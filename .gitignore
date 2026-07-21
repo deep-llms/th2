@@ -1,0 +1,31 @@
+# Data
+cache/
+data/
+checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Wandb
+wandb/
+
+temp/
+
+eval_parallel.log
+
+
+docs/commands.md
+
+smoke_test_outputs/
+
+.claude/
+docs/GIT_PUSH.md
