@@ -1,3 +1,2 @@
-#1
-#setup-env
-bash scripts/setup_env.sh
+#2 +a
+#pull-latest-log
