@@ -37,20 +37,17 @@ REPO_ID = "uonlp/CulturaX"
 HF_TOKEN = os.environ.get("HF_TOKEN", "")
 SEED = 42
 
-# num_files: how many parquet files to download per language. The previous run
-# over-downloaded massively (en hit 30B tokens in 35 of 300 files; every other
-# lang hit 300M in its 1st file). At ~2.46GB / ~857M tokens per en file, 50 files
-# ≈ 123GB / ~43B tokens — comfortable margin over the 30B+10M target. 5 files per
-# other lang ≈ ~1.5B tokens, far above the 300M+10M target. Selection stays
-# deterministic via SEED, so it is reproducible across machine restarts (but note:
-# this is a NEW selection, not the old run's files — sample(k) is not nested).
+# num_files: how many parquet files to download per language.
+# At ~2.46GB / ~857M tokens per en file, 50 files ≈ 123GB / ~43B tokens —
+# comfortable margin over the 30B target. 10 files per other lang ≈ ~8.5B tokens,
+# far above the 1B+10M target. Selection is deterministic via SEED.
 LANG_CONFIG = {
     "en": {"target_tokens": 30_000_000_000, "eval_tokens": 10_000_000, "num_files": 50},
-    "vi": {"target_tokens": 300_000_000, "eval_tokens": 10_000_000, "num_files": 5},
-    "zh": {"target_tokens": 300_000_000, "eval_tokens": 10_000_000, "num_files": 5},
-    "ru": {"target_tokens": 300_000_000, "eval_tokens": 10_000_000, "num_files": 5},
-    "de": {"target_tokens": 300_000_000, "eval_tokens": 10_000_000, "num_files": 5},
-    "ar": {"target_tokens": 300_000_000, "eval_tokens": 10_000_000, "num_files": 5},
+    "vi": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
+    "zh": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
+    "ru": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
+    "de": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
+    "ar": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
 }
 
 
