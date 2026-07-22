@@ -1,29 +1,27 @@
 #!/bin/bash
 #
-# Train Qwen3-0.6B from scratch WITHOUT EmbHub (baseline) on multilingual data.
+# Train Qwen3-0.6B from scratch (baseline) on multilingual data.
 #
 # Hardware: 8x H200 141GB
 # Model: ~0.66B params
-# Data: ~31.5B tokens (30B en + 5x300M other languages) x 1 epoch = ~31.5B tokens
+# Data: ~35B tokens (30B en + 5x1B other languages) x 1 epoch
 # Effective batch: 16 * 4 * 8 = 512 sequences x 2048 = 1M tokens/step
-# Total steps: ~31.5B / 1M ≈ 31,500 steps
+# Total steps: ~35B / 1M ≈ 35,000 steps
 # Warmup: 500 steps
 # Min LR: 10% of max LR = 3e-5
 #
 
-
-export WANDB_PROJECT="cross_lingual_embedding_hub"
+export WANDB_PROJECT="sparse_embedding"
 export WANDB_MODE=offline
 export NCCL_NVLS_ENABLE=0
 
-accelerate launch smoke_train.py \
+accelerate launch train.py \
     --config_name Qwen/Qwen3-0.6B \
     --tokenizer_name Qwen/Qwen3-0.6B \
-    --data_dir /opt/dlami/nvme/embhub_data/Qwen_Qwen3-0.6B/train \
+    --data_dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/train \
     --block_size 2048 \
     --preprocessing_num_workers 160 \
-    --no_embhub \
-    --output_dir /opt/dlami/nvme/smoke_test_outputs/baseline \
+    --output_dir /opt/dlami/nvme/sparse_emb_outputs/baseline \
     --seed 42 \
     --bf16 \
     --ddp_timeout 21600 \
@@ -41,5 +39,5 @@ accelerate launch smoke_train.py \
     --logging_steps 10 \
     --save_steps 250 \
     --dataloader_num_workers 8 \
-    --run_name qwen3-0.6b-scratch-baseline \
+    --run_name qwen3-0.6b-baseline \
     --report_to wandb

@@ -1,15 +1,9 @@
-"""Train a causal LM on multilingual data.
+"""Train a causal LM from scratch on multilingual data.
 
 Adapted from HuggingFace's run_clm.py example:
 https://github.com/huggingface/transformers/blob/main/examples/pytorch/language-modeling/run_clm.py
 
 Data is loaded from per-language directories saved by prepare_data.py.
-
-NOTE: This file was copied from the cross_lingual_embeddings_hub project.
-It contains EmbHub-specific code (imports, EmbHubArguments, SaveEmbHubCallback,
-inject/load/save calls) that must be replaced with this project's own model
-wrapper. Search for "model_wrapper_v2" and "embhub" to find all EmbHub
-references that need updating.
 """
 
 import json
@@ -30,13 +24,10 @@ from transformers import (
     HfArgumentParser,
     Trainer,
     TrainingArguments,
-    TrainerCallback,
     default_data_collator,
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
-
-from model_wrapper_v2 import inject_embhub, load_model_with_embhub, save_embhub
 
 logger = logging.getLogger(__name__)
 
@@ -89,19 +80,10 @@ class DataArguments:
     )
 
 
-@dataclass
-class EmbHubArguments:
-    num_hub_embeddings: int = field(default=1000, metadata={"help": "Number of hub embeddings"})
-    alpha: float = field(default=0.05, metadata={"help": "Hub scaling factor"})
-    freeze_base: bool = field(default=False, metadata={"help": "Freeze base model, train only hub"})
-    no_embhub: bool = field(default=False, metadata={"help": "Train original model without EmbHub layer"})
-
-
-def save_train_config(save_dir, model_args, data_args, embhub_args, training_args):
+def save_train_config(save_dir, model_args, data_args, training_args):
     config = {
         "model": asdict(model_args),
         "data": asdict(data_args),
-        "embhub": asdict(embhub_args),
         "training": {
             k: v for k, v in training_args.to_dict().items()
             if v is not None and v != "" and k not in ("_n_gpu", "local_rank")
@@ -111,29 +93,14 @@ def save_train_config(save_dir, model_args, data_args, embhub_args, training_arg
         json.dump(config, f, indent=2, default=str)
 
 
-class SaveEmbHubCallback(TrainerCallback):
-    def __init__(self, model_args, data_args, embhub_args):
-        self.model_args = model_args
-        self.data_args = data_args
-        self.embhub_args = embhub_args
-
-    def on_save(self, args, state, control, **kwargs):
-        if not args.should_save:
-            return
-        checkpoint_dir = os.path.join(args.output_dir, f"checkpoint-{state.global_step}")
-        if not self.embhub_args.no_embhub:
-            save_embhub(kwargs["model"], checkpoint_dir)
-        save_train_config(checkpoint_dir, self.model_args, self.data_args, self.embhub_args, args)
-
-
 def main():
-    parser = HfArgumentParser((ModelArguments, DataArguments, EmbHubArguments, TrainingArguments))
+    parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
-        model_args, data_args, embhub_args, training_args = parser.parse_json_file(
+        model_args, data_args, training_args = parser.parse_json_file(
             json_file=os.path.abspath(sys.argv[1])
         )
     else:
-        model_args, data_args, embhub_args, training_args = parser.parse_args_into_dataclasses()
+        model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     # Setup logging
     logging.basicConfig(
@@ -159,7 +126,6 @@ def main():
     )
     logger.info(f"Training/evaluation parameters {training_args}")
 
-    # Set seed before initializing model.
     set_seed(training_args.seed)
 
     # Detect last checkpoint for resume
@@ -202,53 +168,23 @@ def main():
 
     # Load model
     if model_args.model_name_or_path:
-        if embhub_args.no_embhub:
-            model = AutoModelForCausalLM.from_pretrained(
-                model_args.model_name_or_path,
-                config=config,
-                cache_dir=model_args.cache_dir,
-                token=model_args.token,
-                trust_remote_code=model_args.trust_remote_code,
-            )
-            logger.info(f"Loaded pretrained model: {model_args.model_name_or_path} (no EmbHub)")
-        else:
-            model, hub = load_model_with_embhub(
-                model_args.model_name_or_path,
-                num_embeddings=embhub_args.num_hub_embeddings,
-                alpha=embhub_args.alpha,
-                freeze_base=embhub_args.freeze_base,
-                config=config,
-                cache_dir=model_args.cache_dir,
-                token=model_args.token,
-                trust_remote_code=model_args.trust_remote_code,
-            )
-            embhub_path = os.path.join(model_args.model_name_or_path, "embhub.pt")
-            if os.path.isfile(embhub_path):
-                logger.info(f"Loaded model with existing hub weights from: {model_args.model_name_or_path}")
-            else:
-                logger.info(f"Loaded model with fresh hub: {model_args.model_name_or_path}")
+        model = AutoModelForCausalLM.from_pretrained(
+            model_args.model_name_or_path,
+            config=config,
+            cache_dir=model_args.cache_dir,
+            token=model_args.token,
+            trust_remote_code=model_args.trust_remote_code,
+        )
+        logger.info(f"Loaded pretrained model: {model_args.model_name_or_path}")
     else:
         model = AutoModelForCausalLM.from_config(config, trust_remote_code=model_args.trust_remote_code)
         n_params = sum({p.data_ptr(): p.numel() for p in model.parameters()}.values())
         logger.info(f"Training new model from scratch - Total size={n_params / 2**20:.2f}M params")
 
-        if not embhub_args.no_embhub:
-            hub = inject_embhub(
-                model,
-                num_embeddings=embhub_args.num_hub_embeddings,
-                alpha=embhub_args.alpha,
-                freeze_base=embhub_args.freeze_base,
-            )
-
-    # Log model info
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     total_params = sum(p.numel() for p in model.parameters())
     logger.info(f"Total params: {total_params:,}, Trainable: {trainable_params:,} "
                 f"({100 * trainable_params / total_params:.2f}%)")
-    if not embhub_args.no_embhub:
-        logger.info(f"Hub embeddings: {hub.hub_embeddings.shape}, alpha: {embhub_args.alpha}, "
-                     f"freeze_base: {embhub_args.freeze_base}, "
-                     f"logit_scale_init: {hub.log_logit_scale.exp().item():.1f}")
 
     # Load per-language datasets (supports both single-dir and sharded layouts)
     datasets_list = []
@@ -339,18 +275,12 @@ def main():
     logger.info(f"Training dataset: {train_dataset.num_rows:,} sequences of {block_size} tokens")
 
     # Initialize Trainer
-    callbacks = [SaveEmbHubCallback(model_args, data_args, embhub_args)]
-    if not embhub_args.no_embhub:
-        from diagnostics.smoke_callback import EmbHubSmokeCallback
-        callbacks.append(EmbHubSmokeCallback(model, tokenizer, log_every=50))
-
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         processing_class=tokenizer,
         data_collator=default_data_collator,
-        callbacks=callbacks,
     )
 
     # Training
@@ -369,11 +299,8 @@ def main():
     trainer.save_metrics("train", metrics)
     trainer.save_state()
 
-    # Save EmbHub weights and train config (main process only)
     if training_args.should_save:
-        if not embhub_args.no_embhub:
-            save_embhub(model, training_args.output_dir)
-        save_train_config(training_args.output_dir, model_args, data_args, embhub_args, training_args)
+        save_train_config(training_args.output_dir, model_args, data_args, training_args)
     logger.info(f"Training complete. Model saved to: {training_args.output_dir}")
 
 

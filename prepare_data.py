@@ -109,8 +109,8 @@ def sample_by_token_count(args, plan):
     This guarantees zero overlap between train and eval.
 
     To avoid OOM on machines with limited RAM, train texts are flushed
-    to disk as shards every --flush-every files. train.py and
-    smoke_train.py detect and load these shards automatically.
+    to disk as shards every --flush-every files. train.py detects
+    and loads these shards automatically.
     """
     os.environ["TOKENIZERS_PARALLELISM"] = "true"
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name)
