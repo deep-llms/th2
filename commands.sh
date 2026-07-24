@@ -1,3 +1,2 @@
-#1
+#2
 #run-dummy
-nvidia-smi
