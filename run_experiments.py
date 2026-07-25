@@ -13,7 +13,6 @@ To add experiments: edit EXPERIMENT_COMMANDS below.
 """
 
 import argparse
-import csv
 import logging
 import os
 import signal
@@ -29,19 +28,27 @@ logger = logging.getLogger(__name__)
 # Each entry is a dict with:
 #   "name": short label for logging and output files
 #   "cmd": the full shell command to run
-#   "output_dir": where checkpoints go (for CSV monitoring)
-#   "monitor_csv": filename inside output_dir to watch for step progress
-#                  (optional — omit to just run until the command finishes)
+#   "output_dir": where checkpoints go (monitored for --stop-at-step)
 # =====================================================================
 
+OUT_BASE = "/opt/dlami/nvme/sparse_emb_outputs"
+
 EXPERIMENT_COMMANDS = [
-    # Example:
-    # {
-    #     "name": "baseline",
-    #     "cmd": "accelerate launch train.py --config_name Qwen/Qwen3-0.6B --bf16 --output_dir /opt/dlami/nvme/outputs/baseline",
-    #     "output_dir": "/opt/dlami/nvme/outputs/baseline",
-    #     "monitor_csv": "smoke_metrics.csv",
-    # },
+    {
+        "name": "original_ant",
+        "cmd": "bash scripts/train_original_ant.sh",
+        "output_dir": f"{OUT_BASE}/original_ant",
+    },
+    {
+        "name": "ant_ours",
+        "cmd": "bash scripts/train_ant_ours.sh",
+        "output_dir": f"{OUT_BASE}/ant_ours",
+    },
+    {
+        "name": "v2_attn",
+        "cmd": "bash scripts/train_v2_attn.sh",
+        "output_dir": f"{OUT_BASE}/v2_attn",
+    },
 ]
 
 
@@ -104,40 +111,54 @@ def ensure_gpus_free(max_attempts=10, sleep_between=30):
 # Step monitoring
 # =====================================================================
 
-def wait_for_step(proc, csv_path, target_step, poll_interval=10):
-    """Monitor a CSV file for step progress. Terminate when target is reached."""
+def _latest_checkpoint_step(output_dir):
+    """Return the highest step number from checkpoint-* dirs, or -1."""
+    if not output_dir or not os.path.isdir(output_dir):
+        return -1
+    steps = []
+    for d in os.listdir(output_dir):
+        if d.startswith("checkpoint-") and os.path.isdir(os.path.join(output_dir, d)):
+            try:
+                steps.append(int(d.split("-")[1]))
+            except (IndexError, ValueError):
+                pass
+    return max(steps) if steps else -1
+
+
+def wait_for_step(proc, output_dir, target_step, poll_interval=30):
+    """Monitor checkpoint directories for step progress. Kill when target reached.
+
+    The training script saves checkpoints every --save_steps to output_dir/.
+    This watches for checkpoint-{step}/ directories and terminates training
+    once the step exceeds the target. The LR schedule / lambda ramp are still
+    configured for the full run — only the process is stopped early.
+    """
     while proc.poll() is None:
         time.sleep(poll_interval)
-        if not csv_path or not os.path.isfile(csv_path):
+        last_step = _latest_checkpoint_step(output_dir)
+        if last_step < 0:
             continue
-        try:
-            with open(csv_path) as f:
-                rows = list(csv.DictReader(f))
-            if rows:
-                last_step = int(rows[-1].get("step", 0))
-                if last_step >= target_step:
-                    logger.info(f"    Reached step {last_step} >= {target_step}, waiting 120s...")
-                    time.sleep(120)
-                    logger.info(f"    Sending SIGTERM...")
-                    try:
-                        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-                    except OSError:
-                        pass
-                    try:
-                        proc.wait(timeout=60)
-                    except subprocess.TimeoutExpired:
-                        try:
-                            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-                        except OSError:
-                            pass
-                        try:
-                            proc.wait(timeout=30)
-                        except subprocess.TimeoutExpired:
-                            pass
-                    return last_step
-        except (ValueError, OSError):
-            continue
-    return -1
+        if last_step >= target_step:
+            logger.info(f"    Reached step {last_step} >= {target_step}, waiting 120s for save...")
+            time.sleep(120)
+            logger.info(f"    Sending SIGTERM...")
+            try:
+                os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+            except OSError:
+                pass
+            try:
+                proc.wait(timeout=60)
+            except subprocess.TimeoutExpired:
+                try:
+                    os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+                except OSError:
+                    pass
+                try:
+                    proc.wait(timeout=30)
+                except subprocess.TimeoutExpired:
+                    pass
+            return last_step
+    return _latest_checkpoint_step(output_dir)
 
 
 # =====================================================================
@@ -149,11 +170,6 @@ def run_experiment(exp, stop_at_step, log_dir):
     name = exp["name"]
     cmd = exp["cmd"]
     output_dir = exp.get("output_dir")
-    monitor_csv = exp.get("monitor_csv")
-
-    csv_path = None
-    if monitor_csv and output_dir:
-        csv_path = os.path.join(output_dir, monitor_csv)
 
     log_path = os.path.join(log_dir, f"{name}.log")
 
@@ -164,6 +180,8 @@ def run_experiment(exp, stop_at_step, log_dir):
 
     logger.info(f"  START: {name}")
     logger.info(f"  Command: {cmd}")
+    if stop_at_step:
+        logger.info(f"  Will stop at step {stop_at_step} (monitoring {output_dir})")
     start = time.time()
 
     env = os.environ.copy()
@@ -176,11 +194,11 @@ def run_experiment(exp, stop_at_step, log_dir):
             preexec_fn=os.setsid, env=env,
         )
 
-        if stop_at_step and csv_path:
-            last_step = wait_for_step(proc, csv_path, stop_at_step)
+        if stop_at_step and output_dir:
+            last_step = wait_for_step(proc, output_dir, stop_at_step)
         else:
             proc.wait()
-            last_step = -1
+            last_step = _latest_checkpoint_step(output_dir) if output_dir else -1
 
     elapsed = time.time() - start
 
@@ -188,6 +206,8 @@ def run_experiment(exp, stop_at_step, log_dir):
         status = f"STOPPED at step {last_step}"
     elif proc.returncode == 0:
         status = "OK"
+    elif proc.returncode == -signal.SIGTERM or proc.returncode == -signal.SIGKILL:
+        status = f"KILLED at step {last_step}"
     else:
         status = f"FAILED (code {proc.returncode})"
 
@@ -204,7 +224,7 @@ def main():
     parser.add_argument("--experiments", nargs="+", type=int, default=None,
                         help="Indices of experiments to run (default: all)")
     parser.add_argument("--stop-at-step", type=int, default=None,
-                        help="Stop each experiment at this step (requires monitor_csv)")
+                        help="Stop each experiment at this step (monitors checkpoint dirs in output_dir)")
     parser.add_argument("--log-dir", default=".",
                         help="Directory for per-experiment log files (default: .)")
     parser.add_argument("--list", action="store_true",

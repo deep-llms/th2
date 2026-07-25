@@ -257,8 +257,8 @@ def main():
     )
     parser.add_argument(
         "--tokenizer-name",
-        default="gpt2",
-        help="Tokenizer for counting tokens (default: gpt2)",
+        default="Qwen/Qwen3-0.6B",
+        help="Tokenizer for counting tokens (default: Qwen/Qwen3-0.6B)",
     )
     parser.add_argument(
         "--num-workers",
