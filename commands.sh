@@ -1,4 +1,4 @@
-#1 +30+a
+#1 +30+a 
 #kill-dummy
 pkill -f "dummy.py"
 sleep 10
