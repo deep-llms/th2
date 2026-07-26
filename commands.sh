@@ -1,5 +1,5 @@
-#1 +20+a
+#1 +30+a
 #kill-dummy
 pkill -f "dummy.py"
 sleep 10
-nvidia-smi
+nvidia-smi 
