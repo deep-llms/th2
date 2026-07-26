@@ -629,6 +629,10 @@ def main():
                     avg_nnz_val = accelerator.gather(logs["avg_nnz"]).mean().item()
                     dead_rate_val = accelerator.gather(logs["dead_rate"]).mean().item()
                     ent_val = accelerator.gather(logs["entropy"]).mean().item()
+                    div_loss_val = (
+                        accelerator.gather(logs["div_loss"]).mean().item()
+                        if "div_loss" in logs else 0.0
+                    )
                     bb_lr = bb_sched.get_last_lr()[0]
                     emb_lr = emb_sched.get_last_lr()[0]
                     ppl = math.exp(min(lm_loss_val, 20))
@@ -650,6 +654,8 @@ def main():
                         )
                         if l1_pen > 0:
                             log_str += f" | l1 {l1_pen:.2e}"
+                        if div_loss_val > 0:
+                            log_str += f" | div {div_loss_val:.4f}"
                         logger.info(log_str)
 
                         if training_args.report_to == "wandb":
@@ -660,6 +666,7 @@ def main():
                                 "avg_nnz": avg_nnz_val,
                                 "dead_rate": dead_rate_val,
                                 "entropy": ent_val,
+                                "div_loss": div_loss_val,
                                 "bb_lr": bb_lr,
                                 "emb_lr": emb_lr,
                                 "l1_penalty": l1_pen,
