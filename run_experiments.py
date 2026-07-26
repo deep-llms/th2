@@ -231,6 +231,7 @@ def main():
                         help="List available experiments and exit")
     args = parser.parse_args()
 
+    os.makedirs(args.log_dir, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(message)s", datefmt="%H:%M:%S",
         handlers=[logging.StreamHandler(),
@@ -251,7 +252,6 @@ def main():
     else:
         to_run = EXPERIMENT_COMMANDS
 
-    os.makedirs(args.log_dir, exist_ok=True)
     start_time = time.time()
 
     logger.info(f"Running {len(to_run)} experiments sequentially")
