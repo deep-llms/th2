@@ -1,15 +1,5 @@
 #1 +120+a
 #setup-and-clean
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-sleep 3
-conda activate sparse_emb
-sleep 3
-
-pip install entmax
-sleep 3
-
-python -c "from entmax import entmax15; print('entmax OK')"
-sleep 3
 
 # Clean previous outputs
 rm -rf /opt/dlami/nvme/sparse_emb_outputs/original_ant
@@ -31,3 +21,7 @@ mkdir -p ~/.cache/huggingface/accelerate
 cp resources/accelerate_config.yaml ~/.cache/huggingface/accelerate/default_config.yaml
 
 echo "Done"
+
+sleep 3
+nvidia-smi
+

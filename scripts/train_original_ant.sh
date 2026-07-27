@@ -13,7 +13,7 @@ export NCCL_NVLS_ENABLE=0
 nvidia-smi
 sleep 3
 
-accelerate launch train_compositional.py \
+accelerate launch train_original_ant.py \
     --config_name Qwen/Qwen3-0.6B \
     --tokenizer_name Qwen/Qwen3-0.6B \
     --data_dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/train \
@@ -25,7 +25,8 @@ accelerate launch train_compositional.py \
     --gradient_accumulation_steps 4 \
     --num_train_epochs 1 \
     --learning_rate 3e-4 \
-    --min_lr_rate 0.1 \
+    --lr_scheduler_type cosine_with_min_lr \
+    --lr_scheduler_kwargs '{"min_lr_rate": 0.1}' \
     --warmup_steps 500 \
     --weight_decay 0.1 \
     --adam_beta1 0.9 \
@@ -37,7 +38,6 @@ accelerate launch train_compositional.py \
     --report_to wandb \
     --output_dir /opt/dlami/nvme/sparse_emb_outputs/original_ant \
     --run_name original-ant-qwen3-0.6b \
-    --arm original_ant \
     --K 4096 \
     --emb_lr 1e-2 \
     --lam 1e-3

@@ -25,7 +25,8 @@ accelerate launch train_compositional.py \
     --gradient_accumulation_steps 4 \
     --num_train_epochs 1 \
     --learning_rate 3e-4 \
-    --min_lr_rate 0.1 \
+    --lr_scheduler_type cosine_with_min_lr \
+    --lr_scheduler_kwargs '{"min_lr_rate": 0.1}' \
     --warmup_steps 500 \
     --weight_decay 0.1 \
     --adam_beta1 0.9 \
