@@ -48,7 +48,7 @@ conda run -n sparse_emb pip install \
 
 conda run -n sparse_emb pip install \
     transformers==5.9.0 datasets==4.8.5 accelerate==1.13.0 \
-    scipy wandb pyarrow huggingface_hub openai
+    scipy wandb pyarrow huggingface_hub openai entmax
 
 # 6. Create fasttext_env
 if conda env list | grep -q "fasttext_env"; then
