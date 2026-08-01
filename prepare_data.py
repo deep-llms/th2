@@ -43,11 +43,11 @@ SEED = 42
 # far above the 1B+10M target. Selection is deterministic via SEED.
 LANG_CONFIG = {
     "en": {"target_tokens": 30_000_000_000, "eval_tokens": 10_000_000, "num_files": 50},
-    "vi": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
-    "zh": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
-    "ru": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
-    "de": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
-    "ar": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 10},
+    "vi": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 5},
+    "zh": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 5},
+    "ru": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 5},
+    "de": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 5},
+    "ar": {"target_tokens": 1_000_000_000, "eval_tokens": 10_000_000, "num_files": 5},
 }
 
 
