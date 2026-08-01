@@ -21,8 +21,8 @@ accelerate launch train_original_ant.py \
     --preprocessing_num_workers 160 \
     --seed 42 \
     --bf16 \
-    --per_device_train_batch_size 16 \
-    --gradient_accumulation_steps 4 \
+    --per_device_train_batch_size 4 \
+    --gradient_accumulation_steps 16 \
     --num_train_epochs 1 \
     --learning_rate 3e-4 \
     --lr_scheduler_type cosine_with_min_lr \
