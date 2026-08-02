@@ -1,2 +1,2 @@
-#2 +a -f-/opt/dlami/nvme/sparse_emb_outputs/logs/experiments.log
-#pull-experiment-log
+#2 +a
+#pull-log
