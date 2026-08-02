@@ -24,9 +24,10 @@ accelerate launch train.py \
     --output_dir /opt/dlami/nvme/sparse_emb_outputs/baseline \
     --seed 42 \
     --bf16 \
+    --gradient_checkpointing \
     --ddp_timeout 21600 \
-    --per_device_train_batch_size 4 \
-    --gradient_accumulation_steps 16 \
+    --per_device_train_batch_size 8 \
+    --gradient_accumulation_steps 8 \
     --num_train_epochs 1 \
     --learning_rate 3e-4 \
     --lr_scheduler_type cosine_with_min_lr \
