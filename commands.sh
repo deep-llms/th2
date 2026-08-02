@@ -5,6 +5,9 @@ sleep 3
 conda activate sparse_emb
 sleep 3
 
+nvidia-smi
+sleep 3
+
 # Verify CUDA
 python -c "import torch; assert torch.cuda.is_available(), 'CUDA FAILED'; print(f'CUDA OK: {torch.cuda.device_count()} GPUs')"
 sleep 5
