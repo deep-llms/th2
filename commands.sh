@@ -5,15 +5,6 @@ sleep 3
 conda activate sparse_emb
 sleep 3
 
-# Clean
-rm -rf /opt/dlami/nvme/sparse_emb_outputs/v2_attn
-rm -rf /opt/dlami/nvme/sparse_emb_outputs/logs
-rm -rf ~/.cache/huggingface/datasets
-find /opt/dlami/nvme/sparse_emb_data -name "cache-*" -delete 2>/dev/null
-find /opt/dlami/nvme/sparse_emb_data -name "tmp*" -delete 2>/dev/null
-echo "Cleaned"
-sleep 10
-
 # Verify CUDA
 python -c "import torch; assert torch.cuda.is_available(), 'CUDA FAILED'; print(f'CUDA OK: {torch.cuda.device_count()} GPUs')"
 sleep 5
