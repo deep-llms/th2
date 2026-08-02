@@ -1,3 +1,2 @@
-#1
-#check-gpu-mem
-nvidia-smi
+#2 +a
+#pull-log
