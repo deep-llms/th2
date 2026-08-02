@@ -21,8 +21,9 @@ accelerate launch train_compositional.py \
     --preprocessing_num_workers 160 \
     --seed 42 \
     --bf16 \
-    --per_device_train_batch_size 4 \
-    --gradient_accumulation_steps 16 \
+    --gradient_checkpointing \
+    --per_device_train_batch_size 8 \
+    --gradient_accumulation_steps 8 \
     --num_train_epochs 1 \
     --learning_rate 3e-4 \
     --lr_scheduler_type cosine_with_min_lr \
