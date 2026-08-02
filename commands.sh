@@ -1,2 +1,3 @@
-#2 +a -f-/opt/dlami/nvme/sparse_emb_outputs/logs/original_ant.log
-#pull-train-log
+#1
+#check-gpu-mem
+nvidia-smi
