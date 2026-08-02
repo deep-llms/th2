@@ -25,8 +25,8 @@ accelerate launch train.py \
     --seed 42 \
     --bf16 \
     --ddp_timeout 21600 \
-    --per_device_train_batch_size 16 \
-    --gradient_accumulation_steps 4 \
+    --per_device_train_batch_size 4 \
+    --gradient_accumulation_steps 16 \
     --num_train_epochs 1 \
     --learning_rate 3e-4 \
     --lr_scheduler_type cosine_with_min_lr \

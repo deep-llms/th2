@@ -49,6 +49,11 @@ EXPERIMENT_COMMANDS = [
         "cmd": "bash scripts/train_v2_attn.sh",
         "output_dir": f"{OUT_BASE}/v2_attn",
     },
+    {
+        "name": "baseline",
+        "cmd": "bash scripts/train_qwen3_0.6b_baseline.sh",
+        "output_dir": f"{OUT_BASE}/baseline",
+    },
 ]
 
 
