@@ -12,6 +12,9 @@ sleep 3
 python -c "import torch; assert torch.cuda.is_available(), 'CUDA FAILED'; print(f'CUDA OK: {torch.cuda.device_count()} GPUs')"
 sleep 5
 
+# Verify output dir not exist
+if [ -d /opt/dlami/nvme/sparse_emb_outputs/v2_attn ]; then echo "ERROR: output dir already exists"; exit 1; fi
+
 # Config
 mkdir -p ~/.cache/huggingface/accelerate
 cp resources/accelerate_config.yaml ~/.cache/huggingface/accelerate/default_config.yaml
