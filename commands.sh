@@ -5,6 +5,9 @@ sleep 3
 conda activate sparse_emb
 sleep 3
 
+pkill -f dummy.py 2>/dev/null
+sleep 5
+
 nvidia-smi
 sleep 3
 
