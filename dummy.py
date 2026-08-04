@@ -1,6 +1,6 @@
 """Occupy GPUs with matrix multiplications. Keeps GPUs busy until killed.
 
-Allocates ~110GB per GPU and runs continuous matmuls so GPU utilization
+Allocates ~60GB per GPU and runs continuous matmuls so GPU utilization
 and power draw are high.
 
 Usage:
@@ -27,7 +27,7 @@ def main():
     for gpu_id in gpus:
         tensors = []
         allocated = 0
-        while allocated < 110:
+        while allocated < 60:
             try:
                 t = torch.randn(8192, 8192, device=f"cuda:{gpu_id}", dtype=torch.float32)
                 tensors.append(t)
