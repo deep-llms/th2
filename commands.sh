@@ -1,9 +1,13 @@
-#1 +120+a
-#kill-dummy
-for i in 1 2 3 4 5; do
-    echo "attempt $i"
-    pkill -f dummy.py 2>/dev/null
-    sleep 5
-done
-nvidia-smi
-echo "done"
+#1
+#eval-v2-attn
+eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+sleep 3
+conda activate sparse_emb
+sleep 3
+
+python eval/eval_checkpoint.py \
+    --checkpoint /opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-10000 \
+    --eval-dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/eval \
+    --tokenizer-name Qwen/Qwen3-0.6B \
+    --bf16 \
+    --ppl-only
