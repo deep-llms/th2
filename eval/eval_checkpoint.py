@@ -19,19 +19,11 @@ import torch
 from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 
 
-def _is_compositional(checkpoint_path):
-    """Check if checkpoint is a compositional model (has backbone/ + embedding.pt)."""
-    return (
-        os.path.isdir(os.path.join(checkpoint_path, "backbone"))
-        and os.path.isfile(os.path.join(checkpoint_path, "embedding.pt"))
-    )
-
-
 def load_model(checkpoint_path, device, dtype=None):
-    if _is_compositional(checkpoint_path):
-        from compositional.loading import load_compositional_model
-        model, train_config = load_compositional_model(checkpoint_path, device, dtype)
-        print(f"  Loaded compositional model: arm={train_config['arm']}")
+    from compositional.loading import is_compositional, load_compositional_model
+    if is_compositional(checkpoint_path):
+        model, comp_config = load_compositional_model(checkpoint_path, device, dtype)
+        print(f"  Loaded compositional model: arm={comp_config['arm']}")
         return model
 
     config = AutoConfig.from_pretrained(checkpoint_path)
