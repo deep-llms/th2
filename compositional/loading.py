@@ -1,16 +1,16 @@
 """Load a compositional checkpoint into a single model for evaluation.
 
-The training script saves the backbone and embedding separately:
-  output_dir/backbone/       — HF model (embed_tokens missing)
-  output_dir/embedding.pt    — compositional embedding state_dict
-  output_dir/train_config.json — training args (tells us which arm was used)
+Supports two checkpoint layouts:
 
-This module rebuilds the full model by:
-  1. Loading the backbone
-  2. Rebuilding the embedding module from the saved config
-  3. Loading embedding.pt
-  4. Installing an embed_tokens shim so model(input_ids) works transparently
-     (including with lm_eval benchmarks that call model(input_ids) internally)
+1. HF Trainer checkpoint (the actual layout):
+     output_dir/checkpoint-N/     — HF model files + embedding.pt
+     output_dir/train_config.json — saved by save_train_config()
+
+2. Standalone dir (if restructured):
+     dir/                         — HF model files + embedding.pt + train_config.json
+
+In layout 1, pass the checkpoint dir as output_dir and config_path separately.
+In layout 2, everything is in one dir.
 """
 
 import json
@@ -47,9 +47,9 @@ class EmbeddingShim(nn.Module):
         return e
 
 
-def _build_arm_from_config(train_config, vocab_size, embed_dim):
+def _build_arm_from_config(comp_config, vocab_size, embed_dim):
     """Rebuild the embedding module from saved train_config.json."""
-    tc = train_config
+    tc = comp_config
     arm = tc["arm"]
     shared = dict(
         d_x=tc.get("d_x", 128),
@@ -78,37 +78,55 @@ def _build_arm_from_config(train_config, vocab_size, embed_dim):
     raise ValueError(f"Unknown arm: {arm}")
 
 
-def load_compositional_model(output_dir, device="cuda", dtype=None):
+def _find_config_path(checkpoint_dir):
+    """Find train_config.json — in checkpoint dir or parent."""
+    local = os.path.join(checkpoint_dir, "train_config.json")
+    if os.path.isfile(local):
+        return local
+    parent = os.path.join(os.path.dirname(checkpoint_dir), "train_config.json")
+    if os.path.isfile(parent):
+        return parent
+    return None
+
+
+def is_compositional(checkpoint_dir):
+    """Check if a checkpoint is compositional (has embedding.pt + train_config.json)."""
+    if not os.path.isfile(os.path.join(checkpoint_dir, "embedding.pt")):
+        return False
+    return _find_config_path(checkpoint_dir) is not None
+
+
+def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
     """Load a compositional checkpoint as a ready-to-use model.
 
     Args:
-        output_dir: The training output directory containing backbone/,
-                    embedding.pt, and train_config.json.
+        checkpoint_dir: Path to the checkpoint directory containing model files
+                        and embedding.pt. train_config.json is searched in the
+                        checkpoint dir first, then its parent.
         device: Target device.
-        dtype: Parameter dtype for the backbone (default: from config).
+        dtype: Parameter dtype (default: from config).
 
     Returns:
-        (model, tokenizer, train_config) where model(input_ids) works normally.
+        (model, comp_config) where model(input_ids) works normally.
     """
-    backbone_dir = os.path.join(output_dir, "backbone")
-    embedding_path = os.path.join(output_dir, "embedding.pt")
-    config_path = os.path.join(output_dir, "train_config.json")
+    embedding_path = os.path.join(checkpoint_dir, "embedding.pt")
+    config_path = _find_config_path(checkpoint_dir)
 
-    if not os.path.isdir(backbone_dir):
-        raise FileNotFoundError(f"No backbone/ directory in {output_dir}")
     if not os.path.isfile(embedding_path):
-        raise FileNotFoundError(f"No embedding.pt in {output_dir}")
-    if not os.path.isfile(config_path):
-        raise FileNotFoundError(f"No train_config.json in {output_dir}")
+        raise FileNotFoundError(f"No embedding.pt in {checkpoint_dir}")
+    if config_path is None:
+        raise FileNotFoundError(
+            f"No train_config.json in {checkpoint_dir} or its parent")
 
     with open(config_path) as f:
         full_config = json.load(f)
-    train_config = full_config["training"]
+    comp_config = full_config["compositional"]
 
-    config = AutoConfig.from_pretrained(backbone_dir)
-    model = AutoModelForCausalLM.from_pretrained(backbone_dir, config=config, torch_dtype=dtype)
+    config = AutoConfig.from_pretrained(checkpoint_dir)
+    model = AutoModelForCausalLM.from_pretrained(
+        checkpoint_dir, config=config, torch_dtype=dtype)
 
-    embed = _build_arm_from_config(train_config, config.vocab_size, config.hidden_size)
+    embed = _build_arm_from_config(comp_config, config.vocab_size, config.hidden_size)
     state = torch.load(embedding_path, map_location="cpu", weights_only=True)
     embed.load_state_dict(state)
 
@@ -119,4 +137,4 @@ def load_compositional_model(output_dir, device="cuda", dtype=None):
     model.to(device)
     model.eval()
 
-    return model, train_config
+    return model, comp_config

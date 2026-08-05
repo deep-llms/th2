@@ -8,4 +8,4 @@ from .embeddings import (
 )
 from .optimizers import Yogi
 from .losses import compute_loss
-from .loading import load_compositional_model
+from .loading import load_compositional_model, is_compositional
