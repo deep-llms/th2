@@ -41,6 +41,8 @@ def build_cmd(script, ckpt, args):
         cmd.append("--ppl-only")
     if args.bench_only:
         cmd.append("--bench-only")
+    if args.tokenizer_name:
+        cmd += ["--tokenizer-name", args.tokenizer_name]
     return cmd
 
 
@@ -65,6 +67,7 @@ def main():
     parser.add_argument("--bf16", action="store_true", help="Use bfloat16")
     parser.add_argument("--ppl-only", action="store_true", help="Only run perplexity")
     parser.add_argument("--bench-only", action="store_true", help="Only run benchmarks")
+    parser.add_argument("--tokenizer-name", default=None, help="Tokenizer name (default: from checkpoint)")
     parser.add_argument("--num-gpus", type=int, default=8, help="Number of GPUs available")
     parser.add_argument("--log", default="eval_parallel.log", help="Log file for parallel launcher output")
     args = parser.parse_args()
