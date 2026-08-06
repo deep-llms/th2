@@ -1,21 +1,2 @@
-#1
-#eval-v2-attn
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-sleep 3
-conda activate sparse_emb
-sleep 3
-
-pkill -f dummy.py 2>/dev/null
-sleep 5
-
-nvidia-smi
-sleep 3
-
-for step in 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do
-    echo "========== Evaluating checkpoint-${step} =========="
-    CUDA_VISIBLE_DEVICES=0 python eval/eval_checkpoint.py \
-        --checkpoint /opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-${step} \
-        --eval-dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/eval \
-        --tokenizer-name Qwen/Qwen3-0.6B \
-        --bf16
-done
+#2 +a -f-/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-1000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-1000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-2000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-2000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-3000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-3000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-4000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-4000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-5000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-5000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-6000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-6000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-7000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-7000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-8000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-8000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-9000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-9000/eval_benchmarks.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-10000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-10000/eval_benchmarks.json
+#pull-eval-results
