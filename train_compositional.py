@@ -423,6 +423,12 @@ def main():
         callbacks=[SaveEmbeddingCallback(embed_shim)],
     )
 
+    # Save train config BEFORE training — runs killed at a stop-step never reach
+    # the post-training save, and eval needs this file to rebuild the embedding.
+    if training_args.should_save:
+        os.makedirs(training_args.output_dir, exist_ok=True)
+        save_train_config(training_args.output_dir, model_args, data_args, training_args, comp_args)
+
     # Training
     logger.info("*** Train ***")
     checkpoint = None

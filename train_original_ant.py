@@ -372,6 +372,20 @@ def main():
         callbacks=[SaveEmbeddingCallback(embed_shim)],
     )
 
+    def write_train_config():
+        with open(os.path.join(training_args.output_dir, "train_config.json"), "w") as f:
+            json.dump({"model": asdict(model_args), "data": asdict(data_args),
+                       "training": {k: v for k, v in training_args.to_dict().items()
+                                    if v is not None and k not in ("_n_gpu", "local_rank")},
+                       "compositional": {"arm": "original_ant", **asdict(ant_args)}},
+                      f, indent=2, default=str)
+
+    # Save train config BEFORE training — runs killed at a stop-step never reach
+    # the post-training save, and eval needs this file to rebuild the embedding.
+    if training_args.should_save:
+        os.makedirs(training_args.output_dir, exist_ok=True)
+        write_train_config()
+
     checkpoint = training_args.resume_from_checkpoint or last_checkpoint
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     trainer.save_model()
@@ -379,12 +393,7 @@ def main():
     if training_args.should_save:
         torch.save(embed_shim.embed.state_dict(),
                    os.path.join(training_args.output_dir, "embedding.pt"))
-        with open(os.path.join(training_args.output_dir, "train_config.json"), "w") as f:
-            json.dump({"model": asdict(model_args), "data": asdict(data_args),
-                       "training": {k: v for k, v in training_args.to_dict().items()
-                                    if v is not None and k not in ("_n_gpu", "local_rank")},
-                       "compositional": {"arm": "original_ant", **asdict(ant_args)}},
-                      f, indent=2, default=str)
+        write_train_config()
 
     logger.info(f"Training complete. Model saved to: {training_args.output_dir}")
 
