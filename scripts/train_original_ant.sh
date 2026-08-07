@@ -40,4 +40,4 @@ accelerate launch train_original_ant.py \
     --run_name original-ant-qwen3-0.6b \
     --K 4096 \
     --emb_lr 1e-2 \
-    --lam 1e-3
+    --lam 1e-6
