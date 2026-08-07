@@ -1,2 +1,3 @@
 #2 +a -f-/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-1000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-2000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-3000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-4000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-5000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-6000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-7000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-8000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-9000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-10000/eval_ppl.json
 #pull-v2-attn-ppl
+
