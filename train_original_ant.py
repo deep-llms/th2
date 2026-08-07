@@ -192,7 +192,14 @@ class OriginalANTTrainer(Trainer):
                 self.args.warmup_steps, self.state.max_steps,
             )
 
-        outputs = model(input_ids=inputs["input_ids"], labels=inputs.get("labels", inputs["input_ids"]))
+        # Forward num_items_in_batch so the model normalizes the summed CE across
+        # gradient-accumulation steps — without it, logged loss (and gradients)
+        # are scaled by gradient_accumulation_steps.
+        loss_kwargs = {}
+        if kwargs.get("num_items_in_batch") is not None:
+            loss_kwargs["num_items_in_batch"] = kwargs["num_items_in_batch"]
+        outputs = model(input_ids=inputs["input_ids"], labels=inputs.get("labels", inputs["input_ids"]),
+                        **loss_kwargs)
         lm_loss = outputs.loss
         theta = self.embed_shim._last_theta
 
