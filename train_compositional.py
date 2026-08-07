@@ -150,7 +150,14 @@ class CompositionalTrainer(Trainer):
 
     def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
         input_ids = inputs["input_ids"]
-        outputs = model(input_ids=input_ids, labels=inputs.get("labels", input_ids))
+        # Forward num_items_in_batch so the model normalizes the summed CE across
+        # gradient-accumulation steps — without it, logged loss (and gradients)
+        # are scaled by gradient_accumulation_steps.
+        loss_kwargs = {}
+        if kwargs.get("num_items_in_batch") is not None:
+            loss_kwargs["num_items_in_batch"] = kwargs["num_items_in_batch"]
+        outputs = model(input_ids=input_ids, labels=inputs.get("labels", input_ids),
+                        **loss_kwargs)
         lm_loss = outputs.loss
 
         theta = self.embed_shim._last_theta
