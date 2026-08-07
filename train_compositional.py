@@ -178,7 +178,12 @@ class CompositionalTrainer(Trainer):
         div_loss_val = 0.0
         if theta is not None and self.comp_args.lambda_div > 0:
             div_loss = load_balance(theta)
-            total_loss = lm_loss + self.comp_args.lambda_div * div_loss
+            # With num_items_in_batch normalization the micro-batch losses SUM to
+            # the true batch loss, so the per-micro-batch div term must be scaled
+            # by 1/accum to keep its effective weight at lambda_div.
+            div_scale = (1.0 / self.args.gradient_accumulation_steps
+                         if loss_kwargs else 1.0)
+            total_loss = lm_loss + self.comp_args.lambda_div * div_scale * div_loss
             div_loss_val = div_loss.detach().item()
 
         self._comp_count += 1
