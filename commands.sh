@@ -1,2 +1,5 @@
-#2 +a -f-/opt/dlami/nvme/sparse_emb_outputs/original_ant/checkpoint-10000/trainer_state.json,/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-10000/trainer_state.json
-#pull-trainer-state
+#1
+#check-original-ant-ckpt
+ls -la /opt/dlami/nvme/sparse_emb_outputs/original_ant/checkpoint-10000/trainer_state.json
+wc -c /opt/dlami/nvme/sparse_emb_outputs/original_ant/checkpoint-10000/trainer_state.json
+head -5 /opt/dlami/nvme/sparse_emb_outputs/original_ant/checkpoint-10000/trainer_state.json
