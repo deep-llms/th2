@@ -1,33 +1,45 @@
-#1
-#retrain-h100-1-orig-and-v2-clean
+#1 +120+a
+#cancel-and-clean-prep
 eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
 sleep 3
 conda activate sparse_emb
 sleep 3
 
-nvidia-smi
-sleep 3
+echo '=== 1. kill all training ==='
+for i in 1 2 3 4 5; do
+    echo "attempt $i"
+    pkill -f run_experiments.py 2>/dev/null
+    pkill -f train_original_ant.py 2>/dev/null
+    pkill -f train_compositional.py 2>/dev/null
+    pkill -f "accelerate launch" 2>/dev/null
+    sleep 5
+done
 
-echo '=== state before cleanup ==='
+echo '=== 2. state before cleanup ==='
 ls -la /opt/dlami/nvme/sparse_emb_outputs/
 
-# Old runs were ALREADY moved to *_old16x by the killed relaunch — do NOT mv again
-# (mv onto an existing dir would nest inside it). Verify the archives exist:
-if [ ! -d /opt/dlami/nvme/sparse_emb_outputs/original_ant_old16x ]; then echo "ERROR: original_ant_old16x archive missing"; exit 1; fi
-if [ ! -d /opt/dlami/nvme/sparse_emb_outputs/v2_attn_old16x ]; then echo "ERROR: v2_attn_old16x archive missing"; exit 1; fi
-
-# Remove PARTIAL dirs left by the killed retrain (else Trainer resumes from a partial checkpoint)
+echo '=== 3. delete old run output folders ==='
 rm -rf /opt/dlami/nvme/sparse_emb_outputs/original_ant
 rm -rf /opt/dlami/nvme/sparse_emb_outputs/v2_attn
+rm -rf /opt/dlami/nvme/sparse_emb_outputs/original_ant_old16x
+rm -rf /opt/dlami/nvme/sparse_emb_outputs/v2_attn_old16x
 rm -rf /opt/dlami/nvme/sparse_emb_outputs/smoke_orig
+rm -rf /opt/dlami/nvme/sparse_emb_outputs/logs
 
-if [ -d /opt/dlami/nvme/sparse_emb_outputs/original_ant ]; then echo "ERROR: original_ant still exists"; exit 1; fi
-if [ -d /opt/dlami/nvme/sparse_emb_outputs/v2_attn ]; then echo "ERROR: v2_attn still exists"; exit 1; fi
+echo '=== 4. remove all caches ==='
+rm -rf ~/.cache/huggingface/datasets
+find /opt/dlami/nvme/sparse_emb_data -name "cache-*" -delete 2>/dev/null
+find /opt/dlami/nvme/sparse_emb_data -name "tmp*" -delete 2>/dev/null
+echo "caches removed"
 
-# Config
+echo '=== 5. GPUs empty? ==='
+nvidia-smi
+
+echo '=== 6. copy accelerate config ==='
 mkdir -p ~/.cache/huggingface/accelerate
 cp resources/accelerate_config.yaml ~/.cache/huggingface/accelerate/default_config.yaml
+cat ~/.cache/huggingface/accelerate/default_config.yaml
 
-# Train original_ant (lam 1e-6, paper value) then v2_attn, stop each at 10k
-export WANDB_MODE=offline
-python run_experiments.py --experiments 0 2 --stop-at-step 10000 --log-dir /opt/dlami/nvme/sparse_emb_outputs/logs
+echo '=== 7. final state ==='
+ls -la /opt/dlami/nvme/sparse_emb_outputs/
+echo "PREP DONE"
