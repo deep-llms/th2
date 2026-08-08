@@ -1,42 +1,26 @@
-#1 +600+500
-#smoke-original-ant-fixed-v2
+#1
+#retrain-h100-1-orig-and-v2
 eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
 sleep 3
 conda activate sparse_emb
 sleep 3
 
+nvidia-smi
+sleep 3
+
+# Move old 16x-gradient runs aside, clean smoke leftovers
+mv -v /opt/dlami/nvme/sparse_emb_outputs/original_ant /opt/dlami/nvme/sparse_emb_outputs/original_ant_old16x
+mv -v /opt/dlami/nvme/sparse_emb_outputs/v2_attn /opt/dlami/nvme/sparse_emb_outputs/v2_attn_old16x
 rm -rf /opt/dlami/nvme/sparse_emb_outputs/smoke_orig
 
+# Guard: fresh output dirs (else Trainer would resume from old checkpoints)
+if [ -d /opt/dlami/nvme/sparse_emb_outputs/original_ant ]; then echo "ERROR: original_ant dir still exists"; exit 1; fi
+if [ -d /opt/dlami/nvme/sparse_emb_outputs/v2_attn ]; then echo "ERROR: v2_attn dir still exists"; exit 1; fi
+
+# Config
+mkdir -p ~/.cache/huggingface/accelerate
+cp resources/accelerate_config.yaml ~/.cache/huggingface/accelerate/default_config.yaml
+
+# Train original_ant (lam 1e-6, paper value) then v2_attn, stop each at 10k
 export WANDB_MODE=offline
-export NCCL_NVLS_ENABLE=0
-
-accelerate launch train_original_ant.py \
-    --config_name Qwen/Qwen3-0.6B \
-    --tokenizer_name Qwen/Qwen3-0.6B \
-    --data_dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/train \
-    --block_size 2048 \
-    --preprocessing_num_workers 160 \
-    --seed 42 \
-    --bf16 \
-    --per_device_train_batch_size 4 \
-    --gradient_accumulation_steps 16 \
-    --max_steps 30 \
-    --learning_rate 3e-4 \
-    --lr_scheduler_type cosine_with_min_lr \
-    --lr_scheduler_kwargs '{"min_lr_rate": 0.1}' \
-    --warmup_steps 500 \
-    --weight_decay 0.1 \
-    --adam_beta1 0.9 \
-    --adam_beta2 0.95 \
-    --max_grad_norm 1.0 \
-    --logging_steps 10 \
-    --save_steps 100000 \
-    --dataloader_num_workers 8 \
-    --report_to none \
-    --output_dir /opt/dlami/nvme/sparse_emb_outputs/smoke_orig \
-    --run_name smoke-orig \
-    --K 4096 \
-    --emb_lr 1e-2 \
-    --lam 1e-6
-
-echo '=== SMOKE CHECKS: EXPECT loss ~12.11 at step 10 (baseline: 12.1096) ==='
+python run_experiments.py --experiments 0 2 --stop-at-step 10000 --log-dir /opt/dlami/nvme/sparse_emb_outputs/logs
