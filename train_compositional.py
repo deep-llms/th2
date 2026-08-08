@@ -159,6 +159,13 @@ class CompositionalTrainer(Trainer):
         outputs = model(input_ids=input_ids, labels=inputs.get("labels", input_ids),
                         **loss_kwargs)
         lm_loss = outputs.loss
+        # num_items_in_batch is the GLOBAL token count (all-reduced) when
+        # average_tokens_across_devices is on, while each rank's CE sum covers
+        # local tokens only; DDP then averages gradients across ranks. Scale by
+        # num_processes to restore sum semantics — mirrors HF's default
+        # compute_loss exactly (verified against baseline logging).
+        if loss_kwargs and getattr(self.args, "average_tokens_across_devices", False):
+            lm_loss = lm_loss * self.accelerator.num_processes
 
         theta = self.embed_shim._last_theta
 
