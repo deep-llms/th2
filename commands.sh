@@ -1,13 +1,13 @@
 #1 +120+a
-#th2-tail-train-loss-1
+#th2-check-progress-2
 echo '=== log dir ==='
-ls -la /opt/dlami/nvme/sparse_emb_outputs/logs/
-echo '=== gpu ==='
-nvidia-smi | head -20
-echo '=== first loss lines (expect ~12.1 at step 10) ==='
+ls -la /opt/dlami/nvme/sparse_emb_outputs/logs/ /opt/dlami/nvme/sparse_emb_outputs/
+echo '=== experiments.log ==='
+cat /opt/dlami/nvme/sparse_emb_outputs/logs/experiments.log
+echo '=== latest loss lines per log ==='
 for f in /opt/dlami/nvme/sparse_emb_outputs/logs/*.log; do
     echo "--- $f ---"
-    grep -m 5 "'loss'" "$f"
-    echo "--- last lines ---"
-    tail -5 "$f"
+    grep -o "{'loss'[^}]*}" "$f" | tail -3
 done
+echo '=== gpu ==='
+nvidia-smi | head -12
