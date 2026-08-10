@@ -197,6 +197,55 @@ results dumped directly from machine. All numbers below are trusted.
   still near chance at this scale — not yet discriminative.
 - Training loss @10K: baseline 3.147 < ant_ours 3.19 ≈ v2_attn 3.192 < original_ant 3.203.
 
+### Paper framing: why entmax routing beats Original ANT (worth a paragraph in the paper)
+
+Both use the same K=4096 anchor codebook; the difference is how tokens select anchors,
+and round-2 gives hard evidence for our side:
+
+1. **ANT's params are huge by construction, and its promised compression never
+   materialized.** T is a dense N×K matrix from step 0: 151,936 × 4096 ≈ 622M trained
+   params (+A ≈ 4.2M) — the "compression method" more than doubles Qwen3-0.6B. The ANT
+   paper's efficiency claim is about *storage after training*: L1 prunes T, you store
+   only nonzeros (N×s + K×d). But at the paper's own best LM value λ=1e-6, our run ends
+   at **nnz ≈ 4003/4096 (s ≈ K, 98% dense)** — nothing was pruned, so post-hoc storage
+   ≈ the dense table. And at λ=1e-3 (round 1) T collapsed to all-zeros by step ~1300.
+   L1-prox sparsity sits on a knife edge between "not sparse" and "dead".
+2. **Ours is compressed unconditionally.** Coefficients are computed (attention query
+   from X ∈ N×128 + entmax), not stored: ~23.7M params (27× less than ANT) during
+   training, at deployment, regardless of any hyperparameter. entmax gives ~45 active
+   anchors per token *structurally* — 90× sparser activation than ANT's ~4000 — at
+   equal PPL (38.12 vs 37.94 avg) with plain AdamW (no YOGI/prox machinery).
+3. **Shared routing geometry**: ANT's per-token coefficient rows are independent
+   parameter blocks ("dog" teaches "dogs" nothing); our tokens share the routing space
+   X and query projection, so selection knowledge transfers across the vocabulary
+   (basis for the rare-token hypothesis below).
+4. **Context routing is only possible in our formulation** (coefficients = f(query) →
+   swap in a context-dependent query = V2-attn); a stored table T cannot depend on
+   context by definition.
+- Honesty caveats for the paper: K=4096 (matched to our arms) inflates ANT's N×K vs the
+  small K used in their paper; and our arms untie lm_head (+155.6M dense output layer),
+  so efficiency claims must be scoped to the *input* embedding.
+
+### Planned evals to show the method's advantage (2026-08-10 discussion)
+
+- [ ] **ALBERT-style low-rank baseline** (Lan et al. 2020; trains from scratch like us):
+  Embedding(151936, 128) + Linear(128, 1024) ≈ 19.6M params ≈ ant_ours budget, no
+  routing. The critical control: does anchor routing beat a plain linear bottleneck?
+- [ ] **Hash embeddings** (Svenstrup et al. 2017) as second control: anchors selected by
+  hash instead of learned content-based routing.
+- [ ] **Frequency-binned PPL** (standard diagnostic, cf. Baevski & Auli ICLR'19 who
+  report PPL by word-frequency buckets): same PPL formula, computed on subsets of
+  positions binned by the target token's training frequency. Implementation: ppl.py
+  with reduction='none', scatter-add nll_sum[id]/count[id] (vocab-sized arrays) per
+  checkpoint; bins defined offline (equal-mass head/torso/tail). Bins decompose overall
+  PPL exactly (count-weighted geometric mean). Hypothesis: compositional arms win/close
+  the gap on tail tokens via shared anchors + shared routing geometry.
+- [ ] **PPL-vs-embedding-params Pareto plot** from existing round-2 data.
+- [ ] V2-attn-specific: PPL on high-routing-variance (ambiguous) tokens; routing entropy
+  vs polysemy analysis; cross-lingual anchor-overlap analysis.
+- [ ] **Vocab-expansion demo**: add unseen tokens post-training; ours learns only a
+  128-dim routing vector per new token vs baseline's full 1024-dim row.
+
 ## TODO
 
 - [ ] Decide go/no-go for full 35K run based on round-2 de-risk results
