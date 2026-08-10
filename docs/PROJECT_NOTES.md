@@ -171,10 +171,33 @@ hazards. Everything below is verified (smoke tests / md5 / on-machine probes), n
 - **Early verification passed on both machines**: step-10 loss 12.11 / 12.14 with the
   exact smoke-v2 grad norms; ~3.44 s/it → ~9.5 h per 10K run.
 
+## Round-2 Results (2026-08-10, all arms at checkpoint-10000, fixed code + fixed eval)
+
+All three retrains completed cleanly at exactly step 10000 (~10.3h each). Evals ran with
+the fixed loader ("Loaded compositional model: arm=..." confirmed in logs); baseline
+results dumped directly from machine. All numbers below are trusted.
+
+### Held-out PPL @ 10K (10M tokens/language)
+
+| Model | en | vi | zh | ru | de | ar | avg |
+|---|---|---|---|---|---|---|---|
+| baseline | **33.05** | **21.32** | **84.92** | **18.73** | **29.41** | **24.02** | **35.24** |
+| original_ant | 34.44 | 22.06 | 95.20 | 19.71 | 31.23 | 25.04 | 37.94 |
+| ant_ours | 34.08 | 22.17 | 94.98 | 19.92 | 31.06 | 26.51 | 38.12 |
+| v2_attn | 34.25 | 21.99 | 96.17 | 19.89 | 30.86 | 26.28 | 38.24 |
+
+- PPL curves monotone decreasing for every arm/language — no collapse anywhere.
+- Compositional arms sit ~8% avg PPL behind baseline at 10K (en gap only ~3-4%).
+- ant_ours/v2_attn (~23.7M embed params, ~45 active anchors) ≈ original_ant
+  (~626M embed params, ~4000 active) — huge efficiency win for entmax routing.
+- v2_attn ≈ ant_ours so far: context-conditioned routing not yet separating from
+  static routing at 10K on PPL.
+- Benchmarks @10K: averages within noise of each other (baseline 0.3702,
+  ant_ours 0.3679, v2_attn 0.3667, original_ant 0.3660); most multilingual tasks
+  still near chance at this scale — not yet discriminative.
+- Training loss @10K: baseline 3.147 < ant_ours 3.19 ≈ v2_attn 3.192 < original_ant 3.203.
+
 ## TODO
 
-- [ ] Verify round-2 runs reach 10K cleanly (orig-ANT + ant_ours ~2026-08-09, v2_attn +~10h)
-- [ ] Re-run evals with fixed loader (round-1 eval JSONs are invalid — random embeddings)
-- [ ] Compare baseline vs ANT-ours vs V2-attn vs Original ANT at 10K steps
-- [ ] Decide go/no-go for full 35K run based on de-risk results
+- [ ] Decide go/no-go for full 35K run based on round-2 de-risk results
 - [ ] Pull training metrics (loss curves, ppl) from wandb offline logs
