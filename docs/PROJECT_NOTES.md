@@ -240,6 +240,25 @@ and round-2 gives hard evidence for our side:
   checkpoint; bins defined offline (equal-mass head/torso/tail). Bins decompose overall
   PPL exactly (count-weighted geometric mean). Hypothesis: compositional arms win/close
   the gap on tail tokens via shared anchors + shared routing geometry.
+- [x] **Frequency-binned PPL — DONE 2026-08-10.** Per-token-id NLL arrays
+  (eval/ppl_bytoken.py, self-verified: max chunk gap 9.5e-7; per-lang recombination
+  matches round-2 eval to ~3e-9) + train-corpus counts on 3.5B-token 1/10 sample
+  (scripts/count_token_freq.py). Equal-mass bins: head=19k types (90% mass),
+  torso=44k (9%), tail=89k (1%). Pooled PPL @10K:
+  | model | head | torso | tail | (ratio vs baseline) |
+  |---|---|---|---|---|
+  | baseline | 19.97 | 144.2 | 894.7 | — |
+  | original_ant | 20.86 | 159.7 | 1069.2 | 1.045 / 1.108 / 1.195 |
+  | ant_ours | 21.12 | 159.3 | 1061.5 | 1.058 / 1.105 / 1.186 |
+  | v2_attn | 21.15 | 157.5 | 1033.4 | 1.059 / 1.093 / 1.155 |
+  Findings: (a) **rare-token hypothesis refuted** — compositional gap WIDENS with
+  rarity (+6% head → +16-20% tail); anchors/routing are dominated by frequent-token
+  gradients while baseline keeps dedicated rows. (b) **First v2_attn separation**:
+  tied with ant_ours on head, clearly better on torso (1.093 vs 1.105) and tail
+  (1.155 vs 1.186, ~2.7% better tail PPL) — context routing compensates where static
+  routing is weak. Tells the v2 story via frequency split; motivates ambiguous-token
+  analysis. (c) original_ant best-compositional on head (memorizing table) but worst
+  on tail (1.195) — supports shared-routing-generalizes narrative.
 - [ ] **PPL-vs-embedding-params Pareto plot** from existing round-2 data.
 - [ ] V2-attn-specific: PPL on high-routing-variance (ambiguous) tokens; routing entropy
   vs polysemy analysis; cross-lingual anchor-overlap analysis.

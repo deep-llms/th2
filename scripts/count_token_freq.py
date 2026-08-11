@@ -87,7 +87,10 @@ def main():
         tokenized = tokenized.with_format("numpy")
         for start in range(0, tokenized.num_rows, args.batch_rows):
             batch = tokenized[start:start + args.batch_rows]["input_ids"]
-            flat = np.concatenate([np.asarray(row) for row in batch])
+            # dtype forced: empty docs tokenize to [], whose default float64
+            # would promote the concatenation and break bincount
+            flat = np.concatenate(
+                [np.asarray(row, dtype=np.int64) for row in batch])
             if flat.size == 0:
                 continue
             if flat.max() >= args.vocab_size:
