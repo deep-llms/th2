@@ -73,12 +73,26 @@ def main():
     parser.add_argument("--flores-dir", default=None)
     parser.add_argument("--csls-k", type=int, default=10)
     parser.add_argument("--mexa-sentences", type=int, default=500)
-    parser.add_argument("--num-gpus", type=int, default=8)
+    parser.add_argument("--num-gpus", type=int, default=None,
+                        help="Default: auto-detect via nvidia-smi")
     parser.add_argument("--output-base", required=True)
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s",
                         datefmt="%H:%M:%S")
+
+    if args.num_gpus is None:
+        # nvidia-smi, not torch: keeps the parent free of CUDA init
+        # (lesson from run_probe_tests.py)
+        try:
+            r = subprocess.run(
+                ["nvidia-smi", "--query-gpu=index", "--format=csv,noheader"],
+                capture_output=True, text=True)
+            args.num_gpus = len([x for x in r.stdout.strip().split("\n")
+                                 if x.strip()])
+        except Exception:
+            args.num_gpus = 1
+        logger.info(f"Auto-detected {args.num_gpus} GPUs")
 
     checkpoints = [c for c in args.checkpoints if os.path.isdir(c)]
     for c in set(args.checkpoints) - set(checkpoints):
@@ -112,10 +126,15 @@ def main():
                 still.append(job)
                 continue
             job["log_file"].close()
-            status = "OK" if ret == 0 else f"FAILED (code {ret})"
+            expected = os.path.join(args.output_base, job["label"],
+                                    f"{job['label']}.json")
+            if ret == 0 and not os.path.isfile(expected):
+                status = "FAILED (exit 0 but no output JSON)"
+            else:
+                status = "OK" if ret == 0 else f"FAILED (code {ret})"
             logger.info(f"  DONE  GPU {job['gpu_id']}: {status} - "
                         f"{job['label']}  [{time.time() - start:.0f}s]")
-            if ret != 0:
+            if "FAILED" in status:
                 logger.info(f"        see {job['log_path']}")
             completed.append(job)
             free_gpus.append(job["gpu_id"])
