@@ -42,21 +42,32 @@ def label_for(ckpt_path):
     return os.path.basename(os.path.dirname(os.path.normpath(ckpt_path)))
 
 
-def run_tests_for_model(ckpt, tests, tokenizer, translations, args, device):
+def run_tests_for_model(ckpt, tests, tokenizer, translations, args, device,
+                        json_path=None):
+    """Run the requested tests; if json_path is given, the results file is
+    rewritten after EVERY completed test so a later crash loses nothing
+    (lesson from run_probe_tests.py's per-test dumps)."""
     model = load_model(ckpt, device, dtype=torch.bfloat16)
     results = {"checkpoint": ckpt}
+
+    def checkpoint_results():
+        if json_path:
+            with open(json_path, "w") as f:
+                json.dump(results, f, indent=2, default=str)
 
     if "t6" in tests:
         from crosslingual.t6_bli import run_t6
         print("  t6 (BLI/CSLS)...")
         results["t6"] = run_t6(model, tokenizer, translations, device,
                                layer_idx=None, csls_k=args.csls_k)
+        checkpoint_results()
 
     if "probe_b" in tests:
         from crosslingual.probe_b import run_probe_b
         print("  probe_b (cosine gap)...")
         results["probe_b"] = run_probe_b(model, tokenizer, translations,
                                          device, layer_idx=None)
+        checkpoint_results()
 
     if "t8" in tests:
         from crosslingual.t8_mexa import load_flores_all, run_t8
@@ -67,6 +78,7 @@ def run_tests_for_model(ckpt, tests, tokenizer, translations, args, device):
                                       f"(dir={args.flores_dir})"}
         else:
             results["t8"] = run_t8(model, tokenizer, flores, device)
+        checkpoint_results()
 
     if "t5" in tests:
         from crosslingual.t5_layer_sweep import run_t5
@@ -74,11 +86,13 @@ def run_tests_for_model(ckpt, tests, tokenizer, translations, args, device):
         layers = [None] + args.t5_layers
         results["t5"] = run_t5(model, tokenizer, translations, args.eval_dir,
                                layers, device)
+        checkpoint_results()
 
     if "t7" in tests:
         from crosslingual.t7_codeswitch import run_t7
         print("  t7 (code-switch)...")
         results["t7"] = run_t7(model, tokenizer, translations, device)
+        checkpoint_results()
 
     if "t1" in tests:
         from crosslingual.t1_xnli import run_t1
@@ -86,6 +100,7 @@ def run_tests_for_model(ckpt, tests, tokenizer, translations, args, device):
         results["t1"] = run_t1(model, tokenizer, device,
                                layers=args.t1_layers,
                                max_train=args.t1_max_train)
+        checkpoint_results()
 
     del model
     if device == "cuda":
@@ -272,11 +287,11 @@ def main():
     for ckpt in args.checkpoints:
         lb = args.label or label_for(ckpt)
         print(f"\n=== {lb}: {ckpt}")
+        json_path = os.path.join(args.output_dir, f"{lb}.json")
         results = run_tests_for_model(ckpt, args.tests, tokenizer,
-                                      translations, args, device)
+                                      translations, args, device,
+                                      json_path=json_path)
         all_results[lb] = results
-        with open(os.path.join(args.output_dir, f"{lb}.json"), "w") as f:
-            json.dump(results, f, indent=2, default=str)
 
     report = write_report(all_results, args.baseline_label, args.tests,
                           os.path.join(args.output_dir, "report.md"))
