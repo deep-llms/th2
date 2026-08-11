@@ -275,6 +275,12 @@ and round-2 gives hard evidence for our side:
   ~2× better than ant_ours** — context routing diversifies anchor use, consistent with
   its torso/tail PPL advantage; (d) zero dead anchors with lambda_div=0.
   Follow-up ablations suggested: small lambda_div for ant_ours; smaller K.
+  **Paper figure from the npz files**: each checkpoint-10000/anchor_usage.npz holds
+  per-anchor load arrays (static arms: sel_type/w_type/sel_freq/w_freq, each float64[4096];
+  v2: sel_occ/w_occ + n_positions). Plot sorted-load (rank vs load share, log-y) or
+  Lorenz curves of w_freq/w_occ for the three arms in one figure — shows original_ant's
+  flat no-structure line vs ant_ours' concentration vs v2_attn in between. Files are
+  small (~80KB); pull via -f- when making figures.
 - [ ] **PPL-vs-embedding-params Pareto plot** from existing round-2 data.
 - [ ] V2-attn-specific: PPL on high-routing-variance (ambiguous) tokens; routing entropy
   vs polysemy analysis; cross-lingual anchor-overlap analysis.
