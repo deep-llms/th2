@@ -123,6 +123,36 @@ def write_report(all_results, baseline_label, tests, path):
         lines.append(f"\nrelated={RELATED_PAIRS}, distant={DISTANT_PAIRS}; "
                      "en-vi is small-n — do not over-read.")
 
+        # Paired McNemar vs baseline (same word pairs across models)
+        if base:
+            from crosslingual.t6_bli import mcnemar_vs_baseline
+            base_pl = base.get("t6", {}).get("per_lang", {})
+            all_pairs = [f"en-{l}" for l in NON_EN_LANGS]
+            groups = ([("all", all_pairs), ("related", RELATED_PAIRS),
+                       ("distant", DISTANT_PAIRS)]
+                      + [(lp, [lp]) for lp in all_pairs])
+            lines.append("\n### T6 paired comparison vs baseline "
+                         "(McNemar on P@1 outcomes)\n")
+            lines.append("| model | group | base P@1 | model P@1 | delta | "
+                         "b (base only) | c (model only) | McNemar p | n |")
+            lines.append("|---|---|---|---|---|---|---|---|---|")
+            for lb in labels:
+                if lb == baseline_label:
+                    continue
+                model_pl = all_results[lb].get("t6", {}).get("per_lang", {})
+                if not model_pl:
+                    continue
+                for gname, lps in groups:
+                    m = mcnemar_vs_baseline(base_pl, model_pl, lps)
+                    if m["n_shared_pairs"] == 0:
+                        continue
+                    lines.append(
+                        f"| {lb} | {gname} | {m['base_acc']:.4f} | "
+                        f"{m['model_acc']:.4f} | "
+                        f"{m['model_acc'] - m['base_acc']:+.4f} | "
+                        f"{m['b_base_only']} | {m['c_model_only']} | "
+                        f"{m['pvalue']:.3g} | {m['n_shared_pairs']} |")
+
     if "t8" in tests:
         lines.append("\n## T8 — MEXA (FLORES-200)\n")
         header = "| pair | " + " | ".join(

@@ -78,6 +78,9 @@ def run_bli_for_lang_pair(model, tokenizer, translations, target_lang, device,
 
     csls = compute_csls_scores(en_embs, tgt_embs, k=csls_k)
 
+    # Per-pair hit outcomes are recorded so models can be compared with a
+    # PAIRED test (McNemar) — all models are evaluated on the same pairs.
+    outcomes = []
     hits_1 = hits_5 = n_eval = 0
     for en_word, tgt_word in pairs:
         if en_word not in en_emb_idx or tgt_word not in tgt_emb_idx:
@@ -91,12 +94,15 @@ def run_bli_for_lang_pair(model, tokenizer, translations, target_lang, device,
         n_eval += 1
         hits_1 += rank == 0
         hits_5 += rank < 5
+        outcomes.append({"en": en_word, "tgt": tgt_word,
+                         "hit1": rank == 0, "hit5": rank < 5})
 
     if n_eval == 0:
         return {"p_at_1": 0.0, "p_at_5": 0.0, "n_pairs": 0,
-                "n_candidates": len(tgt_valid)}
+                "n_candidates": len(tgt_valid), "pairs": []}
     return {"p_at_1": hits_1 / n_eval, "p_at_5": hits_5 / n_eval,
-            "n_pairs": n_eval, "n_candidates": len(tgt_valid)}
+            "n_pairs": n_eval, "n_candidates": len(tgt_valid),
+            "pairs": outcomes}
 
 
 def run_t6(model, tokenizer, translations, device, layer_idx=None, csls_k=10):
@@ -110,3 +116,46 @@ def run_t6(model, tokenizer, translations, device, layer_idx=None, csls_k=10):
     return {"per_lang": per_lang, "summary": summary,
             "layer": "embedding" if layer_idx is None else layer_idx,
             "csls_k": csls_k}
+
+
+def mcnemar_vs_baseline(base_per_lang, model_per_lang, lang_pairs,
+                        metric="hit1"):
+    """Exact McNemar test on paired per-pair outcomes, pooled over lang_pairs.
+
+    b = pairs the baseline got right and the model missed;
+    c = pairs the model got right and the baseline missed.
+    p = two-sided exact binomial test of b against Bin(b+c, 0.5).
+    Also returns pooled paired P@1 for both models over exactly the shared
+    pairs (can differ slightly from the unpaired per-language means).
+    """
+    base_hits, model_hits = {}, {}
+    for lp in lang_pairs:
+        for o in base_per_lang.get(lp, {}).get("pairs", []):
+            base_hits[(lp, o["en"], o["tgt"])] = o[metric]
+        for o in model_per_lang.get(lp, {}).get("pairs", []):
+            model_hits[(lp, o["en"], o["tgt"])] = o[metric]
+
+    shared = sorted(set(base_hits) & set(model_hits))
+    b = sum(1 for k in shared if base_hits[k] and not model_hits[k])
+    c = sum(1 for k in shared if model_hits[k] and not base_hits[k])
+
+    if b + c == 0:
+        pvalue = 1.0
+    else:
+        try:
+            from scipy.stats import binomtest
+            pvalue = binomtest(b, n=b + c, p=0.5,
+                               alternative="two-sided").pvalue
+        except ImportError:
+            from scipy.stats import binom_test  # older scipy
+            pvalue = binom_test(b, n=b + c, p=0.5, alternative="two-sided")
+
+    n = len(shared)
+    return {
+        "n_shared_pairs": n,
+        "base_acc": sum(base_hits[k] for k in shared) / n if n else 0.0,
+        "model_acc": sum(model_hits[k] for k in shared) / n if n else 0.0,
+        "b_base_only": b,
+        "c_model_only": c,
+        "pvalue": float(pvalue),
+    }
