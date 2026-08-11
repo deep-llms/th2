@@ -259,6 +259,28 @@ and round-2 gives hard evidence for our side:
   routing is weak. Tells the v2 story via frequency split; motivates ambiguous-token
   analysis. (c) original_ant best-compositional on head (memorizing table) but worst
   on tail (1.195) — supports shared-routing-generalizes narrative.
+- [x] **Anchor-usage distribution — DONE 2026-08-11** (scripts/analyze_anchor_usage.py;
+  exact over vocab for static arms, 3.0M eval positions for v2; arrays in
+  checkpoint-10000/anchor_usage.npz on machines). Traffic-weighted load (θ mass):
+  | metric | original_ant | ant_ours | v2_attn |
+  |---|---|---|---|
+  | dead anchors | 0 | 0 | 0 |
+  | Gini | 0.066 | 0.536 | 0.485 |
+  | effective anchors (1/HHI) | 4041 | 304 | 582 |
+  | effective anchors (exp-entropy) | 4068 | 1593 | 2251 |
+  | top-1% (41 anchors) load share | 1.3% | 26.4% | 15.7% |
+  Findings: (a) original_ant "uniform" only because ~98% dense selection — no routing
+  structure; (b) ant_ours concentrates load (Zipf + large θ on few anchors for frequent
+  tokens; per-type selection itself fairly even, Gini 0.14); (c) **v2_attn spreads load
+  ~2× better than ant_ours** — context routing diversifies anchor use, consistent with
+  its torso/tail PPL advantage; (d) zero dead anchors with lambda_div=0.
+  Follow-up ablations suggested: small lambda_div for ant_ours; smaller K.
+  **Paper figure from the npz files**: each checkpoint-10000/anchor_usage.npz holds
+  per-anchor load arrays (static arms: sel_type/w_type/sel_freq/w_freq, each float64[4096];
+  v2: sel_occ/w_occ + n_positions). Plot sorted-load (rank vs load share, log-y) or
+  Lorenz curves of w_freq/w_occ for the three arms in one figure — shows original_ant's
+  flat no-structure line vs ant_ours' concentration vs v2_attn in between. Files are
+  small (~80KB); pull via -f- when making figures.
 - [ ] **PPL-vs-embedding-params Pareto plot** from existing round-2 data.
 - [ ] V2-attn-specific: PPL on high-routing-variance (ambiguous) tokens; routing entropy
   vs polysemy analysis; cross-lingual anchor-overlap analysis.
