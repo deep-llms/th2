@@ -232,6 +232,9 @@ def write_report(all_results, baseline_label, tests, path):
 def main():
     parser = argparse.ArgumentParser(description="Cross-lingual test battery")
     parser.add_argument("--checkpoints", nargs="+", required=True)
+    parser.add_argument("--label", default=None,
+                        help="Override the model label (single checkpoint "
+                             "only; default: checkpoint's parent dir name)")
     parser.add_argument("--baseline-label", default="baseline",
                         help="Label whose numbers are the delta reference")
     parser.add_argument("--tests", nargs="+", default=["t6", "t8", "probe_b"],
@@ -261,10 +264,13 @@ def main():
         load_translations(args.translations))
     print(f"Translation tuples (loanword-filtered): {len(translations)}")
 
+    if args.label and len(args.checkpoints) > 1:
+        parser.error("--label only valid with a single checkpoint")
+
     os.makedirs(args.output_dir, exist_ok=True)
     all_results = {}
     for ckpt in args.checkpoints:
-        lb = label_for(ckpt)
+        lb = args.label or label_for(ckpt)
         print(f"\n=== {lb}: {ckpt}")
         results = run_tests_for_model(ckpt, args.tests, tokenizer,
                                       translations, args, device)
