@@ -167,6 +167,34 @@ class ANTEmbed(nn.Module):
 
 
 # ---------------------------------------------------------------------------
+# Residual ANT — ANT with low-rank identity path
+# ---------------------------------------------------------------------------
+
+class ResidualANTEmbed(ANTEmbed):
+    """ANT embedding + low-rank identity residual.
+
+    e = x @ W_up + theta @ A
+
+    The identity path (x @ W_up) carries per-token discrimination.
+    The codebook path (theta @ A) adds shared semantic structure.
+    Forward returns (e, theta): same interface as ANTEmbed.
+    """
+
+    def __init__(self, vocab_size, codebook_size, embed_dim, d_x=128, d_k=64,
+                 gamma=1.0, num_heads=1):
+        super().__init__(vocab_size, codebook_size, embed_dim, d_x, d_k,
+                         gamma, num_heads)
+        self.W_up = nn.Linear(d_x, embed_dim, bias=False)
+        nn.init.normal_(self.W_up.weight, std=0.02)
+
+    def forward(self, input_ids, doc_mask=None):
+        x = self.X[input_ids]                       # (B, L, d_x)
+        e_id = self.W_up(x)                          # (B, L, d) identity
+        e_code, theta = self._embed(x)               # (B, L, d) codebook
+        return e_id + e_code, theta
+
+
+# ---------------------------------------------------------------------------
 # V0 — rung 2: static selection + causal anchor-level SAT
 # ---------------------------------------------------------------------------
 
