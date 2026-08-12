@@ -194,8 +194,45 @@ results dumped directly from machine. All numbers below are trusted.
   static routing at 10K on PPL.
 - Benchmarks @10K: averages within noise of each other (baseline 0.3702,
   ant_ours 0.3679, v2_attn 0.3667, original_ant 0.3660); most multilingual tasks
-  still near chance at this scale — not yet discriminative.
+  still near chance at this scale — not yet discriminative. Clearly-above-chance
+  tasks only: hellaswag-en (~0.30 vs 0.25), xstorycloze-en (~0.59 vs 0.50),
+  xcopa-vi (~0.55), paws-en/de (~0.53); "best per task" is spread across all four
+  arms (noise pattern). Full 26-task tables: temp/r2_eval/<model>/checkpoint-
+  10000_eval_benchmarks.json.
 - Training loss @10K: baseline 3.147 < ant_ours 3.19 ≈ v2_attn 3.192 < original_ant 3.203.
+
+### Eval-PPL trajectory (avg over 6 languages, checkpoints 1k-10k)
+
+| step | baseline | original_ant | ant_ours | v2_attn |
+|---|---|---|---|---|
+| 1000 | 178.90 | 327.50 | 263.82 | 265.46 |
+| 2000 | 79.13 | 178.43 | 113.04 | 114.94 |
+| 3000 | 57.14 | 72.80 | 72.93 | 73.18 |
+| 4000 | 49.03 | 58.83 | 56.86 | 56.87 |
+| 6000 | 41.51 | 46.13 | 46.30 | 45.99 |
+| 8000 | 37.45 | 40.65 | 41.14 | 40.85 |
+| 10000 | 35.24 | 37.94 | 38.12 | 38.24 |
+
+Compositional arms start far behind (composition is harder to learn early), catch up
+fast, and are still closing on baseline at 10K (Δavg-PPL 9k→10k: baseline −1.27 vs
+ant_ours −1.88) — relevant to the full-35K go/no-go: the 10K snapshot catches them
+mid-trajectory.
+
+### Result data locations (per analysis)
+
+| Analysis | Local files (dev machine, gitignored temp/) | Machine files (/opt/dlami/nvme/sparse_emb_outputs/) |
+|---|---|---|
+| Round-2 PPL curves | `temp/r2_eval/{baseline,ant_ours,v2_attn,original_ant}/checkpoint-{1000..10000}_eval_ppl.json` | `<model>/checkpoint-<step>/eval_ppl.json` |
+| Round-2 benchmarks | `temp/r2_eval/<model>/checkpoint-<step>_eval_benchmarks.json` | `<model>/checkpoint-<step>/eval_benchmarks.json` |
+| Freq-binned PPL (per-token-id NLL) | `temp/r2_eval/bytoken/<model>_eval_ppl_bytoken.npz` + `_summary.json` | `<model>/checkpoint-10000/eval_ppl_bytoken.npz` |
+| Train-corpus token freqs (1/10 sample) | `temp/r2_eval/bytoken/misc_token_freq.npz` (+ committed copy `resources/token_freq_sample10.npz`) | `token_freq.npz` + `token_freq_meta.json` |
+| Anchor-usage distribution | metrics JSON transcribed in probe logs `temp/{th2,th3}__run-*-anchor-usage*.log` / `*probe-anchor-results.log` (npz NOT pulled yet) | `<model>/checkpoint-10000/anchor_usage.{npz,json}` |
+| Training loss logs (round 2) | `temp/h100-{1,2}__run-*tail-train-loss*.log`, `*check-progress*.log` | `logs/<model>.log` (full tqdm+loss stream) |
+| Cross-lingual Phase 1 | not pulled yet | `crosslingual/<model>/<model>@10000.json` + `crosslingual/<model>.log` |
+| Smoke tests (loss-scaling fix) | `temp/*smoke*-fixed*.log` | (smoke output dirs deleted in cleanup) |
+
+Note: `temp/` is gitignored — these local copies do not survive a dev-machine switch;
+the machine-side copies and the tables in this document are the durable record.
 
 ### Paper framing: why entmax routing beats Original ANT (worth a paragraph in the paper)
 
@@ -287,7 +324,86 @@ and round-2 gives hard evidence for our side:
 - [ ] **Vocab-expansion demo**: add unseen tokens post-training; ours learns only a
   128-dim routing vector per new token vs baseline's full 1024-dim row.
 
+## Cross-lingual transfer testing (started 2026-08-11)
+
+Question: do compositional embeddings (shared anchor codebook) give better
+cross-lingual transfer than the dense baseline? Structural motivation: unlike the
+failed additive "EmbHub" project (/disk/thuat/cross_lingual_embeddings_hub — its
+hypothesis was a controlled negative), our models FORCE every token's embedding to be
+composed from shared anchors (bottleneck, not bypass), so cross-lingual sharing could
+be structural. Known prior: the baseline develops some alignment on its own from
+monolingual data; the question is the gap over baseline.
+
+### Test battery (`crosslingual/`, ported from the EmbHub project)
+
+Six architecture-independent tests (standard forward passes only, so compositional
+checkpoints work via the existing loader; hidden_states[0] = our module's output):
+
+| Test | What | Role |
+|---|---|---|
+| t6 BLI/CSLS | translation retrieval P@1/P@5 + exact McNemar paired vs baseline | headline (word-level) |
+| t8 MEXA | FLORES-200 parallel-sentence mutual-NN per layer (500 sents/lang) | headline (sentence-level, published metric) |
+| probe_b | translation-vs-random cosine gap + Mann-Whitney | secondary (gameable — never headline) |
+| t5 layer sweep | in-context per-layer gap (fixed: matches space-prefixed tokens too) | diagnostic (where alignment lives) |
+| t7 code-switch | logP(translation)−logP(random) | weak (frequency-dominated at this scale) |
+| t1 XNLI probe | English-trained linear probe tested on 6 langs | functional transfer; risky (may be all-chance at 0.6B/10K) |
+
+Drivers: `run_crosslingual.py` (loads model once, runs chosen tests, per-test
+incremental JSON writes), `run_parallel.py` (eval_parallel-style GPU queue,
+labels `<model>@<step>`), `merge_report.py` (cross-machine report merge).
+Assets committed: `resources/frequent_translations_llm.json` (4,804 GPT-4o tuples)
++ `resources/flores200/` (500 sents × 6 langs).
+
+Methodology guardrails (inherited from EmbHub's hard lessons): per-pair loanword
+filter (worth ~20× on its own), single-token words, related (en-de,en-vi) vs
+distant (en-zh,en-ru,en-ar) split, baseline measured at the same layer, en-vi
+n=58 → do not over-read. Single-token pair counts (Qwen3 tokenizer): zh 2381,
+ar 763, de 181, ru 128, vi 58.
+
+Validation (dev machine, 2026-08-11/12):
+- Specificity: random tiny models → probe_b gap −0.0008 (p=0.68), t6 P@1 ≈ chance,
+  McNemar p 0.38–1.0 (no false positives); both plain and compositional load paths.
+- Sensitivity: pretrained multilingual Qwen3-0.6B → t6 P@1 mean 0.62 (zh 0.85),
+  probe_b gap +0.260 (p≈0), MEXA best 0.86–1.00 at layers 18–23 (mid-layer peak
+  matches the MEXA paper). Pair counts reproduce EmbHub's documented n's exactly.
+- Dictionary transferability to OUR data verified against token_freq counts: every
+  test word appears in our training sample (0% unseen), median exposure 37k–130k
+  occurrences per word.
+- McNemar implementation unit-tested against scipy binomtest.
+
+Interpretation notes for reading results: t6/probe_b feed words in isolation → for
+v2_attn they measure its *static* routing; t5/t8 use real sentences → exercise
+context routing. Our non-English exposure (5×1B tokens) is ~3× EmbHub's — never
+compare absolute numbers across projects, only against our own baseline. If an arm
+wins, the ALBERT low-rank baseline doubles as the no-routing control for the
+cross-lingual claim too.
+
+### Status
+
+- [x] Battery built + validated (commits 6b3ce43, 9f9267f, f0b95eb, 6d75c8d, f48e8a8)
+- [~] **Phase 1 IN FLIGHT**: t6+t8+probe_b on all 4 arms @checkpoint-10000
+  (th2: original_ant+v2_attn; th3: ant_ours+baseline; jobs th2/th3-xling-1 picked up
+  2026-08-11 11:08 machine-time; results written to
+  /opt/dlami/nvme/sparse_emb_outputs/crosslingual/<model>/ — pull pending: remote
+  runner went down again; probes queued). Merge locally with merge_report.py
+  (baseline label `baseline@10000`).
+- [ ] Phase 2 (if Phase 1 interesting): θ-based anchor-overlap probe (translations
+  share anchors? — the mechanism test, loanword-filtered) + θ-based language
+  decodability (do anchors encode language identity or meaning?); alignment-vs-step
+  curves (t6/t8 at 2k..10k, checkpoints exist every 250); t1 at mid layers; t5.
+
+### Remote runner semantics (docs/commands.md — learned the hard way)
+
+`#1` = submit only, NO log ever uploads (completion is silent by design);
+`#1 +W+a` = submit + wait W sec + pull log (partial if still running); `#2` = pull
+only, executes nothing (`-0/-1` recency, `+a` full, `-f-` files; folders with
+trailing `/`; ≤10 items, ≤50MB). NEVER re-push the same `#1` commands to fetch a
+log — every `#1` push re-executes the script (duplicate run). Never launch
+never-ending jobs (dummy.py) with `+W+a`. If a push shows no `_RUN_STATUS_.log`
+entry in ~10 min, report to the user and wait (runner outages: 3 so far).
+
 ## TODO
 
+- [ ] Pull Phase-1 cross-lingual results when runner is fixed; merge + analyze
 - [ ] Decide go/no-go for full 35K run based on round-2 de-risk results
 - [ ] Pull training metrics (loss curves, ppl) from wandb offline logs

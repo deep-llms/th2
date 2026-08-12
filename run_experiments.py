@@ -54,6 +54,11 @@ EXPERIMENT_COMMANDS = [
         "cmd": "bash scripts/train_qwen3_0.6b_baseline.sh",
         "output_dir": f"{OUT_BASE}/baseline",
     },
+    {
+        "name": "lowrank",
+        "cmd": "bash scripts/train_lowrank.sh",
+        "output_dir": f"{OUT_BASE}/lowrank",
+    },
 ]
 
 

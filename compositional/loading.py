@@ -27,6 +27,7 @@ from .embeddings import (
     V1Embed,
     V2Embed,
     IsolationControlEmbed,
+    LowRankEmbed,
 )
 
 
@@ -59,6 +60,8 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim):
     K = tc.get("K", 4096)
     num_heads = tc.get("num_heads", 1)
 
+    if arm == "lowrank":
+        return LowRankEmbed(vocab_size, embed_dim, rank=tc.get("d_x", 128))
     if arm == "original_ant":
         return OriginalANT(vocab_size, K, embed_dim)
     if arm == "ant":
@@ -101,6 +104,9 @@ def _infer_comp_config_from_state(state):
 
     if "T" in keys:
         return {"arm": "original_ant", "K": state["T"].shape[1]}
+
+    if "proj.weight" in keys:  # LowRankEmbed: X + proj, no codebook A
+        return {"arm": "lowrank", "d_x": state["X"].shape[1]}
 
     cfg = {"K": state["A"].shape[0], "gamma": 1.0}
     if "X" in keys:
