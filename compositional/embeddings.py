@@ -26,6 +26,33 @@ def _sinusoidal_pe(max_len, d):
 
 
 # ---------------------------------------------------------------------------
+# ALBERT-style low-rank factorization (Lan et al. 2020) — no-routing control
+# ---------------------------------------------------------------------------
+
+class LowRankEmbed(nn.Module):
+    """Factorized embedding: V x r lookup then r -> d linear projection.
+
+    The parameter-matched control for the compositional arms: same low-rank
+    token table dimension (r = d_x = 128) but no anchors and no routing.
+    Isolates whether anchor routing adds anything beyond a plain linear
+    bottleneck. Matches HF ALBERT: Linear with bias, normal(0.02) init.
+
+    Forward returns (e, None): no theta, so the trainer logs no routing
+    metrics and the div loss is skipped.
+    """
+
+    def __init__(self, vocab_size, embed_dim, rank=128):
+        super().__init__()
+        self.X = nn.Parameter(torch.randn(vocab_size, rank) * 0.02)
+        self.proj = nn.Linear(rank, embed_dim, bias=True)
+        nn.init.normal_(self.proj.weight, std=0.02)
+        nn.init.zeros_(self.proj.bias)
+
+    def forward(self, input_ids, doc_mask=None):
+        return self.proj(self.X[input_ids]), None
+
+
+# ---------------------------------------------------------------------------
 # Original ANT (Liang et al. 2021)
 # ---------------------------------------------------------------------------
 

@@ -37,7 +37,7 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 
 from compositional import (
-    ANTEmbed, V0Embed, V1Embed, V2Embed, IsolationControlEmbed,
+    ANTEmbed, V0Embed, V1Embed, V2Embed, IsolationControlEmbed, LowRankEmbed,
 )
 from compositional.losses import load_balance
 
@@ -102,7 +102,7 @@ class CompositionalArguments:
         default="ant",
         metadata={
             "help": "Embedding arm to train.",
-            "choices": ["ant", "v0", "v1", "v2", "isolation_control"],
+            "choices": ["ant", "v0", "v1", "v2", "isolation_control", "lowrank"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
@@ -247,6 +247,8 @@ def build_arm(comp_args, vocab_size, embed_dim):
     ca = comp_args
     shared = dict(d_x=ca.d_x, d_k=ca.d_k, gamma=ca.gamma)
 
+    if ca.arm == "lowrank":
+        return LowRankEmbed(vocab_size, embed_dim, rank=ca.d_x)
     if ca.arm == "ant":
         return ANTEmbed(vocab_size, ca.K, embed_dim, **shared, num_heads=ca.num_heads)
     if ca.arm == "v0":

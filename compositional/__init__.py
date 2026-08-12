@@ -5,6 +5,7 @@ from .embeddings import (
     V1Embed,
     V2Embed,
     IsolationControlEmbed,
+    LowRankEmbed,
 )
 from .optimizers import Yogi
 from .losses import compute_loss
