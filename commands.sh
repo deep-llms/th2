@@ -1,18 +1,14 @@
-#1
-#th2-train-lowrank-resant
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-sleep 3
-conda activate sparse_emb
-sleep 3
-
-nvidia-smi | head -12
-python -c "import torch; assert torch.cuda.is_available(); print(f'CUDA OK: {torch.cuda.device_count()} GPUs')"
-
-if [ -d /opt/dlami/nvme/sparse_emb_outputs/lowrank ]; then echo "ERROR: lowrank dir already exists"; exit 1; fi
-if [ -d /opt/dlami/nvme/sparse_emb_outputs/residual_ant ]; then echo "ERROR: residual_ant dir already exists"; exit 1; fi
-
-mkdir -p ~/.cache/huggingface/accelerate
-cp resources/accelerate_config.yaml ~/.cache/huggingface/accelerate/default_config.yaml
-
-export WANDB_MODE=offline
-python run_experiments.py --experiments 4 5 --stop-at-step 10000 --log-dir /opt/dlami/nvme/sparse_emb_outputs/logs
+#1 +120+a
+#th2-cancel-and-verify
+for i in 1 2 3; do
+    pkill -f run_experiments.py 2>/dev/null
+    pkill -f train_compositional.py 2>/dev/null
+    pkill -f "accelerate launch" 2>/dev/null
+    sleep 5
+done
+nvidia-smi --query-compute-apps=pid --format=csv,noheader | while read pid; do
+    [ -n "$pid" ] && kill -9 "$pid" 2>/dev/null && echo "killed $pid"
+done
+sleep 5
+nvidia-smi | grep -E "MiB /|No running"
+echo TH2 CANCELLED
