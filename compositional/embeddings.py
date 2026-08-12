@@ -35,7 +35,13 @@ class LowRankEmbed(nn.Module):
     The parameter-matched control for the compositional arms: same low-rank
     token table dimension (r = d_x = 128) but no anchors and no routing.
     Isolates whether anchor routing adds anything beyond a plain linear
-    bottleneck. Matches HF ALBERT: Linear with bias, normal(0.02) init.
+    bottleneck. Matches HF ALBERT: Linear with bias, normal(0.02) init;
+    E=128 is the paper's best ablation value (Table 3). Deliberately OMITS
+    ALBERT's LayerNorm-at-E: that LN is inherited from BERT's embedding
+    block (sum of word/pos/type embs -> LN -> dropout), not part of the
+    factorization; Qwen3 has no embedding-block norm and neither does any
+    other arm here, so adding one only to this control would confound the
+    routing-vs-bottleneck comparison.
 
     Forward returns (e, None): no theta, so the trainer logs no routing
     metrics and the div loss is skipped.
