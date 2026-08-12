@@ -194,8 +194,40 @@ results dumped directly from machine. All numbers below are trusted.
   static routing at 10K on PPL.
 - Benchmarks @10K: averages within noise of each other (baseline 0.3702,
   ant_ours 0.3679, v2_attn 0.3667, original_ant 0.3660); most multilingual tasks
-  still near chance at this scale — not yet discriminative.
+  still near chance at this scale — not yet discriminative. Clearly-above-chance
+  tasks only: hellaswag-en (~0.30 vs 0.25), xstorycloze-en (~0.59 vs 0.50),
+  xcopa-vi (~0.55), paws-en/de (~0.53); "best per task" is spread across all four
+  arms (noise pattern). Full 26-task tables: temp/r2_eval/<model>/checkpoint-
+  10000_eval_benchmarks.json.
 - Training loss @10K: baseline 3.147 < ant_ours 3.19 ≈ v2_attn 3.192 < original_ant 3.203.
+
+### Eval-PPL trajectory (avg over 6 languages, checkpoints 1k-10k)
+
+| step | baseline | original_ant | ant_ours | v2_attn |
+|---|---|---|---|---|
+| 1000 | 178.90 | 327.50 | 263.82 | 265.46 |
+| 2000 | 79.13 | 178.43 | 113.04 | 114.94 |
+| 3000 | 57.14 | 72.80 | 72.93 | 73.18 |
+| 4000 | 49.03 | 58.83 | 56.86 | 56.87 |
+| 6000 | 41.51 | 46.13 | 46.30 | 45.99 |
+| 8000 | 37.45 | 40.65 | 41.14 | 40.85 |
+| 10000 | 35.24 | 37.94 | 38.12 | 38.24 |
+
+Compositional arms start far behind (composition is harder to learn early), catch up
+fast, and are still closing on baseline at 10K (Δavg-PPL 9k→10k: baseline −1.27 vs
+ant_ours −1.88) — relevant to the full-35K go/no-go: the 10K snapshot catches them
+mid-trajectory.
+
+### Result data locations
+
+- Local (dev machine): per-checkpoint eval JSONs `temp/r2_eval/<model>/checkpoint-
+  <step>_eval_{ppl,benchmarks}.json` (10 ckpts × 4 models); per-token-id NLL arrays +
+  train-corpus freq counts `temp/r2_eval/bytoken/*.npz`; freq counts also committed as
+  `resources/token_freq_sample10.npz`.
+- Machines: checkpoints + `anchor_usage.npz` under
+  `/opt/dlami/nvme/sparse_emb_outputs/<model>/checkpoint-10000/`; cross-lingual
+  Phase-1 outputs under `/opt/dlami/nvme/sparse_emb_outputs/crosslingual/<model>/`
+  (pull pending).
 
 ### Paper framing: why entmax routing beats Original ANT (worth a paragraph in the paper)
 
