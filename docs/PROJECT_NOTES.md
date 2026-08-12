@@ -218,16 +218,21 @@ fast, and are still closing on baseline at 10K (Δavg-PPL 9k→10k: baseline −
 ant_ours −1.88) — relevant to the full-35K go/no-go: the 10K snapshot catches them
 mid-trajectory.
 
-### Result data locations
+### Result data locations (per analysis)
 
-- Local (dev machine): per-checkpoint eval JSONs `temp/r2_eval/<model>/checkpoint-
-  <step>_eval_{ppl,benchmarks}.json` (10 ckpts × 4 models); per-token-id NLL arrays +
-  train-corpus freq counts `temp/r2_eval/bytoken/*.npz`; freq counts also committed as
-  `resources/token_freq_sample10.npz`.
-- Machines: checkpoints + `anchor_usage.npz` under
-  `/opt/dlami/nvme/sparse_emb_outputs/<model>/checkpoint-10000/`; cross-lingual
-  Phase-1 outputs under `/opt/dlami/nvme/sparse_emb_outputs/crosslingual/<model>/`
-  (pull pending).
+| Analysis | Local files (dev machine, gitignored temp/) | Machine files (/opt/dlami/nvme/sparse_emb_outputs/) |
+|---|---|---|
+| Round-2 PPL curves | `temp/r2_eval/{baseline,ant_ours,v2_attn,original_ant}/checkpoint-{1000..10000}_eval_ppl.json` | `<model>/checkpoint-<step>/eval_ppl.json` |
+| Round-2 benchmarks | `temp/r2_eval/<model>/checkpoint-<step>_eval_benchmarks.json` | `<model>/checkpoint-<step>/eval_benchmarks.json` |
+| Freq-binned PPL (per-token-id NLL) | `temp/r2_eval/bytoken/<model>_eval_ppl_bytoken.npz` + `_summary.json` | `<model>/checkpoint-10000/eval_ppl_bytoken.npz` |
+| Train-corpus token freqs (1/10 sample) | `temp/r2_eval/bytoken/misc_token_freq.npz` (+ committed copy `resources/token_freq_sample10.npz`) | `token_freq.npz` + `token_freq_meta.json` |
+| Anchor-usage distribution | metrics JSON transcribed in probe logs `temp/{th2,th3}__run-*-anchor-usage*.log` / `*probe-anchor-results.log` (npz NOT pulled yet) | `<model>/checkpoint-10000/anchor_usage.{npz,json}` |
+| Training loss logs (round 2) | `temp/h100-{1,2}__run-*tail-train-loss*.log`, `*check-progress*.log` | `logs/<model>.log` (full tqdm+loss stream) |
+| Cross-lingual Phase 1 | not pulled yet | `crosslingual/<model>/<model>@10000.json` + `crosslingual/<model>.log` |
+| Smoke tests (loss-scaling fix) | `temp/*smoke*-fixed*.log` | (smoke output dirs deleted in cleanup) |
+
+Note: `temp/` is gitignored — these local copies do not survive a dev-machine switch;
+the machine-side copies and the tables in this document are the durable record.
 
 ### Paper framing: why entmax routing beats Original ANT (worth a paragraph in the paper)
 
