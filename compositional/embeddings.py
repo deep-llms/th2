@@ -184,8 +184,9 @@ class ResidualANTEmbed(ANTEmbed):
                  gamma=1.0, num_heads=1):
         super().__init__(vocab_size, codebook_size, embed_dim, d_x, d_k,
                          gamma, num_heads)
-        self.W_up = nn.Linear(d_x, embed_dim, bias=False)
+        self.W_up = nn.Linear(d_x, embed_dim, bias=True)
         nn.init.normal_(self.W_up.weight, std=0.02)
+        nn.init.zeros_(self.W_up.bias)
 
     def forward(self, input_ids, doc_mask=None):
         x = self.X[input_ids]                       # (B, L, d_x)
