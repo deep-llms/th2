@@ -1,10 +1,31 @@
-#1 +120+a
-#th2-check-stale
-echo '=== partial eval.log files ==='
-for i in 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do
-    f=/opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-$i/eval.log
-    [ -f "$f" ] && echo "  ckpt-$i: eval.log exists ($(wc -c < $f) bytes)" || echo "  ckpt-$i: clean"
+#1
+#th2-eval-lowrank-clean
+eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+sleep 3
+conda activate eval
+sleep 3
+
+# Clean ALL partial eval outputs from failed runs
+for d in /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-*/; do
+    rm -f "$d/eval.log" "$d/eval_ppl.json" "$d/eval_benchmarks.json"
 done
-echo '=== any eval_ppl/eval_benchmarks ==='
-ls /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-*/eval_ppl.json /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-*/eval_benchmarks.json 2>/dev/null || echo "none"
-echo TH2 STALE CHECK DONE
+echo "cleaned stale eval outputs"
+
+nvidia-smi | head -12
+
+python eval/eval_parallel.py \
+    --checkpoints \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-1000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-2000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-3000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-4000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-5000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-6000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-7000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-8000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-9000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-10000 \
+    --eval-dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/eval \
+    --tokenizer-name Qwen/Qwen3-0.6B \
+    --bf16 \
+    --num-gpus 8
