@@ -1,12 +1,25 @@
-#1 +120+a
-#th2-check-done
-echo '=== experiments.log ==='
-cat /opt/dlami/nvme/sparse_emb_outputs/logs/experiments.log 2>/dev/null
-echo '=== last loss ==='
-grep -o "{'loss'[^}]*}" /opt/dlami/nvme/sparse_emb_outputs/logs/lowrank.log 2>/dev/null | tail -3
-echo '=== latest checkpoints ==='
-ls -d /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-* 2>/dev/null | sort -V | tail -3
-echo '=== gpu ==='
-nvidia-smi | grep -E "MiB /|No running" | head -4
-echo '=== processes ==='
-pgrep -af "run_experiments|train_compositional|accelerate" | grep -v pgrep | head -3 || echo "no training processes"
+#1
+#th2-eval-lowrank
+eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+sleep 3
+conda activate eval
+sleep 3
+
+nvidia-smi | head -12
+
+python eval/eval_parallel.py \
+    --checkpoints \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-1000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-2000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-3000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-4000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-5000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-6000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-7000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-8000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-9000 \
+        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-10000 \
+    --eval-dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/eval \
+    --tokenizer-name Qwen/Qwen3-0.6B \
+    --bf16 \
+    --num-gpus 8
