@@ -37,7 +37,8 @@ def evaluate(wrapper, loader, device):
         ids = batch["input_ids"].to(device)
         mask = batch["attention_mask"].to(device)
         labels = batch["labels"].to(device)
-        logits = wrapper(ids, mask)
+        with torch.amp.autocast("cuda", dtype=torch.bfloat16):
+            logits = wrapper(ids, mask)
         preds = logits.argmax(dim=-1)
         correct += (preds == labels).sum().item()
         total += labels.size(0)
@@ -128,14 +129,21 @@ def train_one(checkpoint, task_name, mode, seed, device, output_dir,
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             best_epoch = epoch + 1
-            head = (wrapper.classifier if not is_mc
-                    else wrapper.score_head)
-            best_state = {k: v.cpu().clone()
-                          for k, v in head.state_dict().items()}
+            if mode == "probe":
+                head = (wrapper.classifier if not is_mc
+                        else wrapper.score_head)
+                best_state = {k: v.cpu().clone()
+                              for k, v in head.state_dict().items()}
+            else:
+                best_state = {k: v.cpu().clone()
+                              for k, v in wrapper.state_dict().items()}
 
-    # Restore best head and evaluate on test splits
-    head = wrapper.classifier if not is_mc else wrapper.score_head
-    head.load_state_dict(best_state)
+    # Restore best state
+    if mode == "probe":
+        head = wrapper.classifier if not is_mc else wrapper.score_head
+        head.load_state_dict(best_state)
+    else:
+        wrapper.load_state_dict(best_state)
 
     test_results = {}
     for split_name, loader in test_splits.items():

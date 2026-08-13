@@ -205,11 +205,30 @@ def get_dataloaders(task_name, tokenizer, mode="full", num_workers=4):
                 ds, batch_size=bs * 2, shuffle=False,
                 num_workers=num_workers, pin_memory=True)
     elif task_name == "sst2":
+        # SST-2 test has no labels; use validation for both val and test
         val_ds = load_task_data(task_name, tokenizer, "test")
         val_loader = DataLoader(val_ds, batch_size=bs * 2, shuffle=False,
                                 num_workers=num_workers, pin_memory=True)
         test_splits["sst2"] = val_loader
+    elif task_name == "ag_news":
+        # AG News has no val split; hold out 5% of train for validation
+        full_train = load_task_data(task_name, tokenizer, "train")
+        n_val = len(full_train) // 20
+        val_indices = list(range(n_val))
+        train_indices = list(range(n_val, len(full_train)))
+        from torch.utils.data import Subset
+        train_loader = DataLoader(
+            Subset(full_train, train_indices), batch_size=bs, shuffle=True,
+            num_workers=num_workers, pin_memory=True)
+        val_loader = DataLoader(
+            Subset(full_train, val_indices), batch_size=bs * 2, shuffle=False,
+            num_workers=num_workers, pin_memory=True)
+        test_ds = load_task_data(task_name, tokenizer, "test")
+        test_splits["ag_news"] = DataLoader(
+            test_ds, batch_size=bs * 2, shuffle=False,
+            num_workers=num_workers, pin_memory=True)
     else:
+        # HellaSwag: test has no labels; use validation for both
         test_ds = load_task_data(task_name, tokenizer, "test")
         val_loader = DataLoader(test_ds, batch_size=bs * 2, shuffle=False,
                                 num_workers=num_workers, pin_memory=True)
