@@ -150,6 +150,16 @@ def train_one(checkpoint, task_name, mode, seed, device, output_dir,
         test_results[split_name] = evaluate(wrapper, loader, device)
         print(f"    test {split_name}: {test_results[split_name]:.4f}")
 
+    os.makedirs(output_dir, exist_ok=True)
+    arm = os.path.basename(os.path.dirname(os.path.normpath(checkpoint)))
+
+    # Save finetuned model
+    model_dir = os.path.join(output_dir, "models",
+                             f"{task_name}_{mode}_{arm}_seed{seed}")
+    os.makedirs(model_dir, exist_ok=True)
+    torch.save(best_state, os.path.join(model_dir, "best_state.pt"))
+    print(f"    model saved: {model_dir}/best_state.pt")
+
     result = {
         "checkpoint": checkpoint,
         "task": task_name,
@@ -160,10 +170,9 @@ def train_one(checkpoint, task_name, mode, seed, device, output_dir,
         "test_results": test_results,
         "epochs": epochs,
         "lr": cfg[f"{mode}_lr"],
+        "model_path": model_dir,
     }
 
-    os.makedirs(output_dir, exist_ok=True)
-    arm = os.path.basename(os.path.dirname(os.path.normpath(checkpoint)))
     out_path = os.path.join(output_dir,
                             f"{task_name}_{mode}_{arm}_seed{seed}.json")
     with open(out_path, "w") as f:
