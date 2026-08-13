@@ -59,6 +59,11 @@ EXPERIMENT_COMMANDS = [
         "cmd": "bash scripts/train_lowrank.sh",
         "output_dir": f"{OUT_BASE}/lowrank",
     },
+    {
+        "name": "residual_ant",
+        "cmd": "bash scripts/train_residual_ant.sh",
+        "output_dir": f"{OUT_BASE}/residual_ant",
+    },
 ]
 
 

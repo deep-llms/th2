@@ -1,6 +1,7 @@
 from .embeddings import (
     OriginalANT,
     ANTEmbed,
+    ResidualANTEmbed,
     V0Embed,
     V1Embed,
     V2Embed,

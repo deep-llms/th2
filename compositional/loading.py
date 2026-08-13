@@ -23,6 +23,7 @@ from transformers import AutoConfig, AutoModelForCausalLM
 from .embeddings import (
     OriginalANT,
     ANTEmbed,
+    ResidualANTEmbed,
     V0Embed,
     V1Embed,
     V2Embed,
@@ -66,6 +67,8 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim):
         return OriginalANT(vocab_size, K, embed_dim)
     if arm == "ant":
         return ANTEmbed(vocab_size, K, embed_dim, **shared, num_heads=num_heads)
+    if arm == "residual_ant":
+        return ResidualANTEmbed(vocab_size, K, embed_dim, **shared, num_heads=num_heads)
     if arm == "v0":
         return V0Embed(vocab_size, K, embed_dim, **shared,
                        max_k=tc.get("max_k", 16), mode=tc.get("v0_mode", "post"))
@@ -130,6 +133,8 @@ def _infer_comp_config_from_state(state):
         raise ValueError(
             "V0/V1 checkpoints cannot be identified from weights alone — "
             "provide train_config.json")
+    elif "W_up.weight" in keys:
+        cfg["arm"] = "residual_ant"
     else:
         cfg["arm"] = "ant"
 

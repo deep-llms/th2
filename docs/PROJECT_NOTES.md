@@ -318,7 +318,28 @@ and round-2 gives hard evidence for our side:
   Lorenz curves of w_freq/w_occ for the three arms in one figure — shows original_ant's
   flat no-structure line vs ant_ours' concentration vs v2_attn in between. Files are
   small (~80KB); pull via -f- when making figures.
-- [ ] **PPL-vs-embedding-params Pareto plot** from existing round-2 data.
+- [x] **Cross-lingual transfer battery — DONE 2026-08-12** (crosslingual/ port of the
+  embeddings-hub probe suite; t6 BLI/CSLS + McNemar, t8 MEXA 500 FLORES sents, probe_b;
+  checkpoint-10000 all arms; JSONs in temp/xling_results/, report.md there too).
+  **HYPOTHESIS REFUTED — compositional embeddings HURT cross-lingual transfer:**
+  | metric | baseline | ant_ours | v2_attn | original_ant |
+  |---|---|---|---|---|
+  | T6 BLI mean P@1 (embed layer) | **0.278** | 0.013 | 0.006 | 0.049 |
+  | T8 MEXA avg (all layers) | **0.556** | 0.428 | 0.432 | 0.429 |
+  | Probe B cos gap (embed layer) | **0.076** | 0.016 | 0.013 | 0.054 |
+  All deficits McNemar/MWU p ≈ 0 (e.g. ant_ours all-pairs: baseline-only hits 1338 vs
+  model-only 7, n=3511). Findings: (a) dense baseline word embeddings align languages
+  far better than any compositional arm; (b) severity tracks routing sparsity —
+  original_ant (~4000 near-dense coefficients) preserves 4-8x more word-level alignment
+  than the entmax arms (~45 anchors), i.e. sparse quantized routing fragments the
+  cross-lingual geometry (consistent with anchors encoding identity/frequency, not
+  meaning — cf. anchor-usage analysis, and with the tail-PPL deficit: less smooth
+  embedding space); (c) the deficit shrinks but persists at depth (MEXA −0.13 at
+  layers 16-22 peaks); (d) v2_attn ≈ ant_ours on sentence-level MEXA (0.432 vs 0.428)
+  but worst on isolated-word tests — expected, its context routing is inactive on
+  single words. Paper framing: cross-lingual alignment is a COST of sparse
+  compositional embeddings at this scale, to report honestly alongside the
+  efficiency/tail tradeoffs; do NOT claim a transfer advantage.
 - [ ] V2-attn-specific: PPL on high-routing-variance (ambiguous) tokens; routing entropy
   vs polysemy analysis; cross-lingual anchor-overlap analysis.
 - [ ] **Vocab-expansion demo**: add unseen tokens post-training; ours learns only a
