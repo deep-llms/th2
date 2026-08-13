@@ -1,25 +1,25 @@
-#1
-#th2-eval-lowrank
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-sleep 3
-conda activate eval
-sleep 3
-
-nvidia-smi | head -12
-
-python eval/eval_parallel.py \
-    --checkpoints \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-1000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-2000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-3000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-4000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-5000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-6000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-7000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-8000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-9000 \
-        /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-10000 \
-    --eval-dir /opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/eval \
-    --tokenizer-name Qwen/Qwen3-0.6B \
-    --bf16 \
-    --num-gpus 8
+#1 +120+a
+#th2-check-new-machine
+echo '=== OS ==='
+cat /etc/os-release | head -5
+uname -a
+echo '=== hostname ==='
+hostname
+echo '=== GPUs ==='
+nvidia-smi | head -20
+echo '=== disk ==='
+df -h | grep -E "nvme|opt|home|Filesystem"
+echo '=== conda ==='
+which conda 2>/dev/null || echo "no conda"
+ls $HOME/miniconda3/envs/ 2>/dev/null || echo "no miniconda3"
+echo '=== project dir ==='
+ls -la /opt/dlami/nvme/ 2>/dev/null || echo "no /opt/dlami/nvme"
+ls -la $HOME/ | head -15
+echo '=== data ==='
+ls -la /opt/dlami/nvme/sparse_emb_data/ 2>/dev/null || echo "no data dir"
+echo '=== outputs ==='
+ls -la /opt/dlami/nvme/sparse_emb_outputs/ 2>/dev/null || echo "no outputs dir"
+echo '=== python ==='
+python3 --version 2>/dev/null
+pip3 list 2>/dev/null | grep -E "torch|transformers|accelerate|datasets" | head -5
+echo TH2 MACHINE CHECK DONE
