@@ -1,10 +1,16 @@
 #1 +120+a
-#th2-check-running
-echo '=== GPU processes ==='
-nvidia-smi | grep -E "MiB /|No running|python" | head -12
-echo '=== training/eval processes ==='
-pgrep -af "python|accelerate|eval_parallel|run_experiments" | grep -v pgrep | grep -v networkd | grep -v unattended | head -10 || echo "no processes"
-echo '=== lowrank eval results exist? ==='
-ls /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-10000/eval_ppl.json 2>/dev/null && echo "EVAL DONE" || echo "NO EVAL YET"
-ls /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-1000/eval_ppl.json 2>/dev/null && echo "at least ckpt-1000 eval done" || echo "no evals at all"
-echo TH2 CHECK DONE
+#th2-pre-eval-check
+echo '=== any partial eval results in lowrank checkpoints? ==='
+for d in /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-*/; do
+    ppl=$(ls "$d"eval_ppl.json 2>/dev/null && echo "HAS_PPL" || echo "no_ppl")
+    bench=$(ls "$d"eval_benchmarks.json 2>/dev/null && echo "HAS_BENCH" || echo "no_bench")
+    log=$(ls "$d"eval.log 2>/dev/null && echo "HAS_LOG" || echo "no_log")
+    echo "$(basename $d): $ppl $bench $log"
+done
+echo '=== train_config.json exists? ==='
+cat /opt/dlami/nvme/sparse_emb_outputs/lowrank/train_config.json 2>/dev/null | head -3 || echo "MISSING"
+echo '=== embedding.pt in checkpoint-10000? ==='
+ls -la /opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-10000/embedding.pt 2>/dev/null || echo "MISSING"
+echo '=== gpu free? ==='
+nvidia-smi | grep -E "No running"
+echo TH2 PRE-EVAL DONE
