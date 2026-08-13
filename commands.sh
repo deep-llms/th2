@@ -1,17 +1,17 @@
-#1
-#th2-train-lowrank
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-sleep 3
-conda activate sparse_emb
-sleep 3
-
-nvidia-smi | head -12
-python -c "import torch; assert torch.cuda.is_available(); print(f'CUDA OK: {torch.cuda.device_count()} GPUs')"
-
-if [ -d /opt/dlami/nvme/sparse_emb_outputs/lowrank ]; then echo "ERROR: lowrank dir already exists"; exit 1; fi
-
-mkdir -p ~/.cache/huggingface/accelerate
-cp resources/accelerate_config.yaml ~/.cache/huggingface/accelerate/default_config.yaml
-
-export WANDB_MODE=offline
-python run_experiments.py --experiments 4 --stop-at-step 10000 --log-dir /opt/dlami/nvme/sparse_emb_outputs/logs
+#1 +120+a
+#th2-full-check
+echo '=== GPUs ==='
+nvidia-smi | grep -E "MiB /|No running"
+echo '=== processes ==='
+pgrep -af "python|accelerate|train" | grep -v pgrep | head -5 || echo "no processes"
+echo '=== output dirs ==='
+ls -la /opt/dlami/nvme/sparse_emb_outputs/
+echo '=== lowrank? ==='
+ls -d /opt/dlami/nvme/sparse_emb_outputs/lowrank 2>/dev/null && echo "EXISTS" || echo "NOT EXIST"
+echo '=== residual_ant? ==='
+ls -d /opt/dlami/nvme/sparse_emb_outputs/residual_ant 2>/dev/null && echo "EXISTS" || echo "NOT EXIST"
+echo '=== HF dataset cache? ==='
+du -sh ~/.cache/huggingface/datasets 2>/dev/null || echo "NO CACHE"
+echo '=== data dir caches? ==='
+find /opt/dlami/nvme/sparse_emb_data -name "cache-*" 2>/dev/null | head -5 || echo "none"
+echo TH2 CHECK DONE
