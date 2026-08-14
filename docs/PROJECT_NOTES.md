@@ -402,12 +402,9 @@ cross-lingual claim too.
 ### Status
 
 - [x] Battery built + validated (commits 6b3ce43, 9f9267f, f0b95eb, 6d75c8d, f48e8a8)
-- [~] **Phase 1 IN FLIGHT**: t6+t8+probe_b on all 4 arms @checkpoint-10000
-  (th2: original_ant+v2_attn; th3: ant_ours+baseline; jobs th2/th3-xling-1 picked up
-  2026-08-11 11:08 machine-time; results written to
-  /opt/dlami/nvme/sparse_emb_outputs/crosslingual/<model>/ — pull pending: remote
-  runner went down again; probes queued). Merge locally with merge_report.py
-  (baseline label `baseline@10000`).
+- [x] **Phase 1 DONE (2026-08-12)**: t6+t8+probe_b on all 4 arms @checkpoint-10000.
+  Results pulled + verified (md5 match on re-pull, per-pair recomputation exact).
+  See "Cross-lingual battery results" above for full tables + McNemar.
 - [ ] Phase 2 (if Phase 1 interesting): θ-based anchor-overlap probe (translations
   share anchors? — the mechanism test, loanword-filtered) + θ-based language
   decodability (do anchors encode language identity or meaning?); alignment-vs-step
@@ -423,8 +420,64 @@ log — every `#1` push re-executes the script (duplicate run). Never launch
 never-ending jobs (dummy.py) with `+W+a`. If a push shows no `_RUN_STATUS_.log`
 entry in ~10 min, report to the user and wait (runner outages: 3 so far).
 
+## ALBERT + Residual ANT experiments (started 2026-08-13)
+
+Two new arms: the critical matched-params controls for the compositional story.
+
+### Arms
+
+| Arm | Architecture | Embed params | What it tests |
+|---|---|---|---|
+| ALBERT (lowrank) | `e = X[ids] @ proj` (V×128 + Linear(128→1024)) | 19.6M | Does anchor routing beat a plain linear bottleneck at matched rank? |
+| Residual ANT | `e = X[ids] @ W_up + θ @ A` (identity + codebook) | 23.9M | Does the codebook add value when the identity path handles discrimination? |
+
+Both verified against the official Google ALBERT repo (google-research/ALBERT):
+factorization itself (V×E lookup → Linear(E→H, bias, no activation)) is identical;
+init matches HF PyTorch convention (normal(0.02), not TF's truncated_normal — same
+as HF's own modeling_albert.py). Omissions (pos/type embeddings, LayerNorm at E,
+dropout) are BERT-block components that Qwen3 doesn't have.
+
+Residual ANT inherits from ANTEmbed, adds W_up = Linear(128→1024, bias=True).
+Forward: `e_id + e_code, theta`. At init both paths contribute (~37% identity,
+~63% codebook by norm). The identity path provides a dense gradient to X regardless
+of routing quality (breaking the bootstrap problem).
+
+### Training status
+
+| Arm | Machine | Status | Train loss @10K |
+|---|---|---|---|
+| ALBERT | h100-1 | **DONE** (35,851s ≈ 10.0h) | **3.160** |
+| Residual ANT | h100-2 | Running (~step 5,000+) | TBD |
+
+### Early results: ALBERT
+
+**ALBERT train loss 3.160 vs baseline 3.147 — only +0.4% gap** with 8× fewer
+embedding params (19.6M vs 155.6M). This means the 128-d linear bottleneck is
+nearly sufficient for Qwen3-0.6B at 10K steps.
+
+Critically, ALBERT **beats every compositional arm** (ant_ours 3.190, v2_attn
+3.192, original_ant 3.203) despite having *fewer* params than any of them
+(19.6M vs 23.7–23.9M). This raises the bar for what anchor routing must
+demonstrate: it isn't enough to beat the dense baseline — it must beat ALBERT
+at matched rank to prove the codebook adds value over plain factorization.
+
+**Eval PPL + benchmarks running now** (th2, checkpoints 1k–10k, 8-GPU parallel).
+
+### Interpretation matrix (from the design doc)
+
+| ALBERT vs Baseline | Residual ANT vs ALBERT | Meaning |
+|---|---|---|
+| ALBERT ≈ Baseline (3.160 vs 3.147 ✓) | Residual < ALBERT | Codebook adds value on top of low-rank |
+| ALBERT ≈ Baseline ✓ | Residual ≈ ALBERT | Codebook ignored by optimizer |
+| — | Residual > ALBERT | Codebook hurts (unlikely given ant_ours trains fine) |
+
+The quantity `gap_residual - gap_albert` = the codebook's marginal value.
+
 ## TODO
 
-- [ ] Pull Phase-1 cross-lingual results when runner is fixed; merge + analyze
-- [ ] Decide go/no-go for full 35K run based on round-2 de-risk results
+- [ ] Pull ALBERT eval results (PPL + benchmarks 1k–10k) when eval finishes
+- [ ] Wait for Residual ANT training to finish on th3
+- [ ] Run eval + frequency-binned PPL + cross-lingual battery on both new arms
+- [ ] Compare: does residual ANT's identity path recover cross-lingual alignment?
+- [ ] Decide go/no-go for full 35K run based on all results
 - [ ] Pull training metrics (loss curves, ppl) from wandb offline logs
