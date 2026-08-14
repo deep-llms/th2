@@ -151,7 +151,9 @@ def train_one(checkpoint, task_name, mode, seed, device, output_dir,
         print(f"    test {split_name}: {test_results[split_name]:.4f}")
 
     os.makedirs(output_dir, exist_ok=True)
-    arm = os.path.basename(os.path.dirname(os.path.normpath(checkpoint)))
+    arm = os.environ.get("FINETUNE_ARM_NAME",
+                         os.path.basename(os.path.dirname(
+                             os.path.normpath(checkpoint))))
 
     # Save finetuned model
     model_dir = os.path.join(output_dir, "models",
