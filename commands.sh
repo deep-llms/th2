@@ -1,12 +1,20 @@
 #1 +120+a
-#th2-finetune-progress
-echo '=== GPU ==='
-nvidia-smi | grep -E "MiB /|python" | head -4
-echo '=== finetune output dir ==='
-ls /opt/dlami/nvme/sparse_emb_outputs/finetune/*.json 2>/dev/null | head -10 || echo "no results yet"
-echo '=== run log tail ==='
-tail -30 /opt/dlami/nvme/sparse_emb_outputs/finetune/run_all.log 2>/dev/null || echo "no run_all.log"
-echo '=== latest run log from _run_log_ ==='
-f=$(ls -t _run_log_/*finetune*.log 2>/dev/null | head -1)
-[ -n "$f" ] && tail -30 "$f" || echo "no finetune run log"
-echo TH2 PROGRESS
+#th2-cancel-clean-finetune
+echo '=== kill finetune ==='
+for i in 1 2 3; do
+    pkill -f "finetune/run_all.py" 2>/dev/null
+    pkill -f "finetune/train.py" 2>/dev/null
+    sleep 5
+done
+nvidia-smi --query-compute-apps=pid --format=csv,noheader | while read pid; do
+    [ -n "$pid" ] && kill -9 "$pid" 2>/dev/null && echo "killed $pid"
+done
+sleep 5
+echo '=== remove finetune outputs ==='
+rm -rf /opt/dlami/nvme/sparse_emb_outputs/finetune
+echo '=== remove caches ==='
+rm -rf ~/.cache/huggingface/datasets
+echo '=== verify ==='
+nvidia-smi | grep -E "MiB /|No running" | head -4
+ls /opt/dlami/nvme/sparse_emb_outputs/finetune 2>/dev/null || echo "finetune dir: gone"
+echo TH2 FINETUNE CLEANED
