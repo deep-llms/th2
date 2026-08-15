@@ -51,8 +51,9 @@ class GenerativeDataset(Dataset):
                 full_ids = full_ids[:max_length]
 
             # Labels: -100 for prompt, real ids for completion
-            n_prompt = min(len(prompt_ids), max_length)
-            n_comp = len(full_ids) - n_prompt
+            n_prompt = min(len(prompt_ids), len(full_ids))
+            if n_prompt >= len(full_ids):
+                continue  # skip: prompt fills entire sequence, no completion
             labels = [-100] * n_prompt + full_ids[n_prompt:]
 
             # Right-pad
