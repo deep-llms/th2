@@ -1,5 +1,10 @@
 #1 +120+a
-#th2-ft-check2
-ls /opt/dlami/nvme/sparse_emb_outputs/finetune/*.json 2>/dev/null | wc -l
-ls /opt/dlami/nvme/sparse_emb_outputs/finetune/summary.md 2>/dev/null && echo "DONE" || echo "RUNNING"
-nvidia-smi | grep -c "python"
+#th2-dump-ft
+echo '=== summary.md ==='
+cat /opt/dlami/nvme/sparse_emb_outputs/finetune/summary.md
+echo '=== all JSONs ==='
+for f in /opt/dlami/nvme/sparse_emb_outputs/finetune/*.json; do
+    echo "===JSON $(basename $f)==="
+    cat "$f"
+    echo
+done
