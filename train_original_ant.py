@@ -66,6 +66,9 @@ class OriginalANTArguments:
     K: int = field(default=4096, metadata={"help": "Codebook size."})
     emb_lr: float = field(default=1e-2, metadata={"help": "YOGI learning rate for embedding."})
     lam: float = field(default=1e-3, metadata={"help": "L1 proximal penalty target."})
+    tie_output: bool = field(default=False, metadata={
+        "help": "Tie output lm_head to input embedding (logits = hidden @ A.T @ T.T).",
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -317,7 +320,15 @@ def main():
         embed_module = embed_module.to(torch.bfloat16)
     embed_shim = EmbeddingShim(embed_module)
     model.model.embed_tokens = embed_shim
+
+    if ant_args.tie_output:
+        from compositional.tied_head import make_tied_head
+        model.lm_head = make_tied_head(embed_module, "original_ant", config.vocab_size)
+        logger.info(f"Output tied to input embedding (lm_head replaced)")
+
     logger.info(f"Original ANT embedding: {sum(p.numel() for p in embed_shim.parameters()):,} params (K={ant_args.K})")
+    logger.info(f"Tied output: {ant_args.tie_output}")
+    logger.info(f"Total params: {sum(p.numel() for p in model.parameters()):,}")
 
     # Data — same as train.py
     datasets_list = []

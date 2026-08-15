@@ -116,6 +116,12 @@ class CompositionalArguments:
     v1_query: str = field(default="content", metadata={"help": "V1 query.", "choices": ["content", "cls"]})
     localenc: str = field(default="attn", metadata={"help": "V2 LocalEnc.", "choices": ["attn", "conv", "conv_lite"]})
     lambda_div: float = field(default=0.0, metadata={"help": "Load-balance loss weight."})
+    tie_output: bool = field(default=False, metadata={
+        "help": "Tie the output lm_head to the input embedding weights. "
+                "Removes the free V×d lm_head (~155.6M params) and computes "
+                "output logits from the embedding module's own weights. "
+                "Not supported for context-dependent arms (v2, isolation_control).",
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -352,9 +358,16 @@ def main():
     embed_shim = EmbeddingShim(embed_module)
     model.model.embed_tokens = embed_shim
 
+    if comp_args.tie_output:
+        from compositional.tied_head import make_tied_head
+        tied_head = make_tied_head(embed_module, comp_args.arm, config.vocab_size)
+        model.lm_head = tied_head
+        logger.info(f"Output tied to input embedding (lm_head replaced)")
+
     emb_params = sum(p.numel() for p in embed_shim.parameters())
     total_params = sum(p.numel() for p in model.parameters())
     logger.info(f"Embedding [{comp_args.arm}]: {emb_params:,} params (K={comp_args.K})")
+    logger.info(f"Tied output: {comp_args.tie_output}")
     logger.info(f"Total params: {total_params:,}")
 
     # Load data — identical to train.py
