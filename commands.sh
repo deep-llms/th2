@@ -1,15 +1,17 @@
 #1 +120+a
-#th2-final-clean-check
-echo '=== GPU ==='
+#th2-clean-and-verify
+echo '=== kill any running ==='
+pkill -f "finetune" 2>/dev/null || true
+sleep 5
+nvidia-smi --query-compute-apps=pid --format=csv,noheader | while read pid; do
+    [ -n "$pid" ] && kill -9 "$pid" 2>/dev/null && echo "killed $pid"
+done
+sleep 5
+echo '=== remove old finetune outputs ==='
+rm -rf /opt/dlami/nvme/sparse_emb_outputs/finetune
+echo '=== remove caches ==='
+rm -rf ~/.cache/huggingface/datasets
+echo '=== verify ==='
 nvidia-smi | grep -E "MiB /|No running" | head -4
-echo '=== finetune dir ==='
-ls /opt/dlami/nvme/sparse_emb_outputs/finetune 2>/dev/null && echo "EXISTS" || echo "GONE"
-echo '=== HF cache ==='
-du -sh ~/.cache/huggingface/datasets 2>/dev/null || echo "NO CACHE"
-echo '=== data cache ==='
-find /opt/dlami/nvme/sparse_emb_data -name "cache-*" 2>/dev/null | wc -l
-echo '=== processes ==='
-pgrep -af "python" | grep -v pgrep | grep -v networkd | grep -v unattended | head -3 || echo "none"
-echo '=== outputs ==='
-ls -d /opt/dlami/nvme/sparse_emb_outputs/*/
-echo TH2 FINAL CHECK
+ls /opt/dlami/nvme/sparse_emb_outputs/finetune 2>/dev/null || echo "finetune: gone"
+echo TH2 CLEAN
