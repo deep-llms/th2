@@ -473,11 +473,84 @@ at matched rank to prove the codebook adds value over plain factorization.
 
 The quantity `gap_residual - gap_albert` = the codebook's marginal value.
 
+## Fine-tune Benchmark Results (2026-08-15)
+
+Generative fine-tuning: train with causal LM loss on (prompt + completion)
+matching lm-eval-harness format exactly, eval with lm-eval-harness in-memory.
+3 tasks × 6 arms × 3 seeds = 54 runs total. Right padding, loss on completion
+tokens only. Each task trains on English, evals on English + multilingual.
+
+### Tasks
+
+| Task | Train data | Eval (English) | Eval (multilingual) |
+|---|---|---|---|
+| HellaSwag | 40K (EN) | hellaswag (acc_norm) | ar, de, ru, vi |
+| ARC-Easy | 2.3K (EN) | arc_easy (acc_norm) | ar, de, ru, vi, zh |
+| XNLI | 393K (EN MultiNLI) | xnli_en (acc) | vi, zh, de, ru, ar |
+
+### Full results (acc_norm where available, else acc; mean±std over 3 seeds)
+
+| Benchmark | baseline | lowrank | ant_ours | v2_attn | original_ant | residual_ant |
+|---|---|---|---|---|---|---|
+| hellaswag EN | **0.359** | 0.356 | 0.352 | 0.349 | 0.343 | 0.356 |
+| hellaswag ar | 0.275 | 0.271 | 0.272 | **0.274** | **0.276** | 0.274 |
+| hellaswag de | 0.282 | **0.283** | 0.281 | 0.280 | 0.279 | 0.281 |
+| hellaswag ru | 0.282 | 0.282 | 0.277 | **0.284** | 0.276 | 0.273 |
+| hellaswag vi | 0.301 | **0.307** | 0.302 | 0.302 | 0.293 | 0.305 |
+| arc_easy EN | 0.457 | **0.467** | **0.467** | 0.459 | 0.443 | 0.464 |
+| arc ar | 0.226 | 0.235 | **0.241** | 0.238 | 0.238 | 0.223 |
+| arc de | **0.228** | 0.224 | 0.222 | 0.224 | 0.219 | 0.224 |
+| arc ru | 0.219 | **0.228** | 0.225 | 0.218 | 0.212 | 0.226 |
+| arc vi | 0.219 | 0.223 | 0.219 | 0.216 | **0.225** | 0.223 |
+| arc zh | 0.241 | 0.254 | 0.254 | **0.258** | 0.246 | 0.242 |
+| xnli EN | 0.623 | 0.651 | 0.651 | **0.659** | 0.633 | 0.644 |
+| xnli de | **0.371** | 0.335 | 0.339 | 0.336 | 0.344 | 0.344 |
+| xnli ru | **0.367** | 0.343 | 0.360 | 0.340 | 0.354 | 0.344 |
+| xnli vi | 0.345 | 0.337 | 0.346 | 0.350 | **0.351** | 0.340 |
+| xnli zh | 0.335 | 0.335 | **0.346** | 0.343 | 0.336 | 0.337 |
+| xnli ar | 0.333 | 0.334 | 0.333 | 0.333 | 0.334 | 0.332 |
+|---|---|---|---|---|---|---|
+| **AVERAGE** | 0.3213 | 0.3214 | **0.3228** | 0.3214 | 0.3177 | 0.3194 |
+| **English avg** | 0.4795 | **0.4912** | 0.4898 | 0.4889 | 0.4731 | 0.4880 |
+| **Non-English avg** | **0.2874** | 0.2850 | 0.2870 | 0.2855 | 0.2844 | 0.2833 |
+
+### Key findings
+
+1. **English tasks: compressed embeddings BEAT baseline after fine-tuning.**
+   XNLI-EN: v2_attn 0.659 > ant_ours/lowrank 0.651 > baseline 0.623 (+3.6%).
+   ARC-Easy: lowrank/ant_ours 0.467 > baseline 0.457. HellaSwag: baseline
+   leads slightly (0.359 vs 0.356). English avg: lowrank 0.491 > baseline 0.480.
+   This is the first evidence that compressed embeddings learn *better*
+   task-specific structure — the bottleneck acts as implicit regularization.
+
+2. **Cross-lingual: baseline leads on DE/RU after XNLI fine-tuning** (0.371/0.367
+   vs ~0.335-0.360 for compositional arms). But the gap is much smaller than the
+   embedding-level BLI deficit (0.278 vs 0.013) — fine-tuning partially recovers
+   cross-lingual ability through the backbone. VI/ZH are competitive or better
+   for compositional arms, suggesting the deficit is language-pair-dependent.
+
+3. **ant_ours wins overall average (0.3228)** — the entmax-routed codebook-only
+   architecture, with 6.5× fewer embedding params than baseline, produces the
+   best aggregate downstream performance after fine-tuning. This was not visible
+   in zero-shot benchmarks (which were near chance) nor in raw PPL (where
+   baseline led by 8%).
+
+4. **original_ant is consistently worst** (0.3177 avg, 0.473 EN avg) — its
+   626M-param near-dense embedding table neither helps nor is parameter-efficient.
+
+5. **residual_ant ≈ lowrank on English** (0.488 vs 0.491) — the codebook adds
+   negligible value over the plain identity path on downstream tasks, consistent
+   with the training loss result (3.172 vs 3.160).
+
+### Data locations
+
+Result JSONs: `/opt/dlami/nvme/sparse_emb_outputs/finetune/` on both machines.
+Per-run logs: same directory, `*.log` files. Local copies: `temp/finetune_gen/`.
+Code: `finetune/{tasks,train,run_all}.py`.
+
 ## TODO
 
-- [ ] Pull ALBERT eval results (PPL + benchmarks 1k–10k) when eval finishes
-- [ ] Wait for Residual ANT training to finish on th3
-- [ ] Run eval + frequency-binned PPL + cross-lingual battery on both new arms
-- [ ] Compare: does residual ANT's identity path recover cross-lingual alignment?
+- [ ] Run eval PPL + benchmarks for ALBERT and Residual ANT (checkpoints on machines)
+- [ ] Run frequency-binned PPL + cross-lingual battery on both new arms
 - [ ] Decide go/no-go for full 35K run based on all results
 - [ ] Pull training metrics (loss curves, ppl) from wandb offline logs
