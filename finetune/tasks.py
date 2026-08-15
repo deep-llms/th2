@@ -85,7 +85,8 @@ TASK_CONFIGS = {
         "epochs": 3,
         "lr": 2e-5,
         "batch_size": 16,
-        "eval_tasks": ["hellaswag"],
+        "eval_tasks": ["hellaswag", "hellaswag_ar", "hellaswag_de",
+                        "hellaswag_ru", "hellaswag_vi"],
     },
     "arc_easy": {
         "max_length": 256,
@@ -167,7 +168,7 @@ def load_train_data(task_name, tokenizer, max_length=256):
             completions.append(c)
 
     elif task_name == "xnli":
-        ds = load_dataset("nyu-mll/multi_nli", split="train")
+        ds = load_dataset("facebook/xnli", "en", split="train")
         for doc in ds:
             p, c = format_xnli(doc, lang="en")
             prompts.append(p)
