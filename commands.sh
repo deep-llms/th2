@@ -1,17 +1,17 @@
-#1
-#th2-gen-finetune
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-sleep 3
-conda activate eval
-sleep 3
-
-nvidia-smi | head -12
-
-python finetune/run_all.py \
-    --checkpoints \
-        lowrank=/opt/dlami/nvme/sparse_emb_outputs/lowrank/checkpoint-10000 \
-        original_ant=/opt/dlami/nvme/sparse_emb_outputs/original_ant/checkpoint-10000 \
-        v2_attn=/opt/dlami/nvme/sparse_emb_outputs/v2_attn/checkpoint-10000 \
-    --tasks hellaswag arc_easy xnli \
-    --seeds 42 123 456 \
-    --output-dir /opt/dlami/nvme/sparse_emb_outputs/finetune
+#1 +120+a
+#th2-kill-clean-ft
+for i in 1 2 3 4 5; do
+    pkill -f "finetune" 2>/dev/null
+    pkill -f "train.py" 2>/dev/null
+    pkill -f "run_all" 2>/dev/null
+    sleep 5
+done
+nvidia-smi --query-compute-apps=pid --format=csv,noheader | while read pid; do
+    [ -n "$pid" ] && kill -9 "$pid" 2>/dev/null && echo "killed $pid"
+done
+sleep 5
+rm -rf /opt/dlami/nvme/sparse_emb_outputs/finetune
+rm -rf ~/.cache/huggingface/datasets
+nvidia-smi | grep -E "MiB /|No running" | head -4
+ls /opt/dlami/nvme/sparse_emb_outputs/finetune 2>/dev/null || echo "finetune: gone"
+echo TH2 KILLED AND CLEANED
