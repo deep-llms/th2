@@ -1,9 +1,14 @@
-"""Task definitions: data loading, preprocessing, eval splits.
+"""Task definitions for generative fine-tuning.
 
-Each task returns train/val/test DataLoaders via get_dataloaders().
-Text-pair tasks (XNLI, PAWS-X) concatenate with the tokenizer's EOS.
-HellaSwag returns (B, 4, L) tensors for multiple-choice scoring.
+Each task formats training data as (prompt, completion) pairs matching
+the EXACT format that lm-evaluation-harness uses at eval time. Training
+loss is computed only on completion tokens (prompt is masked with -100).
+
+Right padding: text first, then padding after. Standard for causal LM
+training — the model processes real tokens left-to-right, ignoring pads.
 """
+
+import re
 
 import torch
 from torch.utils.data import DataLoader, Dataset
@@ -11,38 +16,56 @@ from datasets import load_dataset
 
 
 # -----------------------------------------------------------------------
-# Collation helpers
+# HellaSwag preprocessing (copied from lm-eval-harness hellaswag/utils.py)
 # -----------------------------------------------------------------------
 
-class ClassificationDataset(Dataset):
-    def __init__(self, texts, labels, tokenizer, max_length):
-        self.encodings = tokenizer(
-            list(texts), max_length=max_length, padding="max_length",
-            truncation=True, return_tensors="pt")
-        self.labels = torch.tensor(list(labels), dtype=torch.long)
-
-    def __len__(self):
-        return len(self.labels)
-
-    def __getitem__(self, idx):
-        return {
-            "input_ids": self.encodings["input_ids"][idx],
-            "attention_mask": self.encodings["attention_mask"][idx],
-            "labels": self.labels[idx],
-        }
+def _preprocess_hellaswag(text):
+    text = text.strip()
+    text = text.replace(" [title]", ". ")
+    text = re.sub("\\[.*?\\]", "", text)
+    text = text.replace("  ", " ")
+    return text
 
 
-class MultipleChoiceDataset(Dataset):
-    def __init__(self, contexts, endings_list, labels, tokenizer, max_length):
+# -----------------------------------------------------------------------
+# Dataset: tokenized (prompt, completion) with labels=-100 for prompt
+# -----------------------------------------------------------------------
+
+class GenerativeDataset(Dataset):
+    """Tokenized (prompt + completion) with loss masking on prompt tokens.
+
+    Right-padded: real tokens first, padding at end. Labels use -100
+    for both prompt and padding positions.
+    """
+
+    def __init__(self, prompts, completions, tokenizer, max_length):
         self.items = []
-        for ctx, endings, label in zip(contexts, endings_list, labels):
-            texts = [ctx + " " + e for e in endings]
-            enc = tokenizer(texts, max_length=max_length, padding="max_length",
-                            truncation=True, return_tensors="pt")
+        pad_id = tokenizer.pad_token_id
+
+        for prompt, completion in zip(prompts, completions):
+            prompt_ids = tokenizer(prompt, add_special_tokens=False)["input_ids"] if prompt else []
+            comp_ids = tokenizer(completion, add_special_tokens=False)["input_ids"]
+
+            full_ids = prompt_ids + comp_ids
+            if len(full_ids) > max_length:
+                full_ids = full_ids[:max_length]
+
+            # Labels: -100 for prompt, real ids for completion
+            n_prompt = min(len(prompt_ids), len(full_ids))
+            if n_prompt >= len(full_ids):
+                continue  # skip: prompt fills entire sequence, no completion
+            labels = [-100] * n_prompt + full_ids[n_prompt:]
+
+            # Right-pad
+            pad_len = max_length - len(full_ids)
+            input_ids = full_ids + [pad_id] * pad_len
+            labels = labels + [-100] * pad_len
+            attention_mask = [1] * len(full_ids) + [0] * pad_len
+
             self.items.append({
-                "input_ids": enc["input_ids"],       # (C, L)
-                "attention_mask": enc["attention_mask"],
-                "labels": torch.tensor(label, dtype=torch.long),
+                "input_ids": torch.tensor(input_ids, dtype=torch.long),
+                "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
+                "labels": torch.tensor(labels, dtype=torch.long),
             })
 
     def __len__(self):
@@ -57,188 +80,108 @@ class MultipleChoiceDataset(Dataset):
 # -----------------------------------------------------------------------
 
 TASK_CONFIGS = {
-    "ag_news": {
-        "num_classes": 4,
-        "max_length": 128,
-        "type": "classification",
-        "full_epochs": 3,
-        "probe_epochs": 10,
-        "full_lr": 2e-5,
-        "probe_lr": 1e-3,
-        "full_batch": 32,
-        "probe_batch": 64,
+    "hellaswag": {
+        "max_length": 256,
+        "epochs": 3,
+        "lr": 2e-5,
+        "batch_size": 16,
+        "eval_tasks": ["hellaswag"],
     },
-    "sst2": {
-        "num_classes": 2,
-        "max_length": 128,
-        "type": "classification",
-        "full_epochs": 3,
-        "probe_epochs": 10,
-        "full_lr": 2e-5,
-        "probe_lr": 1e-3,
-        "full_batch": 32,
-        "probe_batch": 64,
+    "arc_easy": {
+        "max_length": 256,
+        "epochs": 3,
+        "lr": 2e-5,
+        "batch_size": 32,
+        "eval_tasks": ["arc_easy"],
     },
     "xnli": {
-        "num_classes": 3,
         "max_length": 256,
-        "type": "classification",
-        "full_epochs": 5,
-        "probe_epochs": 20,
-        "full_lr": 2e-5,
-        "probe_lr": 1e-3,
-        "full_batch": 32,
-        "probe_batch": 64,
-        "xling_langs": ["en", "vi", "zh", "de", "ru", "ar"],
-    },
-    "paws_x": {
-        "num_classes": 2,
-        "max_length": 256,
-        "type": "classification",
-        "full_epochs": 5,
-        "probe_epochs": 20,
-        "full_lr": 2e-5,
-        "probe_lr": 1e-3,
-        "full_batch": 32,
-        "probe_batch": 64,
-        "xling_langs": ["en", "de", "zh"],
-    },
-    "hellaswag": {
-        "num_classes": 4,
-        "max_length": 256,
-        "type": "multiple_choice",
-        "full_epochs": 3,
-        "probe_epochs": 10,
-        "full_lr": 2e-5,
-        "probe_lr": 1e-3,
-        "full_batch": 8,
-        "probe_batch": 16,
+        "epochs": 3,
+        "lr": 2e-5,
+        "batch_size": 32,
+        "eval_tasks": ["xnli_en", "xnli_vi", "xnli_zh", "xnli_de",
+                        "xnli_ru", "xnli_ar"],
     },
 }
 
-XNLI_LANGS = ["en", "vi", "zh", "de", "ru", "ar"]
-PAWSX_LANGS = ["en", "de", "zh"]
+XNLI_KEYWORDS = {
+    "en": {"q": "right", "yes": "Yes", "also": "Also", "no": "No"},
+    "vi": {"q": "đúng", "yes": "Vâng", "also": "Vì vậy", "no": "Không"},
+    "zh": {"q": "正确", "yes": "是的", "also": "所以", "no": "不是的"},
+    "de": {"q": "richtig", "yes": "Ja", "also": "Auch", "no": "Nein"},
+    "ru": {"q": "правильно", "yes": "Да", "also": "Так", "no": "Нет"},
+    "ar": {"q": "صحيح", "yes": "نعم", "also": "لذا", "no": "رقم"},
+}
 
 
-def load_task_data(task_name, tokenizer, split="train", lang=None):
-    """Load and preprocess a task split, returning a Dataset."""
-    cfg = TASK_CONFIGS[task_name]
-    sep = " " + tokenizer.eos_token + " "
+# -----------------------------------------------------------------------
+# Format functions: match lm-eval-harness exactly
+# -----------------------------------------------------------------------
 
-    if task_name == "ag_news":
-        ds = load_dataset("fancyzhx/ag_news", split=split)
-        return ClassificationDataset(
-            ds["text"], ds["label"], tokenizer, cfg["max_length"])
+def format_hellaswag(doc):
+    """Match hellaswag.yaml: doc_to_text={{query}}, doc_to_choice=choices."""
+    ctx = doc["ctx_a"] + " " + doc["ctx_b"].capitalize()
+    query = _preprocess_hellaswag(doc["activity_label"] + ": " + ctx)
+    choices = [_preprocess_hellaswag(e) for e in doc["endings"]]
+    correct = choices[int(doc["label"])]
+    return query, " " + correct
 
-    if task_name == "sst2":
-        s = "validation" if split == "test" else split
-        ds = load_dataset("stanfordnlp/sst2", split=s)
-        return ClassificationDataset(
-            ds["sentence"], ds["label"], tokenizer, cfg["max_length"])
 
-    if task_name == "xnli":
-        if split == "train":
-            ds = load_dataset("nyu-mll/multi_nli", split="train")
-            texts = [p + sep + h for p, h in
-                     zip(ds["premise"], ds["hypothesis"])]
-            return ClassificationDataset(
-                texts, ds["label"], tokenizer, cfg["max_length"])
-        lang = lang or "en"
-        s = "validation" if split == "val" else "test"
-        ds = load_dataset("facebook/xnli", lang, split=s)
-        texts = [p + sep + h for p, h in
-                 zip(ds["premise"], ds["hypothesis"])]
-        return ClassificationDataset(
-            texts, ds["label"], tokenizer, cfg["max_length"])
+def format_arc_easy(doc):
+    """Match arc_easy.yaml: Question: {{question}}\nAnswer:"""
+    prompt = f"Question: {doc['question']}\nAnswer:"
+    idx = doc["choices"]["label"].index(doc["answerKey"])
+    answer = doc["choices"]["text"][idx]
+    return prompt, " " + answer
 
-    if task_name == "paws_x":
-        lang = lang or "en"
-        ds = load_dataset("google-research-datasets/paws-x", lang,
-                          split=split)
-        texts = [s1 + sep + s2 for s1, s2 in
-                 zip(ds["sentence1"], ds["sentence2"])]
-        return ClassificationDataset(
-            texts, ds["label"], tokenizer, cfg["max_length"])
+
+def format_xnli(doc, lang="en"):
+    """Match xnli YAML: empty prompt, full sentence as completion."""
+    kw = XNLI_KEYWORDS[lang]
+    label_words = [kw["yes"], kw["also"], kw["no"]]
+    correct = label_words[doc["label"]]
+    sentence = f"{doc['premise']}, {kw['q']}? {correct}, {doc['hypothesis']}"
+    return "", " " + sentence
+
+
+# -----------------------------------------------------------------------
+# Data loading
+# -----------------------------------------------------------------------
+
+def load_train_data(task_name, tokenizer, max_length=256):
+    """Load and format training data. Returns a GenerativeDataset."""
+    prompts, completions = [], []
 
     if task_name == "hellaswag":
-        s = "validation" if split == "test" else split
-        ds = load_dataset("Rowan/hellaswag", split=s)
-        return MultipleChoiceDataset(
-            ds["ctx"], ds["endings"],
-            [int(l) for l in ds["label"]],
-            tokenizer, cfg["max_length"])
+        ds = load_dataset("Rowan/hellaswag", split="train")
+        for doc in ds:
+            p, c = format_hellaswag(doc)
+            prompts.append(p)
+            completions.append(c)
 
-    raise ValueError(f"Unknown task: {task_name}")
+    elif task_name == "arc_easy":
+        ds = load_dataset("allenai/ai2_arc", "ARC-Easy", split="train")
+        for doc in ds:
+            p, c = format_arc_easy(doc)
+            prompts.append(p)
+            completions.append(c)
 
-
-def get_dataloaders(task_name, tokenizer, mode="full", num_workers=4):
-    """Build train/val/test DataLoaders for a task.
-
-    Returns (train_loader, val_loader, test_splits) where test_splits is a
-    dict of {split_name: DataLoader} — for cross-lingual tasks this includes
-    per-language test sets.
-    """
-    cfg = TASK_CONFIGS[task_name]
-    bs = cfg[f"{mode}_batch"]
-
-    test_splits = {}
-    if task_name == "ag_news":
-        # AG News has no val split; hold out 5% of train for validation
-        from torch.utils.data import Subset
-        full_train = load_task_data(task_name, tokenizer, "train")
-        n_val = len(full_train) // 20
-        train_loader = DataLoader(
-            Subset(full_train, list(range(n_val, len(full_train)))),
-            batch_size=bs, shuffle=True,
-            num_workers=num_workers, pin_memory=True)
-        val_loader = DataLoader(
-            Subset(full_train, list(range(n_val))),
-            batch_size=bs * 2, shuffle=False,
-            num_workers=num_workers, pin_memory=True)
-        test_ds = load_task_data(task_name, tokenizer, "test")
-        test_splits["ag_news"] = DataLoader(
-            test_ds, batch_size=bs * 2, shuffle=False,
-            num_workers=num_workers, pin_memory=True)
     elif task_name == "xnli":
-        train_ds = load_task_data(task_name, tokenizer, "train")
-        train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True,
-                                  num_workers=num_workers, pin_memory=True)
-        val_ds = load_task_data(task_name, tokenizer, "val", lang="en")
-        val_loader = DataLoader(val_ds, batch_size=bs * 2, shuffle=False,
-                                num_workers=num_workers, pin_memory=True)
-        for lang in XNLI_LANGS:
-            ds = load_task_data(task_name, tokenizer, "test", lang=lang)
-            test_splits[f"xnli_{lang}"] = DataLoader(
-                ds, batch_size=bs * 2, shuffle=False,
-                num_workers=num_workers, pin_memory=True)
-    elif task_name == "paws_x":
-        train_ds = load_task_data(task_name, tokenizer, "train")
-        train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True,
-                                  num_workers=num_workers, pin_memory=True)
-        val_ds = load_task_data(task_name, tokenizer, "validation", lang="en")
-        val_loader = DataLoader(val_ds, batch_size=bs * 2, shuffle=False,
-                                num_workers=num_workers, pin_memory=True)
-        for lang in PAWSX_LANGS:
-            ds = load_task_data(task_name, tokenizer, "test", lang=lang)
-            test_splits[f"paws_{lang}"] = DataLoader(
-                ds, batch_size=bs * 2, shuffle=False,
-                num_workers=num_workers, pin_memory=True)
-    elif task_name == "sst2":
-        train_ds = load_task_data(task_name, tokenizer, "train")
-        train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True,
-                                  num_workers=num_workers, pin_memory=True)
-        val_ds = load_task_data(task_name, tokenizer, "test")
-        val_loader = DataLoader(val_ds, batch_size=bs * 2, shuffle=False,
-                                num_workers=num_workers, pin_memory=True)
-        test_splits["sst2"] = val_loader
-    else:
-        # HellaSwag: test has no labels; use validation for both
-        train_ds = load_task_data(task_name, tokenizer, "train")
-        train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True,
-                                  num_workers=num_workers, pin_memory=True)
-        test_ds = load_task_data(task_name, tokenizer, "test")
-        val_loader = DataLoader(test_ds, batch_size=bs * 2, shuffle=False,
-                                num_workers=num_workers, pin_memory=True)
-        test_splits[task_name] = val_loader
+        ds = load_dataset("nyu-mll/multi_nli", split="train")
+        for doc in ds:
+            p, c = format_xnli(doc, lang="en")
+            prompts.append(p)
+            completions.append(c)
 
-    return train_loader, val_loader, test_splits
+    else:
+        raise ValueError(f"Unknown task: {task_name}")
+
+    return GenerativeDataset(prompts, completions, tokenizer, max_length)
+
+
+def get_train_loader(task_name, tokenizer, num_workers=2):
+    """Build training DataLoader."""
+    cfg = TASK_CONFIGS[task_name]
+    ds = load_train_data(task_name, tokenizer, cfg["max_length"])
+    return DataLoader(ds, batch_size=cfg["batch_size"], shuffle=True,
+                      num_workers=num_workers, pin_memory=True)
