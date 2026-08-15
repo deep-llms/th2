@@ -93,7 +93,8 @@ TASK_CONFIGS = {
         "epochs": 3,
         "lr": 2e-5,
         "batch_size": 32,
-        "eval_tasks": ["arc_easy"],
+        "eval_tasks": ["arc_easy", "arc_ar", "arc_de", "arc_ru",
+                        "arc_vi", "arc_zh"],
     },
     "xnli": {
         "max_length": 256,
