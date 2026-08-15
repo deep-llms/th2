@@ -31,10 +31,18 @@ class TiedLowRankHead(nn.Module):
 
     def forward(self, hidden_states):
         # proj is Linear(E→H), weight shape (H, E)
-        # Forward: x @ weight.T = (B,E) @ (E,H) = (B,H)
-        # Reverse: hidden @ weight = (B,H) @ (H,E) = (B,E)
+        # Input: e = X[i] @ W.T + b  (per token, includes bias)
+        # Tied output: logits = hidden @ table.T where table = X @ W.T + b
+        # = hidden @ (X @ W.T + b).T
+        # = hidden @ (W @ X.T) + hidden @ b (b broadcast across V)
+        # Factored: H→E then E→V, plus bias contribution
         h_proj = hidden_states @ self.embed.proj.weight  # (B, L, E)
-        return h_proj @ self.embed.X.T  # (B, L, V)
+        logits = h_proj @ self.embed.X.T  # (B, L, V)
+        if self.embed.proj.bias is not None:
+            # bias (H,): each hidden position dot-products with bias,
+            # adds a scalar to all V logits (shifts all equally)
+            logits = logits + (hidden_states @ self.embed.proj.bias).unsqueeze(-1)
+        return logits
 
 
 class TiedOriginalANTHead(nn.Module):
