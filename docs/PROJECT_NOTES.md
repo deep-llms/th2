@@ -488,6 +488,22 @@ tokens only. Each task trains on English, evals on English + multilingual.
 | ARC-Easy | 2.3K (EN) | arc_easy (acc_norm) | ar, de, ru, vi, zh |
 | XNLI | 393K (EN MultiNLI) | xnli_en (acc) | vi, zh, de, ru, ar |
 
+### Hyperparameters (identical across all arms — no per-arm tuning)
+
+```
+Optimizer:       AdamW
+Learning rate:   2e-5 (standard from BERT/GPT fine-tuning)
+Weight decay:    0.01
+Warmup:          10% of total steps
+Scheduler:       Linear decay
+Gradient clip:   1.0
+Epochs:          3
+Batch size:      16 (HellaSwag), 32 (ARC-Easy, XNLI)
+Max length:      256
+Precision:       bf16 autocast
+Seeds:           42, 123, 456 (report mean ± std)
+```
+
 ### Full results (acc_norm where available, else acc; mean±std over 3 seeds)
 
 | Benchmark | baseline | lowrank | ant_ours | v2_attn | original_ant | residual_ant |
