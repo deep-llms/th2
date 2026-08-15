@@ -26,9 +26,8 @@ class CausalLMClassifier(nn.Module):
             output_hidden_states=True,
         )
         hidden = outputs.hidden_states[-1]
-        seq_lengths = attention_mask.sum(dim=1) - 1
-        pooled = hidden[torch.arange(hidden.size(0), device=hidden.device),
-                        seq_lengths].float()
+        # Left-padded: last real token is always at rightmost position
+        pooled = hidden[:, -1, :].float()
         return self.classifier(pooled)
 
 
@@ -52,7 +51,6 @@ class CausalLMMultipleChoice(nn.Module):
             output_hidden_states=True,
         )
         hidden = outputs.hidden_states[-1]
-        seq_lengths = flat_mask.sum(dim=1) - 1
-        pooled = hidden[torch.arange(B * C, device=hidden.device),
-                        seq_lengths].float()
+        # Left-padded: last real token is always at rightmost position
+        pooled = hidden[:, -1, :].float()
         return self.score_head(pooled).view(B, C)
