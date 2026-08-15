@@ -101,20 +101,6 @@ TASK_CONFIGS = {
         "eval_tasks": ["xnli_en", "xnli_vi", "xnli_zh", "xnli_de",
                         "xnli_ru", "xnli_ar"],
     },
-    "piqa": {
-        "max_length": 256,
-        "epochs": 3,
-        "lr": 2e-5,
-        "batch_size": 32,
-        "eval_tasks": ["piqa"],
-    },
-    "winogrande": {
-        "max_length": 256,
-        "epochs": 3,
-        "lr": 2e-5,
-        "batch_size": 32,
-        "eval_tasks": ["winogrande"],
-    },
 }
 
 XNLI_KEYWORDS = {
@@ -157,24 +143,6 @@ def format_xnli(doc, lang="en"):
     return "", " " + sentence
 
 
-def format_piqa(doc):
-    """Match piqa.yaml: Question: {{goal}}\nAnswer:"""
-    prompt = f"Question: {doc['goal']}\nAnswer:"
-    solutions = [doc["sol1"], doc["sol2"]]
-    correct = solutions[doc["label"]]
-    return prompt, " " + correct
-
-
-def format_winogrande(doc):
-    """Match winogrande: context varies per choice, continuation is shared."""
-    idx = doc["sentence"].index("_")
-    options = [doc["option1"], doc["option2"]]
-    correct = options[int(doc["answer"]) - 1]
-    suffix = doc["sentence"][idx + 1:].strip()
-    prompt = doc["sentence"][:idx] + correct
-    return prompt, " " + suffix
-
-
 # -----------------------------------------------------------------------
 # Data loading
 # -----------------------------------------------------------------------
@@ -201,21 +169,6 @@ def load_train_data(task_name, tokenizer, max_length=256):
         ds = load_dataset("nyu-mll/multi_nli", split="train")
         for doc in ds:
             p, c = format_xnli(doc, lang="en")
-            prompts.append(p)
-            completions.append(c)
-
-    elif task_name == "piqa":
-        ds = load_dataset("ybisk/piqa", split="train")
-        for doc in ds:
-            p, c = format_piqa(doc)
-            prompts.append(p)
-            completions.append(c)
-
-    elif task_name == "winogrande":
-        ds = load_dataset("allenai/winogrande", "winogrande_xl",
-                          split="train")
-        for doc in ds:
-            p, c = format_winogrande(doc)
             prompts.append(p)
             completions.append(c)
 

@@ -118,22 +118,35 @@ def train_one(checkpoint, task_name, seed, device, output_dir,
     print(f"  Training done in {train_time:.0f}s")
 
     # Evaluate with lm-eval-harness (in-memory, same model)
-    print(f"  Evaluating with lm-eval-harness: {cfg['eval_tasks']}")
-    model.eval()
-    eval_results = evaluate_with_lm_eval(
-        model, tokenizer, cfg["eval_tasks"], device)
+    eval_results = {}
+    try:
+        print(f"  Evaluating with lm-eval-harness: {cfg['eval_tasks']}")
+        model.eval()
+        eval_results = evaluate_with_lm_eval(
+            model, tokenizer, cfg["eval_tasks"], device)
+        for task, metrics in eval_results.items():
+            acc = metrics.get("acc", 0)
+            acc_norm = metrics.get("acc_norm")
+            extra = f" acc_norm={acc_norm:.4f}" if acc_norm is not None else ""
+            print(f"    {task}: acc={acc:.4f}{extra}")
+    except ImportError:
+        print("  lm_eval not available — skipping eval (run separately)")
+    except Exception as e:
+        print(f"  eval failed: {e}")
 
-    for task, metrics in eval_results.items():
-        acc = metrics.get("acc", 0)
-        acc_norm = metrics.get("acc_norm")
-        extra = f" acc_norm={acc_norm:.4f}" if acc_norm is not None else ""
-        print(f"    {task}: acc={acc:.4f}{extra}")
-
-    # Save result
+    # Save result + fine-tuned model state
     os.makedirs(output_dir, exist_ok=True)
     arm = os.environ.get("FINETUNE_ARM_NAME",
                          os.path.basename(os.path.dirname(
                              os.path.normpath(checkpoint))))
+
+    model_dir = os.path.join(output_dir, "models",
+                             f"{task_name}_{arm}_seed{seed}")
+    os.makedirs(model_dir, exist_ok=True)
+    torch.save({k: v.cpu() for k, v in model.state_dict().items()},
+               os.path.join(model_dir, "model_state.pt"))
+    print(f"    model saved: {model_dir}")
+
     result = {
         "checkpoint": checkpoint,
         "task": task_name,
@@ -142,6 +155,7 @@ def train_one(checkpoint, task_name, seed, device, output_dir,
         "lr": cfg["lr"],
         "train_time_s": train_time,
         "eval_results": eval_results,
+        "model_path": model_dir,
     }
 
     out_path = os.path.join(output_dir, f"{task_name}_{arm}_seed{seed}.json")
