@@ -1,6 +1,6 @@
-#1 +60+a
-#th2-cancel-clean-lowrank-tied
-echo '=== th2 cancel low-rank tied ==='
+#1 +120+a
+#th2-delete-dataset-cache-verify-clean
+echo '=== th2 delete dataset caches and verify clean ==='
 date -u
 hostname
 
@@ -18,9 +18,16 @@ nvidia-smi --query-compute-apps=pid --format=csv,noheader \
       done
 sleep 5
 
-echo '=== remove only current low-rank tied artifacts ==='
+echo '=== remove current experiment artifacts ==='
 rm -rf -- /opt/dlami/nvme/sparse_emb_outputs/lowrank_tied
+rm -rf -- /opt/dlami/nvme/sparse_emb_outputs/shared_local_tied
 rm -rf -- /home/ubuntu/deep-llms_th2/wandb/offline-run-20260816_092120-uuv8wvem
+
+echo '=== remove dataset-processing caches ==='
+rm -rf -- "$HOME/.cache/huggingface/datasets"
+find /opt/dlami/nvme/sparse_emb_data -depth \
+    \( -name 'cache-*' -o -name 'tmp*' \) \
+    -exec rm -rf -- {} +
 
 echo '=== verify th2 clean ==='
 pgrep -af '[t]rain_compositional.py|[a]ccelerate launch' || echo 'training processes: none'
@@ -32,7 +39,20 @@ if [ -n "$TASK_GPU_PROCESSES" ]; then
 fi
 echo 'GPU processes: none'
 test ! -e /opt/dlami/nvme/sparse_emb_outputs/lowrank_tied
+test ! -e /opt/dlami/nvme/sparse_emb_outputs/shared_local_tied
 test ! -e /home/ubuntu/deep-llms_th2/wandb/offline-run-20260816_092120-uuv8wvem
+test ! -e "$HOME/.cache/huggingface/datasets"
+TASK_DATA_CACHE_COUNT="$(find /opt/dlami/nvme/sparse_emb_data \
+    \( -name 'cache-*' -o -name 'tmp*' \) -print | wc -l)"
+if [ "$TASK_DATA_CACHE_COUNT" -ne 0 ]; then
+    echo "ERROR: $TASK_DATA_CACHE_COUNT data cache paths remain:"
+    find /opt/dlami/nvme/sparse_emb_data \
+        \( -name 'cache-*' -o -name 'tmp*' \) -print | head -50
+    exit 1
+fi
 echo 'lowrank_tied output: gone'
+echo 'shared_local_tied output: gone'
 echo 'lowrank_tied W&B run: gone'
+echo 'Hugging Face datasets cache: gone'
+echo 'data cache/tmp paths: 0'
 echo 'TH2 CLEAN'
