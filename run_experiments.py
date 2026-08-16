@@ -85,6 +85,11 @@ EXPERIMENT_COMMANDS = [
         "cmd": "bash scripts/train_residual_ant_tied.sh",
         "output_dir": f"{OUT_BASE}/residual_ant_tied",
     },
+    {
+        "name": "shared_local_tied",
+        "cmd": "bash scripts/train_shared_local_tied.sh",
+        "output_dir": f"{OUT_BASE}/shared_local_tied",
+    },
 ]
 
 

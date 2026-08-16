@@ -7,6 +7,7 @@ from .embeddings import (
     V2Embed,
     IsolationControlEmbed,
     LowRankEmbed,
+    SharedLocalEmbed,
 )
 from .optimizers import Yogi
 from .losses import compute_loss

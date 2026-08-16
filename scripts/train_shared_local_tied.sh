@@ -1,7 +1,7 @@
 #!/bin/bash
-# Train Qwen3-0.6B from scratch — ANT (ours) embedding
+# Train Qwen3-0.6B from scratch — exactly tied shared + group-local low-rank embedding
 
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+eval "$("$HOME"/miniconda3/bin/conda shell.bash hook)"
 sleep 3
 conda activate sparse_emb
 sleep 3
@@ -37,11 +37,10 @@ accelerate launch train_compositional.py \
     --save_steps 250 \
     --dataloader_num_workers 8 \
     --report_to wandb \
-    --output_dir /opt/dlami/nvme/sparse_emb_outputs/ant_ours_tied \
-    --run_name ant-ours-tied-qwen3-0.6b \
-    --arm ant \
-    --K 4096 \
-    --d_x 128 \
-    --d_k 64 \
-    --gamma 1.0 \
+    --output_dir /opt/dlami/nvme/sparse_emb_outputs/shared_local_tied \
+    --run_name shared-local-tied-qwen3-0.6b \
+    --arm shared_local \
+    --shared_rank 64 \
+    --local_embed_rank 64 \
+    --num_groups 4 \
     --tie_output

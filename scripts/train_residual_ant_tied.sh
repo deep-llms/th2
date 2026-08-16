@@ -21,6 +21,7 @@ accelerate launch train_compositional.py \
     --preprocessing_num_workers 160 \
     --seed 42 \
     --bf16 \
+    --ddp_find_unused_parameters false \
     --per_device_train_batch_size 4 \
     --gradient_accumulation_steps 16 \
     --num_train_epochs 1 \

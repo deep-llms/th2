@@ -264,6 +264,8 @@ class SaveEmbeddingCallback(TrainerCallback):
         self.embed_shim = embed_shim
 
     def on_save(self, args, state, control, **kwargs):
+        if not args.should_save:
+            return
         checkpoint_dir = os.path.join(args.output_dir, f"checkpoint-{state.global_step}")
         if os.path.isdir(checkpoint_dir):
             torch.save(self.embed_shim.embed.state_dict(),

@@ -38,7 +38,7 @@ from transformers.trainer_utils import get_last_checkpoint
 
 from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
-    IsolationControlEmbed, LowRankEmbed,
+    IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed,
 )
 from compositional.losses import load_balance
 
@@ -103,11 +103,21 @@ class CompositionalArguments:
         default="ant",
         metadata={
             "help": "Embedding arm to train.",
-            "choices": ["ant", "residual_ant", "v0", "v1", "v2", "isolation_control", "lowrank"],
+            "choices": ["ant", "residual_ant", "v0", "v1", "v2",
+                        "isolation_control", "lowrank", "shared_local"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
     d_x: int = field(default=128, metadata={"help": "Base token table dimension."})
+    shared_rank: int = field(default=64, metadata={
+        "help": "Shared token-subspace rank for the shared_local arm."
+    })
+    local_embed_rank: int = field(default=64, metadata={
+        "help": "Per-group token-subspace rank for the shared_local arm."
+    })
+    num_groups: int = field(default=4, metadata={
+        "help": "Number of contiguous vocabulary groups for the shared_local arm."
+    })
     d_k: int = field(default=64, metadata={"help": "Router key dimension."})
     gamma: float = field(default=1.0, metadata={"help": "Score temperature for entmax."})
     num_heads: int = field(default=1, metadata={"help": "Number of selection heads (ANT/V2 only)."})
@@ -120,7 +130,9 @@ class CompositionalArguments:
         "help": "Tie the output lm_head to the input embedding weights. "
                 "Removes the free V×d lm_head (~155.6M params) and computes "
                 "output logits from the embedding module's own weights. "
-                "Not supported for context-dependent arms (v2, isolation_control).",
+                "Supported for lowrank, shared_local, original_ant, ant, and "
+                "residual_ant; not supported "
+                "for context-dependent arms (v0, v1, v2, isolation_control).",
     })
 
 
@@ -224,6 +236,8 @@ class SaveEmbeddingCallback(TrainerCallback):
         self.embed_shim = embed_shim
 
     def on_save(self, args, state, control, **kwargs):
+        if not args.should_save:
+            return
         checkpoint_dir = os.path.join(args.output_dir, f"checkpoint-{state.global_step}")
         if os.path.isdir(checkpoint_dir):
             torch.save(
@@ -256,6 +270,13 @@ def build_arm(comp_args, vocab_size, embed_dim):
 
     if ca.arm == "lowrank":
         return LowRankEmbed(vocab_size, embed_dim, rank=ca.d_x)
+    if ca.arm == "shared_local":
+        return SharedLocalEmbed(
+            vocab_size, embed_dim,
+            shared_rank=ca.shared_rank,
+            local_rank=ca.local_embed_rank,
+            num_groups=ca.num_groups,
+        )
     if ca.arm == "ant":
         return ANTEmbed(vocab_size, ca.K, embed_dim, **shared, num_heads=ca.num_heads)
     if ca.arm == "residual_ant":

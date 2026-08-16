@@ -21,6 +21,7 @@ accelerate launch train_compositional.py \
     --preprocessing_num_workers 160 \
     --seed 42 \
     --bf16 \
+    --ddp_find_unused_parameters false \
     --per_device_train_batch_size 4 \
     --gradient_accumulation_steps 16 \
     --num_train_epochs 1 \
@@ -37,7 +38,7 @@ accelerate launch train_compositional.py \
     --dataloader_num_workers 8 \
     --report_to wandb \
     --output_dir /opt/dlami/nvme/sparse_emb_outputs/lowrank_tied \
-    --run_name lowrank-tied-tied-qwen3-0.6b \
+    --run_name lowrank-tied-qwen3-0.6b \
     --arm lowrank \
     --d_x 128 \
     --tie_output
