@@ -1,5 +1,5 @@
 #2 +a
-#th2-lowrank-tied-progress
+#th2-lowrank-tied-progress-2
 eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
 sleep 3
 conda activate sparse_emb
