@@ -63,7 +63,9 @@ Checkpoints:    every 250 steps
 ### Fair comparison notes
 
 - All arms use same data, seed, LR schedule, batch size, block size
-- Baseline: `tie_word_embeddings=True` (default Qwen3). All others: `False` (custom input embedding can't be tied)
+- Baseline: `tie_word_embeddings=True` (default Qwen3). The historical custom-embedding
+  runs used an untied free `lm_head`; the new static-embedding reruns explicitly tie the
+  output to the custom input embedding (see the 2026-08-16 section below).
 - All arms train in bf16 (Qwen3 config default). Custom embeddings cast to bf16 via `.to(torch.bfloat16)`
 - entmax is the only fp32 component (explicit `s.float()` cast for sum-to-1 precision)
 - Baseline uses HF Trainer directly. Compositional arms use CompositionalTrainer (subclass) with EmbeddingShim
@@ -564,8 +566,104 @@ Result JSONs: `/opt/dlami/nvme/sparse_emb_outputs/finetune/` on both machines.
 Per-run logs: same directory, `*.log` files. Local copies: `temp/finetune_gen/`.
 Code: `finetune/{tasks,train,run_all}.py`.
 
+## Tied-output reruns and SharedLocal alternative (2026-08-16)
+
+### Why this experiment exists
+
+The standard Qwen3 baseline ties its input embedding and output classifier, while the
+historical custom-embedding arms replaced only `embed_tokens` and retained a free
+`V x d` `lm_head`. Those results are valid for the architectures that were actually
+trained, but input compression and output tying were confounded. We are now running a
+matched tied-output comparison:
+
+1. **Low-rank tied control** — the existing ALBERT-style rank-128 embedding with the
+   exact same weights used for the output classifier.
+2. **SharedLocal tied** — a more expressive alternative to a single global low-rank
+   subspace that remains fast with ordinary dense kernels and exact output tying.
+
+The primary architecture comparison is **SharedLocal tied vs low-rank tied**. A new
+low-rank tied vs historical low-rank untied comparison measures the effect of tying;
+it should not be presented as a pure architecture comparison.
+
+### Tied-output implementation and fixes
+
+- `--tie_output` replaces the free `lm_head` after installing the custom input
+  embedding. `config.tie_word_embeddings` remains disabled so Hugging Face does not
+  incorrectly apply its native tying logic to `EmbeddingShim`.
+- Low-rank logits are computed exactly and without materializing a `V x d` table:
+  `H -> r -> V`. The projection bias is included in the tied logits.
+- The tied head keeps a non-registering reference to the already-registered input
+  embedder. This prevents duplicate state-dict ownership and SafeTensors save errors.
+- Save/reload reconstructs the custom arm and tied head from `compositional_config.json`;
+  legacy low-rank checkpoints can infer the arm dimensions and tied flag.
+- SharedLocal supports balanced groups even when `V` is not divisible by the group
+  count. Qwen3's divisible production path uses batched dense GEMMs without vocabulary
+  materialization or a custom kernel.
+- The SharedLocal CLI uses `--local_embed_rank`, avoiding collision with Accelerate /
+  `TrainingArguments.local_rank`.
+- LowRank `proj` and SharedLocal `shared_proj` both use a bias. SharedLocal deliberately
+  has no separate bias for each local group: such a term would add learned group identity
+  and group-specific output priors, changing the architecture rather than completing a
+  missing linear-layer bias.
+- Regression status: **46 tests passed**, covering explicit-table equality, gradients,
+  serialization/reload, CLI parsing, balanced non-divisible groups, and the broader
+  compositional embedding suite.
+
+Relevant code: `compositional/tied_head.py`, `compositional/embeddings.py`,
+`compositional/loading.py`, `compositional/test_tied_head.py`, and
+`train_compositional.py`.
+
+### SharedLocal architecture under test
+
+For token `i` in vocabulary group `g(i)`:
+
+```
+e_i = shared_proj(x_i) + local_weight[g(i)] @ z_i
+x_i in R^64, z_i in R^64, number of groups = 4
+```
+
+Each token therefore retains 128 independent coefficients, matching the rank-128
+low-rank control. The shared 64-dimensional subspace transfers global structure, while
+four 64-dimensional local subspaces increase effective rank and token discrimination.
+Both input lookup and tied output use standard dense operations.
+
+| Arm | Embedding params | Total model params | Output computation |
+|---|---:|---:|---|
+| Low-rank tied (`r=128`) | 19,579,904 | 460,047,360 | factored `H -> 128 -> V` |
+| SharedLocal tied (`64+64`, 4 groups) | 19,776,512 | 460,243,968 | shared projection + grouped batched GEMM |
+
+SharedLocal has 196,608 additional embedding/model parameters (about 1% of the
+embedding budget), so this is a close parameter-matched comparison.
+
+### Fair training protocol
+
+Both reruns use Qwen3-0.6B from scratch, the same CulturaX data and tokenizer, seed 42,
+bf16, block size 2048, 4 sequences/device, 8 GPUs, gradient accumulation 16 (global
+batch 512), one epoch / 33,339 steps, AdamW (`3e-4`, betas `0.9/0.95`, weight decay
+`0.1`), cosine-with-min-LR (`0.1`), 500 warmup steps, gradient clipping `1.0`, logging
+every 10 steps, and checkpoints every 250 steps. Only the embedding architecture differs.
+
+Before rerunning, both machines were verified to have no GPU processes, both new output
+directories and exact W&B runs were deleted, and dataset-processing caches were deleted.
+Consequently, both reruns regenerated preprocessing caches from the same raw dataset.
+
+### Current runs
+
+| Machine | Arm | Launch commit | Output directory | Progress at 2026-08-16 ~17:20 UTC |
+|---|---|---|---|---|
+| th2 / `h100-1` | Low-rank tied | `da21ab6` | `.../sparse_emb_outputs/lowrank_tied` | step 5,953 / 33,339 (17.9%); loss 3.568; PPL 35.44; ~3.26 s/step |
+| th3 / `h100-2` | SharedLocal tied | `b4fa01f` | `.../sparse_emb_outputs/shared_local_tied` | step 5,636 / 33,339 (16.9%); loss 3.566; PPL 35.38; ~3.38 s/step |
+
+Both runs have finite gradients and no observed traceback, NaN, OOM, or NCCL failure.
+The latest log-pull commits are `6dc4468` (th2) and `49ae8ba` (th3). Do not infer an
+architecture winner from this early near-tie; compare matched checkpoints and final
+validation metrics.
+
 ## TODO
 
+- [ ] Finish the full 33,339-step low-rank-tied and SharedLocal-tied reruns
+- [ ] Compare matched-checkpoint loss/PPL curves, throughput, and peak memory
+- [ ] Run identical validation PPL and downstream evaluations for both tied arms
 - [ ] Run eval PPL + benchmarks for ALBERT and Residual ANT (checkpoints on machines)
 - [ ] Run frequency-binned PPL + cross-lingual battery on both new arms
 - [ ] Decide go/no-go for full 35K run based on all results
