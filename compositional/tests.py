@@ -12,6 +12,7 @@ import torch.nn as nn
 
 from .embeddings import (
     OriginalANT, ANTEmbed, V0Embed, V1Embed, V2Embed, IsolationControlEmbed,
+    SharedLocalEmbed,
 )
 from .optimizers import Yogi
 from .losses import compute_loss
@@ -156,6 +157,34 @@ def test_compute_loss_with_div():
     assert "div_loss" in logs
     assert loss_with_div > loss_no_div, "div loss did not increase total"
     print("  PASS compute_loss with load_balance")
+
+
+def test_shared_local_shapes_groups_and_gradients():
+    """Shared-local covers the vocabulary and trains every branch."""
+    N, d, r_s, r_l, G, B, L = 99, 32, 8, 8, 4, 2, 12
+    model = SharedLocalEmbed(N, d, r_s, r_l, G)
+    ids = torch.tensor([
+        [0, 1, 24, 25, 26, 49, 50, 51, 74, 75, 76, 98],
+        [98, 76, 75, 74, 51, 50, 49, 26, 25, 24, 1, 0],
+    ])
+    e, theta = model(ids)
+    assert e.shape == (B, L, d)
+    assert theta is None
+
+    bounds = [model.group_bounds(group) for group in range(G)]
+    assert bounds[0][0] == 0 and bounds[-1][1] == N
+    assert all(bounds[i][1] == bounds[i + 1][0] for i in range(G - 1))
+    sizes = [end - start for start, end in bounds]
+    assert min(sizes) > 0 and max(sizes) - min(sizes) <= 1
+
+    e.square().mean().backward()
+    for name, parameter in model.named_parameters():
+        assert parameter.grad is not None, f"shared_local {name}: grad is None"
+        assert torch.isfinite(parameter.grad).all(), \
+            f"shared_local {name}: non-finite gradient"
+        assert parameter.grad.abs().sum() > 0, \
+            f"shared_local {name}: zero gradient"
+    print("  PASS shared-local shapes, groups, and gradients")
 
 
 def test_end_to_end_train_step():
@@ -569,6 +598,8 @@ def run_all():
     test_compute_loss_basic()
     test_compute_loss_none_theta()
     test_compute_loss_with_div()
+    print("--- Shared-Local ---")
+    test_shared_local_shapes_groups_and_gradients()
     print("--- Original ANT end-to-end ---")
     test_end_to_end_train_step()
     print("--- ANT (ours) ---")

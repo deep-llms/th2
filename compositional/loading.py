@@ -29,6 +29,7 @@ from .embeddings import (
     V2Embed,
     IsolationControlEmbed,
     LowRankEmbed,
+    SharedLocalEmbed,
 )
 
 
@@ -63,6 +64,14 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim):
 
     if arm == "lowrank":
         return LowRankEmbed(vocab_size, embed_dim, rank=tc.get("d_x", 128))
+    if arm == "shared_local":
+        return SharedLocalEmbed(
+            vocab_size,
+            embed_dim,
+            shared_rank=tc.get("shared_rank", 64),
+            local_rank=tc.get("local_embed_rank", tc.get("local_rank", 64)),
+            num_groups=tc.get("num_groups", 4),
+        )
     if arm == "original_ant":
         return OriginalANT(vocab_size, K, embed_dim)
     if arm == "ant":
@@ -98,15 +107,24 @@ def _find_config_path(checkpoint_dir):
 def _infer_comp_config_from_state(state):
     """Infer arm + hyperparams from embedding.pt tensor names/shapes.
 
-    Needed because train_config.json is only written when training finishes
-    normally — runs killed at a target step (run_experiments.py) never write it.
-    gamma is not recoverable from weights; the training default (1.0) is assumed.
-    V0/V1 cannot be distinguished from weights alone and are not handled here.
+    Supports legacy, manually copied, or interrupted checkpoints whose
+    train_config.json is absent. Gamma is not recoverable from weights; the
+    training default (1.0) is assumed. V0/V1 cannot be distinguished from
+    weights alone and are not handled here.
     """
     keys = set(state.keys())
 
     if "T" in keys:
         return {"arm": "original_ant", "K": state["T"].shape[1]}
+
+    if "local_weight" in keys:
+        local_rank = state["local_weight"].shape[-1]
+        return {
+            "arm": "shared_local",
+            "shared_rank": state["token_factors"].shape[-1] - local_rank,
+            "local_embed_rank": local_rank,
+            "num_groups": state["local_weight"].shape[0],
+        }
 
     if "proj.weight" in keys:  # LowRankEmbed: X + proj, no codebook A
         return {"arm": "lowrank", "d_x": state["X"].shape[1]}
@@ -173,19 +191,47 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
         comp_config = full_config["compositional"]
     else:
         comp_config = _infer_comp_config_from_state(state)
-        print(f"  No train_config.json — inferred from embedding.pt: {comp_config}")
 
     config = AutoConfig.from_pretrained(checkpoint_dir)
-    model = AutoModelForCausalLM.from_pretrained(
-        checkpoint_dir, config=config, torch_dtype=dtype)
+    load_kwargs = dict(config=config, torch_dtype=dtype)
+    if config_path is None:
+        # A tied checkpoint intentionally has no lm_head tensors.  Loading info
+        # lets old/interrupted checkpoints that lack train_config.json recover
+        # tie_output as well as the arm dimensions inferred above.
+        model, loading_info = AutoModelForCausalLM.from_pretrained(
+            checkpoint_dir, output_loading_info=True, **load_kwargs
+        )
+        supported_tied_arms = {
+            "lowrank", "shared_local", "original_ant", "ant", "residual_ant"
+        }
+        comp_config["tie_output"] = (
+            comp_config["arm"] in supported_tied_arms
+            and any(key.startswith("lm_head.") for key in loading_info["missing_keys"])
+        )
+        print(f"  No train_config.json — inferred from checkpoint: {comp_config}")
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            checkpoint_dir, **load_kwargs
+        )
 
     embed = _build_arm_from_config(comp_config, config.vocab_size, config.hidden_size)
     embed.load_state_dict(state)
 
-    if dtype is not None:
-        embed = embed.to(dtype)
+    # The compositional weights live in a separate embedding.pt, so unlike the
+    # backbone they are not cast by from_pretrained().  Match the dtype that HF
+    # actually selected for the model when the caller leaves dtype unspecified
+    # (for example, a BF16 checkpoint whose config records BF16).  Otherwise the
+    # first projection in the embedding fails with a Float/BFloat16 mismatch.
+    model_dtype = next(model.parameters()).dtype
+    embed = embed.to(dtype=dtype if dtype is not None else model_dtype)
 
     model.model.embed_tokens = EmbeddingShim(embed)
+
+    if comp_config.get("tie_output", False):
+        from .tied_head import make_tied_head
+        model.lm_head = make_tied_head(embed, comp_config["arm"],
+                                       config.vocab_size)
+
     model.to(device)
     model.eval()
 

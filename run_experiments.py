@@ -64,6 +64,32 @@ EXPERIMENT_COMMANDS = [
         "cmd": "bash scripts/train_residual_ant.sh",
         "output_dir": f"{OUT_BASE}/residual_ant",
     },
+    # --- Tied output versions (no separate lm_head) ---
+    {
+        "name": "ant_ours_tied",
+        "cmd": "bash scripts/train_ant_ours_tied.sh",
+        "output_dir": f"{OUT_BASE}/ant_ours_tied",
+    },
+    {
+        "name": "lowrank_tied",
+        "cmd": "bash scripts/train_lowrank_tied.sh",
+        "output_dir": f"{OUT_BASE}/lowrank_tied",
+    },
+    {
+        "name": "original_ant_tied",
+        "cmd": "bash scripts/train_original_ant_tied.sh",
+        "output_dir": f"{OUT_BASE}/original_ant_tied",
+    },
+    {
+        "name": "residual_ant_tied",
+        "cmd": "bash scripts/train_residual_ant_tied.sh",
+        "output_dir": f"{OUT_BASE}/residual_ant_tied",
+    },
+    {
+        "name": "shared_local_tied",
+        "cmd": "bash scripts/train_shared_local_tied.sh",
+        "output_dir": f"{OUT_BASE}/shared_local_tied",
+    },
 ]
 
 

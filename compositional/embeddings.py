@@ -59,6 +59,130 @@ class LowRankEmbed(nn.Module):
 
 
 # ---------------------------------------------------------------------------
+# Shared-local low-rank factorization — global + vocabulary-local subspaces
+# ---------------------------------------------------------------------------
+
+class SharedLocalEmbed(nn.Module):
+    """A shared low-rank branch plus group-local low-rank branches.
+
+    The vocabulary is split into contiguous, nearly equal-sized groups.  Token
+    ``i`` in group ``g(i)`` has coefficients ``[x_i; z_i]`` and is represented
+    as
+
+        e_i = shared_proj(x_i) + z_i @ local_weight[g(i)].T
+
+    With shared_rank=local_rank=64 and four groups, every token retains 128
+    independent coefficients (matching LowRankEmbed(rank=128)), while the full
+    embedding matrix can span a shared subspace plus four distinct local
+    subspaces.  Both input and exactly tied output paths use ordinary dense
+    matrix multiplications; there is no router or vocabulary materialization.
+    """
+
+    def __init__(self, vocab_size, embed_dim, shared_rank=64, local_rank=64,
+                 num_groups=4):
+        super().__init__()
+        if shared_rank <= 0 or local_rank <= 0:
+            raise ValueError("shared_rank and local_rank must be positive")
+        if num_groups <= 0:
+            raise ValueError("num_groups must be positive")
+        if num_groups > vocab_size:
+            raise ValueError(
+                f"num_groups={num_groups} cannot exceed vocab_size={vocab_size}"
+            )
+
+        self.vocab_size = vocab_size
+        self.shared_rank = shared_rank
+        self.local_rank = local_rank
+        self.num_groups = num_groups
+        self.group_size = math.ceil(vocab_size / num_groups)
+        self.base_group_size = vocab_size // num_groups
+        self.num_large_groups = vocab_size % num_groups
+
+        # The first remainder groups have ceil(V/G) tokens and the rest have
+        # floor(V/G), so every configured group is non-empty and group sizes
+        # differ by at most one. These structural values are reconstructed from
+        # the saved config; only trainable tensors belong in the state dict.
+        self.group_sizes = tuple(
+            self.base_group_size + (1 if group < self.num_large_groups else 0)
+            for group in range(num_groups)
+        )
+
+        # Keeping both coefficient blocks in one group-major tensor lets the
+        # tied head use them directly in a strided-batched GEMM. At most
+        # num_groups-1 total padding rows are allocated across the smaller
+        # groups; they are never used as input embeddings or output classes.
+        self.token_factors = nn.Parameter(
+            torch.randn(
+                num_groups, self.group_size, shared_rank + local_rank
+            ) * 0.02
+        )
+        self.shared_proj = nn.Linear(shared_rank, embed_dim, bias=True)
+        # Keep one global d-dimensional bias, matching LowRankEmbed.proj.
+        # A separate bias per local group would inject an additional learned
+        # group-identity vector into every token (and into tied output logits),
+        # so it is a different architecture rather than a missing Linear bias.
+        self.local_weight = nn.Parameter(
+            torch.randn(num_groups, embed_dim, local_rank) * 0.02
+        )
+        nn.init.normal_(self.shared_proj.weight, std=0.02)
+        nn.init.zeros_(self.shared_proj.bias)
+
+    def group_bounds(self, group):
+        """Return the half-open contiguous vocabulary range for ``group``."""
+        if not 0 <= group < self.num_groups:
+            raise IndexError(f"group index out of range: {group}")
+        start = (
+            group * self.base_group_size
+            + min(group, self.num_large_groups)
+        )
+        end = start + self.group_sizes[group]
+        return start, end
+
+    def forward(self, input_ids, doc_mask=None):
+        if self.num_large_groups == 0:
+            group_ids = torch.div(
+                input_ids, self.group_size, rounding_mode="floor"
+            )
+            offsets = input_ids.remainder(self.group_size)
+        else:
+            large_region = self.num_large_groups * self.group_size
+            in_large_group = input_ids < large_region
+            group_ids = torch.where(
+                in_large_group,
+                torch.div(input_ids, self.group_size, rounding_mode="floor"),
+                self.num_large_groups + torch.div(
+                    input_ids - large_region,
+                    self.base_group_size,
+                    rounding_mode="floor",
+                ),
+            )
+            offsets = torch.where(
+                in_large_group,
+                input_ids.remainder(self.group_size),
+                (input_ids - large_region).remainder(self.base_group_size),
+            )
+        factors = self.token_factors[group_ids, offsets]
+        shared = self.shared_proj(factors[..., :self.shared_rank])
+        z = factors[..., self.shared_rank:]
+        flat_z = z.reshape(-1, self.local_rank)
+        flat_groups = group_ids.reshape(-1)
+
+        # A short loop over large, standard Linear kernels avoids gathering a
+        # (tokens x embed_dim x local_rank) weight tensor. Groups absent from a
+        # particular batch remain in the autograd graph and are therefore safe
+        # with DDP unused-parameter detection disabled.
+        local = torch.empty(
+            flat_z.size(0), self.local_weight.size(1),
+            device=flat_z.device, dtype=flat_z.dtype,
+        )
+        for group in range(self.num_groups):
+            mask = flat_groups == group
+            local[mask] = F.linear(flat_z[mask], self.local_weight[group])
+
+        return shared + local.view(*input_ids.shape, -1), None
+
+
+# ---------------------------------------------------------------------------
 # Original ANT (Liang et al. 2021)
 # ---------------------------------------------------------------------------
 
