@@ -1,10 +1,12 @@
-#1 +120+a
-#th2-dump-ft
-echo '=== summary.md ==='
-cat /opt/dlami/nvme/sparse_emb_outputs/finetune/summary.md
-echo '=== all JSONs ==='
-for f in /opt/dlami/nvme/sparse_emb_outputs/finetune/*.json; do
-    echo "===JSON $(basename $f)==="
-    cat "$f"
-    echo
-done
+#1 +30+a
+#th2-gpu-free-check
+echo "=== UTC time ==="
+date -u
+echo "=== Host ==="
+hostname
+echo "=== NVIDIA status ==="
+nvidia-smi
+echo "=== Active GPU compute processes ==="
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+echo "=== Training-related host processes ==="
+pgrep -af 'accelerate|torchrun|run_experiments|train_compositional|train_original_ant|finetune' || true
