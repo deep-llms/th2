@@ -1,8 +1,8 @@
 #1 +120+a
-#th2-check-gpus-before-new-10k-screens
+#th2-check-gpus-fresh-20260817-191418
 set -euo pipefail
 
-echo '=== th2 GPU availability check ==='
+echo '=== th2 fresh GPU availability check 20260817-191418 ==='
 date -u
 hostname
 
