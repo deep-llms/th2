@@ -1,5 +1,5 @@
-#1 +60+a
-#th2-verify-lowrank-tied-finetune-final-2
+#2 +a -f-/opt/dlami/nvme/sparse_emb_outputs/lowrank_tied/checkpoint-10000/eval_ppl.json,/opt/dlami/nvme/sparse_emb_outputs/lowrank_tied/checkpoint-10000/eval_benchmarks.json
+#th2-pull-lowrank-tied-eval-results
 set -euo pipefail
 echo '=== th2 wait for low-rank tied finetune ==='
 date -u
