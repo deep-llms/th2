@@ -1,5 +1,5 @@
-#1 +60+a
-#th2-wait-verify-lowrank-tied-finetune-final
+#2 +a
+#th2-pull-lowrank-tied-watcher-1
 set -euo pipefail
 echo '=== th2 wait for low-rank tied finetune ==='
 date -u
