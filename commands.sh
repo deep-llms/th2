@@ -1,39 +1,49 @@
-#1 +60+a
-#th2-verify-lowrank-tied-eval-10k
+#1 +120+a
+#th2-finetune-lowrank-tied-10k
 eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
 sleep 3
 conda activate eval
 sleep 3
 
-echo '=== th2 verify low-rank tied checkpoint-10000 evaluation ==='
+echo '=== th2 low-rank tied generative finetune preflight ==='
 date -u
 hostname
 echo "conda=$CONDA_DEFAULT_ENV"
+python --version
+nvidia-smi
 
 TASK_CHECKPOINT=/opt/dlami/nvme/sparse_emb_outputs/lowrank_tied/checkpoint-10000
-TASK_LAUNCH_LOG=/opt/dlami/nvme/sparse_emb_outputs/lowrank_tied/eval_parallel_10k.log
+TASK_OUTPUT_DIR=/opt/dlami/nvme/sparse_emb_outputs/finetune_tied
 
-echo '=== evaluation processes ==='
-if pgrep -af '[e]val_parallel.py|[e]val_checkpoint.py'; then
-    echo 'EVALUATION STILL RUNNING'
+TASK_GPU_PROCESSES="$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | sed '/^[[:space:]]*$/d')"
+if [ -n "$TASK_GPU_PROCESSES" ]; then
+    echo 'ERROR: GPU compute processes are active; refusing to start finetuning.'
     nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
-    exit 0
+    exit 1
 fi
-echo 'none'
-echo '=== GPU compute processes ==='
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
 
-echo '=== result files ==='
-ls -lh "$TASK_CHECKPOINT/eval.log" \
-    "$TASK_CHECKPOINT/eval_ppl.json" \
-    "$TASK_CHECKPOINT/eval_benchmarks.json" \
-    "$TASK_LAUNCH_LOG" 2>/dev/null || true
+python -c "import torch; assert torch.cuda.is_available(); assert torch.cuda.device_count() == 8, torch.cuda.device_count(); print('CUDA OK: 8 GPUs')"
 
-python -c "import json, math; p=json.load(open('$TASK_CHECKPOINT/eval_ppl.json')); b=json.load(open('$TASK_CHECKPOINT/eval_benchmarks.json')); expected={'en','vi','zh','ru','de','ar'}; assert expected <= set(p), (expected-set(p)); assert all(math.isfinite(p[x]['loss']) and math.isfinite(p[x]['perplexity']) and p[x]['num_tokens'] > 0 for x in expected); assert len(b) == 26, len(b); print(f'JSON VALID: 6 PPL languages, {len(b)} benchmark tasks')"
-grep -F 'Loaded compositional model: arm=lowrank' "$TASK_CHECKPOINT/eval.log"
+for TASK_FILE in config.json embedding.pt trainer_state.json eval_ppl.json eval_benchmarks.json; do
+    if [ ! -f "$TASK_CHECKPOINT/$TASK_FILE" ]; then
+        echo "ERROR: missing checkpoint/eval file: $TASK_CHECKPOINT/$TASK_FILE"
+        exit 1
+    fi
+done
 
-echo '=== launcher tail ==='
-tail -30 "$TASK_LAUNCH_LOG"
-echo '=== eval error scan ==='
-grep -Ei 'traceback|out of memory|nan|failed \(code|error:' "$TASK_CHECKPOINT/eval.log" || echo 'no error signatures'
-echo 'TH2 LOWRANK TIED EVAL VERIFIED'
+if [ -e "$TASK_OUTPUT_DIR" ]; then
+    echo "ERROR: finetune output already exists; refusing to resume or overwrite: $TASK_OUTPUT_DIR"
+    exit 1
+fi
+echo "fresh output path confirmed: $TASK_OUTPUT_DIR"
+
+echo '=== starting 3 tasks x 3 seeds on 8 GPUs ==='
+python finetune/run_all.py \
+    --checkpoints lowrank_tied="$TASK_CHECKPOINT" \
+    --tasks hellaswag arc_easy xnli \
+    --seeds 42 123 456 \
+    --num-gpus 8 \
+    --output-dir "$TASK_OUTPUT_DIR"
+
+test -f "$TASK_OUTPUT_DIR/summary.md"
+echo 'TH2 LOWRANK TIED FINETUNE DONE'
