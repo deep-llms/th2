@@ -47,7 +47,9 @@ seen = set()
 for path in paths:
     with open(path) as handle:
         result = json.load(handle)
-    assert result.get("arm_name") == arm, (path, result.get("arm_name"))
+    result_arm = result.get("arm_name") or os.path.basename(os.path.dirname(
+        os.path.normpath(result["checkpoint"])))
+    assert result_arm == arm, (path, result_arm)
     task = result["task"]
     seed = int(result["seed"])
     assert task in expected_tasks, (path, task)
