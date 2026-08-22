@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-stop-validated-gpu-burn-and-verify-free-20260822
+#th2-stop-llm-pretrain-burn-and-verify-free-20260822
 set -euo pipefail
 
 echo '=== th2 validated GPU-burn cleanup ==='
@@ -25,8 +25,8 @@ for TASK_PID in $TASK_GPU_PIDS; do
     TASK_CMDLINE="$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline" 2>/dev/null || true)"
     ps -o pid,ppid,user,stat,etime,cmd -p "$TASK_PID" || true
     echo "gpu_pid=$TASK_PID cmdline=$TASK_CMDLINE"
-    if ! printf '%s\n' "$TASK_CMDLINE" | grep -Eiq 'gpu[-_]?burn|burn[-_]?gpu|gpu[-_]?stress'; then
-        echo "REFUSE: GPU PID $TASK_PID is not clearly identified as a burn/stress process"
+    if ! printf '%s\n' "$TASK_CMDLINE" | grep -Fq '/tmp/llm_pretrain_burn.py'; then
+        echo "REFUSE: GPU PID $TASK_PID is not /tmp/llm_pretrain_burn.py"
         exit 1
     fi
 done
