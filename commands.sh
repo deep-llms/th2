@@ -1,12 +1,14 @@
 #1 +60+a
-#th2-verify-runner-smoke-dataset-20260822
+#th2-verify-runner-smoke-dataset-resolved-path-20260822
 set -euo pipefail
 
 echo '=== th2 downloaded dataset verification ==='
 date -u
 hostname
 
-TASK_DATA_DIR="/mnt/local/_data/@PROJECT@/runner_smoke_demo1"
+TASK_PROJECT="${PWD##*/}"
+TASK_DATA_DIR="/mnt/local/_data/$TASK_PROJECT/runner_smoke_demo1"
+echo "project=$TASK_PROJECT"
 echo "dataset_dir=$TASK_DATA_DIR"
 test -d "$TASK_DATA_DIR"
 
