@@ -1,15 +1,20 @@
 #1 +60+a
-#th2-verify-runner-smoke-dataset-resolved-path-20260822
+#th2-verify-project-token-substitution-20260822
 set -euo pipefail
 
 echo '=== th2 downloaded dataset verification ==='
 date -u
 hostname
 
-TASK_PROJECT="${PWD##*/}"
-TASK_DATA_DIR="/mnt/local/_data/$TASK_PROJECT/runner_smoke_demo1"
-echo "project=$TASK_PROJECT"
+TASK_DATA_DIR="/mnt/local/_data/@PROJECT@/runner_smoke_demo1"
 echo "dataset_dir=$TASK_DATA_DIR"
+TASK_LITERAL_PROJECT_TOKEN='@'"PROJECT"'@'
+case "$TASK_DATA_DIR" in
+    *"$TASK_LITERAL_PROJECT_TOKEN"*)
+        echo 'ERROR: project placeholder was not substituted in the #1 shell body'
+        exit 1
+        ;;
+esac
 test -d "$TASK_DATA_DIR"
 
 echo '=== directory listing ==='
@@ -30,4 +35,6 @@ find "$TASK_DATA_DIR" -type f -print0 | sort -z | xargs -0 -r sha256sum
 
 echo '=== disk usage ==='
 du -sh "$TASK_DATA_DIR"
-echo 'TH2 DATASET VERIFY OK'
+test -s "$TASK_DATA_DIR/data/train.csv"
+test -s "$TASK_DATA_DIR/data/test.csv"
+echo 'TH2 PROJECT TOKEN AND DATASET VERIFY OK'
