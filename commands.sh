@@ -1,44 +1,49 @@
 #1 +60+a
-#th2-verify-qwen3-0.6b-download-20260822
+#th2-relaunch-llm-pretrain-burn-20260822
 set -euo pipefail
 
-echo '=== th2 Qwen3-0.6B download verification ==='
+echo '=== th2 relaunch GPU burn ==='
 date -u
 hostname
 
-TASK_MODEL_DIR="/mnt/local/_models/@PROJECT@/Qwen3-0.6B"
-echo "model_dir=$TASK_MODEL_DIR"
-test -d "$TASK_MODEL_DIR"
+TASK_BURN_SCRIPT="/tmp/llm_pretrain_burn.py"
+test -s "$TASK_BURN_SCRIPT"
 
-echo '=== model files ==='
-ls -lah "$TASK_MODEL_DIR"
-find "$TASK_MODEL_DIR" -maxdepth 2 -type f -printf '%s bytes  %p\n' | sort
+TASK_GPU_COUNT="$(nvidia-smi --query-gpu=index --format=csv,noheader | wc -l)"
+echo "gpu_count=$TASK_GPU_COUNT"
+test "$TASK_GPU_COUNT" -eq 8
 
-for TASK_FILE in config.json model.safetensors tokenizer.json tokenizer_config.json; do
-    test -s "$TASK_MODEL_DIR/$TASK_FILE"
+echo '=== preflight: GPUs must be free ==='
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+TASK_EXISTING_GPU_PIDS="$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | sed '/^[[:space:]]*$/d')"
+if [ -n "$TASK_EXISTING_GPU_PIDS" ]; then
+    echo 'REFUSE: GPU compute processes already exist'
+    exit 1
+fi
+
+echo '=== launch one burn worker per GPU ==='
+for TASK_GPU in 0 1 2 3 4 5 6 7; do
+    TASK_LOG="/tmp/llm_pretrain_burn_gpu${TASK_GPU}.log"
+    nohup env CUDA_VISIBLE_DEVICES="$TASK_GPU" /usr/bin/python3 -u "$TASK_BURN_SCRIPT" >"$TASK_LOG" 2>&1 &
+    TASK_PID=$!
+    echo "launched gpu=$TASK_GPU pid=$TASK_PID log=$TASK_LOG"
 done
 
-python3 - "$TASK_MODEL_DIR/config.json" <<'PY'
-import json
-import sys
+sleep 20
 
-with open(sys.argv[1], encoding="utf-8") as handle:
-    config = json.load(handle)
+echo '=== post-launch verification ==='
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+TASK_BURN_PIDS="$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | sed '/^[[:space:]]*$/d' | sort -nu)"
+TASK_BURN_COUNT="$(printf '%s\n' "$TASK_BURN_PIDS" | sed '/^[[:space:]]*$/d' | wc -l)"
+echo "burn_process_count=$TASK_BURN_COUNT"
+test "$TASK_BURN_COUNT" -eq 8
 
-assert config["model_type"] == "qwen3", config.get("model_type")
-assert config["hidden_size"] == 1024, config.get("hidden_size")
-assert config["num_hidden_layers"] == 28, config.get("num_hidden_layers")
-assert config["vocab_size"] == 151936, config.get("vocab_size")
-print("config_ok", {
-    "model_type": config["model_type"],
-    "hidden_size": config["hidden_size"],
-    "num_hidden_layers": config["num_hidden_layers"],
-    "vocab_size": config["vocab_size"],
-})
-PY
+for TASK_PID in $TASK_BURN_PIDS; do
+    TASK_CMDLINE="$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")"
+    echo "gpu_pid=$TASK_PID cmdline=$TASK_CMDLINE"
+    printf '%s\n' "$TASK_CMDLINE" | grep -Fq "$TASK_BURN_SCRIPT"
+done
 
-echo '=== weight checksum and disk usage ==='
-sha256sum "$TASK_MODEL_DIR/model.safetensors"
-du -sh "$TASK_MODEL_DIR"
-
-echo 'TH2 QWEN3-0.6B DOWNLOAD VERIFY OK'
+echo 'TH2 GPU BURN: RUNNING ON ALL 8 GPUS'
