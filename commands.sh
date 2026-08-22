@@ -1,40 +1,29 @@
 #1 +60+a
-#th2-verify-project-token-substitution-20260822
+#th2-check-new-runner-gpus-20260822
 set -euo pipefail
 
-echo '=== th2 downloaded dataset verification ==='
+echo '=== th2 GPU check ==='
 date -u
 hostname
 
-TASK_DATA_DIR="/mnt/local/_data/@PROJECT@/runner_smoke_demo1"
-echo "dataset_dir=$TASK_DATA_DIR"
-TASK_LITERAL_PROJECT_TOKEN='@'"PROJECT"'@'
-case "$TASK_DATA_DIR" in
-    *"$TASK_LITERAL_PROJECT_TOKEN"*)
-        echo 'ERROR: project placeholder was not substituted in the #1 shell body'
-        exit 1
-        ;;
-esac
-test -d "$TASK_DATA_DIR"
+echo '=== GPU inventory and utilization ==='
+nvidia-smi --query-gpu=index,name,memory.total,memory.used,utilization.gpu --format=csv,noheader
+TASK_GPU_COUNT="$(nvidia-smi --query-gpu=index --format=csv,noheader | wc -l)"
+echo "gpu_count=$TASK_GPU_COUNT"
+test "$TASK_GPU_COUNT" -eq 8
 
-echo '=== directory listing ==='
-ls -la "$TASK_DATA_DIR"
+echo '=== active GPU compute processes ==='
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+TASK_GPU_PROCESSES="$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | sed '/^[[:space:]]*$/d')"
 
-echo '=== recursive files ==='
-find "$TASK_DATA_DIR" -maxdepth 4 -type f -printf '%s bytes  %p\n' | sort
+echo '=== training-related host processes ==='
+pgrep -af '[r]un_experiments.py|[t]rain_compositional.py|[t]rain_original_ant.py|[a]ccelerate launch|[f]inetune/' || echo 'none'
 
-TASK_FILE_COUNT="$(find "$TASK_DATA_DIR" -type f | wc -l)"
-TASK_BYTE_COUNT="$(du -sb "$TASK_DATA_DIR" | awk '{print $1}')"
-echo "file_count=$TASK_FILE_COUNT"
-echo "byte_count=$TASK_BYTE_COUNT"
-test "$TASK_FILE_COUNT" -gt 0
-test "$TASK_BYTE_COUNT" -gt 0
+echo '=== PyTorch CUDA visibility ==='
+/mnt/local/conda/envs/sparse_emb/bin/python -c "import torch; print('torch', torch.__version__); print('cuda_available', torch.cuda.is_available()); print('cuda_version', torch.version.cuda); print('gpu_count', torch.cuda.device_count()); assert torch.cuda.is_available(); assert torch.cuda.device_count() == 8"
 
-echo '=== checksums ==='
-find "$TASK_DATA_DIR" -type f -print0 | sort -z | xargs -0 -r sha256sum
-
-echo '=== disk usage ==='
-du -sh "$TASK_DATA_DIR"
-test -s "$TASK_DATA_DIR/data/train.csv"
-test -s "$TASK_DATA_DIR/data/test.csv"
-echo 'TH2 PROJECT TOKEN AND DATASET VERIFY OK'
+if [ -n "$TASK_GPU_PROCESSES" ]; then
+    echo 'TH2 GPU CHECK: BUSY'
+else
+    echo 'TH2 GPU CHECK: ALL 8 GPUS FREE'
+fi
