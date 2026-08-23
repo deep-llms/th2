@@ -5,7 +5,9 @@
 set -euo pipefail
 
 if [ "${CONDA_DEFAULT_ENV:-}" != "sparse_emb" ]; then
-    if [ -x /mnt/local/conda/bin/conda ]; then
+    if [ -x /mnt/local/conda-py311/bin/conda ]; then
+        eval "$(/mnt/local/conda-py311/bin/conda shell.bash hook)"
+    elif [ -x /mnt/local/conda/bin/conda ]; then
         eval "$(/mnt/local/conda/bin/conda shell.bash hook)"
     elif [ -x "$HOME/miniconda3/bin/conda" ]; then
         eval "$("$HOME/miniconda3/bin/conda" shell.bash hook)"
@@ -16,10 +18,12 @@ if [ "${CONDA_DEFAULT_ENV:-}" != "sparse_emb" ]; then
     conda activate sparse_emb
 fi
 
+TASK_PYTHON="${SPARSE_EMB_PYTHON:-$(command -v python3.11)}"
 TASK_MODEL_DIR="${SPARSE_EMB_MODEL_DIR:-Qwen/Qwen3-0.6B}"
 TASK_DATA_DIR="${SPARSE_EMB_DATA_DIR:-/opt/dlami/nvme/sparse_emb_data/Qwen_Qwen3-0.6B/train}"
 TASK_OUTPUT_BASE="${SPARSE_EMB_OUTPUT_BASE:-/opt/dlami/nvme/sparse_emb_outputs}"
 TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/shared_local_tied_g16"
+test -x "$TASK_PYTHON"
 
 export WANDB_PROJECT="sparse_embedding"
 export WANDB_MODE=offline
@@ -28,7 +32,7 @@ export NCCL_NVLS_ENABLE=0
 nvidia-smi
 sleep 3
 
-python -m accelerate.commands.launch train_compositional.py \
+"$TASK_PYTHON" -m accelerate.commands.launch train_compositional.py \
     --config_name "$TASK_MODEL_DIR" \
     --tokenizer_name "$TASK_MODEL_DIR" \
     --data_dir "$TASK_DATA_DIR" \
