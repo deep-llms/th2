@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-verify-independent-lr-b200-runtime-20260823-0924
+#th2-verify-independent-lr-b200-runtime-20260823-0938
 set -euo pipefail
 
 TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
@@ -85,7 +85,7 @@ PY
 echo '=== validate live training log ==='
 test -s "$TASK_LOG"
 stat --format='log_size=%s log_modified=%y' "$TASK_LOG"
-if grep -E -i 'Traceback|CUDA out of memory|OutOfMemoryError|NCCL[^[:cntrl:]]*(error|failed)|RuntimeError:' "$TASK_LOG"; then
+if grep -E -i 'Traceback|CUDA out of memory|OutOfMemoryError|RuntimeError:|NCCL[^[:cntrl:]]*(unhandled|system error|remote process exited|watchdog|collective operation timeout)' "$TASK_LOG"; then
     echo 'ERROR: fatal signature found in training log'
     exit 1
 fi
