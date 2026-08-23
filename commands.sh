@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-inspect-culturax-sampling-retry-20260823-0230
+#th2-inspect-culturax-sampling-retry-20260823-0236
 set -euo pipefail
 
 echo '=== inspect corrected CulturaX sampling retry ==='
