@@ -1,28 +1,40 @@
 #1 +60+a
-#th2-inspect-offline-culturax-sampling-20260823-0210
-set -euo pipefail
+#th2-diagnose-culturax-sampling-preflight-20260823-0212
+set -u
 
-echo '=== inspect offline CulturaX sampling without changing it ==='
+echo '=== diagnose failed CulturaX sampling preflight ==='
 date -u
 hostname
 
-TASK_OUTPUT_ROOT="/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B"
-echo '=== sampler/hash processes ==='
-pgrep -af 'prepare_data.py|sha256sum' || true
-ps -eo pid,etime,pcpu,pmem,rss,args | grep -E 'prepare_data.py|sha256sum' | grep -v grep || true
+TASK_PROJECT_DIR="$PWD"
+TASK_PYTHON="/mnt/local/conda/envs/sparse_emb/bin/python"
+TASK_DATA_ROOT="/mnt/local/_data/@PROJECT@/data"
+TASK_RAW_DIR="$TASK_DATA_ROOT/raw"
+TASK_OUTPUT_ROOT="$TASK_DATA_ROOT/Qwen_Qwen3-0.6B"
+TASK_MODEL_DIR="/mnt/local/_models/@PROJECT@/Qwen3-0.6B"
+TASK_MANIFEST="$TASK_PROJECT_DIR/resources/culturax_raw_manifest.tsv"
+TASK_PREPARE_SCRIPT="$TASK_PROJECT_DIR/prepare_data.py"
 
-echo '=== current output ==='
-if [ -e "$TASK_OUTPUT_ROOT" ]; then
-    du -sh "$TASK_OUTPUT_ROOT"
-    for TASK_LANG in en vi zh ru de ar; do
-        TASK_SHARDS="$(find "$TASK_OUTPUT_ROOT/train/$TASK_LANG" -mindepth 1 -maxdepth 1 -type d -name 'shard_*' 2>/dev/null | wc -l || true)"
-        TASK_TRAIN_ARROW="$(find "$TASK_OUTPUT_ROOT/train/$TASK_LANG" -type f -name '*.arrow' 2>/dev/null | wc -l || true)"
-        TASK_EVAL_ARROW="$(find "$TASK_OUTPUT_ROOT/eval/$TASK_LANG" -maxdepth 1 -type f -name '*.arrow' 2>/dev/null | wc -l || true)"
-        echo "$TASK_LANG train_shards=$TASK_SHARDS train_arrow_files=$TASK_TRAIN_ARROW eval_arrow_files=$TASK_EVAL_ARROW"
-    done
-else
-    echo 'sample_output=not_created_yet'
-fi
+for TASK_CHECK in \
+    "$TASK_PYTHON" \
+    "$TASK_DATA_ROOT" \
+    "$TASK_RAW_DIR" \
+    "$TASK_MODEL_DIR" \
+    "$TASK_MODEL_DIR/tokenizer.json" \
+    "$TASK_MODEL_DIR/tokenizer_config.json" \
+    "$TASK_MANIFEST" \
+    "$TASK_PREPARE_SCRIPT"; do
+    if [ -e "$TASK_CHECK" ]; then
+        echo "EXISTS: $TASK_CHECK"
+        ls -ld "$TASK_CHECK"
+    else
+        echo "MISSING: $TASK_CHECK"
+    fi
+done
 
-df -h /mnt/local/_data/@PROJECT@/data
-echo 'TH2 CULTURAX SAMPLING INSPECTION COMPLETE'
+echo '=== model top level ==='
+find "$TASK_MODEL_DIR" -mindepth 1 -maxdepth 2 -printf '%y %P -> %l\n' 2>/dev/null | sort | head -100 || true
+echo '=== raw/output summary ==='
+find "$TASK_RAW_DIR" -type f -name '*.parquet' 2>/dev/null | wc -l
+if [ -e "$TASK_OUTPUT_ROOT" ]; then du -sh "$TASK_OUTPUT_ROOT"; else echo 'sample_output=absent'; fi
+echo 'TH2 CULTURAX PREFLIGHT DIAGNOSIS COMPLETE'
