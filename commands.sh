@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-watch-shared-local-g16-verify-and-launch-gpu-burn-20260823
+#th2-verify-completed-shared-local-g16-and-launch-gpu-burn-20260823
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -170,156 +170,29 @@ done <<<"$TASK_GPU_INVENTORY_RAW"
 [[ "${#TASK_EXPECTED_GPU_UUIDS[@]}" -eq 8 ]] \
     || die "expected 8 B200 GPUs, found ${#TASK_EXPECTED_GPU_UUIDS[@]}"
 
-echo '=== bind to the exact active run and its current log inode ==='
-find_exact_runner
-[[ "${#TASK_RUNNER_MATCHES[@]}" -eq 1 ]] \
-    || die "expected exactly one active 10k G16 runner, found ${#TASK_RUNNER_MATCHES[@]}"
-TASK_RUNNER_PID=${TASK_RUNNER_MATCHES[0]}
-proc_snapshot "$TASK_RUNNER_PID" \
-    || die "could not snapshot runner PID $TASK_RUNNER_PID"
-TASK_RUNNER_START_TICKS=$TASK_PROC_START_TICKS
-runner_owns_experiment_log "$TASK_RUNNER_PID" \
-    || die "runner PID $TASK_RUNNER_PID does not own $TASK_EXPERIMENT_LOG"
-TASK_EXPERIMENT_LOG_ID=$(stat -Lc '%d:%i' "$TASK_EXPERIMENT_LOG")
-echo "bound_runner_pid=$TASK_RUNNER_PID start_ticks=$TASK_RUNNER_START_TICKS log_identity=$TASK_EXPERIMENT_LOG_ID"
-
-find_exact_training_processes
-[[ "${#TASK_TRAIN_MATCHES[@]}" -ge 8 ]] \
-    || die "expected at least 8 active G16 training processes, found ${#TASK_TRAIN_MATCHES[@]}"
-declare -A TASK_TRAIN_START_BY_PID=()
-for TASK_PID in "${TASK_TRAIN_MATCHES[@]}"; do
-    proc_snapshot "$TASK_PID" || die "could not snapshot training PID $TASK_PID"
-    TASK_TRAIN_START_BY_PID[$TASK_PID]=$TASK_PROC_START_TICKS
-done
-echo "bound_training_processes=${#TASK_TRAIN_MATCHES[@]}"
-
-[[ "$(grep -Fc '[1/1] shared_local_tied_g16' "$TASK_EXPERIMENT_LOG" || true)" -eq 1 ]] \
-    || die 'current runner log does not contain exactly one G16 selection marker'
-[[ "$(grep -Fc 'START: shared_local_tied_g16' "$TASK_EXPERIMENT_LOG" || true)" -eq 1 ]] \
-    || die 'current runner log does not contain exactly one G16 start marker'
-[[ "$(grep -Fc 'Will stop at step 10000' "$TASK_EXPERIMENT_LOG" || true)" -eq 1 ]] \
-    || die 'current runner log does not contain exactly one stop-step marker'
-
-echo '=== bind the eight current GPU workers to UUID, PID, and start time ==='
-query_compute_pairs
-[[ "${#TASK_COMPUTE_PAIRS[@]}" -eq 8 ]] \
-    || die "expected 8 current GPU workers, found ${#TASK_COMPUTE_PAIRS[@]}"
-declare -A TASK_INITIAL_TRAIN_PAIR=()
-declare -A TASK_GPU_WORKER_START_BY_PID=()
-declare -A TASK_SEEN_TRAIN_UUID=()
-declare -A TASK_SEEN_TRAIN_PID=()
-for TASK_PAIR in "${TASK_COMPUTE_PAIRS[@]}"; do
-    TASK_UUID=${TASK_PAIR%,*}
-    TASK_PID=${TASK_PAIR#*,}
-    [[ -n "${TASK_GPU_INDEX_BY_UUID[$TASK_UUID]+x}" ]] \
-        || die "training process uses an unexpected GPU: $TASK_PAIR"
-    [[ -z "${TASK_SEEN_TRAIN_UUID[$TASK_UUID]+x}" ]] \
-        || die "multiple training processes mapped to GPU $TASK_UUID"
-    [[ -z "${TASK_SEEN_TRAIN_PID[$TASK_PID]+x}" ]] \
-        || die "training PID $TASK_PID is mapped more than once"
-    [[ -n "${TASK_TRAIN_START_BY_PID[$TASK_PID]+x}" ]] \
-        || die "GPU PID $TASK_PID is not one of the bound G16 workers"
-    same_proc "$TASK_PID" "${TASK_TRAIN_START_BY_PID[$TASK_PID]}" \
-        || die "training PID $TASK_PID changed identity"
-    TASK_SEEN_TRAIN_UUID[$TASK_UUID]=1
-    TASK_SEEN_TRAIN_PID[$TASK_PID]=1
-    TASK_INITIAL_TRAIN_PAIR[$TASK_PAIR]=1
-    TASK_GPU_WORKER_START_BY_PID[$TASK_PID]=${TASK_TRAIN_START_BY_PID[$TASK_PID]}
-    echo "bound_gpu_worker uuid=$TASK_UUID pid=$TASK_PID start_ticks=${TASK_GPU_WORKER_START_BY_PID[$TASK_PID]}"
-done
-
-echo '=== wait for the bound runner to report successful checkpoint-10000 completion ==='
-TASK_WAIT_ITERATION=0
-while true; do
-    if completion_failed; then
-        tail -100 "$TASK_EXPERIMENT_LOG"
-        die 'the bound experiment runner reported failure'
-    fi
-    if completion_succeeded; then
-        echo 'runner_completion_marker_seen=true'
-        break
-    fi
-
-    if ! same_proc "$TASK_RUNNER_PID" "$TASK_RUNNER_START_TICKS"; then
-        sleep 5
-        if completion_failed; then
-            tail -100 "$TASK_EXPERIMENT_LOG"
-            die 'the bound experiment runner reported failure while exiting'
-        fi
-        completion_succeeded && break
-        tail -100 "$TASK_EXPERIMENT_LOG"
-        die 'the bound runner exited without a successful completion marker'
-    fi
-    [[ "$(stat -Lc '%d:%i' "$TASK_EXPERIMENT_LOG")" == "$TASK_EXPERIMENT_LOG_ID" ]] \
-        || die 'the experiment log file was replaced while the bound runner was active'
-    runner_owns_experiment_log "$TASK_RUNNER_PID" \
-        || die 'the bound runner no longer owns the current experiment log'
-
-    find_exact_runner
-    [[ "${#TASK_RUNNER_MATCHES[@]}" -eq 1 \
-        && "${TASK_RUNNER_MATCHES[0]}" == "$TASK_RUNNER_PID" ]] \
-        || die 'the exact active runner set changed before completion'
-    find_exact_training_processes
-    for TASK_PID in "${TASK_TRAIN_MATCHES[@]}"; do
-        [[ -n "${TASK_TRAIN_START_BY_PID[$TASK_PID]+x}" ]] \
-            || die "an unbound matching training process appeared: $TASK_PID"
-        same_proc "$TASK_PID" "${TASK_TRAIN_START_BY_PID[$TASK_PID]}" \
-            || die "training process $TASK_PID changed identity"
-    done
-
-    query_compute_pairs
-    for TASK_PAIR in "${TASK_COMPUTE_PAIRS[@]}"; do
-        [[ -n "${TASK_INITIAL_TRAIN_PAIR[$TASK_PAIR]+x}" ]] \
-            || die "unexpected or remapped GPU process while training: $TASK_PAIR"
-        TASK_PID=${TASK_PAIR#*,}
-        same_proc "$TASK_PID" "${TASK_GPU_WORKER_START_BY_PID[$TASK_PID]}" \
-            || die "GPU worker $TASK_PID changed identity"
-    done
-    if [[ ! -d "$TASK_CHECKPOINT" ]]; then
-        [[ "${#TASK_COMPUTE_PAIRS[@]}" -eq 8 ]] \
-            || die "GPU workers disappeared before checkpoint-10000 existed"
-    fi
-
-    TASK_WAIT_ITERATION=$((TASK_WAIT_ITERATION + 1))
-    if (( TASK_WAIT_ITERATION % 4 == 1 )); then
-        TASK_CHECKPOINTS_RAW=$(find "$TASK_OUTPUT" -mindepth 1 -maxdepth 1 \
-            -type d -name 'checkpoint-*' -printf '%f\n') \
-            || die 'failed to enumerate checkpoints'
-        TASK_LATEST_CHECKPOINT=$(printf '%s\n' "$TASK_CHECKPOINTS_RAW" \
-            | awk 'NF' | sort -V | tail -1)
-        echo "training_wait latest_checkpoint=${TASK_LATEST_CHECKPOINT:-none} bound_runner_alive=true gpu_processes=${#TASK_COMPUTE_PAIRS[@]}"
-        date -u
-    fi
-    sleep 15
-done
-
-echo '=== wait for every bound training process and runner to exit ==='
-TASK_EXIT_WAIT_ITERATION=0
-while true; do
-    TASK_REMAINING=()
-    if same_proc "$TASK_RUNNER_PID" "$TASK_RUNNER_START_TICKS"; then
-        TASK_REMAINING+=("runner:$TASK_RUNNER_PID")
-    fi
-    for TASK_PID in "${!TASK_TRAIN_START_BY_PID[@]}"; do
-        if same_proc "$TASK_PID" "${TASK_TRAIN_START_BY_PID[$TASK_PID]}"; then
-            TASK_REMAINING+=("training:$TASK_PID")
-        fi
-    done
-    [[ "${#TASK_REMAINING[@]}" -eq 0 ]] && break
-    TASK_EXIT_WAIT_ITERATION=$((TASK_EXIT_WAIT_ITERATION + 1))
-    if (( TASK_EXIT_WAIT_ITERATION % 12 == 1 )); then
-        echo "waiting_for_bound_process_exit remaining=${TASK_REMAINING[*]}"
-    fi
-    sleep 5
-done
+echo '=== require the SharedLocal run to have exited cleanly ==='
 find_exact_runner
 [[ "${#TASK_RUNNER_MATCHES[@]}" -eq 0 ]] \
-    || die "another exact G16 runner remains after completion: ${TASK_RUNNER_MATCHES[*]}"
+    || die "the exact G16 runner is still active: ${TASK_RUNNER_MATCHES[*]}"
 find_exact_training_processes
 [[ "${#TASK_TRAIN_MATCHES[@]}" -eq 0 ]] \
-    || die "matching G16 training processes remain after completion: ${TASK_TRAIN_MATCHES[*]}"
-[[ "$(stat -Lc '%d:%i' "$TASK_EXPERIMENT_LOG")" == "$TASK_EXPERIMENT_LOG_ID" ]] \
-    || die 'the bound experiment log was replaced before validation'
+    || die "matching G16 training processes are still active: ${TASK_TRAIN_MATCHES[*]}"
+
+[[ "$(grep -Fc '[1/1] shared_local_tied_g16' "$TASK_EXPERIMENT_LOG" || true)" -eq 1 ]] \
+    || die 'experiment log does not contain exactly one G16 selection marker'
+[[ "$(grep -Fc 'START: shared_local_tied_g16' "$TASK_EXPERIMENT_LOG" || true)" -eq 1 ]] \
+    || die 'experiment log does not contain exactly one G16 start marker'
+[[ "$(grep -Fc 'Will stop at step 10000' "$TASK_EXPERIMENT_LOG" || true)" -eq 1 ]] \
+    || die 'experiment log does not contain exactly one stop-step marker'
+if completion_failed; then
+    tail -100 "$TASK_EXPERIMENT_LOG"
+    die 'the experiment runner reported failure'
+fi
+if ! completion_succeeded; then
+    tail -100 "$TASK_EXPERIMENT_LOG"
+    die 'the experiment runner has no successful checkpoint-10000 completion marker'
+fi
+echo 'runner_completion_marker_seen=true'
 
 echo '=== verify checkpoint-10000 is the latest complete checkpoint ==='
 TASK_CHECKPOINTS_RAW=$(find "$TASK_OUTPUT" -mindepth 1 -maxdepth 1 \
@@ -694,21 +567,10 @@ tail -12 "$TASK_EXPERIMENT_LOG"
 du -sh "$TASK_OUTPUT"
 echo 'TH2 SHARED LOCAL TIED G16 CHECKPOINT 10000 COMPLETE'
 
-echo '=== wait for the bound CUDA contexts to disappear; reject any new workload ==='
-TASK_GPU_RELEASE_ITERATION=0
-while true; do
-    query_compute_pairs
-    [[ "${#TASK_COMPUTE_PAIRS[@]}" -eq 0 ]] && break
-    for TASK_PAIR in "${TASK_COMPUTE_PAIRS[@]}"; do
-        [[ -n "${TASK_INITIAL_TRAIN_PAIR[$TASK_PAIR]+x}" ]] \
-            || die "unexpected GPU workload appeared before burn launch: $TASK_PAIR"
-    done
-    TASK_GPU_RELEASE_ITERATION=$((TASK_GPU_RELEASE_ITERATION + 1))
-    if (( TASK_GPU_RELEASE_ITERATION % 12 == 1 )); then
-        echo "waiting_for_bound_cuda_context_release pairs=${TASK_COMPUTE_PAIRS[*]}"
-    fi
-    sleep 5
-done
+echo '=== require all eight B200 GPUs to be free immediately before burn launch ==='
+query_compute_pairs
+[[ "${#TASK_COMPUTE_PAIRS[@]}" -eq 0 ]] \
+    || die "GPU compute processes are still active: ${TASK_COMPUTE_PAIRS[*]}"
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader \
     || die 'failed to query free-GPU state'
 echo 'TH2 ALL 8 B200 GPUS FREE AFTER TRAINING'
