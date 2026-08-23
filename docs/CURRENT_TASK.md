@@ -19,6 +19,9 @@ been launched.
   steps across 8 GPUs. The effective batch remains the H100-era value of 512
   sequences (about 1M tokens) per optimizer step, so the update count, warmup,
   and learning-rate schedule remain directly comparable.
+- The current runner's Python 3.11 conda prefix is `/mnt/local/conda-py311`;
+  activate `sparse_emb` from that prefix and invoke its `python3.11` explicitly
+  because this installation does not provide a `bin/python` symlink.
 
 ## Implementation completed (2026-08-17)
 
