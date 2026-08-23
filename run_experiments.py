@@ -13,6 +13,7 @@ To add experiments: edit EXPERIMENT_COMMANDS below.
 """
 
 import argparse
+import json
 import logging
 import os
 import signal
@@ -31,7 +32,9 @@ logger = logging.getLogger(__name__)
 #   "output_dir": where checkpoints go (monitored for --stop-at-step)
 # =====================================================================
 
-OUT_BASE = "/opt/dlami/nvme/sparse_emb_outputs"
+OUT_BASE = os.environ.get(
+    "SPARSE_EMB_OUTPUT_BASE", "/opt/dlami/nvme/sparse_emb_outputs"
+)
 
 EXPERIMENT_COMMANDS = [
     {
@@ -89,6 +92,32 @@ EXPERIMENT_COMMANDS = [
         "name": "shared_local_tied",
         "cmd": "bash scripts/train_shared_local_tied.sh",
         "output_dir": f"{OUT_BASE}/shared_local_tied",
+    },
+    {
+        "name": "shared_local_tied_g16",
+        "cmd": "bash scripts/train_shared_local_tied_g16.sh",
+        "output_dir": f"{OUT_BASE}/shared_local_tied_g16",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "lowrank_independent_output_r128",
+        "cmd": "bash scripts/train_lowrank_independent_output_r128.sh",
+        "output_dir": f"{OUT_BASE}/lowrank_independent_output_r128",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt", "output_head.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
     },
 ]
 
@@ -182,11 +211,13 @@ def wait_for_step(proc, output_dir, target_step, poll_interval=30):
         if last_step >= target_step:
             logger.info(f"    Reached step {last_step} >= {target_step}, waiting 120s for save...")
             time.sleep(120)
-            logger.info(f"    Sending SIGTERM...")
-            try:
-                os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-            except OSError:
-                pass
+            terminated_by_runner = proc.poll() is None
+            if terminated_by_runner:
+                logger.info(f"    Sending SIGTERM...")
+                try:
+                    os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+                except OSError:
+                    pass
             try:
                 proc.wait(timeout=60)
             except subprocess.TimeoutExpired:
@@ -198,8 +229,35 @@ def wait_for_step(proc, output_dir, target_step, poll_interval=30):
                     proc.wait(timeout=30)
                 except subprocess.TimeoutExpired:
                     pass
-            return last_step
-    return _latest_checkpoint_step(output_dir)
+            return last_step, terminated_by_runner
+    return _latest_checkpoint_step(output_dir), False
+
+
+def validate_checkpoint_artifacts(output_dir, step, required_files):
+    """Return an error string if a checkpoint is partial or inconsistent."""
+    if not required_files:
+        return None
+    checkpoint_dir = os.path.join(output_dir, f"checkpoint-{step}")
+    missing = [
+        filename for filename in required_files
+        if not os.path.isfile(os.path.join(checkpoint_dir, filename))
+        or os.path.getsize(os.path.join(checkpoint_dir, filename)) == 0
+    ]
+    if missing:
+        return f"checkpoint-{step} has missing/empty artifacts: {missing}"
+
+    trainer_state_path = os.path.join(checkpoint_dir, "trainer_state.json")
+    if "trainer_state.json" in required_files:
+        try:
+            with open(trainer_state_path) as handle:
+                saved_step = json.load(handle)["global_step"]
+        except (OSError, ValueError, KeyError) as error:
+            return f"invalid trainer_state.json: {error}"
+        if saved_step != step:
+            return (
+                f"trainer_state global_step={saved_step}, expected {step}"
+            )
+    return None
 
 
 # =====================================================================
@@ -213,6 +271,17 @@ def run_experiment(exp, stop_at_step, log_dir):
     output_dir = exp.get("output_dir")
 
     log_path = os.path.join(log_dir, f"{name}.log")
+
+    if (exp.get("require_fresh_output") and output_dir
+            and os.path.exists(output_dir)):
+        logger.error(
+            f"  REFUSE {name}: output path already exists: {output_dir}"
+        )
+        return {
+            "name": name,
+            "status": "FAILED (output path already exists)",
+            "elapsed": 0,
+        }
 
     logger.info(f"  Ensuring GPUs are free...")
     if not ensure_gpus_free():
@@ -236,15 +305,31 @@ def run_experiment(exp, stop_at_step, log_dir):
         )
 
         if stop_at_step and output_dir:
-            last_step = wait_for_step(proc, output_dir, stop_at_step)
+            last_step, terminated_by_runner = wait_for_step(
+                proc, output_dir, stop_at_step
+            )
         else:
             proc.wait()
             last_step = _latest_checkpoint_step(output_dir) if output_dir else -1
+            terminated_by_runner = False
 
     elapsed = time.time() - start
 
+    artifact_error = None
     if stop_at_step and last_step >= stop_at_step:
-        status = f"STOPPED at step {last_step}"
+        artifact_error = validate_checkpoint_artifacts(
+            output_dir, last_step, exp.get("required_checkpoint_files", [])
+        )
+
+    if proc.poll() is None:
+        status = f"FAILED (process still alive at step {last_step})"
+    elif artifact_error is not None:
+        status = f"FAILED ({artifact_error})"
+    elif stop_at_step and last_step >= stop_at_step:
+        if terminated_by_runner or proc.returncode == 0:
+            status = f"STOPPED at step {last_step}"
+        else:
+            status = f"FAILED (code {proc.returncode} after step {last_step})"
     elif proc.returncode == 0:
         status = "OK"
     elif proc.returncode == -signal.SIGTERM or proc.returncode == -signal.SIGKILL:
@@ -314,6 +399,15 @@ def main():
     logger.info("=" * 50)
     for job in completed:
         logger.info(f"  {job['name']}: {job['status']} [{job['elapsed']:.0f}s]")
+
+    failed = [
+        job for job in completed
+        if not (job["status"] == "OK"
+                or job["status"].startswith("STOPPED at step "))
+    ]
+    if failed:
+        logger.error(f"{len(failed)} experiment(s) did not complete successfully")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

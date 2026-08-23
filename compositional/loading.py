@@ -4,10 +4,12 @@ Supports two checkpoint layouts:
 
 1. HF Trainer checkpoint (the actual layout):
      output_dir/checkpoint-N/     — HF model files + embedding.pt
+                                      (+ output_head.pt for independent LR output)
      output_dir/train_config.json — saved by save_train_config()
 
 2. Standalone dir (if restructured):
      dir/                         — HF model files + embedding.pt + train_config.json
+                                      (+ output_head.pt for independent LR output)
 
 In layout 1, pass the checkpoint dir as output_dir and config_path separately.
 In layout 2, everything is in one dir.
@@ -30,6 +32,10 @@ from .embeddings import (
     IsolationControlEmbed,
     LowRankEmbed,
     SharedLocalEmbed,
+)
+from .tied_head import (
+    INDEPENDENT_OUTPUT_FILENAME,
+    IndependentLowRankHead,
 )
 
 
@@ -104,6 +110,141 @@ def _find_config_path(checkpoint_dir):
     return None
 
 
+def _checkpoint_model_state_keys(checkpoint_dir):
+    """Read saved tensor names without materializing safetensor weights."""
+    safetensors_path = os.path.join(checkpoint_dir, "model.safetensors")
+    if os.path.isfile(safetensors_path):
+        from safetensors import safe_open
+        with safe_open(safetensors_path, framework="pt", device="cpu") as handle:
+            return set(handle.keys())
+
+    safetensors_index = os.path.join(
+        checkpoint_dir, "model.safetensors.index.json"
+    )
+    if os.path.isfile(safetensors_index):
+        with open(safetensors_index) as handle:
+            return set(json.load(handle)["weight_map"])
+
+    pytorch_path = os.path.join(checkpoint_dir, "pytorch_model.bin")
+    if os.path.isfile(pytorch_path):
+        return set(torch.load(
+            pytorch_path, map_location="cpu", weights_only=True
+        ))
+
+    pytorch_index = os.path.join(
+        checkpoint_dir, "pytorch_model.bin.index.json"
+    )
+    if os.path.isfile(pytorch_index):
+        with open(pytorch_index) as handle:
+            return set(json.load(handle)["weight_map"])
+    return set()
+
+
+def _load_checkpoint_tensors(checkpoint_dir, tensor_names):
+    """Load selected HF checkpoint tensors, including from sharded states."""
+    requested = set(tensor_names)
+    if not requested:
+        return {}
+
+    loaded = {}
+    safetensors_path = os.path.join(checkpoint_dir, "model.safetensors")
+    if os.path.isfile(safetensors_path):
+        from safetensors import safe_open
+        with safe_open(
+            safetensors_path, framework="pt", device="cpu"
+        ) as handle:
+            available = set(handle.keys())
+            missing = requested - available
+            if missing:
+                raise FileNotFoundError(
+                    "HF checkpoint is missing custom tensors: "
+                    f"{sorted(missing)}"
+                )
+            return {name: handle.get_tensor(name) for name in requested}
+
+    safetensors_index = os.path.join(
+        checkpoint_dir, "model.safetensors.index.json"
+    )
+    if os.path.isfile(safetensors_index):
+        with open(safetensors_index) as handle:
+            weight_map = json.load(handle)["weight_map"]
+        missing = requested - set(weight_map)
+        if missing:
+            raise FileNotFoundError(
+                "HF checkpoint is missing custom tensors: "
+                f"{sorted(missing)}"
+            )
+        tensors_by_shard = {}
+        for name in requested:
+            tensors_by_shard.setdefault(weight_map[name], []).append(name)
+        from safetensors import safe_open
+        for shard_name, names in tensors_by_shard.items():
+            with safe_open(
+                os.path.join(checkpoint_dir, shard_name),
+                framework="pt",
+                device="cpu",
+            ) as handle:
+                loaded.update({name: handle.get_tensor(name) for name in names})
+        return loaded
+
+    pytorch_path = os.path.join(checkpoint_dir, "pytorch_model.bin")
+    if os.path.isfile(pytorch_path):
+        state = torch.load(
+            pytorch_path, map_location="cpu", weights_only=True
+        )
+        missing = requested - set(state)
+        if missing:
+            raise FileNotFoundError(
+                "HF checkpoint is missing custom tensors: "
+                f"{sorted(missing)}"
+            )
+        return {name: state[name] for name in requested}
+
+    pytorch_index = os.path.join(
+        checkpoint_dir, "pytorch_model.bin.index.json"
+    )
+    if os.path.isfile(pytorch_index):
+        with open(pytorch_index) as handle:
+            weight_map = json.load(handle)["weight_map"]
+        missing = requested - set(weight_map)
+        if missing:
+            raise FileNotFoundError(
+                "HF checkpoint is missing custom tensors: "
+                f"{sorted(missing)}"
+            )
+        tensors_by_shard = {}
+        for name in requested:
+            tensors_by_shard.setdefault(weight_map[name], []).append(name)
+        for shard_name, names in tensors_by_shard.items():
+            shard_state = torch.load(
+                os.path.join(checkpoint_dir, shard_name),
+                map_location="cpu",
+                weights_only=True,
+            )
+            loaded.update({name: shard_state[name] for name in names})
+        return loaded
+
+    raise FileNotFoundError(
+        f"No supported HF model state in {checkpoint_dir}"
+    )
+
+
+def _validate_sidecar_values(checkpoint_dir, state, prefix, filename):
+    """Require a sidecar to be an exact duplicate of its saved HF tensors."""
+    full_names = {prefix + key for key in state}
+    hf_state = _load_checkpoint_tensors(checkpoint_dir, full_names)
+    mismatches = []
+    for key, sidecar_tensor in state.items():
+        hf_tensor = hf_state[prefix + key]
+        if not torch.equal(sidecar_tensor, hf_tensor):
+            mismatches.append(key)
+    if mismatches:
+        raise ValueError(
+            f"{filename} does not match the corresponding HF checkpoint "
+            f"tensors: {sorted(mismatches)}"
+        )
+
+
 def _infer_comp_config_from_state(state):
     """Infer arm + hyperparams from embedding.pt tensor names/shapes.
 
@@ -160,8 +301,43 @@ def _infer_comp_config_from_state(state):
 
 
 def is_compositional(checkpoint_dir):
-    """Check if a checkpoint is compositional (has embedding.pt)."""
-    return os.path.isfile(os.path.join(checkpoint_dir, "embedding.pt"))
+    """Recognize custom checkpoints, including damaged ones, before loading.
+
+    A missing ``embedding.pt`` must not make evaluation silently fall back to
+    a stock model with randomly initialized native embeddings. Sidecar/config
+    evidence routes such checkpoints through ``load_compositional_model``,
+    which then raises a precise missing-artifact error.
+    """
+    if os.path.isfile(os.path.join(checkpoint_dir, "embedding.pt")):
+        return True
+    if os.path.isfile(os.path.join(
+        checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME
+    )):
+        return True
+    config_path = _find_config_path(checkpoint_dir)
+    if config_path is not None:
+        try:
+            with open(config_path) as handle:
+                if isinstance(
+                    json.load(handle).get("compositional"), dict
+                ):
+                    return True
+        except (OSError, ValueError, AttributeError):
+            pass
+
+    # Last-resort corruption detection: custom registered tensors survive in
+    # the HF model state even if both sidecars and train_config.json were lost.
+    # Route that checkpoint through the strict compositional loader so it fails
+    # for the missing artifacts instead of evaluating random native weights.
+    try:
+        model_keys = _checkpoint_model_state_keys(checkpoint_dir)
+    except (OSError, ValueError, KeyError):
+        return False
+    return (
+        any(key.startswith("model.embed_tokens.embed.") for key in model_keys)
+        or any(key in {"lm_head.X", "lm_head.proj_weight"}
+               for key in model_keys)
+    )
 
 
 def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
@@ -183,36 +359,130 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
         raise FileNotFoundError(f"No embedding.pt in {checkpoint_dir}")
 
     state = torch.load(embedding_path, map_location="cpu", weights_only=True)
+    output_head_path = os.path.join(
+        checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME
+    )
+    has_independent_output = os.path.isfile(output_head_path)
 
     config_path = _find_config_path(checkpoint_dir)
     if config_path is not None:
         with open(config_path) as f:
             full_config = json.load(f)
         comp_config = full_config["compositional"]
+        configured_independent = comp_config.get(
+            "independent_lowrank_output", False
+        )
+        if has_independent_output and not configured_independent:
+            raise ValueError(
+                f"Found {INDEPENDENT_OUTPUT_FILENAME}, but train_config.json "
+                "does not declare an independent low-rank output head"
+            )
     else:
         comp_config = _infer_comp_config_from_state(state)
+        if has_independent_output:
+            output_state = torch.load(
+                output_head_path, map_location="cpu", weights_only=True
+            )
+            if set(output_state) != {"X", "proj_weight"}:
+                raise ValueError(
+                    f"Unrecognized independent output state in {output_head_path}: "
+                    f"{sorted(output_state)}"
+                )
+            comp_config.update({
+                "tie_output": False,
+                "independent_lowrank_output": True,
+                "output_rank": output_state["X"].shape[1],
+            })
+
+    _validate_sidecar_values(
+        checkpoint_dir,
+        state,
+        "model.embed_tokens.embed.",
+        "embedding.pt",
+    )
+    if has_independent_output:
+        output_integrity_state = torch.load(
+            output_head_path, map_location="cpu", weights_only=True
+        )
+        _validate_sidecar_values(
+            checkpoint_dir,
+            output_integrity_state,
+            "lm_head.",
+            INDEPENDENT_OUTPUT_FILENAME,
+        )
 
     config = AutoConfig.from_pretrained(checkpoint_dir)
     load_kwargs = dict(config=config, torch_dtype=dtype)
-    if config_path is None:
-        # A tied checkpoint intentionally has no lm_head tensors.  Loading info
-        # lets old/interrupted checkpoints that lack train_config.json recover
-        # tie_output as well as the arm dimensions inferred above.
-        model, loading_info = AutoModelForCausalLM.from_pretrained(
-            checkpoint_dir, output_loading_info=True, **load_kwargs
+    # Always inspect the stock-model load report. Custom heads appear as
+    # unexpected keys while the native lm_head is missing; validating that
+    # topology prevents stale config/sidecars from silently selecting a random
+    # dense or tied head.
+    model, loading_info = AutoModelForCausalLM.from_pretrained(
+        checkpoint_dir, output_loading_info=True, **load_kwargs
+    )
+    unexpected_head_keys = {
+        key for key in loading_info["unexpected_keys"]
+        if key.startswith("lm_head.")
+    }
+    expected_independent_keys = {"lm_head.X", "lm_head.proj_weight"}
+    if unexpected_head_keys and unexpected_head_keys != expected_independent_keys:
+        raise ValueError(
+            "Unrecognized output-head tensors in HF checkpoint: "
+            f"{sorted(unexpected_head_keys)}"
         )
+    hf_has_independent_output = (
+        unexpected_head_keys == expected_independent_keys
+    )
+    hf_missing_native_output = any(
+        key == "lm_head.weight" for key in loading_info["missing_keys"]
+    )
+
+    if config_path is None:
+        # A tied checkpoint intentionally has no lm_head tensors. Loading info
+        # lets old/interrupted checkpoints recover tie_output, while explicit
+        # independent keys require their sidecar rather than being mistaken for
+        # a tied head.
+        if hf_has_independent_output and not has_independent_output:
+            raise FileNotFoundError(
+                "HF checkpoint contains an independent low-rank output head "
+                f"but {INDEPENDENT_OUTPUT_FILENAME} is missing"
+            )
+        if has_independent_output and not hf_has_independent_output:
+            raise ValueError(
+                f"{INDEPENDENT_OUTPUT_FILENAME} exists, but the HF checkpoint "
+                "does not contain the matching independent head topology"
+            )
         supported_tied_arms = {
             "lowrank", "shared_local", "original_ant", "ant", "residual_ant"
         }
-        comp_config["tie_output"] = (
-            comp_config["arm"] in supported_tied_arms
-            and any(key.startswith("lm_head.") for key in loading_info["missing_keys"])
-        )
+        if not has_independent_output:
+            comp_config["tie_output"] = (
+                comp_config["arm"] in supported_tied_arms
+                and hf_missing_native_output
+            )
         print(f"  No train_config.json — inferred from checkpoint: {comp_config}")
     else:
-        model = AutoModelForCausalLM.from_pretrained(
-            checkpoint_dir, **load_kwargs
+        configured_tied = comp_config.get("tie_output", False)
+        configured_independent = comp_config.get(
+            "independent_lowrank_output", False
         )
+        if configured_independent:
+            if not hf_has_independent_output or not hf_missing_native_output:
+                raise ValueError(
+                    "train_config.json requests independent low-rank output, "
+                    "but the HF checkpoint has a different head topology"
+                )
+        elif configured_tied:
+            if hf_has_independent_output or not hf_missing_native_output:
+                raise ValueError(
+                    "train_config.json requests tied output, but the HF "
+                    "checkpoint has a different head topology"
+                )
+        elif hf_has_independent_output or hf_missing_native_output:
+            raise ValueError(
+                "train_config.json requests a native dense output, but the HF "
+                "checkpoint has a compressed/missing head"
+            )
 
     embed = _build_arm_from_config(comp_config, config.vocab_size, config.hidden_size)
     embed.load_state_dict(state)
@@ -227,7 +497,40 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
 
     model.model.embed_tokens = EmbeddingShim(embed)
 
-    if comp_config.get("tie_output", False):
+    uses_independent_output = comp_config.get(
+        "independent_lowrank_output", False
+    )
+    if comp_config.get("tie_output", False) and uses_independent_output:
+        raise ValueError(
+            "Checkpoint config cannot request both tied and independent output"
+        )
+
+    if uses_independent_output:
+        if comp_config["arm"] != "lowrank":
+            raise ValueError(
+                "Independent low-rank output currently requires arm=lowrank"
+            )
+        if not has_independent_output:
+            raise FileNotFoundError(
+                f"Checkpoint requests independent low-rank output but has no "
+                f"{INDEPENDENT_OUTPUT_FILENAME}: {checkpoint_dir}"
+            )
+        independent_head = IndependentLowRankHead(embed)
+        expected_rank = comp_config.get("output_rank", embed.X.shape[1])
+        if expected_rank != embed.X.shape[1]:
+            raise ValueError(
+                f"Independent output rank {expected_rank} does not match input "
+                f"rank {embed.X.shape[1]}"
+            )
+        output_state = torch.load(
+            output_head_path, map_location="cpu", weights_only=True
+        )
+        independent_head.load_state_dict(output_state, strict=True)
+        independent_head = independent_head.to(
+            dtype=dtype if dtype is not None else model_dtype
+        )
+        model.lm_head = independent_head
+    elif comp_config.get("tie_output", False):
         from .tied_head import make_tied_head
         model.lm_head = make_tied_head(embed, comp_config["arm"],
                                        config.vocab_size)
