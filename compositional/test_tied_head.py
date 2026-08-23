@@ -8,11 +8,12 @@ import copy
 import json
 import os
 import tempfile
+from dataclasses import asdict
 from types import SimpleNamespace
 
 import torch
 import torch.nn as nn
-from safetensors.torch import load_file
+from safetensors.torch import load_file, save_file
 from transformers import (
     HfArgumentParser,
     Qwen3Config,
@@ -27,8 +28,17 @@ from .embeddings import (
     ResidualANTEmbed,
     SharedLocalEmbed,
 )
-from .loading import EmbeddingShim, load_compositional_model
-from .tied_head import make_tied_head
+from .loading import (
+    EmbeddingShim,
+    _load_checkpoint_tensors,
+    is_compositional,
+    load_compositional_model,
+)
+from .tied_head import (
+    INDEPENDENT_OUTPUT_FILENAME,
+    IndependentLowRankHead,
+    make_tied_head,
+)
 
 
 VOCAB_SIZE = 31
@@ -128,6 +138,28 @@ def _install_tied_embedding(model, embed, arm):
     model.lm_head = make_tied_head(embed, arm, VOCAB_SIZE)
 
 
+def _install_independent_lowrank(model, embed):
+    model.model.embed_tokens = EmbeddingShim(embed)
+    head = IndependentLowRankHead(embed)
+    model.lm_head = head
+    return head
+
+
+def _write_minimal_resume_state(checkpoint_dir, step):
+    """Create nonempty Trainer-state fixtures for resume validation tests."""
+    with open(os.path.join(checkpoint_dir, "trainer_state.json"), "w") as handle:
+        json.dump({"global_step": step}, handle)
+    torch.save({"state": {}, "param_groups": []}, os.path.join(
+        checkpoint_dir, "optimizer.pt"
+    ))
+    torch.save({"last_epoch": step}, os.path.join(
+        checkpoint_dir, "scheduler.pt"
+    ))
+    torch.save({"cpu": torch.random.get_rng_state()}, os.path.join(
+        checkpoint_dir, "rng_state.pth"
+    ))
+
+
 def test_tied_heads_match_explicit_tables_and_backpropagate():
     torch.manual_seed(7)
     hidden = torch.randn(2, 5, HIDDEN_SIZE)
@@ -147,6 +179,93 @@ def test_tied_heads_match_explicit_tables_and_backpropagate():
             assert parameter.grad is not None, f"{arm}.{name}: missing gradient"
             assert torch.isfinite(parameter.grad).all(), \
                 f"{arm}.{name}: non-finite gradient"
+
+
+def test_independent_lowrank_clones_factors_without_alias_or_rng_change():
+    torch.manual_seed(8)
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    with torch.no_grad():
+        embed.proj.bias.copy_(torch.linspace(-0.2, 0.2, HIDDEN_SIZE))
+
+    rng_before = torch.random.get_rng_state().clone()
+    head = IndependentLowRankHead(embed)
+    rng_after = torch.random.get_rng_state()
+
+    assert torch.equal(rng_after, rng_before)
+    torch.testing.assert_close(head.X, embed.X, rtol=0, atol=0)
+    torch.testing.assert_close(
+        head.proj_weight, embed.proj.weight, rtol=0, atol=0
+    )
+    assert head.X is not embed.X
+    assert head.proj_weight is not embed.proj.weight
+    assert head.X.data_ptr() != embed.X.data_ptr()
+    assert head.proj_weight.data_ptr() != embed.proj.weight.data_ptr()
+
+    hidden = torch.randn(2, 5, HIDDEN_SIZE)
+    explicit_table = head.X @ head.proj_weight.T
+    actual = head(hidden)
+    expected = hidden @ explicit_table.T
+    torch.testing.assert_close(actual, expected, rtol=1e-5, atol=1e-6)
+
+    # The input embedding bias is deliberately absent from the independent
+    # classifier. In the tied head it contributes one common scalar per hidden
+    # state, so both heads still define exactly the same token probabilities.
+    tied_logits = make_tied_head(embed, "lowrank", VOCAB_SIZE)(hidden)
+    common_shift = (hidden @ embed.proj.bias).unsqueeze(-1)
+    torch.testing.assert_close(
+        tied_logits - actual,
+        common_shift.expand_as(tied_logits),
+        rtol=1e-5,
+        atol=1e-6,
+    )
+    torch.testing.assert_close(
+        tied_logits.log_softmax(-1), actual.log_softmax(-1),
+        rtol=1e-5, atol=1e-6,
+    )
+
+    input_before = embed.X.detach().clone()
+    with torch.no_grad():
+        head.X.add_(1.0)
+    torch.testing.assert_close(embed.X, input_before, rtol=0, atol=0)
+
+
+def test_independent_lowrank_qwen_gradients_ownership_and_generation():
+    torch.manual_seed(10)
+    model = _tiny_qwen()
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    head = _install_independent_lowrank(model, embed)
+
+    parameter_ids = [id(parameter) for parameter in model.parameters()]
+    assert len(parameter_ids) == len(set(parameter_ids))
+    for parameter in list(embed.parameters()) + list(head.parameters()):
+        assert parameter_ids.count(id(parameter)) == 1
+    assert set(key for key in model.state_dict() if key.startswith("lm_head.")) \
+        == {"lm_head.X", "lm_head.proj_weight"}
+
+    input_ids = torch.randint(0, VOCAB_SIZE, (2, 7))
+    input_x_before = embed.X.detach().clone()
+    output_x_before = head.X.detach().clone()
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+    loss = model(input_ids=input_ids, labels=input_ids).loss
+    assert torch.isfinite(loss)
+    loss.backward()
+
+    for name, parameter in list(embed.named_parameters()) + list(
+        head.named_parameters()
+    ):
+        assert parameter.grad is not None, f"{name}: missing gradient"
+        assert torch.isfinite(parameter.grad).all(), f"{name}: non-finite gradient"
+        assert parameter.grad.abs().sum() > 0, f"{name}: zero gradient"
+
+    optimizer.step()
+    assert not torch.equal(embed.X, input_x_before)
+    assert not torch.equal(head.X, output_x_before)
+    assert not torch.equal(embed.X, head.X)
+
+    model.eval()
+    with torch.no_grad():
+        generated = model.generate(input_ids[:1, :3], max_new_tokens=2)
+    assert generated.shape == (1, 5)
 
 
 def test_shared_local_balanced_padding_and_backward_are_exact():
@@ -193,6 +312,33 @@ def test_shared_local_balanced_padding_and_backward_are_exact():
     )
     padding_grad = embed.token_factors.grad[~valid_factor_mask]
     assert torch.count_nonzero(padding_grad) == 0
+
+
+def test_shared_local_g16_divisible_fast_path_is_exact():
+    """The production G=16 layout must take the padded-free batched path."""
+    torch.manual_seed(15)
+    vocab_size, num_groups = 32, 16
+    embed = SharedLocalEmbed(
+        vocab_size, HIDDEN_SIZE,
+        shared_rank=3, local_rank=3, num_groups=num_groups,
+    )
+    assert embed.num_large_groups == 0
+    assert embed.group_size == 2
+    assert all(size == 2 for size in embed.group_sizes)
+
+    hidden = torch.randn(2, 5, HIDDEN_SIZE, requires_grad=True)
+    head = make_tied_head(embed, "shared_local", vocab_size)
+    actual = head(hidden)
+    table, _ = embed(torch.arange(vocab_size).unsqueeze(0))
+    expected = hidden @ table.squeeze(0).T
+    torch.testing.assert_close(actual, expected, rtol=1e-5, atol=1e-6)
+
+    actual.square().mean().backward()
+    assert hidden.grad is not None and torch.isfinite(hidden.grad).all()
+    for name, parameter in embed.named_parameters():
+        assert parameter.grad is not None, f"G16 {name}: missing gradient"
+        assert torch.isfinite(parameter.grad).all(), \
+            f"G16 {name}: non-finite gradient"
 
 
 def test_tied_embedding_has_one_registered_owner():
@@ -274,6 +420,80 @@ def test_tied_qwen_save_and_load_round_trip():
         torch.testing.assert_close(logits_after, logits_before, rtol=0, atol=0)
 
 
+def test_independent_lowrank_qwen_save_and_load_round_trip():
+    torch.manual_seed(21)
+    input_ids = torch.randint(0, VOCAB_SIZE, (2, 7))
+    model = _tiny_qwen()
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    head = _install_independent_lowrank(model, embed)
+    model.eval()
+
+    # Make input and output observably independent before serializing.
+    with torch.no_grad():
+        head.X.add_(torch.linspace(-0.1, 0.1, VOCAB_SIZE).unsqueeze(1))
+    with torch.no_grad():
+        logits_before = model(input_ids=input_ids).logits
+
+    comp_config = {
+        "arm": "lowrank",
+        "d_x": BASE_DIM,
+        "tie_output": False,
+        "independent_lowrank_output": True,
+    }
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        with open(os.path.join(checkpoint_dir, "train_config.json"), "w") as handle:
+            json.dump({"compositional": comp_config}, handle)
+
+        loaded, loaded_config = load_compositional_model(
+            checkpoint_dir, device="cpu", dtype=torch.float32
+        )
+        with torch.no_grad():
+            logits_after = loaded(input_ids=input_ids).logits
+
+    assert loaded_config == comp_config
+    assert isinstance(loaded.lm_head, IndependentLowRankHead)
+    assert loaded.lm_head.X.data_ptr() \
+        != loaded.model.embed_tokens.embed.X.data_ptr()
+    torch.testing.assert_close(logits_after, logits_before, rtol=0, atol=0)
+
+
+def test_independent_lowrank_hf_state_restores_for_trainer_resume():
+    """Trainer resume restores both independently registered factor sets."""
+    torch.manual_seed(22)
+    model = _tiny_qwen()
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    head = _install_independent_lowrank(model, embed)
+    with torch.no_grad():
+        head.X.add_(0.25)
+        head.proj_weight.mul_(1.5)
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        saved_state = load_file(os.path.join(checkpoint_dir, "model.safetensors"))
+
+        resumed = _tiny_qwen()
+        resumed_embed = LowRankEmbed(
+            VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM
+        )
+        _install_independent_lowrank(resumed, resumed_embed)
+        incompatible = resumed.load_state_dict(saved_state, strict=True)
+
+    assert incompatible.missing_keys == []
+    assert incompatible.unexpected_keys == []
+    for key, value in model.state_dict().items():
+        torch.testing.assert_close(
+            resumed.state_dict()[key], value, rtol=0, atol=0
+        )
+
+
 def test_shared_local_hf_state_restores_directly_for_trainer_resume():
     """HF's model state alone must load into an already-installed custom arm."""
     torch.manual_seed(12)
@@ -337,6 +557,39 @@ def test_shared_local_periodic_checkpoint_saves_embedding_once():
         torch.testing.assert_close(saved[key], value, rtol=0, atol=0)
 
 
+def test_independent_lowrank_periodic_checkpoint_saves_both_sidecars():
+    from train_compositional import SaveEmbeddingCallback
+
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    shim = EmbeddingShim(embed)
+    head = IndependentLowRankHead(embed)
+    callback = SaveEmbeddingCallback(
+        shim, independent_output_head=head
+    )
+
+    with tempfile.TemporaryDirectory() as output_dir:
+        checkpoint_dir = os.path.join(output_dir, "checkpoint-7")
+        os.makedirs(checkpoint_dir)
+        callback.on_save(
+            SimpleNamespace(output_dir=output_dir, should_save=True),
+            SimpleNamespace(global_step=7),
+            control=None,
+        )
+        saved_embed = torch.load(
+            os.path.join(checkpoint_dir, "embedding.pt"),
+            map_location="cpu", weights_only=True,
+        )
+        saved_head = torch.load(
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+            map_location="cpu", weights_only=True,
+        )
+
+    assert saved_embed.keys() == embed.state_dict().keys()
+    assert saved_head.keys() == head.state_dict().keys()
+    for key, value in head.state_dict().items():
+        torch.testing.assert_close(saved_head[key], value, rtol=0, atol=0)
+
+
 def test_shared_local_loads_periodic_checkpoint_with_parent_config():
     torch.manual_seed(14)
     model = _tiny_qwen()
@@ -378,6 +631,201 @@ def test_shared_local_loads_periodic_checkpoint_with_parent_config():
     torch.testing.assert_close(actual, expected, rtol=0, atol=0)
 
 
+def test_independent_lowrank_loads_periodic_checkpoint_with_parent_config():
+    torch.manual_seed(25)
+    model = _tiny_qwen()
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    head = _install_independent_lowrank(model, embed)
+    input_ids = torch.randint(0, VOCAB_SIZE, (2, 7))
+    model.eval()
+    with torch.no_grad():
+        expected = model(input_ids=input_ids).logits
+
+    comp_config = {
+        "arm": "lowrank",
+        "d_x": BASE_DIM,
+        "tie_output": False,
+        "independent_lowrank_output": True,
+    }
+    with tempfile.TemporaryDirectory() as output_dir:
+        checkpoint_dir = os.path.join(output_dir, "checkpoint-7")
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        with open(os.path.join(output_dir, "train_config.json"), "w") as handle:
+            json.dump({"compositional": comp_config}, handle)
+
+        loaded, loaded_config = load_compositional_model(
+            checkpoint_dir, device="cpu", dtype=torch.float32
+        )
+        with torch.no_grad():
+            actual = loaded(input_ids=input_ids).logits
+
+    assert loaded_config == comp_config
+    torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+
+
+def test_independent_loader_rejects_missing_or_stale_sidecar():
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    model = _tiny_qwen()
+    head = _install_independent_lowrank(model, embed)
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        with open(os.path.join(checkpoint_dir, "train_config.json"), "w") as handle:
+            json.dump(
+                {
+                    "compositional": {
+                        "arm": "lowrank",
+                        "d_x": BASE_DIM,
+                        "tie_output": False,
+                        "independent_lowrank_output": True,
+                    }
+                },
+                handle,
+            )
+        try:
+            load_compositional_model(
+                checkpoint_dir, device="cpu", dtype=torch.float32
+            )
+        except FileNotFoundError as error:
+            assert INDEPENDENT_OUTPUT_FILENAME in str(error)
+        else:
+            raise AssertionError("missing output sidecar should fail loudly")
+
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        mismatched_head_state = {
+            key: value.detach().clone()
+            for key, value in head.state_dict().items()
+        }
+        mismatched_head_state["X"].add_(0.5)
+        torch.save(
+            mismatched_head_state,
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        try:
+            load_compositional_model(
+                checkpoint_dir, device="cpu", dtype=torch.float32
+            )
+        except ValueError as error:
+            assert "does not match" in str(error)
+        else:
+            raise AssertionError(
+                "loader should reject same-shaped mixed output sidecars"
+            )
+
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        with open(os.path.join(checkpoint_dir, "train_config.json"), "w") as handle:
+            json.dump(
+                {
+                    "compositional": {
+                        "arm": "lowrank",
+                        "d_x": BASE_DIM,
+                        "tie_output": False,
+                        "independent_lowrank_output": False,
+                    }
+                },
+                handle,
+            )
+        try:
+            load_compositional_model(
+                checkpoint_dir, device="cpu", dtype=torch.float32
+            )
+        except ValueError as error:
+            assert INDEPENDENT_OUTPUT_FILENAME in str(error)
+        else:
+            raise AssertionError("stale output sidecar should fail loudly")
+
+
+def test_damaged_compositional_checkpoint_cannot_fall_back_to_stock():
+    with tempfile.TemporaryDirectory() as output_dir:
+        checkpoint_dir = os.path.join(output_dir, "checkpoint-7")
+        os.makedirs(checkpoint_dir)
+        with open(os.path.join(output_dir, "train_config.json"), "w") as handle:
+            json.dump(
+                {
+                    "compositional": {
+                        "arm": "lowrank",
+                        "d_x": BASE_DIM,
+                        "tie_output": False,
+                    }
+                },
+                handle,
+            )
+        assert is_compositional(checkpoint_dir)
+        try:
+            load_compositional_model(
+                checkpoint_dir, device="cpu", dtype=torch.float32
+            )
+        except FileNotFoundError as error:
+            assert "embedding.pt" in str(error)
+        else:
+            raise AssertionError(
+                "damaged compositional checkpoint should not load as stock"
+            )
+
+    # Even if config and both sidecars are lost, the registered custom tensor
+    # names in the HF state must prevent silent stock-model fallback.
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model = _tiny_qwen()
+        embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+        _install_independent_lowrank(model, embed)
+        model.save_pretrained(checkpoint_dir)
+        assert is_compositional(checkpoint_dir)
+        try:
+            load_compositional_model(
+                checkpoint_dir, device="cpu", dtype=torch.float32
+            )
+        except FileNotFoundError as error:
+            assert "embedding.pt" in str(error)
+        else:
+            raise AssertionError(
+                "custom HF tensors must not fall back to random stock weights"
+            )
+
+
+def test_checkpoint_tensor_reader_matches_hf_file_precedence():
+    """A stale index must not override the single safetensors HF will load."""
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        tensor_name = "model.embed_tokens.embed.X"
+        expected = torch.ones(2, 3)
+        save_file(
+            {tensor_name: expected},
+            os.path.join(checkpoint_dir, "model.safetensors"),
+        )
+        save_file(
+            {tensor_name: torch.zeros_like(expected)},
+            os.path.join(checkpoint_dir, "stale-shard.safetensors"),
+        )
+        with open(os.path.join(
+            checkpoint_dir, "model.safetensors.index.json"
+        ), "w") as handle:
+            json.dump({
+                "metadata": {},
+                "weight_map": {tensor_name: "stale-shard.safetensors"},
+            }, handle)
+
+        loaded = _load_checkpoint_tensors(checkpoint_dir, {tensor_name})
+
+    torch.testing.assert_close(
+        loaded[tensor_name], expected, rtol=0, atol=0
+    )
+
+
 def test_loader_default_dtype_matches_bfloat16_checkpoint():
     """dtype=None must follow the checkpoint dtype for separately saved weights."""
     torch.manual_seed(13)
@@ -411,6 +859,50 @@ def test_loader_default_dtype_matches_bfloat16_checkpoint():
     assert logits.dtype == torch.bfloat16
 
 
+def test_independent_loader_default_dtype_matches_bfloat16_checkpoint():
+    torch.manual_seed(23)
+    model = _tiny_qwen().to(torch.bfloat16)
+    embed = LowRankEmbed(
+        VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM
+    ).to(torch.bfloat16)
+    head = _install_independent_lowrank(model, embed)
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        with open(os.path.join(checkpoint_dir, "train_config.json"), "w") as handle:
+            json.dump(
+                {
+                    "compositional": {
+                        "arm": "lowrank",
+                        "d_x": BASE_DIM,
+                        "tie_output": False,
+                        "independent_lowrank_output": True,
+                    }
+                },
+                handle,
+            )
+
+        loaded, _ = load_compositional_model(
+            checkpoint_dir, device="cpu", dtype=None
+        )
+        with torch.no_grad():
+            logits = loaded(
+                input_ids=torch.randint(0, VOCAB_SIZE, (2, 7))
+            ).logits
+
+    assert loaded.model.embed_tokens.embed.X.dtype == torch.bfloat16
+    assert loaded.lm_head.X.dtype == torch.bfloat16
+    assert loaded.lm_head.proj_weight.dtype == torch.bfloat16
+    assert logits.dtype == torch.bfloat16
+
+
 def test_loader_infers_tied_output_when_train_config_is_missing():
     """Interrupted legacy runs can recover tying from the absent lm_head weights."""
     torch.manual_seed(17)
@@ -435,6 +927,67 @@ def test_loader_infers_tied_output_when_train_config_is_missing():
     assert inferred == {"arm": "lowrank", "d_x": BASE_DIM, "tie_output": True}
     assert loaded.lm_head.embed is loaded.model.embed_tokens.embed
     torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+
+
+def test_loader_infers_independent_output_when_train_config_is_missing():
+    torch.manual_seed(24)
+    input_ids = torch.randint(0, VOCAB_SIZE, (2, 7))
+    model = _tiny_qwen()
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    head = _install_independent_lowrank(model, embed)
+    with torch.no_grad():
+        head.X.mul_(1.1)
+    model.eval()
+    with torch.no_grad():
+        expected = model(input_ids=input_ids).logits
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+
+        loaded, inferred = load_compositional_model(
+            checkpoint_dir, device="cpu", dtype=torch.float32
+        )
+        with torch.no_grad():
+            actual = loaded(input_ids=input_ids).logits
+
+    assert inferred == {
+        "arm": "lowrank",
+        "d_x": BASE_DIM,
+        "tie_output": False,
+        "independent_lowrank_output": True,
+        "output_rank": BASE_DIM,
+    }
+    assert isinstance(loaded.lm_head, IndependentLowRankHead)
+    torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+
+
+def test_loader_rejects_configless_independent_head_without_sidecar():
+    model = _tiny_qwen()
+    embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+    _install_independent_lowrank(model, embed)
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        try:
+            load_compositional_model(
+                checkpoint_dir, device="cpu", dtype=torch.float32
+            )
+        except FileNotFoundError as error:
+            assert INDEPENDENT_OUTPUT_FILENAME in str(error)
+        else:
+            raise AssertionError(
+                "configless independent head must not be inferred as tied"
+            )
 
 
 def test_loader_infers_shared_local_shape_when_train_config_is_missing():
@@ -484,6 +1037,222 @@ def test_shared_local_cli_rank_does_not_collide_with_distributed_local_rank():
     ])
     assert training_args.local_rank == 2
     assert comp_args.local_embed_rank == 7
+
+
+def test_independent_output_cli_and_validation():
+    from train_compositional import (
+        CompositionalArguments,
+        validate_output_configuration,
+        validate_resume_compatibility,
+    )
+
+    parser = HfArgumentParser((TrainingArguments, CompositionalArguments))
+    _, comp_args = parser.parse_args_into_dataclasses(args=[
+        "--output_dir", "/tmp/independent-output-parser-test",
+        "--arm", "lowrank",
+        "--d_x", str(BASE_DIM),
+        "--independent_lowrank_output",
+    ])
+    assert validate_output_configuration(comp_args) == "independent_lowrank"
+
+    comp_args.tie_output = True
+    try:
+        validate_output_configuration(comp_args)
+    except ValueError as error:
+        assert "mutually exclusive" in str(error)
+    else:
+        raise AssertionError("tied and independent output flags should conflict")
+
+    comp_args.tie_output = False
+    comp_args.arm = "shared_local"
+    try:
+        validate_output_configuration(comp_args)
+    except ValueError as error:
+        assert "requires --arm lowrank" in str(error)
+    else:
+        raise AssertionError("independent output should reject non-lowrank input")
+
+    resume_args = CompositionalArguments(
+        arm="lowrank", d_x=BASE_DIM, independent_lowrank_output=True
+    )
+    with tempfile.TemporaryDirectory() as output_dir:
+        checkpoint_dir = os.path.join(output_dir, "checkpoint-7")
+        model = _tiny_qwen()
+        embed = LowRankEmbed(VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM)
+        head = _install_independent_lowrank(model, embed)
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        torch.save(
+            head.state_dict(),
+            os.path.join(checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME),
+        )
+        _write_minimal_resume_state(checkpoint_dir, 7)
+        with open(os.path.join(output_dir, "train_config.json"), "w") as handle:
+            json.dump({"compositional": asdict(resume_args)}, handle)
+        validate_resume_compatibility(
+            checkpoint_dir,
+            resume_args,
+            expected_embed_module=embed,
+            expected_output_head=head,
+        )
+
+        os.remove(os.path.join(checkpoint_dir, "rng_state.pth"))
+        for rank in range(8):
+            torch.save({"cpu": torch.random.get_rng_state()}, os.path.join(
+                checkpoint_dir, f"rng_state_{rank}.pth"
+            ))
+        distributed_args = SimpleNamespace(world_size=8)
+        validate_resume_compatibility(
+            checkpoint_dir, resume_args, distributed_args
+        )
+        try:
+            validate_resume_compatibility(
+                checkpoint_dir, resume_args, SimpleNamespace(world_size=4)
+            )
+        except ValueError as error:
+            assert "world size 4" in str(error)
+        else:
+            raise AssertionError(
+                "resume should reject a changed distributed world size"
+            )
+        os.remove(os.path.join(checkpoint_dir, "rng_state_7.pth"))
+        try:
+            validate_resume_compatibility(
+                checkpoint_dir, resume_args, distributed_args
+            )
+        except ValueError as error:
+            assert "rng_state_7.pth" in str(error)
+        else:
+            raise AssertionError(
+                "distributed resume should require every rank's RNG state"
+            )
+        torch.save({"cpu": torch.random.get_rng_state()}, os.path.join(
+            checkpoint_dir, "rng_state_7.pth"
+        ))
+        for rank in range(8):
+            os.remove(os.path.join(
+                checkpoint_dir, f"rng_state_{rank}.pth"
+            ))
+        torch.save({"cpu": torch.random.get_rng_state()}, os.path.join(
+            checkpoint_dir, "rng_state.pth"
+        ))
+
+        os.remove(os.path.join(checkpoint_dir, "optimizer.pt"))
+        try:
+            validate_resume_compatibility(checkpoint_dir, resume_args)
+        except FileNotFoundError as error:
+            assert "optimizer.pt" in str(error)
+        else:
+            raise AssertionError(
+                "resume should reject a missing optimizer state"
+            )
+        torch.save({"state": {}, "param_groups": []}, os.path.join(
+            checkpoint_dir, "optimizer.pt"
+        ))
+
+        with open(os.path.join(checkpoint_dir, "trainer_state.json"), "w") as handle:
+            json.dump({"global_step": 6}, handle)
+        try:
+            validate_resume_compatibility(checkpoint_dir, resume_args)
+        except ValueError as error:
+            assert "step mismatch" in str(error)
+        else:
+            raise AssertionError(
+                "resume should reject a mismatched Trainer global step"
+            )
+        with open(os.path.join(checkpoint_dir, "trainer_state.json"), "w") as handle:
+            json.dump({"global_step": 7}, handle)
+
+        mismatched = copy.deepcopy(resume_args)
+        mismatched.d_x += 1
+        try:
+            validate_resume_compatibility(checkpoint_dir, mismatched)
+        except ValueError as error:
+            assert "d_x" in str(error)
+        else:
+            raise AssertionError("resume should reject mismatched factor rank")
+
+        # Sidecars alone are insufficient: Trainer restores the registered
+        # head from the HF model state, so a partial state must fail before
+        # training can continue with freshly initialized output factors.
+        model_path = os.path.join(checkpoint_dir, "model.safetensors")
+        valid_state = load_file(model_path)
+        output_path = os.path.join(
+            checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME
+        )
+        valid_output_state = torch.load(
+            output_path, map_location="cpu", weights_only=True
+        )
+        torch.save({"X": valid_output_state["X"]}, output_path)
+        save_file(
+            {
+                key: value
+                for key, value in valid_state.items()
+                if key != "lm_head.proj_weight"
+            },
+            model_path,
+        )
+        try:
+            validate_resume_compatibility(
+                checkpoint_dir,
+                resume_args,
+                expected_embed_module=embed,
+                expected_output_head=head,
+            )
+        except ValueError as error:
+            assert "wrong parameter schema" in str(error)
+        else:
+            raise AssertionError(
+                "resume should reject matching partial HF/sidecar states"
+            )
+        torch.save(valid_output_state, output_path)
+        save_file(valid_state, model_path)
+
+        save_file(
+            {
+                key: value
+                for key, value in valid_state.items()
+                if not key.startswith("lm_head.")
+            },
+            model_path,
+        )
+        try:
+            validate_resume_compatibility(
+                checkpoint_dir,
+                resume_args,
+                expected_embed_module=embed,
+                expected_output_head=head,
+            )
+        except ValueError as error:
+            assert "output-head topology" in str(error)
+        else:
+            raise AssertionError(
+                "resume should reject an incomplete HF output-head state"
+            )
+
+    legacy_dense = CompositionalArguments(arm="lowrank", d_x=BASE_DIM)
+    requested_tied = copy.deepcopy(legacy_dense)
+    requested_tied.tie_output = True
+    with tempfile.TemporaryDirectory() as output_dir:
+        checkpoint_dir = os.path.join(output_dir, "checkpoint-7")
+        os.makedirs(checkpoint_dir)
+        torch.save({}, os.path.join(checkpoint_dir, "embedding.pt"))
+        _write_minimal_resume_state(checkpoint_dir, 7)
+        saved_legacy = asdict(legacy_dense)
+        saved_legacy.pop("tie_output")
+        saved_legacy.pop("independent_lowrank_output")
+        with open(os.path.join(output_dir, "train_config.json"), "w") as handle:
+            json.dump({"compositional": saved_legacy}, handle)
+        try:
+            validate_resume_compatibility(checkpoint_dir, requested_tied)
+        except ValueError as error:
+            assert "tie_output" in str(error)
+        else:
+            raise AssertionError(
+                "legacy dense checkpoint must not resume as tied output"
+            )
 
 
 def test_context_dependent_arms_are_rejected():

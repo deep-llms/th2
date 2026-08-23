@@ -1,7 +1,7 @@
-"""Tied output head: replaces lm_head to share weights with the input embedding.
+"""Compressed output heads for compositional embedding experiments.
 
-Instead of a free V×d output matrix (155.6M params for Qwen3), the output
-logits are computed from the same weights as the input embedding:
+Tied heads replace the free V×d output matrix (155.6M params for Qwen3) and
+compute logits from the same weights as the input embedding:
 
     logits = hidden @ embed_table(all_tokens).T
 
@@ -17,10 +17,30 @@ For each embedding architecture, we use the most efficient computation:
 V0Embed, V1Embed, V2Embed, and IsolationControlEmbed cannot be tied because
 their embedding for a token depends on surrounding context, so there is no
 fixed per-token output vector.
+
+``IndependentLowRankHead`` is a causal diagnostic rather than a tied head. It
+starts with value-identical copies of a ``LowRankEmbed`` token table and
+projection weight, but owns separate Parameters. This holds the input
+architecture and output rank fixed while isolating hard parameter sharing.
 """
 
 import torch
 import torch.nn as nn
+
+
+INDEPENDENT_OUTPUT_FILENAME = "output_head.pt"
+
+
+def _factorized_low_rank_logits(hidden_states, token_factors, proj_weight,
+                                projection_bias=None):
+    """Compute exact logits for a V×r factorization without materializing V×d."""
+    h_proj = hidden_states @ proj_weight
+    logits = h_proj @ token_factors.T
+    if projection_bias is not None:
+        # A rank->hidden embedding bias contributes h·b equally to every class.
+        # It is included only for exact tying to the input embedding table.
+        logits = logits + (hidden_states @ projection_bias).unsqueeze(-1)
+    return logits
 
 
 class _TiedHeadBase(nn.Module):
@@ -55,13 +75,53 @@ class TiedLowRankHead(_TiedHeadBase):
         # = hidden @ (X @ W.T + b).T
         # = hidden @ (W @ X.T) + hidden @ b (b broadcast across V)
         # Factored: H→E then E→V, plus bias contribution
-        h_proj = hidden_states @ self.embed.proj.weight  # (B, L, E)
-        logits = h_proj @ self.embed.X.T  # (B, L, V)
-        if self.embed.proj.bias is not None:
-            # bias (H,): each hidden position dot-products with bias,
-            # adds a scalar to all V logits (shifts all equally)
-            logits = logits + (hidden_states @ self.embed.proj.bias).unsqueeze(-1)
-        return logits
+        return _factorized_low_rank_logits(
+            hidden_states,
+            self.embed.X,
+            self.embed.proj.weight,
+            self.embed.proj.bias,
+        )
+
+
+class IndependentLowRankHead(nn.Module):
+    """Independent rank-r output initialized from a ``LowRankEmbed``.
+
+    Only the two classifier-relevant factors are copied. ``LowRankEmbed``'s
+    rank->hidden bias is omitted because it would add the same scalar to every
+    vocabulary logit and therefore cancels exactly in softmax. A hidden->rank
+    bias or a V-way class bias would instead change the architecture and is not
+    part of Qwen's bias-free ``lm_head``.
+
+    Construction performs clones only—no random initialization—so adding this
+    control does not advance PyTorch's RNG relative to the tied run.
+    """
+
+    def __init__(self, input_embed):
+        super().__init__()
+        if not hasattr(input_embed, "X") or not hasattr(input_embed, "proj"):
+            raise TypeError(
+                "IndependentLowRankHead requires a LowRankEmbed-like module"
+            )
+        if input_embed.proj.weight.ndim != 2 or input_embed.X.ndim != 2:
+            raise ValueError("Low-rank factors must both be matrices")
+        if input_embed.X.shape[1] != input_embed.proj.weight.shape[1]:
+            raise ValueError(
+                "Token-factor rank does not match projection-weight rank"
+            )
+
+        self.X = nn.Parameter(input_embed.X.detach().clone())
+        self.proj_weight = nn.Parameter(
+            input_embed.proj.weight.detach().clone()
+        )
+
+    @property
+    def rank(self):
+        return self.X.shape[1]
+
+    def forward(self, hidden_states):
+        return _factorized_low_rank_logits(
+            hidden_states, self.X, self.proj_weight
+        )
 
 
 class TiedSharedLocalHead(_TiedHeadBase):
