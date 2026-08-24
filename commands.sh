@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-check-recent-finetune-runtime-20260824
+#th2-check-recent-finetune-progress-20260824-2
 #!/usr/bin/env bash
 set -euo pipefail
 
