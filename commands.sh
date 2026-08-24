@@ -1,79 +1,130 @@
-#1 +60+a
-#th2-check-global-lowrank-tied-r128-b200-runtime-20260824
+#1 +120+a
+#th2-stop-clean-matched-global-lr-dense-tied-b200-20260824
 set -euo pipefail
 
-TASK_OUTPUT=/mnt/local/_outputs/@PROJECT@/global_lowrank_tied_r128_b200
-TASK_LOG=/mnt/local/_outputs/@PROJECT@/logs/b200_matched_global_lr_then_dense_tied_20260824/global_lowrank_tied_r128_b200.log
-TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
+TASK_PROJECT_DIR="$PWD"
+TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
+TASK_DATA_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/train
+TASK_GLOBAL_OUTPUT="$TASK_OUTPUT_BASE/global_lowrank_tied_r128_b200"
+TASK_DENSE_OUTPUT="$TASK_OUTPUT_BASE/dense_tied_baseline_b200"
+TASK_LOG_DIR="$TASK_OUTPUT_BASE/logs/b200_matched_global_lr_then_dense_tied_20260824"
+TASK_HF_DATASETS_CACHE=/mnt/local/.cache/huggingface/datasets
 
-echo '=== timestamp and B200 utilization ==='
+is_current_training_process() {
+    local cmd=$1
+    [[ "$cmd" == *"run_experiments.py --experiments 13 14"* ]] \
+        || [[ "$cmd" == *"global_lowrank_tied_r128_b200"* ]] \
+        || [[ "$cmd" == *"dense_tied_baseline_b200"* ]]
+}
+
+current_process_pids() {
+    local proc pid cmd
+    for proc in /proc/[0-9]*; do
+        pid=${proc#/proc/}
+        [ -r "$proc/cmdline" ] || continue
+        cmd=$(tr '\0' ' ' < "$proc/cmdline" 2>/dev/null || true)
+        if is_current_training_process "$cmd"; then
+            printf '%s\n' "$pid"
+        fi
+    done | sort -nu
+}
+
+echo '=== identify the exact current matched-control processes ==='
 date -u
 hostname
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+mapfile -t TASK_PIDS < <(current_process_pids)
+test "${#TASK_PIDS[@]}" -gt 0 || {
+    echo 'ERROR: no current global-LR/dense matched-control processes found'
+    exit 1
+}
+for pid in "${TASK_PIDS[@]}"; do
+    printf 'pid=%s cmd=' "$pid"
+    tr '\0' ' ' < "/proc/$pid/cmdline" || true
+    echo
+done
 
-echo '=== verify exactly eight global-LR tied workers ==='
+echo '=== stop runner, launcher, and all eight workers ==='
+kill -TERM "${TASK_PIDS[@]}" 2>/dev/null || true
+for attempt in 1 2 3; do
+    sleep 5
+    mapfile -t TASK_PIDS < <(current_process_pids)
+    [ "${#TASK_PIDS[@]}" -eq 0 ] && break
+    echo "remaining_after_term_attempt_${attempt}=${TASK_PIDS[*]}"
+    kill -TERM "${TASK_PIDS[@]}" 2>/dev/null || true
+done
+mapfile -t TASK_PIDS < <(current_process_pids)
+if [ "${#TASK_PIDS[@]}" -gt 0 ]; then
+    echo "force_kill=${TASK_PIDS[*]}"
+    kill -KILL "${TASK_PIDS[@]}" 2>/dev/null || true
+    sleep 5
+fi
+mapfile -t TASK_PIDS < <(current_process_pids)
+test "${#TASK_PIDS[@]}" -eq 0
+
+echo '=== verify no unexpected GPU process remains before cleanup ==='
 mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -u
 )
-test "${#TASK_GPU_PIDS[@]}" -eq 8 || {
-    echo "ERROR: expected 8 unique GPU workers, found ${#TASK_GPU_PIDS[@]}"
-    exit 1
-}
-for pid in "${TASK_GPU_PIDS[@]}"; do
-    cmd=$(tr '\0' ' ' < "/proc/$pid/cmdline")
-    [[ "$cmd" == *train_compositional.py* ]] || { echo "ERROR: wrong worker $pid: $cmd"; exit 1; }
-    [[ "$cmd" == *"--arm lowrank"* ]] || { echo "ERROR: missing lowrank arm for $pid"; exit 1; }
-    [[ "$cmd" == *"--d_x 128"* ]] || { echo "ERROR: missing rank 128 for $pid"; exit 1; }
-    [[ "$cmd" == *"--tie_output"* ]] || { echo "ERROR: missing exact tying for $pid"; exit 1; }
-    [[ "$cmd" == *"--output_dir $TASK_OUTPUT"* ]] || { echo "ERROR: wrong output for $pid"; exit 1; }
-    echo "global_lr_tied_gpu_worker=$pid"
-done
-
-echo '=== verify live training log ==='
-test -s "$TASK_LOG"
-stat --format='log_size=%s log_modified=%y' "$TASK_LOG"
-grep -F 'Output tied to input embedding (lm_head replaced)' "$TASK_LOG"
-grep -F 'Training new model from scratch' "$TASK_LOG" | tail -1
-if grep -E -i 'Traceback|CUDA out of memory|OutOfMemoryError|RuntimeError:|NCCL[^[:cntrl:]]*(unhandled|system error|remote process exited|watchdog|collective operation timeout)' "$TASK_LOG"; then
-    echo 'ERROR: fatal signature found in training log'
-    exit 1
-fi
-tail -40 "$TASK_LOG"
-
-echo '=== latest checkpoint if available ==='
-latest_checkpoint=$(
-    find "$TASK_OUTPUT" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' \
-        -printf '%f\n' 2>/dev/null | sort -V | tail -1
-)
-if [ -n "$latest_checkpoint" ]; then
-    checkpoint_dir="$TASK_OUTPUT/$latest_checkpoint"
-    checkpoint_step=${latest_checkpoint#checkpoint-}
-    for required in config.json model.safetensors trainer_state.json optimizer.pt scheduler.pt \
-                    embedding.pt rng_state_0.pth rng_state_1.pth rng_state_2.pth \
-                    rng_state_3.pth rng_state_4.pth rng_state_5.pth rng_state_6.pth \
-                    rng_state_7.pth; do
-        test -s "$checkpoint_dir/$required"
+if [ "${#TASK_GPU_PIDS[@]}" -ne 0 ]; then
+    echo "ERROR: GPU processes remain after stopping the current run: ${TASK_GPU_PIDS[*]}"
+    for pid in "${TASK_GPU_PIDS[@]}"; do
+        printf 'pid=%s cmd=' "$pid"
+        tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null || true
+        echo
     done
-    "$TASK_PYTHON" - "$checkpoint_dir/trainer_state.json" "$checkpoint_step" <<'PY'
-import json
-import math
-import sys
-
-path, expected = sys.argv[1], int(sys.argv[2])
-with open(path) as handle:
-    state = json.load(handle)
-assert state["global_step"] == expected, (state["global_step"], expected)
-metrics = [row for row in state.get("log_history", []) if "loss" in row]
-assert metrics
-for row in metrics:
-    for key in ("loss", "grad_norm", "learning_rate"):
-        assert math.isfinite(float(row[key])), (key, row[key])
-print(f"latest_checkpoint=checkpoint-{expected}")
-print(f"latest_metrics={metrics[-1]}")
-PY
-else
-    echo 'latest_checkpoint=not_created_yet'
+    exit 1
 fi
 
-echo 'TH2 GLOBAL LOWRANK TIED R128 B200 TRAINING HEALTHY'
+echo '=== inventory scoped artifacts before deletion ==='
+for path in "$TASK_GLOBAL_OUTPUT" "$TASK_DENSE_OUTPUT" "$TASK_LOG_DIR"; do
+    if [ -e "$path" ]; then
+        du -sh "$path"
+    else
+        echo "absent=$path"
+    fi
+done
+if [ -d "$TASK_HF_DATASETS_CACHE" ]; then
+    du -sh "$TASK_HF_DATASETS_CACHE"
+else
+    echo "absent=$TASK_HF_DATASETS_CACHE"
+fi
+TASK_DATA_CACHE_COUNT=$(find "$TASK_DATA_DIR" -type f -name 'cache-*' | wc -l)
+echo "dataset_preprocessing_cache_files=$TASK_DATA_CACHE_COUNT"
+
+echo '=== remove only current outputs/logs and preprocessing caches ==='
+rm -rf -- "$TASK_GLOBAL_OUTPUT"
+rm -rf -- "$TASK_DENSE_OUTPUT"
+rm -rf -- "$TASK_LOG_DIR"
+rm -rf -- "$TASK_HF_DATASETS_CACHE"
+find "$TASK_DATA_DIR" -type f -name 'cache-*' -delete
+
+echo '=== remove only the current offline W&B run if present ==='
+if [ -d "$TASK_PROJECT_DIR/wandb" ]; then
+    mapfile -t TASK_WANDB_DIRS < <(
+        find "$TASK_PROJECT_DIR/wandb" -mindepth 1 -maxdepth 1 -type d \
+            -name 'offline-run-20260824_1942*' -print
+    )
+    for path in "${TASK_WANDB_DIRS[@]}"; do
+        case "$(basename "$path")" in
+            offline-run-20260824_1942*) rm -rf -- "$path" ;;
+            *) echo "REFUSE unexpected W&B path: $path"; exit 1 ;;
+        esac
+    done
+fi
+
+echo '=== final verification ==='
+for path in "$TASK_GLOBAL_OUTPUT" "$TASK_DENSE_OUTPUT" "$TASK_LOG_DIR" \
+            "$TASK_HF_DATASETS_CACHE"; do
+    test ! -e "$path"
+    echo "removed=$path"
+done
+test "$(find "$TASK_DATA_DIR" -type f -name 'cache-*' | wc -l)" -eq 0
+echo 'dataset_preprocessing_cache_files=0'
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+mapfile -t TASK_GPU_PIDS < <(
+    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
+        | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -u
+)
+test "${#TASK_GPU_PIDS[@]}" -eq 0
+echo 'TH2 CURRENT MATCHED-CONTROL RUN STOPPED CLEANED ALL 8 B200 GPUS FREE'
