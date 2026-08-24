@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-check-shared-local-g16-10k-finetune-completion-20260824-2
+#th2-final-verify-shared-local-g16-10k-finetune-20260824
 #!/usr/bin/env bash
 set -euo pipefail
 
