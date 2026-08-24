@@ -66,6 +66,20 @@ done
 TASK_DATA_CACHE_COUNT=$(find "$TASK_DATA_DIR" -type f -name 'cache-*' | wc -l)
 test "$TASK_DATA_CACHE_COUNT" -eq 0
 echo 'dataset_preprocessing_cache_files=0'
+
+echo '=== remove and verify scoped dataset tmp-* leftovers ==='
+mapfile -d '' TASK_DATA_TMP_PATHS < <(
+    find "$TASK_DATA_DIR" -mindepth 1 -name 'tmp*' -print0
+)
+echo "dataset_tmp_paths_before=${#TASK_DATA_TMP_PATHS[@]}"
+for path in "${TASK_DATA_TMP_PATHS[@]}"; do
+    case "$path" in
+        "$TASK_DATA_DIR"/*) rm -rf -- "$path" ;;
+        *) echo "REFUSE unexpected temporary path: $path"; exit 1 ;;
+    esac
+done
+test "$(find "$TASK_DATA_DIR" -mindepth 1 -name 'tmp*' | wc -l)" -eq 0
+echo 'dataset_tmp_paths_after=0'
 if [ -d "$TASK_PROJECT_DIR/wandb" ]; then
     test "$(find "$TASK_PROJECT_DIR/wandb" -mindepth 1 -maxdepth 1 -type d \
         -name 'offline-run-20260824_1942*' | wc -l)" -eq 0
