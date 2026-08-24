@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-stop-unintended-resume-run-shared-local-10k-eval-20260824
+#th2-run-shared-local-10k-eval-after-driver-release-20260824
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -77,6 +77,15 @@ for relpath in \
     test -d "$TASK_BENCH_ROOT/$relpath" || die "missing offline dataset: $relpath"
 done
 
+for _ in $(seq 1 60); do
+    mapfile -t TASK_GPU_PIDS < <(
+        nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
+            | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
+    )
+    [[ "${#TASK_GPU_PIDS[@]}" -gt 0 ]] || break
+    echo "waiting for GPU contexts to release: ${TASK_GPU_PIDS[*]}"
+    sleep 1
+done
 mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
