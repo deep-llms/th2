@@ -119,6 +119,33 @@ EXPERIMENT_COMMANDS = [
             "rng_state_6.pth", "rng_state_7.pth",
         ],
     },
+    # --- B200-matched tied controls for SharedLocal G16 ---
+    {
+        "name": "global_lowrank_tied_r128_b200",
+        "cmd": "bash scripts/train_global_lowrank_tied_r128_b200.sh",
+        "output_dir": f"{OUT_BASE}/global_lowrank_tied_r128_b200",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "dense_tied_baseline_b200",
+        "cmd": "bash scripts/train_dense_tied_baseline_b200.sh",
+        "output_dir": f"{OUT_BASE}/dense_tied_baseline_b200",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
 ]
 
 
