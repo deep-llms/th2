@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-fresh-rerun-b200-global-lr-tied-r128-then-dense-tied-10k-20260824
+#th2-stop-reclean-relaunch-b200-matched-tied-controls-20260824
 set -euo pipefail
 
 TASK_PROJECT_DIR="$PWD"
@@ -15,80 +15,136 @@ TASK_HF_DATASETS_CACHE=/mnt/local/.cache/huggingface/datasets
 TASK_ACCELERATE_SOURCE="$TASK_PROJECT_DIR/resources/accelerate_config.yaml"
 TASK_ACCELERATE_DEST=/mnt/local/.cache/huggingface/accelerate/default_config.yaml
 
-echo '=== activate and validate sparse_emb ==='
+is_matched_control_process() {
+    local cmd=$1
+    [[ "$cmd" == *python* ]] && {
+        [[ "$cmd" == *"run_experiments.py --experiments 13 14"* ]] \
+            || [[ "$cmd" == *"global_lowrank_tied_r128_b200"* ]] \
+            || [[ "$cmd" == *"dense_tied_baseline_b200"* ]]
+    }
+}
+
+matched_control_pids() {
+    local proc pid cmd
+    for proc in /proc/[0-9]*; do
+        pid=${proc#/proc/}
+        [ -r "$proc/cmdline" ] || continue
+        cmd=$(tr '\0' ' ' < "$proc/cmdline" 2>/dev/null || true)
+        if is_matched_control_process "$cmd"; then
+            printf '%s\n' "$pid"
+        fi
+    done | sort -nu
+}
+
+echo '=== confirm and stop only the currently running matched controls ==='
 date -u
 hostname
-test -x "$TASK_CONDA"
-eval "$("$TASK_CONDA" shell.bash hook)"
-conda activate sparse_emb
-test "$CONDA_DEFAULT_ENV" = sparse_emb
-test "$(command -v python3.11)" = "$TASK_PYTHON"
-"$TASK_PYTHON" -c 'import accelerate, datasets, torch, transformers; print("training_imports=OK", torch.__version__, accelerate.__version__, transformers.__version__, datasets.__version__)'
+mapfile -t TASK_PIDS < <(matched_control_pids)
+test "${#TASK_PIDS[@]}" -gt 0 || {
+    echo 'ERROR: expected prior matched-control run is not running'
+    exit 1
+}
+echo "matched_control_processes=${#TASK_PIDS[@]}"
+for pid in "${TASK_PIDS[@]}"; do
+    printf 'pid=%s cmd=' "$pid"
+    tr '\0' ' ' < "/proc/$pid/cmdline" || true
+    echo
+done
+kill -TERM "${TASK_PIDS[@]}" 2>/dev/null || true
+for attempt in 1 2 3; do
+    sleep 5
+    mapfile -t TASK_PIDS < <(matched_control_pids)
+    [ "${#TASK_PIDS[@]}" -eq 0 ] && break
+    echo "remaining_after_term_attempt_${attempt}=${TASK_PIDS[*]}"
+    kill -TERM "${TASK_PIDS[@]}" 2>/dev/null || true
+done
+mapfile -t TASK_PIDS < <(matched_control_pids)
+if [ "${#TASK_PIDS[@]}" -gt 0 ]; then
+    echo "force_kill=${TASK_PIDS[*]}"
+    kill -KILL "${TASK_PIDS[@]}" 2>/dev/null || true
+    sleep 5
+fi
+mapfile -t TASK_PIDS < <(matched_control_pids)
+test "${#TASK_PIDS[@]}" -eq 0
+echo 'matched_control_processes_after_stop=0'
 
-echo '=== verify all eight B200 GPUs are completely free ==='
+echo '=== verify all eight B200 GPUs are free before deleting anything ==='
 mapfile -t TASK_GPU_NAMES < <(
     nvidia-smi --query-gpu=name --format=csv,noheader \
         | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
 )
 test "${#TASK_GPU_NAMES[@]}" -eq 8
 for index in "${!TASK_GPU_NAMES[@]}"; do
-    echo "gpu=$index name=${TASK_GPU_NAMES[$index]}"
     case "${TASK_GPU_NAMES[$index]}" in
         *B200*) ;;
         *) echo "ERROR: GPU $index is not a B200"; exit 1 ;;
     esac
 done
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
 mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -u
 )
 test "${#TASK_GPU_PIDS[@]}" -eq 0 || {
-    echo "ERROR: GPUs have compute processes: ${TASK_GPU_PIDS[*]}"
+    echo "ERROR: unexpected GPU processes remain: ${TASK_GPU_PIDS[*]}"
     exit 1
 }
-echo 'TH2 ALL 8 B200 GPUS FREE BEFORE FRESH RERUN'
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+echo 'TH2 ALL 8 B200 GPUS FREE AFTER STOP'
 
-echo '=== verify previous matched run left no process, output, log, or cache ==='
-if pgrep -af 'run_experiments.py.*--experiments 13 14|global_lowrank_tied_r128_b200|dense_tied_baseline_b200'; then
-    echo 'ERROR: previous matched-control process remains'
-    exit 1
-fi
+echo '=== inventory exact outputs and caches before scoped cleanup ==='
 for path in "$TASK_GLOBAL_OUTPUT" "$TASK_DENSE_OUTPUT" "$TASK_LOG_DIR" \
             "$TASK_HF_DATASETS_CACHE"; do
-    test ! -e "$path" || {
-        echo "ERROR: stale path exists: $path"
-        du -sh "$path" || true
-        exit 1
-    }
-    echo "absent=$path"
+    if [ -e "$path" ]; then
+        du -sh "$path"
+    else
+        echo "absent=$path"
+    fi
 done
-TASK_DATA_CACHE_COUNT=$(find "$TASK_DATA_DIR" -type f -name 'cache-*' | wc -l)
-test "$TASK_DATA_CACHE_COUNT" -eq 0
-echo 'dataset_preprocessing_cache_files=0'
-
-echo '=== remove and verify scoped dataset tmp-* leftovers ==='
-mapfile -d '' TASK_DATA_TMP_PATHS < <(
-    find "$TASK_DATA_DIR" -mindepth 1 -name 'tmp*' -print0
+mapfile -d '' TASK_DATA_CACHE_PATHS < <(
+    find "$TASK_DATA_DIR" -mindepth 1 \
+        \( -name 'cache-*' -o -name 'tmp*' \) -print0
 )
-echo "dataset_tmp_paths_before=${#TASK_DATA_TMP_PATHS[@]}"
-for path in "${TASK_DATA_TMP_PATHS[@]}"; do
+echo "dataset_cache_or_tmp_paths_before=${#TASK_DATA_CACHE_PATHS[@]}"
+
+echo '=== remove only current matched-control outputs and caches ==='
+rm -rf -- "$TASK_GLOBAL_OUTPUT"
+rm -rf -- "$TASK_DENSE_OUTPUT"
+rm -rf -- "$TASK_LOG_DIR"
+rm -rf -- "$TASK_HF_DATASETS_CACHE"
+for path in "${TASK_DATA_CACHE_PATHS[@]}"; do
     case "$path" in
         "$TASK_DATA_DIR"/*) rm -rf -- "$path" ;;
-        *) echo "REFUSE unexpected temporary path: $path"; exit 1 ;;
+        *) echo "REFUSE unexpected cache path: $path"; exit 1 ;;
     esac
 done
-test "$(find "$TASK_DATA_DIR" -mindepth 1 -name 'tmp*' | wc -l)" -eq 0
-echo 'dataset_tmp_paths_after=0'
-if [ -d "$TASK_PROJECT_DIR/wandb" ]; then
-    test "$(find "$TASK_PROJECT_DIR/wandb" -mindepth 1 -maxdepth 1 -type d \
-        -name 'offline-run-20260824_1942*' | wc -l)" -eq 0
-fi
-echo 'TH2 PREVIOUS MATCHED-CONTROL OUTPUTS AND CACHES ABSENT'
 
-echo '=== verify local model and untouched sampled source data ==='
-test -s "$TASK_MODEL_DIR/config.json"
-test -s "$TASK_MODEL_DIR/tokenizer.json"
+echo '=== remove only W&B runs belonging to these matched outputs ==='
+if [ -d "$TASK_PROJECT_DIR/wandb" ]; then
+    mapfile -d '' TASK_WANDB_METADATA < <(
+        find "$TASK_PROJECT_DIR/wandb" -mindepth 3 -maxdepth 3 -type f \
+            -path '*/files/wandb-metadata.json' -print0
+    )
+    for metadata in "${TASK_WANDB_METADATA[@]}"; do
+        if grep -Fq 'global_lowrank_tied_r128_b200' "$metadata" \
+                || grep -Fq 'dense_tied_baseline_b200' "$metadata"; then
+            run_dir=$(dirname "$(dirname "$metadata")")
+            case "$run_dir" in
+                "$TASK_PROJECT_DIR"/wandb/offline-run-*) rm -rf -- "$run_dir" ;;
+                *) echo "REFUSE unexpected W&B path: $run_dir"; exit 1 ;;
+            esac
+        fi
+    done
+fi
+
+echo '=== verify clean state and preserve raw sampled data ==='
+for path in "$TASK_GLOBAL_OUTPUT" "$TASK_DENSE_OUTPUT" "$TASK_LOG_DIR" \
+            "$TASK_HF_DATASETS_CACHE"; do
+    test ! -e "$path"
+    echo "absent=$path"
+done
+test "$(find "$TASK_DATA_DIR" -mindepth 1 \
+    \( -name 'cache-*' -o -name 'tmp*' \) | wc -l)" -eq 0
+echo 'dataset_cache_or_tmp_paths_after=0'
 for lang in en vi zh ru de ar; do
     test -d "$TASK_DATA_DIR/$lang"
     TASK_ARROW_COUNT=$(find "$TASK_DATA_DIR/$lang" -type f -name '*.arrow' \
@@ -96,6 +152,19 @@ for lang in en vi zh ru de ar; do
     test "$TASK_ARROW_COUNT" -gt 0
     echo "source_language=$lang arrow_files=$TASK_ARROW_COUNT"
 done
+echo 'TH2 MATCHED-CONTROL OUTPUTS CACHES AND TMP PATHS CLEAN'
+
+echo '=== activate and validate sparse_emb ==='
+test -x "$TASK_CONDA"
+eval "$("$TASK_CONDA" shell.bash hook)"
+conda activate sparse_emb
+test "$CONDA_DEFAULT_ENV" = sparse_emb
+test "$(command -v python3.11)" = "$TASK_PYTHON"
+"$TASK_PYTHON" -c 'import accelerate, datasets, torch, transformers; print("training_imports=OK", torch.__version__, accelerate.__version__, transformers.__version__, datasets.__version__)'
+
+echo '=== verify local model and native dense tying ==='
+test -s "$TASK_MODEL_DIR/config.json"
+test -s "$TASK_MODEL_DIR/tokenizer.json"
 "$TASK_PYTHON" - "$TASK_MODEL_DIR/config.json" <<'PY'
 import json
 import sys
@@ -109,7 +178,7 @@ assert config.get("vocab_size") == 151936, config.get("vocab_size")
 print("model_config=Qwen3-0.6B dense_native_tying=true")
 PY
 
-echo '=== install and verify exact eight-GPU bf16 Accelerate configuration ==='
+echo '=== copy and verify exact eight-GPU bf16 Accelerate configuration ==='
 test -s "$TASK_ACCELERATE_SOURCE"
 mkdir -p "$(dirname "$TASK_ACCELERATE_DEST")"
 cp "$TASK_ACCELERATE_SOURCE" "$TASK_ACCELERATE_DEST"
@@ -119,7 +188,27 @@ grep -Fx 'mixed_precision: bf16' "$TASK_ACCELERATE_DEST"
 grep -Fx 'num_processes: 8' "$TASK_ACCELERATE_DEST"
 echo "accelerate_config=$TASK_ACCELERATE_DEST"
 
-echo '=== verify matched sequential experiment definitions ==='
+echo '=== wait one minute after Accelerate copy ==='
+sleep 60
+
+echo '=== repeat clean-state and GPU checks immediately before launch ==='
+mapfile -t TASK_PIDS < <(matched_control_pids)
+test "${#TASK_PIDS[@]}" -eq 0
+for path in "$TASK_GLOBAL_OUTPUT" "$TASK_DENSE_OUTPUT" "$TASK_LOG_DIR" \
+            "$TASK_HF_DATASETS_CACHE"; do
+    test ! -e "$path"
+done
+test "$(find "$TASK_DATA_DIR" -mindepth 1 \
+    \( -name 'cache-*' -o -name 'tmp*' \) | wc -l)" -eq 0
+mapfile -t TASK_GPU_PIDS < <(
+    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
+        | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -u
+)
+test "${#TASK_GPU_PIDS[@]}" -eq 0
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+echo 'TH2 ALL 8 B200 GPUS STILL FREE AFTER ONE-MINUTE WAIT'
+
+echo '=== fresh matched launch ==='
 export SPARSE_EMB_PYTHON="$TASK_PYTHON"
 export SPARSE_EMB_MODEL_DIR="$TASK_MODEL_DIR"
 export SPARSE_EMB_DATA_DIR="$TASK_DATA_DIR"
@@ -133,12 +222,9 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 "$TASK_PYTHON" -u run_experiments.py --list \
     | grep -F '[14] dense_tied_baseline_b200:'
 echo 'experiment_order=global_lowrank_tied_r128_b200,dense_tied_baseline_b200'
-echo 'global_architecture=rank128_input_output_same_parameters_for_entire_training'
-echo 'dense_architecture=native_dense_input_output_same_parameters_for_entire_training'
 echo 'batch_configuration=16_per_device_x_4_accum_x_8_gpus=512_sequences_per_step'
 echo 'precision=bf16 stop_checkpoint=10000 original_one_epoch_schedule=true'
-
-echo '=== launch fresh global LR tied, then dense tied, each to checkpoint 10000 ==='
+echo 'TH2 FRESH MATCHED-CONTROL RELAUNCH PREFLIGHT COMPLETE'
 exec "$TASK_PYTHON" -u run_experiments.py \
     --experiments 13 14 \
     --stop-at-step 10000 \
