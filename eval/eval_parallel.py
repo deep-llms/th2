@@ -175,6 +175,11 @@ def main():
                 if isinstance(acc, float):
                     logger.info(f"  BENCH {task:<30} acc={acc:.4f}")
 
+    failed = [job for job in completed if job["process"].returncode != 0]
+    if failed:
+        logger.error(f"\n{len(failed)} of {len(completed)} evaluations failed")
+        raise SystemExit(1)
+
 
 if __name__ == "__main__":
     main()
