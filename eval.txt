@@ -1,0 +1,14 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+# Stable lm-evaluation-harness release with only the Hugging Face backend.
+# FastText is intentionally excluded; it belongs to the separate fasttext_env.
+torch
+transformers==5.9.0
+datasets==4.8.5
+accelerate==1.13.0
+lm_eval[hf]==0.4.10
+entmax==1.3
+scipy
+pyarrow
+sentencepiece
