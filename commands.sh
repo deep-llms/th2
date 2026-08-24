@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-launch-b200-matched-global-lr-then-dense-tied-10k-20260824
+#th2-launch-b200-matched-global-lr-then-dense-tied-10k-20260824-retry1
 set -euo pipefail
 
 TASK_PROJECT_DIR="$PWD"
@@ -17,7 +17,6 @@ TASK_ACCELERATE_DEST="$HOME/.cache/huggingface/accelerate/default_config.yaml"
 echo '=== activate and validate sparse_emb ==='
 date -u
 hostname
-git rev-parse HEAD
 test -x "$TASK_CONDA"
 eval "$("$TASK_CONDA" shell.bash hook)"
 conda activate sparse_emb
