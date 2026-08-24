@@ -41,6 +41,8 @@ _DATASET_REPOSITORIES = {
     "google-research-datasets/paws-x": "google-research-datasets/paws-x",
     "Rowan/hellaswag": "Rowan/hellaswag",
     "alexandrainst/m_hellaswag": "alexandrainst/m_hellaswag",
+    "allenai/ai2_arc": "allenai/ai2_arc",
+    "alexandrainst/m_arc": "alexandrainst/m_arc",
 }
 
 _DATASET_PATH_PATCHES = [
@@ -57,6 +59,15 @@ _DATASET_PATH_PATCHES = [
             set(),
         )
         for lang in ("ar", "de", "ru", "vi")
+    ],
+    ("arc/arc_easy.yaml", "allenai/ai2_arc", set()),
+    *[
+        (
+            f"okapi/arc_multilingual/arc_{lang}.yaml",
+            "alexandrainst/m_arc",
+            set(),
+        )
+        for lang in ("ar", "de", "ru", "vi", "zh")
     ],
 ]
 

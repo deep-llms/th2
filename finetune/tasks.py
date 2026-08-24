@@ -8,6 +8,7 @@ Right padding: text first, then padding after. Standard for causal LM
 training — the model processes real tokens left-to-right, ignoring pads.
 """
 
+import os
 import re
 
 import torch
@@ -150,26 +151,41 @@ def format_xnli(doc, lang="en"):
 # Data loading
 # -----------------------------------------------------------------------
 
+def _dataset_path(repository):
+    """Resolve a Hub dataset ID to its namespaced offline snapshot."""
+    dataset_root = os.environ.get("LM_EVAL_DATASET_ROOT")
+    if not dataset_root:
+        return repository
+    path = os.path.join(os.path.abspath(dataset_root), repository)
+    if not os.path.isdir(path):
+        raise FileNotFoundError(
+            f"Missing offline finetune dataset snapshot for {repository}: {path}"
+        )
+    return path
+
+
 def load_train_data(task_name, tokenizer, max_length=256):
     """Load and format training data. Returns a GenerativeDataset."""
     prompts, completions = [], []
 
     if task_name == "hellaswag":
-        ds = load_dataset("Rowan/hellaswag", split="train")
+        ds = load_dataset(_dataset_path("Rowan/hellaswag"), split="train")
         for doc in ds:
             p, c = format_hellaswag(doc)
             prompts.append(p)
             completions.append(c)
 
     elif task_name == "arc_easy":
-        ds = load_dataset("allenai/ai2_arc", "ARC-Easy", split="train")
+        ds = load_dataset(
+            _dataset_path("allenai/ai2_arc"), "ARC-Easy", split="train"
+        )
         for doc in ds:
             p, c = format_arc_easy(doc)
             prompts.append(p)
             completions.append(c)
 
     elif task_name == "xnli":
-        ds = load_dataset("facebook/xnli", "en", split="train")
+        ds = load_dataset(_dataset_path("facebook/xnli"), "en", split="train")
         for doc in ds:
             p, c = format_xnli(doc, lang="en")
             prompts.append(p)

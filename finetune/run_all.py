@@ -262,6 +262,10 @@ def main():
     elapsed = time.time() - t_start
     print(f"\nTotal time: {elapsed/3600:.1f}h")
     build_summary([r for r in all_results if "error" not in r], args.output_dir)
+    failed_results = [result for result in all_results if "error" in result]
+    if failed_results:
+        print(f"ERROR: {len(failed_results)} finetune jobs have no valid output")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

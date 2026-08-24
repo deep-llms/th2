@@ -129,10 +129,9 @@ def train_one(checkpoint, task_name, seed, device, output_dir,
             acc_norm = metrics.get("acc_norm")
             extra = f" acc_norm={acc_norm:.4f}" if acc_norm is not None else ""
             print(f"    {task}: acc={acc:.4f}{extra}")
-    except ImportError:
-        print("  lm_eval not available — skipping eval (run separately)")
     except Exception as e:
         print(f"  eval failed: {e}")
+        raise
 
     # Save result + fine-tuned model state
     os.makedirs(output_dir, exist_ok=True)
