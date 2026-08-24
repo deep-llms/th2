@@ -1,102 +1,62 @@
-#1 +120+a
-#th2-launch-shared-local-g16-10k-finetune-20260824
+#1 +60+a
+#th2-check-shared-local-g16-10k-finetune-completion-20260824
 #!/usr/bin/env bash
 set -euo pipefail
 
 TASK_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
-TASK_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
-TASK_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
 TASK_CHECKPOINT="$TASK_OUTPUT_BASE/shared_local_tied_g16/checkpoint-10000"
 TASK_FINETUNE_OUTPUT="$TASK_OUTPUT_BASE/finetune_shared_local_tied_g16_10k_20260824"
 
-export HF_HUB_OFFLINE=1
-export HF_DATASETS_OFFLINE=1
-export TRANSFORMERS_OFFLINE=1
-export TOKENIZERS_PARALLELISM=false
-export PYTHONUNBUFFERED=1
-export LM_EVAL_DATASET_ROOT="$TASK_BENCH_ROOT"
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-
-die() {
-    echo "ERROR: $*"
-    exit 1
-}
-
-echo '=== SharedLocal checkpoint-10000 finetune preflight ==='
+echo '=== SharedLocal checkpoint-10000 finetune status ==='
 date -u
 hostname
-test -x "$TASK_EVAL_PYTHON"
-"$TASK_EVAL_PYTHON" -c 'import lm_eval, torch; assert torch.cuda.is_available(); assert torch.cuda.device_count() == 8; print("FINETUNE_ENV_OK", torch.__version__, "gpus=8")'
 
-echo '=== verify checkpoint and completed evaluation ==='
-for filename in \
-    config.json model.safetensors embedding.pt trainer_state.json \
-    eval_ppl.json eval_benchmarks.json; do
-    test -s "$TASK_CHECKPOINT/$filename" \
-        || die "missing checkpoint/eval artifact: $TASK_CHECKPOINT/$filename"
-done
-[[ ! -e "$TASK_CHECKPOINT/output_head.pt" ]] \
-    || die 'SharedLocal tied checkpoint unexpectedly has output_head.pt'
-grep -F 'Loaded compositional model: arm=shared_local' "$TASK_CHECKPOINT/eval.log"
+echo '=== active finetune processes ==='
+pgrep -af '[f]inetune/run_all.py|[f]inetune/train.py' || true
 
-echo '=== verify offline train and evaluation datasets ==='
-test -s "$TASK_MODEL_DIR/config.json"
-test -s "$TASK_MODEL_DIR/tokenizer.json"
-for relpath in \
-    Rowan/hellaswag allenai/ai2_arc facebook/xnli \
-    alexandrainst/m_arc alexandrainst/m_hellaswag \
-    facebook/belebele cambridgeltl/xcopa \
-    juletxara/xstory_cloze google-research-datasets/paws-x; do
-    test -d "$TASK_BENCH_ROOT/$relpath" \
-        || die "missing offline dataset: $TASK_BENCH_ROOT/$relpath"
-done
-"$TASK_EVAL_PYTHON" - <<'PY'
-import os
-from eval.benchmarks import patch_lm_eval_dataset_paths
-
-patch_lm_eval_dataset_paths(os.environ['LM_EVAL_DATASET_ROOT'])
-print('OFFLINE_LM_EVAL_PATHS_OK')
-PY
-
-echo '=== verify fresh output, storage, and all eight free B200 GPUs ==='
-[[ ! -e "$TASK_FINETUNE_OUTPUT" ]] \
-    || die "refusing to reuse finetune output: $TASK_FINETUNE_OUTPUT"
-available_bytes=$(df -PB1 "$TASK_OUTPUT_BASE" | awk 'NR == 2 {print $4}')
-[[ "$available_bytes" =~ ^[0-9]+$ ]] || die 'could not determine free storage'
-(( available_bytes >= 20000000000 )) \
-    || die "less than 20 GB available for finetune artifacts: $available_bytes bytes"
-
-mapfile -t TASK_GPU_NAMES < <(
-    nvidia-smi --query-gpu=name --format=csv,noheader \
-        | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-)
-[[ "${#TASK_GPU_NAMES[@]}" -eq 8 ]] \
-    || die "expected 8 GPUs, found ${#TASK_GPU_NAMES[@]}"
-for index in "${!TASK_GPU_NAMES[@]}"; do
-    [[ "${TASK_GPU_NAMES[$index]}" == *B200* ]] \
-        || die "GPU $index is not B200: ${TASK_GPU_NAMES[$index]}"
-done
-mapfile -t TASK_GPU_PIDS < <(
-    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
-        | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
-)
-[[ "${#TASK_GPU_PIDS[@]}" -eq 0 ]] \
-    || die "GPU processes active before finetune: ${TASK_GPU_PIDS[*]}"
+echo '=== GPU state ==='
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
-echo "FINETUNE_PREFLIGHT_OK fresh_output=$TASK_FINETUNE_OUTPUT available_bytes=$available_bytes"
-echo 'PROTOCOL tasks=hellaswag,arc_easy,xnli seeds=42,123,456 jobs=9 epochs=3 bf16'
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory \
+    --format=csv,noheader \
+    || true
 
-echo '=== launch SharedLocal checkpoint-10000 finetuning across 8 GPUs ==='
-"$TASK_EVAL_PYTHON" -u finetune/run_all.py \
-    --checkpoints shared_local_tied_g16="$TASK_CHECKPOINT" \
-    --tasks hellaswag arc_easy xnli \
-    --seeds 42 123 456 \
-    --tokenizer-name "$TASK_MODEL_DIR" \
-    --num-gpus 8 \
-    --output-dir "$TASK_FINETUNE_OUTPUT"
+echo '=== current artifact counts ==='
+test -d "$TASK_FINETUNE_OUTPUT"
+echo "RESULT_JSON_COUNT=$(find "$TASK_FINETUNE_OUTPUT" -maxdepth 1 -type f -name '*.json' | wc -l)"
+echo "JOB_LOG_COUNT=$(find "$TASK_FINETUNE_OUTPUT" -maxdepth 1 -type f -name '*.log' | wc -l)"
+echo "MODEL_STATE_COUNT=$(find "$TASK_FINETUNE_OUTPUT/models" -mindepth 2 -maxdepth 2 -type f -name 'model_state.pt' 2>/dev/null | wc -l)"
+if [[ -s "$TASK_FINETUNE_OUTPUT/summary.md" ]]; then
+    stat -c 'SUMMARY_PRESENT modified=%y bytes=%s path=%n' "$TASK_FINETUNE_OUTPUT/summary.md"
+else
+    echo 'SUMMARY_PENDING'
+fi
 
-echo '=== validate all nine SharedLocal finetune jobs ==='
+echo '=== per-job log tails ==='
+while IFS= read -r log_path; do
+    echo "--- $log_path ---"
+    tail -20 "$log_path"
+done < <(find "$TASK_FINETUNE_OUTPUT" -maxdepth 1 -type f -name '*.log' -print | sort)
+
+echo '=== failure-signature scan ==='
+TASK_FAILURE_FOUND=0
+while IFS= read -r log_path; do
+    if grep -niE 'Traceback \(most recent call last\)|CUDA out of memory|OutOfMemoryError|eval failed:|FAILED \(code|(^|[^[:alpha:]])nan([^[:alpha:]]|$)' "$log_path"; then
+        TASK_FAILURE_FOUND=1
+    fi
+done < <(find "$TASK_FINETUNE_OUTPUT" -maxdepth 1 -type f -name '*.log' -print)
+[[ "$TASK_FAILURE_FOUND" -eq 0 ]] || {
+    echo 'ERROR: failure signature found in finetune logs'
+    exit 1
+}
+echo 'NO FINETUNE FAILURE SIGNATURE FOUND'
+
+if pgrep -f '[f]inetune/run_all.py|[f]inetune/train.py' >/dev/null; then
+    echo 'TH2 SHARED LOCAL 10K FINETUNE STATUS: STILL RUNNING'
+    exit 0
+fi
+
+echo '=== validate all nine completed jobs ==='
 "$TASK_EVAL_PYTHON" - "$TASK_FINETUNE_OUTPUT" "$TASK_CHECKPOINT" <<'PY'
 import json
 import math
@@ -121,7 +81,7 @@ for task, expected_tasks in expected_eval_tasks.items():
             assert os.path.isfile(path) and os.path.getsize(path) > 0, path
         with open(result_path, encoding='utf-8') as handle:
             result = json.load(handle)
-        assert result['checkpoint'] == checkpoint, result['checkpoint']
+        assert result['checkpoint'] == checkpoint
         assert result['task'] == task
         assert int(result['seed']) == seed
         assert int(result['epochs']) == 3
@@ -136,19 +96,16 @@ for task, expected_tasks in expected_eval_tasks.items():
 assert validated == 9
 summary = os.path.join(output_dir, 'summary.md')
 assert os.path.isfile(summary) and os.path.getsize(summary) > 0
-print('SHARED_LOCAL_10K_FINETUNE_OK jobs=9 tasks=3 seeds=3')
+print('SHARED_LOCAL_10K_FINETUNE_RESULTS_OK jobs=9 tasks=3 seeds=3')
 PY
 
-if grep -HniE 'Traceback \(most recent call last\)|CUDA out of memory|OutOfMemoryError|eval failed:|FAILED \(code|(^|[^[:alpha:]])nan([^[:alpha:]]|$)' \
-    "$TASK_FINETUNE_OUTPUT"/*.log; then
-    die 'failure signature found in finetune logs'
-fi
-mapfile -t TASK_FINAL_GPU_PIDS < <(
+mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
 )
-[[ "${#TASK_FINAL_GPU_PIDS[@]}" -eq 0 ]] \
-    || die "GPU processes remain after finetune: ${TASK_FINAL_GPU_PIDS[*]}"
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+[[ "${#TASK_GPU_PIDS[@]}" -eq 0 ]] || {
+    echo "ERROR: GPU processes remain after finetune: ${TASK_GPU_PIDS[*]}"
+    exit 1
+}
 cat "$TASK_FINETUNE_OUTPUT/summary.md"
 echo 'TH2 SHARED LOCAL G16 CHECKPOINT-10000 FINETUNE COMPLETE AND VERIFIED; ALL GPUS FREE'
