@@ -2,13 +2,33 @@
 
 ## Training Infrastructure
 
-- **h100-1**: 8x H100 80GB HBM3 — runs V2-attn and compositional experiments
-- **h100-2**: 8x H100 80GB HBM3 — runs baseline experiments
+- **Current active remote (2026-08-22 onward): th2 only**, one node with 8×
+  NVIDIA B200 GPUs (183,359 MiB reported per GPU). Run new remote work
+  sequentially on th2.
+- **Active deployment mapping:** local branch `h100-1` → remote `second`
+  (`deep-llms/th2`) → remote `main`. `h100-1` is a legacy branch name; the
+  attached hardware is now B200.
+- **th3 is inactive:** retain local branch `h100-2`, remote `third`, its old
+  Dropbox entry, and historical results for reference, but do not submit jobs
+  or claim current status for th3 unless the user explicitly reactivates it.
 - **main branch**: dev machine (4x A100 40GB) — code development, not training
-- Each training machine pulls from its own git branch (`h100-1`, `h100-2`)
-- Jobs submitted via `commands.sh` (mode #1 = run, #2 = pull logs)
+- **Current runner paths:** code `/mnt/local/<owner>_<repo>/`, data
+  `/mnt/local/_data/@PROJECT@/`, models `/mnt/local/_models/@PROJECT@/`, and
+  conda environments `/mnt/local/conda/envs/<env>/`.
+- Jobs are submitted with `commands.sh`; see `docs/commands.md` for `#0`, `#1`,
+  `#2`, `#3`, `#i`, and `#d` syntax.
 
-## Hardware Adjustments (H100 80GB vs original H200 141GB plan)
+**Reading rule:** dated sections below preserve the state and wording of their
+original experiment snapshots. Terms such as “current,” “running,” “both
+machines,” H100 branch assignments, and `/opt/dlami/nvme` paths inside those
+sections are historical unless explicitly restated in this infrastructure
+section or in `docs/CURRENT_TASK.md`.
+
+## Historical Hardware Adjustments (H100 80GB vs original H200 141GB plan)
+
+The following settings describe the completed H100-era experiments and remain
+part of their reproducibility record. Do not infer that those machines are
+currently available.
 
 - Batch size reduced: 16 → 4 per device
 - Gradient accumulation increased: 4 → 16
@@ -412,7 +432,11 @@ cross-lingual claim too.
   decodability (do anchors encode language identity or meaning?); alignment-vs-step
   curves (t6/t8 at 2k..10k, checkpoints exist every 250); t1 at mid layers; t5.
 
-### Remote runner semantics (docs/commands.md — learned the hard way)
+### Historical remote-runner semantics (superseded by the B200 runner)
+
+This subsection records behavior observed on the old H100-era runner. It is
+kept to explain past incidents, not as current operating instructions. Use
+`docs/commands.md` and `docs/AGENT_GUIDE.md` for the active th2 B200 runner.
 
 `#1` = submit only, NO log ever uploads (completion is silent by design);
 `#1 +W+a` = submit + wait W sec + pull log (partial if still running); `#2` = pull
@@ -647,7 +671,7 @@ Before rerunning, both machines were verified to have no GPU processes, both new
 directories and exact W&B runs were deleted, and dataset-processing caches were deleted.
 Consequently, both reruns regenerated preprocessing caches from the same raw dataset.
 
-### Current runs
+### Historical run snapshot (2026-08-16)
 
 | Machine | Arm | Launch commit | Output directory | Progress at 2026-08-16 ~17:20 UTC |
 |---|---|---|---|---|
@@ -659,12 +683,113 @@ The latest log-pull commits are `6dc4468` (th2) and `49ae8ba` (th3). Do not infe
 architecture winner from this early near-tie; compare matched checkpoints and final
 validation metrics.
 
+## G16 candidate and independent-output diagnostic implementation (2026-08-17)
+
+The next screen is intentionally limited to one candidate and one causal
+diagnostic:
+
+The checkpoint-10k validation that motivates it is: dense tied baseline PPL
+35.24, global low-rank tied PPL 48.514, and SharedLocal G4 tied PPL 47.045.
+G4 therefore recovers only a small fraction of the dense-to-low-rank gap.
+
+1. **SharedLocal tied G16** (`shared_rank=64`, `local_rank=64`) tests whether
+   increasing the number of vocabulary-local subspaces can recover the output
+   rank lost by global rank-128 tying. Qwen's 151,936-token vocabulary divides
+   by 16 exactly, so this uses the padding-free batched-GEMM path. The interface
+   has 20,562,944 parameters and the complete model has 461,030,400.
+2. **Low-rank input + independent low-rank output** keeps rank 128 on both
+   sides while removing hard factor sharing. The independent output owns
+   `X_out in R^(V x 128)` and `W_out in R^(1024 x 128)` and computes
+   `(hidden @ W_out) @ X_out.T`. Its 19,578,880 output parameters give
+   479,626,240 total model parameters.
+
+The independent output factors are cloned by value from the input factors, are
+different Parameter objects/storage, and consume no additional RNG during
+construction. The input projection bias is not copied: as an output-table bias
+it contributes only one common scalar to all vocabulary logits, while Qwen's
+native `lm_head` is bias-free. Consequently the diagnostic starts with the same
+classifier factors/probabilities as the tied control without adding a dead or
+class-specific bias.
+
+New training flag: `--independent_lowrank_output` (only with `--arm lowrank`,
+mutually exclusive with `--tie_output`). Each periodic/final checkpoint saves
+`output_head.pt` in addition to `embedding.pt`. The shared loader used by eval
+and finetuning reconstructs the independent head, casts it to the model dtype,
+and refuses missing, stale, conflicting, malformed, or value-divergent
+sidecars by comparing them to the HF checkpoint tensors. Resume also
+checks the saved architecture, sidecars, and actual HF input/output tensor
+topology before Trainer loads state. It requires the Trainer global step to
+match the checkpoint directory and requires optimizer, scheduler, and all
+eight DDP RNG states with the same world size, so a partial save cannot
+silently restart training state.
+
+New runner entries preserve the existing G4 experiment at index 10:
+
+- index 11: `shared_local_tied_g16`
+- index 12: `lowrank_independent_output_r128`
+
+Both production scripts retain the one-epoch schedule and all existing fair
+training settings. The 10k screen must use runner-level
+`--stop-at-step 10000`, never production `max_steps`. Both entries require new
+output directories to prevent accidental auto-resume with a different
+architecture. The runner now returns failure for failed/skipped jobs and for a
+child process that did not terminate.
+
+Validation: 63 focused/broader tests pass. A tiny end-to-end Qwen Trainer smoke
+trained one step, saved `embedding.pt` and `output_head.pt`, automatically
+resumed to step 2, and loaded through the evaluation path with finite logits.
+On the four-A100 dev machine, a real four-process BF16 DDP invocation of
+`train_compositional.py` trained to step 2, saved the model/optimizer/scheduler,
+both sidecars, and `rng_state_0..3.pth`, automatically resumed to step 3, then
+loaded through the eval path and generated successfully. A four-GPU test at the
+exact production interface dimensions (`V=151936`, `d=1024`, `r=128`) produced
+finite nonzero gradients for both input and output factors and synchronized
+updates across ranks. The full 479,626,240-parameter Qwen3-0.6B configuration
+also completed a BF16 causal-loss backward pass on an A100 (about 1,947 MiB peak
+allocated memory). At that 2026-08-17 snapshot, neither new screen had been
+launched remotely. The current execution plan is sequential on th2/B200; see
+`docs/CURRENT_TASK.md`.
+
+## Pure-local G16 R128 control implementation (2026-08-25)
+
+The fair B200 checkpoint-10k comparison is now dense tied PPL 24.69,
+independent-output LR128 PPL 32.12, SharedLocal G16 tied PPL 33.93, and global
+LR128 tied PPL 33.97. SharedLocal's 0.04-PPL advantage over global LR128 is not
+decisive, so the next control removes its shared-global branch.
+
+`PureLocalEmbed` uses 16 contiguous groups and rank 128 per group:
+`e_i = z_i @ L_g.T + b`. Input and output are exactly tied, the output remains
+a flat vocabulary softmax, and the production path uses standard padding-free
+grouped GEMMs. Its 21,545,984-parameter interface is 983,040 parameters larger
+than SharedLocal G16 64+64; this is an equal-rank structural control rather than
+an exact-budget control. A later R120/R128 curve can bracket SharedLocal's
+budget if required for the final paper.
+
+The new `pure_local` arm, exact tied head, strict loading/configless inference,
+training script, and runner index 17 are implemented. All 62 repository pytest
+tests and the standalone compositional invariant suite pass locally. A
+production-dimension CPU forward/backward also verified the exact parameter
+count, group layout, finite full-vocabulary logits/loss, and finite gradients.
+An actual tiny-Qwen Trainer run completed checkpoint 1, loaded and generated
+through the evaluation path, then automatically resumed to checkpoint 2 with
+all Trainer and Pure-local state restored.
+A four-A100 BF16/NCCL DDP smoke at the exact production interface dimensions
+also passed with `find_unused_parameters=False`, finite/nonzero gradients for
+all 16 groups, and identical post-update checksums across ranks. All dev GPUs
+were free after the test. Remote B200 training has not yet been launched.
+
 ## TODO
 
-- [ ] Finish the full 33,339-step low-rank-tied and SharedLocal-tied reruns
+- [x] Stop low-rank-tied and SharedLocal-G4-tied at checkpoint 10k
+- [x] Run matched checkpoint-10k validation and downstream finetuning
+- [x] Train independent-low-rank-output and SharedLocal G16 to checkpoint 10k
+  on the B200 machine
+- [x] Evaluate both checkpoint-10k models with `eval/eval_parallel.py` and the
+  common finetuning suite
+- [ ] Run the implemented pure-local rank-128 G16 structural control to 10k
 - [ ] Compare matched-checkpoint loss/PPL curves, throughput, and peak memory
-- [ ] Run identical validation PPL and downstream evaluations for both tied arms
-- [ ] Run eval PPL + benchmarks for ALBERT and Residual ANT (checkpoints on machines)
+- [ ] Run eval PPL + benchmarks for ALBERT and Residual ANT from retained
+  backups, if available; the old training machines are inactive
 - [ ] Run frequency-binned PPL + cross-lingual battery on both new arms
-- [ ] Decide go/no-go for full 35K run based on all results
+- [ ] Decide go/no-go for full 33,339-step run based on all results
 - [ ] Pull training metrics (loss curves, ppl) from wandb offline logs

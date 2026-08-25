@@ -8,6 +8,13 @@ from .embeddings import (
     IsolationControlEmbed,
     LowRankEmbed,
     SharedLocalEmbed,
+    PureLocalEmbed,
+)
+from .compressed_baselines import (
+    PVQEmbed,
+    SlimEmbed,
+    GroupReduceEmbed,
+    TTEmbedding,
 )
 from .optimizers import Yogi
 from .losses import compute_loss

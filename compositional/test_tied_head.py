@@ -27,6 +27,13 @@ from .embeddings import (
     OriginalANT,
     ResidualANTEmbed,
     SharedLocalEmbed,
+    PureLocalEmbed,
+)
+from .compressed_baselines import (
+    PVQEmbed,
+    SlimEmbed,
+    GroupReduceEmbed,
+    TTEmbedding,
 )
 from .loading import (
     EmbeddingShim,
@@ -69,6 +76,77 @@ def _arm_cases():
                 "shared_rank": BASE_DIM // 2,
                 "local_embed_rank": BASE_DIM // 2,
                 "num_groups": 4,
+                "tie_output": True,
+            },
+        ),
+        (
+            "pure_local",
+            PureLocalEmbed(
+                VOCAB_SIZE,
+                HIDDEN_SIZE,
+                rank=BASE_DIM,
+                num_groups=4,
+            ),
+            {
+                "arm": "pure_local",
+                "pure_local_rank": BASE_DIM,
+                "num_groups": 4,
+                "tie_output": True,
+            },
+        ),
+        (
+            "pvq",
+            PVQEmbed(
+                VOCAB_SIZE, HIDDEN_SIZE,
+                shared_dim=12, num_codes=5,
+            ),
+            {
+                "arm": "pvq",
+                "pvq_shared_dim": 12,
+                "pvq_num_codes": 5,
+                "tie_output": True,
+            },
+        ),
+        (
+            "slim",
+            SlimEmbed(
+                VOCAB_SIZE, HIDDEN_SIZE,
+                num_components=4, num_subvectors=32,
+            ),
+            {
+                "arm": "slim",
+                "slim_num_components": 4,
+                "slim_num_subvectors": 32,
+                "tie_output": True,
+            },
+        ),
+        (
+            "groupreduce",
+            GroupReduceEmbed(
+                VOCAB_SIZE, HIDDEN_SIZE,
+                group_ranks=(2, 3, 4, 5),
+            ),
+            {
+                "arm": "groupreduce",
+                "groupreduce_num_groups": 4,
+                "groupreduce_ranks": "2,3,4,5",
+                "tie_output": True,
+            },
+        ),
+        (
+            "tt",
+            TTEmbedding(
+                VOCAB_SIZE, HIDDEN_SIZE,
+                vocab_modes=(4, 4, 2),
+                embedding_modes=(2, 2, 4),
+                tt_ranks=(1, 3, 3, 1),
+            ),
+            {
+                "arm": "tt",
+                "tt_order": 3,
+                "tt_vocab_shape": "4,4,2",
+                "tt_embedding_shape": "2,2,4",
+                "tt_ranks": "3,3",
                 "tie_output": True,
             },
         ),
@@ -341,6 +419,97 @@ def test_shared_local_g16_divisible_fast_path_is_exact():
             f"G16 {name}: non-finite gradient"
 
 
+def test_pure_local_balanced_padding_and_g16_fast_path_are_exact():
+    """Pure-local handles both uneven tiny groups and the production layout."""
+    torch.manual_seed(16)
+    for vocab_size, num_groups in ((10, 4), (32, 16)):
+        embed = PureLocalEmbed(
+            vocab_size, HIDDEN_SIZE, rank=BASE_DIM, num_groups=num_groups
+        )
+        with torch.no_grad():
+            embed.bias.copy_(
+                torch.linspace(-0.25, 0.25, HIDDEN_SIZE)
+            )
+        expected_params = (
+            num_groups * embed.group_size * BASE_DIM
+            + num_groups * HIDDEN_SIZE * BASE_DIM
+            + HIDDEN_SIZE
+        )
+        assert sum(parameter.numel() for parameter in embed.parameters()) \
+            == expected_params
+        explicit_embed = copy.deepcopy(embed)
+        hidden = torch.randn(2, 5, HIDDEN_SIZE, requires_grad=True)
+        explicit_hidden = hidden.detach().clone().requires_grad_(True)
+        weights = torch.randn(2, 5, vocab_size)
+
+        actual = make_tied_head(embed, "pure_local", vocab_size)(hidden)
+        table, _ = explicit_embed(torch.arange(vocab_size).unsqueeze(0))
+        expected = explicit_hidden @ table.squeeze(0).T
+        torch.testing.assert_close(actual, expected, rtol=1e-5, atol=1e-6)
+
+        (actual * weights).sum().backward()
+        (expected * weights).sum().backward()
+        torch.testing.assert_close(
+            hidden.grad, explicit_hidden.grad, rtol=1e-5, atol=1e-6
+        )
+        for (name, parameter), (other_name, other_parameter) in zip(
+            embed.named_parameters(), explicit_embed.named_parameters()
+        ):
+            assert name == other_name
+            torch.testing.assert_close(
+                parameter.grad, other_parameter.grad, rtol=1e-5, atol=1e-6
+            )
+
+        valid_factor_mask = (
+            torch.arange(embed.group_size).unsqueeze(0)
+            < torch.tensor(embed.group_sizes).unsqueeze(1)
+        )
+        assert torch.count_nonzero(
+            embed.token_factors.grad[~valid_factor_mask]
+        ) == 0
+
+    production_params = (
+        151_936 * 128 + 16 * 1024 * 128 + 1024
+    )
+    assert production_params == 21_545_984
+
+
+def test_pure_local_tied_qwen_uses_every_group_when_inputs_do_not():
+    """The tied classifier keeps all local bases active for DDP training."""
+    torch.manual_seed(17)
+    vocab_size, num_groups = 32, 16
+    model = _tiny_qwen()
+    # Override the helper's V=31 model with a divisible production-style V.
+    config = copy.deepcopy(model.config)
+    config.vocab_size = vocab_size
+    model = Qwen3ForCausalLM(config)
+    embed = PureLocalEmbed(
+        vocab_size, HIDDEN_SIZE, rank=BASE_DIM, num_groups=num_groups
+    )
+    model.model.embed_tokens = EmbeddingShim(embed)
+    model.lm_head = make_tied_head(embed, "pure_local", vocab_size)
+
+    # Every input token is in group zero. All other local bases can receive a
+    # gradient only through the exactly tied full-vocabulary output path.
+    input_ids = torch.tensor([[0, 1, 0, 1, 0, 1]])
+    loss = model(input_ids=input_ids, labels=input_ids).loss
+    assert torch.isfinite(loss)
+    loss.backward()
+
+    for group in range(num_groups):
+        weight_grad = embed.local_weight.grad[group]
+        factor_grad = embed.token_factors.grad[group]
+        assert torch.isfinite(weight_grad).all()
+        assert torch.isfinite(factor_grad).all()
+        assert torch.count_nonzero(weight_grad) > 0, \
+            f"group {group} basis was unused"
+        assert torch.count_nonzero(factor_grad) > 0, \
+            f"group {group} token factors were unused"
+
+    assert embed.bias.grad is not None
+    assert torch.isfinite(embed.bias.grad).all()
+
+
 def test_tied_embedding_has_one_registered_owner():
     for arm, embed, _ in _arm_cases():
         model = _tiny_qwen()
@@ -525,6 +694,60 @@ def test_shared_local_hf_state_restores_directly_for_trainer_resume():
     for key, value in model.state_dict().items():
         torch.testing.assert_close(resumed.state_dict()[key], value,
                                    rtol=0, atol=0)
+
+
+def test_pure_local_hf_state_and_resume_validation_are_exact():
+    """Pure-local must restore every factor and pass strict Trainer preflight."""
+    from train_compositional import (
+        CompositionalArguments,
+        validate_resume_compatibility,
+    )
+
+    torch.manual_seed(18)
+    model = _tiny_qwen()
+    embed = PureLocalEmbed(
+        VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM, num_groups=4
+    )
+    _install_tied_embedding(model, embed, "pure_local")
+    args = CompositionalArguments(
+        arm="pure_local",
+        pure_local_rank=BASE_DIM,
+        num_groups=4,
+        tie_output=True,
+    )
+
+    with tempfile.TemporaryDirectory() as output_dir:
+        checkpoint_dir = os.path.join(output_dir, "checkpoint-7")
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        _write_minimal_resume_state(checkpoint_dir, 7)
+        with open(os.path.join(output_dir, "train_config.json"), "w") as handle:
+            json.dump({"compositional": asdict(args)}, handle)
+
+        validate_resume_compatibility(
+            checkpoint_dir,
+            args,
+            expected_embed_module=embed,
+        )
+
+        saved_state = load_file(os.path.join(
+            checkpoint_dir, "model.safetensors"
+        ))
+        resumed = _tiny_qwen()
+        resumed_embed = PureLocalEmbed(
+            VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM, num_groups=4
+        )
+        _install_tied_embedding(resumed, resumed_embed, "pure_local")
+        incompatible = resumed.load_state_dict(saved_state, strict=True)
+
+    assert incompatible.missing_keys == []
+    assert incompatible.unexpected_keys == []
+    for key, value in model.state_dict().items():
+        torch.testing.assert_close(
+            resumed.state_dict()[key], value, rtol=0, atol=0
+        )
 
 
 def test_shared_local_periodic_checkpoint_saves_embedding_once():
@@ -859,6 +1082,48 @@ def test_loader_default_dtype_matches_bfloat16_checkpoint():
     assert logits.dtype == torch.bfloat16
 
 
+def test_pure_local_loader_and_logits_match_bfloat16_checkpoint():
+    torch.manual_seed(24)
+    model = _tiny_qwen().to(torch.bfloat16)
+    embed = PureLocalEmbed(
+        VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM, num_groups=4
+    ).to(torch.bfloat16)
+    _install_tied_embedding(model, embed, "pure_local")
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        with open(os.path.join(checkpoint_dir, "train_config.json"), "w") as handle:
+            json.dump(
+                {
+                    "compositional": {
+                        "arm": "pure_local",
+                        "pure_local_rank": BASE_DIM,
+                        "num_groups": 4,
+                        "tie_output": True,
+                    }
+                },
+                handle,
+            )
+
+        loaded, _ = load_compositional_model(
+            checkpoint_dir, device="cpu", dtype=None
+        )
+        with torch.no_grad():
+            logits = loaded(
+                input_ids=torch.randint(0, VOCAB_SIZE, (2, 7))
+            ).logits
+
+    loaded_embed = loaded.model.embed_tokens.embed
+    assert loaded_embed.token_factors.dtype == torch.bfloat16
+    assert loaded_embed.local_weight.dtype == torch.bfloat16
+    assert loaded_embed.bias.dtype == torch.bfloat16
+    assert logits.dtype == torch.bfloat16
+    assert torch.isfinite(logits).all()
+
+
 def test_independent_loader_default_dtype_matches_bfloat16_checkpoint():
     torch.manual_seed(23)
     model = _tiny_qwen().to(torch.bfloat16)
@@ -1025,6 +1290,38 @@ def test_loader_infers_shared_local_shape_when_train_config_is_missing():
     torch.testing.assert_close(actual, expected, rtol=0, atol=0)
 
 
+def test_loader_infers_pure_local_shape_when_train_config_is_missing():
+    torch.manual_seed(20)
+    input_ids = torch.randint(0, VOCAB_SIZE, (2, 7))
+    model = _tiny_qwen()
+    embed = PureLocalEmbed(
+        VOCAB_SIZE, HIDDEN_SIZE, rank=BASE_DIM, num_groups=4
+    )
+    _install_tied_embedding(model, embed, "pure_local")
+    model.eval()
+    with torch.no_grad():
+        expected = model(input_ids=input_ids).logits
+
+    with tempfile.TemporaryDirectory() as checkpoint_dir:
+        model.save_pretrained(checkpoint_dir)
+        torch.save(
+            embed.state_dict(), os.path.join(checkpoint_dir, "embedding.pt")
+        )
+        loaded, inferred = load_compositional_model(
+            checkpoint_dir, device="cpu", dtype=torch.float32
+        )
+        with torch.no_grad():
+            actual = loaded(input_ids=input_ids).logits
+
+    assert inferred == {
+        "arm": "pure_local",
+        "pure_local_rank": BASE_DIM,
+        "num_groups": 4,
+        "tie_output": True,
+    }
+    torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+
+
 def test_shared_local_cli_rank_does_not_collide_with_distributed_local_rank():
     from train_compositional import CompositionalArguments
 
@@ -1037,6 +1334,34 @@ def test_shared_local_cli_rank_does_not_collide_with_distributed_local_rank():
     ])
     assert training_args.local_rank == 2
     assert comp_args.local_embed_rank == 7
+
+
+def test_pure_local_cli_build_and_output_validation():
+    from train_compositional import (
+        CompositionalArguments,
+        build_arm,
+        validate_output_configuration,
+    )
+
+    args = CompositionalArguments(
+        arm="pure_local",
+        pure_local_rank=BASE_DIM,
+        num_groups=4,
+        tie_output=True,
+    )
+    embed = build_arm(args, VOCAB_SIZE, HIDDEN_SIZE)
+    assert isinstance(embed, PureLocalEmbed)
+    assert embed.rank == BASE_DIM
+    assert embed.num_groups == 4
+    assert validate_output_configuration(args) == "tied"
+
+    args.tie_output = False
+    try:
+        validate_output_configuration(args)
+    except ValueError as error:
+        assert "requires --tie_output" in str(error)
+    else:
+        raise AssertionError("pure_local with a dense output must be rejected")
 
 
 def test_independent_output_cli_and_validation():

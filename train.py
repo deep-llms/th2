@@ -13,6 +13,7 @@ import sys
 from dataclasses import dataclass, field, asdict
 from itertools import chain
 
+import torch
 import datasets
 from datasets import load_from_disk, concatenate_datasets
 
@@ -80,7 +81,28 @@ class DataArguments:
     )
 
 
-def save_train_config(save_dir, model_args, data_args, training_args):
+@dataclass
+class PVQCurriculumArguments:
+    pvq_curriculum: bool = field(default=False, metadata={
+        "help": "Run P-VQ's dense-table clustering curriculum. Requires a "
+                "pretrained dense exactly-tied model; compact conversion is a "
+                "separate step after this run."
+    })
+    pvq_shared_dim: int = field(default=768)
+    pvq_k_begin: int = field(default=1024)
+    pvq_k_end: int = field(default=128)
+    pvq_k_decay: int = field(default=128)
+    pvq_cluster_every: int = field(default=1000)
+    pvq_curriculum_steps: int = field(default=10000)
+    pvq_cluster_iters: int = field(default=100)
+    pvq_cluster_restarts: int = field(default=10)
+    pvq_cluster_chunk_size: int = field(default=4096)
+    pvq_cluster_device: str = field(default="cuda")
+    pvq_final_recluster: bool = field(default=True)
+
+
+def save_train_config(save_dir, model_args, data_args, training_args,
+                      pvq_args=None):
     config = {
         "model": asdict(model_args),
         "data": asdict(data_args),
@@ -89,18 +111,23 @@ def save_train_config(save_dir, model_args, data_args, training_args):
             if v is not None and v != "" and k not in ("_n_gpu", "local_rank")
         },
     }
+    if pvq_args is not None:
+        config["pvq_curriculum"] = asdict(pvq_args)
     with open(os.path.join(save_dir, "train_config.json"), "w") as f:
         json.dump(config, f, indent=2, default=str)
 
 
 def main():
-    parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
+    parser = HfArgumentParser((
+        ModelArguments, DataArguments, TrainingArguments,
+        PVQCurriculumArguments,
+    ))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
-        model_args, data_args, training_args = parser.parse_json_file(
+        model_args, data_args, training_args, pvq_args = parser.parse_json_file(
             json_file=os.path.abspath(sys.argv[1])
         )
     else:
-        model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+        model_args, data_args, training_args, pvq_args = parser.parse_args_into_dataclasses()
 
     # Setup logging
     logging.basicConfig(
@@ -125,6 +152,8 @@ def main():
         f"16-bits training: {training_args.fp16}"
     )
     logger.info(f"Training/evaluation parameters {training_args}")
+    if pvq_args.pvq_curriculum:
+        logger.info(f"P-VQ curriculum parameters {pvq_args}")
 
     set_seed(training_args.seed)
 
@@ -152,6 +181,17 @@ def main():
         config = AutoConfig.from_pretrained(model_args.model_name_or_path, **config_kwargs)
     else:
         raise ValueError("Must set --model_name_or_path or --config_name")
+
+    if pvq_args.pvq_curriculum:
+        if not model_args.model_name_or_path:
+            raise ValueError(
+                "P-VQ curriculum requires --model_name_or_path pointing to a "
+                "pretrained dense tied checkpoint"
+            )
+        if not getattr(config, "tie_word_embeddings", False):
+            raise ValueError(
+                "P-VQ curriculum requires tie_word_embeddings=true"
+            )
 
     # Load tokenizer
     tokenizer_kwargs = {
@@ -185,6 +225,14 @@ def main():
     total_params = sum(p.numel() for p in model.parameters())
     logger.info(f"Total params: {total_params:,}, Trainable: {trainable_params:,} "
                 f"({100 * trainable_params / total_params:.2f}%)")
+
+    if pvq_args.pvq_curriculum:
+        input_weight = model.get_input_embeddings().weight
+        output_weight = model.get_output_embeddings().weight
+        if input_weight.data_ptr() != output_weight.data_ptr():
+            raise ValueError(
+                "Loaded model does not have exact input-output parameter tying"
+            )
 
     # Load per-language datasets (supports both single-dir and sharded layouts)
     datasets_list = []
@@ -275,21 +323,49 @@ def main():
     logger.info(f"Training dataset: {train_dataset.num_rows:,} sequences of {block_size} tokens")
 
     # Initialize Trainer
+    checkpoint = None
+    if training_args.resume_from_checkpoint is not None:
+        checkpoint = training_args.resume_from_checkpoint
+    elif last_checkpoint is not None:
+        checkpoint = last_checkpoint
+
+    callbacks = []
+    if pvq_args.pvq_curriculum:
+        from compositional.pvq_curriculum import PVQCurriculumCallback
+        callbacks.append(PVQCurriculumCallback(
+            shared_dim=pvq_args.pvq_shared_dim,
+            k_begin=pvq_args.pvq_k_begin,
+            k_end=pvq_args.pvq_k_end,
+            k_decay=pvq_args.pvq_k_decay,
+            cluster_every=pvq_args.pvq_cluster_every,
+            curriculum_steps=pvq_args.pvq_curriculum_steps,
+            cluster_iters=pvq_args.pvq_cluster_iters,
+            cluster_restarts=pvq_args.pvq_cluster_restarts,
+            cluster_chunk_size=pvq_args.pvq_cluster_chunk_size,
+            cluster_device=pvq_args.pvq_cluster_device,
+            seed=training_args.seed,
+            resume_checkpoint=checkpoint,
+            final_recluster=pvq_args.pvq_final_recluster,
+        ))
+
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         processing_class=tokenizer,
         data_collator=default_data_collator,
+        callbacks=callbacks,
     )
+
+    if training_args.should_save:
+        os.makedirs(training_args.output_dir, exist_ok=True)
+        save_train_config(
+            training_args.output_dir, model_args, data_args, training_args,
+            pvq_args,
+        )
 
     # Training
     logger.info("*** Train ***")
-    checkpoint = None
-    if training_args.resume_from_checkpoint is not None:
-        checkpoint = training_args.resume_from_checkpoint
-    elif last_checkpoint is not None:
-        checkpoint = last_checkpoint
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     trainer.save_model()
 
@@ -300,7 +376,10 @@ def main():
     trainer.save_state()
 
     if training_args.should_save:
-        save_train_config(training_args.output_dir, model_args, data_args, training_args)
+        save_train_config(
+            training_args.output_dir, model_args, data_args, training_args,
+            pvq_args,
+        )
     logger.info(f"Training complete. Model saved to: {training_args.output_dir}")
 
 
