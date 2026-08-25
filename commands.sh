@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-check-pure-local-live-progress-20260825-2106
+#th2-check-pure-local-live-progress-20260825-2354
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
