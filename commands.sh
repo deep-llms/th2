@@ -1,79 +1,99 @@
-#1 +120+a
-#th2-replace-pure-local-handoff-watcher-after-audit-20260825
+#1 +60+a
+#th2-check-pure-local-live-progress-20260825-2106
 set -euo pipefail
 
-echo '=== replace only the Pure-local handoff watcher with audited version ==='
+TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
+TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/pure_local_tied_g16_r128"
+TASK_LOG_DIR="$TASK_OUTPUT_BASE/logs/pure_local_tied_g16_r128_20260825"
+TASK_TRAIN_LOG="$TASK_LOG_DIR/pure_local_tied_g16_r128.log"
+TASK_EXPERIMENT_LOG="$TASK_LOG_DIR/experiments.log"
+TASK_EVAL_LOG="$TASK_OUTPUT_BASE/eval_parallel_pure_local_tied_g16_r128_10k_20260825.log"
+TASK_FINETUNE_DIR="$TASK_OUTPUT_BASE/finetune_pure_local_tied_g16_r128_10k_20260825"
+TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
+
+echo '=== PureLocal live progress (read-only) ==='
 date -u
 hostname
+test -x "$TASK_PYTHON"
+test -d "$TASK_OUTPUT_DIR"
+test -s "$TASK_TRAIN_LOG"
+test -s "$TASK_EXPERIMENT_LOG"
 
-TASK_PROJECT_DIR="$PWD"
-TASK_WATCHER="$TASK_PROJECT_DIR/scripts/watch_pure_local_10k_eval_finetune_burn.sh"
-TASK_TRAIN_OUTPUT=/mnt/local/_outputs/@PROJECT@/pure_local_tied_g16_r128
-TASK_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
-test -s "$TASK_WATCHER"
-test -x "$TASK_EVAL_PYTHON"
-
-find_exact_watchers() {
-    local proc
-    local -a argv
-    for proc in /proc/[0-9]*; do
-        [[ -r "$proc/cmdline" ]] || continue
-        argv=()
-        mapfile -d '' -t argv < "$proc/cmdline" || true
-        [[ "${#argv[@]}" -ge 2 ]] || continue
-        if [[ "${argv[0]}" == bash || "${argv[0]}" == */bash ]] \
-                && [[ "${argv[1]}" == "$TASK_WATCHER" ]]; then
-            printf '%s\n' "${proc#/proc/}"
-        fi
-    done | sort -nu
-}
-
-echo '=== stop the old watcher only; do not touch training ==='
-mapfile -t TASK_OLD_WATCHERS < <(find_exact_watchers)
-[[ "${#TASK_OLD_WATCHERS[@]}" -le 1 ]] \
-    || { echo "ERROR: multiple old watchers found: ${TASK_OLD_WATCHERS[*]}"; exit 1; }
-if [[ "${#TASK_OLD_WATCHERS[@]}" -eq 1 ]]; then
-    echo "stopping_old_watcher_pid=${TASK_OLD_WATCHERS[0]}"
-    kill -TERM "${TASK_OLD_WATCHERS[0]}"
-    for TASK_WAIT in $(seq 1 30); do
-        mapfile -t TASK_REMAINING_WATCHERS < <(find_exact_watchers)
-        [[ "${#TASK_REMAINING_WATCHERS[@]}" -eq 0 ]] && break
-        sleep 1
-    done
-fi
-mapfile -t TASK_REMAINING_WATCHERS < <(find_exact_watchers)
-[[ "${#TASK_REMAINING_WATCHERS[@]}" -eq 0 ]] \
-    || { echo "ERROR: old watcher remains: ${TASK_REMAINING_WATCHERS[*]}"; exit 1; }
-echo 'OLD WATCHER STOPPED; TRAINING WAS NOT SIGNALED'
-
-echo '=== prove the eight exact Pure-local GPU workers are still running ==='
+echo '=== GPU state and process stage ==='
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
 mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
 )
-[[ "${#TASK_GPU_PIDS[@]}" -eq 8 ]] \
-    || { echo "ERROR: expected 8 training workers, found ${#TASK_GPU_PIDS[@]}"; exit 1; }
+echo "gpu_process_count=${#TASK_GPU_PIDS[@]}"
 for TASK_PID in "${TASK_GPU_PIDS[@]}"; do
-    test -r "/proc/$TASK_PID/cmdline"
-    TASK_CMDLINE=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")
-    echo "training_gpu_pid=$TASK_PID cmd=$TASK_CMDLINE"
-    [[ "$TASK_CMDLINE" == *train_compositional.py* \
-        && "$TASK_CMDLINE" == *"--output_dir $TASK_TRAIN_OUTPUT"* \
-        && "$TASK_CMDLINE" == *"--arm pure_local"* \
-        && "$TASK_CMDLINE" == *"--pure_local_rank 128"* \
-        && "$TASK_CMDLINE" == *"--num_groups 16"* \
-        && "$TASK_CMDLINE" == *"--tie_output"* ]] \
-        || { echo "ERROR: unexpected GPU process $TASK_PID"; exit 1; }
+    if test -r "/proc/$TASK_PID/cmdline"; then
+        TASK_CMDLINE=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")
+        echo "gpu_pid=$TASK_PID cmd=$TASK_CMDLINE"
+    else
+        echo "gpu_pid=$TASK_PID cmd=<exited-during-snapshot>"
+    fi
 done
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
-echo 'PURE-LOCAL TRAINING UNINTERRUPTED WITH ALL 8 EXPECTED WORKERS'
 
-export SPARSE_EMB_PROJECT_DIR="$TASK_PROJECT_DIR"
-export SPARSE_EMB_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-export SPARSE_EMB_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
-export SPARSE_EMB_EVAL_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
-export SPARSE_EMB_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
-export SPARSE_EMB_EVAL_PYTHON="$TASK_EVAL_PYTHON"
+echo '=== checkpoints ==='
+find "$TASK_OUTPUT_DIR" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' \
+    -printf '%f %TY-%Tm-%TdT%TH:%TM:%TSZ\n' | sort -V | tail -n 8
 
-echo '=== start audited fail-closed watcher ==='
-exec bash "$TASK_WATCHER"
+echo '=== derive latest step, rate, and training ETA ==='
+"$TASK_PYTHON" - "$TASK_TRAIN_LOG" <<'PY'
+import datetime as dt
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+with path.open("rb") as handle:
+    handle.seek(0, 2)
+    size = handle.tell()
+    handle.seek(max(0, size - 8_000_000))
+    text = handle.read().decode("utf-8", errors="replace").replace("\r", "\n")
+
+matches = re.findall(
+    r"(\d+)/33339\s+\[[^\n]*?,\s*([0-9]+(?:\.[0-9]+)?)s/it\]",
+    text,
+)
+if not matches:
+    raise SystemExit("ERROR: no recent tqdm progress record found")
+step, seconds_per_step = int(matches[-1][0]), float(matches[-1][1])
+target = 10_000
+now = dt.datetime.now(dt.timezone.utc)
+remaining_seconds = max(0, target - step) * seconds_per_step
+eta = now + dt.timedelta(seconds=remaining_seconds)
+print(f"live_step={step}")
+print(f"target_step={target}")
+print(f"seconds_per_step={seconds_per_step:.3f}")
+print(f"training_remaining_seconds={remaining_seconds:.0f}")
+print(f"training_eta_utc={eta:%Y-%m-%d %H:%M:%S UTC}")
+
+metric_rows = re.findall(r"\{'loss':[^\n]+", text)
+if metric_rows:
+    print(f"latest_metric={metric_rows[-1]}")
+PY
+
+echo '=== workflow artifact/stage indicators ==='
+if test -d "$TASK_OUTPUT_DIR/checkpoint-10000"; then
+    echo 'checkpoint_10000=present'
+else
+    echo 'checkpoint_10000=absent'
+fi
+if test -s "$TASK_EVAL_LOG"; then
+    echo "eval_log=present bytes=$(stat -c %s "$TASK_EVAL_LOG")"
+    tail -n 20 "$TASK_EVAL_LOG"
+else
+    echo 'eval_log=absent'
+fi
+if test -d "$TASK_FINETUNE_DIR"; then
+    echo "finetune_json_count=$(find "$TASK_FINETUNE_DIR" -maxdepth 1 -type f -name '*.json' | wc -l)"
+else
+    echo 'finetune_dir=absent'
+fi
+
+echo '=== latest experiment state ==='
+tail -n 20 "$TASK_EXPERIMENT_LOG"
+
+echo 'TH2 PURE-LOCAL LIVE PROGRESS CHECK OK'
