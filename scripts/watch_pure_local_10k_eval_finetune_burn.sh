@@ -41,22 +41,6 @@ gpu_pids() {
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
 }
 
-target_train_pids() {
-    local pid cmd
-    while IFS= read -r pid; do
-        [[ -n "$pid" && -r "/proc/$pid/cmdline" ]] || continue
-        cmd=$(tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null || true)
-        if [[ "$cmd" == *train_compositional.py* \
-                && "$cmd" == *"--output_dir $TASK_TRAIN_OUTPUT"* \
-                && "$cmd" == *"--arm pure_local"* \
-                && "$cmd" == *"--pure_local_rank 128"* \
-                && "$cmd" == *"--num_groups 16"* \
-                && "$cmd" == *"--tie_output"* ]]; then
-            printf '%s\n' "$pid"
-        fi
-    done < <(gpu_pids)
-}
-
 validate_b200_node() {
     local index
     mapfile -t TASK_GPU_NAMES < <(
@@ -116,15 +100,53 @@ validate_b200_node
     || die "refusing to reuse finetune output: $TASK_FINETUNE_OUTPUT"
 
 echo '=== wait for exact Pure-local training to stop at checkpoint-10000 ==='
+TASK_TRAINING_DONE=0
 for TASK_POLL in $(seq 1 720); do
-    mapfile -t TASK_TRAIN_PIDS < <(target_train_pids)
+    # Take one process snapshot, then classify every PID from that snapshot.
+    # This avoids comparing two nvidia-smi calls across a rank-shutdown race.
     mapfile -t TASK_ACTIVE_GPU_PIDS < <(gpu_pids)
+    TASK_TRAIN_PIDS=()
+    TASK_UNEXPECTED_GPU_PIDS=()
+    TASK_TRANSIENT_GPU_PIDS=()
+    for TASK_PID in "${TASK_ACTIVE_GPU_PIDS[@]}"; do
+        if [[ ! -r "/proc/$TASK_PID/cmdline" ]]; then
+            TASK_TRANSIENT_GPU_PIDS+=("$TASK_PID")
+            continue
+        fi
+        TASK_CMDLINE=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline" 2>/dev/null || true)
+        if [[ "$TASK_CMDLINE" == *train_compositional.py* \
+                && "$TASK_CMDLINE" == *"--output_dir $TASK_TRAIN_OUTPUT"* \
+                && "$TASK_CMDLINE" == *"--arm pure_local"* \
+                && "$TASK_CMDLINE" == *"--pure_local_rank 128"* \
+                && "$TASK_CMDLINE" == *"--num_groups 16"* \
+                && "$TASK_CMDLINE" == *"--tie_output"* ]]; then
+            TASK_TRAIN_PIDS+=("$TASK_PID")
+        else
+            echo "unexpected_gpu_pid=$TASK_PID cmd=$TASK_CMDLINE"
+            TASK_UNEXPECTED_GPU_PIDS+=("$TASK_PID")
+        fi
+    done
+
+    [[ "${#TASK_UNEXPECTED_GPU_PIDS[@]}" -eq 0 ]] \
+        || die "unexpected GPU processes during training: ${TASK_UNEXPECTED_GPU_PIDS[*]}"
+    if [[ "${#TASK_TRANSIENT_GPU_PIDS[@]}" -gt 0 ]]; then
+        if [[ -d "$TASK_CHECKPOINT" ]]; then
+            echo "checkpoint-10000 rank cleanup in progress; stale GPU PIDs=${TASK_TRANSIENT_GPU_PIDS[*]}"
+            sleep 10
+            continue
+        fi
+        die "unreadable GPU processes before checkpoint-10000: ${TASK_TRANSIENT_GPU_PIDS[*]}"
+    fi
 
     if [[ "${#TASK_TRAIN_PIDS[@]}" -gt 0 ]]; then
-        [[ "${#TASK_TRAIN_PIDS[@]}" -eq 8 ]] \
-            || die "expected 8 Pure-local training workers, found ${#TASK_TRAIN_PIDS[@]}: ${TASK_TRAIN_PIDS[*]}"
-        [[ "${TASK_ACTIVE_GPU_PIDS[*]}" == "${TASK_TRAIN_PIDS[*]}" ]] \
-            || die "GPU processes are not exactly the Pure-local workers: gpu=[${TASK_ACTIVE_GPU_PIDS[*]}] train=[${TASK_TRAIN_PIDS[*]}]"
+        if [[ "${#TASK_TRAIN_PIDS[@]}" -ne 8 ]]; then
+            if [[ -d "$TASK_CHECKPOINT" ]]; then
+                echo "checkpoint-10000 controlled rank shutdown in progress; workers=${#TASK_TRAIN_PIDS[@]} pids=${TASK_TRAIN_PIDS[*]}"
+                sleep 10
+                continue
+            fi
+            die "expected 8 Pure-local workers before checkpoint-10000, found ${#TASK_TRAIN_PIDS[@]}: ${TASK_TRAIN_PIDS[*]}"
+        fi
         if (( TASK_POLL == 1 || TASK_POLL % 10 == 0 )); then
             TASK_LATEST_STEP=$(find "$TASK_TRAIN_OUTPUT" -mindepth 1 -maxdepth 1 \
                 -type d -name 'checkpoint-*' -printf '%f\n' 2>/dev/null \
@@ -143,11 +165,11 @@ for TASK_POLL in $(seq 1 720); do
     [[ -d "$TASK_CHECKPOINT" ]] \
         || die 'Pure-local training stopped before checkpoint-10000 existed'
     echo "training_workers=0 checkpoint_present=$TASK_CHECKPOINT poll=$TASK_POLL"
+    TASK_TRAINING_DONE=1
     break
 done
-mapfile -t TASK_TRAIN_PIDS < <(target_train_pids)
-[[ "${#TASK_TRAIN_PIDS[@]}" -eq 0 ]] \
-    || die 'Pure-local training was still active after 12 hours'
+[[ "$TASK_TRAINING_DONE" -eq 1 ]] \
+    || die 'Pure-local training did not stop successfully within 12 hours'
 
 echo '=== verify exact complete tied Pure-local checkpoint ==='
 for TASK_FILE in \
@@ -337,11 +359,13 @@ summary = os.path.join(output_dir, "summary.md")
 assert os.path.isfile(summary) and os.path.getsize(summary) > 0, summary
 print("PURE_LOCAL_FINETUNE_OK jobs=9 tasks=3 seeds=3 epochs=3")
 PY
-grep -lF 'Loaded compositional model: arm=pure_local' \
-    "$TASK_FINETUNE_OUTPUT"/*_pure_local_tied_g16_r128_seed*.log >/dev/null
 mapfile -t TASK_FINETUNE_LOGS < <(find "$TASK_FINETUNE_OUTPUT" -maxdepth 1 -type f -name '*.log' | sort)
 [[ "${#TASK_FINETUNE_LOGS[@]}" -eq 9 ]] \
     || die "expected 9 finetune logs, found ${#TASK_FINETUNE_LOGS[@]}"
+for TASK_FINETUNE_LOG in "${TASK_FINETUNE_LOGS[@]}"; do
+    grep -Fq 'Loaded compositional model: arm=pure_local' "$TASK_FINETUNE_LOG" \
+        || die "Pure-local loader confirmation missing from $TASK_FINETUNE_LOG"
+done
 scan_fatal_logs finetune "${TASK_FINETUNE_LOGS[@]}"
 require_free_gpus 'ONE MINUTE AFTER FINETUNE'
 cat "$TASK_FINETUNE_OUTPUT/summary.md"
@@ -375,6 +399,25 @@ for TASK_PID in "${TASK_BURN_GPU_PIDS[@]}"; do
     TASK_CMDLINE=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")
     [[ "$TASK_CMDLINE" == *scripts/gpu_burn.py* ]] \
         || die "unexpected final GPU process $TASK_PID: $TASK_CMDLINE"
+done
+declare -A TASK_BURNS_PER_UUID=()
+while IFS=',' read -r TASK_GPU_UUID TASK_PID; do
+    TASK_GPU_UUID="${TASK_GPU_UUID//[[:space:]]/}"
+    TASK_PID="${TASK_PID//[[:space:]]/}"
+    [[ -n "$TASK_GPU_UUID" && -n "$TASK_PID" ]] || continue
+    TASK_BURNS_PER_UUID["$TASK_GPU_UUID"]=$((
+        ${TASK_BURNS_PER_UUID["$TASK_GPU_UUID"]:-0} + 1
+    ))
+done < <(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader,nounits)
+mapfile -t TASK_GPU_UUIDS < <(
+    nvidia-smi --query-gpu=uuid --format=csv,noheader,nounits \
+        | sed 's/[[:space:]]//g'
+)
+[[ "${#TASK_GPU_UUIDS[@]}" -eq 8 ]] \
+    || die "expected 8 GPU UUIDs, found ${#TASK_GPU_UUIDS[@]}"
+for TASK_GPU_UUID in "${TASK_GPU_UUIDS[@]}"; do
+    [[ "${TASK_BURNS_PER_UUID[$TASK_GPU_UUID]:-0}" -eq 1 ]] \
+        || die "expected one burn on GPU $TASK_GPU_UUID, found ${TASK_BURNS_PER_UUID[$TASK_GPU_UUID]:-0}"
 done
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
 echo 'TH2 FULL PURE-LOCAL WORKFLOW COMPLETE; GPU BURN VERIFIED ON ALL 8 GPUS'
