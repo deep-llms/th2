@@ -1,17 +1,17 @@
 #1 +120+a
-#th2-eval-global-lr-tied-r128-and-dense-tied-b200-10k-20260825
+#th2-watch-eval-then-finetune-matched-tied-controls-20260825
 #!/usr/bin/env bash
 set -euo pipefail
 
 TASK_PROJECT_DIR="$PWD"
 TASK_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
 TASK_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
-TASK_EVAL_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
 TASK_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
 TASK_GLOBAL_CKPT="$TASK_OUTPUT_BASE/global_lowrank_tied_r128_b200/checkpoint-10000"
 TASK_DENSE_CKPT="$TASK_OUTPUT_BASE/dense_tied_baseline_b200/checkpoint-10000"
-TASK_LAUNCH_LOG="$TASK_OUTPUT_BASE/eval_parallel_global_lr_tied_r128_dense_tied_b200_10k_20260825.log"
+TASK_EVAL_LAUNCH_LOG="$TASK_OUTPUT_BASE/eval_parallel_global_lr_tied_r128_dense_tied_b200_10k_20260825.log"
+TASK_FINETUNE_OUTPUT="$TASK_OUTPUT_BASE/finetune_global_lr_tied_r128_dense_tied_b200_10k_20260825"
 
 export HF_HUB_OFFLINE=1
 export HF_DATASETS_OFFLINE=1
@@ -26,120 +26,50 @@ die() {
     exit 1
 }
 
-echo '=== host, environment, and idle-GPU preflight ==='
+matched_eval_processes() {
+    local proc cmd
+    for proc in /proc/[0-9]*; do
+        [ -r "$proc/cmdline" ] || continue
+        cmd=$(tr '\0' ' ' < "$proc/cmdline" 2>/dev/null || true)
+        [[ "$cmd" == *python* ]] || continue
+        if [[ "$cmd" == *eval/eval_parallel.py* \
+                && "$cmd" == *global_lowrank_tied_r128_b200/checkpoint-10000* \
+                && "$cmd" == *dense_tied_baseline_b200/checkpoint-10000* ]] \
+            || [[ "$cmd" == *eval/eval_checkpoint.py* \
+                && "$cmd" == *global_lowrank_tied_r128_b200/checkpoint-10000* ]] \
+            || [[ "$cmd" == *eval/eval_checkpoint.py* \
+                && "$cmd" == *dense_tied_baseline_b200/checkpoint-10000* ]]; then
+            printf '%s\n' "${proc#/proc/}"
+        fi
+    done | sort -nu
+}
+
+echo '=== monitor the exact current two-checkpoint evaluation ==='
 date -u
 hostname
 cd "$TASK_PROJECT_DIR"
 test -x "$TASK_EVAL_PYTHON"
-"$TASK_EVAL_PYTHON" -c 'import datasets, lm_eval, torch, transformers; print("eval_imports=OK", torch.__version__, transformers.__version__, datasets.__version__)'
-
-mapfile -t TASK_GPU_NAMES < <(
-    nvidia-smi --query-gpu=name --format=csv,noheader \
-        | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-)
-[[ "${#TASK_GPU_NAMES[@]}" -eq 8 ]] \
-    || die "expected 8 GPUs, found ${#TASK_GPU_NAMES[@]}"
-for index in "${!TASK_GPU_NAMES[@]}"; do
-    [[ "${TASK_GPU_NAMES[$index]}" == *B200* ]] \
-        || die "GPU $index is not a B200: ${TASK_GPU_NAMES[$index]}"
+for poll in $(seq 1 180); do
+    mapfile -t TASK_EVAL_PIDS < <(matched_eval_processes)
+    if [[ "${#TASK_EVAL_PIDS[@]}" -eq 0 ]]; then
+        echo "eval_processes=0 poll=$poll"
+        break
+    fi
+    latest_global=$(tail -c 200000 "$TASK_GLOBAL_CKPT/eval.log" 2>/dev/null \
+        | tr '\r' '\n' | tail -1 || true)
+    latest_dense=$(tail -c 200000 "$TASK_DENSE_CKPT/eval.log" 2>/dev/null \
+        | tr '\r' '\n' | tail -1 || true)
+    echo "eval_poll=$poll processes=${#TASK_EVAL_PIDS[@]} pids=${TASK_EVAL_PIDS[*]}"
+    echo "global_tail=$latest_global"
+    echo "dense_tail=$latest_dense"
+    sleep 60
 done
-mapfile -t TASK_GPU_PIDS < <(
-    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
-        | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
-)
-[[ "${#TASK_GPU_PIDS[@]}" -eq 0 ]] \
-    || die "GPU compute processes exist before evaluation: ${TASK_GPU_PIDS[*]}"
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
-echo 'TH2 ALL 8 B200 GPUS FREE BEFORE TWO-MODEL EVAL'
+mapfile -t TASK_EVAL_PIDS < <(matched_eval_processes)
+[[ "${#TASK_EVAL_PIDS[@]}" -eq 0 ]] \
+    || die "evaluation still running after three hours: ${TASK_EVAL_PIDS[*]}"
+sleep 10
 
-echo '=== validate both exact checkpoint-10000 inputs and loader routing ==='
-"$TASK_EVAL_PYTHON" - "$TASK_GLOBAL_CKPT" "$TASK_DENSE_CKPT" <<'PY'
-import json
-import os
-import sys
-
-from compositional.loading import is_compositional
-
-global_ckpt, dense_ckpt = sys.argv[1:]
-for checkpoint in (global_ckpt, dense_ckpt):
-    assert os.path.isdir(checkpoint), checkpoint
-    for filename in ("config.json", "model.safetensors", "trainer_state.json"):
-        path = os.path.join(checkpoint, filename)
-        assert os.path.isfile(path) and os.path.getsize(path) > 0, path
-    with open(os.path.join(checkpoint, "trainer_state.json")) as handle:
-        assert json.load(handle)["global_step"] == 10000, checkpoint
-
-assert is_compositional(global_ckpt), global_ckpt
-assert os.path.getsize(os.path.join(global_ckpt, "embedding.pt")) > 0
-assert not os.path.exists(os.path.join(global_ckpt, "output_head.pt"))
-
-assert not is_compositional(dense_ckpt), dense_ckpt
-assert not os.path.exists(os.path.join(dense_ckpt, "embedding.pt"))
-assert not os.path.exists(os.path.join(dense_ckpt, "output_head.pt"))
-with open(os.path.join(dense_ckpt, "config.json")) as handle:
-    dense_config = json.load(handle)
-assert dense_config.get("tie_word_embeddings") is True, dense_config.get("tie_word_embeddings")
-print("CHECKPOINT_ROUTING_OK global=compositional_lowrank_tied dense=native_dense_tied step=10000")
-PY
-
-test -s "$TASK_MODEL_DIR/config.json"
-test -s "$TASK_MODEL_DIR/tokenizer.json"
-for language in en vi zh ru de ar; do
-    test -d "$TASK_EVAL_DIR/$language"
-    test "$(find "$TASK_EVAL_DIR/$language" -type f -name '*.arrow' | wc -l)" -gt 0
-done
-
-echo '=== validate all offline benchmark repositories and 26 task mappings ==='
-for relpath in \
-    facebook/xnli facebook/belebele cambridgeltl/xcopa \
-    juletxara/xstory_cloze google-research-datasets/paws-x \
-    Rowan/hellaswag alexandrainst/m_hellaswag; do
-    test -d "$TASK_BENCH_ROOT/$relpath" || die "missing offline dataset: $relpath"
-    test "$(find "$TASK_BENCH_ROOT/$relpath" -type f | wc -l)" -gt 0
-    echo "offline_dataset_ok=$relpath"
-done
-"$TASK_EVAL_PYTHON" - <<'PY'
-import os
-
-import lm_eval
-
-from eval.benchmarks import TASK_CONFIGS, _DATASET_PATH_PATCHES, patch_lm_eval_dataset_paths
-
-root = os.environ["LM_EVAL_DATASET_ROOT"]
-patch_lm_eval_dataset_paths(root)
-tasks_dir = os.path.join(os.path.dirname(lm_eval.__file__), "tasks")
-for relative_file, repository, _aliases in _DATASET_PATH_PATCHES:
-    expected = f"dataset_path: {os.path.join(root, repository)}"
-    with open(os.path.join(tasks_dir, relative_file), encoding="utf-8") as handle:
-        actual = [line.strip() for line in handle if line.startswith("dataset_path:")]
-    assert actual == [expected], (relative_file, actual, expected)
-tasks = [task for group in TASK_CONFIGS.values() for task in group]
-assert len(tasks) == len(set(tasks)) == 26, tasks
-print("OFFLINE_BENCHMARK_MAPPING_OK repositories=7 tasks=26")
-PY
-
-echo '=== refuse to overwrite any prior evaluation result ==='
-for artifact in \
-    "$TASK_GLOBAL_CKPT/eval.log" \
-    "$TASK_GLOBAL_CKPT/eval_ppl.json" \
-    "$TASK_GLOBAL_CKPT/eval_benchmarks.json" \
-    "$TASK_DENSE_CKPT/eval.log" \
-    "$TASK_DENSE_CKPT/eval_ppl.json" \
-    "$TASK_DENSE_CKPT/eval_benchmarks.json" \
-    "$TASK_LAUNCH_LOG"; do
-    [[ ! -e "$artifact" ]] || die "refusing to overwrite evaluation artifact: $artifact"
-done
-
-echo '=== one eval_parallel.py run: two checkpoint-10000 models in parallel ==='
-"$TASK_EVAL_PYTHON" -u eval/eval_parallel.py \
-    --checkpoints "$TASK_GLOBAL_CKPT" "$TASK_DENSE_CKPT" \
-    --eval-dir "$TASK_EVAL_DIR" \
-    --tokenizer-name "$TASK_MODEL_DIR" \
-    --bf16 \
-    --num-gpus 8 \
-    --log "$TASK_LAUNCH_LOG"
-
-echo '=== validate complete PPL and benchmark outputs ==='
+echo '=== validate both completed full evaluations ==='
 "$TASK_EVAL_PYTHON" - "$TASK_GLOBAL_CKPT" "$TASK_DENSE_CKPT" <<'PY'
 import json
 import math
@@ -163,24 +93,146 @@ for checkpoint in sys.argv[1:]:
         assert accuracy is not None and math.isfinite(float(accuracy)), (
             checkpoint, task, metrics
         )
-    print(f"EVAL_JSON_OK checkpoint={checkpoint} ppl_languages=6 benchmark_tasks=26")
+    print(f"EVAL_COMPLETE_OK checkpoint={checkpoint} ppl_languages=6 benchmark_tasks=26")
 PY
-
+test -s "$TASK_EVAL_LAUNCH_LOG"
+grep -F 'All 2 evaluations done' "$TASK_EVAL_LAUNCH_LOG"
 grep -F 'Loaded compositional model: arm=lowrank' "$TASK_GLOBAL_CKPT/eval.log"
 if grep -Fq 'Loaded compositional model:' "$TASK_DENSE_CKPT/eval.log"; then
-    die 'dense checkpoint was incorrectly routed through the compositional loader'
+    die 'dense checkpoint was incorrectly loaded as compositional'
 fi
 if grep -HniE 'Traceback \(most recent call last\)|CUDA out of memory|OutOfMemoryError|FAILED \(code|Error:' \
-    "$TASK_GLOBAL_CKPT/eval.log" "$TASK_DENSE_CKPT/eval.log" "$TASK_LAUNCH_LOG"; then
-    die 'failure signature found in evaluation logs'
+    "$TASK_GLOBAL_CKPT/eval.log" "$TASK_DENSE_CKPT/eval.log" "$TASK_EVAL_LAUNCH_LOG"; then
+    die 'failure signature found in completed evaluation logs'
 fi
+echo 'TH2 BOTH MATCHED TIED CONTROL EVALUATIONS COMPLETE AND VALID'
 
+echo '=== require all eight B200 GPUs free after evaluation ==='
+mapfile -t TASK_GPU_NAMES < <(
+    nvidia-smi --query-gpu=name --format=csv,noheader \
+        | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+)
+[[ "${#TASK_GPU_NAMES[@]}" -eq 8 ]] \
+    || die "expected 8 GPUs, found ${#TASK_GPU_NAMES[@]}"
+for index in "${!TASK_GPU_NAMES[@]}"; do
+    [[ "${TASK_GPU_NAMES[$index]}" == *B200* ]] \
+        || die "GPU $index is not B200: ${TASK_GPU_NAMES[$index]}"
+done
+for attempt in $(seq 1 30); do
+    mapfile -t TASK_GPU_PIDS < <(
+        nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
+            | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
+    )
+    [[ "${#TASK_GPU_PIDS[@]}" -eq 0 ]] && break
+    echo "waiting_for_gpu_release attempt=$attempt pids=${TASK_GPU_PIDS[*]}"
+    sleep 10
+done
+[[ "${#TASK_GPU_PIDS[@]}" -eq 0 ]] \
+    || die "GPU processes remain after evaluation: ${TASK_GPU_PIDS[*]}"
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+echo 'TH2 ALL 8 B200 GPUS FREE AFTER EVAL AND BEFORE FINETUNE'
+
+echo '=== standard two-checkpoint finetune preflight ==='
+test -s "$TASK_MODEL_DIR/config.json"
+test -s "$TASK_MODEL_DIR/tokenizer.json"
+for relpath in \
+    Rowan/hellaswag allenai/ai2_arc facebook/xnli \
+    alexandrainst/m_arc alexandrainst/m_hellaswag \
+    facebook/belebele cambridgeltl/xcopa \
+    juletxara/xstory_cloze google-research-datasets/paws-x; do
+    test -d "$TASK_BENCH_ROOT/$relpath" \
+        || die "missing offline dataset: $TASK_BENCH_ROOT/$relpath"
+done
+"$TASK_EVAL_PYTHON" - <<'PY'
+import os
+from eval.benchmarks import patch_lm_eval_dataset_paths
+
+patch_lm_eval_dataset_paths(os.environ["LM_EVAL_DATASET_ROOT"])
+print("OFFLINE_LM_EVAL_PATHS_OK")
+PY
+[[ ! -e "$TASK_FINETUNE_OUTPUT" ]] \
+    || die "refusing to reuse finetune output: $TASK_FINETUNE_OUTPUT"
+available_bytes=$(df -PB1 "$TASK_OUTPUT_BASE" | awk 'NR == 2 {print $4}')
+[[ "$available_bytes" =~ ^[0-9]+$ ]] || die 'could not determine free storage'
+(( available_bytes >= 40000000000 )) \
+    || die "less than 40 GB available for 18 finetune jobs: $available_bytes bytes"
+echo "FINETUNE_PREFLIGHT_OK fresh_output=$TASK_FINETUNE_OUTPUT available_bytes=$available_bytes"
+echo 'PROTOCOL checkpoints=2 tasks=3 seeds=3 jobs=18 epochs=3 bf16 max_parallel_jobs=8'
+
+echo '=== launch one 18-job finetune queue across all eight GPUs ==='
+"$TASK_EVAL_PYTHON" -u finetune/run_all.py \
+    --checkpoints \
+        global_lowrank_tied_r128_b200="$TASK_GLOBAL_CKPT" \
+        dense_tied_baseline_b200="$TASK_DENSE_CKPT" \
+    --tasks hellaswag arc_easy xnli \
+    --seeds 42 123 456 \
+    --tokenizer-name "$TASK_MODEL_DIR" \
+    --num-gpus 8 \
+    --output-dir "$TASK_FINETUNE_OUTPUT"
+
+echo '=== validate all 18 finetune jobs and summary ==='
+"$TASK_EVAL_PYTHON" - "$TASK_FINETUNE_OUTPUT" "$TASK_GLOBAL_CKPT" "$TASK_DENSE_CKPT" <<'PY'
+import json
+import math
+import os
+import sys
+
+output_dir, global_ckpt, dense_ckpt = sys.argv[1:]
+arms = {
+    "global_lowrank_tied_r128_b200": global_ckpt,
+    "dense_tied_baseline_b200": dense_ckpt,
+}
+expected_eval_tasks = {
+    "hellaswag": {"hellaswag", "hellaswag_ar", "hellaswag_de", "hellaswag_ru", "hellaswag_vi"},
+    "arc_easy": {"arc_easy", "arc_ar", "arc_de", "arc_ru", "arc_vi", "arc_zh"},
+    "xnli": {"xnli_en", "xnli_vi", "xnli_zh", "xnli_de", "xnli_ru", "xnli_ar"},
+}
+validated = 0
+for task, expected_tasks in expected_eval_tasks.items():
+    for arm, checkpoint in arms.items():
+        for seed in (42, 123, 456):
+            stem = f"{task}_{arm}_seed{seed}"
+            result_path = os.path.join(output_dir, stem + ".json")
+            log_path = os.path.join(output_dir, stem + ".log")
+            model_path = os.path.join(output_dir, "models", stem, "model_state.pt")
+            for path in (result_path, log_path, model_path):
+                assert os.path.isfile(path) and os.path.getsize(path) > 0, path
+            with open(result_path, encoding="utf-8") as handle:
+                result = json.load(handle)
+            assert result["checkpoint"] == checkpoint, result["checkpoint"]
+            assert result["task"] == task
+            assert int(result["seed"]) == seed
+            assert int(result["epochs"]) == 3
+            assert set(result["eval_results"]) == expected_tasks
+            assert math.isfinite(float(result["train_time_s"]))
+            for eval_task, metrics in result["eval_results"].items():
+                assert metrics.get("acc") is not None, (result_path, eval_task, metrics)
+                assert math.isfinite(float(metrics["acc"])), (result_path, eval_task, metrics)
+                if metrics.get("acc_norm") is not None:
+                    assert math.isfinite(float(metrics["acc_norm"]))
+            validated += 1
+assert validated == 18, validated
+summary = os.path.join(output_dir, "summary.md")
+assert os.path.isfile(summary) and os.path.getsize(summary) > 0, summary
+print("MATCHED_TIED_CONTROLS_FINETUNE_OK jobs=18 tasks=3 seeds=3")
+PY
+
+grep -lF 'Loaded compositional model: arm=lowrank' \
+    "$TASK_FINETUNE_OUTPUT"/*_global_lowrank_tied_r128_b200_seed*.log >/dev/null
+if grep -lF 'Loaded compositional model:' \
+    "$TASK_FINETUNE_OUTPUT"/*_dense_tied_baseline_b200_seed*.log; then
+    die 'a dense finetune job was incorrectly loaded as compositional'
+fi
+if grep -HniE 'Traceback \(most recent call last\)|CUDA out of memory|OutOfMemoryError|eval failed:|FAILED \(code|(^|[^[:alpha:]])nan([^[:alpha:]]|$)' \
+    "$TASK_FINETUNE_OUTPUT"/*.log; then
+    die 'failure signature found in finetune logs'
+fi
 mapfile -t TASK_FINAL_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
 )
 [[ "${#TASK_FINAL_GPU_PIDS[@]}" -eq 0 ]] \
-    || die "GPU processes remain after evaluation: ${TASK_FINAL_GPU_PIDS[*]}"
+    || die "GPU processes remain after finetune: ${TASK_FINAL_GPU_PIDS[*]}"
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
-tail -100 "$TASK_LAUNCH_LOG"
-echo 'TH2 GLOBAL LOWRANK TIED R128 AND DENSE TIED 10K FULL EVAL COMPLETE; GPUS FREE'
+cat "$TASK_FINETUNE_OUTPUT/summary.md"
+echo 'TH2 MATCHED TIED CONTROL FINETUNE COMPLETE AND VERIFIED; ALL GPUS FREE'
