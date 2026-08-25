@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-stop-burn-launch-pure-local-g16-r128-10k-20260825
+#th2-stop-burn-launch-pure-local-g16-r128-10k-20260825-retry1
 set -euo pipefail
 
 TASK_PROJECT_DIR="$PWD"
@@ -16,7 +16,6 @@ TASK_ACCELERATE_DEST=/mnt/local/.cache/huggingface/accelerate/default_config.yam
 echo '=== activate and validate sparse_emb ==='
 date -u
 hostname
-git rev-parse HEAD
 test -x "$TASK_CONDA"
 eval "$("$TASK_CONDA" shell.bash hook)"
 conda activate sparse_emb
