@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-check-matched-tied-controls-completion-20260825
+#th2-check-matched-tied-controls-final-completion-20260825
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -123,4 +123,4 @@ for name in global_lowrank_tied_r128_b200 dense_tied_baseline_b200; do
     fi
 done
 
-echo 'TH2 MATCHED TIED CONTROL COMPLETION CHECK FINISHED'
+echo 'TH2 MATCHED TIED CONTROL FINAL COMPLETION CHECK FINISHED'
