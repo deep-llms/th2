@@ -32,6 +32,15 @@ from .embeddings import (
     IsolationControlEmbed,
     LowRankEmbed,
     SharedLocalEmbed,
+    PureLocalEmbed,
+)
+from .compressed_baselines import (
+    PVQEmbed,
+    SlimEmbed,
+    GroupReduceEmbed,
+    TTEmbedding,
+    balanced_exact_modes,
+    balanced_padded_modes,
 )
 from .tied_head import (
     INDEPENDENT_OUTPUT_FILENAME,
@@ -56,7 +65,13 @@ class EmbeddingShim(nn.Module):
         return e
 
 
-def _build_arm_from_config(comp_config, vocab_size, embed_dim):
+def _parse_int_list(value):
+    if isinstance(value, str):
+        value = [part.strip() for part in value.split(",") if part.strip()]
+    return tuple(int(part) for part in value)
+
+
+def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
     """Rebuild the embedding module from saved train_config.json."""
     tc = comp_config
     arm = tc["arm"]
@@ -68,7 +83,7 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim):
     K = tc.get("K", 4096)
     num_heads = tc.get("num_heads", 1)
 
-    if arm == "lowrank":
+    if arm in ("lowrank", "global_lowrank"):
         return LowRankEmbed(vocab_size, embed_dim, rank=tc.get("d_x", 128))
     if arm == "shared_local":
         return SharedLocalEmbed(
@@ -77,6 +92,86 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim):
             shared_rank=tc.get("shared_rank", 64),
             local_rank=tc.get("local_embed_rank", tc.get("local_rank", 64)),
             num_groups=tc.get("num_groups", 4),
+        )
+    if arm == "pure_local":
+        return PureLocalEmbed(
+            vocab_size,
+            embed_dim,
+            rank=tc.get("pure_local_rank", tc.get("local_rank", 128)),
+            num_groups=tc.get("num_groups", 16),
+        )
+    if arm == "pvq":
+        assignments = None if state is None else state.get("assignments")
+        return PVQEmbed(
+            vocab_size,
+            embed_dim,
+            shared_dim=tc.get("pvq_shared_dim", 768),
+            num_codes=tc.get("pvq_num_codes", 128),
+            assignments=assignments,
+            assignment_seed=tc.get("pvq_assignment_seed", 42),
+        )
+    if arm == "slim":
+        mapping = None if state is None else state.get("mapping")
+        return SlimEmbed(
+            vocab_size,
+            embed_dim,
+            num_components=tc.get("slim_num_components", 8),
+            num_subvectors=tc.get("slim_num_subvectors", 0) or vocab_size,
+            mapping=mapping,
+            mapping_seed=tc.get("slim_mapping_seed", 42),
+        )
+    if arm == "groupreduce":
+        if state is not None:
+            group_ids = state.get("group_ids")
+            ranks = []
+            group = 0
+            while f"left_factors.{group}" in state:
+                ranks.append(state[f"left_factors.{group}"].shape[1])
+                group += 1
+        else:
+            group_ids = None
+            ranks = _parse_int_list(tc.get("groupreduce_ranks", ""))
+            if not ranks:
+                ranks = (tc.get("d_x", 128),) * tc.get(
+                    "groupreduce_num_groups", 4
+                )
+        return GroupReduceEmbed(
+            vocab_size,
+            embed_dim,
+            group_ranks=ranks,
+            group_ids=group_ids,
+        )
+    if arm == "tt":
+        if state is not None and any(
+            key.startswith("cores.") for key in state
+        ):
+            core_keys = sorted(
+                (key for key in state if key.startswith("cores.")),
+                key=lambda key: int(key.split(".")[1]),
+            )
+            shapes = [state[key].shape for key in core_keys]
+            vocab_modes = tuple(shape[1] for shape in shapes)
+            embedding_modes = tuple(shape[2] for shape in shapes)
+            ranks = (shapes[0][0],) + tuple(shape[3] for shape in shapes)
+        else:
+            order = tc.get("tt_order", 3)
+            vocab_modes = _parse_int_list(tc.get("tt_vocab_shape", ""))
+            embedding_modes = _parse_int_list(
+                tc.get("tt_embedding_shape", "")
+            )
+            vocab_modes = vocab_modes or balanced_padded_modes(vocab_size, order)
+            embedding_modes = embedding_modes or balanced_exact_modes(embed_dim, order)
+            ranks = _parse_int_list(tc.get("tt_ranks", "")) or tc.get(
+                "tt_rank", 128
+            )
+        return TTEmbedding(
+            vocab_size,
+            embed_dim,
+            vocab_modes=vocab_modes,
+            embedding_modes=embedding_modes,
+            tt_ranks=ranks,
+            target_std=(tc.get("tt_target_std", 0.0) or None),
+            implementation=tc.get("tt_implementation", "materialize"),
         )
     if arm == "original_ant":
         return OriginalANT(vocab_size, K, embed_dim)
@@ -255,15 +350,68 @@ def _infer_comp_config_from_state(state):
     """
     keys = set(state.keys())
 
+    if {"codebook", "exclusive", "assignments"}.issubset(keys):
+        return {
+            "arm": "pvq",
+            "pvq_shared_dim": state["codebook"].shape[1],
+            "pvq_num_codes": state["codebook"].shape[0],
+        }
+
+    if {"subvectors", "mapping"}.issubset(keys):
+        return {
+            "arm": "slim",
+            "slim_num_components": state["subvectors"].shape[0],
+            "slim_num_subvectors": (
+                state["subvectors"].shape[0]
+                * state["subvectors"].shape[1]
+            ),
+        }
+
+    if "group_ids" in keys and any(
+        key.startswith("left_factors.") for key in keys
+    ):
+        left_keys = sorted(
+            (key for key in keys if key.startswith("left_factors.")),
+            key=lambda key: int(key.split(".")[1]),
+        )
+        return {
+            "arm": "groupreduce",
+            "groupreduce_num_groups": len(left_keys),
+            "groupreduce_ranks": ",".join(
+                str(state[key].shape[1]) for key in left_keys
+            ),
+        }
+
+    if "cores.0" in keys:
+        core_keys = sorted(
+            (key for key in keys if key.startswith("cores.")),
+            key=lambda key: int(key.split(".")[1]),
+        )
+        shapes = [state[key].shape for key in core_keys]
+        return {
+            "arm": "tt",
+            "tt_order": len(shapes),
+            "tt_vocab_shape": ",".join(str(shape[1]) for shape in shapes),
+            "tt_embedding_shape": ",".join(str(shape[2]) for shape in shapes),
+            "tt_ranks": ",".join(str(shape[3]) for shape in shapes[:-1]),
+        }
+
     if "T" in keys:
         return {"arm": "original_ant", "K": state["T"].shape[1]}
 
-    if "local_weight" in keys:
+    if "local_weight" in keys and "shared_proj.weight" in keys:
         local_rank = state["local_weight"].shape[-1]
         return {
             "arm": "shared_local",
             "shared_rank": state["token_factors"].shape[-1] - local_rank,
             "local_embed_rank": local_rank,
+            "num_groups": state["local_weight"].shape[0],
+        }
+
+    if {"token_factors", "local_weight", "bias"}.issubset(keys):
+        return {
+            "arm": "pure_local",
+            "pure_local_rank": state["local_weight"].shape[-1],
             "num_groups": state["local_weight"].shape[0],
         }
 
@@ -453,7 +601,9 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
                 "does not contain the matching independent head topology"
             )
         supported_tied_arms = {
-            "lowrank", "shared_local", "original_ant", "ant", "residual_ant"
+            "lowrank", "global_lowrank", "shared_local", "pure_local",
+            "pvq", "slim", "groupreduce", "tt", "original_ant", "ant",
+            "residual_ant"
         }
         if not has_independent_output:
             comp_config["tie_output"] = (
@@ -484,7 +634,9 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
                 "checkpoint has a compressed/missing head"
             )
 
-    embed = _build_arm_from_config(comp_config, config.vocab_size, config.hidden_size)
+    embed = _build_arm_from_config(
+        comp_config, config.vocab_size, config.hidden_size, state=state
+    )
     embed.load_state_dict(state)
 
     # The compositional weights live in a separate embedding.pt, so unlike the

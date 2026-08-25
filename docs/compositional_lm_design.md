@@ -61,6 +61,7 @@ router* that emits a *sparse* weighting over a *shared* anchor codebook to
 from-scratch decoder-only LM.
 
 ### Must-beat competitors
+
 - **MultiHashFormer (arXiv:2606.28057)** — closest *setting* (decoder-only, from
   scratch, 100M/1B/3B, beats standard transformers, constant footprint under
   multilingual vocab expansion). Differentiator: **learned semantic anchors +
@@ -76,12 +77,14 @@ from-scratch decoder-only LM.
   matched per the §8 protocol (identical backbone, honest param+FLOP deltas, frontier).
 
 ### Must-cite to distinguish
+
 Soft-MoE (routing math), Product-Key Memory (context-sparse memory read — but at
 FFN, not input construction), A&T (base method), Shu & Nakayama compositional
 codes (static codes), Adaptive Input (frequency low-rank), Byte Latent
 Transformer (the "eliminate the vocabulary" school).
 
 ### The objection we must answer up front
+
 *"Self-attention already makes representations context-dependent (ADE's SAT does
 this after a static lookup) — why route at the input?"*
 Answer with the **decisive experiment**: static selection vs. context-routed
@@ -106,6 +109,7 @@ could carry neither θ nor the mask; see pseudocode §7d.) Only this module chan
 arms; the backbone and (input-only setting) the dense output head are identical.
 
 ### 3.1 Shared components (used by rungs 1–4)
+
 - **Codebook** `A ∈ ℝ^{K×d}` (K≈4096) — the learned shared anchor vectors.
 - **Base token table** `X ∈ ℝ^{N×d_x}` (d_x≈128–256) — a small learned per-token
   vector. This is the **only per-token parameter** in the compositional rungs and
@@ -468,9 +472,14 @@ will check it.
 
 ---
 
-## 7. Experiment Plan (8×H200, ~30B tokens ≈ 1 day per Qwen3-0.6B run)
+## 7. Historical Experiment Plan (original 8×H200 estimate)
+
+The architecture and comparison logic below remain design references. Hardware,
+duration, and path assumptions are from the original plan; current remote runs
+use the sole active th2 8×B200 node and the workflow in `docs/commands.md`.
 
 ### 7.1 Shared setup (identical across all arms)
+
 - **Backbone: Qwen3-0.6B architecture, trained FROM SCRATCH (random init, NOT
   pretrained weights).** Config: vocab **151,936**, d=1024, **28 layers**, GQA
   (16 query / 8 KV heads), SwiGLU (intermediate 3072), RoPE, RMSNorm. Instantiate
@@ -497,6 +506,7 @@ will check it.
 - **Training:** AdamW, cosine LR schedule; identical for all arms.
 
 ### 7.2 Arms — the ablation ladder (train in this order)
+
 Same backbone + same dense output head; only the embedding module changes. Each arm is
 defined precisely in §3 — the table just names it and states what it answers.
 
@@ -516,6 +526,7 @@ defined precisely in §3 — the table just names it and states what it answers.
 | **Isolation control** (§8; **code: pseudocode §5.1b**) | **ANT embedding + LocalEnc output added as a residual** (context is computed and used, but does **not** drive selection). ⚠️ Needs `W_ctl : d_c×d` to lift context to `d` → **~+123K params vs V2**; report it, the arms are not exactly matched | proves V2's gain is *selection*, not just having a context encoder |
 
 ### 7.3 Metrics (operational — how to compute each; see pseudocode §7b for two details)
+
 - **Perplexity:** held-out set. Report overall **and frequency-stratified**:
   bucket the vocab into deciles by training-corpus frequency, report ppl per
   decile. *Expected distinctive win: V2 helps the rarest deciles most* (shared
@@ -553,6 +564,7 @@ defined precisely in §3 — the table just names it and states what it answers.
   attn↔conv gap is *small* — so do **not** read a V2 null result as "window too narrow."
 
 ### 7.4 Go / No-go criteria
+
 - **Go:** V2 ppl ≈ Standard, **V2 clearly better than ANT (ours)** — especially on the
   **rare/low-frequency deciles** (§7.3) — polysemy-Jaccard clearly > 0, dead-anchor rate
   manageable (≲30%, or fixed by anti-collapse), and V2 > Isolation-control
@@ -574,6 +586,7 @@ defined precisely in §3 — the table just names it and states what it answers.
   **No-go for V2** and pivot the paper to ANT (ours) vs Original ANT.
 
 ### 7.5 Full comparison (~days, Qwen3-0.6B, ~30B tokens)
+
 Arms: **V2** (best de-risk config) · standard Qwen3-0.6B · **MultiHashFormer** ·
 **Original ANT** (free `T` + YOGI/proximal, pseudocode §7c) · **ANT (ours)** (static, §3 rung 1),
 matched per §8. ⚠️ **MultiHashFormer is the one arm these documents do not specify** — it is
@@ -587,6 +600,7 @@ and say so. Every other arm is fully spec'd here. Report:
   anchors), dead-anchor rate.
 
 ### 7.6 Config knobs to fix up front
+
 - **Run scale — fix these first; they must be IDENTICAL across every arm.** Nothing in the
   method depends on the exact values, but the comparison does, so pin them and record them:
   - **`L` (sequence length) = 2048.** Sets `max_position_embeddings` and the LocalEnc's
@@ -646,6 +660,7 @@ Two distinct reviewer objections; each needs its own control. Do **not** tune
 capacity and produces non-standard values that read as cherry-picking.
 
 ### Objection 1 — "you added parameters / compute / depth"
+
 - **Keep the backbone standard and identical** for all arms (same layers, width,
   `d_ff = 4d`, head count). Change **only** the embedding module. Any difference
   is then attributable to the embedding.
@@ -659,6 +674,7 @@ capacity and produces non-standard values that read as cherry-picking.
   width or a standard layer) — never handicap V2 by removing one of its layers.
 
 ### Objection 2 — "it's just the extra context-processing, not your selection"
+
 The param-match alone does not answer this. Use the **isolation ablation**:
 - **V2 (ours):** LocalEnc context `c_i` **drives anchor selection**.
 - **Control (identical capacity):** *same* LocalEnc, same params/FLOPs, but its
@@ -677,6 +693,7 @@ The param-match alone does not answer this. Use the **isolation ablation**:
   "Isolation control" arm in §7.2.)
 
 ### Most robust: report the frontier, not a single point
+
 Train both families at **2–3 natural scales** (vary layers/width in standard
 steps) and plot **quality vs. params** *and* **quality vs. FLOPs**. Dominance on
 the curve at every budget is immune to "you picked a favorable operating point"

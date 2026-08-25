@@ -38,7 +38,17 @@ from transformers.trainer_utils import get_last_checkpoint
 
 from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
-    IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed,
+    IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed, PureLocalEmbed,
+    PVQEmbed, SlimEmbed, GroupReduceEmbed, TTEmbedding,
+)
+from compositional.compressed_baselines import (
+    balanced_exact_modes,
+    balanced_padded_modes,
+)
+from compositional.compression_init import (
+    allocate_frequency_proportional_ranks,
+    frequency_group_ids,
+    load_frequency_counts,
 )
 from compositional.losses import load_balance
 
@@ -104,7 +114,9 @@ class CompositionalArguments:
         metadata={
             "help": "Embedding arm to train.",
             "choices": ["ant", "residual_ant", "v0", "v1", "v2",
-                        "isolation_control", "lowrank", "shared_local"],
+                        "isolation_control", "lowrank", "global_lowrank",
+                        "shared_local", "pure_local", "pvq", "slim",
+                        "groupreduce", "tt"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
@@ -115,8 +127,84 @@ class CompositionalArguments:
     local_embed_rank: int = field(default=64, metadata={
         "help": "Per-group token-subspace rank for the shared_local arm."
     })
+    pure_local_rank: int = field(default=128, metadata={
+        "help": "Per-group token-subspace rank for the pure_local arm."
+    })
     num_groups: int = field(default=4, metadata={
-        "help": "Number of contiguous vocabulary groups for the shared_local arm."
+        "help": "Number of contiguous vocabulary groups for shared_local or "
+                "pure_local."
+    })
+    embedding_init_path: str | None = field(default=None, metadata={
+        "help": "Optional strict embedding state used to initialize a published "
+                "compressed baseline. P-VQ and faithful GroupReduce runs must "
+                "be converted from a dense checkpoint instead of silently "
+                "using random factors."
+    })
+    allow_from_scratch_baseline_init: bool = field(default=False, metadata={
+        "help": "Explicitly allow random/static initialization for P-VQ or "
+                "GroupReduce. Such runs are adaptations, not reproductions of "
+                "the papers' post-hoc training procedures."
+    })
+    pvq_shared_dim: int = field(default=768, metadata={
+        "help": "P-VQ shared/codebook window width w."
+    })
+    pvq_num_codes: int = field(default=128, metadata={
+        "help": "P-VQ final codebook size K."
+    })
+    pvq_assignment_seed: int = field(default=42, metadata={
+        "help": "Seed used only for the explicitly allowed random-code P-VQ adaptation."
+    })
+    slim_num_components: int = field(default=8, metadata={
+        "help": "Number K of coordinate subvectors per Slim embedding."
+    })
+    slim_num_subvectors: int = field(default=0, metadata={
+        "help": "Total learned Slim subvectors M; 0 means vocab_size (1/8 "
+                "float-parameter ratio when K=8)."
+    })
+    slim_mapping_seed: int = field(default=42, metadata={
+        "help": "Seed for Slim's fixed balanced-random mapping table."
+    })
+    groupreduce_num_groups: int = field(default=4, metadata={
+        "help": "Number of GroupReduce vocabulary blocks."
+    })
+    groupreduce_ranks: str = field(default="", metadata={
+        "help": "Comma-separated rank per GroupReduce block. Empty uses d_x "
+                "for every block."
+    })
+    groupreduce_frequency_path: str | None = field(default=None, metadata={
+        "help": "Token-frequency .npz/.pt used to construct the static "
+                "frequency bins for a GroupReduce end-to-end adaptation."
+    })
+    groupreduce_frequency_key: str = field(default="counts")
+    groupreduce_frequency_pseudocount: float = field(default=1.0)
+    groupreduce_target_params: int = field(default=0, metadata={
+        "help": "Resolve GroupReduce's proportional ranks to this trainable "
+                "embedding budget when explicit ranks are omitted."
+    })
+    tt_order: int = field(default=3, metadata={
+        "help": "TT matrix order used when explicit shapes are omitted."
+    })
+    tt_vocab_shape: str = field(default="", metadata={
+        "help": "Comma-separated TT vocabulary modes; product may pad V."
+    })
+    tt_embedding_shape: str = field(default="", metadata={
+        "help": "Comma-separated TT hidden modes; product must equal hidden size."
+    })
+    tt_rank: int = field(default=128, metadata={
+        "help": "Uniform internal TT rank when tt_ranks is empty."
+    })
+    tt_ranks: str = field(default="", metadata={
+        "help": "Optional comma-separated internal TT ranks."
+    })
+    tt_target_std: float = field(default=0.0, metadata={
+        "help": "Target standard deviation of the effective TT table. 0 uses "
+                "the paper's modified Glorot value; set 0.02 only for an "
+                "explicit Qwen-initialization ablation."
+    })
+    tt_implementation: str = field(default="materialize", metadata={
+        "help": "TT execution path. 'materialize' matches the released paper "
+                "implementation; 'direct' is an optimized tied adaptation.",
+        "choices": ["materialize", "direct"],
     })
     d_k: int = field(default=64, metadata={"help": "Router key dimension."})
     gamma: float = field(default=1.0, metadata={"help": "Score temperature for entmax."})
@@ -130,7 +218,8 @@ class CompositionalArguments:
         "help": "Tie the output lm_head to the input embedding weights. "
                 "Removes the free V×d lm_head (~155.6M params) and computes "
                 "output logits from the embedding module's own weights. "
-                "Supported for lowrank, shared_local, original_ant, ant, and "
+                "Supported for lowrank, shared_local, pure_local, "
+                "original_ant, ant, and "
                 "residual_ant; not supported "
                 "for context-dependent arms (v0, v1, v2, isolation_control).",
     })
@@ -278,11 +367,37 @@ def save_train_config(save_dir, model_args, data_args, training_args, comp_args)
         json.dump(config, f, indent=2, default=str)
 
 
-def build_arm(comp_args, vocab_size, embed_dim):
+def _parse_int_list(value, *, name):
+    if isinstance(value, str):
+        parts = [part.strip() for part in value.split(",") if part.strip()]
+    else:
+        parts = list(value)
+    try:
+        return tuple(int(part) for part in parts)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"{name} must be a comma-separated integer list") from error
+
+
+def _load_embedding_state(path):
+    """Load a strict plain embedding state dictionary."""
+    if not path or not os.path.isfile(path):
+        raise FileNotFoundError(f"Embedding initialization not found: {path}")
+    state = torch.load(path, map_location="cpu", weights_only=True)
+    if not isinstance(state, dict) or not state:
+        raise ValueError(f"Embedding initialization is not a non-empty state dict: {path}")
+    if not all(isinstance(key, str) and torch.is_tensor(value)
+               for key, value in state.items()):
+        raise ValueError(
+            "Embedding initialization must be a plain string-to-tensor state dict"
+        )
+    return state
+
+
+def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
     ca = comp_args
     shared = dict(d_x=ca.d_x, d_k=ca.d_k, gamma=ca.gamma)
 
-    if ca.arm == "lowrank":
+    if ca.arm in ("lowrank", "global_lowrank"):
         return LowRankEmbed(vocab_size, embed_dim, rank=ca.d_x)
     if ca.arm == "shared_local":
         return SharedLocalEmbed(
@@ -290,6 +405,129 @@ def build_arm(comp_args, vocab_size, embed_dim):
             shared_rank=ca.shared_rank,
             local_rank=ca.local_embed_rank,
             num_groups=ca.num_groups,
+        )
+    if ca.arm == "pure_local":
+        return PureLocalEmbed(
+            vocab_size,
+            embed_dim,
+            rank=ca.pure_local_rank,
+            num_groups=ca.num_groups,
+        )
+    if ca.arm == "pvq":
+        assignments = None
+        if initial_state is not None:
+            assignments = initial_state.get("assignments")
+            expected = {
+                "codebook": (ca.pvq_num_codes, ca.pvq_shared_dim),
+                "exclusive": (
+                    vocab_size, embed_dim - ca.pvq_shared_dim
+                ),
+            }
+            for key, shape in expected.items():
+                if key not in initial_state or tuple(initial_state[key].shape) != shape:
+                    actual = None if key not in initial_state else tuple(initial_state[key].shape)
+                    raise ValueError(
+                        f"P-VQ initialization {key} has shape {actual}; expected {shape}"
+                    )
+        return PVQEmbed(
+            vocab_size,
+            embed_dim,
+            shared_dim=ca.pvq_shared_dim,
+            num_codes=ca.pvq_num_codes,
+            assignments=assignments,
+            assignment_seed=ca.pvq_assignment_seed,
+        )
+    if ca.arm == "slim":
+        mapping = None if initial_state is None else initial_state.get("mapping")
+        return SlimEmbed(
+            vocab_size,
+            embed_dim,
+            num_components=ca.slim_num_components,
+            num_subvectors=(ca.slim_num_subvectors or vocab_size),
+            mapping=mapping,
+            mapping_seed=ca.slim_mapping_seed,
+        )
+    if ca.arm == "groupreduce":
+        if initial_state is not None:
+            group_ids = initial_state.get("group_ids")
+            ranks = []
+            group = 0
+            while f"left_factors.{group}" in initial_state:
+                ranks.append(initial_state[f"left_factors.{group}"].shape[1])
+                group += 1
+            if not ranks:
+                raise ValueError(
+                    "GroupReduce initialization has no left_factors.* tensors"
+                )
+            declared = _parse_int_list(
+                ca.groupreduce_ranks, name="groupreduce_ranks"
+            )
+            if declared and tuple(ranks) != declared:
+                raise ValueError(
+                    f"GroupReduce initialization ranks {tuple(ranks)} do not "
+                    f"match --groupreduce_ranks {declared}"
+                )
+            if ca.groupreduce_num_groups != len(ranks):
+                raise ValueError(
+                    f"GroupReduce initialization has {len(ranks)} groups but "
+                    f"--groupreduce_num_groups={ca.groupreduce_num_groups}"
+                )
+        else:
+            ranks = _parse_int_list(
+                ca.groupreduce_ranks, name="groupreduce_ranks"
+            )
+            if ca.groupreduce_frequency_path:
+                counts = load_frequency_counts(
+                    ca.groupreduce_frequency_path,
+                    vocab_size,
+                    key=ca.groupreduce_frequency_key,
+                    pseudocount=ca.groupreduce_frequency_pseudocount,
+                )
+                group_ids = frequency_group_ids(
+                    counts, ca.groupreduce_num_groups
+                )
+                if not ranks:
+                    if ca.groupreduce_target_params <= 0:
+                        raise ValueError(
+                            "GroupReduce frequency allocation requires "
+                            "--groupreduce_target_params or explicit ranks"
+                        )
+                    ranks = allocate_frequency_proportional_ranks(
+                        counts,
+                        group_ids,
+                        embed_dim,
+                        ca.groupreduce_target_params,
+                    )
+            else:
+                group_ids = None
+                ranks = ranks or (ca.d_x,) * ca.groupreduce_num_groups
+            if len(ranks) != ca.groupreduce_num_groups:
+                raise ValueError(
+                    "--groupreduce_ranks must have one entry per group"
+                )
+        return GroupReduceEmbed(
+            vocab_size, embed_dim, group_ranks=ranks, group_ids=group_ids
+        )
+    if ca.arm == "tt":
+        vocab_modes = _parse_int_list(ca.tt_vocab_shape, name="tt_vocab_shape")
+        embedding_modes = _parse_int_list(
+            ca.tt_embedding_shape, name="tt_embedding_shape"
+        )
+        if not vocab_modes:
+            vocab_modes = balanced_padded_modes(vocab_size, ca.tt_order)
+        if not embedding_modes:
+            embedding_modes = balanced_exact_modes(embed_dim, ca.tt_order)
+        if len(vocab_modes) != len(embedding_modes):
+            raise ValueError("TT vocabulary and embedding shapes must have equal order")
+        ranks = _parse_int_list(ca.tt_ranks, name="tt_ranks") or ca.tt_rank
+        return TTEmbedding(
+            vocab_size,
+            embed_dim,
+            vocab_modes=vocab_modes,
+            embedding_modes=embedding_modes,
+            tt_ranks=ranks,
+            target_std=(ca.tt_target_std or None),
+            implementation=ca.tt_implementation,
         )
     if ca.arm == "ant":
         return ANTEmbed(vocab_size, ca.K, embed_dim, **shared, num_heads=ca.num_heads)
@@ -316,6 +554,14 @@ def validate_output_configuration(comp_args):
     if comp_args.independent_lowrank_output and comp_args.arm != "lowrank":
         raise ValueError(
             "--independent_lowrank_output currently requires --arm lowrank"
+        )
+    if comp_args.arm in {
+        "pure_local", "pvq", "slim", "groupreduce", "tt"
+    } and not comp_args.tie_output:
+        raise ValueError(
+            f"--arm {comp_args.arm} requires --tie_output for the compressed "
+            "input/output baseline; retaining Qwen's dense lm_head would test "
+            "a different architecture"
         )
     if comp_args.tie_output:
         return "tied"
@@ -654,6 +900,35 @@ def main():
         if last_checkpoint is not None:
             logger.info(f"Checkpoint detected: {last_checkpoint}. Resuming training.")
 
+    checkpoint = (
+        training_args.resume_from_checkpoint
+        if training_args.resume_from_checkpoint is not None
+        else last_checkpoint
+    )
+
+    # Published P-VQ and GroupReduce are initialized by compressing a trained
+    # dense table.  For a new compact run, the conversion artifact supplies
+    # both learned factors and structural integer buffers.  For resume, use the
+    # checkpoint sidecar as the structural source so an external init artifact
+    # is not trusted over the checkpoint being resumed.
+    initial_embedding_state = None
+    if checkpoint is not None:
+        checkpoint_embedding = os.path.join(checkpoint, "embedding.pt")
+        if os.path.isfile(checkpoint_embedding):
+            initial_embedding_state = _load_embedding_state(checkpoint_embedding)
+    elif comp_args.embedding_init_path is not None:
+        initial_embedding_state = _load_embedding_state(
+            comp_args.embedding_init_path
+        )
+    elif (comp_args.arm in {"pvq", "groupreduce"}
+          and not comp_args.allow_from_scratch_baseline_init):
+        raise ValueError(
+            f"--arm {comp_args.arm} is a post-hoc published method and requires "
+            "--embedding_init_path from a dense-checkpoint conversion. To run "
+            "a clearly labelled from-scratch adaptation instead, explicitly "
+            "pass --allow_from_scratch_baseline_init."
+        )
+
     # Load config
     config_kwargs = {
         "cache_dir": model_args.cache_dir,
@@ -687,7 +962,14 @@ def main():
         logger.info(f"Training new model from scratch - Total size={n_params / 2**20:.2f}M params")
 
     # Replace embed_tokens with compositional embedding
-    embed_module = build_arm(comp_args, config.vocab_size, config.hidden_size)
+    embed_module = build_arm(
+        comp_args,
+        config.vocab_size,
+        config.hidden_size,
+        initial_state=initial_embedding_state,
+    )
+    if initial_embedding_state is not None:
+        embed_module.load_state_dict(initial_embedding_state, strict=True)
     if training_args.bf16:
         embed_module = embed_module.to(torch.bfloat16)
     embed_shim = EmbeddingShim(embed_module)
@@ -799,11 +1081,6 @@ def main():
         )],
     )
 
-    checkpoint = None
-    if training_args.resume_from_checkpoint is not None:
-        checkpoint = training_args.resume_from_checkpoint
-    elif last_checkpoint is not None:
-        checkpoint = last_checkpoint
     validate_resume_compatibility(
         checkpoint,
         comp_args,

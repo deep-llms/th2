@@ -12,7 +12,7 @@ import torch.nn as nn
 
 from .embeddings import (
     OriginalANT, ANTEmbed, V0Embed, V1Embed, V2Embed, IsolationControlEmbed,
-    SharedLocalEmbed,
+    SharedLocalEmbed, PureLocalEmbed,
 )
 from .optimizers import Yogi
 from .losses import compute_loss
@@ -185,6 +185,31 @@ def test_shared_local_shapes_groups_and_gradients():
         assert parameter.grad.abs().sum() > 0, \
             f"shared_local {name}: zero gradient"
     print("  PASS shared-local shapes, groups, and gradients")
+
+
+def test_pure_local_shapes_groups_and_gradients():
+    """Pure-local covers the vocabulary and trains factors, bases, and bias."""
+    N, d, rank, G, B, L = 99, 32, 16, 4, 2, 12
+    model = PureLocalEmbed(N, d, rank=rank, num_groups=G)
+    ids = torch.tensor([
+        [0, 1, 24, 25, 26, 49, 50, 51, 74, 75, 76, 98],
+        [98, 76, 75, 74, 51, 50, 49, 26, 25, 24, 1, 0],
+    ])
+    e, theta = model(ids)
+    assert e.shape == (B, L, d)
+    assert theta is None
+
+    bounds = [model.group_bounds(group) for group in range(G)]
+    assert bounds == [(0, 25), (25, 50), (50, 75), (75, 99)]
+
+    e.square().mean().backward()
+    for name, parameter in model.named_parameters():
+        assert parameter.grad is not None, f"pure_local {name}: grad is None"
+        assert torch.isfinite(parameter.grad).all(), \
+            f"pure_local {name}: non-finite gradient"
+        assert parameter.grad.abs().sum() > 0, \
+            f"pure_local {name}: zero gradient"
+    print("  PASS pure-local shapes, groups, and gradients")
 
 
 def test_end_to_end_train_step():
@@ -600,6 +625,8 @@ def run_all():
     test_compute_loss_with_div()
     print("--- Shared-Local ---")
     test_shared_local_shapes_groups_and_gradients()
+    print("--- Pure-Local ---")
+    test_pure_local_shapes_groups_and_gradients()
     print("--- Original ANT end-to-end ---")
     test_end_to_end_train_step()
     print("--- ANT (ours) ---")

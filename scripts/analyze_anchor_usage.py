@@ -163,7 +163,7 @@ def main():
     arm = comp_config["arm"]
     print(f"arm={arm}  vocab={vocab_size}")
 
-    static = arm in ("ant", "original_ant", "v0", "v1")
+    static = arm in ("ant", "original_ant", "v0", "v1", "residual_ant", "isolation_control")
     if static:
         freq = None
         if args.freq_npz:
