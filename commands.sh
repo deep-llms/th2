@@ -1,99 +1,126 @@
-#1 +60+a
-#th2-check-pure-local-live-progress-20260826-0048
+#1 +120+a
+#th2-export-pure-local-results-20260826-a01
 set -euo pipefail
 
-TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/pure_local_tied_g16_r128"
-TASK_LOG_DIR="$TASK_OUTPUT_BASE/logs/pure_local_tied_g16_r128_20260825"
-TASK_TRAIN_LOG="$TASK_LOG_DIR/pure_local_tied_g16_r128.log"
-TASK_EXPERIMENT_LOG="$TASK_LOG_DIR/experiments.log"
-TASK_EVAL_LOG="$TASK_OUTPUT_BASE/eval_parallel_pure_local_tied_g16_r128_10k_20260825.log"
-TASK_FINETUNE_DIR="$TASK_OUTPUT_BASE/finetune_pure_local_tied_g16_r128_10k_20260825"
-TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
+TASK_OUTPUT_BASE=/mnt/local/_outputs/deep-llms_th2
+TASK_CHECKPOINT="$TASK_OUTPUT_BASE/pure_local_tied_g16_r128/checkpoint-10000"
+TASK_TRAIN_CONFIG="$TASK_OUTPUT_BASE/pure_local_tied_g16_r128/train_config.json"
+TASK_EVAL_LAUNCH_LOG="$TASK_OUTPUT_BASE/eval_parallel_pure_local_tied_g16_r128_10k_20260825.log"
+TASK_FINETUNE_OUTPUT="$TASK_OUTPUT_BASE/finetune_pure_local_tied_g16_r128_10k_20260825"
+TASK_EXPORT_DIR="$TASK_OUTPUT_BASE/result_exports"
+TASK_ARCHIVE_NAME=pure_local_eval_finetune_results_20260826.tar.gz
+TASK_MANIFEST_NAME=pure_local_eval_finetune_results_20260826.files
+TASK_SHA_NAME=pure_local_eval_finetune_results_20260826.tar.gz.sha256
+TASK_ARCHIVE="$TASK_EXPORT_DIR/$TASK_ARCHIVE_NAME"
+TASK_MANIFEST="$TASK_EXPORT_DIR/$TASK_MANIFEST_NAME"
+TASK_SHA="$TASK_EXPORT_DIR/$TASK_SHA_NAME"
+TASK_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
 
-echo '=== PureLocal live progress (read-only) ==='
+die() {
+    echo "ERROR: $*"
+    exit 1
+}
+
+echo '=== validate completed Pure-local workflow before compact export ==='
 date -u
 hostname
 test -x "$TASK_PYTHON"
-test -d "$TASK_OUTPUT_DIR"
-test -s "$TASK_TRAIN_LOG"
-test -s "$TASK_EXPERIMENT_LOG"
 
-echo '=== GPU state and process stage ==='
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
 mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
 )
-echo "gpu_process_count=${#TASK_GPU_PIDS[@]}"
+[[ "${#TASK_GPU_PIDS[@]}" -eq 8 ]] \
+    || die "workflow is not at final burn stage: expected 8 GPU processes, found ${#TASK_GPU_PIDS[@]}"
 for TASK_PID in "${TASK_GPU_PIDS[@]}"; do
-    if test -r "/proc/$TASK_PID/cmdline"; then
-        TASK_CMDLINE=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")
-        echo "gpu_pid=$TASK_PID cmd=$TASK_CMDLINE"
-    else
-        echo "gpu_pid=$TASK_PID cmd=<exited-during-snapshot>"
-    fi
+    test -r "/proc/$TASK_PID/cmdline"
+    TASK_CMDLINE=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")
+    [[ "$TASK_CMDLINE" == *scripts/gpu_burn.py* ]] \
+        || die "non-burn GPU process remains: pid=$TASK_PID cmd=$TASK_CMDLINE"
+done
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+
+for TASK_FILE in \
+    "$TASK_TRAIN_CONFIG" \
+    "$TASK_CHECKPOINT/config.json" \
+    "$TASK_CHECKPOINT/trainer_state.json" \
+    "$TASK_CHECKPOINT/eval.log" \
+    "$TASK_CHECKPOINT/eval_ppl.json" \
+    "$TASK_CHECKPOINT/eval_benchmarks.json" \
+    "$TASK_EVAL_LAUNCH_LOG" \
+    "$TASK_FINETUNE_OUTPUT/summary.md"; do
+    test -s "$TASK_FILE" || die "missing result artifact: $TASK_FILE"
 done
 
-echo '=== checkpoints ==='
-find "$TASK_OUTPUT_DIR" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' \
-    -printf '%f %TY-%Tm-%TdT%TH:%TM:%TSZ\n' | sort -V | tail -n 8
-
-echo '=== derive latest step, rate, and training ETA ==='
-"$TASK_PYTHON" - "$TASK_TRAIN_LOG" <<'PY'
-import datetime as dt
-import pathlib
-import re
+"$TASK_PYTHON" - "$TASK_CHECKPOINT" "$TASK_FINETUNE_OUTPUT" <<'PY'
+import glob
+import json
+import math
+import os
 import sys
 
-path = pathlib.Path(sys.argv[1])
-with path.open("rb") as handle:
-    handle.seek(0, 2)
-    size = handle.tell()
-    handle.seek(max(0, size - 8_000_000))
-    text = handle.read().decode("utf-8", errors="replace").replace("\r", "\n")
-
-matches = re.findall(
-    r"(\d+)/33339\s+\[[^\n]*?,\s*([0-9]+(?:\.[0-9]+)?)s/it\]",
-    text,
-)
-if not matches:
-    raise SystemExit("ERROR: no recent tqdm progress record found")
-step, seconds_per_step = int(matches[-1][0]), float(matches[-1][1])
-target = 10_000
-now = dt.datetime.now(dt.timezone.utc)
-remaining_seconds = max(0, target - step) * seconds_per_step
-eta = now + dt.timedelta(seconds=remaining_seconds)
-print(f"live_step={step}")
-print(f"target_step={target}")
-print(f"seconds_per_step={seconds_per_step:.3f}")
-print(f"training_remaining_seconds={remaining_seconds:.0f}")
-print(f"training_eta_utc={eta:%Y-%m-%d %H:%M:%S UTC}")
-
-metric_rows = re.findall(r"\{'loss':[^\n]+", text)
-if metric_rows:
-    print(f"latest_metric={metric_rows[-1]}")
+checkpoint, finetune_output = sys.argv[1:]
+with open(os.path.join(checkpoint, "trainer_state.json"), encoding="utf-8") as handle:
+    assert int(json.load(handle)["global_step"]) == 10000
+with open(os.path.join(checkpoint, "eval_ppl.json"), encoding="utf-8") as handle:
+    ppl = json.load(handle)
+with open(os.path.join(checkpoint, "eval_benchmarks.json"), encoding="utf-8") as handle:
+    benchmarks = json.load(handle)
+assert set(ppl) == {"en", "vi", "zh", "ru", "de", "ar"}
+for language, metrics in ppl.items():
+    assert int(metrics["num_tokens"]) > 0, (language, metrics)
+    assert math.isfinite(float(metrics["loss"])), (language, metrics)
+    assert math.isfinite(float(metrics["perplexity"])), (language, metrics)
+assert len(benchmarks) == 26, len(benchmarks)
+for task, metrics in benchmarks.items():
+    accuracy = metrics.get("acc,none", metrics.get("acc"))
+    assert accuracy is not None and math.isfinite(float(accuracy)), (task, metrics)
+result_paths = sorted(glob.glob(os.path.join(finetune_output, "*.json")))
+log_paths = sorted(glob.glob(os.path.join(finetune_output, "*.log")))
+assert len(result_paths) == len(log_paths) == 9, (len(result_paths), len(log_paths))
+for result_path in result_paths:
+    with open(result_path, encoding="utf-8") as handle:
+        result = json.load(handle)
+    assert result["checkpoint"] == checkpoint, result["checkpoint"]
+    assert int(result["epochs"]) == 3, result["epochs"]
+    assert math.isfinite(float(result["train_time_s"])), result["train_time_s"]
+print("PURE_LOCAL_RESULTS_VALID jobs=9 ppl_languages=6 benchmark_tasks=26")
 PY
 
-echo '=== workflow artifact/stage indicators ==='
-if test -d "$TASK_OUTPUT_DIR/checkpoint-10000"; then
-    echo 'checkpoint_10000=present'
-else
-    echo 'checkpoint_10000=absent'
-fi
-if test -s "$TASK_EVAL_LOG"; then
-    echo "eval_log=present bytes=$(stat -c %s "$TASK_EVAL_LOG")"
-    tail -n 20 "$TASK_EVAL_LOG"
-else
-    echo 'eval_log=absent'
-fi
-if test -d "$TASK_FINETUNE_DIR"; then
-    echo "finetune_json_count=$(find "$TASK_FINETUNE_DIR" -maxdepth 1 -type f -name '*.json' | wc -l)"
-else
-    echo 'finetune_dir=absent'
-fi
+grep -F 'Loaded compositional model: arm=pure_local' "$TASK_CHECKPOINT/eval.log"
+for TASK_LOG in "$TASK_FINETUNE_OUTPUT"/*.log; do
+    grep -Fq 'Loaded compositional model: arm=pure_local' "$TASK_LOG" \
+        || die "Pure-local loader confirmation missing from $TASK_LOG"
+done
 
-echo '=== latest experiment state ==='
-tail -n 20 "$TASK_EXPERIMENT_LOG"
+echo '=== build idempotent compact result archive (no model weights) ==='
+mkdir -p "$TASK_EXPORT_DIR"
+if [[ -s "$TASK_ARCHIVE" && -s "$TASK_MANIFEST" && -s "$TASK_SHA" ]]; then
+    (cd "$TASK_EXPORT_DIR" && sha256sum -c "$TASK_SHA_NAME")
+    echo 'TH2 PURE-LOCAL COMPACT RESULT EXPORT OK (EXISTING VERIFIED)'
+    exit 0
+fi
+rm -f "$TASK_ARCHIVE" "$TASK_MANIFEST" "$TASK_SHA"
+cd "$TASK_OUTPUT_BASE"
+{
+    printf '%s\n' \
+        pure_local_tied_g16_r128/train_config.json \
+        pure_local_tied_g16_r128/checkpoint-10000/config.json \
+        pure_local_tied_g16_r128/checkpoint-10000/trainer_state.json \
+        pure_local_tied_g16_r128/checkpoint-10000/eval.log \
+        pure_local_tied_g16_r128/checkpoint-10000/eval_ppl.json \
+        pure_local_tied_g16_r128/checkpoint-10000/eval_benchmarks.json \
+        eval_parallel_pure_local_tied_g16_r128_10k_20260825.log
+    find finetune_pure_local_tied_g16_r128_10k_20260825 -maxdepth 1 -type f \
+        \( -name '*.json' -o -name '*.log' -o -name 'summary.md' \) -print
+} | LC_ALL=C sort > "$TASK_MANIFEST"
+[[ "$(wc -l < "$TASK_MANIFEST")" -eq 26 ]] \
+    || die "expected 26 compact result files, found $(wc -l < "$TASK_MANIFEST")"
+tar -czf "$TASK_ARCHIVE" -T "$TASK_MANIFEST"
+(cd "$TASK_EXPORT_DIR" && sha256sum "$TASK_ARCHIVE_NAME" > "$TASK_SHA_NAME")
+(cd "$TASK_EXPORT_DIR" && sha256sum -c "$TASK_SHA_NAME")
+tar -tzf "$TASK_ARCHIVE" | grep -E '(^|/)(model_state\.pt|model\.safetensors|embedding\.pt|optimizer\.pt)$' >/dev/null \
+    && die 'model weights were accidentally included in compact export'
 
-echo 'TH2 PURE-LOCAL LIVE PROGRESS CHECK OK'
+ls -lh "$TASK_ARCHIVE" "$TASK_MANIFEST" "$TASK_SHA"
+echo 'TH2 PURE-LOCAL COMPACT RESULT EXPORT OK'
