@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-sample-culturax-offline-qwen3-0-6b-fresh-b200-20260828-a01
+#th2-sample-culturax-offline-qwen3-0-6b-fresh-b200-20260828-a02
 set -euo pipefail
 
 echo '=== sample verified CulturaX data offline ==='
@@ -53,7 +53,7 @@ test "$TASK_EXPECTED_FILES" -eq 75
 test "$TASK_ACTUAL_FILES" -eq 75
 (
     cd "$TASK_RAW_DIR"
-    sha256sum --quiet -c <(awk '!/^#/ {print $1 "  " $3}' "$OLDPWD/$TASK_MANIFEST")
+    sha256sum --quiet -c <(awk '!/^#/ {print $1 "  " $3}' "$TASK_MANIFEST")
 )
 echo 'raw_sha256_verification=OK'
 
