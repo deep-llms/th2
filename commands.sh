@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-audit-nested-burn-watcher-isolation-20260829-a01
+#th2-audit-nested-burn-watcher-isolation-20260829-a02
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -28,10 +28,15 @@ TASK_RUNNER_PID="${TASK_RUNNER_PIDS[0]}"
 
 echo '=== resolve independent watcher through its held lock ==='
 test -e "$TASK_LOCK_FILE"
-mapfile -t TASK_LOCK_PIDS < <(
-    fuser "$TASK_LOCK_FILE" 2>/dev/null \
-        | tr ' ' '\n' | sed '/^[[:space:]]*$/d' | sort -nu
-)
+TASK_LOCK_PIDS=()
+for TASK_FD in /proc/[0-9]*/fd/9; do
+    TASK_FD_TARGET="$(readlink "$TASK_FD" 2>/dev/null || true)"
+    if [ "$TASK_FD_TARGET" = "$TASK_LOCK_FILE" ]; then
+        TASK_PID="${TASK_FD#/proc/}"
+        TASK_PID="${TASK_PID%%/*}"
+        TASK_LOCK_PIDS+=("$TASK_PID")
+    fi
+done
 test "${#TASK_LOCK_PIDS[@]}" -eq 1
 TASK_WATCHER_PID="${TASK_LOCK_PIDS[0]}"
 test "$TASK_WATCHER_PID" -ne "$TASK_RUNNER_PID"
