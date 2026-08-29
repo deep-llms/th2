@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-check-nested-ladder-phase1-current-run-20260829-a02
+#0
+#th2-idle-after-nested-ladder-current-run-check-20260829-a01
 set -uo pipefail
 
 TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
