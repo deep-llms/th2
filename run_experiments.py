@@ -146,6 +146,19 @@ EXPERIMENT_COMMANDS = [
             "rng_state_6.pth", "rng_state_7.pth",
         ],
     },
+    {
+        "name": "dense_tied_baseline_b200_ddp_default",
+        "cmd": "bash scripts/train_dense_tied_baseline_b200_ddp_default.sh",
+        "output_dir": f"{OUT_BASE}/dense_tied_baseline_b200_ddp_default",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
     # --- Published compressed-vocabulary baselines / tied adaptations ---
     {
         "name": "slim_tied_k4_m76484",
