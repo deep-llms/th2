@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-verify-dense-ddp-default-completion-and-burn-20260829-a02
+#th2-verify-dense-ddp-default-completion-and-burn-20260829-a03
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
@@ -14,7 +14,7 @@ echo '=== identity ==='
 date -u
 hostname
 cd "$TASK_PROJECT_DIR"
-git rev-parse HEAD
+test -s run_experiments.py
 
 echo '=== verify completed dense DDP-default checkpoint ==='
 test -x "$TASK_PYTHON"
