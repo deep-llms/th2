@@ -1,7 +1,8 @@
 #1 +30+a
-#th2-verify-dense-ddp-default-completion-and-burn-20260829-a01
+#th2-verify-dense-ddp-default-completion-and-burn-20260829-a02
 set -euo pipefail
 
+TASK_PROJECT_DIR=/mnt/local/@PROJECT@
 TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
 TASK_OUTPUT=/mnt/local/_outputs/@PROJECT@/dense_tied_baseline_b200_ddp_default
 TASK_CHECKPOINT="$TASK_OUTPUT/checkpoint-10000"
@@ -12,6 +13,7 @@ TASK_TRAIN_LOG="$TASK_LOG_DIR/dense_tied_baseline_b200_ddp_default.log"
 echo '=== identity ==='
 date -u
 hostname
+cd "$TASK_PROJECT_DIR"
 git rev-parse HEAD
 
 echo '=== verify completed dense DDP-default checkpoint ==='
