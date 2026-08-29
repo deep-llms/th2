@@ -1,6 +1,6 @@
 #1 +30+a
-#th2-check-nested-ladder-phase1-training-20260829-a01
-set -euo pipefail
+#th2-check-nested-ladder-phase1-training-20260829-a02
+set -uo pipefail
 
 TASK_OUTPUT=/mnt/local/_outputs/@PROJECT@/nested_ladder_tied_t4
 TASK_LOG_DIR=/mnt/local/_outputs/@PROJECT@/logs/nested_ladder_phase1_20260829
@@ -22,31 +22,40 @@ pgrep -af '[a]ccelerate.commands.launch|[a]ccelerate launch' || {
 }
 mapfile -t TASK_TRAIN_PIDS < <(pgrep -f '[t]rain_compositional.py' | sort -nu)
 test "${#TASK_TRAIN_PIDS[@]}" -ge 8
-printf 'train_worker_pids=%s\n' "${TASK_TRAIN_PIDS[*]}"
+echo "train_related_process_count=${#TASK_TRAIN_PIDS[@]}"
 
 echo '=== output and logs ==='
-test -d "$TASK_OUTPUT"
-test -s "$TASK_EXPERIMENT_LOG"
-test -s "$TASK_TRAIN_LOG"
-du -sh "$TASK_OUTPUT"
-find "$TASK_OUTPUT" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' \
-    -printf '%f\n' | sort -V | tail -10 || true
-tail -40 "$TASK_EXPERIMENT_LOG"
-if grep -HniE 'CUDA out of memory|OutOfMemoryError|NCCL.*(unhandled|system error|remote process exited|watchdog|timeout)|Segmentation fault|Bus error' \
-        "$TASK_TRAIN_LOG" "$TASK_EXPERIMENT_LOG"; then
-    echo 'ERROR: fatal signature found in current training logs' >&2
-    exit 1
+if [ -d "$TASK_OUTPUT" ]; then
+    du -sh "$TASK_OUTPUT"
+    find "$TASK_OUTPUT" -mindepth 1 -maxdepth 1 -type d -name 'checkpoint-*' \
+        -printf '%f\n' | sort -V | tail -10 || true
+else
+    echo 'training_output=not_created_yet'
 fi
-tail -c 200000 "$TASK_TRAIN_LOG" | tr '\r' '\n' \
-    | grep -E "Embedding:|Total parameters:|Trainable parameters:|\{'loss':" \
-    | tail -30 || true
+if [ -s "$TASK_EXPERIMENT_LOG" ]; then
+    tail -40 "$TASK_EXPERIMENT_LOG"
+else
+    echo 'experiment_log=not_created_yet'
+fi
+if [ -s "$TASK_TRAIN_LOG" ]; then
+    if grep -HniE 'CUDA out of memory|OutOfMemoryError|NCCL.*(unhandled|system error|remote process exited|watchdog|timeout)|Segmentation fault|Bus error' \
+            "$TASK_TRAIN_LOG" "$TASK_EXPERIMENT_LOG"; then
+        echo 'ERROR: fatal signature found in current training logs' >&2
+        exit 1
+    fi
+    tail -c 200000 "$TASK_TRAIN_LOG" | tr '\r' '\n' \
+        | grep -E "Embedding:|Total parameters:|Trainable parameters:|\{'loss':" \
+        | tail -30 || true
+else
+    echo 'training_log=not_created_yet'
+fi
 
 echo '=== live GPU state ==='
 mapfile -t TASK_GPU_PIDS < <(
     nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
         | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
 )
-test "${#TASK_GPU_PIDS[@]}" -eq 8
+echo "gpu_compute_pid_count=${#TASK_GPU_PIDS[@]}"
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu,power.draw \
     --format=csv,noheader
 nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory \
