@@ -381,6 +381,15 @@ def test_groupreduce_weighted_svd_and_budget_allocation():
     )
 
 
+def test_groupreduce_rank_allocator_rejects_zero_average_group():
+    counts = torch.tensor([10.0, 5.0, 0.0, 0.0])
+    groups = torch.tensor([0, 0, 1, 1])
+    with pytest.raises(ValueError, match="positive average frequency"):
+        allocate_frequency_proportional_ranks(
+            counts, groups, embed_dim=4, target_params=24
+        )
+
+
 def test_groupreduce_refinement_preserves_an_exact_partition():
     # Two obvious one-dimensional subspaces, deliberately mixed initially.
     dense = torch.tensor([

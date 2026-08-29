@@ -39,7 +39,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
     IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed, PureLocalEmbed,
-    PVQEmbed, SlimEmbed, GroupReduceEmbed, TTEmbedding,
+    PVQEmbed, SlimEmbed, GroupReduceEmbed, NestedLadderEmbed, TTEmbedding,
 )
 from compositional.compressed_baselines import (
     balanced_exact_modes,
@@ -47,7 +47,10 @@ from compositional.compressed_baselines import (
 )
 from compositional.compression_init import (
     allocate_frequency_proportional_ranks,
+    file_sha256,
     frequency_group_ids,
+    frequency_group_ids_from_populations,
+    group_parameter_count,
     load_frequency_counts,
 )
 from compositional.losses import load_balance
@@ -116,7 +119,7 @@ class CompositionalArguments:
             "choices": ["ant", "residual_ant", "v0", "v1", "v2",
                         "isolation_control", "lowrank", "global_lowrank",
                         "shared_local", "pure_local", "pvq", "slim",
-                        "groupreduce", "tt"],
+                        "groupreduce", "nested_ladder", "tt"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
@@ -171,6 +174,11 @@ class CompositionalArguments:
         "help": "Comma-separated rank per GroupReduce block. Empty uses d_x "
                 "for every block."
     })
+    groupreduce_populations: str = field(default="", metadata={
+        "help": "Optional comma-separated frequency-block populations. Their "
+                "sum must equal the vocabulary size; group 0 receives the "
+                "highest-frequency block. Empty uses equal-sized blocks."
+    })
     groupreduce_frequency_path: str | None = field(default=None, metadata={
         "help": "Token-frequency .npz/.pt used to construct the static "
                 "frequency bins for a GroupReduce end-to-end adaptation."
@@ -181,6 +189,24 @@ class CompositionalArguments:
         "help": "Resolve GroupReduce's proportional ranks to this trainable "
                 "embedding budget when explicit ranks are omitted."
     })
+    nested_tier_ranks: str = field(default="64,128,320,512", metadata={
+        "help": "Comma-separated additive rank for each Nested Ladder tier."
+    })
+    nested_tier_populations: str = field(
+        default="151936,32768,8192,2048",
+        metadata={
+            "help": "Comma-separated nested tier populations; the first must "
+                    "equal the model vocabulary size."
+        },
+    )
+    nested_frequency_path: str | None = field(
+        default="resources/token_freq_sample10.npz",
+        metadata={
+            "help": "Token-frequency .npz/.pt used only to build fresh static "
+                    "Nested Ladder memberships. Checkpoints store membership."
+        },
+    )
+    nested_frequency_key: str = field(default="counts")
     tt_order: int = field(default=3, metadata={
         "help": "TT matrix order used when explicit shapes are omitted."
     })
@@ -218,7 +244,7 @@ class CompositionalArguments:
         "help": "Tie the output lm_head to the input embedding weights. "
                 "Removes the free V×d lm_head (~155.6M params) and computes "
                 "output logits from the embedding module's own weights. "
-                "Supported for lowrank, shared_local, pure_local, "
+                "Supported for lowrank, shared_local, pure_local, nested_ladder, "
                 "original_ant, ant, and "
                 "residual_ant; not supported "
                 "for context-dependent arms (v0, v1, v2, isolation_control).",
@@ -261,7 +287,9 @@ class CompositionalTrainer(Trainer):
         self.embed_shim = embed_shim
         self.comp_args = comp_args
         self._comp_sums = {}
-        self._comp_count = 0
+        self._comp_counts = {}
+        self._device_metric_sums = {}
+        self._device_metric_counts = {}
 
     def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
         input_ids = inputs["input_ids"]
@@ -308,22 +336,47 @@ class CompositionalTrainer(Trainer):
             total_loss = lm_loss + self.comp_args.lambda_div * div_scale * div_loss
             div_loss_val = div_loss.detach().item()
 
-        self._comp_count += 1
         for k, v in [("avg_nnz", avg_nnz.item()), ("dead_rate", dead_rate.item()),
                      ("entropy", entropy.item()), ("div_loss", div_loss_val)]:
             self._comp_sums[k] = self._comp_sums.get(k, 0.0) + v
+            self._comp_counts[k] = self._comp_counts.get(k, 0) + 1
+
+        pop_metrics = getattr(
+            self.embed_shim.embed, "pop_step_metrics", None
+        )
+        if callable(pop_metrics):
+            for key, (metric_sum, metric_count) in (pop_metrics() or {}).items():
+                if key in self._device_metric_sums:
+                    self._device_metric_sums[key].add_(metric_sum.detach())
+                    self._device_metric_counts[key].add_(metric_count.detach())
+                else:
+                    self._device_metric_sums[key] = metric_sum.detach().clone()
+                    self._device_metric_counts[key] = metric_count.detach().clone()
 
         return (total_loss, outputs) if return_outputs else total_loss
 
     def log(self, logs, *args, **kwargs):
-        if self._comp_count > 0:
+        if self._comp_counts:
             for k, v in self._comp_sums.items():
-                logs[k] = v / self._comp_count
+                logs[k] = v / self._comp_counts[k]
             lm_loss = logs.get("loss", 0.0)
             if lm_loss > 0:
                 logs["perplexity"] = math.exp(min(lm_loss, 20))
             self._comp_sums = {}
-            self._comp_count = 0
+            self._comp_counts = {}
+        if self._device_metric_sums:
+            keys = sorted(self._device_metric_sums)
+            sums = torch.stack([
+                self._device_metric_sums[key] for key in keys
+            ]).cpu().tolist()
+            counts = torch.stack([
+                self._device_metric_counts[key] for key in keys
+            ]).cpu().tolist()
+            for key, metric_sum, metric_count in zip(keys, sums, counts):
+                if metric_count > 0:
+                    logs[key] = metric_sum / metric_count
+            self._device_metric_sums = {}
+            self._device_metric_counts = {}
         super().log(logs, *args, **kwargs)
 
 
@@ -472,20 +525,60 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
                     f"GroupReduce initialization has {len(ranks)} groups but "
                     f"--groupreduce_num_groups={ca.groupreduce_num_groups}"
                 )
+            declared_populations = _parse_int_list(
+                ca.groupreduce_populations, name="groupreduce_populations"
+            )
+            if declared_populations:
+                actual_populations = tuple(
+                    torch.bincount(
+                        group_ids, minlength=len(ranks)
+                    ).tolist()
+                )
+                if actual_populations != declared_populations:
+                    raise ValueError(
+                        "GroupReduce initialization populations "
+                        f"{actual_populations} do not match "
+                        f"--groupreduce_populations {declared_populations}"
+                    )
         else:
             ranks = _parse_int_list(
                 ca.groupreduce_ranks, name="groupreduce_ranks"
             )
+            populations = _parse_int_list(
+                ca.groupreduce_populations, name="groupreduce_populations"
+            )
             if ca.groupreduce_frequency_path:
+                # Explicit populations are a structural frequency ranking,
+                # not weighted-SVD input. Preserve raw zero/one counts so its
+                # (-count, token_id) order exactly matches Nested Ladder.
+                grouping_pseudocount = (
+                    0.0 if populations
+                    else ca.groupreduce_frequency_pseudocount
+                )
                 counts = load_frequency_counts(
                     ca.groupreduce_frequency_path,
                     vocab_size,
                     key=ca.groupreduce_frequency_key,
-                    pseudocount=ca.groupreduce_frequency_pseudocount,
+                    pseudocount=grouping_pseudocount,
                 )
-                group_ids = frequency_group_ids(
-                    counts, ca.groupreduce_num_groups
-                )
+                if populations:
+                    if len(populations) != ca.groupreduce_num_groups:
+                        raise ValueError(
+                            "--groupreduce_populations must have one entry per group"
+                        )
+                    group_ids = frequency_group_ids_from_populations(
+                        counts, populations
+                    )
+                    logger.info(
+                        "GroupReduce explicit-population frequency artifact: "
+                        "%s (sha256=%s)",
+                        ca.groupreduce_frequency_path,
+                        file_sha256(ca.groupreduce_frequency_path),
+                    )
+                else:
+                    group_ids = frequency_group_ids(
+                        counts, ca.groupreduce_num_groups
+                    )
                 if not ranks:
                     if ca.groupreduce_target_params <= 0:
                         raise ValueError(
@@ -499,14 +592,82 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
                         ca.groupreduce_target_params,
                     )
             else:
+                if populations:
+                    raise ValueError(
+                        "--groupreduce_populations requires "
+                        "--groupreduce_frequency_path"
+                    )
                 group_ids = None
                 ranks = ranks or (ca.d_x,) * ca.groupreduce_num_groups
             if len(ranks) != ca.groupreduce_num_groups:
                 raise ValueError(
                     "--groupreduce_ranks must have one entry per group"
                 )
+            if populations:
+                logger.info(
+                    "GroupReduce explicit profile: populations=%s ranks=%s "
+                    "parameters=%d",
+                    populations,
+                    tuple(ranks),
+                    group_parameter_count(group_ids, ranks, embed_dim),
+                )
         return GroupReduceEmbed(
             vocab_size, embed_dim, group_ranks=ranks, group_ids=group_ids
+        )
+    if ca.arm == "nested_ladder":
+        ranks = _parse_int_list(
+            ca.nested_tier_ranks, name="nested_tier_ranks"
+        )
+        populations = _parse_int_list(
+            ca.nested_tier_populations,
+            name="nested_tier_populations",
+        )
+        member_ids = None
+        counts = None
+        if initial_state is not None:
+            structure = NestedLadderEmbed.structure_from_state(initial_state)
+            if (structure["vocab_size"] != vocab_size
+                    or structure["embed_dim"] != embed_dim):
+                raise ValueError(
+                    "Nested Ladder checkpoint model dimensions do not match "
+                    f"the requested model (state V={structure['vocab_size']}, "
+                    f"d={structure['embed_dim']}; requested V={vocab_size}, "
+                    f"d={embed_dim})"
+                )
+            state_ranks = structure["tier_ranks"]
+            state_populations = structure["tier_populations"]
+            if state_ranks != ranks or state_populations != populations:
+                raise ValueError(
+                    "Nested Ladder checkpoint structure "
+                    f"(ranks={state_ranks}, populations={state_populations}) "
+                    "does not match the requested structure "
+                    f"(ranks={ranks}, populations={populations})"
+                )
+            member_ids = structure["member_ids"]
+        else:
+            if not ca.nested_frequency_path:
+                raise ValueError(
+                    "A fresh Nested Ladder run requires "
+                    "--nested_frequency_path"
+                )
+            counts = load_frequency_counts(
+                ca.nested_frequency_path,
+                vocab_size,
+                key=ca.nested_frequency_key,
+                pseudocount=0.0,
+            )
+            logger.info(
+                "Nested Ladder frequency artifact: %s (sha256=%s)",
+                ca.nested_frequency_path,
+                file_sha256(ca.nested_frequency_path),
+            )
+        return NestedLadderEmbed(
+            vocab_size,
+            embed_dim,
+            tier_ranks=ranks,
+            tier_populations=populations,
+            counts=counts,
+            member_ids=member_ids,
         )
     if ca.arm == "tt":
         vocab_modes = _parse_int_list(ca.tt_vocab_shape, name="tt_vocab_shape")
@@ -556,7 +717,7 @@ def validate_output_configuration(comp_args):
             "--independent_lowrank_output currently requires --arm lowrank"
         )
     if comp_args.arm in {
-        "pure_local", "pvq", "slim", "groupreduce", "tt"
+        "pure_local", "pvq", "slim", "groupreduce", "nested_ladder", "tt"
     } and not comp_args.tie_output:
         raise ValueError(
             f"--arm {comp_args.arm} requires --tie_output for the compressed "

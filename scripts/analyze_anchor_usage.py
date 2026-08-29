@@ -63,7 +63,7 @@ def build_embed(checkpoint_dir, device):
 
     hf_config = AutoConfig.from_pretrained(checkpoint_dir)
     embed = _build_arm_from_config(comp_config, hf_config.vocab_size,
-                                   hf_config.hidden_size)
+                                   hf_config.hidden_size, state=state)
     embed.load_state_dict(state)
     embed.to(device).eval()
     return embed, comp_config, hf_config.vocab_size
@@ -163,7 +163,16 @@ def main():
     arm = comp_config["arm"]
     print(f"arm={arm}  vocab={vocab_size}")
 
-    static = arm in ("ant", "original_ant", "v0", "v1", "residual_ant", "isolation_control")
+    static_arms = {
+        "ant", "original_ant", "v0", "v1", "residual_ant",
+        "isolation_control",
+    }
+    context_arms = {"v2"}
+    if arm not in static_arms | context_arms:
+        raise SystemExit(
+            f"arm={arm} has no anchor-routing weights to analyze"
+        )
+    static = arm in static_arms
     if static:
         freq = None
         if args.freq_npz:
