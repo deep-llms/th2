@@ -1,5 +1,5 @@
-#1 +60+a
-#th2-watch-nested-phase1-then-supervise-burns-20260829-a01
+#0
+#th2-idle-with-nested-phase1-burn-watcher-active-20260829-a01
 set -euo pipefail
 
 die() {
