@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-verify-dense-ddp-default-completion-and-burn-20260829-a03
+#th2-verify-dense-ddp-default-completion-and-burn-20260829-a04
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
@@ -43,7 +43,9 @@ assert config.get("model_type") == "qwen3", config.get("model_type")
 assert config.get("tie_word_embeddings") is True, config.get("tie_word_embeddings")
 print("DENSE_DDP_DEFAULT_CHECKPOINT_OK step=10000 native_tied=true")
 PY
-if grep -HniE 'Traceback|CUDA out of memory|OutOfMemoryError|NCCL.*(unhandled|system error|remote process exited|watchdog|timeout)|Segmentation fault|Bus error' \
+echo '=== stop-at-step termination context ==='
+sed -n '2915,2965p' "$TASK_TRAIN_LOG"
+if grep -HniE 'CUDA out of memory|OutOfMemoryError|NCCL.*(unhandled|system error|remote process exited|watchdog|timeout)|Segmentation fault|Bus error' \
         "$TASK_TRAIN_LOG" "$TASK_EXPERIMENT_LOG"; then
     echo 'ERROR: fatal signature found in dense retrain logs' >&2
     exit 1
