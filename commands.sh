@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-check-nested-ladder-phase1-training-20260829-a02
+#0
+#th2-idle-after-nested-ladder-phase1-start-20260829-a01
 set -uo pipefail
 
 TASK_OUTPUT=/mnt/local/_outputs/@PROJECT@/nested_ladder_tied_t4
