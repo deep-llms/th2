@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-inspect-nested-watcher-process-and-lock-20260829-a01
+#0
+#th2-idle-after-nested-watcher-isolation-audit-20260829-a01
 set -uo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
