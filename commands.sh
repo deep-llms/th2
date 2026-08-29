@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-check-nested-ladder-phase1-current-run-20260829-a01
+#th2-check-nested-ladder-phase1-current-run-20260829-a02
 set -uo pipefail
 
 TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
@@ -82,6 +82,7 @@ PY
 
     if [ -s "$TASK_TRAIN_LOG" ]; then
         echo "training_log_bytes=$(stat -c %s "$TASK_TRAIN_LOG")"
+        echo "training_log_mtime=$(stat -c %y "$TASK_TRAIN_LOG")"
         if grep -HniE 'CUDA out of memory|OutOfMemoryError|NCCL.*(unhandled|system error|remote process exited|watchdog|timeout)|Segmentation fault|Bus error' \
                 "$TASK_TRAIN_LOG"; then
             TASK_FATAL=1
@@ -89,6 +90,8 @@ PY
         tail -c 250000 "$TASK_TRAIN_LOG" | tr '\r' '\n' \
             | grep -E "Embedding:|Total parameters:|Trainable parameters:|\{'loss':" \
             | tail -25 || true
+        echo 'raw_training_log_tail:'
+        tail -c 120000 "$TASK_TRAIN_LOG" | tr '\r' '\n' | tail -100
     else
         echo 'training_log=not_created_yet'
     fi
