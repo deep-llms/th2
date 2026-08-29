@@ -35,6 +35,12 @@ logger = logging.getLogger(__name__)
 OUT_BASE = os.environ.get(
     "SPARSE_EMB_OUTPUT_BASE", "/opt/dlami/nvme/sparse_emb_outputs"
 )
+# Current B200 launchers use /mnt/local by default. Keep legacy entries on
+# OUT_BASE, but make B200 entries agree with their scripts even when the caller
+# does not explicitly export SPARSE_EMB_OUTPUT_BASE.
+B200_OUT_BASE = os.environ.get(
+    "SPARSE_EMB_OUTPUT_BASE", "/mnt/local/_outputs/sparse_embedding"
+)
 
 EXPERIMENT_COMMANDS = [
     {
@@ -163,7 +169,7 @@ EXPERIMENT_COMMANDS = [
     {
         "name": "slim_tied_k4_m76484",
         "cmd": "bash scripts/train_slim_tied.sh",
-        "output_dir": f"{OUT_BASE}/slim_tied_k4_m76484",
+        "output_dir": f"{B200_OUT_BASE}/slim_tied_k4_m76484",
         "require_fresh_output": True,
         "required_checkpoint_files": [
             "config.json", "model.safetensors", "trainer_state.json",
@@ -176,7 +182,7 @@ EXPERIMENT_COMMANDS = [
     {
         "name": "groupreduce_e2e_tied_g20",
         "cmd": "bash scripts/train_groupreduce_e2e_tied.sh",
-        "output_dir": f"{OUT_BASE}/groupreduce_e2e_tied_g20",
+        "output_dir": f"{B200_OUT_BASE}/groupreduce_e2e_tied_g20",
         "require_fresh_output": True,
         "required_checkpoint_files": [
             "config.json", "model.safetensors", "trainer_state.json",
@@ -202,7 +208,7 @@ EXPERIMENT_COMMANDS = [
     {
         "name": "tt_tied_r219",
         "cmd": "bash scripts/train_tt_tied.sh",
-        "output_dir": f"{OUT_BASE}/tt_tied_r219",
+        "output_dir": f"{B200_OUT_BASE}/tt_tied_r219",
         "require_fresh_output": True,
         "required_checkpoint_files": [
             "config.json", "model.safetensors", "trainer_state.json",
@@ -215,7 +221,33 @@ EXPERIMENT_COMMANDS = [
     {
         "name": "global_lowrank_tied_r128",
         "cmd": "bash scripts/train_global_lowrank_tied_r128.sh",
-        "output_dir": f"{OUT_BASE}/global_lowrank_tied_r128",
+        "output_dir": f"{B200_OUT_BASE}/global_lowrank_tied_r128",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "nested_ladder_tied_t4",
+        "cmd": "bash scripts/train_nested_ladder_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/nested_ladder_tied_t4",
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "groupreduce_matched_nested_tied_t4",
+        "cmd": "bash scripts/train_groupreduce_matched_nested_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/groupreduce_matched_nested_tied_t4",
         "require_fresh_output": True,
         "required_checkpoint_files": [
             "config.json", "model.safetensors", "trainer_state.json",

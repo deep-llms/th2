@@ -10,6 +10,7 @@ from .embeddings import (
     SharedLocalEmbed,
     PureLocalEmbed,
 )
+from .nested_ladder import NestedLadderEmbed
 from .compressed_baselines import (
     PVQEmbed,
     SlimEmbed,

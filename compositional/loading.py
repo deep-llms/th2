@@ -42,6 +42,7 @@ from .compressed_baselines import (
     balanced_exact_modes,
     balanced_padded_modes,
 )
+from .nested_ladder import NestedLadderEmbed
 from .tied_head import (
     INDEPENDENT_OUTPUT_FILENAME,
     IndependentLowRankHead,
@@ -140,6 +141,52 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
             embed_dim,
             group_ranks=ranks,
             group_ids=group_ids,
+        )
+    if arm == "nested_ladder":
+        if state is not None:
+            structure = NestedLadderEmbed.structure_from_state(state)
+            if structure["vocab_size"] != vocab_size:
+                raise ValueError(
+                    "Nested Ladder checkpoint vocabulary size "
+                    f"{structure['vocab_size']} does not match model "
+                    f"vocabulary size {vocab_size}"
+                )
+            if structure["embed_dim"] != embed_dim:
+                raise ValueError(
+                    "Nested Ladder checkpoint embedding dimension "
+                    f"{structure['embed_dim']} does not match model hidden "
+                    f"size {embed_dim}"
+                )
+            ranks = structure["tier_ranks"]
+            populations = structure["tier_populations"]
+            declared_ranks = _parse_int_list(tc.get("nested_tier_ranks", ""))
+            declared_populations = _parse_int_list(
+                tc.get("nested_tier_populations", "")
+            )
+            if declared_ranks and declared_ranks != ranks:
+                raise ValueError(
+                    f"Nested Ladder config ranks {declared_ranks} do not "
+                    f"match checkpoint ranks {ranks}"
+                )
+            if declared_populations and declared_populations != populations:
+                raise ValueError(
+                    "Nested Ladder config populations "
+                    f"{declared_populations} do not match checkpoint "
+                    f"populations {populations}"
+                )
+            member_ids = structure["member_ids"]
+        else:
+            ranks = _parse_int_list(tc.get("nested_tier_ranks", ""))
+            populations = _parse_int_list(
+                tc.get("nested_tier_populations", "")
+            )
+            member_ids = None
+        return NestedLadderEmbed(
+            vocab_size,
+            embed_dim,
+            tier_ranks=ranks,
+            tier_populations=populations,
+            member_ids=member_ids,
         )
     if arm == "tt":
         if state is not None and any(
@@ -349,6 +396,18 @@ def _infer_comp_config_from_state(state):
     weights alone and are not handled here.
     """
     keys = set(state.keys())
+
+    if {"Z.0", "W.0", "bias"}.issubset(keys):
+        structure = NestedLadderEmbed.structure_from_state(state)
+        return {
+            "arm": "nested_ladder",
+            "nested_tier_ranks": ",".join(
+                str(rank) for rank in structure["tier_ranks"]
+            ),
+            "nested_tier_populations": ",".join(
+                str(size) for size in structure["tier_populations"]
+            ),
+        }
 
     if {"codebook", "exclusive", "assignments"}.issubset(keys):
         return {
@@ -602,7 +661,8 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
             )
         supported_tied_arms = {
             "lowrank", "global_lowrank", "shared_local", "pure_local",
-            "pvq", "slim", "groupreduce", "tt", "original_ant", "ant",
+            "pvq", "slim", "groupreduce", "nested_ladder", "tt",
+            "original_ant", "ant",
             "residual_ant"
         }
         if not has_independent_output:

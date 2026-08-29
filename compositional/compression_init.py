@@ -30,8 +30,8 @@ def tensor_sha256(tensor):
 
 def load_frequency_counts(path, vocab_size, key="counts", pseudocount=1.0):
     """Load and validate the frequency vector used by GroupReduce."""
-    if pseudocount <= 0:
-        raise ValueError("pseudocount must be positive")
+    if pseudocount < 0:
+        raise ValueError("pseudocount must be nonnegative")
     source = Path(path)
     if not source.is_file():
         raise FileNotFoundError(f"Frequency file not found: {source}")
@@ -60,6 +60,16 @@ def load_frequency_counts(path, vocab_size, key="counts", pseudocount=1.0):
     return counts.clamp_min(float(pseudocount))
 
 
+def frequency_rank_order(counts):
+    """Return deterministic high-to-low frequency order (token-id ties)."""
+    counts = torch.as_tensor(counts, dtype=torch.float64).cpu()
+    if counts.ndim != 1 or not torch.isfinite(counts).all():
+        raise ValueError("counts must be a finite one-dimensional tensor")
+    if torch.any(counts < 0):
+        raise ValueError("counts must be nonnegative")
+    return torch.argsort(counts, descending=True, stable=True)
+
+
 def frequency_group_ids(counts, num_groups):
     """Stable frequency-rank bins used to initialize GroupReduce."""
     counts = torch.as_tensor(counts, dtype=torch.float64).cpu()
@@ -67,7 +77,7 @@ def frequency_group_ids(counts, num_groups):
     if not 0 < num_groups <= vocab_size:
         raise ValueError("num_groups must be between 1 and vocabulary size")
     # Stable sorting makes token id the deterministic tie-breaker.
-    order = torch.argsort(counts, descending=True, stable=True)
+    order = frequency_rank_order(counts)
     base, remainder = divmod(vocab_size, num_groups)
     sizes = [base + (group < remainder) for group in range(num_groups)]
     group_ids = torch.empty(vocab_size, dtype=torch.long)
@@ -76,6 +86,35 @@ def frequency_group_ids(counts, num_groups):
         group_ids[order[start:start + size]] = group
         start += size
     return group_ids
+
+
+def frequency_group_ids_from_populations(counts, populations):
+    """Assign frequency-ranked tokens to blocks of explicit populations."""
+    counts = torch.as_tensor(counts, dtype=torch.float64).cpu()
+    populations = tuple(int(size) for size in populations)
+    if not populations or any(size <= 0 for size in populations):
+        raise ValueError("populations must contain positive sizes")
+    if sum(populations) != counts.numel():
+        raise ValueError(
+            f"population sum {sum(populations)} does not equal vocabulary "
+            f"size {counts.numel()}"
+        )
+    order = frequency_rank_order(counts)
+    group_ids = torch.empty(counts.numel(), dtype=torch.long)
+    start = 0
+    for group, size in enumerate(populations):
+        group_ids[order[start:start + size]] = group
+        start += size
+    return group_ids
+
+
+def file_sha256(path, chunk_size=1024 * 1024):
+    """Hash an input artifact without reading the whole file at once."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        while chunk := handle.read(chunk_size):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def group_parameter_count(group_ids, ranks, embed_dim):
@@ -101,12 +140,28 @@ def allocate_frequency_proportional_ranks(
     requested budget and report the resolved ranks explicitly.
     """
     counts = torch.as_tensor(counts, dtype=torch.float64)
-    group_ids = torch.as_tensor(group_ids, dtype=torch.long)
+    group_ids = torch.as_tensor(
+        group_ids, dtype=torch.long, device=counts.device
+    )
+    if counts.ndim != 1 or group_ids.shape != counts.shape or counts.numel() == 0:
+        raise ValueError("counts and group_ids must be non-empty matching vectors")
+    if not torch.isfinite(counts).all() or torch.any(counts < 0):
+        raise ValueError("counts must be finite and nonnegative")
+    if group_ids.min().item() < 0:
+        raise ValueError("group_ids must be nonnegative")
     num_groups = int(group_ids.max().item()) + 1
     sizes = torch.bincount(group_ids, minlength=num_groups)
+    if torch.any(sizes == 0):
+        raise ValueError("group_ids must use every group id contiguously")
     averages = torch.stack([
         counts[group_ids == group].mean() for group in range(num_groups)
     ])
+    if averages.min().item() <= 0:
+        raise ValueError(
+            "frequency-proportional rank allocation requires every group to "
+            "have positive average frequency; use a positive pseudocount or "
+            "provide explicit --groupreduce_ranks"
+        )
     ratios = averages / averages.min()
     caps = torch.minimum(
         sizes, torch.full_like(sizes, int(embed_dim))
@@ -284,7 +339,10 @@ def refine_groupreduce_from_dense(
         if candidates.numel() < min_candidates:
             break
         move_limit = max(1, math.ceil(move_fraction * candidates.numel()))
-        order = torch.argsort(best_error[candidates], stable=True)
+        improvement = current_error[candidates] - best_error[candidates]
+        order = torch.argsort(
+            improvement, descending=True, stable=True
+        )
         sizes = torch.bincount(group_ids, minlength=num_groups)
         moved = 0
         objective_before = float(

@@ -167,6 +167,11 @@ def _pvq(args, dense):
 def _groupreduce(args, dense):
     if not args.frequency_path:
         raise ValueError("GroupReduce conversion requires --frequency_path")
+    if args.frequency_pseudocount <= 0:
+        raise ValueError(
+            "GroupReduce weighted-SVD conversion requires "
+            "--frequency_pseudocount > 0"
+        )
     counts = load_frequency_counts(
         args.frequency_path,
         dense.size(0),
@@ -263,6 +268,11 @@ def parse_args():
 
 def main():
     args = parse_args()
+    if args.method == "groupreduce" and args.frequency_pseudocount <= 0:
+        raise ValueError(
+            "GroupReduce weighted-SVD conversion requires "
+            "--frequency_pseudocount > 0"
+        )
     output = Path(args.output)
     if output.exists():
         raise FileExistsError(f"Refusing to overwrite existing artifact: {output}")

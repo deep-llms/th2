@@ -14,6 +14,7 @@ For each embedding architecture, we use the most efficient computation:
   P-VQ:           codebook projection + code lookup + exclusive projection
   Slim:           component GEMMs + fixed mapping-table gather/sum
   GroupReduce:    one factored projection per vocabulary block
+  NestedLadder:   additive factored projections into nested vocabulary subsets
   TT:             reverse TT-matrix contraction
   OriginalANT:    logits = (hidden @ A.T) @ T.T              (factored via T and A)
   ANTEmbed:       logits = hidden @ materialize(all_ids).T    (must materialize, batched)
@@ -271,6 +272,27 @@ class TiedGroupReduceHead(_TiedHeadBase):
         return logits.view(*hidden_states.shape[:-1], self.embed.vocab_size)
 
 
+class TiedNestedLadderHead(_TiedHeadBase):
+    """Exact tied output for additive nested low-rank tiers."""
+
+    def forward(self, hidden_states):
+        flat_hidden = hidden_states.reshape(-1, self.embed.embed_dim)
+        logits = (flat_hidden @ self.embed.W[0]) @ self.embed.Z[0].T
+        for index in range(1, self.embed.num_tiers):
+            partial = (flat_hidden @ self.embed.W[index]) @ self.embed.Z[index].T
+            # ``logits`` is a fresh non-leaf matmul result, and neither
+            # index_add nor the matmul backward needs its output value. The
+            # in-place accumulation avoids cloning the full N x V tensor once
+            # per tier while preserving exact gradients.
+            logits.index_add_(
+                -1,
+                getattr(self.embed, f"member_ids_{index + 1}"),
+                partial,
+            )
+        logits.add_((flat_hidden @ self.embed.bias).unsqueeze(-1))
+        return logits.view(*hidden_states.shape[:-1], self.embed.vocab_size)
+
+
 class TiedTTHead(_TiedHeadBase):
     """Exact tied output using the TT-matrix contraction implemented by TTEmbedding."""
 
@@ -345,6 +367,8 @@ def make_tied_head(embed, embed_type, vocab_size):
         return TiedSlimHead(embed)
     if embed_type == "groupreduce":
         return TiedGroupReduceHead(embed)
+    if embed_type == "nested_ladder":
+        return TiedNestedLadderHead(embed)
     if embed_type == "tt":
         return TiedTTHead(embed)
     if embed_type == "original_ant":
@@ -354,7 +378,7 @@ def make_tied_head(embed, embed_type, vocab_size):
     raise ValueError(
         f"Cannot tie output for embed_type={embed_type}. Supported types are "
         "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
-        "groupreduce, tt, "
+        "groupreduce, nested_ladder, tt, "
         "original_ant, ant, and residual_ant; v0, v1, v2, and "
         "isolation_control are context-dependent and cannot be tied."
     )
