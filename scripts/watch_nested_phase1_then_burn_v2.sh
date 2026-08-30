@@ -62,43 +62,47 @@ while read -r TASK_PID; do
         echo "matched_runner_pid=$TASK_PID cmdline=$TASK_CMDLINE"
     fi
 done < <(pgrep -f '[r]un_experiments.py' || true)
-[[ "${#TASK_RUNNER_PIDS[@]}" -eq 1 ]] \
-    || die "expected one matching runner, found ${#TASK_RUNNER_PIDS[@]}"
-TASK_RUNNER_PID="${TASK_RUNNER_PIDS[0]}"
+[[ "${#TASK_RUNNER_PIDS[@]}" -le 1 ]] \
+    || die "expected at most one matching runner, found ${#TASK_RUNNER_PIDS[@]}"
 
-echo '=== monitor runner without signaling or modifying it ==='
-TASK_POLL_COUNT=0
-while true; do
-    if ! kill -0 "$TASK_RUNNER_PID" 2>/dev/null; then
-        break
-    fi
-    if TASK_CMDLINE="$(
-        tr '\0' ' ' < "/proc/$TASK_RUNNER_PID/cmdline" 2>/dev/null
-    )"; then
-        if [ -z "$TASK_CMDLINE" ]; then
-            TASK_PROCESS_STATE="$(
-                awk '{print $3}' "/proc/$TASK_RUNNER_PID/stat" 2>/dev/null \
-                    || true
-            )"
-            [ "$TASK_PROCESS_STATE" = Z ] && break
-            die "runner PID has an empty command line: $TASK_RUNNER_PID"
+if [[ "${#TASK_RUNNER_PIDS[@]}" -eq 1 ]]; then
+    TASK_RUNNER_PID="${TASK_RUNNER_PIDS[0]}"
+    echo '=== monitor runner without signaling or modifying it ==='
+    TASK_POLL_COUNT=0
+    while true; do
+        if ! kill -0 "$TASK_RUNNER_PID" 2>/dev/null; then
+            break
         fi
-        [[ "$TASK_CMDLINE" == *"$TASK_EXPECTED_RUNNER_FRAGMENT"* ]] \
-            || die "runner PID changed identity: $TASK_RUNNER_PID $TASK_CMDLINE"
-    else
-        if kill -0 "$TASK_RUNNER_PID" 2>/dev/null; then
-            die "cannot inspect live runner PID $TASK_RUNNER_PID"
+        if TASK_CMDLINE="$(
+            tr '\0' ' ' < "/proc/$TASK_RUNNER_PID/cmdline" 2>/dev/null
+        )"; then
+            if [ -z "$TASK_CMDLINE" ]; then
+                TASK_PROCESS_STATE="$(
+                    awk '{print $3}' "/proc/$TASK_RUNNER_PID/stat" 2>/dev/null \
+                        || true
+                )"
+                [ "$TASK_PROCESS_STATE" = Z ] && break
+                die "runner PID has an empty command line: $TASK_RUNNER_PID"
+            fi
+            [[ "$TASK_CMDLINE" == *"$TASK_EXPECTED_RUNNER_FRAGMENT"* ]] \
+                || die "runner PID changed identity: $TASK_RUNNER_PID $TASK_CMDLINE"
+        else
+            if kill -0 "$TASK_RUNNER_PID" 2>/dev/null; then
+                die "cannot inspect live runner PID $TASK_RUNNER_PID"
+            fi
+            break
         fi
-        break
-    fi
-    if (( TASK_POLL_COUNT % 20 == 0 )); then
-        date -u
-        echo "runner_pid=$TASK_RUNNER_PID still_active=true"
-        tail -16 "$TASK_EXPERIMENT_LOG" || true
-    fi
-    TASK_POLL_COUNT=$((TASK_POLL_COUNT + 1))
-    sleep 30
-done
+        if (( TASK_POLL_COUNT % 20 == 0 )); then
+            date -u
+            echo "runner_pid=$TASK_RUNNER_PID still_active=true"
+            tail -16 "$TASK_EXPERIMENT_LOG" || true
+        fi
+        TASK_POLL_COUNT=$((TASK_POLL_COUNT + 1))
+        sleep 30
+    done
+else
+    echo 'matching_runner=absent; validating already-completed outputs'
+fi
 
 echo '=== runner exited; wait 60 seconds before validation ==='
 date -u
@@ -171,8 +175,35 @@ fi
 mapfile -t TASK_REMAINING_GPU_PIDS < <(gpu_pids)
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu,power.draw \
     --format=csv,noheader
-[[ "${#TASK_REMAINING_GPU_PIDS[@]}" -eq 0 ]] \
-    || die "GPU processes remain before burn: ${TASK_REMAINING_GPU_PIDS[*]}"
+if [[ "${#TASK_REMAINING_GPU_PIDS[@]}" -gt 0 ]]; then
+    [[ "${#TASK_REMAINING_GPU_PIDS[@]}" -eq 8 ]] \
+        || die "expected zero or eight GPU processes, found ${#TASK_REMAINING_GPU_PIDS[@]}: ${TASK_REMAINING_GPU_PIDS[*]}"
+    declare -A TASK_EXISTING_BURNS_PER_UUID=()
+    for TASK_PID in "${TASK_REMAINING_GPU_PIDS[@]}"; do
+        TASK_CMDLINE="$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")"
+        [[ "$TASK_CMDLINE" == *scripts/gpu_burn.py* ]] \
+            || die "non-burn GPU process remains: $TASK_PID $TASK_CMDLINE"
+    done
+    while IFS=',' read -r TASK_GPU_UUID TASK_PID; do
+        TASK_GPU_UUID="${TASK_GPU_UUID//[[:space:]]/}"
+        TASK_PID="${TASK_PID//[[:space:]]/}"
+        [[ -n "$TASK_GPU_UUID" && -n "$TASK_PID" ]] || continue
+        TASK_EXISTING_BURNS_PER_UUID["$TASK_GPU_UUID"]=$((
+            ${TASK_EXISTING_BURNS_PER_UUID["$TASK_GPU_UUID"]:-0} + 1
+        ))
+    done < <(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader,nounits)
+    mapfile -t TASK_EXISTING_GPU_UUIDS < <(
+        nvidia-smi --query-gpu=uuid --format=csv,noheader,nounits \
+            | sed 's/[[:space:]]//g'
+    )
+    [[ "${#TASK_EXISTING_GPU_UUIDS[@]}" -eq 8 ]] || die 'expected 8 GPU UUIDs'
+    for TASK_GPU_UUID in "${TASK_EXISTING_GPU_UUIDS[@]}"; do
+        [[ "${TASK_EXISTING_BURNS_PER_UUID[$TASK_GPU_UUID]:-0}" -eq 1 ]] \
+            || die "expected one existing burn on $TASK_GPU_UUID, found ${TASK_EXISTING_BURNS_PER_UUID[$TASK_GPU_UUID]:-0}"
+    done
+    echo 'TH2 NESTED PHASE-1 COMPLETE; EXISTING GPU BURNS VERIFIED ON ALL 8 GPUS'
+    exit 0
+fi
 echo 'ALL 8 B200 GPUS FREE AFTER BOTH PHASE-1 EXPERIMENTS'
 
 echo '=== launch and supervise one project burn worker per GPU ==='
