@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-audit-live-four-model-eval-finetune-workflow-20260830-a02
+#th2-audit-live-four-model-eval-finetune-workflow-20260830-a03
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -42,18 +42,26 @@ def has_script(args, suffix):
 
 
 processes = {}
+parents = {}
 for entry in os.scandir("/proc"):
     if entry.name.isdigit():
         pid = int(entry.name)
         args = read_args(pid)
         if args:
             processes[pid] = args
+            try:
+                with open(f"/proc/{pid}/status", encoding="utf-8") as handle:
+                    parents[pid] = next(
+                        int(line.split()[1]) for line in handle if line.startswith("PPid:")
+                    )
+            except (FileNotFoundError, PermissionError, ProcessLookupError, StopIteration):
+                parents[pid] = None
 
 workflow = []
 eval_launchers = []
 eval_workers = []
 finetune_launchers = []
-finetune_workers = []
+finetune_processes = []
 burn_workers = []
 for pid, args in processes.items():
     executable = os.path.basename(args[0])
@@ -70,16 +78,25 @@ for pid, args in processes.items():
         and finetune_output in args
         and any(path in args for path in checkpoints)
     ):
-        finetune_workers.append(pid)
+        finetune_processes.append(pid)
     if has_script(args, "scripts/gpu_burn.py"):
         burn_workers.append(pid)
+
+if len(finetune_launchers) == 1:
+    finetune_workers = [
+        pid for pid in finetune_processes if parents.get(pid) == finetune_launchers[0]
+    ]
+else:
+    finetune_workers = []
+finetune_helpers = [pid for pid in finetune_processes if pid not in finetune_workers]
 
 groups = {
     "workflow": workflow,
     "eval_launcher": eval_launchers,
     "eval_worker": eval_workers,
     "finetune_launcher": finetune_launchers,
-    "finetune_worker": finetune_workers,
+    "finetune_gpu_trainer": finetune_workers,
+    "finetune_dataloader_helper": finetune_helpers,
     "burn_worker": burn_workers,
 }
 for label, pids in groups.items():
@@ -88,14 +105,18 @@ for label, pids in groups.items():
         print(f"  pid={pid} argv={processes[pid]}")
 
 assert len(workflow) == 1, f"expected exactly one workflow parent, found {workflow}"
-active_groups = sum(bool(group) for group in (eval_launchers or eval_workers, finetune_launchers or finetune_workers, burn_workers))
+active_groups = sum(bool(group) for group in (eval_launchers or eval_workers, finetune_launchers or finetune_processes, burn_workers))
 assert active_groups <= 1, "eval, finetune, and burn stages overlap"
 if eval_workers:
     assert len(eval_launchers) == 1, eval_launchers
     assert 1 <= len(eval_workers) <= 4, eval_workers
-if finetune_workers:
+if finetune_processes:
     assert len(finetune_launchers) == 1, finetune_launchers
     assert 1 <= len(finetune_workers) <= 8, finetune_workers
+    assert all(parents.get(pid) in finetune_workers for pid in finetune_helpers), (
+        finetune_helpers,
+        {pid: parents.get(pid) for pid in finetune_helpers},
+    )
 if burn_workers:
     assert len(burn_workers) <= 8, burn_workers
 
@@ -120,7 +141,7 @@ if burn_workers:
 
 if eval_launchers or eval_workers:
     stage = "eval"
-elif finetune_launchers or finetune_workers:
+elif finetune_launchers or finetune_processes:
     stage = "finetune"
 elif burn_workers:
     stage = "burn"
