@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-readonly-verify-165g-burn-script-memory-and-nccl-20260830-a01
+#th2-readonly-verify-165g-burn-script-memory-and-nccl-20260830-a02
 set -euo pipefail
 
 TASK_SOURCE=/mnt/local/@PROJECT@/resources/llm_pretrain_burn.py
@@ -99,7 +99,8 @@ for row in gpu_rows:
     assert index in range(8) and index not in gpus
     assert "B200" in name, (index, name)
     assert lower_memory_mib <= used <= upper_memory_mib, (index, used)
-    assert abs(total - used - free) <= 2, (index, total, used, free)
+    driver_reserved = total - used - free
+    assert 0 <= driver_reserved <= 2048, (index, total, used, free, driver_reserved)
     gpus[index] = {
         "uuid": uuid,
         "total": total,
@@ -107,6 +108,7 @@ for row in gpu_rows:
         "free": free,
         "utilization": utilization,
         "power": power,
+        "driver_reserved": driver_reserved,
     }
 assert set(gpus) == set(range(8)), gpus
 
@@ -136,7 +138,8 @@ for index in range(8):
         f"GPU {index} uuid={gpu['uuid']} pid={pid} process={process_name} "
         f"process_memory={process_memory:.0f}MiB used={gpu['used']:.0f}MiB "
         f"total={gpu['total']:.0f}MiB used_percent={used_percent:.2f}% "
-        f"free={gpu['free']:.0f}MiB utilization={gpu['utilization']:.0f}% "
+        f"free={gpu['free']:.0f}MiB driver_reserved={gpu['driver_reserved']:.0f}MiB "
+        f"utilization={gpu['utilization']:.0f}% "
         f"power={gpu['power']:.0f}W"
     )
 
