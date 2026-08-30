@@ -1,3 +1,2 @@
-#0
-#th2-idle-after-eight-gpu-burn-audit-20260830
-echo 'TH2 IDLE COMMAND: all eight supervised GPU burns verified active'
+#2 +a -f-/tmp/llm_pretrain_burn.py
+#th2-pull-runner-gpu-burn-script-20260830-a01
