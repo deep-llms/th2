@@ -48,6 +48,16 @@ scan_fatal_logs() {
     fi
 }
 
+install_accelerate_config() {
+    mkdir -p "$(dirname "$TASK_ACCELERATE_TARGET")"
+    cp "$TASK_ACCELERATE_SOURCE" "$TASK_ACCELERATE_TARGET"
+    cmp "$TASK_ACCELERATE_SOURCE" "$TASK_ACCELERATE_TARGET"
+    grep -Fxq 'distributed_type: MULTI_GPU' "$TASK_ACCELERATE_TARGET"
+    grep -Fxq 'mixed_precision: bf16' "$TASK_ACCELERATE_TARGET"
+    grep -Fxq 'num_processes: 8' "$TASK_ACCELERATE_TARGET"
+    echo "ACCELERATE_CONFIG_OK target=$TASK_ACCELERATE_TARGET"
+}
+
 TASK_PROJECT_DIR="${SPARSE_EMB_PROJECT_DIR:?SPARSE_EMB_PROJECT_DIR is required}"
 TASK_OUTPUT_BASE="${SPARSE_EMB_OUTPUT_BASE:?SPARSE_EMB_OUTPUT_BASE is required}"
 TASK_MODEL_DIR="${SPARSE_EMB_MODEL_DIR:?SPARSE_EMB_MODEL_DIR is required}"
@@ -220,63 +230,11 @@ TASK_AVAILABLE_BYTES=$(df -PB1 "$TASK_OUTPUT_BASE" | awk 'NR == 2 {print $4}')
     || die "less than 100 GB available for four-model eval/finetune: $TASK_AVAILABLE_BYTES bytes"
 echo "STORAGE_PREFLIGHT_OK available_bytes=$TASK_AVAILABLE_BYTES"
 
-echo '=== verify and stop only the eight current project burn workers ==='
-mapfile -t TASK_INITIAL_GPU_PIDS < <(gpu_pids)
-[[ "${#TASK_INITIAL_GPU_PIDS[@]}" -eq 8 ]] \
-    || die "expected 8 current burn processes, found ${#TASK_INITIAL_GPU_PIDS[@]}: ${TASK_INITIAL_GPU_PIDS[*]}"
-declare -A TASK_INITIAL_PID_SET=()
-for TASK_PID in "${TASK_INITIAL_GPU_PIDS[@]}"; do
-    [[ "$TASK_PID" != 1 ]] || die 'refusing to signal PID 1'
-    TASK_CMDLINE="$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")"
-    [[ "$TASK_CMDLINE" == *scripts/gpu_burn.py* ]] \
-        || die "GPU PID is not a project burn: $TASK_PID $TASK_CMDLINE"
-    TASK_INITIAL_PID_SET["$TASK_PID"]=1
-    echo "verified_burn_pid=$TASK_PID cmdline=$TASK_CMDLINE"
-done
-declare -A TASK_INITIAL_BURNS_PER_UUID=()
-while IFS=',' read -r TASK_GPU_UUID TASK_PID; do
-    TASK_GPU_UUID="${TASK_GPU_UUID//[[:space:]]/}"
-    TASK_PID="${TASK_PID//[[:space:]]/}"
-    [[ -n "$TASK_GPU_UUID" && -n "$TASK_PID" ]] || continue
-    [[ -n "${TASK_INITIAL_PID_SET[$TASK_PID]:-}" ]] \
-        || die "unexpected GPU PID in initial UUID map: $TASK_PID"
-    TASK_INITIAL_BURNS_PER_UUID["$TASK_GPU_UUID"]=$((
-        ${TASK_INITIAL_BURNS_PER_UUID["$TASK_GPU_UUID"]:-0} + 1
-    ))
-done < <(nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader,nounits)
-mapfile -t TASK_INITIAL_GPU_UUIDS < <(
-    nvidia-smi --query-gpu=uuid --format=csv,noheader,nounits \
-        | sed 's/[[:space:]]//g'
-)
-[[ "${#TASK_INITIAL_GPU_UUIDS[@]}" -eq 8 ]] || die 'expected 8 initial GPU UUIDs'
-for TASK_GPU_UUID in "${TASK_INITIAL_GPU_UUIDS[@]}"; do
-    [[ "${TASK_INITIAL_BURNS_PER_UUID[$TASK_GPU_UUID]:-0}" -eq 1 ]] \
-        || die "expected one initial burn on $TASK_GPU_UUID, found ${TASK_INITIAL_BURNS_PER_UUID[$TASK_GPU_UUID]:-0}"
-done
-kill -TERM "${TASK_INITIAL_GPU_PIDS[@]}" 2>/dev/null || true
-for TASK_ATTEMPT in $(seq 1 30); do
-    mapfile -t TASK_REMAINING_GPU_PIDS < <(gpu_pids)
-    [[ "${#TASK_REMAINING_GPU_PIDS[@]}" -eq 0 ]] && break
-    sleep 1
-done
-if [[ "${#TASK_REMAINING_GPU_PIDS[@]}" -gt 0 ]]; then
-    for TASK_PID in "${TASK_REMAINING_GPU_PIDS[@]}"; do
-        [[ -n "${TASK_INITIAL_PID_SET[$TASK_PID]:-}" ]] \
-            || die "unexpected GPU PID appeared during burn shutdown: $TASK_PID"
-        TASK_CMDLINE="$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline" 2>/dev/null || true)"
-        [[ "$TASK_CMDLINE" == *scripts/gpu_burn.py* ]] \
-            || die "remaining PID changed identity: $TASK_PID $TASK_CMDLINE"
-    done
-    kill -KILL "${TASK_REMAINING_GPU_PIDS[@]}" 2>/dev/null || true
-fi
+echo '=== verify all eight B200 GPUs are free before eval ==='
+require_free_gpus 'BEFORE PRE-EVAL ACCELERATE CONFIG COPY'
 
-echo '=== sleep 60 seconds after stopping burns ==='
-sleep 60
-require_free_gpus 'AFTER FIRST 60-SECOND WAIT'
-
-echo '=== sleep another 60 seconds and verify again ==='
-sleep 60
-require_free_gpus 'AFTER SECOND 60-SECOND WAIT AND BEFORE EVAL'
+echo '=== copy and verify the exact eight-GPU Accelerate config before eval ==='
+install_accelerate_config
 
 echo '=== run one eval_parallel.py command for all four checkpoints ==='
 "$TASK_EVAL_PYTHON" -u eval/eval_parallel.py \
@@ -333,13 +291,7 @@ sleep 60
 require_free_gpus '60 SECONDS AFTER FOUR-MODEL EVAL'
 
 echo '=== copy and verify the exact eight-GPU Accelerate config ==='
-mkdir -p "$(dirname "$TASK_ACCELERATE_TARGET")"
-cp "$TASK_ACCELERATE_SOURCE" "$TASK_ACCELERATE_TARGET"
-cmp "$TASK_ACCELERATE_SOURCE" "$TASK_ACCELERATE_TARGET"
-grep -Fxq 'distributed_type: MULTI_GPU' "$TASK_ACCELERATE_TARGET"
-grep -Fxq 'mixed_precision: bf16' "$TASK_ACCELERATE_TARGET"
-grep -Fxq 'num_processes: 8' "$TASK_ACCELERATE_TARGET"
-echo "ACCELERATE_CONFIG_OK target=$TASK_ACCELERATE_TARGET"
+install_accelerate_config
 
 echo '=== wait 60 seconds after config copy and verify GPUs again ==='
 sleep 60
