@@ -1,5 +1,5 @@
-#0
-#th2-idle-while-product-code-production-shape-smoke-a02-runs-20260831
+#1 +120+a # source-hash-preflight
+#th2-product-code-production-shape-smoke-20260831-a04
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
@@ -19,7 +19,10 @@ cd "$TASK_PROJECT"
 echo '=== identity and intended workload ==='
 date -u
 hostname
-git rev-parse HEAD
+pwd
+echo 'b17de9f5ab2211c0825922bfaf8f23ed9ecf98c7cae29cc3973074c5dac843a1  compositional/product_code.py' | sha256sum -c -
+echo '58a4dfdbe46d45ce674a1f6d3cd8501941b0e8eccda2dc1a047eaeda3fa4bf35  train_compositional.py' | sha256sum -c -
+echo '185e1b0cc9bc45290be52b9de1134791e3fd4efdbd5a431f64ee130b474779fe  scripts/make_token_importance.py' | sha256sum -c -
 echo 'Product Code production-shape smoke: Qwen3-0.6B, seq=2048, batch=16/GPU, accum=4, 8xB200, 2 optimizer steps'
 
 echo '=== verify the current all-GPU workload is exactly the runner burn ==='
