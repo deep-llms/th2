@@ -393,9 +393,12 @@ class ResidualSubspaceExpertsEmbed(nn.Module):
                     f"{expected}, got {tuple(top_indices.shape)} and "
                     f"{tuple(top_weights.shape)}"
                 )
-        residual = flat_factors.new_zeros(
-            flat_factors.size(0), self.embed_dim
-        )
+        # Derive the accumulation dtype from the projection output, not the
+        # gathered factors. With FP32 master parameters under autocast the
+        # factors remain FP32 while Linear activations are BF16; explicitly
+        # BF16 models make both BF16. This handles both training policies.
+        base = self.base_proj(flat_factors)
+        residual = base.new_zeros(flat_factors.size(0), self.embed_dim)
 
         # The loop is over a small fixed number of experts. Each selected token
         # is evaluated exactly top_k times in total. Empty selections still run
@@ -428,11 +431,13 @@ class ResidualSubspaceExpertsEmbed(nn.Module):
                 0, token_positions, contribution * weights
             )
 
-        output = self.base_proj(flat_factors) + residual
+        output = base + residual
         output = output.view(*leading_shape, self.embed_dim)
         theta = None
         if return_theta:
-            theta = flat_factors.new_zeros(
+            # Theta is a routing-probability tensor and must follow the gate
+            # dtype, which can differ from token-factor dtype under autocast.
+            theta = top_weights.new_zeros(
                 flat_factors.size(0), self.num_experts
             ).scatter(-1, top_indices, top_weights)
             theta = theta.view(*leading_shape, self.num_experts)
