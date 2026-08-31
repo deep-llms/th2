@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-frequency-binned-ppl-four-10k-then-correct-burn-20260831-a01
+#th2-frequency-binned-ppl-four-10k-then-correct-burn-20260831-a02
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
@@ -76,19 +76,36 @@ import numpy as np
 counts_path = Path(sys.argv[1])
 output_base = Path(sys.argv[2])
 models = sys.argv[3:]
+expected_arms = [None, None, "groupreduce", "nested_ladder"]
+assert len(models) == len(expected_arms)
 with np.load(counts_path, allow_pickle=False) as archive:
     assert "counts" in archive.files
     counts = archive["counts"]
 assert counts.shape == (151936,) and counts.dtype == np.int64
 assert np.all(counts >= 0) and int(counts.sum()) == 3501021467
-for model in models:
+for model, expected_arm in zip(models, expected_arms):
     checkpoint = output_base / model / "checkpoint-10000"
     state = json.loads((checkpoint / "trainer_state.json").read_text())
     assert state["global_step"] == 10000, (model, state["global_step"])
     config = json.loads((checkpoint / "config.json").read_text())
     assert config["vocab_size"] == 151936
     assert config["hidden_size"] == 1024
-    assert config["tie_word_embeddings"] is True
+    if expected_arm is None:
+        # Native dense Qwen tying is represented directly by the HF flag.
+        assert config["tie_word_embeddings"] is True, model
+        assert not (checkpoint / "embedding.pt").exists(), model
+    else:
+        # Custom exact tying deliberately disables HF's native tying because
+        # EmbeddingShim and the structured head do not share a dense Parameter.
+        assert config["tie_word_embeddings"] is False, model
+        assert (checkpoint / "embedding.pt").is_file(), model
+        train_config_path = checkpoint / "train_config.json"
+        if not train_config_path.is_file():
+            train_config_path = checkpoint.parent / "train_config.json"
+        train_config = json.loads(train_config_path.read_text())
+        compositional = train_config["compositional"]
+        assert compositional["arm"] == expected_arm, (model, compositional["arm"])
+        assert compositional["tie_output"] is True, model
 print("FOUR_CHECKPOINT_PREFLIGHT_OK")
 PY
 
