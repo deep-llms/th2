@@ -1,5 +1,5 @@
-#1 +120+a
-#th2-product-code-production-shape-smoke-20260831-a02
+#1 +120+a # corrected-working-directory-retrigger
+#th2-product-code-production-shape-smoke-20260831-a03
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
