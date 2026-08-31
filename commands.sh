@@ -1,6 +1,10 @@
 #1 +45+a
-#th2-readonly-check-gpu-usage-20260831-a01
+#th2-readonly-check-gpu-usage-20260831-a02
 set -euo pipefail
+
+TASK_PROJECT_DIR="/mnt/local/@PROJECT@"
+test -d "$TASK_PROJECT_DIR"
+cd "$TASK_PROJECT_DIR"
 
 echo '=== identity ==='
 date -u
