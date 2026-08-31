@@ -1,5 +1,5 @@
-#1 +60+a
-#th2-audit-product-code-prodshape-smoke-and-burn-20260831-a01
+#0
+#th2-idle-after-product-code-prodshape-audit-20260831
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
