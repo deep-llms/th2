@@ -6,6 +6,14 @@ can run inside the minimal production training environment (which need not
 install pytest).
 """
 
+import sys
+from pathlib import Path
+
+# Direct execution sets sys.path[0] to scripts/, not the repository root.
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import torch
 
 from compositional.residual_subspace_experts import (
