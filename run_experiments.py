@@ -240,7 +240,7 @@ EXPERIMENT_COMMANDS = [
         "output_dir": f"{B200_OUT_BASE}/product_code_hashed_h2048",
         "require_fresh_output": True,
         "required_input_files": [
-            "resources/token_importance_langbalanced.npz",
+            "${PRODUCT_CODE_IMPORTANCE_PATH:-resources/token_importance_langbalanced.npz}",
         ],
         "required_checkpoint_files": [
             "config.json", "model.safetensors", "trainer_state.json",
