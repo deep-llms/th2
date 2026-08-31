@@ -1,5 +1,5 @@
-#2 +a
-#th2-pull-frequency-binned-ppl-a02-burn-handoff-20260831-a01
+#1 +120+a
+#th2-frequency-binned-ppl-four-10k-then-correct-burn-20260831-a03
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
@@ -9,9 +9,9 @@ TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
 TASK_DATA_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
 TASK_TOKENIZER=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
 TASK_COUNTS="$TASK_PROJECT/resources/token_freq_sample10.npz"
-TASK_RESULT_ROOT="$TASK_OUTPUT_BASE/frequency_binned_ppl_four_10k_20260831"
+TASK_RESULT_ROOT="$TASK_OUTPUT_BASE/frequency_binned_ppl_four_10k_20260831_a03"
 TASK_EXPORT_DIR="$TASK_OUTPUT_BASE/result_exports"
-TASK_EXPORT="$TASK_EXPORT_DIR/frequency_binned_ppl_four_10k_20260831.tar.gz"
+TASK_EXPORT="$TASK_EXPORT_DIR/frequency_binned_ppl_four_10k_20260831_a03.tar.gz"
 TASK_BURN_SOURCE="$TASK_PROJECT/resources/llm_pretrain_burn.py"
 TASK_BURN_TARGET=/tmp/llm_pretrain_burn.py
 TASK_BURN_LOG=/tmp/llm_pretrain_burn_all_gpus.log
@@ -35,6 +35,10 @@ TASK_NAMES=(
 gpu_pids() {
   nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
     | sed '/^[[:space:]]*$/d;s/[[:space:]]//g' | sort -nu
+}
+
+burn_marker_count() {
+  grep -oF "$1" "$TASK_BURN_LOG" 2>/dev/null | wc -l || true
 }
 
 echo '=== preflight without changing GPU state ==='
@@ -420,7 +424,7 @@ for _ in $(seq 1 240); do
     cat "$TASK_BURN_LOG" >&2
     exit 1
   fi
-  TASK_READY_COUNT="$(grep -Fc 'gpu_burn_ready' "$TASK_BURN_LOG" 2>/dev/null || true)"
+  TASK_READY_COUNT="$(burn_marker_count 'gpu_burn_ready')"
   mapfile -t TASK_NEW_GPU_PIDS < <(gpu_pids)
   if [[ "$TASK_READY_COUNT" -eq 8 && "${#TASK_NEW_GPU_PIDS[@]}" -eq 8 ]]; then
     TASK_BURN_READY=1
@@ -439,11 +443,11 @@ for _ in $(seq 1 60); do
   sleep 1
 done
 grep -Fq 'gpu_burn_progress' "$TASK_BURN_LOG"
-[[ "$(grep -Fc 'world_size=8' "$TASK_BURN_LOG")" -eq 8 ]]
-[[ "$(grep -Fc 'collective_probe_sum=36' "$TASK_BURN_LOG")" -eq 8 ]]
-[[ "$(grep -Fc 'comm_total_mib=1137' "$TASK_BURN_LOG")" -eq 8 ]]
-[[ "$(grep -Fc 'comm_bucket_mib=25' "$TASK_BURN_LOG")" -eq 8 ]]
-[[ "$(grep -Fc 'approx_step_seconds=0.750' "$TASK_BURN_LOG")" -eq 8 ]]
+[[ "$(burn_marker_count 'world_size=8')" -eq 8 ]]
+[[ "$(burn_marker_count 'collective_probe_sum=36')" -eq 8 ]]
+[[ "$(burn_marker_count 'comm_total_mib=1137')" -eq 8 ]]
+[[ "$(burn_marker_count 'comm_bucket_mib=25')" -eq 8 ]]
+[[ "$(burn_marker_count 'approx_step_seconds=0.750')" -eq 8 ]]
 
 "$TASK_BURN_PYTHON" - "$TASK_NEW_LAUNCHER" <<'PY'
 import csv
