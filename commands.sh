@@ -1,5 +1,5 @@
-#1 +45+a
-#th2-readonly-check-gpu-usage-20260831-a03
+#0
+#th2-idle-after-readonly-gpu-check-20260831
 set -euo pipefail
 
 echo '=== identity ==='
