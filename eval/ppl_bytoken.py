@@ -113,11 +113,25 @@ def main():
     parser.add_argument("--stride", type=int, default=None)
     parser.add_argument("--langs", nargs="+", default=None)
     parser.add_argument("--output-dir", default=None)
+    parser.add_argument(
+        "--max-verification-gap",
+        type=float,
+        default=1e-3,
+        help="fail if any chunk's manual-vs-model loss gap exceeds this value",
+    )
     args = parser.parse_args()
 
     if args.output_dir is None:
         args.output_dir = args.checkpoint
     stride = args.stride or args.block_size // 2
+    if args.block_size <= 1:
+        raise ValueError("--block-size must be greater than 1")
+    if not 0 < stride <= args.block_size:
+        raise ValueError("--stride must be positive and no larger than --block-size")
+    if args.max_verification_gap < 0 or not math.isfinite(args.max_verification_gap):
+        raise ValueError("--max-verification-gap must be finite and nonnegative")
+    if args.langs and len(args.langs) != len(set(args.langs)):
+        raise ValueError("--langs must not contain duplicates")
 
     dtype = torch.bfloat16 if args.bf16 else None
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name or args.checkpoint)
@@ -129,6 +143,10 @@ def main():
     print(f"  Checkpoint: {args.checkpoint}")
     model = load_model(args.checkpoint, args.device, dtype=dtype)
     vocab_size = model.config.vocab_size
+    if len(tokenizer) != vocab_size:
+        raise ValueError(
+            f"tokenizer/model vocabulary mismatch: {len(tokenizer)} != {vocab_size}"
+        )
     print(f"  Vocab size: {vocab_size}")
     print("=" * 60)
 
@@ -144,8 +162,10 @@ def main():
                               add_special_tokens=False)
         input_ids = encodings.input_ids
         if input_ids.size(1) < args.block_size:
-            print(f"  [{lang}] only {input_ids.size(1)} tokens, skipping")
-            continue
+            raise ValueError(
+                f"{lang}: only {input_ids.size(1)} tokens, fewer than "
+                f"block size {args.block_size}"
+            )
         print(f"  [{lang}] {input_ids.size(1):,} tokens")
         nll_sum, count, stats = accumulate_bytoken(
             model, input_ids, args.block_size, stride, args.device, vocab_size)
@@ -159,12 +179,19 @@ def main():
     npz_path = os.path.join(args.output_dir, "eval_ppl_bytoken.npz")
     np.savez_compressed(npz_path, **arrays)
     with open(os.path.join(args.output_dir, "eval_ppl_bytoken_summary.json"), "w") as f:
-        json.dump(summary, f, indent=2)
+        json.dump(summary, f, indent=2, allow_nan=False)
 
     worst = max((s["max_chunk_gap"] for s in summary.values()), default=0.0)
+    if not summary:
+        raise RuntimeError("no languages were evaluated")
     print(f"\n  Saved {npz_path}")
     print(f"  Max verification gap across all chunks: {worst:.2e} "
-          f"({'OK' if worst < 1e-3 else 'SUSPICIOUS — investigate'})")
+          f"({'OK' if worst <= args.max_verification_gap else 'INVALID'})")
+    if worst > args.max_verification_gap:
+        raise RuntimeError(
+            f"max verification gap {worst:.6g} exceeds "
+            f"limit {args.max_verification_gap:.6g}"
+        )
 
 
 if __name__ == "__main__":
