@@ -1,5 +1,5 @@
-#1 +120+a
-#th2-frequency-binned-ppl-four-10k-then-correct-burn-20260831-a03
+#2 +a
+#th2-pull-frequency-binned-ppl-a03-progress-20260831-a01
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
