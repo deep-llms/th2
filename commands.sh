@@ -1,15 +1,10 @@
 #1 +45+a
-#th2-readonly-check-gpu-usage-20260831-a02
+#th2-readonly-check-gpu-usage-20260831-a03
 set -euo pipefail
-
-TASK_PROJECT_DIR="/mnt/local/@PROJECT@"
-test -d "$TASK_PROJECT_DIR"
-cd "$TASK_PROJECT_DIR"
 
 echo '=== identity ==='
 date -u
 hostname
-git rev-parse HEAD
 
 echo '=== static GPU inventory ==='
 nvidia-smi --query-gpu=index,uuid,name,memory.used,memory.total,utilization.gpu,power.draw \
