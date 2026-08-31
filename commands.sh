@@ -1,5 +1,5 @@
-#1 +120+a # corrected-working-directory-retrigger
-#th2-product-code-production-shape-smoke-20260831-a03
+#0
+#th2-idle-while-product-code-production-shape-smoke-a02-runs-20260831
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
