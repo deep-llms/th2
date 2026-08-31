@@ -277,6 +277,41 @@ def test_bfloat16_forward_head_auxiliary_and_backward_are_finite():
         assert torch.isfinite(parameter.grad).all(), f"non-finite BF16 {name}"
 
 
+@pytest.mark.skipif(
+    not torch.cuda.is_available(), reason="CUDA autocast regression test"
+)
+def test_cuda_bfloat16_autocast_keeps_fp32_routing_dtype_safe():
+    """Exercise the production AMP boundary that explicit BF16 misses."""
+    torch.manual_seed(13)
+    embed = _small_embed().cuda()
+    with torch.no_grad():
+        embed.expert_down_weight.normal_(std=0.1)
+        embed.expert_down_bias.normal_(std=0.1)
+        embed.expert_up_bias.normal_(std=0.1)
+    ids = torch.tensor([[0, 3, 7, 18]], device="cuda")
+    hidden = torch.randn(2, 3, 11, device="cuda")
+
+    with torch.autocast("cuda", dtype=torch.bfloat16):
+        embeddings, theta = embed(ids)
+        # CUDA AMP's softmax policy leaves these routing probabilities FP32.
+        assert theta.dtype == torch.float32
+        logits = make_tied_head(
+            embed, "residual_subspace_experts", 19
+        )(hidden)
+        auxiliary = embed.pop_router_aux_loss()
+        loss = logits.float().square().mean() + 0.01 * auxiliary.float()
+
+    assert embeddings.dtype == torch.bfloat16
+    assert logits.dtype == torch.bfloat16
+    assert torch.isfinite(embeddings).all()
+    assert torch.isfinite(logits).all()
+    assert torch.isfinite(auxiliary)
+    loss.backward()
+    for name, parameter in embed.named_parameters():
+        assert parameter.grad is not None, f"missing AMP gradient for {name}"
+        assert torch.isfinite(parameter.grad).all(), f"non-finite AMP {name}"
+
+
 def test_input_and_head_consume_one_identical_vocabulary_route():
     torch.manual_seed(11)
     embed = _small_embed().to(torch.bfloat16)

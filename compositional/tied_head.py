@@ -329,7 +329,11 @@ class TiedResidualSubspaceExpertsHead(_TiedHeadBase):
             partial.add_((
                 flat_hidden @ embed.expert_up_bias[expert]
             ).unsqueeze(-1))
-            partial.mul_(weights.unsqueeze(0))
+            # Routing softmax stays FP32 under CUDA autocast; the grouped
+            # projection is BF16. Match the input embedding's gate cast at the
+            # application boundary so index_add_ remains dtype-safe and the
+            # two sides use the same finite-precision tied weight.
+            partial.mul_(weights.to(dtype=partial.dtype).unsqueeze(0))
             logits.index_add_(1, token_ids, partial)
 
         return logits.view(*hidden_states.shape[:-1], embed.vocab_size)

@@ -416,7 +416,14 @@ class ResidualSubspaceExpertsEmbed(nn.Module):
                 self.expert_up_weight[expert],
                 self.expert_up_bias[expert],
             )
-            weights = top_weights[token_positions, slots].unsqueeze(-1)
+            # CUDA autocast intentionally keeps the routing softmax in FP32
+            # while the expert Linears produce BF16 activations.  Cast only
+            # the selected gates at the application boundary: this preserves
+            # stable FP32 routing/auxiliary loss without promoting the whole
+            # residual path (and index_add_ requires identical dtypes).
+            weights = top_weights[token_positions, slots].to(
+                dtype=contribution.dtype
+            ).unsqueeze(-1)
             residual.index_add_(
                 0, token_positions, contribution * weights
             )
