@@ -43,6 +43,8 @@ from .compressed_baselines import (
     balanced_padded_modes,
 )
 from .nested_ladder import NestedLadderEmbed
+from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
+from .product_code import ProductCodeEmbed
 from .tied_head import (
     INDEPENDENT_OUTPUT_FILENAME,
     IndependentLowRankHead,
@@ -187,6 +189,103 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
             tier_ranks=ranks,
             tier_populations=populations,
             member_ids=member_ids,
+        )
+    if arm == "residual_subspace_experts":
+        if state is not None:
+            structure = ResidualSubspaceExpertsEmbed.structure_from_state(state)
+            if structure["vocab_size"] != vocab_size:
+                raise ValueError(
+                    "Residual-expert checkpoint vocabulary size "
+                    f"{structure['vocab_size']} does not match model "
+                    f"vocabulary size {vocab_size}"
+                )
+            if structure["embed_dim"] != embed_dim:
+                raise ValueError(
+                    "Residual-expert checkpoint embedding dimension "
+                    f"{structure['embed_dim']} does not match model hidden "
+                    f"size {embed_dim}"
+                )
+            declarations = {
+                "base_rank": tc.get("rse_base_rank", 120),
+                "expert_rank": tc.get("rse_expert_rank", 80),
+                "num_experts": tc.get("rse_num_experts", 12),
+                "router_dim": tc.get("rse_router_dim", 32),
+                "top_k": tc.get("rse_top_k", 2),
+                "router_temperature": tc.get(
+                    "rse_router_temperature", 1.0
+                ),
+            }
+            mismatches = {
+                key: (structure[key], value)
+                for key, value in declarations.items()
+                if structure[key] != value
+            }
+            if mismatches:
+                raise ValueError(
+                    "Residual-expert config does not match checkpoint "
+                    f"structure: {mismatches}"
+                )
+        else:
+            structure = {
+                "base_rank": tc.get("rse_base_rank", 120),
+                "expert_rank": tc.get("rse_expert_rank", 80),
+                "num_experts": tc.get("rse_num_experts", 12),
+                "router_dim": tc.get("rse_router_dim", 32),
+                "top_k": tc.get("rse_top_k", 2),
+                "router_temperature": tc.get(
+                    "rse_router_temperature", 1.0
+                ),
+            }
+        return ResidualSubspaceExpertsEmbed(
+            vocab_size,
+            embed_dim,
+            base_rank=structure["base_rank"],
+            expert_rank=structure["expert_rank"],
+            num_experts=structure["num_experts"],
+            router_dim=structure["router_dim"],
+            top_k=structure["top_k"],
+            router_temperature=structure["router_temperature"],
+        )
+    if arm == "product_code":
+        if state is not None:
+            structure = ProductCodeEmbed.structure_from_state(state)
+            if structure["vocab_size"] != vocab_size:
+                raise ValueError(
+                    "Product Code checkpoint vocabulary size "
+                    f"{structure['vocab_size']} does not match model "
+                    f"vocabulary size {vocab_size}"
+                )
+            if structure["embed_dim"] != embed_dim:
+                raise ValueError(
+                    "Product Code checkpoint embedding dimension "
+                    f"{structure['embed_dim']} does not match model hidden "
+                    f"size {embed_dim}"
+                )
+            for key, name in (
+                ("product_code_head_size", "head_size"),
+                ("product_code_num_hashes", "num_hashes"),
+                ("product_code_num_buckets", "num_buckets"),
+            ):
+                declared = tc.get(key)
+                if declared is not None and int(declared) != structure[name]:
+                    raise ValueError(
+                        f"Product Code config {key}={declared} does not match "
+                        f"checkpoint {name}={structure[name]}"
+                    )
+            return ProductCodeEmbed(
+                vocab_size,
+                embed_dim,
+                structure["head_size"],
+                structure["num_hashes"],
+                structure["num_buckets"],
+                head_ids=structure["head_ids"],
+                codes=structure["codes"],
+                assignment="checkpoint",
+            )
+        raise ValueError(
+            "Product Code arms are rebuilt from their checkpoint state "
+            "(embedding.pt); pass state= — the partition and codes are not "
+            "re-derivable from train_config.json alone"
         )
     if arm == "tt":
         if state is not None and any(
@@ -397,6 +496,16 @@ def _infer_comp_config_from_state(state):
     """
     keys = set(state.keys())
 
+    if {"E_h", "C.0", "codes", "head_ids", "tail_ids", "bias"}.issubset(keys):
+        structure = ProductCodeEmbed.structure_from_state(state)
+        return {
+            "arm": "product_code",
+            "product_code_head_size": structure["head_size"],
+            "product_code_num_hashes": structure["num_hashes"],
+            "product_code_num_buckets": structure["num_buckets"],
+            "product_code_assignment": "checkpoint",
+        }
+
     if {"Z.0", "W.0", "bias"}.issubset(keys):
         structure = NestedLadderEmbed.structure_from_state(state)
         return {
@@ -407,6 +516,26 @@ def _infer_comp_config_from_state(state):
             "nested_tier_populations": ",".join(
                 str(size) for size in structure["tier_populations"]
             ),
+        }
+
+    if {
+        "token_factors",
+        "base_proj.weight",
+        "expert_down_weight",
+        "expert_up_weight",
+        "expert_keys",
+        "routing_top_k",
+        "routing_temperature",
+    }.issubset(keys):
+        structure = ResidualSubspaceExpertsEmbed.structure_from_state(state)
+        return {
+            "arm": "residual_subspace_experts",
+            "rse_base_rank": structure["base_rank"],
+            "rse_expert_rank": structure["expert_rank"],
+            "rse_num_experts": structure["num_experts"],
+            "rse_router_dim": structure["router_dim"],
+            "rse_top_k": structure["top_k"],
+            "rse_router_temperature": structure["router_temperature"],
         }
 
     if {"codebook", "exclusive", "assignments"}.issubset(keys):
@@ -661,7 +790,9 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
             )
         supported_tied_arms = {
             "lowrank", "global_lowrank", "shared_local", "pure_local",
-            "pvq", "slim", "groupreduce", "nested_ladder", "tt",
+            "pvq", "slim", "groupreduce", "nested_ladder",
+            "residual_subspace_experts", "product_code",
+            "tt",
             "original_ant", "ant",
             "residual_ant"
         }

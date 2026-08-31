@@ -11,6 +11,8 @@ from .embeddings import (
     PureLocalEmbed,
 )
 from .nested_ladder import NestedLadderEmbed
+from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
+from .product_code import ProductCodeEmbed
 from .compressed_baselines import (
     PVQEmbed,
     SlimEmbed,

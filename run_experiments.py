@@ -16,6 +16,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -217,6 +218,57 @@ EXPERIMENT_COMMANDS = [
             "rng_state_6.pth", "rng_state_7.pth",
         ],
     },
+    {
+        "name": "residual_subspace_experts_tied_g12_r120_q80",
+        "cmd": "bash scripts/train_residual_subspace_experts_tied.sh",
+        "output_dir": (
+            f"{B200_OUT_BASE}/"
+            "residual_subspace_experts_tied_g12_r120_q80"
+        ),
+        "require_fresh_output": True,
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "product_code_hashed_h2048",
+        "cmd": "bash scripts/train_product_code_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/product_code_hashed_h2048",
+        "require_fresh_output": True,
+        "required_input_files": [
+            "resources/token_importance_langbalanced.npz",
+        ],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "product_code_pq_h2048",
+        "cmd": "bash scripts/train_product_code_pq_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/product_code_pq_h2048",
+        "require_fresh_output": True,
+        # Generate on the node first: scripts/make_pq_codes.py from the dense
+        # checkpoint (docs/product_code_design.md §2.3b).
+        "required_input_files": [
+            "resources/token_importance_langbalanced.npz",
+            "${PRODUCT_CODE_CODES_PATH:-resources/pq_codes_h2048_4x4096.pt}",
+        ],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
 ]
 
 
@@ -362,6 +414,28 @@ def validate_checkpoint_artifacts(output_dir, step, required_files):
 # Experiment runner
 # =====================================================================
 
+_INPUT_SPEC = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)(?::-(.*))?\}$")
+
+
+def resolve_input_path(spec):
+    """Resolve a required-input spec; supports ``${VAR:-default}`` like the launchers."""
+    match = _INPUT_SPEC.match(spec)
+    if match is None:
+        return spec
+    name, default = match.group(1), match.group(2) or ""
+    return os.environ.get(name) or default
+
+
+def missing_input_files(exp):
+    """Specs whose resolved path is absent or empty (same rule as ``test -s``)."""
+    missing = []
+    for spec in exp.get("required_input_files", []):
+        path = resolve_input_path(spec)
+        if not path or not os.path.isfile(path) or os.path.getsize(path) == 0:
+            missing.append(f"{spec} -> {path or '<unset>'}")
+    return missing
+
+
 def run_experiment(exp, stop_at_step, log_dir):
     """Run a single experiment."""
     name = exp["name"]
@@ -378,6 +452,17 @@ def run_experiment(exp, stop_at_step, log_dir):
         return {
             "name": name,
             "status": "FAILED (output path already exists)",
+            "elapsed": 0,
+        }
+
+    missing_inputs = missing_input_files(exp)
+    if missing_inputs:
+        logger.error(
+            f"  REFUSE {name}: required input files missing: {missing_inputs}"
+        )
+        return {
+            "name": name,
+            "status": "FAILED (required input files missing)",
             "elapsed": 0,
         }
 

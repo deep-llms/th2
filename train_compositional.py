@@ -39,7 +39,8 @@ from transformers.trainer_utils import get_last_checkpoint
 from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
     IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed, PureLocalEmbed,
-    PVQEmbed, SlimEmbed, GroupReduceEmbed, NestedLadderEmbed, TTEmbedding,
+    PVQEmbed, SlimEmbed, GroupReduceEmbed, NestedLadderEmbed, ProductCodeEmbed,
+    ResidualSubspaceExpertsEmbed, TTEmbedding,
 )
 from compositional.compressed_baselines import (
     balanced_exact_modes,
@@ -119,7 +120,8 @@ class CompositionalArguments:
             "choices": ["ant", "residual_ant", "v0", "v1", "v2",
                         "isolation_control", "lowrank", "global_lowrank",
                         "shared_local", "pure_local", "pvq", "slim",
-                        "groupreduce", "nested_ladder", "tt"],
+                        "groupreduce", "nested_ladder",
+                        "residual_subspace_experts", "product_code", "tt"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
@@ -207,6 +209,51 @@ class CompositionalArguments:
         },
     )
     nested_frequency_key: str = field(default="counts")
+    rse_base_rank: int = field(default=120, metadata={
+        "help": "Global token-factor rank for residual_subspace_experts."
+    })
+    rse_expert_rank: int = field(default=80, metadata={
+        "help": "Bottleneck rank of each residual subspace expert."
+    })
+    rse_num_experts: int = field(default=12, metadata={
+        "help": "Number of residual subspace experts."
+    })
+    rse_router_dim: int = field(default=32, metadata={
+        "help": "Cosine-router query/key dimension."
+    })
+    rse_top_k: int = field(default=2, metadata={
+        "help": "Number of residual experts selected per token."
+    })
+    rse_router_temperature: float = field(default=1.0, metadata={
+        "help": "Positive softmax temperature within the selected experts."
+    })
+    product_code_head_size: int = field(default=2048, metadata={
+        "help": "Number of highest-importance tokens that keep private dense rows."
+    })
+    product_code_num_hashes: int = field(default=4, metadata={
+        "help": "Number of codebooks (code coordinates) per tail token."
+    })
+    product_code_num_buckets: int = field(default=4096, metadata={
+        "help": "Rows per codebook."
+    })
+    product_code_assignment: str = field(default="hashed", metadata={
+        "help": "Tail code assignment: 'hashed' (deterministic keyed hash, pure "
+                "from-scratch) or 'pq' (codes from scripts/make_pq_codes.py; "
+                "post-hoc-informed, report as such).",
+        "choices": ["hashed", "pq"],
+    })
+    product_code_codes_path: str | None = field(default=None, metadata={
+        "help": "Codes artifact (.pt with 'codes' and 'tail_ids') for assignment=pq."
+    })
+    product_code_importance_path: str | None = field(
+        default="resources/token_importance_langbalanced.npz",
+        metadata={"help": "Token importance vector used only to select the dense "
+                          "head for a fresh run; checkpoints store the partition."},
+    )
+    product_code_importance_key: str = field(default="counts")
+    product_code_seed: int = field(default=0, metadata={
+        "help": "Seed for the keyed hash (hashed assignment only)."
+    })
     tt_order: int = field(default=3, metadata={
         "help": "TT matrix order used when explicit shapes are omitted."
     })
@@ -244,9 +291,10 @@ class CompositionalArguments:
         "help": "Tie the output lm_head to the input embedding weights. "
                 "Removes the free V×d lm_head (~155.6M params) and computes "
                 "output logits from the embedding module's own weights. "
-                "Supported for lowrank, shared_local, pure_local, nested_ladder, "
-                "original_ant, ant, and "
-                "residual_ant; not supported "
+                "Supported for lowrank/global_lowrank, shared_local, pure_local, "
+                "pvq, slim, groupreduce, nested_ladder, "
+                "residual_subspace_experts, product_code, tt, "
+                "original_ant, ant, and residual_ant; not supported "
                 "for context-dependent arms (v0, v1, v2, isolation_control).",
     })
     independent_lowrank_output: bool = field(default=False, metadata={
@@ -280,6 +328,15 @@ class EmbeddingShim(nn.Module):
 # CompositionalTrainer
 # ---------------------------------------------------------------------------
 
+def _matches_declared_no_decay(name, declared):
+    """True when ``name`` is one of the embedding's declared no-decay params.
+
+    Names are matched by suffix so wrapper prefixes (``model.embed_tokens.embed.``,
+    DDP's ``module.``) do not matter.
+    """
+    return any(name == leaf or name.endswith("." + leaf) for leaf in declared)
+
+
 class CompositionalTrainer(Trainer):
 
     def __init__(self, *args, embed_shim=None, comp_args=None, **kwargs):
@@ -290,6 +347,24 @@ class CompositionalTrainer(Trainer):
         self._comp_counts = {}
         self._device_metric_sums = {}
         self._device_metric_counts = {}
+
+    def get_decay_parameter_names(self, model):
+        """Honor an embedding module's ``no_decay_parameters()`` declaration.
+
+        Mirrors the ``pop_step_metrics`` duck-typed protocol: a module that
+        owns parameters which must not be decayed (ProductCodeEmbed's
+        zero-initialized gate offsets) declares them itself; the trainer stays
+        arm-agnostic.
+        """
+        names = super().get_decay_parameter_names(model)
+        declare = getattr(self.embed_shim.embed, "no_decay_parameters", None)
+        declared = tuple(declare()) if callable(declare) else ()
+        if not declared:
+            return names
+        return [
+            name for name in names
+            if not _matches_declared_no_decay(name, declared)
+        ]
 
     def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
         input_ids = inputs["input_ids"]
@@ -311,6 +386,12 @@ class CompositionalTrainer(Trainer):
             lm_loss = lm_loss * self.accelerator.num_processes
 
         theta = self.embed_shim._last_theta
+        pop_router_aux = getattr(
+            self.embed_shim.embed, "pop_router_aux_loss", None
+        )
+        router_aux_loss = (
+            pop_router_aux() if callable(pop_router_aux) else None
+        )
 
         with torch.no_grad():
             if theta is not None:
@@ -327,7 +408,11 @@ class CompositionalTrainer(Trainer):
         total_loss = lm_loss
         div_loss_val = 0.0
         if theta is not None and self.comp_args.lambda_div > 0:
-            div_loss = load_balance(theta)
+            div_loss = (
+                router_aux_loss
+                if router_aux_loss is not None
+                else load_balance(theta)
+            )
             # With num_items_in_batch normalization the micro-batch losses SUM to
             # the true batch loss, so the per-micro-batch div term must be scaled
             # by 1/accum to keep its effective weight at lambda_div.
@@ -669,6 +754,148 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
             counts=counts,
             member_ids=member_ids,
         )
+    if ca.arm == "residual_subspace_experts":
+        if initial_state is not None:
+            structure = ResidualSubspaceExpertsEmbed.structure_from_state(
+                initial_state
+            )
+            requested = {
+                "vocab_size": int(vocab_size),
+                "embed_dim": int(embed_dim),
+                "base_rank": ca.rse_base_rank,
+                "expert_rank": ca.rse_expert_rank,
+                "num_experts": ca.rse_num_experts,
+                "router_dim": ca.rse_router_dim,
+                "top_k": ca.rse_top_k,
+                "router_temperature": ca.rse_router_temperature,
+            }
+            if structure != requested:
+                raise ValueError(
+                    "Residual-expert checkpoint structure does not match the "
+                    f"requested structure (state={structure}, "
+                    f"requested={requested})"
+                )
+        return ResidualSubspaceExpertsEmbed(
+            vocab_size,
+            embed_dim,
+            base_rank=ca.rse_base_rank,
+            expert_rank=ca.rse_expert_rank,
+            num_experts=ca.rse_num_experts,
+            router_dim=ca.rse_router_dim,
+            top_k=ca.rse_top_k,
+            router_temperature=ca.rse_router_temperature,
+        )
+    if ca.arm == "product_code":
+        head_ids = None
+        codes = None
+        importance = None
+        assignment = ca.product_code_assignment
+        if initial_state is not None:
+            structure = ProductCodeEmbed.structure_from_state(initial_state)
+            if structure["vocab_size"] != vocab_size or structure["embed_dim"] != embed_dim:
+                raise ValueError(
+                    "Product Code checkpoint dimensions (vocab_size="
+                    f"{structure['vocab_size']}, embed_dim={structure['embed_dim']}) "
+                    f"do not match the model ({vocab_size}, {embed_dim})"
+                )
+            requested = (
+                ca.product_code_head_size,
+                ca.product_code_num_hashes,
+                ca.product_code_num_buckets,
+            )
+            found = (
+                structure["head_size"],
+                structure["num_hashes"],
+                structure["num_buckets"],
+            )
+            if requested != found:
+                raise ValueError(
+                    "Product Code checkpoint structure (head_size, num_hashes, "
+                    f"num_buckets)={found} does not match the requested "
+                    f"{requested}"
+                )
+            head_ids = structure["head_ids"]
+            codes = structure["codes"]
+            assignment = "checkpoint"
+        else:
+            if not ca.product_code_importance_path:
+                raise ValueError(
+                    "A fresh Product Code run requires "
+                    "--product_code_importance_path"
+                )
+            importance = load_frequency_counts(
+                ca.product_code_importance_path,
+                vocab_size,
+                key=ca.product_code_importance_key,
+                pseudocount=0.0,
+            )
+            logger.info(
+                "Product Code importance artifact: %s (sha256=%s)",
+                ca.product_code_importance_path,
+                file_sha256(ca.product_code_importance_path),
+            )
+            if assignment == "pq":
+                if not ca.product_code_codes_path:
+                    raise ValueError(
+                        "--product_code_assignment pq requires "
+                        "--product_code_codes_path"
+                    )
+                artifact = torch.load(
+                    ca.product_code_codes_path, map_location="cpu",
+                    weights_only=True,
+                )
+                codes = artifact["codes"]
+                provenance = artifact.get("provenance")
+                if not isinstance(provenance, dict):
+                    raise ValueError(
+                        "PQ codes artifact has no provenance dict; regenerate it "
+                        "with scripts/make_pq_codes.py"
+                    )
+                for key, requested in (
+                    ("head_size", ca.product_code_head_size),
+                    ("num_hashes", ca.product_code_num_hashes),
+                    ("num_buckets", ca.product_code_num_buckets),
+                ):
+                    if key not in provenance:
+                        raise ValueError(f"PQ codes artifact provenance lacks {key!r}")
+                    if int(provenance[key]) != int(requested):
+                        raise ValueError(
+                            f"PQ codes artifact was built with {key}="
+                            f"{provenance[key]} but the run requests {requested}"
+                        )
+                logger.info(
+                    "Product Code PQ codes artifact: %s (sha256=%s)",
+                    ca.product_code_codes_path,
+                    file_sha256(ca.product_code_codes_path),
+                )
+            elif assignment != "hashed":
+                raise ValueError(f"unknown --product_code_assignment {assignment!r}")
+        module = ProductCodeEmbed(
+            vocab_size,
+            embed_dim,
+            ca.product_code_head_size,
+            ca.product_code_num_hashes,
+            ca.product_code_num_buckets,
+            importance=importance,
+            head_ids=head_ids,
+            codes=codes,
+            assignment=assignment,
+            seed=ca.product_code_seed,
+        )
+        if initial_state is None and assignment == "pq":
+            # The artifact's partition must be the one the module derived from
+            # the importance file, otherwise codes would be applied to the
+            # wrong tokens.
+            if not torch.equal(
+                torch.as_tensor(artifact["tail_ids"], dtype=torch.long),
+                module.tail_ids,
+            ):
+                raise ValueError(
+                    "PQ codes artifact tail ids do not match the head "
+                    "selection implied by the importance file and "
+                    "--product_code_head_size"
+                )
+        return module
     if ca.arm == "tt":
         vocab_modes = _parse_int_list(ca.tt_vocab_shape, name="tt_vocab_shape")
         embedding_modes = _parse_int_list(
@@ -717,7 +944,8 @@ def validate_output_configuration(comp_args):
             "--independent_lowrank_output currently requires --arm lowrank"
         )
     if comp_args.arm in {
-        "pure_local", "pvq", "slim", "groupreduce", "nested_ladder", "tt"
+        "pure_local", "pvq", "slim", "groupreduce", "nested_ladder",
+        "residual_subspace_experts", "product_code", "tt"
     } and not comp_args.tie_output:
         raise ValueError(
             f"--arm {comp_args.arm} requires --tie_output for the compressed "
