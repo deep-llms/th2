@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-readonly-check-frequency-binned-ppl-a03-progress-20260831-a03
+#2 +a
+#th2-pull-frequency-binned-ppl-a03-completion-20260831-a01
 set -euo pipefail
 
 TASK_ROOT=/mnt/local/_outputs/@PROJECT@/frequency_binned_ppl_four_10k_20260831_a03
