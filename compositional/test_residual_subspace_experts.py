@@ -277,6 +277,36 @@ def test_bfloat16_forward_head_auxiliary_and_backward_are_finite():
         assert torch.isfinite(parameter.grad).all(), f"non-finite BF16 {name}"
 
 
+def test_cpu_bfloat16_autocast_with_fp32_master_parameters_is_dtype_safe():
+    """AMP master weights and projection activations may have different dtypes."""
+    torch.manual_seed(14)
+    embed = _small_embed()
+    with torch.no_grad():
+        embed.expert_down_weight.normal_(std=0.1)
+        embed.expert_down_bias.normal_(std=0.1)
+        embed.expert_up_bias.normal_(std=0.1)
+    ids = torch.tensor([[0, 3, 7, 18]])
+    hidden = torch.randn(2, 3, 11)
+
+    with torch.autocast("cpu", dtype=torch.bfloat16):
+        embeddings, _ = embed(ids)
+        logits = make_tied_head(
+            embed, "residual_subspace_experts", 19
+        )(hidden)
+        auxiliary = embed.pop_router_aux_loss()
+        loss = logits.float().square().mean() + 0.01 * auxiliary.float()
+
+    assert embeddings.dtype == torch.bfloat16
+    assert logits.dtype == torch.bfloat16
+    assert torch.isfinite(embeddings).all()
+    assert torch.isfinite(logits).all()
+    assert torch.isfinite(auxiliary)
+    loss.backward()
+    for name, parameter in embed.named_parameters():
+        assert parameter.grad is not None, f"missing CPU AMP gradient for {name}"
+        assert torch.isfinite(parameter.grad).all(), f"non-finite CPU AMP {name}"
+
+
 @pytest.mark.skipif(
     not torch.cuda.is_available(), reason="CUDA autocast regression test"
 )
