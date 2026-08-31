@@ -1,5 +1,5 @@
 #1 +240+a
-#th2-rse-production-shape-smoke-20260831-a03
+#th2-rse-production-shape-smoke-20260831-a04
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
@@ -8,11 +8,12 @@ TASK_MODEL=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
 TASK_DATA=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/train
 TASK_FAILED_OUTPUT_A01=/mnt/local/_outputs/@PROJECT@/residual_subspace_experts_prodshape_smoke_20260831_a01
 TASK_FAILED_OUTPUT_A02=/mnt/local/_outputs/@PROJECT@/residual_subspace_experts_prodshape_smoke_20260831_a02
-TASK_OUTPUT=/mnt/local/_outputs/@PROJECT@/residual_subspace_experts_prodshape_smoke_20260831_a03
+TASK_FAILED_OUTPUT_A03=/mnt/local/_outputs/@PROJECT@/residual_subspace_experts_prodshape_smoke_20260831_a03
+TASK_OUTPUT=/mnt/local/_outputs/@PROJECT@/residual_subspace_experts_prodshape_smoke_20260831_a04
 TASK_BURN=/tmp/llm_pretrain_burn.py
 TASK_BURN_SHA=2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174
-TASK_CURRENT_BURN_LOG=/tmp/llm_pretrain_burn_after_rse_smoke_a02.log
-TASK_NEW_BURN_LOG=/tmp/llm_pretrain_burn_after_rse_smoke_a03.log
+TASK_CURRENT_BURN_LOG=/tmp/llm_pretrain_burn_after_rse_smoke_a03.log
+TASK_NEW_BURN_LOG=/tmp/llm_pretrain_burn_after_rse_smoke_a04.log
 TASK_BURN_PID_FILE=/tmp/llm_pretrain_burn_launcher.pid
 
 cd "$TASK_PROJECT"
@@ -21,7 +22,7 @@ echo '=== source, input, output, and environment preflight before touching GPUs 
 date -u
 hostname
 pwd
-echo '4b154675f05b1632fc370d620fadf7d525b1ee3cc8e69f4d84502fc1dd87dec1  compositional/residual_subspace_experts.py' | sha256sum -c -
+echo 'f2f5ea64b63d933d7e0609bd27f3226bf4c8abcf7bcf582a5907557ecb2ab606  compositional/residual_subspace_experts.py' | sha256sum -c -
 echo 'cd88bbe4e7da7d6f135b9b1e9f89874b5c2ed9c7b1863aa51291a61b975bad6d  scripts/test_rse_cuda_autocast.py' | sha256sum -c -
 echo '58a4dfdbe46d45ce674a1f6d3cd8501941b0e8eccda2dc1a047eaeda3fa4bf35  train_compositional.py' | sha256sum -c -
 echo '7be9957197d39b454cfcdda08989588e545b6487c9b2302362e96afcdcd581b9  scripts/train_residual_subspace_experts_tied.sh' | sha256sum -c -
@@ -30,10 +31,11 @@ test -d "$TASK_MODEL"
 test -s "$TASK_MODEL/config.json"
 test -d "$TASK_DATA"
 test ! -e "$TASK_OUTPUT"
-echo "removing_failed_smoke_outputs=$TASK_FAILED_OUTPUT_A01 $TASK_FAILED_OUTPUT_A02"
-rm -rf -- "$TASK_FAILED_OUTPUT_A01" "$TASK_FAILED_OUTPUT_A02"
+echo "removing_failed_smoke_outputs=$TASK_FAILED_OUTPUT_A01 $TASK_FAILED_OUTPUT_A02 $TASK_FAILED_OUTPUT_A03"
+rm -rf -- "$TASK_FAILED_OUTPUT_A01" "$TASK_FAILED_OUTPUT_A02" "$TASK_FAILED_OUTPUT_A03"
 test ! -e "$TASK_FAILED_OUTPUT_A01"
 test ! -e "$TASK_FAILED_OUTPUT_A02"
+test ! -e "$TASK_FAILED_OUTPUT_A03"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
 conda activate sparse_emb
 test "$(command -v python3.11)" = "$TASK_PYTHON"
@@ -140,7 +142,7 @@ set +e
     --dataloader_num_workers 8 \
     --report_to wandb \
     --output_dir "$TASK_OUTPUT" \
-    --run_name rse-prodshape-smoke-20260831-a03 \
+    --run_name rse-prodshape-smoke-20260831-a04 \
     --arm residual_subspace_experts \
     --rse_base_rank 120 \
     --rse_expert_rank 80 \
