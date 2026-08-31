@@ -1,5 +1,5 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/result_exports/frequency_binned_ppl_four_10k_20260831_a03.tar.gz,/mnt/local/_outputs/deep-llms_th2/result_exports/frequency_binned_ppl_four_10k_20260831_a03.tar.gz.sha256
-#th2-pull-frequency-binned-ppl-a03-results-20260831-a01
+#0
+#th2-idle-after-pulling-frequency-binned-ppl-a03-20260831
 set -euo pipefail
 
 TASK_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
