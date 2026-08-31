@@ -22,8 +22,9 @@ TASK_MODEL_DIR="${SPARSE_EMB_MODEL_DIR:-Qwen/Qwen3-0.6B}"
 TASK_DATA_DIR="${SPARSE_EMB_DATA_DIR:-/mnt/local/_data/sparse_embedding/data/Qwen_Qwen3-0.6B/train}"
 TASK_OUTPUT_BASE="${SPARSE_EMB_OUTPUT_BASE:-/mnt/local/_outputs/sparse_embedding}"
 TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/product_code_hashed_h2048"
+TASK_IMPORTANCE_PATH="${PRODUCT_CODE_IMPORTANCE_PATH:-resources/token_importance_langbalanced.npz}"
 test -x "$TASK_PYTHON"
-test -s resources/token_importance_langbalanced.npz
+test -s "$TASK_IMPORTANCE_PATH"
 
 export WANDB_PROJECT=sparse_embedding
 export WANDB_MODE=offline
@@ -64,7 +65,7 @@ sleep 3
     --product_code_num_hashes 4 \
     --product_code_num_buckets 4096 \
     --product_code_assignment hashed \
-    --product_code_importance_path resources/token_importance_langbalanced.npz \
+    --product_code_importance_path "$TASK_IMPORTANCE_PATH" \
     --product_code_importance_key counts \
     --product_code_seed 0 \
     --tie_output
