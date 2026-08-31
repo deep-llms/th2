@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-product-code-production-shape-smoke-20260831-a01
+#th2-product-code-production-shape-smoke-20260831-a02
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
@@ -13,6 +13,8 @@ TASK_BURN=/tmp/llm_pretrain_burn.py
 TASK_BURN_SHA=2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174
 TASK_BURN_LOG=/tmp/llm_pretrain_burn_after_product_code_smoke.log
 TASK_BURN_PID_FILE=/tmp/llm_pretrain_burn_launcher.pid
+
+cd "$TASK_PROJECT"
 
 echo '=== identity and intended workload ==='
 date -u
