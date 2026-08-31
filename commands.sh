@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-readonly-audit-frequency-binned-ppl-a03-and-burn-20260831-a01
+#0
+#th2-idle-after-frequency-binned-ppl-a03-20260831
 set -euo pipefail
 
 TASK_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
