@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import torch
 import torch.nn.functional as F
 
-from eval.ppl_bytoken import accumulate_bytoken
+from eval.ppl_bytoken import accumulate_bytoken, validate_tokenizer_ids
 
 
 class TinyCausalModel:
@@ -27,6 +27,30 @@ class TinyCausalModel:
 
 
 class PPLByTokenTest(unittest.TestCase):
+    def test_tokenizer_ids_allow_padded_model_vocabulary(self):
+        class PaddedTokenizer:
+            def __len__(self):
+                return 3
+
+            def get_vocab(self):
+                return {"a": 0, "b": 1, "c": 2}
+
+        info = validate_tokenizer_ids(PaddedTokenizer(), model_vocab_size=8)
+        self.assertEqual(info["tokenizer_size"], 3)
+        self.assertEqual(info["tokenizer_id_max"], 2)
+        self.assertEqual(info["unused_model_rows"], 5)
+
+    def test_tokenizer_ids_reject_out_of_range_id(self):
+        class InvalidTokenizer:
+            def __len__(self):
+                return 2
+
+            def get_vocab(self):
+                return {"a": 0, "bad": 8}
+
+        with self.assertRaisesRegex(ValueError, "does not fit"):
+            validate_tokenizer_ids(InvalidTokenizer(), model_vocab_size=8)
+
     def test_sliding_windows_reconstruct_full_target_nll(self):
         vocab_size = 5
         input_ids = torch.tensor([[0, 1, 2, 3, 4, 1, 0]])

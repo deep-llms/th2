@@ -42,6 +42,32 @@ from tqdm import tqdm
 from transformers import AutoTokenizer
 
 
+def validate_tokenizer_ids(tokenizer, model_vocab_size):
+    """Require every tokenizer id to fit the model's possibly padded vocab."""
+    if model_vocab_size <= 0:
+        raise ValueError("model vocabulary size must be positive")
+    vocabulary = tokenizer.get_vocab()
+    if not vocabulary:
+        raise ValueError("tokenizer vocabulary is empty")
+    token_ids = list(vocabulary.values())
+    if any(not isinstance(token_id, int) for token_id in token_ids):
+        raise ValueError("tokenizer vocabulary contains a non-integer token id")
+    minimum = min(token_ids)
+    maximum = max(token_ids)
+    if minimum < 0 or maximum >= model_vocab_size:
+        raise ValueError(
+            "tokenizer id range does not fit model vocabulary: "
+            f"[{minimum}, {maximum}] vs [0, {model_vocab_size})"
+        )
+    return {
+        "tokenizer_size": len(tokenizer),
+        "tokenizer_id_min": minimum,
+        "tokenizer_id_max": maximum,
+        "model_vocab_size": model_vocab_size,
+        "unused_model_rows": model_vocab_size - len(set(token_ids)),
+    }
+
+
 @torch.no_grad()
 def accumulate_bytoken(model, input_ids, max_length, stride, device, vocab_size):
     """Sliding-window pass mirroring eval/ppl.py's compute_perplexity, but
@@ -143,11 +169,13 @@ def main():
     print(f"  Checkpoint: {args.checkpoint}")
     model = load_model(args.checkpoint, args.device, dtype=dtype)
     vocab_size = model.config.vocab_size
-    if len(tokenizer) != vocab_size:
-        raise ValueError(
-            f"tokenizer/model vocabulary mismatch: {len(tokenizer)} != {vocab_size}"
-        )
-    print(f"  Vocab size: {vocab_size}")
+    vocab_info = validate_tokenizer_ids(tokenizer, vocab_size)
+    print(
+        f"  Vocab: tokenizer={vocab_info['tokenizer_size']} "
+        f"id_range=[{vocab_info['tokenizer_id_min']}, "
+        f"{vocab_info['tokenizer_id_max']}] model={vocab_size} "
+        f"unused_model_rows={vocab_info['unused_model_rows']}"
+    )
     print("=" * 60)
 
     langs = args.langs or sorted(
