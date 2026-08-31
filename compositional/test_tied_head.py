@@ -41,6 +41,7 @@ from .loading import (
     is_compositional,
     load_compositional_model,
 )
+from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
 from .tied_head import (
     INDEPENDENT_OUTPUT_FILENAME,
     IndependentLowRankHead,
@@ -91,6 +92,29 @@ def _arm_cases():
                 "arm": "pure_local",
                 "pure_local_rank": BASE_DIM,
                 "num_groups": 4,
+                "tie_output": True,
+            },
+        ),
+        (
+            "residual_subspace_experts",
+            ResidualSubspaceExpertsEmbed(
+                VOCAB_SIZE,
+                HIDDEN_SIZE,
+                base_rank=BASE_DIM,
+                expert_rank=4,
+                num_experts=4,
+                router_dim=KEY_DIM,
+                top_k=2,
+                router_temperature=0.75,
+            ),
+            {
+                "arm": "residual_subspace_experts",
+                "rse_base_rank": BASE_DIM,
+                "rse_expert_rank": 4,
+                "rse_num_experts": 4,
+                "rse_router_dim": KEY_DIM,
+                "rse_top_k": 2,
+                "rse_router_temperature": 0.75,
                 "tie_output": True,
             },
         ),

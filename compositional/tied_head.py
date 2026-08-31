@@ -15,6 +15,8 @@ For each embedding architecture, we use the most efficient computation:
   Slim:           component GEMMs + fixed mapping-table gather/sum
   GroupReduce:    one factored projection per vocabulary block
   NestedLadder:   additive factored projections into nested vocabulary subsets
+  ResidualExperts: global factorization + grouped top-k residual projections
+  ProductCode:    materialize the V x d table from codes once, then one dense GEMM
   TT:             reverse TT-matrix contraction
   OriginalANT:    logits = (hidden @ A.T) @ T.T              (factored via T and A)
   ANTEmbed:       logits = hidden @ materialize(all_ids).T    (must materialize, batched)
@@ -293,6 +295,64 @@ class TiedNestedLadderHead(_TiedHeadBase):
         return logits.view(*hidden_states.shape[:-1], self.embed.vocab_size)
 
 
+class TiedResidualSubspaceExpertsHead(_TiedHeadBase):
+    """Exact tied head for token-routed low-rank residual experts.
+
+    The global path is evaluated as a standard factored softmax.  For each
+    expert, only the vocabulary tokens routed to that expert participate in
+    its grouped GEMM; ``index_add_`` accumulates the two expert contributions
+    for each token directly into the final flat-vocabulary logits.
+    """
+
+    def forward(self, hidden_states):
+        embed = self.embed
+        flat_hidden = hidden_states.reshape(-1, embed.embed_dim)
+        factors = embed.token_factors
+
+        # e_base(i) = z_i B_0^T + b_0
+        logits = (
+            flat_hidden @ embed.base_proj.weight
+        ) @ factors.T
+        logits.add_((flat_hidden @ embed.base_proj.bias).unsqueeze(-1))
+
+        # Routing is computed once for the full vocabulary. It is a function
+        # of the same token factors and router parameters used by the input
+        # embedding, so this remains exact weight tying rather than a copied
+        # or stale assignment table.
+        for expert, (token_ids, weights, token_latent) in enumerate(
+            embed.expert_output_data()
+        ):
+            # For r_i = V_g(U_g(z_i)), h·r_i is evaluated as
+            # (h V_g^T)·U_g(z_i), plus the up-projection bias term.
+            hidden_latent = flat_hidden @ embed.expert_up_weight[expert]
+            partial = hidden_latent @ token_latent.T
+            partial.add_((
+                flat_hidden @ embed.expert_up_bias[expert]
+            ).unsqueeze(-1))
+            partial.mul_(weights.unsqueeze(0))
+            logits.index_add_(1, token_ids, partial)
+
+        return logits.view(*hidden_states.shape[:-1], embed.vocab_size)
+
+
+class TiedProductCodeHead(_TiedHeadBase):
+    """Exact tied output for ProductCodeEmbed: materialize once, one dense GEMM.
+
+    The effective table is only V x d (311 MB in bf16 at Qwen3-0.6B size) and
+    is a cheap sum of gathers, so materializing it once per micro-batch and
+    running the dense baseline's own (N, d) @ (d, V) GEMM is both faster and
+    lighter than gathering four (N, N_tail) logit blocks per codebook
+    (measured ~13x faster, ~45% less peak memory, and it saves only the
+    (V, d) table for backward instead of one (N, N_tail) operand per
+    codebook).  Gradients flow through ``materialize`` to every parameter.
+    """
+
+    def forward(self, hidden_states):
+        embed = self.embed
+        table = embed.materialize()                                  # (V, d)
+        return hidden_states @ table.T                               # (..., V)
+
+
 class TiedTTHead(_TiedHeadBase):
     """Exact tied output using the TT-matrix contraction implemented by TTEmbedding."""
 
@@ -369,6 +429,10 @@ def make_tied_head(embed, embed_type, vocab_size):
         return TiedGroupReduceHead(embed)
     if embed_type == "nested_ladder":
         return TiedNestedLadderHead(embed)
+    if embed_type == "residual_subspace_experts":
+        return TiedResidualSubspaceExpertsHead(embed)
+    if embed_type == "product_code":
+        return TiedProductCodeHead(embed)
     if embed_type == "tt":
         return TiedTTHead(embed)
     if embed_type == "original_ant":
@@ -378,7 +442,7 @@ def make_tied_head(embed, embed_type, vocab_size):
     raise ValueError(
         f"Cannot tie output for embed_type={embed_type}. Supported types are "
         "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
-        "groupreduce, nested_ladder, tt, "
+        "groupreduce, nested_ladder, residual_subspace_experts, product_code, tt, "
         "original_ant, ant, and residual_ant; v0, v1, v2, and "
         "isolation_control are context-dependent and cannot be tied."
     )
