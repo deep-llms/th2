@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-audit-live-final-rse-hashed-eval-finetune-20260901-a01
+#th2-readonly-audit-live-final-rse-hashed-eval-finetune-20260901-a02
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
