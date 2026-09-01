@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-check-final-rse-hashed-ready-for-eval-20260901-a03
+#th2-readonly-check-final-rse-hashed-ready-for-eval-20260901-a04
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -12,7 +12,6 @@ cd "$TASK_PROJECT_DIR"
 echo '=== identity and GPU state ==='
 date -u
 hostname
-git rev-parse HEAD
 nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader
 
 echo '=== GPU compute owners ==='
