@@ -1,11 +1,11 @@
 #1 +60+a
-#th2-readonly-check-final-rse-hashed-ready-for-eval-20260901-a02
+#th2-readonly-check-final-rse-hashed-ready-for-eval-20260901-a03
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
 TASK_RUN_LOG="$TASK_OUTPUT_BASE/logs/final_rse_b8a8_hashed_10k_20260831_a02/run_experiments.log"
 TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
-TASK_PROJECT_DIR=/mnt/local/_projects/@PROJECT@
+TASK_PROJECT_DIR=/mnt/local/@PROJECT@
 
 cd "$TASK_PROJECT_DIR"
 
