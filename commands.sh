@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-audit-live-final-rse-hashed-eval-finetune-20260901-a02
+#th2-readonly-estimate-final-rse-hashed-finetune-20260901-a03
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
@@ -200,6 +200,27 @@ if [[ -s "$TASK_FINETUNE_OUTPUT/summary.md" ]]; then
     cat "$TASK_FINETUNE_OUTPUT/summary.md"
 else
     echo 'finetune_summary=pending'
+fi
+
+echo '=== active finetune commands ==='
+mapfile -t TASK_ACTIVE_FINETUNE_PIDS < <(
+    pgrep -f 'finetune/train.py' || true
+)
+for TASK_PID in "${TASK_ACTIVE_FINETUNE_PIDS[@]}"; do
+    [[ -r "/proc/$TASK_PID/cmdline" ]] || continue
+    printf 'pid=%s cmd=' "$TASK_PID"
+    tr '\0' ' ' < "/proc/$TASK_PID/cmdline"
+    printf '\n'
+done
+
+echo '=== tails of incomplete finetune logs ==='
+if [[ -d "$TASK_FINETUNE_OUTPUT" ]]; then
+    while IFS= read -r TASK_LOG; do
+        TASK_JSON="${TASK_LOG%.log}.json"
+        [[ -s "$TASK_JSON" ]] && continue
+        echo "--- $TASK_LOG bytes=$(stat -c %s "$TASK_LOG") modified=$(stat -c %y "$TASK_LOG") ---"
+        tr '\r' '\n' < "$TASK_LOG" | tail -n 12
+    done < <(find "$TASK_FINETUNE_OUTPUT" -maxdepth 1 -type f -name '*.log' | sort)
 fi
 
 echo '=== narrow fatal-signature scan ==='
