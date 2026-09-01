@@ -1,82 +1,28 @@
-#1 +60+a
-#th2-readonly-check-final-rse-hashed-ready-for-eval-20260901-a04
+#1 +240+a
+#th2-eval-finetune-final-rse-hashed-10k-then-correct-burn-20260901-a01
 set -euo pipefail
 
-TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-TASK_RUN_LOG="$TASK_OUTPUT_BASE/logs/final_rse_b8a8_hashed_10k_20260831_a02/run_experiments.log"
-TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
+TASK_WORKFLOW_SOURCE="$TASK_PROJECT_DIR/scripts/run_final_rse_hashed_eval_finetune_burn.sh"
+TASK_WORKFLOW_RUNTIME=/tmp/run_final_rse_hashed_eval_finetune_burn_f954755720e1.sh
+TASK_WORKFLOW_SHA=f954755720e1d65f797627bbce7c365bfba3960438a4f8937ab43941e1124b4f
 
-cd "$TASK_PROJECT_DIR"
-
-echo '=== identity and GPU state ==='
+echo '=== launch final RSE + Hashed eval/finetune/burn workflow ==='
 date -u
 hostname
-nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader
+cd "$TASK_PROJECT_DIR"
+test -x "$TASK_WORKFLOW_SOURCE"
+echo "$TASK_WORKFLOW_SHA  $TASK_WORKFLOW_SOURCE" | sha256sum -c -
+cp "$TASK_WORKFLOW_SOURCE" "$TASK_WORKFLOW_RUNTIME"
+cmp "$TASK_WORKFLOW_SOURCE" "$TASK_WORKFLOW_RUNTIME"
+chmod 700 "$TASK_WORKFLOW_RUNTIME"
 
-echo '=== GPU compute owners ==='
-mapfile -t TASK_GPU_PIDS < <(
-    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
-        | sed 's/^[[:space:]]*//;s/[[:space:]]*$//;/^$/d' | sort -u
-)
-echo "unique_gpu_pid_count=${#TASK_GPU_PIDS[@]}"
-for TASK_PID in "${TASK_GPU_PIDS[@]}"; do
-    case "$TASK_PID" in
-        *[!0-9]*|'') echo "ERROR: invalid GPU PID: $TASK_PID"; exit 1 ;;
-    esac
-    TASK_CMD=$(tr '\0' ' ' < "/proc/$TASK_PID/cmdline")
-    echo "pid=$TASK_PID ppid=$(awk '/^PPid:/{print $2}' "/proc/$TASK_PID/status") cmd=$TASK_CMD"
-done
+export SPARSE_EMB_PROJECT_DIR="$TASK_PROJECT_DIR"
+export SPARSE_EMB_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
+export SPARSE_EMB_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
+export SPARSE_EMB_EVAL_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
+export SPARSE_EMB_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
+export SPARSE_EMB_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
+export SPARSE_EMB_CONDA=/mnt/local/conda-py311/bin/conda
 
-echo '=== relevant tmux sessions ==='
-tmux list-sessions 2>/dev/null | grep -E 'final-rse|hashed|burn|eval|finetune' || true
-
-echo '=== checkpoint integrity ==='
-for TASK_EXPERIMENT in \
-    residual_subspace_experts_tied_g12_r120_q80 \
-    product_code_hashed_h2048; do
-    TASK_CHECKPOINT="$TASK_OUTPUT_BASE/$TASK_EXPERIMENT/checkpoint-10000"
-    echo "experiment=$TASK_EXPERIMENT"
-    test -d "$TASK_CHECKPOINT" || {
-        echo "checkpoint_10000=ABSENT"
-        continue
-    }
-    TASK_MISSING=0
-    for TASK_FILE in config.json model.safetensors trainer_state.json \
-                     optimizer.pt scheduler.pt embedding.pt \
-                     rng_state_0.pth rng_state_1.pth rng_state_2.pth \
-                     rng_state_3.pth rng_state_4.pth rng_state_5.pth \
-                     rng_state_6.pth rng_state_7.pth; do
-        if [ ! -s "$TASK_CHECKPOINT/$TASK_FILE" ]; then
-            echo "missing_or_empty=$TASK_FILE"
-            TASK_MISSING=1
-        fi
-    done
-    "$TASK_PYTHON" - "$TASK_CHECKPOINT/trainer_state.json" <<'PY'
-import json
-import math
-import sys
-
-with open(sys.argv[1]) as handle:
-    state = json.load(handle)
-assert state["global_step"] == 10000, state["global_step"]
-rows = [row for row in state.get("log_history", []) if "loss" in row]
-assert rows, "no loss rows"
-for row in rows:
-    for key in ("loss", "grad_norm", "learning_rate"):
-        assert math.isfinite(float(row[key])), (key, row[key])
-print(f"global_step={state['global_step']} finite_loss_rows={len(rows)}")
-print(f"last_loss_row={rows[-1]}")
-PY
-    test "$TASK_MISSING" -eq 0
-    echo 'checkpoint_10000=COMPLETE'
-done
-
-echo '=== sequential runner tail ==='
-if [ -s "$TASK_RUN_LOG" ]; then
-    tail -n 100 "$TASK_RUN_LOG"
-else
-    echo "run_log_absent=$TASK_RUN_LOG"
-fi
-
-echo 'TH2 READONLY RSE HASHED EVAL READINESS CHECK COMPLETE'
+exec bash "$TASK_WORKFLOW_RUNTIME"
