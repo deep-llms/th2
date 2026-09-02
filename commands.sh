@@ -1,5 +1,5 @@
 #1 +90+a
-#th2-readonly-inventory-checkpoints-after-pod-return-20260902-a01
+#th2-readonly-inventory-checkpoints-after-pod-return-20260902-a02
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
