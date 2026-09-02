@@ -64,6 +64,27 @@ def descendant(pid: int, ancestor: int) -> bool:
     return False
 
 
+def command_arguments(pid: int) -> list[bytes]:
+    """Return exact argv fields; never substring-match the PID-1 command."""
+    return [
+        argument
+        for argument in Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
+        if argument
+    ]
+
+
+def ancestors(pid: int) -> list[int]:
+    """Return live ancestors below PID 1, nearest parent first."""
+    result = []
+    seen = {pid}
+    pid = parent(pid)
+    while pid > 1 and pid not in seen:
+        result.append(pid)
+        seen.add(pid)
+        pid = parent(pid)
+    return result
+
+
 def require_b200_node() -> None:
     names = output(
         "nvidia-smi", "--query-gpu=name", "--format=csv,noheader"
@@ -93,14 +114,37 @@ class BurnManager:
         pids = gpu_pids()
         if len(pids) != 8:
             die(f"expected eight current burn workers, found {pids}")
-        if not self.pid_file.is_file():
-            die(f"missing burn launcher file: {self.pid_file}")
-        launcher = int(self.pid_file.read_text().strip())
-        if launcher == 1 or not Path(f"/proc/{launcher}").exists():
-            die(f"invalid burn launcher PID: {launcher}")
-        args = Path(f"/proc/{launcher}/cmdline").read_bytes().replace(b"\0", b" ")
-        if str(self.target).encode() not in args:
-            die(f"unexpected burn launcher command: {args!r}")
+
+        # A fresh runner creates /tmp/llm_pretrain_burn.py itself and does not
+        # create our optional launcher PID file.  Resolve the unique common
+        # non-PID-1 ancestor whose argv contains the burn path as an EXACT
+        # argument.  This deliberately cannot match PID 1's embedded shell
+        # program, which contains the same text inside one large ``-c`` arg.
+        common_ancestors = set(ancestors(pids[0]))
+        for pid in pids[1:]:
+            common_ancestors.intersection_update(ancestors(pid))
+        target_argument = str(self.target).encode()
+        launchers = []
+        for candidate in common_ancestors:
+            try:
+                candidate_args = command_arguments(candidate)
+            except (FileNotFoundError, PermissionError, ProcessLookupError):
+                continue
+            if candidate != 1 and target_argument in candidate_args:
+                launchers.append(candidate)
+        if len(launchers) != 1:
+            die(
+                "expected one exact non-PID-1 burn launcher ancestor, "
+                f"found {sorted(launchers)} for workers {pids}"
+            )
+        launcher = launchers[0]
+        if self.pid_file.is_file():
+            recorded_launcher = int(self.pid_file.read_text().strip())
+            if recorded_launcher != launcher:
+                die(
+                    "burn launcher PID file disagrees with process ancestry: "
+                    f"recorded={recorded_launcher}, detected={launcher}"
+                )
         if not all(pid != 1 and descendant(pid, launcher) for pid in pids):
             die(f"GPU PIDs are not all burn descendants: launcher={launcher}, pids={pids}")
         app_rows = [
@@ -114,10 +158,10 @@ class BurnManager:
             die(f"burn does not own exactly one process per GPU: {app_rows}")
         for pid in pids:
             os.kill(pid, signal.SIGKILL)
-        try:
-            os.kill(launcher, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        # Kill only the verified GPU compute workers returned by nvidia-smi.
+        # Do not signal the launcher: the documented safe transition targets
+        # GPU owners only.  The multiprocessing launcher exits after its
+        # workers are gone.
         time.sleep(30)
         require_free("AFTER_VERIFIED_BURN_STOP")
 
