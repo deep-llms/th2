@@ -55,8 +55,9 @@ verify_direct_children() {
 echo '=== immutable preflight before changing GPU state ==='
 date -u
 hostname
-git rev-parse HEAD
 test -d "$TASK_PROJECT"
+cd "$TASK_PROJECT"
+git rev-parse HEAD
 test -x "$TASK_PYTHON"
 test -x "$TASK_BURN_PYTHON"
 test -s "$TASK_BURN_SCRIPT"
