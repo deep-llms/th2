@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-run-complete-hashed-zh-diagnostics-20260902-a02
+#th2-run-complete-hashed-zh-diagnostics-20260902-a03
 set -euo pipefail
 
 bash scripts/run_hashed_zh_diagnostics_b200.sh

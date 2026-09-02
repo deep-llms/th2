@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TASK_PROJECT=/mnt/local/@PROJECT@
+TASK_PROJECT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+TASK_PROJECT_NAME="$(basename "$TASK_PROJECT")"
 TASK_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
 TASK_BURN_PYTHON=/usr/bin/python3
 TASK_BURN_SCRIPT=/tmp/llm_pretrain_burn.py
 TASK_BURN_SHA=3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857
-TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-TASK_DATA_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
-TASK_TOKENIZER=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
+TASK_OUTPUT_BASE="/mnt/local/_outputs/$TASK_PROJECT_NAME"
+TASK_DATA_DIR="/mnt/local/_data/$TASK_PROJECT_NAME/data/Qwen_Qwen3-0.6B/eval"
+TASK_TOKENIZER="/mnt/local/_models/$TASK_PROJECT_NAME/Qwen3-0.6B"
 TASK_HASHED_ROOT="$TASK_OUTPUT_BASE/product_code_hashed_h2048"
 TASK_HASHED_CKPT="$TASK_HASHED_ROOT/checkpoint-10000"
 TASK_CONTROL_ROOT="$TASK_OUTPUT_BASE/groupreduce_matched_nested_tied_t4"
@@ -57,6 +58,7 @@ date -u
 hostname
 test -d "$TASK_PROJECT"
 cd "$TASK_PROJECT"
+echo "project=$TASK_PROJECT project_name=$TASK_PROJECT_NAME"
 git rev-parse HEAD
 test -x "$TASK_PYTHON"
 test -x "$TASK_BURN_PYTHON"
