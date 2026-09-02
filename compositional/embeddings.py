@@ -49,6 +49,7 @@ class LowRankEmbed(nn.Module):
 
     def __init__(self, vocab_size, embed_dim, rank=128):
         super().__init__()
+        self.embed_dim = int(embed_dim)
         self.X = nn.Parameter(torch.randn(vocab_size, rank) * 0.02)
         self.proj = nn.Linear(rank, embed_dim, bias=True)
         nn.init.normal_(self.proj.weight, std=0.02)
@@ -81,6 +82,7 @@ class SharedLocalEmbed(nn.Module):
     def __init__(self, vocab_size, embed_dim, shared_rank=64, local_rank=64,
                  num_groups=4):
         super().__init__()
+        self.embed_dim = int(embed_dim)
         if shared_rank <= 0 or local_rank <= 0:
             raise ValueError("shared_rank and local_rank must be positive")
         if num_groups <= 0:
@@ -311,6 +313,7 @@ class OriginalANT(nn.Module):
 
     def __init__(self, vocab_size, codebook_size, embed_dim):
         super().__init__()
+        self.embed_dim = int(embed_dim)
         self.A = nn.Parameter(torch.randn(codebook_size, embed_dim) * 0.02)
         self.T = nn.Parameter(torch.empty(vocab_size, codebook_size).uniform_(0, 0.02))
 
@@ -344,6 +347,7 @@ class ANTEmbed(nn.Module):
     def __init__(self, vocab_size, codebook_size, embed_dim, d_x=128, d_k=64,
                  gamma=1.0, num_heads=1):
         super().__init__()
+        self.embed_dim = int(embed_dim)
         self.d_k = d_k
         self.gamma = gamma
         self.num_heads = num_heads

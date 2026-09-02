@@ -6,11 +6,13 @@ import json
 import os
 
 import pytest
+import numpy as np
 import torch
 import torch.nn.functional as F
 from transformers import Qwen3Config, Qwen3ForCausalLM
 
 from .compressed_baselines import GroupReduceEmbed
+from .embeddings import ANTEmbed, LowRankEmbed, OriginalANT, SharedLocalEmbed
 from .loading import EmbeddingShim, load_compositional_model
 from .mos_head import MixtureOfSoftmaxesHead
 from .tied_head import TiedGroupReduceHead, make_tied_head
@@ -172,6 +174,91 @@ def test_every_parameter_is_connected_and_metrics_are_well_formed():
     assert head.pop_step_metrics() is None
 
 
+@pytest.mark.parametrize("arm,embed", [
+    ("lowrank", LowRankEmbed(19, 8, rank=4)),
+    ("shared_local", SharedLocalEmbed(
+        19, 8, shared_rank=2, local_rank=2, num_groups=3
+    )),
+    ("original_ant", OriginalANT(19, 5, 8)),
+    ("ant", ANTEmbed(19, 5, 8, d_x=4, d_k=2)),
+])
+def test_factory_wraps_every_legacy_embedder_that_lacked_dimension_metadata(
+    arm, embed
+):
+    head = make_tied_head(
+        embed, arm, 19,
+        mos_components=2, mos_context_rank=3, mos_chunk_size=2,
+    )
+    output = head(torch.randn(3, 8))
+    assert output.shape == (3, 19)
+    torch.testing.assert_close(
+        output.exp().sum(-1), torch.ones(3), rtol=1e-6, atol=2e-6
+    )
+
+
+def test_frozen_hidden_still_checkpoints_trainable_head(monkeypatch):
+    import compositional.mos_head as mos_module
+
+    calls = []
+    real_checkpoint = mos_module.checkpoint
+
+    def recording_checkpoint(function, *args, **kwargs):
+        calls.append(args[0].shape[0])
+        return real_checkpoint(function, *args, **kwargs)
+
+    monkeypatch.setattr(mos_module, "checkpoint", recording_checkpoint)
+    embed = _embed(dtype=torch.float32)
+    head = _head(embed, chunk_size=2)
+    hidden = torch.randn(5, 8, requires_grad=False)
+    head(hidden).sum().backward()
+    assert calls == [2, 2, 1]
+    assert all(parameter.grad is not None for parameter in head.parameters())
+    assert all(parameter.grad is not None for parameter in embed.parameters())
+
+
+def test_bfloat16_autocast_checkpoint_backward_with_partial_chunk():
+    embed = _embed(dtype=torch.bfloat16)
+    head = _head(embed, chunk_size=2)  # five rows leaves a one-row last chunk
+    hidden = torch.randn(5, 8, requires_grad=True)
+    targets = torch.arange(5) % embed.vocab_size
+    with torch.autocast("cpu", dtype=torch.bfloat16):
+        log_probs = head(hidden)
+        loss = F.cross_entropy(log_probs, targets)
+    assert log_probs.dtype == torch.float32
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert torch.isfinite(hidden.grad).all()
+    assert all(
+        parameter.grad is not None and torch.isfinite(parameter.grad).all()
+        for parameter in head.parameters()
+    )
+    assert all(
+        parameter.grad is not None and torch.isfinite(parameter.grad).all()
+        for parameter in embed.parameters()
+    )
+
+
+def test_cross_entropy_on_returned_log_probs_is_exact_mixture_nll():
+    torch.manual_seed(13)
+    embed = _embed()
+    head = _head(embed, chunk_size=2)
+    hidden = torch.randn(5, 8, dtype=torch.float64, requires_grad=True)
+    targets = torch.tensor([0, 4, 7, 12, 18])
+    log_probs = head(hidden)
+    cross_entropy = F.cross_entropy(log_probs, targets, reduction="mean")
+    direct_nll = -log_probs[torch.arange(5), targets].mean()
+    torch.testing.assert_close(
+        cross_entropy, direct_nll, rtol=1e-6, atol=2e-7
+    )
+    ce_gradient = torch.autograd.grad(
+        cross_entropy, hidden, retain_graph=True
+    )[0]
+    nll_gradient = torch.autograd.grad(direct_nll, hidden)[0]
+    torch.testing.assert_close(
+        ce_gradient, nll_gradient, rtol=2e-5, atol=2e-6
+    )
+
+
 def test_trainer_collects_output_head_metrics(tmp_path):
     from transformers import TrainingArguments
     from train_compositional import CompositionalArguments, CompositionalTrainer
@@ -246,19 +333,33 @@ def test_save_load_roundtrip_with_and_without_train_config(tmp_path, with_train_
     torch.testing.assert_close(after, before, rtol=0, atol=0)
 
 
-def test_reference_parameter_budget():
+def test_reference_parameter_budget_through_real_builder(tmp_path):
+    from train_compositional import CompositionalArguments, build_arm
+
     vocab, dim = 151_936, 1024
-    populations = (2048, 6144, 24576, 119168)
-    group_ids = torch.repeat_interleave(
-        torch.arange(4), torch.tensor(populations)
+    importance_path = tmp_path / "importance.npz"
+    np.savez(importance_path, counts=np.ones(vocab, dtype=np.float64))
+    arguments = CompositionalArguments(
+        arm="groupreduce",
+        tie_output=True,
+        allow_from_scratch_baseline_init=True,
+        groupreduce_num_groups=4,
+        groupreduce_ranks="1024,352,192,64",
+        groupreduce_populations="2048,6144,24576,119168",
+        groupreduce_frequency_path=str(importance_path),
+        groupreduce_frequency_key="counts",
+        mos_components=3,
+        mos_context_rank=256,
+        mos_chunk_size=2048,
     )
-    embed = GroupReduceEmbed(
-        vocab, dim, (1024, 352, 192, 64), group_ids=group_ids
-    )
+    embed = build_arm(arguments, vocab, dim)
     head = make_tied_head(
         embed, "groupreduce", vocab,
-        mos_components=3, mos_context_rank=256, mos_chunk_size=2048,
+        mos_components=arguments.mos_components,
+        mos_context_rank=arguments.mos_context_rank,
+        mos_chunk_size=arguments.mos_chunk_size,
     )
+    assert embed.group_sizes == (2048, 6144, 24576, 119168)
     count = sum(p.numel() for p in embed.parameters())
     count += sum(p.numel() for p in head.parameters())
     assert count == 19_330_051

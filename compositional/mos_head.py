@@ -101,34 +101,43 @@ class MixtureOfSoftmaxesHead(nn.Module):
         transformed = torch.tanh(transformed + self.context_bias[:, None, :])
         return torch.cat((flat_h.unsqueeze(0), transformed), dim=0)
 
-    def _chunk_log_probs(self, flat_h):
+    def _chunk_outputs(self, flat_h):
+        """Return log probabilities plus detached prior statistics."""
         contexts = self._contexts(flat_h)
         component_logits = self.inner(
             contexts.reshape(-1, self.embed_dim)
         ).reshape(self.num_components, flat_h.shape[0], -1).float()
         component_log_probs = F.log_softmax(component_logits, dim=-1)
         if self.num_components == 1:
-            return component_log_probs.squeeze(0)
+            empty = component_log_probs.new_zeros((1,))
+            return component_log_probs.squeeze(0), empty, empty.squeeze(0)
         log_prior = F.log_softmax(self.prior(flat_h).float(), dim=-1)
-        return torch.logsumexp(
+        log_probs = torch.logsumexp(
             component_log_probs + log_prior.T.unsqueeze(-1), dim=0
         )
+        with torch.no_grad():
+            probabilities = log_prior.detach().exp()
+            usage_sum = probabilities.sum(dim=0)
+            entropy_sum = -(
+                probabilities * log_prior.detach()
+            ).sum()
+        return log_probs, usage_sum, entropy_sum
+
+    def _chunk_log_probs(self, flat_h):
+        """Unchunked helper used by independent references and library callers."""
+        return self._chunk_outputs(flat_h)[0]
 
     @torch.no_grad()
-    def _record_prior_metrics(self, flat_h):
-        if self.num_components == 1 or flat_h.numel() == 0:
+    def _record_prior_metrics(self, usage_sum, entropy_sum, count):
+        if self.num_components == 1 or count == 0:
             return
-        probabilities = F.softmax(self.prior(flat_h).float(), dim=-1)
         self._prior_usage_sum.add_(
-            probabilities.sum(dim=0).to(self._prior_usage_sum.dtype)
+            usage_sum.to(self._prior_usage_sum.dtype)
         )
-        entropy = -(
-            probabilities * probabilities.clamp_min(1e-30).log()
-        ).sum(dim=-1)
         self._prior_entropy_sum.add_(
-            entropy.sum().to(self._prior_entropy_sum.dtype)
+            entropy_sum.to(self._prior_entropy_sum.dtype)
         )
-        self._prior_metric_count.add_(float(flat_h.shape[0]))
+        self._prior_metric_count.add_(float(count))
         self._has_step_metrics = True
 
     def forward(self, hidden_states):
@@ -139,20 +148,26 @@ class MixtureOfSoftmaxesHead(nn.Module):
             )
         leading_shape = hidden_states.shape[:-1]
         flat_h = hidden_states.reshape(-1, self.embed_dim)
-        if self.training:
-            self._record_prior_metrics(flat_h.detach())
 
         outputs = []
-        use_checkpoint = torch.is_grad_enabled() and flat_h.requires_grad
+        use_checkpoint = torch.is_grad_enabled() and (
+            flat_h.requires_grad
+            or any(parameter.requires_grad for parameter in self.parameters())
+            or any(parameter.requires_grad for parameter in self.embed.parameters())
+        )
         for start in range(0, flat_h.shape[0], self.chunk_size):
             chunk = flat_h[start:start + self.chunk_size]
             if use_checkpoint:
-                output = checkpoint(
-                    self._chunk_log_probs, chunk, use_reentrant=False
+                output, usage_sum, entropy_sum = checkpoint(
+                    self._chunk_outputs, chunk, use_reentrant=False
                 )
             else:
-                output = self._chunk_log_probs(chunk)
+                output, usage_sum, entropy_sum = self._chunk_outputs(chunk)
             outputs.append(output)
+            if self.training:
+                self._record_prior_metrics(
+                    usage_sum, entropy_sum, chunk.shape[0]
+                )
 
         # A language-model batch cannot normally be empty, but preserving a
         # well-defined empty shape makes this module usable in unit/library code.
@@ -161,7 +176,7 @@ class MixtureOfSoftmaxesHead(nn.Module):
             vocab_size = result.shape[-1]
         else:
             probe = hidden_states.new_empty((0, self.embed_dim))
-            result = self._chunk_log_probs(probe)
+            result = self._chunk_outputs(probe)[0]
             vocab_size = result.shape[-1]
         return result.reshape(*leading_shape, vocab_size)
 

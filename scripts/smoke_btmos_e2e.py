@@ -163,11 +163,14 @@ def main():
         launcher + common + ["--output_dir", str(output_dir), "--max_steps", "3"],
         scratch, results, environment,
     )
-    ok = run(
-        "train_resume",
-        launcher + common + ["--output_dir", str(output_dir), "--max_steps", "6"],
-        scratch, results, environment,
-    ) and ok
+    if ok:
+        ok = run(
+            "train_resume",
+            launcher + common + [
+                "--output_dir", str(output_dir), "--max_steps", "6"
+            ],
+            scratch, results, environment,
+        )
     checkpoint_dir = output_dir / "checkpoint-6"
     if ok:
         with open(checkpoint_dir / "trainer_state.json") as handle:
