@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-estimate-final-rse-hashed-finetune-20260901-a03
+#th2-readonly-verify-final-rse-hashed-workflow-20260902-a04
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
