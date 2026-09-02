@@ -59,7 +59,6 @@ hostname
 test -d "$TASK_PROJECT"
 cd "$TASK_PROJECT"
 echo "project=$TASK_PROJECT project_name=$TASK_PROJECT_NAME"
-git rev-parse HEAD
 test -x "$TASK_PYTHON"
 test -x "$TASK_BURN_PYTHON"
 test -s "$TASK_BURN_SCRIPT"
@@ -69,6 +68,11 @@ grep -F 'dist.all_reduce' "$TASK_BURN_SCRIPT"
 test -s "$TASK_PROJECT/eval/ppl_bytoken.py"
 test -s "$TASK_PROJECT/eval/ppl_bins.py"
 test -s "$TASK_PROJECT/eval/hashed_zh_diagnostics.py"
+sha256sum \
+    "$TASK_PROJECT/eval/ppl_bytoken.py" \
+    "$TASK_PROJECT/eval/ppl_bins.py" \
+    "$TASK_PROJECT/eval/hashed_zh_diagnostics.py" \
+    "$TASK_PROJECT/scripts/run_hashed_zh_diagnostics_b200.sh"
 test -s "$TASK_COUNTS_RAW"
 test -s "$TASK_COUNTS_BALANCED"
 test -d "$TASK_DATA_DIR"
