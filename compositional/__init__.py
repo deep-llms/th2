@@ -13,6 +13,11 @@ from .embeddings import (
 from .nested_ladder import NestedLadderEmbed
 from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
 from .product_code import ProductCodeEmbed
+from .nonlinear_factorizations import (
+    RankLiftEmbed,
+    FunnelingEmbed,
+    DeFINEEmbed,
+)
 from .compressed_baselines import (
     PVQEmbed,
     SlimEmbed,

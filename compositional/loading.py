@@ -17,6 +17,7 @@ In layout 2, everything is in one dir.
 
 import json
 import os
+import struct
 
 import torch
 import torch.nn as nn
@@ -45,6 +46,11 @@ from .compressed_baselines import (
 from .nested_ladder import NestedLadderEmbed
 from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
 from .product_code import ProductCodeEmbed
+from .nonlinear_factorizations import (
+    RankLiftEmbed,
+    FunnelingEmbed,
+    DeFINEEmbed,
+)
 from .tied_head import (
     INDEPENDENT_OUTPUT_FILENAME,
     IndependentLowRankHead,
@@ -287,6 +293,32 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
             "(embedding.pt); pass state= — the partition and codes are not "
             "re-derivable from train_config.json alone"
         )
+    if arm == "ranklift":
+        return RankLiftEmbed(
+            vocab_size,
+            embed_dim,
+            code_dim=tc.get("ranklift_code_dim", 124),
+            lift_dim=tc.get("ranklift_lift_dim", 336),
+            rms_eps=tc.get("ranklift_rms_eps", 1e-6),
+        )
+    if arm == "funneling":
+        return FunnelingEmbed(
+            vocab_size,
+            embed_dim,
+            rank=tc.get("funneling_rank", 128),
+        )
+    if arm == "define":
+        return DeFINEEmbed(
+            vocab_size,
+            embed_dim,
+            code_dim=tc.get("define_code_dim", 112),
+            expansion_dims=_parse_int_list(
+                tc.get("define_expansion_dims", "656,1184,1724")
+            ),
+            group_counts=_parse_int_list(
+                tc.get("define_group_counts", "16,8,4")
+            ),
+        )
     if arm == "tt":
         if state is not None and any(
             key.startswith("cores.") for key in state
@@ -318,6 +350,9 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
             tt_ranks=ranks,
             target_std=(tc.get("tt_target_std", 0.0) or None),
             implementation=tc.get("tt_implementation", "materialize"),
+            materialize_chunk_size=tc.get(
+                "tt_materialize_chunk_size", 1024
+            ),
         )
     if arm == "original_ant":
         return OriginalANT(vocab_size, K, embed_dim)
@@ -495,6 +530,78 @@ def _infer_comp_config_from_state(state):
     weights alone and are not handled here.
     """
     keys = set(state.keys())
+
+    if {
+        "token_codes", "lift_a.weight", "lift_a.bias", "lift_b.weight",
+        "lift_b.bias", "projection.weight", "projection.bias",
+    }.issubset(keys):
+        rms_eps = 1e-6
+        if "rms_eps_bits" in state:
+            bits = int(state["rms_eps_bits"].item())
+            rms_eps = struct.unpack("<d", struct.pack("<q", bits))[0]
+        return {
+            "arm": "ranklift",
+            "ranklift_code_dim": state["token_codes"].shape[1],
+            "ranklift_lift_dim": state["lift_a.weight"].shape[0],
+            "ranklift_rms_eps": rms_eps,
+        }
+
+    if {
+        "token_codes", "expand_weights.0", "expand_biases.0",
+        "reduce.weight", "reduce.bias", "output_projection.weight",
+    }.issubset(keys):
+        weight_keys = sorted(
+            (key for key in keys if key.startswith("expand_weights.")),
+            key=lambda key: int(key.split(".")[1]),
+        )
+        bias_keys = sorted(
+            (key for key in keys if key.startswith("expand_biases.")),
+            key=lambda key: int(key.split(".")[1]),
+        )
+        if len(weight_keys) != len(bias_keys):
+            raise ValueError("DeFINE state has mismatched expansion weights/biases")
+        code_dim = state["token_codes"].shape[1]
+        expansion_dims = []
+        group_counts = []
+        previous_dim = code_dim
+        for index, (weight_key, bias_key) in enumerate(zip(weight_keys, bias_keys)):
+            weight_shape = state[weight_key].shape
+            bias_shape = state[bias_key].shape
+            mixed_dim = code_dim if index == 0 else previous_dim + code_dim
+            if len(weight_shape) == 3 and len(bias_shape) == 2:
+                groups, input_per_group, output_per_group = weight_shape
+                if tuple(bias_shape) != (groups, output_per_group):
+                    raise ValueError("Invalid DeFINE per-group bias shape")
+                if mixed_dim != groups * input_per_group:
+                    raise ValueError("Cannot infer DeFINE group count from state")
+            elif len(weight_shape) == 2 and len(bias_shape) == 1:
+                # Older local checkpoints used a shared group matrix and are
+                # readable for structure diagnostics but fail strict loading
+                # into the corrected author-code HGT implementation.
+                input_per_group, output_per_group = weight_shape
+                if mixed_dim % input_per_group != 0:
+                    raise ValueError("Cannot infer DeFINE group count from state")
+                groups = mixed_dim // input_per_group
+            else:
+                raise ValueError("Invalid DeFINE expansion tensor ranks")
+            output_dim = groups * output_per_group
+            expansion_dims.append(output_dim)
+            group_counts.append(groups)
+            previous_dim = output_dim
+        return {
+            "arm": "define",
+            "define_code_dim": code_dim,
+            "define_expansion_dims": ",".join(map(str, expansion_dims)),
+            "define_group_counts": ",".join(map(str, group_counts)),
+        }
+
+    if {
+        "token_codes", "projection.weight", "projection.bias"
+    }.issubset(keys):
+        return {
+            "arm": "funneling",
+            "funneling_rank": state["token_codes"].shape[1],
+        }
 
     if {"E_h", "C.0", "codes", "head_ids", "tail_ids", "bias"}.issubset(keys):
         structure = ProductCodeEmbed.structure_from_state(state)
@@ -792,7 +899,7 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
             "lowrank", "global_lowrank", "shared_local", "pure_local",
             "pvq", "slim", "groupreduce", "nested_ladder",
             "residual_subspace_experts", "product_code",
-            "tt",
+            "ranklift", "funneling", "define", "tt",
             "original_ant", "ant",
             "residual_ant"
         }

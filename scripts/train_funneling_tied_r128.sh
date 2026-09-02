@@ -1,7 +1,5 @@
 #!/bin/bash
-# Exactly tied adaptation of TT-Embedding at a near-LR128 parameter budget.
-# The output table is materialized in activation-checkpointed chunks; this is
-# algebraically exact and avoids the full-vocabulary TT intermediate OOM.
+# From-scratch nonlinear Funneling control at the exact LR128 budget.
 
 set -euo pipefail
 
@@ -23,7 +21,7 @@ TASK_PYTHON="${SPARSE_EMB_PYTHON:-$(command -v python3.11)}"
 TASK_MODEL_DIR="${SPARSE_EMB_MODEL_DIR:-Qwen/Qwen3-0.6B}"
 TASK_DATA_DIR="${SPARSE_EMB_DATA_DIR:-/mnt/local/_data/sparse_embedding/data/Qwen_Qwen3-0.6B/train}"
 TASK_OUTPUT_BASE="${SPARSE_EMB_OUTPUT_BASE:-/mnt/local/_outputs/sparse_embedding}"
-TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/tt_tied_r219"
+TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/funneling_tied_r128"
 test -x "$TASK_PYTHON"
 
 export WANDB_PROJECT=sparse_embedding
@@ -59,11 +57,7 @@ sleep 3
     --dataloader_num_workers 8 \
     --report_to wandb \
     --output_dir "$TASK_OUTPUT_DIR" \
-    --run_name tt-tied-r219-qwen3-0.6b \
-    --arm tt \
-    --tt_vocab_shape 50,50,64 \
-    --tt_embedding_shape 8,8,16 \
-    --tt_ranks 219,219 \
-    --tt_implementation materialize \
-    --tt_materialize_chunk_size 1024 \
+    --run_name funneling-tied-r128-qwen3-0.6b \
+    --arm funneling \
+    --funneling_rank 128 \
     --tie_output

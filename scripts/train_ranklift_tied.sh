@@ -1,7 +1,5 @@
 #!/bin/bash
-# Exactly tied adaptation of TT-Embedding at a near-LR128 parameter budget.
-# The output table is materialized in activation-checkpointed chunks; this is
-# algebraically exact and avoids the full-vocabulary TT intermediate OOM.
+# RankLift: LR-budget private codes with a wider nonlinear exactly tied table.
 
 set -euo pipefail
 
@@ -23,7 +21,7 @@ TASK_PYTHON="${SPARSE_EMB_PYTHON:-$(command -v python3.11)}"
 TASK_MODEL_DIR="${SPARSE_EMB_MODEL_DIR:-Qwen/Qwen3-0.6B}"
 TASK_DATA_DIR="${SPARSE_EMB_DATA_DIR:-/mnt/local/_data/sparse_embedding/data/Qwen_Qwen3-0.6B/train}"
 TASK_OUTPUT_BASE="${SPARSE_EMB_OUTPUT_BASE:-/mnt/local/_outputs/sparse_embedding}"
-TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/tt_tied_r219"
+TASK_OUTPUT_DIR="$TASK_OUTPUT_BASE/ranklift_tied_c124_m460"
 test -x "$TASK_PYTHON"
 
 export WANDB_PROJECT=sparse_embedding
@@ -59,11 +57,9 @@ sleep 3
     --dataloader_num_workers 8 \
     --report_to wandb \
     --output_dir "$TASK_OUTPUT_DIR" \
-    --run_name tt-tied-r219-qwen3-0.6b \
-    --arm tt \
-    --tt_vocab_shape 50,50,64 \
-    --tt_embedding_shape 8,8,16 \
-    --tt_ranks 219,219 \
-    --tt_implementation materialize \
-    --tt_materialize_chunk_size 1024 \
+    --run_name ranklift-tied-c124-m460-qwen3-0.6b \
+    --arm ranklift \
+    --ranklift_code_dim 124 \
+    --ranklift_lift_dim 336 \
+    --ranklift_rms_eps 1e-6 \
     --tie_output
