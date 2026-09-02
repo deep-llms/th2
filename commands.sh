@@ -1,66 +1,75 @@
-#1 +60+a
-#th2-readonly-check-ranklift-10k-completion-20260902-a01
+#1 +90+a
+#th2-readonly-inventory-checkpoints-after-pod-return-20260902-a01
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-TASK_OUTPUT="$TASK_OUTPUT_BASE/ranklift_tied_c124_m460"
-TASK_CKPT="$TASK_OUTPUT/checkpoint-10000"
-TASK_LOG="$TASK_OUTPUT_BASE/logs/ranklift_tied_c124_m460_10k_20260902/ranklift_tied_c124_m460.log"
-TASK_EXPERIMENT_LOG="$TASK_OUTPUT_BASE/logs/ranklift_tied_c124_m460_10k_20260902/experiments.log"
+TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
 
-echo '=== current GPU state ==='
+echo '=== machine and GPUs ==='
 date -u
+hostname
 nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power.draw \
     --format=csv,noheader,nounits
 nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory \
     --format=csv,noheader,nounits || true
 
-echo '=== relevant live processes ==='
-pgrep -af 'run_ranklift_b200_10k.py|run_experiments.py|train_compositional.py|/tmp/llm_pretrain_burn.py' || true
+echo '=== storage ==='
+df -h /mnt/local
+du -sh "$TASK_OUTPUT_BASE" 2>/dev/null || true
 
-echo '=== checkpoint validation ==='
-if [[ -d "$TASK_CKPT" ]]; then
-    /mnt/local/conda-py311/envs/sparse_emb/bin/python3.11 - "$TASK_CKPT" <<'PY'
+echo '=== complete checkpoint inventory and structural validation ==='
+test -x "$TASK_PYTHON"
+test -d "$TASK_OUTPUT_BASE"
+"$TASK_PYTHON" - "$TASK_OUTPUT_BASE" <<'PY'
 import json
-import math
 from pathlib import Path
 import sys
 
-checkpoint = Path(sys.argv[1])
-required = (
-    "config.json", "model.safetensors", "trainer_state.json",
-    "optimizer.pt", "scheduler.pt", "embedding.pt",
-    *(f"rng_state_{rank}.pth" for rank in range(8)),
+root = Path(sys.argv[1])
+checkpoints = sorted(
+    root.glob("*/checkpoint-*"),
+    key=lambda path: (path.parent.name, int(path.name.removeprefix("checkpoint-"))),
 )
-missing = [name for name in required if not (checkpoint / name).is_file() or (checkpoint / name).stat().st_size == 0]
-print(f"missing={missing}")
-state = json.loads((checkpoint / "trainer_state.json").read_text())
-losses = [float(row["loss"]) for row in state.get("log_history", []) if "loss" in row]
-print(f"global_step={state['global_step']} logged_losses={len(losses)} first_loss={losses[0] if losses else None} last_loss={losses[-1] if losses else None}")
-assert int(state["global_step"]) == 10000
-assert not missing
-assert losses and all(math.isfinite(value) for value in losses)
-print("CHECKPOINT_10000_COMPLETE_AND_VALID")
+print(f"output_root={root} checkpoint_count={len(checkpoints)}")
+assert checkpoints, "no checkpoints found"
+bad = []
+for checkpoint in checkpoints:
+    step_text = checkpoint.name.removeprefix("checkpoint-")
+    # Dense Qwen checkpoints intentionally have no separate embedding.pt;
+    # require only artifacts common to dense and compositional checkpoints.
+    required = ("config.json", "model.safetensors", "trainer_state.json")
+    missing = [
+        name for name in required
+        if not (checkpoint / name).is_file() or (checkpoint / name).stat().st_size == 0
+    ]
+    state_step = None
+    try:
+        state = json.loads((checkpoint / "trainer_state.json").read_text())
+        state_step = int(state["global_step"])
+    except Exception as error:
+        missing.append(f"invalid trainer_state.json: {error}")
+    if state_step is not None and state_step != int(step_text):
+        missing.append(f"trainer_state_step={state_step}")
+    status = "OK" if not missing else f"BAD {missing}"
+    print(f"{checkpoint.relative_to(root)} | {status}")
+    if missing:
+        bad.append((str(checkpoint), missing))
+print(f"checkpoint_count={len(checkpoints)} invalid_count={len(bad)}")
+assert not bad, bad
+print("ALL_DISCOVERED_CHECKPOINTS_STRUCTURALLY_VALID")
 PY
-else
-    echo 'checkpoint-10000: pending'
-    find "$TASK_OUTPUT" -maxdepth 1 -type d -name 'checkpoint-*' -printf '%f\n' 2>/dev/null | sort -V | tail -n 5 || true
-fi
 
-echo '=== logs ==='
-for TASK_FILE in "$TASK_EXPERIMENT_LOG" "$TASK_LOG"; do
-    echo "--- $TASK_FILE ---"
-    if [[ -s "$TASK_FILE" ]]; then
-        tr '\r' '\n' < "$TASK_FILE" | tail -n 100
-    else
-        echo 'missing or empty'
-    fi
+echo '=== latest checkpoint per experiment ==='
+for TASK_DIR in "$TASK_OUTPUT_BASE"/*; do
+    [[ -d "$TASK_DIR" ]] || continue
+    TASK_LATEST="$(find "$TASK_DIR" -maxdepth 1 -type d -name 'checkpoint-*' -printf '%f\n' 2>/dev/null | sort -V | tail -n 1)"
+    [[ -n "$TASK_LATEST" ]] && printf '%s | %s\n' "$(basename "$TASK_DIR")" "$TASK_LATEST"
 done
 
-echo '=== narrow fatal scan ==='
-if grep -HniE 'Traceback \(most recent call last\)|CUDA out of memory|OutOfMemoryError|ChildFailedError|ProcessExitedException|Segmentation fault|Bus error' "$TASK_LOG" "$TASK_EXPERIMENT_LOG" 2>/dev/null; then
-    echo 'FATAL_SIGNATURE_FOUND' >&2
-    exit 1
-fi
-echo 'NO_FATAL_SIGNATURE_FOUND'
-echo 'TH2 READONLY RANKLIFT COMPLETION CHECK FINISHED; PROCESSES UNMODIFIED'
+echo '=== final-interface smoke and RankLift state ==='
+find "$TASK_OUTPUT_BASE/final_interfaces_smoke_20260902" -maxdepth 3 -type f \
+    -printf '%s %p\n' 2>/dev/null | sort || true
+find "$TASK_OUTPUT_BASE/ranklift_tied_c124_m460" -maxdepth 1 -type d \
+    -name 'checkpoint-*' -printf '%f\n' 2>/dev/null | sort -V || true
+
+echo 'TH2 READONLY CHECKPOINT INVENTORY COMPLETE; NOTHING MODIFIED'
