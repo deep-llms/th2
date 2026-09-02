@@ -451,7 +451,8 @@ class TiedMaterializeHead(_TiedHeadBase):
         return hidden_states @ embed_table.T  # (B, L, V)
 
 
-def make_tied_head(embed, embed_type, vocab_size):
+def make_tied_head(embed, embed_type, vocab_size, mos_components=1,
+                   mos_context_rank=256, mos_chunk_size=2048):
     """Create the appropriate tied head for an embedding module.
 
     Args:
@@ -463,40 +464,53 @@ def make_tied_head(embed, embed_type, vocab_size):
         nn.Module that computes logits from hidden states using tied weights
     """
     if embed_type in ("lowrank", "global_lowrank"):
-        return TiedLowRankHead(embed)
-    if embed_type == "shared_local":
-        return TiedSharedLocalHead(embed)
-    if embed_type == "pure_local":
-        return TiedPureLocalHead(embed)
-    if embed_type == "pvq":
-        return TiedPVQHead(embed)
-    if embed_type == "slim":
-        return TiedSlimHead(embed)
-    if embed_type == "groupreduce":
-        return TiedGroupReduceHead(embed)
-    if embed_type == "nested_ladder":
-        return TiedNestedLadderHead(embed)
-    if embed_type == "residual_subspace_experts":
-        return TiedResidualSubspaceExpertsHead(embed)
-    if embed_type == "product_code":
-        return TiedProductCodeHead(embed)
-    if embed_type == "ranklift":
-        return TiedRankLiftHead(embed)
-    if embed_type == "funneling":
-        return TiedFunnelingHead(embed)
-    if embed_type == "define":
-        return TiedDeFINEHead(embed)
-    if embed_type == "tt":
-        return TiedTTHead(embed)
-    if embed_type == "original_ant":
-        return TiedOriginalANTHead(embed)
-    if embed_type in ("ant", "residual_ant"):
-        return TiedMaterializeHead(embed, vocab_size)
-    raise ValueError(
-        f"Cannot tie output for embed_type={embed_type}. Supported types are "
-        "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
-        "groupreduce, nested_ladder, residual_subspace_experts, product_code, "
-        "ranklift, funneling, define, tt, "
-        "original_ant, ant, and residual_ant; v0, v1, v2, and "
-        "isolation_control are context-dependent and cannot be tied."
+        inner = TiedLowRankHead(embed)
+    elif embed_type == "shared_local":
+        inner = TiedSharedLocalHead(embed)
+    elif embed_type == "pure_local":
+        inner = TiedPureLocalHead(embed)
+    elif embed_type == "pvq":
+        inner = TiedPVQHead(embed)
+    elif embed_type == "slim":
+        inner = TiedSlimHead(embed)
+    elif embed_type == "groupreduce":
+        inner = TiedGroupReduceHead(embed)
+    elif embed_type == "nested_ladder":
+        inner = TiedNestedLadderHead(embed)
+    elif embed_type == "residual_subspace_experts":
+        inner = TiedResidualSubspaceExpertsHead(embed)
+    elif embed_type == "product_code":
+        inner = TiedProductCodeHead(embed)
+    elif embed_type == "ranklift":
+        inner = TiedRankLiftHead(embed)
+    elif embed_type == "funneling":
+        inner = TiedFunnelingHead(embed)
+    elif embed_type == "define":
+        inner = TiedDeFINEHead(embed)
+    elif embed_type == "tt":
+        inner = TiedTTHead(embed)
+    elif embed_type == "original_ant":
+        inner = TiedOriginalANTHead(embed)
+    elif embed_type in ("ant", "residual_ant"):
+        inner = TiedMaterializeHead(embed, vocab_size)
+    else:
+        raise ValueError(
+            f"Cannot tie output for embed_type={embed_type}. Supported types are "
+            "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
+            "groupreduce, nested_ladder, residual_subspace_experts, product_code, "
+            "ranklift, funneling, define, tt, "
+            "original_ant, ant, and residual_ant; v0, v1, v2, and "
+            "isolation_control are context-dependent and cannot be tied."
+        )
+
+    mos_components = int(mos_components)
+    if mos_components == 1:
+        return inner
+    from .mos_head import MixtureOfSoftmaxesHead
+    return MixtureOfSoftmaxesHead(
+        inner,
+        embed_dim=embed.embed_dim,
+        num_components=mos_components,
+        context_rank=mos_context_rank,
+        chunk_size=mos_chunk_size,
     )

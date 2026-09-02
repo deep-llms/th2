@@ -305,6 +305,16 @@ class CompositionalArguments:
     tt_materialize_chunk_size: int = field(default=1024, metadata={
         "help": "Rows per activation-checkpointed TT table chunk."
     })
+    mos_components: int = field(default=1, metadata={
+        "help": "Number of tied Mixture-of-Softmaxes output components. "
+                "One disables MoS and preserves the existing tied head."
+    })
+    mos_context_rank: int = field(default=256, metadata={
+        "help": "Bottleneck rank of each non-identity MoS context map."
+    })
+    mos_chunk_size: int = field(default=2048, metadata={
+        "help": "Hidden positions per activation-checkpointed MoS chunk."
+    })
     d_k: int = field(default=64, metadata={"help": "Router key dimension."})
     gamma: float = field(default=1.0, metadata={"help": "Score temperature for entmax."})
     num_heads: int = field(default=1, metadata={"help": "Number of selection heads (ANT/V2 only)."})
@@ -453,10 +463,14 @@ class CompositionalTrainer(Trainer):
             self._comp_sums[k] = self._comp_sums.get(k, 0.0) + v
             self._comp_counts[k] = self._comp_counts.get(k, 0) + 1
 
-        pop_metrics = getattr(
-            self.embed_shim.embed, "pop_step_metrics", None
-        )
-        if callable(pop_metrics):
+        metric_sources = [self.embed_shim.embed]
+        output_head = getattr(self.model, "lm_head", None)
+        if output_head is not None:
+            metric_sources.append(output_head)
+        for source in metric_sources:
+            pop_metrics = getattr(source, "pop_step_metrics", None)
+            if not callable(pop_metrics):
+                continue
             for key, (metric_sum, metric_count) in (pop_metrics() or {}).items():
                 if key in self._device_metric_sums:
                     self._device_metric_sums[key].add_(metric_sum.detach())
@@ -999,6 +1013,14 @@ def validate_output_configuration(comp_args):
         raise ValueError(
             "--independent_lowrank_output currently requires --arm lowrank"
         )
+    if comp_args.mos_components <= 0:
+        raise ValueError("--mos_components must be positive")
+    if comp_args.mos_context_rank <= 0:
+        raise ValueError("--mos_context_rank must be positive")
+    if comp_args.mos_chunk_size <= 0:
+        raise ValueError("--mos_chunk_size must be positive")
+    if comp_args.mos_components > 1 and not comp_args.tie_output:
+        raise ValueError("--mos_components > 1 requires --tie_output")
     if comp_args.arm in {
         "pure_local", "pvq", "slim", "groupreduce", "nested_ladder",
         "residual_subspace_experts", "product_code", "ranklift",
@@ -1276,7 +1298,32 @@ def validate_resume_compatibility(checkpoint_dir, comp_args,
             "lm_head." + key for key in expected_output_state
         }
     elif comp_args.tie_output:
-        expected_head_keys = set()
+        expected_output_state = (
+            expected_output_head.state_dict()
+            if expected_output_head is not None else {}
+        )
+        expected_head_keys = {
+            "lm_head." + key for key in expected_output_state
+        }
+        if expected_head_keys and actual_head_keys == expected_head_keys:
+            from compositional.loading import _load_checkpoint_tensors
+            saved_output_state = _load_checkpoint_tensors(
+                checkpoint_dir, expected_head_keys
+            )
+            output_shape_mismatches = {
+                key: (
+                    tuple(saved_output_state["lm_head." + key].shape),
+                    tuple(expected_output_state[key].shape),
+                )
+                for key in expected_output_state
+                if saved_output_state["lm_head." + key].shape
+                != expected_output_state[key].shape
+            }
+            if output_shape_mismatches:
+                raise ValueError(
+                    "Resume tied output has incompatible parameter shapes: "
+                    f"{output_shape_mismatches}"
+                )
     else:
         expected_head_keys = {"lm_head.weight"}
     if actual_head_keys != expected_head_keys:
@@ -1424,9 +1471,22 @@ def main():
     independent_output_head = None
     if comp_args.tie_output:
         from compositional.tied_head import make_tied_head
-        tied_head = make_tied_head(embed_module, comp_args.arm, config.vocab_size)
+        tied_head = make_tied_head(
+            embed_module,
+            comp_args.arm,
+            config.vocab_size,
+            mos_components=comp_args.mos_components,
+            mos_context_rank=comp_args.mos_context_rank,
+            mos_chunk_size=comp_args.mos_chunk_size,
+        )
         model.lm_head = tied_head
-        logger.info(f"Output tied to input embedding (lm_head replaced)")
+        logger.info(
+            "Output tied to input embedding (lm_head replaced; MoS K=%d, "
+            "context rank=%d, chunk=%d)",
+            comp_args.mos_components,
+            comp_args.mos_context_rank,
+            comp_args.mos_chunk_size,
+        )
     elif comp_args.independent_lowrank_output:
         from compositional.tied_head import IndependentLowRankHead
         independent_output_head = IndependentLowRankHead(embed_module)
@@ -1437,8 +1497,24 @@ def main():
         )
 
     emb_params = sum(p.numel() for p in embed_shim.parameters())
+    output_head_params = sum(p.numel() for p in model.lm_head.parameters())
     total_params = sum(p.numel() for p in model.parameters())
     logger.info(f"Embedding [{comp_args.arm}]: {emb_params:,} params (K={comp_args.K})")
+    if comp_args.tie_output and comp_args.mos_components > 1:
+        context_params = sum(
+            getattr(model.lm_head, name).numel()
+            for name in ("context_down", "context_up", "context_bias")
+        )
+        prior_params = sum(p.numel() for p in model.lm_head.prior.parameters())
+        logger.info(
+            "BT-MoS interface + head: blocks=%s contexts=%s prior=%s total=%s",
+            f"{emb_params:,}",
+            f"{context_params:,}",
+            f"{prior_params:,}",
+            f"{emb_params + context_params + prior_params:,}",
+        )
+    elif output_head_params:
+        logger.info("Output-head parameters: %s", f"{output_head_params:,}")
     logger.info(f"Output mode: {output_mode}")
     logger.info(f"Total params: {total_params:,}")
 
@@ -1532,7 +1608,10 @@ def main():
         comp_args,
         training_args,
         expected_embed_module=embed_module,
-        expected_output_head=independent_output_head,
+        expected_output_head=(
+            independent_output_head if independent_output_head is not None
+            else model.lm_head
+        ),
     )
 
     # Save train config BEFORE training — runs killed at a stop-step never reach

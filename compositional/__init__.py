@@ -27,3 +27,4 @@ from .compressed_baselines import (
 from .optimizers import Yogi
 from .losses import compute_loss
 from .loading import load_compositional_model, is_compositional
+from .mos_head import MixtureOfSoftmaxesHead

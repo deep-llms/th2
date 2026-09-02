@@ -521,6 +521,64 @@ def _validate_sidecar_values(checkpoint_dir, state, prefix, filename):
         )
 
 
+_MOS_HEAD_STATE_KEYS = {
+    "context_down", "context_up", "context_bias",
+    "prior.weight", "prior.bias",
+}
+
+
+def _expected_mos_head_keys(comp_config):
+    if int(comp_config.get("mos_components", 1)) <= 1:
+        return set()
+    return {"lm_head." + key for key in _MOS_HEAD_STATE_KEYS}
+
+
+def _infer_mos_config(head_state, embed_dim):
+    """Infer and validate MoS hyperparameters from unprefixed head tensors."""
+    if set(head_state) != _MOS_HEAD_STATE_KEYS:
+        raise ValueError(
+            "Unrecognized MoS output-head tensor schema: "
+            f"{sorted(head_state)}"
+        )
+    down = head_state["context_down"]
+    up = head_state["context_up"]
+    bias = head_state["context_bias"]
+    prior_weight = head_state["prior.weight"]
+    prior_bias = head_state["prior.bias"]
+    if down.ndim != 3:
+        raise ValueError("MoS context_down must be rank 3")
+    extra, context_rank, state_dim = down.shape
+    components = extra + 1
+    expected = {
+        "context_up": (extra, state_dim, context_rank),
+        "context_bias": (extra, state_dim),
+        "prior.weight": (components, state_dim),
+        "prior.bias": (components,),
+    }
+    tensors = {
+        "context_up": up,
+        "context_bias": bias,
+        "prior.weight": prior_weight,
+        "prior.bias": prior_bias,
+    }
+    mismatches = {
+        key: (tuple(tensors[key].shape), shape)
+        for key, shape in expected.items()
+        if tuple(tensors[key].shape) != shape
+    }
+    if state_dim != embed_dim:
+        mismatches["context_down.embed_dim"] = (state_dim, embed_dim)
+    if extra <= 0 or context_rank <= 0 or state_dim <= 0 or mismatches:
+        raise ValueError(
+            "Invalid MoS output-head tensor shapes: "
+            f"context_down={tuple(down.shape)}, mismatches={mismatches}"
+        )
+    return {
+        "mos_components": components,
+        "mos_context_rank": context_rank,
+    }
+
+
 def _infer_comp_config_from_state(state):
     """Infer arm + hyperparams from embedding.pt tensor names/shapes.
 
@@ -780,6 +838,8 @@ def is_compositional(checkpoint_dir):
         any(key.startswith("model.embed_tokens.embed.") for key in model_keys)
         or any(key in {"lm_head.X", "lm_head.proj_weight"}
                for key in model_keys)
+        or any(key.startswith("lm_head.context_")
+               or key.startswith("lm_head.prior.") for key in model_keys)
     )
 
 
@@ -806,6 +866,25 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
         checkpoint_dir, INDEPENDENT_OUTPUT_FILENAME
     )
     has_independent_output = os.path.isfile(output_head_path)
+
+    model_keys = _checkpoint_model_state_keys(checkpoint_dir)
+    actual_head_keys = {
+        key for key in model_keys if key.startswith("lm_head.")
+    }
+    actual_mos_keys = {
+        key for key in actual_head_keys
+        if key != "lm_head.weight"
+        and key not in {"lm_head.X", "lm_head.proj_weight"}
+    }
+    mos_head_state = {}
+    if actual_mos_keys:
+        prefixed_state = _load_checkpoint_tensors(
+            checkpoint_dir, actual_mos_keys
+        )
+        mos_head_state = {
+            key.removeprefix("lm_head."): value
+            for key, value in prefixed_state.items()
+        }
 
     config_path = _find_config_path(checkpoint_dir)
     if config_path is not None:
@@ -855,6 +934,40 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
         )
 
     config = AutoConfig.from_pretrained(checkpoint_dir)
+    if mos_head_state:
+        # Model hidden size is authoritative; embedding states do not share a
+        # universal tensor whose trailing dimension is d.
+        inferred_mos = _infer_mos_config(
+            mos_head_state, config.hidden_size
+        )
+        if config_path is not None:
+            mismatches = {
+                key: (
+                    comp_config.get(
+                        key, 1 if key == "mos_components" else 256
+                    ),
+                    value,
+                )
+                for key, value in inferred_mos.items()
+                if comp_config.get(
+                    key, 1 if key == "mos_components" else 256
+                ) != value
+            }
+            if mismatches:
+                raise ValueError(
+                    "MoS tensors do not match train_config.json: "
+                    f"{mismatches}"
+                )
+        else:
+            comp_config.update(inferred_mos)
+    if config_path is None and mos_head_state:
+        comp_config.update({
+            "tie_output": True,
+            "independent_lowrank_output": False,
+            # Chunk size is a runtime/memory choice and is not encoded in the
+            # weights. Use the training default for configless recovery.
+            "mos_chunk_size": 2048,
+        })
     load_kwargs = dict(config=config, torch_dtype=dtype)
     # Always inspect the stock-model load report. Custom heads appear as
     # unexpected keys while the native lm_head is missing; validating that
@@ -868,10 +981,24 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
         if key.startswith("lm_head.")
     }
     expected_independent_keys = {"lm_head.X", "lm_head.proj_weight"}
-    if unexpected_head_keys and unexpected_head_keys != expected_independent_keys:
+    if (config_path is None
+            and unexpected_head_keys == expected_independent_keys
+            and not has_independent_output):
+        raise FileNotFoundError(
+            "HF checkpoint contains an independent low-rank output head "
+            f"but {INDEPENDENT_OUTPUT_FILENAME} is missing"
+        )
+    expected_mos_keys = _expected_mos_head_keys(comp_config)
+    allowed_custom_head_keys = (
+        expected_independent_keys
+        if comp_config.get("independent_lowrank_output", False)
+        else expected_mos_keys
+    )
+    if unexpected_head_keys != allowed_custom_head_keys:
         raise ValueError(
-            "Unrecognized output-head tensors in HF checkpoint: "
-            f"{sorted(unexpected_head_keys)}"
+            "Output-head tensors in HF checkpoint do not match the requested "
+            f"topology (expected {sorted(allowed_custom_head_keys)}, found "
+            f"{sorted(unexpected_head_keys)})"
         )
     hf_has_independent_output = (
         unexpected_head_keys == expected_independent_keys
@@ -895,6 +1022,11 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
                 f"{INDEPENDENT_OUTPUT_FILENAME} exists, but the HF checkpoint "
                 "does not contain the matching independent head topology"
             )
+        if mos_head_state and not hf_missing_native_output:
+            raise ValueError(
+                "HF checkpoint contains both MoS tensors and a native dense "
+                "lm_head.weight"
+            )
         supported_tied_arms = {
             "lowrank", "global_lowrank", "shared_local", "pure_local",
             "pvq", "slim", "groupreduce", "nested_ladder",
@@ -903,7 +1035,7 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
             "original_ant", "ant",
             "residual_ant"
         }
-        if not has_independent_output:
+        if not has_independent_output and not mos_head_state:
             comp_config["tie_output"] = (
                 comp_config["arm"] in supported_tied_arms
                 and hf_missing_native_output
@@ -921,7 +1053,8 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
                     "but the HF checkpoint has a different head topology"
                 )
         elif configured_tied:
-            if hf_has_independent_output or not hf_missing_native_output:
+            if (hf_has_independent_output or not hf_missing_native_output
+                    or unexpected_head_keys != expected_mos_keys):
                 raise ValueError(
                     "train_config.json requests tied output, but the HF "
                     "checkpoint has a different head topology"
@@ -982,8 +1115,24 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
         model.lm_head = independent_head
     elif comp_config.get("tie_output", False):
         from .tied_head import make_tied_head
-        model.lm_head = make_tied_head(embed, comp_config["arm"],
-                                       config.vocab_size)
+        model.lm_head = make_tied_head(
+            embed,
+            comp_config["arm"],
+            config.vocab_size,
+            mos_components=comp_config.get("mos_components", 1),
+            mos_context_rank=comp_config.get("mos_context_rank", 256),
+            mos_chunk_size=comp_config.get("mos_chunk_size", 2048),
+        )
+        if mos_head_state:
+            model.lm_head.load_state_dict(mos_head_state, strict=True)
+        elif model.lm_head.state_dict():
+            raise FileNotFoundError(
+                "Checkpoint requests a parameterized tied output head but its "
+                "lm_head tensors are missing"
+            )
+        model.lm_head = model.lm_head.to(
+            dtype=dtype if dtype is not None else model_dtype
+        )
 
     model.to(device)
     model.eval()

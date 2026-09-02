@@ -348,6 +348,60 @@ EXPERIMENT_COMMANDS = [
             "rng_state_6.pth", "rng_state_7.pth",
         ],
     },
+    # Keep BT-MoS entries last: experiment indices are used by commands.sh.
+    {
+        "name": "groupreduce_matched_lb_t4",
+        "cmd": "bash scripts/train_groupreduce_matched_lb_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/groupreduce_matched_lb_t4",
+        "require_fresh_output": True,
+        "required_input_files": [
+            "${BTMOS_IMPORTANCE_PATH:-resources/token_importance_langbalanced.npz}",
+        ],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "btmos_k3_c256_lb",
+        "cmd": "bash scripts/train_btmos_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/btmos_k3_c256_lb",
+        "require_fresh_output": True,
+        "required_input_files": [
+            "${BTMOS_IMPORTANCE_PATH:-resources/token_importance_langbalanced.npz}",
+        ],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "btmos_k3_c256_lb_r512",
+        "cmd": (
+            "BTMOS_GROUP_RANKS=1024,512,192,64 "
+            "BTMOS_OUTPUT_DIR=${SPARSE_EMB_OUTPUT_BASE:-/mnt/local/_outputs/sparse_embedding}/btmos_k3_c256_lb_r512 "
+            "BTMOS_RUN_NAME=btmos-k3-c256-lb-r512-qwen3-0.6b "
+            "bash scripts/train_btmos_tied.sh"
+        ),
+        "output_dir": f"{B200_OUT_BASE}/btmos_k3_c256_lb_r512",
+        "require_fresh_output": True,
+        "required_input_files": [
+            "${BTMOS_IMPORTANCE_PATH:-resources/token_importance_langbalanced.npz}",
+        ],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
 ]
 
 
