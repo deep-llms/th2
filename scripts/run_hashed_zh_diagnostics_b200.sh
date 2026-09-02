@@ -11,6 +11,13 @@ TASK_PYTHON_CANDIDATES=(
     /mnt/local/conda/envs/eval/bin/python
     "$HOME/miniconda3/envs/eval/bin/python3.11"
     "$HOME/miniconda3/envs/eval/bin/python"
+    /mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
+    /mnt/local/conda-py311/envs/sparse_emb/bin/python
+    /mnt/local/conda/envs/sparse_emb/bin/python3.11
+    /mnt/local/conda/envs/sparse_emb/bin/python
+    "$HOME/miniconda3/envs/sparse_emb/bin/python3.11"
+    "$HOME/miniconda3/envs/sparse_emb/bin/python"
+    /usr/bin/python3
 )
 TASK_BURN_PYTHON=/usr/bin/python3
 TASK_BURN_SCRIPT=/tmp/llm_pretrain_burn.py
@@ -68,13 +75,25 @@ test -d "$TASK_PROJECT"
 cd "$TASK_PROJECT"
 echo "project=$TASK_PROJECT project_name=$TASK_PROJECT_NAME"
 for TASK_PYTHON_CANDIDATE in "${TASK_PYTHON_CANDIDATES[@]}"; do
-    if [[ -x "$TASK_PYTHON_CANDIDATE" ]]; then
+    if [[ -x "$TASK_PYTHON_CANDIDATE" ]] \
+        && "$TASK_PYTHON_CANDIDATE" - <<'PY' >/dev/null 2>&1
+import importlib.metadata
+import datasets
+import numpy
+import torch
+import tqdm
+import transformers
+
+assert importlib.metadata.version("transformers") == "5.9.0"
+assert importlib.metadata.version("datasets") == "4.8.5"
+PY
+    then
         TASK_PYTHON="$TASK_PYTHON_CANDIDATE"
         break
     fi
 done
 if [[ -z "$TASK_PYTHON" ]]; then
-    printf 'ERROR: eval Python not found; checked:\n' >&2
+    printf 'ERROR: no compatible diagnostic Python found; checked:\n' >&2
     printf '  %s\n' "${TASK_PYTHON_CANDIDATES[@]}" >&2
     exit 1
 fi
