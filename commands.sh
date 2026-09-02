@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-verify-final-rse-hashed-workflow-20260902-a04
+#th2-export-final-rse-hashed-eval-finetune-results-20260902-a01
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
@@ -241,3 +241,79 @@ fi
 [[ "$TASK_FATAL_FOUND" -eq 0 ]]
 echo 'NO_FATAL_SIGNATURE_FOUND'
 echo 'TH2 LIVE RSE HASHED EVAL FINETUNE AUDIT COMPLETE; WORKFLOW UNMODIFIED'
+
+echo '=== create compact result-only export; keep GPU burns untouched ==='
+TASK_EXPORT_DIR="$TASK_OUTPUT_BASE/result_exports"
+TASK_EXPORT_STEM=final_rse_hashed_eval_finetune_results_20260902
+TASK_ARCHIVE="$TASK_EXPORT_DIR/$TASK_EXPORT_STEM.tar.gz"
+TASK_MANIFEST="$TASK_EXPORT_DIR/$TASK_EXPORT_STEM.files"
+TASK_CHECKSUM="$TASK_ARCHIVE.sha256"
+
+mkdir -p "$TASK_EXPORT_DIR"
+for TASK_PATH in "$TASK_ARCHIVE" "$TASK_MANIFEST" "$TASK_CHECKSUM"; do
+    [[ ! -e "$TASK_PATH" ]] || {
+        echo "ERROR: refusing to overwrite existing export: $TASK_PATH" >&2
+        exit 1
+    }
+done
+
+cd "$TASK_OUTPUT_BASE"
+{
+    printf '%s\n' "${TASK_EVAL_LOG#"$TASK_OUTPUT_BASE/"}"
+    for TASK_EXPERIMENT in \
+        residual_subspace_experts_tied_g12_r120_q80 \
+        product_code_hashed_h2048; do
+        printf '%s\n' \
+            "$TASK_EXPERIMENT/checkpoint-10000/config.json" \
+            "$TASK_EXPERIMENT/checkpoint-10000/trainer_state.json" \
+            "$TASK_EXPERIMENT/checkpoint-10000/eval.log" \
+            "$TASK_EXPERIMENT/checkpoint-10000/eval_ppl.json" \
+            "$TASK_EXPERIMENT/checkpoint-10000/eval_benchmarks.json"
+        if [[ -s "$TASK_EXPERIMENT/train_config.json" ]]; then
+            printf '%s\n' "$TASK_EXPERIMENT/train_config.json"
+        fi
+    done
+    find "${TASK_FINETUNE_OUTPUT#"$TASK_OUTPUT_BASE/"}" -maxdepth 1 -type f \
+        \( -name '*.json' -o -name '*.log' -o -name 'summary.md' \) -print
+} | LC_ALL=C sort -u > "$TASK_MANIFEST"
+
+TASK_FILE_COUNT=$(wc -l < "$TASK_MANIFEST")
+[[ "$TASK_FILE_COUNT" -eq 50 ]] || {
+    echo "ERROR: expected 50 result files, found $TASK_FILE_COUNT" >&2
+    exit 1
+}
+while IFS= read -r TASK_RELATIVE_PATH; do
+    [[ -n "$TASK_RELATIVE_PATH" ]] || {
+        echo 'ERROR: empty manifest entry' >&2
+        exit 1
+    }
+    [[ -s "$TASK_RELATIVE_PATH" ]] || {
+        echo "ERROR: missing or empty result file: $TASK_RELATIVE_PATH" >&2
+        exit 1
+    }
+done < "$TASK_MANIFEST"
+
+tar -czf "$TASK_ARCHIVE" -T "$TASK_MANIFEST"
+(
+    cd "$TASK_EXPORT_DIR"
+    sha256sum "$(basename "$TASK_ARCHIVE")" > "$(basename "$TASK_CHECKSUM")"
+    sha256sum -c "$(basename "$TASK_CHECKSUM")"
+)
+gzip -t "$TASK_ARCHIVE"
+[[ "$(tar -tzf "$TASK_ARCHIVE" | wc -l)" -eq "$TASK_FILE_COUNT" ]]
+if tar -tzf "$TASK_ARCHIVE" \
+    | grep -E '(^|/)(model_state\.pt|model\.safetensors|embedding\.pt|optimizer\.pt|scheduler\.pt)$'; then
+    echo 'ERROR: model weights or optimizer state entered the result archive' >&2
+    exit 1
+fi
+TASK_ARCHIVE_BYTES=$(stat -c '%s' "$TASK_ARCHIVE")
+(( TASK_ARCHIVE_BYTES < 250000000 )) || {
+    echo "ERROR: result archive unexpectedly exceeds 250 MB: $TASK_ARCHIVE_BYTES" >&2
+    exit 1
+}
+
+echo "EXPORT_FILE_COUNT=$TASK_FILE_COUNT"
+echo "EXPORT_ARCHIVE_BYTES=$TASK_ARCHIVE_BYTES"
+cat "$TASK_CHECKSUM"
+ls -lh "$TASK_ARCHIVE" "$TASK_MANIFEST" "$TASK_CHECKSUM"
+echo 'TH2 FINAL RSE/HASHED EVAL+FINETUNE RESULT EXPORT READY; GPU BURNS UNTOUCHED'
