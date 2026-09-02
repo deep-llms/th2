@@ -23,6 +23,9 @@ merges disjoint language shards, which permits two one-GPU jobs per checkpoint:
 
 For every bin and arm the script reports PPL, realized type/training/eval mass,
 and, against ``--reference``, the exact contribution to the mean log-PPL gap.
+The JSON additionally records per-language values and equal-language means,
+so multilingual diagnostics do not accidentally substitute pooled token mass
+for the project's language-balanced reporting objective.
 """
 
 import argparse
@@ -265,7 +268,10 @@ def analyze(runs, bin_of_token, labels, reference, frequency_counts):
         "eval_token_share": (reference_counts / total_tokens).tolist(),
         "ppl": {},
         "per_language_ppl": {},
+        "mean_per_language_ppl": {},
         "gap_vs_reference": {},
+        "per_language_gap_vs_reference": {},
+        "mean_per_language_gap_vs_reference": {},
     }
     for name, (nll, count, per_language) in tables.items():
         result["ppl"][name] = [
@@ -279,6 +285,19 @@ def analyze(runs, bin_of_token, labels, reference, frequency_counts):
             ]
             for lang, (bin_nll, bin_count) in per_language.items()
         }
+        result["mean_per_language_ppl"][name] = [
+            float(np.mean([
+                values[index]
+                for values in result["per_language_ppl"][name].values()
+                if values[index] is not None
+            ]))
+            if any(
+                values[index] is not None
+                for values in result["per_language_ppl"][name].values()
+            )
+            else None
+            for index in range(num_bins)
+        ]
 
     if reference:
         reference_nll = tables[reference][0]
@@ -292,6 +311,43 @@ def analyze(runs, bin_of_token, labels, reference, frequency_counts):
                 "per_bin_contribution": contributions.tolist(),
                 "per_bin_share_of_gap": (
                     (contributions / total).tolist() if total != 0 else None
+                ),
+            }
+            language_gaps = {}
+            reference_by_language = tables[reference][2]
+            for lang, (lang_nll, lang_count) in tables[name][2].items():
+                reference_lang_nll = reference_by_language[lang][0]
+                language_total = int(lang_count.sum())
+                if language_total <= 0:
+                    raise ValueError(
+                        f"run {name!r} language {lang!r} has no eval targets"
+                    )
+                language_contributions = (
+                    lang_nll - reference_lang_nll
+                ) / language_total
+                language_total_gap = float(language_contributions.sum())
+                language_gaps[lang] = {
+                    "total_mean_log_ppl_gap": language_total_gap,
+                    "per_bin_contribution": language_contributions.tolist(),
+                    "per_bin_share_of_gap": (
+                        (language_contributions / language_total_gap).tolist()
+                        if language_total_gap != 0
+                        else None
+                    ),
+                }
+            result["per_language_gap_vs_reference"][name] = language_gaps
+            language_contribution_rows = np.asarray([
+                gap["per_bin_contribution"] for gap in language_gaps.values()
+            ], dtype=np.float64)
+            mean_language_contributions = language_contribution_rows.mean(axis=0)
+            mean_language_total_gap = float(mean_language_contributions.sum())
+            result["mean_per_language_gap_vs_reference"][name] = {
+                "total_mean_log_ppl_gap": mean_language_total_gap,
+                "per_bin_contribution": mean_language_contributions.tolist(),
+                "per_bin_share_of_gap": (
+                    (mean_language_contributions / mean_language_total_gap).tolist()
+                    if mean_language_total_gap != 0
+                    else None
                 ),
             }
     return result
