@@ -1,11 +1,13 @@
-#1 +90+a
-#th2-readonly-inventory-checkpoints-after-pod-return-20260902-a02
+#1 +60+a
+#th2-ensure-eight-runner-burns-20260902-a01
 set -euo pipefail
 
-TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
+TASK_BURN_SCRIPT=/tmp/llm_pretrain_burn.py
+test -s "$TASK_BURN_SCRIPT"
+grep -F 'init_process_group' "$TASK_BURN_SCRIPT"
+grep -F 'all_reduce' "$TASK_BURN_SCRIPT"
 
-echo '=== machine and GPUs ==='
+echo '=== preflight: machine and current GPU ownership ==='
 date -u
 hostname
 nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power.draw \
@@ -13,63 +15,83 @@ nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power
 nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory \
     --format=csv,noheader,nounits || true
 
-echo '=== storage ==='
-df -h /mnt/local
-du -sh "$TASK_OUTPUT_BASE" 2>/dev/null || true
+mapfile -t TASK_GPU_PIDS < <(
+    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
+        | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
+)
 
-echo '=== complete checkpoint inventory and structural validation ==='
-test -x "$TASK_PYTHON"
-test -d "$TASK_OUTPUT_BASE"
-"$TASK_PYTHON" - "$TASK_OUTPUT_BASE" <<'PY'
-import json
+if [[ "${#TASK_GPU_PIDS[@]}" -eq 0 ]]; then
+    echo 'No GPU compute process is active; starting the runner burn on all eight GPUs.'
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python3 "$TASK_BURN_SCRIPT" &
+    sleep 15
+else
+    echo "Found ${#TASK_GPU_PIDS[@]} existing GPU compute process(es); validating ownership without killing anything."
+    TASK_PID_CSV="$(IFS=,; echo "${TASK_GPU_PIDS[*]}")"
+    python3 - "$TASK_PID_CSV" "$TASK_BURN_SCRIPT" <<'PY'
 from pathlib import Path
 import sys
 
-root = Path(sys.argv[1])
-checkpoints = sorted(
-    root.glob("*/checkpoint-*"),
-    key=lambda path: (path.parent.name, int(path.name.removeprefix("checkpoint-"))),
-)
-print(f"output_root={root} checkpoint_count={len(checkpoints)}")
-assert checkpoints, "no checkpoints found"
-bad = []
-for checkpoint in checkpoints:
-    step_text = checkpoint.name.removeprefix("checkpoint-")
-    # Dense Qwen checkpoints intentionally have no separate embedding.pt;
-    # require only artifacts common to dense and compositional checkpoints.
-    required = ("config.json", "model.safetensors", "trainer_state.json")
-    missing = [
-        name for name in required
-        if not (checkpoint / name).is_file() or (checkpoint / name).stat().st_size == 0
-    ]
-    state_step = None
-    try:
-        state = json.loads((checkpoint / "trainer_state.json").read_text())
-        state_step = int(state["global_step"])
-    except Exception as error:
-        missing.append(f"invalid trainer_state.json: {error}")
-    if state_step is not None and state_step != int(step_text):
-        missing.append(f"trainer_state_step={state_step}")
-    status = "OK" if not missing else f"BAD {missing}"
-    print(f"{checkpoint.relative_to(root)} | {status}")
-    if missing:
-        bad.append((str(checkpoint), missing))
-print(f"checkpoint_count={len(checkpoints)} invalid_count={len(bad)}")
-assert not bad, bad
-print("ALL_DISCOVERED_CHECKPOINTS_STRUCTURALLY_VALID")
-PY
+pids = [int(value) for value in sys.argv[1].split(",") if value]
+needle = sys.argv[2]
 
-echo '=== latest checkpoint per experiment ==='
-for TASK_DIR in "$TASK_OUTPUT_BASE"/*; do
-    [[ -d "$TASK_DIR" ]] || continue
-    TASK_LATEST="$(find "$TASK_DIR" -maxdepth 1 -type d -name 'checkpoint-*' -printf '%f\n' 2>/dev/null | sort -V | tail -n 1)"
-    [[ -n "$TASK_LATEST" ]] && printf '%s | %s\n' "$(basename "$TASK_DIR")" "$TASK_LATEST"
+def cmdline(pid):
+    try:
+        return Path(f"/proc/{pid}/cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace")
+    except OSError:
+        return ""
+
+def parent(pid):
+    try:
+        fields = Path(f"/proc/{pid}/stat").read_text().split()
+        return int(fields[3])
+    except (OSError, ValueError, IndexError):
+        return 0
+
+unexpected = []
+for pid in pids:
+    chain = []
+    current = pid
+    seen = set()
+    owned = False
+    while current > 1 and current not in seen:
+        seen.add(current)
+        command = cmdline(current)
+        chain.append((current, command))
+        if needle in command:
+            owned = True
+        current = parent(current)
+    print(f"gpu_pid={pid} burn_owned={owned} ancestry={chain}")
+    if not owned:
+        unexpected.append(pid)
+
+if unexpected:
+    raise SystemExit(f"REFUSE TO START BURN: unexpected GPU process(es): {unexpected}")
+if len(pids) != 8:
+    raise SystemExit(f"REFUSE TO MODIFY PARTIAL BURN: expected 8 workers, found {len(pids)}")
+print("EXISTING_EIGHT_GPU_BURNS_VERIFIED; NO NEW BURN STARTED")
+PY
+fi
+
+echo '=== postflight: require one active compute worker per B200 ==='
+for TASK_SAMPLE in 1 2 3; do
+    echo "sample=$TASK_SAMPLE"
+    nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power.draw \
+        --format=csv,noheader,nounits
+    sleep 3
 done
 
-echo '=== final-interface smoke and RankLift state ==='
-find "$TASK_OUTPUT_BASE/final_interfaces_smoke_20260902" -maxdepth 3 -type f \
-    -printf '%s %p\n' 2>/dev/null | sort || true
-find "$TASK_OUTPUT_BASE/ranklift_tied_c124_m460" -maxdepth 1 -type d \
-    -name 'checkpoint-*' -printf '%f\n' 2>/dev/null | sort -V || true
+mapfile -t TASK_FINAL_PIDS < <(
+    nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits \
+        | awk 'NF {gsub(/[[:space:]]/, "", $0); print}' | sort -nu
+)
+test "${#TASK_FINAL_PIDS[@]}" -eq 8
+mapfile -t TASK_FINAL_APPS < <(
+    nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory \
+        --format=csv,noheader,nounits
+)
+printf '%s\n' "${TASK_FINAL_APPS[@]}"
+test "${#TASK_FINAL_APPS[@]}" -eq 8
+TASK_FINAL_UUID_COUNT="$(printf '%s\n' "${TASK_FINAL_APPS[@]}" | cut -d, -f1 | sort -u | wc -l)"
+test "$TASK_FINAL_UUID_COUNT" -eq 8
 
-echo 'TH2 READONLY CHECKPOINT INVENTORY COMPLETE; NOTHING MODIFIED'
+echo 'TH2 EIGHT-GPU RUNNER BURN ACTIVE'
