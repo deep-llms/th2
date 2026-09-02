@@ -281,10 +281,9 @@ assert {int(pid_text) for _, pid_text in rows} == set(pids), rows
 assert len({uuid for uuid, _ in rows}) == 8, rows
 print(f"VERIFIED_RUNNER_BURN_TREE launcher={launcher} workers={pids}")
 PY
-# All targets were validated above.  Kill the GPU workers and their non-PID-1
-# launcher in one operation so a quickly exiting spawn parent cannot be reused
-# between separate kill commands.
-kill -9 "${TASK_INITIAL_GPU_PIDS[@]}" "$TASK_OLD_BURN_LAUNCHER" 2>/dev/null || true
+# Kill only the verified GPU compute workers returned by nvidia-smi.  Do not
+# signal the launcher or use a command-line pattern matching the burn path.
+kill -9 "${TASK_INITIAL_GPU_PIDS[@]}" 2>/dev/null || true
 sleep 30
 require_free_gpus '30 SECONDS AFTER VERIFIED BURN CANCELLATION'
 
