@@ -1,5 +1,5 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/result_exports/final_rse_hashed_eval_finetune_results_20260902.tar.gz,/mnt/local/_outputs/deep-llms_th2/result_exports/final_rse_hashed_eval_finetune_results_20260902.tar.gz.sha256,/mnt/local/_outputs/deep-llms_th2/result_exports/final_rse_hashed_eval_finetune_results_20260902.files
-#th2-pull-final-rse-hashed-eval-finetune-results-20260902-a01
+#0
+#th2-idle-after-final-rse-hashed-result-pull-20260902
 set -euo pipefail
 
 TASK_PROJECT_DIR=/mnt/local/@PROJECT@
