@@ -114,10 +114,10 @@ class BurnManager:
             die(f"burn does not own exactly one process per GPU: {app_rows}")
         for pid in pids:
             os.kill(pid, signal.SIGKILL)
-        try:
-            os.kill(launcher, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        # Kill only the verified GPU compute workers returned by nvidia-smi.
+        # Do not signal the launcher: the documented safe transition targets
+        # GPU owners only.  The multiprocessing launcher exits after its
+        # workers are gone.
         time.sleep(30)
         require_free("AFTER_VERIFIED_BURN_STOP")
 
