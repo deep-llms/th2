@@ -17,6 +17,9 @@ For each embedding architecture, we use the most efficient computation:
   NestedLadder:   additive factored projections into nested vocabulary subsets
   ResidualExperts: global factorization + grouped top-k residual projections
   ProductCode:    materialize the V x d table from codes once, then one dense GEMM
+  RankLift:       nonlinear V x m features + one width-m vocabulary GEMM
+  Funneling:      ReLU token factors + one factored vocabulary GEMM
+  DeFINE:         hidden-to-map projection + tied low-dimensional token table
   TT:             reverse TT-matrix contraction
   OriginalANT:    logits = (hidden @ A.T) @ T.T              (factored via T and A)
   ANTEmbed:       logits = hidden @ materialize(all_ids).T    (must materialize, batched)
@@ -357,6 +360,46 @@ class TiedProductCodeHead(_TiedHeadBase):
         return hidden_states @ table.T                               # (..., V)
 
 
+class TiedRankLiftHead(_TiedHeadBase):
+    """Exact RankLift output without materializing the ``V x d`` table."""
+
+    def forward(self, hidden_states):
+        embed = self.embed
+        features = embed.materialize_features()                    # (V, m)
+        projected = hidden_states @ embed.projection.weight        # (..., m)
+        logits = projected @ features.T                            # (..., V)
+        if embed.projection.bias is not None:
+            # Matmul backward saves its inputs, not this output. In-place
+            # broadcast accumulation therefore preserves exact gradients and
+            # avoids allocating a second full (..., V) logits tensor.
+            logits.add_((
+                hidden_states @ embed.projection.bias
+            ).unsqueeze(-1))
+        return logits
+
+
+class TiedFunnelingHead(_TiedHeadBase):
+    """Exact tied output for the width-preserving nonlinear control."""
+
+    def forward(self, hidden_states):
+        embed = self.embed
+        return _factorized_low_rank_logits(
+            hidden_states,
+            embed.materialize_features(),
+            embed.projection.weight,
+            embed.projection.bias,
+        )
+
+
+class TiedDeFINEHead(_TiedHeadBase):
+    """DeFINE's tied low-dimensional map and flat vocabulary classifier."""
+
+    def forward(self, hidden_states):
+        embed = self.embed
+        projected = embed.output_projection(hidden_states)
+        return projected @ embed.token_codes.T
+
+
 class TiedTTHead(_TiedHeadBase):
     """Exact tied output using the TT-matrix contraction implemented by TTEmbedding."""
 
@@ -437,6 +480,12 @@ def make_tied_head(embed, embed_type, vocab_size):
         return TiedResidualSubspaceExpertsHead(embed)
     if embed_type == "product_code":
         return TiedProductCodeHead(embed)
+    if embed_type == "ranklift":
+        return TiedRankLiftHead(embed)
+    if embed_type == "funneling":
+        return TiedFunnelingHead(embed)
+    if embed_type == "define":
+        return TiedDeFINEHead(embed)
     if embed_type == "tt":
         return TiedTTHead(embed)
     if embed_type == "original_ant":
@@ -446,7 +495,8 @@ def make_tied_head(embed, embed_type, vocab_size):
     raise ValueError(
         f"Cannot tie output for embed_type={embed_type}. Supported types are "
         "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
-        "groupreduce, nested_ladder, residual_subspace_experts, product_code, tt, "
+        "groupreduce, nested_ladder, residual_subspace_experts, product_code, "
+        "ranklift, funneling, define, tt, "
         "original_ant, ant, and residual_ant; v0, v1, v2, and "
         "isolation_control are context-dependent and cannot be tied."
     )

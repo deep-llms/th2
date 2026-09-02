@@ -40,7 +40,8 @@ from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
     IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed, PureLocalEmbed,
     PVQEmbed, SlimEmbed, GroupReduceEmbed, NestedLadderEmbed, ProductCodeEmbed,
-    ResidualSubspaceExpertsEmbed, TTEmbedding,
+    ResidualSubspaceExpertsEmbed, TTEmbedding, RankLiftEmbed, FunnelingEmbed,
+    DeFINEEmbed,
 )
 from compositional.compressed_baselines import (
     balanced_exact_modes,
@@ -121,7 +122,8 @@ class CompositionalArguments:
                         "isolation_control", "lowrank", "global_lowrank",
                         "shared_local", "pure_local", "pvq", "slim",
                         "groupreduce", "nested_ladder",
-                        "residual_subspace_experts", "product_code", "tt"],
+                        "residual_subspace_experts", "product_code",
+                        "ranklift", "funneling", "define", "tt"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
@@ -254,6 +256,27 @@ class CompositionalArguments:
     product_code_seed: int = field(default=0, metadata={
         "help": "Seed for the keyed hash (hashed assignment only)."
     })
+    ranklift_code_dim: int = field(default=124, metadata={
+        "help": "Private per-token code width for RankLift."
+    })
+    ranklift_lift_dim: int = field(default=336, metadata={
+        "help": "Nonlinear shared feature width added by RankLift."
+    })
+    ranklift_rms_eps: float = field(default=1e-6, metadata={
+        "help": "Positive epsilon for RankLift's parameter-free RMSNorm."
+    })
+    funneling_rank: int = field(default=128, metadata={
+        "help": "Bottleneck width of the from-scratch Funneling control."
+    })
+    define_code_dim: int = field(default=112, metadata={
+        "help": "Low-dimensional map and tied classifier width for DeFINE."
+    })
+    define_expansion_dims: str = field(default="656,1184,1724", metadata={
+        "help": "Comma-separated DeFINE HGT expansion widths."
+    })
+    define_group_counts: str = field(default="16,8,4", metadata={
+        "help": "Comma-separated DeFINE group counts, one per expansion."
+    })
     tt_order: int = field(default=3, metadata={
         "help": "TT matrix order used when explicit shapes are omitted."
     })
@@ -279,6 +302,9 @@ class CompositionalArguments:
                 "implementation; 'direct' is an optimized tied adaptation.",
         "choices": ["materialize", "direct"],
     })
+    tt_materialize_chunk_size: int = field(default=1024, metadata={
+        "help": "Rows per activation-checkpointed TT table chunk."
+    })
     d_k: int = field(default=64, metadata={"help": "Router key dimension."})
     gamma: float = field(default=1.0, metadata={"help": "Score temperature for entmax."})
     num_heads: int = field(default=1, metadata={"help": "Number of selection heads (ANT/V2 only)."})
@@ -293,7 +319,8 @@ class CompositionalArguments:
                 "output logits from the embedding module's own weights. "
                 "Supported for lowrank/global_lowrank, shared_local, pure_local, "
                 "pvq, slim, groupreduce, nested_ladder, "
-                "residual_subspace_experts, product_code, tt, "
+                "residual_subspace_experts, product_code, ranklift, "
+                "funneling, define, tt, "
                 "original_ant, ant, and residual_ant; not supported "
                 "for context-dependent arms (v0, v1, v2, isolation_control).",
     })
@@ -896,6 +923,34 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
                     "--product_code_head_size"
                 )
         return module
+    if ca.arm == "ranklift":
+        return RankLiftEmbed(
+            vocab_size,
+            embed_dim,
+            code_dim=ca.ranklift_code_dim,
+            lift_dim=ca.ranklift_lift_dim,
+            rms_eps=ca.ranklift_rms_eps,
+        )
+    if ca.arm == "funneling":
+        return FunnelingEmbed(
+            vocab_size,
+            embed_dim,
+            rank=ca.funneling_rank,
+        )
+    if ca.arm == "define":
+        expansion_dims = _parse_int_list(
+            ca.define_expansion_dims, name="define_expansion_dims"
+        )
+        group_counts = _parse_int_list(
+            ca.define_group_counts, name="define_group_counts"
+        )
+        return DeFINEEmbed(
+            vocab_size,
+            embed_dim,
+            code_dim=ca.define_code_dim,
+            expansion_dims=expansion_dims,
+            group_counts=group_counts,
+        )
     if ca.arm == "tt":
         vocab_modes = _parse_int_list(ca.tt_vocab_shape, name="tt_vocab_shape")
         embedding_modes = _parse_int_list(
@@ -916,6 +971,7 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
             tt_ranks=ranks,
             target_std=(ca.tt_target_std or None),
             implementation=ca.tt_implementation,
+            materialize_chunk_size=ca.tt_materialize_chunk_size,
         )
     if ca.arm == "ant":
         return ANTEmbed(vocab_size, ca.K, embed_dim, **shared, num_heads=ca.num_heads)
@@ -945,7 +1001,8 @@ def validate_output_configuration(comp_args):
         )
     if comp_args.arm in {
         "pure_local", "pvq", "slim", "groupreduce", "nested_ladder",
-        "residual_subspace_experts", "product_code", "tt"
+        "residual_subspace_experts", "product_code", "ranklift",
+        "funneling", "define", "tt",
     } and not comp_args.tie_output:
         raise ValueError(
             f"--arm {comp_args.arm} requires --tie_output for the compressed "

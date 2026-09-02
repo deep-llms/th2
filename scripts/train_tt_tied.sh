@@ -1,6 +1,7 @@
 #!/bin/bash
 # Exactly tied adaptation of TT-Embedding at a near-LR128 parameter budget.
-# The materialize path matches the released paper implementation.
+# The output table is materialized in activation-checkpointed chunks; this is
+# algebraically exact and avoids the full-vocabulary TT intermediate OOM.
 
 set -euo pipefail
 
@@ -64,4 +65,5 @@ sleep 3
     --tt_embedding_shape 8,8,16 \
     --tt_ranks 219,219 \
     --tt_implementation materialize \
+    --tt_materialize_chunk_size 1024 \
     --tie_output

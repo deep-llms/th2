@@ -36,7 +36,7 @@ from collections.abc import Iterable, Sequence
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint
 
 
 def _as_long_vector(values, *, name, length=None):
@@ -553,6 +553,7 @@ class TTEmbedding(nn.Module):
         tt_ranks,
         target_std=None,
         implementation="materialize",
+        materialize_chunk_size=1024,
     ):
         super().__init__()
         vocab_modes = _normalize_modes(vocab_modes, name="vocab_modes")
@@ -597,6 +598,8 @@ class TTEmbedding(nn.Module):
             raise ValueError(
                 "TT implementation must be 'materialize' or 'direct'"
             )
+        if materialize_chunk_size <= 0:
+            raise ValueError("materialize_chunk_size must be positive")
 
         self.vocab_size = int(vocab_size)
         self.embed_dim = int(embed_dim)
@@ -607,6 +610,7 @@ class TTEmbedding(nn.Module):
         self.padded_vocab_size = padded_vocab_size
         self.target_std = float(target_std)
         self.implementation = implementation
+        self.materialize_chunk_size = int(materialize_chunk_size)
 
         # If unit-variance cores are used, one effective table element has
         # variance equal to the number of rank paths (product internal ranks).
@@ -623,7 +627,7 @@ class TTEmbedding(nn.Module):
             for k in range(order)
         ])
 
-    def _lookup(self, input_ids):
+    def _lookup_from_cores(self, input_ids, cores):
         flat_ids = input_ids.reshape(-1)
         if flat_ids.numel() and flat_ids.min().item() < 0:
             raise IndexError("input token id is negative")
@@ -632,10 +636,10 @@ class TTEmbedding(nn.Module):
         digits = _mixed_radix_digits(flat_ids, self.vocab_modes)
 
         # First selected core has shape (B, J_0, r_1), since r_0=1.
-        state = self.cores[0][0, digits[0], :, :]
+        state = cores[0][0, digits[0], :, :]
         for position in range(1, self.order):
             # selected: (B, r_k, J_k, r_{k+1})
-            selected = self.cores[position][:, digits[position], :, :].permute(
+            selected = cores[position][:, digits[position], :, :].permute(
                 1, 0, 2, 3
             )
             # state: (B, prod(J_<k), r_k)
@@ -646,25 +650,55 @@ class TTEmbedding(nn.Module):
         )
         return embeddings
 
+    def _lookup(self, input_ids):
+        return self._lookup_from_cores(input_ids, tuple(self.cores))
+
     def materialize(self):
-        """Construct the padded ordinary matrix from the TT cores."""
-        all_rows = torch.arange(
-            self.padded_vocab_size, device=self.cores[0].device
+        """Construct the padded table without retaining full-row intermediates.
+
+        A single ``_lookup(arange(V))`` expands production TT intermediates to
+        roughly 123 GB at the repository's r=219 configuration. Chunking
+        limits the live forward workspace. During training, non-reentrant
+        activation checkpointing recomputes each chunk in backward instead of
+        retaining every chunk's TT contraction graph; the final V x d table is
+        still live because the vocabulary GEMM requires it.
+        """
+        chunks = []
+        cores = tuple(self.cores)
+        use_checkpoint = torch.is_grad_enabled() and any(
+            core.requires_grad for core in cores
         )
-        return self._lookup(all_rows)
+        for start in range(
+            0, self.padded_vocab_size, self.materialize_chunk_size
+        ):
+            rows = torch.arange(
+                start,
+                min(start + self.materialize_chunk_size, self.padded_vocab_size),
+                device=self.cores[0].device,
+            )
+            if use_checkpoint:
+                chunk = checkpoint(
+                    lambda row_ids, *core_args: self._lookup_from_cores(
+                        row_ids, core_args
+                    ),
+                    rows,
+                    *cores,
+                    use_reentrant=False,
+                )
+            else:
+                chunk = self._lookup_from_cores(rows, cores)
+            chunks.append(chunk)
+        return torch.cat(chunks, dim=0)
 
     def forward(self, input_ids, doc_mask=None):
         if input_ids.numel() and (
             input_ids.min().item() < 0 or input_ids.max().item() >= self.vocab_size
         ):
             raise IndexError("input token id is outside the configured vocabulary")
-        if self.implementation == "materialize":
-            embedding = F.embedding(
-                input_ids, self.materialize()[:self.vocab_size]
-            )
-        else:
-            embedding = self._lookup(input_ids)
-        return embedding, None
+        # Selected-row contraction is exact and avoids constructing V x d for
+        # the input path. ``implementation`` controls only the tied output
+        # algebra, where all vocabulary rows are necessarily involved.
+        return self._lookup(input_ids), None
 
     def project_hidden(self, hidden_states):
         """Compute exact tied full-vocabulary logits by TT contraction."""
