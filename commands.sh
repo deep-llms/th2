@@ -1,2 +1,3 @@
-#2 +a
-#th2-pull-culturax-verification-20260902-a18
+#d +a
+#models
+--hf Qwen/Qwen3-0.6B /mnt/local/_models/@PROJECT@/Qwen3-0.6B
