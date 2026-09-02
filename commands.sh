@@ -1,45 +1,30 @@
 #1 +60+a
-#th2-readonly-inventory-diagnostic-data-20260902-a11
+#th2-readonly-locate-diagnostic-assets-20260902-a12
 set -euo pipefail
 
-echo '=== read-only diagnostic data/model inventory; burns are not modified ==='
+echo '=== read-only locate diagnostic assets across /mnt/local; burns unchanged ==='
 date -u
 hostname
 
-for TASK_ROOT in \
-    /mnt/local/_data/@PROJECT@ \
-    /mnt/local/_models/@PROJECT@ \
-    /mnt/local/_outputs/@PROJECT@; do
-    echo "--- root: $TASK_ROOT ---"
-    if [[ -d "$TASK_ROOT" ]]; then
-        find "$TASK_ROOT" -maxdepth 7 \
-            \( -type d -o -type f \) \
-            \( -name eval -o -name ar -o -name de -o -name en -o -name ru \
-               -o -name vi -o -name zh -o -name config.json \
-               -o -name eval_ppl_bytoken.npz -o -name 'tokenized_data_*' \) \
-            -print 2>/dev/null | sort | sed -n '1,500p'
-    else
-        echo 'MISSING ROOT'
-    fi
-done
+echo '=== top-level mount namespaces ==='
+find /mnt/local -mindepth 1 -maxdepth 2 -type d -print 2>/dev/null \
+    | sort | sed -n '1,500p'
 
-echo '=== required checkpoint roots ==='
-for TASK_ROOT in \
-    /mnt/local/_outputs/@PROJECT@/product_code_hashed_h2048 \
-    /mnt/local/_outputs/@PROJECT@/groupreduce_matched_nested_tied_t4 \
-    /mnt/local/_outputs/@PROJECT@/frequency_binned_ppl_four_10k_20260831_a03/merged; do
-    if [[ -d "$TASK_ROOT" ]]; then
-        du -sh "$TASK_ROOT"
-        find "$TASK_ROOT" -maxdepth 2 -type f \
-            \( -name eval_ppl_bytoken.npz -o -name eval_ppl.json \
-               -o -name trainer_state.json -o -name train_config.json \) \
-            -print | sort
-    else
-        echo "MISSING: $TASK_ROOT"
-    fi
-done
+echo '=== exact experiment and model directories ==='
+find /mnt/local -xdev -maxdepth 6 -type d \
+    \( -name product_code_hashed_h2048 \
+       -o -name groupreduce_matched_nested_tied_t4 \
+       -o -name frequency_binned_ppl_four_10k_20260831_a03 \
+       -o -name Qwen3-0.6B -o -name Qwen_Qwen3-0.6B \) \
+    -print 2>/dev/null | sort
+
+echo '=== diagnostic files and checkpoint-10000 parents ==='
+find /mnt/local -xdev -maxdepth 8 \
+    \( -type d -name checkpoint-10000 \
+       -o -type f -name eval_ppl_bytoken.npz \) \
+    -print 2>/dev/null | sort | sed -n '1,1000p'
 
 echo '=== GPU state unchanged ==='
 nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power.draw \
     --format=csv,noheader,nounits
-echo 'TH2 READONLY DIAGNOSTIC DATA INVENTORY COMPLETE'
+echo 'TH2 READONLY DIAGNOSTIC ASSET LOCATION COMPLETE'
