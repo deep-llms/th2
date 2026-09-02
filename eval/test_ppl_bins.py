@@ -72,6 +72,27 @@ class PPLBinsTest(unittest.TestCase):
         self.assertAlmostEqual(
             sum(gap["per_bin_contribution"]), gap["total_mean_log_ppl_gap"]
         )
+        self.assertEqual(
+            set(report["per_language_gap_vs_reference"]["candidate"]),
+            {"de", "en"},
+        )
+        for language_gap in report["per_language_gap_vs_reference"][
+            "candidate"
+        ].values():
+            self.assertAlmostEqual(
+                sum(language_gap["per_bin_contribution"]),
+                language_gap["total_mean_log_ppl_gap"],
+            )
+        mean_language_gap = report["mean_per_language_gap_vs_reference"][
+            "candidate"
+        ]
+        self.assertAlmostEqual(
+            sum(mean_language_gap["per_bin_contribution"]),
+            mean_language_gap["total_mean_log_ppl_gap"],
+        )
+        self.assertEqual(
+            len(report["mean_per_language_ppl"]["candidate"]), 2
+        )
 
         mismatched = {
             lang: (nll.copy(), count.copy())
