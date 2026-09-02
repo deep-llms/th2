@@ -33,6 +33,7 @@ TASK_DENSE_BYTOKEN="$TASK_REFERENCE_ROOT/dense_ddp_false_eval_ppl_bytoken.npz"
 TASK_CONTROL_BYTOKEN="$TASK_REFERENCE_ROOT/groupreduce_t4_eval_ppl_bytoken.npz"
 TASK_COUNTS_RAW="$TASK_PROJECT/resources/token_freq_sample10.npz"
 TASK_COUNTS_BALANCED="$TASK_PROJECT/resources/token_importance_langbalanced.npz"
+TASK_COUNTS_BALANCED_META="$TASK_PROJECT/resources/token_importance_langbalanced.json"
 TASK_RESULT_ROOT="$TASK_OUTPUT_BASE/hashed_zh_diagnostics_20260902_a01"
 TASK_EXPORT_DIR="$TASK_OUTPUT_BASE/result_exports"
 TASK_EXPORT="$TASK_EXPORT_DIR/hashed_zh_diagnostics_20260902_a01.tar.gz"
@@ -68,10 +69,31 @@ verify_direct_children() {
     done
 }
 
+require_file() {
+    [[ -s "$1" ]] || {
+        echo "ERROR: required nonempty file is missing: $1" >&2
+        exit 1
+    }
+}
+
+require_dir() {
+    [[ -d "$1" ]] || {
+        echo "ERROR: required directory is missing: $1" >&2
+        exit 1
+    }
+}
+
+require_absent() {
+    [[ ! -e "$1" ]] || {
+        echo "ERROR: refusing to overwrite existing path: $1" >&2
+        exit 1
+    }
+}
+
 echo '=== immutable preflight before changing GPU state ==='
 date -u
 hostname
-test -d "$TASK_PROJECT"
+require_dir "$TASK_PROJECT"
 cd "$TASK_PROJECT"
 echo "project=$TASK_PROJECT project_name=$TASK_PROJECT_NAME"
 for TASK_PYTHON_CANDIDATE in "${TASK_PYTHON_CANDIDATES[@]}"; do
@@ -98,46 +120,52 @@ if [[ -z "$TASK_PYTHON" ]]; then
     exit 1
 fi
 echo "eval_python=$TASK_PYTHON"
-test -x "$TASK_BURN_PYTHON"
-test -s "$TASK_BURN_SCRIPT"
+[[ -x "$TASK_BURN_PYTHON" ]] || {
+    echo "ERROR: burn Python is not executable: $TASK_BURN_PYTHON" >&2
+    exit 1
+}
+require_file "$TASK_BURN_SCRIPT"
 echo "$TASK_BURN_SHA  $TASK_BURN_SCRIPT" | sha256sum -c -
 grep -F 'init_process_group(backend="nccl"' "$TASK_BURN_SCRIPT"
 grep -F 'dist.all_reduce' "$TASK_BURN_SCRIPT"
-test -s "$TASK_PROJECT/eval/ppl_bytoken.py"
-test -s "$TASK_PROJECT/eval/ppl_bins.py"
-test -s "$TASK_PROJECT/eval/hashed_zh_diagnostics.py"
+require_file "$TASK_PROJECT/eval/ppl_bytoken.py"
+require_file "$TASK_PROJECT/eval/ppl_bins.py"
+require_file "$TASK_PROJECT/eval/hashed_zh_diagnostics.py"
 sha256sum \
     "$TASK_PROJECT/eval/ppl_bytoken.py" \
     "$TASK_PROJECT/eval/ppl_bins.py" \
     "$TASK_PROJECT/eval/hashed_zh_diagnostics.py" \
     "$TASK_PROJECT/scripts/run_hashed_zh_diagnostics_b200.sh"
-test -s "$TASK_COUNTS_RAW"
-test -s "$TASK_COUNTS_BALANCED"
-test -d "$TASK_DATA_DIR"
-test -d "$TASK_TOKENIZER"
-test -s "$TASK_DENSE_BYTOKEN"
-test -s "$TASK_CONTROL_BYTOKEN"
-test ! -e "$TASK_RESULT_ROOT"
-test ! -e "$TASK_EXPORT"
-test ! -e "$TASK_EXPORT.sha256"
+require_file "$TASK_COUNTS_RAW"
+require_file "$TASK_COUNTS_BALANCED"
+require_file "$TASK_COUNTS_BALANCED_META"
+require_dir "$TASK_DATA_DIR"
+require_dir "$TASK_TOKENIZER"
+require_file "$TASK_DENSE_BYTOKEN"
+require_file "$TASK_CONTROL_BYTOKEN"
+require_absent "$TASK_RESULT_ROOT"
+require_absent "$TASK_EXPORT"
+require_absent "$TASK_EXPORT.sha256"
 
 for TASK_LANG in "${TASK_LANGUAGES[@]}"; do
-    test -d "$TASK_DATA_DIR/$TASK_LANG"
+    require_dir "$TASK_DATA_DIR/$TASK_LANG"
 done
 for TASK_STEP in "${TASK_TRAJECTORY_STEPS[@]}"; do
     for TASK_MODEL_ROOT in "$TASK_HASHED_ROOT" "$TASK_CONTROL_ROOT"; do
         TASK_CKPT="$TASK_MODEL_ROOT/checkpoint-$TASK_STEP"
-        test -d "$TASK_CKPT"
-        test -s "$TASK_CKPT/config.json"
-        test -s "$TASK_CKPT/model.safetensors"
-        test -s "$TASK_CKPT/embedding.pt"
-        test -s "$TASK_CKPT/trainer_state.json"
+        require_dir "$TASK_CKPT"
+        require_file "$TASK_CKPT/config.json"
+        require_file "$TASK_CKPT/model.safetensors"
+        require_file "$TASK_CKPT/embedding.pt"
+        require_file "$TASK_CKPT/trainer_state.json"
     done
 done
 
 "$TASK_PYTHON" - "$TASK_HASHED_ROOT" "$TASK_CONTROL_ROOT" \
     "$TASK_DENSE_BYTOKEN" "$TASK_CONTROL_BYTOKEN" \
-    "$TASK_COUNTS_RAW" "$TASK_COUNTS_BALANCED" <<'PY'
+    "$TASK_COUNTS_RAW" "$TASK_COUNTS_BALANCED" \
+    "$TASK_COUNTS_BALANCED_META" <<'PY'
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -147,6 +175,7 @@ import numpy as np
 hashed_root, control_root = map(Path, sys.argv[1:3])
 dense_bytoken, control_bytoken = map(Path, sys.argv[3:5])
 raw_path, balanced_path = map(Path, sys.argv[5:7])
+balanced_meta_path = Path(sys.argv[7])
 steps = (1000, 2500, 5000, 7500, 10000)
 expected_languages = {"ar", "de", "en", "ru", "vi", "zh"}
 
@@ -192,6 +221,12 @@ with np.load(balanced_path, allow_pickle=False) as data:
     assert data.files == ["counts"]
     assert data["counts"].shape == (151936,)
     assert abs(float(data["counts"].sum()) - 1.0) < 1e-12
+balanced_meta = json.loads(balanced_meta_path.read_text())
+assert balanced_meta["source_sha256"] == hashlib.sha256(raw_path.read_bytes()).hexdigest()
+assert balanced_meta["output_sha256"] == hashlib.sha256(balanced_path.read_bytes()).hexdigest()
+assert balanced_meta["languages"] == ["ar", "de", "en", "ru", "vi", "zh"]
+assert balanced_meta["vocab_size"] == 151936
+assert balanced_meta["head_size_reported"] == 2048
 print("HASHED_DIAGNOSTIC_INPUTS_OK")
 PY
 

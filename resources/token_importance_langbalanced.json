@@ -1,0 +1,32 @@
+{
+  "source": "resources/token_freq_sample10.npz",
+  "source_sha256": "c2694ea0b34f69119472a4262013b2387166aaa1981c80ac5b30c32b72c5741c",
+  "languages": [
+    "ar",
+    "de",
+    "en",
+    "ru",
+    "vi",
+    "zh"
+  ],
+  "formula": "mean over languages of counts_lang / sum(counts_lang)",
+  "vocab_size": 151936,
+  "head_size_reported": 2048,
+  "head_dominant_language_composition": {
+    "ar": 381,
+    "de": 174,
+    "en": 488,
+    "ru": 388,
+    "vi": 405,
+    "zh": 212
+  },
+  "raw_frequency_head_composition": {
+    "ar": 99,
+    "de": 41,
+    "en": 1747,
+    "ru": 90,
+    "vi": 53,
+    "zh": 18
+  },
+  "output_sha256": "39b15eab8cf213d563dcf5137bb982e836bb8e3beba8e7def8dcddf21fe43594"
+}
