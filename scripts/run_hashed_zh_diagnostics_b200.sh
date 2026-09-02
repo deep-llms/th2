@@ -3,7 +3,15 @@ set -euo pipefail
 
 TASK_PROJECT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 TASK_PROJECT_NAME="$(basename "$TASK_PROJECT")"
-TASK_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
+TASK_PYTHON=''
+TASK_PYTHON_CANDIDATES=(
+    /mnt/local/conda-py311/envs/eval/bin/python3.11
+    /mnt/local/conda-py311/envs/eval/bin/python
+    /mnt/local/conda/envs/eval/bin/python3.11
+    /mnt/local/conda/envs/eval/bin/python
+    "$HOME/miniconda3/envs/eval/bin/python3.11"
+    "$HOME/miniconda3/envs/eval/bin/python"
+)
 TASK_BURN_PYTHON=/usr/bin/python3
 TASK_BURN_SCRIPT=/tmp/llm_pretrain_burn.py
 TASK_BURN_SHA=3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857
@@ -59,7 +67,18 @@ hostname
 test -d "$TASK_PROJECT"
 cd "$TASK_PROJECT"
 echo "project=$TASK_PROJECT project_name=$TASK_PROJECT_NAME"
-test -x "$TASK_PYTHON"
+for TASK_PYTHON_CANDIDATE in "${TASK_PYTHON_CANDIDATES[@]}"; do
+    if [[ -x "$TASK_PYTHON_CANDIDATE" ]]; then
+        TASK_PYTHON="$TASK_PYTHON_CANDIDATE"
+        break
+    fi
+done
+if [[ -z "$TASK_PYTHON" ]]; then
+    printf 'ERROR: eval Python not found; checked:\n' >&2
+    printf '  %s\n' "${TASK_PYTHON_CANDIDATES[@]}" >&2
+    exit 1
+fi
+echo "eval_python=$TASK_PYTHON"
 test -x "$TASK_BURN_PYTHON"
 test -s "$TASK_BURN_SCRIPT"
 echo "$TASK_BURN_SHA  $TASK_BURN_SCRIPT" | sha256sum -c -
