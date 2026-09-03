@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-check-culturax-sampling-progress-20260902-a21
+#th2-readonly-check-culturax-sampling-completion-20260903-a22
 set -euo pipefail
 
 echo '=== CulturaX sampling status ==='
