@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-readonly-audit-three-experiment-training-20260903-a03
+#th2-readonly-audit-three-experiment-training-20260903-a04
 set -euo pipefail
 
 TASK_PROJECT=/mnt/local/@PROJECT@
@@ -16,10 +16,19 @@ TASK_NAMES=(
 )
 
 cd "$TASK_PROJECT"
-echo '=== identity and deployed revision ==='
+echo '=== identity and deployed source ==='
 date -u
 hostname
-git rev-parse HEAD
+pwd
+echo '0eee1bcdf32d547c46e676832267d330371d53a3191351353432059a8c400b73  run_experiments.py' | sha256sum -c -
+echo '09e7a5818b082a8cd12bf3605d3dfc309efed3dc2862cbd96d64e335a4f1d814  train_compositional.py' | sha256sum -c -
+echo '43e01ee01e9ae167ed460dcd222b8b46d7e8b05d6d81bfaec6fa19ad1883ea2c  scripts/train_ranklift_tied.sh' | sha256sum -c -
+echo '021fa932a90256018a2e6b62f8f9c1351f56082fd3b64755ff030248a3b5116f  scripts/train_product_code_quota_tied.sh' | sha256sum -c -
+echo '0b94d4759f545f6a1518e95f3065bfd7dbc391d6f1b171ebcea45b1e5f9c402c  scripts/train_btmos_tied.sh' | sha256sum -c -
+echo 'a9fe347a415d8f1de6e5f1f8b0ff031ede672e23d19c3df3f695af752b6a8a05  compositional/nonlinear_factorizations.py' | sha256sum -c -
+echo 'b17de9f5ab2211c0825922bfaf8f23ed9ecf98c7cae29cc3973074c5dac843a1  compositional/product_code.py' | sha256sum -c -
+echo '39c15f123223edc1a306eae84df2951a5973682f85464f019b22961499136006  compositional/mos_head.py' | sha256sum -c -
+echo '2c129c29d16778a4117e8ddc393253daed5da355e4aa1bb1c95c698fd30b1cf3  compositional/tied_head.py' | sha256sum -c -
 
 echo '=== immutable inputs and Accelerate config ==='
 echo '39b15eab8cf213d563dcf5137bb982e836bb8e3beba8e7def8dcddf21fe43594  resources/token_importance_langbalanced.npz' | sha256sum -c -
