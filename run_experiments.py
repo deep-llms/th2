@@ -348,6 +348,25 @@ EXPERIMENT_COMMANDS = [
             "rng_state_6.pth", "rng_state_7.pth",
         ],
     },
+    {
+        "name": "product_code_quota_h6144",
+        "cmd": (
+            "PRODUCT_CODE_QUOTA_HEAD_SIZE=6144 "
+            "bash scripts/train_product_code_quota_tied.sh"
+        ),
+        "output_dir": f"{B200_OUT_BASE}/product_code_quota_h6144",
+        "require_fresh_output": True,
+        "required_input_files": [
+            "resources/token_importance_quota.npz",
+        ],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
     # Keep BT-MoS entries last: experiment indices are used by commands.sh.
     {
         "name": "groupreduce_matched_lb_t4",
