@@ -1,125 +1,76 @@
-#1 +120+a
-#th2-readonly-audit-three-experiment-training-20260903-a04
+#1 +60+a
+#th2-readonly-progress-three-experiments-20260903-a05
 set -euo pipefail
 
-TASK_PROJECT=/mnt/local/@PROJECT@
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
 TASK_LOG_DIR="$TASK_OUTPUT_BASE/logs/ranklift_hashedv2_btmos_10k_20260903_a01"
-TASK_EXPERIMENT_LOG="$TASK_LOG_DIR/experiments.log"
-TASK_COMPLETION_FILE="$TASK_OUTPUT_BASE/status/ranklift_hashedv2_btmos_10k_20260903_a01.complete"
-TASK_ACCELERATE_TARGET=/mnt/local/.cache/huggingface/accelerate/default_config.yaml
-TASK_PYTHON=/mnt/local/conda-py311/envs/sparse_emb/bin/python3.11
 TASK_NAMES=(
     ranklift_tied_c124_m460
     product_code_quota_h6144
     btmos_k3_c256_lb
 )
 
-cd "$TASK_PROJECT"
-echo '=== identity and deployed source ==='
+echo '=== time ==='
 date -u
-hostname
-pwd
-echo '0eee1bcdf32d547c46e676832267d330371d53a3191351353432059a8c400b73  run_experiments.py' | sha256sum -c -
-echo '09e7a5818b082a8cd12bf3605d3dfc309efed3dc2862cbd96d64e335a4f1d814  train_compositional.py' | sha256sum -c -
-echo '43e01ee01e9ae167ed460dcd222b8b46d7e8b05d6d81bfaec6fa19ad1883ea2c  scripts/train_ranklift_tied.sh' | sha256sum -c -
-echo '021fa932a90256018a2e6b62f8f9c1351f56082fd3b64755ff030248a3b5116f  scripts/train_product_code_quota_tied.sh' | sha256sum -c -
-echo '0b94d4759f545f6a1518e95f3065bfd7dbc391d6f1b171ebcea45b1e5f9c402c  scripts/train_btmos_tied.sh' | sha256sum -c -
-echo 'a9fe347a415d8f1de6e5f1f8b0ff031ede672e23d19c3df3f695af752b6a8a05  compositional/nonlinear_factorizations.py' | sha256sum -c -
-echo 'b17de9f5ab2211c0825922bfaf8f23ed9ecf98c7cae29cc3973074c5dac843a1  compositional/product_code.py' | sha256sum -c -
-echo '39c15f123223edc1a306eae84df2951a5973682f85464f019b22961499136006  compositional/mos_head.py' | sha256sum -c -
-echo '2c129c29d16778a4117e8ddc393253daed5da355e4aa1bb1c95c698fd30b1cf3  compositional/tied_head.py' | sha256sum -c -
 
-echo '=== immutable inputs and Accelerate config ==='
-echo '39b15eab8cf213d563dcf5137bb982e836bb8e3beba8e7def8dcddf21fe43594  resources/token_importance_langbalanced.npz' | sha256sum -c -
-echo 'f43d19925f5add96c56913eccf57f3989d6cd52e69da761d879e22f901010ea5  resources/token_importance_quota.npz' | sha256sum -c -
-echo '923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5  resources/accelerate_config.yaml' | sha256sum -c -
-cmp resources/accelerate_config.yaml "$TASK_ACCELERATE_TARGET"
-grep -E 'distributed_type:|mixed_precision:|num_processes:' "$TASK_ACCELERATE_TARGET"
+echo '=== sequential runner ==='
+pgrep -af '[r]un_experiments.py.*--stop-at-step 10000' || echo 'runner=absent'
+tail -40 "$TASK_LOG_DIR/experiments.log"
 
-echo '=== exact live workflow processes ==='
-mapfile -t TASK_RUNNER_PIDS < <(pgrep -f '[r]un_experiments.py.*--stop-at-step 10000' | sort -nu)
-echo "runner_count=${#TASK_RUNNER_PIDS[@]}"
-for TASK_PID in "${TASK_RUNNER_PIDS[@]}"; do
-    ps -p "$TASK_PID" -o pid=,ppid=,etimes=,stat=,args=
-done
-pgrep -af '[a]ccelerate.commands.launch|[a]ccelerate launch' || echo 'accelerate_launcher=absent'
-mapfile -t TASK_TRAIN_PIDS < <(pgrep -f '[t]rain_compositional.py' | sort -nu)
-echo "train_process_count=${#TASK_TRAIN_PIDS[@]}"
-for TASK_PID in "${TASK_TRAIN_PIDS[@]}"; do
-    ps -p "$TASK_PID" -o pid=,ppid=,etimes=,stat=,args=
-done
-
-echo '=== sequential runner state ==='
-if [ -s "$TASK_EXPERIMENT_LOG" ]; then
-    tail -80 "$TASK_EXPERIMENT_LOG"
-else
-    echo 'experiments_log=missing_or_empty'
-fi
-if [ -s "$TASK_COMPLETION_FILE" ]; then
-    echo 'completion_marker=present'
-    cat "$TASK_COMPLETION_FILE"
-else
-    echo 'completion_marker=absent_training_not_fully_verified_yet'
-fi
-
-echo '=== output/checkpoint/trainer-state inventory ==='
-"$TASK_PYTHON" - "${TASK_NAMES[@]}" <<'PY'
+echo '=== current checkpoints ==='
+for TASK_NAME in "${TASK_NAMES[@]}"; do
+    TASK_OUTPUT="$TASK_OUTPUT_BASE/$TASK_NAME"
+    if [ -d "$TASK_OUTPUT" ]; then
+        TASK_LATEST=$(find "$TASK_OUTPUT" -mindepth 1 -maxdepth 1 -type d \
+            -name 'checkpoint-*' -printf '%f\n' | sort -V | tail -1)
+        echo "$TASK_NAME latest=${TASK_LATEST:-none}"
+        if [ -n "$TASK_LATEST" ] && [ -s "$TASK_OUTPUT/$TASK_LATEST/trainer_state.json" ]; then
+            /mnt/local/conda-py311/envs/sparse_emb/bin/python3.11 - \
+                "$TASK_OUTPUT/$TASK_LATEST/trainer_state.json" <<'PY'
 import json
 import math
 import sys
-from pathlib import Path
-
-base = Path('/mnt/local/_outputs/@PROJECT@')
-for name in sys.argv[1:]:
-    out = base / name
-    checkpoints = sorted(
-        (p for p in out.glob('checkpoint-*') if p.is_dir()),
-        key=lambda p: int(p.name.rsplit('-', 1)[1]),
-    ) if out.is_dir() else []
-    print(f'{name}: output={out.is_dir()} checkpoints={len(checkpoints)}')
-    if not checkpoints:
-        continue
-    latest = checkpoints[-1]
-    state_path = latest / 'trainer_state.json'
-    print(f'  latest={latest.name} trainer_state={state_path.is_file()}')
-    if not state_path.is_file():
-        continue
-    state = json.loads(state_path.read_text())
-    losses = [entry.get('loss') for entry in state.get('log_history', []) if 'loss' in entry]
-    finite = all(isinstance(value, (int, float)) and math.isfinite(value) for value in losses)
-    print(f"  global_step={state.get('global_step')} loss_records={len(losses)} finite_losses={finite}")
-    if losses:
-        print(f'  recent_losses={losses[-5:]}')
+state = json.load(open(sys.argv[1]))
+losses = [x['loss'] for x in state.get('log_history', []) if 'loss' in x]
+print('global_step=', state.get('global_step'), 'finite_losses=', all(math.isfinite(x) for x in losses), 'recent_losses=', losses[-5:])
 PY
+        fi
+    else
+        echo "$TASK_NAME output=not_started"
+    fi
+done
 
-echo '=== fatal-signature audit of every workflow log ==='
-mapfile -t TASK_LOGS < <(find "$TASK_LOG_DIR" -maxdepth 1 -type f -name '*.log' -print | sort)
-echo "log_count=${#TASK_LOGS[@]}"
-if [ "${#TASK_LOGS[@]}" -gt 0 ] && grep -H -E -i \
+echo '=== active experiment recent progress ==='
+for TASK_NAME in "${TASK_NAMES[@]}"; do
+    TASK_LOG="$TASK_LOG_DIR/$TASK_NAME.log"
+    if [ -s "$TASK_LOG" ]; then
+        echo "--- $TASK_NAME ---"
+        tail -c 300000 "$TASK_LOG" | tr '\r' '\n' |
+            grep -E '[0-9]+/33339|loss|Saving model checkpoint|Training completed' |
+            tail -20 || true
+    fi
+done
+
+echo '=== fatal signatures ==='
+if grep -H -E -i \
         'Traceback|CUDA out of memory|OutOfMemoryError|ChildFailedError|ProcessExitedException|NCCL[^[:cntrl:]]*(unhandled|system error|remote process exited|watchdog|collective operation timeout)|Segmentation fault|Bus error|nan loss|inf loss' \
-        "${TASK_LOGS[@]}"; then
+        "$TASK_LOG_DIR"/*.log; then
     echo 'FATAL_SIGNATURES_FOUND=YES'
 else
     echo 'FATAL_SIGNATURES_FOUND=NO'
 fi
 
-echo '=== current experiment log progress tail ==='
-for TASK_NAME in "${TASK_NAMES[@]}"; do
-    TASK_LOG="$TASK_LOG_DIR/$TASK_NAME.log"
-    echo "--- $TASK_NAME ---"
-    if [ -s "$TASK_LOG" ]; then
-        tail -c 400000 "$TASK_LOG" | tr '\r' '\n' |
-            grep -E 'Embedding:|Total parameters:|Trainable parameters:|Running tokenizer|[0-9]+/[0-9]+|loss|Training completed|STOPPED|FAILED' |
-            tail -30 || true
-    else
-        echo 'log=not_started'
-    fi
-done
-
-echo '=== GPU state and ownership ==='
-nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power.draw \
+echo '=== GPU state ==='
+nvidia-smi --query-gpu=index,memory.used,memory.total,utilization.gpu,power.draw \
     --format=csv,noheader
 nvidia-smi --query-compute-apps=gpu_uuid,pid,used_gpu_memory \
     --format=csv,noheader
-echo 'TH2 READ-ONLY THREE-EXPERIMENT AUDIT COMPLETE'
+
+TASK_MARKER="$TASK_OUTPUT_BASE/status/ranklift_hashedv2_btmos_10k_20260903_a01.complete"
+if [ -s "$TASK_MARKER" ]; then
+    echo '=== completion marker ==='
+    cat "$TASK_MARKER"
+else
+    echo 'completion_marker=absent'
+fi
+echo 'TH2 READ-ONLY TRAINING PROGRESS SNAPSHOT COMPLETE'
