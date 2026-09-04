@@ -1,5 +1,5 @@
-#1 +120+a
-#th2-export-five-checkpoint-eval-and-partial-finetune-results-20260904-a01
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/result_exports/ranklift_hashedv2_btmos_eval_finetune_partial_20260904.tar.gz,/mnt/local/_outputs/deep-llms_th2/result_exports/ranklift_hashedv2_btmos_eval_finetune_partial_20260904.tar.gz.sha256,/mnt/local/_outputs/deep-llms_th2/result_exports/ranklift_hashedv2_btmos_eval_finetune_partial_20260904.files,/mnt/local/_outputs/deep-llms_th2/result_exports/ranklift_hashedv2_btmos_eval_finetune_partial_20260904.status.txt
+#th2-pull-five-checkpoint-eval-and-partial-finetune-results-20260904-a01
 set -euo pipefail
 
 TASK_PROJECT_DIR="${SPARSE_EMB_PROJECT_DIR:-/mnt/local/@PROJECT@}"
