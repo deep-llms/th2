@@ -1,5 +1,5 @@
 #1 +240+a
-#th2-readonly-inspect-live-xnli-duration-20260904-a01
+#th2-readonly-inspect-live-xnli-duration-20260904-a02
 set -u
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -38,8 +38,8 @@ else
 fi
 
 echo '=== representative BT-MoS XNLI job ==='
-TASK_BTMOS_LOG="$TASK_FINETUNE_OUTPUT/xnli_btmos_k3_c256_lb_s6500_seed456.log"
-TASK_BTMOS_JSON="$TASK_FINETUNE_OUTPUT/xnli_btmos_k3_c256_lb_s6500_seed456.json"
+TASK_BTMOS_LOG="$TASK_FINETUNE_OUTPUT/xnli_btmos_k3_c256_lb_s6500_seed42.log"
+TASK_BTMOS_JSON="$TASK_FINETUNE_OUTPUT/xnli_btmos_k3_c256_lb_s6500_seed42.json"
 if [[ -e "$TASK_BTMOS_LOG" ]]; then
     stat -c 'log=%n bytes=%s modified=%y' "$TASK_BTMOS_LOG"
     tail -100 "$TASK_BTMOS_LOG"
