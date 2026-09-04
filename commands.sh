@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-progress-three-experiments-20260903-a09
+#th2-readonly-final-status-three-experiments-20260904-a10
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
