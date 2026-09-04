@@ -365,19 +365,25 @@ def test_reference_parameter_budget_through_real_builder(tmp_path):
     assert count == 19_330_051
 
 
-def test_runner_entries_are_last_and_require_importance_artifact(tmp_path, monkeypatch):
+def test_runner_entries_are_contiguous_and_require_importance_artifact(tmp_path, monkeypatch):
     import run_experiments as runner
 
     names = [entry["name"] for entry in runner.EXPERIMENT_COMMANDS]
-    assert names[-3:] == [
+    expected_names = [
         "groupreduce_matched_lb_t4",
         "btmos_k3_c256_lb",
         "btmos_k3_c256_lb_r512",
     ]
+    start = names.index(expected_names[0])
+    assert names[start:start + len(expected_names)] == expected_names
     artifact = tmp_path / "importance.npz"
     artifact.write_bytes(b"nonempty")
     monkeypatch.setenv("BTMOS_IMPORTANCE_PATH", str(artifact))
-    for entry in runner.EXPERIMENT_COMMANDS[-3:]:
+    for name in expected_names:
+        entry = next(
+            item for item in runner.EXPERIMENT_COMMANDS
+            if item["name"] == name
+        )
         assert runner.missing_input_files(entry) == []
         assert any(
             "BTMOS_IMPORTANCE_PATH" in spec

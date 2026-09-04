@@ -15,6 +15,7 @@ from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
 from .product_code import ProductCodeEmbed
 from .nonlinear_factorizations import (
     RankLiftEmbed,
+    TieredRankLiftEmbed,
     FunnelingEmbed,
     DeFINEEmbed,
 )

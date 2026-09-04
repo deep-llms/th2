@@ -14,6 +14,10 @@ The classes here intentionally separate three hypotheses:
 * :class:`RankLiftEmbed` expands each private token code to a wider nonlinear
   feature vector and uses that same expanded effective table for input and
   output.  Its exact output algebra is implemented in ``tied_head.py``.
+* :class:`TieredRankLiftEmbed` applies that expansion inside static vocabulary
+  tiers.  It preserves GroupReduce's disjoint capacity allocation while
+  decoupling stored token-code width from classifier-feature width in the
+  lower-capacity tiers.
 
 All modules return ``(embedding, None)`` to match the project's common
 embedding interface.  They own every trainable output-side projection so the
@@ -169,6 +173,334 @@ class RankLiftEmbed(nn.Module):
         codes = F.embedding(input_ids, self.token_codes)
         features = self.features_from_codes(codes)
         return self.projection(features), None
+
+
+class TieredRankLiftEmbed(nn.Module):
+    """Disjoint frequency tiers with optional nonlinear rank expansion.
+
+    Group ``g`` stores a private code ``z_i`` of width ``c_g``.  When its lift
+    width ``q_g`` is non-zero, its tied feature and effective embedding are
+
+        u_i = RMSNorm(z_i)
+        f_i = concat(z_i, SiLU(A_g(u_i)) * B_g(u_i))
+        e_i = f_i @ R_g.T
+
+    where ``R_g`` has shape ``(embed_dim, c_g + q_g)``.  A zero lift recovers
+    the ordinary GroupReduce block exactly: ``f_i = z_i``.  Group membership
+    is static and persistent, so checkpoint loading never recomputes it from
+    a possibly changed external importance file.
+
+    The lift linears include biases deliberately.  They are custom affine
+    layers (not Qwen projections), and the registered design budget includes
+    both biases.  The final block projection remains bias-free to match the
+    GroupReduce control and keep the comparison isolated to nonlinear width.
+    """
+
+    def __init__(
+        self,
+        vocab_size: int,
+        embed_dim: int,
+        code_dims: Sequence[int],
+        lift_dims: Sequence[int],
+        group_ids=None,
+        rms_eps: float = 1e-6,
+    ) -> None:
+        super().__init__()
+        if vocab_size <= 0 or embed_dim <= 0:
+            raise ValueError("vocab_size and embed_dim must be positive")
+        code_dims = tuple(int(value) for value in code_dims)
+        lift_dims = tuple(int(value) for value in lift_dims)
+        if not code_dims or len(code_dims) != len(lift_dims):
+            raise ValueError(
+                "code_dims and lift_dims must be non-empty and have equal length"
+            )
+        if any(value <= 0 or value > embed_dim for value in code_dims):
+            raise ValueError(
+                f"code dimensions must be in [1, {embed_dim}], got {code_dims}"
+            )
+        if any(value < 0 for value in lift_dims):
+            raise ValueError(f"lift dimensions must be nonnegative, got {lift_dims}")
+        if len(code_dims) > vocab_size:
+            raise ValueError("number of tiers cannot exceed vocabulary size")
+        if not math.isfinite(rms_eps) or rms_eps <= 0:
+            raise ValueError("rms_eps must be finite and positive")
+
+        num_groups = len(code_dims)
+        if group_ids is None:
+            base, remainder = divmod(vocab_size, num_groups)
+            sizes = [base + (group < remainder) for group in range(num_groups)]
+            group_ids = torch.repeat_interleave(
+                torch.arange(num_groups, dtype=torch.long),
+                torch.tensor(sizes, dtype=torch.long),
+            )
+        else:
+            group_ids = torch.as_tensor(
+                group_ids, dtype=torch.long
+            ).detach().clone()
+        if group_ids.ndim != 1 or group_ids.numel() != vocab_size:
+            raise ValueError(
+                f"group_ids must have shape ({vocab_size},), got "
+                f"{tuple(group_ids.shape)}"
+            )
+        if group_ids.min().item() < 0 or group_ids.max().item() >= num_groups:
+            raise ValueError(f"group_ids must be in [0, {num_groups - 1}]")
+        group_sizes = torch.bincount(group_ids, minlength=num_groups)
+        if torch.any(group_sizes == 0):
+            missing = torch.where(group_sizes == 0)[0].tolist()
+            raise ValueError(f"every Tiered RankLift group must be used; missing {missing}")
+
+        token_ids_by_group = torch.cat([
+            torch.where(group_ids == group)[0] for group in range(num_groups)
+        ])
+        inverse_grouped_order = torch.empty(vocab_size, dtype=torch.long)
+        inverse_grouped_order[token_ids_by_group] = torch.arange(
+            vocab_size, dtype=torch.long
+        )
+        offsets = torch.empty(vocab_size, dtype=torch.long)
+        start = 0
+        for size in group_sizes.tolist():
+            token_ids = token_ids_by_group[start:start + size]
+            offsets[token_ids] = torch.arange(size, dtype=torch.long)
+            start += size
+
+        self.vocab_size = int(vocab_size)
+        self.embed_dim = int(embed_dim)
+        self.num_groups = int(num_groups)
+        self.code_dims = code_dims
+        self.lift_dims = lift_dims
+        self.feature_dims = tuple(
+            code_dim + lift_dim
+            for code_dim, lift_dim in zip(code_dims, lift_dims)
+        )
+        self.group_sizes = tuple(int(size) for size in group_sizes.tolist())
+        self.rms_eps = float(rms_eps)
+
+        self.token_codes = nn.ParameterList([
+            nn.Parameter(torch.empty(size, code_dim))
+            for size, code_dim in zip(self.group_sizes, self.code_dims)
+        ])
+        self.lift_a = nn.ModuleList([
+            nn.Linear(code_dim, lift_dim, bias=True)
+            if lift_dim else nn.Identity()
+            for code_dim, lift_dim in zip(self.code_dims, self.lift_dims)
+        ])
+        self.lift_b = nn.ModuleList([
+            nn.Linear(code_dim, lift_dim, bias=True)
+            if lift_dim else nn.Identity()
+            for code_dim, lift_dim in zip(self.code_dims, self.lift_dims)
+        ])
+        self.right_factors = nn.ParameterList([
+            nn.Parameter(torch.empty(embed_dim, feature_dim))
+            for feature_dim in self.feature_dims
+        ])
+
+        self.register_buffer("group_ids", group_ids, persistent=True)
+        self.register_buffer("group_offsets", offsets, persistent=True)
+        self.register_buffer(
+            "token_ids_by_group", token_ids_by_group, persistent=True
+        )
+        self.register_buffer(
+            "inverse_grouped_order", inverse_grouped_order, persistent=True
+        )
+        self.register_buffer(
+            "tier_code_dims",
+            torch.tensor(self.code_dims, dtype=torch.long),
+            persistent=True,
+        )
+        self.register_buffer(
+            "tier_lift_dims",
+            torch.tensor(self.lift_dims, dtype=torch.long),
+            persistent=True,
+        )
+        rms_eps_bits = struct.unpack("<q", struct.pack("<d", self.rms_eps))[0]
+        self.register_buffer(
+            "tier_rms_eps_bits",
+            torch.tensor(rms_eps_bits, dtype=torch.int64),
+            persistent=True,
+        )
+        self.reset_parameters()
+        self.register_load_state_dict_post_hook(
+            lambda module, incompatible: module.validate_structure()
+        )
+
+    @classmethod
+    def structure_from_state(cls, state):
+        """Recover persistent topology without relying on train_config.json."""
+        required = {
+            "group_ids", "tier_code_dims", "tier_lift_dims",
+            "tier_rms_eps_bits",
+        }
+        missing = required.difference(state)
+        if missing:
+            raise ValueError(
+                "Tiered RankLift state is missing structural tensors: "
+                f"{sorted(missing)}"
+            )
+        group_ids = torch.as_tensor(state["group_ids"], dtype=torch.long).cpu()
+        code_dims = tuple(
+            int(value) for value in state["tier_code_dims"].cpu().tolist()
+        )
+        lift_dims = tuple(
+            int(value) for value in state["tier_lift_dims"].cpu().tolist()
+        )
+        if not code_dims or len(code_dims) != len(lift_dims):
+            raise ValueError("invalid Tiered RankLift dimension metadata")
+        right_keys = [f"right_factors.{group}" for group in range(len(code_dims))]
+        code_keys = [f"token_codes.{group}" for group in range(len(code_dims))]
+        missing_parameters = [
+            key for key in right_keys + code_keys if key not in state
+        ]
+        if missing_parameters:
+            raise ValueError(
+                "Tiered RankLift state is missing parameters: "
+                f"{missing_parameters}"
+            )
+        embed_dims = {int(state[key].shape[0]) for key in right_keys}
+        if len(embed_dims) != 1:
+            raise ValueError("Tiered RankLift right factors disagree on embed_dim")
+        rms_bits = int(state["tier_rms_eps_bits"].item())
+        rms_eps = struct.unpack("<d", struct.pack("<q", rms_bits))[0]
+        return {
+            "vocab_size": int(group_ids.numel()),
+            "embed_dim": embed_dims.pop(),
+            "code_dims": code_dims,
+            "lift_dims": lift_dims,
+            "group_ids": group_ids,
+            "group_sizes": tuple(
+                int(value) for value in torch.bincount(
+                    group_ids, minlength=len(code_dims)
+                ).tolist()
+            ),
+            "rms_eps": rms_eps,
+        }
+
+    def _load_from_state_dict(
+        self,
+        state_dict,
+        prefix,
+        local_metadata,
+        strict,
+        missing_keys,
+        unexpected_keys,
+        error_msgs,
+    ) -> None:
+        bits_key = prefix + "tier_rms_eps_bits"
+        if bits_key in state_dict:
+            saved_bits = int(state_dict[bits_key].item())
+            saved_eps = struct.unpack("<d", struct.pack("<q", saved_bits))[0]
+            if saved_eps != self.rms_eps:
+                error_msgs.append(
+                    f"{bits_key} encodes rms_eps={saved_eps!r}, but the "
+                    f"module was constructed with rms_eps={self.rms_eps!r}"
+                )
+        super()._load_from_state_dict(
+            state_dict,
+            prefix,
+            local_metadata,
+            strict,
+            missing_keys,
+            unexpected_keys,
+            error_msgs,
+        )
+
+    def reset_parameters(self) -> None:
+        for codes in self.token_codes:
+            nn.init.normal_(codes, mean=0.0, std=0.02)
+        for group, lift_dim in enumerate(self.lift_dims):
+            if lift_dim:
+                nn.init.normal_(self.lift_a[group].weight, mean=0.0, std=0.02)
+                nn.init.normal_(self.lift_b[group].weight, mean=0.0, std=0.02)
+                nn.init.zeros_(self.lift_a[group].bias)
+                nn.init.zeros_(self.lift_b[group].bias)
+        for factor in self.right_factors:
+            nn.init.normal_(factor, mean=0.0, std=0.02)
+
+    def validate_structure(self) -> None:
+        if tuple(self.tier_code_dims.cpu().tolist()) != self.code_dims:
+            raise ValueError("Tiered RankLift code-dimension metadata is inconsistent")
+        if tuple(self.tier_lift_dims.cpu().tolist()) != self.lift_dims:
+            raise ValueError("Tiered RankLift lift-dimension metadata is inconsistent")
+        expected_ids = torch.cat([
+            torch.where(self.group_ids == group)[0]
+            for group in range(self.num_groups)
+        ])
+        if not torch.equal(self.token_ids_by_group, expected_ids):
+            raise ValueError("Tiered RankLift grouped token order is inconsistent")
+        expected_inverse = torch.empty_like(self.inverse_grouped_order)
+        expected_inverse[expected_ids] = torch.arange(
+            self.vocab_size, device=expected_ids.device
+        )
+        if not torch.equal(self.inverse_grouped_order, expected_inverse):
+            raise ValueError("Tiered RankLift inverse token order is inconsistent")
+        expected_offsets = torch.empty_like(self.group_offsets)
+        start = 0
+        for group, size in enumerate(self.group_sizes):
+            ids = expected_ids[start:start + size]
+            expected_offsets[ids] = torch.arange(size, device=ids.device)
+            if tuple(self.token_codes[group].shape) != (size, self.code_dims[group]):
+                raise ValueError(f"Tiered RankLift token-code shape mismatch in group {group}")
+            if tuple(self.right_factors[group].shape) != (
+                self.embed_dim, self.feature_dims[group]
+            ):
+                raise ValueError(f"Tiered RankLift right-factor shape mismatch in group {group}")
+            start += size
+        if not torch.equal(self.group_offsets, expected_offsets):
+            raise ValueError("Tiered RankLift token offsets are inconsistent")
+
+    def token_ids_for_group(self, group: int) -> torch.Tensor:
+        if not 0 <= group < self.num_groups:
+            raise IndexError(f"group index out of range: {group}")
+        start = sum(self.group_sizes[:group])
+        return self.token_ids_by_group[start:start + self.group_sizes[group]]
+
+    def features_from_codes(
+        self, group: int, codes: torch.Tensor
+    ) -> torch.Tensor:
+        if not 0 <= group < self.num_groups:
+            raise IndexError(f"group index out of range: {group}")
+        if codes.shape[-1] != self.code_dims[group]:
+            raise ValueError(
+                f"group {group} codes must end in width {self.code_dims[group]}, "
+                f"got {codes.shape[-1]}"
+            )
+        if self.lift_dims[group] == 0:
+            return codes
+        normalized = _parameter_free_rms_norm(codes, self.rms_eps)
+        lifted = (
+            F.silu(self.lift_a[group](normalized))
+            * self.lift_b[group](normalized)
+        )
+        return torch.cat((codes, lifted), dim=-1)
+
+    def materialize_group_features(self, group: int) -> torch.Tensor:
+        return self.features_from_codes(group, self.token_codes[group])
+
+    def materialize_effective_table(self) -> torch.Tensor:
+        grouped = torch.cat([
+            self.materialize_group_features(group)
+            @ self.right_factors[group].T
+            for group in range(self.num_groups)
+        ])
+        return grouped.index_select(0, self.inverse_grouped_order)
+
+    def forward(self, input_ids, doc_mask=None):
+        flat_ids = input_ids.reshape(-1)
+        flat_groups = self.group_ids[flat_ids]
+        flat_offsets = self.group_offsets[flat_ids]
+        output = torch.empty(
+            flat_ids.numel(), self.embed_dim,
+            device=flat_ids.device,
+            dtype=self.token_codes[0].dtype,
+        )
+        # Execute every group even when the current input contains no member of
+        # it.  Empty tensor operations keep all parameters connected under DDP
+        # with find_unused_parameters=False, matching GroupReduce's behavior.
+        for group in range(self.num_groups):
+            mask = flat_groups == group
+            codes = self.token_codes[group][flat_offsets[mask]]
+            features = self.features_from_codes(group, codes)
+            output[mask] = features @ self.right_factors[group].T
+        return output.view(*input_ids.shape, self.embed_dim), None
 
 
 class FunnelingEmbed(nn.Module):

@@ -778,6 +778,18 @@ also passed with `find_unused_parameters=False`, finite/nonzero gradients for
 all 16 groups, and identical post-update checksums across ranks. All dev GPUs
 were free after the test. Remote B200 training has not yet been launched.
 
+## 2026-09-04 — Tiered RankLift-512 controlled launch decision
+
+The next pair is `tiered_ranklift_lb_t4_c512` followed by
+`groupreduce_matched_lb_t4`. Both use the exact same equal-language normalized
+importance artifact and group populations. Tiered preserves all GroupReduce
+stored widths (`1024/512/192/64`) and adds nonlinear lift widths
+`0/0/320/192`, totaling 20,096,000 interface parameters versus 19,423,232 for
+the control (+672,768; about 0.15% of the full model). The language-balanced
+control is required: without it, grouping improvement and architecture
+improvement are confounded. The width-416 exact-budget Tiered configuration is
+deferred unless the 512 efficacy screen wins.
+
 ## TODO
 
 - [x] Stop low-rank-tied and SharedLocal-G4-tied at checkpoint 10k

@@ -40,8 +40,8 @@ from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
     IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed, PureLocalEmbed,
     PVQEmbed, SlimEmbed, GroupReduceEmbed, NestedLadderEmbed, ProductCodeEmbed,
-    ResidualSubspaceExpertsEmbed, TTEmbedding, RankLiftEmbed, FunnelingEmbed,
-    DeFINEEmbed,
+    ResidualSubspaceExpertsEmbed, TTEmbedding, RankLiftEmbed,
+    TieredRankLiftEmbed, FunnelingEmbed, DeFINEEmbed,
 )
 from compositional.compressed_baselines import (
     balanced_exact_modes,
@@ -123,7 +123,8 @@ class CompositionalArguments:
                         "shared_local", "pure_local", "pvq", "slim",
                         "groupreduce", "nested_ladder",
                         "residual_subspace_experts", "product_code",
-                        "ranklift", "funneling", "define", "tt"],
+                        "ranklift", "tiered_ranklift", "funneling",
+                        "define", "tt"],
         },
     )
     K: int = field(default=4096, metadata={"help": "Codebook size (number of anchors)."})
@@ -265,6 +266,39 @@ class CompositionalArguments:
     ranklift_rms_eps: float = field(default=1e-6, metadata={
         "help": "Positive epsilon for RankLift's parameter-free RMSNorm."
     })
+    tiered_ranklift_code_dims: str = field(
+        default="1024,512,192,64",
+        metadata={
+            "help": "Comma-separated private token-code widths, one per "
+                    "Tiered RankLift vocabulary group."
+        },
+    )
+    tiered_ranklift_lift_dims: str = field(
+        default="0,0,320,192",
+        metadata={
+            "help": "Comma-separated nonlinear lift widths, one per Tiered "
+                    "RankLift group; zero makes that group ordinary linear "
+                    "GroupReduce."
+        },
+    )
+    tiered_ranklift_populations: str = field(
+        default="2048,6144,24576,119168",
+        metadata={
+            "help": "Comma-separated disjoint vocabulary-group populations "
+                    "for Tiered RankLift, highest importance first."
+        },
+    )
+    tiered_ranklift_frequency_path: str | None = field(
+        default="resources/token_importance_langbalanced.npz",
+        metadata={
+            "help": "Static token-importance artifact used to build fresh "
+                    "Tiered RankLift memberships; checkpoints store membership."
+        },
+    )
+    tiered_ranklift_frequency_key: str = field(default="counts")
+    tiered_ranklift_rms_eps: float = field(default=1e-6, metadata={
+        "help": "Positive epsilon for Tiered RankLift's parameter-free RMSNorm."
+    })
     funneling_rank: int = field(default=128, metadata={
         "help": "Bottleneck width of the from-scratch Funneling control."
     })
@@ -330,6 +364,7 @@ class CompositionalArguments:
                 "Supported for lowrank/global_lowrank, shared_local, pure_local, "
                 "pvq, slim, groupreduce, nested_ladder, "
                 "residual_subspace_experts, product_code, ranklift, "
+                "tiered_ranklift, "
                 "funneling, define, tt, "
                 "original_ant, ant, and residual_ant; not supported "
                 "for context-dependent arms (v0, v1, v2, isolation_control).",
@@ -945,6 +980,89 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
             lift_dim=ca.ranklift_lift_dim,
             rms_eps=ca.ranklift_rms_eps,
         )
+    if ca.arm == "tiered_ranklift":
+        declared_code_dims = _parse_int_list(
+            ca.tiered_ranklift_code_dims,
+            name="tiered_ranklift_code_dims",
+        )
+        declared_lift_dims = _parse_int_list(
+            ca.tiered_ranklift_lift_dims,
+            name="tiered_ranklift_lift_dims",
+        )
+        declared_populations = _parse_int_list(
+            ca.tiered_ranklift_populations,
+            name="tiered_ranklift_populations",
+        )
+        if initial_state is not None:
+            structure = TieredRankLiftEmbed.structure_from_state(initial_state)
+            if (structure["vocab_size"] != vocab_size
+                    or structure["embed_dim"] != embed_dim):
+                raise ValueError(
+                    "Tiered RankLift checkpoint model dimensions do not match "
+                    f"the requested model (state V={structure['vocab_size']}, "
+                    f"d={structure['embed_dim']}; requested V={vocab_size}, "
+                    f"d={embed_dim})"
+                )
+            actual_populations = structure["group_sizes"]
+            mismatches = {
+                "code_dims": (structure["code_dims"], declared_code_dims),
+                "lift_dims": (structure["lift_dims"], declared_lift_dims),
+                "populations": (actual_populations, declared_populations),
+                "rms_eps": (structure["rms_eps"], ca.tiered_ranklift_rms_eps),
+            }
+            mismatches = {
+                key: value for key, value in mismatches.items()
+                if value[0] != value[1]
+            }
+            if mismatches:
+                raise ValueError(
+                    "Tiered RankLift checkpoint structure does not match the "
+                    f"requested configuration: {mismatches}"
+                )
+            group_ids = structure["group_ids"]
+        else:
+            if not declared_code_dims or len(declared_code_dims) != len(
+                declared_lift_dims
+            ):
+                raise ValueError(
+                    "Tiered RankLift code/lift dimensions must be non-empty "
+                    "lists of equal length"
+                )
+            if len(declared_populations) != len(declared_code_dims):
+                raise ValueError(
+                    "Tiered RankLift populations must have one entry per group"
+                )
+            if not ca.tiered_ranklift_frequency_path:
+                raise ValueError(
+                    "A fresh Tiered RankLift run requires "
+                    "--tiered_ranklift_frequency_path"
+                )
+            importance = load_frequency_counts(
+                ca.tiered_ranklift_frequency_path,
+                vocab_size,
+                key=ca.tiered_ranklift_frequency_key,
+                pseudocount=0.0,
+            )
+            group_ids = frequency_group_ids_from_populations(
+                importance, declared_populations
+            )
+            logger.info(
+                "Tiered RankLift importance artifact: %s (sha256=%s), "
+                "populations=%s code_dims=%s lift_dims=%s",
+                ca.tiered_ranklift_frequency_path,
+                file_sha256(ca.tiered_ranklift_frequency_path),
+                declared_populations,
+                declared_code_dims,
+                declared_lift_dims,
+            )
+        return TieredRankLiftEmbed(
+            vocab_size,
+            embed_dim,
+            code_dims=declared_code_dims,
+            lift_dims=declared_lift_dims,
+            group_ids=group_ids,
+            rms_eps=ca.tiered_ranklift_rms_eps,
+        )
     if ca.arm == "funneling":
         return FunnelingEmbed(
             vocab_size,
@@ -1024,7 +1142,7 @@ def validate_output_configuration(comp_args):
     if comp_args.arm in {
         "pure_local", "pvq", "slim", "groupreduce", "nested_ladder",
         "residual_subspace_experts", "product_code", "ranklift",
-        "funneling", "define", "tt",
+        "tiered_ranklift", "funneling", "define", "tt",
     } and not comp_args.tie_output:
         raise ValueError(
             f"--arm {comp_args.arm} requires --tie_output for the compressed "

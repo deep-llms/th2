@@ -392,11 +392,13 @@ def test_runner_resolves_required_inputs_and_requires_nonempty(monkeypatch, tmp_
     monkeypatch.setenv("PRODUCT_CODE_CODES_PATH", str(empty))
     assert runner.missing_input_files({"required_input_files": [spec]})
     names = [e["name"] for e in runner.EXPERIMENT_COMMANDS]
-    assert names[-6:-3] == [
+    expected_names = [
         "product_code_hashed_h2048",
         "product_code_pq_h2048",
         "product_code_quota_h6144",
     ]
+    start = names.index(expected_names[0])
+    assert names[start:start + len(expected_names)] == expected_names
     pq = next(
         entry for entry in runner.EXPERIMENT_COMMANDS
         if entry["name"] == "product_code_pq_h2048"

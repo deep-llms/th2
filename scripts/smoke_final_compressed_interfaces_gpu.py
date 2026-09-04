@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Production-shape CUDA/DDP smoke for the final tied-interface candidates.
 
-The smoke constructs the real Qwen3-0.6B vocabulary and hidden width for
-RankLift, Funneling, DeFINE, Slim, and TT.  Each visible GPU owns one DDP rank.
+The smoke constructs the real Qwen3-0.6B vocabulary and hidden width for the
+selected compressed interface.  Each visible GPU owns one DDP rank.
 For every arm it runs the input path, tied output path, backward, one AdamW
 update, and a NCCL checksum.  Rank 0 writes a JSON report when ``--output`` is
 provided.
@@ -31,20 +31,58 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from compositional.compressed_baselines import SlimEmbed, TTEmbedding
+from compositional.compressed_baselines import (
+    GroupReduceEmbed,
+    SlimEmbed,
+    TTEmbedding,
+)
+from compositional.compression_init import (
+    frequency_group_ids_from_populations,
+    load_frequency_counts,
+)
 from compositional.nonlinear_factorizations import (
     DeFINEEmbed,
     FunnelingEmbed,
     RankLiftEmbed,
+    TieredRankLiftEmbed,
 )
 from compositional.tied_head import make_tied_head
 
 
 VOCAB_SIZE = 151_936
 HIDDEN_SIZE = 1_024
+TIER_POPULATIONS = (2_048, 6_144, 24_576, 119_168)
+
+
+def _language_balanced_groups() -> torch.Tensor:
+    importance_path = (
+        PROJECT_ROOT / "resources" / "token_importance_langbalanced.npz"
+    )
+    importance = load_frequency_counts(
+        importance_path, VOCAB_SIZE, key="counts", pseudocount=0.0
+    )
+    return frequency_group_ids_from_populations(
+        importance, TIER_POPULATIONS
+    )
 
 
 def _build(name: str) -> nn.Module:
+    if name == "groupreduce_matched_lb_t4":
+        return GroupReduceEmbed(
+            VOCAB_SIZE,
+            HIDDEN_SIZE,
+            group_ranks=(1_024, 512, 192, 64),
+            group_ids=_language_balanced_groups(),
+        )
+    if name == "tiered_ranklift_lb_t4_c512":
+        return TieredRankLiftEmbed(
+            VOCAB_SIZE,
+            HIDDEN_SIZE,
+            code_dims=(1_024, 512, 192, 64),
+            lift_dims=(0, 0, 320, 192),
+            group_ids=_language_balanced_groups(),
+            rms_eps=1e-6,
+        )
     if name == "ranklift_tied_c124_m460":
         return RankLiftEmbed(
             VOCAB_SIZE, HIDDEN_SIZE, code_dim=124, lift_dim=336,
@@ -83,6 +121,8 @@ def _build(name: str) -> nn.Module:
 
 def _arm_type(name: str) -> str:
     return {
+        "groupreduce_matched_lb_t4": "groupreduce",
+        "tiered_ranklift_lb_t4_c512": "tiered_ranklift",
         "ranklift_tied_c124_m460": "ranklift",
         "funneling_tied_r128": "funneling",
         "define_tied_n112_k1724": "define",

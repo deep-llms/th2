@@ -378,6 +378,23 @@ class TiedRankLiftHead(_TiedHeadBase):
         return logits
 
 
+class TiedTieredRankLiftHead(_TiedHeadBase):
+    """Exact tied output for per-tier nonlinear rank expansion."""
+
+    def forward(self, hidden_states):
+        embed = self.embed
+        flat_hidden = hidden_states.reshape(-1, embed.embed_dim)
+        grouped_logits = []
+        for group in range(embed.num_groups):
+            features = embed.materialize_group_features(group)
+            projected = flat_hidden @ embed.right_factors[group]
+            grouped_logits.append(projected @ features.T)
+        logits = torch.cat(grouped_logits, dim=-1).index_select(
+            -1, embed.inverse_grouped_order
+        )
+        return logits.view(*hidden_states.shape[:-1], embed.vocab_size)
+
+
 class TiedFunnelingHead(_TiedHeadBase):
     """Exact tied output for the width-preserving nonlinear control."""
 
@@ -483,6 +500,8 @@ def make_tied_head(embed, embed_type, vocab_size, mos_components=1,
         inner = TiedProductCodeHead(embed)
     elif embed_type == "ranklift":
         inner = TiedRankLiftHead(embed)
+    elif embed_type == "tiered_ranklift":
+        inner = TiedTieredRankLiftHead(embed)
     elif embed_type == "funneling":
         inner = TiedFunnelingHead(embed)
     elif embed_type == "define":
@@ -498,7 +517,7 @@ def make_tied_head(embed, embed_type, vocab_size, mos_components=1,
             f"Cannot tie output for embed_type={embed_type}. Supported types are "
             "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
             "groupreduce, nested_ladder, residual_subspace_experts, product_code, "
-            "ranklift, funneling, define, tt, "
+            "ranklift, tiered_ranklift, funneling, define, tt, "
             "original_ant, ant, and residual_ant; v0, v1, v2, and "
             "isolation_control are context-dependent and cannot be tied."
         )

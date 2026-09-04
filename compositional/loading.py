@@ -48,6 +48,7 @@ from .residual_subspace_experts import ResidualSubspaceExpertsEmbed
 from .product_code import ProductCodeEmbed
 from .nonlinear_factorizations import (
     RankLiftEmbed,
+    TieredRankLiftEmbed,
     FunnelingEmbed,
     DeFINEEmbed,
 )
@@ -300,6 +301,80 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
             code_dim=tc.get("ranklift_code_dim", 124),
             lift_dim=tc.get("ranklift_lift_dim", 336),
             rms_eps=tc.get("ranklift_rms_eps", 1e-6),
+        )
+    if arm == "tiered_ranklift":
+        if state is not None:
+            structure = TieredRankLiftEmbed.structure_from_state(state)
+            if structure["vocab_size"] != vocab_size:
+                raise ValueError(
+                    "Tiered RankLift checkpoint vocabulary size "
+                    f"{structure['vocab_size']} does not match model "
+                    f"vocabulary size {vocab_size}"
+                )
+            if structure["embed_dim"] != embed_dim:
+                raise ValueError(
+                    "Tiered RankLift checkpoint embedding dimension "
+                    f"{structure['embed_dim']} does not match model hidden "
+                    f"size {embed_dim}"
+                )
+            declared_code_dims = _parse_int_list(
+                tc.get(
+                    "tiered_ranklift_code_dims",
+                    ",".join(str(value) for value in structure["code_dims"]),
+                )
+            )
+            declared_lift_dims = _parse_int_list(
+                tc.get(
+                    "tiered_ranklift_lift_dims",
+                    ",".join(str(value) for value in structure["lift_dims"]),
+                )
+            )
+            declared_populations = _parse_int_list(
+                tc.get(
+                    "tiered_ranklift_populations",
+                    ",".join(str(value) for value in structure["group_sizes"]),
+                )
+            )
+            declared_eps = tc.get(
+                "tiered_ranklift_rms_eps", structure["rms_eps"]
+            )
+            declarations = {
+                "code_dims": (structure["code_dims"], declared_code_dims),
+                "lift_dims": (structure["lift_dims"], declared_lift_dims),
+                "populations": (
+                    structure["group_sizes"], declared_populations
+                ),
+                "rms_eps": (structure["rms_eps"], declared_eps),
+            }
+            mismatches = {
+                name: values for name, values in declarations.items()
+                if values[0] != values[1]
+            }
+            if mismatches:
+                raise ValueError(
+                    "Tiered RankLift config does not match checkpoint "
+                    f"structure: {mismatches}"
+                )
+            code_dims = structure["code_dims"]
+            lift_dims = structure["lift_dims"]
+            group_ids = structure["group_ids"]
+            rms_eps = structure["rms_eps"]
+        else:
+            code_dims = _parse_int_list(
+                tc.get("tiered_ranklift_code_dims", "1024,512,192,64")
+            )
+            lift_dims = _parse_int_list(
+                tc.get("tiered_ranklift_lift_dims", "0,0,320,192")
+            )
+            group_ids = None
+            rms_eps = tc.get("tiered_ranklift_rms_eps", 1e-6)
+        return TieredRankLiftEmbed(
+            vocab_size,
+            embed_dim,
+            code_dims=code_dims,
+            lift_dims=lift_dims,
+            group_ids=group_ids,
+            rms_eps=rms_eps,
         )
     if arm == "funneling":
         return FunnelingEmbed(
@@ -602,6 +677,25 @@ def _infer_comp_config_from_state(state):
             "ranklift_code_dim": state["token_codes"].shape[1],
             "ranklift_lift_dim": state["lift_a.weight"].shape[0],
             "ranklift_rms_eps": rms_eps,
+        }
+
+    if {
+        "group_ids", "tier_code_dims", "tier_lift_dims",
+        "tier_rms_eps_bits", "token_codes.0", "right_factors.0",
+    }.issubset(keys):
+        structure = TieredRankLiftEmbed.structure_from_state(state)
+        return {
+            "arm": "tiered_ranklift",
+            "tiered_ranklift_code_dims": ",".join(
+                str(value) for value in structure["code_dims"]
+            ),
+            "tiered_ranklift_lift_dims": ",".join(
+                str(value) for value in structure["lift_dims"]
+            ),
+            "tiered_ranklift_populations": ",".join(
+                str(value) for value in structure["group_sizes"]
+            ),
+            "tiered_ranklift_rms_eps": structure["rms_eps"],
         }
 
     if {
@@ -1031,7 +1125,7 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
             "lowrank", "global_lowrank", "shared_local", "pure_local",
             "pvq", "slim", "groupreduce", "nested_ladder",
             "residual_subspace_experts", "product_code",
-            "ranklift", "funneling", "define", "tt",
+            "ranklift", "tiered_ranklift", "funneling", "define", "tt",
             "original_ant", "ant",
             "residual_ant"
         }

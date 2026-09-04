@@ -1,3 +1,16 @@
+# Current task: Tiered RankLift-512 and language-balanced GroupReduce
+
+Update (2026-09-04): launch the controlled pair
+`tiered_ranklift_lb_t4_c512` followed by `groupreduce_matched_lb_t4`, using the
+same language-balanced static membership, data, optimizer, BF16, eight-GPU
+B200 configuration, and 10k cutoff. Tiered preserves GroupReduce's stored
+widths `1024/512/192/64` and adds lift widths `0/0/320/192`; it has 20,096,000
+interface parameters, +672,768 over the 19,423,232-parameter control (about
+0.15% of the full model). The control is required to distinguish architecture
+gain from grouping gain. See `docs/language_balanced_tiered_ranklift.md`.
+
+The historical task below is retained for provenance.
+
 # Pure-local G16 R128 structural control
 
 Status: implementation and local CPU validation complete; remote training has
