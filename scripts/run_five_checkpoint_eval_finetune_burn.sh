@@ -430,9 +430,16 @@ TASK_AVAILABLE_BYTES="$(df -PB1 "$TASK_OUTPUT_BASE" | awk 'NR == 2 {print $4}')"
 echo "STORAGE_PREFLIGHT_OK available_bytes=$TASK_AVAILABLE_BYTES"
 
 echo '=== safely stop the current all-GPU burn ==='
-[[ "$(burn_launcher_for_indices 0,1,2,3,4,5,6,7 8)" =~ ^[0-9]+$ ]] \
-    || die 'current full burn validation failed'
-stop_verified_burn 0,1,2,3,4,5,6,7 8 FULL
+mapfile -t TASK_INITIAL_GPU_PIDS < <(gpu_pids)
+if [[ "${#TASK_INITIAL_GPU_PIDS[@]}" -eq 0 ]]; then
+    echo 'GPUS_ALREADY_FREE; no process will be signaled'
+elif [[ "${#TASK_INITIAL_GPU_PIDS[@]}" -eq 8 ]]; then
+    [[ "$(burn_launcher_for_indices 0,1,2,3,4,5,6,7 8)" =~ ^[0-9]+$ ]] \
+        || die 'current full burn validation failed'
+    stop_verified_burn 0,1,2,3,4,5,6,7 8 FULL
+else
+    die "unexpected partial GPU ownership before eval: ${TASK_INITIAL_GPU_PIDS[*]}"
+fi
 sleep 30
 require_free_gpus '30 SECONDS AFTER VERIFIED FULL-BURN CANCELLATION'
 
