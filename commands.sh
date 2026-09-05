@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-current-tiered-control-status-20260905-a07
+#th2-readonly-current-tiered-control-status-20260905-a08
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -82,4 +82,6 @@ tail -40 "$TASK_LOG_DIR/groupreduce_matched_lb_t4.log" 2>/dev/null || true
 echo '=== handoff log tail ==='
 ls -lah "$TASK_LOG_DIR"
 find "$TASK_OUTPUT_BASE" -maxdepth 3 -type f -iname '*burn*' -printf '%p %s bytes %TY-%Tm-%Td %TH:%TM\n'
+echo '=== post-training burn failure context ==='
+tail -100 "$TASK_OUTPUT_BASE/logs/gpu_burn_after_tiered_c512_lb_groupreduce_20260904_a01.log"
 echo 'TH2 CURRENT TRAINING READ-ONLY STATUS CHECK COMPLETE'
