@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-tiered-groupreduce-eval-finetune-status-20260905-a02
+#th2-readonly-tiered-groupreduce-eval-finetune-status-20260905-a03
 set -euo pipefail
 date -u
 TASK_BASE=/mnt/local/_outputs/@PROJECT@
@@ -56,4 +56,11 @@ for TASK_BURN_LOG in "$TASK_BASE/logs/burn_final_${TASK_RUN}.log" "$TASK_BASE/lo
         tail -5 "$TASK_BURN_LOG"
     fi
 done
+echo '=== second burn progress sample after 15 seconds ==='
+sleep 15
+for TASK_BURN_LOG in "$TASK_BASE/logs/burn_final_${TASK_RUN}.log" "$TASK_BASE/logs/burn_final_${TASK_RUN}_recovery.log"; do
+    if [[ -s "$TASK_BURN_LOG" ]]; then tail -2 "$TASK_BURN_LOG"; fi
+done
+nvidia-smi --query-gpu=index,uuid,memory.used,memory.total,utilization.gpu --format=csv,noheader
+nvidia-smi --query-compute-apps=gpu_uuid,pid --format=csv,noheader
 echo 'TH2 READONLY PAIRED EVAL FINETUNE STATUS COMPLETE'
