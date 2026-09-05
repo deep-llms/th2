@@ -1,20 +1,28 @@
-#1 +300+a
-#th2-eval-finetune-tiered-c512-groupreduce-lb-10k-20260905-a01
+#1 +60+a
+#th2-readonly-verify-tiered-groupreduce-eval-start-20260905-a01
 set -euo pipefail
-
-TASK_PROJECT_DIR=/mnt/local/@PROJECT@
-TASK_WORKFLOW="$TASK_PROJECT_DIR/scripts/run_tiered_groupreduce_eval_finetune_burn.sh"
-cd "$TASK_PROJECT_DIR"
-test -s "$TASK_WORKFLOW"
-echo 'f451ab0b43cf46f072bacf27df0b4c03e1963463c7e8a89c085de721b42d963c  scripts/run_tiered_groupreduce_eval_finetune_burn.sh' | sha256sum -c -
-bash -n "$TASK_WORKFLOW"
-
-export SPARSE_EMB_PROJECT_DIR="$TASK_PROJECT_DIR"
-export SPARSE_EMB_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-export SPARSE_EMB_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
-export SPARSE_EMB_EVAL_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
-export SPARSE_EMB_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
-export SPARSE_EMB_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
-export SPARSE_EMB_CONDA=/mnt/local/conda-py311/bin/conda
-
-exec bash "$TASK_WORKFLOW"
+date -u
+TASK_BASE=/mnt/local/_outputs/@PROJECT@
+TASK_RUN=tiered_c512_groupreduce_lb_10k_20260905_a01
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+tail -25 "$TASK_BASE/logs/eval_finetune_${TASK_RUN}.log"
+/mnt/local/conda-py311/envs/eval/bin/python3.11 - "$TASK_BASE" <<'PY'
+from pathlib import Path
+import sys
+base=Path(sys.argv[1])
+for arm in ('tiered_ranklift_lb_t4_c512','groupreduce_matched_lb_t4'):
+    path=base/arm/'checkpoint-10000'/'eval.log'
+    print('EVAL_LOG',arm)
+    if path.exists():
+        with path.open('rb') as handle:
+            head=handle.read(12000).decode(errors='replace')
+            handle.seek(max(0,path.stat().st_size-6000))
+            tail=handle.read().decode(errors='replace')
+        print('\n'.join(line for line in head.splitlines() if 'Loaded' in line or 'checkpoint' in line or 'arm=' in line))
+        print(tail[-3500:])
+    else:
+        print('not present')
+PY
+tail -5 "$TASK_BASE/logs/burn_eval_${TASK_RUN}.log"
+echo 'TH2 READONLY EVAL START CHECK COMPLETE'
