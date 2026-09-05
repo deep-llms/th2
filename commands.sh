@@ -1,5 +1,5 @@
-#1 +120+a
-#th2-readonly-current-tiered-control-status-20260905-a05
+#1 +60+a
+#th2-readonly-current-tiered-control-status-20260905-a06
 set -euo pipefail
 
 TASK_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
@@ -62,4 +62,6 @@ echo '=== runner state ==='
 tail -30 "$TASK_LOG_DIR/experiments.log"
 echo '=== active control log tail ==='
 tail -40 "$TASK_LOG_DIR/groupreduce_matched_lb_t4.log" 2>/dev/null || true
+echo '=== handoff log tail ==='
+ls -lah "$TASK_LOG_DIR"
 echo 'TH2 CURRENT TRAINING READ-ONLY STATUS CHECK COMPLETE'
