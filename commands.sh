@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/@PROJECT@/result_exports/tiered_c512_groupreduce_lb_eval_finetune_complete_20260905.tar.gz,/mnt/local/_outputs/@PROJECT@/result_exports/tiered_c512_groupreduce_lb_eval_finetune_complete_20260905.tar.gz.sha256,/mnt/local/_outputs/@PROJECT@/result_exports/tiered_c512_groupreduce_lb_eval_finetune_complete_20260905.files
-#th2-pull-tiered-groupreduce-complete-results-20260905-a01
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/result_exports/tiered_c512_groupreduce_lb_eval_finetune_complete_20260905.tar.gz,/mnt/local/_outputs/deep-llms_th2/result_exports/tiered_c512_groupreduce_lb_eval_finetune_complete_20260905.tar.gz.sha256,/mnt/local/_outputs/deep-llms_th2/result_exports/tiered_c512_groupreduce_lb_eval_finetune_complete_20260905.files
+#th2-pull-tiered-groupreduce-complete-results-20260905-a02
