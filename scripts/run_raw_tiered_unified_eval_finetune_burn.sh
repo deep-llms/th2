@@ -218,7 +218,9 @@ start_burn() {
     if tmux has-session -t "$session" 2>/dev/null; then
         die "burn session already exists: $session"
     fi
-    printf -v launch_command 'exec env CUDA_VISIBLE_DEVICES=%q MASTER_ADDR=127.0.0.1 MASTER_PORT=%q NCCL_DEBUG=WARN GPU_BURN_MIN_WORLD_SIZE=2 %q -u %q >%q 2>&1 </dev/null' \
+    # Keep stdin attached to the pane. Redirecting all three standard FDs
+    # closes the PTY slave and causes tmux to tear down the new pane.
+    printf -v launch_command 'exec env CUDA_VISIBLE_DEVICES=%q MASTER_ADDR=127.0.0.1 MASTER_PORT=%q NCCL_DEBUG=WARN GPU_BURN_MIN_WORLD_SIZE=2 %q -u %q >%q 2>&1' \
         "$indices" "$port" "$TASK_BURN_PYTHON" "$TASK_BURN_TARGET" "$log"
     tmux new-session -d -s "$session" "$launch_command"
     tmux set-option -w -t "$session" remain-on-exit on
@@ -242,7 +244,7 @@ TASK_TIERED="$TASK_OUTPUT_BASE/tiered_ranklift_raw_t4_c512/checkpoint-10000"
 TASK_UNIFIED="$TASK_OUTPUT_BASE/unified_ranklift_raw_t4_m460/checkpoint-10000"
 TASK_CHECKPOINTS=("$TASK_TIERED" "$TASK_UNIFIED")
 TASK_LABELS=(tiered_ranklift_raw_c512_s10000 unified_ranklift_raw_m460_s10000)
-TASK_RUN_ID=raw_tiered_unified_10k_20260906_a01
+TASK_RUN_ID=raw_tiered_unified_10k_20260906_a02
 TASK_EVAL_LAUNCH_LOG="$TASK_OUTPUT_BASE/eval_parallel_${TASK_RUN_ID}.log"
 TASK_FINETUNE_OUTPUT="$TASK_OUTPUT_BASE/finetune_${TASK_RUN_ID}"
 TASK_COMPLETION_MARKER="$TASK_OUTPUT_BASE/eval_finetune_${TASK_RUN_ID}.complete"
