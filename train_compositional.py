@@ -36,6 +36,8 @@ from transformers import (
 )
 from transformers.trainer_utils import get_last_checkpoint
 
+from compositional.unified_ranklift import build_unified_ranklift
+
 from compositional import (
     ANTEmbed, ResidualANTEmbed, V0Embed, V1Embed, V2Embed,
     IsolationControlEmbed, LowRankEmbed, SharedLocalEmbed, PureLocalEmbed,
@@ -123,7 +125,7 @@ class CompositionalArguments:
                         "shared_local", "pure_local", "pvq", "slim",
                         "groupreduce", "nested_ladder",
                         "residual_subspace_experts", "product_code",
-                        "ranklift", "tiered_ranklift", "funneling",
+                        "ranklift", "tiered_ranklift", "unified_ranklift", "funneling",
                         "define", "tt"],
         },
     )
@@ -298,6 +300,23 @@ class CompositionalArguments:
     tiered_ranklift_frequency_key: str = field(default="counts")
     tiered_ranklift_rms_eps: float = field(default=1e-6, metadata={
         "help": "Positive epsilon for Tiered RankLift's parameter-free RMSNorm."
+    })
+    unified_ranklift_code_dims: str = field(default="384,256,128,112", metadata={
+        "help": "Private token-code width per raw-frequency group."
+    })
+    unified_ranklift_feature_dim: int = field(default=460, metadata={
+        "help": "Common expanded width feeding ONE shared tied projection."
+    })
+    unified_ranklift_populations: str = field(default="2048,6144,24576,119168", metadata={
+        "help": "Group populations in descending token-frequency order."
+    })
+    unified_ranklift_frequency_path: str | None = field(
+        default="resources/token_freq_sample10.npz", metadata={
+            "help": "Fresh-run frequency artifact; saved checkpoints persist membership."
+        })
+    unified_ranklift_frequency_key: str = field(default="counts")
+    unified_ranklift_rms_eps: float = field(default=1e-6, metadata={
+        "help": "Positive epsilon for Unified RankLift's parameter-free RMSNorm."
     })
     funneling_rank: int = field(default=128, metadata={
         "help": "Bottleneck width of the from-scratch Funneling control."
@@ -980,6 +999,8 @@ def build_arm(comp_args, vocab_size, embed_dim, initial_state=None):
             lift_dim=ca.ranklift_lift_dim,
             rms_eps=ca.ranklift_rms_eps,
         )
+    if ca.arm == "unified_ranklift":
+        return build_unified_ranklift(vars(ca), vocab_size, embed_dim, initial_state)
     if ca.arm == "tiered_ranklift":
         declared_code_dims = _parse_int_list(
             ca.tiered_ranklift_code_dims,
@@ -1142,7 +1163,7 @@ def validate_output_configuration(comp_args):
     if comp_args.arm in {
         "pure_local", "pvq", "slim", "groupreduce", "nested_ladder",
         "residual_subspace_experts", "product_code", "ranklift",
-        "tiered_ranklift", "funneling", "define", "tt",
+        "tiered_ranklift", "unified_ranklift", "funneling", "define", "tt",
     } and not comp_args.tie_output:
         raise ValueError(
             f"--arm {comp_args.arm} requires --tie_output for the compressed "

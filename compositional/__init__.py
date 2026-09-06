@@ -19,6 +19,7 @@ from .nonlinear_factorizations import (
     FunnelingEmbed,
     DeFINEEmbed,
 )
+from .unified_ranklift import UnifiedRankLiftEmbed
 from .compressed_baselines import (
     PVQEmbed,
     SlimEmbed,

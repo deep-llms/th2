@@ -234,9 +234,10 @@ class TieredRankLiftEmbed(nn.Module):
                 torch.tensor(sizes, dtype=torch.long),
             )
         else:
-            group_ids = torch.as_tensor(
-                group_ids, dtype=torch.long
-            ).detach().clone()
+            group_ids = torch.as_tensor(group_ids).detach().clone()
+            if group_ids.dtype not in (torch.int32, torch.int64):
+                raise ValueError("group_ids must contain integers")
+            group_ids = group_ids.long()
         if group_ids.ndim != 1 or group_ids.numel() != vocab_size:
             raise ValueError(
                 f"group_ids must have shape ({vocab_size},), got "
@@ -336,7 +337,9 @@ class TieredRankLiftEmbed(nn.Module):
                 "Tiered RankLift state is missing structural tensors: "
                 f"{sorted(missing)}"
             )
-        group_ids = torch.as_tensor(state["group_ids"], dtype=torch.long).cpu()
+        group_ids = torch.as_tensor(state["group_ids"]).cpu()
+        if group_ids.dtype != torch.int64:
+            raise ValueError("invalid Tiered RankLift checkpoint group_ids dtype")
         code_dims = tuple(
             int(value) for value in state["tier_code_dims"].cpu().tolist()
         )
@@ -420,6 +423,23 @@ class TieredRankLiftEmbed(nn.Module):
             raise ValueError("Tiered RankLift code-dimension metadata is inconsistent")
         if tuple(self.tier_lift_dims.cpu().tolist()) != self.lift_dims:
             raise ValueError("Tiered RankLift lift-dimension metadata is inconsistent")
+        bits = int(self.tier_rms_eps_bits.item())
+        if struct.unpack("<d", struct.pack("<q", bits))[0] != self.rms_eps:
+            raise ValueError("Tiered RankLift rms_eps metadata is inconsistent")
+        if self.group_ids.dtype != torch.int64 or self.group_ids.shape != (
+            self.vocab_size,
+        ):
+            raise ValueError("Tiered RankLift group_ids metadata is invalid")
+        if (self.group_ids.min().item() < 0
+                or self.group_ids.max().item() >= self.num_groups):
+            raise ValueError("Tiered RankLift group_ids metadata is out of range")
+        actual_sizes = tuple(
+            int(size) for size in torch.bincount(
+                self.group_ids, minlength=self.num_groups
+            ).tolist()
+        )
+        if actual_sizes != self.group_sizes:
+            raise ValueError("Tiered RankLift group populations are inconsistent")
         expected_ids = torch.cat([
             torch.where(self.group_ids == group)[0]
             for group in range(self.num_groups)
@@ -485,13 +505,16 @@ class TieredRankLiftEmbed(nn.Module):
 
     def forward(self, input_ids, doc_mask=None):
         flat_ids = input_ids.reshape(-1)
-        flat_groups = self.group_ids[flat_ids]
-        flat_offsets = self.group_offsets[flat_ids]
-        output = torch.empty(
-            flat_ids.numel(), self.embed_dim,
-            device=flat_ids.device,
-            dtype=self.token_codes[0].dtype,
-        )
+        # Embedding lookup rejects negative/out-of-range IDs. Direct tensor
+        # indexing would silently treat a negative token ID as a Python-style
+        # index from the end of the vocabulary.
+        flat_groups = F.embedding(
+            flat_ids, self.group_ids[:, None]
+        ).squeeze(-1)
+        flat_offsets = F.embedding(
+            flat_ids, self.group_offsets[:, None]
+        ).squeeze(-1)
+        output = None
         # Execute every group even when the current input contains no member of
         # it.  Empty tensor operations keep all parameters connected under DDP
         # with find_unused_parameters=False, matching GroupReduce's behavior.
@@ -499,7 +522,15 @@ class TieredRankLiftEmbed(nn.Module):
             mask = flat_groups == group
             codes = self.token_codes[group][flat_offsets[mask]]
             features = self.features_from_codes(group, codes)
-            output[mask] = features @ self.right_factors[group].T
+            projected = features @ self.right_factors[group].T
+            # Under autocast, projected values can be BF16 while parameters
+            # and token codes remain FP32. Allocate from the operation result,
+            # rather than from a parameter, so indexed assignment is valid in
+            # both native-BF16 and FP32-with-autocast execution.
+            if output is None:
+                output = projected.new_empty(flat_ids.numel(), self.embed_dim)
+            output[mask] = projected
+        assert output is not None
         return output.view(*input_ids.shape, self.embed_dim), None
 
 

@@ -438,6 +438,34 @@ EXPERIMENT_COMMANDS = [
             "rng_state_6.pth", "rng_state_7.pth",
         ],
     },
+    {
+        "name": "tiered_ranklift_raw_t4_c512",
+        "cmd": "bash scripts/train_tiered_ranklift_raw_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/tiered_ranklift_raw_t4_c512",
+        "require_fresh_output": True,
+        "required_input_files": ["resources/token_freq_sample10.npz"],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
+    {
+        "name": "unified_ranklift_raw_t4_m460",
+        "cmd": "bash scripts/train_unified_ranklift_raw_tied.sh",
+        "output_dir": f"{B200_OUT_BASE}/unified_ranklift_raw_t4_m460",
+        "require_fresh_output": True,
+        "required_input_files": ["resources/token_freq_sample10.npz"],
+        "required_checkpoint_files": [
+            "config.json", "model.safetensors", "trainer_state.json",
+            "optimizer.pt", "scheduler.pt", "embedding.pt",
+            "rng_state_0.pth", "rng_state_1.pth", "rng_state_2.pth",
+            "rng_state_3.pth", "rng_state_4.pth", "rng_state_5.pth",
+            "rng_state_6.pth", "rng_state_7.pth",
+        ],
+    },
 ]
 
 

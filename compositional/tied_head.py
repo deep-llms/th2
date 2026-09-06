@@ -18,6 +18,7 @@ For each embedding architecture, we use the most efficient computation:
   ResidualExperts: global factorization + grouped top-k residual projections
   ProductCode:    materialize the V x d table from codes once, then one dense GEMM
   RankLift:       nonlinear V x m features + one width-m vocabulary GEMM
+  UnifiedRankLift: variable private codes + one shared width-m vocabulary GEMM
   Funneling:      ReLU token factors + one factored vocabulary GEMM
   DeFINE:         hidden-to-map projection + tied low-dimensional token table
   TT:             reverse TT-matrix contraction
@@ -500,6 +501,9 @@ def make_tied_head(embed, embed_type, vocab_size, mos_components=1,
         inner = TiedProductCodeHead(embed)
     elif embed_type == "ranklift":
         inner = TiedRankLiftHead(embed)
+    elif embed_type == "unified_ranklift":
+        # Same one-projection algebra; only feature-table construction differs.
+        inner = TiedRankLiftHead(embed)
     elif embed_type == "tiered_ranklift":
         inner = TiedTieredRankLiftHead(embed)
     elif embed_type == "funneling":
@@ -517,7 +521,7 @@ def make_tied_head(embed, embed_type, vocab_size, mos_components=1,
             f"Cannot tie output for embed_type={embed_type}. Supported types are "
             "lowrank/global_lowrank, shared_local, pure_local, pvq, slim, "
             "groupreduce, nested_ladder, residual_subspace_experts, product_code, "
-            "ranklift, tiered_ranklift, funneling, define, tt, "
+            "ranklift, tiered_ranklift, unified_ranklift, funneling, define, tt, "
             "original_ant, ant, and residual_ant; v0, v1, v2, and "
             "isolation_control are context-dependent and cannot be tied."
         )

@@ -52,6 +52,7 @@ from .nonlinear_factorizations import (
     FunnelingEmbed,
     DeFINEEmbed,
 )
+from .unified_ranklift import UnifiedRankLiftEmbed, build_unified_ranklift
 from .tied_head import (
     INDEPENDENT_OUTPUT_FILENAME,
     IndependentLowRankHead,
@@ -302,6 +303,8 @@ def _build_arm_from_config(comp_config, vocab_size, embed_dim, state=None):
             lift_dim=tc.get("ranklift_lift_dim", 336),
             rms_eps=tc.get("ranklift_rms_eps", 1e-6),
         )
+    if arm == "unified_ranklift":
+        return build_unified_ranklift(tc, vocab_size, embed_dim, state)
     if arm == "tiered_ranklift":
         if state is not None:
             structure = TieredRankLiftEmbed.structure_from_state(state)
@@ -663,6 +666,21 @@ def _infer_comp_config_from_state(state):
     weights alone and are not handled here.
     """
     keys = set(state.keys())
+
+    if {"unified_code_dims", "unified_rms_eps_bits", "projection.weight",
+        "token_codes.0"}.issubset(keys):
+        structure = UnifiedRankLiftEmbed.structure_from_state(state)
+        return {
+            "arm": "unified_ranklift",
+            "unified_ranklift_code_dims": ",".join(
+                map(str, structure["code_dims"])
+            ),
+            "unified_ranklift_feature_dim": structure["feature_dim"],
+            "unified_ranklift_populations": ",".join(
+                map(str, structure["group_sizes"])
+            ),
+            "unified_ranklift_rms_eps": structure["rms_eps"],
+        }
 
     if {
         "token_codes", "lift_a.weight", "lift_a.bias", "lift_b.weight",
@@ -1125,7 +1143,8 @@ def load_compositional_model(checkpoint_dir, device="cuda", dtype=None):
             "lowrank", "global_lowrank", "shared_local", "pure_local",
             "pvq", "slim", "groupreduce", "nested_ladder",
             "residual_subspace_experts", "product_code",
-            "ranklift", "tiered_ranklift", "funneling", "define", "tt",
+            "ranklift", "tiered_ranklift", "unified_ranklift", "funneling",
+            "define", "tt",
             "original_ant", "ant",
             "residual_ant"
         }
