@@ -1,51 +1,51 @@
-#1 +60+a
-#th2-readonly-ranklift-completion-and-burn-check-20260906-a04
+#1 +120+a
+#th2-restore-runner-burn-after-ranklift-completion-20260906-a01
 set -euo pipefail
 date -u
 hostname
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+TASK_BASE=/mnt/local/_outputs/@PROJECT@
+test -s "$TASK_BASE/status/raw_tiered_unified_ranklift_10k_20260906_a01.complete"
+grep -Fx 'STATUS=SUCCESS' "$TASK_BASE/status/raw_tiered_unified_ranklift_10k_20260906_a01.complete"
+test -s /tmp/llm_pretrain_burn.py
+echo '=== existing tmux sessions ==='
+tmux list-sessions || true
+echo '=== old burn log tail ==='
+tail -n 12 "$TASK_BASE/logs/gpu_burn_after_raw_tiered_unified_ranklift_20260906_a01.log"
+if pgrep -af '[t]rain_compositional.py|[r]un_experiments.py|[e]val_parallel.py|[f]inetune_parallel.py'; then
+    echo 'Refusing burn: project workload still exists'; exit 1
+fi
+for attempt in 1 2; do
+    TASK_GPU_PIDS="$(nvidia-smi --query-compute-apps=pid --format=csv,noheader)"
+    test -z "$TASK_GPU_PIDS" || { echo 'GPU processes exist; refusing launch'; exit 1; }
+    nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+    sleep 3
+done
+TASK_SESSION=ranklift_completed_burn_20260906_a01
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then
+    echo 'Refusing duplicate burn session'; exit 1
+fi
+tmux new-session -d -s "$TASK_SESSION" "exec env CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 /usr/bin/python3 -u /tmp/llm_pretrain_burn.py >> '$TASK_BASE/logs/gpu_burn_ranklift_restore_20260906_a01.log' 2>&1"
+sleep 40
 python3 - <<'PY'
+import subprocess
 from pathlib import Path
-import json, subprocess
-gpu_pids=subprocess.check_output(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader'],text=True).splitlines()
-for pid in sorted(set(x.strip() for x in gpu_pids if x.strip().isdigit()),key=int):
-    for depth in range(4):
-        if int(pid)<=1: break
-        proc=Path('/proc')/pid
-        try:
-            cmd=(proc/'cmdline').read_bytes().replace(b'\x00',b' ').decode(errors='replace')
-            print('GPU_PROCESS_ANCESTRY',depth,pid,cmd)
-            pid=next(l.split()[1] for l in (proc/'status').read_text().splitlines() if l.startswith('PPid:'))
-        except (OSError,StopIteration): break
-base=Path('/mnt/local/_outputs/@PROJECT@')
-def tail(path, size=9000):
-    print('FILE',path)
-    if not path.is_file():
-        print('NOT PRESENT'); return
-    with path.open('rb') as f:
-        f.seek(max(0,path.stat().st_size-size))
-        print(f.read().decode(errors='replace').replace('\r','\n'))
-logs=base/'logs/raw_tiered_unified_ranklift_10k_20260906_a01'
-tail(logs/'experiments.log')
-for arm in ('tiered_ranklift_raw_t4_c512','unified_ranklift_raw_t4_m460'):
-    tail(logs/(arm+'.log'))
-    checkpoints=sorted((base/arm).glob('checkpoint-*'),key=lambda p:int(p.name.split('-')[-1]),reverse=True)
-    for checkpoint in checkpoints:
-        path=checkpoint/'trainer_state.json'
-        if not path.is_file(): continue
-        try:
-            state=json.loads(path.read_text())
-        except json.JSONDecodeError:
-            continue
-        rows=[row for row in state.get('log_history',[]) if 'loss' in row]
-        print('EARLY_HISTORY '+json.dumps(dict(arm=arm,checkpoint=checkpoint.name,global_step=state.get('global_step'),rows=rows)))
-        break
-    else:
-        print('NO_READABLE_STATE',arm)
-marker=base/'status/raw_tiered_unified_ranklift_10k_20260906_a01.complete'
-print('COMPLETION_MARKER',marker.exists())
-if marker.exists(): print(marker.read_text())
-tail(base/'logs/gpu_burn_after_raw_tiered_unified_ranklift_20260906_a01.log',4000)
+seen=set()
+for gpu in range(8):
+    pids=subprocess.check_output(['nvidia-smi','-i',str(gpu),'--query-compute-apps=pid','--format=csv,noheader'],text=True).split()
+    assert len(pids)==1, (gpu,pids)
+    pid=pids[0]; assert pid not in seen; seen.add(pid)
+    current=pid; owned=False
+    for depth in range(6):
+        if int(current)<=1: break
+        p=Path('/proc')/current
+        cmd=(p/'cmdline').read_bytes().replace(b'\0',b' ').decode(errors='replace')
+        if '/tmp/llm_pretrain_burn.py' in cmd:
+            owned=True; print('BURN_GPU',gpu,'worker',pid,'ancestor',current,cmd); break
+        current=next(l.split()[1] for l in (p/'status').read_text().splitlines() if l.startswith('PPid:'))
+    assert owned,(gpu,pid)
+print('ALL_EIGHT_BURN_WORKERS_VERIFIED')
 PY
-echo 'TH2 READONLY MATCHED EARLY PPL COMPLETE'
+tmux has-session -t "$TASK_SESSION"
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+tail -n 12 "$TASK_BASE/logs/gpu_burn_ranklift_restore_20260906_a01.log"
+echo 'TH2 RUNNER BURN RESTORED IN INDEPENDENT TMUX SESSION'
