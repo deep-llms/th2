@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-readonly-ranklift-progress-and-matched-ppl-20260906-a03
+#th2-readonly-ranklift-completion-and-burn-check-20260906-a04
 set -euo pipefail
 date -u
 hostname
@@ -7,7 +7,17 @@ nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,nohea
 nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
 python3 - <<'PY'
 from pathlib import Path
-import json
+import json, subprocess
+gpu_pids=subprocess.check_output(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader'],text=True).splitlines()
+for pid in sorted(set(x.strip() for x in gpu_pids if x.strip().isdigit()),key=int):
+    for depth in range(4):
+        if int(pid)<=1: break
+        proc=Path('/proc')/pid
+        try:
+            cmd=(proc/'cmdline').read_bytes().replace(b'\x00',b' ').decode(errors='replace')
+            print('GPU_PROCESS_ANCESTRY',depth,pid,cmd)
+            pid=next(l.split()[1] for l in (proc/'status').read_text().splitlines() if l.startswith('PPid:'))
+        except (OSError,StopIteration): break
 base=Path('/mnt/local/_outputs/@PROJECT@')
 def tail(path, size=9000):
     print('FILE',path)
