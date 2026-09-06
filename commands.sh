@@ -1,16 +1,26 @@
-#1 +180+a
-#th2-eval-finetune-raw-tiered-unified-10k-20260906-a02
+#1 +60+a
+#th2-readonly-verify-raw-tiered-unified-eval-start-20260906-a01
 set -euo pipefail
-TASK_PROJECT_DIR=/mnt/local/@PROJECT@
-cd "$TASK_PROJECT_DIR"
-echo '27bed3ae0449c4e3ef0ff7dda6f7660c3cc34a0d62ded172983f6d955aed071d  scripts/run_raw_tiered_unified_eval_finetune_burn.sh' | sha256sum -c -
-tmux list-panes -a -F '#{session_name} pid=#{pane_pid} dead=#{pane_dead} exit=#{pane_dead_status}' || true
-bash -n scripts/run_raw_tiered_unified_eval_finetune_burn.sh
-export SPARSE_EMB_PROJECT_DIR="$TASK_PROJECT_DIR"
-export SPARSE_EMB_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
-export SPARSE_EMB_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
-export SPARSE_EMB_EVAL_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
-export SPARSE_EMB_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
-export SPARSE_EMB_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
-export SPARSE_EMB_CONDA=/mnt/local/conda-py311/bin/conda
-exec bash scripts/run_raw_tiered_unified_eval_finetune_burn.sh
+date -u
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
+tmux list-panes -a -F '#{session_name} pid=#{pane_pid} dead=#{pane_dead} exit=#{pane_dead_status} signal=#{pane_dead_signal}'
+python3 - <<'PY'
+from pathlib import Path
+base=Path('/mnt/local/_outputs/@PROJECT@')
+def tail(p,n=5000):
+    print('FILE',p)
+    if not p.is_file(): print('NOT PRESENT');return
+    with p.open('rb') as f:
+        head=f.read(18000).decode(errors='replace')
+        f.seek(max(0,p.stat().st_size-n))
+        end=f.read().decode(errors='replace')
+    for line in head.splitlines():
+        if 'Loaded compositional model:' in line: print(line)
+    print(end.replace('\r','\n'))
+for arm in ('tiered_ranklift_raw_t4_c512','unified_ranklift_raw_t4_m460'):
+    tail(base/arm/'checkpoint-10000/eval.log')
+tail(base/'logs/eval_finetune_raw_tiered_unified_10k_20260906_a02.log')
+tail(base/'logs/burn_eval_raw_tiered_unified_10k_20260906_a02.log',1600)
+PY
+echo 'TH2 LIVE EVAL READONLY VERIFICATION COMPLETE'
