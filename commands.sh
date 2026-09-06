@@ -1,18 +1,15 @@
-#1 +60+a
-#th2-readonly-investigate-burn-lifetime-20260906-a01
+#1 +300+a
+#th2-eval-finetune-raw-tiered-unified-10k-20260906-a01
 set -euo pipefail
-date -u
-hostname
-nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
-nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
-tmux list-panes -a -F '#{session_name} pane=#{pane_id} pid=#{pane_pid} dead=#{pane_dead} exit=#{pane_dead_status} command=#{pane_current_command}' || true
-ps -eo pid,ppid,sid,pgid,etime,comm | grep -E 'python|tmux|bash' || true
-tail -n 8 /mnt/local/_outputs/@PROJECT@/logs/gpu_burn_ranklift_restore_20260906_a01.log
-sha256sum /tmp/llm_pretrain_burn.py resources/llm_pretrain_burn.py
-echo '=== original training pane tail if retained ==='
-tmux list-panes -a -F '#{session_name} #{pane_id}' | while read -r session pane; do
-    case "$session" in
-        *train-raw-tiered-and-unified*) tmux capture-pane -p -t "$pane" -S -100 ;;
-    esac
-done
-echo 'TH2 BURN LIFETIME READONLY DIAGNOSTIC COMPLETE'
+TASK_PROJECT_DIR=/mnt/local/@PROJECT@
+cd "$TASK_PROJECT_DIR"
+echo 'cd90d538ee36ba3ead56388d4a9264280d14043bda2a7b0bf8c744e3bc6f76be  scripts/run_raw_tiered_unified_eval_finetune_burn.sh' | sha256sum -c -
+bash -n scripts/run_raw_tiered_unified_eval_finetune_burn.sh
+export SPARSE_EMB_PROJECT_DIR="$TASK_PROJECT_DIR"
+export SPARSE_EMB_OUTPUT_BASE=/mnt/local/_outputs/@PROJECT@
+export SPARSE_EMB_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B
+export SPARSE_EMB_EVAL_DIR=/mnt/local/_data/@PROJECT@/data/Qwen_Qwen3-0.6B/eval
+export SPARSE_EMB_BENCH_ROOT=/mnt/local/_data/@PROJECT@/benchmarks/hf
+export SPARSE_EMB_EVAL_PYTHON=/mnt/local/conda-py311/envs/eval/bin/python3.11
+export SPARSE_EMB_CONDA=/mnt/local/conda-py311/bin/conda
+exec bash scripts/run_raw_tiered_unified_eval_finetune_burn.sh
