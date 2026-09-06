@@ -1,11 +1,11 @@
 #1 +60+a
-#th2-readonly-raw-tiered-unified-training-progress-20260906-a01
+#th2-readonly-raw-tiered-unified-training-progress-20260906-a02
 set -euo pipefail
 date -u
 hostname
 nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
 nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
-ps -eo pid,ppid,etime,args | grep -E '[r]un_experiments.py|[t]rain_compositional.py|[l]lm_pretrain_burn.py' || true
+ps -eo pid,ppid,etime,comm | grep -E 'python|accelerate' || true
 python3 - <<'PY'
 from pathlib import Path
 import json
