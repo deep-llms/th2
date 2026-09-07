@@ -1,15 +1,16 @@
 # Current task
 
-Status: v0.5 capacity-allocation English pilot implemented and CPU-tested;
-code-only publication to the user-confirmed development and th2 repositories.
-No Stagewise workload, dataset revision or training hyperparameters are selected.
+Status: creating `swt` environments on dev/B200 from each host's `sparse_emb`,
+verifying B200 code/environment and preparing frozen English/GPT-2 data.
+No Stagewise training or GPU-process termination is authorized.
 
 ## User request and authorized scope
 
-- Objective: publish the implemented §12 experiments to both confirmed repositories.
-- Allowed remote actions: Git pushes to `origin/main` and th2 `main`, with `#0`.
-- Constraints / do not touch: no new workload, GPU cancellation, or real-data
-  download is authorized by this publication request. Work in this project,
+- Objective: create `swt` on both machines; verify code/environment and prepare data.
+- Allowed remote actions: necessary setup/download/CPU-preprocessing commands and
+  pushes to both confirmed repositories, with monitoring through Dropbox.
+- Constraints / do not touch: no training, GPU cancellation, or modification of
+  existing environments, datasets or checkpoints. Work in this project,
   not the old sparse-embedding project or generic template.
 
 ## Configuration and evidence
