@@ -46,8 +46,14 @@ Random-row token-yield preview across all 50 English shards estimates 43.07B
 tokens before document sampling/exact dedup. Fraction 0.30 estimates 12.87B
 train and 25.84M each held-out split, with actual minimums enforced at completion.
 Submitted offline preparation in th2 commit `4e6e553` at 2026-09-07 22:57 UTC,
-job `th2-swt-english-gpt2-10b-prepare-20260907-a01`. Await the matching remote
-log to verify startup and progress; no training or GPU changes.
+job `th2-swt-english-gpt2-10b-prepare-20260907-a01`. Remote log snapshot at
+2026-09-07 23:02:05 UTC verifies all five tokenizer files, 42 CPU tests, all
+50 raw English SHA256 hashes and the production `preparation_started` marker.
+Evidence: `temp/remote_logs/swt_english_10b_start_a02.log`.
+Sampling is running; it has not completed. No training or GPU changes.
+Runner command now `#2 +a` (`d7dcafe`) to pull logs without relaunching.
+Next: monitor using `#2`; require final manifest and
+`SWT_SAMPLING_FINISHED_SUCCESSFULLY` before declaring preparation complete.
 
 See `CAPACITY_EXPERIMENTS.md` for implemented arms, offline preparation, tests and
 the training CLI. Run the destination-GPU smoke test and freeze real input
