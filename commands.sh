@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-swt-english-gpt2-10b-prepare-20260907-a01
-set -euo pipefail
-bash scripts/prepare_english_b200.sh
+#2 +a
+#th2-pull-swt-english-gpt2-10b-start-20260907-a01
