@@ -1,0 +1,40 @@
+# Data
+cache/
+data/
+checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Wandb
+wandb/
+
+temp/
+
+smoke_test_outputs/
+
+.claude/
+outputs/
+logs/
+artifacts/
+.venv/
+.pytest_cache/
+*.log
+*.part
+.env
+.env.*
+!.env.example
+project.local.json
+
+# Local agent/operator guides
+/docs/AGENT_GUIDE.md
+/docs/DROPBOX_ACCESS.md

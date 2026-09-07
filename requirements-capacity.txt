@@ -1,0 +1,9 @@
+# Tested with Python 3.11. Install the torch wheel appropriate to the GPU/driver;
+# the local correctness tests used torch 2.7.1+cu118 on CPU, not on B200.
+torch==2.7.1
+transformers==5.9.0
+accelerate==1.13.0
+numpy==2.4.4
+pyarrow==24.0.0
+tokenizers==0.22.2
+safetensors==0.8.0

@@ -1,0 +1,5 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+pip
+# Add project dependencies here after checking the runner's package availability.
