@@ -1,0 +1,258 @@
+{
+  "dataset": "uonlp/CulturaX",
+  "language": "en",
+  "revision": "6a8734bc69fefcbb7735f4f9250f43e4cd7a442e",
+  "selection_rule": "Reuse 50 English shards selected across the full pinned release: sorted(random.Random('42_en').sample(sorted(all English parquet files), 50)). SHA256 and sizes independently matched to HF Hub LFS metadata on 2026-09-07. Document sampling and splits use separate seed 0.",
+  "shards": [
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00015.parquet",
+      "sha256": "b83d23dc436670adc95adf3111fc330902aebfce671775a831309c614a34004e",
+      "bytes": 2496438120
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00024.parquet",
+      "sha256": "782d0a1ad055dd122c53e72f9b352fbf5c8172051962c0564132f606a99e702e",
+      "bytes": 2504086169
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00062.parquet",
+      "sha256": "f41272fbad532f1ef483a57d4ea843c4190bff6da9b85a05d2066d99f393b9e5",
+      "bytes": 2502230084
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00079.parquet",
+      "sha256": "b6df04f2a2287b1c632e41e3b3f07cc6890d7cdfdb13cbd12f3f1dc2477fc98d",
+      "bytes": 2502008547
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00119.parquet",
+      "sha256": "c0ee8eac4b54341d5f5812dad349315da3fcab77e30f95be891756a199247173",
+      "bytes": 2502087620
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00387.parquet",
+      "sha256": "8606ea2adf824c67f525a55ffa33a2e9b40dbb40b606a6f1fc4e1756d8bb417a",
+      "bytes": 2498457978
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00457.parquet",
+      "sha256": "efebe7516f235e3ccf6f09078a0b999d9d59f06f4c31f48514cafbb24ce31477",
+      "bytes": 2500854058
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00459.parquet",
+      "sha256": "f82a0398455efa7c527a0151ac1f7a0af22658ed9b5ace0d6c7956e64ac72656",
+      "bytes": 2501289801
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00501.parquet",
+      "sha256": "223380555239a7460f461ee31afeebc82eb3b8891c8d827749ce9aad3f98aeac",
+      "bytes": 2498366384
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00539.parquet",
+      "sha256": "7c5494f8c8d4d4e2af14c909c9cbc3476439d9f15659ee9ff2d4f01bc22261bc",
+      "bytes": 2503893527
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00767.parquet",
+      "sha256": "492748980355941d17c461774449e99069e3adb524c584cd6c53f306492a1cc7",
+      "bytes": 2500486769
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_00914.parquet",
+      "sha256": "4408a0469c73601f76159cd6862455b2681082f4e4c0fe14b40cf47c22fc1a17",
+      "bytes": 2505956906
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01044.parquet",
+      "sha256": "96357190eeeae5e8e066c475c1600115c49004412626602119234b909bbbdf48",
+      "bytes": 2508214795
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01046.parquet",
+      "sha256": "d4818f2c221bc4ecd273e7d80725004bd7abca77522b96659c1719dfdda74f2f",
+      "bytes": 2512814800
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01058.parquet",
+      "sha256": "dafd1aa41b7b4b1db94292fad881959c7ee1a467a812361463296e68944d7dcb",
+      "bytes": 2514139714
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01083.parquet",
+      "sha256": "3927593273510101e2adbed8f19cb1e11d187359e421714063604af81267f763",
+      "bytes": 2510135478
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01115.parquet",
+      "sha256": "883db1943ae900743ce284ac1b03adb2e55934f89b857b611ca40883d990bb53",
+      "bytes": 2514835957
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01120.parquet",
+      "sha256": "a9d7d64faac8259ccabf3f22b72053c657acba15da5253f5b20357c8c1e7804a",
+      "bytes": 2511979369
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01131.parquet",
+      "sha256": "da054544a6edfca8be3e93c39f307cfd0e09528f8c218c690482abdb46e399bf",
+      "bytes": 2506448645
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01155.parquet",
+      "sha256": "40dbce2591d13c76c9902d8d7811de895e8865e9daca97b7acc298ca40636829",
+      "bytes": 2507723757
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01252.parquet",
+      "sha256": "5610de52f4aff6023a7fe30e33ec6f36f1cd8ecfb0eab9cd1ca003ebdf8acf75",
+      "bytes": 2512787640
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01430.parquet",
+      "sha256": "61d2636e2c3adbf0aab7e8e0689f5ca73ce5a8181790dc226411e97194e7906f",
+      "bytes": 2519065528
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01456.parquet",
+      "sha256": "66e675f2889f171a425b6a50a74b2534900961d744e4fd998d128ef50e0e4e27",
+      "bytes": 2505457163
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01489.parquet",
+      "sha256": "d1ae76d968ac3644dc47818c4001c76ae60af7c4a04ab55377beac4294609ab7",
+      "bytes": 2510984776
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01697.parquet",
+      "sha256": "a0373d8db1e60b235ec576488bb748a43a5a7b2f1e9c12559fe58e1f31fcdfaf",
+      "bytes": 2507156777
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01766.parquet",
+      "sha256": "640df665f52b8202473a1fb75ad1c3fce11e69c183c96f25cbe2a469a26a88a9",
+      "bytes": 2506977415
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01851.parquet",
+      "sha256": "322ca02c7dd22ff4f1496854d7daab62cbace5305a9c420a7bd09841a47bae44",
+      "bytes": 2511246575
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01863.parquet",
+      "sha256": "9dca073624a37d36acb43a88a6a140476c97bb77810b331db38e1493c3013e55",
+      "bytes": 2509713874
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01871.parquet",
+      "sha256": "0e424d408fbbf45b89c618e12ab744a9fdafe6040cf0f40fbab93d81803132f1",
+      "bytes": 2507273602
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_01903.parquet",
+      "sha256": "4eb7f6c588aaf4bfc650fa34a7e0007f8622169c275d5a97a6e1fdbd257866c0",
+      "bytes": 2510920337
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02078.parquet",
+      "sha256": "8ac4877dd78c3e3924c78e7ffc3b404f8cd5a901b51f2ad09762c6ea4635a83d",
+      "bytes": 2341519366
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02079.parquet",
+      "sha256": "66a346a3a6ac0312f602512d99284c393dc870a9ce0f5ea087208df1a7dfba14",
+      "bytes": 2351927972
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02083.parquet",
+      "sha256": "f30e1950bc6e97cd75a7bcdb6b134fd12546e3b02a540dbb45c2bf4d5471383b",
+      "bytes": 2349831093
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02139.parquet",
+      "sha256": "a70daef1c156006533c117557b2452be19daec1ca995352144cf642a54ccad21",
+      "bytes": 2344237915
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02331.parquet",
+      "sha256": "7d6a1d7638ad7ef13ee0784f4b7e301360456052c7d241e24e57c370b464d7c8",
+      "bytes": 2348342112
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02351.parquet",
+      "sha256": "1146297e52102085616e63cc0c8e67ca6cff13b604f0336d6662b7e19159b8a5",
+      "bytes": 2348008384
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02391.parquet",
+      "sha256": "cac6ea4b0ab2426ecffc0a838cbdbcb86929103da3ffeed0c7c22bb9c13b068e",
+      "bytes": 2348471928
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02415.parquet",
+      "sha256": "dd6b80100bb624f06ff4b5dbb28a4fba84de0529f4d56449c09593887877eb53",
+      "bytes": 2353098626
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02451.parquet",
+      "sha256": "34255a3568d468f25cf75ee0e84b7542c963673839bcde1b25236daa7dcb194d",
+      "bytes": 2346461443
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02565.parquet",
+      "sha256": "bd93d0690c0d5c7c90665a3b1d2897e51aa223d99b3585bd9e52655f1ca3fbd5",
+      "bytes": 2343408029
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02622.parquet",
+      "sha256": "b3cc4643ef753845652a7503ee95ad5619fdd8756452950bf7e5c982bc1f1dd4",
+      "bytes": 2352666441
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02662.parquet",
+      "sha256": "1cef7ba8f2342a3f427d4a8fd220dda0a9eb45379a0ac050f8cc3fa187360d6a",
+      "bytes": 2345683476
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02688.parquet",
+      "sha256": "4cb021717dfb618463cb2f601de0e6bdfc480640932fd19ecf604d89bcb86ea0",
+      "bytes": 2351300854
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02691.parquet",
+      "sha256": "d7f3da7a06986582eb3ca89239acf6d49803839476f734cac512c511d01df506",
+      "bytes": 2344141940
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02715.parquet",
+      "sha256": "3a3e3f49498117383b4884db883fc71db9afdeb8ae1b454f2c5e8d70a996dca7",
+      "bytes": 2354829014
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02796.parquet",
+      "sha256": "c1a139ec39fa6d4498992e39adfefd133b434545aee31faed3904cd58b9e148a",
+      "bytes": 2345630465
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_02907.parquet",
+      "sha256": "4842e8486955d10c3e2a8c6b14a5f1898b37ca4603a08db1902db509b5576895",
+      "bytes": 2342873411
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_03048.parquet",
+      "sha256": "b389d3483298f78dbe1da897d0fa4e5477da43d30fc4fd7a308fb6e31df6ecde",
+      "bytes": 2348188823
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_03060.parquet",
+      "sha256": "cd4b6dc13d0a8e9dd367f0ffa4b3b1c087ed48262faa9cdadccb76965c2419a2",
+      "bytes": 2351808884
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/data/raw/en/en_part_03066.parquet",
+      "sha256": "af52f027b4f1b43651d329362b32956cd92eaa7073deb54d5972dab70388e5bc",
+      "bytes": 2350985534
+    }
+  ]
+}

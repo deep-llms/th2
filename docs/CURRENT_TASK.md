@@ -1,7 +1,7 @@
 # Current task
 
-Status: creating `swt` environments on dev/B200 from each host's `sparse_emb`,
-verifying B200 code/environment and preparing frozen English/GPT-2 data.
+Status: `swt` created and verified on both hosts; preparing frozen English/GPT-2
+data with the user's revised target of at least 10B training tokens.
 No Stagewise training or GPU-process termination is authorized.
 
 ## User request and authorized scope
@@ -21,10 +21,14 @@ No Stagewise training or GPU-process termination is authorized.
   `/disk/thuat/th2_runner_clean_probe` (remote `second`; development alias `runner`).
 - Machine: `thiennh-p6-oish-worker-0`, 8 B200s. Last read-only observation at
   2026-09-07 22:21 UTC: all GPUs occupied (155010 MiB, 100% utilization each).
-- Environment/interpreter: `/home/users/thien/miniconda3/envs/sparse_emb/bin/python`
-  for local CPU tests; separate dependencies in `requirements-capacity.txt`.
-- Input manifests and output/run directory:
-- Exact command and job name:
+- Environments: `/home/users/thien/miniconda3/envs/swt` (dev),
+  `/mnt/local/conda-py311/envs/swt` (B200), offline clones of each host's
+  existing `sparse_emb`; source versions matched. B200 torch is 2.14.0,
+  dev torch 2.7.1+cu118; both Transformers 5.9.0. GPU runtime not tested here.
+- Input manifests: `resources/culturax_en_source_b200.json` and
+  `resources/gpt2_tokenizer_607a30d_manifest.json`.
+- Output: `/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01`.
+- Preparation command: `bash scripts/prepare_english_b200.sh`.
 - Latest verified status: 2026-09-07, 40 tests passed in
   `temp/capacity_all_tests.log`; BF16 CPU, two-rank Gloo model smoke, two-rank
   Trainer and standalone-NLL consistency checks passed. No destination GPU test.
@@ -33,8 +37,15 @@ No Stagewise training or GPU-process termination is authorized.
 
 ## Next action
 
-Publication uses `#0`: updating GitHub alone does not prove code has been synced
-to the B200 filesystem. A later authorized `#1` job performs that sync.
+B200 verified the three main Stagewise file hashes and 40 CPU tests at
+2026-09-07 22:48:14 UTC (`temp/remote_logs/swt_clone_a01.log`, runner commit
+`52c73b3`). Tokenizer download `94f1cf7` reported all five files successful;
+the preparation job will independently verify their hashes. Latest dev review:
+42 tests passed, plus pinned real GPT-2 long-document/EOS/dedup packing smoke.
+Random-row token-yield preview across all 50 English shards estimates 43.07B
+tokens before document sampling/exact dedup. Fraction 0.30 estimates 12.87B
+train and 25.84M each held-out split, with actual minimums enforced at completion.
+Next: submit and verify offline preparation; no training or GPU changes.
 
 See `CAPACITY_EXPERIMENTS.md` for implemented arms, offline preparation, tests and
 the training CLI. Run the destination-GPU smoke test and freeze real input

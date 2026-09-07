@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from transformers import AutoModelForCausalLM, TrainingArguments
 
-from capacity_allocation.data import PackedTokens, prepare, sha256
+from capacity_allocation.data import PackedTokens, prepare, sha256, document_keys, hash_fraction
 from train_capacity import OrderedTrainer, main as train_main, schedule_budget
 from capacity_allocation.modeling import build_model, experiment_config
 
@@ -46,6 +46,43 @@ class DataAndTrainingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         torch.set_num_threads(2)
+
+    def test_hash_sampling_and_split_assignment(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            inventory, _ = fixture(root)
+            output = root / "sampled"
+            report = prepare(inventory, ToyTokenizer(), output, sequence_length=8,
+                             seed=0, sample_fraction=.3,
+                             validation_fraction=.2, test_fraction=.2)
+            expected = {}
+            for line in (root / "source.jsonl").read_text().splitlines():
+                _, content, key = document_keys(json.loads(line))
+                if hash_fraction(key, "sample:0") < .3:
+                    value = hash_fraction(key, "split:0")
+                    expected[content] = ("validation" if value < .2 else
+                                         "test" if value < .4 else "train")
+            con = sqlite3.connect(output / "documents.sqlite")
+            actual = dict(con.execute("SELECT content_sha256,split FROM documents"))
+            con.close()
+            self.assertEqual(actual, expected)
+            self.assertEqual(sum(s["documents"] for s in report["splits"].values()), len(expected))
+            self.assertLess(len(expected), 100)
+
+    def test_preparation_failure_has_no_completion_manifest(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            inventory, _ = fixture(root)
+            output = root / "too_small"
+            with self.assertRaisesRegex(ValueError, "insufficient packed tokens"):
+                prepare(inventory, ToyTokenizer(), output,
+                        minimum_tokens={"train": 10**12})
+            self.assertFalse((output / "manifest.json").exists())
+            source = root / "source.jsonl"
+            source.write_text(source.read_text() + '\n')
+            with self.assertRaisesRegex(ValueError, "Source checksum mismatch"):
+                prepare(inventory, ToyTokenizer(), root / "bad_hash")
+            self.assertFalse((root / "bad_hash").exists())
 
     def test_frozen_packing_and_exact_dedup(self):
         with tempfile.TemporaryDirectory() as folder:

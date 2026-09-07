@@ -123,8 +123,33 @@ Preparation is currently single-process; no untested parallel sampler is implied
 **Before research training:** verify mapping to the public release and tokenizer
 commit, inspect source/domain composition from the document manifest, and perform
 the cross-split near-duplicate audit. The code records `near_duplicate_audit:
-not_performed`; exact deduplication is not a substitute for that audit. No real
-source inventory, tokenizer revision or sampled corpus has been selected here.
+not_performed`; exact deduplication is not a substitute for that audit. Corpus
+completion is not implied by this implementation alone.
+
+### Registered B200 preparation (2026-09-07)
+
+`scripts/prepare_english_b200.sh` reuses the 50 existing English raw shards in
+`/mnt/local/_data/deep-llms_th2/data/raw/en`. The inventory is
+`resources/culturax_en_source_b200.json`: its checksums and sizes were independently
+matched to Hub LFS metadata at CulturaX revision
+`6a8734bc69fefcbb7735f4f9250f43e4cd7a442e`. The preparer verifies every file's
+full SHA256 on the node before writing packs. The release-wide shard selection
+is the original seeded random 50-file selection, not an English stream prefix.
+
+Tokenizer: `openai-community/gpt2` revision
+`607a30d783dfa663caf39e06633721c8d4cfcd7e`, five tokenizer/config files only,
+verified with `resources/gpt2_tokenizer_607a30d_manifest.json`.
+No pretrained model weights are used or downloaded.
+
+The user increased the available training-data target from 5B to **at least 10B**.
+Use seed 0, document sampling fraction 0.30, validation/test fractions 0.002
+each. These are hash/document fractions, not exact token caps; the final manifest
+must meet 10B packed training tokens and 20M tokens in each held-out split.
+This preparation target does not change the proposed 1B screening horizon or
+authorize any training. The script uses the new `swt` conda environment and
+fresh output `/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01`.
+Raw and old Qwen-packed data are unchanged. The script is CPU-only and never
+signals GPU processes. A near-duplicate audit remains a pre-training requirement.
 
 ## Train a registered arm
 
