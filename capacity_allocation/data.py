@@ -80,6 +80,8 @@ def prepare(source_manifest, tokenizer, output, *, sequence_length=2048, seed=0,
         raise ValueError("This pilot requires a mapped public CulturaX English release")
     if not source.get("selection_rule") or not source.get("shards"):
         raise ValueError("Declare shard selection rule and inventory")
+    if output.exists() or output.is_symlink():
+        raise FileExistsError(f"Refusing existing preparation output: {output}")
     paths = set()
     for shard in source["shards"]:
         path = (source_manifest.parent / shard["path"]).resolve()
@@ -88,10 +90,13 @@ def prepare(source_manifest, tokenizer, output, *, sequence_length=2048, seed=0,
         paths.add(path)
         if sha256(path) != shard["sha256"]:
             raise ValueError(f"Source checksum mismatch: {path}")
+        print(json.dumps(dict(source_verified=str(path))), flush=True)
     output.mkdir(parents=True, exist_ok=False)
     write_json(output / "source_manifest.json", source)
     stats = {s: dict(documents=0, tokens=0) for s in ("train", "validation", "test")}
     scanned = duplicate = excluded = 0
+    print(json.dumps(dict(preparation_started=True, output=str(output), seed=seed,
+                          sample_fraction=sample_fraction)), flush=True)
     database = sqlite3.connect(output / "documents.sqlite")
     database.execute("CREATE TABLE documents (id TEXT PRIMARY KEY, content_sha256 TEXT UNIQUE, "
                      "split_key TEXT, split TEXT, shard TEXT, row_number INTEGER, "
