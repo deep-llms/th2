@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-archive-old-project-code-20260907-a01
+#0
+#th2-idle-after-old-project-code-cleanup-20260907-a01
 set -euo pipefail
 
 date -u
