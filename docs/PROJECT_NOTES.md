@@ -83,6 +83,28 @@ an evaluator-consistency check, not model-quality results.
 
 ## Operational lessons
 
+### SWT environment and English preparation, 2026-09-07
+
+Created `swt` by offline-cloning each machine's own `sparse_emb`, preserving
+installed package versions and leaving the source environments untouched.
+Dev prefix: `/home/users/thien/miniconda3/envs/swt`; B200 prefix:
+`/mnt/local/conda-py311/envs/swt`. B200 retains torch 2.14.0; dev retains
+2.7.1+cu118. Both use Transformers 5.9.0 and Accelerate 1.13.0.
+B200 Stagewise hashes matched and 40 CPU tests passed; the subsequent dev
+preparer review passed 42 tests plus a real pinned GPT-2 packing smoke with
+documents longer than 2048 tokens. No destination-GPU test was performed.
+
+Reusing 50 English CulturaX raw shards (122,167,447,875 bytes), with hashes
+matched against the pinned public release's Hub LFS metadata. Only the five
+pinned GPT-2 tokenizer/config files were downloaded, not model weights.
+The user requested **10B**, replacing the earlier 5B available-data target.
+Registered offline command, seed/fractions, exact revisions, fresh output and
+validation conditions are in `CAPACITY_EXPERIMENTS.md` and
+`scripts/prepare_english_b200.sh`. This does not authorize training or extend
+the screening optimizer schedule. All existing GPU work is left untouched.
+Preparation completion and the required near-duplicate audit remain separate
+checks; neither is claimed by the setup/smoke results.
+
 Record confirmed failure causes and validated recovery procedures; distinguish
 project exceptions from runner/infrastructure failures. Avoid live-status claims
 without a timestamp. Do not treat a failed run as successful because a PID ended.

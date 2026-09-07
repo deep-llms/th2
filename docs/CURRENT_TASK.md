@@ -45,7 +45,9 @@ the preparation job will independently verify their hashes. Latest dev review:
 Random-row token-yield preview across all 50 English shards estimates 43.07B
 tokens before document sampling/exact dedup. Fraction 0.30 estimates 12.87B
 train and 25.84M each held-out split, with actual minimums enforced at completion.
-Next: submit and verify offline preparation; no training or GPU changes.
+Submitted offline preparation in th2 commit `4e6e553` at 2026-09-07 22:57 UTC,
+job `th2-swt-english-gpt2-10b-prepare-20260907-a01`. Await the matching remote
+log to verify startup and progress; no training or GPU changes.
 
 See `CAPACITY_EXPERIMENTS.md` for implemented arms, offline preparation, tests and
 the training CLI. Run the destination-GPU smoke test and freeze real input
