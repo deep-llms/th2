@@ -1,39 +1,48 @@
 #1 +30+a
-#th2-readonly-swt-sampling-liveness-20260908-a01
+#th2-stop-only-swt-serial-sampler-20260908-a01
 set -euo pipefail
 date -u
-hostname
-export CUDA_VISIBLE_DEVICES=""
 /mnt/local/conda-py311/envs/swt/bin/python -u - <<'PY'
+import os, signal, select, time
 from pathlib import Path
-import json, time
-root = Path('/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01')
+target = b'/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01'
+matched = []
 for proc in Path('/proc').iterdir():
-    if not proc.name.isdigit():
+    if not proc.name.isdigit() or int(proc.name) <= 1:
         continue
     try:
-        argv = (proc / 'cmdline').read_bytes().split(b'\0')
-        if b'capacity_allocation.data' in argv:
-            print('SAMPLER_PROCESS', proc.name, (proc/'stat').read_text())
-            print('SAMPLER_ARGV', [a.decode(errors='replace') for a in argv if a])
+        argv = (proc/'cmdline').read_bytes().split(b'\0')
+        if b'-m' not in argv or b'capacity_allocation.data' not in argv or b'--output' not in argv:
+            continue
+        if argv[argv.index(b'--output')+1] != target:
+            continue
+        fd = os.pidfd_open(int(proc.name))
+        if (proc/'cmdline').read_bytes().split(b'\0') != argv:
+            os.close(fd)
+            raise RuntimeError('Process identity changed; no signal sent')
+        matched.append((int(proc.name), fd))
     except (FileNotFoundError, ProcessLookupError, PermissionError):
-        pass
-def snapshot():
-    return {p.name: {'bytes': p.stat().st_size, 'mtime': p.stat().st_mtime}
-            for p in root.iterdir() if p.is_file()}
-before = snapshot()
-print('FILES_BEFORE', json.dumps(before), flush=True)
-time.sleep(10)
-after = snapshot()
-print('FILES_AFTER', json.dumps(after), flush=True)
-for split in ('train','validation','test'):
-    name = split+'.bin'
-    if name in before and name in after:
-        print('TOKEN_FILE_GROWTH_BYTES', split, after[name]['bytes']-before[name]['bytes'])
-manifest = root/'manifest.json'
-print('COMPLETION_MANIFEST_EXISTS', manifest.is_file())
-if manifest.is_file():
-    print(manifest.read_text())
+        continue
+assert len(matched) <= 1, 'Unexpected multiple samplers; refusing signals'
+for pid, fd in matched:
+    print('STOPPING_VERIFIED_CPU_SAMPLER', pid, flush=True)
+    signal.pidfd_send_signal(fd, signal.SIGTERM)
+    poll = select.poll()
+    poll.register(fd, select.POLLIN)
+    if not poll.poll(20000):
+        signal.pidfd_send_signal(fd, signal.SIGKILL)
+        assert poll.poll(10000), 'Sampler did not exit'
+    os.close(fd)
+    print('SAMPLER_EXIT_CONFIRMED', pid, flush=True)
+if not matched:
+    print('NO_MATCHING_SAMPLER_PROCESS')
+root = Path(target.decode())
+before = {p.name:p.stat().st_size for p in root.glob('*.bin')}
+time.sleep(3)
+after = {p.name:p.stat().st_size for p in root.glob('*.bin')}
+assert before == after, 'Outputs still changing'
+print('PARTIAL_OUTPUT_PRESERVED', after)
+print('SWT_SERIAL_SAMPLER_STOPPED')
 PY
-df -h /mnt/local
+nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv
 date -u
