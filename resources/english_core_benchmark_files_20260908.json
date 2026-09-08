@@ -1,0 +1,679 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "EleutherAI/lambada_openai/README.md",
+      "bytes": 5474,
+      "sha256": "2a7f96fbf8fa6859e3d0dd1bb165611b57319b21b7ac442b6a1e1a53410f51f9"
+    },
+    {
+      "path": "EleutherAI/lambada_openai/default/test/default.parquet",
+      "bytes": 1157764,
+      "sha256": "99d8a9e54cda761c6340ddd4fa6feda7f846ffb0e716afa52968dea75495eea7"
+    },
+    {
+      "path": "Rowan/hellaswag/README.md",
+      "bytes": 7019,
+      "sha256": "cfe6e26e7e936a447a12f7eee50f2bffb0355c3b97459496d8c7296f65c5b353"
+    },
+    {
+      "path": "Rowan/hellaswag/data/test-00000-of-00001.parquet",
+      "bytes": 6112397,
+      "sha256": "e572fd5579bd1768b1985f47234f8bbe29247aca200a778b635bffc637714a41"
+    },
+    {
+      "path": "Rowan/hellaswag/data/train-00000-of-00001.parquet",
+      "bytes": 24365524,
+      "sha256": "cacb12587faa63d7f723a72d61d12bfa94b140446f5a6a0a2e1c6906ab88bf02"
+    },
+    {
+      "path": "Rowan/hellaswag/data/validation-00000-of-00001.parquet",
+      "bytes": 6315951,
+      "sha256": "899813071e1e95efafec90f856e1987d2150fa4d020fc005df6962c259f660cd"
+    },
+    {
+      "path": "allenai/ai2_arc/ARC-Challenge/test-00000-of-00001.parquet",
+      "bytes": 203808,
+      "sha256": "62f03257e737aed263f55c6abf87c7bb0028a44a6bdd2a26eb1279eb42c1d1e9"
+    },
+    {
+      "path": "allenai/ai2_arc/ARC-Challenge/train-00000-of-00001.parquet",
+      "bytes": 189909,
+      "sha256": "e488c1587ffdcfc8443f916c53488a95cd471c5790e0746c6bfe4cecf20962cb"
+    },
+    {
+      "path": "allenai/ai2_arc/ARC-Challenge/validation-00000-of-00001.parquet",
+      "bytes": 55743,
+      "sha256": "395a5c88d1580d69855fbaee9450270578df1ad5af6259771cd0a42c20e99f05"
+    },
+    {
+      "path": "allenai/ai2_arc/ARC-Easy/test-00000-of-00001.parquet",
+      "bytes": 346257,
+      "sha256": "4160597d618ae851c7eb04e281574f3f654776216ac6b6641588d64527b47177"
+    },
+    {
+      "path": "allenai/ai2_arc/ARC-Easy/train-00000-of-00001.parquet",
+      "bytes": 330598,
+      "sha256": "b315db8a4be597dc7daa50a4e70d48dd7c990c32085629e6ccd8c926beaa80b5"
+    },
+    {
+      "path": "allenai/ai2_arc/ARC-Easy/validation-00000-of-00001.parquet",
+      "bytes": 86080,
+      "sha256": "ed890ff1e4cef7a7140d3a30dcea3ed2c9d467c6458f447ad9ef0176d8dcbb74"
+    },
+    {
+      "path": "allenai/ai2_arc/README.md",
+      "bytes": 9001,
+      "sha256": "4a293e352253d771604725c978adcea71ee6504e89ed40e1cb0024ecafa9b37e"
+    },
+    {
+      "path": "allenai/winogrande/README.md",
+      "bytes": 11171,
+      "sha256": "fd653689cc77706672b40cd040156ad57f4969656d25a14be645cffa8ef55176"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_debiased/test-00000-of-00001.parquet",
+      "bytes": 117656,
+      "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_debiased/train-00000-of-00001.parquet",
+      "bytes": 616756,
+      "sha256": "b69a6e9c13a64d33d482ab201e6cfdd90740febe3b986ab641bdd33a98d7ead3"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_debiased/validation-00000-of-00001.parquet",
+      "bytes": 85928,
+      "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_l/test-00000-of-00001.parquet",
+      "bytes": 117656,
+      "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_l/train-00000-of-00001.parquet",
+      "bytes": 529480,
+      "sha256": "d6f5c0c5d288d29f8b0e80dd88146a7fc927da277aecac40295ee8343b81fdc1"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_l/validation-00000-of-00001.parquet",
+      "bytes": 85928,
+      "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_m/test-00000-of-00001.parquet",
+      "bytes": 117656,
+      "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_m/train-00000-of-00001.parquet",
+      "bytes": 133795,
+      "sha256": "a3be4246db586d9c10536d4a420f5031c7695ff8fc93aaedddafe5bca553bdc5"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_m/validation-00000-of-00001.parquet",
+      "bytes": 85928,
+      "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_s/test-00000-of-00001.parquet",
+      "bytes": 117656,
+      "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_s/train-00000-of-00001.parquet",
+      "bytes": 34813,
+      "sha256": "ce089cd597b84962428d7e36e33820abe19c2fe870820a99ab5c96cbc1f3af31"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_s/validation-00000-of-00001.parquet",
+      "bytes": 85928,
+      "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_xl/test-00000-of-00001.parquet",
+      "bytes": 117656,
+      "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_xl/train-00000-of-00001.parquet",
+      "bytes": 2058506,
+      "sha256": "5d8c38ad12b9a6c88f79b6e00aaf0f40781f93d4f94816f6cff2b67625d67399"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_xl/validation-00000-of-00001.parquet",
+      "bytes": 85928,
+      "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_xs/test-00000-of-00001.parquet",
+      "bytes": 117656,
+      "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_xs/train-00000-of-00001.parquet",
+      "bytes": 11717,
+      "sha256": "a4698ccae8c0041c259dcff0810a18abef3e5ab4b58011b42e7f5d88de23608a"
+    },
+    {
+      "path": "allenai/winogrande/winogrande_xs/validation-00000-of-00001.parquet",
+      "bytes": 85928,
+      "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1"
+    },
+    {
+      "path": "aps/super_glue/README.md",
+      "bytes": 19734,
+      "sha256": "da05060933491c5d3472f494ce22847d4247e928a39d59d94dff9555a4858df9"
+    },
+    {
+      "path": "aps/super_glue/axb/test-00000-of-00001.parquet",
+      "bytes": 80924,
+      "sha256": "655cadf2b23ebf0147984c8809811a82453137ee22f131d802137862ff3f2501"
+    },
+    {
+      "path": "aps/super_glue/axg/test-00000-of-00001.parquet",
+      "bytes": 14284,
+      "sha256": "4ed3eddc728664a79b7b25cbec8aea1528d917f04870116d2ae84fdbc1f80028"
+    },
+    {
+      "path": "aps/super_glue/boolq/test-00000-of-00001.parquet",
+      "bytes": 1309912,
+      "sha256": "95a74cd7c8fdbae1aa9ba767fa62993fcc2bd582ee5512f42a8c6c89b88a7c3d"
+    },
+    {
+      "path": "aps/super_glue/boolq/train-00000-of-00001.parquet",
+      "bytes": 3846588,
+      "sha256": "41e2ce07ac0d3bcd411bd4b6326bab2cff5fa67bacdbbcea74bb9e001ec635d3"
+    },
+    {
+      "path": "aps/super_glue/boolq/validation-00000-of-00001.parquet",
+      "bytes": 1313731,
+      "sha256": "f46438b8cce048184552a2bfcdb8252eadb3a2602f0c22334caccd9b6ea547d6"
+    },
+    {
+      "path": "aps/super_glue/cb/test-00000-of-00001.parquet",
+      "bytes": 63490,
+      "sha256": "e9b1164fed6ca2d65ef873fd45626fc4cf744f6fc34ac0d468cf558da872e61c"
+    },
+    {
+      "path": "aps/super_glue/cb/train-00000-of-00001.parquet",
+      "bytes": 58001,
+      "sha256": "a338d1276fd0248fd4d6648917ef7181f994d85d141b3a2a4fc6a659d69f3a8a"
+    },
+    {
+      "path": "aps/super_glue/cb/validation-00000-of-00001.parquet",
+      "bytes": 18022,
+      "sha256": "36cf71dba8a314d36266b71bb136e3bad9e20c46b8983cf44d4a13d9031d0951"
+    },
+    {
+      "path": "aps/super_glue/copa/test-00000-of-00001.parquet",
+      "bytes": 40228,
+      "sha256": "7d7d6e12adc051ed21587afb2ddad9a9e733fbc8c43ffb68fae52129d04828b9"
+    },
+    {
+      "path": "aps/super_glue/copa/train-00000-of-00001.parquet",
+      "bytes": 33938,
+      "sha256": "8e243c3a2428837f5725f19885ddf3a83eecb6874474606a2ca1d1e6dd5bd6d7"
+    },
+    {
+      "path": "aps/super_glue/copa/validation-00000-of-00001.parquet",
+      "bytes": 11975,
+      "sha256": "247a7f586c5cc706eb18a15ad20f1a5b543b9c7af0df4161df138a25edc95d67"
+    },
+    {
+      "path": "aps/super_glue/multirc/test-00000-of-00001.parquet",
+      "bytes": 580878,
+      "sha256": "465107b93b83c89df826603445512ac887074a747e0d23fb6b1f87c692059b29"
+    },
+    {
+      "path": "aps/super_glue/multirc/train-00000-of-00001.parquet",
+      "bytes": 1708291,
+      "sha256": "ced6d731a335a0e4fbd29f6f382f291518952c0f449448361d294000c39e6728"
+    },
+    {
+      "path": "aps/super_glue/multirc/validation-00000-of-00001.parquet",
+      "bytes": 306376,
+      "sha256": "5eb64893afc5af7828b2f3b41d6a4574eb7a82cbb17c86c75842f5f95f679ada"
+    },
+    {
+      "path": "aps/super_glue/record/test-00000-of-00001.parquet",
+      "bytes": 7992474,
+      "sha256": "6a91cd50dbdf98cfdb6d9ec6619176ddab170db299db0a13107109ad61262a9d"
+    },
+    {
+      "path": "aps/super_glue/record/train-00000-of-00001.parquet",
+      "bytes": 75054886,
+      "sha256": "20ae20deb498305cb872b52987c63c46fa08bd97605c6fd78a1553bf8d91a417"
+    },
+    {
+      "path": "aps/super_glue/record/validation-00000-of-00001.parquet",
+      "bytes": 8110551,
+      "sha256": "3662aa327fec7faaf7f47c651941c35ff1643105bf81291168c37a78a37b59a1"
+    },
+    {
+      "path": "aps/super_glue/rte/test-00000-of-00001.parquet",
+      "bytes": 621960,
+      "sha256": "5a4c57d7b81ed0034bd4ba0a85950f3d5c2e0c7d76836e2f3be22e8514656e86"
+    },
+    {
+      "path": "aps/super_glue/rte/train-00000-of-00001.parquet",
+      "bytes": 586160,
+      "sha256": "16c83717da2e5b14cfd75e88b6331ac88d8cbf8f4fcd8bc48941c67ac8e9b3a9"
+    },
+    {
+      "path": "aps/super_glue/rte/validation-00000-of-00001.parquet",
+      "bytes": 69819,
+      "sha256": "b3740aac80522a9a86e9d926287b813531eeabdead967399b1fd899c640fac76"
+    },
+    {
+      "path": "aps/super_glue/wic/test-00000-of-00001.parquet",
+      "bytes": 126788,
+      "sha256": "e77d121835508a9e4c15bfb79bbc8188510d61da06f9d8fb0f892e1762b8469a"
+    },
+    {
+      "path": "aps/super_glue/wic/train-00000-of-00001.parquet",
+      "bytes": 410323,
+      "sha256": "d6d2231730f52800dba48219790ee9b76381bbba7c99ea76047081631877ec80"
+    },
+    {
+      "path": "aps/super_glue/wic/validation-00000-of-00001.parquet",
+      "bytes": 60115,
+      "sha256": "22cc5df62bf76c8ed47ea0c92b4bb1bce698984ac1c10493250365d3419ac6da"
+    },
+    {
+      "path": "aps/super_glue/wsc.fixed/test-00000-of-00001.parquet",
+      "bytes": 12162,
+      "sha256": "5308e3ca654355a00911fd400e500c4b79c7806856075a83184adcf71b3c5cc3"
+    },
+    {
+      "path": "aps/super_glue/wsc.fixed/train-00000-of-00001.parquet",
+      "bytes": 27336,
+      "sha256": "13086042694cd7550f91f4279fafa8425cead3ed046c6a6cd22d96107f1a1944"
+    },
+    {
+      "path": "aps/super_glue/wsc.fixed/validation-00000-of-00001.parquet",
+      "bytes": 10208,
+      "sha256": "aa64cc8f27c793b60b6263302c26ae49f768a6b90d050e383fc3f99d2080b201"
+    },
+    {
+      "path": "aps/super_glue/wsc/test-00000-of-00001.parquet",
+      "bytes": 12164,
+      "sha256": "4a39c4f576a415fd1139428a1423911c7523090b2da9de9202f82c5b1955e3f1"
+    },
+    {
+      "path": "aps/super_glue/wsc/train-00000-of-00001.parquet",
+      "bytes": 27222,
+      "sha256": "a1fb4be43c74cc03e4b519adc63660820f3bde7367a464c39e61dd17b8af0c7a"
+    },
+    {
+      "path": "aps/super_glue/wsc/validation-00000-of-00001.parquet",
+      "bytes": 10206,
+      "sha256": "1459bd73672508365680b4b3eb584e6cf33dfa151762863f7eed2e494062634a"
+    },
+    {
+      "path": "baber/piqa/piqa_test.parquet",
+      "bytes": 496219,
+      "sha256": "037e4175b967f4082e45a5ccf5c9d31ca3fd73030804aa7d4db0f7ca1fcd9b34"
+    },
+    {
+      "path": "baber/piqa/piqa_train.parquet",
+      "bytes": 2638413,
+      "sha256": "3114602b31fa724309a6c493cc86368c4eab7ab6e79e285056fd5ce3b60ddf02"
+    },
+    {
+      "path": "baber/piqa/piqa_validation.parquet",
+      "bytes": 299694,
+      "sha256": "2b17ee1215b1ceb2ddabf4c90a05c5a8b833bef9d207960f57d111c43a2080f3"
+    },
+    {
+      "path": "nyu-mll/blimp/README.md",
+      "bytes": 58554,
+      "sha256": "7b534a3a2a8fcf5d7861534aa74ae53c1937fd0e559e5cfd7aa823f25b4e9f5d"
+    },
+    {
+      "path": "nyu-mll/blimp/adjunct_island/train-00000-of-00001.parquet",
+      "bytes": 62231,
+      "sha256": "094b1a6c4d8e88d2a193d25b6a8eaf6dc746158c14eec537802dd2b67f57847b"
+    },
+    {
+      "path": "nyu-mll/blimp/anaphor_gender_agreement/train-00000-of-00001.parquet",
+      "bytes": 39201,
+      "sha256": "3c3f1d8d9e6aa071151e6455bf121c097ca4f7d9a0a7349ebfc9ec0e193c3472"
+    },
+    {
+      "path": "nyu-mll/blimp/anaphor_number_agreement/train-00000-of-00001.parquet",
+      "bytes": 41547,
+      "sha256": "5dc16d19b9b3694589a11a66c7d0d0ca5707d3762a45d8cf0306133151575784"
+    },
+    {
+      "path": "nyu-mll/blimp/animate_subject_passive/train-00000-of-00001.parquet",
+      "bytes": 47282,
+      "sha256": "d4c957edec77c6fb5b8afc3cee3b5b54c759458e0a19bca54ba1c35570c1d84e"
+    },
+    {
+      "path": "nyu-mll/blimp/animate_subject_trans/train-00000-of-00001.parquet",
+      "bytes": 49651,
+      "sha256": "ef2f412c3f47a8bddc0a365aba51c7ce0678bc2a0d52874df923e008ea32bf2d"
+    },
+    {
+      "path": "nyu-mll/blimp/causative/train-00000-of-00001.parquet",
+      "bytes": 48963,
+      "sha256": "cfec48a03e32498177214dd7add31df1200c2e049c6723678cbd3b66b5da52c4"
+    },
+    {
+      "path": "nyu-mll/blimp/complex_NP_island/train-00000-of-00001.parquet",
+      "bytes": 78211,
+      "sha256": "4a01cfd34626f006bcf0ae90ca3f340348b20d1f6c0530450f35b7218e1b8db7"
+    },
+    {
+      "path": "nyu-mll/blimp/coordinate_structure_constraint_complex_left_branch/train-00000-of-00001.parquet",
+      "bytes": 67908,
+      "sha256": "b776239fe67070fb13d64671fdeb4a31a81dd0693204abf4447fbe2e582c8f8a"
+    },
+    {
+      "path": "nyu-mll/blimp/coordinate_structure_constraint_object_extraction/train-00000-of-00001.parquet",
+      "bytes": 51584,
+      "sha256": "55d830a519e53f2400d3c436f751295a83a123f46084f247ce802ebec9585816"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_1/train-00000-of-00001.parquet",
+      "bytes": 49893,
+      "sha256": "eac75d95c9fa5a1e6e560918d8a2edf64e4c6e0fae8622a7389bbd5ec514727f"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_2/train-00000-of-00001.parquet",
+      "bytes": 49527,
+      "sha256": "17520554fff0a78a122cc5bf92708e64099b6907d1791c029a1c254e20089bca"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_irregular_1/train-00000-of-00001.parquet",
+      "bytes": 47274,
+      "sha256": "b73d7c301e81f55ce3631cf2c0a02de83a1c5fdf70fdaef4bff90ac5d4f60c7d"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_irregular_2/train-00000-of-00001.parquet",
+      "bytes": 47422,
+      "sha256": "73c404f947d00d35d8b21cce80d0c23b51268873fa834d162018fb45927d1c6c"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_with_adj_2/train-00000-of-00001.parquet",
+      "bytes": 56346,
+      "sha256": "732f6dc785f282ef4757e119c847feef552c324b7125bb5191eb1f1377ef060d"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_with_adj_irregular_1/train-00000-of-00001.parquet",
+      "bytes": 54405,
+      "sha256": "939567391e6ec007ef20a9f8306f41b2ee0e25c380842550ca46bcf0484ceca9"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_with_adj_irregular_2/train-00000-of-00001.parquet",
+      "bytes": 54064,
+      "sha256": "e71c6a9baf9cf00d9e4bee09ac01590f9f3f96265ea80821ce309696d840811a"
+    },
+    {
+      "path": "nyu-mll/blimp/determiner_noun_agreement_with_adjective_1/train-00000-of-00001.parquet",
+      "bytes": 55682,
+      "sha256": "dd61dd23aa32be9bfe5f8c440a1bfc1720bde1543428cbe919a1359f53fa8cfb"
+    },
+    {
+      "path": "nyu-mll/blimp/distractor_agreement_relational_noun/train-00000-of-00001.parquet",
+      "bytes": 59641,
+      "sha256": "2e0cef46676c822f3443d91aab2daaab23e177bc9b033d2eb50324df29052ae9"
+    },
+    {
+      "path": "nyu-mll/blimp/distractor_agreement_relative_clause/train-00000-of-00001.parquet",
+      "bytes": 77897,
+      "sha256": "c23c03ee033d92d9c22061089a80cbca29da2d337764bfa9bd20dc9d14d42afc"
+    },
+    {
+      "path": "nyu-mll/blimp/drop_argument/train-00000-of-00001.parquet",
+      "bytes": 39961,
+      "sha256": "4acf04febbe94ca4d8e0d12d2e02c808fb028c3501f4e66e62b1a1e2bfc8fdf3"
+    },
+    {
+      "path": "nyu-mll/blimp/ellipsis_n_bar_1/train-00000-of-00001.parquet",
+      "bytes": 92776,
+      "sha256": "58edad00d53c2abe73e721a8afdd6220c06c5bf3aeb860da8670249b181a5fa1"
+    },
+    {
+      "path": "nyu-mll/blimp/ellipsis_n_bar_2/train-00000-of-00001.parquet",
+      "bytes": 98882,
+      "sha256": "7506bd80abb5c2d54afddf64042bc2df6d587b271f37832c2dcdfa1b66c11d70"
+    },
+    {
+      "path": "nyu-mll/blimp/existential_there_object_raising/train-00000-of-00001.parquet",
+      "bytes": 76641,
+      "sha256": "1c63d5b77b5d40e0a8d475342d9893f2809093653b08c04f69f8a17252a98809"
+    },
+    {
+      "path": "nyu-mll/blimp/existential_there_quantifiers_1/train-00000-of-00001.parquet",
+      "bytes": 51576,
+      "sha256": "ac2e197d55304a262bfeddaa498163f475e6da53dcab819892c799f58a229d99"
+    },
+    {
+      "path": "nyu-mll/blimp/existential_there_quantifiers_2/train-00000-of-00001.parquet",
+      "bytes": 52092,
+      "sha256": "df307122fda88d067682497963044cfff29e3de5d9a88ace338e61d91e016f55"
+    },
+    {
+      "path": "nyu-mll/blimp/existential_there_subject_raising/train-00000-of-00001.parquet",
+      "bytes": 59519,
+      "sha256": "1e281bf8a80a598b73f173f575003f6c3a7899143dd27412e18c06e5b561e171"
+    },
+    {
+      "path": "nyu-mll/blimp/expletive_it_object_raising/train-00000-of-00001.parquet",
+      "bytes": 88607,
+      "sha256": "45a0a957726a018283bb5eaefc7a902257b363234f9b8793a73f8c4acfd20347"
+    },
+    {
+      "path": "nyu-mll/blimp/inchoative/train-00000-of-00001.parquet",
+      "bytes": 39842,
+      "sha256": "cb452cd6ee3795f19a6b6e8b4328172610610c8cd9ed943c58c1ebbcd7e769cd"
+    },
+    {
+      "path": "nyu-mll/blimp/intransitive/train-00000-of-00001.parquet",
+      "bytes": 42387,
+      "sha256": "f04f66e0a30a5f0ca8bbe130ed8f680ccf09d42a1e7971a1520352d37b667627"
+    },
+    {
+      "path": "nyu-mll/blimp/irregular_past_participle_adjectives/train-00000-of-00001.parquet",
+      "bytes": 36654,
+      "sha256": "77d65967bbf67977e0ccaa13f190a3ebcf2066222fa6bb343841257d6ad564c3"
+    },
+    {
+      "path": "nyu-mll/blimp/irregular_past_participle_verbs/train-00000-of-00001.parquet",
+      "bytes": 37297,
+      "sha256": "f6acd480c04c37beac4a65252edf51b2472c391646ec55ff04794d29b0f1338e"
+    },
+    {
+      "path": "nyu-mll/blimp/irregular_plural_subject_verb_agreement_1/train-00000-of-00001.parquet",
+      "bytes": 50725,
+      "sha256": "b4b07609019d870a0b95ee8245d0e3d97ea9999098d58eb03b49dbfe1a975e2c"
+    },
+    {
+      "path": "nyu-mll/blimp/irregular_plural_subject_verb_agreement_2/train-00000-of-00001.parquet",
+      "bytes": 42707,
+      "sha256": "66a1bf6bba6daad40a9d90676e5f7971bf2f12543f96557968fa60ab40e25adc"
+    },
+    {
+      "path": "nyu-mll/blimp/left_branch_island_echo_question/train-00000-of-00001.parquet",
+      "bytes": 50481,
+      "sha256": "41a535903bc7f138d556dc01cff7cb6d9d8cc8e5d40fca1cb17e5da18ce12ae4"
+    },
+    {
+      "path": "nyu-mll/blimp/left_branch_island_simple_question/train-00000-of-00001.parquet",
+      "bytes": 50293,
+      "sha256": "8c718b6f37cb5674c5f8dfd2094d7cd54c43fe6f86154cf3a73eaf2dc74aa721"
+    },
+    {
+      "path": "nyu-mll/blimp/matrix_question_npi_licensor_present/train-00000-of-00001.parquet",
+      "bytes": 51899,
+      "sha256": "a7ed0834104a8fe81b389072c856c10779d660295f924067362740d7901d3532"
+    },
+    {
+      "path": "nyu-mll/blimp/npi_present_1/train-00000-of-00001.parquet",
+      "bytes": 51981,
+      "sha256": "cca3e48e8a08528c06eaec33e9a53aa2875048642f6b38f8c03355c008a55c4f"
+    },
+    {
+      "path": "nyu-mll/blimp/npi_present_2/train-00000-of-00001.parquet",
+      "bytes": 51661,
+      "sha256": "44cdf2e5c7964d7618370927e5a86753f87de84b4b53555ed19f710eb61f8240"
+    },
+    {
+      "path": "nyu-mll/blimp/only_npi_licensor_present/train-00000-of-00001.parquet",
+      "bytes": 51361,
+      "sha256": "8e26a57bc8d8625bfcc1cc018d6c46944abf202aa5f874a39a0f04c24df9e178"
+    },
+    {
+      "path": "nyu-mll/blimp/only_npi_scope/train-00000-of-00001.parquet",
+      "bytes": 84970,
+      "sha256": "c5c14f42c274448aaaaa7fe0e94440f9fdbe5c01a9cf1673af824189678d90e7"
+    },
+    {
+      "path": "nyu-mll/blimp/passive_1/train-00000-of-00001.parquet",
+      "bytes": 53931,
+      "sha256": "3bcb3d7397215b8fc4804d74c6c2accf37c649cdf3976a56d8964004ed4f0ee5"
+    },
+    {
+      "path": "nyu-mll/blimp/passive_2/train-00000-of-00001.parquet",
+      "bytes": 40499,
+      "sha256": "ee29e69ca55ec89cf648a57595f13c2b7271995ffb3329e10233a6703dbdd1bf"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_c_command/train-00000-of-00001.parquet",
+      "bytes": 67867,
+      "sha256": "6d18116ede2c686232348552e632f04be358cc62ce1a8c3d65e32263c625c887"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_case_1/train-00000-of-00001.parquet",
+      "bytes": 61092,
+      "sha256": "6615f7f1572b9bcc335be59e7645002ceb2c95d92dc2371551c91db48d9a9a55"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_case_2/train-00000-of-00001.parquet",
+      "bytes": 56430,
+      "sha256": "e3a13d2ab24f231adbc9b3dda2fcd448883855199419db178a449c42eee1d097"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_domain_1/train-00000-of-00001.parquet",
+      "bytes": 59120,
+      "sha256": "5efcec2af824973d3eca500ee3591d444b5cc56569394c7bb1e0fb8a95efcd35"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_domain_2/train-00000-of-00001.parquet",
+      "bytes": 58464,
+      "sha256": "5de4982ab8ba2914d476335ba48956cc5c26e24c5ae0b64b8aed7ab06cf2903b"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_domain_3/train-00000-of-00001.parquet",
+      "bytes": 52859,
+      "sha256": "25227d39f6168b88f5b3ee0b35d0f6dd8105545016d76764d11c27f6031844d5"
+    },
+    {
+      "path": "nyu-mll/blimp/principle_A_reconstruction/train-00000-of-00001.parquet",
+      "bytes": 44480,
+      "sha256": "bd57fef2d8e907730bfdf9be1048bfaa75571b8a5c3481219b08254df544feb1"
+    },
+    {
+      "path": "nyu-mll/blimp/regular_plural_subject_verb_agreement_1/train-00000-of-00001.parquet",
+      "bytes": 49466,
+      "sha256": "602d82e663e7d8d73aad82eeb8b4f6d1f578dcf33121a54fd639e3f0d5196aeb"
+    },
+    {
+      "path": "nyu-mll/blimp/regular_plural_subject_verb_agreement_2/train-00000-of-00001.parquet",
+      "bytes": 43365,
+      "sha256": "47b11c839024e89b06eae89dc874c1f5c447b384dfadec7ed0f812e97e4ba5a3"
+    },
+    {
+      "path": "nyu-mll/blimp/sentential_negation_npi_licensor_present/train-00000-of-00001.parquet",
+      "bytes": 54830,
+      "sha256": "2f2e30c846249f580be81a8a1276db371351bae9bf7c569e59679169404608dc"
+    },
+    {
+      "path": "nyu-mll/blimp/sentential_negation_npi_scope/train-00000-of-00001.parquet",
+      "bytes": 90157,
+      "sha256": "06afb479723e7bff4071ca2f1511c1a78b8849331d09c608aa963fee057f8ac2"
+    },
+    {
+      "path": "nyu-mll/blimp/sentential_subject_island/train-00000-of-00001.parquet",
+      "bytes": 56666,
+      "sha256": "a096e1ea8ff2e05ae00f0a52663f46598acc535ef108a7d3b2bbd73607b082f1"
+    },
+    {
+      "path": "nyu-mll/blimp/superlative_quantifiers_1/train-00000-of-00001.parquet",
+      "bytes": 48453,
+      "sha256": "eba2e172058aaa24858464ab6e79455564e2e220d18863395897895ce8fcec4e"
+    },
+    {
+      "path": "nyu-mll/blimp/superlative_quantifiers_2/train-00000-of-00001.parquet",
+      "bytes": 50480,
+      "sha256": "76eadb284f7c21aefe83c8eff7cf43afb446d237efbfbcb74962311650e5ba5e"
+    },
+    {
+      "path": "nyu-mll/blimp/tough_vs_raising_1/train-00000-of-00001.parquet",
+      "bytes": 44779,
+      "sha256": "defbb5c0cb9b3d4b4b5f1571e64df8ba37428619bb4943d4d228ad5caf83f4d7"
+    },
+    {
+      "path": "nyu-mll/blimp/tough_vs_raising_2/train-00000-of-00001.parquet",
+      "bytes": 61465,
+      "sha256": "01d9c6a6b0df268db59ce28ef6904541df2c0755cb5915b2f1f5dbcf08c3d82a"
+    },
+    {
+      "path": "nyu-mll/blimp/transitive/train-00000-of-00001.parquet",
+      "bytes": 55090,
+      "sha256": "1c92b23164784bdb7b721a87969a883ce76fcb13b7b2e2240230f67800544432"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_island/train-00000-of-00001.parquet",
+      "bytes": 52808,
+      "sha256": "63e455edde12fd76bca6e9287cb80920833b705ac656bc5ad105831b3327f219"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_questions_object_gap/train-00000-of-00001.parquet",
+      "bytes": 70049,
+      "sha256": "5107d0b8a4057d6f778a01253de18ee1de6c125b42ee6dc75111aeee43e20b41"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_questions_subject_gap/train-00000-of-00001.parquet",
+      "bytes": 71632,
+      "sha256": "a58be1f30174106b6934ca13a7d89716e380a8f2ccd051f6bc20e85ba19904a4"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_questions_subject_gap_long_distance/train-00000-of-00001.parquet",
+      "bytes": 98913,
+      "sha256": "ca30473b9569b256cc7707d02668db436d097c810466c8cb60b1b7315ddb10e9"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_vs_that_no_gap/train-00000-of-00001.parquet",
+      "bytes": 71710,
+      "sha256": "92fc7e67b32b10f6e94b6b4c094204c51bb1b622d48812d714e33f91b6603fe2"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_vs_that_no_gap_long_distance/train-00000-of-00001.parquet",
+      "bytes": 95504,
+      "sha256": "e1aa6fd1c7406b3bea5206e954b75f1dec7dd17c1019d526abe6005e715b38b3"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_vs_that_with_gap/train-00000-of-00001.parquet",
+      "bytes": 60291,
+      "sha256": "c905f68e44327d8a970a0341a4a023f4f70e402f382c0262f702cd5946b58c68"
+    },
+    {
+      "path": "nyu-mll/blimp/wh_vs_that_with_gap_long_distance/train-00000-of-00001.parquet",
+      "bytes": 84147,
+      "sha256": "c2adf0cb1714de75ac960e59eeed74c0fada5babee2e0cd6c2721b90aa8ed829"
+    }
+  ],
+  "source_revisions": {
+    "nyu-mll/blimp": "877fba0801ffb7cbd8c39c1ff314a46f053f6036",
+    "EleutherAI/lambada_openai": "900124bf3b8235c6daf21033af9948b3f07346c4",
+    "baber/piqa": "142f6d7367fd9877f0fb3b5734ea6a545f54cdd1",
+    "allenai/winogrande": "01e74176c63542e6b0bcb004dcdea22d94fb67b5",
+    "allenai/ai2_arc": "210d026faf9955653af8916fad021475a3f00453",
+    "aps/super_glue": "3de24cf8022e94f4ee4b9d55a6f539891524d646",
+    "Rowan/hellaswag": "218ec52e09a7e7462a5400043bb9a69a41d06b76"
+  }
+}

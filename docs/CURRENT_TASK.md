@@ -1,5 +1,29 @@
 # Current task
 
+## English benchmark expansion — dev verified, not deployed (2026-09-08)
+
+Added BLiMP (all 67 official subtests and a separate unweighted suite mean),
+LAMBADA-OpenAI (accuracy and target-word PPL), PIQA, WinoGrande, ARC-Challenge
+and BoolQ to the existing HellaSwag/ARC-Easy coverage. Definitions/scoring use
+unmodified lm_eval 0.4.10. The eight-family core has 74 task results; defaults
+also retain four earlier English tasks, giving 78. Fine-tuning tasks are unchanged.
+See EVALUATION.md for selection, local data layout and future #d commands.
+
+Dev verification: all 72 regression tests passed, with no skips, in 157.678s
+(`temp/expanded_benchmarks_full_suite_20260908.log`). A separate offline CPU
+smoke checked the complete evaluation split counts for all 74 tasks and scored
+two real examples per task on tiny random B0 and C models; both passed.
+Evidence: `temp/english_realdata_smoke_20260908_a02/complete.json` and its log.
+These are correctness checks, not research scores or B200 throughput evidence.
+
+Pinned dev snapshots are in `temp/english_benchmark_snapshots_20260908_a01`.
+The tracked `resources/english_core_benchmark_files_20260908.json` records seven
+source revisions and 133 file hashes/sizes for later B200 verification. The first
+real-data smoke failed because a hand-pruned WinoGrande snapshot lacked other
+configs referenced by README format inference. Downloading complete WinoGrande
+and SuperGLUE parquet snapshots resolved this; use whole-repo #d downloads.
+No B200 download, deployment, training change or GPU action was performed.
+
 ## Latest instruction — authorized fresh 5k screening (2026-09-08)
 
 Latest progress, pulled18:54 UTC: B0 started18:30:17 UTC after cache preparation

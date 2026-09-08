@@ -15,11 +15,13 @@ the tokenizer, checkpoint name, or directories present on disk.
   pack across language boundaries or average language PPL values. Use the
   current pretraining settings: 2048 tokens, 160 map workers, batch1000.
 - Zero-shot: official **lm_eval 0.4.10**, zero few-shot examples, no chat
-  template, BF16 autocast, maximum context2048. Default English tasks:
-  `xnli_en`, `belebele_eng_Latn`, `xstorycloze_en`, `paws_en`, `hellaswag`,
-  `arc_easy`. The first five match the old English benchmark subset;
-  ARC-Easy is added to supply a zero-shot comparator for its fine-tune.
-  Do not compare six-task averages with old five-task averages.
+  template, BF16 autocast, maximum context2048. The default now includes
+  BLiMP, LAMBADA-OpenAI, HellaSwag, PIQA, ARC-Easy, WinoGrande, ARC-Challenge,
+  BoolQ, plus the earlier `xnli_en`, `belebele_eng_Latn`, `xstorycloze_en`
+  and `paws_en`. BLiMP expands to all67 official subtests:78 individual task
+  results in total. See the English suite section below for task IDs/metrics.
+  Do not compare averages across different benchmark selections or count
+  each BLiMP subtest as a separate family in an overall benchmark average.
 - Fine-tuning: independent original-checkpoint reload for each task/seed;
   never train the next task from a previous task's fine-tuned weights.
   English HellaSwag, ARC-Easy and XNLI training splits; evaluate only their
@@ -69,6 +71,11 @@ benchmarks/
   google-research-datasets/paws-x/
   Rowan/hellaswag/
   allenai/ai2_arc/
+  nyu-mll/blimp/
+  EleutherAI/lambada_openai/
+  baber/piqa/
+  allenai/winogrande/
+  aps/super_glue/
 ```
 
 Only snapshots for selected tasks/languages are required. The code overrides
@@ -76,6 +83,114 @@ official task dataset paths in memory before loading them; it does not mutate
 installed lm-eval YAML files, download missing inputs, or use a remote fallback.
 Missing snapshots/configurations/splits fail. Verify real B200 inputs and run
 a destination smoke before scheduling the full evaluation battery.
+
+## English pretraining benchmark suite
+
+Definitions come from the pinned [lm-eval v0.4.10 task code](https://github.com/EleutherAI/lm-evaluation-harness/tree/v0.4.10/lm_eval/tasks).
+No custom prompts, scoring normalization or few-shot demonstrations are added.
+
+| Group flag | Official task(s) | Evaluated split | Reported metrics |
+|---|---|---|---|
+| `blimp` | All67 `blimp_*` subtests | Each configuration's `train` split (official benchmark split) | Subtest accuracy and unweighted suite mean |
+| `lambada` | `lambada_openai`, configuration `default` | test | Last-word exact-token accuracy and target-word perplexity |
+| `hellaswag` | `hellaswag` | validation | acc, acc_norm |
+| `piqa` | `piqa` | validation | acc, acc_norm |
+| `arc_easy` | `arc_easy` | test | acc, acc_norm |
+| `winogrande` | `winogrande`, configuration `winogrande_xl` | validation | acc |
+| `arc_challenge` | `arc_challenge` | test | acc, acc_norm |
+| `boolq` | `boolq`, configuration `boolq` | validation | acc |
+
+`lambada` deliberately selects the [OpenAI variant](https://github.com/EleutherAI/lm-evaluation-harness/blob/v0.4.10/lm_eval/tasks/lambada/lambada_openai.yaml),
+not `lambada_standard` and not the multilingual `en` configuration. Its
+perplexity scores the withheld target word, not corpus PPL. It is a
+loglikelihood task, unlike the multiple-choice tasks. WinoGrande uses the
+official distinct candidate contexts and shared suffix scoring.
+
+BLiMP membership and aggregation follow the [official group](https://github.com/EleutherAI/lm-evaluation-harness/blob/v0.4.10/lm_eval/tasks/blimp/_blimp.yaml).
+It compares complete grammatical/ungrammatical sentence likelihoods. The suite
+summary is stored separately under `benchmark_summaries.blimp`; all67 original
+results remain under `benchmarks`. A partial suite cannot produce a suite mean.
+No overall average mixing these families is generated.
+
+For **only these eight families** (74 task results), pass:
+
+```bash
+--task-groups blimp lambada hellaswag piqa arc_easy winogrande arc_challenge boolq
+```
+
+For the previous six-task English suite, explicitly select:
+
+```bash
+--task-groups xnli belebele xstorycloze paws-x hellaswag arc_easy
+```
+
+New groups are English-only. Future multilingual runs retain their existing
+task mappings and report unsupported group/language pairs explicitly. Adding
+these evaluation tasks does **not** expand the fine-tuning task list: it remains
+HellaSwag/ARC-Easy/XNLI. Evaluation accepts checkpoint5000 without code changes.
+
+### Download preparation for later B200 use
+
+The following is a **template only**, not a submitted command. Confirm the
+destination root and authorize downloads separately. ARC-Challenge reuses the
+ARC-Easy repository, so do not download it twice. Preserve org/repo directories.
+
+```text
+#d +a
+#datasets
+--hf-dataset nyu-mll/blimp /mnt/local/_data/@PROJECT@/benchmarks/nyu-mll/blimp
+--hf-dataset EleutherAI/lambada_openai /mnt/local/_data/@PROJECT@/benchmarks/EleutherAI/lambada_openai
+--hf-dataset baber/piqa /mnt/local/_data/@PROJECT@/benchmarks/baber/piqa
+--hf-dataset allenai/winogrande /mnt/local/_data/@PROJECT@/benchmarks/allenai/winogrande
+--hf-dataset allenai/ai2_arc /mnt/local/_data/@PROJECT@/benchmarks/allenai/ai2_arc
+--hf-dataset aps/super_glue /mnt/local/_data/@PROJECT@/benchmarks/aps/super_glue
+--hf-dataset Rowan/hellaswag /mnt/local/_data/@PROJECT@/benchmarks/Rowan/hellaswag
+```
+
+This covers only the eight-family core. Default evaluation additionally needs
+the four earlier XNLI/Belebele/XStoryCloze/PAWS-X repositories listed above.
+The `#d --hf-dataset` form uses the runner's resolved snapshot revision; compare
+downloaded files to the tested manifest before use. Main branches may change.
+Use complete parquet snapshots for WinoGrande and SuperGLUE, as in the whole-repo
+commands above. Their README metadata lists multiple configurations; the current
+HF local-directory loader may inspect a different configuration during format
+inference even when `winogrande_xl` or `boolq` is selected. A hand-pruned directory
+containing only the selected configuration can therefore fail to load. This
+does not change which split/configuration the evaluator scores.
+For exact revisions, use the supported direct resolve-URL mode per file with
+operator-managed credentials when necessary, never direct GPU-node downloads.
+
+`resources/english_core_benchmark_files_20260908.json` records the tested
+seven repository revisions and SHA256/size of133 required metadata/parquet files.
+It covers full parquet snapshots for WinoGrande/SuperGLUE and selected English
+files for LAMBADA; extra downloaded files are allowed. Verify later downloads:
+
+```bash
+python scripts/verify_manifest.py verify --root /absolute/benchmarks \
+  --manifest resources/english_core_benchmark_files_20260908.json
+```
+
+These hashes establish identity with the tested pinned snapshots, not model
+accuracy. Do not regenerate the reference manifest from a mismatching B200
+download merely to make verification pass; inspect any revision difference.
+
+### Dev-only smoke test on real snapshots
+
+After retrieving the snapshots on dev (or through an authorized #d on B200),
+run in the evaluation environment with a fresh output directory:
+
+```bash
+CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 \
+python -m scripts.smoke_english_benchmarks \
+  --dataset-root /absolute/benchmarks --output-dir temp/fresh_benchmark_smoke \
+  --examples-per-task 2 --arms B0 C
+```
+
+This CPU-only test validates full dataset split counts, then scores just two
+real examples for each of74 tasks on tiny random B0/C models with a byte-level
+smoke tokenizer. Its outputs are explicitly marked `smoke_only`: they are not
+research metrics. No checkpoint/data downloads or GPU operations occur inside
+this script. Production eval has no sample-limit option and checks full coverage.
 
 ## Multi-checkpoint evaluation
 

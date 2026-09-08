@@ -8,7 +8,7 @@ if __package__ in (None, ''):
 from eval.runtime import offline
 offline()
 from eval.runtime import checkpoint_identity, languages, load_checkpoint
-from eval.benchmarks import DEFAULT_GROUPS, task_plan, load_tasks, evaluate as benchmark_eval
+from eval.benchmarks import DEFAULT_GROUPS, task_plan, load_tasks, summarize_benchmarks, evaluate as benchmark_eval
 from eval.ppl import evaluate as ppl_eval
 from capacity_allocation.data import write_json
 
@@ -53,6 +53,7 @@ def main():
     if tasks:
         result['benchmarks'] = benchmark_eval(model, tokenizer, tasks, device=args.device,
             precision=args.precision, batch_size=args.benchmark_batch_size)
+        result['benchmark_summaries'] = summarize_benchmarks(result['benchmarks'])
         result['lm_eval_version'] = '0.4.10'
     output.parent.mkdir(parents=True, exist_ok=True)
     write_json(output, result)

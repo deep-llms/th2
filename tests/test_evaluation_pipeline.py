@@ -11,7 +11,9 @@ from unittest.mock import patch
 import torch
 from datasets import Dataset
 from capacity_allocation.modeling import build_model, experiment_config
-from eval.benchmarks import DEFAULT_GROUPS, TASKS, local_task_config, task_plan
+from eval.benchmarks import (DEFAULT_GROUPS, LEGACY_GROUPS, ENGLISH_CORE_GROUPS, TASKS,
+                             local_task_config, task_plan, summarize_benchmarks)
+from eval.blimp_tasks import BLIMP_TASKS
 from eval.runtime import checkpoint_specs, languages, load_checkpoint
 from eval.ppl import evaluate as ppl_eval
 from finetune.tasks import GenerativeDataset, encode_example, format_example
@@ -26,8 +28,13 @@ class EvaluationTests(unittest.TestCase):
 
     def test_english_default_tasks_and_multilingual_selection(self):
         plan, missing = task_plan()
-        self.assertEqual([p['task'] for p in plan], ['xnli_en', 'belebele_eng_Latn',
+        self.assertEqual([p['task'] for p in plan[:6]], ['xnli_en', 'belebele_eng_Latn',
                          'xstorycloze_en', 'paws_en', 'hellaswag', 'arc_easy'])
+        self.assertEqual(len(plan), 78)
+        self.assertEqual(len({p['task'] for p in plan}), 78)
+        self.assertEqual(sum(p['group'] == 'blimp' for p in plan), 67)
+        self.assertEqual(len(task_plan('en', LEGACY_GROUPS)[0]), 6)
+        self.assertEqual(len(task_plan('en', ENGLISH_CORE_GROUPS)[0]), 74)
         self.assertFalse(missing)
         plan, missing = task_plan('en,zh', list(DEFAULT_GROUPS)+['xcopa'])
         self.assertTrue(all(p['language'] in ('en', 'zh') for p in plan))
@@ -38,6 +45,28 @@ class EvaluationTests(unittest.TestCase):
         for selection in ('en,en', '../en', 'en,', 'unknown'):
             with self.subTest(selection=selection), self.assertRaises(ValueError):
                 languages(selection)
+
+    def test_blimp_complete_macro_mean_and_missing_subtest(self):
+        results = {name: dict(metrics={'acc,none': (i % 2)}, samples={'effective': i+1})
+                   for i, name in enumerate(BLIMP_TASKS)}
+        summary = summarize_benchmarks(results)['blimp']
+        self.assertEqual(summary['subtasks'], 67)
+        self.assertAlmostEqual(summary['metrics']['acc,none'], 33/67)
+        self.assertEqual(summary['samples'], sum(range(1,68)))
+        self.assertEqual(summarize_benchmarks({'hellaswag': {}}), {})
+        results.pop(BLIMP_TASKS[0])
+        with self.assertRaisesRegex(ValueError, 'missing subtests'):
+            summarize_benchmarks(results)
+
+    def test_lambada_only_accepts_loglikelihood_definition(self):
+        plan, _ = task_plan('en', ['lambada'])
+        with tempfile.TemporaryDirectory() as folder:
+            (Path(folder)/'EleutherAI/lambada_openai').mkdir(parents=True)
+            config = dict(task='lambada_openai', output_type='loglikelihood',
+                          dataset_path='EleutherAI/lambada_openai')
+            self.assertEqual(local_task_config(config, plan[0], folder)['output_type'], 'loglikelihood')
+            with self.assertRaises(ValueError):
+                local_task_config(dict(config, output_type='multiple_choice'), plan[0], folder)
 
     def test_offline_config_only_requires_selected_snapshot(self):
         plan, _ = task_plan('en', ['hellaswag'])
@@ -166,6 +195,11 @@ class EvaluationTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec('lm_eval'), 'Requires optional lm_eval==0.4.10 test environment')
 class HarnessIntegrationTests(unittest.TestCase):
+    def test_exact_blimp_suite_matches_pinned_harness(self):
+        from lm_eval.tasks import TaskManager
+        manager = TaskManager()
+        self.assertEqual(tuple(manager._get_config('blimp')['task']), BLIMP_TASKS)
+
     def test_bpe_completion_boundary_matches_harness(self):
         from tokenizers import Tokenizer, models, pre_tokenizers, trainers
         from transformers import PreTrainedTokenizerFast

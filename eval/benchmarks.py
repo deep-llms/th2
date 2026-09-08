@@ -9,6 +9,7 @@ import math
 from pathlib import Path
 
 from eval.runtime import languages, offline
+from eval.blimp_tasks import BLIMP_TASKS
 
 TASKS = {
     'xnli': {lang: f'xnli_{lang}' for lang in ('en', 'ar', 'de', 'ru', 'vi', 'zh')},
@@ -20,15 +21,26 @@ TASKS = {
     'paws-x': {lang: f'paws_{lang}' for lang in ('en', 'de', 'zh')},
     'hellaswag': {'en': 'hellaswag', **{lang: f'hellaswag_{lang}' for lang in ('ar', 'de', 'ru', 'vi')}},
     'arc_easy': {'en': 'arc_easy', **{lang: f'arc_{lang}' for lang in ('ar', 'de', 'ru', 'vi', 'zh')}},
+    'blimp': {'en': BLIMP_TASKS},
+    'lambada': {'en': 'lambada_openai'},
+    'piqa': {'en': 'piqa'},
+    'winogrande': {'en': 'winogrande'},
+    'arc_challenge': {'en': 'arc_challenge'},
+    'boolq': {'en': 'boolq'},
 }
-# Preserve the old five English zero-shot tasks; ARC-Easy is additionally
-# evaluated so every fine-tuned task also has a matching zero-shot result.
-DEFAULT_GROUPS = ('xnli', 'belebele', 'xstorycloze', 'paws-x', 'hellaswag', 'arc_easy')
+# Retain prior tasks and include the requested English pretraining suite.
+LEGACY_GROUPS = ('xnli', 'belebele', 'xstorycloze', 'paws-x', 'hellaswag', 'arc_easy')
+ENGLISH_CORE_GROUPS = ('blimp', 'lambada', 'hellaswag', 'piqa', 'arc_easy',
+                       'winogrande', 'arc_challenge', 'boolq')
+DEFAULT_GROUPS = LEGACY_GROUPS + ('blimp', 'lambada', 'piqa', 'winogrande', 'arc_challenge', 'boolq')
 REPOSITORIES = {
     'xnli': 'facebook/xnli', 'belebele': 'facebook/belebele',
     'xcopa': 'cambridgeltl/xcopa', 'xstorycloze': 'juletxara/xstory_cloze',
     'paws-x': 'google-research-datasets/paws-x',
     'hellaswag': 'Rowan/hellaswag', 'arc_easy': 'allenai/ai2_arc',
+    'blimp': 'nyu-mll/blimp', 'lambada': 'EleutherAI/lambada_openai',
+    'piqa': 'baber/piqa', 'winogrande': 'allenai/winogrande',
+    'arc_challenge': 'allenai/ai2_arc', 'boolq': 'aps/super_glue',
 }
 
 
@@ -46,7 +58,9 @@ def task_plan(selected_languages='en', groups=DEFAULT_GROUPS):
             repo = REPOSITORIES[group]
             if lang != 'en' and group in ('hellaswag', 'arc_easy'):
                 repo = 'alexandrainst/' + ('m_hellaswag' if group == 'hellaswag' else 'm_arc')
-            plan.append(dict(task=TASKS[group][lang], group=group, language=lang, repository=repo))
+            names = TASKS[group][lang]
+            for name in (names,) if isinstance(names, str) else names:
+                plan.append(dict(task=name, group=group, language=lang, repository=repo))
     if not plan or set(selected_languages) - {item['language'] for item in plan}:
         raise ValueError('No benchmark coverage for one or more selected languages')
     return plan, unavailable
@@ -55,10 +69,11 @@ def task_plan(selected_languages='en', groups=DEFAULT_GROUPS):
 def local_task_config(config, item, dataset_root):
     """Validate our known task mapping before giving HF an absolute local path."""
     config = deepcopy(config)
-    if config.get('task') != item['task'] or config.get('output_type') != 'multiple_choice':
+    expected_type = 'loglikelihood' if item['task'] == 'lambada_openai' else 'multiple_choice'
+    if config.get('task') != item['task'] or config.get('output_type') != expected_type:
         raise ValueError('Unexpected lm-eval task definition')
     aliases = {'xnli': 'facebook/xnli', 'xcopa': 'cambridgeltl/xcopa',
-               'paws-x': 'google-research-datasets/paws-x'}
+               'paws-x': 'google-research-datasets/paws-x', 'blimp': 'nyu-mll/blimp'}
     repository = aliases.get(config.get('dataset_path'), config.get('dataset_path'))
     if repository != item['repository']:
         raise ValueError(f'Unexpected repository for {item["task"]}: {repository}')
@@ -108,6 +123,11 @@ def evaluate(model, tokenizer, tasks, *, device, precision, batch_size=8, seed=4
         values = {key: float(metrics[key]) for key in ('acc,none', 'acc_norm,none') if key in metrics}
         if 'acc,none' not in values or not all(math.isfinite(x) and 0 <= x <= 1 for x in values.values()):
             raise RuntimeError(f'Missing/nonfinite benchmark accuracy: {name}')
+        if name == 'lambada_openai':
+            perplexity = float(metrics.get('perplexity,none', float('nan')))
+            if not math.isfinite(perplexity) or perplexity <= 0:
+                raise RuntimeError('Missing/nonfinite LAMBADA target-word perplexity')
+            values['perplexity,none'] = perplexity
         counts = raw['n-samples'][name]
         expected = len(tasks[name].eval_docs)
         if counts['effective'] != expected or expected <= 0:
@@ -116,3 +136,22 @@ def evaluate(model, tokenizer, tasks, *, device, precision, batch_size=8, seed=4
             split=tasks[name].config.test_split or tasks[name].config.validation_split,
             data_fingerprint=tasks[name].eval_docs._fingerprint)
     return results
+
+
+def summarize_benchmarks(results):
+    """BLiMP is an unweighted mean over all 67 subtests, as in the official group.
+
+    Keep subtest results separate from the suite summary. Never fold 67 BLiMP
+    accuracies into an undifferentiated mean with other benchmark families.
+    """
+    members = set(results).intersection(BLIMP_TASKS)
+    if not members:
+        return {}
+    if members != set(BLIMP_TASKS):
+        raise ValueError('Cannot report BLiMP suite accuracy with missing subtests')
+    values = [results[name]['metrics']['acc,none'] for name in BLIMP_TASKS]
+    if not all(math.isfinite(x) and 0 <= x <= 1 for x in values):
+        raise ValueError('Invalid BLiMP accuracy')
+    return {'blimp': dict(metrics={'acc,none': math.fsum(values)/len(values)},
+        aggregation='unweighted_subtest_mean', subtasks=len(values),
+        samples=sum(results[name]['samples']['effective'] for name in BLIMP_TASKS))}
