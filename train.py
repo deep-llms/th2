@@ -123,8 +123,6 @@ def main():
     else:
         model_args, data_args, training_args, run_args = parser.parse_args_into_dataclasses()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
-    if training_args.push_to_hub:
-        raise ValueError('Runner training is offline; exporting results uses the run system, not Hub uploads')
     if training_args.label_smoothing_factor != 0:
         raise ValueError('label_smoothing_factor must be zero: all arms use ordinary next-token cross entropy')
     if training_args.save_only_model:

@@ -32,7 +32,32 @@ one-epoch cosine-with-min-LR schedule, stop-at-step10000, seed42, same cache.
 After successful verification it writes training_complete.json and starts
 the verified /tmp burn in a persistent tmux terminal; burn_verified.json
 requires all eight ranks and advancing communication counters.
-No training launch or GPU stopping has been submitted yet.
+Development implementation is committed/pushed as64472ea. Execution commit
+50340a8 submitted the six-arm workflow, but the runner blocked it before any
+shell execution. Status: `BLOCKED | GUARDRAIL: outbound push pattern(s):
+train.py:126:    if training_args.push_to_hub:`. That line rejects Hub uploads;
+it does not perform an upload. This is a false-positive runner guardrail.
+Evidence: temp/remote_logs/swt_launch_status_20260908_a01.log (Dropbox modified
+2026-09-08T12:50:36Z; controller status line05:50:30). No burns were stopped,
+no new cache preparation or training started.
+
+Latest user instruction: remove the added upload-option guard, follow the
+proven sparse-embedding default (Hub uploads disabled), and explicitly
+document the outbound prohibition and this case in local AGENT_GUIDE.md.
+The guard has been removed locally; there are no added upload calls or
+launch flags enabling uploads. The launch manifest was updated and all20
+source hashes verified. All51 tests passed again after removal
+(temp/qwen_remove_upload_guard_tests.log); the inherited upload option remains
+False and the launcher does not enable it. This turn is local correction/review only: no retry or additional
+execution push has been made after the block.
+
+Intended run root (not created by this blocked command):
+/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a01.
+Before a subsequent authorized launch, deploy the corrected source and updated
+manifest, and recheck status and current machine/GPU ownership. Do not assume
+the blocked revision auto-retries. The earlier instruction to wait for an
+operator change to preserve this extra guard is superseded by the user's
+explicit removal request.
 
 ## Current implementation
 
