@@ -1,5 +1,27 @@
 # Current task
 
+## Latest instruction — fresh six-arm rerun submitted (2026-09-08)
+
+The user authorized checking GPUs, rerunning training, copying Accelerate and
+starting burns after verified successful training. Execution commit `f528935`
+submits the unchanged tested `scripts/train_capacity_b200.sh` for
+`B0 A128 A256 A512 C D`, with fresh root
+`/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a03`.
+It uses batch16/accumulation4, eight GPUs, BF16, English only, seed42,
+stop-at-step10000 and the full one-epoch LR schedule (no max_steps override).
+The wrapper rejects live Stagewise queues and existing old/new output/cache,
+checks GPUs, waits30s/checks, copies and verifies the actual Accelerate cache
+config, waits30s/checks, and runs destination handoff tests before the queue.
+The queue must regenerate the deleted English preprocessing cache, then repeat
+GPU/Accelerate gates, run production smoke, train/verify all six arms, publish
+training_complete.json, wait30s/check GPUs, and launch the verified communicating
+burn in its own persistent tmux session. Failure prevents the burn handoff.
+All20 source-manifest entries match both development and execution checkouts;
+seven local handoff tests passed. Submission is not yet proof of remote startup.
+Use read-only log retrieval to verify; never repush the executable command to poll.
+Previous cleanup/no-relaunch restrictions below are historical, superseded by
+this explicit rerun authorization. No additional deletion is authorized.
+
 ## Latest action — authorized cleanup completed (2026-09-08)
 
 After reviewing batch-test results, the user requested removal of the previous
