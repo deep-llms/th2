@@ -7,6 +7,14 @@ Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Batch-size benchmark completed — 2026-09-08
 
+The user subsequently authorized a fresh rerun of all six arms. Execution
+`f528935` started the `qwen6_allarms_10k_s42_20260908_a03` workflow at17:22 UTC;
+all GPUs were verified free, Accelerate copied/validated, seven destination
+handoff tests passed. Cache regeneration was approximately10% in the17:25 UTC
+snapshot. It will use the unchanged batch16/accumulation4 protocol, stopping
+each arm at10k with the full-epoch schedule, then verify all results before
+launching the persistent communicating burn. See CURRENT_TASK.md for evidence.
+
 Subsequent user-authorized cleanup completed at16:54:52 UTC: the stopped
 `qwen6_allarms_10k_s42_20260908_a02` output (including checkpoint6250),
 `batch_benchmark_20260908_a01` output and dedicated `qwen_en_map160_batch1000`

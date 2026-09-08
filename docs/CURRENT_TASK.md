@@ -17,7 +17,15 @@ GPU/Accelerate gates, run production smoke, train/verify all six arms, publish
 training_complete.json, wait30s/check GPUs, and launch the verified communicating
 burn in its own persistent tmux session. Failure prevents the burn handoff.
 All20 source-manifest entries match both development and execution checkouts;
-seven local handoff tests passed. Submission is not yet proof of remote startup.
+seven local handoff tests passed. Remote startup is now confirmed: the
+17:22:11 UTC log verifies all eight GPUs free, source hashes and fresh paths;
+Accelerate was copied and parsed at its actual HF cache path. All seven
+destination handoff tests passed. By the17:25:40 UTC snapshot, English cache
+tokenization was approximately10% (3.506M/36.596M documents), using160 workers.
+No project error appeared in that log. GPU training has not started yet; the
+foreground queue will proceed automatically after cache preparation and gates.
+Evidence: `temp/remote_logs/swt_a03_start_20260908_1726.log`, SHA256
+`76094ba147a3b7ad72ec9aa1fec4079d198bea76609105c3524de6070ceaf463`.
 Use read-only log retrieval to verify; never repush the executable command to poll.
 Previous cleanup/no-relaunch restrictions below are historical, superseded by
 this explicit rerun authorization. No additional deletion is authorized.
