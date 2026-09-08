@@ -1,4 +1,4 @@
-"""English capacity-allocation experiments from the v0.5 design."""
+"""Qwen3 English capacity-allocation experiments (six-layer default)."""
 
 from .modeling import AllocationConfig, AllocationForCausalLM, build_model, experiment_config
 

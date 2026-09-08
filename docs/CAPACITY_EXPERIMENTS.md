@@ -1,236 +1,142 @@
-# Capacity-allocation experiments: implementation and use
+# Qwen3 capacity-allocation experiments
 
-Implements §12 of `Capacity_Allocation_Research_Project_v0.5_Final_Reviewed.md`.
-This is a from-scratch **English pilot**, not pretrained GPT-2/Llama/Qwen tuning.
-No research training has been launched by this implementation task.
+Current implementation, 2026-09-08. This supersedes the GPT-2/Llama setup in the
+historical research drafts. All models train **from scratch**. No pretrained
+weights, research training, or remote jobs are launched by this rewrite.
 
-## Implemented arms
+## Model arms
 
-| CLI arm | Body widths | Vocabulary interface | Unique parameters |
+| Arm | Residual widths | Vocabulary interface | Parameters |
 |---|---|---|---:|
-| `B0` | 1024 × 6 | One genuinely tied 1024-wide table | 128,546,816 |
-| `A128` | 1024 × 6 | Independent input 128 / output 896 | 129,595,392 |
-| `A256` | 1024 × 6 | Independent input 256 / output 768 | 129,595,392 |
-| `A512` | 1024 × 6 | Independent input 512 / output 512 | 129,595,392 |
-| `C` | 256,256,512,512,1024,1024 | Independent 128 / 896 | 86,893,568 |
-| `D` | 512,512,1024,1024,1280,1280 | Independent 128 / 896 | 126,285,056 |
+| B0 | 1024 × 6 | Stock Qwen3, exactly tied 1024-wide table | 249,969,152 |
+| A128 | 1024 × 6 | Independent input 128 / output 896 | 251,017,728 |
+| A256 | 1024 × 6 | Independent input 256 / output 768 | 251,017,728 |
+| A512 | 1024 × 6 | Independent input 512 / output 512 | 251,017,728 |
+| C | 256,256,512,512,1024,1024 | Independent 128 / 896 | 198,485,504 |
+| D | 512,512,1024,1024,1280,1280 | Independent 128 / 896 | 247,117,568 |
 
-Validate B0/A128 first; screen uniform arms before C/D. A128 is C/D's fixed-interface
-reference. These are **not total-parameter-matched** models. Uniform arms also
-support `--depth 12`; C/D reject that option until a deeper width budget is designed.
-T2/T3, nonlinear input, N128, multilingual/Qwen and additional budget controls remain
-deferred, as specified in the design. No automatic full-grid launch is configured.
+B0 uses stock HF Qwen3ForCausalLM with Qwen3-0.6B dimensions and six layers:
+vocabulary 151936, width 1024, FFN 3072, 16 query heads, 8 KV heads, head dimension
+128, Q/K RMSNorm, RoPE theta 1,000,000, maximum positions 40960.
+Training blocks remain 2048 tokens. No dropout or attention bias.
+Uniform arms also support 12 layers; C/D are defined only at depth six.
 
-`capacity_allocation/modeling.py` uses stock HF `LlamaForCausalLM` for B0.
-Custom models reuse HF Llama layers, masks, RoPE, causal loss and dynamic KV cache.
-C/D change both residual width and MHA head count with fixed head dimension 64.
-T1 projections occur **after** complete residual blocks at changing-width boundaries.
-Final RMSNorm precedes the output adapter. All matrices are bias-free.
-No unused full-width vocabulary table, extra output table, or extra norm is retained.
+Custom models reuse HF Qwen3 blocks, masking, rotary embeddings, causal LM loss,
+generation and dynamic cache. For stage width d, FFN width is 3d, query heads
+are 2d/128, and KV heads are d/128. This preserves Qwen3's query/KV ratio of two
+and query projection width 2d. Each block has 15d² + 2d + 256 parameters,
+including two per-head Q/K norms. T1 transitions project after whole blocks,
+only at width changes. Final RMSNorm precedes the output adapter.
 
-Initialization policy is `fanin_scaled_head`: custom projections use normal std
-`1/sqrt(fan_in)`, input lookup std 0.02, output table std
-`0.02*sqrt(1024/output_rank)`. There is no forward-time logit multiplier.
-Stock body initialization is retained. A shared seed does not imply identical
-body tensors across architectures with different RNG consumption.
+Custom interfaces and transitions retain the explicit fan-in initialization:
+adapter std 1/sqrt(fan_in); output-table std 0.02*sqrt(1024/output_rank).
+The body retains HF initialization. B0 has no custom modules. The arms are not
+exactly total-parameter-matched; compare the actual counts above.
 
-## Environment and correctness gate
+## Reuse the old sparse-embedding data and training workflow
 
-Core template utilities still have no third-party dependencies. ML requirements
-are separate in `requirements-capacity.txt`. The tested local environment uses
-Python 3.11, torch 2.7.1+cu118, Transformers 5.9.0, Accelerate 1.13.0.
-The tests so far use CPU; this is **not a verified B200 CUDA environment**.
-Choose the torch CUDA wheel for the destination hardware/driver before installing
-the remaining pins, then verify CUDA and run the GPU smoke gate. Do not silently
-upgrade Transformers: the custom stage implementation depends on its layer API.
+There is no new sampling prerequisite or custom binary-token format.
+Use the old prepare_data.py outputs, saved as Hugging Face text datasets:
 
-From the project root with the selected environment active:
+```text
+Qwen_Qwen3-0.6B/
+  train/en/shard_0000/    # saved Dataset, text column
+  train/en/shard_0001/
+  eval/en/               # saved Dataset
+```
+
+Pass the parent train/ and eval/ directories; --languages en is the default.
+Other languages are opt-in (comma-separated). Missing selected languages fail.
+The B200 candidate root is
+/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B;
+verify those sampled directories before any launch. Raw parquet alone does not
+establish that sampling outputs exist.
+
+The old corpus contains approximately 30B sampled English tokens and a separate
+10M-token English evaluation set. Reusing it does **not** create the former
+20M validation + 20M final-test reservations. Do not claim a separate final test
+unless one is explicitly prepared. Previous GPT-2 partial output is not an input.
+
+Training loads and concatenates saved text shards, applies batched
+Dataset.map tokenization with configurable CPU processes, then batched
+concatenation/packing and shuffle, as in sparse_embedding/train.py.
+No EOS is inserted (matching the old trainer); existing EOS tokens are not masked.
+Each map batch drops its short tail. Worker count and map batch size can therefore
+affect packing: keep both fixed across arms. Preprocessing cache keys include
+source Dataset fingerprint, tokenizer, code, workers, batch size and block size.
+HF fingerprints are cache identities, not a fresh cryptographic corpus audit.
+New cache names deliberately avoid treating old unverified caches as compatible.
+
+No SQLite deduplication or replacement corpus is generated here. This reuses
+the original sampled corpus and its deduplication properties; a new cross-split
+duplicate audit is not claimed.
+
+## Train
+
+train.py follows the original HfArgumentParser + TrainingArguments + Trainer
+interface. Model construction is isolated in capacity_allocation/modeling.py.
+Tokenizer loading is local-only; use the existing Qwen3 tokenizer directory.
+The example below illustrates syntax, not tuned settings or an approved job.
 
 ```bash
-python -m unittest discover -s tests -v
-python -m scripts.smoke_capacity --output temp/capacity_smoke.json
-torchrun --standalone --nproc_per_node=2 -m scripts.smoke_capacity \
-  --output temp/capacity_ddp_cpu.json
+accelerate launch train.py \
+  --arm B0 --num_hidden_layers 6 \
+  --tokenizer_name /path/to/local/Qwen3-0.6B \
+  --data_dir /path/to/Qwen_Qwen3-0.6B/train \
+  --eval_data_dir /path/to/Qwen_Qwen3-0.6B/eval \
+  --languages en --block_size 2048 \
+  --preprocessing_num_workers 16 --preprocessing_batch_size 1000 \
+  --preprocessing_cache_dir /path/to/swt_cache \
+  --output_dir /path/to/fresh/B0 \
+  --num_train_epochs 1 --stop-at-step 10000 \
+  --per_device_train_batch_size 4 --gradient_accumulation_steps 16 \
+  --per_device_eval_batch_size 1 --bf16 \
+  --learning_rate 3e-4 --lr_scheduler_type cosine_with_min_lr \
+  --lr_scheduler_kwargs '{"min_lr_rate":0.1}' --warmup_steps 500 \
+  --weight_decay 0.1 --adam_beta1 0.9 --adam_beta2 0.95 \
+  --max_grad_norm 1 --seed 42 --data_seed 42 \
+  --ddp_find_unused_parameters false --ddp_timeout 21600 \
+  --save_steps 250 --logging_steps 10 --report_to none
 ```
 
-The smoke output path must be fresh. For an **authorized, free** GPU allocation:
+Do not set max_steps. Epoch count/data determine the full LR schedule;
+--stop_at_step / --stop-at-step is a save-and-stop callback only. A 10k-step
+cutoff is not a 10B-token horizon. Freeze the actual effective batch and schedule
+before comparing arms. Standard TrainingArguments control BF16, optimizer,
+scheduler, logging, checkpointing, DDP and DataLoader workers.
 
-```bash
-CUDA_VISIBLE_DEVICES=0,1 torchrun --standalone --nproc_per_node=2 \
-  -m scripts.smoke_capacity --device cuda --precision bf16 \
-  --output temp/capacity_ddp_gpu.json
-```
+Two narrowly scoped correctness fixes remain in the common CausalTrainer:
+count shifted labels for HF 5.9 accumulation normalization, and aggregate
+per-example NLL sums/target counts for exact distributed evaluation.
+They apply identically to the stock B0 model and every custom arm.
+EOS labels are never discarded merely because EOS is also a pad ID.
 
-This never stops burns or other jobs. Follow `GPU_SAFETY.md` separately before
-claiming GPUs. Tiny tests are correctness checks, not speed/quality measurements.
-Full-size parameter counts are tested on the meta device without allocating weights.
+A checkpoint inside the same output directory resumes automatically (or use
+--resume_from_checkpoint). Resume verifies recorded data/config/code.
+A successful result.json or a nonempty directory without a checkpoint is refused.
+Checkpoints retain the ordinary Trainer optimizer/scheduler/RNG state.
+final/ includes HF model files and tokenizer; it is for evaluation, not exact resume.
+Success is written only after the expected training step, final save, and optional
+evaluation complete. GPU stopping/burns are outside this script.
 
-## Prepare one frozen local English dataset
-
-1. Obtain an authorized, pinned public CulturaX English release and a pinned
-   `openai-community/gpt2` tokenizer through the run system's download mode.
-   Training and preprocessing here make **no network requests**.
-2. Create a source inventory JSON. Use real commit and SHA256 values, not these
-   placeholders. Paths are relative to the inventory; absolute paths also work.
-   Include a declared selection across English shards, not just a stream prefix.
-
-```json
-{
-  "dataset": "uonlp/CulturaX",
-  "language": "en",
-  "revision": "REPLACE_WITH_40_CHARACTER_PUBLIC_RELEASE_COMMIT",
-  "selection_rule": "REPLACE_WITH_RELEASE_WIDE_SHARD_SELECTION_RULE",
-  "shards": [
-    {"path": "en/en_part_00000.parquet", "sha256": "REPLACE_WITH_FILE_SHA256"}
-  ]
-}
-```
-
-3. Materialize the common packs into a **new** output directory:
-
-```bash
-python -m capacity_allocation.data \
-  --source-manifest /path/to/source_inventory.json \
-  --tokenizer-dir /path/to/gpt2_tokenizer \
-  --tokenizer-revision REPLACE_WITH_TOKENIZER_COMMIT \
-  --output /path/to/english_gpt2_packs \
-  --seed 0 --sample-fraction 1 \
-  --validation-fraction 0.004 --test-fraction 0.004
-```
-
-The CLI requires at least 5B packed training tokens and 20M each in validation/test
-by default. Hash fractions are **document/cluster fractions**, not exact token
-reservations: inspect measured counts and revise the preparation plan if needed.
-The source inventory fixes order; hash sampling scans every listed shard rather
-than stopping after a token prefix. Global exact duplicates are removed using an
-on-disk SQLite index. Stable IDs preserve source/URL/timestamp/content hash and
-shard/row locators. Splits use content hashes (or `--cluster-field FIELD` for
-duplicate clusters), keeping exact duplicate content out of different splits.
-Cluster IDs must be consistent for identical content.
-
-Documents are tokenized without truncation or added vocabulary entries; append
-one existing EOS, then pack continuously within each split. A final short tail
-is retained in the binary file but unused; no tail is discarded per document or
-tokenizer batch. Each full 2048-token pack has **2047 scored next-token targets**.
-EOS targets are not masked. Attention can cross EOS within a pack.
-
-Outputs: `train.bin`, `validation.bin`, `test.bin` (little-endian uint32),
-`documents.sqlite`, `source_manifest.json`, and completion `manifest.json`.
-The latter records file hashes, revisions, split rules and actual counts. Failed
-preparation does not write a completion manifest and cannot overwrite its directory.
-Preparation is currently single-process; no untested parallel sampler is implied.
-
-**Before research training:** verify mapping to the public release and tokenizer
-commit, inspect source/domain composition from the document manifest, and perform
-the cross-split near-duplicate audit. The code records `near_duplicate_audit:
-not_performed`; exact deduplication is not a substitute for that audit. Corpus
-completion is not implied by this implementation alone.
-
-### Registered B200 preparation (2026-09-07)
-
-`scripts/prepare_english_b200.sh` reuses the 50 existing English raw shards in
-`/mnt/local/_data/deep-llms_th2/data/raw/en`. The inventory is
-`resources/culturax_en_source_b200.json`: its checksums and sizes were independently
-matched to Hub LFS metadata at CulturaX revision
-`6a8734bc69fefcbb7735f4f9250f43e4cd7a442e`. The preparer verifies every file's
-full SHA256 on the node before writing packs. The release-wide shard selection
-is the original seeded random 50-file selection, not an English stream prefix.
-
-Tokenizer: `openai-community/gpt2` revision
-`607a30d783dfa663caf39e06633721c8d4cfcd7e`, five tokenizer/config files only,
-verified with `resources/gpt2_tokenizer_607a30d_manifest.json`.
-No pretrained model weights are used or downloaded.
-
-The user increased the available training-data target from 5B to **at least 10B**.
-Use seed 0, document sampling fraction 0.30, validation/test fractions 0.002
-each. These are hash/document fractions, not exact token caps; the final manifest
-must meet 10B packed training tokens and 20M tokens in each held-out split.
-This preparation target does not change the proposed 1B screening horizon or
-authorize any training. The script uses the new `swt` conda environment and
-fresh output `/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01`.
-Raw and old Qwen-packed data are unchanged. The script is CPU-only and never
-signals GPU processes. A near-duplicate audit remains a pre-training requirement.
-
-## Train a registered arm
-
-`train_capacity.py` uses HF Trainer/Accelerate with one process per GPU. Supply
-optimizer settings explicitly; the design has not selected their final values.
-An example command structure, **after** those shell variables have been selected:
-
-```bash
-torchrun --standalone --nproc_per_node="$GPU_COUNT" train_capacity.py \
-  --arm B0 --data "$PACKS" --output "$RUN_OUTPUT" \
-  --train-tokens 1000000000 \
-  --batch-per-device "$BATCH_PER_DEVICE" \
-  --gradient-accumulation "$ACCUMULATION" \
-  --learning-rate "$LR" --warmup-ratio "$WARMUP_RATIO" \
-  --weight-decay "$WEIGHT_DECAY" --beta2 "$BETA2" \
-  --precision bf16 --attention sdpa
-```
-
-Use `--arm A128`, etc., with separate fresh output directories. Keep
-`world_size * batch_per_device * accumulation * 2048` identical within a
-same-token comparison. All arms use AdamW, cosine decay, explicit warmup, no TF32,
-no dropout, and `ddp_find_unused_parameters=False`; gradient flow is tested for
-all parameters. Optional non-reentrant `--gradient-checkpointing` is available;
-register its use and measure its speed/memory effect. Default beta1=0.9,
-epsilon=1e-8 and clipping=1.0 are explicit implementation defaults, not tuned results.
-
-The token horizon is rounded **up** to whole optimizer steps and the extra tokens
-are recorded. Sufficient distinct packs must exist for this rounded horizon;
-implicit repeated epochs are rejected. The trainer shuffles global pack indices
-once with `--data-seed` and reuses that order independently of model RNG.
-It never evaluates on the reserved test set during training.
-
-The pinned Trainer normally counts unshifted labels when normalizing loss; our
-override counts only `labels[:, 1:]`, preserving HF's accumulation/DDP reduction.
-Validation gathers per-example NLL sums and target counts, not repeated batch
-means. This lets Accelerate trim duplicated final-batch examples exactly. The
-reported validation target count must match every full held-out pack once.
-
-`--stop-at-step N` stops/saves without shortening the configured LR schedule.
-For example, stopping at step N under a 5B-token horizon is not a completed
-1B-token cosine run. `max_steps` is computed internally from the *full* token
-horizon, never from the stop override. `result.json` distinguishes
-`stopped_at_step` from `horizon_complete`. Periodic Trainer checkpoints contain
-optimizer/scheduler/RNG state; `final/` is for model evaluation, not exact resume.
-`--resume /same/run/checkpoint-N` resumes **interrupted** runs with unchanged
-data/code/software/settings. Existing successful `result.json` is protected;
-deliberate continuation requires a separately reviewed continuation workflow.
-
-Artifacts also include `run_specification.json`, `parameters.json`,
-`initial_scales.json`, `trainer_state.json`, periodic checkpoints and validation
-metrics. Report processed tokens and scored targets separately. The recorded
-train-call wall time includes periodic evaluation and checkpointing; it is **not**
-an isolated kernel-throughput measurement. Peak memory is labeled rank zero.
-HF's `total_flos` field is a library estimate, not measured FLOPs or a validated
-variable-width compute accounting result; do not use it to claim equal compute.
-
-To reload any checkpoint, import the registrations first:
-
-```python
-import capacity_allocation
-from transformers import AutoModelForCausalLM
-model = AutoModelForCausalLM.from_pretrained("/path/to/run/final", local_files_only=True)
-```
-
-Dynamic cached decoding is covered by tests, including different KV head counts
-at each stage. Tensor parallelism/static-cache/compiled deployment are not verified.
-
-For a saved checkpoint, single-process held-out PPL can also be reproduced with:
+## Evaluate and test
 
 ```bash
 python evaluate_capacity.py --checkpoint /path/to/run/final \
-  --data /path/to/english_gpt2_packs --split validation \
+  --data_dir /path/to/Qwen_Qwen3-0.6B/eval --languages en \
+  --block_size 2048 --preprocessing_num_workers 16 \
+  --preprocessing_batch_size 1000 --preprocessing_cache_dir /path/to/swt_cache \
   --device cuda --precision bf16 --batch-size 1 \
-  --output /path/to/new_validation_result.json
+  --output /path/to/fresh/eval.json
+
+python -m unittest discover -s tests -v
+python -m scripts.smoke_capacity --output temp/qwen_smoke.json
+torchrun --standalone --nproc_per_node=2 -m scripts.smoke_capacity \
+  --output temp/qwen_ddp_cpu.json
 ```
 
-Use the same precision across comparisons. `--split test` is an explicit final
-confirmation action, not part of screening. The evaluator verifies pack hashes,
-counts scored targets exactly and records checkpoint file hashes. For CPU
-verification use `--device cpu --precision fp32`. Neither script downloads data.
-
-The generic `run_experiments.py` can sequence explicit training argv lists and
-verify each `result.json` contract; `commands.sh` remains inactive. No new remote
-or automatic burn/handoff script is inferred from this implementation request.
+Use the same preprocessing settings for training/evaluation. A --split test
+label does not construct a new test set: point --data_dir at genuinely held-out
+data. Tiny CPU tests and meta-device counts do not establish B200 speed/memory.
+GPU smoke tests require separately authorized free GPUs; none is launched here.
+commands.sh stays inactive in the development repository.

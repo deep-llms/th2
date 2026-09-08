@@ -1,54 +1,19 @@
-# Stagewise widening / capacity allocation
+# Stagewise widening transformer
 
-English from-scratch Llama-family experiments from
-`docs/Capacity_Allocation_Research_Project_v0.5_Final_Reviewed.md`.
-Models B0, A128/A256/A512 and stagewise C/D, offline data preparation, and the
-training CLI are implemented. Read [the experiment guide](docs/CAPACITY_EXPERIMENTS.md)
-for architecture details, tests and usage. Real data revisions, optimizer choices,
-and a remote training run have not been configured.
+English from-scratch capacity-allocation experiments using **Qwen3 with six
+layers**, plus independent vocabulary interfaces and stagewise-width arms.
 
-The project also retains the generic Git-triggered runner utilities below.
-The confirmed development and th2 repositories are documented in `docs/GIT_PUSH.md`.
-Code-only publication keeps `commands.sh` at `#0` and submits no workload.
+Start with [the experiment guide](docs/CAPACITY_EXPERIMENTS.md).
+The old sparse-embedding sampled text datasets are reused; train.py follows
+its Hugging Face Trainer and cached multiprocess preprocessing workflow.
+No GPT-2 resampling or custom binary-token dataset is required.
 
-## Configure infrastructure
+- Architecture: capacity_allocation/modeling.py
+- Training: train.py
+- Data loading/packing: capacity_allocation/data.py
+- Held-out PPL: evaluate_capacity.py
+- CPU tests: python -m unittest discover -s tests -v
 
-1. Work in this project folder. Do not copy another project's credentials
-   or populated `temp/` folder.
-2. Read `docs/AGENT_GUIDE.md`, then configure `project.local.json` from
-   `project.example.json`. Populate the project notes and current task.
-3. Configure and verify the development and execution Git remotes separately
-   using `docs/GIT_PUSH.md`. Leave `commands.sh` at `#0` until a job is ready.
-4. Choose project dependencies. Use runner `#i` to install, `#d` to download,
-   and `#1` to verify/process/run. Follow `docs/commands.md`.
-5. Run the local tests and harmless CPU example below before adding real jobs.
-
-## Local verification (no network or GPU use)
-
-```bash
-python3 -m unittest discover -s tests -p test_utilities.py -v
-python3 run_experiments.py --config jobs.example.json --list
-python3 run_experiments.py --config jobs.example.json --run-dir temp/example-run-001
-```
-
-The example writes and verifies one JSON artifact, then publishes
-`temp/example-run-001/complete.json`. It refuses an existing run directory;
-use a new run ID for a retry. It does not train, download, or use GPUs.
-
-## Included utilities
-
-| File | Purpose |
-|---|---|
-| `run_experiments.py` | Sequential arbitrary commands, logs, timeouts, required artifacts, success marker |
-| `scripts/gpu_status.py` | Read-only physical GPU/PID inspection; optional fail-if-busy check |
-| `scripts/verify_manifest.py` | SHA-256/size manifest creation and verification for local files |
-| `scripts/dropbox_access.py` | Dev-machine non-recursive shared-folder listing and safe file download |
-| `scripts/example_job.py` | Tiny CPU example; not a project training script |
-| `envs/runtime.txt` | Minimal runner environment example |
-| `resources/accelerate_config.example.yaml` | Optional, deliberately single-process/no-mixed-precision example |
-| `resources/llm_pretrain_burn.py` | Optional PyTorch/NCCL GPU stress workload; see `docs/GPU_SAFETY.md` before use |
-
-See `docs/JOBS.md` for the job manifest and `docs/DROPBOX_ACCESS.md` for
-credentials and result retrieval. ML tests require `requirements-capacity.txt`;
-run them with `python -m unittest discover -s tests -v` in the ML environment.
-Do not copy old sparse-embedding benchmarks or defaults into this experiment.
+Historical research drafts are retained for context; their GPT-2/Llama setup
+is superseded by the current experiment guide. commands.sh defaults to #0:
+publishing source does not authorize training or remote GPU actions.
