@@ -9,13 +9,23 @@ Compare batch16/accumulation4 against batch32/accumulation2, keeping8 GPUs,
 effective batch512, BF16, sequence2048, the same actual Trainer and English
 cache. Test all six arms in isolated processes,5 warm-up +20 measured updates.
 
-**Stop is submitted but unconfirmed as of15:13 UTC.** Execution commit855bde4,
-submitted15:07:40 UTC, is confirmed on deep-llms/th2 main. Dropbox status still
-ends at32720d9 (the read-only ancestry check; modified15:03:16 UTC), with no
-acknowledgement/log for855bde4. Do not assume training stopped or GPUs are free;
-do not resubmit the stop or launch a benchmark while this is unverified.
-No explicit AWS/runner error has been returned; the missing response is not
-evidence of a model-code error or of successful cancellation.
+**Stop confirmed at15:17 UTC; pulled at15:25 UTC.** Execution commit855bde4
+eventually ran successfully. It stopped the exact queue109572 and all eight
+verified workers112904–112911, waited30s, and verified all GPUs free plus
+queue/launcher exit. Snapshot: every GPU0 MiB /0% utilization. The latest
+retained checkpoint passing validate_resume_checkpoint was B0/checkpoint-6250.
+No outputs/caches were deleted. Evidence:
+temp/remote_logs/swt_stop_confirm_20260908_1525.log, SHA256
+94d325171ac2784a63fa166e572b933ac9945fcf48431b7437e0dcf38cae949b.
+The earlier response delay is historical; no model-code failure was reported.
+
+On the user's follow-up check, continued the already-authorized benchmark:
+execution commit39d5c9c submits fresh source/hash checks and destination CPU
+benchmark tests, then scripts/benchmark_batches_b200.sh with fresh root
+/mnt/local/_outputs/deep-llms_th2/swt/batch_benchmark_20260908_a01.
+It rechecks free GPUs, copies/verifies Accelerate, waits30s/rechecks, then
+profiles all arms. Submission is not yet confirmation that GPU tests started.
+Do not relaunch full research training from this benchmark request.
 
 Ancestry evidence: temp/remote_logs/swt_before_batch_stop_20260908.log.
 At15:01 UTC it showed B0 workers112904–112911, Accelerate launcher112894,
@@ -31,8 +41,8 @@ state. B0 checkpoint directories through5250 existed at the ancestry check;
 their final completeness has not yet been reported by the stop command.
 
 Benchmark source: development826db18 (stop/helper/tests) andf1de3bd (shell queue).
-The Python helper was deployed with855bde4; the benchmark shell has not been
-deployed or executed. `scripts/benchmark_batches_b200.sh` needs a fresh root
+The Python helper was deployed with855bde4; the shell is now deployed with
+39d5c9c. `scripts/benchmark_batches_b200.sh` needs a fresh root
 matching `/mnt/local/_outputs/deep-llms_th2/swt/batch_benchmark_*`, copies and
 verifies Accelerate, waits30s/rechecks, and runs isolated profiles. It records
 OOM as an unusable configuration; non-OOM failures stop for investigation.
