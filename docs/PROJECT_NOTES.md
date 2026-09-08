@@ -67,6 +67,14 @@ custom model class. Also record/compare world size and effective batch on
 resume. Default CE behavior and architecture weights are unchanged by these
 guards. Handoff verifies weights and checkpoint state, not PID disappearance.
 
+Local final verification:51 tests passed, plus the all-six-arm two-rank BF16
+CPU smoke. Development64472ea was pushed; execution50340a8 was rejected
+before execution by a runner false positive:
+`BLOCKED | GUARDRAIL: outbound push pattern(s): train.py:126: if training_args.push_to_hub:`.
+The flagged line rejects Hub uploads. No GPU stop, cache preparation or training
+occurred. Preserve the safety check; wait for operator repair, do not bypass
+the scanner or resubmit blindly. See CURRENT_TASK.md for exact evidence.
+
 ## Qwen3 migration — 2026-09-08
 
 The user chose Qwen3-0.6B with six layers and the existing Qwen-sampled English
