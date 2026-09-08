@@ -1,9 +1,9 @@
 #1 +30+a
-#th2-stop-only-swt-serial-sampler-20260908-a01
+#th2-stop-only-swt-serial-sampler-20260908-a02
 set -euo pipefail
 date -u
 /mnt/local/conda-py311/envs/swt/bin/python -u - <<'PY'
-import os, signal, select, time
+import os, signal, time
 from pathlib import Path
 target = b'/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01'
 matched = []
@@ -16,23 +16,28 @@ for proc in Path('/proc').iterdir():
             continue
         if argv[argv.index(b'--output')+1] != target:
             continue
-        fd = os.pidfd_open(int(proc.name))
-        if (proc/'cmdline').read_bytes().split(b'\0') != argv:
-            os.close(fd)
-            raise RuntimeError('Process identity changed; no signal sent')
-        matched.append((int(proc.name), fd))
+        start = (proc/'stat').read_text().rsplit(')', 1)[1].split()[19]
+        matched.append((int(proc.name), start, argv))
     except (FileNotFoundError, ProcessLookupError, PermissionError):
         continue
 assert len(matched) <= 1, 'Unexpected multiple samplers; refusing signals'
-for pid, fd in matched:
+def still_same(pid, start):
+    try:
+        stat = Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()
+        return stat[19] == start and stat[0] != 'Z'
+    except (FileNotFoundError, ProcessLookupError):
+        return False
+for pid, start, argv in matched:
+    assert pid > 1 and pid != os.getpid()
+    assert still_same(pid, start)
+    assert Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0') == argv
     print('STOPPING_VERIFIED_CPU_SAMPLER', pid, flush=True)
-    signal.pidfd_send_signal(fd, signal.SIGTERM)
-    poll = select.poll()
-    poll.register(fd, select.POLLIN)
-    if not poll.poll(20000):
-        signal.pidfd_send_signal(fd, signal.SIGKILL)
-        assert poll.poll(10000), 'Sampler did not exit'
-    os.close(fd)
+    os.kill(pid, signal.SIGTERM)
+    for _ in range(20):
+        if not still_same(pid, start):
+            break
+        time.sleep(1)
+    assert not still_same(pid, start), 'Sampler still alive; no further signals sent'
     print('SAMPLER_EXIT_CONFIRMED', pid, flush=True)
 if not matched:
     print('NO_MATCHING_SAMPLER_PROCESS')
