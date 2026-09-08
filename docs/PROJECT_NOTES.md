@@ -76,8 +76,16 @@ occurred. The user subsequently instructed removal of this unnecessary guard
 to follow the proven sparse-embedding implementation. Retain HF's default of
 disabled Hub uploads and never enable uploads in launch settings. The direct
 outbound-upload prohibition and this example are now in local AGENT_GUIDE.md.
-No new execution push is part of that local correction/review. See
-CURRENT_TASK.md for exact evidence and the next deployment gate.
+That correction was committed as 792ea47. On the user's subsequent re-run
+request, execution commit **1226141** submitted a fresh a02 pipeline. At
+2026-09-08 13:25:50 UTC, the runner log confirmed source/host/ownership checks,
+all 51 destination CPU tests passing, and CPU tokenization-cache preparation
+underway while existing burns remained untouched. GPU smoke/training had not
+yet been observed. Run root:
+`/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a02`.
+Evidence: `temp/remote_logs/swt_retry_start_20260908_a02.log`.
+No cleanup or replacement corpus sampling was performed. See CURRENT_TASK.md
+for the exact next gates and required completion artifacts.
 
 ## Qwen3 migration — 2026-09-08
 

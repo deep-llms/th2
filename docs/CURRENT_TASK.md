@@ -48,16 +48,36 @@ The guard has been removed locally; there are no added upload calls or
 launch flags enabling uploads. The launch manifest was updated and all20
 source hashes verified. All51 tests passed again after removal
 (temp/qwen_remove_upload_guard_tests.log); the inherited upload option remains
-False and the launcher does not enable it. This turn is local correction/review only: no retry or additional
-execution push has been made after the block.
+False and the launcher does not enable it. Development correction 792ea47 is
+pushed to origin. The blocked a01 command did not create its intended run root.
 
-Intended run root (not created by this blocked command):
-/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a01.
-Before a subsequent authorized launch, deploy the corrected source and updated
-manifest, and recheck status and current machine/GPU ownership. Do not assume
-the blocked revision auto-retries. The earlier instruction to wait for an
-operator change to preserve this extra guard is superseded by the user's
-explicit removal request.
+## Authorized retry — observed 2026-09-08 13:25:50 UTC
+
+Execution commit **1226141** was pushed to th2 for job
+`th2-swt-qwen6-all-six-train-10k-then-burn-20260908-a02` after another local
+51-test pass. Its source manifest passed, the node/environment and burn
+ownership checks passed, and **all 51 CPU tests passed on B200 in 5.366s**.
+The pipeline has entered CPU cache preparation: last exported progress was
+563,000 / 36,595,514 training documents tokenized. Existing burns remain
+untouched at this stage. GPU smoke and optimizer training have not yet been
+observed; do not describe this as training already underway.
+
+Fresh run root:
+`/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a02`.
+Evidence: `temp/remote_logs/swt_retry_start_20260908_a02.log`, exported run
+log dated 13:24:14 UTC, Dropbox modification 13:25:50 UTC. Local SHA256:
+`9af005cf23464083739b3f4d7b2bae1248f2d8bdbe306be24cf2def8e22ae4c1`.
+No outputs/caches were deleted. The shared cache is
+`/mnt/local/_data/deep-llms_th2/swt/qwen_en_map160_batch1000`.
+
+Next: retrieve fresh progress, without resubmitting the executable command.
+The running script automatically performs burn reclaim, both 30s/free checks,
+Accelerate copy/verification, production GPU smoke, all six sequential arms,
+completion validation, and communicating-burn handoff. Completion requires
+`training_complete.json`; successful burn handoff additionally requires
+`burn_verified.json`. A failed gate stops the pipeline without declaring
+success or starting a burn over training. Report any failure before deciding
+on recovery; do not assume any later stage succeeded from startup alone.
 
 ## Current implementation
 
@@ -81,7 +101,8 @@ temp/remote_logs/swt_stop_sampler_20260908_a02.log.
 Partial GPT-2 output remains on B200 (not deleted or reused):
 /mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01.
 All eight GPU burns remained active (155010 MiB, 100% utilization each).
-No replacement preprocessing/training run has been launched.
+These are historical sampler-stop observations; the Qwen cache-preparation
+retry above is now active.
 
 ## Infrastructure
 
@@ -105,6 +126,6 @@ or B200 CUDA evidence. Reports: temp/qwen_bf16_cpu_smoke.json,
 temp/qwen_ddp_cpu_smoke.json, temp/qwen_trainer_ddp_run/result.json,
 temp/qwen_trainer_ddp_nll.json.
 
-Before an authorized training run, verify the old sampled English data and
-local Qwen tokenizer on B200, validate the actual Accelerate config and run
-destination-GPU correctness/throughput smoke tests on authorized free GPUs.
+Destination CPU tests and old sampled-data preflight have passed. After local
+cache preparation, the active pipeline still must validate the copied
+Accelerate config and pass production GPU smoke before optimizer training.
