@@ -1,53 +1,59 @@
 #1 +30+a
-#th2-stop-only-swt-serial-sampler-20260908-a02
+#th2-swt-qwen-readonly-preflight-20260908-a01
 set -euo pipefail
 date -u
+hostname
+pwd
+nvidia-smi --query-gpu=index,uuid,name,memory.total,memory.used,utilization.gpu --format=csv
+nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv
+df -h /mnt/local
 /mnt/local/conda-py311/envs/swt/bin/python -u - <<'PY'
-import os, signal, time
+import hashlib, json, subprocess, sys
 from pathlib import Path
-target = b'/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01'
-matched = []
-for proc in Path('/proc').iterdir():
-    if not proc.name.isdigit() or int(proc.name) <= 1:
-        continue
-    try:
-        argv = (proc/'cmdline').read_bytes().split(b'\0')
-        if b'-m' not in argv or b'capacity_allocation.data' not in argv or b'--output' not in argv:
-            continue
-        if argv[argv.index(b'--output')+1] != target:
-            continue
-        start = (proc/'stat').read_text().rsplit(')', 1)[1].split()[19]
-        matched.append((int(proc.name), start, argv))
-    except (FileNotFoundError, ProcessLookupError, PermissionError):
-        continue
-assert len(matched) <= 1, 'Unexpected multiple samplers; refusing signals'
-def still_same(pid, start):
-    try:
-        stat = Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()
-        return stat[19] == start and stat[0] != 'Z'
-    except (FileNotFoundError, ProcessLookupError):
-        return False
-for pid, start, argv in matched:
-    assert pid > 1 and pid != os.getpid()
-    assert still_same(pid, start)
-    assert Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0') == argv
-    print('STOPPING_VERIFIED_CPU_SAMPLER', pid, flush=True)
-    os.kill(pid, signal.SIGTERM)
-    for _ in range(20):
-        if not still_same(pid, start):
+import torch, transformers, datasets, accelerate
+print('VERSIONS', sys.executable, torch.__version__, transformers.__version__, datasets.__version__, accelerate.__version__)
+raw = subprocess.check_output(['nvidia-smi', '--query-compute-apps=pid', '--format=csv,noheader,nounits'], text=True)
+seen = set()
+for line in raw.splitlines():
+    pid = int(line.strip())
+    for depth in range(6):
+        if pid <= 1 or pid in seen:
             break
-        time.sleep(1)
-    assert not still_same(pid, start), 'Sampler still alive; no further signals sent'
-    print('SAMPLER_EXIT_CONFIRMED', pid, flush=True)
-if not matched:
-    print('NO_MATCHING_SAMPLER_PROCESS')
-root = Path(target.decode())
-before = {p.name:p.stat().st_size for p in root.glob('*.bin')}
-time.sleep(3)
-after = {p.name:p.stat().st_size for p in root.glob('*.bin')}
-assert before == after, 'Outputs still changing'
-print('PARTIAL_OUTPUT_PRESERVED', after)
-print('SWT_SERIAL_SAMPLER_STOPPED')
+        seen.add(pid)
+        proc = Path(f'/proc/{pid}')
+        try:
+            stat = (proc/'stat').read_text().rsplit(')',1)[1].split()
+            argv = (proc/'cmdline').read_bytes().split(b'\0')
+            print('GPU_ANCESTOR', json.dumps(dict(pid=pid, ppid=int(stat[1]), start=stat[19], argv=[v.decode(errors='replace') for v in argv if v])))
+            pid = int(stat[1])
+        except FileNotFoundError:
+            break
+for root in ['/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B', '/mnt/local/_models/deep-llms_th2', '/mnt/local/.cache/huggingface/accelerate']:
+    path = Path(root)
+    print('PATH', root, 'EXISTS', path.exists())
+    if path.is_dir():
+        for p in sorted(path.iterdir()):
+            print('ENTRY', str(p), 'directory' if p.is_dir() else p.stat().st_size)
+data = Path('/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B')
+for p in sorted(data.glob('*.json')):
+    if p.stat().st_size < 200000:
+        print('DATA_METADATA', str(p), p.read_text())
+for split in ['train/en', 'eval/en']:
+    path = data/split
+    print('SAMPLED_SPLIT', str(path), path.is_dir())
+    if path.is_dir():
+        shards = sorted(p for p in path.iterdir() if p.is_dir() and p.name.startswith('shard_'))
+        total = 0
+        for p in shards or [path]:
+            ds = datasets.load_from_disk(str(p))
+            assert 'text' in ds.column_names and len(ds) > 0
+            assert all(isinstance(ds[i]['text'], str) and ds[i]['text'] for i in [0,len(ds)-1])
+            total += len(ds)
+        print('SAMPLED_READABLE', split, 'shards', len(shards), 'documents', total)
+for p in [Path('/tmp/llm_pretrain_burn.py'), Path('/mnt/local/.cache/huggingface/accelerate/default_config.yaml')]:
+    if p.is_file():
+        print('FILE_HASH', str(p), hashlib.sha256(p.read_bytes()).hexdigest())
+        print('FILE_CONTENT', str(p), p.read_text()[:20000])
+print('SWT_QWEN_PREFLIGHT_COMPLETE')
 PY
-nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv
 date -u
