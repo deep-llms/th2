@@ -87,6 +87,39 @@ Evidence: `temp/remote_logs/swt_retry_start_20260908_a02.log`.
 No cleanup or replacement corpus sampling was performed. See CURRENT_TASK.md
 for the exact next gates and required completion artifacts.
 
+## English evaluation and fine-tuning implementation — 2026-09-08
+
+Added separate evaluation/fine-tuning tools with `--languages en` defaults;
+the active pretraining code and frozen20-file launch manifest are unchanged.
+`eval/eval_parallel.py` queues one PPL and one benchmark worker per checkpoint.
+`finetune/run_all.py` queues independent task/checkpoint/seed workers. Both
+use explicitly selected free GPUs, unique outputs, full result-coverage checks,
+and nonzero failure propagation; neither stops workloads or starts burns.
+
+Official lm-eval0.4.10 definitions were inspected at upstream tag commit
+f7d0b116 and reused for both task prompts and multiple-choice scoring. Local
+dataset paths are applied to task configs in memory, not shared package YAML.
+English zero-shot tasks are XNLI, Belebele, XStoryCloze, PAWS-X, HellaSwag and
+ARC-Easy; ARC-Easy adds the previously missing zero-shot fine-tune comparator.
+Future languages are explicit and unsupported pairs cannot become English
+fallbacks. Separate PPL per language and target-weighted combined NLL avoid
+cross-language packing/averaging errors. See EVALUATION.md for full protocol.
+
+Fine-tune defaults retain3 epochs/LR2e-5/tasks and3 seeds, but use FP32 master
+weights with BF16 autocast and HFLM-compatible continuation tokenization. This
+is not exactly the old BF16-master/separately-tokenized fine-tune protocol;
+record these differences when comparing historical results. English-only
+defaults still imply54 fine-tunes for6 checkpoints ×3 tasks ×3 seeds.
+There is no scheduled evaluation job or B200 environment change in this work.
+
+Final verification:62 tests passed in109.606s, including actual lm_eval0.4.10
+offline fixture scoring on all six model types, tiny BF16 CPU fine-tuning,
+save/eval round trip, token-boundary consistency, language selection and queue
+failure contracts. Log: temp/evaluation_final_full_suite.log. Optional harness
+dependencies were installed only in the isolated dev temp/evaluation_test_env;
+the existing swt environment was not changed. These are correctness tests,
+not real benchmark results or B200 throughput evidence.
+
 ## Qwen3 migration — 2026-09-08
 
 The user chose Qwen3-0.6B with six layers and the existing Qwen-sampled English

@@ -70,6 +70,25 @@ log dated 13:24:14 UTC, Dropbox modification 13:25:50 UTC. Local SHA256:
 No outputs/caches were deleted. The shared cache is
 `/mnt/local/_data/deep-llms_th2/swt/qwen_en_map160_batch1000`.
 
+### Later verified progress — 2026-09-08 14:05:29 UTC
+
+Read-only log exports a390631/2f9086a confirmed cache preparation completed,
+the Accelerate configuration was copied/verified, and all six production
+BF16/eight-rank GPU smokes exited successfully. The first training arm **B0**
+is active: step1487/10000, training elapsed20m21s, approximately1.38 steps/s.
+Step1480 training loss3.965; step1000 validation loss4.20 on9,829,694 targets.
+The progress bar's28575 steps describe the full-epoch LR horizon, not the
+10000-step cutoff. Evidence: temp/remote_logs/swt_progress_full_20260908_1405.log.
+No pipeline-failure marker or traceback was present. Based on B0 and relative
+production-smoke timings, provisional all-six completion is around03:00–04:00
+UTC September9, excluding failures; revise from later arms' actual timings.
+
+Read-only export176f1fa at14:30:34 UTC confirms continued B0 progress:
+step3182/10000 after45m29s, still1.38–1.39 steps/s; step3180 loss3.623,
+step3000 validation loss3.619 (same9,829,694 scored targets).
+Evidence: temp/remote_logs/swt_progress_20260908_1430.log. The provisional
+all-six finish window remains03:00–04:00 UTC September9.
+
 Next: retrieve fresh progress, without resubmitting the executable command.
 The running script automatically performs burn reclaim, both 30s/free checks,
 Accelerate copy/verification, production GPU smoke, all six sequential arms,
@@ -78,6 +97,25 @@ completion validation, and communicating-burn handoff. Completion requires
 `burn_verified.json`. A failed gate stops the pipeline without declaring
 success or starting a burn over training. Report any failure before deciding
 on recovery; do not assume any later stage succeeded from startup alone.
+
+## Evaluation/fine-tuning preparation — local development only
+
+User requested English-only evaluation/fine-tuning for this run, retaining
+explicit language selection for future runs. New entry points:
+`eval/eval_parallel.py`, `eval/eval_checkpoint.py`, `finetune/run_all.py`,
+`finetune/train.py`. See EVALUATION.md for protocol, offline inputs, examples,
+and known differences from historical fine-tuning. These files have not been
+deployed to B200 or appended to the current training-and-burn workflow.
+Pretraining source and the execution commands remain unchanged by this work.
+Verify evaluation environment and actual benchmark snapshots on B200 before
+any authorized full evaluation launch. Do not install into active `swt`.
+Verification: all62 tests passed in109.606s using the isolated dev
+`temp/evaluation_test_env` with pinned lm_eval0.4.10 and inherited swt ML
+dependencies (no changes to swt). Evidence: temp/evaluation_final_full_suite.log.
+Tests cover real offline local-parquet harness scoring for all six tiny model
+types, BF16 CPU fine-tune updates, fine-tune/save/evaluate round trip, BPE
+boundary matching, language coverage and queue failure propagation. No actual
+B200 benchmark data or GPU evaluation throughput has been validated yet.
 
 ## Current implementation
 
@@ -126,6 +164,6 @@ or B200 CUDA evidence. Reports: temp/qwen_bf16_cpu_smoke.json,
 temp/qwen_ddp_cpu_smoke.json, temp/qwen_trainer_ddp_run/result.json,
 temp/qwen_trainer_ddp_nll.json.
 
-Destination CPU tests and old sampled-data preflight have passed. After local
-cache preparation, the active pipeline still must validate the copied
-Accelerate config and pass production GPU smoke before optimizer training.
+Destination CPU tests, cache preparation, Accelerate configuration and
+production GPU smoke have passed. The active training queue must still finish
+and pass every checkpoint verifier before its final burn handoff.
