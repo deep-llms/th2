@@ -1,4 +1,4 @@
-"""HF Llama blocks with independent vocabulary interfaces and T1 transitions.
+"""HF Qwen3 blocks with independent vocabulary interfaces and T1 transitions.
 
 Validated against Transformers 5.9.0. B0 is the unmodified HF causal LM.
 No pretrained model weights or unused full-width vocabulary tables are created.
@@ -8,29 +8,31 @@ import math
 
 import torch
 from torch import nn
-from transformers import AutoConfig, AutoModelForCausalLM, LlamaConfig, LlamaForCausalLM
-from transformers.models.llama.modeling_llama import (
-    LlamaDecoderLayer, LlamaModel, LlamaPreTrainedModel, LlamaRMSNorm,
-    LlamaRotaryEmbedding,
+from transformers import AutoConfig, AutoModelForCausalLM, Qwen3Config, Qwen3ForCausalLM
+from transformers.models.qwen3.modeling_qwen3 import (
+    Qwen3DecoderLayer, Qwen3Model, Qwen3PreTrainedModel, Qwen3RMSNorm,
+    Qwen3RotaryEmbedding,
 )
 
 
 ARMS = ("B0", "A128", "A256", "A512", "C", "D")
-EXPECTED_COUNTS = dict(B0=128546816, A128=129595392, A256=129595392,
-                       A512=129595392, C=86893568, D=126285056)
+EXPECTED_COUNTS = dict(B0=249969152, A128=251017728, A256=251017728,
+                       A512=251017728, C=198485504, D=247117568)
 
 
 def intermediate_size(width):
-    return 128 * ((8 * width + 383) // 384)
+    return 3 * width
 
 
-class AllocationConfig(LlamaConfig):
-    model_type = "capacity_allocation_llama"
+class AllocationConfig(Qwen3Config):
+    model_type = "capacity_allocation_qwen3"
 
     def __init__(self, widths=None, input_rank=128, output_rank=896,
                  reference_width=1024, scale_policy="fanin_scaled_head", **kwargs):
         widths = list(widths or [1024] * 6)
-        head_dim = kwargs.get("head_dim", 64)
+        head_dim = kwargs.get("head_dim", 128)
+        if type(head_dim) is not int or head_dim <= 0 or head_dim % 2:
+            raise ValueError("head_dim must be a positive even integer for rotary embeddings")
         if (not widths or any(type(d) is not int or d <= 0 or d % head_dim for d in widths)
                 or input_rank <= 0 or output_rank <= 0 or reference_width <= 0):
             raise ValueError("Positive ranks and widths divisible by head_dim are required")
@@ -40,9 +42,10 @@ class AllocationConfig(LlamaConfig):
             raise ValueError("Allocation models require independent vocabulary tables")
         kwargs.update(hidden_size=widths[0], num_hidden_layers=len(widths),
                       intermediate_size=intermediate_size(widths[0]),
-                      num_attention_heads=widths[0] // head_dim,
+                      num_attention_heads=2 * widths[0] // head_dim,
                       num_key_value_heads=widths[0] // head_dim,
-                      tie_word_embeddings=False)
+                      tie_word_embeddings=False, head_dim=head_dim,
+                      layer_types=["full_attention"] * len(widths), use_sliding_window=False)
         super().__init__(**kwargs)
         self.widths = widths
         self.input_rank = input_rank
@@ -62,17 +65,18 @@ def experiment_config(arm, *, depth=6, tiny=False, attention="sdpa"):
     widths = {"C": [256, 256, 512, 512, 1024, 1024],
               "D": [512, 512, 1024, 1024, 1280, 1280]}.get(arm, [1024] * depth)
     widths = [d // divisor for d in widths]
-    common = dict(vocab_size=97 if tiny else 50257, hidden_size=ref,
+    common = dict(vocab_size=97 if tiny else 151936, hidden_size=ref,
                   intermediate_size=intermediate_size(ref), num_hidden_layers=depth,
-                  num_attention_heads=16, num_key_value_heads=16,
-                  head_dim=64 // divisor, hidden_act="silu", max_position_embeddings=2048,
-                  rope_parameters={"rope_type": "default", "rope_theta": 10000.0},
+                  num_attention_heads=16, num_key_value_heads=8,
+                  head_dim=128 // divisor, hidden_act="silu", max_position_embeddings=40960,
+                  rope_parameters={"rope_type": "default", "rope_theta": 1000000.0},
                   rms_norm_eps=1e-6, initializer_range=0.02, attention_bias=False,
                   mlp_bias=False, attention_dropout=0.0, tie_word_embeddings=arm == "B0",
-                  bos_token_id=96 if tiny else 50256, eos_token_id=96 if tiny else 50256,
-                  pad_token_id=None, use_cache=False, experiment_arm=arm, tiny_test=tiny)
+                  bos_token_id=None, eos_token_id=96 if tiny else 151645,
+                  pad_token_id=None if tiny else 151643, use_cache=False, layer_types=["full_attention"] * depth,
+                  use_sliding_window=False, experiment_arm=arm, tiny_test=tiny)
     if arm == "B0":
-        config = LlamaConfig(**common)
+        config = Qwen3Config(**common)
     else:
         rin = {"A256": 256, "A512": 512}.get(arm, 128) // divisor
         config = AllocationConfig(widths=widths, input_rank=rin, output_rank=ref-rin,
@@ -123,7 +127,7 @@ class OutputInterface(nn.Module):
         return self.head(self.projection(hidden_states))
 
 
-class T1DecoderLayer(LlamaDecoderLayer):
+class T1DecoderLayer(Qwen3DecoderLayer):
     def __init__(self, config, layer_idx, next_width):
         super().__init__(config, layer_idx)
         self.transition = (FanInLinear(config.hidden_size, next_width)
@@ -149,11 +153,11 @@ class ScaleInitialization:
             super()._init_weights(module)
 
 
-class AllocationBody(ScaleInitialization, LlamaModel):
+class AllocationBody(ScaleInitialization, Qwen3Model):
     def __init__(self, config):
         # Reuse HF's forward, RoPE, causal masks and per-layer dynamic KV cache.
-        # Construct only the required shapes, not a throwaway uniform LlamaModel.
-        LlamaPreTrainedModel.__init__(self, config)
+        # Construct only the required shapes, not a throwaway uniform Qwen3Model.
+        Qwen3PreTrainedModel.__init__(self, config)
         self.padding_idx = config.pad_token_id
         self.vocab_size = config.vocab_size
         self.embed_tokens = InputInterface(config)
@@ -162,23 +166,24 @@ class AllocationBody(ScaleInitialization, LlamaModel):
             layer_config = copy.deepcopy(config)
             layer_config.hidden_size = width
             layer_config.intermediate_size = intermediate_size(width)
-            layer_config.num_attention_heads = width // config.head_dim
+            layer_config.num_attention_heads = 2 * width // config.head_dim
             layer_config.num_key_value_heads = width // config.head_dim
             next_width = config.widths[min(i + 1, len(config.widths) - 1)]
             self.layers.append(T1DecoderLayer(layer_config, i, next_width))
-        self.norm = LlamaRMSNorm(config.widths[-1], eps=config.rms_norm_eps)
-        self.rotary_emb = LlamaRotaryEmbedding(config=config)
+        self.norm = Qwen3RMSNorm(config.widths[-1], eps=config.rms_norm_eps)
+        self.rotary_emb = Qwen3RotaryEmbedding(config=config)
         self.gradient_checkpointing = False
+        self.has_sliding_layers = False
         # The owning causal LM performs post_init once, with the custom policy.
 
 
-class AllocationForCausalLM(ScaleInitialization, LlamaForCausalLM):
+class AllocationForCausalLM(ScaleInitialization, Qwen3ForCausalLM):
     config_class = AllocationConfig
     _tied_weights_keys = {}
     _tp_plan = {}  # Tensor parallelism is not validated; use ordinary DDP.
 
     def __init__(self, config):
-        LlamaPreTrainedModel.__init__(self, config)
+        Qwen3PreTrainedModel.__init__(self, config)
         self.model = AllocationBody(config)
         self.vocab_size = config.vocab_size
         self.lm_head = OutputInterface(config)
@@ -190,13 +195,13 @@ AutoModelForCausalLM.register(AllocationConfig, AllocationForCausalLM)
 
 def build_model(config):
     return (AllocationForCausalLM(config) if isinstance(config, AllocationConfig)
-            else LlamaForCausalLM(config))
+            else Qwen3ForCausalLM(config))
 
 
 def parameter_report(model):
     config = model.config
     widths = getattr(config, "widths", [config.hidden_size] * config.num_hidden_layers)
-    blocks = sum(4*d*d + 3*d*intermediate_size(d) + 2*d for d in widths)
+    blocks = sum(6*d*d + 3*d*intermediate_size(d) + 2*d + 2*config.head_dim for d in widths)
     if isinstance(config, AllocationConfig):
         tables = config.vocab_size * (config.input_rank + config.output_rank)
         adapters = config.input_rank * widths[0] + widths[-1] * config.output_rank

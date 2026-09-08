@@ -1,5 +1,9 @@
 # Where Should Language Models Be Wide?
 
+> Historical design draft. The 2026-09-08 user-approved Qwen3 six-layer setup
+> supersedes this document's GPT-2/Llama execution details and parameter counts.
+> Follow [CAPACITY_EXPERIMENTS.md](CAPACITY_EXPERIMENTS.md) for current code/data/commands.
+
 Asymmetric embeddings and stagewise width reallocation
 
 **Working draft v0.5 — final setup review, 8 September 2026**

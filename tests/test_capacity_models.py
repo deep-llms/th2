@@ -3,7 +3,7 @@ import tempfile
 import unittest
 
 import torch
-from transformers import AutoModelForCausalLM, LlamaForCausalLM, set_seed
+from transformers import AutoModelForCausalLM, Qwen3ForCausalLM, set_seed
 
 from capacity_allocation.modeling import (
     ARMS, EXPECTED_COUNTS, FanInLinear, ScaledVocabularyHead, activation_report,
@@ -21,7 +21,7 @@ class ModelTests(unittest.TestCase):
             with self.subTest(arm=arm), torch.device("meta"):
                 model = build_model(experiment_config(arm))
                 self.assertEqual(parameter_report(model)["total"], EXPECTED_COUNTS[arm])
-        for arm, count in [("B0", 205629440), ("A128", 206678016)]:
+        for arm, count in [("B0", 344354816), ("A128", 345403392)]:
             with torch.device("meta"):
                 self.assertEqual(parameter_report(build_model(experiment_config(arm, depth=12)))["total"], count)
 
@@ -30,9 +30,30 @@ class ModelTests(unittest.TestCase):
         set_seed(7)
         actual = build_model(config)
         set_seed(7)
-        expected = LlamaForCausalLM(config)
+        expected = Qwen3ForCausalLM(config)
         x = torch.arange(8).unsqueeze(0)
         torch.testing.assert_close(actual(x).logits, expected(x).logits, rtol=0, atol=0)
+
+    def test_qwen_reference_configuration_and_stage_heads(self):
+        config = experiment_config('B0')
+        for key, value in dict(vocab_size=151936, hidden_size=1024, intermediate_size=3072,
+                               num_hidden_layers=6, num_attention_heads=16, num_key_value_heads=8,
+                               head_dim=128, max_position_embeddings=40960,
+                               eos_token_id=151645, pad_token_id=151643,
+                               tie_word_embeddings=True).items():
+            self.assertEqual(getattr(config, key), value, key)
+        self.assertEqual(config.layer_types, ['full_attention']*6)
+        self.assertEqual(config.rope_parameters['rope_theta'], 1000000.)
+        for arm in ('C', 'D'):
+            with torch.device('meta'):
+                model = build_model(experiment_config(arm))
+            for layer, width in zip(model.model.layers, model.config.widths):
+                self.assertEqual(layer.self_attn.q_proj.out_features, 2*width)
+                self.assertEqual(layer.self_attn.k_proj.out_features, width)
+                self.assertEqual(layer.self_attn.v_proj.out_features, width)
+                self.assertEqual(layer.self_attn.num_key_value_groups, 2)
+                self.assertEqual(layer.mlp.intermediate_size, 3*width)
+                self.assertEqual(layer.self_attn.q_norm.weight.numel(), 128)
 
     def test_forward_backward_causality_cache_and_roundtrip(self):
         for arm in ARMS:

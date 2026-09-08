@@ -1,57 +1,85 @@
 # Current task
 
-Status: `swt` created and verified on both hosts; preparing frozen English/GPT-2
-data with the user's revised target of at least 10B training tokens.
-No Stagewise training or GPU-process termination is authorized.
+## Active scope — 2026-09-08
 
-## User request and authorized scope
+User authorized correcting/verifying Stagewise, safely stopping verified GPU
+burns, launching training, verifying completion, then restarting communicating
+burns. The user explicitly selected all six arms in order:
+B0 -> A128 -> A256 -> A512 -> C -> D. No dataset/checkpoint cleanup is authorized.
 
-- Objective: create `swt` on both machines; verify code/environment and prepare data.
-- Allowed remote actions: necessary setup/download/CPU-preprocessing commands and
-  pushes to both confirmed repositories, with monitoring through Dropbox.
-- Constraints / do not touch: no training, GPU cancellation, or modification of
-  existing environments, datasets or checkpoints. Work in this project,
-  not the old sparse-embedding project or generic template.
+Launch preparation (2026-09-08): the incomplete-resume and label-smoothing
+gaps are fixed. All checkpoints require optimizer/scheduler/RNG/weights;
+nonzero label smoothing and model-only saving are rejected. DDP world size
+and effective batch are recorded and checked on resume. 51 tests plus the
+two-rank BF16 CPU smoke passed, including handoff ownership checks and
+completion-validator rejection of nonfinite saved weights. Evidence:
+temp/qwen_launch_final_tests.log and temp/qwen_prelaunch_fixed_ddp_bf16.json.
 
-## Configuration and evidence
+Read-only runner preflight 137fb5d completed at 12:36 UTC. Same B200 node,
+eight known burn workers 99571-99578, parent 99482, /usr/bin/python3 -u
+/tmp/llm_pretrain_burn.py. These are historical observations, not PIDs to kill
+without fresh identity checks. The burn hash matches resources/llm_pretrain_burn.py.
+35 English training shards (36,595,514 documents) and 11,822 eval documents
+are readable; local Qwen3 tokenizer directory exists. swt imports confirmed.
+Evidence: temp/remote_logs/swt_qwen_preflight_20260908_a01.log.
 
-- Development: `/disk/thuat/stagewise_widening_transformer`, `main`, origin
-  `nguyenhuuthuat09/stagewise_widening_transformer`.
-- Execution: `deep-llms/th2`, `main`; deployment checkout
-  `/disk/thuat/th2_runner_clean_probe` (remote `second`; development alias `runner`).
-- Machine: `thiennh-p6-oish-worker-0`, 8 B200s. Last read-only observation at
-  2026-09-07 22:21 UTC: all GPUs occupied (155010 MiB, 100% utilization each).
-- Environments: `/home/users/thien/miniconda3/envs/swt` (dev),
-  `/mnt/local/conda-py311/envs/swt` (B200), offline clones of each host's
-  existing `sparse_emb`; source versions matched. B200 torch is 2.14.0,
-  dev torch 2.7.1+cu118; both Transformers 5.9.0. GPU runtime not tested here.
-- Input manifests: `resources/culturax_en_source_b200.json` and
-  `resources/gpt2_tokenizer_607a30d_manifest.json`.
-- Output: `/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01`.
-- Preparation command: `bash scripts/prepare_english_b200.sh`.
-- Latest verified status: 2026-09-07, 40 tests passed in
-  `temp/capacity_all_tests.log`; BF16 CPU, two-rank Gloo model smoke, two-rank
-  Trainer and standalone-NLL consistency checks passed. No destination GPU test.
-- Completion criteria / expected artifacts: all six model arms, offline frozen
-  packs, Trainer CLI, standalone PPL, documentation and correctness tests.
+Workflow scripts: scripts/train_capacity_b200.sh prepares the shared HF map
+cache while burns stay active, then reclaims freshly verified workers,
+waits 30s/checks free, copies/verifies the eight-GPU BF16 Accelerate config,
+waits 30s/checks free, runs a production-shape smoke, then sequential training.
+Each arm: English, six layers, BF16 SDPA, batch16 x accumulation4 x 8 GPUs,
+one-epoch cosine-with-min-LR schedule, stop-at-step10000, seed42, same cache.
+After successful verification it writes training_complete.json and starts
+the verified /tmp burn in a persistent tmux terminal; burn_verified.json
+requires all eight ranks and advancing communication counters.
+No training launch or GPU stopping has been submitted yet.
 
-## Next action
+## Current implementation
 
-B200 verified the three main Stagewise file hashes and 40 CPU tests at
-2026-09-07 22:48:14 UTC (`temp/remote_logs/swt_clone_a01.log`, runner commit
-`52c73b3`). Tokenizer download `94f1cf7` reported all five files successful;
-the preparation job will independently verify their hashes. Latest dev review:
-42 tests passed, plus pinned real GPT-2 long-document/EOS/dedup packing smoke.
-Random-row token-yield preview across all 50 English shards estimates 43.07B
-tokens before document sampling/exact dedup. Fraction 0.30 estimates 12.87B
-train and 25.84M each held-out split, with actual minimums enforced at completion.
-Next: submit and verify offline preparation; no training or GPU changes.
+- Model arms B0/A128/A256/A512/C/D now use Qwen3; stock B0 has 249,969,152 parameters.
+- train.py uses HfArgumentParser, TrainingArguments, saved HF text datasets,
+  multiprocess Dataset.map, cached tokenization/packing and ordinary Trainer.
+- Existing sampled English Qwen data is the intended input; verify B200
+  train/en and eval/en directories before launching.
+- Superseded serial sampler, PackedTokens, train_capacity.py, GPT-2 manifests
+  and its B200 preparation launcher are removed from active source.
+- See CAPACITY_EXPERIMENTS.md for current architecture counts and commands.
+- The historical research drafts are not the current execution specification.
 
-See `CAPACITY_EXPERIMENTS.md` for implemented arms, offline preparation, tests and
-the training CLI. Run the destination-GPU smoke test and freeze real input
-provenance/splits and optimization settings before authorizing research training.
+## Remote state (last verified)
 
-## Handoff
+Serial sampler PID 106043 was stopped at 2026-09-08 08:42 UTC by runner commit
+cb5b9d5. The first stop command failed before signaling because pidfd_open was
+unavailable; the corrected command verified PID/start-time/argv, sent SIGTERM,
+confirmed exit and stable output sizes. Evidence:
+temp/remote_logs/swt_stop_sampler_20260908_a02.log.
+Partial GPT-2 output remains on B200 (not deleted or reused):
+/mnt/local/_data/deep-llms_th2/swt/english_gpt2_10b_seed0_20260907_a01.
+All eight GPU burns remained active (155010 MiB, 100% utilization each).
+No replacement preprocessing/training run has been launched.
 
-Record what completed, failed, remains uncertain, and what is authorized next.
-Move durable results/decisions to `PROJECT_NOTES.md`; mark old plans historical.
+## Infrastructure
+
+Development: /disk/thuat/stagewise_widening_transformer, main,
+nguyenhuuthuat09/stagewise_widening_transformer.
+Execution: deep-llms/th2, main, checkout /disk/thuat/th2_runner_clean_probe.
+Machine: thiennh-p6-oish-worker-0, 8 B200; @PROJECT@ = deep-llms_th2.
+swt environments: /home/users/thien/miniconda3/envs/swt (dev),
+/mnt/local/conda-py311/envs/swt (B200). Both clone each host's sparse_emb.
+Dev torch 2.7.1+cu118, B200 torch 2.14.0; Transformers 5.9.0 on both.
+
+## Next gate
+
+Local verification passed: 42 unit/integration tests
+(temp/qwen_rewrite_final_tests.log), all-six-arm BF16 CPU and two-rank Gloo
+model smoke, and a real two-rank CausalTrainer D run with cached text preprocessing.
+Distributed evaluation scored exactly 378 synthetic targets with NLL
+4.5103965777; standalone evaluation scored the same targets with NLL
+4.5103966587 (difference about 8.1e-8). Tiny tests are not production throughput
+or B200 CUDA evidence. Reports: temp/qwen_bf16_cpu_smoke.json,
+temp/qwen_ddp_cpu_smoke.json, temp/qwen_trainer_ddp_run/result.json,
+temp/qwen_trainer_ddp_nll.json.
+
+Before an authorized training run, verify the old sampled English data and
+local Qwen tokenizer on B200, validate the actual Accelerate config and run
+destination-GPU correctness/throughput smoke tests on authorized free GPUs.

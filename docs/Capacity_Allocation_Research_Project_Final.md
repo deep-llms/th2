@@ -1,5 +1,8 @@
 # Where Should Language Models Be Wide?
 
+> Historical design draft. For the current Qwen3 six-layer implementation,
+> data workflow and counts, use [CAPACITY_EXPERIMENTS.md](CAPACITY_EXPERIMENTS.md).
+
 Asymmetric embeddings and stagewise width reallocation
 
 **Working draft v0.3 — reviewed 8 September 2026**

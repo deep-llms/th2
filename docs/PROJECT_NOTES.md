@@ -1,14 +1,15 @@
 # Project notes
 
-Status: v0.5 English capacity-allocation pilot implemented locally; no research
-training results. The user explicitly assigned the existing th2 B200 to this
-project on 2026-09-07; no Stagewise workload has been launched.
+Status (2026-09-08): switched to the six-layer Qwen3 English pilot. The user
+requested reuse of sparse-embedding's sampled text and training workflow.
+No research training results. GPT-2 preprocessing was stopped and is superseded.
+Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Purpose and success criteria
 
-Implement and test §12 of `Capacity_Allocation_Research_Project_v0.5_Final_Reviewed.md`:
-random-initialized Llama-family B0/A128 first, A256/A512 controls, then C/D T1
-stagewise width schedules. See `CAPACITY_EXPERIMENTS.md` for exact code and usage.
+Test the allocation ideas in §12 of the historical design with a Qwen3 backbone:
+random-initialized stock B0/A128 first, A256/A512 controls, then C/D T1
+stagewise width schedules. See CAPACITY_EXPERIMENTS.md for current code and usage.
 The document remains a hypothesis/test plan, not evidence of architectural gains.
 
 ## Infrastructure
@@ -44,7 +45,58 @@ budget, metrics and validation criteria. For ML projects, distinguish training
 from held-out results, document batch/precision/scheduler settings, and retain
 checkpoint/evaluation provenance. Do not claim speed from tiny smoke tests.
 
-## Results and decisions
+## First Qwen training authorization — 2026-09-08
+
+The user authorized correctness fixes, safe burn reclaim, training, completion
+validation, and communicating-burn restart. The user explicitly selected
+B0 -> A128 -> A256 -> A512 -> C -> D. Batch16 x
+accumulation4 x 8 B200, BF16 SDPA, seed42, English-only existing sampled text,
+2048 context, 10k-step cutoff within a full-epoch LR schedule; see the frozen
+settings and workflow in CAPACITY_EXPERIMENTS.md. Preparing new HF map caches
+while existing burns remain active avoids GPU idleness during CPU preprocessing.
+This is normal trainer tokenization/packing, not replacement corpus sampling.
+
+Read-only preflight137fb5d confirmed the same node, working swt imports,
+35 saved English training shards/36,595,514 documents, 11,822 eval documents,
+local Qwen3 tokenizer directory, and all eight known burn workers. The live
+/tmp burn SHA256 matches the reviewed resources copy. No cleaning needed.
+
+Before launch, fixed two review findings: reject incomplete optimizer/RNG
+resume state, and reject nonzero label smoothing that HF mis-shifts for the
+custom model class. Also record/compare world size and effective batch on
+resume. Default CE behavior and architecture weights are unchanged by these
+guards. Handoff verifies weights and checkpoint state, not PID disappearance.
+
+## Qwen3 migration — 2026-09-08
+
+The user chose Qwen3-0.6B with six layers and the existing Qwen-sampled English
+corpus. Stock B0 has 249,969,152 unique parameters. Custom models retain the
+interface/width experiment arms but now use Qwen3 GQA (2:1 query/KV ratio),
+Q/K normalization, FFN width 3d and head dimension 128. See the current guide
+for recounted arm budgets; historical Llama parameter counts do not apply.
+
+train.py now follows the old HfArgumentParser/TrainingArguments/Trainer
+workflow, loading old saved text and using batched multiprocess Dataset.map.
+The serial SQLite sampler, custom binary reader, old training entry point and
+GPT-2-specific launch/manifests have been removed from active source.
+The old sampling process was explicitly stopped and verified at 08:42 UTC;
+its partial data remains on B200, unused. No data, caches or checkpoints were
+deleted. GPU burns were not touched.
+
+Packing intentionally follows sparse embedding: no inserted EOS, batch-local
+tail dropping and cached Arrow datasets. Keep preprocessing batch/worker counts
+fixed across arms. Existing English eval is about 10M tokens, not the superseded
+20M validation + 20M test plan. No separate final-test or new duplicate audit is
+claimed. Preserve the common shifted-loss and exact-evaluation correctness fixes.
+
+Local Qwen rewrite verification: 42 tests passed; all-six-arm BF16 CPU and
+two-rank Gloo model smoke passed. Full two-rank Trainer/preprocessing/save/eval
+smoke for D passed; its NLL matched standalone evaluation within 8.1e-8 on
+exactly 378 synthetic scored targets. Single-process tests cover every arm,
+cached multiprocess packing, exact resume, and standalone evaluation agreement.
+These are local correctness tests, not evidence of B200 speed or model quality.
+
+## Historical results and decisions (superseded Llama/GPT-2 implementation)
 
 Local implementation verification (2026-09-07): initial 39 unit/integration tests passed,
 including production meta-device parameter counts, all six tiny model arms,
@@ -82,6 +134,28 @@ an evaluator-consistency check, not model-quality results.
 |---|---|---|---|---|
 
 ## Operational lessons
+
+### Historical SWT environment and English preparation, 2026-09-07
+
+Created `swt` by offline-cloning each machine's own `sparse_emb`, preserving
+installed package versions and leaving the source environments untouched.
+Dev prefix: `/home/users/thien/miniconda3/envs/swt`; B200 prefix:
+`/mnt/local/conda-py311/envs/swt`. B200 retains torch 2.14.0; dev retains
+2.7.1+cu118. Both use Transformers 5.9.0 and Accelerate 1.13.0.
+B200 Stagewise hashes matched and 40 CPU tests passed; the subsequent dev
+preparer review passed 42 tests plus a real pinned GPT-2 packing smoke with
+documents longer than 2048 tokens. No destination-GPU test was performed.
+
+Reusing 50 English CulturaX raw shards (122,167,447,875 bytes), with hashes
+matched against the pinned public release's Hub LFS metadata. Only the five
+pinned GPT-2 tokenizer/config files were downloaded, not model weights.
+The user requested **10B**, replacing the earlier 5B available-data target.
+Registered offline command, seed/fractions, exact revisions, fresh output and
+validation conditions are in `CAPACITY_EXPERIMENTS.md` and
+the now-removed preparation script (recoverable in Git). This did not authorize training or extend
+the screening optimizer schedule. All existing GPU work is left untouched.
+Preparation completion and the required near-duplicate audit remain separate
+checks; neither is claimed by the setup/smoke results.
 
 Record confirmed failure causes and validated recovery procedures; distinguish
 project exceptions from runner/infrastructure failures. Avoid live-status claims
