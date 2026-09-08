@@ -115,6 +115,10 @@ A checkpoint inside the same output directory resumes automatically (or use
 --resume_from_checkpoint). Resume verifies recorded data/config/code.
 A successful result.json or a nonempty directory without a checkpoint is refused.
 Checkpoints retain the ordinary Trainer optimizer/scheduler/RNG state.
+Incomplete checkpoints are rejected before resume, including missing
+per-rank RNG files or weight shards. DDP world size/effective batch must
+match. Nonzero label smoothing is rejected (ordinary next-token CE only),
+as are model-only saves and unsupported DeepSpeed/FSDP training modes.
 final/ includes HF model files and tokenizer; it is for evaluation, not exact resume.
 Success is written only after the expected training step, final save, and optional
 evaluation complete. GPU stopping/burns are outside this script.
@@ -140,3 +144,31 @@ label does not construct a new test set: point --data_dir at genuinely held-out
 data. Tiny CPU tests and meta-device counts do not establish B200 speed/memory.
 GPU smoke tests require separately authorized free GPUs; none is launched here.
 commands.sh stays inactive in the development repository.
+
+## Authorized first B200 launch
+
+`bash scripts/train_capacity_b200.sh /mnt/local/_outputs/deep-llms_th2/swt/RUN_ID B0 A128 A256 A512 C D`
+is the explicit sequential train-and-burn workflow; use a fresh RUN_ID.
+It uses the verified existing Qwen English text, not the partial GPT-2 output.
+Shared CPU caches are prepared while the current burns remain running.
+Before the first GPU job, it verifies/stops only the burn's GPU workers,
+waits 30s/checks free, copies resources/accelerate_config.yaml to the active
+environment's actual HF Accelerate cache, then waits/checks again.
+
+Frozen first-run settings: eight B200 GPUs, BF16 SDPA, per-device batch16,
+accumulation4 (512 sequences / 1,048,576 input tokens per optimizer step),
+2048-token blocks, seed/data_seed42, preprocessing160 workers/batch1000,
+AdamW LR3e-4, betas0.9/0.95, weight decay0.1, clip1, warmup500,
+cosine-with-min-LR0.1 over one full epoch, graceful cutoff10000. No max_steps
+override. Checkpoints every250, validation every1000 and at completion.
+10k full steps expose 10,485,760,000 input tokens; this is not a cosine schedule
+that decays fully at 10B. No gradient checkpointing in this launch.
+
+Production-shape BF16/DDP smoke must pass before training. Failed stages stop
+the workflow and do not automatically kill residual workers or launch burns.
+After successful training, scripts/verify_capacity_run.py checks the saved
+step/state, data fingerprint/coverage, parameter counts and finite weights.
+Only then may training_complete.json be published. The known enhanced
+/tmp/llm_pretrain_burn.py starts in its own tmux terminal after another free
+check. burn_verified.json requires eight workers, approximately85% memory,
+collective probe36, and advancing cycle/payload counters.

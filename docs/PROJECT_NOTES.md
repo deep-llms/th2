@@ -45,6 +45,28 @@ budget, metrics and validation criteria. For ML projects, distinguish training
 from held-out results, document batch/precision/scheduler settings, and retain
 checkpoint/evaluation provenance. Do not claim speed from tiny smoke tests.
 
+## First Qwen training authorization — 2026-09-08
+
+The user authorized correctness fixes, safe burn reclaim, training, completion
+validation, and communicating-burn restart. The user explicitly selected
+B0 -> A128 -> A256 -> A512 -> C -> D. Batch16 x
+accumulation4 x 8 B200, BF16 SDPA, seed42, English-only existing sampled text,
+2048 context, 10k-step cutoff within a full-epoch LR schedule; see the frozen
+settings and workflow in CAPACITY_EXPERIMENTS.md. Preparing new HF map caches
+while existing burns remain active avoids GPU idleness during CPU preprocessing.
+This is normal trainer tokenization/packing, not replacement corpus sampling.
+
+Read-only preflight137fb5d confirmed the same node, working swt imports,
+35 saved English training shards/36,595,514 documents, 11,822 eval documents,
+local Qwen3 tokenizer directory, and all eight known burn workers. The live
+/tmp burn SHA256 matches the reviewed resources copy. No cleaning needed.
+
+Before launch, fixed two review findings: reject incomplete optimizer/RNG
+resume state, and reject nonzero label smoothing that HF mis-shifts for the
+custom model class. Also record/compare world size and effective batch on
+resume. Default CE behavior and architecture weights are unchanged by these
+guards. Handoff verifies weights and checkpoint state, not PID disappearance.
+
 ## Qwen3 migration — 2026-09-08
 
 The user chose Qwen3-0.6B with six layers and the existing Qwen-sampled English

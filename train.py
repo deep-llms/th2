@@ -90,6 +90,32 @@ def nll_metrics(prediction):
     return {'loss': float(scores[:, 0].sum()/count), 'scored_targets': int(count)}
 
 
+def validate_resume_checkpoint(checkpoint, world_size, *, needs_scaler=False):
+    """Fail closed on partial ordinary Trainer/DDP checkpoints before resuming."""
+    path = Path(checkpoint)
+    required = ['trainer_state.json', 'config.json', 'optimizer.pt', 'scheduler.pt']
+    required += (['rng_state.pth'] if world_size == 1 else
+                 [f'rng_state_{rank}.pth' for rank in range(world_size)])
+    if needs_scaler:
+        required.append('scaler.pt')
+    index = path / 'model.safetensors.index.json'
+    if index.is_file():
+        mapping = json.loads(index.read_text())['weight_map']
+        if not mapping or any(Path(name).name != name for name in mapping.values()):
+            raise ValueError('Invalid checkpoint weight index')
+        required += sorted(set(mapping.values()))
+    else:
+        required.append('model.safetensors')
+    missing = [name for name in required
+               if not (path/name).is_file() or (path/name).stat().st_size == 0]
+    if missing:
+        raise ValueError(f'Incomplete resume checkpoint; missing/nonempty state required: {missing}')
+    state = json.loads((path/'trainer_state.json').read_text())
+    if path.name != f"checkpoint-{state['global_step']}":
+        raise ValueError('Checkpoint directory and saved global_step disagree')
+    return state
+
+
 def main():
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments, RunArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith('.json'):
@@ -99,6 +125,12 @@ def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
     if training_args.push_to_hub:
         raise ValueError('Runner training is offline; exporting results uses the run system, not Hub uploads')
+    if training_args.label_smoothing_factor != 0:
+        raise ValueError('label_smoothing_factor must be zero: all arms use ordinary next-token cross entropy')
+    if training_args.save_only_model:
+        raise ValueError('save_only_model must be false: checkpoints must retain optimizer/scheduler/RNG state')
+    if training_args.deepspeed or training_args.fsdp:
+        raise ValueError('This training/resume implementation supports ordinary Trainer/DDP, not DeepSpeed/FSDP')
     if model_args.arm not in ARMS or model_args.attn_implementation not in ('eager', 'sdpa'):
         raise ValueError('Unknown arm or unsupported attention implementation')
     if training_args.max_steps > 0:
@@ -123,7 +155,9 @@ def main():
         checkpoint = str(Path(checkpoint).resolve())
         if Path(checkpoint).parent != root or not (Path(checkpoint)/'trainer_state.json').is_file():
             raise ValueError('Resume checkpoint must be inside this run')
-        step = json.loads((Path(checkpoint)/'trainer_state.json').read_text())['global_step']
+        state = validate_resume_checkpoint(checkpoint, training_args.world_size,
+                                           needs_scaler=training_args.fp16 and not training_args.use_cpu)
+        step = state['global_step']
         if run_args.stop_at_step is not None and run_args.stop_at_step <= step:
             raise ValueError('Stop must be after the resumed checkpoint')
 
@@ -152,6 +186,9 @@ def main():
     logging.info('Training: %s blocks; evaluation: %s blocks', len(train_dataset),
                  len(eval_dataset) if eval_dataset is not None else 0)
     specification = dict(model=asdict(model_args), data=asdict(data_args),
+                         execution=dict(world_size=training_args.world_size,
+                             effective_batch_size=training_args.world_size *
+                             training_args.per_device_train_batch_size * training_args.gradient_accumulation_steps),
                          training={k:v for k,v in training_args.to_dict().items()
                                    if k not in ('resume_from_checkpoint', 'local_rank', 'hub_token')},
                          train_fingerprint=train_dataset._fingerprint,

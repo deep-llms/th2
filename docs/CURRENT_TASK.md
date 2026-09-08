@@ -2,10 +2,37 @@
 
 ## Active scope — 2026-09-08
 
-User requested a fresh Qwen3 six-layer implementation based on sparse-embedding's
-code style, removing the superseded GPT-2/Llama pipeline. Local implementation
-and CPU tests only; no replacement sampling, remote training, GPU termination,
-or data/cache cleanup is authorized by this rewrite.
+User authorized correcting/verifying Stagewise, safely stopping verified GPU
+burns, launching training, verifying completion, then restarting communicating
+burns. The user explicitly selected all six arms in order:
+B0 -> A128 -> A256 -> A512 -> C -> D. No dataset/checkpoint cleanup is authorized.
+
+Launch preparation (2026-09-08): the incomplete-resume and label-smoothing
+gaps are fixed. All checkpoints require optimizer/scheduler/RNG/weights;
+nonzero label smoothing and model-only saving are rejected. DDP world size
+and effective batch are recorded and checked on resume. 51 tests plus the
+two-rank BF16 CPU smoke passed, including handoff ownership checks and
+completion-validator rejection of nonfinite saved weights. Evidence:
+temp/qwen_launch_final_tests.log and temp/qwen_prelaunch_fixed_ddp_bf16.json.
+
+Read-only runner preflight 137fb5d completed at 12:36 UTC. Same B200 node,
+eight known burn workers 99571-99578, parent 99482, /usr/bin/python3 -u
+/tmp/llm_pretrain_burn.py. These are historical observations, not PIDs to kill
+without fresh identity checks. The burn hash matches resources/llm_pretrain_burn.py.
+35 English training shards (36,595,514 documents) and 11,822 eval documents
+are readable; local Qwen3 tokenizer directory exists. swt imports confirmed.
+Evidence: temp/remote_logs/swt_qwen_preflight_20260908_a01.log.
+
+Workflow scripts: scripts/train_capacity_b200.sh prepares the shared HF map
+cache while burns stay active, then reclaims freshly verified workers,
+waits 30s/checks free, copies/verifies the eight-GPU BF16 Accelerate config,
+waits 30s/checks free, runs a production-shape smoke, then sequential training.
+Each arm: English, six layers, BF16 SDPA, batch16 x accumulation4 x 8 GPUs,
+one-epoch cosine-with-min-LR schedule, stop-at-step10000, seed42, same cache.
+After successful verification it writes training_complete.json and starts
+the verified /tmp burn in a persistent tmux terminal; burn_verified.json
+requires all eight ranks and advancing communication counters.
+No training launch or GPU stopping has been submitted yet.
 
 ## Current implementation
 

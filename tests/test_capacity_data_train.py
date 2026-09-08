@@ -14,7 +14,7 @@ from transformers import AutoModelForCausalLM, PreTrainedTokenizerFast, Training
 
 from capacity_allocation.data import load_text_data, preprocess_text, group_texts
 from capacity_allocation.modeling import build_model, experiment_config
-from train import CausalTrainer, main as train_main
+from train import CausalTrainer, main as train_main, validate_resume_checkpoint
 from evaluate_capacity import main as eval_main
 
 
@@ -101,6 +101,32 @@ class DataAndTrainingTests(unittest.TestCase):
                        for batch in batches)
             torch.testing.assert_close(loss, model(x, labels=x).loss)
 
+    def test_reject_unsupported_loss_and_model_only_saves(self):
+        for flag, value, message in [('--label_smoothing_factor', '0.1', 'label_smoothing_factor'),
+                                     ('--save_only_model', 'true', 'save_only_model')]:
+            with tempfile.TemporaryDirectory() as folder:
+                argv = ['train.py', '--tokenizer_name', 'unused', '--data_dir', 'unused',
+                        '--output_dir', folder, '--use_cpu', '--report_to', 'none', flag, value]
+                with self.subTest(flag=flag), patch.object(sys, 'argv', argv), self.assertRaisesRegex(ValueError, message):
+                    train_main()
+
+    def test_resume_requires_every_distributed_rng_and_weight_shard(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)/'checkpoint-2'
+            root.mkdir()
+            for name in ['config.json', 'optimizer.pt', 'scheduler.pt', 'rng_state_0.pth',
+                         'rng_state_1.pth', 'part-1.safetensors', 'part-2.safetensors']:
+                (root/name).write_bytes(b'fixture')
+            (root/'trainer_state.json').write_text(json.dumps({'global_step': 2}))
+            (root/'model.safetensors.index.json').write_text(json.dumps({
+                'weight_map': {'a': 'part-1.safetensors', 'b': 'part-2.safetensors'}}))
+            self.assertEqual(validate_resume_checkpoint(root, 2)['global_step'], 2)
+            for name in ['rng_state_1.pth', 'part-2.safetensors', 'optimizer.pt', 'scheduler.pt']:
+                (root/name).rename(root/(name+'.review'))
+                with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'Incomplete resume'):
+                    validate_resume_checkpoint(root, 2)
+                (root/(name+'.review')).rename(root/name)
+
     def test_training_save_resume_and_evaluator(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
@@ -145,6 +171,12 @@ class DataAndTrainingTests(unittest.TestCase):
                     (output/'result.json').rename(output/'short_result.json')
                     resumed = argv.copy()
                     resumed[resumed.index('--stop-at-step')+1] = '3'
+                    for filename in ('optimizer.pt', 'scheduler.pt', 'rng_state.pth'):
+                        state_path = output/'checkpoint-2'/filename
+                        state_path.rename(state_path.with_suffix('.review'))
+                        with patch.object(sys, 'argv', resumed), self.assertRaisesRegex(ValueError, 'Incomplete resume'):
+                            train_main()
+                        state_path.with_suffix('.review').rename(state_path)
                     with patch.object(sys, 'argv', resumed):
                         train_main()
                     uninterrupted = resumed.copy()
