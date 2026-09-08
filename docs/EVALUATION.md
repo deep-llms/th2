@@ -1,5 +1,13 @@
 # Checkpoint evaluation and task fine-tuning
 
+**Open pre-launch gate:** the review found that the benchmark harness disables
+the wrapper's outer BF16 autocast. Until its explicit mixed-precision option is
+configured, benchmark model calls run in FP32 even when BF16 is requested.
+The documented BF16 protocol below is the intended protocol, not a verified
+current harness behavior. Preserve/run `scripts/check_eval_precision.py` on
+B200 later, after authorization and free-GPU checks; see [DIAGNOSTICS.md](DIAGNOSTICS.md).
+PPL and new diagnostic model calls do not use the affected harness wrapper.
+
 Current Stagewise run: **English only**. These tools are separate from
 pretraining and do not alter its model code, schedule, caches, or running job.
 They load stock B0 and custom A128/A256/A512/C/D checkpoints through registered
@@ -193,6 +201,11 @@ research metrics. No checkpoint/data downloads or GPU operations occur inside
 this script. Production eval has no sample-limit option and checks full coverage.
 
 ## Multi-checkpoint evaluation
+
+Optional frequency loss, spectra and fixed-probe gradient workers can share
+this queue via `--diagnostic-bundle`; see [DIAGNOSTICS.md](DIAGNOSTICS.md) for
+preparing immutable inputs and the additional job count. Default queue behavior
+is unchanged when no bundle is supplied.
 
 Example only: select actual checkpoint paths and a fresh external output root.
 Activate the verified evaluation environment and ensure the selected physical

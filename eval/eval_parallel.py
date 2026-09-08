@@ -17,6 +17,10 @@ def build_jobs(args):
     checkpoints = checkpoint_specs(args.checkpoints)
     selected = languages(args.languages)
     plan, _ = task_plan(selected, args.task_groups)
+    if getattr(args, 'diagnostic_bundle', None):
+        diagnostics = getattr(args, 'diagnostics', ['frequency', 'spectra', 'gradients'])
+        if not diagnostics or len(set(diagnostics)) != len(diagnostics):
+            raise ValueError('Select nonempty unique diagnostics')
     root = Path(args.output_dir).resolve()
     jobs = []
     for name, checkpoint in checkpoints.items():
@@ -35,6 +39,22 @@ def build_jobs(args):
             jobs.append(dict(name=f'{name}_{stage}', argv=command, result=str(output),
                 checkpoint=checkpoint, stage=stage, tasks=[item['task'] for item in plan],
                 expected=dict(languages=selected)))
+        bundle = getattr(args, 'diagnostic_bundle', None)
+        if bundle:
+            from capacity_allocation.data import sha256
+            manifest_path = Path(bundle).resolve(strict=True)/'manifest.json'
+            for diagnostic in getattr(args, 'diagnostics', ['frequency', 'spectra', 'gradients']):
+                output = root/name/f'diagnostic_{diagnostic}.json'
+                command = [sys.executable, '-u', '-m', 'eval.diagnostics_checkpoint',
+                    '--checkpoint', checkpoint, '--diagnostic-bundle', str(manifest_path.parent),
+                    '--languages', args.languages, '--diagnostics', diagnostic,
+                    '--precision', args.precision, '--output', str(output)]
+                if args.tokenizer_name:
+                    command += ['--tokenizer-name', str(Path(args.tokenizer_name).resolve())]
+                jobs.append(dict(name=f'{name}_diagnostic_{diagnostic}', argv=command,
+                    result=str(output), checkpoint=checkpoint, stage='diagnostics',
+                    tasks=[diagnostic], expected=dict(languages=selected,
+                    diagnostic_manifest_sha256=sha256(manifest_path))))
     return jobs
 
 
@@ -47,6 +67,9 @@ def main():
     parser.add_argument('--preprocessing-num-workers', type=int, default=160)
     parser.add_argument('--preprocessing-batch-size', type=int, default=1000)
     parser.add_argument('--preprocessing-cache-dir')
+    parser.add_argument('--diagnostic-bundle', help='Optional frozen diagnostic bundle; no training changes')
+    parser.add_argument('--diagnostics', nargs='+', choices=('frequency', 'spectra', 'gradients'),
+                        default=['frequency', 'spectra', 'gradients'])
     args = parser.parse_args()
     jobs = build_jobs(args)
     if args.dry_run:

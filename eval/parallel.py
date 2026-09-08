@@ -60,7 +60,9 @@ def run(jobs, gpus, output_dir, project_dir):
                         raise ValueError('Checkpoint mismatch')
                     if job['stage'] == 'ppl' and set(result['ppl']['by_language']) != set(job['expected']['languages']):
                         raise ValueError('Missing language PPL')
-                    if job['stage'] != 'ppl' and set(result['benchmarks']) != set(job['tasks']):
+                    if job['stage'] == 'diagnostics' and set(result['diagnostics']) != set(job['tasks']):
+                        raise ValueError('Missing diagnostic results')
+                    if job['stage'] not in ('ppl', 'diagnostics') and set(result['benchmarks']) != set(job['tasks']):
                         raise ValueError('Missing benchmark results')
                 except (OSError, ValueError, KeyError, TypeError, RuntimeError) as exc:
                     error = str(exc)

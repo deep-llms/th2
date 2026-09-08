@@ -1,5 +1,48 @@
 # Current task
 
+## Checkpoint diagnostics implemented locally — not deployed (2026-09-08)
+
+Implemented the reviewed token-frequency/spectra/gradient design. See
+DIAGNOSTICS.md: freeze one diagnostic bundle via `eval.diagnostic_data`, then
+run `eval.diagnostics_checkpoint` or add `--diagnostic-bundle` to the existing
+eval queue. With all diagnostics selected, six checkpoints produce 30 jobs
+(PPL, benchmarks, frequency, spectra, gradients per checkpoint), not 12.
+The current training/burn workflow has not been modified or submitted again.
+
+Counts refer explicitly to the complete selected packed training pool, not
+the actual exposure prefix of a stopped checkpoint. Production diagnostics
+check training/eval fingerprints and preprocessing against saved train_config.
+All artifacts and comparisons bind to one frozen manifest; per-checkpoint
+consumed token budgets are separately reported for full-batch first-epoch runs.
+Probe gradients are newly measured at fixed saved weights without optimizer
+steps, not reconstructed historical gradients. The future training observer
+is opt-in and is not attached in train.py. No live training source was changed.
+
+The benchmark precision review remains an OPEN gate: `eval.benchmarks.evaluate`
+uses outer autocast which lm_eval overrides, so its requested BF16 calls are
+actually FP32. User deferred the B200 precision test. The executable regression
+gate is now `scripts/check_eval_precision.py`; its dev report
+`temp/eval_precision_gate_20260908.json` confirms all six BF16 cases fail while
+FP32 passes. No benchmark precision fix was silently applied. Configure the
+harness explicitly and require this gate to pass before full B200 benchmark
+evaluation. Direct PPL/diagnostic model calls are not affected by this bug.
+
+Initial verification: 82 full-suite tests passed (172.501s), followed by 11
+diagnostics tests (15.560s) including additional BF16 all-arm checks. Tests
+cover SVD/effective products, masked shifted loss versus PPL, bucket/hash errors,
+fixed-probe accumulation, tied additivity, no optimizer/model mutations and
+unchanged tiny Trainer weights when the observer is enabled. The initial
+diagnostic loss-chunk off-by-one was found and fixed before these passes.
+Evidence: `temp/diagnostics_full_suite.log`, `temp/diagnostics_tests_final.log`.
+Final regression pass: 83 tests passed in 171.526s
+(`temp/diagnostics_final_full_suite.log`). The expanded 12-test diagnostics
+suite then passed in 15.106s, including a real train.py CLI checkpoint whose
+saved training/eval fingerprints and consumed input/target budgets match the
+prepared bundle (`temp/diagnostics_checkpoint_provenance_suite.log`). All 20
+active training-source manifest entries still match. These remain tiny CPU
+checks, not a production B200 memory/throughput or distributed-observer test.
+No B200 data preparation, diagnostics, eval, finetune or GPU action was launched.
+
 ## English benchmark expansion — dev verified, not deployed (2026-09-08)
 
 Added BLiMP (all 67 official subtests and a separate unweighted suite mean),
