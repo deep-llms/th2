@@ -71,9 +71,13 @@ Local final verification:51 tests passed, plus the all-six-arm two-rank BF16
 CPU smoke. Development64472ea was pushed; execution50340a8 was rejected
 before execution by a runner false positive:
 `BLOCKED | GUARDRAIL: outbound push pattern(s): train.py:126: if training_args.push_to_hub:`.
-The flagged line rejects Hub uploads. No GPU stop, cache preparation or training
-occurred. Preserve the safety check; wait for operator repair, do not bypass
-the scanner or resubmit blindly. See CURRENT_TASK.md for exact evidence.
+The flagged line rejected Hub uploads. No GPU stop, cache preparation or training
+occurred. The user subsequently instructed removal of this unnecessary guard
+to follow the proven sparse-embedding implementation. Retain HF's default of
+disabled Hub uploads and never enable uploads in launch settings. The direct
+outbound-upload prohibition and this example are now in local AGENT_GUIDE.md.
+No new execution push is part of that local correction/review. See
+CURRENT_TASK.md for exact evidence and the next deployment gate.
 
 ## Qwen3 migration — 2026-09-08
 
