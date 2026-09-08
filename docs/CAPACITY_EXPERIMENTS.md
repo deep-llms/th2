@@ -6,6 +6,15 @@ weights, research training, or remote jobs are launched by this rewrite.
 
 ## Model arms
 
+Current screening launch uses all six arms with `SWT_STOP_AT_STEP=5000` passed
+to `scripts/train_capacity_b200.sh`. This environment setting controls the
+Trainer stop callback, preprocessing coverage guard, checkpoint verifier and
+final completion marker consistently. It defaults to10000 for historical
+launches. The full English pool and one-epoch LR schedule are unchanged;
+no `max_steps` override or5B-token corpus subsampling is used. At8 GPUs,
+batch16, accumulation4 and2048 tokens,5000 updates consume5,242,880,000 input
+tokens per arm (shifted loss scores2047 targets per sequence).
+
 | Arm | Residual widths | Vocabulary interface | Parameters |
 |---|---|---|---:|
 | B0 | 1024 × 6 | Stock Qwen3, exactly tied 1024-wide table | 249,969,152 |

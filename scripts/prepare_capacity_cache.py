@@ -12,8 +12,11 @@ def main():
     parser.add_argument('--tokenizer', required=True)
     parser.add_argument('--cache-dir', required=True)
     parser.add_argument('--workers', type=int, default=160)
+    parser.add_argument('--stop-at-step', type=int, default=10000)
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
+    if args.stop_at_step <= 0:
+        parser.error('--stop-at-step must be positive')
     if Path(args.output).exists():
         parser.error('Use a fresh cache-verification report')
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer, local_files_only=True)
@@ -30,9 +33,9 @@ def main():
         result[split] = dict(blocks=len(data), fingerprint=data._fingerprint,
                              scored_targets=len(data)*2047, processed_tokens=len(data)*2048)
         print(split, result[split], flush=True)
-    # The requested 10k cutoff must lie before the full-epoch horizon at 512 sequences/step.
-    if result['train']['blocks'] <= 10000*512:
-        raise ValueError('Not enough training blocks for 10k steps at effective batch 512')
+    # Only the screening cutoff changes; prepare the entire English pool.
+    if result['train']['blocks'] <= args.stop_at_step*512:
+        raise ValueError(f'Not enough training blocks for {args.stop_at_step} steps at effective batch 512')
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     write_json(args.output, result)
 
