@@ -23,8 +23,12 @@ On the user's follow-up check, continued the already-authorized benchmark:
 execution commit39d5c9c submits fresh source/hash checks and destination CPU
 benchmark tests, then scripts/benchmark_batches_b200.sh with fresh root
 /mnt/local/_outputs/deep-llms_th2/swt/batch_benchmark_20260908_a01.
-It rechecks free GPUs, copies/verifies Accelerate, waits30s/rechecks, then
-profiles all arms. Submission is not yet confirmation that GPU tests started.
+At15:28:42 UTC, its startup log confirmed source hashes, three destination CPU
+tests passing, free-GPU checks and copied Accelerate. The first profile
+`B0_b16_a4` started at15:27:53 UTC. Later profile results/completion have not
+yet been pulled. Evidence: temp/remote_logs/swt_batch_start_20260908_1528.log.
+It rechecks free GPUs between isolated profiles and never resumes research
+training. Refresh logs with #2, not by resubmitting its executable #1 command.
 Do not relaunch full research training from this benchmark request.
 
 Ancestry evidence: temp/remote_logs/swt_before_batch_stop_20260908.log.
