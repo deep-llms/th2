@@ -8,6 +8,8 @@ TASK_RUN_ROOT=${1:?Pass a fresh absolute run directory outside the project}
 shift
 TASK_ARMS=("$@")
 [[ "${#TASK_ARMS[@]}" -gt 0 ]] || { echo 'Specify experiment arms' >&2; exit 1; }
+TASK_STOP_AT_STEP=${SWT_STOP_AT_STEP:-10000}
+[[ "$TASK_STOP_AT_STEP" =~ ^[1-9][0-9]*$ ]] || { echo 'SWT_STOP_AT_STEP must be a positive integer' >&2; exit 1; }
 [[ "$TASK_RUN_ROOT" == /mnt/local/_outputs/deep-llms_th2/swt/* ]] || exit 1
 [[ ! -e "$TASK_RUN_ROOT" ]] || { echo 'Run root already exists; refusing overwrite' >&2; exit 1; }
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -55,7 +57,7 @@ hostname
 echo "CPU_CACHE_PREPARATION; existing burns remain untouched"
 CUDA_VISIBLE_DEVICES='' "$TASK_PYTHON" -u -m scripts.prepare_capacity_cache \
   --data-root "$TASK_DATA" --tokenizer "$TASK_TOKENIZER" --cache-dir "$TASK_CACHE" \
-  --workers 160 --output "$TASK_RUN_ROOT/cache_ready.json"
+  --workers 160 --stop-at-step "$TASK_STOP_AT_STEP" --output "$TASK_RUN_ROOT/cache_ready.json"
 
 # Revalidate actual burn ownership and PID start times immediately before signals.
 "$TASK_PYTHON" -u -m scripts.reclaim_verified_burn --burn-path "$TASK_BURN" \
@@ -94,7 +96,7 @@ for TASK_ARM in "${TASK_ARMS[@]}"; do
     --data_dir "$TASK_DATA/train" --eval_data_dir "$TASK_DATA/eval" --languages en \
     --block_size 2048 --preprocessing_num_workers 160 --preprocessing_batch_size 1000 \
     --preprocessing_cache_dir "$TASK_CACHE" --output_dir "$TASK_RUN_ROOT/$TASK_ARM" \
-    --num_train_epochs 1 --stop-at-step 10000 \
+    --num_train_epochs 1 --stop-at-step "$TASK_STOP_AT_STEP" \
     --per_device_train_batch_size 16 --gradient_accumulation_steps 4 \
     --per_device_eval_batch_size 1 --bf16 --attn_implementation sdpa \
     --learning_rate 3e-4 --lr_scheduler_type cosine_with_min_lr \
@@ -102,24 +104,25 @@ for TASK_ARM in "${TASK_ARMS[@]}"; do
     --weight_decay 0.1 --adam_beta1 0.9 --adam_beta2 0.95 --max_grad_norm 1 \
     --seed 42 --data_seed 42 --ddp_find_unused_parameters false --ddp_timeout 21600 \
     --save_steps 250 --logging_steps 10 --eval_strategy steps --eval_steps 1000 \
-    --dataloader_num_workers 8 --report_to none --run_name "swt_${TASK_ARM}_qwen6_10k" \
+    --dataloader_num_workers 8 --report_to none --run_name "swt_${TASK_ARM}_qwen6_${TASK_STOP_AT_STEP}steps" \
     2>&1 | tee "$TASK_RUN_ROOT/train_${TASK_ARM}.log"
   sleep 30
   "$TASK_PYTHON" -m scripts.gpu_status --gpus "${TASK_GPUS[@]}" --require-free
   CUDA_VISIBLE_DEVICES='' "$TASK_PYTHON" -m scripts.verify_capacity_run \
-    --run-dir "$TASK_RUN_ROOT/$TASK_ARM" --arm "$TASK_ARM" --step 10000 --world-size 8 \
+    --run-dir "$TASK_RUN_ROOT/$TASK_ARM" --arm "$TASK_ARM" --step "$TASK_STOP_AT_STEP" --world-size 8 \
     --cache-report "$TASK_RUN_ROOT/cache_ready.json" --output "$TASK_RUN_ROOT/verified_${TASK_ARM}.json"
 done
 
-"$TASK_PYTHON" - "$TASK_RUN_ROOT" "${TASK_ARMS[@]}" <<'PY'
+"$TASK_PYTHON" - "$TASK_RUN_ROOT" "$TASK_STOP_AT_STEP" "${TASK_ARMS[@]}" <<'PY'
 import json, sys
 from datetime import datetime, timezone
 from pathlib import Path
 from capacity_allocation.data import write_json
 root = Path(sys.argv[1])
-results = [json.loads((root/f'verified_{arm}.json').read_text()) for arm in sys.argv[2:]]
-assert all(row['success'] and row['step']==10000 for row in results)
-write_json(root/'training_complete.json', dict(success=True, completed_utc=datetime.now(timezone.utc).isoformat(), experiments=results))
+stop_at_step = int(sys.argv[2])
+results = [json.loads((root/f'verified_{arm}.json').read_text()) for arm in sys.argv[3:]]
+assert results and all(row['success'] and row['step']==stop_at_step for row in results)
+write_json(root/'training_complete.json', dict(success=True, stop_at_step=stop_at_step, completed_utc=datetime.now(timezone.utc).isoformat(), experiments=results))
 print('ALL_TRAINING_COMPLETED_AND_VERIFIED', flush=True)
 PY
 sleep 30
