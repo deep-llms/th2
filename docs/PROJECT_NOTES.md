@@ -5,6 +5,43 @@ requested reuse of sparse-embedding's sampled text and training workflow.
 No research training results. GPT-2 preprocessing was stopped and is superseded.
 Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
+## Batch-size benchmark completed — 2026-09-08
+
+Subsequent user-authorized cleanup completed at16:54:52 UTC: the stopped
+`qwen6_allarms_10k_s42_20260908_a02` output (including checkpoint6250),
+`batch_benchmark_20260908_a01` output and dedicated `qwen_en_map160_batch1000`
+cache were deleted on B200. About519 GiB of directory usage was removed.
+Sampled data, tokenizer/model and unrelated HF benchmark cache remain intact.
+All eight GPUs were free at completion; no new run was launched. Local results
+below are preserved, but previous statements about retained remote checkpoints
+are historical. See CURRENT_TASK.md for exact paths and cleanup evidence.
+
+All 12 eight-GPU profiles passed, finishing at15:44:49 UTC. Each used five
+warm-up and20 measured optimizer updates, actual English training cache,
+BF16 and2048-token sequences. Effective batch stayed512:16×4×8 versus32×2×8.
+Downloaded JSON verified all eight ranks, finite timings and identical data
+fingerprints. Times below are median optimizer-update seconds, excluding
+periodic evaluation and checkpoint saving; this was not a full training run.
+
+| Arm | Batch16 / accumulation4 | Batch32 / accumulation2 |
+|---|---:|---:|
+| B0 | 0.7070 | 0.7010 |
+| A128 | 0.7253 | 0.7202 |
+| A256 | 0.7091 | 0.7014 |
+| A512 | 0.6861 | 0.6728 |
+| C | 0.5584 | 0.5543 |
+| D | 0.6950 | 0.6890 |
+
+Batch32 fits every arm, but the measured throughput gain is only0.7–2%,
+potentially within short-test variability. Peak reserved memory increases
+from75.9–82.8 GiB to150.0–163.2 GiB per GPU. No material end-to-end speedup
+is established. All GPUs were free at completion; research training remains
+stopped with B0/checkpoint-6250 retained. No automatic restart or burns.
+
+Evidence: `temp/remote_logs/swt_batch_progress_20260908_1629.log` and
+`temp/remote_logs/swt_benchmark_complete_20260908_1632.json` (SHA256
+`cf29dbe1115db58a86c7f9f01b1cf6e55913b97b18cc5822472fb94868e4e7c7`).
+
 ## Purpose and success criteria
 
 Test the allocation ideas in §12 of the historical design with a Qwen3 backbone:

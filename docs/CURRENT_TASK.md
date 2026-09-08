@@ -1,5 +1,26 @@
 # Current task
 
+## Latest action — authorized cleanup completed (2026-09-08)
+
+After reviewing batch-test results, the user requested removal of the previous
+run outputs and cache. Execution commit `f9a1c5f` completed cleanup at16:54:52 UTC;
+`b294d8b` pulled its completion log without repeating deletion.
+Removed these exact B200 directories, including all contents and temporary files:
+
+- `/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a02`
+- `/mnt/local/_outputs/deep-llms_th2/swt/batch_benchmark_20260908_a01`
+- `/mnt/local/_data/deep-llms_th2/swt/qwen_en_map160_batch1000`
+
+All three were verified absent. B0/checkpoint-6250 is now deleted, not resumable
+from that path. The sampled Qwen corpus, local Qwen tokenizer/model and unrelated
+HF benchmark dataset cache were preserved; file paths/sizes/mtimes matched before
+and after. All eight GPUs were free after cleanup. No training or burns launched.
+Local benchmark JSON/logs remain available. Evidence:
+`temp/remote_logs/swt_cleanup_complete_20260908_1657.log`, SHA256
+`4619ceb2a540df633104d18d9d8a473cefe8a8a94d7a487aa6fd513999a65e8d`.
+The following stop/benchmark notes are historical and do not describe retained
+remote artifacts after this cleanup. A new run must regenerate preprocessing cache.
+
 ## Latest instruction — stop training and benchmark batches (2026-09-08)
 
 The user explicitly authorized stopping the active six-arm queue and testing
@@ -25,8 +46,18 @@ benchmark tests, then scripts/benchmark_batches_b200.sh with fresh root
 /mnt/local/_outputs/deep-llms_th2/swt/batch_benchmark_20260908_a01.
 At15:28:42 UTC, its startup log confirmed source hashes, three destination CPU
 tests passing, free-GPU checks and copied Accelerate. The first profile
-`B0_b16_a4` started at15:27:53 UTC. Later profile results/completion have not
-yet been pulled. Evidence: temp/remote_logs/swt_batch_start_20260908_1528.log.
+`B0_b16_a4` started at15:27:53 UTC. All 12 profiles finished successfully at
+15:44:49 UTC; results were pulled and validated at16:32 UTC. No OOMs. All
+eight ranks recorded 20 finite positive measured update times per profile;
+the data fingerprint and effective batch512 matched throughout. Batch32
+improved median update throughput by only approximately0.7–2%, while peak
+reserved memory rose from75.9–82.8 GiB to150.0–163.2 GiB per GPU. These short
+measurements do not demonstrate a material end-to-end speedup. All GPUs were
+free at completion (historical snapshot, not a live usage check).
+Evidence: temp/remote_logs/swt_batch_progress_20260908_1629.log and
+temp/remote_logs/swt_benchmark_complete_20260908_1632.json. Research training
+remains stopped; B0/checkpoint-6250 is retained and no burns were started by
+the benchmark queue. Detailed comparisons are in PROJECT_NOTES.md.
 It rechecks free GPUs between isolated profiles and never resumes research
 training. Refresh logs with #2, not by resubmitting its executable #1 command.
 Do not relaunch full research training from this benchmark request.
