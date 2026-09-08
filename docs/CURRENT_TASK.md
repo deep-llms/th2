@@ -1,5 +1,48 @@
 # Current task
 
+## Latest instruction — stop training and benchmark batches (2026-09-08)
+
+The user explicitly authorized stopping the active six-arm queue and testing
+larger per-device batches. Preserve all outputs/caches. Do not automatically
+restart full research training or bypass its strict resume-config checks.
+Compare batch16/accumulation4 against batch32/accumulation2, keeping8 GPUs,
+effective batch512, BF16, sequence2048, the same actual Trainer and English
+cache. Test all six arms in isolated processes,5 warm-up +20 measured updates.
+
+**Stop is submitted but unconfirmed as of15:13 UTC.** Execution commit855bde4,
+submitted15:07:40 UTC, is confirmed on deep-llms/th2 main. Dropbox status still
+ends at32720d9 (the read-only ancestry check; modified15:03:16 UTC), with no
+acknowledgement/log for855bde4. Do not assume training stopped or GPUs are free;
+do not resubmit the stop or launch a benchmark while this is unverified.
+No explicit AWS/runner error has been returned; the missing response is not
+evidence of a model-code error or of successful cancellation.
+
+Ancestry evidence: temp/remote_logs/swt_before_batch_stop_20260908.log.
+At15:01 UTC it showed B0 workers112904–112911, Accelerate launcher112894,
+and dedicated queue PID109572/start161614436 with exact argv
+`bash scripts/train_capacity_b200.sh <a02-run-root> B0 A128 A256 A512 C D`.
+The parent commands shell, tmux server88744, and PID1 are not stop targets.
+These are historical identities; scripts/stop_capacity_queue.py verifies
+queue start/argv and fresh worker ownership before signaling individual PIDs.
+It disables only the dedicated queue, then stops verified training workers,
+waits30s/checks all GPUs free and checks queue/launcher exit. No process-group
+or name-based kills. The submitted command then checks retained checkpoint
+state. B0 checkpoint directories through5250 existed at the ancestry check;
+their final completeness has not yet been reported by the stop command.
+
+Benchmark source: development826db18 (stop/helper/tests) andf1de3bd (shell queue).
+The Python helper was deployed with855bde4; the benchmark shell has not been
+deployed or executed. `scripts/benchmark_batches_b200.sh` needs a fresh root
+matching `/mnt/local/_outputs/deep-llms_th2/swt/batch_benchmark_*`, copies and
+verifies Accelerate, waits30s/rechecks, and runs isolated profiles. It records
+OOM as an unusable configuration; non-OOM failures stop for investigation.
+It neither resumes training nor deletes files nor automatically starts burns.
+Do not confuse benchmark_complete.json with research training completion.
+Local checks passed:3 benchmark unit/Trainer tests,2 stop identity tests,
+and a real two-rank CPU Trainer benchmark. Evidence:
+temp/batch_benchmark_tests.log and
+temp/batch_benchmark_ddp_review_20260908_a01/result.json.
+
 ## Active scope — 2026-09-08
 
 User authorized correcting/verifying Stagewise, safely stopping verified GPU
