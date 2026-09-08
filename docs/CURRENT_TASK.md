@@ -1,5 +1,20 @@
 # Current task
 
+## Latest instruction — cancel and clean a03 (2026-09-08)
+
+The user requested cancellation and cleanup again, not a5k relaunch. Execution
+`db212a7` inspected the live queue: PID152404/start163046836, parent152229,
+Accelerate155673 and GPU workers155683–155690, all belonging to a03 B0.
+The17:53 UTC snapshot showed B0 aroundstep841. Evidence:
+`temp/remote_logs/swt_a03_cancel_ancestry_20260908_1755.log`.
+Execution `872f4c4` submits the unchanged verified stop helper for that exact
+queue identity, then confirms no remaining active Stagewise workers before
+deleting only a03 output and qwen_en_map160_batch1000. It preserves sampled
+Qwen data, tokenizer/model and unrelated HF benchmark cache. It verifies
+absence of cache-/tmp- leftovers in Stagewise directories and all GPUs free.
+Remote completion is pending confirmation. No automatic training/burn restart;
+the earlier training-to-burn authorization is superseded by this cancellation.
+
 ## Latest instruction — fresh six-arm rerun submitted (2026-09-08)
 
 The user authorized checking GPUs, rerunning training, copying Accelerate and
