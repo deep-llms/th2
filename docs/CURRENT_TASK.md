@@ -1,5 +1,27 @@
 # Current task
 
+## Latest instruction — authorized fresh 5k screening (2026-09-08)
+
+The user authorized restarting all six arms at5000 steps (approximately5.24B
+input tokens per arm), with the normal GPU/config gates and post-success burns.
+Shared implementation commit `b43aecf` adds SWT_STOP_AT_STEP (default10000) and
+passes it consistently to preprocessing coverage checks, train.py's stop callback,
+per-arm checkpoint verification and the aggregate completion marker. This launch
+sets SWT_STOP_AT_STEP=5000. Model/trainer/data code and the full-epoch LR schedule
+are unchanged; effective batch512, eight GPUs, BF16 and English-only are retained.
+Eight local handoff tests passed, including5k completion and wrong-cutoff rejection.
+New source manifest: resources/swt_qwen_launch_5k_20260908.json (all20 files verified).
+
+Execution checkout contains shared commit `e486957` and the new launch command.
+Fresh output: `/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_5k_s42_20260908_a01`.
+Order B0 -> A128 -> A256 -> A512 -> C -> D. It first checks GPUs, waits30s/checks,
+copies/parses/compares Accelerate, waits30s/checks, runs destination handoff tests,
+then regenerates cache and runs production smoke/training through the existing
+foreground queue. Every arm must verify checkpoint5000 before training_complete.json;
+only then does the queue wait/check GPUs and launch/verify communicating burns.
+Remote startup is not yet verified. Use read-only logs, never resubmit to poll.
+Older cancellation/no-relaunch instructions below are superseded by this request.
+
 ## Latest instruction — cancel and clean a03 (2026-09-08)
 
 The user requested cancellation and cleanup again, not a5k relaunch. Execution
