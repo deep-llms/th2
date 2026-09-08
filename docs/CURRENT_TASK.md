@@ -2,6 +2,20 @@
 
 ## Latest instruction — authorized fresh 5k screening (2026-09-08)
 
+Latest progress, pulled18:54 UTC: B0 started18:30:17 UTC after cache preparation
+and production smoke. The18:53:39 UTC pipeline snapshot shows step1656/5000,
+approximately1.39 updates/s, latest training loss3.904. Step1000 evaluation
+completed: loss4.204, scored_targets9829694, runtime131.4s. No project traceback
+or failure marker observed. A128/A256/A512/C/D remain queued. Estimated total
+wall time for all six: approximately7–8h including initial cache, evaluation,
+checkpoint and handoff overhead; finish roughly01:00–02:00 UTC September9.
+Other-arm timing is extrapolated from short batch benchmarks, not completed
+production runs. Evidence: `temp/remote_logs/swt_5k_progress_20260908_1854.log`,
+SHA256 `ef3088f8709209d340023ed5d46fccc88c63274629fdc185d590ca908f652747`.
+The displayed28575-step progress total belongs to the full-epoch LR schedule;
+the screening callback still stops at5000. Execution `00138b1` only exports
+the pipeline log; it does not signal/restart the job.
+
 The user authorized restarting all six arms at5000 steps (approximately5.24B
 input tokens per arm), with the normal GPU/config gates and post-success burns.
 Shared implementation commit `b43aecf` adds SWT_STOP_AT_STEP (default10000) and
