@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-swt-clean-stopped-run-and-owned-cache-20260908-a01
+#2 +a
+#th2-swt-pull-cleanup-completion-20260908-a01
 set -euo pipefail
 date -u
 hostname
