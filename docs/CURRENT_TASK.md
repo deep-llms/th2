@@ -12,7 +12,14 @@ queue identity, then confirms no remaining active Stagewise workers before
 deleting only a03 output and qwen_en_map160_batch1000. It preserves sampled
 Qwen data, tokenizer/model and unrelated HF benchmark cache. It verifies
 absence of cache-/tmp- leftovers in Stagewise directories and all GPUs free.
-Remote completion is pending confirmation. No automatic training/burn restart;
+Completion confirmed at17:58:34 UTC. The exact queue and eight verified GPU
+workers were stopped; launcher exit and no active Stagewise workers were checked
+before deletion. Both target directories are absent, and both Stagewise parent
+trees have zero cache-/tmp- leftovers. Protected file inventories are unchanged.
+All eight GPUs report0 MiB/0% and no compute processes. No training/burn restart.
+Evidence: `temp/remote_logs/swt_a03_stop_cleanup_20260908_1800.log`, SHA256
+`4e79102d851e45f746a540351ce7a61368bc99031b5a4b63781f83ccb5e2898a`.
+Execution commands.sh is returned to inactive #0 after verified cleanup;
 the earlier training-to-burn authorization is superseded by this cancellation.
 
 ## Latest instruction — fresh six-arm rerun submitted (2026-09-08)

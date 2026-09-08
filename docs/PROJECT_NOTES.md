@@ -7,6 +7,14 @@ Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Batch-size benchmark completed — 2026-09-08
 
+Latest state: at the user's request, a03 was cancelled and cleaned at17:58:34 UTC.
+Only its exact experiment queue and eight verified GPU workers were stopped;
+a03 outputs/checkpoints and qwen_en_map160_batch1000 were deleted. Sampled data,
+tokenizer/model and unrelated HF caches were preserved. Stagewise directories
+have no cache-/tmp- leftovers. All eight GPUs are free; no job/burn was restarted.
+The discussion of5k screening has not yet resulted in a5k launch or code change.
+See CURRENT_TASK.md for the verified cleanup log and current authority.
+
 The user subsequently authorized a fresh rerun of all six arms. Execution
 `f528935` started the `qwen6_allarms_10k_s42_20260908_a03` workflow at17:22 UTC;
 all GPUs were verified free, Accelerate copied/validated, seven destination
