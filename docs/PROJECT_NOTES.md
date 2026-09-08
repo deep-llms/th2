@@ -7,6 +7,17 @@ Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Batch-size benchmark completed — 2026-09-08
 
+Current launch supersedes the stopped10k runs below: user-authorized5k screening
+of all six arms was submitted in execution `594b3ac` and started at18:09:41 UTC.
+Output root: `/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_5k_s42_20260908_a01`.
+SWT_STOP_AT_STEP=5000 controls training and all verification gates consistently;
+effective batch512 gives5,242,880,000 input tokens per arm. No max_steps override:
+the full English pool and one-epoch LR schedule are unchanged. All GPUs were
+verified free, Accelerate copied/verified, and eight destination handoff tests
+passed. Cache regeneration was active (~2%) in the18:11 UTC snapshot. The queue
+will train B0/A128/A256/A512/C/D sequentially, verify checkpoint5000 for every arm,
+then launch persistent communicating burns only after success and free-GPU checks.
+
 Latest state: at the user's request, a03 was cancelled and cleaned at17:58:34 UTC.
 Only its exact experiment queue and eight verified GPU workers were stopped;
 a03 outputs/checkpoints and qwen_en_map160_batch1000 were deleted. Sampled data,

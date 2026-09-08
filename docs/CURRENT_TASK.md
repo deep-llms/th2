@@ -12,14 +12,21 @@ are unchanged; effective batch512, eight GPUs, BF16 and English-only are retaine
 Eight local handoff tests passed, including5k completion and wrong-cutoff rejection.
 New source manifest: resources/swt_qwen_launch_5k_20260908.json (all20 files verified).
 
-Execution checkout contains shared commit `e486957` and the new launch command.
+Execution checkout contains shared commit `e486957` and launch commit `594b3ac`.
 Fresh output: `/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_5k_s42_20260908_a01`.
 Order B0 -> A128 -> A256 -> A512 -> C -> D. It first checks GPUs, waits30s/checks,
 copies/parses/compares Accelerate, waits30s/checks, runs destination handoff tests,
 then regenerates cache and runs production smoke/training through the existing
 foreground queue. Every arm must verify checkpoint5000 before training_complete.json;
 only then does the queue wait/check GPUs and launch/verify communicating burns.
-Remote startup is not yet verified. Use read-only logs, never resubmit to poll.
+Remote startup confirmed at18:09:41 UTC:5000-step cutoff banner, all20 source
+hashes, fresh paths and all eight GPUs free. Accelerate was copied and verified
+at `/mnt/local/.cache/huggingface/accelerate/default_config.yaml`; all eight
+destination handoff tests passed. At the18:11:53 UTC snapshot,160-worker English
+cache tokenization was616k/36.596M documents (~2%); GPU training had not started.
+No project error appeared. Evidence: `temp/remote_logs/swt_5k_start_20260908_1812.log`,
+SHA256 `f8e1a707d4a01d3d66ab0fb17d61f01bd5127205c85ebae30ecfb8bfcd83c287`.
+Use read-only logs, never resubmit to poll.
 Older cancellation/no-relaunch instructions below are superseded by this request.
 
 ## Latest instruction — cancel and clean a03 (2026-09-08)
