@@ -83,8 +83,29 @@ def interfaces(model):
     """
     inp, out = model.get_input_embeddings(), model.get_output_embeddings()
     if getattr(model.config, 'model_type', None) == 'capacity_allocation_qwen3':
-        return dict(input=(inp.embedding.weight, inp.projection.weight.T),
-                    output=(out.head.weight, out.projection.weight))
+        def weight(module, transpose=False):
+            if isinstance(module, torch.nn.Identity):
+                return None
+            return module.weight.T if transpose else module.weight
+        if model.config.interface_type == 'independent':
+            return dict(input=(inp.embedding.weight, weight(inp.projection, True)),
+                        output=(out.head.weight, weight(out.projection)))
+        input_tables = [inp.shared.weight]
+        if inp.input_private is not None:
+            input_tables.append(inp.input_private.weight)
+        output_tables = [out.shared_head.weight]
+        output_adapters = [weight(out.shared_projection)]
+        if out.output_private_head is not None:
+            output_tables.append(out.output_private_head.weight)
+            output_adapters.append(weight(out.output_private_projection))
+        # Concatenation is exact: each row remains one vocabulary item and the
+        # block-concatenated output projection reproduces the summed logits.
+        input_table = input_tables[0] if len(input_tables) == 1 else torch.cat(input_tables, dim=1)
+        output_table = output_tables[0] if len(output_tables) == 1 else torch.cat(output_tables, dim=1)
+        output_adapter = (None if output_adapters == [None]
+                          else torch.cat(output_adapters, dim=0))
+        return dict(input=(input_table, weight(inp.projection, True)),
+                    output=(output_table, output_adapter))
     if getattr(model.config, 'model_type', None) != 'qwen3' or inp.weight is not out.weight:
         raise ValueError('Expected Stagewise interfaces or truly tied Qwen B0')
     return dict(input=(inp.weight, None), output=(out.weight, None))

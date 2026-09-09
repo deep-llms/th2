@@ -37,6 +37,51 @@ and query projection width 2d. Each block has 15d² + 2d + 256 parameters,
 including two per-head Q/K norms. T1 transitions project after whole blocks,
 only at width changes. Final RMSNorm precedes the output adapter.
 
+## Implemented follow-up variants
+
+The following arms implement
+[Next_Capacity_Allocation_Architectures_v0.4_Reviewed.md](Next_Capacity_Allocation_Architectures_v0.4_Reviewed.md).
+They are available through the same `--arm` CLI and sequential launch script,
+but are **not trained results**. Counts are exact unique trainable parameters
+from instantiated production-shape models.
+
+| CLI arm | Vocabulary interface | Body / transition | Parameters |
+|---|---|---|---:|
+| T768 | Exactly shared rank 768 | Uniform 1024 × 6, T1 | 212,646,400 |
+| T512 | Exactly shared rank 512 | Uniform 1024 × 6, T1 | 173,226,496 |
+| P512-128-384 | Shared 512 + private input 128 + private output 384 | Uniform 1024 × 6, T1 | 251,542,016 |
+| A640 | Independent 640 / 384 | Uniform 1024 × 6, T1 | 251,017,728 |
+| A768 | Independent 768 / 256 | Uniform 1024 × 6, T1 | 251,017,728 |
+| A768-Direct | Independent 768 / 256; no input adapter | Direct 768→1024 first block + five 1024 blocks | 243,939,328 |
+| FixedResidual | Exactly tied dense 1024; no vocabulary adapters | Outer 1024; inner 512,512,768,768,1024,1024 | 217,853,440 |
+| WNW | Independent 128 / 896 | T1 widths 1024,1024,768,768,1024,1024 | 238,827,008 |
+| D-1024 | Independent 128 / 1024 | D's T1 body unchanged | 266,729,216 |
+| O1024-I256 | Independent 256 / 1024 | T1 widths 512,512,768,768,1024,1024 | 253,865,472 |
+| O1024-I232 | Independent 232 / 1024 | Same body as O1024-I256 | 250,206,720 |
+| O1280 | Independent 64 / 1280 | T1 widths 256,256,512,512,768,1280 | 250,627,840 |
+| C-Direct | Independent 128 / 896 | C widths with direct widening boundaries | 198,813,184 |
+| D-Direct | Independent 128 / 896 | D widths with direct widening boundaries | 246,855,424 |
+
+T768/T512 use one actual `Parameter` for input lookup and output scoring.
+P512-128-384 also uses one actual shared-table parameter, with independent
+private tables. Its logits are the sum of the shared and output-private scores.
+For these projected shared interfaces, the output adapter is initialized with
+gain `sqrt(1024 / output_rank)` so initial logit scale follows the existing
+scaled-head policy without multiplying logits by a permanent temperature.
+
+`A768-Direct`, `C-Direct` and `D-Direct` use the reviewed widening equation:
+attention and its residual remain at width `d`; the gated MLP down projection
+produces `D`; the old residual is zero-padded before addition. Direct shrinking
+is rejected. `FixedResidual` instead computes a Qwen block at active width `d`
+and applies `x + P_up(block(P_down(x)) - P_down(x))`, so its full-width layers
+reduce exactly to ordinary Qwen blocks. It keeps B0's dense tied vocabulary
+interface to isolate body compute from residual-representation width.
+
+The same evaluator, fine-tuner, save/reload path, production verifier and
+diagnostics support these arms. For projected or partially shared tables, the
+gradient diagnostic reports total row gradients but does not claim B0's exact
+input-path/output-path decomposition.
+
 Custom interfaces and transitions retain the explicit fan-in initialization:
 adapter std 1/sqrt(fan_in); output-table std 0.02*sqrt(1024/output_rank).
 The body retains HF initialization. B0 has no custom modules. The arms are not

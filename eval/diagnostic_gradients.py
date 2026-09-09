@@ -12,7 +12,27 @@ def selected_parameters(model):
     return {name: p for name, p in model.named_parameters() if (
         name.startswith(('model.embed_tokens.', 'lm_head.')) or 'norm' in name or
         any(part in name for part in ('.transition.', '.self_attn.q_proj.', '.self_attn.o_proj.',
-                                       '.mlp.up_proj.', '.mlp.down_proj.')))}
+                                       '.mlp.up_proj.', '.mlp.down_proj.', '.down.', '.up.')))}
+
+
+def interface_gradients(model):
+    """Return row-aligned gradients for each complete vocabulary interface."""
+    inp, out = model.get_input_embeddings(), model.get_output_embeddings()
+    if getattr(model.config, 'model_type', None) != 'capacity_allocation_qwen3':
+        return dict(input=inp.weight.grad, output=out.weight.grad)
+    if model.config.interface_type == 'independent':
+        return dict(input=inp.embedding.weight.grad, output=out.head.weight.grad)
+    input_grads = [inp.shared.weight.grad]
+    if inp.input_private is not None:
+        input_grads.append(inp.input_private.weight.grad)
+    output_grads = [out.shared_head.weight.grad]
+    if out.output_private_head is not None:
+        output_grads.append(out.output_private_head.weight.grad)
+    # The shared parameter's total gradient appears on both sides. These row
+    # summaries are descriptive for projected/partial tying; B0's separate-path
+    # decomposition below remains the only causal input/output split.
+    return dict(input=input_grads[0] if len(input_grads) == 1 else torch.cat(input_grads, dim=1),
+                output=output_grads[0] if len(output_grads) == 1 else torch.cat(output_grads, dim=1))
 
 
 @torch.no_grad()
@@ -116,8 +136,9 @@ def probe_gradients(model, datasets, probe_ids, mapping, *, device='cpu', precis
         raise ValueError('Empty probe targets')
     was_training = model.training
     table = model.get_input_embeddings().weight
-    tied = table is model.get_output_embeddings().weight
-    paths = ('total', 'input', 'output') if tied else ('total',)
+    direct_tied = (getattr(model.config, 'model_type', None) == 'qwen3'
+                   and table is model.get_output_embeddings().weight)
+    paths = ('total', 'input', 'output') if direct_tied else ('total',)
     grads, report, losses_by_path = {}, {}, {}
     try:
         model.eval()  # Dropout off for the same function on every path.
@@ -149,18 +170,21 @@ def probe_gradients(model, datasets, probe_ids, mapping, *, device='cpu', precis
             if path == 'total':
                 report['parameters'] = {name: tensor_statistics(p, p.grad)
                                         for name, p in selected_parameters(model).items()}
-                report['rows'] = {side: row_statistics(p.grad, mapping)
-                                   for side, (p, _) in interfaces(model).items()}
-            if tied:
+                report['rows'] = {side: row_statistics(gradient, mapping)
+                                  for side, gradient in interface_gradients(model).items()}
+            if direct_tied:
                 grads[path] = table.grad.detach().float().cpu().clone()
-        if tied:
+        if direct_tied:
             if max(losses_by_path.values())-min(losses_by_path.values()) > (1e-4 if precision == 'fp32' else .02):
                 raise ValueError('Detached diagnostic paths changed forward loss')
             report['tied_paths'] = path_comparison(grads['total'], grads['input'], grads['output'], mapping,
                                                   5e-5 if precision == 'fp32' else .03)
             report['tied_path_rows'] = {path: row_statistics(g, mapping) for path, g in grads.items()}
         else:
-            report['tied_paths'] = dict(status='not_applicable_untied')
+            status = ('not_applicable_projected_or_partial_tying'
+                      if getattr(model.config, 'tie_word_embeddings', False)
+                      else 'not_applicable_untied')
+            report['tied_paths'] = dict(status=status)
         report.update(probe_ids=probe_ids, scored_targets=targets, nll=losses_by_path,
             precision=precision, master_weights=str(next(model.parameters()).dtype),
             gradient_scaling=False, clipping=False, optimizer_steps=0,

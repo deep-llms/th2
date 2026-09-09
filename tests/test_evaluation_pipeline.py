@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 import torch
 from datasets import Dataset
-from capacity_allocation.modeling import build_model, experiment_config
+from capacity_allocation.modeling import ARMS, build_model, experiment_config
 from eval.benchmarks import (DEFAULT_GROUPS, LEGACY_GROUPS, ENGLISH_CORE_GROUPS, TASKS,
                              local_task_config, task_plan, summarize_benchmarks)
 from eval.blimp_tasks import BLIMP_TASKS
@@ -103,7 +103,7 @@ class EvaluationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             tokenizer = fixture(root)
-            for arm in ('B0', 'A128', 'A256', 'A512', 'C', 'D'):
+            for arm in ARMS:
                 path = root/arm
                 build_model(experiment_config(arm, tiny=True)).save_pretrained(path)
                 tokenizer.save_pretrained(path)
@@ -260,7 +260,7 @@ class HarnessIntegrationTests(unittest.TestCase):
             prompt, completion = format_example(tasks['hellaswag'], tasks['hellaswag'].training_docs()[0])
             self.assertEqual(prompt, 'w4: w1 w2 W3')
             self.assertEqual(completion, ' w5')
-            for arm in ('B0', 'A128', 'A256', 'A512', 'C', 'D'):
+            for arm in ARMS:
                 model = build_model(experiment_config(arm, tiny=True)).eval()
                 report = evaluate(model, tokenizer, tasks, device='cpu', precision='fp32', batch_size=2)
                 self.assertEqual(report['hellaswag']['samples']['effective'], 4)

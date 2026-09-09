@@ -11,7 +11,7 @@ import torch
 from torch.utils.data import DataLoader
 from transformers import TrainingArguments, default_data_collator, set_seed
 
-from capacity_allocation.modeling import ARMS, build_model, experiment_config
+from capacity_allocation.modeling import ARMS, SHARED_ARMS, build_model, experiment_config
 from capacity_allocation.data import preprocess_text, load_text_data
 from eval.diagnostic_data import BUCKETS, count_tokens, frequency_buckets, load_bundle, prepare
 from eval.diagnostic_metrics import (centered_covariance, embedding_spectra, frequency_nll,
@@ -168,8 +168,13 @@ class DiagnosticTests(unittest.TestCase):
                 for name,p in model.named_parameters(): torch.testing.assert_close(p,before[name],rtol=0,atol=0)
                 for name,row in first['parameters'].items():
                     self.assertAlmostEqual(row['grad_rms'],second['parameters'][name]['grad_rms'],places=6)
-                if arm=='B0': self.assertLess(first['tied_paths']['overall']['additivity_relative_l2'],5e-5)
-                else: self.assertEqual(first['tied_paths']['status'],'not_applicable_untied')
+                if arm=='B0':
+                    self.assertLess(first['tied_paths']['overall']['additivity_relative_l2'],5e-5)
+                elif arm in SHARED_ARMS:
+                    self.assertEqual(first['tied_paths']['status'],
+                                     'not_applicable_projected_or_partial_tying')
+                else:
+                    self.assertEqual(first['tied_paths']['status'],'not_applicable_untied')
 
     def test_full_checkpoint_cli_and_frequency_vs_ppl(self):
         from eval.ppl import evaluate as ppl

@@ -8,7 +8,7 @@ from safetensors import safe_open
 import torch
 
 from capacity_allocation.data import write_json
-from capacity_allocation.modeling import EXPECTED_COUNTS
+from capacity_allocation.modeling import EXPECTED_COUNTS, SHARED_ARMS
 from train import validate_resume_checkpoint
 
 
@@ -45,7 +45,7 @@ def verify(root, arm, step, world_size, cache_report):
         config = json.loads((path/'config.json').read_text())
         if config.get('experiment_arm') != arm or config['num_hidden_layers'] != 6:
             raise ValueError('Saved model configuration mismatch')
-        if config['tie_word_embeddings'] != (arm == 'B0'):
+        if config['tie_word_embeddings'] != (arm == 'B0' or arm in SHARED_ARMS):
             raise ValueError('Saved tying configuration mismatch')
         for filename in ('tokenizer.json', 'tokenizer_config.json'):
             if not (path/filename).is_file() or not (path/filename).stat().st_size:

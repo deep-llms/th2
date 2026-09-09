@@ -131,6 +131,13 @@ Weights/checkpoint files are not modified. Gradient buffers are cleared and
 model mode restored on exit. These gradients are **not historical optimizer
 training gradients**, and cannot establish actual AdamW update sizes.
 
+For the follow-up projected-tied and partial-sharing interfaces, spectra use
+the exact concatenated functional table/adapter representation. Row-gradient
+statistics concatenate the corresponding learned table components. A shared
+component receives its combined input/output gradient, so the B0-only detached
+input-path/output-path decomposition is deliberately reported as not applicable
+for those arms rather than presenting a misleading split.
+
 ## Alongside the existing eval queue
 
 Add the following to the normal `python -m eval.eval_parallel ...` command:
