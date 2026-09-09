@@ -1,5 +1,38 @@
 # Current task
 
+## Authorized eval/finetune smoke preparation — 2026-09-09
+
+All six arms completed step5000 at01:49:11 UTC; `training_complete.json`
+and all six checkpoint sets were recovered and verified in the07:09 UTC
+live check. Same node/GPU UUIDs, retained data/model/env, host uptime19.4 days.
+The burn verifier timed out, but the independent burn was running on all eight
+GPUs (155010 MiB each) with advancing communication counters.
+
+User now authorized stopping those burns and testing eval/finetune, not full
+research evaluation. Execution440a53f failed before signaling: system Python
+could not import the project stop helper. Corrected7ad9562 activated `swt`,
+checked the helper's absolute path, verified one known launcher/eight worker
+PID+start identities, and signaled only those workers. After30s all eight GPUs
+were free, with0 MiB. Evidence: `temp/remote_logs/swt_stop_eval_preflight_20260909_a02.log`
+(SHA256745a39b015374bf3b98ad337b6087b33b6568ef5bb58b12a8b62326860adc7f3).
+No checkpoint/data/cache cleanup or burn restart was requested or performed.
+
+Preflight found no `swt_eval`/`lm_eval` conda environment; `swt` lacks lm_eval.
+Old benchmark snapshots are under `/mnt/local/_data/deep-llms_th2/benchmarks/hf`.
+Execution08e801d requests a separate `swt_eval` install via `#i envs/swt_eval.txt +a`;
+await its completion and verify imports before GPU smoke. No direct node downloads.
+
+Local14 eval/finetune integration tests passed in103.002s, including all-arm
+fine-tuning, CLI round trip and queue validation (`temp/eval_finetune_review_20260909.log`).
+The independent precision gate reproduces the OPEN benchmark BF16 failure on
+all six arms (`temp/eval_precision_before_20260909.json`); FP32 cases pass.
+User was asked whether to fix this evaluation-only bug; do not claim it fixed.
+New bounded `scripts/smoke_eval_finetune.py` tests real benchmark subsets,
+two optimizer updates at each task's normal batch/sequence settings, fresh
+checkpoint reload per task, save/reload and unchanged input checkpoint hashes.
+It fails if requested benchmark BF16 is not observed. Its small-subset outputs
+are smoke tests, never research scores. Destination testing is still pending.
+
 ## Checkpoint diagnostics implemented locally — not deployed (2026-09-08)
 
 Implemented the reviewed token-frequency/spectra/gradient design. See
