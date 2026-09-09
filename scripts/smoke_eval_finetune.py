@@ -10,9 +10,11 @@ from pathlib import Path
 from eval.runtime import offline
 offline()
 import torch
+from datasets import Dataset
 from capacity_allocation.data import write_json
 from eval.runtime import checkpoint_identity, load_checkpoint
 from eval.benchmarks import evaluate, load_tasks, task_plan
+from eval.ppl import evaluate as evaluate_ppl
 from finetune.tasks import GenerativeDataset, TASK_CONFIGS
 from finetune.train import fit
 
@@ -38,6 +40,7 @@ def main():
     plan, _ = task_plan('en', args.tasks)
     tasks = load_tasks(plan, args.dataset_root)
     reports = {}
+    ppl = None
     for item in plan:
         name, task = item['task'], tasks[item['task']]
         config = TASK_CONFIGS[item['group']].copy()
@@ -50,6 +53,15 @@ def main():
         task.dataset[eval_split] = task.dataset[eval_split].select(range(min(2, full_eval)))
         task.task_docs = task.eval_docs
         model, tokenizer = load_checkpoint(source, device=args.device, precision='bf16')
+        if item == plan[0]:
+            # Synthetic long context tests the actual PPL entry point/shape only.
+            # It is never a corpus-quality score or the training validation set.
+            Dataset.from_dict({'text': ['This is a local smoke test. ' * 1024]}).save_to_disk(
+                str(root/'ppl_input/en'))
+            ppl = evaluate_ppl(model, tokenizer, root/'ppl_input', 'en',
+                device=args.device, precision='bf16', block_size=2048,
+                workers=1, map_batch_size=1000, cache_dir=root/'ppl_cache')
+            assert ppl['token_weighted']['scored_targets'] >= 2047
         observed = []
         hook = model.model.layers[0].self_attn.q_proj.register_forward_hook(
             lambda module, inputs, output: observed.append(str(output.dtype)))
@@ -108,7 +120,8 @@ def main():
     assert checkpoint_identity(source) == before, 'Source checkpoint changed'
     success = all(r['benchmark_dtypes'] == ['torch.bfloat16'] for r in reports.values())
     write_json(root/'report.json', dict(success=success, smoke_only=True,
-        checkpoint=before, tasks=reports, source_checkpoint_unchanged=True))
+        checkpoint=before, tasks=reports, synthetic_long_context_ppl=ppl,
+        source_checkpoint_unchanged=True))
     if not success:
         raise SystemExit('SMOKE FAILED: benchmark BF16 precision mismatch; see report.json')
     print('EVAL_FINETUNE_SMOKE_PASS_NOT_RESEARCH_RESULTS', flush=True)
