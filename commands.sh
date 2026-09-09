@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/pipeline.log,/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/inputs_verified.json,/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/eval_plan.json,/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/finetune_plan.json,/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/eval/B0_step250_ppl.log,/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/eval/B0_step250_benchmarks.log
-#th2-pull-authorized-full-evaluation-startup-20260909-a01
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01/pipeline.log
+#th2-confirm-running-eval-and-automatic-finetune-handoff-20260909-a02
