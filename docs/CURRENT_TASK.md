@@ -7,8 +7,8 @@ arms at steps 250, 500, 1000, 2000, 3000, 4000 and 5000 (42 checkpoints), then
 emphasized downloading missing benchmarks first. Keep one GPU per independent
 job, up to eight concurrent jobs. Retain the documented three tasks and seeds
 42/123/456 (378 fine-tunes), BF16 forwards and unchanged task hyperparameters.
-No full sweep has launched yet. No cleanup, training restart or burn restart
-is part of this submission.
+The full sweep is launched (executiona6c0ab8); current progress is recorded
+below. No cleanup, training restart or burn restart is part of this submission.
 
 Read-only execution97f82b2 verified all42 checkpoint configs/weight files are
 present, all eight GPUs free (0 MiB), and22 TiB available. Existing HellaSwag/ARC
@@ -63,6 +63,14 @@ plus matching-prefix inputs, both complete job plans, and two B0 worker logs.
 The pulled plans were checked locally for all42 identities,84 eval jobs,
 378 independent fine-tunes, English-only coverage and seeds42/123/456.
 Do not repush its active#1 command to poll; use read-only Dropbox/#2 exports.
+
+09:07 UTC progress reconfirmed before the user leaves:12/84 eval workers
+completed with exit0 and successful queue validation (eight PPL and four full
+benchmark jobs). New A128 workers are starting as GPUs become available.
+Fine-tuning is still correctly queued, not running concurrently with eval.
+Read-only exportf586c66 retrieved the log without resubmitting the workload.
+Evidence: `temp/remote_logs/swt_full_eval_progress_20260909_0907.log`, SHA256
+`d9f101a4d3fd9d90611bf653f22e9a640a61b87a9afdf54748c00abb074e3030`.
 
 ## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 
