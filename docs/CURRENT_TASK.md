@@ -47,7 +47,21 @@ Shared handoff commit:a7412c4. Executiona6c0ab8 submits the authorized sweep;
 GitHub head was verified. All source files match development (only commands.sh
 differs), and all20 pretraining-manifest entries still match. The launch first
 checks the handoff SHA256 and runs its three CPU tests on B200, then executes
-the foreground script. Remote progress confirmation is pending at this entry.
+the foreground script. Remote startup is confirmed at08:57:16 UTC. All three
+destination tests passed, all eight GPUs were free, and the source/data/input
+and job-plan gates passed. The09:03 UTC pipeline export confirms Accelerate
+copied/verified at `/mnt/local/.cache/huggingface/accelerate/default_config.yaml`,
+the subsequent free-GPU check, and eight eval workers on physical GPUs0–7.
+All seven B0 PPL workers have exited0 and their queue validation passed;
+benchmark workers are advancing and A128 PPL has started. Fine-tuning remains
+queued behind successful completion/validation of all84 evaluation jobs.
+No project traceback/OOM/failure marker appeared in the retrieved startup logs.
+Export0746910 only retrieved results/logs; it did not rerun or stop the queue.
+Local evidence: `temp/remote_logs/swt_full_eval_start_20260909_pipeline.log`
+(SHA256ec9662cf6d2df74ee6c9e9972cd8f79cd973ebfe4d95cdd9e43e82e1028a143e),
+plus matching-prefix inputs, both complete job plans, and two B0 worker logs.
+The pulled plans were checked locally for all42 identities,84 eval jobs,
+378 independent fine-tunes, English-only coverage and seeds42/123/456.
 Do not repush its active#1 command to poll; use read-only Dropbox/#2 exports.
 
 ## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
