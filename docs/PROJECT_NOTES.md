@@ -8,6 +8,22 @@ Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Destination eval/finetune smoke — 2026-09-09
 
+Full-suite inputs are now verified. Controller#d executiona5b3177 downloaded
+the five previously missing repositories into the retained benchmark root
+`/mnt/local/_data/deep-llms_th2/benchmarks/hf`. Executionfbfeb3b verified all133
+reference hashes, all78 English eval splits, HellaSwag/ARC-Easy/XNLI training
+splits, and a74-task two-example CPU smoke for tiny B0/C. These remain input/
+correctness checks, not research scores. Terminal reports were pulled via8792aff
+and matched to source hashes; see CURRENT_TASK.md. All42 requested checkpoints
+are retained, all eight GPUs were free, and no existing data was deleted.
+
+Authorized sweep: all six arms at250/500/1000/2000/3000/4000/5000, full English
+PPL and78 benchmark results per checkpoint, then independent English task
+fine-tunes with seeds42/123/456. Keep one GPU per job (eight concurrent), not
+eight-GPU DDP with a changed global batch. The checked-in shell handoff gates
+the entire84-job evaluation stage before the378-job fine-tuning stage and
+preserves original checkpoints. New outputs are separate from pretraining.
+
 Correction/retest: user approved fixing the benchmark precision issue described
 below. Commitbbcce4e explicitly configures HFLM BF16 forwards and FP32 softmax,
 without changing pretraining or fine-tuning updates. All85 local regressions

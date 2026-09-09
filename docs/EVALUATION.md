@@ -206,6 +206,18 @@ this script. Production eval has no sample-limit option and checks full coverage
 
 ## Multi-checkpoint evaluation
 
+For the authorized September9 six-arm sweep, the checked-in handoff is
+`scripts/eval_finetune_capacity_b200.sh`. Pass a fresh output directory beneath
+`/mnt/local/_outputs/deep-llms_th2/swt/`. It selects steps250/500/1000/2000/3000/
+4000/5000 from the completed5k training run, validates local inputs and source
+hashes, warms the English PPL cache once, and runs84 eval workers followed by
+378 independent fine-tunes (three tasks × three seeds ×42 checkpoints).
+Eight single-GPU workers run concurrently; the two stages never overlap.
+The handoff requires successful queue validation, full result coverage and
+free-GPU checks, copying/verifying Accelerate before each stage. It performs
+no downloads, process termination, cleanup, or burn launch. Download and verify
+the missing snapshots before submitting it; code presence is not execution.
+
 Optional frequency loss, spectra and fixed-probe gradient workers can share
 this queue via `--diagnostic-bundle`; see [DIAGNOSTICS.md](DIAGNOSTICS.md) for
 preparing immutable inputs and the additional job count. Default queue behavior

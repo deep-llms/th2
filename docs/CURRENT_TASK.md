@@ -23,6 +23,28 @@ coverage must pass before launching the sweep. Evidence:
 `3c902461dfbb28808ce469ccdce5788041fcd6a6c59f7c4f8c002f4d457a0940`.
 Earlier no-full-sweep authorization statements below are historical.
 
+Downloads completed successfully: all five controller items reported OK.
+Executionfbfeb3b then verified all133 reference files, offline loading of all78
+evaluation tasks and the three training splits (HellaSwag39905, ARC-Easy2251,
+XNLI-English392702), and the74-task tiny B0/C CPU scoring smoke. All eight GPUs
+remained free. Terminal artifacts exported via8792aff were pulled and matched
+to their printed source SHA256 values: coverage
+`b31d9d35a8a408f725f089a108f79bc61805f0be6f3b5ed7c6075aa3defc6dd9`, smoke
+`7cdb16ec2a77713f3710d87f61bc2c431fcd84f2a9cd371b02a9c88a5994427a`.
+Local evidence prefix: `temp/remote_logs/swt_benchmark_verified_20260909_`.
+
+Prepared `scripts/eval_finetune_capacity_b200.sh` for fresh output
+`/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01`.
+It checks42 checkpoint steps/hashes, all benchmark splits and the common PPL
+cache once, validates84 eval/378 fine-tune job plans, copies/verifies Accelerate
+and checks GPUs before each stage. Eval success requires full benchmark sample
+counts and9829694 English PPL targets; fine-tune success additionally checks
+the unchanged task hyperparameters and full three-epoch update counts. Source
+pretraining files are untouched. No process signaling/deletion/burn restart.
+Local17 eval/harness tests passed without skips (101.741s); the expanded three
+handoff tests also passed, including rejection of incomplete PPL/changed weights.
+Launch/remote progress confirmation is still pending at this entry.
+
 ## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 
 User approved fixing the confirmed evaluation-only bug and rerunning smoke.
