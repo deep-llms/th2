@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-swt-next-architecture-production-smoke-20260909-a01
+#th2-swt-next-architecture-production-smoke-20260909-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-oish-worker-0
@@ -9,11 +9,11 @@ test "$(command -v python)" = /mnt/local/conda-py311/envs/swt/bin/python
 TASK_PYTHON=/mnt/local/conda-py311/envs/swt/bin/python
 TASK_TORCHRUN=/mnt/local/conda-py311/envs/swt/bin/torchrun
 TASK_BURN=/tmp/llm_pretrain_burn.py
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/next_architectures_smoke_20260909_a01
-TASK_BURN_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/burn_after_next_architectures_smoke_20260909_a01
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/next_architectures_smoke_20260909_a02
+TASK_BURN_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/burn_after_next_architectures_smoke_20260909_a02
 TASK_BURN_LOG="$TASK_BURN_ROOT/burn.log"
-TASK_BURN_SESSION=swt_burn_after_next_architectures_smoke_20260909_a01
-TASK_BURN_PORT=29559
+TASK_BURN_SESSION=swt_burn_after_next_architectures_smoke_20260909_a02
+TASK_BURN_PORT=29560
 TASK_ARMS=(T768 T512 P512-128-384 A640 A768 A768-Direct FixedResidual WNW D-1024 O1024-I256 O1024-I232 O1280 C-Direct D-Direct)
 TASK_GPUS=(0 1 2 3 4 5 6 7)
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
@@ -37,7 +37,6 @@ mkdir -p "$TASK_ROOT"
 exec > >(tee "$TASK_ROOT/pipeline.log") 2>&1
 date -u
 hostname
-git rev-parse HEAD
 "$TASK_PYTHON" - <<'PY'
 import importlib.metadata as md
 import torch
