@@ -1,5 +1,17 @@
 # Current task
 
+## Authorized benchmark precision fix and retest — 2026-09-09
+
+User approved fixing the confirmed evaluation-only bug and rerunning smoke.
+`eval.benchmarks.evaluate` now supplies explicit HFLM mixed_precision_dtype
+(BF16 or None for FP32) and softmax_dtype=FP32 instead of outer autocast.
+Pretraining, PPL, diagnostic model calls and finetuning optimizer code are
+unchanged. The regression gate checks all six arms/both precisions, FP32
+softmax and FP32 master weights; the production smoke also records actual
+post-finetuning benchmark-forward dtypes. Local and destination retests pending.
+No full benchmark sweep, cleanup, training restart or burn restart is authorized.
+Previous failed smoke outputs below are preserved, not overwritten or relabeled.
+
 ## Eval/finetune smoke completed; benchmark precision fails — 2026-09-09
 
 Execution189b56e completed the bounded destination tests. All14 CPU integration

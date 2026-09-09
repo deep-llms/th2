@@ -195,6 +195,12 @@ class EvaluationTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec('lm_eval'), 'Requires optional lm_eval==0.4.10 test environment')
 class HarnessIntegrationTests(unittest.TestCase):
+    def test_actual_harness_forward_precision_all_arms(self):
+        from scripts.check_eval_precision import check
+        report = check('cpu')
+        self.assertTrue(report['success'], report)
+        self.assertEqual(len(report['checks']), 12)
+
     def test_exact_blimp_suite_matches_pinned_harness(self):
         from lm_eval.tasks import TaskManager
         manager = TaskManager()

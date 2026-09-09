@@ -208,10 +208,10 @@ additivity, nonmutation and actual Trainer observer behavior. They use tiny CPU
 models, not full-size B200 resource measurements. Run a destination smoke with
 real frozen inputs on a free GPU before scheduling the full diagnostics.
 
-The earlier **benchmark-harness precision bug remains a separate open gate**:
-its nested autocast currently disables the requested BF16 model calls. The
-diagnostics above call the model directly and do not use that harness wrapper.
-`scripts/check_eval_precision.py` now preserves the actual-forward check:
+The benchmark wrapper now explicitly configures HFLM mixed precision and FP32
+softmax, correcting the nested-autocast bug reproduced on B200 on2026-09-09.
+Diagnostics above call the model directly and are unaffected by this change.
+`scripts/check_eval_precision.py` preserves the actual-forward regression check:
 
 ```bash
 # Later, after explicit authorization, compatible eval env and free-GPU checks:
@@ -221,11 +221,8 @@ CUDA_VISIBLE_DEVICES=0 python -m scripts.check_eval_precision \
 
 It performs tiny forward calls for all six arms, requires actual FP32 and BF16
 projection outputs as requested, and exits nonzero on a mismatch. It does not
-score benchmarks or download anything. **Expect BF16 failure until the harness
-is explicitly configured with mixed_precision_dtype** (and FP32 softmax is
-recommended). Do not launch full benchmark evaluation with the known mismatch,
-or mistake the existing 72-test pass for proof of BF16 operation. The initially
-deferred precision test was authorized and run on B200 on2026-09-09: BF16 failed
-for all six arms, while FP32 passed. Production checkpoint/task smoke confirmed
-the mismatch; fine-tuning updates used BF16 correctly. See CURRENT_TASK.md for
-evidence. No allocation diagnostics or full benchmark sweep has been run.
+score benchmarks or download anything. Both precision cases must pass, as must
+FP32 softmax and FP32 master weights. The pre-fix destination smoke failed BF16
+on all six arms; fine-tuning updates used BF16 correctly. Require the corrected
+destination test before full evaluation; see CURRENT_TASK.md for status/evidence.
+No allocation diagnostics or full benchmark sweep has been run.
