@@ -1,10 +1,13 @@
 #1 +30+a
-#th2-swt-identify-finetune-before-final-only-stop-20260909-a01
+#th2-swt-identify-finetune-before-final-only-stop-20260909-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 date -u
 hostname
-python3 - <<'PY'
+source /mnt/local/conda-py311/etc/profile.d/conda.sh
+conda activate swt_eval
+test "$(command -v python)" = /mnt/local/conda-py311/envs/swt_eval/bin/python
+python - <<'PY'
 import json
 from pathlib import Path
 from scripts.reclaim_verified_burn import identity
