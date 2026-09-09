@@ -224,5 +224,8 @@ projection outputs as requested, and exits nonzero on a mismatch. It does not
 score benchmarks or download anything. **Expect BF16 failure until the harness
 is explicitly configured with mixed_precision_dtype** (and FP32 softmax is
 recommended). Do not launch full benchmark evaluation with the known mismatch,
-or mistake the existing 72-test pass for proof of BF16 operation. The user deferred
-this destination test; no B200 job has been submitted by this implementation.
+or mistake the existing 72-test pass for proof of BF16 operation. The initially
+deferred precision test was authorized and run on B200 on2026-09-09: BF16 failed
+for all six arms, while FP32 passed. Production checkpoint/task smoke confirmed
+the mismatch; fine-tuning updates used BF16 correctly. See CURRENT_TASK.md for
+evidence. No allocation diagnostics or full benchmark sweep has been run.

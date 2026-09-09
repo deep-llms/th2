@@ -1,6 +1,32 @@
 # Current task
 
-## Authorized eval/finetune smoke preparation — 2026-09-09
+## Eval/finetune smoke completed; benchmark precision fails — 2026-09-09
+
+Execution189b56e completed the bounded destination tests. All14 CPU integration
+tests passed (71.551s). Six checkpoint5000 workers, one per GPU0–5, each passed
+the2048-token synthetic PPL path (6141 targets), two real BF16 optimizer updates
+on each of HellaSwag/ARC-Easy/XNLI, finite weights, before/after benchmark
+coverage, and a HellaSwag fine-tuned save/reload with identical probe logits.
+Fresh original-checkpoint reload was used for every task. All six original
+checkpoint weight/config hashes remained unchanged.
+
+The CUDA precision gate and all18 production checkpoint/task smoke cases
+confirmed the existing bug: requested BF16 benchmark calls actually useFP32.
+Fine-tuning forward calls useBF16 correctly. Thus overall smoke success=false;
+no full research evaluation is authorized or ready. The evaluation wrapper has
+NOT been fixed; awaiting user direction on that change. Missing new English
+benchmark downloads are also a separate prerequisite to the full suite.
+
+All eight GPUs were verified free after workers exited and a30s wait. Burns
+were not restarted. Results were pulled via40d2d98/82bc041 and checked locally:
+`temp/remote_logs/swt_smoke_final_20260909_summary.json`, SHA256
+`cee1315c89700b93a3324afdbe9149e03c12ee7f4c9da86fed539a023464cec4`, plus
+pipeline/CPU/precision logs and six complete per-arm reports in the same folder.
+Remote smoke root: `/mnt/local/_outputs/deep-llms_th2/swt/eval_finetune_smoke_20260909_a01`.
+These outputs include one smoke fine-tuned model per arm and private smoke
+input/cache directories; they are not research results or pretraining outputs.
+The source pretraining20-file manifest still matches. Shared eval/diagnostic
+code was deployed for these tests, but no allocation diagnostics were run.
 
 All six arms completed step5000 at01:49:11 UTC; `training_complete.json`
 and all six checkpoint sets were recovered and verified in the07:09 UTC
@@ -19,8 +45,11 @@ No checkpoint/data/cache cleanup or burn restart was requested or performed.
 
 Preflight found no `swt_eval`/`lm_eval` conda environment; `swt` lacks lm_eval.
 Old benchmark snapshots are under `/mnt/local/_data/deep-llms_th2/benchmarks/hf`.
-Execution08e801d requests a separate `swt_eval` install via `#i envs/swt_eval.txt +a`;
-await its completion and verify imports before GPU smoke. No direct node downloads.
+Execution08e801d installed separate `swt_eval` via `#i envs/swt_eval.txt +a`.
+Install succeeded07:31 UTC; imports verified07:35 UTC: torch2.14.0+cu130,
+Transformers5.9.0, datasets4.8.5, Accelerate1.13.0, lm_eval0.4.10. Accelerate
+config was copied/compared before tests (workers themselves are single-GPU).
+No direct node downloads; the `swt` training environment was not modified.
 
 Local14 eval/finetune integration tests passed in103.002s, including all-arm
 fine-tuning, CLI round trip and queue validation (`temp/eval_finetune_review_20260909.log`).
@@ -31,7 +60,7 @@ New bounded `scripts/smoke_eval_finetune.py` tests real benchmark subsets,
 two optimizer updates at each task's normal batch/sequence settings, fresh
 checkpoint reload per task, save/reload and unchanged input checkpoint hashes.
 It fails if requested benchmark BF16 is not observed. Its small-subset outputs
-are smoke tests, never research scores. Destination testing is still pending.
+are smoke tests, never research scores. Destination results are recorded above.
 
 ## Checkpoint diagnostics implemented locally — not deployed (2026-09-08)
 

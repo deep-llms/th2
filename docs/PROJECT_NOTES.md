@@ -1,9 +1,36 @@
 # Project notes
 
-Status (2026-09-08): switched to the six-layer Qwen3 English pilot. The user
+Status (2026-09-09): switched to the six-layer Qwen3 English pilot. The user
 requested reuse of sparse-embedding's sampled text and training workflow.
-No research training results. GPT-2 preprocessing was stopped and is superseded.
+All six5000-step training arms finished; full benchmark evaluation is pending.
+GPT-2 preprocessing was stopped and is superseded.
 Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
+
+## Destination eval/finetune smoke — 2026-09-09
+
+All six training arms finished at01:49:11 UTC. The post-training burn verifier
+timed out, but the independent burn was live on all eight GPUs at07:09 UTC,
+with advancing communication counters. At the user's request, the verified
+eight burn workers were stopped (only worker PIDs, not PID1/launcher/group).
+An initial system-Python import failure sent no signals; the corrected command
+activated `swt` and verified the helper path before stopping. All GPUs were free.
+
+Installed isolated `swt_eval` through controller#i; left `swt` unchanged. The
+destination smoke used all six actual checkpoint5000 models on GPUs0–5:
+2048-token synthetic PPL, real HellaSwag/ARC-Easy/XNLI subsets, two BF16 optimizer
+updates/task, and save/reload. All passed those checks, including unchanged
+original weight/config hashes. Fourteen destination integration tests also passed.
+
+The overall smoke correctly FAILED: all six tiny CUDA precision probes and
+all18 actual checkpoint/task tests observedFP32 benchmark calls despite requesting
+BF16. This is the known nested lm-eval autocast issue, not a pretraining defect;
+fine-tuning optimizer updates useBF16 correctly. The wrapper is not fixed yet.
+No full evaluation/finetuning sweep or burn restart was launched. All eight GPUs
+were verified free after the smoke workers exited and a30s wait.
+Evidence: `temp/remote_logs/swt_smoke_final_20260909_summary.json` (SHA256
+`cee1315c89700b93a3324afdbe9149e03c12ee7f4c9da86fed539a023464cec4`) and
+six per-arm reports. Synthetic/subsample smoke metrics are NOT research scores.
+See CURRENT_TASK.md for commits, paths, environment and the pending fix decision.
 
 ## Batch-size benchmark completed — 2026-09-08
 

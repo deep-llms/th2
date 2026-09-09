@@ -4,8 +4,11 @@
 the wrapper's outer BF16 autocast. Until its explicit mixed-precision option is
 configured, benchmark model calls run in FP32 even when BF16 is requested.
 The documented BF16 protocol below is the intended protocol, not a verified
-current harness behavior. Preserve/run `scripts/check_eval_precision.py` on
-B200 later, after authorization and free-GPU checks; see [DIAGNOSTICS.md](DIAGNOSTICS.md).
+current harness behavior. On2026-09-09, `scripts/check_eval_precision.py` reproduced
+this on B200 for all six arms; the bounded production-checkpoint smoke confirmed
+the same issue. BF16 fine-tuning updates, save/reload and PPL-path tests passed,
+but the overall smoke failed on benchmark precision. Fix/retest before a full
+BF16 evaluation; see CURRENT_TASK.md for reports. No fix has been applied yet.
 PPL and new diagnostic model calls do not use the affected harness wrapper.
 
 Current Stagewise run: **English only**. These tools are separate from
