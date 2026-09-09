@@ -1,5 +1,31 @@
 # Current task
 
+## Revised scope: step5000 fine-tuning and diagnostics — 2026-09-09
+
+The user superseded the 42-checkpoint fine-tuning sweep: stop its active
+fine-tuning queue, preserve results/checkpoints/caches, and run only the six
+step5000 checkpoints. HellaSwag/ARC-Easy/English XNLI and seeds42/123/456 remain
+unchanged (54 jobs). Existing all42 zero-shot PPL/benchmark results are complete;
+do not rerun them. Add frequency-binned held-out NLL, embedding spectra and
+fixed-probe gradients only at step5000 (18 diagnostic jobs).
+
+Preparation: `scripts/final_checkpoint_diagnostics_finetune_b200.sh` uses a fresh
+output root, one frozen full-training-pool frequency bundle, a bounded real
+B0/C CUDA smoke, then the 18 diagnostic workers and 54 fresh fine-tunes.
+Each stage requires successful validation and free-GPU gates; Accelerate is
+copied/verified. No source checkpoint changes, downloads, cleanup or burn launch.
+Local12 diagnostic tests and three final-only handoff tests passed. Execution
+f0394cb's read-only ancestry probe failed before any signaling because system
+Python could not import the project helper. Corrected read-only a7194df uses
+the verified swt_eval conda interpreter. Stop/relaunch not yet confirmed.
+
+Intended fresh output:
+`/mnt/local/_outputs/deep-llms_th2/swt/final5k_diagnostics_finetune_20260909_a01`.
+Intended frozen bundle:
+`/mnt/local/_data/deep-llms_th2/swt/diagnostics/qwen_en_pool_20260909_a01`.
+Only publish completion after all18 diagnostic and54 fine-tuning results pass.
+Earlier full fine-tuning scope below is historical.
+
 ## Complete evaluation results pulled — 2026-09-09
 
 All42 checkpoints' evaluation results are local at
