@@ -1,14 +1,24 @@
 #1 +60+a
-#th2-swt-stop-verified-burn-and-eval-preflight-20260909-a01
+#th2-swt-stop-verified-burn-and-eval-preflight-20260909-a02
 set -euo pipefail
 date -u
 hostname
 test "$(hostname)" = thiennh-p6-oish-worker-0
+cd /mnt/local/deep-llms_th2
+source /mnt/local/conda-py311/etc/profile.d/conda.sh
+conda activate swt
+test "$(command -v python)" = /mnt/local/conda-py311/envs/swt/bin/python
+python - <<'PY'
+import scripts.reclaim_verified_burn as helper
+from pathlib import Path
+assert Path(helper.__file__).resolve() == Path.cwd()/'scripts/reclaim_verified_burn.py'
+print('BURN_HELPER_VERIFIED', helper.__file__)
+PY
 sha256sum /tmp/llm_pretrain_burn.py
-python3 -m scripts.reclaim_verified_burn --burn-path /tmp/llm_pretrain_burn.py --gpus 0 1 2 3 4 5 6 7
-python3 -m scripts.reclaim_verified_burn --burn-path /tmp/llm_pretrain_burn.py --gpus 0 1 2 3 4 5 6 7 --stop
+python -m scripts.reclaim_verified_burn --burn-path /tmp/llm_pretrain_burn.py --gpus 0 1 2 3 4 5 6 7
+python -m scripts.reclaim_verified_burn --burn-path /tmp/llm_pretrain_burn.py --gpus 0 1 2 3 4 5 6 7 --stop
 sleep 30
-python3 scripts/gpu_status.py --gpus 0 1 2 3 4 5 6 7 --require-free
+python scripts/gpu_status.py --gpus 0 1 2 3 4 5 6 7 --require-free
 echo SWT_BURNS_STOPPED_ALL_GPUS_FREE
 for TASK_ENV in swt swt_eval lm_eval; do
     TASK_PYTHON="/mnt/local/conda-py311/envs/$TASK_ENV/bin/python"
