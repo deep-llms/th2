@@ -7,8 +7,10 @@ for FP32) and `softmax_dtype` to FP32. Model master weights remain FP32.
 This applies equally to zero-shot and post-finetuning scoring; pretraining,
 fine-tuning updates, PPL and diagnostics are unchanged. The actual-forward
 regression gate is `scripts/check_eval_precision.py`, covering all six arms,
-both forward precisions, FP32 softmax and FP32 master weights. Require the
-corrected destination smoke to pass before full evaluation; see CURRENT_TASK.md.
+both forward precisions, FP32 softmax and FP32 master weights. The corrected
+B200 smoke passed all six checkpoints, including BF16 scoring before/after
+fine-tuning, save/reload and unchanged input checkpoints. See CURRENT_TASK.md
+for evidence. Full-suite benchmark downloads/verification are still separate.
 
 Current Stagewise run: **English only**. These tools are separate from
 pretraining and do not alter its model code, schedule, caches, or running job.
@@ -203,6 +205,18 @@ research metrics. No checkpoint/data downloads or GPU operations occur inside
 this script. Production eval has no sample-limit option and checks full coverage.
 
 ## Multi-checkpoint evaluation
+
+For the authorized September9 six-arm sweep, the checked-in handoff is
+`scripts/eval_finetune_capacity_b200.sh`. Pass a fresh output directory beneath
+`/mnt/local/_outputs/deep-llms_th2/swt/`. It selects steps250/500/1000/2000/3000/
+4000/5000 from the completed5k training run, validates local inputs and source
+hashes, warms the English PPL cache once, and runs84 eval workers followed by
+378 independent fine-tunes (three tasks × three seeds ×42 checkpoints).
+Eight single-GPU workers run concurrently; the two stages never overlap.
+The handoff requires successful queue validation, full result coverage and
+free-GPU checks, copying/verifying Accelerate before each stage. It performs
+no downloads, process termination, cleanup, or burn launch. Download and verify
+the missing snapshots before submitting it; code presence is not execution.
 
 Optional frequency loss, spectra and fixed-probe gradient workers can share
 this queue via `--diagnostic-bundle`; see [DIAGNOSTICS.md](DIAGNOSTICS.md) for

@@ -8,6 +8,37 @@ Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Destination eval/finetune smoke — 2026-09-09
 
+Full-suite inputs are now verified. Controller#d executiona5b3177 downloaded
+the five previously missing repositories into the retained benchmark root
+`/mnt/local/_data/deep-llms_th2/benchmarks/hf`. Executionfbfeb3b verified all133
+reference hashes, all78 English eval splits, HellaSwag/ARC-Easy/XNLI training
+splits, and a74-task two-example CPU smoke for tiny B0/C. These remain input/
+correctness checks, not research scores. Terminal reports were pulled via8792aff
+and matched to source hashes; see CURRENT_TASK.md. All42 requested checkpoints
+are retained, all eight GPUs were free, and no existing data was deleted.
+
+Authorized sweep: all six arms at250/500/1000/2000/3000/4000/5000, full English
+PPL and78 benchmark results per checkpoint, then independent English task
+fine-tunes with seeds42/123/456. Keep one GPU per job (eight concurrent), not
+eight-GPU DDP with a changed global batch. The checked-in shell handoff gates
+the entire84-job evaluation stage before the378-job fine-tuning stage and
+preserves original checkpoints. New outputs are separate from pretraining.
+
+Correction/retest: user approved fixing the benchmark precision issue described
+below. Commitbbcce4e explicitly configures HFLM BF16 forwards and FP32 softmax,
+without changing pretraining or fine-tuning updates. All85 local regressions
+passed. Execution5665bf6 then passed15 destination integration tests,12 CUDA
+precision cases and all six checkpoint5000 smoke workers. All18 task/checkpoint
+cases observedBF16 before/after fine-tuning; master weights/softmax remainFP32.
+PPL-path, two-update fine-tuning, save/reload and source-weight/config hash checks
+passed. After the final30s wait all eight GPUs were free; no burns restarted.
+Corrected summary: `temp/remote_logs/swt_smoke_fixed_final_20260909_summary.json`,
+SHA256 `bf89a99c724622fa125f694921b8073e8d63d6af59a067d8dc5996376b5c04f7`,
+matched against the hash printed on B200. The failed pre-fix smoke below remains
+historical evidence, not the status of the corrected code. No full research
+evaluation or finetuning sweep was run, and new English benchmarks still need
+their separate download/verification step.
+
 All six training arms finished at01:49:11 UTC. The post-training burn verifier
 timed out, but the independent burn was live on all eight GPUs at07:09 UTC,
 with advancing communication counters. At the user's request, the verified

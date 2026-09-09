@@ -1,6 +1,51 @@
 # Current task
 
-## Authorized benchmark precision fix and retest — 2026-09-09
+## Authorized full English evaluation then fine-tuning — 2026-09-09
+
+The user authorized evaluation followed by independent fine-tuning for all six
+arms at steps 250, 500, 1000, 2000, 3000, 4000 and 5000 (42 checkpoints), then
+emphasized downloading missing benchmarks first. Keep one GPU per independent
+job, up to eight concurrent jobs. Retain the documented three tasks and seeds
+42/123/456 (378 fine-tunes), BF16 forwards and unchanged task hyperparameters.
+No full sweep has launched yet. No cleanup, training restart or burn restart
+is part of this submission.
+
+Read-only execution97f82b2 verified all42 checkpoint configs/weight files are
+present, all eight GPUs free (0 MiB), and22 TiB available. Existing HellaSwag/ARC
+match all11 of their reference entries. Five repositories are absent, comprising
+122 missing reference files; there are zero hash mismatches. Executiona5b3177
+submits controller#d downloads of nyu-mll/blimp, EleutherAI/lambada_openai,
+baber/piqa, allenai/winogrande and aps/super_glue into the existing
+`/mnt/local/_data/deep-llms_th2/benchmarks/hf/<org>/<repo>` layout.
+Download completion, all133 reference hashes, and full offline task/split
+coverage must pass before launching the sweep. Evidence:
+`temp/remote_logs/swt_benchmark_inventory_20260909_c01.log`, SHA256
+`3c902461dfbb28808ce469ccdce5788041fcd6a6c59f7c4f8c002f4d457a0940`.
+Earlier no-full-sweep authorization statements below are historical.
+
+Downloads completed successfully: all five controller items reported OK.
+Executionfbfeb3b then verified all133 reference files, offline loading of all78
+evaluation tasks and the three training splits (HellaSwag39905, ARC-Easy2251,
+XNLI-English392702), and the74-task tiny B0/C CPU scoring smoke. All eight GPUs
+remained free. Terminal artifacts exported via8792aff were pulled and matched
+to their printed source SHA256 values: coverage
+`b31d9d35a8a408f725f089a108f79bc61805f0be6f3b5ed7c6075aa3defc6dd9`, smoke
+`7cdb16ec2a77713f3710d87f61bc2c431fcd84f2a9cd371b02a9c88a5994427a`.
+Local evidence prefix: `temp/remote_logs/swt_benchmark_verified_20260909_`.
+
+Prepared `scripts/eval_finetune_capacity_b200.sh` for fresh output
+`/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01`.
+It checks42 checkpoint steps/hashes, all benchmark splits and the common PPL
+cache once, validates84 eval/378 fine-tune job plans, copies/verifies Accelerate
+and checks GPUs before each stage. Eval success requires full benchmark sample
+counts and9829694 English PPL targets; fine-tune success additionally checks
+the unchanged task hyperparameters and full three-epoch update counts. Source
+pretraining files are untouched. No process signaling/deletion/burn restart.
+Local17 eval/harness tests passed without skips (101.741s); the expanded three
+handoff tests also passed, including rejection of incomplete PPL/changed weights.
+Launch/remote progress confirmation is still pending at this entry.
+
+## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 
 User approved fixing the confirmed evaluation-only bug and rerunning smoke.
 `eval.benchmarks.evaluate` now supplies explicit HFLM mixed_precision_dtype
@@ -8,7 +53,30 @@ User approved fixing the confirmed evaluation-only bug and rerunning smoke.
 Pretraining, PPL, diagnostic model calls and finetuning optimizer code are
 unchanged. The regression gate checks all six arms/both precisions, FP32
 softmax and FP32 master weights; the production smoke also records actual
-post-finetuning benchmark-forward dtypes. Local and destination retests pending.
+post-finetuning benchmark-forward dtypes. Shared fix commit: bbcce4e.
+
+Verification completed:85 local regression tests passed (174.311s), and a local
+real-data smoke passed. Execution5665bf6 deployed the fix and verified all four
+changed-file hashes plus the unchanged20-file pretraining manifest. Its B200
+tests passed:15 CPU integration tests (71.861s),12 CUDA precision cases (six
+arms ×FP32/BF16), and all six actual checkpoint5000 smoke workers (exit0).
+All18 checkpoint/task cases observedBF16 in both pre- and post-finetuning
+benchmark forwards and in fine-tuning updates. Each used two optimizer updates;
+all six arms passed2048-token synthetic PPL and fine-tuned save/reload, with
+unchanged original checkpoint weight/config hashes. These are bounded smoke
+tests, not research evaluation scores or full fine-tuning runs.
+
+After workers exited and30s elapsed, all eight GPUs were verified free. No
+burns were restarted. The terminal pipeline marker is
+`SWT_CORRECTED_BF16_SMOKE_SUCCESS`. Summary was exported through5211a3a and
+downloaded to `temp/remote_logs/swt_smoke_fixed_final_20260909_summary.json`;
+its SHA256 matches the independently printed source hash:
+`bf89a99c724622fa125f694921b8073e8d63d6af59a067d8dc5996376b5c04f7`.
+Remote corrected smoke output:
+`/mnt/local/_outputs/deep-llms_th2/swt/eval_finetune_smoke_20260909_b01`.
+CPU/precision/pipeline logs and per-arm reports use the same local filename
+prefix. Full English-suite benchmark downloads/verification remain a separate
+prerequisite; no allocation diagnostics were run.
 No full benchmark sweep, cleanup, training restart or burn restart is authorized.
 Previous failed smoke outputs below are preserved, not overwritten or relabeled.
 
