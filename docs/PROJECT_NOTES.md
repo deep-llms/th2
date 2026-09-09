@@ -5,6 +5,70 @@ requested reuse of sparse-embedding's sampled text and training workflow.
 No research training results. GPT-2 preprocessing was stopped and is superseded.
 Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
+## Batch-size benchmark completed — 2026-09-08
+
+Current launch supersedes the stopped10k runs below: user-authorized5k screening
+of all six arms was submitted in execution `594b3ac` and started at18:09:41 UTC.
+Output root: `/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_5k_s42_20260908_a01`.
+SWT_STOP_AT_STEP=5000 controls training and all verification gates consistently;
+effective batch512 gives5,242,880,000 input tokens per arm. No max_steps override:
+the full English pool and one-epoch LR schedule are unchanged. All GPUs were
+verified free, Accelerate copied/verified, and eight destination handoff tests
+passed. Cache regeneration was active (~2%) in the18:11 UTC snapshot. The queue
+will train B0/A128/A256/A512/C/D sequentially, verify checkpoint5000 for every arm,
+then launch persistent communicating burns only after success and free-GPU checks.
+
+Latest state: at the user's request, a03 was cancelled and cleaned at17:58:34 UTC.
+Only its exact experiment queue and eight verified GPU workers were stopped;
+a03 outputs/checkpoints and qwen_en_map160_batch1000 were deleted. Sampled data,
+tokenizer/model and unrelated HF caches were preserved. Stagewise directories
+have no cache-/tmp- leftovers. All eight GPUs are free; no job/burn was restarted.
+The discussion of5k screening has not yet resulted in a5k launch or code change.
+See CURRENT_TASK.md for the verified cleanup log and current authority.
+
+The user subsequently authorized a fresh rerun of all six arms. Execution
+`f528935` started the `qwen6_allarms_10k_s42_20260908_a03` workflow at17:22 UTC;
+all GPUs were verified free, Accelerate copied/validated, seven destination
+handoff tests passed. Cache regeneration was approximately10% in the17:25 UTC
+snapshot. It will use the unchanged batch16/accumulation4 protocol, stopping
+each arm at10k with the full-epoch schedule, then verify all results before
+launching the persistent communicating burn. See CURRENT_TASK.md for evidence.
+
+Subsequent user-authorized cleanup completed at16:54:52 UTC: the stopped
+`qwen6_allarms_10k_s42_20260908_a02` output (including checkpoint6250),
+`batch_benchmark_20260908_a01` output and dedicated `qwen_en_map160_batch1000`
+cache were deleted on B200. About519 GiB of directory usage was removed.
+Sampled data, tokenizer/model and unrelated HF benchmark cache remain intact.
+All eight GPUs were free at completion; no new run was launched. Local results
+below are preserved, but previous statements about retained remote checkpoints
+are historical. See CURRENT_TASK.md for exact paths and cleanup evidence.
+
+All 12 eight-GPU profiles passed, finishing at15:44:49 UTC. Each used five
+warm-up and20 measured optimizer updates, actual English training cache,
+BF16 and2048-token sequences. Effective batch stayed512:16×4×8 versus32×2×8.
+Downloaded JSON verified all eight ranks, finite timings and identical data
+fingerprints. Times below are median optimizer-update seconds, excluding
+periodic evaluation and checkpoint saving; this was not a full training run.
+
+| Arm | Batch16 / accumulation4 | Batch32 / accumulation2 |
+|---|---:|---:|
+| B0 | 0.7070 | 0.7010 |
+| A128 | 0.7253 | 0.7202 |
+| A256 | 0.7091 | 0.7014 |
+| A512 | 0.6861 | 0.6728 |
+| C | 0.5584 | 0.5543 |
+| D | 0.6950 | 0.6890 |
+
+Batch32 fits every arm, but the measured throughput gain is only0.7–2%,
+potentially within short-test variability. Peak reserved memory increases
+from75.9–82.8 GiB to150.0–163.2 GiB per GPU. No material end-to-end speedup
+is established. All GPUs were free at completion; research training remains
+stopped with B0/checkpoint-6250 retained. No automatic restart or burns.
+
+Evidence: `temp/remote_logs/swt_batch_progress_20260908_1629.log` and
+`temp/remote_logs/swt_benchmark_complete_20260908_1632.json` (SHA256
+`cf29dbe1115db58a86c7f9f01b1cf6e55913b97b18cc5822472fb94868e4e7c7`).
+
 ## Purpose and success criteria
 
 Test the allocation ideas in §12 of the historical design with a Qwen3 backbone:
@@ -76,8 +140,49 @@ occurred. The user subsequently instructed removal of this unnecessary guard
 to follow the proven sparse-embedding implementation. Retain HF's default of
 disabled Hub uploads and never enable uploads in launch settings. The direct
 outbound-upload prohibition and this example are now in local AGENT_GUIDE.md.
-No new execution push is part of that local correction/review. See
-CURRENT_TASK.md for exact evidence and the next deployment gate.
+That correction was committed as 792ea47. On the user's subsequent re-run
+request, execution commit **1226141** submitted a fresh a02 pipeline. At
+2026-09-08 13:25:50 UTC, the runner log confirmed source/host/ownership checks,
+all 51 destination CPU tests passing, and CPU tokenization-cache preparation
+underway while existing burns remained untouched. GPU smoke/training had not
+yet been observed. Run root:
+`/mnt/local/_outputs/deep-llms_th2/swt/qwen6_allarms_10k_s42_20260908_a02`.
+Evidence: `temp/remote_logs/swt_retry_start_20260908_a02.log`.
+No cleanup or replacement corpus sampling was performed. See CURRENT_TASK.md
+for the exact next gates and required completion artifacts.
+
+## English evaluation and fine-tuning implementation — 2026-09-08
+
+Added separate evaluation/fine-tuning tools with `--languages en` defaults;
+the active pretraining code and frozen20-file launch manifest are unchanged.
+`eval/eval_parallel.py` queues one PPL and one benchmark worker per checkpoint.
+`finetune/run_all.py` queues independent task/checkpoint/seed workers. Both
+use explicitly selected free GPUs, unique outputs, full result-coverage checks,
+and nonzero failure propagation; neither stops workloads or starts burns.
+
+Official lm-eval0.4.10 definitions were inspected at upstream tag commit
+f7d0b116 and reused for both task prompts and multiple-choice scoring. Local
+dataset paths are applied to task configs in memory, not shared package YAML.
+English zero-shot tasks are XNLI, Belebele, XStoryCloze, PAWS-X, HellaSwag and
+ARC-Easy; ARC-Easy adds the previously missing zero-shot fine-tune comparator.
+Future languages are explicit and unsupported pairs cannot become English
+fallbacks. Separate PPL per language and target-weighted combined NLL avoid
+cross-language packing/averaging errors. See EVALUATION.md for full protocol.
+
+Fine-tune defaults retain3 epochs/LR2e-5/tasks and3 seeds, but use FP32 master
+weights with BF16 autocast and HFLM-compatible continuation tokenization. This
+is not exactly the old BF16-master/separately-tokenized fine-tune protocol;
+record these differences when comparing historical results. English-only
+defaults still imply54 fine-tunes for6 checkpoints ×3 tasks ×3 seeds.
+There is no scheduled evaluation job or B200 environment change in this work.
+
+Final verification:62 tests passed in109.606s, including actual lm_eval0.4.10
+offline fixture scoring on all six model types, tiny BF16 CPU fine-tuning,
+save/eval round trip, token-boundary consistency, language selection and queue
+failure contracts. Log: temp/evaluation_final_full_suite.log. Optional harness
+dependencies were installed only in the isolated dev temp/evaluation_test_env;
+the existing swt environment was not changed. These are correctness tests,
+not real benchmark results or B200 throughput evidence.
 
 ## Qwen3 migration — 2026-09-08
 
