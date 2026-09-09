@@ -1,5 +1,28 @@
 # Current task
 
+## Authorized full English evaluation then fine-tuning — 2026-09-09
+
+The user authorized evaluation followed by independent fine-tuning for all six
+arms at steps 250, 500, 1000, 2000, 3000, 4000 and 5000 (42 checkpoints), then
+emphasized downloading missing benchmarks first. Keep one GPU per independent
+job, up to eight concurrent jobs. Retain the documented three tasks and seeds
+42/123/456 (378 fine-tunes), BF16 forwards and unchanged task hyperparameters.
+No full sweep has launched yet. No cleanup, training restart or burn restart
+is part of this submission.
+
+Read-only execution97f82b2 verified all42 checkpoint configs/weight files are
+present, all eight GPUs free (0 MiB), and22 TiB available. Existing HellaSwag/ARC
+match all11 of their reference entries. Five repositories are absent, comprising
+122 missing reference files; there are zero hash mismatches. Executiona5b3177
+submits controller#d downloads of nyu-mll/blimp, EleutherAI/lambada_openai,
+baber/piqa, allenai/winogrande and aps/super_glue into the existing
+`/mnt/local/_data/deep-llms_th2/benchmarks/hf/<org>/<repo>` layout.
+Download completion, all133 reference hashes, and full offline task/split
+coverage must pass before launching the sweep. Evidence:
+`temp/remote_logs/swt_benchmark_inventory_20260909_c01.log`, SHA256
+`3c902461dfbb28808ce469ccdce5788041fcd6a6c59f7c4f8c002f4d457a0940`.
+Earlier no-full-sweep authorization statements below are historical.
+
 ## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 
 User approved fixing the confirmed evaluation-only bug and rerunning smoke.
