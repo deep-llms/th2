@@ -43,7 +43,12 @@ the unchanged task hyperparameters and full three-epoch update counts. Source
 pretraining files are untouched. No process signaling/deletion/burn restart.
 Local17 eval/harness tests passed without skips (101.741s); the expanded three
 handoff tests also passed, including rejection of incomplete PPL/changed weights.
-Launch/remote progress confirmation is still pending at this entry.
+Shared handoff commit:a7412c4. Executiona6c0ab8 submits the authorized sweep;
+GitHub head was verified. All source files match development (only commands.sh
+differs), and all20 pretraining-manifest entries still match. The launch first
+checks the handoff SHA256 and runs its three CPU tests on B200, then executes
+the foreground script. Remote progress confirmation is pending at this entry.
+Do not repush its active#1 command to poll; use read-only Dropbox/#2 exports.
 
 ## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 
