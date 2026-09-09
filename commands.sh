@@ -1,95 +1,32 @@
 #1 +60+a
-#th2-swt-stop-old-finetune-preserve-all-results-20260909-a01
+#th2-swt-final5k-diagnostics-then-finetune-20260909-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-oish-worker-0
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
 conda activate swt_eval
+test "$(command -v python)" = /mnt/local/conda-py311/envs/swt_eval/bin/python
 date -u
 python - <<'PY'
-import json, os, signal, time
 from pathlib import Path
 from scripts.reclaim_verified_burn import identity
-from scripts.gpu_status import snapshot, require_free
-root = '/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01'
-pipeline = identity(199032)
-queue = identity(215026)
-assert pipeline['start'] == '168650771'
-assert pipeline['argv'] == ['bash','scripts/eval_finetune_capacity_b200.sh',root]
-assert queue['start'] == '168932038' and queue['parent'] == pipeline['pid']
-assert queue['argv'][:4] == ['python','-u','-m','finetune.run_all']
-assert queue['argv'][queue['argv'].index('--output-dir')+1] == root+'/finetune'
-def processes():
-    result = {}
-    for path in Path('/proc').iterdir():
-        if path.name.isdigit() and int(path.name) > 1:
-            try:
-                result[int(path.name)] = identity(int(path.name))
-            except (FileNotFoundError, ProcessLookupError):
-                pass
-    return result
-def signal_exact(record, sig):
+from scripts.gpu_status import require_free
+expected = [(199032, '168650771'), (215026, '168932038'), (227206, '169491835'), (227975, '169505946'), (227976, '169505950'), (227791, '169503251'), (227792, '169503254'), (227221, '169492061'), (226967, '169489549'), (227874, '169504377'), (227948, '169505631'), (227949, '169505632'), (227950, '169505634'), (227183, '169491796'), (227887, '169504801'), (227057, '169491176'), (227951, '169505635'), (227188, '169491815'), (227892, '169504857'), (227893, '169504861'), (227966, '169505683'), (227967, '169505686')]
+for pid, start in expected:
     try:
-        current = identity(record['pid'])
-        assert all(current[k] == record[k] for k in ('pid','start','argv'))
-        os.kill(record['pid'], sig)
-        print('SIGNAL_EXACT_OWNED_PID', record['pid'], sig.name, flush=True)
-    except (FileNotFoundError, ProcessLookupError):
-        print('OWNED_PID_ALREADY_EXITED', record['pid'], flush=True)
-def check_worker(r):
-    assert r['argv'][:4] == ['/mnt/local/conda-py311/envs/swt_eval/bin/python','-u','-m','finetune.train']
-    assert Path(r['argv'][r['argv'].index('--output-dir')+1]).parent == Path(root)/'finetune'
-before = processes()
-direct = [r for r in before.values() if r['parent'] == queue['pid']]
-assert direct
-for r in direct:
-    check_worker(r)
-status = snapshot()
-assert [g['index'] for g in status] == list(range(8))
-assert {p for g in status for p in g['pids']} <= {r['pid'] for r in direct}
-print('VERIFIED_PIPELINE_AND_QUEUE', json.dumps([pipeline, queue]), flush=True)
-# Stop dispatch temporarily before collecting workers; never signal runner parents/groups.
-frozen = []
-try:
-    for r in (pipeline, queue):
-        signal_exact(r, signal.SIGSTOP)
-        frozen.append(r)
-    time.sleep(.1)
-    records = processes()
-    direct = [r for r in records.values() if r['parent'] == queue['pid']]
-    for r in direct:
-        check_worker(r)
-        signal_exact(r, signal.SIGSTOP)
-        frozen.append(r)
-    records = processes()
-    owned = {queue['pid']}
-    while True:
-        expanded = owned | {p for p,r in records.items() if r['parent'] in owned}
-        if expanded == owned:
-            break
-        owned = expanded
-    children = [records[p] for p in owned if p != queue['pid']]
-    for r in children:
-        check_worker(r)
-    assert {p for g in snapshot() for p in g['pids']} <= owned
-    print('VERIFIED_OWNED_DESCENDANTS', json.dumps(children), flush=True)
-    signal_exact(pipeline, signal.SIGKILL)
-    signal_exact(queue, signal.SIGKILL)
-    for r in children:
-        signal_exact(r, signal.SIGKILL)
-finally:
-    # If a gate fails before termination, do not leave surviving jobs frozen.
-    for r in reversed(frozen):
-        signal_exact(r, signal.SIGCONT)
-time.sleep(30)
-require_free(list(range(8)))
-for r in (pipeline, queue, *children):
-    try:
-        now = identity(r['pid'])
-        assert now['start'] != r['start'], f'Owned PID still alive: {r["pid"]}'
+        current = identity(pid)
+        assert current['start'] != start, f'Old owned process still alive: {pid}'
     except (FileNotFoundError, ProcessLookupError):
         pass
-assert (Path(root)/'eval/complete.json').is_file()
-assert not (Path(root)/'complete.json').exists()
-print('OLD_FINETUNE_STOPPED_ALL_GPUS_FREE_ALL_OUTPUTS_PRESERVED', flush=True)
+root = Path('/mnt/local/_outputs/deep-llms_th2/swt/full_eval_finetune_42ckpt_20260909_a01')
+assert (root/'eval/complete.json').is_file()
+assert not (root/'complete.json').exists()
+require_free(list(range(8)))
+print('OLD_QUEUE_AND_ALL_OWNED_WORKERS_GONE_ALL_GPUS_FREE', flush=True)
+print('PRESERVED_FINETUNE_RESULTS', len(list((root/'finetune').glob('*/result.json'))), flush=True)
 PY
+sleep 30
+python scripts/gpu_status.py --gpus 0 1 2 3 4 5 6 7 --require-free
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 DO_NOT_TRACK=1
+CUDA_VISIBLE_DEVICES='' python -m unittest discover -s tests -p test_final_checkpoint_handoff.py -v
+bash scripts/final_checkpoint_diagnostics_finetune_b200.sh /mnt/local/_outputs/deep-llms_th2/swt/final5k_diagnostics_finetune_20260909_a01
