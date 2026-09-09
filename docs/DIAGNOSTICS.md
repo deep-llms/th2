@@ -223,6 +223,6 @@ It performs tiny forward calls for all six arms, requires actual FP32 and BF16
 projection outputs as requested, and exits nonzero on a mismatch. It does not
 score benchmarks or download anything. Both precision cases must pass, as must
 FP32 softmax and FP32 master weights. The pre-fix destination smoke failed BF16
-on all six arms; fine-tuning updates used BF16 correctly. Require the corrected
-destination test before full evaluation; see CURRENT_TASK.md for status/evidence.
+on all six arms; fine-tuning updates used BF16 correctly. The corrected B200
+gate and six-checkpoint eval/finetune smoke subsequently passed; see CURRENT_TASK.md.
 No allocation diagnostics or full benchmark sweep has been run.

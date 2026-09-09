@@ -8,6 +8,21 @@ Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
 ## Destination eval/finetune smoke — 2026-09-09
 
+Correction/retest: user approved fixing the benchmark precision issue described
+below. Commitbbcce4e explicitly configures HFLM BF16 forwards and FP32 softmax,
+without changing pretraining or fine-tuning updates. All85 local regressions
+passed. Execution5665bf6 then passed15 destination integration tests,12 CUDA
+precision cases and all six checkpoint5000 smoke workers. All18 task/checkpoint
+cases observedBF16 before/after fine-tuning; master weights/softmax remainFP32.
+PPL-path, two-update fine-tuning, save/reload and source-weight/config hash checks
+passed. After the final30s wait all eight GPUs were free; no burns restarted.
+Corrected summary: `temp/remote_logs/swt_smoke_fixed_final_20260909_summary.json`,
+SHA256 `bf89a99c724622fa125f694921b8073e8d63d6af59a067d8dc5996376b5c04f7`,
+matched against the hash printed on B200. The failed pre-fix smoke below remains
+historical evidence, not the status of the corrected code. No full research
+evaluation or finetuning sweep was run, and new English benchmarks still need
+their separate download/verification step.
+
 All six training arms finished at01:49:11 UTC. The post-training burn verifier
 timed out, but the independent burn was live on all eight GPUs at07:09 UTC,
 with advancing communication counters. At the user's request, the verified

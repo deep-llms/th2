@@ -7,8 +7,10 @@ for FP32) and `softmax_dtype` to FP32. Model master weights remain FP32.
 This applies equally to zero-shot and post-finetuning scoring; pretraining,
 fine-tuning updates, PPL and diagnostics are unchanged. The actual-forward
 regression gate is `scripts/check_eval_precision.py`, covering all six arms,
-both forward precisions, FP32 softmax and FP32 master weights. Require the
-corrected destination smoke to pass before full evaluation; see CURRENT_TASK.md.
+both forward precisions, FP32 softmax and FP32 master weights. The corrected
+B200 smoke passed all six checkpoints, including BF16 scoring before/after
+fine-tuning, save/reload and unchanged input checkpoints. See CURRENT_TASK.md
+for evidence. Full-suite benchmark downloads/verification are still separate.
 
 Current Stagewise run: **English only**. These tools are separate from
 pretraining and do not alter its model code, schedule, caches, or running job.

@@ -1,6 +1,6 @@
 # Current task
 
-## Authorized benchmark precision fix and retest — 2026-09-09
+## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 
 User approved fixing the confirmed evaluation-only bug and rerunning smoke.
 `eval.benchmarks.evaluate` now supplies explicit HFLM mixed_precision_dtype
@@ -8,7 +8,30 @@ User approved fixing the confirmed evaluation-only bug and rerunning smoke.
 Pretraining, PPL, diagnostic model calls and finetuning optimizer code are
 unchanged. The regression gate checks all six arms/both precisions, FP32
 softmax and FP32 master weights; the production smoke also records actual
-post-finetuning benchmark-forward dtypes. Local and destination retests pending.
+post-finetuning benchmark-forward dtypes. Shared fix commit: bbcce4e.
+
+Verification completed:85 local regression tests passed (174.311s), and a local
+real-data smoke passed. Execution5665bf6 deployed the fix and verified all four
+changed-file hashes plus the unchanged20-file pretraining manifest. Its B200
+tests passed:15 CPU integration tests (71.861s),12 CUDA precision cases (six
+arms ×FP32/BF16), and all six actual checkpoint5000 smoke workers (exit0).
+All18 checkpoint/task cases observedBF16 in both pre- and post-finetuning
+benchmark forwards and in fine-tuning updates. Each used two optimizer updates;
+all six arms passed2048-token synthetic PPL and fine-tuned save/reload, with
+unchanged original checkpoint weight/config hashes. These are bounded smoke
+tests, not research evaluation scores or full fine-tuning runs.
+
+After workers exited and30s elapsed, all eight GPUs were verified free. No
+burns were restarted. The terminal pipeline marker is
+`SWT_CORRECTED_BF16_SMOKE_SUCCESS`. Summary was exported through5211a3a and
+downloaded to `temp/remote_logs/swt_smoke_fixed_final_20260909_summary.json`;
+its SHA256 matches the independently printed source hash:
+`bf89a99c724622fa125f694921b8073e8d63d6af59a067d8dc5996376b5c04f7`.
+Remote corrected smoke output:
+`/mnt/local/_outputs/deep-llms_th2/swt/eval_finetune_smoke_20260909_b01`.
+CPU/precision/pipeline logs and per-arm reports use the same local filename
+prefix. Full English-suite benchmark downloads/verification remain a separate
+prerequisite; no allocation diagnostics were run.
 No full benchmark sweep, cleanup, training restart or burn restart is authorized.
 Previous failed smoke outputs below are preserved, not overwritten or relabeled.
 
