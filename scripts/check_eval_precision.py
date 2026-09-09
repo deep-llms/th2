@@ -1,7 +1,7 @@
 """Check actual harness forward precision on tiny arms; no datasets/downloads.
 
-This is a regression gate, NOT a benchmark. In the currently unfixed harness
-wrapper the BF16 case should fail; do not treat a passing FP32 case as success.
+This is a regression gate, NOT a benchmark. Both precision cases must pass;
+also require FP32 softmax and unchanged FP32 master-weight precision.
 Run on B200 only after authorization and the normal free-GPU checks.
 """
 import argparse
@@ -33,12 +33,15 @@ def check(device='cpu', arms=ARMS):
         model=build_model(experiment_config(arm,tiny=True)).to(device).eval()
         for precision in ('fp32','bf16'):
             observed=[]
+            softmax_dtypes=[]
             hook=model.model.layers[0].self_attn.q_proj.register_forward_hook(
                 lambda module, inputs, output: observed.append(str(output.dtype)))
             def forward_only(model, **kwargs):
                 # Execute the real HFLM _model_call constructed by our wrapper.
                 # Stop before scoring fabricated tasks; no synthetic accuracy.
-                model._model_call(torch.tensor([[1,1,1]],device=device))
+                logits=model._model_call(torch.tensor([[1,1,1]],device=device))
+                scores=torch.nn.functional.log_softmax(logits,dim=-1,dtype=model.softmax_dtype)
+                softmax_dtypes.append(str(scores.dtype))
                 raise ProbeComplete
             try:
                 with patch('lm_eval.simple_evaluate',side_effect=forward_only):
@@ -48,8 +51,11 @@ def check(device='cpu', arms=ARMS):
             finally:
                 hook.remove()
             expected='torch.bfloat16' if precision=='bf16' else 'torch.float32'
+            master_dtypes=sorted({str(p.dtype) for p in model.parameters()})
             reports.append(dict(arm=arm,precision=precision,expected=expected,observed=observed,
-                                passed=bool(observed) and set(observed)=={expected}))
+                softmax_dtypes=softmax_dtypes,master_dtypes=master_dtypes,
+                passed=bool(observed) and set(observed)=={expected}
+                    and softmax_dtypes==['torch.float32'] and master_dtypes==['torch.float32']))
     return dict(success=all(r['passed'] for r in reports),device=device,smoke_only=True,checks=reports)
 
 

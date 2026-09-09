@@ -108,11 +108,18 @@ def evaluate(model, tokenizer, tasks, *, device, precision, batch_size=8, seed=4
     from lm_eval.models.huggingface import HFLM
     if not tasks or batch_size <= 0:
         raise ValueError('Nonempty task set and positive batch required')
+    if precision not in ('fp32', 'bf16'):
+        raise ValueError('Choose fp32/bf16 benchmark precision')
     model.eval()
+    # HFLM enters its own autocast context in _model_call; an outer context
+    # cannot select its precision. Keep FP32 master weights and probability
+    # reductions, while explicitly selecting BF16 forward computation.
     lm = HFLM(pretrained=model, tokenizer=tokenizer, device=device,
               batch_size=batch_size, max_length=2048, add_bos_token=False,
-              prefix_token_id=tokenizer.eos_token_id)
-    with torch.no_grad(), torch.autocast(device, dtype=torch.bfloat16, enabled=precision == 'bf16'):
+              prefix_token_id=tokenizer.eos_token_id,
+              mixed_precision_dtype=torch.bfloat16 if precision == 'bf16' else None,
+              softmax_dtype=torch.float32)
+    with torch.no_grad():
         raw = lm_eval.simple_evaluate(model=lm, tasks=list(tasks.values()), num_fewshot=0,
             log_samples=False, bootstrap_iters=0, random_seed=seed, numpy_random_seed=seed,
             torch_random_seed=seed, fewshot_random_seed=seed)

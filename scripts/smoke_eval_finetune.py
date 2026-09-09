@@ -103,12 +103,20 @@ def main():
                 actual = model(probe, use_cache=False).logits.detach().cpu()
             torch.testing.assert_close(actual, expected, rtol=0, atol=0)
             reload_ok = True
-        after_benchmark = evaluate(model, tokenizer, {name: task}, device=args.device,
-                                   precision='bf16', batch_size=2)
+        observed.clear()
+        hook = model.model.layers[0].self_attn.q_proj.register_forward_hook(
+            lambda module, inputs, output: observed.append(str(output.dtype)))
+        try:
+            after_benchmark = evaluate(model, tokenizer, {name: task}, device=args.device,
+                                       precision='bf16', batch_size=2)
+        finally:
+            hook.remove()
+        after_benchmark_dtypes = sorted(set(observed))
         reports[name] = dict(full_train=full_train, full_eval=full_eval,
             smoke_train_examples=count, smoke_eval_examples=2,
             benchmark=benchmark, after_benchmark=after_benchmark,
             benchmark_dtypes=benchmark_dtypes,
+            after_benchmark_dtypes=after_benchmark_dtypes,
             training=training, training_dtypes=training_dtypes,
             weights_changed=changed, reload_ok=reload_ok)
         write_json(root/f'{name}.json', dict(smoke_only=True, **reports[name]))
@@ -118,7 +126,8 @@ def main():
         gc.collect()
         if args.device == 'cuda': torch.cuda.empty_cache()
     assert checkpoint_identity(source) == before, 'Source checkpoint changed'
-    success = all(r['benchmark_dtypes'] == ['torch.bfloat16'] for r in reports.values())
+    success = all(r['benchmark_dtypes'] == ['torch.bfloat16'] and
+                  r['after_benchmark_dtypes'] == ['torch.bfloat16'] for r in reports.values())
     write_json(root/'report.json', dict(success=success, smoke_only=True,
         checkpoint=before, tasks=reports, synthetic_long_context_ppl=ppl,
         source_checkpoint_unchanged=True))

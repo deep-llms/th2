@@ -1,12 +1,14 @@
 # Checkpoint evaluation and task fine-tuning
 
-**Open pre-launch gate:** the review found that the benchmark harness disables
-the wrapper's outer BF16 autocast. Until its explicit mixed-precision option is
-configured, benchmark model calls run in FP32 even when BF16 is requested.
-The documented BF16 protocol below is the intended protocol, not a verified
-current harness behavior. Preserve/run `scripts/check_eval_precision.py` on
-B200 later, after authorization and free-GPU checks; see [DIAGNOSTICS.md](DIAGNOSTICS.md).
-PPL and new diagnostic model calls do not use the affected harness wrapper.
+**Precision correction (2026-09-09):** the earlier B200 smoke found that the
+harness overrode outer BF16 autocast and ran benchmark forwards in FP32.
+The wrapper now explicitly sets HFLM `mixed_precision_dtype` to BF16 (or None
+for FP32) and `softmax_dtype` to FP32. Model master weights remain FP32.
+This applies equally to zero-shot and post-finetuning scoring; pretraining,
+fine-tuning updates, PPL and diagnostics are unchanged. The actual-forward
+regression gate is `scripts/check_eval_precision.py`, covering all six arms,
+both forward precisions, FP32 softmax and FP32 master weights. Require the
+corrected destination smoke to pass before full evaluation; see CURRENT_TASK.md.
 
 Current Stagewise run: **English only**. These tools are separate from
 pretraining and do not alter its model code, schedule, caches, or running job.
