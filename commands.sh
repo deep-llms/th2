@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-swt-next-architecture-production-smoke-20260909-a02
+#th2-swt-next-architecture-production-smoke-20260909-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-oish-worker-0
@@ -9,11 +9,11 @@ test "$(command -v python)" = /mnt/local/conda-py311/envs/swt/bin/python
 TASK_PYTHON=/mnt/local/conda-py311/envs/swt/bin/python
 TASK_TORCHRUN=/mnt/local/conda-py311/envs/swt/bin/torchrun
 TASK_BURN=/tmp/llm_pretrain_burn.py
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/next_architectures_smoke_20260909_a02
-TASK_BURN_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/burn_after_next_architectures_smoke_20260909_a02
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/next_architectures_smoke_20260909_a03
+TASK_BURN_ROOT=/mnt/local/_outputs/deep-llms_th2/swt/burn_after_next_architectures_smoke_20260909_a03
 TASK_BURN_LOG="$TASK_BURN_ROOT/burn.log"
-TASK_BURN_SESSION=swt_burn_after_next_architectures_smoke_20260909_a02
-TASK_BURN_PORT=29560
+TASK_BURN_SESSION=swt_burn_after_next_architectures_smoke_20260909_a03
+TASK_BURN_PORT=29561
 TASK_ARMS=(T768 T512 P512-128-384 A640 A768 A768-Direct FixedResidual WNW D-1024 O1024-I256 O1024-I232 O1280 C-Direct D-Direct)
 TASK_GPUS=(0 1 2 3 4 5 6 7)
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
@@ -49,12 +49,12 @@ PY
 CUDA_VISIBLE_DEVICES='' "$TASK_PYTHON" -m unittest tests.test_capacity_models -v
 
 # Reclaim only the eight workers descended from the exact reviewed burn path.
-"$TASK_PYTHON" scripts/reclaim_verified_burn.py \
+"$TASK_PYTHON" -m scripts.reclaim_verified_burn \
     --burn-path "$TASK_BURN" --gpus "${TASK_GPUS[@]}"
-"$TASK_PYTHON" scripts/reclaim_verified_burn.py \
+"$TASK_PYTHON" -m scripts.reclaim_verified_burn \
     --burn-path "$TASK_BURN" --gpus "${TASK_GPUS[@]}" --stop
 sleep 30
-"$TASK_PYTHON" scripts/gpu_status.py --gpus "${TASK_GPUS[@]}" --require-free
+"$TASK_PYTHON" -m scripts.gpu_status --gpus "${TASK_GPUS[@]}" --require-free
 
 TASK_SMOKE_EXIT=0
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 "$TASK_TORCHRUN" \
@@ -92,7 +92,7 @@ PY
 fi
 
 sleep 30
-"$TASK_PYTHON" scripts/gpu_status.py --gpus "${TASK_GPUS[@]}" --require-free
+"$TASK_PYTHON" -m scripts.gpu_status --gpus "${TASK_GPUS[@]}" --require-free
 
 # Restore the reviewed persistent eight-rank communicating burn after the test.
 "$TASK_PYTHON" - "$TASK_BURN_PORT" <<'PY'
