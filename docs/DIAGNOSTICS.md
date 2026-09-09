@@ -225,4 +225,6 @@ score benchmarks or download anything. Both precision cases must pass, as must
 FP32 softmax and FP32 master weights. The pre-fix destination smoke failed BF16
 on all six arms; fine-tuning updates used BF16 correctly. The corrected B200
 gate and six-checkpoint eval/finetune smoke subsequently passed; see CURRENT_TASK.md.
-No allocation diagnostics or full benchmark sweep has been run.
+The full42-checkpoint benchmark/PPL sweep subsequently completed on2026-09-09.
+Allocation diagnostics are a separate, newly authorized step5000-only run;
+see CURRENT_TASK.md for its observed status and fine-tuning handoff.

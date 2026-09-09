@@ -1,5 +1,52 @@
 # Current task
 
+## Revised scope: step5000 fine-tuning and diagnostics — 2026-09-09
+
+The user superseded the 42-checkpoint fine-tuning sweep: stop its active
+fine-tuning queue, preserve results/checkpoints/caches, and run only the six
+step5000 checkpoints. HellaSwag/ARC-Easy/English XNLI and seeds42/123/456 remain
+unchanged (54 jobs). Existing all42 zero-shot PPL/benchmark results are complete;
+do not rerun them. Add frequency-binned held-out NLL, embedding spectra and
+fixed-probe gradients only at step5000 (18 diagnostic jobs).
+
+Preparation: `scripts/final_checkpoint_diagnostics_finetune_b200.sh` uses a fresh
+output root, one frozen full-training-pool frequency bundle, a bounded real
+B0/C CUDA smoke, then the 18 diagnostic workers and 54 fresh fine-tunes.
+Each stage requires successful validation and free-GPU gates; Accelerate is
+copied/verified. No source checkpoint changes, downloads, cleanup or burn launch.
+Local12 diagnostic tests and three final-only handoff tests passed. Execution
+f0394cb's read-only ancestry probe failed before any signaling because system
+Python could not import the project helper. Corrected read-only a7194df uses
+the verified swt_eval conda interpreter. Stop/relaunch not yet confirmed.
+
+Intended fresh output:
+`/mnt/local/_outputs/deep-llms_th2/swt/final5k_diagnostics_finetune_20260909_a01`.
+Intended frozen bundle:
+`/mnt/local/_data/deep-llms_th2/swt/diagnostics/qwen_en_pool_20260909_a01`.
+Only publish completion after all18 diagnostic and54 fine-tuning results pass.
+Earlier full fine-tuning scope below is historical.
+
+## Complete evaluation results pulled — 2026-09-09
+
+All42 checkpoints' evaluation results are local at
+`artifacts/eval_42ckpt_20260909_a01/results/` (Git-ignored). This contains42 PPL
+reports,42 benchmark reports (3276 task results), and four provenance/queue
+files. Every checkpoint has all78 English tasks, including67 BLiMP subtests,
+and9829694 PPL targets. All88 exported file SHA256 hashes were checked before
+and after safe extraction, along with checkpoint identities, BF16 settings,
+finite metrics, full task sample counts and successful84-job completion.
+
+The retained archive is `artifacts/eval_42ckpt_20260909_a01/eval_results.zip`,
+SHA256 `8174e9d757ba8ac57869fe58d4e4eefd52a1dcdeac3166c1c4caff4fac61bdba`.
+Its adjacent export_manifest.json matches the independently printed source hash
+`5bd2526773449d584124d17d63b0b9cadc385628f422addf56f1a4edfe0e26f8`.
+Executione0acac7 packaged only completed results on CPU; ccbf9e1 exported them
+through#2. No model weights, fine-tuning outputs or live logs were bundled;
+no process was signaled and running fine-tuning was left untouched.
+Evaluation finished successfully in43.6 minutes; fine-tuning began09:44 UTC.
+The10:15 UTC read-only timing check observed40 fine-tunes trained and33 also
+scored. This result pull is not a newer fine-tuning completion/status check.
+
 ## Authorized full English evaluation then fine-tuning — 2026-09-09
 
 The user authorized evaluation followed by independent fine-tuning for all six
@@ -7,8 +54,8 @@ arms at steps 250, 500, 1000, 2000, 3000, 4000 and 5000 (42 checkpoints), then
 emphasized downloading missing benchmarks first. Keep one GPU per independent
 job, up to eight concurrent jobs. Retain the documented three tasks and seeds
 42/123/456 (378 fine-tunes), BF16 forwards and unchanged task hyperparameters.
-No full sweep has launched yet. No cleanup, training restart or burn restart
-is part of this submission.
+The full sweep is launched (executiona6c0ab8); current progress is recorded
+below. No cleanup, training restart or burn restart is part of this submission.
 
 Read-only execution97f82b2 verified all42 checkpoint configs/weight files are
 present, all eight GPUs free (0 MiB), and22 TiB available. Existing HellaSwag/ARC
@@ -43,7 +90,34 @@ the unchanged task hyperparameters and full three-epoch update counts. Source
 pretraining files are untouched. No process signaling/deletion/burn restart.
 Local17 eval/harness tests passed without skips (101.741s); the expanded three
 handoff tests also passed, including rejection of incomplete PPL/changed weights.
-Launch/remote progress confirmation is still pending at this entry.
+Shared handoff commit:a7412c4. Executiona6c0ab8 submits the authorized sweep;
+GitHub head was verified. All source files match development (only commands.sh
+differs), and all20 pretraining-manifest entries still match. The launch first
+checks the handoff SHA256 and runs its three CPU tests on B200, then executes
+the foreground script. Remote startup is confirmed at08:57:16 UTC. All three
+destination tests passed, all eight GPUs were free, and the source/data/input
+and job-plan gates passed. The09:03 UTC pipeline export confirms Accelerate
+copied/verified at `/mnt/local/.cache/huggingface/accelerate/default_config.yaml`,
+the subsequent free-GPU check, and eight eval workers on physical GPUs0–7.
+All seven B0 PPL workers have exited0 and their queue validation passed;
+benchmark workers are advancing and A128 PPL has started. Fine-tuning remains
+queued behind successful completion/validation of all84 evaluation jobs.
+No project traceback/OOM/failure marker appeared in the retrieved startup logs.
+Export0746910 only retrieved results/logs; it did not rerun or stop the queue.
+Local evidence: `temp/remote_logs/swt_full_eval_start_20260909_pipeline.log`
+(SHA256ec9662cf6d2df74ee6c9e9972cd8f79cd973ebfe4d95cdd9e43e82e1028a143e),
+plus matching-prefix inputs, both complete job plans, and two B0 worker logs.
+The pulled plans were checked locally for all42 identities,84 eval jobs,
+378 independent fine-tunes, English-only coverage and seeds42/123/456.
+Do not repush its active#1 command to poll; use read-only Dropbox/#2 exports.
+
+09:07 UTC progress reconfirmed before the user leaves:12/84 eval workers
+completed with exit0 and successful queue validation (eight PPL and four full
+benchmark jobs). New A128 workers are starting as GPUs become available.
+Fine-tuning is still correctly queued, not running concurrently with eval.
+Read-only exportf586c66 retrieved the log without resubmitting the workload.
+Evidence: `temp/remote_logs/swt_full_eval_progress_20260909_0907.log`, SHA256
+`d9f101a4d3fd9d90611bf653f22e9a640a61b87a9afdf54748c00abb074e3030`.
 
 ## Benchmark precision fixed; corrected B200 smoke passed — 2026-09-09
 

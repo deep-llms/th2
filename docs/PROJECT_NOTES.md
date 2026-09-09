@@ -2,7 +2,10 @@
 
 Status (2026-09-09): switched to the six-layer Qwen3 English pilot. The user
 requested reuse of sparse-embedding's sampled text and training workflow.
-All six5000-step training arms finished; full benchmark evaluation is pending.
+All six5000-step training arms and the42-checkpoint evaluation sweep finished;
+fine-tuning is underway. Complete raw evaluation results are retained locally
+under `artifacts/eval_42ckpt_20260909_a01/results/` (see CURRENT_TASK.md for
+source checksums and provenance). No scientific comparison is recorded yet.
 GPT-2 preprocessing was stopped and is superseded.
 Current source/commands are documented in CAPACITY_EXPERIMENTS.md.
 
