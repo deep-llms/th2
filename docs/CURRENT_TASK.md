@@ -1,5 +1,26 @@
 # Current task
 
+## Complete evaluation results pulled — 2026-09-09
+
+All42 checkpoints' evaluation results are local at
+`artifacts/eval_42ckpt_20260909_a01/results/` (Git-ignored). This contains42 PPL
+reports,42 benchmark reports (3276 task results), and four provenance/queue
+files. Every checkpoint has all78 English tasks, including67 BLiMP subtests,
+and9829694 PPL targets. All88 exported file SHA256 hashes were checked before
+and after safe extraction, along with checkpoint identities, BF16 settings,
+finite metrics, full task sample counts and successful84-job completion.
+
+The retained archive is `artifacts/eval_42ckpt_20260909_a01/eval_results.zip`,
+SHA256 `8174e9d757ba8ac57869fe58d4e4eefd52a1dcdeac3166c1c4caff4fac61bdba`.
+Its adjacent export_manifest.json matches the independently printed source hash
+`5bd2526773449d584124d17d63b0b9cadc385628f422addf56f1a4edfe0e26f8`.
+Executione0acac7 packaged only completed results on CPU; ccbf9e1 exported them
+through#2. No model weights, fine-tuning outputs or live logs were bundled;
+no process was signaled and running fine-tuning was left untouched.
+Evaluation finished successfully in43.6 minutes; fine-tuning began09:44 UTC.
+The10:15 UTC read-only timing check observed40 fine-tunes trained and33 also
+scored. This result pull is not a newer fine-tuning completion/status check.
+
 ## Authorized full English evaluation then fine-tuning — 2026-09-09
 
 The user authorized evaluation followed by independent fine-tuning for all six
