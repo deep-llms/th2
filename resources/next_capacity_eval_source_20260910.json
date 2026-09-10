@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "files": [
+    {"path": "capacity_allocation/__init__.py", "bytes": 499, "sha256": "d1f16cbe39dab7caabc8803e27a4e8baf67c01366630f04e8394e2e7e2de8b88"},
+    {"path": "capacity_allocation/data.py", "bytes": 4280, "sha256": "81cec40e20145d74bc7dc400f7dd747a76b21aee9cb51335d3a74aad9c0f33d8"},
+    {"path": "capacity_allocation/modeling.py", "bytes": 25238, "sha256": "cdaedf19db69c35a4bf58bef8a1b3224647b17359c0fa098d02277df2b26341c"},
+    {"path": "eval/__init__.py", "bytes": 65, "sha256": "ae7d51513beab689308e508f58bd9bc02e81479e49094254f7615a8d604c3ac5"},
+    {"path": "eval/benchmarks.py", "bytes": 8649, "sha256": "5d3c5c122f3fd9d5fe3bb56a88e28c576cfd49e0711625fd45a6c3a5ef46b634"},
+    {"path": "eval/blimp_tasks.py", "bytes": 2800, "sha256": "95cedb12e3b9689adc533e95db5515ccd3e9f56c6a12c7e9561e61eba0968e7f"},
+    {"path": "eval/diagnostic_data.py", "bytes": 9792, "sha256": "4c8341b87140774fb9cb585af5afce4cc7d888b00d97973edda4c175d128e43f"},
+    {"path": "eval/diagnostic_gradients.py", "bytes": 10624, "sha256": "3f645ab8b33be1010c0381b9b234881437fb21409a9f1221c1b349b7ceddcc42"},
+    {"path": "eval/diagnostic_metrics.py", "bytes": 9875, "sha256": "1bf390562460d0918dc1b3ea59d0101603d9a60b54fd72c474d8333631411992"},
+    {"path": "eval/diagnostics_checkpoint.py", "bytes": 6798, "sha256": "e00db95f34ba5407409e3b2c2daa39d52b56a9cdcefa9a7d22a9d4ed0cde0e1a"},
+    {"path": "eval/eval_checkpoint.py", "bytes": 3520, "sha256": "248eb9b5511a782940dea38f7bc4cf1e0e117ce005cc66edd99af9ebf1c1b53a"},
+    {"path": "eval/eval_parallel.py", "bytes": 4292, "sha256": "8d1351906f6fc4fe6c91fcad155750dd6f7312ac0522e214449e127b76fdcb10"},
+    {"path": "eval/parallel.py", "bytes": 5560, "sha256": "8e2525486e1d2013be414ef04f572cf6bf3bdfb95cb42a3f52777159e066b561"},
+    {"path": "eval/ppl.py", "bytes": 2089, "sha256": "1f09fc4bdbd17687fa168f6be798762aa810be3608bdc236a82cee9039e09315"},
+    {"path": "eval/runtime.py", "bytes": 3459, "sha256": "2d695322a16f1605ecfe5fd6a579efcdc052052e41520a5a15c67170a35b2fbf"},
+    {"path": "finetune/__init__.py", "bytes": 80, "sha256": "33c4f00b8a7bdce1a3da5dd27d7a6e3055b5bbd1a171312b4cb234fe21fceaf4"},
+    {"path": "finetune/run_all.py", "bytes": 2518, "sha256": "f41c557b6576d17005c001f157640087ff0505bf8ba32c77d84593a0d8274432"},
+    {"path": "finetune/tasks.py", "bytes": 3402, "sha256": "26968332a2c7392aa652e3ee7ae4f37a3b49bbb8de49c18d223484caeb513511"},
+    {"path": "finetune/train.py", "bytes": 5797, "sha256": "aa7255f032a02a7075f729535831a0e1630a6737aced9d01d4143f05b9577dd0"},
+    {"path": "scripts/eval_diagnostics_finetune_next_capacity_b200.sh", "bytes": 7485, "sha256": "c5b34c855cc8abcb386d7d414be97701c087018e4c387ede17343d71f933e62f"},
+    {"path": "scripts/gpu_status.py", "bytes": 3106, "sha256": "63506e500bd24c4b105234116cd601543e1cdf5bd50c599b22550730b31c38eb"},
+    {"path": "scripts/next_capacity_eval_handoff.py", "bytes": 11911, "sha256": "c63f6b4887e027577cd19d485b210a296c0fbaf1b84420820f0c32db261305a4"},
+    {"path": "scripts/reclaim_verified_burn.py", "bytes": 3785, "sha256": "134b6c7189dbf89b46a8072ad3c919aff2f060a9e1693b0efcbf712e83481922"},
+    {"path": "scripts/verify_manifest.py", "bytes": 3778, "sha256": "4be05466e3a0144cbb6930438e0c94df8597e7ae725c27ff20fe3db340db13c7"},
+    {"path": "resources/accelerate_config.yaml", "bytes": 291, "sha256": "edc67b8db554a8053f8e183b3108ad643e4fe98602577a190911bd27b6b9a93f"},
+    {"path": "resources/llm_pretrain_burn.py", "bytes": 11414, "sha256": "2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174"},
+    {"path": "tests/test_next_capacity_eval_handoff.py", "bytes": 4125, "sha256": "5325e9ab381cf973c958ce41e728d69ad72c785cbcb1813220dbf4c4daafc1bb"}
+  ]
+}
