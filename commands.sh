@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-swt-readonly-next-capacity-current-progress-20260910-a04
+#th2-swt-readonly-next-capacity-current-progress-20260910-a05
 set -euo pipefail
 
 OUT=/mnt/local/_outputs/deep-llms_th2/swt/next_capacity_14arms_5k_s42_20260909_a01
