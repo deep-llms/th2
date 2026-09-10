@@ -199,7 +199,7 @@ class HarnessIntegrationTests(unittest.TestCase):
         from scripts.check_eval_precision import check
         report = check('cpu')
         self.assertTrue(report['success'], report)
-        self.assertEqual(len(report['checks']), 12)
+        self.assertEqual(len(report['checks']), 2 * len(ARMS))
 
     def test_exact_blimp_suite_matches_pinned_harness(self):
         from lm_eval.tasks import TaskManager
