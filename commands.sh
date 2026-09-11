@@ -1,49 +1,29 @@
-#1 +60+a
-#th2-zgui-verify-culturax-download-20260911-a01
+#1 +30+a
+#th2-zgui-sampling-prerequisites-20260911-a01
 set -euo pipefail
 date -u
 hostname
 test "$(hostname)" = thiennh-p6-zgui-worker-0
+free -h
+nproc
+df -h /mnt/local
 /mnt/local/conda-py311/envs/train_env/bin/python -B - <<'PY'
-import collections, hashlib, json, time
+import os
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
-import pyarrow.parquet as pq
-root=Path('/mnt/local/_data/deep-llms_th2/data/raw')
-manifest="# CulturaX raw parquet manifest\n# Dataset: uonlp/CulturaX\n# Revision: 6a8734bc69fefcbb7735f4f9250f43e4cd7a442e\n# Selection: prepare_data.py SEED=42 (50 en; 5 each vi/zh/ru/de/ar)\n# Total: 75 files, 166107112571 bytes\n# Columns: sha256<TAB>bytes<TAB>relative_path\n6d0242e4b08ec94ad5f59875af8ddcc81f325a5edd96d5ea51aa236833b337bf\t1597722889\tar/ar_part_00002.parquet\n71be18cde755b6e37cae14f1518b77c6acab9d12c3929b51d5e9acbef25dd875\t1591679872\tar/ar_part_00027.parquet\n53c735ab676b64abed2af8630f39015f06db85477d72f9b44a67d1192fa03dc7\t1602760343\tar/ar_part_00053.parquet\ndbb5c54310c8f46f6e61089accf22518f474eb1c272aec43a76fb31017490914\t1600305932\tar/ar_part_00062.parquet\n1531684174d7576e5a827cadf9459e5cbc3018a273c6b072fc3881b24004def8\t1597769044\tar/ar_part_00065.parquet\nc58eaa26302cf5f01dd5f3f1c1c5d55934af41506698af5c6896598bd5b88874\t1899943826\tde/de_part_00064.parquet\n34519ea985c0097a5dac8e913e0e128dd25da1e9cccadcc11d020d4bc0cdcd42\t1900244417\tde/de_part_00150.parquet\nfaf53dfad13849eca57fa867a2d4f553d7600ef5a1c80f016a2e72e098932153\t1901859717\tde/de_part_00210.parquet\na7041ac19e61a894b1a5a7c1483722705f68229bf98d787fc6b9b2dd7edc13c1\t1897365011\tde/de_part_00255.parquet\n29cac955c15b614ac1fe76ccad94cb92f609a5b6dfa28e66e115a5fbd6f6217a\t1900131697\tde/de_part_00297.parquet\nb83d23dc436670adc95adf3111fc330902aebfce671775a831309c614a34004e\t2496438120\ten/en_part_00015.parquet\n782d0a1ad055dd122c53e72f9b352fbf5c8172051962c0564132f606a99e702e\t2504086169\ten/en_part_00024.parquet\nf41272fbad532f1ef483a57d4ea843c4190bff6da9b85a05d2066d99f393b9e5\t2502230084\ten/en_part_00062.parquet\nb6df04f2a2287b1c632e41e3b3f07cc6890d7cdfdb13cbd12f3f1dc2477fc98d\t2502008547\ten/en_part_00079.parquet\nc0ee8eac4b54341d5f5812dad349315da3fcab77e30f95be891756a199247173\t2502087620\ten/en_part_00119.parquet\n8606ea2adf824c67f525a55ffa33a2e9b40dbb40b606a6f1fc4e1756d8bb417a\t2498457978\ten/en_part_00387.parquet\nefebe7516f235e3ccf6f09078a0b999d9d59f06f4c31f48514cafbb24ce31477\t2500854058\ten/en_part_00457.parquet\nf82a0398455efa7c527a0151ac1f7a0af22658ed9b5ace0d6c7956e64ac72656\t2501289801\ten/en_part_00459.parquet\n223380555239a7460f461ee31afeebc82eb3b8891c8d827749ce9aad3f98aeac\t2498366384\ten/en_part_00501.parquet\n7c5494f8c8d4d4e2af14c909c9cbc3476439d9f15659ee9ff2d4f01bc22261bc\t2503893527\ten/en_part_00539.parquet\n492748980355941d17c461774449e99069e3adb524c584cd6c53f306492a1cc7\t2500486769\ten/en_part_00767.parquet\n4408a0469c73601f76159cd6862455b2681082f4e4c0fe14b40cf47c22fc1a17\t2505956906\ten/en_part_00914.parquet\n96357190eeeae5e8e066c475c1600115c49004412626602119234b909bbbdf48\t2508214795\ten/en_part_01044.parquet\nd4818f2c221bc4ecd273e7d80725004bd7abca77522b96659c1719dfdda74f2f\t2512814800\ten/en_part_01046.parquet\ndafd1aa41b7b4b1db94292fad881959c7ee1a467a812361463296e68944d7dcb\t2514139714\ten/en_part_01058.parquet\n3927593273510101e2adbed8f19cb1e11d187359e421714063604af81267f763\t2510135478\ten/en_part_01083.parquet\n883db1943ae900743ce284ac1b03adb2e55934f89b857b611ca40883d990bb53\t2514835957\ten/en_part_01115.parquet\na9d7d64faac8259ccabf3f22b72053c657acba15da5253f5b20357c8c1e7804a\t2511979369\ten/en_part_01120.parquet\nda054544a6edfca8be3e93c39f307cfd0e09528f8c218c690482abdb46e399bf\t2506448645\ten/en_part_01131.parquet\n40dbce2591d13c76c9902d8d7811de895e8865e9daca97b7acc298ca40636829\t2507723757\ten/en_part_01155.parquet\n5610de52f4aff6023a7fe30e33ec6f36f1cd8ecfb0eab9cd1ca003ebdf8acf75\t2512787640\ten/en_part_01252.parquet\n61d2636e2c3adbf0aab7e8e0689f5ca73ce5a8181790dc226411e97194e7906f\t2519065528\ten/en_part_01430.parquet\n66e675f2889f171a425b6a50a74b2534900961d744e4fd998d128ef50e0e4e27\t2505457163\ten/en_part_01456.parquet\nd1ae76d968ac3644dc47818c4001c76ae60af7c4a04ab55377beac4294609ab7\t2510984776\ten/en_part_01489.parquet\na0373d8db1e60b235ec576488bb748a43a5a7b2f1e9c12559fe58e1f31fcdfaf\t2507156777\ten/en_part_01697.parquet\n640df665f52b8202473a1fb75ad1c3fce11e69c183c96f25cbe2a469a26a88a9\t2506977415\ten/en_part_01766.parquet\n322ca02c7dd22ff4f1496854d7daab62cbace5305a9c420a7bd09841a47bae44\t2511246575\ten/en_part_01851.parquet\n9dca073624a37d36acb43a88a6a140476c97bb77810b331db38e1493c3013e55\t2509713874\ten/en_part_01863.parquet\n0e424d408fbbf45b89c618e12ab744a9fdafe6040cf0f40fbab93d81803132f1\t2507273602\ten/en_part_01871.parquet\n4eb7f6c588aaf4bfc650fa34a7e0007f8622169c275d5a97a6e1fdbd257866c0\t2510920337\ten/en_part_01903.parquet\n8ac4877dd78c3e3924c78e7ffc3b404f8cd5a901b51f2ad09762c6ea4635a83d\t2341519366\ten/en_part_02078.parquet\n66a346a3a6ac0312f602512d99284c393dc870a9ce0f5ea087208df1a7dfba14\t2351927972\ten/en_part_02079.parquet\nf30e1950bc6e97cd75a7bcdb6b134fd12546e3b02a540dbb45c2bf4d5471383b\t2349831093\ten/en_part_02083.parquet\na70daef1c156006533c117557b2452be19daec1ca995352144cf642a54ccad21\t2344237915\ten/en_part_02139.parquet\n7d6a1d7638ad7ef13ee0784f4b7e301360456052c7d241e24e57c370b464d7c8\t2348342112\ten/en_part_02331.parquet\n1146297e52102085616e63cc0c8e67ca6cff13b604f0336d6662b7e19159b8a5\t2348008384\ten/en_part_02351.parquet\ncac6ea4b0ab2426ecffc0a838cbdbcb86929103da3ffeed0c7c22bb9c13b068e\t2348471928\ten/en_part_02391.parquet\ndd6b80100bb624f06ff4b5dbb28a4fba84de0529f4d56449c09593887877eb53\t2353098626\ten/en_part_02415.parquet\n34255a3568d468f25cf75ee0e84b7542c963673839bcde1b25236daa7dcb194d\t2346461443\ten/en_part_02451.parquet\nbd93d0690c0d5c7c90665a3b1d2897e51aa223d99b3585bd9e52655f1ca3fbd5\t2343408029\ten/en_part_02565.parquet\nb3cc4643ef753845652a7503ee95ad5619fdd8756452950bf7e5c982bc1f1dd4\t2352666441\ten/en_part_02622.parquet\n1cef7ba8f2342a3f427d4a8fd220dda0a9eb45379a0ac050f8cc3fa187360d6a\t2345683476\ten/en_part_02662.parquet\n4cb021717dfb618463cb2f601de0e6bdfc480640932fd19ecf604d89bcb86ea0\t2351300854\ten/en_part_02688.parquet\nd7f3da7a06986582eb3ca89239acf6d49803839476f734cac512c511d01df506\t2344141940\ten/en_part_02691.parquet\n3a3e3f49498117383b4884db883fc71db9afdeb8ae1b454f2c5e8d70a996dca7\t2354829014\ten/en_part_02715.parquet\nc1a139ec39fa6d4498992e39adfefd133b434545aee31faed3904cd58b9e148a\t2345630465\ten/en_part_02796.parquet\n4842e8486955d10c3e2a8c6b14a5f1898b37ca4603a08db1902db509b5576895\t2342873411\ten/en_part_02907.parquet\nb389d3483298f78dbe1da897d0fa4e5477da43d30fc4fd7a308fb6e31df6ecde\t2348188823\ten/en_part_03048.parquet\ncd4b6dc13d0a8e9dd367f0ffa4b3b1c087ed48262faa9cdadccb76965c2419a2\t2351808884\ten/en_part_03060.parquet\naf52f027b4f1b43651d329362b32956cd92eaa7073deb54d5972dab70388e5bc\t2350985534\ten/en_part_03066.parquet\naaaf805d4163c44c0209f66f25e3bfa206c06ecd52f3cc44297c1febed45fac4\t1682989747\tru/ru_part_00055.parquet\n950ad37b99a3b960bb224134394dd8134bd664cbe09a80aa9f4bfc2aee051a97\t1683428405\tru/ru_part_00218.parquet\nc2a4088f3c2b215332d92ac164632314ead044772434c59f4d39c7099a45f620\t1682553447\tru/ru_part_00593.parquet\nd13367a649aec8a57c5a1bd41dc32bba075956e61918174866b5142fa8637d30\t1685705486\tru/ru_part_01152.parquet\n51d87bf982ac7f2748fd14fa85f38d9f71d5a1ce1324287483ea92c65bcff738\t1682756560\tru/ru_part_01407.parquet\n86c03f6381a24823ff82aee55d433d33c74d95776c31570a4153152422017f00\t1600816776\tvi/vi_part_00028.parquet\nfbfdf0b1a092aa53c7444e40bd2507a5f76bcf1a45f31cce85e14fe60694d14e\t1601629501\tvi/vi_part_00030.parquet\n6ea9d7e3b20537adde1c024c68bc00025f9504eaa77bbb2b95e9b7ff2588f78e\t1600731927\tvi/vi_part_00034.parquet\n663d57ad435a111c83baf59843f25652c120ef2bafcc40fbb4b163861b12ff4f\t1601291493\tvi/vi_part_00068.parquet\n0978d3b8d25b76608b65dbeff652d200c89b28d408e68b2eea507cfe2304fe13\t1603310545\tvi/vi_part_00085.parquet\na15e59008ebb997c699fb4d384006547bb1e9f77a658cd2cb8241de57294827c\t2009026036\tzh/zh_part_00099.parquet\neffce96d8556794a7a0998c3b33bbda44b84363f53a8c40923a14302b9ff3c98\t2003275408\tzh/zh_part_00118.parquet\n064db32923088090a73cfb2d131202c80f93bdb384b55f8f50fd19d99839f141\t2002905523\tzh/zh_part_00146.parquet\n59af101f4e5acdac89af2c0576554a568d6432d27b0620ababfe0067d941030b\t2003226230\tzh/zh_part_00238.parquet\n05cf9fd512d0b1fd56afbb041421b6ff5c174b3948bc31b2d01f955cf40d1faf\t2006234864\tzh/zh_part_00298.parquet"
-expected={}
-for line in manifest.splitlines():
-    if not line or line.startswith('#'): continue
-    digest,size,relative=line.split()
-    expected[relative]=(digest,int(size))
-assert len(expected)==75
-actual={p.relative_to(root).as_posix() for p in root.rglob('*.parquet')}
-assert actual==set(expected), dict(missing=sorted(set(expected)-actual),extra=sorted(actual-set(expected)))
-assert sum(size for _,size in expected.values())==166107112571
-for name,(_,size) in expected.items():
-    assert (root/name).stat().st_size==size, name
-print('FILE_NAMES_AND_SIZES_PASSED files=75 bytes=166107112571',flush=True)
-def check(item):
-    name,(wanted,size)=item
-    path=root/name
-    digest=hashlib.sha256()
-    with path.open('rb') as f:
-        while chunk:=f.read(8*1024*1024): digest.update(chunk)
-    assert digest.hexdigest()==wanted, ('HASH_MISMATCH',name)
-    parquet=pq.ParquetFile(path)
-    assert parquet.metadata.num_rows>0 and 'text' in parquet.schema_arrow.names,name
-    return dict(file=name,bytes=size,rows=parquet.metadata.num_rows)
-start=time.monotonic()
-with ThreadPoolExecutor(max_workers=4) as executor:
-    rows=[]
-    for result in executor.map(check,expected.items()):
-        rows.append(result)
-        print('VERIFIED',json.dumps(result),flush=True)
-counts=collections.Counter(Path(row['file']).parts[0] for row in rows)
-assert counts==dict(en=50,vi=5,zh=5,ru=5,de=5,ar=5),counts
-print('CULTURAX_DOWNLOAD_VERIFIED',json.dumps(dict(success=True,root=str(root),
-    files=len(rows),bytes=sum(x['bytes'] for x in rows),languages=dict(counts),
-    elapsed_seconds=round(time.monotonic()-start,2))),flush=True)
+print('CPU_AFFINITY',len(os.sched_getaffinity(0)))
+model=Path('/mnt/local/_models/deep-llms_th2/Qwen3-0.6B')
+for name in ('config.json','tokenizer.json','tokenizer_config.json'):
+    p=model/name
+    print('TOKENIZER_FILE',str(p),p.stat().st_size if p.exists() else 'ABSENT')
+out=Path('/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B')
+print('SAMPLING_OUTPUT_EXISTS',out.exists())
+for proc in Path('/proc').iterdir():
+    if not proc.name.isdigit(): continue
+    try:
+        argv=(proc/'cmdline').read_bytes().split(b'\0')
+        if argv and b'python' in Path(os.fsdecode(argv[0])).name.encode() and any(x.endswith(b'prepare_data.py') for x in argv):
+            print('EXISTING_SAMPLER',proc.name,[os.fsdecode(x) for x in argv if x])
+    except (FileNotFoundError,ProcessLookupError,PermissionError): pass
 PY
-date -u
-echo CULTURAX_DOWNLOAD_HASH_AND_PARQUET_CHECK_COMPLETE
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv,noheader
+echo SAMPLING_PREREQUISITE_CHECK_COMPLETE
