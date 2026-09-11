@@ -1,5 +1,5 @@
-#1 +120+a
-#th2-verify-train-env-and-eval-20260911-a01
+#1 +30+a
+#th2-recheck-envs-before-culturax-download-20260911-a02
 set -euo pipefail
 date -u
 hostname
@@ -37,6 +37,12 @@ print('ENV_IMPORT_CHECK_PASSED',json.dumps(dict(env=name,python=sys.executable,
 PY
     python -m pip check
 done
+df -h /mnt/local
+if test -d /mnt/local/_data/deep-llms_th2/data; then
+    find /mnt/local/_data/deep-llms_th2/data -maxdepth 3 -type f -name '*.parquet' -printf '%p (%s bytes)\n'
+else
+    echo CULTURAX_DESTINATION_NOT_PRESENT
+fi
 nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader
 nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv,noheader
 date -u
