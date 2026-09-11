@@ -1,9 +1,0 @@
-# manager: conda
-# fresh: true
-# python: 3.11
-torch
-transformers==5.9.0
-datasets==4.8.5
-accelerate==1.13.0
-lm_eval[hf]==0.4.10
-sentencepiece
