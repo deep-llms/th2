@@ -1,2 +1,4 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed17_20260913_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed17_20260913_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_prepare_pilot_v1_20260913_a01/prepare.log
-#th2-ccm-hourly-20260913T141503Z
+#1 +60+a
+#th2-ccm-stage1-six-arms-20260913-a01
+set -euo pipefail
+bash scripts/launch_pilot_stage1.sh
