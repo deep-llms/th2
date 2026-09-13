@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-ccm-readonly-preflight-20260913-a01
+#th2-ccm-readonly-preflight-20260913-a02
 set -euo pipefail
 date -u
 hostname
@@ -10,7 +10,7 @@ nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=c
 /mnt/local/conda-py311/envs/train_env/bin/python -B - <<'PY'
 import importlib, json, subprocess
 from pathlib import Path
-for name in ('torch','transformers','numpy','pyarrow','pytest'):
+for name in ('torch','transformers','numpy','pyarrow'):
     module=importlib.import_module(name)
     print('ENV',name,getattr(module,'__version__','unknown'),flush=True)
 import torch
@@ -45,3 +45,33 @@ df -h /mnt/local
 free -h
 date -u
 echo CCM_READONLY_PREFLIGHT_COMPLETE
+/mnt/local/conda-py311/envs/train_env/bin/python -B - <<'PY'
+import hashlib, json, time
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+import pyarrow.parquet as pq
+root=Path('/mnt/local/_data/deep-llms_th2/data/raw')
+expected={}
+for line in Path('resources/culturax_raw_manifest.tsv').read_text().splitlines():
+    if not line or line.startswith('#'): continue
+    sha,size,name=line.split()
+    if name.startswith('en/'): expected[name]=(sha,int(size))
+assert len(expected)==50
+assert {p.relative_to(root).as_posix() for p in (root/'en').glob('*.parquet')}==set(expected)
+def verify(item):
+    name,(wanted,size)=item
+    path=root/name
+    assert path.stat().st_size==size,name
+    with path.open('rb') as f: actual=hashlib.file_digest(f,'sha256').hexdigest()
+    assert actual==wanted,name
+    file=pq.ParquetFile(path)
+    assert file.metadata.num_rows>0 and 'text' in file.schema_arrow.names,name
+    return dict(file=name,sha256=actual,bytes=size,rows=file.metadata.num_rows)
+start=time.monotonic()
+with ThreadPoolExecutor(max_workers=4) as pool:
+    results=list(pool.map(verify,expected.items()))
+for row in results: print('VERIFIED_EN_SHARD',json.dumps(row),flush=True)
+print('CCM_REAL_RAW_DATA_VERIFIED',json.dumps(dict(files=len(results),bytes=sum(x['bytes'] for x in results),seconds=time.monotonic()-start)),flush=True)
+PY
+date -u
+echo CCM_PREFLIGHT_AND_REAL_RAW_VERIFICATION_COMPLETE
