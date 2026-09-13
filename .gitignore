@@ -1,0 +1,18 @@
+# Runtime data and local-only configuration
+temp/
+data/
+cache/
+checkpoints/
+outputs/
+logs/
+artifacts/
+__pycache__/
+*.pyc
+*.log
+*.part
+.env
+.env.*
+!.env.example
+project.local.json
+/docs/AGENT_GUIDE.md
+/docs/DROPBOX_ACCESS.md
