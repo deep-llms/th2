@@ -98,10 +98,10 @@ def validate_train(root, arm, corpus, vocab, common):
                 frozen_backbone_exact=True, frozen_table_exact=arm != 'grad', step=977, input_tokens=256114688)
 
 
-def validate_eval(root, arm, corpus, vocab, common):
+def validate_eval(root, arm, corpus, vocab, common, checkpoint=None):
     path = root/'eval'/arm
     m = read_json(path/'metrics.json')
-    ck = common if arm == 'base' else checkpoint_meta(root/'train'/arm/'checkpoint-977')
+    ck = checkpoint if checkpoint is not None else (common if arm == 'base' else checkpoint_meta(root/'train'/arm/'checkpoint-977'))
     require(m['arm'] == arm and m['role'] == 'dev' and not m['final_evaluation'] and not m['engineering'] and
             m['seed'] == 17 and m['phase'] == ck['phase'] and m['step'] == ck['step'] and
             m['total_steps'] == ck['total_steps'] and m['checkpoint_hash'] == ck['model_sha256'], 'Wrong evaluation contract')

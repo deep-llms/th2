@@ -1,5 +1,128 @@
 # Current task
 
+## Active request — launch Stage-2 matched continuation, 2026-09-13
+
+User authorized five seed-17 arms sequentially, with artifact verification,
+dev evaluation and original communicating burns afterward. Stage-1 is now
+confirmed complete at 17:16:25 UTC (fresh child-folder handoff export), and
+its burns were verified at 17:47:51. Earlier stale-status notes below are
+historical, not current failures. Last runner status acknowledges `08b0f21`
+successfully after a transient SSH failure; no new job has yet been pushed.
+
+Stage-2 implementation/launch checks in progress. See `STAGE2_RUN_20260913.md`.
+Canonical folder: `/disk/thuat/context_compiled_memory`; execution checkout:
+`/tmp/th2-commands-only-20260911-q6dcOW`, main, origin deep-llms/th2.
+No research-core modifications, old-output/cache deletion or locked-val use.
+Stop only verified original burn workers AFTER the Stage-1 idle observer is
+disarmed through its own `STOP_IDLE_WATCH` and its exit verified.
+
+## Historical request — sequential Stage-1 arms, 2026-09-13
+
+Completion check requested at approximately 17:45 UTC via commit `08b0f21`
+(read-only #2, remote main confirmed). Repeated Dropbox checks over several
+minutes returned unchanged status/export files: `_RUN_STATUS_.log` is still
+modified at 16:23:11 UTC and does not acknowledge the new commit. Latest
+workflow heartbeat remains 16:22:57. Completion, evaluation results and current
+GPU/burn state are therefore UNVERIFIED, not failed. No explicit new AWS or
+project error was returned. Do not relaunch, clean or signal anything to fix
+this visibility issue. Execution head is `08b0f21`; evidence:
+`temp/stage1_done_export_status_20260913_a04.log` and
+`temp/stage1_status_20260913_1747.json` (stale heartbeat).
+
+Latest check: read-only export `3612926`, heartbeat 16:22:57 UTC. Contextual,
+Isolated, Shuffled, Shallow and Delta each completed 977 steps and passed
+their full training gates (unchanged backbone/table, paired initialization).
+Their subprocess wall times were 16.55 / 16.42 / 16.44 / 16.43 / 16.51 minutes,
+excluding the following wait and validator. Grad is running on all eight GPUs,
+at least step 250/977 (65536000 tokens), finite NLL/gradients, with roughly
+14–16 minutes of training remaining at the observed rate. Evaluation has not
+started. Evidence: `temp/stage1_status_20260913_1623.json` and
+`temp/stage1_handoff_20260913_1623.log`. No workload was modified. Execution
+head is now `3612926` (#2 only); older startup observations below are historical.
+
+User authorized the next arms. Launch commit `18c89f6` submitted
+`scripts/launch_pilot_stage1.sh` to th2; startup is now verified, not merely
+pushed. Input gate passed at 14:47:58 UTC. Old observer exited before burn
+workers 31343–31350 were stopped through verified pidfds. All eight GPUs
+passed free checks at 14:49:00 and 14:49:30. Contextual launched at 14:49:30;
+fresh export `dfe0c85` confirms 131 contiguous, finite updates / 34340864 tokens.
+Its recorded contract is Stage-1, seed 17, bf16, world size 8, total 977 steps,
+reader peak LR 5e-4 and the exact completed common checkpoint hash. GPU worker
+PIDs are 32359–32366, one per GPU; latest heartbeat is 14:52:31 UTC.
+Evidence: `temp/stage1_handoff_20260913_a01.log`,
+`temp/stage1_workflow_20260913_a02.json`,
+`temp/stage1_contextual_run_20260913_a02.json`, and
+`temp/stage1_contextual_train_20260913_a02.jsonl`.
+Plan: six Stage-1 arms, 977 steps each, eight GPUs sequentially; then Base +
+six full dev evaluations, paired primary comparisons, and verified burns.
+No Stage-2, locked-val use, new compiler, cleanup or optimizer resume.
+See `STAGE1_RUN_20260913.md` for settings, paths and the observer stop contract.
+New workflow root: `/mnt/local/_outputs/deep-llms_th2/ccm_stage1_seed17_20260913_a01`.
+The old dev a04 monitor exited after observing Steps 1–3 complete; it no longer
+owns execution Git. The new remote handoff records per-minute status itself.
+79 local tests passed before deployment; `ccm/` core remains unchanged.
+Execution head is `dfe0c85`; commands.sh is now a read-only #2 export, not a
+second launch. No local hourly push monitor is active. The remote persistent
+sequence owns subsequent arms/evaluation/gates/burn restoration; do not start
+another GPU job while it runs. Future reclaim after completion must disarm
+the Stage-1 root's `STOP_IDLE_WATCH`, not only the old completed workflow.
+
+## Latest B200 completion — verified 2026-09-13, 14:17 UTC
+
+Fresh read-only export `0bac963` confirms the original single-GPU compiler
+exited 0 at 14:10:26 UTC after processing exactly 1,000,000,000 tokens.
+Reported compilation wall time: 17849.15 seconds (4h57m29s), excluding process
+startup. All five table artifacts (shallow/contextual/delta/isolated/shuffled)
+passed the table gate at 14:11:48, with corpus/vocabulary/checkpoint identities
+checked. All eight GPUs passed the free check at 14:12:20; the handoff then
+verified burn startup and recorded `verified_steps_1_2_3_and_burns_active`,
+`success: true`, at 14:13:01. Steps 1–3 are now complete; no reader training
+has been launched by this status check.
+
+Evidence: `temp/b200_workflow_fresh_20260913_1416.json` and
+`temp/b200_handoff_fresh_20260913_1416.log`. The local a04 monitor below will
+exit after retrieving this terminal state. The remote idle-burn observer
+remains active: create its workflow-root `STOP_IDLE_WATCH` and verify it exits
+before an authorized future job reclaims the GPUs. Do not stop anything for
+a status request.
+
+## Latest verified state — 2026-09-13, dev compiler benchmark
+
+Step 1 finished and passed its final data gate at 05:43 UTC. Step 2 finished
+at 09:09 UTC (15259 updates / 4000055296 tokens) and its model/optimizer/log
+checks passed at 09:10 UTC. Compilation started at 09:12 UTC; the latest
+observed B200 heartbeat at 12:45 UTC still showed it running on GPU 0, with
+original communicating burns on GPUs 1-7.
+
+User authorized a **dev-only speed benchmark**, not cancellation/replacement
+of the B200 compiler. See `COMPILER_BENCHMARK_20260913.md` and
+`tests/benchmark_compiler.py`: CPU/GPU accumulation, larger batches, length
+grouping and four-GPU NCCL merging tested at full pilot dimensions. Measured
+3.08x / 6.00x / 9.60x sample speedups for GPU accumulation / added grouping /
+four GPUs respectively. These are A100 engineering timings, not B200 ETAs.
+No `ccm/` production source, B200 workload or execution command was changed.
+The existing local hourly monitor remains responsible for read-only #2 pulls.
+
+At approximately 14:15 UTC the old local monitor (`ccm_pilot_monitor_20260913_a02`)
+gracefully relinquished Git control via its local `STOP` file. Replacement
+`ccm_pilot_monitor_20260913_a04` requests an immediate fresh snapshot, then
+continues hourly for up to 12 checks (or stops on complete/failure). Reports
+and its `STOP`/expected-head files are now under
+`temp/pilot_monitor_20260913_a04/`; log:
+`temp/pilot_monitor_20260913_a04.log`. This changes only dev-side snapshot
+scheduling, not the B200 workflow or its GPU processes. Use this new monitor's
+STOP file to relinquish Git control before any other execution push.
+
+Follow-up equivalence audit completed on four dev A100s: fixed-state replay
+and whole-original-batch distribution both reproduce all bf16 lookup tables
+exactly on the sample, though raw master statistics have rounding differences.
+Length grouping changes forward numerics and is NOT an identical-output
+replacement (up to 0.7852% relative L2 mean error). Preserve original physical
+batches for the conservative candidate. See the benchmark report's audit
+section. No B200 job or production source was changed.
+
+## Historical overnight launch and early observations
+
 Status: full pilot data preparation started on 2026-09-13 at 01:36:51 UTC.
 New authority: user approved unattended Step 1 -> Step 2 common training ->
 Step 3 offline table compilation, plus persistent burns and monitoring.
@@ -10,13 +133,22 @@ scanned 2026000 documents and written 1602396747 / 5040134656 tokens (31.79%).
 Evidence: `temp/overnight_armed_20260913.log`. Training has not started yet.
 Local hourly monitor: `scripts/monitor_pilot_local.py`, tmux session
 `ccm_pilot_monitor_20260913_a02`, reports under
-`temp/pilot_monitor_20260913_a02/` (verify its first snapshot before assuming active).
+`temp/pilot_monitor_20260913_a02/`. Its first full snapshot is verified: four
+downloaded files (including the sibling handoff log), local SHA256 checks passed.
+Remote heartbeat 02:42:52 UTC: preparation 1896188056 tokens / 2396000 documents,
+still waiting, all eight original GPUs 98% / 2510 MiB. Local tmux pane alive.
+Evidence: `temp/pilot_monitor_20260913_a02/20260913T024223Z/report.json`.
+The next hourly snapshot is due about 03:42 UTC. Latest execution head after
+the monitor's first push: `fcc767c` (#2 only). Do not push over the monitor.
 Create that local directory's `STOP` file to relinquish its Git control before
 making another execution push. It also stops automatically on an unexpected
 HEAD change. The local monitor only submits #2 and pulls small status/log files.
 The first monitor's snapshot verified a fresh 02:37:51 UTC heartbeat and all
 eight burns active. It was stopped locally to correct retrieval of the sibling
 handoff log (exported in the parent Dropbox folder); no B200 task was stopped.
+Local final suite: 75 tests passed; `temp/overnight_local_tests_20260913.log`.
+These latest observation-only notes are local; no further execution push was
+made because the hourly monitor now owns its expected-HEAD guard.
 Remote preflight passed; full preparation/validation is not complete yet.
 Prior B200 smoke passed; see `B200_SMOKE_20260913.md`.
 

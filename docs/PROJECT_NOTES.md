@@ -1,6 +1,93 @@
 # Project notes
 
-Status: context-compiled memory offline pilot; no scientific experiment results yet.
+Status: seed-17 Stage-1 completed; Stage-2 matched continuation authorized.
+
+## Stage-1 dev result and next phase — 2026-09-13
+
+All six 977-update training runs, seven dev evaluations and artifact gates
+completed successfully at 17:16:25 UTC. All-eight-GPU original burns were
+verified again at 17:47:51. Evidence: local
+`temp/stage1_handoff_child_recheck_20260913_a01.log` and
+`temp/stage1_status_child_recheck_20260913_a01.json` (fresh flattened Dropbox
+child-folder exports). Earlier stale-status observations below are historical.
+
+| Stage-1 arm | Overall dev NLL | PPL |
+|---|---:|---:|
+| Base (unadapted) | 3.242478541 | 25.597087 |
+| Contextual | 3.240683974 | 25.551192 |
+| Isolated | 3.241132248 | 25.562649 |
+| Shuffled | 3.241994293 | 25.584694 |
+| Shallow | 3.240763330 | 25.553220 |
+| Delta | 3.240717930 | 25.552060 |
+| Grad | 3.239475761 | 25.520339 |
+
+Contextual minus Isolated: -0.000448274 nats/token, document-bootstrap 95% CI
+[-0.000468182, -0.000428767]. Contextual minus Shuffled: -0.001310319,
+CI [-0.001342067, -0.001279312]. Both primary directions are favorable but
+effects are small; Grad is better. These are single-backbone development
+diagnostics, not multi-seed evidence or a training-efficiency claim.
+
+User authorized the planned Stage-2 seed-17 continuation: Base, Contextual,
+Isolated, Shuffled, Grad, 3815 updates each from the same 4B common checkpoint
+with fresh optimizers/modules, followed by dev evaluations and burns.
+Delta fails the preregistered overall-NLL safeguard and is not included.
+No locked validation or replication launch. See `STAGE2_RUN_20260913.md`.
+
+## Stage-1 sequential launch — 2026-09-13
+
+User authorized six seed-17 reader-adaptation arms. Launch `18c89f6`:
+Contextual → Isolated → Shuffled → Shallow → Delta → Grad, each on all eight
+GPUs for 977 steps / 256114688 tokens, with the backbone frozen. The sequence
+then evaluates Base and all six arms on dev, validates outputs, calculates the
+two primary contextual contrasts, and restores verified original burns.
+See `STAGE1_RUN_20260913.md`. No Stage-2/val launch is authorized by this job.
+
+Startup verified: input artifacts passed; old idle observer exited; only its
+verified burn workers were stopped; two 30-second free checks passed. First
+Contextual launch at 14:49:30 UTC. Export `dfe0c85` shows 131 finite contiguous
+updates / 34340864 tokens, the correct 8-rank bf16 seed-17 contract, and the
+same common checkpoint hash. These are startup checks, not a quality result.
+Outputs: `/mnt/local/_outputs/deep-llms_th2/ccm_stage1_seed17_20260913_a01`.
+79 local tests passed; no research-core changes or old-output cleanup.
+
+## Original B200 compilation completed — 2026-09-13
+
+Fresh #2 export `0bac963` confirms compilation exited 0 at 14:10:26 UTC:
+1,000,000,000 tokens, 17849.15 seconds reported wall time (4h57m29s),
+5926582414 output bytes. All five table constructors passed the artifact gate
+at 14:11:48, including corpus/vocabulary/checkpoint identity checks. The
+handoff checked all eight GPUs free and verified burn startup before recording
+all Steps 1–3 complete at 14:13:01. No reader-quality results yet. Evidence:
+`temp/b200_handoff_fresh_20260913_1416.log` and
+`temp/b200_workflow_fresh_20260913_1416.json`.
+
+## Compiler performance benchmark — 2026-09-13
+
+Common seed-17 training completed and passed verification (4B tokens, 15259
+updates; approximately 3h25 wall time). Offline compilation is the next active
+stage. A user-approved dev-only benchmark found substantial avoidable CPU
+accumulation and padding overhead. Full details and caveats are in
+`COMPILER_BENCHMARK_20260913.md`.
+
+On a fixed 398818-token CulturaX sample with a random full-size writer, median
+pass times were 19.534s for current CPU accumulation, 6.334s for GPU accumulation
+at the same batch size, 3.255s with length grouping, and 2.036s on four A100s
+including NCCL merging. Counts matched exactly. Same-batch GPU accumulation
+produced identical bf16 lookups on this sample; changed batch layouts produced
+small but nonzero bf16 forward differences. These are implementation benchmark
+results, not scientific quality results or B200 throughput predictions.
+No production job was stopped or changed and nothing was pushed for the test.
+
+Follow-up four-A100 equivalence audit: replaying identical captured states with
+NCCL merging, or distributing unchanged original batches, reproduced all three
+bf16 lookup tables exactly on this sample. Master statistics still differ by
+floating-point rounding. Length grouping did **not** reproduce the tables:
+up to 0.7852% relative L2 mean difference, with differences already present in
+the forward residuals. Do not treat the benchmark's 1% guard as a scientific
+equivalence threshold. Prefer preserved physical batches when reproduction
+is the priority; their four-GPU speed was not measured by the 9.60x result.
+See the follow-up section of `COMPILER_BENCHMARK_20260913.md` and
+`temp/compiler_equivalence_audit_20260913/complete.json`.
 
 ## Local implementation — 2026-09-12
 
@@ -86,6 +173,11 @@ tests passed, including exact stage order, failed-data blocking, PID reuse,
 PID-1 refusal and live-child preservation. The full 72-test local suite also
 passed. Commit `0750f56` was verified ARMED on B200 at 02:32:50 UTC, with
 preparation progressing and all original burns active; no training yet.
+The final local suite passed 75 tests. The independent dev monitor's complete
+first retrieval was verified (four files and local SHA256), with a fresh remote
+02:42:52 UTC heartbeat: 1896188056 prepared tokens, all eight original burns
+still 98% / 2510 MiB. The B200 supervisor and dev hourly monitor are both active;
+training/compilation are gated future stages, not completed results.
 
 ## Purpose and success criteria
 
