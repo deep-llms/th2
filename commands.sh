@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-stage1-six-arms-20260913-a01
-set -euo pipefail
-bash scripts/launch_pilot_stage1.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_stage1_seed17_20260913_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_stage1_seed17_20260913_a01/status.json
+#th2-ccm-stage1-confirm-training-20260913-a01
