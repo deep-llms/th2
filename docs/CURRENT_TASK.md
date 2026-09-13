@@ -7,9 +7,20 @@ dev evaluation and original communicating burns afterward. Stage-1 is now
 confirmed complete at 17:16:25 UTC (fresh child-folder handoff export), and
 its burns were verified at 17:47:51. Earlier stale-status notes below are
 historical, not current failures. Last runner status acknowledges `08b0f21`
-successfully after a transient SSH failure; no new job has yet been pushed.
+successfully after a transient SSH failure.
 
-Stage-2 implementation/launch checks in progress. See `STAGE2_RUN_20260913.md`.
+Stage-2 launch `b8d1712b0d2f70b60b93faf4ad7c22da31d0e9c6` acknowledged.
+Read-only export `ac6c0e2` verifies input gate success at 18:27:04, Stage-1
+observer voluntary exit at 18:27:35, and stopping ONLY burn workers 35999–36006.
+Both all-eight-GPU free checks passed at 18:28:06 and 18:28:36. Base-Continue
+launched at 18:28:36 with the correct eight-rank Stage-2 command. This initial
+snapshot predates run.json/train.jsonl creation; optimizer progress still
+needs a fresh export. Evidence: `temp/stage2_handoff_20260913_a01.log` and
+`temp/stage2_status_20260913_a01.json`. Do not repush #1 or relaunch.
+Canonical suite 86 passed; execution suite 39 passed (dev-only Dropbox-monitor
+test excluded because its client is not deployed). No ccm bytes changed in
+execution: `055f0518853e76487a4e2f31b81f1441113d4fceab322b5e211359a7d58f2fa9`.
+See `STAGE2_RUN_20260913.md`.
 Canonical folder: `/disk/thuat/context_compiled_memory`; execution checkout:
 `/tmp/th2-commands-only-20260911-q6dcOW`, main, origin deep-llms/th2.
 No research-core modifications, old-output/cache deletion or locked-val use.
