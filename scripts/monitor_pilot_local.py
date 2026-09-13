@@ -93,8 +93,10 @@ def main():
                         item['path'] == '/_RUN_STATUS_.log')
             if relevant and item['type'] == 'file':
                 candidates.append(item)
-            elif relevant and item['type'] == 'folder':
-                candidates.extend(x for x in list_folder(token, url, item['path']) if x['type'] == 'file')
+            elif item['type'] == 'folder' and (relevant or item['path'] == '/mnt_local__outputs_deep-llms_th2'):
+                candidates.extend(x for x in list_folder(token, url, item['path'])
+                                  if x['type'] == 'file' and (relevant or
+                                     'ccm_pilot_seed17_20260913_a01' in x['path']))
         report = dict(time=tag, commit=expected, files=[], workflow=None)
         for item in candidates:
             if not item['bytes'] or item['bytes'] > 25*1024*1024:

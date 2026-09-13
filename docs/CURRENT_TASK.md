@@ -9,11 +9,14 @@ burn workers 18141-18148 still at 98% utilization / 2510 MiB. Preparation had
 scanned 2026000 documents and written 1602396747 / 5040134656 tokens (31.79%).
 Evidence: `temp/overnight_armed_20260913.log`. Training has not started yet.
 Local hourly monitor: `scripts/monitor_pilot_local.py`, tmux session
-`ccm_pilot_monitor_20260913_a01`, reports under
-`temp/pilot_monitor_20260913_a01/` (verify its first snapshot before assuming active).
+`ccm_pilot_monitor_20260913_a02`, reports under
+`temp/pilot_monitor_20260913_a02/` (verify its first snapshot before assuming active).
 Create that local directory's `STOP` file to relinquish its Git control before
 making another execution push. It also stops automatically on an unexpected
 HEAD change. The local monitor only submits #2 and pulls small status/log files.
+The first monitor's snapshot verified a fresh 02:37:51 UTC heartbeat and all
+eight burns active. It was stopped locally to correct retrieval of the sibling
+handoff log (exported in the parent Dropbox folder); no B200 task was stopped.
 Remote preflight passed; full preparation/validation is not complete yet.
 Prior B200 smoke passed; see `B200_SMOKE_20260913.md`.
 
