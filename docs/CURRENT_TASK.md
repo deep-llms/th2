@@ -1,6 +1,36 @@
 # Current task
 
+## New active request — queue seed-29 common pretraining, 2026-09-13
+
+User explicitly authorized seed 29's first/common phase after the current
+Stage-2 workflow completes, irrespective of scientific wins/losses. Require
+the full workflow completion, original eight-GPU burns observed for three
+minutes, Stage-2 observer STOP_IDLE_WATCH + verified exit, then verified burn
+worker stopping and two 30s/free checks. Train independent seed-29 common
+backbone for 15259 updates/4B, validate and restore burns. No compilation,
+adaptation/continuation, seed43, locked-val or model changes in this queue.
+Implementation complete: execution suite 47 passed; shell syntax passed.
+Deployment pending; see `SEED29_QUEUE_20260913.md`.
+The current Stage-2 job is NOT stopped, relaunched or edited by this request.
+
 ## Active request — launch Stage-2 matched continuation, 2026-09-13
+
+Latest read-only progress export `04a4728`, heartbeat 20:27:42 UTC:
+Base and Contextual both finished all 3815 updates and passed training gates.
+Subprocess wall times: Base 56m27s; Contextual 58m25s (each excludes the
+following 30s wait/validator). Isolated launched 20:25:41, at least step 30,
+all eight ranks active; Shuffled and Grad remain queued. No training failure.
+Estimated whole-sequence completion including dev evaluation and gates:
+approximately 23:55 UTC Sep13–00:25 UTC Sep14, subject to Grad throughput.
+Evidence: `temp/stage2_handoff_20260913_2028.log`,
+`temp/stage2_status_20260913_2028.json`. Only #2 was pushed; no workload altered.
+Current execution head: `04a4728ef949e06095c35718c7b45e8709097e2b`.
+Earlier authorization required result review before replication. The new
+request above now permits seed-29 common pretraining unconditionally on the
+scientific result; further seed-29 phases, seed 43, locked-val use, Stage-3
+online writing and 28-layer scale-up remain outside this queue.
+
+Earlier launch observations follow.
 
 User authorized five seed-17 arms sequentially, with artifact verification,
 dev evaluation and original communicating burns afterward. Stage-1 is now
@@ -13,10 +43,20 @@ Stage-2 launch `b8d1712b0d2f70b60b93faf4ad7c22da31d0e9c6` acknowledged.
 Read-only export `ac6c0e2` verifies input gate success at 18:27:04, Stage-1
 observer voluntary exit at 18:27:35, and stopping ONLY burn workers 35999–36006.
 Both all-eight-GPU free checks passed at 18:28:06 and 18:28:36. Base-Continue
-launched at 18:28:36 with the correct eight-rank Stage-2 command. This initial
-snapshot predates run.json/train.jsonl creation; optimizer progress still
-needs a fresh export. Evidence: `temp/stage2_handoff_20260913_a01.log` and
-`temp/stage2_status_20260913_a01.json`. Do not repush #1 or relaunch.
+launched at 18:28:36 with the correct eight-rank Stage-2 command.
+Fresh export `35f3377` confirms 105 contiguous finite optimizer updates,
+27525120 input tokens, the correct LR schedule, bf16, seed 17, 3815 total
+updates, unchanged common source hash and research-core hash. Latest heartbeat
+18:31:37: launcher 37994, workers 38000–38007 (one per GPU), 13544–14156 MiB
+device memory. Instantaneous utilization varies across ranks; all eight are
+assigned to this DDP training job. Evidence:
+`temp/stage2_handoff_20260913_a02.log`, `temp/stage2_status_20260913_a02.json`,
+`temp/stage2_base_run_20260913_a02.json`, `temp/stage2_base_train_20260913_a02.jsonl`.
+Execution head is `35f337796cad36117c86311249e1a4c3ef9d7c02`; commands.sh is
+read-only #2, not another launch. No separate local monitor is active; remote
+persistent Stage2 owns sequential training/eval/verification/burn restoration
+and minute heartbeats. Future reclaim must disarm the Stage-2 root observer.
+Do not repush #1, clean outputs/caches or relaunch an active job.
 Canonical suite 86 passed; execution suite 39 passed (dev-only Dropbox-monitor
 test excluded because its client is not deployed). No ccm bytes changed in
 execution: `055f0518853e76487a4e2f31b81f1441113d4fceab322b5e211359a7d58f2fa9`.
