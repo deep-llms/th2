@@ -74,9 +74,7 @@ Reports: `/mnt/local/_outputs/deep-llms_th2/ccm_prepare_pilot_v1_20260913_a01`.
 Compile/adapt are part of the common-training corpus, not extra optimization
 data. Existing raw files and older sampled/smoke artifacts are preserved.
 
-## Purpose and success criteria
-
-### Overnight follow-on authorization — 2026-09-13
+## Overnight follow-on authorization — 2026-09-13
 
 After the initial Step-1-only launch, the user authorized an unattended handoff:
 verify preparation -> train the 4B-token common seed-17 model -> verify it ->
@@ -85,7 +83,11 @@ compile offline tables -> restore communicating burns. See
 arms. Scientific source is preserved; new scripts add orchestration and artifact
 gates only. There are still no scientific results. Ten new CPU/mocked handoff
 tests passed, including exact stage order, failed-data blocking, PID reuse,
-PID-1 refusal and live-child preservation.
+PID-1 refusal and live-child preservation. The full 72-test local suite also
+passed. Commit `0750f56` was verified ARMED on B200 at 02:32:50 UTC, with
+preparation progressing and all original burns active; no training yet.
+
+## Purpose and success criteria
 
 Describe the actual problem, working hypothesis, baseline and decision criteria.
 

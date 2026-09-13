@@ -3,7 +3,17 @@
 Status: full pilot data preparation started on 2026-09-13 at 01:36:51 UTC.
 New authority: user approved unattended Step 1 -> Step 2 common training ->
 Step 3 offline table compilation, plus persistent burns and monitoring.
-The new handoff is being deployed; verify its ARMED marker before relying on it.
+Handoff commit `0750f56` is deployed and ARMED: verified from the B200 log at
+02:32:50 UTC, persistent tmux alive, waiting for preparation. All eight original
+burn workers 18141-18148 still at 98% utilization / 2510 MiB. Preparation had
+scanned 2026000 documents and written 1602396747 / 5040134656 tokens (31.79%).
+Evidence: `temp/overnight_armed_20260913.log`. Training has not started yet.
+Local hourly monitor: `scripts/monitor_pilot_local.py`, tmux session
+`ccm_pilot_monitor_20260913_a01`, reports under
+`temp/pilot_monitor_20260913_a01/` (verify its first snapshot before assuming active).
+Create that local directory's `STOP` file to relinquish its Git control before
+making another execution push. It also stops automatically on an unexpected
+HEAD change. The local monitor only submits #2 and pulls small status/log files.
 Remote preflight passed; full preparation/validation is not complete yet.
 Prior B200 smoke passed; see `B200_SMOKE_20260913.md`.
 

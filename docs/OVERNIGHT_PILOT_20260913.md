@@ -70,5 +70,11 @@ upload/download directly from B200. A local hourly monitor can run in tmux,
 but must stop if another user/agent changes the execution Git head, or if the
 runner reports infrastructure errors. It must never resubmit `#1`, kill jobs,
 or rewrite the scientific source. Persist observations under ignored `temp/`.
+The dev monitor is `scripts/monitor_pilot_local.py`, local tmux session
+`ccm_pilot_monitor_20260913_a01`. Reports go to
+`temp/pilot_monitor_20260913_a01/`; it exports only the existing workflow
+status/handoff log and preparation log, not model weights. Create `STOP` in
+that local monitor directory before making another execution push; also verify
+the monitor exits. Unexpected Git HEAD changes make it stop, not overwrite work.
 An interactive assistant is not guaranteed to wake after the chat ends; the
 persistent scripts provide the unattended behavior.
