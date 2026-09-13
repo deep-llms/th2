@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-queue-seed29-after-stage2-burns-20260913-a01
-set -euo pipefail
-bash scripts/launch_seed29_queue.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_stage2_seed17_20260913_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_stage2_seed17_20260913_a01.handoff.log
+#th2-ccm-verify-seed29-queue-and-stage2-20260913-a01
