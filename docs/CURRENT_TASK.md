@@ -1,5 +1,19 @@
 # Current task
 
+## Seed29 remaining replication authorized — 2026-09-14
+
+User authorized compilation, all six Stage1 arms, required Stage2 arms,
+full D_dev evaluation/comparisons, and original burns afterward in one queue.
+Explicit clarification: apply the unchanged Delta inclusion thresholds
+separately to seed29 (new `per_seed` policy), not the older seed17-only screen.
+No common retraining, seed43, D_val or cleanup. See
+[the queue protocol](SEED29_REPLICATION_20260914.md) for commands and guards.
+Fresh root: `/mnt/local/_outputs/deep-llms_th2/ccm_replication_seed29_20260914_a01`.
+Existing seed29 theta_4B is reused only after full validation. A3's exact
+observer is disarmed cooperatively before verified burn-worker reclamation.
+CPU tests: all 69 passed, including a tiny real seed29 Delta pipeline.
+Prepared locally; remote launch/input validation not yet verified.
+
 ## A3 complete, original all-eight burns active — 2026-09-14
 
 A3 completed and was verified locally. All 13 result files, three archive

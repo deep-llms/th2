@@ -29,33 +29,35 @@ def stage1_log(path):
     require(count == PILOT.adapt_steps, 'Incomplete Stage-1 log')
 
 
-def fresh_reader_hash():
+def fresh_reader_hash(seed=17):
     with torch.random.fork_rng(devices=[]):
-        torch.manual_seed(seed_bundle(17)['reader'])
+        torch.manual_seed(seed_bundle(seed)['reader'])
         return state_hash(Reader(1024).bfloat16().state_dict())
 
 
-def validate_train(root, arm, corpus, vocab, common):
+def validate_train(root, arm, corpus, vocab, common, *, seed=17, common_root=COMMON,
+                   table_root=None, core_sha=CORE_SHA):
+    table_root = common_root/'tables' if table_root is None else table_root
     path = root/'train'/arm
     done = read_json(path/'complete.json')
     require(done == dict(success=True, phase='stage1', arm=arm, step=977,
                         input_tokens=256114688, checkpoint='checkpoint-977'), 'Wrong arm completion')
     ckpath = path/'checkpoint-977'
     ck = checkpoint_meta(ckpath)
-    require(ck['phase'] == 'stage1' and ck['arm'] == arm and ck['seed'] == 17 and
-            ck['seeds'] == seed_bundle(17) and ck['step'] == ck['total_steps'] == 977 and
+    require(ck['phase'] == 'stage1' and ck['arm'] == arm and ck['seed'] == seed and
+            ck['seeds'] == seed_bundle(seed) and ck['step'] == ck['total_steps'] == 977 and
             ck['world_size'] == 8 and not ck['engineering'], 'Wrong Stage-1 checkpoint contract')
     require(ck['source_checkpoint_hash'] == common['model_sha256'] and
             ck['corpus_hash'] == corpus.meta['manifest_hash'] and ck['vocabulary_hash'] == vocab.hash and
             ck['tokenizer'] == common['tokenizer'] and ck['backbone_contract'] == common['backbone_contract'] and
-            ck['model_dtype'] == 'torch.bfloat16' and ck['config']['source_code_hash'] == CORE_SHA,
+            ck['model_dtype'] == 'torch.bfloat16' and ck['config']['source_code_hash'] == core_sha,
             'Stage-1 provenance/precision mismatch')
-    require(ck['paired_initial_reader_hash'] == fresh_reader_hash(), 'Unpaired reader initialization')
+    require(ck['paired_initial_reader_hash'] == fresh_reader_hash(seed), 'Unpaired reader initialization')
     require(ck['config']['microbatch_segments'] == 8 and ck['config']['loss_chunk'] == 1024 and
             ck['config']['activation_checkpointing'] and not ck['config']['online'], 'Wrong runtime settings')
     stage1_log(path/'train.jsonl')
     state = torch.load(ckpath/'model.pt', map_location='cpu', weights_only=True)
-    base = torch.load(COMMON/'common/checkpoint-15259/model.pt', map_location='cpu', weights_only=True)
+    base = torch.load(common_root/'common/checkpoint-15259/model.pt', map_location='cpu', weights_only=True)
     require({k for k in state if k.startswith('backbone.')} == set(base), 'Wrong backbone state keys')
     require(all(torch.equal(state[k], v) for k, v in base.items()), 'Frozen backbone was modified')
     del base
@@ -66,14 +68,14 @@ def validate_train(root, arm, corpus, vocab, common):
             'Reader did not learn')
     require(state_hash({'table': state['table']}) == ck['table_hash'], 'Saved table hash mismatch')
     if arm != 'grad':
-        table, meta = load_table(COMMON/'tables'/arm, dict(constructor=arm, vocabulary_hash=vocab.hash,
+        table, meta = load_table(table_root/arm, dict(constructor=arm, vocabulary_hash=vocab.hash,
                     corpus_hash=corpus.meta['manifest_hash'], source_checkpoint_hash=common['model_sha256']))
         require(ck['table_artifact_hash'] == meta['artifact_hash'] and torch.equal(state['table'], table['lookup']),
                 'Frozen table was modified or wrong table loaded')
         del table
     else:
         with torch.random.fork_rng(devices=[]):
-            torch.manual_seed(seed_bundle(17)['grad_table'])
+            torch.manual_seed(seed_bundle(seed)['grad_table'])
             initial = torch.empty(PILOT.slots, 1024).normal_(0, .02).bfloat16()
         require(ck['initial_grad_table_hash'] == state_hash({'table': initial}), 'Wrong Grad initialization')
         require(not torch.equal(state['table'], initial), 'Grad table did not learn')
@@ -98,16 +100,17 @@ def validate_train(root, arm, corpus, vocab, common):
                 frozen_backbone_exact=True, frozen_table_exact=arm != 'grad', step=977, input_tokens=256114688)
 
 
-def validate_eval(root, arm, corpus, vocab, common, checkpoint=None):
+def validate_eval(root, arm, corpus, vocab, common, checkpoint=None, *, seed=17, table_root=None):
+    table_root = COMMON/'tables' if table_root is None else table_root
     path = root/'eval'/arm
     m = read_json(path/'metrics.json')
     ck = checkpoint if checkpoint is not None else (common if arm == 'base' else checkpoint_meta(root/'train'/arm/'checkpoint-977'))
     require(m['arm'] == arm and m['role'] == 'dev' and not m['final_evaluation'] and not m['engineering'] and
-            m['seed'] == 17 and m['phase'] == ck['phase'] and m['step'] == ck['step'] and
+            m['seed'] == seed and m['phase'] == ck['phase'] and m['step'] == ck['step'] and
             m['total_steps'] == ck['total_steps'] and m['checkpoint_hash'] == ck['model_sha256'], 'Wrong evaluation contract')
     require(m['corpus_hash'] == corpus.meta['manifest_hash'] and m['vocabulary_hash'] == vocab.hash and
             m['input_tokens'] == PILOT.dev_tokens and m['diagnostic_table_hash'] ==
-            read_json(COMMON/'tables/contextual/artifact.json')['artifact_hash'], 'Wrong dev data/diagnostic bins')
+            read_json(table_root/'contextual/artifact.json')['artifact_hash'], 'Wrong dev data/diagnostic bins')
     require(file_hash(path/'segments.jsonl') == m['segments_sha256'], 'Evaluation record checksum mismatch')
     totals = {k: [0., 0] for k in ('overall', 'hit', 'miss', 'eligible_miss')}
     binned = {k: np.zeros((10, 2)) for k in ('frequency', 'variance')}

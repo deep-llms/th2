@@ -101,7 +101,7 @@ def parser():
     for name in ("delta", "contextual", "shuffled", "output"):
         s.add_argument("--"+name, required=True)
     s.add_argument("--cluster", choices=("doc_id", "content_hash"), required=True)
-    s.add_argument("--replication-policy", choices=("seed17_then_all",), required=True)
+    s.add_argument("--replication-policy", choices=("seed17_then_all", "per_seed"), required=True)
     s = sub.add_parser("lock-final")
     s.add_argument("--checkpoints", nargs="+", required=True)
     s.add_argument("--include-delta", action="store_true")

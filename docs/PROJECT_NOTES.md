@@ -1,5 +1,16 @@
 # Project notes
 
+## Seed29 automatic replication / explicit Delta policy — 2026-09-14
+
+User authorized all remaining seed29 offline phases, reusing its completed 4B
+common checkpoint. They explicitly chose the same Delta thresholds applied
+independently to seed29, rather than seed17's decision controlling every seed.
+This inclusion-policy amendment is recorded before seed29 memory outcomes;
+primary hypotheses, thresholds, training, data and model remain unchanged.
+See [the queue protocol](SEED29_REPLICATION_20260914.md). Stage2 always uses
+fresh modules/optimizer and the common checkpoint, not Stage1 learned state.
+No seed43 or locked validation is automatically scheduled.
+
 ## A3 joint frequency × variance — 2026-09-14
 
 Completed on all five seed17 Stage2 step3815 checkpoints, full 20M-input-token

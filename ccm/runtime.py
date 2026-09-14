@@ -144,6 +144,24 @@ def require_coverage(path, corpus, vocab):
     return c
 
 
+def delta_policy_matches(decision, seed, common_hash):
+    """Legacy screen remains supported; per-seed decisions bind their own writer."""
+    if decision.get("replication_policy") == "seed17_then_all":
+        return decision.get("decision_seed") == 17
+    if decision.get("replication_policy") == "per_seed":
+        r = decision.get("results", {})
+        names = ("hit_vs_contextual", "hit_vs_shuffled", "miss_vs_contextual")
+        return (decision.get("decision_seed") == seed
+                and decision.get("source_checkpoint_hash") == common_hash
+                and decision.get("overall_safeguard") is True
+                and all(n in r and r[n].get("replicates") == 10000
+                        and r[n].get("bootstrap_seed") == 20260913 for n in names)
+                and r["hit_vs_contextual"]["upper95"] < 0
+                and r["hit_vs_shuffled"]["upper95"] < 0
+                and r["miss_vs_contextual"]["upper95"] <= .002)
+    return False
+
+
 def train(args, corpus, vocab=None):
     device, rank, world = device_context(args.device)
     require(args.engineering or device.type == "cuda", "Pilot training requires bf16 CUDA; use --engineering for toy CPU")
@@ -189,8 +207,8 @@ def train(args, corpus, vocab=None):
                 decision = read_json(args.delta_decision)
                 require(decision.get("include_delta") is True and decision.get("corpus_hash") == corpus.meta["manifest_hash"]
                         and decision.get("vocabulary_hash") == vocab.hash
-                        and decision.get("replication_policy") == "seed17_then_all"
-                        and decision.get("decision_seed") == 17, "Invalid Delta inclusion decision")
+                        and delta_policy_matches(decision, args.seed, common_meta["model_sha256"]),
+                        "Invalid Delta inclusion decision")
         model = MemoryLM(c, arm, table=table, slots=len(vocab.keys) if vocab else 0,
                          reader_seed=seeds["reader"], table_seed=seeds["grad_table"])
         model.backbone.load_state_dict(base.backbone.state_dict(), strict=True)

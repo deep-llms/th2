@@ -121,9 +121,13 @@ def compare(args):
 def delta_decision(args):
     paths = dict(delta=args.delta, contextual=args.contextual, shuffled=args.shuffled)
     metas = {k: read_json(Path(p)/"metrics.json") for k, p in paths.items()}
+    decision_seed = metas["delta"]["seed"]
+    require(args.replication_policy in ("seed17_then_all", "per_seed"), "Explicit replication policy required")
+    require(decision_seed in (17, 29, 43) and
+            (args.replication_policy == "per_seed" or decision_seed == 17), "Wrong Delta screen seed")
     for arm, meta in metas.items():
-        require(meta["arm"] == arm and meta["phase"] == "stage1" and meta["seed"] == 17,
-                "Delta inclusion is an explicit seed-17 Stage-1 screen decision")
+        require(meta["arm"] == arm and meta["phase"] == "stage1" and meta["seed"] == decision_seed,
+                "Delta inclusion requires matched Stage-1 evaluations")
         require(meta["step"] == meta["total_steps"], "Delta decision requires completed Stage-1 adaptation")
     results = {}
     for control in ("contextual", "shuffled"):
@@ -132,9 +136,10 @@ def delta_decision(args):
     include = (results["hit_vs_contextual"]["upper95"] < 0 and results["hit_vs_shuffled"]["upper95"] < 0
                and results["miss_vs_contextual"]["upper95"] <= .002
                and metas["delta"]["metrics"]["overall"]["nll"] <= metas["contextual"]["metrics"]["overall"]["nll"])
-    require(args.replication_policy == "seed17_then_all", "Explicit replication policy required")
     report = dict(include_delta=include, results=results, cluster=args.cluster,
-                  replication_policy=args.replication_policy, decision_seed=17,
+                  replication_policy=args.replication_policy, decision_seed=decision_seed,
+                  source_checkpoint_hash=metas["delta"]["source_checkpoint_hash"],
+                  overall_safeguard=metas["delta"]["metrics"]["overall"]["nll"] <= metas["contextual"]["metrics"]["overall"]["nll"],
                   corpus_hash=metas["delta"]["corpus_hash"], vocabulary_hash=metas["delta"]["vocabulary_hash"],
                   source_evaluations=paths)
     write_json(args.output, report)
