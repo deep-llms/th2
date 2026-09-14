@@ -12,7 +12,15 @@ Fresh root: `/mnt/local/_outputs/deep-llms_th2/ccm_replication_seed29_20260914_a
 Existing seed29 theta_4B is reused only after full validation. A3's exact
 observer is disarmed cooperatively before verified burn-worker reclamation.
 CPU tests: all 69 passed, including a tiny real seed29 Delta pipeline.
-Prepared locally; remote launch/input validation not yet verified.
+Launched in `2c035fa`; startup export `28562d1` verified locally.
+Input/checkpoint/optimizer validation passed. A3 observer exited cooperatively;
+only its verified burn-worker pidfds were stopped, followed by two 30s free checks.
+Compilation started 21:22:07 UTC; latest retrieved heartbeat 21:24:09 UTC:
+GPU0 compiler PID 68604; GPUs1–7 original burn workers 68078–68084 at 98%,
+seven-rank NCCL rings connected. Stage1/Stage2 are queued, not finished.
+Current owner is `ccm_replication_seed29_20260914_a01`; do not reclaim through
+the historical A3 owner below. Use this queue's STOP_IDLE_WATCH after completion.
+Local startup evidence: `temp/seed29_replication_live_a01/`.
 
 ## A3 complete, original all-eight burns active — 2026-09-14
 

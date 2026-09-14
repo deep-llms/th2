@@ -120,7 +120,21 @@ Verify exact observer exit before stopping verified burn workers.
 Stage1 Delta → Stage2 Delta test (69 total). It verifies fresh Stage2 reader
 initialization and rejection of another seed's inclusion decision.
 Mocked include/exclude queue paths and failure/ownership paths passed.
-This is CPU correctness evidence; the launch's remote input gate still must pass.
+This is CPU correctness evidence, not a claim that the full run has finished.
+
+### Verified remote startup
+
+Launch commit `2c035fa`; read-only startup export `28562d1`.
+Remote input gate passed, including original seed29 model/optimizer hashes,
+immutable corpus/vocabulary, and current reviewed core hash.
+A3 observer exited cooperatively; verified burn workers were stopped; both
+30-second GPU-free checks passed. Compiler started at 21:22:07 UTC Sep14.
+Retrieved heartbeat at 21:24:09 UTC: compiler PID 68604 on GPU 0, original burn
+workers 68078–68084 on GPUs 1–7, each at 98% utilization, with seven connected
+NCCL ranks. No error in the retrieved handoff. Empty compiler log at startup
+is expected: this reference compiler does not print per-batch progress.
+Stage1/Stage2 are queued and have not yet been verified complete.
+Evidence: canonical `temp/seed29_replication_live_a01/`.
 
 Monitor by fresh #2 exports, never repush the #1 launch. Pull status.json,
 handoff log, current stage log and validation JSONs. AWS/runner-system errors
