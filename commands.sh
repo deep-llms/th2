@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-memory-off-and-contribution-diagnostics-20260914-a01
-set -euo pipefail
-bash scripts/launch_memory_diagnostics.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/smoke/contextual/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/smoke/isolated/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/smoke/grad/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/full_contextual.log,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/full_isolated.log,/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/full_grad.log
+#th2-ccm-diagnostics-smoke-and-progress-20260914-a01
