@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-a3-frequency-variance-five-checkpoints-20260914-a01
-set -euo pipefail
-bash scripts/launch_a3_diagnostics.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/complete.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/full/summary.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/export/manifest.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/ccm_a3_20260914_a01_b2.log,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/smoke/contextual/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/smoke/isolated/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/smoke/shuffled/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/smoke/grad/diagnostics.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/smoke/base/diagnostics.json
+#th2-ccm-a3-progress-and-results-20260914-a02
