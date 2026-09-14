@@ -1,2 +1,4 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/manifest.json,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part000,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part001,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part002,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part003,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part004,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part005,/mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01/results.tar.gz.part006
-#th2-ccm-pull-complete-results-bundle-20260914-a01
+#1 +60+a
+#th2-ccm-memory-off-and-contribution-diagnostics-20260914-a01
+set -euo pipefail
+bash scripts/launch_memory_diagnostics.sh
