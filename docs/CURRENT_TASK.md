@@ -1,5 +1,58 @@
 # Current task
 
+## A3 authorized and prepared — 2026-09-14
+
+User requested A3 and an update to the existing diagnostic results document.
+Five seed-17 Stage-2 checkpoints, normal evaluation on full D_dev only:
+Contextual, Isolated, Shuffled, Grad, Base on GPUs 0–4. Shared compile-derived
+frequency/Contextual-variance quintiles; per-key and per-segment cell records.
+No training, frozen research-core change, D_val, or A1/A2 output modification.
+62 execution-checkout CPU tests passed (dev-only Dropbox helper on PYTHONPATH).
+
+Entry: `scripts/launch_a3_diagnostics.sh`; controller:
+`scripts/pilot_a3_diagnostics.py`; research diagnostic:
+`scripts/frequency_variance_diagnostics.py`.
+Fresh run root: `/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01`.
+Must verify A1/A2 completion and heartbeat, disarm its exact observer, then
+reclaim verified burn workers, two 30s/free checks, five two-batch smoke jobs,
+then full evaluation. Keep an original burn group on GPUs 5–7. Reap all five
+jobs and check free before restoring all-eight original burns, CPU summary and
+result packaging. Final `complete.json` requires all gates and active burns.
+Submission/start/completion are not yet established by this preparation note.
+
+## A1/A2 diagnostics completed and verified — 2026-09-14
+
+See [the diagnostic results](MEMORY_DIAGNOSTICS_RESULTS_20260914.md).
+All three Stage-2 seed-17 models passed full 20M-input-token D_dev diagnostics,
+with zero normal-replay discrepancy. All 12 new metrics/segment file hashes,
+ordered segment identities, original normal loss sums, target counts and
+summary point estimates were verified locally; the Contextual overall
+10,000-replicate bootstrap was recomputed with an exact match.
+
+Normal → memory-off overall NLL:
+Contextual 3.213114 → 3.216956; Isolated 3.214406 → 3.215295;
+Grad 3.208273 → 3.217307. Every off-minus-normal and off-minus-Base overall
+95% CI is positive. This shows inference-time dependency, not a causal
+partition of training effects. Mean contribution/hidden norm ratios are
+5.82%, 2.01%, 8.68%, respectively. A3 and seed-29 memory replication remain unrun.
+
+Workflow completion: 19:07:25 UTC. Final exported heartbeat: 19:08:26 UTC,
+all eight original burn workers 63356–63363, one per GPU, 98% utilization.
+The burn log verifies all eight ranks initialized the same NCCL communicator.
+Current owner: tmux `ccm_memory_diagnostics_20260914_a01`,
+script `scripts/pilot_memory_diagnostics.py`. Before a later authorized
+reclaim, disarm this workflow through its own
+`/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/STOP_IDLE_WATCH`
+and verify its exact voluntary exit, then follow GPU_SAFETY.md.
+The previous seed-29 observer is already disarmed.
+
+Canonical local results: `outputs/memory_diagnostics_20260914_a01/`.
+Launch `f8aa4a4`; read-only exports `933bd16`, `333e104`, `47c264e`.
+No training/checkpoint/cache/core changes or cleanup. Final handoff-log
+download returned Dropbox HTTP 409; the earlier handoff snapshots, successful
+complete marker, and final burn heartbeat are available and verified.
+This retrieval limitation is not a diagnostic/job failure.
+
 ## A1/A2 diagnostics submitted — 2026-09-14
 
 User authorized running the cheap diagnostics after reviewing the next-step

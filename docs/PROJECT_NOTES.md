@@ -1,6 +1,23 @@
 # Project notes
 
-Status: seed-17 Stage-1 completed; Stage-2 matched continuation authorized.
+## Memory dependency diagnostics — 2026-09-14
+
+See [the complete A1/A2 report](MEMORY_DIAGNOSTICS_RESULTS_20260914.md).
+Completed full seed-17 Stage-2 D_dev evaluations for Contextual, Isolated, Grad,
+normal and memory-off. Normal replay matched original losses exactly on every
+segment/population. Disabling memory worsens all three models and makes each
+worse than Base-Continue (all overall paired 95% CIs positive).
+Off-minus-normal NLL: Contextual +0.003841, Isolated +0.000888, Grad +0.009034.
+Mean per-token contribution/hidden norm ratios: 5.82%, 2.01%, 8.68%.
+The memory branch remains useful at inference; this does not establish a
+causal decomposition, specifically deep advantage, replication, or system
+superiority. Grad remains best in normal NLL. No new training or D_val access.
+Full results/paired records are local and hash-verified. The workflow finished
+at 19:07:25 UTC and restored original all-eight NCCL burns; its later heartbeat
+confirmed one active worker per GPU at 98% utilization.
+
+Status: seed-17 Stage 1, Stage 2, and A1/A2 diagnostics completed; seed-29
+common pretraining completed. No seed-29 memory comparisons or seed-43 run yet.
 
 ## Stage-1 dev result and next phase — 2026-09-13
 
