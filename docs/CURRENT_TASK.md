@@ -1,5 +1,87 @@
 # Current task
 
+## A1/A2 diagnostics submitted — 2026-09-14
+
+User authorized running the cheap diagnostics after reviewing the next-step
+plan. Execution commit `f8aa4a4` adds external-hook memory-off/contribution-norm
+diagnostics for completed seed-17 Stage-2 Contextual, Isolated and Grad on full
+`D_dev`, plus paired document CIs. No new training, A3, or locked validation.
+See `MEMORY_DIAGNOSTICS.md` for exact measurements, guards and output paths.
+All 57 execution-checkout CPU tests passed with the dev-only Dropbox helper
+on PYTHONPATH; an initial all-suite invocation lacked that local helper.
+The frozen `ccm/` code hash is unchanged.
+
+Submitted to `deep-llms/th2` from `/tmp/th2-commands-only-20260911-q6dcOW`.
+Canonical copies of all new source/tests are in this project. Remote preflight
+passed. Export `933bd16` confirms all three two-batch real-data smoke tests
+passed, with exactly zero normal-replay discrepancy and finite norm statistics.
+Full diagnostics launched on physical GPUs 0–2; heartbeat 18:58:22 UTC confirms
+those three independent jobs and the original five-GPU burn group on 3–7.
+Full completion is not yet verified. Output:
+`/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01`.
+Three independent eval GPUs, five spare original burns; all-eight original
+burns restored before CPU bootstrap and checked before success marker.
+
+## Results summary written — 2026-09-14
+
+`docs/PILOT_RESULTS_SUMMARY_20260914.md` consolidates verified seed17
+Stage1/Stage2 results and seed29 common training: all 12 evaluations, six
+saved CIs, coverage/hit/miss/gate/frequency/variance diagnostics, optimizer
+parameter counts, runtime/memory, compilation accounting and limitations.
+It distinguishes a favorable single-seed contextual-control result from
+the incomplete multi-seed criterion, and documents Grad's better NLL.
+No new evaluation, remote command or training was submitted for this summary.
+
+## Results pulled and verified — 2026-09-14
+
+All 310 result files are local under
+`/disk/thuat/context_compiled_memory/outputs/pilot_results_20260914_a01/results/`.
+The sibling README indexes the four run roots; download/ retains seven archive
+parts and a SHA256 manifest. All part/archive/file hashes passed. All 12
+evaluations match original remote validation gates, all 13 training logs have
+the expected final step/token counts, and all six comparison reports exist.
+Includes training/evaluation logs, per-segment metrics, reports, completion
+gates, checkpoint JSON configs/metadata and compilation artifact metadata.
+Excludes large model/optimizer/table binaries and data; not a checkpoint backup.
+Packaging `da103ee`, read-only export `f7290cf`; no GPU signal/restart.
+Remote packaging's final original all-eight burn ownership/health check passed.
+Local verifier: `scripts/verify_result_bundle.py`; manifest:
+`outputs/pilot_results_20260914_a01/download/manifest.json`.
+Combined archive SHA256:
+`35a345113fd344cd9023f16b2ff55a118f590813149e29d66d37a9f92f7ac44e`.
+No new experiments launched. Commands are #2, not a packaging/training rerun.
+
+## Verified completion — 2026-09-14
+
+Fresh read-only export `9e2ac82` confirms the entire seed-17 Stage-2 workflow
+completed successfully at 23:57:05 UTC Sep13, including its panel gate.
+The queued handoff observed the same burn group for 181.63 seconds, passed
+predecessor/data checks, verified the old observer exited at 00:01:27 UTC,
+and reclaimed only verified burn workers before two 30s/free checks.
+
+Seed-29 common training launched at 00:02:29 UTC Sep14, exited zero at
+03:26:10 (3h23m41s training subprocess), passed final validation at 03:27:13,
+and recorded completion with original all-eight-GPU burns at 03:27:54.
+Verified 15259 updates / 4000055296 input tokens, seed29; model SHA256
+`da85b43b1509f0f8b5e807f951b624126f17d673edd505b8f041d8413f104038`.
+Fresh handoff heartbeat at 10:58:53 UTC confirms original burn workers
+46137–46144, one per GPU, 98% utilization and 2510 MiB/device. No failure
+events in the handoff. Do not stop them merely to retrieve results.
+
+Seed29 compilation, reader adaptation and continuation have NOT run.
+They require the next authorized workflow. Future reclaim must first disarm
+the seed29 root's STOP_IDLE_WATCH and verify its exact observer exit.
+Evidence: `temp/seed29_done_handoff_20260914.log`,
+`temp/seed29_done_complete_20260914.json`,
+`temp/seed29_done_validated_20260914.json`,
+`temp/stage2_done_complete_20260914.json`,
+`temp/stage2_done_validated_20260914.json`.
+One parallel Dropbox status-file fetch returned HTTP429; completion and fresh
+GPU health were verified from the successfully downloaded full handoff log.
+Commands remain read-only #2, execution head
+`9e2ac823cff760d5772645ac89af8ad67453fac7`. No new training or GPU action
+was submitted for this completion check.
+
 ## New active request — queue seed-29 common pretraining, 2026-09-13
 
 User explicitly authorized seed 29's first/common phase after the current
@@ -10,7 +92,30 @@ worker stopping and two 30s/free checks. Train independent seed-29 common
 backbone for 15259 updates/4B, validate and restore burns. No compilation,
 adaptation/continuation, seed43, locked-val or model changes in this queue.
 Implementation complete: execution suite 47 passed; shell syntax passed.
-Deployment pending; see `SEED29_QUEUE_20260913.md`.
+Pushed launch commit `67cd8d27c7eb6d5df27cd32d41aae086d437da31`.
+The earlier SSH hostname-resolution failure recovered through the runner;
+no duplicate queue was submitted. Launch log confirms
+`CCM_SEED29_QUEUE_ARMED` at 23:08 UTC. Fresh read-only export `8e99e11`
+confirms a healthy queue heartbeat at 23:46:21 UTC, waiting for full Stage-2
+completion with no failure or GPU action. Remote `commands.sh` is now #2,
+not another launch. Current execution remote head:
+`8e99e11e284c5c66b72dbd4302767822d040ce07`.
+All five Stage-2 training arms exited zero and passed their training gates;
+Grad finished at 23:25:23 and passed validation at 23:26:36 UTC. Base,
+Contextual and Isolated dev evaluations passed; Shuffled eval is active
+at 23:45:51. GPU0 runs eval; GPUs1–7 have original burn workers
+41918–41924, 2508 MiB/device and 98% utilization in that snapshot.
+Evidence: `temp/seed29_queue_launch_recovered.log`,
+`temp/seed29_live_handoff_a01.log`, `temp/seed29_live_status_a01.json`,
+`temp/stage2_live_seed29_queue_a01.log` and
+`temp/stage2_live_seed29_queue_a01.json`.
+No reminder is needed for the remote queue: it waits for full completion,
+observes burns for 180s, disarms/verifies the predecessor observer's exit,
+reclaims verified workers, performs two 30s/free checks, then trains only
+seed29 common and restores burns after validation. Seed29 training has NOT
+started in this latest observation. No separate dev-side auto-push monitor
+is active. Next manual check should use fresh #2 exports, not re-run #1.
+See `SEED29_QUEUE_20260913.md`.
 The current Stage-2 job is NOT stopped, relaunched or edited by this request.
 
 ## Active request — launch Stage-2 matched continuation, 2026-09-13
