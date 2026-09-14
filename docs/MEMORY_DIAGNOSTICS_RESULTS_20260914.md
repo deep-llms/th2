@@ -1,8 +1,8 @@
-# Memory-off and contribution diagnostics — seed 17
+# Memory diagnostics A1–A3 — seed 17
 
-Completed and verified on 2026-09-14. These are **post-hoc A1/A2 diagnostics**
+Completed and verified on 2026-09-14. These are **post-hoc A1/A2/A3 diagnostics**
 from `ccm_next_steps_after_seed17.md`, not new training or primary preregistered
-comparisons. All three completed Stage-2 checkpoints are at step 3815.
+comparisons. A1/A2 use three models; A3 uses all five Stage-2 models, each at step 3815.
 Only `D_dev` was used; no locked validation or seed-29 memory training.
 
 ## Main finding
@@ -102,8 +102,8 @@ this magnitude because the value projection also matters.
   enhanced 85%-memory resource copy.
 
 Memory-off still computes the reader before zeroing its contribution, so these
-runs are **not** a reader-free speed benchmark. A3 frequency × variance and
-seed-29 replication remain separate future work.
+runs are **not** a reader-free speed benchmark. A3 is reported below;
+seed-29 memory replication remains separate future work.
 
 ## Artifacts
 
@@ -123,3 +123,133 @@ project's `scripts/` directory. See [the diagnostic procedure](MEMORY_DIAGNOSTIC
 
 Summary SHA256:
 `9c2e9f092d3cc9535e30066363d0fd1fd6f089e8698f985513c7784497e5bbaa`.
+
+## A3: Joint frequency × within-key variance — completed 2026-09-14
+
+A3 evaluates all five seed-17 Stage-2 step-3815 checkpoints with their normal
+memory behavior: Contextual, Isolated, Shuffled, Grad and Base. Each replays
+the same full 20M-input-token D_dev. The grid uses only the **12,942,338 hit
+targets**, not all targets, with identical bins and target assignments for
+every model.
+
+### Bin definition
+
+Frequency is the key's D_compile count; variance is its compiled Contextual
+within-key residual variance. Both use unweighted quintiles over all 262,144
+selected keys, computed separately, then crossed into 25 cells. The variance
+cutoffs are global, not recomputed inside each frequency band. Equal values
+stay together (`searchsorted(..., side="right")`); no test-loss-driven grouping.
+
+- Frequency cutoffs: 502, 663, 960, 1776.4 (last value rounded).
+  Integer-count bands: <502; 502–662; 663–959; 960–1776; ≥1777.
+- Variance cutoffs, rounded: 24.393661, 30.446532, 35.023790, 40.272482.
+- Rows/columns 1→5 mean low→high. NLLs and differences are token-weighted
+  within cells, even though the cutoffs are unweighted across selected keys.
+- All 25 cells are populated. 261,835 selected keys appear among scored hits.
+  The highest frequency band accounts for **75.02%** of all hit targets;
+  cells range from 83,549 to 3,116,758 targets.
+
+### All 25 cell results
+
+Differences are **Contextual − comparator**, in nats/hit-target.
+Negative favors Contextual. These are descriptive point estimates, not
+25 independent significance tests.
+
+| Frequency | Variance | Hit targets | − Base | − Isolated | − Shuffled | − Grad |
+|---|---|---:|---:|---:|---:|---:|
+| 1 | 1 | 105,520 | -0.003233 | -0.002165 | -0.003321 | +0.012202 |
+| 1 | 2 | 96,344 | -0.003968 | -0.003200 | -0.004010 | +0.014069 |
+| 1 | 3 | 88,652 | -0.003472 | -0.002738 | -0.003464 | +0.014347 |
+| 1 | 4 | 83,549 | -0.003456 | -0.002924 | -0.003384 | +0.014410 |
+| 1 | 5 | 88,902 | -0.003820 | -0.002884 | -0.003673 | +0.017408 |
+| 2 | 1 | 134,049 | -0.002309 | -0.001707 | -0.002340 | +0.011159 |
+| 2 | 2 | 124,435 | -0.002742 | -0.002024 | -0.002751 | +0.012770 |
+| 2 | 3 | 117,533 | -0.003256 | -0.002550 | -0.003252 | +0.011928 |
+| 2 | 4 | 109,759 | -0.002908 | -0.002156 | -0.002915 | +0.014069 |
+| 2 | 5 | 115,398 | -0.004310 | -0.003597 | -0.004333 | +0.014769 |
+| 3 | 1 | 174,020 | -0.002510 | -0.001625 | -0.002484 | +0.008546 |
+| 3 | 2 | 167,774 | -0.002778 | -0.002309 | -0.002809 | +0.010387 |
+| 3 | 3 | 166,308 | -0.002787 | -0.002191 | -0.002825 | +0.010932 |
+| 3 | 4 | 162,504 | -0.002644 | -0.002028 | -0.002717 | +0.011943 |
+| 3 | 5 | 158,167 | -0.003073 | -0.002330 | -0.003075 | +0.014874 |
+| 4 | 1 | 251,154 | -0.001781 | -0.001355 | -0.001791 | +0.006673 |
+| 4 | 2 | 268,961 | -0.001883 | -0.001329 | -0.001835 | +0.008905 |
+| 4 | 3 | 276,947 | -0.002156 | -0.001616 | -0.002148 | +0.009258 |
+| 4 | 4 | 279,443 | -0.001991 | -0.001501 | -0.002060 | +0.009295 |
+| 4 | 5 | 263,826 | -0.002831 | -0.002287 | -0.002850 | +0.010854 |
+| 5 | 1 | 945,921 | -0.000811 | -0.000568 | -0.000814 | +0.002951 |
+| 5 | 2 | 1,319,766 | -0.001106 | -0.000867 | -0.001115 | +0.003702 |
+| 5 | 3 | 1,763,043 | -0.001052 | -0.000844 | -0.001012 | +0.004234 |
+| 5 | 4 | 2,563,605 | -0.001303 | -0.001063 | -0.001314 | +0.004482 |
+| 5 | 5 | 3,116,758 | -0.001795 | -0.001473 | -0.001779 | +0.005290 |
+
+### Interpretation
+
+1. **Contextual beats Base, Isolated and Shuffled in all 25 cells**, but loses
+   to Grad in all 25. Its advantage over the frozen-table controls is not
+   confined to one rare cell. The grid does not overturn Grad's superiority.
+2. **The high-variance pattern persists within coarse frequency bands.**
+   V5 has a larger Contextual improvement than V1 against each of Base,
+   Isolated and Shuffled in every frequency band. V5 is the largest improvement
+   in four of five frequency bands; F1 is an exception (V2 is strongest).
+   Thus the marginal pattern is not explained solely by different proportions
+   of these five frequency bands. It is not a monotonic variance curve.
+3. **Lower-frequency selected keys generally show larger per-hit gains.**
+   For example, Contextual − Isolated is −0.002884 at F1/V5 versus −0.001473
+   at F5/V5. These are low-frequency *selected* keys, not unselected rare keys.
+   Individual cells do not show a strictly monotonic frequency relationship.
+4. **No causal variance conclusion follows.** Coarse bins leave residual
+   frequency and difficulty differences. No per-cell confidence intervals,
+   multiple-testing claims, or exploratory per-key regression were fitted.
+   Per-key sums/counts and per-document segment records are saved for a later
+   adjusted analysis. This remains post-hoc D_dev evidence from one backbone,
+   not independent-seed replication or locked-validation evidence.
+
+Bottom line: A3 strengthens the descriptive evidence that Contextual's small
+advantage over the fixed-table controls is broad, including high-variance keys
+within frequency bands. It does **not** establish that variance causes the gain,
+that deep computation is necessary, or that Contextual beats trainable Grad.
+
+### Verification, runtime and artifacts
+
+- 62 CPU tests passed before launch, including new binning, repeated-key
+  accumulation, masking, and all-five-child handoff tests.
+- All five real-checkpoint two-batch smoke tests passed before full evaluation.
+- Every full replay covered 27,926 identical segments and exactly 20M input
+  tokens per arm. Every normal segment/population loss matched its original
+  evaluation exactly (maximum discrepancy **0** in all five arms).
+- Per-key and per-segment cell counts/sums agree. Both grid marginals reproduce
+  the original frequency/variance deciles merged in adjacent pairs. Hashes,
+  checkpoint identities, ordered segment identities and all cell contrasts
+  were also checked locally against the original results.
+- Five independent GPU jobs ran together on GPUs 0–4 while the original burn
+  group used GPUs 5–7. Full-panel wall time: **4m11s**, 19:47:00–19:51:11 UTC;
+  per-arm evaluation bodies: 230–234 seconds. No training/core changes.
+- Original all-eight burns were restored before CPU summary/packaging.
+  Completion: **19:53:03 UTC**. Latest exported heartbeat: **20:04:12 UTC**;
+  workers 65728–65735, one per GPU, each at 98% utilization and 2510 MiB used.
+  All eight ranks initialized the same NCCL communicator
+  `0x6df2f2ed4e3fbc36` using original `/tmp/llm_pretrain_burn.py`.
+- All three archive-part hashes, the archive hash and all **13 result-file
+  hashes** passed local verification. The initial folder export was skipped;
+  exact-file exports successfully retrieved the three size-bounded parts.
+  This was a retrieval issue, not an evaluation failure.
+
+Local root: `outputs/a3_results_20260914_a01/`.
+
+- `results/full/summary.json`: all five NLLs and four contrasts in every cell,
+  plus selected/observed key counts.
+- `results/definition/bins.{json,npz}`: exact cutoffs and per-key cell mapping.
+- `results/full/{arm}/{diagnostics.json,statistics.npz}`: replay/identity checks,
+  FP64 per-key and per-segment cell loss sums, INT64 counts, segment/document IDs.
+- `results/VERIFIED.json`: local verification record; `download/`: manifest
+  and three verified archive parts. No model weights or training data exported.
+- `first_export/`, `final_export/`, `latest_burn_status.json`: smoke, handoff,
+  completion and burn evidence.
+
+Remote root: `/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01`.
+Launch commit `0ae7e33`; read-only exports `e01167d`, `0b6ba32`, `842181c`.
+Canonical verifier: `scripts/verify_a3_results.py`.
+
+A3 summary SHA256:
+`465ccdc5affe80b2de64b03b06f14ecf6e3033a04b32af7d47422d19a906a53b`.

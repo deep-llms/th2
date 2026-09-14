@@ -1,5 +1,24 @@
 # Project notes
 
+## A3 joint frequency × variance — 2026-09-14
+
+Completed on all five seed17 Stage2 step3815 checkpoints, full 20M-input-token
+D_dev each, unchanged normal memory behavior. Shared compile-defined 5×5 bins
+cover 12,942,338 identical hit targets. Contextual has lower NLL than Base,
+Isolated and Shuffled in all 25 cells, but higher NLL than Grad in all 25.
+V5 has larger Contextual gains than V1 against all three fixed-table controls
+within each coarse frequency band; this is not a causal variance result.
+All original segment/population losses replay exactly, both original marginal
+bin summaries match, and all 13 result-file hashes pass local verification.
+No per-cell CIs or regression fitted, no new training/validation/seed29 arms.
+
+See [A1–A3 results](MEMORY_DIAGNOSTICS_RESULTS_20260914.md) for all cell counts,
+four contrasts, limitations and execution evidence. Local A3 artifacts:
+`outputs/a3_results_20260914_a01/results/`. Launch `0ae7e33`; exact final
+archive-part export `842181c`. Completion 19:53:03 UTC; original all-eight burns
+verified at 20:04:12 UTC with eight ranks in one NCCL communicator. Current
+burn owner/handoff flag is recorded at the top of CURRENT_TASK.md.
+
 ## Memory dependency diagnostics — 2026-09-14
 
 See [the complete A1/A2 report](MEMORY_DIAGNOSTICS_RESULTS_20260914.md).

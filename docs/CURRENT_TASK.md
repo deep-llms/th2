@@ -1,5 +1,26 @@
 # Current task
 
+## A3 complete, original all-eight burns active — 2026-09-14
+
+A3 completed and was verified locally. All 13 result files, three archive
+parts, original replay/segment alignment, and both original bin marginals passed.
+See docs/MEMORY_DIAGNOSTICS_RESULTS_20260914.md, A3 section. Contextual beats
+Base/Isolated/Shuffled in all 25 joint cells but loses to Grad in all 25.
+V5 improves more than V1 against those three controls in each frequency band;
+this is exploratory, coarse-bin evidence, not a causal variance effect.
+No per-cell CIs/regression, new training, D_val, or seed29 replication.
+
+Latest original all-eight burn heartbeat: 20:04:12 UTC, workers 65728–65735,
+98% utilization on every GPU; one shared eight-rank NCCL communicator.
+Current owner: tmux `ccm_a3_diagnostics_20260914_a01`,
+script `scripts/pilot_a3_diagnostics.py`. Before a later authorized reclaim,
+create its exact
+`/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/STOP_IDLE_WATCH`,
+verify voluntary observer exit, then follow GPU_SAFETY.md.
+The older A1/A2 observer is now disarmed; do not target it again.
+Canonical results: `outputs/a3_results_20260914_a01/results/`.
+No additional experiment is queued; await user direction.
+
 ## A3 authorized and prepared — 2026-09-14
 
 User requested A3 and an update to the existing diagnostic results document.
@@ -18,7 +39,18 @@ reclaim verified burn workers, two 30s/free checks, five two-batch smoke jobs,
 then full evaluation. Keep an original burn group on GPUs 5–7. Reap all five
 jobs and check free before restoring all-eight original burns, CPU summary and
 result packaging. Final `complete.json` requires all gates and active burns.
-Submission/start/completion are not yet established by this preparation note.
+Launch commit `0ae7e33` was pushed and acknowledged by the runner. The launch
+log confirms frozen-input preflight passed at 19:44:28 UTC, then the exact
+previous observer was asked to exit voluntarily. Read-only export `e01167d`
+requests live status, five smoke reports and available completion/results.
+Full remote completion was verified at 19:53:03 UTC: all five real-data smoke
+and full jobs exited zero; the grid passed pairing/original-marginal checks.
+Original all-eight burns were restored before CPU summary/packaging. Heartbeat
+19:57:06 UTC confirms workers 65728–65735, 96–98% utilization, one per GPU;
+the burn log verifies one shared eight-rank NCCL communicator.
+Export `0b6ba32` retrieved completion/burn evidence but skipped the export
+folder. Exact-file export `842181c` requests manifest and three <25MB parts.
+Local full-result verification and report update are complete (see entry above).
 
 ## A1/A2 diagnostics completed and verified — 2026-09-14
 
@@ -39,7 +71,7 @@ partition of training effects. Mean contribution/hidden norm ratios are
 Workflow completion: 19:07:25 UTC. Final exported heartbeat: 19:08:26 UTC,
 all eight original burn workers 63356–63363, one per GPU, 98% utilization.
 The burn log verifies all eight ranks initialized the same NCCL communicator.
-Current owner: tmux `ccm_memory_diagnostics_20260914_a01`,
+Historical owner at A1/A2 completion (now disarmed): tmux `ccm_memory_diagnostics_20260914_a01`,
 script `scripts/pilot_memory_diagnostics.py`. Before a later authorized
 reclaim, disarm this workflow through its own
 `/mnt/local/_outputs/deep-llms_th2/ccm_memory_diagnostics_seed17_20260914_a01/STOP_IDLE_WATCH`
