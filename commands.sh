@@ -1,2 +1,7 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01/complete.json,/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01/validated_common.json,/mnt/local/_outputs/deep-llms_th2/ccm_stage2_seed17_20260913_a01/complete.json,/mnt/local/_outputs/deep-llms_th2/ccm_stage2_seed17_20260913_a01/validated_panel.json
-#th2-ccm-seed29-completion-and-burn-check-20260914-a01
+#1 +60+a
+#th2-ccm-export-all-completed-results-20260914-a01
+set -euo pipefail
+test "$(hostname)" = thiennh-p6-8mgy-worker-0
+cd /mnt/local/deep-llms_th2
+/usr/bin/python3 scripts/export_pilot_results.py --base /mnt/local/_outputs/deep-llms_th2 --output /mnt/local/_outputs/deep-llms_th2/ccm_results_export_20260914_a01
+/usr/bin/python3 -c 'import sys; sys.path.insert(0, "scripts"); from pilot_gpu_ops import inspect; inspect(list(range(8)), active=True); print("RESULT_EXPORT_COMPLETE_BURNS_UNTOUCHED")'
