@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/complete.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/export/,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/ccm_a3_20260914_a01_b2.log
-#th2-ccm-a3-final-bundle-and-burns-20260914-a03
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/export/manifest.json,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/export/results.part000,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/export/results.part001,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/export/results.part002,/mnt/local/_outputs/deep-llms_th2/ccm_a3_seed17_20260914_a01/status.json
+#th2-ccm-a3-exact-result-parts-20260914-a04
