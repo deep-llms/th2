@@ -1,5 +1,27 @@
 # Current task
 
+## Seed29 complete; all results pulled — 2026-09-15
+
+Workflow completed successfully at 10:16:57 UTC. Compilation, six Stage1
+training arms plus seven dev evaluations, and five Stage2 training/evaluation
+arms all passed their gates. Seed29's own Delta decision excluded Delta
+(failed hit-vs-Contextual and overall safeguards). No seed43 or D_val launched.
+
+Canonical results: `outputs/seed29_results_20260915_a01/results/`.
+Download parts/manifest: sibling `download/`. All seven parts, full archive,
+217 file hashes and 12 original evaluation gates verified by
+`scripts/verify_seed29_results.py`; see `results/VERIFIED.json`.
+Archive SHA256: `f0a782bc6492778ebe8c08aa120a36e8aaac62c3aac6d5589fe383a3e3b0b2cc`.
+Export commit `34fd85e`; pull commit `7168594`. No model/optimizer/table binaries
+were downloaded; prior seed17/common-seed29 results remain in their existing folders.
+
+Last verified remote burn heartbeat: 12:18:34 UTC; workers86248–86255,
+one per GPU, all98% utilization,2510MiB each. Original runner burn, eight
+connected NCCL ranks in `ccm_seed29_replication_20260914_a01_b5.log`.
+Owner remains tmux `ccm_replication_seed29_20260914_a01`; no GPU process
+was stopped or relaunched during retrieval. Before any later authorized job,
+disarm its exact `STOP_IDLE_WATCH` and verify observer exit per GPU_SAFETY.md.
+
 ## Seed29 remaining replication authorized — 2026-09-14
 
 User authorized compilation, all six Stage1 arms, required Stage2 arms,
