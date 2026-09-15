@@ -3,7 +3,8 @@ set -euo pipefail
 test "$PWD" = /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-8mgy-worker-0
 date -u
-git rev-parse HEAD
+# No git call: the runner-synced code directory is not a git repository; the
+# submitted commit is recorded by the runner status and ccm's code hash gate.
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
 conda activate train_env
 test "$CONDA_DEFAULT_ENV" = train_env

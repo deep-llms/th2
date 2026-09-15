@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-scaleup28-phase-a-20260915-a01
-set -euo pipefail
-bash scripts/launch_scaleup28_phase_a.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_replication_seed29_20260914_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_replication_seed29_20260914_a01/complete.json,/mnt/local/_outputs/deep-llms_th2/ccm_replication_seed29_20260914_a01/ccm_seed29_replication_20260914_a01_b5.log,/mnt/local/_outputs/deep-llms_th2/ccm_replication_seed29_20260914_a01.handoff.log
+#th2-ccm-verify-burns-before-scaleup-rerun-20260915-a01
