@@ -199,11 +199,11 @@ class ModelTests(Temporary):
             lambda module, args, kwargs: references.update(block2_args=args, block2_kwargs=kwargs), with_kwargs=True)
         h2 = m.backbone.model.norm.register_forward_pre_hook(lambda module, args: references.update(deep=args[0]))
         r = self.run_model(m, capture=True, return_logits=True)
-        self.assertTrue(torch.equal(r["r12_pre_final_norm"], references["deep"]))
+        self.assertTrue(torch.equal(r["deep_pre_final_norm"], references["deep"]))
         direct_shallow = m.backbone.model.layers[1].forward(*references["block2_args"], **references["block2_kwargs"])
         self.assertTrue(torch.equal(r["r2_pre_memory"], direct_shallow))
         self.assertFalse(torch.equal(r["r2_pre_memory"], r["u2_post_memory"]))
-        self.assertTrue(torch.allclose(m.backbone.model.norm(r["r12_pre_final_norm"]), r["hidden"]))
+        self.assertTrue(torch.allclose(m.backbone.model.norm(r["deep_pre_final_norm"]), r["hidden"]))
         changed = {k: v.clone() for k, v in self.batch.items()}
         changed["input_ids"][0].fill_(12)
         other = self.run_model(m, changed, return_logits=True)

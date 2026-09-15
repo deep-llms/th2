@@ -4,13 +4,23 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import subprocess
 import transformers
 from .contracts import (require, read_json, write_json, digest_json, file_hash,
                         load_budget, PILOT, ARMS, VERSION)
+from .studies import STUDIES, PILOT_STUDY, SCALEUP, SCALEUP_BUDGET, open_corpus, require_vocabulary
 
 
 def code_hash():
     return digest_json({p.name: file_hash(p) for p in sorted(Path(__file__).parent.glob("*.py"))})
+
+
+def local_git_commit():
+    # Local repository metadata only; never contacts a remote. Source-byte
+    # hash remains authoritative for non-Git or dirty development directories.
+    result = subprocess.run(["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "HEAD"],
+                            text=True, capture_output=True, timeout=10)
+    return result.stdout.strip() if result.returncode == 0 else None
 
 
 def asset_identity(path, metadata):
@@ -42,20 +52,49 @@ def prepare(args):
                     row += 1
     provenance = dict(dataset="uonlp/CulturaX", language="en", revision=args.dataset_revision,
                       raw_manifest_hash=file_hash(args.source_manifest), tokenizer=tokenizer_info,
-                      transformers=transformers.__version__, source_code_hash=code_hash())
+                      transformers=transformers.__version__, source_code_hash=code_hash(),
+                      source_git_commit=getattr(args, "source_git_commit", None))
+    if args.command == "prepare-scaleup":
+        from .scaleup_data import prepare_scaleup
+        from .data import Corpus
+        from .keys import Vocabulary
+        require(args.budget is None or args.engineering, "Scientific scale-up budget is fixed")
+        return prepare_scaleup(docs, tokenizer, Corpus(args.historical_data), Vocabulary.load(args.vocabulary),
+                               args.output, provenance, budget if args.budget else SCALEUP_BUDGET, args.engineering)
     return build_manifest(docs(), tokenizer, args.output, budget, provenance, args.engineering)
 
 
 def parser():
     p = argparse.ArgumentParser(description=__doc__)
     sub = p.add_subparsers(dest="command", required=True)
-    s = sub.add_parser("prepare")
-    for name in ("raw-dir", "source-manifest", "dataset-revision", "tokenizer-path", "tokenizer-manifest", "output"):
-        s.add_argument("--"+name, required=True)
-    s.add_argument("--budget")
-    s.add_argument("--engineering", action="store_true")
+    for command in ("prepare", "prepare-scaleup"):
+        s = sub.add_parser(command)
+        for name in ("raw-dir", "source-manifest", "dataset-revision", "tokenizer-path", "tokenizer-manifest", "output"):
+            s.add_argument("--"+name, required=True)
+        s.add_argument("--budget")
+        s.add_argument("--engineering", action="store_true")
+        if command == "prepare-scaleup":
+            s.add_argument("--historical-data", required=True)
+            s.add_argument("--vocabulary", required=True)
     s = sub.add_parser("validate-data")
     s.add_argument("--data", required=True)
+    s = sub.add_parser("validate-run")
+    for name in ("data", "run", "output", "phase", "arm"):
+        s.add_argument("--"+name, required=True)
+    s.add_argument("--seed", type=int, choices=(17,29,43), default=17)
+    s = sub.add_parser("scaleup-jobs")
+    s.add_argument("--queue", choices=("common", "panel", "shallow12"), required=True)
+    for name in ("data", "vocabulary", "output"):
+        s.add_argument("--"+name, required=True)
+    for name in ("checkpoint", "tables", "model-config", "contextual-eval", "lr-failure-report"):
+        s.add_argument("--"+name)
+    s.add_argument("--gpus", type=int, nargs="+", required=True)
+    s.add_argument("--seed", type=int, choices=(17,29,43), default=17)
+    s.add_argument("--microbatch-segments", type=int, default=8)
+    # Decision 1(c) 2026-09-15: stability smoke past the 763-update warmup.
+    s.add_argument("--stability-steps", type=int, default=1024)
+    s.add_argument("--common-lr", type=float, choices=(3e-4,2e-4), default=3e-4)
+    s.add_argument("--compiler", choices=("distributed", "reference"), default="distributed")
     for command in ("vocabulary", "coverage", "compile", "train", "evaluate"):
         s = sub.add_parser(command)
         s.add_argument("--data", required=True)
@@ -70,7 +109,18 @@ def parser():
             s.add_argument("--loss-chunk", type=int, default=128)
         if command == "compile":
             s.add_argument("--isolated-batch", type=int, default=256)
+            s.add_argument("--distributed", action="store_true")
+            s.add_argument("--compiler-validation")
+            s.add_argument("--validate-distributed", action="store_true")
+            s.add_argument("--validation-batches", type=int, default=16)
+            s.add_argument("--validation-eval-batches", type=int, default=4)
+            s.add_argument("--reserved-gpus", type=int, default=8)
         if command == "train":
+            s.add_argument("--study", choices=STUDIES, default=PILOT_STUDY)
+            s.add_argument("--common-lr", type=float, choices=(3e-4, 2e-4), default=3e-4)
+            s.add_argument("--stability-steps", type=int)
+            s.add_argument("--stability-report")
+            s.add_argument("--lr-failure-report")
             s.add_argument("--phase", choices=("common", "stage1", "stage2"), required=True)
             s.add_argument("--arm", choices=ARMS, required=True)
             s.add_argument("--seed", type=int, choices=(17, 29, 43), default=17)
@@ -103,12 +153,19 @@ def parser():
     s.add_argument("--cluster", choices=("doc_id", "content_hash"), required=True)
     s.add_argument("--replication-policy", choices=("seed17_then_all", "per_seed"), required=True)
     s = sub.add_parser("lock-final")
+    s.add_argument("--study", choices=STUDIES, default=PILOT_STUDY)
     s.add_argument("--checkpoints", nargs="+", required=True)
     s.add_argument("--include-delta", action="store_true")
     s.add_argument("--confirm-choices-locked", action="store_true")
+    s.add_argument("--single-seed-terminal", action="store_true",
+                   help="Declare the 28L study stops at seed 17; required for a seeds=[17] scale-up lock (decision 2a, 2026-09-15)")
     s.add_argument("--engineering", action="store_true")
     s.add_argument("--cluster", choices=("doc_id", "content_hash"), required=True)
     s.add_argument("--cross-seed-coupling", choices=("shared", "independent"), required=True)
+    s.add_argument("--output", required=True)
+    s = sub.add_parser("scaleup-decision")
+    s.add_argument("--isolated-report", required=True)
+    s.add_argument("--shuffled-report", required=True)
     s.add_argument("--output", required=True)
     return p
 
@@ -117,11 +174,20 @@ def main(argv=None):
     args = parser().parse_args(argv)
     require(transformers.__version__ == "5.9.0", "This implementation is tested against Transformers 5.9.0")
     args.source_code_hash = code_hash()
-    for name in ("microbatch_segments", "loss_chunk", "isolated_batch", "save_every", "log_every"):
+    args.source_git_commit = local_git_commit()
+    for name in ("microbatch_segments", "loss_chunk", "isolated_batch", "save_every", "log_every",
+                 "stability_steps", "validation_batches", "validation_eval_batches"):
         if hasattr(args, name):
-            require(getattr(args, name) > 0, f"Positive {name} required")
-    if args.command == "prepare":
+            require(getattr(args, name) is None or getattr(args, name) > 0, f"Positive {name} required")
+    if args.command in ("prepare", "prepare-scaleup"):
         result = prepare(args)
+    elif args.command == "scaleup-jobs":
+        from .scaleup_jobs import make_jobs
+        result = make_jobs(args)
+        write_json(args.output, result)
+    elif args.command == "scaleup-decision":
+        from .scaleup_protocol import replication_decision
+        result = replication_decision(args.isolated_report, args.shuffled_report, args.output)
     elif args.command == "lock-final":
         from .decisions import lock_final
         result = lock_final(args)
@@ -131,13 +197,21 @@ def main(argv=None):
     else:
         from .data import Corpus, validate_splits
         from .keys import Vocabulary, count_vocabulary
-        corpus = Corpus(args.data)
+        corpus = open_corpus(args.data)
         vocab = Vocabulary.load(args.vocabulary) if getattr(args, "vocabulary", None) else None
         if args.command == "validate-data":
-            result = dict(documents=validate_splits(corpus), manifest_hash=corpus.meta["manifest_hash"])
+            if corpus.meta.get("study") == SCALEUP:
+                from .scaleup_data import validate_scaleup
+                result = validate_scaleup(corpus)
+            else:
+                result = dict(documents=validate_splits(corpus), manifest_hash=corpus.meta["manifest_hash"])
             for role in corpus.meta["quotas"]:
                 require(sum(len(r["tokens"]) for r in corpus.segments(role)) == corpus.meta["quotas"][role], "Wrong role budget")
+        elif args.command == "validate-run":
+            from .scaleup_jobs import validate_run
+            result = validate_run(args, corpus)
         elif args.command == "vocabulary":
+            require(corpus.meta.get("study") != SCALEUP, "Reuse the checked historical vocabulary; do not recount/rebind it")
             vocab = count_vocabulary(corpus.segments("compile"), corpus.meta["special_ids"], corpus.budget.slots,
                                      str(args.output)+".counts.sqlite", dict(corpus_hash=corpus.meta["manifest_hash"],
                                      compile_segment_hash=corpus.meta["files"]["compile.segments.jsonl"],
@@ -148,8 +222,12 @@ def main(argv=None):
             from .compiler import coverage
             result = coverage(corpus, vocab, args.output)
         elif args.command == "compile":
-            from .compiler import compile_tables
-            result = compile_tables(args, corpus, vocab)
+            if args.distributed or args.validate_distributed:
+                from .distributed_compiler import distributed_compile
+                result = distributed_compile(args, corpus, vocab)
+            else:
+                from .compiler import compile_tables
+                result = compile_tables(args, corpus, vocab)
         elif args.command == "train":
             from .runtime import train
             require(args.save_every > 0 and args.log_every > 0, "Positive log/save intervals required")

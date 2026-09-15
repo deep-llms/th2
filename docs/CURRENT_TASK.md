@@ -1,5 +1,22 @@
 # Current task
 
+## 28L/12B Phase-A queue launched — 2026-09-15
+
+User authorized launch of plan v3 §23.A after the implementation review and
+recorded pre-launch decisions. One guarded sequential handoff
+(`scripts/pilot_scaleup28_phase_a.py`, tmux `ccm_scaleup28_phase_a_20260915_a01`)
+runs: input gates → background CPU `prepare-scaleup`
+(`scaleup28_v3_20260915_a01`) → seed29-observer disarm and verified burn
+reclaim → 12L Stage-2 Shallow follow-ups (seeds 17, 29) with Deep-vs-Shallow
+reports → extension validation → decided 28L common queue (32-update pipeline
+smoke, 1,024-update stability smoke, fresh 38,147-update/10B common training,
+save-every 5000) → validation → burns restored, idle observer armed.
+See `SCALEUP28_PHASE_A_20260915.md`. NOT launched: 28L panel, 12L D_val,
+any replication seed, LR fallback. `ccm/` hash
+`214d57c4816b37298000051da8a0ef16fabdfce1f2c870e8e5262729e35b1582`;
+execution suite 99 passed. Before any later GPU job, disarm THIS queue's
+`STOP_IDLE_WATCH` and verify its observer exit per GPU_SAFETY.md.
+
 ## Seed29 complete; all results pulled — 2026-09-15
 
 Workflow completed successfully at 10:16:57 UTC. Compilation, six Stage1

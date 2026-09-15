@@ -19,6 +19,13 @@ def position_keys(ids, special_ids):
 
 
 class Vocabulary:
+    @property
+    def mapping_hash(self):
+        # Slot is the array index. Excludes corpus metadata and counts, which
+        # have their own checksums; exact LE int64 bytes are portable.
+        import hashlib
+        return hashlib.sha256(self.keys.astype("<i8").tobytes()).hexdigest()
+
     def __init__(self, keys, counts, metadata):
         self.keys = np.asarray(keys, dtype=np.int64)
         self.counts = np.asarray(counts, dtype=np.int64)

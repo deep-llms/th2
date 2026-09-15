@@ -12,6 +12,7 @@ from .contracts import require, write_json, read_json, fresh_dir, file_hash, dig
 from .artifacts import state_hash, load_table
 from .model import MemoryLM, pilot_config
 from .data import microbatches, collate
+from .studies import SCALEUP, PILOT_STUDY, validate_training_study, require_vocabulary, study_of
 
 
 def device_context(requested):
@@ -163,6 +164,19 @@ def delta_policy_matches(decision, seed, common_hash):
 
 
 def train(args, corpus, vocab=None):
+    study = validate_training_study(args, corpus)
+    stability_steps = getattr(args, "stability_steps", None)
+    if stability_steps is not None:
+        require(study == SCALEUP and args.phase == "common" and 1 <= stability_steps < corpus.budget.common_steps,
+                "Stability run must be a strict prefix of 28L common training")
+    common_lr = getattr(args, "common_lr", 3e-4)
+    require(common_lr in (3e-4, 2e-4), "Only predetermined common LR values are allowed")
+    require(study == SCALEUP or common_lr == 3e-4, "Historical common LR is unchanged")
+    if study == SCALEUP:
+        require(read_json(corpus.path/"complete.json")["manifest_hash"] == corpus.meta["manifest_hash"],
+                "Scale-up preparation must finish and validate before training")
+        from .scaleup_protocol import validate_stability_inputs
+        validate_stability_inputs(args, corpus)
     device, rank, world = device_context(args.device)
     require(args.engineering or device.type == "cuda", "Pilot training requires bf16 CUDA; use --engineering for toy CPU")
     seeds = seed_bundle(args.seed)
@@ -170,7 +184,6 @@ def train(args, corpus, vocab=None):
     phase, arm = args.phase, args.arm
     require(not args.online, "Online self-writing is not implemented in pilot v1.")
     require(phase != "stage1" or arm != "base", "Stage-1 Base is evaluated without adaptation")
-    require(phase != "stage2" or arm != "shallow", "Shallow is Stage-1 diagnostic only")
     require(corpus.meta["engineering"] == args.engineering, "Engineering/pilot corpus mode mismatch")
     common_meta = None
     artifact = None
@@ -180,7 +193,7 @@ def train(args, corpus, vocab=None):
             c = Qwen3Config.from_pretrained(args.model_config, local_files_only=True)
             c._attn_implementation = "sdpa"
         else:
-            c = pilot_config(args.model_config)
+            c = pilot_config(args.model_config, layers=28 if study == SCALEUP else 12)
         model = MemoryLM(c)
     else:
         require(args.checkpoint is not None, "Stage 1/2 requires theta_4B")
@@ -190,11 +203,13 @@ def train(args, corpus, vocab=None):
         require(common_meta["corpus_hash"] == corpus.meta["manifest_hash"] and common_meta["seed"] == args.seed,
                 "Common checkpoint data/seed mismatch")
         c = base.backbone.config
+        require(common_meta.get("study", PILOT_STUDY) == study_of(corpus), "Common checkpoint study mismatch")
+        require(args.engineering or c.num_hidden_layers == (28 if study == SCALEUP else 12), "Wrong writer depth")
         table = None
         if arm != "base":
             require(vocab is not None and args.coverage is not None, "Memory arms require vocabulary and pre-reader coverage")
             require_coverage(args.coverage, corpus, vocab)
-            require(vocab.metadata["corpus_hash"] == corpus.meta["manifest_hash"], "Vocabulary corpus mismatch")
+            require_vocabulary(corpus, vocab)
             if arm != "grad":
                 require(args.table is not None, "Compiled arm requires its checked table")
                 tensors, artifact = load_table(args.table, dict(constructor=arm, vocabulary_hash=vocab.hash,
@@ -232,9 +247,9 @@ def train(args, corpus, vocab=None):
         dist.barrier()
     total = dict(common=corpus.budget.common_steps, stage1=corpus.budget.adapt_steps,
                  stage2=corpus.budget.continue_steps)[phase]
-    peak = dict(common=3e-4, stage1=5e-4, stage2=1.5e-4)[phase]
+    peak = dict(common=common_lr, stage1=5e-4, stage2=1.5e-4)[phase]
     warm = 0.05 if phase == "stage1" else 0.02
-    meta = dict(version=VERSION, phase=phase, arm=arm, seed=args.seed, seeds=seeds,
+    meta = dict(version=VERSION, study=study, phase=phase, arm=arm, seed=args.seed, seeds=seeds,
                 engineering=args.engineering, corpus_hash=corpus.meta["manifest_hash"],
                 tokenizer=corpus.meta["provenance"]["tokenizer"], vocabulary_hash=vocab.hash if vocab else None,
                 source_checkpoint_hash=common_meta["model_sha256"] if common_meta else None,
@@ -242,6 +257,8 @@ def train(args, corpus, vocab=None):
                 paired_initial_reader_hash=state_hash(model.reader.state_dict()) if model.reader else None,
                 initial_grad_table_hash=state_hash({"table": model.table}) if arm == "grad" else None,
                 config=vars(args), torch=torch.__version__, transformers=transformers.__version__,
+                cuda=torch.version.cuda, source_code_hash=getattr(args, "source_code_hash", None),
+                source_git_commit=getattr(args, "source_git_commit", None),
                 optimizer="AdamW fp32 masters/moments, reset per phase", model_dtype=str(dtype),
                 world_size=world, peak_lr=peak, total_steps=total)
     if rank == 0:
@@ -251,6 +268,7 @@ def train(args, corpus, vocab=None):
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
     last = 0
+    stop = stability_steps or total
     log = (out/"train.jsonl").open("x") if rank == 0 else None
     try:
         for step, rows in enumerate(corpus.optimizer_batches(phase, seeds["data"]), 1):
@@ -270,12 +288,27 @@ def train(args, corpus, vocab=None):
                     loss.backward()
                     step_loss += result["loss_sum"].detach().double()
                 del result, batch, loss
+            # All ranks must see the same failure before applying an update.
+            # Non-finite loss can occur even with finite gradients (e.g. a
+            # non-finite additive term), so gradient clipping alone is not a
+            # sufficient numerical-safety check. Reuse the logging reduction.
+            if world > 1:
+                dist.all_reduce(step_loss)
+            if not bool(torch.isfinite(step_loss)):
+                raise RuntimeError("non-finite training loss")
             lr = schedule(step, total, peak, warm)
             for g in opt.inner.param_groups:
                 g["lr"] = lr*g["multiplier"]
             grad_norm = opt.step()
-            if world > 1:
-                dist.all_reduce(step_loss)
+            if stability_steps and step == stop:
+                finite = torch.ones((), device=device, dtype=torch.bool)
+                for _, master in opt.pairs:
+                    finite &= torch.isfinite(master).all()
+                    for state in opt.inner.state[master].values():
+                        if isinstance(state, torch.Tensor):
+                            finite &= torch.isfinite(state).all().to(device)
+                if not bool(finite):
+                    raise RuntimeError("non-finite stability optimizer state")
             sync(device)
             elapsed = time.monotonic()-start
             peak_bytes = torch.tensor(torch.cuda.max_memory_allocated(device) if device.type == "cuda" else 0,
@@ -292,15 +325,26 @@ def train(args, corpus, vocab=None):
                 log.flush()
                 if step == 1 or step % args.log_every == 0:
                     print(json.dumps(record), flush=True)
-                if step % args.save_every == 0 or step == total:
+                if step % args.save_every == 0 or step == stop:
                     save_checkpoint(out/f"checkpoint-{step}", model, dict(meta, step=step, metrics=record), opt)
             if world > 1:
                 dist.barrier()
             last = step
-        require(last == total, "Training ended before exact step budget")
+            if stability_steps and step == stop:
+                break
+        require(last == stop, "Training ended before exact step budget")
         if rank == 0:
-            write_json(out/"complete.json", dict(success=True, phase=phase, arm=arm, step=last,
-                       input_tokens=last*corpus.budget.batch_tokens, checkpoint=f"checkpoint-{last}"))
+            if stability_steps:
+                from .scaleup_protocol import stability_record
+                write_json(out/"stability.json", stability_record(args, corpus, True, last))
+            else:
+                write_json(out/"complete.json", dict(success=True, phase=phase, arm=arm, step=last,
+                           input_tokens=last*corpus.budget.batch_tokens, checkpoint=f"checkpoint-{last}"))
+    except (ValueError, RuntimeError) as exc:
+        if rank == 0 and study == SCALEUP and phase == "common" and "non-finite" in str(exc).lower():
+            from .scaleup_protocol import stability_record
+            write_json(out/"instability.json", stability_record(args, corpus, False, last, str(exc)))
+        raise
     finally:
         if log:
             log.close()

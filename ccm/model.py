@@ -10,7 +10,8 @@ from .contracts import require, HOOKS, digest_json
 from .keys import safe_gather
 
 
-def pilot_config(path):
+def pilot_config(path, layers=12):
+    require(layers in (12, 28), "Only the versioned 12L and 28L architectures are supported")
     c = Qwen3Config.from_pretrained(path, local_files_only=True)
     expected = dict(model_type="qwen3", vocab_size=151936, hidden_size=1024,
                     intermediate_size=3072, num_hidden_layers=28,
@@ -23,10 +24,10 @@ def pilot_config(path):
     if theta is None:
         theta = c.rope_parameters["rope_theta"]
     require(theta == 1000000, "Unexpected Qwen RoPE theta")
-    c.num_hidden_layers = 12
-    c.max_window_layers = 12
+    c.num_hidden_layers = layers
+    c.max_window_layers = layers
     c.use_sliding_window = False
-    c.layer_types = ["full_attention"]*12
+    c.layer_types = ["full_attention"]*layers
     c.use_cache = False
     c._attn_implementation = "sdpa"
     return c
@@ -101,7 +102,11 @@ class MemoryLM(nn.Module):
 
     def _writer_hook(self, module, args):
         if self._capture:
-            self._states["r12_pre_final_norm"] = args[0]
+            self._states["deep_pre_final_norm"] = args[0]
+            self._states[f"r{self.backbone.config.num_hidden_layers}_pre_final_norm"] = args[0]
+            # Historical tiny tests use the pilot name for toy (<12L) models.
+            if self.backbone.config.num_hidden_layers < 12:
+                self._states["r12_pre_final_norm"] = args[0]
 
     def set_phase(self, phase):
         require(phase in ("common", "compile", "stage1", "stage2", "eval"), "Online self-writing is not implemented in pilot v1.")

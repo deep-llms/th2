@@ -1,5 +1,15 @@
 # Project notes
 
+## 28L/12B Phase-A launch — 2026-09-15
+
+Phase A of `ccm_28layer_scaleup_plan_v3_12B.md` submitted as one queue:
+extension data preparation, both post-hoc 12L Shallow follow-ups, and the 28L
+seed-17 10B common training with the decided smoke policy. The 28L panel,
+12L locked validation and replication seeds require separate authorization.
+Pre-launch decisions are recorded in `SCALEUP28_PRELAUNCH_DECISIONS_20260915.md`;
+the implementation contract in `SCALEUP28_IMPLEMENTATION.md`; the queue
+protocol in `SCALEUP28_PHASE_A_20260915.md`.
+
 ## Seed29 automatic replication / explicit Delta policy — 2026-09-14
 
 User authorized all remaining seed29 offline phases, reusing its completed 4B

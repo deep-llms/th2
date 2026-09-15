@@ -9,6 +9,7 @@ from .data import collate
 from .runtime import load_model, model_inputs, to_device, sync
 from .compiler import batches
 from .artifacts import load_bundle
+from .studies import require_vocabulary
 
 
 def bins(values):
@@ -36,7 +37,7 @@ def validate_final_access(role, final, lock, corpus, metadata):
 def evaluate(args, corpus, vocab):
     model, meta = load_model(args.checkpoint, args.device)
     require(meta["corpus_hash"] == corpus.meta["manifest_hash"], "Evaluation corpus mismatch")
-    require(vocab.metadata["corpus_hash"] == corpus.meta["manifest_hash"], "Evaluation vocabulary mismatch")
+    require_vocabulary(corpus, vocab)
     if model.arm != "base":
         require(meta["vocabulary_hash"] == vocab.hash, "Model/vocabulary mismatch")
     validate_final_access(args.role, args.final_evaluation, args.final_lock, corpus, meta)
@@ -109,7 +110,7 @@ def evaluate(args, corpus, vocab):
     sync(device)
     wall = time.monotonic()-start
     gate = np.concatenate(gate_values) if gate_values else np.array([])
-    report = dict(arm=meta["arm"], phase=meta["phase"], seed=meta["seed"], role=args.role,
+    report = dict(study=meta.get("study", "pilot12"), arm=meta["arm"], phase=meta["phase"], seed=meta["seed"], role=args.role,
                   step=meta["step"], total_steps=meta["total_steps"], engineering=meta["engineering"],
                   source_checkpoint_hash=meta["source_checkpoint_hash"],
                   paired_initial_reader_hash=meta["paired_initial_reader_hash"],

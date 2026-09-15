@@ -7,6 +7,7 @@ from .contracts import require, fresh_dir, write_json, HOOKS
 from .data import collate
 from .runtime import load_model, to_device, sync
 from .artifacts import Accumulator, save_bundle
+from .studies import SCALEUP, study_of, require_vocabulary
 
 
 def batches(stream, size):
@@ -21,7 +22,7 @@ def batches(stream, size):
 
 
 def coverage(corpus, vocab, output):
-    require(vocab.metadata["corpus_hash"] == corpus.meta["manifest_hash"], "Coverage vocabulary/corpus mismatch")
+    require_vocabulary(corpus, vocab)
     hits = eligible = targets = 0
     for row in corpus.segments("dev"):
         slots, e = vocab.route(row["tokens"], corpus.meta["special_ids"])
@@ -39,18 +40,22 @@ def coverage(corpus, vocab, output):
 
 @torch.no_grad()
 def compile_tables(args, corpus, vocab):
-    require(vocab.metadata["corpus_hash"] == corpus.meta["manifest_hash"], "Compiler vocabulary/corpus mismatch")
+    require_vocabulary(corpus, vocab)
     model, ck = load_model(args.checkpoint, args.device)
     require(ck["phase"] == "common" and ck["arm"] == "base" and ck["step"] == corpus.budget.common_steps,
             "Writer must be the completed memory-free theta_4B")
     require(ck["corpus_hash"] == corpus.meta["manifest_hash"], "Writer/data mismatch")
+    require(ck.get("study", "pilot12") == study_of(corpus), "Writer study mismatch")
+    require(corpus.meta["engineering"] or model.backbone.config.num_hidden_layers == (28 if study_of(corpus) == SCALEUP else 12),
+            "Compiler writer depth mismatch")
     model.set_phase("compile")
     device = torch.device(args.device)
     out = fresh_dir(args.output)
     n, width = len(vocab.keys), model.backbone.config.hidden_size
     # CPU masters avoid competing with model accelerator memory. Per-microbatch
     # transfer/accumulation cost is measured, not hidden in a speed claim.
-    accum = {kind: Accumulator(n, width) for kind in ("shallow", "contextual", "delta")}
+    kinds = ("shallow", "contextual") if study_of(corpus) == SCALEUP else ("shallow", "contextual", "delta")
+    accum = {kind: Accumulator(n, width) for kind in kinds}
     sync(device)
     start, cpu_start = time.monotonic(), time.process_time()
     tokens = 0
@@ -58,9 +63,10 @@ def compile_tables(args, corpus, vocab):
         batch = to_device(collate(rows, corpus.meta["special_ids"], vocab), device)
         r = model(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"],
                   position_ids=batch["position_ids"], capture=True)
-        shallow, deep = r["r2_pre_memory"].float(), r["r12_pre_final_norm"].float()
+        shallow, deep = r["r2_pre_memory"].float(), r["deep_pre_final_norm"].float()
         for kind, values in (("shallow", shallow), ("contextual", deep), ("delta", deep-shallow)):
-            accum[kind].add(batch["slots"], values)
+            if kind in accum:
+                accum[kind].add(batch["slots"], values)
         tokens += int(batch["attention_mask"].sum())
         del batch, r, shallow, deep
     require(tokens == corpus.budget.compile_tokens, "Wrong compiler input-token budget")
@@ -75,8 +81,12 @@ def compile_tables(args, corpus, vocab):
                 compile_segment_hash=corpus.meta["files"]["compile.segments.jsonl"],
                 hooks=HOOKS, source_seed=ck["seed"], config=vars(args),
                 source_code_hash=args.source_code_hash)
+    # Online writing is excluded from the scale-up study; do not advertise its
+    # tables as online-capable there (matches the distributed compiler path).
+    online = study_of(corpus) != SCALEUP
     for kind, a in accum.items():
-        save_bundle(out/kind, a.finish(), dict(base, constructor=kind, online_capable=kind in ("contextual", "delta")))
+        save_bundle(out/kind, a.finish(), dict(base, constructor=kind,
+                    online_capable=online and kind in ("contextual", "delta")))
     # Isolated control is intentionally different: [a,b] has no teacher-forced
     # target at b, but b's final hidden state IS the isolated constructor.
     isolated = torch.empty(n, width, dtype=torch.bfloat16)
@@ -86,7 +96,7 @@ def compile_tables(args, corpus, vocab):
         ids = torch.tensor(np.stack([keys >> 32, keys & 0xffffffff], axis=1), device=device)
         r = model(input_ids=ids, attention_mask=torch.ones_like(ids, dtype=torch.bool),
                   position_ids=torch.tensor([0, 1], device=device).expand(len(ids), -1), capture=True)
-        isolated[i:i+len(ids)] = r["r12_pre_final_norm"][:, 1].to("cpu", dtype=torch.bfloat16)
+        isolated[i:i+len(ids)] = r["deep_pre_final_norm"][:, 1].to("cpu", dtype=torch.bfloat16)
     save_bundle(out/"isolated", dict(lookup=isolated), dict(base, constructor="isolated", online_capable=False))
     g = torch.Generator().manual_seed(200000+ck["seed"])
     permutation = torch.randperm(n, generator=g)
