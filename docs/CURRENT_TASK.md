@@ -1,5 +1,18 @@
 # Current task
 
+## Phase-A2 recovery queue — 2026-09-16
+
+The a01 queue ended early on 2026-09-15 (external interruption during the
+seed-29 Shallow arm; the completed seed-17 section is verified and kept).
+With the user's ownership confirmation and explicit instructions, the
+`th2-ccm-scaleup28-phase-a2-20260916-a01` job runs
+`scripts/pilot_scaleup28_phase_a2.py`: input gates, the authorized takeover
+and cleanup steps documented in `SCALEUP28_PHASE_A2_20260916.md`, then fresh
+data preparation (`scaleup28_v3_20260916_a01`), the seed-29 Shallow follow-up
+with all gates, the decided smokes, and the 10B 28L common training.
+`ccm/` core unchanged (`214d57c4...`); execution suite 103 passed.
+Torchrun only; no Accelerate configuration exists in this project.
+
 ## 28L/12B Phase-A queue launched — 2026-09-15
 
 User authorized launch of plan v3 §23.A after the implementation review and

@@ -1,5 +1,6 @@
 """CPU/mocked Phase-A queue checks: never inspect or signal real GPU processes."""
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -9,6 +10,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
 import pilot_scaleup28_phase_a as job
+import pilot_scaleup28_phase_a2 as job2
 import scaleup28_config as config
 from ccm.cli import parser
 from ccm.scaleup_jobs import make_jobs
@@ -69,8 +71,14 @@ class PhaseATests(unittest.TestCase):
         from ccm.cli import code_hash
         self.assertEqual(config.CORE, code_hash())
         self.assertNotEqual(config.SESSION, config.OLD_SESSION)
-        self.assertIn('20260915', str(config.OUT))
-        self.assertIn('20260915', str(config.DATA28))
+        # a2 recovery uses fresh roots; the old queue's roots stay addressable
+        # as verification/cleanup targets only.
+        self.assertIn('20260916', str(config.OUT))
+        self.assertIn('20260916', str(config.DATA28))
+        self.assertIn('20260915', str(config.OUT_A1))
+        self.assertIn('20260915', str(config.DATA28_PARTIAL))
+        self.assertNotEqual(config.OUT, config.OUT_A1)
+        self.assertNotEqual(config.DATA28, config.DATA28_PARTIAL)
 
     def test_previous_state_gate(self):
         done = dict(success=True, event=config.OLD_EVENT)
@@ -108,6 +116,91 @@ class PhaseATests(unittest.TestCase):
         with patch.object(job.PhaseA, 'record'):
             w.stop_own_preparation()
         self.assertEqual(len(signals), 1)
+
+    def test_a2_foreign_allowlist(self):
+        ok = job2.foreign_process_allowed
+        self.assertTrue(ok([b'/usr/bin/python3', b'-B', b'-c', b'x', b'--multiprocessing-fork']))
+        self.assertTrue(ok([b'/mnt/local/conda-py310/envs/deepeyes/bin/python', b'trainer.py']))
+        self.assertTrue(ok([b'/usr/bin/python3', b'/tmp/llm_pretrain_burn.py']))
+        self.assertFalse(ok([b'/usr/bin/bash', b'--multiprocessing-fork']))
+        self.assertFalse(ok([b'/usr/bin/python3', b'some_random_service.py']))
+        self.assertFalse(ok([b'']))
+        self.assertFalse(ok([]))
+
+    @unittest.skipUnless(hasattr(os, 'pidfd_open'), 'pidfd API unavailable in this test env')
+    def test_a2_pinned_signal_refuses_drift_and_gone(self):
+        import os as _os
+        import signal as _sig
+        import subprocess as _sp
+        pid = _os.getpid()
+        real = job2.identity(pid)
+        drifted = (real[0], real[1], real[2]+[b'changed'])
+        with self.assertRaisesRegex(RuntimeError, 'identity changed'):
+            job2.pinned_signal(pid, drifted, _sig.SIGTERM)
+        child = _sp.Popen(['true'])
+        child.wait()
+        self.assertFalse(job2.pinned_signal(child.pid, real, _sig.SIGTERM))
+
+    def test_a2_cleanup_guards_and_success(self):
+        w = job2.PhaseA2.__new__(job2.PhaseA2)
+        events = []
+        with tempfile.TemporaryDirectory() as tmp:
+            old = Path(tmp)/'a1'
+            seed29 = old/'shallow12_seed29/train/shallow'
+            seed29.mkdir(parents=True)
+            (seed29/'run.json').write_text(json.dumps(dict(
+                study='pilot12-shallow-followup', seed=29, arm='shallow')))
+            (old/'shallow29_train.log').write_text('log')
+            (old/'cache-123.arrow').write_text('x')
+            sub = old/'shallow12_seed17'
+            sub.mkdir()
+            (sub/'tmp-x').write_text('y')
+            (sub/'metrics.json').write_text('{}')
+            with patch.object(job2, 'OUT_A1', old), \
+                 patch.object(job2, 'DATA28_PARTIAL', Path(tmp)/'absent'), \
+                 patch.object(job2.PhaseA2, 'record', lambda self, **kw: events.append(kw)):
+                # refuse completed section
+                (old/'shallow12_seed29/complete.json').write_text('{}')
+                with self.assertRaisesRegex(RuntimeError, 'completed'):
+                    w.cleanup()
+                (old/'shallow12_seed29/complete.json').unlink()
+                # refuse wrong contract
+                (seed29/'run.json').write_text(json.dumps(dict(study='pilot12', seed=17, arm='base')))
+                with self.assertRaisesRegex(RuntimeError, 'contract mismatch'):
+                    w.cleanup()
+                (seed29/'run.json').write_text(json.dumps(dict(
+                    study='pilot12-shallow-followup', seed=29, arm='shallow')))
+                w.cleanup()
+            self.assertFalse((old/'shallow12_seed29').exists())
+            self.assertFalse((old/'shallow29_train.log').exists())
+            self.assertFalse((old/'cache-123.arrow').exists())
+            self.assertFalse((sub/'tmp-x').exists())
+            self.assertTrue((sub/'metrics.json').exists())
+            removed = [e for e in events if e.get('event') == 'removed_cache_tmp_files'][0]
+            self.assertEqual(removed['count'], 2)
+
+    def test_a2_partial_root_hard_path_guard(self):
+        w = job2.PhaseA2.__new__(job2.PhaseA2)
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = Path(tmp)/'not-the-real-partial-root'
+            fake.mkdir()
+            with patch.object(job2, 'OUT_A1', Path(tmp)/'missing-old'), \
+                 patch.object(job2, 'DATA28_PARTIAL', fake), \
+                 patch.object(job2.PhaseA2, 'record', lambda self, **kw: None):
+                with self.assertRaisesRegex(RuntimeError, 'refuse delete'):
+                    w.cleanup()
+            self.assertTrue(fake.exists())
+
+    def test_a2_burns_and_disarm(self):
+        w = job2.PhaseA2.__new__(job2.PhaseA2)
+        w.burn_number = 0
+        with patch.object(job2, 'start') as started:
+            w.burns([0, 1])
+            args = started.call_args.args
+            self.assertIn('phase_a2', args[1])
+            self.assertEqual(args[3], 30801)
+        with self.assertRaisesRegex(RuntimeError, 'no previous observer'):
+            w.disarm()
 
     def test_validator_parses_all_gate_actions(self):
         # The controller's gate invocations must match the validator CLI.

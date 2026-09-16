@@ -12,9 +12,14 @@ CORPUS_HASH = '10746d723b6098729cb8824d52f377edb04a97fed69f1106101afdf1763059d5'
 VOCAB_HASH = 'bff81f51cb1a9c03ade925996743fa1575a92560d74f4dcb960deb683da7d6c1'
 
 RAW = Path('/mnt/local/_data/deep-llms_th2/data/raw')
-DATA28 = Path('/mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260915_a01')
-OUT = Path('/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a_20260915_a01')
-SESSION = 'ccm_scaleup28_phase_a_20260915_a01'
+# a2 recovery roots (2026-09-16), after the external kill of the a01 queue.
+DATA28 = Path('/mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260916_a01')
+OUT = Path('/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a01')
+SESSION = 'ccm_scaleup28_phase_a2_20260916_a01'
+# Prior interrupted queue: completed seed-17 section is kept and verified; the
+# interrupted seed-29 section and the partial data root are removal targets.
+OUT_A1 = Path('/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a_20260915_a01')
+DATA28_PARTIAL = Path('/mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260915_a01')
 
 COMMON17 = Path('/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed17_20260913_a01')
 COMMON29 = Path('/mnt/local/_outputs/deep-llms_th2/ccm_pilot_seed29_20260913_a01')

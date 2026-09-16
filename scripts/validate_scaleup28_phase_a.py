@@ -18,8 +18,8 @@ from ccm.studies import SCALEUP_BUDGET, open_corpus, require_vocabulary
 from ccm.scaleup_data import validate_scaleup
 from scaleup28_config import (ASSETS, COMMON_HASH, COMMON_ROOT, COMMON_SAVE_EVERY,
     CONTEXT_EVAL, CONTEXT_EVAL_CKPT, CONTEXT_EVAL_GATE, CORE, CORPUS_HASH, DATA, DATA28,
-    FOLLOWUP, OLD_EVENT, OUT, PREP, PREVIOUS, RAW, REVISION, SEED28, SHALLOW_SEEDS,
-    STAGE1_ROOT, STUDY, TABLES, TABLE_HASH, VOCAB_HASH)
+    DATA28_PARTIAL, FOLLOWUP, OLD_EVENT, OUT, OUT_A1, PREP, PREVIOUS, RAW, REVISION,
+    SEED28, SHALLOW_SEEDS, STAGE1_ROOT, STUDY, TABLES, TABLE_HASH, VOCAB_HASH)
 from validate_stage1 import validate_eval
 from validate_stage2 import validate_train
 
@@ -71,7 +71,30 @@ def inputs(corpus, vocab):
         context_eval_integrity(seed)
         checkpoint_meta(STAGE1_ROOT[seed]/'train/shallow/checkpoint-977')
         commons[str(seed)] = common['model_sha256']
-    return dict(commons=commons, previous_queue_event=done['event'])
+    seed17 = completed_seed17_intact()
+    if DATA28_PARTIAL.exists():
+        # Removal target from the killed a01 queue; refuse if it ever looks
+        # like a completed dataset, which must never be deleted.
+        require(not DATA28_PARTIAL.is_symlink() and not (DATA28_PARTIAL/'manifest.json').exists()
+                and not (DATA28_PARTIAL/'complete.json').exists(),
+                'Partial extension root unexpectedly looks complete; do not delete')
+    return dict(commons=commons, previous_queue_event=done['event'], seed17_followup=seed17)
+
+
+def completed_seed17_intact():
+    # The a01 queue's completed seed-17 section is carried forward, not rerun.
+    root = OUT_A1/'shallow12_seed17'
+    require((root/'complete.json').is_file(), 'Missing completed seed-17 section')
+    for gate_name in ('validated_shallow_train_17', 'validated_shallow_eval_17', 'validated_followup_17'):
+        require(read_json(OUT_A1/f'{gate_name}.json')['success'], f'Missing/failed {gate_name}')
+    m = read_json(root/'eval/shallow/metrics.json')
+    gate = read_json(OUT_A1/'validated_shallow_eval_17.json')
+    require(gate['metrics_sha256'] == file_hash(root/'eval/shallow/metrics.json')
+            and gate['segments_sha256'] == file_hash(root/'eval/shallow/segments.jsonl')
+            and m['seed'] == 17 and m['arm'] == 'shallow', 'Seed-17 evaluation records changed')
+    r = read_json(root/'reports/contextual_vs_shallow.json')
+    require(r['backbone_seeds'] == [17] and math.isfinite(r['upper95']), 'Seed-17 follow-up report changed')
+    return dict(eval_nll=m['metrics']['overall']['nll'], deep_vs_shallow_upper95=r['upper95'])
 
 
 def extension(vocab):
