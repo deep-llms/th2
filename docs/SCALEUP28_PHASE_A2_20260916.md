@@ -38,6 +38,28 @@ exists or is copied (`resources/accelerate_config.example.yaml` is an unused
 template and is not touched). The `ccm/` research core is unchanged
 (`214d57c4...`); only scripts/tests were added.
 
+## First a2 attempt aborted in the clear (fixed)
+
+The first a2 attempt (`bb29976`, session `...a01`) aborted during the GPU
+clear: it precomputed process identities, signaled launcher parents first,
+which reparented their workers (ppid -> 1), and a strict `ppid`-inclusive
+identity check then treated that benign reparenting as fatal and aborted.
+It had already SIGTERM'd some launchers, which stopped the foreign `deepeyes`
+trainer (authorized, but done partially) and left orphaned worker remnants.
+
+Fix (this version, session/roots bumped to `...a02`):
+- `pinned_signal` pins on **start-time + cmdline only** (reuse-proof) and
+  ignores `ppid`, so reparenting no longer blocks a kill; drift/disappearance
+  returns False instead of aborting the whole clear.
+- `authorized_clear` is now **iterative**: each pass re-snapshots GPU pids,
+  re-verifies every one against the allowlist (aborting only on a genuinely
+  unrecognized GPU process), signals them plus their allowlisted launcher
+  ancestors, escalates SIGTERM -> SIGKILL after 90 s, and converges when the
+  GPUs are empty. `allowlisted_ancestors` stops at the first non-allowlisted
+  parent so tmux/bash/init are never signaled.
+The orphaned remnants from the first attempt are allowlisted and parentless,
+so the iterative clear removes them cleanly.
+
 ## Still not launched by this queue
 
 28L compile/Stage-1/Stage-2 panel, 12L locked `D_val` evaluations, replication

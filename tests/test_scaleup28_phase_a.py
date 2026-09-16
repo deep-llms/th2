@@ -128,18 +128,35 @@ class PhaseATests(unittest.TestCase):
         self.assertFalse(ok([]))
 
     @unittest.skipUnless(hasattr(os, 'pidfd_open'), 'pidfd API unavailable in this test env')
-    def test_a2_pinned_signal_refuses_drift_and_gone(self):
+    def test_a2_pinned_signal_tolerates_reparent_rejects_reuse(self):
         import os as _os
         import signal as _sig
         import subprocess as _sp
         pid = _os.getpid()
         real = job2.identity(pid)
-        drifted = (real[0], real[1], real[2]+[b'changed'])
-        with self.assertRaisesRegex(RuntimeError, 'identity changed'):
-            job2.pinned_signal(pid, drifted, _sig.SIGTERM)
+        # Benign reparenting: only ppid differs -> stable identity holds -> signal 0 delivers.
+        reparented = (999999, real[1], real[2])
+        self.assertTrue(job2.pinned_signal(pid, reparented, 0))
+        # PID reuse: start time differs -> refuse (returns False, never raises).
+        reused = (real[0], str(int(real[1]) + 5), real[2])
+        self.assertFalse(job2.pinned_signal(pid, reused, _sig.SIGTERM))
+        # Cmdline change -> refuse.
+        self.assertFalse(job2.pinned_signal(pid, (real[0], real[1], real[2] + [b'x']), _sig.SIGTERM))
+        # Gone process -> False.
         child = _sp.Popen(['true'])
         child.wait()
         self.assertFalse(job2.pinned_signal(child.pid, real, _sig.SIGTERM))
+
+    def test_a2_ancestor_walk_stops_at_non_allowlisted(self):
+        # chain: gpu-worker(pid) -> torchrun(2) -> bash(3); bash must NOT be collected.
+        table = {
+            10: (2, '100', [b'/usr/bin/python3', b'--multiprocessing-fork']),
+            2: (3, '90', [b'python', b'-m', b'torch.distributed.run']),
+            3: (1, '80', [b'/usr/bin/bash']),
+        }
+        with patch.object(job2, 'identity', side_effect=lambda p: table[p]):
+            anc = job2.allowlisted_ancestors(10)
+        self.assertEqual(set(anc), {2})  # torchrun kept, bash (non-allowlisted) stops the walk
 
     def test_a2_cleanup_guards_and_success(self):
         w = job2.PhaseA2.__new__(job2.PhaseA2)
@@ -190,6 +207,28 @@ class PhaseATests(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, 'refuse delete'):
                     w.cleanup()
             self.assertTrue(fake.exists())
+
+    def test_a2_clear_targets_aborts_on_unrecognized_gpu_process(self):
+        w = job2.PhaseA2.__new__(job2.PhaseA2)
+        gpus = [{'index': 0, 'pids': [500]}]
+        with patch.object(job2, 'snapshot', return_value=gpus), \
+             patch.object(job2, 'identity', return_value=(1, '10', [b'/usr/bin/postgres'])):
+            with self.assertRaisesRegex(RuntimeError, 'refuse to signal'):
+                w.clear_targets()
+
+    def test_a2_clear_targets_collects_workers_and_launcher(self):
+        w = job2.PhaseA2.__new__(job2.PhaseA2)
+        gpus = [{'index': 0, 'pids': [10]}, {'index': 1, 'pids': [11]}]
+        table = {
+            10: (2, '100', [b'/usr/bin/python3', b'--multiprocessing-fork']),
+            11: (2, '100', [b'/usr/bin/python3', b'--multiprocessing-fork']),
+            2: (3, '90', [b'python', b'-m', b'torch.distributed.run']),
+            3: (1, '80', [b'/usr/bin/bash']),
+        }
+        with patch.object(job2, 'snapshot', return_value=gpus), \
+             patch.object(job2, 'identity', side_effect=lambda p: table[p]):
+            _, targets = w.clear_targets()
+        self.assertEqual(set(targets), {10, 11, 2})  # workers + torchrun launcher, not bash
 
     def test_a2_burns_and_disarm(self):
         w = job2.PhaseA2.__new__(job2.PhaseA2)

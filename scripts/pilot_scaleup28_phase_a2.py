@@ -46,8 +46,23 @@ def foreign_process_allowed(cmdline):
             or b'torchrun' in joined)
 
 
+def stable_identity(ident):
+    """Reuse-proof identity: start time + cmdline, ignoring benign reparenting.
+
+    A parent's death reparents its child (ppid -> 1); that must NOT block
+    signaling the child. PID reuse instead changes start time (and usually
+    cmdline), which this key does catch.
+    """
+    return (ident[1], ident[2])
+
+
 def pinned_signal(pid, expected, sig):
-    """Signal a pid only while its (ppid, starttime, cmdline) identity holds."""
+    """Signal pid only if its start-time/cmdline still matches; never fatal.
+
+    Returns True if the signal was delivered. Any drift, disappearance, or PID
+    reuse returns False so the caller re-snapshots instead of aborting the whole
+    clear on an expected transient (reparenting, a worker reaped mid-kill).
+    """
     try:
         fd = os.pidfd_open(pid)
     except (ProcessLookupError, FileNotFoundError, OSError):
@@ -57,7 +72,8 @@ def pinned_signal(pid, expected, sig):
             current = identity(pid)
         except (FileNotFoundError, ProcessLookupError):
             return False
-        check(current == expected, f'Process {pid} identity changed; aborting clear')
+        if stable_identity(current) != stable_identity(expected):
+            return False
         try:
             signal.pidfd_send_signal(fd, sig)
         except ProcessLookupError:
@@ -67,10 +83,36 @@ def pinned_signal(pid, expected, sig):
         os.close(fd)
 
 
+def allowlisted_ancestors(pid):
+    """Walk up the parent chain collecting ONLY allowlisted launcher processes.
+
+    Stops at the first non-allowlisted ancestor so tmux/bash/systemd/init are
+    never signaled. Killing an elastic launcher (torchrun) prevents it from
+    respawning workers we just killed.
+    """
+    result = {}
+    seen = set()
+    try:
+        ppid = identity(pid)[0]
+    except (FileNotFoundError, ProcessLookupError):
+        return result
+    while ppid > 1 and ppid not in seen:
+        seen.add(ppid)
+        try:
+            ident = identity(ppid)
+        except (FileNotFoundError, ProcessLookupError):
+            break
+        if not foreign_process_allowed(ident[2]):
+            break
+        result[ppid] = ident
+        ppid = ident[0]
+    return result
+
+
 class PhaseA2(PhaseA):
     def burns(self, indices):
         self.burn_number += 1
-        label = f'ccm_scaleup28_phase_a2_20260916_a01_b{self.burn_number}'
+        label = f'{SESSION}_b{self.burn_number}'
         start(indices, label, OUT/f'{label}.log', 30800+self.burn_number)
 
     def disarm(self):
@@ -84,56 +126,54 @@ class PhaseA2(PhaseA):
             if name.startswith('ccm_') and state.strip() == 'alive' and name != SESSION:
                 check(False, f'Live ccm session {name}; refuse to clear GPUs under it')
 
-    def authorized_clear(self):
-        """Stop every current GPU compute job; single pass, verify, abort on failure."""
-        preflight()
-        self.no_live_own_sessions()
+    def clear_targets(self):
+        """Current GPU processes plus their allowlisted launcher ancestors.
+
+        Aborts if any process holding a GPU is NOT on the allowlist, so we never
+        signal an unrecognized workload. Ancestors are added to stop elastic
+        launchers respawning workers.
+        """
         gpus = snapshot(ALL)
-        pids = sorted({pid for g in gpus for pid in g['pids']})
-        if not pids:
-            self.record(event='authorized_clear_not_needed')
-            self.reclaimed = True
-            return
-        workers = {}
-        for pid in pids:
+        targets = {}
+        for pid in sorted({p for g in gpus for p in g['pids']}):
             try:
                 ident = identity(pid)
             except (FileNotFoundError, ProcessLookupError):
                 continue
             check(foreign_process_allowed(ident[2]),
-                  f'Unexpected GPU process {pid}; refuse to signal it')
-            workers[pid] = ident
-        parents = {}
-        for pid, (ppid, _, _) in workers.items():
-            if ppid > 1 and ppid not in workers and ppid not in parents:
-                try:
-                    ident = identity(ppid)
-                except (FileNotFoundError, ProcessLookupError):
-                    continue
-                if foreign_process_allowed(ident[2]):
-                    parents[ppid] = ident
+                  f'Unexpected GPU process {pid} ({ident[2][:1]}); refuse to signal it')
+            targets[pid] = ident
+            for apid, aident in allowlisted_ancestors(pid).items():
+                targets.setdefault(apid, aident)
+        return gpus, targets
+
+    def authorized_clear(self):
+        """Stop every current GPU job iteratively; drift-tolerant, escalating."""
+        preflight()
+        self.no_live_own_sessions()
+        gpus, targets = self.clear_targets()
+        if not targets:
+            self.record(event='authorized_clear_not_needed')
+            self.reclaimed = True
+            return
         self.record(event='authorized_foreign_clear', authorization=AUTHORIZATION,
-                    workers={str(p): i[2][0].decode(errors='replace') for p, i in workers.items()},
-                    parents={str(p): i[2][0].decode(errors='replace') for p, i in parents.items()},
+                    targets={str(p): i[2][0].decode(errors='replace') for p, i in targets.items()},
                     gpus=gpus)
-        for group in (parents, workers):
-            for pid, ident in group.items():
-                if pinned_signal(pid, ident, signal.SIGTERM):
-                    self.record(event='sigterm_sent', pid=pid)
-        deadline = time.monotonic()+180
+        start_at = time.monotonic()
+        deadline, escalate_after = start_at+300, start_at+90
         while time.monotonic() < deadline:
-            if all(not g['pids'] for g in snapshot(ALL)):
+            gpus, targets = self.clear_targets()
+            if not targets:
                 break
+            sig = signal.SIGKILL if time.monotonic() >= escalate_after else signal.SIGTERM
+            # Ancestors (launchers) share this target set; killing them across
+            # passes stops elastic respawn. Intra-pass order is immaterial.
+            for pid in sorted(targets):
+                if pinned_signal(pid, targets[pid], sig):
+                    self.record(event='signal_sent', pid=pid, signal=int(sig))
             time.sleep(10)
-        survivors = sorted({pid for g in snapshot(ALL) for pid in g['pids']})
-        for pid in survivors:
-            expected = workers.get(pid) or parents.get(pid)
-            check(expected is not None, f'New GPU process {pid} appeared during clear; aborting')
-            if pinned_signal(pid, expected, signal.SIGKILL):
-                self.record(event='sigkill_sent', pid=pid)
-        time.sleep(20)
-        remaining = sorted({pid for g in snapshot(ALL) for pid in g['pids']})
-        check(not remaining, f'GPU processes remain after authorized clear: {remaining}')
+        gpus, targets = self.clear_targets()
+        check(not targets, f'GPU processes remain after authorized clear: {sorted(targets)}')
         self.free_after_wait(ALL)
         self.free_after_wait(ALL)
         self.reclaimed = True

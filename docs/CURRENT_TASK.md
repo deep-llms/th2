@@ -1,34 +1,196 @@
 # Current task
 
-## Phase-A2 recovery queue — 2026-09-16
+## Phase-A2 relaunch (a02) after clear-logic fix — 2026-09-16
 
-The a01 queue ended early on 2026-09-15 (external interruption during the
-seed-29 Shallow arm; the completed seed-17 section is verified and kept).
-With the user's ownership confirmation and explicit instructions, the
-`th2-ccm-scaleup28-phase-a2-20260916-a01` job runs
-`scripts/pilot_scaleup28_phase_a2.py`: input gates, the authorized takeover
-and cleanup steps documented in `SCALEUP28_PHASE_A2_20260916.md`, then fresh
-data preparation (`scaleup28_v3_20260916_a01`), the seed-29 Shallow follow-up
-with all gates, the decided smokes, and the 10B 28L common training.
-`ccm/` core unchanged (`214d57c4...`); execution suite 103 passed.
-Torchrun only; no Accelerate configuration exists in this project.
+First a2 attempt (`bb29976`) aborted in the GPU clear: it signaled launcher
+parents first, reparenting workers (ppid->1), and a strict ppid-inclusive
+identity check treated that as fatal. It had already SIGTERM'd some launchers,
+stopping the foreign `deepeyes` trainer (authorized, but partial) and leaving
+orphaned worker remnants (all ppid=1) on GPUs 0-3/4-5/6-7. Fixed: pinned_signal
+pins on start-time+cmdline only (ignores reparenting; drift returns False, not
+fatal); authorized_clear is iterative, re-snapshots each pass, walks only
+allowlisted launcher ancestors, escalates SIGTERM->SIGKILL. Session/roots
+bumped to a02. 150 canonical / execution phase-a tests pass; ccm core
+`214d57c4...`. Relaunch job `th2-ccm-scaleup28-phase-a2-20260916-a02`.
+The orphaned remnants are allowlisted and parentless -> the iterative clear
+removes them cleanly, then prepare/seed-29 Shallow/smokes/10B common proceed.
 
-## 28L/12B Phase-A queue launched — 2026-09-15
+## Phase-A2 recovery queue PREPARED; arming pending — 2026-09-16
 
-User authorized launch of plan v3 §23.A after the implementation review and
-recorded pre-launch decisions. One guarded sequential handoff
-(`scripts/pilot_scaleup28_phase_a.py`, tmux `ccm_scaleup28_phase_a_20260915_a01`)
-runs: input gates → background CPU `prepare-scaleup`
-(`scaleup28_v3_20260915_a01`) → seed29-observer disarm and verified burn
-reclaim → 12L Stage-2 Shallow follow-ups (seeds 17, 29) with Deep-vs-Shallow
-reports → extension validation → decided 28L common queue (32-update pipeline
-smoke, 1,024-update stability smoke, fresh 38,147-update/10B common training,
-save-every 5000) → validation → burns restored, idle observer armed.
-See `SCALEUP28_PHASE_A_20260915.md`. NOT launched: 28L panel, 12L D_val,
-any replication seed, LR fallback. `ccm/` hash
-`214d57c4816b37298000051da8a0ef16fabdfce1f2c870e8e5262729e35b1582`;
-execution suite 99 passed. Before any later GPU job, disarm THIS queue's
+User confirmed node ownership (the external use was a mistake) and authorized:
+stop all current GPU jobs, remove the interrupted seed-29 outputs and
+cache-*/tmp-* files, and restart from seed-29 onward. Built and tested:
+`scripts/pilot_scaleup28_phase_a2.py` + `launch_scaleup28_phase_a2.sh` +
+updated `scaleup28_config.py`/validator/tests (147+1skip canonical, 103+1skip
+execution; `ccm/` core unchanged `214d57c4...`). The a2 queue: pinned input
+gates + completed-seed17 verification → allowlisted identity-pinned clear of
+all current GPU jobs (recorded user authorization; aborts on any unexpected
+process) → guarded cleanup (`<a01>/shallow12_seed29`, its log, partial
+`scaleup28_v3_20260915_a01`, cache-*/tmp-*; refuses anything that looks
+completed) → fresh prepare (`scaleup28_v3_20260916_a01`) → seed-29 Shallow +
+gates + Deep-vs-Shallow → smokes → 10B common → burns/observer. Protocol:
+`SCALEUP28_PHASE_A2_20260916.md`. No Accelerate config exists (torchrun);
+nothing under `resources/` is touched. All files synced to the execution
+worktree; ONLY the `#1` commands.sh arming + push remain (blocked by the
+permission layer; user to perform or approve). Job name:
+`th2-ccm-scaleup28-phase-a2-20260916-a01`.
+
+## Phase-A KILLED EXTERNALLY at 21:44:55 UTC; node now shared — 2026-09-15
+
+The seed-29 Shallow training's eight ranks were SIGKILL'd at 21:44:55 UTC
+(all `exitcode -9`; first rank 1, pid 99468). This was NOT our code and NOT
+memory: the read-only node inspection (22:37 UTC,
+`temp/scaleup28_failure_diag/inspect_a01.log`) shows cgroup oom/oom_kill
+counters all ZERO, no kernel OOM lines, 1,643/1,996 GB RAM available.
+Foreign processes now occupy the GPUs: a heavy job on GPUs 4–5 (158.5 GiB,
+75–80% util, two PIDs each), 10.7 GiB idle allocations on GPUs 0–3, and
+non-ours burn-like workers on 6–7. The controller failed cleanly per design:
+recorded the failure, SIGTERM'd its own preparation child, and restored
+all-eight burns (`b3`, 21:45:03) — which the external party then also killed.
+Do NOT launch, reclaim, or signal anything until the user/operator clarifies
+node ownership.
+
+State: **seed-17 Shallow follow-up COMPLETE and validated** (all three gates);
+Deep-vs-Shallow on seed 17: Contextual − Shallow = **-0.001218675
+[-0.001255302, -0.001183090]** (10,000 doc_id/independent replicates) — the
+plan §15.3 secondary hypothesis is supported on this seed. Results bundle
+hash-verified locally: `outputs/scaleup28_phase_a_partial_20260915/`.
+Shallow seed-29 died at step 2550/3815 (checkpoints 1000/2000 exist; per
+policy rerun fresh, no resume). Extension preparation was terminated during
+its third pass (val28 and continuation extensions complete by token counts,
+common extension 1.82B/6.0B); the partial root
+`/mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260915_a01` has no
+manifest, is unusable, and is preserved; a retry uses a fresh root. The 28L
+common run never started. Execution head `f46c577` (read-only preserve
+export). Remaining recovery (after operator clarification): fresh prepare,
+seed-29 Shallow rerun + gates, smokes, 10B common — as a new a03 queue.
+
+## Phase-A running: input gate passed, Shallow17 training active — 2026-09-15
+
+Fresh export `681db65` (20:06 UTC files) verifies, in
+`temp/scaleup28_startup_a01/`: `validated_inputs.json` success with both
+pinned common hashes confirmed on-node; background `prepare-scaleup` running
+(val28 pass at 19.48M/20M tokens); seed29 observer disarm and verified burn
+reclaim completed (shallow training now owns the GPUs); 12L Stage-2 Shallow
+seed-17 at step 210/3815, 19:59:59 UTC heartbeat, finite NLL 3.3368, exact
+Stage-2 LR schedule (1.4958e-4 at step 210), peak 8.99 GiB/rank. Throughput
+185k tokens/s (below the historical 292k due to expected CPU contention with
+the concurrent preparation child). No failures. Next checks: fresh `#2`
+exports only; the queue owns all sequencing through the 10B common run.
+
+## Phase-A a02 startup VERIFIED — 2026-09-15
+
+The a02 relaunch (`0ab7369`) started at 19:52:10 UTC. Verified from the
+`+60` snapshot (`temp/scaleup28_phase_a_launch_a02.log`): launcher checks
+passed; GPU inspect confirmed the original eight burn workers 86248–86255 at
+98%; the persistent tmux owner is alive
+(`CCM_SCALEUP28_PHASE_A_HANDOFF_ALIVE`); controller preflight passed on-node
+(`SCALEUP28_CORE_AND_ENV_PREFLIGHT_PASS`, core `214d57c4…`, Transformers
+5.9.0, torch 2.14.0+cu130); the `validate_inputs` gate was running at
+19:52:13. Read-only startup-progress export `681db65`
+(`th2-ccm-scaleup28-startup-check-20260915-a01`) requests the handoff log,
+status, input gate, preparation log and first Shallow training log. Later
+progress checks must use fresh `#2` exports; never repush `#1`.
+
+## Phase-A relaunched as a02 after verified burns — 2026-09-15
+
+Read-only export `0b50ff4` verified the seed29 owner BEFORE the rerun:
+status heartbeat 19:43:34 UTC (`complete_burn_health_check`, success), all
+eight GPUs 98% with one burn worker each (86248–86255, eight connected NCCL
+rings in `b5`), `complete.json` unchanged — confirming a01 touched nothing.
+The same commit shipped the fixed launcher (git call removed). Relaunch
+commit `0ab7369c0d9adb7f8ebfbad916df29fb5cc03713` pushed with job
+`th2-ccm-scaleup28-phase-a-20260915-a02` (`#1 +60+a`). Output/data roots
+remain the fresh `a01` names (never created by the failed attempt).
+Evidence: `temp/scaleup28_prelaunch_verify/`. Startup verification of a02
+is pending Dropbox exports; do not repush `#1`.
+
+## Phase-A a01 launcher failed harmlessly; verifying burns before rerun — 2026-09-15
+
+Job `th2-ccm-scaleup28-phase-a-20260915-a01` (commit `3f2e9b3`) exited at its
+`git rev-parse HEAD` provenance line: the runner-synced code directory is not
+a git repository. Evidence: `temp/scaleup28_phase_a_launch_a01.log` (171
+bytes, only `date -u` plus the git fatal). The failure occurred BEFORE tmux
+creation, output/data-root creation, STOP_IDLE_WATCH, or any GPU action: the
+seed29 observer and burns were never touched, and the `a01` output/data roots
+were never created (they remain valid for the rerun). Launcher fixed by
+removing the invented git call (now matches the proven seed29 template);
+synced to the worktree. Read-only export commit `0b50ff4`
+(`#2`, `th2-ccm-verify-burns-before-scaleup-rerun-20260915-a01`) requests the
+seed29 owner's fresh `status.json`, `complete.json`, burn log `b5` and handoff
+log to verify burns/observer health BEFORE resubmitting the launch as
+`th2-ccm-scaleup28-phase-a-20260915-a02`. Dropbox retrieval credentials were
+restored to `temp/` from the sparse_embedding project. Do not repush `#1 a01`.
+
+## 28L/12B Phase-A queue submitted — 2026-09-15
+
+Pushed launch commit `3f2e9b34de5b86b0024cabcad299c21155336170` to th2 main
+(job `th2-ccm-scaleup28-phase-a-20260915-a01`, `#1 +60+a`,
+`scripts/launch_scaleup28_phase_a.sh`). FAILED at startup; see the entry
+above — nothing on the node was modified. One guarded sequential owner
+(tmux `ccm_scaleup28_phase_a_20260915_a01`, `scripts/pilot_scaleup28_phase_a.py`)
+runs: pinned input gates → background CPU `prepare-scaleup`
+(`/mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260915_a01`) →
+seed29-observer disarm + verified burn reclaim → 12L Stage-2 Shallow
+follow-ups (seeds 17, 29) with Deep-vs-Shallow reports → extension validation
+→ decided 28L common queue (32-update pipeline smoke, 1,024-update stability
+smoke, fresh 38,147-update/10B common, save-every 5000) → validation → burns
+restored, idle observer armed. Output root:
+`/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a_20260915_a01`.
+Protocol: `SCALEUP28_PHASE_A_20260915.md`. NOT launched: 28L panel, 12L D_val,
+replication seeds, LR fallback. Execution suite 99 passed at push; `ccm/`
+hash `214d57c4816b37298000051da8a0ef16fabdfce1f2c870e8e5262729e35b1582`
+identical in canonical and execution checkouts.
+
+**Startup is NOT yet verified**: local Dropbox retrieval credentials
+(`temp/dropbox_credentials.txt`, `temp/dropbox_folders.txt`) are absent from
+this dev checkout, so the `+60` snapshot could not be pulled. Restore the
+credentials per `DROPBOX_ACCESS.md`, then verify the handoff log shows
+`CCM_SCALEUP28_PHASE_A_HANDOFF_ALIVE`, the input-gate pass, preparation start,
+observer disarm and first Shallow updates. Use fresh `#2` exports only; never
+re-push `#1`. Before any later GPU job, disarm this queue's exact
 `STOP_IDLE_WATCH` and verify its observer exit per GPU_SAFETY.md.
+
+## Scale-up plan review and pre-launch decisions — 2026-09-15
+
+Reviewed the `ccm_28layer_scaleup_plan_v3_12B.md` implementation: conformant;
+findings were a stale recorded source hash (now corrected in
+`SCALEUP28_IMPLEMENTATION.md`) plus three decisions escalated via
+`SCALEUP28_PRELAUNCH_DECISIONS_20260915.md`. The plan owner decided:
+1(c) 32-update pipeline smoke then 1,024-update stability smoke, with
+non-finite-only instability detection; 2(a) `D_val_28` untouched until the
+full replication panel is frozen; 3a(b) sparse checkpoints (common 5,000 /
+Stage-2 2,000 / Stage-1 final-only, 12L follow-up unchanged); 3b(a) no resume
+path, restart-from-scratch. Implemented in `ccm/scaleup_jobs.py` and
+`ccm/cli.py` and locked by queue tests. All remaining review findings then
+closed: `lock-final` enforces the seeds=[17] rule via a new explicit
+`--single-seed-terminal` flag (`ccm/decisions.py`), the reference compiler no
+longer marks scale-up tables online-capable (`ccm/compiler.py`), and the
+implementation doc gained the free-disk launch gate and a `D_val_28`
+allocation caveat. Research training/evaluation/statistics numeric paths are
+unchanged. Full regression: 136 CPU tests passed. Current `ccm/` hash:
+`214d57c4816b37298000051da8a0ef16fabdfce1f2c870e8e5262729e35b1582`.
+No deployment, remote push, or GPU action was performed; B200 launch gates in
+`SCALEUP28_IMPLEMENTATION.md` remain open.
+
+## 28L / 12B scale-up implementation — 2026-09-15
+
+User requested implementation of `ccm_28layer_scaleup_plan_v3_12B.md`.
+Canonical local code now has explicit `scaleup28-12b-v3` and post-hoc
+`pilot12-shallow-followup` paths. See `SCALEUP28_IMPLEMENTATION.md` for exact
+data extension, compiler gate, queues and final-holdout rules. This entry is
+implementation work, not evidence that new data/training has run on B200.
+No deployment, GPU reclaim or training was performed during implementation.
+Final local regression: 135 CPU tests passed, including two-process Gloo
+compilation, 28-block tiny-model acceptance/end-to-end tests and historical
+Shallow continuation. Full-width B200 CUDA/NCCL validation remains a launch gate.
+
+The new plan defers 12L seed43, adds matched Shallow for seeds17/29 and their
+explicit two-seed heldout panel, and reserves a fresh holdout for 28L. The
+historical three-seed protocol remains incomplete and is not relabeled.
+Keep the historical corpus: extended manifests depend on its checked payloads.
+Actual B200 status/observer ownership remains the last timestamped observation
+below, not a fresh observation from this implementation task.
 
 ## Seed29 complete; all results pulled — 2026-09-15
 

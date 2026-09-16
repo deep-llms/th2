@@ -8,16 +8,16 @@ conda activate train_env
 test "$CONDA_DEFAULT_ENV" = train_env
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
 export WANDB_MODE=offline TOKENIZERS_PARALLELISM=false OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
-TASK_SESSION=ccm_scaleup28_phase_a2_20260916_a01
-TASK_LOG=/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a01.handoff.log
+TASK_SESSION=ccm_scaleup28_phase_a2_20260916_a02
+TASK_LOG=/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02.handoff.log
 test ! -e "$TASK_LOG"
 test ! -L "$TASK_LOG"
-test ! -e /mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a01
-test ! -L /mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a01
-test ! -e /mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260916_a01
-test ! -L /mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260916_a01
+test ! -e /mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02
+test ! -L /mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02
+test ! -e /mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260916_a02
+test ! -L /mnt/local/_data/deep-llms_th2/ccm/scaleup28_v3_20260916_a02
 if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then
-    echo 'REFUSE: scaleup28 phase-a2 session exists' >&2
+    echo 'REFUSE: scaleup28 phase-a2 (a02) session exists' >&2
     exit 1
 fi
 # Foreign jobs currently occupy the GPUs; the controller performs the
