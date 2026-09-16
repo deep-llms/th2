@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-scaleup28-phase-a2-20260916-a02
-set -euo pipefail
-bash scripts/launch_scaleup28_phase_a2.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02/validated_inputs.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02/prepare_scaleup.log,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_phase_a2_20260916_a02/shallow29_train.log
+#th2-ccm-scaleup28-a2b-clear-and-startup-check-20260916-a01
