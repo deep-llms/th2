@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-ccm-scaleup28-panel-20260917-a01
-set -euo pipefail
-bash scripts/launch_scaleup28_panel.sh
+#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01.handoff.log,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/validated_panel_inputs.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/verified-common-input.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/coverage.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/compiler-gate/validation.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/compile.log
+#th2-ccm-panel-startup-check-20260917-a01
