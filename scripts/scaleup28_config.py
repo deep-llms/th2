@@ -55,6 +55,18 @@ CONTEXT_EVAL_CKPT = {17: 'fe85b8d5e4ec41d909a58772ccbbe8f6b3b6d1117b2d1f97bdd978
 SMOKES = (('common-pipeline', 32), ('common-stability', 1024))
 COMMON_SAVE_EVERY = 5000
 
+# Phase-B panel (plan v3 §23.B), against the verified theta_10B_28L.
+PANEL_OUT = Path('/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01')
+PANEL_SESSION = 'ccm_scaleup28_panel_20260917_a01'
+THETA = OUT/'common-base/checkpoint-38147'
+THETA_HASH = '8a370d274306089b8dd3e543cf3b124d9738e106ec8b731259d3876ec21b0bab'
+THETA_META_HASH = '9dfee9f71c8a406227f22ddf7a705e2882af6a74d4321d0060183858fb9034df'
+EXT_MANIFEST_HASH = 'b9e8c3bb38410f65e689face074d39f85f21cf7b002ec63d5329b7e103dba8aa'
+MAPPING_HASH = '4777e0c0ecf0cf1c08569c1ac410d64580b7a99121b7478c76443b1ac1e668fb'
+# Previous owner for the panel's cooperative disarm: the completed a2 observer.
+A2_EVENT = 'scaleup28_phase_a2_verified_and_burns_active'
+A2_SCRIPT = b'scripts/pilot_scaleup28_phase_a2.py'
+
 
 def shallow_root(seed):
     from pilot_gpu_ops import check

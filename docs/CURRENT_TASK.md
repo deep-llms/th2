@@ -1,5 +1,64 @@
 # Current task
 
+## Phase-B panel queue launched — 2026-09-17
+
+Results preserved first: 24-file hash-verified bundle
+`outputs/scaleup28_phase_a2_results_20260917/` (seed-29 Shallow eval/train
+records with matching segment hashes, theta checkpoint contract, both smoke
+records, extension corpus manifest bound to pinned `b9e8c3bb...`, plus gates;
+`LOCAL_MANIFEST.json` lists local SHA256s). Then the Phase-B panel launched:
+job `th2-ccm-scaleup28-panel-20260917-a01`,
+`scripts/pilot_scaleup28_panel.py` (tmux `ccm_scaleup28_panel_20260917_a01`).
+It generates the test-locked `ccm scaleup-jobs --queue panel` manifest
+on-node (asserted 48 jobs) and executes it verbatim with run_experiments
+semantics ({python}/{run_dir} substitution, required-output json subset
+gates), wrapped in the proven discipline: pinned input gate
+(theta `8a370d27...`, ext manifest, vocabulary/mapping, a2 completion,
+>=400GiB) → a2-observer disarm + verified burn reclaim → verify-common-input
+→ coverage → distributed-compiler gate → 1B compilation (four table
+families) → Stage-1 (5 arms, 977 updates, final-only checkpoints) → Stage-2
+(6 arms, 7,629 updates, save-every 2000) → 12 dev evals → 9 bootstrap
+contrasts → replication decision (reports only; automatic_launch false) →
+burns/observer. Burn states transition only via full-subset stop then fresh
+single-session start. NOT launched: replication seeds, any D_val evaluation.
+Est. ~1.5-2 days. 156 canonical / 112 execution tests pass; core unchanged
+`214d57c4...`. Before any later GPU job disarm THIS queue's STOP_IDLE_WATCH.
+
+## Phase-A2 COMPLETE: theta_10B_28L verified — 2026-09-17
+
+Queue finished 10:57:52 UTC (`scaleup28_phase_a2_verified_and_burns_active`,
+success). 28L common training: exactly 38,147 updates / 10,000,007,168 input
+tokens in 18.19 h wall (~152.7k tok/s), final smoothed train NLL ~2.92, all
+records finite, LR-schedule replay exact. Gates passed: `validate-run` and
+the contract gate. **theta_10B_28L =
+`ccm_scaleup28_phase_a2_20260916_a02/common-base/checkpoint-38147`**, model
+hash `8a370d274306089b...`. Burns restored on all eight GPUs (98%, one worker
+each); the a2 observer is heart-beating (latest 13:12 UTC). Evidence:
+`temp/a2_complete/`. Phase A is now fully done across both queues: seed-17
+Shallow (a01, Deep-vs-Shallow -0.001219 [-0.001255, -0.001183]), seed-29
+Shallow (a02, -0.001208 [-0.001244, -0.001172]), extension corpus validated,
+both smokes, 10B common. NEXT (separate authorization, plan §23.B): the 28L
+panel queue — distributed-compiler gate + 1B compilation with the 28L writer,
+five Stage-1 arms, six Stage-2 arms, dev evals, bootstrap contrasts,
+replication decision. Before any GPU job, disarm the a2 observer's exact
+`STOP_IDLE_WATCH` per GPU_SAFETY.md.
+
+## Phase-A2 (a02) RUNNING correctly — 2026-09-16
+
+Verified from export `260a9cc` (11:37 UTC): the fixed iterative clear swept all
+eight orphaned foreign workers (`authorized_foreign_clear` -> 8x `signal_sent`
+-> `authorized_clear_complete`), the guarded cleanup removed the interrupted
+seed-29 outputs+log, the partial 20260915 data root and cache-*/tmp-* files,
+background `prepare-scaleup` (into `scaleup28_v3_20260916_a02`) started, and
+**seed-29 Shallow training is live**: our PIDs 1132098-1132105 on all 8 GPUs,
+step 210/3815, NLL ~3.19 (falling), exact Stage-2 LR 1.4958e-4 at step 210,
+8.99 GiB/rank, prepare_running true. No failures. Session
+`ccm_scaleup28_phase_a2_20260916_a02`, job `...a02`. The queue now owns all
+sequencing: seed-29 Shallow -> gates/Deep-vs-Shallow -> extension gate ->
+32/1,024 smokes -> 10B 28L common -> burns/observer. Later checks: fresh `#2`
+only. Completed seed-17 section from the killed a01-phase queue is preserved
+(`outputs/scaleup28_phase_a_partial_20260915/`).
+
 ## Phase-A2 relaunch (a02) after clear-logic fix — 2026-09-16
 
 First a2 attempt (`bb29976`) aborted in the GPU clear: it signaled launcher
