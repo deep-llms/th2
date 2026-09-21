@@ -1,9 +1,0 @@
-{
-  "repo_id": "Qwen/Qwen3-0.6B-Base",
-  "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
-  "files": {
-    "config.json": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59",
-    "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
-    "tokenizer_config.json": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
-  }
-}

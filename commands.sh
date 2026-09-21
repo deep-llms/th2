@@ -1,2 +1,4 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/status.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/verified-stage2-shallow.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/verified-stage2-grad.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/decision.json,/mnt/local/_outputs/deep-llms_th2/ccm_scaleup28_panel_20260917_a01/complete.json
-#th2-ccm-panel-alive-eta-check-20260918-a01
+#1 +60+a
+#th2-readonly-nvidia-smi-check-20260921-a01
+set -euo pipefail
+nvidia-smi
