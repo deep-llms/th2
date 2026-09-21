@@ -1,4 +1,2 @@
-#1 +60+a
-#th2-readonly-nvidia-smi-check-20260921-a01
-set -euo pipefail
-nvidia-smi
+#i envs/train_env.txt envs/eval.txt +a
+#th2-tpbw-install-envs-20260921-a01
