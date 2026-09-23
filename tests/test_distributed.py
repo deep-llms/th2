@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -99,6 +100,11 @@ class DistributedTests(unittest.TestCase):
                 self.assertEqual(job['required_outputs'][0]['json_equals']['updates'], 6144)
             with self.assertRaises(ValueError):
                 manifest(cfg, 0, root / 'invalid.json')
+            from pcc.joint import main
+            with patch('sys.argv', ['pcc.joint', 'train', '--config', str(cfg), '--output', str(root / 'out'),
+                                   '--data-dir', str(root / 'inputs'), '--arm', 'Base', '--physical-gpu', '0']):
+                with self.assertRaisesRegex(ValueError, 'requires eight GPUs'):
+                    main()
 
 
 if __name__ == '__main__':

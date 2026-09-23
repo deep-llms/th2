@@ -40,6 +40,16 @@ under /mnt/local/_outputs/deep-llms_th2/joint-v2-readiness-20260923-a01;
 then reclaim the authorized burn and launch the gated eight-GPU queue under
 /mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a01.
 
+Remote DDP regression (7fa177c) passed all 115 tests in 33.983s; all model
+hashes verified again. Longer input preparation is running. Local CLI allocation
+guard was additionally tested (two DDP tests passed in 22.101s).
+
+Submitting th2-joint-v2-eight-gpu-20260923-a01: it waits for CPU readiness,
+checks exact 201M/2M counts and config, reclaims only the previously authorized
+burn after fresh identity checks, then executes the gated capacity/6-run queue.
+No unconditional training begins before those gates. Stop receipt:
+/mnt/local/_outputs/deep-llms_th2/joint-v2-burn-stop-20260923-a01.json.
+
 ## Historical local readiness and screen scope
 
 Latest request: carefully review/fix code and make it ready to launch the agreed

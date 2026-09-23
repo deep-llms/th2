@@ -368,6 +368,10 @@ def report_results(args, config):
 def main():
     args = parser().parse_args()
     config = load_config(args.config)
+    if (args.mode in ("train", "capacity", "manifest")
+            and settings_for(config).version == "joint-v2-ddp"
+            and len(getattr(args, "physical_gpus", None) or []) != 8):
+        raise ValueError("joint-v2-ddp requires eight GPUs per experiment")
     if args.mode == "manifest":
         manifest(args.config, args.physical_gpus or args.physical_gpu, args.output, args.data_dir)
         return
