@@ -63,6 +63,13 @@ scripts/__init__.py and set the guard's PYTHONPATH to the synced project root.
 Retry a03 uses fresh joint-v2-b200-20260923-a03 and burn-stop-a03 paths; inputs
 remain unchanged. No scientific runs have started at this point.
 
+Launch b4bc9f6 succeeded in reclaiming the authorized burn with process handles.
+The 21:55:53 UTC job log records LONG_INPUTS_VERIFIED and VERIFIED_BURN_STOPPED,
+followed by eight-rank NCCL initialization and Base capacity update 1 with
+finite NLL 3.156401. No traceback in the first snapshot. Source is isolated in
+joint-v2-b200-20260923-a03/source. Exporting capacity reports and initial queue
+progress next; do not resubmit the launch or reclaim command.
+
 ## Historical local readiness and screen scope
 
 Latest request: carefully review/fix code and make it ready to launch the agreed
