@@ -1,0 +1,11 @@
+{
+  "jobs": [
+    {
+      "name": "pcc-pipeline",
+      "argv": ["{python}", "-u", "-m", "pcc", "pipeline", "--config", "{project_dir}/temp/pcc.pipeline.local.json", "--output", "{run_dir}/pcc"],
+      "required_outputs": [
+        {"path": "pcc/complete.json", "json_equals": {"status": "ok", "pretraining_authorized": false}}
+      ]
+    }
+  ]
+}

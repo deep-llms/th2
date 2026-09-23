@@ -1,0 +1,6 @@
+{
+  "model_path": "/absolute/path/to/pinned/Qwen3-0.6B-Base/snapshot",
+  "train_data": "/absolute/path/to/completed/train",
+  "val_data": "/absolute/path/to/completed/validation",
+  "microbatch": 1
+}

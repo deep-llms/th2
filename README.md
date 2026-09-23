@@ -1,4 +1,50 @@
-# General remote-project template
+# Deep2shallow: cross-depth anticipation
+
+PCC correctness checks, the frozen-backbone layer screen, and full adapter
+training/evaluation are implemented in `pcc/`. Start with
+[docs/PCC_DIAGNOSTICS.md](docs/PCC_DIAGNOSTICS.md) for local tests and input
+requirements, then [docs/PCC_EXPERIMENT.md](docs/PCC_EXPERIMENT.md) for the full
+probe and development-locked test workflow. The scientific contract is
+[the cross-depth research plan](docs/cross_depth_anticipation_research_ideas_v2_13_launch_final_20260923_en.md).
+The user has authorized B200 joint training via deep-llms/th2. Current deployment
+status and prerequisites are recorded in docs/CURRENT_TASK.md.
+
+For a single-command run or a sequential queue of experiments, see
+[docs/PCC_AUTOMATION.md](docs/PCC_AUTOMATION.md). `python -m pcc pipeline`
+automates screen → eligible full probe; `jobs.pcc.example.json` integrates it
+with the existing `run_experiments.py` runner.
+
+PCC reads the completed sampler's train and validation Arrow directories directly.
+Use `train_data` and `val_data` in `pcc.pipeline.example.json`; no separate
+export command or document-range configuration is needed. See
+[docs/PCC_DATA_HANDOFF.md](docs/PCC_DATA_HANDOFF.md).
+
+The pipeline checks full train/validation budgets before training. Add
+`--check-only` to validate the local model and inputs without starting the
+experiment; `input-check.json` records exact token counts and context fingerprints.
+
+For actual adapter training, configure the paths in a copy of
+`pcc.pipeline.example.json`, then run:
+
+```bash
+conda run --no-capture-output -n train_env python -u -m pcc pipeline \
+  --config temp/pcc.pipeline.local.json --output temp/pcc-training-001
+```
+
+This command trains the four layer pairs for 128 updates each. If a pair passes
+the screen, it trains a fresh privileged teacher for 610 updates, freezes and
+calibrates it, then trains the shallow control and PCC student for 610 updates
+each. It saves trained adapter weights, per-update losses, and validation results.
+The pretrained backbone remains frozen throughout. `pcc/screen.py` and
+`pcc/training.py` implement the optimizer updates; `pcc/probe.py` runs the full
+teacher/student workflow. The separate legacy `train.py` is not the PCC entry point.
+CPU tests remain the default for local development.
+
+The inherited runner template and legacy training references are described
+below. `commands.sh` is an active execution control file; inspect its exact
+action before every push to th2.
+
+## Inherited remote-project template
 
 A small, standard-library foundation for projects using a Git-triggered GPU
 runner. No model, dataset, hardware allocation, or experiment is configured.
@@ -17,6 +63,11 @@ No Git repository is initialized and no remote action is submitted by setup.
 5. Run the local tests and harmless CPU example below before adding real jobs.
 
 ## Local verification (no network or GPU use)
+
+For full-backbone Qwen continued training, see
+[`docs/PCC_JOINT_TRAINING.md`](docs/PCC_JOINT_TRAINING.md). Its `pcc.joint`
+entry point and generated sequential manifest are separate from the frozen
+adapter-only `pcc pipeline` experiment.
 
 ```bash
 python3 -m unittest discover -s tests -v

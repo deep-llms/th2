@@ -1,0 +1,6 @@
+{
+  "model_path": "/LOCAL/PATH/Qwen3-0.6B-Base-ddc928429ed09d9ad603fd762053d0434c15e865",
+  "train_data": "/LOCAL/PATH/data/TOKENIZER_SLUG/train/en",
+  "val_data": "/LOCAL/PATH/data/TOKENIZER_SLUG/eval/en",
+  "microbatch": 1
+}

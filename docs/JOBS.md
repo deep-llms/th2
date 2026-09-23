@@ -78,7 +78,9 @@ provenance, checkpoint step, metrics, expected tasks/seeds and no NaNs as
 appropriate. Do not declare only a log file and call that validation.
 
 For multi-stage workflows, add train → validate → eval → validate → downstream
-jobs explicitly. Train/eval code is intentionally absent from the template.
+jobs explicitly. The project's PCC implementation also provides a single
+`python -m pcc pipeline` job that owns its screen/probe scientific gates;
+see [PCC_AUTOMATION.md](PCC_AUTOMATION.md) and `jobs.pcc.example.json`.
 To stop at an iteration, implement a graceful project-specific trainer cutoff
 that saves and verifies the desired checkpoint. A wall-clock timeout is a
 failure condition, not successful training completion.

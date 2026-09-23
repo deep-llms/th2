@@ -1,0 +1,10 @@
+# manager: conda
+# fresh: false
+# python: 3.11
+# Reference dependencies, not an instruction to submit an installation job.
+# Local development uses the user's train_env clone of sparse_emb.
+torch==2.7.1
+transformers==4.57.1
+numpy==2.4.4
+datasets==4.8.5
+matplotlib==3.10.9

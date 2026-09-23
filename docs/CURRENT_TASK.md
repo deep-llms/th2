@@ -1,30 +1,214 @@
 # Current task
 
-Status: template only; no project, machine, or workload configured.
+## Active B200 deployment — 2026-09-23
 
-## User request and authorized scope
+The user now explicitly authorizes B200 inspection, runner commands, the six
+joint-v1 training runs, and publishing this project to deep-llms/th2 main.
+This supersedes the historical B200 prohibition below. No process termination
+has been authorized. Sampling completed successfully at 18:50:19 UTC: English
+has 35 train shards (36,595,514 documents) and 11,822 eval documents.
 
-- Objective: fill in for the new project.
-- Allowed remote actions: none until explicitly authorized.
-- Constraints / do not touch: fill in.
+Execution remote: git@github-share:deep-llms/th2.git; project identifier
+`deep-llms_th2`; Dropbox label `th2-tpbw`. Existing remote history is preserved.
+First deployment submits read-only `th2-joint-inspect-b200-20260923-a01`.
+Verify current hardware/process ownership, environment, prepared data and pinned
+model assets before installing dependencies or launching the training queue.
+The agreed experiment is Base/Shallow/Deep, two seeds, full 28-layer Qwen3,
+block 4 query / actual block 20 source, 1536 updates per run. No student yet.
 
-## Configuration and evidence
+## Historical local readiness and screen scope
 
-- Development branch/commit:
-- Execution remote/branch/worktree/commit:
-- Machine identity and physical GPU allocation:
-- Environment/interpreter:
-- Input manifests and output/run directory:
-- Exact command and job name:
-- Latest verified status (UTC timestamp and log path):
-- Completion criteria / expected artifacts:
+Latest request: carefully review/fix code and make it ready to launch the agreed
+joint-training plan. Full-model training was absent; separate `pcc.joint` code
+has now been implemented. Review is complete: 109 CPU tests passed; all three
+full-size A100 capacity checks passed; real Deep checkpoint resume reproduced
+the next update's loss and all weights exactly. Do not launch the six scientific
+runs as part of this review. See `PCC_JOINT_READINESS_20260923.md` for evidence
+and the unexecuted launch command.
+Use `train_env`; B200, `prepare_data.py`, and `commands.sh` remain untouched.
+New input/config/artifact root: `temp/pcc-joint-ready-20260923-a01/`.
+`jobs.json` is the generated six-run sequential manifest with CPU input and
+report stages. All bounded GPU checks have exited. Recheck availability before
+launching a new workload. The source
+experiment plan is `PCC_JOINT_TRAINING_PLAN_20260923.md`.
+Earlier frozen-screen evidence follows.
 
-## Next action
+Status: requested effectiveness test completed successfully on the local A100s.
+Scientific decision: `stop_negative_screen`; none of four pairs qualified.
+Deep feedback improved over Base, but matched shallow attention was slightly
+better for every pair, with all paired 95% CIs favoring the shallow control.
+Run: `temp/pcc-promise-screen-20260923-a01/`; all workers exited and GPUs were
+released. Artifact audit passed. See `PCC_PROMISE_SCREEN_20260923.md` for results.
 
-Configure the project using `AGENT_GUIDE.md`. Do not submit a template example
-as a real workload or reuse an old job name without inspecting its state.
+## Authorized scope
 
-## Handoff
+- Implement research-contract sections 11–13: correctness checks, layer screen,
+  frozen-backbone adapter training, and sequential experiment execution.
+- Latest user instruction: "run the test that show a method is promise or not."
+  They requested pretrained Qwen3 0.6B on this dev machine and supplied
+  `nguyenhuuthuat09/CulturaX_sampled` as the data source. Run a meaningful matched
+  training/evaluation screen locally, keeping B200 untouched (reported down).
+- Completed four fixed pairs `(4,16)`, `(4,20)`, `(8,20)`, `(8,24)`, one per local
+  A100. All use pinned Qwen3-0.6B-Base, paired seed 1701, 128 updates, global
+  32768 tokens/update, microbatch 4, the existing optimizer/schedule, and shared
+  fixed train/dev inputs. Evaluate once after training and apply the original
+  joint 1000-resample paired bootstrap/tie-break rule over all nine arms.
+- The finalized B200 splits are unavailable. As stated to the user before
+  execution, this is an exploratory local split from the user-selected source:
+  English shard `en_part_00015.parquet` rows [0,20000) train and [20000,30000)
+  dev. Same legacy packing and seed 20260922 for all arms. Training consumes
+  4194304 input tokens; dev consumes 2000000. No test split or full probe.
+- `design.json` froze this design before training; `data-check.json` records
+  exact counts and input fingerprints. Scripts and logs are under the run root.
+  Each worker invokes production `screen()` for one fixed pair; per-worker
+  selection is deferred, and the controller calls the unchanged `select_pair`
+  once using all pairs. No scientific gate, schedule, or training formula changed.
+- Do not access B200 or change `prepare_data.py`, `commands.sh`, or remote jobs.
+  All GPUs were checked free before launch; controller stops only its own
+  child workers if a software failure occurs. No sub-agents were spawned.
+- No sub-agents. Use `/home/users/thien/miniconda3/envs/train_env/bin/python`,
+  cloned from `sparse_emb`; the source environment remains unchanged.
 
-Record what completed, failed, remains uncertain, and what is authorized next.
-Move durable results/decisions to `PROJECT_NOTES.md`; mark old plans historical.
+## Current interface
+
+For real training, fill in a copy of `pcc.pipeline.example.json` and run:
+
+```bash
+conda run --no-capture-output -n train_env python -u -m pcc pipeline \
+  --config temp/pcc.pipeline.local.json --output temp/pcc-training-001
+```
+
+This runs actual adapter optimization (screen, then an eligible full probe).
+Do not pass `--check-only` or `--dry-run` when intending to train. These commands
+are documentation, not an authorized B200 launch. The pretrained backbone stays
+frozen; `pcc/screen.py`, `pcc/training.py`, and `pcc/probe.py` implement the method.
+The separate legacy `train.py` is not the PCC entry point.
+
+`python -m pcc pipeline --config <json> --output <fresh-dir>` reads:
+
+- `model_path`: pinned local model/tokenizer snapshot.
+- `train_data`: completed sampler English train directory (sorted shards).
+- `val_data`: completed sampler English eval Dataset, used for validation.
+- `microbatch`: optional, default 1, divisor of 16 contexts/update.
+- `test_data`: optional independent test Dataset, opened only after dev gates.
+
+Before screening, the normal pipeline validates full train/validation budgets,
+matched policies, vocabulary bounds, and screen-prefix equality. It saves
+`input-check.json` with exact input/target counts and SHA256 fingerprints of
+ordered model inputs (IDs, masks, positions, segments). A failure stops before
+screening and leaves `failure.json` without a completion marker.
+
+Add `--check-only` to run synthetic model preflight and those same input checks,
+then finish with `decision=inputs_validated`. It does not read test data or
+train experimental adapters; preflight uses disposable adapters for gradient
+checks. `--dry-run --check-only` previews the plan without loading model/data.
+Normal execution includes the data checks automatically; a separate check job
+is optional, and check-only outputs are not a training resume/export artifact.
+
+The separate `pcc prepare` command, document-range schema, exporter examples,
+and exporter-specific tests/docs were removed. Shared loading replaces that
+stage. Internal Arrow caches stay inside the run directory and leave sampler
+inputs unchanged. Existing NPZ inputs/fixtures still use the low-level reader.
+
+Screen runs 128 optimizer updates per arm; full probe runs 610 per arm. Both
+use 32,768 input tokens/update and fixed stage initialization seeds. Shared
+packing follows the legacy single-process 1000-document map recipe, without
+special tokens/separators, then context shuffling with seed 20260922. Screen
+inputs are prefixes of the full streams. No new document split is selected.
+The generic runner timeout is a wall-clock failure limit, not an update cutoff.
+
+Without test data, a positive dev run finishes as
+`validation_complete_test_not_supplied`, with no confirmatory test or scaling
+recommendation. Fixed token budgets remain enforced: short validation inputs
+fail explicitly; no repetition, resampling, or training-data borrowing.
+
+## Evidence and remaining limits
+
+Latest run: `temp/pcc-promise-screen-20260923-a01/` completed with status `ok`,
+decision `stop_negative_screen`, no selected pair, and passing artifact audit.
+All eight adapters completed 128 updates; nine arms were evaluated on the same
+2M-token validation slice. Base NLL was 3.02107552; deep NLLs ranged from
+3.00111982 to 3.00483784. Every deep-minus-shallow contrast was positive with
+its entire 95% CI above zero. No full probe or pretraining was launched. This is
+negative evidence under the tested setup, not a universal impossibility claim.
+Train/dev source rows were disjoint and fixed across all arms, but this was not
+a reproduction of the unavailable B200 splits. Full details and evidence links:
+`PCC_PROMISE_SCREEN_20260923.md`.
+
+Before the effectiveness request, a forward-only pretrained test passed real-text
+wrapper loss/logit comparison, all post-block hooks, and future-token invariance,
+but failed the native HF cached-vs-full logits comparison at atol .02 / rtol .01
+(max absolute difference .375). Evidence:
+`temp/dev-diagnostics-20260923-a01/pretrained-only-failure.json`. It was preserved;
+no tolerance was loosened or result relabeled as passing. The user steered work
+to the effectiveness screen, which uses `use_cache=False` throughout and the
+previously verified full-sequence path. Native cached decoding remains a separate
+unresolved diagnostic and is not used for this screen.
+
+
+Latest local GPU diagnostics: pinned pretrained preflight passed 42 checks.
+Real 2048-token contexts / 32,768-token updates passed for teacher and paired
+students, with exact one-pass equivalence and unchanged frozen weights. Peak
+allocated/reserved memory: 2.432/2.980 GiB. The permuted control failed before
+its optimizer step because crossed bucket 69 contained one of 32,752 targets.
+A deterministic diagnostic follow-up confirmed the bucket occupancy and finished
+independent checks; final status is `blocked_permutation`, not all-passed.
+Evidence: `temp/dev-diagnostics-20260923-a01/real-context-followup.json` and
+`pretrained-preflight.json`. Detailed scope/results and limitations are in
+`PCC_DEV_DIAGNOSTICS_20260923.md`. Those earlier checks alone established no
+scientific benefit; the subsequent screen result is described above.
+
+
+Latest training review (2026-09-23): **15 focused training/probe tests passed in
+37.843 seconds**, CPU-only and offline in `train_env`. Evidence:
+`temp/pcc-real-training-review-20260923-a01.log`. The strengthened full-training
+test runs real teacher/shallow/PCC optimizer steps on a tiny Qwen fixture,
+checks exact step counts and token logs, verifies learned weights and frozen
+backbone identity, and reproduces evaluation from saved checkpoints. CLI help
+also passed. Only documentation/help and test assertions changed this turn;
+the actual training loops were already implemented. No pretrained-data run,
+B200 access, sampler modification, or remote submission occurred.
+
+
+New focused validation passed six real-loader/model input-check tests (2.208 s)
+and twelve pipeline tests (29.593 s), including the real CPU CLI/runner flow.
+Logs: `temp/pcc-input-check-focused-20260922-a02.log` and
+`temp/pcc-input-check-pipeline-20260922-a01.log`. The first focused test attempt
+was stopped because the new test class omitted the usual one-thread CPU setup;
+that fixture was corrected before the passing rerun. Full regression passed
+**94 tests in 92.146 seconds**, with no failures or skips, in `train_env` with
+CUDA hidden and offline loading. Evidence:
+`temp/pcc-input-check-regression-20260922-a01.log`. The CLI check-only help and
+dry-run examples pass without opening input paths. No B200 access, model/data
+downloads, scientific training run, or sampler/runner-command changes occurred.
+
+Earlier direct-loader validation:
+
+Focused checks passed: three direct-loader tests and eleven pipeline/runner
+tests. Logs: `temp/pcc-direct-loader-tests-20260922-a01.log` and
+`temp/pcc-direct-pipeline-tests-20260922-a01.log`. They verify legacy packing
+agreement, deterministic prefixes, unchanged source files, shortfall/overlap
+rejection, and real CLI → pipeline → next queued job with synthetic Arrow data.
+Full regression passed **87 tests in 88.311 seconds**, with no failures or
+skips, under `train_env`, CPU-only and offline. Evidence:
+`temp/pcc-direct-data-regression-20260922-a01.log`. This also covers the positive
+dev-gates/no-test branch, preserving the existing held-out test lock when test
+data is supplied. CLI help, example-config dry run, and runner manifest listing
+passed. No model/data downloads, pretrained experiments, or B200 access occurred.
+
+The pinned pretrained snapshot is now local; see
+`temp/dev-diagnostics-20260923-a01/inputs.json` for exact paths. Model revision:
+`ddc928429ed09d9ad603fd762053d0434c15e865`. Source dataset revision:
+`b19d850278693d37113c197857cc6328fa5c6881`, file `raw/en/en_part_00015.parquet`.
+Weight/shard SHA256 verification against pinned Hub metadata is saved in
+`download-verification.json`. The cached non-Base Qwen variant was not used.
+
+The dataset repository contains raw parquet files, not the completed sampled
+train/validation datasets. Fixed split replication, usable full eval budget,
+and the B200 sampling-tokenizer revision discrepancy remain unresolved. Local
+checks use the first 16 complete contexts (2048 tokens each), no special tokens,
+no context shuffle, for one update per teacher/shallow/PCC arm. This is not
+scientific evidence of PCC benefit. B200 remains untouched.
+
+See `PCC_AUTOMATION.md`, `PCC_DATA_HANDOFF.md`, `PCC_DIAGNOSTICS.md`, and
+`PCC_EXPERIMENT.md` for current commands, behavior, and contract coverage.
