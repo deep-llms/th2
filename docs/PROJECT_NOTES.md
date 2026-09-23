@@ -8,6 +8,10 @@
 - User authorized longer training: fixed joint-v2-ddp uses 6144 updates / 201M
   tokens per arm, six sequential eight-rank DDP runs. Global batch is unchanged.
 - See PCC_B200_LAUNCH_20260923.md for the versioned budget, source pool and launch.
+- Controller gpu_guard.sh has a supported /mnt/local/_gpu_guard/DISABLED marker.
+  Its power trigger can launch a co-burn even during training. The current queue
+  has an authorized temporary marker lease, restored when its pinned PID exits.
+  One-time reclamation scripts must never be reused with different process IDs.
 - Existing run_experiments.py handles eight-GPU job allocation; custom PCC
   training adds DDP normalization, rank-safe I/O, exact eval ordering and RNG.
 
@@ -22,8 +26,9 @@
   results /mnt/local/_outputs/deep-llms_th2; Dropbox label th2-tpbw.
 - Completed sampler report (18:50:19 UTC) confirms all six languages succeeded.
   English train has 35 shards / 36,595,514 documents; eval has 11,822 documents.
-- Latest controller export fa905b1 succeeded; earlier connection failures are
-  historical. Current runtime/GPU/model readiness still requires inspection.
+- Launch b4bc9f6 passed readiness and all three eight-GPU capacity checks,
+  including Deep resume; scientific seed-0 Base started at 21:59:20 UTC.
+  Active root is joint-v2-b200-20260923-a03; do not resubmit the launch.
 - The remote sampler env specification has Transformers 5.9.0; joint training
   requires 4.57.1. Preserve B200-compatible CUDA PyTorch when configuring it.
 - No temp/INSTRUCTION.md was supplied. Runner syntax was checked against the

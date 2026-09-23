@@ -1,5 +1,3 @@
-#1 +60+a
-#th2-joint-v2-hold-guard-20260923-a01
-set -euo pipefail
-date -u
-PYTHONPATH="$PWD" /usr/bin/python3 -u -m scripts.hold_gpu_guard_20260923
+#0
+# Scientific queue is already running; do not resubmit the launch.
+# See docs/PCC_B200_LAUNCH_20260923.md for paths and verified status.

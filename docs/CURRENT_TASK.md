@@ -5,7 +5,7 @@
 The user explicitly authorized B200 training, pushes to deep-llms/th2, stopping
 the verified GPU burn, and **all eight GPUs per experiment** (six experiments
 sequentially). They authorized longer training. No further stop approval is
-needed for the verified burn. No scientific run has started yet.
+needed for the verified burn. Scientific training is running (launch b4bc9f6).
 
 Current fixed design is joint-v2-ddp: 6144 updates × 32768 global input tokens
 = 201326592 tokens/run, all 28 pretrained layers, Base/Shallow/Deep × two seeds.
@@ -35,10 +35,23 @@ It uses eight-rank NCCL. Reclaim script rechecks all identities and pins process
 handles before signaling only those workers; it does not signal PID 1 or groups.
 If any identity changes, stop and re-inspect instead of widening the kill scope.
 
-Next: complete local regression, deploy DDP and prepare the longer input cache
-under /mnt/local/_outputs/deep-llms_th2/joint-v2-readiness-20260923-a01;
-then reclaim the authorized burn and launch the gated eight-GPU queue under
-/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a01.
+Current experiment root:
+/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03.
+Readiness root: joint-v2-readiness-20260923-a01. All capacity checks and Deep
+resume passed; seed-0 Base reached update 352 by 22:04 UTC. Fixed monitor NLL
+was 3.00215843 initially and 2.97496419 at update 256. Checkpoint written.
+A controller guard launched new burn workers during scientific startup;
+commit b0ea30d stopped only freshly verified workers 27017–27024 and preserved
+all scientific workers. At 22:13 UTC, Base reached update 1108; monitor NLL
+at update 1024 was 2.96816706. Commit 76279e8 submits the supported DISABLED
+marker lease until the pinned scientific queue exits. At 22:16 UTC its log
+confirmed GUARD_DISABLED_FOR_AUTHORIZED_QUEUE and exactly one scientific worker
+on each GPU (27540–27547). Base reached update 1532; monitor NLL at update 1280
+was 2.96475494. Final code-only push sets commands.sh to #0; the isolated queue
+and CPU guard lease continue. Retrieve results with a fresh #2 request.
+The scientific job is live: do not restart it or edit its source snapshot.
+
+The following paragraphs record earlier deployment attempts chronologically.
 
 Remote DDP regression (7fa177c) passed all 115 tests in 33.983s; all model
 hashes verified again. Longer input preparation is running. Local CLI allocation
