@@ -50,6 +50,13 @@ burn after fresh identity checks, then executes the gated capacity/6-run queue.
 No unconditional training begins before those gates. Stop receipt:
 /mnt/local/_outputs/deep-llms_th2/joint-v2-burn-stop-20260923-a01.json.
 
+Launch 31f9a31 verified the longer inputs, then exited before any signal because
+conda Python lacks os.pidfd_open. No GPU training or burn-stop occurred.
+Retry a02 uses distro /usr/bin/python3 for the standard-library reclaim helper,
+first requiring both pidfd_open and pidfd_send_signal. Training remains in
+pcc_joint. Fresh experiment root is joint-v2-b200-20260923-a02; the verified
+readiness root remains joint-v2-readiness-20260923-a01.
+
 ## Historical local readiness and screen scope
 
 Latest request: carefully review/fix code and make it ready to launch the agreed
