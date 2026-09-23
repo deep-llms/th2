@@ -25,11 +25,16 @@ approval before reclaiming any GPU. train_env has torch 2.14.0+cu130 (sm_100),
 Transformers 5.9.0, datasets 4.8.5, numpy 2.4.6, and no matplotlib.
 Only sampler tokenizer assets exist; the pinned model weights are absent.
 
-Next controller action installs isolated pcc_joint with torch 2.14.0 and
+Controller acknowledged c07767e installation STARTED at 21:22 UTC, background
+ID 2026-09-23_21-22-36. It installs isolated pcc_joint with torch 2.14.0 and
 Transformers 4.57.1; train_env and eval remain unchanged. B200 config is
 pcc.joint.b200.json, with a documented fixed 100000-document training pool.
 Local regression after the bounded-pool change: all 110 CPU tests passed
 (96.925s; temp/pcc-deployment-regression-20260923-a01.log).
+
+Next action downloads the six pinned model assets via controller #d; require
+per-file success and local size/SHA verification before use. Model hashes are
+in resources/qwen3_joint_assets.json.
 
 ## Historical local readiness and screen scope
 
