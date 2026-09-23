@@ -10,7 +10,9 @@ has 35 train shards (36,595,514 documents) and 11,822 eval documents.
 
 Execution remote: git@github-share:deep-llms/th2.git; project identifier
 `deep-llms_th2`; Dropbox label `th2-tpbw`. Existing remote history is preserved.
-First deployment submits read-only `th2-joint-inspect-b200-20260923-a01`.
+Source deployed as 84e6ccf. Inspection a01 exited at git rev-parse because
+runner source has no .git directory; no project inspection or GPU use occurred.
+Submit corrected read-only `th2-joint-inspect-b200-20260923-a02`.
 Verify current hardware/process ownership, environment, prepared data and pinned
 model assets before installing dependencies or launching the training queue.
 The agreed experiment is Base/Shallow/Deep, two seeds, full 28-layer Qwen3,
