@@ -18,6 +18,19 @@ model assets before installing dependencies or launching the training queue.
 The agreed experiment is Base/Shallow/Deep, two seeds, full 28-layer Qwen3,
 block 4 query / actual block 20 source, 1536 updates per run. No student yet.
 
+Inspection a02 (0ecab91) completed at 21:19 UTC on thiennh-p6-tpbw-worker-0.
+All 8 B200 GPUs are occupied by workers 498–505, with a burn launcher 431.
+No processes have been stopped. Verify ancestry/script and obtain exact-stop
+approval before reclaiming any GPU. train_env has torch 2.14.0+cu130 (sm_100),
+Transformers 5.9.0, datasets 4.8.5, numpy 2.4.6, and no matplotlib.
+Only sampler tokenizer assets exist; the pinned model weights are absent.
+
+Next controller action installs isolated pcc_joint with torch 2.14.0 and
+Transformers 4.57.1; train_env and eval remain unchanged. B200 config is
+pcc.joint.b200.json, with a documented fixed 100000-document training pool.
+Local regression after the bounded-pool change: all 110 CPU tests passed
+(96.925s; temp/pcc-deployment-regression-20260923-a01.log).
+
 ## Historical local readiness and screen scope
 
 Latest request: carefully review/fix code and make it ready to launch the agreed

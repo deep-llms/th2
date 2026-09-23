@@ -11,7 +11,8 @@ It is not an extension that changes that screen's eligibility rule.
 
 Keep all 28 layers of the pinned pretrained Qwen3-0.6B-Base and train the whole
 backbone together with the added branch. Start from pretrained weights, not
-random initialization. Use local A100s and `train_env`; B200 stays untouched.
+random initialization. B200 execution is now authorized; local A100 capacity
+checks remain supporting evidence, with B200 checks required before launch.
 
 Question: does allowing the backbone and feedback branch to adapt together
 produce a useful deep-source advantage over equally trained shallow attention?
@@ -58,6 +59,23 @@ embedding/head weights. These are initial design choices, not established optima
 
 ## Data and evaluation
 
+B200 deployment amendment, fixed before any scientific training: consume the
+completed sampler's English `train/en` and `eval/en` directories. The train
+split contains 36,595,514 documents; tokenizing it in full would greatly exceed
+this pilot's needs. Select 100,000 documents uniformly without replacement using
+NumPy default_rng(20260922), sort their original indices for Arrow locality,
+and then apply the unchanged 1000-document packing and context shuffle. Save
+selected indices plus their hash. All six arms share the resulting fixed
+50,331,648-token context pool; seed 2 only permutes that pool. Fail on a token
+shortfall rather than repeating data or silently widening the pool. Validation
+uses the completed sampler eval split with unchanged packing and a fixed 2M
+input-token prefix. No sampler data is rewritten and no new split is created.
+`train_documents: 100000` explicitly selects this deployment policy; omission
+retains the prior full-split loader behavior. B200 and local exploratory results
+use different document splits and must not be pooled as paired comparisons.
+
+The following paragraph records the earlier local readiness data preparation:
+
 Use the pinned, already downloaded user-selected CulturaX English parquet.
 Keep the existing validation document rows [20000,30000) excluded from training.
 The current local packed training source has only 15,908,864 input tokens, so
@@ -86,7 +104,7 @@ zero and at least .0005 nats/token improvement over trained Shallow in each seed
 This is a new practical gate, not a retroactive change to the frozen protocol.
 Otherwise report negative/inconclusive as appropriate. A still-falling curve at
 the budget limit is evidence of incomplete convergence, not permission to extend.
-No automatic budget increase, new pair search, distillation run, or remote job.
+No automatic budget increase, new pair search, or distillation run.
 
 ## Required implementation before execution
 
@@ -123,8 +141,7 @@ full-size capacity/throughput check on local A100 hardware establishes memory
 and runtime; discard its weights before scientific runs. No training launched
 during planning. Do not promise a runtime from the frozen screen's throughput.
 
-Default scientific scheduling: one arm at a time on one verified-free local
-A100, all six jobs queued automatically. This minimizes peak resource use and
+Default scientific scheduling: one arm at a time on one verified-free B200, all six jobs queued automatically. This minimizes peak resource use and
 avoids distributed-training complexity; it trades longer wall time for simpler
 execution. Choose the same feasible microbatch for all arms, accumulate to the
 fixed global token count, and use activation checkpointing. Do not silently
@@ -135,7 +152,7 @@ Save periodic full state every 128 updates; retain latest and final full state
 plus metrics. Implement and test explicit resume; do not retry indefinitely or
 interpret a timeout as successful completion. Software failure stops the queue.
 The final report states all completed budgets, failures, loss curves, paired
-comparisons, and compute cost. This task introduces no B200 submission.
+comparisons, and compute cost. The user has now authorized B200 submission.
 
 ## Research references for the model-size decision
 

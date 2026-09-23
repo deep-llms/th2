@@ -1,0 +1,10 @@
+# manager: conda
+# fresh: false
+# python: 3.11
+# Isolated B200 joint-training runtime; leave the sampler's train_env unchanged.
+torch==2.14.0
+transformers==4.57.1
+numpy==2.4.4
+datasets==4.8.5
+matplotlib==3.10.9
+accelerate==1.13.0

@@ -18,6 +18,13 @@
 - No temp/INSTRUCTION.md was supplied. Runner syntax was checked against the
   provided guides and current successful th2 install/download/run/export history.
 
+- The runner syncs source without Git metadata. Do not run git rev-parse in
+  node jobs; use controller commit records and file hashes for provenance.
+- Core tokenizer.json and model config hashes match between the sampler and
+  locked training revisions, but tokenizer_config differs (chat template and
+  added-token metadata). Training always uses the complete locked revision;
+  no whole-tokenizer equivalence is assumed from the core file hash alone.
+
 ## Historical local work
 
 Status: joint full-model follow-up is implemented and ready for a bounded local

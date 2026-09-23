@@ -40,6 +40,32 @@ def sampled_fixture(root, sharded=True, documents=2003):
 
 @unittest.skipUnless(HAS_SAMPLING, "Requires the project's local data environment")
 class SampledDataTests(unittest.TestCase):
+    def test_bounded_training_pool_is_seeded_unique_and_does_not_change_validation(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as temp, patch("pcc.data.CONTEXT", 12):
+            root = Path(temp)
+            path, tokenizer, texts = sampled_fixture(root / "train")
+            selected = np.sort(np.random.default_rng(DATA_SEED).choice(len(texts), size=1000, replace=False))
+            expected_path = root / "expected"
+            Dataset.from_dict({"text": [texts[i] for i in selected]}).save_to_disk(expected_path)
+            expected = SampledDataLoader(tokenizer, root / "expected-cache")(expected_path, "train", 120)
+            loader = SampledDataLoader(tokenizer, root / "cache", train_documents=1000)
+            actual = loader(path, "train", 120)
+            np.testing.assert_array_equal(actual.ids, expected.ids)
+            self.assertEqual(actual.metadata["document_selection"]["indices_sha256"],
+                             hashlib.sha256(selected.astype('<i8').tobytes()).hexdigest())
+            again = SampledDataLoader(tokenizer, root / "cache2", train_documents=1000)(path, "train", 120)
+            np.testing.assert_array_equal(actual.ids, again.ids)
+            dev = loader(path, "dev", 120)
+            full = SampledDataLoader(tokenizer, root / "full-cache")(path, "dev", 120)
+            np.testing.assert_array_equal(dev.ids, full.ids)
+            self.assertNotIn("document_selection", dev.metadata)
+            with self.assertRaisesRegex(ValueError, "no resampling"):
+                SampledDataLoader(tokenizer, root / "short", train_documents=3000)(path, "train", 120)
+            for bad in (True, 0, -1, 1.5):
+                with self.assertRaises(ValueError):
+                    SampledDataLoader(tokenizer, root / "bad", train_documents=bad)
+
     def test_matches_legacy_map_shuffle_and_reuses_prefix_without_export(self):
         with tempfile.TemporaryDirectory() as temp, patch("pcc.data.CONTEXT", 12):
             root = Path(temp)

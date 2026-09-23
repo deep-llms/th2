@@ -65,7 +65,8 @@ def prepare(config, output):
         if model_path.name != REVISION and not model_path.name.endswith("-" + REVISION):
             raise ValueError("Model path must identify the locked revision")
         tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True, trust_remote_code=False)
-        loader = SampledDataLoader(tokenizer, output / "data-cache")
+        loader = SampledDataLoader(tokenizer, output / "data-cache",
+                                   train_documents=config.get("train_documents"))
         train = loader(config["train_data"], "train", settings.updates * settings.tokens_per_update)
         dev = loader(config["val_data"], "dev", settings.dev_tokens)
         validate_matched_data(train, dev)

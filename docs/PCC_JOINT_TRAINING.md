@@ -101,3 +101,14 @@ controls in both seeds with upper paired 95% CIs below zero and at least
 .0005 nats/token improvement over Shallow in each seed. It triggers no further
 training, new layer search, or remote submission. The reused local validation
 split makes this exploratory evidence, not an independent confirmatory test.
+
+## Bounded document selection for the B200 pilot
+
+Optional joint config `train_documents` selects a fixed uniform document pool
+without replacement from the completed training split before tokenization.
+The deployment uses 100000, seed 20260922, sorted selected indices, followed by
+the existing context packing/shuffle. Indices and hash are saved with the input
+cache; all arms reuse the same pool. Evaluation is unaffected. Omitting this
+field preserves full-split preprocessing. A short pool fails; no repetition or
+automatic expansion occurs. This prevents preprocessing the entire 36.6M-document
+corpus for a 50M-token run. See the pre-launch amendment in the experiment plan.

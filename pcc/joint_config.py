@@ -36,8 +36,8 @@ def load_config(path):
     path = Path(path).resolve()
     config = json.loads(path.read_text())
     required = {"model_path", "train_data", "val_data"}
-    if not isinstance(config, dict) or not required <= set(config) or set(config) - (required | {"microbatch"}):
-        raise ValueError("Joint config requires model_path/train_data/val_data and optional microbatch")
+    if not isinstance(config, dict) or not required <= set(config) or set(config) - (required | {"microbatch", "train_documents"}):
+        raise ValueError("Joint config requires model_path/train_data/val_data and optional microbatch/train_documents")
     for key in required:
         if not isinstance(config[key], str) or not config[key]:
             raise ValueError(f"Invalid path: {key}")
@@ -45,6 +45,8 @@ def load_config(path):
     micro = config.setdefault("microbatch", 1)
     if type(micro) is not int or micro < 1 or 16 % micro:
         raise ValueError("microbatch must divide 16 contexts/update")
+    if "train_documents" in config and (type(config["train_documents"]) is not int or config["train_documents"] <= 0):
+        raise ValueError("train_documents must be a positive integer")
     return config
 
 

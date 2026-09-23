@@ -1,0 +1,7 @@
+{
+  "model_path": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base-ddc928429ed09d9ad603fd762053d0434c15e865",
+  "train_data": "/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/train/en",
+  "val_data": "/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/eval/en",
+  "microbatch": 1,
+  "train_documents": 100000
+}

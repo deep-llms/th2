@@ -113,9 +113,12 @@ class SampledDataLoader:
     NPZ inputs remain supported for existing fixtures and already packed data.
     """
 
-    def __init__(self, tokenizer, cache_dir):
+    def __init__(self, tokenizer, cache_dir, *, train_documents=None):
+        if train_documents is not None and (type(train_documents) is not int or train_documents <= 0):
+            raise ValueError("train_documents must be a positive integer")
         self.tokenizer = tokenizer
         self.cache_dir = Path(cache_dir)
+        self.train_documents = train_documents
         self.packed = {}
 
     def __call__(self, path, split, token_budget):
@@ -126,9 +129,10 @@ class SampledDataLoader:
             raise ValueError("Invalid input-token budget: each context needs a causal target")
         if split == "train" and token_budget % CONTEXT:
             raise ValueError("Training requires complete contexts")
-        if path not in self.packed:
-            self.packed[path] = self._pack(path)
-        packed, identity = self.packed[path]
+        key = (path, split == "train") if self.train_documents is not None else path
+        if key not in self.packed:
+            self.packed[key] = self._pack(path, training=split == "train")
+        packed, identity = self.packed[key]
         rows = (token_budget + CONTEXT - 1) // CONTEXT
         if rows > len(packed):
             raise ValueError(f"{split}: need {token_budget} input tokens, but the fixed split has "
@@ -149,7 +153,7 @@ class SampledDataLoader:
         data.validate(split, token_budget)
         return data
 
-    def _pack(self, path):
+    def _pack(self, path, *, training=False):
         from datasets import Dataset, concatenate_datasets, load_from_disk
 
         if self.tokenizer is None:
@@ -172,6 +176,20 @@ class SampledDataLoader:
         # One fresh cache per split in this run, not a separate prepared dataset.
         cache = self.cache_dir / f"split-{len(self.packed)}"
         cache.mkdir(parents=True, exist_ok=False)
+        if training and self.train_documents is not None:
+            if self.train_documents > len(raw):
+                raise ValueError("Fixed training document pool exceeds sampled split; no resampling")
+            # Select once before tokenization; sorting improves Arrow locality.
+            # Context shuffle below still defines the common training order.
+            indices = np.sort(np.random.default_rng(DATA_SEED).choice(
+                len(raw), size=self.train_documents, replace=False))
+            import hashlib
+            identity["document_selection"] = {
+                "policy": "uniform_without_replacement_sorted", "seed": DATA_SEED,
+                "available_documents": len(raw), "selected_documents": len(indices),
+                "indices_sha256": hashlib.sha256(indices.astype('<i8').tobytes()).hexdigest()}
+            np.save(cache / "selected_document_indices.npy", indices, allow_pickle=False)
+            raw = raw.select(indices, keep_in_memory=True)
         tokenizer = self.tokenizer
         context_length = CONTEXT
 
