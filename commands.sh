@@ -1,30 +1,162 @@
 #1 +60+a
-#th2-d2s-verify-qwen-assets-20260923-a01
+#th2-tpbw-d2s-sample-culturax-qwen-20260923-a01
 set -euo pipefail
+
+echo '=== sample verified CulturaX data offline (deep2shallow) ==='
 date -u
 hostname
 test "$(hostname)" = thiennh-p6-tpbw-worker-0
-/mnt/local/conda-py311/envs/train_env/bin/python -B - <<'PY'
-import hashlib, json
-from pathlib import Path
-spec = json.loads(Path('resources/qwen3_base_assets.json').read_text())
-assert spec['repo_id'] == 'Qwen/Qwen3-0.6B-Base'
-rev = spec['revision']
-assert len(rev) == 40 and all(c in '0123456789abcdef' for c in rev)
-root = Path(f'/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base-{rev}')
-for name, wanted in spec['files'].items():
-    p = root/name
-    digest = hashlib.sha256(p.read_bytes()).hexdigest()
-    assert digest == wanted, ('HASH_MISMATCH', name, digest)
-    print('ASSET_VERIFIED', name, p.stat().st_size, 'bytes')
-from transformers import AutoTokenizer, AutoConfig
-config = AutoConfig.from_pretrained(root, local_files_only=True)
-tokenizer = AutoTokenizer.from_pretrained(root, local_files_only=True)
-assert config.num_hidden_layers == 28 and config.vocab_size == 151936
-assert tokenizer.eos_token_id is not None
-sample = tokenizer('hello world')['input_ids']
-print('QWEN_ASSETS_VERIFIED', json.dumps(dict(success=True, revision=rev,
-    layers=config.num_hidden_layers, vocab=config.vocab_size,
-    eos=tokenizer.eos_token_id, sample_ids=sample)), flush=True)
+
+TASK_PROJECT_DIR="$PWD"
+TASK_LOG_DIR=/mnt/local/_outputs/@PROJECT@/data_preparation/culturax_qwen_tpbw_20260923_a01
+test ! -e "$TASK_LOG_DIR"
+mkdir -p "$TASK_LOG_DIR"
+exec > >(tee "$TASK_LOG_DIR/sampling.log") 2>&1
+TASK_CONDA=/mnt/local/conda-py311/bin/conda
+TASK_DATA_ROOT=/mnt/local/_data/@PROJECT@/data
+TASK_RAW_DIR="$TASK_DATA_ROOT/raw"
+TASK_OUTPUT_ROOT="$TASK_DATA_ROOT/Qwen_Qwen3-0.6B-Base"
+TASK_MODEL_DIR=/mnt/local/_models/@PROJECT@/Qwen3-0.6B-Base-da87bfb608c14b7cf20ba1ce41287e8de496c0cd
+TASK_MANIFEST="$TASK_PROJECT_DIR/resources/culturax_raw_manifest.tsv"
+TASK_PREPARE_SCRIPT="$TASK_PROJECT_DIR/prepare_data.py"
+
+test -x "$TASK_CONDA"
+eval "$("$TASK_CONDA" shell.bash hook)"
+conda activate train_env
+TASK_PYTHON="$(command -v python3.11)"
+echo "conda_env=$CONDA_DEFAULT_ENV"
+echo "python=$TASK_PYTHON"
+test "$CONDA_DEFAULT_ENV" = train_env
+test "$TASK_PYTHON" = /mnt/local/conda-py311/envs/train_env/bin/python3.11
+
+for TASK_REQUIRED_DIR in "$TASK_DATA_ROOT" "$TASK_RAW_DIR" "$TASK_MODEL_DIR"; do
+    test -d "$TASK_REQUIRED_DIR"
+done
+for TASK_REQUIRED_FILE in \
+    "$TASK_MODEL_DIR/config.json" \
+    "$TASK_MODEL_DIR/tokenizer.json" \
+    "$TASK_MODEL_DIR/tokenizer_config.json" \
+    "$TASK_MANIFEST" \
+    "$TASK_PREPARE_SCRIPT"; do
+    test -s "$TASK_REQUIRED_FILE"
+done
+
+case "$TASK_OUTPUT_ROOT" in
+    /mnt/local/_data/*/data/Qwen_Qwen3-0.6B-Base) ;;
+    *) echo "REFUSE: unexpected output path: $TASK_OUTPUT_ROOT"; exit 1 ;;
+esac
+if [ -e "$TASK_OUTPUT_ROOT" ]; then
+    echo "REFUSE: sampled output already exists: $TASK_OUTPUT_ROOT"
+    exit 1
+fi
+
+echo '=== storage preflight ==='
+df -h "$TASK_DATA_ROOT"
+TASK_AVAILABLE_BYTES="$(df --output=avail -B1 "$TASK_DATA_ROOT" | tail -n 1 | tr -d ' ')"
+echo "available_bytes=$TASK_AVAILABLE_BYTES"
+test "$TASK_AVAILABLE_BYTES" -ge 200000000000
+
+echo '=== verify local model config and tokenizer (pinned Base assets) ==='
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
+export TOKENIZERS_PARALLELISM=true
+export CUDA_VISIBLE_DEVICES=''
+"$TASK_PYTHON" - "$TASK_MODEL_DIR" <<'PY'
+import json
+import sys
+
+import datasets
+import pyarrow
+import transformers
+from transformers import AutoTokenizer
+
+model_dir = sys.argv[1]
+with open(f"{model_dir}/config.json", encoding="utf-8") as handle:
+    config = json.load(handle)
+assert config["model_type"] == "qwen3", config.get("model_type")
+assert config["hidden_size"] == 1024, config.get("hidden_size")
+assert config["num_hidden_layers"] == 28, config.get("num_hidden_layers")
+assert config["vocab_size"] == 151936, config.get("vocab_size")
+tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
+ids = tokenizer("offline tokenizer check", add_special_tokens=False)["input_ids"]
+assert ids
+print(f"python={sys.version.split()[0]}")
+print(f"datasets={datasets.__version__} pyarrow={pyarrow.__version__} transformers={transformers.__version__}")
+print(f"tokenizer_class={type(tokenizer).__name__} tokenizer_test_tokens={len(ids)}")
+print("LOCAL_QWEN3_BASE_TOKENIZER_OK")
 PY
-echo TPBW_QWEN_ASSET_CHECK_COMPLETE
+
+echo '504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59  '"$TASK_MODEL_DIR/config.json" | sha256sum -c -
+echo 'c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539  '"$TASK_MODEL_DIR/tokenizer.json" | sha256sum -c -
+echo '3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5  '"$TASK_MODEL_DIR/tokenizer_config.json" | sha256sum -c -
+echo '=== validate exact local six-language sample plan ==='
+"$TASK_PYTHON" -u "$TASK_PREPARE_SCRIPT" sample \
+    --dry-run \
+    --raw-dir "$TASK_RAW_DIR" \
+    --data-dir "$TASK_DATA_ROOT" \
+    --manifest "$TASK_MANIFEST" \
+    --tokenizer-name Qwen/Qwen3-0.6B-Base \
+    --tokenizer-path "$TASK_MODEL_DIR" \
+    --local-files-only
+
+echo '=== run offline sampling for en vi zh ru de ar ==='
+"$TASK_PYTHON" -u "$TASK_PREPARE_SCRIPT" sample \
+    --raw-dir "$TASK_RAW_DIR" \
+    --data-dir "$TASK_DATA_ROOT" \
+    --manifest "$TASK_MANIFEST" \
+    --tokenizer-name Qwen/Qwen3-0.6B-Base \
+    --tokenizer-path "$TASK_MODEL_DIR" \
+    --local-files-only \
+    --langs en vi zh ru de ar \
+    --flush-every 1 \
+    --tokenize-batch-size 4096
+
+echo '=== verify sampled output layout ==='
+for TASK_LANG in en vi zh ru de ar; do
+    TASK_TRAIN_DIR="$TASK_OUTPUT_ROOT/train/$TASK_LANG"
+    TASK_EVAL_DIR="$TASK_OUTPUT_ROOT/eval/$TASK_LANG"
+    test -d "$TASK_TRAIN_DIR"
+    test -d "$TASK_EVAL_DIR"
+    test -s "$TASK_EVAL_DIR/dataset_info.json"
+    test -s "$TASK_EVAL_DIR/state.json"
+    TASK_SHARD_COUNT="$(find "$TASK_TRAIN_DIR" -mindepth 1 -maxdepth 1 -type d -name 'shard_*' | wc -l)"
+    TASK_TRAIN_ARROW_COUNT="$(find "$TASK_TRAIN_DIR" -type f -name '*.arrow' | wc -l)"
+    TASK_EVAL_ARROW_COUNT="$(find "$TASK_EVAL_DIR" -maxdepth 1 -type f -name '*.arrow' | wc -l)"
+    echo "$TASK_LANG train_shards=$TASK_SHARD_COUNT train_arrow_files=$TASK_TRAIN_ARROW_COUNT eval_arrow_files=$TASK_EVAL_ARROW_COUNT"
+    test "$TASK_SHARD_COUNT" -gt 0
+    test "$TASK_TRAIN_ARROW_COUNT" -gt 0
+    test "$TASK_EVAL_ARROW_COUNT" -gt 0
+done
+
+"$TASK_PYTHON" - "$TASK_OUTPUT_ROOT" "$TASK_LOG_DIR" <<'PY'
+import json, sys
+from pathlib import Path
+from datetime import datetime, timezone
+from datasets import load_from_disk
+root=Path(sys.argv[1])
+summary={}
+for lang in ['en','vi','zh','ru','de','ar']:
+    shards=sorted((root/'train'/lang).glob('shard_*'))
+    assert shards
+    counts=[]
+    for shard in shards:
+        ds=load_from_disk(str(shard))
+        assert ds.column_names==['text'] and len(ds)>0
+        counts.append(len(ds))
+        del ds
+    ds=load_from_disk(str(root/'eval'/lang))
+    assert ds.column_names==['text'] and len(ds)>0
+    summary[lang]=dict(train_shards=len(shards),train_documents=sum(counts),eval_documents=len(ds))
+    del ds
+report=dict(success=True,completed_utc=datetime.now(timezone.utc).isoformat(),output=str(root),languages=summary)
+with (Path(sys.argv[2])/'sampling_complete.json').open('x') as f:
+    json.dump(report,f,indent=2)
+print('SAMPLED_DATASETS_REOPENED',json.dumps(report),flush=True)
+PY
+du -sh "$TASK_OUTPUT_ROOT"
+df -h "$TASK_DATA_ROOT"
+echo '=== read-only GPU status after CPU-only sampling ==='
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu,power.draw \
+    --format=csv,noheader,nounits
+echo 'D2S OFFLINE CULTURAX SAMPLING OK'
