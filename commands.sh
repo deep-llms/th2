@@ -1,10 +1,10 @@
 #1 +60+a
-#th2-joint-v2-eight-gpu-20260923-a02
+#th2-joint-v2-eight-gpu-20260923-a03
 set -euo pipefail
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_DISABLED=true
 TASK_PYTHON=/mnt/local/conda-py311/envs/pcc_joint/bin/python3.11
 TASK_READY=/mnt/local/_outputs/@PROJECT@/joint-v2-readiness-20260923-a01
-TASK_RUN=/mnt/local/_outputs/@PROJECT@/joint-v2-b200-20260923-a02
+TASK_RUN=/mnt/local/_outputs/@PROJECT@/joint-v2-b200-20260923-a03
 date -u
 hostname
 # The CPU producer is already running. Do not resubmit preprocessing.
@@ -31,5 +31,5 @@ print('LONG_INPUTS_VERIFIED', flush=True)
 PYTHON
 # Explicit user authorization was given for stopping this verified GPU burn.
 /usr/bin/python3 -c 'import os, signal; assert hasattr(os, "pidfd_open") and hasattr(signal, "pidfd_send_signal"); print("SYSTEM_PIDFD_AVAILABLE", flush=True)'
-/usr/bin/python3 -u -m scripts.reclaim_b200_burn_20260923 --authorized-stop   --output /mnt/local/_outputs/@PROJECT@/joint-v2-burn-stop-20260923-a02.json
+PYTHONPATH="$PWD" /usr/bin/python3 -u -m scripts.reclaim_b200_burn_20260923 --authorized-stop   --output /mnt/local/_outputs/@PROJECT@/joint-v2-burn-stop-20260923-a03.json
 bash scripts/launch_joint_b200.sh "$TASK_READY" "$TASK_RUN"

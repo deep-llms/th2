@@ -57,6 +57,12 @@ first requiring both pidfd_open and pidfd_send_signal. Training remains in
 pcc_joint. Fresh experiment root is joint-v2-b200-20260923-a02; the verified
 readiness root remains joint-v2-readiness-20260923-a01.
 
+Retry 7acccaf confirmed system pidfd support, but system Python could not
+resolve the scripts namespace. It stopped before any signal. Add explicit
+scripts/__init__.py and set the guard's PYTHONPATH to the synced project root.
+Retry a03 uses fresh joint-v2-b200-20260923-a03 and burn-stop-a03 paths; inputs
+remain unchanged. No scientific runs have started at this point.
+
 ## Historical local readiness and screen scope
 
 Latest request: carefully review/fix code and make it ready to launch the agreed
