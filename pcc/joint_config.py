@@ -32,11 +32,17 @@ SEEDS = ((2901, 20260922), (3901, 20260923))
 ARMS = ("Base", "Shallow", "Deep")
 
 
+def settings_for(config):
+    if config.get("experiment", "joint-v1") == "joint-v2-ddp":
+        return JointSettings(version="joint-v2-ddp", updates=6144, warmup=307, eval_every=256).validate()
+    return JointSettings().validate()
+
+
 def load_config(path):
     path = Path(path).resolve()
     config = json.loads(path.read_text())
     required = {"model_path", "train_data", "val_data"}
-    if not isinstance(config, dict) or not required <= set(config) or set(config) - (required | {"microbatch", "train_documents"}):
+    if not isinstance(config, dict) or not required <= set(config) or set(config) - (required | {"microbatch", "train_documents", "experiment"}):
         raise ValueError("Joint config requires model_path/train_data/val_data and optional microbatch/train_documents")
     for key in required:
         if not isinstance(config[key], str) or not config[key]:
@@ -47,11 +53,13 @@ def load_config(path):
         raise ValueError("microbatch must divide 16 contexts/update")
     if "train_documents" in config and (type(config["train_documents"]) is not int or config["train_documents"] <= 0):
         raise ValueError("train_documents must be a positive integer")
+    if config.get("experiment", "joint-v1") not in ("joint-v1", "joint-v2-ddp"):
+        raise ValueError("Unknown fixed joint experiment")
     return config
 
 
 def plan(config):
-    settings = JointSettings().validate()
+    settings = settings_for(config)
     return {"settings": asdict(settings), "config": config,
             "seeds": SEEDS, "arms": ARMS,
             "input_tokens_per_run": settings.updates * settings.tokens_per_update,

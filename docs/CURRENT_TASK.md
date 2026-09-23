@@ -1,54 +1,44 @@
 # Current task
 
-## Active B200 deployment — 2026-09-23
+## Active: longer eight-GPU B200 pilot
 
-The user now explicitly authorizes B200 inspection, runner commands, the six
-joint-v1 training runs, and publishing this project to deep-llms/th2 main.
-This supersedes the historical B200 prohibition below. No process termination
-has been authorized. Sampling completed successfully at 18:50:19 UTC: English
-has 35 train shards (36,595,514 documents) and 11,822 eval documents.
+The user explicitly authorized B200 training, pushes to deep-llms/th2, stopping
+the verified GPU burn, and **all eight GPUs per experiment** (six experiments
+sequentially). They authorized longer training. No further stop approval is
+needed for the verified burn. No scientific run has started yet.
 
-Execution remote: git@github-share:deep-llms/th2.git; project identifier
-`deep-llms_th2`; Dropbox label `th2-tpbw`. Existing remote history is preserved.
-Source deployed as 84e6ccf. Inspection a01 exited at git rev-parse because
-runner source has no .git directory; no project inspection or GPU use occurred.
-Submit corrected read-only `th2-joint-inspect-b200-20260923-a02`.
-Verify current hardware/process ownership, environment, prepared data and pinned
-model assets before installing dependencies or launching the training queue.
-The agreed experiment is Base/Shallow/Deep, two seeds, full 28-layer Qwen3,
-block 4 query / actual block 20 source, 1536 updates per run. No student yet.
+Current fixed design is joint-v2-ddp: 6144 updates × 32768 global input tokens
+= 201326592 tokens/run, all 28 pretrained layers, Base/Shallow/Deep × two seeds.
+Warmup 307, monitor/checkpoint every 256, shared 400000-document source pool,
+fixed 2M-token final dev. See PCC_B200_LAUNCH_20260923.md for all settings.
+This supersedes the earlier one-GPU / 1536-update execution plan.
 
-Inspection a02 (0ecab91) completed at 21:19 UTC on thiennh-p6-tpbw-worker-0.
-All 8 B200 GPUs are occupied by workers 498–505, with a burn launcher 431.
-No processes have been stopped. Verify ancestry/script and obtain exact-stop
-approval before reclaiming any GPU. train_env has torch 2.14.0+cu130 (sm_100),
-Transformers 5.9.0, datasets 4.8.5, numpy 2.4.6, and no matplotlib.
-Only sampler tokenizer assets exist; the pinned model weights are absent.
+Remote main was initialized preserving th2 history. Recent deployment commits:
+84e6ccf source; 0ecab91 successful read-only inspection; c07767e isolated env
+installation; 955d9e5 exact model download; e6747eb burn ownership inspection;
+cf0a8b2 CPU readiness; b61baf7 result export. No force pushes.
 
-Controller acknowledged c07767e installation STARTED at 21:22 UTC, background
-ID 2026-09-23_21-22-36. It installs isolated pcc_joint with torch 2.14.0 and
-Transformers 4.57.1; train_env and eval remain unchanged. B200 config is
-pcc.joint.b200.json, with a documented fixed 100000-document training pool.
-Local regression after the bounded-pool change: all 110 CPU tests passed
-(96.925s; temp/pcc-deployment-regression-20260923-a01.log).
+B200 CPU readiness v1 completed: all six model hashes verified, dependencies
+passed, all 110 existing tests passed (30.275s). The fixed 50M training/2M dev
+cache is valid but is superseded by the requested longer budget. Local two-rank
+Gloo tests of the new DDP path passed, including exact resumed weights.
 
-Next action downloads the six pinned model assets via controller #d; require
-per-file success and local size/SHA verification before use. Model hashes are
-in resources/qwen3_joint_assets.json.
+Node thiennh-p6-tpbw-worker-0 has eight B200s. Runtime pcc_joint uses torch
+2.14.0+cu130, Transformers 4.57.1; train_env/eval unchanged. All model assets
+are at the pinned ddc928... revision. Sampling completed 18:50 UTC, English
+train 35 shards / 36595514 documents, eval 11822 documents.
 
-Controller confirmed installation and all six model downloads successful at
-21:27 UTC. Ownership inspection e6747eb confirms workers 498–505 share launcher
-431, /tmp/llm_pretrain_burn.py SHA256
+Burn ownership verified at 21:25 UTC: workers 498–505, parent 431, worker start
+ticks 258980483, parent start ticks 258980356. Script hash
 3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857.
-It uses eight-rank NCCL, so reclaiming one GPU requires stopping this whole burn.
-Explicit stop authorization has been requested and is pending; no signaling.
+It uses eight-rank NCCL. Reclaim script rechecks all identities and pins process
+handles before signaling only those workers; it does not signal PID 1 or groups.
+If any identity changes, stop and re-inspect instead of widening the kill scope.
 
-Submitting CPU-only th2-joint-cpu-ready-20260923-a01: verify dependencies/hashes,
-run all tests in pcc_joint, and prepare the shared inputs. Output root:
-/mnt/local/_outputs/deep-llms_th2/joint-v1-readiness-20260923-a01.
-Require cpu_ready.json and B200_CPU_READY before capacity checks. The prepared
-cache can be reused via manifest --data-dir, avoiding repeat tokenization.
-The final manifest update passed all 15 joint tests locally (6.301s).
+Next: complete local regression, deploy DDP and prepare the longer input cache
+under /mnt/local/_outputs/deep-llms_th2/joint-v2-readiness-20260923-a01;
+then reclaim the authorized burn and launch the gated eight-GPU queue under
+/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a01.
 
 ## Historical local readiness and screen scope
 

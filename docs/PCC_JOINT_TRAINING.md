@@ -117,3 +117,14 @@ To reuse a verified input cache in the sequential queue, pass `--data-dir` to
 `pcc.joint manifest`. The manifest then contains six training jobs and the
 report, and every job verifies input/config identity before using the cache.
 Without that option the manifest prepares its own inputs as before.
+
+## Eight-GPU longer B200 run
+
+Use `pcc.joint.b200.json` (`experiment: joint-v2-ddp`) and
+`--physical-gpus 0 1 2 3 4 5 6 7` for train/capacity/manifest. This fixed
+experiment requires eight GPUs, 6144 updates and 201326592 input tokens per run.
+Microbatch is per rank (1 or 2); the global batch remains 16 contexts.
+`--resume-check` adds a next-update checkpoint resume check to capacity mode.
+See [PCC_B200_LAUNCH_20260923.md](PCC_B200_LAUNCH_20260923.md) for the active
+budget, preflight, scripts and expected artifacts. The original single-GPU
+joint-v1 interface is retained for previous evidence and small local checks.

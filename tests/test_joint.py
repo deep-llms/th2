@@ -254,7 +254,7 @@ class JointTests(unittest.TestCase):
                 save_contexts(data.path, data.ids, data.valid, data.positions, data.metadata)
                 streams[split] = describe_contexts(data)
             (root / "complete.json").write_text(json.dumps({"status": "ok", "plan": plan(config), "streams": streams}))
-            with patch("pcc.joint.JointSettings", return_value=small):
+            with patch("pcc.joint.settings_for", return_value=small):
                 a, _, fa = load_inputs(config, root, 0)
                 b, _, fb = load_inputs(config, root, 1)
                 self.assertNotEqual(fa["train"], fb["train"])
@@ -293,7 +293,7 @@ class JointTests(unittest.TestCase):
             args = Namespace(output=root / "report", data_dir=root / "inputs", runs_dir=root)
             def audit(path, identity):
                 return {"history": {"train": [json.loads(line) for line in (Path(path).parent / "train.jsonl").read_text().splitlines()]}}
-            with patch("pcc.joint.JointSettings", return_value=settings()), patch("pcc.joint.load_inputs", return_value=(None, dev, fingerprints)), patch("pcc.joint_training.audit_final_checkpoint", side_effect=audit):
+            with patch("pcc.joint.settings_for", return_value=settings()), patch("pcc.joint.load_inputs", return_value=(None, dev, fingerprints)), patch("pcc.joint_training.audit_final_checkpoint", side_effect=audit):
                 report = report_results(args, config)
                 self.assertEqual(report["decision"], "no_consistent_joint_advantage")
                 self.assertTrue(report["seeds"][0]["passed"])

@@ -1,2 +1,6 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/joint-v1-readiness-20260923-a01/cpu_ready.json,/mnt/local/_outputs/deep-llms_th2/joint-v1-readiness-20260923-a01/prepare.log
-#th2-joint-export-cpu-ready-20260923-a01
+#1 +60+a
+#th2-joint-v2-cpu-ready-20260923-a01
+set -euo pipefail
+date -u
+hostname
+bash scripts/prepare_joint_b200.sh /mnt/local/_outputs/@PROJECT@/joint-v2-readiness-20260923-a01

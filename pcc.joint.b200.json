@@ -3,5 +3,6 @@
   "train_data": "/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/train/en",
   "val_data": "/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/eval/en",
   "microbatch": 1,
-  "train_documents": 100000
+  "train_documents": 400000,
+  "experiment": "joint-v2-ddp"
 }

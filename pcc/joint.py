@@ -4,7 +4,7 @@ from dataclasses import asdict
 import json
 from pathlib import Path
 
-from .joint_config import ARMS, SEEDS, JointSettings, load_config, plan
+from .joint_config import ARMS, SEEDS, JointSettings, load_config, plan, settings_for
 
 
 def parser():
@@ -19,21 +19,32 @@ def parser():
         if name in ("train", "capacity"):
             command.add_argument("--arm", required=True, choices=ARMS)
             command.add_argument("--seed-index", type=int, choices=(0, 1), default=0)
-            command.add_argument("--physical-gpu", required=True, type=int)
+            group = command.add_mutually_exclusive_group(required=True)
+            group.add_argument("--physical-gpu", type=int)
+            group.add_argument("--physical-gpus", nargs="+", type=int)
         if name == "train":
             command.add_argument("--resume", type=Path)
+        if name == "capacity":
+            command.add_argument("--resume-check", action="store_true")
         if name == "report":
             command.add_argument("--runs-dir", required=True, type=Path)
         if name == "manifest":
-            command.add_argument("--physical-gpu", required=True, type=int)
+            group = command.add_mutually_exclusive_group(required=True)
+            group.add_argument("--physical-gpu", type=int)
+            group.add_argument("--physical-gpus", nargs="+", type=int)
             command.add_argument("--data-dir", type=Path,
                                  help="Reuse already prepared inputs, verified by each run")
     return result
 
 
 def manifest(config_path, physical_gpu, output, data_dir=None):
-    if physical_gpu < 0:
-        raise ValueError("GPU index must be nonnegative")
+    gpus = [physical_gpu] if isinstance(physical_gpu, int) else list(physical_gpu)
+    if not gpus or len(set(gpus)) != len(gpus) or any(type(g) is not int or g < 0 for g in gpus):
+        raise ValueError("GPU indices must be unique nonnegative integers")
+    settings = settings_for(load_config(config_path))
+    if settings.version == "joint-v2-ddp" and len(gpus) != 8:
+        raise ValueError("joint-v2-ddp requires eight GPUs per experiment")
+    gpu_args = ["--physical-gpu", str(gpus[0])] if len(gpus) == 1 else ["--physical-gpus", *map(str, gpus)]
     jobs = [{"name": "inputs", "argv": ["{python}", "-u", "-m", "pcc.joint", "prepare",
              "--config", str(config_path.resolve()), "--output", "{run_dir}/inputs"],
              "required_outputs": [{"path": "inputs/complete.json", "json_equals": {"status": "ok"}}]}]
@@ -43,12 +54,12 @@ def manifest(config_path, physical_gpu, output, data_dir=None):
     for seed_index in range(2):
         for arm in ARMS:
             name = f"seed-{seed_index}-{arm}"
-            jobs.append({"name": name, "gpus": [physical_gpu], "argv": ["{python}", "-u", "-m", "pcc.joint", "train",
+            jobs.append({"name": name, "gpus": gpus, "argv": ["{python}", "-u", "-m", "pcc.joint", "train",
                 "--config", str(config_path.resolve()), "--data-dir", inputs, "--arm", arm,
-                "--seed-index", str(seed_index), "--physical-gpu", str(physical_gpu),
+                "--seed-index", str(seed_index), *gpu_args,
                 "--output", "{run_dir}/" + name],
                 "required_outputs": [{"path": f"{name}/complete.json", "json_equals": {
-                    "status": "ok", "updates": 1536, "input_tokens": 50331648, "arm": arm}}]})
+                    "status": "ok", "updates": settings.updates, "input_tokens": settings.updates * settings.tokens_per_update, "arm": arm}}]})
     jobs.append({"name": "report", "argv": ["{python}", "-u", "-m", "pcc.joint", "report",
         "--config", str(config_path.resolve()), "--data-dir", inputs,
         "--runs-dir", "{run_dir}", "--output", "{run_dir}/report"],
@@ -63,7 +74,7 @@ def prepare(config, output):
     from .input_check import describe_contexts
     from .screen import write_json
     from .protocol import REVISION
-    settings = JointSettings()
+    settings = settings_for(config)
     output.mkdir(parents=True, exist_ok=False)
     try:
         model_path = Path(config["model_path"])
@@ -97,7 +108,7 @@ def load_inputs(config, directory, seed_index):
     from .data import PreparedContexts, validate_matched_data
     from .input_check import context_fingerprint
     from .joint_training import require
-    settings = JointSettings()
+    settings = settings_for(config)
     record = json.loads((directory / "complete.json").read_text())
     # JSON normalization makes tuples in the in-memory plan compare as arrays.
     require(record["status"] == "ok" and record["plan"] == json.loads(json.dumps(plan(config))), "Prepared inputs/config mismatch")
@@ -119,6 +130,7 @@ def load_inputs(config, directory, seed_index):
 
 def run_arm(args, config):
     import hashlib
+    import os
     import random
     import socket
     import time
@@ -131,15 +143,20 @@ def run_arm(args, config):
     from .screen import write_json
     from .protocol import REVISION
     torch.set_num_threads(4)
+    distributed = bool(getattr(args, "physical_gpus", None))
+    import torch.distributed as dist
+    rank = dist.get_rank() if distributed else 0
+    device = torch.device("cuda", int(os.environ["LOCAL_RANK"]) if distributed else 0)
     data, dev, fingerprints = load_inputs(config, args.data_dir, args.seed_index)
     seed, order_seed = SEEDS[args.seed_index]
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
     from scripts.gpu_status import require_free
-    require_free([args.physical_gpu])
-    backbone, _ = load_local(config["model_path"], torch.device("cuda:0"))
+    if not distributed:
+        require_free([args.physical_gpu])
+    backbone, _ = load_local(config["model_path"], device)
     model = JointQwen(backbone.model, args.arm, seed=seed)
     # Verify the actual pretrained 2048-token path, not only tiny fixtures.
-    context = data.batch(0, 1, "cuda:0")
+    context = data.batch(0, 1, device)
     with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
         reference = model.model.model(input_ids=context.input_ids,
             attention_mask=context.additive_mask(torch.float32),
@@ -154,17 +171,27 @@ def run_arm(args, config):
     original = {name: value.detach().cpu().clone() for name, value in watch.items()} if args.mode == "capacity" else {}
     # Authentic input identity and exact software evidence travel with checkpoints.
     weights = Path(config["model_path"]) / "model.safetensors"
-    with weights.open("rb") as handle:
-        weights_hash = hashlib.file_digest(handle, "sha256").hexdigest()
-    identity = {"settings": asdict(JointSettings()), "arm": args.arm,
+    weights_hash = None
+    if rank == 0:
+        with weights.open("rb") as handle:
+            weights_hash = hashlib.file_digest(handle, "sha256").hexdigest()
+    if distributed:
+        values = [weights_hash]
+        dist.broadcast_object_list(values, src=0)
+        weights_hash = values[0]
+    identity = {"settings": asdict(settings_for(config)), "arm": args.arm,
                 "purpose": "capacity_check" if args.mode == "capacity" else "scientific_training",
                 "adapter_seed": seed, "data_order_seed": order_seed, "config": config,
                 "inputs": fingerprints, "model_revision": REVISION, "weights_sha256": weights_hash,
                 "code": code_identity(), "mixed_precision": True,
                 "torch": str(torch.__version__), "transformers": str(transformers.__version__)}
+    if distributed:
+        identity["distributed"] = {"world_size": dist.get_world_size(), "backend": dist.get_backend(),
+                                    "physical_gpus": args.physical_gpus,
+                                    "loss_normalization": "global_targets_world_scaled"}
     started = time.monotonic()
     report = train(model, data, dev, args.output, identity, microbatch=config["microbatch"],
-                   resume=getattr(args, "resume", None), stop_after=2 if args.mode == "capacity" else None)
+                   resume=getattr(args, "resume", None), stop_after=2 if args.mode == "capacity" else None, distributed=distributed)
     if args.mode == "capacity":
         # Bounded test weights are retained as diagnostics, never used to start a run.
         import json as json_module
@@ -172,15 +199,49 @@ def run_arm(args, config):
         require(len(records) == 2 and report["status"] == "stopped_at_step", "Incomplete capacity check")
         changed = {name: not torch.equal(original[name], value.detach().cpu()) for name, value in watch.items()}
         require(all(changed.values()), "Capacity check did not update expected parameters")
+        replicas = None
+        rank_peaks = None
+        if distributed:
+            from .distributed import identical_parameters
+            replicas = identical_parameters(model)
+            rank_peaks = [None] * dist.get_world_size()
+            dist.all_gather_object(rank_peaks, torch.cuda.max_memory_allocated(device))
+        resume_verified = False
+        if getattr(args, "resume_check", False):
+            import copy
+            # A fresh module/reducer loads the full checkpoint, including this
+            # rank's RNG and optimizer, then executes one more global update.
+            resumed = copy.deepcopy(model)
+            resumed_report = train(resumed, data, dev, args.output / "resume-smoke", identity,
+                microbatch=config["microbatch"], resume=args.output / "latest.pt",
+                stop_after=3, distributed=distributed)
+            require(resumed_report["update"] == 3, "Resume smoke did not advance")
+            if distributed:
+                identical_parameters(resumed)
+            del resumed
+            resume_verified = True
+        if rank != 0:
+            return report
         saved = torch.load(args.output / "latest.pt", map_location="cpu", weights_only=True)
         require(saved["identity"] == identity and saved["update"] == 2, "Checkpoint did not roundtrip")
         require(saved["next_context"] == 32, "Capacity checkpoint cursor is wrong")
+        if distributed:
+            require(len(saved.get("rank_rng", [])) == dist.get_world_size(), "Missing per-rank RNG")
+        if resume_verified:
+            resumed_state = torch.load(args.output / "resume-smoke/latest.pt", map_location="cpu", weights_only=True)
+            require(resumed_state["update"] == 3 and resumed_state["next_context"] == 48,
+                    "Resume checkpoint budget mismatch")
+            del resumed_state
         write_json(args.output / "capacity.json", {"status": "ok", "arm": args.arm,
             "updates": 2, "input_tokens": 65536, "microbatch": config["microbatch"],
             "host": socket.gethostname(), "physical_gpu": args.physical_gpu,
+            "physical_gpus": getattr(args, "physical_gpus", None),
+            "world_size": dist.get_world_size() if distributed else 1,
+            "replicas_sha256": replicas, "rank_peak_allocated_bytes": rank_peaks,
             "peak_allocated_bytes": torch.cuda.max_memory_allocated(),
             "initial_native_equivalence": True, "parameters_changed": changed,
             "checkpoint_roundtrip": True,
+            "resume_next_update_verified": resume_verified,
             "step_seconds": [r["seconds"] for r in records], "elapsed_seconds": time.monotonic() - started,
             "scientific_run": False})
     return report
@@ -195,8 +256,8 @@ def report_results(args, config):
     args.output.mkdir(parents=True, exist_ok=False)
     reports, curves, training_curves, timings = [], [], [], []
     try:
-        common_code = common_weights = None
-        settings = JointSettings()
+        common_code = common_weights = common_distributed = None
+        settings = settings_for(config)
         for seed_index in range(2):
             _, dev, fingerprints = load_inputs(config, args.data_dir, seed_index)
             eligible = dev.valid[:, :-1] & dev.valid[:, 1:]
@@ -214,11 +275,15 @@ def report_results(args, config):
                         and completed["arm"] == arm, "Incomplete arm")
                 require(identity["inputs"] == fingerprints and identity["config"] == config
                         and identity["purpose"] == "scientific_training"
-                        and identity["settings"] == asdict(JointSettings()) and identity["arm"] == arm
+                        and identity["settings"] == asdict(settings_for(config)) and identity["arm"] == arm
                         and (identity["adapter_seed"], identity["data_order_seed"]) == SEEDS[seed_index], "Unmatched arm identity")
                 if common_code is None:
                     common_code, common_weights = identity["code"], identity["weights_sha256"]
+                    common_distributed = identity.get("distributed")
                 require(identity["code"] == common_code and identity["weights_sha256"] == common_weights, "Mixed code/model versions")
+                require(identity.get("distributed") == common_distributed, "Mixed distributed training layouts")
+                if settings.version == "joint-v2-ddp":
+                    require(identity.get("distributed", {}).get("world_size") == 8, "Expected eight-GPU training")
                 require((directory / "final.pt").is_file(), "Missing final checkpoint")
                 audit = audit_final_checkpoint(directory / "final.pt", identity)
                 with np.load(directory / "eval.npz", allow_pickle=False) as values:
@@ -281,11 +346,11 @@ def report_results(args, config):
         figure.tight_layout()
         figure.savefig(args.output / "validation-contrasts.png", dpi=160)
         plt.close(figure)
-        result = {"status": "ok", "stage": "joint-v1", "seeds": reports, "exploratory": True,
+        result = {"status": "ok", "stage": settings.version, "seeds": reports, "exploratory": True,
                   "decision": "recommend_distillation_design" if all(r["passed"] for r in reports) else "no_consistent_joint_advantage",
                   "bootstrap_resamples": 2000, "bootstrap_seed": 20260922,
                   "pretraining_authorized": False, "remote_launch": False, "timings": timings}
-        text = ["# Joint-training result", "", result["decision"], "", "Exploratory local validation; no remote launch.", "",
+        text = ["# Joint-training result", "", result["decision"], "", "Exploratory fixed-split validation; no automatic follow-up training.", "",
                 "| Seed | Base NLL | Shallow NLL | Deep NLL | Deep − shallow, 95% CI | Pass |",
                 "|---|---:|---:|---:|---|---|"]
         for row in reports:
@@ -304,8 +369,11 @@ def main():
     args = parser().parse_args()
     config = load_config(args.config)
     if args.mode == "manifest":
-        manifest(args.config, args.physical_gpu, args.output, args.data_dir)
+        manifest(args.config, args.physical_gpus or args.physical_gpu, args.output, args.data_dir)
         return
+    if getattr(args, "physical_gpus", None):
+        from .distributed_launch import execute
+        return execute(args, config)
     if args.output.exists():
         raise ValueError("Output exists; use a fresh directory, including for explicit resume")
     from .__main__ import configure_offline

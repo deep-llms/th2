@@ -1,5 +1,16 @@
 # Project notes
 
+## Latest execution decisions (2026-09-23)
+
+- User explicitly approved stopping the verified runner burn, then clarified
+  that every experiment must use all eight GPUs. Do not revert to six independent
+  single-GPU jobs or request burn-stop authorization again.
+- User authorized longer training: fixed joint-v2-ddp uses 6144 updates / 201M
+  tokens per arm, six sequential eight-rank DDP runs. Global batch is unchanged.
+- See PCC_B200_LAUNCH_20260923.md for the versioned budget, source pool and launch.
+- Existing run_experiments.py handles eight-GPU job allocation; custom PCC
+  training adds DDP normalization, rank-safe I/O, exact eval ordering and RNG.
+
 ## Current deployment authority (2026-09-23)
 
 - User authorized B200 training and pushes to https://github.com/deep-llms/th2.

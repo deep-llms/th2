@@ -1,5 +1,10 @@
 # Proposed joint-training experiment — 2026-09-23
 
+Execution amendment: the user now requires all eight B200 GPUs per experiment
+and authorized a longer fixed budget. The active joint-v2-ddp protocol is
+[PCC_B200_LAUNCH_20260923.md](PCC_B200_LAUNCH_20260923.md). The joint-v1 plan
+below remains historical design/readiness evidence.
+
 Status: implemented and reviewed after the user's follow-up. Bounded local
 correctness/capacity checks passed; the six scientific runs remain unlaunched.
 See `PCC_JOINT_READINESS_20260923.md` and `PCC_JOINT_TRAINING.md` for evidence
