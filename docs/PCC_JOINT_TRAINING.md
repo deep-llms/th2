@@ -112,3 +112,8 @@ cache; all arms reuse the same pool. Evaluation is unaffected. Omitting this
 field preserves full-split preprocessing. A short pool fails; no repetition or
 automatic expansion occurs. This prevents preprocessing the entire 36.6M-document
 corpus for a 50M-token run. See the pre-launch amendment in the experiment plan.
+
+To reuse a verified input cache in the sequential queue, pass `--data-dir` to
+`pcc.joint manifest`. The manifest then contains six training jobs and the
+report, and every job verifies input/config identity before using the cache.
+Without that option the manifest prepares its own inputs as before.

@@ -26,26 +26,31 @@ def parser():
             command.add_argument("--runs-dir", required=True, type=Path)
         if name == "manifest":
             command.add_argument("--physical-gpu", required=True, type=int)
+            command.add_argument("--data-dir", type=Path,
+                                 help="Reuse already prepared inputs, verified by each run")
     return result
 
 
-def manifest(config_path, physical_gpu, output):
+def manifest(config_path, physical_gpu, output, data_dir=None):
     if physical_gpu < 0:
         raise ValueError("GPU index must be nonnegative")
     jobs = [{"name": "inputs", "argv": ["{python}", "-u", "-m", "pcc.joint", "prepare",
              "--config", str(config_path.resolve()), "--output", "{run_dir}/inputs"],
              "required_outputs": [{"path": "inputs/complete.json", "json_equals": {"status": "ok"}}]}]
+    inputs = "{run_dir}/inputs" if data_dir is None else str(Path(data_dir).resolve())
+    if data_dir is not None:
+        jobs = []
     for seed_index in range(2):
         for arm in ARMS:
             name = f"seed-{seed_index}-{arm}"
             jobs.append({"name": name, "gpus": [physical_gpu], "argv": ["{python}", "-u", "-m", "pcc.joint", "train",
-                "--config", str(config_path.resolve()), "--data-dir", "{run_dir}/inputs", "--arm", arm,
+                "--config", str(config_path.resolve()), "--data-dir", inputs, "--arm", arm,
                 "--seed-index", str(seed_index), "--physical-gpu", str(physical_gpu),
                 "--output", "{run_dir}/" + name],
                 "required_outputs": [{"path": f"{name}/complete.json", "json_equals": {
                     "status": "ok", "updates": 1536, "input_tokens": 50331648, "arm": arm}}]})
     jobs.append({"name": "report", "argv": ["{python}", "-u", "-m", "pcc.joint", "report",
-        "--config", str(config_path.resolve()), "--data-dir", "{run_dir}/inputs",
+        "--config", str(config_path.resolve()), "--data-dir", inputs,
         "--runs-dir", "{run_dir}", "--output", "{run_dir}/report"],
         "required_outputs": [{"path": "report/complete.json", "json_equals": {"status": "ok"}}]})
     with Path(output).open("x") as handle:
@@ -299,7 +304,7 @@ def main():
     args = parser().parse_args()
     config = load_config(args.config)
     if args.mode == "manifest":
-        manifest(args.config, args.physical_gpu, args.output)
+        manifest(args.config, args.physical_gpu, args.output, args.data_dir)
         return
     if args.output.exists():
         raise ValueError("Output exists; use a fresh directory, including for explicit resume")

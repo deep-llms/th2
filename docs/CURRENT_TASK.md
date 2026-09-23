@@ -36,6 +36,20 @@ Next action downloads the six pinned model assets via controller #d; require
 per-file success and local size/SHA verification before use. Model hashes are
 in resources/qwen3_joint_assets.json.
 
+Controller confirmed installation and all six model downloads successful at
+21:27 UTC. Ownership inspection e6747eb confirms workers 498–505 share launcher
+431, /tmp/llm_pretrain_burn.py SHA256
+3cdcc857bd01b096e20a02640fa85f0b8be7607e3c2b22a89a704bbac3650857.
+It uses eight-rank NCCL, so reclaiming one GPU requires stopping this whole burn.
+Explicit stop authorization has been requested and is pending; no signaling.
+
+Submitting CPU-only th2-joint-cpu-ready-20260923-a01: verify dependencies/hashes,
+run all tests in pcc_joint, and prepare the shared inputs. Output root:
+/mnt/local/_outputs/deep-llms_th2/joint-v1-readiness-20260923-a01.
+Require cpu_ready.json and B200_CPU_READY before capacity checks. The prepared
+cache can be reused via manifest --data-dir, avoiding repeat tokenization.
+The final manifest update passed all 15 joint tests locally (6.301s).
+
 ## Historical local readiness and screen scope
 
 Latest request: carefully review/fix code and make it ready to launch the agreed

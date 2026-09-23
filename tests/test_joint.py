@@ -219,6 +219,16 @@ class JointTests(unittest.TestCase):
             jobs = load_jobs(root / "jobs.json")
             self.assertEqual(len(jobs), 8)
             self.assertEqual(sum("gpus" in j for j in jobs), 6)
+            manifest(cfg, 0, root / "reuse-jobs.json", root / "prepared")
+            reuse_jobs = load_jobs(root / "reuse-jobs.json")
+            self.assertEqual(len(reuse_jobs), 7)
+            self.assertEqual([j["name"] for j in reuse_jobs], [j["name"] for j in jobs[1:]])
+            for job in reuse_jobs:
+                self.assertEqual(job["argv"][job["argv"].index("--data-dir") + 1], str(root / "prepared"))
+            for bad in (0, True, -1, 1.5):
+                cfg.write_text(json.dumps({"model_path": "model", "train_data": "train", "val_data": "val", "train_documents": bad}))
+                with self.assertRaises(ValueError):
+                    load_config(cfg)
             cfg.write_text(json.dumps({"model_path": "model", "train_data": "train", "val_data": "val", "microbatch": True}))
             with self.assertRaises(ValueError):
                 load_config(cfg)
