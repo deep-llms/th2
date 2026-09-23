@@ -1,2 +1,3 @@
-#i envs/train_env.txt envs/eval.txt +a
-#th2-d2s-install-envs-20260923-a01
+#d +a
+#datasets
+--hf-dataset nguyenhuuthuat09/CulturaX_sampled /mnt/local/_data/@PROJECT@/data
