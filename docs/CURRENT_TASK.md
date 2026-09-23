@@ -2,6 +2,13 @@
 
 ## Active: longer eight-GPU B200 pilot
 
+Latest read-only observation: **2026-09-23 23:27:15 UTC**, commit 682be7e.
+Seed-0 Base finished successfully at 22:51:15 UTC, all 6144 updates and
+201326592 input tokens; final 2M-token dev NLL 2.93309613, checkpoint verified.
+Seed-0 Shallow is running at update 4847/6144. Four subsequent experiments
+remain pending. All eight GPUs have one training process each; the burn guard
+remains disabled. No final report yet. Status check changed no training state.
+
 The user explicitly authorized B200 training, pushes to deep-llms/th2, stopping
 the verified GPU burn, and **all eight GPUs per experiment** (six experiments
 sequentially). They authorized longer training. No further stop approval is
