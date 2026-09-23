@@ -1,2 +1,13 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/joint-v2-readiness-20260923-a01/cpu_ready.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-burn-stop-20260923-a03.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/capacity-Base/capacity.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/capacity-Shallow/capacity.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/capacity-Deep/capacity.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/capacity_ready.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/run.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/seed-0-Base/identity.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/seed-0-Base/train.jsonl,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/seed-0-Base/validation.jsonl,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/seed-0-Base.log
-#th2-joint-v2-progress-20260923-a01
+#1 +30+a
+#th2-joint-v2-live-ownership-20260923-a01
+set -euo pipefail
+date -u
+hostname
+/mnt/local/conda-py311/envs/pcc_joint/bin/python3.11 -u -m scripts.inspect_burn
+TASK_RUN=/mnt/local/_outputs/@PROJECT@/joint-v2-b200-20260923-a03
+cat "$TASK_RUN/runs/run.json"
+tail -n 3 "$TASK_RUN/runs/seed-0-Base/train.jsonl"
+tail -n 3 "$TASK_RUN/runs/seed-0-Base/validation.jsonl"
+if test -e "$TASK_RUN/runs/seed-0-Base/latest.pt"; then
+  stat --format='checkpoint_bytes=%s modified=%y' "$TASK_RUN/runs/seed-0-Base/latest.pt"
+fi
