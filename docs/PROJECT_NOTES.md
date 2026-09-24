@@ -1,5 +1,10 @@
 # Project notes
 
+New explicit authority (2026-09-24): user permits reclaiming current vLLM/burn/
+other GPU workloads after precise fresh ownership verification, then launching
+the four-run correction-distillation stage. This overrides the earlier leave-
+deepeyes-running note below. Preserve completed teacher checkpoints and outputs.
+
 Latest outcome: the six-run joint-v2 queue completed successfully at 2026-09-24
 03:25:08 UTC. Deep passed both-seed comparison gates; no student training yet.
 See PCC_JOINT_RESULTS_20260924.md. At 20:46 UTC live inspection confirmed a

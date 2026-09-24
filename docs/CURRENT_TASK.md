@@ -1,5 +1,19 @@
 # Current task
 
+## Active: authorized B200 correction distillation
+
+User explicitly authorized stopping all currently GPU-using workloads, including
+vLLM and burns, after fresh identity checks; verify all eight GPUs free and launch
+the next stage. This supersedes the previous instruction to leave deepeyes alone.
+Do not use name-pattern or arbitrary process-group kills. Exact targets must
+match the newly recorded PID/start-time/command-hash/GPU identities.
+
+The fixed next-stage plan is PCC_DISTILLATION_PLAN_20260924.md: two same-checkpoint
+feedback-off audits, two bounded capacity/resume checks, then four sequential
+eight-GPU student runs (LM/PCC × two seeds), 6144 updates each, frozen Deep parent.
+Local nine focused model/DDP/report tests passed in 23.517s; full regression is
+running. New code is not yet launched on B200.
+
 ## Completed: longer eight-GPU B200 pilot
 
 Verified on 2026-09-24: all six runs and the CPU report finished successfully
