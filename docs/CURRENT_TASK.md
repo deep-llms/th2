@@ -1,6 +1,13 @@
 # Current task
 
-## Active: longer eight-GPU B200 pilot
+## Completed: longer eight-GPU B200 pilot
+
+Verified on 2026-09-24: all six runs and the CPU report finished successfully
+at 03:25:08 UTC. Deep beat both controls in both seeds; both predefined gates
+passed. See PCC_JOINT_RESULTS_20260924.md. No follow-up training has started.
+The controller reports automatic GPU burn restoration. commands.sh is inactive.
+
+## Historical launch and progress observations
 
 Latest read-only observation: **2026-09-23 23:27:15 UTC**, commit 682be7e.
 Seed-0 Base finished successfully at 22:51:15 UTC, all 6144 updates and

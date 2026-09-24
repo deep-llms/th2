@@ -1,5 +1,9 @@
 # Project notes
 
+Latest outcome: the six-run joint-v2 queue completed successfully at 2026-09-24
+03:25:08 UTC. Deep passed both-seed comparison gates; no student training yet.
+See PCC_JOINT_RESULTS_20260924.md. Automatic GPU burn restoration was reported.
+
 ## Latest execution decisions (2026-09-23)
 
 - User explicitly approved stopping the verified runner burn, then clarified

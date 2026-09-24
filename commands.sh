@@ -1,2 +1,3 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/run.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/complete.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/report/complete.json,/mnt/local/_outputs/deep-llms_th2/joint-v2-b200-20260923-a03/runs/report/RESULTS.md
-#th2-joint-v2-final-status-20260924-a01
+#0
+# Six-experiment queue and report completed; no follow-up training submitted.
+# See docs/PCC_JOINT_RESULTS_20260924.md.
