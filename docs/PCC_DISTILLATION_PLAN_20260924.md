@@ -82,3 +82,24 @@ claimed.
 5. Four fresh scientific runs via run_experiments.py, then a CPU paired report.
    Capacity adapters never initialize scientific runs. Any operational failure
    stops the queue. Restore prior controller guard policy when it exits.
+
+## Implementation and current launch status
+
+Implemented in `pcc/distill_model.py`, `distill_training.py`, `distill.py`, and
+`distill_report.py`; the earlier joint/frozen-probe code paths are preserved.
+Local regression: 124 tests passed in 144.467 s; separate reclaim identity test
+passed. Focused nine student/DDP/report tests passed in 23.517 s.
+
+The first read-only B200 readiness job (commit 1d2d4b5) failed at the controller
+before execution because `thiennh-p6-tpbw` had no Running worker pod. No workloads
+were stopped and no student training began. Await runner restoration. Do not
+repeat an executable submission merely to refresh its log.
+
+After fresh CPU/ownership verification on the restored node, the concrete entry
+point is `scripts/with_gpu_guard_disabled.py --owner <run-name> -- bash
+scripts/launch_distill_b200.sh <fresh-root> <completed-joint-root> <inputs>
+<fresh-ownership-json> <passing-cpu-readiness-json>`. Use system Python for the
+lease/reclaim helpers (pidfd support) and pcc_joint for model code. The launch
+script verifies readiness matches its exact pcc source before any signal, then
+runs the two audits, two capacity/resume checks, four students and final report.
+The supported guard marker is restored when the child command exits.

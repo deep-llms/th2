@@ -11,8 +11,26 @@ match the newly recorded PID/start-time/command-hash/GPU identities.
 The fixed next-stage plan is PCC_DISTILLATION_PLAN_20260924.md: two same-checkpoint
 feedback-off audits, two bounded capacity/resume checks, then four sequential
 eight-GPU student runs (LM/PCC × two seeds), 6144 updates each, frozen Deep parent.
-Local nine focused model/DDP/report tests passed in 23.517s; full regression is
-running. New code is not yet launched on B200.
+Local nine focused model/DDP/report tests passed in 23.517s. Full local
+regression passed 124 tests in 144.467s; the additional fresh-reclaim safety test
+passed separately (0.003s). All checks were CPU-only and offline in train_env.
+
+**Launch blocked by infrastructure**, observed 2026-09-24 21:51 UTC:
+commit 1d2d4b5, job th2-distill-ownership-cpu-ready-20260924-a01, controller
+record 2026-09-24 14:50:42: FAILED(rc=5), "no Running worker pod for job
+'thiennh-p6-tpbw' (context=<ctx>)". No remote inspection/test/reclaim/student
+training executed. Current GPU/node state is unverified. User was asked to
+restore/reconnect this worker or provide its new runner assignment. Per
+AGENT_GUIDE.md infrastructure rules, do not resubmit until the system is repaired.
+commands.sh is #0; source and the concrete launch script are committed.
+
+Once the worker is restored: fresh read-only ownership/CPU readiness first;
+then, without reasking the already granted workload-stop authorization, verify
+that source matches readiness, hold the guard marker, revalidate/pin workload
+identities, stop those workloads, require all eight GPUs free, and execute the
+audits/capacities/four-run queue from an immutable source snapshot. Verify parent
+checkpoints/data still exist on the restored node; do not recreate or substitute
+missing parents without reporting it.
 
 ## Completed: longer eight-GPU B200 pilot
 

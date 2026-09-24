@@ -4,6 +4,7 @@ TASK_ROOT=${1:?Fresh student experiment root}
 TASK_JOINT=${2:?Completed joint experiment root}
 TASK_INPUTS=${3:?Verified existing input directory}
 TASK_INSPECTION=${4:?Fresh GPU ownership inspection JSON}
+TASK_CPU_READY=${5:?Passing CPU regression receipt for this source version}
 TASK_PYTHON=/mnt/local/conda-py311/envs/pcc_joint/bin/python3.11
 test -x "$TASK_PYTHON"
 test -s "$TASK_JOINT/runs/report/complete.json"
@@ -12,6 +13,14 @@ test ! -e "$TASK_ROOT"
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
 export HF_HUB_DISABLE_TELEMETRY=1 WANDB_DISABLED=true MPLBACKEND=Agg
 export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 RAYON_NUM_THREADS=8
+CUDA_VISIBLE_DEVICES='' "$TASK_PYTHON" - "$TASK_CPU_READY" <<'PY'
+import json,sys
+from pathlib import Path
+from pcc.joint_training import code_identity
+ready=json.loads(Path(sys.argv[1]).read_text())
+assert ready['status']=='ok' and ready['code']==code_identity(), 'CPU readiness/source mismatch'
+print('DISTILL_CPU_SOURCE_VERIFIED',flush=True)
+PY
 # This script is called only inside with_gpu_guard_disabled, after CPU checks.
 PYTHONPATH="$PWD" /usr/bin/python3 -u -m scripts.verified_gpu_reclaim stop \
   --authorized-stop --inspection "$TASK_INSPECTION" --output "${TASK_ROOT}-gpu-reclaim.json"

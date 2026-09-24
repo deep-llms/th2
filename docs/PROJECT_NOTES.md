@@ -4,6 +4,10 @@ New explicit authority (2026-09-24): user permits reclaiming current vLLM/burn/
 other GPU workloads after precise fresh ownership verification, then launching
 the four-run correction-distillation stage. This overrides the earlier leave-
 deepeyes-running note below. Preserve completed teacher checkpoints and outputs.
+Submission 1d2d4b5 failed before remote execution: no Running worker pod for
+thiennh-p6-tpbw (controller rc=5, observed 21:51 UTC). No GPU signals/training
+occurred. Wait for infrastructure repair/new runner assignment; do not relaunch
+against a missing worker. Local 124-test regression and fresh reclaim test passed.
 
 Latest outcome: the six-run joint-v2 queue completed successfully at 2026-09-24
 03:25:08 UTC. Deep passed both-seed comparison gates; no student training yet.
