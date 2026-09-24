@@ -2,7 +2,11 @@
 
 Latest outcome: the six-run joint-v2 queue completed successfully at 2026-09-24
 03:25:08 UTC. Deep passed both-seed comparison gates; no student training yet.
-See PCC_JOINT_RESULTS_20260924.md. Automatic GPU burn restoration was reported.
+See PCC_JOINT_RESULTS_20260924.md. At 20:46 UTC live inspection confirmed a
+polite burn under deepeyes (PID 80920, workers 80990–80997) plus vLLM servers
+on all GPUs. These are separate workloads; do not reclaim or reuse the node
+based on historical permissions/PIDs. Compact results are local in
+artifacts/joint-v2-20260924/.
 
 ## Latest execution decisions (2026-09-23)
 

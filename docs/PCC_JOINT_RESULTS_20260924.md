@@ -25,3 +25,26 @@ Retrieved evidence: `temp/b200-final-20260924-a01/`. Report JSON SHA256:
 `00cb05c9bdb3a1432c25bd01e21be8e928ceb3919772faf0170535bae9b66744`,
 verified against the queue completion record. Earlier protocol and deployment
 checks: `PCC_B200_LAUNCH_20260923.md`.
+
+## Download and live GPU follow-up
+
+All 45 result files were downloaded and checksum-verified locally under
+`artifacts/joint-v2-20260924/`, including plots, CSV curves, six full training
+histories, identities, completion records and per-context evaluation arrays.
+The archive is `artifacts/joint-v2-20260924-download/results.tar.gz` (3639009
+bytes), SHA256 `67d4c81cd2d2c60349b69163c16135cad0298cd830af6993be542f1f6547d147`.
+Local verification checked all six 6144-update histories, finite losses/gradient
+norms, fixed token totals, eight ranks, matched identities and receipt hashes.
+Model/optimizer checkpoints remain on B200.
+
+At 2026-09-24 20:46 UTC, live inspection confirmed burn workers 80990–80997,
+one on each GPU, under launcher 80920. The script is now
+`/mnt/local/deepeyesv2/code/p6_jobs/polite_burn.py`, using the deepeyes Python
+runtime; its SHA256 matches the previously inspected polite burn. All eight
+worker CPU counters advanced between samples. vLLM servers are also running
+on all eight GPUs. These workloads were not modified or signaled.
+
+The initial export's `gpu-burn-verification.json` retains its strict controller
+path/exclusive-ownership check failure. It is superseded for live burn identity
+by `gpu-burn-followup.json` and `gpu-identity-followup.log` in the extracted
+artifact directory. Do not interpret the initial false flag as an idle node.

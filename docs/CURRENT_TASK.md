@@ -5,7 +5,10 @@
 Verified on 2026-09-24: all six runs and the CPU report finished successfully
 at 03:25:08 UTC. Deep beat both controls in both seeds; both predefined gates
 passed. See PCC_JOINT_RESULTS_20260924.md. No follow-up training has started.
-The controller reports automatic GPU burn restoration. commands.sh is inactive.
+Live inspection at 2026-09-24 20:46 UTC confirmed an eight-GPU polite burn
+under the deepeyes runtime alongside eight vLLM servers. These other workloads
+were left untouched. All 45 compact result files are downloaded and verified
+under artifacts/joint-v2-20260924/. commands.sh is inactive.
 
 ## Historical launch and progress observations
 
