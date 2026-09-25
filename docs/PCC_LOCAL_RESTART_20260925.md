@@ -94,3 +94,23 @@ hidden (`regression-v2.log`). The final controller-only gate/backup test also
 passed (17.528 seconds, `queue-tests-final.log`). The expanded distributed tests
 passed 3/3 in 44.976 seconds. Scientific startup remains gated by the actual
 four-GPU capacity/resume receipt. No B200 checkpoint is reused.
+
+
+Live launch: source commit 7ec9b4f, tmux pcc-local-restart-20260925-a01,
+controller PID 771522 (verify PID identity before any action). Initial backup
+completed with hashes matching all pinned model assets. Four-GPU capacity
+passed with identical replica hash 059d6988..., 3.216/2.880 seconds per update,
+and resumed update 3 completed. Peak allocated during capacity/resume was
+21729107968 bytes. The controller advanced to teacher-seed-0. These are
+readiness results, not scientific evidence for the method.
+
+Fixed input fingerprints: train
+0f79e3ad69b8af9d4aec7636f05a0492b6e09b2ecdcbef8bf369cc109dec9bb1;
+dev dbcc5234be00e7b82682112922a496f00ffa5359c9b75106d064568e67685e9e.
+98304 training contexts / 201326592 input tokens; 977 dev contexts / 2000000 inputs.
+
+
+At 2026-09-25 04:40:49 UTC, seed-0 Deep reached update 14/6144 with finite
+loss/gradient norms and 2.9–3.1s/update. Workers 771852–771855 occupied GPUs 0–3
+at about 15.3 GiB each. invocation.json confirms resume=null and stop_after=null.
+Initial fixed monitor NLL was 3.0760444572. No final scientific result yet.

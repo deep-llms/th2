@@ -10,10 +10,23 @@ teacher -> same-checkpoint feedback audit -> matched LM/PCC students if positive
 second seed only if the first matched student pair passes. Fixed 201M tokens/run,
 new fixed local split, no substitution of old B200 metrics for missing weights.
 
-Code and fixed-input preparation are underway at
-`temp/local-restart-20260925-a01/`. commands.sh stays #0. Checkpoints/inputs/source
-will be SHA256-verified on the separate network home filesystem under
+Local queue launched from tested source commit 7ec9b4f under tmux session
+`pcc-local-restart-20260925-a01`. Root: `temp/local-restart-20260925-a01/`.
+All 131 CPU tests passed (165.407s). Real four-GPU Deep capacity/resume passed:
+matching replicas, early/late/branch updates, exact initial native equivalence,
+checkpoint roundtrip and next-update resume. Updates took 3.216/2.880 seconds;
+capacity/resume peak allocated 20.24 GiB. The first 6144-update teacher is running: verified at 04:40:49 UTC,
+update 14, finite loss/gradients, ~2.9–3.1s/update, one worker per GPU
+(PIDs 771852–771855 at this observation only). Invocation confirms resume=null
+and stop_after=null; capacity weights did not initialize the scientific run.
+Monitor root/pipeline.json and teacher-seed-0/runs/seed-0-Deep/train.jsonl.
+Source is isolated in root/source; do not edit that snapshot or relaunch the queue.
+commands.sh stays #0; no remote submission. Inputs/model/source have already
+been SHA256-verified on the separate network home filesystem under
 `/home/users/thien/deep2shallow-backups/local-restart-20260925-a01/`.
+The controller copies new scientific checkpoints every 15s after they are saved
+(every 256 updates); complete teacher weights are required in the backup before
+student stages. A negative gate stops the queue; no local burn is launched.
 No B200 access, GPU reclaim, or new burn is authorized/needed for this restart.
 The older sections below describe historical scopes and states.
 
