@@ -1,4 +1,4 @@
-"""Gated distillation from completed joint-v2 teachers; offline eight-GPU CLI."""
+"""Gated distillation from completed joint-v2 teachers; offline distributed CLI."""
 import argparse
 from dataclasses import asdict, replace
 from datetime import timedelta
@@ -13,9 +13,9 @@ from .joint_config import SEEDS, load_config, settings_for
 
 
 def settings(config):
-    if config.get('experiment') != 'joint-v2-ddp':
-        raise ValueError('Distillation requires completed joint-v2-ddp inputs and teachers')
-    return replace(settings_for(config), version='distill-v1').validate()
+    if config.get('experiment') not in ('joint-v2-ddp', 'joint-local-v3'):
+        raise ValueError('Distillation requires completed joint-v2-ddp or joint-local-v3 inputs and teachers')
+    return replace(settings_for(config), version='distill-local-v2' if config.get('experiment') == 'joint-local-v3' else 'distill-v1').validate()
 
 
 def file_hash(path):
@@ -32,10 +32,16 @@ def read_teacher(args, config, fingerprints):
     from .protocol import validate_config
     root = args.joint_root / 'runs'
     queue = json.loads((root / 'complete.json').read_text())
-    result = json.loads((root / 'report/complete.json').read_text())
-    require(queue['status'] == result['status'] == 'ok' and len(queue['jobs']) == 7
-            and all(j['status'] == 'ok' for j in queue['jobs'])
-            and all(s['passed'] for s in result['seeds']), 'Joint teacher stage did not pass')
+    local = config.get('experiment') == 'joint-local-v3'
+    if local:
+        require(queue['status'] == 'ok' and len(queue['jobs']) == 1
+                and queue['jobs'][0]['name'] == f'seed-{args.seed_index}-Deep'
+                and queue['jobs'][0]['status'] == 'ok', 'Local teacher queue did not finish')
+    else:
+        result = json.loads((root / 'report/complete.json').read_text())
+        require(queue['status'] == result['status'] == 'ok' and len(queue['jobs']) == 7
+                and all(j['status'] == 'ok' for j in queue['jobs'])
+                and all(s['passed'] for s in result['seeds']), 'Joint teacher stage did not pass')
     directory = root / f'seed-{args.seed_index}-Deep'
     identity = json.loads((directory / 'identity.json').read_text())
     complete = json.loads((directory / 'complete.json').read_text())
@@ -44,7 +50,9 @@ def read_teacher(args, config, fingerprints):
     require(identity['arm'] == complete['arm'] == 'Deep' and identity['purpose'] == 'scientific_training'
             and identity['config'] == config and identity['inputs'] == fingerprints
             and identity['settings'] == asdict(settings_for(config))
-            and identity['distributed']['world_size'] == 8
+            and identity['distributed']['world_size'] == (4 if local else 8)
+            and identity['distributed']['physical_gpus'] == list(range(4 if local else 8))
+            and complete['status'] == 'ok' and complete['world_size'] == (4 if local else 8)
             and (identity['adapter_seed'], identity['data_order_seed']) == SEEDS[args.seed_index]
             and complete['updates'] == settings_for(config).updates and complete['checkpoint_verified'],
             'Joint teacher identity mismatch')
@@ -183,7 +191,7 @@ def run_worker(args, config):
             microbatch=config['microbatch'], distributed=True, stop_after=3, resume=args.output/'latest.pt')
         require(resumed['update'] == 3 and resumed['checkpoint_roundtrip'], 'Distributed student resume failed')
         if dist.get_rank() == 0:
-            write_json(args.output/'capacity.json', {**result, 'status':'ok', 'arm':args.arm, 'world_size':8,
+            write_json(args.output/'capacity.json', {**result, 'status':'ok', 'arm':args.arm, 'world_size':dist.get_world_size(),
                        'resume_next_update_verified':True, 'student_noop_exact':True,
                        'scientific_run':False})
     if dist.get_rank() == 0:
@@ -233,16 +241,20 @@ def main():
             p.add_argument('--audit-root',type=Path,required=True)
         if mode == 'report':
             p.add_argument('--runs-dir',type=Path,required=True)
+            p.add_argument('--seed-count',type=int,choices=(1,2),default=2)
     args=parser.parse_args()
     config=load_config(args.config);settings(config)
     from .__main__ import configure_offline
     configure_offline()
     if args.mode == 'manifest':
+        if config.get('experiment') == 'joint-local-v3':
+            raise ValueError('Use the gated local restart pipeline')
         return manifest(args)
     if args.mode == 'report':
         return report(args,config)
-    if args.physical_gpus != list(range(8)):
-        raise ValueError('This stage requires all physical GPUs 0 through 7')
+    world = 4 if config.get('experiment') == 'joint-local-v3' else 8
+    if args.physical_gpus != list(range(world)):
+        raise ValueError(f'This stage requires all physical GPUs 0 through {world-1}')
     os.environ['CUDA_VISIBLE_DEVICES']=','.join(map(str,args.physical_gpus))
     if 'LOCAL_RANK' not in os.environ:
         from scripts.gpu_status import require_free
@@ -250,13 +262,13 @@ def main():
         if args.output.exists():
             raise ValueError('Use a fresh output directory')
         subprocess.run([sys.executable,'-m','torch.distributed.run','--standalone','--nnodes=1',
-            '--nproc-per-node=8','--max-restarts=0','-m','pcc.distill',*sys.argv[1:]],check=True)
+            f'--nproc-per-node={world}','--max-restarts=0','-m','pcc.distill',*sys.argv[1:]],check=True)
         return
     import torch
     import torch.distributed as dist
     rank=int(os.environ['LOCAL_RANK'])
-    if int(os.environ['WORLD_SIZE'])!=8 or int(os.environ['RANK'])!=rank or not 0<=rank<8:
-        raise ValueError('Expected a single-node eight-rank allocation')
+    if int(os.environ['WORLD_SIZE'])!=world or int(os.environ['RANK'])!=rank or not 0<=rank<world:
+        raise ValueError('Expected the declared single-node rank allocation')
     torch.cuda.set_device(rank)
     dist.init_process_group('nccl',timeout=timedelta(minutes=10),device_id=torch.device('cuda',rank))
     try:

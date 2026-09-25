@@ -33,8 +33,8 @@ ARMS = ("Base", "Shallow", "Deep")
 
 
 def settings_for(config):
-    if config.get("experiment", "joint-v1") == "joint-v2-ddp":
-        return JointSettings(version="joint-v2-ddp", updates=6144, warmup=307, eval_every=256).validate()
+    if config.get("experiment", "joint-v1") in ("joint-v2-ddp", "joint-local-v3"):
+        return JointSettings(version=config["experiment"], updates=6144, warmup=307, eval_every=256).validate()
     return JointSettings().validate()
 
 
@@ -53,7 +53,7 @@ def load_config(path):
         raise ValueError("microbatch must divide 16 contexts/update")
     if "train_documents" in config and (type(config["train_documents"]) is not int or config["train_documents"] <= 0):
         raise ValueError("train_documents must be a positive integer")
-    if config.get("experiment", "joint-v1") not in ("joint-v1", "joint-v2-ddp"):
+    if config.get("experiment", "joint-v1") not in ("joint-v1", "joint-v2-ddp", "joint-local-v3"):
         raise ValueError("Unknown fixed joint experiment")
     return config
 
@@ -63,4 +63,5 @@ def plan(config):
     return {"settings": asdict(settings), "config": config,
             "seeds": SEEDS, "arms": ARMS,
             "input_tokens_per_run": settings.updates * settings.tokens_per_update,
-            "total_runs": 6, "backbone_trainable": True, "remote_launch": False}
+            "total_runs": 2 if config.get("experiment") == "joint-local-v3" else 6,
+            "backbone_trainable": True, "remote_launch": False}

@@ -42,6 +42,8 @@ def manifest(config_path, physical_gpu, output, data_dir=None):
     if not gpus or len(set(gpus)) != len(gpus) or any(type(g) is not int or g < 0 for g in gpus):
         raise ValueError("GPU indices must be unique nonnegative integers")
     settings = settings_for(load_config(config_path))
+    if settings.version == "joint-local-v3":
+        raise ValueError("Use the gated local restart pipeline for joint-local-v3")
     if settings.version == "joint-v2-ddp" and len(gpus) != 8:
         raise ValueError("joint-v2-ddp requires eight GPUs per experiment")
     gpu_args = ["--physical-gpu", str(gpus[0])] if len(gpus) == 1 else ["--physical-gpus", *map(str, gpus)]
@@ -372,6 +374,11 @@ def main():
             and settings_for(config).version == "joint-v2-ddp"
             and len(getattr(args, "physical_gpus", None) or []) != 8):
         raise ValueError("joint-v2-ddp requires eight GPUs per experiment")
+    if config.get("experiment") == "joint-local-v3":
+        if args.mode in ("train", "capacity") and getattr(args, "physical_gpus", None) != list(range(4)):
+            raise ValueError("joint-local-v3 requires all four local GPUs")
+        if args.mode in ("manifest", "report"):
+            raise ValueError("Use the gated local restart pipeline for joint-local-v3")
     if args.mode == "manifest":
         manifest(args.config, args.physical_gpus or args.physical_gpu, args.output, args.data_dir)
         return

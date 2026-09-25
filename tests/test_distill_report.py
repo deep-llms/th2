@@ -19,13 +19,21 @@ from test_joint import contexts, settings
 
 class DistillationReportTests(unittest.TestCase):
     def test_paired_report_and_changed_counts_rejected(self):
+        self.exercise_report(False)
+
+    def test_local_single_seed_report_and_changed_counts_rejected(self):
+        self.exercise_report(True)
+
+    def exercise_report(self, local):
         torch.set_num_threads(1)
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);dev=contexts(4);data=contexts()
             counts=np.full(4,7,dtype=np.int64)
-            config={'experiment':'joint-v2-ddp','microbatch':1}
+            config={'experiment':'joint-local-v3' if local else 'joint-v2-ddp','microbatch':1}
+            world=4 if local else 8
+            seed_count=1 if local else 2
             fingerprints={'train':'fixed','dev':'fixed'}
-            for seed in range(2):
+            for seed in range(seed_count):
                 audit=root/f'audit-seed-{seed}';audit.mkdir()
                 audit_value={'status':'ok','ready_for_students':True,'inputs':fingerprints,
                              'parent':{'seed':seed},'calibration':{'sigma_delta':.2},
@@ -45,24 +53,27 @@ class DistillationReportTests(unittest.TestCase):
                     # Synthetic topology/provenance for this pure CPU report fixture.
                     ids.update(purpose='correction_distillation',seed_index=seed,inputs=fingerprints,
                                config=config,parent=audit_value['parent'],audit_sha256=file_hash(audit/'complete.json'),
-                               sigma_delta=.2,world_size=8,physical_gpus=list(range(8)),code='fixed',
+                               sigma_delta=.2,world_size=world,physical_gpus=list(range(world)),code='fixed',
                                adapter_seed=seed,data_order_seed=seed,mixed_precision=False,torch=str(torch.__version__))
-                    state['identity']=ids;state['rank_rng']*=8
+                    state['identity']=ids;state['rank_rng']*=world
                     torch.save(state,path/'final.pt')
                     (path/'identity.json').write_text(json.dumps(ids))
-                    final.update(world_size=8,nll=nll)
+                    final.update(world_size=world,nll=nll)
                     (path/'complete.json').write_text(json.dumps(final))
                     np.savez(path/'eval.npz',loss_sums=counts*nll,target_counts=counts,sequence_indices=np.arange(4))
             args=Namespace(output=root/'report',audit_root=root,joint_root=root/'joint',
-                           runs_dir=root/'runs',data_dir=root/'inputs')
+                           runs_dir=root/'runs',data_dir=root/'inputs',seed_count=seed_count)
             with patch('pcc.joint.load_inputs',return_value=(data,dev,fingerprints)), \
                  patch('pcc.distill_report.settings',return_value=settings()):
                 result=report_results(args,config)
-                self.assertEqual(result['decision'],'stop_no_consistent_student_recovery')
-                self.assertTrue(result['seeds'][0]['passed']);self.assertFalse(result['seeds'][1]['passed'])
+                self.assertEqual(result['decision'],'recommend_second_seed' if local else 'stop_no_consistent_student_recovery')
+                self.assertTrue(result['seeds'][0]['passed'])
+                if not local:self.assertFalse(result['seeds'][1]['passed'])
+                if local:self.assertNotIn('OriginalBase',result['seeds'][0]['nll'])
                 self.assertFalse(result['test_unlocked'])
+                self.assertEqual(result['automatic_followup_training'],local)
                 self.assertTrue((args.output/'validation-curves.png').is_file())
-                path=root/'runs/seed-1-PCC/eval.npz'
+                path=root/f'runs/seed-{seed_count-1}-PCC/eval.npz'
                 np.savez(path,loss_sums=counts*2.9,target_counts=counts+1,sequence_indices=np.arange(4))
                 args.output=root/'bad-report'
                 with self.assertRaisesRegex(ValueError,'eval alignment'):

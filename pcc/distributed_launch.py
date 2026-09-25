@@ -15,6 +15,8 @@ def execute(args, config):
     contexts = settings.tokens_per_update // settings.context
     if contexts % len(gpus) or (contexts // len(gpus)) % config["microbatch"]:
         raise ValueError("Per-rank microbatch must divide the fixed global context count")
+    if settings.version == "joint-local-v3" and gpus != list(range(4)):
+        raise ValueError("joint-local-v3 requires all four local GPUs")
     if settings.version == "joint-v2-ddp" and len(gpus) != 8:
         raise ValueError("joint-v2-ddp requires eight GPUs per experiment")
     from .__main__ import configure_offline

@@ -17,10 +17,10 @@ from pcc.joint_training import evaluate, load_checkpoint, make_optimizer, train,
 from test_joint import contexts, tiny
 
 
-def worker(rank, directory):
+def worker(rank, directory, world=2):
     root = Path(directory)
     torch.set_num_threads(1)
-    dist.init_process_group('gloo', init_method='file://' + str(root / 'rendezvous'), rank=rank, world_size=2)
+    dist.init_process_group('gloo', init_method='file://' + str(root / 'rendezvous'), rank=rank, world_size=world)
     try:
         settings = JointSettings(updates=4, context=8, tokens_per_update=64, warmup=1,
                                  eval_every=2, monitor_tokens=16, dev_tokens=35, s=1, d=2)
@@ -48,25 +48,32 @@ def worker(rank, directory):
                 np.testing.assert_array_equal(expected[1], actual[1])
             del parallel
 
-        identity = {'settings': asdict(settings), 'arm': 'Deep', 'distributed': {'world_size': 2}}
+        identity = {'settings': asdict(settings), 'arm': 'Deep', 'distributed': {'world_size': world}}
         torch.manual_seed(100 + rank)
         train(tiny(), data, dev, root / 'full', identity, mixed_precision=False, distributed=True)
         train(tiny(), data, dev, root / 'partial', identity, mixed_precision=False, stop_after=2, distributed=True)
         dist.barrier()
         partial = torch.load(root / 'partial/latest.pt', weights_only=True)
-        assert len(partial['rank_rng']) == 2
+        assert len(partial['rank_rng']) == world
         assert not torch.equal(partial['rank_rng'][0]['torch'], partial['rank_rng'][1]['torch'])
         model = tiny()
         torch.manual_seed(999)
         load_checkpoint(root / 'partial/latest.pt', model, make_optimizer(model), identity, rng_rank=rank)
         assert torch.equal(torch.get_rng_state(), partial['rank_rng'][rank]['torch'])
+        for name, tensor in model.state_dict().items():
+            torch.testing.assert_close(tensor, partial['model'][name], atol=0, rtol=0)
         train(tiny(), data, dev, root / 'resumed', identity, mixed_precision=False,
               resume=root / 'partial/latest.pt', distributed=True)
         dist.barrier()
         full = torch.load(root / 'full/final.pt', weights_only=True)
         resumed = torch.load(root / 'resumed/final.pt', weights_only=True)
         for name in full['model']:
-            torch.testing.assert_close(full['model'][name], resumed['model'][name], atol=0, rtol=0)
+            # Four-rank Gloo can change floating-point summation order when a
+            # fresh reducer rebuilds buckets. Loaded weights/RNG above must be
+            # exact; subsequent updates must agree numerically. Preserve the
+            # established bitwise two-rank regression check.
+            torch.testing.assert_close(full['model'][name], resumed['model'][name],
+                atol=1e-8 if world == 4 else 0, rtol=1e-6 if world == 4 else 0)
         assert full['next_context'] == resumed['next_context'] == 32
         if rank == 0:
             (root / 'passed.json').write_text(json.dumps({'status': 'ok'}))
@@ -79,6 +86,11 @@ class DistributedTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             mp.spawn(worker, args=(directory,), nprocs=2, join=True)
             self.assertEqual(json.loads((Path(directory) / 'passed.json').read_text())['status'], 'ok')
+
+    def test_four_process_local_gradient_accumulation_evaluation_resume(self):
+        with tempfile.TemporaryDirectory() as directory:
+            mp.spawn(worker, args=(directory, 4), nprocs=4, join=True)
+            self.assertEqual(json.loads((Path(directory) / "passed.json").read_text())["status"], "ok")
 
     def test_long_eight_gpu_manifest_preserves_global_budget(self):
         from pcc.joint import manifest

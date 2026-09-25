@@ -1,5 +1,23 @@
 # Current task
 
+## Current authority: local restart after B200 loss (2026-09-25)
+
+User confirmed the B200 machine is dead and authorized the proposed local
+restart. This supersedes the wait-for-B200-restoration instructions below.
+See PCC_LOCAL_RESTART_20260925.md. Four idle A100-PCIE-40GB GPUs were verified;
+use all four sequentially, train_env, full 28 layers. One newly trained Deep
+teacher -> same-checkpoint feedback audit -> matched LM/PCC students if positive;
+second seed only if the first matched student pair passes. Fixed 201M tokens/run,
+new fixed local split, no substitution of old B200 metrics for missing weights.
+
+Code and fixed-input preparation are underway at
+`temp/local-restart-20260925-a01/`. commands.sh stays #0. Checkpoints/inputs/source
+will be SHA256-verified on the separate network home filesystem under
+`/home/users/thien/deep2shallow-backups/local-restart-20260925-a01/`.
+No B200 access, GPU reclaim, or new burn is authorized/needed for this restart.
+The older sections below describe historical scopes and states.
+
+
 ## Active: authorized B200 correction distillation
 
 User explicitly authorized stopping all currently GPU-using workloads, including

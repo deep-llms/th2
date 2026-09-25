@@ -17,10 +17,14 @@ def report_results(args, config):
     from dataclasses import asdict
     from .joint import load_inputs
     args.output.mkdir(parents=True, exist_ok=False)
+    local = config.get("experiment") == "joint-local-v3"
+    world = 4 if local else 8
+    seed_count = getattr(args, "seed_count", 2) if local else 2
+    require(seed_count in (1, 2), "Invalid seed count")
     rows, curves = [], []
     common_code = None
     try:
-        for seed in range(2):
+        for seed in range(seed_count):
             _, dev, fingerprints = load_inputs(config,args.data_dir,seed)
             expected_counts=(dev.valid[:,:-1] & dev.valid[:,1:])
             if dev.segments is not None:
@@ -49,18 +53,18 @@ def report_results(args, config):
                         and identity['audit_sha256']==file_hash(audit_dir/'complete.json')
                         and identity['settings']==asdict(settings(config))
                         and identity['sigma_delta']==audit['calibration']['sigma_delta']
-                        and identity['world_size']==8 and identity['physical_gpus']==list(range(8)),
+                        and identity['world_size']==world and identity['physical_gpus']==list(range(world)),
                         'Mismatched student identity')
                 if common_code is None:
                     common_code=identity['code']
                 require(identity['code']==common_code,'Mixed student source versions')
                 require(complete['status']=='ok' and complete['updates']==settings(config).updates
                         and complete['input_tokens']==settings(config).updates*settings(config).tokens_per_update
-                        and complete['world_size']==8 and complete['teacher_unchanged']
+                        and complete['world_size']==world and complete['teacher_unchanged']
                         and complete['checkpoint_verified'],'Incomplete student run')
                 saved=torch.load(directory/'final.pt',map_location='cpu',weights_only=True)
                 require(saved['format']=='distill-v1' and saved['identity']==identity
-                        and saved['update']==settings(config).updates and len(saved['rank_rng'])==8,
+                        and saved['update']==settings(config).updates and len(saved['rank_rng'])==world,
                         'Incorrect final student checkpoint')
                 digest=hashlib.sha256()
                 for name,tensor in saved['student'].items():
@@ -90,22 +94,24 @@ def report_results(args, config):
             for key in ('settings','adapter_seed','data_order_seed','inputs','config','parent','audit_sha256',
                         'sigma_delta','code','world_size','physical_gpus','mixed_precision','torch'):
                 require(identities[0][key]==identities[1][key],f'Unmatched student pair: {key}')
-            original=args.joint_root/'runs'/f'seed-{seed}-Base/eval.npz'
-            with np.load(original,allow_pickle=False) as values:
-                require(np.array_equal(values['target_counts'],counts)
-                        and np.array_equal(values['sequence_indices'],np.arange(len(counts))),'Original baseline eval changed')
-                losses['OriginalBase']=values['loss_sums'].copy()
+            if not local:
+                original=args.joint_root/'runs'/f'seed-{seed}-Base/eval.npz'
+                with np.load(original,allow_pickle=False) as values:
+                    require(np.array_equal(values['target_counts'],counts)
+                            and np.array_equal(values['sequence_indices'],np.arange(len(counts))),'Original baseline eval changed')
+                    losses['OriginalBase']=values['loss_sums'].copy()
             stats=paired_bootstrap(losses,counts,resamples=2000,seed=20260922)
             contrasts={}
-            for control in ('LM','FeedbackOff','OriginalBase','Deep'):
+            for control in (('LM','FeedbackOff','Deep') if local else ('LM','FeedbackOff','OriginalBase','Deep')):
                 contrasts[control]={'pcc_minus_control':stats['nll']['PCC']-stats['nll'][control],
                     'ci95':np.quantile(stats['samples']['PCC']-stats['samples'][control],[.025,.975]).tolist()}
             gain=stats['nll']['FeedbackOff']-stats['nll']['Deep']
             recovery=(stats['nll']['FeedbackOff']-stats['nll']['PCC'])/gain if gain>0 else None
             gates={'beats_matched_lm':contrasts['LM']['ci95'][1]<0,
                    'beats_feedback_off':contrasts['FeedbackOff']['ci95'][1]<0,
-                   'beats_original_baseline':contrasts['OriginalBase']['ci95'][1]<0,
                    'recovers_quarter':recovery is not None and recovery>=.25}
+            if not local:
+                gates['beats_original_baseline'] = contrasts['OriginalBase']['ci95'][1]<0
             rows.append({'seed_index':seed,'nll':stats['nll'],'contrasts':contrasts,
                          'recovery_ratio':recovery,'gates':gates,'passed':all(gates.values())})
         with (args.output/'validation-curves.csv').open('x') as f:
@@ -114,7 +120,8 @@ def report_results(args, config):
         import matplotlib
         matplotlib.use('Agg')
         import matplotlib.pyplot as plt
-        fig,axes=plt.subplots(1,2,figsize=(11,4),sharey=True)
+        fig,axes=plt.subplots(1,seed_count,figsize=(5.5*seed_count,4),sharey=True,squeeze=False)
+        axes=axes[0]
         for seed,axis in enumerate(axes):
             for arm in ('LM','PCC'):
                 values=[r for r in curves if r['seed_index']==seed and r['arm']==arm]
@@ -124,11 +131,16 @@ def report_results(args, config):
             axis.legend()
         fig.tight_layout();fig.savefig(args.output/'validation-curves.png',dpi=160);plt.close(fig)
         passed=all(r['passed'] for r in rows)
-        result={'status':'ok','stage':'distill-v1','seeds':rows,'exploratory':True,
+        result={'status':'ok','stage':settings(config).version,'seeds':rows,'exploratory':True,
                 'decision':'recommend_target_semantics_control' if passed else 'stop_no_consistent_student_recovery',
                 'test_unlocked':False,'automatic_followup_training':False}
+        if local:
+            result['automatic_followup_training'] = passed and seed_count == 1
+            result['comparison_scope'] = 'same-checkpoint off / matched LM / PCC; no retrained Base or Shallow control'
+            result['decision'] = ('recommend_second_seed' if seed_count == 1 else 'recommend_target_semantics_control') if passed else 'stop_no_consistent_student_recovery'
         text=['# Correction-distillation results','',result['decision'],'',
-              'Fixed-dev exploratory comparison; no new held-out test or automatic follow-up.','',
+              ('Fixed-dev exploratory comparison; a passing first seed permits the fixed second seed.' if local else
+               'Fixed-dev exploratory comparison; no new held-out test or automatic follow-up.'),'',
               '| Seed | Feedback off | Deep teacher | LM control | PCC | Recovery | Pass |',
               '|---|---:|---:|---:|---:|---:|---|']
         for row in rows:
