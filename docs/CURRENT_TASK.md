@@ -1,5 +1,18 @@
 # Current task
 
+## Active: verify environments, then download CulturaX on 78gg
+
+User authorized checking the completed installation and, if correct, downloading
+nguyenhuuthuat09/CulturaX_sampled using the established th2 history.
+The new share reports both `OK env eval` and `OK env train_env`, followed by
+`OK | install: 2 env(s)` for bf4cadd (controller timestamp 2026-09-26 12:13:35).
+Now submit read-only imports/pip-check/device/destination checks adapted from
+f678729, job `th2-78gg-verify-envs-before-download-20260926-a01`.
+If they pass, use the identical #d directive from 382992d/c802234/cc338d4:
+`--hf-dataset nguyenhuuthuat09/CulturaX_sampled /mnt/local/_data/@PROJECT@/data`.
+No sampling, training, GPU allocation, process stop, or additional model download.
+
+
 ## Current: install runtime on the replacement B200 (2026-09-26)
 
 Active Dropbox share updated by the user on 2026-09-26: label `th2-78gg`,
