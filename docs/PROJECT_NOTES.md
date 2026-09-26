@@ -2,6 +2,12 @@
 
 ## Active: CulturaX download on verified 78gg environments
 
+Download submission 616cc39 is confirmed STARTED by the controller. Background
+ID 2026-09-26_19-20-41, status timestamp 2026-09-26 12:20:44 (controller clock).
+Completion is not yet verified. Evidence:
+`temp/th2-monitor-78gg-20260926/1790450488108036992-_RUN_STATUS_.log`.
+Read status from the new share; do not repush the active #d command.
+
 Environment validation 631f77c passed on thiennh-p6-78gg-worker-0 at
 2026-09-26 19:17:53 UTC: both environments imported all required modules and
 reported no broken pip requirements. Both use torch 2.14.0+cu130/CUDA 13.0,
