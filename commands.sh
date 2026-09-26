@@ -1,4 +1,4 @@
-#1 +60+a
+#0
 #th2-78gg-d2s-sample-culturax-qwen-20260926-a01
 set -euo pipefail
 

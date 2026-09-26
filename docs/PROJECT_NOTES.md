@@ -21,14 +21,23 @@ train targets 30B English / 1B each vi,zh,ru,de,ar; eval 10M tokens per language
 Raw input /mnt/local/_data/deep-llms_th2/data/raw; sampled output
 /mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/{train,eval}/<lang>.
 Refuse existing sampled output; do not delete or silently resume partial data.
-Submit sampling job th2-78gg-d2s-sample-culturax-qwen-20260926-a01 now.
+Sampling job th2-78gg-d2s-sample-culturax-qwen-20260926-a01 launched via
+3dca9ddf34764bbfb4921796e9cedaa32ac1d242 at 2026-09-26 19:59:00 UTC.
 commands.sh preserves b4f150d's sampling and validation commands, changing only
 worker/job/log identity and adding a check of the verified raw-data receipt.
 Expected completion artifact:
 /mnt/local/_outputs/deep-llms_th2/data_preparation/culturax_qwen_78gg_20260926_a01/sampling_complete.json.
 Require success=true and all six languages reopened as nonempty text datasets.
-Launch receipt and actual progress remain to be verified. Existing GPU workloads
-remain untouched; sampling hides GPUs. This authorizes sampling, not training.
+Startup verified from the snapshot exported at 2026-09-26 20:00:24 UTC:
+raw-data receipt, train_env, offline tokenizer/config and all three SHA256 checks
+passed; dry run passed; real sampler entered English sampling from 50 files.
+No completed shard or terminal result is present in that initial snapshot.
+Evidence: temp/th2-monitor-78gg-20260926/1790452829348526335-_run-2026-09-26_19-58-50-th2-78gg-d2s-sample-culturax-qwen-20260926-a01.log.
+commands.sh is now #0 to prevent accidental relaunch on later source pushes;
+this does not stop the already running job. Use a unique #2 to export sampling.log
+and sampling_complete.json on a later status request; do not resubmit #1.
+Existing GPU workloads remain untouched; sampling hides GPUs. This authorizes
+sampling, not training. Completion remains unverified.
 
 
 ## Historical: CulturaX download on verified 78gg environments
