@@ -9,24 +9,32 @@ B200 reference captured read-only via f4f4e92, job
 th2-78gg-export-sampling-env-20260926-a01. Python 3.11.15; 160 exact conda
 name/version/build/subdir records and 160 Python distribution versions captured,
 plus first-16-document tokenizer digests for each language. Reference and locks
-are under envs/sampling_b200.*. Conda creation succeeded; pip installation and
-final version/tokenization equality checks are pending. Original train_env is
-unchanged. No GPU use; no changes to the B200 sampling process.
-Pinned local download is running in tmux d2s_sampling_download_20260926_a01,
+are under envs/sampling_b200.*. Installation and pip check succeeded. At
+2026-09-26 23:34:18 UTC, verification confirmed all 160 Python package versions
+(no extra distributions), all 160 conda builds, Python 3.11.15, source/asset
+hashes, and exact first-16-document token IDs/counts for all six languages.
+Evidence: <run>/environment_verified.json and <run>/pip-check.log. Original
+train_env is unchanged. No GPU use; no changes to the B200 sampling process.
+Pinned local download completed; full SHA256 verification is progressing in
+tmux d2s_sampling_download_20260926_a01,
 using nguyenhuuthuat09/CulturaX_sampled revision
 b19d850278693d37113c197857cc6328fa5c6881. HF metadata matches all 75 committed
 manifest hashes/166107112571 bytes. Existing verified en_part_00015 was hardlinked;
-other 74 files download under <run>/data/raw. Require download_complete.json
+other 74 files downloaded under <run>/data/raw. Require download_complete.json
 (status ok, all 75 SHA256 checked) before sampling. Download log: <run>/download.log.
 Sampler source/manifests and pinned tokenizer assets are frozen under <run>/source
 and <run>/tokenizer. prepare_data.py is unchanged. CPU-only workflow
-scripts/run_verified_local_sampling.py will check exact software versions,
-conda builds, source/assets hashes and six-language tokenization probes before
-launching the identical offline sampler. Output: <run>/data/Qwen_Qwen3-0.6B-Base.
+scripts/run_verified_local_sampling.py was copied to <run>/source and launched
+in persistent tmux d2s_sampling_local_20260926_a01. It currently waits for the
+download receipt, then automatically rechecks the environment, dry-runs and
+launches the identical offline sampler. Launch receipt: <run>/workflow_launch.json;
+workflow log: <run>/workflow.log; actual sampler log: <run>/sampling.log.
+Check sampling_started.json and the sampler log before claiming actual sampling
+has started. Output: <run>/data/Qwen_Qwen3-0.6B-Base.
 Its final sampling_complete.json will record document counts and ordered text
 hashes per split; cross-machine full-output equality still needs B200 hashes.
 No Hugging Face upload authorized/launched in this step. commands.sh set back
- to #0 after the read-only environment capture; do not relaunch it.
+to #0 after the read-only environment capture; do not relaunch it.
 
 ## Document-end packing update (2026-09-26)
 
