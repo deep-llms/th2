@@ -1,6 +1,20 @@
 # Project notes
 
-## Active: verify environments, then download CulturaX on 78gg
+## Active: CulturaX download on verified 78gg environments
+
+Environment validation 631f77c passed on thiennh-p6-78gg-worker-0 at
+2026-09-26 19:17:53 UTC: both environments imported all required modules and
+reported no broken pip requirements. Both use torch 2.14.0+cu130/CUDA 13.0,
+Transformers 5.9.0, datasets 4.8.5, accelerate 1.13.0; eval has lm_eval 0.4.10.
+All eight B200s are visible and NCCL is available. About 25 TB free; the dataset
+destination did not exist. Existing GPU workloads were only inspected.
+Evidence: temp/th2-monitor-78gg-20260926/1790450345258291967-_run-2026-09-26_19-17-31-th2-78gg-verify-envs-before-download-20260926-a01.log.
+
+Now submit the exact dataset-only #d command from 382992d to fetch the whole
+nguyenhuuthuat09/CulturaX_sampled repository to /mnt/local/_data/deep-llms_th2/data.
+The historical raw-data manifest covers 75 files/166107112571 bytes; download
+completion and file verification are still pending. Do not resubmit the same
+download to request status. The existing #d workflow handles network access.
 
 User authorized checking the completed installation and, if correct, downloading
 nguyenhuuthuat09/CulturaX_sampled using the established th2 history.
