@@ -1,5 +1,21 @@
 # Project notes
 
+## Active: authorized six-language sampling on 78gg (2026-09-26)
+
+User requests running prepare_data.py using the established th2 history.
+The CulturaX download completed (616cc39, controller OK at 12:39:27). Follow
+9bbcaf9 for 75-file hash/Parquet verification, d0a71b5 for pinned tokenizer
+prerequisites if absent, and b4f150d for the CPU-only offline sampling launch.
+prepare_data.py and both manifests are unchanged from b4f150d.
+Use train_env; seed 42, Qwen3-0.6B-Base tokenizer revision da87bfb608c14b7cf20ba1ce41287e8de496c0cd;
+train targets 30B English / 1B each vi,zh,ru,de,ar; eval 10M tokens per language.
+Raw input /mnt/local/_data/deep-llms_th2/data/raw; sampled output
+/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/{train,eval}/<lang>.
+Refuse existing sampled output; do not delete or silently resume partial data.
+Current preflight job: th2-78gg-sampling-preflight-20260926-a01. No sampling
+started yet. Existing GPU workloads remain untouched; sampling hides GPUs.
+
+
 ## Active: CulturaX download on verified 78gg environments
 
 Download submission 616cc39 is confirmed STARTED by the controller. Background
