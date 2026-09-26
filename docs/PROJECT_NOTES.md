@@ -2,6 +2,14 @@
 
 ## Active: authorized six-language sampling on 78gg (2026-09-26)
 
+Preflight 1d94408 completed on 78gg at 2026-09-26 19:53:55 UTC: all 75 raw files,
+166107112571 bytes, SHA256 and Parquet metadata verified (33.6s). Correct
+language counts 50 en / 5 each other; sampled output absent, 24 TB free. All three
+pinned tokenizer assets are absent. Submit the identical three-file model
+asset #d command from d0a71b5; no full model weights needed for sampling.
+Receipt on worker: /mnt/local/_outputs/deep-llms_th2/data_preparation/culturax_78gg_preflight_20260926_a01.json.
+Evidence: temp/th2-monitor-78gg-20260926/1790452501265019095-_run-2026-09-26_19-53-11-th2-78gg-sampling-preflight-20260926-a01.log.
+
 User requests running prepare_data.py using the established th2 history.
 The CulturaX download completed (616cc39, controller OK at 12:39:27). Follow
 9bbcaf9 for 75-file hash/Parquet verification, d0a71b5 for pinned tokenizer
