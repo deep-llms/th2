@@ -4,9 +4,10 @@
 
 Preflight 1d94408 completed on 78gg at 2026-09-26 19:53:55 UTC: all 75 raw files,
 166107112571 bytes, SHA256 and Parquet metadata verified (33.6s). Correct
-language counts 50 en / 5 each other; sampled output absent, 24 TB free. All three
-pinned tokenizer assets are absent. Submit the identical three-file model
-asset #d command from d0a71b5; no full model weights needed for sampling.
+language counts 50 en / 5 each other; sampled output absent, 24 TB free. The three missing
+pinned tokenizer assets were downloaded via 208baa6 (identical to d0a71b5):
+all three ITEM OK and overall OK at controller 12:57:31 on 2026-09-26.
+No full model weights are needed for sampling.
 Receipt on worker: /mnt/local/_outputs/deep-llms_th2/data_preparation/culturax_78gg_preflight_20260926_a01.json.
 Evidence: temp/th2-monitor-78gg-20260926/1790452501265019095-_run-2026-09-26_19-53-11-th2-78gg-sampling-preflight-20260926-a01.log.
 
@@ -20,11 +21,17 @@ train targets 30B English / 1B each vi,zh,ru,de,ar; eval 10M tokens per language
 Raw input /mnt/local/_data/deep-llms_th2/data/raw; sampled output
 /mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/{train,eval}/<lang>.
 Refuse existing sampled output; do not delete or silently resume partial data.
-Current preflight job: th2-78gg-sampling-preflight-20260926-a01. No sampling
-started yet. Existing GPU workloads remain untouched; sampling hides GPUs.
+Submit sampling job th2-78gg-d2s-sample-culturax-qwen-20260926-a01 now.
+commands.sh preserves b4f150d's sampling and validation commands, changing only
+worker/job/log identity and adding a check of the verified raw-data receipt.
+Expected completion artifact:
+/mnt/local/_outputs/deep-llms_th2/data_preparation/culturax_qwen_78gg_20260926_a01/sampling_complete.json.
+Require success=true and all six languages reopened as nonempty text datasets.
+Launch receipt and actual progress remain to be verified. Existing GPU workloads
+remain untouched; sampling hides GPUs. This authorizes sampling, not training.
 
 
-## Active: CulturaX download on verified 78gg environments
+## Historical: CulturaX download on verified 78gg environments
 
 Download submission 616cc39 is confirmed STARTED by the controller. Background
 ID 2026-09-26_19-20-41, status timestamp 2026-09-26 12:20:44 (controller clock).
@@ -57,7 +64,7 @@ If they pass, use the identical #d directive from 382992d/c802234/cc338d4:
 No sampling, training, GPU allocation, process stop, or additional model download.
 
 
-## Current: install runtime on the replacement B200 (2026-09-26)
+## Historical: install runtime on the replacement B200 (2026-09-26)
 
 Active Dropbox share updated by the user on 2026-09-26: label `th2-78gg`,
 with `th2` as an alias. The supplied URL is stored only in ignored
