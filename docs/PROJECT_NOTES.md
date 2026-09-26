@@ -1,5 +1,30 @@
 # Project notes
 
+## Sampling runtime and reuse assessment (2026-09-26)
+
+Read-only progress export 889eec6 completed; snapshot at 20:30:38 UTC shows
+three English files processed, 2,588,403,725 tokens. Run began 19:59:00 UTC;
+completion remains pending. Evidence: temp/sampling-progress-20260926-2030.log.
+Previous identical sampler ran 2026-09-23 13:02:49 to 18:50:19 UTC (5h47m30s).
+Current planning estimate: 6–8 hours total, subject to language/IO throughput.
+Local CPU-only benchmark used the matching tokenizer.json, Transformers 4.57.1,
+three 4096-document English batches: 9,674,000 tokens in 5.6718 seconds (~1.706M
+ tokens/s). Extrapolation is 5.71h tokenization-only for 35.06B tokens; budget
+6–10h sampling locally, excluding download/upload. This is not an end-to-end
+benchmark: local package version differs from remote 5.9.0 and timings exclude
+whole-file IO, shuffle, saves and non-English languages. Evidence:
+temp/sampling-local-timing-20260926.json. Dev has 32 CPU cores, 251GiB RAM,
+8.0TiB available disk at observation, enough capacity for this workflow.
+User asks about preparing once on dev and publishing reusable sampled splits
+on HF. Feasible; preserve train/eval Arrow directory layout and order, publish
+source/tokenizer/software/seed provenance plus per-file hashes, pin published
+revision and validate downloads. Raw text outputs still require training-time
+tokenization/packing. No full local sampling or HF publication launched in this
+assessment. GPU-node direct outbound upload is prohibited by AGENT_GUIDE;
+large #2 exports are limited to 25MB/file, so dev-origin publication is the
+straightforward route without a separate operator-provided bulk export path.
+commands.sh restored to #0 after this read-only export; sampler continues.
+
 ## Active: authorized six-language sampling on 78gg (2026-09-26)
 
 Preflight 1d94408 completed on 78gg at 2026-09-26 19:53:55 UTC: all 75 raw files,
