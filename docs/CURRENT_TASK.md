@@ -4,10 +4,14 @@
 
 User reports a new fresh B200 machine and explicitly requests changing
 commands.sh to install the environment and pushing to deep-llms/th2.
-Submit `#i envs/pcc_joint.txt +a`, job
-`th2-pcc-install-fresh-b200-20260926-a01`, through origin/main.
-Use the existing isolated Python 3.11 pcc_joint recipe (torch 2.14.0,
-Transformers 4.57.1); fresh:false creates/updates it without forcing a rebuild.
+User corrected the environment choice: install both train_env and eval using
+`#i envs/train_env.txt envs/eval.txt +a`, job
+`th2-install-train-env-and-eval-20260926-a01`, through origin/main.
+Verified against th2 history: bd23724, 3c5fa74 and 189e0c3 all use this exact
+installation directive. Both environment specifications are unchanged from
+bd23724 (Python 3.11, fresh:true, Transformers 5.9.0). The earlier pcc_joint-only
+submission c1595a6 was the wrong choice for this request; its installation
+outcome remains unverified. This correction does not remove that environment.
 Installation completion, CUDA build and the replacement worker's identity are
 not yet verified. Do not reuse the dead worker's hostname/PIDs/storage state.
 This submission installs dependencies only; no training, download or GPU stop.
