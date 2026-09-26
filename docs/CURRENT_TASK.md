@@ -1,5 +1,29 @@
 # Current task
 
+## Current: install runtime on the replacement B200 (2026-09-26)
+
+User reports a new fresh B200 machine and explicitly requests changing
+commands.sh to install the environment and pushing to deep-llms/th2.
+Submit `#i envs/pcc_joint.txt +a`, job
+`th2-pcc-install-fresh-b200-20260926-a01`, through origin/main.
+Use the existing isolated Python 3.11 pcc_joint recipe (torch 2.14.0,
+Transformers 4.57.1); fresh:false creates/updates it without forcing a rebuild.
+Installation completion, CUDA build and the replacement worker's identity are
+not yet verified. Do not reuse the dead worker's hostname/PIDs/storage state.
+This submission installs dependencies only; no training, download or GPU stop.
+Do not repush the executable installation command to refresh status.
+
+The local restart finished successfully at 2026-09-25T15:30:59Z. Deep teacher,
+LM and PCC each completed 6144 updates/201326592 input tokens. Final dev NLL:
+feedback off 2.98561804, Deep 2.96830996, LM 2.97769621, PCC 2.97917756.
+PCC recovered 37.2% of the feedback benefit but lost to matched LM; the queue
+correctly stopped before seed two. Results are in
+`temp/local-restart-20260925-a01/report-1-seed/`; final teacher/student weights
+and inputs/source have verified network-filesystem backups under
+`/home/users/thien/deep2shallow-backups/local-restart-20260925-a01/`.
+All older running/blocked observations below are historical.
+
+
 ## Current authority: local restart after B200 loss (2026-09-25)
 
 User confirmed the B200 machine is dead and authorized the proposed local

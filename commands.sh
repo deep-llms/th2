@@ -1,3 +1,2 @@
-#0
-# Distillation is prepared; B200 worker unavailable. Do not resubmit until repaired.
-# See docs/PCC_DISTILLATION_PLAN_20260924.md and docs/CURRENT_TASK.md.
+#i envs/pcc_joint.txt +a
+#th2-pcc-install-fresh-b200-20260926-a01
