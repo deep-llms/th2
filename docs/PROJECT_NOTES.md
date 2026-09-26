@@ -1,5 +1,14 @@
 # Project notes
 
+## Qwen end-token verification (2026-09-26)
+
+User accepted existing per-1000-document packing without separators; leave it
+unchanged. A CPU-only verified base-weight probe naturally generated endoftext
+151643 in 1/8 greedy and 1/8 sampled runs; no im_end generated. Official Qwen
+control-token docs state pretraining inserts endoftext between documents,
+separately from the tokenizer call. See QWEN_BASE_EOS_PROBE_20260926.md.
+All local GPUs were occupied; no GPU or B200 workload changed.
+
 ## Sampling runtime and reuse assessment (2026-09-26)
 
 Read-only progress export 889eec6 completed; snapshot at 20:30:38 UTC shows
