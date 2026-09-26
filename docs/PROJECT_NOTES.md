@@ -2,6 +2,17 @@
 
 ## Current: install runtime on the replacement B200 (2026-09-26)
 
+Active Dropbox share updated by the user on 2026-09-26: label `th2-78gg`,
+with `th2` as an alias. The supplied URL is stored only in ignored
+`temp/dropbox_folders.txt` (mode 0600). Read-only folder listing succeeded.
+The share name identifies assignment thiennh-p6-78gg; live worker identity
+still needs verification. `temp/poll_th2.py` now reads the new share and keeps
+its observations in `temp/th2-monitor-78gg-20260926/`. The old `th2-tpbw`
+entry and its local observations remain historical. No installation resubmitted.
+The new share's _RUN_STATUS_.log matches commit bf4cadd and the requested
+train_env/eval job: STARTED, then RUNNING (latest file modification
+2026-09-26T19:08:53Z). Installation completion is still unverified.
+
 User reports a new fresh B200 machine and explicitly requests changing
 commands.sh to install the environment and pushing to deep-llms/th2.
 User corrected the environment choice: install both train_env and eval using
