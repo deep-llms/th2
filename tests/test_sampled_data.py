@@ -1,4 +1,4 @@
-"""Direct sampler loading, legacy packing equivalence, and matched prefixes."""
+"""Document-end packing, fixed sampler loading, and matched prefixes."""
 from itertools import chain
 from pathlib import Path
 import tempfile
@@ -18,16 +18,19 @@ if HAS_SAMPLING:
     from pcc.data import SampledDataLoader, validate_matched_data
     from pcc.probe import verify_slice
     from pcc.protocol import DATA_SEED
+    from pcc.packing import document_end_id, tokenize_documents, preprocessing_policy
 
 
 def sampled_fixture(root, sharded=True, documents=2003):
-    vocab = {"[UNK]": 0, **{str(i): i for i in range(1, 65)}, "[BOS]": 65, "[EOS]": 66}
+    vocab = {"[UNK]": 0, **{str(i): i for i in range(1, 64)}, "[BOS]": 65, "[EOS]": 66,
+             "<|endoftext|>": 64}
     backend = Tokenizer(WordLevel(vocab, unk_token="[UNK]"))
     backend.pre_tokenizer = Whitespace()
     backend.post_processor = TemplateProcessing(single="[BOS] $A [EOS]",
                                                  special_tokens=[("[BOS]", 65), ("[EOS]", 66)])
     tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend, unk_token="[UNK]",
-                                        bos_token="[BOS]", eos_token="[EOS]")
+                                        bos_token="[BOS]", eos_token="[EOS]",
+                                        additional_special_tokens=["<|endoftext|>"])
     texts = [" ".join(str((i * 7 + j) % 60 + 1) for j in range(3 + i % 9)) for i in range(documents)]
     if sharded:
         # Publish out of order to exercise sorted shard loading.
@@ -66,7 +69,7 @@ class SampledDataTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     SampledDataLoader(tokenizer, root / "bad", train_documents=bad)
 
-    def test_matches_legacy_map_shuffle_and_reuses_prefix_without_export(self):
+    def test_matches_document_end_map_shuffle_and_reuses_prefix_without_export(self):
         with tempfile.TemporaryDirectory() as temp, patch("pcc.data.CONTEXT", 12):
             root = Path(temp)
             path, tokenizer, texts = sampled_fixture(root / "train")
@@ -77,7 +80,8 @@ class SampledDataTests(unittest.TestCase):
             verify_slice(screen, train)
             # Independent implementation of train.py's default map recipe.
             raw = concatenate_datasets([load_from_disk(str(p)) for p in sorted(path.glob("shard_*"))])
-            tokenized = raw.map(lambda batch: tokenizer(batch["text"], add_special_tokens=False),
+            tokenized = raw.map(lambda batch: {"input_ids": [
+                tokenizer.encode(text, add_special_tokens=False) + [64] for text in batch["text"]]},
                                 batched=True, remove_columns=["text"], keep_in_memory=True)
             def legacy_group(batch):
                 concatenated = {key: list(chain(*rows)) for key, rows in batch.items()}
@@ -87,6 +91,8 @@ class SampledDataTests(unittest.TestCase):
             expected = tokenized.map(legacy_group, batched=True, keep_in_memory=True).shuffle(seed=DATA_SEED)
             np.testing.assert_array_equal(train.ids, expected[:10]["input_ids"])
             self.assertFalse(np.isin(train.ids, [65, 66]).any())
+            self.assertIn(64, train.ids)
+            self.assertEqual(train.metadata["preprocessing"], preprocessing_policy(12, 64))
             self.assertEqual(len(loader.packed), 1)
             self.assertEqual(len(list((root / "cache").glob("split-*"))), 1)
             self.assertEqual(before, {str(p): p.read_bytes() for p in path.rglob("*") if p.is_file()})
@@ -97,6 +103,67 @@ class SampledDataTests(unittest.TestCase):
             screen.ids[:] = 0
             np.testing.assert_array_equal(loader(path, "train", 48).ids, train.ids[:4])
             self.assertFalse(list(root.rglob("*.npz")))
+
+    def test_document_end_is_not_chat_eos_and_crosses_chunks(self):
+        with tempfile.TemporaryDirectory() as temp, patch("pcc.data.CONTEXT", 4):
+            root = Path(temp)
+            _, tokenizer, _ = sampled_fixture(root / "fixture", documents=1)
+            texts = ["1 2 3", "4 5", "", "6 7 8 9 10"]
+            self.assertEqual(tokenizer.eos_token_id, 66)
+            self.assertEqual(document_end_id(tokenizer), 64)
+            self.assertEqual(tokenize_documents(texts, tokenizer, 64),
+                             [[1, 2, 3, 64], [4, 5, 64], [64], [6, 7, 8, 9, 10, 64]])
+            path = root / "train"
+            Dataset.from_dict({"text": texts}).save_to_disk(path)
+            data = SampledDataLoader(tokenizer, root / "cache")(path, "train", 12)
+            # Hand-specified chunks: EOS is a normal causal target, not padding.
+            self.assertEqual(sorted(data.ids.tolist()),
+                             sorted([[1, 2, 3, 64], [4, 5, 64, 64], [6, 7, 8, 9]]))
+            self.assertTrue(data.valid.all())
+            self.assertIsNone(data.segments)
+            with patch.object(tokenizer, "get_vocab", return_value={"[UNK]": 0}):
+                with self.assertRaisesRegex(ValueError, "document-end token"):
+                    document_end_id(tokenizer)
+
+    def test_remainder_is_still_dropped_per_1000_documents(self):
+        with tempfile.TemporaryDirectory() as temp, patch("pcc.data.CONTEXT", 12):
+            root = Path(temp)
+            _, tokenizer, _ = sampled_fixture(root / "fixture", documents=1)
+            path = root / "train"
+            Dataset.from_dict({"text": ["1"] * 1000 + ["63"]}).save_to_disk(path)
+            loader = SampledDataLoader(tokenizer, root / "cache")
+            data = loader(path, "train", 1992)
+            self.assertEqual(data.ids.tolist(), [[1, 64] * 6] * 166)
+            with self.assertRaisesRegex(ValueError, "no resampling"):
+                loader(path, "train", 2004)
+
+    def test_old_prepared_inputs_are_rejected_by_experiment_loader(self):
+        from pcc.data import PreparedContexts, save_contexts
+        from pcc.protocol import MODEL_ID, REVISION
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "train.npz"
+            ids = np.ones((1, 2048), dtype=np.int64)
+            valid = np.ones_like(ids, dtype=bool)
+            positions = np.arange(2048)[None, :]
+            metadata = dict(source="fixture", split="train", language="en", model_id=MODEL_ID,
+                            tokenizer_revision=REVISION, data_order_seed=DATA_SEED,
+                            packing="full_causal", preprocessing={"policy": "legacy_document_map"})
+            save_contexts(path, ids, valid, positions, metadata)
+            # The low-level reader remains available to inspect historical data.
+            PreparedContexts(path, "train", 2048)
+            with self.assertRaisesRegex(ValueError, "prepare fresh inputs"):
+                SampledDataLoader(None, Path(temp) / "cache")(path, "train", 2048)
+            # Current inputs pass without tokenizing again; wrong chat EOS fails.
+            metadata["preprocessing"] = preprocessing_policy(2048)
+            current = Path(temp) / "current.npz"
+            save_contexts(current, ids, valid, positions, metadata)
+            loaded = SampledDataLoader(None, Path(temp) / "cache")(current, "train", 2048)
+            np.testing.assert_array_equal(loaded.ids, ids)
+            metadata["preprocessing"]["document_end_token_id"] = 151645
+            wrong = Path(temp) / "wrong.npz"
+            save_contexts(wrong, ids, valid, positions, metadata)
+            with self.assertRaisesRegex(ValueError, "document-end policy"):
+                SampledDataLoader(None, Path(temp) / "cache")(wrong, "train", 2048)
 
     def test_validation_padding_shortfall_and_split_aliases(self):
         with tempfile.TemporaryDirectory() as temp, patch("pcc.data.CONTEXT", 12):

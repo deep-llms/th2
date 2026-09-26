@@ -1,9 +1,34 @@
 # Project notes
 
+## Document-end packing update (2026-09-26)
+
+User authorized adding EOS document boundaries while retaining current packing.
+Both train.py and PCC now explicitly append <|endoftext|> (151643 for the pinned
+Qwen tokenizer) before concatenation/chunking. Resolve by token name; do not use
+tokenizer.eos_token_id, which can be the chat marker 151645. Shared logic lives
+in pcc/packing.py. Automatic tokenizer special tokens remain disabled.
+1000-document batches, remainder dropping, context shuffle, full causal attention,
+positions, and fixed update/input-token budgets are preserved. EOD tokens count
+in those budgets and participate in the existing causal loss.
+Future metadata records document_map_eod_v1; experiment entry points reject
+old prepared NPZ policies. Low-level PreparedContexts remains able to read
+historical artifacts. No existing cache cleanup or migration is needed on B200.
+prepare_data.py and ongoing remote sampling are unchanged; no deployment or
+training launch is part of this code change. Previous experiments remain results
+of the earlier no-separator policy.
+Validation: all 134 offline CPU tests passed (163.834s), including document
+boundaries, unchanged remainder handling, prepared-policy rejection, shared
+prefixes, and the real tiny pipeline/queue test. Log:
+temp/eod-packing-regression-final-20260926.log. The initial broader run caught
+an out-of-vocabulary ID in the new toy fixture; corrected the fixture to use
+its existing vocabulary, then reran the full suite successfully. Actual pinned
+Qwen tokenizer check also passed: [9707,1879,13,151643] for Hello world. despite
+tokenizer.eos_token_id=151645. Python compilation and git diff checks passed.
+
 ## Qwen end-token verification (2026-09-26)
 
-User accepted existing per-1000-document packing without separators; leave it
-unchanged. A CPU-only verified base-weight probe naturally generated endoftext
+Historical decision: user initially accepted packing without separators;
+superseded by the 2026-09-26 document-end change below. A CPU-only verified base-weight probe naturally generated endoftext
 151643 in 1/8 greedy and 1/8 sampled runs; no im_end generated. Official Qwen
 control-token docs state pretraining inserts endoftext between documents,
 separately from the tokenizer call. See QWEN_BASE_EOS_PROBE_20260926.md.
@@ -324,8 +349,8 @@ B200 remains outside the execution scope.
   `model_path`, `train_data`, and `val_data`, with optional `microbatch` and
   independent `test_data`. The previous exporter and document-range config
   were removed at the user's request.
-- Packing follows the legacy single-process map recipe: 1000 documents per
-  batch, no special tokens/separators, per-batch remainder dropping, then
+- Packing now uses document_map_eod_v1: 1000 documents per batch, explicit
+  endoftext (151643) after each document, per-batch remainder dropping, then
   context shuffling with seed 20260922. Entire supplied splits are preprocessed
   once per run before shuffle; internal caches are reused between stages.
 - Missing test input permits development-only completion. Passing dev gates

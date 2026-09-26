@@ -120,8 +120,9 @@ of gain or a full-context memory/throughput benchmark.
 The screen uses the first 4,194,304 ordered training input tokens and 2,000,000
 validation input tokens. These are prefixes of the same streams used by the
 full probe. The last evaluation context may be right-padded. Every valid causal
-next-token target is scored, excluding padding. Tokenization adds no special
-tokens or separators, with ordinary causal attention across packed documents.
+next-token target is scored, excluding padding. Tokenization disables automatic special tokens; packing explicitly appends
+`<|endoftext|>` (151643) after each document, with ordinary causal attention
+across packed documents. This is policy `document_map_eod_v1` (2026-09-26).
 The low-level NPZ interface remains supported for existing packed inputs and
 fixtures, including explicit block-isolated segment masks.
 

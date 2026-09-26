@@ -51,12 +51,22 @@ existing `eval/en` Dataset in `pcc.pipeline.example.json`. PCC consumes those
 fixed splits directly. There is no `pcc prepare` command, explicit document-range
 configuration, or required NPZ export. It neither resamples documents nor makes
 another validation split. The low-level packed-context reader remains available
-for existing NPZ inputs and test fixtures.
+for inspecting historical NPZ inputs and test fixtures. Experiment loaders require
+the current document-end preprocessing metadata on prepared NPZ inputs.
 
 The shared loader loads training shards in sorted order and follows `train.py`'s
-single-process recipe: tokenize without special tokens, concatenate within each
+single-process recipe: tokenize with `add_special_tokens=False`, explicitly append
+`<|endoftext|>` (151643) after each document, concatenate within each
 1000-document map batch, drop that batch's incomplete context, then shuffle
 2048-token contexts with seed 20260922. The same recipe is used for validation.
+The separator is resolved by its literal token name, not `tokenizer.eos_token_id`,
+which can point to the chat marker `<|im_end|>`. Separators count toward input-token
+budgets and are normal causal targets where a preceding token is in the context.
+Attention and positions are not reset at document boundaries. The policy is
+`document_map_eod_v1`, introduced on 2026-09-26; prior runs used no separator.
+Sampling and its saved whole-document text remain unchanged. No existing B200
+cache needs migration or deletion. Future experiment inputs must be prepared
+with this policy; old NPZ inputs are rejected rather than relabeled.
 Screen and full probe use token-identical prefixes of this shared ordered stream.
 The final evaluation context is right-padded to the exact requested token count.
 Every arm uses the same batch order, masks, initialization seed within its stage,

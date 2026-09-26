@@ -8,6 +8,8 @@ import torch
 
 from .model import Context
 from .protocol import CONTEXT, DATA_SEED, MODEL_ID, REVISION
+from .packing import (document_end_id, preprocessing_policy,
+                      require_current_preprocessing, tokenize_documents)
 
 
 def save_contexts(path, input_ids, valid, position_ids, metadata, segments=None):
@@ -107,10 +109,10 @@ def validate_matched_data(train, dev):
 class SampledDataLoader:
     """Tokenize each fixed split once and serve identical shuffled prefixes.
 
-    Matches train.py's single-process, 1000-document map batches: concatenate
-    without special tokens, drop each batch's remainder, then shuffle contexts.
+    Matches train.py's single-process, 1000-document map batches: append document
+    ends, concatenate, drop each batch's remainder, then shuffle contexts.
     Arrow caches live in the run directory; sampler inputs are never modified.
-    NPZ inputs remain supported for existing fixtures and already packed data.
+    NPZ experiment inputs must declare the current document-end policy.
     """
 
     def __init__(self, tokenizer, cache_dir, *, train_documents=None):
@@ -124,7 +126,9 @@ class SampledDataLoader:
     def __call__(self, path, split, token_budget):
         path = Path(path).resolve()
         if not path.is_dir():
-            return PreparedContexts(path, split, token_budget)
+            data = PreparedContexts(path, split, token_budget)
+            require_current_preprocessing(data.metadata, CONTEXT)
+            return data
         if type(token_budget) is not int or token_budget < 2 or token_budget % CONTEXT == 1:
             raise ValueError("Invalid input-token budget: each context needs a causal target")
         if split == "train" and token_budget % CONTEXT:
@@ -146,10 +150,8 @@ class SampledDataLoader:
         data.segments = None
         data.metadata = {**identity, "split": split, "language": "en", "model_id": MODEL_ID,
                          "tokenizer_revision": REVISION, "data_order_seed": DATA_SEED,
-                         "packing": "full_causal", "preprocessing": {
-                             "policy": "legacy_document_map", "map_batch_size": 1000, "num_proc": 1,
-                             "context_length": CONTEXT, "add_special_tokens": False,
-                             "remainder": "drop_per_document_map_batch"}}
+                         "packing": "full_causal", "preprocessing":
+                             preprocessing_policy(CONTEXT, document_end_id(self.tokenizer))}
         data.validate(split, token_budget)
         return data
 
@@ -158,6 +160,7 @@ class SampledDataLoader:
 
         if self.tokenizer is None:
             raise ValueError("Raw-text datasets require the pinned model tokenizer")
+        end_id = document_end_id(self.tokenizer)
         shards = [path] if (path / "dataset_info.json").is_file() else sorted(path.glob("shard_*"))
         if not shards or any(not p.is_dir() for p in shards):
             raise ValueError(f"Expected a saved text Dataset or shard_* directories: {path}")
@@ -194,7 +197,7 @@ class SampledDataLoader:
         context_length = CONTEXT
 
         def tokenize(batch):
-            return {"input_ids": tokenizer(batch["text"], add_special_tokens=False)["input_ids"]}
+            return {"input_ids": tokenize_documents(batch["text"], tokenizer, end_id)}
 
         def pack(batch):
             tokens = list(chain.from_iterable(batch["input_ids"]))

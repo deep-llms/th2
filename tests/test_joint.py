@@ -239,6 +239,7 @@ class JointTests(unittest.TestCase):
         from pcc.joint import load_inputs
         from pcc.joint_config import plan
         from pcc.protocol import MODEL_ID, REVISION
+        from pcc.packing import preprocessing_policy
         small = JointSettings(updates=4, tokens_per_update=4096, warmup=1,
                               monitor_tokens=2048, dev_tokens=4096)
         with tempfile.TemporaryDirectory() as directory:
@@ -250,7 +251,7 @@ class JointTests(unittest.TestCase):
                 data.path = root / f"{split}.npz"
                 data.metadata = {"source": split, "split": split, "language": "en", "model_id": MODEL_ID,
                     "tokenizer_revision": REVISION, "data_order_seed": 20260922,
-                    "preprocessing": {"policy": "fixture"}, "packing": "full_causal"}
+                    "preprocessing": preprocessing_policy(2048), "packing": "full_causal"}
                 save_contexts(data.path, data.ids, data.valid, data.positions, data.metadata)
                 streams[split] = describe_contexts(data)
             (root / "complete.json").write_text(json.dumps({"status": "ok", "plan": plan(config), "streams": streams}))
@@ -265,6 +266,20 @@ class JointTests(unittest.TestCase):
                 modified["input_ids"][0, 0] += 1
                 np.savez(root / "train.npz", **modified)
                 with self.assertRaisesRegex(ValueError, "inputs changed"):
+                    load_inputs(config, root, 0)
+                old_metadata = json.loads(str(modified["metadata"].item()))
+                old_metadata["preprocessing"] = {"policy": "legacy_document_map"}
+                modified["metadata"] = np.array(json.dumps(old_metadata))
+                np.savez(root / "train.npz", **modified)
+                # Change dev metadata too so the train/dev policy match cannot
+                # alone catch this historical-data reuse.
+                with np.load(root / "dev.npz", allow_pickle=False) as archive:
+                    old_dev = {k: archive[k] for k in archive.files}
+                dev_metadata = json.loads(str(old_dev["metadata"].item()))
+                dev_metadata["preprocessing"] = old_metadata["preprocessing"]
+                old_dev["metadata"] = np.array(json.dumps(dev_metadata))
+                np.savez(root / "dev.npz", **old_dev)
+                with self.assertRaisesRegex(ValueError, "prepare fresh inputs"):
                     load_inputs(config, root, 0)
 
     def test_joint_report_uses_both_seeds_and_rejects_wrong_counts(self):

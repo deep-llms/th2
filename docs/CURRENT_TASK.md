@@ -1,5 +1,30 @@
 # Current task
 
+## Document-end packing update (2026-09-26)
+
+User authorized adding EOS document boundaries while retaining current packing.
+Both train.py and PCC now explicitly append <|endoftext|> (151643 for the pinned
+Qwen tokenizer) before concatenation/chunking. Resolve by token name; do not use
+tokenizer.eos_token_id, which can be the chat marker 151645. Shared logic lives
+in pcc/packing.py. Automatic tokenizer special tokens remain disabled.
+1000-document batches, remainder dropping, context shuffle, full causal attention,
+positions, and fixed update/input-token budgets are preserved. EOD tokens count
+in those budgets and participate in the existing causal loss.
+Future metadata records document_map_eod_v1; experiment entry points reject
+old prepared NPZ policies. Low-level PreparedContexts remains able to read
+historical artifacts. No existing cache cleanup or migration is needed on B200.
+prepare_data.py and ongoing remote sampling are unchanged; no deployment or
+training launch is part of this code change. Previous experiments remain results
+of the earlier no-separator policy.
+Validation: all 134 offline CPU tests passed (163.834s), including document
+boundaries, unchanged remainder handling, prepared-policy rejection, shared
+prefixes, and the real tiny pipeline/queue test. Log:
+temp/eod-packing-regression-final-20260926.log. The initial broader run caught
+an out-of-vocabulary ID in the new toy fixture; corrected the fixture to use
+its existing vocabulary, then reran the full suite successfully. Actual pinned
+Qwen tokenizer check also passed: [9707,1879,13,151643] for Hello world. despite
+tokenizer.eos_token_id=151645. Python compilation and git diff checks passed.
+
 ## Sampling runtime and reuse assessment (2026-09-26)
 
 Read-only progress export 889eec6 completed; snapshot at 20:30:38 UTC shows

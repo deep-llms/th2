@@ -110,6 +110,8 @@ def load_inputs(config, directory, seed_index):
     from .data import PreparedContexts, validate_matched_data
     from .input_check import context_fingerprint
     from .joint_training import require
+    from .packing import require_current_preprocessing
+    from .protocol import CONTEXT
     settings = settings_for(config)
     record = json.loads((directory / "complete.json").read_text())
     # JSON normalization makes tuples in the in-memory plan compare as arrays.
@@ -118,6 +120,7 @@ def load_inputs(config, directory, seed_index):
     dev = PreparedContexts(directory / "dev.npz", "dev", settings.dev_tokens)
     validate_matched_data(train, dev)
     for name, data in (("train", train), ("dev", dev)):
+        require_current_preprocessing(data.metadata, CONTEXT)
         require(context_fingerprint(data) == record["streams"][name]["context_sha256"], "Prepared inputs changed")
     # The first pool order already uses 20260922. The second seed permutes the
     # exact same pool, not a different prefix of the full corpus.

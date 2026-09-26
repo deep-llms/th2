@@ -37,6 +37,7 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 
 from model_wrapper_v2 import inject_embhub, load_model_with_embhub, save_embhub
+from pcc.packing import document_end_id, tokenize_documents
 
 logger = logging.getLogger(__name__)
 
@@ -279,9 +280,11 @@ def main():
     logger.info(f"Combined: {raw_dataset.num_rows:,} documents")
     column_names = raw_dataset.column_names
 
-    # Tokenize
+    # Explicit document ends; Qwen's tokenizer EOS may instead be <|im_end|>.
+    end_id = document_end_id(tokenizer)
     def tokenize_function(examples):
-        return tokenizer(examples["text"], add_special_tokens=False)
+        ids = tokenize_documents(examples["text"], tokenizer, end_id)
+        return {"input_ids": ids, "attention_mask": [[1] * len(row) for row in ids]}
 
     with training_args.main_process_first(desc="dataset map tokenization"):
         tokenized_dataset = raw_dataset.map(
