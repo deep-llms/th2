@@ -1,5 +1,33 @@
 # Current task
 
+## Active: local reproduction of B200 sampling (2026-09-26)
+
+User authorized a separate environment matching B200, then download and sampling
+on this dev machine. Run root: temp/local-sampling-20260926-a01.
+New conda environment: /home/users/thien/miniconda3/envs/sampling_b200.
+B200 reference captured read-only via f4f4e92, job
+th2-78gg-export-sampling-env-20260926-a01. Python 3.11.15; 160 exact conda
+name/version/build/subdir records and 160 Python distribution versions captured,
+plus first-16-document tokenizer digests for each language. Reference and locks
+are under envs/sampling_b200.*. Conda creation succeeded; pip installation and
+final version/tokenization equality checks are pending. Original train_env is
+unchanged. No GPU use; no changes to the B200 sampling process.
+Pinned local download is running in tmux d2s_sampling_download_20260926_a01,
+using nguyenhuuthuat09/CulturaX_sampled revision
+b19d850278693d37113c197857cc6328fa5c6881. HF metadata matches all 75 committed
+manifest hashes/166107112571 bytes. Existing verified en_part_00015 was hardlinked;
+other 74 files download under <run>/data/raw. Require download_complete.json
+(status ok, all 75 SHA256 checked) before sampling. Download log: <run>/download.log.
+Sampler source/manifests and pinned tokenizer assets are frozen under <run>/source
+and <run>/tokenizer. prepare_data.py is unchanged. CPU-only workflow
+scripts/run_verified_local_sampling.py will check exact software versions,
+conda builds, source/assets hashes and six-language tokenization probes before
+launching the identical offline sampler. Output: <run>/data/Qwen_Qwen3-0.6B-Base.
+Its final sampling_complete.json will record document counts and ordered text
+hashes per split; cross-machine full-output equality still needs B200 hashes.
+No Hugging Face upload authorized/launched in this step. commands.sh set back
+ to #0 after the read-only environment capture; do not relaunch it.
+
 ## Document-end packing update (2026-09-26)
 
 User authorized adding EOS document boundaries while retaining current packing.
