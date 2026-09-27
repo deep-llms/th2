@@ -1,5 +1,33 @@
 # Project notes
 
+## B200 smoke blocked by runner connection (2026-09-27)
+
+User authorized an eight-GPU B200 smoke, committing all local changes, copying
+resources/accelerate_config.yaml to the actual HF Accelerate default config,
+verifying accelerate env, and correctly stopping identified GPU burns first.
+Committed the user's README/commands.md/config rename as 5e76192. Pushed all
+pending code and preflight command in 96487e06babf6d256723f239430f87efee98a959 to
+origin main (deep-llms/th2); remote head was verified. No temp/INSTRUCTION.md was
+supplied; protocol follows the provided guides and successful runner history.
+
+Runner status for job th2-78gg-deep-kv-smoke-preflight-20260927-a01 at controller
+timestamp 2026-09-27 04:06:10 reports FAILED(rc=255):
+ ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known
+This is a runner SSH/hostname failure before remote project execution. No current
+B200 GPU ownership, environment/config installation, burn stop, or smoke outcome
+was obtained. Do not infer GPU availability from the old sampling logs. No
+resubmission, process signal or cleanup was attempted after this failure.
+Wait for operator repair before a fresh preflight and smoke submission.
+
+Evidence: temp/deep-kv-b200-smoke-status-poll1-20260927.log, SHA256
+21e974ade9e4be4f4601ca32b51593f420f1258e468c74ed221dc6d7874d8ddd.
+The submitted command is preserved in Git at 96487e0 and locally in
+temp/deep-kv-b200-smoke-preflight-20260927-a01.commands.sh. Local commands.sh is
+restored to #0. No further execution-remote push after the infrastructure error;
+remote main remains at the failed preflight revision. Hardware smoke is pending,
+not passed. All user source changes are committed; no real training started.
+
+
 ## Active: use train.py's cached text pipeline (2026-09-27)
 
 User explicitly rejected the custom binary preparation stage. Removed Deep-KV
