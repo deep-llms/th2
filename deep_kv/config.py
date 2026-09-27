@@ -9,10 +9,11 @@ NAMES = dict(zip(ARMS, ("Base", "ExtraAttn-NoAlign", "ShallowKV-Align", "DeepKV-
 
 @dataclass(frozen=True)
 class Recipe:
-    updates: int = 28610
+    # Leave packing margin below the sampler's approximate 30B raw-token target.
+    updates: int = 28600
     context: int = 2048
     tokens_per_update: int = 1048576
-    warmup: int = 1431
+    warmup: int = 1430
     learning_rate: float = 3e-4
     weight_decay: float = 0.1
     eval_every: int = 512

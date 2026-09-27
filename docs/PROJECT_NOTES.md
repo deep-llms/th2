@@ -1,13 +1,32 @@
 # Project notes
 
+## Selected 2,000-step run and packing margin (2026-09-27)
+
+User selected 2000 updates per arm, replacing the earlier 1000-step example:
+2097152000 input tokens per arm, 8388608000 across A/B/C/D, eight GPUs per arm.
+Use make-jobs --stop-after 2000; the full LR schedule remains independent.
+Checked DEEP_KV_DATA_SHORTFALL_20260927.md against sampler code, both sampler
+logs and the eval audit. Its raw token arithmetic is consistent; the expected
+302-context deficit depends on a uniform/independent remainder model, not an
+exact measured train packing count. Applied the recommended 28600-update /
+1430-warmup recipe (29989273600 tokens, 14643200 contexts), giving an estimated
+4818-context margin. Preparation still validates exact capacity before training.
+No sampler/packing changes or repeated data. Previous 28610-recipe streams
+cannot be reused; generated queues must use the revised recipe.
+Updated launch examples to 2000 steps. All 13 focused CPU tests passed (5.963s);
+plan, queue parsing, compilation and diff checks passed. Evidence:
+temp/deep-kv-2k-shortfall-tests-20260927.log, temp/deep-kv-2k-plan-20260927.json
+and temp/deep-kv-2k-jobs-20260927.json. No preparation, GPU training, process
+management, or remote push. commands.sh remains #0.
+
 ## Deep-KV budget and cutoff decision (2026-09-27)
 
 User overrides the original four-arm document's 1B/32K budget: plan approximately
 30B English tokens with a 1M-token global batch, then optionally stop all arms at
-the same optimizer iteration. Defaults are 28610 updates x 1048576 input tokens
-= 29999759360 tokens per arm; 512 contexts of length 2048, eight ranks with 64
+the same optimizer iteration. Defaults are 28600 updates x 1048576 input tokens
+= 29989273600 tokens per arm; 512 contexts of length 2048, eight ranks with 64
 contexts each. Microbatch defaults to 1 (64 accumulation passes); any divisor
-of 64 is accepted. Existing AdamW settings remain; 5% warmup becomes 1431 updates.
+of 64 is accepted. Existing AdamW settings remain; 5% warmup becomes 1430 updates.
 
 The current generic run_experiments.py handles process/artifact sequencing, not
 trainer step counting. Deep-KV make-jobs now passes --stop-after N to all four
@@ -16,7 +35,8 @@ the next arm. The default queue still demands full-budget complete.json.
 Cutoff checkpoints are resumable with unchanged schedule/data order. Every
 endpoint uses the full fixed evaluation split; reports explicitly record
 compared_update, schedule_updates and training_complete. Synthetic tests remain
-marked pilot_result false. No default early-stop iteration was selected.
+marked pilot_result false. The selected experiment cutoff is now 2000 updates;
+pass --stop-after 2000 explicitly (the generic CLI default stays full training).
 
 Preparation covers the full 30B budget even for cutoff queues (~120GB uint32
 tokens/order), so longer runs keep identical shuffled data prefixes. Existing

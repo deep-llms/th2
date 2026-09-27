@@ -1,13 +1,32 @@
 # Current task
 
+## Selected 2,000-step run and packing margin (2026-09-27)
+
+User selected 2000 updates per arm, replacing the earlier 1000-step example:
+2097152000 input tokens per arm, 8388608000 across A/B/C/D, eight GPUs per arm.
+Use make-jobs --stop-after 2000; the full LR schedule remains independent.
+Checked DEEP_KV_DATA_SHORTFALL_20260927.md against sampler code, both sampler
+logs and the eval audit. Its raw token arithmetic is consistent; the expected
+302-context deficit depends on a uniform/independent remainder model, not an
+exact measured train packing count. Applied the recommended 28600-update /
+1430-warmup recipe (29989273600 tokens, 14643200 contexts), giving an estimated
+4818-context margin. Preparation still validates exact capacity before training.
+No sampler/packing changes or repeated data. Previous 28610-recipe streams
+cannot be reused; generated queues must use the revised recipe.
+Updated launch examples to 2000 steps. All 13 focused CPU tests passed (5.963s);
+plan, queue parsing, compilation and diff checks passed. Evidence:
+temp/deep-kv-2k-shortfall-tests-20260927.log, temp/deep-kv-2k-plan-20260927.json
+and temp/deep-kv-2k-jobs-20260927.json. No preparation, GPU training, process
+management, or remote push. commands.sh remains #0.
+
 ## Active recipe override: 30B English / 1M-token updates (2026-09-27)
 
 User superseded the document's 1B-token / 32K-token batch pilot budget.
-Deep-KV now plans 28610 optimizer updates x 1048576 input tokens per update
-= 29999759360 input tokens per arm, with eight GPUs per arm. Context stays
+Deep-KV now plans 28600 optimizer updates x 1048576 input tokens per update
+= 29989273600 input tokens per arm, with eight GPUs per arm. Context stays
 2048; 512 global contexts / 64 per rank. Default microbatch 1 accumulates 64
 passes; any divisor of 64 is configurable without changing global batch.
-Warmup retains 5% of the full schedule (1431 updates), followed by the same
+Warmup retains 5% of the full schedule (1430 updates), followed by the same
 cosine decay to 10% of peak. Mechanism, seeds and other optimizer settings stay.
 
 plan/make-jobs/train/report accept --stop-after N. Generated queues apply one

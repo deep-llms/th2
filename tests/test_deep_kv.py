@@ -292,7 +292,9 @@ class DeepKVTraining(unittest.TestCase):
         from deep_kv.config import load_config, plan
         from run_experiments import load_jobs
         self.assertEqual(Recipe().tokens_per_update, 1048576)
-        self.assertEqual(Recipe().updates * Recipe().tokens_per_update, 29999759360)
+        self.assertEqual(Recipe().warmup, 1430)
+        self.assertEqual(Recipe().train_rows, 14643200)
+        self.assertEqual(Recipe().updates * Recipe().tokens_per_update, 29989273600)
         self.assertEqual(Recipe().tokens_per_update // Recipe().context // 8, 64)
         identity = build_identity({}, Recipe(), model("D"), {}, mixed_precision=False)
         self.assertEqual(json.loads(json.dumps(identity)), identity)
@@ -304,21 +306,22 @@ class DeepKVTraining(unittest.TestCase):
             for job, arm in zip(queue[1:5], "ABCD"):
                 self.assertEqual(job["gpus"], list(range(8)))
                 self.assertEqual(job["required_outputs"][0]["json_equals"]["arm"], arm)
-                self.assertEqual(job["required_outputs"][0]["json_equals"]["input_tokens"], 29999759360)
-            path.write_text(json.dumps(jobs("deep_kv.b200.json", stop_after=1000)))
+                self.assertEqual(job["required_outputs"][0]["json_equals"]["input_tokens"], 29989273600)
+            path.write_text(json.dumps(jobs("deep_kv.b200.json", stop_after=2000)))
             queue = load_jobs(path)
             for job, arm in zip(queue[1:5], "ABCD"):
-                self.assertEqual(job["argv"][-2:], ["--stop-after", "1000"])
+                self.assertEqual(job["argv"][-2:], ["--stop-after", "2000"])
                 self.assertEqual(job["required_outputs"][0], {"path": f"{arm}/stopped.json", "json_equals": {
-                    "status": "stopped", "arm": arm, "update": 1000, "input_tokens": 1048576000}})
-            self.assertEqual(queue[-1]["argv"][-2:], ["--stop-after", "1000"])
+                    "status": "stopped", "arm": arm, "update": 2000, "input_tokens": 2097152000}})
+            self.assertEqual(queue[-1]["argv"][-2:], ["--stop-after", "2000"])
             self.assertFalse(queue[-1]["required_outputs"][0]["json_equals"]["training_complete"])
-            for invalid in (0, -1, 28611, True, 1.5):
+            for invalid in (0, -1, 28601, True, 1.5):
                 with self.assertRaises(ValueError):
                     jobs("deep_kv.b200.json", stop_after=invalid)
-            planned = plan(load_config("deep_kv.b200.json"), 1000)
-            self.assertEqual(planned["run_tokens_per_arm"], 1048576000)
-            self.assertEqual(planned["recipe"]["updates"], 28610)
+            planned = plan(load_config("deep_kv.b200.json"), 2000)
+            self.assertEqual(planned["run_tokens_per_arm"], 2097152000)
+            self.assertEqual(planned["run_total_input_tokens"], 8388608000)
+            self.assertEqual(planned["recipe"]["updates"], 28600)
             for microbatch in (1, 2, 4, 8, 16, 32, 64, 3, 128):
                 path.write_text(json.dumps({**json.loads(Path("deep_kv.b200.json").read_text()), "microbatch": microbatch}))
                 if microbatch in (3, 128):

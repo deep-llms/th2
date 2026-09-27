@@ -32,14 +32,15 @@ recomputes ordinary blocks during backward without mutable capture hooks.
 | Backbone | Qwen3 0.6B geometry, 28 blocks, random initialization |
 | Context | 2048 |
 | Global input tokens/update | 1,048,576 (512 full contexts) |
-| Updates/arm | 28,610 (floor of 30B / 1,048,576) |
-| Input tokens/arm | 29,999,759,360 |
+| Full schedule updates/arm | 28,600 (includes packing margin below 30B) |
+| Full schedule input tokens/arm | 29,989,273,600 |
+| Selected run cutoff | 2,000 updates = 2,097,152,000 input tokens/arm |
 | Execution | Eight GPUs per arm, sequential A → B → C → D |
 | Microbatch/rank | 1 by default; 64 accumulation passes (64 contexts/rank) |
 | Master parameters / compute | float32 / bfloat16 autocast |
 | Optimizer | AdamW, betas (0.9, 0.95), epsilon 1e-8 |
 | Peak LR / weight decay | 3e-4 / 0.1; no decay on vectors/norms |
-| Schedule | 1,431 warmup updates (5%, rounded up); cosine decay to 10% of peak |
+| Schedule | 1,430 warmup updates (5%); cosine decay to 10% of peak |
 | Gradient clipping | Global norm 1.0 |
 | Model / data seed | 2901 / 20260922 |
 | Monitoring | Every 512 updates, fixed 128 evaluation contexts |
@@ -52,6 +53,11 @@ measured optimal values. A cutoff shortens execution while retaining this full
 schedule. Microbatch may be any divisor of 64; accumulation adapts to preserve
 the global batch. Larger microbatches require a GPU memory check. Synthetic CPU
 smoke runs use a separate, clearly labeled tiny recipe.
+
+The original 28,610-update budget was slightly larger than the expected packed
+English split. The 28,600-update schedule follows the margin recommended in
+[the shortfall analysis](DEEP_KV_DATA_SHORTFALL_20260927.md). Its capacity estimate
+is not a measured packed count; preparation still validates the exact budget.
 
 ## Data
 
@@ -80,17 +86,20 @@ GPU workloads must be handled under the repository's GPU ownership rules first.
 The queue only checks GPUs and refuses occupied devices; it never reclaims them.
 
 ```bash
-python -m deep_kv plan --config deep_kv.b200.json
-python -m deep_kv make-jobs --config deep_kv.b200.json --output temp/deep-kv-jobs.json
+python -m deep_kv plan --config deep_kv.b200.json --stop-after 2000
+python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
+  --output temp/deep-kv-jobs.json
 python run_experiments.py --config temp/deep-kv-jobs.json --list
 python run_experiments.py --config temp/deep-kv-jobs.json \
-  --run-dir /mnt/local/_outputs/deep-llms_th2/deep-kv-v2-seed2901
+  --run-dir /mnt/local/_outputs/deep-llms_th2/deep-kv-v2-seed2901-2k
 ```
 
 Use the selected environment's Python for all commands. The generated queue
 prepares data on CPU, runs each arm with eight-rank `torchrun`, then produces
 `comparison.json` on CPU. Each arm must exit successfully and publish the exact
-28,610-update/29,999,759,360-token completion marker before the queue advances.
+2,000-update/2,097,152,000-token stopped marker before the queue advances.
+Omitting `--stop-after` instead requires full 28,600-update/29,989,273,600-token
+completion.
 The report verifies shared data/recipe/initialization and checkpoint identities.
 It reports LM-loss differences B−A, C−B, D−B, D−C and D−A; negative favors the
 first arm. Single-seed differences are exploratory, not statistical proof.
@@ -99,7 +108,7 @@ To prepare once and reuse in another explicitly planned queue:
 
 ```bash
 python -m deep_kv prepare --config deep_kv.b200.json --output /PATH/prepared
-python -m deep_kv make-jobs --config deep_kv.b200.json \
+python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
   --data-dir /PATH/prepared --output temp/deep-kv-reuse-jobs.json
 ```
 
@@ -111,23 +120,24 @@ per-rank RNG and exact update cursor. The latest checkpoint is replaced atomical
 older periodic checkpoints are not accumulated. Budget roughly 7–8 GB per arm
 for float32 model plus Adam moments, with additional temporary space during save.
 
-For a deliberate common cutoff, generate the queue with `--stop-after N`.
-For example, 1,000 optimizer updates consume 1,048,576,000 tokens per arm:
+The selected experiment uses a common **2,000-update cutoff**, consuming
+2,097,152,000 tokens per arm (8,388,608,000 across four arms). Generate its queue
+with `--stop-after 2000`; omitting that argument requests the full schedule:
 
 ```bash
-python -m deep_kv plan --config deep_kv.b200.json --stop-after 1000
-python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 1000 \
+python -m deep_kv plan --config deep_kv.b200.json --stop-after 2000
+python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
   --data-dir /PATH/prepared --output temp/deep-kv-cutoff-jobs.json
 python run_experiments.py --config temp/deep-kv-cutoff-jobs.json --run-dir /PATH/run
 ```
 
 The queue passes the same cutoff to A/B/C/D and the comparison. Each arm retains
-the 28,610-update LR schedule, evaluates all 4,882 fixed evaluation contexts,
+the 28,600-update LR schedule, evaluates all 4,882 fixed evaluation contexts,
 saves a resumable checkpoint, and writes `stopped.json`. The cutoff queue checks
 the exact iteration and token count before advancing. `comparison.json` records
 `compared_update` and `training_complete: false`; its `status: complete` means
 the comparison finished. A full-budget queue still requires `complete.json`.
-No cutoff is selected by default. A cutoff equal to 28,610 is full completion.
+The CLI default remains full training. A cutoff equal to 28,600 is full completion.
 
 The trainer and report also accept `--stop-after N` individually. To continue
 an arm to the full budget, omit the cutoff when resuming:
