@@ -197,13 +197,14 @@ the job manifest, and verify data/model/env/output settings. Honor requested
 wait/recheck intervals; after copying the actual distributed config, compare
 its bytes and check availability again immediately before launch.
 
-The optional Accelerate config in this template is only a single-process,
-no-mixed-precision example. If the project needs Accelerate, configure and
-validate its GPU count and precision first, then explicitly pass its path to
+`resources/accelerate_config.yaml` is an eight-GPU, single-node, BF16
+`MULTI_GPU` configuration (`gpu_ids: all`), copied from the
+cross_lingual_embeddings_hub project. Explicitly pass its path to
 `accelerate launch --config_file ...` or copy it to the interpreter's actual
 HF Accelerate cache path. On the known runner this is commonly
-`/mnt/local/.cache/huggingface/accelerate/default_config.yaml`. Do not copy the
-unmodified example as an eight-GPU training configuration.
+`/mnt/local/.cache/huggingface/accelerate/default_config.yaml`; confirm the
+path with `accelerate env` and back up any existing file before replacing it.
+Verify the node's GPU count before using it on a different machine.
 
 The generic job runner supports wall-clock timeouts, not trainer-specific
 step counting. Implement a graceful stop-at-step in the actual trainer,

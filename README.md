@@ -94,7 +94,7 @@ use a new run ID for a retry. It does not train, download, or use GPUs.
 | `scripts/dropbox_access.py` | Dev-machine non-recursive shared-folder listing and safe file download |
 | `scripts/example_job.py` | Tiny CPU example; not a project training script |
 | `envs/runtime.txt` | Minimal runner environment example |
-| `resources/accelerate_config.example.yaml` | Optional, deliberately single-process/no-mixed-precision example |
+| `resources/accelerate_config.yaml` | Eight-GPU single-node BF16 Accelerate config (`MULTI_GPU`, `gpu_ids: all`) |
 | `resources/llm_pretrain_burn.py` | Optional PyTorch/NCCL GPU stress workload; see `docs/GPU_SAFETY.md` before use |
 
 See `docs/JOBS.md` for the job manifest and `docs/DROPBOX_ACCESS.md` for
