@@ -1,5 +1,17 @@
 # Project notes
 
+## Smoke launcher compatibility correction (2026-09-27)
+
+The first smoke submission 7b01e3f failed BEFORE any GPU signal or training:
+B200 conda Python does not expose os.pidfd_open. The runner burn remained active;
+the safety wrapper left its owned guard-disable marker pending review. Evidence:
+temp/deep-kv-refactor-smoke-20260927-a01-initial.log. Added libc PID-handle fallback
+for Python builds missing either PID-handle function, tested against an owned
+local child process (including stale-handle rejection). Retry job a02 adopts only
+this task's previous marker after verifying its launcher has exited, and repeats
+all fresh PID/UUID/start-time checks. It keeps the same fresh a01 smoke output
+path, which the first attempt never created. Model/training code is unchanged.
+
 ## B200 preflight passed; full-model smoke submission (2026-09-27)
 
 Commit 7b59f57 preflight succeeded on thiennh-p6-78gg-worker-0 at 23:10 UTC.

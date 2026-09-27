@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-deep-kv-refactor-smoke-20260927-a01
+#th2-78gg-deep-kv-refactor-smoke-20260927-a02
 set -euo pipefail
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
 conda activate train_env
@@ -9,7 +9,7 @@ python -u <<'PY'
 import hashlib, json, os, signal, socket, subprocess, time
 from pathlib import Path
 from scripts.gpu_status import require_free
-from scripts.verified_gpu_reclaim import inspect, ownership
+from scripts.verified_gpu_reclaim import inspect, ownership, pidfd_open, pidfd_send_signal
 from accelerate.commands.config.config_args import default_yaml_config_file
 
 preflight = Path('/mnt/local/_outputs/deep-llms_th2/deep-kv-refactor-preflight-20260927-a01')
@@ -23,7 +23,7 @@ guard = Path('/mnt/local/_gpu_guard')
 assert hashlib.sha256((guard / 'gpu_guard.sh').read_bytes()).hexdigest() == '3657a891b9e75e1bf57e9cf13d6db24f89ca2b625bbbfb80a19a141d64a1e3b5'
 assert Path(default_yaml_config_file).read_bytes() == Path('resources/accelerate_config.yaml').read_bytes()
 marker = guard / 'DISABLED'
-payload = json.dumps({'owner': 'deep-kv-refactor-smoke-20260927-a01', 'pid': os.getpid()}) + '\n'
+payload = json.dumps({'owner': 'deep-kv-refactor-smoke-20260927-a02', 'pid': os.getpid()}) + '\n'
 owned = None
 handles = {}
 try:
@@ -33,11 +33,22 @@ try:
             handle.flush()
             owned = os.fstat(handle.fileno())
     except FileExistsError:
-        print('PRESERVING_PREEXISTING_GUARD_DISABLE', flush=True)
+        # Adopt only the marker left by this task's failed pre-signal attempt.
+        with marker.open('r+') as handle:
+            previous = json.load(handle)
+            assert previous['owner'] == 'deep-kv-refactor-smoke-20260927-a01'
+            assert not Path('/proc', str(previous['pid'])).exists(), 'Previous launcher still exists'
+            assert marker.stat().st_ino == os.fstat(handle.fileno()).st_ino
+            handle.seek(0)
+            handle.write(payload)
+            handle.truncate()
+            handle.flush()
+            owned = os.fstat(handle.fileno())
+        print('ADOPTED_OWN_FAILED_PREFLIGHT_MARKER', flush=True)
     # Allow a guard pass already in progress to finish before final inspection.
     time.sleep(30)
     for pid in expected['workers']:
-        handles[pid] = os.pidfd_open(pid)
+        handles[pid] = pidfd_open(pid)
     current = inspect()
     assert current['host'] == expected['host']
     assert ownership(current['gpus']) == ownership(expected['gpus'])
@@ -47,7 +58,7 @@ try:
     print('VERIFIED_BURN_WORKER_STOP', json.dumps(current), flush=True)
     for pid, handle in handles.items():
         try:
-            signal.pidfd_send_signal(handle, signal.SIGKILL)
+            pidfd_send_signal(handle, signal.SIGKILL)
         except ProcessLookupError:
             pass
     time.sleep(30)

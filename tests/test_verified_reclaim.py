@@ -1,9 +1,36 @@
 import copy
 import unittest
+import os
+import signal
+import subprocess
+import sys
+from unittest.mock import patch
 from scripts.verified_gpu_reclaim import validate
+from scripts.verified_gpu_reclaim import pidfd_open, pidfd_send_signal
 
 
 class VerifiedReclaimTests(unittest.TestCase):
+    @unittest.skipUnless(sys.platform == 'linux', 'Linux PID handles')
+    def test_libc_pidfd_fallback_only_signals_owned_child(self):
+        # Exercise the B200 conda case without GPU access or external processes.
+        with patch('scripts.verified_gpu_reclaim.os', wraps=os) as mocked_os, \
+                patch('scripts.verified_gpu_reclaim.signal', wraps=signal) as mocked_signal:
+            del mocked_os.pidfd_open
+            del mocked_signal.pidfd_send_signal
+            with subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)']) as child:
+                fd = None
+                try:
+                    fd = pidfd_open(child.pid)
+                    pidfd_send_signal(fd, signal.SIGTERM)
+                    self.assertEqual(child.wait(timeout=5), -signal.SIGTERM)
+                    with self.assertRaises(ProcessLookupError):
+                        pidfd_send_signal(fd, signal.SIGTERM)
+                finally:
+                    if fd is not None:
+                        os.close(fd)
+                    if child.poll() is None:
+                        child.kill()
+
     def fixture(self):
         status=[{'index':i,'uuid':f'gpu-{i}','pids':[100+i]} for i in range(8)]
         records={str(100+i):{'pid':100+i,'ppid':50,'start_ticks':1000+i,'command_sha256':'worker',

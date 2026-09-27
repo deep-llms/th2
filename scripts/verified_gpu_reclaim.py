@@ -1,15 +1,44 @@
 """Inspect GPU workloads, or stop exactly inspected identities with explicit authorization."""
 import argparse
+import ctypes
 from datetime import datetime, timezone
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import signal
 import socket
 import time
 
 from scripts.gpu_status import require_free, snapshot
+
+
+def _pidfd_syscall(number, *args):
+    # Linux x86-64 UAPI: pidfd_send_signal=424, pidfd_open=434. Conda may
+    # omit Python's wrappers, and dev glibc predates the named libc wrappers.
+    if platform.system() != 'Linux' or platform.machine() != 'x86_64':
+        raise RuntimeError('PID-handle fallback requires Linux x86-64')
+    libc = ctypes.CDLL(None, use_errno=True)
+    libc.syscall.restype = ctypes.c_long
+    result = libc.syscall(ctypes.c_long(number), *(ctypes.c_long(arg) for arg in args))
+    if result < 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error))
+    return result
+
+
+def pidfd_open(pid):
+    """Conda Python can omit os.pidfd_open even on a recent Linux kernel."""
+    if hasattr(os, 'pidfd_open'):
+        return os.pidfd_open(pid)
+    return _pidfd_syscall(434, pid, 0)
+
+
+def pidfd_send_signal(fd, sig):
+    if hasattr(signal, 'pidfd_send_signal'):
+        return signal.pidfd_send_signal(fd, sig)
+    return _pidfd_syscall(424, fd, sig, 0, 0)
 
 
 def process(pid):
@@ -83,7 +112,7 @@ def reclaim(expected, output):
         # Pin identities before the final full validation; never send a group signal.
         for pid in targets:
             if pid<=1:raise ValueError('Refusing PID 1')
-            handles[pid]=os.pidfd_open(pid)
+            handles[pid]=pidfd_open(pid)
         records={str(pid):process(pid) for pid in targets}
         validate(expected,snapshot(list(range(8))),records,socket.gethostname())
         if not Path('/mnt/local/_gpu_guard/DISABLED').is_file():
@@ -92,11 +121,11 @@ def reclaim(expected, output):
         # Gracefully stop the verified serving/burn launchers first so they do
         # not restart their workers. User explicitly authorized these workloads.
         for pid in expected['stop_roots']:
-            try:signal.pidfd_send_signal(handles[pid],signal.SIGTERM)
+            try:pidfd_send_signal(handles[pid],signal.SIGTERM)
             except ProcessLookupError:pass
         time.sleep(10)
         for pid in targets:
-            try:signal.pidfd_send_signal(handles[pid],signal.SIGKILL)
+            try:pidfd_send_signal(handles[pid],signal.SIGKILL)
             except ProcessLookupError:pass
         time.sleep(30)
         after=require_free(list(range(8)))
