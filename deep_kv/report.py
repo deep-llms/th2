@@ -2,9 +2,8 @@
 import json
 from dataclasses import asdict
 from pathlib import Path
-import torch
 from .config import ARMS, Recipe
-from .training import write_json
+from .training import write_json, verify_checkpoint
 
 
 def report(directory, *, recipe=None, stop_after=None):
@@ -16,8 +15,10 @@ def report(directory, *, recipe=None, stop_after=None):
     for arm in ARMS:
         identity = json.loads((root / arm / "run.json").read_text())
         result = json.loads((root / arm / f"{status}.json").read_text())
-        state = torch.load(root / arm / "checkpoint.pt", map_location="cpu", weights_only=True, mmap=True)
-        if (identity["recipe"] != asdict(recipe) or state.get("format") != "deep-kv-checkpoint-v2"
+        if result.get("checkpoint") != f"checkpoint-{end}":
+            raise ValueError("Result references the wrong HF checkpoint")
+        state = verify_checkpoint(root / arm / result["checkpoint"], identity)
+        if (identity["recipe"] != asdict(recipe)
                 or identity["arm"] != arm or result["status"] != status or result["arm"] != arm or result["update"] != end
                 or result["input_tokens"] != end * recipe.tokens_per_update
                 or state["update"] != end or state["identity"] != identity

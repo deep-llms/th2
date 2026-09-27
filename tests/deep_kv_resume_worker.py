@@ -25,6 +25,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--bf16", action="store_true")
     args = parser.parse_args()
     offline()
     torch.set_num_threads(1)
@@ -45,13 +46,18 @@ def main():
                 return DeepKV.from_scratch(copy.deepcopy(config), arm, consumer=recipe.consumer,
                                            deep_target=recipe.deep_target, lm_chunk=recipe.lm_chunk)
             full = fresh()
-            identity = build_identity({"synthetic_resume_check": True}, recipe, full, data.manifest, mixed_precision=False)
-            train(full, data, dev, recipe, args.output / arm / "full", identity, mixed_precision=False)
+            identity = build_identity({"synthetic_resume_check": True}, recipe, full, data.manifest, mixed_precision=args.bf16)
+            train(full, data, dev, recipe, args.output / arm / "full", identity, microbatch=16, mixed_precision=args.bf16)
             train(fresh(), data, dev, recipe, args.output / arm / "resumed", identity,
-                  mixed_precision=False, stop_after=1)
+                  microbatch=16, mixed_precision=args.bf16, stop_after=2)
             resumed = fresh()
             train(resumed, data, dev, recipe, args.output / arm / "resumed", identity,
-                  mixed_precision=False, resume=True)
+                  microbatch=16, mixed_precision=args.bf16, resume=True)
+            trainer_state = json.loads((args.output / arm / "resumed" /
+                                        f"checkpoint-{recipe.updates}/trainer_state.json").read_text())
+            for row in trainer_state["log_history"]:
+                if "eval_objective" in row:
+                    assert row["eval_loss"] == row["eval_objective"]
             for p, q in zip(full.parameters(), resumed.parameters()):
                 torch.testing.assert_close(p, q, atol=2e-6, rtol=2e-5)
             delta = max((p - q).abs().max().item() for p, q in zip(full.parameters(), resumed.parameters()))
@@ -60,6 +66,7 @@ def main():
             results[arm] = {"maximum_parameter_difference": maximum.item(), "updates": recipe.updates}
         if dist.get_rank() == 0:
             write_json(args.output / "resume_verified.json", {"status": "ok", "cpu_only": True,
+                                                              "bf16": args.bf16, "microbatch": 16,
                                                               "world_size": dist.get_world_size(), "arms": results})
     finally:
         dist.destroy_process_group()

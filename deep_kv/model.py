@@ -52,7 +52,7 @@ class AuxiliaryKV(nn.Module):
 
 
 class DeepKV(nn.Module):
-    def __init__(self, backbone, arm, *, seed=2901, consumer=5, deep_target=21,
+    def __init__(self, backbone, arm, *, seed=42, consumer=5, deep_target=21,
                  checkpoint_layers=True, lm_chunk=128):
         super().__init__()
         if transformers.__version__ != "5.9.0":
@@ -76,7 +76,7 @@ class DeepKV(nn.Module):
         # Construct the entire backbone before the branch. Branch initialization
         # never advances the shared backbone's RNG stream.
         with torch.random.fork_rng(devices=[]):
-            torch.random.default_generator.manual_seed(kwargs.get("seed", 2901))
+            torch.random.default_generator.manual_seed(kwargs.get("seed", 42))
             backbone = Qwen3ForCausalLM(config)
         return cls(backbone, arm, **kwargs)
 
@@ -130,27 +130,33 @@ class DeepKV(nn.Module):
         return self.backbone.model.norm(hidden), predicted, target
 
     @staticmethod
-    def alignment(predicted, target, valid):
+    def alignment(predicted, target, valid, *, per_example=False):
         # Mean over heads/features, sum over nonpadding tokens. The trainer
         # normalizes by global input tokens across ranks and accumulation steps.
         mask = valid[:, None, :, None]
-        return tuple(((p.float() - t.detach().float()).abs().masked_fill(~mask, 0)
-                      .mean(dim=(1, 3)).sum()) for p, t in zip(predicted, target))
+        rows = tuple(((p.float() - t.detach().float()).abs().masked_fill(~mask, 0)
+                      .mean(dim=(1, 3)).sum(dim=1)) for p, t in zip(predicted, target))
+        return rows if per_example else tuple(row.sum() for row in rows)
 
     def forward(self, context: Context):
         hidden, predicted, target = self.hidden_states(context)
         labels = context.input_ids[:, 1:].masked_fill(~context.targets(), -100)
-        lm_sum = hidden.new_zeros((), dtype=torch.float32)
+        lm_rows = hidden.new_zeros((hidden.shape[0],), dtype=torch.float32)
         for start in range(0, labels.shape[1], self.lm_chunk):
             y = labels[:, start:start + self.lm_chunk]
             x = hidden[:, start:start + y.shape[1]]
             def ce(h, targets):
                 logits = self.backbone.lm_head(h).float()
                 return F.cross_entropy(logits.reshape(-1, logits.shape[-1]), targets.reshape(-1),
-                                       ignore_index=-100, reduction="sum")
-            lm_sum = lm_sum + (checkpoint(ce, x, y, use_reentrant=False) if self.training else ce(x, y))
-        k_sum = v_sum = lm_sum.new_zeros(())
+                                       ignore_index=-100, reduction="none").view_as(targets).sum(dim=1)
+            lm_rows = lm_rows + (checkpoint(ce, x, y, use_reentrant=False) if self.training else ce(x, y))
+        k_rows = v_rows = torch.zeros_like(lm_rows)
         if target is not None:
-            k_sum, v_sum = self.alignment(predicted, target, context.valid)
-        return {"lm_sum": lm_sum, "lm_count": context.targets().sum(),
-                "k_sum": k_sum, "v_sum": v_sum, "kv_count": context.valid.sum()}
+            k_rows, v_rows = self.alignment(predicted, target, context.valid, per_example=True)
+        counts, tokens = context.targets().sum(dim=1), context.valid.sum(dim=1)
+        return {"lm_sum": lm_rows.sum(), "lm_count": counts.sum(),
+                "k_sum": k_rows.sum(), "v_sum": v_rows.sum(), "kv_count": tokens.sum(),
+                # Tiny per-example statistics let Trainer remove repeated eval
+                # padding on uneven distributed shards without storing logits.
+                "statistics": torch.stack((lm_rows.detach(), counts, k_rows.detach(),
+                                            v_rows.detach(), tokens), dim=1).double()}

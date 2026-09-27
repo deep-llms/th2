@@ -1,5 +1,56 @@
 # Project notes
 
+## Active: Hugging Face Trainer / Accelerate migration (2026-09-27)
+
+User requested following train.py and scripts/train_qwen3_0.6b_baseline.sh,
+replacing only project-specific model/loss and necessary integration points.
+The active deep_kv trainer now delegates its training loop, optimizer/scheduler,
+accumulation, DDP, evaluation gathering and optimizer/RNG checkpoints to Trainer
+(Transformers 5.9.0, Accelerate 1.13.0). Sequential jobs use accelerate launch;
+scripts/train_deep_kv.sh provides the equivalent single-arm launch. Legacy
+EmbHub scripts are unchanged examples, not the active Deep-KV entry point.
+
+Baseline settings now apply: microbatch 16 x 8 GPUs x 4 accumulation, BF16,
+AdamW 3e-4 / .9,.95 / wd .1 / clip 1, cosine_with_min_lr (.1), warmup 500,
+seed/data_seed 42, save every 250 steps, log every 10, 8 data-loader workers
+per rank, offline W&B. CUDA uses Trainer's fused AdamW; CPU tests use AdamW.
+Full budget remains 28600 x 1048576 = 29989273600 tokens; the chosen queue stops
+all arms at 2000 steps without shortening the LR schedule. English packing,
+full-model scratch initialization, four architectures, target detach, fixed
+monitor/final splits, shared input permutation and matched receipts remain.
+Old prepared recipes/checkpoint.pt outputs are incompatible; sampled text is
+unchanged. Prepare once for the new seed/recipe; no resampling is required.
+
+Custom compute_loss returns correctly normalized microbatch means and disables
+HF loss-kwargs scaling; Trainer and DDP apply accumulation/rank averaging once.
+Evaluation gathers per-example sums/counts and removes padded repeats before
+computing LM, K/V, and total loss. A save adapter handles tied embeddings.
+Standard checkpoint-N directories retain two saves; deep_kv.json certifies all
+required files with SHA256 after every rank finishes. Resume/report validate
+identity, exact step, histories and hashes. A CPU-only optimizer restore adapter
+normalizes Accelerate's cpu:0 device; CUDA restore stays native HF.
+
+Verification: 13 focused CPU tests passed in 5.793s, including direct raw-gradient
+accumulation equivalence and corruption rejection. Existing train_env regression:
+147 tests run, 13 version-specific skips, 134 passed (165.808s). Eight-process
+microbatch-16/four-accumulation cutoff/report passed; single-vs-eight weights
+agree within 6.054e-9 and gradient norms within 1.193e-7. Eight-process BF16
+interrupted/resumed training passed for every arm (max weight difference
+3.726e-9). Initial tests exposed/fixed an output-directory creation race and
+CPU indexed-device checkpoint loading. Uneven eval scalar loss was corrected
+to use de-duplicated per-example statistics. Evidence:
+ temp/deep-kv-hf-tests-20260927-final.log
+ temp/deep-kv-hf-legacy-regression-20260927.log
+ temp/deep-kv-hf-ddp-parity-20260927.json
+ temp/deep-kv-hf-resume8-bf16-20260927-a02/resume_verified.json
+ temp/deep-kv-hf-ddp8-20260927-a03/comparison.json
+Accelerate CPU module-launch, generated queue parsing, shell syntax, compilation
+and diff checks passed. All testing local/CPU; no push, B200 operation or real
+training launch. commands.sh remains #0. CUDA/NCCL/fused-optimizer execution
+and real-context throughput are not verified by CPU tests.
+See DEEP_KV_TRAINING.md for current commands. Earlier backend/seed/warmup and
+checkpoint notes below are historical and superseded by this section.
+
 ## Selected 2,000-step run and packing margin (2026-09-27)
 
 User selected 2000 updates per arm, replacing the earlier 1000-step example:

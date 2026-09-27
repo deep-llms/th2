@@ -1,7 +1,9 @@
 # Deep-KV 30B budget: English train data shortfall — 2026-09-27
 
 **Status: recommended recipe fix applied; exact packed count remains unmeasured.**
-The current recipe uses 28,600 updates and 1,430 warmup updates. The selected
+The capacity fix uses 28,600 updates. The original recommendation below used
+1,430 warmup updates; the subsequent HF Trainer migration adopts the baseline's
+500-step warmup (which has no effect on data capacity). The selected
 four-arm run stops at 2,000 updates, preserving that full schedule. No resampling
 or packing-policy change is needed. Preparation still checks the exact required
 context count. The analysis below documents the superseded budget.

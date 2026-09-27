@@ -13,24 +13,28 @@ class Recipe:
     updates: int = 28600
     context: int = 2048
     tokens_per_update: int = 1048576
-    warmup: int = 1430
+    warmup: int = 500
     learning_rate: float = 3e-4
     weight_decay: float = 0.1
     eval_every: int = 512
     monitor_rows: int = 128
     eval_rows: int = 4882
-    checkpoint_every: int = 512
-    seed: int = 2901
-    data_seed: int = 20260922
+    checkpoint_every: int = 250
+    logging_every: int = 10
+    dataloader_workers: int = 8
+    seed: int = 42
+    data_seed: int = 42
     consumer: int = 5
     deep_target: int = 21
     lm_chunk: int = 128
 
     def validate(self):
         for name in ("updates", "context", "tokens_per_update", "warmup", "eval_every",
-                     "monitor_rows", "eval_rows", "checkpoint_every", "consumer", "deep_target", "lm_chunk"):
+                     "monitor_rows", "eval_rows", "checkpoint_every", "logging_every", "consumer", "deep_target", "lm_chunk"):
             if type(getattr(self, name)) is not int or getattr(self, name) <= 0:
                 raise ValueError(f"Invalid recipe field {name}")
+        if type(self.dataloader_workers) is not int or self.dataloader_workers < 0:
+            raise ValueError("Invalid dataloader_workers")
         if not (self.context >= 2 and self.tokens_per_update % self.context == 0
                 and self.warmup < self.updates and self.monitor_rows <= self.eval_rows
                 and self.consumer < self.deep_target and self.learning_rate > 0 and self.weight_decay >= 0):
@@ -56,7 +60,7 @@ def load_config(path):
         raise ValueError("Config requires model_config/tokenizer/train_data/eval_data and optional microbatch")
     for key in required:
         value[key] = str((path.parent / value[key]).resolve())
-    value.setdefault("microbatch", 1)
+    value.setdefault("microbatch", 16)
     rows_per_rank = Recipe().tokens_per_update // Recipe().context // 8
     if (type(value["microbatch"]) is not int or value["microbatch"] <= 0
             or rows_per_rank % value["microbatch"]):

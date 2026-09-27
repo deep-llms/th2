@@ -12,7 +12,7 @@ from transformers import Qwen3Config
 from deep_kv.config import Recipe
 from deep_kv.data import TokenStream, prepare, write_split
 from deep_kv.model import DeepKV
-from deep_kv.training import parameter_hash, train, optimizer_for, set_lr, train_update
+from deep_kv.training import parameter_hash, train, DeepKVTrainer, training_arguments, verify_checkpoint
 from pcc.model import Context
 
 
@@ -217,7 +217,7 @@ class DeepKVTraining(unittest.TestCase):
         from datasets import Dataset
         from tokenizers import Tokenizer, models, pre_tokenizers
         from transformers import PreTrainedTokenizerFast
-        recipe = Recipe(updates=3, context=6, tokens_per_update=12, warmup=1,
+        recipe = Recipe(dataloader_workers=0, logging_every=1, updates=3, context=6, tokens_per_update=12, warmup=1,
                         monitor_rows=1, eval_rows=2, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -239,7 +239,7 @@ class DeepKVTraining(unittest.TestCase):
 
     def test_packing_resume_and_fixed_budget(self):
         torch.set_num_threads(1)
-        recipe = Recipe(updates=3, context=6, tokens_per_update=12, warmup=1, eval_every=1,
+        recipe = Recipe(dataloader_workers=0, logging_every=1, updates=3, context=6, tokens_per_update=12, warmup=1, eval_every=1,
                         monitor_rows=1, eval_rows=2, checkpoint_every=1, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -282,6 +282,14 @@ class DeepKVTraining(unittest.TestCase):
             self.assertEqual(saved_history["train"][-1]["update"], 3)
             for p, q in zip(full.parameters(), recovered.parameters()):
                 torch.testing.assert_close(p, q, atol=0, rtol=0)
+            checkpoint = root / "resumed/checkpoint-3"
+            verify_checkpoint(checkpoint, identity)
+            scheduler = checkpoint / "scheduler.pt"
+            original = scheduler.read_bytes()
+            scheduler.write_bytes(original[:-1] + bytes([original[-1] ^ 1]))
+            with self.assertRaisesRegex(ValueError, "checksum"):
+                verify_checkpoint(checkpoint, identity)
+            scheduler.write_bytes(original)
             with (root / "train.bin").open("r+b") as handle:
                 handle.write(b"xxxx")
             with self.assertRaisesRegex(ValueError, "checksum"):
@@ -292,7 +300,8 @@ class DeepKVTraining(unittest.TestCase):
         from deep_kv.config import load_config, plan
         from run_experiments import load_jobs
         self.assertEqual(Recipe().tokens_per_update, 1048576)
-        self.assertEqual(Recipe().warmup, 1430)
+        self.assertEqual(Recipe().warmup, 500)
+        self.assertEqual(Recipe().checkpoint_every, 250)
         self.assertEqual(Recipe().train_rows, 14643200)
         self.assertEqual(Recipe().updates * Recipe().tokens_per_update, 29989273600)
         self.assertEqual(Recipe().tokens_per_update // Recipe().context // 8, 64)
@@ -305,6 +314,8 @@ class DeepKVTraining(unittest.TestCase):
             self.assertEqual(len(queue), 6)
             for job, arm in zip(queue[1:5], "ABCD"):
                 self.assertEqual(job["gpus"], list(range(8)))
+                self.assertIn("accelerate.commands.launch", job["argv"])
+                self.assertIn("--multi_gpu", job["argv"])
                 self.assertEqual(job["required_outputs"][0]["json_equals"]["arm"], arm)
                 self.assertEqual(job["required_outputs"][0]["json_equals"]["input_tokens"], 29989273600)
             path.write_text(json.dumps(jobs("deep_kv.b200.json", stop_after=2000)))
@@ -330,27 +341,35 @@ class DeepKVTraining(unittest.TestCase):
                 else:
                     self.assertEqual(load_config(path)["microbatch"], microbatch)
 
-    def test_accumulation_matches_whole_global_batch(self):
+    def test_hf_accumulation_gradient_matches_whole_global_batch(self):
         torch.set_num_threads(1)
-        recipe = Recipe(updates=3, context=6, tokens_per_update=24, warmup=1,
-                        monitor_rows=1, eval_rows=2, consumer=2, deep_target=4)
-        class Data:
-            def batch(self, first, last, device):
-                ids = (torch.arange(first * 6, last * 6, device=device).reshape(-1, 6) % 30)
-                return Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids))
-        for arm in "ABCD":
-            accumulated, whole = model(arm), model(arm)
-            for current, microbatch in ((accumulated, 1), (whole, 4)):
-                opt = optimizer_for(current, recipe)
-                train_update(current, current, opt, Data(), 1, recipe, microbatch, False)
-            for p, q in zip(accumulated.parameters(), whole.parameters()):
-                torch.testing.assert_close(p, q, atol=2e-7, rtol=2e-5)
+        recipe = Recipe(dataloader_workers=0, updates=3, context=6, tokens_per_update=24,
+                        warmup=1, monitor_rows=1, eval_rows=2, consumer=2, deep_target=4)
+        ids = torch.arange(24).reshape(4, 6) % 30
+        with tempfile.TemporaryDirectory() as tmp:
+            for arm in "ABCD":
+                accumulated, whole = model(arm), model(arm)
+                if accumulated.aux is not None:
+                    torch.nn.init.normal_(accumulated.aux.out.weight, std=.03)
+                    whole.load_state_dict(accumulated.state_dict())
+                args = training_arguments(recipe, tmp, 1, cpu=True, mixed_precision=False)
+                args.eval_strategy = "no"
+                trainer = DeepKVTrainer(model=accumulated, args=args)
+                trainer.current_gradient_accumulation_steps = 4
+                for row in ids:
+                    trainer.training_step(accumulated, {"input_ids": row[None]})
+                batch = Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids))
+                result = whole(batch)
+                loss = result["lm_sum"] / 20 + (result["k_sum"] + result["v_sum"]) / 48
+                loss.backward()
+                for (name, p), (_, q) in zip(accumulated.named_parameters(), whole.named_parameters()):
+                    torch.testing.assert_close(p.grad, q.grad, atol=2e-6, rtol=2e-5, msg=name)
 
     def test_cutoff_report_and_full_schedule_resume(self):
         from deep_kv.__main__ import build_identity
         from deep_kv.report import report
         torch.set_num_threads(1)
-        recipe = Recipe(updates=4, context=6, tokens_per_update=12, warmup=1, eval_every=2,
+        recipe = Recipe(dataloader_workers=0, logging_every=1, updates=4, context=6, tokens_per_update=12, warmup=1, eval_every=2,
                         monitor_rows=1, eval_rows=2, checkpoint_every=2, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -366,11 +385,15 @@ class DeepKVTraining(unittest.TestCase):
                 identities[arm] = build_identity({}, recipe, current, meta, mixed_precision=False)
                 history = train(current, data, dev, recipe, root / arm, identities[arm],
                                 mixed_precision=False, stop_after=2)
-                opt = optimizer_for(current, recipe)
-                set_lr(opt, 2, recipe)
-                self.assertEqual(history["train"][-1]["lr"], opt.param_groups[0]["lr"])
+                # Native HF schedule: step 1 uses LR 0; step 2 uses the peak
+                # after one warmup update. The cutoff never shortens the curve.
+                self.assertEqual(history["train"][-1]["lr"], recipe.learning_rate)
                 self.assertEqual(history["evaluation"][-1]["rows"], 2)
                 self.assertFalse((root / arm / "complete.json").exists())
+                state = json.loads((root / arm / "checkpoint-2/trainer_state.json").read_text())
+                for row in state["log_history"]:
+                    if "eval_objective" in row:
+                        self.assertEqual(row["eval_loss"], row["eval_objective"])
             result = report(root, recipe=recipe, stop_after=2)
             self.assertFalse(result["training_complete"])
             self.assertEqual(result["compared_update"], 2)
@@ -381,9 +404,10 @@ class DeepKVTraining(unittest.TestCase):
                 report(root, recipe=recipe, stop_after=1)
             # A periodic checkpoint at the chosen cutoff may only have monitor
             # metrics. Resume at that same step must add full evaluation/save.
-            saved = torch.load(root / "A/checkpoint.pt", weights_only=True)
+            checkpoint = root / "A/checkpoint-2/deep_kv.json"
+            saved = json.loads(checkpoint.read_text())
             saved["history"]["evaluation"][-1]["rows"] = 1
-            torch.save(saved, root / "A/checkpoint.pt")
+            checkpoint.write_text(json.dumps(saved))
             train(model("A"), data, dev, recipe, root / "A", identities["A"],
                   mixed_precision=False, resume=True, stop_after=2)
             self.assertFalse(report(root, recipe=recipe, stop_after=2)["training_complete"])

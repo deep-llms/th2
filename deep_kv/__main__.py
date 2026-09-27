@@ -9,7 +9,8 @@ from .config import ARMS, Recipe, load_config, plan
 
 def offline():
     os.environ.update(HF_HUB_OFFLINE="1", HF_DATASETS_OFFLINE="1",
-                      TRANSFORMERS_OFFLINE="1", HF_HUB_DISABLE_TELEMETRY="1")
+                      TRANSFORMERS_OFFLINE="1", HF_HUB_DISABLE_TELEMETRY="1", WANDB_MODE="offline")
+    os.environ.setdefault("NCCL_NVLS_ENABLE", "0")
 
 
 def jobs(config_path, data_dir=None, stop_after=None):
@@ -30,9 +31,9 @@ def jobs(config_path, data_dir=None, stop_after=None):
         data_dir = str(Path(data_dir).resolve())
     for arm in ARMS:
         items.append({"name": f"arm-{arm}", "gpus": list(range(8)),
-                      "argv": ["{python}", "-m", "torch.distributed.run", "--standalone",
-                               "--nnodes=1", "--nproc-per-node=8", "--max-restarts=0",
-                               "-m", "deep_kv", "train", "--config", config_path,
+                      "argv": ["{python}", "-m", "accelerate.commands.launch", "--multi_gpu",
+                               "--num_machines", "1", "--num_processes", "8", "--mixed_precision", "bf16",
+                               "--dynamo_backend", "no", "--module", "deep_kv", "train", "--config", config_path,
                                "--data-dir", data_dir, "--output", "{run_dir}/" + arm, "--arm", arm] + cutoff_args,
                       "required_outputs": [{"path": f"{arm}/{status}.json", "json_equals": {
                           "status": status, "arm": arm, "update": end,
@@ -53,33 +54,36 @@ def setup_distributed(cpu=False):
     local = int(os.environ.get("LOCAL_RANK", "0"))
     if not cpu:
         if world != 8 or rank != local or not 0 <= local < 8 or torch.cuda.device_count() != 8:
-            raise ValueError("Pilot requires single-node torchrun with all eight visible GPUs")
+            raise ValueError("Pilot requires a single-node launch with all eight visible GPUs")
         torch.cuda.set_device(local)
     if world > 1:
-        dist.init_process_group("gloo" if cpu else "nccl", timeout=timedelta(minutes=30))
+        dist.init_process_group("gloo" if cpu else "nccl", timeout=timedelta(seconds=21600))
     return torch.device("cpu" if cpu else f"cuda:{local}")
 
 
 def build_identity(config, recipe, model, data_manifest, *, mixed_precision):
+    import accelerate
     import transformers
     import torch
     from .data import sha256
     from .training import parameter_hash, topology
     root = Path(__file__).resolve().parent.parent
-    sources = sorted((root / "deep_kv").glob("*.py")) + [root / p for p in ("pcc/model.py", "pcc/packing.py", "pcc/joint_training.py")]
-    identity = {"format": "deep-kv-run-v2", "arm": model.arm, "recipe": asdict(recipe),
+    sources = sorted((root / "deep_kv").glob("*.py")) + [root / p for p in ("pcc/model.py", "pcc/packing.py")]
+    identity = {"format": "deep-kv-run-hf-v1", "arm": model.arm, "recipe": asdict(recipe),
             "config": config, "model_config": model.backbone.config.to_dict(),
             "data": data_manifest, "world_size": topology()[0], "mixed_precision": mixed_precision,
             "initial_backbone_sha256": parameter_hash(model.backbone),
             "initial_aux_sha256": parameter_hash(model.aux) if model.aux is not None else None,
             "code": {str(p.relative_to(root)): sha256(p) for p in sources},
-            "software": {"torch": str(torch.__version__), "transformers": transformers.__version__}}
+            "software": {"torch": str(torch.__version__), "transformers": transformers.__version__,
+                         "accelerate": accelerate.__version__}}
     # Config dictionaries can contain integer keys (e.g. id2label). Canonicalize
     # once so JSON receipts and torch checkpoints compare identically on resume.
     return json.loads(json.dumps(identity, sort_keys=True, allow_nan=False))
 
 
 def run_pilot(args):
+    import accelerate
     import torch
     import torch.distributed as dist
     import transformers
@@ -87,8 +91,8 @@ def run_pilot(args):
     from .data import TokenStream, sha256
     from .model import DeepKV
     from .training import train, topology
-    if transformers.__version__ != "5.9.0":
-        raise ValueError("Use the B200-matched environment: transformers==5.9.0")
+    if transformers.__version__ != "5.9.0" or accelerate.__version__ != "1.13.0":
+        raise ValueError("Use the B200-matched environment: transformers==5.9.0, accelerate==1.13.0")
     config = load_config(args.config)
     recipe = Recipe().validate()
     device = setup_distributed()
@@ -139,8 +143,9 @@ def smoke(args):
     from pcc.packing import preprocessing_policy
     device = setup_distributed(cpu=True)
     torch.set_num_threads(1)
-    recipe = Recipe(updates=3, context=8, tokens_per_update=128, warmup=1, eval_every=2,
-                    monitor_rows=2, eval_rows=5, checkpoint_every=2, consumer=2, deep_target=4, lm_chunk=4)
+    recipe = Recipe(updates=3, context=8, tokens_per_update=4096, warmup=1, eval_every=2,
+                    monitor_rows=2, eval_rows=5, checkpoint_every=2, consumer=2, deep_target=4, lm_chunk=4,
+                    logging_every=1, dataloader_workers=0)
     root = Path(args.output)
     try:
         if topology()[1] == 0:
@@ -166,9 +171,9 @@ def smoke(args):
                                 tie_word_embeddings=True)
             config._attn_implementation = "sdpa"
             model = DeepKV.from_scratch(config, arm, consumer=2, deep_target=4, lm_chunk=4).to(device)
-            identity = build_identity({"synthetic_smoke": True}, recipe, model, train_data.manifest, mixed_precision=False)
-            train(model, train_data, eval_data, recipe, root / arm, identity, microbatch=1,
-                  mixed_precision=False, stop_after=args.stop_after)
+            identity = build_identity({"synthetic_smoke": True}, recipe, model, train_data.manifest, mixed_precision=args.bf16)
+            train(model, train_data, eval_data, recipe, root / arm, identity, microbatch=16,
+                  mixed_precision=args.bf16, stop_after=args.stop_after)
         if topology()[1] == 0:
             from .report import report
             report(root, recipe=recipe, stop_after=args.stop_after)
@@ -198,6 +203,7 @@ def main():
     p = sub.add_parser("smoke")
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--stop-after", type=int)
+    p.add_argument("--bf16", action="store_true", help="Exercise Trainer's bfloat16 path on CPU")
     p = sub.add_parser("report")
     p.add_argument("--run-dir", type=Path, required=True)
     p.add_argument("--stop-after", type=int, help="Require all arms to have stopped at this exact update")

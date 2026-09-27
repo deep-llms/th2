@@ -112,6 +112,11 @@ class TokenStream:
     def __len__(self):
         return len(self.order)
 
+    def __getitem__(self, index):
+        # Trainer's collator stacks full contexts; the stored permutation is
+        # already seeded, so the Trainer uses a sequential sampler over it.
+        return {"input_ids": torch.from_numpy(self.ids[self.order[index]].astype(np.int64))}
+
     def batch(self, start, stop, device):
         if not 0 <= start < stop <= len(self):
             raise ValueError("Invalid stream slice")
