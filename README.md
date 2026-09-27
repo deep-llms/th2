@@ -1,5 +1,10 @@
 # Deep2shallow: cross-depth anticipation
 
+The new **four-arm from-scratch Deep-KV pilot** is implemented in `deep_kv/`.
+See [docs/DEEP_KV_TRAINING.md](docs/DEEP_KV_TRAINING.md) for the fixed 1B-token
+recipe, local checks, resumable checkpoints, and sequential eight-GPU queue.
+Its entry point is `python -m deep_kv`; it does not load pretrained weights.
+
 PCC correctness checks, the frozen-backbone layer screen, and full adapter
 training/evaluation are implemented in `pcc/`. Start with
 [docs/PCC_DIAGNOSTICS.md](docs/PCC_DIAGNOSTICS.md) for local tests and input

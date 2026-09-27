@@ -1,5 +1,42 @@
 # Project notes
 
+## Active: implement four-arm from-scratch Deep-KV pilot (2026-09-27)
+
+User requested training code for docs/anticipatory_deep_kv_four_arm_pilot_v2.md.
+Implemented dedicated deep_kv package; the legacy EmbHub trainer and pretrained
+PCC mechanism are unchanged. No B200 training/deployment requested in this step;
+commands.sh remains #0. All verification ran on local CPU with sampling_b200.
+Arms A/B/C/D: Base / ExtraAttn-NoAlign / ShallowKV-Align / DeepKV-Align.
+Consumer block 5; target block 5 or 21; native query reused, normalized pre-RoPE
+native key and native value targets from the same forward; target-only detach;
+strict-past auxiliary mask; zero output initialization; L1 coefficient fixed 1.
+Backbone initialized from Qwen3 config, never pretrained weights. Shared initial
+backbone across all arms and identical B/C/D branch tensors are fingerprinted.
+Fixed 30518 updates x 32768 tokens = 1000013824 tokens per arm. Recipe choices
+not specified by the document are explicit: AdamW 3e-4, beta .9/.95, wd .1,
+1526-update warmup, cosine to .1 peak, grad clip 1; full details in
+DEEP_KV_TRAINING.md. English-only sources in deep_kv.b200.json point to completed
+B200 sampled data. One CPU preparation creates a shared fixed token stream with
+current EOS packing, then the queue runs A/B/C/D with eight GPUs each and reports
+matched LM contrasts. Periodic atomic optimizer/model/RNG checkpoints support
+exact resume; a graceful stop preserves LR schedule and cannot count as complete.
+
+Verification: 10 CPU tests passed in 4.013s (temp/deep-kv-tests-20260927.log),
+including all six mechanism acceptance requirements, native block-5/21 targets,
+Qwen query-width geometry, checkpoint gradients, bfloat16 forward/backward,
+actual Arrow/tokenizer preparation, stream checksums, exact interrupted resume,
+and eight-GPU queue budgets. Four-arm single-process and eight-process CPU/Gloo
+smokes both completed including comparison.json; artifacts under
+ temp/deep-kv-smoke-single-20260927-a03 and
+ temp/deep-kv-smoke-ddp8-20260927-a03.
+Initial distributed parity measured max parameter difference 3.204e-7 and max
+LM-loss difference 6.812e-8 (temp/deep-kv-ddp-parity-20260927.json).
+End-to-end reporting exposed integer model-config keys becoming strings in JSON;
+canonicalized run identities before checkpoint/receipt creation, added regression
+coverage, and reran both complete smoke workflows successfully. No GPU/NCCL
+capacity/throughput test or real 1B-token training has run. Next launch requires
+normal GPU ownership checks and a short authorized hardware capacity check.
+
 ## B200 sampling completed and verified (2026-09-27)
 
 Read-only export cbedcd7 (th2-78gg-check-sampling-20260927-a02) returned both
