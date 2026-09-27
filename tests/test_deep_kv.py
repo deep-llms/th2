@@ -12,7 +12,7 @@ import torch
 import transformers
 from transformers import Qwen3Config
 from deep_kv.config import Recipe
-from deep_kv.data import TokenStream, prepare, write_split, verify_sources
+from deep_kv.data import load_data
 from deep_kv.model import DeepKV
 from deep_kv.training import parameter_hash, train, DeepKVTrainer, training_arguments, verify_checkpoint
 from pcc.model import Context
@@ -202,24 +202,23 @@ class DeepKVAcceptance(unittest.TestCase):
                     torch.testing.assert_close(p.grad, q.grad, atol=1e-6, rtol=1e-6, msg=name)
 
 
-class TinyTokenizer:
-    def get_vocab(self):
-        return {"<|endoftext|>": 31}
-
-    def encode(self, text, **kwargs):
-        return [31]
-
-    def __call__(self, texts, **kwargs):
-        return {"input_ids": [[int(x) for x in text.split()] for text in texts]}
+def toy_data(recipe):
+    from datasets import Dataset
+    result = []
+    for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
+        ids = np.random.default_rng(42 + (split == "eval")).integers(0, 31, (rows, recipe.context))
+        result.append(Dataset.from_dict({"input_ids": ids.tolist(), "labels": ids.tolist(),
+                                         "attention_mask": np.ones_like(ids).tolist()}).shuffle(seed=recipe.seed))
+    return tuple(result)
 
 
 @unittest.skipUnless(transformers.__version__ == "5.9.0", "Deep-KV uses the B200-matched Transformers 5.9.0 environment")
 class DeepKVTraining(unittest.TestCase):
-    def test_actual_arrow_and_tokenizer_preparation(self):
+    def test_hf_cached_text_pipeline_and_cache_miss_order(self):
         from datasets import Dataset
         from tokenizers import Tokenizer, models, pre_tokenizers
         from transformers import PreTrainedTokenizerFast
-        recipe = Recipe(dataloader_workers=0, logging_every=1, updates=3, context=6, tokens_per_update=12, warmup=1,
+        recipe = Recipe(dataloader_workers=0, updates=3, context=6, tokens_per_update=12, warmup=1,
                         monitor_rows=1, eval_rows=2, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -228,39 +227,42 @@ class DeepKVTraining(unittest.TestCase):
             tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend, unk_token="0", eos_token="<|endoftext|>")
             tokenizer.save_pretrained(root / "tokenizer")
             Dataset.from_dict({"text": ["1 2 3"] * 20}).save_to_disk(root / "train" / "shard_0000")
+            Dataset.from_dict({"text": ["7 8 9"] * 20}).save_to_disk(root / "train" / "shard_0001")
             Dataset.from_dict({"text": ["4 5 6"] * 20}).save_to_disk(root / "eval")
-            (root / "config.json").write_text("{}")
-            inputs = {"tokenizer": str(root / "tokenizer"), "model_config": str(root / "config.json"),
-                      "train_data": str(root / "train"), "eval_data": str(root / "eval"), "microbatch": 1}
-            prepare(inputs, root / "prepared", recipe)
-            data = TokenStream(root / "prepared", "train", recipe)
-            self.assertEqual(len(data), 6)
-            self.assertEqual(np.fromfile(root / "prepared/train.bin", dtype=np.uint32)[:8].tolist(), [1, 2, 3, 31, 1, 2, 3, 31])
-            # All non-data recipe fields can change for a NEW run. Loading must
-            # preserve the manifest and exact context order without rewriting.
-            operational = dict(logging_every=2, checkpoint_every=1, eval_every=1,
-                               dataloader_workers=2, warmup=2, learning_rate=1e-4,
-                               weight_decay=0.2, seed=77, monitor_rows=2,
-                               consumer=1, deep_target=3, lm_chunk=2)
-            for key, value in operational.items():
-                with self.subTest(field=key):
-                    reused = TokenStream(root / "prepared", "train", replace(recipe, **{key: value}))
-                    self.assertEqual(reused.manifest, data.manifest)
-                    np.testing.assert_array_equal(reused.order, data.order)
-                    np.testing.assert_array_equal(reused.ids, data.ids)
-            for key, value in dict(updates=4, tokens_per_update=18, context=3,
-                                   eval_rows=3, data_seed=77).items():
-                with self.subTest(field=key), self.assertRaisesRegex(ValueError, "recipe mismatch"):
-                    TokenStream(root / "prepared", "train", replace(recipe, **{key: value}))
-            verify_sources(data.manifest, {**inputs, "microbatch": 16})
-            for key in ("tokenizer", "model_config", "train_data", "eval_data"):
-                with self.subTest(source=key), self.assertRaisesRegex(ValueError, "provenance"):
-                    verify_sources(data.manifest, {**inputs, key: str(root / "different")})
-            (root / "config.json").write_text('{"changed": true}')
-            with self.assertRaisesRegex(ValueError, "provenance"):
-                verify_sources(data.manifest, inputs)
-            with self.assertRaises(FileExistsError):
-                prepare(inputs, root / "prepared", recipe)
+            inputs = {"tokenizer": str(root / "tokenizer"), "train_data": str(root / "train"),
+                      "eval_data": str(root / "eval"), "preprocessing_num_workers": 2}
+            args = training_arguments(recipe, root / "args", 1, cpu=True, mixed_precision=False)
+            data, dev, meta = load_data(inputs, recipe, args)
+            self.assertGreater(len(data), recipe.train_rows)  # no prefix truncation
+            self.assertEqual(len(dev), recipe.eval_rows)
+            self.assertEqual(dev[0]["input_ids"], [4, 5, 6, 31, 4, 5])
+            # Each of the two map workers handles 20 four-token documents:
+            # 80 tokens -> 13 contexts, dropping two tokens at its boundary.
+            expected = []
+            for document in ([1, 2, 3, 31], [7, 8, 9, 31]):
+                flat = document * 20
+                expected.extend(flat[i:i + 6] for i in range(0, 78, 6))
+            baseline = Dataset.from_dict({"input_ids": expected, "labels": expected,
+                                          "attention_mask": [[1] * 6] * 26}).shuffle(seed=42)
+            self.assertEqual(data.to_dict(), baseline.to_dict())
+            caches = {p: p.stat().st_mtime_ns for p in root.rglob("cache-*.arrow")}
+            cached, _, cached_meta = load_data(inputs, replace(recipe, logging_every=1), args)
+            self.assertEqual(meta, cached_meta)
+            self.assertEqual(data.to_dict(), cached.to_dict())
+            self.assertEqual(caches, {p: p.stat().st_mtime_ns for p in root.rglob("cache-*.arrow")})
+            rebuilt, _, rebuilt_meta = load_data({**inputs, "overwrite_cache": True}, recipe, args)
+            self.assertEqual(meta, rebuilt_meta)
+            self.assertEqual(data.to_dict(), rebuilt.to_dict())
+            self.assertTrue(any(p.stat().st_mtime_ns != mtime for p, mtime in caches.items()))
+            # Native Trainer sampling must also produce the same example order
+            # across arms, including an arm that rebuilt its own cache.
+            orders = []
+            for arm, dataset in zip("ABCD", (data, cached, rebuilt, data)):
+                trainer = DeepKVTrainer(model=model(arm), args=args, train_dataset=dataset, eval_dataset=dev)
+                orders.append([batch["input_ids"].tolist() for batch in trainer.get_train_dataloader()])
+            self.assertTrue(all(order == orders[0] for order in orders))
+            with self.assertRaisesRegex(ValueError, "Insufficient train data"):
+                load_data(inputs, replace(recipe, updates=100), args)
 
     def test_offline_wandb_per_arm_and_override(self):
         import wandb
@@ -272,12 +274,8 @@ class DeepKVTraining(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"WANDB_SILENT": "true"}):
             os.environ.pop("WANDB_DIR", None)
             root = Path(tmp)
-            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
-            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
-                meta[split] = write_split(root, split, [["1 2 3 4 5"]] * rows,
-                                          TinyTokenizer(), rows, 6, 42)
-            (root / "complete.json").write_text(json.dumps(meta))
-            data, dev = (TokenStream(root, split, recipe) for split in ("train", "eval"))
+            data, dev = toy_data(recipe)
+            meta = {"fingerprint": data._fingerprint}
 
             def with_wandb(*args, **kwargs):
                 result = training_arguments(*args, **kwargs)
@@ -314,18 +312,7 @@ class DeepKVTraining(unittest.TestCase):
                         monitor_rows=1, eval_rows=2, checkpoint_every=1, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
-            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
-                batches = [["1 2", "3 4 5", "6 7 8 9 10 11"]] * 6
-                meta[split] = write_split(root, split, batches, TinyTokenizer(), rows, 6, 42)
-            (root / "complete.json").write_text(json.dumps(meta))
-            raw = np.fromfile(root / "train.bin", dtype=np.uint32).reshape(-1, 6)
-            self.assertEqual(raw[0].tolist(), [1, 2, 31, 3, 4, 5])
-            self.assertEqual(raw[1].tolist(), [31, 6, 7, 8, 9, 10])
-            # The last two tokens in each document-map batch are dropped.
-            self.assertEqual(raw[2].tolist(), raw[0].tolist())
-            data = TokenStream(root, "train", recipe)
-            dev = TokenStream(root, "eval", recipe)
+            data, dev = toy_data(recipe)
             full = model("D", checkpoint=True)
             resumed = model("D", checkpoint=True)
             identity = {"recipe": asdict(recipe), "arm": "D"}
@@ -336,7 +323,7 @@ class DeepKVTraining(unittest.TestCase):
             # Reusable data does not make an existing run resumable under new
             # operational settings: full run identity remains authoritative.
             with self.assertRaisesRegex(ValueError, "Run receipt differs"):
-                train(model("D"), TokenStream(root, "train", changed), TokenStream(root, "eval", changed),
+                train(model("D"), data, dev,
                       changed, root / "resumed", {"recipe": asdict(changed), "arm": "D"},
                       mixed_precision=False, resume=True)
             with self.assertRaisesRegex(ValueError, "precedes checkpoint"):
@@ -368,10 +355,6 @@ class DeepKVTraining(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "checksum"):
                 verify_checkpoint(checkpoint, identity)
             scheduler.write_bytes(original)
-            with (root / "train.bin").open("r+b") as handle:
-                handle.write(b"xxxx")
-            with self.assertRaisesRegex(ValueError, "checksum"):
-                TokenStream(root, "train", recipe)
 
     def test_queue_and_budget(self):
         from deep_kv.__main__ import build_identity, jobs
@@ -389,16 +372,18 @@ class DeepKVTraining(unittest.TestCase):
             path = Path(tmp) / "jobs.json"
             path.write_text(json.dumps(jobs("deep_kv.b200.json")))
             queue = load_jobs(path)
-            self.assertEqual(len(queue), 6)
-            for job, arm in zip(queue[1:5], "ABCD"):
+            self.assertEqual(len(queue), 5)
+            for job, arm in zip(queue[:4], "ABCD"):
                 self.assertEqual(job["gpus"], list(range(8)))
                 self.assertIn("accelerate.commands.launch", job["argv"])
                 self.assertIn("--multi_gpu", job["argv"])
+                self.assertNotIn("--data-dir", job["argv"])
+                self.assertNotIn("prepare", job["argv"])
                 self.assertEqual(job["required_outputs"][0]["json_equals"]["arm"], arm)
                 self.assertEqual(job["required_outputs"][0]["json_equals"]["input_tokens"], 29989273600)
             path.write_text(json.dumps(jobs("deep_kv.b200.json", stop_after=2000)))
             queue = load_jobs(path)
-            for job, arm in zip(queue[1:5], "ABCD"):
+            for job, arm in zip(queue[:4], "ABCD"):
                 self.assertEqual(job["argv"][-2:], ["--stop-after", "2000"])
                 self.assertEqual(job["required_outputs"][0], {"path": f"{arm}/stopped.json", "json_equals": {
                     "status": "stopped", "arm": arm, "update": 2000, "input_tokens": 2097152000}})
@@ -426,12 +411,8 @@ class DeepKVTraining(unittest.TestCase):
                         consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
-            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
-                meta[split] = write_split(root, split, [["1 2 3 4 5"]] * rows,
-                                          TinyTokenizer(), rows, 6, 42)
-            write_json(root / "complete.json", meta)
-            data, dev = (TokenStream(root, split, recipe) for split in ("train", "eval"))
+            data, dev = toy_data(recipe)
+            meta = {"fingerprint": data._fingerprint}
             output = root / "run"
             identity = {"recipe": asdict(recipe), "arm": "D"}
             train(model("D"), data, dev, recipe, output, identity,
@@ -488,12 +469,8 @@ class DeepKVTraining(unittest.TestCase):
                         monitor_rows=1, eval_rows=2, checkpoint_every=2, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
-            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
-                meta[split] = write_split(root, split, [["1 2 3 4 5"]] * rows,
-                                          TinyTokenizer(), rows, 6, 42)
-            (root / "complete.json").write_text(json.dumps(meta))
-            data, dev = (TokenStream(root, split, recipe) for split in ("train", "eval"))
+            data, dev = toy_data(recipe)
+            meta = {"fingerprint": data._fingerprint}
             identities = {}
             for arm in "ABCD":
                 current = model(arm)

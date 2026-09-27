@@ -1,5 +1,13 @@
 # Deep-KV: prepared-data recipe coupling and wandb output location — 2026-09-27
 
+**Superseded data path:** per the later user instruction, the standalone
+preparation/binary-token path described below has been removed. Training now
+uses `train.py`'s shared Hugging Face tokenization/packing pipeline and normal
+HF caching internally. There is no `prepare` command or prepared-recipe check.
+The scoped offline W&B fix remains active. See `DEEP_KV_TRAINING.md` for current
+commands. The remainder of this note records the previous implementation.
+
+
 **Status: both implemented.** These came from reviewing commits
 `170bb9b` (HF Trainer/Accelerate migration) and `1c10a46`. Neither changes the
 model or loss. Prepared-data checks now compare only data-defining recipe

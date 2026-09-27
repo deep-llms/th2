@@ -56,11 +56,18 @@ def load_config(path):
     path = Path(path).resolve()
     value = json.loads(path.read_text())
     required = {"model_config", "tokenizer", "train_data", "eval_data"}
-    if not isinstance(value, dict) or not required <= value.keys() or value.keys() - (required | {"microbatch"}):
-        raise ValueError("Config requires model_config/tokenizer/train_data/eval_data and optional microbatch")
+    optional = {"microbatch", "preprocessing_num_workers", "overwrite_cache"}
+    if not isinstance(value, dict) or not required <= value.keys() or value.keys() - (required | optional):
+        raise ValueError("Config requires model_config/tokenizer/train_data/eval_data and optional microbatch/preprocessing_num_workers/overwrite_cache")
     for key in required:
         value[key] = str((path.parent / value[key]).resolve())
     value.setdefault("microbatch", 16)
+    value.setdefault("preprocessing_num_workers", 1)
+    value.setdefault("overwrite_cache", False)
+    if type(value["preprocessing_num_workers"]) is not int or value["preprocessing_num_workers"] <= 0:
+        raise ValueError("preprocessing_num_workers must be a positive integer")
+    if type(value["overwrite_cache"]) is not bool:
+        raise ValueError("overwrite_cache must be boolean")
     rows_per_rank = Recipe().tokens_per_update // Recipe().context // 8
     if (type(value["microbatch"]) is not int or value["microbatch"] <= 0
             or rows_per_rank % value["microbatch"]):

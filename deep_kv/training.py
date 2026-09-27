@@ -11,7 +11,7 @@ import shutil
 import numpy as np
 import torch
 import torch.distributed as dist
-from torch.utils.data import SequentialSampler, Subset
+from torch.utils.data import Subset
 from transformers import Trainer, TrainerCallback, TrainingArguments, default_data_collator
 from transformers.trainer_callback import TrainerState
 
@@ -113,7 +113,7 @@ def training_arguments(recipe, output, microbatch, *, cpu=False, mixed_precision
 
 
 class DeepKVTrainer(Trainer):
-    """Keep the HF loop; customize loss, fixed input order, and compact evaluation."""
+    """Keep the HF loop; customize loss and compact evaluation."""
 
     def __init__(self, *args, **kwargs):
         import accelerate
@@ -125,9 +125,6 @@ class DeepKVTrainer(Trainer):
         # Trainer divides once by accumulation; DDP averages once across ranks.
         self.model_accepts_loss_kwargs = False
         self.step_totals = None
-
-    def _get_train_sampler(self, train_dataset=None):
-        return SequentialSampler(self.train_dataset if train_dataset is None else train_dataset)
 
     def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
         ids = inputs["input_ids"]
@@ -272,7 +269,7 @@ class ExperimentCallback(TrainerCallback):
 
 
 def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=1,
-          mixed_precision=True, resume=False, stop_after=None):
+          mixed_precision=True, resume=False, stop_after=None, trainer_args=None):
     os.environ["WANDB_MODE"] = "offline"
     os.environ.setdefault("WANDB_PROJECT", "deep2shallow")
     recipe.validate()
@@ -286,7 +283,7 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
             identity.get("config", {}).get("microbatch", microbatch) != microbatch):
         raise ValueError("Runtime settings differ from run identity")
     cpu = next(model.parameters()).device.type == "cpu"
-    args = training_arguments(recipe, output, microbatch, cpu=cpu, mixed_precision=mixed_precision)
+    args = trainer_args or training_arguments(recipe, output, microbatch, cpu=cpu, mixed_precision=mixed_precision)
     if args.world_size != world or (args.device.type == "cpu") != cpu:
         raise ValueError("Trainer device/topology differs from the requested runtime")
     checkpoint = None

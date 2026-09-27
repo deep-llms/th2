@@ -61,35 +61,46 @@ smoke runs use a separate, clearly labeled tiny recipe.
 The original 28,610-update budget was slightly larger than the expected packed
 English split. The 28,600-update schedule follows the margin recommended in
 [the shortfall analysis](DEEP_KV_DATA_SHORTFALL_20260927.md). Its capacity estimate
-is not a measured packed count; preparation still validates the exact budget.
+is not a measured packed count; training startup still validates the exact packed budget.
 
 ## Data
 
 `deep_kv.b200.json` selects the already sampled **English** training/evaluation
 directories. No resampling of CulturaX or full-weight download is needed.
-Preparation appends `<|endoftext|>` (151643), concatenates each 1,000-document
-batch, splits into 2048-token contexts and drops that batch's remainder, matching
-the current packing policy. Documents can attend across EOS boundaries within
-a context; EOS does not imply segment isolation.
+Each training command performs preprocessing internally, using the same
+`preprocess_dataset` helper as `train.py`. It loads shards in sorted order,
+appends `<|endoftext|>` (151643), runs batched tokenization and groups tokens into
+2048-token contexts with Hugging Face `Dataset.map`. Both maps reuse the normal
+HF dataset cache and run inside `TrainingArguments.main_process_first`.
+There is no separate `deep_kv prepare` command, custom binary token file,
+permutation file, or prepared-data manifest.
 
-Preparation takes enough contexts from the ordered source prefix for the fixed
-30B budget, then shuffles those contexts once with the locked data seed. It
-writes uint32 token files and a fixed context permutation, about 120 GB total,
-with checksums. Preparation covers the full budget even for an early-stop run,
-so changing the cutoff preserves the exact data order and allows resume.
-Every arm verifies and reuses these exact files. If packing leaves too few
-contexts, preparation fails explicitly; it never repeats data to fill a budget.
-Train and evaluation sources differ. Data reuse requires the same `updates`,
-`tokens_per_update`, `context`, `eval_rows` and `data_seed`, plus matching source
-paths, model-config checksum, packing policy and token/order checksums. Logging,
-checkpoint/monitor intervals, workers, optimizer settings, model seed and
-microbatch may change for a new run without preparing tokens again. The full
-original preparation recipe stays in the manifest for provenance. Resume and
-arm comparison still require identical full run settings. Changing only the
-cutoff never requires preparation. The sampled text needs no resampling.
-Trainer uses a sequential sampler over the existing fixed permutation, then
-Accelerate shards batches across ranks; it does not apply a second shuffle.
-These local token files are experiment inputs; the sampled Arrow data stays text.
+As in `train.py`, packing concatenates each map batch of 1,000 documents and
+drops its incomplete final context. Documents may attend across EOS boundaries.
+`preprocessing_num_workers` in `deep_kv.b200.json` is 160 for training, matching
+the baseline launch script; `overwrite_cache` defaults to false. Validation
+uses one preprocessing worker to preserve the audited 4,882-context budget:
+its ~10M-token source has little margin for extra worker-boundary remainders.
+HF cache files live at the locations chosen by Datasets for the saved Arrow
+inputs, as in `train.py`. They must remain writable for cache creation.
+
+Training uses the entire packed dataset shuffled with seed 42, then Trainer's
+normal seeded training sampler and Accelerate's distributed batch sharding.
+There is no custom sequential sampler or training-prefix truncation. All arms
+use the same sorted source data, tokenizer, preprocessing worker count, seeds,
+and software. A cache miss repeats the same deterministic computation and
+produces the same tokens and example order. Worker count must also remain fixed
+across arms because multiprocessing can change packing remainder boundaries.
+Validation uses the first 4,882 packed contexts, with a fixed 128-context monitor
+subset. These choices are recorded through dataset fingerprints and run settings.
+
+Startup checks that the packed training dataset has enough rows for the full
+28,600-update schedule, even with a 2,000-step cutoff, and that validation has
+4,882 contexts. It fails on insufficient data; it does not silently repeat it.
+Full run identity remains strict for resume and comparison. Old custom-binary
+runs/checkpoints have different data order and identity and are incompatible.
+Sampled text remains usable without resampling. Operational settings do not
+invalidate HF tokenization/packing caches; preprocessing inputs control caching.
 
 ## Plan and sequential launch
 
@@ -107,8 +118,10 @@ python run_experiments.py --config temp/deep-kv-jobs.json \
 ```
 
 Use the selected environment's Python for all commands. The generated queue
-prepares data on CPU, runs each arm with eight-process `accelerate launch`, then produces
-`comparison.json` on CPU. Each arm must exit successfully and publish the exact
+runs A, B, C and D with eight-process `accelerate launch`, then produces
+`comparison.json` on CPU. There are five jobs and no preparation job.
+Each arm tokenizes/packs or reuses the HF cache inside its training command.
+Each arm must exit successfully and publish the exact
 2,000-update/2,097,152,000-token stopped marker before the queue advances.
 Omitting `--stop-after` instead requires full 28,600-update/29,989,273,600-token
 completion.
@@ -122,13 +135,6 @@ The report verifies shared data/recipe/initialization and checkpoint identities.
 It reports LM-loss differences B−A, C−B, D−B, D−C and D−A; negative favors the
 first arm. Single-seed differences are exploratory, not statistical proof.
 
-To prepare once and reuse in another explicitly planned queue:
-
-```bash
-python -m deep_kv prepare --config deep_kv.b200.json --output /PATH/prepared
-python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
-  --data-dir /PATH/prepared --output temp/deep-kv-reuse-jobs.json
-```
 
 ## Checkpoints and stopping
 
@@ -158,7 +164,7 @@ with `--stop-after 2000`; omitting that argument requests the full schedule:
 ```bash
 python -m deep_kv plan --config deep_kv.b200.json --stop-after 2000
 python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
-  --data-dir /PATH/prepared --output temp/deep-kv-cutoff-jobs.json
+  --output temp/deep-kv-cutoff-jobs.json
 python run_experiments.py --config temp/deep-kv-cutoff-jobs.json --run-dir /PATH/run
 ```
 
@@ -175,7 +181,7 @@ an arm to the full budget, omit the cutoff when resuming:
 
 ```bash
 bash scripts/train_deep_kv.sh --config deep_kv.b200.json \
-  --data-dir /PATH/prepared --output /PATH/run/D --arm D --resume
+  --output /PATH/run/D --arm D --resume
 ```
 
 Resume rejects changed data, code, software, model configuration, precision or
@@ -213,12 +219,13 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m torch.distributed.run \
   -m deep_kv smoke --stop-after 2 --output temp/kv-smoke-ddp8
 CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m torch.distributed.run \
   --standalone --nnodes=1 --nproc-per-node=8 --max-restarts=0 \
-  tests/deep_kv_resume_worker.py --data-dir temp/kv-smoke-ddp8/prepared \
+  tests/deep_kv_resume_worker.py \
   --output temp/kv-resume-check --bf16
 ```
 
 CPU tests exercise the real Trainer loop, custom accumulation gradients,
-mechanism acceptance, fixed data, checkpoint identity, exact single-process
+mechanism acceptance, cached vs rebuilt HF data and batch order across arms,
+checkpoint identity, exact single-process
 resume with worker prefetch, interrupted-save recovery, and cutoff reporting.
 The Gloo worker checks all four arms with eight CPU processes and four
 accumulation steps, asserting the actual projection dtype during execution.

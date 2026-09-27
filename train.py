@@ -17,7 +17,6 @@ import logging
 import os
 import sys
 from dataclasses import dataclass, field, asdict
-from itertools import chain
 
 import datasets
 from datasets import load_from_disk, concatenate_datasets
@@ -37,7 +36,7 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 
 from model_wrapper_v2 import inject_embhub, load_model_with_embhub, save_embhub
-from pcc.packing import document_end_id, tokenize_documents
+from pcc.packing import preprocess_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -278,24 +277,6 @@ def main():
 
     raw_dataset = concatenate_datasets(datasets_list)
     logger.info(f"Combined: {raw_dataset.num_rows:,} documents")
-    column_names = raw_dataset.column_names
-
-    # Explicit document ends; Qwen's tokenizer EOS may instead be <|im_end|>.
-    end_id = document_end_id(tokenizer)
-    def tokenize_function(examples):
-        ids = tokenize_documents(examples["text"], tokenizer, end_id)
-        return {"input_ids": ids, "attention_mask": [[1] * len(row) for row in ids]}
-
-    with training_args.main_process_first(desc="dataset map tokenization"):
-        tokenized_dataset = raw_dataset.map(
-            tokenize_function,
-            batched=True,
-            num_proc=data_args.preprocessing_num_workers,
-            remove_columns=column_names,
-            load_from_cache_file=not data_args.overwrite_cache,
-            desc="Running tokenizer on dataset",
-        )
-
     # Determine block_size
     if data_args.block_size is None:
         block_size = tokenizer.model_max_length
@@ -317,26 +298,9 @@ def main():
             )
         block_size = min(data_args.block_size, tokenizer.model_max_length)
 
-    # Group texts into chunks of block_size
-    def group_texts(examples):
-        concatenated_examples = {k: list(chain(*examples[k])) for k in examples}
-        total_length = len(concatenated_examples[list(examples.keys())[0]])
-        total_length = (total_length // block_size) * block_size
-        result = {
-            k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
-            for k, t in concatenated_examples.items()
-        }
-        result["labels"] = result["input_ids"].copy()
-        return result
-
-    with training_args.main_process_first(desc="grouping texts together"):
-        lm_dataset = tokenized_dataset.map(
-            group_texts,
-            batched=True,
-            num_proc=data_args.preprocessing_num_workers,
-            load_from_cache_file=not data_args.overwrite_cache,
-            desc=f"Grouping texts in chunks of {block_size}",
-        )
+    lm_dataset = preprocess_dataset(
+        raw_dataset, tokenizer, block_size, training_args,
+        num_proc=data_args.preprocessing_num_workers, overwrite_cache=data_args.overwrite_cache)
 
     train_dataset = lm_dataset.shuffle(seed=training_args.seed)
     logger.info(f"Training dataset: {train_dataset.num_rows:,} sequences of {block_size} tokens")

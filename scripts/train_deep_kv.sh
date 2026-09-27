@@ -1,7 +1,7 @@
 #!/bin/bash
 # Launch one Deep-KV arm using the baseline's eight-GPU Accelerate/HF workflow.
 # Config selects offline assets and microbatch 16; Trainer accumulates four times.
-# Pass --config, --data-dir, --output, --arm and optional --stop-after/--resume.
+# Pass --config, --output, --arm and optional --stop-after/--resume.
 set -euo pipefail
 export WANDB_PROJECT="deep2shallow"
 export WANDB_MODE=offline

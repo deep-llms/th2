@@ -1,15 +1,8 @@
-"""Prepare one fixed, disk-backed English token stream for every arm."""
-from dataclasses import asdict
+"""Load sampled text and reuse train.py's Hugging Face cached CLM pipeline."""
 import hashlib
-import json
 from pathlib import Path
-import numpy as np
-import torch
-from pcc.model import Context
-from pcc.packing import document_end_id, preprocessing_policy, tokenize_documents
 
-
-DATA_RECIPE_FIELDS = ("updates", "tokens_per_update", "context", "eval_rows", "data_seed")
+from pcc.packing import document_end_id, preprocess_dataset
 
 
 def sha256(path):
@@ -20,119 +13,44 @@ def sha256(path):
     return digest.hexdigest()
 
 
-def text_batches(directory, size=1000):
-    from datasets import load_from_disk
+def load_text(directory):
+    from datasets import concatenate_datasets, load_from_disk
     directory = Path(directory)
-    shards = [directory] if (directory / "state.json").is_file() else sorted(directory.glob("shard_*"))
-    if not shards:
+    paths = [directory] if (directory / "state.json").is_file() else sorted(directory.glob("shard_*"))
+    if not paths:
         raise ValueError(f"No sampled Arrow datasets: {directory}")
-    pending = []
-    for path in shards:
-        dataset = load_from_disk(str(path))
-        if dataset.column_names != ["text"]:
-            raise ValueError(f"Expected text-only sampled data: {path}")
-        for batch in dataset.iter(batch_size=size):
-            pending.extend(batch["text"])
-            while len(pending) >= size:
-                yield pending[:size]
-                pending = pending[size:]
-    if pending:
-        yield pending
+    datasets = [load_from_disk(str(path)) for path in paths]
+    return concatenate_datasets(datasets) if len(datasets) > 1 else datasets[0]
 
 
-def write_split(directory, split, batches, tokenizer, rows, context, seed):
-    end_id = document_end_id(tokenizer)
-    path = Path(directory) / f"{split}.bin"
-    written = documents = 0
-    with path.open("xb") as handle:
-        for texts in batches:
-            documents += len(texts)
-            encoded = tokenize_documents(texts, tokenizer, end_id)
-            flat = np.fromiter((x for row in encoded for x in row), dtype=np.uint32)
-            count = min(len(flat) // context, rows - written)
-            handle.write(flat[:count * context].tobytes())
-            written += count
-            if written == rows:
-                break
-        if written != rows:
-            raise ValueError(f"Insufficient {split} data: {written} contexts, need {rows}")
-    order = np.random.default_rng(seed).permutation(rows).astype(np.int64)
-    order_path = Path(directory) / f"{split}.order.npy"
-    with order_path.open("xb") as handle:
-        np.save(handle, order, allow_pickle=False)
-    return {"rows": rows, "context": context, "dtype": "uint32", "documents_tokenized": documents,
-            "tokens_sha256": sha256(path), "order_sha256": sha256(order_path),
-            "preprocessing": preprocessing_policy(context, end_id)}
-
-
-def prepare(config, output, recipe):
-    import transformers
+def load_data(config, recipe, training_args):
     from transformers import AutoTokenizer
-    if transformers.__version__ != "5.9.0":
-        raise ValueError("Prepare this pilot with transformers==5.9.0")
     recipe.validate()
-    output = Path(output)
-    output.mkdir(parents=True, exist_ok=False)
     tokenizer = AutoTokenizer.from_pretrained(config["tokenizer"], local_files_only=True)
-    manifest = {"format": "deep-kv-data-v2", "recipe": asdict(recipe), "sources": config,
-                "transformers_version": transformers.__version__,
-                "tokenizer_files": {p.name: sha256(p) for p in Path(config["tokenizer"]).iterdir()
-                                    if p.is_file() and p.name in ("tokenizer.json", "tokenizer_config.json", "vocab.json", "merges.txt")},
-                "model_config_sha256": sha256(config["model_config"]),
-                "packing": "full_causal", "selection": "packed source prefix, then fixed context permutation"}
-    for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
-        manifest[split] = write_split(output, split, text_batches(config[f"{split}_data"]),
-                                     tokenizer, rows, recipe.context, recipe.data_seed)
-        print(f"Prepared {split}: {rows} contexts / {rows * recipe.context} input tokens", flush=True)
-    (output / "complete.json").write_text(json.dumps(manifest, indent=2))
-    return manifest
-
-
-def verify_sources(manifest, config):
-    # Microbatch is an execution choice, not an input to token preparation.
-    saved = {key: value for key, value in manifest["sources"].items() if key != "microbatch"}
-    current = {key: value for key, value in config.items() if key != "microbatch"}
-    if saved != current or manifest["model_config_sha256"] != sha256(config["model_config"]):
-        raise ValueError("Data/config provenance mismatch")
-
-
-class TokenStream:
-    def __init__(self, directory, split, recipe, *, verify=True):
-        directory = Path(directory)
-        self.manifest = json.loads((directory / "complete.json").read_text())
-        recipe.validate()
-        if (self.manifest.get("format") != "deep-kv-data-v2" or
-                any(self.manifest["recipe"].get(key) != getattr(recipe, key) for key in DATA_RECIPE_FIELDS)):
-            raise ValueError("Prepared stream recipe mismatch")
-        spec = self.manifest[split]
-        rows = recipe.train_rows if split == "train" else recipe.eval_rows
-        if (spec["rows"], spec["context"], spec["dtype"]) != (rows, recipe.context, "uint32"):
-            raise ValueError("Prepared stream shape mismatch")
-        if spec["preprocessing"] != preprocessing_policy(recipe.context, spec["preprocessing"]["document_end_token_id"]):
-            raise ValueError("Wrong document packing policy")
-        path, order = directory / f"{split}.bin", directory / f"{split}.order.npy"
-        if path.stat().st_size != rows * recipe.context * 4:
-            raise ValueError("Token file length mismatch")
-        if verify and (sha256(path) != spec["tokens_sha256"] or sha256(order) != spec["order_sha256"]):
-            raise ValueError("Prepared stream checksum mismatch")
-        self.ids = np.memmap(path, mode="r", dtype=np.uint32, shape=(rows, recipe.context))
-        self.order = np.load(order, allow_pickle=False, mmap_mode="r")
-        if self.order.shape != (rows,) or self.order.dtype != np.int64:
-            raise ValueError("Invalid context permutation")
-        if verify and not np.array_equal(np.sort(self.order), np.arange(rows)):
-            raise ValueError("Order must visit each context exactly once")
-
-    def __len__(self):
-        return len(self.order)
-
-    def __getitem__(self, index):
-        # Trainer's collator stacks full contexts; the stored permutation is
-        # already seeded, so the Trainer uses a sequential sampler over it.
-        return {"input_ids": torch.from_numpy(self.ids[self.order[index]].astype(np.int64))}
-
-    def batch(self, start, stop, device):
-        if not 0 <= start < stop <= len(self):
-            raise ValueError("Invalid stream slice")
-        ids = torch.tensor(self.ids[self.order[start:stop]].astype(np.int64), device=device)
-        return Context(ids, torch.ones_like(ids, dtype=torch.bool),
-                       torch.arange(ids.shape[1], device=device).expand_as(ids))
+    if recipe.context > tokenizer.model_max_length:
+        raise ValueError("Context exceeds tokenizer model_max_length")
+    workers = config.get("preprocessing_num_workers", 1)
+    overwrite = config.get("overwrite_cache", False)
+    datasets = {}
+    metadata = {"format": "deep-kv-hf-data-v1", "context": recipe.context,
+                "map_batch_size": 1000, "document_end_token_id": document_end_id(tokenizer),
+                "preprocessing_num_workers": {"train": workers, "eval": 1},
+                "shuffle_seed": training_args.seed, "splits": {}}
+    for split in ("train", "eval"):
+        raw = load_text(config[f"{split}_data"])
+        # The small eval split was audited with one worker. Multiprocess map
+        # drops a remainder at each worker boundary and could exhaust its margin.
+        packed = preprocess_dataset(raw, tokenizer, recipe.context, training_args,
+                                    num_proc=workers if split == "train" else 1,
+                                    overwrite_cache=overwrite)
+        needed = recipe.train_rows if split == "train" else recipe.eval_rows
+        if len(packed) < needed:
+            raise ValueError(f"Insufficient {split} data: {len(packed)} contexts, need {needed}")
+        # Match train.py: shuffle the dataset once, then use Trainer's normal
+        # seeded training sampler. Do not trim the training source to a prefix.
+        data = packed.shuffle(seed=training_args.seed) if split == "train" else packed.select(range(needed))
+        metadata["splits"][split] = {"source": str(Path(config[f"{split}_data"]).resolve()),
+                                    "source_fingerprint": raw._fingerprint,
+                                    "dataset_fingerprint": data._fingerprint, "rows": len(data)}
+        datasets[split] = data
+    return datasets["train"], datasets["eval"], metadata

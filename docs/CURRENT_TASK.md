@@ -1,5 +1,42 @@
 # Current task
 
+## Active: use train.py's cached text pipeline (2026-09-27)
+
+User explicitly rejected the custom binary preparation stage. Removed Deep-KV
+prepare/--data-dir, token/permutation files, prepared manifests and custom
+SequentialSampler. The queue is now A/B/C/D/compare (five jobs). Each training
+command loads sampled text and calls shared `pcc.packing.preprocess_dataset`,
+also used by train.py: tokenization + grouping Dataset.map, main_process_first,
+HF cache reuse, dataset.shuffle(seed=42), then native Trainer seeded sampling.
+Training uses the full packed dataset, not a custom prefix. B200 training uses
+160 preprocessing workers as the baseline script; validation uses one worker
+to retain its audited 4,882-context budget. Source/worker/tokenizer/seed/software
+settings must match across arms for identical packing and order on cache misses.
+
+The schedule stays 28,600 updates, 1,048,576 tokens/update, optional matched
+2,000-step cutoff, eight GPUs per arm. Startup checks full packed-data capacity.
+Fingerprints and full run identity guard comparison/resume; old binary-data
+runs/checkpoints are incompatible. Scoped offline W&B and model/loss remain.
+Sampled Arrow text is unchanged. Earlier preparation instructions below are
+historical and superseded; use DEEP_KV_TRAINING.md. No remote/GPU launch.
+
+
+Verification: 15 focused CPU tests passed (16.585s), including real two-worker
+HF cache hits/forced rebuilds, independent packed-token expectations and equal
+Trainer batch order across A/B/C/D. Native-sampler eight-process BF16 resume
+passed all arms (maximum weight difference 9.314e-10), including production
+input_ids/attention_mask/labels columns. Four-arm CLI cutoff/report smoke passed.
+Existing regression: 134 passed, 15 version-specific skips (149 run, 166.967s).
+Queue parsing lists exactly A/B/C/D/compare; shell, compile and diff checks pass.
+Evidence:
+ temp/deep-kv-hfdata-tests-20260927-final.log
+ temp/deep-kv-hfdata-resume8-20260927-final/resume_verified.json
+ temp/deep-kv-hfdata-smoke-20260927-final/comparison.json
+ temp/deep-kv-hfdata-legacy-20260927.log
+ temp/deep-kv-hfdata-jobs-20260927-final.json
+All work was local and CPU-only; CUDA/NCCL/full-context capacity remains an
+on-machine check. No push, sampling, production tokenization or training launch.
+
 ## Prepared-data reuse and W&B output fixes (2026-09-27)
 
 Implemented the findings in DEEP_KV_RECIPE_COUPLING_AND_WANDB_20260927.md.

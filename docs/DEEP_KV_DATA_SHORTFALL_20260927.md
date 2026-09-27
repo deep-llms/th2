@@ -1,18 +1,26 @@
 # Deep-KV 30B budget: English train data shortfall — 2026-09-27
 
+**Current data path:** training now uses train.py's cached Hugging Face maps
+internally, with 160 training preprocessing workers and one validation worker.
+The per-worker grouping boundaries can change remainders relative to this
+single-worker estimate. The 28,600-update schedule remains, and training startup
+checks the exact packed row count before any optimizer update. No separate
+Deep-KV preparation command is required. See DEEP_KV_TRAINING.md.
+
+
 **Status: recommended recipe fix applied; exact packed count remains unmeasured.**
 The capacity fix uses 28,600 updates. The original recommendation below used
 1,430 warmup updates; the subsequent HF Trainer migration adopts the baseline's
 500-step warmup (which has no effect on data capacity). The selected
 four-arm run stops at 2,000 updates, preserving that full schedule. No resampling
-or packing-policy change is needed. Preparation still checks the exact required
+or packing-policy change is needed. Training startup still checks the exact required
 context count. The analysis below documents the superseded budget.
 
 Commit `72901c7` set the Deep-KV recipe to
 28,610 updates × 1,048,576 input tokens = 29,999,759,360 tokens per arm.
 The completed English train split is expected to pack to about **302 fewer
-2048-token contexts** than that budget requires. `python -m deep_kv prepare`
-would therefore fail after tokenizing the whole split, before arm A starts.
+2048-token contexts** than that budget requires. The former standalone
+preparation command would therefore fail after tokenizing the whole split, before arm A starts.
 This applies to cutoff queues too (e.g. `--stop-after 2000`), because
 preparation always covers the full schedule so that later resumes keep the
 same data order.
