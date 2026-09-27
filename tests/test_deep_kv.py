@@ -180,6 +180,25 @@ class DeepKVAcceptance(unittest.TestCase):
         loss.backward()
         self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in m.parameters()))
 
+    def test_modified_arms_have_identical_lm_path_after_branch_learns(self):
+        # Zero-output equivalence alone would hide mistakes in the live branch.
+        for bf16 in (False, True):
+            models = [model(arm, checkpoint=True) for arm in "BCD"]
+            torch.nn.init.normal_(models[0].aux.out.weight, std=.03)
+            for other in models[1:]:
+                other.load_state_dict(models[0].state_dict())
+            reference = None
+            for current in models:
+                with torch.autocast("cpu", dtype=torch.bfloat16, enabled=bf16):
+                    result = current(context())
+                if reference is None:
+                    reference = result["lm_sum"].detach()
+                torch.testing.assert_close(result["lm_sum"], reference, atol=1e-6, rtol=1e-6)
+                result["lm_sum"].backward()
+            for other in models[1:]:
+                for (name, p), (_, q) in zip(models[0].named_parameters(), other.named_parameters()):
+                    torch.testing.assert_close(p.grad, q.grad, atol=1e-6, rtol=1e-6, msg=name)
+
 
 class TinyTokenizer:
     def get_vocab(self):
@@ -240,14 +259,29 @@ class DeepKVTraining(unittest.TestCase):
             resumed = model("D", checkpoint=True)
             identity = {"recipe": asdict(recipe), "arm": "D"}
             train(full, data, dev, recipe, root / "full", identity, mixed_precision=False)
-            train(resumed, data, dev, recipe, root / "resumed", identity, mixed_precision=False, stop_after=1)
+            train(resumed, data, dev, recipe, root / "resumed", identity, mixed_precision=False, stop_after=2)
             self.assertFalse((root / "resumed/complete.json").exists())
+            with self.assertRaisesRegex(ValueError, "precedes checkpoint"):
+                train(resumed, data, dev, recipe, root / "resumed", identity,
+                      mixed_precision=False, resume=True, stop_after=1)
+            self.assertTrue((root / "resumed/stopped.json").exists())
             train(resumed, data, dev, recipe, root / "resumed", identity, mixed_precision=False, resume=True)
             for p, q in zip(full.parameters(), resumed.parameters()):
                 torch.testing.assert_close(p, q, atol=0, rtol=0)
             report = json.loads((root / "resumed/complete.json").read_text())
             self.assertEqual(report["input_tokens"], 36)
             self.assertEqual(report["final_evaluation"]["rows"], 2)
+            self.assertFalse((root / "resumed/stopped.json").exists())
+            # Simulate a crash after the final checkpoint was safely saved but
+            # before final JSON publication. Resume must restore both receipts.
+            (root / "resumed/complete.json").unlink()
+            (root / "resumed/metrics.json").unlink()
+            recovered = model("D", checkpoint=True)
+            train(recovered, data, dev, recipe, root / "resumed", identity, mixed_precision=False, resume=True)
+            saved_history = json.loads((root / "resumed/metrics.json").read_text())
+            self.assertEqual(saved_history["train"][-1]["update"], 3)
+            for p, q in zip(full.parameters(), recovered.parameters()):
+                torch.testing.assert_close(p, q, atol=0, rtol=0)
             with (root / "train.bin").open("r+b") as handle:
                 handle.write(b"xxxx")
             with self.assertRaisesRegex(ValueError, "checksum"):

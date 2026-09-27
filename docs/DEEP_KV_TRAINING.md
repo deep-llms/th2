@@ -117,6 +117,9 @@ python -m torch.distributed.run --standalone --nnodes=1 --nproc-per-node=8 \
 Resume rejects changed data, code, software, model configuration, precision or
 world size. It continues at the next exact global context batch. The generic
 queue itself uses fresh output directories; resume interrupted arms explicitly.
+Resume removes the old stop marker after checkpoint validation. If interruption
+occurs after saving the final checkpoint but before publishing results, resuming
+restores `metrics.json` before publishing `complete.json` without another update.
 There is no automatic training extension or GPU-burn management in this module.
 
 ## Local verification
@@ -134,3 +137,22 @@ checkpoint gradients, bfloat16 arithmetic, fixed packing, exact checkpoint resum
 and queue budgets. The eight-process Gloo smoke run checks distributed training
 and uneven evaluation shards, including ranks with no evaluation rows.
 GPU/NCCL capacity and throughput still require a short authorized B200 check.
+
+The 2026-09-27 review additionally verified that B/C/D have identical LM outputs
+and LM gradients for shared weights with a nonzero auxiliary output projection,
+in both float32 and bfloat16. An eight-process CPU interruption/resume check
+matched uninterrupted training within 7.5e-9 in every arm's parameters. Repeat
+that check after creating a synthetic smoke's prepared data with:
+
+```bash
+CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m torch.distributed.run \
+  --standalone --nnodes=1 --nproc-per-node=8 --max-restarts=0 \
+  tests/deep_kv_resume_worker.py --data-dir temp/kv-smoke/prepared \
+  --output temp/kv-resume-check
+```
+
+The actual 28-layer, 600,244,352-parameter arm D passed a CPU forward/backward
+check on eight tokens, including zero-output Base equivalence and finite
+gradients. This verifies real model geometry, not 2048-token GPU memory capacity.
+The locally reproduced English evaluation set yields 4,883 complete contexts
+under the current EOS packing policy, enough for the fixed 4,882-context budget.

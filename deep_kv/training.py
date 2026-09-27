@@ -1,5 +1,6 @@
 """Fixed-budget DDP optimization and resumable checkpoints for the four arms."""
 from contextlib import nullcontext
+from dataclasses import asdict
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -179,6 +180,8 @@ def load_checkpoint(path, model, optimizer, identity):
 def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=1,
           mixed_precision=True, resume=False, stop_after=None):
     recipe.validate()
+    if identity.get("recipe") != asdict(recipe) or identity.get("arm") != model.arm:
+        raise ValueError("Run identity differs from the requested arm/recipe")
     world, rank = topology()
     output = Path(output)
     device = next(model.parameters()).device
@@ -202,8 +205,13 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
     update, history = 0, {"train": [], "evaluation": []}
     if resume:
         update, history = load_checkpoint(output / "checkpoint.pt", model, optimizer, identity)
+        if rank == 0:
+            if json.loads((output / "run.json").read_text()) != identity:
+                raise ValueError("Run receipt differs from the checkpoint identity")
     if end < update:
         raise ValueError("Cutoff precedes checkpoint")
+    if resume and rank == 0:
+        (output / "stopped.json").unlink(missing_ok=True)
     if not history["evaluation"]:
         initial = evaluate(model, eval_data, recipe.monitor_rows, microbatch, mixed_precision)
         history["evaluation"].append({"update": 0, **initial})
@@ -220,10 +228,13 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
                 print(json.dumps({"evaluation": history["evaluation"][-1]}), flush=True)
         if update % recipe.checkpoint_every == 0 or update == end:
             save_checkpoint(output / "checkpoint.pt", model, optimizer, identity, update, history)
-            if rank == 0:
+            if rank == 0 and update < end:
                 write_json(output / "metrics.json", history)
     # Also handle interruption after the final checkpoint but before publication.
     if rank == 0:
+        # A crash may leave a valid final checkpoint without metrics.json (or
+        # with metrics from an older checkpoint). Repair it before completion.
+        write_json(output / "metrics.json", history)
         status = {"status": "complete" if update == recipe.updates else "stopped",
                   "arm": model.arm, "name": NAMES[model.arm], "update": update,
                   "input_tokens": update * recipe.tokens_per_update,

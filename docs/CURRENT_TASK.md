@@ -1,5 +1,34 @@
 # Current task
 
+## Deep-KV code review and recovery fixes (2026-09-27)
+
+Reviewed the four-arm implementation against the supplied pilot specification.
+Fixed two recovery edge cases: a resumed run retained its old stopped.json, and
+resuming a final checkpoint after an interrupted results write did not restore
+metrics.json. Resume now checks the run receipt against checkpoint identity,
+clears the stop marker only after validation, and restores metrics before final
+completion. Training also checks that the supplied identity matches arm/recipe.
+No architecture, objective, token budget, data recipe or schedule was changed.
+
+11 B200-environment CPU tests passed in 4.296s, including a failing-before/fixed-
+after regression and exact single-process recovery after final-checkpoint save.
+The new nonzero-branch test verifies identical B/C/D LM outputs and gradients
+in float32 and bfloat16. Eight-process CPU/Gloo full-vs-resumed training passed
+for all four arms (max parameter difference 7.451e-9). Evidence:
+temp/deep-kv-review-after-20260927.log and
+temp/deep-kv-ddp8-resume-review-20260927-a01/resume_verified.json.
+The actual 28-layer, 600244352-parameter arm D also passed CPU Base equivalence
+and finite forward/backward gradients with an eight-token sequence (13.33s):
+temp/deep-kv-full-geometry-review-20260927.json. This is not a 2048-token GPU
+capacity test. The real locally reproduced English eval split has 11822 docs,
+10011667 tokens including EOD, and 4883 packed contexts: enough for the locked
+4882-context budget (temp/deep-kv-real-eval-audit-20260927.json).
+Existing regression suite passed in its original train_env: 145 tests run in
+165.753s, with the 11 version-specific Deep-KV tests skipped there (134 passed).
+Deep-KV tests passed separately in sampling_b200 (Transformers 5.9.0). Evidence:
+temp/deep-kv-review-legacy-regression-20260927.log. All work was local/CPU; no remote changes,
+training launch, process termination or GPU-management action. commands.sh is #0.
+
 ## Active: implement four-arm from-scratch Deep-KV pilot (2026-09-27)
 
 User requested training code for docs/anticipatory_deep_kv_four_arm_pilot_v2.md.
