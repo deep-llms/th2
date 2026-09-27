@@ -1,49 +1,12 @@
-"""HF Trainer/Accelerate training with the project's loss and matched-run receipts."""
-from dataclasses import asdict
+"""Only the HF Trainer adaptations needed by the four-arm model."""
 from contextlib import contextmanager
-from datetime import datetime, timezone
-import hashlib
-import json
 import os
 from pathlib import Path
-import shutil
 
 import numpy as np
 import torch
-import torch.distributed as dist
-from torch.utils.data import Subset
-from transformers import Trainer, TrainerCallback, TrainingArguments, default_data_collator
-from transformers.trainer_callback import TrainerState
-
-from pcc.model import Context
-from .config import NAMES
-from .data import sha256
-
-
-def distributed():
-    return dist.is_available() and dist.is_initialized()
-
-
-def topology():
-    return (dist.get_world_size(), dist.get_rank()) if distributed() else (1, 0)
-
-
-def parameter_hash(module):
-    h = hashlib.sha256()
-    for name, value in module.state_dict().items():
-        h.update(name.encode())
-        h.update(value.detach().cpu().contiguous().numpy().tobytes())
-    return h.hexdigest()
-
-
-def write_json(path, value):
-    path = Path(path)
-    temporary = path.with_suffix(path.suffix + ".part")
-    with temporary.open("w") as handle:
-        json.dump(value, handle, indent=2, allow_nan=False)
-        handle.flush()
-        os.fsync(handle.fileno())
-    os.replace(temporary, path)
+from transformers import Trainer, TrainerCallback
+from .model import Context
 
 
 def summarize_statistics(statistics):
@@ -80,36 +43,6 @@ def offline_wandb_run(args):
                     name=args.run_name, dir=str(directory)):
         yield
 
-
-def training_arguments(recipe, output, microbatch, *, cpu=False, mixed_precision=True):
-    rows = recipe.tokens_per_update // recipe.context
-    world = topology()[0]
-    if type(microbatch) is not int or microbatch <= 0 or rows % (world * microbatch):
-        raise ValueError("Global batch must divide evenly across ranks and microbatches")
-    return TrainingArguments(
-        output_dir=str(output), use_cpu=cpu, bf16=mixed_precision,
-        per_device_train_batch_size=microbatch, per_device_eval_batch_size=microbatch,
-        gradient_accumulation_steps=rows // (world * microbatch),
-        num_train_epochs=1, max_steps=recipe.updates,
-        learning_rate=recipe.learning_rate, lr_scheduler_type="cosine_with_min_lr",
-        lr_scheduler_kwargs={"min_lr_rate": 0.1}, warmup_steps=recipe.warmup,
-        weight_decay=recipe.weight_decay, adam_beta1=0.9, adam_beta2=0.95,
-        adam_epsilon=1e-8, max_grad_norm=1.0,
-        # Match baseline's Trainer default (fused AdamW on this CUDA runtime).
-        optim="adamw_torch" if cpu else "adamw_torch_fused",
-        seed=recipe.seed, data_seed=recipe.data_seed,
-        logging_steps=recipe.logging_every, logging_nan_inf_filter=False,
-        # Native rotation runs before our all-rank checkpoint certification and
-        # counts partial saves. Retain two certified saves in on_save instead.
-        save_steps=recipe.checkpoint_every, save_total_limit=None,
-        eval_strategy="steps", eval_steps=recipe.eval_every, eval_on_start=True,
-        dataloader_num_workers=recipe.dataloader_workers, dataloader_pin_memory=not cpu,
-        ddp_timeout=21600, ddp_find_unused_parameters=False,
-        # DeepKV already checkpoints its custom blocks and chunked output head.
-        gradient_checkpointing=False, remove_unused_columns=False,
-        report_to="none" if cpu else "wandb", run_name=f"deep-kv-{Path(output).name}-seed{recipe.seed}",
-        disable_tqdm=True, push_to_hub=False,
-    )
 
 
 class DeepKVTrainer(Trainer):
@@ -177,177 +110,27 @@ class DeepKVTrainer(Trainer):
             super()._load_optimizer_and_scheduler(checkpoint)
 
 
-def checkpoint_files(world):
-    return ["model.safetensors", "optimizer.pt", "scheduler.pt", "trainer_state.json",
-            "training_args.bin"] + (["rng_state.pth"] if world == 1 else
-                                    [f"rng_state_{rank}.pth" for rank in range(world)])
 
-
-def verify_checkpoint(path, identity, *, verify_hashes=True):
-    path = Path(path)
-    receipt = json.loads((path / "deep_kv.json").read_text())
-    state = json.loads((path / "trainer_state.json").read_text())
-    if (receipt.get("format") != "deep-kv-hf-checkpoint-v1" or receipt["identity"] != identity
-            or state["global_step"] != receipt["update"]
-            or state["max_steps"] != identity["recipe"]["updates"]
-            or not 0 < receipt["update"] <= state["max_steps"]):
-        raise ValueError("Checkpoint identity/schedule mismatch")
-    if set(receipt["files"]) != set(checkpoint_files(identity.get("world_size", topology()[0]))):
-        raise ValueError("Incomplete Trainer checkpoint")
-    for name, spec in receipt["files"].items():
-        file = path / name
-        if file.stat().st_size != spec["bytes"] or (verify_hashes and sha256(file) != spec["sha256"]):
-            raise ValueError(f"Checkpoint checksum mismatch: {name}")
-    if [row["update"] for row in receipt["history"]["train"]] != list(range(1, receipt["update"] + 1)):
-        raise ValueError("Checkpoint training history is incomplete")
-    return receipt
-
-
-class ExperimentCallback(TrainerCallback):
-    def __init__(self, recipe, identity, end, evaluation, history):
-        self.recipe, self.identity, self.end = recipe, identity, end
-        self.evaluation, self.history = evaluation, history
+class PilotCallback(TrainerCallback):
+    """Log component losses and stop at the same update without changing LR."""
+    def __init__(self, end, tokens_per_update):
+        self.end, self.tokens_per_update = end, tokens_per_update
         self.trainer = None
-        self.lr = None
-
-    def on_step_begin(self, args, state, control, optimizer, **kwargs):
-        self.lr = optimizer.param_groups[0]["lr"]
+        self.latest = {}
 
     def on_step_end(self, args, state, control, **kwargs):
         totals = self.trainer.step_totals
         self.trainer.step_totals = None
         if totals is None:
-            raise ValueError("Missing custom training statistics")
-        if distributed():
-            dist.all_reduce(totals)
-        tokens = int(totals[-1].item())
-        targets = int(totals[1].item())
-        rows = self.recipe.tokens_per_update // self.recipe.context
-        if tokens != self.recipe.tokens_per_update or targets != rows * (self.recipe.context - 1):
-            raise ValueError("Global token/target budget mismatch")
-        metrics = summarize_statistics(totals.cpu().numpy()[None])
-        metrics.update(update=state.global_step, input_tokens=state.global_step * tokens,
-                       rows=rows, lr=self.lr)
-        self.history["train"].append(metrics)
+            raise ValueError("Missing training statistics")
+        totals = self.trainer.accelerator.reduce(totals, reduction="sum")
+        if int(totals[-1]) != self.tokens_per_update:
+            raise ValueError("Incomplete global token batch; check dataset capacity")
+        self.latest = summarize_statistics(totals.cpu().numpy()[None])
         if state.global_step >= self.end:
-            control.should_training_stop = True
-            control.should_save = control.should_evaluate = True
-            self.trainer.eval_dataset = self.evaluation
+            control.should_training_stop = control.should_save = True
         return control
 
-    def on_evaluate(self, args, state, control, metrics, **kwargs):
-        keys = ("lm_loss", "loss_k", "loss_v", "objective", "input_tokens", "target_tokens", "rows")
-        self.history["evaluation"].append({"update": state.global_step,
-                                            **{key: metrics[f"eval_{key}"] for key in keys}})
-
     def on_log(self, args, state, control, logs, **kwargs):
-        if "loss" in logs and self.history["train"]:
-            # HF logs interval-averaged total loss; these are explicitly the
-            # most recent optimizer step's individually normalized components.
-            row = self.history["train"][-1]
-            logs.update({f"step_{key}": row[key] for key in ("lm_loss", "loss_k", "loss_v")})
-
-    def on_save(self, args, state, control, **kwargs):
-        # All ranks must finish RNG writes before rank zero certifies a save.
-        self.trainer.accelerator.wait_for_everyone()
-        if state.is_world_process_zero:
-            path = Path(args.output_dir) / f"checkpoint-{state.global_step}"
-            files = {name: {"bytes": (path / name).stat().st_size, "sha256": sha256(path / name)}
-                     for name in checkpoint_files(args.world_size)}
-            write_json(path / "deep_kv.json", {"format": "deep-kv-hf-checkpoint-v1",
-                       "identity": self.identity, "update": state.global_step,
-                       "history": self.history, "files": files})
-            write_json(Path(args.output_dir) / "metrics.json", self.history)
-            certified = sorted(
-                (p for p in Path(args.output_dir).glob("checkpoint-*")
-                 if p.name.removeprefix("checkpoint-").isdigit() and (p / "deep_kv.json").is_file()),
-                key=lambda p: int(p.name.split("-")[-1]),
-            )
-            for old in certified[:-2]:
-                shutil.rmtree(old)
-        self.trainer.accelerator.wait_for_everyone()
-
-
-def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=1,
-          mixed_precision=True, resume=False, stop_after=None, trainer_args=None):
-    os.environ["WANDB_MODE"] = "offline"
-    os.environ.setdefault("WANDB_PROJECT", "deep2shallow")
-    recipe.validate()
-    if identity.get("recipe") != asdict(recipe) or identity.get("arm") != model.arm:
-        raise ValueError("Run identity differs from the requested arm/recipe")
-    end = recipe.end_update(stop_after)
-    output = Path(output)
-    world, rank = topology()
-    if (identity.get("world_size", world) != world or
-            identity.get("mixed_precision", mixed_precision) != mixed_precision or
-            identity.get("config", {}).get("microbatch", microbatch) != microbatch):
-        raise ValueError("Runtime settings differ from run identity")
-    cpu = next(model.parameters()).device.type == "cpu"
-    args = trainer_args or training_arguments(recipe, output, microbatch, cpu=cpu, mixed_precision=mixed_precision)
-    if args.world_size != world or (args.device.type == "cpu") != cpu:
-        raise ValueError("Trainer device/topology differs from the requested runtime")
-    checkpoint = None
-    history = {"train": [], "evaluation": []}
-    update = 0
-    if resume:
-        if (output / "complete.json").exists():
-            raise ValueError("Resume requires an incomplete run")
-        if json.loads((output / "run.json").read_text()) != identity:
-            raise ValueError("Run receipt differs from checkpoint identity")
-        candidates = [p for p in output.glob("checkpoint-*")
-                      if p.name.removeprefix("checkpoint-").isdigit() and (p / "deep_kv.json").is_file()]
-        if not candidates:
-            raise ValueError("Resume requires a certified HF checkpoint")
-        checkpoint = max(candidates, key=lambda p: int(p.name.split("-")[-1]))
-        receipt = verify_checkpoint(checkpoint, identity, verify_hashes=rank == 0)
-        update, history = receipt["update"], receipt["history"]
-        if end < update:
-            raise ValueError("Cutoff precedes checkpoint")
-    elif rank == 0 and output.exists():
-        raise FileExistsError(output)
-    if rank == 0:
-        output.mkdir(parents=True, exist_ok=resume)
-        if not resume:
-            write_json(output / "run.json", identity)
-        (output / "stopped.json").unlink(missing_ok=True)
-    if distributed():
-        dist.barrier()
-    with offline_wandb_run(args):
-        callback = ExperimentCallback(recipe, identity, end, eval_data, history)
-        trainer = DeepKVTrainer(model=model, args=args, train_dataset=train_data,
-                                eval_dataset=Subset(eval_data, range(recipe.monitor_rows)),
-                                data_collator=default_data_collator, compute_metrics=compute_metrics,
-                                callbacks=[callback])
-        callback.trainer = trainer
-        if update < end:
-            trainer.train(resume_from_checkpoint=str(checkpoint) if checkpoint else None)
-            if trainer.state.global_step != end:
-                raise ValueError("Trainer stopped outside the requested iteration")
-            checkpoint = output / f"checkpoint-{end}"
-        else:
-            # Do not invoke Trainer.train at an already reached cutoff: it can take
-            # another step before its stopping callback fires. Only restore/evaluate.
-            trainer._load_from_checkpoint(str(checkpoint))
-            trainer.state = TrainerState.load_from_json(str(checkpoint / "trainer_state.json"))
-            if (not history["evaluation"] or history["evaluation"][-1]["update"] != end
-                    or history["evaluation"][-1]["rows"] != recipe.eval_rows):
-                trainer.evaluate(eval_dataset=eval_data)
-                if rank == 0:
-                    receipt["history"] = history
-                    write_json(checkpoint / "deep_kv.json", receipt)
-        trainer.accelerator.wait_for_everyone()
-        if rank == 0:
-            receipt = verify_checkpoint(checkpoint, identity)
-            history = receipt["history"]
-            if history["evaluation"][-1]["rows"] != recipe.eval_rows or history["evaluation"][-1]["update"] != end:
-                raise ValueError("Missing fixed final evaluation")
-            write_json(output / "metrics.json", history)
-            status = {"status": "complete" if end == recipe.updates else "stopped",
-                      "arm": model.arm, "name": NAMES[model.arm], "update": end,
-                      "input_tokens": end * recipe.tokens_per_update,
-                      "checkpoint": checkpoint.name,
-                      "final_evaluation": history["evaluation"][-1],
-                      "utc": datetime.now(timezone.utc).isoformat()}
-            write_json(output / ("complete.json" if end == recipe.updates else "stopped.json"), status)
-        trainer.accelerator.wait_for_everyone()
-        return history
+        if "loss" in logs:
+            logs.update({f"step_{k}": self.latest[k] for k in ("lm_loss", "loss_k", "loss_v") if k in self.latest})

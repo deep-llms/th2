@@ -1,5 +1,80 @@
 # Current task
 
+## Authorized B200 smoke after four-arm review (2026-09-27)
+
+User requested another specification review and an eight-GPU B200 smoke.
+Reviewed A/B/C/D against the mechanism document and pinned native Qwen3 code;
+no new mechanism discrepancy found. Existing 46-test and eight-process CPU/BF16
+evidence applies. Preparing a fresh read-only GPU/process/data preflight,
+th2-78gg-deep-kv-refactor-preflight-20260927-a01, including copying the repository
+Accelerate config to the actual default cache and checking accelerate env.
+No GPU stop or training is included in this first command. Fresh ownership
+inspection must precede the previously authorized burn stop and smoke launch.
+Latest retrieved status still concerns old 96487e0 (BLOCKED, controller
+06:53:34, Dropbox modified 13:53:37 UTC); it does not establish current B200
+connectivity. Evidence: temp/deep-kv-smoke-review-status-20260927-a01.log.
+
+## Follow-up correctness review (2026-09-27)
+
+Fixed explicit resume accepting another arm's checkpoint: checkpoint paths must
+now belong to the selected output directory and match its full schedule. Invalid
+noninteger cutoffs and nonpositive/noninteger LM chunks are rejected. Queue list
+arguments now follow HF CLI parsing; report_to lists with zero/one integration
+are supported, while multiple integrations give an explicit CLI limitation error.
+All 46 local tests passed (11.556 s), including cross-arm rejection, valid resume,
+and generated queue parsing. Evidence: temp/deep-kv-refactor-review-tests-20260927.log.
+Packing remains byte-identical; no remote launch or sampling change. Existing
+eight-process BF16 CPU evidence below remains applicable; B200 smoke is pending.
+
+## Active: minimal four-arm training refactor (2026-09-27)
+
+The four-arm specification is the active task. User requested removing the
+unnecessary PCC infrastructure and using the proven train.py flow, changing
+only the custom model/loss and required experiment behavior. train.py now owns
+HF argument parsing, cached text preprocessing, seeded shuffle, Trainer
+training/evaluation, and native checkpoint/resume. deep_kv holds the model,
+unchanged packing helper, small Trainer adaptations, queue generator and report.
+The obsolete PCC package, teacher/distillation/joint workflows, their configs,
+launchers and tests are removed; source remains in Git at pre-refactor 63bcc61.
+
+EOS packing was mechanically moved from pcc/packing.py to deep_kv/packing.py;
+its bytes are unchanged. prepare_data.py, saved text, local preparation project,
+and running corpus preparation are untouched. No new export/tokenization stage.
+
+The authoritative recipe is now flat HF JSON in deep_kv.b200.json: 28,600 full
+schedule steps, eight GPUs, microbatch 16, accumulation 4, 1,048,576 tokens/update.
+Generate A/B/C/D/report with python -m deep_kv make-jobs --stop-after 2000.
+The old deep_kv train/smoke/plan and --config/--output/--stop-after training CLI
+are removed. train.py uses standard HF args or a JSON file, including stop_after.
+See DEEP_KV_TRAINING.md for current commands; older entries below are historical.
+
+Native HF checkpoints replace the previous hash/certification/rotation layer;
+old custom checkpoint receipts are not compatible. Config/data matching remains,
+without custom per-step history or checkpoint manifests. Resume can select an
+explicit intact native checkpoint if the latest save was interrupted.
+
+Removed the redundant disabled upload argument that the runner scanner flagged;
+pinned HF defaults still disable uploads, local-only model/tokenizer loading
+and offline W&B remain. No push or B200 launch during this refactor. Latest
+observed remote status was BLOCKED on commit 96487e0 (controller 06:53:34;
+Dropbox upload 13:53:37 UTC, 2026-09-27), not evidence that the GPU node was dead.
+Current local commands.sh remains #0. B200 CUDA/NCCL smoke remains pending.
+
+Validation completed: 45 retained local tests passed (10.755 s). The actual
+train.py path passed exact single-process resume, cache-hit/rebuild token and
+sampler-order checks, independent gradient-accumulation checks, and matched
+four-arm cutoff/reporting. Eight-process CPU/Gloo training passed every arm
+with actual BF16 projection outputs, microbatch 16 and accumulation 4; maximum
+resumed/uninterrupted parameter difference was 1.862645149230957e-9. Uneven
+five-context final evaluation was counted exactly once per context. An initial
+eight-process check exposed a fresh-output race; an HF distributed-state barrier
+now completes all ranks' output checks before rank-zero writes. Shell syntax,
+compilation, diff checks and the byte-identical packing comparison passed.
+Evidence:
+ temp/deep-kv-refactor-all-tests-20260927-final.log
+ temp/deep-kv-refactor-resume8-20260927-final/resume_verified.json
+No GPU workload, remote push, or corpus preparation change was performed.
+
 ## B200 smoke blocked by runner connection (2026-09-27)
 
 User authorized an eight-GPU B200 smoke, committing all local changes, copying

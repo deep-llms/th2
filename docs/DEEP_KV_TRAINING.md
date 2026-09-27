@@ -1,241 +1,138 @@
-# Four-arm anticipatory K/V training
+# Four-arm training through train.py
 
-Implementation of the arms in `anticipatory_deep_kv_four_arm_pilot_v2.md`, with
-the user's 2026-09-27 budget override: approximately 30B English tokens and 1M
-tokens per optimizer update, with optional matched iteration cutoffs. Entry point:
-`python -m deep_kv`. Training now uses Hugging Face Trainer and Accelerate,
-following `train.py` and `scripts/train_qwen3_0.6b_baseline.sh`. The old scripts
-remain historical EmbHub examples; the active launcher is `scripts/train_deep_kv.sh`. No model weights are loaded: Qwen3 is initialized
-from its local config with a fixed seed. Use Transformers **5.9.0**, as installed
-in B200 `train_env` and local `sampling_b200`, with Accelerate **1.13.0**.
+The mechanism is defined in [the four-arm specification](anticipatory_deep_kv_four_arm_pilot_v2.md).
+The user's later budget overrides its original 1B/32K pilot: approximately
+30B English tokens, 1,048,576 tokens per update, and a matched 2,000-step cutoff.
 
-## Fixed experiment
+## Ordinary training follows the baseline
 
-| Arm | Auxiliary attention | Alignment |
-|---|---|---|
-| A | None | None |
-| B | Strict-past, native block-5 query | None |
-| C | Identical to B | Native block-5 K/V |
-| D | Identical to B | Native block-21 K/V |
+`train.py` is the single training entry point. It uses HfArgumentParser,
+TrainingArguments, set_seed, HF Dataset.map/cache/shuffle, default_data_collator,
+and Trainer.train/save_model/save_metrics/save_state. HF/Accelerate initializes
+distributed training, places the model, shards batches, creates the optimizer
+and scheduler, scales accumulated gradients, and manages checkpoints/resume.
+There is no separate custom training loop or distributed launcher.
 
-Targets are normalized native pre-RoPE keys and native values, computed once in
-the same model forward. Targets alone are detached. Alignment averages direct
-L1 over heads/features and valid tokens, with `(L_K + L_V) / 2`, coefficient 1.
-Native attention and auxiliary attention use the same positions. Auxiliary
-visibility intersects the backbone mask with `j < t`; empty-source outputs are
-exactly zero. Its bias-free output projection starts at zero. The entire
-backbone is trainable. All arms share identical initial backbone tensors;
-B/C/D additionally share identical branch tensors. Activation checkpointing
-recomputes ordinary blocks during backward without mutable capture hooks.
+The old EmbHub customization is replaced with DeepKV. The necessary Trainer
+subclass supplies the combined LM/KV loss and five per-example evaluation
+statistics, avoiding full vocabulary-logit storage. It also handles tied tensor
+storage when saving the nn.Module wrapper and a pinned-version CPU optimizer
+restore issue; CUDA restore uses HF unchanged. A small callback logs loss
+components and requests stop/save at the selected update. W&B stays offline,
+with files under the arm output directory (or an explicit WANDB_DIR).
+
+The old PCC pipelines, Recipe class, preparation commands, per-step history
+ledger, checkpoint hashes/certification/rotation, and duplicate train CLI are
+removed. Checkpoints now use ordinary HF handling and save_total_limit=2.
+
+## Recipe
+
+The executable source of ordinary hyperparameters is `deep_kv.b200.json`:
 
 | Setting | Value |
 |---|---|
-| Backbone | Qwen3 0.6B geometry, 28 blocks, random initialization |
+| Model | Local Qwen3-0.6B-Base config, random initialization, 28 blocks |
+| Arms | A Base; B extra attention; C shallow alignment; D deep alignment |
+| Consumer / deep target | Block 5 / block 21, 1-based |
 | Context | 2048 |
-| Global input tokens/update | 1,048,576 (512 full contexts) |
-| Full schedule updates/arm | 28,600 (includes packing margin below 30B) |
-| Full schedule input tokens/arm | 29,989,273,600 |
-| Selected run cutoff | 2,000 updates = 2,097,152,000 input tokens/arm |
-| Execution | Eight GPUs per arm, sequential A → B → C → D |
-| Microbatch/rank | 16; four accumulation passes (64 contexts/rank) |
-| Master parameters / compute | float32 / bfloat16 autocast |
-| Optimizer | Trainer fused AdamW on CUDA; betas (0.9, 0.95), epsilon 1e-8 |
-| Peak LR / weight decay | 3e-4 / 0.1; Trainer parameter groups exclude biases/norms |
-| Schedule | Baseline 500-step warmup; HF cosine_with_min_lr, minimum 10% of peak |
-| Gradient clipping | Global norm 1.0 |
-| Model / data seed | 42 / 42 (baseline seed) |
-| Monitoring | Every 512 updates, fixed 128 evaluation contexts |
-| Final evaluation | Fixed 4,882 contexts = 9,998,336 input tokens |
-| Checkpoint | Every 250 updates and at a cutoff/final update; retain two |
-| Logging / data-loader workers | Every 10 updates / 8 workers per rank |
-| Experiment logging | Offline W&B on GPU; JSON history; CPU tests disable W&B |
+| GPUs / microbatch / accumulation | 8 / 16 / 4 |
+| Tokens per update | 1,048,576 |
+| Full schedule | 28,600 updates = 29,989,273,600 input tokens |
+| Selected cutoff | 2,000 updates = 2,097,152,000 input tokens per arm |
+| Seed / data seed | 42 / 42 |
+| Optimizer | Native HF fused AdamW on CUDA, betas .9/.95, weight decay .1 |
+| LR | 3e-4, cosine_with_min_lr, minimum .1 of peak, warmup 500 |
+| BF16 / gradient clipping | Enabled / 1.0 |
+| Logging / saving | Every 10 / 250 updates, and save at cutoff |
+| Monitoring | 128 fixed contexts every 512 updates |
+| Final evaluation | 4,882 fixed contexts, 9,998,336 input tokens |
 
-Optimizer, batch size, scheduler, seed, logging and worker settings follow the
-baseline launch script. The fixed evaluation and matched cutoff protocol remain
-project-specific. Trainer uses its native scheduler step convention (the first
-warmup update has LR zero). A cutoff shortens execution while retaining this full
-schedule. Microbatch may be any divisor of 64; accumulation adapts to preserve
-the global batch. The selected B200 microbatch is 16. Synthetic CPU
-smoke runs use a separate, clearly labeled tiny recipe.
+Changing stop_after never changes max_steps or the LR curve. Startup validates
+capacity for the full schedule even when stopping early. All arms receive the
+same configuration except arm, output directory, and run name. B/C/D share
+identical auxiliary initialization. Alignment uses detached native pre-RoPE
+normalized K and native V from the same forward pass, direct L1, weight 1.
 
-The original 28,610-update budget was slightly larger than the expected packed
-English split. The 28,600-update schedule follows the margin recommended in
-[the shortfall analysis](DEEP_KV_DATA_SHORTFALL_20260927.md). Its capacity estimate
-is not a measured packed count; training startup still validates the exact packed budget.
+## Packing is unchanged
 
-## Data
+`deep_kv/packing.py` is a mechanical move of the previous `pcc/packing.py`.
+It appends one explicit `<|endoftext|>` (151643) to each document, concatenates
+within each HF map batch, splits into fixed contexts, and drops that batch's
+remainder. It does not carry remainders between map batches. EOS is not a
+segment attention barrier. Tokenization/grouping still use the two Dataset.map
+calls inside main_process_first, followed by shuffle(seed=42) and the normal
+Trainer sampler. There is no raw-text export or pretokenization job.
 
-`deep_kv.b200.json` selects the already sampled **English** training/evaluation
-directories. No resampling of CulturaX or full-weight download is needed.
-Each training command performs preprocessing internally, using the same
-`preprocess_dataset` helper as `train.py`. It loads shards in sorted order,
-appends `<|endoftext|>` (151643), runs batched tokenization and groups tokens into
-2048-token contexts with Hugging Face `Dataset.map`. Both maps reuse the normal
-HF dataset cache and run inside `TrainingArguments.main_process_first`.
-There is no separate `deep_kv prepare` command, custom binary token file,
-permutation file, or prepared-data manifest.
+Training uses 160 preprocessing workers; evaluation retains one worker and its
+existing fixed prefix. Keep source files, tokenizer, worker count, and software
+identical across arms. A cache miss recomputes the same token sequences/order.
+Moving the helper may cause an HF cache rebuild, without changing packing.
+The sampled text and the separately running corpus preparation job are unchanged.
 
-As in `train.py`, packing concatenates each map batch of 1,000 documents and
-drops its incomplete final context. Documents may attend across EOS boundaries.
-`preprocessing_num_workers` in `deep_kv.b200.json` is 160 for training, matching
-the baseline launch script; `overwrite_cache` defaults to false. Validation
-uses one preprocessing worker to preserve the audited 4,882-context budget:
-its ~10M-token source has little margin for extra worker-boundary remainders.
-HF cache files live at the locations chosen by Datasets for the saved Arrow
-inputs, as in `train.py`. They must remain writable for cache creation.
+## Commands
 
-Training uses the entire packed dataset shuffled with seed 42, then Trainer's
-normal seeded training sampler and Accelerate's distributed batch sharding.
-There is no custom sequential sampler or training-prefix truncation. All arms
-use the same sorted source data, tokenizer, preprocessing worker count, seeds,
-and software. A cache miss repeats the same deterministic computation and
-produces the same tokens and example order. Worker count must also remain fixed
-across arms because multiprocessing can change packing remainder boundaries.
-Validation uses the first 4,882 packed contexts, with a fixed 128-context monitor
-subset. These choices are recorded through dataset fingerprints and run settings.
+Use Transformers 5.9.0 and Accelerate 1.13.0. Model/config/tokenizer/data paths
+must already exist locally. The entry point disables online HF access and W&B
+uploads. No explicit redundant upload flag is supplied to TrainingArguments;
+the pinned HF default keeps uploads disabled.
 
-Startup checks that the packed training dataset has enough rows for the full
-28,600-update schedule, even with a 2,000-step cutoff, and that validation has
-4,882 contexts. It fails on insufficient data; it does not silently repeat it.
-Full run identity remains strict for resume and comparison. Old custom-binary
-runs/checkpoints have different data order and identity and are incompatible.
-Sampled text remains usable without resampling. Operational settings do not
-invalidate HF tokenization/packing caches; preprocessing inputs control caching.
-
-## Plan and sequential launch
-
-The following are launch instructions, not an automatic deployment. Existing
-GPU workloads must be handled under the repository's GPU ownership rules first.
-The queue only checks GPUs and refuses occupied devices; it never reclaims them.
+For a single arm, use a standard HF JSON configuration:
 
 ```bash
-python -m deep_kv plan --config deep_kv.b200.json --stop-after 2000
+bash scripts/train_deep_kv.sh deep_kv.b200.json
+```
+
+That config defaults to Arm A and the full schedule. For another arm or a cutoff,
+copy the JSON and set arm, output_dir, and stop_after. Alternatively pass the
+standard HF CLI arguments directly to train.py through the same shell launcher.
+
+For the intended sequential 2,000-step experiment:
+
+```bash
 python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
   --output temp/deep-kv-jobs.json
 python run_experiments.py --config temp/deep-kv-jobs.json --list
-python run_experiments.py --config temp/deep-kv-jobs.json \
-  --run-dir /mnt/local/_outputs/deep-llms_th2/deep-kv-hf-seed42-2k
+python run_experiments.py --config temp/deep-kv-jobs.json --run-dir /PATH/fresh-run
 ```
 
-Use the selected environment's Python for all commands. The generated queue
-runs A, B, C and D with eight-process `accelerate launch`, then produces
-`comparison.json` on CPU. There are five jobs and no preparation job.
-Each arm tokenizes/packs or reuses the HF cache inside its training command.
-Each arm must exit successfully and publish the exact
-2,000-update/2,097,152,000-token stopped marker before the queue advances.
-Omitting `--stop-after` instead requires full 28,600-update/29,989,273,600-token
-completion.
-Rank zero writes offline W&B files to `<run-dir>/<arm>/wandb/` by default;
-an explicit `WANDB_DIR` overrides that location. Each training call owns and
-closes its W&B run, including on failure, so sequential calls in one Python
-process use separate runs and correct directories. An existing active W&B run
-must be finished before calling this trainer. Normal CPU tests disable W&B;
-the dedicated logging regression enables the offline SDK on CPU.
-The report verifies shared data/recipe/initialization and checkpoint identities.
-It reports LM-loss differences B−A, C−B, D−B, D−C and D−A; negative favors the
-first arm. Single-seed differences are exploratory, not statistical proof.
+Both launch routes use `resources/accelerate_config.yaml`. Before a B200 launch,
+copy it to the machine's actual HF Accelerate default config and check
+`accelerate env`, as previously requested. These instructions do not themselves
+launch anything or stop GPU processes.
 
+The queue runs A/B/C/D then report, requiring successful exit and each arm's
+result.json at the exact requested step before advancing. Report checks matched
+configuration, dataset fingerprints, steps, final evaluation, and saved model
+presence. It reports B−A, C−B, D−B, D−C and D−A in held-out LM loss. Negative
+favors the first arm; one seed does not establish statistical significance.
 
-## Checkpoints and stopping
+## Resume and output
 
-Each arm writes `run.json`, `metrics.json`, and standard Trainer
-`checkpoint-N/` directories: model safetensors, optimizer, scheduler, per-rank
-RNG, training arguments and trainer state. The custom wrapper preserves both
-names of tied embedding/output weights when saving, so standard HF restore
-loads every tensor. The latest two certified checkpoints are retained. Allow roughly
-8 GB per checkpoint, plus space for a third while a new save is being written.
+Each arm writes native checkpoint-N directories, a final model/tokenizer,
+trainer_state.json, train_results.json, eval_results.json, train_config.json,
+and result.json. The latter appears only after the requested update and final
+evaluation finish. There is no custom checkpoint format or certificate.
 
-After all ranks finish saving, `checkpoint-N/deep_kv.json` records the run
-identity, step, component-loss history, and hashes of every required checkpoint
-file. Resume selects the latest certified save and checks its identity/files;
-unmarked partial saves are ignored. Native HF rotation is disabled: cleanup runs
-only after certification and retains the two latest certified saves. This keeps
-an interrupted replacement save from deleting the last recoverable checkpoint.
-Partial directories do not count toward that limit and may require extra disk
-space after an interruption. The report also verifies checkpoint hashes.
-Old custom-loop `checkpoint.pt` files are not HF checkpoints and are rejected.
-These checkpoints contain our custom model's full state; restoring it requires
-the DeepKV wrapper, rather than treating it as an unmodified Qwen model.
+Like the original train.py, rerunning the same output automatically resumes its
+latest HF checkpoint, or accepts resume_from_checkpoint explicitly within the
+same arm's output directory. Checkpoints from another output are rejected. Saved
+configuration and data fingerprints must match; stop_after may change. Resuming
+at an already reached cutoff restores/evaluates without taking another update.
+A nonempty directory with no checkpoint is rejected. An interrupted/incomplete
+native checkpoint can fail to load; select an earlier intact native checkpoint
+explicitly. There is no automatic certified-checkpoint recovery layer.
+Old Deep-KV/PCC checkpoint formats are not supported by this entry point.
 
-The selected experiment uses a common **2,000-update cutoff**, consuming
-2,097,152,000 tokens per arm (8,388,608,000 across four arms). Generate its queue
-with `--stop-after 2000`; omitting that argument requests the full schedule:
+The saved weights belong to the DeepKV wrapper; construct the same model and
+load its state when evaluating outside train.py. They are not a bare Qwen
+AutoModelForCausalLM checkpoint.
 
-```bash
-python -m deep_kv plan --config deep_kv.b200.json --stop-after 2000
-python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
-  --output temp/deep-kv-cutoff-jobs.json
-python run_experiments.py --config temp/deep-kv-cutoff-jobs.json --run-dir /PATH/run
-```
+## Verification
 
-The queue passes the same cutoff to A/B/C/D and the comparison. Each arm retains
-the 28,600-update LR schedule, evaluates all 4,882 fixed evaluation contexts,
-saves a resumable checkpoint, and writes `stopped.json`. The cutoff queue checks
-the exact iteration and token count before advancing. `comparison.json` records
-`compared_update` and `training_complete: false`; its `status: complete` means
-the comparison finished. A full-budget queue still requires `complete.json`.
-The CLI default remains full training. A cutoff equal to 28,600 is full completion.
-
-The trainer and report also accept `--stop-after N` individually. To continue
-an arm to the full budget, omit the cutoff when resuming:
-
-```bash
-bash scripts/train_deep_kv.sh --config deep_kv.b200.json \
-  --output /PATH/run/D --arm D --resume
-```
-
-Resume rejects changed data, code, software, model configuration, precision or
-world size. It continues at the next exact global context batch. The generic
-queue itself uses fresh output directories; resume interrupted arms explicitly.
-Resume removes the old stop marker after checkpoint validation. If interruption
-occurs after saving the final checkpoint but before publishing results, resuming
-restores `metrics.json` before publishing `complete.json` without another update.
-There is no automatic training extension or GPU-burn management in this module.
-
-## Loss and evaluation normalization
-
-`DeepKVTrainer.compute_loss` returns a microbatch mean:
-`LM_sum / LM_target_count + (K_sum + V_sum) / (2 * input_token_count)`.
-The LM denominator excludes the first token of each causal context. The K/V
-loss averages heads/features and all input positions; only native targets are
-detached. Every training microbatch is full and equal-sized. The subclass sets
-`model_accepts_loss_kwargs=False`: Trainer divides by four accumulation steps,
-and DDP averages over eight ranks. There is no extra manual scaling by either
-factor. Baseline/NoAlign simply have zero K/V terms.
-
-Evaluation returns five small statistics per context, avoiding vocabulary-size
-logit storage. Trainer gathers these and removes duplicate padding examples
-from uneven distributed evaluation batches before computing token-weighted LM,
-K, V and total losses. Model selection/report comparisons use **LM loss**;
-HF's `eval_loss` is the full training objective for aligned arms.
-
-## Local verification
-
-```bash
-CUDA_VISIBLE_DEVICES='' python -m unittest discover -s tests -p test_deep_kv.py -v
-CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m deep_kv smoke --output temp/kv-smoke
-CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m torch.distributed.run \
-  --standalone --nnodes=1 --nproc-per-node=8 --max-restarts=0 \
-  -m deep_kv smoke --stop-after 2 --output temp/kv-smoke-ddp8
-CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m torch.distributed.run \
-  --standalone --nnodes=1 --nproc-per-node=8 --max-restarts=0 \
-  tests/deep_kv_resume_worker.py \
-  --output temp/kv-resume-check --bf16
-```
-
-CPU tests exercise the real Trainer loop, custom accumulation gradients,
-mechanism acceptance, cached vs rebuilt HF data and batch order across arms,
-checkpoint identity, exact single-process
-resume with worker prefetch, interrupted-save recovery, and cutoff reporting.
-The Gloo worker checks all four arms with eight CPU processes and four
-accumulation steps, asserting the actual projection dtype during execution.
-CPU tests use non-fused AdamW;
-CUDA/NCCL, fused AdamW and full-context B200 throughput remain hardware checks.
-The pinned libraries need a small CPU-only optimizer restore adjustment:
-Accelerate's `cpu:0` device is normalized to `cpu` for `torch.load`; CUDA uses
-Trainer's standard restore path.
-
-Earlier full-geometry CPU tests established 28-layer model forward/backward
-and zero-branch Base equivalence; they were not GPU capacity measurements.
-The local English evaluation audit found 4,883 complete contexts, enough for
-the fixed 4,882-context evaluation budget.
+The tests retain the specification's mechanism checks: base equivalence,
+strict-past/empty-source masks, native target correctness, detached targets,
+and live-branch gradient paths. Integration checks cover the real train.py entry
+point, unchanged EOS packing/cache rebuild order, native accumulation scaling,
+matched cutoff/reporting, and native checkpoint resume. The eight-process CPU
+worker uses BF16, microbatch 16, accumulation 4, and uneven evaluation shards.
+Local checks do not establish B200 CUDA/NCCL capacity or throughput.

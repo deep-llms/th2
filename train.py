@@ -1,347 +1,200 @@
-"""Train a causal LM on multilingual data.
+"""Four-arm Qwen pretraining using the baseline HF Trainer/Accelerate pipeline.
 
-Adapted from HuggingFace's run_clm.py example:
-https://github.com/huggingface/transformers/blob/main/examples/pytorch/language-modeling/run_clm.py
-
-Data is loaded from per-language directories saved by prepare_data.py.
-
-NOTE: This file was copied from the cross_lingual_embeddings_hub project.
-It contains EmbHub-specific code (imports, EmbHubArguments, SaveEmbHubCallback,
-inject/load/save calls) that must be replaced with this project's own model
-wrapper. Search for "model_wrapper_v2" and "embhub" to find all EmbHub
-references that need updating.
+Accepts standard TrainingArguments plus model/data/arm arguments, or one JSON
+config. All assets are local. Packing is the unchanged two-map EOS CLM pipeline.
 """
+import os
+os.environ.update(HF_HUB_OFFLINE="1", HF_DATASETS_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
+                  HF_HUB_DISABLE_TELEMETRY="1", WANDB_MODE="offline")
 
 import json
 import logging
-import os
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
 import sys
-from dataclasses import dataclass, field, asdict
 
 import datasets
-from datasets import load_from_disk, concatenate_datasets
-
 import transformers
-from transformers import (
-    AutoConfig,
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    HfArgumentParser,
-    Trainer,
-    TrainingArguments,
-    TrainerCallback,
-    default_data_collator,
-    set_seed,
-)
+from transformers import AutoConfig, AutoTokenizer, HfArgumentParser, TrainingArguments, default_data_collator, set_seed
 from transformers.trainer_utils import get_last_checkpoint
+from transformers.trainer_callback import TrainerState
 
-from model_wrapper_v2 import inject_embhub, load_model_with_embhub, save_embhub
-from pcc.packing import preprocess_dataset
+from deep_kv.model import DeepKV
+from deep_kv.packing import preprocess_dataset
+from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class ModelArguments:
-    model_name_or_path: str | None = field(
-        default=None,
-        metadata={"help": "Model checkpoint for weights initialization. Don't set if training from scratch."},
-    )
-    config_name: str | None = field(
-        default=None,
-        metadata={"help": "Pretrained config name or path if not the same as model_name_or_path"},
-    )
-    tokenizer_name: str | None = field(
-        default=None,
-        metadata={"help": "Pretrained tokenizer name or path if not the same as model_name_or_path"},
-    )
-    cache_dir: str | None = field(
-        default=None,
-        metadata={"help": "Where to store pretrained models downloaded from huggingface.co"},
-    )
-    token: str | None = field(
-        default=None,
-        metadata={"help": "HF auth token for downloading gated models/tokenizers"},
-    )
-    trust_remote_code: bool = field(
-        default=False,
-        metadata={"help": "Whether to trust remote code from the Hub"},
-    )
+    config_name: str = field(metadata={"help": "Local Qwen3 config file or directory; random initialization"})
+    tokenizer_name: str = field(metadata={"help": "Local tokenizer directory"})
 
 
 @dataclass
 class DataArguments:
-    data_dir: str = field(
-        default="data/sampled",
-        metadata={"help": "Directory containing per-language raw text datasets (saved by prepare_data.py)"},
-    )
-    block_size: int | None = field(
-        default=None,
-        metadata={"help": "Optional input sequence length after tokenization. Defaults to model max length."},
-    )
-    preprocessing_num_workers: int | None = field(
-        default=None,
-        metadata={"help": "Number of processes for preprocessing"},
-    )
-    overwrite_cache: bool = field(
-        default=False,
-        metadata={"help": "Overwrite the cached preprocessed datasets"},
-    )
+    data_dir: str = field(metadata={"help": "Saved text: split root, language directory, or Arrow dataset"})
+    eval_data_dir: str = field(metadata={"help": "Separate held-out text directory"})
+    block_size: int = 2048
+    preprocessing_num_workers: int = 160
+    overwrite_cache: bool = False
+    eval_rows: int = 4882
+    monitor_rows: int = 128
 
 
 @dataclass
-class EmbHubArguments:
-    num_hub_embeddings: int = field(default=1000, metadata={"help": "Number of hub embeddings"})
-    alpha: float = field(default=0.05, metadata={"help": "Hub scaling factor"})
-    freeze_base: bool = field(default=False, metadata={"help": "Freeze base model, train only hub"})
-    no_embhub: bool = field(default=False, metadata={"help": "Train original model without EmbHub layer"})
+class PilotArguments:
+    arm: str = "A"
+    consumer: int = 5
+    deep_target: int = 21
+    lm_chunk: int = 128
+    checkpoint_layers: bool = True
+    stop_after: int | None = None
 
 
-def save_train_config(save_dir, model_args, data_args, embhub_args, training_args):
-    config = {
-        "model": asdict(model_args),
-        "data": asdict(data_args),
-        "embhub": asdict(embhub_args),
-        "training": {
-            k: v for k, v in training_args.to_dict().items()
-            if v is not None and v != "" and k not in ("_n_gpu", "local_rank")
-        },
-    }
-    with open(os.path.join(save_dir, "train_config.json"), "w") as f:
-        json.dump(config, f, indent=2, default=str)
-
-
-class SaveEmbHubCallback(TrainerCallback):
-    def __init__(self, model_args, data_args, embhub_args):
-        self.model_args = model_args
-        self.data_args = data_args
-        self.embhub_args = embhub_args
-
-    def on_save(self, args, state, control, **kwargs):
-        if not args.should_save:
-            return
-        checkpoint_dir = os.path.join(args.output_dir, f"checkpoint-{state.global_step}")
-        if not self.embhub_args.no_embhub:
-            save_embhub(kwargs["model"], checkpoint_dir)
-        save_train_config(checkpoint_dir, self.model_args, self.data_args, self.embhub_args, args)
+def load_text(directory):
+    """The baseline's sorted language/shard concatenation; accepts one language too."""
+    root = Path(directory)
+    if not root.is_dir():
+        raise ValueError(f"Missing sampled text: {root}")
+    def shards(path):
+        if (path / "state.json").is_file():
+            return [path]
+        return sorted(p for p in path.glob("shard_*") if p.is_dir())
+    paths = shards(root)
+    if not paths:
+        for language in sorted(p for p in root.iterdir() if p.is_dir()):
+            found = shards(language)
+            if not found:
+                raise ValueError(f"Missing Arrow dataset: {language}")
+            paths.extend(found)
+    if not paths:
+        raise ValueError(f"No datasets found in {root}")
+    parts = [datasets.load_from_disk(str(p)) for p in paths]
+    return datasets.concatenate_datasets(parts) if len(parts) > 1 else parts[0]
 
 
 def main():
-    parser = HfArgumentParser((ModelArguments, DataArguments, EmbHubArguments, TrainingArguments))
+    parser = HfArgumentParser((ModelArguments, DataArguments, PilotArguments, TrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
-        model_args, data_args, embhub_args, training_args = parser.parse_json_file(
-            json_file=os.path.abspath(sys.argv[1])
-        )
+        model_args, data_args, pilot, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
-        model_args, data_args, embhub_args, training_args = parser.parse_args_into_dataclasses()
-
-    # Setup logging
-    logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        datefmt="%m/%d/%Y %H:%M:%S",
-        handlers=[logging.StreamHandler(sys.stdout)],
-    )
-
-    if training_args.should_log:
-        transformers.utils.logging.set_verbosity_info()
-
-    log_level = training_args.get_process_log_level()
-    logger.setLevel(log_level)
-    datasets.utils.logging.set_verbosity(log_level)
-    transformers.utils.logging.set_verbosity(log_level)
-    transformers.utils.logging.enable_default_handler()
-    transformers.utils.logging.enable_explicit_format()
-
-    logger.warning(
-        f"Process rank: {training_args.local_process_index}, device: {training_args.device}, "
-        f"n_gpu: {training_args.n_gpu}, distributed training: {training_args.parallel_mode.value == 'distributed'}, "
-        f"16-bits training: {training_args.fp16}"
-    )
-    logger.info(f"Training/evaluation parameters {training_args}")
-
-    # Set seed before initializing model.
+        model_args, data_args, pilot, training_args = parser.parse_args_into_dataclasses()
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+                        handlers=[logging.StreamHandler(sys.stdout)], level=training_args.get_process_log_level())
+    datasets.utils.logging.set_verbosity(training_args.get_process_log_level())
+    transformers.utils.logging.set_verbosity(training_args.get_process_log_level())
+    if transformers.__version__ != "5.9.0":
+        raise ValueError("Use the pinned Transformers 5.9.0 environment")
+    if training_args.max_steps <= 0:
+        raise ValueError("Set max_steps to the full training schedule; stop_after is the optional cutoff")
+    end = training_args.max_steps if pilot.stop_after is None else pilot.stop_after
+    if type(end) is not int or not 1 <= end <= training_args.max_steps:
+        raise ValueError("stop_after must be an integer within the full training schedule")
+    if not 0 < data_args.monitor_rows <= data_args.eval_rows or data_args.block_size < 2:
+        raise ValueError("Invalid context/evaluation sizes")
+    if Path(data_args.data_dir).resolve() == Path(data_args.eval_data_dir).resolve():
+        raise ValueError("Training and validation directories must differ")
+    if training_args.gradient_checkpointing:
+        raise ValueError("Use checkpoint_layers for the custom model's checkpointing")
+    # The wrapper consumes Context, so Trainer must retain the CLM input columns.
+    training_args.remove_unused_columns = False
+    training_args.ddp_find_unused_parameters = False
     set_seed(training_args.seed)
 
-    # Detect last checkpoint for resume
-    last_checkpoint = None
-    if os.path.isdir(training_args.output_dir):
-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
-        if last_checkpoint is not None:
-            logger.info(f"Checkpoint detected: {last_checkpoint}. Resuming training.")
-
-    # Load config
-    config_kwargs = {
-        "cache_dir": model_args.cache_dir,
-        "token": model_args.token,
-        "trust_remote_code": model_args.trust_remote_code,
-    }
-    if model_args.config_name:
-        if model_args.config_name.endswith(".json") and os.path.isfile(model_args.config_name):
-            with open(model_args.config_name) as f:
-                config_dict = json.load(f)
-            config = AutoConfig.for_model(**config_dict)
-        else:
-            config = AutoConfig.from_pretrained(model_args.config_name, **config_kwargs)
-    elif model_args.model_name_or_path:
-        config = AutoConfig.from_pretrained(model_args.model_name_or_path, **config_kwargs)
+    if Path(model_args.config_name).is_file():
+        config = AutoConfig.for_model(**json.loads(Path(model_args.config_name).read_text()))
     else:
-        raise ValueError("Must set --model_name_or_path or --config_name")
-
-    # Load tokenizer
-    tokenizer_kwargs = {
-        "cache_dir": model_args.cache_dir,
-        "token": model_args.token,
-        "trust_remote_code": model_args.trust_remote_code,
-    }
-    tokenizer_name = model_args.tokenizer_name or model_args.model_name_or_path
-    if tokenizer_name is None:
-        raise ValueError("Must set --tokenizer_name when training from scratch without --model_name_or_path")
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, **tokenizer_kwargs)
+        config = AutoConfig.from_pretrained(model_args.config_name, local_files_only=True)
+    if config.model_type != "qwen3":
+        raise ValueError("This pilot implements Qwen3")
+    config._attn_implementation = "sdpa"
+    config.use_cache = False
+    tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name, local_files_only=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+    if data_args.block_size > min(tokenizer.model_max_length, config.max_position_embeddings):
+        raise ValueError("block_size exceeds the model/tokenizer context limit")
+    model = DeepKV.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
+                               deep_target=pilot.deep_target, lm_chunk=pilot.lm_chunk,
+                               checkpoint_layers=pilot.checkpoint_layers)
+    raw_train, raw_eval = load_text(data_args.data_dir), load_text(data_args.eval_data_dir)
+    train_dataset = preprocess_dataset(raw_train, tokenizer, data_args.block_size, training_args,
+                                      num_proc=data_args.preprocessing_num_workers,
+                                      overwrite_cache=data_args.overwrite_cache).shuffle(seed=training_args.seed)
+    # Keep the existing single-worker validation packing and fixed prefix.
+    eval_dataset = preprocess_dataset(raw_eval, tokenizer, data_args.block_size, training_args,
+                                     num_proc=1, overwrite_cache=data_args.overwrite_cache)
+    rows_per_update = (training_args.per_device_train_batch_size * training_args.world_size
+                       * training_args.gradient_accumulation_steps)
+    if len(train_dataset) < training_args.max_steps * rows_per_update or len(eval_dataset) < data_args.eval_rows:
+        raise ValueError("Insufficient packed data for the full training/evaluation budget")
+    eval_dataset = eval_dataset.select(range(data_args.eval_rows))
+    tokens_per_update = rows_per_update * data_args.block_size
 
-    # Load model
-    if model_args.model_name_or_path:
-        if embhub_args.no_embhub:
-            model = AutoModelForCausalLM.from_pretrained(
-                model_args.model_name_or_path,
-                config=config,
-                cache_dir=model_args.cache_dir,
-                token=model_args.token,
-                trust_remote_code=model_args.trust_remote_code,
-            )
-            logger.info(f"Loaded pretrained model: {model_args.model_name_or_path} (no EmbHub)")
-        else:
-            model, hub = load_model_with_embhub(
-                model_args.model_name_or_path,
-                num_embeddings=embhub_args.num_hub_embeddings,
-                alpha=embhub_args.alpha,
-                freeze_base=embhub_args.freeze_base,
-                config=config,
-                cache_dir=model_args.cache_dir,
-                token=model_args.token,
-                trust_remote_code=model_args.trust_remote_code,
-            )
-            embhub_path = os.path.join(model_args.model_name_or_path, "embhub.pt")
-            if os.path.isfile(embhub_path):
-                logger.info(f"Loaded model with existing hub weights from: {model_args.model_name_or_path}")
-            else:
-                logger.info(f"Loaded model with fresh hub: {model_args.model_name_or_path}")
-    else:
-        model = AutoModelForCausalLM.from_config(config, trust_remote_code=model_args.trust_remote_code)
-        n_params = sum({p.data_ptr(): p.numel() for p in model.parameters()}.values())
-        logger.info(f"Training new model from scratch - Total size={n_params / 2**20:.2f}M params")
-
-        if not embhub_args.no_embhub:
-            hub = inject_embhub(
-                model,
-                num_embeddings=embhub_args.num_hub_embeddings,
-                alpha=embhub_args.alpha,
-                freeze_base=embhub_args.freeze_base,
-            )
-
-    # Log model info
-    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    total_params = sum(p.numel() for p in model.parameters())
-    logger.info(f"Total params: {total_params:,}, Trainable: {trainable_params:,} "
-                f"({100 * trainable_params / total_params:.2f}%)")
-    if not embhub_args.no_embhub:
-        logger.info(f"Hub embeddings: {hub.hub_embeddings.shape}, alpha: {embhub_args.alpha}, "
-                     f"freeze_base: {embhub_args.freeze_base}, "
-                     f"logit_scale_init: {hub.log_logit_scale.exp().item():.1f}")
-
-    # Load per-language datasets (supports both single-dir and sharded layouts)
-    datasets_list = []
-    for lang_dir in sorted(os.listdir(data_args.data_dir)):
-        lang_path = os.path.join(data_args.data_dir, lang_dir)
-        if not os.path.isdir(lang_path):
-            continue
-        shard_dirs = sorted(
-            os.path.join(lang_path, d) for d in os.listdir(lang_path)
-            if d.startswith("shard_") and os.path.isdir(os.path.join(lang_path, d))
-        )
-        if shard_dirs:
-            total = 0
-            for sd in shard_dirs:
-                ds = load_from_disk(sd)
-                total += ds.num_rows
-                datasets_list.append(ds)
-            logger.info(f"[{lang_dir}] {total:,} documents ({len(shard_dirs)} shards)")
-        else:
-            ds = load_from_disk(lang_path)
-            logger.info(f"[{lang_dir}] {ds.num_rows:,} documents")
-            datasets_list.append(ds)
-
-    if not datasets_list:
-        raise ValueError(f"No datasets found in {data_args.data_dir}")
-
-    raw_dataset = concatenate_datasets(datasets_list)
-    logger.info(f"Combined: {raw_dataset.num_rows:,} documents")
-    # Determine block_size
-    if data_args.block_size is None:
-        block_size = tokenizer.model_max_length
-        if hasattr(config, "max_position_embeddings"):
-            max_pos = config.max_position_embeddings
-        else:
-            max_pos = 1024
-        if block_size > max_pos:
-            logger.warning(
-                f"Tokenizer model_max_length ({block_size}) > max_position_embeddings ({max_pos}). "
-                f"Using block_size={min(1024, max_pos)}."
-            )
-            block_size = min(1024, max_pos) if max_pos > 0 else 1024
-    else:
-        if data_args.block_size > tokenizer.model_max_length:
-            logger.warning(
-                f"block_size ({data_args.block_size}) > tokenizer model_max_length ({tokenizer.model_max_length}). "
-                f"Using block_size={tokenizer.model_max_length}."
-            )
-        block_size = min(data_args.block_size, tokenizer.model_max_length)
-
-    lm_dataset = preprocess_dataset(
-        raw_dataset, tokenizer, block_size, training_args,
-        num_proc=data_args.preprocessing_num_workers, overwrite_cache=data_args.overwrite_cache)
-
-    train_dataset = lm_dataset.shuffle(seed=training_args.seed)
-    logger.info(f"Training dataset: {train_dataset.num_rows:,} sequences of {block_size} tokens")
-
-    # Initialize Trainer
-    callbacks = [SaveEmbHubCallback(model_args, data_args, embhub_args)]
-    if not embhub_args.no_embhub:
-        from diagnostics.smoke_callback import EmbHubSmokeCallback
-        callbacks.append(EmbHubSmokeCallback(model, tokenizer, log_every=50))
-
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        processing_class=tokenizer,
-        data_collator=default_data_collator,
-        callbacks=callbacks,
-    )
-
-    # Training
-    logger.info("*** Train ***")
-    checkpoint = None
-    if training_args.resume_from_checkpoint is not None:
-        checkpoint = training_args.resume_from_checkpoint
-    elif last_checkpoint is not None:
-        checkpoint = last_checkpoint
-    train_result = trainer.train(resume_from_checkpoint=checkpoint)
-    trainer.save_model()
-
-    metrics = train_result.metrics
-    metrics["train_samples"] = len(train_dataset)
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
-    trainer.save_state()
-
-    # Save EmbHub weights and train config (main process only)
+    # Ordinary config recording also guards matched-arm comparisons and resume.
+    settings = training_args.to_dict()
+    for key in ("output_dir", "logging_dir", "run_name", "resume_from_checkpoint", "local_rank"):
+        settings.pop(key, None)
+    experiment = json.loads(json.dumps({"model": asdict(model_args), "model_config": config.to_dict(),
+                  "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items() if k != "stop_after"},
+                  "training": settings, "world_size": training_args.world_size,
+                  "tokens_per_update": tokens_per_update,
+                  "train_fingerprint": train_dataset._fingerprint, "eval_fingerprint": eval_dataset._fingerprint}))
+    output = Path(training_args.output_dir)
+    checkpoint = training_args.resume_from_checkpoint or (get_last_checkpoint(str(output)) if output.is_dir() else None)
+    if checkpoint:
+        if Path(checkpoint).resolve().parent != output.resolve():
+            raise ValueError("Resume checkpoint must belong to this output directory")
+        previous = json.loads((output / "train_config.json").read_text())
+        if previous != experiment:
+            raise ValueError("Resume configuration/data differs from the saved run")
+        state = TrainerState.load_from_json(str(Path(checkpoint) / "trainer_state.json"))
+        if state.max_steps != training_args.max_steps:
+            raise ValueError("Checkpoint training schedule differs from the saved run")
+        if state.global_step > end:
+            raise ValueError("Cutoff precedes checkpoint")
+    elif output.exists() and any(output.iterdir()):
+        raise ValueError("Output is nonempty without a resumable checkpoint; use a fresh directory")
+    # Finish every rank's fresh/resume checks before rank zero creates outputs.
+    training_args.distributed_state.wait_for_everyone()
     if training_args.should_save:
-        if not embhub_args.no_embhub:
-            save_embhub(model, training_args.output_dir)
-        save_train_config(training_args.output_dir, model_args, data_args, embhub_args, training_args)
-    logger.info(f"Training complete. Model saved to: {training_args.output_dir}")
+        output.mkdir(parents=True, exist_ok=True)
+        (output / "train_config.json").write_text(json.dumps(experiment, indent=2) + "\n")
+        (output / "result.json").unlink(missing_ok=True)
+    training_args.distributed_state.wait_for_everyone()
+
+    callback = PilotCallback(end, tokens_per_update)
+    with offline_wandb_run(training_args):
+        trainer = DeepKVTrainer(model=model, args=training_args, train_dataset=train_dataset,
+                               eval_dataset=eval_dataset.select(range(data_args.monitor_rows)),
+                               processing_class=tokenizer, data_collator=default_data_collator,
+                               compute_metrics=compute_metrics, callbacks=[callback])
+        callback.trainer = trainer
+        if checkpoint and state.global_step == end:
+            # HF train() can take a step even at an already reached cutoff.
+            trainer._load_from_checkpoint(checkpoint)
+            trainer.state = state
+        else:
+            train_result = trainer.train(resume_from_checkpoint=checkpoint)
+            trainer.log_metrics("train", train_result.metrics)
+            trainer.save_metrics("train", train_result.metrics)
+        if trainer.state.global_step != end:
+            raise ValueError("Training stopped outside the requested iteration")
+        trainer.save_model()
+        trainer.save_state()
+        metrics = trainer.evaluate(eval_dataset=eval_dataset)
+        trainer.log_metrics("eval", metrics)
+        trainer.save_metrics("eval", metrics)
+        trainer.accelerator.wait_for_everyone()
+        if training_args.should_save:
+            result = {"arm": pilot.arm, "global_step": end, "schedule_steps": training_args.max_steps,
+                      "input_tokens": end * tokens_per_update,
+                      "status": "complete" if end == training_args.max_steps else "stopped", "evaluation": metrics}
+            temporary = output / "result.json.tmp"
+            temporary.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
+            temporary.replace(output / "result.json")
 
 
 if __name__ == "__main__":

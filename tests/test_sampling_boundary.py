@@ -12,7 +12,6 @@ try:
     import pyarrow.parquet as pq
     from datasets import load_from_disk
     import prepare_data
-    from pcc.data import PreparedContexts
     HAS_SAMPLING = True
 except ImportError:
     HAS_SAMPLING = False
@@ -53,8 +52,6 @@ class SamplingBoundaryTests(unittest.TestCase):
             self.assertTrue(set(train["text"]) | set(evaluation["text"]) <= set(texts))
             self.assertFalse((base / "dev").exists())
             self.assertFalse((base / "test").exists())
-            with self.assertRaisesRegex(ValueError, "raw-text Arrow"):
-                PreparedContexts(base / "train" / "en", "train", 10)
 
 
 if __name__ == "__main__":

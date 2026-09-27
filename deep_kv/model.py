@@ -13,7 +13,49 @@ from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 from transformers.models.qwen3.modeling_qwen3 import (
     Qwen3RMSNorm, apply_rotary_pos_emb, eager_attention_forward, repeat_kv,
 )
-from pcc.model import Context
+from dataclasses import dataclass
+
+
+@dataclass
+class Context:
+    input_ids: torch.Tensor
+    valid: torch.Tensor
+    position_ids: torch.Tensor
+    segments: torch.Tensor | None = None
+
+    def __post_init__(self):
+        shape = self.input_ids.shape
+        if len(shape) != 2 or shape[1] < 2:
+            raise ValueError("Contexts must have shape [batch, length >= 2]")
+        if self.valid.shape != shape or self.position_ids.shape != shape:
+            raise ValueError("Context mask and position IDs must match input IDs")
+        if self.valid.dtype != torch.bool:
+            raise ValueError("valid must be boolean")
+        if self.segments is not None and self.segments.shape != shape:
+            raise ValueError("segment IDs must match input IDs")
+
+    def allowed(self):
+        n = self.input_ids.shape[1]
+        causal = torch.ones(n, n, dtype=torch.bool, device=self.input_ids.device).tril()
+        mask = causal[None] & self.valid[:, :, None] & self.valid[:, None, :]
+        if self.segments is not None:
+            mask = mask & (self.segments[:, :, None] == self.segments[:, None, :])
+        return mask[:, None]
+
+    def additive_mask(self, dtype):
+        # An ignored padding query gets a dummy self edge in the backbone only.
+        # No valid query can see it; auxiliary empty-source rows remain zero.
+        allowed = self.allowed()
+        eye = torch.eye(self.input_ids.shape[1], dtype=torch.bool, device=self.input_ids.device)
+        safe = allowed | ((~self.valid)[:, None, :, None] & eye[None, None])
+        return torch.zeros_like(safe, dtype=dtype).masked_fill(~safe, torch.finfo(dtype).min)
+
+    def targets(self):
+        eligible = self.valid[:, :-1] & self.valid[:, 1:]
+        if self.segments is not None:
+            eligible = eligible & (self.segments[:, :-1] == self.segments[:, 1:])
+        return eligible
+
 
 
 class AuxiliaryKV(nn.Module):
@@ -59,6 +101,8 @@ class DeepKV(nn.Module):
             raise ValueError("Deep-KV requires transformers==5.9.0; use sampling_b200/train_env")
         if arm not in ("A", "B", "C", "D") or not 1 <= consumer < deep_target <= len(backbone.model.layers):
             raise ValueError("Invalid arm or 1-based block coordinates")
+        if type(lm_chunk) is not int or lm_chunk <= 0:
+            raise ValueError("lm_chunk must be a positive integer")
         if backbone.config.attention_dropout != 0 or any(
                 getattr(layer.self_attn, "sliding_window", None) is not None for layer in backbone.model.layers):
             raise ValueError("Pilot requires full attention and zero dropout")
