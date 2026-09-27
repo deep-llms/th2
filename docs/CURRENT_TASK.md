@@ -1,5 +1,24 @@
 # Current task
 
+## B200 sampling completed and verified (2026-09-27)
+
+Read-only export cbedcd7 (th2-78gg-check-sampling-20260927-a02) returned both
+sampling.log and sampling_complete.json at 2026-09-27 04:43:31 UTC.
+Completion receipt success=true, completed_utc=2026-09-27T01:53:34.841949+00:00;
+terminal log ends D2S OFFLINE CULTURAX SAMPLING OK, no traceback. Runtime from
+19:59 UTC was approximately 5h55m. All six train/eval outputs were reopened and
+validated as nonempty text-only datasets by the launch script. Output remains
+/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base; du -sh reports 146G.
+Train documents / eval documents / train shards:
+en 36595514 / 11822 / 35; vi 927135 / 9251 / 2; zh 964420 / 9802 / 2;
+ru 805963 / 7963 / 2; de 974614 / 9596 / 2; ar 846723 / 8337 / 2.
+Evidence: temp/b200-sampling-complete-20260927-a02.json and .log.
+Receipt SHA256 f204e4bbe6897ce2c1d85c40e7095ab59417e066a0c74249e785cbb49b78339f;
+log SHA256 3ee2de006ded252d2c76a35e624bfd169c55fb7d591da8a401dfc04bb34c6446.
+This supersedes earlier B200 progress estimates. Local sampling status was not
+checked in this request. No training launched or processes modified; restored
+commands.sh to #0 after the successful export.
+
 ## B200 sampling status checked (2026-09-27 00:20 UTC)
 
 Read-only export e5b69e6, job th2-78gg-check-sampling-20260927-a01,
