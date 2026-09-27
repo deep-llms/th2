@@ -1,5 +1,30 @@
 # Project notes
 
+## B200 preflight passed; full-model smoke submission (2026-09-27)
+
+Commit 7b59f57 preflight succeeded on thiennh-p6-78gg-worker-0 at 23:10 UTC.
+Runtime: torch 2.14.0+cu130, Transformers 5.9.0, Accelerate 1.13.0, Datasets
+4.8.5. Eight B200s and sampled English text are present (36,595,514 train /
+11,822 eval documents). Copied resources/accelerate_config.yaml to
+/mnt/local/.cache/huggingface/accelerate/default_config.yaml and verified via
+accelerate env: MULTI_GPU, eight processes, BF16. 24 TiB disk free.
+Evidence: temp/deep-kv-refactor-preflight-20260927-a01.log.
+
+Inspected runner burn workers 501–508 under launcher 434; no training process
+was observed. The authorized smoke command pins and rechecks these identities
+with pidfds, signals only those workers, waits 30 seconds and requires free
+GPUs. No process-group or name-based kill. A temporary guard-disable marker
+prevents co-burn; restore only the owned marker after confirming GPUs are free.
+
+scripts/smoke_deep_kv_b200.sh runs full 28-layer Qwen, context 2048, microbatch
+16, accumulation 4, BF16, eight GPUs per arm. A fresh 20,000-document train /
+2,000-document eval text subset uses normal HF packing/cache. Smoke-only full
+schedule is four updates: run each arm to two, compare, resume each to three,
+compare again; verify 129 eval rows and eight rank RNG checkpoints. This is a
+runtime check, not a scientific pilot or evidence of method quality. Expected
+output: /mnt/local/_outputs/deep-llms_th2/deep-kv-refactor-smoke-20260927-a01/
+smoke_complete.json. No completion claimed until retrieved and verified.
+
 ## Follow-up correctness review (2026-09-27)
 
 Resume is restricted to native checkpoints within the same arm's output
