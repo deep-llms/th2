@@ -1,5 +1,25 @@
 # Current task
 
+## Prepared-data reuse and W&B output fixes (2026-09-27)
+
+Implemented the findings in DEEP_KV_RECIPE_COUPLING_AND_WANDB_20260927.md.
+TokenStream now matches only updates, tokens_per_update, context, eval_rows
+and data_seed against the stored recipe. Preparation still records the full
+original recipe. Source matching excludes microbatch; source paths, model-config
+hash, shape, packing and token/order integrity checks remain. Operational changes
+can reuse existing v2 token files in a new run. Full run identities still govern
+checkpoint resume and arm comparisons; changing only a cutoff already worked.
+
+Rank zero explicitly creates a scoped offline W&B run under the arm output
+directory, or the operator's WANDB_DIR override, after output creation. The
+standard HF callback logs to that run. It closes on success/failure and does not
+leak a default directory to subsequent calls in the same process. Ordinary CPU
+training and other ranks do not initialize W&B. Tests enable the real offline
+SDK on CPU to exercise HF logging, separate arm paths, override and failure
+cleanup. No re-preparation, GPU work, remote operation or launch was performed.
+All 15 focused CPU tests passed (13.609s); compilation and diff checks passed.
+Evidence: temp/deep-kv-data-wandb-tests-20260927-final.log.
+
 ## Trainer review and checkpoint recovery fix (2026-09-27)
 
 Reviewed the four-arm model, loss normalization, fixed input order, BF16,

@@ -88,7 +88,7 @@ def run_pilot(args):
     import torch.distributed as dist
     import transformers
     from transformers import Qwen3Config
-    from .data import TokenStream, sha256
+    from .data import TokenStream, verify_sources
     from .model import DeepKV
     from .training import train, topology
     if transformers.__version__ != "5.9.0" or accelerate.__version__ != "1.13.0":
@@ -110,8 +110,7 @@ def run_pilot(args):
         model_config.use_cache = False
         train_data = TokenStream(args.data_dir, "train", recipe, verify=topology()[1] == 0)
         eval_data = TokenStream(args.data_dir, "eval", recipe, verify=topology()[1] == 0)
-        if train_data.manifest["sources"] != config or train_data.manifest["model_config_sha256"] != sha256(config["model_config"]):
-            raise ValueError("Data/config provenance mismatch")
+        verify_sources(train_data.manifest, config)
         if train_data.manifest["train"]["preprocessing"]["document_end_token_id"] != 151643:
             raise ValueError("Pilot requires Qwen <|endoftext|> document boundaries")
         model = DeepKV.from_scratch(model_config, args.arm, seed=recipe.seed,

@@ -1,5 +1,6 @@
 """HF Trainer/Accelerate training with the project's loss and matched-run receipts."""
 from dataclasses import asdict
+from contextlib import contextmanager
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -59,6 +60,25 @@ def compute_metrics(prediction):
     result = summarize_statistics(prediction.predictions)
     result["loss"] = result["objective"]
     return result
+
+
+@contextmanager
+def offline_wandb_run(args):
+    """Own one offline run per arm, including repeated calls in one process."""
+    if "wandb" not in args.report_to or args.process_index != 0:
+        yield
+        return
+    import wandb
+    if wandb.run is not None:
+        raise ValueError("Deep-KV requires its own W&B run; finish the existing run first")
+    directory = Path(os.environ.get("WANDB_DIR", args.output_dir)).resolve()
+    directory.mkdir(parents=True, exist_ok=True)
+    # An explicit dir avoids W&B's cached environment retaining a previous arm.
+    # The standard HF callback attaches to this run; the context closes it even
+    # if training fails. Nonzero ranks and normal CPU tests never initialize it.
+    with wandb.init(mode="offline", project=os.environ.get("WANDB_PROJECT", "deep2shallow"),
+                    name=args.run_name, dir=str(directory)):
+        yield
 
 
 def training_arguments(recipe, output, microbatch, *, cpu=False, mixed_precision=True):
@@ -295,41 +315,42 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
         (output / "stopped.json").unlink(missing_ok=True)
     if distributed():
         dist.barrier()
-    callback = ExperimentCallback(recipe, identity, end, eval_data, history)
-    trainer = DeepKVTrainer(model=model, args=args, train_dataset=train_data,
-                            eval_dataset=Subset(eval_data, range(recipe.monitor_rows)),
-                            data_collator=default_data_collator, compute_metrics=compute_metrics,
-                            callbacks=[callback])
-    callback.trainer = trainer
-    if update < end:
-        trainer.train(resume_from_checkpoint=str(checkpoint) if checkpoint else None)
-        if trainer.state.global_step != end:
-            raise ValueError("Trainer stopped outside the requested iteration")
-        checkpoint = output / f"checkpoint-{end}"
-    else:
-        # Do not invoke Trainer.train at an already reached cutoff: it can take
-        # another step before its stopping callback fires. Only restore/evaluate.
-        trainer._load_from_checkpoint(str(checkpoint))
-        trainer.state = TrainerState.load_from_json(str(checkpoint / "trainer_state.json"))
-        if (not history["evaluation"] or history["evaluation"][-1]["update"] != end
-                or history["evaluation"][-1]["rows"] != recipe.eval_rows):
-            trainer.evaluate(eval_dataset=eval_data)
-            if rank == 0:
-                receipt["history"] = history
-                write_json(checkpoint / "deep_kv.json", receipt)
-    trainer.accelerator.wait_for_everyone()
-    if rank == 0:
-        receipt = verify_checkpoint(checkpoint, identity)
-        history = receipt["history"]
-        if history["evaluation"][-1]["rows"] != recipe.eval_rows or history["evaluation"][-1]["update"] != end:
-            raise ValueError("Missing fixed final evaluation")
-        write_json(output / "metrics.json", history)
-        status = {"status": "complete" if end == recipe.updates else "stopped",
-                  "arm": model.arm, "name": NAMES[model.arm], "update": end,
-                  "input_tokens": end * recipe.tokens_per_update,
-                  "checkpoint": checkpoint.name,
-                  "final_evaluation": history["evaluation"][-1],
-                  "utc": datetime.now(timezone.utc).isoformat()}
-        write_json(output / ("complete.json" if end == recipe.updates else "stopped.json"), status)
-    trainer.accelerator.wait_for_everyone()
-    return history
+    with offline_wandb_run(args):
+        callback = ExperimentCallback(recipe, identity, end, eval_data, history)
+        trainer = DeepKVTrainer(model=model, args=args, train_dataset=train_data,
+                                eval_dataset=Subset(eval_data, range(recipe.monitor_rows)),
+                                data_collator=default_data_collator, compute_metrics=compute_metrics,
+                                callbacks=[callback])
+        callback.trainer = trainer
+        if update < end:
+            trainer.train(resume_from_checkpoint=str(checkpoint) if checkpoint else None)
+            if trainer.state.global_step != end:
+                raise ValueError("Trainer stopped outside the requested iteration")
+            checkpoint = output / f"checkpoint-{end}"
+        else:
+            # Do not invoke Trainer.train at an already reached cutoff: it can take
+            # another step before its stopping callback fires. Only restore/evaluate.
+            trainer._load_from_checkpoint(str(checkpoint))
+            trainer.state = TrainerState.load_from_json(str(checkpoint / "trainer_state.json"))
+            if (not history["evaluation"] or history["evaluation"][-1]["update"] != end
+                    or history["evaluation"][-1]["rows"] != recipe.eval_rows):
+                trainer.evaluate(eval_dataset=eval_data)
+                if rank == 0:
+                    receipt["history"] = history
+                    write_json(checkpoint / "deep_kv.json", receipt)
+        trainer.accelerator.wait_for_everyone()
+        if rank == 0:
+            receipt = verify_checkpoint(checkpoint, identity)
+            history = receipt["history"]
+            if history["evaluation"][-1]["rows"] != recipe.eval_rows or history["evaluation"][-1]["update"] != end:
+                raise ValueError("Missing fixed final evaluation")
+            write_json(output / "metrics.json", history)
+            status = {"status": "complete" if end == recipe.updates else "stopped",
+                      "arm": model.arm, "name": NAMES[model.arm], "update": end,
+                      "input_tokens": end * recipe.tokens_per_update,
+                      "checkpoint": checkpoint.name,
+                      "final_evaluation": history["evaluation"][-1],
+                      "utc": datetime.now(timezone.utc).isoformat()}
+            write_json(output / ("complete.json" if end == recipe.updates else "stopped.json"), status)
+        trainer.accelerator.wait_for_everyone()
+        return history

@@ -1,6 +1,7 @@
 """Mechanism acceptance, budget/resume, and fixed-stream contracts (CPU only)."""
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -11,7 +12,7 @@ import torch
 import transformers
 from transformers import Qwen3Config
 from deep_kv.config import Recipe
-from deep_kv.data import TokenStream, prepare, write_split
+from deep_kv.data import TokenStream, prepare, write_split, verify_sources
 from deep_kv.model import DeepKV
 from deep_kv.training import parameter_hash, train, DeepKVTrainer, training_arguments, verify_checkpoint
 from pcc.model import Context
@@ -235,8 +236,75 @@ class DeepKVTraining(unittest.TestCase):
             data = TokenStream(root / "prepared", "train", recipe)
             self.assertEqual(len(data), 6)
             self.assertEqual(np.fromfile(root / "prepared/train.bin", dtype=np.uint32)[:8].tolist(), [1, 2, 3, 31, 1, 2, 3, 31])
+            # All non-data recipe fields can change for a NEW run. Loading must
+            # preserve the manifest and exact context order without rewriting.
+            operational = dict(logging_every=2, checkpoint_every=1, eval_every=1,
+                               dataloader_workers=2, warmup=2, learning_rate=1e-4,
+                               weight_decay=0.2, seed=77, monitor_rows=2,
+                               consumer=1, deep_target=3, lm_chunk=2)
+            for key, value in operational.items():
+                with self.subTest(field=key):
+                    reused = TokenStream(root / "prepared", "train", replace(recipe, **{key: value}))
+                    self.assertEqual(reused.manifest, data.manifest)
+                    np.testing.assert_array_equal(reused.order, data.order)
+                    np.testing.assert_array_equal(reused.ids, data.ids)
+            for key, value in dict(updates=4, tokens_per_update=18, context=3,
+                                   eval_rows=3, data_seed=77).items():
+                with self.subTest(field=key), self.assertRaisesRegex(ValueError, "recipe mismatch"):
+                    TokenStream(root / "prepared", "train", replace(recipe, **{key: value}))
+            verify_sources(data.manifest, {**inputs, "microbatch": 16})
+            for key in ("tokenizer", "model_config", "train_data", "eval_data"):
+                with self.subTest(source=key), self.assertRaisesRegex(ValueError, "provenance"):
+                    verify_sources(data.manifest, {**inputs, key: str(root / "different")})
+            (root / "config.json").write_text('{"changed": true}')
+            with self.assertRaisesRegex(ValueError, "provenance"):
+                verify_sources(data.manifest, inputs)
             with self.assertRaises(FileExistsError):
                 prepare(inputs, root / "prepared", recipe)
+
+    def test_offline_wandb_per_arm_and_override(self):
+        import wandb
+        # Stop the SDK service explicitly; unittest exits with a bool, which
+        # this SDK's protobuf atexit handler rejects as an integer exit code.
+        self.addCleanup(wandb.teardown, exit_code=0)
+        recipe = Recipe(dataloader_workers=0, updates=3, context=6, tokens_per_update=12,
+                        warmup=1, monitor_rows=1, eval_rows=2, consumer=2, deep_target=4)
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"WANDB_SILENT": "true"}):
+            os.environ.pop("WANDB_DIR", None)
+            root = Path(tmp)
+            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
+            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
+                meta[split] = write_split(root, split, [["1 2 3 4 5"]] * rows,
+                                          TinyTokenizer(), rows, 6, 42)
+            (root / "complete.json").write_text(json.dumps(meta))
+            data, dev = (TokenStream(root, split, recipe) for split in ("train", "eval"))
+
+            def with_wandb(*args, **kwargs):
+                result = training_arguments(*args, **kwargs)
+                result.report_to = ["wandb"]
+                return result
+
+            # Opt CPU tests into the real offline SDK/HF callback, without GPUs.
+            with patch("deep_kv.training.training_arguments", side_effect=with_wandb):
+                for arm in "ABC":
+                    directory = root / arm
+                    if arm == "C":
+                        os.environ["WANDB_DIR"] = str(root / "operator-logs")
+                    train(model(arm), data, dev, recipe, directory,
+                          {"recipe": asdict(recipe), "arm": arm},
+                          mixed_precision=False, stop_after=1)
+                    log_root = root / "operator-logs" if arm == "C" else directory
+                    self.assertEqual(len(list((log_root / "wandb").glob("offline-run-*/*.wandb"))), 1)
+                    self.assertIsNone(wandb.run)
+                self.assertFalse((root / "C/wandb").exists())
+                self.assertEqual(os.environ["WANDB_DIR"], str(root / "operator-logs"))
+                os.environ.pop("WANDB_DIR")
+                with patch.object(DeepKVTrainer, "train", side_effect=RuntimeError("injected failure")):
+                    with self.assertRaisesRegex(RuntimeError, "injected failure"):
+                        train(model("D"), data, dev, recipe, root / "D",
+                              {"recipe": asdict(recipe), "arm": "D"}, mixed_precision=False)
+                self.assertIsNone(wandb.run)
+                self.assertNotIn("WANDB_DIR", os.environ)
 
     def test_packing_resume_and_fixed_budget(self):
         torch.set_num_threads(1)
@@ -264,6 +332,13 @@ class DeepKVTraining(unittest.TestCase):
             train(full, data, dev, recipe, root / "full", identity, mixed_precision=False)
             train(resumed, data, dev, recipe, root / "resumed", identity, mixed_precision=False, stop_after=2)
             self.assertFalse((root / "resumed/complete.json").exists())
+            changed = replace(recipe, logging_every=2)
+            # Reusable data does not make an existing run resumable under new
+            # operational settings: full run identity remains authoritative.
+            with self.assertRaisesRegex(ValueError, "Run receipt differs"):
+                train(model("D"), TokenStream(root, "train", changed), TokenStream(root, "eval", changed),
+                      changed, root / "resumed", {"recipe": asdict(changed), "arm": "D"},
+                      mixed_precision=False, resume=True)
             with self.assertRaisesRegex(ValueError, "precedes checkpoint"):
                 train(resumed, data, dev, recipe, root / "resumed", identity,
                       mixed_precision=False, resume=True, stop_after=1)

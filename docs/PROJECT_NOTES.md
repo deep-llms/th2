@@ -1,5 +1,25 @@
 # Project notes
 
+## Prepared-data compatibility and offline logging (2026-09-27)
+
+Prepared v2 files are reusable when updates, tokens_per_update, context,
+eval_rows and data_seed match. Other recipe settings and microbatch may change
+for a new run. The original full preparation recipe/config remains in the
+manifest; source paths, model config hash, shape, packing, order and content
+checks remain enforced. Full run recipe/config identity still governs resume
+and matched-arm reporting. No token-file rewriting or manifest migration.
+
+Offline W&B is explicitly initialized on rank zero with dir set to the arm
+output directory, unless WANDB_DIR overrides it. The standard HF callback
+attaches to the owned run, closed on normal or exceptional exit. This avoids
+source-tree artifacts and stale directories/runs across repeated train calls.
+Tests use the real offline SDK on CPU, including sequential arms, an override,
+and an injected failure; reusable-data tests also check incompatible data and
+changed-recipe resume rejection. All 15 focused CPU tests passed (13.609s),
+plus compilation and diff checks. Evidence:
+ temp/deep-kv-data-wandb-tests-20260927-final.log
+No GPU/remote work or launch. See DEEP_KV_RECIPE_COUPLING_AND_WANDB_20260927.md.
+
 ## Trainer review: retain certified checkpoints (2026-09-27)
 
 HF 5.9 checkpoint rotation runs before the custom on_save certification. A

@@ -9,6 +9,9 @@ from pcc.model import Context
 from pcc.packing import document_end_id, preprocessing_policy, tokenize_documents
 
 
+DATA_RECIPE_FIELDS = ("updates", "tokens_per_update", "context", "eval_rows", "data_seed")
+
+
 def sha256(path):
     digest = hashlib.sha256()
     with Path(path).open("rb") as handle:
@@ -85,11 +88,21 @@ def prepare(config, output, recipe):
     return manifest
 
 
+def verify_sources(manifest, config):
+    # Microbatch is an execution choice, not an input to token preparation.
+    saved = {key: value for key, value in manifest["sources"].items() if key != "microbatch"}
+    current = {key: value for key, value in config.items() if key != "microbatch"}
+    if saved != current or manifest["model_config_sha256"] != sha256(config["model_config"]):
+        raise ValueError("Data/config provenance mismatch")
+
+
 class TokenStream:
     def __init__(self, directory, split, recipe, *, verify=True):
         directory = Path(directory)
         self.manifest = json.loads((directory / "complete.json").read_text())
-        if self.manifest.get("format") != "deep-kv-data-v2" or self.manifest["recipe"] != asdict(recipe):
+        recipe.validate()
+        if (self.manifest.get("format") != "deep-kv-data-v2" or
+                any(self.manifest["recipe"].get(key) != getattr(recipe, key) for key in DATA_RECIPE_FIELDS)):
             raise ValueError("Prepared stream recipe mismatch")
         spec = self.manifest[split]
         rows = recipe.train_rows if split == "train" else recipe.eval_rows

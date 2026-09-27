@@ -79,8 +79,14 @@ with checksums. Preparation covers the full budget even for an early-stop run,
 so changing the cutoff preserves the exact data order and allows resume.
 Every arm verifies and reuses these exact files. If packing leaves too few
 contexts, preparation fails explicitly; it never repeats data to fill a budget.
-Train and evaluation sources differ. Streams from earlier recipes are rejected
-because their recorded recipe/seed differs; the sampled text needs no resampling.
+Train and evaluation sources differ. Data reuse requires the same `updates`,
+`tokens_per_update`, `context`, `eval_rows` and `data_seed`, plus matching source
+paths, model-config checksum, packing policy and token/order checksums. Logging,
+checkpoint/monitor intervals, workers, optimizer settings, model seed and
+microbatch may change for a new run without preparing tokens again. The full
+original preparation recipe stays in the manifest for provenance. Resume and
+arm comparison still require identical full run settings. Changing only the
+cutoff never requires preparation. The sampled text needs no resampling.
 Trainer uses a sequential sampler over the existing fixed permutation, then
 Accelerate shards batches across ranks; it does not apply a second shuffle.
 These local token files are experiment inputs; the sampled Arrow data stays text.
@@ -106,6 +112,12 @@ prepares data on CPU, runs each arm with eight-process `accelerate launch`, then
 2,000-update/2,097,152,000-token stopped marker before the queue advances.
 Omitting `--stop-after` instead requires full 28,600-update/29,989,273,600-token
 completion.
+Rank zero writes offline W&B files to `<run-dir>/<arm>/wandb/` by default;
+an explicit `WANDB_DIR` overrides that location. Each training call owns and
+closes its W&B run, including on failure, so sequential calls in one Python
+process use separate runs and correct directories. An existing active W&B run
+must be finished before calling this trainer. Normal CPU tests disable W&B;
+the dedicated logging regression enables the offline SDK on CPU.
 The report verifies shared data/recipe/initialization and checkpoint identities.
 It reports LM-loss differences B−A, C−B, D−B, D−C and D−A; negative favors the
 first arm. Single-seed differences are exploratory, not statistical proof.
