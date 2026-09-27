@@ -1,5 +1,36 @@
 # Project notes
 
+## Deep-KV budget and cutoff decision (2026-09-27)
+
+User overrides the original four-arm document's 1B/32K budget: plan approximately
+30B English tokens with a 1M-token global batch, then optionally stop all arms at
+the same optimizer iteration. Defaults are 28610 updates x 1048576 input tokens
+= 29999759360 tokens per arm; 512 contexts of length 2048, eight ranks with 64
+contexts each. Microbatch defaults to 1 (64 accumulation passes); any divisor
+of 64 is accepted. Existing AdamW settings remain; 5% warmup becomes 1431 updates.
+
+The current generic run_experiments.py handles process/artifact sequencing, not
+trainer step counting. Deep-KV make-jobs now passes --stop-after N to all four
+trainers and the report, checks exact stopped.json receipts, and advances to
+the next arm. The default queue still demands full-budget complete.json.
+Cutoff checkpoints are resumable with unchanged schedule/data order. Every
+endpoint uses the full fixed evaluation split; reports explicitly record
+compared_update, schedule_updates and training_complete. Synthetic tests remain
+marked pilot_result false. No default early-stop iteration was selected.
+
+Preparation covers the full 30B budget even for cutoff queues (~120GB uint32
+tokens/order), so longer runs keep identical shuffled data prefixes. Existing
+sampled text needs no change; old 1B packed streams fail recipe validation.
+Preparation must verify the full packed budget fits; it fails on insufficient
+data rather than silently repeating examples. No full 30B preparation ran here.
+
+Verification: 13 Deep-KV CPU tests (5.950s), 31 runner utility tests (1.281s),
+eight-process Gloo cutoff/report and interrupted-vs-uninterrupted checks passed.
+Evidence under temp/deep-kv-30b-*20260927*. Tests cover accumulation equivalence,
+full-schedule LR at cutoffs, full evaluation, mismatched cutoff rejection,
+continuing stopped arms, and recovery at an existing periodic checkpoint.
+All changes/tests local; commands.sh remains #0; no push or real training launch.
+
 ## Deep-KV code review and recovery fixes (2026-09-27)
 
 Reviewed the four-arm implementation against the supplied pilot specification.

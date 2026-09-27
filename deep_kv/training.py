@@ -185,11 +185,9 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
     world, rank = topology()
     output = Path(output)
     device = next(model.parameters()).device
-    # A cutoff preserves the full LR schedule and writes a resumable checkpoint;
-    # it must never be accepted as an arm completion by the sequential runner.
-    end = recipe.updates if stop_after is None else stop_after
-    if not 1 <= end <= recipe.updates:
-        raise ValueError("Invalid fixed-schedule cutoff")
+    # A cutoff preserves the full LR schedule and writes a resumable checkpoint.
+    # Only a queue explicitly configured for this cutoff may accept stopped.json.
+    end = recipe.end_update(stop_after)
     if rank == 0:
         if resume:
             if not (output / "checkpoint.pt").is_file() or (output / "complete.json").exists():
@@ -221,7 +219,7 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
         if rank == 0:
             print(json.dumps({"arm": model.arm, **row}), flush=True)
         if update % recipe.eval_every == 0 or update == end:
-            rows = recipe.eval_rows if update == recipe.updates else recipe.monitor_rows
+            rows = recipe.eval_rows if update == end else recipe.monitor_rows
             metrics = evaluate(model, eval_data, rows, microbatch, mixed_precision)
             history["evaluation"].append({"update": update, **metrics})
             if rank == 0:
@@ -230,6 +228,14 @@ def train(model, train_data, eval_data, recipe, output, identity, *, microbatch=
             save_checkpoint(output / "checkpoint.pt", model, optimizer, identity, update, history)
             if rank == 0 and update < end:
                 write_json(output / "metrics.json", history)
+    # A requested cutoff can coincide with an existing periodic checkpoint that
+    # only has monitoring metrics. Evaluate the full fixed split before reporting,
+    # even when no additional optimizer update is needed.
+    if (history["evaluation"][-1]["update"] != end or
+            history["evaluation"][-1]["rows"] != recipe.eval_rows):
+        metrics = evaluate(model, eval_data, recipe.eval_rows, microbatch, mixed_precision)
+        history["evaluation"].append({"update": end, **metrics})
+        save_checkpoint(output / "checkpoint.pt", model, optimizer, identity, update, history)
     # Also handle interruption after the final checkpoint but before publication.
     if rank == 0:
         # A crash may leave a valid final checkpoint without metrics.json (or

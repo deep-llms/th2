@@ -1,5 +1,36 @@
 # Current task
 
+## Active recipe override: 30B English / 1M-token updates (2026-09-27)
+
+User superseded the document's 1B-token / 32K-token batch pilot budget.
+Deep-KV now plans 28610 optimizer updates x 1048576 input tokens per update
+= 29999759360 input tokens per arm, with eight GPUs per arm. Context stays
+2048; 512 global contexts / 64 per rank. Default microbatch 1 accumulates 64
+passes; any divisor of 64 is configurable without changing global batch.
+Warmup retains 5% of the full schedule (1431 updates), followed by the same
+cosine decay to 10% of peak. Mechanism, seeds and other optimizer settings stay.
+
+plan/make-jobs/train/report accept --stop-after N. Generated queues apply one
+cutoff to A/B/C/D and report; they require exact step/token stopped.json receipts
+and then continue sequentially. All cutoffs evaluate the full fixed 4882-row
+split and save resumable checkpoints. A comparison records training_complete
+false at a cutoff, while a default full queue still requires full completion.
+Resume keeps the full LR schedule and data order; cutoff is not part of the
+immutable training identity. Preparation always covers the full budget (~120GB
+packed storage) and rejects insufficient data rather than repeating it. Old
+1B prepared streams are incompatible; sampled text/prepare_data.py are unchanged.
+Full packed-budget availability still needs validation during preparation.
+
+Verification: 13 focused CPU tests passed (5.950s), 31 runner utility tests
+passed (1.281s), eight-process Gloo cutoff/report and interrupted-vs-full
+training checks passed for all four arms. Evidence: temp/deep-kv-30b-tests-20260927.log,
+temp/deep-kv-30b-queue-tests-20260927.log,
+temp/deep-kv-30b-cutoff-ddp8-20260927-a01/comparison.json,
+temp/deep-kv-30b-resume-ddp8-20260927-a01/resume_verified.json.
+Plan, generated queue parsing, compilation and diff checks passed. CPU only;
+no remote push, GPU test, preprocessing or real training launch. commands.sh #0.
+See DEEP_KV_TRAINING.md for current commands; older budget notes below are historical.
+
 ## Deep-KV code review and recovery fixes (2026-09-27)
 
 Reviewed the four-arm implementation against the supplied pilot specification.

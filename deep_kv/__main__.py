@@ -12,9 +12,13 @@ def offline():
                       TRANSFORMERS_OFFLINE="1", HF_HUB_DISABLE_TELEMETRY="1")
 
 
-def jobs(config_path, data_dir=None):
+def jobs(config_path, data_dir=None, stop_after=None):
     config_path = str(Path(config_path).resolve())
     load_config(config_path)
+    recipe = Recipe().validate()
+    end = recipe.end_update(stop_after)
+    status = "complete" if end == recipe.updates else "stopped"
+    cutoff_args = [] if stop_after is None else ["--stop-after", str(stop_after)]
     items = []
     if data_dir is None:
         data_dir = "{run_dir}/prepared"
@@ -29,11 +33,14 @@ def jobs(config_path, data_dir=None):
                       "argv": ["{python}", "-m", "torch.distributed.run", "--standalone",
                                "--nnodes=1", "--nproc-per-node=8", "--max-restarts=0",
                                "-m", "deep_kv", "train", "--config", config_path,
-                               "--data-dir", data_dir, "--output", "{run_dir}/" + arm, "--arm", arm],
-                      "required_outputs": [{"path": f"{arm}/complete.json", "json_equals": {
-                          "status": "complete", "arm": arm, "update": 30518, "input_tokens": 1000013824}}]})
-    items.append({"name": "compare", "argv": ["{python}", "-m", "deep_kv", "report", "--run-dir", "{run_dir}"],
-                  "required_outputs": [{"path": "comparison.json", "json_equals": {"status": "complete"}}]})
+                               "--data-dir", data_dir, "--output", "{run_dir}/" + arm, "--arm", arm] + cutoff_args,
+                      "required_outputs": [{"path": f"{arm}/{status}.json", "json_equals": {
+                          "status": status, "arm": arm, "update": end,
+                          "input_tokens": end * recipe.tokens_per_update}}]})
+    items.append({"name": "compare", "argv": ["{python}", "-m", "deep_kv", "report", "--run-dir", "{run_dir}"] + cutoff_args,
+                  "required_outputs": [{"path": "comparison.json", "json_equals": {
+                      "status": "complete", "compared_update": end,
+                      "training_complete": end == recipe.updates}}]})
     return {"jobs": items}
 
 
@@ -160,10 +167,11 @@ def smoke(args):
             config._attn_implementation = "sdpa"
             model = DeepKV.from_scratch(config, arm, consumer=2, deep_target=4, lm_chunk=4).to(device)
             identity = build_identity({"synthetic_smoke": True}, recipe, model, train_data.manifest, mixed_precision=False)
-            train(model, train_data, eval_data, recipe, root / arm, identity, microbatch=1, mixed_precision=False)
+            train(model, train_data, eval_data, recipe, root / arm, identity, microbatch=1,
+                  mixed_precision=False, stop_after=args.stop_after)
         if topology()[1] == 0:
             from .report import report
-            report(root, recipe=recipe)
+            report(root, recipe=recipe, stop_after=args.stop_after)
             write_json(root / "smoke_complete.json", {"status": "ok", "arms": list(ARMS), "cpu_only": True,
                                                       "world_size": topology()[0], "pilot_result": False})
     finally:
@@ -178,6 +186,8 @@ def main():
     for name in ("plan", "prepare", "make-jobs", "train"):
         p = sub.add_parser(name)
         p.add_argument("--config", type=Path, required=True)
+        if name in ("plan", "make-jobs", "train"):
+            p.add_argument("--stop-after", type=int, help="Stop all requested arms at this update; retain full LR schedule")
         if name != "plan":
             p.add_argument("--output", type=Path, required=True)
         if name in ("make-jobs", "train"):
@@ -185,17 +195,18 @@ def main():
         if name == "train":
             p.add_argument("--arm", choices=ARMS, required=True)
             p.add_argument("--resume", action="store_true")
-            p.add_argument("--stop-after", type=int, help="Graceful fixed-schedule cutoff; never counts as complete")
     p = sub.add_parser("smoke")
     p.add_argument("--output", type=Path, required=True)
+    p.add_argument("--stop-after", type=int)
     p = sub.add_parser("report")
     p.add_argument("--run-dir", type=Path, required=True)
+    p.add_argument("--stop-after", type=int, help="Require all arms to have stopped at this exact update")
     args = parser.parse_args()
     if args.command == "plan":
-        print(json.dumps(plan(load_config(args.config)), indent=2))
+        print(json.dumps(plan(load_config(args.config), args.stop_after), indent=2))
     elif args.command == "make-jobs":
         with args.output.open("x") as handle:
-            json.dump(jobs(args.config, args.data_dir), handle, indent=2)
+            json.dump(jobs(args.config, args.data_dir, args.stop_after), handle, indent=2)
     elif args.command == "prepare":
         from .data import prepare
         prepare(load_config(args.config), args.output, Recipe().validate())
@@ -203,7 +214,7 @@ def main():
         run_pilot(args)
     elif args.command == "report":
         from .report import report
-        print(json.dumps(report(args.run_dir), indent=2))
+        print(json.dumps(report(args.run_dir, stop_after=args.stop_after), indent=2))
     else:
         smoke(args)
 

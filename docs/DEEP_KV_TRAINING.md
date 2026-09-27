@@ -1,6 +1,8 @@
 # Four-arm anticipatory K/V training
 
-Implementation of `anticipatory_deep_kv_four_arm_pilot_v2.md`. Entry point:
+Implementation of the arms in `anticipatory_deep_kv_four_arm_pilot_v2.md`, with
+the user's 2026-09-27 budget override: approximately 30B English tokens and 1M
+tokens per optimizer update, with optional matched iteration cutoffs. Entry point:
 `python -m deep_kv`. This is separate from the legacy EmbHub `train.py` and
 pretrained PCC experiments. No model weights are loaded: Qwen3 is initialized
 from its local config with a fixed seed. Use Transformers **5.9.0**, as installed
@@ -29,15 +31,15 @@ recomputes ordinary blocks during backward without mutable capture hooks.
 |---|---|
 | Backbone | Qwen3 0.6B geometry, 28 blocks, random initialization |
 | Context | 2048 |
-| Global input tokens/update | 32,768 (16 full contexts) |
-| Updates/arm | 30,518 |
-| Input tokens/arm | 1,000,013,824 |
+| Global input tokens/update | 1,048,576 (512 full contexts) |
+| Updates/arm | 28,610 (floor of 30B / 1,048,576) |
+| Input tokens/arm | 29,999,759,360 |
 | Execution | Eight GPUs per arm, sequential A → B → C → D |
-| Microbatch/rank | 1 by default; two accumulation passes |
+| Microbatch/rank | 1 by default; 64 accumulation passes (64 contexts/rank) |
 | Master parameters / compute | float32 / bfloat16 autocast |
 | Optimizer | AdamW, betas (0.9, 0.95), epsilon 1e-8 |
 | Peak LR / weight decay | 3e-4 / 0.1; no decay on vectors/norms |
-| Schedule | 1,526 warmup updates; cosine decay to 10% of peak |
+| Schedule | 1,431 warmup updates (5%, rounded up); cosine decay to 10% of peak |
 | Gradient clipping | Global norm 1.0 |
 | Model / data seed | 2901 / 20260922 |
 | Monitoring | Every 512 updates, fixed 128 evaluation contexts |
@@ -46,8 +48,10 @@ recomputes ordinary blocks during backward without mutable capture hooks.
 
 The optimizer and evaluation values fill settings left unspecified by the
 four-arm document. They are explicit implementation defaults, not previously
-measured optimal values. A configuration cannot silently shorten or extend the
-pilot. Synthetic CPU smoke runs use a separate, clearly labeled tiny recipe.
+measured optimal values. A cutoff shortens execution while retaining this full
+schedule. Microbatch may be any divisor of 64; accumulation adapts to preserve
+the global batch. Larger microbatches require a GPU memory check. Synthetic CPU
+smoke runs use a separate, clearly labeled tiny recipe.
 
 ## Data
 
@@ -59,10 +63,14 @@ the current packing policy. Documents can attend across EOS boundaries within
 a context; EOS does not imply segment isolation.
 
 Preparation takes enough contexts from the ordered source prefix for the fixed
-budget, then shuffles those contexts once with the locked data seed. It does
-not tokenize/shuffle the entire 30B-token English pool. It writes uint32 token
-files and a fixed context permutation, about 4 GB total, with checksums. Every
-arm verifies and reuses these exact files. Train and evaluation sources differ.
+30B budget, then shuffles those contexts once with the locked data seed. It
+writes uint32 token files and a fixed context permutation, about 120 GB total,
+with checksums. Preparation covers the full budget even for an early-stop run,
+so changing the cutoff preserves the exact data order and allows resume.
+Every arm verifies and reuses these exact files. If packing leaves too few
+contexts, preparation fails explicitly; it never repeats data to fill a budget.
+Train and evaluation sources differ. Old 1B/32K prepared streams are rejected
+because their recorded recipe differs; the sampled text needs no resampling.
 These local token files are experiment inputs; the sampled Arrow data stays text.
 
 ## Plan and sequential launch
@@ -82,7 +90,7 @@ python run_experiments.py --config temp/deep-kv-jobs.json \
 Use the selected environment's Python for all commands. The generated queue
 prepares data on CPU, runs each arm with eight-rank `torchrun`, then produces
 `comparison.json` on CPU. Each arm must exit successfully and publish the exact
-30,518-update/1,000,013,824-token completion marker before the queue advances.
+28,610-update/29,999,759,360-token completion marker before the queue advances.
 The report verifies shared data/recipe/initialization and checkpoint identities.
 It reports LM-loss differences B−A, C−B, D−B, D−C and D−A; negative favors the
 first arm. Single-seed differences are exploratory, not statistical proof.
@@ -103,10 +111,26 @@ per-rank RNG and exact update cursor. The latest checkpoint is replaced atomical
 older periodic checkpoints are not accumulated. Budget roughly 7–8 GB per arm
 for float32 model plus Adam moments, with additional temporary space during save.
 
-For a deliberate common cutoff, invoke all arms with the same `--stop-after N`.
-This preserves the 30,518-update LR schedule and writes `stopped.json`, never
-`complete.json`; the full-run queue therefore cannot mistake it for success.
-For example, an individual arm may be resumed with:
+For a deliberate common cutoff, generate the queue with `--stop-after N`.
+For example, 1,000 optimizer updates consume 1,048,576,000 tokens per arm:
+
+```bash
+python -m deep_kv plan --config deep_kv.b200.json --stop-after 1000
+python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 1000 \
+  --data-dir /PATH/prepared --output temp/deep-kv-cutoff-jobs.json
+python run_experiments.py --config temp/deep-kv-cutoff-jobs.json --run-dir /PATH/run
+```
+
+The queue passes the same cutoff to A/B/C/D and the comparison. Each arm retains
+the 28,610-update LR schedule, evaluates all 4,882 fixed evaluation contexts,
+saves a resumable checkpoint, and writes `stopped.json`. The cutoff queue checks
+the exact iteration and token count before advancing. `comparison.json` records
+`compared_update` and `training_complete: false`; its `status: complete` means
+the comparison finished. A full-budget queue still requires `complete.json`.
+No cutoff is selected by default. A cutoff equal to 28,610 is full completion.
+
+The trainer and report also accept `--stop-after N` individually. To continue
+an arm to the full budget, omit the cutoff when resuming:
 
 ```bash
 python -m torch.distributed.run --standalone --nnodes=1 --nproc-per-node=8 \

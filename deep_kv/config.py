@@ -1,4 +1,4 @@
-"""Explicit, immutable pilot recipe; small settings are only for CPU tests."""
+"""Full English pretraining recipe; cutoffs never shorten the LR schedule."""
 from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
@@ -9,10 +9,10 @@ NAMES = dict(zip(ARMS, ("Base", "ExtraAttn-NoAlign", "ShallowKV-Align", "DeepKV-
 
 @dataclass(frozen=True)
 class Recipe:
-    updates: int = 30518
+    updates: int = 28610
     context: int = 2048
-    tokens_per_update: int = 32768
-    warmup: int = 1526
+    tokens_per_update: int = 1048576
+    warmup: int = 1431
     learning_rate: float = 3e-4
     weight_decay: float = 0.1
     eval_every: int = 512
@@ -40,6 +40,12 @@ class Recipe:
     def train_rows(self):
         return self.updates * self.tokens_per_update // self.context
 
+    def end_update(self, stop_after=None):
+        end = self.updates if stop_after is None else stop_after
+        if type(end) is not int or not 1 <= end <= self.updates:
+            raise ValueError("Invalid fixed-schedule cutoff")
+        return end
+
 
 def load_config(path):
     path = Path(path).resolve()
@@ -50,17 +56,23 @@ def load_config(path):
     for key in required:
         value[key] = str((path.parent / value[key]).resolve())
     value.setdefault("microbatch", 1)
-    if type(value["microbatch"]) is not int or value["microbatch"] not in (1, 2):
-        raise ValueError("Eight-GPU pilot microbatch must be 1 or 2")
+    rows_per_rank = Recipe().tokens_per_update // Recipe().context // 8
+    if (type(value["microbatch"]) is not int or value["microbatch"] <= 0
+            or rows_per_rank % value["microbatch"]):
+        raise ValueError(f"Eight-GPU microbatch must divide {rows_per_rank} contexts per rank")
     if value["train_data"] == value["eval_data"]:
         raise ValueError("Training and evaluation splits must differ")
     return value
 
 
-def plan(config):
+def plan(config, stop_after=None):
     recipe = Recipe().validate()
+    end = recipe.end_update(stop_after)
     return {"format": "deep-kv-v2", "recipe": asdict(recipe), "config": config,
             "arms": NAMES, "tokens_per_arm": recipe.updates * recipe.tokens_per_update,
             "total_input_tokens": len(ARMS) * recipe.updates * recipe.tokens_per_update,
+            "stop_after": stop_after, "run_updates_per_arm": end,
+            "run_tokens_per_arm": end * recipe.tokens_per_update,
+            "run_total_input_tokens": len(ARMS) * end * recipe.tokens_per_update,
             "initialization": "random Qwen3; shared backbone seed; byte-identical B/C/D branch",
             "alignment_weight": 1.0, "gpus_per_arm": 8, "training_launched": False}

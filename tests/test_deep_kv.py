@@ -12,7 +12,7 @@ from transformers import Qwen3Config
 from deep_kv.config import Recipe
 from deep_kv.data import TokenStream, prepare, write_split
 from deep_kv.model import DeepKV
-from deep_kv.training import parameter_hash, train
+from deep_kv.training import parameter_hash, train, optimizer_for, set_lr, train_update
 from pcc.model import Context
 
 
@@ -289,8 +289,11 @@ class DeepKVTraining(unittest.TestCase):
 
     def test_queue_and_budget(self):
         from deep_kv.__main__ import build_identity, jobs
+        from deep_kv.config import load_config, plan
         from run_experiments import load_jobs
-        self.assertEqual(Recipe().updates * Recipe().tokens_per_update, 1000013824)
+        self.assertEqual(Recipe().tokens_per_update, 1048576)
+        self.assertEqual(Recipe().updates * Recipe().tokens_per_update, 29999759360)
+        self.assertEqual(Recipe().tokens_per_update // Recipe().context // 8, 64)
         identity = build_identity({}, Recipe(), model("D"), {}, mixed_precision=False)
         self.assertEqual(json.loads(json.dumps(identity)), identity)
         with tempfile.TemporaryDirectory() as tmp:
@@ -301,6 +304,90 @@ class DeepKVTraining(unittest.TestCase):
             for job, arm in zip(queue[1:5], "ABCD"):
                 self.assertEqual(job["gpus"], list(range(8)))
                 self.assertEqual(job["required_outputs"][0]["json_equals"]["arm"], arm)
+                self.assertEqual(job["required_outputs"][0]["json_equals"]["input_tokens"], 29999759360)
+            path.write_text(json.dumps(jobs("deep_kv.b200.json", stop_after=1000)))
+            queue = load_jobs(path)
+            for job, arm in zip(queue[1:5], "ABCD"):
+                self.assertEqual(job["argv"][-2:], ["--stop-after", "1000"])
+                self.assertEqual(job["required_outputs"][0], {"path": f"{arm}/stopped.json", "json_equals": {
+                    "status": "stopped", "arm": arm, "update": 1000, "input_tokens": 1048576000}})
+            self.assertEqual(queue[-1]["argv"][-2:], ["--stop-after", "1000"])
+            self.assertFalse(queue[-1]["required_outputs"][0]["json_equals"]["training_complete"])
+            for invalid in (0, -1, 28611, True, 1.5):
+                with self.assertRaises(ValueError):
+                    jobs("deep_kv.b200.json", stop_after=invalid)
+            planned = plan(load_config("deep_kv.b200.json"), 1000)
+            self.assertEqual(planned["run_tokens_per_arm"], 1048576000)
+            self.assertEqual(planned["recipe"]["updates"], 28610)
+            for microbatch in (1, 2, 4, 8, 16, 32, 64, 3, 128):
+                path.write_text(json.dumps({**json.loads(Path("deep_kv.b200.json").read_text()), "microbatch": microbatch}))
+                if microbatch in (3, 128):
+                    with self.assertRaises(ValueError):
+                        load_config(path)
+                else:
+                    self.assertEqual(load_config(path)["microbatch"], microbatch)
+
+    def test_accumulation_matches_whole_global_batch(self):
+        torch.set_num_threads(1)
+        recipe = Recipe(updates=3, context=6, tokens_per_update=24, warmup=1,
+                        monitor_rows=1, eval_rows=2, consumer=2, deep_target=4)
+        class Data:
+            def batch(self, first, last, device):
+                ids = (torch.arange(first * 6, last * 6, device=device).reshape(-1, 6) % 30)
+                return Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids))
+        for arm in "ABCD":
+            accumulated, whole = model(arm), model(arm)
+            for current, microbatch in ((accumulated, 1), (whole, 4)):
+                opt = optimizer_for(current, recipe)
+                train_update(current, current, opt, Data(), 1, recipe, microbatch, False)
+            for p, q in zip(accumulated.parameters(), whole.parameters()):
+                torch.testing.assert_close(p, q, atol=2e-7, rtol=2e-5)
+
+    def test_cutoff_report_and_full_schedule_resume(self):
+        from deep_kv.__main__ import build_identity
+        from deep_kv.report import report
+        torch.set_num_threads(1)
+        recipe = Recipe(updates=4, context=6, tokens_per_update=12, warmup=1, eval_every=2,
+                        monitor_rows=1, eval_rows=2, checkpoint_every=2, consumer=2, deep_target=4)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
+            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
+                meta[split] = write_split(root, split, [["1 2 3 4 5"]] * rows,
+                                          TinyTokenizer(), rows, 6, 42)
+            (root / "complete.json").write_text(json.dumps(meta))
+            data, dev = (TokenStream(root, split, recipe) for split in ("train", "eval"))
+            identities = {}
+            for arm in "ABCD":
+                current = model(arm)
+                identities[arm] = build_identity({}, recipe, current, meta, mixed_precision=False)
+                history = train(current, data, dev, recipe, root / arm, identities[arm],
+                                mixed_precision=False, stop_after=2)
+                opt = optimizer_for(current, recipe)
+                set_lr(opt, 2, recipe)
+                self.assertEqual(history["train"][-1]["lr"], opt.param_groups[0]["lr"])
+                self.assertEqual(history["evaluation"][-1]["rows"], 2)
+                self.assertFalse((root / arm / "complete.json").exists())
+            result = report(root, recipe=recipe, stop_after=2)
+            self.assertFalse(result["training_complete"])
+            self.assertEqual(result["compared_update"], 2)
+            self.assertEqual(result["input_tokens_per_arm"], 24)
+            with self.assertRaises(FileNotFoundError):
+                report(root, recipe=recipe)
+            with self.assertRaises(ValueError):
+                report(root, recipe=recipe, stop_after=1)
+            # A periodic checkpoint at the chosen cutoff may only have monitor
+            # metrics. Resume at that same step must add full evaluation/save.
+            saved = torch.load(root / "A/checkpoint.pt", weights_only=True)
+            saved["history"]["evaluation"][-1]["rows"] = 1
+            torch.save(saved, root / "A/checkpoint.pt")
+            train(model("A"), data, dev, recipe, root / "A", identities["A"],
+                  mixed_precision=False, resume=True, stop_after=2)
+            self.assertFalse(report(root, recipe=recipe, stop_after=2)["training_complete"])
+            for arm in "ABCD":
+                train(model(arm), data, dev, recipe, root / arm, identities[arm],
+                      mixed_precision=False, resume=True)
+            self.assertTrue(report(root, recipe=recipe)["training_complete"])
 
 
 if __name__ == "__main__":

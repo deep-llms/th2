@@ -1,6 +1,13 @@
 # Anticipatory Deep-KV Pilot
 ## Minimal Four-Arm From-Scratch Specification
 
+> Implementation update (2026-09-27): the user superseded the 1B-token / 32K-token
+> batch pilot budget below with approximately 30B English tokens and 1,048,576
+> tokens per optimizer update. All four arms use the same optional iteration
+> cutoff while preserving the full training schedule. See
+> [DEEP_KV_TRAINING.md](DEEP_KV_TRAINING.md) for the current executable recipe.
+> The mechanism definitions below remain applicable.
+
 ## 1. Goal
 
 Test whether a Transformer can use **predicted mature K/V states early** to obtain useful deep-to-shallow feedback while preserving a normal single-pass, token-parallel training graph.
