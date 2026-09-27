@@ -1,5 +1,20 @@
 # Project notes
 
+## B200 sampling status checked (2026-09-27 00:20 UTC)
+
+Read-only export e5b69e6, job th2-78gg-check-sampling-20260927-a01,
+completed successfully. Snapshot timestamp 2026-09-27T00:20:14Z.
+Sampling has not completed: English file 29/50 processed, 24,978,593,652
+counted tokens toward 30B train + 10M eval. Last completed shard flush in
+snapshot is shard_0027. No other language has started in this log; no traceback
+or terminal success marker. sampling_complete.json was not returned and is
+absent from the exported folder. Approximately 71% of the total 35.06B-token
+target; elapsed about 4h21m since 2026-09-26 19:59 UTC. Rough remaining estimate
+2 hours, subject to language/IO speed. This is a progress snapshot, not a fresh
+process-liveness check. No workload restarted/stopped. commands.sh restored #0.
+Evidence: temp/b200-sampling-progress-20260927-a01.log (87354 bytes,
+SHA256 6339a77867717678f8df2d5e64df08ebea9a5d9fd161be10979f220e0a5e1fee).
+
 ## Active: local reproduction of B200 sampling (2026-09-26)
 
 User authorized a separate environment matching B200, then download and sampling
