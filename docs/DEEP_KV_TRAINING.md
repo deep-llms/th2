@@ -124,13 +124,17 @@ Each arm writes `run.json`, `metrics.json`, and standard Trainer
 `checkpoint-N/` directories: model safetensors, optimizer, scheduler, per-rank
 RNG, training arguments and trainer state. The custom wrapper preserves both
 names of tied embedding/output weights when saving, so standard HF restore
-loads every tensor. The latest two checkpoints are retained. Allow roughly
+loads every tensor. The latest two certified checkpoints are retained. Allow roughly
 8 GB per checkpoint, plus space for a third while a new save is being written.
 
 After all ranks finish saving, `checkpoint-N/deep_kv.json` records the run
 identity, step, component-loss history, and hashes of every required checkpoint
 file. Resume selects the latest certified save and checks its identity/files;
-unmarked partial saves are ignored. The report also verifies checkpoint hashes.
+unmarked partial saves are ignored. Native HF rotation is disabled: cleanup runs
+only after certification and retains the two latest certified saves. This keeps
+an interrupted replacement save from deleting the last recoverable checkpoint.
+Partial directories do not count toward that limit and may require extra disk
+space after an interruption. The report also verifies checkpoint hashes.
 Old custom-loop `checkpoint.pt` files are not HF checkpoints and are rejected.
 These checkpoints contain our custom model's full state; restoring it requires
 the DeepKV wrapper, rather than treating it as an unmodified Qwen model.
@@ -203,8 +207,10 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m torch.distributed.run \
 
 CPU tests exercise the real Trainer loop, custom accumulation gradients,
 mechanism acceptance, fixed data, checkpoint identity, exact single-process
-resume, and cutoff reporting. The Gloo worker checks all four arms with eight
-CPU processes and four accumulation steps. CPU tests use non-fused AdamW;
+resume with worker prefetch, interrupted-save recovery, and cutoff reporting.
+The Gloo worker checks all four arms with eight CPU processes and four
+accumulation steps, asserting the actual projection dtype during execution.
+CPU tests use non-fused AdamW;
 CUDA/NCCL, fused AdamW and full-context B200 throughput remain hardware checks.
 The pinned libraries need a small CPU-only optimizer restore adjustment:
 Accelerate's `cpu:0` device is normalized to `cpu` for `torch.load`; CUDA uses

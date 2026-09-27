@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 
 import numpy as np
 import torch
@@ -78,7 +79,9 @@ def training_arguments(recipe, output, microbatch, *, cpu=False, mixed_precision
         optim="adamw_torch" if cpu else "adamw_torch_fused",
         seed=recipe.seed, data_seed=recipe.data_seed,
         logging_steps=recipe.logging_every, logging_nan_inf_filter=False,
-        save_steps=recipe.checkpoint_every, save_total_limit=2,
+        # Native rotation runs before our all-rank checkpoint certification and
+        # counts partial saves. Retain two certified saves in on_save instead.
+        save_steps=recipe.checkpoint_every, save_total_limit=None,
         eval_strategy="steps", eval_steps=recipe.eval_every, eval_on_start=True,
         dataloader_num_workers=recipe.dataloader_workers, dataloader_pin_memory=not cpu,
         ddp_timeout=21600, ddp_find_unused_parameters=False,
@@ -238,6 +241,13 @@ class ExperimentCallback(TrainerCallback):
                        "identity": self.identity, "update": state.global_step,
                        "history": self.history, "files": files})
             write_json(Path(args.output_dir) / "metrics.json", self.history)
+            certified = sorted(
+                (p for p in Path(args.output_dir).glob("checkpoint-*")
+                 if p.name.removeprefix("checkpoint-").isdigit() and (p / "deep_kv.json").is_file()),
+                key=lambda p: int(p.name.split("-")[-1]),
+            )
+            for old in certified[:-2]:
+                shutil.rmtree(old)
         self.trainer.accelerator.wait_for_everyone()
 
 

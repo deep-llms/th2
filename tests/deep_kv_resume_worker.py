@@ -42,9 +42,18 @@ def main():
         config._attn_implementation = "sdpa"
         results = {}
         for arm in "ABCD":
+            observed_dtypes = set()
+
+            def check_projection_dtype(module, inputs, output):
+                observed_dtypes.add(str(output.dtype))
+                expected = torch.bfloat16 if args.bf16 else torch.float32
+                assert output.dtype == expected, (arm, output.dtype, expected)
+
             def fresh():
-                return DeepKV.from_scratch(copy.deepcopy(config), arm, consumer=recipe.consumer,
-                                           deep_target=recipe.deep_target, lm_chunk=recipe.lm_chunk)
+                result = DeepKV.from_scratch(copy.deepcopy(config), arm, consumer=recipe.consumer,
+                                            deep_target=recipe.deep_target, lm_chunk=recipe.lm_chunk)
+                result.backbone.model.layers[0].self_attn.q_proj.register_forward_hook(check_projection_dtype)
+                return result
             full = fresh()
             identity = build_identity({"synthetic_resume_check": True}, recipe, full, data.manifest, mixed_precision=args.bf16)
             train(full, data, dev, recipe, args.output / arm / "full", identity, microbatch=16, mixed_precision=args.bf16)
@@ -63,7 +72,9 @@ def main():
             delta = max((p - q).abs().max().item() for p, q in zip(full.parameters(), resumed.parameters()))
             maximum = torch.tensor(delta, dtype=torch.float64)
             dist.all_reduce(maximum, op=dist.ReduceOp.MAX)
-            results[arm] = {"maximum_parameter_difference": maximum.item(), "updates": recipe.updates}
+            assert observed_dtypes
+            results[arm] = {"maximum_parameter_difference": maximum.item(), "updates": recipe.updates,
+                            "projection_dtypes": sorted(observed_dtypes)}
         if dist.get_rank() == 0:
             write_json(args.output / "resume_verified.json", {"status": "ok", "cpu_only": True,
                                                               "bf16": args.bf16, "microbatch": 16,

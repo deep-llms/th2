@@ -1,5 +1,26 @@
 # Project notes
 
+## Trainer review: retain certified checkpoints (2026-09-27)
+
+HF 5.9 checkpoint rotation runs before the custom on_save certification. A
+reproduced interrupted-save/resume case with a later partial directory deleted
+the last recoverable checkpoint before certifying its replacement. Disabled
+native rotation; on_save now retains the two latest certified saves after
+publishing the new certificate and metrics. Uncertified partial directories
+remain ignored and may occupy additional disk space. Training settings and
+the native HF optimizer/accumulation loop are unchanged.
+
+Verification: 14 focused CPU tests passed (7.537s), including injected save
+failure/recovery and exact resume with two loader workers. Eight CPU/Gloo
+processes, BF16, microbatch 16, accumulation 4 passed interrupted vs continuous
+training for all arms (max parameter difference 3.726e-9). Forward hooks verify
+actual BF16 projection outputs. Evidence:
+ temp/deep-kv-review-tests-20260927-final.log
+ temp/deep-kv-review-resume8-bf16-20260927-final/resume_verified.json
+Pre-fix reproducer: temp/deep-kv-review-checkpoint-repro-20260927.log.
+Plan/shell/compile/diff checks passed; no push, B200 operation or real training.
+CUDA/NCCL, fused optimizer and full-context capacity still require hardware.
+
 ## Active: Hugging Face Trainer / Accelerate migration (2026-09-27)
 
 User requested following train.py and scripts/train_qwen3_0.6b_baseline.sh,

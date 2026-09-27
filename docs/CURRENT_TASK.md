@@ -1,5 +1,28 @@
 # Current task
 
+## Trainer review and checkpoint recovery fix (2026-09-27)
+
+Reviewed the four-arm model, loss normalization, fixed input order, BF16,
+Trainer/Accelerate integration, cutoff and checkpoint recovery. Reproduced a
+failure where HF rotation counted an old partial save and deleted the last
+certified checkpoint before certifying its replacement. Native rotation is now
+disabled; the save callback retains two certified checkpoints only after the
+new save is certified. Partial directories remain ignored, not automatically
+deleted. The training loop and experiment settings are unchanged.
+
+All 14 focused CPU tests passed (7.537s), including the reproduced save failure
+and exact resume with two data-loader workers. Eight-process CPU/Gloo BF16
+resume passed for A/B/C/D at microbatch 16 and accumulation 4; maximum parameter
+difference was 3.726e-9. The worker now asserts actual BF16 projection outputs,
+not only the requested precision flag. Plan, shell syntax, compilation and diff
+checks passed. Evidence:
+ temp/deep-kv-review-checkpoint-repro-20260927.log (failure before fix)
+ temp/deep-kv-review-tests-20260927-final.log
+ temp/deep-kv-review-resume8-bf16-20260927-final/resume_verified.json
+ temp/deep-kv-review-plan-20260927.json
+No remote push, B200 access or real training launch. commands.sh stays #0.
+CUDA/NCCL, fused AdamW and real-context memory/throughput remain hardware checks.
+
 ## Active: Hugging Face Trainer / Accelerate migration (2026-09-27)
 
 User requested following train.py and scripts/train_qwen3_0.6b_baseline.sh,

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -239,7 +240,9 @@ class DeepKVTraining(unittest.TestCase):
 
     def test_packing_resume_and_fixed_budget(self):
         torch.set_num_threads(1)
-        recipe = Recipe(dataloader_workers=0, logging_every=1, updates=3, context=6, tokens_per_update=12, warmup=1, eval_every=1,
+        # Exercise worker prefetch plus HF's skipped-batch restore, not only the
+        # synchronous loader used by the smallest mechanism tests.
+        recipe = Recipe(dataloader_workers=2, logging_every=1, updates=3, context=6, tokens_per_update=12, warmup=1, eval_every=1,
                         monitor_rows=1, eval_rows=2, checkpoint_every=1, consumer=2, deep_target=4)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -340,6 +343,43 @@ class DeepKVTraining(unittest.TestCase):
                         load_config(path)
                 else:
                     self.assertEqual(load_config(path)["microbatch"], microbatch)
+
+    def test_interrupted_save_preserves_certified_checkpoint(self):
+        from deep_kv.training import write_json
+        recipe = Recipe(dataloader_workers=0, updates=5, context=6, tokens_per_update=12,
+                        warmup=1, monitor_rows=1, eval_rows=2, checkpoint_every=1,
+                        consumer=2, deep_target=4)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            meta = {"format": "deep-kv-data-v2", "recipe": asdict(recipe)}
+            for split, rows in (("train", recipe.train_rows), ("eval", recipe.eval_rows)):
+                meta[split] = write_split(root, split, [["1 2 3 4 5"]] * rows,
+                                          TinyTokenizer(), rows, 6, 42)
+            write_json(root / "complete.json", meta)
+            data, dev = (TokenStream(root, split, recipe) for split in ("train", "eval"))
+            output = root / "run"
+            identity = {"recipe": asdict(recipe), "arm": "D"}
+            train(model("D"), data, dev, recipe, output, identity,
+                  mixed_precision=False, stop_after=2)
+            # A failed later save was ignored during restore. The user now
+            # selects an earlier cutoff, still after the last certified save.
+            (output / "checkpoint-4").mkdir()
+
+            def fail_certification(path, value):
+                if Path(path) == output / "checkpoint-3/deep_kv.json":
+                    raise OSError("simulated interrupted certification")
+                return write_json(path, value)
+
+            with patch("deep_kv.training.write_json", side_effect=fail_certification):
+                with self.assertRaisesRegex(OSError, "interrupted certification"):
+                    train(model("D"), data, dev, recipe, output, identity,
+                          mixed_precision=False, stop_after=3, resume=True)
+            verify_checkpoint(output / "checkpoint-2", identity)
+            train(model("D"), data, dev, recipe, output, identity,
+                  mixed_precision=False, stop_after=3, resume=True)
+            verify_checkpoint(output / "checkpoint-3", identity)
+            self.assertTrue((output / "checkpoint-2").exists())
+            self.assertFalse((output / "checkpoint-1").exists())
 
     def test_hf_accumulation_gradient_matches_whole_global_batch(self):
         torch.set_num_threads(1)
