@@ -1,5 +1,35 @@
 # Current task
 
+## Four-arm B200 smoke completed and verified (2026-09-27)
+
+All four arms match the active specification and passed the full-model CUDA/NCCL
+smoke on eight B200s per arm: 28 layers, context 2048, BF16, microbatch 16,
+accumulation 4, 1,048,576 input tokens/update. Each arm stopped at update 2,
+then resumed the native model/optimizer/scheduler/RNG checkpoint to update 3.
+Each consumed 3,145,728 input tokens and evaluated exactly 129 contexts
+(264,192 input / 264,063 LM-target tokens), including uneven distributed shards.
+A/B alignment losses are zero; C/D K/V losses and all LM losses are finite.
+Both matched-arm comparisons passed. This short smoke is not scientific evidence
+for the method; the production recipe remains 28,600 schedule / 2,000 cutoff.
+Full-corpus packed capacity is still checked at real-training startup.
+
+The initial launcher hit missing os.pidfd_open in B200 conda Python before any
+signal. The tested Linux PID-handle fallback fixed this; 7dae5e3 successfully
+stopped only reverified burn workers 501–508, left PID 1/launcher untouched, and
+verified all GPUs free before launching. The repo Accelerate config was copied
+to the actual default cache and accelerate env confirmed eight-process BF16.
+B200 runtime: torch 2.14.0+cu130, Transformers 5.9.0, Accelerate 1.13.0.
+
+Postflight 3b2a6a1 at 23:38:25 UTC verified every arm's checkpoint weights,
+optimizer, scheduler and eight RNG files. Eighteen downloaded result/config/state
+artifacts match source SHA256. Local evidence: artifacts/deep-kv-smoke-20260927/
+(including smoke_complete.json and postflight.json); remote root:
+/mnt/local/_outputs/deep-llms_th2/deep-kv-refactor-smoke-20260927-a01.
+The owned guard marker was removed, restoring the controller's idle policy.
+Latest GPU inspection showed all eight free, with no compute PIDs; this is NOT
+evidence that an idle burn has already restarted. commands.sh is now inactive.
+No full 2,000-step pilot or corpus preparation job was launched/changed.
+
 ## Smoke launcher compatibility correction (2026-09-27)
 
 The first smoke submission 7b01e3f failed BEFORE any GPU signal or training:
