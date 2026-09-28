@@ -10,7 +10,16 @@ failure. Prepare a persistent supervisor that waits for the training processes
 to release GPUs, then starts and verifies the idle burn. Fresh preflight must
 copy resources/accelerate_config.yaml to the actual HF cache and run accelerate
 env; stop only freshly verified burn workers and verify all eight GPUs free.
-Current command is the read-only GPU/data preflight, not the training launch.
+Preflight bbdbb2f passed on host thiennh-p6-78gg-worker-0: 8 B200s, expected
+train/eval fingerprints, correct pinned environment, Accelerate cache copied
+and accelerate env verified. Next command launches a detached pipeline: a
+controlled failure proves automatic eight-rank burn restoration, then the real
+A/B/C/D queue runs 2500 updates each. scripts/train_then_burn.py uses the existing
+runner and cleans only its own children (including orphaned descendants) before
+starting an independent tmux burn. It verifies all-rank readiness and advancing
+collectives. Queue failure remains failure in run.json/supervisor.json.
+Output root: /mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01.
+Launch is being submitted; live optimizer progress is not yet verified.
 
 ## Full-schedule 5% warmup selected (2026-09-28)
 

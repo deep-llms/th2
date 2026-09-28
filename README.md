@@ -43,7 +43,7 @@ python run_experiments.py --config temp/deep-kv-jobs.json \
   --run-dir /mnt/local/_outputs/deep-llms_th2/deep-kv-2500
 ```
 
-`commands.sh` remains inactive locally. Runner pushes and GPU process management
+`commands.sh` is an operator-controlled deployment command. Runner pushes and GPU process management
 follow [docs/commands.md](docs/commands.md), [docs/GIT_PUSH.md](docs/GIT_PUSH.md),
 and [docs/GPU_SAFETY.md](docs/GPU_SAFETY.md).
 
