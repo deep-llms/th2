@@ -1,5 +1,27 @@
 # Current task
 
+## F complete; G running (2026-09-28 23:03 UTC)
+
+Read-only status ac31b69 on thiennh-p6-78gg-worker-0 at 23:03:48 UTC confirms
+F exited zero at 2500 updates / 2621440000 input tokens, finished 22:59:58 UTC
+(10328.79 seconds, about 2h52m). Its result status stopped is the intended cutoff;
+trainer_state global_step2500/max_steps28600; checkpoints2250 and2500 remain.
+Final eval: LM=3.5103442129966322, route=0.1812025474324223, message=0,
+objective=3.564704977226359; 4882 rows / 9993454 target tokens.
+Runner recorded F/result.json SHA256
+160830425acb17a1c0cae4c497b9dd1cfc7356103b83a645806a7fc9f610c8d4.
+
+G started automatically at 22:59:58 UTC; latest log step43/2500, about4.36s/update.
+Step40 LM10.55, route0.2557, message0.2672, finite gradient norm2.144.
+All eight GPUs show one worker each, 95-100% utilization, 26416MiB per GPU.
+Supervisor/queue status running; final comparison and burn receipts not present,
+as expected while G trains. Estimated finish around 2026-09-29 02:05-02:15 UTC,
+subject to throughput/checkpoint/evaluation overhead. Automatic burn handoff
+remains configured; do not report it verified before completion.
+Evidence: temp/FG-status-20260928-2303.log (SHA256
+d2cf6e062f5ed88991b3b0218ab54cc99a1906e403461ac93957b5ffb44f0b14).
+No process/data/training code changed. commands.sh restored to #0.
+
 ## B200 dataset format checked read-only (2026-09-28 22:26 UTC)
 
 User paused HF upload planning to clarify formats and repository layout.
