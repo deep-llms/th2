@@ -1,5 +1,15 @@
 # Project notes
 
+## Arm E preflight version assertion corrected (2026-09-28)
+
+Attempt a01 (b923b68) stopped at the first preflight version assertion, before
+Accelerate copy, GPU inspection/reclamation or training. The package metadata
+reports torch=2.14.0; torch.__version__ includes the CUDA suffix 2.14.0+cu130.
+No training output/cache was produced. Log: temp/arm-E-a01-launch.log.
+Corrected those separate checks, preserving all training code and recipe.
+Retry uses fresh root deep-kv-E-2500-20260928-a02 and fresh tmux session;
+a01 is preserved. Waiting for remote a02 verification.
+
 ## Arm E launch authorized (2026-09-28)
 
 User authorized E on all eight B200 GPUs, with Accelerate copy/verification,
