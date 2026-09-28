@@ -1,5 +1,23 @@
 # Project notes
 
+## Status snapshot at 07:17 UTC (2026-09-28)
+
+Export 394ddf7 confirms A/B completed 2500 updates with exit code zero.
+B finished at 05:55:43 UTC (8698 seconds elapsed); final held-out LM loss
+3.505886971 versus A 3.510730336. B result SHA256 matches run.json:
+652fc740148b1d216fcc918d35fc3901dc7d67dfada060fa8a5bd84875fc5157.
+Saved A/B configurations differ only in pilot.arm, including identical train
+and eval fingerprints. This is a small observed difference, not a robust
+method conclusion; C/D final results remain pending.
+C started automatically at 05:55:43, reached step 1397 in the fresh log;
+latest logged objective 4.290, step LM loss 4.205, K loss .1015, V loss .08786
+at step 1390. No traceback, CUDA OOM, ChildFailedError or NaN found in C log.
+Speed ~3.4–3.5 seconds/update. D remains queued. Estimated C finish ~08:20–08:25
+UTC and total queue ~10:45–11:15 UTC if D maintains similar speed.
+No final burn handoff yet because training continues. Status checking made
+no changes to training; commands.sh restored to #0.
+Receipts: artifacts/deep-kv-status-20260928-0717/ (ignored).
+
 ## Status snapshot at 04:19 UTC (2026-09-28)
 
 Fresh export 8e6af30 from deep-kv-2500-20260928-a02 confirms Arm A exited
