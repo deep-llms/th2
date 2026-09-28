@@ -1,5 +1,33 @@
 # Current task
 
+## Four-arm run completed; live burn verified (2026-09-28)
+
+Read-only node inspection 55c39ac at 12:49:43–12:49:56 UTC confirms all four
+arms finished successfully at global_step=2500 with max_steps=28600. Queue
+and comparison completed at 10:45:37 UTC (9h 51m 58s since 00:53:39 launch,
+including preprocessing). Every job exited zero. All five artifact hashes
+match complete.json, and A/B/C/D saved configurations match after removing arm.
+
+Final held-out LM losses on the same ~10M-token evaluation set:
+A=3.510730336181336; B=3.505886970597037;
+C=3.5791965769364404; D=3.5259151358008247.
+D beats C by .05328144 but is worse than A by .01518480 and B by .02002817.
+B is slightly better than A by .00484337. deep_gain_pattern=false. This is
+one seed and a 2500-update cutoff, not evidence of a robust method advantage.
+
+Automatic handoff succeeded at 10:46:48 UTC. Fresh inspection at 12:49 UTC
+verified one reviewed enhanced-burn worker on each of all eight B200 GPUs,
+100% utilization and ~155212 MiB occupied per GPU. During a 12-second check,
+completed collective cycles advanced 8330 -> 8350 and logical payload per rank
+9249.23 -> 9271.44 GiB. The supervisor exited successfully; guard hold removed.
+No training or process-management changes were made by the status check.
+
+Local results: artifacts/deep-kv-final-20260928/ (ignored): all four result.json,
+comparison.json, complete.json, and full fresh node inspection. Reconstructed
+individual JSON bytes independently match the remote runner's recorded hashes.
+Large weights/checkpoints remain on B200 under the existing production/run root.
+commands.sh restored to #0. No further experiments have been launched.
+
 ## Status snapshot at 07:17 UTC (2026-09-28)
 
 Export 394ddf7 confirms A/B completed 2500 updates with exit code zero.
