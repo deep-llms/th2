@@ -163,9 +163,11 @@ def start_burn(output, session, project):
                 'COMM_TOTAL_MIB': '1137', 'COMM_BUCKET_MIB': '25', 'APPROX_STEP_SECONDS': '0.75',
                 'CALIBRATION_GEMMS': '64', 'PROGRESS_EVERY': '10', 'MIN_WORLD_SIZE': '2'}
     env = ['CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7', 'CUDA_DEVICE_ORDER=PCI_BUS_ID',
-           'NCCL_NVLS_ENABLE=0', 'MASTER_ADDR=127.0.0.1', f'MASTER_PORT={port}']
+           'NCCL_NVLS_ENABLE=0', 'PYTHONUNBUFFERED=', 'MASTER_ADDR=127.0.0.1', f'MASTER_PORT={port}']
     env += [f'GPU_BURN_{key}={value}' for key, value in settings.items()]
-    command = 'exec ' + shlex.join(['env', *env, sys.executable, '-u', str(source)])
+    # print(..., flush=True) must assemble each readiness line in its buffer;
+    # -u splits multi-argument print into interleaving writes across eight ranks.
+    command = 'exec ' + shlex.join(['env', *env, sys.executable, str(source)])
     command += ' >' + shlex.quote(str(log)) + ' 2>&1'
     subprocess.run(['tmux', 'new-session', '-d', '-s', session, command], check=True)
     subprocess.run(['tmux', 'set-option', '-w', '-t', session, 'remain-on-exit', 'on'], check=True)

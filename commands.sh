@@ -1,2 +1,48 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01.log,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/rehearsal/supervisor.json,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/rehearsal/burn-verified.json,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/rehearsal/burn.log,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/production/supervisor.json,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/production/reclaim.json,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/production/gpus-free-before-training.json,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/production/run/run.json,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/production/run/arm-A.log,/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01/production/run/A/train_config.json
-#th2-78gg-deep-kv-2500-progress-20260928-a01
+#1 +60+a
+#th2-78gg-deep-kv-2500-launch-20260928-a02
+set -euo pipefail
+date -u
+hostname
+test "$(hostname)" = thiennh-p6-78gg-worker-0
+# The first rehearsal deliberately blocked training on garbled burn logs.
+# Require its terminal receipt, dead supervisor and exact owned marker first.
+/mnt/local/conda-py311/envs/train_env/bin/python - <<'PYRECOVER'
+import json, subprocess, time
+from pathlib import Path
+old = Path('/mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01')
+for _ in range(24):
+    receipt = json.loads((old / 'rehearsal/supervisor.json').read_text())
+    if 'finished_at' in receipt and subprocess.check_output(['tmux','display-message','-p','-t',old.name,'#{pane_dead}'], text=True).strip() == '1':
+        break
+    time.sleep(5)
+assert receipt['training_status'] == 'failed'
+assert 'Burn did not demonstrate all-rank readiness' in receipt['handoff_error']
+assert not (old / 'production').exists()
+assert subprocess.check_output(['tmux','display-message','-p','-t',old.name,'#{pane_dead}'], text=True).strip() == '1'
+guard = Path('/mnt/local/_gpu_guard/DISABLED')
+body = guard.read_text()
+marker = json.loads(body)
+assert marker['output'] == str(old / 'rehearsal')
+assert marker['owner_pid'] > 1 and not Path('/proc',str(marker['owner_pid'])).exists()
+assert guard.read_text() == body
+guard.unlink()
+print('REMOVED_ONLY_COMPLETED_REHEARSAL_GUARD_HOLD', flush=True)
+PYRECOVER
+TASK_ROOT=/mnt/local/_outputs/@PROJECT@/deep-kv-2500-20260928-a02
+TASK_INSPECTION=/mnt/local/_outputs/@PROJECT@/deep-kv-2500-preflight-20260928-a01/gpu_inspection.json
+TASK_SESSION=deep-kv-2500-20260928-a02
+test -s "$TASK_INSPECTION"
+test ! -e "$TASK_ROOT"
+test ! -e "${TASK_ROOT}.log"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then
+  echo 'REFUSE: training supervisor session already exists' >&2
+  exit 1
+fi
+printf -v TASK_CMD 'cd %q && exec bash scripts/launch_deep_kv_b200.sh %q %q >%q 2>&1' \
+  "$PWD" "$TASK_ROOT" "$TASK_INSPECTION" "${TASK_ROOT}.log"
+tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
+tail -n 65 "${TASK_ROOT}.log"
+printf '%s\n' 'DETACHED_PIPELINE_LIVE: verified crash-to-burn rehearsal, then real four-arm queue'

@@ -19,7 +19,12 @@ runner and cleans only its own children (including orphaned descendants) before
 starting an independent tmux burn. It verifies all-rank readiness and advancing
 collectives. Queue failure remains failure in run.json/supervisor.json.
 Output root: /mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a01.
-Launch is being submitted; live optimizer progress is not yet verified.
+First live handoff rehearsal correctly held training because Python -u
+interleaved rank readiness log lines, although the burn was live and advancing.
+Corrected only the burn launch to buffered stdout with explicit flush in the
+existing burn source. Retry root deep-kv-2500-20260928-a02 first verifies the
+failed rehearsal is terminal before releasing its exact guard hold. Training
+has not yet started. Local suite: 53 passed; B200 handoff CPU tests: 5 passed.
 
 ## Full-schedule 5% warmup selected (2026-09-28)
 
