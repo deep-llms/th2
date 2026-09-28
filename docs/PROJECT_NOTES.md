@@ -1,5 +1,32 @@
 # Project notes
 
+## Arm E completed; automatic final burn verified (2026-09-28)
+
+Read-only check 7ce7ce9 at 18:41:18-18:41:30 UTC verifies E completed the
+2500-update cutoff successfully at 16:01:48 UTC (2h24m50s elapsed), with
+2,621,440,000 input tokens and the unchanged 28600-step schedule. Training and
+E-result validation both exited zero. Result status "stopped" is the intended
+fixed-schedule cutoff. Final trainer state is global_step=2500/max_steps=28600.
+Both artifact hashes match complete.json remotely and after local retrieval.
+E's saved configuration still matches D after removing only pilot.arm.
+
+Final held-out LM loss: E=3.514632263741271, D=3.5259151358008247,
+A=3.510730336181336, B=3.505886970597037, C=3.5791965769364404.
+E improves D by .01128287 but remains .00390193 worse than A and .00874529
+worse than B. Same ~10M-token evaluation set (4882 contexts). Single-seed
+exploratory result; lowering alignment weight helped relative to D, without
+beating baseline or the branch-only B. E weighted objective=3.639359351846798;
+raw K=.47293925608269066 and V=.35857466462082377.
+
+Automatic burn handoff succeeded at 16:02:59 UTC. Fresh inspection confirmed
+one reviewed burn worker on every B200, 100% utilization, ~155212 MiB/GPU.
+Collective cycles advanced 10720 -> 10730 and logical payload per rank
+11902.97 -> 11914.07 GiB during the 12-second check. Guard hold was removed;
+no handoff error. No process was stopped or training launched by this check.
+Local results and receipts: artifacts/deep-kv-E-final-20260928/ (ignored).
+Large checkpoints remain on B200 in the E a02 production/run/E directory.
+commands.sh restored to #0; no new experiment queued.
+
 ## Arm E is running; launch verified (2026-09-28 13:39 UTC)
 
 Launch commit 887b64b, fresh root:
