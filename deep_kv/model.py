@@ -180,7 +180,8 @@ class DeepKV(nn.Module):
                 if self.arm in ("D", "E") and i == self.deep_target - 1:
                     target = (k, v)
                 if self.functional_loss and i == self.deep_target - 1:
-                    target = (kr.detach(), v.detach())
+                    # Match the attention-input precision before FP32 loss math.
+                    target = (kr.detach().to(v.dtype), v.detach())
             else:
                 hidden = result
         return self.backbone.model.norm(hidden), predicted, target

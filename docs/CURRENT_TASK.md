@@ -1,5 +1,22 @@
 # Current task
 
+## F/G smoke and production launch authorized (2026-09-28)
+
+User authorized new arms on B200 using the established launch workflow.
+Applied the reviewed deep-key target cast to attention value dtype for F/G only;
+60 CPU tests pass, including a new BF16 target-precision regression. Three smoke
+gate tests pass. Production train.py and original recipe remain unchanged.
+Fresh root: /mnt/local/_outputs/deep-llms_th2/deep-kv-FG-2500-20260928-a01.
+Queue: production-shape D/F/G smoke (10 updates, resume to 12), then fresh F
+and G at 2500/28600 updates, followed by FG result validation/comparison.
+Smoke-only callbacks collect clean step timings and all-rank memory peaks;
+minimum 8 GiB headroom required. The outer unchanged train_then_burn supervisor
+reclaims only freshly verified burns and restores them after success or failure.
+Accelerate config copy/byte verification + accelerate env precede reclamation.
+All runs use eight GPUs, micro16/accum4, seq2048, EOS packing; W&B offline and
+NCCL_NVLS_ENABLE=0. Commands and code are ready for submission; remote status
+not yet verified. Local corpus sampling is untouched.
+
 ## F/G independent recheck passed (2026-09-28)
 
 Re-read the functional-loss specification and reviewed forward captures,

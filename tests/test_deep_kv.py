@@ -377,6 +377,26 @@ class DeepKVAcceptance(unittest.TestCase):
             self.assertGreater(consumer.q_proj.weight.grad.abs().sum().item(), 0)
             self.assertGreater(m.aux.v.weight.grad.abs().sum().item(), 0)
 
+    def test_functional_deep_key_precision_matches_attention_under_bf16(self):
+        from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb
+        for arm in "FG":
+            m = model(arm).eval()
+            keys = []
+            handle = m.backbone.model.layers[3].self_attn.k_norm.register_forward_hook(
+                lambda module, args, output: keys.append(output))
+            batch = context()
+            try:
+                with torch.no_grad(), torch.autocast("cpu", dtype=torch.bfloat16):
+                    _, predicted, target = m.hidden_states(batch)
+                    rotary = m.backbone.model.rotary_emb(m.backbone.model.embed_tokens(batch.input_ids), batch.position_ids)
+                    key = keys[0].transpose(1, 2)
+                    _, rotated = apply_rotary_pos_emb(key, key, *rotary)
+            finally:
+                handle.remove()
+            self.assertTrue(all(t.dtype == torch.bfloat16 for t in (*predicted, *target)))
+            torch.testing.assert_close(target[0], rotated.to(target[1].dtype), rtol=0, atol=0)
+            self.assertTrue(all(not t.requires_grad for t in target))
+
 
 
 if __name__ == "__main__":
