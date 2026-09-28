@@ -2,7 +2,8 @@
 
 **Original status: review notes only.** The user subsequently authorized F/G
 training. The precision cast is now implemented and locally tested; the proposed
-D/F/G smoke is being prepared as a mandatory gate before the long F/G queue.
+D/F/G smoke passed on B200 before the long F/G queue started. See the
+execution record below.
 The notes below describe the pre-adjustment review. Written
 after reviewing the F/G implementation (`f6ce7e5`, `a8f4fd6`) against
 `deep_route_kl_variant.md`. That review found no implementation bug; all 59
@@ -60,9 +61,8 @@ using it as the target, for example in `hidden_states`:
 target = (kr.detach().to(v.dtype), v.detach())
 ```
 
-This adjustment has now been applied. It only changes F/G loss numerics. No F/G run has been launched, so
-comparability is not affected. If left unchanged, keep this note as the record
-of the known, negligible asymmetry.
+This adjustment was applied before any F/G run. It only changes F/G loss
+numerics; the earlier A-E results and forward computation are unchanged.
 
 ## 2. Proposed B200 smoke for F/G
 
@@ -134,3 +134,14 @@ Only a successful smoke receipt unlocks fresh F/G production training, using
 the unchanged 28600-step schedule / 2500 cutoff / 1430 warmup. On smoke or
 training failure, the queue stops and the verified supervisor restores burns
 after owned-worker cleanup and free-GPU checks.
+
+## Execution record
+
+Launch 26e8e7f passed this gate on B200 at 2026-09-28 20:07:48 UTC.
+All D/F/G initial and resumed runs exited successfully. Query counts and
+weighted objectives matched; every rank passed the memory-headroom gate.
+Measured synchronized seconds/update: D 4.278, F 4.918, G 5.262; ratios
+F/D 1.150 and G/D 1.230. Peak reserved memory stayed below 24 GiB per GPU.
+Production F then started fresh, followed by queued G, each stopping at 2500
+updates of the unchanged full schedule. See CURRENT_TASK.md for exact paths,
+receipt hash, verification timestamp and automatic final burn supervision.

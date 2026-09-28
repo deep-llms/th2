@@ -1,5 +1,50 @@
 # Current task
 
+## F/G production running after successful B200 smoke (2026-09-28)
+
+Launch commit 26e8e7fa5ca1ebf71a424577ec9a946ddb32d555 was accepted on
+thiennh-p6-78gg-worker-0 at 19:57:48 UTC. Fresh preflight at 19:58:00
+verified train_env, copied resources/accelerate_config.yaml to the actual tmux
+cache /dev/shm/.cache/huggingface/accelerate/default_config.yaml, compared
+bytes/SHA256, and ran accelerate env (MULTI_GPU, eight processes, BF16).
+Only freshly identified approved burn workers were stopped via pinned pidfds.
+At 19:59:05 all eight B200s had zero compute PIDs and zero allocated MiB.
+
+Root: /mnt/local/_outputs/deep-llms_th2/deep-kv-FG-2500-20260928-a01.
+Tmux session: deep-kv-FG-2500-20260928-a01. Production outputs: production/run/F
+and production/run/G. Do not relaunch this queue or reuse this output root.
+D/F/G smoke passed at 20:07:48 UTC: each arm trained to 10, resumed its own
+checkpoint to 12, and passed loss/count/checkpoint/all-rank memory validation.
+Smoke receipt SHA256:
+d8ff35e8744227ee388a6e7f71ce9d2f6256d24de94f71e275378869294e8ab8.
+The retrieved receipt matches the outer runner's artifact hash.
+
+Smoke steps 3-10: D 4.278, F 4.918, G 5.262 seconds/update; F/D=1.150,
+G/D=1.230. Maximum reserved memory across initial/resumed runs was under
+24 GiB per GPU, with over 8 GiB headroom on every rank. All objectives finite;
+F message loss exactly zero, G message loss positive, both routing query counts
+129*2047=264063. Smoke losses are implementation checks, not scientific results.
+
+Fresh production F started at 20:07:48 UTC. The 20:10 export verifies step 19,
+about 4.0 seconds/update, finite step-10 losses/gradients and W&B offline.
+Its saved train_config.json equals original production D after removing only
+pilot.arm, including train/eval fingerprints adb88539d2924dc2/0568ce654afc3fdb.
+G starts automatically after successful F, then F/G result validation/comparison.
+Both use eight GPUs, microbatch16/accum4, 1048576 tokens/update, seq2048,
+EOS document boundaries, 2500-update cutoff, full schedule28600/warmup1430.
+Fresh output roots prevent smoke or prior-arm checkpoints initializing F/G.
+Provisional combined duration about six hours (around 2026-09-29 02:00 UTC),
+subject to production throughput/checkpoint/evaluation overhead.
+
+The unchanged train_then_burn supervisor owns cleanup and automatic enhanced
+burn restoration after success or failure, then verifies all eight ranks and
+advancing collectives. Final burn for THIS queue has not yet occurred/been
+verified. Expected session: deep-kv-FG-2500-20260928-a01-final-burn.
+Next check: production/run/run.json, F/G logs/results, final complete.json,
+comparison.json, production/supervisor.json and burn-verified.json/burn.log.
+Small receipts/logs retained under artifacts/deep-kv-FG-launch-20260928/.
+commands.sh returned to #0 after verification; local sampling remains untouched.
+
 ## F/G smoke and production launch authorized (2026-09-28)
 
 User authorized new arms on B200 using the established launch workflow.
