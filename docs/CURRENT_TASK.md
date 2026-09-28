@@ -1,5 +1,44 @@
 # Current task
 
+## Arm E is running; launch verified (2026-09-28 13:39 UTC)
+
+Launch commit 887b64b, fresh root:
+/mnt/local/_outputs/deep-llms_th2/deep-kv-E-2500-20260928-a02
+Tmux session deep-kv-E-2500-20260928-a02; supervisor under production/.
+E queue started at 13:36:58 UTC. Export ae1324d at 13:39:18 UTC shows live
+optimizer updates through step 23, no traceback/nonfinite/OOM/child failure.
+Initial held-out LM loss ~12.12; step-20 LM loss ~11.44. These are startup
+observations, not final results. About 3.3-3.5 seconds/update; expected finish
+around 16:02 UTC based on D's ~2h25 runtime, subject to checkpoint/eval overhead.
+
+Verified ordering: resource Accelerate config copied to the actual tmux cache
+/dev/shm/.cache/huggingface/accelerate/default_config.yaml, byte/hash matched,
+then accelerate env confirmed MULTI_GPU / 8 processes / BF16. Supervisor
+freshly verified burn identities and source hashes, pinned PID handles, stopped
+only eight burn workers (80257-80264), waited 30 seconds, and recorded all
+eight B200 GPUs empty (zero compute PIDs, zero used memory) at 13:36:58 UTC.
+Training started after that receipt and the runner's additional free check.
+
+E's saved train_config.json matches completed D exactly after removing only
+pilot.arm; includes model, seeds, full training schedule, data fingerprints
+(train adb88539d2924dc2; eval 0568ce654afc3fdb), world_size=8 and
+1,048,576 tokens/update. E coefficient .3, D=1; no checkpoint resume.
+2500 cutoff / 28600 full schedule / 1430 warmup / micro16 / accum4 / seq2048;
+EOS packing and HF caches unchanged. NCCL_NVLS_ENABLE=0, W&B offline.
+
+Only E then E-result validation is queued. Unchanged train_then_burn supervisor
+runs owned-child cleanup and verifies free GPUs before independent final burn
+on success or training failure. Final session:
+deep-kv-E-2500-20260928-a02-final-burn. Its existing handoff was verified on
+both success/failure for A-D; E's future handoff is configured, not yet observed.
+Check production/supervisor.json, burn-verified.json and advancing burn.log
+collectives after completion; do not launch another job or burn concurrently.
+
+Receipts/log/config comparison: artifacts/deep-kv-E-launch-20260928/ (ignored).
+a01 failed only a preflight version assertion before any GPU management or
+training; preserved separately. commands.sh restored to #0. Local corpus
+sampling was not touched. Next action: read-only E status/result retrieval.
+
 ## Arm E preflight version assertion corrected (2026-09-28)
 
 Attempt a01 (b923b68) stopped at the first preflight version assertion, before
