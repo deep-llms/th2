@@ -2,7 +2,7 @@
 
 The mechanism is defined in [the four-arm specification](anticipatory_deep_kv_four_arm_pilot_v2.md).
 The user's later budget overrides its original 1B/32K pilot: approximately
-30B English tokens, 1,048,576 tokens per update, and a matched 2,000-step cutoff.
+30B English tokens, 1,048,576 tokens per update, and a matched 2,500-step cutoff.
 
 ## Ordinary training follows the baseline
 
@@ -38,16 +38,18 @@ The executable source of ordinary hyperparameters is `deep_kv.b200.json`:
 | GPUs / microbatch / accumulation | 8 / 16 / 4 |
 | Tokens per update | 1,048,576 |
 | Full schedule | 28,600 updates = 29,989,273,600 input tokens |
-| Selected cutoff | 2,000 updates = 2,097,152,000 input tokens per arm |
+| Selected cutoff | 2,500 updates = 2,621,440,000 input tokens per arm |
 | Seed / data seed | 42 / 42 |
 | Optimizer | Native HF fused AdamW on CUDA, betas .9/.95, weight decay .1 |
-| LR | 3e-4, cosine_with_min_lr, minimum .1 of peak, warmup 500 |
+| LR | 3e-4, cosine_with_min_lr, minimum .1 of peak, warmup 1,430 (5% of full schedule) |
 | BF16 / gradient clipping | Enabled / 1.0 |
 | Logging / saving | Every 10 / 250 updates, and save at cutoff |
 | Monitoring | 128 fixed contexts every 512 updates |
 | Final evaluation | 4,882 fixed contexts, 9,998,336 input tokens |
 
-Changing stop_after never changes max_steps or the LR curve. Startup validates
+Warmup uses 5% of the full 28,600-update schedule, as requested on 2026-09-28,
+including when stopping at 2,500 updates. This supersedes the baseline's 500-step
+warmup. Changing stop_after never changes max_steps or the LR curve. Startup validates
 capacity for the full schedule even when stopping early. All arms receive the
 same configuration except arm, output directory, and run name. B/C/D share
 identical auxiliary initialization. Alignment uses detached native pre-RoPE
@@ -82,22 +84,26 @@ For a single arm, use a standard HF JSON configuration:
 bash scripts/train_deep_kv.sh deep_kv.b200.json
 ```
 
-That config defaults to Arm A and the full schedule. For another arm or a cutoff,
+That config defaults to Arm A with a 2,500-update cutoff on the full schedule. For another arm or a cutoff,
 copy the JSON and set arm, output_dir, and stop_after. Alternatively pass the
 standard HF CLI arguments directly to train.py through the same shell launcher.
 
-For the intended sequential 2,000-step experiment:
+For the intended sequential 2,500-step experiment:
 
 ```bash
-python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
+python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2500 \
   --output temp/deep-kv-jobs.json
 python run_experiments.py --config temp/deep-kv-jobs.json --list
 python run_experiments.py --config temp/deep-kv-jobs.json --run-dir /PATH/fresh-run
 ```
 
-Both launch routes use `resources/accelerate_config.yaml`. Before a B200 launch,
-copy it to the machine's actual HF Accelerate default config and check
-`accelerate env`, as previously requested. These instructions do not themselves
+Both launch routes use `resources/accelerate_config.yaml`.
+`train.py` also defaults `NCCL_NVLS_ENABLE=0` before distributed imports, so
+the generated queue retains the original Qwen script's NCCL setting without
+requiring a shell export. Direct launches may explicitly override that default.
+W&B remains offline and uses the `deep2shallow` project by default.
+Before a B200 launch, copy the config to the machine's actual HF Accelerate
+default config and check `accelerate env`, as previously requested. These instructions do not themselves
 launch anything or stop GPU processes.
 
 The queue runs A/B/C/D then report, requiring successful exit and each arm's

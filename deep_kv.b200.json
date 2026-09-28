@@ -23,7 +23,7 @@
   "lr_scheduler_kwargs": {
     "min_lr_rate": 0.1
   },
-  "warmup_steps": 500,
+  "warmup_steps": 1430,
   "weight_decay": 0.1,
   "adam_beta1": 0.9,
   "adam_beta2": 0.95,
@@ -35,5 +35,6 @@
   "eval_steps": 512,
   "eval_on_start": true,
   "dataloader_num_workers": 8,
-  "report_to": "wandb"
+  "report_to": "wandb",
+  "stop_after": 2500
 }

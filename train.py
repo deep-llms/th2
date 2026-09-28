@@ -6,6 +6,9 @@ config. All assets are local. Packing is the unchanged two-map EOS CLM pipeline.
 import os
 os.environ.update(HF_HUB_OFFLINE="1", HF_DATASETS_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
                   HF_HUB_DISABLE_TELEMETRY="1", WANDB_MODE="offline")
+# Match the original Qwen shell launch even when the queue invokes Python
+# directly. Set this before importing HF/Accelerate or initializing NCCL.
+os.environ.setdefault("NCCL_NVLS_ENABLE", "0")
 
 import json
 import logging

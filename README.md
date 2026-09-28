@@ -11,7 +11,7 @@ Train Qwen3 from scratch and compare:
 | D | Same as B | Native block-21 K/V |
 
 The current recipe is approximately 30B English tokens, 1,048,576 input tokens
-per update, and an optional matched 2,000-update cutoff. Every arm uses eight
+per update, and an optional matched 2,500-update cutoff. Every arm uses eight
 GPUs; arms run sequentially. The decisive comparison is D versus C, alongside
 D versus B and A. Lower held-out LM loss is better.
 
@@ -36,11 +36,11 @@ training: the normal Hugging Face Dataset cache is shared across arms.
 After verifying the machine, environment, local data, and GPU availability:
 
 ```bash
-python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2000 \
+python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2500 \
   --output temp/deep-kv-jobs.json
 python run_experiments.py --config temp/deep-kv-jobs.json --list
 python run_experiments.py --config temp/deep-kv-jobs.json \
-  --run-dir /mnt/local/_outputs/deep-llms_th2/deep-kv-2k
+  --run-dir /mnt/local/_outputs/deep-llms_th2/deep-kv-2500
 ```
 
 `commands.sh` remains inactive locally. Runner pushes and GPU process management

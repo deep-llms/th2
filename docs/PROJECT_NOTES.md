@@ -1,5 +1,38 @@
 # Project notes
 
+## Authorized real four-arm launch at 2,500 updates (2026-09-28)
+
+User increased the cutoff to 2500 updates per arm (2,621,440,000 input tokens),
+keeping full schedule 28600, warmup 1430, microbatch 16, accumulation 4, eight
+GPUs and context 2048. Updated the default recipe and queue examples. User also
+requires automatic GPU burn after either successful completion or training
+failure. Prepare a persistent supervisor that waits for the training processes
+to release GPUs, then starts and verifies the idle burn. Fresh preflight must
+copy resources/accelerate_config.yaml to the actual HF cache and run accelerate
+env; stop only freshly verified burn workers and verify all eight GPUs free.
+Current command is the read-only GPU/data preflight, not the training launch.
+
+## Full-schedule 5% warmup selected (2026-09-28)
+
+User explicitly requested warmup based on the full training schedule to mimic
+later full training. deep_kv.b200.json now uses warmup_steps=1430 (5% of 28600),
+superseding the inherited 500-step setting. The selected cutoff remains 2000;
+cutoff does not shorten the scheduler or warmup. Verified all four generated
+queue commands carry warmup 1430, full schedule 28600 and cutoff 2000.
+This recipe change is local; no remote launch in this follow-up.
+
+## Launch environment and standalone test import fixed (2026-09-28)
+
+Compared with the original Qwen shell script at 63bcc61: NCCL NVLS defaults to
+0 and W&B stays offline. train.py now sets the NCCL default before distributed
+imports, covering generated queues/direct launches; explicit NCCL overrides are
+preserved. Existing shell exports and the deep2shallow W&B project remain.
+The test sibling import now uses tests.test_deep_kv. Both local invocation modes
+passed: six module tests and 48 discovery tests, including a fresh-process
+launch-environment check. Logs: temp/deep-kv-launch-env-module-tests-20260928.log
+and temp/deep-kv-launch-env-discovery-tests-20260928.log. Changes are local;
+no remote launch or deployment in this follow-up.
+
 ## Four-arm B200 smoke completed and verified (2026-09-27)
 
 All four arms match the active specification and passed the full-model CUDA/NCCL

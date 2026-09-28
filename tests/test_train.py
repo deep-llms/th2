@@ -4,6 +4,8 @@ import io
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -139,7 +141,7 @@ class TrainingTests(unittest.TestCase):
             self.assertTrue(all(x == orders[0] for x in orders))
 
     def test_native_gradient_accumulation_scaling(self):
-        from test_deep_kv import model
+        from tests.test_deep_kv import model
         ids = torch.arange(24).reshape(4, 6) % 30
         with tempfile.TemporaryDirectory() as tmp:
             for arm in "ABCD":
@@ -157,11 +159,28 @@ class TrainingTests(unittest.TestCase):
                 for (name, p), (_, q) in zip(accumulated.named_parameters(), whole.named_parameters()):
                     torch.testing.assert_close(p.grad, q.grad, atol=2e-6, rtol=2e-5, msg=name)
 
+    def test_direct_entry_point_restores_baseline_environment(self):
+        # A fresh process catches queue launches which bypass the shell exports.
+        env = dict(os.environ, WANDB_MODE="online")
+        env.pop("NCCL_NVLS_ENABLE", None)
+        subprocess.run([sys.executable, "-c", """
+import importlib, os
+import train
+assert os.environ['NCCL_NVLS_ENABLE'] == '0'
+assert os.environ['WANDB_MODE'] == 'offline'
+assert all(os.environ[key] == '1' for key in (
+    'HF_HUB_OFFLINE', 'HF_DATASETS_OFFLINE', 'TRANSFORMERS_OFFLINE', 'HF_HUB_DISABLE_TELEMETRY'))
+# Preserve an operator's explicit NCCL override, as documented.
+os.environ['NCCL_NVLS_ENABLE'] = '1'
+importlib.reload(train)
+assert os.environ['NCCL_NVLS_ENABLE'] == '1'
+"""], env=env, check=True, timeout=120)
+
     def test_queue_uses_train_py_and_unchanged_schedule(self):
         from run_experiments import load_jobs
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "jobs.json"
-            path.write_text(json.dumps(jobs("deep_kv.b200.json", 2000)))
+            path.write_text(json.dumps(jobs("deep_kv.b200.json", 2500)))
             queue = load_jobs(path)
             self.assertEqual(len(queue), 5)
             for job in queue[:4]:
@@ -169,7 +188,7 @@ class TrainingTests(unittest.TestCase):
                 argv = job["argv"]
                 self.assertTrue(any(a.endswith("/train.py") for a in argv))
                 self.assertEqual(argv[argv.index("--max_steps") + 1], "28600")
-                self.assertEqual(argv[argv.index("--stop_after") + 1], "2000")
+                self.assertEqual(argv[argv.index("--stop_after") + 1], "2500")
             # Parse the exact generated CLI with HF's parser to catch shell/JSON drift.
             parser = train.HfArgumentParser((train.ModelArguments, train.DataArguments, train.PilotArguments, TrainingArguments))
             argv = queue[0]["argv"]; start = next(i for i,a in enumerate(argv) if a.endswith("/train.py")) + 1
@@ -182,7 +201,7 @@ class TrainingTests(unittest.TestCase):
             for report_to in (["none"], [], ["wandb"]):
                 config["report_to"] = report_to
                 recipe.write_text(json.dumps(config))
-                argv = jobs(recipe, 2000)["jobs"][0]["argv"]
+                argv = jobs(recipe, 2500)["jobs"][0]["argv"]
                 start = next(i for i, a in enumerate(argv) if a.endswith("/train.py")) + 1
                 parsed = parser.parse_args_into_dataclasses(argv[start:])[-1]
                 self.assertEqual(parsed.label_names, ["labels"])
