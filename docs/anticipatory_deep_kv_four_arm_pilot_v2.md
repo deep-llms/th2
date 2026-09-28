@@ -1,4 +1,10 @@
 # Anticipatory Deep-KV Pilot
+
+> Follow-up requested 2026-09-28: Arm E is Arm D with `lambda_KV=0.3`
+> instead of 1; all other architecture and training settings are identical.
+> This is a separate ablation after the completed A–D pilot. The original
+> A–D definitions and their fixed loss weights below remain unchanged.
+> See [training commands](DEEP_KV_TRAINING.md) for selecting E.
 ## Minimal Four-Arm From-Scratch Specification
 
 > Implementation update (2026-09-27): the user superseded the 1B-token / 32K-token

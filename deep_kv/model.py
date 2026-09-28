@@ -14,6 +14,7 @@ from transformers.models.qwen3.modeling_qwen3 import (
     Qwen3RMSNorm, apply_rotary_pos_emb, eager_attention_forward, repeat_kv,
 )
 from dataclasses import dataclass
+from . import ARMS, kv_loss_weight
 
 
 @dataclass
@@ -99,7 +100,7 @@ class DeepKV(nn.Module):
         super().__init__()
         if transformers.__version__ != "5.9.0":
             raise ValueError("Deep-KV requires transformers==5.9.0; use sampling_b200/train_env")
-        if arm not in ("A", "B", "C", "D") or not 1 <= consumer < deep_target <= len(backbone.model.layers):
+        if arm not in ARMS or not 1 <= consumer < deep_target <= len(backbone.model.layers):
             raise ValueError("Invalid arm or 1-based block coordinates")
         if type(lm_chunk) is not int or lm_chunk <= 0:
             raise ValueError("lm_chunk must be a positive integer")
@@ -108,6 +109,7 @@ class DeepKV(nn.Module):
             raise ValueError("Pilot requires full attention and zero dropout")
         self.backbone = backbone.float().requires_grad_(True)
         self.arm, self.consumer, self.deep_target = arm, consumer, deep_target
+        self.kv_loss_weight = kv_loss_weight(arm)
         self.checkpoint_layers, self.lm_chunk = checkpoint_layers, lm_chunk
         self.aux = None
         if arm != "A":
@@ -152,7 +154,7 @@ class DeepKV(nn.Module):
         mask, allowed = context.additive_mask(hidden.dtype), context.allowed()
         predicted = target = None
         for i, layer in enumerate(self.backbone.model.layers):
-            special = self.aux is not None and (i == self.consumer - 1 or (self.arm == "D" and i == self.deep_target - 1))
+            special = self.aux is not None and (i == self.consumer - 1 or (self.arm in ("D", "E") and i == self.deep_target - 1))
             if special:
                 def call(x, index=i):
                     return self.special_block(index, x, rotary, mask, allowed)
@@ -167,7 +169,7 @@ class DeepKV(nn.Module):
                     predicted = (pk, pv)
                     if self.arm == "C":
                         target = (k, v)
-                if self.arm == "D" and i == self.deep_target - 1:
+                if self.arm in ("D", "E") and i == self.deep_target - 1:
                     target = (k, v)
             else:
                 hidden = result

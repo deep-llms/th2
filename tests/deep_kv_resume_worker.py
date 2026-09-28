@@ -12,11 +12,13 @@ from transformers import TrainingArguments
 from test_train import fixture
 import train
 from deep_kv.model import DeepKV
+from deep_kv import ARMS
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--arms", nargs="+", choices=ARMS, default=list("ABCD"))
     args = parser.parse_args()
     root = args.output.resolve()
     torch.set_num_threads(1)
@@ -31,7 +33,7 @@ def main():
     cfg = json.loads((root / "fixture.json").read_text())
     results = {}
     original_factory = DeepKV.from_scratch
-    for arm in "ABCD":
+    for arm in args.arms:
         dtypes = set()
         def check_dtype(module, inputs, output):
             dtypes.add(str(output.dtype))

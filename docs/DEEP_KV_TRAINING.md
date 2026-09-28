@@ -1,4 +1,4 @@
-# Four-arm training through train.py
+# Deep-KV training through train.py
 
 The mechanism is defined in [the four-arm specification](anticipatory_deep_kv_four_arm_pilot_v2.md).
 The user's later budget overrides its original 1B/32K pilot: approximately
@@ -32,7 +32,7 @@ The executable source of ordinary hyperparameters is `deep_kv.b200.json`:
 | Setting | Value |
 |---|---|
 | Model | Local Qwen3-0.6B-Base config, random initialization, 28 blocks |
-| Arms | A Base; B extra attention; C shallow alignment; D deep alignment |
+| Arms | A Base; B extra attention; C shallow alignment; D deep alignment; E same as D with weight .3 |
 | Consumer / deep target | Block 5 / block 21, 1-based |
 | Context | 2048 |
 | GPUs / microbatch / accumulation | 8 / 16 / 4 |
@@ -51,9 +51,14 @@ Warmup uses 5% of the full 28,600-update schedule, as requested on 2026-09-28,
 including when stopping at 2,500 updates. This supersedes the baseline's 500-step
 warmup. Changing stop_after never changes max_steps or the LR curve. Startup validates
 capacity for the full schedule even when stopping early. All arms receive the
-same configuration except arm, output directory, and run name. B/C/D share
+same configuration except arm, output directory, and run name. B/C/D/E share
 identical auxiliary initialization. Alignment uses detached native pre-RoPE
-normalized K and native V from the same forward pass, direct L1, weight 1.
+normalized K and native V from the same forward pass, direct L1. C/D use weight 1;
+E uses weight 0.3 on `(L_K + L_V) / 2`, so its individual K/V coefficients are
+0.15. E has exactly D's initialization, architecture, targets, stop-gradient,
+optimizer, data order, and schedule. The coefficient is fixed by arm identity;
+recorded `pilot.arm` also prevents resuming D as E. Training, evaluation and
+objective logging use the same coefficient; logged K/V losses remain unweighted.
 
 ## Packing is unchanged
 
@@ -96,6 +101,21 @@ python -m deep_kv make-jobs --config deep_kv.b200.json --stop-after 2500 \
 python run_experiments.py --config temp/deep-kv-jobs.json --list
 python run_experiments.py --config temp/deep-kv-jobs.json --run-dir /PATH/fresh-run
 ```
+
+The default queue remains A/B/C/D. Select the new E follow-up explicitly, using
+the identical base recipe and a fresh output directory:
+
+```bash
+python -m deep_kv make-jobs --config deep_kv.b200.json --arms E \
+  --output temp/deep-kv-E-jobs.json
+python run_experiments.py --config temp/deep-kv-E-jobs.json --list
+python run_experiments.py --config temp/deep-kv-E-jobs.json --run-dir /PATH/fresh-E-run
+```
+
+`--arms D E` generates a sequential D/E comparison; `--arms A B C D E` includes
+all five. `python -m deep_kv report --run-dir /PATH/run --arms D E` compares
+matched D/E results in that directory. An E-only queue validates E's result
+and reports its LM loss without claiming a comparison to absent arms.
 
 Both launch routes use `resources/accelerate_config.yaml`.
 `train.py` also defaults `NCCL_NVLS_ENABLE=0` before distributed imports, so

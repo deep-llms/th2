@@ -50,7 +50,7 @@ class DeepKVAcceptance(unittest.TestCase):
             base_logits = base.backbone.lm_head(base.hidden_states(batch)[0])
         torch.testing.assert_close(base_logits, native)
         branch_hash = None
-        for arm in "BCD":
+        for arm in "BCDE":
             m = model(arm).eval()
             self.assertEqual(parameter_hash(base.backbone), parameter_hash(m.backbone))
             if branch_hash is None:
@@ -90,7 +90,7 @@ class DeepKVAcceptance(unittest.TestCase):
         torch.testing.assert_close(actual[0, :2], after[0, :2])
 
     def test_native_targets_exact_and_one_projection_per_forward(self):
-        for arm, target_index in (("C", 4), ("D", 20)):
+        for arm, target_index in (("C", 4), ("D", 20), ("E", 20)):
             cfg = config()
             cfg.num_hidden_layers = 28
             cfg.layer_types = ["full_attention"] * 28
@@ -116,7 +116,7 @@ class DeepKVAcceptance(unittest.TestCase):
             self.assertEqual(predicted[0].shape, (2, 2, 6, 8))
 
     def test_target_stopgrad_and_padding_exclusion(self):
-        for arm, target_index in (("C", 1), ("D", 3)):
+        for arm, target_index in (("C", 1), ("D", 3), ("E", 3)):
             m = model(arm)
             batch = context()
             _, predicted, target = m.hidden_states(batch)
@@ -136,14 +136,14 @@ class DeepKVAcceptance(unittest.TestCase):
             self.assertGreater(m.backbone.model.embed_tokens.weight.grad.abs().sum().item(), 0)
 
     def test_checkpoint_recomputation_and_lm_gradient_path(self):
-        for arm in "ABCD":
+        for arm in "ABCDE":
             plain, checked = model(arm), model(arm, checkpoint=True)
             if plain.aux is not None:
                 torch.nn.init.normal_(plain.aux.out.weight, std=.03)
                 checked.load_state_dict(plain.state_dict())
             for m in (plain, checked):
                 result = m(context())
-                loss = result["lm_sum"] / result["lm_count"] + (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+                loss = result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
                 loss.backward()
             for (name, p), (_, q) in zip(plain.named_parameters(), checked.named_parameters()):
                 self.assertIsNotNone(p.grad, name)
@@ -156,11 +156,11 @@ class DeepKVAcceptance(unittest.TestCase):
 
     def test_bfloat16_forward_backward(self):
         reference = None
-        for arm in "ABCD":
+        for arm in "ABCDE":
             m = model(arm, checkpoint=True)
             with torch.autocast("cpu", dtype=torch.bfloat16):
                 result = m(context())
-                loss = result["lm_sum"] / result["lm_count"] + (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+                loss = result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
             if reference is None:
                 reference = result["lm_sum"].detach()
             torch.testing.assert_close(result["lm_sum"], reference, atol=1e-5, rtol=1e-5)
@@ -173,14 +173,14 @@ class DeepKVAcceptance(unittest.TestCase):
         m = DeepKV.from_scratch(cfg, "D", consumer=2, deep_target=4)
         self.assertEqual(m.aux.out.in_features, 64)
         result = m(context())
-        loss = result["lm_sum"] / result["lm_count"] + (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+        loss = result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
         loss.backward()
         self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in m.parameters()))
 
     def test_modified_arms_have_identical_lm_path_after_branch_learns(self):
         # Zero-output equivalence alone would hide mistakes in the live branch.
         for bf16 in (False, True):
-            models = [model(arm, checkpoint=True) for arm in "BCD"]
+            models = [model(arm, checkpoint=True) for arm in "BCDE"]
             torch.nn.init.normal_(models[0].aux.out.weight, std=.03)
             for other in models[1:]:
                 other.load_state_dict(models[0].state_dict())

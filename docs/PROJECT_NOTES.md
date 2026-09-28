@@ -1,5 +1,61 @@
 # Project notes
 
+## Arm E launch authorized (2026-09-28)
+
+User authorized E on all eight B200 GPUs, with Accelerate copy/verification,
+verified burn-worker reclamation, free-GPU checks and automatic final burn.
+Submitting fresh root /mnt/local/_outputs/deep-llms_th2/deep-kv-E-2500-20260928-a01.
+The E-only queue reuses scripts/train_then_burn.py unchanged; its failure and
+success handoffs were verified on this same node during the completed A-D run.
+Bootstrap checks the original A-D recipe and GPU UUIDs, copies the Accelerate
+config in the actual tmux context and runs accelerate env before reclamation.
+Only the coefficient changes: E=.3, D=1. Same 2500 cutoff, 28600 schedule,
+1430 warmup, microbatch 16, accumulation 4, eight GPUs, seq2048 and EOS packing.
+Fresh E output; no D checkpoint resume. Remote launch verification pending.
+
+## Arm E recheck against original D passed (2026-09-28)
+
+Rechecked E against D and the pre-E D implementation from a23032c. On a
+28-layer tiny-width CPU model with consumer 5 / target 21 and nonzero branch
+output weights, original D, current D and E have bitwise-identical initial
+parameters and raw forward statistics. Original/current D gradients also match
+bitwise. Explicit tests pin coefficients D=1.0 and E=.3 and verify that E's
+gradients equal LM gradients plus .3 times D's alignment gradient contribution.
+Generated D/E training argv are identical except arm/output_dir/run_name;
+GPU allocation is identical. train.py, recipe, packing, Accelerate config and
+shell training launcher have no changes from a23032c. No runtime fix was needed.
+Strengthened regression tests; all 54 local CPU tests pass.
+Evidence: temp/deep-kv-E-vs-original-D-audit.json and
+ temp/deep-kv-E-recheck-all-20260928.log. E remains local and unlaunched.
+
+## Arm E implemented locally: D with alignment weight 0.3 (2026-09-28)
+
+User requested E as an otherwise identical D. E follows exactly D's native
+block-21 target path, consumer block 5, shared seed/initialization, architecture,
+stop-gradient and training recipe. Its objective is LM + .3*(K_L1+V_L1)/2;
+D/C remain weight 1. Weight is fixed by arm identity; no new arbitrary recipe
+knob or training loop. Trainer loss, evaluation objective and statistics use
+the same coefficient; separate K/V metrics remain unweighted. Existing A–D
+checkpoint/config formats remain compatible and D-to-E resume is rejected.
+
+Queue/report support explicit --arms E, --arms D E, or all five. Default remains
+A/B/C/D. E-only queue uses the existing base recipe (2500 cutoff, 28600 schedule,
+1430 warmup, microbatch 16, accumulation 4, all eight GPUs) and a fresh run root.
+Only E and its result validation run; earlier arms are not implicitly retrained.
+Generated example: temp/deep-kv-E-jobs-20260928.json (list validated locally).
+
+Validation on dev CPU in sampling_b200: all 15 model/training tests passed,
+including E native deep targets, shared initialization, unchanged LM path,
+.3 auxiliary gradient scaling, gradient accumulation, cache/data order,
+weighted evaluation, real train.py cutoff/save/resume and report selection.
+Eight-process BF16 E test (microbatch 16, accumulation 4) passed uninterrupted
+versus resumed training, maximum parameter difference 9.313225746154785e-10;
+uneven five-row evaluation retains the .3 objective in both modes.
+Logs: temp/deep-kv-arm-E-tests.log and temp/deep-kv-E-distributed-resume.log.
+Receipt: temp/deep-kv-E-resume-20260928-a01/resume_verified.json.
+Changes are local, not deployed. commands.sh remains #0; B200 and local corpus
+sampling were not modified. This request implemented E; it did not launch it.
+
 ## Four-arm run completed; live burn verified (2026-09-28)
 
 Read-only node inspection 55c39ac at 12:49:43–12:49:56 UTC confirms all four

@@ -20,7 +20,7 @@ from transformers import PreTrainedTokenizerFast, Qwen3Config, TrainingArguments
 import train
 from deep_kv.__main__ import jobs
 from deep_kv.report import report
-from deep_kv.training import DeepKVTrainer
+from deep_kv.training import DeepKVTrainer, compute_metrics
 from deep_kv.model import Context, DeepKV
 
 
@@ -60,11 +60,11 @@ class TrainingTests(unittest.TestCase):
     def setUpClass(cls):
         torch.set_num_threads(1)
 
-    def test_real_entry_point_four_arms_cutoff_report_and_resume(self):
+    def test_real_entry_point_all_arms_cutoff_report_and_resume(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config = fixture(root)
-            for arm in "ABCD":
+            for arm in "ABCDE":
                 args = {**config, "arm": arm, "output_dir": str(root / arm), "stop_after": 2}
                 invoke(root, args)
                 state = json.loads((root / arm / "checkpoint-2/trainer_state.json").read_text())
@@ -72,6 +72,16 @@ class TrainingTests(unittest.TestCase):
                 self.assertEqual(state["global_step"], 2)
                 self.assertEqual(json.loads((root / arm / "result.json").read_text())["evaluation"]["eval_rows"], 5)
             self.assertEqual(report(root)["compared_update"], 2)
+            comparison = report(root, "ABCDE")
+            self.assertIn("E-D", comparison["nll_differences"])
+            self.assertEqual(comparison["kv_loss_weights"]["E"], 0.3)
+            self.assertEqual(set(report(root, "E")["lm_loss"]), {"E"})
+            e_eval = json.loads((root / "E/eval_results.json").read_text())
+            self.assertAlmostEqual(e_eval["eval_loss"], e_eval["eval_lm_loss"] +
+                                   0.3 * (e_eval["eval_loss_k"] + e_eval["eval_loss_v"]) / 2)
+            # The same weights are not permission to resume D as E.
+            with self.assertRaisesRegex(ValueError, "Resume configuration"):
+                invoke(root, {**config, "arm": "E", "output_dir": str(root / "D"), "stop_after": 2})
             # C and D have identical tensor names: HF alone cannot reject this
             # scientifically invalid cross-arm restore.
             result_before = (root / "D/result.json").read_bytes()
@@ -86,13 +96,14 @@ class TrainingTests(unittest.TestCase):
             for name, value in load_file(root / "A/model.safetensors").items():
                 torch.testing.assert_close(value, before[name], rtol=0, atol=0)
             # Compare real interrupted/resumed training against an uninterrupted run.
-            for arm in "ABCD":
+            for arm in "ABCDE":
                 invoke(root, {**config, "arm": arm, "output_dir": str(root / arm)})
                 invoke(root, {**config, "arm": arm, "output_dir": str(root / (arm + "-full"))})
                 actual, expected = (load_file(root / p / "model.safetensors") for p in (arm, arm + "-full"))
                 for name in actual:
                     torch.testing.assert_close(actual[name], expected[name], rtol=0, atol=0)
             self.assertEqual(report(root)["compared_update"], 3)
+            self.assertEqual(report(root, "DE")["compared_update"], 3)
             with self.assertRaisesRegex(ValueError, "Resume configuration"):
                 invoke(root, {**config, "output_dir": str(root / "A"), "seed": 43})
             result_path = root / "D/result.json"
@@ -131,7 +142,7 @@ class TrainingTests(unittest.TestCase):
             rebuilt = train.preprocess_dataset(raw, tokenizer, 6, args, num_proc=2, overwrite_cache=True).shuffle(seed=42)
             self.assertEqual(first.to_dict(), cached.to_dict()); self.assertEqual(first.to_dict(), rebuilt.to_dict())
             orders = []
-            for arm, data in zip("ABCD", (first, cached, rebuilt, first)):
+            for arm, data in zip("ABCDE", (first, cached, rebuilt, first, cached)):
                 model_cfg = Qwen3Config.from_pretrained(root / "model", local_files_only=True)
                 model_cfg._attn_implementation = "sdpa"
                 model = DeepKV.from_scratch(model_cfg, arm, consumer=2, deep_target=4)
@@ -144,7 +155,7 @@ class TrainingTests(unittest.TestCase):
         from tests.test_deep_kv import model
         ids = torch.arange(24).reshape(4, 6) % 30
         with tempfile.TemporaryDirectory() as tmp:
-            for arm in "ABCD":
+            for arm in "ABCDE":
                 accumulated, whole = model(arm), model(arm)
                 if accumulated.aux is not None:
                     torch.nn.init.normal_(accumulated.aux.out.weight, std=.03)
@@ -155,7 +166,7 @@ class TrainingTests(unittest.TestCase):
                 for row in ids:
                     trainer.training_step(accumulated, {"input_ids": row[None]})
                 result = whole(Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids)))
-                (result["lm_sum"] / 20 + (result["k_sum"] + result["v_sum"]) / 48).backward()
+                (result["lm_sum"] / 20 + whole.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / 48).backward()
                 for (name, p), (_, q) in zip(accumulated.named_parameters(), whole.named_parameters()):
                     torch.testing.assert_close(p.grad, q.grad, atol=2e-6, rtol=2e-5, msg=name)
 
@@ -176,6 +187,44 @@ importlib.reload(train)
 assert os.environ['NCCL_NVLS_ENABLE'] == '1'
 """], env=env, check=True, timeout=120)
 
+    def test_e_changes_only_alignment_weight_and_gradient(self):
+        from types import SimpleNamespace
+        from tests.test_deep_kv import model, parameter_hash
+        models = {arm: model(arm) for arm in "BDE"}
+        self.assertEqual(models["D"].kv_loss_weight, 1.0)
+        self.assertEqual(models["E"].kv_loss_weight, 0.3)
+        self.assertEqual(parameter_hash(models["D"]), parameter_hash(models["E"]))
+        torch.nn.init.normal_(models["B"].aux.out.weight, std=.03)
+        for arm in "DE":
+            models[arm].load_state_dict(models["B"].state_dict())
+        ids = torch.arange(24).reshape(4, 6) % 30
+        # Compare raw outputs before applying either loss coefficient, with a
+        # nonzero branch so this also exercises its learned attention path.
+        ctx = Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids))
+        with torch.no_grad():
+            d_outputs, e_outputs = models["D"](ctx), models["E"](ctx)
+        for key in d_outputs:
+            torch.testing.assert_close(d_outputs[key], e_outputs[key], rtol=0, atol=0)
+        losses, gradients, metrics = {}, {}, {}
+        with tempfile.TemporaryDirectory() as tmp:
+            for arm, current in models.items():
+                trainer = DeepKVTrainer(model=current, compute_metrics=compute_metrics,
+                    args=TrainingArguments(output_dir=tmp, use_cpu=True, report_to="none"))
+                loss, outputs = trainer.compute_loss(current, {"input_ids": ids}, return_outputs=True)
+                losses[arm] = loss.detach()
+                metrics[arm] = trainer.compute_metrics(SimpleNamespace(predictions=outputs["statistics"].numpy()))
+                self.assertAlmostEqual(metrics[arm]["loss"], loss.item(), places=5)
+                loss.backward()
+                gradients[arm] = {name: p.grad.clone() for name, p in current.named_parameters()}
+        self.assertGreater((losses["D"] - losses["B"]).item(), 0)
+        torch.testing.assert_close(losses["E"] - losses["B"],
+                                   .3 * (losses["D"] - losses["B"]), atol=1e-6, rtol=1e-5)
+        for name in gradients["E"]:
+            expected = gradients["B"][name] + .3 * (gradients["D"][name] - gradients["B"][name])
+            torch.testing.assert_close(gradients["E"][name], expected, atol=2e-6, rtol=2e-5, msg=name)
+        for key in ("lm_loss", "loss_k", "loss_v"):
+            self.assertAlmostEqual(metrics["E"][key], metrics["D"][key], places=6)
+
     def test_queue_uses_train_py_and_unchanged_schedule(self):
         from run_experiments import load_jobs
         with tempfile.TemporaryDirectory() as tmp:
@@ -195,6 +244,30 @@ assert os.environ['NCCL_NVLS_ENABLE'] == '1'
             values = parser.parse_args_into_dataclasses(argv[start:] + ["--use_cpu", "true", "--bf16", "false", "--report_to", "none"])
             self.assertEqual(values[-1].gradient_accumulation_steps, 4)
             self.assertEqual(values[-1].lr_scheduler_kwargs, {"min_lr_rate": .1})
+            selected = jobs("deep_kv.b200.json", 2500, arms="E")["jobs"]
+            self.assertEqual([j["name"] for j in selected], ["arm-E", "compare"])
+            self.assertEqual(selected[0]["gpus"], list(range(8)))
+            argv = selected[0]["argv"]
+            start = next(i for i, a in enumerate(argv) if a.endswith("/train.py")) + 1
+            parsed = parser.parse_args_into_dataclasses(argv[start:] + ["--use_cpu", "true", "--bf16", "false", "--report_to", "none"])
+            self.assertEqual(parsed[2].arm, "E")
+            self.assertEqual(parsed[-1].max_steps, 28600)
+            self.assertEqual(parsed[-1].warmup_steps, 1430)
+            self.assertEqual(selected[-1]["argv"][-2:], ["--arms", "E"])
+            # All executable training settings must match, apart from the arm
+            # selector and the names/paths that keep their results separate.
+            d_job, e_job = jobs("deep_kv.b200.json", 2500, arms="DE")["jobs"][:2]
+            normalized = []
+            for job in (d_job, e_job):
+                argv = list(job["argv"])
+                for key in ("--arm", "--output_dir", "--run_name"):
+                    argv[argv.index(key) + 1] = "ARM_SPECIFIC"
+                normalized.append(argv)
+            self.assertEqual(normalized[0], normalized[1])
+            self.assertEqual(d_job["gpus"], e_job["gpus"])
+            for invalid in ("", "EE", "F"):
+                with self.assertRaises(ValueError):
+                    jobs("deep_kv.b200.json", arms=invalid)
             config = json.loads(Path("deep_kv.b200.json").read_text())
             config.update(use_cpu=True, bf16=False, label_names=["labels"], report_to=["none"])
             recipe = Path(tmp) / "recipe.json"

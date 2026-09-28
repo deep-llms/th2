@@ -1,4 +1,4 @@
-# Anticipatory Deep-KV four-arm pilot
+# Anticipatory Deep-KV pilot
 
 The active task is [the four-arm specification](docs/anticipatory_deep_kv_four_arm_pilot_v2.md).
 Train Qwen3 from scratch and compare:
@@ -8,7 +8,11 @@ Train Qwen3 from scratch and compare:
 | A | None | None |
 | B | Strict-past attention at block 5 | None |
 | C | Same as B | Native block-5 K/V |
-| D | Same as B | Native block-21 K/V |
+| D | Same as B | Native block-21 K/V, weight 1 |
+| E | Same as D | Native block-21 K/V, weight 0.3 |
+
+Arm E is the follow-up loss-weight ablation requested after the A–D pilot.
+It changes only the coefficient in `LM + weight * (K_loss + V_loss) / 2`.
 
 The current recipe is approximately 30B English tokens, 1,048,576 input tokens
 per update, and an optional matched 2,500-update cutoff. Every arm uses eight
@@ -19,7 +23,7 @@ D versus B and A. Lower held-out LM loss is better.
 
 - `train.py`: the baseline Hugging Face training flow, with the Deep-KV model
   and loss replacing the old project's model customization.
-- `deep_kv/model.py`: the four arms and their causal masks.
+- `deep_kv/model.py`: the arms and their causal masks.
 - `deep_kv/packing.py`: unchanged EOS tokenization and batched CLM packing.
 - `deep_kv/training.py`: custom loss, compact evaluation, component logging,
   fixed-step stopping, and the small adapters needed to save/restore the wrapper.

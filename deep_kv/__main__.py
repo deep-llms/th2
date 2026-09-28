@@ -1,10 +1,14 @@
-"""Generate the sequential four-arm queue or compare its results. Training is train.py."""
+"""Generate a sequential arm queue or compare its results. Training is train.py."""
 import argparse
 import json
 from pathlib import Path
+from . import ARMS
 
 
-def jobs(config_path, stop_after=None):
+def jobs(config_path, stop_after=None, arms="ABCD"):
+    arms = tuple(arms)
+    if not arms or len(set(arms)) != len(arms) or any(arm not in ARMS for arm in arms):
+        raise ValueError("Select nonempty, unique arms from A/B/C/D/E")
     config = json.loads(Path(config_path).read_text())
     end = config.get("stop_after") if stop_after is None else stop_after
     if end is None:
@@ -13,7 +17,7 @@ def jobs(config_path, stop_after=None):
         raise ValueError("Invalid fixed-schedule cutoff")
     root = Path(__file__).resolve().parent.parent
     items = []
-    for arm in "ABCD":
+    for arm in arms:
         args = {**config, "arm": arm, "output_dir": "{run_dir}/" + arm,
                 "run_name": f"deep-kv-{arm}", "stop_after": end}
         argv = ["{python}", "-m", "accelerate.commands.launch", "--config_file",
@@ -35,7 +39,7 @@ def jobs(config_path, stop_after=None):
                       "required_outputs": [{"path": f"{arm}/result.json", "json_equals": {
                           "arm": arm, "global_step": end,
                           "status": "complete" if end == config["max_steps"] else "stopped"}}]})
-    items.append({"name": "compare", "argv": ["{python}", "-m", "deep_kv", "report", "--run-dir", "{run_dir}"],
+    items.append({"name": "compare", "argv": ["{python}", "-m", "deep_kv", "report", "--run-dir", "{run_dir}", "--arms", *arms],
                   "required_outputs": [{"path": "comparison.json", "json_equals": {
                       "status": "complete", "compared_update": end}}]})
     return {"jobs": items}
@@ -48,16 +52,18 @@ def main():
     p.add_argument("--config", type=Path, default=Path("deep_kv.b200.json"))
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--stop-after", type=int)
+    p.add_argument("--arms", nargs="+", choices=ARMS, default=list("ABCD"))
     p = sub.add_parser("report")
     p.add_argument("--run-dir", type=Path, required=True)
+    p.add_argument("--arms", nargs="+", choices=ARMS, default=list("ABCD"))
     args = parser.parse_args()
     if args.command == "make-jobs":
-        value = jobs(args.config, args.stop_after)
+        value = jobs(args.config, args.stop_after, args.arms)
         with args.output.open("x") as handle:
             json.dump(value, handle, indent=2)
     else:
         from .report import report
-        print(json.dumps(report(args.run_dir), indent=2))
+        print(json.dumps(report(args.run_dir, args.arms), indent=2))
 
 
 if __name__ == "__main__":
