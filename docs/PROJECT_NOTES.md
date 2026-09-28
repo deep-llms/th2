@@ -1,5 +1,49 @@
 # Project notes
 
+## Real four-arm queue launched and handoff verified (2026-09-28)
+
+At 00:53:39 UTC, Arm A started under the detached session
+`deep-kv-2500-20260928-a02` on thiennh-p6-78gg-worker-0. Its log confirms eight
+DDP ranks and active full-English tokenization through train.py (36,595,514
+documents, 160 map workers). Optimizer updates and exact full packed capacity
+are not yet verified; startup performs the normal capacity check after packing.
+B/C/D and the comparison follow sequentially. All arms use cutoff 2500,
+schedule 28600, warmup 1430, microbatch 16, accumulation 4, sequence 2048,
+EOS boundaries, and 1,048,576 input tokens/update (2,621,440,000 per arm).
+
+Accelerate resources config was copied and verified with accelerate env in
+both the preflight shell and the actual tmux environment. The latter resolves
+its HF cache to /dev/shm/.cache/huggingface/accelerate/default_config.yaml;
+both configs report MULTI_GPU, eight processes, BF16. NCCL NVLS=0, W&B offline.
+
+A deliberate queue failure on B200 proved the automatic burn handoff at
+00:52:17 UTC: all eight ranks ready, collective probe sum 36, advancing cycles
+and collective payload, ~85% device memory. It remained alive after its
+supervisor exited. Only those freshly identified burn workers (52125–52132)
+were then signaled via pidfds; all eight GPUs were verified free at 00:53:39
+before Arm A. These PIDs are historical evidence, never reusable stop targets.
+The first rehearsal had correctly blocked on interleaved unbuffered log lines;
+removing unbuffered burn output fixed verification without changing the burn.
+
+Production supervisor runs the existing run_experiments.py queue and restarts
+an independent burn on success or training failure, after cleaning only its
+owned descendants and verifying free GPUs. A first-arm failure stops the queue;
+it never publishes success. If GPU ownership/cleanup cannot be verified,
+it records handoff_error and keeps the guard disabled instead of competing.
+Machine loss or killing the supervisor with SIGKILL cannot execute cleanup.
+
+Remote root: /mnt/local/_outputs/deep-llms_th2/deep-kv-2500-20260928-a02
+- Production: production/run/{A,B,C,D}, production/run/run.json and arm-*.log.
+- Handoff state: production/supervisor.json; final burn: production/burn.log
+  and production/burn-verified.json, tmux session with suffix -final-burn.
+- Main pipeline log: the remote root path plus .log.
+- Local launch receipts: artifacts/deep-kv-2500-launch-20260928/ (ignored).
+- Validation: 53 CPU tests passed locally; 5 handoff tests passed on B200;
+  live failure-to-burn rehearsal and eight-rank launch verified.
+
+commands.sh is reset to #0 after launch; this does not stop detached training.
+No final experiment results or optimizer-step progress are claimed yet.
+
 ## Authorized real four-arm launch at 2,500 updates (2026-09-28)
 
 User increased the cutoff to 2500 updates per arm (2,621,440,000 input tokens),
