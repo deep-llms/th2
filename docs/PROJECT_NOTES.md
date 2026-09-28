@@ -1,5 +1,29 @@
 # Project notes
 
+## B200 dataset format checked read-only (2026-09-28 22:26 UTC)
+
+User paused HF upload planning to clarify formats and repository layout.
+Read-only command 04891fc on thiennh-p6-78gg-worker-0 confirmed
+/mnt/local/_data/deep-llms_th2/data/raw contains exactly 75 .parquet files.
+Sample footer: ar/ar_part_00002.parquet, 578336 rows, 12 row groups,
+columns text/timestamp/url/source, all strings. No text rows were exported.
+Prepared English train contains 35 save_to_disk dataset directories; eval one.
+Their state.json references data-*.arrow; dataset_info.json exposes text:string.
+The directories also contain training-generated cache-*.arrow, which are not
+source dataset files. Current train.py uses load_from_disk on sorted shards.
+
+Repository count and storage format are independent: either one repository or
+per-language repositories can preserve save_to_disk folders for the same loader.
+Parquet would instead require local load_dataset('parquet', data_files=...).
+Runner #d --url supports pinned individual HF file URLs, while --hf-dataset has
+no documented subset/split filter. Partial folder downloads must include all
+files referenced by state.json plus dataset_info.json. Preserve explicit shard
+order and token/source indexes for reproducible prefix selection.
+Evidence: temp/b200-data-format-20260928-a01.log (SHA256
+7689d3e1e600da984d70914fece11e69fc370c840340c099f48f6cd4fe1bdf5b).
+No training code/data/process was changed and no HF upload started.
+commands.sh restored to #0 after this inspection.
+
 ## F/G production running after successful B200 smoke (2026-09-28)
 
 Launch commit 26e8e7fa5ca1ebf71a424577ec9a946ddb32d555 was accepted on
