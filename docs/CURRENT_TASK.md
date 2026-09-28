@@ -1,5 +1,22 @@
 # Current task
 
+## Status snapshot at 04:19 UTC (2026-09-28)
+
+Fresh export 8e6af30 from deep-kv-2500-20260928-a02 confirms Arm A exited
+zero and completed its requested cutoff of 2500 updates at 03:30:44 UTC.
+A result SHA256 matches the runner receipt:
+cd9ca808342131d96ca2130f47d3a26a9ec0db1e8b761550248eda59323b7d19.
+Its held-out LM loss is 3.510730336 on 4882 rows / 9,998,336 input tokens;
+input training budget 2,621,440,000, full schedule retained at 28600.
+Arm B began automatically at 03:30:44 and reached step 835 in the exported
+log. Recent speed ~3.4 seconds/update; logged training loss 12.07 at step 10
+to 4.937 at step 830. No traceback, CUDA OOM, ChildFailedError or NaN found
+in B log. C/D remain queued; no matched final method comparison yet.
+B log has no repeated tokenizer-map progress (consistent with cache reuse).
+Production supervisor has no final handoff yet, as the queue is running.
+Receipts: artifacts/deep-kv-status-20260928-0419/ (ignored).
+Status check made no training changes; commands.sh returned to #0.
+
 ## Real four-arm queue launched and handoff verified (2026-09-28)
 
 At 00:53:39 UTC, Arm A started under the detached session
