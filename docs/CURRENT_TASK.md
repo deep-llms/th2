@@ -1,5 +1,24 @@
 # Current task
 
+## F/G independent recheck passed (2026-09-28)
+
+Re-read the functional-loss specification and reviewed forward captures,
+KL direction/weights, head/query/feature normalization, strict-past masks,
+query/teacher detach boundaries, BF16 math, checkpoint recomputation, Trainer
+accumulation, per-example evaluation statistics, resume and queue/report logic.
+No implementation bug found; no production-code change needed.
+
+Added a regression against an independent per-query FP64 oracle with 259
+positions, 16 query heads / 8 KV heads / head_dim=128, noncontiguous BF16
+inputs, padding and segment boundaries. This crosses both default 128-query
+chunk boundaries, exercises both SmoothL1 regions, and checks nonzero FP32
+losses and backward recomputation outside autocast against reference gradients.
+All 59 local CPU tests pass: temp/deep-kv-FG-recheck-all-20260928.log.
+The existing eight-process BF16 micro16/accum4 F/G resume checks remain valid;
+implementation is unchanged from f6ce7e5. train.py, packing, data recipe,
+schedule, Accelerate config and runner commands are unchanged. No B200 work
+was submitted. Actual B200 capacity/throughput still requires a GPU smoke test.
+
 ## Functional-loss arms F/G implemented and locally validated (2026-09-28)
 
 Implemented docs/deep_route_kl_variant.md. F = LM + .3*KL(deep||pred);

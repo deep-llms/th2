@@ -281,6 +281,61 @@ class DeepKVAcceptance(unittest.TestCase):
             self.assertIsNone(q.grad)
         self.assertEqual(counts.sum().item(), 0)
 
+    def test_functional_default_chunks_against_double_precision_reference(self):
+        # Cross two default 128-query boundaries with production head dimensions
+        # and GQA, noncontiguous BF16 inputs, padding, and a segment reset.
+        from torch.nn import functional as F
+        torch.manual_seed(137)
+        length, heads, kv_heads, dim = 259, 16, 8, 128
+        originals = [torch.randn(2, length, h, dim).transpose(1, 2).bfloat16()
+                     for h in (kv_heads, kv_heads, heads, kv_heads, kv_heads)]
+        originals[1] *= 4
+        originals[4] *= 4  # Exercise both branches of SmoothL1, including |error| > 1.
+        valid = torch.arange(length)[None] < torch.tensor([[length], [173]])
+        segments = (torch.arange(length)[None] >= 129).expand(2, -1)
+        batch = Context(torch.zeros(2, length, dtype=torch.long), valid,
+                        torch.arange(length).expand(2, -1), segments)
+        allowed = batch.allowed()
+        reference = [x.double().requires_grad_() for x in originals]
+        pk, pv, q, dk, dv = reference
+        expected_route, expected_msg, expected_counts = [], [], []
+        for b in range(2):
+            routes, messages = [], []
+            for t in range(length):
+                sources = torch.where(allowed[b, 0, t, :t])[0]
+                if len(sources) == 0:
+                    continue
+                # Independent, per-query reference: no chunking or dense restore.
+                keys = pk[b, :, sources].repeat_interleave(2, dim=0)
+                deep_keys = dk[b, :, sources].detach().repeat_interleave(2, dim=0)
+                query = q[b, :, t].detach()[:, None, :]
+                lp = ((query * keys).sum(-1) / dim ** .5).log_softmax(-1)
+                ld = ((query * deep_keys).sum(-1) / dim ** .5).log_softmax(-1)
+                routes.append(F.kl_div(lp, ld, reduction="none", log_target=True).sum(-1).mean())
+                pred_msg = (lp.exp()[..., None] * pv[b, :, sources].repeat_interleave(2, dim=0)).sum(1)
+                deep_msg = (ld.exp()[..., None] * dv[b, :, sources].detach().repeat_interleave(2, dim=0)).sum(1)
+                messages.append(F.smooth_l1_loss(pred_msg, deep_msg, beta=1., reduction="mean"))
+            expected_counts.append(len(routes))
+            expected_route.append(torch.stack(routes).sum())
+            expected_msg.append(torch.stack(messages).sum())
+        expected_route, expected_msg = torch.stack(expected_route), torch.stack(expected_msg)
+        (expected_route.sum() + expected_msg.sum()).backward()
+        actual = [x.clone().requires_grad_() for x in originals]
+        with torch.autocast("cpu", dtype=torch.bfloat16):
+            route, message, counts = DeepKV.routing_alignment(
+                tuple(actual[:3]), tuple(actual[3:]), allowed, message=True)
+        self.assertEqual(route.dtype, torch.float32)
+        self.assertEqual(message.dtype, torch.float32)
+        torch.testing.assert_close(route.double(), expected_route, atol=2e-5, rtol=2e-6)
+        torch.testing.assert_close(message.double(), expected_msg, atol=2e-5, rtol=2e-6)
+        self.assertEqual(counts.tolist(), expected_counts)
+        # Backward outside autocast also checks checkpoint precision restoration.
+        (route.sum() + message.sum()).backward()
+        for actual_tensor, ref_tensor in zip(actual[:2], reference[:2]):
+            torch.testing.assert_close(actual_tensor.grad.float(), ref_tensor.grad.bfloat16().float(),
+                                       atol=2e-5, rtol=.008)
+        self.assertTrue(all(x.grad is None for x in actual[2:]))
+
     def test_functional_query_target_detach_and_exact_forward_attention_inputs(self):
         from unittest.mock import patch
         for arm in "FG":
