@@ -10,9 +10,15 @@ Train Qwen3 from scratch and compare:
 | C | Same as B | Native block-5 K/V |
 | D | Same as B | Native block-21 K/V, weight 1 |
 | E | Same as D | Native block-21 K/V, weight 0.3 |
+| F | Same as D | Deep routing KL, weight 0.3 |
+| G | Same as D | Same routing KL + message SmoothL1, each weight 0.3 |
 
 Arm E is the follow-up loss-weight ablation requested after the A–D pilot.
 It changes only the coefficient in `LM + weight * (K_loss + V_loss) / 2`.
+Arms F/G replace raw K/V alignment with the losses in
+[the functional-loss specification](docs/deep_route_kl_variant.md). Their
+forward architecture is unchanged. Select them with `--arms F G` when generating
+the sequential queue; the default remains A/B/C/D.
 
 The current recipe is approximately 30B English tokens, 1,048,576 input tokens
 per update, and an optional matched 2,500-update cutoff. Every arm uses eight

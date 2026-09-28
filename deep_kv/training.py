@@ -1,4 +1,4 @@
-"""Only the HF Trainer adaptations needed by the four-arm model."""
+"""Only the HF Trainer adaptations needed by the Deep-KV variants."""
 from contextlib import contextmanager
 from functools import partial
 import os
@@ -10,8 +10,17 @@ from transformers import Trainer, TrainerCallback
 from .model import Context
 
 
-def summarize_statistics(statistics, kv_loss_weight=1.0):
+def summarize_statistics(statistics, kv_loss_weight=1.0, arm=None):
     values = np.asarray(statistics, dtype=np.float64)
+    if arm in ("F", "G"):
+        lm, targets, route, msg, queries, tokens = values.sum(axis=0).tolist()
+        if targets <= 0 or tokens <= 0 or queries < 0 or not np.isfinite(values).all():
+            raise ValueError("Nonfinite loss or empty token statistics")
+        route, msg = route / max(queries, 1), msg / max(queries, 1)
+        return {"lm_loss": lm / targets, "loss_route": route, "loss_msg": msg,
+                "objective": lm / targets + kv_loss_weight * (route + (msg if arm == "G" else 0)),
+                "route_queries": int(queries), "input_tokens": int(tokens),
+                "target_tokens": int(targets), "rows": len(values)}
     lm, targets, k, v, tokens = values.sum(axis=0).tolist()
     if targets <= 0 or tokens <= 0 or not np.isfinite(values).all():
         raise ValueError("Nonfinite loss or empty token statistics")
@@ -20,8 +29,8 @@ def summarize_statistics(statistics, kv_loss_weight=1.0):
             "input_tokens": int(tokens), "target_tokens": int(targets), "rows": len(values)}
 
 
-def compute_metrics(prediction, kv_loss_weight=1.0):
-    result = summarize_statistics(prediction.predictions, kv_loss_weight)
+def compute_metrics(prediction, kv_loss_weight=1.0, arm=None):
+    result = summarize_statistics(prediction.predictions, kv_loss_weight, arm)
     result["loss"] = result["objective"]
     return result
 
@@ -58,7 +67,8 @@ class DeepKVTrainer(Trainer):
         # Bind the project's evaluation metric to the same coefficient as
         # training. Keep explicitly supplied unrelated metric functions intact.
         if self.compute_metrics is compute_metrics:
-            self.compute_metrics = partial(compute_metrics, kv_loss_weight=self.model.kv_loss_weight)
+            self.compute_metrics = partial(compute_metrics, kv_loss_weight=self.model.kv_loss_weight,
+                                           arm=self.model.arm)
         # We return a microbatch mean, not a sum normalized by HF's label count.
         # Trainer divides once by accumulation; DDP averages once across ranks.
         self.model_accepts_loss_kwargs = False
@@ -69,8 +79,14 @@ class DeepKVTrainer(Trainer):
         context = Context(ids, torch.ones_like(ids, dtype=torch.bool),
                           torch.arange(ids.shape[1], device=ids.device).expand_as(ids))
         outputs = model(context)
-        loss = (outputs["lm_sum"] / outputs["lm_count"] +
-                self.model.kv_loss_weight * (outputs["k_sum"] + outputs["v_sum"]) / (2 * outputs["kv_count"]))
+        if self.model.functional_loss:
+            auxiliary = outputs["route_sum"]
+            if self.model.arm == "G":
+                auxiliary = auxiliary + outputs["msg_sum"]
+            loss = outputs["lm_sum"] / outputs["lm_count"] + self.model.kv_loss_weight * auxiliary / outputs["route_count"].clamp_min(1)
+        else:
+            loss = (outputs["lm_sum"] / outputs["lm_count"] +
+                    self.model.kv_loss_weight * (outputs["k_sum"] + outputs["v_sum"]) / (2 * outputs["kv_count"]))
         if not bool(torch.isfinite(loss)):
             raise ValueError("Nonfinite objective")
         if model.training and self.is_in_train:
@@ -131,11 +147,13 @@ class PilotCallback(TrainerCallback):
         totals = self.trainer.accelerator.reduce(totals, reduction="sum")
         if int(totals[-1]) != self.tokens_per_update:
             raise ValueError("Incomplete global token batch; check dataset capacity")
-        self.latest = summarize_statistics(totals.cpu().numpy()[None], self.trainer.model.kv_loss_weight)
+        self.latest = summarize_statistics(totals.cpu().numpy()[None], self.trainer.model.kv_loss_weight,
+                                           self.trainer.model.arm)
         if state.global_step >= self.end:
             control.should_training_stop = control.should_save = True
         return control
 
     def on_log(self, args, state, control, logs, **kwargs):
         if "loss" in logs:
-            logs.update({f"step_{k}": self.latest[k] for k in ("lm_loss", "loss_k", "loss_v") if k in self.latest})
+            logs.update({f"step_{k}": self.latest[k] for k in
+                         ("lm_loss", "loss_k", "loss_v", "loss_route", "loss_msg") if k in self.latest})

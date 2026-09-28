@@ -8,7 +8,7 @@ from . import ARMS
 def jobs(config_path, stop_after=None, arms="ABCD"):
     arms = tuple(arms)
     if not arms or len(set(arms)) != len(arms) or any(arm not in ARMS for arm in arms):
-        raise ValueError("Select nonempty, unique arms from A/B/C/D/E")
+        raise ValueError("Select nonempty, unique arms from " + "/".join(ARMS))
     config = json.loads(Path(config_path).read_text())
     end = config.get("stop_after") if stop_after is None else stop_after
     if end is None:

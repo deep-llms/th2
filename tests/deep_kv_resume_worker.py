@@ -61,6 +61,14 @@ def main():
             result = json.loads((root / arm / "resumed/result.json").read_text())
             assert result["global_step"] == 3 and result["evaluation"]["eval_rows"] == 5
             assert result["input_tokens"] == 3 * 8 * 16 * 4 * 8
+            if arm in ("F", "G"):
+                evaluation = result["evaluation"]
+                assert evaluation["eval_route_queries"] == 5 * 7
+                expected = (evaluation["eval_lm_loss"] + .3 * evaluation["eval_loss_route"]
+                            + (.3 * evaluation["eval_loss_msg"] if arm == "G" else 0))
+                assert abs(evaluation["eval_loss"] - expected) < 1e-10
+                assert arm != "F" or evaluation["eval_loss_msg"] == 0
+                assert "eval_loss_k" not in evaluation
             assert dtypes
             results[arm] = {"maximum_parameter_difference": delta, "updates": 3, "eval_rows": 5,
                             "projection_dtypes": sorted(dtypes)}

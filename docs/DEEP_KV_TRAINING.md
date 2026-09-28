@@ -118,6 +118,7 @@ matched D/E results in that directory. An E-only queue validates E's result
 and reports its LM loss without claiming a comparison to absent arms.
 
 Both launch routes use `resources/accelerate_config.yaml`.
+
 `train.py` also defaults `NCCL_NVLS_ENABLE=0` before distributed imports, so
 the generated queue retains the original Qwen script's NCCL setting without
 requiring a shell export. Direct launches may explicitly override that default.
@@ -126,11 +127,47 @@ Before a B200 launch, copy the config to the machine's actual HF Accelerate
 default config and check `accelerate env`, as previously requested. These instructions do not themselves
 launch anything or stop GPU processes.
 
-The queue runs A/B/C/D then report, requiring successful exit and each arm's
+By default the queue runs A/B/C/D then report, requiring successful exit and each arm's
 result.json at the exact requested step before advancing. Report checks matched
 configuration, dataset fingerprints, steps, final evaluation, and saved model
 presence. It reports B−A, C−B, D−B, D−C and D−A in held-out LM loss. Negative
 favors the first arm; one seed does not establish statistical significance.
+
+### Functional-loss arms F/G
+
+[The functional-loss specification](deep_route_kl_variant.md) adds two arms
+with exactly D's forward, initialization and recipe:
+
+- F: `LM + 0.3 * route_KL`.
+- G: `LM + 0.3 * route_KL + 0.3 * message_SmoothL1` (no division by two).
+
+Routing is `KL(deep || predicted)` at temperature 1, using the exact rotated
+shallow query/predicted keys from the auxiliary forward and native rotated
+block-21 keys, with the normal GQA repetition. Query and deep references are
+detached only in the auxiliary loss. Empty strict-past rows are excluded before
+softmax. KL averages valid queries and heads; message SmoothL1 (beta 1) also
+averages head features, before the output projection. F has no auxiliary value
+gradient. Neither F nor G computes raw K/V alignment.
+
+FP32 score/loss computation uses 128-query chunks with activation recomputation
+during training, preserving every allowed source and the exact objective while
+bounding temporary score memory. This does add computation; B200 throughput and
+capacity must be measured with the real configuration before a long launch.
+The normal Trainer/Accelerate loop, packing, caches, schedule and evaluation
+selection remain unchanged. Metrics are `loss_route` and `loss_msg`, with the
+same weighted objective for training and evaluation. Compact per-example
+statistics preserve correct denominators under distributed evaluation padding.
+
+```bash
+python -m deep_kv make-jobs --config deep_kv.b200.json --arms F G \
+  --output temp/deep-kv-FG-jobs.json
+python run_experiments.py --config temp/deep-kv-FG-jobs.json --list
+```
+
+This queues F, then G, then result validation/comparison; no previous arm is
+implicitly retrained. Reporting matched results with `--arms A B D E F G`
+includes the required F-B, G-F and G-B comparisons and prior controls. Compare
+`eval_lm_loss`, not differently weighted auxiliary objectives.
 
 ## Resume and output
 

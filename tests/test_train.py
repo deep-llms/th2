@@ -64,7 +64,7 @@ class TrainingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config = fixture(root)
-            for arm in "ABCDE":
+            for arm in "ABCDEFG":
                 args = {**config, "arm": arm, "output_dir": str(root / arm), "stop_after": 2}
                 invoke(root, args)
                 state = json.loads((root / arm / "checkpoint-2/trainer_state.json").read_text())
@@ -72,7 +72,19 @@ class TrainingTests(unittest.TestCase):
                 self.assertEqual(state["global_step"], 2)
                 self.assertEqual(json.loads((root / arm / "result.json").read_text())["evaluation"]["eval_rows"], 5)
             self.assertEqual(report(root)["compared_update"], 2)
-            comparison = report(root, "ABCDE")
+            comparison = report(root, "ABCDEFG")
+            self.assertIn("F-B", comparison["nll_differences"])
+            self.assertIn("G-F", comparison["nll_differences"])
+            self.assertIn("G-B", comparison["nll_differences"])
+            self.assertEqual(comparison["functional_loss_weights"]["G"], {"route": .3, "message": .3})
+            self.assertEqual(set(report(root, "FG")["lm_loss"]), {"F", "G"})
+            for arm in "FG":
+                metrics = json.loads((root / arm / "eval_results.json").read_text())
+                self.assertAlmostEqual(metrics["eval_loss"], metrics["eval_lm_loss"] +
+                                       .3 * metrics["eval_loss_route"] + .3 * metrics["eval_loss_msg"])
+                self.assertEqual(metrics["eval_route_queries"], 5 * 7)
+                self.assertNotIn("eval_loss_k", metrics)
+            self.assertEqual(json.loads((root / "F/eval_results.json").read_text())["eval_loss_msg"], 0.)
             self.assertIn("E-D", comparison["nll_differences"])
             self.assertEqual(comparison["kv_loss_weights"]["E"], 0.3)
             self.assertEqual(set(report(root, "E")["lm_loss"]), {"E"})
@@ -96,7 +108,7 @@ class TrainingTests(unittest.TestCase):
             for name, value in load_file(root / "A/model.safetensors").items():
                 torch.testing.assert_close(value, before[name], rtol=0, atol=0)
             # Compare real interrupted/resumed training against an uninterrupted run.
-            for arm in "ABCDE":
+            for arm in "ABCDEFG":
                 invoke(root, {**config, "arm": arm, "output_dir": str(root / arm)})
                 invoke(root, {**config, "arm": arm, "output_dir": str(root / (arm + "-full"))})
                 actual, expected = (load_file(root / p / "model.safetensors") for p in (arm, arm + "-full"))
@@ -142,7 +154,7 @@ class TrainingTests(unittest.TestCase):
             rebuilt = train.preprocess_dataset(raw, tokenizer, 6, args, num_proc=2, overwrite_cache=True).shuffle(seed=42)
             self.assertEqual(first.to_dict(), cached.to_dict()); self.assertEqual(first.to_dict(), rebuilt.to_dict())
             orders = []
-            for arm, data in zip("ABCDE", (first, cached, rebuilt, first, cached)):
+            for arm, data in zip("ABCDEFG", (first, cached, rebuilt, first, cached, rebuilt, cached)):
                 model_cfg = Qwen3Config.from_pretrained(root / "model", local_files_only=True)
                 model_cfg._attn_implementation = "sdpa"
                 model = DeepKV.from_scratch(model_cfg, arm, consumer=2, deep_target=4)
@@ -152,10 +164,10 @@ class TrainingTests(unittest.TestCase):
             self.assertTrue(all(x == orders[0] for x in orders))
 
     def test_native_gradient_accumulation_scaling(self):
-        from tests.test_deep_kv import model
+        from tests.test_deep_kv import model, objective
         ids = torch.arange(24).reshape(4, 6) % 30
         with tempfile.TemporaryDirectory() as tmp:
-            for arm in "ABCDE":
+            for arm in "ABCDEFG":
                 accumulated, whole = model(arm), model(arm)
                 if accumulated.aux is not None:
                     torch.nn.init.normal_(accumulated.aux.out.weight, std=.03)
@@ -166,7 +178,7 @@ class TrainingTests(unittest.TestCase):
                 for row in ids:
                     trainer.training_step(accumulated, {"input_ids": row[None]})
                 result = whole(Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids)))
-                (result["lm_sum"] / 20 + whole.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / 48).backward()
+                objective(whole, result).backward()
                 for (name, p), (_, q) in zip(accumulated.named_parameters(), whole.named_parameters()):
                     torch.testing.assert_close(p.grad, q.grad, atol=2e-6, rtol=2e-5, msg=name)
 
@@ -225,6 +237,51 @@ assert os.environ['NCCL_NVLS_ENABLE'] == '1'
         for key in ("lm_loss", "loss_k", "loss_v"):
             self.assertAlmostEqual(metrics["E"][key], metrics["D"][key], places=6)
 
+    def test_functional_trainer_weights_metrics_and_gradient(self):
+        from types import SimpleNamespace
+        from tests.test_deep_kv import model, parameter_hash
+        models = {arm: model(arm) for arm in "BFG"}
+        self.assertEqual(parameter_hash(models["B"]), parameter_hash(models["F"]))
+        self.assertEqual(parameter_hash(models["F"]), parameter_hash(models["G"]))
+        torch.nn.init.normal_(models["B"].aux.out.weight, std=.03)
+        for arm in "FG":
+            models[arm].load_state_dict(models["B"].state_dict())
+        ids = torch.arange(24).reshape(4, 6) % 30
+        ctx = Context(ids, torch.ones_like(ids, dtype=torch.bool), torch.arange(6).expand_as(ids))
+        losses, route, message, gradients = {}, {}, {}, {}
+        with tempfile.TemporaryDirectory() as tmp:
+            for arm, current in models.items():
+                trainer = DeepKVTrainer(model=current, compute_metrics=compute_metrics,
+                    args=TrainingArguments(output_dir=tmp, use_cpu=True, report_to="none"))
+                loss, outputs = trainer.compute_loss(current, {"input_ids": ids}, return_outputs=True)
+                losses[arm] = loss.detach()
+                metrics = trainer.compute_metrics(SimpleNamespace(predictions=outputs["statistics"].numpy()))
+                self.assertAlmostEqual(metrics["loss"], loss.item(), places=5)
+                if arm in "FG":
+                    self.assertEqual(current.kv_loss_weight, .3)
+                    self.assertEqual(outputs["route_count"].item(), 20)
+                    route[arm] = outputs["route_sum"].detach() / 20
+                    message[arm] = outputs["msg_sum"].detach() / 20
+                    self.assertNotIn("loss_k", metrics)
+                    self.assertNotIn("k_sum", outputs)
+                loss.backward()
+                gradients[arm] = {name: p.grad.clone() for name, p in current.named_parameters()}
+        torch.testing.assert_close(route["F"], route["G"], rtol=0, atol=0)
+        self.assertEqual(message["F"], 0.)
+        self.assertGreater(message["G"], 0.)
+        torch.testing.assert_close(losses["F"], losses["B"] + .3 * route["F"])
+        torch.testing.assert_close(losses["G"], losses["F"] + .3 * message["G"])
+        # G's additional gradient must be exactly .3 times the message gradient;
+        # routing retains F's coefficient, and the shared query stays detached.
+        current = models["G"]
+        current.zero_grad(set_to_none=True)
+        output = current(ctx)
+        (.3 * output["msg_sum"] / output["route_count"]).backward()
+        for name, p in current.named_parameters():
+            extra = torch.zeros_like(p) if p.grad is None else p.grad
+            torch.testing.assert_close(gradients["G"][name], gradients["F"][name] + extra,
+                                       atol=2e-6, rtol=2e-5, msg=name)
+
     def test_queue_uses_train_py_and_unchanged_schedule(self):
         from run_experiments import load_jobs
         with tempfile.TemporaryDirectory() as tmp:
@@ -256,16 +313,23 @@ assert os.environ['NCCL_NVLS_ENABLE'] == '1'
             self.assertEqual(selected[-1]["argv"][-2:], ["--arms", "E"])
             # All executable training settings must match, apart from the arm
             # selector and the names/paths that keep their results separate.
-            d_job, e_job = jobs("deep_kv.b200.json", 2500, arms="DE")["jobs"][:2]
+            selected_jobs = jobs("deep_kv.b200.json", 2500, arms="DEFG")["jobs"][:-1]
             normalized = []
-            for job in (d_job, e_job):
+            for job in selected_jobs:
                 argv = list(job["argv"])
                 for key in ("--arm", "--output_dir", "--run_name"):
                     argv[argv.index(key) + 1] = "ARM_SPECIFIC"
                 normalized.append(argv)
-            self.assertEqual(normalized[0], normalized[1])
-            self.assertEqual(d_job["gpus"], e_job["gpus"])
-            for invalid in ("", "EE", "F"):
+            self.assertTrue(all(argv == normalized[0] for argv in normalized))
+            self.assertTrue(all(job["gpus"] == list(range(8)) for job in selected_jobs))
+            fg = jobs("deep_kv.b200.json", arms="FG")["jobs"]
+            self.assertEqual([j["name"] for j in fg], ["arm-F", "arm-G", "compare"])
+            for job, arm in zip(fg, "FG"):
+                argv = job["argv"]
+                start = next(i for i,a in enumerate(argv) if a.endswith("/train.py")) + 1
+                values = parser.parse_args_into_dataclasses(argv[start:] + ["--use_cpu", "true", "--bf16", "false", "--report_to", "none"])
+                self.assertEqual(values[2].arm, arm)
+            for invalid in ("", "EE", "H"):
                 with self.assertRaises(ValueError):
                     jobs("deep_kv.b200.json", arms=invalid)
             config = json.loads(Path("deep_kv.b200.json").read_text())

@@ -1,5 +1,44 @@
 # Current task
 
+## Functional-loss arms F/G implemented and locally validated (2026-09-28)
+
+Implemented docs/deep_route_kl_variant.md. F = LM + .3*KL(deep||pred);
+G = LM + .3*KL(deep||pred) + .3*SmoothL1(message_pred,message_deep), beta=1.
+No /2 and no raw K/V reconstruction in F/G. Same Arm D forward, parameters,
+initialization and shallow/deep pair. Reuse exact rotated shallow queries and
+predicted keys from the live auxiliary attention; native rotated block-21 K/V
+supply detached targets. The query is detached only in auxiliary losses.
+Strict-past/backbone masks and GQA mapping are shared; empty rows are excluded
+before softmax. FP32 loss math, 128-query checkpointed chunks (all source keys),
+valid-query/head normalization, plus head-feature averaging for messages.
+Unique query slots and a regular sum avoid repeated-index CUDA atomic reduction.
+
+HF Trainer/Accelerate integration logs route/message losses separately and
+uses per-example query counts for distributed evaluation. Existing A-E metrics
+and formats preserved. train.py, packing/EOS, recipe, seeds, schedule, batch,
+Accelerate resource and launch shell are unchanged. --arms F G generates the
+sequential F/G queue and result validation; reports include F-B, G-F, G-B plus
+prior controls when present. Default queue remains A/B/C/D. No new loss knob.
+
+Validation: all 58 local CPU tests pass (temp/deep-kv-FG-final-tests.log).
+Independent dense oracle covers KL direction, GQA, masking/empty rows, message
+beta/normalization, gradients and chunk recomputation. Checks cover no raw loss,
+no auxiliary query/deep-target/F-value gradients, retained LM gradients,
+unchanged forward after branch output becomes nonzero, native one-pass captures,
+BF16, exact F/G coefficients, Trainer accumulation, cache order and resume.
+Eight-process BF16 CPU full-vs-resume tests with micro16/accum4 and uneven 5-row
+eval pass for F/G: max parameter deltas 2.33e-10 / 4.66e-10. Receipt:
+temp/deep-kv-FG-resume-20260928-a02/resume_verified.json; log:
+temp/deep-kv-FG-distributed-final.log. Independent 28-layer tiny-width audit
+against pre-change committed D passes bitwise raw outputs/gradients in FP32
+and BF16; F/G initial parameters and LM outputs match original D:
+temp/deep-kv-FG-vs-original-D-audit.json. Generated queue list validated locally
+at temp/deep-kv-FG-jobs-20260928.json (dev paths, regenerate on B200 for launch).
+
+No B200 process was changed or new training launched. commands.sh remains #0.
+GPU capacity/throughput of the new losses has not yet been measured; use the
+real B200 recipe in a smoke test before a long run. Implementation remains local.
+
 ## Arm E completed; automatic final burn verified (2026-09-28)
 
 Read-only check 7ce7ce9 at 18:41:18-18:41:30 UTC verifies E completed the

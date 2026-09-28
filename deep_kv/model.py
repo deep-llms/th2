@@ -72,7 +72,7 @@ class AuxiliaryKV(nn.Module):
         nn.init.zeros_(self.out.weight)
         self.groups = config.num_attention_heads // config.num_key_value_heads
 
-    def forward(self, normalized, rotated_query, rotary, allowed):
+    def forward(self, normalized, rotated_query, rotary, allowed, *, return_routing=False):
         b, t, _ = normalized.shape
         k = self.k_norm(self.k(normalized).view(b, t, -1, self.head_dim)).transpose(1, 2)
         v = self.v(normalized).view(b, t, -1, self.head_dim).transpose(1, 2)
@@ -91,6 +91,9 @@ class AuxiliaryKV(nn.Module):
             scale=self.head_dim ** -0.5)
         message = message.masked_fill(~nonempty, 0)
         correction = self.out(message.transpose(1, 2).reshape(b, t, -1))
+        if return_routing:
+            # Return the exact attention inputs, not a second projection/rotation.
+            return correction, k, v, rotated_query.to(dtype), rotated_k.to(dtype)
         return correction, k, v
 
 
@@ -110,6 +113,7 @@ class DeepKV(nn.Module):
         self.backbone = backbone.float().requires_grad_(True)
         self.arm, self.consumer, self.deep_target = arm, consumer, deep_target
         self.kv_loss_weight = kv_loss_weight(arm)
+        self.functional_loss = arm in ("F", "G")
         self.checkpoint_layers, self.lm_chunk = checkpoint_layers, lm_chunk
         self.aux = None
         if arm != "A":
@@ -140,13 +144,17 @@ class DeepKV(nn.Module):
         attended, _ = interface(a, qr, kr, v, mask, dropout=0.0,
                                scaling=a.scaling, sliding_window=None)
         attended = a.o_proj(attended.reshape(*u.shape[:-1], -1).contiguous())
-        pk = pv = u.new_empty(0)
+        pk = pv = loss_q = loss_k = u.new_empty(0)
         if index == self.consumer - 1 and self.aux is not None:
-            correction, pk, pv = self.aux(u, qr, rotary, allowed)
+            if self.functional_loss:
+                correction, pk, pv, loss_q, loss_k = self.aux(u, qr, rotary, allowed, return_routing=True)
+                loss_q = loss_q.detach()
+            else:
+                correction, pk, pv = self.aux(u, qr, rotary, allowed)
             attended = attended + correction
         hidden = hidden + attended
         hidden = hidden + layer.mlp(layer.post_attention_layernorm(hidden))
-        return hidden, pk, pv, k, v
+        return hidden, pk, pv, k, v, loss_q, loss_k, kr
 
     def hidden_states(self, context: Context):
         hidden = self.backbone.model.embed_tokens(context.input_ids)
@@ -154,7 +162,7 @@ class DeepKV(nn.Module):
         mask, allowed = context.additive_mask(hidden.dtype), context.allowed()
         predicted = target = None
         for i, layer in enumerate(self.backbone.model.layers):
-            special = self.aux is not None and (i == self.consumer - 1 or (self.arm in ("D", "E") and i == self.deep_target - 1))
+            special = self.aux is not None and (i == self.consumer - 1 or (self.arm in ("D", "E", "F", "G") and i == self.deep_target - 1))
             if special:
                 def call(x, index=i):
                     return self.special_block(index, x, rotary, mask, allowed)
@@ -164,13 +172,15 @@ class DeepKV(nn.Module):
                                  position_embeddings=rotary, use_cache=False)
             result = checkpoint(call, hidden, use_reentrant=False) if self.checkpoint_layers and self.training else call(hidden)
             if special:
-                hidden, pk, pv, k, v = result
+                hidden, pk, pv, k, v, loss_q, loss_k, kr = result
                 if i == self.consumer - 1:
-                    predicted = (pk, pv)
+                    predicted = (loss_k, pv, loss_q) if self.functional_loss else (pk, pv)
                     if self.arm == "C":
                         target = (k, v)
                 if self.arm in ("D", "E") and i == self.deep_target - 1:
                     target = (k, v)
+                if self.functional_loss and i == self.deep_target - 1:
+                    target = (kr.detach(), v.detach())
             else:
                 hidden = result
         return self.backbone.model.norm(hidden), predicted, target
@@ -184,6 +194,71 @@ class DeepKV(nn.Module):
                       .mean(dim=(1, 3)).sum(dim=1)) for p, t in zip(predicted, target))
         return rows if per_example else tuple(row.sum() for row in rows)
 
+    @staticmethod
+    def routing_alignment(predicted, target, allowed, *, message=False, query_chunk=128,
+                          checkpoint_chunks=True):
+        """FP32 deep||pred KL and optional pre-output SmoothL1, per example.
+
+        Inputs are already normalized/rotated as in attention. Chunking and
+        recomputation bound quadratic score memory without sampling any edges.
+        Sums average heads (and message features), then sum eligible queries.
+        """
+        if query_chunk <= 0:
+            raise ValueError("query_chunk must be positive")
+        pk, pv, q = predicted
+        dk, dv = target
+        b, heads, length, dim = q.shape
+        groups = heads // pk.shape[1]
+        strict = allowed & torch.ones(length, length, dtype=torch.bool, device=q.device).tril(-1)
+        counts = strict.any(-1).sum(dim=(1, 2))
+        q = q.detach().float()
+        pk = repeat_kv(pk.float(), groups)
+        dk = repeat_kv(dk.detach().float(), groups)
+        if message:
+            pv = repeat_kv(pv.float(), groups)
+            dv = repeat_kv(dv.detach().float(), groups)
+
+        def chunk(qc, keys, values, deep_keys, deep_values, mask):
+            with torch.autocast(device_type=q.device.type, enabled=False):
+                valid = mask[:, 0].any(-1)
+                visible = mask[:, 0][valid][:, None, :]
+                # Select eligible queries BEFORE softmax; empty rows never enter it.
+                def log_probs(k):
+                    logits = (qc @ k.transpose(-1, -2)) * (dim ** -0.5)
+                    selected = logits.permute(0, 2, 1, 3)[valid]
+                    return selected.masked_fill(~visible, -torch.inf).log_softmax(-1)
+                with torch.no_grad():
+                    deep_log = log_probs(deep_keys)
+                    deep_probs = deep_log.exp()
+                pred_log = log_probs(keys)
+                # Mask the logs before multiplying: 0 * (-inf - -inf) is NaN.
+                kl = (deep_probs * (deep_log.masked_fill(~visible, 0) -
+                                    pred_log.masked_fill(~visible, 0))).sum(-1).mean(-1)
+                # Unique query slots avoid a repeated-index atomic reduction on CUDA.
+                route = q.new_zeros(valid.shape)
+                route[valid] = kl
+                route = route.sum(-1)
+                msg = q.new_zeros(b)
+                if message:
+                    def restore(probs):
+                        dense = q.new_zeros(b, qc.shape[2], heads, length)
+                        dense[valid] = probs
+                        return dense.transpose(1, 2)
+                    with torch.no_grad():
+                        deep_msg = restore(deep_probs) @ deep_values
+                    pred_msg = restore(pred_log.exp()) @ values
+                    msg = F.smooth_l1_loss(pred_msg, deep_msg, beta=1.0, reduction="none").mean(dim=(1, 3)).sum(-1)
+                return route, msg
+
+        route_rows = msg_rows = q.new_zeros(b)
+        for start in range(0, length, query_chunk):
+            args = (q[:, :, start:start + query_chunk], pk, pv, dk, dv,
+                    strict[:, :, start:start + query_chunk])
+            r, m = (checkpoint(chunk, *args, use_reentrant=False)
+                    if checkpoint_chunks and torch.is_grad_enabled() else chunk(*args))
+            route_rows, msg_rows = route_rows + r, msg_rows + m
+        return route_rows, msg_rows, counts
+
     def forward(self, context: Context):
         hidden, predicted, target = self.hidden_states(context)
         labels = context.input_ids[:, 1:].masked_fill(~context.targets(), -100)
@@ -196,10 +271,17 @@ class DeepKV(nn.Module):
                 return F.cross_entropy(logits.reshape(-1, logits.shape[-1]), targets.reshape(-1),
                                        ignore_index=-100, reduction="none").view_as(targets).sum(dim=1)
             lm_rows = lm_rows + (checkpoint(ce, x, y, use_reentrant=False) if self.training else ce(x, y))
+        counts, tokens = context.targets().sum(dim=1), context.valid.sum(dim=1)
+        if self.functional_loss:
+            route, msg, queries = self.routing_alignment(predicted, target, context.allowed(),
+                message=self.arm == "G", checkpoint_chunks=self.training)
+            return {"lm_sum": lm_rows.sum(), "lm_count": counts.sum(),
+                    "route_sum": route.sum(), "msg_sum": msg.sum(), "route_count": queries.sum(),
+                    "statistics": torch.stack((lm_rows.detach(), counts, route.detach(),
+                                                msg.detach(), queries, tokens), dim=1).double()}
         k_rows = v_rows = torch.zeros_like(lm_rows)
         if target is not None:
             k_rows, v_rows = self.alignment(predicted, target, context.valid, per_example=True)
-        counts, tokens = context.targets().sum(dim=1), context.valid.sum(dim=1)
         return {"lm_sum": lm_rows.sum(), "lm_count": counts.sum(),
                 "k_sum": k_rows.sum(), "v_sum": v_rows.sum(), "kv_count": tokens.sum(),
                 # Tiny per-example statistics let Trainer remove repeated eval

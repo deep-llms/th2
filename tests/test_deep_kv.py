@@ -27,6 +27,13 @@ def model(arm, checkpoint=False):
                                checkpoint_layers=checkpoint, lm_chunk=3)
 
 
+def objective(m, result):
+    if m.arm in ("F", "G"):
+        aux = result["route_sum"] + (result["msg_sum"] if m.arm == "G" else 0)
+        return result["lm_sum"] / result["lm_count"] + .3 * aux / result["route_count"].clamp_min(1)
+    return result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+
+
 def context():
     ids = torch.tensor([[3, 8, 2, 6, 9, 1], [4, 7, 8, 0, 0, 0]])
     valid = torch.tensor([[1, 1, 1, 1, 1, 1], [1, 1, 1, 0, 0, 0]], dtype=torch.bool)
@@ -50,7 +57,7 @@ class DeepKVAcceptance(unittest.TestCase):
             base_logits = base.backbone.lm_head(base.hidden_states(batch)[0])
         torch.testing.assert_close(base_logits, native)
         branch_hash = None
-        for arm in "BCDE":
+        for arm in "BCDEFG":
             m = model(arm).eval()
             self.assertEqual(parameter_hash(base.backbone), parameter_hash(m.backbone))
             if branch_hash is None:
@@ -90,7 +97,7 @@ class DeepKVAcceptance(unittest.TestCase):
         torch.testing.assert_close(actual[0, :2], after[0, :2])
 
     def test_native_targets_exact_and_one_projection_per_forward(self):
-        for arm, target_index in (("C", 4), ("D", 20), ("E", 20)):
+        for arm, target_index in (("C", 4), ("D", 20), ("E", 20), ("F", 20), ("G", 20)):
             cfg = config()
             cfg.num_hidden_layers = 28
             cfg.layer_types = ["full_attention"] * 28
@@ -111,6 +118,11 @@ class DeepKVAcceptance(unittest.TestCase):
             self.assertTrue(all(len(x) == 1 for x in captures.values()))
             native_k = captures[(target_index, "k_norm")][0].transpose(1, 2)
             native_v = captures[(target_index, "v_proj")][0].view(2, 6, 2, 8).transpose(1, 2)
+            if arm in ("F", "G"):
+                from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb
+                batch = context()
+                rotary = m.backbone.model.rotary_emb(m.backbone.model.embed_tokens(batch.input_ids), batch.position_ids)
+                _, native_k = apply_rotary_pos_emb(native_k, native_k, *rotary)
             self.assertTrue(torch.equal(target[0], native_k))
             self.assertTrue(torch.equal(target[1], native_v))
             self.assertEqual(predicted[0].shape, (2, 2, 6, 8))
@@ -136,14 +148,14 @@ class DeepKVAcceptance(unittest.TestCase):
             self.assertGreater(m.backbone.model.embed_tokens.weight.grad.abs().sum().item(), 0)
 
     def test_checkpoint_recomputation_and_lm_gradient_path(self):
-        for arm in "ABCDE":
+        for arm in "ABCDEFG":
             plain, checked = model(arm), model(arm, checkpoint=True)
             if plain.aux is not None:
                 torch.nn.init.normal_(plain.aux.out.weight, std=.03)
                 checked.load_state_dict(plain.state_dict())
             for m in (plain, checked):
                 result = m(context())
-                loss = result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+                loss = objective(m, result)
                 loss.backward()
             for (name, p), (_, q) in zip(plain.named_parameters(), checked.named_parameters()):
                 self.assertIsNotNone(p.grad, name)
@@ -156,11 +168,11 @@ class DeepKVAcceptance(unittest.TestCase):
 
     def test_bfloat16_forward_backward(self):
         reference = None
-        for arm in "ABCDE":
+        for arm in "ABCDEFG":
             m = model(arm, checkpoint=True)
             with torch.autocast("cpu", dtype=torch.bfloat16):
                 result = m(context())
-                loss = result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+                loss = objective(m, result)
             if reference is None:
                 reference = result["lm_sum"].detach()
             torch.testing.assert_close(result["lm_sum"], reference, atol=1e-5, rtol=1e-5)
@@ -173,14 +185,14 @@ class DeepKVAcceptance(unittest.TestCase):
         m = DeepKV.from_scratch(cfg, "D", consumer=2, deep_target=4)
         self.assertEqual(m.aux.out.in_features, 64)
         result = m(context())
-        loss = result["lm_sum"] / result["lm_count"] + m.kv_loss_weight * (result["k_sum"] + result["v_sum"]) / (2 * result["kv_count"])
+        loss = objective(m, result)
         loss.backward()
         self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in m.parameters()))
 
     def test_modified_arms_have_identical_lm_path_after_branch_learns(self):
         # Zero-output equivalence alone would hide mistakes in the live branch.
         for bf16 in (False, True):
-            models = [model(arm, checkpoint=True) for arm in "BCDE"]
+            models = [model(arm, checkpoint=True) for arm in "BCDEFG"]
             torch.nn.init.normal_(models[0].aux.out.weight, std=.03)
             for other in models[1:]:
                 other.load_state_dict(models[0].state_dict())
@@ -195,6 +207,120 @@ class DeepKVAcceptance(unittest.TestCase):
             for other in models[1:]:
                 for (name, p), (_, q) in zip(models[0].named_parameters(), other.named_parameters()):
                     torch.testing.assert_close(p.grad, q.grad, atol=1e-6, rtol=1e-6, msg=name)
+
+    def test_functional_losses_match_independent_dense_reference_and_gradients(self):
+        from torch.nn import functional as F
+        batch = context()
+        torch.manual_seed(61)
+        # Uneven padding, reset positions, segments, GQA and nonempty singleton
+        # rows exercise the actual loss denominator and KL direction.
+        originals = [torch.randn(2, h, 6, 8) for h in (2, 2, 4, 2, 2)]
+        for with_message in (False, True):
+            ref = [t.clone().requires_grad_() for t in originals]
+            pk, pv, q, dk, dv = ref
+            expected_r, expected_m, counts = [], [], []
+            for b in range(2):
+                route, msg, count = pk[b].sum() * 0, pv[b].sum() * 0, 0
+                for t in range(6):
+                    source = [j for j in range(t) if batch.allowed()[b, 0, t, j]]
+                    if not source:
+                        continue
+                    count += 1
+                    for h in range(4):
+                        g = h // 2
+                        query = q[b, h, t].detach()
+                        deep_log = (dk[b, g, source].detach() @ query / 8 ** .5).log_softmax(-1)
+                        pred_log = (pk[b, g, source] @ query / 8 ** .5).log_softmax(-1)
+                        route = route + F.kl_div(pred_log, deep_log, reduction="sum", log_target=True) / 4
+                        if with_message:
+                            pm = pred_log.exp() @ pv[b, g, source]
+                            dm = deep_log.exp() @ dv[b, g, source].detach()
+                            msg = msg + F.smooth_l1_loss(pm, dm, beta=1., reduction="mean") / 4
+                expected_r.append(route); expected_m.append(msg); counts.append(count)
+            expected_r, expected_m = torch.stack(expected_r), torch.stack(expected_m)
+            (expected_r.sum() + expected_m.sum()).backward()
+            for size in (1, 2, 128):
+                for recompute in (False, True):
+                    tensors = [t.clone().requires_grad_() for t in originals]
+                    pk, pv, q, dk, dv = tensors
+                    actual_r, actual_m, actual_counts = DeepKV.routing_alignment(
+                        (pk, pv, q), (dk, dv), batch.allowed(), message=with_message,
+                        query_chunk=size, checkpoint_chunks=recompute)
+                    torch.testing.assert_close(actual_r, expected_r)
+                    torch.testing.assert_close(actual_m, expected_m)
+                    self.assertEqual(actual_counts.tolist(), counts)
+                    (actual_r.sum() + actual_m.sum()).backward()
+                    torch.testing.assert_close(pk.grad, ref[0].grad, atol=2e-6, rtol=2e-5)
+                    if with_message:
+                        torch.testing.assert_close(pv.grad, ref[1].grad, atol=2e-6, rtol=2e-5)
+                    else:
+                        self.assertIsNone(pv.grad)
+                    for t in (q, dk, dv):
+                        self.assertIsNone(t.grad)
+                    # Final positions and padding never serve a valid later query.
+                    self.assertEqual(pk.grad[0, :, [2, 5]].count_nonzero().item(), 0)
+                    self.assertEqual(pk.grad[1, :, 2:].count_nonzero().item(), 0)
+
+    def test_functional_empty_rows_identical_targets_and_fp32_under_autocast(self):
+        batch = context()
+        tensors = [torch.randn(2, h, 6, 8).bfloat16().requires_grad_() for h in (2, 2, 4)]
+        pk, pv, q = tensors
+        for allowed in (batch.allowed(), torch.eye(6, dtype=torch.bool)[None, None].expand(2, 1, 6, 6)):
+            for t in tensors:
+                t.grad = None
+            with torch.autocast("cpu", dtype=torch.bfloat16):
+                r, m, counts = DeepKV.routing_alignment((pk, pv, q), (pk, pv), allowed,
+                                                        message=True, query_chunk=2)
+            self.assertEqual(r.dtype, torch.float32)
+            self.assertEqual(m.dtype, torch.float32)
+            torch.testing.assert_close(r, torch.zeros(2), atol=1e-7, rtol=0)
+            torch.testing.assert_close(m, torch.zeros(2), atol=1e-7, rtol=0)
+            (r.sum() + m.sum()).backward()
+            self.assertTrue(torch.isfinite(pk.grad).all() and torch.isfinite(pv.grad).all())
+            torch.testing.assert_close(pk.grad.float(), torch.zeros_like(pk.grad).float(), atol=2e-7, rtol=0)
+            self.assertIsNone(q.grad)
+        self.assertEqual(counts.sum().item(), 0)
+
+    def test_functional_query_target_detach_and_exact_forward_attention_inputs(self):
+        from unittest.mock import patch
+        for arm in "FG":
+            m = model(arm, checkpoint=True)
+            torch.nn.init.normal_(m.aux.out.weight, std=.03)
+            batch = context()
+            captured = {}
+            original = torch.nn.functional.scaled_dot_product_attention
+            def capture(q, k, v, *args, **kwargs):
+                if kwargs.get("attn_mask") is not None and kwargs["attn_mask"].dtype == torch.bool:
+                    captured.update(q=q.detach(), k=k.detach(), v=v.detach())
+                return original(q, k, v, *args, **kwargs)
+            with patch("torch.nn.functional.scaled_dot_product_attention", side_effect=capture):
+                _, predicted, target = m.hidden_states(batch)
+            from transformers.models.qwen3.modeling_qwen3 import repeat_kv
+            torch.testing.assert_close(predicted[2], captured["q"], rtol=0, atol=0)
+            torch.testing.assert_close(repeat_kv(predicted[0], 2), captured["k"], rtol=0, atol=0)
+            torch.testing.assert_close(repeat_kv(predicted[1], 2), captured["v"], rtol=0, atol=0)
+            self.assertFalse(predicted[2].requires_grad)
+            self.assertTrue(all(not t.requires_grad for t in target))
+            r, msg, _ = m.routing_alignment(predicted, target, batch.allowed(), message=arm == "G", query_chunk=2)
+            (r.sum() + msg.sum()).backward()
+            consumer = m.backbone.model.layers[m.consumer - 1].self_attn
+            deep = m.backbone.model.layers[m.deep_target - 1].self_attn
+            self.assertIsNone(consumer.q_proj.weight.grad)
+            self.assertIsNone(consumer.q_norm.weight.grad)
+            self.assertIsNone(deep.k_proj.weight.grad)
+            self.assertIsNone(deep.v_proj.weight.grad)
+            self.assertIsNone(m.aux.out.weight.grad)
+            self.assertGreater(m.aux.k.weight.grad.abs().sum().item(), 0)
+            if arm == "F":
+                self.assertIsNone(m.aux.v.weight.grad)
+            else:
+                self.assertGreater(m.aux.v.weight.grad.abs().sum().item(), 0)
+            m.zero_grad(set_to_none=True)
+            with patch.object(m, "alignment", side_effect=AssertionError("No raw K/V loss allowed")):
+                result = m(batch)
+            result["lm_sum"].backward()
+            self.assertGreater(consumer.q_proj.weight.grad.abs().sum().item(), 0)
+            self.assertGreater(m.aux.v.weight.grad.abs().sum().item(), 0)
 
 
 

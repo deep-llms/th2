@@ -1,10 +1,10 @@
-"""Anticipatory K/V pilot and loss-weight ablation. Imports launch nothing."""
+"""Anticipatory K/V pilot and auxiliary-loss variants. Imports launch nothing."""
 
-ARMS = ("A", "B", "C", "D", "E")
+ARMS = ("A", "B", "C", "D", "E", "F", "G")
 
 
 def kv_loss_weight(arm):
-    """E is exactly D with a lower weight on the mean K/V alignment loss."""
+    """Raw alignment weight for A-E; individual functional-term weight for F/G."""
     if arm not in ARMS:
         raise ValueError(f"Unknown arm: {arm}")
-    return 0.3 if arm == "E" else 1.0
+    return 0.3 if arm in ("E", "F", "G") else 1.0
