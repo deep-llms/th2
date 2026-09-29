@@ -1,103 +1,82 @@
-# B/F/G optimized continuation to 10,000 updates
+# B/F/G checkpoint-only continuation to 10,000 updates
 
-## Checkpoint-only gate passed; production staging (2026-09-29 16:30 UTC)
+Production B resumed successfully from step 5,000. The 16:34:12 UTC audit on
+2026-09-29 observed step 5,040, finite losses/gradients, continued LR about
+0.0002884, and one train.py worker on each of eight B200 GPUs. Each GPU used
+119,192 MiB with 98–99% utilization. Early B updates took about 2.5 seconds each.
+F and G follow sequentially; each arm stops at 10,000 total updates.
 
-Retry4daa75c/e31c52d passes the unchanged real-checkpoint gate for B/F/G.
-Parameter relative L2: B4.19410e-6, F4.04550e-6, G4.14861e-6 (<1e-5).
-First-moment relative L2<=0.002158; second-moment<=0.00002041 (<0.03).
-LM evaluation deltas B-4.09e-6/F+1.68e-6/G+1.38e-6 (<0.001). All ranks restore
-exact model/optimizer/scheduler/RNG and consume identical next microbatches.
-Only checkpoint_layers/checkpoint_lm/checkpoint_aux are disabled. Keep original
-explicit attention mask and lm_chunk128; no gate thresholds were relaxed.
+## Final recipe
 
-Audit16:30:59: gate and all3 optimized smoke jobs succeeded; stage-continuation
-running in deep-kv-BFG-10000-20260929-a02. Production uses fresh original5000
-copies, not smoke5001 outputs. Schedule28600/warmup1430/micro16/accum4/world8
-unchanged; planned sequential B/F/G cutoff10000. Next: verify production B progress.
-Retry preflight also verified prior failed-attempt burn handoff at16:16:04 and
-all8 GPUs completely free at16:22:52 before the retry. Automatic final burn
-recovery still wraps the production queue. Raw passing-gate log SHA256:
-70a2aa1817d7e64ecf74862836e0fccb81e0fcaff86710eb63cdea15d4efdd4b.
+Only decoder, LM-loss and auxiliary-loss activation checkpointing are disabled:
+`checkpoint_layers=false`, `checkpoint_lm=false`, `checkpoint_aux=false`.
+Keep original `causal_attention=false` (explicit attention mask) and `lm_chunk=128`.
+The additional causal/chunk optimizations were not selected for this continuation.
 
-## Initial gate outcome and checkpoint-only retry
+Everything else stays fixed: native HF Trainer/Accelerate, eight GPUs, BF16,
+microbatch 16, accumulation 4, sequence 2048, 1,048,576 input tokens per update,
+full schedule 28,600, warmup 1,430, original optimizer/LR settings, seeds, language
+mix, EOS packing, sampler/data skipping, evaluation and checkpoint-save cadence.
+The cutoff is 10,485,760,000 cumulative input tokens per arm.
 
-Initial a01 gate completed all six one-update runs; all48 rank receipts verified
-exact restored model/optimizer/scheduler/RNG and matched next microbatches.
-However, the numerical gate rejected combined optimized B: parameter relative L2
-1.1260900673368356e-5 exceeds the predeclared1e-5 limit (control update relative
-L2 0.0018496647; difference is about0.61% of the update). Evaluation deltas were
-B -6.76e-6, F +1.36e-5, G +2.89e-6. This is a numerical tolerance failure, not a
-state/data restoration failure. Do not report the original gate as passed.
-Production never started. Queue failed16:14:53 UTC; automatic burn recovery
-started and all8 burn workers were live in the16:15:59 audit. The final handoff
-receipt/guard release must be rechecked before retry.
+`train.py` exposes the five execution settings while preserving their historical
+defaults. Changing them on resume requires explicit
+`--allow_performance_change_on_resume true`. All scientific recipe and data
+fingerprint checks remain strict. Each change archives the full previous and
+requested recipe in `resume-transition-<step>-<UTC>.json`. Production B's record
+changes exactly the three checkpoint switches.
 
-Keep every tolerance unchanged. New a02 recipe disables only decoder, LM-loss
-and auxiliary-loss checkpointing, retaining original causal_attention=False and
-lm_chunk128. Both additional switches remain available in train.py, but are not
-selected for this continuation. The a02 root replaces a01 in the production
-paths below. Reuse the successful original control checkpoints/receipts read-only;
-run three fresh optimized one-update resumes and compare all states/data and
-numerics against those controls. A gate receipt records its control directory.
-Only passing this unchanged gate permits fresh original5000 copies to resume
-B/F/G to10000. No original or failed-attempt outputs are overwritten/deleted.
+## Validation and the initial rejected variant
 
-Initial audit68c5aa7:73 small artifacts verified under
-artifacts/optimized-resume-20260929-a01/. Raw log SHA256:
-a5b6ef983e2276e4925497418a5526c980445cb50472b1bb339d844b93c347d6.
+The initial combined recipe also enabled implicit causal SDPA and LM chunks 512.
+Its six real-checkpoint smoke runs completed, and all 48 rank receipts confirmed
+exact initial model/optimizer/scheduler/RNG restoration and matched input order.
+However, B's updated parameter relative L2 difference was 1.12609e-5, exceeding
+the predeclared 1e-5 bound. Production did not start. The queue failed at 16:14:53;
+automatic burn recovery was verified at 16:16:04. That attempt remains preserved.
 
-The following records the initial proposal and common resume protocol:
+The fresh checkpoint-only retry reused the completed controls read-only and ran
+three new eight-GPU resumes, each taking one update from original step 5,000,
+saving full state and evaluating the same 4,882 rows. No tolerances were relaxed.
 
-Authorized 2026-09-29. Continue each completed step-5,000 arm on all eight B200
-GPUs, sequential B/F/G. Keep microbatch16, accumulation4, sequence2048,
-1,048,576 input tokens/update, full schedule28,600 and warmup1,430. Dataset,
-EOS packing, sampler seeds, optimizer and scientific arm/loss settings stay fixed.
+| Arm | Parameter relative L2 | Adam first-moment relative L2 | Adam second-moment relative L2 | LM loss delta |
+|---|---:|---:|---:|---:|
+| B | 4.19410e-6 | 0.002110 | 1.53924e-5 | -4.09e-6 |
+| F | 4.04550e-6 | 0.002117 | 2.04061e-5 | +1.68e-6 |
+| G | 4.14861e-6 | 0.002157 | 1.73025e-5 | +1.38e-6 |
 
-`train.py` exposes the previously tested model switches: checkpoint_layers,
-checkpoint_lm, checkpoint_aux, causal_attention and lm_chunk. Defaults preserve
-old execution. Optimized continuation disables all three recomputation switches,
-uses implicit causal SDPA on fully packed/unsegmented inputs, and LM chunks512.
-The production loop remains native HF Trainer/Accelerate.
+All passed: parameter difference <=1e-5 and <=5% of the control update;
+first/second moments <=3%; LM loss delta <=0.001. Scheduler states and optimizer
+step counters matched exactly. All ranks restored exact source state and consumed
+the same next four microbatches; input batches also matched across B/F/G.
+This supports numerical correctness, not bitwise-identical future trajectories.
+The smoke wrapper observes native Trainer behavior without replacing loading,
+RNG restoration, data skipping or optimization. Production calls train.py directly.
+Local CPU checks also covered native resume, strict metadata rejection, all-arm
+model/gradient behavior and the smoke/queue workflow.
 
-Resume configuration matching remains strict except these five settings, and
-changing any requires explicit `--allow_performance_change_on_resume true`.
-Legacy missing flags mean the historical defaults. Each permitted transition
-archives the complete previous/requested recipe and changed values in
-`resume-transition-<step>-<UTC>.json`. This record describes requested execution;
-only successful Trainer loading/training establishes that resume actually worked.
-Other settings, data fingerprints, optimizer schedule, global/per-device batch,
-seeds, ignore_data_skip and arm must match. Do not use this flag to change them.
-Small floating-point differences are expected; bitwise equivalence is not claimed.
+## Launch and artifacts
 
-Before the long queue, `scripts/check_optimized_resume.py` observes native HF
-restoration from full copies of each real checkpoint5000. Control and optimized
-runs each take exactly one update and save/evaluate normally. All ranks verify
-restored model, complete AdamW state, scheduler and RNG against the source files;
-the two paths must consume the identical ordered microbatches. The checker does
-not replace native loading, RNG handling, sampler skipping or optimization.
-Predeclared acceptance bounds: parameter relative L2<=1e-5 and difference<=5%
-of the control update; first/second moment relative L2<=3%; final LM loss delta
-<=0.001. Scheduler states and optimizer step counters must match exactly.
-The gate writes `resume-smoke/verified.json` only after every arm passes.
-
-Production resumes fresh checksum-verified copies of the original5000 checkpoints,
-not the smoke outputs. Source directory:
+Source checkpoints remain intact at:
 `/mnt/local/_outputs/deep-llms_th2/deep-kv-BFG-5000-20260929-a01/production/run`.
-New root: `/mnt/local/_outputs/deep-llms_th2/deep-kv-BFG-10000-20260929-a01`.
-Production arms: `production/run/continuation/{B,F,G}` beneath that root.
-Stop at10,000 total updates /10,485,760,000 input tokens, keeping the full schedule.
+Active root:
+`/mnt/local/_outputs/deep-llms_th2/deep-kv-BFG-10000-20260929-a02`.
+Production arms are under `production/run/continuation/{B,F,G}`.
+They use fresh checksum-verified original step-5,000 copies, not smoke outputs.
 
-Launch copies the resource Accelerate YAML to the actual HF cache, compares bytes,
-checks8 processes/BF16/MULTI_GPU and runs `accelerate env`. Existing supervisor
-rechecks approved burn identities, signals only verified worker PIDs, waits and
-requires all eight GPUs free. The same supervisor restores and verifies enhanced
-burns after queue success or failure, after cleaning only its own descendants.
-No environment, driver, CUDA or package installation is part of this launch.
+The launch copied resources/accelerate_config.yaml into the actual cache,
+`/dev/shm/.cache/huggingface/accelerate/default_config.yaml`, compared bytes and
+verified eight-process BF16 MULTI_GPU with `accelerate env`. Only freshly verified
+burn worker identities were stopped. All eight GPUs were empty at 16:22:52 before
+the retry. Native production B started at 16:31:44 after the successful gate and
+fresh checkpoint staging. No environment, CUDA, driver or package changes occurred.
+The existing supervisor restores and verifies enhanced burns after queue success
+or failure, after cleaning only its own descendants and checking GPUs are free.
 
-Local validation:30 existing/extended CPU tests passed, including all-arm model
-checks and B/F/G native Trainer state/data/optimizer continuation, rejection of
-unauthorized metadata changes, and numerical comparisons. Two additional targeted
-tests passed: the observational gate on a real tiny saved G checkpoint plus queue
-contracts, and production causal-path rejection of padded/segmented contexts.
-Remote gate and launch status must be checked separately; this document does not
-assert that they have run or passed yet.
+Launch commit: 4daa75c. Startup audit: 967843b.
+49 small source artifacts, source hashes, production copy manifests, CLI cutoffs,
+transition settings and all-rank receipts verified locally under
+`artifacts/optimized-resume-20260929-a02/`. Initial attempt artifacts remain in
+`artifacts/optimized-resume-20260929-a01/`.
+Final startup log SHA256:
+`63dcc975edd3167c4bf7b830ab72858a74de3ddf930040de46611f3a19607f43`.

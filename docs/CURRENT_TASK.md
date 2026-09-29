@@ -1,5 +1,34 @@
 # Current task
 
+## B/F/G 10,000-step continuation running (2026-09-29 16:34 UTC)
+
+See BFG_OPTIMIZED_RESUME_20260929.md. Retry launch4daa75c passed the unchanged
+real-checkpoint numerical gate for all3 arms. Selected optimization disables
+checkpoint_layers/checkpoint_lm/checkpoint_aux only; explicit attention mask and
+LM chunks128 remain original. Native HF Trainer/Accelerate is unchanged.
+
+Audit967843b at16:34:12 confirms production B at5040, finite loss/gradient and
+continued LR~0.0002884. All8 GPUs have one train.py worker,98–99% utilization,
+119192MiB each. Early B throughput~2.5s/update. B started16:31:44; F then G are
+queued, each from original5000 to total10000. Full schedule28600/warmup1430,
+micro16/accum4/world8/seq2048/data/seeds/EOS packing remain fixed.
+
+Active root: /mnt/local/_outputs/deep-llms_th2/deep-kv-BFG-10000-20260929-a02.
+Production: production/run/continuation/{B,F,G}. Original5000 runs are preserved;
+production staging SHA256s match controls/source. All24 optimized rank receipts
+match restored model/optimizer/scheduler/RNG and next batches against controls;
+next batches match across B/F/G. Parameter relative L2<=4.20e-6, first moment
+<=0.002158, second moment<=0.00002041, LM delta<=4.1e-6; gate passed unchanged.
+
+Accelerate resource/cache bytes and eight-GPU BF16 env verified. Previous a01
+failure automatically restored verified burns16:16:04; retry freshly reclaimed
+those identified workers, with all GPUs empty16:22:52. Existing supervisor will
+restore/verify burns after this queue succeeds or fails. No env/driver installs.
+49 small artifacts/source hashes verified under artifacts/optimized-resume-20260929-a02/.
+Raw startup log SHA256:63dcc975edd3167c4bf7b830ab72858a74de3ddf930040de46611f3a19607f43.
+commands.sh restored to#0 after inspection; the active tmux queue continues.
+Next: read-only progress/completion checks; do not submit another training queue.
+
 ## Checkpoint-only gate passed; production staging (2026-09-29 16:30 UTC)
 
 Retry4daa75c/e31c52d passes the unchanged real-checkpoint gate for B/F/G.
