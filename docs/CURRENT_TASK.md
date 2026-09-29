@@ -1,5 +1,19 @@
 # Current task
 
+## FlashAttention environment checked (2026-09-29 06:13 UTC)
+
+Read-only check 96b2f4e verified B200 train_env: torch2.14.0+cu130,
+CUDA13.0, Triton3.8.0, cuDNN9.24.0.43. PyTorch reports built-in FlashAttention
+available and flash/memory-efficient/cuDNN SDPA backends enabled. Standalone
+flash-attn, flash-attn-3 and flash-attn-4 distributions are absent; flash_attn
+module is absent. Build availability/enabled flags do not establish which
+kernel the training inputs dispatch to; no kernel profiling performed.
+No CUDA context was initialized and no packages or training code changed.
+Evidence: temp/flash-attention-env-check-20260929-a01.log, SHA256
+aa4fede1b9a0be312ecb9a58cad04a8c829eeffe208d265eac9956dc073752f2.
+commands.sh restored to #0. B/F/G queue remains as previously configured;
+this environment check did not take a new training-progress snapshot.
+
 ## B complete at 5,000; F running; G queued (2026-09-29 05:33 UTC)
 
 Read-only check ae585c5 at 05:33:38 UTC on thiennh-p6-78gg-worker-0 confirms

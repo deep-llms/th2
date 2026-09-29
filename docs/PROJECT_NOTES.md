@@ -1,5 +1,16 @@
 # Project notes
 
+## B200 FlashAttention availability (2026-09-29)
+
+Live train_env inspection at 06:13:57 UTC: PyTorch2.14.0+cu130 has built-in
+FlashAttention compiled and the flash SDPA backend enabled; memory-efficient
+and cuDNN backends are also enabled. Triton3.8.0 and cuDNN9.24.0.43 installed.
+No standalone flash-attn/flash-attn-3/flash-attn-4 package or flash_attn module.
+Current train.py selects SDPA, so absence of the external package alone does
+not imply unfused attention. Actual per-call backend remains unprofiled.
+CPU-only inspection 96b2f4e left training/environment unchanged; evidence in
+temp/flash-attention-env-check-20260929-a01.log.
+
 ## B continuation result at 5,000 updates (2026-09-29)
 
 B completed its additional 2,500 updates at 05:26:49 UTC, exit zero, total
