@@ -19,6 +19,11 @@ class BenchmarkTests(unittest.TestCase):
     def test_native_qwen_matches_wrapped_objective_and_gradients(self):
         self.assertLess(validate_variant('original',True,'A')['gradient_relative_l2'],2e-5)
 
+    def test_chunk_size_and_checkpoint_recomputation_preserve_gradients(self):
+        for enabled in (True,False):
+            value=validate_variant('causal',False,'G',checkpoint_layers=enabled,lm_chunk=64)
+            self.assertLess(value['gradient_relative_l2'],2e-5)
+
     def test_fast_path_refuses_padding_and_segment_masks(self):
         model=configure_model('causal').from_scratch(config(),'B',consumer=2,deep_target=4)
         with self.assertRaisesRegex(ValueError,'fully packed'):

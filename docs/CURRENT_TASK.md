@@ -2,6 +2,25 @@
 
 ## Authorized B200 performance investigation (2026-09-29)
 
+Install93a404d succeeded. CPU-only preflight634b56b at12:08:39 UTC confirmed
+perf_env torch2.14.0+cu130, transformers5.9.0, accelerate1.13.0, datasets4.8.5,
+FA4 4.0.0b32, CUTLASS DSL4.8.0, cuDNN9.24.0.43 and Triton3.8.0; FA4 imports.
+All eight GPUs have1000W limits and NV18 connectivity. Four CPU tests passed,
+including native-Qwen/causal-mask/chunk/checkpoint loss and gradient equivalence.
+
+Benchmark launch prepared: performance-20260929-a01 under the usual outputs
+root,14 sequential eight-GPU cases at18 updates each, measured updates6-18;
+profile update3 separately. Cases: current A/native A; current B/no decoder
+checkpoint/B LM chunk512/causal-mask B/combined fast B/microbatch32 B; current
+and fast F/G; fast B repeated in perf_env, then FA4 backbone B. Auxiliary
+attention and F/G losses stay unchanged. Both microbatch settings use1M tokens
+per update (16x4x8x2048 versus32x2x8x2048); summary verifies identical first
+global batches and records data fingerprints. Original full schedule and data
+pipeline retained; monitoring/checkpoint overhead excluded from timed updates.
+Each case runs BF16 loss/gradient validation before the real training probe.
+Use existing supervisor to reclaim verified burns, verify GPUs free and restore
+burns on success/failure. Production trainer/model files remain unchanged.
+
 User requests diagnosis of B200 throughput versus the earlier H100/H200 run,
 and authorizes a separate FlashAttention environment and short training tests.
 Keep the completed scientific runs and production trainer/model unchanged.

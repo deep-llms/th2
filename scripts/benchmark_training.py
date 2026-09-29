@@ -81,7 +81,7 @@ def objective(model, result):
         result['k_sum']+result['v_sum'])/(2*result['kv_count'])
 
 
-def validate_variant(backend, native, arm, device='cpu', bf16=False):
+def validate_variant(backend, native, arm, device='cpu', bf16=False, checkpoint_layers=False, lm_chunk=32):
     import copy
     import torch
     from transformers import Qwen3Config
@@ -94,6 +94,8 @@ def validate_variant(backend, native, arm, device='cpu', bf16=False):
     options = dict(consumer=2, deep_target=4, checkpoint_layers=False, lm_chunk=32)
     reference = DeepKV.from_scratch(copy.deepcopy(cfg), arm, **options).to(device)
     candidate = configure_model(backend, native).from_scratch(copy.deepcopy(cfg), arm, **options).to(device)
+    candidate.checkpoint_layers=checkpoint_layers
+    candidate.lm_chunk=lm_chunk
     # Nonzero branch output tests attention/backbone gradients beyond zero-init.
     if reference.aux is not None:
         with torch.no_grad():
@@ -126,7 +128,8 @@ def worker(backend, native, variant):
     from accelerate import PartialState
     state=PartialState()
     run_config=json.loads(Path(sys.argv[1]).read_text())
-    validation=validate_variant(backend,native,run_config['arm'],state.device,True)
+    validation=validate_variant(backend,native,run_config['arm'],state.device,True,
+        checkpoint_layers=run_config.get('checkpoint_layers',True),lm_chunk=run_config.get('lm_chunk',128))
     torch.cuda.empty_cache()
     train.DeepKV=configure_model(backend,native)
     callbacks=[]
@@ -151,6 +154,7 @@ def worker(backend, native, variant):
         def __init__(self,*args,**kwargs):
             super().__init__(*args,**kwargs)
             self.rows=[];self.profiler=None;self.profile=None;self.previous=None
+            self.allocated=self.reserved=0
             callbacks.append(self)
 
         def on_step_begin(self,args,state,control,**kwargs):
@@ -170,6 +174,9 @@ def worker(backend, native, variant):
             self.rows.append(dict(step=state.global_step,compute_seconds=end-self.begin,
                 interval_seconds=None if self.previous is None else end-self.previous,**self.latest))
             self.previous=end
+            if state.global_step>=6:
+                self.allocated=torch.cuda.max_memory_allocated()
+                self.reserved=torch.cuda.max_memory_reserved()
             if state.global_step==3 and self.profiler is not None:
                 self.profiler.stop()
                 averages=self.profiler.key_averages()
@@ -193,7 +200,7 @@ def worker(backend, native, variant):
     trainer=callback.trainer
     record=dict(status='ok',variant=variant,backend=backend,native=native,rank=trainer.args.process_index,
         world_size=trainer.args.world_size,steps=callback.rows,validation=validation,
-        allocated_peak_bytes=torch.cuda.max_memory_allocated(),reserved_peak_bytes=torch.cuda.max_memory_reserved(),
+        allocated_peak_bytes=callback.allocated,reserved_peak_bytes=callback.reserved,
         profile=callback.profile,input_sha256=trainer.input_digest.hexdigest(),first_batches=trainer.first_batches,
         input_rows=trainer.input_rows,
         optimizer=type(trainer.optimizer).__name__,wrapped_model=type(trainer.model_wrapped).__name__)
