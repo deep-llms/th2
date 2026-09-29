@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-BFG-10000-status-20260929-a02
+#th2-78gg-BFG-10000-status-20260929-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
@@ -17,7 +17,7 @@ for name in ['production/run/run.json','production/supervisor.json','production/
  if path.exists():
   print('ARTIFACT_JSON',json.dumps({'path':name,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'value':json.loads(path.read_text())}),flush=True)
 for path in sorted((root/'production/run/resume-smoke').glob('*/*/resume-check-*.json')):
- print('RESUME_RANK',str(path.relative_to(root)),path.read_text(),flush=True)
+ print('ARTIFACT_JSON',json.dumps({'path':str(path.relative_to(root)),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'content':path.read_text()}),flush=True)
 for arm in 'BFG':
  path=root/'production/run/continuation'/arm/'train_config.json'
  if path.exists():
