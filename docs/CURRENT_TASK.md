@@ -1,5 +1,39 @@
 # Current task
 
+## Checkpoint and capacity investigation complete (2026-09-29 15:01 UTC)
+
+See B200_CHECKPOINT_CAPACITY_20260929.md. Fresh capacity-20260929-a01 completed
+41 probes: 25 successful eight-GPU runs and 16 controlled CUDA OOMs. Best matched
+1,048,576-token setting is microbatch 16 / accumulation 4 with decoder, LM-loss
+and F/G auxiliary-loss checkpointing disabled, causal SDPA and LM chunks 512.
+B/F/G times: 2.0906 / 2.4745 / 2.7053 seconds per update; peak allocated memory
+111.71 / 113.15 / 121.64 GiB, reserved 112.65 / 116.03 / 124.28 GiB.
+
+Largest passing microbatch with all checkpointing off: B26, F26, G24; next integer
+OOMed in each case. Retaining loss checkpointing permits 30 for all three, with
+31 failing. These limits leave little headroom and are not fixed-global-batch
+production recommendations. Microbatch 32 OOMed without decoder checkpointing.
+B with decoder checkpointing and microbatch 64 fits (81.67 GiB allocated), but
+is slower at 2.6532 seconds/update than checkpoint-free microbatch 16.
+
+21 CPU tests passed, including 56 arm/toggle combinations for loss, gradients,
+restored AdamW moments/next weights and scheduler. Successful probes passed
+CUDA BF16 objective/gradient validation on all eight ranks. Matched 18-update
+final LM losses differed by at most 0.0000253, not bitwise equality. Original
+production CLI/recipe, strict resume checks, environments and drivers remain
+unchanged. The new model switches default on; only the benchmark CLI exposes
+them. A future scientific resume with new settings still needs a tested,
+recorded metadata policy; no production resume was launched here.
+
+Queue completed 14:58:33; automatic enhanced burn handoff verified 14:59:39.
+Live audit f353a59 at 15:01:32–15:01:45 confirmed all eight approved workers,
+100% utilization, 155212 MiB/GPU, guard released, cycles 150→160 and collective
+payload 166.55→177.66 GiB. 429 artifacts/source hashes verified locally under
+artifacts/capacity-20260929-a01/. Raw audit log SHA256:
+17b85a9b0a2dc1023df59530421eb522dbd4d851c75a02b972e2a18ef76734f5.
+commands.sh restored to #0; no additional probes or training queued.
+
+
 ## Authorized checkpoint/capacity investigation (2026-09-29)
 
 User requests testing remaining loss checkpoint removal and maximum fitting
