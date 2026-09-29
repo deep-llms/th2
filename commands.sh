@@ -1,32 +1,56 @@
 #1 +60+a
-#th2-78gg-performance-status-20260929-a07
+#th2-78gg-performance-failure-audit-20260929-a01
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
 export CUDA_VISIBLE_DEVICES=''
-/mnt/local/conda-py311/envs/train_env/bin/python - <<'PY'
-import json,statistics
+/mnt/local/conda-py311/envs/train_env/bin/python - <<'CHECK'
+import hashlib,json,time,re
 from pathlib import Path
 from datetime import datetime,timezone
+from scripts.verified_gpu_reclaim import inspect,process
+from scripts.train_then_burn import approved_launcher,BURN_HASH,burn_progress
 root=Path('/mnt/local/_outputs/deep-llms_th2/performance-20260929-a01')
-print('PERF_STATUS',datetime.now(timezone.utc).isoformat(),flush=True)
-for name in ['preflight.json','production/gpus-free-before-training.json','production/supervisor.json','production/run/run.json','production/run/benchmark-summary.json','production/burn-verified.json']:
- path=root/name
- if path.exists():print('ARTIFACT',name,path.read_text(),flush=True)
- else:print('ABSENT',name,flush=True)
-for case in json.loads((root/'variants.json').read_text()):
- name=case[0];path=root/'production/run'/name
- if all((path/f'benchmark-rank{i}.json').exists() for i in range(8)):
-  ranks=[json.loads((path/f'benchmark-rank{i}.json').read_text()) for i in range(8)]
-  wall=[max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(5,18)]
-  compute=[max(r['steps'][i]['compute_seconds'] for r in ranks) for i in range(5,18)]
-  print('MEASUREMENT',json.dumps(dict(name=name,seconds=statistics.mean(wall),compute_seconds=statistics.mean(compute),
-   stdev=statistics.stdev(wall),peak_gib=max(r['allocated_peak_bytes'] for r in ranks)/2**30,
-   validation=ranks[0]['validation'],wrapped_model=ranks[0]['wrapped_model'])),flush=True)
- log=root/'production/run'/f'{name}.log'
- if log.exists():
-  with log.open('rb') as f:
-   f.seek(max(0,log.stat().st_size-7000));text=f.read().decode(errors='replace')
-  print('LOG_TAIL',name,'\n'+'\n'.join(text.replace('\r','\n').splitlines()[-12:]),flush=True)
-PY
+run=root/'production/run'
+print('PERFORMANCE_FINAL_CHECK',datetime.now(timezone.utc).isoformat(),flush=True)
+print('SOURCE_HASHES',json.dumps({name:hashlib.sha256(Path(name).read_bytes()).hexdigest() for name in
+ ['scripts/benchmark_training.py','train.py','deep_kv/model.py','deep_kv/training.py','resources/accelerate_config.yaml']}),flush=True)
+report=json.loads((run/'run.json').read_text())
+print('QUEUE',json.dumps(report),flush=True)
+supervisor=json.loads((root/'production/supervisor.json').read_text())
+print('SUPERVISOR',json.dumps(supervisor),flush=True)
+assert report['status']=='failed'
+print('FA4_TRACEBACK', (run/'fa4-B.log').read_text()[-180000:], flush=True)
+assert 'burn' in supervisor and 'handoff_error' not in supervisor
+
+for job in report['jobs']:
+ if job['status']!='ok': continue
+ for artifact in job.get('artifacts',[]):
+  path=run/artifact['path']
+  assert hashlib.sha256(path.read_bytes()).hexdigest()==artifact['sha256']
+paths=[root/'preflight.json',root/'jobs.json',root/'variants.json',root/'gpu_inspection.json',
+ root/'production/gpus-free-before-training.json',root/'production/supervisor.json',
+ root/'production/burn-verified.json',run/'run.json']
+for variant in json.loads((root/'variants.json').read_text()):
+ path=run/variant[0]
+ if not (path/'benchmark-rank0.json').exists():continue
+ paths.extend([path/'result.json',path/'train_config.json',*[path/f'benchmark-rank{i}.json' for i in range(8)]])
+for path in paths:
+ raw=path.read_bytes()
+ print('ARTIFACT_JSON',json.dumps(dict(path=str(path.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),content=raw.decode())),flush=True)
+source=str(Path('resources/llm_pretrain_burn.py').resolve())
+before=inspect()
+assert not before['guard_disabled'] and len(before['workers'])==8
+assert all(approved_launcher(process(pid)['ppid'],{source:BURN_HASH}) for pid in before['workers'])
+burn=root/'production/burn.log'
+a=burn.read_text();assert burn_progress(a)
+time.sleep(12)
+b=burn.read_text();after=inspect()
+assert before['workers']==after['workers']
+progress=lambda text: re.findall(r'gpu_burn_progress rank=0 completed_cycles=(\d+) .*?completed_collective_payload_gib=([\d.]+)',text)[-1]
+x,y=progress(a),progress(b)
+assert int(y[0])>int(x[0]) and float(y[1])>float(x[1])
+print('LIVE_BURN',json.dumps(dict(before=before,after=after,progress_before=x,progress_after=y)),flush=True)
+print('PERFORMANCE_PARTIAL_AUDIT_VERIFIED',flush=True)
+CHECK
 nvidia-smi --query-gpu=index,utilization.gpu,memory.used,power.draw,power.limit,clocks.sm,clocks.mem,temperature.gpu --format=csv
