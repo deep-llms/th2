@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 
 FAST = dict(checkpoint_layers=False, checkpoint_lm=False, checkpoint_aux=False,
-            causal_attention=True, lm_chunk=512)
+            causal_attention=False, lm_chunk=128)
 
 
 def write(path, value):
@@ -119,12 +119,13 @@ def relative_difference(left, right):
     return (delta / max(norm, 1e-100)) ** .5
 
 
-def compare(root, step, arms='BFG', world=8):
+def compare(root, step, arms='BFG', world=8, control_root=None):
     import torch
     from safetensors.torch import load_file
     results = {}
     for arm in arms:
-        control, fast = [root / mode / arm for mode in ('control', 'optimized')]
+        control = (control_root or root / 'control') / arm
+        fast = root / 'optimized' / arm
         for rank in range(world):
             a, b = [json.loads((p / f'resume-check-{rank}.json').read_text()) for p in (control, fast)]
             for record in (a, b):
@@ -137,7 +138,7 @@ def compare(root, step, arms='BFG', world=8):
         configs = [json.loads((p / 'train_config.json').read_text()) for p in (control, fast)]
         from train import resume_performance_changes
         changes = resume_performance_changes(*configs, allow=True)
-        assert set(changes) == set(FAST)
+        assert set(changes) == {k for k, v in FAST.items() if configs[0]['pilot'][k] != v}
         assert all(configs[1]['pilot'][k] == v for k, v in FAST.items())
         assert len(list(fast.glob('resume-transition-*.json'))) == 1
         ends = [p / f'checkpoint-{step + 1}' for p in (control, fast)]
@@ -171,11 +172,12 @@ def compare(root, step, arms='BFG', world=8):
         assert abs(losses[0] - losses[1]) <= .001, (arm, losses)
         results[arm] = dict(parameter_relative_l2=relative, control_update_relative_l2=update,
                             moment_relative_l2=moment_errors, eval_lm_losses=losses)
-    write(root / 'verified.json', dict(status='ok', source_step=step, arms=results))
+    write(root / 'verified.json', dict(status='ok', source_step=step, arms=results,
+                                      control_root=str((control_root or root / 'control').resolve())))
     print('REAL_CHECKPOINT_RESUME_VERIFIED', json.dumps(results), flush=True)
 
 
-def make_jobs(recipe_path, root, source_root, step, end):
+def make_jobs(recipe_path, root, source_root, step, end, control_root=None):
     from deep_kv.__main__ import jobs
     root.mkdir(parents=True, exist_ok=True)
     sources = root / 'resume-sources.json'
@@ -190,6 +192,8 @@ def make_jobs(recipe_path, root, source_root, step, end):
             required_outputs=[dict(path=destination.replace('{run_dir}/', '') + '/resume_inputs.json',
                                    json_equals=dict(status='ok', source_step=step))])
     for mode, config in [('control', recipe_path), ('optimized', optimized)]:
+        if mode == 'control' and control_root is not None:
+            continue  # Reuse completed, unchanged controls; compare still checks all their state/data receipts.
         prefix = '{run_dir}/resume-smoke/' + mode
         items.append(staging(prefix, f'stage-smoke-{mode}'))
         for job in jobs(config, step + 1, 'BFG')['jobs'][:-1]:
@@ -206,6 +210,8 @@ def make_jobs(recipe_path, root, source_root, step, end):
     items.append(dict(name='verify-resume', argv=['{python}', '-m', 'scripts.check_optimized_resume',
         'compare', '--root', '{run_dir}/resume-smoke', '--step', str(step)],
         required_outputs=[dict(path='resume-smoke/verified.json', json_equals=dict(status='ok'))]))
+    if control_root is not None:
+        items[-1]['argv'] += ['--control-root', str(control_root)]
     items.append(staging('{run_dir}/continuation', 'stage-continuation'))
     for job in jobs(optimized, end, 'BFG')['jobs']:
         job['argv'] = [arg.replace('{run_dir}', '{run_dir}/continuation') for arg in job['argv']]
@@ -225,12 +231,14 @@ def main():
     p = sub.add_parser('compare')
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--step', type=int, required=True)
+    p.add_argument('--control-root', type=Path)
     p = sub.add_parser('make-jobs')
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--source-root', type=Path, required=True)
     p.add_argument('--recipe', type=Path, required=True)
     p.add_argument('--step', type=int, required=True)
     p.add_argument('--end', type=int, required=True)
+    p.add_argument('--control-root', type=Path)
     args, extra = parser.parse_known_args()
     if args.command == 'worker':
         worker(args.receipt_prefix, extra)
@@ -238,9 +246,9 @@ def main():
         if extra:
             parser.error(f'Unknown arguments: {extra}')
         if args.command == 'compare':
-            compare(args.root, args.step)
+            compare(args.root, args.step, control_root=args.control_root)
         else:
-            make_jobs(args.recipe, args.root, args.source_root, args.step, args.end)
+            make_jobs(args.recipe, args.root, args.source_root, args.step, args.end, args.control_root)
 
 
 if __name__ == '__main__':

@@ -98,6 +98,16 @@ class TrainingTests(unittest.TestCase):
                     self.assertEqual(job['gpus'], list(range(8)))
                     self.assertIn('--resume_from_checkpoint', job['argv'])
                     self.assertEqual(job['argv'][job['argv'].index('--max_steps') + 1], '3')
+            reused = root / 'reuse'
+            make_jobs(recipe, reused, root / 'source', 2, 3, smoke / 'control')
+            load_jobs(reused / 'jobs.json')
+            generated = json.loads((reused / 'jobs.json').read_text())['jobs']
+            self.assertFalse(any('smoke-control' in job['name'] for job in generated))
+            # A read-only external control gives the same numerical/state checks.
+            external = root / 'external-control'
+            shutil.move(smoke / 'control', external)
+            (smoke / 'verified.json').unlink()
+            compare(smoke, 2, arms='G', world=1, control_root=external)
 
     def test_real_entry_point_all_arms_cutoff_report_and_resume(self):
         with tempfile.TemporaryDirectory() as tmp:

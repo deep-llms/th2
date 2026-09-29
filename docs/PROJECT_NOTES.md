@@ -1,5 +1,18 @@
 # Project notes
 
+## Initial optimized gate rejected; checkpoint-only retry prepared (2026-09-29)
+
+See BFG_OPTIMIZED_RESUME_20260929.md. a01's six smoke runs passed all48 exact
+restoration/data receipts, but combined B parameter difference1.12609e-5 exceeded
+predeclared1e-5. Gate failed16:14:53; no production continuation ran. Automatic
+burn recovery started; all8 burn workers observed16:15:59, final handoff pending
+at that snapshot.73 source artifacts verified locally. Keep every gate tolerance.
+Fresh a02 disables only all3 checkpoint types, retaining original explicit mask
+and lm_chunk128. Reuse completed control receipts read-only, rerun3 optimized
+checks, then continue from fresh original5000 copies to10000 only if gate passes.
+Same8 GPUs/micro16/accum4/schedule28600/warmup1430 and automatic burn recovery.
+Next: verify retry preflight/free GPUs, numerical gate, actual production start.
+
 ## Authorized optimized B/F/G continuation to 10,000 (2026-09-29)
 
 See BFG_OPTIMIZED_RESUME_20260929.md. Local train.py exposes tested execution
