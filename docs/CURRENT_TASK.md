@@ -1,5 +1,34 @@
 # Current task
 
+## B/F/G continuation to 5,000 updates authorized (2026-09-29)
+
+User selected 5,000 total updates: resume each arm's complete checkpoint-2500
+for 2,500 additional updates, sequentially using all eight B200 GPUs per arm.
+Keep max_steps=28600, warmup_steps=1430, data/order/seed, batch and losses fixed.
+Read-only preflight 4dbf931 at 02:52:58 UTC passed for all three checkpoints:
+315 model tensors, 314 optimizer states, scheduler last_epoch2500 and LR
+0.0002989680996734328, all eight RNG files, matching data/config and ample disk.
+Evidence: temp/BFG-resume-preflight-20260929-a01.log.
+
+Launch job: th2-78gg-deep-kv-BFG-5000-20260929-a01.
+Fresh output: /mnt/local/_outputs/deep-llms_th2/deep-kv-BFG-5000-20260929-a01.
+Original B is in deep-kv-2500-20260928-a02/production/run/B; F/G are in
+deep-kv-FG-2500-20260928-a01/production/run/{F,G}, under the same outputs root.
+The first CPU queue job copies complete checkpoints/configs, checks every
+checkpoint file's SHA256, and records resume_inputs.json; originals remain
+untouched. Native Trainer resumes the copied checkpoints, preserving optimizer,
+scheduler and RNG, with the usual batch skipping. No model/trainer changes.
+
+Local actual B/F/G copied-checkpoint continuation test passed: bit-identical
+weights against uninterrupted training, unchanged source files, refusal of
+reused destinations and incomplete checkpoints (tests/test_resume_staging.py;
+temp/BFG-resume-staging-tests.log, 1 test, 5.715s).
+Launch copies/verifies Accelerate config and prints accelerate env, verifies
+and stops only approved burn workers, then records all eight GPUs free.
+The existing supervisor restores/validates enhanced burns after queue success
+or failure. Next: verify launch receipts and B progress beyond update2500;
+then restore commands.sh to #0. Submission alone is not a running-job claim.
+
 ## F/G complete; automatic final burns verified live (2026-09-29 02:40 UTC)
 
 User explicitly requested another read-only check after the SSH failure.

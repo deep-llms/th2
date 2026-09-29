@@ -1,5 +1,18 @@
 # Project notes
 
+## Native checkpoint continuation (2026-09-29)
+
+User authorized B/F/G to continue from update2500 to total5000, retaining the
+28600-update cosine schedule and1430-update warmup. A fresh sequential queue
+uses scripts/stage_deep_kv_resume.py to copy full checkpoints plus saved
+train_config.json; prior result.json becomes previous-result.json. Every
+checkpoint file is checksum-verified. This preserves original outputs while
+satisfying train.py's checkpoint-parent/output-directory check and the generic
+runner's fresh-output contract. No weights-only restart or schedule reset.
+tests/test_resume_staging.py exercises actual B/F/G Trainer continuation and
+matches uninterrupted CPU weights exactly, preserving all source files.
+
+
 ## F/G complete; automatic final burns verified live (2026-09-29 02:40 UTC)
 
 User explicitly requested another read-only check after the SSH failure.
