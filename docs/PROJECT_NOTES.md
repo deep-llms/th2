@@ -1,5 +1,23 @@
 # Project notes
 
+## B complete at 10,000; F running (2026-09-29 20:45 UTC)
+
+Read-only audit018b098 at20:45:12 confirms B finished successfully20:00:56,
+exactly10000 steps /10485760000 input tokens, full schedule28600. Held-out LM
+loss3.0293528655393467 on4882 rows, down from3.208608250096011 at5000. The
+additional5000-step run took3h29m12s including startup/evaluation/checkpointing.
+
+F started20:00:56 and reached5907 by the snapshot; latest saved checkpoint5750.
+Throughput~2.85s/update; finite loss/gradients and LR~0.0002824 at5900. All8 GPUs
+have one train.py worker,94–99% utilization,127774MiB each. G remains queued at
+its staged5000 checkpoint. Supervisor/tmux remain active, no failure reported.
+Automatic burn recovery remains configured for queue success/failure.
+
+Four small artifacts and live GPU inspection stored in
+artifacts/BFG-status-20260929-2045/; B result source hash matches queue receipt.
+Raw log SHA256:8b398e25db28380de288107e01b49f9d936a501f99c6e7631c76e811bb6c1e3b.
+No training/process/config changes. commands.sh restored to#0 after inspection.
+
 ## B/F/G 10,000-step continuation running (2026-09-29 16:34 UTC)
 
 See BFG_OPTIMIZED_RESUME_20260929.md. Retry launch4daa75c passed the unchanged
