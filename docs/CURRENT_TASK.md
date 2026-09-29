@@ -1,5 +1,20 @@
 # Current task
 
+## Latest B200 check blocked by runner SSH access (2026-09-29 02:11 UTC)
+
+User requested a fresh completion/status check. Read-only submission a9619f9,
+job th2-78gg-FG-completion-check-20260929-0210, failed before a project log was
+returned. Controller record at 2026-09-28 19:11:03 (UTC-7; 02:11:03 UTC Sep29):
+FAILED(rc=255), <host>: Permission denied (publickey).
+Evidence: temp/FG-controller-20260929-0211.log.
+No current G result or final-burn verification was obtained. This is an access
+failure, not evidence that training failed or the node died. Last verified
+observation remains Sep28 23:03:48 UTC: F complete2500, G runningstep43, eight
+active GPUs. Do not resubmit, reclaim, or repair infrastructure in response;
+wait for operator restoration of runner SSH access, then retrieve final queue,
+F/G results, supervisor and fresh live burn progress. commands.sh restored to
+#0; no training/data/process changed by this check.
+
 ## F complete; G running (2026-09-28 23:03 UTC)
 
 Read-only status ac31b69 on thiennh-p6-78gg-worker-0 at 23:03:48 UTC confirms
