@@ -1,5 +1,16 @@
 # Project notes
 
+## B continuation result at 5,000 updates (2026-09-29)
+
+B completed its additional 2,500 updates at 05:26:49 UTC, exit zero, total
+5,242,880,000 input tokens. Held-out LM loss: 3.208608250096011 (previously
+3.505886970597037 at step 2500), same 4882 evaluation rows. Result file hash
+matches the runner receipt; state reports global_step5000/max_steps28600.
+F then started automatically; read-only check ae585c5 at 05:33:38 UTC found
+step2589 and all eight GPUs training at 99% utilization. G remains queued.
+Evidence: artifacts/deep-kv-BFG-status-20260929-0533/ and
+temp/BFG-status-20260929-0532.log. No 5,000-step cross-arm comparison yet.
+
 ## Native checkpoint continuation (2026-09-29)
 
 User authorized B/F/G to continue from update2500 to total5000, retaining the

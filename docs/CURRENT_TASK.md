@@ -1,5 +1,27 @@
 # Current task
 
+## B complete at 5,000; F running; G queued (2026-09-29 05:33 UTC)
+
+Read-only check ae585c5 at 05:33:38 UTC on thiennh-p6-78gg-worker-0 confirms
+B finished successfully at 05:26:49 UTC (2h24m53s for the continuation).
+Result and trainer state both report step 5000 / schedule 28600; input tokens
+5242880000. Final held-out LM loss is 3.208608250096011, down from
+3.505886970597037 at step 2500, on the same 4882 evaluation rows.
+Pulled result SHA256 matches the successful queue job's artifact receipt.
+
+F started automatically at 05:26:49 UTC and reached step 2589 by the check.
+At step 2580: LM loss 3.504, route loss 0.1836, learning rate 0.0002988;
+finite gradient norm. Throughput about 4 seconds/update. All eight B200 GPUs
+have one train.py worker each, 99% utilization and 25486 MiB used per GPU.
+G remains queued. Supervisor is running; final comparison/completion/burn
+receipts are absent as expected while training continues. Approximate finish:
+F around 08:20 UTC; G/queue around 11:30 UTC, subject to overhead.
+
+Evidence: temp/BFG-status-20260929-0532.log, SHA256
+3984a28376cf856ba07a02ecf19cf0d3c1687a24192455bf2f84e74a6eec7826;
+verified small artifacts in artifacts/deep-kv-BFG-status-20260929-0533/.
+This check did not change training or GPU processes. commands.sh restored to #0.
+
 ## B resumed on eight GPUs; F/G queued (2026-09-29 03:07 UTC)
 
 Follow-up57d5674 at03:07:21 UTC confirms B reached2582, finite training loss
