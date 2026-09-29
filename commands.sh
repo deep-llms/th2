@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-capacity-status-20260929-a09
+#th2-78gg-capacity-status-20260929-a10
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
@@ -22,6 +22,8 @@ for relative in ['production/run/run.json','production/supervisor.json','product
   if 'results' in value:
    value['results']={n:{k:v for k,v in r.items() if k not in ('input_rows','validations','free_after')} for n,r in value['results'].items()}
   print('ARTIFACT',relative,json.dumps(value),flush=True)
+for path in (root/'production/run/probes').glob('*-b16/result.json'):
+ print('ABLATION_EVAL',path.parent.name,json.dumps(json.loads(path.read_text())['evaluation']),flush=True)
 paths=sorted((root/'production/run/probes').glob('*.log'),key=lambda p:p.stat().st_mtime)
 if paths:
  print('LATEST_ATTEMPT_LOG',paths[-1].name,flush=True)
