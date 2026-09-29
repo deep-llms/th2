@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-performance-status-20260929-a01
+#th2-78gg-performance-status-20260929-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
@@ -22,9 +22,7 @@ for case in json.loads((root/'variants.json').read_text()):
   compute=[max(r['steps'][i]['compute_seconds'] for r in ranks) for i in range(5,18)]
   print('MEASUREMENT',json.dumps(dict(name=name,seconds=statistics.mean(wall),compute_seconds=statistics.mean(compute),
    stdev=statistics.stdev(wall),peak_gib=max(r['allocated_peak_bytes'] for r in ranks)/2**30,
-   validation=ranks[0]['validation'],wrapped_model=ranks[0]['wrapped_model'],
-   top_ops=ranks[0]['profile']['top_ops'][:8],attention_ops=ranks[0]['profile']['attention_ops'],
-   top_kernels=ranks[0]['profile']['top_kernels'][:8])),flush=True)
+   validation=ranks[0]['validation'],wrapped_model=ranks[0]['wrapped_model'])),flush=True)
  log=root/'production/run'/f'{name}.log'
  if log.exists():
   with log.open('rb') as f:
