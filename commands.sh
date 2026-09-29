@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-capacity-status-20260929-a10
+#th2-78gg-capacity-status-20260929-a11
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
