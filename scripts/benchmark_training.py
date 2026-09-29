@@ -19,7 +19,7 @@ def write(path, value):
         json.dump(value, handle, indent=2, allow_nan=False)
 
 
-def configure_model(backend='original', native=False):
+def configure_model(backend='original', native=False, checkpoint_lm=True, checkpoint_aux=True):
     import torch
     import deep_kv.model as module
     from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
@@ -48,6 +48,7 @@ def configure_model(backend='original', native=False):
     class BenchmarkModel(module.DeepKV):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
+            self.checkpoint_lm, self.checkpoint_aux = checkpoint_lm, checkpoint_aux
             if backend == 'fa4':
                 self.backbone.config._attn_implementation = 'benchmark_fa4'
             if native and self.arm != 'A':
@@ -82,7 +83,8 @@ def objective(model, result):
         result['k_sum']+result['v_sum'])/(2*result['kv_count'])
 
 
-def validate_variant(backend, native, arm, device='cpu', bf16=False, checkpoint_layers=False, lm_chunk=32):
+def validate_variant(backend, native, arm, device='cpu', bf16=False, checkpoint_layers=False, lm_chunk=32,
+                     checkpoint_lm=True, checkpoint_aux=True):
     import copy
     import torch
     from transformers import Qwen3Config
@@ -94,7 +96,7 @@ def validate_variant(backend, native, arm, device='cpu', bf16=False, checkpoint_
     cfg._attn_implementation = 'sdpa'
     options = dict(consumer=2, deep_target=4, checkpoint_layers=False, lm_chunk=32)
     reference = DeepKV.from_scratch(copy.deepcopy(cfg), arm, **options).to(device)
-    candidate = configure_model(backend, native).from_scratch(copy.deepcopy(cfg), arm, **options).to(device)
+    candidate = configure_model(backend, native, checkpoint_lm, checkpoint_aux).from_scratch(copy.deepcopy(cfg), arm, **options).to(device)
     candidate.checkpoint_layers=checkpoint_layers
     candidate.lm_chunk=lm_chunk
     # Nonzero branch output tests attention/backbone gradients beyond zero-init.
@@ -123,16 +125,17 @@ def validate_variant(backend, native, arm, device='cpu', bf16=False, checkpoint_
                 gradient_parameters=len(a[1]), bf16=bf16)
 
 
-def worker(backend, native, variant):
+def worker(backend, native, variant, checkpoint_lm=True, checkpoint_aux=True, disposable=False):
     import torch
     import train
     from accelerate import PartialState
     state=PartialState()
     run_config=json.loads(Path(sys.argv[1]).read_text())
     validation=validate_variant(backend,native,run_config['arm'],state.device,True,
-        checkpoint_layers=run_config.get('checkpoint_layers',True),lm_chunk=run_config.get('lm_chunk',128))
+        checkpoint_layers=run_config.get('checkpoint_layers',True),lm_chunk=run_config.get('lm_chunk',128),
+        checkpoint_lm=checkpoint_lm,checkpoint_aux=checkpoint_aux)
     torch.cuda.empty_cache()
-    train.DeepKV=configure_model(backend,native)
+    train.DeepKV=configure_model(backend,native,checkpoint_lm,checkpoint_aux)
     callbacks=[]
     original_trainer=train.DeepKVTrainer
 
@@ -142,6 +145,14 @@ def worker(backend, native, variant):
             self.input_digest=hashlib.sha256()
             self.first_batches=0
             self.input_rows=[]
+
+        def _save_checkpoint(self, *args, **kwargs):
+            if not disposable:
+                return super()._save_checkpoint(*args, **kwargs)
+
+        def save_model(self, *args, **kwargs):
+            if not disposable:
+                return super().save_model(*args, **kwargs)
 
         def compute_loss(self,model,inputs,*args,**kwargs):
             if model.training and self.is_in_train and self.state.global_step==0:
@@ -161,7 +172,7 @@ def worker(backend, native, variant):
         def on_step_begin(self,args,state,control,**kwargs):
             if state.global_step==5:
                 torch.cuda.reset_peak_memory_stats()
-            if state.global_step==2 and args.process_index==0:
+            if state.global_step==2 and args.process_index==0 and not disposable:
                 self.profiler=torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU,
                     torch.profiler.ProfilerActivity.CUDA],record_shapes=False)
                 self.profiler.start()
@@ -196,11 +207,19 @@ def worker(backend, native, variant):
 
     train.DeepKVTrainer=BenchTrainer
     train.PilotCallback=Timing
-    train.main()
+    try:
+        train.main()
+    except torch.cuda.OutOfMemoryError as error:
+        # Structured capacity failure only after CUDA objective validation passed.
+        write(Path(run_config['output_dir'])/f'capacity-oom-rank{state.process_index}.json',
+              dict(status='cuda_oom',rank=state.process_index,variant=variant,error=str(error)))
+        raise
     callback,=callbacks
     trainer=callback.trainer
     record=dict(status='ok',variant=variant,backend=backend,native=native,rank=trainer.args.process_index,
         world_size=trainer.args.world_size,steps=callback.rows,validation=validation,
+        checkpoint_lm=checkpoint_lm,checkpoint_aux=checkpoint_aux,disposable=disposable,
+        device_total_bytes=torch.cuda.get_device_properties(state.device).total_memory,
         allocated_peak_bytes=callback.allocated,reserved_peak_bytes=callback.reserved,
         profile=callback.profile,input_sha256=trainer.input_digest.hexdigest(),first_batches=trainer.first_batches,
         input_rows=trainer.input_rows,
@@ -238,9 +257,11 @@ if __name__=='__main__':
     sub=parser.add_subparsers(dest='command',required=True)
     p=sub.add_parser('worker');p.add_argument('--backend',choices=['original','causal','fa4'],default='original')
     p.add_argument('--native',action='store_true');p.add_argument('--variant',required=True);p.add_argument('config')
+    p.add_argument('--no-checkpoint-lm',action='store_true');p.add_argument('--no-checkpoint-aux',action='store_true')
+    p.add_argument('--disposable',action='store_true',help='No weight/optimizer saves or profiler; capacity probes only')
     p=sub.add_parser('summarize');p.add_argument('--root',type=Path,required=True);p.add_argument('--names',nargs='+',required=True)
     args=parser.parse_args()
     if args.command=='worker':
         sys.argv=['train.py',str(Path(args.config).resolve())]
-        worker(args.backend,args.native,args.variant)
+        worker(args.backend,args.native,args.variant,not args.no_checkpoint_lm,not args.no_checkpoint_aux,args.disposable)
     else:summarize(args.root,args.names)

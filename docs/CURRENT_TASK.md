@@ -1,5 +1,29 @@
 # Current task
 
+## Authorized checkpoint/capacity investigation (2026-09-29)
+
+User requests testing remaining loss checkpoint removal and maximum fitting
+microbatch. Fresh capacity-20260929-a01 uses all8 GPUs and train_env, no installs.
+Model adds default-on LM/functional-loss checkpoint switches; production CLI,
+recipe, parameter schema and old resume checks remain unchanged. Benchmark-only
+flags control them. 21 CPU tests passed, including all8 toggle combinations on
+all7 arms: loss, gradients, AdamW moments, next weights and scheduler continuation.
+
+Queue: B/F/G independent remaining-checkpoint ablations at16x4, then fresh-process
+integer capacity searches for retained losses and fastest passing removal; bound64.
+Only typed CUDA OOM receipts permit a failed attempt to continue. Unknown failure
+or timeout aborts. Each successful attempt is18 real Trainer updates; timing6-18,
+no profiler or weight saves. Fixed-global-batch cases16x4/32x2/64x1 verify matching
+first512 packed input rows and fingerprints. Non-divisor batches use accumulation1
+for capacity only; they are not scientifically matched training runs. Also tests
+B with decoder checkpointing and micro64. Recommendations require >=8GiB reserved
+memory headroom, a heuristic rather than a long-run no-OOM guarantee.
+
+Launch copies and verifies Accelerate config/cache and env, inspects approved
+burn identities, uses existing supervised reclamation/free checks, and restores
+verified enhanced burns on success or failure. No scientific checkpoints touched.
+Next: verify launch, collect all-rank results, then audit final live burn progress.
+
 ## B200 performance investigation complete (2026-09-29 12:55 UTC)
 
 All14 intended performance cases completed across original performance-20260929-a01

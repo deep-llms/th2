@@ -99,7 +99,7 @@ class AuxiliaryKV(nn.Module):
 
 class DeepKV(nn.Module):
     def __init__(self, backbone, arm, *, seed=42, consumer=5, deep_target=21,
-                 checkpoint_layers=True, lm_chunk=128):
+                 checkpoint_layers=True, lm_chunk=128, checkpoint_lm=True, checkpoint_aux=True):
         super().__init__()
         if transformers.__version__ != "5.9.0":
             raise ValueError("Deep-KV requires transformers==5.9.0; use sampling_b200/train_env")
@@ -115,6 +115,7 @@ class DeepKV(nn.Module):
         self.kv_loss_weight = kv_loss_weight(arm)
         self.functional_loss = arm in ("F", "G")
         self.checkpoint_layers, self.lm_chunk = checkpoint_layers, lm_chunk
+        self.checkpoint_lm, self.checkpoint_aux = checkpoint_lm, checkpoint_aux
         self.aux = None
         if arm != "A":
             with torch.random.fork_rng(devices=[]):
@@ -271,11 +272,12 @@ class DeepKV(nn.Module):
                 logits = self.backbone.lm_head(h).float()
                 return F.cross_entropy(logits.reshape(-1, logits.shape[-1]), targets.reshape(-1),
                                        ignore_index=-100, reduction="none").view_as(targets).sum(dim=1)
-            lm_rows = lm_rows + (checkpoint(ce, x, y, use_reentrant=False) if self.training else ce(x, y))
+            lm_rows = lm_rows + (checkpoint(ce, x, y, use_reentrant=False)
+                                if self.training and self.checkpoint_lm else ce(x, y))
         counts, tokens = context.targets().sum(dim=1), context.valid.sum(dim=1)
         if self.functional_loss:
             route, msg, queries = self.routing_alignment(predicted, target, context.allowed(),
-                message=self.arm == "G", checkpoint_chunks=self.training)
+                message=self.arm == "G", checkpoint_chunks=self.training and self.checkpoint_aux)
             return {"lm_sum": lm_rows.sum(), "lm_count": counts.sum(),
                     "route_sum": route.sum(), "msg_sum": msg.sum(), "route_count": queries.sum(),
                     "statistics": torch.stack((lm_rows.detach(), counts, route.detach(),
