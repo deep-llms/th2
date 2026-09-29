@@ -1,5 +1,32 @@
 # Current task
 
+## B/F/G complete at 5,000; automatic burns verified (2026-09-29 11:51 UTC)
+
+Read-only check 75816db confirms all five continuation queue jobs exited zero,
+complete.json equals the successful run receipt, and comparison passed. Each
+arm stopped at exactly 5000 / schedule 28600 updates, 5242880000 input tokens;
+saved configurations match except arm and evaluation uses the same 4882 rows.
+Final held-out LM loss: B 3.208608250096011; F 3.2087102048666094;
+G 3.2090661402300626. F-B +0.00010195477059848912;
+G-B +0.0004578901340517305. Essentially tied in this single-seed comparison;
+no observed LM advantage for the additional F/G losses at this cutoff.
+
+B finished 05:26:49 UTC, F 08:20:07, G 11:27:11; comparison completed 11:27:12.
+Supervisor verified all GPUs free and automatic burn handoff at 11:28:22.
+Live inspection 11:51:18-11:51:30 confirms eight approved burn workers at
+100% utilization, 155212 MiB/GPU, all-rank readiness and advancing collectives:
+cycles1570->1580, payload1743.25->1754.36 GiB. No handoff error; guard released.
+
+F route loss0.17738269914479182; G route0.17724789010716982,
+message0.0058306707835078485; weighted objective identities validated.
+Fifteen small artifacts were retrieved and SHA256-verified against the source;
+all completion-manifest hashes also match (including the saved staging receipt).
+Local artifacts: artifacts/deep-kv-BFG-final-20260929/.
+Raw log: temp/BFG-completion-check-20260929-1150.log, SHA256
+ac2c0748999e084a5ac9ffa7a168e2b30f6d45dc3dbc560c92d9c54c1624b470.
+Large model/optimizer checkpoints remain on B200. This check changed no GPU
+processes or training code. commands.sh restored to #0; no further training queued.
+
 ## FlashAttention environment checked (2026-09-29 06:13 UTC)
 
 Read-only check 96b2f4e verified B200 train_env: torch2.14.0+cu130,

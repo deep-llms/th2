@@ -1,5 +1,22 @@
 # Project notes
 
+## B/F/G 5,000-update continuation complete (2026-09-29)
+
+Queue deep-kv-BFG-5000-20260929-a01 completed successfully at 11:27:12 UTC.
+Each arm trained 5.24288B input tokens in total on the unchanged 28600-step
+schedule, same data/order/batch, and same 4882-row final evaluation. LM losses:
+B 3.208608250096011; F 3.2087102048666094; G 3.2090661402300626.
+F-B is +0.000102; G-B +0.000458. Essentially tied; the extra functional losses
+show no observed LM advantage at 5000 updates in this single-seed experiment.
+No matched 5000-step Arm A run exists, so do not claim superiority to vanilla A.
+
+Automatic enhanced burns started and passed supervisor verification at 11:28:22.
+Read-only live check 75816db at 11:51:18-11:51:30 verified eight approved workers,
+100% GPU utilization, 155212 MiB/GPU, advancing cycles/payload and all-rank
+collectives. Source and completion-manifest SHA256s verified locally for final
+results and comparison. Small receipts/configs/states are retained in
+artifacts/deep-kv-BFG-final-20260929/; full weights remain on B200.
+
 ## B200 FlashAttention availability (2026-09-29)
 
 Live train_env inspection at 06:13:57 UTC: PyTorch2.14.0+cu130 has built-in
