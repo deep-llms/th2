@@ -1,5 +1,34 @@
 # Current task
 
+## B200 performance investigation complete (2026-09-29 12:55 UTC)
+
+All14 intended performance cases completed across original performance-20260929-a01
+and corrected one-case performance-fa4-20260929-a02. See B200_PERFORMANCE_20260929.md.
+At fixed8 GPUs /1,048,576 tokens per update: B3.3662->2.2075s, F4.0102->2.8547s,
+G4.3710->3.2174s using no decoder checkpointing, implicit causal backbone mask,
+and LM chunks512. Peak~98GiB/GPU. Microbatch32 alone3.2795s (small/noisy gain).
+FA4 matched-env2.2281s versus SDPA2.2077s: no speedup. Actual FA4 kernels verified.
+Keep Trainer/Accelerate and SDPA; changing the custom model paths gives the gains.
+Production train.py/model/training files and scientific checkpoints are unchanged.
+
+FA4 initially failed in its precheck due to this agent's tuple-return adapter bug.
+Fixed in a5ede38 with a regression test; all5 CPU tests passed. Fresh retry passed
+CUDA BF16 objective/gradient validation and18 real eight-GPU updates. All112 rank
+prechecks, global first-batch hashes and measured timings verified across14 cases.
+158 small source artifacts SHA256/manifest verified locally under
+artifacts/performance-20260929-a01/ and artifacts/performance-fa4-20260929-a02/.
+Combined summary is in the first root. Original failed queue receipt is preserved.
+
+Corrected queue completed12:53:42; supervisor burn handoff12:54:53. Live read-only
+audit96305a0 at12:55:00-12:55:12 verified all8 approved workers,100% utilization,
+155212MiB/GPU, collective cycles30->40/payload33.31->44.41GiB, guard released.
+Raw final log temp/perf-fa4-final-20260929-a02.log SHA256
+7d4f388de1021f8cc47c6e3abc57530fbd6b2a17432b8be5f9fd6acb85ac5aac.
+commands.sh restored to#0. No further training/benchmark queued. A future production
+optimization should preserve matching settings across scientific arms; no such
+recipe change was made during this performance investigation.
+
+
 ## Performance investigation: 13 cases verified; FA4 adapter correction (2026-09-29)
 
 Original performance-20260929-a01 completed13 native/SDPA cases successfully.
