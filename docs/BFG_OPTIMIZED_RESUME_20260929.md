@@ -1,5 +1,24 @@
 # B/F/G optimized continuation to 10,000 updates
 
+## Checkpoint-only gate passed; production staging (2026-09-29 16:30 UTC)
+
+Retry4daa75c/e31c52d passes the unchanged real-checkpoint gate for B/F/G.
+Parameter relative L2: B4.19410e-6, F4.04550e-6, G4.14861e-6 (<1e-5).
+First-moment relative L2<=0.002158; second-moment<=0.00002041 (<0.03).
+LM evaluation deltas B-4.09e-6/F+1.68e-6/G+1.38e-6 (<0.001). All ranks restore
+exact model/optimizer/scheduler/RNG and consume identical next microbatches.
+Only checkpoint_layers/checkpoint_lm/checkpoint_aux are disabled. Keep original
+explicit attention mask and lm_chunk128; no gate thresholds were relaxed.
+
+Audit16:30:59: gate and all3 optimized smoke jobs succeeded; stage-continuation
+running in deep-kv-BFG-10000-20260929-a02. Production uses fresh original5000
+copies, not smoke5001 outputs. Schedule28600/warmup1430/micro16/accum4/world8
+unchanged; planned sequential B/F/G cutoff10000. Next: verify production B progress.
+Retry preflight also verified prior failed-attempt burn handoff at16:16:04 and
+all8 GPUs completely free at16:22:52 before the retry. Automatic final burn
+recovery still wraps the production queue. Raw passing-gate log SHA256:
+70a2aa1817d7e64ecf74862836e0fccb81e0fcaff86710eb63cdea15d4efdd4b.
+
 ## Initial gate outcome and checkpoint-only retry
 
 Initial a01 gate completed all six one-update runs; all48 rank receipts verified
