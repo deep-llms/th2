@@ -1,5 +1,38 @@
 # Current task
 
+## B resumed on eight GPUs; F/G queued (2026-09-29 03:07 UTC)
+
+Follow-up57d5674 at03:07:21 UTC confirms B reached2582, finite training loss
+about3.51, finite gradient norms and LR0.0002988 continuing the original cosine
+schedule. All eight GPUs remain97-99% utilized,25292MiB each. No restart from
+zero or warmup reset. Evidence: temp/BFG-resume-progress-a02.log, SHA256
+9a58e32c874c5e6d151c42551f6fea7a55f4ae930e31a9f1ca93b91ebaf0ab55.
+commands.sh restored to #0; queue continues unattended. Approximate completion
+11:30 UTC Sep29 (allow11:00-12:00), using prior B/F/G throughput and overhead.
+
+Launch 0ce6bff succeeded on thiennh-p6-78gg-worker-0. Startup inspection864b793
+at03:03:11 UTC verifies B progressed from checkpoint2500 through step2507;
+all eight GPUs have one train.py worker,99-100% utilization,25292MiB each.
+Supervisor/queue running; staging job passed in49.21s, then B started03:01:56.
+All three copied checkpoints match original file SHA256s, including optimizer,
+scheduler and all eight RNG states. Original checkpoint trees remain untouched.
+
+Accelerate config was copied to /dev/shm/.cache/huggingface/accelerate/default_config.yaml;
+byte/hash comparison and accelerate env verified MULTI_GPU,8 processes,BF16.
+Only the eight freshly identified approved burn workers were stopped; the
+supervisor recorded all GPUs free before the queue. Configs/data fingerprints
+match earlier runs; ignore_data_skip=false, max_steps28600, warmup1430,
+microbatch16, accumulation4, seed42,1048576 tokens/update. Cutoff5000 only.
+
+Checksum-verified small startup receipts are retained in
+artifacts/deep-kv-BFG-resume-startup-20260929/. Full inspection log is
+temp/BFG-resume-startup-check-a01.log, SHA256
+b8fdda4a53fa060c60d3d032eaff8b437f2ef5b8d1a539014e31261103454c8d.
+Queue remains B -> F -> G -> compare, with automatic verified burn handoff
+after success/failure. Expected total duration about8-9h, subject to throughput.
+First resumed loss/LR check passed as recorded above. Future completion
+requires each result.global_step5000, comparison/complete.json and live burns.
+
 ## B/F/G continuation to 5,000 updates authorized (2026-09-29)
 
 User selected 5,000 total updates: resume each arm's complete checkpoint-2500

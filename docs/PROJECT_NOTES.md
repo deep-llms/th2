@@ -11,6 +11,12 @@ satisfying train.py's checkpoint-parent/output-directory check and the generic
 runner's fresh-output contract. No weights-only restart or schedule reset.
 tests/test_resume_staging.py exercises actual B/F/G Trainer continuation and
 matches uninterrupted CPU weights exactly, preserving all source files.
+Launch0ce6bff ran on B200; at03:07:21 UTC B reached2582 with finite loss and
+LR0.0002988. F/G follow sequentially, each cutoff5000. Original checkpoint
+files were all checksum-verified against their copies. Accelerate config/env
+and the all-eight-GPUs-free prelaunch receipt passed. Small evidence is in
+artifacts/deep-kv-BFG-resume-startup-20260929/; the unchanged supervisor will
+restore/verify enhanced burns after completion or failure.
 
 
 ## F/G complete; automatic final burns verified live (2026-09-29 02:40 UTC)
