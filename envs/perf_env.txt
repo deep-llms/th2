@@ -1,0 +1,12 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+torch==2.14.0
+transformers==5.9.0
+datasets==4.8.5
+accelerate==1.13.0
+scipy
+wandb
+pyarrow
+huggingface_hub
+flash-attn-4[cu13]==4.0.0b32

@@ -1,5 +1,19 @@
 # Current task
 
+## Authorized B200 performance investigation (2026-09-29)
+
+User requests diagnosis of B200 throughput versus the earlier H100/H200 run,
+and authorizes a separate FlashAttention environment and short training tests.
+Keep the completed scientific runs and production trainer/model unchanged.
+Install envs/perf_env.txt through controller #i, verify its versions/imports,
+then benchmark the existing path and isolated performance variants using all
+eight GPUs, the same packed inputs, global batch, seed and optimizer schedule.
+Measure warmed-up updates separately from profiling/startup/checkpoint overhead;
+record actual attention kernels and peak memory. Validate changed paths against
+the original loss/gradients. Existing authorization permits stopping freshly
+verified burns; use the existing train_then_burn supervisor for automatic final
+handoff on success/failure. No node outbound network or direct package installs.
+
 ## B/F/G complete at 5,000; automatic burns verified (2026-09-29 11:51 UTC)
 
 Read-only check 75816db confirms all five continuation queue jobs exited zero,

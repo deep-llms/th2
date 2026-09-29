@@ -1,2 +1,2 @@
-#0
-# B/F/G completed 5000 updates; automatic burns verified live 2026-09-29 11:51 UTC.
+#i envs/perf_env.txt +a
+#th2-78gg-install-perf-env-20260929-a01
