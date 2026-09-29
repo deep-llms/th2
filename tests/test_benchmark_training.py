@@ -48,6 +48,10 @@ class BenchmarkTests(unittest.TestCase):
         model=configure_model('causal').from_scratch(config(),'B',consumer=2,deep_target=4)
         with self.assertRaisesRegex(ValueError,'fully packed'):
             model(context())
+        from deep_kv.model import DeepKV
+        model=DeepKV.from_scratch(config(),'B',consumer=2,deep_target=4,causal_attention=True)
+        with self.assertRaisesRegex(ValueError,'fully packed'):
+            model(context())
 
 
 if __name__=='__main__':

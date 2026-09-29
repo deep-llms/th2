@@ -5,6 +5,8 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
+import copy
 import sys
 import tempfile
 import unittest
@@ -59,6 +61,43 @@ class TrainingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         torch.set_num_threads(1)
+
+    def test_observed_resume_gate_and_generated_queue(self):
+        from scripts.check_optimized_resume import FAST, worker, compare, make_jobs
+        from scripts.stage_deep_kv_resume import stage
+        from run_experiments import load_jobs
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = fixture(root)
+            source = root / 'source' / 'G'
+            invoke(root, {**config, 'arm': 'G', 'output_dir': str(source), 'stop_after': 2})
+            smoke = root / 'smoke'
+            for mode in ('control', 'optimized'):
+                stage({'G': str(source)}, smoke / mode, 2)
+                output = smoke / mode / 'G'
+                args = {**config, 'arm': 'G', 'output_dir': str(output), 'stop_after': 3,
+                        'resume_from_checkpoint': str(output / 'checkpoint-2')}
+                if mode == 'optimized':
+                    args.update(**FAST, allow_performance_change_on_resume=True)
+                invocation = root / 'gate.json'
+                invocation.write_text(json.dumps(args))
+                with patch.object(train, 'DeepKVTrainer', train.DeepKVTrainer), patch('sys.argv', []):
+                    worker(str(output / 'resume-check'), [str(invocation)])
+            compare(smoke, 2, arms='G', world=1)
+            self.assertEqual(json.loads((smoke / 'verified.json').read_text())['status'], 'ok')
+            recipe = root / 'recipe.json'
+            recipe.write_text(json.dumps(config))
+            queue = root / 'queue'
+            make_jobs(recipe, queue, root / 'source', 2, 3)
+            load_jobs(queue / 'jobs.json')
+            generated = json.loads((queue / 'jobs.json').read_text())['jobs']
+            self.assertEqual([j['name'] for j in generated][-6:],
+                             ['verify-resume', 'stage-continuation', 'arm-B', 'arm-F', 'arm-G', 'compare'])
+            for job in generated:
+                if 'gpus' in job:
+                    self.assertEqual(job['gpus'], list(range(8)))
+                    self.assertIn('--resume_from_checkpoint', job['argv'])
+                    self.assertEqual(job['argv'][job['argv'].index('--max_steps') + 1], '3')
 
     def test_real_entry_point_all_arms_cutoff_report_and_resume(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -123,6 +162,63 @@ class TrainingTests(unittest.TestCase):
             result_path.write_text(json.dumps(broken))
             with self.assertRaises(ValueError):
                 report(root)
+
+    def test_performance_resume_preserves_state_and_data_and_rejects_other_changes(self):
+        class RecordingTrainer(DeepKVTrainer):
+            def _load_optimizer_and_scheduler(self, checkpoint):
+                super()._load_optimizer_and_scheduler(checkpoint)
+                if checkpoint:
+                    torch.testing.assert_close(self.optimizer.state_dict(),
+                        torch.load(Path(checkpoint) / 'optimizer.pt', map_location='cpu', weights_only=True), rtol=0, atol=0)
+                    self.loaded_scheduler = copy.deepcopy(self.lr_scheduler.state_dict())
+                    self.seen = []
+                    records.append(self)
+
+            def compute_loss(self, model, inputs, *args, **kwargs):
+                if model.training and self.is_in_train and hasattr(self, 'seen'):
+                    self.seen.append(inputs['input_ids'].clone())
+                return super().compute_loss(model, inputs, *args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); cfg = fixture(root)
+            for arm in 'BFG':
+                old = root / arm
+                invoke(root, {**cfg, 'arm': arm, 'output_dir': str(old), 'stop_after': 2})
+                # Simulate an existing checkpoint/config from before these flags existed.
+                metadata = json.loads((old / 'train_config.json').read_text())
+                for key in ('checkpoint_lm', 'checkpoint_aux', 'causal_attention'):
+                    metadata['pilot'].pop(key)
+                (old / 'train_config.json').write_text(json.dumps(metadata))
+                optimized = root / (arm + '-optimized')
+                shutil.copytree(old, optimized)
+                changes = dict(checkpoint_layers=False, checkpoint_lm=False, checkpoint_aux=False,
+                               causal_attention=True, lm_chunk=8)
+                args = {**cfg, 'arm': arm, 'output_dir': str(optimized), **changes}
+                with self.assertRaisesRegex(ValueError, 'allow_performance_change'):
+                    invoke(root, args)
+                for extra in ({'seed': 43}, {'learning_rate': .001}, {'ignore_data_skip': True},
+                              {'per_device_train_batch_size': 1, 'gradient_accumulation_steps': 4}, {'arm': 'D'}):
+                    with self.assertRaisesRegex(ValueError, 'Resume configuration'):
+                        invoke(root, {**args, 'allow_performance_change_on_resume': True, **extra})
+                self.assertFalse(list(optimized.glob('resume-transition-*.json')))
+                records = []
+                with patch.object(train, 'DeepKVTrainer', RecordingTrainer):
+                    invoke(root, {**cfg, 'arm': arm, 'output_dir': str(old)})
+                    invoke(root, {**args, 'allow_performance_change_on_resume': True})
+                a, b = records
+                self.assertEqual(a.loaded_scheduler, b.loaded_scheduler)
+                self.assertEqual(len(a.seen), cfg['gradient_accumulation_steps'])
+                torch.testing.assert_close(a.seen, b.seen, rtol=0, atol=0)
+                torch.testing.assert_close(a.model.state_dict(), b.model.state_dict(), rtol=1e-5, atol=1e-7)
+                torch.testing.assert_close(a.optimizer.state_dict(), b.optimizer.state_dict(), rtol=1e-4, atol=1e-7)
+                self.assertEqual(a.lr_scheduler.state_dict(), b.lr_scheduler.state_dict())
+                transitions = list(optimized.glob('resume-transition-*.json'))
+                self.assertEqual(len(transitions), 1)
+                record = json.loads(transitions[0].read_text())
+                self.assertEqual(record['global_step'], 2)
+                self.assertEqual(set(record['changes']), set(changes))
+                self.assertEqual(record['previous'], metadata)
+                self.assertNotIn('allow_performance_change_on_resume', record['requested']['pilot'])
 
     def test_invalid_cutoff_and_chunk_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

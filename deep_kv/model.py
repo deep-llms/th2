@@ -99,7 +99,8 @@ class AuxiliaryKV(nn.Module):
 
 class DeepKV(nn.Module):
     def __init__(self, backbone, arm, *, seed=42, consumer=5, deep_target=21,
-                 checkpoint_layers=True, lm_chunk=128, checkpoint_lm=True, checkpoint_aux=True):
+                 checkpoint_layers=True, lm_chunk=128, checkpoint_lm=True, checkpoint_aux=True,
+                 causal_attention=False):
         super().__init__()
         if transformers.__version__ != "5.9.0":
             raise ValueError("Deep-KV requires transformers==5.9.0; use sampling_b200/train_env")
@@ -116,6 +117,7 @@ class DeepKV(nn.Module):
         self.functional_loss = arm in ("F", "G")
         self.checkpoint_layers, self.lm_chunk = checkpoint_layers, lm_chunk
         self.checkpoint_lm, self.checkpoint_aux = checkpoint_lm, checkpoint_aux
+        self.causal_attention = causal_attention
         self.aux = None
         if arm != "A":
             with torch.random.fork_rng(devices=[]):
@@ -160,7 +162,13 @@ class DeepKV(nn.Module):
     def hidden_states(self, context: Context):
         hidden = self.backbone.model.embed_tokens(context.input_ids)
         rotary = self.backbone.model.rotary_emb(hidden, context.position_ids)
-        mask, allowed = context.additive_mask(hidden.dtype), context.allowed()
+        if self.causal_attention:
+            if context.segments is not None or not bool(context.valid.all()):
+                raise ValueError("Implicit causal attention requires fully packed unsegmented inputs")
+            mask = None
+        else:
+            mask = context.additive_mask(hidden.dtype)
+        allowed = context.allowed()
         predicted = target = None
         for i, layer in enumerate(self.backbone.model.layers):
             special = self.aux is not None and (i == self.consumer - 1 or (self.arm in ("D", "E", "F", "G") and i == self.deep_target - 1))

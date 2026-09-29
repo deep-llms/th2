@@ -12,6 +12,8 @@ os.environ.setdefault("NCCL_NVLS_ENABLE", "0")
 
 import json
 import logging
+import copy
+from datetime import datetime, timezone
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 import sys
@@ -53,7 +55,30 @@ class PilotArguments:
     deep_target: int = 21
     lm_chunk: int = 128
     checkpoint_layers: bool = True
+    checkpoint_lm: bool = True
+    checkpoint_aux: bool = True
+    causal_attention: bool = False
+    allow_performance_change_on_resume: bool = False
     stop_after: int | None = None
+
+
+def resume_performance_changes(previous, requested, allow=False):
+    """Keep the scientific recipe strict; explicitly permit execution-only changes."""
+    before, after = copy.deepcopy(previous), copy.deepcopy(requested)
+    defaults = dict(checkpoint_layers=True, checkpoint_lm=True, checkpoint_aux=True,
+                    causal_attention=False, lm_chunk=128)
+    changes = {}
+    for key, default in defaults.items():
+        old = before['pilot'].get(key, default)
+        new = after['pilot'].get(key, default)
+        before['pilot'][key] = after['pilot'][key] = default
+        if old != new:
+            changes[key] = dict(before=old, after=new)
+    if before != after:
+        raise ValueError("Resume configuration/data differs from the saved run")
+    if changes and not allow:
+        raise ValueError("Resume configuration changes require allow_performance_change_on_resume")
+    return changes
 
 
 def load_text(directory):
@@ -121,7 +146,9 @@ def main():
         raise ValueError("block_size exceeds the model/tokenizer context limit")
     model = DeepKV.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
                                deep_target=pilot.deep_target, lm_chunk=pilot.lm_chunk,
-                               checkpoint_layers=pilot.checkpoint_layers)
+                               checkpoint_layers=pilot.checkpoint_layers,
+                               checkpoint_lm=pilot.checkpoint_lm, checkpoint_aux=pilot.checkpoint_aux,
+                               causal_attention=pilot.causal_attention)
     raw_train, raw_eval = load_text(data_args.data_dir), load_text(data_args.eval_data_dir)
     train_dataset = preprocess_dataset(raw_train, tokenizer, data_args.block_size, training_args,
                                       num_proc=data_args.preprocessing_num_workers,
@@ -141,7 +168,8 @@ def main():
     for key in ("output_dir", "logging_dir", "run_name", "resume_from_checkpoint", "local_rank"):
         settings.pop(key, None)
     experiment = json.loads(json.dumps({"model": asdict(model_args), "model_config": config.to_dict(),
-                  "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items() if k != "stop_after"},
+                  "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
+                      if k not in ("stop_after", "allow_performance_change_on_resume")},
                   "training": settings, "world_size": training_args.world_size,
                   "tokens_per_update": tokens_per_update,
                   "train_fingerprint": train_dataset._fingerprint, "eval_fingerprint": eval_dataset._fingerprint}))
@@ -151,8 +179,7 @@ def main():
         if Path(checkpoint).resolve().parent != output.resolve():
             raise ValueError("Resume checkpoint must belong to this output directory")
         previous = json.loads((output / "train_config.json").read_text())
-        if previous != experiment:
-            raise ValueError("Resume configuration/data differs from the saved run")
+        changes = resume_performance_changes(previous, experiment, pilot.allow_performance_change_on_resume)
         state = TrainerState.load_from_json(str(Path(checkpoint) / "trainer_state.json"))
         if state.max_steps != training_args.max_steps:
             raise ValueError("Checkpoint training schedule differs from the saved run")
@@ -164,7 +191,16 @@ def main():
     training_args.distributed_state.wait_for_everyone()
     if training_args.should_save:
         output.mkdir(parents=True, exist_ok=True)
-        (output / "train_config.json").write_text(json.dumps(experiment, indent=2) + "\n")
+        if checkpoint and changes:
+            # Preserve the exact prior recipe before replacing the current one.
+            stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+            record = dict(checkpoint=str(Path(checkpoint).resolve()), global_step=state.global_step,
+                          changes=changes, previous=previous, requested=experiment)
+            with (output / f'resume-transition-{state.global_step}-{stamp}.json').open('x') as handle:
+                json.dump(record, handle, indent=2, allow_nan=False)
+        temporary_config = output / "train_config.json.tmp"
+        temporary_config.write_text(json.dumps(experiment, indent=2) + "\n")
+        temporary_config.replace(output / "train_config.json")
         (output / "result.json").unlink(missing_ok=True)
     training_args.distributed_state.wait_for_everyone()
 

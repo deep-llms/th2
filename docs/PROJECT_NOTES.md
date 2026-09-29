@@ -1,5 +1,19 @@
 # Project notes
 
+## Authorized optimized B/F/G continuation to 10,000 (2026-09-29)
+
+See BFG_OPTIMIZED_RESUME_20260929.md. Local train.py exposes tested execution
+switches with strict opt-in resume metadata and a full transition record. Native
+HF Trainer/Accelerate loading/data skip/optimizer loop is unchanged.30 CPU tests
+plus2 targeted gate tests passed. Prepared deep-kv-BFG-10000-20260929-a01:
+real5000 checkpoints -> six old/optimized one-update checks -> numerical/state/
+data comparison -> fresh source5000 copies -> sequential B/F/G to10000.
+Micro16/accum4/world8/seq2048, schedule28600/warmup1430 remain fixed. All three
+checkpoint switches off, implicit causal SDPA, LM chunks512. Original5000 outputs
+remain intact. Automatic verified burn recovery wraps the full gated queue.
+Next: submit once, verify preflight/config copy, fresh GPU reclaim, remote gate,
+then actual production resume and progress. No remote success claimed yet.
+
 ## Checkpoint and capacity investigation complete (2026-09-29 15:01 UTC)
 
 See B200_CHECKPOINT_CAPACITY_20260929.md. Fresh capacity-20260929-a01 completed
