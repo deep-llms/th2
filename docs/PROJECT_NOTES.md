@@ -1,5 +1,39 @@
 # Project notes
 
+## F/G complete; automatic final burns verified live (2026-09-29 02:40 UTC)
+
+User explicitly requested another read-only check after the SSH failure.
+Retry 1f98d6f reached thiennh-p6-78gg-worker-0; access is restored. All four jobs
+(smoke, F, G, compare) exited zero and complete.json is present. F finished
+Sep28 22:59:58 UTC (2h52m09s); G finished Sep29 02:06:05 UTC (3h06m07s).
+Both stopped at exactly2500/28600 updates, 2621440000 input tokens, as intended.
+Both saved configurations match original D after removing only pilot.arm;
+train/eval fingerprints, tokenizer, seed, packing, batch and schedule match.
+Local receipt/result hashes match the queue's completion manifest. All saved
+steps, token counts, 4882 eval rows and weighted loss identities validate.
+
+Final held-out LM loss (lower is better):
+A 3.510730336181336; B 3.505886970597037; C 3.5791965769364404;
+D 3.5259151358008247; E 3.514632263741271;
+F 3.5103442129966322; G 3.5105305372349864.
+F/G are essentially at A, improve over D/E, and remain worse than B. G-F is
++0.0001863242383541852. Single-seed exploratory results; tiny differences do
+not establish a robust gain. F route0.1812025474324223/message0;
+G route0.18460066779232728/message0.006506484034108609.
+
+Supervisor completed automatic handoff at 02:07:16 UTC with all eight GPUs
+verified free before starting the enhanced burn; no handoff error. Read-only
+inspection at 02:40:26-02:40:38 verifies eight approved burn workers, one per
+GPU, 100% utilization and155212MiB/GPU. All-rank readiness/collective probe
+passed; rank0 cycles advanced2240->2250 and payload2487.19->2498.29GiB.
+No workload was stopped or launched by this status check.
+
+Small original artifacts and live verification are retained in
+artifacts/deep-kv-FG-final-20260929/ (recipe, supervisor, queue/completion,
+comparison, F/G results/configs/trainer states, live-burn-check.json).
+Raw export: temp/FG-final-check-20260929-0240.log. Large model/optimizer
+checkpoints remain on B200 and were not downloaded. commands.sh restored to #0.
+
 ## Latest B200 check blocked by runner SSH access (2026-09-29 02:11 UTC)
 
 User requested a fresh completion/status check. Read-only submission a9619f9,
