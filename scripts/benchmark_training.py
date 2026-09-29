@@ -37,8 +37,9 @@ def configure_model(backend='original', native=False):
         from flash_attn.cute import flash_attn_func
         # Match SDPA autocast: Q/K can be FP32 after QK norms/rotary.
         dtype = value.dtype
-        output = flash_attn_func(query.to(dtype).transpose(1, 2), key.to(dtype).transpose(1, 2),
-                                 value.transpose(1, 2), causal=True, softmax_scale=scaling)
+        # FA4 4.0.0b32 always returns (output, lse), even with return_lse=False.
+        output, _ = flash_attn_func(query.to(dtype).transpose(1, 2), key.to(dtype).transpose(1, 2),
+                                   value.transpose(1, 2), causal=True, softmax_scale=scaling)
         return output, None
 
     if backend == 'fa4':

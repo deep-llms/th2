@@ -1,5 +1,26 @@
 # Current task
 
+## Performance investigation: 13 cases verified; FA4 adapter correction (2026-09-29)
+
+Original performance-20260929-a01 completed13 native/SDPA cases successfully.
+FA4 failed in the tiny CUDA precheck because the benchmark adapter treated its
+(output,lse) tuple as a Tensor. Verified pinned b32 source; fixed tuple unpacking
+and added a regression test through actual Qwen forward/backward. All5 CPU
+benchmark tests passed. Production model/trainer remains unchanged.
+
+Failure audit9abc7c6 retrieved138 artifacts with verified source/manifest hashes;
+local cross-rank timing/input-batch checks passed for all13 completed cases.
+Artifacts: artifacts/performance-20260929-a01/. Burn recovery verified live at
+12:45 UTC: all8 workers, guard released, cycles230->240/payload255.38->266.48GiB.
+Current B3.3662s/update, microbatch32 B3.2795s, optimized B2.2075s;
+F4.0102->2.8547s; G4.3710->3.2174s. Optimized path disables decoder checkpointing,
+uses implicit causal backbone mask and LM chunks512; peak~98GiB/GPU.
+
+A fresh one-case FA4 retry is prepared under performance-fa4-20260929-a02;
+only the benchmark adapter changed. Same8 GPUs,18 updates, BF16 objective/gradient
+precheck, config copy/env verification and supervised fresh burn reclaim/restore.
+Do not rerun the successful13 cases or reuse their outputs as fresh training.
+
 ## Authorized B200 performance investigation (2026-09-29)
 
 Install93a404d succeeded. CPU-only preflight634b56b at12:08:39 UTC confirmed
