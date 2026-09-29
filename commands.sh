@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-BFG-10000-status-20260929-a01
+#th2-78gg-BFG-10000-status-20260929-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
@@ -11,15 +11,13 @@ from pathlib import Path
 from scripts.verified_gpu_reclaim import inspect
 root=Path('/mnt/local/_outputs/deep-llms_th2/deep-kv-BFG-10000-20260929-a01')
 print('STARTUP_CHECK', datetime.now(timezone.utc).isoformat(), socket.gethostname(), flush=True)
-for name in ['preflight.json','optimized-recipe.json','production/reclaim.json','production/gpus-free-before-training.json',
-             'production/supervisor.json','production/run/continuation/resume_inputs.json','production/run/resume-smoke/verified.json','production/run/run.json']:
+for name in ['production/run/run.json','production/supervisor.json','production/run/resume-smoke/verified.json',
+             'production/burn-verified.json','production/handoff-error.json']:
  path=root/name
  if path.exists():
-  raw=path.read_bytes()
-  print('ARTIFACT',name,'SHA256',hashlib.sha256(raw).hexdigest(),flush=True)
-  print(raw.decode(),flush=True)
- else:
-  print('NOT_YET_PRESENT',name,flush=True)
+  print('ARTIFACT_JSON',json.dumps({'path':name,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'value':json.loads(path.read_text())}),flush=True)
+for path in sorted((root/'production/run/resume-smoke').glob('*/*/resume-check-*.json')):
+ print('RESUME_RANK',str(path.relative_to(root)),path.read_text(),flush=True)
 for arm in 'BFG':
  path=root/'production/run/continuation'/arm/'train_config.json'
  if path.exists():
