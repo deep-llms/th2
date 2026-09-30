@@ -1,5 +1,12 @@
 # B/F/G checkpoint-only continuation to 10,000 updates
 
+Completed on September 30 at 04:22:53 UTC. All three arms reached 10,000 steps;
+final LM losses: B 3.029353, F 3.029287, G 3.030396. Automatic burns were
+verified at 04:24:04 and remained active on all eight GPUs at 05:23 UTC.
+Final artifacts: `artifacts/BFG-10000-final-20260930/`.
+
+The following records the launch and resume validation.
+
 Production B resumed successfully from step 5,000. The 16:34:12 UTC audit on
 2026-09-29 observed step 5,040, finite losses/gradients, continued LR about
 0.0002884, and one train.py worker on each of eight B200 GPUs. Each GPU used

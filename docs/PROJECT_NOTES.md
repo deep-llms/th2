@@ -1,5 +1,29 @@
 # Project notes
 
+## B/F/G complete at 10,000; automatic burns verified (2026-09-30 05:23 UTC)
+
+Read-only audit47508e2 confirms all queue jobs passed, complete.json equals the
+successful run receipt, and final comparison passed. Each arm stopped at exactly
+10000 / schedule28600 steps,10485760000 cumulative input tokens. Final configs
+match except arm; all use the same4882 evaluation rows. LM losses:
+B3.0293528655393467, F3.029287303072595, G3.0303955152025916.
+F-B=-0.0000655625; G-B=+0.00104265. B/F are essentially tied; G is slightly worse
+in this single-seed LM comparison. No clear extra-loss advantage is established.
+
+B finished2026-09-29 20:00:56 UTC, F2026-09-30 00:02:11, G04:22:53;
+comparison completed04:22:53. Full checkpoint10000 weights, optimizer, scheduler,
+training args and8 RNG files were verified present/nonempty for each arm.
+All completion-manifest artifact hashes passed.17 small artifacts retrieved and
+source-hash verified under artifacts/BFG-10000-final-20260930/; final configurations,
+trainer states, result hashes and F/G weighted-objective identities checked locally.
+Large model/optimizer checkpoints remain on B200 in the a02 continuation root.
+
+Supervisor verified automatic burn recovery at04:24:04. Live audit05:23:11–05:23:24
+confirmed8 approved workers,100% utilization,155212MiB/GPU, guard released and
+advancing collective cycles4000->4020/payload4441.41->4463.61GiB. No handoff error.
+Raw log SHA256:24e3faf9b05ac002ff886ecf56d61ac4f8719e30c772ada1d3d956c8d7e44304.
+commands.sh restored to#0. No more training is queued; burns are running.
+
 ## B complete at 10,000; F running (2026-09-29 20:45 UTC)
 
 Read-only audit018b098 at20:45:12 confirms B finished successfully20:00:56,
