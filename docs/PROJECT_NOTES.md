@@ -1,5 +1,41 @@
 # Project notes
 
+## Bottleneck B200 launch verified (2026-09-30)
+
+Final startup auditeb7ee19 at12:58:42 observed Task153, finite losses/gradients,
+~2.77s/update and all8GPUs98–99%. Exact remote jobs/recipe files were pulled and
+hash-checked: both arms have cutoff5000 and no resume argument; queue order is
+smoke -> fresh Task -> fresh Consumer -> compare. Commands deactivated to#0;
+independent supervised queue remains live. Evidence final-startup/ within the
+artifact root below; raw audit SHA256
+1a35118217b1c526666dfb33e3654c0cdd15aeccf0ba7683a727690bfc799bb9.
+
+Launchaa1ce75 uses existing supervisor and selected-arm extension of the smoke
+helper. Both aligned arms passed full Qwen3-0.6B, seq2048, micro16/accum4/eightGPU
+BF16 smoke and native10->12 resume. Smoke gate passed12:50:48 UTC. Initial
+measured update times were Task2.763s / Consumer2.930s; peak reserved memory
+115.78 /119.37GiB, with >8GiB headroom on every rank. These short measurements
+exclude long-run save/eval overhead. Shared inference parameters598540416;
+training-only parameters Task19578880 / Consumer155713536.
+
+Fresh Task-Aware production started12:50:48 and reached40 updates by12:53:28
+(~2.78s/update, finite losses, warmup LR8.182e-6). All eight GPUs had one train.py
+worker at97–99% utilization,120490MiB each. Consumer follows sequentially; each
+cutoff5000 means5,242,880,000 input tokens. Both data fingerprints match prior
+B/F/G exactly. Schedule28600/warmup1430 and original optimizer/data recipe stay
+fixed. Decoder/main-LM checkpointing are off, auxiliary checkpointing on.
+
+Accelerate copied to /dev/shm/.cache/huggingface/accelerate/default_config.yaml,
+byte-verified and checked via accelerate env. Only known burn workers457634–
+457641 were stopped after identity checks; allGPUs verifiedfree12:45:09. Final
+burn recovery is automatic after queue success/failure under the unchanged
+train_then_burn supervisor. No environment/package/driver modifications.
+
+Root /mnt/local/_outputs/deep-llms_th2/deep-bottleneck-5000-20260930-a01.
+Local hash-verified evidence artifacts/bottleneck-launch-20260930-a01/ includes
+source digests, preflight/reclamation/free-GPU receipts, smoke completion and
+production config. Smoke receipt also matches the outer queue artifact hash.
+
 ## Authorized two-arm bottleneck run (2026-09-30)
 
 User selected the two aligned versions, each fresh for5,000 optimizer updates

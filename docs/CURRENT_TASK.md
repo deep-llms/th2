@@ -1,5 +1,39 @@
 # Current task
 
+## Bottleneck production running after successful GPU smoke (2026-09-30 12:58 UTC)
+
+Latest auditeb7ee19 at12:58:42 confirms Task-Aware at153 updates, ~2.77s/update,
+all8GPUs98–99% /120490MiB, finite step150 LM7.908 and LR3.126e-5. Remote jobs.json
+and recipe.json retrieved/hash-verified: both native production commands have
+stop_after5000, full schedule28600/warmup1430, micro16/accum4, all8GPUs, fresh
+separate outputs, and no resume_from_checkpoint. Consumer-Aware remains next.
+Evidence artifacts/bottleneck-launch-20260930-a01/final-startup/; raw audit SHA256
+1a35118217b1c526666dfb33e3654c0cdd15aeccf0ba7683a727690bfc799bb9.
+commands.sh restored to#0 after verification; independent tmux queue continues.
+
+Launchaa1ce75 passed full-shape eight-B200 smoke for Task-Aware-Align and
+Consumer-Aware-Align, including native10->12 resume, finite component losses,
+all-rank telemetry and >8GiB memory headroom. Smoke gate finished12:50:48 UTC;
+its receipt SHA256 matches the successful outer queue artifact record.
+Fresh Task-Aware production started12:50:48. Snapshot6d2290b at12:53:28 confirms
+step40, finite losses/gradients, LR8.182e-6, ~2.78s/update, and one native train.py
+worker per GPU at97–99% utilization /120490MiB. Consumer-Aware follows next.
+
+Both stop at5,000 updates with schedule28600/warmup1430/micro16/accum4/world8/
+seq2048. Main/decoder checkpointing off, auxiliary checkpointing on; explicit
+mask/chunk128 retained. Production train/eval fingerprints equal prior B/F/G.
+Accelerate resource/cache bytes and accelerate env verified8GPU BF16 at launch.
+Approved burn workers457634–457641 were reidentified and stopped; all8GPUs
+were verified empty12:45:09 before the smoke. Existing supervisor owns the
+entire queue and automatic burn recovery after success/failure.
+
+Root: /mnt/local/_outputs/deep-llms_th2/deep-bottleneck-5000-20260930-a01.
+Production: production/run/{Task-Aware-Align,Consumer-Aware-Align}; smoke is in
+production/run/smoke and is never used to initialize production. Source hashes,
+receipts/configs and snapshots collected under artifacts/bottleneck-launch-20260930-a01/.
+Startup audit SHA256 b5df94291654d6d4814663d0ae4d93af3e70186424cee8f4d386e0432cbd2dea.
+Next: read-only progress/completion checks; do not launch a duplicate queue.
+
 ## Authorized bottleneck launch: two aligned arms, 5,000 steps (2026-09-30)
 
 User authorized Task-Aware and Consumer-Aware, each5,000 updates on B200.
