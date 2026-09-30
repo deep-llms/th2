@@ -1,5 +1,28 @@
 # Project notes
 
+## Authorized fresh A/B seed replication (2026-09-30)
+
+User requested fresh A and B, each cutoff 2,500, with all training seeds changed.
+Selected seed=123 and data_seed=123, with PYTHONHASHSEED=123. Backbone and global
+Python/NumPy/Torch RNG use123; B auxiliary initialization retains its independent
+seed+1 stream (124). Existing sampled text splits and fixed evaluation prefix
+remain unchanged; training shuffle and sampler both change to123. No resampling.
+Original deep_kv.b200.json recipe is unchanged except seed/data_seed; full schedule
+28,600, warmup1,430, micro16/accum4/world8/seq2048, original checkpointing/mask/chunk
+settings. Each fresh run processes2,621,440,000 input tokens. Smoke checkpoints
+will not initialize production. Queue: A/B full-shape10->12 smoke/resume, fresh
+A2500, freshB2500, comparison, automatic burn handoff on success/failure.
+
+Local CPU checks passed matched/new/repeatable initialization and RNG/shuffle/
+sampler checks plus exact generated job arguments. Nine smoke/supervisor tests
+passed (initial invocation typo corrected; no code issue). Read-only B200
+preflight f6a7ab3 passed21:32:31 UTC: only approved burn workers487231–487238 under
+487162; guard enabled, pinned packages and input assets present, >23TiB free.
+Launch will copy/verify Accelerate config, run accelerate env, reidentify burns,
+stop only verified workers and require all eight GPUs free before smoke.
+Root: /mnt/local/_outputs/deep-llms_th2/deep-kv-AB-seed123-2500-20260930-a01.
+Next: verify actual launch, smoke gate, seed configs and fresh production start.
+
 ## Both bottleneck arms complete; burns verified (2026-09-30 21:17 UTC)
 
 Read-only audit fedcfb0 confirms both aligned arms completed exactly 5,000
