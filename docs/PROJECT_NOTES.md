@@ -1,5 +1,28 @@
 # Project notes
 
+## Both bottleneck arms complete; burns verified (2026-09-30 21:17 UTC)
+
+Read-only audit fedcfb0 confirms both aligned arms completed exactly 5,000
+updates / 5,242,880,000 input tokens, retaining schedule 28,600 and warmup 1,430.
+Consumer finished 20:57:56 UTC (4h11m including startup/save/evaluation).
+All queue jobs passed, complete.json matches run.json, and all declared artifact
+hashes passed. Both checkpoint-5000 folders contain nonempty weights, optimizer,
+scheduler, training args, trainer state and all eight RNG files.
+Validation LM losses on the same 4,882 rows: Task 3.208638078874859;
+Consumer 3.2137939965533175; historical B at 5,000 is 3.208608250096011.
+Consumer is worse than B by 0.0051857464573065; Task is essentially tied.
+Consumer auxiliary message CE gain is 0.015386735621624403, which is not an
+improvement in the main LM loss. These are single-seed exploratory results.
+
+Supervisor completed without error and automatically verified burns at
+20:59:07 UTC. Audit rechecked all eight burn worker identities and new collective
+progress (cycles 1210 -> 1230); GPU guard was released. No training restart or
+process signaling occurred during inspection. Final small artifacts retrieved
+and source-hash verified under artifacts/bottleneck-final-20260930/.
+Raw log temp/bottleneck-completion-20260930-2115.log SHA256:
+9e12496dc02d7a9f2eb73b8d0bad3d7df7f9a1a2ef5241b05fb93b412fc26533.
+commands.sh restored to #0. No further training is queued by this experiment.
+
 ## Bottleneck status verified (2026-09-30 20:49 UTC)
 
 Read-only audit 102f004: Task-Aware-Align completed exactly 5,000 updates and
