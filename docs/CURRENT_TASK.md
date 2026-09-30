@@ -1,5 +1,23 @@
 # Current task
 
+## A/B seed 123 progress verified (2026-09-30 22:20 UTC)
+
+Read-only status b2c80da (th2-78gg-AB-seed123-status-20260930-a04) ran at
+22:19:50 UTC; the runner recorded it OK. The full-shape A/B smoke passed at
+21:42:31 UTC. The production queue is running: arm A was at update 660 of the
+2,500 cutoff (schedule 28,600), about 3.3 s/update, logged LM loss 5.357 at
+step 660, with checkpoint-500 present. B has not started. The tmux pane is alive.
+A's saved train_config has seed=123, data_seed=123, max_steps=28600 and
+warmup=1430. Its train fingerprint is c430c71d175af59e, different from the
+seed-42 runs' adb88539d2924dc2 as intended; the eval fingerprint is unchanged
+(0568ce654afc3fdb). All eight worker processes carry PYTHONHASHSEED=123.
+Rough estimate at this speed: A finishes about 00:05 UTC and B about 02:30 UTC
+on 2026-10-01, before evaluation/handoff overhead. No process was changed.
+Evidence: temp/AB-seed123-status-a04.log (SHA256
+4f8402fa3516984f4ffcfb47d11c824b3f7d61c7ddfe126da30f9149c1f7edd7); the
+previously unsaved a03 output is temp/AB-seed123-status-a03.log.
+commands.sh restored to #0.
+
 ## Authorized fresh A/B seed replication (2026-09-30)
 
 User requested fresh A and B, each cutoff 2,500, with all training seeds changed.
