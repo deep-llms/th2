@@ -1,22 +1,24 @@
 """Bottleneck mechanism, gradient boundaries, and native Trainer integration."""
 import copy
+import itertools
 import json
 from pathlib import Path
 import tempfile
 import unittest
 
 import torch
+from torch.nn import functional as F
 from datasets import Dataset
 from safetensors.torch import load_file
 from transformers import TrainingArguments, default_data_collator
 
 from deep_kv import BOTTLENECK_ARMS
-from deep_kv.model import Context, normalize_code
+from deep_kv.model import Context, DeepKV, normalize_code
 from deep_kv.training import DeepKVTrainer, summarize_statistics
 from deep_kv.__main__ import jobs
 from deep_kv.report import report
-from test_deep_kv import model, context, parameter_hash
-from test_train import fixture, invoke
+from tests.test_deep_kv import model, context, parameter_hash, config
+from tests.test_train import fixture, invoke
 
 
 def objective(m, out):
@@ -29,6 +31,126 @@ class BottleneckTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         torch.set_num_threads(1)
+
+    def test_literal_reference_at_production_hook_indices(self):
+        # Qwen3-0.6B has query width != residual width. Preserve that ratio in a
+        # tiny 22-block model and exercise the actual 1-based hooks 5 and 21.
+        cfg = config()
+        cfg.num_hidden_layers, cfg.head_dim = 22, 16
+        cfg.layer_types = ['full_attention'] * cfg.num_hidden_layers
+        batch = context()
+        labels = batch.input_ids[:, 1:].clone()
+        eligible = batch.valid[:, :-1] & batch.valid[:, 1:]
+        eligible &= batch.segments[:, :-1].eq(batch.segments[:, 1:])
+        labels.masked_fill_(~eligible, -100)
+        n = batch.input_ids.shape[1]
+        strict = (torch.arange(n)[None, :] < torch.arange(n)[:, None])[None, None]
+        strict = strict & batch.valid[:, None, :, None] & batch.valid[:, None, None, :]
+        strict &= batch.segments[:, None, :, None].eq(batch.segments[:, None, None, :])
+
+        def rms(x, epsilon):
+            return x.float() / (x.float().square().mean(-1, keepdim=True) + epsilon).sqrt()
+
+        def ce(head, x, y):
+            logits = F.linear(x, head.weight).float()
+            return F.cross_entropy(logits[:, :-1].reshape(-1, logits.shape[-1]),
+                                   y.flatten(), reduction='sum', ignore_index=-100)
+
+        for arm in BOTTLENECK_ARMS:
+            actual = DeepKV.from_scratch(cfg, arm, checkpoint_layers=False, lm_chunk=3)
+            with torch.no_grad():
+                actual.aux.out.weight.normal_(std=.04)
+            reference = copy.deepcopy(actual)
+            out = actual(batch)
+            objective(actual, out).backward()
+            captured = {}
+            def capture(index):
+                def hook(module, args, output):
+                    captured[index] = (args[0], output)
+                return hook
+            handles = [reference.backbone.model.layers[i].input_layernorm.register_forward_hook(capture(i))
+                       for i in (4, 20)]
+            hidden, predicted, target = reference.hidden_states(batch)
+            for handle in handles:
+                handle.remove()
+            torch.testing.assert_close(target[0], captured[20][0], atol=0, rtol=0)
+            torch.testing.assert_close(predicted[0], rms(reference.aux.predictor(captured[4][1]), 1e-6))
+            code = rms(reference.extractor(captured[20][0].detach()), 1e-6)
+            if reference.consumer_aware:
+                torch.testing.assert_close(predicted[2], captured[4][0], atol=0, rtol=0)
+                head = reference.backbone.model.layers[4].self_attn
+                q = head.q_proj(captured[4][1]).view(2, n, 4, 16)
+                q = rms(q, head.q_norm.variance_epsilon) * head.q_norm.weight
+                q = q.transpose(1, 2).detach()
+                cos, sin = target[1]
+                def rotate(x):
+                    halves = torch.cat((-x[..., 8:], x[..., :8]), dim=-1)
+                    return x * cos[:, None] + halves * sin[:, None]
+                query = rotate(q)
+                torch.testing.assert_close(predicted[1], query)
+                keys = F.linear(code, reference.aux.k.weight.detach()).view(2, n, 2, 16)
+                keys = rms(keys, reference.aux.k_norm.variance_epsilon) * reference.aux.k_norm.weight.detach()
+                keys = rotate(keys.transpose(1, 2)).repeat_interleave(2, dim=1)
+                values = F.linear(code, reference.aux.v.weight.detach()).view(2, n, 2, 16)
+                values = values.transpose(1, 2).repeat_interleave(2, dim=1)
+                scores = (query @ keys.transpose(-1, -2)) / 4
+                scores = scores.masked_fill(~strict, -torch.inf)
+                weights = torch.where(strict.any(-1, keepdim=True), scores, 0).softmax(-1)
+                weights = weights.masked_fill(~strict, 0)
+                correction = F.linear((weights @ values).transpose(1, 2).reshape(2, n, 64),
+                                      reference.aux.out.weight.detach())
+                value = captured[4][0].detach() + correction
+                use_mask = eligible & strict[:, 0, :-1].any(-1)
+            else:
+                value, use_mask = code, eligible
+            extract = ce(reference.readout, value, labels.masked_fill(~use_mask, -100))
+            lm = ce(reference.backbone.lm_head, hidden, labels)
+            error = (predicted[0] - code.detach()).abs()
+            align = torch.where(error < 1, .5 * error.square(), error - .5).mean(-1)[batch.valid].sum()
+            torch.testing.assert_close(out['lm_sum'], lm)
+            torch.testing.assert_close(out['extractor_sum'], extract)
+            torch.testing.assert_close(out['align_sum'], align)
+            loss = lm / eligible.sum() + extract / use_mask.sum()
+            if reference.code_loss_weight:
+                loss = loss + reference.code_loss_weight * align / batch.valid.sum()
+            loss.backward()
+            for (name, p), (_, q) in zip(actual.named_parameters(), reference.named_parameters()):
+                torch.testing.assert_close(p.grad, q.grad, atol=2e-6, rtol=2e-5, msg=name)
+
+    def test_bf16_adam_resume_all_checkpoint_combinations(self):
+        def step(m, optimizer, scheduler):
+            optimizer.zero_grad(set_to_none=True)
+            with torch.autocast('cpu', dtype=torch.bfloat16):
+                loss = objective(m, m(context()))
+            loss.backward()
+            gradients = {n: p.grad.clone() for n, p in m.named_parameters()}
+            torch.nn.utils.clip_grad_norm_(m.parameters(), 1.0)
+            optimizer.step()
+            scheduler.step()
+            return loss.detach(), gradients
+
+        for arm in BOTTLENECK_ARMS:
+            m = model(arm, checkpoint=True)
+            optimizer = torch.optim.AdamW(m.parameters(), lr=3e-4, betas=(.9, .95), weight_decay=.1)
+            scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda i: 1 - .01 * i)
+            for _ in range(2):
+                step(m, optimizer, scheduler)
+            saved = copy.deepcopy((m.state_dict(), optimizer.state_dict(), scheduler.state_dict()))
+            expected = step(m, optimizer, scheduler)
+            for flags in itertools.product((False, True), repeat=3):
+                with self.subTest(arm=arm, checkpoint=flags):
+                    other = model(arm)
+                    opt = torch.optim.AdamW(other.parameters(), lr=3e-4, betas=(.9, .95), weight_decay=.1)
+                    sched = torch.optim.lr_scheduler.LambdaLR(opt, lambda i: 1 - .01 * i)
+                    other.load_state_dict(saved[0])
+                    opt.load_state_dict(copy.deepcopy(saved[1]))
+                    sched.load_state_dict(saved[2])
+                    other.checkpoint_layers, other.checkpoint_lm, other.checkpoint_aux = flags
+                    actual = step(other, opt, sched)
+                    torch.testing.assert_close(actual, expected, atol=1e-6, rtol=1e-5)
+                    torch.testing.assert_close(other.state_dict(), m.state_dict(), atol=1e-7, rtol=1e-5)
+                    torch.testing.assert_close(opt.state_dict(), optimizer.state_dict(), atol=1e-7, rtol=1e-5)
+                    self.assertEqual(sched.state_dict(), scheduler.state_dict())
 
     def test_matched_initialization_and_forward_isolation(self):
         models = [model(arm).eval() for arm in BOTTLENECK_ARMS]

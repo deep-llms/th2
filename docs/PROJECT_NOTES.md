@@ -1,5 +1,18 @@
 # Project notes
 
+## Bottleneck second review (2026-09-30)
+
+No training-logic correction required after specification/Trainer review and
+independent mathematical checks. Fixed test_bottleneck sibling imports to use
+tests.test_deep_kv/tests.test_train, supporting module invocation and discovery.
+Expanded tests verify losses and every parameter gradient against a literal
+dense consumer reference at blocks5/21 (22 tiny layers, query width2x residual),
+plus all eight recomputation-flag combinations under BF16 with restored AdamW
+and scheduler state. Full CPU suite83 passed in81.074s; local evidence in
+temp/bottleneck-review-full.log. No model/optimizer/data/recipe changes and no
+remote operations. B200 full-model memory/throughput remains unmeasured for the
+new arms; earlier eight-process CPU distributed results are recorded below.
+
 ## Bottleneck variants implemented locally (2026-09-30)
 
 `deep_bottleneck_task_and_consumer_v2.md` now has implementation/usage notes.

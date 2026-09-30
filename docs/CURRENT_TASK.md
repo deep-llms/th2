@@ -1,5 +1,18 @@
 # Current task
 
+## Bottleneck follow-up correctness review (2026-09-30)
+
+Reviewed the four new arms against the specification and pinned Trainer code.
+No training-logic defect found. Fixed sibling test imports so the focused suite
+also runs as `python -m unittest tests.test_bottleneck` (previously failed before
+any test). Added independent dense-attention/loss/gradient reference checks at
+blocks5/21 with the actual Qwen attention-width ratio, and BF16 AdamW/scheduler
+continuation checks for all eight checkpointing combinations across four arms.
+All83 CPU tests passed; evidence temp/bottleneck-review-full.log. The isolated
+reference also passed via module invocation (temp/bottleneck-reference-review.log).
+Training implementation and launch recipe are unchanged. No B200 action; the
+remaining operational step is still an authorized full-model GPU capacity smoke.
+
 ## Bottleneck task-aware / consumer-aware implementation (2026-09-30)
 
 Implemented the four arms in `deep_bottleneck_task_and_consumer_v2.md`:

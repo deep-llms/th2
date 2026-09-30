@@ -499,3 +499,10 @@ training/save/resume, checkpoint staging, and sequential queue/report integratio
 CPU BF16 train/resume and an uneven-mask distributed update against a single
 global-batch SGD reference. These tests establish small-model correctness, not
 research gains or full-model GPU capacity.
+
+The follow-up review adds a literal dense-attention/loss/gradient reference using
+22 tiny blocks with hooks 5/21 and query width twice the residual width, matching
+Qwen3-0.6B's attention-width relationship. It also checks all eight combinations
+of decoder/LM/auxiliary checkpointing under BF16, including a restored AdamW
+update and scheduler state. The focused suite supports both unittest discovery
+and `python -m unittest tests.test_bottleneck -v`.
