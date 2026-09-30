@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-bottleneck-status-20260930-a02
+#th2-78gg-bottleneck-status-20260930-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
