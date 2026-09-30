@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-bottleneck-status-20260930-a03
+#th2-78gg-bottleneck-status-20260930-a04
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
@@ -11,7 +11,7 @@ from pathlib import Path
 from scripts.verified_gpu_reclaim import inspect
 root = Path('/mnt/local/_outputs/deep-llms_th2/deep-bottleneck-5000-20260930-a01')
 print('STATUS_AT', datetime.now(timezone.utc).isoformat(), flush=True)
-for name in ['preflight.json','gpu_inspection.json','production/supervisor.json','production/reclaim.json',
+for name in ['jobs.json','recipe.json','preflight.json','gpu_inspection.json','production/supervisor.json','production/reclaim.json',
              'production/gpus-free-before-training.json','production/run/run.json',
              'production/run/smoke/smoke_complete.json','production/run/complete.json',
              'production/burn-verified.json']:
