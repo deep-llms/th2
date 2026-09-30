@@ -1,5 +1,26 @@
 # Current task
 
+## Authorized bottleneck launch: two aligned arms, 5,000 steps (2026-09-30)
+
+User authorized Task-Aware and Consumer-Aware, each5,000 updates on B200.
+Selected Task-Aware-Align and Consumer-Aware-Align; both fresh initialization.
+Read-only preflight2da76ed at12:39:19 UTC passed: eight approved burn workers
+457634–457641 under457565, guard enabled, pinned torch2.14/transformers5.9/
+accelerate1.13, model and English text paths present, >23TiB disk free.
+Evidence temp/bottleneck-remote-preflight.log, SHA256
+583a078e5d811c1289106a3e501510c83ef3f635862aa111053b2a0fea6f9c0c.
+
+Prepared root /mnt/local/_outputs/deep-llms_th2/deep-bottleneck-5000-20260930-a01.
+Queue: both production-shape smoke arms (10 updates then native resume to12),
+then fresh Task-Aware-Align5000, Consumer-Aware-Align5000, matched LM comparison.
+Production schedule28600/warmup1430/micro16/accum4/eightGPUs/seq2048 unchanged.
+Decoder and main-LM checkpointing off; auxiliary-loss checkpointing on for both
+new heads' memory headroom. Explicit attention mask and LM chunk128 retained.
+Smoke gate requires >8GiB free on every GPU. Existing supervisor rechecks exact
+burn identities, verifies free GPUs, and restores/validates communicating burns
+after success/failure. Accelerate resource->cache copy plus accelerate env precede
+reclamation. Next: verify actual launch, smoke receipts, and production progress.
+
 ## Bottleneck follow-up correctness review (2026-09-30)
 
 Reviewed the four new arms against the specification and pinned Trainer code.

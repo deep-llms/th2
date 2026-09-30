@@ -1,5 +1,21 @@
 # Project notes
 
+## Authorized two-arm bottleneck run (2026-09-30)
+
+User selected the two aligned versions, each fresh for5,000 optimizer updates
+(5,242,880,000 input tokens). NoAlign controls are not part of this launch.
+Keep schedule28600/warmup1430, micro16/accum4/world8/seq2048, original text,
+cache/order/seeds/EOS, optimizer/clipping, explicit attention mask, LM chunk128.
+Use checkpoint_layers=false/checkpoint_lm=false/checkpoint_aux=true identically
+for both arms: new training-only vocabulary readouts add memory. This requires
+the production-shape smoke gate before fresh production outputs are created.
+The existing smoke helper now accepts selected arms and validates bottleneck
+loss denominators/components, main-LM evaluation, parameters, all-rank memory
+and10->12 resume. Nine smoke-gate/burn-supervisor CPU tests passed locally.
+Existing train_then_burn owns the entire smoke->training->comparison->burn flow.
+Read-only B200 preflight2da76ed passed12:39:19 UTC; actual launch still needs
+verification. No environment/package/driver changes are requested.
+
 ## Bottleneck second review (2026-09-30)
 
 No training-logic correction required after specification/Trainer review and

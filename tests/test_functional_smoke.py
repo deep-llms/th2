@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from scripts.smoke_deep_kv_functional import validate_arm
+from deep_kv import BOTTLENECK_ARMS, code_loss_weight
 
 
 class FunctionalSmokeGateTests(unittest.TestCase):
@@ -70,6 +71,36 @@ class FunctionalSmokeGateTests(unittest.TestCase):
                 path.write_text(json.dumps(record))
                 with self.assertRaises(AssertionError):
                     validate_arm(root, 'G', 12)
+
+    def test_bottleneck_gate_and_incorrect_query_count(self):
+        for arm in BOTTLENECK_ARMS:
+            for step in (10, 12):
+                with tempfile.TemporaryDirectory() as tmp:
+                    root = Path(tmp)
+                    self.fixture(root, arm, step)
+                    path = root / 'result.json'
+                    result = json.loads(path.read_text())
+                    consumer = arm.startswith('Consumer')
+                    metrics = dict(eval_rows=129, eval_lm_loss=4., eval_loss=4., eval_loss_align=.5,
+                                   eval_extractor_targets=129 * (2046 if consumer else 2047),
+                                   eval_objective=6. + code_loss_weight(arm) * .5)
+                    metrics['eval_loss_use' if consumer else 'eval_loss_extract'] = 2.
+                    if consumer:
+                        metrics.update(eval_loss_use_no_message=2.2, eval_message_ce_gain=.2)
+                    result.update(evaluation=metrics, training_cost={'parameters': dict(total=120, inference=100, training_only=20)})
+                    path.write_text(json.dumps(result))
+                    for rank in range(8):
+                        record_path = root / f'smoke-step{step}-rank{rank}.json'
+                        record = json.loads(record_path.read_text())
+                        for row in record['steps']:
+                            row.update(lm_loss=4., objective=metrics['eval_objective'], loss_align=.5,
+                                       **{'loss_use' if consumer else 'loss_extract': 2.})
+                        record_path.write_text(json.dumps(record))
+                    validate_arm(root, arm, step)
+                    result['evaluation']['eval_extractor_targets'] += 129
+                    path.write_text(json.dumps(result))
+                    with self.assertRaises(AssertionError):
+                        validate_arm(root, arm, step)
 
 
 if __name__ == '__main__':

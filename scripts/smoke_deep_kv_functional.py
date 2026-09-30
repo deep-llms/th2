@@ -1,4 +1,4 @@
-"""D/F/G production-shape smoke using train.py; run under train_then_burn."""
+"""Selected-arm production-shape smoke using train.py; run under train_then_burn."""
 import argparse
 import json
 import math
@@ -9,6 +9,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from deep_kv import ARMS, BOTTLENECK_ARMS, code_loss_weight
 
 
 def read(path):
@@ -93,6 +94,20 @@ def validate_arm(path, arm, step):
         if arm == 'G':
             expected += .3 * evaluation['eval_loss_msg']
         assert math.isclose(evaluation['eval_loss'], expected, abs_tol=1e-9)
+    if arm in BOTTLENECK_ARMS:
+        consumer = arm.startswith('Consumer')
+        assert evaluation['eval_extractor_targets'] == 129 * (2046 if consumer else 2047)
+        assert evaluation['eval_loss_align'] >= 0
+        assert evaluation['eval_loss'] == evaluation['eval_lm_loss']
+        extract = evaluation['eval_loss_use' if consumer else 'eval_loss_extract']
+        expected = evaluation['eval_lm_loss'] + extract + code_loss_weight(arm) * evaluation['eval_loss_align']
+        assert math.isclose(evaluation['eval_objective'], expected, abs_tol=1e-9)
+        if consumer:
+            assert math.isclose(evaluation['eval_message_ce_gain'],
+                                evaluation['eval_loss_use_no_message'] - extract, abs_tol=1e-9)
+        counts = result['training_cost']['parameters']
+        assert counts['total'] == counts['inference'] + counts['training_only']
+        assert counts['inference'] > 0 and counts['training_only'] > 0
     telemetry = [read(path / f'smoke-step{step}-rank{rank}.json') for rank in range(8)]
     for rank, record in enumerate(telemetry):
         assert record['arm'] == arm and record['rank'] == rank and record['step'] == step
@@ -101,6 +116,10 @@ def validate_arm(path, arm, step):
         assert record['device_total_bytes'] - record['reserved_peak_bytes'] > 8 * 2**30
         for metrics in record['steps']:
             assert math.isfinite(metrics['seconds']) and metrics['seconds'] > 0
+            if arm in BOTTLENECK_ARMS:
+                assert all(math.isfinite(metrics[key]) for key in ('lm_loss', 'objective', 'loss_align',
+                           'loss_use' if arm.startswith('Consumer') else 'loss_extract'))
+                assert metrics['loss_align'] >= 0
             if arm in 'FG':
                 assert math.isfinite(metrics['loss_route']) and metrics['loss_route'] >= -1e-6
                 assert math.isfinite(metrics['loss_msg']) and metrics['loss_msg'] >= 0
@@ -118,12 +137,15 @@ def validate_arm(path, arm, step):
                 evaluation=evaluation)
 
 
-def run(root, recipe):
+def run(root, recipe, arms='DFG'):
     from train import load_text
     from deep_kv.__main__ import jobs
     from deep_kv.report import report
     from run_experiments import load_jobs, run_jobs
     from scripts.gpu_status import require_free
+    arms = tuple(arms)
+    if not arms or len(set(arms)) != len(arms) or any(arm not in ARMS for arm in arms):
+        raise ValueError('Choose nonempty unique supported arms')
     root.mkdir(parents=True, exist_ok=False)
     assert shutil.disk_usage(root).free > 180 * 2**30, 'Insufficient checkpoint disk space'
     config = read(recipe)
@@ -134,10 +156,10 @@ def run(root, recipe):
         config[key] = str(destination)
     config.update(max_steps=12, warmup_steps=1, stop_after=10, preprocessing_num_workers=8,
                   eval_rows=129, monitor_rows=16, logging_steps=1, save_steps=5, eval_steps=5,
-                  dataloader_num_workers=2, skip_memory_metrics=False)
+                  dataloader_num_workers=2, skip_memory_metrics=any(a in BOTTLENECK_ARMS for a in arms))
     recipe_path = root / 'recipe.json'
     recipe_path.write_text(json.dumps(config, indent=2))
-    manifest = jobs(recipe_path, arms='DFG')
+    manifest = jobs(recipe_path, arms=arms)
     # Replace only the entry point to attach observational callbacks for this smoke.
     for job in manifest['jobs'][:-1]:
         argv = job['argv']
@@ -147,11 +169,11 @@ def run(root, recipe):
     manifest_path.write_text(json.dumps(manifest, indent=2))
     run_dir = root / 'run'
     run_jobs(load_jobs(manifest_path), Path.cwd(), run_dir)
-    initial = {arm: validate_arm(run_dir / arm, arm, 10) for arm in 'DFG'}
+    initial = {arm: validate_arm(run_dir / arm, arm, 10) for arm in arms}
     # Preserve step-10 receipts before the intentional in-place resume changes artifacts.
     for name in ('complete.json', 'run.json', 'comparison.json'):
         (run_dir / name).rename(root / (Path(name).stem + '-step10.json'))
-    for arm in 'DFG':
+    for arm in arms:
         for name in ('result.json', 'trainer_state.json', 'eval_results.json'):
             shutil.copy2(run_dir / arm / name, run_dir / arm / (Path(name).stem + '-step10.json'))
     for job in manifest['jobs'][:-1]:
@@ -161,13 +183,13 @@ def run(root, recipe):
         with (root / (job['name'] + '-resume.log')).open('x') as log:
             subprocess.run(argv, check=True, stdout=log, stderr=subprocess.STDOUT)
         require_free(list(range(8)))
-    final = {arm: validate_arm(run_dir / arm, arm, 12) for arm in 'DFG'}
-    assert report(run_dir, 'DFG')['compared_update'] == 12
-    baseline = initial['D']['seconds_per_update']
-    receipt = dict(status='ok', arms=list('DFG'), initial_cutoff=10, resumed_step=12,
+    final = {arm: validate_arm(run_dir / arm, arm, 12) for arm in arms}
+    assert report(run_dir, arms)['compared_update'] == 12
+    baseline = initial[arms[0]]['seconds_per_update']
+    receipt = dict(status='ok', arms=list(arms), initial_cutoff=10, resumed_step=12,
                    schedule_steps=12, tokens_per_update=1048576, eval_rows=129,
                    initial=initial, final=final, scientific_result=False,
-                   speed_ratios={arm: initial[arm]['seconds_per_update'] / baseline for arm in 'FG'})
+                   speed_ratios={arm: initial[arm]['seconds_per_update'] / baseline for arm in arms[1:]})
     (root / 'smoke_complete.json').write_text(json.dumps(receipt, indent=2, allow_nan=False))
     print('FUNCTIONAL_SMOKE_PASSED', json.dumps(receipt), flush=True)
 
@@ -180,5 +202,6 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser(description=__doc__)
         parser.add_argument('--root', required=True, type=Path)
         parser.add_argument('--recipe', required=True, type=Path)
+        parser.add_argument('--arms', nargs='+', choices=ARMS, default=list('DFG'))
         args = parser.parse_args()
-        run(args.root.resolve(), args.recipe.resolve())
+        run(args.root.resolve(), args.recipe.resolve(), args.arms)
