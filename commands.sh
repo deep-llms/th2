@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-78gg-AB-seed123-status-20260930-a02
+#th2-78gg-AB-seed123-status-20260930-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
@@ -42,6 +42,10 @@ def tail(path):
 tail(root/'launch.log')
 for folder in [root/'production/run',root/'production/run/smoke',root/'production/run/smoke/run']:
  for path in sorted(folder.glob('*.log')):tail(path)
-print('LIVE_GPU_INSPECTION',json.dumps(inspect()),flush=True)
+live=inspect()
+print('LIVE_GPU_INSPECTION',json.dumps(live),flush=True)
+for pid in live['workers']:
+ values=(Path('/proc')/str(pid)/'environ').read_bytes().split(b'\0')
+ print('WORKER_HASH_SEED',pid,[v.decode() for v in values if v.startswith(b'PYTHONHASHSEED=')],flush=True)
 print('TMUX_PANE',subprocess.run(['tmux','display-message','-p','-t','deep-kv-AB-seed123-2500-20260930-a01','#{pane_dead}'],capture_output=True,text=True).stdout.strip(),flush=True)
 PY
