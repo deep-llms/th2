@@ -1,7 +1,7 @@
 """Compare selected matched train.py results, using held-out LM loss."""
 import json
 from pathlib import Path
-from . import ARMS, kv_loss_weight
+from . import ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
 
 
 def report(directory, arms="ABCD"):
@@ -40,11 +40,18 @@ def report(directory, arms="ABCD"):
                                     ("E", "D"), ("E", "B"), ("E", "C"), ("E", "A"),
                                     ("F", "B"), ("G", "F"), ("G", "B"),
                                     ("F", "A"), ("G", "A"), ("F", "D"), ("G", "D"),
-                                    ("F", "E"), ("G", "E")) if a in nll and b in nll},
+                                    ("F", "E"), ("G", "E"),
+                                    ("Task-Aware-Align", "Task-Aware-NoAlign"),
+                                    ("Consumer-Aware-Align", "Consumer-Aware-NoAlign"),
+                                    ("Consumer-Aware-Align", "Task-Aware-Align")) if a in nll and b in nll},
                "deep_gain_pattern": all(nll["D"] < nll[a] for a in "ABC") if set("ABCD") <= nll.keys() else None,
                "interpretation": "Negative difference favors first arm; single-seed exploratory comparison."}
     if "E" in arms:
-        summary["kv_loss_weights"] = {arm: kv_loss_weight(arm) for arm in arms if arm not in ("F", "G")}
+        summary["kv_loss_weights"] = {arm: kv_loss_weight(arm) for arm in arms if arm in "ABCDE"}
+    if set(arms) & set(BOTTLENECK_ARMS):
+        summary["bottleneck_loss_weights"] = {arm: {"extractor": 1.0, "alignment": code_loss_weight(arm)}
+                                              for arm in arms if arm in BOTTLENECK_ARMS}
+        summary["training_cost"] = {arm: results[arm].get("training_cost") for arm in arms}
     if set(arms) & {"F", "G"}:
         summary["functional_loss_weights"] = {arm: {"route": .3, "message": .3 if arm == "G" else 0.}
                                                for arm in arms if arm in ("F", "G")}

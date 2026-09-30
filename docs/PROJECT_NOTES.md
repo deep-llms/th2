@@ -1,5 +1,32 @@
 # Project notes
 
+## Bottleneck variants implemented locally (2026-09-30)
+
+`deep_bottleneck_task_and_consumer_v2.md` now has implementation/usage notes.
+Arm IDs are Task-Aware-NoAlign/Align and Consumer-Aware-NoAlign/Align. All share
+fresh identical backbone, P, E, code decoders and auxiliary output initialization;
+each aligned/control pair has identical full initialization. Codes are fixed
+width128, parameter-free RMS eps1e-6, SmoothL1 beta1, alignment weight0/.3.
+The deep extractor reads the detached residual before block21; the predictor
+reads block5 normalized attention input. Actual deep codes never enter LM logits.
+
+Task CE trains E plus the independent code-to-vocabulary readout. Consumer CE
+trains E plus the independent hidden-to-vocabulary readout, using functional
+detachment of the live consumer weights and detached native query/shallow state.
+Alignment targets are detached. Consumer query eligibility also requires a
+strict-past source. All reductions are FP32; Trainer's item-count hook normalizes
+each loss over its own global accumulated count. Existing A–G recipes remain.
+New eval_loss means LM only, with eval_objective/components separate; consumer
+no-message CE is evaluation-only. Result files include parameter counts and
+invocation throughput/peak CUDA memory. Inference uses the shared predicted-code
+branch; extractor/readout can be removed when auxiliary objectives are disabled.
+
+Local full suite81 passed; eight-rank CPU BF16 native save/resume passed four
+arms (max parameter difference1.86265e-9); unequal-mask DDP+accumulation update
+matched global reference within3.72530e-9. These are tiny-model correctness tests,
+not B200 capacity/performance evidence. No new run horizon or launch authorized
+in this implementation request; no new runner command was submitted.
+
 ## B/F/G complete at 10,000; automatic burns verified (2026-09-30 05:23 UTC)
 
 Read-only audit47508e2 confirms all queue jobs passed, complete.json equals the

@@ -8,10 +8,25 @@ import numpy as np
 import torch
 from transformers import Trainer, TrainerCallback
 from .model import Context
+from . import BOTTLENECK_ARMS, code_loss_weight
 
 
-def summarize_statistics(statistics, kv_loss_weight=1.0, arm=None):
+def summarize_statistics(statistics, kv_loss_weight=1.0, arm=None, *, evaluation=False):
     values = np.asarray(statistics, dtype=np.float64)
+    if arm in BOTTLENECK_ARMS:
+        lm, targets, extract, queries, align, no_message, tokens = values.sum(axis=0).tolist()
+        if targets <= 0 or tokens <= 0 or queries < 0 or not np.isfinite(values).all():
+            raise ValueError("Nonfinite loss or empty token statistics")
+        extract, align = extract / max(queries, 1), align / tokens
+        consumer = arm.startswith("Consumer")
+        result = {"lm_loss": lm / targets, "loss_use" if consumer else "loss_extract": extract,
+                  "loss_align": align, "objective": lm / targets + extract + code_loss_weight(arm) * align,
+                  "extractor_targets": int(queries), "input_tokens": int(tokens),
+                  "target_tokens": int(targets), "rows": len(values)}
+        if consumer and evaluation:
+            result.update(loss_use_no_message=no_message / max(queries, 1),
+                          message_ce_gain=no_message / max(queries, 1) - extract)
+        return result
     if arm in ("F", "G"):
         lm, targets, route, msg, queries, tokens = values.sum(axis=0).tolist()
         if targets <= 0 or tokens <= 0 or queries < 0 or not np.isfinite(values).all():
@@ -30,8 +45,8 @@ def summarize_statistics(statistics, kv_loss_weight=1.0, arm=None):
 
 
 def compute_metrics(prediction, kv_loss_weight=1.0, arm=None):
-    result = summarize_statistics(prediction.predictions, kv_loss_weight, arm)
-    result["loss"] = result["objective"]
+    result = summarize_statistics(prediction.predictions, kv_loss_weight, arm, evaluation=True)
+    result["loss"] = result["lm_loss"] if arm in BOTTLENECK_ARMS else result["objective"]
     return result
 
 
@@ -69,17 +84,47 @@ class DeepKVTrainer(Trainer):
         if self.compute_metrics is compute_metrics:
             self.compute_metrics = partial(compute_metrics, kv_loss_weight=self.model.kv_loss_weight,
                                            arm=self.model.arm)
-        # We return a microbatch mean, not a sum normalized by HF's label count.
-        # Trainer divides once by accumulation; DDP averages once across ranks.
-        self.model_accepts_loss_kwargs = False
+        # Legacy arms return microbatch means. Bottleneck arms consume the three
+        # global denominators below, so Trainer must not divide by GAS again.
+        self.model_accepts_loss_kwargs = self.model.bottleneck
         self.step_totals = None
 
-    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+    @staticmethod
+    def context(inputs):
         ids = inputs["input_ids"]
-        context = Context(ids, torch.ones_like(ids, dtype=torch.bool),
-                          torch.arange(ids.shape[1], device=ids.device).expand_as(ids))
+        return Context(ids, inputs.get("attention_mask", torch.ones_like(ids)).bool(),
+                       inputs.get("position_ids", torch.arange(ids.shape[1], device=ids.device).expand_as(ids)),
+                       inputs.get("segments"), inputs.get("labels"))
+
+    def _get_num_items_in_batch(self, batch_samples, device):
+        if not self.model.bottleneck:
+            return super()._get_num_items_in_batch(batch_samples, device)
+        if not batch_samples:
+            return None
+        # The three losses have DIFFERENT denominators. Count across the entire
+        # accumulation window and all DDP ranks, including uneven valid masks.
+        counts = torch.zeros(3, dtype=torch.long, device=device)
+        for inputs in batch_samples:
+            context = self.context(inputs)
+            eligible = context.consumer_targets() if self.model.consumer_aware else context.targets()
+            counts += torch.stack((context.targets().sum(), eligible.sum(), context.valid.sum())).to(device)
+        return self.accelerator.reduce(counts, reduction="sum")
+
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        context = self.context(inputs)
         outputs = model(context)
-        if self.model.functional_loss:
+        if self.model.bottleneck:
+            counts = (num_items_in_batch if num_items_in_batch is not None else
+                      torch.stack((outputs["lm_count"], outputs["extractor_count"], outputs["align_count"])))
+            lm_n, extract_n, align_n = counts.clamp_min(1)
+            loss = outputs["lm_sum"] / lm_n + outputs["extractor_sum"] / extract_n
+            if self.model.code_loss_weight:
+                loss = loss + self.model.code_loss_weight * outputs["align_sum"] / align_n
+            if num_items_in_batch is not None:
+                # Trainer skips its accumulation divisor; compensate only for
+                # DDP's gradient average. Our denominators already cover GAS.
+                loss = loss * self.accelerator.num_processes
+        elif self.model.functional_loss:
             auxiliary = outputs["route_sum"]
             if self.model.arm == "G":
                 auxiliary = auxiliary + outputs["msg_sum"]
@@ -156,4 +201,5 @@ class PilotCallback(TrainerCallback):
     def on_log(self, args, state, control, logs, **kwargs):
         if "loss" in logs:
             logs.update({f"step_{k}": self.latest[k] for k in
-                         ("lm_loss", "loss_k", "loss_v", "loss_route", "loss_msg") if k in self.latest})
+                         ("lm_loss", "loss_k", "loss_v", "loss_route", "loss_msg",
+                          "loss_extract", "loss_use", "loss_align") if k in self.latest})

@@ -19,6 +19,7 @@ from pathlib import Path
 import sys
 
 import datasets
+import torch
 import transformers
 from transformers import AutoConfig, AutoTokenizer, HfArgumentParser, TrainingArguments, default_data_collator, set_seed
 from transformers.trainer_utils import get_last_checkpoint
@@ -211,6 +212,10 @@ def main():
                                processing_class=tokenizer, data_collator=default_data_collator,
                                compute_metrics=compute_metrics, callbacks=[callback])
         callback.trainer = trainer
+        starting_step = state.global_step if checkpoint else 0
+        train_result = None
+        if model.bottleneck and training_args.device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(training_args.device)
         if checkpoint and state.global_step == end:
             # HF train() can take a step even at an already reached cutoff.
             trainer._load_from_checkpoint(checkpoint)
@@ -219,6 +224,20 @@ def main():
             train_result = trainer.train(resume_from_checkpoint=checkpoint)
             trainer.log_metrics("train", train_result.metrics)
             trainer.save_metrics("train", train_result.metrics)
+        if model.bottleneck:
+            runtime = train_result.metrics["train_runtime"] if train_result is not None else 0.0
+            completed = trainer.state.global_step - starting_step
+            peak = None
+            if training_args.device.type == "cuda":
+                local_peak = torch.tensor([torch.cuda.max_memory_allocated(training_args.device),
+                                           torch.cuda.max_memory_reserved(training_args.device)],
+                                          device=training_args.device)
+                peak = trainer.accelerator.gather(local_peak).reshape(-1, 2).max(0).values.tolist()
+            training_cost = {"parameters": model.parameter_counts(), "optimizer_steps": completed,
+                             "runtime_seconds": runtime,
+                             "input_tokens_per_second": completed * tokens_per_update / runtime if runtime else None,
+                             "peak_cuda_allocated_bytes": peak[0] if peak else None,
+                             "peak_cuda_reserved_bytes": peak[1] if peak else None}
         if trainer.state.global_step != end:
             raise ValueError("Training stopped outside the requested iteration")
         trainer.save_model()
@@ -231,6 +250,8 @@ def main():
             result = {"arm": pilot.arm, "global_step": end, "schedule_steps": training_args.max_steps,
                       "input_tokens": end * tokens_per_update,
                       "status": "complete" if end == training_args.max_steps else "stopped", "evaluation": metrics}
+            if model.bottleneck:
+                result["training_cost"] = training_cost
             temporary = output / "result.json.tmp"
             temporary.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
             temporary.replace(output / "result.json")

@@ -12,7 +12,53 @@ from transformers import TrainingArguments
 from test_train import fixture
 import train
 from deep_kv.model import DeepKV
-from deep_kv import ARMS
+from deep_kv import ARMS, BOTTLENECK_ARMS, code_loss_weight
+
+
+def check_masked_distributed_update(root, arm):
+    """Eight-rank GAS update against a single global-batch SGD reference.
+
+    Different padding/segment/label masks give each loss its own denominator,
+    and each rank a different number of eligible positions.
+    """
+    from datasets import Dataset
+    from transformers import default_data_collator
+    from deep_kv.training import DeepKVTrainer
+    from deep_kv.model import Context
+    from test_deep_kv import model
+    ids = torch.arange(16 * 6).reshape(16, 6) % 31
+    valid = torch.arange(6)[None] < (2 + torch.arange(16) % 5)[:, None]
+    segments = (torch.arange(6)[None] // 3).expand_as(ids)
+    positions = (torch.arange(6)[None] % 3).expand_as(ids)
+    labels = ids.clone()
+    labels[::3, 2] = -100
+    batch = Context(ids, valid, positions, segments, labels)
+    reference = model(arm)
+    with torch.no_grad():
+        reference.aux.out.weight.fill_(.03)
+    out = reference(batch)
+    loss = (out['lm_sum'] / out['lm_count'] + out['extractor_sum'] / out['extractor_count']
+            + code_loss_weight(arm) * out['align_sum'] / out['align_count'])
+    loss.backward()
+    torch.optim.SGD(reference.parameters(), lr=.01).step()
+    data = Dataset.from_dict({'input_ids': ids.tolist(), 'attention_mask': valid.tolist(),
+                              'segments': segments.tolist(), 'position_ids': positions.tolist(),
+                              'labels': labels.tolist()})
+    actual = model(arm)
+    with torch.no_grad():
+        actual.aux.out.weight.fill_(.03)
+    arguments = TrainingArguments(output_dir=str(root / arm / 'masked-ddp'), use_cpu=True,
+        report_to='none', max_steps=1, per_device_train_batch_size=1, gradient_accumulation_steps=2,
+        optim='sgd', learning_rate=.01, max_grad_norm=0, remove_unused_columns=False,
+        ddp_find_unused_parameters=False, save_strategy='no', logging_strategy='no', disable_tqdm=True)
+    trainer = DeepKVTrainer(model=actual, args=arguments, train_dataset=data, data_collator=default_data_collator)
+    trainer.train()
+    maximum = 0.0
+    for name, value in actual.state_dict().items():
+        expected = reference.state_dict()[name]
+        torch.testing.assert_close(value, expected, atol=2e-7, rtol=2e-6, msg=name)
+        maximum = max(maximum, (value - expected).abs().max().item())
+    return maximum
 
 
 def main():
@@ -34,6 +80,7 @@ def main():
     results = {}
     original_factory = DeepKV.from_scratch
     for arm in args.arms:
+        masked_delta = check_masked_distributed_update(root, arm) if arm in BOTTLENECK_ARMS else None
         dtypes = set()
         def check_dtype(module, inputs, output):
             dtypes.add(str(output.dtype))
@@ -69,9 +116,17 @@ def main():
                 assert abs(evaluation["eval_loss"] - expected) < 1e-10
                 assert arm != "F" or evaluation["eval_loss_msg"] == 0
                 assert "eval_loss_k" not in evaluation
+            if arm in BOTTLENECK_ARMS:
+                evaluation = result['evaluation']
+                assert evaluation['eval_loss'] == evaluation['eval_lm_loss']
+                assert evaluation['eval_extractor_targets'] == 5 * (6 if arm.startswith('Consumer') else 7)
+                expected = (evaluation['eval_lm_loss'] + evaluation[
+                    'eval_loss_use' if arm.startswith('Consumer') else 'eval_loss_extract']
+                    + code_loss_weight(arm) * evaluation['eval_loss_align'])
+                assert abs(evaluation['eval_objective'] - expected) < 1e-10
             assert dtypes
             results[arm] = {"maximum_parameter_difference": delta, "updates": 3, "eval_rows": 5,
-                            "projection_dtypes": sorted(dtypes)}
+                            "projection_dtypes": sorted(dtypes), "masked_ddp_maximum_difference": masked_delta}
         state.wait_for_everyone()
     if state.is_main_process:
         (root / "resume_verified.json").write_text(json.dumps({"status": "ok", "world_size": 8,

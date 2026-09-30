@@ -4,6 +4,9 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from deep_kv import ARMS
 
 
 def digest(path):
@@ -20,7 +23,7 @@ def stage(sources, destination, step):
     receipt = dict(status='ok', source_step=step, arms={})
     # Check every input before copying any checkpoint.
     for arm, source in sources.items():
-        if arm not in 'ABCDEFG' or len(arm) != 1:
+        if arm not in ARMS:
             raise ValueError('Invalid arm')
         source = Path(source)
         checkpoint = source / f'checkpoint-{step}'

@@ -1,5 +1,28 @@
 # Current task
 
+## Bottleneck task-aware / consumer-aware implementation (2026-09-30)
+
+Implemented the four arms in `deep_bottleneck_task_and_consumer_v2.md`:
+Task-Aware-NoAlign, Task-Aware-Align, Consumer-Aware-NoAlign, Consumer-Aware-Align.
+They reuse train.py, native HF Trainer/Accelerate, EOS packing/cache, and the
+sequential queue/report/staging tools. New model code stays in deep_kv/model.py.
+128-wide normalized codes; independent extractor/readout; alignment weight 0/.3.
+New runs require fresh matched initialization, not old B/F/G checkpoint loading.
+
+Local CPU validation: full suite 81 tests passed; focused seven bottleneck tests
+also passed after metric/staging review. Eight-process CPU BF16 micro16/accum4
+training/resume passed all four arms, including evaluation deduplication over
+five rows and uneven-mask distributed scaling against a global SGD reference.
+Maximum resume parameter difference 1.86265e-9; masked distributed difference
+3.72530e-9. Evidence: temp/bottleneck-regression.log,
+temp/bottleneck-final-tests.log, temp/bottleneck-ddp.log, and
+temp/bottleneck-ddp-20260930-a01/resume_verified.json (local ignored test outputs).
+
+No new B200 workload submitted; commands.sh remains #0. Next operational step
+is an authorized full-model B200 smoke/capacity test, especially for the larger
+consumer readout. Choose a common training cutoff before launch; the new
+specification does not select one. Existing B/F/G completion below is history.
+
 ## B/F/G complete at 10,000; automatic burns verified (2026-09-30 05:23 UTC)
 
 Read-only audit47508e2 confirms all queue jobs passed, complete.json equals the

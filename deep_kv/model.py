@@ -14,7 +14,7 @@ from transformers.models.qwen3.modeling_qwen3 import (
     Qwen3RMSNorm, apply_rotary_pos_emb, eager_attention_forward, repeat_kv,
 )
 from dataclasses import dataclass
-from . import ARMS, kv_loss_weight
+from . import ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
 
 
 @dataclass
@@ -23,6 +23,7 @@ class Context:
     valid: torch.Tensor
     position_ids: torch.Tensor
     segments: torch.Tensor | None = None
+    labels: torch.Tensor | None = None
 
     def __post_init__(self):
         shape = self.input_ids.shape
@@ -34,6 +35,8 @@ class Context:
             raise ValueError("valid must be boolean")
         if self.segments is not None and self.segments.shape != shape:
             raise ValueError("segment IDs must match input IDs")
+        if self.labels is not None and self.labels.shape != shape:
+            raise ValueError("Unshifted labels must match input IDs")
 
     def allowed(self):
         n = self.input_ids.shape[1]
@@ -55,7 +58,18 @@ class Context:
         eligible = self.valid[:, :-1] & self.valid[:, 1:]
         if self.segments is not None:
             eligible = eligible & (self.segments[:, :-1] == self.segments[:, 1:])
+        if self.labels is not None:
+            eligible = eligible & self.labels[:, 1:].ne(-100)
         return eligible
+
+    def consumer_targets(self):
+        # A source must be valid and in the same segment, strictly before t.
+        if self.segments is None:
+            past = self.valid.long().cumsum(-1) - self.valid.long()
+            return self.targets() & past[:, :-1].gt(0)
+        n = self.input_ids.shape[1]
+        strict = self.allowed() & torch.ones(n, n, device=self.input_ids.device, dtype=torch.bool).tril(-1)
+        return self.targets() & strict[:, 0, :-1].any(-1)
 
 
 
@@ -97,6 +111,32 @@ class AuxiliaryKV(nn.Module):
         return correction, k, v
 
 
+def normalize_code(value):
+    value = value.float()
+    return value * torch.rsqrt(value.square().mean(-1, keepdim=True) + 1e-6)
+
+
+class BottleneckKV(AuxiliaryKV):
+    """The real branch; decode_only also supports a functional detached consumer."""
+    def __init__(self, config):
+        nn.Module.__init__(self)
+        self.head_dim = config.head_dim
+        self.groups = config.num_attention_heads // config.num_key_value_heads
+        self.predictor = nn.Linear(config.hidden_size, 128, bias=False)
+        self.k = nn.Linear(128, config.num_key_value_heads * config.head_dim, bias=False)
+        self.v = nn.Linear(128, config.num_key_value_heads * config.head_dim, bias=False)
+        self.k_norm = Qwen3RMSNorm(config.head_dim, config.rms_norm_eps)
+        self.out = nn.Linear(config.num_attention_heads * config.head_dim, config.hidden_size, bias=False)
+        for layer in (self.predictor, self.k, self.v):
+            nn.init.normal_(layer.weight, std=config.initializer_range)
+        nn.init.zeros_(self.out.weight)
+
+    def forward(self, value, rotated_query, rotary, allowed, *, decode_only=False):
+        code = value if decode_only else normalize_code(self.predictor(value))
+        correction, _, _ = super().forward(code, rotated_query, rotary, allowed)
+        return correction, code, code.new_empty(0)
+
+
 class DeepKV(nn.Module):
     def __init__(self, backbone, arm, *, seed=42, consumer=5, deep_target=21,
                  checkpoint_layers=True, lm_chunk=128, checkpoint_lm=True, checkpoint_aux=True,
@@ -115,6 +155,9 @@ class DeepKV(nn.Module):
         self.arm, self.consumer, self.deep_target = arm, consumer, deep_target
         self.kv_loss_weight = kv_loss_weight(arm)
         self.functional_loss = arm in ("F", "G")
+        self.bottleneck = arm in BOTTLENECK_ARMS
+        self.consumer_aware = self.bottleneck and arm.startswith("Consumer")
+        self.code_loss_weight = code_loss_weight(arm) if self.bottleneck else 0.0
         self.checkpoint_layers, self.lm_chunk = checkpoint_layers, lm_chunk
         self.checkpoint_lm, self.checkpoint_aux = checkpoint_lm, checkpoint_aux
         self.causal_attention = causal_attention
@@ -122,7 +165,18 @@ class DeepKV(nn.Module):
         if arm != "A":
             with torch.random.fork_rng(devices=[]):
                 torch.random.default_generator.manual_seed(seed + 1)
-                self.aux = AuxiliaryKV(backbone.config)
+                self.aux = (BottleneckKV if self.bottleneck else AuxiliaryKV)(backbone.config)
+        if self.bottleneck:
+            # Independent streams keep E and every shared real parameter identical
+            # across both readout shapes, and entire states identical within pairs.
+            with torch.random.fork_rng(devices=[]):
+                torch.random.default_generator.manual_seed(seed + 2)
+                self.extractor = nn.Linear(backbone.config.hidden_size, 128, bias=False)
+                nn.init.normal_(self.extractor.weight, std=backbone.config.initializer_range)
+                torch.random.default_generator.manual_seed(seed + 3)
+                self.readout = nn.Linear(backbone.config.hidden_size if self.consumer_aware else 128,
+                                         backbone.config.vocab_size, bias=False)
+                nn.init.normal_(self.readout.weight, std=backbone.config.initializer_range)
 
     @classmethod
     def from_scratch(cls, config, arm, **kwargs):
@@ -154,6 +208,8 @@ class DeepKV(nn.Module):
                 loss_q = loss_q.detach()
             else:
                 correction, pk, pv = self.aux(u, qr, rotary, allowed)
+                if self.consumer_aware:
+                    loss_q = qr.detach()
             attended = attended + correction
         hidden = hidden + attended
         hidden = hidden + layer.mlp(layer.post_attention_layernorm(hidden))
@@ -171,6 +227,9 @@ class DeepKV(nn.Module):
         allowed = context.allowed()
         predicted = target = None
         for i, layer in enumerate(self.backbone.model.layers):
+            if self.bottleneck and i == self.deep_target - 1:
+                target = (hidden.detach(), rotary)
+            shallow = hidden.detach() if self.consumer_aware and i == self.consumer - 1 else None
             special = self.aux is not None and (i == self.consumer - 1 or (self.arm in ("D", "E", "F", "G") and i == self.deep_target - 1))
             if special:
                 def call(x, index=i):
@@ -184,6 +243,8 @@ class DeepKV(nn.Module):
                 hidden, pk, pv, k, v, loss_q, loss_k, kr = result
                 if i == self.consumer - 1:
                     predicted = (loss_k, pv, loss_q) if self.functional_loss else (pk, pv)
+                    if self.bottleneck:
+                        predicted = (pk, loss_q, shallow)
                     if self.arm == "C":
                         target = (k, v)
                 if self.arm in ("D", "E") and i == self.deep_target - 1:
@@ -269,9 +330,58 @@ class DeepKV(nn.Module):
             route_rows, msg_rows = route_rows + r, msg_rows + m
         return route_rows, msg_rows, counts
 
-    def forward(self, context: Context):
+    def bottleneck_losses(self, context, predicted, target):
+        code, query, shallow = predicted
+        deep, rotary = target
+        extracted = normalize_code(self.extractor(deep.detach()))
+        alignment = F.smooth_l1_loss(code.float(), extracted.detach().float(),
+                                     reduction="none", beta=1.0).mean(-1)
+        alignment = (alignment * context.valid).sum(-1)
+        eligible = context.consumer_targets() if self.consumer_aware else context.targets()
+        labels = (context.input_ids if context.labels is None else context.labels)[:, 1:].masked_fill(~eligible, -100)
+        if self.consumer_aware:
+            # Functional parameter detachment preserves d(message)/d(extracted)
+            # without updating or copying any real consumer parameter.
+            def consume(z):
+                correction, _, _ = torch.func.functional_call(
+                    self.aux, {n: p.detach() for n, p in self.aux.named_parameters()},
+                    (z, query.detach(), rotary, context.allowed()), {"decode_only": True})
+                return correction
+            correction = (checkpoint(consume, extracted, use_reentrant=False)
+                          if self.training and self.checkpoint_aux else consume(extracted))
+            value = shallow.detach() + correction
+        else:
+            value = extracted
+        rows = self.readout_ce(value, labels)
+        no_message = torch.zeros_like(rows)
+        # This extra readout is an evaluation diagnostic, never another objective.
+        if self.consumer_aware and not self.training:
+            with torch.no_grad():
+                no_message = self.readout_ce(shallow.detach(), labels)
+        return rows, eligible.sum(-1), alignment, no_message
+
+    def readout_ce(self, value, labels):
+        rows = value.new_zeros(value.shape[0], dtype=torch.float32)
+        def ce(x, y):
+            logits = self.readout(x).float()
+            return F.cross_entropy(logits.flatten(0, 1), y.flatten(),
+                                   ignore_index=-100, reduction="none").view_as(y).sum(-1)
+        for start in range(0, labels.shape[1], self.lm_chunk):
+            y = labels[:, start:start + self.lm_chunk]
+            x = value[:, start:start + y.shape[1]]
+            rows = rows + (checkpoint(ce, x, y, use_reentrant=False)
+                           if self.training and self.checkpoint_aux else ce(x, y))
+        return rows
+
+    def parameter_counts(self):
+        total = sum(p.numel() for p in self.parameters())
+        training_only = (sum(p.numel() for module in (self.extractor, self.readout)
+                             for p in module.parameters()) if self.bottleneck else 0)
+        return {"total": total, "inference": total - training_only, "training_only": training_only}
+
+    def forward(self, context: Context, *, compute_auxiliary_losses=True):
         hidden, predicted, target = self.hidden_states(context)
-        labels = context.input_ids[:, 1:].masked_fill(~context.targets(), -100)
+        labels = (context.input_ids if context.labels is None else context.labels)[:, 1:].masked_fill(~context.targets(), -100)
         lm_rows = hidden.new_zeros((hidden.shape[0],), dtype=torch.float32)
         for start in range(0, labels.shape[1], self.lm_chunk):
             y = labels[:, start:start + self.lm_chunk]
@@ -283,6 +393,16 @@ class DeepKV(nn.Module):
             lm_rows = lm_rows + (checkpoint(ce, x, y, use_reentrant=False)
                                 if self.training and self.checkpoint_lm else ce(x, y))
         counts, tokens = context.targets().sum(dim=1), context.valid.sum(dim=1)
+        if self.bottleneck:
+            extract = align = no_message = torch.zeros_like(lm_rows)
+            queries = torch.zeros_like(counts)
+            if compute_auxiliary_losses:
+                extract, queries, align, no_message = self.bottleneck_losses(context, predicted, target)
+            return {"lm_sum": lm_rows.sum(), "lm_count": counts.sum(),
+                    "extractor_sum": extract.sum(), "extractor_count": queries.sum(),
+                    "align_sum": align.sum(), "align_count": tokens.sum(),
+                    "statistics": torch.stack((lm_rows.detach(), counts, extract.detach(), queries,
+                                                align.detach(), no_message.detach(), tokens), dim=1).double()}
         if self.functional_loss:
             route, msg, queries = self.routing_alignment(predicted, target, context.allowed(),
                 message=self.arm == "G", checkpoint_chunks=self.training and self.checkpoint_aux)
