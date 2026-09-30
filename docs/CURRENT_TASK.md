@@ -1,5 +1,22 @@
 # Current task
 
+## Bottleneck status verified (2026-09-30 20:49 UTC)
+
+Read-only audit 102f004: Task-Aware-Align completed exactly 5,000 updates and
+5,242,880,000 input tokens at 16:46:48 UTC (3h56m wall time). Validation LM loss
+3.208638078874859 over 4,882 rows. Full checkpoint-5000 weights, optimizer,
+scheduler, training args and all eight RNG files verified present/nonempty;
+result hash matches the successful queue receipt. Consumer-Aware-Align is still
+running: live step 4,847/5,000 at 20:49:52 UTC, approximately 2.96s/update,
+finite losses/gradients, eight train.py workers at 91–99% GPU utilization.
+Estimated completion 20:58–21:00 UTC including save/evaluation; unverified ETA.
+Supervisor remains running; burns have not restarted while training owns GPUs.
+Automatic burn handoff remains pending. No restart or process signaling occurred.
+Small artifacts pulled and source-hash verified under
+artifacts/bottleneck-status-20260930-2046/. Raw snapshot SHA256:
+4affd3b52bedfc0be9c0dbaaa406777b85459ff022a42acdf108b5e5e8d25184.
+commands.sh restored to #0; the independent supervised queue continues.
+
 ## Bottleneck production running after successful GPU smoke (2026-09-30 12:58 UTC)
 
 Latest auditeb7ee19 at12:58:42 confirms Task-Aware at153 updates, ~2.77s/update,
