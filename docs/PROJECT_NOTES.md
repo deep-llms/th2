@@ -1,5 +1,26 @@
 # Project notes
 
+## Task-Aware-Align continuation to 10,000 launched and verified (2026-10-01 10:33 UTC)
+
+User requested Task-Aware-Align (seed 42) for 5,000 more updates to compare
+with B/F/G at 10,000; B has no full evaluation or retained checkpoint at 7,500.
+Native continuation as 0ce6bff. Read-only preflight c0eb025 passed at 10:20:57
+UTC: pinned versions, 23 TiB free, guard enabled, only approved burn workers,
+bottleneck recipe.json unchanged, and source checkpoint-5000 complete (all 13
+files; eval 3.208638, seed 42). Launch d4de734 at 10:23 UTC
+(th2-78gg-TA-10000-20261001-a01) copied/verified the Accelerate config, stopped
+only verified burn workers 524137-524144, staged checkpoint-5000 with checksums
+(stage-resume ok 10:26:00, 16 files), and resumed with the bottleneck recipe
+unchanged except stop_after 10000 (schedule 28600, warmup 1430,
+checkpoint_layers/lm off, checkpoint_aux on, lm_chunk 128). Training code is
+unchanged since the bottleneck launch.
+Status 86d1beb at 10:32:48 UTC: arm running at update 5,129, about 2.8 s/update;
+saved config seed=42/data_seed=42, train fingerprint adb88539d2924dc2. Estimated
+finish about 14:20 UTC plus evaluation/burn handoff. Original 5,000 outputs are
+untouched. Root: /mnt/local/_outputs/deep-llms_th2/deep-kv-TA-10000-20261001-a01.
+Evidence: temp/TA-10000-preflight.log, temp/TA-10000-launch.log,
+temp/TA-10000-status-a01.log. commands.sh restored to #0.
+
 ## F seed 123 complete; burn verified (2026-10-01 06:58 UTC)
 
 Read-only audit 69e2144 (th2-78gg-F-seed123-completion-20261001-0657) ran at
