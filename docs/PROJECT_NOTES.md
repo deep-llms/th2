@@ -1,5 +1,23 @@
 # Project notes
 
+## A/B seed 123: A complete, B running (2026-10-01 01:33 UTC)
+
+Read-only audit 542ff8f (th2-78gg-AB-seed123-completion-20261001-0132) ran at
+01:33:04 UTC; the runner recorded it OK. Queue run.json: smoke ok; arm-A ok,
+finished 2026-10-01 00:03:35 UTC; arm-B running. A stopped exactly at 2,500 /
+28,600 updates (2,621,440,000 input tokens). checkpoint-2500 holds nonempty
+weights, optimizer, scheduler, training args, trainer state and all eight RNG
+files. A's held-out LM loss on the same 4,882 evaluation rows is
+3.5108211549941237, versus 3.510730336181336 for seed-42 A (+0.00009).
+A and B configs both record seed=123/data_seed=123, train fingerprint
+c430c71d175af59e and eval fingerprint 0568ce654afc3fdb. B's latest checkpoint is
+1500; its log showed update 1,545 at about 3.5 s/update, so B should finish
+around 02:30 UTC plus evaluation/save. GPU guard is held during training as
+designed; live workers are the eight training ranks. No process was changed.
+Evidence: temp/AB-seed123-completion-20261001-0132.log (SHA256
+bde60643f946aae509e403203a5927136d959f783220d616e398a6dec8fdeeda).
+commands.sh restored to #0.
+
 ## A/B seed 123 progress verified (2026-09-30 22:20 UTC)
 
 Read-only status b2c80da (th2-78gg-AB-seed123-status-20260930-a04) ran at
