@@ -1,5 +1,26 @@
 # Project notes
 
+## F seed 123 complete; burn verified (2026-10-01 06:58 UTC)
+
+Read-only audit 69e2144 (th2-78gg-F-seed123-completion-20261001-0657) ran at
+06:57:42 UTC; the runner recorded it OK. Queue complete.json matches run.json and
+every artifact hash passed: smoke ok; F finished 06:30:16 UTC; comparison ok.
+F stopped exactly at 2,500 / 28,600 updates (2,621,440,000 input tokens);
+checkpoint-2500 holds nonempty weights, optimizer, scheduler, training args,
+trainer state and eight RNG files. Config seed=123/data_seed=123, train
+fingerprint c430c71d175af59e (same as A/B seed 123), eval fingerprint unchanged.
+Held-out LM loss on the same 4,882 rows: F 3.5080745944491065
+(route KL 0.16541, message 0).
+Paired seed-123 contrasts: F-B +0.00152, F-A -0.00275 (B 3.50655, A 3.51082).
+Seed 42 for reference: F-B +0.00446, F-A -0.00039.
+F is worse than B in both seeds and better than A in both; the size of each gap
+varies by seed. Two seeds only.
+Automatic burn handoff verified: guard released, eight approved burn workers
+with new progress. No process was changed by the audit.
+Evidence: temp/F-seed123-completion-20261001-0657.log (SHA256
+f3b8020dce862b81e596bacdc06760ee7ba1c441e0a0937e41d2d89dbbf7f296).
+commands.sh restored to #0.
+
 ## F seed 123 replication launched and verified (2026-10-01 03:45 UTC)
 
 User requested a fresh F at seed 123 for 2,500 updates, run as A/B seed 123 was.
