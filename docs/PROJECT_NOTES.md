@@ -1,5 +1,24 @@
 # Project notes
 
+## A/B seed 123 complete; burn verified (2026-10-01 03:04 UTC)
+
+Read-only audit af40d10 (th2-78gg-AB-seed123-completion-20261001-0303) ran at
+03:03:42 UTC; the runner recorded it OK. Queue complete.json matches run.json and
+every artifact hash passed: smoke ok; A finished 00:03:35 UTC; B finished
+02:28:28 UTC; comparison ok. Both arms stopped at exactly 2,500 / 28,600 updates
+(2,621,440,000 input tokens). Both checkpoint-2500 folders hold nonempty
+weights, optimizer, scheduler, training args, trainer state and eight RNG files.
+Held-out LM loss on the same 4,882 rows (seed 123): A 3.5108211549941237,
+B 3.5065545880332287, B-A -0.004266566960895.
+Seed 42 for reference: A 3.510730336181336, B 3.505886970597037, B-A -0.00484337.
+Seed-to-seed change: A +0.00009, B +0.00067. B beats A by 0.0043-0.0048 in both
+seeds, so the branch-only advantage replicated; two seeds only.
+Automatic burn handoff verified: guard released, eight approved burn workers
+with new progress. No process was changed by the audit.
+Evidence: temp/AB-seed123-completion-20261001-0303.log (SHA256
+6456ec93ef6dd04f7fbeaec89e65b0688bb6b22e7d322d92f6828a02ddf6f8e9).
+commands.sh restored to #0.
+
 ## A/B seed 123: A complete, B running (2026-10-01 01:33 UTC)
 
 Read-only audit 542ff8f (th2-78gg-AB-seed123-completion-20261001-0132) ran at
