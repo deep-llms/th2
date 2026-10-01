@@ -1,5 +1,28 @@
 # Project notes
 
+## F seed 123 replication launched and verified (2026-10-01 03:45 UTC)
+
+User requested a fresh F at seed 123 for 2,500 updates, run as A/B seed 123 was.
+Launch ff81e56 (th2-78gg-F-seed123-2500-20261001-a01) is 28da1bb with arms=['F']
+and new root/session/job names only. Recipe = deep_kv.b200.json with only
+seed/data_seed set to 123 (branch seed 124, PYTHONHASHSEED=123). Training code is
+unchanged since the A/B seed 123 launch, so F is paired with A/B seed 123
+(same data, order and backbone initialization). F seed 42's saved config differs
+only in seed, train fingerprint, and three later pilot fields whose defaults
+reproduce the earlier behavior.
+Read-only preflight 7070c7a passed 03:30:53 UTC: pinned versions, inputs, 23 TiB
+free, guard enabled, only approved burn workers 511147-511154. The launch copied
+the Accelerate config (accelerate env: MULTI_GPU, 8, bf16) and stopped only those
+verified workers. Root: /mnt/local/_outputs/deep-llms_th2/deep-kv-F-seed123-2500-20261001-a01.
+Status 2c509f3 at 03:44:44 UTC: smoke ok 03:37:51 (10->12 resume, F route checks);
+smoke step-10 peak allocated 21.17 GB/rank. arm-F running at update 92, about
+4.0 s/update; F's train_config has seed=123/data_seed=123, max_steps 28600,
+warmup 1430, train fingerprint c430c71d175af59e (same as A/B seed 123), eval
+fingerprint 0568ce654afc3fdb. All eight ranks carry PYTHONHASHSEED=123; tmux pane
+alive. Estimated finish about 06:30 UTC plus final evaluation/burn handoff.
+Evidence: temp/F-seed123-preflight.log, temp/F-seed123-launch.log,
+temp/F-seed123-status-a01.log. commands.sh restored to #0.
+
 ## A/B seed 123 complete; burn verified (2026-10-01 03:04 UTC)
 
 Read-only audit af40d10 (th2-78gg-AB-seed123-completion-20261001-0303) ran at
