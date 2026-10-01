@@ -1,46 +1,119 @@
 #1 +60+a
-#th2-78gg-TA-10000-preflight-20261001-a01
+#th2-78gg-TA-10000-20261001-a01
 set -euo pipefail
-cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-78gg-worker-0
-export CUDA_VISIBLE_DEVICES=''
-/mnt/local/conda-py311/envs/train_env/bin/python -u - <<'PY'
-import hashlib, importlib.metadata, json, shutil
+cd /mnt/local/@PROJECT@
+TASK_ROOT=/mnt/local/_outputs/@PROJECT@/deep-kv-TA-10000-20261001-a01
+TASK_SESSION=deep-kv-TA-10000-20261001-a01
+test ! -e "$TASK_ROOT"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then
+    echo 'REFUSE: session already exists' >&2
+    exit 1
+fi
+mkdir -p "$TASK_ROOT"
+cat > "$TASK_ROOT/launch.sh" <<'LAUNCH'
+#!/usr/bin/env bash
+set -euo pipefail
+TASK_ROOT=$1
+cd /mnt/local/deep-llms_th2
+test "$(hostname)" = thiennh-p6-78gg-worker-0
+source /mnt/local/conda-py311/etc/profile.d/conda.sh
+conda activate train_env
+export NCCL_NVLS_ENABLE=0 WANDB_MODE=offline WANDB_PROJECT=deep2shallow
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
+export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+python -u - "$TASK_ROOT" <<'PY'
+import hashlib, importlib.metadata, json, shutil, sys
 from pathlib import Path
+from accelerate.commands.config.config_args import default_yaml_config_file, load_config_from_file
+from deep_kv.__main__ import jobs
 from scripts.verified_gpu_reclaim import inspect
 from scripts.train_then_burn import approved_launcher, APPROVED_BURNS, BURN_HASH, GUARD_HASH, process
-inspection = inspect()
-print('GPU_INSPECTION', json.dumps(inspection), flush=True)
-approved = {**APPROVED_BURNS, str(Path('resources/llm_pretrain_burn.py').resolve()): BURN_HASH}
-assert not inspection['guard_disabled']
-assert all(approved_launcher(pid, approved) or approved_launcher(process(pid)['ppid'], approved)
-           for pid in inspection['workers'])
-assert hashlib.sha256(Path('/mnt/local/_gpu_guard/gpu_guard.sh').read_bytes()).hexdigest() == GUARD_HASH
-for name in ('torch', 'transformers', 'accelerate', 'datasets'):
- print('ENV_VERSION', name, importlib.metadata.version(name), flush=True)
-recipe = json.loads(Path('deep_kv.b200.json').read_text())
-for key in ('config_name', 'tokenizer_name', 'data_dir', 'eval_data_dir'):
- path = Path(recipe[key]); assert path.exists(), str(path)
- print('INPUT_EXISTS', key, str(path), flush=True)
-print('FREE_DISK_GIB', shutil.disk_usage('/mnt/local/_outputs').free / 2**30, flush=True)
-root = Path('/mnt/local/_outputs/deep-llms_th2/deep-bottleneck-5000-20260930-a01')
-saved_recipe = json.loads((root / 'recipe.json').read_text())
-expected = dict(recipe, stop_after=5000, checkpoint_layers=False, checkpoint_lm=False, checkpoint_aux=True,
+from run_experiments import load_jobs
+
+root = Path(sys.argv[1])
+previous = Path('/mnt/local/_outputs/deep-llms_th2/deep-bottleneck-5000-20260930-a01')
+arm = 'Task-Aware-Align'
+versions = {key: importlib.metadata.version(key) for key in ('torch', 'transformers', 'accelerate', 'datasets')}
+assert versions == dict(torch='2.14.0', transformers='5.9.0', accelerate='1.13.0', datasets='4.8.5'), versions
+import torch
+assert torch.__version__ == '2.14.0+cu130', torch.__version__
+assert torch.version.cuda == '13.0', torch.version.cuda
+source = Path('resources/accelerate_config.yaml')
+destination = Path(default_yaml_config_file)
+destination.parent.mkdir(parents=True, exist_ok=True)
+if destination.exists():
+    shutil.copy2(destination, root / 'previous_accelerate_config.yaml')
+shutil.copy2(source, destination)
+assert source.read_bytes() == destination.read_bytes()
+config = load_config_from_file(str(destination)).to_dict()
+assert config['num_processes'] == 8 and config['mixed_precision'] == 'bf16'
+assert config['distributed_type'] == 'MULTI_GPU'
+base = json.loads(Path('deep_kv.b200.json').read_text())
+recipe = json.loads((previous / 'recipe.json').read_text())
+expected = dict(base, stop_after=5000, checkpoint_layers=False, checkpoint_lm=False, checkpoint_aux=True,
                 causal_attention=False, lm_chunk=128, skip_memory_metrics=True)
-assert saved_recipe == expected, {k: (saved_recipe.get(k), expected.get(k)) for k in set(saved_recipe) | set(expected) if saved_recipe.get(k) != expected.get(k)}
-run = root / 'production/run/Task-Aware-Align'
-checkpoint = run / 'checkpoint-5000'
-state = json.loads((checkpoint / 'trainer_state.json').read_text())
-config = json.loads((run / 'train_config.json').read_text())
-result = json.loads((run / 'result.json').read_text())
-assert state['global_step'] == 5000 and state['max_steps'] == 28600, state['global_step']
-assert config['pilot']['arm'] == result['arm'] == 'Task-Aware-Align' and config['world_size'] == 8
-assert result['global_step'] == 5000 and result['status'] == 'stopped'
-sizes = {name: (checkpoint / name).stat().st_size for name in
-         ['model.safetensors', 'optimizer.pt', 'scheduler.pt', 'training_args.bin', 'trainer_state.json'] + [f'rng_state_{i}.pth' for i in range(8)]}
-assert all(sizes.values()), sizes
-print('TA_SOURCE_VERIFIED', json.dumps(dict(checkpoint=str(checkpoint), sizes=sizes, eval_lm_loss=result['evaluation']['eval_lm_loss'],
-      seed=config['training']['seed'], data_seed=config['training']['data_seed'], train_fingerprint=config['train_fingerprint'],
-      checkpoints=sorted(p.name for p in run.glob('checkpoint-*')))), flush=True)
-print('READ_ONLY_PREFLIGHT_PASSED', flush=True)
+assert recipe == expected, 'Recipe changed from the bottleneck run'
+for key, value in dict(max_steps=28600, warmup_steps=1430, per_device_train_batch_size=16,
+                       gradient_accumulation_steps=4, block_size=2048, eval_rows=4882, seed=42, data_seed=42).items():
+    assert recipe[key] == value, (key, recipe.get(key))
+assert shutil.disk_usage(root).free > 180 * 2**30, 'Insufficient free disk space'
+for key in ('config_name', 'tokenizer_name', 'data_dir', 'eval_data_dir'):
+    assert Path(recipe[key]).exists(), (key, recipe[key])
+inspection = inspect()
+assert inspection['host'] == 'thiennh-p6-78gg-worker-0'
+assert not inspection['guard_disabled'], 'Another workload holds the GPU guard'
+assert len(inspection['gpus']) == 8 and all('B200' in g['name'] for g in inspection['gpus'])
+assert hashlib.sha256(Path('/mnt/local/_gpu_guard/gpu_guard.sh').read_bytes()).hexdigest() == GUARD_HASH
+old_gpus = json.loads((previous / 'production/burn-verified.json').read_text())['gpus']
+assert [(g['index'], g['uuid']) for g in inspection['gpus']] == [(g['index'], g['uuid']) for g in old_gpus]
+approved = {**APPROVED_BURNS, str(Path('resources/llm_pretrain_burn.py').resolve()): BURN_HASH}
+for pid in inspection['workers']:
+    assert approved_launcher(pid, approved) or approved_launcher(process(pid)['ppid'], approved), pid
+source_run = previous / 'production/run' / arm
+state = json.loads((source_run / 'checkpoint-5000/trainer_state.json').read_text())
+assert state['global_step'] == 5000 and state['max_steps'] == 28600
+saved = json.loads((source_run / 'train_config.json').read_text())
+assert saved['pilot']['arm'] == arm and saved['world_size'] == 8
+assert saved['training']['seed'] == saved['training']['data_seed'] == 42
+for name in ('model.safetensors', 'optimizer.pt', 'scheduler.pt', 'training_args.bin', *[f'rng_state_{i}.pth' for i in range(8)]):
+    assert (source_run / 'checkpoint-5000' / name).is_file(), name
+sources = {arm: str(source_run)}
+(root / 'sources.json').write_text(json.dumps(sources, indent=2))
+recipe['stop_after'] = 10000
+recipe_path = root / 'recipe.json'
+recipe_path.write_text(json.dumps(recipe, indent=2))
+queue = jobs(recipe_path, stop_after=10000, arms=[arm])
+queue['jobs'][0]['argv'].extend(['--resume_from_checkpoint', '{run_dir}/' + arm + '/checkpoint-5000'])
+queue['jobs'].insert(0, {'name': 'stage-resume',
+    'argv': ['{python}', '-u', '-m', 'scripts.stage_deep_kv_resume',
+             '--sources', str(root / 'sources.json'), '--destination', '{run_dir}', '--step', '5000'],
+    'required_outputs': [{'path': 'resume_inputs.json', 'json_equals': {'status': 'ok', 'source_step': 5000}}]})
+assert [j['name'] for j in queue['jobs']] == ['stage-resume', 'arm-' + arm, 'compare']
+manifest_path = root / 'jobs.json'
+manifest_path.write_text(json.dumps(queue, indent=2))
+load_jobs(manifest_path)
+(root / 'gpu_inspection.json').write_text(json.dumps(inspection, indent=2))
+receipt = dict(versions=versions, accelerate_cache=str(destination),
+               accelerate_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+               recipe_matches_bottleneck_except_cutoff=True, arms=[arm], source_step=5000, stop_after=10000,
+               inspected_at=inspection['time'], host=inspection['host'],
+               source_sha256={name: hashlib.sha256(Path(name).read_bytes()).hexdigest() for name in
+                              ['train.py', 'deep_kv/model.py', 'deep_kv/training.py',
+                               'scripts/stage_deep_kv_resume.py', 'scripts/train_then_burn.py']})
+(root / 'preflight.json').write_text(json.dumps(receipt, indent=2))
+print('TA_RESUME_PREFLIGHT_PASSED', json.dumps(receipt), flush=True)
 PY
+accelerate env
+exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" \
+    --output "$TASK_ROOT/production" --inspection "$TASK_ROOT/gpu_inspection.json" \
+    --host thiennh-p6-78gg-worker-0 --burn-session deep-kv-TA-10000-20261001-a01-final-burn
+LAUNCH
+bash -n "$TASK_ROOT/launch.sh"
+printf -v TASK_CMD 'exec bash %q %q >%q 2>&1' "$TASK_ROOT/launch.sh" "$TASK_ROOT" "$TASK_ROOT/launch.log"
+tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+tail -n 100 "$TASK_ROOT/launch.log"
+test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
