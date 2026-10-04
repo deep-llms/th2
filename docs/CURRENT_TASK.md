@@ -1,5 +1,18 @@
 # Current task
 
+## Full training attention comparison authorized (2026-10-04)
+
+User requests real full-model training-step timings and output/gradient checks
+for document-isolated FA4 versus previous cross-document attention. Use a fresh
+test output directory, the separate attention_bench env, full Qwen3-0.6B arm A,
+real sampled English text, HF Trainer/Accelerate, eight GPUs, seq2048 and matched
+micro16/accum4 (1,048,576 input tokens/update), decoder/LM checkpointing off.
+Also compare dense and FA4 with identical isolation semantics to distinguish
+kernel numerical errors from expected changes caused by blocking documents.
+Read-only preflight checks local model/tokenizer assets before GPU reclamation.
+Production entry point and previous scientific outputs must remain unchanged.
+Known burn reclamation and automatic verified recovery remain authorized.
+
 ## Packed-attention APIs verified on B200 (2026-10-04)
 
 User accepted benchmarking efficient document isolation and asked whether
