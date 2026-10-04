@@ -1,5 +1,28 @@
 # Current task
 
+## Original Qwen arm A launch authorized (2026-10-05 Singapore)
+
+User requested fresh original-model training to2500 updates. Prepared one
+seed42 arm A (proxy_screen=true for the matching boolean dense SDPA path),
+all eight B200s, micro16/accum4/seq2048, EOS/document-local positions,
+full28600 schedule and1430 warmup. Decoder/LM/aux checkpointing disabled,
+using the previously validated throughput configuration. No proxy heads or
+auxiliary objective in A. Three-update full-size smoke in a separate output
+must pass checkpoint, finite-loss/gradient-log, SDPA and peak-memory gates
+before the fresh2500-update stage. Existing supervisor restores and verifies
+communicating burns on success/failure, with ownership-safe cleanup.
+
+Read-only preflight d8fc122 verified tjx3, eight known burns21008–21015 under
+20939, train_env torch2.14.1/transformers5.9.0/accelerate1.13.0 and pip check.
+Its Parquet-only assertion was incorrect; 60d1732 verified the saved Arrow
+shard layout already handled by train.load_text. No GPU worker was stopped
+by either preflight. Inputs remain cx_sampled_old English and pinned Qwen assets.
+Launch root: /mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-2500-20261005-a01.
+Production model path: supervised/run/baseline/seed-42/A under that root.
+Launch command copies resources/accelerate_config.yaml to the actual HF cache,
+compares bytes, runs accelerate env, then invokes the verified supervisor in
+an independent tmux session. Launch pending verification, not yet claimed live.
+
 ## Proxy implementation follow-up review passed (2026-10-04)
 
 Fixed custom-queue baseline selection/mixed-family rejection and V3 widening
