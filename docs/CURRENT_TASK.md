@@ -1,5 +1,18 @@
 # Current task
 
+## Proxy implementation follow-up review passed (2026-10-04)
+
+Fixed custom-queue baseline selection/mixed-family rejection and V3 widening
+using the configured sequence length; duplicate report seeds now fail early.
+Default 2048-token screening recipe is unchanged. Added independent 28-layer
+P1/P3 target/loss/all-parameter-gradient oracles with 16Q/8KV, reduced hidden
+width, nonzero gates/means and channel exclusions. All121 offline tests passed
+in140.462s (temp/proxy-review-full-a01.log). Repeated eight-process CPU BF16
+resume/global-gradient checks passed with the same maxima as the implementation
+receipt; centering buffers match across ranks. New receipt:
+temp/proxy-review-ddp-a01/verified.json. No B200 job; commands.sh remains#0.
+Full-size capacity/throughput smoke still precedes real screening.
+
 ## P1/P3 proxy-head implementation (2026-10-04, revision 4)
 
 User confirmed dense SDPA and positions reset per document in the updated

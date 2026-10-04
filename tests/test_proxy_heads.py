@@ -268,6 +268,79 @@ class ProxyHeadTests(unittest.TestCase):
                 self.assertEqual(call['mask']['shape'],[1,1,8,8])
                 self.assertFalse(call['is_causal'])
 
+    def test_widening_uses_actual_sequence_length(self):
+        widths=[]
+        for length in (8,2048):
+            cost=compute_budget(cfg(),settings(),length)
+            m=ProxyModel.from_scratch(cfg(),'V3',consumer=2,deep_target=8,
+                proxy_settings=settings(),sequence_length=length)
+            widths.append(m.backbone.config.intermediate_size)
+            self.assertEqual(widths[-1]-cfg().intermediate_size,cost['P3']['widening'])
+        self.assertNotEqual(*widths)
+        for chunk,length in ((0,8),(3,8),(2,0)):
+            invalid=settings();invalid.chunk_size=chunk
+            with self.assertRaisesRegex(ValueError,'chunk_size'):
+                compute_budget(cfg(),invalid,length)
+
+    def test_full_depth_targets_losses_and_gradients_against_independent_reference(self):
+        # Preserve the real 28-layer, 16Q/8KV, Q-width=2d layout at a small d.
+        config=cfg();config.num_hidden_layers=28;config.layer_types=['full_attention']*28
+        config.num_attention_heads=16;config.num_key_value_heads=8;config.head_dim=4
+        rows=[dict(input_ids=list(range(3,19)),labels=list(range(3,19)),attention_mask=[1]*16,
+                   segments=ids) for ids in ([0]*3+[1]*13,[0]+[1]*7+[2]*8)]
+        ctx=ProxyTrainer.context(isolated_data_collator(rows))
+        for arm,groups in (('P1-block',1),('P1-flow',2),('P3-block',4),('P3-flow',2)):
+            opt=ProxySettings(groups=groups,width=8,features=9,chunk_size=4)
+            m=ProxyModel.from_scratch(config,arm,consumer=2,deep_target=28,proxy_settings=opt,
+                checkpoint_layers=False,checkpoint_aux=False,checkpoint_lm=False)
+            with torch.no_grad():
+                m.mu.normal_(0,.05);m.channel_mask[[0,4]]=False
+                for head in m.heads.values():head.alpha.fill_(.15)
+            blocks={};original=m.block
+            def capture(index,*args):
+                value=original(index,*args);blocks[index+1]=value;return value
+            with patch.object(m,'block',side_effect=capture):
+                actual=m(ctx,collect_target_statistics=True)
+            def normalized(x,layer):
+                centered=x.detach().float()-m.mu[m.mean_index[layer]]
+                kept=centered[...,m.channel_mask]
+                return centered*m.channel_mask/torch.sqrt(kept.square().mean(-1,keepdim=True)+1e-6)
+            def sequential(x,gamma):
+                state=torch.zeros_like(x[:,0]);values=[]
+                for token in range(x.shape[1]):
+                    if token:
+                        state=state*(ctx.segments[:,token]==ctx.segments[:,token-1])[:,None]
+                    state=gamma*state+(1-gamma)*x[:,token];values.append(state)
+                return torch.stack(values,1)
+            losses=[]
+            for layer in m.layers:
+                head=m.heads[str(layer)];u=blocks[layer][2]
+                if arm.endswith('block'):u=u.detach()
+                prediction=F.linear(F.silu(F.linear(u,head.w1.weight)),head.w2.weight)
+                if m.family=='P1':
+                    raw=sum(blocks[i][1].float() for i in range(layer,layer+4))
+                    targets=(normalized(raw,layer),);predictions=(prediction,)
+                    torch.testing.assert_close(actual['center_sums'][m.mean_index[layer]],raw.sum((0,1)))
+                else:
+                    band=list(range(layer+2,min(layer+6,28)+1))
+                    raw=torch.stack([normalized(blocks[i][0],i) for i in band]).mean(0)
+                    targets=tuple(sequential(raw,g) for g in m.gamma)
+                    predictions=tuple(F.linear(sequential(p,g),projection.weight)
+                        for p,g,projection in zip(prediction.chunk(3,-1),m.gamma,head.projections))
+                losses.extend((1-F.cosine_similarity(p*m.channel_mask,t.detach(),dim=-1,eps=1e-6)).mean()
+                              for p,t in zip(predictions,targets))
+            expected=torch.stack(losses).mean()
+            torch.testing.assert_close(actual['aux_sum']/actual['aux_count'],expected,rtol=1e-5,atol=1e-6)
+            if m.family=='P3':
+                for layer in range(4,29):
+                    torch.testing.assert_close(actual['center_sums'][m.mean_index[layer]],blocks[layer][0].detach().sum((0,1)))
+            parameters=list(m.named_parameters())
+            a=torch.autograd.grad(actual['aux_sum']/actual['aux_count'],[p for _,p in parameters],retain_graph=True,allow_unused=True)
+            b=torch.autograd.grad(expected,[p for _,p in parameters],allow_unused=True)
+            for (name,_),left,right in zip(parameters,a,b):
+                if left is None:self.assertIsNone(right,(arm,name))
+                else:torch.testing.assert_close(left,right,rtol=1e-5,atol=1e-6,msg=arm+'/'+name)
+
 
 
 if __name__=='__main__':unittest.main()

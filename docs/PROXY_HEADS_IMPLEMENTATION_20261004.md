@@ -74,6 +74,8 @@ estimator seed `seed + 1`. Output directories are `seed-N/ARM`. The queue has 24
 training jobs, three within-seed reports and one aggregate report, run sequentially.
 Each training job uses all eight GPUs. Use `--arms ... --seeds ...` to select a
 subset. Historical `deep_kv.b200.json` queue defaults remain A/B/C/D.
+Selecting proxy arms explicitly also selects the proxy baseline path for A;
+mixing legacy B–G/bottleneck arms into that queue is rejected before any launch.
 
 Data order is shared across arms for a given seed. Report generation checks
 recipes, dataset fingerprints, token counts and stopping steps. The aggregate
@@ -88,6 +90,8 @@ from the actual config; P3 includes chunk-end/carry work as well as local produc
 Widening mismatch is below 0.2% of total forward MACs. Training-only target and
 auxiliary-recomputation work is excluded from that match and must be measured.
 Each result records actual parameter counts, the budget and runtime/memory data.
+V3 construction uses the configured sequence length for its scan budget, matching
+the reported budget; it does not assume 2,048 when a custom recipe changes length.
 
 ## Optional channel calibration
 
@@ -157,3 +161,25 @@ reclaim authorized idle workers, and measure full-size capacity/throughput in
 separate smoke outputs. Keep automatic burn recovery around any authorized GPU
 queue. `commands.sh` is still inactive (`#0`). Decode-time cached EMS and the
 optional offline estimability study are outside this screening implementation.
+
+## Follow-up code review
+
+A second review found and fixed two non-default configuration issues: custom
+queues could select legacy A alongside proxy arms, and V3 construction used a
+hard-coded length of 2,048 while its report used the configured length. The
+standard 2,048-token eight-arm recipe is numerically unchanged. Aggregate reports
+now also reject duplicate seeds so one run cannot be counted repeatedly.
+
+An additional independent reference test covers all 28 layers at reduced width,
+16 query/8 KV heads and query width twice hidden width, with nonzero gates and
+centering means and excluded channels. It independently constructs P1 window
+targets, P3 normalized deep-band targets, sequential EMS, auxiliary losses and
+all parameter gradients for block/flow routing. All pass the unchanged FP32
+tolerances. Local checks do not replace the pending B200 smoke test.
+
+Review validation: **121 offline tests passed in 140.462 seconds**
+(`temp/proxy-review-full-a01.log`). The repeated eight-process CPU BF16 resume
+and global-gradient checks also passed (`temp/proxy-review-ddp-a01/verified.json`):
+maximum resumed-state difference 1.862645149230957e-9 and global-gradient
+difference 3.725290298461914e-9, with identical centering buffers across ranks.
+Compilation and whitespace checks passed. No B200 workload was started.

@@ -36,6 +36,10 @@ def proxy_layers(config, family, lookahead=4):
 
 def compute_budget(config, settings, sequence_length=2048):
     """Forward architecture MACs; exclude targets, normalization and auxiliary recomputation."""
+    if (type(settings.chunk_size) is not int or settings.chunk_size <= 0
+            or type(sequence_length) is not int or sequence_length <= 0
+            or sequence_length % settings.chunk_size):
+        raise ValueError('Positive EMS chunk_size must divide sequence length')
     d, n, h = config.hidden_size, config.num_hidden_layers, config.head_dim
     nq, nk = config.num_attention_heads, config.num_key_value_heads
     p1n = len(proxy_layers(config, 'P1', settings.lookahead))
@@ -162,10 +166,10 @@ class ProxyModel(DeepKV):
         self.gates_disabled = False
 
     @classmethod
-    def from_scratch(cls, config, arm, *, proxy_settings=None, **kwargs):
+    def from_scratch(cls, config, arm, *, proxy_settings=None, sequence_length=2048, **kwargs):
         settings = proxy_settings or ProxySettings()
         config = copy.deepcopy(config)
-        budget = compute_budget(config, settings)
+        budget = compute_budget(config, settings, sequence_length)
         if arm in ('V1','V3'):
             config.intermediate_size += budget['P'+arm[1]]['widening']
         return super().from_scratch(config, arm, proxy_settings=settings, **kwargs)

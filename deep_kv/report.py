@@ -70,6 +70,8 @@ def report(directory, arms="ABCD"):
 
 def report_seeds(directory, arms, seeds):
     import statistics
+    if not seeds or len(set(seeds)) != len(seeds) or any(type(seed) is not int or seed < 0 for seed in seeds):
+        raise ValueError('Seeds must be distinct nonnegative integers')
     root = Path(directory)
     rows = {seed:report(root/f'seed-{seed}',arms) for seed in seeds}
     recipes = []

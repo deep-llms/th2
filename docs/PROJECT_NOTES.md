@@ -1,5 +1,16 @@
 # Project notes
 
+## Proxy code review follow-up (2026-10-04)
+
+Selecting any proxy arm now selects the matching proxy-screen A path for the
+entire queue and rejects legacy B–G/bottleneck mixtures. V3 widening uses the
+actual sequence length, consistent with its MAC report. Duplicate report seeds
+are rejected. These fixes leave the default 2048-token recipe unchanged.
+Independent reduced-width 28-layer target/loss/gradient reference checks pass,
+along with all121 offline tests and repeated eight-process CPU resume/scaling
+checks. Details/evidence: PROXY_HEADS_IMPLEMENTATION_20261004.md. B200 full-size
+memory/dispatch/throughput preflight remains pending; no GPU job launched.
+
 ## Proxy-head screening uses revised dense SDPA contract (2026-10-04)
 
 The active proxy_heads_P1_P3_spec_v3.md is revision 4, explicitly confirmed by

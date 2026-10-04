@@ -173,8 +173,7 @@ def main():
         from deep_kv.proxy_training import ProxyTrainer, ProxyCallback
         model_class, trainer_class, callback_class = ProxyModel, ProxyTrainer, ProxyCallback
         proxy_settings = ProxySettings(**{key: getattr(pilot, 'proxy_'+key) for key in ProxySettings.__dataclass_fields__})
-        if data_args.block_size % proxy_settings.chunk_size:
-            raise ValueError("proxy_chunk_size must divide block_size")
+        budget = compute_budget(config,proxy_settings,data_args.block_size)
         channel_mask = None
         mask_receipt = {'source': 'none; no calibration checkpoint supplied', 'excluded_channels': []}
         if pilot.proxy_channel_mask:
@@ -187,8 +186,8 @@ def main():
             channel_mask[excluded] = False
             mask_receipt = dict(source=pilot.proxy_channel_mask,sha256=hashlib.sha256(content).hexdigest(),excluded_channels=excluded)
         logger.warning('Proxy target channel mask: %s', mask_receipt)
-        proxy_options = dict(proxy_settings=proxy_settings,channel_mask=channel_mask)
-        budget = compute_budget(config,proxy_settings,data_args.block_size)
+        proxy_options = dict(proxy_settings=proxy_settings,channel_mask=channel_mask,
+                             sequence_length=data_args.block_size)
     model = model_class.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
                                deep_target=pilot.deep_target, lm_chunk=pilot.lm_chunk,
                                checkpoint_layers=pilot.checkpoint_layers,

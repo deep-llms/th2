@@ -148,6 +148,20 @@ class ProxyTrainingTests(unittest.TestCase):
                     self.assertTrue((out['center_counts']>0).all())
                     self.assertTrue(loss.requires_grad)
 
+    def test_custom_queues_match_baseline_and_reject_mixed_families(self):
+        generated=jobs('deep_kv.b200.json',arms=('A','P1-block'),seeds=(42,))
+        for job in generated['jobs']:
+            if 'gpus' in job:
+                argv=job['argv']
+                self.assertEqual(argv[argv.index('--proxy_screen')+1],'true')
+        for recipe in ('deep_kv.b200.json','proxy_heads.b200.json'):
+            with self.assertRaisesRegex(ValueError,'Cannot mix'):
+                jobs(recipe,arms=('B','P1-block'))
+        with self.assertRaisesRegex(ValueError,'Cannot mix'):
+            jobs('proxy_heads.b200.json',arms=('A','B'))
+        with self.assertRaisesRegex(ValueError,'distinct'):
+            report_seeds('unused',('A',),(42,42,42))
+
     def test_calibration_mask_union(self):
         from scripts.calibrate_proxy_mask import calibrate
         ctx=batch()

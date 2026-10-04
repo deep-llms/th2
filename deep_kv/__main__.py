@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from . import ALL_ARMS, SCREEN_ARMS
+from . import ALL_ARMS, PROXY_ARMS, SCREEN_ARMS
 
 
 def jobs(config_path, stop_after=None, arms=None, seeds=None):
@@ -10,6 +10,12 @@ def jobs(config_path, stop_after=None, arms=None, seeds=None):
     arms = tuple(arms if arms is not None else SCREEN_ARMS if config.get('proxy_screen') else 'ABCD')
     if not arms or len(set(arms)) != len(arms) or any(arm not in ALL_ARMS for arm in arms):
         raise ValueError("Select nonempty, unique arms from " + "/".join(ALL_ARMS))
+    # A is shared by both experiment families. Select its matching model path
+    # before constructing any jobs; otherwise comparison fails after training.
+    if config.get('proxy_screen') or any(arm in PROXY_ARMS for arm in arms):
+        if any(arm not in ('A',) + PROXY_ARMS for arm in arms):
+            raise ValueError('Cannot mix legacy Deep-KV arms with proxy screening arms')
+        config['proxy_screen'] = True
     if seeds is None and config.get('proxy_screen'):
         seeds = [42,43,44]
     if seeds is None:
