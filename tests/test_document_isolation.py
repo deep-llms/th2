@@ -11,6 +11,8 @@ import torch
 
 from deep_kv import ARMS
 from deep_kv.model import Context, DeepKV
+from deep_kv.packing import tokenize_with_segments, group_texts, isolated_data_collator
+from deep_kv.training import DeepKVTrainer
 from tests.test_deep_kv import config
 
 
@@ -120,6 +122,47 @@ class DocumentIsolationTests(unittest.TestCase):
                             torch.testing.assert_close(parameter.grad, expected,
                                                        **self.tolerance, msg=name)
                 self.assertFalse(packed_gradients, 'Different active parameters in packed/separate runs')
+
+    def test_production_packing_literal_eos_and_all_arm_isolation(self):
+        class Tokenizer:
+            def __call__(self, texts, **kwargs):
+                return {'input_ids': [[int(token) for token in text.split()] for text in texts]}
+
+        def pack(first):
+            tokenized = tokenize_with_segments({'text': [first, '8 9 10']}, [100, 101], Tokenizer(), 31)
+            packed = group_texts(tokenized, 8)
+            inputs = isolated_data_collator([{key: rows[0] for key, rows in packed.items()}])
+            return DeepKVTrainer.context({key: value.to(self.device) for key, value in inputs.items()})
+
+        batch, changed = pack('3 31 4'), pack('15 31 16')
+        self.assertEqual(batch.segments.tolist(), [[100]*4 + [101]*4])
+        self.assertEqual(batch.position_ids.tolist(), [[0,1,2,3,0,1,2,3]])
+        self.assertEqual(batch.targets().tolist(), [[True,True,True,False,True,True,True]])
+        for arm in ARMS:
+            with self.subTest(arm=arm):
+                model = self.make_model(arm, checkpoint=True).train()
+                with self.autocast():
+                    before = model.hidden_states(batch)[0]
+                    after = model.hidden_states(changed)[0]
+                    torch.testing.assert_close(before[:, 4:], after[:, 4:], atol=0, rtol=0)
+                    before[:, 4:].float().square().sum().backward()
+                grad = model.backbone.model.embed_tokens.weight.grad
+                self.assertEqual(grad[[3,4]].count_nonzero().item(), 0)
+                self.assertGreater(grad[[8,9,10]].abs().sum().item(), 0)
+
+    def test_production_chunk_continuations_and_single_token_documents(self):
+        class Tokenizer:
+            def __call__(self, texts, **kwargs):
+                return {'input_ids': [[], [3,4,5,6,7,8], [], [9,10,11]]}
+
+        tokens = tokenize_with_segments({'text': ['']*4}, [4,5,6,7], Tokenizer(), 31)
+        packed = group_texts(tokens, 6)
+        rows = [{key: values[i] for key, values in packed.items()} for i in range(2)]
+        batch = DeepKVTrainer.context(isolated_data_collator(rows))
+        self.assertEqual(batch.input_ids.tolist(), [[31,3,4,5,6,7], [8,31,31,9,10,11]])
+        self.assertEqual(batch.segments.tolist(), [[4,5,5,5,5,5], [5,5,6,7,7,7]])
+        self.assertEqual(batch.position_ids.tolist(), [[0,0,1,2,3,4], [0,1,0,0,1,2]])
+        self.assertEqual(batch.targets().tolist(), [[False,True,True,True,True], [True,False,False,True,True]])
 
     def test_unsegmented_control_really_leaks_and_fast_path_refuses_segments(self):
         model = self.make_model('B').eval()

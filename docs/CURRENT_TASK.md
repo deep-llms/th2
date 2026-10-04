@@ -1,5 +1,21 @@
 # Current task
 
+## Isolation follow-up review passed (2026-10-05)
+
+Reviewed production packing/collation, dense and auxiliary masks, loss eligibility,
+cache identity and resume guards after 2d51ea0. No additional production-code
+change was needed. Added two regression tests connecting production tokenization,
+packing and collation to all 11 models: literal source EOS stays in its real
+document, later outputs/input gradients cannot depend on an earlier document,
+and empty/single-token documents plus chunk continuations have correct positions
+and target masks. The full offline CPU suite passed all 103 tests (97.028 s).
+An independent oracle also matched every token/document ID for 2,005 shuffled
+documents over two workers, batch-1000 map boundaries and empty documents (770
+packed rows). Evidence: temp/isolation-review-full-suite-a01.log and
+temp/isolation-map-boundaries-review-a01.log. Previous eight-process CPU resume
+validation remains applicable; no production implementation changed in this
+review. No B200 job launched; commands.sh remains #0.
+
 ## Dense SDPA document isolation enabled (2026-10-05)
 
 User selected dense SDPA isolation for the next experiment series. `train.py`
