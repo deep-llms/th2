@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from transformers import TrainingArguments
 from deep_kv.model import DeepKV
 from deep_kv.packing import group_texts
+from deep_kv.training import compute_metrics
 from scripts.benchmark_document_training import (BenchmarkModel, BenchTrainer, Collator, context,
                                                   tokenize_with_segments)
 from tests.test_deep_kv import config
@@ -98,8 +99,27 @@ class DocumentTrainingTests(unittest.TestCase):
                     train_dataset=Dataset.from_list(self.rows), data_collator=Collator('sdpa_isolated'),
                     optimizers=(torch.optim.SGD(models[i].parameters(), lr=.01), None))
                 trainer.train()
+                self.assertEqual(trainer.observed_rows, 2)
         for (name,p), (_,q) in zip(models[0].named_parameters(), models[1].named_parameters()):
             torch.testing.assert_close(p, q, atol=1e-7, rtol=1e-5, msg=name)
+
+    def test_heldout_evaluation_uses_target_weighted_metrics(self):
+        from datasets import Dataset
+        import sys, types
+        fake = types.ModuleType('flash_attn.cute.interface')
+        fake.flash_attn_varlen_func = fake_varlen
+        model = self.model()
+        with tempfile.TemporaryDirectory() as path, patch.dict(sys.modules, {'flash_attn.cute.interface':fake}):
+            args = TrainingArguments(output_dir=path, use_cpu=True, report_to=[],
+                per_device_eval_batch_size=1, remove_unused_columns=False, disable_tqdm=True)
+            trainer = BenchTrainer(model=model, mode='sdpa_isolated', args=args,
+                data_collator=Collator('sdpa_isolated'), compute_metrics=compute_metrics)
+            dense = trainer.evaluate(Dataset.from_list(self.rows), metric_key_prefix='heldout')
+            trainer.mode = 'fa4_isolated'; trainer.data_collator = Collator(trainer.mode)
+            fa4 = trainer.evaluate(Dataset.from_list(self.rows), metric_key_prefix='heldout')
+            self.assertEqual(dense['heldout_target_tokens'], 11)
+            self.assertEqual(fa4['heldout_target_tokens'], 11)
+            self.assertAlmostEqual(dense['heldout_lm_loss'], fa4['heldout_lm_loss'], places=6)
 
 
 if __name__ == '__main__': unittest.main()

@@ -22,7 +22,7 @@ from transformers import AutoConfig, AutoTokenizer, TrainerCallback, TrainingArg
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 from deep_kv.model import Context, DeepKV
 from deep_kv.packing import document_end_id, group_texts, tokenize_batch
-from deep_kv.training import DeepKVTrainer
+from deep_kv.training import DeepKVTrainer, compute_metrics
 
 MODES = ('sdpa_cross', 'sdpa_causal', 'fa4_cross', 'sdpa_isolated', 'fa4_isolated')
 
@@ -170,6 +170,24 @@ def prepare(args):
                                mean_document_fragments=statistics.mean(fragments),
                                initialization='random seed 42, identical to train.py arm A',
                                recipe=recipe))
+    if args.eval_rows:
+        raw_eval = load_text(recipe['eval_data_dir'])
+        raw_eval = raw_eval.select(range(min(4096, len(raw_eval))))
+        tokenized_eval = raw_eval.map(tokenize_with_segments, with_indices=True, batched=True,
+            fn_kwargs=dict(tokenizer=tokenizer, end_id=document_end_id(tokenizer)),
+            remove_columns=raw_eval.column_names, cache_file_name=str(root/'eval-tokenized.arrow'))
+        packed_eval = tokenized_eval.map(group_texts, batched=True, fn_kwargs=dict(block_size=2048),
+                                        cache_file_name=str(root/'eval-packed.arrow'))
+        if len(packed_eval) < args.eval_rows:
+            raise ValueError('Insufficient held-out test data')
+        packed_eval = packed_eval.select(range(args.eval_rows))
+        packed_eval.save_to_disk(str(root/'eval'))
+        eval_digest = hashlib.sha256()
+        for batch in packed_eval.iter(batch_size=256):
+            for key in ('input_ids', 'segments'):
+                eval_digest.update(torch.tensor(batch[key], dtype=torch.long).numpy().tobytes())
+        write(root/'eval-data.json', dict(rows=len(packed_eval), source=recipe['eval_data_dir'],
+                                        sha256=eval_digest.hexdigest(), input_tokens=args.eval_rows*2048))
     print('BENCH_DATA', (root/'data.json').read_text(), flush=True)
 
 
@@ -302,10 +320,19 @@ class BenchTrainer(DeepKVTrainer):
         self.mode = mode
         self.model_accepts_loss_kwargs = True
         self.input_digest = hashlib.sha256()
+        self.full_input_digest = hashlib.sha256()
+        self.observed_rows = 0
 
     def _get_num_items_in_batch(self, batch_samples, device):
         # Unlike equal-size cross-document targets, document-isolated counts
         # can vary across ranks/GAS. Normalize by the actual global target count.
+        if self.is_in_train:
+            for batch in batch_samples:
+                # Audit the entire training stream, not just its first update.
+                self.full_input_digest.update(batch['input_ids'].detach().cpu().numpy().tobytes())
+                self.full_input_digest.update(batch['segments'].detach().cpu().numpy().tobytes()
+                                              if 'segments' in batch else b'')
+                self.observed_rows += len(batch['input_ids'])
         count = sum(context(x, self.mode).targets().sum() for x in batch_samples).to(device)
         return self.accelerator.reduce(count, reduction='sum')
 
@@ -347,6 +374,7 @@ def train_worker(args):
     recipe = meta['recipe']; output = root/args.mode
     set_seed(42)
     training = TrainingArguments(output_dir=str(output), per_device_train_batch_size=16,
+        per_device_eval_batch_size=16,
         gradient_accumulation_steps=4, max_steps=28600, warmup_steps=1430,
         learning_rate=3e-4, lr_scheduler_type='cosine_with_min_lr',
         lr_scheduler_kwargs={'min_lr_rate':.1}, weight_decay=.1, adam_beta1=.9, adam_beta2=.95,
@@ -355,19 +383,39 @@ def train_worker(args):
         save_strategy='no', eval_strategy='no', remove_unused_columns=False,
         ddp_find_unused_parameters=False, ddp_timeout=1800, disable_tqdm=True)
     assert training.world_size == 8
+    training.distributed_state.wait_for_everyone()
+    if output.exists():
+        raise ValueError('Use a fresh benchmark mode directory')
+    # All ranks finish the freshness check before Trainer can create this path.
+    training.distributed_state.wait_for_everyone()
     model = new_model(recipe['config_name'], 'cpu')
     timing = Timing(args.steps)
     trainer = BenchTrainer(model=model, mode=args.mode, args=training,
-        train_dataset=load_from_disk(str(root/'data')), data_collator=Collator(args.mode), callbacks=[timing])
+        train_dataset=load_from_disk(str(root/'data')), data_collator=Collator(args.mode), callbacks=[timing],
+        compute_metrics=compute_metrics)
     before = time.perf_counter()
     result = trainer.train()
     elapsed = time.perf_counter()-before
     assert trainer.state.global_step == args.steps
+    peak = torch.cuda.max_memory_allocated()/1024**3
+    evaluation = None
+    if args.eval_rows:
+        eval_data = load_from_disk(str(root/'eval'))
+        assert len(eval_data) == args.eval_rows and args.mode.endswith('isolated')
+        # Score both trained weight sets through the same dense backend first.
+        trainer.mode = 'sdpa_isolated'; trainer.data_collator = Collator(trainer.mode)
+        common = trainer.evaluate(eval_dataset=eval_data, metric_key_prefix='heldout')
+        trainer.mode = args.mode; trainer.data_collator = Collator(args.mode)
+        native = (trainer.evaluate(eval_dataset=eval_data, metric_key_prefix='heldout')
+                  if args.mode != 'sdpa_isolated' else common)
+        evaluation = dict(common_dense=common, native=native,
+                          data=json.loads((root/'eval-data.json').read_text()))
     # Save actual trained weights and logs, outside the measured intervals.
     trainer.save_model(str(output/'final_model')); trainer.save_state()
     record = dict(status='passed', mode=args.mode, rank=training.process_index,
         world_size=training.world_size, tokens_per_update=1048576, steps=timing.rows,
-        elapsed_seconds=elapsed, peak_allocated_gib=torch.cuda.max_memory_allocated()/1024**3,
+        elapsed_seconds=elapsed, peak_allocated_gib=peak, evaluation=evaluation,
+        full_input_sha256=trainer.full_input_digest.hexdigest(), observed_rows=trainer.observed_rows,
         input_sha256=trainer.input_digest.hexdigest(), log_history=trainer.state.log_history,
         train_metrics=result.metrics, wrapped_model=type(trainer.model_wrapped).__name__)
     write(output/f'rank-{training.process_index}.json', record)
@@ -378,12 +426,18 @@ def train_worker(args):
 def summarize(args):
     root = Path(args.root); summary = {}
     digests = None
-    for mode in MODES:
+    streams = None
+    for mode in args.modes:
         ranks = [json.loads((root/mode/f'rank-{i}.json').read_text()) for i in range(8)]
         assert all(r['status']=='passed' and len(r['steps'])==args.steps for r in ranks)
         current = [r['input_sha256'] for r in ranks]
         assert digests is None or current == digests, 'Input order differs between modes'
         digests = current
+        if len({m.endswith('isolated') for m in args.modes}) == 1:
+            full = [r['full_input_sha256'] for r in ranks]
+            assert streams is None or full == streams, 'Full training streams differ'
+            streams = full
+        assert all(r['observed_rows'] == args.steps*64 for r in ranks)
         elapsed = [max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(5, args.steps)]
         compute = [max(r['steps'][i]['compute_seconds'] for r in ranks) for i in range(5, args.steps)]
         losses = [x['loss'] for x in ranks[0]['log_history'] if 'loss' in x]
@@ -395,10 +449,26 @@ def summarize(args):
             max_update_seconds=max(elapsed), median_compute_seconds=statistics.median(compute),
             tokens_per_second=1048576/statistics.median(elapsed),
             peak_allocated_gib=max(r['peak_allocated_gib'] for r in ranks), losses=losses,
-            gradient_norms=norms)
-    base = summary['sdpa_cross']['median_update_seconds']
-    for row in summary.values(): row['slowdown_vs_previous_percent']=100*(row['median_update_seconds']/base-1)
+            gradient_norms=norms, evaluation=ranks[0]['evaluation'])
+    reference_mode = 'sdpa_cross' if 'sdpa_cross' in summary else args.modes[0]
+    base = summary[reference_mode]['median_update_seconds']
+    for row in summary.values(): row['time_change_vs_reference_percent']=100*(row['median_update_seconds']/base-1)
+    if args.eval_rows:
+        assert set(args.modes) == {'sdpa_isolated', 'fa4_isolated'}
+        a, b = (summary[m] for m in ('sdpa_isolated', 'fa4_isolated'))
+        assert a['evaluation']['data'] == b['evaluation']['data']
+        assert a['evaluation']['common_dense']['heldout_target_tokens'] == b['evaluation']['common_dense']['heldout_target_tokens']
+        comparison = dict(max_training_loss_gap=max(abs(x-y) for x,y in zip(a['losses'],b['losses'])),
+            max_relative_gradient_norm_gap=max(abs(x-y)/max(abs(x),1e-20) for x,y in zip(a['gradient_norms'],b['gradient_norms'])),
+            heldout_loss_gap=abs(a['evaluation']['common_dense']['heldout_lm_loss']-b['evaluation']['common_dense']['heldout_lm_loss']),
+            trained_fa4_backend_eval_gap=abs(b['evaluation']['common_dense']['heldout_lm_loss']-b['evaluation']['native']['heldout_lm_loss']))
+        comparison['passed'] = (comparison['max_training_loss_gap'] < .01 and
+            comparison['max_relative_gradient_norm_gap'] < .03 and comparison['heldout_loss_gap'] < .01 and
+            comparison['trained_fa4_backend_eval_gap'] < .01)
+        write(root/'comparison.json', comparison)
+        assert comparison['passed'], comparison
     write(root/'summary.json', dict(status='passed', results=summary, measured_steps=[6,args.steps],
+          reference_mode=reference_mode,
           includes='full model forward, LM loss, backward, DDP, clipping, optimizer, scheduler, data delivery',
           excludes='startup, first five updates, evaluation, final checkpoint writing'))
     print('FULL_TRAINING_SUMMARY', json.dumps(summary), flush=True)
@@ -412,6 +482,8 @@ def main():
     parser.add_argument('--documents', type=int, default=24000)
     parser.add_argument('--mode', choices=MODES)
     parser.add_argument('--steps', type=int, default=30)
+    parser.add_argument('--modes', nargs='+', choices=MODES, default=list(MODES))
+    parser.add_argument('--eval-rows', type=int, default=0)
     args = parser.parse_args()
     if args.steps < 10: raise ValueError('At least 10 updates are required')
     {'prepare':prepare, 'correctness':correctness, 'train':train_worker, 'summarize':summarize}[args.command](args)

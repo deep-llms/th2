@@ -1,5 +1,23 @@
 # Current task
 
+## Authorized 200-update isolated-attention stability comparison (2026-10-04)
+
+User approved the proposed longer check: fresh dense SDPA isolated and FA4
+isolated runs, 200 updates each, same full arm A/seed42/data/optimizer, original
+28600-step schedule and1430 warmup. Eight GPUs per run, micro16/accum4/seq2048,
+checkpointing off. Repeated16.78M-token benchmark pool, separate512-row (~1M
+input tokens) held-out pool from the saved validation split. No production run.
+Hash the entire token/document-ID stream per rank; compare all200 loss/gradient
+norm records. Evaluate both weight sets through common dense SDPA, then also
+evaluate the FA4 weight set through native FA4. Predeclared comparison limits:
+max training loss gap <.01, max relative gradient-norm gap <.03, common-backend
+held-out loss gap <.01, trained FA4 dense/native held-out gap <.01.
+Use the existing separate attention_bench environment and verified worker-only
+burn reclamation, resource Accelerate copy/env check, automatic burn recovery.
+Prepared job th2-tjx3-document-stability-200-20261004-a01; outputs under
+/mnt/local/_outputs/deep-llms_th2/document-stability-200-20261004-a01/benchmark.
+Both models start fresh rather than resuming the30-update test weights.
+
 ## Full training benchmark completed and burns verified (2026-10-04)
 
 daea6f6 / th2-tjx3-document-training-20261004-a01 completed successfully at
