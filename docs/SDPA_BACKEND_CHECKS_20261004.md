@@ -1,6 +1,7 @@
 # SDPA attention backend: what is verified and what to check
 
-Date: 2026-10-04. Status: **checklist only; nothing below has been run yet.**
+Date: 2026-10-04. Status: **C1/C3 implemented and B200 profiling completed; see Section 8.**
+Sections 1–6 preserve the original checklist and pre-implementation review.
 
 > **Read Section 6 before implementing any check.** It corrects several
 > instructions in Sections 1–5:
@@ -341,3 +342,126 @@ is pending at this point in the record.
 C4 remains optional and is not enabled. C5 is deferred while answering the
 backend-dispatch question. Full-model FP32 micro16 is not attempted; the earlier
 same-weight FP32 evidence remains explicitly scoped to micro2 baseline checks.
+
+## 8. Verified C1/C3 results (2026-10-04)
+
+**All 88 full-model profiles passed. Every observed SDPA forward and fused
+backward used cuDNN; no math, FlashAttention or memory-efficient dispatch was
+observed.** This includes evaluation, the boolean-mask auxiliary branch, and
+the detached consumer path. It answers G1/G2 for the tested current runtime;
+it cannot recover the historical node's dispatch (G3).
+
+### Coverage and execution
+
+Implementation/launch commit: `ab62618`. Job: `sdpa-full-profile-20261004-a01`.
+Completed at 15:36:08 UTC on `thiennh-p6-tjx3-worker-0`.
+
+The 88 cases are 11 arms × 2 checkpoint settings × 2 mask modes × 2 phases:
+A–G and all four Task-/Consumer-Aware variants; all activation checkpoints on
+or off; explicit cross-document or dense document-isolated masks; training
+forward/backward or evaluation without gradients. Both phases used microbatch
+16, sequence length 2,048, and CUDA BF16 autocast. Eight GPUs processed
+independent cases, using the full production model and Trainer objective.
+This was not an eight-rank DDP throughput measurement.
+
+Full models used random initialization (seed 42), including the production
+zero-initialized auxiliary output. Inputs came from the existing real English
+benchmark pool. No full-model optimizer updates occurred; all before/after
+parameter fingerprints matched and all observed gradients were finite. This
+is dispatch evidence, not a same-weight numerical comparison or convergence
+validation of every arm. CPU preservation tests separately activate the
+auxiliary output and verify that auditing leaves loss/gradients/weights/RNG
+unchanged.
+
+Runtime: torch `2.14.1+cu130`, CUDA `13.0`, cuDNN package `9.24.0.43`
+(runtime integer `92400`), Transformers `5.9.0`, Accelerate `1.13.0`, driver
+`580.167.08`. All four SDPA backend flags were enabled. Matmul TF32 was off;
+cuDNN TF32 was on. Deterministic algorithms, cuDNN deterministic mode and
+cuDNN benchmarking were off. These flags describe this test, not a guarantee
+of repeatability.
+
+### Observed calls and dtypes
+
+| Site | Q / K / V at SDPA API | Mask at API | Train forward/backward | Eval forward |
+|---|---|---|---|---|
+| Every backbone layer | FP32 / FP32 / BF16 | FP32 additive | cuDNN / cuDNN | cuDNN |
+| Auxiliary branch | BF16 / BF16 / BF16 | Boolean | cuDNN / cuDNN | cuDNN |
+| Detached consumer (consumer-aware variants) | BF16 / BF16 / BF16 | Boolean | cuDNN / cuDNN | cuDNN |
+
+All API Q/K/V shapes were `[16,16,2048,128]`; masks were
+`[16,1,2048,2048]`. Every call had `is_causal=False`, `enable_gqa=False`,
+and BF16 autocast enabled. Explicit masks express causality/isolation.
+
+**This corrects the inference in Sections 1 and 3 about mask dtype.** The
+backbone mask reaches the API as FP32 in this execution. With checkpointing off,
+the training saved-tensor observations include BF16 tensors of the attention
+input shape and BF16 tensors of the mask shape. The auxiliary boolean API mask
+likewise corresponds to a retained BF16 tensor of that mask shape. Saved-tensor
+metadata has no semantic labels; it records what autograd retained inside SDPA,
+not every internal conversion. Evaluation saves no tensors, so it has only API
+dtype and operator observations. Do not infer FP32 attention arithmetic merely
+from FP32 arguments before autocast.
+
+Counts matched exactly in every case:
+
+| Arm family | Initial forward calls | Recomputed calls with checkpoints on (train) | Fused backward calls (train) |
+|---|---:|---:|---:|
+| A | 28 | 28 | 28 |
+| B–G, Task-Aware variants | 29 | 29 | 29 |
+| Consumer-Aware variants | 30 | 30 | 30 |
+
+Checkpointing off produced no recomputation. Evaluation produced neither
+recomputation nor backward calls in either checkpoint setting. All calls and
+fused backward operators were attributed to their sites. Across the 88 cases:
+3,200 `aten::_scaled_dot_product_cudnn_attention` and 1,280
+`aten::_scaled_dot_product_cudnn_attention_backward` events.
+
+### Automatic receipts and validation
+
+`DeepKVTrainer` now records one first-training and one first-evaluation CUDA
+microbatch on rank zero per invocation, including a resumed invocation. It
+observes the real calls, preserves backend selection, and adds no extra
+forward or optimizer update. Receipts live as `sdpa-train-*.json` and
+`sdpa-eval-*.json` in the run directory; `train.py` lists them in `result.json`.
+They include runtime/configuration, API tensor metadata, checkpoint status,
+call attribution and observed operators. Profiling adds one-time overhead;
+these receipts are not throughput measurements.
+
+A separate tiny Consumer-Aware-Align model completed two actual HF Trainer
+updates on B200, including evaluation before training and afterward. It wrote
+exactly two automatic receipts, with complete attribution. This verifies the
+single-GPU Trainer integration; the new receipt hook has not yet been exercised
+in a full eight-rank training launch. Full-model cases exercise all arms through
+`DeepKVTrainer.compute_loss`, independently on each GPU.
+
+Local validation passed: two audit tests covering all 11 arms and both
+checkpoint settings, nine document-training/trained-attention regression tests,
+and ten Trainer tests. B200 preflight passed the audit plus nine regression
+tests (11 tests). Shell syntax and Python compilation checks also passed.
+
+### Evidence and GPU handoff
+
+Local evidence: `artifacts/sdpa-full-profile-20261004-a01/`, especially
+`result.json`, `profiles/summary.json`, the 88 case JSON files, and
+`profiles/trainer-receipt-smoke.json`. All 104 exported evidence files passed
+their size/SHA-256 manifest checks. Archive SHA-256:
+`ebc23667459a57a6739bb03a99b68bc8d62c6ee44238158974502ae3f679cba1`.
+
+Remote root: `/mnt/local/_outputs/deep-llms_th2/sdpa-full-profile-20261004-a01`.
+The launch copied and byte-verified the resources Accelerate config, printed
+`accelerate env`, stopped only the eight verified burn workers, and verified
+all eight GPUs free. Burns restarted automatically after profiling; collective
+progress was verified at 15:36:08 UTC. The read-only follow-up at 15:39:13 UTC
+confirmed workers 21008–21015 on GPUs 0–7 at 100% utilization, with the guard
+released. Evidence logs: `temp/sdpa-full-profile-launch-a01.log` and
+`temp/sdpa-full-profile-monitor-a01.log`.
+
+### Remaining decisions
+
+C1/C3 are complete for this matrix and integrated for future runs. Production
+document isolation remains disabled, and backend selection is not pinned.
+C2 remains a runtime-change gate; earlier baseline FP32 reference evidence is
+microbatch 2, not all-arm or microbatch-16 validation. C4 is optional. C5, the
+additional 200-update same-backend trajectory control, was not run here and
+remains useful before reconsidering FA4. These dispatch results do not resolve
+the previous dense-versus-FA4 trajectory gap or promise bitwise reproducibility.

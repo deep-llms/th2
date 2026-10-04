@@ -1,5 +1,23 @@
 # Project notes
 
+## SDPA full-model audit completed (2026-10-04)
+
+C1/C3 from SDPA_BACKEND_CHECKS_20261004.md completed on tjx3, launch ab62618.
+All 88 cases passed: 11 arms, checkpointing on/off, cross/isolated masks,
+train/eval, micro16/seq2048/BF16. Every observed forward and fused backward
+used cuDNN; no math fallback. Full-objective gradients finite, call counts exact,
+parameter fingerprints unchanged. Independent single-GPU cases across eight
+GPUs; not DDP throughput. Tiny two-update actual Trainer smoke verified one
+automatic receipt per phase. Future DeepKVTrainer invocations record first
+train/eval CUDA dispatch on rank zero; train.py links the receipts.
+Backbone API Q/K and additive masks were FP32 under BF16 autocast; retained
+training tensors included BF16 attention/mask shapes. Aux API mask was boolean.
+See Section 8 of the checklist for runtime, complete evidence, and limitations.
+Results downloaded and all 104 manifest entries verified. Burns automatically
+restored, collective progress verified 15:36:08 UTC, live workers 21008–21015
+confirmed 15:39:13 UTC. No production isolation/pinning change. C2 conditional,
+C4 optional, C5 deferred. commands.sh returned to #0 after export.
+
 ## Current document-isolation recommendation (2026-10-04)
 
 See the [consolidated investigation report](DOCUMENT_ISOLATION_INVESTIGATION_20261004.md) for the goal, code map,
