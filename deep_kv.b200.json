@@ -6,6 +6,7 @@
   "output_dir": "/mnt/local/_outputs/deep-llms_th2/deep-kv/A",
   "arm": "A",
   "block_size": 2048,
+  "isolate_documents": true,
   "preprocessing_num_workers": 160,
   "eval_rows": 4882,
   "monitor_rows": 128,

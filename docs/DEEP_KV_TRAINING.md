@@ -7,7 +7,8 @@ The user's later budget overrides its original 1B/32K pilot: approximately
 ## Ordinary training follows the baseline
 
 `train.py` is the single training entry point. It uses HfArgumentParser,
-TrainingArguments, set_seed, HF Dataset.map/cache/shuffle, default_data_collator,
+TrainingArguments, set_seed, HF Dataset.map/cache/shuffle, default_data_collator
+(with a small position-reset adapter for document isolation),
 and Trainer.train/save_model/save_metrics/save_state. HF/Accelerate initializes
 distributed training, places the model, shards batches, creates the optimizer
 and scheduler, scales accumulated gradients, and manages checkpoints/resume.
@@ -60,21 +61,43 @@ optimizer, data order, and schedule. The coefficient is fixed by arm identity;
 recorded `pilot.arm` also prevents resuming D as E. Training, evaluation and
 objective logging use the same coefficient; logged K/V losses remain unweighted.
 
-## Packing is unchanged
+## EOS packing and document isolation
 
-`deep_kv/packing.py` is a mechanical move of the previous `pcc/packing.py`.
-It appends one explicit `<|endoftext|>` (151643) to each document, concatenates
+`deep_kv/packing.py` appends one explicit `<|endoftext|>` (151643) to each document, concatenates
 within each HF map batch, splits into fixed contexts, and drops that batch's
-remainder. It does not carry remainders between map batches. EOS is not a
-segment attention barrier. Tokenization/grouping still use the two Dataset.map
+remainder. It does not carry remainders between map batches. Tokenization/grouping still use the two Dataset.map
 calls inside main_process_first, followed by shuffle(seed=42) and the normal
 Trainer sampler. There is no raw-text export or pretokenization job.
 
 Training uses 160 preprocessing workers; evaluation retains one worker and its
 existing fixed prefix. Keep source files, tokenizer, worker count, and software
 identical across arms. A cache miss recomputes the same token sequences/order.
-Moving the helper may cause an HF cache rebuild, without changing packing.
 The sampled text and the separately running corpus preparation job are unchanged.
+
+From 2026-10-05, `isolate_documents=true` is the default in `train.py` and the
+shared B200 recipe, for every arm and both training and evaluation. Tokenization
+also records real document IDs, including ownership of the appended EOS, and
+packs those IDs alongside the unchanged token sequence. Literal EOS tokens in
+source text do not introduce extra boundaries. The collator resets RoPE position
+IDs at each document fragment's start, including a fragment at a chunk's start.
+The existing `Context` builds dense causal same-document masks for both backbone
+and auxiliary paths. It excludes the EOS-to-next-document prediction from LM
+targets while retaining prediction of the appended EOS itself. Existing routing
+and consumer losses use the same document restrictions.
+
+The HF dataset cache gains a `segments` column; the isolated tokenization has a
+distinct cache fingerprint. Its first use builds the appropriate cache inside
+training, and subsequent arms can reuse it. No sampling rerun or separate export
+is needed. The metadata adds cache storage, but token chunks, input-token budgets,
+shuffle seed and schedule are unchanged. Eligible loss-target counts decrease
+at document boundaries; compare arms using the same isolation policy.
+
+Keep `causal_attention=false`: implicit causal attention cannot represent these
+document restrictions, and incompatible settings are rejected before preprocessing.
+SDPA dispatch remains automatic (cuDNN in the verified B200 matrix), without FA4
+or backend pinning. `--isolate_documents false` is available for an explicit
+cross-document experiment. It is recorded in the scientific recipe, not treated
+as a performance-only switch.
 
 ## Commands
 
@@ -185,6 +208,9 @@ A nonempty directory with no checkpoint is rejected. An interrupted/incomplete
 native checkpoint can fail to load; select an earlier intact native checkpoint
 explicitly. There is no automatic certified-checkpoint recovery layer.
 Old Deep-KV/PCC checkpoint formats are not supported by this entry point.
+Do not resume a historical cross-document run with isolation enabled: that changes
+the objective and is rejected even with `allow_performance_change_on_resume=true`.
+Use a fresh output directory for the isolated experiment series.
 
 The saved weights belong to the DeepKV wrapper; construct the same model and
 load its state when evaluating outside train.py. They are not a bare Qwen

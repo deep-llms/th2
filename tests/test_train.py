@@ -57,6 +57,19 @@ def invoke(root, config):
         train.main()
 
 
+def fixture_target_counts(root, config):
+    """Independent counts from document lengths in the tiny evaluation fixture."""
+    from itertools import groupby
+    tokenizer = PreTrainedTokenizerFast.from_pretrained(root / 'model', local_files_only=True)
+    texts = train.load_text(root / 'eval')['text']
+    lengths = [len(ids) + 1 for ids in tokenizer(list(texts), add_special_tokens=False)['input_ids']]
+    documents = [i for i, length in enumerate(lengths) for _ in range(length)]
+    size = config['block_size']
+    fragments = [len(list(group)) for start in range(0, config['eval_rows'] * size, size)
+                 for _, group in groupby(documents[start:start + size])]
+    return sum(length - 1 for length in fragments), sum(max(0, length - 2) for length in fragments)
+
+
 class TrainingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -113,6 +126,7 @@ class TrainingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config = fixture(root)
+            target_count, _ = fixture_target_counts(root, config)
             for arm in "ABCDEFG":
                 args = {**config, "arm": arm, "output_dir": str(root / arm), "stop_after": 2}
                 invoke(root, args)
@@ -131,7 +145,7 @@ class TrainingTests(unittest.TestCase):
                 metrics = json.loads((root / arm / "eval_results.json").read_text())
                 self.assertAlmostEqual(metrics["eval_loss"], metrics["eval_lm_loss"] +
                                        .3 * metrics["eval_loss_route"] + .3 * metrics["eval_loss_msg"])
-                self.assertEqual(metrics["eval_route_queries"], 5 * 7)
+                self.assertEqual(metrics["eval_route_queries"], target_count)
                 self.assertNotIn("eval_loss_k", metrics)
             self.assertEqual(json.loads((root / "F/eval_results.json").read_text())["eval_loss_msg"], 0.)
             self.assertIn("E-D", comparison["nll_differences"])
@@ -190,7 +204,7 @@ class TrainingTests(unittest.TestCase):
                 return super().compute_loss(model, inputs, *args, **kwargs)
 
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp); cfg = fixture(root)
+            root = Path(tmp); cfg = {**fixture(root), 'isolate_documents': False}
             for arm in 'BFG':
                 old = root / arm
                 invoke(root, {**cfg, 'arm': arm, 'output_dir': str(old), 'stop_after': 2})
@@ -268,6 +282,63 @@ class TrainingTests(unittest.TestCase):
                 trainer = DeepKVTrainer(model=model, args=args, train_dataset=data)
                 orders.append([b["input_ids"].tolist() for b in trainer.get_train_dataloader()])
             self.assertTrue(all(x == orders[0] for x in orders))
+
+    def test_isolation_packing_cache_boundaries_and_all_arm_entry_points(self):
+        from deep_kv import ARMS
+        from deep_kv.packing import isolated_data_collator
+        from scripts.benchmark_document_training import Collator
+
+        class RecordingTrainer(DeepKVTrainer):
+            def compute_loss(self, model, inputs, *args, **kwargs):
+                ctx = self.context(inputs)
+                self_outer.assertIsNotNone(ctx.segments)
+                # Different documents must never attend or form an LM target.
+                boundary = ctx.segments[:, 1:] != ctx.segments[:, :-1]
+                self_outer.assertFalse((ctx.targets() & boundary).any())
+                different = ctx.segments[:, :, None] != ctx.segments[:, None, :]
+                self_outer.assertFalse((ctx.allowed()[:, 0] & different).any())
+                if boundary.any():
+                    seen.add((self.model.arm, model.training))
+                return super().compute_loss(model, inputs, *args, **kwargs)
+
+        self_outer = self
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); cfg = fixture(root)
+            cfg.update(block_size=6, stop_after=1)
+            tokenizer = PreTrainedTokenizerFast.from_pretrained(root / 'model', local_files_only=True)
+            raw = train.load_text(root / 'train')
+            args = TrainingArguments(output_dir=str(root / 'args'), use_cpu=True, report_to='none')
+            cross = train.preprocess_dataset(raw, tokenizer, 6, args, num_proc=2)
+            isolated = train.preprocess_dataset(raw, tokenizer, 6, args, num_proc=2, isolate_documents=True)
+            self.assertNotEqual(cross._fingerprint, isolated._fingerprint)
+            self.assertEqual(cross['input_ids'], isolated['input_ids'])
+            # Global indices remain distinct across multiprocessing shards.
+            self.assertGreater(max(max(s) for s in isolated['segments']), len(raw) // 2)
+            times = {p: p.stat().st_mtime_ns for p in root.rglob('cache-*.arrow')}
+            cached = train.preprocess_dataset(raw, tokenizer, 6, args, num_proc=2, isolate_documents=True)
+            self.assertEqual(times, {p: p.stat().st_mtime_ns for p in root.rglob('cache-*.arrow')})
+            rebuilt = train.preprocess_dataset(raw, tokenizer, 6, args, num_proc=2,
+                                               isolate_documents=True, overwrite_cache=True)
+            self.assertEqual(isolated.to_dict(), cached.to_dict())
+            self.assertEqual(isolated.to_dict(), rebuilt.to_dict())
+            # Production collator must exactly match the B200-tested semantics.
+            rows = list(isolated.select(range(4)))
+            torch.testing.assert_close(isolated_data_collator(rows), Collator('sdpa_isolated')(rows), rtol=0, atol=0)
+            with self.assertRaises(KeyError):
+                isolated_data_collator(list(cross.select(range(2))))
+            seen = set()
+            with patch.object(train, 'DeepKVTrainer', RecordingTrainer):
+                for arm in ARMS:
+                    invoke(root, {**cfg, 'arm': arm, 'output_dir': str(root / arm)})
+                    saved = json.loads((root / arm / 'train_config.json').read_text())
+                    self.assertTrue(saved['data']['isolate_documents'])
+            self.assertEqual(seen, {(arm, phase) for arm in ARMS for phase in (True, False)})
+            # Even performance-change permission cannot change isolation on resume.
+            with self.assertRaisesRegex(ValueError, 'Resume configuration'):
+                invoke(root, {**cfg, 'output_dir': str(root / 'A'), 'isolate_documents': False,
+                              'allow_performance_change_on_resume': True})
+            with self.assertRaisesRegex(ValueError, 'explicit dense SDPA'):
+                invoke(root, {**cfg, 'causal_attention': True})
 
     def test_native_gradient_accumulation_scaling(self):
         from tests.test_deep_kv import model, objective

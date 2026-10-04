@@ -21,7 +21,7 @@ import torch
 from transformers import AutoConfig, AutoTokenizer, TrainerCallback, TrainingArguments, set_seed
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 from deep_kv.model import Context, DeepKV
-from deep_kv.packing import document_end_id, group_texts, tokenize_batch
+from deep_kv.packing import document_end_id, group_texts, tokenize_with_segments
 from deep_kv.training import DeepKVTrainer, compute_metrics
 
 MODES = ('sdpa_cross', 'sdpa_causal', 'fa4_cross', 'sdpa_isolated', 'fa4_isolated')
@@ -32,13 +32,6 @@ def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('x') as handle:
         json.dump(value, handle, indent=2, allow_nan=False)
-
-
-def tokenize_with_segments(examples, indices, tokenizer, end_id):
-    result = tokenize_batch(examples, tokenizer, end_id)
-    # Track appended boundaries explicitly, even if source text contains EOS.
-    result['segments'] = [[index] * len(ids) for index, ids in zip(indices, result['input_ids'])]
-    return result
 
 
 class Collator:

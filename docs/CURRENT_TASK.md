@@ -1,5 +1,34 @@
 # Current task
 
+## Dense SDPA document isolation enabled (2026-10-05)
+
+User selected dense SDPA isolation for the next experiment series. `train.py`
+and `deep_kv.b200.json` now default to `isolate_documents=true` for every arm,
+in training and evaluation. Shared EOS tokenization carries real document IDs
+through the existing two-map packing/cache pipeline. A small collator resets
+positions per packed document fragment. Existing Context/model/loss code applies
+same-document causal/strict-past masks and omits cross-boundary LM targets.
+Literal source EOS tokens do not create false boundaries. No model, optimizer,
+schedule or sampling changes. Implicit causal mode is rejected with isolation.
+Isolation is part of the recorded data recipe; changing it on resume is rejected
+even with performance-change permission. Use fresh outputs for isolated runs.
+HF builds a separate boundary-aware cache during normal training; no manual
+preprocessing or sampling rerun is required. It adds per-token segment metadata.
+See DEEP_KV_TRAINING.md for behavior. Earlier entries saying production isolation
+is disabled describe the state before this change. No B200 job was launched for
+this change; commands.sh remains #0.
+
+Validation: 31 local tests passed (real entry-point train/eval for all 11 arms,
+cache reuse/rebuild and token preservation, isolation semantics, bottleneck losses,
+resume, and audit regressions). Eight-process CPU BF16 micro16/accum4 checks for
+A and Consumer-Aware-Align passed: resumed versus uninterrupted max parameter
+difference 9.313225746154785e-10; masked Consumer-Aware DDP versus global-batch
+reference max difference 3.725290298461914e-09. Python compilation/diff checks
+passed. Logs: temp/production-isolation-tests-a02.log and
+temp/production-isolation-ddp-a01.log; receipt:
+temp/deep-kv-isolated-resume-a01/resume_verified.json. These local integration
+checks do not replace a future B200 launch preflight.
+
 ## SDPA full-model audit completed (2026-10-04)
 
 C1/C3 from SDPA_BACKEND_CHECKS_20261004.md completed on tjx3, launch ab62618.

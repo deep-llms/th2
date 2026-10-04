@@ -38,6 +38,27 @@ def tokenize_batch(examples, tokenizer, end_id):
     return {"input_ids": ids, "attention_mask": [[1] * len(row) for row in ids]}
 
 
+def tokenize_with_segments(examples, indices, tokenizer, end_id):
+    result = tokenize_batch(examples, tokenizer, end_id)
+    # Dataset indices identify real documents, including their appended EOS.
+    # A literal EOS inside source text must not create another document.
+    result["segments"] = [[index] * len(ids) for index, ids in zip(indices, result["input_ids"])]
+    return result
+
+
+def isolated_data_collator(rows):
+    """Keep the standard HF collator; reset RoPE at each packed fragment start."""
+    import torch
+    from transformers import default_data_collator
+    batch = default_data_collator(rows)
+    segments = batch["segments"]  # Fail closed if an old cache lacks boundaries.
+    offsets = torch.arange(segments.shape[1]).expand_as(segments)
+    starts = torch.ones_like(segments, dtype=torch.bool)
+    starts[:, 1:] = segments[:, 1:] != segments[:, :-1]
+    batch["position_ids"] = offsets - offsets.masked_fill(~starts, 0).cummax(-1).values
+    return batch
+
+
 def group_texts(examples, block_size):
     from itertools import chain
     concatenated = {key: list(chain(*rows)) for key, rows in examples.items()}
@@ -49,11 +70,13 @@ def group_texts(examples, block_size):
 
 
 def preprocess_dataset(raw_dataset, tokenizer, block_size, training_args, *,
-                       num_proc=None, overwrite_cache=False):
+                       num_proc=None, overwrite_cache=False, isolate_documents=False):
     """The train.py two-map CLM pipeline, cached by Hugging Face Datasets."""
     with training_args.main_process_first(desc="dataset map tokenization"):
         tokenized = raw_dataset.map(
-            tokenize_batch, fn_kwargs={"tokenizer": tokenizer, "end_id": document_end_id(tokenizer)},
+            tokenize_with_segments if isolate_documents else tokenize_batch,
+            with_indices=isolate_documents,
+            fn_kwargs={"tokenizer": tokenizer, "end_id": document_end_id(tokenizer)},
             batched=True, num_proc=num_proc, remove_columns=raw_dataset.column_names,
             load_from_cache_file=not overwrite_cache, desc="Running tokenizer on dataset")
     with training_args.main_process_first(desc="grouping texts together"):

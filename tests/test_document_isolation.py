@@ -1,4 +1,4 @@
-"""Local feasibility checks; production packing remains unchanged.
+"""Document-isolation semantics for every production arm.
 
 Defaults to CPU FP32. Set DOCUMENT_TEST_DEVICE=cuda:0 and
 DOCUMENT_TEST_BF16=1 explicitly for an authorized local GPU check.

@@ -30,7 +30,8 @@ D versus B and A. Lower held-out LM loss is better.
 - `train.py`: the baseline Hugging Face training flow, with the Deep-KV model
   and loss replacing the old project's model customization.
 - `deep_kv/model.py`: the arms and their causal masks.
-- `deep_kv/packing.py`: unchanged EOS tokenization and batched CLM packing.
+- `deep_kv/packing.py`: EOS tokenization, batched CLM packing, and document IDs
+  for dense SDPA isolation (enabled by default for training and evaluation).
 - `deep_kv/training.py`: custom loss, compact evaluation, component logging,
   fixed-step stopping, and the small adapters needed to save/restore the wrapper.
 - `deep_kv/__main__.py` and `report.py`: queue generation and matched comparisons.

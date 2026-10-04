@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import torch
 from safetensors.torch import load_file
 from transformers import TrainingArguments
-from test_train import fixture
+from test_train import fixture, fixture_target_counts
 import train
 from deep_kv.model import DeepKV
 from deep_kv import ARMS, BOTTLENECK_ARMS, code_loss_weight
@@ -77,6 +77,7 @@ def main():
         (root / "fixture.json").write_text(json.dumps(cfg))
     state.wait_for_everyone()
     cfg = json.loads((root / "fixture.json").read_text())
+    target_count, consumer_count = fixture_target_counts(root, cfg)
     results = {}
     original_factory = DeepKV.from_scratch
     for arm in args.arms:
@@ -110,7 +111,7 @@ def main():
             assert result["input_tokens"] == 3 * 8 * 16 * 4 * 8
             if arm in ("F", "G"):
                 evaluation = result["evaluation"]
-                assert evaluation["eval_route_queries"] == 5 * 7
+                assert evaluation["eval_route_queries"] == target_count
                 expected = (evaluation["eval_lm_loss"] + .3 * evaluation["eval_loss_route"]
                             + (.3 * evaluation["eval_loss_msg"] if arm == "G" else 0))
                 assert abs(evaluation["eval_loss"] - expected) < 1e-10
@@ -119,7 +120,7 @@ def main():
             if arm in BOTTLENECK_ARMS:
                 evaluation = result['evaluation']
                 assert evaluation['eval_loss'] == evaluation['eval_lm_loss']
-                assert evaluation['eval_extractor_targets'] == 5 * (6 if arm.startswith('Consumer') else 7)
+                assert evaluation['eval_extractor_targets'] == (consumer_count if arm.startswith('Consumer') else target_count)
                 expected = (evaluation['eval_lm_loss'] + evaluation[
                     'eval_loss_use' if arm.startswith('Consumer') else 'eval_loss_extract']
                     + code_loss_weight(arm) * evaluation['eval_loss_align'])

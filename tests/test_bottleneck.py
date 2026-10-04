@@ -338,9 +338,11 @@ class BottleneckTests(unittest.TestCase):
 
     def test_train_entry_resume_report_and_sequential_queue(self):
         from run_experiments import load_jobs
+        from tests.test_train import fixture_target_counts
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config = fixture(root)
+            target_count, consumer_count = fixture_target_counts(root, config)
             for arm in BOTTLENECK_ARMS:
                 invoke(root, {**config, 'arm': arm, 'output_dir': str(root / arm), 'stop_after': 2})
                 invoke(root, {**config, 'arm': arm, 'output_dir': str(root / arm)})
@@ -353,7 +355,7 @@ class BottleneckTests(unittest.TestCase):
                 evaluation = result['evaluation']
                 self.assertEqual(evaluation['eval_loss'], evaluation['eval_lm_loss'])
                 self.assertEqual(evaluation['eval_rows'], 5)
-                self.assertEqual(evaluation['eval_extractor_targets'], 5 * (6 if arm.startswith('Consumer') else 7))
+                self.assertEqual(evaluation['eval_extractor_targets'], consumer_count if arm.startswith('Consumer') else target_count)
                 cost = result['training_cost']
                 self.assertEqual(cost['optimizer_steps'], 1)
                 self.assertGreater(cost['input_tokens_per_second'], 0)

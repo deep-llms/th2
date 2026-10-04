@@ -1,7 +1,8 @@
 """Four-arm Qwen pretraining using the baseline HF Trainer/Accelerate pipeline.
 
 Accepts standard TrainingArguments plus model/data/arm arguments, or one JSON
-config. All assets are local. Packing is the unchanged two-map EOS CLM pipeline.
+config. All assets are local. Two-map EOS packing tracks document boundaries
+for dense SDPA isolation by default, in both training and evaluation.
 """
 import os
 os.environ.update(HF_HUB_OFFLINE="1", HF_DATASETS_OFFLINE="1", TRANSFORMERS_OFFLINE="1",
@@ -26,7 +27,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
-from deep_kv.packing import preprocess_dataset
+from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,7 @@ class DataArguments:
     block_size: int = 2048
     preprocessing_num_workers: int = 160
     overwrite_cache: bool = False
+    isolate_documents: bool = field(default=True, metadata={"help": "Block attention and next-token targets across documents; reset positions per fragment"})
     eval_rows: int = 4882
     monitor_rows: int = 128
 
@@ -127,6 +129,8 @@ def main():
         raise ValueError("Training and validation directories must differ")
     if training_args.gradient_checkpointing:
         raise ValueError("Use checkpoint_layers for the custom model's checkpointing")
+    if data_args.isolate_documents and pilot.causal_attention:
+        raise ValueError("isolate_documents requires explicit dense SDPA masks; set causal_attention=false")
     # The wrapper consumes Context, so Trainer must retain the CLM input columns.
     training_args.remove_unused_columns = False
     training_args.ddp_find_unused_parameters = False
@@ -153,10 +157,12 @@ def main():
     raw_train, raw_eval = load_text(data_args.data_dir), load_text(data_args.eval_data_dir)
     train_dataset = preprocess_dataset(raw_train, tokenizer, data_args.block_size, training_args,
                                       num_proc=data_args.preprocessing_num_workers,
-                                      overwrite_cache=data_args.overwrite_cache).shuffle(seed=training_args.seed)
+                                      overwrite_cache=data_args.overwrite_cache,
+                                      isolate_documents=data_args.isolate_documents).shuffle(seed=training_args.seed)
     # Keep the existing single-worker validation packing and fixed prefix.
     eval_dataset = preprocess_dataset(raw_eval, tokenizer, data_args.block_size, training_args,
-                                     num_proc=1, overwrite_cache=data_args.overwrite_cache)
+                                     num_proc=1, overwrite_cache=data_args.overwrite_cache,
+                                     isolate_documents=data_args.isolate_documents)
     rows_per_update = (training_args.per_device_train_batch_size * training_args.world_size
                        * training_args.gradient_accumulation_steps)
     if len(train_dataset) < training_args.max_steps * rows_per_update or len(eval_dataset) < data_args.eval_rows:
@@ -209,7 +215,8 @@ def main():
     with offline_wandb_run(training_args):
         trainer = DeepKVTrainer(model=model, args=training_args, train_dataset=train_dataset,
                                eval_dataset=eval_dataset.select(range(data_args.monitor_rows)),
-                               processing_class=tokenizer, data_collator=default_data_collator,
+                               processing_class=tokenizer,
+                               data_collator=isolated_data_collator if data_args.isolate_documents else default_data_collator,
                                compute_metrics=compute_metrics, callbacks=[callback])
         callback.trainer = trainer
         starting_step = state.global_step if checkpoint else 0

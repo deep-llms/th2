@@ -465,3 +465,23 @@ microbatch 2, not all-arm or microbatch-16 validation. C4 is optional. C5, the
 additional 200-update same-backend trajectory control, was not run here and
 remains useful before reconsidering FA4. These dispatch results do not resolve
 the previous dense-versus-FA4 trajectory gap or promise bitwise reproducibility.
+
+## 9. Production choice (2026-10-05)
+
+The user subsequently selected dense SDPA document isolation. `train.py` and the
+shared recipe now enable it by default for both phases and every arm, using the
+same boundary semantics as these tests. See [the training guide](DEEP_KV_TRAINING.md#eos-packing-and-document-isolation).
+Section 8's statements about production isolation being disabled describe the
+state at the time of that audit. This code change does not launch training or
+pin the SDPA backend. The FA4 trajectory-control experiment remains unrun.
+
+Validation: 31 local tests passed (real entry-point train/eval for all 11 arms,
+cache reuse/rebuild and token preservation, isolation semantics, bottleneck losses,
+resume, and audit regressions). Eight-process CPU BF16 micro16/accum4 checks for
+A and Consumer-Aware-Align passed: resumed versus uninterrupted max parameter
+difference 9.313225746154785e-10; masked Consumer-Aware DDP versus global-batch
+reference max difference 3.725290298461914e-09. Python compilation/diff checks
+passed. Logs: temp/production-isolation-tests-a02.log and
+temp/production-isolation-ddp-a01.log; receipt:
+temp/deep-kv-isolated-resume-a01/resume_verified.json. These local integration
+checks do not replace a future B200 launch preflight.
