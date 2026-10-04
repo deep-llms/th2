@@ -75,9 +75,20 @@ def packed_varlen(q, k, v, layout, strict, kernel):
 
 def factory(name, layout, strict):
     started = time.perf_counter()
-    if name == 'dense':
+    if name == 'implicit':
+        assert not strict
+        fn = lambda q, k, v: F.scaled_dot_product_attention(q, repeat_heads(k, q.shape[1]),
+                                              repeat_heads(v, q.shape[1]), is_causal=True)
+    elif name == 'dense':
         allowed = layout.allowed(strict)
-        fn = lambda q, k, v: dense(q, k, v, allowed)
+        nonempty = allowed.any(-1, keepdim=True)
+        eye = torch.eye(layout.length, dtype=torch.bool, device=allowed.device)[None, None]
+        safe = allowed | (~nonempty & eye)
+        mask = torch.zeros_like(safe, dtype=torch.bfloat16).masked_fill(~safe, torch.finfo(torch.bfloat16).min)
+        def fn(q, k, v):
+            out = F.scaled_dot_product_attention(q, repeat_heads(k, q.shape[1]),
+                                                 repeat_heads(v, q.shape[1]), attn_mask=mask)
+            return out.masked_fill(~nonempty, 0) if strict else out
     elif name == 'varlen':
         from torch.nn.attention.varlen import varlen_attn
         fn = lambda q, k, v: packed_varlen(q, k, v, layout, strict, varlen_attn)
@@ -97,7 +108,7 @@ def factory(name, layout, strict):
             return same & ((q > k) | (first & (q == k))) if strict else same & (q >= k)
         mask = create_block_mask(mask_mod, layout.batch, None, layout.length, layout.length,
                                  device=str(segments.device))
-        options = {'BACKEND': 'FLASH'} if name == 'flex_fa4' else {}
+        options = {'BACKEND': 'FLASH' if name == 'flex_fa4' else 'TRITON'}
         flex = torch.compile(flex_attention, dynamic=False)
         nonempty = layout.allowed(strict).any(-1, keepdim=True)
         def fn(q, k, v):
@@ -139,7 +150,8 @@ def validate(fn, inputs, allowed):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--backends', nargs='+', default=['dense', 'varlen', 'flex', 'fa4', 'flex_fa4'])
+    p.add_argument('--backends', nargs='+', choices=['implicit', 'dense', 'varlen', 'flex', 'fa4', 'flex_fa4'],
+                   default=['implicit', 'dense', 'varlen', 'flex', 'fa4', 'flex_fa4'])
     p.add_argument('--iterations', type=int, default=20)
     p.add_argument('--output', required=True)
     args = p.parse_args()
@@ -148,7 +160,7 @@ def main():
     print('KERNEL_ENV', json.dumps(dict(torch=torch.__version__, cuda=torch.version.cuda,
                                       gpu=torch.cuda.get_device_name())), flush=True)
     report = []
-    layouts = {'equal': [[512] * 4] * 2,
+    layouts = {'single': [[2048], [2048]], 'equal': [[512] * 4] * 2,
                'ragged': [[1, 127, 384, 1536], [63, 1, 448, 512, 1024]]}
     for case, rows in layouts.items():
         start = time.perf_counter(); layout = Layout(rows, 'cuda')
@@ -158,11 +170,14 @@ def main():
             inputs = [torch.randn(2, h, 2048, 128, device='cuda', dtype=torch.bfloat16,
                                   requires_grad=True) for h in (16, 8, 8)]
             for name in args.backends:
+                if name == 'implicit' and strict:
+                    continue
                 record = dict(layout=case, strict_past=strict, backend=name, layout_ms=layout_ms)
                 try:
                     fn, setup_ms = factory(name, layout, strict)
                     validation_start = time.perf_counter()
-                    errors = validate(fn, inputs, allowed)
+                    reference_mask = (torch.ones_like(allowed).tril() if name == 'implicit' else allowed)
+                    errors = validate(fn, inputs, reference_mask)
                     torch.cuda.synchronize()
                     validation_seconds = time.perf_counter() - validation_start
                     def step():
