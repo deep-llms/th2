@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-document-isolation-20261004-a01
+#th2-tjx3-document-isolation-20261004-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -10,7 +10,8 @@ TASK_PYTHON=/mnt/local/conda-py311/envs/train_env/bin/python
 hostname
 date -u
 nvidia-smi --query-gpu=index,name,driver_version,memory.total,memory.used,utilization.gpu --format=csv
-TASK_ROOT=/mnt/local/_outputs/@PROJECT@/document-isolation-20261004-a01
+TASK_ROOT=/mnt/local/_outputs/@PROJECT@/document-isolation-20261004-a02
+mkdir -p /mnt/local/_outputs/@PROJECT@
 mkdir "$TASK_ROOT"
 python3 -m scripts.verified_gpu_reclaim inspect --output "$TASK_ROOT/gpu-inspection.json"
 "$TASK_PYTHON" -u - <<'CHECK'
@@ -21,7 +22,7 @@ source=pathlib.Path('resources/accelerate_config.yaml')
 dest=pathlib.Path(default_yaml_config_file)
 dest.parent.mkdir(parents=True,exist_ok=True)
 if dest.exists() and dest.read_bytes()!=source.read_bytes():
-    backup=dest.with_name(dest.name+'.before-document-isolation-20261004-a01')
+    backup=dest.with_name(dest.name+'.before-document-isolation-20261004-a02')
     with backup.open('xb') as f:f.write(dest.read_bytes())
 shutil.copy2(source,dest)
 assert source.read_bytes()==dest.read_bytes()

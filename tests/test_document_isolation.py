@@ -106,8 +106,19 @@ class DocumentIsolationTests(unittest.TestCase):
                 for name, parameter in model.named_parameters():
                     if parameter.grad is not None:
                         self.assertTrue(torch.isfinite(parameter.grad).all(), name)
-                        torch.testing.assert_close(parameter.grad, packed_gradients.pop(name),
-                                                   **self.tolerance, msg=name)
+                        expected = packed_gradients.pop(name)
+                        if self.bf16:
+                            # Separate BF16 GEMMs round before their gradient sum;
+                            # the packed GEMM rounds a different reduction. Compare
+                            # tensor-scale errors, not relative errors near zero.
+                            delta = (parameter.grad - expected).float()
+                            self.assertLessEqual(delta.norm().item(),
+                                0.01 * expected.float().norm().item() + 1e-6, name)
+                            self.assertLessEqual(delta.abs().max().item(),
+                                0.01 * expected.abs().max().item() + 1e-6, name)
+                        else:
+                            torch.testing.assert_close(parameter.grad, expected,
+                                                       **self.tolerance, msg=name)
                 self.assertFalse(packed_gradients, 'Different active parameters in packed/separate runs')
 
     def test_unsegmented_control_really_leaks_and_fast_path_refuses_segments(self):
