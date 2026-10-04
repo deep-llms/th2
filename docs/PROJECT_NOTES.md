@@ -1,5 +1,38 @@
 # Project notes
 
+## Full eight-B200 training comparison for document isolation (2026-10-04)
+
+Disposable daea6f6 benchmark completed11:08:14 UTC, all5 modes x30 optimizer
+updates, with automatic eight-GPU burn recovery verified. Full random-init
+Qwen3-0.6B arm A, HF Trainer/Accelerate, micro16/accum4/seq2048/BF16, activation
+checkpointing off, LM chunks128. Same16.78M-token real English test pool and
+seed42; first-update input hashes identical across modes. Dataset repeats.
+Median full update intervals after5 warmup measurements: previous explicit
+cross-document SDPA2.42576s; implicit causal SDPA2.06230s; FA4 cross2.08819s;
+dense isolated SDPA2.42524s; FA4 varlen isolated2.07173s. FA4 isolation therefore
+takes0.457% more time than fast causal SDPA and14.595% less than the previous
+explicit-mask implementation. Peak allocated memory110.62GiB for dense modes,
+103.62GiB for implicit/FA4. These are full baseline training steps, including
+DDP and optimizer; startup/evaluation/saving excluded. Single short run per
+mode, not a convergence study or performance result for auxiliary arms.
+
+Full-model numerical gate passed: isolated FA4 vs BF16 dense gradient relative
+L2=0.5408%, logits=0.6364%, loss gap4.196e-5. Against FP32, full-gradient errors
+FA4=1.2314%, BF16 SDPA=1.2331%. Both isolated methods have exact zero output
+leakage and embedding-activation gradients across document boundaries. Loss
+decreased12.12->10.85 for cross-document modes and12.12->10.98 for isolation;
+all30-step loss/gradient traces finite. Blocking documents changes the objective
+and gradients deliberately; use matched masks for kernel correctness checks.
+
+Experimental scripts/benchmark_document_training.py only; production train.py,
+packing and custom arms unchanged. Boundary metadata tracks source document IDs
+(including appended EOS), not token-ID guessing. Its Trainer normalizes by the
+true global target count across ranks/GAS; this matters with isolated documents.
+Four CPU tests include real HF Trainer full-batch/accumulation update equality.
+Config/tokenizer on new node downloaded via e21d47f with pinned asset hashes.
+Final weights and result files remain in document-training-20261004-a01 under
+the project output root. See CURRENT_TASK for full receipt/hash information.
+
 ## API-based document isolation benchmark (2026-10-04)
 
 FA4 flash_attn_varlen_func with document cu_seqlens and FlexAttention with

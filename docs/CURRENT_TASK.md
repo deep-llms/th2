@@ -1,5 +1,59 @@
 # Current task
 
+## Full training benchmark completed and burns verified (2026-10-04)
+
+daea6f6 / th2-tjx3-document-training-20261004-a01 completed successfully at
+11:08:14 UTC (19:08 Singapore). All five modes finished 30 real HF Trainer
+updates on all eight B200s; 40 rank receipts passed. Same seed-42 random full
+Qwen3-0.6B arm A, micro16/accum4/seq2048, 1,048,576 input tokens/update, BF16,
+checkpointing off, LM chunk128, full LR schedule28600/warmup1430. Shared test
+pool: 8192 packed rows /16,777,216 tokens, mean3.453 document fragments/row.
+The pool repeats during 30 updates. No scientific production run was changed.
+
+Median full update intervals, updates6-30, maximum across all ranks per update:
+
+| Mode | Seconds/update | Peak allocated GiB |
+|---|---:|---:|
+| Previous explicit SDPA, cross-document | 2.42576 | 110.62 |
+| Implicit causal SDPA, cross-document | 2.06230 | 103.62 |
+| FA4, cross-document | 2.08819 | 103.62 |
+| Dense SDPA, isolated documents | 2.42524 | 110.62 |
+| FA4 varlen, isolated documents | 2.07173 | 103.62 |
+
+FA4 isolation is +0.457% time vs fast implicit SDPA, -14.595% vs previous
+explicit SDPA. Approximately equal to fast causal for this baseline workload;
+do not extrapolate the sub-percent gap or arm A timings to all custom arms.
+Intervals include forward/LM loss/backward/DDP/clipping/optimizer/data delivery;
+startup, first5 updates, evaluation and final weight saves excluded. One short
+run per mode; no long-run convergence or between-run confidence claim.
+
+Correctness gate passed before training: all-parameter gradient relative L2
+FA4 vs matched dense isolated BF16 =0.0054076; sampled logits =0.0063636;
+absolute loss gap4.1962e-5. Against FP32, gradient errors FA4=0.0123142 and
+BF16 SDPA=0.0123313. Exact zero cross-document hidden changes and embedding
+activation gradients for both isolated backends; cross-document controls leak.
+Cross-document FA4 vs SDPA gradient error0.0042305. Mask semantics intentionally
+change outputs/gradients: dense isolation vs cross gradient difference0.73331.
+All training losses/gradient norms finite. Cross loss12.11895 ->10.84888;
+isolated loss12.12183 ->10.98176. Same-semantics FA4/SDPA loss traces agree closely.
+
+Input first-update hashes match per rank across all modes; data/seed/order are
+shared. Final trained weights remain in each mode's final_model/ under
+/mnt/local/_outputs/deep-llms_th2/document-training-20261004-a01/benchmark.
+Original train_env/driver untouched; separate attention_bench used throughout.
+GPU burns10552-10559 restored with advancing collectives; read-only collector
+070798b also verified live matching workers and released guard.
+Collector evidence temp/tjx3-document-training-collect-a01.log SHA256
+34f210bd9c3eafca9d1d0695cba799e76400c9c4e2e1e343460f8c8025026688.
+Result-only archive SHA256
+835c13e4c140901aa99a2599299655083bca8bc3de2a1a961a1c26d4d9caced7;
+exported via e141726 and retrieved with the exact expected archive hash.
+All 50 artifact hashes passed under artifacts/document-training-20261004-a01/;
+includes 40 rank receipts, correctness, timing summary, trained-step records
+and verified burn receipt. commands.sh restored#0.
+Production FA4/document isolation is not enabled; only disposable benchmark
+code was added. Future integration requires per-arm auxiliary/loss checks.
+
 ## Full training attention comparison authorized (2026-10-04)
 
 User requests real full-model training-step timings and output/gradient checks
