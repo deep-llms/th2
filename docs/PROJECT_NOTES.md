@@ -1,5 +1,21 @@
 # Project notes
 
+## Document isolation feasibility on tjx3 B200 (2026-10-04)
+
+tests/test_document_isolation.py passed on local CPU/A100 and B200 FP32/BF16,
+all11arms. Existing Context segment masks isolate decoder and auxiliary paths;
+cross-document outputs match exactly and input-embedding gradients are zero.
+Packed/separate parameter gradients agree in FP32; BF16 uses1% tensor norm/max
+bounds because separate GEMMs round reductions differently. No production
+segmentation enabled. Model tests exercise active auxiliary output weights.
+scripts/benchmark_document_attention.py measured B200 implicit causal0.2535ms
+versus document-isolated0.6239ms (B2,H16,L2048,D128,BF16,forward+backward).
+All modes used cuDNN SDPA; explicit causal was0.6238ms. This is attention-only,
+not a full-model throughput estimate; mask construction is excluded.
+Completed e14a630 at09:38:50UTC with automatic eight-GPU burn recovery verified.
+New node uses torch2.14.1+cu130 and driver580.167.08. Actual downloaded English
+Arrow splits load through train.py with36,595,514 training/11,822 validation docs.
+
 ## Environment recipes and old-pool release (2026-10-04)
 
 Keep env recipes simple: original direct dependency lists with exact versions;

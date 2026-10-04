@@ -1,5 +1,48 @@
 # Current task
 
+## B200 document-isolation tests passed; burn restored (2026-10-04)
+
+e14a630 / th2-tjx3-document-isolation-20261004-a03 completed09:38:50UTC
+(17:38:50Singapore). Both FP32 and BF16 four-test suites passed across all11
+arms, including exact isolation, zero cross-document embedding gradients,
+packed/separate losses and parameter gradients, checkpointing on/off.
+Attention-only BF16 B=2,H=16,L=2048,D=128,20 measured forward/backward iterations:
+implicit causal0.2535ms/236.27MiB; explicit causal0.6238ms/252.27MiB;
+document-isolated0.6239ms/252.27MiB. All three used cuDNN SDPA on torch2.14.1+cu130.
+These are kernel timings, not full-training throughput or eight-GPU scaling.
+Accelerate resource config copied and verified; accelerate env confirmed CUDA.
+Stopped only verified/hash-approved original burn workers501-508, then verified
+all eight GPUs free. Automatic recovery verified workers4194-4201,100% utilization,
+155212MiB/GPU, all-rank readiness and advancing collective cycles.
+Evidence temp/tjx3-document-a03.log, SHA256
+0fd29bf33bcad3610dd498b82405b1a93eabeaeb4865744af29ef1c86e997002.
+commands.sh restored to#0. Production packing/attention policy unchanged;
+no actual training launched. Remaining implementation work is explicit document
+boundary metadata and non-bottleneck loss-denominator review, then full-model
+throughput measurement if user chooses to enable isolation.
+
+## B200 document-isolation test (2026-10-04)
+
+User authorized B200 tests, no real training. Submitted e14a630, job
+th2-tjx3-document-isolation-20261004-a03. Rechecks known burn source hashes
+and live worker identities, stops workers only via existing pidfd helper,
+requires all GPUs free, runs FP32/BF16 all-arm tests and attention microbenchmark
+on GPU0, then restores/validates eight-GPU enhanced burn in finally.
+Result: /mnt/local/_outputs/deep-llms_th2/document-isolation-20261004-a03/result.json.
+Wait for result including passed=true and burn; do not resubmit blindly.
+a01 failed before GPU work because output parent directory was absent; a02
+verified both actual B200 English split counts (36,595,514 / 11,822), copied
+Accelerate config and ran accelerate env, then correctly refused occupied GPU0.
+Evidence temp/tjx3-document-a02.log: worker501-508 under /tmp/llm_pretrain_burn.py
+launcher434; eightB200, driver580.167.08, torch2.14.1+cu130, Transformers5.9.0,
+Accelerate1.13.0, datasets4.8.5. No prior test stopped processes.
+Reviewed tests now compare parameter gradients as well as losses. CPU FP32
+passed; local A100 BF16 passed with a 1% tensor-norm and tensor-maximum error
+bound for packed/separate gradient reduction rounding. Exact cross-document
+output equality and zero cross-document embedding gradients remain strict.
+Observed initial failing BF16 tensor norm deltas were0.26-0.32%; logs under
+temp/document-isolation-reviewed-* and document-isolation-gradient-deltas.log.
+
 ## Local document-isolation feasibility tests (2026-10-04)
 
 User requested local testing only; production packing and training behavior
