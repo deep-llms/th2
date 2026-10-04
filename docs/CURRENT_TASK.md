@@ -1,5 +1,18 @@
 # Current task
 
+## Same-weight trained-attention follow-up authorized (2026-10-04)
+
+User requested further verification after the 200-step trajectory gate failure.
+Compare both saved step-200 checkpoints with dense SDPA and FA4 on identical
+training/validation batches, micro2 and micro16. Eight independent GPU cases;
+no optimizer updates. Repeat each backend; micro2 also uses FP32 math SDPA.
+Strict state loading, unchanged parameter fingerprints, matching inputs, full
+parameter-gradient comparisons. Preserve .01 loss / 3% gradient / 2% output
+limits; save all cases even on gate failure. Production training unchanged.
+Job trained-attention-check-20261004-a01 uses attention_bench and existing
+verified worker-only reclamation, Accelerate config copy/env validation, and
+automatic burn recovery. Check remote receipts before drawing conclusions.
+
 ## Authorized 200-update isolated-attention stability comparison (2026-10-04)
 
 User approved the proposed longer check: fresh dense SDPA isolated and FA4
