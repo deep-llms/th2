@@ -1,5 +1,15 @@
 # Project notes
 
+## Current document-isolation recommendation (2026-10-04)
+
+See the [consolidated investigation report](DOCUMENT_ISOLATION_INVESTIGATION_20261004.md) for the goal, code map,
+all test stages, timings, numerical results, and unresolved trajectory drift.
+After discussing the 48% gradient-norm gap, the current recommendation is dense
+SDPA isolation for real experiments when minimizing uncertainty is the priority.
+This is not a production switch or launch authorization. Same-weight FA4 checks
+passed; the 200-update trajectory comparison remains failed and its cause is
+unproven. Production isolation remains disabled; commands.sh is #0.
+
 ## Same-weight trained FA4 verification (2026-10-04)
 
 Follow-up 3d5070b/a02 passed all eight cases: both step-200 checkpoints, training

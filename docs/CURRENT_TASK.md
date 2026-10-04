@@ -1,5 +1,30 @@
 # Current task
 
+## SDPA full-model train/eval backend audit authorized (2026-10-04)
+
+User requested execution of SDPA_BACKEND_CHECKS_20261004.md, with updated Section 6
+including evaluation. Implement C1/C3 first: all 11 arms, cross-document and dense
+isolation, train/eval, micro16/seq2048, checkpointing on/off. Full Trainer objective,
+no full-model optimizer updates; a tiny Consumer-Aware Trainer smoke verifies
+automatic first-train/first-eval receipts. Existing real English benchmark pool.
+Each GPU handles independent cases; this is not a DDP throughput experiment.
+Production now records first actual train/eval dispatch on rank zero, without
+changing its data/masks/objective. No production isolation or backend pinning.
+C2 full-model FP32 remains micro2 in previous evidence; runtime is unchanged.
+C4 optional, C5 trajectory control deferred while closing dispatch gaps.
+Job sdpa-full-profile-20261004-a01 uses existing train_env, verified burn stop,
+Accelerate copy/env verification and automatic eight-GPU burn recovery.
+
+## Document-isolation investigation consolidated (2026-10-04)
+
+See the [consolidated investigation report](DOCUMENT_ISOLATION_INVESTIGATION_20261004.md) for the goal, code map,
+all test stages, timings, numerical results, and unresolved trajectory drift.
+After discussing the 48% gradient-norm gap, the current recommendation is dense
+SDPA isolation for real experiments when minimizing uncertainty is the priority.
+This is not a production switch or launch authorization. Same-weight FA4 checks
+passed; the 200-update trajectory comparison remains failed and its cause is
+unproven. Production isolation remains disabled; commands.sh is #0.
+
 ## Same-weight trained-attention follow-up authorized (2026-10-04)
 
 User requested further verification after the 200-step trajectory gate failure.

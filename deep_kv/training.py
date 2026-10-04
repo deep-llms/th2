@@ -8,6 +8,7 @@ import numpy as np
 import torch
 from transformers import Trainer, TrainerCallback
 from .model import Context
+from .sdpa_audit import trainer_audit
 from . import BOTTLENECK_ARMS, code_loss_weight
 
 
@@ -88,6 +89,13 @@ class DeepKVTrainer(Trainer):
         # global denominators below, so Trainer must not divide by GAS again.
         self.model_accepts_loss_kwargs = self.model.bottleneck
         self.step_totals = None
+        self._sdpa_seen = set()
+        self._sdpa_receipts = []
+        self._active_sdpa_audit = None
+
+    def training_step(self, model, inputs, num_items_in_batch=None):
+        with trainer_audit(self, "train"):
+            return super().training_step(model, inputs, num_items_in_batch)
 
     @staticmethod
     def context(inputs):
@@ -137,11 +145,13 @@ class DeepKVTrainer(Trainer):
         if model.training and self.is_in_train:
             totals = outputs["statistics"].sum(dim=0)
             self.step_totals = totals if self.step_totals is None else self.step_totals + totals
+        if self._active_sdpa_audit is not None and loss.requires_grad:
+            loss.register_hook(self._active_sdpa_audit.backward_marker)
         return (loss, outputs) if return_outputs else loss
 
     def prediction_step(self, model, inputs, prediction_loss_only, ignore_keys=None):
         inputs = self._prepare_inputs(inputs)
-        with torch.no_grad(), self.compute_loss_context_manager():
+        with trainer_audit(self, "eval"), torch.no_grad(), self.compute_loss_context_manager():
             loss, outputs = self.compute_loss(model, inputs, return_outputs=True)
         stats = outputs["statistics"]
         # A per-example placeholder makes Trainer invoke compute_metrics. HF

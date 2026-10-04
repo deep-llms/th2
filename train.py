@@ -249,7 +249,8 @@ def main():
         if training_args.should_save:
             result = {"arm": pilot.arm, "global_step": end, "schedule_steps": training_args.max_steps,
                       "input_tokens": end * tokens_per_update,
-                      "status": "complete" if end == training_args.max_steps else "stopped", "evaluation": metrics}
+                      "status": "complete" if end == training_args.max_steps else "stopped", "evaluation": metrics,
+                      "sdpa_receipts": trainer._sdpa_receipts}
             if model.bottleneck:
                 result["training_cost"] = training_cost
             temporary = output / "result.json.tmp"

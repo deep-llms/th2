@@ -1,5 +1,9 @@
 # Same-weight attention verification at update 200
 
+For the subsequent risk discussion and current recommendation, see the
+[consolidated investigation](DOCUMENT_ISOLATION_INVESTIGATION_20261004.md).
+The measurements below remain unchanged.
+
 All eight comparisons passed the unchanged numerical thresholds. This follow-up
 compares both backends at identical trained weights, rather than comparing the
 different weights produced by the two 200-update trajectories.
