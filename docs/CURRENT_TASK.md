@@ -9,7 +9,12 @@ no optimizer updates. Repeat each backend; micro2 also uses FP32 math SDPA.
 Strict state loading, unchanged parameter fingerprints, matching inputs, full
 parameter-gradient comparisons. Preserve .01 loss / 3% gradient / 2% output
 limits; save all cases even on gate failure. Production training unchanged.
-Job trained-attention-check-20261004-a01 uses attention_bench and existing
+Initial 3279ab4/a01 attempt failed before GPU capture: safetensors.load_model
+rejected Trainer checkpoints containing both cloned tied-embedding aliases.
+Burns 18263–18270 restored and verified at 13:49:25 UTC. Added explicit tied
+alias consistency validation, strict state loading and cloned-alias regression.
+Retry a02 preloads both actual checkpoints on CPU before stopping any burn.
+Job trained-attention-check-20261004-a02 uses attention_bench and existing
 verified worker-only reclamation, Accelerate config copy/env validation, and
 automatic burn recovery. Check remote receipts before drawing conclusions.
 

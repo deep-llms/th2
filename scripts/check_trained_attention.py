@@ -11,7 +11,7 @@ from pathlib import Path
 
 import torch
 from torch.nn.attention import SDPBackend, sdpa_kernel
-from safetensors.torch import load_model
+from safetensors.torch import load_file
 from scripts.benchmark_document_training import capture, compare, new_model, write
 
 MODES = ('sdpa_isolated', 'fa4_isolated')
@@ -24,6 +24,29 @@ def fingerprint(model):
         digest.update(name.encode())
         digest.update(parameter.detach().cpu().contiguous().numpy().tobytes())
     return digest.hexdigest()
+
+
+
+def restore(model, checkpoint):
+    """Accept Trainer's cloned tied tensors and safetensors' deduplicated form.
+
+    Every missing alias must have an explicitly tied peer; disagreeing saved
+    copies are rejected before load_state_dict's strict key/shape validation.
+    """
+    state = load_file(str(checkpoint), device='cpu')
+    aliases = {}
+    for name, parameter in model.named_parameters(remove_duplicate=False):
+        aliases.setdefault(id(parameter), []).append(name)
+    for names in aliases.values():
+        present = [name for name in names if name in state]
+        if not present:
+            continue  # Strict loading below reports missing parameters.
+        source = state[present[0]]
+        if any(not torch.equal(source, state[name]) for name in present[1:]):
+            raise ValueError(f'Checkpoint tied weights disagree: {names}')
+        for name in names:
+            state.setdefault(name, source)
+    model.load_state_dict(state, strict=True)
 
 
 def acceptable(row):
@@ -48,8 +71,7 @@ def worker(args):
     checkpoint = source/mode/'final_model/model.safetensors'
     config = json.loads((source/'data.json').read_text())['recipe']['config_name']
     model = new_model(config, 'cpu')
-    # load_model handles tied embeddings and requires exact checkpoint keys.
-    load_model(model, str(checkpoint), strict=True, device='cpu')
+    restore(model, checkpoint)
     initial = fingerprint(model)
     model.to('cuda')
     rows = list(load_from_disk(str(source/split)).select(range(batch)))

@@ -1,5 +1,5 @@
 #1 +180+a
-#th2-tjx3-trained-attention-check-20261004-a01
+#th2-tjx3-trained-attention-check-20261004-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -18,7 +18,7 @@ from run_experiments import now, write_json
 from accelerate.commands.config.config_args import default_yaml_config_file
 assert socket.gethostname() == 'thiennh-p6-tjx3-worker-0'
 project=Path.cwd()
-root=Path('/mnt/local/_outputs/deep-llms_th2/trained-attention-check-20261004-a01')
+root=Path('/mnt/local/_outputs/deep-llms_th2/trained-attention-check-20261004-a02')
 root.mkdir(exist_ok=False)
 work=root/'checks'
 work.mkdir()
@@ -52,6 +52,13 @@ for mode in ['sdpa_isolated','fa4_isolated']:
     assert state['global_step']==200
 assert (source_run/'data/dataset_info.json').is_file()
 assert (source_run/'eval/dataset_info.json').is_file()
+subprocess.run([bench_python,'-c',
+    "import json,sys; from pathlib import Path; from scripts.check_trained_attention import restore,fingerprint; from scripts.benchmark_document_training import new_model; "
+    "r=Path(sys.argv[1]); c=json.loads((r/'data.json').read_text())['recipe']['config_name']; "
+    "m=new_model(c,'cpu'); "
+    "restore(m,r/'sdpa_isolated/final_model/model.safetensors'); print('DENSE_CHECKPOINT_LOADED',fingerprint(m)); "
+    "restore(m,r/'fa4_isolated/final_model/model.safetensors'); print('FA4_CHECKPOINT_LOADED',fingerprint(m))",
+    str(source_run)],check=True,timeout=180)
 print('SAVED_CHECKPOINTS_AND_DATA_VERIFIED',str(source_run),flush=True)
 print('BURN_IDENTITIES_AND_SOURCE_VERIFIED',record['workers'],flush=True)
 source=project/'resources/accelerate_config.yaml';cached=Path(default_yaml_config_file)
@@ -112,7 +119,7 @@ finally:
             clean_owned_children()
             time.sleep(30)
             require_free(list(range(8)))
-            receipt['burn']=start_burn(root,'tjx3-trained-attention-check-a01-burn',project)
+            receipt['burn']=start_burn(root,'tjx3-trained-attention-check-a02-burn',project)
             print('AUTOMATIC_BURN_RESTORED_AND_VERIFIED',flush=True)
         except BaseException as error:
             receipt['handoff_error']=repr(error);traceback.print_exc()

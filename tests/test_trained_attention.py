@@ -6,8 +6,8 @@ from types import SimpleNamespace
 import unittest
 
 import torch
-from safetensors.torch import load_model, save_model
-from scripts.check_trained_attention import acceptable, fingerprint, summarize, MODES, CASES
+from safetensors.torch import save_model, save_file
+from scripts.check_trained_attention import acceptable, fingerprint, summarize, restore, MODES, CASES
 from scripts.benchmark_document_training import BenchmarkModel
 from tests.test_deep_kv import config
 
@@ -23,8 +23,25 @@ class TrainedAttentionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             file = str(Path(directory)/'model.safetensors')
             save_model(a, file)
-            load_model(b, file, strict=True)
+            restore(b, file)
         self.assertEqual(fingerprint(a), fingerprint(b))
+
+    def test_trainer_cloned_tied_weights_and_conflict(self):
+        torch.set_num_threads(1)
+        model = BenchmarkModel.from_scratch(config(), 'A', consumer=2, deep_target=4)
+        model.backbone.lm_head.weight = model.backbone.model.embed_tokens.weight
+        before = fingerprint(model)
+        state = {name: value.clone() for name, value in model.state_dict().items()}
+        with tempfile.TemporaryDirectory() as directory:
+            file = str(Path(directory)/'model.safetensors')
+            save_file(state, file)
+            restore(model, file)
+            self.assertEqual(fingerprint(model), before)
+            state['backbone.lm_head.weight'].add_(1)
+            save_file(state, file)
+            with self.assertRaisesRegex(ValueError, 'tied weights disagree'):
+                restore(model, file)
+        self.assertEqual(fingerprint(model), before)
 
     def test_failed_gate_keeps_complete_summary(self):
         with tempfile.TemporaryDirectory() as directory:
