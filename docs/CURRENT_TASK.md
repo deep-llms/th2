@@ -1,5 +1,19 @@
 # Current task
 
+## Downloaded dataset compatibility check (2026-10-04)
+
+Download 2a334dc completed successfully according to the runner receipt
+(temp/tjx3-download-status-083501.log). User requests compatibility verification,
+explicitly no training. Existing train.load_text supports the uploaded save_to_disk
+shards. Updated only data_dir/eval_data_dir in deep_kv.b200.json to English
+subsets/qwen3_0.6b_base_en_30B/{train,validation} under cx_sampled_old.
+CPU-only commands.sh audit verifies trusted manifest, all manifested file sizes,
+English file SHA256 hashes, real loader counts/order, and generated queue paths.
+No model creation, tokenization, training, GPU stop or environment reinstall.
+Wait for DATA_COMPATIBILITY_PASSED; model/tokenizer availability is reported
+separately and is not implied by data compatibility. Historical launch helper
+still targets old 78gg; do not use it unchanged on tjx3.
+
 ## Prepared old-pool download (2026-10-04)
 
 User authorized downloading the already sampled old pool to replacement tjx3.

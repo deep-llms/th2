@@ -1,8 +1,8 @@
 {
   "config_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base-da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json",
   "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base-da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
-  "data_dir": "/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/train/en",
-  "eval_data_dir": "/mnt/local/_data/deep-llms_th2/data/Qwen_Qwen3-0.6B-Base/eval/en",
+  "data_dir": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train",
+  "eval_data_dir": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/validation",
   "output_dir": "/mnt/local/_outputs/deep-llms_th2/deep-kv/A",
   "arm": "A",
   "block_size": 2048,
