@@ -18,6 +18,26 @@ Prepared job th2-tjx3-document-stability-200-20261004-a01; outputs under
 /mnt/local/_outputs/deep-llms_th2/document-stability-200-20261004-a01/benchmark.
 Both models start fresh rather than resuming the30-update test weights.
 
+Completed both 200-update runs; strict trajectory comparison FAILED. Full
+per-rank input streams and LR sequences match. All losses/norms finite. Maximum
+loss gap 0.01066065 (limit .01), relative gradient-norm gap 48.098% (limit 3%).
+Norm gap first exceeds 3% at update 137, with 49 exceedances overall. Common
+held-out losses 7.1107591 dense / 7.1074235 FA4; same FA4-trained weights evaluated
+through both backends differ only 2.58e-6. This does not establish backward
+agreement at trained weights or identify the cause of trajectory drift.
+Median full update times 2.42939s dense / 2.07476s FA4. See
+DOCUMENT_ATTENTION_STABILITY_20261004.md for setup, limits and evidence.
+
+Summarizer failed on the numerical gate after saving comparison.json; both
+training/evaluation jobs finished successfully. All 24 source artifact hashes
+verified locally in artifacts/document-stability-200-20261004-a01/. Added local
+analysis.json and training_comparison.png/.svg, preserving raw receipts. Burns
+17301–17308 restored with collective progress verified at 13:30:02 UTC / 21:30
+Singapore; read-only collector verified live workers and guard release.
+commands.sh deactivated (#0). No production change or additional GPU run.
+Recommended next diagnostic: same saved weights/batch with both backends,
+compare full gradients; this has not been launched.
+
 ## Full training benchmark completed and burns verified (2026-10-04)
 
 daea6f6 / th2-tjx3-document-training-20261004-a01 completed successfully at

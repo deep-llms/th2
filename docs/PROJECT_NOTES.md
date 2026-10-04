@@ -1,5 +1,20 @@
 # Project notes
 
+## Longer isolated-attention comparison (2026-10-04)
+
+Two matched 200-update eight-B200 runs completed. Strict trajectory gate failed:
+max loss gap 0.01066065 > .01 and relative gradient-norm gap 48.098% > 3%.
+All input streams and LR sequences match; all losses/norms finite. Divergence
+appears after the first 100 updates. These are different trained weights, so
+the norm gap alone cannot identify a kernel gradient error. Common held-out
+losses remain close (dense 7.1107591, FA4 7.1074235); evaluating the same final
+FA4 weights through both backends differs by only 2.58e-6. Same-weight backward
+agreement at the final checkpoint remains untested. Initial gradient gate passed.
+Full update medians 2.42939s dense / 2.07476s FA4; repeated 16.78M-token pool,
+original warmup, random initialization, baseline arm A only. Do not claim this
+longer strict check passed or promote production FA4 based on it. Burns restored
+and verified. Details: DOCUMENT_ATTENTION_STABILITY_20261004.md.
+
 ## Full eight-B200 training comparison for document isolation (2026-10-04)
 
 Disposable daea6f6 benchmark completed11:08:14 UTC, all5 modes x30 optimizer
