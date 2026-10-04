@@ -75,7 +75,7 @@ class DocumentIsolationTests(unittest.TestCase):
                     with self.autocast():
                         before = model.hidden_states(batch)[0]
                         after = model.hidden_states(changed)[0]
-                        torch.testing.assert_close(before[:, 3:], after[:, 3:], **self.tolerance)
+                        torch.testing.assert_close(before[:, 3:], after[:, 3:], atol=0, rtol=0)
                         # Unique A token IDs let embedding gradients detect leakage.
                         before[:, 3:].float().square().sum().backward()
                     grad = model.backbone.model.embed_tokens.weight.grad
@@ -96,9 +96,19 @@ class DocumentIsolationTests(unittest.TestCase):
                         torch.testing.assert_close(value, parts[0][key] + parts[1][key], **self.tolerance)
                     loss = sum(value for key, value in together.items() if key.endswith('_sum'))
                     loss.backward()
+                packed_gradients = {name: p.grad.detach().clone()
+                                    for name, p in model.named_parameters() if p.grad is not None}
+                model.zero_grad(set_to_none=True)
+                with self.autocast():
+                    separate_loss = sum(value for part in parts for key, value in part.items()
+                                        if key.endswith('_sum'))
+                    separate_loss.backward()
                 for name, parameter in model.named_parameters():
                     if parameter.grad is not None:
                         self.assertTrue(torch.isfinite(parameter.grad).all(), name)
+                        torch.testing.assert_close(parameter.grad, packed_gradients.pop(name),
+                                                   **self.tolerance, msg=name)
+                self.assertFalse(packed_gradients, 'Different active parameters in packed/separate runs')
 
     def test_unsegmented_control_really_leaks_and_fast_path_refuses_segments(self):
         model = self.make_model('B').eval()
