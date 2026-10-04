@@ -13,6 +13,24 @@ Read-only preflight checks local model/tokenizer assets before GPU reclamation.
 Production entry point and previous scientific outputs must remain unchanged.
 Known burn reclamation and automatic verified recovery remain authorized.
 
+Implementation: scripts/benchmark_document_training.py, process-local arm A
+adapter only. Four local CPU tests passed, including actual HF Trainer update
+equivalence for accumulation vs full batch with uneven document target counts.
+Read-only 46e2f36 found only the verified eight burns and missing model assets.
+Controller e21d47f downloaded all three pinned config/tokenizer files successfully
+at 10:52:26 UTC; the test preflight verifies hashes before use. Initialization
+is random seed 42, matching train.py; this is not pretrained-weight finetuning.
+Prepared job th2-tjx3-document-training-20261004-a01 with fresh output root
+/mnt/local/_outputs/deep-llms_th2/document-training-20261004-a01/benchmark.
+Five modes: previous explicit SDPA cross-document, implicit causal SDPA,
+FA4 cross-document, dense SDPA isolated, FA4 isolated. Each trains 30 updates
+on a shared small text pool; report updates 6-30, including DDP/optimizer/data
+delivery, excluding startup/evaluation/checkpoint writing. Full schedule and
+LR warmup remain 28,600/1,430. Save final weights/logs in each mode's directory.
+Require full-model BF16 output/all-parameter-gradient checks, independent FP32
+reference, and exact document output/embedding-activation gradient isolation
+before timed training. Automatic burn recovery wraps the entire GPU queue.
+
 ## Packed-attention APIs verified on B200 (2026-10-04)
 
 User accepted benchmarking efficient document isolation and asked whether
