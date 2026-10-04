@@ -1,24 +1,48 @@
 # Current task
 
-## Faster packed-attention benchmark in progress (2026-10-04)
+## Packed-attention APIs verified on B200 (2026-10-04)
 
-User accepted benchmarking efficient document isolation; production policy is
-unchanged. Installed separate attention_bench via e6352df: torch2.14.1 and
-flash-attn-4[cu13]4.0.0b33 (beta), original train_env untouched. Controller reported
-OK installation at09:54:52UTC. Submitted b391b37, job
-th2-tjx3-packed-kernels-20261004-a01, using verified worker-only burn reclamation
-and automatic enhanced-burn recovery via the already tested supervisor flow.
-Remote outputs: /mnt/local/_outputs/deep-llms_th2/packed-kernels-20261004-a01/
-{kernels.json,result.json,burn.log}. Inspect individual kernel status; overall
-receipt success only means the benchmark finished and dense controls passed.
-Includes single/equal/ragged layouts, normal causal and strict-past attention,
-GQA16/8 heads,D128,B2,L2048,BF16,20 iterations, numerical and isolation checks.
-Native varlen, Flex Triton, direct FA4 and Flex FA4 are experimental candidates.
-CPU shifted-varlen output/gradient tests passed including singleton documents.
-Local A100 dense/Flex numerical tests passed; no B200 speed conclusion yet.
-Local uncommitted correction unpacks the pinned FA4 beta's (output,lse) return;
-the first remote submission predates it and may need a targeted adapter rerun.
-Do not repush active commands.sh just to refresh status.
+User accepted benchmarking efficient document isolation and asked whether
+existing APIs avoid custom kernels. Yes: FA4 cumulative sequence lengths and
+FlexAttention block masks handle it. Production attention/packing is unchanged;
+no real training launched. Separate attention_bench env installed via e6352df:
+torch 2.14.1+cu130, flash-attn-4[cu13] 4.0.0b33, cutlass-dsl 4.8.0.
+Original train_env and driver were not changed.
+
+Corrected benchmark ca21c7b / th2-tjx3-packed-kernels-20261004-a02 completed
+10:07:27 UTC (18:07 Singapore). All FA4 and Flex-FA4 cases passed output/QKV
+gradient reference checks and exact forward isolation: single/equal/ragged
+documents, normal causal and strict-past, BF16 GQA 16/8 heads, D128, B2, L2048.
+Maximum relative L2 error was 0.302%, relative tensor-max error 0.489%.
+Strict-past varlen uses each document's Q[1:] with K/V[:-1], zero first output;
+CPU tests also cover all-singleton documents and gradients.
+
+Attention forward/backward milliseconds, 20 measured iterations:
+
+| Layout | Implicit causal | Dense isolated | FA4 varlen | Flex FA4 |
+|---|---:|---:|---:|---:|
+| Single document | 0.339 | 0.710 | 0.536 | 1.009 |
+| Four equal documents | 0.339 | 0.712 | 0.515 | 0.965 |
+| Ragged documents | 0.339 | 0.711 | 0.525 | 0.965 |
+| Ragged, strict-past | N/A | 0.775 | 0.695 | 0.970 |
+
+Includes tensor conversion/gather/scatter overhead; excludes metadata setup
+and initial compilation. B2 is a microbenchmark, not the production microbatch
+or a full-model/eight-GPU training throughput result. Direct FA4 improves over
+dense isolation here but does not match unsegmented implicit causal attention.
+First run b391b37 also passed native varlen/Flex Triton; its FA4 adapters failed
+because beta returns (output,lse) and B200 Flex-FA4 requires 256-token blocks.
+Both adapters were corrected before a02; no failed candidate was promoted.
+
+Accelerate config copied/verified; stopped only verified burn workers 5420-5427,
+then required all eight GPUs free. Automatic burn recovery verified workers
+6339-6346, 100% utilization, 155212 MiB/GPU, advancing collective cycles.
+Evidence: temp/tjx3-packed-kernels-a02.log, SHA256
+75063063c63e07a1a37411c8783ea77b1954dfd095124e56b90c3ed730fab9dc.
+Remote root: /mnt/local/_outputs/deep-llms_th2/packed-kernels-20261004-a02.
+commands.sh restored to #0. Any production integration still needs explicit
+document metadata, boundary-target/loss-denominator handling, all-arm checks
+and realistic full-step measurements. No hand-written CUDA kernel is needed.
 
 ## B200 document-isolation tests passed; burn restored (2026-10-04)
 

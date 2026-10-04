@@ -1,4 +1,4 @@
-#1 +300+a
+#0
 #th2-tjx3-packed-kernels-20261004-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@

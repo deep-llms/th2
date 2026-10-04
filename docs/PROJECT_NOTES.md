@@ -1,5 +1,26 @@
 # Project notes
 
+## API-based document isolation benchmark (2026-10-04)
+
+FA4 flash_attn_varlen_func with document cu_seqlens and FlexAttention with
+same-document causal block masks require no hand-written kernels. Experimental
+adapters live in scripts/benchmark_packed_attention.py, not production code.
+Strict-past auxiliary attention is expressible by per-document Q[1:], K/V[:-1]
+with ordinary causal varlen and a zero first output. CPU tests verify outputs
+and gradients including singleton documents.
+
+B200 ca21c7b / packed-kernels-20261004-a02 passed all FA4/Flex-FA4 reference and
+isolation checks in BF16, normal and strict-past, single/equal/ragged documents.
+Pinned FA4 beta 4.0.0b33 returns a tuple; Flex-FA4 on B200 needs block size 256.
+Separate attention_bench environment leaves train_env unchanged. For B2, L2048,
+GQA16/8, D128, ragged normal forward+backward: implicit 0.339 ms, dense isolated
+0.711 ms, FA4 varlen 0.525 ms, Flex-FA4 0.965 ms. Ragged strict-past: dense
+0.775 ms, FA4 0.695 ms, Flex-FA4 0.970 ms. Wrapper movement overhead included,
+metadata setup/compilation excluded. These do not estimate full training speed
+at production microbatch size. No production attention policy was changed.
+Completed 10:07:27 UTC with all eight GPU burns restored and collective progress
+verified. Details and evidence hash are in CURRENT_TASK.md.
+
 ## Document isolation feasibility on tjx3 B200 (2026-10-04)
 
 tests/test_document_isolation.py passed on local CPU/A100 and B200 FP32/BF16,
