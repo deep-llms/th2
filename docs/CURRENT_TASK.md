@@ -1,5 +1,46 @@
 # Current task
 
+## Prepared old-pool download (2026-10-04)
+
+User authorized downloading the already sampled old pool to replacement tjx3.
+Verified public nht10/cx_sampled_old completion and remote manifest SHA256
+dbba73b7a95ebc530297bac5a2151be6292f080e80e9b3101302a905806dde9a.
+Release head 2c425f4e1d4467008a0afce00de0ae8a33c8e834; data revision
+d62a1db19dc789f834fe2e84fbb7d55f529e16bb. About 156.5 GB, six languages,
+30B English / 1B others, unpacked text Arrow shards with validation.
+commands.sh now requests controller #d to /mnt/local/_data/deep-llms_th2/cx_sampled_old.
+No resampling or environment reinstall requested. Verify download completion,
+manifest/file hashes and adapt folder layout before training consumes this data.
+The earlier environment audit ended at git rev-parse: the synced runner folder
+has no Git metadata. Remove that assumption in the next audit; no environment
+imports ran, so runtime readiness is still unverified. Evidence:
+temp/tjx3-audit-upload-check.log and temp/tjx3-status-upload-check.log.
+This supersedes the pending-audit note below.
+
+## Replacement tjx3 environment check (2026-10-04 Singapore time)
+
+User supplied a new Dropbox folder for deep-llms_th2_thiennh-p6-tjx3 and
+requested environment/GitHub verification. Use label th2-tjx3 with
+`--folders temp/dropbox_tjx3_folders.txt`; the private link is ignored locally.
+GitHub main matched local install commit1d3b68b. Its unchanged specifications
+install Python3.11 train_env/eval, pin transformers5.9.0/datasets4.8.5/
+accelerate1.13.0, and leave torch unpinned. New runner installation log reports
+OK eval, OK train_env and OK install:2envs; last update07:25:52UTC (15:25SGT).
+It downloaded torch2.14.1, whereas the previous B200 runs used2.14.0.
+
+Read-only runtime verification submitted as8f350d8 at07:46:44UTC (15:46SGT),
+job th2-tjx3-verify-environments-20261004-a01. It inspects GPU inventory,
+both interpreters/package versions/imports/pip check/Accelerate cache, and runs
+one tiny CPU model equivalence test with CUDA_VISIBLE_DEVICES empty. No GPU
+workload, installation, download, process stop or config-copy action submitted.
+GitHub head confirmed8f350d8. As of the last poll, Dropbox still only exposes
+the installation status; audit execution/result and actual new hostname/GPU
+inventory remain unverified. Do not resubmit the audit or infer machine failure.
+commands.sh deliberately remains the pending read-only#1; do not push another
+commit with it active merely to refresh logs. Retrieve the audit, then restore#0.
+Installation evidence: temp/tjx3-install-run-status-20261004.log, SHA256
+7cedbe2ab78d6b79746fee6ee09d0ef1b51e9d35ad8792ed557a9042632850e6.
+
 ## Task-Aware-Align continuation to 10,000 launched and verified (2026-10-01 10:33 UTC)
 
 User requested Task-Aware-Align (seed 42) for 5,000 more updates to compare

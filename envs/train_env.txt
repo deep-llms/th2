@@ -1,13 +1,12 @@
 # manager: conda
 # fresh: true
 # python: 3.11
-torch
+torch==2.14.1
 transformers==5.9.0
 datasets==4.8.5
 accelerate==1.13.0
-scipy
-wandb
-pyarrow
-huggingface_hub
-openai
-entmax
+scipy==1.17.1
+wandb==0.30.0
+pyarrow==25.0.1
+huggingface_hub==1.33.0
+openai==3.19.2

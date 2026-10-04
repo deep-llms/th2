@@ -1,5 +1,30 @@
 # Project notes
 
+## Environment recipes and old-pool release (2026-10-04)
+
+Keep env recipes simple: original direct dependency lists with exact versions;
+torch2.14.1 for train/eval, sentencepiece0.2.2 for eval. Removed unused entmax.
+Historical sampling_b200 locks remain unchanged; no reinstall was performed.
+Public nht10/cx_sampled_old finished upload with 457 verified files (including
+manifest), about156.5GB. Completion release2c425f4e1d4467008a0afce00de0ae8a33c8e834.
+Local ordered-text hashes verified; old B200 document/shard counts match but
+cross-machine full text-hash equality was never established. This is prepared
+unpacked text, not training-token cache. No prepare_data.py rerun is needed.
+Runner source sync lacks .git: do not require git rev-parse in GPU-node audits.
+
+## Replacement B200 tjx3 installation (2026-10-04)
+
+User supplied replacement Dropbox folder; use label th2-tjx3 and ignored
+temp/dropbox_tjx3_folders.txt. Do not use78gg receipts as live inventory.
+GitHub install commit1d3b68b matches local source and its runner log reports
+successful installation of both train_env and eval at07:25UTC (15:25SGT).
+Specifications keep Python3.11, transformers5.9.0, datasets4.8.5 and
+accelerate1.13.0; torch is unpinned and installation resolved2.14.1 instead of
+the prior2.14.0. Full old-machine package equivalence is not established.
+Read-only runtime audit8f350d8 is pending; see CURRENT_TASK for scope and
+retrieval. No new-machine training or GPU management was authorized/performed.
+commands.sh is a pending CPU/import verification#1, not an installation retry.
+
 ## Task-Aware-Align continuation to 10,000 launched and verified (2026-10-01 10:33 UTC)
 
 User requested Task-Aware-Align (seed 42) for 5,000 more updates to compare
