@@ -1,5 +1,20 @@
 # Project notes
 
+## Same-weight trained FA4 verification (2026-10-04)
+
+Follow-up 3d5070b/a02 passed all eight cases: both step-200 checkpoints, training
+and held-out data, micro2 and micro16, seq2048. No optimizer updates. Full-gradient
+relative L2 FA4 vs dense 0.181%–0.532%; at micro16 0.181%–0.266%. Both BF16 paths
+have similar errors against FP32 math (dense 0.539%–1.209%, FA4 0.540%–1.163%).
+Repeated full backward captures vary even on the same backend: dense up to
+0.302%, FA4 up to 0.111%. Parameters unchanged and all original gates passed.
+This supports numerical drift, not a demonstrated large FA4 backward error, as
+a plausible explanation for the earlier training divergence. It does not prove
+causation or cover auxiliary arms; production attention is unchanged.
+Burn recovery and live workers verified. TRAINED_ATTENTION_CHECK_20261004.md
+contains evidence and limits. Initial attempt failed only on diagnostic loader
+handling of cloned tied tensors; fixed with strict alias consistency validation.
+
 ## Longer isolated-attention comparison (2026-10-04)
 
 Two matched 200-update eight-B200 runs completed. Strict trajectory gate failed:

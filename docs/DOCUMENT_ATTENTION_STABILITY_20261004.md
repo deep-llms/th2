@@ -51,6 +51,10 @@ the norms still differed by 42.44%, so this is not a single isolated outlier.
 
 ## Interpretation and next check
 
+Subsequent same-weight checks have now completed successfully; see
+[the follow-up report](TRAINED_ATTENTION_CHECK_20261004.md). The interpretation
+below records what was known when this 200-update comparison completed.
+
 Both runs learned and ended with close held-out losses. They did not maintain
 the strict trajectory agreement seen in the 30-update test. These gradient
 norms belong to **different trained weight sets**; their difference is not a

@@ -14,9 +14,25 @@ rejected Trainer checkpoints containing both cloned tied-embedding aliases.
 Burns 18263–18270 restored and verified at 13:49:25 UTC. Added explicit tied
 alias consistency validation, strict state loading and cloned-alias regression.
 Retry a02 preloads both actual checkpoints on CPU before stopping any burn.
-Job trained-attention-check-20261004-a02 uses attention_bench and existing
-verified worker-only reclamation, Accelerate config copy/env validation, and
-automatic burn recovery. Check remote receipts before drawing conclusions.
+Retry 3d5070b/a02 COMPLETED: all eight same-weight backend gates and all four
+FP32-reference cases passed unchanged thresholds. Full-gradient relative L2
+FA4 vs dense: 0.181%–0.532%; micro16 specifically 0.181%–0.266%. Against FP32
+math, dense BF16 is 0.539%–1.209%, FA4 0.540%–1.163%. Identical weights, matching
+inputs, parameters unchanged. Repeat backward variation is 0.119%–0.302% dense,
+0%–0.111% FA4, showing the full pipelines are not bitwise repeatable. This
+supports accumulated drift as a plausible explanation of the earlier training
+trajectory difference, without proving its cause or erasing the failed gate.
+See TRAINED_ATTENTION_CHECK_20261004.md for scope and all measurements.
+
+Supervisor passed=true at 13:57:24 UTC, burns 19173–19180 restored with advancing
+collectives; collector 736802d verified live identities and guard release at
+13:58:16 UTC. Original train_env/driver and production training untouched.
+Archive exported via fbef742; SHA256
+dc7d0645149fac6628bcf3ea510ffca99cfa0a6fb3557dcd512691bf93555680.
+
+Verified all 21 source-file hashes after retrieval to
+artifacts/trained-attention-check-20261004-a02/. Eight receipts match the summary;
+final supervisor passed and burn collective progress passed. commands.sh is #0.
 
 ## Authorized 200-update isolated-attention stability comparison (2026-10-04)
 
