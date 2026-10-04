@@ -1,26 +1,40 @@
-#1 +60+a
-#th2-tjx3-document-training-status-20261004-a01
+#1 +180+a
+#th2-tjx3-document-training-collect-20261004-a01
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
 export CUDA_VISIBLE_DEVICES=''
 /mnt/local/conda-py311/envs/train_env/bin/python -u - <<'PY'
-import json,statistics
+import hashlib,json,tarfile,time
 from pathlib import Path
-from scripts.gpu_status import snapshot
+from scripts.verified_gpu_reclaim import inspect
 from run_experiments import now
 root=Path('/mnt/local/_outputs/deep-llms_th2/document-training-20261004-a01')
-print('READ_ONLY_STATUS',now(),flush=True)
-print('GPU_STATUS',json.dumps(snapshot()),flush=True)
-for mode in ['sdpa_cross','sdpa_causal','fa4_cross','sdpa_isolated','fa4_isolated']:
-    paths=[root/'benchmark'/mode/f'rank-{i}.json' for i in range(8)]
-    if all(p.exists() for p in paths):
-        ranks=[json.loads(p.read_text()) for p in paths]
-        times=[max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(5,30)]
-        print('COMPLETED_MODE',json.dumps(dict(mode=mode,steps=len(ranks[0]['steps']),median_seconds=statistics.median(times),peak_gib=max(r['peak_allocated_gib'] for r in ranks))),flush=True)
-    else:
-        p=root/(mode+'.log')
-        print('INCOMPLETE_MODE',mode,'log_exists',p.exists(),flush=True)
-        if p.exists():print(p.read_text()[-1500:],flush=True)
-if (root/'result.json').exists():print('FINAL_RESULT',(root/'result.json').read_text(),flush=True)
+print('WAITING_FOR_BENCHMARK_RECEIPT',now(),flush=True)
+for _ in range(60):
+    if (root/'result.json').is_file():break
+    time.sleep(10)
+else:raise TimeoutError('Benchmark has not completed; no process action taken')
+receipt=json.loads((root/'result.json').read_text())
+print('FINAL_RESULT',json.dumps(receipt),flush=True)
+status=inspect()
+print('LIVE_GPU_STATUS',json.dumps(status),flush=True)
+if receipt.get('burn'):
+    expected={g['index']:g['pids'] for g in receipt['burn']['gpus']}
+    assert all(g['pids']==expected[g['index']] for g in status['gpus'])
+    assert not status['guard_disabled']
+paths=[root/'result.json',root/'burn.log',root/'benchmark/data.json',root/'benchmark/correctness.json',root/'benchmark/summary.json']
+paths += sorted((root/'benchmark').glob('*/rank-*.json'))
+paths += sorted((root/'benchmark').glob('*/trainer_state.json'))
+paths=[p for p in paths if p.is_file()]
+manifest={str(p.relative_to(root)):dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in paths}
+manifest_path=root/'result-files.json'
+with manifest_path.open('x') as f:json.dump(manifest,f,indent=2)
+archive=root/'result-export.tar.gz'
+assert not archive.exists()
+with tarfile.open(archive,'w:gz') as tar:
+    for p in paths+[manifest_path]:tar.add(p,arcname=str(p.relative_to(root)),recursive=False)
+print('RESULT_EXPORT',json.dumps(dict(path=str(archive),bytes=archive.stat().st_size,sha256=hashlib.sha256(archive.read_bytes()).hexdigest())),flush=True)
+assert receipt.get('passed') and receipt.get('burn',{}).get('collective_progress_verified')
+assert len(list((root/'benchmark').glob('*/rank-*.json')))==40
 PY
