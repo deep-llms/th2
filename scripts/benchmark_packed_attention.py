@@ -95,8 +95,10 @@ def factory(name, layout, strict):
     elif name == 'fa4':
         from flash_attn.cute.interface import flash_attn_varlen_func
         def kernel(q, k, v, cq, ck, mq, mk, **kwargs):
-            return flash_attn_varlen_func(q, k, v, cu_seqlens_q=cq, cu_seqlens_k=ck,
-                                          max_seqlen_q=mq, max_seqlen_k=mk, causal=True)
+            # Pinned FA4 beta returns (output, lse), even when return_lse=False.
+            output, _ = flash_attn_varlen_func(q, k, v, cu_seqlens_q=cq, cu_seqlens_k=ck,
+                                              max_seqlen_q=mq, max_seqlen_k=mk, causal=True)
+            return output
         fn = lambda q, k, v: packed_varlen(q, k, v, layout, strict, kernel)
     else:
         from torch.nn.attention.flex_attention import create_block_mask, flex_attention
@@ -107,7 +109,7 @@ def factory(name, layout, strict):
             first = (q == 0) | (segments[b, (q - 1).clamp_min(0)] != segments[b, q])
             return same & ((q > k) | (first & (q == k))) if strict else same & (q >= k)
         mask = create_block_mask(mask_mod, layout.batch, None, layout.length, layout.length,
-                                 device=str(segments.device))
+                                 device=str(segments.device), BLOCK_SIZE=256 if name == 'flex_fa4' else 128)
         options = {'BACKEND': 'FLASH' if name == 'flex_fa4' else 'TRITON'}
         flex = torch.compile(flex_attention, dynamic=False)
         nonempty = layout.allowed(strict).any(-1, keepdim=True)

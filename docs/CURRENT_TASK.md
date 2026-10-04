@@ -1,5 +1,25 @@
 # Current task
 
+## Faster packed-attention benchmark in progress (2026-10-04)
+
+User accepted benchmarking efficient document isolation; production policy is
+unchanged. Installed separate attention_bench via e6352df: torch2.14.1 and
+flash-attn-4[cu13]4.0.0b33 (beta), original train_env untouched. Controller reported
+OK installation at09:54:52UTC. Submitted b391b37, job
+th2-tjx3-packed-kernels-20261004-a01, using verified worker-only burn reclamation
+and automatic enhanced-burn recovery via the already tested supervisor flow.
+Remote outputs: /mnt/local/_outputs/deep-llms_th2/packed-kernels-20261004-a01/
+{kernels.json,result.json,burn.log}. Inspect individual kernel status; overall
+receipt success only means the benchmark finished and dense controls passed.
+Includes single/equal/ragged layouts, normal causal and strict-past attention,
+GQA16/8 heads,D128,B2,L2048,BF16,20 iterations, numerical and isolation checks.
+Native varlen, Flex Triton, direct FA4 and Flex FA4 are experimental candidates.
+CPU shifted-varlen output/gradient tests passed including singleton documents.
+Local A100 dense/Flex numerical tests passed; no B200 speed conclusion yet.
+Local uncommitted correction unpacks the pinned FA4 beta's (output,lse) return;
+the first remote submission predates it and may need a targeted adapter rerun.
+Do not repush active commands.sh just to refresh status.
+
 ## B200 document-isolation tests passed; burn restored (2026-10-04)
 
 e14a630 / th2-tjx3-document-isolation-20261004-a03 completed09:38:50UTC

@@ -1,5 +1,5 @@
 #1 +300+a
-#th2-tjx3-packed-kernels-20261004-a01
+#th2-tjx3-packed-kernels-20261004-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -18,7 +18,7 @@ from run_experiments import now, write_json
 from accelerate.commands.config.config_args import default_yaml_config_file
 assert socket.gethostname() == 'thiennh-p6-tjx3-worker-0'
 project=Path.cwd()
-root=Path('/mnt/local/_outputs/deep-llms_th2/packed-kernels-20261004-a01')
+root=Path('/mnt/local/_outputs/deep-llms_th2/packed-kernels-20261004-a02')
 root.mkdir(exist_ok=False)
 assert shutil.which('tmux')
 assert digest(project/'resources/llm_pretrain_burn.py') == BURN_HASH
@@ -59,6 +59,7 @@ try:
     subprocess.run([sys.executable,'-m','accelerate.commands.accelerate_cli','env'],env=env,check=True,timeout=120)
     bench_python='/mnt/local/conda-py311/envs/attention_bench/bin/python'
     result=subprocess.run([bench_python,'-m','scripts.benchmark_packed_attention',
+        '--backends','implicit','dense','fa4','flex_fa4',
         '--output',str(root/'kernels.json')],env=env,timeout=1200)
     receipt['benchmark_returncode']=result.returncode
     receipt['passed']=result.returncode==0 and (root/'kernels.json').is_file()
@@ -73,7 +74,7 @@ finally:
             clean_owned_children()
             time.sleep(30)
             require_free(list(range(8)))
-            receipt['burn']=start_burn(root,'tjx3-packed-kernels-a01-burn',project)
+            receipt['burn']=start_burn(root,'tjx3-packed-kernels-a02-burn',project)
             print('AUTOMATIC_BURN_RESTORED_AND_VERIFIED',flush=True)
         except BaseException as error:
             receipt['handoff_error']=repr(error);traceback.print_exc()
