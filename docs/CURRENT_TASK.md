@@ -1,5 +1,26 @@
 # Current task
 
+## Local document-isolation feasibility tests (2026-10-04)
+
+User requested local testing only; production packing and training behavior
+are unchanged. tests/test_document_isolation.py exercises all 11 arms with
+nonzero auxiliary output weights: output/embedding-gradient isolation with
+checkpointing on/off, packed-versus-separate loss sums/counts, EOS ownership,
+boundary target masking, and a leaking unsegmented control. Four tests passed
+on sampling_b200 CPU FP32 and sparse_emb A100 GPU0 BF16 (torch2.7.1+cu118,
+transformers5.9.0). No environment/driver changes or GPU process stops.
+Commands: python -m unittest tests.test_document_isolation -v; GPU additionally
+sets CUDA_VISIBLE_DEVICES=0 DOCUMENT_TEST_DEVICE=cuda:0 DOCUMENT_TEST_BF16=1.
+Logs: temp/document-isolation-{cpu,a100-bf16}.log.
+Attention-only BF16 benchmark, B=2,H=16,L=2048,D=128, four512-token segments,
+3 warmups/10 measured forward+backward iterations on A100: implicit causal
+2.24ms (SDPA flash), explicit causal6.54ms, document-isolated6.53ms (both SDPA
+efficient). Peak allocated236/252/252MiB. Evidence:
+temp/document-isolation-a100-attention.log. These are not full-model/B200 timings.
+Implementation still needs real packing boundary metadata and loss-denominator
+review for non-bottleneck arms; test-only EOS inference is not a production
+boundary policy. Do not silently enable segmented attention for existing runs.
+
 ## Downloaded dataset compatibility check (2026-10-04)
 
 Download 2a334dc completed successfully according to the runner receipt
