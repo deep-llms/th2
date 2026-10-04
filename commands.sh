@@ -1,2 +1,2 @@
-#0
-# B200 document-isolation tests complete; no workload queued.
+#i envs/attention_bench.txt +a
+#th2-tjx3-install-attention-bench-20261004-a01
