@@ -1,5 +1,28 @@
 # Project notes
 
+## Proxy-head screening uses revised dense SDPA contract (2026-10-04)
+
+The active proxy_heads_P1_P3_spec_v3.md is revision 4, explicitly confirmed by
+the user: boolean dense same-document causal SDPA, document-local positions,
+and P3 EMS resets from the same document IDs. All new controls share this path.
+Legacy A–G results are not matched controls. P1/P3 replace native KV groups;
+they do not add the older extra attention branch.
+
+New ProxyModel/ProxyTrainer adapters reuse the existing Trainer loop and data
+pipeline. Mu bootstraps before the first update and changes once per optimizer
+step after global reduction, including lambda-zero controls; checkpoint replay
+never mutates it. Auxiliary lambda ramps over 250 absolute completed updates;
+default maximum .1. Gates have no weight decay. Mask calibration is optional;
+the no-checkpoint fallback explicitly records no excluded channels. All buffers
+and calibration-file identity participate in checkpoint/resume correctness.
+
+The new recipe/queue defaults to eight arms, seeds42/43/44, cutoff2500 with
+full28600 schedule/warmup1430 and micro16/accum4/seq2048 on eight GPUs per job.
+Legacy queue defaults remain ABCD. See PROXY_HEADS_IMPLEMENTATION_20261004.md
+for commands, architecture counts and validation. Local distributed resume and
+global-gradient checks and all 118 offline regression tests passed; new B200 capacity/throughput validation and real
+screening have not run. commands.sh remains #0.
+
 ## Isolation follow-up review passed (2026-10-05)
 
 Reviewed production packing/collation, dense and auxiliary masks, loss eligibility,

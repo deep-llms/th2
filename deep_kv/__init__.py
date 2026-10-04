@@ -3,6 +3,9 @@
 BOTTLENECK_ARMS = ("Task-Aware-NoAlign", "Task-Aware-Align",
                    "Consumer-Aware-NoAlign", "Consumer-Aware-Align")
 ARMS = ("A", "B", "C", "D", "E", "F", "G") + BOTTLENECK_ARMS
+PROXY_ARMS = ("V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block", "P3-flow")
+SCREEN_ARMS = ("A", "V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block")
+ALL_ARMS = ARMS + PROXY_ARMS
 
 
 def code_loss_weight(arm):

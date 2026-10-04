@@ -1,7 +1,14 @@
 # Anticipatory Deep-KV pilot
 
-The active task is [the four-arm specification](docs/anticipatory_deep_kv_four_arm_pilot_v2.md).
-Train Qwen3 from scratch and compare:
+The active task is [P1/P3 proxy heads, revision 4](docs/proxy_heads_P1_P3_spec_v3.md):
+dense SDPA document isolation with positions reset per document. The
+[implementation guide](docs/PROXY_HEADS_IMPLEMENTATION_20261004.md) covers the
+eight screening arms, three-seed queue and local validation. It reuses `train.py`,
+HF Trainer/Accelerate, EOS packing and Dataset caching. B200 screening has not
+been launched; full-size capacity/throughput checks remain pending.
+
+The earlier [four-arm specification](docs/anticipatory_deep_kv_four_arm_pilot_v2.md)
+and its follow-ups remain supported. They train Qwen3 from scratch and compare:
 
 | Arm | Auxiliary attention | Alignment target |
 |---|---|---|

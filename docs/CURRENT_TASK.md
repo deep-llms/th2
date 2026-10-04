@@ -1,5 +1,27 @@
 # Current task
 
+## P1/P3 proxy-head implementation (2026-10-04, revision 4)
+
+User confirmed dense SDPA and positions reset per document in the updated
+proxy_heads_P1_P3_spec_v3.md (now revision 4). Implemented the P1 and P3 models,
+lambda-zero/block/flow options, widened V1/V3 controls, step-level distributed
+centering, optional calibrated channel mask, logging and reliance evaluation.
+Reuses train.py/HF Trainer/Accelerate, packing/cache and checkpoint/resume.
+proxy_heads.b200.json creates the eight-arm, three-seed sequential queue:
+24 training jobs, each eight GPUs, 2500-step cutoff, 28600/1430 schedule/warmup,
+micro16/accum4/seq2048. No B200 launch; commands.sh stays #0.
+
+Implementation and validation details: PROXY_HEADS_IMPLEMENTATION_20261004.md.
+Final offline suite: 118 tests passed in 137.825s; log
+temp/proxy-full-suite-final-a02.log. Compilation/diff checks passed.
+Eight-rank CPU BF16 train/resume passed A/P1-flow/P3-block/P3-lambda0; max state
+difference 1.862645149230957e-9; means match across ranks. FP32 global-batch
+gradient checks passed at max3.725290298461914e-9. Receipt:
+temp/proxy-ddp-a02/verified.json. Full-size B200 memory, dispatch and throughput
+checks remain the next preflight; prior additive-mask SDPA results do not verify
+the new boolean-mask proxy path. The optional offline estimability study and
+cached decoding are outside this implementation.
+
 ## Isolation follow-up review passed (2026-10-05)
 
 Reviewed production packing/collation, dense and auxiliary masks, loss eligibility,

@@ -379,8 +379,7 @@ class DeepKV(nn.Module):
                              for p in module.parameters()) if self.bottleneck else 0)
         return {"total": total, "inference": total - training_only, "training_only": training_only}
 
-    def forward(self, context: Context, *, compute_auxiliary_losses=True):
-        hidden, predicted, target = self.hidden_states(context)
+    def lm_statistics(self, context, hidden):
         labels = (context.input_ids if context.labels is None else context.labels)[:, 1:].masked_fill(~context.targets(), -100)
         lm_rows = hidden.new_zeros((hidden.shape[0],), dtype=torch.float32)
         for start in range(0, labels.shape[1], self.lm_chunk):
@@ -393,6 +392,11 @@ class DeepKV(nn.Module):
             lm_rows = lm_rows + (checkpoint(ce, x, y, use_reentrant=False)
                                 if self.training and self.checkpoint_lm else ce(x, y))
         counts, tokens = context.targets().sum(dim=1), context.valid.sum(dim=1)
+        return lm_rows, counts, tokens
+
+    def forward(self, context: Context, *, compute_auxiliary_losses=True):
+        hidden, predicted, target = self.hidden_states(context)
+        lm_rows, counts, tokens = self.lm_statistics(context, hidden)
         if self.bottleneck:
             extract = align = no_message = torch.zeros_like(lm_rows)
             queries = torch.zeros_like(counts)

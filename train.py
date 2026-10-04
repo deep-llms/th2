@@ -14,6 +14,7 @@ os.environ.setdefault("NCCL_NVLS_ENABLE", "0")
 import json
 import logging
 import copy
+import hashlib
 from datetime import datetime, timezone
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -27,6 +28,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
+from deep_kv import PROXY_ARMS
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
@@ -63,6 +65,18 @@ class PilotArguments:
     causal_attention: bool = False
     allow_performance_change_on_resume: bool = False
     stop_after: int | None = None
+    proxy_screen: bool = False
+    proxy_groups: int = 2
+    proxy_lookahead: int = 4
+    proxy_width: int = 256
+    proxy_features: int = 255
+    proxy_chunk_size: int = 64
+    proxy_lambda_max: float = .1
+    proxy_warmup_steps: int = 250
+    proxy_target_centering: bool = True
+    proxy_decay_start: int | None = None
+    proxy_decay_end: int | None = None
+    proxy_channel_mask: str | None = None
 
 
 def resume_performance_changes(previous, requested, allow=False):
@@ -131,6 +145,9 @@ def main():
         raise ValueError("Use checkpoint_layers for the custom model's checkpointing")
     if data_args.isolate_documents and pilot.causal_attention:
         raise ValueError("isolate_documents requires explicit dense SDPA masks; set causal_attention=false")
+    pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS
+    if pilot.proxy_screen and not data_args.isolate_documents:
+        raise ValueError("Proxy screening requires isolate_documents=true")
     # The wrapper consumes Context, so Trainer must retain the CLM input columns.
     training_args.remove_unused_columns = False
     training_args.ddp_find_unused_parameters = False
@@ -149,11 +166,34 @@ def main():
         tokenizer.pad_token = tokenizer.eos_token
     if data_args.block_size > min(tokenizer.model_max_length, config.max_position_embeddings):
         raise ValueError("block_size exceeds the model/tokenizer context limit")
-    model = DeepKV.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
+    model_class, trainer_class, callback_class = DeepKV, DeepKVTrainer, PilotCallback
+    proxy_options = {}
+    if pilot.proxy_screen:
+        from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget
+        from deep_kv.proxy_training import ProxyTrainer, ProxyCallback
+        model_class, trainer_class, callback_class = ProxyModel, ProxyTrainer, ProxyCallback
+        proxy_settings = ProxySettings(**{key: getattr(pilot, 'proxy_'+key) for key in ProxySettings.__dataclass_fields__})
+        if data_args.block_size % proxy_settings.chunk_size:
+            raise ValueError("proxy_chunk_size must divide block_size")
+        channel_mask = None
+        mask_receipt = {'source': 'none; no calibration checkpoint supplied', 'excluded_channels': []}
+        if pilot.proxy_channel_mask:
+            content = Path(pilot.proxy_channel_mask).read_bytes()
+            payload = json.loads(content)
+            excluded = payload['excluded_channels']
+            if payload['hidden_size'] != config.hidden_size or any(type(i) is not int or not 0 <= i < config.hidden_size for i in excluded):
+                raise ValueError('Invalid proxy channel-mask file')
+            channel_mask = torch.ones(config.hidden_size,dtype=torch.bool)
+            channel_mask[excluded] = False
+            mask_receipt = dict(source=pilot.proxy_channel_mask,sha256=hashlib.sha256(content).hexdigest(),excluded_channels=excluded)
+        logger.warning('Proxy target channel mask: %s', mask_receipt)
+        proxy_options = dict(proxy_settings=proxy_settings,channel_mask=channel_mask)
+        budget = compute_budget(config,proxy_settings,data_args.block_size)
+    model = model_class.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
                                deep_target=pilot.deep_target, lm_chunk=pilot.lm_chunk,
                                checkpoint_layers=pilot.checkpoint_layers,
                                checkpoint_lm=pilot.checkpoint_lm, checkpoint_aux=pilot.checkpoint_aux,
-                               causal_attention=pilot.causal_attention)
+                               causal_attention=pilot.causal_attention, **proxy_options)
     raw_train, raw_eval = load_text(data_args.data_dir), load_text(data_args.eval_data_dir)
     train_dataset = preprocess_dataset(raw_train, tokenizer, data_args.block_size, training_args,
                                       num_proc=data_args.preprocessing_num_workers,
@@ -176,10 +216,13 @@ def main():
         settings.pop(key, None)
     experiment = json.loads(json.dumps({"model": asdict(model_args), "model_config": config.to_dict(),
                   "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
-                      if k not in ("stop_after", "allow_performance_change_on_resume")},
+                      if k not in ("stop_after", "allow_performance_change_on_resume")
+                      and (pilot.proxy_screen or not k.startswith('proxy_'))},
                   "training": settings, "world_size": training_args.world_size,
                   "tokens_per_update": tokens_per_update,
                   "train_fingerprint": train_dataset._fingerprint, "eval_fingerprint": eval_dataset._fingerprint}))
+    if pilot.proxy_screen:
+        experiment['proxy_mask'] = mask_receipt
     output = Path(training_args.output_dir)
     checkpoint = training_args.resume_from_checkpoint or (get_last_checkpoint(str(output)) if output.is_dir() else None)
     if checkpoint:
@@ -211,9 +254,9 @@ def main():
         (output / "result.json").unlink(missing_ok=True)
     training_args.distributed_state.wait_for_everyone()
 
-    callback = PilotCallback(end, tokens_per_update)
+    callback = callback_class(end, tokens_per_update)
     with offline_wandb_run(training_args):
-        trainer = DeepKVTrainer(model=model, args=training_args, train_dataset=train_dataset,
+        trainer = trainer_class(model=model, args=training_args, train_dataset=train_dataset,
                                eval_dataset=eval_dataset.select(range(data_args.monitor_rows)),
                                processing_class=tokenizer,
                                data_collator=isolated_data_collator if data_args.isolate_documents else default_data_collator,
@@ -221,7 +264,7 @@ def main():
         callback.trainer = trainer
         starting_step = state.global_step if checkpoint else 0
         train_result = None
-        if model.bottleneck and training_args.device.type == "cuda":
+        if (model.bottleneck or pilot.proxy_screen) and training_args.device.type == "cuda":
             torch.cuda.reset_peak_memory_stats(training_args.device)
         if checkpoint and state.global_step == end:
             # HF train() can take a step even at an already reached cutoff.
@@ -231,7 +274,7 @@ def main():
             train_result = trainer.train(resume_from_checkpoint=checkpoint)
             trainer.log_metrics("train", train_result.metrics)
             trainer.save_metrics("train", train_result.metrics)
-        if model.bottleneck:
+        if model.bottleneck or pilot.proxy_screen:
             runtime = train_result.metrics["train_runtime"] if train_result is not None else 0.0
             completed = trainer.state.global_step - starting_step
             peak = None
@@ -258,8 +301,11 @@ def main():
                       "input_tokens": end * tokens_per_update,
                       "status": "complete" if end == training_args.max_steps else "stopped", "evaluation": metrics,
                       "sdpa_receipts": trainer._sdpa_receipts}
-            if model.bottleneck:
+            if model.bottleneck or pilot.proxy_screen:
                 result["training_cost"] = training_cost
+            if pilot.proxy_screen:
+                result['proxy'] = dict(budget=budget, model_config=model.backbone.config.to_dict(),
+                                       channel_mask=mask_receipt, mean_initialized=bool(model.mu_initialized))
             temporary = output / "result.json.tmp"
             temporary.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
             temporary.replace(output / "result.json")

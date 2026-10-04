@@ -1,13 +1,13 @@
 """Compare selected matched train.py results, using held-out LM loss."""
 import json
 from pathlib import Path
-from . import ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
+from . import ALL_ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
 
 
 def report(directory, arms="ABCD"):
     arms = tuple(arms)
-    if not arms or len(set(arms)) != len(arms) or any(arm not in ARMS for arm in arms):
-        raise ValueError("Select nonempty, unique arms from " + "/".join(ARMS))
+    if not arms or len(set(arms)) != len(arms) or any(arm not in ALL_ARMS for arm in arms):
+        raise ValueError("Select nonempty, unique arms from " + "/".join(ALL_ARMS))
     root = Path(directory)
     results, common = {}, None
     for arm in arms:
@@ -55,5 +55,39 @@ def report(directory, arms="ABCD"):
     if set(arms) & {"F", "G"}:
         summary["functional_loss_weights"] = {arm: {"route": .3, "message": .3 if arm == "G" else 0.}
                                                for arm in arms if arm in ("F", "G")}
+    if common[0]['pilot'].get('proxy_screen'):
+        for family in ('P1','P3'):
+            for route in ('block','flow'):
+                arm = family+'-'+route
+                for control in (family+'-lambda0','V'+family[1],'A'):
+                    if arm in nll and control in nll:
+                        summary['nll_differences'][arm+'-'+control] = nll[arm]-nll[control]
+        summary['training_cost'] = {arm:results[arm]['training_cost'] for arm in arms}
+        summary['reliance_loss_increase'] = {arm:results[arm]['evaluation'].get('eval_reliance_loss_increase') for arm in arms}
     (root / "comparison.json").write_text(json.dumps(summary, indent=2, allow_nan=False) + "\n")
     return summary
+
+
+def report_seeds(directory, arms, seeds):
+    import statistics
+    root = Path(directory)
+    rows = {seed:report(root/f'seed-{seed}',arms) for seed in seeds}
+    recipes = []
+    for seed in seeds:
+        cfg = json.loads((root/f'seed-{seed}'/arms[0]/'train_config.json').read_text())
+        if cfg['training']['seed'] != seed or cfg['training']['data_seed'] != seed:
+            raise ValueError('Incorrect screening seed')
+        for key in ('seed','data_seed'):
+            cfg['training'].pop(key)
+        # HF shuffle fingerprints intentionally differ across seeds.
+        cfg.pop('train_fingerprint')
+        recipes.append(cfg)
+    if any(cfg != recipes[0] for cfg in recipes) or len({r['compared_update'] for r in rows.values()}) != 1:
+        raise ValueError('Seed runs differ in recipe or cutoff')
+    losses = {arm:[rows[seed]['lm_loss'][arm] for seed in seeds] for arm in arms}
+    result = dict(status='complete',seeds=list(seeds),lm_loss={arm:dict(values=values,mean=statistics.mean(values),
+                  stdev=statistics.stdev(values) if len(values)>1 else None,range=max(values)-min(values)) for arm,values in losses.items()},
+                  per_seed_differences={str(seed):r['nll_differences'] for seed,r in rows.items()},
+                  interpretation='Inspect paired differences and seed spread; no significance claim from three seeds alone.')
+    (root/'comparison-seeds.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
+    return result

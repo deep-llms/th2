@@ -2,14 +2,36 @@
 import argparse
 import json
 from pathlib import Path
-from . import ARMS
+from . import ALL_ARMS, SCREEN_ARMS
 
 
-def jobs(config_path, stop_after=None, arms="ABCD"):
-    arms = tuple(arms)
-    if not arms or len(set(arms)) != len(arms) or any(arm not in ARMS for arm in arms):
-        raise ValueError("Select nonempty, unique arms from " + "/".join(ARMS))
+def jobs(config_path, stop_after=None, arms=None, seeds=None):
     config = json.loads(Path(config_path).read_text())
+    arms = tuple(arms if arms is not None else SCREEN_ARMS if config.get('proxy_screen') else 'ABCD')
+    if not arms or len(set(arms)) != len(arms) or any(arm not in ALL_ARMS for arm in arms):
+        raise ValueError("Select nonempty, unique arms from " + "/".join(ALL_ARMS))
+    if seeds is None and config.get('proxy_screen'):
+        seeds = [42,43,44]
+    if seeds is None:
+        return arm_jobs(config,stop_after,arms)
+    if not seeds or len(set(seeds)) != len(seeds) or any(type(seed) is not int or seed < 0 for seed in seeds):
+        raise ValueError('Seeds must be distinct nonnegative integers')
+    items = []
+    for seed in seeds:
+        prefix = f'seed-{seed}'
+        for job in arm_jobs({**config,'seed':seed,'data_seed':seed},stop_after,arms)['jobs']:
+            job['name'] = prefix+'-'+job['name']
+            job['argv'] = [a.replace('{run_dir}', '{run_dir}/'+prefix) for a in job['argv']]
+            for output in job['required_outputs']:
+                output['path'] = prefix+'/'+output['path']
+            items.append(job)
+    items.append(dict(name='compare-seeds',argv=['{python}','-m','deep_kv','report-seeds','--run-dir','{run_dir}',
+                     '--arms',*arms,'--seeds',*map(str,seeds)],
+                     required_outputs=[dict(path='comparison-seeds.json',json_equals={'status':'complete'})]))
+    return {'jobs':items}
+
+
+def arm_jobs(config, stop_after, arms):
     end = config.get("stop_after") if stop_after is None else stop_after
     if end is None:
         end = config["max_steps"]
@@ -52,18 +74,26 @@ def main():
     p.add_argument("--config", type=Path, default=Path("deep_kv.b200.json"))
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--stop-after", type=int)
-    p.add_argument("--arms", nargs="+", choices=ARMS, default=list("ABCD"))
+    p.add_argument("--arms", nargs="+", choices=ALL_ARMS)
+    p.add_argument('--seeds', nargs='+', type=int)
     p = sub.add_parser("report")
     p.add_argument("--run-dir", type=Path, required=True)
-    p.add_argument("--arms", nargs="+", choices=ARMS, default=list("ABCD"))
+    p.add_argument("--arms", nargs="+", choices=ALL_ARMS, default=list("ABCD"))
+    p = sub.add_parser('report-seeds')
+    p.add_argument('--run-dir', type=Path, required=True)
+    p.add_argument('--arms', nargs='+', choices=ALL_ARMS, default=list(SCREEN_ARMS))
+    p.add_argument('--seeds', nargs='+', type=int, required=True)
     args = parser.parse_args()
     if args.command == "make-jobs":
-        value = jobs(args.config, args.stop_after, args.arms)
+        value = jobs(args.config, args.stop_after, args.arms, args.seeds)
         with args.output.open("x") as handle:
             json.dump(value, handle, indent=2)
-    else:
+    elif args.command == 'report':
         from .report import report
         print(json.dumps(report(args.run_dir, args.arms), indent=2))
+    else:
+        from .report import report_seeds
+        print(json.dumps(report_seeds(args.run_dir,args.arms,args.seeds),indent=2))
 
 
 if __name__ == "__main__":

@@ -97,6 +97,9 @@ class DeepKVTrainer(Trainer):
         with trainer_audit(self, "train"):
             return super().training_step(model, inputs, num_items_in_batch)
 
+    def summarize_statistics(self, values):
+        return summarize_statistics(values, self.model.kv_loss_weight, self.model.arm)
+
     @staticmethod
     def context(inputs):
         ids = inputs["input_ids"]
@@ -202,8 +205,7 @@ class PilotCallback(TrainerCallback):
         totals = self.trainer.accelerator.reduce(totals, reduction="sum")
         if int(totals[-1]) != self.tokens_per_update:
             raise ValueError("Incomplete global token batch; check dataset capacity")
-        self.latest = summarize_statistics(totals.cpu().numpy()[None], self.trainer.model.kv_loss_weight,
-                                           self.trainer.model.arm)
+        self.latest = self.trainer.summarize_statistics(totals.cpu().numpy()[None])
         if state.global_step >= self.end:
             control.should_training_stop = control.should_save = True
         return control
