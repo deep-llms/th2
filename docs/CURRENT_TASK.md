@@ -1,5 +1,27 @@
 # Current task
 
+## Baseline pipeline startup verified (2026-10-05 07:43 Singapore)
+
+Launch3eec7f9 is running on tjx3. The actual Accelerate cache is
+/dev/shm/.cache/huggingface/accelerate/default_config.yaml; copied bytes/hash
+and accelerate env confirm8GPU/BF16. Only verified burn workers21008–21015
+were signaled; all8GPUs were verified free at07:38:34 Singapore. Reviewed
+train/model/supervisor source hashes match the remote receipt exactly.
+Eight train.py ranks25274–25281 are alive under25268. At07:43 the first
+smoke invocation was tokenizing the full English pool (28%,10.08M/36.60M
+documents) through the ordinary HF Dataset cache. No optimizer step or smoke
+success is claimed yet. The supervised queue automatically runs the3-step
+smoke, validates it, then starts a fresh A/seed42 run to2500; burns restore
+on queue completion or failure. Full schedule28600/warmup1430 unchanged.
+
+Evidence: temp/baseline-launch-a01.log and temp/baseline-startup-monitor-a01.log
+(SHA2562ea3a32a6de98f98cd2e6afa33d72491498ab620981e184c786dc273f18d0f9e).
+Read-only monitor4c1d579 watches for first baseline optimizer logs (30-minute
+window). The independent supervisor and training do not depend on that monitor.
+commands.sh returned to#0; this does not stop the detached run. Next status check
+should inspect launch.log, supervised/run/run.json, smoke/validation.json and
+baseline-seed-42-arm-A.log under the launch root. Do not relaunch over it.
+
 ## Original Qwen arm A launch authorized (2026-10-05 Singapore)
 
 User requested fresh original-model training to2500 updates. Prepared one
@@ -21,7 +43,7 @@ Launch root: /mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-2500-20261005-a0
 Production model path: supervised/run/baseline/seed-42/A under that root.
 Launch command copies resources/accelerate_config.yaml to the actual HF cache,
 compares bytes, runs accelerate env, then invokes the verified supervisor in
-an independent tmux session. Launch pending verification, not yet claimed live.
+an independent tmux session. Launch3eec7f9 startup is verified; see below.
 
 ## Proxy implementation follow-up review passed (2026-10-04)
 

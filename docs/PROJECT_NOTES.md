@@ -1,5 +1,25 @@
 # Project notes
 
+## Fresh isolated baseline launched (2026-10-05)
+
+User authorized one original Qwen3-0.6B arm A, seed42, from scratch to2500
+updates on all8B200s. Launch3eec7f9 uses the proxy-screen boolean dense SDPA
+path with no proxy heads/auxiliary loss, EOS boundaries and reset positions;
+micro16/accum4/seq2048, full28600 schedule, warmup1430, all checkpointing off.
+A separate3-update same-shape/schedule smoke must pass before the fresh baseline.
+Existing train_then_burn supervisor provides ownership-verified reclaim, guard,
+free-GPU checks and automatic verified burn recovery after success/failure.
+
+At07:43 Singapore startup was verified through dataset-cache tokenization28%;
+optimizer updates/smoke completion were still pending. Accelerate bytes/env and
+reviewed source hashes verified; original burns21008–21015 stopped and all GPUs
+free before new training ranks25274–25281. Root:
+/mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-2500-20261005-a01;
+model output supervised/run/baseline/seed-42/A. See CURRENT_TASK.md for receipts.
+Initial read-only preflight assumed Parquet; the pool is actually the original
+saved Arrow shards, already supported by train.load_text. No data/model change
+or GPU stop occurred in that failed preflight. No resampling/download required.
+
 ## Proxy code review follow-up (2026-10-04)
 
 Selecting any proxy arm now selects the matching proxy-screen A path for the
