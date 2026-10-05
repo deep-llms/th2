@@ -113,8 +113,11 @@ class FA4BaselineTests(unittest.TestCase):
         self.assertEqual(len(training),3)
         with self.assertRaisesRegex(ValueError,'proxy-screen arms'):
             jobs('baseline_a_fa4.b200.json',arms=('A','B'))
-        with self.assertRaisesRegex(ValueError,'do not reuse'):
-            jobs('baseline_a_fa4.b200.json',reuse_baselines={42:'/old/A'})
+        reused=jobs('baseline_a_fa4.b200.json',arms=('A','P1-block'),seeds=[42],reuse_baselines={42:'/old/A'})
+        self.assertEqual(reused['jobs'][0]['name'],'seed-42-validate-baseline')
+        self.assertIn('--expected-attention-backend',reused['jobs'][0]['argv'])
+        self.assertEqual(reused['jobs'][0]['argv'][-1],'fa4')
+        self.assertEqual([j['name'] for j in reused['jobs'] if 'gpus' in j],['seed-42-arm-P1-block'])
         # Dense recipes omit the default field, preserving historical resume identity.
         previous=dict(pilot=dict(arm='A'),training={})
         requested=copy.deepcopy(previous);requested['pilot']['attention_backend']='fa4'

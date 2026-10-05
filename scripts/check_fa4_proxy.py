@@ -144,19 +144,24 @@ def validate(args):
     """Fail closed on actual backend, full recipe, final state, or normalization errors."""
     from safetensors import safe_open
     root=Path(args.run_dir);results=[]
-    for arm in ('A',)+PROXY_ARMS:
-        folder=root/'seed-42'/arm
+    assert 1 <= args.steps < 28600 and args.arms and len(set(args.arms))==len(args.arms)
+    for arm in args.arms:
+        folder=root/f'seed-{args.seed}'/arm
         result,state,config=(read(folder/name) for name in ('result.json','trainer_state.json','train_config.json'))
-        assert result['arm']==arm and result['global_step']==state['global_step']==3
+        assert result['arm']==arm and result['global_step']==state['global_step']==args.steps
         assert result['status']=='stopped' and result['schedule_steps']==state['max_steps']==28600
-        assert result['input_tokens']==3*1048576
+        assert result['input_tokens']==args.steps*1048576
         assert config['pilot']['attention_backend']=='fa4' and config['data']['isolate_documents']
         assert config['training']['per_device_train_batch_size']==16 and config['training']['gradient_accumulation_steps']==4
         assert config['training']['warmup_steps']==1430
         assert not any(config['pilot'][key] for key in ('checkpoint_layers','checkpoint_lm','checkpoint_aux'))
         assert result['attention_runtime']['version']=='4.0.0b33' and not result['sdpa_receipts']
         logs=[row for row in state['log_history'] if 'loss' in row]
-        assert len(logs)==3 and all(math.isfinite(row['loss']) and math.isfinite(row['grad_norm']) for row in logs)
+        assert logs and logs[-1]['step']==args.steps
+        assert all(math.isfinite(row['loss']) and math.isfinite(row['grad_norm']) for row in logs)
+        assert config['training']['seed']==config['training']['data_seed']==args.seed
+        assert config['world_size']==8
+        assert result['evaluation']['eval_rows']==config['data']['eval_rows']
         assert math.isfinite(result['evaluation']['eval_lm_loss'])
         receipts=[read(folder/name) for name in result['fa4_receipts']]
         assert {r['phase'] for r in receipts}=={'train','eval'}
@@ -165,10 +170,10 @@ def validate(args):
             assert r['kernel_dtype']=='torch.bfloat16' and r['positions']=='reset_per_document'
             assert r['document_isolation'] and r['causal'] and not r['dense_mask']
             if r['phase']=='train':assert all(r[k+'_gradient_calls']==28 for k in ('query','key','value'))
-        checkpoint=folder/'checkpoint-3'
+        checkpoint=folder/f'checkpoint-{args.steps}'
         for name in ['model.safetensors','optimizer.pt','scheduler.pt','trainer_state.json',*[f'rng_state_{i}.pth' for i in range(8)]]:
             assert (checkpoint/name).stat().st_size>0,name
-        assert read(checkpoint/'trainer_state.json')['global_step']==3
+        assert read(checkpoint/'trainer_state.json')['global_step']==args.steps
         with safe_open(checkpoint/'model.safetensors',framework='pt',device='cpu') as weights:
             import torch
             assert bool(weights.get_tensor('mu_initialized'))
@@ -181,13 +186,15 @@ def validate(args):
                 assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
         peak=result['training_cost']['peak_cuda_allocated_bytes'];assert peak<160*2**30
         results.append(dict(arm=arm,peak_gib=peak/2**30,eval_lm_loss=result['evaluation']['eval_lm_loss'],receipts=result['fa4_receipts']))
-    write(args.output,dict(status='passed',steps=3,arms=results))
+    write(args.output,dict(status='passed',steps=args.steps,arms=results))
 
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('mode',choices=('run','worker','validate'))
     p.add_argument('--recipe');p.add_argument('--rows');p.add_argument('--run-dir')
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
+    p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
+    p.add_argument('--arms',nargs='+',choices=('A',)+PROXY_ARMS,default=('A',)+PROXY_ARMS)
     args=p.parse_args();globals()[args.mode](args)
 
 

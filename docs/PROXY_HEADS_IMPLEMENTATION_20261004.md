@@ -447,3 +447,17 @@ FA4 baseline reuse still needs a queue-tooling change before reusing the existin
 A. A safe implementation must check the expected backend before training; final
 cross-arm recipe comparison alone is too late. Explicit `--arms` remains required
 for an FA4 screen because the default is A. No new GPU work was run for this review.
+
+### FA4 baseline reuse for the seed-42 launch
+
+FA4 queues now permit `--reuse-baseline 42=/absolute/path/to/A`. Their first
+CPU job validates the recorded backend with `--expected-attention-backend fa4`,
+alongside completion, seed and cutoff. A dense baseline is refused before GPU
+training. The final report retains full recipe/data/backend comparison. For the
+current launch, a separate preflight also matched the completed A to the current
+validated smoke recipe and recomputed its full validation fingerprint before
+reclaiming GPUs. Explicit `--arms` remains required; defaults are unchanged.
+
+`check_fa4_proxy validate` now accepts `--steps`, `--seed`, and `--arms`, allowing
+per-arm2500-step artifact validation between sequential training jobs. Its default
+still validates the existing3-step nine-arm smoke. No model/loss changes.

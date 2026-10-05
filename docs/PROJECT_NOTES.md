@@ -1,5 +1,34 @@
 # Project notes
 
+## Seed-42 FA4 proxy screen authorized (2026-10-05)
+
+User requested real P1/P3 training on B200, explicitly selected seed42 first and
+same settings as completed FA4 A. Queue scope: V1,V3,P1-lambda0,P1-block,P1-flow,
+P3-lambda0,P3-block, each2500 steps/all8 GPUs. Reuse existing matching FA4 A2500;
+no P3-flow or additional seeds. Full28600 schedule/1430warmup, micro16×GAS4,
+seq2048, EOS document boundaries, per-document positions and FA4 isolation,
+checkpointing off, offline W&B/NCCL settings unchanged.
+
+Read-only preflight29d283b passed: expected node and only approved burn workers;
+pinned environment; old A complete with optimizer/scheduler/all8 RNG states;
+current smoke effective recipe matches baseline beyond known smoke-only settings.
+Recomputed full validation fingerprint08432871cf987d61; train6e4708f1e818fb44.
+Baseline config SHA256:2d198d6491282c7d8e748c63b372d5dac1efbe3eaa8bbd73c9e7d2189118f8db.
+Receipt:temp/fa4-screen-preflight-a01.log. Plenty of disk (23446GiB free).
+
+Queue tooling now allows matching FA4 baseline reuse, with a CPU backend check
+before any training; final comparison still checks full recipe/data. Runtime
+validator accepts explicit steps/arms and validates each arm before the next.
+Four focused CPU tests passed after queue/validator updates; training/model/loss
+code is unchanged from the successful B200 smokes. Previous fresh full suite142
+passed before these tooling-only changes.
+
+Prepared fresh output:/mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a01.
+Launch will copy/verify Accelerate config, revalidate baseline and smoke artifacts,
+reclaim only verified burns, wait/recheck all8 GPUs free, and run sequentially
+under train_then_burn. Automatic communicating burn restoration after success or
+failure. No environment/driver changes. Launch observation pending.
+
 ## FA4 review findings verified; test fixes (2026-10-05)
 
 Reviewed FA4_PROXY_REVIEW_FINDINGS_20261005.md against source and recorded B200

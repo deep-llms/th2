@@ -26,8 +26,6 @@ def jobs(config_path, stop_after=None, arms=None, seeds=None, reuse_baselines=No
         if any(arm not in ('A',) + PROXY_ARMS for arm in arms):
             raise ValueError('FA4 queues require arm A or proxy-screen arms')
         config['proxy_screen'] = True
-        if reuse_baselines:
-            raise ValueError('FA4 baseline requires its own training run; do not reuse dense A')
     if not arms or len(set(arms)) != len(arms) or any(arm not in ALL_ARMS for arm in arms):
         raise ValueError("Select nonempty, unique arms from " + "/".join(ALL_ARMS))
     # A is shared by both experiment families. Select its matching model path
@@ -76,7 +74,8 @@ def arm_jobs(config, stop_after, arms, baseline_dir=None):
         baseline_dir = str(baseline_dir)
         items.append(dict(name='validate-baseline',argv=['{python}','-m','deep_kv','report',
                      '--run-dir','{run_dir}/baseline-validation','--arms','A','--baseline-dir',baseline_dir,
-                     '--expected-step',str(end),'--expected-seed',str(config['seed'])],
+                     '--expected-step',str(end),'--expected-seed',str(config['seed']),
+                     '--expected-attention-backend',config.get('attention_backend','sdpa')],
                      required_outputs=[dict(path='baseline-validation/comparison.json',
                                             json_equals={'status':'complete','compared_update':end})]))
     for arm in arms:
@@ -126,6 +125,7 @@ def main():
     p.add_argument('--baseline-dir', type=Path)
     p.add_argument('--expected-step', type=int)
     p.add_argument('--expected-seed', type=int)
+    p.add_argument('--expected-attention-backend', choices=('sdpa','fa4'))
     p = sub.add_parser('report-seeds')
     p.add_argument('--run-dir', type=Path, required=True)
     p.add_argument('--arms', nargs='+', choices=ALL_ARMS, default=list(SCREEN_ARMS))
@@ -138,7 +138,7 @@ def main():
             json.dump(value, handle, indent=2)
     elif args.command == 'report':
         from .report import report
-        print(json.dumps(report(args.run_dir, args.arms, args.baseline_dir, args.expected_step, args.expected_seed), indent=2))
+        print(json.dumps(report(args.run_dir, args.arms, args.baseline_dir, args.expected_step, args.expected_seed, args.expected_attention_backend), indent=2))
     else:
         from .report import report_seeds
         print(json.dumps(report_seeds(args.run_dir,args.arms,args.seeds,parse_baselines(args.reuse_baseline)),indent=2))

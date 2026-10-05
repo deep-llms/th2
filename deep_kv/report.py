@@ -27,7 +27,7 @@ def result_path(root, arm, baseline_dir=None):
     return root/arm
 
 
-def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expected_seed=None):
+def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expected_seed=None, expected_attention_backend=None):
     arms = tuple(arms)
     if not arms or len(set(arms)) != len(arms) or any(arm not in ALL_ARMS for arm in arms):
         raise ValueError("Select nonempty, unique arms from " + "/".join(ALL_ARMS))
@@ -39,6 +39,9 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
     for arm in arms:
         path = result_path(root, arm, baseline_dir)
         config = json.loads((path / "train_config.json").read_text())
+        if expected_attention_backend is not None:
+            if expected_attention_backend not in ('sdpa','fa4') or config['pilot'].get('attention_backend','sdpa') != expected_attention_backend:
+                raise ValueError('Incorrect reused baseline attention backend')
         result = json.loads((path / "result.json").read_text())
         state = json.loads((path / "trainer_state.json").read_text())
         evaluation = json.loads((path / "eval_results.json").read_text())

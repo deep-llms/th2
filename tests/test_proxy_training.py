@@ -277,6 +277,19 @@ class ProxyTrainingTests(unittest.TestCase):
             self.assertEqual(summary['reused_baseline'],str(external))
             self.assertEqual(set(summary['proxy_targets']),{'P1-lambda0','P1-block','P3-block'})
             report_seeds(root,arms,[42,1042],{42:external})
+            report(root/'preflight',('A',),baseline_dir=external,expected_attention_backend='sdpa')
+            with self.assertRaisesRegex(ValueError,'attention backend'):
+                report(root/'preflight-bad',('A',),baseline_dir=external,expected_attention_backend='fa4')
+            baseline_config=external/'train_config.json'
+            saved_baseline=json.loads(baseline_config.read_text())
+            flash_config=copy.deepcopy(saved_baseline);flash_config['pilot']['attention_backend']='fa4'
+            baseline_config.write_text(json.dumps(flash_config))
+            report(root/'preflight-fa4',('A',),baseline_dir=external,expected_attention_backend='fa4')
+            with self.assertRaisesRegex(ValueError,'attention backend'):
+                report(root/'preflight-fa4-bad',('A',),baseline_dir=external,expected_attention_backend='sdpa')
+            with self.assertRaisesRegex(ValueError,'Arms differ'):
+                report(root/'seed-42',arms,baseline_dir=external)
+            baseline_config.write_text(before['train_config.json'].decode())
             self.assertEqual(before,{p.name:p.read_bytes() for p in external.iterdir()})
             for kwargs in ({'expected_seed':1042},{'expected_step':4}):
                 with self.assertRaises(ValueError):report(root/'seed-42',arms,baseline_dir=external,**kwargs)
