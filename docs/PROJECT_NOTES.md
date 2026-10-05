@@ -1,5 +1,28 @@
 # Project notes
 
+## P4/P5/P6 follow-up correctness review
+
+Fixed train.py's initial dataset shuffle to honor data_seed, falling back to
+seed when unset. Previously the documented initialization-only A experiment
+(seed1042/data_seed42) changed the first permutation despite fixing the Trainer
+sampler seed. The real Trainer test now captures consumed batches: equal data
+seed gives identical batches with different backbone weights; changing data
+seed changes the batches. Existing equal-seed runs preserve their ordering.
+Historical unequal-seed checkpoints will fail fingerprint validation if the
+corrected shuffle changes their saved data, rather than silently resume.
+
+Report validation now checks actual P4/P5/P6 target quantity, exact windows,
+normalization, epsilon and cosine objective, plus recipe/result agreement.
+A matching target-version label is no longer sufficient. Added BF16 tests for
+separate LM/auxiliary gradients on all five arms with checkpointing and AOT
+compilation, compared with the detached-input recomputation reference.
+
+All46 selected CPU acceptance/regression tests passed in183.264s, including
+2-rank Gloo, exact resume, new batch-order checks, and old P1/P3/FA4-reference
+coverage. Log:temp/p4-review-regression.log. No model architecture change was
+needed in this review. B200/CUDA smoke and throughput profiling remain pending.
+No remote action or training launch; commands.sh remains#0.
+
 ## P4/P5/P6 implemented and locally verified
 
 Implemented revision 3 of docs/proxy_arms_P4_P5_P6_spec.md using the existing

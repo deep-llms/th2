@@ -109,3 +109,27 @@ Interpretation cautions: P1 alpha-one used its proxies but did not outperform A;
 that does not prove estimator collapse or its cause. Target detachment defines
 gradient routing, not a stability guarantee. P4-iso is a useful direct test of
 prediction-only estimators; whether it helps remains an empirical question.
+
+## Follow-up review
+
+Fixed the initial packed-dataset shuffle to use `data_seed`, falling back to
+`seed` when it is unset. Previously, `seed=1042, data_seed=42` still changed
+that first shuffle, despite fixing the Trainer sampler seed. The new real
+Trainer test records consumed batches and confirms identical data order with
+different backbone initialization, and different order when the data seed
+changes. Existing runs with equal seeds keep their ordering. Historical runs
+with unequal seeds cannot silently resume with the corrected shuffle: their
+saved dataset fingerprint must match, otherwise resume is refused.
+
+Result comparison now checks the actual four-MLP target windows, quantity,
+normalization, epsilon and cosine loss, and agreement between the recipe and
+saved result. A matching `p4p6-r1` label alone is insufficient.
+
+Additional BF16 checks backpropagate LM and auxiliary losses separately for all
+five variants, with decoder/loss checkpointing and AOT compilation, comparing
+against the detached-input recomputation reference. These supplement the
+original combined-objective tests. The B200/CUDA smoke and throughput profile
+remain pending; this review does not launch training.
+
+Follow-up verification: all 46 selected CPU tests passed in 183.264 seconds.
+Log: `temp/p4-review-regression.log`.

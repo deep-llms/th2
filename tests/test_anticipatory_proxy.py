@@ -200,6 +200,14 @@ class AnticipatoryTests(unittest.TestCase):
                     with self.assertRaises(ValueError):comparable_config(bad)
             result=report(root,('A',)+ANTICIPATORY_ARMS)
             self.assertIn('P4-iso-A',result['nll_differences'])
+            # A matching version string alone must not accept a different target.
+            path=root/'P4-iso'/'train_config.json';saved=path.read_text()
+            for key,value in (('bands',[2]),('quantity','deep_band_increment'),('lookahead',3),
+                              ('normalization','none'),('epsilon',.1)):
+                changed=json.loads(saved);changed['proxy_target'][key]=value
+                path.write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError,'target metadata'):report(root,('A','P4-iso'))
+            path.write_text(saved)
             path=root/'recipe.json';path.write_text(json.dumps(recipe))
             queue=jobs(path,arms=['P4-iso','P6'],seeds=[42])
             self.assertEqual(len(queue['jobs']),4)  # two trains, per-seed and seed comparisons
@@ -251,6 +259,49 @@ class AnticipatoryTests(unittest.TestCase):
             for (name,p),(_,q) in zip(models[0].named_parameters(),models[1].named_parameters()):
                 self.assertEqual(p.grad is None,q.grad is None,name)
                 if p.grad is not None:torch.testing.assert_close(p.grad,q.grad,rtol=2e-5,atol=3e-7,msg=name)
+
+    def test_initialization_only_seed_keeps_consumed_data_order(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);recipe=proxy_fixture(root);seen={};fingerprints={};initial={}
+            original=ProxyTrainer.training_step
+            for name,seed,data_seed in (('base',42,42),('init',1042,42),('data',1042,1042)):
+                seen[name]=[]
+                def observe(trainer,wrapped,inputs,*args,**kwargs):
+                    seen[name].append(inputs['input_ids'].clone())
+                    if name not in initial:initial[name]=trainer.model.backbone.model.embed_tokens.weight.detach().clone()
+                    return original(trainer,wrapped,inputs,*args,**kwargs)
+                with patch.object(ProxyTrainer,'training_step',observe):
+                    invoke(root,{**recipe,'seed':seed,'data_seed':data_seed,'arm':'A','output_dir':str(root/name)})
+                fingerprints[name]=json.loads((root/name/'train_config.json').read_text())['train_fingerprint']
+            self.assertEqual(fingerprints['base'],fingerprints['init'])
+            self.assertNotEqual(fingerprints['base'],fingerprints['data'])
+            torch.testing.assert_close(torch.cat(seen['base']),torch.cat(seen['init']),rtol=0,atol=0)
+            self.assertFalse(torch.equal(torch.cat(seen['base']),torch.cat(seen['data'])))
+            self.assertFalse(torch.equal(initial['base'],initial['init']))
+            torch.testing.assert_close(initial['init'],initial['data'],rtol=0,atol=0)
+
+    def test_mixed_precision_separate_loss_routes_with_compilation(self):
+        compile_fn=torch.compile
+        for arm in ANTICIPATORY_ARMS:
+            for compiled in (False,True):
+                with patch('torch.compile',side_effect=lambda fn:compile_fn(fn,backend='aot_eager',fullgraph=True)):
+                    m=model(arm,checkpoint=True,compile_estimator=compiled)
+                reference=model(arm,aux_recompute=True)
+                for component in ('lm_sum','aux_sum'):
+                    results=[]
+                    for current in (m,reference):
+                        current.zero_grad(set_to_none=True)
+                        with torch.autocast('cpu',dtype=torch.bfloat16):out=current(batch())
+                        out[component].backward();results.append(out)
+                    for key in ('lm_sum','aux_sum'):
+                        torch.testing.assert_close(results[0][key],results[1][key],rtol=0,atol=0)
+                    for (name,p),(_,q) in zip(m.named_parameters(),reference.named_parameters()):
+                        if q.grad is None or not bool(q.grad.count_nonzero()):
+                            self.assertTrue(p.grad is None or not bool(p.grad.count_nonzero()),arm+'/'+name)
+                        else:
+                            self.assertIsNotNone(p.grad,arm+'/'+name)
+                            error=(p.grad-q.grad).abs().max()/q.grad.abs().max()
+                            self.assertLessEqual(float(error),.02,arm+'/'+name)
 
 
 if __name__=='__main__':unittest.main()

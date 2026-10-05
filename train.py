@@ -203,10 +203,11 @@ def main():
                                checkpoint_lm=pilot.checkpoint_lm, checkpoint_aux=pilot.checkpoint_aux,
                                causal_attention=pilot.causal_attention, **proxy_options)
     raw_train, raw_eval = load_text(data_args.data_dir), load_text(data_args.eval_data_dir)
+    data_seed = training_args.data_seed if training_args.data_seed is not None else training_args.seed
     train_dataset = preprocess_dataset(raw_train, tokenizer, data_args.block_size, training_args,
                                       num_proc=data_args.preprocessing_num_workers,
                                       overwrite_cache=data_args.overwrite_cache,
-                                      isolate_documents=data_args.isolate_documents).shuffle(seed=training_args.seed)
+                                      isolate_documents=data_args.isolate_documents).shuffle(seed=data_seed)
     # Keep the existing single-worker validation packing and fixed prefix.
     eval_dataset = preprocess_dataset(raw_eval, tokenizer, data_args.block_size, training_args,
                                      num_proc=1, overwrite_cache=data_args.overwrite_cache,

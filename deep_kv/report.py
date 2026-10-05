@@ -12,7 +12,7 @@ def comparable_config(config):
     if arm in ANTICIPATORY_ARMS:
         expected=dict(proxy_alpha_init=.1 if arm.startswith('P6') else 1.,
                       proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso'),
-                      proxy_target_version='p4p6-r1',proxy_lookahead=4)
+                      proxy_target_version='p4p6-r1',proxy_lookahead=4,proxy_loss_form='cosine')
         if any(config['pilot'].get(k)!=v for k,v in expected.items()):
             raise ValueError('P4/P5/P6 configuration does not match its arm definition')
         for key in ('proxy_alpha_init','proxy_isolate_estimator','proxy_module_seed',
@@ -81,6 +81,13 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             version='p4p6-r1' if arm in ANTICIPATORY_ARMS else 'r7'
             if not target or target.get('target_version') != version or config['pilot'].get('proxy_channel_mask'):
                 raise ValueError('Proxy arms require their versioned target definition without a channel mask')
+            if arm in ANTICIPATORY_ARMS:
+                expected_target = dict(quantity='mlp_window_sum',lookahead=4,
+                    bands=list(range(2,config['model_config']['num_hidden_layers']-2,2)),
+                    normalization='running_per_channel',epsilon=1e-6,loss_form='cosine')
+                if (any(target.get(k)!=v for k,v in expected_target.items())
+                        or result.get('proxy',{}).get('target') != target):
+                    raise ValueError('P4/P5/P6 target metadata does not match its definition or saved result')
             targets[arm] = target
             for other, definition in targets.items():
                 # Families differ only in the raw target quantity and target index set.
