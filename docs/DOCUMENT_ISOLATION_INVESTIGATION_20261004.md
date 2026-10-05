@@ -566,3 +566,96 @@ Evidence:
   `temp/fa4-dense-numerical-review-20261005-a01/`.
 - Raw-source SHA256 values are retained in `source-manifest.json`; extracted
   files are reformatted JSON, so their byte hashes can differ from raw sources.
+
+## 11. Final-checkpoint same-weight checks passed (2026-10-05)
+
+This closes the final-checkpoint numerical gap described in Section10. On the
+user's request, both completed Arm A checkpoint-2500 models were strictly loaded
+and each was evaluated with both dense SDPA and FA4 at unchanged weights. The
+production Arm A source used for training was retained; the uncommitted
+revision-7 P1/P3 implementation was not deployed.
+
+### Method and acceptance
+
+`scripts/check_proxy_trained_attention.py` reuses the existing strict tied-weight
+loader, parameter fingerprinting, full-gradient comparison and numerical gates.
+Five focused CPU tests passed locally on the committed source snapshot and on
+B200. CPU preflight loaded both full checkpoints before GPU reclamation. The
+first512 documents from each original English train/validation split were packed
+using the shared EOS/document-segment functions; each split supplies16 sequences
+of2048 tokens. These are diagnostic batches from the real sources, not a replay
+of a particular optimizer update. Micro2 cases use prefixes of micro16, not
+independent additional datasets. Positions reset at each document boundary.
+
+Eight independent GPU cases: two checkpoints × train/validation × microbatch2/16.
+Each takes dense and FA4 BF16 forward/backward captures, then repeats both to
+measure within-backend variation. The four micro2 cases additionally use FP32
+math SDPA with TF32 disabled as a reference. FP32 micro16 was deliberately not
+run because its capacity has not been established. No optimizer was constructed,
+no checkpoint was overwritten, and no training was resumed.
+
+The unchanged gates are absolute loss<0.01, full-gradient relative L2<3%,
+hidden/logit relative L2<2%, and matching target counts. Logits are sampled every
+128th position; loss and parameter gradients use all valid targets. All gradients,
+losses and captured outputs were checked finite. All eight backend comparisons
+and all eight BF16-versus-FP32 comparisons (two backends × four cases) passed.
+
+### Production microbatch16 results
+
+| Checkpoint | Batch source | Absolute loss gap | Gradient relative L2 | Gradient cosine | Hidden relative L2 | Sampled-logit relative L2 |
+|---|---|---:|---:|---:|---:|---:|
+| Dense-trained | train | 0.00005198 | 1.2394% | 0.99992321 | 0.5047% | 0.2080% |
+| Dense-trained | validation | 0.00004745 | 0.7323% | 0.99997326 | 0.4982% | 0.2161% |
+| FA4-trained | train | 0.00006604 | 1.2730% | 0.99991900 | 0.5000% | 0.2056% |
+| FA4-trained | validation | 0.00000525 | 0.7598% | 0.99997122 | 0.4946% | 0.2119% |
+
+Across all eight cases (including micro2), backend gradient relative L2 spans
+0.6966–1.2730%, maximum absolute loss gap0.000279665, and minimum gradient cosine
+0.99991900. Production micro16 maximum loss gap is0.000066042.
+
+Micro2 FP32-reference gradient relative L2 ranges:
+- Dense BF16 versus FP32 math:0.9224–1.2157%.
+- FA4 BF16 versus FP32 math:0.9089–1.1907%.
+
+Both backends therefore have similar gradient accuracy against FP32 in these
+cases. Repeated captures at unchanged weights had identical forward outputs and
+losses. Backward gradients varied: dense-repeat relative L2=0.3120–0.5177%;
+FA4-repeat=0–0.2980%. This is whole-model backward variation, not a standalone
+attention-kernel nondeterminism measurement. It does not establish that FA4 is
+universally deterministic or more accurate.
+
+All in-memory parameter fingerprints were unchanged, and SHA256 of both source
+checkpoint files matched before/after the complete job. Peak allocated GPU memory
+was101.736GiB for micro16 and34.129GiB for micro2 including FP32 capture. No OOM or
+nonfinite result occurred. GPU cases and validation finished successfully in
+98.70seconds, at08:02:47UTC /16:02:47 Asia/Singapore.
+
+### Interpretation and handoff
+
+These results support numerical correctness of the current Arm A FA4 integration
+at the new final weights, alongside the similar2500-update convergence already
+measured. The separately trained models'63.3% maximum gradient-norm gap is not
+reproduced as a same-weight backend gradient error; their training trajectories
+have different learned weights. This test does not establish the precise cause
+of that trajectory gap or full-schedule/multiple-seed equivalence. FA4 validation
+for custom proxy arms remains separate. No additional baseline backend check is
+required for the question posed here.
+
+Accelerate config was copied and verified (eight GPUs, BF16). Known burn workers
+46080–46087 were identity-checked and stopped; all eight GPUs were verified free
+before the diagnostic. The supervisor restored the approved burn automatically
+at08:03:58UTC. Fresh08:05:22UTC inspection verified workers47839–47846, one per GPU,
+all100% utilization, all-rank readiness and newly advancing collective progress;
+the guard was released. Environments/drivers and training checkpoints were not
+modified. commands.sh was returned to#0 after retrieval.
+
+Launch commit:`e2b5bfa`; final monitor:`eae9f2c`. Remote output root:
+`/mnt/local/_outputs/deep-llms_th2/proxy-final-attention-check-20261005-a01`.
+Local evidence:
+- `temp/proxy-final-check-monitor-a02.log`, SHA256
+  `14b5295fb3667566f60a549b38c72e49c7669ad88a755d8bf7af992160055427`.
+- `temp/proxy-final-check-results-a01/`: extracted manifest, supervisor, run,
+  summary and burn receipts, with exact JSON byte hashes verified against the
+  remote artifact records.
+- Summary SHA256 matches the run manifest:
+  `d2e88f3eef4765fcc3fea379663c239d13ccec851ed34bc4022c1577f5b2ee95`.
