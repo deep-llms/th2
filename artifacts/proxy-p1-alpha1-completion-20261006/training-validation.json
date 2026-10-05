@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "steps": 2500,
+  "arms": [
+    {
+      "arm": "P1-block",
+      "peak_gib": 115.7625503540039,
+      "eval_lm_loss": 3.4823192569156207,
+      "receipts": [
+        "fa4-eval-20261005T154639156633Z.json",
+        "fa4-train-20261005T154649805794Z.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "path": "supervised/run/run.json",
+  "sha256": "da0d343007db4f1abccc6d0f66bab669015697493f114791dceaa7192545f5a3",
+  "value": {
+    "status": "ok",
+    "started_at": "2026-10-05T15:44:34.448333+00:00",
+    "jobs": [
+      {
+        "name": "smoke-seed-42-arm-P1-block",
+        "started_at": "2026-10-05T15:44:34.448688+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 78.56915291398764,
+        "artifacts": [
+          {
+            "path": "smoke/seed-42/P1-block/result.json",
+            "sha256": "7e420f08e97760b76a6de9b07d08058cd22795ec42d5c4f55b090cfd73210fe2",
+            "bytes": 7809
+          }
+        ],
+        "finished_at": "2026-10-05T15:45:53.544214+00:00"
+      },
+      {
+        "name": "smoke-seed-42-compare",
+        "started_at": "2026-10-05T15:45:53.544254+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 0.06391597900073975,
+        "artifacts": [
+          {
+            "path": "smoke/seed-42/comparison.json",
+            "sha256": "2b0a3180c0445638832795b71c5153e1fdc01cb1af3b31fdea14bbcaf7ad5c85",
+            "bytes": 1182
+          }
+        ],
+        "finished_at": "2026-10-05T15:45:53.609009+00:00"
+      },
+      {
+        "name": "smoke-compare-seeds",
+        "started_at": "2026-10-05T15:45:53.609028+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 0.06393219204619527,
+        "artifacts": [
+          {
+            "path": "smoke/comparison-seeds.json",
+            "sha256": "8f35b78ee5b07428e268f0baa0c483c340ad37c8600fcf1c1fd8c83aa644c3a9",
+            "bytes": 383
+          }
+        ],
+        "finished_at": "2026-10-05T15:45:53.673693+00:00"
+      },
+      {
+        "name": "validate-smoke",
+        "started_at": "2026-10-05T15:45:53.673710+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 1.31544971303083,
+        "artifacts": [
+          {
+            "path": "smoke/validation.json",
+            "sha256": "10002374d29abacae69e8ae6ffdf8329be4961ca766ded735879a3cca32a45b9",
+            "bytes": 295
+          }
+        ],
+        "finished_at": "2026-10-05T15:45:54.989815+00:00"
+      },
+      {
+        "name": "training-seed-42-arm-P1-block",
+        "started_at": "2026-10-05T15:45:54.989843+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 5976.716394888004,
+        "artifacts": [
+          {
+            "path": "training/seed-42/P1-block/result.json",
+            "sha256": "b8b2d8997cfaa1266d08023e743588bdbd30f99a18b006defd6d5b0e5ed49e4a",
+            "bytes": 7764
+          }
+        ],
+        "finished_at": "2026-10-05T17:25:32.224901+00:00"
+      },
+      {
+        "name": "training-seed-42-compare",
+        "started_at": "2026-10-05T17:25:32.224938+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 0.06398001394700259,
+        "artifacts": [
+          {
+            "path": "training/seed-42/comparison.json",
+            "sha256": "d5d202ca8150255df5bf93064a96ae4caa099d7c6bcb43166d2f83815425d315",
+            "bytes": 1189
+          }
+        ],
+        "finished_at": "2026-10-05T17:25:32.289819+00:00"
+      },
+      {
+        "name": "training-compare-seeds",
+        "started_at": "2026-10-05T17:25:32.289841+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 0.06391907704528421,
+        "artifacts": [
+          {
+            "path": "training/comparison-seeds.json",
+            "sha256": "ea42af918f62966873e19d5d68247ec6de6ede250b0bb2f8ce484863b5f432c7",
+            "bytes": 383
+          }
+        ],
+        "finished_at": "2026-10-05T17:25:32.354412+00:00"
+      },
+      {
+        "name": "validate-training",
+        "started_at": "2026-10-05T17:25:32.354430+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 1.4162135830847546,
+        "artifacts": [
+          {
+            "path": "training/validation.json",
+            "sha256": "cb53192a860f1c4bae7beffb80e01cb7b47411eb0b8d3022d9fd14422274ba35",
+            "bytes": 298
+          }
+        ],
+        "finished_at": "2026-10-05T17:25:33.771399+00:00"
+      }
+    ],
+    "finished_at": "2026-10-05T17:25:33.771434+00:00"
+  }
+}

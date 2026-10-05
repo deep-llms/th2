@@ -1,5 +1,28 @@
 # Project notes
 
+## P1 alpha-one finished; communicating burns restored (2026-10-06 Singapore)
+
+Read-only request c568290 acknowledged by controller. Fresh17:43:01UTC
+(01:43Singapore) snapshot confirms all queue jobs exit0, identical run/complete
+receipts, and passed production validator at exactly2500updates. Production
+finished17:25:32UTC /01:25:32Singapore, job5976.716s=99m37s.
+Held-out LM loss3.4823192569156207 versus previous P1-block3.477280233119416
+and A3.4771733830242613: worse by0.0050390/0.0051459 respectively in this
+single-seed comparison. Initial alpha1 alone did not improve held-out LM loss.
+Same saved recipe/fingerprints except alpha initialization. Peak115.7626GiB.
+Final validator checked checkpoint2500 model,optimizer,scheduler,all8RNGs,
+finite state and actual FA4 receipts. No training was resumed or launched.
+Supervisor verified all8GPUs free then restored communicating burn at
+17:26:44UTC /01:26:44Singapore. Latest snapshot workers123842–123849, guard
+released, burn cycles advancing960→1130 and payload1065.94→1254.70GiB/rank.
+Evidence:artifacts/proxy-p1-alpha1-completion-20261006 and
+temp/p1-alpha-finish-20261006-a01.log, SHA256
+6216067ba527494d36e24e194efdd43a7c18eb9241a17bb47f205e6ffb374e1c.
+Published snapshot filename/body followed the prior monitor format despite
+controller acknowledgment of c568290; results above are from that fresh snapshot.
+commands.sh returned#0. Values-only and shorter-target variants remain unrun.
+
+
 ## P1 routing and horizon variants (2026-10-06 Singapore)
 
 Use --proxy_kv_mode v for native queries/keys and proxy-enhanced selected

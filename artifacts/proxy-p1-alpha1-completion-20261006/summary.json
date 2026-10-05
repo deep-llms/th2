@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "steps": 2500,
+  "validation_lm_loss": 3.4823192569156207,
+  "baseline_a": 3.4771733830242613,
+  "previous_p1": 3.477280233119416,
+  "difference_vs_a": 0.005145873891359454,
+  "difference_vs_previous_p1": 0.005039023796204578,
+  "job_seconds": 5976.716394888004,
+  "finished_at": "2026-10-05T17:25:32.224901+00:00",
+  "burn_verified_at": "2026-10-05T17:26:44.624795+00:00",
+  "snapshot_time": "2026-10-05T17:43:01.374256+00:00",
+  "source_log_sha256": "6216067ba527494d36e24e194efdd43a7c18eb9241a17bb47f205e6ffb374e1c"
+}
