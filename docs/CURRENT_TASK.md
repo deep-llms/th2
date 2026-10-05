@@ -1,5 +1,35 @@
 # Current task
 
+## Authorized clean restart, P1/P3 first (2026-10-05)
+
+User explicitly requested stopping the active seed42 FA4 screen, removing its
+outputs and dataset cache-*/tmp-* files, then restarting with main P1/P3 first.
+Stop110b1b6 identity-rechecked supervisor85650 and sent SIGTERM via pidfd.
+Monitor5213e0e confirms terminal10:31:53UTC, all8 GPUs free before automatic
+burn restoration, communicating burn89414–89421 advancing and guard released.
+This is an intentional cancellation, not an unexplained training failure.
+
+Replacement root: /mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a02.
+Order: P1-block, P3-block, P1-lambda0, P3-lambda0, P1-flow, V1, V3.
+Same seed42,2500 updates each/all8 GPUs, full28600/warmup1430,micro16/GAS4,
+FA4 isolation/reset positions, unchanged baseline recipe and no resume.
+Completed A remains the comparison reference; source Arrow text is preserved.
+
+The first CPU job inside the replacement supervisor removes only old screena01
+and inspected English train/validation cache-*/tmp-* files. Inspection found325
+cache files (1,021,643,627,160bytes),351 source files. Fail-closed source inventory,
+symlink/open-file checks and source-preservation tests passed locally. This
+forces normal train.py tokenization/packing to rebuild, then later arms reuse
+that fresh cache. No separate data export. Small stop/cleanup receipts retained
+outside the deleted output under proxy-fa4-restart-control-20261005-a01.
+
+Launch copies/verifies Accelerate config, checks accelerate env and existing
+smoke/recipe evidence, safely reclaims only verified burns, checks all8 GPUs
+free, then performs cleanup and sequential training+validation. Automatic burn
+recovery after queue success/failure remains enabled. Relaunch submitted;
+actual cleanup/startup still needs remote verification. Historical a01 startup
+below is superseded; do not resume its weights.
+
 ## Seed-42 FA4 screen running (2026-10-05)
 
 Launchb88e455 deployed queue tooling7f9b2d9; startup monitor9215134 confirms the
