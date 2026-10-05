@@ -1,5 +1,37 @@
 # Project notes
 
+## FA4 A tests passed; production training verified (2026-10-05)
+
+Launch commit `90c5e11`, monitor `dfa465e`. At 13:22:22 Asia/Singapore
+(05:22:22 UTC), fresh FA4 A had reached update13, with eight train.py workers
+41445–41452 on all eight B200s. Recent update time 2.069s, finite loss/gradients.
+Root: `/mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-fa4-2500-20261005-a01`;
+production arm `supervised/run/baseline/seed-42/A`, cutoff2500. Not finished.
+
+Accelerate config copied to `/dev/shm/.cache/huggingface/accelerate/default_config.yaml`
+and `accelerate env` verified 8/BF16. Verified burn workers34928–34935 stopped;
+all eight GPUs had zero compute PIDs/memory at05:18:55 UTC before tests.
+No train_env/driver changes. attention_bench core package versions match.
+
+Production-model numerical gate passed: same weights/packed text, loss absolute
+difference0.0000419617, hidden relative L2 0.56898%, logits0.63636%, gradient
+relative L2 0.54365%, cosine0.99998523. Cross-document output and embedding-gradient
+leakage both exactly zero. This is a startup check, not a long-run equivalence claim.
+Separate eight-GPU three-update smoke passed: exact saved scientific config/data
+fingerprints match completed dense A after removing backend and smoke logging
+frequency; all8 RNG/optimizer/scheduler/model artifacts and FA4 forward/backward
+receipts verified. Peak allocated111264339456 bytes, eval loss12.1131795165.
+
+Supervisor will validate final artifacts and restore communicating eight-GPU
+burns after success/failure, provided the machine remains available and owned
+cleanup/free-GPU verification succeeds. No completion/burn restoration claimed yet.
+Expected output `supervised/supervisor.json` and `supervised/burn-verified.json`.
+commands.sh returned to#0; detached training continues. Next action: read-only
+status/collect after training, not another launch. Evidence:
+`temp/fa4-launch-receipt-20261005-a01.log` and
+`temp/fa4-startup-monitor-20261005-a01.log` (SHA256
+`6f5a56d0b57a4bfd5884f89be75d81f9873ea0b84c7989dcb1eec10d9190bc9d`).
+
 ## FA4 A launch requested (2026-10-05)
 
 User authorized testing and fresh training of A with FA4, matching the completed
