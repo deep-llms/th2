@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-proxy-final-attention-check-monitor-20261005-a01
+#th2-tjx3-proxy-final-attention-check-monitor-20261005-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
