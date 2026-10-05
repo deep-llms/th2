@@ -93,21 +93,26 @@ class ProxyTrainingTests(unittest.TestCase):
                 callback=ProxyCallback(1,32)
                 trainer=ProxyTrainer(model=m,args=args,train_dataset=Dataset.from_list(rows),
                     data_collator=isolated_data_collator,callbacks=[callback]);callback.trainer=trainer
-                snapshots=[];calls=[];original=m.update_mu;forward=m.forward
-                def update(sums,counts,initialize=False):
+                snapshots=[];variance_snapshots=[];inputs_seen=[];calls=[];original=m.update_statistics;forward=m.forward
+                def update(sums,squares,counts,initialize=None):
                     calls.append((initialize,counts.clone()))
-                    original(sums,counts,initialize=initialize)
+                    return original(sums,squares,counts,initialize=initialize)
                 def observed(*a,**kw):
-                    snapshots.append(m.mu.clone());out=forward(*a,**kw)
+                    snapshots.append(m.mu.clone());variance_snapshots.append(m.sigma2.clone())
+                    inputs_seen.append(a[0].input_ids.clone());out=forward(*a,**kw)
                     if kw.get('compute_auxiliary_losses'):
                         self.assertFalse(out['aux_sum'].requires_grad)
                     return out
-                with patch.object(m,'update_mu',side_effect=update),patch.object(m,'forward',side_effect=observed):
+                with patch.object(m,'update_statistics',side_effect=update),patch.object(m,'forward',side_effect=observed):
                     trainer.train()
-                self.assertEqual([first for first,_ in calls],[True,False])
+                self.assertEqual([first for first,_ in calls],['mean','variance',None])
                 self.assertTrue(torch.equal(calls[0][1],torch.full_like(calls[0][1],8)))
-                self.assertTrue(torch.equal(calls[1][1],torch.full_like(calls[1][1],32)))
-                for value in snapshots[2:]:torch.testing.assert_close(value,snapshots[1],rtol=0,atol=0)
+                self.assertTrue(torch.equal(calls[2][1],torch.full_like(calls[2][1],32)))
+                for value in snapshots[3:]:torch.testing.assert_close(value,snapshots[2],rtol=0,atol=0)
+                self.assertEqual(len(inputs_seen),6)  # Two bootstrap passes plus four real microbatches.
+                for value in inputs_seen[1:3]:torch.testing.assert_close(value,inputs_seen[0],rtol=0,atol=0)
+                for value in variance_snapshots[3:]:torch.testing.assert_close(value,variance_snapshots[2],rtol=0,atol=0)
+                self.assertTrue(torch.equal(calls[1][1],torch.full_like(calls[1][1],8)))
                 self.assertIsNone(trainer.center_totals)
 
     def test_queue_three_seeds_all_arms_and_native_parser(self):
@@ -237,7 +242,7 @@ class ProxyTrainingTests(unittest.TestCase):
             with self.assertRaises(ValueError):parse_baselines(values)
         with self.assertRaises(ValueError):jobs('proxy_heads.b200.json',seeds=[1042],reuse_baselines=reused)
 
-    def test_report_mask_matching_and_external_baseline(self):
+    def test_report_target_matching_and_external_baseline(self):
         import copy
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);arms=('A','V1','P1-lambda0','P1-block','P3-block')
@@ -247,11 +252,16 @@ class ProxyTrainingTests(unittest.TestCase):
                 path.mkdir(parents=True)
                 proxy=arm.startswith('P')
                 config=dict(pilot=dict(arm=arm,proxy_screen=True,checkpoint_layers=False,
-                    checkpoint_lm=False,checkpoint_aux=False,proxy_channel_mask='/mask.json' if proxy else None),
-                    proxy_mask=dict(source='/mask.json',sha256='mask-one',excluded_channels=[7]) if proxy else
-                        dict(source='none; no calibration checkpoint supplied',excluded_channels=[]),
+                    checkpoint_lm=False,checkpoint_aux=False,proxy_channel_mask=None),
+                    proxy_mask=dict(source='none; no calibration checkpoint supplied',excluded_channels=[]),
                     training=dict(max_steps=10,seed=seed,data_seed=seed,learning_rate=.001),
                     data=dict(eval_rows=2),tokens_per_update=16,train_fingerprint=str(seed),eval_fingerprint='fixed')
+                if proxy:
+                    config['pilot'].update(proxy_target_version='r7',proxy_variance_floor=.01,
+                        proxy_target_clip=10.,proxy_momentum=.99,proxy_loss_form='cosine')
+                    config['proxy_target']=dict(target_version='r7',variance_floor=.01,clip=10.,momentum=.99,
+                        loss_form='cosine',quantity='mlp_window_sum' if arm.startswith('P1') else 'deep_band_increment',
+                        bands=[2] if arm.startswith('P1') else [[2,4]])
                 evaluation=dict(eval_rows=2,eval_lm_loss=3.)
                 result=dict(arm=arm,global_step=3,schedule_steps=10,input_tokens=48,status='stopped',
                             evaluation=evaluation,training_cost={})
@@ -265,7 +275,7 @@ class ProxyTrainingTests(unittest.TestCase):
             before={p.name:p.read_bytes() for p in external.iterdir()}
             summary=report(root/'seed-42',arms,baseline_dir=external,expected_seed=42,expected_step=3)
             self.assertEqual(summary['reused_baseline'],str(external))
-            self.assertEqual(set(summary['proxy_masks']),{'P1-lambda0','P1-block','P3-block'})
+            self.assertEqual(set(summary['proxy_targets']),{'P1-lambda0','P1-block','P3-block'})
             report_seeds(root,arms,[42,1042],{42:external})
             self.assertEqual(before,{p.name:p.read_bytes() for p in external.iterdir()})
             for kwargs in ({'expected_seed':1042},{'expected_step':4}):
@@ -276,16 +286,16 @@ class ProxyTrainingTests(unittest.TestCase):
                 changed=copy.deepcopy(original);changed['pilot'][field]=value
                 target.write_text(json.dumps(changed))
                 with self.assertRaises(ValueError):report(root/'seed-42',arms,baseline_dir=external)
-            changed=copy.deepcopy(original);changed['proxy_mask']['sha256']='mask-two'
+            changed=copy.deepcopy(original);changed['proxy_target']['clip']=9.
             target.write_text(json.dumps(changed))
-            with self.assertRaisesRegex(ValueError,'channel mask'):report(root/'seed-42',arms,baseline_dir=external)
+            with self.assertRaisesRegex(ValueError,'target'):report(root/'seed-42',arms,baseline_dir=external)
             target.write_text(json.dumps(original))
             # Even when A is the first arm, masks must match across seeds as well.
             for arm in arms:
                 if not arm.startswith('P'):continue
                 target=root/f'seed-1042/{arm}/train_config.json';changed=json.loads(target.read_text())
-                changed['proxy_mask']['sha256']='mask-two';target.write_text(json.dumps(changed))
-            with self.assertRaisesRegex(ValueError,'Seed runs differ in proxy channel mask'):
+                changed['proxy_target']['clip']=9.;changed['pilot']['proxy_target_clip']=9.;target.write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError,'Seed runs differ in proxy target definition'):
                 report_seeds(root,arms,[42,1042],{42:external})
 
 

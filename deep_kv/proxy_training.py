@@ -1,4 +1,4 @@
-"""Small HF Trainer adapters for proxy targets, step-level centering and metrics."""
+"""Small HF Trainer adapters for proxy targets, step-level normalization and metrics."""
 import time
 import numpy as np
 import torch
@@ -15,12 +15,14 @@ def summarize_proxy(statistics, model):
     result = dict(lm_loss=lm/targets,loss=lm/targets,input_tokens=int(totals[-1]),
                   target_tokens=int(targets),rows=len(values))
     if auxiliary_count:
-        cosines = np.asarray(rest[:-1])/auxiliary_count
-        result['aux_loss'] = float((1-cosines).mean())
+        size = len(model.layers)*(3 if model.family == 'P3' else 1)
+        cosines = np.asarray(rest[:size])/auxiliary_count
+        losses = np.asarray(rest[size:-1])/auxiliary_count
+        result['aux_loss'] = float(losses.mean())
         width = 3 if model.family == 'P3' else 1
         for index, layer in enumerate(model.layers):
             row = cosines[index*width:(index+1)*width]
-            result[f'proxy_layer_{layer}_aux_loss'] = float((1-row).mean())
+            result[f'proxy_layer_{layer}_aux_loss'] = float(losses[index*width:(index+1)*width].mean())
             for c, cosine in enumerate(row):
                 result[f'proxy_layer_{layer}_cosine_{c}'] = float(cosine)
     return result
@@ -34,10 +36,10 @@ class ProxyCallback(PilotCallback):
         trainer = self.trainer
         model = trainer.model
         if trainer.center_totals is not None:
-            sums, counts = trainer.center_totals
-            sums = trainer.accelerator.reduce(sums,reduction='sum')
-            counts = trainer.accelerator.reduce(counts,reduction='sum')
-            model.update_mu(sums,counts)
+            sums, squares, counts, clipped = [trainer.accelerator.reduce(value,reduction='sum')
+                                               for value in trainer.center_totals]
+            trainer.normalization_metrics = model.update_statistics(sums,squares,counts)
+            trainer.normalization_metrics['clip_fraction'] = clipped/(counts*model.mu.shape[-1])
             trainer.center_totals = None
         if args.device.type == 'cuda':
             torch.cuda.synchronize(args.device)
@@ -50,6 +52,10 @@ class ProxyCallback(PilotCallback):
             logs.update({f'step_{k}':v for k,v in self.latest.items() if k.startswith('proxy_') or k=='aux_loss'})
             logs['seconds_per_update'] = self.seconds_per_update
             logs['proxy_lambda'] = self.trainer.model.auxiliary_weight(max(0,state.global_step-1))
+            for metric, values in self.trainer.normalization_metrics.items():
+                for key, value in zip(self.trainer.model.mean_layers,values.detach().cpu().tolist()):
+                    suffix = str(key) if isinstance(key,int) else f'{key[0]}_deep_{key[1]}'
+                    logs[f'target_layer_{suffix}_{metric}'] = value
             for name, head in self.trainer.model.heads.items():
                 for c, value in enumerate(head.alpha.detach().abs().mean(-1)):
                     logs[f'proxy_layer_{name}_mean_abs_alpha_{c}'] = float(value)
@@ -62,6 +68,7 @@ class ProxyTrainer(DeepKVTrainer):
         # All proxy-screen arms, including A/V, use global token denominators.
         self.model_accepts_loss_kwargs = True
         self.center_totals = None
+        self.normalization_metrics = {}
 
     def log(self,logs,start_time=None):
         # Enrich before HF copies log_history and dispatches W&B callbacks.
@@ -88,14 +95,15 @@ class ProxyTrainer(DeepKVTrainer):
 
     def training_step(self,model,inputs,num_items_in_batch=None):
         if not bool(self.model.mu_initialized):
-            # Same first microbatch, no loader advancement, no RNG-dependent modules.
+            # Reuse exactly the same prepared microbatch and weights for both passes.
             prepared = self._prepare_inputs(inputs)
-            with torch.no_grad(), self.accelerator.autocast(), self.compute_loss_context_manager():
-                outputs = model(self.context(prepared),compute_auxiliary_losses=False,
-                                auxiliary_grad=False,collect_target_statistics=True)
-            sums = self.accelerator.reduce(outputs['center_sums'],reduction='sum')
-            counts = self.accelerator.reduce(outputs['center_counts'],reduction='sum')
-            self.model.update_mu(sums,counts,initialize=True)
+            for phase in ('mean','variance'):
+                with torch.no_grad(), self.accelerator.autocast(), self.compute_loss_context_manager():
+                    outputs = model(self.context(prepared),compute_auxiliary_losses=False,
+                                    auxiliary_grad=False,collect_target_statistics=True,statistics_mode=phase)
+                sums, squares, counts = [self.accelerator.reduce(outputs[key],reduction='sum')
+                                         for key in ('center_sums','center_squares','center_counts')]
+                self.model.update_statistics(sums,squares,counts,initialize=phase)
         return super().training_step(model,inputs,num_items_in_batch)
 
     def compute_loss(self,model,inputs,return_outputs=False,num_items_in_batch=None):
@@ -106,7 +114,7 @@ class ProxyTrainer(DeepKVTrainer):
         compute_aux = bool(self.model.family and (not training or weight>0 or diagnostic))
         outputs = model(self.context(inputs),compute_auxiliary_losses=compute_aux,
                         auxiliary_grad=model.training and weight>0,
-                        collect_target_statistics=training and self.model.settings.target_centering)
+                        collect_target_statistics=training and bool(self.model.family))
         counts = (num_items_in_batch if num_items_in_batch is not None else
                   torch.stack((outputs['lm_count'],outputs['aux_count'])))
         loss = outputs['lm_sum']/counts[0].clamp_min(1)
@@ -119,12 +127,12 @@ class ProxyTrainer(DeepKVTrainer):
         if training:
             values = outputs['statistics'].sum(0)
             self.step_totals = values if self.step_totals is None else self.step_totals+values
-            if self.model.family and self.model.settings.target_centering:
-                sums,counts = outputs['center_sums'],outputs['center_counts']
+            if self.model.family:
+                moments = tuple(outputs[key] for key in ('center_sums','center_squares','center_counts','clip_counts'))
                 if self.center_totals is None:
-                    self.center_totals = (sums.clone(),counts.clone())
+                    self.center_totals = tuple(value.clone() for value in moments)
                 else:
-                    self.center_totals[0].add_(sums);self.center_totals[1].add_(counts)
+                    for total,value in zip(self.center_totals,moments):total.add_(value)
         if self._active_sdpa_audit is not None and loss.requires_grad:
             loss.register_hook(self._active_sdpa_audit.backward_marker)
         return (loss,outputs) if return_outputs else loss

@@ -1,6 +1,6 @@
 # P1/P3 implementation and validation
 
-Implements [revision 4 of the proxy-head specification](proxy_heads_P1_P3_spec_v3.md).
+Implements [revision 7 of the proxy-head specification](proxy_heads_P1_P3_spec_v3.md).
 The user confirmed dense SDPA and document-local position IDs. This is a new
 screening series; previous non-isolated A–G checkpoints are not matched controls.
 No B200 experiment was launched during implementation.
@@ -10,7 +10,7 @@ No B200 experiment was launched during implementation.
 `deep_kv/proxy.py` adds a model adapter to the existing Qwen backbone. P1 replaces
 the last two KV groups in eligible even layers using a gated estimate of a future
 MLP-output sum. P3 uses three document-reset exponential moving sums and full-width
-deep-band targets. Queries and the K/V projection parameters remain native; the
+deep-band increment targets. Queries and the K/V projection parameters remain native; the
 model makes one SDPA call per layer. GQA ordering, QK normalization and RoPE follow
 Qwen. Gates start at zero; estimator weights use normal initialization.
 
@@ -25,18 +25,41 @@ throughput audit is useful background, **not validation of this new boolean-mask
 proxy implementation**. The existing first-train/first-eval runtime audit remains
 enabled and will record actual GPU dispatch on the next launch.
 
-`deep_kv/proxy_training.py` supplies only the additional loss, centering and logging
+`deep_kv/proxy_training.py` supplies only the additional loss, normalization and logging
 adapters. Optimizer, scheduler, dataloader, accumulation, distributed execution,
 saving, resume and stopping remain HF Trainer/Accelerate through `train.py`.
 No extra data-export or preprocessing command is required.
 
-Centering means bootstrap from each rank's first microbatch, then update once per
-optimizer step after all-reducing detached sums/counts. Means stay fixed within
-the step and during checkpoint recomputation. Lambda-zero controls also update
-means, but compute diagnostic cosines under no-grad only at logging intervals.
-All means, decay constants and channel masks are checkpoint buffers. Alpha gates
-have zero weight decay. Block auxiliary gradients reach only estimator parameters;
-flow auxiliary gradients also reach the backbone. Targets are detached.
+Targets use per-channel running standardization, relative variance floor 0.01,
+clipping at ±10, epsilon 1e-6 and momentum 0.99. Cosine remains the default;
+`proxy_loss_form=smooth_l1` is an opt-in ablation (beta=1), not part of the default
+screen. No static channel mask or external calibration is used. The old mask
+argument and disabled-centering option fail explicitly instead of silently
+changing the new method.
+
+P1 normalizes each detached FP32 MLP window sum. P3 subtracts the detached
+FP32 input residual `h[layer-1]` from each deep-band state, normalizes each
+increment with its own `(proxy_layer, deep_layer)` statistics, averages the
+normalized increments, then applies the same document-reset EMS as the estimator.
+The default P1/P3 buffers contain 12/58 mean-variance pairs respectively.
+
+Initialization uses two no-grad forwards on exactly the first training
+microbatch of each rank: globally reduced means, then globally reduced squared
+deviations. It does not advance the loader or optimizer and skips the unneeded
+vocabulary projection. Shifted sums, squares and counts accumulate once in the
+original forward, outside checkpointed functions. After all accumulation
+microbatches, all-reduce and update once per optimizer step. Variance is the EMA
+of **per-step** variances, not pooled historical variance. Statistics remain
+frozen during the step, backward recomputation and evaluation. Lambda-zero arms
+initialize/update the same statistics but calculate no-grad diagnostic cosines
+only at logging intervals. Mean, variance and initialization state are checkpoint
+buffers. Alpha gates have zero weight decay; targets remain detached.
+
+Each normalization buffer logs clipping fraction, floored-channel count, median
+variance, normalized mean lag and step/running variance ratio. Lag ratios use FP64 and guard exactly zero variance with the smallest
+normal FP32 value to keep dead-channel diagnostics finite. These metrics
+describe the pre-update statistics used by the last optimizer step in the log
+interval. Investigation thresholds in the spec are not automatic stopping rules.
 
 P3 uses the specified two-level chunkwise scan: local 64×64 products, chunk-end
 products and carry terms, in FP32. It builds coefficient/mask tensors once per
@@ -146,27 +169,35 @@ passed in 142.696 s (temp/fa4-baseline-full-20261005-a01.log). The queue manifes
 passed the runner loader. A separate checkpoint-enabled receipt check verified
 recomputation and query-gradient callbacks.
 
-Actual FA4 CUDA numerical behavior/throughput for this new production path still
-requires a B200 smoke test. No GPU training is launched by implementation tests.
+The production FA4 A path subsequently passed B200 numerical/smoke checks and
+was launched separately; see CURRENT_TASK.md. No GPU job is launched by these tests.
 
 ## Reusing a completed baseline
 
-Reports ignore channel-mask settings only for the computation of vanilla A/V
-controls. Both the mask path and full receipt must match between every P1/P3
-arm (including lambda-zero controls), and across seeds. All other recipe fields,
-including checkpointing flags, dataset fingerprints and stopping steps remain
-strict. This does not relax checkpoint-resume validation.
+Reports compare the shared scientific recipe strictly (including attention,
+data fingerprints, schedule, execution settings and cutoff). Target metadata is
+irrelevant for A/V, so a matching completed dense A remains usable. Proxy arms
+must use r7 and matching normalization/loss settings. Within each family, target
+quantity and index sets must also match, including lambda-zero controls. Checks
+also apply across seeds. FA4 A remains a separate backend comparison.
+
+The saved config records target_version=r7, raw target quantity, complete target
+index sets, k, floor, clip, epsilon, momentum and loss form. Strict resume rejects
+older definitions or changed hyperparameters, including with the performance-only
+override. No target-migration override is provided. A/V retain their historical
+saved config and state layout; their unused legacy all-ones mask buffer has no
+role in r7 proxy target normalization.
 
 To reuse an existing A without copying weights or altering its saved config:
 
 ```bash
-python -m deep_kv make-jobs --config /local/calibrated-screen-recipe.json \
+python -m deep_kv make-jobs --config proxy_heads.b200.json \
   --reuse-baseline 42=/local/completed-baseline/seed-42/A \
   --output temp/proxy-screen-jobs.json
 ```
 
-The supplied recipe should be a copy of `proxy_heads.b200.json` with the shared
-`proxy_channel_mask` path set after calibration. Paths above are placeholders.
+The supplied recipe is the ordinary screen recipe; no calibration is required.
+The reused baseline path above is a placeholder.
 `--reuse-baseline` accepts `SEED=/absolute/path/to/A` entries for selected seeds.
 The queue validates the reused baseline's completion artifacts, seed and cutoff,
 skips only that seed's A training, and includes it in both reports. With one
@@ -179,31 +210,56 @@ Standalone reports accept `report --baseline-dir /path/to/A`; `report-seeds`
 accepts the same `--reuse-baseline SEED=/path/to/A` mapping as queue generation.
 The report records the external baseline path; source artifacts are read-only.
 
-## Optional channel calibration
+## Historical calibration utility
 
-Without a calibration file, the code explicitly logs an empty exclusion set.
-The specification permits that fallback only when no checkpoint is available.
-A trained isolated baseline now exists, so calibrate it before the proxy screen.
-`scripts/calibrate_proxy_mask.py` can create one from a local trained original
-arm-A checkpoint (either DeepKV or ProxyModel), using isolated text packing
-and approximately 1M tokens. Loading is strict; proxy block outputs are observed
-directly, since decoder forward hooks do not fire on the ProxyModel path.
-Calibration requires every block to account for every processed token:
+`scripts/calibrate_proxy_mask.py` is retained for inspecting earlier experiments.
+Its output is not accepted by revision-7 training. Do not run it as a prerequisite
+for the current screen.
 
-```bash
-python -m scripts.calibrate_proxy_mask \
-  --checkpoint /local/old-A/model.safetensors --config /local/model/config.json \
-  --tokenizer /local/model --data-dir /local/english/train \
-  --tokens 1048576 --output /local/proxy-channel-mask.json
-```
+## Revision-7 validation (2026-10-05)
 
-Paths above are placeholders. Add `--device cuda --bf16` only for an approved GPU
-calibration run. Pass the result as `proxy_channel_mask` in the shared recipe.
-The file records per-block statistics and source hashes; the training recipe
-records the mask SHA256. Changing it on resume is rejected. No calibration job
-or checkpoint download was started here.
+All 136 offline regression tests passed in132.101s. A final focused six-test run
+passed in4.841s, covering the additional BF16-statistics check, two-pass startup,
+frozen accumulation buffers and zero-variance diagnostic guard. The full-depth
+independent reference now checks P3 increments and all58 statistics pairs, not
+the former normalized full-state targets. Logs:
+`temp/proxy-r7-full-tests-20261005-a01.log`,
+`temp/proxy-r7-final-t9-tests-a02.log`.
 
-## Validation evidence and limits
+T9 FP32/FP64 maximum relative errors over500 updates: mean8.77e-7 and variance
+1.89e-6. After1000 updates with4096 tokens each, a100000-token stationary held-out
+batch had max absolute channel mean0.007692 and variance[0.987434,1.010180].
+Clipping/variance-floor behavior, target detachment, frozen recomputation/eval,
+BF16 compute with FP32 moments/loss, and exact saved-buffer/next-target replay pass.
+
+Two-process CPU training covers A, P1-flow, P3-block and P3-lambda0. Resumed versus
+uninterrupted weights and buffers match bitwise; mean/variance buffers also match
+bitwise between ranks. Accumulated distributed loss gradients match a single
+global batch within3.73e-9. Receipt:
+`temp/proxy-r7-ddp-20261005-a01/verified.json`.
+The distributed worker accepts any rank count>=2 and now uses FP32 for strict
+bitwise resume checks. Existing older eight-rank BF16 evidence below belongs to
+revision4. Full-size B200 capacity, dispatch and throughput for revision7 still
+need a separate smoke test before screening. This implementation was tested only
+on the dev machine and was not pushed to the execution remote.
+
+### Follow-up review
+
+All138 offline tests passed in144.624s (`temp/proxy-r7-review-full-a01.log`).
+The additional test verifies unequal-size microbatch pooling and distinguishes
+within-step variance from variation between historical step means. Eight CPU
+ranks passed (`temp/proxy-r7-review-ddp8-a02/verified.json`): input order and
+pre-interruption checkpoints match exactly, normalization buffers match bitwise
+immediately after updates (before DDP can broadcast them) and after resume.
+Resumed **parameters** differ by at most3.73e-9, including vanilla A; global-batch
+versus distributed gradients differ by at most3.73e-9. The worker therefore keeps
+buffers exact and separately bounds/reports parameter roundoff (rtol2e-6,
+atol2e-8). The initial all-parameter bitwise assertion failed on A and was
+corrected after measuring the difference. Two-rank bitwise behavior should not
+be generalized to all distributed runs. Production training code was unchanged
+by this review; full-size GPU validation is still pending.
+
+## Earlier revision-4 validation (historical)
 
 Local tests use tiny randomly initialized models and synthetic text in the pinned
 `sampling_b200` environment. They do not estimate research gains.
@@ -274,3 +330,28 @@ and global-gradient checks also passed (`temp/proxy-review-ddp-a01/verified.json
 maximum resumed-state difference 1.862645149230957e-9 and global-gradient
 difference 3.725290298461914e-9, with identical centering buffers across ranks.
 Compilation and whitespace checks passed. No B200 workload was started.
+
+## FA4 extension (2026-10-05)
+
+Following the operator's acceptance of the Arm A FA4 evidence, the same
+`attention_backend=fa4` interface now supports V1/V3 and all P1/P3 variants.
+The native/replaced K/V projections, QK normalization, RoPE, target normalization,
+EMS, losses and Trainer remain shared. FA4 replaces only the final attention
+operation, using one document-fragment layout per microbatch. EOS ownership,
+position resets, and next-document target masking remain unchanged.
+
+The CLI default remains SDPA for compatibility. Select FA4 explicitly in a recipe
+and select the proxy arms explicitly in `make-jobs`; the standalone FA4 baseline
+recipe still defaults to A. A matched screen must use one backend across all arms.
+Backend changes on resume and reuse of a dense baseline in an FA4 queue are refused.
+FA4 stays pinned to 4.0.0b33 with no fallback. Training receipts now check Q, K and V
+backward calls, including the replaced groups.
+
+Local CPU tests use an independent per-document attention oracle, including
+nonzero proxy gates, all routes and lambda-zero controls, auxiliary-only routing,
+loss/parameter-gradient agreement, frozen normalization buffers, checkpoint
+recomputation, isolation and exact native Trainer save/resume. These do not test
+the CUDA kernel. `scripts/check_fa4_proxy.py` supplies separate full-model B200
+numerical checks and artifact validation for three-step, eight-GPU Trainer smokes.
+B200 execution and outcomes will be recorded after verification; no full screen
+is launched by this validation task.

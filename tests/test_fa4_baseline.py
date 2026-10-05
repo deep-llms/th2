@@ -109,13 +109,12 @@ class FA4BaselineTests(unittest.TestCase):
         self.assertEqual(len(training),1)
         self.assertIn('--attention_backend',training[0]['argv'])
         self.assertEqual(training[0]['gpus'],list(range(8)))
-        with self.assertRaisesRegex(ValueError,'only arm A'):
-            jobs('baseline_a_fa4.b200.json',arms=('A','P1-block'))
+        training=[job for job in jobs('baseline_a_fa4.b200.json',arms=('A','P1-block','P3-flow'),seeds=[42])['jobs'] if 'gpus' in job]
+        self.assertEqual(len(training),3)
+        with self.assertRaisesRegex(ValueError,'proxy-screen arms'):
+            jobs('baseline_a_fa4.b200.json',arms=('A','B'))
         with self.assertRaisesRegex(ValueError,'do not reuse'):
             jobs('baseline_a_fa4.b200.json',reuse_baselines={42:'/old/A'})
-        with self.assertRaisesRegex(ValueError,'only for vanilla arm A'):
-            ProxyModel.from_scratch(cfg(),'P1-block',consumer=2,deep_target=8,
-                proxy_settings=settings(),attention_backend='fa4')
         # Dense recipes omit the default field, preserving historical resume identity.
         previous=dict(pilot=dict(arm='A'),training={})
         requested=copy.deepcopy(previous);requested['pilot']['attention_backend']='fa4'

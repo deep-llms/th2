@@ -1,4 +1,4 @@
-"""Revision-4 proxy contract: local CPU acceptance, no GPU workload or real-data training."""
+"""Revision-7 proxy contract: local CPU acceptance, no GPU workload or real-data training."""
 import copy
 import tempfile
 import unittest
@@ -202,24 +202,25 @@ class ProxyHeadTests(unittest.TestCase):
         for arm in ('P1-block','P1-flow','P3-block','P3-flow'):
             a=model(arm);b=model(arm,checkpoint=True);b.load_state_dict(a.state_dict())
             for m in (a,b):
-                out=m(batch(),collect_target_statistics=True)
-                m.update_mu(out['center_sums'],out['center_counts'],initialize=True)
+                for phase in ('mean','variance'):
+                    out=m(batch(),compute_auxiliary_losses=False,collect_target_statistics=True,statistics_mode=phase)
+                    m.update_statistics(out['center_sums'],out['center_squares'],out['center_counts'],initialize=phase)
                 before=m.mu.clone();out=m(batch(),collect_target_statistics=True)
                 objective(m,out).backward()
                 torch.testing.assert_close(m.mu,before,rtol=0,atol=0)
-                expected=.99*before+.01*out['center_sums']/out['center_counts'][:,None]
-                m.update_mu(out['center_sums'],out['center_counts'])
+                expected=before+.01*out['center_sums']/out['center_counts'][:,None]
+                m.update_statistics(out['center_sums'],out['center_squares'],out['center_counts'])
                 torch.testing.assert_close(m.mu,expected)
             for (name,p),(_,q) in zip(a.named_parameters(),b.named_parameters()):
                 if p.grad is None:self.assertIsNone(q.grad,name)
                 else:torch.testing.assert_close(p.grad,q.grad,rtol=1e-5,atol=1e-6,msg=name)
             torch.testing.assert_close(a.mu,b.mu,rtol=0,atol=0)
 
-    def test_hidden_states_uses_proxy_path_and_masked_normalization(self):
+    def test_hidden_states_uses_proxy_path_and_channel_standardization(self):
         for arm in ('P1-block','P3-block'):
             m=model(arm).eval();ctx=batch()
             with torch.no_grad():
-                m.channel_mask[0]=False
+                m.sigma2.fill_(4.)
                 m.mu.fill_(.25)
                 for head in m.heads.values():head.alpha.fill_(.2)
                 hidden,_,_=m.hidden_states(ctx)
@@ -228,8 +229,7 @@ class ProxyHeadTests(unittest.TestCase):
                 with m.without_proxy():native,_,_=m.hidden_states(ctx)
                 self.assertGreater((hidden-native).abs().max().item(),1e-5)
                 raw=torch.arange(32,dtype=torch.float32).view(1,1,32)
-                expected=raw-.25;expected[:,:,0]=0
-                expected=expected/torch.sqrt(expected.square().sum(-1,keepdim=True)/31+1e-6)
+                expected=((raw-.25)/(4.+1e-6)**.5).clamp(-10,10)
                 normalized=m.normalize_target(raw,m.mean_layers[0])
                 torch.testing.assert_close(normalized,expected)
                 self.assertFalse(normalized.requires_grad)
@@ -294,7 +294,7 @@ class ProxyHeadTests(unittest.TestCase):
             m=ProxyModel.from_scratch(config,arm,consumer=2,deep_target=28,proxy_settings=opt,
                 checkpoint_layers=False,checkpoint_aux=False,checkpoint_lm=False)
             with torch.no_grad():
-                m.mu.normal_(0,.05);m.channel_mask[[0,4]]=False
+                m.mu.normal_(0,.05);m.sigma2.uniform_(.01,.1)
                 for head in m.heads.values():head.alpha.fill_(.15)
             blocks={};original=m.block
             def capture(index,*args):
@@ -303,8 +303,8 @@ class ProxyHeadTests(unittest.TestCase):
                 actual=m(ctx,collect_target_statistics=True)
             def normalized(x,layer):
                 centered=x.detach().float()-m.mu[m.mean_index[layer]]
-                kept=centered[...,m.channel_mask]
-                return centered*m.channel_mask/torch.sqrt(kept.square().mean(-1,keepdim=True)+1e-6)
+                variance=m.sigma2[m.mean_index[layer]]
+                return (centered/torch.sqrt(variance.clamp_min(.01*variance.median())+1e-6)).clamp(-10,10)
             def sequential(x,gamma):
                 state=torch.zeros_like(x[:,0]);values=[]
                 for token in range(x.shape[1]):
@@ -320,20 +320,24 @@ class ProxyHeadTests(unittest.TestCase):
                 if m.family=='P1':
                     raw=sum(blocks[i][1].float() for i in range(layer,layer+4))
                     targets=(normalized(raw,layer),);predictions=(prediction,)
-                    torch.testing.assert_close(actual['center_sums'][m.mean_index[layer]],raw.sum((0,1)))
+                    torch.testing.assert_close(actual['center_sums'][m.mean_index[layer]],(raw-m.mu[m.mean_index[layer]]).sum((0,1)))
                 else:
                     band=list(range(layer+2,min(layer+6,28)+1))
-                    raw=torch.stack([normalized(blocks[i][0],i) for i in band]).mean(0)
+                    raw=torch.stack([normalized(blocks[i][0].detach().float()-blocks[layer-1][0].detach().float(),(layer,i)) for i in band]).mean(0)
                     targets=tuple(sequential(raw,g) for g in m.gamma)
                     predictions=tuple(F.linear(sequential(p,g),projection.weight)
                         for p,g,projection in zip(prediction.chunk(3,-1),m.gamma,head.projections))
-                losses.extend((1-F.cosine_similarity(p*m.channel_mask,t.detach(),dim=-1,eps=1e-6)).mean()
+                losses.extend((1-F.cosine_similarity(p,t.detach(),dim=-1,eps=1e-6)).mean()
                               for p,t in zip(predictions,targets))
             expected=torch.stack(losses).mean()
             torch.testing.assert_close(actual['aux_sum']/actual['aux_count'],expected,rtol=1e-5,atol=1e-6)
             if m.family=='P3':
-                for layer in range(4,29):
-                    torch.testing.assert_close(actual['center_sums'][m.mean_index[layer]],blocks[layer][0].detach().sum((0,1)))
+                self.assertEqual(len(m.mean_layers),58)
+                for proxy,deep in m.mean_layers:
+                    raw=blocks[deep][0].detach().float()-blocks[proxy-1][0].detach().float()
+                    shifted=raw-m.mu[m.mean_index[(proxy,deep)]]
+                    torch.testing.assert_close(actual['center_sums'][m.mean_index[(proxy,deep)]],shifted.sum((0,1)))
+                    torch.testing.assert_close(actual['center_squares'][m.mean_index[(proxy,deep)]],shifted.square().sum((0,1)))
             parameters=list(m.named_parameters())
             a=torch.autograd.grad(actual['aux_sum']/actual['aux_count'],[p for _,p in parameters],retain_graph=True,allow_unused=True)
             b=torch.autograd.grad(expected,[p for _,p in parameters],allow_unused=True)

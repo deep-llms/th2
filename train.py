@@ -14,7 +14,6 @@ os.environ.setdefault("NCCL_NVLS_ENABLE", "0")
 import json
 import logging
 import copy
-import hashlib
 from datetime import datetime, timezone
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -73,7 +72,12 @@ class PilotArguments:
     proxy_chunk_size: int = 64
     proxy_lambda_max: float = .1
     proxy_warmup_steps: int = 250
-    proxy_target_centering: bool = True
+    proxy_target_centering: bool = True  # Legacy CLI: False is no longer supported.
+    proxy_target_version: str = 'r7'
+    proxy_variance_floor: float = .01
+    proxy_target_clip: float = 10.
+    proxy_momentum: float = .99
+    proxy_loss_form: str = 'cosine'
     proxy_decay_start: int | None = None
     proxy_decay_end: int | None = None
     proxy_channel_mask: str | None = None
@@ -145,9 +149,9 @@ def main():
     if training_args.gradient_checkpointing:
         raise ValueError("Use checkpoint_layers for the custom model's checkpointing")
     if data_args.isolate_documents and pilot.causal_attention:
-        raise ValueError("isolate_documents requires explicit dense SDPA masks; set causal_attention=false")
-    if pilot.attention_backend not in ('sdpa', 'fa4') or (pilot.attention_backend == 'fa4' and pilot.arm != 'A'):
-        raise ValueError('attention_backend=fa4 is supported only for arm A')
+        raise ValueError("isolate_documents requires document-aware attention; set causal_attention=false")
+    if pilot.attention_backend not in ('sdpa', 'fa4') or (pilot.attention_backend == 'fa4' and pilot.arm not in ('A',) + PROXY_ARMS):
+        raise ValueError('attention_backend=fa4 requires arm A or a proxy-screen arm')
     pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS or pilot.attention_backend == 'fa4'
     if pilot.proxy_screen and not data_args.isolate_documents:
         raise ValueError("Proxy screening requires isolate_documents=true")
@@ -177,19 +181,9 @@ def main():
         model_class, trainer_class, callback_class = ProxyModel, ProxyTrainer, ProxyCallback
         proxy_settings = ProxySettings(**{key: getattr(pilot, 'proxy_'+key) for key in ProxySettings.__dataclass_fields__})
         budget = compute_budget(config,proxy_settings,data_args.block_size)
-        channel_mask = None
-        mask_receipt = {'source': 'none; no calibration checkpoint supplied', 'excluded_channels': []}
-        if pilot.proxy_channel_mask:
-            content = Path(pilot.proxy_channel_mask).read_bytes()
-            payload = json.loads(content)
-            excluded = payload['excluded_channels']
-            if payload['hidden_size'] != config.hidden_size or any(type(i) is not int or not 0 <= i < config.hidden_size for i in excluded):
-                raise ValueError('Invalid proxy channel-mask file')
-            channel_mask = torch.ones(config.hidden_size,dtype=torch.bool)
-            channel_mask[excluded] = False
-            mask_receipt = dict(source=pilot.proxy_channel_mask,sha256=hashlib.sha256(content).hexdigest(),excluded_channels=excluded)
-        logger.warning('Proxy target channel mask: %s', mask_receipt)
-        proxy_options = dict(proxy_settings=proxy_settings,channel_mask=channel_mask,
+        if pilot.proxy_channel_mask is not None or not pilot.proxy_target_centering:
+            raise ValueError('Revision r7 requires running standardization without a channel mask')
+        proxy_options = dict(proxy_settings=proxy_settings,
                              sequence_length=data_args.block_size,attention_backend=pilot.attention_backend)
     model = model_class.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
                                deep_target=pilot.deep_target, lm_chunk=pilot.lm_chunk,
@@ -225,7 +219,17 @@ def main():
                   "tokens_per_update": tokens_per_update,
                   "train_fingerprint": train_dataset._fingerprint, "eval_fingerprint": eval_dataset._fingerprint}))
     if pilot.proxy_screen:
-        experiment['proxy_mask'] = mask_receipt
+        target_keys = ('target_version','variance_floor','target_clip','momentum','loss_form')
+        if model.family:
+            experiment['proxy_target'] = dict(target_version=proxy_settings.target_version,
+                quantity='mlp_window_sum' if model.family=='P1' else 'deep_band_increment',
+                normalization='running_per_channel',variance_floor=proxy_settings.variance_floor,
+                clip=proxy_settings.target_clip,momentum=proxy_settings.momentum,epsilon=1e-6,
+                lookahead=proxy_settings.lookahead,bands=[list(key) if isinstance(key,tuple) else key for key in model.mean_layers],loss_form=proxy_settings.loss_form)
+        else:
+            # A has no target definition. Keep its historical recipe/checkpoint usable.
+            for key in target_keys:experiment['pilot'].pop('proxy_'+key)
+            experiment['proxy_mask'] = {'source':'none; no calibration checkpoint supplied','excluded_channels':[]}
     output = Path(training_args.output_dir)
     checkpoint = training_args.resume_from_checkpoint or (get_last_checkpoint(str(output)) if output.is_dir() else None)
     if checkpoint:
@@ -308,7 +312,7 @@ def main():
                 result["training_cost"] = training_cost
             if pilot.proxy_screen:
                 result['proxy'] = dict(budget=budget, model_config=model.backbone.config.to_dict(),
-                                       channel_mask=mask_receipt, mean_initialized=bool(model.mu_initialized))
+                                       target=experiment.get('proxy_target'), mean_initialized=bool(model.mu_initialized))
                 result['attention_runtime'] = model.attention_runtime
                 result['fa4_receipts'] = getattr(trainer, '_fa4_receipts', [])
             temporary = output / "result.json.tmp"

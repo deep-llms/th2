@@ -1,5 +1,209 @@
 # Project notes
 
+## FA4 proxy validation in progress (2026-10-05)
+
+Operator approved extending the tested FA4 backend to P1/P3 and matched controls,
+with local tests and B200 smoke validation only. Production model changes remove
+A-only backend guards; native/replaced K/V, targets, EMS, packing and HF Trainer
+remain shared. Q/K/V backward receipts now cover proxy gradients. Pending r7
+normalization changes from prior turns are included in this deployment.
+
+Local focused tests passed (11). Eight-rank CPU DDP with an independent varlen
+oracle passed A/P1-flow/P3-block/P3-lambda0: exact normalization buffers and data
+order on resume, parameter roundoff <=7.45e-9, global-batch gradient differences
+<=7.45e-9. Evidence: temp/fa4-proxy-ddp-a01/verified.json. Full CPU regression: 142 tests passed in 159.94s.
+B200 plan: eight full-model same-weight cases with nonzero gates and separate
+proxy-gradient thresholds, then nine sequential three-step runs, each on all
+eight GPUs (A, V1/V3, six P variants including optional P3-flow). Full 28600-step
+schedule/1430 warmup, micro16×GAS4, seq2048 and existing full training cache;
+32-row evaluation for smoke only. No environment installation or full screen.
+Unique output: /mnt/local/_outputs/deep-llms_th2/proxy-fa4-smoke-20261005-a01.
+Copy/verify Accelerate config, identify/reclaim only approved burns, verify free
+GPUs, use existing supervisor for automatic burn restoration on any outcome.
+
+## Repeated SDPA200 completed:74% norm gap (2026-10-05)
+
+Authorized single SDPA200 repeat completed successfully, launch15cc5cf / final
+monitor607af11. Exact historical e06d5f9 source restored in isolated output; same
+old8192-row train/512-row validation pools, seed42, eightGPU BF16 micro16×GAS4,
+28600 schedule/1430 warmup. Full per-rank token/segment stream hashes and LR
+histories match originals. Old data/results, envs and local P1/P3 work untouched.
+
+SDPA repeat versus original: max pre-clipping norm gap73.9992% at185 (norms
+0.66423291/1.15576005), mean5.1968%, first>=3% at137,57 updates>=3%. Old FA4 versus
+original SDPA: max48.0984%, mean4.1875%, first>=3% at137,49 updates>=3%. Repeat max
+training-loss gap0.0145850; common held-out original/repeat/FA4 losses
+7.11075908/7.10265799/7.10742352. Thus large trajectory norm gaps also occur without
+changing backend. This does not identify the cause of the separate2500-step63%
+gap or establish multi-seed/full-schedule equivalence. Old trajectory thresholds
+remain failed for both comparisons; measurement/execution succeeded.
+
+Train job533.04s, completed08:37:59UTC. Burns restored08:39:10UTC; fresh08:39:50UTC
+verified known8 workers51261–51268 with advancing collectives, guard released.
+commands.sh restored#0. Evidence:`artifacts/sdpa-repeat-200-20261005-a01/` and
+`temp/sdpa-repeat-monitor-a03.log`; full details in
+DOCUMENT_ISOLATION_INVESTIGATION_20261004.md Section12. All rank stream hashes
+also match original downloaded receipts; comparison JSON hash matches run
+manifest. Current revision-7 P1/P3 changes remain uncommitted and undeployed.
+
+## Repeated SDPA 200-step control launched (2026-10-05)
+
+User authorized one200-update SDPA-only repeat matching the old diagnostic.
+Launch15cc5cf; output `/mnt/local/_outputs/deep-llms_th2/sdpa-repeat-200-20261005-a01`.
+Original benchmark source e06d5f9 restored to isolated historical_source directory
+using a reviewed patch; all8 source-file SHA256 values match that commit. Exact
+old8192-row train /512-row heldout packed datasets reused and token/segment hashes
+verified. Seed42, eight GPUs, micro16×accum4, full schedule28600/warmup1430; fresh
+random initialization, stop200. Local/source-snapshot and node CPU tests5 passed.
+Accelerate resource config copied and `accelerate env` verified. Verified burns
+47839–47846 stopped, all GPUs free before launch. Supervisor restores burns after
+success/failure. Last observation08:31:27UTC:8 workers48809–48816, about45 updates,
+finite losses/norms; no completion claim yet. Monitor d86896b. Compare helper
+checks every rank's full input stream and LR history against original SDPA and
+FA4; measures large gaps without mislabeling them as execution failures. Old
+3%/0.01 trajectory limits remain visible in output. This warmup-only repeated-pool
+control is not a recreation of the later2500-step63% observation.
+
+## Final trained-weight FA4 check passed (2026-10-05)
+
+Authorized final check completed on B200, launch e2b5bfa, monitor eae9f2c.
+Both checkpoint-2500 models × train/validation × micro2/16 passed same-weight
+backend checks, repeats and micro2 FP32 references. Production micro16 gradient
+relative L2=0.7323–1.2730%, cosine>=0.999919, loss difference<=0.000066042.
+FP32 gradient errors similar: dense0.9224–1.2157%, FA40.9089–1.1907%. All parameter
+fingerprints and both source checkpoint file hashes unchanged. No optimizer
+updates; diagnostic source is the committed production Arm A, without deploying
+local revision-7 P1/P3 changes. See DOCUMENT_ISOLATION_INVESTIGATION_20261004.md
+Section11 for full methods, results, limits and evidence hashes.
+
+Final checks completed08:02:47UTC (98.70seconds). Automatic burns restored and
+verified08:03:58UTC; fresh08:05:22UTC check confirmed workers47839–47846 across all
+8 GPUs with advancing collective progress, guard released. Environment unchanged;
+Accelerate config copied/verified. commands.sh restored#0. Receipt:
+`temp/proxy-final-check-monitor-a02.log`; exact-hash-verified extracted artifacts:
+`temp/proxy-final-check-results-a01/`. No more backend checking is needed to answer
+this baseline question; multi-seed/full-schedule/custom-arm claims remain separate.
+
+## FA4 versus dense numerical review (2026-10-05)
+
+Read-only retrieval `88bddbd` compared all250 training log points and all monitor
+and final evaluations. Configs/fingerprints match except backend, and logged LR
+is identical. Training-loss mean absolute gap0.00330542, maximum0.04351387;
+final full validation3.47794143 dense /3.47717338 FA4. Same-weight production
+preflight gradient relative L2=0.54365%, cosine0.99998523. Separately evolved
+trajectory gradient norms differ more: mean13.2256%, max63.2908% atupdate980.
+This is similar convergence, not identical gradients/weights or proof of
+full-schedule equivalence. No new2500-checkpoint matched-weight GPU test was run.
+See DOCUMENT_ISOLATION_INVESTIGATION_20261004.md Section10 for full evidence and
+limitations. Receipt:temp/fa4-dense-numerical-review-20261005-a01.log. No GPU process
+or environment changes; only read-only commands pushed, then restored to#0.
+Local revision-7 P1/P3 changes remain uncommitted and undeployed.
+
+## FA4 A completed; automatic burn verified (2026-10-05)
+
+Read-only status commit `867d031` verified successful completion of all queued
+jobs, final validation and step2500 checkpoint (model, optimizer, scheduler,
+Trainer state and all eight rank RNG files). Run root:
+`/mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-fa4-2500-20261005-a01`.
+Training job finished06:50:13UTC /14:50:13 Asia/Singapore. Full schedule remains
+28600; result status `stopped` is the requested2500-update cutoff, not a crash.
+2,621,440,000 input tokens, final4882-row validation LM loss3.4771733830242613
+versus dense A3.4779414257087833 (delta−0.000768042684522019). Config comparison
+passed with only attention backend differing. One seed does not establish an
+accuracy advantage. Trainer runtime5298.1764s (~88m18s), versus dense6187.4524s;
+recent updates~2.074s. Peak allocated111264339456bytes.
+
+Automatic burn verified06:51:24UTC. Fresh07:16:26–07:16:38UTC inspection found
+approved workers46080–46087, all eight GPUs100% utilized, guard released and
+collective progress advancing1690→1710 cycles /1876.49→1898.70GiB. No process
+was stopped or environment changed by this check. commands.sh restored to#0.
+
+Receipt:`temp/fa4-completion-status-20261005-a01.log`, SHA256
+`abc50f27209a1704ef3c0c57db5f1dfa8e7e6cef72bf76b9407637b02bd181f5`.
+Extracted JSON artifacts:`temp/fa4-completed-results-20261005-a01/`; result JSON
+SHA256 verified against remote run manifest:
+`5394fe8132cd528be31669ef6fbd3c3fc3fbf72ab7044db6e4bd37a31382cd4f`.
+Only status commands were pushed; local revision-7 P1/P3 work remains uncommitted
+and was not deployed or executed on B200.
+
+## Revision-7 follow-up review passed (2026-10-05)
+
+Rechecked target indices/increments, normalization order, block/flow gradient
+routing, accumulation/DDP loss scaling, checkpoint replay, saved config matching
+and the unchanged dense-SDPA/packing path. No new production-code defect found.
+Strengthened tests for unequal microbatch sizes/means (pooled within-step variance,
+EMA across steps), immediate post-update buffer synchronization before any DDP
+forward/evaluation broadcast, and rank-local data order across resume.
+
+Full offline suite: **138 tests passed in144.624s**
+(`temp/proxy-r7-review-full-a01.log`). Eight CPU ranks passed for A, P1-flow,
+P3-block and P3-lambda0 (`temp/proxy-r7-review-ddp8-a02/verified.json`):
+- identical pre-interruption checkpoints and rank-local input order;
+- bitwise-identical mean/variance immediately after both bootstrap passes and
+  each optimizer-step update across ranks;
+- bitwise-identical saved buffers after resume;
+- maximum resumed parameter difference3.725290298461914e-9 (also vanilla A),
+  and distributed/global-batch gradient difference at most the same magnitude.
+
+The initial eight-rank check rejected this parameter difference because it
+incorrectly required bitwise equality for every parameter after restarting DDP.
+It was measured before adjusting the test: checkpoint2 matched exactly, with
+only tiny differences after resumed update3. This is consistent with changed
+floating-point reduction order. The revised test retains exact buffer checks,
+checks data order explicitly, and bounds parameter differences with rtol2e-6 /
+atol2e-8 while recording the observed maximum. No training implementation or
+normalization tolerance was changed to make the test pass. Previous two-rank
+bitwise results remain valid for that test, not a universal DDP guarantee.
+
+Compilation/whitespace checks passed. No B200 access, push, environment change or
+GPU launch; commands.sh remains#0. Full-size revision-7 P1/P3 GPU smoke/capacity
+and runtime backend checks remain required before screening.
+
+## Revision-7 P1/P3 implemented locally (2026-10-05)
+
+User approved the updated spec and all normalization recommendations. P1 now
+standardizes detached MLP window sums; P3 uses detached FP32 deep-band increments
+h_b-h_(layer-1), independently normalized per (proxy,deep) pair before averaging
+and EMS. Default full-depth buffers: 12 P1 / 58 P3 pairs. Static masks are rejected.
+Per-channel mean/variance, floor0.01, clip±10, epsilon1e-6 and EMA momentum0.99
+replace the old masked RMS targets. Cosine remains default; Smooth L1 beta1 is
+available only as an explicitly selected ablation.
+
+Initialization reuses the first rank-local training microbatch for two no-grad
+forwards, all-reducing means then squared deviations. Shifted sums/squares/counts
+accumulate outside checkpointed functions and update once per optimizer step,
+including lambda-zero arms. Buffers freeze within steps/recomputation/evaluation.
+Per-buffer clip/floor/variance/lag diagnostics are recorded in Trainer/W&B logs.
+Target version r7, hyperparameters, quantity and index sets are saved; strict
+resume rejects old targets or hyperparameter changes. No migration override.
+A/V saved config/state compatibility is retained; report matching ignores only
+irrelevant target metadata for controls and remains strict across proxy arms and
+seeds. The completed dense A remains the matching reference; FA4 A is separate.
+
+Validation on local sampling_b200 env, CUDA hidden:
+- 29 focused model/Trainer/FA4 tests passed in37.520s.
+- Full regression:136 tests passed in132.101s
+  (temp/proxy-r7-full-tests-20261005-a01.log).
+- Final six T9/accumulation tests passed in4.841s after adding BF16 statistics
+  coverage and guarding zero-variance diagnostic denominators
+  (temp/proxy-r7-final-t9-tests-a02.log).
+- 500-update FP32 vs FP64 maximum relative errors: mean8.77e-7, variance1.89e-6.
+  After1000 steps of4096 tokens, 100000 held-out tokens: max abs mean0.007692,
+  channel variance range[0.987434,1.010180]. Freeze/clipping/detachment tests pass.
+- Two-rank CPU train/resume checks passed for A/P1-flow/P3-block/P3-lambda0:
+  all resumed weights/buffers bitwise equal, mean/variance bitwise equal across
+  ranks; accumulated distributed/global-batch gradient maximum delta3.73e-9.
+  Receipt:temp/proxy-r7-ddp-20261005-a01/verified.json.
+Compilation and whitespace checks passed. An intermediate P3 resume test exposed
+list/tuple serialization of target indices; fixed before final passing tests.
+
+Changes remain local; no push, runner command, B200 process/environment change or
+P1/P3 GPU run. commands.sh stays#0. The previously launched FA4 A is untouched;
+its last verified remote state is recorded below, not refreshed in this task.
+Next deployment step is a separate full-size eight-GPU P1/P3 smoke/capacity check
+before screening. Local tests establish semantics, not GPU throughput or research
+benefit. See PROXY_HEADS_IMPLEMENTATION_20261004.md for the updated usage guide.
+
 ## FA4 A tests passed; production training verified (2026-10-05)
 
 Launch commit `90c5e11`, monitor `dfa465e`. At 13:22:22 Asia/Singapore

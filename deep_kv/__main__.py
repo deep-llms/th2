@@ -23,8 +23,8 @@ def jobs(config_path, stop_after=None, arms=None, seeds=None, reuse_baselines=No
     fa4 = config.get('attention_backend', 'sdpa') == 'fa4'
     arms = tuple(arms if arms is not None else ('A',) if fa4 else SCREEN_ARMS if config.get('proxy_screen') else 'ABCD')
     if fa4:
-        if arms != ('A',):
-            raise ValueError('FA4 baseline queues support only arm A')
+        if any(arm not in ('A',) + PROXY_ARMS for arm in arms):
+            raise ValueError('FA4 queues require arm A or proxy-screen arms')
         config['proxy_screen'] = True
         if reuse_baselines:
             raise ValueError('FA4 baseline requires its own training run; do not reuse dense A')

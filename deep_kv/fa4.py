@@ -1,4 +1,4 @@
-"""FA4 variable-length attention for the document-isolated vanilla baseline."""
+"""FA4 variable-length attention for the document-isolated baseline and proxy heads."""
 from importlib.metadata import version
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -14,9 +14,9 @@ def load_kernel():
         installed = version('flash-attn-4')
         from flash_attn.cute.interface import flash_attn_varlen_func
     except ImportError as error:
-        raise RuntimeError('FA4 baseline requires envs/attention_bench.txt; no SDPA fallback') from error
+        raise RuntimeError('FA4 requires envs/attention_bench.txt; no SDPA fallback') from error
     if installed != '4.0.0b33':
-        raise RuntimeError(f'FA4 baseline requires flash-attn-4==4.0.0b33, found {installed}')
+        raise RuntimeError(f'FA4 requires flash-attn-4==4.0.0b33, found {installed}')
     return flash_attn_varlen_func, dict(package='flash-attn-4', version=installed,
                                       entry_point='flash_attn.cute.interface.flash_attn_varlen_func')
 
@@ -53,19 +53,22 @@ def trainer_audit(trainer, phase):
     model = trainer.model
     receipt = dict(phase=phase, backend=model.attention_runtime, global_step=trainer.state.global_step,
                    rank=trainer.args.process_index, world_size=trainer.args.world_size,
-                   calls=0, query_gradient_calls=0, causal=True, document_isolation=True,
+                   arm=model.arm, calls=0, query_gradient_calls=0, key_gradient_calls=0, value_gradient_calls=0, causal=True, document_isolation=True,
                    positions='reset_per_document', dense_mask=False,
-                   note='Wrapper calls and query gradients; not CUDA kernel profiling or numerical validation')
-    def backward(gradient):
-        receipt['query_gradient_calls'] += 1
-        return gradient
+                   note='Wrapper calls and Q/K/V gradients; not CUDA kernel profiling or numerical validation')
+    def backward(name):
+        def record(gradient):
+            receipt[name + '_gradient_calls'] += 1
+            return gradient
+        return record
     def observe(q,k,v,layout):
         receipt['calls'] += 1
         if receipt['calls'] == 1:
             receipt.update(query_shape=list(q.shape),key_shape=list(k.shape),
                            kernel_dtype=str(v.dtype),fragments=layout[0].numel()-1,max_seqlen=layout[1])
-        if q.requires_grad:
-            q.register_hook(backward)
+        for name, tensor in zip(('query','key','value'), (q,k,v)):
+            if tensor.requires_grad:
+                tensor.register_hook(backward(name))
     previous = model._fa4_observer
     model._fa4_observer = observe
     try:
@@ -73,7 +76,7 @@ def trainer_audit(trainer, phase):
     finally:
         model._fa4_observer = previous
     layers = len(model.backbone.model.layers)
-    if receipt['calls'] < layers or (phase == 'train' and receipt['query_gradient_calls'] < layers):
+    if receipt['calls'] < layers or (phase == 'train' and any(receipt[name + '_gradient_calls'] < layers for name in ('query','key','value'))):
         raise RuntimeError('Incomplete FA4 forward/backward receipt')
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     path = Path(trainer.args.output_dir)/f'fa4-{phase}-{stamp}.json'

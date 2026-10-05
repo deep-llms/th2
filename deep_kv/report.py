@@ -6,12 +6,15 @@ from . import ALL_ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
 
 
 def comparable_config(config):
-    """Compare the shared recipe; proxy mask identity is checked separately."""
+    """Compare the shared recipe; proxy target identity is checked separately."""
     config = copy.deepcopy(config)
     config['pilot'].pop('arm')
     if config['pilot'].get('proxy_screen'):
         config['pilot'].pop('proxy_channel_mask', None)
         config.pop('proxy_mask', None)
+        config.pop('proxy_target', None)
+        for key in ('target_version','variance_floor','target_clip','momentum','loss_form'):
+            config['pilot'].pop('proxy_'+key,None)
     return config
 
 
@@ -32,7 +35,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
     if baseline_dir is not None and 'A' not in arms:
         raise ValueError('Baseline reuse requires arm A')
     results, common = {}, None
-    masks = {}
+    targets = {}
     for arm in arms:
         path = result_path(root, arm, baseline_dir)
         config = json.loads((path / "train_config.json").read_text())
@@ -57,9 +60,20 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
         if expected_seed is not None and any(config['training'][key] != expected_seed for key in ('seed','data_seed')):
             raise ValueError('Incorrect screening seed')
         if config['pilot'].get('proxy_screen') and arm.startswith(('P1-', 'P3-')):
-            masks[arm] = dict(path=config['pilot'].get('proxy_channel_mask'), receipt=config['proxy_mask'])
-            if any(mask != masks[arm] for mask in masks.values()):
-                raise ValueError('Proxy arms differ in channel mask')
+            target = config.get('proxy_target')
+            if not target or target.get('target_version') != 'r7' or config['pilot'].get('proxy_channel_mask'):
+                raise ValueError('Proxy arms require the r7 target definition without a channel mask')
+            targets[arm] = target
+            for other, definition in targets.items():
+                # Families differ only in the raw target quantity and target index set.
+                ignored = set() if other[:2] == arm[:2] else {'quantity','bands'}
+                if ({k:v for k,v in target.items() if k not in ignored} !=
+                        {k:v for k,v in definition.items() if k not in ignored}):
+                    raise ValueError('Proxy arms differ in target normalization/loss definition')
+            for key, value in [('target_version',target['target_version']),('variance_floor',target['variance_floor']),
+                               ('target_clip',target['clip']),('momentum',target['momentum']),('loss_form',target['loss_form'])]:
+                if config['pilot'].get('proxy_'+key) != value:
+                    raise ValueError('Proxy target metadata differs from pilot configuration')
         matched = (comparable_config(config), result["global_step"])
         if common is not None and matched != common:
             raise ValueError("Arms differ in configuration, data, or stopping step")
@@ -87,7 +101,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
         summary["functional_loss_weights"] = {arm: {"route": .3, "message": .3 if arm == "G" else 0.}
                                                for arm in arms if arm in ("F", "G")}
     if common[0]['pilot'].get('proxy_screen'):
-        summary['proxy_masks'] = masks
+        summary['proxy_targets'] = targets
         for family in ('P1','P3'):
             for route in ('block','flow'):
                 arm = family+'-'+route
@@ -125,8 +139,8 @@ def report_seeds(directory, arms, seeds, reuse_baselines=None):
         recipes.append(cfg)
     if any(cfg != recipes[0] for cfg in recipes) or len({r['compared_update'] for r in rows.values()}) != 1:
         raise ValueError('Seed runs differ in recipe or cutoff')
-    if any(row.get('proxy_masks') != rows[seeds[0]].get('proxy_masks') for row in rows.values()):
-        raise ValueError('Seed runs differ in proxy channel mask')
+    if any(row.get('proxy_targets') != rows[seeds[0]].get('proxy_targets') for row in rows.values()):
+        raise ValueError('Seed runs differ in proxy target definition')
     losses = {arm:[rows[seed]['lm_loss'][arm] for seed in seeds] for arm in arms}
     result = dict(status='complete',seeds=list(seeds),lm_loss={arm:dict(values=values,mean=statistics.mean(values),
                   stdev=statistics.stdev(values) if len(values)>1 else None,range=max(values)-min(values)) for arm,values in losses.items()},

@@ -1,4 +1,4 @@
-"""P1/P3 replaced KV heads and exact document-reset scans (proxy spec revision 4)."""
+"""P1/P3 replaced KV heads and exact document-reset scans (proxy spec revision 7)."""
 from contextlib import contextmanager
 import copy
 from dataclasses import dataclass
@@ -23,7 +23,11 @@ class ProxySettings:
     chunk_size: int = 64
     lambda_max: float = .1
     warmup_steps: int = 250
-    target_centering: bool = True
+    target_version: str = 'r7'
+    variance_floor: float = .01
+    target_clip: float = 10.
+    momentum: float = .99
+    loss_form: str = 'cosine'
     # Explicitly optional confirmation-run schedule; disabled in screening.
     decay_start: int | None = None
     decay_end: int | None = None
@@ -128,12 +132,18 @@ class ProxyModel(DeepKV):
                  attention_backend='sdpa', **kwargs):
         settings = proxy_settings or ProxySettings()
         cfg = backbone.config
+        if channel_mask is not None:
+            raise ValueError('Revision r7 does not use a static channel mask')
+        if (settings.target_version != 'r7' or settings.loss_form not in ('cosine','smooth_l1')
+                or not 0 < settings.variance_floor <= 1 or not 0 < settings.target_clip < float('inf')
+                or not 0 <= settings.momentum < 1):
+            raise ValueError('Invalid r7 target normalization/loss settings')
         if arm not in ('A',) + PROXY_ARMS:
             raise ValueError('Unknown proxy screen arm')
-        if attention_backend not in ('sdpa', 'fa4') or (attention_backend == 'fa4' and arm != 'A'):
-            raise ValueError('FA4 isolation is supported only for vanilla arm A')
-        if cfg.attention_bias or cfg.hidden_act != 'silu' or cfg.num_attention_heads % cfg.num_key_value_heads:
-            raise ValueError('Proxy heads require bias-free Qwen SwiGLU and contiguous integer GQA groups')
+        if attention_backend not in ('sdpa', 'fa4'):
+            raise ValueError('Unknown document-isolated attention backend')
+        if cfg.attention_bias or cfg.attention_dropout != 0 or cfg.hidden_act != 'silu' or cfg.num_attention_heads % cfg.num_key_value_heads:
+            raise ValueError('Proxy heads require bias-free, zero-dropout Qwen SwiGLU and contiguous integer GQA groups')
         if settings.groups not in (1,2,4) or settings.groups >= cfg.num_key_value_heads:
             raise ValueError('Proxy groups must be 1, 2 or 4 and leave native KV groups')
         if settings.features % 3 or min(settings.width, settings.features, settings.chunk_size) <= 0:
@@ -144,7 +154,7 @@ class ProxyModel(DeepKV):
                 not settings.warmup_steps <= settings.decay_start < settings.decay_end):
             raise ValueError('Invalid optional lambda decay interval')
         if kwargs.get('causal_attention', False):
-            raise ValueError('Proxy screen requires dense document isolation')
+            raise ValueError('Proxy screen requires document isolation')
         super().__init__(backbone, 'A', **kwargs)
         self.arm, self.proxy_screen, self.settings = arm, True, settings
         self.attention_backend = attention_backend
@@ -164,15 +174,18 @@ class ProxyModel(DeepKV):
             torch.random.default_generator.manual_seed(kwargs.get('seed',42)+1)
             for layer in self.layers:
                 self.heads[str(layer)] = ProxyHead(cfg, self.family, settings)
-        self.mean_layers = self.layers if self.family == 'P1' else tuple(range(4,cfg.num_hidden_layers+1)) if self.family else ()
-        self.mean_index = {layer:i for i,layer in enumerate(self.mean_layers)}
+        self.mean_layers = (self.layers if self.family == 'P1' else
+            tuple((layer, deep) for layer in self.layers
+                  for deep in range(layer+2,min(layer+6,cfg.num_hidden_layers)+1)))
+        self.mean_index = {key:i for i,key in enumerate(self.mean_layers)}
         self.register_buffer('mu', torch.zeros(len(self.mean_layers), cfg.hidden_size))
-        self.register_buffer('mu_initialized', torch.tensor(not bool(self.family and settings.target_centering)))
+        self.register_buffer('mu_initialized', torch.tensor(not bool(self.family)))
+        if self.family:
+            self.register_buffer('sigma2', torch.ones_like(self.mu))
+        else:
+            # Preserve the state layout of completed A/V checkpoints; unused by r7 targets.
+            self.register_buffer('channel_mask', torch.ones(cfg.hidden_size,dtype=torch.bool))
         self.register_buffer('gamma', torch.tensor([.5,.9,.99], dtype=torch.float32))
-        mask = torch.ones(cfg.hidden_size, dtype=torch.bool) if channel_mask is None else torch.as_tensor(channel_mask, dtype=torch.bool)
-        if mask.shape != (cfg.hidden_size,) or not bool(mask.any()):
-            raise ValueError('Channel mask must retain at least one channel and match hidden size')
-        self.register_buffer('channel_mask', mask)
         self.gates_disabled = False
 
     @classmethod
@@ -193,23 +206,47 @@ class ProxyModel(DeepKV):
         return result
 
     @torch.no_grad()
-    def update_mu(self, sums, counts, *, initialize=False):
-        if not self.family or not self.settings.target_centering:
-            return
-        if bool((counts <= 0).any()):
-            raise ValueError('Missing target-centering samples')
-        mean = sums / counts[:, None]
-        if initialize:
-            self.mu.copy_(mean)
+    def update_statistics(self, sums, squares, counts, *, initialize=None):
+        """Sums are raw only in initialization pass 1; otherwise shifted by frozen mu."""
+        if not self.family:
+            return {}
+        if bool((counts <= 0).any()) or not all(bool(torch.isfinite(x).all()) for x in (sums,squares,counts)):
+            raise ValueError('Invalid target-normalization samples')
+        delta = sums / counts[:,None]
+        if initialize == 'mean':
+            self.mu.copy_(delta)
+            return {}
+        if initialize == 'variance':
+            self.sigma2.copy_((squares/counts[:,None]).clamp_min(0))
             self.mu_initialized.fill_(True)
-        else:
-            self.mu.mul_(.99).add_(mean, alpha=.01)
+            return {}
+        if initialize is not None:
+            raise ValueError('Unknown normalization initialization pass')
+        variance = (squares/counts[:,None]-delta.square()).clamp_min(0)
+        # Diagnostics describe pre-update statistics, the ones used by this step.
+        # Diagnostic ratios retain every positive variance; guard only exact zeros.
+        # FP64 here avoids overflow when a dead channel becomes active.
+        scale = self.sigma2.double().clamp_min(torch.finfo(self.sigma2.dtype).tiny)
+        diagnostics = dict(mean_lag=(delta.double().abs()/scale.sqrt()).median(-1).values,
+                           variance_lag=(variance.double()/scale).median(-1).values,
+                           median_variance=self.sigma2.median(-1).values,
+                           floored_channels=(self.sigma2 < self.settings.variance_floor*
+                               self.sigma2.median(-1,keepdim=True).values).sum(-1))
+        momentum = self.settings.momentum
+        self.mu.add_(delta, alpha=1-momentum)
+        self.sigma2.mul_(momentum).add_(variance,alpha=1-momentum)
+        return diagnostics
 
-    def normalize_target(self, value, layer):
+    def normalize_target(self, value, key, *, return_clipped=False):
         with torch.no_grad(), torch.autocast(device_type=value.device.type, enabled=False):
-            centered = value.float() - (self.mu[self.mean_index[layer]] if self.settings.target_centering else 0.)
-            masked = centered * self.channel_mask
-            return masked * torch.rsqrt(masked.square().sum(-1, keepdim=True)/self.channel_mask.sum() + 1e-6)
+            index = self.mean_index[key]
+            variance = self.sigma2[index]
+            floor = self.settings.variance_floor*variance.median()
+            standardized = (value.detach().float()-self.mu[index])*torch.rsqrt(variance.clamp_min(floor)+1e-6)
+            normalized = standardized.clamp(-self.settings.target_clip,self.settings.target_clip)
+            if return_clipped:
+                return normalized, (standardized.abs()>self.settings.target_clip).sum()
+            return normalized
 
     def attention(self, layer, u, z, mask, rotary):
         a = layer.self_attn
@@ -255,18 +292,22 @@ class ProxyModel(DeepKV):
             with torch.autocast(device_type=source.device.type, enabled=False):
                 target = target.detach().float()
                 if self.family == 'P1':
-                    targets = (self.normalize_target(target,layer),)
+                    targets = (target,)
                 else:
                     targets = tuple(plan.apply(target,c).detach() for c in range(3))
-                return torch.stack([(F.cosine_similarity(pred.float()*self.channel_mask, truth, dim=-1, eps=1e-6)*valid).sum(-1)
-                                    for pred,truth in zip(predictions,targets)],dim=-1)
+                cosines = torch.stack([(F.cosine_similarity(pred.float(),truth,dim=-1,eps=1e-6)*valid).sum(-1)
+                                       for pred,truth in zip(predictions,targets)],dim=-1)
+                losses = (valid.sum(-1)[:,None]-cosines if self.settings.loss_form == 'cosine' else
+                    torch.stack([(F.smooth_l1_loss(pred.float(),truth,reduction='none',beta=1.).mean(-1)*valid).sum(-1)
+                                 for pred,truth in zip(predictions,targets)],dim=-1))
+                return cosines, losses
         with torch.set_grad_enabled(torch.is_grad_enabled() and auxiliary_grad):
             if self.training and self.checkpoint_aux and torch.is_grad_enabled():
                 return checkpoint(compute,u,raw_target,*estimates,use_reentrant=False)
             return compute(u,raw_target,*estimates)
 
     def _run_backbone(self, context, *, compute_auxiliary_losses, auxiliary_grad, collect_target_statistics,
-                      block_observer=None):
+                      block_observer=None, statistics_mode=None):
         if context.segments is None or not bool(context.valid.all()):
             raise ValueError('Proxy screen requires packed, document-isolated inputs')
         if self.attention_backend == 'fa4':
@@ -277,25 +318,38 @@ class ProxyModel(DeepKV):
         plan = EMSPlan(context.segments,self.gamma,self.settings.chunk_size) if self.family == 'P3' else None
         hidden = self.backbone.model.embed_tokens(context.input_ids)
         rotary = self.backbone.model.rotary_emb(hidden,context.position_ids)
-        sources, windows, cosines = {}, {}, {}
+        sources, windows, cosines, bases = {}, {}, {}, {}
         sums = self.mu.new_zeros(self.mu.shape)
+        squares = torch.zeros_like(sums)
         counts = self.mu.new_zeros(len(self.mean_layers))
+        clipped = torch.zeros_like(counts)
         need_targets = bool(self.family and (compute_auxiliary_losses or collect_target_statistics))
-        def record(layer, raw):
-            if collect_target_statistics:
-                with torch.no_grad():
-                    sums[self.mean_index[layer]] = (raw.float()*context.valid[:,:,None]).sum((0,1))
-                    counts[self.mean_index[layer]] = context.valid.sum()
+        def record(key, raw):
+            with torch.no_grad(), torch.autocast(device_type=raw.device.type,enabled=False):
+                index = self.mean_index[key]
+                if collect_target_statistics:
+                    shifted = raw.detach().float() if statistics_mode == 'mean' else raw.detach().float()-self.mu[index]
+                    sums[index] = shifted.sum((0,1))
+                    squares[index] = shifted.square().sum((0,1)) if statistics_mode != 'mean' else 0
+                    counts[index] = context.valid.sum()
+                if compute_auxiliary_losses or (collect_target_statistics and statistics_mode is None):
+                    normalized, entries = self.normalize_target(raw,key,return_clipped=True)
+                    if collect_target_statistics:clipped[index] = entries
+                    return normalized
+                return None
         for index in range(len(self.backbone.model.layers)):
             layer = index+1
             def call(x, i=index):
                 return self.block(i,x,mask,rotary,plan)
+            if layer in self.layers and need_targets:
+                sources[layer] = None
+                if self.family == 'P3':bases[layer] = hidden.detach().float()
             result = (checkpoint(call,hidden,use_reentrant=False)
                       if self.training and self.checkpoint_layers and torch.is_grad_enabled() else call(hidden))
             hidden, mlp, u, *estimates = result
             if block_observer is not None:
                 block_observer(layer, hidden)
-            if layer in self.layers and need_targets and (self.family == 'P1' or compute_auxiliary_losses):
+            if layer in self.layers and need_targets:
                 sources[layer] = (u,tuple(estimates)) if compute_auxiliary_losses else None
             if not need_targets:
                 continue
@@ -305,48 +359,52 @@ class ProxyModel(DeepKV):
                         windows[proxy] = windows[proxy] + mlp.float() if proxy in windows else mlp.float()
                     if layer == proxy+self.settings.lookahead-1:
                         raw = windows.pop(proxy)
-                        record(proxy,raw)
+                        normalized = record(proxy,raw)
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
-                            cosines[proxy] = self.layer_cosines(proxy,*source,raw,plan,context.valid,auxiliary_grad)
-            elif layer in self.mean_index:
-                record(layer,hidden.detach())
-                if not compute_auxiliary_losses:
-                    continue
-                normalized = self.normalize_target(hidden.detach(),layer)
+                            cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,auxiliary_grad)
+            else:
                 for proxy in tuple(sources):
                     if proxy+2 <= layer <= min(proxy+6,len(self.backbone.model.layers)):
-                        with torch.no_grad():
-                            windows[proxy] = windows[proxy] + normalized if proxy in windows else normalized
-                        if layer == min(proxy+6,len(self.backbone.model.layers)):
-                            raw = windows.pop(proxy)/(layer-proxy-1)
-                            source = sources.pop(proxy)
+                        with torch.no_grad(), torch.autocast(device_type=hidden.device.type,enabled=False):
+                            increment = hidden.detach().float()-bases[proxy]
+                            normalized = record((proxy,layer),increment)
                             if compute_auxiliary_losses:
+                                windows[proxy] = windows[proxy]+normalized if proxy in windows else normalized
+                        if layer == min(proxy+6,len(self.backbone.model.layers)):
+                            source = sources.pop(proxy)
+                            bases.pop(proxy)
+                            if compute_auxiliary_losses:
+                                raw = windows.pop(proxy)/(layer-proxy-1)
                                 cosines[proxy] = self.layer_cosines(proxy,*source,raw,plan,context.valid,auxiliary_grad)
         if sources or windows:
             raise RuntimeError('Incomplete proxy target windows')
-        return self.backbone.model.norm(hidden), cosines, sums, counts
+        return self.backbone.model.norm(hidden), cosines, sums, squares, counts, clipped
 
     def hidden_states(self, context):
-        hidden, _, _, _ = self._run_backbone(context, compute_auxiliary_losses=False,
+        hidden, *_ = self._run_backbone(context, compute_auxiliary_losses=False,
                                             auxiliary_grad=False, collect_target_statistics=False)
         return hidden, None, None
 
-    def forward(self, context, *, compute_auxiliary_losses=True, auxiliary_grad=True, collect_target_statistics=False):
-        hidden, cosines, sums, counts = self._run_backbone(context,
+    def forward(self, context, *, compute_auxiliary_losses=True, auxiliary_grad=True, collect_target_statistics=False, statistics_mode=None):
+        hidden, cosines, sums, squares, counts, clipped = self._run_backbone(context,
             compute_auxiliary_losses=compute_auxiliary_losses, auxiliary_grad=auxiliary_grad,
-            collect_target_statistics=collect_target_statistics)
+            collect_target_statistics=collect_target_statistics,statistics_mode=statistics_mode)
+        if statistics_mode is not None:
+            return dict(center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped)
         lm_rows, target_counts, tokens = self.lm_statistics(context,hidden)
         width = 3 if self.family == 'P3' else 1
-        values = (torch.stack([cosines[layer] for layer in self.layers],dim=1).flatten(1)
+        values = (torch.stack([cosines[layer][0] for layer in self.layers],dim=1).flatten(1)
                   if cosines else lm_rows.new_zeros((len(lm_rows),len(self.layers)*width)))
         auxiliary_counts = tokens if cosines else torch.zeros_like(tokens)
-        auxiliary = (tokens-values.mean(-1)).sum() if cosines else lm_rows.sum()*0
+        losses = (torch.stack([cosines[layer][1] for layer in self.layers],dim=1).flatten(1)
+                  if cosines else torch.zeros_like(values))
+        auxiliary = losses.mean(-1).sum() if cosines else lm_rows.sum()*0
         statistics = torch.cat((lm_rows.detach()[:,None],target_counts[:,None],auxiliary_counts[:,None],
-                                values.detach(),tokens[:,None]),dim=1).double()
+                                values.detach(),losses.detach(),tokens[:,None]),dim=1).double()
         return dict(lm_sum=lm_rows.sum(),lm_count=target_counts.sum(),aux_sum=auxiliary,
                     aux_count=auxiliary_counts.sum(),statistics=statistics,
-                    center_sums=sums,center_counts=counts)
+                    center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped)
 
     @contextmanager
     def without_proxy(self):
