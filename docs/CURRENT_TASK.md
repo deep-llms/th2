@@ -1,5 +1,47 @@
 # Current task
 
+## Gate multiplier evaluation complete; training stopped (2026-10-05)
+
+User requested canceling the active queue and evaluating2x/5x gates;10x omitted.
+Stop13a31ba targeted only the verified queue supervisor via pidfd SIGTERM and
+preserved all source outputs/checkpoints/data. The old queue will not continue.
+Gate-evaluation launch66b62d7 ran scripts/evaluate_proxy_gates.py with production
+ProxyTrainer on all8 B200s, FA4/BF16/micro16, completed checkpoint2500 for each
+of P1-block/P3-block. No optimizer, training step, or checkpoint save occurred.
+
+Each evaluation used the same4882rows/9,981,660target tokens, fingerprint
+08432871cf987d61. Multipliers applied to learned per-channel alpha only:
+1x→2x→5x→restored1x. Each pass also ran the existing proxy-disabled control.
+Original1x and restored1x LM losses match EXACTLY for both arms; proxy-disabled
+losses are identical across all passes. Full restored model-state and source
+checkpoint hashes unchanged. Actual FA4 eval receipts saved; local and B200
+CPU tests passed, including exception-safe restoration and real HF evaluation.
+
+| Gate multiplier | P1-block validation LM loss | P3-block validation LM loss |
+|---|---:|---:|
+| 0 (disabled) | 3.4772731692609793 | 3.479060135913288 |
+| 1 | 3.477280233119416 | 3.4789088241301345 |
+| 2 | 3.4772899565613393 | 3.4789827767758883 |
+| 5 | 3.4773086201176944 | 3.4807160064284948 |
+
+Both2x/5x worsen LM loss; P1 effects are tiny, P3 at5x rises0.0018071823
+versus1x. This does not support simply amplifying the trained gates; it does
+not test retraining with a different gate initialization or auxiliary objective.
+Baseline A at the same2500steps remains3.4771733830242613.
+
+Both evaluation jobs exited0 with passed integrity summaries; queue completed
+15:18:26UTC/23:18Singapore. Supervisor finishedok15:19:37UTC after verified
+communicating burn recovery. Read-only monitor4de4db9 at15:22:37UTC/23:22Singapore
+verified all8 approved burn workers113219–113226, guard released, and collective
+cycles/payload advancing (through220cycles/244.28GiB per rank in snapshot).
+No training remains active. commands.sh is inactive#0.
+
+Remote:/mnt/local/_outputs/deep-llms_th2/proxy-gate-sweep-20261005-a01.
+Evidence:artifacts/proxy-gate-sweep-20261005/ (hash-verified original JSON receipts),
+temp/proxy-gate-sweep-monitor-a02.log (89ee3dbec278b6b321b304739af5be23a4a6c362a6c6222f88d8e0a0856f800e),
+and temp/proxy-gate-sweep-burn-verified.log (ed85fdf4ba338bcb1cb5bf88b173b3d930aeb0a8be4af8a7328ff3fd3772400e).
+Await user direction before any further training or gate experiments.
+
 ## Training queue stopped; gate evaluation authorized (2026-10-05)
 
 User explicitly requested stopping the current run and testing gates2x/5x,

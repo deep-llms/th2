@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "arm": "P3-block",
+  "checkpoint": "/mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a02/supervised/run/seed-42/P3-block/checkpoint-2500",
+  "step": 2500,
+  "checkpoint_sha256": "5e66a370ddc3d5814b07e376fa0ecffe67a04b1f21b42f1f9c3be88991a6cfaa",
+  "model_state_unchanged": true,
+  "checkpoint_unchanged": true,
+  "eval_fingerprint": "08432871cf987d61",
+  "world_size": 8,
+  "attention_runtime": {
+    "backend": "fa4",
+    "package": "flash-attn-4",
+    "version": "4.0.0b33",
+    "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+  },
+  "original_lm_loss": 3.4789088241301345,
+  "repeat_tolerance": 1e-05,
+  "measurements": [
+    {
+      "multiplier": 1,
+      "lm_loss": 3.4789088241301345,
+      "no_proxy_lm_loss": 3.479060135913288,
+      "target_tokens": 9981660,
+      "rows": 4882,
+      "auxiliary_loss": 0.3033168538614671
+    },
+    {
+      "multiplier": 2,
+      "lm_loss": 3.4789827767758883,
+      "no_proxy_lm_loss": 3.479060135913288,
+      "target_tokens": 9981660,
+      "rows": 4882,
+      "auxiliary_loss": 0.30353910551360275
+    },
+    {
+      "multiplier": 5,
+      "lm_loss": 3.4807160064284948,
+      "no_proxy_lm_loss": 3.479060135913288,
+      "target_tokens": 9981660,
+      "rows": 4882,
+      "auxiliary_loss": 0.3060422035822627
+    },
+    {
+      "multiplier": 1,
+      "lm_loss": 3.4789088241301345,
+      "no_proxy_lm_loss": 3.479060135913288,
+      "target_tokens": 9981660,
+      "rows": 4882,
+      "auxiliary_loss": 0.3033168538614671
+    }
+  ],
+  "fa4_receipts": [
+    "fa4-eval-20261005T151645672912Z.json"
+  ]
+}

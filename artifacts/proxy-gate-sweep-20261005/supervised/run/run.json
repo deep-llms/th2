@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-05T15:14:00.494939+00:00",
+  "jobs": [
+    {
+      "name": "evaluate-P1-block",
+      "started_at": "2026-10-05T15:14:00.495154+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 122.07433318591211,
+      "artifacts": [
+        {
+          "path": "P1-block/summary.json",
+          "sha256": "9d4fa1087ee05ab7390a9cf588831b44a9fa3259fc0be6e0758220ade3d0e537",
+          "bytes": 1618
+        }
+      ],
+      "finished_at": "2026-10-05T15:16:04.019534+00:00"
+    },
+    {
+      "name": "evaluate-P3-block",
+      "started_at": "2026-10-05T15:16:04.019572+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 141.9502883440582,
+      "artifacts": [
+        {
+          "path": "P3-block/summary.json",
+          "sha256": "d5966e8662b30dbabe8949ede282aed9e4068fbe93ea034594b80a29d32cbb4a",
+          "bytes": 1617
+        }
+      ],
+      "finished_at": "2026-10-05T15:18:26.475296+00:00"
+    }
+  ],
+  "finished_at": "2026-10-05T15:18:26.475331+00:00"
+}
