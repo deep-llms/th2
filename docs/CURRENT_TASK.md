@@ -1,5 +1,32 @@
 # Current task
 
+## Training queue stopped; gate evaluation authorized (2026-10-05)
+
+User explicitly requested stopping the current run and testing gates2x/5x,
+with10x omitted. This is evaluation of completed P1-block/P3-block checkpoints,
+not new training. Scope:original full4882-row validation, FA4/BF16/world8,
+micro16, multipliers1,2,5,then restored1; existing proxy-disabled evaluation
+repeated as a control. Source checkpoints/data/caches must be preserved.
+
+Stop13a31ba verified supervisor identity/argv/guard and GPU-worker ancestry,
+then sent SIGTERM through pidfd. Monitorcf20292 confirms canceled queue terminal
+15:06:42UTC, all8 GPUs free before burn handoff, guard released and communicating
+burn107399–107406 progressing at15:09:09UTC. Intentional cancellation, not an
+unexplained training failure. Remaining training arms are no longer queued to run.
+
+scripts/evaluate_proxy_gates.py reuses the production ProxyTrainer evaluation,
+strictly restores saved checkpoint state, checks validation fingerprint/counts,
+scales only in-memory alpha tensors, restores gates after each pass, and verifies
+full model-state/checkpoint hashes unchanged. No optimizer/scheduler is created.
+CPU tests passed for real tiny P1/P3 checkpoint evaluation and exception-safe
+scaling/restoration. Production train/model/loss code unchanged.
+
+Fresh evaluation root:/mnt/local/_outputs/deep-llms_th2/proxy-gate-sweep-20261005-a01.
+Launch copies/verifies Accelerate config and accelerate env, checks pinned env,
+reclaims only verified burns, verifies all8 GPUs free, and evaluates both arms
+sequentially under train_then_burn with automatic burn restoration on end/failure.
+Launch submitted; remote results still pending. Do not restart the training queue.
+
 ## P3-block complete; P1-lambda0 running (2026-10-05)
 
 Read-only monitor9f10dc9 at14:51:06UTC/22:51Singapore confirms P3-block2500
