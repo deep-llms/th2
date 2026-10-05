@@ -18,7 +18,21 @@ Production begins only after smoke reports and checkpoint/backend validation
 pass. Launch copies/verifies Accelerate config, runs accelerate env, checks
 pinned env and known burn identities; supervisor verifies GPUs free and
 automatically restores communicating burn after success/failure.
-Remote startup pending verification. Old canceled queue remains canceled.
+Launch10fc15e verified by read-only monitors9c84dea/8f359f0. Both local and
+B200 CPU checks passed. Accelerate copied to active /dev/shm cache and env
+confirmed8GPU/BF16. Only identity-rechecked burn workers113219–113226 stopped;
+all8 GPUs verified0MiB/no processes at15:44:34UTC before smoke. Smoke3steps
+completed and validator passed, peak113.5184GiB, finite state/backend receipts.
+Fresh production started afterwards (separate seed/reset/output, no smoke resume).
+At15:49:05UTC all8 training workers117877–117884 active,97–99%utilization;
+latest observed58updates,~2.31s/update. At50 LM loss10.38,grad norm2.015 finite;
+gates remain~1. Saved production recipe/data fingerprints EXACTLY match prior
+P1-block after removing only proxy_alpha_init=1. No final scientific result yet.
+Expected roughly100minutes training, automatic burn recovery after end/failure.
+Evidence:artifacts/proxy-p1-alpha1-20261005/ and temp/proxy-alpha-monitor-a02.log
+(SHA2565838a49c61d0ce90aae2c82c5cf6b174922aa9c83923ba0d36a8eed7f05778b0).
+commands.sh returned inactive#0; current training continues. Old canceled queue
+remains canceled. Next action:read-only progress/final validation and burn check.
 
 ## Gate multiplier evaluation complete; training stopped (2026-10-05)
 

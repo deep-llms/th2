@@ -1,5 +1,20 @@
 # Project notes
 
+## P1 nonzero gate initialization (2026-10-05)
+
+User authorized a fresh P1-block alpha=1 experiment; retain the auxiliary
+schedule0→0.1 over250updates and all previous seed42/FA4/2500-step settings.
+CLI: --arm P1-block --proxy_alpha_init 1. Each channel starts1 and remains
+trainable without weight decay. Default0 is unchanged and omitted from saved
+recipes to retain old checkpoint/resume compatibility. Nonzero initialization
+is recorded and cannot be changed across resume. Gate-only initialization adds
+no random draws; tests verify all nongate state identical, immediate LM proxy
+gradients, exact CPU interrupted/resumed equivalence and legacy evaluation.
+Launch10fc15e passed3step full-shape eight-B200 smoke before fresh production.
+58updates observed, finite loss/gradients, matched recipe/fingerprints except
+initial alpha; scientific result pending. See CURRENT_TASK for active root.
+
+
 ## Gate multiplier evaluation complete; training stopped (2026-10-05)
 
 User requested canceling the active queue and evaluating2x/5x gates;10x omitted.
