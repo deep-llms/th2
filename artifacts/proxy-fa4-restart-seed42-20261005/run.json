@@ -1,0 +1,41 @@
+{
+  "status": "running",
+  "started_at": "2026-10-05T10:38:08.332163+00:00",
+  "jobs": [
+    {
+      "name": "clean-authorized-previous-screen",
+      "started_at": "2026-10-05T10:38:08.332804+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 94.34019951906521,
+      "artifacts": [
+        {
+          "path": "cleanup.json",
+          "sha256": "8778c9db5c3fe475ff62ea5724b024955ce417b83b02cb12f6d54e98b504fade",
+          "bytes": 86589
+        }
+      ],
+      "finished_at": "2026-10-05T10:39:42.674342+00:00"
+    },
+    {
+      "name": "seed-42-validate-baseline",
+      "started_at": "2026-10-05T10:39:42.674387+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 0.06410298403352499,
+      "artifacts": [
+        {
+          "path": "seed-42/baseline-validation/comparison.json",
+          "sha256": "d42a80b969ebb292c1850b4cb5acaa584e06eda27266aa866614b9454142836c",
+          "bytes": 831
+        }
+      ],
+      "finished_at": "2026-10-05T10:39:42.739377+00:00"
+    },
+    {
+      "name": "seed-42-arm-P1-block",
+      "started_at": "2026-10-05T10:39:42.739399+00:00",
+      "status": "running"
+    }
+  ]
+}

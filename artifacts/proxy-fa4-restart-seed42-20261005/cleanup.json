@@ -1,0 +1,2033 @@
+{
+  "status": "cleaned",
+  "old_output_removed": "/mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a01",
+  "deleted_cache_count": 325,
+  "deleted_cache_bytes": 1021643627160,
+  "deleted_cache_files": [
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-2ff8fca2e5d6b07c.arrow",
+      "bytes": 9251592,
+      "inode": 43785393,
+      "mtime_ns": 1791177545123094415
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-6e4708f1e818fb44.arrow",
+      "bytes": 119294616,
+      "inode": 43785399,
+      "mtime_ns": 1791158130929071897
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-786b341a472afbe2.arrow",
+      "bytes": 5748064,
+      "inode": 43785392,
+      "mtime_ns": 1791177544803094846
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00000_of_00160.arrow",
+      "bytes": 3997347096,
+      "inode": 43785242,
+      "mtime_ns": 1791158121639082432
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00001_of_00160.arrow",
+      "bytes": 3984310840,
+      "inode": 43785236,
+      "mtime_ns": 1791158125279078286
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00002_of_00160.arrow",
+      "bytes": 3998164504,
+      "inode": 43785243,
+      "mtime_ns": 1791158106259100273
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00003_of_00160.arrow",
+      "bytes": 4046609752,
+      "inode": 43785370,
+      "mtime_ns": 1791158123219080616
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00004_of_00160.arrow",
+      "bytes": 4011028504,
+      "inode": 43785337,
+      "mtime_ns": 1791158118199086403
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00005_of_00160.arrow",
+      "bytes": 3984612152,
+      "inode": 43785278,
+      "mtime_ns": 1791158116059088875
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00006_of_00160.arrow",
+      "bytes": 3989817912,
+      "inode": 43785244,
+      "mtime_ns": 1791158106369100131
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00007_of_00160.arrow",
+      "bytes": 3975103736,
+      "inode": 43785349,
+      "mtime_ns": 1791158121219082917
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00008_of_00160.arrow",
+      "bytes": 3984095608,
+      "inode": 43785239,
+      "mtime_ns": 1791158100119108247
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00009_of_00160.arrow",
+      "bytes": 3804556632,
+      "inode": 43785233,
+      "mtime_ns": 1791158099049109637
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00010_of_00160.arrow",
+      "bytes": 3793585592,
+      "inode": 43785387,
+      "mtime_ns": 1791158112719092732
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00011_of_00160.arrow",
+      "bytes": 3809375160,
+      "inode": 43785332,
+      "mtime_ns": 1791158112799092639
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00012_of_00160.arrow",
+      "bytes": 3815441592,
+      "inode": 43785237,
+      "mtime_ns": 1791158096199113338
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00013_of_00160.arrow",
+      "bytes": 3793757528,
+      "inode": 43785261,
+      "mtime_ns": 1791158094619115390
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00014_of_00160.arrow",
+      "bytes": 3818926488,
+      "inode": 43785235,
+      "mtime_ns": 1791158105329101481
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00015_of_00160.arrow",
+      "bytes": 3780506168,
+      "inode": 43785266,
+      "mtime_ns": 1791158114579090584
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00016_of_00160.arrow",
+      "bytes": 3774181720,
+      "inode": 43785303,
+      "mtime_ns": 1791158113189092190
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00017_of_00160.arrow",
+      "bytes": 3811741560,
+      "inode": 43785234,
+      "mtime_ns": 1791158102229105506
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00018_of_00160.arrow",
+      "bytes": 3842589944,
+      "inode": 43785301,
+      "mtime_ns": 1791158117559087143
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00019_of_00160.arrow",
+      "bytes": 4006511288,
+      "inode": 43785341,
+      "mtime_ns": 1791158112859092571
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00020_of_00160.arrow",
+      "bytes": 3993905080,
+      "inode": 43785241,
+      "mtime_ns": 1791158109519096428
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00021_of_00160.arrow",
+      "bytes": 3970844120,
+      "inode": 43785232,
+      "mtime_ns": 1791158120829083367
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00022_of_00160.arrow",
+      "bytes": 3964089368,
+      "inode": 43785350,
+      "mtime_ns": 1791158122179081808
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00023_of_00160.arrow",
+      "bytes": 3974630648,
+      "inode": 43785365,
+      "mtime_ns": 1791158121579082500
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00024_of_00160.arrow",
+      "bytes": 3987967928,
+      "inode": 43785319,
+      "mtime_ns": 1791158116739088090
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00025_of_00160.arrow",
+      "bytes": 3974157304,
+      "inode": 43785374,
+      "mtime_ns": 1791158120559083678
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00026_of_00160.arrow",
+      "bytes": 3980438936,
+      "inode": 43785245,
+      "mtime_ns": 1791158108059098114
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00027_of_00160.arrow",
+      "bytes": 3991237752,
+      "inode": 43785383,
+      "mtime_ns": 1791158121539082547
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00028_of_00160.arrow",
+      "bytes": 3790487576,
+      "inode": 43785367,
+      "mtime_ns": 1791158120009084314
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00029_of_00160.arrow",
+      "bytes": 3785540056,
+      "inode": 43785251,
+      "mtime_ns": 1791158118359086218
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00030_of_00160.arrow",
+      "bytes": 3815269496,
+      "inode": 43785376,
+      "mtime_ns": 1791158116449088424
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00031_of_00160.arrow",
+      "bytes": 3820088216,
+      "inode": 43785354,
+      "mtime_ns": 1791158114949090158
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00032_of_00160.arrow",
+      "bytes": 3831919928,
+      "inode": 43785240,
+      "mtime_ns": 1791158110569095215
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00033_of_00160.arrow",
+      "bytes": 3985730680,
+      "inode": 43785253,
+      "mtime_ns": 1791158120709083505
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00034_of_00160.arrow",
+      "bytes": 4000057624,
+      "inode": 43785315,
+      "mtime_ns": 1791158114049091196
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00035_of_00160.arrow",
+      "bytes": 4008748280,
+      "inode": 43785313,
+      "mtime_ns": 1791158119249085191
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00036_of_00160.arrow",
+      "bytes": 3997088952,
+      "inode": 43785360,
+      "mtime_ns": 1791158121899082131
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00037_of_00160.arrow",
+      "bytes": 3982976984,
+      "inode": 43785238,
+      "mtime_ns": 1791158109099096913
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00038_of_00160.arrow",
+      "bytes": 3981944632,
+      "inode": 43785353,
+      "mtime_ns": 1791158123289080537
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00039_of_00160.arrow",
+      "bytes": 3982976952,
+      "inode": 43785289,
+      "mtime_ns": 1791158103979103234
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00040_of_00160.arrow",
+      "bytes": 3999627288,
+      "inode": 43785255,
+      "mtime_ns": 1791158107509098749
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00041_of_00160.arrow",
+      "bytes": 3997131960,
+      "inode": 43785272,
+      "mtime_ns": 1791158106369100131
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00042_of_00160.arrow",
+      "bytes": 3983149048,
+      "inode": 43785248,
+      "mtime_ns": 1791158108539097561
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00043_of_00160.arrow",
+      "bytes": 3983106008,
+      "inode": 43785390,
+      "mtime_ns": 1791158122189081795
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00044_of_00160.arrow",
+      "bytes": 3992270264,
+      "inode": 43785290,
+      "mtime_ns": 1791158113469091867
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00045_of_00160.arrow",
+      "bytes": 3982590008,
+      "inode": 43785286,
+      "mtime_ns": 1791158104729102260
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00046_of_00160.arrow",
+      "bytes": 3993561080,
+      "inode": 43785320,
+      "mtime_ns": 1791158109419096543
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00047_of_00160.arrow",
+      "bytes": 3985515416,
+      "inode": 43785263,
+      "mtime_ns": 1791158108859097190
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00048_of_00160.arrow",
+      "bytes": 3985945848,
+      "inode": 43785388,
+      "mtime_ns": 1791158122739081161
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00049_of_00160.arrow",
+      "bytes": 3972522168,
+      "inode": 43785270,
+      "mtime_ns": 1791158108939097098
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00050_of_00160.arrow",
+      "bytes": 3956173272,
+      "inode": 43785249,
+      "mtime_ns": 1791158106759099624
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00051_of_00160.arrow",
+      "bytes": 3787088952,
+      "inode": 43785259,
+      "mtime_ns": 1791158102699104897
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00052_of_00160.arrow",
+      "bytes": 3802792472,
+      "inode": 43785274,
+      "mtime_ns": 1791158103439103936
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00053_of_00160.arrow",
+      "bytes": 3809203128,
+      "inode": 43785256,
+      "mtime_ns": 1791158110449095355
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00054_of_00160.arrow",
+      "bytes": 3796252984,
+      "inode": 43785250,
+      "mtime_ns": 1791158104769102208
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00055_of_00160.arrow",
+      "bytes": 3846935256,
+      "inode": 43785258,
+      "mtime_ns": 1791158102659104948
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00056_of_00160.arrow",
+      "bytes": 3986333080,
+      "inode": 43785298,
+      "mtime_ns": 1791158106329100182
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00057_of_00160.arrow",
+      "bytes": 3989258648,
+      "inode": 43785299,
+      "mtime_ns": 1791158108439097676
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00058_of_00160.arrow",
+      "bytes": 3991538904,
+      "inode": 43785273,
+      "mtime_ns": 1791158113219092156
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00059_of_00160.arrow",
+      "bytes": 4005822744,
+      "inode": 43785309,
+      "mtime_ns": 1791158100749107428
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00060_of_00160.arrow",
+      "bytes": 3990635352,
+      "inode": 43785326,
+      "mtime_ns": 1791158106869099489
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00061_of_00160.arrow",
+      "bytes": 4010942680,
+      "inode": 43785277,
+      "mtime_ns": 1791158109979095897
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00062_of_00160.arrow",
+      "bytes": 4010297528,
+      "inode": 43785340,
+      "mtime_ns": 1791158122339081623
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00063_of_00160.arrow",
+      "bytes": 4006425176,
+      "inode": 43785310,
+      "mtime_ns": 1791158105369101430
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00064_of_00160.arrow",
+      "bytes": 3986332984,
+      "inode": 43785314,
+      "mtime_ns": 1791158113779091508
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00065_of_00160.arrow",
+      "bytes": 3988053816,
+      "inode": 43785288,
+      "mtime_ns": 1791158106699099702
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00066_of_00160.arrow",
+      "bytes": 3973555032,
+      "inode": 43785330,
+      "mtime_ns": 1791158107569098680
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00067_of_00160.arrow",
+      "bytes": 3990678296,
+      "inode": 43785292,
+      "mtime_ns": 1791158106279100248
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00068_of_00160.arrow",
+      "bytes": 3994980984,
+      "inode": 43785328,
+      "mtime_ns": 1791158122279081692
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00069_of_00160.arrow",
+      "bytes": 3987795672,
+      "inode": 43785369,
+      "mtime_ns": 1791158118199086403
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00070_of_00160.arrow",
+      "bytes": 3987623736,
+      "inode": 43785346,
+      "mtime_ns": 1791158108699097375
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00071_of_00160.arrow",
+      "bytes": 3979234072,
+      "inode": 43785381,
+      "mtime_ns": 1791158105409101377
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00072_of_00160.arrow",
+      "bytes": 4008060184,
+      "inode": 43785345,
+      "mtime_ns": 1791158121649082420
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00073_of_00160.arrow",
+      "bytes": 4010598360,
+      "inode": 43785382,
+      "mtime_ns": 1791158122779081115
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00074_of_00160.arrow",
+      "bytes": 3995368024,
+      "inode": 43785364,
+      "mtime_ns": 1791158105989100624
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00075_of_00160.arrow",
+      "bytes": 3999412376,
+      "inode": 43785308,
+      "mtime_ns": 1791158119229085214
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00076_of_00160.arrow",
+      "bytes": 3998938904,
+      "inode": 43785327,
+      "mtime_ns": 1791158121519082570
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00077_of_00160.arrow",
+      "bytes": 3953548568,
+      "inode": 43785264,
+      "mtime_ns": 1791158108199097952
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00078_of_00160.arrow",
+      "bytes": 3819399448,
+      "inode": 43785252,
+      "mtime_ns": 1791158102469105196
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00079_of_00160.arrow",
+      "bytes": 3796382072,
+      "inode": 43785293,
+      "mtime_ns": 1791158116789088033
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00080_of_00160.arrow",
+      "bytes": 3799092376,
+      "inode": 43785362,
+      "mtime_ns": 1791158102879104663
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00081_of_00160.arrow",
+      "bytes": 3773966712,
+      "inode": 43785304,
+      "mtime_ns": 1791158096999112298
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00082_of_00160.arrow",
+      "bytes": 3900543288,
+      "inode": 43785336,
+      "mtime_ns": 1791158120589083644
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00083_of_00160.arrow",
+      "bytes": 3984956376,
+      "inode": 43785318,
+      "mtime_ns": 1791158102079105701
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00084_of_00160.arrow",
+      "bytes": 3987021336,
+      "inode": 43785285,
+      "mtime_ns": 1791158108609097479
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00085_of_00160.arrow",
+      "bytes": 3991840152,
+      "inode": 43785334,
+      "mtime_ns": 1791158120579083655
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00086_of_00160.arrow",
+      "bytes": 3999627480,
+      "inode": 43785307,
+      "mtime_ns": 1791158123469080333
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00087_of_00160.arrow",
+      "bytes": 3982589848,
+      "inode": 43785347,
+      "mtime_ns": 1791158100499107753
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00088_of_00160.arrow",
+      "bytes": 3983794360,
+      "inode": 43785325,
+      "mtime_ns": 1791158120809083389
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00089_of_00160.arrow",
+      "bytes": 3992657336,
+      "inode": 43785267,
+      "mtime_ns": 1791158119859084486
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00090_of_00160.arrow",
+      "bytes": 3994507544,
+      "inode": 43785254,
+      "mtime_ns": 1791158112949092467
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00091_of_00160.arrow",
+      "bytes": 3987408696,
+      "inode": 43785283,
+      "mtime_ns": 1791158121189082951
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00092_of_00160.arrow",
+      "bytes": 3982159736,
+      "inode": 43785338,
+      "mtime_ns": 1791158105939100689
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00093_of_00160.arrow",
+      "bytes": 3977728152,
+      "inode": 43785284,
+      "mtime_ns": 1791158106649099766
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00094_of_00160.arrow",
+      "bytes": 3993948312,
+      "inode": 43785269,
+      "mtime_ns": 1791158122679081230
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00095_of_00160.arrow",
+      "bytes": 3976136216,
+      "inode": 43785386,
+      "mtime_ns": 1791158120899083285
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00096_of_00160.arrow",
+      "bytes": 3989258776,
+      "inode": 43785281,
+      "mtime_ns": 1791158122579081346
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00097_of_00160.arrow",
+      "bytes": 3970801400,
+      "inode": 43785247,
+      "mtime_ns": 1791158109839096059
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00098_of_00160.arrow",
+      "bytes": 3984569048,
+      "inode": 43785348,
+      "mtime_ns": 1791158120649083574
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00099_of_00160.arrow",
+      "bytes": 3988269240,
+      "inode": 43785246,
+      "mtime_ns": 1791158124009079723
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00100_of_00160.arrow",
+      "bytes": 3980266552,
+      "inode": 43785275,
+      "mtime_ns": 1791158116869087940
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00101_of_00160.arrow",
+      "bytes": 4001133336,
+      "inode": 43785389,
+      "mtime_ns": 1791158119749084613
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00102_of_00160.arrow",
+      "bytes": 3991754040,
+      "inode": 43785361,
+      "mtime_ns": 1791158112939092479
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00103_of_00160.arrow",
+      "bytes": 4002682008,
+      "inode": 43785265,
+      "mtime_ns": 1791158117129087640
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00104_of_00160.arrow",
+      "bytes": 3998723896,
+      "inode": 43785322,
+      "mtime_ns": 1791158121739082316
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00105_of_00160.arrow",
+      "bytes": 4016664952,
+      "inode": 43785260,
+      "mtime_ns": 1791158118539086011
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00106_of_00160.arrow",
+      "bytes": 3988914552,
+      "inode": 43785342,
+      "mtime_ns": 1791158123179080661
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00107_of_00160.arrow",
+      "bytes": 3980481720,
+      "inode": 43785324,
+      "mtime_ns": 1791158119679084694
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00108_of_00160.arrow",
+      "bytes": 3968348888,
+      "inode": 43785302,
+      "mtime_ns": 1791158110329095493
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00109_of_00160.arrow",
+      "bytes": 3960131416,
+      "inode": 43785344,
+      "mtime_ns": 1791158119889084452
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00110_of_00160.arrow",
+      "bytes": 3805804248,
+      "inode": 43785321,
+      "mtime_ns": 1791158099759108714
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00111_of_00160.arrow",
+      "bytes": 3817635960,
+      "inode": 43785282,
+      "mtime_ns": 1791158118679085850
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00112_of_00160.arrow",
+      "bytes": 3789541272,
+      "inode": 43785271,
+      "mtime_ns": 1791158095719113961
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00113_of_00160.arrow",
+      "bytes": 3806664856,
+      "inode": 43785311,
+      "mtime_ns": 1791158117349087385
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00114_of_00160.arrow",
+      "bytes": 3877224152,
+      "inode": 43785276,
+      "mtime_ns": 1791158120699083517
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00115_of_00160.arrow",
+      "bytes": 3991968920,
+      "inode": 43785317,
+      "mtime_ns": 1791158107249099049
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00116_of_00160.arrow",
+      "bytes": 3981299032,
+      "inode": 43785297,
+      "mtime_ns": 1791158107169099142
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00117_of_00160.arrow",
+      "bytes": 3985945848,
+      "inode": 43785287,
+      "mtime_ns": 1791158119559084834
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00118_of_00160.arrow",
+      "bytes": 3995841240,
+      "inode": 43785257,
+      "mtime_ns": 1791158118739085780
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00119_of_00160.arrow",
+      "bytes": 3881741784,
+      "inode": 43785339,
+      "mtime_ns": 1791158107359098922
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00120_of_00160.arrow",
+      "bytes": 3779043128,
+      "inode": 43785300,
+      "mtime_ns": 1791158102609105014
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00121_of_00160.arrow",
+      "bytes": 3781022584,
+      "inode": 43785262,
+      "mtime_ns": 1791158107579098669
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00122_of_00160.arrow",
+      "bytes": 3799135576,
+      "inode": 43785306,
+      "mtime_ns": 1791158113399091948
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00123_of_00160.arrow",
+      "bytes": 3797973976,
+      "inode": 43785291,
+      "mtime_ns": 1791158098469110390
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00124_of_00160.arrow",
+      "bytes": 3965853624,
+      "inode": 43785268,
+      "mtime_ns": 1791158105279101546
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00125_of_00160.arrow",
+      "bytes": 3975103768,
+      "inode": 43785343,
+      "mtime_ns": 1791158102699104897
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00126_of_00160.arrow",
+      "bytes": 3980998200,
+      "inode": 43785384,
+      "mtime_ns": 1791158120319083956
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00127_of_00160.arrow",
+      "bytes": 3988484024,
+      "inode": 43785335,
+      "mtime_ns": 1791158121299082824
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00128_of_00160.arrow",
+      "bytes": 3898607096,
+      "inode": 43785391,
+      "mtime_ns": 1791158123389080423
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00129_of_00160.arrow",
+      "bytes": 3799823960,
+      "inode": 43785312,
+      "mtime_ns": 1791158114129091104
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00130_of_00160.arrow",
+      "bytes": 3804083224,
+      "inode": 43785294,
+      "mtime_ns": 1791158105759100923
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00131_of_00160.arrow",
+      "bytes": 3801458840,
+      "inode": 43785296,
+      "mtime_ns": 1791158104009103195
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00132_of_00160.arrow",
+      "bytes": 3775601496,
+      "inode": 43785331,
+      "mtime_ns": 1791158099069109610
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00133_of_00160.arrow",
+      "bytes": 3914913144,
+      "inode": 43785279,
+      "mtime_ns": 1791158106349100157
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00134_of_00160.arrow",
+      "bytes": 3968133848,
+      "inode": 43785323,
+      "mtime_ns": 1791158104529102520
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00135_of_00160.arrow",
+      "bytes": 3988139928,
+      "inode": 43785366,
+      "mtime_ns": 1791158123989079746
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00136_of_00160.arrow",
+      "bytes": 3980954808,
+      "inode": 43785375,
+      "mtime_ns": 1791158107129099189
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00137_of_00160.arrow",
+      "bytes": 3978545560,
+      "inode": 43785280,
+      "mtime_ns": 1791158117369087363
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00138_of_00160.arrow",
+      "bytes": 4021182456,
+      "inode": 43785305,
+      "mtime_ns": 1791158120039084279
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00139_of_00160.arrow",
+      "bytes": 3989904056,
+      "inode": 43785372,
+      "mtime_ns": 1791158103719103573
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00140_of_00160.arrow",
+      "bytes": 3998766936,
+      "inode": 43785377,
+      "mtime_ns": 1791158119499084902
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00141_of_00160.arrow",
+      "bytes": 4009609016,
+      "inode": 43785368,
+      "mtime_ns": 1791158107079099245
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00142_of_00160.arrow",
+      "bytes": 3997261112,
+      "inode": 43785378,
+      "mtime_ns": 1791158109019097005
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00143_of_00160.arrow",
+      "bytes": 4000272536,
+      "inode": 43785355,
+      "mtime_ns": 1791158121749082303
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00144_of_00160.arrow",
+      "bytes": 4012706744,
+      "inode": 43785373,
+      "mtime_ns": 1791158122699081208
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00145_of_00160.arrow",
+      "bytes": 4000875032,
+      "inode": 43785357,
+      "mtime_ns": 1791158111429094222
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00146_of_00160.arrow",
+      "bytes": 4024624376,
+      "inode": 43785363,
+      "mtime_ns": 1791158108659097421
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00147_of_00160.arrow",
+      "bytes": 3812559000,
+      "inode": 43785329,
+      "mtime_ns": 1791158099279109338
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00148_of_00160.arrow",
+      "bytes": 3814710328,
+      "inode": 43785385,
+      "mtime_ns": 1791158115859089106
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00149_of_00160.arrow",
+      "bytes": 3792251672,
+      "inode": 43785371,
+      "mtime_ns": 1791158116199088713
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00150_of_00160.arrow",
+      "bytes": 3785797976,
+      "inode": 43785358,
+      "mtime_ns": 1791158099909108519
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00151_of_00160.arrow",
+      "bytes": 3824519992,
+      "inode": 43785351,
+      "mtime_ns": 1791158116279088621
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00152_of_00160.arrow",
+      "bytes": 3988656248,
+      "inode": 43785380,
+      "mtime_ns": 1791158114539090630
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00153_of_00160.arrow",
+      "bytes": 3981040984,
+      "inode": 43785356,
+      "mtime_ns": 1791158105869100780
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00154_of_00160.arrow",
+      "bytes": 3974200504,
+      "inode": 43785359,
+      "mtime_ns": 1791158122879081001
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00155_of_00160.arrow",
+      "bytes": 3969855000,
+      "inode": 43785379,
+      "mtime_ns": 1791158115929089025
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00156_of_00160.arrow",
+      "bytes": 3985128408,
+      "inode": 43785352,
+      "mtime_ns": 1791158109039096983
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00157_of_00160.arrow",
+      "bytes": 4009006616,
+      "inode": 43785295,
+      "mtime_ns": 1791158107389098888
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00158_of_00160.arrow",
+      "bytes": 4014599736,
+      "inode": 43785316,
+      "mtime_ns": 1791158109549096394
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8149fcbedc114d62_00159_of_00160.arrow",
+      "bytes": 4012276536,
+      "inode": 43785333,
+      "mtime_ns": 1791158124379079304
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00000_of_00160.arrow",
+      "bytes": 2479382480,
+      "inode": 43785072,
+      "mtime_ns": 1791157647319686880
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00001_of_00160.arrow",
+      "bytes": 2471300048,
+      "inode": 43785073,
+      "mtime_ns": 1791157748729570838
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00002_of_00160.arrow",
+      "bytes": 2479905288,
+      "inode": 43785074,
+      "mtime_ns": 1791157703859625159
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00003_of_00160.arrow",
+      "bytes": 2509795696,
+      "inode": 43785075,
+      "mtime_ns": 1791157695269634511
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00004_of_00160.arrow",
+      "bytes": 2487871032,
+      "inode": 43785076,
+      "mtime_ns": 1791157712239616037
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00005_of_00160.arrow",
+      "bytes": 2471414616,
+      "inode": 43785077,
+      "mtime_ns": 1791157681409649597
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00006_of_00160.arrow",
+      "bytes": 2474637152,
+      "inode": 43785078,
+      "mtime_ns": 1791157731089595399
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00007_of_00160.arrow",
+      "bytes": 2465783912,
+      "inode": 43785079,
+      "mtime_ns": 1791157749339569930
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00008_of_00160.arrow",
+      "bytes": 2471165312,
+      "inode": 43785080,
+      "mtime_ns": 1791157707639621046
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00009_of_00160.arrow",
+      "bytes": 2360173464,
+      "inode": 43785081,
+      "mtime_ns": 1791157686059644535
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00010_of_00160.arrow",
+      "bytes": 2353365920,
+      "inode": 43785082,
+      "mtime_ns": 1791157717839609941
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00011_of_00160.arrow",
+      "bytes": 2363127624,
+      "inode": 43785083,
+      "mtime_ns": 1791157691529638583
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00012_of_00160.arrow",
+      "bytes": 2366915040,
+      "inode": 43785084,
+      "mtime_ns": 1791157630469705484
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00013_of_00160.arrow",
+      "bytes": 2353399832,
+      "inode": 43785085,
+      "mtime_ns": 1791157667689664532
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00014_of_00160.arrow",
+      "bytes": 2369028984,
+      "inode": 43785086,
+      "mtime_ns": 1791157694419635437
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00015_of_00160.arrow",
+      "bytes": 2345200072,
+      "inode": 43785087,
+      "mtime_ns": 1791157690559639639
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00016_of_00160.arrow",
+      "bytes": 2341099112,
+      "inode": 43785088,
+      "mtime_ns": 1791157762269550640
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00017_of_00160.arrow",
+      "bytes": 2364533736,
+      "inode": 43785089,
+      "mtime_ns": 1791157690579639617
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00018_of_00160.arrow",
+      "bytes": 2383761968,
+      "inode": 43785090,
+      "mtime_ns": 1791157704819624116
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00019_of_00160.arrow",
+      "bytes": 2485165536,
+      "inode": 43785091,
+      "mtime_ns": 1791157738629585906
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00020_of_00160.arrow",
+      "bytes": 2477091160,
+      "inode": 43785092,
+      "mtime_ns": 1791157730519596025
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00021_of_00160.arrow",
+      "bytes": 2462919016,
+      "inode": 43785093,
+      "mtime_ns": 1791157780229530760
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00022_of_00160.arrow",
+      "bytes": 2458791664,
+      "inode": 43785094,
+      "mtime_ns": 1791157718379609353
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00023_of_00160.arrow",
+      "bytes": 2465010328,
+      "inode": 43785095,
+      "mtime_ns": 1791157730269596298
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00024_of_00160.arrow",
+      "bytes": 2473670272,
+      "inode": 43785096,
+      "mtime_ns": 1791157726569600366
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00025_of_00160.arrow",
+      "bytes": 2465138752,
+      "inode": 43785097,
+      "mtime_ns": 1791157718679609029
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00026_of_00160.arrow",
+      "bytes": 2469191656,
+      "inode": 43785098,
+      "mtime_ns": 1791157730379596177
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00027_of_00160.arrow",
+      "bytes": 2475796944,
+      "inode": 43785099,
+      "mtime_ns": 1791157717679610117
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00028_of_00160.arrow",
+      "bytes": 2351314968,
+      "inode": 43785100,
+      "mtime_ns": 1791157731129595355
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00029_of_00160.arrow",
+      "bytes": 2348095928,
+      "inode": 43785101,
+      "mtime_ns": 1791157741919580998
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00030_of_00160.arrow",
+      "bytes": 2366784160,
+      "inode": 43785102,
+      "mtime_ns": 1791157694959634847
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00031_of_00160.arrow",
+      "bytes": 2369372792,
+      "inode": 43785103,
+      "mtime_ns": 1791157704489624473
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00032_of_00160.arrow",
+      "bytes": 2377318632,
+      "inode": 43785104,
+      "mtime_ns": 1791157670339661650
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00033_of_00160.arrow",
+      "bytes": 2472183264,
+      "inode": 43785105,
+      "mtime_ns": 1791157735689590292
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00034_of_00160.arrow",
+      "bytes": 2481141224,
+      "inode": 43785106,
+      "mtime_ns": 1791157760449553353
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00035_of_00160.arrow",
+      "bytes": 2486398248,
+      "inode": 43785107,
+      "mtime_ns": 1791157746269574508
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00036_of_00160.arrow",
+      "bytes": 2479077136,
+      "inode": 43785108,
+      "mtime_ns": 1791157804719498309
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00037_of_00160.arrow",
+      "bytes": 2470726048,
+      "inode": 43785109,
+      "mtime_ns": 1791157769349542579
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00038_of_00160.arrow",
+      "bytes": 2469994680,
+      "inode": 43785110,
+      "mtime_ns": 1791157810839491373
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00039_of_00160.arrow",
+      "bytes": 2470581528,
+      "inode": 43785111,
+      "mtime_ns": 1791157739109585190
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00040_of_00160.arrow",
+      "bytes": 2480823384,
+      "inode": 43785112,
+      "mtime_ns": 1791157801429502036
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00041_of_00160.arrow",
+      "bytes": 2479415160,
+      "inode": 43785113,
+      "mtime_ns": 1791157716399611509
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00042_of_00160.arrow",
+      "bytes": 2470699400,
+      "inode": 43785114,
+      "mtime_ns": 1791157747159573180
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00043_of_00160.arrow",
+      "bytes": 2470819256,
+      "inode": 43785115,
+      "mtime_ns": 1791157802139501233
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00044_of_00160.arrow",
+      "bytes": 2476178104,
+      "inode": 43785116,
+      "mtime_ns": 1791157767169544971
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00045_of_00160.arrow",
+      "bytes": 2470186936,
+      "inode": 43785117,
+      "mtime_ns": 1791157801079502434
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00046_of_00160.arrow",
+      "bytes": 2477252952,
+      "inode": 43785118,
+      "mtime_ns": 1791157795589510017
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00047_of_00160.arrow",
+      "bytes": 2471992920,
+      "inode": 43785119,
+      "mtime_ns": 1791157771159540612
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00048_of_00160.arrow",
+      "bytes": 2472388568,
+      "inode": 43785120,
+      "mtime_ns": 1791157759479554801
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00049_of_00160.arrow",
+      "bytes": 2464121128,
+      "inode": 43785121,
+      "mtime_ns": 1791157789469518792
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00050_of_00160.arrow",
+      "bytes": 2454004160,
+      "inode": 43785122,
+      "mtime_ns": 1791157711439616908
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00051_of_00160.arrow",
+      "bytes": 2349330496,
+      "inode": 43785123,
+      "mtime_ns": 1791157728329598432
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00052_of_00160.arrow",
+      "bytes": 2359064920,
+      "inode": 43785124,
+      "mtime_ns": 1791157730339596223
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00053_of_00160.arrow",
+      "bytes": 2363081424,
+      "inode": 43785125,
+      "mtime_ns": 1791157804469498592
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00054_of_00160.arrow",
+      "bytes": 2355053008,
+      "inode": 43785126,
+      "mtime_ns": 1791157738799585653
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00055_of_00160.arrow",
+      "bytes": 2386271088,
+      "inode": 43785127,
+      "mtime_ns": 1791157749439569781
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00056_of_00160.arrow",
+      "bytes": 2472730736,
+      "inode": 43785128,
+      "mtime_ns": 1791157753299564020
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00057_of_00160.arrow",
+      "bytes": 2474497600,
+      "inode": 43785129,
+      "mtime_ns": 1791157728059598728
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00058_of_00160.arrow",
+      "bytes": 2475888376,
+      "inode": 43785130,
+      "mtime_ns": 1791157790329517560
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00059_of_00160.arrow",
+      "bytes": 2484580808,
+      "inode": 43785131,
+      "mtime_ns": 1791157744949576477
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00060_of_00160.arrow",
+      "bytes": 2475184680,
+      "inode": 43785132,
+      "mtime_ns": 1791157820509480415
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00061_of_00160.arrow",
+      "bytes": 2487713016,
+      "inode": 43785133,
+      "mtime_ns": 1791157784259526263
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00062_of_00160.arrow",
+      "bytes": 2487549584,
+      "inode": 43785134,
+      "mtime_ns": 1791157816239485255
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00063_of_00160.arrow",
+      "bytes": 2484889832,
+      "inode": 43785135,
+      "mtime_ns": 1791157774049537475
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00064_of_00160.arrow",
+      "bytes": 2472772560,
+      "inode": 43785136,
+      "mtime_ns": 1791157779929531086
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00065_of_00160.arrow",
+      "bytes": 2473670384,
+      "inode": 43785137,
+      "mtime_ns": 1791157744779576731
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00066_of_00160.arrow",
+      "bytes": 2464637296,
+      "inode": 43785138,
+      "mtime_ns": 1791157804789498231
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00067_of_00160.arrow",
+      "bytes": 2475183608,
+      "inode": 43785139,
+      "mtime_ns": 1791157790389517473
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00068_of_00160.arrow",
+      "bytes": 2478073248,
+      "inode": 43785140,
+      "mtime_ns": 1791157790329517560
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00069_of_00160.arrow",
+      "bytes": 2473460632,
+      "inode": 43785141,
+      "mtime_ns": 1791157756519559216
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00070_of_00160.arrow",
+      "bytes": 2473255920,
+      "inode": 43785142,
+      "mtime_ns": 1791157772439539223
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00071_of_00160.arrow",
+      "bytes": 2468377600,
+      "inode": 43785143,
+      "mtime_ns": 1791157777949533238
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00072_of_00160.arrow",
+      "bytes": 2485843976,
+      "inode": 43785144,
+      "mtime_ns": 1791157773659537896
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00073_of_00160.arrow",
+      "bytes": 2487630104,
+      "inode": 43785145,
+      "mtime_ns": 1791157836669461834
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00074_of_00160.arrow",
+      "bytes": 2478310152,
+      "inode": 43785146,
+      "mtime_ns": 1791157827409472596
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00075_of_00160.arrow",
+      "bytes": 2480984840,
+      "inode": 43785147,
+      "mtime_ns": 1791157789169519223
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00076_of_00160.arrow",
+      "bytes": 2480314176,
+      "inode": 43785148,
+      "mtime_ns": 1791157764969547431
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00077_of_00160.arrow",
+      "bytes": 2452472072,
+      "inode": 43785149,
+      "mtime_ns": 1791157856919437686
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00078_of_00160.arrow",
+      "bytes": 2369103696,
+      "inode": 43785150,
+      "mtime_ns": 1791157800909502628
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00079_of_00160.arrow",
+      "bytes": 2355014320,
+      "inode": 43785151,
+      "mtime_ns": 1791157783449527265
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00080_of_00160.arrow",
+      "bytes": 2356738608,
+      "inode": 43785152,
+      "mtime_ns": 1791157730049596542
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00081_of_00160.arrow",
+      "bytes": 2341243872,
+      "inode": 43785153,
+      "mtime_ns": 1791157762359550504
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00082_of_00160.arrow",
+      "bytes": 2419601736,
+      "inode": 43785154,
+      "mtime_ns": 1791157827679472290
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00083_of_00160.arrow",
+      "bytes": 2471589456,
+      "inode": 43785155,
+      "mtime_ns": 1791157804039499080
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00084_of_00160.arrow",
+      "bytes": 2472978552,
+      "inode": 43785156,
+      "mtime_ns": 1791157842179455234
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00085_of_00160.arrow",
+      "bytes": 2475880832,
+      "inode": 43785157,
+      "mtime_ns": 1791157840099457724
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00086_of_00160.arrow",
+      "bytes": 2481068760,
+      "inode": 43785158,
+      "mtime_ns": 1791157844359452621
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00087_of_00160.arrow",
+      "bytes": 2470391272,
+      "inode": 43785159,
+      "mtime_ns": 1791157823159477411
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00088_of_00160.arrow",
+      "bytes": 2471066624,
+      "inode": 43785160,
+      "mtime_ns": 1791157834669464230
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00089_of_00160.arrow",
+      "bytes": 2476487976,
+      "inode": 43785161,
+      "mtime_ns": 1791157818509482682
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00090_of_00160.arrow",
+      "bytes": 2477779896,
+      "inode": 43785162,
+      "mtime_ns": 1791157778639532488
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00091_of_00160.arrow",
+      "bytes": 2473518584,
+      "inode": 43785163,
+      "mtime_ns": 1791157796489508728
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00092_of_00160.arrow",
+      "bytes": 2470026280,
+      "inode": 43785164,
+      "mtime_ns": 1791157825019475304
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00093_of_00160.arrow",
+      "bytes": 2467343168,
+      "inode": 43785165,
+      "mtime_ns": 1791157874969416131
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00094_of_00160.arrow",
+      "bytes": 2477260416,
+      "inode": 43785166,
+      "mtime_ns": 1791157804329498751
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00095_of_00160.arrow",
+      "bytes": 2466081944,
+      "inode": 43785167,
+      "mtime_ns": 1791157819519481536
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00096_of_00160.arrow",
+      "bytes": 2474340360,
+      "inode": 43785168,
+      "mtime_ns": 1791157807379495295
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00097_of_00160.arrow",
+      "bytes": 2463098320,
+      "inode": 43785169,
+      "mtime_ns": 1791157817109484269
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00098_of_00160.arrow",
+      "bytes": 2471568304,
+      "inode": 43785170,
+      "mtime_ns": 1791157799129504942
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00099_of_00160.arrow",
+      "bytes": 2473845080,
+      "inode": 43785171,
+      "mtime_ns": 1791157807769494853
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00100_of_00160.arrow",
+      "bytes": 2469010032,
+      "inode": 43785172,
+      "mtime_ns": 1791157840279457510
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00101_of_00160.arrow",
+      "bytes": 2481545496,
+      "inode": 43785173,
+      "mtime_ns": 1791157836599461915
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00102_of_00160.arrow",
+      "bytes": 2476001264,
+      "inode": 43785174,
+      "mtime_ns": 1791157831419468051
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00103_of_00160.arrow",
+      "bytes": 2482507016,
+      "inode": 43785175,
+      "mtime_ns": 1791157842589454743
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00104_of_00160.arrow",
+      "bytes": 2480208632,
+      "inode": 43785176,
+      "mtime_ns": 1791157826539473579
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00105_of_00160.arrow",
+      "bytes": 2491247992,
+      "inode": 43785177,
+      "mtime_ns": 1791157884959404068
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00106_of_00160.arrow",
+      "bytes": 2474177968,
+      "inode": 43785178,
+      "mtime_ns": 1791157844359452621
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00107_of_00160.arrow",
+      "bytes": 2469022568,
+      "inode": 43785179,
+      "mtime_ns": 1791157830819468731
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00108_of_00160.arrow",
+      "bytes": 2461327528,
+      "inode": 43785180,
+      "mtime_ns": 1791157814139487634
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00109_of_00160.arrow",
+      "bytes": 2456473232,
+      "inode": 43785181,
+      "mtime_ns": 1791157809559492825
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00110_of_00160.arrow",
+      "bytes": 2360969328,
+      "inode": 43785182,
+      "mtime_ns": 1791157843159454059
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00111_of_00160.arrow",
+      "bytes": 2368074352,
+      "inode": 43785183,
+      "mtime_ns": 1791157866279426576
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00112_of_00160.arrow",
+      "bytes": 2350915688,
+      "inode": 43785184,
+      "mtime_ns": 1791157860849433030
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00113_of_00160.arrow",
+      "bytes": 2361403216,
+      "inode": 43785185,
+      "mtime_ns": 1791157872009419688
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00114_of_00160.arrow",
+      "bytes": 2405118968,
+      "inode": 43785186,
+      "mtime_ns": 1791157892159395305
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00115_of_00160.arrow",
+      "bytes": 2475973392,
+      "inode": 43785187,
+      "mtime_ns": 1791157863229430211
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00116_of_00160.arrow",
+      "bytes": 2469522760,
+      "inode": 43785188,
+      "mtime_ns": 1791157860249433741
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00117_of_00160.arrow",
+      "bytes": 2472576072,
+      "inode": 43785189,
+      "mtime_ns": 1791157861089432746
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00118_of_00160.arrow",
+      "bytes": 2478581088,
+      "inode": 43785190,
+      "mtime_ns": 1791157888539399712
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00119_of_00160.arrow",
+      "bytes": 2407985256,
+      "inode": 43785191,
+      "mtime_ns": 1791157853119442189
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00120_of_00160.arrow",
+      "bytes": 2344346920,
+      "inode": 43785192,
+      "mtime_ns": 1791157854759440246
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00121_of_00160.arrow",
+      "bytes": 2345498648,
+      "inode": 43785193,
+      "mtime_ns": 1791157855559439297
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00122_of_00160.arrow",
+      "bytes": 2356913408,
+      "inode": 43785194,
+      "mtime_ns": 1791157873959417347
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00123_of_00160.arrow",
+      "bytes": 2356027544,
+      "inode": 43785195,
+      "mtime_ns": 1791157845929450741
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00124_of_00160.arrow",
+      "bytes": 2459923672,
+      "inode": 43785196,
+      "mtime_ns": 1791157856759437875
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00125_of_00160.arrow",
+      "bytes": 2465692792,
+      "inode": 43785197,
+      "mtime_ns": 1791157858139436243
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00126_of_00160.arrow",
+      "bytes": 2469343120,
+      "inode": 43785198,
+      "mtime_ns": 1791157867189425480
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00127_of_00160.arrow",
+      "bytes": 2473896424,
+      "inode": 43785199,
+      "mtime_ns": 1791157902409381963
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00128_of_00160.arrow",
+      "bytes": 2418273056,
+      "inode": 43785201,
+      "mtime_ns": 1791157820679480220
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00129_of_00160.arrow",
+      "bytes": 2357196152,
+      "inode": 43785200,
+      "mtime_ns": 1791157869559422635
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00130_of_00160.arrow",
+      "bytes": 2359733256,
+      "inode": 43785202,
+      "mtime_ns": 1791157881919407765
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00131_of_00160.arrow",
+      "bytes": 2358171208,
+      "inode": 43785203,
+      "mtime_ns": 1791157893839393261
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00132_of_00160.arrow",
+      "bytes": 2342216120,
+      "inode": 43785204,
+      "mtime_ns": 1791157872799418739
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00133_of_00160.arrow",
+      "bytes": 2428406864,
+      "inode": 43785205,
+      "mtime_ns": 1791157843029454214
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00134_of_00160.arrow",
+      "bytes": 2461457552,
+      "inode": 43785206,
+      "mtime_ns": 1791157887319401194
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00135_of_00160.arrow",
+      "bytes": 2473592864,
+      "inode": 43785207,
+      "mtime_ns": 1791157904299379355
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00136_of_00160.arrow",
+      "bytes": 2469237840,
+      "inode": 43785208,
+      "mtime_ns": 1791157883179406232
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00137_of_00160.arrow",
+      "bytes": 2467804064,
+      "inode": 43785209,
+      "mtime_ns": 1791157873049418438
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00138_of_00160.arrow",
+      "bytes": 2494231024,
+      "inode": 43785210,
+      "mtime_ns": 1791157890869396877
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00139_of_00160.arrow",
+      "bytes": 2475019584,
+      "inode": 43785211,
+      "mtime_ns": 1791157906919375745
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00140_of_00160.arrow",
+      "bytes": 2480405448,
+      "inode": 43785212,
+      "mtime_ns": 1791157879309410916
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00141_of_00160.arrow",
+      "bytes": 2487118296,
+      "inode": 43785213,
+      "mtime_ns": 1791157918169361386
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00142_of_00160.arrow",
+      "bytes": 2479353392,
+      "inode": 43785214,
+      "mtime_ns": 1791157872669418897
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00143_of_00160.arrow",
+      "bytes": 2481179736,
+      "inode": 43785215,
+      "mtime_ns": 1791157907289375235
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00144_of_00160.arrow",
+      "bytes": 2489056456,
+      "inode": 43785216,
+      "mtime_ns": 1791157866819425927
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00145_of_00160.arrow",
+      "bytes": 2481466376,
+      "inode": 43785217,
+      "mtime_ns": 1791157880109409956
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00146_of_00160.arrow",
+      "bytes": 2496226856,
+      "inode": 43785218,
+      "mtime_ns": 1791157892289395147
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00147_of_00160.arrow",
+      "bytes": 2365076024,
+      "inode": 43785219,
+      "mtime_ns": 1791157881989407679
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00148_of_00160.arrow",
+      "bytes": 2366381768,
+      "inode": 43785220,
+      "mtime_ns": 1791157912759367690
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00149_of_00160.arrow",
+      "bytes": 2352583608,
+      "inode": 43785221,
+      "mtime_ns": 1791157865589427403
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00150_of_00160.arrow",
+      "bytes": 2348404760,
+      "inode": 43785222,
+      "mtime_ns": 1791157882819406672
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00151_of_00160.arrow",
+      "bytes": 2372538368,
+      "inode": 43785223,
+      "mtime_ns": 1791157922819356023
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00152_of_00160.arrow",
+      "bytes": 2474168496,
+      "inode": 43785224,
+      "mtime_ns": 1791157890679397106
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00153_of_00160.arrow",
+      "bytes": 2469385912,
+      "inode": 43785225,
+      "mtime_ns": 1791157916229363624
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00154_of_00160.arrow",
+      "bytes": 2465154968,
+      "inode": 43785226,
+      "mtime_ns": 1791157901169383674
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00155_of_00160.arrow",
+      "bytes": 2462320680,
+      "inode": 43785227,
+      "mtime_ns": 1791157889959397984
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00156_of_00160.arrow",
+      "bytes": 2471897256,
+      "inode": 43785228,
+      "mtime_ns": 1791157899579385866
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00157_of_00160.arrow",
+      "bytes": 2486454304,
+      "inode": 43785229,
+      "mtime_ns": 1791157934299342757
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00158_of_00160.arrow",
+      "bytes": 2490252248,
+      "inode": 43785230,
+      "mtime_ns": 1791157909189372613
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/train/shard_000000/cache-8629c80cbce3a95d_00159_of_00160.arrow",
+      "bytes": 2488760920,
+      "inode": 43785231,
+      "mtime_ns": 1791157906429376418
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/cache-3b02e3412d5d1854.arrow",
+      "bytes": 130299264,
+      "inode": 45449235,
+      "mtime_ns": 1791158151869057634
+    },
+    {
+      "path": "/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/cache-fa456cc35360ec05.arrow",
+      "bytes": 210093224,
+      "inode": 45449236,
+      "mtime_ns": 1791158154959054785
+    }
+  ],
+  "source_files_preserved": 351,
+  "gpus_free": [
+    {
+      "index": 0,
+      "uuid": "GPU-8b8eac6b-f556-5f1f-efaf-a14a6d758d38",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-990967d0-ed45-d1bd-8508-75c8e6a7f870",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-f739f7b5-adef-0163-d1f9-33641b42565e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-d441ab06-ca6e-1208-11f8-0a30c3ffcd78",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-cc6c6cd8-8c15-e9ca-531a-41087b514651",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-4fe58c04-8aae-2798-b22a-e4d990f8940f",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-d7835e4a-ae8c-8287-98e6-973be5fbbe64",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-e3d1056c-6878-0a59-7b7a-7142d59e02ca",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    }
+  ]
+}

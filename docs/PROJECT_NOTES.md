@@ -1,5 +1,43 @@
 # Project notes
 
+## Clean restart verified, P1-block preprocessing (2026-10-05)
+
+User-authorized clean restart launch7d9f0b1 verified by monitor47215cd at
+10:42:40UTC. The earlier V1-first screen was intentionally stopped via its
+identity-rechecked supervisor (110b1b6); all8 training workers exited, GPUs
+were verified free and communicating burn restored before the new launch.
+
+New launch copied resources/accelerate_config.yaml to the active environment's
+/dev/shm/.cache/huggingface/accelerate/default_config.yaml and checked accelerate
+env:8GPU/MULTI_GPU/BF16. Seven targeted tests and existing nine-arm smoke artifact
+validation passed. Known burn89414–89421 was reclaimed by verified identities;
+all8 GPUs free at10:38:08UTC before the supervised cleanup/training queue.
+
+Cleanup finished10:39:42UTC, removed exactly screena01 and325 English dataset
+cache-*/tmp-* files (1,021,643,627,160bytes), preserving all351 source files.
+Old screen output absence verified; completed FA4 A reference preserved and
+its baseline validator passed. No environment/model/training/loss changes.
+Cleanup/source-preservation receipts are saved outside the deleted directory.
+
+Fresh P1-block job started10:39:42UTC, workers90422–90429. At10:42:40UTC it was
+running normal train.py tokenization with160 workers,14% of36,595,514 documents.
+Cache rebuilding is active; optimizer updates have NOT yet been verified.
+This is a fresh output/run, not a checkpoint resume. Later arms reuse the newly
+rebuilt deterministic cache. Same seed42,2500 updates each/all8 GPUs,
+full28600/warmup1430,micro16/GAS4,FA4 isolation/reset positions/EOS,checkpoints off.
+Order:P1-block→P3-block→P1-lambda0→P3-lambda0→P1-flow→V1→V3.
+Existing A2500 is reused only for comparison. Per-arm validators/final reports
+and automatic verified communicating burn recovery after success/failure remain.
+
+Active root:/mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a02.
+Run state/logs:supervised/run; guard/supervisor remain active. Do not relaunch.
+Next action:read-only preprocessing/training progress and rebuilt fingerprint
+comparison with A (train6e4708f1e818fb44,eval08432871cf987d61) once config is saved.
+Evidence:artifacts/proxy-fa4-restart-seed42-20261005/ and
+temp/proxy-restart-monitor-a02.log (SHA256
+d68b40eef6b114a89ccf4d9cf68802b776b89701e7824b495833c22b64b1cf63).
+commands.sh returned to inactive#0; detached training remains running.
+
 ## Seed-42 FA4 screen running (2026-10-05)
 
 Launchb88e455 deployed queue tooling7f9b2d9; startup monitor9215134 confirms the
