@@ -1,5 +1,31 @@
 # Project notes
 
+## P4 four-head launch blocked by runner hostname resolution (2026-10-06)
+
+User authorized training the latest P4-4h and P4-iso-4h variants on B200.
+Planned established dense-SDPA recipe: all8GPUs per arm, seed42, micro16/GAS4,
+seq2048, EOS/document isolation/reset positions, stop2500, full28600schedule,
+1430warmup. Must copy/verify Accelerate config, run CUDA correctness/full-size
+smokes and throughput checks, then train with train_then_burn automatic recovery.
+None of the GPU stages has started.
+
+Submitted read-only preflight c01373a, job
+th2-tjx3-p4-four-head-preflight-20261006-a01. GitHub main verified c01373a.
+Dropbox _RUN_STATUS_.log modified2026-10-05T23:15:38Z (Oct6 07:15:38Singapore)
+reports FAILED(rc=255): ssh: Could not resolve hostname <host>: nodename nor
+servname provided, or not known. Controller line is16:15:36, timezone unconfirmed.
+Evidence:temp/p4-launch-controller-after.log, SHA256
+5d83fd70f2090eb451bc2e074c4f80c455b85abe9f12287de75be4b633bb5da8.
+
+This is infrastructure failure before remote shell execution, not a training
+failure or evidence the GPU node died. No GPU stops, environment changes,
+Accelerate-cache copy or training occurred. Per AGENT_GUIDE failure policy,
+do not resubmit/change/kill/clean to work around it; wait for operator repair.
+Local commands.sh restored#0 and saved preflight in temp/p4-four-head-preflight.commands.sh.
+No further push; execution remote still has the read-only preflight c01373a.
+A controller retry can only inspect, not train. After repair, inspect fresh
+status, finish launch gates and submit the authorized supervised training queue.
+
 ## Four-query-head P4 variants implemented locally
 
 Added P4-4h and P4-iso-4h. "Four heads" is interpreted as four query heads:
