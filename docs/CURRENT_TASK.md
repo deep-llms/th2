@@ -1,5 +1,30 @@
 # Current task
 
+## P1-block complete; P3-block running (2026-10-05)
+
+Read-only monitor606a5b7 at13:41:34UTC/21:41Singapore confirms P1-block2500
+completed with exit0 at12:35:58UTC/20:35:58Singapore. Per-arm validator passed
+at12:35:59UTC. checkpoint-2500 has model,optimizer,scheduler,trainer state and
+all8 rank RNG files; actual FA4 receipts and finite normalization/gates checked.
+Common recipe and rebuilt train/eval fingerprints exactly match A.
+
+P1-block held-out LM loss3.477280233119416 on4882rows/9,981,660targets;
+A3.4771733830242613 (difference+0.0001068500951549). This single-seed result
+is effectively tied, not evidence of an improvement. Auxiliary cosine loss
+0.4119091441372323; disabling proxies gives LM loss3.4772731692609793,
+reliance difference-0.00000706385843685 (negligible at this checkpoint).
+Trainer runtime5915.4653s=98m35s; whole job6974.93s=116m15s including cache
+rebuilding/loading and finalization. Peak allocated113.5184GiB.
+
+P3-block started12:35:59UTC on all8 GPUs, current workers97665–97672,
+last observed update1331/2500 at~2.88s/update. Its common recipe/fingerprints
+also match A. Queue/supervisor still active; automatic burn handoff remains
+configured for end/failure. No training/process/config modifications.
+Evidence:artifacts/proxy-fa4-p1-block-completion-20261005/ and
+temp/p1-block-status-20261005-a02.log, SHA256
+076e67858cbe698728bfe6ad0804da6c058a31fd347fbcb3fa90f5c3b7469104.
+commands.sh restored#0. Next action:read-only P3-block completion/results check.
+
 ## P1-block nearing cutoff (2026-10-05, 12:32:33 UTC / 20:32 Singapore)
 
 Read-only monitor919682d: P1-block still running, last observed update2427/2500

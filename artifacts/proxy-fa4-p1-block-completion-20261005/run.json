@@ -1,0 +1,71 @@
+{
+  "status": "running",
+  "started_at": "2026-10-05T10:38:08.332163+00:00",
+  "jobs": [
+    {
+      "name": "clean-authorized-previous-screen",
+      "started_at": "2026-10-05T10:38:08.332804+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 94.34019951906521,
+      "artifacts": [
+        {
+          "path": "cleanup.json",
+          "sha256": "8778c9db5c3fe475ff62ea5724b024955ce417b83b02cb12f6d54e98b504fade",
+          "bytes": 86589
+        }
+      ],
+      "finished_at": "2026-10-05T10:39:42.674342+00:00"
+    },
+    {
+      "name": "seed-42-validate-baseline",
+      "started_at": "2026-10-05T10:39:42.674387+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 0.06410298403352499,
+      "artifacts": [
+        {
+          "path": "seed-42/baseline-validation/comparison.json",
+          "sha256": "d42a80b969ebb292c1850b4cb5acaa584e06eda27266aa866614b9454142836c",
+          "bytes": 831
+        }
+      ],
+      "finished_at": "2026-10-05T10:39:42.739377+00:00"
+    },
+    {
+      "name": "seed-42-arm-P1-block",
+      "started_at": "2026-10-05T10:39:42.739399+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 6974.93284159794,
+      "artifacts": [
+        {
+          "path": "seed-42/P1-block/result.json",
+          "sha256": "15d36013185088b8f027b63621c58571d82ce10423712c8ce7d5755353a70d4c",
+          "bytes": 7768
+        }
+      ],
+      "finished_at": "2026-10-05T12:35:58.199601+00:00"
+    },
+    {
+      "name": "validate-P1-block",
+      "started_at": "2026-10-05T12:35:58.199669+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 1.36606093600858,
+      "artifacts": [
+        {
+          "path": "seed-42/P1-block-validation.json",
+          "sha256": "8b77f7fa3f0978c16a39e4c692243b5237313555ef800ee51ad62c69ba2f471f",
+          "bytes": 297
+        }
+      ],
+      "finished_at": "2026-10-05T12:35:59.566850+00:00"
+    },
+    {
+      "name": "seed-42-arm-P3-block",
+      "started_at": "2026-10-05T12:35:59.566885+00:00",
+      "status": "running"
+    }
+  ]
+}
