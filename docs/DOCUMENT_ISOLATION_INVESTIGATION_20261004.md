@@ -483,3 +483,86 @@ stands, for the other reasons in Sections 6–7:
 
 FA4 remains a reasonable later optimization, worth about 15% per update, after
 it is integrated and tested for every arm that will use it.
+
+## 10. Production Arm A: matched 2,500-update comparison (2026-10-05)
+
+Read-only retrieval at commit `88bddbd` compared the completed dense and FA4
+baseline runs. No GPU workload was launched or stopped. Local revision-7 P1/P3
+changes were not deployed. Both runs use the same saved model/data/training
+configuration, seed42, train/eval fingerprints, eight GPUs, BF16, microbatch16,
+accumulation4, sequence2048, EOS boundaries and per-document position resets.
+Removing the FA4 `attention_backend` field makes saved configurations identical.
+Learning rates match exactly at all250 logged training points. Their full
+schedule is28600 updates with1430 warmup updates, stopped at2500.
+
+### Convergence comparison
+
+| Update | Dense SDPA loss | FA4 loss | FA4 minus dense |
+|---|---:|---:|---:|
+| 0 | 12.124935 | 12.124942 | +0.000007 |
+| 512 | 5.657214 | 5.651754 | -0.005460 |
+| 1024 | 4.348823 | 4.356540 | +0.007717 |
+| 1536 | 3.749307 | 3.758197 | +0.008890 |
+| 2048 | 3.484767 | 3.485469 | +0.000702 |
+| 2500 (full validation) | 3.477941 | 3.477173 | -0.000768 |
+
+Updates0–2048 use the same128-row monitor subset; the final measurement uses
+all4882 validation rows (~10M tokens). Do not interpret the last row as a change
+on the same evaluation population. Final perplexities:32.39297 dense /32.36810
+FA4. Final absolute loss difference0.00076804 (~0.0221% of dense loss).
+
+Across250 matching ten-update training-loss averages, mean absolute difference
+is0.00330542 and maximum0.04351387 atupdate990 (4.52586327 dense /4.56937714
+FA4). Maximum relative difference is0.96145%. For logged current-update LM losses,
+mean absolute difference0.00462758 and maximum0.02817057. Logs cover every tenth
+update; these are not claims about every individual update. All logged losses
+and gradient norms are finite.
+
+### Same-weight numerical comparison versus trajectory differences
+
+The production preflight compared identical initialized weights and two real
+packed2048-token sequences, BF16, before any optimizer update:
+
+| Quantity | FA4 versus dense |
+|---|---:|
+| Absolute loss difference | 0.00004196 |
+| Hidden-state relative L2 | 0.56898% |
+| Sampled-logit relative L2 | 0.63636% |
+| Full-gradient relative L2 | 0.54365% |
+| Full-gradient cosine similarity | 0.99998523 |
+| Largest reported per-parameter gradient relative L2 | 1.30428% |
+| Cross-document output/embedding-gradient leakage | Exactly zero in the tested case |
+
+These are close numerical results, not bitwise equality. This preflight uses
+microbatch2, not16. The older identical-trained-weight tests in Section5.E cover
+microbatch2/16 and FP32 references, but use the earlier200-update checkpoints.
+**No same-weight output/gradient comparison on the new2500-update checkpoints
+was run in this read-only review.**
+
+For the separately trained2500-update models, logged pre-clipping gradient norms
+show mean relative gap13.2256% and maximum63.2908% atupdate980:
+0.51419210 dense versus0.83962822 FA4. Definition:abs(FA4−dense)/dense.
+Both are below the clipping threshold1 at that update, so clipping cannot erase
+that particular norm difference. After warmup (logged updates>1430), the mean gap
+is9.8498% and maximum44.5329%. Atupdate2500, norms are0.17089225/0.16141333.
+These compare gradients at different learned weights; they are not a kernel
+relative-L2 error measurement and give no information about gradient direction.
+They must not be represented as all gradients agreeing within1%.
+
+The stronger evidence now supports **similar baseline loss convergence through
+2500 updates, including after warmup**, together with close same-weight numerical
+checks on the tested inputs. It does not establish identical trajectories,
+statistical equivalence across seeds, full-schedule equivalence, or correctness
+of FA4 for P1/P3. No evidence here establishes an accuracy advantage for FA4.
+A matched-weight backend swap on the new final checkpoints would extend the
+numerical check to their current weights; a repeated same-backend run remains
+the appropriate control for quantifying ordinary trajectory variation.
+
+Evidence:
+- `temp/fa4-dense-numerical-review-20261005-a01.log`, SHA256
+  `d3c12db8c3e3d6bedddb36141567a7847a416466cd32aaf4ef057fd427b0d20a`.
+- Extracted configs, full Trainer histories, result files, runtime receipts,
+  numerics and computed summary:
+  `temp/fa4-dense-numerical-review-20261005-a01/`.
+- Raw-source SHA256 values are retained in `source-manifest.json`; extracted
+  files are reformatted JSON, so their byte hashes can differ from raw sources.
