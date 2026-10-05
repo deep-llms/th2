@@ -4,7 +4,7 @@
 
 Read-only collector 998de33 verified the fresh original Qwen arm A/seed42
 completed exactly 2500 updates with the full 28600-step schedule unchanged.
-The three-update full-size smoke passed; all eight queue stages returned zero.
+The three-update full-size smoke passed; all seven queue stages returned zero.
 Final held-out LM loss: 3.4779414257087833 over 9,981,660 eligible targets
 (4882 rows). Input tokens trained: 2,621,440,000. Trainer runtime: 6187.4524 s
 (about 1 h 43 min); last update interval about 2.435 s. Peak allocated GPU
