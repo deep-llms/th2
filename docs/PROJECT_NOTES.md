@@ -1,5 +1,37 @@
 # Project notes
 
+## Seed-42 FA4 screen running (2026-10-05)
+
+Launchb88e455 deployed queue tooling7f9b2d9; startup monitor9215134 confirms the
+first job V1 training on all8 B200 GPUs. Observed10:05:26UTC (18:05Singapore),
+workers85721–85728, ~99% GPU utilization/113782MiB device usage. Reached update28;
+logged updates10/20 have finite losses12.09/11.85 and grad norms2.108/2.951,
+steady update time~2.08s. Saved V1 common recipe matches completed FA4 A exactly.
+Actual FA4 train receipt:28 forward and28 Q/K/V gradient calls, BF16, native GQA,
+document isolation and reset positions. Training active; completion not claimed.
+
+Sequence:V1→V3→P1-lambda0→P1-block→P1-flow→P3-lambda0→P3-block, seed42 only,
+2500 updates EACH/all8 GPUs each. A2500 reused as comparison reference, not model
+initialization; all seven are fresh from-scratch runs with shared recipe. Full
+schedule28600/warmup1430, micro16×GAS4,1,048,576tokens/update,seq2048,EOS packing,
+checkpointing off; unchanged attention_bench/NCCL/offline W&B environment.
+
+Accelerate resource config copied to interpreter cache and `accelerate env`
+verified. Known burn workers84505–84512 reclaimed by exact identity; all GPUs
+verified free10:03:33UTC before queue. Four updated tooling tests and validation
+of all9 existing smoke artifacts passed on-node before reclaim. Baseline CPU
+validation finished successfully before V1. Every new arm has a checkpoint/runtime
+validator before next training; final matched-arm report included. Existing
+supervisor automatically restores verified communicating burns after success or
+failure. No additional installation or backend numerical tests.
+
+Run:/mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a01.
+Job logs/arm folders under supervised/run; live state supervised/supervisor.json,
+queue state supervised/run/run.json; final marker supervised/run/complete.json.
+Startup evidence:artifacts/proxy-fa4-screen-seed42-20261005/ and
+temp/fa4-screen-monitor-a01.log. commands.sh restored#0 without stopping tmux
+training. Next step is read-only progress/result monitoring; do not relaunch.
+
 ## Seed-42 FA4 proxy screen authorized (2026-10-05)
 
 User requested real P1/P3 training on B200, explicitly selected seed42 first and

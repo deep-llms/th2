@@ -1,0 +1,26 @@
+{
+  "status": "running",
+  "started_at": "2026-10-05T10:03:33.319946+00:00",
+  "jobs": [
+    {
+      "name": "seed-42-validate-baseline",
+      "started_at": "2026-10-05T10:03:33.320568+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 0.06393811909947544,
+      "artifacts": [
+        {
+          "path": "seed-42/baseline-validation/comparison.json",
+          "sha256": "d42a80b969ebb292c1850b4cb5acaa584e06eda27266aa866614b9454142836c",
+          "bytes": 831
+        }
+      ],
+      "finished_at": "2026-10-05T10:03:33.385194+00:00"
+    },
+    {
+      "name": "seed-42-arm-V1",
+      "started_at": "2026-10-05T10:03:33.385214+00:00",
+      "status": "running"
+    }
+  ]
+}

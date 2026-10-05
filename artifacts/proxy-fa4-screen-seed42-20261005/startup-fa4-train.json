@@ -1,0 +1,37 @@
+{
+  "phase": "train",
+  "backend": {
+    "backend": "fa4",
+    "package": "flash-attn-4",
+    "version": "4.0.0b33",
+    "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+  },
+  "global_step": 0,
+  "rank": 0,
+  "world_size": 8,
+  "arm": "V1",
+  "calls": 28,
+  "query_gradient_calls": 28,
+  "key_gradient_calls": 28,
+  "value_gradient_calls": 28,
+  "causal": true,
+  "document_isolation": true,
+  "positions": "reset_per_document",
+  "dense_mask": false,
+  "note": "Wrapper calls and Q/K/V gradients; not CUDA kernel profiling or numerical validation",
+  "query_shape": [
+    16,
+    16,
+    2048,
+    128
+  ],
+  "key_shape": [
+    16,
+    8,
+    2048,
+    128
+  ],
+  "kernel_dtype": "torch.bfloat16",
+  "fragments": 51,
+  "max_seqlen": 2048
+}
