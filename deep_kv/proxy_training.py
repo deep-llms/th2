@@ -6,6 +6,13 @@ import torch
 from .training import DeepKVTrainer, PilotCallback
 
 
+def reduce_moments(accelerator, values, fused):
+    if not fused:return tuple(accelerator.reduce(v,reduction='sum') for v in values)
+    sizes=[v.numel() for v in values]
+    merged=accelerator.reduce(torch.cat([v.reshape(-1) for v in values]),reduction='sum')
+    return tuple(v.reshape(original.shape) for v,original in zip(merged.split(sizes),values))
+
+
 def summarize_proxy(statistics, model):
     values = np.asarray(statistics,dtype=np.float64)
     totals = values.sum(0)
@@ -29,6 +36,13 @@ def summarize_proxy(statistics, model):
 
 
 class ProxyCallback(PilotCallback):
+    def on_train_begin(self,args,state,control,**kwargs):
+        if self.trainer.model.anticipatory and state.global_step==0:
+            self.trainer.log({f'proxy_layer_{name}_mean_abs_alpha_{c}':float(value)
+                for name,head in self.trainer.model.heads.items()
+                for c,value in enumerate(head.alpha.detach().abs().mean(-1))})
+        return control
+
     def on_step_begin(self,args,state,control,**kwargs):
         self.started = time.perf_counter()
 
@@ -36,8 +50,7 @@ class ProxyCallback(PilotCallback):
         trainer = self.trainer
         model = trainer.model
         if trainer.center_totals is not None:
-            sums, squares, counts, clipped = [trainer.accelerator.reduce(value,reduction='sum')
-                                               for value in trainer.center_totals]
+            sums, squares, counts, clipped = reduce_moments(trainer.accelerator,trainer.center_totals,model.anticipatory)
             trainer.normalization_metrics = model.update_statistics(sums,squares,counts)
             trainer.normalization_metrics['clip_fraction'] = clipped/(counts*model.mu.shape[-1])
             trainer.center_totals = None
@@ -101,8 +114,8 @@ class ProxyTrainer(DeepKVTrainer):
                 with torch.no_grad(), self.accelerator.autocast(), self.compute_loss_context_manager():
                     outputs = model(self.context(prepared),compute_auxiliary_losses=False,
                                     auxiliary_grad=False,collect_target_statistics=True,statistics_mode=phase)
-                sums, squares, counts = [self.accelerator.reduce(outputs[key],reduction='sum')
-                                         for key in ('center_sums','center_squares','center_counts')]
+                sums, squares, counts = reduce_moments(self.accelerator,
+                    tuple(outputs[key] for key in ('center_sums','center_squares','center_counts')),self.model.anticipatory)
                 self.model.update_statistics(sums,squares,counts,initialize=phase)
         return super().training_step(model,inputs,num_items_in_batch)
 
@@ -111,14 +124,16 @@ class ProxyTrainer(DeepKVTrainer):
         weight = self.model.auxiliary_weight(self.state.global_step)
         interval = max(1,self.state.logging_steps or int(self.args.logging_steps))
         diagnostic = (self.state.global_step+1)%interval==0 or (self.args.logging_first_step and self.state.global_step==0)
-        compute_aux = bool(self.model.family and (not training or weight>0 or diagnostic))
+        # At lambda=0 an isolated estimator still needs zero-gradient DDP hooks.
+        isolated_training = training and self.model.anticipatory and self.model.settings.isolate_estimator
+        compute_aux = bool(self.model.family and (not training or weight>0 or diagnostic or isolated_training))
         outputs = model(self.context(inputs),compute_auxiliary_losses=compute_aux,
-                        auxiliary_grad=model.training and weight>0,
+                        auxiliary_grad=model.training and (weight>0 or isolated_training),
                         collect_target_statistics=training and bool(self.model.family))
         counts = (num_items_in_batch if num_items_in_batch is not None else
                   torch.stack((outputs['lm_count'],outputs['aux_count'])))
         loss = outputs['lm_sum']/counts[0].clamp_min(1)
-        if weight>0:
+        if weight>0 or isolated_training:
             loss = loss+weight*outputs['aux_sum']/counts[1].clamp_min(1)
         if num_items_in_batch is not None:
             loss = loss*self.accelerator.num_processes

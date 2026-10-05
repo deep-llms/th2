@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from . import ALL_ARMS, PROXY_ARMS, SCREEN_ARMS
+from . import ALL_ARMS, ALL_PROXY_ARMS as PROXY_ARMS, SCREEN_ARMS
 
 
 def parse_baselines(values):

@@ -1,5 +1,38 @@
 # Current task
 
+## P4/P5/P6 implemented and locally verified
+
+Implemented revision 3 of docs/proxy_arms_P4_P5_P6_spec.md using the existing
+train.py/HF Trainer pipeline: P4, P4-iso, P5, P6, P6-iso. Dense SDPA isolation
+and reset positions remain the defaults. P4/P5 inject all values; P6 injects
+before the residual block. Versioned four-MLP targets, prescribed gate defaults,
+independent module seed43, strict resume metadata, sequential queue selection,
+reporting and saved-gate evaluation are supported. P5 defaults to isolation.
+
+One-forward block routing uses separate LM/aux autograd outputs. The auxiliary
+output needs independent storage: a tensor alias merged routes in eager mode,
+and a view still merged routes in AOT Autograd. An output clone fixes both.
+No estimator recomputation by default; optional recompute reference and compiled
+estimator/injection/cosine paths are available. Normalization buffers use one
+collective per update. Isolated estimators execute zero auxiliary gradients at
+lambda0 so DDP reducer hooks remain valid. Gates are logged at step0.
+
+44 local CPU tests passed in169.987s, including actual two-rank Gloo/HFTrainer
+for P4-iso/P5/P6, exact save/resume for all five variants, checkpoint replay,
+no cross-document leakage, gradient routing and accumulation, AOT compilation,
+and existing P1/P3/FA4-reference regressions. Additional tightened custom-VJP
+comparison passed: fp32 max-absolute error divided by the reference tensor's
+maximum absolute value <=1e-6; BF16 <=1%. Logs: temp/p4-p5-p6-acceptance.log
+and temp/p4-gradient-tolerance.log. This is CPU acceptance, not CUDA validation.
+
+No B200 interaction, push or real-data training. commands.sh remains#0.
+Before launch, still run the spec's GPU smoke and component throughput profile;
+3% overhead is a target, not an observed result. CUDA Inductor also needs smoke
+before enabling compilation. First screen order P4-iso then P6; P5 conditional.
+Usage and caveats: docs/P4_P5_P6_IMPLEMENTATION.md. Legacy FA4 A cannot serve as
+matched control for default dense SDPA. Extra initialization-only A seed must
+keep data_seed42; historical make-jobs --seeds changes both seeds.
+
 ## Final P1 gates retrieved successfully (2026-10-06 Singapore)
 
 Controller export98263d9 recovered: OK,2files pulled, published18:26:49UTC

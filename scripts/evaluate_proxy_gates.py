@@ -11,6 +11,7 @@ from transformers import AutoTokenizer, Qwen3Config, TrainingArguments, TrainerS
 
 from deep_kv.packing import isolated_data_collator, preprocess_dataset
 from deep_kv.proxy import ProxyModel, ProxySettings
+from deep_kv import ANTICIPATORY_ARMS
 from deep_kv.proxy_training import ProxyTrainer
 from scripts.check_trained_attention import restore
 from train import load_text
@@ -56,8 +57,8 @@ def run_sweep(arm_dir, output, step=2500):
     arm_dir, output = Path(arm_dir), Path(output)
     saved, result = read(arm_dir/'train_config.json'), read(arm_dir/'result.json')
     pilot = saved['pilot']
-    if pilot['arm'] not in ('P1-block', 'P3-block') or result['global_step'] != step:
-        raise ValueError('Expected a completed P1/P3-block checkpoint at the requested step')
+    if pilot['arm'] not in ('P1-block', 'P3-block')+ANTICIPATORY_ARMS or result['global_step'] != step:
+        raise ValueError('Expected a completed supported proxy checkpoint at the requested step')
     checkpoint = arm_dir/f'checkpoint-{step}'
     state = TrainerState.load_from_json(str(checkpoint/'trainer_state.json'))
     if state.global_step != step or state.max_steps != saved['training']['max_steps']:
@@ -77,7 +78,7 @@ def run_sweep(arm_dir, output, step=2500):
     config = Qwen3Config.from_dict(saved['model_config'])
     config._attn_implementation = 'sdpa'
     config.use_cache = False
-    legacy_defaults = dict(alpha_init=0., kv_mode='kv', layers=None)
+    legacy_defaults = dict(alpha_init=0., kv_mode='kv', layers=None,isolate_estimator=False,module_seed=None,aux_recompute=False,compile_estimator=False)
     settings = ProxySettings(**{key: (pilot.get('proxy_'+key, legacy_defaults[key]) if key in legacy_defaults
                                      else pilot['proxy_'+key]) for key in ProxySettings.__dataclass_fields__})
     model = ProxyModel.from_scratch(config, pilot['arm'], seed=args.seed,

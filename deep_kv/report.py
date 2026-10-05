@@ -2,13 +2,22 @@
 import json
 import copy
 from pathlib import Path
-from . import ALL_ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
+from . import ALL_ARMS, ANTICIPATORY_ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
 
 
 def comparable_config(config):
     """Compare the shared recipe; proxy target identity is checked separately."""
     config = copy.deepcopy(config)
-    config['pilot'].pop('arm')
+    arm=config['pilot'].pop('arm')
+    if arm in ANTICIPATORY_ARMS:
+        expected=dict(proxy_alpha_init=.1 if arm.startswith('P6') else 1.,
+                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso'),
+                      proxy_target_version='p4p6-r1',proxy_lookahead=4)
+        if any(config['pilot'].get(k)!=v for k,v in expected.items()):
+            raise ValueError('P4/P5/P6 configuration does not match its arm definition')
+        for key in ('proxy_alpha_init','proxy_isolate_estimator','proxy_module_seed',
+                    'proxy_aux_recompute','proxy_compile_estimator'):
+            config['pilot'].pop(key,None)
     if config['pilot'].get('proxy_screen'):
         config['pilot'].pop('proxy_channel_mask', None)
         config.pop('proxy_mask', None)
@@ -36,9 +45,14 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
         raise ValueError('Baseline reuse requires arm A')
     results, common = {}, None
     targets = {}
+    module_seeds = set()
     for arm in arms:
         path = result_path(root, arm, baseline_dir)
         config = json.loads((path / "train_config.json").read_text())
+        if arm in ANTICIPATORY_ARMS:
+            module_seeds.add(config['pilot'].get('proxy_module_seed'))
+            if None in module_seeds or len(module_seeds)>1:
+                raise ValueError('P4/P5/P6 arms require the same explicit module seed')
         if expected_attention_backend is not None:
             if expected_attention_backend not in ('sdpa','fa4') or config['pilot'].get('attention_backend','sdpa') != expected_attention_backend:
                 raise ValueError('Incorrect reused baseline attention backend')
@@ -62,10 +76,11 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             raise ValueError('Incorrect reused baseline stopping step')
         if expected_seed is not None and any(config['training'][key] != expected_seed for key in ('seed','data_seed')):
             raise ValueError('Incorrect screening seed')
-        if config['pilot'].get('proxy_screen') and arm.startswith(('P1-', 'P3-')):
+        if config['pilot'].get('proxy_screen') and (arm.startswith(('P1-', 'P3-')) or arm in ANTICIPATORY_ARMS):
             target = config.get('proxy_target')
-            if not target or target.get('target_version') != 'r7' or config['pilot'].get('proxy_channel_mask'):
-                raise ValueError('Proxy arms require the r7 target definition without a channel mask')
+            version='p4p6-r1' if arm in ANTICIPATORY_ARMS else 'r7'
+            if not target or target.get('target_version') != version or config['pilot'].get('proxy_channel_mask'):
+                raise ValueError('Proxy arms require their versioned target definition without a channel mask')
             targets[arm] = target
             for other, definition in targets.items():
                 # Families differ only in the raw target quantity and target index set.
@@ -113,6 +128,10 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                         summary['nll_differences'][arm+'-'+control] = nll[arm]-nll[control]
         summary['training_cost'] = {arm:results[arm]['training_cost'] for arm in arms}
         summary['reliance_loss_increase'] = {arm:results[arm]['evaluation'].get('eval_reliance_loss_increase') for arm in arms}
+        if set(arms)&set(ANTICIPATORY_ARMS):
+            for arm in ANTICIPATORY_ARMS:
+                if arm in nll and 'A' in nll:summary['nll_differences'][arm+'-A']=nll[arm]-nll['A']
+            summary['interpretation']='Token-matched exploratory comparison; time-matched A and initialization-seed spread are required for a screen success claim.'
     if baseline_dir is not None:
         summary['reused_baseline'] = str(Path(baseline_dir).resolve())
     root.mkdir(parents=True, exist_ok=True)

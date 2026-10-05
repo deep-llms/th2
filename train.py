@@ -27,7 +27,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
-from deep_kv import PROXY_ARMS
+from deep_kv import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
@@ -72,11 +72,15 @@ class PilotArguments:
     proxy_chunk_size: int = 64
     proxy_lambda_max: float = .1
     proxy_warmup_steps: int = 250
-    proxy_alpha_init: float = 0.
+    proxy_alpha_init: float | None = None
     proxy_kv_mode: str = 'kv'
     proxy_layers: list[int] | None = None
+    proxy_isolate_estimator: bool | None = None
+    proxy_module_seed: int | None = None
+    proxy_aux_recompute: bool = False
+    proxy_compile_estimator: bool = False
     proxy_target_centering: bool = True  # Legacy CLI: False is no longer supported.
-    proxy_target_version: str = 'r7'
+    proxy_target_version: str | None = None
     proxy_variance_floor: float = .01
     proxy_target_clip: float = 10.
     proxy_momentum: float = .99
@@ -156,8 +160,8 @@ def main():
     if pilot.attention_backend not in ('sdpa', 'fa4') or (pilot.attention_backend == 'fa4' and pilot.arm not in ('A',) + PROXY_ARMS):
         raise ValueError('attention_backend=fa4 requires arm A or a proxy-screen arm')
     pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS or pilot.attention_backend == 'fa4'
-    if pilot.proxy_alpha_init != 0 and not pilot.arm.startswith(('P1','P3')):
-        raise ValueError('Nonzero proxy_alpha_init requires a P1/P3 arm')
+    if pilot.proxy_alpha_init not in (None,0) and not pilot.arm.startswith(('P1','P3')) and pilot.arm not in ANTICIPATORY_ARMS:
+        raise ValueError('Nonzero proxy_alpha_init requires a proxy arm')
     if (pilot.proxy_kv_mode != 'kv' or pilot.proxy_layers is not None) and not pilot.arm.startswith('P1'):
         raise ValueError('Custom proxy K/V routing or layers require a P1 arm')
     if pilot.proxy_screen and not data_args.isolate_documents:
@@ -183,10 +187,11 @@ def main():
     model_class, trainer_class, callback_class = DeepKV, DeepKVTrainer, PilotCallback
     proxy_options = {}
     if pilot.proxy_screen:
-        from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget
+        from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget, resolve_proxy_settings
         from deep_kv.proxy_training import ProxyTrainer, ProxyCallback
         model_class, trainer_class, callback_class = ProxyModel, ProxyTrainer, ProxyCallback
-        proxy_settings = ProxySettings(**{key: getattr(pilot, 'proxy_'+key) for key in ProxySettings.__dataclass_fields__})
+        proxy_settings = resolve_proxy_settings(pilot.arm,ProxySettings(**{key: getattr(pilot, 'proxy_'+key) for key in ProxySettings.__dataclass_fields__}))
+        for key in ProxySettings.__dataclass_fields__:setattr(pilot,'proxy_'+key,getattr(proxy_settings,key))
         budget = compute_budget(config,proxy_settings,data_args.block_size)
         if pilot.proxy_channel_mask is not None or not pilot.proxy_target_centering:
             raise ValueError('Revision r7 requires running standardization without a channel mask')
@@ -221,9 +226,11 @@ def main():
                   "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
                       if k not in ("stop_after", "allow_performance_change_on_resume")
                       and (k != 'attention_backend' or v != 'sdpa')
-                      and (k != 'proxy_alpha_init' or v != 0.)  # Preserve pre-option checkpoint recipes.
+                      and (k != 'proxy_alpha_init' or v not in (None,0.))  # Preserve pre-option checkpoint recipes.
                       and (k != 'proxy_kv_mode' or v != 'kv')
                       and (k != 'proxy_layers' or v is not None)
+                      and (k not in ('proxy_isolate_estimator','proxy_aux_recompute','proxy_compile_estimator') or v or pilot.arm in ANTICIPATORY_ARMS)
+                      and (k != 'proxy_module_seed' or v is not None)
                       and (pilot.proxy_screen or not k.startswith('proxy_'))},
                   "training": settings, "world_size": training_args.world_size,
                   "tokens_per_update": tokens_per_update,
@@ -232,7 +239,7 @@ def main():
         target_keys = ('target_version','variance_floor','target_clip','momentum','loss_form')
         if model.family:
             experiment['proxy_target'] = dict(target_version=proxy_settings.target_version,
-                quantity='mlp_window_sum' if model.family=='P1' else 'deep_band_increment',
+                quantity='deep_band_increment' if model.family=='P3' else 'mlp_window_sum',
                 normalization='running_per_channel',variance_floor=proxy_settings.variance_floor,
                 clip=proxy_settings.target_clip,momentum=proxy_settings.momentum,epsilon=1e-6,
                 lookahead=proxy_settings.lookahead,bands=[list(key) if isinstance(key,tuple) else key for key in model.mean_layers],loss_form=proxy_settings.loss_form)
