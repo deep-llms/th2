@@ -1,5 +1,29 @@
 # Project notes
 
+## Baseline completed; eight burns verified (2026-10-05 03:19 UTC)
+
+Read-only collector 998de33 verified the fresh original Qwen arm A/seed42
+completed exactly 2500 updates with the full 28600-step schedule unchanged.
+The three-update full-size smoke passed; all eight queue stages returned zero.
+Final held-out LM loss: 3.4779414257087833 over 9,981,660 eligible targets
+(4882 rows). Input tokens trained: 2,621,440,000. Trainer runtime: 6187.4524 s
+(about 1 h 43 min); last update interval about 2.435 s. Peak allocated GPU
+memory: 118,780,560,384 bytes. Use actual updates/runtime for throughput;
+Trainer's generic train_steps_per_second uses the full scheduled step count
+and is misleading after a forced cutoff.
+
+checkpoint-2500 contains model weights, optimizer, scheduler, trainer state
+and RNG files for all eight ranks. Supervisor training_status=ok. Automatic
+burn handoff succeeded at 01:41:56 UTC. At 03:18–03:19 UTC, the same verified
+burn workers34928–34935 under launcher34859 occupied all eight B200s at100%
+utilization, collective cycles advanced6590 to6610, and the guard was released.
+No further training was launched. commands.sh returned to inactive#0.
+
+Evidence: temp/baseline-done-status-20261005-a01.log, SHA256
+1578d04101d2cfb5c6ff54d0cf8380fcee99b68abc3d788703c263b2760e340a.
+Remote root: /mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-2500-20261005-a01;
+model/checkpoint directory: supervised/run/baseline/seed-42/A.
+
 ## Fresh isolated baseline launched (2026-10-05)
 
 User authorized one original Qwen3-0.6B arm A, seed42, from scratch to2500
