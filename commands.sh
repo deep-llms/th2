@@ -1,8 +1,9 @@
 #1 +60+a
-#th2-tjx3-proxy-gate-sweep-monitor-20261005-a01
+#th2-tjx3-proxy-gate-sweep-monitor-20261005-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
+sleep 40
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 WANDB_MODE=offline
 /mnt/local/conda-py311/envs/attention_bench/bin/python -u - <<'PY'
 import json,hashlib
