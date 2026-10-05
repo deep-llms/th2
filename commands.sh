@@ -1,10 +1,10 @@
 #1 +60+a
-#th2-tjx3-proxy-fa4-smoke-monitor-20261005-a02
+#th2-tjx3-proxy-fa4-smoke-monitor-20261005-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 WANDB_MODE=offline
-/mnt/local/conda-py311/envs/train_env/bin/python -u - <<'PYMON'
+/mnt/local/conda-py311/envs/attention_bench/bin/python -u - <<'PYMON'
 import json,time,hashlib,re
 from pathlib import Path
 from scripts.verified_gpu_reclaim import inspect,process
@@ -15,6 +15,12 @@ def tail(path,n=3500):
     with path.open('rb') as stream:
         stream.seek(max(0,path.stat().st_size-n));return stream.read().decode(errors='replace')
 print('GPU_STATUS',json.dumps(inspect()),flush=True)
+from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
+import importlib.metadata as md
+source=Path('resources/accelerate_config.yaml');destination=Path(default_yaml_config_file)
+print('ACCELERATE_VERIFIED',json.dumps(dict(path=str(destination),matches_resource=source.read_bytes()==destination.read_bytes(),
+    sha256=hashlib.sha256(destination.read_bytes()).hexdigest(),config=load_config_from_file(str(destination)).to_dict(),
+    versions={name:md.version(name) for name in ('torch','transformers','accelerate','datasets','flash-attn-4','nvidia-cutlass-dsl')})),flush=True)
 for name in ['inspection.json','supervised/reclaim.json','supervised/gpus-free-before-training.json',
              'supervised/supervisor.json','supervised/run/run.json','supervised/run/numerics/summary.json',
              'supervised/run/smoke-validation.json','supervised/run/complete.json','supervised/burn-verified.json']:
