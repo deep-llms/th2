@@ -58,8 +58,10 @@ Python scan loops, inverse decay powers, random target sketches or custom kernel
 warmup, cutoff 2,500, sequence 2,048, microbatch 16, accumulation 4 and eight GPUs:
 1,048,576 input tokens/update. Auxiliary lambda uses the absolute completed-update
 count: 0 for the first update, 0.1 at count 250, then constant. Optional decay is
-off. Checkpointing follows existing defaults; performance changes require the
-existing resume checks. Real GPU capacity for this combination is still unmeasured.
+off. The screen recipe explicitly disables decoder, LM and auxiliary activation
+checkpointing, matching the completed isolated A baseline. The existing resume
+checks still govern performance changes. Full-size proxy-arm capacity must be
+smoke-tested before the screen; baseline capacity alone does not prove it fits.
 
 Queue generation (creates a manifest only):
 
@@ -69,7 +71,7 @@ python -m deep_kv make-jobs --config proxy_heads.b200.json \
 python run_experiments.py --config temp/proxy-screen-jobs.json --list
 ```
 
-Default seeds are 42, 43, 44, with matching model/data seeds and deterministic
+Default seeds are 42, 1042, 2042, with matching model/data seeds and deterministic
 estimator seed `seed + 1`. Output directories are `seed-N/ARM`. The queue has 24
 training jobs, three within-seed reports and one aggregate report, run sequentially.
 Each training job uses all eight GPUs. Use `--arms ... --seeds ...` to select a
@@ -93,11 +95,46 @@ Each result records actual parameter counts, the budget and runtime/memory data.
 V3 construction uses the configured sequence length for its scan budget, matching
 the reported budget; it does not assume 2,048 when a custom recipe changes length.
 
+## Reusing a completed baseline
+
+Reports ignore channel-mask settings only for the computation of vanilla A/V
+controls. Both the mask path and full receipt must match between every P1/P3
+arm (including lambda-zero controls), and across seeds. All other recipe fields,
+including checkpointing flags, dataset fingerprints and stopping steps remain
+strict. This does not relax checkpoint-resume validation.
+
+To reuse an existing A without copying weights or altering its saved config:
+
+```bash
+python -m deep_kv make-jobs --config /local/calibrated-screen-recipe.json \
+  --reuse-baseline 42=/local/completed-baseline/seed-42/A \
+  --output temp/proxy-screen-jobs.json
+```
+
+The supplied recipe should be a copy of `proxy_heads.b200.json` with the shared
+`proxy_channel_mask` path set after calibration. Paths above are placeholders.
+`--reuse-baseline` accepts `SEED=/absolute/path/to/A` entries for selected seeds.
+The queue validates the reused baseline's completion artifacts, seed and cutoff,
+skips only that seed's A training, and includes it in both reports. With one
+reused baseline the default screen has 23 new training jobs. New arms still
+undergo full recipe/data matching against A when their results are compared.
+References point to the original output directory; keep it available and unchanged.
+Other seeds still train their own A. No baseline is reused implicitly.
+
+Standalone reports accept `report --baseline-dir /path/to/A`; `report-seeds`
+accepts the same `--reuse-baseline SEED=/path/to/A` mapping as queue generation.
+The report records the external baseline path; source artifacts are read-only.
+
 ## Optional channel calibration
 
 Without a calibration file, the code explicitly logs an empty exclusion set.
+The specification permits that fallback only when no checkpoint is available.
+A trained isolated baseline now exists, so calibrate it before the proxy screen.
 `scripts/calibrate_proxy_mask.py` can create one from a local trained original
-arm-A checkpoint, using the same isolated text packing and approximately 1M tokens:
+arm-A checkpoint (either DeepKV or ProxyModel), using isolated text packing
+and approximately 1M tokens. Loading is strict; proxy block outputs are observed
+directly, since decoder forward hooks do not fire on the ProxyModel path.
+Calibration requires every block to account for every processed token:
 
 ```bash
 python -m scripts.calibrate_proxy_mask \

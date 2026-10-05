@@ -1,5 +1,29 @@
 # Current task
 
+## Proxy review fixes implemented (2026-10-05)
+
+F1: calibration strictly loads either DeepKV-A or ProxyModel-A checkpoints.
+Proxy block outputs are observed directly; every block must account for all
+calibration tokens with finite statistics. The existing baseline is usable
+without changing its weights or dropping checkpoint keys.
+
+F2: proxy_heads.b200.json now explicitly disables decoder/LM/aux activation
+checkpointing to match the completed baseline. Reports ignore channel-mask
+fields for vanilla controls, but enforce identical path/receipt for every
+P1/P3 arm and across seeds. Other recipe matching and resume checks stay strict.
+Optional make-jobs/report-seeds --reuse-baseline SEED=/absolute/path/to/A
+references an existing baseline, validates artifacts/seed/cutoff and skips its
+training job. Final comparisons still enforce the complete shared recipe.
+
+F3: default screen seeds are 42,1042,2042; initialization algorithms and explicit
+seed overrides are unchanged. One reused A means 23 new training jobs.
+Focused local CPU suite: 21 tests passed in 31.125s. Full offline suite: 124 tests passed in 138.135s
+(temp/proxy-review-fixes-full-20261005-a01.log). Queue CLI dry-run and
+compilation/diff checks also passed.
+No B200 action or calibration run; commands.sh stays#0. Before the screen,
+calibrate the completed A, put the shared mask path into the launch recipe,
+and smoke-test full-size proxy capacity with the chosen execution flags.
+
 ## Baseline completed; eight burns verified (2026-10-05 03:19 UTC)
 
 Read-only collector 998de33 verified the fresh original Qwen arm A/seed42

@@ -5,54 +5,83 @@ import json
 from pathlib import Path
 
 import torch
+from safetensors import safe_open
 from torch.utils.data import DataLoader
 from transformers import AutoConfig, AutoTokenizer, TrainingArguments
 
 from deep_kv.model import DeepKV
+from deep_kv.proxy import ProxyModel
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer
 from scripts.check_trained_attention import restore
 from train import load_text
 
 
+def load_calibration_model(config, checkpoint, *, proxy_settings=None):
+    """Strictly restore either saved vanilla wrapper; never discard unknown keys."""
+    with safe_open(str(checkpoint), framework='pt', device='cpu') as saved:
+        proxy = any(key in saved.keys() for key in ('mu', 'mu_initialized', 'gamma', 'channel_mask'))
+    cls = ProxyModel if proxy else DeepKV
+    options = {'proxy_settings': proxy_settings} if proxy else {}
+    model = cls.from_scratch(config, 'A', consumer=1, deep_target=config.num_hidden_layers,
+                             checkpoint_layers=False, **options)
+    restore(model, checkpoint)
+    return model
+
+
 @torch.no_grad()
 def calibrate(model, batches, token_budget):
-    if getattr(model,'proxy_screen',False) or model.arm != 'A':
-        raise ValueError('Calibration requires the original vanilla arm A')
+    if model.arm != 'A':
+        raise ValueError('Calibration requires vanilla arm A')
     if token_budget <= 0:
         raise ValueError('Calibration token budget must be positive')
     totals = torch.zeros(len(model.backbone.model.layers),model.backbone.config.hidden_size,
                          device=next(model.parameters()).device,dtype=torch.float32)
     count = 0
+    observed = [0] * len(model.backbone.model.layers)
+    def record(index, value):
+        if not bool(torch.isfinite(value).all()):
+            raise ValueError('Nonfinite calibration activations')
+        totals[index].add_(value.float().abs().sum((0,1)))
+        observed[index] += value.shape[0] * value.shape[1]
     handles = []
-    for i,layer in enumerate(model.backbone.model.layers):
-        def hook(module,args,output,index=i):
-            value=output[0] if isinstance(output,tuple) else output
-            totals[index].add_(value.float().abs().sum((0,1)))
-        handles.append(layer.register_forward_hook(hook))
+    if not isinstance(model, ProxyModel):
+        for i,layer in enumerate(model.backbone.model.layers):
+            def hook(module,args,output,index=i):
+                record(index, output[0] if isinstance(output,tuple) else output)
+            handles.append(layer.register_forward_hook(hook))
     previous = model.training
     model.eval()
     try:
         for context in batches:
             if not bool(context.valid.all()):raise ValueError('Calibration expects fully packed contexts')
-            model.hidden_states(context)
+            if isinstance(model, ProxyModel):
+                # ProxyModel executes blocks directly, bypassing decoder forward hooks.
+                model._run_backbone(context, compute_auxiliary_losses=False, auxiliary_grad=False,
+                                    collect_target_statistics=False,
+                                    block_observer=lambda layer, value: record(layer-1, value))
+            else:
+                model.hidden_states(context)
             count += context.input_ids.numel()
             if count >= token_budget:break
     finally:
         for hook in handles:hook.remove()
         model.train(previous)
     if count < token_budget:raise ValueError('Insufficient calibration tokens')
+    if any(tokens != count for tokens in observed):
+        raise ValueError('Calibration did not observe every block for every token')
     means = totals/count
+    if not bool(torch.isfinite(means).all()):raise ValueError('Nonfinite calibration statistics')
     mask = (means > 20*means.median(-1,keepdim=True).values).any(0)
     if bool(mask.all()):raise ValueError('Calibration excluded every channel')
-    return dict(hidden_size=means.shape[1],tokens=count,threshold=20,
+    return dict(hidden_size=means.shape[1],tokens=count,tokens_by_block=observed,threshold=20,
                 excluded_channels=mask.nonzero().flatten().cpu().tolist(),
                 mean_abs_by_block=means.cpu().tolist())
 
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--checkpoint',type=Path,required=True,help='Old arm-A model.safetensors, local only')
+    p.add_argument('--checkpoint',type=Path,required=True,help='DeepKV or ProxyModel arm-A model.safetensors, local only')
     p.add_argument('--config',required=True)
     p.add_argument('--tokenizer',required=True)
     p.add_argument('--data-dir',required=True)
@@ -68,8 +97,7 @@ def main():
         raise ValueError('Calibration sizes must be positive')
     if a.output.exists():raise ValueError('Refuse to overwrite channel mask')
     cfg=AutoConfig.from_pretrained(a.config,local_files_only=True);cfg._attn_implementation='sdpa';cfg.use_cache=False
-    m=DeepKV.from_scratch(cfg,'A',consumer=1,deep_target=cfg.num_hidden_layers,checkpoint_layers=False)
-    restore(m,a.checkpoint);m.to(a.device)
+    m=load_calibration_model(cfg,a.checkpoint);m.to(a.device)
     tokenizer=AutoTokenizer.from_pretrained(a.tokenizer,local_files_only=True)
     raw=load_text(a.data_dir);raw=raw.select(range(min(len(raw),a.max_documents)))
     args=TrainingArguments(output_dir=str(a.output.parent),report_to=[],use_cpu=a.device=='cpu')

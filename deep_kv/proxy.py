@@ -249,7 +249,8 @@ class ProxyModel(DeepKV):
                 return checkpoint(compute,u,raw_target,*estimates,use_reentrant=False)
             return compute(u,raw_target,*estimates)
 
-    def _run_backbone(self, context, *, compute_auxiliary_losses, auxiliary_grad, collect_target_statistics):
+    def _run_backbone(self, context, *, compute_auxiliary_losses, auxiliary_grad, collect_target_statistics,
+                      block_observer=None):
         if context.segments is None or not bool(context.valid.all()):
             raise ValueError('Proxy screen requires packed, document-isolated inputs')
         mask = context.allowed()  # Boolean causal + same-document; one shared mask.
@@ -272,6 +273,8 @@ class ProxyModel(DeepKV):
             result = (checkpoint(call,hidden,use_reentrant=False)
                       if self.training and self.checkpoint_layers and torch.is_grad_enabled() else call(hidden))
             hidden, mlp, u, *estimates = result
+            if block_observer is not None:
+                block_observer(layer, hidden)
             if layer in self.layers and need_targets and (self.family == 'P1' or compute_auxiliary_losses):
                 sources[layer] = (u,tuple(estimates)) if compute_auxiliary_losses else None
             if not need_targets:

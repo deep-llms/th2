@@ -38,5 +38,8 @@
   "dataloader_num_workers": 8,
   "report_to": "wandb",
   "stop_after": 2500,
-  "proxy_screen": true
+  "proxy_screen": true,
+  "checkpoint_layers": false,
+  "checkpoint_lm": false,
+  "checkpoint_aux": false
 }
