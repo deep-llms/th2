@@ -20,7 +20,14 @@ def parse_baselines(values):
 
 def jobs(config_path, stop_after=None, arms=None, seeds=None, reuse_baselines=None):
     config = json.loads(Path(config_path).read_text())
-    arms = tuple(arms if arms is not None else SCREEN_ARMS if config.get('proxy_screen') else 'ABCD')
+    fa4 = config.get('baseline_attention', 'sdpa') == 'fa4'
+    arms = tuple(arms if arms is not None else ('A',) if fa4 else SCREEN_ARMS if config.get('proxy_screen') else 'ABCD')
+    if fa4:
+        if arms != ('A',):
+            raise ValueError('FA4 baseline queues support only arm A')
+        config['proxy_screen'] = True
+        if reuse_baselines:
+            raise ValueError('FA4 baseline requires its own training run; do not reuse dense A')
     if not arms or len(set(arms)) != len(arms) or any(arm not in ALL_ARMS for arm in arms):
         raise ValueError("Select nonempty, unique arms from " + "/".join(ALL_ARMS))
     # A is shared by both experiment families. Select its matching model path

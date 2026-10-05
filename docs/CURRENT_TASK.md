@@ -1,5 +1,29 @@
 # Current task
 
+## Optional FA4-isolated baseline implemented (2026-10-05)
+
+User requested an arm-A variant using FA4 document isolation. train.py now
+accepts baseline_attention=fa4 for A only, selecting the same ProxyModel/
+ProxyTrainer baseline flow and unchanged packing, EOS, reset positions, loss,
+optimizer and schedule. Native GQA/QK norm/RoPE feed the pinned FA4 varlen API;
+one document-fragment layout is reused per microbatch without a dense mask.
+The original dense SDPA screen remains the default and its saved config identity
+is preserved. Switching attention backends on resume is rejected.
+
+Recipe: baseline_a_fa4.b200.json. Queue CLI defaults to A only for this recipe;
+use --seeds 42 for one run. The environment must already provide the separately
+pinned flash-attn-4==4.0.0b33 from envs/attention_bench.txt. No fallback. Results
+identify the backend/package and first-GPU-microbatch call/gradient receipts,
+separately from SDPA receipts. These are not numerical-equivalence certificates.
+
+All 28 focused CPU tests passed in 36.654s using an independent per-fragment
+attention stand-in. Queue manifest and compilation/diff checks passed. Full
+offline suite: 131 tests passed in 142.696s
+(temp/fa4-baseline-full-20261005-a01.log). The checkpoint-enabled receipt
+check also passed: 16 forward/recompute calls and eight query-gradient callbacks
+for the eight-layer CPU fixture, with no dense mask. No B200 job or environment change; commands.sh stays#0.
+Actual FA4 CUDA smoke/throughput validation remains before a real run.
+
 ## Proxy review fixes implemented (2026-10-05)
 
 F1: calibration strictly loads either DeepKV-A or ProxyModel-A checkpoints.

@@ -95,6 +95,60 @@ Each result records actual parameter counts, the budget and runtime/memory data.
 V3 construction uses the configured sequence length for its scan budget, matching
 the reported budget; it does not assume 2,048 when a custom recipe changes length.
 
+## Optional FA4-isolated arm A
+
+`train.py --baseline_attention fa4` selects a separate vanilla-A backend
+experiment. It automatically uses the matching ProxyModel/ProxyTrainer baseline
+path, but has no proxy heads or auxiliary loss. Only arm A is accepted. The
+proxy screen and ordinary A default remain dense SDPA.
+
+`baseline_a_fa4.b200.json` copies the current screen recipe, changing only the
+attention selection and output directory. Sequence2048, micro16/accum4/eight
+GPUs, all checkpointing off, full28600 schedule/warmup1430, cutoff2500 and the
+same sampled English data are retained. Choose an explicit seed for a single run:
+
+```bash
+python -m deep_kv make-jobs --config baseline_a_fa4.b200.json \
+  --seeds 42 --output temp/baseline-a-fa4-jobs.json
+python run_experiments.py --config temp/baseline-a-fa4-jobs.json --list
+```
+
+This generates a manifest only. Execution requires the separately provisioned
+`envs/attention_bench.txt` environment with `flash-attn-4==4.0.0b33`; do not
+reinstall a live environment. Missing/other FA4 versions fail explicitly, without
+a fallback. The existing eight-GPU launcher and supervisor workflow still apply.
+
+The variant reuses packing, document IDs, EOS handling, reset RoPE positions,
+next-token target eligibility, global loss normalization, optimizer/scheduler,
+checkpointing and resume. Each contiguous document fragment becomes one varlen
+sequence; every packed row starts a new fragment even when adjacent rows share a
+document ID. One int32 cu_seqlens layout is built per microbatch and reused across
+layers. Native GQA, QK normalization and RoPE precede the FA4 call. No dense mask
+is allocated. The adapter follows the prior document-training benchmark's API.
+
+`train_config.json` records `baseline_attention=fa4`; default SDPA omits the new
+field to preserve historical dense-run resume identity. Backend changes on resume
+are rejected even with allow_performance_change_on_resume. Reports retain strict
+backend matching; this is a separate backend experiment, not a replacement for
+the dense A control. FA4 queues cannot reuse the completed dense baseline.
+
+Results contain attention_runtime package/API metadata and fa4_receipts for the
+first actual train/eval GPU microbatch on rank zero. Those receipts record calls,
+query-gradient callbacks, dtype, fragment counts and maximum fragment length;
+they are not CUDA profiler traces or numerical equivalence certificates.
+SDPA receipts remain empty for FA4, rather than mislabeling a no-SDPA run.
+
+Local tests use an independent per-fragment CPU attention stand-in to verify
+outputs, all parameter gradients, exact isolation, no dense-mask allocation,
+checkpoint recomputation, Trainer save/resume, queue scope and receipts.
+Validation: 28 focused tests passed in 36.654 s; all 131 offline CPU tests
+passed in 142.696 s (temp/fa4-baseline-full-20261005-a01.log). The queue manifest
+passed the runner loader. A separate checkpoint-enabled receipt check verified
+recomputation and query-gradient callbacks.
+
+Actual FA4 CUDA numerical behavior/throughput for this new production path still
+requires a B200 smoke test. No GPU training is launched by implementation tests.
+
 ## Reusing a completed baseline
 
 Reports ignore channel-mask settings only for the computation of vanilla A/V

@@ -200,6 +200,12 @@ def trainer_audit(trainer, phase):
             or phase in trainer._sdpa_seen):
         yield
         return
+    if getattr(trainer.model, 'baseline_attention', 'sdpa') == 'fa4':
+        from .fa4 import trainer_audit as fa4_audit
+        with fa4_audit(trainer, phase):
+            yield
+        trainer._sdpa_seen.add(phase)
+        return
     audit = SDPAAudit(trainer.model)
     # Backward marker separates checkpoint recomputation from the first forward.
     trainer._active_sdpa_audit = audit
