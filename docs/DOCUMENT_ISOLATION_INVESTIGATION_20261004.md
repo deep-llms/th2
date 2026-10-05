@@ -659,3 +659,104 @@ Local evidence:
   remote artifact records.
 - Summary SHA256 matches the run manifest:
   `d2e88f3eef4765fcc3fea379663c239d13ccec851ed34bc4022c1577f5b2ee95`.
+
+## 12. Same-backend 200-update SDPA control completed (2026-10-05)
+
+**Two dense SDPA runs reached a73.9992% maximum pre-clipping gradient-norm gap
+under the same historical recipe, seed and verified data stream.** This exceeds
+the48.0984% maximum of the old SDPA/FA4 pair. The proposed same-backend control
+is now measured, rather than inferred from repeated backward captures.
+
+### Matched replay
+
+One fresh SDPA-only200-update run reused the original8192 packed training rows
+and512 held-out rows. Hashes of their full token/document-ID contents matched the
+original metadata. Seed42, eight B200s, BF16, micro16×accum4, sequence2048,
+EOS separation, document isolation and reset positions are unchanged. Schedule
+28600 and warmup1430 are preserved, so this remains a warmup-only repeated-pool
+diagnostic, not the later2500-step production run.
+
+Because the current model/Trainer code had changed, all eight required historical
+source/test files were restored byte-for-byte from commit e06d5f9 into a fresh
+output directory. `resources/sdpa_repeat_200_source.json` records the source/base
+hashes; the adjacent patch is applied only to that isolated copy. Current model
+code, uncommitted P1/P3 changes, old outputs and environments were not altered.
+Five historical CPU benchmark tests passed locally and on B200. Accelerator
+configuration was copied and verified before the supervised launch.
+
+`scripts/compare_sdpa_repeat.py` verified all200 updates, every rank's full and
+first-update token-stream hashes,12800 observed rows per rank, finite logged
+losses/norms, matched learning rates, and matched held-out metadata/target counts.
+All eight new stream hashes were also checked against the previously downloaded
+original rank receipts on the dev machine. This is a fresh random-initialization
+repeat, not a checkpoint resume.
+
+### Measured variation
+
+All gaps below use original SDPA as the reference. Relative norm gap is
+`abs(candidate_norm-original_norm)/abs(original_norm)` and uses norms logged
+before gradient clipping. It compares different evolved weight sets.
+
+| Measurement over200 updates | Repeated SDPA versus original SDPA | Original FA4 versus original SDPA |
+|---|---:|---:|
+| Maximum relative gradient-norm gap | 73.9992% | 48.0984% |
+| Mean relative gradient-norm gap | 5.1968% | 4.1875% |
+| Median relative gradient-norm gap | 0.01692% | 0.00503% |
+| First update at or above3% norm gap | 137 | 137 |
+| Updates at or above3% norm gap | 57 | 49 |
+| Maximum absolute training-loss gap | 0.0145850 | 0.0106606 |
+| Mean absolute training-loss gap | 0.0007563 | 0.0007019 |
+| Absolute common-backend held-out loss gap | 0.0081011 | 0.0033356 |
+
+Atupdate185, the original/repeated SDPA gradient norms were0.66423291 and
+1.15576005, giving the74.0% maximum. Training losses at that update were7.30942154
+and7.31287956 (gap0.00345802). Atupdate200 the norm gap was4.3213%, rather than
+remaining at its maximum. Over updates151–200 the mean norm gap was19.5074% for
+the SDPA repeat and15.2894% for the old FA4 comparison. Both comparisons were
+close early and separated later in this warmup experiment.
+
+| Run | Final training loss | Held-out loss through common dense SDPA |
+|---|---:|---:|
+| Original SDPA | 7.11688042 | 7.11075908 |
+| Repeated SDPA | 7.11285686 | 7.10265799 |
+| Original FA4 | 7.11714840 | 7.10742352 |
+
+The SDPA repeat also exceeds the old3% norm /0.01 training-loss trajectory
+limits; `within_old_trajectory_limits=false` records that outcome. It is not
+relabelled as passing those limits. The repeat training and measurement job
+completed successfully; a large measured gap is not an execution failure.
+
+[Training and gradient-norm curves](../artifacts/sdpa-repeat-200-20261005-a01/training_comparison.png)
+show all three runs and both gap series. The plot and raw results are local
+artifacts, not included in a fresh Git clone.
+
+### Interpretation
+
+This directly demonstrates that large gradient-norm separation can occur between
+two SDPA runs even with identical seed, source, LR and audited data order. The
+old48% SDPA/FA4 gap is therefore not unique to changing the attention backend.
+Together with the same-weight/FP32 checks, this weakens the interpretation that
+large trajectory norm gaps alone indicate a FA4 kernel defect.
+
+It does not prove that the exact63% gap from the later2500-update recipe has the
+same cause, identify which nondeterministic operation triggered the divergence,
+or establish full-schedule statistical equivalence. One repeat provides an
+observed counterexample to strict trajectory matching, not a distribution of
+normal variation or an accuracy advantage for either backend. Same-weight
+numerical checks and final validation quality remain distinct measurements.
+
+### Completion and evidence
+
+Launch15cc5cf, final monitor607af11. Training/evaluation/save completed08:37:59UTC
+(16:37:59 Asia/Singapore); job duration533.04s. Supervisor verified GPUs free and
+restored burns at08:39:10UTC. Fresh08:39:50UTC inspection verified known workers
+51261–51268 on all8 GPUs,100% utilization, all-rank readiness, newly advancing
+collective progress and released guard. commands.sh returned to#0.
+
+Remote root:`/mnt/local/_outputs/deep-llms_th2/sdpa-repeat-200-20261005-a01`.
+Local exact-hash-verified results, source preflight, rank audits and burn receipts:
+`artifacts/sdpa-repeat-200-20261005-a01/`.
+Comparison JSON SHA256 (matches runner's manifest):
+`549230a2c9a78faa3705837aa37ea73a2bff224577853051c12290cf63760279`.
+Final monitoring receipt:`temp/sdpa-repeat-monitor-a03.log`, SHA256
+`f7bc8f5d874708eea9188c30f8240f5a54870f8a1b116f2680931a59b905e38c`.
