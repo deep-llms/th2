@@ -1,0 +1,12 @@
+{
+  "launch_commit": "10fc15ed93c50511438e337d57427c954d31db66",
+  "monitor_commit": "9c84deaa2aadc0fd065e8dd67c5fcf14cafbcaad",
+  "source_log_sha256": "cc06a202fffb065d3a76fc879fb41aea05a5581d3176505e61e3fc0b1a81c8ad",
+  "local_tests": {
+    "tests": 16,
+    "status": "passed",
+    "log_sha256": "73fe8ce56abaf3a760aa41ff86f0314b8f19c1b1cc57d861c6f9f9308641758c"
+  },
+  "production_monitor_commit": "8f359f0811a47b6c4498af1d336c3c87968ca9de",
+  "production_log_sha256": "5838a49c61d0ce90aae2c82c5cf6b174922aa9c83923ba0d36a8eed7f05778b0"
+}
