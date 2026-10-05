@@ -42,5 +42,5 @@
   "checkpoint_layers": false,
   "checkpoint_lm": false,
   "checkpoint_aux": false,
-  "baseline_attention": "fa4"
+  "attention_backend": "fa4"
 }

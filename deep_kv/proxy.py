@@ -125,12 +125,12 @@ class ProxyHead(nn.Module):
 class ProxyModel(DeepKV):
     """Shared Qwen backbone, no added attention branch. Targets never mutate during checkpoint replay."""
     def __init__(self, backbone, arm, *, proxy_settings=None, channel_mask=None,
-                 baseline_attention='sdpa', **kwargs):
+                 attention_backend='sdpa', **kwargs):
         settings = proxy_settings or ProxySettings()
         cfg = backbone.config
         if arm not in ('A',) + PROXY_ARMS:
             raise ValueError('Unknown proxy screen arm')
-        if baseline_attention not in ('sdpa', 'fa4') or (baseline_attention == 'fa4' and arm != 'A'):
+        if attention_backend not in ('sdpa', 'fa4') or (attention_backend == 'fa4' and arm != 'A'):
             raise ValueError('FA4 isolation is supported only for vanilla arm A')
         if cfg.attention_bias or cfg.hidden_act != 'silu' or cfg.num_attention_heads % cfg.num_key_value_heads:
             raise ValueError('Proxy heads require bias-free Qwen SwiGLU and contiguous integer GQA groups')
@@ -147,9 +147,9 @@ class ProxyModel(DeepKV):
             raise ValueError('Proxy screen requires dense document isolation')
         super().__init__(backbone, 'A', **kwargs)
         self.arm, self.proxy_screen, self.settings = arm, True, settings
-        self.baseline_attention = baseline_attention
-        self.attention_runtime = {'backend': baseline_attention}
-        if baseline_attention == 'fa4':
+        self.attention_backend = attention_backend
+        self.attention_runtime = {'backend': attention_backend}
+        if attention_backend == 'fa4':
             from .fa4 import load_kernel
             self.fa4_kernel, metadata = load_kernel()
             self.attention_runtime.update(metadata)
@@ -224,7 +224,7 @@ class ProxyModel(DeepKV):
         k = a.k_norm(k.view(shape)).transpose(1,2)
         v = v.view(shape).transpose(1,2)
         q, k = apply_rotary_pos_emb(q,k,*rotary)
-        if self.baseline_attention == 'fa4':
+        if self.attention_backend == 'fa4':
             from .fa4 import attention
             output = attention(q,k,v,mask,a.scaling,self.fa4_kernel)
             if self._fa4_observer is not None:
@@ -269,7 +269,7 @@ class ProxyModel(DeepKV):
                       block_observer=None):
         if context.segments is None or not bool(context.valid.all()):
             raise ValueError('Proxy screen requires packed, document-isolated inputs')
-        if self.baseline_attention == 'fa4':
+        if self.attention_backend == 'fa4':
             from .fa4 import document_layout
             mask = document_layout(context)  # One shared varlen layout; no dense mask.
         else:

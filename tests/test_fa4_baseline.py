@@ -37,7 +37,7 @@ def reference_kernel(q,k,v,*,cu_seqlens_q,cu_seqlens_k,max_seqlen_q,max_seqlen_k
 
 def make_model(backend,checkpoint=False):
     return ProxyModel.from_scratch(cfg(),'A',consumer=2,deep_target=8,proxy_settings=settings(),
-        baseline_attention=backend,checkpoint_layers=checkpoint,checkpoint_lm=checkpoint,lm_chunk=3)
+        attention_backend=backend,checkpoint_layers=checkpoint,checkpoint_lm=checkpoint,lm_chunk=3)
 
 
 class FA4BaselineTests(unittest.TestCase):
@@ -90,7 +90,7 @@ class FA4BaselineTests(unittest.TestCase):
     def test_actual_entry_save_resume_and_backend_change_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);config=proxy_fixture(root)
-            config.update(arm='A',baseline_attention='fa4',output_dir=str(root/'A'))
+            config.update(arm='A',attention_backend='fa4',output_dir=str(root/'A'))
             invoke(root,{**config,'stop_after':2});invoke(root,config)
             invoke(root,{**config,'output_dir':str(root/'full')})
             from safetensors.torch import load_file
@@ -101,13 +101,13 @@ class FA4BaselineTests(unittest.TestCase):
             self.assertEqual(result['attention_runtime']['backend'],'fa4')
             self.assertEqual(result['sdpa_receipts'],[])
             with self.assertRaisesRegex(ValueError,'Resume configuration'):
-                invoke(root,{**config,'baseline_attention':'sdpa','allow_performance_change_on_resume':True})
+                invoke(root,{**config,'attention_backend':'sdpa','allow_performance_change_on_resume':True})
 
     def test_queue_and_scope_guards(self):
         manifest=jobs('baseline_a_fa4.b200.json',seeds=[42])
         training=[job for job in manifest['jobs'] if 'gpus' in job]
         self.assertEqual(len(training),1)
-        self.assertIn('--baseline_attention',training[0]['argv'])
+        self.assertIn('--attention_backend',training[0]['argv'])
         self.assertEqual(training[0]['gpus'],list(range(8)))
         with self.assertRaisesRegex(ValueError,'only arm A'):
             jobs('baseline_a_fa4.b200.json',arms=('A','P1-block'))
@@ -115,10 +115,10 @@ class FA4BaselineTests(unittest.TestCase):
             jobs('baseline_a_fa4.b200.json',reuse_baselines={42:'/old/A'})
         with self.assertRaisesRegex(ValueError,'only for vanilla arm A'):
             ProxyModel.from_scratch(cfg(),'P1-block',consumer=2,deep_target=8,
-                proxy_settings=settings(),baseline_attention='fa4')
+                proxy_settings=settings(),attention_backend='fa4')
         # Dense recipes omit the default field, preserving historical resume identity.
         previous=dict(pilot=dict(arm='A'),training={})
-        requested=copy.deepcopy(previous);requested['pilot']['baseline_attention']='fa4'
+        requested=copy.deepcopy(previous);requested['pilot']['attention_backend']='fa4'
         with self.assertRaisesRegex(ValueError,'Resume configuration'):
             train.resume_performance_changes(previous,requested,True)
 

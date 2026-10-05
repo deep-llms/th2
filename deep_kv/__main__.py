@@ -20,7 +20,7 @@ def parse_baselines(values):
 
 def jobs(config_path, stop_after=None, arms=None, seeds=None, reuse_baselines=None):
     config = json.loads(Path(config_path).read_text())
-    fa4 = config.get('baseline_attention', 'sdpa') == 'fa4'
+    fa4 = config.get('attention_backend', 'sdpa') == 'fa4'
     arms = tuple(arms if arms is not None else ('A',) if fa4 else SCREEN_ARMS if config.get('proxy_screen') else 'ABCD')
     if fa4:
         if arms != ('A',):

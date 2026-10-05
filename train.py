@@ -77,7 +77,7 @@ class PilotArguments:
     proxy_decay_start: int | None = None
     proxy_decay_end: int | None = None
     proxy_channel_mask: str | None = None
-    baseline_attention: str = 'sdpa'
+    attention_backend: str = 'sdpa'
 
 
 def resume_performance_changes(previous, requested, allow=False):
@@ -146,9 +146,9 @@ def main():
         raise ValueError("Use checkpoint_layers for the custom model's checkpointing")
     if data_args.isolate_documents and pilot.causal_attention:
         raise ValueError("isolate_documents requires explicit dense SDPA masks; set causal_attention=false")
-    if pilot.baseline_attention not in ('sdpa', 'fa4') or (pilot.baseline_attention == 'fa4' and pilot.arm != 'A'):
-        raise ValueError('baseline_attention=fa4 is supported only for arm A')
-    pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS or pilot.baseline_attention == 'fa4'
+    if pilot.attention_backend not in ('sdpa', 'fa4') or (pilot.attention_backend == 'fa4' and pilot.arm != 'A'):
+        raise ValueError('attention_backend=fa4 is supported only for arm A')
+    pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS or pilot.attention_backend == 'fa4'
     if pilot.proxy_screen and not data_args.isolate_documents:
         raise ValueError("Proxy screening requires isolate_documents=true")
     # The wrapper consumes Context, so Trainer must retain the CLM input columns.
@@ -190,7 +190,7 @@ def main():
             mask_receipt = dict(source=pilot.proxy_channel_mask,sha256=hashlib.sha256(content).hexdigest(),excluded_channels=excluded)
         logger.warning('Proxy target channel mask: %s', mask_receipt)
         proxy_options = dict(proxy_settings=proxy_settings,channel_mask=channel_mask,
-                             sequence_length=data_args.block_size,baseline_attention=pilot.baseline_attention)
+                             sequence_length=data_args.block_size,attention_backend=pilot.attention_backend)
     model = model_class.from_scratch(config, pilot.arm, seed=training_args.seed, consumer=pilot.consumer,
                                deep_target=pilot.deep_target, lm_chunk=pilot.lm_chunk,
                                checkpoint_layers=pilot.checkpoint_layers,
@@ -219,7 +219,7 @@ def main():
     experiment = json.loads(json.dumps({"model": asdict(model_args), "model_config": config.to_dict(),
                   "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
                       if k not in ("stop_after", "allow_performance_change_on_resume")
-                      and (k != 'baseline_attention' or v != 'sdpa')
+                      and (k != 'attention_backend' or v != 'sdpa')
                       and (pilot.proxy_screen or not k.startswith('proxy_'))},
                   "training": settings, "world_size": training_args.world_size,
                   "tokens_per_update": tokens_per_update,

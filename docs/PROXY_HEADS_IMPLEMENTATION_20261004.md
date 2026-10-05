@@ -97,7 +97,7 @@ the reported budget; it does not assume 2,048 when a custom recipe changes lengt
 
 ## Optional FA4-isolated arm A
 
-`train.py --baseline_attention fa4` selects a separate vanilla-A backend
+`train.py --attention_backend fa4` selects a separate vanilla-A backend
 experiment. It automatically uses the matching ProxyModel/ProxyTrainer baseline
 path, but has no proxy heads or auxiliary loss. Only arm A is accepted. The
 proxy screen and ordinary A default remain dense SDPA.
@@ -126,7 +126,7 @@ document ID. One int32 cu_seqlens layout is built per microbatch and reused acro
 layers. Native GQA, QK normalization and RoPE precede the FA4 call. No dense mask
 is allocated. The adapter follows the prior document-training benchmark's API.
 
-`train_config.json` records `baseline_attention=fa4`; default SDPA omits the new
+`train_config.json` records `attention_backend=fa4`; default SDPA omits the new
 field to preserve historical dense-run resume identity. Backend changes on resume
 are rejected even with allow_performance_change_on_resume. Reports retain strict
 backend matching; this is a separate backend experiment, not a replacement for

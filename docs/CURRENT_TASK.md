@@ -1,9 +1,20 @@
 # Current task
 
+## Attention option renamed (2026-10-05)
+
+The public CLI/JSON option and model attribute are now attention_backend.
+Use --arm A --attention_backend fa4. Recipe, queue selection, runtime audit,
+documentation and tests use the new name. Default SDPA still omits the field
+from saved scientific configs, preserving existing dense-checkpoint resume.
+FA4 remains supported only for A; this rename does not expand model support.
+All 27 focused FA4/proxy-training/Trainer tests passed in 64.333s
+(temp/attention-backend-rename-tests-20261005-a01.log). Queue generation,
+compilation and diff checks passed. No GPU job or remote push; commands.sh stays#0.
+
 ## Optional FA4-isolated baseline implemented (2026-10-05)
 
 User requested an arm-A variant using FA4 document isolation. train.py now
-accepts baseline_attention=fa4 for A only, selecting the same ProxyModel/
+accepts attention_backend=fa4 for A only, selecting the same ProxyModel/
 ProxyTrainer baseline flow and unchanged packing, EOS, reset positions, loss,
 optimizer and schedule. Native GQA/QK norm/RoPE feed the pinned FA4 varlen API;
 one document-fragment layout is reused per microbatch without a dense mask.
