@@ -1,40 +1,35 @@
 #1 +60+a
-#th2-tjx3-proxy-fa4-restart-stop-20261005-a01
+#th2-tjx3-proxy-fa4-restart-stopped-20261005-a01
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 WANDB_MODE=offline
 /mnt/local/conda-py311/envs/attention_bench/bin/python -u - <<'PY'
-import json,os,signal
+import json,hashlib,re
 from pathlib import Path
-from scripts.verified_gpu_reclaim import inspect,process,pidfd_open,pidfd_send_signal
-from scripts.train_then_burn import argv
-control=Path('/mnt/local/_outputs/deep-llms_th2/proxy-fa4-restart-control-20261005-a01')
-receipt=control/'stop-request.json'
-assert not receipt.exists()
-old=json.loads((control/'inspection.json').read_text())
-owner=old['supervisor'];pid=owner['pid']
-fd=pidfd_open(pid)
-try:
-    assert process(pid)==owner
-    assert argv(pid)==old['supervisor_argv']
-    assert json.loads(Path('/mnt/local/_gpu_guard/DISABLED').read_text())==old['guard']
-    status=inspect();assert status['host']==old['host']
-    for worker in status['workers']:
-        current=worker;seen=set()
-        while current!=pid:
-            assert current>1 and current not in seen and len(seen)<10
-            seen.add(current);current=process(current)['ppid']
-    # The supervisor stops only its own child session, then verifies free GPUs
-    # and restores the authorized idle burn before releasing its guard.
-    assert process(pid)==owner
-    pidfd_send_signal(fd,signal.SIGTERM)
-    value=dict(status='SIGTERM_sent_to_verified_supervisor',supervisor=owner,gpu_status=status)
-    receipt.write_text(json.dumps(value,indent=2))
-    print('STOP_REQUEST',json.dumps(value),flush=True)
-finally:
-    os.close(fd)
+from scripts.verified_gpu_reclaim import inspect
+from deep_kv.report import comparable_config
+from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
+root=Path('/mnt/local/_outputs/deep-llms_th2/proxy-fa4-screen-seed42-2500-20261005-a01')
+base=Path('/mnt/local/_outputs/deep-llms_th2/proxy-baseline-A-fa4-2500-20261005-a01/supervised/run/baseline/seed-42/A')
+def read(path):return json.loads(path.read_text())
+def tail(path,n=8000):
+    if not path.is_file():return 'MISSING'
+    with path.open('rb') as f:f.seek(max(0,path.stat().st_size-n));return f.read().decode(errors='replace')
+print('GPU_STATUS',json.dumps(inspect()),flush=True)
+config=Path(default_yaml_config_file)
+print('ACCELERATE',json.dumps(dict(path=str(config),matches_resource=config.read_bytes()==Path('resources/accelerate_config.yaml').read_bytes(),config=load_config_from_file(str(config)).to_dict())),flush=True)
+for name in ['inspection.json','revalidated-smokes.json','supervised/reclaim.json','supervised/gpus-free-before-training.json',
+             'supervised/supervisor.json','supervised/run/run.json','supervised/run/complete.json','supervised/burn-verified.json']:
+    p=root/name
+    if p.is_file():
+        raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=name,sha256=hashlib.sha256(raw).hexdigest(),value=json.loads(raw))),flush=True)
+print('LAUNCH',tail(root/'launch.log',14000),flush=True)
+run=root/'supervised/run'
+for p in []:print('JOB',p.name,tail(p,9000),flush=True)
+for p in []:
+    value=read(p)
+    print('MATCHES_BASELINE',p.parent.name,comparable_config(value)==comparable_config(read(base/'train_config.json')),flush=True)
+    for receipt in sorted(p.parent.glob('fa4-*.json')):print('BACKEND_RECEIPT',json.dumps(read(receipt)),flush=True)
+print('BURN_TAIL',tail(root/'supervised/burn.log',3000),flush=True)
 PY
-sleep 45
-cat /mnt/local/_outputs/@PROJECT@/proxy-fa4-screen-seed42-2500-20261005-a01/supervised/supervisor.json
-tail -n 15 /mnt/local/_outputs/@PROJECT@/proxy-fa4-screen-seed42-2500-20261005-a01/launch.log
