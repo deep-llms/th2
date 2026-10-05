@@ -1,0 +1,494 @@
+{
+  "arm": "P3-block",
+  "global_step": 2500,
+  "schedule_steps": 28600,
+  "input_tokens": 2621440000,
+  "status": "stopped",
+  "evaluation": {
+    "eval_lm_loss": 3.4789088241301345,
+    "eval_loss": 3.4789088241301345,
+    "eval_input_tokens": 9998336,
+    "eval_target_tokens": 9981660,
+    "eval_rows": 4882,
+    "eval_aux_loss": 0.3033168538614671,
+    "eval_proxy_layer_2_aux_loss": 0.28484003526842466,
+    "eval_proxy_layer_2_cosine_0": 0.589400835039185,
+    "eval_proxy_layer_2_cosine_1": 0.7259837494600703,
+    "eval_proxy_layer_2_cosine_2": 0.8300953096954709,
+    "eval_proxy_layer_4_aux_loss": 0.2989309150575533,
+    "eval_proxy_layer_4_cosine_0": 0.5860829492454791,
+    "eval_proxy_layer_4_cosine_1": 0.7107689496021395,
+    "eval_proxy_layer_4_cosine_2": 0.8063553559736168,
+    "eval_proxy_layer_6_aux_loss": 0.31288014275608017,
+    "eval_proxy_layer_6_cosine_0": 0.5647957486080274,
+    "eval_proxy_layer_6_cosine_1": 0.6991896128273557,
+    "eval_proxy_layer_6_cosine_2": 0.797374210302481,
+    "eval_proxy_layer_8_aux_loss": 0.3340462265396548,
+    "eval_proxy_layer_8_cosine_0": 0.5371910361531131,
+    "eval_proxy_layer_8_cosine_1": 0.6768419388399316,
+    "eval_proxy_layer_8_cosine_2": 0.7838283453818864,
+    "eval_proxy_layer_10_aux_loss": 0.32673900951604024,
+    "eval_proxy_layer_10_cosine_0": 0.5413879619507651,
+    "eval_proxy_layer_10_cosine_1": 0.6850599849727104,
+    "eval_proxy_layer_10_cosine_2": 0.7933350245467173,
+    "eval_proxy_layer_12_aux_loss": 0.33194209766505145,
+    "eval_proxy_layer_12_cosine_0": 0.5337656819334483,
+    "eval_proxy_layer_12_cosine_1": 0.6791921180078896,
+    "eval_proxy_layer_12_cosine_2": 0.7912159070574031,
+    "eval_proxy_layer_14_aux_loss": 0.3206989272694339,
+    "eval_proxy_layer_14_cosine_0": 0.5422429554668033,
+    "eval_proxy_layer_14_cosine_1": 0.6931546859226477,
+    "eval_proxy_layer_14_cosine_2": 0.8025055767839339,
+    "eval_proxy_layer_16_aux_loss": 0.2997730832338887,
+    "eval_proxy_layer_16_cosine_0": 0.5647931569658406,
+    "eval_proxy_layer_16_cosine_1": 0.7166167104136792,
+    "eval_proxy_layer_16_cosine_2": 0.8192708828882915,
+    "eval_proxy_layer_18_aux_loss": 0.3041410854193872,
+    "eval_proxy_layer_18_cosine_0": 0.5682904446701298,
+    "eval_proxy_layer_18_cosine_1": 0.710048406949936,
+    "eval_proxy_layer_18_cosine_2": 0.8092378921095634,
+    "eval_proxy_layer_20_aux_loss": 0.3001719306730661,
+    "eval_proxy_layer_20_cosine_0": 0.5849897961289802,
+    "eval_proxy_layer_20_cosine_1": 0.7135703202301925,
+    "eval_proxy_layer_20_cosine_2": 0.8009240916277336,
+    "eval_proxy_layer_22_aux_loss": 0.2744756135217124,
+    "eval_proxy_layer_22_cosine_0": 0.6205123288985014,
+    "eval_proxy_layer_22_cosine_1": 0.7409276171865545,
+    "eval_proxy_layer_22_cosine_2": 0.8151332133498069,
+    "eval_proxy_layer_24_aux_loss": 0.25116317941731287,
+    "eval_proxy_layer_24_cosine_0": 0.6554587867747365,
+    "eval_proxy_layer_24_cosine_1": 0.7627962572513082,
+    "eval_proxy_layer_24_cosine_2": 0.8282554177220167,
+    "eval_runtime": 11.2336,
+    "eval_samples_per_second": 434.59,
+    "eval_steps_per_second": 3.472,
+    "eval_no_proxy_lm_loss": 3.479060135913288,
+    "eval_no_proxy_loss": 3.479060135913288,
+    "eval_no_proxy_input_tokens": 9998336,
+    "eval_no_proxy_target_tokens": 9981660,
+    "eval_no_proxy_rows": 4882,
+    "eval_no_proxy_aux_loss": 0.30339980795603055,
+    "eval_no_proxy_proxy_layer_2_aux_loss": 0.28515004623738793,
+    "eval_no_proxy_proxy_layer_2_cosine_0": 0.5893435168893842,
+    "eval_no_proxy_proxy_layer_2_cosine_1": 0.725637918171068,
+    "eval_no_proxy_proxy_layer_2_cosine_2": 0.8295684262334886,
+    "eval_no_proxy_proxy_layer_4_aux_loss": 0.2992447419284097,
+    "eval_no_proxy_proxy_layer_4_cosine_0": 0.5859407893290827,
+    "eval_no_proxy_proxy_layer_4_cosine_1": 0.7104992738809316,
+    "eval_no_proxy_proxy_layer_4_cosine_2": 0.8058257110047565,
+    "eval_no_proxy_proxy_layer_6_aux_loss": 0.3140665202596287,
+    "eval_no_proxy_proxy_layer_6_cosine_0": 0.5640974467965922,
+    "eval_no_proxy_proxy_layer_6_cosine_1": 0.6980510559154309,
+    "eval_no_proxy_proxy_layer_6_cosine_2": 0.7956519365090906,
+    "eval_no_proxy_proxy_layer_8_aux_loss": 0.33530624270862397,
+    "eval_no_proxy_proxy_layer_8_cosine_0": 0.5362983644496999,
+    "eval_no_proxy_proxy_layer_8_cosine_1": 0.6755507174010943,
+    "eval_no_proxy_proxy_layer_8_cosine_2": 0.7822321900111249,
+    "eval_no_proxy_proxy_layer_10_aux_loss": 0.32689478251104814,
+    "eval_no_proxy_proxy_layer_10_cosine_0": 0.5413236497233316,
+    "eval_no_proxy_proxy_layer_10_cosine_1": 0.6848739867252387,
+    "eval_no_proxy_proxy_layer_10_cosine_2": 0.793118016048808,
+    "eval_no_proxy_proxy_layer_12_aux_loss": 0.3319064730725685,
+    "eval_no_proxy_proxy_layer_12_cosine_0": 0.5337868142279383,
+    "eval_no_proxy_proxy_layer_12_cosine_1": 0.6792135929192055,
+    "eval_no_proxy_proxy_layer_12_cosine_2": 0.7912801736595688,
+    "eval_no_proxy_proxy_layer_14_aux_loss": 0.32060866131330634,
+    "eval_no_proxy_proxy_layer_14_cosine_0": 0.5423476247697617,
+    "eval_no_proxy_proxy_layer_14_cosine_1": 0.6932617947611834,
+    "eval_no_proxy_proxy_layer_14_cosine_2": 0.8025645965413449,
+    "eval_no_proxy_proxy_layer_16_aux_loss": 0.29951083757798236,
+    "eval_no_proxy_proxy_layer_16_cosine_0": 0.5650397006762609,
+    "eval_no_proxy_proxy_layer_16_cosine_1": 0.7169100351506499,
+    "eval_no_proxy_proxy_layer_16_cosine_2": 0.8195177514208286,
+    "eval_no_proxy_proxy_layer_18_aux_loss": 0.3037450158838592,
+    "eval_no_proxy_proxy_layer_18_cosine_0": 0.568684627571735,
+    "eval_no_proxy_proxy_layer_18_cosine_1": 0.7104987164273314,
+    "eval_no_proxy_proxy_layer_18_cosine_2": 0.8095816083127287,
+    "eval_no_proxy_proxy_layer_20_aux_loss": 0.2996428582644863,
+    "eval_no_proxy_proxy_layer_20_cosine_0": 0.5854642141651589,
+    "eval_no_proxy_proxy_layer_20_cosine_1": 0.714162704911402,
+    "eval_no_proxy_proxy_layer_20_cosine_2": 0.8014445061299802,
+    "eval_no_proxy_proxy_layer_22_aux_loss": 0.27393611150899416,
+    "eval_no_proxy_proxy_layer_22_cosine_0": 0.6210160397911892,
+    "eval_no_proxy_proxy_layer_22_cosine_1": 0.7415192942548999,
+    "eval_no_proxy_proxy_layer_22_cosine_2": 0.8156563314147193,
+    "eval_no_proxy_proxy_layer_24_aux_loss": 0.2507854042060711,
+    "eval_no_proxy_proxy_layer_24_cosine_0": 0.6558512807112158,
+    "eval_no_proxy_proxy_layer_24_cosine_1": 0.7632101987141754,
+    "eval_no_proxy_proxy_layer_24_cosine_2": 0.8285823079563955,
+    "eval_no_proxy_runtime": 11.537,
+    "eval_no_proxy_samples_per_second": 423.162,
+    "eval_no_proxy_steps_per_second": 3.38,
+    "eval_reliance_loss_increase": 0.00015131178315375138
+  },
+  "sdpa_receipts": [],
+  "training_cost": {
+    "parameters": {
+      "total": 603149312,
+      "inference": 603149312,
+      "training_only": 0
+    },
+    "optimizer_steps": 2500,
+    "runtime_seconds": 7305.7404,
+    "input_tokens_per_second": 358819.21016520105,
+    "peak_cuda_allocated_bytes": 135848997888,
+    "peak_cuda_reserved_bytes": 139192172544
+  },
+  "proxy": {
+    "budget": {
+      "baseline_macs_per_token": 713482240,
+      "attention_cost": "causal full-sequence upper bound; documents can reduce useful attention work",
+      "training_only_auxiliary_matched": false,
+      "P1": {
+        "extra_macs_per_token": 6291456,
+        "extra_parameters": 6303744,
+        "gate_parameters": 12288,
+        "widening": 72,
+        "widened_extra_parameters": 6193152,
+        "mismatch_fraction_of_total": 0.00013657626076960723
+      },
+      "P3": {
+        "extra_macs_per_token": 7262958.0,
+        "extra_parameters": 7099392,
+        "gate_parameters": 36864,
+        "widening": 88,
+        "widened_extra_parameters": 7569408,
+        "mismatch_fraction_of_total": 0.0004251849347735786
+      }
+    },
+    "model_config": {
+      "transformers_version": "5.9.0",
+      "architectures": [
+        "Qwen3ForCausalLM"
+      ],
+      "output_hidden_states": false,
+      "return_dict": true,
+      "dtype": "bfloat16",
+      "chunk_size_feed_forward": 0,
+      "is_encoder_decoder": false,
+      "id2label": {
+        "0": "LABEL_0",
+        "1": "LABEL_1"
+      },
+      "label2id": {
+        "LABEL_0": 0,
+        "LABEL_1": 1
+      },
+      "problem_type": null,
+      "vocab_size": 151936,
+      "hidden_size": 1024,
+      "intermediate_size": 3072,
+      "num_hidden_layers": 28,
+      "num_attention_heads": 16,
+      "num_key_value_heads": 8,
+      "head_dim": 128,
+      "hidden_act": "silu",
+      "max_position_embeddings": 32768,
+      "initializer_range": 0.02,
+      "rms_norm_eps": 1e-06,
+      "use_cache": false,
+      "tie_word_embeddings": true,
+      "rope_parameters": {
+        "rope_theta": 1000000,
+        "rope_type": "default"
+      },
+      "attention_bias": false,
+      "use_sliding_window": false,
+      "sliding_window": null,
+      "max_window_layers": 28,
+      "layer_types": [
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention"
+      ],
+      "attention_dropout": 0.0,
+      "pad_token_id": null,
+      "bos_token_id": 151643,
+      "eos_token_id": 151643,
+      "_name_or_path": "",
+      "model_type": "qwen3",
+      "output_attentions": false
+    },
+    "target": {
+      "target_version": "r7",
+      "quantity": "deep_band_increment",
+      "normalization": "running_per_channel",
+      "variance_floor": 0.01,
+      "clip": 10.0,
+      "momentum": 0.99,
+      "epsilon": 1e-06,
+      "lookahead": 4,
+      "bands": [
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          2,
+          8
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          4,
+          9
+        ],
+        [
+          4,
+          10
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          6,
+          9
+        ],
+        [
+          6,
+          10
+        ],
+        [
+          6,
+          11
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          8,
+          10
+        ],
+        [
+          8,
+          11
+        ],
+        [
+          8,
+          12
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          8,
+          14
+        ],
+        [
+          10,
+          12
+        ],
+        [
+          10,
+          13
+        ],
+        [
+          10,
+          14
+        ],
+        [
+          10,
+          15
+        ],
+        [
+          10,
+          16
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          12,
+          15
+        ],
+        [
+          12,
+          16
+        ],
+        [
+          12,
+          17
+        ],
+        [
+          12,
+          18
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          14,
+          17
+        ],
+        [
+          14,
+          18
+        ],
+        [
+          14,
+          19
+        ],
+        [
+          14,
+          20
+        ],
+        [
+          16,
+          18
+        ],
+        [
+          16,
+          19
+        ],
+        [
+          16,
+          20
+        ],
+        [
+          16,
+          21
+        ],
+        [
+          16,
+          22
+        ],
+        [
+          18,
+          20
+        ],
+        [
+          18,
+          21
+        ],
+        [
+          18,
+          22
+        ],
+        [
+          18,
+          23
+        ],
+        [
+          18,
+          24
+        ],
+        [
+          20,
+          22
+        ],
+        [
+          20,
+          23
+        ],
+        [
+          20,
+          24
+        ],
+        [
+          20,
+          25
+        ],
+        [
+          20,
+          26
+        ],
+        [
+          22,
+          24
+        ],
+        [
+          22,
+          25
+        ],
+        [
+          22,
+          26
+        ],
+        [
+          22,
+          27
+        ],
+        [
+          22,
+          28
+        ],
+        [
+          24,
+          26
+        ],
+        [
+          24,
+          27
+        ],
+        [
+          24,
+          28
+        ]
+      ],
+      "loss_form": "cosine"
+    },
+    "mean_initialized": true
+  },
+  "attention_runtime": {
+    "backend": "fa4",
+    "package": "flash-attn-4",
+    "version": "4.0.0b33",
+    "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+  },
+  "fa4_receipts": [
+    "fa4-eval-20261005T123645576314Z.json",
+    "fa4-train-20261005T123656132097Z.json"
+  ]
+}

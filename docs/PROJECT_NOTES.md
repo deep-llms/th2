@@ -1,5 +1,28 @@
 # Project notes
 
+## P3-block complete; P1-lambda0 running (2026-10-05)
+
+Read-only monitor9f10dc9 at14:51:06UTC/22:51Singapore confirms P3-block2500
+finished exit0 at14:38:56UTC/22:38:56Singapore; validator passed14:38:58UTC.
+Final checkpoint contains model,optimizer,scheduler,trainer state and all8 RNG
+states. Common recipe and train/eval fingerprints match A. No run modifications.
+
+Held-out LM loss3.4789088241301345 vs A3.4771733830242613 and
+P1-block3.477280233119416: no gain over A at this single-seed checkpoint.
+Proxy-disabled LM loss3.479060135913288; reliance difference+0.00015131178315375,
+a small measured proxy benefit at identical weights. Aux loss0.3033168538614671.
+Trainer runtime7305.7404s=2h1m46s; whole job7376.64s=2h2m57s;
+peak allocated126.5192GiB. Training steps2500,input tokens2,621,440,000.
+
+P1-lambda0 started14:38:58UTC; last observed update296/2500,~2.24s/update,
+all8 workers103472–103479 active. Common recipe/fingerprints also match A.
+Queue continues P1-lambda0→P3-lambda0→P1-flow→V1→V3, with existing validators
+and automatic communicating burn restoration after end/failure.
+Evidence:artifacts/proxy-fa4-p3-block-completion-20261005/ and
+temp/p3-block-status-20261005-a01.log, SHA256
+9058544308659096e28c89c9a389daa4d14eae10a8c82b56d0de258c057ad351.
+commands.sh restored#0. Next action:read-only remaining-arm progress/results.
+
 ## P1-block complete; P3-block running (2026-10-05)
 
 Read-only monitor606a5b7 at13:41:34UTC/21:41Singapore confirms P1-block2500
