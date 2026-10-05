@@ -71,6 +71,69 @@ class AnticipatoryTests(unittest.TestCase):
                 torch.testing.assert_close(captured[1][2],expected,rtol=0,atol=0)
                 self.assertTrue(all((captured[0][2][:,i]-expected[:,i]).abs().max()>0 for i in range(2)))
 
+    def test_four_head_gqa_mapping_and_unchanged_parameters(self):
+        config=cfg();config.num_attention_heads=16;config.num_key_value_heads=8
+        ctx=batch();u=torch.randn(1,8,32);z=(u+torch.randn_like(u)).requires_grad_()
+        for arm,parent in (('P4-4h','P4'),('P4-iso-4h','P4-iso')):
+            m=ProxyModel.from_scratch(config,arm,consumer=2,deep_target=8,proxy_settings=settings())
+            original=ProxyModel.from_scratch(config,parent,consumer=2,deep_target=8,proxy_settings=settings())
+            self.assertEqual(m.value_groups,2)
+            for key,value in original.state_dict().items():
+                torch.testing.assert_close(m.state_dict()[key],value,rtol=0,atol=0)
+            self.assertEqual(m.settings,original.settings)
+            rotary=m.backbone.model.rotary_emb(u,ctx.position_ids)
+            for index in m.layers:
+                layer=m.backbone.model.layers[index-1];captured=[]
+                def attention(module,q,k,v,mask,**kwargs):
+                    captured.append((q,k,v))
+                    return torch.nn.functional.scaled_dot_product_attention(q,k,v,
+                        attn_mask=mask,enable_gqa=True,scale=module.scaling).transpose(1,2),None
+                with patch('deep_kv.proxy.ALL_ATTENTION_FUNCTIONS.get_interface',return_value=attention):
+                    native=m.attention(layer,u,None,ctx.allowed(),rotary)
+                    partial=m.attention(layer,u,z,ctx.allowed(),rotary)
+                for i in (0,1):torch.testing.assert_close(captured[0][i],captured[1][i],rtol=0,atol=0)
+                torch.testing.assert_close(captured[0][2][:,:6],captured[1][2][:,:6],rtol=0,atol=0)
+                expected=layer.self_attn.v_proj(z).view(1,8,8,8).transpose(1,2)
+                torch.testing.assert_close(captured[1][2][:,6:],expected[:,6:],rtol=0,atol=0)
+                torch.testing.assert_close(native[:,:,:12],partial[:,:,:12],rtol=0,atol=0)
+                self.assertTrue(all((native[:,:,i]-partial[:,:,i]).abs().max()>0 for i in range(12,16)))
+                grad=torch.autograd.grad(partial[:,:,:12].sum(),z,retain_graph=True)[0]
+                self.assertEqual(grad.count_nonzero(),0)
+                self.assertGreater(torch.autograd.grad(partial[:,:,12:].square().sum(),z)[0].abs().sum(),0)
+            for component in ('lm_sum','aux_sum'):
+                m.zero_grad(set_to_none=True);m(ctx)[component].backward()
+                for name,p in m.named_parameters():
+                    active=p.grad is not None and bool(p.grad.count_nonzero())
+                    estimator=name.startswith('heads.') and not name.endswith('.alpha')
+                    if component=='aux_sum':self.assertEqual(active,estimator,name)
+                    elif estimator:self.assertEqual(active,not m.settings.isolate_estimator,name)
+        config.num_key_value_heads=1
+        with self.assertRaisesRegex(ValueError,'complete GQA groups'):
+            ProxyModel.from_scratch(config,'P4-4h',consumer=2,deep_target=8,proxy_settings=settings())
+
+    def test_four_head_real_trainer_and_resume_with_qwen_gqa_ratio(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);recipe=proxy_fixture(root)
+            config=cfg();config.num_attention_heads=16;config.num_key_value_heads=8
+            config.save_pretrained(root/'model')
+            for arm in ('P4-4h','P4-iso-4h'):
+                args={**recipe,'arm':arm,'output_dir':str(root/arm)}
+                invoke(root,{**args,'stop_after':2})
+                with self.assertRaisesRegex(ValueError,'Resume configuration'):
+                    invoke(root,{**args,'arm':arm.removesuffix('-4h')})
+                invoke(root,args);invoke(root,{**args,'output_dir':str(root/('full-'+arm))})
+                resumed=load_file(root/arm/'model.safetensors');full=load_file(root/('full-'+arm)/'model.safetensors')
+                for key in full:torch.testing.assert_close(resumed[key],full[key],rtol=0,atol=0)
+            summary=report(root,('P4-4h','P4-iso-4h'))
+            self.assertEqual(set(summary['lm_loss']),{'P4-4h','P4-iso-4h'})
+            self.assertEqual(summary['nll_differences']['P4-iso-4h-P4-4h'],
+                summary['lm_loss']['P4-iso-4h']-summary['lm_loss']['P4-4h'])
+            path=root/'recipe.json';path.write_text(json.dumps(recipe))
+            queue=jobs(path,arms=['P4-4h','P4-iso-4h'],seeds=[42])
+            training=[job for job in queue['jobs'] if 'gpus' in job]
+            self.assertEqual(len(training),2)
+            self.assertTrue(all(job['gpus']==list(range(8)) for job in training))
+
     def test_block_autograd_reference_fp32_and_bf16(self):
         for dtype in (torch.float32,torch.bfloat16):
             torch.manual_seed(19)

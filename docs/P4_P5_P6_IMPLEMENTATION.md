@@ -10,6 +10,8 @@ random-initialization experiments, not conversions of trained P1 checkpoints.
 |---|---|---:|---|
 | `P4` | All value groups; native queries and keys | 1 | Yes |
 | `P4-iso` | Same as P4 | 1 | No |
+| `P4-4h` | Values for the last four query heads only | 1 | Yes |
+| `P4-iso-4h` | Same four-head selection | 1 | No |
 | `P5` | All values from a width-256 residual stream across depth | 1 | No |
 | `P6` | Residual before the block, scaled by detached input RMS | 0.1 | Yes |
 | `P6-iso` | Same as P6 | 0.1 | No |
@@ -20,6 +22,18 @@ and residual two-linear updates after the first proxy block. Its stream mixes
 depth only and remains connected across proxy blocks for auxiliary gradients.
 Gates are trainable and excluded from weight decay; absolute channel means
 are logged starting at optimizer step zero.
+
+The four-head variants select **four query heads**, not four KV heads. With
+Qwen3's 16 query heads / 8 KV heads, these are query heads 13–16 (zero-based
+12–15), sharing KV groups 7–8 (zero-based 6–7). Native queries and keys are
+preserved in each proxy block; the other twelve query heads read native values.
+The existing value projection is sliced by output rows: native input for the
+first six KV groups and proxy-enhanced input for the last two. Later blocks'
+inputs can change through the normal residual path. Estimator architecture,
+initial weights, gates, target, loss and isolation are identical to the respective
+all-head parent. The arm name fixes the selection and is checked on resume.
+Architectures that cannot represent exactly four query heads using complete
+GQA groups are rejected. These variants do not reduce estimator parameter count.
 
 Every target is the detached sum of four consecutive MLP outputs starting at
 the injection block, with the existing two-pass bootstrap, running per-channel
@@ -59,6 +73,10 @@ python -m deep_kv make-jobs --config proxy_heads.b200.json \
   --arms A P4-iso P6 --seeds 42 --stop-after 2500 \
   --output temp/p4-p6-jobs.json
 ```
+
+To select only the four-head variants, use `--arms P4-4h P4-iso-4h` instead.
+The direct `train.py` interface accepts the same arm names. Gate evaluation and
+matched-arm reports also support them; existing P4/P4-iso keep all-head routing.
 
 This only writes a queue. It does not submit or start training. A can be reused
 with the existing `--reuse-baseline 42=/absolute/path/to/A` option, provided
@@ -133,3 +151,8 @@ remain pending; this review does not launch training.
 
 Follow-up verification: all 46 selected CPU tests passed in 183.264 seconds.
 Log: `temp/p4-review-regression.log`.
+
+Four-head extension verification: all 48 selected CPU tests passed in 194.643
+seconds (`temp/p4-four-head-regression.log`), including dedicated 16-query/8-KV
+mapping and real Trainer resume tests. The latest paired-report assertion also
+passed separately (`temp/p4-four-head-report.log`). No GPU training was launched.

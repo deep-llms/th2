@@ -11,7 +11,7 @@ def comparable_config(config):
     arm=config['pilot'].pop('arm')
     if arm in ANTICIPATORY_ARMS:
         expected=dict(proxy_alpha_init=.1 if arm.startswith('P6') else 1.,
-                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso'),
+                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso','P4-iso-4h'),
                       proxy_target_version='p4p6-r1',proxy_lookahead=4,proxy_loss_form='cosine')
         if any(config['pilot'].get(k)!=v for k,v in expected.items()):
             raise ValueError('P4/P5/P6 configuration does not match its arm definition')
@@ -138,6 +138,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
         if set(arms)&set(ANTICIPATORY_ARMS):
             for arm in ANTICIPATORY_ARMS:
                 if arm in nll and 'A' in nll:summary['nll_differences'][arm+'-A']=nll[arm]-nll['A']
+            for arm,control in (('P4-4h','P4'),('P4-iso-4h','P4-iso'),('P4-iso-4h','P4-4h')):
+                if arm in nll and control in nll:summary['nll_differences'][arm+'-'+control]=nll[arm]-nll[control]
             summary['interpretation']='Token-matched exploratory comparison; time-matched A and initialization-seed spread are required for a screen success claim.'
     if baseline_dir is not None:
         summary['reused_baseline'] = str(Path(baseline_dir).resolve())

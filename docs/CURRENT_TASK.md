@@ -1,5 +1,27 @@
 # Current task
 
+## Four-query-head P4 variants implemented locally
+
+Added P4-4h and P4-iso-4h. "Four heads" is interpreted as four query heads:
+Qwen3 query heads13-16 (zero-based12-15), backed by KV groups7-8 (zero-based6-7).
+All Q/K remain native within each proxy block; the other12query heads read
+native values. Existing v_proj output rows are split between native and proxy
+inputs. Estimator architecture/initialization, gates, targets, auxiliary loss,
+normalization and isolation exactly match the respective P4/P4-iso parent.
+The original all-head arms remain unchanged. Incompatible GQA ratios are
+rejected. Arm identity protects resume; no extra model parameters or state keys.
+
+Both names work with train.py, sequential eight-GPU queues, gate evaluation
+and comparison reports, including partial-vs-full parent and isolation contrasts.
+Dedicated16-query/8-KV CPU tests verify exact selected heads, unchanged Q/K and
+native values/attention outputs on the other heads, gradient isolation, identical
+initial parameter state, real Trainer resume and queue generation. All48selected
+CPU regression tests passed in194.643s; latest report contrast assertion also
+passed separately. Logs:temp/p4-four-head-regression.log,
+temp/p4-four-head-focused.log and temp/p4-four-head-report.log.
+No remote actions or training launch. commands.sh remains#0. CUDA smoke and
+throughput measurements remain pending. Usage:docs/P4_P5_P6_IMPLEMENTATION.md.
+
 ## P4/P5/P6 follow-up correctness review
 
 Fixed train.py's initial dataset shuffle to honor data_seed, falling back to

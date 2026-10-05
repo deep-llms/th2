@@ -46,7 +46,7 @@ def resolve_proxy_settings(arm, settings=None):
     new = arm in ANTICIPATORY_ARMS
     if settings.alpha_init is None:settings.alpha_init = (.1 if arm.startswith('P6') else 1.) if new else 0.
     if settings.target_version is None:settings.target_version = 'p4p6-r1' if new else 'r7'
-    isolation = arm in ('P4-iso','P5','P6-iso')
+    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h')
     if settings.isolate_estimator is None:settings.isolate_estimator = isolation
     if new:
         if (settings.target_version != 'p4p6-r1' or settings.lookahead != 4
@@ -213,6 +213,12 @@ class ProxyModel(DeepKV):
             self.attention_runtime.update(metadata)
         self._fa4_observer = None
         self.anticipatory = new
+        self.value_groups = cfg.num_key_value_heads
+        if arm in ('P4-4h','P4-iso-4h'):
+            queries_per_kv = cfg.num_attention_heads // cfg.num_key_value_heads
+            if cfg.num_attention_heads < 4 or 4 % queries_per_kv:
+                raise ValueError('Four proxy query heads must fit complete GQA groups')
+            self.value_groups = 4 // queries_per_kv
         self.family = arm[:2] if new or arm.startswith(('P1','P3')) else None
         self.routing = 'flow' if arm.endswith('flow') else 'block'
         self.layers = proxy_layers(cfg, 'P1' if new else self.family, settings.lookahead, settings.layers) if self.family else ()
@@ -317,7 +323,10 @@ class ProxyModel(DeepKV):
         if z is None:
             k, v = a.k_proj(u), a.v_proj(u)
         elif self.anticipatory:
-            k, v = a.k_proj(u), a.v_proj(z)
+            k = a.k_proj(u)
+            split = (self.backbone.config.num_key_value_heads-self.value_groups)*a.head_dim
+            v = (torch.cat((F.linear(u,a.v_proj.weight[:split]),F.linear(z,a.v_proj.weight[split:])),dim=-1)
+                 if split else a.v_proj(z))
         else:
             split = (self.backbone.config.num_key_value_heads-self.settings.groups)*a.head_dim
             k = (a.k_proj(u) if self.settings.kv_mode == 'v' else
