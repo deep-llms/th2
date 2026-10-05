@@ -73,6 +73,8 @@ class PilotArguments:
     proxy_lambda_max: float = .1
     proxy_warmup_steps: int = 250
     proxy_alpha_init: float = 0.
+    proxy_kv_mode: str = 'kv'
+    proxy_layers: list[int] | None = None
     proxy_target_centering: bool = True  # Legacy CLI: False is no longer supported.
     proxy_target_version: str = 'r7'
     proxy_variance_floor: float = .01
@@ -156,6 +158,8 @@ def main():
     pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS or pilot.attention_backend == 'fa4'
     if pilot.proxy_alpha_init != 0 and not pilot.arm.startswith(('P1','P3')):
         raise ValueError('Nonzero proxy_alpha_init requires a P1/P3 arm')
+    if (pilot.proxy_kv_mode != 'kv' or pilot.proxy_layers is not None) and not pilot.arm.startswith('P1'):
+        raise ValueError('Custom proxy K/V routing or layers require a P1 arm')
     if pilot.proxy_screen and not data_args.isolate_documents:
         raise ValueError("Proxy screening requires isolate_documents=true")
     # The wrapper consumes Context, so Trainer must retain the CLM input columns.
@@ -218,6 +222,8 @@ def main():
                       if k not in ("stop_after", "allow_performance_change_on_resume")
                       and (k != 'attention_backend' or v != 'sdpa')
                       and (k != 'proxy_alpha_init' or v != 0.)  # Preserve pre-option checkpoint recipes.
+                      and (k != 'proxy_kv_mode' or v != 'kv')
+                      and (k != 'proxy_layers' or v is not None)
                       and (pilot.proxy_screen or not k.startswith('proxy_'))},
                   "training": settings, "world_size": training_args.world_size,
                   "tokens_per_update": tokens_per_update,

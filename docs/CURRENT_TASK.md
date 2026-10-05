@@ -1,5 +1,29 @@
 # Current task
 
+## P1 values-only and shorter targets implemented locally (2026-10-06 Singapore)
+
+User requested values-only P1 and shorter lookahead using2or3blocks. Added
+proxy_kv_mode=v for P1 only; all queries/keys remain native within each
+attention operation, selected value groups consume the proxy. Added3 to
+allowed lookaheads and optional explicit proxy_layers, preserving original
+12proxy blocks2,4,...24 for both shorter windows. Historical automatic
+placement/defaultKV behavior remains unchanged. Auxiliary loss/normalization,
+HFTrainer, FA4/SDPA interfaces, seeds and data pipeline are reused.
+
+Nondefault options are saved and protected by resume recipe checks; defaults
+are omitted for legacy checkpoint compatibility. Gate evaluation reconstructs
+new settings. Usage and sequential queue recipe: P1_VALUES_AND_SHORT_LOOKAHEAD.md.
+First comparison: values-only/k4 and native-KV/k2, each against the alpha-one
+P1 control, same fixed layers. k3 supported as an optional separate experiment.
+No launch/push/process changes; commands.sh remains#0. Previous remote P1
+alpha-one run was not inspected in this turn. All24CPU tests passed in50.158s:
+exact Q/K/native-value preservation, target window sums and fixed placement,
+LM/aux gradient routing, isolation, zero-gate equivalence, SDPA versus varlen
+CPU reference with checkpointing, real HFTrainer exact resume and gate eval,
+CLI parsing and legacy regressions. Documented sequential queue accepted by
+run_experiments.load_jobs. Test log:temp/p1-variants-tests-final.log.
+Actual FA4 CUDA smoke remains required before these variants train on B200.
+
 ## Fresh P1-block with alpha initialized to one (2026-10-05)
 
 User authorized fresh P1 training with alpha initialized to1. Keep auxiliary

@@ -1,5 +1,19 @@
 # Project notes
 
+## P1 routing and horizon variants (2026-10-06 Singapore)
+
+Use --proxy_kv_mode v for native queries/keys and proxy-enhanced selected
+values. Default kv keeps existing P1/P3 behavior; values-only currently accepts
+P1 arms only. --proxy_lookahead now supports3 as well as1,2,4,8. Explicit
+--proxy_layers allows shorter targets without adding late proxy layers. For
+the requested k2/k3 ablations, preserve2,4,...24 and use unchanged KV routing.
+Compare separate ablations with the alpha-one P1-block control, keeping
+auxiliary weight0→0.1 over250steps unchanged. Same train.py/HFTrainer and
+backend interfaces; no new architecture names or trainer. Nondefault options
+are saved and resume-guarded; defaults preserve old recipe metadata.
+See P1_VALUES_AND_SHORT_LOOKAHEAD.md for CLI and sequential job generation.
+
+
 ## P1 nonzero gate initialization (2026-10-05)
 
 User authorized a fresh P1-block alpha=1 experiment; retain the auxiliary

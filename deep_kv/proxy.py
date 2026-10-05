@@ -25,6 +25,8 @@ class ProxySettings:
     lambda_max: float = .1
     warmup_steps: int = 250
     alpha_init: float = 0.
+    kv_mode: str = 'kv'
+    layers: list[int] | None = None
     target_version: str = 'r7'
     variance_floor: float = .01
     target_clip: float = 10.
@@ -35,8 +37,13 @@ class ProxySettings:
     decay_end: int | None = None
 
 
-def proxy_layers(config, family, lookahead=4):
+def proxy_layers(config, family, lookahead=4, layers=None):
     last = config.num_hidden_layers + 1 - lookahead if family == 'P1' else config.num_hidden_layers - 4
+    if layers is not None:
+        if (family != 'P1' or not layers or any(type(i) is not int or i < 2 or i > last or i % 2 for i in layers)
+                or list(layers) != sorted(set(layers))):
+            raise ValueError('Explicit proxy layers must be increasing unique eligible even P1 blocks')
+        return tuple(layers)
     return tuple(range(2, last + 1, 2))
 
 
@@ -48,7 +55,7 @@ def compute_budget(config, settings, sequence_length=2048):
         raise ValueError('Positive EMS chunk_size must divide sequence length')
     d, n, h = config.hidden_size, config.num_hidden_layers, config.head_dim
     nq, nk = config.num_attention_heads, config.num_key_value_heads
-    p1n = len(proxy_layers(config, 'P1', settings.lookahead))
+    p1n = len(proxy_layers(config, 'P1', settings.lookahead, settings.layers))
     p3n = len(proxy_layers(config, 'P3'))
     p1 = p1n * 2 * d * settings.width
     p3 = p3n * (d * settings.width + settings.width * settings.features + settings.features * d)
@@ -145,6 +152,10 @@ class ProxyModel(DeepKV):
             raise ValueError('Unknown proxy screen arm')
         if not math.isfinite(settings.alpha_init) or (settings.alpha_init != 0 and not arm.startswith(('P1','P3'))):
             raise ValueError('Finite alpha_init requires a proxy arm when nonzero')
+        if settings.kv_mode not in ('kv', 'v') or (settings.kv_mode != 'kv' and not arm.startswith('P1')):
+            raise ValueError('proxy_kv_mode must be kv, or v for P1 arms')
+        if settings.layers is not None and not arm.startswith('P1'):
+            raise ValueError('Explicit proxy layers require a P1 arm')
         if attention_backend not in ('sdpa', 'fa4'):
             raise ValueError('Unknown document-isolated attention backend')
         if cfg.attention_bias or cfg.attention_dropout != 0 or cfg.hidden_act != 'silu' or cfg.num_attention_heads % cfg.num_key_value_heads:
@@ -153,7 +164,7 @@ class ProxyModel(DeepKV):
             raise ValueError('Proxy groups must be 1, 2 or 4 and leave native KV groups')
         if settings.features % 3 or min(settings.width, settings.features, settings.chunk_size) <= 0:
             raise ValueError('Invalid proxy width/features/chunk size')
-        if settings.lookahead not in (1,2,4,8) or settings.lambda_max < 0 or settings.warmup_steps <= 0:
+        if type(settings.lookahead) is not int or settings.lookahead not in (1,2,3,4,8) or settings.lambda_max < 0 or settings.warmup_steps <= 0:
             raise ValueError('Invalid proxy lookahead/lambda schedule')
         if (settings.decay_start is None) != (settings.decay_end is None) or (settings.decay_start is not None and
                 not settings.warmup_steps <= settings.decay_start < settings.decay_end):
@@ -171,7 +182,7 @@ class ProxyModel(DeepKV):
         self._fa4_observer = None
         self.family = arm[:2] if arm.startswith(('P1','P3')) else None
         self.routing = 'flow' if arm.endswith('flow') else 'block'
-        self.layers = proxy_layers(cfg, self.family, settings.lookahead) if self.family else ()
+        self.layers = proxy_layers(cfg, self.family, settings.lookahead, settings.layers) if self.family else ()
         if self.family and not self.layers:
             raise ValueError('Model has no eligible proxy layers')
         self.heads = nn.ModuleDict()
@@ -261,7 +272,8 @@ class ProxyModel(DeepKV):
             k, v = a.k_proj(u), a.v_proj(u)
         else:
             split = (self.backbone.config.num_key_value_heads-self.settings.groups)*a.head_dim
-            k = torch.cat((F.linear(u,a.k_proj.weight[:split]), F.linear(z,a.k_proj.weight[split:])),dim=-1)
+            k = (a.k_proj(u) if self.settings.kv_mode == 'v' else
+                 torch.cat((F.linear(u,a.k_proj.weight[:split]), F.linear(z,a.k_proj.weight[split:])),dim=-1))
             v = torch.cat((F.linear(u,a.v_proj.weight[:split]), F.linear(z,a.v_proj.weight[split:])),dim=-1)
         k = a.k_norm(k.view(shape)).transpose(1,2)
         v = v.view(shape).transpose(1,2)
