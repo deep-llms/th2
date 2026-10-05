@@ -1,10 +1,14 @@
 {
-  "status": "passed",
+  "status": "superseded",
   "tests": 142,
   "seconds": 159.936,
   "focused_tests": 11,
   "interpreter": "/home/users/thien/miniconda3/envs/sampling_b200/bin/python",
   "cuda_visible_devices": "",
   "source_commit": "73907b4",
-  "full_log": "temp/fa4-proxy-full-local-a01.log"
+  "full_log": "temp/fa4-proxy-full-local-a01.log",
+  "original_status": "passed",
+  "source_commit_verified": false,
+  "correction": "The process passed before a final train.py error-message edit. The stale test regex fails at commit73907b4/e69e2a5; this receipt does not verify that exact source. GPU numerical/smoke receipts are unaffected.",
+  "superseded_by": "cpu-tests-review-corrected.json"
 }

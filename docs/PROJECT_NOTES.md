@@ -1,5 +1,31 @@
 # Project notes
 
+## FA4 review findings verified; test fixes (2026-10-05)
+
+Reviewed FA4_PROXY_REVIEW_FINDINGS_20261005.md against source and recorded B200
+evidence. Findings confirmed. Reproduced the stale error-message assertion and
+package-import error in tests/test_resume_staging.py; fixed both tests locally.
+No model, attention kernel, loss, queue policy, environment or B200 workload changed.
+
+Correction: the prior142-test pass predates the last train.py error-message edit;
+it was incorrectly attributed to exact deployed commit73907b4. The old CPU receipt
+is marked superseded, preserving its original result and stating this limitation.
+A fresh full142-test run now passes (159.643s runner time), loading modules as
+`tests.test_*` without PYTHONPATH=tests. Source SHA256 values were checked unchanged
+before/after the run and recorded in
+artifacts/proxy-fa4-validation-20261005/cpu-tests-review-corrected.json.
+The previously recorded real B200 numerical/smoke results remain valid.
+
+G2 is a confirmed tooling limitation: all FA4 baseline reuse is blocked, even a
+matching FA4 A. Recommended next queue change: allow matching FA4 reuse, checking
+backend before GPU training and retaining full recipe/data/seed/step matching.
+Simply removing the guard and trusting the final report is insufficient: current
+preflight reports on A alone and would not detect a backend mismatch until after
+expensive training. This policy change is not implemented by this review.
+G3's default-A behavior is confirmed and retained; explicitly select all screen
+arms. FA4 remains the selected backend recommendation; no new GPU comparisons
+are called for by these findings. commands.sh remains inactive#0. No remote push.
+
 ## FA4 proxy validation completed (2026-10-05)
 
 Code73907b4, launch35332c1, final read-only monitorf9ed212. FA4 now supports A,
@@ -8,7 +34,9 @@ RoPE, document resets, revision-7 targets/losses and HF Trainer remain intact.
 CLI/recipe defaults stay SDPA; select FA4 explicitly and uniformly across a screen.
 No backend switch on resume; legacy Deep-KV arms remain outside this FA4 path.
 
-142 local CPU tests passed; independent varlen oracle tests nonzero gates,
+The earlier 142-test CPU pass preceded a final error-message edit; it did not
+verify the exact deployed source. See the review correction below. Independent
+varlen oracle tests cover nonzero gates,
 checkpoint replay, auxiliary gradient routing, isolation and exact single-rank
 resume. Eight-rank CPU DDP also passed normalization synchronization, data-order
 resume and global-batch gradient scaling (maximum parameter roundoff7.45e-9).
@@ -44,7 +72,8 @@ normalization changes from prior turns are included in this deployment.
 Local focused tests passed (11). Eight-rank CPU DDP with an independent varlen
 oracle passed A/P1-flow/P3-block/P3-lambda0: exact normalization buffers and data
 order on resume, parameter roundoff <=7.45e-9, global-batch gradient differences
-<=7.45e-9. Evidence: temp/fa4-proxy-ddp-a01/verified.json. Full CPU regression: 142 tests passed in 159.94s.
+<=7.45e-9. Evidence: temp/fa4-proxy-ddp-a01/verified.json. Historical CPU run: 142 tests passed in 159.94s before the final error-message
+edit. This was incorrectly attributed to exact commit73907b4; see review correction.
 B200 plan: eight full-model same-weight cases with nonzero gates and separate
 proxy-gradient thresholds, then nine sequential three-step runs, each on all
 eight GPUs (A, V1/V3, six P variants including optional P3-flow). Full 28600-step

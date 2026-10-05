@@ -5,7 +5,7 @@ import tempfile
 import unittest
 import torch
 from safetensors.torch import load_file
-from test_train import fixture, invoke
+from tests.test_train import fixture, invoke
 from scripts.stage_deep_kv_resume import stage, digest
 
 

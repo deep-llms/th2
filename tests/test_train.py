@@ -337,7 +337,7 @@ class TrainingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Resume configuration'):
                 invoke(root, {**cfg, 'output_dir': str(root / 'A'), 'isolate_documents': False,
                               'allow_performance_change_on_resume': True})
-            with self.assertRaisesRegex(ValueError, 'explicit dense SDPA'):
+            with self.assertRaisesRegex(ValueError, 'document-aware attention'):
                 invoke(root, {**cfg, 'causal_attention': True})
 
     def test_native_gradient_accumulation_scaling(self):

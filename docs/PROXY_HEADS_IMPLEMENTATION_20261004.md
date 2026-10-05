@@ -431,3 +431,19 @@ known workers84505–84512, all8 ranks ready, advancing collective cycles/payloa
 100% utilization and155212MiB used per GPU, with the guard released. Environment
 versions and Accelerate configuration remain pinned/verified. `commands.sh` is
 restored to inactive `#0`; no full research screen was launched.
+
+### Review correction: local test provenance
+
+FA4_PROXY_REVIEW_FINDINGS_20261005.md correctly identified a stale test regex
+following the final isolation-error wording change, plus a namespace import in
+`test_resume_staging.py`. Both tests are corrected. The previous142-test receipt
+predated that last wording edit and did not verify the exact deployed source;
+it is superseded by `cpu-tests-review-corrected.json`, a fresh142-test pass with
+source hashes checked unchanged throughout (159.643s test-runner time). This
+corrects the CPU verification claim; the actual B200 numerical/smoke receipts
+are unaffected. Model computation and FA4 recommendation are unchanged.
+
+FA4 baseline reuse still needs a queue-tooling change before reusing the existing
+A. A safe implementation must check the expected backend before training; final
+cross-arm recipe comparison alone is too late. Explicit `--arms` remains required
+for an FA4 screen because the default is A. No new GPU work was run for this review.
