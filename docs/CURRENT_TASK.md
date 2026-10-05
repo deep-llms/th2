@@ -1,5 +1,18 @@
 # Current task
 
+## P1-block nearing cutoff (2026-10-05, 12:32:33 UTC / 20:32 Singapore)
+
+Read-only monitor919682d: P1-block still running, last observed update2427/2500
+at~2.32seconds/update; all8 GPUs97–99% utilization. No final result/validator
+receipt yet. Latest logged LM loss3.539, auxiliary loss0.413, grad norm0.2204
+at2420 are finite training metrics, not final held-out results. P3-block is next.
+Rebuilt train/eval fingerprints6e4708f1e818fb44/08432871cf987d61 and common
+recipe match completed A exactly. No process/config/training changes.
+Evidence:temp/p1-block-status-20261005-a01.log, SHA256
+85ae104e96adad4048f659c7cc56f0cc6de34b462fbb2666142ed80e397b4a44.
+commands.sh returned#0; active queue unchanged. Next check:2500 checkpoint,
+final evaluation/result and P1-block-validation.json before claiming completion.
+
 ## Clean restart verified, P1-block preprocessing (2026-10-05)
 
 User-authorized clean restart launch7d9f0b1 verified by monitor47215cd at
