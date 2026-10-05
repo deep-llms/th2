@@ -1,0 +1,39 @@
+{
+  "source_commit": "e06d5f983072a94872d5a7b56a3e6ed4627643f9",
+  "base_commit": "3fbda97fb468d79a4eccee5a0b907d4b73589c93",
+  "patch_sha256": "ceffb14cc48f70092f299c4fa2a7eadbbf5012e705acf8df41e4f4fae32a62d1",
+  "files": {
+    "scripts/benchmark_document_training.py": {
+      "base": "97f4a435a1a9a472043748e735528b81033f7eaa3e937e9baec0e319f36b18e5",
+      "historical": "46f234b31fd09a32a151aa3ec6146d59b6d9f6b736d3fdaf388d67a2f6ea7415"
+    },
+    "scripts/__init__.py": {
+      "base": "beafd9453aeb2ab0492d20d5594db5698679b13fed30504c3bda7ac524b341d2",
+      "historical": "beafd9453aeb2ab0492d20d5594db5698679b13fed30504c3bda7ac524b341d2"
+    },
+    "deep_kv/model.py": {
+      "base": "815f7c3cdd755b63e89af725b6d8fab2f82ee31736aaca242702fde08aa763b3",
+      "historical": "7df50eccb1b20682c27a09779055abd046cd86139349d1bcaed34a509115c6a6"
+    },
+    "deep_kv/training.py": {
+      "base": "2590ed32fe9cd39567d8e7c43246aae6b1c540e62461c442d3c9b12e36fa87a4",
+      "historical": "5f31ce8149857d1cc7ad09823a320c3ad6c5b351513eb04d21c2c48615c3883d"
+    },
+    "deep_kv/packing.py": {
+      "base": "0bebfd59700899f457fb5873829e8067caee450ad6e84025a7a95f60756ce88a",
+      "historical": "797ad5464dc6e4e8b6bd66e1d9c2a69c91a4dce0e8c3a2ce8bdc241039bf6ccb"
+    },
+    "deep_kv/__init__.py": {
+      "base": "0cafbf33e8b650f4a60d343415d2676c98a3cfe4a79888d82ee12f622d598573",
+      "historical": "f80805d8d4b5c39bbb37c28bdd8b786930b2f485d33a5b20be35e9790b080ac1"
+    },
+    "tests/test_document_training.py": {
+      "base": "ea3b9da93db0fd3e45b5d7b1a6613514ced73e27e6a96f8948fe421edfabeec9",
+      "historical": "ea3b9da93db0fd3e45b5d7b1a6613514ced73e27e6a96f8948fe421edfabeec9"
+    },
+    "tests/test_deep_kv.py": {
+      "base": "f7448d05f12133fb4dfbf4161c976b65b914b1b675021ac868193c8a6fd829d2",
+      "historical": "f7448d05f12133fb4dfbf4161c976b65b914b1b675021ac868193c8a6fd829d2"
+    }
+  }
+}

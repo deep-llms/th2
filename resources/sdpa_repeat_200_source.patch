@@ -1,0 +1,98 @@
+diff --git a/deep_kv/__init__.py b/deep_kv/__init__.py
+index 0b223ec..3ba3030 100644
+--- a/deep_kv/__init__.py
++++ b/deep_kv/__init__.py
+@@ -6,3 +5,0 @@ ARMS = ("A", "B", "C", "D", "E", "F", "G") + BOTTLENECK_ARMS
+-PROXY_ARMS = ("V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block", "P3-flow")
+-SCREEN_ARMS = ("A", "V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block")
+-ALL_ARMS = ARMS + PROXY_ARMS
+diff --git a/deep_kv/model.py b/deep_kv/model.py
+index f09dbdd..0a39b4c 100644
+--- a/deep_kv/model.py
++++ b/deep_kv/model.py
+@@ -382 +382,2 @@ class DeepKV(nn.Module):
+-    def lm_statistics(self, context, hidden):
++    def forward(self, context: Context, *, compute_auxiliary_losses=True):
++        hidden, predicted, target = self.hidden_states(context)
+@@ -395,5 +395,0 @@ class DeepKV(nn.Module):
+-        return lm_rows, counts, tokens
+-
+-    def forward(self, context: Context, *, compute_auxiliary_losses=True):
+-        hidden, predicted, target = self.hidden_states(context)
+-        lm_rows, counts, tokens = self.lm_statistics(context, hidden)
+diff --git a/deep_kv/packing.py b/deep_kv/packing.py
+index 88c1017..308c11c 100644
+--- a/deep_kv/packing.py
++++ b/deep_kv/packing.py
+@@ -41,21 +40,0 @@ def tokenize_batch(examples, tokenizer, end_id):
+-def tokenize_with_segments(examples, indices, tokenizer, end_id):
+-    result = tokenize_batch(examples, tokenizer, end_id)
+-    # Dataset indices identify real documents, including their appended EOS.
+-    # A literal EOS inside source text must not create another document.
+-    result["segments"] = [[index] * len(ids) for index, ids in zip(indices, result["input_ids"])]
+-    return result
+-
+-
+-def isolated_data_collator(rows):
+-    """Keep the standard HF collator; reset RoPE at each packed fragment start."""
+-    import torch
+-    from transformers import default_data_collator
+-    batch = default_data_collator(rows)
+-    segments = batch["segments"]  # Fail closed if an old cache lacks boundaries.
+-    offsets = torch.arange(segments.shape[1]).expand_as(segments)
+-    starts = torch.ones_like(segments, dtype=torch.bool)
+-    starts[:, 1:] = segments[:, 1:] != segments[:, :-1]
+-    batch["position_ids"] = offsets - offsets.masked_fill(~starts, 0).cummax(-1).values
+-    return batch
+-
+-
+@@ -73 +52 @@ def preprocess_dataset(raw_dataset, tokenizer, block_size, training_args, *,
+-                       num_proc=None, overwrite_cache=False, isolate_documents=False):
++                       num_proc=None, overwrite_cache=False):
+@@ -77,3 +56 @@ def preprocess_dataset(raw_dataset, tokenizer, block_size, training_args, *,
+-            tokenize_with_segments if isolate_documents else tokenize_batch,
+-            with_indices=isolate_documents,
+-            fn_kwargs={"tokenizer": tokenizer, "end_id": document_end_id(tokenizer)},
++            tokenize_batch, fn_kwargs={"tokenizer": tokenizer, "end_id": document_end_id(tokenizer)},
+diff --git a/deep_kv/training.py b/deep_kv/training.py
+index be1212f..ce711d5 100644
+--- a/deep_kv/training.py
++++ b/deep_kv/training.py
+@@ -11 +10,0 @@ from .model import Context
+-from .sdpa_audit import trainer_audit
+@@ -92,10 +90,0 @@ class DeepKVTrainer(Trainer):
+-        self._sdpa_seen = set()
+-        self._sdpa_receipts = []
+-        self._active_sdpa_audit = None
+-
+-    def training_step(self, model, inputs, num_items_in_batch=None):
+-        with trainer_audit(self, "train"):
+-            return super().training_step(model, inputs, num_items_in_batch)
+-
+-    def summarize_statistics(self, values):
+-        return summarize_statistics(values, self.model.kv_loss_weight, self.model.arm)
+@@ -151,2 +139,0 @@ class DeepKVTrainer(Trainer):
+-        if self._active_sdpa_audit is not None and loss.requires_grad:
+-            loss.register_hook(self._active_sdpa_audit.backward_marker)
+@@ -157 +144 @@ class DeepKVTrainer(Trainer):
+-        with trainer_audit(self, "eval"), torch.no_grad(), self.compute_loss_context_manager():
++        with torch.no_grad(), self.compute_loss_context_manager():
+@@ -208 +195,2 @@ class PilotCallback(TrainerCallback):
+-        self.latest = self.trainer.summarize_statistics(totals.cpu().numpy()[None])
++        self.latest = summarize_statistics(totals.cpu().numpy()[None], self.trainer.model.kv_loss_weight,
++                                           self.trainer.model.arm)
+diff --git a/scripts/benchmark_document_training.py b/scripts/benchmark_document_training.py
+index f4351ca..ec9958d 100644
+--- a/scripts/benchmark_document_training.py
++++ b/scripts/benchmark_document_training.py
+@@ -24 +24 @@ from deep_kv.model import Context, DeepKV
+-from deep_kv.packing import document_end_id, group_texts, tokenize_with_segments
++from deep_kv.packing import document_end_id, group_texts, tokenize_batch
+@@ -36,0 +37,7 @@ def write(path, value):
++def tokenize_with_segments(examples, indices, tokenizer, end_id):
++    result = tokenize_batch(examples, tokenizer, end_id)
++    # Track appended boundaries explicitly, even if source text contains EOS.
++    result['segments'] = [[index] * len(ids) for index, ids in zip(indices, result['input_ids'])]
++    return result
++
++
