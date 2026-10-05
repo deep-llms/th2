@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-proxy-fa4-restart-monitor-20261005-a01
+#th2-tjx3-proxy-fa4-restart-monitor-20261005-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -33,5 +33,8 @@ for p in sorted((run/'seed-42').glob('*/train_config.json')):
     value=read(p)
     print('MATCHES_BASELINE',p.parent.name,comparable_config(value)==comparable_config(read(base/'train_config.json')),flush=True)
     for receipt in sorted(p.parent.glob('fa4-*.json')):print('BACKEND_RECEIPT',json.dumps(read(receipt)),flush=True)
+data=Path('/mnt/local/_data/deep-llms_th2/cx_sampled_old/subsets/qwen3_0.6b_base_en_30B')
+print('CACHE_COUNTS',{split:len(list((data/split).rglob('cache-*'))) for split in ('train','validation')},flush=True)
+print('STOP_AUDIT_SAVED',Path('/mnt/local/_outputs/deep-llms_th2/proxy-fa4-restart-control-20261005-a01/old-supervisor-terminal.json').exists(),flush=True)
 print('BURN_TAIL',tail(root/'supervised/burn.log',3000),flush=True)
 PY
