@@ -1,0 +1,97 @@
+{
+  "at": "2026-10-05T09:18:40.674457+00:00",
+  "known_eight_workers": true,
+  "ready": true,
+  "advancing": true,
+  "guard_released": true,
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-8b8eac6b-f556-5f1f-efaf-a14a6d758d38",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84505
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-990967d0-ed45-d1bd-8508-75c8e6a7f870",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84506
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-f739f7b5-adef-0163-d1f9-33641b42565e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84507
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-d441ab06-ca6e-1208-11f8-0a30c3ffcd78",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84508
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-cc6c6cd8-8c15-e9ca-531a-41087b514651",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84509
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-4fe58c04-8aae-2798-b22a-e4d990f8940f",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84510
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-d7835e4a-ae8c-8287-98e6-973be5fbbe64",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84511
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-e3d1056c-6878-0a59-7b7a-7142d59e02ca",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 155212.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        84512
+      ]
+    }
+  ]
+}

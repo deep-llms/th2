@@ -355,3 +355,79 @@ the CUDA kernel. `scripts/check_fa4_proxy.py` supplies separate full-model B200
 numerical checks and artifact validation for three-step, eight-GPU Trainer smokes.
 B200 execution and outcomes will be recorded after verification; no full screen
 is launched by this validation task.
+
+### B200 numerical results
+
+Launch `35332c1` deployed code `73907b4` to thiennh-p6-tjx3-worker-0.
+Existing attention_bench environment, FA4 4.0.0b33; no packages or drivers changed.
+Accelerate resource config copied and checked before reclaiming verified burn
+workers 51261–51268. All eight GPUs were verified free at 09:02:08 UTC.
+
+Eight full Qwen3-0.6B models ran independent same-weight comparisons on real packed
+text (microbatch 2, sequence 2048). Proxy gates sampled at std 0.05 activate the
+replacement K/V path. R7 statistics bootstrap once and stay identical for both
+backends; auxiliary weight is 0.1 for block/flow and zero for lambda-zero controls.
+No optimizer updates; parameter fingerprints and normalization buffers unchanged.
+
+| Arm | Full gradient relative L2 | Proxy gradient relative L2 | Objective absolute difference |
+|---|---:|---:|---:|
+| V1 | 0.573% | N/A | 0.00002670 |
+| V3 | 0.562% | N/A | 0.00012207 |
+| P1-lambda0 | 0.537% | 0.451% | 0.00008297 |
+| P1-block | 0.541% | 0.464% | 0.00008297 |
+| P1-flow | 0.544% | 0.451% | 0.00008297 |
+| P3-lambda0 | 0.544% | 0.431% | 0.00001144 |
+| P3-block | 0.548% | 0.441% | 0.00001049 |
+| P3-flow | 0.542% | 0.432% | 0.00001049 |
+
+All cases pass the unchanged 3% gradient, 2% hidden/logit and 0.01 loss limits.
+Proxy-only gradients also pass a separate 3% limit, preventing the larger backbone
+from hiding errors. Maximum auxiliary-loss difference is 0.00000334. All cases
+have exactly zero cross-document output change and activation gradients. These
+are BF16 same-weight checks against dense SDPA, not a long-run equivalence claim
+or a new full-model FP32 reference test. The independent CPU oracle tests cover
+FP32 plumbing and all proxy gradients, with activation checkpointing on/off.
+
+Numerical stage took 50.83 seconds. Its SHA256-verified result is under
+`artifacts/proxy-fa4-validation-20261005/supervised/run/numerics/summary.json`.
+
+### Eight-GPU Trainer smoke results
+
+All nine three-update runs completed, followed by matched-recipe comparison and
+checkpoint/backend validation. Each arm used all eight GPUs, BF16, micro16 × GAS4,
+sequence2048, the existing full training dataset/cache, EOS document boundaries,
+reset positions and FA4 isolation. Decoder/LM/auxiliary activation checkpointing
+was off. Full schedule28600, warmup1430, seed/data_seed42. Only cutoff3, logging1
+and evaluation/monitor32 rows distinguish these disposable smokes from screening.
+
+| Arm | Peak allocated memory per GPU (GiB) |
+|---|---:|
+| A | 103.62 |
+| V1 | 104.28 |
+| V3 | 104.43 |
+| P1-lambda0 | 109.39 |
+| P1-block | 115.76 |
+| P1-flow | 112.39 |
+| P3-lambda0 | 118.14 |
+| P3-block | 128.76 |
+| P3-flow | 127.15 |
+
+Every run saved step3 model, optimizer, scheduler, Trainer state and all eight
+rank RNG files. Logs and evaluation are finite; r7 mean/variance buffers are
+initialized and finite, variances nonnegative, and every proxy gate has updated.
+Actual FA4 receipts show28 forward calls and28 backward calls each for Q/K/V on
+the first training microbatch, document isolation, reset positions and BF16.
+No dense SDPA fallback occurred. Cross-arm comparison passed shared recipe/data
+checks; these three-step losses are not research outcomes or steady throughput
+measurements. Full real training remains a separate launch.
+
+The numerical test and all smoke jobs exited zero. Evidence includes the
+SHA256-verified `smoke-validation.json`, `complete.json`, numerical summary and
+local CPU/DDP receipts in `artifacts/proxy-fa4-validation-20261005/`.
+
+Queue completed at09:14:48UTC. Supervisor exited successfully and verified its
+communicating burn at09:15:59UTC. A separate read-only check at09:18:40UTC found
+known workers84505–84512, all8 ranks ready, advancing collective cycles/payload,
+100% utilization and155212MiB used per GPU, with the guard released. Environment
+versions and Accelerate configuration remain pinned/verified. `commands.sh` is
+restored to inactive `#0`; no full research screen was launched.

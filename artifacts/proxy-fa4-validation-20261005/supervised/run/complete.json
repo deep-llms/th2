@@ -1,0 +1,202 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-05T09:02:08.696981+00:00",
+  "jobs": [
+    {
+      "name": "proxy-numerics",
+      "started_at": "2026-10-05T09:02:08.697573+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 50.83306885603815,
+      "artifacts": [
+        {
+          "path": "numerics/summary.json",
+          "sha256": "1e1699730ae0d8dc4dc438f2fe6d70d35181856175185fcb9a1086e1fd91c9bb",
+          "bytes": 30640
+        }
+      ],
+      "finished_at": "2026-10-05T09:03:00.048703+00:00"
+    },
+    {
+      "name": "seed-42-arm-A",
+      "started_at": "2026-10-05T09:03:00.048747+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 75.26516558299772,
+      "artifacts": [
+        {
+          "path": "seed-42/A/result.json",
+          "sha256": "ffbf523e15aa6ec7ef0b72600d66c75d0620a470ee4d2767dbeba986d4bcd1de",
+          "bytes": 3925
+        }
+      ],
+      "finished_at": "2026-10-05T09:04:15.813663+00:00"
+    },
+    {
+      "name": "seed-42-arm-V1",
+      "started_at": "2026-10-05T09:04:15.813703+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 75.81115671503358,
+      "artifacts": [
+        {
+          "path": "seed-42/V1/result.json",
+          "sha256": "ca8d36e294ac79ee08e8c051a5a5c4827d8a04e93381d4de532d0733f647e787",
+          "bytes": 3928
+        }
+      ],
+      "finished_at": "2026-10-05T09:05:32.135296+00:00"
+    },
+    {
+      "name": "seed-42-arm-V3",
+      "started_at": "2026-10-05T09:05:32.135334+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 74.61356388102286,
+      "artifacts": [
+        {
+          "path": "seed-42/V3/result.json",
+          "sha256": "a34d078b18481b559dcf1d317334fae3d6b0ace93eec570522ae796f84dac7d8",
+          "bytes": 3928
+        }
+      ],
+      "finished_at": "2026-10-05T09:06:47.244282+00:00"
+    },
+    {
+      "name": "seed-42-arm-P1-lambda0",
+      "started_at": "2026-10-05T09:06:47.244323+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 76.71518701897003,
+      "artifacts": [
+        {
+          "path": "seed-42/P1-lambda0/result.json",
+          "sha256": "97d191f018ffab41e3a742e82b955e75626d1061881de4cc47abe39a37163ad5",
+          "bytes": 7812
+        }
+      ],
+      "finished_at": "2026-10-05T09:08:04.478731+00:00"
+    },
+    {
+      "name": "seed-42-arm-P1-block",
+      "started_at": "2026-10-05T09:08:04.478770+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 78.01728108990937,
+      "artifacts": [
+        {
+          "path": "seed-42/P1-block/result.json",
+          "sha256": "9fc84bb187aefc6df8c7a3fc8987ed9808451b3846a44cd9f63347af6a10c511",
+          "bytes": 7806
+        }
+      ],
+      "finished_at": "2026-10-05T09:09:23.050932+00:00"
+    },
+    {
+      "name": "seed-42-arm-P1-flow",
+      "started_at": "2026-10-05T09:09:23.050975+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 78.8716549850069,
+      "artifacts": [
+        {
+          "path": "seed-42/P1-flow/result.json",
+          "sha256": "18c62341a540afd11e08938622477135b279c0b22aaac33cd3b4f831c029410a",
+          "bytes": 7813
+        }
+      ],
+      "finished_at": "2026-10-05T09:10:42.496134+00:00"
+    },
+    {
+      "name": "seed-42-arm-P3-lambda0",
+      "started_at": "2026-10-05T09:10:42.496177+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 81.9821476280922,
+      "artifacts": [
+        {
+          "path": "seed-42/P3-lambda0/result.json",
+          "sha256": "1ba18edba3c0584e35abfb655c5af9553cc7b29b0c85d0a840a35acc8d2df9da",
+          "bytes": 13453
+        }
+      ],
+      "finished_at": "2026-10-05T09:12:04.984520+00:00"
+    },
+    {
+      "name": "seed-42-arm-P3-block",
+      "started_at": "2026-10-05T09:12:04.984556+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 80.52953485294711,
+      "artifacts": [
+        {
+          "path": "seed-42/P3-block/result.json",
+          "sha256": "403949ae4e293bc01da93ed9b6bf75722bfafa996b0f7cec105a2b23fe41d38f",
+          "bytes": 13451
+        }
+      ],
+      "finished_at": "2026-10-05T09:13:26.018762+00:00"
+    },
+    {
+      "name": "seed-42-arm-P3-flow",
+      "started_at": "2026-10-05T09:13:26.018801+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 80.22128822200466,
+      "artifacts": [
+        {
+          "path": "seed-42/P3-flow/result.json",
+          "sha256": "9047b8cc7d048f9d0dff236dda54d0981b55cf364cac6606636bad52e05b5d74",
+          "bytes": 13447
+        }
+      ],
+      "finished_at": "2026-10-05T09:14:46.734485+00:00"
+    },
+    {
+      "name": "seed-42-compare",
+      "started_at": "2026-10-05T09:14:46.734523+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 0.0640312759205699,
+      "artifacts": [
+        {
+          "path": "seed-42/comparison.json",
+          "sha256": "9b4da15bf5e4790bc3a3edf86ad93aadd91ba4905c9ce63d9ae2c9d11c52e26e",
+          "bytes": 15154
+        }
+      ],
+      "finished_at": "2026-10-05T09:14:46.799490+00:00"
+    },
+    {
+      "name": "compare-seeds",
+      "started_at": "2026-10-05T09:14:46.799508+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 0.06392502994276583,
+      "artifacts": [
+        {
+          "path": "comparison-seeds.json",
+          "sha256": "265b36745610c9e14608f0c0c46777a3d2a691f778d6e98852d6236c2734633f",
+          "bytes": 2143
+        }
+      ],
+      "finished_at": "2026-10-05T09:14:46.864116+00:00"
+    },
+    {
+      "name": "validate-smokes",
+      "started_at": "2026-10-05T09:14:46.864132+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 1.4662766349501908,
+      "artifacts": [
+        {
+          "path": "smoke-validation.json",
+          "sha256": "220a0cdfff9c8573dbd8b3c876034b29d4b51aaee0cf77a25ddfbbe3ea6a048f",
+          "bytes": 2212
+        }
+      ],
+      "finished_at": "2026-10-05T09:14:48.331198+00:00"
+    }
+  ],
+  "finished_at": "2026-10-05T09:14:48.331228+00:00"
+}

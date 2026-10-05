@@ -1,0 +1,1005 @@
+{
+  "status": "passed",
+  "exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "cases": [
+    {
+      "status": "passed",
+      "arm": "V1",
+      "index": 0,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.0,
+      "comparison": {
+        "reference_loss": 12.129271507263184,
+        "candidate_loss": 12.129298210144043,
+        "loss_abs_diff": 2.6702880859375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005781972790042952,
+          "relative_max": 0.0076664766875483206
+        },
+        "logits": {
+          "relative_l2": 0.006423262933085235,
+          "relative_max": 0.007042253521126761
+        },
+        "gradient_relative_l2": 0.005733650196979784,
+        "gradient_cosine": 0.9999835644193408,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.24.self_attn.k_norm.weight",
+            "relative_l2": 0.014365397034140016
+          },
+          {
+            "name": "backbone.model.layers.24.self_attn.q_norm.weight",
+            "relative_l2": 0.014054676101870032
+          },
+          {
+            "name": "backbone.model.layers.7.self_attn.q_norm.weight",
+            "relative_l2": 0.01322802714126894
+          },
+          {
+            "name": "backbone.model.layers.7.self_attn.k_norm.weight",
+            "relative_l2": 0.012584464163078233
+          },
+          {
+            "name": "backbone.model.layers.24.self_attn.k_proj.weight",
+            "relative_l2": 0.011680210538931158
+          },
+          {
+            "name": "backbone.model.layers.24.self_attn.q_proj.weight",
+            "relative_l2": 0.01167545698259152
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_proj.weight",
+            "relative_l2": 0.01159074662773714
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.k_proj.weight",
+            "relative_l2": 0.011546152009241376
+          }
+        ]
+      },
+      "proxy_comparison": null,
+      "losses": {
+        "lm_loss": [
+          12.129271507263184,
+          12.129298210144043
+        ],
+        "aux_loss": [
+          0.0,
+          0.0
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 16.088895797729492
+    },
+    {
+      "status": "passed",
+      "arm": "V3",
+      "index": 1,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.0,
+      "comparison": {
+        "reference_loss": 12.118634223937988,
+        "candidate_loss": 12.118756294250488,
+        "loss_abs_diff": 0.0001220703125,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.0057894986825020745,
+          "relative_max": 0.007733609381998695
+        },
+        "logits": {
+          "relative_l2": 0.006456408106430166,
+          "relative_max": 0.00646551724137931
+        },
+        "gradient_relative_l2": 0.005620854154009131,
+        "gradient_cosine": 0.9999842030753477,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.19.self_attn.q_norm.weight",
+            "relative_l2": 0.012537106474328957
+          },
+          {
+            "name": "backbone.model.layers.13.self_attn.k_norm.weight",
+            "relative_l2": 0.012186417928951261
+          },
+          {
+            "name": "backbone.model.layers.19.self_attn.k_norm.weight",
+            "relative_l2": 0.012023769811272044
+          },
+          {
+            "name": "backbone.model.layers.20.self_attn.k_norm.weight",
+            "relative_l2": 0.01198822574529278
+          },
+          {
+            "name": "backbone.model.layers.13.self_attn.q_norm.weight",
+            "relative_l2": 0.01184430651402219
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_norm.weight",
+            "relative_l2": 0.01179989134790983
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.011704334013883273
+          },
+          {
+            "name": "backbone.model.layers.20.self_attn.q_norm.weight",
+            "relative_l2": 0.011537695598762943
+          }
+        ]
+      },
+      "proxy_comparison": null,
+      "losses": {
+        "lm_loss": [
+          12.118634223937988,
+          12.118756294250488
+        ],
+        "aux_loss": [
+          0.0,
+          0.0
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 16.110258102416992
+    },
+    {
+      "status": "passed",
+      "arm": "P1-lambda0",
+      "index": 2,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.0,
+      "comparison": {
+        "reference_loss": 12.155928611755371,
+        "candidate_loss": 12.156011581420898,
+        "loss_abs_diff": 8.296966552734375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005659923826988142,
+          "relative_max": 0.0065663556840512335
+        },
+        "logits": {
+          "relative_l2": 0.00631294332829345,
+          "relative_max": 0.007352941176470588
+        },
+        "gradient_relative_l2": 0.005370014112124668,
+        "gradient_cosine": 0.9999855813704502,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.012705531470928469
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_norm.weight",
+            "relative_l2": 0.012293683533647102
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_norm.weight",
+            "relative_l2": 0.012225106804451182
+          },
+          {
+            "name": "backbone.model.layers.24.self_attn.k_proj.weight",
+            "relative_l2": 0.01212966068624978
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.k_proj.weight",
+            "relative_l2": 0.012109474931128116
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_proj.weight",
+            "relative_l2": 0.011957187519445647
+          },
+          {
+            "name": "backbone.model.layers.20.self_attn.q_norm.weight",
+            "relative_l2": 0.01187059703778942
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.q_norm.weight",
+            "relative_l2": 0.011762011938468764
+          }
+        ]
+      },
+      "proxy_comparison": {
+        "reference_loss": 12.155928611755371,
+        "candidate_loss": 12.156011581420898,
+        "loss_abs_diff": 8.296966552734375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005659923826988142,
+          "relative_max": 0.0065663556840512335
+        },
+        "logits": {
+          "relative_l2": 0.00631294332829345,
+          "relative_max": 0.007352941176470588
+        },
+        "gradient_relative_l2": 0.004506334858375205,
+        "gradient_cosine": 0.9999898470453957,
+        "worst_parameters": [
+          {
+            "name": "heads.2.w1.weight",
+            "relative_l2": 0.005468693779222322
+          },
+          {
+            "name": "heads.2.w2.weight",
+            "relative_l2": 0.004879539290921295
+          },
+          {
+            "name": "heads.4.w1.weight",
+            "relative_l2": 0.004570488316366664
+          },
+          {
+            "name": "heads.6.w1.weight",
+            "relative_l2": 0.00438073830872613
+          },
+          {
+            "name": "heads.4.w2.weight",
+            "relative_l2": 0.004259648088215993
+          },
+          {
+            "name": "heads.8.w1.weight",
+            "relative_l2": 0.00414629926702488
+          },
+          {
+            "name": "heads.14.w1.weight",
+            "relative_l2": 0.004138294441820325
+          },
+          {
+            "name": "heads.10.w1.weight",
+            "relative_l2": 0.004090136068236119
+          }
+        ]
+      },
+      "losses": {
+        "lm_loss": [
+          12.155928611755371,
+          12.156011581420898
+        ],
+        "aux_loss": [
+          1.0014827251434326,
+          1.001484751701355
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 16.74336051940918
+    },
+    {
+      "status": "passed",
+      "arm": "P1-block",
+      "index": 3,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.1,
+      "comparison": {
+        "reference_loss": 12.25607681274414,
+        "candidate_loss": 12.256159782409668,
+        "loss_abs_diff": 8.296966552734375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005659923826988142,
+          "relative_max": 0.0065663556840512335
+        },
+        "logits": {
+          "relative_l2": 0.00631294332829345,
+          "relative_max": 0.007352941176470588
+        },
+        "gradient_relative_l2": 0.005412606704399183,
+        "gradient_cosine": 0.9999853557099889,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.01270585957119672
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_norm.weight",
+            "relative_l2": 0.0123226078797941
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_norm.weight",
+            "relative_l2": 0.012225106804451182
+          },
+          {
+            "name": "backbone.model.layers.24.self_attn.k_proj.weight",
+            "relative_l2": 0.01215479496434418
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.k_proj.weight",
+            "relative_l2": 0.012084075735670883
+          },
+          {
+            "name": "backbone.model.layers.16.self_attn.k_norm.weight",
+            "relative_l2": 0.011967802967793156
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_proj.weight",
+            "relative_l2": 0.011892965497343122
+          },
+          {
+            "name": "backbone.model.layers.20.self_attn.k_norm.weight",
+            "relative_l2": 0.011743283951716971
+          }
+        ]
+      },
+      "proxy_comparison": {
+        "reference_loss": 12.25607681274414,
+        "candidate_loss": 12.256159782409668,
+        "loss_abs_diff": 8.296966552734375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005659923826988142,
+          "relative_max": 0.0065663556840512335
+        },
+        "logits": {
+          "relative_l2": 0.00631294332829345,
+          "relative_max": 0.007352941176470588
+        },
+        "gradient_relative_l2": 0.004636862613427828,
+        "gradient_cosine": 0.9999892498150299,
+        "worst_parameters": [
+          {
+            "name": "heads.2.w1.weight",
+            "relative_l2": 0.005456099009898932
+          },
+          {
+            "name": "heads.2.w2.weight",
+            "relative_l2": 0.00486690890020085
+          },
+          {
+            "name": "heads.4.w1.weight",
+            "relative_l2": 0.004799185478148985
+          },
+          {
+            "name": "heads.18.w1.weight",
+            "relative_l2": 0.004658359466807416
+          },
+          {
+            "name": "heads.14.w1.weight",
+            "relative_l2": 0.00458145458837602
+          },
+          {
+            "name": "heads.24.w1.weight",
+            "relative_l2": 0.004575176984865802
+          },
+          {
+            "name": "heads.6.w1.weight",
+            "relative_l2": 0.004558985573175568
+          },
+          {
+            "name": "heads.20.w1.weight",
+            "relative_l2": 0.0045294120837486886
+          }
+        ]
+      },
+      "losses": {
+        "lm_loss": [
+          12.155928611755371,
+          12.156011581420898
+        ],
+        "aux_loss": [
+          1.0014827251434326,
+          1.001484751701355
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 17.259352207183838
+    },
+    {
+      "status": "passed",
+      "arm": "P1-flow",
+      "index": 4,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.1,
+      "comparison": {
+        "reference_loss": 12.25607681274414,
+        "candidate_loss": 12.256159782409668,
+        "loss_abs_diff": 8.296966552734375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005659923826988142,
+          "relative_max": 0.0065663556840512335
+        },
+        "logits": {
+          "relative_l2": 0.00631294332829345,
+          "relative_max": 0.007352941176470588
+        },
+        "gradient_relative_l2": 0.005435339370425694,
+        "gradient_cosine": 0.9999852379183587,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.01270574510042127
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_norm.weight",
+            "relative_l2": 0.012254542497110178
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_norm.weight",
+            "relative_l2": 0.012225106804451182
+          },
+          {
+            "name": "backbone.model.layers.24.self_attn.k_proj.weight",
+            "relative_l2": 0.012125890485547243
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.k_proj.weight",
+            "relative_l2": 0.012099507492542839
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.q_proj.weight",
+            "relative_l2": 0.011931985036432847
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.q_norm.weight",
+            "relative_l2": 0.011802112774190321
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_proj.weight",
+            "relative_l2": 0.011685578463176362
+          }
+        ]
+      },
+      "proxy_comparison": {
+        "reference_loss": 12.25607681274414,
+        "candidate_loss": 12.256159782409668,
+        "loss_abs_diff": 8.296966552734375e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005659923826988142,
+          "relative_max": 0.0065663556840512335
+        },
+        "logits": {
+          "relative_l2": 0.00631294332829345,
+          "relative_max": 0.007352941176470588
+        },
+        "gradient_relative_l2": 0.004507516554001209,
+        "gradient_cosine": 0.9999898508461551,
+        "worst_parameters": [
+          {
+            "name": "heads.2.w1.weight",
+            "relative_l2": 0.005445501204821488
+          },
+          {
+            "name": "heads.2.w2.weight",
+            "relative_l2": 0.004867373430531854
+          },
+          {
+            "name": "heads.4.w1.weight",
+            "relative_l2": 0.004562525941751313
+          },
+          {
+            "name": "heads.6.w1.weight",
+            "relative_l2": 0.004329504039805358
+          },
+          {
+            "name": "heads.4.w2.weight",
+            "relative_l2": 0.0042960339508274275
+          },
+          {
+            "name": "heads.14.w1.weight",
+            "relative_l2": 0.004230464998191448
+          },
+          {
+            "name": "heads.8.w1.weight",
+            "relative_l2": 0.004176742901525505
+          },
+          {
+            "name": "heads.10.w1.weight",
+            "relative_l2": 0.00417525224064953
+          }
+        ]
+      },
+      "losses": {
+        "lm_loss": [
+          12.155928611755371,
+          12.156011581420898
+        ],
+        "aux_loss": [
+          1.0014827251434326,
+          1.001484751701355
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 17.118727207183838
+    },
+    {
+      "status": "passed",
+      "arm": "P3-lambda0",
+      "index": 5,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.0,
+      "comparison": {
+        "reference_loss": 12.153549194335938,
+        "candidate_loss": 12.15353775024414,
+        "loss_abs_diff": 1.1444091796875e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005668604814113133,
+          "relative_max": 0.008051787908824737
+        },
+        "logits": {
+          "relative_l2": 0.006363812905468741,
+          "relative_max": 0.009852216748768473
+        },
+        "gradient_relative_l2": 0.0054394823120768035,
+        "gradient_cosine": 0.9999852146527809,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.26.self_attn.q_norm.weight",
+            "relative_l2": 0.012421683089130834
+          },
+          {
+            "name": "backbone.model.layers.16.self_attn.k_norm.weight",
+            "relative_l2": 0.012071696507347698
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.q_norm.weight",
+            "relative_l2": 0.01177958510907416
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.011709788108853226
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.k_norm.weight",
+            "relative_l2": 0.011684875889688147
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_proj.weight",
+            "relative_l2": 0.011660745748499683
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.k_proj.weight",
+            "relative_l2": 0.011636045144080313
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_proj.weight",
+            "relative_l2": 0.011589199620523906
+          }
+        ]
+      },
+      "proxy_comparison": {
+        "reference_loss": 12.153549194335938,
+        "candidate_loss": 12.15353775024414,
+        "loss_abs_diff": 1.1444091796875e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005668604814113133,
+          "relative_max": 0.008051787908824737
+        },
+        "logits": {
+          "relative_l2": 0.006363812905468741,
+          "relative_max": 0.009852216748768473
+        },
+        "gradient_relative_l2": 0.004311175864336922,
+        "gradient_cosine": 0.9999907187058658,
+        "worst_parameters": [
+          {
+            "name": "heads.2.w1.weight",
+            "relative_l2": 0.005099885368623422
+          },
+          {
+            "name": "heads.2.projections.0.weight",
+            "relative_l2": 0.004729357809452526
+          },
+          {
+            "name": "heads.2.w2.weight",
+            "relative_l2": 0.004482167405725998
+          },
+          {
+            "name": "heads.4.w1.weight",
+            "relative_l2": 0.004471918754659111
+          },
+          {
+            "name": "heads.6.w1.weight",
+            "relative_l2": 0.0044304329452533285
+          },
+          {
+            "name": "heads.2.projections.2.weight",
+            "relative_l2": 0.004375340261187591
+          },
+          {
+            "name": "heads.2.projections.1.weight",
+            "relative_l2": 0.004227310574670071
+          },
+          {
+            "name": "heads.8.w1.weight",
+            "relative_l2": 0.004168801740282525
+          }
+        ]
+      },
+      "losses": {
+        "lm_loss": [
+          12.153549194335938,
+          12.15353775024414
+        ],
+        "aux_loss": [
+          0.998853325843811,
+          0.9988566637039185
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 17.55907917022705
+    },
+    {
+      "status": "passed",
+      "arm": "P3-block",
+      "index": 6,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.1,
+      "comparison": {
+        "reference_loss": 12.253434181213379,
+        "candidate_loss": 12.253423690795898,
+        "loss_abs_diff": 1.049041748046875e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005668604814113133,
+          "relative_max": 0.008051787908824737
+        },
+        "logits": {
+          "relative_l2": 0.006363812905468741,
+          "relative_max": 0.009852216748768473
+        },
+        "gradient_relative_l2": 0.005482482954402102,
+        "gradient_cosine": 0.999984973303375,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.26.self_attn.q_norm.weight",
+            "relative_l2": 0.012424328920851048
+          },
+          {
+            "name": "backbone.model.layers.16.self_attn.k_norm.weight",
+            "relative_l2": 0.011979976135532455
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.q_norm.weight",
+            "relative_l2": 0.011838186047750525
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.k_norm.weight",
+            "relative_l2": 0.011712955691730371
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.011709720808605786
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_proj.weight",
+            "relative_l2": 0.011660745748499683
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.k_proj.weight",
+            "relative_l2": 0.011651504834378552
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_proj.weight",
+            "relative_l2": 0.01158906487928567
+          }
+        ]
+      },
+      "proxy_comparison": {
+        "reference_loss": 12.253434181213379,
+        "candidate_loss": 12.253423690795898,
+        "loss_abs_diff": 1.049041748046875e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005668604814113133,
+          "relative_max": 0.008051787908824737
+        },
+        "logits": {
+          "relative_l2": 0.006363812905468741,
+          "relative_max": 0.009852216748768473
+        },
+        "gradient_relative_l2": 0.004406946046689117,
+        "gradient_cosine": 0.9999902909144195,
+        "worst_parameters": [
+          {
+            "name": "heads.2.w1.weight",
+            "relative_l2": 0.005120904392900074
+          },
+          {
+            "name": "heads.2.projections.0.weight",
+            "relative_l2": 0.00483821673045275
+          },
+          {
+            "name": "heads.6.w1.weight",
+            "relative_l2": 0.004630060552798693
+          },
+          {
+            "name": "heads.4.w1.weight",
+            "relative_l2": 0.004565979700768213
+          },
+          {
+            "name": "heads.2.w2.weight",
+            "relative_l2": 0.0045231610204618375
+          },
+          {
+            "name": "heads.2.projections.2.weight",
+            "relative_l2": 0.004510108564507261
+          },
+          {
+            "name": "heads.8.w1.weight",
+            "relative_l2": 0.004397701468785362
+          },
+          {
+            "name": "heads.2.projections.1.weight",
+            "relative_l2": 0.004326984662912856
+          }
+        ]
+      },
+      "losses": {
+        "lm_loss": [
+          12.153549194335938,
+          12.15353775024414
+        ],
+        "aux_loss": [
+          0.998853325843811,
+          0.9988566637039185
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 18.884305477142334
+    },
+    {
+      "status": "passed",
+      "arm": "P3-flow",
+      "index": 7,
+      "kernel": {
+        "backend": "fa4",
+        "package": "flash-attn-4",
+        "version": "4.0.0b33",
+        "entry_point": "flash_attn.cute.interface.flash_attn_varlen_func"
+      },
+      "rows_sha256": "94b30be129636fa6b1dc1847c02a2329bb6af9bc9fdb72696b7eb7182f3fa90e",
+      "batch": 2,
+      "sequence_length": 2048,
+      "active_gate_std": 0.05,
+      "auxiliary_weight": 0.1,
+      "comparison": {
+        "reference_loss": 12.253434181213379,
+        "candidate_loss": 12.253423690795898,
+        "loss_abs_diff": 1.049041748046875e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005668604814113133,
+          "relative_max": 0.008051787908824737
+        },
+        "logits": {
+          "relative_l2": 0.006363812905468741,
+          "relative_max": 0.009852216748768473
+        },
+        "gradient_relative_l2": 0.0054165495767646826,
+        "gradient_cosine": 0.9999853316426005,
+        "worst_parameters": [
+          {
+            "name": "backbone.model.layers.26.self_attn.q_norm.weight",
+            "relative_l2": 0.012432583841917541
+          },
+          {
+            "name": "backbone.model.layers.16.self_attn.k_norm.weight",
+            "relative_l2": 0.012112135295142549
+          },
+          {
+            "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+            "relative_l2": 0.01206049032904304
+          },
+          {
+            "name": "backbone.model.layers.25.self_attn.q_norm.weight",
+            "relative_l2": 0.011783244268429647
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_norm.weight",
+            "relative_l2": 0.011710158784507024
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.k_proj.weight",
+            "relative_l2": 0.011660745748499683
+          },
+          {
+            "name": "backbone.model.layers.23.self_attn.k_proj.weight",
+            "relative_l2": 0.011633647946051684
+          },
+          {
+            "name": "backbone.model.layers.27.self_attn.q_proj.weight",
+            "relative_l2": 0.011589092662828723
+          }
+        ]
+      },
+      "proxy_comparison": {
+        "reference_loss": 12.253434181213379,
+        "candidate_loss": 12.253423690795898,
+        "loss_abs_diff": 1.049041748046875e-05,
+        "targets": [
+          4088,
+          4088
+        ],
+        "hidden": {
+          "relative_l2": 0.005668604814113133,
+          "relative_max": 0.008051787908824737
+        },
+        "logits": {
+          "relative_l2": 0.006363812905468741,
+          "relative_max": 0.009852216748768473
+        },
+        "gradient_relative_l2": 0.004321526803291404,
+        "gradient_cosine": 0.9999906621770318,
+        "worst_parameters": [
+          {
+            "name": "heads.2.w1.weight",
+            "relative_l2": 0.005045188314707
+          },
+          {
+            "name": "heads.2.projections.0.weight",
+            "relative_l2": 0.004757554236532489
+          },
+          {
+            "name": "heads.6.w1.weight",
+            "relative_l2": 0.004515965394124219
+          },
+          {
+            "name": "heads.4.w1.weight",
+            "relative_l2": 0.004493409069031999
+          },
+          {
+            "name": "heads.2.w2.weight",
+            "relative_l2": 0.004473592849706202
+          },
+          {
+            "name": "heads.2.projections.2.weight",
+            "relative_l2": 0.004451647150002808
+          },
+          {
+            "name": "heads.2.projections.1.weight",
+            "relative_l2": 0.004310984250423323
+          },
+          {
+            "name": "heads.8.w1.weight",
+            "relative_l2": 0.004188738426100467
+          }
+        ]
+      },
+      "losses": {
+        "lm_loss": [
+          12.153549194335938,
+          12.15353775024414
+        ],
+        "aux_loss": [
+          0.998853325843811,
+          0.9988566637039185
+        ]
+      },
+      "parameters_unchanged": true,
+      "cross_document_gradient_max": 0.0,
+      "cross_document_output_max": 0.0,
+      "peak_allocated_gib": 18.68517827987671
+    }
+  ],
+  "tolerances": {
+    "loss_absolute": 0.01,
+    "gradient_relative_l2": 0.03,
+    "proxy_gradient_relative_l2": 0.03,
+    "output_relative_l2": 0.02
+  }
+}

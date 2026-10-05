@@ -1,5 +1,38 @@
 # Project notes
 
+## FA4 proxy validation completed (2026-10-05)
+
+Code73907b4, launch35332c1, final read-only monitorf9ed212. FA4 now supports A,
+V1/V3 and all six P1/P3 variants through attention_backend=fa4. Shared projections,
+RoPE, document resets, revision-7 targets/losses and HF Trainer remain intact.
+CLI/recipe defaults stay SDPA; select FA4 explicitly and uniformly across a screen.
+No backend switch on resume; legacy Deep-KV arms remain outside this FA4 path.
+
+142 local CPU tests passed; independent varlen oracle tests nonzero gates,
+checkpoint replay, auxiliary gradient routing, isolation and exact single-rank
+resume. Eight-rank CPU DDP also passed normalization synchronization, data-order
+resume and global-batch gradient scaling (maximum parameter roundoff7.45e-9).
+On B200 all8 same-weight BF16 full-model cases passed: full-gradient relative
+L2=0.537–0.573%, proxy-only=0.431–0.464%, max objective difference0.0001221,
+max auxiliary difference0.00000334, exactly zero document leakage. Gates were
+nonzero and block/flow auxiliary weight0.1; no optimizer updates in numerics.
+
+All9 sequential three-step Trainer smokes passed on eight GPUs EACH, including
+optional P3-flow. Micro16×GAS4, seq2048, EOS/reset/isolation, checkpointing off,
+full28600 schedule/warmup1430; only smoke cutoff3/logging1/eval32 changed. Shared
+recipe/data comparisons passed; optimizer/scheduler/eight RNG states, r7 buffers,
+updated gates and actual Q/K/V FA4 backward receipts verified. Peaks103.62–128.76
+GiB/GPU. No environment/driver installation. These are readiness checks, not
+full-run convergence evidence or a launched research screen.
+
+Queue finished09:14:48UTC; supervisor succeeded and automatic burns verified
+09:15:59UTC. Fresh09:18:40UTC check confirmed known workers84505–84512 across
+all8 GPUs,100% utilization,155212MiB each, all-rank readiness and advancing
+collective cycles/payload; guard released. commands.sh restored#0 after this check.
+Output:/mnt/local/_outputs/deep-llms_th2/proxy-fa4-smoke-20261005-a01.
+SHA256-verified evidence:artifacts/proxy-fa4-validation-20261005/.
+Report:PROXY_HEADS_IMPLEMENTATION_20261004.md, FA4 extension/results sections.
+
 ## FA4 proxy validation in progress (2026-10-05)
 
 Operator approved extending the tested FA4 backend to P1/P3 and matched controls,

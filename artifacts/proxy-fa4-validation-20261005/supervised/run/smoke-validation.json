@@ -1,0 +1,87 @@
+{
+  "status": "passed",
+  "steps": 3,
+  "arms": [
+    {
+      "arm": "A",
+      "peak_gib": 103.62299108505249,
+      "eval_lm_loss": 12.120569098012883,
+      "receipts": [
+        "fa4-eval-20261005T090344370897Z.json",
+        "fa4-train-20261005T090353602801Z.json"
+      ]
+    },
+    {
+      "arm": "V1",
+      "peak_gib": 104.2818112373352,
+      "eval_lm_loss": 12.109056215041111,
+      "receipts": [
+        "fa4-eval-20261005T090500519064Z.json",
+        "fa4-train-20261005T090509545406Z.json"
+      ]
+    },
+    {
+      "arm": "V3",
+      "peak_gib": 104.42602205276489,
+      "eval_lm_loss": 12.132954013060871,
+      "receipts": [
+        "fa4-eval-20261005T090616314522Z.json",
+        "fa4-train-20261005T090625439373Z.json"
+      ]
+    },
+    {
+      "arm": "P1-lambda0",
+      "peak_gib": 109.39022731781006,
+      "eval_lm_loss": 12.120581306163462,
+      "receipts": [
+        "fa4-eval-20261005T090731164477Z.json",
+        "fa4-train-20261005T090741094886Z.json"
+      ]
+    },
+    {
+      "arm": "P1-block",
+      "peak_gib": 115.7625503540039,
+      "eval_lm_loss": 12.120587813197268,
+      "receipts": [
+        "fa4-eval-20261005T090848376466Z.json",
+        "fa4-train-20261005T090858403671Z.json"
+      ]
+    },
+    {
+      "arm": "P1-flow",
+      "peak_gib": 112.39292621612549,
+      "eval_lm_loss": 12.120606229893863,
+      "receipts": [
+        "fa4-eval-20261005T091007413810Z.json",
+        "fa4-train-20261005T091017541289Z.json"
+      ]
+    },
+    {
+      "arm": "P3-lambda0",
+      "peak_gib": 118.14026212692261,
+      "eval_lm_loss": 12.120579336144054,
+      "receipts": [
+        "fa4-eval-20261005T091128162016Z.json",
+        "fa4-train-20261005T091138833438Z.json"
+      ]
+    },
+    {
+      "arm": "P3-block",
+      "peak_gib": 128.75833702087402,
+      "eval_lm_loss": 12.120540323790003,
+      "receipts": [
+        "fa4-eval-20261005T091249403631Z.json",
+        "fa4-train-20261005T091259737948Z.json"
+      ]
+    },
+    {
+      "arm": "P3-flow",
+      "peak_gib": 127.15264701843262,
+      "eval_lm_loss": 12.12060930431809,
+      "receipts": [
+        "fa4-eval-20261005T091411119577Z.json",
+        "fa4-train-20261005T091421525275Z.json"
+      ]
+    }
+  ]
+}

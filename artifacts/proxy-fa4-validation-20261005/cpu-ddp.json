@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "world_size": 8,
+  "cpu_only": true,
+  "bf16": false,
+  "arms": {
+    "A": {
+      "maximum_resume_difference": 7.450580596923828e-09,
+      "global_batch_gradient_difference": null,
+      "normalization_identical_across_ranks": true,
+      "checked_before_ddp_broadcast": true,
+      "buffers_resume_bitwise": true,
+      "data_order_identical": true,
+      "mean_initialized": true
+    },
+    "P1-flow": {
+      "maximum_resume_difference": 3.725290298461914e-09,
+      "global_batch_gradient_difference": 7.450580596923828e-09,
+      "normalization_identical_across_ranks": true,
+      "checked_before_ddp_broadcast": true,
+      "buffers_resume_bitwise": true,
+      "data_order_identical": true,
+      "mean_initialized": true
+    },
+    "P3-block": {
+      "maximum_resume_difference": 3.725290298461914e-09,
+      "global_batch_gradient_difference": 3.725290298461914e-09,
+      "normalization_identical_across_ranks": true,
+      "checked_before_ddp_broadcast": true,
+      "buffers_resume_bitwise": true,
+      "data_order_identical": true,
+      "mean_initialized": true
+    },
+    "P3-lambda0": {
+      "maximum_resume_difference": 3.725290298461914e-09,
+      "global_batch_gradient_difference": null,
+      "normalization_identical_across_ranks": true,
+      "checked_before_ddp_broadcast": true,
+      "buffers_resume_bitwise": true,
+      "data_order_identical": true,
+      "mean_initialized": true
+    }
+  },
+  "attention_backend": "fa4",
+  "kernel": "independent CPU per-document SDPA oracle; not CUDA FA4"
+}
