@@ -141,5 +141,41 @@ class FA4BaselineTests(unittest.TestCase):
         with patch('deep_kv.fa4.version',side_effect=PackageNotFoundError('flash-attn-4')):
             with self.assertRaisesRegex(RuntimeError,'no SDPA fallback'):load_kernel()
 
+    def test_launch_gate_checks_recipe_and_full_resume_artifacts(self):
+        from scripts.validate_fa4_baseline import validate
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);arm=root/'fa4';old=root/'dense';arm.mkdir();old.mkdir()
+            config=dict(pilot=dict(arm='A'),training=dict(logging_steps=10,learning_rate=.0003),
+                        train_fingerprint='same',eval_fingerprint='same')
+            (old/'train_config.json').write_text(json.dumps(config))
+            config['pilot']['attention_backend']='fa4';config['training']['logging_steps']=1
+            (arm/'train_config.json').write_text(json.dumps(config))
+            state=dict(global_step=3,max_steps=28600,log_history=[dict(loss=12.,grad_norm=1.)]*3)
+            (arm/'trainer_state.json').write_text(json.dumps(state))
+            evaluation=dict(eval_lm_loss=12.)
+            (arm/'eval_results.json').write_text(json.dumps(evaluation))
+            result=dict(arm='A',status='stopped',global_step=3,schedule_steps=28600,input_tokens=3*1048576,
+                evaluation=evaluation,sdpa_receipts=[],fa4_receipts=['fa4-train.json','fa4-eval.json'],
+                attention_runtime=dict(backend='fa4',version='4.0.0b33'),
+                training_cost=dict(peak_cuda_allocated_bytes=100*2**30))
+            (arm/'result.json').write_text(json.dumps(result));(arm/'model.safetensors').write_bytes(b'fixture')
+            checkpoint=arm/'checkpoint-3';checkpoint.mkdir()
+            for name in ['optimizer.pt','scheduler.pt','model.safetensors',*[f'rng_state_{i}.pth' for i in range(8)]]:
+                (checkpoint/name).write_bytes(b'fixture')
+            (checkpoint/'trainer_state.json').write_text(json.dumps(state))
+            for phase in ('train','eval'):
+                (arm/f'fa4-{phase}.json').write_text(json.dumps(dict(phase=phase,calls=28,world_size=8,
+                    kernel_dtype='torch.bfloat16',document_isolation=True,causal=True,dense_mask=False,
+                    positions='reset_per_document',query_gradient_calls=28 if phase=='train' else 0)))
+            validate(arm,old,3,root/'passed.json')
+            self.assertEqual(json.loads((root/'passed.json').read_text())['status'],'passed')
+            config['training']['learning_rate']=.001
+            (arm/'train_config.json').write_text(json.dumps(config))
+            with self.assertRaises(AssertionError):validate(arm,old,3,root/'bad.json')
+            config['training']['learning_rate']=.0003
+            (arm/'train_config.json').write_text(json.dumps(config))
+            (checkpoint/'rng_state_7.pth').unlink()
+            with self.assertRaises(FileNotFoundError):validate(arm,old,3,root/'bad.json')
+
 
 if __name__=='__main__':unittest.main()

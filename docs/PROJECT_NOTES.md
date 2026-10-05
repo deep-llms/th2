@@ -1,5 +1,28 @@
 # Project notes
 
+## FA4 A launch requested (2026-10-05)
+
+User authorized testing and fresh training of A with FA4, matching the completed
+2500-update dense A (`proxy-baseline-A-2500-20261005-a01`). Read-only B200
+preflight passed: node tjx3, eight verified burn workers, matching core library
+versions in attention_bench and train_env, FA4 4.0.0b33 import/pip checks passed.
+Only recipe differences are attention_backend and output_dir.
+
+Submission uses `proxy-baseline-A-fa4-2500-20261005-a01`: same seed42, micro16,
+accumulation4, 8 GPUs, sequence2048, EOS, document isolation/reset positions,
+28600-step schedule, 1430 warmup, cutoff2500 and checkpointing disabled. Copy
+Accelerate config to its actual cache and run accelerate env before supervised
+verified burn reclaim. Gates: full-model same-weight SDPA/FA4 CUDA numerical and
+isolation comparison, separate three-update eight-GPU smoke, exact saved config
+and data-fingerprint comparison to dense A, checkpoint/FA4 receipt checks.
+Only successful gates permit a fresh production run. Supervisor restores the
+communicating eight-GPU burn on completion or failure after owned cleanup.
+
+Local gate regression: eight tests passed in 3.789s; shell syntax, embedded
+Python, queue manifest and compilation checked. Current GPU gate results and
+production launch remain unverified until remote receipts arrive. No live
+environment/driver reinstall and no P1/P3 launch or loss changes.
+
 ## Attention option renamed (2026-10-05)
 
 The public CLI/JSON option and model attribute are now attention_backend.
