@@ -72,6 +72,7 @@ class PilotArguments:
     proxy_chunk_size: int = 64
     proxy_lambda_max: float = .1
     proxy_warmup_steps: int = 250
+    proxy_alpha_init: float = 0.
     proxy_target_centering: bool = True  # Legacy CLI: False is no longer supported.
     proxy_target_version: str = 'r7'
     proxy_variance_floor: float = .01
@@ -153,6 +154,8 @@ def main():
     if pilot.attention_backend not in ('sdpa', 'fa4') or (pilot.attention_backend == 'fa4' and pilot.arm not in ('A',) + PROXY_ARMS):
         raise ValueError('attention_backend=fa4 requires arm A or a proxy-screen arm')
     pilot.proxy_screen = pilot.proxy_screen or pilot.arm in PROXY_ARMS or pilot.attention_backend == 'fa4'
+    if pilot.proxy_alpha_init != 0 and not pilot.arm.startswith(('P1','P3')):
+        raise ValueError('Nonzero proxy_alpha_init requires a P1/P3 arm')
     if pilot.proxy_screen and not data_args.isolate_documents:
         raise ValueError("Proxy screening requires isolate_documents=true")
     # The wrapper consumes Context, so Trainer must retain the CLM input columns.
@@ -214,6 +217,7 @@ def main():
                   "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
                       if k not in ("stop_after", "allow_performance_change_on_resume")
                       and (k != 'attention_backend' or v != 'sdpa')
+                      and (k != 'proxy_alpha_init' or v != 0.)  # Preserve pre-option checkpoint recipes.
                       and (pilot.proxy_screen or not k.startswith('proxy_'))},
                   "training": settings, "world_size": training_args.world_size,
                   "tokens_per_update": tokens_per_update,

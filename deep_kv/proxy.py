@@ -1,6 +1,7 @@
 """P1/P3 replaced KV heads and exact document-reset scans (proxy spec revision 7)."""
 from contextlib import contextmanager
 import copy
+import math
 from dataclasses import dataclass
 
 import torch
@@ -23,6 +24,7 @@ class ProxySettings:
     chunk_size: int = 64
     lambda_max: float = .1
     warmup_steps: int = 250
+    alpha_init: float = 0.
     target_version: str = 'r7'
     variance_floor: float = .01
     target_clip: float = 10.
@@ -108,7 +110,8 @@ class ProxyHead(nn.Module):
         self.w2 = nn.Linear(settings.width, config.hidden_size if family == 'P1' else settings.features, bias=False)
         self.projections = nn.ModuleList([nn.Linear(settings.features//3, config.hidden_size, bias=False)
                                           for _ in range(3)] if family == 'P3' else [])
-        self.alpha = nn.Parameter(torch.zeros(1 if family == 'P1' else 3, config.hidden_size))
+        self.alpha = nn.Parameter(torch.full((1 if family == 'P1' else 3, config.hidden_size),
+                                            float(settings.alpha_init)))
         for module in self.modules():
             if isinstance(module, nn.Linear):
                 nn.init.normal_(module.weight, std=config.initializer_range)
@@ -140,6 +143,8 @@ class ProxyModel(DeepKV):
             raise ValueError('Invalid r7 target normalization/loss settings')
         if arm not in ('A',) + PROXY_ARMS:
             raise ValueError('Unknown proxy screen arm')
+        if not math.isfinite(settings.alpha_init) or (settings.alpha_init != 0 and not arm.startswith(('P1','P3'))):
+            raise ValueError('Finite alpha_init requires a proxy arm when nonzero')
         if attention_backend not in ('sdpa', 'fa4'):
             raise ValueError('Unknown document-isolated attention backend')
         if cfg.attention_bias or cfg.attention_dropout != 0 or cfg.hidden_act != 'silu' or cfg.num_attention_heads % cfg.num_key_value_heads:

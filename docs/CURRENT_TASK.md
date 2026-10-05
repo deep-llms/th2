@@ -1,5 +1,25 @@
 # Current task
 
+## Fresh P1-block with alpha initialized to one (2026-10-05)
+
+User authorized fresh P1 training with alpha initialized to1. Keep auxiliary
+weight0→0.1 over250steps unchanged to isolate initialization. New optional
+proxy_alpha_init defaults0; nonzero recorded in saved recipe, default omitted
+for older-checkpoint compatibility. Learned gates remain trainable/no decay.
+16 local CPU tests passed: nongate state identical, immediate LM gradients,
+real HF save/resume exact equivalence, legacy recipe and gate evaluation.
+
+Submitting fresh3-step full-shape smoke followed by fresh2500-step P1-block,
+all8 B200s, FA4,seed42,micro16/GAS4,full28600/warmup1430,EOS/document isolation
+and reset positions; only initial gate differs from prior P1-block. Separate
+smoke/training outputs; same existing cache, no deletions or checkpoint reuse.
+Root:/mnt/local/_outputs/deep-llms_th2/proxy-p1-alpha1-2500-20261005-a01.
+Production begins only after smoke reports and checkpoint/backend validation
+pass. Launch copies/verifies Accelerate config, runs accelerate env, checks
+pinned env and known burn identities; supervisor verifies GPUs free and
+automatically restores communicating burn after success/failure.
+Remote startup pending verification. Old canceled queue remains canceled.
+
 ## Gate multiplier evaluation complete; training stopped (2026-10-05)
 
 User requested canceling the active queue and evaluating2x/5x gates;10x omitted.

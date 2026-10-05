@@ -77,7 +77,8 @@ def run_sweep(arm_dir, output, step=2500):
     config = Qwen3Config.from_dict(saved['model_config'])
     config._attn_implementation = 'sdpa'
     config.use_cache = False
-    settings = ProxySettings(**{key: pilot['proxy_'+key] for key in ProxySettings.__dataclass_fields__})
+    settings = ProxySettings(**{key: (pilot.get('proxy_alpha_init', 0.) if key == 'alpha_init'
+                                     else pilot['proxy_'+key]) for key in ProxySettings.__dataclass_fields__})
     model = ProxyModel.from_scratch(config, pilot['arm'], seed=args.seed,
         proxy_settings=settings, sequence_length=saved['data']['block_size'],
         attention_backend=pilot.get('attention_backend', 'sdpa'),
