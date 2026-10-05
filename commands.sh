@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-proxy-p1-alpha1-monitor-20261005-a01
+#th2-tjx3-proxy-p1-alpha1-monitor-20261005-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -40,8 +40,7 @@ for p in sorted(run.glob('*/seed-42/*/train_config.json')):
         original['eval_fingerprint']=value['eval_fingerprint']
     print('MATCHES_PRIOR_EXCEPT_ALPHA',phase,alpha,comparable_config(value)==comparable_config(original),flush=True)
     assert alpha==1. and comparable_config(value)==comparable_config(original)
-    for name in ('trainer_state.json','result.json'):
-        if (p.parent/name).is_file():print('RESULT',phase,name,(p.parent/name).read_text(),flush=True)
+    print('SAVED_CONFIG',phase,json.dumps(read(p)),flush=True)
 for phase in ('smoke','training'):
     p=run/phase/'validation.json'
     if p.is_file():print('VALIDATION',phase,p.read_text(),flush=True)
