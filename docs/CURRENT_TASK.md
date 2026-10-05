@@ -1,5 +1,28 @@
 # Current task
 
+## Final learned gates requested; remote read pending (2026-10-06 Singapore)
+
+User asks for gate alpha at2500updates of the alpha-one P1 run. Cached final
+monitor log includes only smoke initialization gate values; do not report those
+as final gates. Read-only CPU checkpoint extraction submitted54b3650 at
+17:50:45UTC /01:50:45Singapore, jobth2-tjx3-p1-alpha1-final-gates-20261006-a01.
+It reads checkpoint2500 safetensors, checks12x1024gates, prints FINAL_GATES
+with per-layer/overall mean,mean_abs,std,min,max and final evaluation metrics.
+No GPU allocation, burn interruption, training or checkpoint mutation.
+At17:58UTC controller still had no acknowledgment/new log; GitHub main verified
+54b3650. Last controller acknowledgment is priorc568290. No reported error and
+no evidence that machine failed. Do not resubmit to refresh. Await Dropbox
+log, parse FINAL_GATES, retain small receipt, then restore commands.sh#0.
+Pending script backed up attemp/p1-alpha1-final-gates-20261006.commands.sh.
+User clarified that gates should already be logged. Confirmed callback logs
+per-layer mean absolute alpha every10steps into trainer_state.json, including
+2500. Submitted direct#2 export of final trainer_state.json and result.json as
+th2-tjx3-p1-alpha1-pull-training-metrics-20261006-a01; no training/GPU command.
+Checkpoint-read54b3650 still unacknowledged at18:04UTC. Direct exported state
+is sufficient for final per-layer logged means; do not infer full channel ranges
+from those means. Await published files and restore#0 only after acknowledgment.
+
+
 ## P1 alpha-one finished; communicating burns restored (2026-10-06 Singapore)
 
 Read-only request c568290 acknowledged by controller. Fresh17:43:01UTC
