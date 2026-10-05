@@ -1,5 +1,26 @@
 # Project notes
 
+## Final P1 gates retrieved successfully (2026-10-06 Singapore)
+
+Controller export98263d9 recovered: OK,2files pulled, published18:26:49UTC
+(02:26:49Singapore). Downloaded trainer_state.json and result.json; final
+step2500confirmed and result SHA256 matches original successful queue manifest.
+Step2500 per-layer channel mean absolute alpha (12layers,1024channels each):
+2:0.9754641;4:0.9748995;6:0.9746817;8:0.9775315;10:0.9818562;12:1.0029802;
+14:0.9883882;16:0.9918040;18:0.9848090;20:0.9913205;22:0.9837440;24:0.9769256.
+Overall mean absolute alpha0.98370038; layer means range0.97468168–1.00298023.
+These are logged absolute means, not signed means or individual channel extrema.
+Gates stayed near initial1; they did not collapse to zero. Exact eval aux
+loss0.5590405854648716. Proxy-disabled LM loss3.525009881073549 versus enabled
+3.4823192569156207, reliance increase0.04269062415792835. This trained model
+uses the proxies but remains worse than A; reliance alone is not baseline gain.
+Trainer runtime5912.0704s (98m32s), whole production job5976.716s (99m37s).
+Receipts:artifacts/proxy-p1-alpha1-completion-20261006/final-gate-metrics.json
+and result.json. Full downloaded state retained in temp/p1-alpha1-final-trainer_state.json,
+SHA2567a6cce59761fc0336b77fa108b0e1df3ade5593516abe0c6c752e4daea4f57a8.
+No new workload or GPU manipulation; commands.sh restored#0.
+
+
 ## P1 alpha-one finished; communicating burns restored (2026-10-06 Singapore)
 
 Read-only request c568290 acknowledged by controller. Fresh17:43:01UTC

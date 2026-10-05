@@ -1,5 +1,46 @@
 # Current task
 
+## Final P1 gates retrieved successfully (2026-10-06 Singapore)
+
+Controller export98263d9 recovered: OK,2files pulled, published18:26:49UTC
+(02:26:49Singapore). Downloaded trainer_state.json and result.json; final
+step2500confirmed and result SHA256 matches original successful queue manifest.
+Step2500 per-layer channel mean absolute alpha (12layers,1024channels each):
+2:0.9754641;4:0.9748995;6:0.9746817;8:0.9775315;10:0.9818562;12:1.0029802;
+14:0.9883882;16:0.9918040;18:0.9848090;20:0.9913205;22:0.9837440;24:0.9769256.
+Overall mean absolute alpha0.98370038; layer means range0.97468168–1.00298023.
+These are logged absolute means, not signed means or individual channel extrema.
+Gates stayed near initial1; they did not collapse to zero. Exact eval aux
+loss0.5590405854648716. Proxy-disabled LM loss3.525009881073549 versus enabled
+3.4823192569156207, reliance increase0.04269062415792835. This trained model
+uses the proxies but remains worse than A; reliance alone is not baseline gain.
+Trainer runtime5912.0704s (98m32s), whole production job5976.716s (99m37s).
+Receipts:artifacts/proxy-p1-alpha1-completion-20261006/final-gate-metrics.json
+and result.json. Full downloaded state retained in temp/p1-alpha1-final-trainer_state.json,
+SHA2567a6cce59761fc0336b77fa108b0e1df3ade5593516abe0c6c752e4daea4f57a8.
+No new workload or GPU manipulation; commands.sh restored#0.
+
+
+## Gate retrieval blocked by runner hostname resolution (2026-10-06 Singapore)
+
+Dropbox _RUN_STATUS_.log updated2026-10-05T18:10:40Z (02:10:40Singapore)
+now explicitly reports both requests FAILED(rc=255):
+-54b3650, th2-tjx3-p1-alpha1-final-gates-20261006-a01
+-98263d9, th2-tjx3-p1-alpha1-pull-training-metrics-20261006-a01
+Exact error: ssh: Could not resolve hostname <host>: nodename nor servname
+provided, or not known. Controller raw timestamps11:09:55/11:10:38 have an
+unconfirmed timezone; use Dropbox UTC timestamp above for user-facing timing.
+This is an infrastructure failure, not a model/logging failure. Per AGENT_GUIDE,
+stop retries/submissions/process changes until operator repairs runner hostname
+or DNS. Final alpha remains unknown locally; metrics were logged every10steps
+and saved in remote trainer_state.json. Last successful monitor still shows
+2500complete and communicating burns at17:43UTC. Cannot infer machine death.
+Evidence:temp/p1-gate-dropbox-controller-latest.log, SHA256
+3f5ca946ec4844ee77a562d635dfc94e60764ee83c6dd71012546a5410a7c5a8.
+No new remote actions. Before any future push, review commands.sh: remote head
+98263d9 still contains the failed#2 request; do not accidentally resubmit it.
+
+
 ## Final learned gates requested; remote read pending (2026-10-06 Singapore)
 
 User asks for gate alpha at2500updates of the alpha-one P1 run. Cached final
