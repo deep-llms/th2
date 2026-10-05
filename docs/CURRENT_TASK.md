@@ -24,7 +24,7 @@ running normal train.py tokenization with160 workers,14% of36,595,514 documents.
 Cache rebuilding is active; optimizer updates have NOT yet been verified.
 This is a fresh output/run, not a checkpoint resume. Later arms reuse the newly
 rebuilt deterministic cache. Same seed42,2500 updates each/all8 GPUs,
-full28600/warmup1430,micro16/GAS4,FA4 isolation/reset positions/EOS,checkpoints off.
+full28600/warmup1430,micro16/GAS4,FA4 isolation/reset positions/EOS,activation checkpointing off.
 Order:P1-block→P3-block→P1-lambda0→P3-lambda0→P1-flow→V1→V3.
 Existing A2500 is reused only for comparison. Per-arm validators/final reports
 and automatic verified communicating burn recovery after success/failure remain.
