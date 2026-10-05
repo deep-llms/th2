@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-sdpa-repeat-200-monitor-20261005-a02
+#th2-tjx3-sdpa-repeat-200-monitor-20261005-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -24,6 +24,12 @@ for name in ['preflight.json','supervised/supervisor.json','supervised/run/run.j
 print('LAUNCH_TAIL',tail(root/'launch.log',6000),flush=True)
 print('JOB_TAIL',tail(root/'supervised/run/sdpa-repeat-200.log'),flush=True)
 print('COMPARISON_LOG',tail(root/'supervised/run/compare-sdpa-repeat.log'),flush=True)
+for i in range(8):
+    p=root/f'supervised/run/benchmark/sdpa_isolated/rank-{i}.json'
+    if p.is_file():
+        row=json.loads(p.read_text())
+        print('RANK_AUDIT',json.dumps({k:row[k] for k in ['rank','status','world_size','input_sha256','full_input_sha256','observed_rows','elapsed_seconds','peak_allocated_gib']}),flush=True)
+
 burn=root/'supervised/burn.log'
 if burn.is_file():
     before=burn.read_text();time.sleep(12);after=burn.read_text();status=inspect()
