@@ -5,7 +5,8 @@ BOTTLENECK_ARMS = ("Task-Aware-NoAlign", "Task-Aware-Align",
 ARMS = ("A", "B", "C", "D", "E", "F", "G") + BOTTLENECK_ARMS
 PROXY_ARMS = ("V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block", "P3-flow")
 ANTICIPATORY_ARMS = ("P4-iso", "P6", "P5", "P4", "P6-iso", "P4-4h", "P4-iso-4h")
-ALL_PROXY_ARMS = PROXY_ARMS + ANTICIPATORY_ARMS
+MEMORY_ARMS = ("P7", "P7-kq", "P7-ems", "P7-mlp")
+ALL_PROXY_ARMS = PROXY_ARMS + ANTICIPATORY_ARMS + MEMORY_ARMS
 SCREEN_ARMS = ("A", "V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block")
 ALL_ARMS = ARMS + ALL_PROXY_ARMS
 

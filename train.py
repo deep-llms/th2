@@ -27,7 +27,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
-from deep_kv import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS
+from deep_kv import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
@@ -230,7 +230,7 @@ def main():
                       and (k != 'proxy_alpha_init' or v not in (None,0.))  # Preserve pre-option checkpoint recipes.
                       and (k != 'proxy_kv_mode' or v != 'kv')
                       and (k != 'proxy_layers' or v is not None)
-                      and (k not in ('proxy_isolate_estimator','proxy_aux_recompute','proxy_compile_estimator') or v or pilot.arm in ANTICIPATORY_ARMS)
+                      and (k not in ('proxy_isolate_estimator','proxy_aux_recompute','proxy_compile_estimator') or v or pilot.arm in ANTICIPATORY_ARMS+MEMORY_ARMS)
                       and (k != 'proxy_module_seed' or v is not None)
                       and (pilot.proxy_screen or not k.startswith('proxy_'))},
                   "training": settings, "world_size": training_args.world_size,
@@ -240,10 +240,15 @@ def main():
         target_keys = ('target_version','variance_floor','target_clip','momentum','loss_form')
         if model.family:
             experiment['proxy_target'] = dict(target_version=proxy_settings.target_version,
-                quantity='deep_band_increment' if model.family=='P3' else 'mlp_window_sum',
+                quantity=('deep_band_increment' if model.family=='P3' else
+                          'four_block_increment' if model.memory_proxy and pilot.arm!='P7-mlp' else 'mlp_window_sum'),
                 normalization='running_per_channel',variance_floor=proxy_settings.variance_floor,
                 clip=proxy_settings.target_clip,momentum=proxy_settings.momentum,epsilon=1e-6,
                 lookahead=proxy_settings.lookahead,bands=[list(key) if isinstance(key,tuple) else key for key in model.mean_layers],loss_form=proxy_settings.loss_form)
+            if model.memory_proxy:
+                experiment['proxy_target']['relational'] = dict(weight=.5,temperature=.1,queries=256,
+                    candidates='strictly_earlier_same_document',sampling='step_and_global_update_row_v1',
+                    normalization_epsilon=1e-6)
         else:
             # A has no target definition. Keep its historical recipe/checkpoint usable.
             for key in target_keys:experiment['pilot'].pop('proxy_'+key)

@@ -12,7 +12,7 @@ from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb, eager
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
 from .model import DeepKV, normalize_code
-from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS
+from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS
 
 
 @dataclass
@@ -44,6 +44,17 @@ class ProxySettings:
 def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
     new = arm in ANTICIPATORY_ARMS
+    memory = arm in MEMORY_ARMS
+    if memory:
+        if settings.target_version is None:settings.target_version = 'p7-r1'
+        if settings.isolate_estimator is None:settings.isolate_estimator = True
+        if settings.alpha_init is None:settings.alpha_init = 0.  # No gate parameter in P7.
+        if (settings.target_version != 'p7-r1' or settings.lookahead != 4 or settings.groups != 2
+                or settings.loss_form != 'cosine' or settings.kv_mode != 'kv'
+                or settings.layers is not None or not settings.isolate_estimator
+                or settings.alpha_init != 0 or settings.aux_recompute or settings.compile_estimator):
+            raise ValueError('P7 requires its specified target, two groups, isolated estimator and no gate')
+        if settings.module_seed is None:settings.module_seed = 43
     if settings.alpha_init is None:settings.alpha_init = (.1 if arm.startswith('P6') else 1.) if new else 0.
     if settings.target_version is None:settings.target_version = 'p4p6-r1' if new else 'r7'
     isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h')
@@ -55,7 +66,7 @@ def resolve_proxy_settings(arm, settings=None):
                 or settings.alpha_init != (.1 if arm.startswith('P6') else 1.)):
             raise ValueError('P4/P5/P6 require their specified target, placement, isolation and gate initialization')
         if settings.module_seed is None:settings.module_seed = 43
-    elif settings.isolate_estimator or settings.aux_recompute or settings.compile_estimator:
+    elif not memory and (settings.isolate_estimator or settings.aux_recompute or settings.compile_estimator):
         raise ValueError('Estimator isolation/routing/compilation options require P4/P5/P6')
     if settings.module_seed is not None and (type(settings.module_seed) is not int or settings.module_seed < 0):
         raise ValueError('module_seed must be a nonnegative integer')
@@ -102,6 +113,24 @@ def compute_budget(config, settings, sequence_length=2048):
     stream = plain+max(0,layers-1)*3*settings.width**2
     for family,mac in [('P4',plain),('P5',stream),('P6',plain)]:
         result[family] = dict(extra_macs_per_token=mac,extra_parameters=mac+layers*d,gate_parameters=layers*d)
+    estimator = 2*d*settings.width+4*settings.width
+    projections = 4*h*d
+    extra_attention = (2*nq//nk)*h*(sequence_length+1)
+    result['P7'] = dict(extra_parameters=layers*(estimator+projections+h),
+        extra_macs_per_token=layers*(estimator+projections+extra_attention),
+        fa4_extra_macs_per_token=layers*(estimator+projections+(2*nq//nk)*h*(3*sequence_length+1)),
+        # Both target and prediction similarity matmuls; excludes backward/softmax.
+        relational_forward_macs_per_token=layers*2*min(256,sequence_length-1)*d,
+        fa4_note='Duplicated queries add selected-head work; measure actual training throughput')
+    result['P7-kq'] = {**result['P7'],
+        'extra_parameters':result['P7']['extra_parameters']-layers*2*h*d,
+        'extra_macs_per_token':result['P7']['extra_macs_per_token']-layers*2*h*d,
+        'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']-layers*2*h*d}
+    result['P7-mlp'] = dict(result['P7'])
+    result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
+        layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1),
+        'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']+
+        layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1)}
     return result
 
 
@@ -168,15 +197,16 @@ class ProxyHead(nn.Module):
 
 
 class ProxyModel(DeepKV):
-    """Shared Qwen backbone, no added attention branch. Targets never mutate during checkpoint replay."""
+    """Shared Qwen backbone. Targets never mutate during checkpoint replay."""
     def __init__(self, backbone, arm, *, proxy_settings=None, channel_mask=None,
                  attention_backend='sdpa', **kwargs):
         settings = resolve_proxy_settings(arm,proxy_settings)
         new = arm in ANTICIPATORY_ARMS
+        memory = arm in MEMORY_ARMS
         cfg = backbone.config
         if channel_mask is not None:
             raise ValueError('Revision r7 does not use a static channel mask')
-        if (settings.target_version != ('p4p6-r1' if new else 'r7') or settings.loss_form not in ('cosine','smooth_l1')
+        if (settings.target_version != ('p7-r1' if memory else 'p4p6-r1' if new else 'r7') or settings.loss_form not in ('cosine','smooth_l1')
                 or not 0 < settings.variance_floor <= 1 or not 0 < settings.target_clip < float('inf')
                 or not 0 <= settings.momentum < 1):
             raise ValueError('Invalid r7 target normalization/loss settings')
@@ -196,7 +226,8 @@ class ProxyModel(DeepKV):
             raise ValueError('Proxy groups must be 1, 2 or 4 and leave native KV groups')
         if settings.features % 3 or min(settings.width, settings.features, settings.chunk_size) <= 0:
             raise ValueError('Invalid proxy width/features/chunk size')
-        if type(settings.lookahead) is not int or settings.lookahead not in (1,2,3,4,8) or settings.lambda_max < 0 or settings.warmup_steps <= 0:
+        if (type(settings.lookahead) is not int or settings.lookahead not in (1,2,3,4,8)
+                or not math.isfinite(settings.lambda_max) or settings.lambda_max < 0 or settings.warmup_steps <= 0):
             raise ValueError('Invalid proxy lookahead/lambda schedule')
         if (settings.decay_start is None) != (settings.decay_end is None) or (settings.decay_start is not None and
                 not settings.warmup_steps <= settings.decay_start < settings.decay_end):
@@ -213,22 +244,27 @@ class ProxyModel(DeepKV):
             self.attention_runtime.update(metadata)
         self._fa4_observer = None
         self.anticipatory = new
+        self.memory_proxy = memory
+        self._proxy_mass = None
         self.value_groups = cfg.num_key_value_heads
         if arm in ('P4-4h','P4-iso-4h'):
             queries_per_kv = cfg.num_attention_heads // cfg.num_key_value_heads
             if cfg.num_attention_heads < 4 or 4 % queries_per_kv:
                 raise ValueError('Four proxy query heads must fit complete GQA groups')
             self.value_groups = 4 // queries_per_kv
-        self.family = arm[:2] if new or arm.startswith(('P1','P3')) else None
+        self.family = arm[:2] if new or memory or arm.startswith(('P1','P3')) else None
         self.routing = 'flow' if arm.endswith('flow') else 'block'
-        self.layers = proxy_layers(cfg, 'P1' if new else self.family, settings.lookahead, settings.layers) if self.family else ()
+        self.layers = proxy_layers(cfg, 'P1' if new or memory else self.family, settings.lookahead, settings.layers) if self.family else ()
         if self.family and not self.layers:
             raise ValueError('Model has no eligible proxy layers')
         self.heads = nn.ModuleDict()
         with torch.random.fork_rng(devices=[]):
             torch.random.default_generator.manual_seed(settings.module_seed if settings.module_seed is not None else kwargs.get('seed',42)+1)
             for layer in self.layers:
-                if new:
+                if memory:
+                    from .proxy_memory import MemoryHead
+                    self.heads[str(layer)] = MemoryHead(cfg,settings,native_values=arm=='P7-kq')
+                elif new:
                     from .proxy_estimators import AnticipatoryHead
                     self.heads[str(layer)] = AnticipatoryHead(cfg,settings,stream=self.family=='P5',first=layer==self.layers[0])
                 else:self.heads[str(layer)] = ProxyHead(cfg, self.family, settings)
@@ -345,10 +381,64 @@ class ProxyModel(DeepKV):
         output, _ = interface(a,q,k,v,mask,dropout=0.,scaling=a.scaling,is_causal=False)
         return output
 
+    def memory_attention(self, layer, u, head, prediction, mask, rotary, plan):
+        from .proxy_memory import rectangular_mask, flash_joint_attention, proxy_mass
+        if self.gates_disabled:
+            # Equivalent to masking the entire proxy half; retain the original
+            # native kernel shape for exact baseline comparison.
+            return self.attention(layer,u,None,mask,rotary)
+        a = layer.self_attn
+        shape = (*u.shape[:-1],-1,a.head_dim)
+        q = a.q_norm(a.q_proj(u).view(shape)).transpose(1,2)
+        k = a.k_norm(a.k_proj(u).view(shape)).transpose(1,2)
+        v = a.v_proj(u).view(shape).transpose(1,2)
+        q,k = apply_rotary_pos_emb(q,k,*rotary)
+        groups = self.backbone.config.num_key_value_heads
+        split = (groups-2)*self.backbone.config.num_attention_heads//groups
+        kp,vp = head.entries(prediction,rotary,v[:,-2:])
+        if self._proxy_mass is not None:
+            name = str(a.layer_idx+1)
+            self._proxy_mass[name] = proxy_mass(q[:,split:],k[:,-2:],kp,plan.documents,a.scaling)
+        if self.attention_backend == 'fa4':
+            from .fa4 import attention
+            qn,kn,vn = q[:,:split],k[:,:-2],v[:,:-2]
+            native = attention(qn,kn,vn,mask,a.scaling,self.fa4_kernel)
+            if self._fa4_observer is not None:
+                self._fa4_observer(qn,kn,vn,mask)
+            proxy = flash_joint_attention(q[:,split:],k[:,-2:],v[:,-2:],kp,vp,mask,
+                                          a.scaling,self.fa4_kernel,self._fa4_observer)
+        else:
+            interface = ALL_ATTENTION_FUNCTIONS.get_interface('sdpa',eager_attention_forward)
+            if not hasattr(plan,'joint_mask'):
+                plan.joint_mask = rectangular_mask(mask)  # Shared by all P7 blocks and replay.
+            native,_ = interface(a,q[:,:split],k[:,:-2],v[:,:-2],mask,
+                                  dropout=0.,scaling=a.scaling,is_causal=False)
+            proxy,_ = interface(a,q[:,split:],torch.cat((k[:,-2:],kp),dim=2),
+                                 torch.cat((v[:,-2:],vp),dim=2),plan.joint_mask,
+                                 dropout=0.,scaling=a.scaling,is_causal=False)
+        return torch.cat((native,proxy),dim=2)
+
+    @torch.no_grad()
+    def proxy_attention_mass(self, context):
+        if not self.memory_proxy or self.gates_disabled or self._proxy_mass is not None:
+            raise ValueError('Attention mass requires an enabled P7 model')
+        self._proxy_mass = {}
+        try:
+            self.hidden_states(context)
+            return torch.stack([self._proxy_mass[str(layer)] for layer in self.layers])
+        finally:
+            self._proxy_mass = None
+
     def block(self, index, hidden, mask, rotary, plan, stream=None):
         layer = self.backbone.model.layers[index]
         u = layer.input_layernorm(hidden)
         head = self.heads[str(index+1)] if str(index+1) in self.heads else None
+        if self.memory_proxy and head is not None:
+            prediction = head.estimate(u,plan)
+            attended = self.memory_attention(layer,u,head,prediction,mask,rotary,plan)
+            residual = hidden+layer.self_attn.o_proj(attended.reshape(*u.shape[:-1],-1).contiguous())
+            mlp = layer.mlp(layer.post_attention_layernorm(residual))
+            return residual+mlp,mlp.detach(),u,prediction
         if self.anticipatory and head is not None:
             if self.family=='P5':
                 aux,stream=head.stream_step(u,stream)
@@ -376,7 +466,14 @@ class ProxyModel(DeepKV):
     def layer_cosines(self, layer, u, estimates, raw_target, plan, valid, auxiliary_grad):
         head = self.heads[str(layer)]
         def compute(source, target, *forward_estimates):
-            if self.anticipatory:
+            if self.memory_proxy:
+                from .proxy_memory import relational_losses
+                prediction = forward_estimates[0]
+                with torch.autocast(source.device.type,enabled=False):
+                    cosines = (F.cosine_similarity(prediction.float(),target.detach().float(),dim=-1,eps=1e-6)*valid).sum(-1)
+                    rel_sum, rel_count = relational_losses(prediction,target,plan)
+                    return cosines[:,None],(valid.sum(-1)-cosines)[:,None],rel_sum,rel_count
+            elif self.anticipatory:
                 return self.cosine_loss(forward_estimates[0],target,valid)
             elif self.routing == 'block':
                 predictions = head.estimates(source.detach(),plan)
@@ -400,7 +497,7 @@ class ProxyModel(DeepKV):
             return compute(u,raw_target,*estimates)
 
     def _run_backbone(self, context, *, compute_auxiliary_losses, auxiliary_grad, collect_target_statistics,
-                      block_observer=None, statistics_mode=None):
+                      block_observer=None, statistics_mode=None, relational_step=0, sequence_indices=None):
         if context.segments is None or not bool(context.valid.all()):
             raise ValueError('Proxy screen requires packed, document-isolated inputs')
         if self.attention_backend == 'fa4':
@@ -409,6 +506,11 @@ class ProxyModel(DeepKV):
         else:
             mask = context.allowed()  # Boolean causal + same-document; one shared mask.
         plan = EMSPlan(context.segments,self.gamma,self.settings.chunk_size) if self.family == 'P3' else None
+        if self.memory_proxy:
+            from .proxy_memory import MemoryPlan
+            ems = EMSPlan(context.segments,self.gamma,self.settings.chunk_size) if self.arm=='P7-ems' else None
+            plan = MemoryPlan(context.segments,step=relational_step,sequence_indices=sequence_indices,ems=ems,
+                              sample_queries=compute_auxiliary_losses)
         hidden = self.backbone.model.embed_tokens(context.input_ids)
         rotary = self.backbone.model.rotary_emb(hidden,context.position_ids)
         sources, windows, cosines, bases = {}, {}, {}, {}
@@ -437,7 +539,8 @@ class ProxyModel(DeepKV):
                 return self.block(i,x,mask,rotary,plan,previous)
             if layer in self.layers and need_targets:
                 sources[layer] = None
-                if self.family == 'P3':bases[layer] = hidden.detach().float()
+                if self.family == 'P3' or (self.memory_proxy and self.arm!='P7-mlp'):
+                    bases[layer] = hidden.detach().float()
             result = (checkpoint(call,hidden,stream,use_reentrant=False)
                       if self.training and self.checkpoint_layers and torch.is_grad_enabled() else call(hidden,stream))
             hidden, mlp, u, *estimates = result
@@ -454,10 +557,12 @@ class ProxyModel(DeepKV):
                 continue
             if self.family != 'P3':
                 for proxy in tuple(sources):
-                    with torch.no_grad():
-                        windows[proxy] = windows[proxy] + mlp.float() if proxy in windows else mlp.float()
+                    if not self.memory_proxy or self.arm=='P7-mlp':
+                        with torch.no_grad():
+                            windows[proxy] = windows[proxy] + mlp.float() if proxy in windows else mlp.float()
                     if layer == proxy+self.settings.lookahead-1:
-                        raw = windows.pop(proxy)
+                        raw = (hidden.detach().float()-bases.pop(proxy) if self.memory_proxy and self.arm!='P7-mlp'
+                               else windows.pop(proxy))
                         normalized = record(proxy,raw)
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
@@ -485,10 +590,12 @@ class ProxyModel(DeepKV):
                                             auxiliary_grad=False, collect_target_statistics=False)
         return hidden, None, None
 
-    def forward(self, context, *, compute_auxiliary_losses=True, auxiliary_grad=True, collect_target_statistics=False, statistics_mode=None):
+    def forward(self, context, *, compute_auxiliary_losses=True, auxiliary_grad=True, collect_target_statistics=False,
+                statistics_mode=None, relational_step=0, sequence_indices=None):
         hidden, cosines, sums, squares, counts, clipped = self._run_backbone(context,
             compute_auxiliary_losses=compute_auxiliary_losses, auxiliary_grad=auxiliary_grad,
-            collect_target_statistics=collect_target_statistics,statistics_mode=statistics_mode)
+            collect_target_statistics=collect_target_statistics,statistics_mode=statistics_mode,
+            relational_step=relational_step,sequence_indices=sequence_indices)
         if statistics_mode is not None:
             return dict(center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped)
         lm_rows, target_counts, tokens = self.lm_statistics(context,hidden)
@@ -499,11 +606,18 @@ class ProxyModel(DeepKV):
         losses = (torch.stack([cosines[layer][1] for layer in self.layers],dim=1).flatten(1)
                   if cosines else torch.zeros_like(values))
         auxiliary = losses.mean(-1).sum() if cosines else lm_rows.sum()*0
+        relational = {}
+        extra = ()
+        if self.memory_proxy:
+            rel_rows = (torch.stack([cosines[layer][2] for layer in self.layers],dim=1) if cosines else torch.zeros_like(values))
+            rel_counts = cosines[self.layers[0]][3] if cosines else torch.zeros_like(tokens)
+            relational = dict(rel_sum=rel_rows.mean(-1).sum(),rel_count=rel_counts.sum())
+            extra = (rel_rows.detach(),rel_counts[:,None])
         statistics = torch.cat((lm_rows.detach()[:,None],target_counts[:,None],auxiliary_counts[:,None],
-                                values.detach(),losses.detach(),tokens[:,None]),dim=1).double()
+                                values.detach(),losses.detach(),*extra,tokens[:,None]),dim=1).double()
         return dict(lm_sum=lm_rows.sum(),lm_count=target_counts.sum(),aux_sum=auxiliary,
                     aux_count=auxiliary_counts.sum(),statistics=statistics,
-                    center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped)
+                    center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped,**relational)
 
     @contextmanager
     def without_proxy(self):

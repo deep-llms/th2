@@ -118,7 +118,8 @@ class ProxyTrainingTests(unittest.TestCase):
     def test_queue_three_seeds_all_arms_and_native_parser(self):
         from run_experiments import load_jobs
         with tempfile.TemporaryDirectory() as tmp:
-            generated=jobs('proxy_heads.b200.json')
+            # FA4 defaults to A-only; the complete screen is selected explicitly.
+            generated=jobs('proxy_heads.b200.json',arms=SCREEN_ARMS)
             path=Path(tmp)/'jobs.json';path.write_text(json.dumps(generated));load_jobs(path)
             self.assertEqual(len(generated['jobs']),28)
             training=[job for job in generated['jobs'] if 'gpus' in job]
@@ -161,9 +162,10 @@ class ProxyTrainingTests(unittest.TestCase):
                 argv=job['argv']
                 self.assertEqual(argv[argv.index('--proxy_screen')+1],'true')
         for recipe in ('deep_kv.b200.json','proxy_heads.b200.json'):
-            with self.assertRaisesRegex(ValueError,'Cannot mix'):
+            expected='FA4 queues require' if json.loads(Path(recipe).read_text()).get('attention_backend')=='fa4' else 'Cannot mix'
+            with self.assertRaisesRegex(ValueError,expected):
                 jobs(recipe,arms=('B','P1-block'))
-        with self.assertRaisesRegex(ValueError,'Cannot mix'):
+        with self.assertRaisesRegex(ValueError,'FA4 queues require'):
             jobs('proxy_heads.b200.json',arms=('A','B'))
         with self.assertRaisesRegex(ValueError,'distinct'):
             report_seeds('unused',('A',),(42,42,42))
@@ -227,7 +229,7 @@ class ProxyTrainingTests(unittest.TestCase):
 
     def test_reused_baseline_queue(self):
         reused=parse_baselines(['42=/existing/seed-42/A'])
-        generated=jobs('proxy_heads.b200.json',reuse_baselines=reused)
+        generated=jobs('proxy_heads.b200.json',arms=SCREEN_ARMS,reuse_baselines=reused)
         training=[j for j in generated['jobs'] if 'gpus' in j]
         self.assertEqual(len(training),23)
         self.assertNotIn('seed-42-arm-A',[j['name'] for j in training])

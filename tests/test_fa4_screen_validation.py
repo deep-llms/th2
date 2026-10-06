@@ -8,13 +8,15 @@ import unittest
 import torch
 from safetensors.torch import save_file
 from scripts.check_fa4_proxy import validate
+from deep_kv import MEMORY_ARMS
 
 
 class ScreenValidationTests(unittest.TestCase):
     def test_smoke_and_screen_cutoffs_and_missing_rank_state(self):
         for backend,variant,steps,interval in (('fa4','P3-block',3,1),('fa4','P3-block',2500,10),
                                              ('fa4','P4-4h',25,1),('fa4','P4-iso-4h',2500,10),
-                                             ('sdpa','P4-4h',3,1),('sdpa','P4-iso-4h',2500,10)):
+                                             ('sdpa','P4-4h',3,1),('sdpa','P4-iso-4h',2500,10),
+                                             ('fa4','P7',25,1),('fa4','P7-kq',25,1),('sdpa','P7-ems',25,1)):
             with self.subTest(steps=steps,arm=variant),tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp);arm=root/f'seed-42/{variant}';checkpoint=arm/f'checkpoint-{steps}'
                 checkpoint.mkdir(parents=True)
@@ -27,22 +29,31 @@ class ScreenValidationTests(unittest.TestCase):
                     evaluation=dict(eval_lm_loss=3.,eval_rows=32),training_cost=dict(peak_cuda_allocated_bytes=128*2**30))
                 if backend=='sdpa':
                     result.update(sdpa_receipts=['train.json','eval.json'],fa4_receipts=[],attention_runtime={})
+                if variant in MEMORY_ARMS:
+                    config['pilot']['proxy_target_version']='p7-r1'
+                    result['evaluation'].update(eval_cos_loss=1.,eval_rel_loss=.5,eval_aux_loss=1.25)
+                    result['evaluation'].update({f'eval_proxy_layer_{layer}_attention_mass':.5 for layer in range(2,25,2)})
                 for name,value in (('train_config',config),('trainer_state',state),('result',result)):
                     (arm/f'{name}.json').write_text(json.dumps(value))
                 (checkpoint/'trainer_state.json').write_text(json.dumps(state))
                 for phase in ('train','eval'):
-                    receipt=dict(arm=variant,phase=phase,calls=28,world_size=8,kernel_dtype='torch.bfloat16',
+                    calls=40 if variant in MEMORY_ARMS else 28
+                    receipt=dict(arm=variant,phase=phase,calls=calls,world_size=8,kernel_dtype='torch.bfloat16',
                         positions='reset_per_document',document_isolation=True,causal=True,dense_mask=False,
-                        query_gradient_calls=28,key_gradient_calls=28,value_gradient_calls=28)
+                        query_gradient_calls=calls,key_gradient_calls=calls,value_gradient_calls=calls)
                     if backend=='sdpa':
-                        receipt.update(calls=[dict(mask=dict(dtype='torch.bool'),is_causal=False,backward_operators=['fused_backward'])]*28,
+                        receipt.update(calls=[dict(mask=dict(dtype='torch.bool'),is_causal=False,backward_operators=['fused_backward'])]*calls,
                             has_math=False,unattributed_calls=[],unattributed_backward=[],
                             checkpointing=dict(checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False))
                     (arm/f'{phase}.json').write_text(json.dumps(receipt))
                 for name in ['optimizer.pt','scheduler.pt',*[f'rng_state_{i}.pth' for i in range(8)]]:
                     (checkpoint/name).write_bytes(b'fixture')
+                heads=({f'heads.{layer}.{suffix}':torch.ones(3) for layer in range(2,25,2)
+                        for suffix in ('conv','w_in.weight','w_out.weight','k_proj.weight','k_norm.weight')+
+                        (() if variant=='P7-kq' else ('v_proj.weight',))} if variant in MEMORY_ARMS else
+                       {'heads.2.alpha':torch.ones(1,3)*.1})
                 save_file(dict(mu_initialized=torch.tensor(True),mu=torch.ones(2,3),sigma2=torch.ones(2,3),
-                    **{'heads.2.alpha':torch.ones(1,3)*.1}),checkpoint/'model.safetensors')
+                    **heads),checkpoint/'model.safetensors')
                 args=SimpleNamespace(run_dir=str(root),output=str(root/'passed.json'),steps=steps,seed=42,arms=[variant],attention_backend=backend)
                 validate(args);self.assertEqual(json.loads((root/'passed.json').read_text())['steps'],steps)
                 args.output=str(root/'bad.json');args.steps=steps+1

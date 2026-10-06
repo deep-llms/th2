@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS
+from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -46,7 +46,7 @@ def worker(args):
     # Nonzero gates exercise proxy K/V injection and its gradients, not only the
     # vanilla-equivalent zero-gate initialization. Bootstrap on one fixed backend.
     with torch.no_grad():
-        if not m.anticipatory:
+        if not m.anticipatory and not m.memory_proxy:
             for head in m.heads.values():head.alpha.normal_(0,.05)
         if m.family:
             for mode in ('mean','variance'):
@@ -67,6 +67,7 @@ def worker(args):
             with torch.autocast('cuda',dtype=torch.bfloat16):
                 out=m(ctx,auxiliary_grad=not arm.endswith('lambda0'),collect_target_statistics=True)
                 lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count'].clamp_min(1)
+                if m.memory_proxy:aux=aux+.5*out['rel_sum']/out['rel_count'].clamp_min(1)
                 loss=lm+m.auxiliary_weight(250)*aux
             loss.backward()
         finally:handle.remove()
@@ -107,7 +108,7 @@ def worker(args):
     unchanged=fingerprint(m)==initial
     result=dict(status='passed' if passed and unchanged else 'failed',arm=arm,index=args.index,
         kernel=m.attention_runtime,rows_sha256=file_hash(args.rows),batch=2,sequence_length=2048,
-        active_gate_std=None if m.anticipatory else .05,
+        active_gate_std=None if m.anticipatory or m.memory_proxy else .05,
         active_gate_init=m.settings.alpha_init if m.anticipatory else None,
         auxiliary_weight=m.auxiliary_weight(250),comparison=comparison,
         proxy_comparison=proxy_comparison,losses=losses,parameters_unchanged=unchanged,
@@ -171,15 +172,16 @@ def validate(args):
         receipt_names=result[backend+'_receipts']
         receipts=[read(folder/name) for name in receipt_names]
         assert {r['phase'] for r in receipts}=={'train','eval'}
+        attention_calls=40 if arm in MEMORY_ARMS else 28
         for r in receipts:
             assert r['arm']==arm and r['world_size']==8
             if backend=='fa4':
-                assert r['calls']==28
+                assert r['calls']==attention_calls
                 assert r['kernel_dtype']=='torch.bfloat16' and r['positions']=='reset_per_document'
                 assert r['document_isolation'] and r['causal'] and not r['dense_mask']
-                if r['phase']=='train':assert all(r[k+'_gradient_calls']==28 for k in ('query','key','value'))
+                if r['phase']=='train':assert all(r[k+'_gradient_calls']==attention_calls for k in ('query','key','value'))
             else:
-                assert len(r['calls'])==28 and not r['has_math']
+                assert len(r['calls'])==attention_calls and not r['has_math']
                 assert not r['unattributed_calls'] and not r['unattributed_backward']
                 assert all(c['mask']['dtype']=='torch.bool' and not c['is_causal'] for c in r['calls'])
                 assert not any(r['checkpointing'].values())
@@ -197,7 +199,17 @@ def validate(args):
                     assert torch.isfinite(value).all() and value.abs().sum()>0
                 assert (weights.get_tensor('sigma2')>=0).all()
                 gates=[weights.get_tensor(n) for n in weights.keys() if n.startswith('heads.') and n.endswith('.alpha')]
-                assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
+                if arm in MEMORY_ARMS:
+                    assert not gates and config['pilot']['proxy_target_version']=='p7-r1'
+                    for layer in range(2,25,2):
+                        for suffix in ('conv','w_in.weight','w_out.weight','k_proj.weight','k_norm.weight')+(() if arm=='P7-kq' else ('v_proj.weight',)):
+                            value=weights.get_tensor(f'heads.{layer}.{suffix}')
+                            assert torch.isfinite(value).all() and value.abs().sum()>0
+                        mass=result['evaluation'][f'eval_proxy_layer_{layer}_attention_mass']
+                        assert math.isfinite(mass) and 0<=mass<=1
+                    assert all(math.isfinite(result['evaluation'][key]) for key in ('eval_cos_loss','eval_rel_loss','eval_aux_loss'))
+                else:
+                    assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
         peak=result['training_cost']['peak_cuda_allocated_bytes'];assert peak<160*2**30
         results.append(dict(arm=arm,peak_gib=peak/2**30,eval_lm_loss=result['evaluation']['eval_lm_loss'],receipts=receipt_names))
     write(args.output,dict(status='passed',steps=args.steps,arms=results))

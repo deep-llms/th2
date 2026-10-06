@@ -1,5 +1,41 @@
 # Project notes
 
+## P7 second review and optimization (2026-10-06)
+
+Batched relational KL while preserving FP32 computation, sampled queries and
+separate global denominators. Cached convolution boundaries and relational
+indices/masks/counts per forward; skipped query sampling when auxiliary losses
+are disabled. P7 now uses the existing fused moment reduction, reducing four
+normalization collectives to one per update. Rejected nonfinite auxiliary
+weights at construction. No SDPA/FA4 attention-function or scientific-recipe
+change. Original per-sequence KL is retained only as a numerical test oracle.
+Ragged/empty query rows and FP32/BF16 derivatives are explicitly compared.
+CPU timing benefits depend on shape; no B200 throughput gain is established.
+All65acceptance/regression tests passed in319.199seconds, including optimized
+exact resume and all-arm two-rank DDP; nonfinite-weight guard rerun also passed.
+See P7_IMPLEMENTATION.md for measurements and remaining CUDA acceptance.
+
+## P7 architecture and backend decision (2026-10-06)
+
+Implement `proxy_arm_P7_spec.md` Revision 2 with both SDPA and FA4, as explicitly
+requested by the operator. Both implement one joint softmax over native and
+predicted memory in the last two KV groups; no gate and no replacement of native
+entries. FA4 interleaves entries, duplicates queries and retains odd outputs,
+with doubled document lengths. This adds work: report its adapter cost and
+measure full training throughput before launch. P7-kq omits its unused value
+projection; P7-ems/P7-mlp are separately named variants. Optional float-mask
+logit bias and incremental KV-cache decoding are not implemented.
+
+Relational KL samples at most256 eligible queries per sequence with a dedicated
+step/logical-update-row seed. Trainer globally sums separate LM-token,
+cosine-token and relational-query counts across accumulation and DDP. Target
+identity p7-r1 plus relational settings are saved and checked on resume/report.
+Step1000 requests evaluation and logs a low-cosine heuristic; extra experiments
+are not launched automatically. Local CPU tests include exact long-context
+resume of weights/optimizer/scheduler and all four arms under two-rank Gloo.
+CPU FA4 tests use an oracle, not the CUDA kernel. Details and launch limitations
+are in [P7_IMPLEMENTATION.md](P7_IMPLEMENTATION.md). No remote workload changed.
+
 ## Latest FA4 status (2026-10-06,14:23 Singapore /06:23UTC)
 
 Read-only monitorea81118: P4-iso-4h completed2500updates and its checkpoint
