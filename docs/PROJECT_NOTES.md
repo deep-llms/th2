@@ -1,5 +1,32 @@
 # Project notes
 
+## Confirmed CUDA correctness failure — production remains unlaunched (2026-10-06)
+
+Latest diagnosis identifies P4-4h auxiliary-only backward with aux_recompute=False
+as the failing case. Forward LM/aux losses are finite (12.17263699/1.00022733),
+but282parameter tensors have NaN gradients, including backbone and earlier
+estimator tensors. The detached-input recomputation reference (True) passes
+this same auxiliary-only finite/gradient-routing check. LM-only comparisons
+pass; P4-iso-4h also passed the first diagnostic. Do not generalize these probes
+to full training safety: no full-size25-step smoke or production optimizer
+updates have run. Do not relax tolerances or bypass the failed custom route.
+The underlying CUDA/autograd cause still needs isolation and a verified fix.
+
+Spec proxy_arms_P4_P5_P6_spec.md §9 explicitly says stop and report on test
+failure. Training is blocked at this gate. Final diagnostic supervisor receipt
+at02:25:53.707380UTC confirms cleanup, all-eight-free checks and restored burn
+with collective_progress_verified=True. Read-only monitor3a6daeb observed
+all8GPUs owned by the new burn; no training was active. Evidence:
+temp/p4-diagnose-monitor-02.log, SHA256
+3beb0ec34b0c0930225a4c072f677f26f8daae434ef36200b15df280b42af370.
+
+commands.sh returned to#0. The next work is diagnosing/fixing the custom
+auxiliary gradient route, then rerunning unchanged CUDA acceptance and the
+full-size smokes/profile before the two fresh2500-step runs. Preserve failed
+outputs; both supervised jobs are terminal. Existing denseA checkpoint/data
+and environments were not modified. Accelerate config copy was intentional.
+
+
 ## P4 CUDA acceptance blocked production; burns restored (2026-10-06)
 
 Job add770c / th2-tjx3-p4-four-head-checks-20261006-a01 reached the GPU tests.
