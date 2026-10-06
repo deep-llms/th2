@@ -1,5 +1,22 @@
 # Current task
 
+## Production start verified (2026-10-06)
+
+Launch f807f59 / p4-four-head-2500-20261006-a01 is active. Read-only monitor
+6e7e49a confirms Accelerate copy/8-GPU BF16 verification, precise approved
+burn-worker reclaim, and all eight GPUs at zero memory/no PIDs before training
+at03:04:32UTC. Baseline reuse validation passed. P4-iso-4h reached step14;
+step10 had finite LM12.01, auxiliary1.000, grad norm2.449, ~2.61s/update.
+Eight workers own the eight GPUs, no burn overlap. Actual train/eval backend
+is cuDNN SDPA with no math fallback. P4-4h remains queued after the first arm
+and its checkpoint validation; each stops at2500 on the unchanged full schedule.
+The independent supervisor will restore verified communicating burns on exit.
+commands.sh is now inactive (#0); this does not stop the running tmux queue.
+Evidence: temp/p4-production-monitor-01.log, SHA256
+61e2fd31ac6b84dc9c660e03c1a2578601794393f280c756612523324cf675c3.
+Production root: /mnt/local/_outputs/deep-llms_th2/p4-four-head-2500-20261006-a01.
+Only the first arm's start is verified; no production completion is claimed.
+
 ## Routing fix verified; production launch (2026-10-06)
 
 The corrected custom gradient routing passed all 38 selected CPU tests and
