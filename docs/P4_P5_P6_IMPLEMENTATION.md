@@ -156,3 +156,34 @@ Four-head extension verification: all 48 selected CPU tests passed in 194.643
 seconds (`temp/p4-four-head-regression.log`), including dedicated 16-query/8-KV
 mapping and real Trainer resume tests. The latest paired-report assertion also
 passed separately (`temp/p4-four-head-report.log`). No GPU training was launched.
+
+
+## CUDA gradient-routing correction (2026-10-06)
+
+The first full-Qwen B200 check found finite auxiliary loss but NaN gradients
+in P4-4h's original shared two-output autograd node. Anomaly detection identified
+`ScaledDotProductCudnnAttentionBackward0`; the detached-input recomputation
+reference passed on the same weights/environment. This used **dense SDPA**, not
+FA4. There is no evidence of a hardware fault.
+
+Returning `None` for the input gradient from that shared node still allowed
+PyTorch to visit upstream backward nodes. A small CPU regression demonstrates
+one upstream visit with the old implementation and zero with the correction.
+`BlockMLP` now calculates its forward once and shares saved activations between
+two `_MLPPath` nodes. The auxiliary node takes an explicitly detached input,
+which structurally disconnects it from the backbone. LM input gradients and both
+parameter-gradient contributions are preserved. P4/P6 use this corrected path;
+isolated arms and A/P1/P3 do not use the defective shared node. State-dict names,
+architecture, initialization, target definitions and loss weights are unchanged.
+
+All16 anticipatory CPU tests passed, including save/resume, AOT compilation,
+BF16 and two-rank DDP; all22 selected legacy/validator tests passed. The first
+post-fix CUDA retry stopped before its P4-4h auxiliary check on a finite LM
+gradient difference of1.07026%, just over the1% bound. Consequently, that retry
+did not yet validate the original failing case. The numerical probe now enables
+deterministic algorithms and adds a reference-vs-itself control. The1% bound is
+unchanged. These settings are confined to the diagnostic process; ordinary
+Trainer smokes and production retain the established performance settings.
+PyTorch documents that CUDA/cuDNN SDPA can select nondeterministic algorithms:
+[SDPA documentation](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention).
+CUDA revalidation and full-size smoke results must be checked before launch.
