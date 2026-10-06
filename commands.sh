@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-p4-routing-fix-checks-monitor-20261006-a02
+#th2-tjx3-p4-routing-fix-checks-monitor-20261006-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 date -u
@@ -17,5 +17,11 @@ for relative in ['launch.log','supervised/reclaim.json','supervised/gpus-free-be
     if path.is_file():print('FILE',relative,path.read_text()[-14000:],flush=True)
 for path in sorted((root/'supervised/run').glob('*.log')):
     print('JOB_LOG',path.name,path.read_text()[-9000:],flush=True)
+for folder in sorted((root/'supervised/run/smoke/seed-42').glob('*')):
+    for name in ['component-profile.json','result.json']:
+        p=folder/name
+        if p.is_file():print('ARM_ARTIFACT',folder.name,name,p.read_text()[-12000:],flush=True)
+    for p in sorted(folder.glob('sdpa-*.json')):
+        r=json.loads(p.read_text());print('BACKEND',folder.name,r['phase'],r['runtime']['deterministic_algorithms'],r['has_math'],sorted({op for c in r['calls'] for op in c['forward_operators']}),flush=True)
 print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
 PYREMOTE
