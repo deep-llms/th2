@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-p4-fa4-four-head-2500-monitor-20261006-a01
+#th2-tjx3-p4-fa4-four-head-2500-monitor-20261006-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 date -u
