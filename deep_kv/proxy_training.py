@@ -26,7 +26,7 @@ def summarize_proxy(statistics, model):
         cosines = np.asarray(rest[:size])/auxiliary_count
         losses = np.asarray(rest[size:2*size])/auxiliary_count
         relational = np.zeros(size)
-        if model.memory_proxy:
+        if model.relational_proxy:
             query_count = rest[-2]
             if query_count:
                 relational = np.asarray(rest[2*size:3*size])/query_count
@@ -36,12 +36,14 @@ def summarize_proxy(statistics, model):
             result['aux_loss'] = float((losses+.5*relational).mean())
         else:
             result['aux_loss'] = float(losses.mean())
+        if model.memory_proxy:result['cos_loss'] = float(losses.mean())
         width = 3 if model.family == 'P3' else 1
         for index, layer in enumerate(model.layers):
             row = cosines[index*width:(index+1)*width]
             result[f'proxy_layer_{layer}_aux_loss'] = float(losses[index*width:(index+1)*width].mean())
             if model.memory_proxy:
                 result[f'proxy_layer_{layer}_cos_loss'] = float(losses[index])
+            if model.relational_proxy:
                 result[f'proxy_layer_{layer}_rel_loss'] = float(relational[index])
                 result[f'proxy_layer_{layer}_aux_loss'] += .5*float(relational[index])
             for c, cosine in enumerate(row):
@@ -119,7 +121,7 @@ class ProxyTrainer(DeepKVTrainer):
     def _get_num_items_in_batch(self,batch_samples,device):
         if not batch_samples:
             return None
-        memory = self.model.memory_proxy
+        memory = self.model.relational_proxy
         counts = torch.zeros(3 if memory else 2,dtype=torch.long,device=device)
         offset = 0
         for inputs in batch_samples:
@@ -159,7 +161,7 @@ class ProxyTrainer(DeepKVTrainer):
         isolated_training = training and (self.model.anticipatory or self.model.memory_proxy) and self.model.settings.isolate_estimator
         compute_aux = bool(self.model.family and (not training or weight>0 or diagnostic or isolated_training))
         memory_kwargs = {}
-        if self.model.memory_proxy:
+        if self.model.relational_proxy:
             indices = inputs.get('_p7_sequence_indices')
             if indices is None and not training:
                 indices = [(self._memory_eval_offset+i)*self.accelerator.num_processes+self.accelerator.process_index
@@ -174,7 +176,7 @@ class ProxyTrainer(DeepKVTrainer):
         loss = outputs['lm_sum']/counts[0].clamp_min(1)
         if weight>0 or isolated_training:
             loss = loss+weight*outputs['aux_sum']/counts[1].clamp_min(1)
-            if self.model.memory_proxy:
+            if self.model.relational_proxy:
                 query_count = num_items_in_batch[2] if num_items_in_batch is not None else outputs['rel_count']
                 loss = loss+weight*.5*outputs['rel_sum']/query_count.clamp_min(1)
         if num_items_in_batch is not None:

@@ -44,7 +44,7 @@ def model(arm='P7',backend='sdpa',checkpoint=False,**settings):
 
 def objective(out):
     return out['lm_sum']/out['lm_count']+.1*(out['aux_sum']/out['aux_count'].clamp_min(1)+
-                                           .5*out['rel_sum']/out['rel_count'].clamp_min(1))
+                                           (.5*out['rel_sum']/out['rel_count'].clamp_min(1) if 'rel_sum' in out else 0))
 
 
 def loop_relational_reference(prediction, target, plan):
@@ -86,37 +86,38 @@ class MemoryTests(unittest.TestCase):
                 with m.without_proxy():actual=m.backbone.lm_head(m.hidden_states(batch())[0])
                 torch.testing.assert_close(expected,actual,rtol=0,atol=1e-5)
                 other=model(arm,backend,module_seed=77)
-                self.assertFalse(torch.equal(m.heads['2'].conv,other.heads['2'].conv))
+                self.assertFalse(torch.equal(next(m.heads['2'].parameters()),next(other.heads['2'].parameters())))
                 self.assertTrue(torch.equal(m.backbone.model.embed_tokens.weight,other.backbone.model.embed_tokens.weight))
         for options in (dict(groups=1),dict(alpha_init=1),dict(isolate_estimator=False),dict(lookahead=3),
                         dict(lambda_max=float('nan')),dict(lambda_max=float('inf'))):
             with self.assertRaises(ValueError):model(**options)
 
     def test_t2_t4_joint_softmax_native_heads_and_exact_gqa(self):
-        m=model();ctx=batch();u=torch.randn(1,8,32);head=m.heads['2'];layer=m.backbone.model.layers[1]
-        rotary=m.backbone.model.rotary_emb(u,ctx.position_ids);plan=MemoryPlan(ctx.segments)
-        prediction=head.estimate(u,plan);calls=[]
-        def attention(module,q,k,v,mask,**kwargs):
-            calls.append((q,k,v,mask))
-            return F.scaled_dot_product_attention(q,k,v,attn_mask=mask,enable_gqa=True,
-                                                 scale=module.scaling).transpose(1,2),None
-        with patch('deep_kv.proxy.ALL_ATTENTION_FUNCTIONS.get_interface',return_value=attention):
-            native=m.attention(layer,u,None,ctx.allowed(),rotary)
-            joint=m.memory_attention(layer,u,head,prediction,ctx.allowed(),rotary,plan)
-        torch.testing.assert_close(native[:,:,:12],joint[:,:,:12],rtol=0,atol=1e-6)
-        for index,heads in ((0,12),(1,6),(2,6)):
-            torch.testing.assert_close(calls[0][index][:,:heads],calls[1][index],rtol=0,atol=0)
-        q,k,v,mask=calls[2]
-        self.assertEqual((q.shape[1],k.shape[1],k.shape[2]),(4,2,16))
-        torch.testing.assert_close(mask,torch.cat((ctx.allowed(),ctx.allowed()),dim=-1),rtol=0,atol=0)
-        manual=((q @ k.repeat_interleave(2,1).transpose(-1,-2))*layer.self_attn.scaling).masked_fill(~mask,-torch.inf).softmax(-1)
-        expected=(manual @ v.repeat_interleave(2,1)).transpose(1,2)
-        torch.testing.assert_close(joint[:,:,12:],expected,rtol=1e-5,atol=1e-6)
-        ablated=rectangular_mask(ctx.allowed(),True)
-        self.assertFalse(ablated[...,8:].any());self.assertTrue(ablated.any(-1).all())
-        for t in range(8):
-            for j in range(8):
-                self.assertEqual(bool(mask[0,0,t,j+8]),j<=t and ctx.segments[0,j]==ctx.segments[0,t])
+        for arm in ('P7','P7-simple'):
+            m=model(arm);ctx=batch();u=torch.randn(1,8,32);head=m.heads['2'];layer=m.backbone.model.layers[1]
+            rotary=m.backbone.model.rotary_emb(u,ctx.position_ids);plan=MemoryPlan(ctx.segments)
+            prediction=head.estimate(u,plan);calls=[]
+            def attention(module,q,k,v,mask,**kwargs):
+                calls.append((q,k,v,mask))
+                return F.scaled_dot_product_attention(q,k,v,attn_mask=mask,enable_gqa=True,
+                                                     scale=module.scaling).transpose(1,2),None
+            with patch('deep_kv.proxy.ALL_ATTENTION_FUNCTIONS.get_interface',return_value=attention):
+                native=m.attention(layer,u,None,ctx.allowed(),rotary)
+                joint=m.memory_attention(layer,u,head,prediction,ctx.allowed(),rotary,plan)
+            torch.testing.assert_close(native[:,:,:12],joint[:,:,:12],rtol=0,atol=1e-6)
+            for index,heads in ((0,12),(1,6),(2,6)):
+                torch.testing.assert_close(calls[0][index][:,:heads],calls[1][index],rtol=0,atol=0)
+            q,k,v,mask=calls[2]
+            self.assertEqual((q.shape[1],k.shape[1],k.shape[2]),(4,2,16))
+            torch.testing.assert_close(mask,torch.cat((ctx.allowed(),ctx.allowed()),dim=-1),rtol=0,atol=0)
+            manual=((q @ k.repeat_interleave(2,1).transpose(-1,-2))*layer.self_attn.scaling).masked_fill(~mask,-torch.inf).softmax(-1)
+            expected=(manual @ v.repeat_interleave(2,1)).transpose(1,2)
+            torch.testing.assert_close(joint[:,:,12:],expected,rtol=1e-5,atol=1e-6)
+            ablated=rectangular_mask(ctx.allowed(),True)
+            self.assertFalse(ablated[...,8:].any());self.assertTrue(ablated.any(-1).all())
+            for t in range(8):
+                for j in range(8):
+                    self.assertEqual(bool(mask[0,0,t,j+8]),j<=t and ctx.segments[0,j]==ctx.segments[0,t])
 
     def test_fa4_joint_reference_values_gradients_and_native_value_variant(self):
         ctx=batch();layout=document_layout(ctx)
@@ -176,11 +177,11 @@ class MemoryTests(unittest.TestCase):
         for arm in MEMORY_ARMS:
             for backend in ('sdpa','fa4'):
                 m=model(arm,backend);ctx=batch()
-                for component in ('lm_sum','aux_sum','rel_sum'):
+                for component in (('lm_sum','aux_sum','rel_sum') if m.relational_proxy else ('lm_sum','aux_sum')):
                     m.zero_grad(set_to_none=True);out=m(ctx);out[component].backward()
                     for name,p in m.named_parameters():
                         active=p.grad is not None and bool(p.grad.count_nonzero())
-                        estimator=name.startswith('heads.') and any(token in name for token in ('.w_in.','.w_out.','.conv'))
+                        estimator=name.startswith('heads.') and any(token in name for token in ('.w_in.','.w_out.','.conv','.w1.','.w2.'))
                         if component=='lm_sum' and estimator:self.assertIsNone(p.grad,name)
                         elif component!='lm_sum':self.assertEqual(active,estimator,(component,name))
                         elif name.startswith('heads.'):self.assertTrue(active,name)
@@ -196,8 +197,108 @@ class MemoryTests(unittest.TestCase):
                                     block_observer=lambda i,x:blocks.__setitem__(i,x.detach().float()))
                 for hook in hooks:hook.remove()
                 for layer in m.layers:
-                    expected=sum(mlps[i] for i in range(layer,layer+4)) if arm=='P7-mlp' else blocks[layer+3]-blocks[layer-1]
+                    expected=sum(mlps[i] for i in range(layer,layer+4)) if arm in ('P7-mlp','P7-simple') else blocks[layer+3]-blocks[layer-1]
                     torch.testing.assert_close(raw[layer],expected,rtol=0,atol=0)
+
+    def test_simple_matches_p4_estimator_and_has_no_relational_work(self):
+        m=model('P7-simple');p4=model('P4-iso-4h');u=torch.randn(2,8,32,requires_grad=True)
+        self.assertEqual(m.layers,p4.layers)
+        self.assertEqual(m.settings.target_version,p4.settings.target_version)
+        self.assertFalse(m.relational_proxy)
+        self.assertFalse(m.increment_target)
+        for layer in m.layers:
+            head=m.heads[str(layer)];reference=p4.heads[str(layer)]
+            self.assertEqual(set(dict(head.named_parameters())),
+                             {'w1.weight','w2.weight','k_proj.weight','v_proj.weight','k_norm.weight'})
+            for name in ('w1','w2'):
+                torch.testing.assert_close(getattr(head,name).weight,getattr(reference,name).weight,rtol=0,atol=0)
+            actual=head.estimate(u,None);expected=reference.estimates(u.detach())[0]
+            torch.testing.assert_close(actual,expected,rtol=0,atol=0)
+            actual.square().sum().backward();expected.square().sum().backward()
+            self.assertIsNone(u.grad)
+            for name in ('w1','w2'):
+                torch.testing.assert_close(getattr(head,name).weight.grad,getattr(reference,name).weight.grad,rtol=0,atol=0)
+        for backend in ('sdpa','fa4'):
+            simple=model('P7-simple',backend)
+            with patch('deep_kv.proxy_memory.eligible_queries',side_effect=AssertionError('query sampling')), \
+                 patch('deep_kv.proxy_memory.relational_losses',side_effect=AssertionError('relational loss')):
+                out=simple(batch());objective(out).backward()
+                self.assertNotIn('rel_sum',out)
+                summary=summarize_proxy(out['statistics'].numpy(),simple)
+                self.assertEqual(summary['cos_loss'],summary['aux_loss'])
+                self.assertNotIn('rel_loss',summary)
+        wrong=config();wrong.num_key_value_heads=4
+        with self.assertRaisesRegex(ValueError,'four query heads'):
+            ProxyModel.from_scratch(wrong,'P7-simple',consumer=2,deep_target=8)
+        budget=compute_budget(config(),m.settings,8)['P7-simple']
+        self.assertEqual(budget['relational_forward_macs_per_token'],0)
+
+    def test_simple_p4_matching_targets_statistics_loss_and_full_depth_seed(self):
+        # With both consumers disabled, equal backbones must produce equal
+        # targets, normalization updates and estimator supervision.
+        for backend in ('sdpa','fa4'):
+            simple=model('P7-simple',backend);control=model('P4-iso-4h',backend)
+            for step,expected in ((0,0.),(125,.05),(250,.1),(1000,.1)):
+                self.assertEqual(simple.auxiliary_weight(step),expected)
+                self.assertEqual(simple.auxiliary_weight(step),control.auxiliary_weight(step))
+            with simple.without_proxy(),control.without_proxy():
+                for phase in ('mean','variance'):
+                    snapshots=[]
+                    for m in (simple,control):
+                        with torch.no_grad():
+                            out=m(batch(),compute_auxiliary_losses=False,collect_target_statistics=True,statistics_mode=phase)
+                        moments=tuple(out[key] for key in ('center_sums','center_squares','center_counts'))
+                        snapshots.append(moments)
+                        m.update_statistics(*moments,initialize=phase)
+                    for a,b in zip(*snapshots):torch.testing.assert_close(a,b,rtol=2e-5,atol=1e-7)
+                out=simple(batch(),collect_target_statistics=True)
+                reference=control(batch(),collect_target_statistics=True)
+                for key in ('lm_sum','aux_sum','center_sums','center_squares','center_counts','clip_counts'):
+                    torch.testing.assert_close(out[key],reference[key],rtol=2e-5,atol=1e-6,msg=key)
+                out['aux_sum'].backward();reference['aux_sum'].backward()
+                for layer in simple.layers:
+                    for name in ('w1','w2'):
+                        a=getattr(simple.heads[str(layer)],name).weight.grad
+                        b=getattr(control.heads[str(layer)],name).weight.grad
+                        torch.testing.assert_close(a,b,rtol=2e-4,atol=2e-5)
+                for m,result in ((simple,out),(control,reference)):
+                    m.update_statistics(*(result[k] for k in ('center_sums','center_squares','center_counts')))
+                torch.testing.assert_close(simple.mu,control.mu,rtol=2e-5,atol=1e-7)
+                torch.testing.assert_close(simple.sigma2,control.sigma2,rtol=2e-5,atol=1e-7)
+        c=config();c.num_hidden_layers=28;c.layer_types=['full_attention']*28
+        pair=[ProxyModel.from_scratch(c,arm,proxy_settings=ProxySettings(width=8,module_seed=77))
+              for arm in ('P7-simple','P4-iso-4h')]
+        self.assertEqual(pair[0].layers,tuple(range(2,25,2)))
+        for layer in pair[0].layers:
+            for name in ('w1','w2'):
+                torch.testing.assert_close(getattr(pair[0].heads[str(layer)],name).weight,
+                                           getattr(pair[1].heads[str(layer)],name).weight,rtol=0,atol=0)
+
+    def test_simple_real_trainer_comparison_with_p4_control(self):
+        arms=('A','P4-iso-4h','P7-simple')
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);recipe=proxy_fixture(root);config().save_pretrained(root/'model')
+            recipe.update(proxy_groups=2)
+            for backend in ('sdpa','fa4'):
+                destination=root/backend
+                for arm in arms:
+                    invoke(root,{**recipe,'attention_backend':backend,'arm':arm,'output_dir':str(destination/arm)})
+                summary=report(destination,arms)
+                self.assertEqual(set(summary['lm_loss']),set(arms))
+                self.assertEqual(summary['proxy_targets']['P7-simple'],summary['proxy_targets']['P4-iso-4h'])
+                configs=[json.loads((destination/arm/'train_config.json').read_text()) for arm in arms]
+                self.assertEqual(len({c['train_fingerprint'] for c in configs}),1)
+                # A differing auxiliary weight must not be reported as matched.
+                path=destination/'P7-simple'/'train_config.json'
+                changed=json.loads(path.read_text());changed['pilot']['proxy_lambda_max']=.3
+                path.write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError,'Arms differ in configuration'):
+                    report(destination,arms)
+            path=root/'queue.json';path.write_text(json.dumps(recipe))
+            queue=jobs(path,arms=arms,seeds=[42])
+            runs=[job for job in queue['jobs'] if 'gpus' in job]
+            self.assertEqual([job['argv'][job['argv'].index('--arm')+1] for job in runs],list(arms))
+            self.assertTrue(all(job['gpus']==list(range(8)) for job in runs))
 
     def test_t7_sampling_rng_replay_empty_and_single_candidates(self):
         docs=torch.zeros(2,600,dtype=torch.long);docs[:,300:]=1
@@ -251,21 +352,22 @@ class MemoryTests(unittest.TestCase):
         ctx=batch();inputs=dict(input_ids=ctx.input_ids.repeat(2,1),labels=ctx.labels.repeat(2,1),
             attention_mask=ctx.valid.repeat(2,1),position_ids=ctx.position_ids.repeat(2,1),segments=ctx.segments.repeat(2,1))
         inputs['segments'][1]=torch.tensor([0,1,2,3,4,4,4,4]);inputs['position_ids'][1]=torch.tensor([0,0,0,0,0,1,2,3])
-        with tempfile.TemporaryDirectory() as tmp:
-            gradients=[];summaries=[]
-            for micro in (2,1):
-                m=model();m.mu_initialized.fill_(True)
-                trainer=ProxyTrainer(model=m,args=TrainingArguments(output_dir=tmp,use_cpu=True,report_to=[]))
-                trainer.is_in_train=True;trainer.state.global_step=300
-                samples=[{key:value[start:start+micro] for key,value in inputs.items()} for start in range(0,2,micro)]
-                counts=trainer._get_num_items_in_batch(samples,torch.device('cpu'))
-                self.assertEqual(counts.tolist(),[9,16,9])
-                for sample in samples:trainer.compute_loss(m,sample,num_items_in_batch=counts).backward()
-                gradients.append({name:p.grad.clone() for name,p in m.named_parameters()})
-                summaries.append(summarize_proxy(trainer.step_totals.detach().numpy()[None],m))
-            for name in gradients[0]:torch.testing.assert_close(gradients[0][name],gradients[1][name],rtol=2e-4,atol=2e-6,msg=name)
-            for key in ('aux_loss','cos_loss','rel_loss'):
-                self.assertAlmostEqual(summaries[0][key],summaries[1][key],places=5)
+        for arm in ('P7','P7-simple'):
+            with tempfile.TemporaryDirectory() as tmp:
+                gradients=[];summaries=[]
+                for micro in (2,1):
+                    m=model(arm);m.mu_initialized.fill_(True)
+                    trainer=ProxyTrainer(model=m,args=TrainingArguments(output_dir=tmp,use_cpu=True,report_to=[]))
+                    trainer.is_in_train=True;trainer.state.global_step=300
+                    samples=[{key:value[start:start+micro] for key,value in inputs.items()} for start in range(0,2,micro)]
+                    counts=trainer._get_num_items_in_batch(samples,torch.device('cpu'))
+                    self.assertEqual(counts.tolist(),[9,16] if arm=='P7-simple' else [9,16,9])
+                    for sample in samples:trainer.compute_loss(m,sample,num_items_in_batch=counts).backward()
+                    gradients.append({name:p.grad.clone() for name,p in m.named_parameters()})
+                    summaries.append(summarize_proxy(trainer.step_totals.detach().numpy()[None],m))
+                for name in gradients[0]:torch.testing.assert_close(gradients[0][name],gradients[1][name],rtol=2e-4,atol=2e-6,msg=name)
+                for key in (('aux_loss','cos_loss') if arm=='P7-simple' else ('aux_loss','cos_loss','rel_loss')):
+                    self.assertAlmostEqual(summaries[0][key],summaries[1][key],places=5)
 
     def test_real_trainer_resume_eval_reports_and_queue(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -281,17 +383,32 @@ class MemoryTests(unittest.TestCase):
                     for name in full:torch.testing.assert_close(resumed[name],full[name],rtol=0,atol=0,msg=name)
                     result=json.loads((destination/arm/'result.json').read_text())
                     if arm=='A':continue
-                    self.assertEqual(result['proxy']['target']['target_version'],'p7-r1')
+                    self.assertEqual(result['proxy']['target']['target_version'],'p4p6-r1' if arm=='P7-simple' else 'p7-r1')
                     self.assertIn('eval_proxy_layer_2_attention_mass',result['evaluation'])
                     history=json.loads((destination/arm/'trainer_state.json').read_text())['log_history']
-                    self.assertTrue(any('step_proxy_layer_2_rel_loss' in row for row in history))
+                    self.assertEqual(any('step_proxy_layer_2_rel_loss' in row for row in history),arm!='P7-simple')
+                    if arm=='P7-simple':
+                        self.assertNotIn('relational',result['proxy']['target'])
+                        self.assertNotIn('eval_rel_loss',result['evaluation'])
                     with self.assertRaisesRegex(ValueError,'Resume configuration'):
                         invoke(root,{**args,'attention_backend':'sdpa' if backend=='fa4' else 'fa4'})
                 report(destination,('A',)+MEMORY_ARMS)
+                # Reject a mislabeled simple arm even if result/config agree.
+                path=destination/'P7-simple'/'train_config.json'
+                result_path=destination/'P7-simple'/'result.json'
+                original_config=path.read_text();original_result=result_path.read_text()
+                for change in ({'relational':{'weight':.5}}, {'quantity':'four_block_increment'}):
+                    changed=json.loads(original_config);changed_result=json.loads(original_result)
+                    changed['proxy_target'].update(change)
+                    changed_result['proxy']['target'].update(change)
+                    path.write_text(json.dumps(changed));result_path.write_text(json.dumps(changed_result))
+                    with self.assertRaisesRegex(ValueError,'target metadata'):
+                        report(destination,('A','P7-simple'))
+                path.write_text(original_config);result_path.write_text(original_result)
             path=root/'queue.json';path.write_text(json.dumps(recipe))
             queue=jobs(path,arms=['A',*MEMORY_ARMS],seeds=[42])
             runs=[job for job in queue['jobs'] if 'gpus' in job]
-            self.assertEqual(len(runs),5);self.assertTrue(all(job['gpus']==list(range(8)) for job in runs))
+            self.assertEqual(len(runs),1+len(MEMORY_ARMS));self.assertTrue(all(job['gpus']==list(range(8)) for job in runs))
 
     def test_budget_parameter_counts(self):
         c=config();settings=ProxySettings(width=8,features=9,chunk_size=2)

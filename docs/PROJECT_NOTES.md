@@ -1,3 +1,16 @@
+## P7-simple decision — 2026-10-06
+
+Use four query heads (last two KV groups), matching P4-iso-4h and P7. This
+is a controlled starting choice, not a proven optimal head count. New arm
+`P7-simple` keeps P4-iso's predictor, initialization, MLP-window target and
+cosine-only loss, consuming detached predictions through P7 joint-softmax
+memory. No convolution, EMS, relational KL or additive gate. Existing arms
+and the shared Trainer/data/schedule remain unchanged. Independent K/V
+projections mean parameter counts differ from P4-iso-4h. Both attention
+backends supported; new-arm CUDA smoke remains pending. Careful review passed
+68 local tests, adding direct P4 target/statistic/gradient and matched-recipe
+Trainer comparisons. No training-code fix was needed. See P7_IMPLEMENTATION.md.
+
 ## P7 CUDA acceptance and speed — 2026-10-06
 
 - Source `2729792`: P7/P7-kq/P7-ems/P7-mlp passed actual SDPA/FA4 numerics,

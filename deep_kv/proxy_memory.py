@@ -18,10 +18,10 @@ def eligible_queries(documents):
 
 
 class MemoryPlan:
-    def __init__(self, documents, *, step=0, sequence_indices=None, ems=None, sample_queries=True):
+    def __init__(self, documents, *, step=0, sequence_indices=None, ems=None, sample_queries=True, convolution=True):
         self.documents, self.ems = documents, ems
         self.conv_masks = tuple((documents[:, lag:] == documents[:, :-lag]).unsqueeze(-1)
-                                for lag in range(1, min(4, documents.shape[1])))
+                                for lag in range(1, min(4, documents.shape[1]))) if convolution else ()
         self._relational_layout = None
         self.queries = []
         if not sample_queries:
@@ -98,6 +98,27 @@ class MemoryHead(nn.Module):
         k, _ = apply_rotary_pos_emb(k, k, *rotary)
         v = native_values if self.v_proj is None else self.v_proj(p).view(shape).transpose(1, 2)
         return k, v
+
+
+class SimpleMemoryHead(MemoryHead):
+    """P4-iso's tokenwise estimator with P7's detached memory projections."""
+    def __init__(self, config, settings):
+        nn.Module.__init__(self)
+        self.w1 = nn.Linear(config.hidden_size, settings.width, bias=False)
+        self.w2 = nn.Linear(settings.width, config.hidden_size, bias=False)
+        for module in (self.w1, self.w2):
+            nn.init.normal_(module.weight, std=config.initializer_range)
+
+    def initialize_projections(self, config):
+        # Called after ALL estimators: preserve P4-iso's estimator RNG sequence.
+        self.k_proj = nn.Linear(config.hidden_size, 2*config.head_dim, bias=False)
+        self.v_proj = nn.Linear(config.hidden_size, 2*config.head_dim, bias=False)
+        self.k_norm = Qwen3RMSNorm(config.head_dim, eps=config.rms_norm_eps)
+        for module in (self.k_proj, self.v_proj):
+            nn.init.normal_(module.weight, std=config.initializer_range)
+
+    def estimate(self, u, plan):
+        return self.w2(F.silu(self.w1(u.detach())))
 
 
 def rectangular_mask(mask, disabled=False):

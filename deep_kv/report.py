@@ -10,7 +10,7 @@ def comparable_config(config):
     config = copy.deepcopy(config)
     arm=config['pilot'].pop('arm')
     if arm in MEMORY_ARMS:
-        expected=dict(proxy_isolate_estimator=True,proxy_target_version='p7-r1',
+        expected=dict(proxy_isolate_estimator=True,proxy_target_version='p4p6-r1' if arm=='P7-simple' else 'p7-r1',
                       proxy_lookahead=4,proxy_loss_form='cosine',proxy_groups=2)
         if (any(config['pilot'].get(k)!=v for k,v in expected.items())
                 or config['pilot'].get('proxy_alpha_init',0)!=0
@@ -91,7 +91,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             raise ValueError('Incorrect screening seed')
         if config['pilot'].get('proxy_screen') and (arm.startswith(('P1-', 'P3-')) or arm in ANTICIPATORY_ARMS+MEMORY_ARMS):
             target = config.get('proxy_target')
-            version='p7-r1' if arm in MEMORY_ARMS else 'p4p6-r1' if arm in ANTICIPATORY_ARMS else 'r7'
+            version='p4p6-r1' if arm in ANTICIPATORY_ARMS or arm=='P7-simple' else 'p7-r1' if arm in MEMORY_ARMS else 'r7'
             if not target or target.get('target_version') != version or config['pilot'].get('proxy_channel_mask'):
                 raise ValueError('Proxy arms require their versioned target definition without a channel mask')
             if arm in ANTICIPATORY_ARMS:
@@ -103,12 +103,14 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     raise ValueError('P4/P5/P6 target metadata does not match its definition or saved result')
             targets[arm] = target
             if arm in MEMORY_ARMS:
-                expected_target = dict(quantity='mlp_window_sum' if arm=='P7-mlp' else 'four_block_increment',
+                expected_target = dict(quantity='mlp_window_sum' if arm in ('P7-mlp','P7-simple') else 'four_block_increment',
                     lookahead=4,bands=list(range(2,config['model_config']['num_hidden_layers']-2,2)),
                     normalization='running_per_channel',epsilon=1e-6,loss_form='cosine',
                     relational=dict(weight=.5,temperature=.1,queries=256,candidates='strictly_earlier_same_document',
                                     sampling='step_and_global_update_row_v1',normalization_epsilon=1e-6))
+                if arm=='P7-simple':expected_target.pop('relational')
                 if (any(target.get(k)!=v for k,v in expected_target.items())
+                        or (arm=='P7-simple' and 'relational' in target)
                         or result.get('proxy',{}).get('target')!=target):
                     raise ValueError('P7 target metadata does not match its definition or saved result')
             for other, definition in targets.items():

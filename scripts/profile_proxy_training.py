@@ -14,7 +14,7 @@ from transformers import TrainerCallback
 
 from deep_kv.proxy import ProxyModel
 from deep_kv.proxy_estimators import AnticipatoryHead, _MLPPath
-from deep_kv.proxy_memory import MemoryHead
+from deep_kv.proxy_memory import MemoryHead, SimpleMemoryHead
 import deep_kv.proxy_memory as memory
 import deep_kv.proxy_training as training
 from scripts.check_fa4_proxy import write
@@ -92,6 +92,7 @@ def main():
         (ProxyModel,'lm_statistics','lm_loss'),
         (AnticipatoryHead,'routed','estimator_forward'),
         (MemoryHead,'estimate','estimator_forward'),
+        (SimpleMemoryHead,'estimate','estimator_forward'),
         (MemoryHead,'entries','proxy_projections'),
         (ProxyModel,'memory_attention','proxy_memory_attention')]:
         setattr(cls,name,annotate(getattr(cls,name),label))

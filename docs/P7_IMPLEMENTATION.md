@@ -4,6 +4,91 @@ Implemented against `proxy_arm_P7_spec.md`, Revision 2. The operator explicitly
 requested both dense SDPA and FA4; this extends the specification's SDPA-only
 implementation wording without changing the attention function or objective.
 
+## P7-simple — controlled memory comparison (6 October 2026)
+
+The operator approved a simpler P7 following the design review. Use
+`--arm P7-simple --attention_backend fa4` (or `sdpa`) with the existing recipe.
+This is a new arm; existing P7/P7-kq/P7-ems/P7-mlp definitions stay unchanged.
+
+**Head decision:** use the last **four query heads**, zero-based 12–15 in
+Qwen3-0.6B, corresponding to KV groups 6–7. The other twelve query heads retain
+native attention. This matches P4-iso-4h and the existing P7 head allocation,
+keeps most attention native and avoids adding a head-count sweep before there
+is evidence of benefit. Four is a controlled starting choice, not an empirically
+established optimum. The arm requires two query heads per KV group and rejects
+incompatible GQA layouts rather than silently changing the number of heads.
+
+At blocks ℓ = 2, 4, …, 24:
+
+- Source: the current block's input RMSNorm output `u_ℓ`.
+- Predictor: `p_ℓ = W2 SiLU(W1 stopgrad(u_ℓ))`, bias-free 1024 → 256 → 1024.
+  No convolution or EMS. Width remains configurable for tiny tests.
+- Target: detached sum of the current and next three blocks' MLP outputs,
+  `Σ(i=ℓ..ℓ+3) MLP_i`, standardized by the existing running per-channel mean
+  and variance, then clipped exactly as in P4-iso; cosine loss normalizes vector
+  directions. Target version
+  is `p4p6-r1`; moments bootstrap/update/checkpoint exactly as before.
+- Loss: cosine only, averaged over tokens and proxy layers. Total objective is
+  `LM_loss + λ(step) cosine_loss`, with default `λ = 0.1 min(step/250, 1)`.
+  There is no relational loss, sampled-query denominator or query sampling.
+- Consumer: RMS-normalize `stopgrad(p_ℓ)` and project independent proxy K/V.
+  Proxy K uses Qwen K normalization and the token's document-reset RoPE position.
+  Four heads jointly attend to native and proxy entries through **one softmax**.
+  Both kinds of entries obey causal, same-document visibility. There is no gate.
+- Gradients: LM trains the backbone and proxy K/V projections; cosine trains
+  only the predictor. Targets and normalization statistics are detached.
+
+All predictor weights initialize identically to P4-iso/P4-iso-4h under the
+same explicit module seed (default 43). Memory projections initialize only
+after all predictors, so they do not perturb that RNG sequence. The head choice,
+predictor, target and loss are matched to P4-iso-4h; changing consumption also
+adds independent K/V projection parameters and removes P4's additive gate.
+It is therefore an architecture comparison, not a parameter-matched control.
+At production dimensions it adds 12,584,448 parameters across twelve blocks.
+
+Implementation reuses `MemoryHead.entries`, `ProxyModel.memory_attention`,
+FA4's interleaved varlen adapter, dense SDPA and the existing HF Trainer.
+`SimpleMemoryHead` in `deep_kv/proxy_memory.py` supplies only the tokenwise MLP.
+The model distinguishes memory attention from relational supervision so the
+new arm uses ordinary LM-token/cosine-token accumulation denominators.
+Logs retain per-layer cosine, auxiliary loss, attention mass and proxy-disabled
+LM evaluation. Result metadata explicitly excludes relational loss, and the
+report rejects an increment target or relational metadata for this arm.
+
+The existing sequential queue accepts `--arms A P4-iso-4h P7-simple --seeds 42`
+with `proxy_heads.b200.json`. It preserves microbatch 16, accumulation 4,
+eight GPUs, 2,048-token packing with EOS/document isolation, the 28,600-step
+schedule, 1,430 warmup steps and 2,500-step cutoff. Generating this queue does
+not launch it. Existing result directories and checkpoints must not be
+relabelled as the new arm.
+
+Local validation covers exact P4 predictor initialization/output/gradients,
+exact MLP-sum targets, no relational work, four-head joint softmax, untouched
+native heads, gradient routes, causality and document isolation, checkpoint
+recomputation, BF16 finiteness, accumulation, resume, reports and two-rank DDP.
+CPU FA4 checks use an independent SDPA oracle in place of the CUDA kernel.
+The earlier B200 results below cover the original four variants only:
+**P7-simple still needs its own CUDA/full-model smoke before production.**
+Local implementation validation covered 66 distinct tests. The careful review
+adds two regression tests that compare against P4-iso-4h directly:
+
+- With both consumers disabled, the same backbone produces matching target
+  bootstrap moments, cosine loss, predictor gradients and running-statistic
+  updates on both attention paths. This tests equality under a controlled
+  forward pass; active P4 and P7 naturally produce different activations.
+- All twelve predictors in a 28-block test model initialize identically under
+  a second module seed, and both arms use the same default lambda schedule.
+- Real tiny Trainer runs for A/P4-iso-4h/P7-simple share a data fingerprint and
+  pass the comparison report on both backends. A changed auxiliary weight is
+  rejected. Their queue preserves the requested arm order and eight GPUs/run.
+
+The two new tests passed in 7.163 seconds, and the fresh 66-test regression
+suite passed in a single invocation: all 68 tests covered by this review passed.
+Logs are `/tmp/p7-simple-review-tests.log` and
+`/tmp/p7-simple-review-control.log`. No training implementation issue has been
+found in this review; only regression coverage and this report were extended.
+No B200 process or execution command was changed.
+
 ## Entry points
 
 Use the existing `train.py` arguments and recipe, changing only:
@@ -13,7 +98,7 @@ Use the existing `train.py` arguments and recipe, changing only:
 --arm P7 --attention_backend fa4
 ```
 
-Also supported: `P7-kq`, `P7-ems`, and `P7-mlp`, with either backend.
+Also supported: `P7-kq`, `P7-ems`, `P7-mlp`, and `P7-simple`, with either backend.
 The usual `python -m deep_kv make-jobs ... --arms A P7 --seeds 42` generates
 sequential, eight-GPU experiments with the existing comparison stage. Specify
 the desired arms explicitly. Select the backend in the recipe passed to this

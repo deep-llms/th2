@@ -46,10 +46,11 @@ def resolve_proxy_settings(arm, settings=None):
     new = arm in ANTICIPATORY_ARMS
     memory = arm in MEMORY_ARMS
     if memory:
-        if settings.target_version is None:settings.target_version = 'p7-r1'
+        version = 'p4p6-r1' if arm=='P7-simple' else 'p7-r1'
+        if settings.target_version is None:settings.target_version = version
         if settings.isolate_estimator is None:settings.isolate_estimator = True
         if settings.alpha_init is None:settings.alpha_init = 0.  # No gate parameter in P7.
-        if (settings.target_version != 'p7-r1' or settings.lookahead != 4 or settings.groups != 2
+        if (settings.target_version != version or settings.lookahead != 4 or settings.groups != 2
                 or settings.loss_form != 'cosine' or settings.kv_mode != 'kv'
                 or settings.layers is not None or not settings.isolate_estimator
                 or settings.alpha_init != 0 or settings.aux_recompute or settings.compile_estimator):
@@ -127,6 +128,9 @@ def compute_budget(config, settings, sequence_length=2048):
         'extra_macs_per_token':result['P7']['extra_macs_per_token']-layers*2*h*d,
         'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']-layers*2*h*d}
     result['P7-mlp'] = dict(result['P7'])
+    result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
+        for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
+        'relational_forward_macs_per_token':0}
     result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
         layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1),
         'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']+
@@ -206,7 +210,7 @@ class ProxyModel(DeepKV):
         cfg = backbone.config
         if channel_mask is not None:
             raise ValueError('Revision r7 does not use a static channel mask')
-        if (settings.target_version != ('p7-r1' if memory else 'p4p6-r1' if new else 'r7') or settings.loss_form not in ('cosine','smooth_l1')
+        if (settings.target_version != ('p4p6-r1' if new or arm=='P7-simple' else 'p7-r1' if memory else 'r7') or settings.loss_form not in ('cosine','smooth_l1')
                 or not 0 < settings.variance_floor <= 1 or not 0 < settings.target_clip < float('inf')
                 or not 0 <= settings.momentum < 1):
             raise ValueError('Invalid r7 target normalization/loss settings')
@@ -245,6 +249,10 @@ class ProxyModel(DeepKV):
         self._fa4_observer = None
         self.anticipatory = new
         self.memory_proxy = memory
+        self.relational_proxy = memory and arm != 'P7-simple'
+        self.increment_target = memory and arm not in ('P7-mlp','P7-simple')
+        if arm=='P7-simple' and cfg.num_attention_heads//cfg.num_key_value_heads != 2:
+            raise ValueError('P7-simple requires four query heads in two complete KV groups')
         self._proxy_mass = None
         self.value_groups = cfg.num_key_value_heads
         if arm in ('P4-4h','P4-iso-4h'):
@@ -261,14 +269,19 @@ class ProxyModel(DeepKV):
         with torch.random.fork_rng(devices=[]):
             torch.random.default_generator.manual_seed(settings.module_seed if settings.module_seed is not None else kwargs.get('seed',42)+1)
             for layer in self.layers:
-                if memory:
+                if arm=='P7-simple':
+                    from .proxy_memory import SimpleMemoryHead
+                    self.heads[str(layer)] = SimpleMemoryHead(cfg,settings)
+                elif memory:
                     from .proxy_memory import MemoryHead
                     self.heads[str(layer)] = MemoryHead(cfg,settings,native_values=arm=='P7-kq')
                 elif new:
                     from .proxy_estimators import AnticipatoryHead
                     self.heads[str(layer)] = AnticipatoryHead(cfg,settings,stream=self.family=='P5',first=layer==self.layers[0])
                 else:self.heads[str(layer)] = ProxyHead(cfg, self.family, settings)
-        if new:
+            if arm=='P7-simple':
+                for head in self.heads.values():head.initialize_projections(cfg)
+        if new or arm=='P7-simple':
             from .proxy_estimators import gated_prediction, cosine_loss
             self.gated_prediction,self.cosine_loss = gated_prediction,cosine_loss
             if settings.compile_estimator:
@@ -466,14 +479,14 @@ class ProxyModel(DeepKV):
     def layer_cosines(self, layer, u, estimates, raw_target, plan, valid, auxiliary_grad):
         head = self.heads[str(layer)]
         def compute(source, target, *forward_estimates):
-            if self.memory_proxy:
+            if self.relational_proxy:
                 from .proxy_memory import relational_losses
                 prediction = forward_estimates[0]
                 with torch.autocast(source.device.type,enabled=False):
                     cosines = (F.cosine_similarity(prediction.float(),target.detach().float(),dim=-1,eps=1e-6)*valid).sum(-1)
                     rel_sum, rel_count = relational_losses(prediction,target,plan)
                     return cosines[:,None],(valid.sum(-1)-cosines)[:,None],rel_sum,rel_count
-            elif self.anticipatory:
+            elif self.anticipatory or self.memory_proxy:
                 return self.cosine_loss(forward_estimates[0],target,valid)
             elif self.routing == 'block':
                 predictions = head.estimates(source.detach(),plan)
@@ -510,7 +523,8 @@ class ProxyModel(DeepKV):
             from .proxy_memory import MemoryPlan
             ems = EMSPlan(context.segments,self.gamma,self.settings.chunk_size) if self.arm=='P7-ems' else None
             plan = MemoryPlan(context.segments,step=relational_step,sequence_indices=sequence_indices,ems=ems,
-                              sample_queries=compute_auxiliary_losses)
+                              sample_queries=compute_auxiliary_losses and self.relational_proxy,
+                              convolution=self.relational_proxy)
         hidden = self.backbone.model.embed_tokens(context.input_ids)
         rotary = self.backbone.model.rotary_emb(hidden,context.position_ids)
         sources, windows, cosines, bases = {}, {}, {}, {}
@@ -539,7 +553,7 @@ class ProxyModel(DeepKV):
                 return self.block(i,x,mask,rotary,plan,previous)
             if layer in self.layers and need_targets:
                 sources[layer] = None
-                if self.family == 'P3' or (self.memory_proxy and self.arm!='P7-mlp'):
+                if self.family == 'P3' or self.increment_target:
                     bases[layer] = hidden.detach().float()
             result = (checkpoint(call,hidden,stream,use_reentrant=False)
                       if self.training and self.checkpoint_layers and torch.is_grad_enabled() else call(hidden,stream))
@@ -557,11 +571,11 @@ class ProxyModel(DeepKV):
                 continue
             if self.family != 'P3':
                 for proxy in tuple(sources):
-                    if not self.memory_proxy or self.arm=='P7-mlp':
+                    if not self.increment_target:
                         with torch.no_grad():
                             windows[proxy] = windows[proxy] + mlp.float() if proxy in windows else mlp.float()
                     if layer == proxy+self.settings.lookahead-1:
-                        raw = (hidden.detach().float()-bases.pop(proxy) if self.memory_proxy and self.arm!='P7-mlp'
+                        raw = (hidden.detach().float()-bases.pop(proxy) if self.increment_target
                                else windows.pop(proxy))
                         normalized = record(proxy,raw)
                         source = sources.pop(proxy)
@@ -608,7 +622,7 @@ class ProxyModel(DeepKV):
         auxiliary = losses.mean(-1).sum() if cosines else lm_rows.sum()*0
         relational = {}
         extra = ()
-        if self.memory_proxy:
+        if self.relational_proxy:
             rel_rows = (torch.stack([cosines[layer][2] for layer in self.layers],dim=1) if cosines else torch.zeros_like(values))
             rel_counts = cosines[self.layers[0]][3] if cosines else torch.zeros_like(tokens)
             relational = dict(rel_sum=rel_rows.mean(-1).sum(),rel_count=rel_counts.sum())

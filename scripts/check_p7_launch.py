@@ -80,19 +80,19 @@ def routing_check(args):
                     model.update_statistics(out['center_sums'],out['center_squares'],out['center_counts'],initialize=phase)
             buffers={n:v.clone() for n,v in model.named_buffers()}
             counts={}
-            for component in ('lm','cosine','relational'):
+            for component in (('lm','cosine','relational') if model.relational_proxy else ('lm','cosine')):
                 model.zero_grad(set_to_none=True)
                 with torch.autocast('cuda',dtype=torch.bfloat16):
                     out=model(ctx,relational_step=125)
-                    loss={'lm':out['lm_sum']/out['lm_count'],
-                          'cosine':out['aux_sum']/out['aux_count'],
-                          'relational':out['rel_sum']/out['rel_count']}[component]
+                    losses={'lm':out['lm_sum']/out['lm_count'],'cosine':out['aux_sum']/out['aux_count']}
+                    if model.relational_proxy:losses['relational']=out['rel_sum']/out['rel_count']
+                    loss=losses[component]
                 loss.backward()
                 active_count=0
                 for name,p in model.named_parameters():
                     if p.grad is not None:assert torch.isfinite(p.grad).all(),name
                     active=p.grad is not None and bool(p.grad.count_nonzero())
-                    estimator=name.startswith('heads.') and any(part in name for part in ('.conv','.w_in.','.w_out.'))
+                    estimator=name.startswith('heads.') and any(part in name for part in ('.conv','.w_in.','.w_out.','.w1.','.w2.'))
                     # All native/proxy projection parameters receive LM gradients;
                     # only estimator parameters receive either auxiliary gradient.
                     assert active==(not estimator if component=='lm' else estimator),(arm,backend,component,name)

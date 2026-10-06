@@ -67,7 +67,7 @@ def worker(args):
             with torch.autocast('cuda',dtype=torch.bfloat16):
                 out=m(ctx,auxiliary_grad=not arm.endswith('lambda0'),collect_target_statistics=True)
                 lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count'].clamp_min(1)
-                if m.memory_proxy:aux=aux+.5*out['rel_sum']/out['rel_count'].clamp_min(1)
+                if m.relational_proxy:aux=aux+.5*out['rel_sum']/out['rel_count'].clamp_min(1)
                 loss=lm+m.auxiliary_weight(250)*aux
             loss.backward()
         finally:handle.remove()
@@ -200,14 +200,15 @@ def validate(args):
                 assert (weights.get_tensor('sigma2')>=0).all()
                 gates=[weights.get_tensor(n) for n in weights.keys() if n.startswith('heads.') and n.endswith('.alpha')]
                 if arm in MEMORY_ARMS:
-                    assert not gates and config['pilot']['proxy_target_version']=='p7-r1'
+                    assert not gates and config['pilot']['proxy_target_version']==('p4p6-r1' if arm=='P7-simple' else 'p7-r1')
                     for layer in range(2,25,2):
-                        for suffix in ('conv','w_in.weight','w_out.weight','k_proj.weight','k_norm.weight')+(() if arm=='P7-kq' else ('v_proj.weight',)):
+                        estimator=('w1.weight','w2.weight') if arm=='P7-simple' else ('conv','w_in.weight','w_out.weight')
+                        for suffix in estimator+('k_proj.weight','k_norm.weight')+(() if arm=='P7-kq' else ('v_proj.weight',)):
                             value=weights.get_tensor(f'heads.{layer}.{suffix}')
                             assert torch.isfinite(value).all() and value.abs().sum()>0
                         mass=result['evaluation'][f'eval_proxy_layer_{layer}_attention_mass']
                         assert math.isfinite(mass) and 0<=mass<=1
-                    assert all(math.isfinite(result['evaluation'][key]) for key in ('eval_cos_loss','eval_rel_loss','eval_aux_loss'))
+                    assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm=='P7-simple' else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
                 else:
                     assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
         peak=result['training_cost']['peak_cuda_allocated_bytes'];assert peak<160*2**30

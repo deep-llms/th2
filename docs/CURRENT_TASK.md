@@ -1,5 +1,18 @@
 # Current task
 
+## P7-simple implementation — 6 October 2026
+
+Operator approved the controlled memory comparison: four query heads / two KV
+groups; P4-iso tokenwise MLP and four-MLP-sum target; cosine-only auxiliary;
+existing P7 joint native/proxy softmax and isolated estimator. New arm
+`P7-simple` supports SDPA and FA4 through train.py and the sequential queue.
+Predictor initialization matches P4-iso under the same module seed.
+See [P7_IMPLEMENTATION.md](P7_IMPLEMENTATION.md) for the exact design and checks.
+Careful review passed all 68 acceptance/regression tests: a fresh 66-test suite
+plus two direct P4-control checks, including real Trainer resume and two-rank
+CPU DDP. No training-code issue found. No new remote launch or GPU access.
+Earlier B200 acceptance below does not cover this new arm.
+
 ## P7 review and B200 acceptance completed — 6 October 2026
 
 All four P7 variants passed full-model CUDA SDPA/FA4 comparisons, separate

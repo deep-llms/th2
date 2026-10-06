@@ -241,11 +241,11 @@ def main():
         if model.family:
             experiment['proxy_target'] = dict(target_version=proxy_settings.target_version,
                 quantity=('deep_band_increment' if model.family=='P3' else
-                          'four_block_increment' if model.memory_proxy and pilot.arm!='P7-mlp' else 'mlp_window_sum'),
+                          'four_block_increment' if model.increment_target else 'mlp_window_sum'),
                 normalization='running_per_channel',variance_floor=proxy_settings.variance_floor,
                 clip=proxy_settings.target_clip,momentum=proxy_settings.momentum,epsilon=1e-6,
                 lookahead=proxy_settings.lookahead,bands=[list(key) if isinstance(key,tuple) else key for key in model.mean_layers],loss_form=proxy_settings.loss_form)
-            if model.memory_proxy:
+            if model.relational_proxy:
                 experiment['proxy_target']['relational'] = dict(weight=.5,temperature=.1,queries=256,
                     candidates='strictly_earlier_same_document',sampling='step_and_global_update_row_v1',
                     normalization_epsilon=1e-6)
