@@ -1,5 +1,27 @@
 # Current task
 
+## FA4 validation passed; fresh production submission (2026-10-06)
+
+FA4 full-Qwen routed/reference, cross-backend gate1, and all8GPU25-step
+A/P4-iso-4h/P4-4h smokes passed. Actual FA4 forward/backward receipts,
+weights/optimizer/scheduler/all8RNG states, finite gradients and memory passed.
+Cross-backend overall gradient relative L2:0.5073%/0.5142%; proxy-only0.3859%/
+0.4310%; zero document leakage. Full evidence and profile breakdown in
+P4_P5_P6_IMPLEMENTATION.md. Throughput2.0692/2.2533/2.2979s per update for
+A/iso/P4; overhead8.90%/11.05%, above3%target and reported before launch.
+Peaks103.62/112.37/113.88GiB. Model/source unchanged by the backend selection.
+Evidence temp/p4-fa4-checks-monitor-04.log SHA256
+22ebbfe7eb9af176d116ebb2eec8fc0fcd239de69f843e82ccf2b95e95591ce6.
+
+Fresh production root /mnt/local/_outputs/deep-llms_th2/p4-fa4-four-head-2500-20261006-a01.
+P4-iso-4h then P4-4h,2500updates each/all8GPUs,attention_bench,FA4,
+seed42/module43,micro16/GAS4/2048,full28600steps/warmup1430,EOS/document
+isolation/resetpositions. Existing FA4 A reused only for comparison; no smoke
+or cancelled SDPA weights reused. Preflight requires completed check/burn
+handoff and unchanged validated source; copies/verifies Accelerate, reclaims
+freshly identified burns and requires all8GPUs free. Supervisor restores
+communicating burns on exit. Submission is not training-start verification.
+
 ## Operator correction: use FA4 for P4 (2026-10-06)
 
 The user confirms FA4 is the selected backend; the P4 specification's SDPA

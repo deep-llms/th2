@@ -265,3 +265,63 @@ CUDA check submission498955f uses `attention_bench` (FA4 4.0.0b33), fresh
 It requires same-backend routed/reference comparisons, cross-backend comparisons
 at gate1, and25-step full-size8GPU training/checkpoint/profile checks before
 production. This paragraph records submission, not their eventual outcome.
+
+
+### FA4 CUDA and full-size smoke results
+
+All required numerical and training gates passed in
+`p4-fa4-checks-20261006-a01` (source498955f). Full-Qwen FA4 routed/reference
+loss differences were zero; the worst per-parameter maximum gradient relative
+error was0.315%, below the unchanged1% threshold. Reference repeats were
+exact except a3.8e-8 relative difference in one P4-4h LM gradient.
+
+At identical weights and gate1, FA4 versus dense SDPA:
+
+| Arm | Loss absolute difference | Overall gradient relative L2 | Proxy gradient relative L2 |
+|---|---:|---:|---:|
+| P4-iso-4h | 0.0000763 | 0.5073% | 0.3859% |
+| P4-4h | 0.0000763 | 0.5142% | 0.4310% |
+
+The existing cross-backend thresholds were unchanged: loss<0.01, gradient
+relative L2<3%, hidden/logits relative L2<2%. Hidden/logit errors were0.546%/
+0.616%; cross-document output and gradient leakage were exactly0. Parameters
+and normalization buffers were unchanged by these probes.
+
+All three normal HFTrainer smokes completed25updates, all8GPUs, BF16,
+micro16/GAS4/2048. Validator checks weights, finite logged gradients, optimizer,
+scheduler, all8rank RNG files, normalization/gates, actual FA4 Q/K/V backward
+receipts, exact recipe/data, and peak allocated memory below160GiB.
+
+| Arm | Seconds/update | Overhead vs FA4 A | Peak allocated GiB |
+|---|---:|---:|---:|
+| A | 2.0692 | 0.00% | 103.62 |
+| P4-iso-4h | 2.2533 | 8.90% | 112.37 |
+| P4-4h | 2.2979 | 11.05% | 113.88 |
+
+The3% overhead target remains unmet. Exclusive summed kernel durations at
+profiled update6 (milliseconds; not critical-path wall time):
+
+| Component | A | P4-iso-4h | P4-4h |
+|---|---:|---:|---:|
+| Estimator forward | 0.000 | 4.086 | 5.949 |
+| Estimator backward | 0.000 | 4.110 | 16.937 |
+| Target/mask/statistics setup | 8.458 | 45.694 | 45.639 |
+| Target normalization | 0.000 | 22.946 | 22.956 |
+| Auxiliary cosine forward/backward | 0.000 | 68.038 | 68.044 |
+| Statistics all-reduce/update | 0.000 | 0.183 | 0.189 |
+| Remaining decoder forward/backward | 1748.092 | 1786.759 | 1815.933 |
+| LM forward/backward | 277.996 | 278.073 | 278.058 |
+| Other model/optimizer/communication | 26.174 | 26.596 | 26.827 |
+
+Unprofiled updates10–25 determine wall time. No auxiliary forward recomputation.
+These bounded checks support launching, not a claim of better research results
+or identical long training trajectories. Local receipts:
+`artifacts/p4-fa4-validation-20261006/`. Full retrieval:
+`temp/p4-fa4-checks-monitor-04.log`, SHA256
+`22ebbfe7eb9af176d116ebb2eec8fc0fcd239de69f843e82ccf2b95e95591ce6`.
+
+Fresh production submission: `p4-fa4-four-head-2500-20261006-a01`, P4-iso-4h
+then P4-4h,2500updates each, matching completed FA4 A. All scientific settings
+are unchanged except the selected attention backend. Preflight also requires
+the check supervisor's completed, verified burn handoff and unchanged model
+source hashes. Full production completion is not yet claimed.
