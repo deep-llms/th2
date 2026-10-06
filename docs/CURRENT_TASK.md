@@ -1,5 +1,36 @@
 # Current task
 
+## Authorized remaining-arm queue — 6 October 2026
+
+Operator explicitly confirmed ten fresh FA4 runs in this priority order:
+P7-simple → P7 → P4-iso → P6 → P5 → P7-mlp → P7-kq → P7-ems → P4 → P6-iso.
+Each uses all eight B200 GPUs, seed/data seed 42, 2,500 updates, unchanged
+28,600-step schedule and 1,430 warmup; microbatch 16 × accumulation 4,
+1,048,576 tokens/update, sequence 2048, EOS boundaries and reset positions.
+No activation checkpointing. Reuse the completed FA4 A baseline; do not rerun
+completed four-head P4 arms or older P1/P3 ablations.
+
+Fresh read-only inspection d0a4027 at 13:36:28 UTC identified the tjx3 host,
+eight approved communicating-burn workers (210967–210974), released GPU guard,
+correct pinned attention_bench environment, intact local inputs, ~24.9 TB
+free storage. Completed-run inventory confirms none of the ten selected arms
+has a 2,500-step result. The four older P7 arms have only 25-step smokes.
+
+Submitting job `th2-tjx3-proxy-remaining-2500-20261006-a01`, output root
+`/mnt/local/_outputs/deep-llms_th2/proxy-remaining-2500-20261006-a01`.
+Preflight copies/checks Accelerate config then runs `accelerate env` before
+verified burn-worker reclamation and all-eight-GPU free checks. Each arm has
+cross-backend full-model numerics, a separate 25-step eight-GPU smoke and
+saved-state/backend validator, plus a matched-A recipe/data-order check,
+before fresh production training. Production checkpoint validation follows
+each arm; matched baseline/all-arm reports finish the queue (63 stages total).
+Any failure stops subsequent stages. Existing train_then_burn supervisor owns
+cleanup and restores/verifies eight-GPU communicating burns after exit.
+Production outputs: `supervised/run/training/seed-42/<arm>`; disposable smoke
+outputs: `supervised/run/smoke/seed-42/<arm>`; never resume production from smoke.
+No cache or prior output cleanup. Submission is not verified training progress.
+
+
 ## P7-simple implementation — 6 October 2026
 
 Operator approved the controlled memory comparison: four query heads / two KV
