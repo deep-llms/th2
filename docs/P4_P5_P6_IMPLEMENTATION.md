@@ -325,3 +325,12 @@ then P4-4h,2500updates each, matching completed FA4 A. All scientific settings
 are unchanged except the selected attention backend. Preflight also requires
 the check supervisor's completed, verified burn handoff and unchanged model
 source hashes. Full production completion is not yet claimed.
+
+
+Production follow-up: launch565c695 verified at step82 by monitor0337db7.
+P4-iso-4h uses all8GPUs, finite gradients and~2.25s/update. Actual FA4 receipts
+record28forward and28each Q/K/V backward calls. P4-4h remains queued;
+2500steps each, fresh starts, matching FA4 A. Completed checks and automatic
+burn handoff were verified before production. No long-run result is claimed.
+Evidence `temp/p4-fa4-production-monitor-02.log`, SHA256
+`e9d6302e300ca22c7bf6e84053c72a5864f76bfb04c29d8ccb8d5a9a32de5ea7`.

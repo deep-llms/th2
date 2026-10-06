@@ -1,5 +1,28 @@
 # Project notes
 
+## FA4 production verified running (2026-10-06)
+
+Launch565c695 / p4-fa4-four-head-2500-20261006-a01 passed preflight and
+started fresh P4-iso-4h. Monitor0337db7 confirms step82, finite loss/gradients,
+~2.25s/update and one training worker on each of8GPUs. Actual FA4 4.0.0b33
+receipts have28forward calls and28each Q/K/V backward calls. Step80 logged
+loss9.934, grad norm1.842; this is training loss, not held-out performance.
+FA4 A baseline reuse validation passed. P4-4h remains queued after the first
+arm and its checkpoint validation; each stops at2500 on the full schedule.
+
+Accelerate was copied/byte-checked in attention_bench and accelerate env
+verified8-GPU BF16. All8GPUs were verified free at03:32:55UTC before launch.
+Validation supervisor terminal receipt confirms success and communicating burn
+handoff at03:29:12UTC. Production reclaimed only those freshly verified workers.
+Its supervisor will restore verified communicating burns after success/failure.
+commands.sh is#0; the independent tmux training queue continues.
+
+Production root: /mnt/local/_outputs/deep-llms_th2/p4-fa4-four-head-2500-20261006-a01.
+Evidence temp/p4-fa4-production-monitor-02.log, SHA256
+e9d6302e300ca22c7bf6e84053c72a5864f76bfb04c29d8ccb8d5a9a32de5ea7.
+The earlier SDPA run is cancelled and preserved separately. No production
+completion or scientific gain is claimed. No environment/driver reinstall.
+
 ## FA4 validation passed; fresh production submission (2026-10-06)
 
 FA4 full-Qwen routed/reference, cross-backend gate1, and all8GPU25-step
