@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-tjx3-p7-checks-monitor-20261006-a02
+#th2-tjx3-p7-checks-monitor-20261006-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
