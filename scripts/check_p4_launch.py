@@ -9,6 +9,7 @@ from contextlib import nullcontext
 import copy
 import gc
 import json
+import os
 from pathlib import Path
 
 import torch
@@ -21,8 +22,14 @@ from scripts.check_fa4_proxy import read, write
 
 
 def check(args):
+    # Strict same-weight gradient comparisons must not include cuDNN's allowed
+    # nondeterministic reduction noise. These settings affect this probe only.
+    os.environ['CUBLAS_WORKSPACE_CONFIG']=':4096:8'
     torch.set_num_threads(2)
     torch.backends.cuda.matmul.allow_tf32=False
+    torch.backends.cudnn.allow_tf32=False
+    torch.backends.cudnn.deterministic=True
+    torch.use_deterministic_algorithms(True)
     recipe=read(args.recipe)
     cfg=AutoConfig.from_pretrained(recipe['config_name'],local_files_only=True)
     cfg._attn_implementation='sdpa';cfg.use_cache=False
@@ -45,7 +52,7 @@ def check(args):
         comparisons=[]
         for component in args.components:
             reference=None
-            for recompute in (True,False):
+            for capture_index,recompute in enumerate((True,True,False)):
                 print('CAPTURE',arm,component,'recompute',recompute,flush=True)
                 model.settings.aux_recompute=recompute;model.zero_grad(set_to_none=True)
                 with torch.autograd.detect_anomaly() if args.anomaly else nullcontext():
@@ -78,7 +85,8 @@ def check(args):
                     errors={n:float((g-reference[n]).abs().max()/reference[n].abs().max().clamp_min(1e-20))
                             for n,g in gradients.items()}
                     worst=max(errors,key=errors.get)
-                    entry=dict(component=component,loss_difference=abs(float(loss.detach())-reference_loss),
+                    entry=dict(component=component,reference_repeat=capture_index==1,
+                        loss_difference=abs(float(loss.detach())-reference_loss),
                         maximum_relative_gradient_error=errors[worst],worst_parameter=worst)
                     comparisons.append(entry)
                     print(arm,json.dumps(entry),flush=True)
@@ -99,13 +107,14 @@ def check(args):
             peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30))
         del model,buffers,hidden,after,gradient
         gc.collect();torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats()
-    write(args.output,dict(status='passed',cases=results,backend='sdpa',dtype='bf16'))
+    write(args.output,dict(status='passed',cases=results,backend='sdpa',dtype='bf16',
+        deterministic_probe=True,reference_repeat_control=True))
 
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--recipe',required=True);p.add_argument('--rows',required=True);p.add_argument('--output',required=True)
     p.add_argument('--arms',nargs='+',choices=('P4-iso-4h','P4-4h'),default=('P4-iso-4h','P4-4h'))
-    p.add_argument('--components',nargs='+',choices=('lm','aux','combined'),default=('lm','aux','combined'))
+    p.add_argument('--components',nargs='+',choices=('lm','aux','combined'),default=('aux','lm','combined'))
     p.add_argument('--anomaly',action='store_true')
     check(p.parse_args())
