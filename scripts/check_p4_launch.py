@@ -5,6 +5,7 @@ including separate loss routes. Uses disposable packed diagnostic rows only;
 production training continues to use train.py's normal dataset/cache path.
 """
 import argparse
+from contextlib import nullcontext
 import copy
 import gc
 import json
@@ -42,16 +43,17 @@ def check(args):
                 model.update_statistics(out['center_sums'],out['center_squares'],out['center_counts'],initialize=mode)
         buffers={k:v.clone() for k,v in model.named_buffers()}
         comparisons=[]
-        for component in ('lm','aux','combined'):
+        for component in args.components:
             reference=None
             for recompute in (True,False):
                 print('CAPTURE',arm,component,'recompute',recompute,flush=True)
                 model.settings.aux_recompute=recompute;model.zero_grad(set_to_none=True)
-                with torch.autocast('cuda',dtype=torch.bfloat16):
-                    out=model(ctx)
-                    lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count']
-                    loss={'lm':lm,'aux':aux,'combined':lm+.1*aux}[component]
-                loss.backward()
+                with torch.autograd.detect_anomaly() if args.anomaly else nullcontext():
+                    with torch.autocast('cuda',dtype=torch.bfloat16):
+                        out=model(ctx)
+                        lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count']
+                        loss={'lm':lm,'aux':aux,'combined':lm+.1*aux}[component]
+                    loss.backward()
                 gradients={n:p.grad.detach().cpu().clone() for n,p in model.named_parameters() if p.grad is not None}
                 invalid={n:dict(nan=int(g.isnan().sum()),inf=int(g.isinf().sum()))
                          for n,g in gradients.items() if not torch.isfinite(g).all()}
@@ -104,4 +106,6 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--recipe',required=True);p.add_argument('--rows',required=True);p.add_argument('--output',required=True)
     p.add_argument('--arms',nargs='+',choices=('P4-iso-4h','P4-4h'),default=('P4-iso-4h','P4-4h'))
+    p.add_argument('--components',nargs='+',choices=('lm','aux','combined'),default=('lm','aux','combined'))
+    p.add_argument('--anomaly',action='store_true')
     check(p.parse_args())
