@@ -20,9 +20,14 @@ Revision 2 (retained) changes:
 
 Components shared with P1/P3 — base model, document isolation, the P1 target, target normalization, the auxiliary-loss schedule and the integration-test conventions — are defined in the P1/P3 specification, Revision 7 [1]. They are referenced here, not repeated, except where this document changes them.
 
+> Backend correction (2026-10-06): the operator confirmed FA4 for these arms,
+> matching the earlier FA4 decision and A/P1/P3 runs. Dense SDPA remains a
+> numerical reference. Start fresh when changing backends; do not resume an
+> SDPA checkpoint as an FA4 experiment.
+
 ## 1. Motivation from the P1/P3 screen
 
-Results at 2,500 steps, one seed, dense-SDPA document isolation [2]:
+Results at 2,500 steps, one seed, FA4 document isolation [2]:
 
 | Model | Validation LM loss ↓ |
 |---|---:|
@@ -73,7 +78,7 @@ All three arms use **per-token** estimators. They can anticipate what upper bloc
 
 These are as in [1, §2]:
 - Qwen3-0.6B-style decoder: 28 blocks, `d = 1024`, 16 query heads, 8 KV heads, head dimension 128.
-- **Dense SDPA document isolation**, with `position_ids` reset at every document start.
+- **FA4 variable-length document isolation**, with `position_ids` reset at every document start.
 - Notation `u_ℓ`, `a_ℓ`, `m_ℓ`, `h_ℓ` as in [1, §2.2].
 
 Blocks are numbered **from 1**. The proxy layer set is
@@ -167,7 +172,7 @@ with `ŷ^inj` as in Section 2.4. Two arms share this definition:
 | **P4** | false |
 | **P4-iso** | **true** |
 
-- QK-norm, RoPE, the document mask and the SDPA call are unchanged.
+- QK-norm, RoPE, document boundaries and the shared FA4 attention call are unchanged.
 - **Implementation:** form `z_v = u + α ⊙ RMSNorm_0(ŷ^inj)` and call the existing `v_proj` once on `z_v`. No extra projection is needed.
 - With all `α = 0`, the block is exactly the vanilla block (test T1).
 - **Early steps.** With `α = 1` the injected term has the same RMS as `u` from step 0. During the λ ramp the estimator is still nearly untrained, so the injection is close to noise. This is acceptable: the whole model is untrained at that point, and the learning-rate warm-up keeps early changes to `α` small, so `α` is not driven to zero before the estimator becomes informative. Log |α| from step 0 to confirm.
@@ -292,7 +297,7 @@ Otherwise each arm effectively uses a different seed, and differences of order 1
 
 | Reference | Definition |
 |---|---|
-| **A, token-matched** | A at step 2,500 (existing dense-SDPA isolated run) |
+| **A, token-matched** | A at step 2,500 (existing FA4 isolated run) |
 | **A, time-matched** | A resumed from its step-2,500 checkpoint, with the same schedule, to step `round(2500 · t_arm / t_A)`, where `t` is measured training time excluding preprocessing. For example, P1's 98.6 vs 88 minutes gives step 2,801 |
 
 **Success:** the arm beats **time-matched A** by more than A's seed-to-seed spread. Beating token-matched A by more than the spread marks an arm as promising; optimize its overhead before concluding.

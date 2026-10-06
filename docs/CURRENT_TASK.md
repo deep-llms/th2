@@ -1,5 +1,23 @@
 # Current task
 
+## Operator correction: use FA4 for P4 (2026-10-06)
+
+The user confirms FA4 is the selected backend; the P4 specification's SDPA
+wording was stale. Updated the specification and proxy_heads.b200.json to
+explicit FA4. The CLI default remains SDPA for compatibility. Preserve the
+existing SDPA output separately; do not change backend on resume. Replacement
+P4-iso-4h then P4-4h must start fresh,2500 updates each/all8 GPUs, and reuse the
+matching completed FA4 A. No change to the model, objective, data, seeds,
+optimizer or schedule. Use the already installed attention_bench environment
+(FA4 4.0.0b33); leave train_env and NVIDIA installation untouched.
+
+Stop request05373dd targets only the freshly verified old supervisor via pidfd
+SIGTERM; its established cleanup restores communicating burns. Verify terminal
+handoff before the replacement. Required checks: CPU FA4 plumbing/gradient
+routing/document isolation/save-resume, full-Qwen CUDA same-backend reference
+comparisons, FA4 vs dense comparisons at gate1, all8GPU full-size25-step smokes
+and checkpoint/backend/throughput validation. No long run until all pass.
+
 ## Production start verified (2026-10-06)
 
 Launch f807f59 / p4-four-head-2500-20261006-a01 is active. Read-only monitor

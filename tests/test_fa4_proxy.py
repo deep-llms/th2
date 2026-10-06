@@ -62,7 +62,7 @@ class FA4ProxyTests(unittest.TestCase):
                         self.assertGreater(p.grad.abs().sum().item(),0,name)
 
     def test_active_proxy_document_isolation_and_auxiliary_routing(self):
-        for arm in ('P1-block','P1-flow','P3-block','P3-flow'):
+        for arm in ('P1-block','P1-flow','P3-block','P3-flow','P4-4h','P4-iso-4h'):
             m=make(arm,'fa4');ctx=batch()
             with torch.no_grad():
                 for head in m.heads.values():head.alpha.fill_(.2)
@@ -76,15 +76,41 @@ class FA4ProxyTests(unittest.TestCase):
                 torch.testing.assert_close(hidden[:,3:],m.hidden_states(altered)[0][:,3:],rtol=0,atol=0)
                 m.zero_grad(set_to_none=True);out=m(ctx);out['aux_sum'].backward()
                 backbone=[p.grad for p in m.backbone.parameters() if p.grad is not None]
-                if arm.endswith('block'):self.assertFalse(backbone)
+                if arm.endswith('block') or arm.startswith('P4'):self.assertFalse(backbone)
                 else:self.assertGreater(sum(g.abs().sum().item() for g in backbone),0)
             finally:handle.remove()
+
+    def test_four_head_p4_backend_and_separate_gradient_routes(self):
+        config=cfg();config.num_attention_heads=16;config.num_key_value_heads=8
+        for arm in ('P4-4h','P4-iso-4h'):
+            models=[ProxyModel.from_scratch(config,arm,consumer=2,deep_target=8,
+                proxy_settings=settings(),attention_backend=backend,lm_chunk=3)
+                for backend in ('sdpa','fa4')]
+            self.assertEqual(models[0].value_groups,2)
+            self.assertEqual(models[0].settings.alpha_init,1)
+            for component in ('lm','aux','combined'):
+                outputs=[]
+                for m in models:
+                    m.zero_grad(set_to_none=True)
+                    with patch.object(Context,'allowed',side_effect=AssertionError('dense mask')) if m is models[1] else nullcontext():
+                        out=m(batch());lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count']
+                        loss={'lm':lm,'aux':aux,'combined':lm+.1*aux}[component];loss.backward()
+                    outputs.append(loss.detach())
+                    for name,p in m.named_parameters():
+                        estimator=name.startswith('heads.') and not name.endswith('.alpha')
+                        active=p.grad is not None and bool(p.grad.count_nonzero())
+                        if component=='aux':self.assertEqual(active,estimator,name)
+                        if component=='lm' and estimator:self.assertEqual(active,'iso' not in arm,name)
+                torch.testing.assert_close(*outputs,rtol=1e-5,atol=1e-6)
+                for (name,p),(_,q) in zip(models[0].named_parameters(),models[1].named_parameters()):
+                    self.assertEqual(p.grad is None,q.grad is None,name)
+                    if p.grad is not None:torch.testing.assert_close(p.grad,q.grad,rtol=5e-4,atol=3e-6,msg=arm+'/'+component+'/'+name)
 
     def test_actual_trainer_proxy_normalization_and_exact_resume(self):
         from safetensors.torch import load_file
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);config=proxy_fixture(root)
-            for arm in ('P1-block','P3-flow','P3-lambda0'):
+            for arm in ('P1-block','P3-flow','P3-lambda0','P4-4h','P4-iso-4h'):
                 args={**config,'arm':arm,'attention_backend':'fa4','output_dir':str(root/arm)}
                 invoke(root,{**args,'stop_after':2})
                 before=load_file(root/arm/'checkpoint-2/model.safetensors')

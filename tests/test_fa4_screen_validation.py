@@ -13,6 +13,7 @@ from scripts.check_fa4_proxy import validate
 class ScreenValidationTests(unittest.TestCase):
     def test_smoke_and_screen_cutoffs_and_missing_rank_state(self):
         for backend,variant,steps,interval in (('fa4','P3-block',3,1),('fa4','P3-block',2500,10),
+                                             ('fa4','P4-4h',25,1),('fa4','P4-iso-4h',2500,10),
                                              ('sdpa','P4-4h',3,1),('sdpa','P4-iso-4h',2500,10)):
             with self.subTest(steps=steps,arm=variant),tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp);arm=root/f'seed-42/{variant}';checkpoint=arm/f'checkpoint-{steps}'

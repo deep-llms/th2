@@ -3,7 +3,7 @@
 Implements revision 3 of [the specification](proxy_arms_P4_P5_P6_spec.md).
 Uses the existing `train.py`, HF Trainer/Accelerate, EOS document packing,
 document-isolated attention and per-document reset positions. No new training
-loop or preprocessing stage. Dense SDPA is the default. These are fresh
+loop or preprocessing stage. The CLI default remains dense SDPA; the selected experiment recipe explicitly uses FA4. These are fresh
 random-initialization experiments, not conversions of trained P1 checkpoints.
 
 | Arm | Injection | Initial channel gate | Estimator LM gradients |
@@ -84,8 +84,8 @@ its data, backend, schedule and stopping step match. P5 is deliberately absent:
 queue it separately only after judging P4-iso. Optional P4 and P6-iso also need
 separate experiment selection. The historical default P1/P3 screen is unchanged.
 
-Use a dense-SDPA A baseline for the default backend. Prior P1/P3 FA4 numbers
-quoted in the spec are not a matched dense-SDPA control. Reports check backend,
+Use the matching FA4 A baseline for the selected FA4 experiments. Dense-SDPA
+results remain separate controls; do not mix their backend with FA4 comparisons. Reports check backend,
 data fingerprints, recipe, target identity and module seed, and label these
 token-matched comparisons exploratory. Time-matched A and initialization-seed
 spread are still needed for the screen success criterion. For an additional

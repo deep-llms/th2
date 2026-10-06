@@ -34,7 +34,7 @@ def worker(args):
     from scripts.check_proxy_trained_attention import file_hash
     torch.set_num_threads(2);torch.manual_seed(42)
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
-    arm=PROXY_ARMS[args.index];recipe=read(args.recipe)
+    arm=args.arm if args.arm is not None else PROXY_ARMS[args.index];recipe=read(args.recipe)
     cfg=AutoConfig.from_pretrained(recipe['config_name'],local_files_only=True)
     cfg._attn_implementation='sdpa';cfg.use_cache=False
     m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=42,
@@ -46,7 +46,8 @@ def worker(args):
     # Nonzero gates exercise proxy K/V injection and its gradients, not only the
     # vanilla-equivalent zero-gate initialization. Bootstrap on one fixed backend.
     with torch.no_grad():
-        for head in m.heads.values():head.alpha.normal_(0,.05)
+        if not m.anticipatory:
+            for head in m.heads.values():head.alpha.normal_(0,.05)
         if m.family:
             for mode in ('mean','variance'):
                 with torch.autocast('cuda',dtype=torch.bfloat16):
@@ -106,7 +107,9 @@ def worker(args):
     unchanged=fingerprint(m)==initial
     result=dict(status='passed' if passed and unchanged else 'failed',arm=arm,index=args.index,
         kernel=m.attention_runtime,rows_sha256=file_hash(args.rows),batch=2,sequence_length=2048,
-        active_gate_std=.05,auxiliary_weight=m.auxiliary_weight(250),comparison=comparison,
+        active_gate_std=None if m.anticipatory else .05,
+        active_gate_init=m.settings.alpha_init if m.anticipatory else None,
+        auxiliary_weight=m.auxiliary_weight(250),comparison=comparison,
         proxy_comparison=proxy_comparison,losses=losses,parameters_unchanged=unchanged,
         cross_document_gradient_max=forbidden,cross_document_output_max=difference,
         peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30)
@@ -204,6 +207,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('mode',choices=('run','worker','validate'))
     p.add_argument('--recipe');p.add_argument('--rows');p.add_argument('--run-dir')
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
+    p.add_argument('--arm',choices=ALL_PROXY_ARMS,help='Explicit arm for a numerical worker')
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
     p.add_argument('--arms',nargs='+',choices=('A',)+ALL_PROXY_ARMS,default=('A',)+PROXY_ARMS)
     p.add_argument('--attention-backend',choices=('fa4','sdpa'),default='fa4',help='Backend expected by validate mode')

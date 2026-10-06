@@ -39,7 +39,7 @@ def check(args):
     ctx=ProxyTrainer.context({k:v.cuda() for k,v in isolated_data_collator(rows).items()})
     results=[]
     for arm in args.arms:
-        model=ProxyModel.from_scratch(cfg,arm,seed=42,checkpoint_layers=False,
+        model=ProxyModel.from_scratch(cfg,arm,attention_backend=args.attention_backend,seed=42,checkpoint_layers=False,
             checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
         assert model.value_groups==2 and model.settings.alpha_init==1
         with torch.no_grad():
@@ -107,7 +107,7 @@ def check(args):
             peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30))
         del model,buffers,hidden,after,gradient
         gc.collect();torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats()
-    write(args.output,dict(status='passed',cases=results,backend='sdpa',dtype='bf16',
+    write(args.output,dict(status='passed',cases=results,backend=args.attention_backend,dtype='bf16',
         deterministic_probe=True,reference_repeat_control=True))
 
 
@@ -117,4 +117,5 @@ if __name__=='__main__':
     p.add_argument('--arms',nargs='+',choices=('P4-iso-4h','P4-4h'),default=('P4-iso-4h','P4-4h'))
     p.add_argument('--components',nargs='+',choices=('lm','aux','combined'),default=('aux','lm','combined'))
     p.add_argument('--anomaly',action='store_true')
+    p.add_argument('--attention-backend',choices=('sdpa','fa4'),default='sdpa')
     check(p.parse_args())
