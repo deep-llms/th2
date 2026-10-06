@@ -1,5 +1,12 @@
 # Remaining proxy arms: interim results
 
+Latest status: **7 October, 03:33:24 Singapore**, monitor `a2b6e36`:
+P6 production running at step 620/2500, checkpoint-500 saved. Started at
+03:07:51 Singapore. All eight GPUs active (94–100% utilization), finite latest
+loss/gradient logs, approximately 2.35 seconds/update. First three completed
+results below are unchanged. Six arms follow P6 in the original order.
+Status log SHA256: `487db823c7942cdb6346d424648cba822b08678254b5b90ab555d9627e60eab2`.
+
 Verified snapshot: **7 October 2026, 03:07:16 Singapore** (6 October 19:07:16 UTC).
 Read-only monitor `c642279`, job `th2-tjx3-proxy-remaining-results-20261007-a01`;
 host `thiennh-p6-tjx3-worker-0`. Original production launch remains `258bde6`.
