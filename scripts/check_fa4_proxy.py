@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from deep_kv import PROXY_ARMS
+from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -151,11 +151,13 @@ def validate(args):
         assert result['arm']==arm and result['global_step']==state['global_step']==args.steps
         assert result['status']=='stopped' and result['schedule_steps']==state['max_steps']==28600
         assert result['input_tokens']==args.steps*1048576
-        assert config['pilot']['attention_backend']=='fa4' and config['data']['isolate_documents']
+        backend=getattr(args,'attention_backend','fa4')
+        assert config['pilot'].get('attention_backend','sdpa')==backend and config['data']['isolate_documents']
         assert config['training']['per_device_train_batch_size']==16 and config['training']['gradient_accumulation_steps']==4
         assert config['training']['warmup_steps']==1430
         assert not any(config['pilot'][key] for key in ('checkpoint_layers','checkpoint_lm','checkpoint_aux'))
-        assert result['attention_runtime']['version']=='4.0.0b33' and not result['sdpa_receipts']
+        if backend=='fa4':
+            assert result['attention_runtime']['version']=='4.0.0b33' and not result['sdpa_receipts']
         logs=[row for row in state['log_history'] if 'loss' in row]
         assert logs and logs[-1]['step']==args.steps
         assert all(math.isfinite(row['loss']) and math.isfinite(row['grad_norm']) for row in logs)
@@ -163,13 +165,22 @@ def validate(args):
         assert config['world_size']==8
         assert result['evaluation']['eval_rows']==config['data']['eval_rows']
         assert math.isfinite(result['evaluation']['eval_lm_loss'])
-        receipts=[read(folder/name) for name in result['fa4_receipts']]
+        receipt_names=result[backend+'_receipts']
+        receipts=[read(folder/name) for name in receipt_names]
         assert {r['phase'] for r in receipts}=={'train','eval'}
         for r in receipts:
-            assert r['arm']==arm and r['calls']==28 and r['world_size']==8
-            assert r['kernel_dtype']=='torch.bfloat16' and r['positions']=='reset_per_document'
-            assert r['document_isolation'] and r['causal'] and not r['dense_mask']
-            if r['phase']=='train':assert all(r[k+'_gradient_calls']==28 for k in ('query','key','value'))
+            assert r['arm']==arm and r['world_size']==8
+            if backend=='fa4':
+                assert r['calls']==28
+                assert r['kernel_dtype']=='torch.bfloat16' and r['positions']=='reset_per_document'
+                assert r['document_isolation'] and r['causal'] and not r['dense_mask']
+                if r['phase']=='train':assert all(r[k+'_gradient_calls']==28 for k in ('query','key','value'))
+            else:
+                assert len(r['calls'])==28 and not r['has_math']
+                assert not r['unattributed_calls'] and not r['unattributed_backward']
+                assert all(c['mask']['dtype']=='torch.bool' and not c['is_causal'] for c in r['calls'])
+                assert not any(r['checkpointing'].values())
+                if r['phase']=='train':assert all(c['backward_operators'] for c in r['calls'])
         checkpoint=folder/f'checkpoint-{args.steps}'
         for name in ['model.safetensors','optimizer.pt','scheduler.pt','trainer_state.json',*[f'rng_state_{i}.pth' for i in range(8)]]:
             assert (checkpoint/name).stat().st_size>0,name
@@ -185,7 +196,7 @@ def validate(args):
                 gates=[weights.get_tensor(n) for n in weights.keys() if n.startswith('heads.') and n.endswith('.alpha')]
                 assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
         peak=result['training_cost']['peak_cuda_allocated_bytes'];assert peak<160*2**30
-        results.append(dict(arm=arm,peak_gib=peak/2**30,eval_lm_loss=result['evaluation']['eval_lm_loss'],receipts=result['fa4_receipts']))
+        results.append(dict(arm=arm,peak_gib=peak/2**30,eval_lm_loss=result['evaluation']['eval_lm_loss'],receipts=receipt_names))
     write(args.output,dict(status='passed',steps=args.steps,arms=results))
 
 
@@ -194,7 +205,8 @@ def main():
     p.add_argument('--recipe');p.add_argument('--rows');p.add_argument('--run-dir')
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
-    p.add_argument('--arms',nargs='+',choices=('A',)+PROXY_ARMS,default=('A',)+PROXY_ARMS)
+    p.add_argument('--arms',nargs='+',choices=('A',)+ALL_PROXY_ARMS,default=('A',)+PROXY_ARMS)
+    p.add_argument('--attention-backend',choices=('fa4','sdpa'),default='fa4',help='Backend expected by validate mode')
     args=p.parse_args();globals()[args.mode](args)
 
 

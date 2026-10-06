@@ -1,5 +1,30 @@
 # Project notes
 
+## B200 recovered; four-head P4 launch checks (2026-10-06)
+
+Read-only job th2-tjx3-p4-four-head-preflight-20261006-a02 at 02:10:42 UTC
+passed on thiennh-p6-tjx3-worker-0: eight B200s, approved resource burn workers,
+guard enabled, train_env torch2.14.1/transformers5.9.0/accelerate1.13.0/datasets4.8.5,
+23,369GiB free. Existing dense A is intact at2500, LM3.4779414257087833;
+train/eval fingerprints6e4708f1e818fb44/08432871cf987d61.
+Evidence temp/p4-recheck-preflight-04.log, SHA256
+adcb4a4316a890a80bc576c04da38bf71832a10b5b6c3c0e97573782f5a46aae.
+
+Next authorized stage is job th2-tjx3-p4-four-head-checks-20261006-a01,
+output /mnt/local/_outputs/deep-llms_th2/p4-four-head-checks-20261006-a01.
+It copies/verifies Accelerate, verifies approved burn identities again, reclaims
+only those workers and checks all eight GPUs free. Supervised queue:
+full-Qwen CUDA routed-vs-recomputed gradient/document-isolation checks, then
+25-step eight-GPU Trainer smokes for A/P4-iso-4h/P4-4h, component profiling at
+step6 and unprofiled timing atsteps10-25. Eval/monitor32rows for these disposable
+smokes only. Same full28600schedule,1430warmup,micro16/GAS4,seq2048,seed42.
+The existing supervisor restores verified communicating burns on success/failure.
+Inspect acceptance, memory, profile and throughput before fresh2500-step runs.
+Training code/model is unchanged by launch tools. Profile instrumentation only
+exists in the disposable wrapper process. Validator now also checks dense SDPA;
+CPU tests cover both backends, missing rank RNG state, and math fallback rejection.
+
+
 ## B200 connectivity recovered; correcting read-only preflight (2026-10-06)
 
 At 01:02:08 UTC the existing c01373a preflight reached the expected host
