@@ -1,5 +1,18 @@
 # Project notes
 
+## Latest FA4 status (2026-10-06,13:06 Singapore /05:06UTC)
+
+Read-only monitor9bd67e1: P4-iso-4h is running at2413/2500,~2.258s/update;
+P4-4h remains queued. Latest logged training LM3.539, raw auxiliary0.4042,
+lambda0.1, grad norm0.1666; finite, no errors in the inspected recent log.
+Gates remain~0.970–0.985. Checkpoint directories2000/2250 are present; this
+status check does not validate their contents or claim final completion.
+All8GPUs have the expected training workers,97–99% utilization,117550MiB
+used per GPU. No burn overlap. Training and automatic handoff were unchanged.
+Evidence temp/p4-fa4-status-20261006-a01.log SHA256
+f5a2bf94cf579ab32f50266c7cc4cc69cf27bded6ae15a08628ccc8170822329.
+commands.sh restored#0 after this read-only request.
+
 ## FA4 production verified running (2026-10-06)
 
 Launch565c695 / p4-fa4-four-head-2500-20261006-a01 passed preflight and
