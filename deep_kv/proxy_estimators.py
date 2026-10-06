@@ -15,41 +15,50 @@ def cosine_loss(prediction, target, valid):
         return cosine[:,None], (valid.sum(-1)-cosine)[:,None]
 
 
-class BlockMLP(torch.autograd.Function):
-    """One forward, two VJPs: LM reaches input+weights; auxiliary reaches weights.
-
-    Cast as autocast Linear does, retain its forward activations, and use ATen's
-    SiLU backward. Backward needs no estimator forward or hidden-state hooks.
-    Higher-order derivatives are not used by this training path.
-    """
+class _MLPPath(torch.autograd.Function):
+    """One gradient path over shared, already-computed estimator activations."""
     @staticmethod
-    def forward(ctx, x, w1, w2):
-        ctx.dtypes = (x.dtype, w1.dtype, w2.dtype)
-        dtype = torch.get_autocast_dtype(x.device.type) if torch.is_autocast_enabled(x.device.type) else x.dtype
-        with torch.autocast(x.device.type, enabled=False):
-            x, w1, w2 = (v.to(dtype) for v in (x,w1,w2))
-            pre = F.linear(x,w1)
-            hidden = F.silu(pre)
-            out = F.linear(hidden,w2)
-        ctx.save_for_backward(x,w1,w2,pre,hidden)
-        ctx.set_materialize_grads(False)
-        # Independent storage preserves the two VJPs under AOT Autograd too.
-        # An alias/view can be deduplicated by compilation, merging the routes.
-        return out, out.clone()
+    def forward(ctx, x, w1, w2, saved):
+        ctx.dtypes = (x.dtype,w1.dtype,w2.dtype)
+        ctx.save_for_backward(*saved[:-1])
+        # Distinct storage also keeps the paths separate under AOT Autograd.
+        return saved[-1].clone()
 
     @staticmethod
     @torch.autograd.function.once_differentiable
-    def backward(ctx, lm, aux):
+    def backward(ctx, gradient):
         x,w1,w2,pre,hidden = ctx.saved_tensors
         with torch.autocast(x.device.type, enabled=False):
-            total = aux if lm is None else lm if aux is None else lm+aux
-            if total is None:return None,None,None
-            total = total.to(hidden.dtype)
-            dz = torch.ops.aten.silu_backward(total @ w2,pre)
-            dw2 = total.flatten(0,-2).T @ hidden.flatten(0,-2)
+            gradient = gradient.to(hidden.dtype)
+            dz = torch.ops.aten.silu_backward(gradient @ w2,pre)
+            dw2 = gradient.flatten(0,-2).T @ hidden.flatten(0,-2)
             dw1 = dz.flatten(0,-2).T @ x.flatten(0,-2)
-            dx = None if lm is None else torch.ops.aten.silu_backward(lm.to(hidden.dtype) @ w2,pre) @ w1
-        return (None if dx is None else dx.to(ctx.dtypes[0]),dw1.to(ctx.dtypes[1]),dw2.to(ctx.dtypes[2]))
+            dx = dz @ w1 if ctx.needs_input_grad[0] else None
+        return (None if dx is None else dx.to(ctx.dtypes[0]),
+                dw1.to(ctx.dtypes[1]),dw2.to(ctx.dtypes[2]),None)
+
+
+class BlockMLP:
+    """One forward, structurally separate LM and auxiliary gradient paths.
+
+    The auxiliary node takes x.detach(): it cannot schedule backbone backward.
+    Returning None for x from a shared two-output node was insufficient to prune
+    that graph and exposed an undefined-gradient CUDA backward failure.
+    Saved activations are shared, with no estimator forward recomputation.
+    """
+    @staticmethod
+    def apply(x,w1,w2):
+        dtype = torch.get_autocast_dtype(x.device.type) if torch.is_autocast_enabled(x.device.type) else x.dtype
+        with torch.no_grad(), torch.autocast(x.device.type,enabled=False):
+            xc,w1c,w2c = (v.to(dtype) for v in (x,w1,w2))
+            pre = F.linear(xc,w1c)
+            hidden = F.silu(pre)
+            out = F.linear(hidden,w2c)
+        # A tuple is metadata to autograd; only the three explicit tensors define
+        # gradient edges. _MLPPath saves its tensor contents via save_for_backward.
+        saved = (xc,w1c,w2c,pre,hidden,out)
+        return (_MLPPath.apply(x,w1,w2,saved),
+                _MLPPath.apply(x.detach(),w1,w2,saved))
 
 
 class AnticipatoryHead(nn.Module):

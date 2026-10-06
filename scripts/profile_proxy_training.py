@@ -13,7 +13,7 @@ from torch.profiler import profile, ProfilerActivity, record_function
 from transformers import TrainerCallback
 
 from deep_kv.proxy import ProxyModel
-from deep_kv.proxy_estimators import AnticipatoryHead, BlockMLP
+from deep_kv.proxy_estimators import AnticipatoryHead, _MLPPath
 import deep_kv.proxy_training as training
 from scripts.check_fa4_proxy import write
 
@@ -90,7 +90,7 @@ def main():
         (ProxyModel,'lm_statistics','lm_loss'),
         (AnticipatoryHead,'routed','estimator_forward')]:
         setattr(cls,name,annotate(getattr(cls,name),label))
-    BlockMLP.backward=staticmethod(annotate(BlockMLP.backward,'estimator_backward'))
+    _MLPPath.backward=staticmethod(annotate(_MLPPath.backward,'estimator_backward'))
     training.reduce_moments=annotate(training.reduce_moments,'statistics_all_reduce')
     original=training.ProxyTrainer.__init__
     def init(self,*args,**kwargs):

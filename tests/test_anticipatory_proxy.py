@@ -155,6 +155,24 @@ class AnticipatoryTests(unittest.TestCase):
                         error=(a-b).abs().max()/b.abs().max().clamp_min(1e-20)
                         self.assertLessEqual(float(error),1e-6 if dtype==torch.float32 else .01)
 
+    def test_auxiliary_graph_does_not_schedule_backbone_backward(self):
+        # A zero/None input gradient is weaker than disconnecting the graph:
+        # the old shared two-output node still invoked this upstream backward.
+        for dtype in (torch.float32,torch.bfloat16):
+            x=torch.randn(2,7,32,requires_grad=True)
+            u=x.sin();visited=[]
+            hook=u.grad_fn.register_hook(lambda *args:visited.append(True))
+            w1=torch.randn(8,32,requires_grad=True);w2=torch.randn(32,8,requires_grad=True)
+            with torch.autocast('cpu',dtype=dtype,enabled=dtype!=torch.float32):
+                lm,aux=BlockMLP.apply(u,w1,w2)
+                loss=aux.float().square().mean()
+            loss.backward();hook.remove()
+            self.assertEqual(visited,[])
+            self.assertIsNone(x.grad)
+            self.assertTrue(torch.isfinite(w1.grad).all() and torch.isfinite(w2.grad).all())
+            self.assertGreater(w1.grad.abs().sum(),0)
+            self.assertGreater(w2.grad.abs().sum(),0)
+
     def test_isolation_gradient_paths_and_stream_recurrence(self):
         for arm in ANTICIPATORY_ARMS:
             m=model(arm)

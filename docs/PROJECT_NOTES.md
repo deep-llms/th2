@@ -1,5 +1,34 @@
 # Project notes
 
+## Fixing the auxiliary autograd graph (2026-10-06)
+
+The user explicitly requested fixing the failed CUDA gate. Anomaly diagnostic
+3b747d2 / p4-backward-trace-20261006-a01 identifies
+ScaledDotProductCudnnAttentionBackward0 as the first NaN-producing operator in
+P4-4h auxiliary-only custom backward. The recomputation reference passes on
+identical weights/backend. This is a software/autograd/backend interaction;
+there is no evidence of faulty B200 hardware. Dense SDPA is already in use.
+Evidence temp/p4-backward-trace-monitor.log, SHA256
+049117ea4fe978fa1017240b8973bf266cd0a4353dac5669cf2ca7c7177f077f.
+
+CPU minimal reproduction proves returning None from the old shared two-output
+node still invokes upstream backward. The corrected BlockMLP computes forward
+activations once, then creates separate gradient nodes sharing saved activations.
+The auxiliary node has an explicitly detached input, so there is no backward
+edge into the backbone. Model state names, objective, gates, masks, seeds and
+normal training loop remain unchanged. This also fixes the shared route for P6.
+New regression requires zero upstream backward visits, not only zero/None leaf
+gradients. All16 anticipatory CPU tests passed116.943s, including exact Trainer
+resume, BF16, checkpointing, AOT compilation and two-rank DDP. Evidence:
+temp/p4-graph-reproducer.log and temp/p4-structural-routing-tests.log.
+
+Next supervised CUDA validation/full-size25-step checks:
+th2-tjx3-p4-routing-fix-checks-20261006-a01. Same dense-SDPA backend/environment,
+same tolerances, fresh outputs, previous handoff must be complete, Accelerate
+copied/verified, approved burn-only reclaim and all-eight-free check, automatic
+burn restoration on exit. Production remains unlaunched until all checks pass.
+
+
 ## Confirmed CUDA correctness failure — production remains unlaunched (2026-10-06)
 
 Latest diagnosis identifies P4-4h auxiliary-only backward with aux_recompute=False
