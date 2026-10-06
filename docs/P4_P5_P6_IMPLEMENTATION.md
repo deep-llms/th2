@@ -187,3 +187,48 @@ Trainer smokes and production retain the established performance settings.
 PyTorch documents that CUDA/cuDNN SDPA can select nondeterministic algorithms:
 [SDPA documentation](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention).
 CUDA revalidation and full-size smoke results must be checked before launch.
+
+
+### Completed B200 revalidation and profile
+
+All 38 selected CPU tests and the controlled CUDA checks passed. Reference
+repeat controls were exactly equal. P4-iso-4h losses and gradients matched the
+recomputation reference exactly; P4-4h matched separately for LM and auxiliary
+losses. Its combined gradient maximum relative difference was 0.315%, below
+the unchanged 1% bound. Both document isolation checks passed.
+
+Normal, nondeterministic dense cuDNN SDPA completed 25 full-size eight-GPU
+updates for each arm. No math fallback; finite gradients, checkpoint state,
+and all eight rank RNG files passed validation. Microbatch16/GAS4/2048,
+full 28600-step schedule, warmup1430, no activation checkpointing.
+
+| Arm | Median seconds/update | Overhead vs A | Peak allocated GiB |
+|---|---:|---:|---:|
+| A | 2.4275 | — | 110.62 |
+| P4-iso-4h | 2.6136 | 7.67% | 117.13 |
+| P4-4h | 2.6586 | 9.52% | 118.64 |
+
+Times use unprofiled updates10–25. This short measurement is not a full-run
+ETA or a scientific result. The 3% target is not met. Per-update exclusive
+summed kernel durations from rank0 at update6 are shown below; overlapping
+kernels mean these are not a decomposition of critical-path wall time.
+
+| Component (milliseconds) | A | P4-iso-4h | P4-4h |
+|---|---:|---:|---:|
+| Estimator forward | 0 | 3.757 | 5.954 |
+| Estimator backward | 0 | 4.088 | 16.889 |
+| Auxiliary cosine forward + backward | 0 | 68.070 | 68.070 |
+| Target/mask/statistics setup | 3.511 | 42.079 | 42.109 |
+| Setup backward | 5.408 | 5.396 | 5.408 |
+| Target normalization | 0 | 22.934 | 22.956 |
+| Statistics all-reduce + normalization update | 0 | 0.192 | 0.189 |
+| Remaining decoder forward + backward | 2108.431 | 2148.161 | 2178.330 |
+| LM loss forward + backward | 278.097 | 278.163 | 278.160 |
+| Other model/optimizer/communication | 24.018 | 24.634 | 24.627 |
+
+No auxiliary forward recomputation is used. Targets/normalization/cosine work
+costs substantially more than the small estimator itself. Production retains
+the tested implementation; this profile does not justify changing the objective.
+Supervision completed and restored communicating burns. Full evidence:
+`temp/p4-fix-monitor-04.log`, SHA256
+`479573f1b78f3c3ac8654df0aa420d7a2a624e98519df8b59daf0e361dde5893`.

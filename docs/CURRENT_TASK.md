@@ -1,5 +1,40 @@
 # Current task
 
+## Routing fix verified; production launch (2026-10-06)
+
+The corrected custom gradient routing passed all 38 selected CPU tests and
+B200 validation in p4-routing-fix-checks-20261006-a02. Under controlled
+numerical settings, reference-repeat gradients matched exactly. P4-iso-4h
+matched the recomputation reference exactly for LM, auxiliary and combined
+losses; P4-4h matched for LM and auxiliary losses, with a worst per-parameter
+combined-gradient relative maximum of 0.315% (unchanged 1% threshold).
+Both cross-document isolation checks passed. Deterministic settings were
+used only for this numerical diagnostic, not the training smokes.
+
+Normal dense cuDNN SDPA, full 28-layer Qwen, eight GPUs, microbatch16/GAS4,
+2048 tokens: A and both P4 arms completed 25 steps, with finite gradients,
+validated weights/optimizer/scheduler/eight RNG files and backend receipts.
+Median seconds/update over unprofiled steps10–25: A2.4275, P4-iso-4h2.6136
+(+7.67%), P4-4h2.6586 (+9.52%). Peak allocated GiB:110.62/117.13/118.64.
+The 3% overhead target is not met; the measured breakdown is recorded in
+P4_P5_P6_IMPLEMENTATION.md and was reported before production submission.
+The check supervisor finished successfully and restored eight communicating
+burn workers, with collective progress verified at02:57:19UTC.
+Evidence: temp/p4-fix-monitor-04.log, SHA256
+479573f1b78f3c3ac8654df0aa420d7a2a624e98519df8b59daf0e361dde5893.
+
+Submitting the already authorized fresh2500-step runs, P4-iso-4h then P4-4h,
+root /mnt/local/_outputs/deep-llms_th2/p4-four-head-2500-20261006-a01,
+tmux tjx3-p4-four-head-2500-20261006-a01. Existing denseA is reused only for
+comparison. Seeds42/module43, gates1, auxiliary lambda0.1/ramp250, full
+28600-step schedule/warmup1430; EOS/document isolation/reset positions.
+No smoke weights are reused. Launch requires completed CUDA checks and exact
+validated model source hashes, copies/verifies Accelerate, reclaims only the
+freshly identified approved burn, and requires all eight GPUs free. Each
+arm gets checkpoint validation before the next job; the supervisor restores
+verified communicating burns on success or failure. No environment or driver
+installation was changed. Submission is not evidence of training progress.
+
 ## Fixing the auxiliary autograd graph (2026-10-06)
 
 The user explicitly requested fixing the failed CUDA gate. Anomaly diagnostic
