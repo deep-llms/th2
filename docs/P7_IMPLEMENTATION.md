@@ -22,7 +22,8 @@ command. Existing backend/configuration guards reject incompatible resumes.
 The shared tokenizer, EOS packing, document boundaries/reset positions, data
 cache, sampler, HF Trainer/Accelerate loop, scheduler, optimizer, stopping and
 checkpoint handling are reused. No new preprocessing or training loop is added.
-This implementation task did not launch or change a B200 workload.
+Initial implementation was local only. The operator subsequently authorized B200
+acceptance tests; see the dated CUDA validation section below.
 
 ## Model and attention
 
@@ -120,11 +121,10 @@ and backend checks. `scripts/profile_proxy_training.py` labels estimator,
 proxy projections, memory attention and relational loss within real Trainer
 updates. Its profile remains a disposable wrapper, not part of training.
 
-Before production, run the full-model CUDA comparisons and eight-GPU Trainer
-smokes/profile on the intended backend and recipe. Actual FA4 CUDA numerics,
-cuDNN rectangular-mask dispatch, peak memory and throughput are **not yet
-validated for P7**. No overhead or production-readiness claim follows from
-the CPU checks.
+The initial CPU checks required full-model CUDA comparisons and eight-GPU
+Trainer smokes on the intended recipe before production. Those subsequent
+B200 results are recorded below; CPU checks alone did not establish actual
+kernel behavior, memory use or throughput.
 
 ## Local tests
 
@@ -204,7 +204,8 @@ These changes reduce repeated work and GPU launch/communication overhead.
 CPU component timings are exploratory, not full training or B200 measurements.
 The larger FA4 query-duplication cost remains; improving that path requires
 separate forward/backward kernel validation. Full-model CUDA correctness,
-memory and end-to-end throughput measurements remain required before launch.
+memory and end-to-end throughput measurements were required before launch
+and are recorded in the subsequent B200 validation section.
 
 Exploratory CPU relational-loss forward+backward timing (one thread, FP32,
 two documents per row, fixed queries/masks, warmup followed by nine alternating
@@ -227,3 +228,105 @@ nonfinite-weight construction guard was also verified in a targeted rerun.
 `git diff --check` passed. Logs: `/tmp/p7-review-final.log` and
 `/tmp/p7-config-guard.log`. FA4 CPU coverage still uses the reference kernel;
 no B200 workload, environment or deployment was changed.
+
+## B200 validation — 6 October 2026 (passed)
+
+Launch `2729792`, root `/mnt/local/_outputs/deep-llms_th2/p7-checks-20261006-a01`.
+The existing `attention_bench` environment and driver were retained. Accelerate
+was copied to its actual cache and verified as eight-GPU BF16. The supervisor
+stopped only the inspected approved burn workers and verified all GPUs free.
+
+Full Qwen3-0.6B CUDA checks passed separate LM, cosine and relational gradient
+routing for P7/P7-kq/P7-ems/P7-mlp on SDPA and FA4. Auxiliary gradients reached
+only the 36 estimator parameter tensors; LM gradients reached the backbone and
+independent proxy projections. Running-statistics buffers stayed unchanged.
+
+At production relational tensor shape `[16,2048,1024]`, the original loop and
+batched loss matched (absolute loss difference zero); maximum FP32 derivative
+difference was `3.41e-13`, relative L2 `1.26e-7`. The check also passed with
+BF16-representable input values, mixed query counts, and a no-query row.
+Alternating CUDA-event timing, excluding two warmups: median forward+backward
+10.3406 ms (loop), 3.1768 ms (batched), approximately 3.25x component speedup.
+This is **not** the end-to-end training speedup. Query plans were fixed for this
+component timing; the full Trainer measurements include plan construction.
+
+Cross-backend full-model numerical checks passed for all four variants:
+
+| Arm | Absolute objective difference | Overall gradient relative L2 | Proxy gradient relative L2 |
+|---|---:|---:|---:|
+| P7 | 0.00002098 | 0.005925 | 0.005351 |
+| P7-kq | 0.00006580 | 0.005497 | 0.010543 |
+| P7-ems | 0.00003529 | 0.005971 | 0.005240 |
+| P7-mlp | 0.00002193 | 0.005959 | 0.005407 |
+
+No tolerance was relaxed. All variants had zero cross-document gradient and
+output influence in the full-model FA4 perturbation test; parameters and
+normalization buffers were unchanged by the numerical captures.
+
+All ten 25-step eight-GPU Trainer runs and both backend validators passed.
+They used the unchanged 28,600-step schedule, micro16/GAS4, sequence2048 and 32 eval
+rows. They are acceptance/throughput tests, not evidence of model quality.
+
+Small prior P4 result files are retained in
+`artifacts/p7-review-20261006/p4-results/`: 42 files checked against producer
+SHA256 hashes, archive `ff145becef7fd37c44896f22258646531df8bfe23d7a95c1d50c8f50e73f6285`.
+Both P4 arms completed 2,500 steps with passing validators and automatic
+communicating-burn handoff. Held-out LM: A 3.477173383, P4-iso-4h 3.479563634,
+P4-4h 3.479081029. Neither P4 result improves on A in this single-seed screen.
+
+FA4 steady-state measurements (median updates 10–25; update 6 is profiled and
+excluded) at the production micro16/GAS4/global1,048,576-token batch:
+
+| Arm | Seconds/update | Overhead versus FA4 A | Peak allocated GiB |
+|---|---:|---:|---:|
+| A | 2.0691 | — | 103.62 |
+| P7 | 2.6094 | 26.11% | 116.27 |
+| P7-kq | 2.6077 | 26.03% | 118.48 |
+| P7-ems | 2.6336 | 27.28% | 118.72 |
+| P7-mlp | 2.6338 | 27.30% | 116.27 |
+
+Each P7 receipt recorded 40 FA4 calls and 40 Q/K/V gradient callbacks; no dense
+mask or SDPA fallback. All final checkpoints contained optimizer/scheduler
+state and eight rank-specific RNG files. Proxy attention-mass/eval diagnostics
+were finite and checkpoint parameters passed validation. Profiled kernel
+sums are diagnostic, not critical-path timings; the table uses unprofiled
+wall-clock update measurements.
+
+SDPA steady-state measurements under the same recipe:
+
+| Arm | Seconds/update | Overhead versus SDPA A | Peak allocated GiB |
+|---|---:|---:|---:|
+| A | 2.4286 | — | 110.62 |
+| P7 | 2.9736 | 22.44% | 125.89 |
+| P7-kq | 2.9721 | 22.38% | 125.84 |
+| P7-ems | 2.9978 | 23.44% | 126.07 |
+| P7-mlp | 3.0005 | 23.55% | 125.89 |
+
+For P7, FA4 reduces update time by about 12.25% versus SDPA (2.6094 versus
+2.9736 seconds), with about 9.62 GiB less peak allocated memory. Both backends
+passed the existing validators; no acceptance threshold was loosened. Actual
+SDPA receipts identify cuDNN forward and backward on every call, including
+rectangular P7 attention, with no math fallback or unattributed calls.
+Final paired validation LM differences after 25 updates were at most 0.000043
+across A and the four variants. These are only 25-step, 32-row smoke results;
+they do not establish long-run convergence, quality, or a P7 improvement over A.
+
+The full supervised queue exited zero and completed automatic burn restoration
+at **10:17:19 UTC / 18:17:19 Singapore**. A fresh 10:18–10:19 UTC read-only
+inspection verified exactly eight approved burn workers, GPU guard enabled,
+and rank-zero collective cycles advancing from 130 to 150. No driver or
+environment installation was performed. Original P4 results/checkpoints and
+training data/cache were preserved.
+
+Evidence: remote root above; local verified archive
+`artifacts/p7-review-20261006/p7-results.tar.gz`, SHA256
+`4e170e0184e61c68d3f4826b5ed95deecac60fe994e8e632ba58ca57f13a4955`,
+161 small result/config/log/receipt files (no model weights). Producer final
+log: `temp/p7-final-results.log`, SHA256
+`b8ee127fa987aba70d1732060dc72aad17f61abd0ad0d57e0cb61136ea19f981`.
+
+Local extraction verified the archive and all 161 manifest entries, all 23
+queue stages, all ten final Trainer states, and recorded source hashes against
+the current code. Runner completion is `status="ok"` in `complete.json` (the
+filename denotes completion); the local verifier uses that existing schema.
+`commands.sh` was returned to inactive `#0` after retrieval.

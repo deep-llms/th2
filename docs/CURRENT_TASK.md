@@ -1,26 +1,38 @@
-## P7 B200 acceptance requested — 6 October 2026
-
-The operator now authorizes pulling B200 results and CUDA tests as needed.
-Read-only job `th2-tjx3-p7-review-preflight-20261006-a01` confirmed at
-09:39 UTC that both P4 four-head arms completed 2,500 steps and only the
-approved eight-rank communicating burn owns the GPUs. Its progress advances.
-Forty-two small result/config/receipt files were pulled and SHA256-verified in
-`artifacts/p7-review-20261006/p4-results/` (ignored); weights remain on B200.
-
-Submitting bounded acceptance job `th2-tjx3-p7-checks-20261006-a01`, fresh root
-`/mnt/local/_outputs/deep-llms_th2/p7-checks-20261006-a01`: production-shape
-relational-loss reference, full-model gradient routing for all four P7 arms on
-both backends, full-model cross-backend comparisons, then 25-step eight-GPU
-Trainer smokes/profiles for A and all P7 arms on FA4 and SDPA. Same production
-micro16/GAS4/sequence2048, full 28,600-step schedule / 1,430 warmup; 32 eval rows.
-Accelerate cache is copied and verified before supervised burn reclamation.
-The established supervisor verifies GPU freedom and restores the communicating
-burn after success or failure. No production P7 run is authorized by this test.
-Next: inspect terminal receipts, pull measured numerics/timing, and verify handoff.
-
 # Current task
 
-## P7 implementation (2026-10-06)
+## P7 review and B200 acceptance completed — 6 October 2026
+
+All four P7 variants passed full-model CUDA SDPA/FA4 comparisons, separate
+LM/cosine/relational gradient-route checks and exact document-isolation probes.
+The optimized relational calculation matched the original objective and FP32
+derivatives (relative L2 1.26e-7) and ran 3.25x faster for that component.
+The existing 65-test CPU acceptance/regression run also passed.
+
+Launch `2729792`, job `th2-tjx3-p7-checks-20261006-a01`, remote root
+`/mnt/local/_outputs/deep-llms_th2/p7-checks-20261006-a01`: all ten 25-step
+8-GPU Trainer runs (A and P7/P7-kq/P7-ems/P7-mlp on both backends), reports,
+backend/checkpoint validators and profiling stages passed. Production recipe
+microbatch 16 / accumulation 4 / sequence 2048 / global 1,048,576 tokens; full 28,600-step schedule,
+warmup 1,430; diagnostic evaluation 32 rows. No production P7 training was launched.
+P7 median update: FA4 2.6094s / SDPA 2.9736s; peak 116.27 / 125.89 GiB.
+FA4 A 2.0691s. SDPA A 2.4286s. See [P7_IMPLEMENTATION.md](P7_IMPLEMENTATION.md)
+for all variants, numerics, speed measurements and limitations.
+
+Accelerate cache was copied and `accelerate env` verified 8-GPU BF16 before
+verified burn-worker reclamation and a free-GPU check. No env/driver change.
+Supervisor finished successfully at 10:17:19 UTC / 18:17:19 Singapore. Final fresh
+inspection confirmed eight approved communicating-burn workers, advancing
+collective progress, and guard re-enabled. Both prior P4 arms completed 2,500
+steps and were preserved. Their small results were downloaded and verified.
+P4-iso-4h LM 3.479563634; P4-4h 3.479081029; A 3.477173383: no single-seed gain.
+
+Local evidence folder: `artifacts/p7-review-20261006/` (ignored); P4 and P7
+archives contain metrics/configs/logs/receipts, not weights. The tested source
+is committed to th2. Results are retrieved and verified; commands.sh is inactive (#0).
+Next research step requires a separately requested production experiment;
+these smokes establish execution/numerics, not long-run model quality.
+
+## Initial P7 implementation (2026-10-06; historical local phase)
 
 Operator requested `proxy_arm_P7_spec.md` Revision 2 for both SDPA and FA4.
 P7/P7-kq/P7-ems/P7-mlp now use the existing Trainer/Accelerate pipeline,
@@ -29,8 +41,8 @@ token/query denominators. FA4 uses interleaved native/proxy entries with
 duplicated queries and retained odd outputs: exact joint softmax, with extra
 compute explicitly reported. Step-1000 evaluation records the cosine heuristic
 and proxy attention mass. See [P7_IMPLEMENTATION.md](P7_IMPLEMENTATION.md).
-Local acceptance includes real CPU Trainer resume and two-rank DDP. Actual
-P7 CUDA/backend/throughput acceptance remains required before production.
+Local acceptance included real CPU Trainer resume and two-rank DDP. The
+subsequent actual CUDA/backend/throughput acceptance is recorded above.
 Second review: batched relational KL, cached per-batch masks/indices/counts,
 skipped unnecessary query sampling and fused P7 normalization reductions.
 Rejected nonfinite auxiliary weights before training. All65tests passed in
@@ -38,7 +50,8 @@ Rejected nonfinite auxiliary weights before training. All65tests passed in
 two-rank DDP and legacy regressions. CPU timing benefits vary by shape; B200
 speed gains remain unmeasured. CPU FA4 oracle coverage is distinguished from
 real kernel validation. Full results are in the implementation report.
-No B200 work or deployment was performed; commands.sh remains inactive.
+The initial implementation was local-only; the newer B200 acceptance entry
+above supersedes that phase.
 Older remote status below is historical, not a fresh observation.
 
 ## Latest FA4 status (2026-10-06,14:23 Singapore /06:23UTC)

@@ -1,3 +1,24 @@
+## P7 CUDA acceptance and speed — 2026-10-06
+
+- Source `2729792`: P7/P7-kq/P7-ems/P7-mlp passed actual SDPA/FA4 numerics,
+  full-model isolated LM/cosine/relational gradients, and causal/document probes.
+  CPU regression (65 tests) also passed. No threshold relaxation.
+- Relational-loss batched implementation vs original loop at `[16, 2048, 1024]`:
+  zero scalar loss difference, gradient relative L2 ~1.26e-7, CUDA F+B median
+  10.3406 ms → 3.1768 ms. Component speedup only; global objective unchanged.
+- All ten 25-step, eight-GPU Trainer runs and saved-state/backend validators
+  passed under the existing attention_bench env. P7 FA4 median 2.6094 s/update,
+  SDPA 2.9736 s; peak 116.27/125.89 GiB. Matching A 2.0691/2.4286 s. Global batch 1,048,576 tokens,
+  microbatch 16 / accumulation 4 / sequence 2048, full 28,600-step schedule,
+  1,430-step warmup, evaluation 32 rows.
+- Remote `/mnt/local/_outputs/deep-llms_th2/p7-checks-20261006-a01`.
+  Supervisor success/burn handoff 10:17:19 UTC; fresh approved-eight-worker
+  collective-progress check passed. Driver/env/data/old checkpoints untouched.
+- Local results `artifacts/p7-review-20261006/`: P4 archive 42 files; P7 archive
+  161 files, SHA256 4e170e0184e61c68d3f4826b5ed95deecac60fe994e8e632ba58ca57f13a4955.
+  Original 2,500-step P4-iso-4h/P4-4h losses 3.479563634/3.479081029 versus A 3.477173383.
+  Report `docs/P7_IMPLEMENTATION.md`; no production P7 run or quality claim.
+
 # Project notes
 
 ## P7 second review and optimization (2026-10-06)
