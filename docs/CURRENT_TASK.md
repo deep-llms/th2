@@ -1,5 +1,25 @@
 # Current task
 
+## Latest FA4 status (2026-10-06,14:23 Singapore /06:23UTC)
+
+Read-only monitorea81118: P4-iso-4h completed2500updates and its checkpoint
+validator passed. Finished13:09:56Singapore; whole job5820.273s (~97min),
+Trainer5756.086s. Full4882-row validation LM3.4795636336261895, raw auxiliary
+0.40820062034433374. Proxy-disabled LM3.5015848079660326, reliance0.02202117.
+Compared with matched FA4 A3.4771733830242613, LM is higher by0.00239025;
+this single-seed result does not show an improvement. Peak allocated110.13GiB.
+
+P4-4h is running at1854/2500 (~74.2%),~2.302s/update. Latest training LM3.738,
+raw auxiliary0.5892, grad norm0.1984; finite and no errors in inspected recent
+log. Checkpoint directories1500/1750 present. All8GPUs have training workers,
+97–99%utilization,~119462MiB used each; no burn overlap. Expected remaining
+~25minutes of updates plus final evaluation/checkpoint/handoff, not a guarantee.
+No training changes. Automatic final burn restoration remains configured.
+Evidence temp/p4-fa4-status-20261006-a02.log SHA256
+c2d3e60da8106cb0e038255d13d3c8c3931013c857491ecaf658fb48d149ea03.
+P4-iso result/validator retained in artifacts/p4-fa4-production-20261006/.
+commands.sh restored#0; no whole-queue completion claimed.
+
 ## Latest FA4 status (2026-10-06,13:06 Singapore /05:06UTC)
 
 Read-only monitor9bd67e1: P4-iso-4h is running at2413/2500,~2.258s/update;
