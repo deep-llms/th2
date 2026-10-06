@@ -68,7 +68,7 @@ native heads, gradient routes, causality and document isolation, checkpoint
 recomputation, BF16 finiteness, accumulation, resume, reports and two-rank DDP.
 CPU FA4 checks use an independent SDPA oracle in place of the CUDA kernel.
 The earlier B200 results below cover the original four variants only:
-**P7-simple still needs its own CUDA/full-model smoke before production.**
+**P7-simple subsequently passed its own CUDA/full-model smoke; see below.**
 Local implementation validation covered 66 distinct tests. The careful review
 adds two regression tests that compare against P4-iso-4h directly:
 
@@ -88,6 +88,23 @@ Logs are `/tmp/p7-simple-review-tests.log` and
 `/tmp/p7-simple-review-control.log`. No training implementation issue has been
 found in this review; only regression coverage and this report were extended.
 No B200 process or execution command was changed.
+
+## P7-simple B200 acceptance and production start
+
+Launch `258bde6` under the authorized ten-arm remaining queue. The actual CUDA
+SDPA/FA4 comparison passed (loss absolute difference 0.0002040863; whole-model
+and proxy-only gradient relative L2 0.00592701 / 0.00513579; document-isolation
+output and gradient differences both zero). The 25-step eight-GPU Trainer
+smoke and checkpoint/backend validator passed, peak allocated 114.2105 GiB.
+The exact matched-A recipe/data-order guard also passed. At 13:49:06 UTC,
+monitor `e759c88` verified fresh P7-simple production training on all eight
+GPUs with finite losses/gradients; it began at 13:47:01 UTC and will stop at
+2,500 steps using the original full schedule. This establishes launch and
+smoke correctness, not a long-run quality improvement.
+
+Root: `/mnt/local/_outputs/deep-llms_th2/proxy-remaining-2500-20261006-a01`.
+See CURRENT_TASK.md for the ten-arm priority order and automatic burn handoff.
+Startup evidence: `artifacts/proxy-remaining-launch-20261006/`.
 
 ## Entry points
 

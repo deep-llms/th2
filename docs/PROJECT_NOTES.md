@@ -1,3 +1,38 @@
+## Remaining-arm production startup verified — 6 October 2026
+
+Launch `258bde6`, job `th2-tjx3-proxy-remaining-2500-20261006-a01`.
+Fresh monitor `e759c88` at 13:49:06 UTC confirms P7-simple production running
+on all eight GPUs (workers 217157–217164), with finite LM loss/gradient logs.
+The run started at 13:47:01 UTC, after its independent 25-step smoke and all
+three validation gates exited zero. Production logs include two 10-step
+logging intervals; no traceback. Nine further arms remain queued in the
+operator-confirmed order below. No completed arm was retrained.
+
+Accelerate resource config was copied byte-for-byte to the actual default
+`/dev/shm/.cache/huggingface/accelerate/default_config.yaml`; `accelerate env`
+verified MULTI_GPU, eight processes, BF16. Only approved burn workers
+210967–210974 were stopped by verified PID handles, followed by the required
+wait and a receipt showing all eight GPUs free before any CUDA job.
+Environment/offline/NCCL settings match the existing launch recipe.
+
+P7-simple actual CUDA SDPA/FA4 same-weight check passed: loss difference
+0.0002040863, whole-model gradient relative L2 0.00592701, proxy-gradient
+relative L2 0.00513579, zero cross-document output/gradient leakage.
+The 25-step all-eight-GPU smoke validated model/optimizer/scheduler and all
+rank RNG files, actual FA4 forward/backward receipts, finite diagnostics,
+and peak allocated 114.2105 GiB. Matched-A recipe guard passed with training
+fingerprint `6e4708f1e818fb44`. Smoke and production use separate fresh roots;
+production was not resumed from smoke. No data/cache or old output deletion.
+
+Root: `/mnt/local/_outputs/deep-llms_th2/proxy-remaining-2500-20261006-a01`.
+Production: `supervised/run/training/seed-42/P7-simple` (then the other arms).
+The 63-stage supervised queue stops on any failure and automatically performs
+owned-worker cleanup, free-GPU verification and communicating-burn restoration.
+Final evidence will be `supervised/run/complete.json`, production validators,
+comparison reports and `supervised/burn-verified.json`. Local startup evidence:
+`artifacts/proxy-remaining-launch-20261006/`, checksummed small logs.
+`commands.sh` is returned to #0; this does not stop the detached queue.
+
 ## Authorized remaining-arm queue — 6 October 2026
 
 Operator explicitly confirmed ten fresh FA4 runs in this priority order:
