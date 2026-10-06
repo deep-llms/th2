@@ -1,5 +1,18 @@
 # Project notes
 
+## B200 connectivity recovered; correcting read-only preflight (2026-10-06)
+
+At 01:02:08 UTC the existing c01373a preflight reached the expected host
+thiennh-p6-tjx3-worker-0. It stopped at `git rev-parse HEAD`: the runner syncs
+source without a .git directory. No Python inspection or GPU action ran.
+Evidence: temp/p4-recheck-preflight-03.log (SHA256
+59cd805173faf581529889dd540030c5285576fad68b174f8c6c191ea0a22592).
+Corrected project command removes the unnecessary remote Git query; new job
+th2-tjx3-p4-four-head-preflight-20261006-a02 remains read-only. Continue the
+already-authorized P4-4h/P4-iso-4h launch only after fresh validation.
+Previous infrastructure-block entry below is historical.
+
+
 ## P4 four-head launch blocked by runner hostname resolution (2026-10-06)
 
 User authorized training the latest P4-4h and P4-iso-4h variants on B200.
