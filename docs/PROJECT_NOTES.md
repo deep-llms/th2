@@ -1,5 +1,37 @@
 # Project notes
 
+## P4 CUDA acceptance blocked production; burns restored (2026-10-06)
+
+Job add770c / th2-tjx3-p4-four-head-checks-20261006-a01 reached the GPU tests.
+Accelerate was copied to the activated environment's actual cache path
+/dev/shm/.cache/huggingface/accelerate/default_config.yaml (different from the
+unactivated read-only preflight path), byte-checked and accelerate env confirmed
+8-GPU BF16 MULTI_GPU. Exact approved burn workers were reclaimed; the supervisor
+saved its all-eight-free receipt. No optimizer update or training smoke ran.
+
+CUDA reference check: P4-iso-4h passed separate LM/aux/combined gradients and
+cross-document isolation. Loss differences were0; worst per-parameter gradient
+relative maxima were0.00914634/0/0.00927568. P4-4h LM passed at0.00824176, but its
+aux-only capture hit the nonfinite-loss-or-gradient assertion. This is not a
+tolerance failure. Failed before full25-step smokes/profile or2500-step runs.
+Do not launch production or relax tests until the cause is understood/resolved.
+
+Supervisor finished failure handling at02:19:57UTC, verified all GPUs free,
+then restored eight approved communicating burn workers with advancing
+collectives. Monitor 1ff14b0 evidence temp/p4-checks-monitor-01.log, SHA256
+2678fc5d1b779b2c054d6afeb2014c718aa9fd6eaa32702316680a80a5c92628.
+Bounded diagnosis submitted072381c, job th2-tjx3-p4-four-head-diagnose-20261006-a01,
+output /mnt/local/_outputs/deep-llms_th2/p4-four-head-diagnose-20261006-a01.
+It reruns P4-4h only and records reference/custom mode, finite losses, exact
+nonfinite gradient names/counts. Same verified reclaim and automatic burn handoff.
+No model/training-loop changes or tolerance changes. Production command is only
+an unsubmitted local draft:temp/p4-four-head-training.commands.sh.
+
+Local profiler-instrumentation regression:4tests passed2.105s, including BF16
+routed/reference gradients, four-head GQA mapping, checkpoint/target logic and
+both backend validators. temp/p4-profile-routing-regression.log.
+
+
 ## B200 recovered; four-head P4 launch checks (2026-10-06)
 
 Read-only job th2-tjx3-p4-four-head-preflight-20261006-a02 at 02:10:42 UTC
