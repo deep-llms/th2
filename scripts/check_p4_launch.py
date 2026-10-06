@@ -30,7 +30,7 @@ def check(args):
     assert len(set(rows[0]['segments']))>1
     ctx=ProxyTrainer.context({k:v.cuda() for k,v in isolated_data_collator(rows).items()})
     results=[]
-    for arm in ('P4-iso-4h','P4-4h'):
+    for arm in args.arms:
         model=ProxyModel.from_scratch(cfg,arm,seed=42,checkpoint_layers=False,
             checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
         assert model.value_groups==2 and model.settings.alpha_init==1
@@ -45,6 +45,7 @@ def check(args):
         for component in ('lm','aux','combined'):
             reference=None
             for recompute in (True,False):
+                print('CAPTURE',arm,component,'recompute',recompute,flush=True)
                 model.settings.aux_recompute=recompute;model.zero_grad(set_to_none=True)
                 with torch.autocast('cuda',dtype=torch.bfloat16):
                     out=model(ctx)
@@ -52,7 +53,15 @@ def check(args):
                     loss={'lm':lm,'aux':aux,'combined':lm+.1*aux}[component]
                 loss.backward()
                 gradients={n:p.grad.detach().cpu().clone() for n,p in model.named_parameters() if p.grad is not None}
-                assert torch.isfinite(loss) and all(torch.isfinite(g).all() for g in gradients.values())
+                invalid={n:dict(nan=int(g.isnan().sum()),inf=int(g.isinf().sum()))
+                         for n,g in gradients.items() if not torch.isfinite(g).all()}
+                if not torch.isfinite(loss) or invalid:
+                    failure=dict(status='failed',arm=arm,component=component,recompute=recompute,
+                        finite_loss=bool(torch.isfinite(loss)),lm_loss=str(float(lm.detach())),
+                        aux_loss=str(float(aux.detach())),invalid_gradients=invalid)
+                    write(args.output,failure)
+                    print('NONFINITE_CAPTURE',json.dumps(failure),flush=True)
+                    raise AssertionError('Nonfinite capture; tensor identities saved')
                 for name,p in model.named_parameters():
                     estimator=name.startswith('heads.') and not name.endswith('.alpha')
                     active=p.grad is not None and bool(p.grad.count_nonzero())
@@ -94,4 +103,5 @@ def check(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--recipe',required=True);p.add_argument('--rows',required=True);p.add_argument('--output',required=True)
+    p.add_argument('--arms',nargs='+',choices=('P4-iso-4h','P4-4h'),default=('P4-iso-4h','P4-4h'))
     check(p.parse_args())
