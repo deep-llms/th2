@@ -1,11 +1,11 @@
 #1 +60+a
-#th2-tjx3-p7-checks-monitor-20261006-a04
+#th2-tjx3-p7-checks-monitor-20261006-a05
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
 date -u
 /mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PY'
-import json
+import json,statistics
 from pathlib import Path
 from scripts.gpu_status import snapshot
 root=Path('/mnt/local/_outputs/deep-llms_th2/p7-checks-20261006-a01');run=root/'supervised/run'
@@ -23,5 +23,12 @@ for backend in ('fa4','sdpa'):
   p=folder/'result.json'
   if p.is_file():
    r=json.loads(p.read_text());print('RESULT',backend,folder.name,json.dumps({k:r[k] for k in ('status','global_step','training_cost','evaluation')}),flush=True)
+for backend in ('fa4','sdpa'):
+ for folder in sorted((run/backend/'seed-42').glob('*')):
+  state=folder/'trainer_state.json';result=folder/'result.json'
+  if state.is_file() and result.is_file():
+   history=json.loads(state.read_text())['log_history']
+   times=[v['seconds_per_update'] for v in history if 'seconds_per_update' in v and 10<=v['step']<=25]
+   if len(times)==16:print('TIMING',backend,folder.name,statistics.median(times),flush=True)
 print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
 PY
