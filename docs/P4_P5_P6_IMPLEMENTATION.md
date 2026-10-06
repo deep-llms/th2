@@ -232,3 +232,36 @@ the tested implementation; this profile does not justify changing the objective.
 Supervision completed and restored communicating burns. Full evidence:
 `temp/p4-fix-monitor-04.log`, SHA256
 `479573f1b78f3c3ac8654df0aa420d7a2a624e98519df8b59daf0e361dde5893`.
+
+
+### FA4 selection and validation scope (2026-10-06)
+
+The operator clarified that FA4 remains the selected experimental backend;
+the dense-SDPA wording in the specification was stale. The shared P4 attention
+path already supports FA4 without changes to projections, loss, or model state.
+`proxy_heads.b200.json` now selects it explicitly. The CLI still accepts SDPA
+as a reference. Replacement runs use the completed FA4 A, fresh initialization,
+and separate outputs; no backend change on resume is permitted.
+
+CPU verification in the matching `sampling_b200` environment passed all13
+FA4 proxy/baseline/validator tests, then the5 proxy/validator tests passed again
+after adding P4 document-isolation, exact Trainer resume and FA4 checkpoint
+validation cases. Logs: `temp/p4-fa4-cpu-tests-02.log` and
+`temp/p4-fa4-cpu-tests-final.log`. The added16-query/8-KV test checks that only
+two KV groups serve the four proxy query heads; separate LM/auxiliary/combined
+routes agree with the independent per-document CPU oracle. No dense mask may
+be constructed by the FA4 path. CPU tests use an oracle, not the CUDA kernel.
+An initial invocation in the older dev `train_env` correctly failed the pinned
+Transformers version guard; the environment was not modified to bypass it.
+
+SDPA queue cancellation05373dd was verified: only supervisor143985 was sent
+SIGTERM after identity checks; it cleaned its owned workers, verified all8GPUs
+free, and restored communicating burns. Outputs and dataset caches preserved.
+Evidence `temp/p4-fa4-stop-handoff.log`, SHA256
+`3a5f3b6ce38469beb20f9d57439e898397094e1e459117f892c62124b898a4ee`.
+
+CUDA check submission498955f uses `attention_bench` (FA4 4.0.0b33), fresh
+`p4-fa4-checks-20261006-a01`, verified Accelerate and approved burn handoff.
+It requires same-backend routed/reference comparisons, cross-backend comparisons
+at gate1, and25-step full-size8GPU training/checkpoint/profile checks before
+production. This paragraph records submission, not their eventual outcome.
