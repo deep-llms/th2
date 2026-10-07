@@ -1,3 +1,20 @@
+## P6-iso supervised fine-tuning running — 7 October 2026
+
+Launch `892fc80`, root
+`/mnt/local/_outputs/deep-llms_th2/supervised-p6iso-20261007-a01`.
+Monitor `001a821` at 14:22:39 UTC confirms CUDA numerical gate, eight-GPU
+four-update smoke and strict reload all passed. Reload loss/accuracy, weight
+hash and development-example-order hash match exactly. Production PAWS-X
+seed 42 / LR 1e-5 is running on eight workers 343599–343606; finite logs
+through epoch .3238. No final results yet. Queue: 8 fits, 6 final tests,
+matched protocol; reuse completed A/P6/P7-simple comparisons.
+Accelerate config copied/verified, environment/data/recipes checked. Only
+verified burn workers 341142–341149 stopped; all eight GPUs verified free
+at 14:18:06 UTC. Automatic communicating burns remain configured after either
+success or failure. commands #0 leaves the detached queue running; do not relaunch.
+Evidence: artifacts/p6iso-finetune-monitor-20261007-a02/ (7 verified JSON artifacts).
+Full protocol: docs/SUPERVISED_FINETUNING_20261007.md.
+
 ## P6-iso supervised extension authorized — 7 October 2026
 
 User clarified that the strongest P6 variant should also receive fine-tuning,
