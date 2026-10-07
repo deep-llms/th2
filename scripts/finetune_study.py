@@ -97,7 +97,7 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS):
         for task in gate_tasks:
             name='gate-'+arm+('-'+task if extended else '');out='gates/'+name+'.json' if extended else 'gates/'+arm+'.json'
             argv=['{python}','-u','-m','scripts.finetune_study','gate','--checkpoint',checkpoints[arm],'--output','{run_dir}/'+out]
-            if extended:argv+=['--task',task]
+            if extended:argv+=['--task',task,'--data-root',str(data_root),'--manifest',str(manifest)]
             jobs.append(dict(name=name,gpus=[0],timeout_seconds=900,argv=argv,
                 required_outputs=[dict(path=out,json_equals={'status':'passed','arm':arm})]))
     for arm in arms:
@@ -196,43 +196,137 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
                      caveat='Three fine-tuning seeds; one pretraining seed; exploratory arm selection.'))
 
 
-def gate(checkpoint, output, task='nli'):
+def numerical_check(model, inputs):
+    """Compare production BF16 FA4 with an independent FP32 math reference.
+
+    BF16 SDPA is another approximate implementation, not ground truth. The
+    original 2% logits / 5% whole-gradient limits now use the FP32 reference.
+    """
+    import torch
+    from torch.nn.attention import SDPBackend, sdpa_kernel
+    from eval.finetune import GradientCheck
+    device = next(model.parameters()).device
+    backbone = model.wrapped
+    old_backend = backbone.attention_backend
+    old_observer = getattr(backbone, '_fa4_observer', None)
+    old_tf32 = torch.backends.cuda.matmul.allow_tf32, torch.backends.cudnn.allow_tf32
+    buffers = {k:v.clone() for k,v in backbone.named_buffers()}
+    pooled, calls = [], []
+    hook = model.score.register_forward_pre_hook(lambda module, args: pooled.append(args[0].detach()))
+    try:
+        if any(p.dtype != torch.float32 for p in model.parameters()):
+            raise ValueError('FP32 reference requires FP32 master parameters')
+        torch.backends.cuda.matmul.allow_tf32 = False
+        torch.backends.cudnn.allow_tf32 = False
+        backbone.attention_backend = 'fa4'
+        backbone._fa4_observer = lambda *args: calls.append(1)
+        model.zero_grad(set_to_none=True)
+        with torch.autocast(device.type, dtype=torch.bfloat16, enabled=device.type=='cuda'):
+            out = model(**inputs)
+        out['loss'].backward()
+        check = GradientCheck(); check.on_pre_optimizer_step(None,None,None,model=model)
+        gradients = {k:p.grad.detach().cpu().clone() for k,p in model.named_parameters() if p.requires_grad}
+        actual_logits, actual_loss = out['logits'].detach(), float(out['loss'].detach())
+        actual_hidden = pooled.pop()
+        del out
+        model.zero_grad(set_to_none=True)
+        backbone.attention_backend = 'sdpa'
+        # Disable autocast explicitly, including when called from an outer context.
+        with sdpa_kernel(SDPBackend.MATH), torch.autocast(device.type, enabled=False):
+            reference = model(**inputs)
+        reference['loss'].backward()
+        reference_check = GradientCheck()
+        reference_check.on_pre_optimizer_step(None,None,None,model=model)
+        expected_hidden = pooled.pop()
+        numer = denom = 0.
+        for k,p in model.named_parameters():
+            if p.requires_grad:
+                ref=p.grad.detach().cpu().double()
+                numer+=float((gradients[k].double()-ref).square().sum())
+                denom+=float(ref.square().sum())
+        def relative(a,b):
+            a,b=a.detach().double(),b.detach().double()
+            return float((a-b).norm()/b.norm().clamp_min(1e-30))
+        for k,v in backbone.named_buffers():
+            if not torch.equal(v,buffers[k]):raise ValueError('Unexpected buffer mutation')
+        return dict(gradient_relative_l2=(numer/max(denom,1e-30))**.5,
+            logit_relative_l2=relative(actual_logits,reference['logits']),
+            hidden_relative_l2=relative(actual_hidden,expected_hidden),
+            logit_max_absolute=float((actual_logits-reference['logits'].detach()).abs().max()),
+            loss_absolute=abs(actual_loss-float(reference['loss'].detach())),
+            logits=actual_logits.cpu().tolist(),reference_logits=reference['logits'].detach().cpu().tolist(),
+            gradients=check.report,reference_gradients=reference_check.report,
+            fa4_calls=len(calls),buffers_unchanged=True)
+    finally:
+        hook.remove()
+        backbone.attention_backend=old_backend
+        backbone._fa4_observer=old_observer
+        torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32=old_tf32
+        model.zero_grad(set_to_none=True)
+
+
+def check_numerical_limits(result):
+    # Fail closed on nonfinite numbers. Thresholds are not fitted per arm/task.
+    limits = dict(gradient_relative_l2=.05,logit_relative_l2=.02,hidden_relative_l2=.02)
+    for name,limit in limits.items():
+        value=result[name]
+        if not math.isfinite(value) or value < 0 or value >= limit:
+            raise ValueError(f'FA4/FP32 math SDPA disagreement: {name}={value}, limit={limit}')
+    if not result['fa4_calls'] or not result['buffers_unchanged']:
+        raise ValueError('FA4 not exercised or normalization buffers changed')
+    for name in ('loss_absolute','logit_max_absolute'):
+        if not math.isfinite(result[name]):raise ValueError('Nonfinite numerical comparison: '+name)
+
+
+def gate(checkpoint, output, task='nli', data_root=None, manifest=None):
     import torch
     from eval.models import load_checkpoint
-    from eval.finetune import PairClassifier, PairCollator, GradientCheck
+    from eval.finetune import PairClassifier, PairCollator, encode_pairs
     torch.manual_seed(42)
-    adapter,_,source=load_checkpoint(checkpoint,'cuda',attention_backend='fa4')
-    backbone=adapter.wrapped
-    # Forward before opting into task gradients must be identical to after.
-    model=PairClassifier(backbone,{'nli':3,'paws':2,'boolq':2,'stsb':1}[task],42).to('cuda')
+    adapter,tokenizer_path,source=load_checkpoint(checkpoint,'cuda',attention_backend='fa4')
+    model=PairClassifier(adapter.wrapped,{'nli':3,'paws':2,'boolq':2,'stsb':1}[task],42).to('cuda')
+    # Preserve the original synthetic fixture, including its RNG order.
     ids=torch.randint(10,10000,(2,64)).tolist()
-    rows=[dict(input_ids=ids[0][:37],labels=.5 if task=='stsb' else 0),
-          dict(input_ids=ids[1],labels=3.5 if task=='stsb' else 1)]
-    inputs={k:v.cuda() for k,v in PairCollator(0,regression=task=='stsb')(rows).items()}
-    buffers={k:v.clone() for k,v in backbone.named_buffers()}
-    calls=[]; backbone._fa4_observer=lambda *args:calls.append(1)
-    with torch.autocast('cuda',dtype=torch.bfloat16):
-        out=model(**inputs)
-    out['loss'].backward()
-    check=GradientCheck();check.on_pre_optimizer_step(None,None,None,model=model)
-    # Compare every trainable gradient to dense SDPA at identical weights/data.
-    grads={k:p.grad.detach().cpu().clone() for k,p in model.named_parameters() if p.requires_grad}
-    model.zero_grad(set_to_none=True)
-    backbone.attention_backend='sdpa'
-    with torch.autocast('cuda',dtype=torch.bfloat16):dense=model(**inputs)
-    dense['loss'].backward()
-    numer=denom=0.
-    for k,p in model.named_parameters():
-        if p.requires_grad:
-            ref=p.grad.detach().cpu();numer+=float((grads[k]-ref).double().square().sum());denom+=float(ref.double().square().sum())
-    relative=(numer/max(denom,1e-30))**.5
-    logit_relative=float((out['logits']-dense['logits']).norm()/dense['logits'].norm().clamp_min(1e-8))
-    if not calls or relative>=.05 or logit_relative>=.02:
-        raise ValueError(f'FA4/SDPA disagreement: gradients={relative}, logits={logit_relative}')
-    for k,v in backbone.named_buffers():
-        if not torch.equal(v,buffers[k]):raise ValueError('Unexpected buffer mutation')
-    write(output,dict(status='passed',arm=source['arm'],task=task,source=source,gradients=check.report,
-        gradient_relative_l2=relative,logit_relative_l2=logit_relative,fa4_calls=len(calls),buffers_unchanged=True))
+    batches={'synthetic':[dict(input_ids=ids[0][:37],labels=.5 if task=='stsb' else 0),
+                           dict(input_ids=ids[1],labels=3.5 if task=='stsb' else 1)]}
+    if (data_root is None) != (manifest is None):raise ValueError('Both data root and manifest are required')
+    if data_root:
+        from datasets import load_dataset
+        from transformers import AutoTokenizer
+        from eval.benchmarks import local_dataset_paths
+        from eval.finetune import TASKS as task_definitions
+        mapping=local_dataset_paths(data_root,manifest)[task_definitions[task][0]]
+        raw=load_dataset(mapping['dataset_path'],**mapping['dataset_kwargs'])['train']
+        rows=raw.select([0,1]).to_dict()
+        if task=='stsb':rows['label']=[5*x for x in rows['score']]
+        tokenizer=AutoTokenizer.from_pretrained(tokenizer_path,local_files_only=True)
+        encoded=encode_pairs(rows,tokenizer,task_definitions[task][1],512,task_name=task)
+        batches['real_training']=[dict(input_ids=x,labels=y) for x,y in zip(encoded['input_ids'],encoded['labels'])]
+    report=dict(status='failed',arm=source['arm'],task=task,source=source,
+        reference='fp32_math_sdpa_tf32_disabled',
+        limits=dict(gradient_relative_l2=.05,logit_relative_l2=.02,hidden_relative_l2=.02),batches={})
+    try:
+        for name,rows in batches.items():
+            inputs={k:v.cuda() for k,v in PairCollator(0,regression=task=='stsb')(rows).items()}
+            result=numerical_check(model,inputs)
+            result['lengths']=[len(r['input_ids']) for r in rows]
+            report['batches'][name]=result
+            check_numerical_limits(result)
+        report.update(status='passed',buffers_unchanged=True,
+            fa4_calls=sum(r['fa4_calls'] for r in report['batches'].values()),
+            **{k:max(r[k] for r in report['batches'].values()) for k in
+               ('gradient_relative_l2','logit_relative_l2','hidden_relative_l2')})
+    except Exception as exc:
+        report['error']=repr(exc)
+        # Preserve finite failure evidence, instead of losing it in a traceback.
+        def serializable(value):
+            if isinstance(value,float) and not math.isfinite(value):return str(value)
+            if isinstance(value,dict):return {k:serializable(v) for k,v in value.items()}
+            if isinstance(value,list):return [serializable(v) for v in value]
+            return value
+        write(output,serializable(report))
+        raise
+    write(output,report)
 
 
 def verify_reload(trained, reloaded, output):
@@ -279,6 +373,7 @@ def main():
     s.add_argument('--tasks',nargs='+',choices=SUPPORTED_TASKS,default=TASKS)
     s=sub.add_parser('gate');s.add_argument('--checkpoint',required=True);s.add_argument('--output',required=True)
     s.add_argument('--task',choices=SUPPORTED_TASKS,default='nli')
+    s.add_argument('--data-root');s.add_argument('--manifest')
     s=sub.add_parser('verify-reload')
     for name in ('trained','reloaded','output'):s.add_argument('--'+name,required=True)
     s=sub.add_parser('audit-data')
@@ -288,7 +383,7 @@ def main():
     args=p.parse_args()
     if args.mode=='select':select(args.runs,args.output)
     elif args.mode=='summary':summary(args.root,args.output,args.arms,args.tasks)
-    elif args.mode=='gate':gate(args.checkpoint,args.output,args.task)
+    elif args.mode=='gate':gate(args.checkpoint,args.output,args.task,args.data_root,args.manifest)
     elif args.mode=='verify-reload':verify_reload(args.trained,args.reloaded,args.output)
     elif args.mode=='audit-data':audit_data(args.dataset_root,args.manifest,args.tokenizer,args.output)
     else:

@@ -173,7 +173,7 @@ Per-seed test accuracy (%), in seed order 42 / 43 / 44.
 
 Sources: [A/P6/P7-simple results](../artifacts/finetune-monitor-20261007-a07/summary.json), [P6-iso results](../artifacts/p6iso-finetune-monitor-20261007-a03/summary.json), [fine-tuning protocol](SUPERVISED_FINETUNING_20261007.md).
 
-**STS-B and BoolQ: no final results.** The queue stopped before fine-tuning: A/STSB passed its numerical gate, but A/BoolQ exceeded the FA4-versus-SDPA logit relative-L2 limit (2.175% versus 2%). Gradient relative L2 was 1.261%, within its 5% limit. These checks used synthetic inputs, not benchmark test scores; the cause needs investigation. Automatic burns resumed on all eight GPUs. Planned evaluation remains STS-B official test Pearson/Spearman and BoolQ public-validation accuracy, with separate development data for selection. [Failure record](SUPERVISED_FINETUNING_20261007.md#sts-bboolq-stopped-at-numerical-gate--8-october-2026).
+**STS-B and BoolQ: no final results.** The queue stopped before fine-tuning: A/STSB passed its numerical gate, but A/BoolQ exceeded the FA4-versus-SDPA logit relative-L2 limit (2.175% versus 2%). Gradient relative L2 was 1.261%, within its 5% limit. These checks used synthetic inputs, not benchmark test scores; the FP32 diagnostic later traced this to the approximate BF16 reference. The corrected gate compares against full FP32 math SDPA; a fresh gated retry is being prepared. Automatic burns resumed on all eight GPUs after the diagnostic. Planned evaluation remains STS-B official test Pearson/Spearman and BoolQ public-validation accuracy, with separate development data for selection. [Failure record](SUPERVISED_FINETUNING_20261007.md#sts-bboolq-stopped-at-numerical-gate--8-october-2026).
 
 ## Evaluation-only proxy ablations
 

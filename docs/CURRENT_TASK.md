@@ -1,3 +1,21 @@
+## STS-B/BoolQ FP32-reference retry prepared — 8 October 2026
+
+User authorized fixing the failed acceptance checks. B200 diagnostic a9a8a75 /
+monitor 671f089 reproduced the failure: A/BoolQ FA4 versus FP32 logits 1.067%,
+BF16 SDPA versus FP32 2.271%; FA4 also passed on real training examples.
+The gate now uses full FP32 math SDPA with TF32/autocast disabled as reference,
+retains 2% logits/5% gradient limits and adds a 2% pooled-hidden check. Original
+synthetic and real training fixtures must both pass. Training code/recipe are
+unchanged. Sixteen focused CPU tests passed in 11.963 s in sampling_b200;
+initial attempt in legacy train_env had an incompatible Transformers version.
+No environments were modified. Evidence: temp/finetune-fp32-reference-tests-a02.log
+and artifacts/finetune-numerics-monitor-20261008-a02/.
+Fresh retry root supervised-stsb-boolq-20261008-a02, all 97 stages retained;
+eight-GPU smoke/reload precedes production. Prior outputs preserved. Config
+copy/accelerate env, exact data audit, identity-checked burn reclamation, free
+GPU verification and automatic final burns remain required. Launch/production
+status still needs verification. Full diagnosis: SUPERVISED_FINETUNING_20261007.md.
+
 ## STS-B/BoolQ stopped at numerical gate — 8 October 2026
 
 Monitor `e525455`, 02:40:08 Singapore: queue failed at 01:59:06 Singapore,

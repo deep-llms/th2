@@ -5,6 +5,7 @@ from dataclasses import asdict
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -36,6 +37,43 @@ class ExtendedFinetuneTests(unittest.TestCase):
         actual=metrics((np.array([[0.],[2.],[1.],[3.]]),np.arange(4.)))
         self.assertAlmostEqual(actual['pearson'],.8);self.assertAlmostEqual(actual['spearman'],.8)
         self.assertEqual(metrics((np.ones((4,1)),np.arange(4.)))['correlation'],0.)
+
+    def test_fp32_reference_runs_all_task_gradients_and_restores_state(self):
+        from scripts.finetune_study import numerical_check, check_numerical_limits
+        from tests.test_fa4_baseline import reference_kernel
+        with patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{'version':'CPU-test-double'})):
+            for arm in ('A','P6','P6-iso','P7-simple'):
+                for regression in (False,True):
+                    with self.subTest(arm=arm,regression=regression):
+                        model=PairClassifier(make_model(arm,'fa4'),1 if regression else 2,42)
+                        inputs=PairCollator(31,regression=regression)([
+                            dict(input_ids=[2,3,31],labels=.5 if regression else 0),
+                            dict(input_ids=[4,5,6,31],labels=3.5 if regression else 1)])
+                        before={k:v.clone() for k,v in model.state_dict().items()}
+                        flags=torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32
+                        report=numerical_check(model,inputs)
+                        check_numerical_limits(report)
+                        self.assertLess(report['logit_relative_l2'],1e-5)
+                        self.assertLess(report['gradient_relative_l2'],1e-5)
+                        self.assertEqual(report['reference_gradients']['status'],'passed')
+                        self.assertEqual(model.wrapped.attention_backend,'fa4')
+                        self.assertEqual(flags,(torch.backends.cuda.matmul.allow_tf32,torch.backends.cudnn.allow_tf32))
+                        for k,v in model.state_dict().items():torch.testing.assert_close(v,before[k],rtol=0,atol=0)
+                        self.assertTrue(all(p.grad is None for p in model.parameters()))
+
+    def test_numerical_limits_reject_errors_and_nonfinite_results(self):
+        from scripts.finetune_study import check_numerical_limits
+        # Observed A/BoolQ FA4 versus FP32; BF16 SDPA was the inaccurate reference.
+        good=dict(logit_relative_l2=.01067456,gradient_relative_l2=.01144959,
+                  hidden_relative_l2=.00469895,logit_max_absolute=.00426087,
+                  loss_absolute=.00013352,fa4_calls=28,buffers_unchanged=True)
+        check_numerical_limits(good)
+        for key,value in [('logit_relative_l2',.02),('gradient_relative_l2',.05),
+                          ('hidden_relative_l2',.02),('fa4_calls',0),('buffers_unchanged',False),
+                          ('logit_relative_l2',float('nan')),('gradient_relative_l2',float('inf')),
+                          ('loss_absolute',float('nan'))]:
+            with self.subTest(key=key,value=value),self.assertRaises(ValueError):
+                check_numerical_limits(dict(good,**{key:value}))
 
     def test_grouped_split_is_fixed_disjoint_and_ignores_hidden_test(self):
         rows=[dict(passage=f'a {i}',question=f'b {i}',label=i%2) for i in range(40)]
@@ -136,6 +174,10 @@ class ExtendedFinetuneTests(unittest.TestCase):
             root=Path(tmp);jobs=make_jobs(root/'study',Path.cwd(),'/data','/manifest',dict(A='/A',P6='/P6',**{'P6-iso':'/iso','P7-simple':'/P7'}),tasks=('stsb','boolq'))
             load_jobs(root/'study/jobs.json')
             self.assertEqual(len(jobs),97)
+            gates=[j for j in jobs if j['name'].startswith('gate-')]
+            self.assertEqual(len(gates),8)
+            for job in gates:
+                self.assertIn('--data-root',job['argv']);self.assertIn('--manifest',job['argv'])
             fits=[i for i,j in enumerate(jobs) if j['name'].startswith(('search-','confirm-'))]
             tests=[i for i,j in enumerate(jobs) if j['name'].startswith('test-')]
             self.assertEqual(len(fits),32);self.assertEqual(len(tests),24);self.assertLess(max(fits),min(tests))

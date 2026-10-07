@@ -417,3 +417,49 @@ temp/stsb-boolq-monitor-20261008-a02.log, SHA256
 8c211dd0343bda3c08c86eb8ede1d4280e46538e99760d4b014c3ffa3a1d79cb.
 commands #0. Read-only check only; no relaunch, threshold change, process stop,
 or cleanup. Next step is diagnose the backend comparison before a new launch.
+
+
+## FP32 diagnosis and acceptance-check correction — 8 October 2026
+
+Read-only B200 diagnostic `a9a8a75`, collected by monitor `671f089` at 02:57:55
+Singapore, reproduces the failed A/BoolQ fixture exactly. Its 2.175% pairwise
+logit disagreement was not an FA4-versus-exact result: both operands were BF16.
+Against full FP32 math SDPA (autocast and TF32 disabled), FA4's logit error is
+1.067%, while BF16 SDPA's is 2.271%. The random task head amplifies rounding:
+pooled hidden-state disagreement between the BF16 backends is only .477%;
+computing both heads in FP32 lowers their logit disagreement to 1.378%.
+No classifier or training implementation was changed in response.
+
+FA4 versus FP32 reference, identical original weights and task heads:
+
+| Task / input | Logit relative L2 | Hidden relative L2 | Gradient relative L2 |
+|---|---:|---:|---:|
+| BoolQ / original synthetic fixture | 1.067% | .470% | 1.145% |
+| BoolQ / first two training examples | 1.553% | .568% | 1.292% |
+| STS-B / original synthetic fixture | .865% | .470% | 1.011% |
+| STS-B / first two training examples | .303% | .485% | 1.034% |
+
+These are bounded numerical checks, not downstream benchmark scores or proof
+of arbitrary long-run equivalence. All diagnostic jobs finished, then automatic
+communicating burns were verified at 02:57:46 (workers 357616–357623).
+Artifacts: `artifacts/finetune-numerics-monitor-20261008-a02/diagnostics/`.
+Diagnostic source: `scripts/diagnose_finetune_numerics.py`.
+
+The production acceptance check now compares BF16 FA4 with **full FP32 math
+SDPA**, keeping the original logit <2% and whole-gradient <5% requirements.
+It also requires pooled-hidden relative L2 <2%, finite gradients on all expected
+parameters, actual FA4 calls and unchanged normalization buffers. Both the
+original synthetic fixture and the first two real training examples must pass
+for each task/arm. No test-set examples are used. Failure reports are preserved
+as JSON with failed status; no failure can advance the queue. TF32/backend/hook
+settings are restored after checks. The training model, task head, precision,
+optimizer, data, seeds and LR selection protocol are unchanged.
+
+Using a full-precision reference avoids treating one approximate fused backend
+as exact. PyTorch documents that fused SDPA implementations can differ
+numerically and exposes the math backend for reference computations:
+[SDPA documentation](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention).
+
+A fresh 97-stage retry is being prepared under `supervised-stsb-boolq-20261008-a02`.
+All eight task/arm gates and distributed smoke/reload checks must pass before
+production fits. Previous failed outputs remain intact.
