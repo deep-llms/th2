@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "repositories": [
+    {
+      "repo_id": "sentence-transformers/stsb",
+      "revision": "ab7a5ac0e35aa22088bdcf23e7fd99b220e53308",
+      "path": "stsb",
+      "tasks": [
+        "stsb"
+      ],
+      "files": [
+        {
+          "path": "stsb/train-00000-of-00001.parquet",
+          "source_path": "data/train-00000-of-00001.parquet",
+          "bytes": 470612,
+          "sha256": "eae324ff1eac2d0ba769851736eb7232eda64f370a16eb20e74a2c5f8f5fafe0"
+        },
+        {
+          "path": "stsb/validation-00000-of-00001.parquet",
+          "source_path": "data/validation-00000-of-00001.parquet",
+          "bytes": 142187,
+          "sha256": "9c6e0e9881f1b398abe3e439a482f4686305c3784568c462f6bba58bdff03b0a"
+        },
+        {
+          "path": "stsb/test-00000-of-00001.parquet",
+          "source_path": "data/test-00000-of-00001.parquet",
+          "bytes": 108100,
+          "sha256": "8acbc291c50977d8655934952956016c3e049c2fe04f8a6c454c1bf6acc42ca1"
+        }
+      ],
+      "load_configs": {
+        "stsb": {
+          "loader": "parquet",
+          "data_files": {
+            "train": [
+              "stsb/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "stsb/validation-00000-of-00001.parquet"
+            ],
+            "test": [
+              "stsb/test-00000-of-00001.parquet"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "repo_id": "aps/super_glue",
+      "revision": "3de24cf8022e94f4ee4b9d55a6f539891524d646",
+      "path": "boolq",
+      "tasks": [
+        "boolq"
+      ],
+      "files": [
+        {
+          "path": "boolq/train-00000-of-00001.parquet",
+          "source_path": "boolq/train-00000-of-00001.parquet",
+          "bytes": 3846588,
+          "sha256": "41e2ce07ac0d3bcd411bd4b6326bab2cff5fa67bacdbbcea74bb9e001ec635d3"
+        },
+        {
+          "path": "boolq/validation-00000-of-00001.parquet",
+          "source_path": "boolq/validation-00000-of-00001.parquet",
+          "bytes": 1313731,
+          "sha256": "f46438b8cce048184552a2bfcdb8252eadb3a2602f0c22334caccd9b6ea547d6"
+        }
+      ],
+      "load_configs": {
+        "boolq": {
+          "loader": "parquet",
+          "data_files": {
+            "train": [
+              "boolq/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "boolq/validation-00000-of-00001.parquet"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

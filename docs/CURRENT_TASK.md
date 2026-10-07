@@ -6,9 +6,12 @@ Two learning rates (1e-5/3e-5) on seed42, selected-rate confirmations43/44;
 3 epochs per task, same eight-GPU HF Trainer recipe. STS-B scalar MSE head,
 Pearson/Spearman reporting and their mean for selection. BoolQ cross-entropy
 and accuracy. No SST-2/WiC or pretraining queued in this extension.
-Pinned raw train/validation files: resources/supervised_english_20261008.json.
-Public validation is the final holdout; fixed grouped 10% of training for
-selection, seed42 independent of fine-tuning seed. Official test files unused.
+Final data manifest: resources/supervised_english_20261008_v2.json.
+Following user clarification, STS-B uses sentence-transformers/stsb official
+train/dev/test with public test labels (score 0–1 converted back to 0–5).
+BoolQ uses public validation as final holdout and fixed grouped 10% of training
+for development. Initial GLUE-only download 77a41a6 completed but is superseded;
+no training used it. New data root supervised-english-20261008-v2.
 Download via controller #d while implementing/testing locally; GPU burns stay
 running until numerical/smoke launch preflight. New root planned:
 /mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a01.
