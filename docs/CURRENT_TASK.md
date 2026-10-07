@@ -1,3 +1,26 @@
+## Downstream evaluation complete — 7 October 2026
+
+Monitor `764d872`, 16:41:20 Singapore: all 15 stages and all 99 model–task
+evaluations passed. Eleven checkpoint-2500 models, nine English tasks,
+23,596 examples each, zero-shot seed 42, FA4. A leads both descriptive
+macro-averages: raw accuracy 40.947%, normalized-where-available 41.113%.
+No variant exceeds A overall; individual-task gains remain single-seed.
+Full tables/protocol: docs/DOWNSTREAM_EVAL_20261007.md.
+66 small artifacts hash-verified under artifacts/downstream-monitor-20261007-a08/.
+GPU burns automatically restored and verified at 16:41:13; workers 314038–314045
+remain active on all eight GPUs at 100%. No work queued; commands set to #0.
+
+## Full downstream evaluation running — 7 October 2026
+
+Monitor `963c243` at 16:27:02 Singapore: all eleven CUDA acceptance checks,
+all eleven nine-task smoke evaluations, and smoke provenance/count validator
+passed. Full evaluation began 16:26:22, first eight models active, P4/P5/P4-iso
+queued. 23,596 examples per model; nine English tasks; zero-shot seed 42, FA4.
+All 31 benchmark files verified against pinned hashes and local document hashes.
+Separate eval_fa4 env verified; training envs unchanged. Automatic final burn
+handoff remains configured. No scientific downstream results complete yet.
+See docs/DOWNSTREAM_EVAL_20261007.md for paths and acceptance evidence.
+
 ## Authorized downstream evaluation — 7 October 2026
 
 User authorized downstream evaluation of A plus all ten completed P4–P7 arms.
