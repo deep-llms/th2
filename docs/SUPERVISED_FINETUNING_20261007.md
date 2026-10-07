@@ -523,3 +523,27 @@ infrastructure error. commands.sh restored locally to#0; no further execution
 remote push attempted. Wait for operator repair, then read-only inspect the
 EXISTING a03 queue before considering any new launch. Earlier a01/a02 output
 roots are preserved and their failures are documented.
+
+
+## Runner recovered; numerical gates and smoke checks progressing — 8 October 2026
+
+Read-only monitor 48e3b5e, GPU timestamp 2026-10-07 19:45:30 UTC
+(03:45:30 Singapore, 8 October), verified the existing a03 queue is running.
+The runner recovered and delivered the previously failed a07 monitor; no
+training relaunch, process signaling, cleanup or numerical changes were made.
+
+All eight fp32_task_v2 numerical gates passed. Five of eight arm/task pairs
+completed distributed smoke training, reload and validation: A and P6 on both
+tasks, plus P6-iso/STSB. P6-iso/BoolQ smoke was starting with eight ranks;
+P7-simple smoke checks remain. Queue: 23 of 97 stages completed, none failed.
+The instantaneous GPU snapshot caught the transition before workers attached;
+it does not establish sustained GPU utilization. Full fitting and final
+benchmark scores are not yet available. Automatic final burns remain configured,
+not currently verified as running. Leave this queue in place.
+
+Evidence: artifacts/stsb-boolq-monitor-20261008-a08/ (28 source-SHA256-verified
+JSON artifacts), temp/stsb-boolq-monitor-20261008-a08.log SHA256
+94e96b6e88734a2e061ca6626e0e1c14b48536465d516489da49cb66c0ef39f4.
+Output root: /mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a03.
+commands.sh returned to #0 after this read-only check. Next: inspect completion
+of remaining smoke/reload checks and subsequent production fitting.
