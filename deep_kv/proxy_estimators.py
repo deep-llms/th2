@@ -84,6 +84,11 @@ class AnticipatoryHead(nn.Module):
         return (self.w2(F.silu(self.w1(u))),)
 
     def routed(self,u,settings):
+        # Downstream classification has no auxiliary loss. Opt into full task
+        # gradients only through its wrapper; pretraining isolation is unchanged.
+        if getattr(self, 'task_finetuning', False):
+            value = self.estimates(u)[0]
+            return value, value
         if settings.isolate_estimator:
             value = self.estimates(u.detach())[0]
             return value.detach(), self.estimates(u.detach())[0] if settings.aux_recompute else value

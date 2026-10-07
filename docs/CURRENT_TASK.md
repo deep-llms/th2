@@ -1,3 +1,20 @@
+## P6-iso supervised extension authorized — 7 October 2026
+
+User clarified that the strongest P6 variant should also receive fine-tuning,
+and confirmed proceeding with P6-iso. Earlier P6 was stronger on zero-shot
+benchmarks; P6-iso had the best held-out LM loss. Run P6-iso only and reuse the
+completed A/P6/P7-simple results. Same tasks, data, seeds, LR search and Trainer
+recipe: 8 full fitting runs and 6 final tests, preceded by CUDA and eight-GPU
+smoke/reload gates. Fresh root supervised-p6iso-20261007-a01. No new pretraining.
+
+The classification wrapper enables end-to-end task gradients through P6-iso's
+predictor, as for P7-simple. This is a downstream-only mode: forward values,
+checkpoint keys, and default pretraining gradient isolation remain unchanged.
+No auxiliary objective or normalization updates. Numerical, gradient and
+save/reload tests must pass before production. Reverify/copy Accelerate config,
+stop only verified authorized burns, require free GPUs, and retain automatic
+communicating burn restoration after success/failure.
+
 ## Supervised study complete — 7 October 2026
 
 Monitor `57be0de`, 13:41:06 UTC: all 58 stages passed, including 24 full fits

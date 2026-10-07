@@ -1,6 +1,6 @@
 # Supervised downstream study: A, P6, P7-simple
 
-User authorized these three arms (P6, **not P6-iso**), starting from their
+The initial study ran these three arms (P6, not P6-iso), starting from their
 existing seed-42, step-2500 FA4 checkpoints. This is task-specific supervised
 adaptation, separate from the completed zero-shot screen.
 
@@ -215,3 +215,36 @@ Log `temp/finetune-monitor-20261007-a07.log`, SHA256
 Per-example prediction arrays remain on B200; the successful remote summary
 validator checked their shapes, finite values, label/order consistency, and
 recomputed accuracy. Small result receipts and summary have been pulled locally.
+
+## P6-iso supervised extension authorized — 7 October 2026
+
+User clarified that the strongest P6 variant should also receive fine-tuning,
+and confirmed proceeding with P6-iso. Earlier P6 was stronger on zero-shot
+benchmarks; P6-iso had the best held-out LM loss. Run P6-iso only and reuse the
+completed A/P6/P7-simple results. Same tasks, data, seeds, LR search and Trainer
+recipe: 8 full fitting runs and 6 final tests, preceded by CUDA and eight-GPU
+smoke/reload gates. Fresh root supervised-p6iso-20261007-a01. No new pretraining.
+
+The classification wrapper enables end-to-end task gradients through P6-iso's
+predictor, as for P7-simple. This is a downstream-only mode: forward values,
+checkpoint keys, and default pretraining gradient isolation remain unchanged.
+No auxiliary objective or normalization updates. Numerical, gradient and
+save/reload tests must pass before production. Reverify/copy Accelerate config,
+stop only verified authorized burns, require free GPUs, and retain automatic
+communicating burn restoration after success/failure.
+
+Prepared launch: `th2-tjx3-supervised-p6iso-20261007-a01`, fresh root
+`/mnt/local/_outputs/deep-llms_th2/supervised-p6iso-20261007-a01`.
+20 stages: 1 CUDA gate, 2 distributed smoke/reload stages, 4 LR search fits,
+2 development selectors, 4 confirmation fits, 6 final tests, 1 validator.
+The checkpoint SHA256 is pinned to the already evaluated P6-iso weights:
+`6bd57582187722caa6e7ca1b504993c40eb9cbc89f086079ca7f8b61d7ded8cf`.
+Preflight also compares all generated task configurations to the previous P6
+study, permitting only arm/checkpoint and fresh output/selection paths to differ.
+No production execution is claimed until remote gates return successfully.
+
+Local verification before this extension: all 24 fine-tuning/anticipatory-proxy
+tests passed in 130.098 s. Includes both attention paths, default isolation,
+P6-iso full entry-point save/reload/test, recipe matching, pretraining resume,
+custom autograd/compilation and two-rank DDP regressions. Log:
+`temp/finetune-p6iso-local-tests.log`.

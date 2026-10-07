@@ -6,6 +6,7 @@ import statistics
 import sys
 
 ARMS = ('A', 'P6', 'P7-simple')
+SUPPORTED_ARMS = (*ARMS, 'P6-iso')
 TASKS = ('paws', 'nli')
 RATES = (1e-5, 3e-5)
 SEEDS = (42, 43, 44)
@@ -49,6 +50,9 @@ def resolve_eval(config, selection, output):
 
 
 def make_jobs(root, project, data_root, manifest, checkpoints):
+    arms = tuple(checkpoints)
+    if not arms or any(arm not in SUPPORTED_ARMS for arm in arms):
+        raise ValueError('Select at least one supported fine-tuning arm')
     root, project = Path(root).resolve(), Path(project).resolve()
     run = root/'supervised/run'; configs=root/'configs'
     jobs=[]
@@ -75,18 +79,18 @@ def make_jobs(root, project, data_root, manifest, checkpoints):
         argv=['{python}','-m','accelerate.commands.launch','--config_file',str(project/'resources/accelerate_config.yaml'),
               '--main_process_port','29647','--module','eval.finetune',str(file)]
         add(name,argv,str(Path(cfg['output_dir']).relative_to(run)/'result.json'))
-    for arm in ARMS:
+    for arm in arms:
         name='gate-'+arm;out='gates/'+arm+'.json'
         jobs.append(dict(name=name,gpus=[0],timeout_seconds=900,
             argv=['{python}','-u','-m','scripts.finetune_study','gate','--checkpoint',checkpoints[arm],'--output','{run_dir}/'+out],
             required_outputs=[dict(path=out,json_equals={'status':'passed','arm':arm})]))
-    for arm in ARMS:
+    for arm in arms:
         dest='smoke/'+arm
         train_job('smoke-'+arm,config_for(arm,'paws',42,1e-5,dest,smoke=True))
         train_job('smoke-reload-'+arm,config_for(arm,'paws',42,1e-5,'smoke-eval/'+arm,
                                               smoke=True,evaluation=str(run/dest)))
     for task in TASKS:
-        for arm in ARMS:
+        for arm in arms:
             paths=[]
             for rate in RATES:
                 dest=f'search/{task}/{arm}/lr-{rate:g}'
@@ -96,14 +100,14 @@ def make_jobs(root, project, data_root, manifest, checkpoints):
             add(f'select-{task}-{arm}',['{python}','-m','scripts.finetune_study','select','--runs',*paths,'--output','{run_dir}/'+out],
                 out,False,{'status':'selected','arm':arm,'task':task})
     for task in TASKS:
-        for arm in ARMS:
+        for arm in arms:
             selection=str(run/f'selections/{task}-{arm}.json')
             for seed in SEEDS[1:]:
                 train_job(f'confirm-{task}-{arm}-{seed}',config_for(arm,task,seed,1e-5,
                     f'confirm/{task}/{arm}/seed-{seed}',selection=selection))
     # No test scoring until every development search/confirmation run completes.
     for task in TASKS:
-        for arm in ARMS:
+        for arm in arms:
             selection=str(run/f'selections/{task}-{arm}.json')
             for seed in SEEDS:
                 name=f'test-{task}-{arm}-{seed}';dest=f'test/{task}/{arm}/seed-{seed}'
@@ -115,20 +119,22 @@ def make_jobs(root, project, data_root, manifest, checkpoints):
                           '--selection',selection,'--resolved',str(resolved),'--project',str(project)]
                     add(name,argv,dest+'/result.json')
                 else: train_job(name,cfg)
-    add('summary',['{python}','-m','scripts.finetune_study','summary','--root','{run_dir}','--output','{run_dir}/summary.json'],
+    add('summary',['{python}','-m','scripts.finetune_study','summary','--root','{run_dir}','--output','{run_dir}/summary.json','--arms',*arms],
         'summary.json',False,{'status':'passed'})
     write(root/'jobs.json',{'jobs':jobs})
     return jobs
 
 
-def summary(root, output):
+def summary(root, output, arms=ARMS):
     import numpy as np
+    if not arms or len(set(arms)) != len(arms) or any(arm not in SUPPORTED_ARMS for arm in arms):
+        raise ValueError('Select distinct supported fine-tuning arms')
     root=Path(root); table={}
     expected_hashes={}
     for task in TASKS:
         table[task]={}
         labels_ref=None
-        for arm in ARMS:
+        for arm in arms:
             scores=[]
             selection=json.loads((root/f'selections/{task}-{arm}.json').read_text())
             for seed in SEEDS:
@@ -202,12 +208,13 @@ def main():
     p=argparse.ArgumentParser();sub=p.add_subparsers(dest='mode',required=True)
     s=sub.add_parser('select');s.add_argument('--runs',nargs='+',required=True);s.add_argument('--output',required=True)
     s=sub.add_parser('summary');s.add_argument('--root',required=True);s.add_argument('--output',required=True)
+    s.add_argument('--arms',nargs='+',choices=SUPPORTED_ARMS,default=ARMS)
     s=sub.add_parser('gate');s.add_argument('--checkpoint',required=True);s.add_argument('--output',required=True)
     s=sub.add_parser('selected-test')
     for name in ('config','selection','resolved','project'):s.add_argument('--'+name,required=True)
     args=p.parse_args()
     if args.mode=='select':select(args.runs,args.output)
-    elif args.mode=='summary':summary(args.root,args.output)
+    elif args.mode=='summary':summary(args.root,args.output,args.arms)
     elif args.mode=='gate':gate(args.checkpoint,args.output)
     else:
         import subprocess
