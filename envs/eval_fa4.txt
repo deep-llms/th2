@@ -1,0 +1,12 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+# Separate downstream environment; leave training and existing eval environments intact.
+torch==2.14.1
+transformers==5.9.0
+datasets==4.8.5
+accelerate==1.13.0
+lm_eval[hf]==0.4.10
+sentencepiece==0.2.2
+flash-attn-4[cu13]==4.0.0b33
+nvidia-cutlass-dsl==4.8.0
