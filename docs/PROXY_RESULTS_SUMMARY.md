@@ -1,6 +1,6 @@
 # Proxy arms: perplexity and downstream results
 
-Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. B200 checked at 03:45 Singapore: the runner connection recovered. All eight STS-B/BoolQ numerical gates and five of eight distributed smoke/reload pairs passed; remaining smoke checks are running. Full fitting and final scores are not yet available.
+Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. B200 checked at 04:48 Singapore: all STS-B/BoolQ numerical and smoke/reload checks passed; 27 of 32 production fine-tuning fits are complete, with P6/BoolQ seed 44 running. Final test-set evaluations and scores remain pending.
 
 ## Setup and interpretation
 
@@ -173,7 +173,7 @@ Per-seed test accuracy (%), in seed order 42 / 43 / 44.
 
 Sources: [A/P6/P7-simple results](../artifacts/finetune-monitor-20261007-a07/summary.json), [P6-iso results](../artifacts/p6iso-finetune-monitor-20261007-a03/summary.json), [fine-tuning protocol](SUPERVISED_FINETUNING_20261007.md).
 
-**STS-B and BoolQ: no final results.** Two acceptance attempts stopped before fitting. The first used BF16 SDPA as the reference; the second exposed sensitivity of relative raw logits from a random two-class head. The corrected gate uses FP32 math SDPA, bounds classification probability/loss differences, and retains hidden-state/gradient checks and the regression output check. The fresh retry is launched with the training model and recipe unchanged. All eight numerical gates passed. A and P6 passed smoke/save/reload on both tasks, and P6-iso passed on STS-B; P6-iso/BoolQ smoke was starting at the latest snapshot. Full fitting has not started. [Diagnosis and acceptance criteria](SUPERVISED_FINETUNING_20261007.md#task-output-gate-correction--8-october-2026).
+**STS-B and BoolQ: no final results.** Two acceptance attempts stopped before fitting. The first used BF16 SDPA as the reference; the second exposed sensitivity of relative raw logits from a random two-class head. The corrected gate uses FP32 math SDPA, bounds classification probability/loss differences, and retains hidden-state/gradient checks and the regression output check. The fresh retry is launched with the training model and recipe unchanged. All eight numerical gates and all eight smoke/save/reload validations passed. At 04:48 Singapore, 27 of 32 production fits were complete; P6/BoolQ seed 44 was running. All eight development selectors chose 3e-5. The 24 final evaluations have not started. [Diagnosis and acceptance criteria](SUPERVISED_FINETUNING_20261007.md#task-output-gate-correction--8-october-2026).
 
 ## Evaluation-only proxy ablations
 

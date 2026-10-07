@@ -547,3 +547,30 @@ JSON artifacts), temp/stsb-boolq-monitor-20261008-a08.log SHA256
 Output root: /mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a03.
 commands.sh returned to #0 after this read-only check. Next: inspect completion
 of remaining smoke/reload checks and subsequent production fitting.
+
+## B200 STS-B/BoolQ fitting progress — 8 October 2026, 04:48 Singapore
+
+Read-only monitor b855d9d verified the existing supervised-stsb-boolq-20261008-a03
+queue at GPU time 2026-10-07 20:48:54 UTC (04:48:54 Singapore, 8 October).
+67/97 stages complete, one running, no failures. All eight numerical gates and
+all eight training/save/reload smoke validations passed. All 16 LR-search fits,
+all eight dev-only selectors and 11/16 seed-confirmation fits completed: 27/32
+production fits done. Every selector chose 3e-5. These are development choices,
+not final test-set results.
+
+Currently confirm-boolq-P6-44, after epoch 2, with workers 390794–390801 on all
+eight GPUs; seven GPUs at 100% and GPU 0 at 0% in this instantaneous snapshot.
+Four further fits follow: P6-iso and P7-simple on BoolQ, seeds 43/44. Then 24
+final evaluations and the summary; no final evaluation files exist yet. Automatic
+final burn restoration remains configured; training workers currently own GPUs.
+
+Pulled 72 source-SHA256-verified artifacts into
+artifacts/stsb-boolq-monitor-20261008-a09/. Source log:
+temp/stsb-boolq-monitor-20261008-a09.log, SHA256
+4551262176cd816c7ef0e885e8b33aa957ca861f1ddeb525e6983d18d4425f90.
+Read-only deployment used /disk/thuat/deep2shallow-status, branch b200-status,
+starting at deployed 4c570ea; no new P6 code was synced into the active queue.
+Remote main is 8420052 with commands #0. Its status-only commits were merged
+into local main; new P6 implementation/review commits remain local. No launch,
+process stop, cleanup, or environment change on B200. Next: inspect the remaining
+fits and final held-out evaluations.
