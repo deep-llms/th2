@@ -1,3 +1,29 @@
+## Runner SSH/DNS failure; corrected queue status unknown — 8 October 2026
+
+Final code correction and fresh retry pushed as d866142. Seventeen focused
+CPU tests passed in12.556s (sampling_b200), including real Trainer reload and
+classification offset-invariance/error-rejection checks. Production task model,
+head precision, optimizer and data recipe unchanged. See SUPERVISED_FINETUNING.
+Fresh output: supervised-stsb-boolq-20261008-a03 (97-stage queue).
+
+Last successful monitor939da7f at03:28:50 Singapore: preflight and identical data
+audit passed; Accelerate config copied/verified. Only verified burn workers
+358890–358897 reclaimed at03:26:50; GPUs free at03:27:20. A/STSB gate passed;
+A/BoolQ running. All-arm gates, distributed smoke/reload and production fitting
+are NOT yet verified. Automatic final burns remain configured.
+
+Monitor48861de (th2-tjx3-stsb-boolq-monitor-20261008-a07) failed at the runner's
+SSH/DNS layer: `ssh: Could not resolve hostname <host>: nodename nor servname
+provided, or not known` (rc255). Raw controller timestamp2026-10-07 12:31:35;
+Dropbox status modified2026-10-07T19:31:38Z. Do not infer the GPU job stopped.
+Evidence: artifacts/stsb-boolq-monitor-20261008-a06/ and
+artifacts/stsb-boolq-monitor-20261008-a07-blocked/controller-error.json.
+No resubmission, signaling, cleanup or backend/threshold change after this
+infrastructure error. commands.sh restored locally to#0; no further execution
+remote push attempted. Wait for operator repair, then read-only inspect the
+EXISTING a03 queue before considering any new launch. Earlier a01/a02 output
+roots are preserved and their failures are documented.
+
 ## Task-output acceptance correction prepared — 8 October 2026
 
 Retry 969d197 failed before production at P7-simple/BoolQ real-input gate;
