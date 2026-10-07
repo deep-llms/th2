@@ -2,7 +2,7 @@
 import json
 import copy
 from pathlib import Path
-from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARIANTS, anticipatory_layout, code_loss_weight, kv_loss_weight
+from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout, code_loss_weight, kv_loss_weight
 
 
 def comparable_config(config):
@@ -10,8 +10,8 @@ def comparable_config(config):
     config = copy.deepcopy(config)
     arm=config['pilot'].pop('arm')
     if arm in MEMORY_ARMS:
-        expected=dict(proxy_isolate_estimator=True,proxy_target_version='p4p6-r1' if arm=='P7-simple' else 'p7-r1',
-                      proxy_lookahead=4,proxy_loss_form='cosine',proxy_groups=2)
+        expected=dict(proxy_isolate_estimator=True,proxy_target_version='p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1',
+                      proxy_lookahead=2 if arm=='P7-simple-short' else 4,proxy_loss_form='cosine',proxy_groups=2)
         if (any(config['pilot'].get(k)!=v for k,v in expected.items())
                 or config['pilot'].get('proxy_alpha_init',0)!=0
                 or config['pilot'].get('proxy_kv_mode','kv')!='kv'
@@ -19,6 +19,7 @@ def comparable_config(config):
                 or config['pilot'].get('proxy_aux_recompute',False)
                 or config['pilot'].get('proxy_compile_estimator',False)):
             raise ValueError('P7 configuration does not match its arm definition')
+        config['pilot']['proxy_lookahead'] = 4
         for key in ('proxy_alpha_init','proxy_isolate_estimator','proxy_module_seed',
                     'proxy_aux_recompute','proxy_compile_estimator'):
             config['pilot'].pop(key,None)
@@ -95,7 +96,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             raise ValueError('Incorrect screening seed')
         if config['pilot'].get('proxy_screen') and (arm.startswith(('P1-', 'P3-')) or arm in ANTICIPATORY_ARMS+MEMORY_ARMS):
             target = config.get('proxy_target')
-            version='p4p6-r1' if arm in ANTICIPATORY_ARMS or arm=='P7-simple' else 'p7-r1' if arm in MEMORY_ARMS else 'r7'
+            version='p4p6-r1' if arm in ANTICIPATORY_ARMS or arm in SIMPLE_MEMORY_ARMS else 'p7-r1' if arm in MEMORY_ARMS else 'r7'
             if not target or target.get('target_version') != version or config['pilot'].get('proxy_channel_mask'):
                 raise ValueError('Proxy arms require their versioned target definition without a channel mask')
             if arm in ANTICIPATORY_ARMS:
@@ -108,20 +109,22 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     raise ValueError('P4/P5/P6 target metadata does not match its definition or saved result')
             targets[arm] = target
             if arm in MEMORY_ARMS:
-                expected_target = dict(quantity='mlp_window_sum' if arm in ('P7-mlp','P7-simple') else 'four_block_increment',
-                    lookahead=4,bands=list(range(2,config['model_config']['num_hidden_layers']-2,2)),
+                bands, lookahead = (simple_memory_layout(arm,config['model_config']['num_hidden_layers'])
+                    if arm in SIMPLE_MEMORY_ARMS else (tuple(range(2,config['model_config']['num_hidden_layers']-2,2)),4))
+                expected_target = dict(quantity='mlp_window_sum' if arm in ('P7-mlp',)+SIMPLE_MEMORY_ARMS else 'four_block_increment',
+                    lookahead=lookahead,bands=list(bands),
                     normalization='running_per_channel',epsilon=1e-6,loss_form='cosine',
                     relational=dict(weight=.5,temperature=.1,queries=256,candidates='strictly_earlier_same_document',
                                     sampling='step_and_global_update_row_v1',normalization_epsilon=1e-6))
-                if arm=='P7-simple':expected_target.pop('relational')
+                if arm in SIMPLE_MEMORY_ARMS:expected_target.pop('relational')
                 if (any(target.get(k)!=v for k,v in expected_target.items())
-                        or (arm=='P7-simple' and 'relational' in target)
+                        or (arm in SIMPLE_MEMORY_ARMS and 'relational' in target)
                         or result.get('proxy',{}).get('target')!=target):
                     raise ValueError('P7 target metadata does not match its definition or saved result')
             for other, definition in targets.items():
                 # Families differ only in the raw target quantity and target index set.
                 ignored = set() if other[:2] == arm[:2] else {'quantity','bands'}
-                if arm in P6_VARIANTS or other in P6_VARIANTS:
+                if arm in P6_VARIANTS+P7_P6_VARIANTS or other in P6_VARIANTS+P7_P6_VARIANTS:
                     ignored |= {'bands','lookahead'}  # Validated arm-specific layouts above.
                 if arm in MEMORY_ARMS or other in MEMORY_ARMS:
                     ignored |= {'quantity','bands','target_version','relational'}
@@ -175,6 +178,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 if arm in nll and control in nll:summary['nll_differences'][arm+'-'+control]=nll[arm]-nll[control]
             for arm in P6_VARIANTS:
                 if arm in nll and 'P6-iso' in nll:summary['nll_differences'][arm+'-P6-iso']=nll[arm]-nll['P6-iso']
+            for arm in P7_P6_VARIANTS:
+                if arm in nll and 'P7-simple' in nll:summary['nll_differences'][arm+'-P7-simple']=nll[arm]-nll['P7-simple']
             for arm in MEMORY_ARMS[1:]:
                 if arm in nll and 'P7' in nll:summary['nll_differences'][arm+'-P7']=nll[arm]-nll['P7']
             summary['interpretation']='Token-matched exploratory comparison; time-matched A and initialization-seed spread are required for a screen success claim.'

@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS
+from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -172,7 +172,8 @@ def validate(args):
         receipt_names=result[backend+'_receipts']
         receipts=[read(folder/name) for name in receipt_names]
         assert {r['phase'] for r in receipts}=={'train','eval'}
-        attention_calls=40 if arm in MEMORY_ARMS else 28
+        memory_layers = simple_memory_layout(arm,28)[0] if arm in SIMPLE_MEMORY_ARMS else tuple(range(2,25,2))
+        attention_calls=28+len(memory_layers) if arm in MEMORY_ARMS else 28
         for r in receipts:
             assert r['arm']==arm and r['world_size']==8
             if backend=='fa4':
@@ -200,15 +201,15 @@ def validate(args):
                 assert (weights.get_tensor('sigma2')>=0).all()
                 gates=[weights.get_tensor(n) for n in weights.keys() if n.startswith('heads.') and n.endswith('.alpha')]
                 if arm in MEMORY_ARMS:
-                    assert not gates and config['pilot']['proxy_target_version']==('p4p6-r1' if arm=='P7-simple' else 'p7-r1')
-                    for layer in range(2,25,2):
-                        estimator=('w1.weight','w2.weight') if arm=='P7-simple' else ('conv','w_in.weight','w_out.weight')
+                    assert not gates and config['pilot']['proxy_target_version']==('p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1')
+                    for layer in memory_layers:
+                        estimator=('w1.weight','w2.weight') if arm in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight')
                         for suffix in estimator+('k_proj.weight','k_norm.weight')+(() if arm=='P7-kq' else ('v_proj.weight',)):
                             value=weights.get_tensor(f'heads.{layer}.{suffix}')
                             assert torch.isfinite(value).all() and value.abs().sum()>0
                         mass=result['evaluation'][f'eval_proxy_layer_{layer}_attention_mass']
                         assert math.isfinite(mass) and 0<=mass<=1
-                    assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm=='P7-simple' else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
+                    assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
                 else:
                     assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
         peak=result['training_cost']['peak_cuda_allocated_bytes'];assert peak<160*2**30

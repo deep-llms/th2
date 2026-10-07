@@ -4,6 +4,62 @@ Implemented against `proxy_arm_P7_spec.md`, Revision 2. The operator explicitly
 requested both dense SDPA and FA4; this extends the specification's SDPA-only
 implementation wording without changing the attention function or objective.
 
+## P7-simple variants based on P6-iso (8 October 2026)
+
+These transfer the two new P6-iso ablations to P7-simple. They are separate
+experiments, using the existing P7 consumer and training loop.
+
+| Arm | Proxy blocks, 1-based | Detached MLP target | P6 counterpart |
+|---|---|---|---|
+| `P7-simple` | 2, 4, …, 24 | `m_l + m_(l+1) + m_(l+2) + m_(l+3)` | `P6-iso` |
+| `P7-simple-sparse` | 2, 6, 10, 14, 18, 22 | Same four-block sum | `P6-iso-sparse` |
+| `P7-simple-short` | 2, 4, …, 24 | `m_l + m_(l+1)` | `P6-iso-short` |
+
+At each selected block, the bias-free 1024→256→1024 SiLU predictor receives
+`stopgrad(RMSNorm(h))`. Its output is RMS-normalized, detached for LM use, and
+projected into independent proxy K/V entries. The last four query heads
+(12–15, KV groups 6–7) attend jointly to native and proxy entries with one
+softmax. The other twelve query heads keep native attention. P7 does not add
+P6's residual injection or channel gate: the predicted information is consumed
+through attention. Causal document isolation and reset RoPE positions apply to
+both entry types. Dense SDPA and FA4 use the existing tested implementations.
+
+The target, predictor architecture, normalization, cosine auxiliary loss and
+its ramp `0.1 * min(step / 250, 1)` match the respective P6-iso counterpart.
+Auxiliary gradients reach only the predictor; LM gradients reach the backbone
+and proxy projections. There is no convolution, EMS or relational KL. Loss is
+averaged over tokens and active locations, so sparse placement preserves the
+auxiliary coefficient. The short variant keeps twelve locations and does not
+add late-block injections. Both variants' final target window ends at block 25.
+
+Sparse initialization preserves all retained predictors **and memory projections**
+from P7-simple under the same seeds; omitted heads do not remain in the model
+or optimizer. Its extra parameter count is 6,292,224, versus 12,584,448 for
+P7-simple/short. Sparse uses 34 attention calls per 28-block forward, versus 40
+for P7-simple/short. Actual throughput requires measurement. Both new arms
+require fresh training and cannot resume under a different arm or target.
+
+```bash
+python -m deep_kv make-jobs --config proxy_heads.b200.json \
+  --arms P7-simple-sparse P7-simple-short --seeds 42 --stop-after 2500 \
+  --output temp/p7-p6-variants-jobs.json
+```
+
+This generates the existing sequential eight-GPU queue only. Defaults resolve
+from the arm; omit `proxy_lookahead`. Conflicting placement, target, isolation,
+head allocation or gate overrides are rejected. Checkpoint evaluation and
+optional supervised fine-tuning support both variants, with task gradients
+re-enabled in fine-tuning as for P7-simple. Existing P7 and P6 definitions are
+unchanged. No research results or full-size CUDA validation exist for these
+new arms yet; they have not been added to the running B200 queue.
+
+Local verification: all 41 regression tests passed in 353.541 seconds, including
+full-depth target/initialization checks, gradient routing and accumulation,
+two-rank CPU DDP, exact Trainer resume, report guards, evaluation and fine-tuning.
+Three focused checks also passed (2.084 seconds). Logs:
+temp/p7-p6-regression.log and temp/p7-p6-focused.log. Both attention interfaces
+were tested on CPU; FA4 used an independent SDPA oracle, not its CUDA kernel.
+
 ## P7-simple — controlled memory comparison (6 October 2026)
 
 The operator approved a simpler P7 following the design review. Use

@@ -15,7 +15,7 @@ from safetensors.torch import load_file
 from datasets import Dataset
 from transformers import TrainingArguments, AutoTokenizer, TrainerControl
 
-from deep_kv import MEMORY_ARMS
+from deep_kv import MEMORY_ARMS, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS
 from deep_kv.fa4 import document_layout
 from deep_kv.model import Context
 from deep_kv.proxy import ProxyModel, ProxySettings, EMSPlan, compute_budget
@@ -93,7 +93,7 @@ class MemoryTests(unittest.TestCase):
             with self.assertRaises(ValueError):model(**options)
 
     def test_t2_t4_joint_softmax_native_heads_and_exact_gqa(self):
-        for arm in ('P7','P7-simple'):
+        for arm in ('P7',)+SIMPLE_MEMORY_ARMS:
             m=model(arm);ctx=batch();u=torch.randn(1,8,32);head=m.heads['2'];layer=m.backbone.model.layers[1]
             rotary=m.backbone.model.rotary_emb(u,ctx.position_ids);plan=MemoryPlan(ctx.segments)
             prediction=head.estimate(u,plan);calls=[]
@@ -197,7 +197,7 @@ class MemoryTests(unittest.TestCase):
                                     block_observer=lambda i,x:blocks.__setitem__(i,x.detach().float()))
                 for hook in hooks:hook.remove()
                 for layer in m.layers:
-                    expected=sum(mlps[i] for i in range(layer,layer+4)) if arm in ('P7-mlp','P7-simple') else blocks[layer+3]-blocks[layer-1]
+                    expected=sum(mlps[i] for i in range(layer,layer+(2 if arm=='P7-simple-short' else 4))) if arm in ('P7-mlp',)+SIMPLE_MEMORY_ARMS else blocks[layer+3]-blocks[layer-1]
                     torch.testing.assert_close(raw[layer],expected,rtol=0,atol=0)
 
     def test_simple_matches_p4_estimator_and_has_no_relational_work(self):
@@ -352,7 +352,7 @@ class MemoryTests(unittest.TestCase):
         ctx=batch();inputs=dict(input_ids=ctx.input_ids.repeat(2,1),labels=ctx.labels.repeat(2,1),
             attention_mask=ctx.valid.repeat(2,1),position_ids=ctx.position_ids.repeat(2,1),segments=ctx.segments.repeat(2,1))
         inputs['segments'][1]=torch.tensor([0,1,2,3,4,4,4,4]);inputs['position_ids'][1]=torch.tensor([0,0,0,0,0,1,2,3])
-        for arm in ('P7','P7-simple'):
+        for arm in ('P7',)+SIMPLE_MEMORY_ARMS:
             with tempfile.TemporaryDirectory() as tmp:
                 gradients=[];summaries=[]
                 for micro in (2,1):
@@ -361,12 +361,12 @@ class MemoryTests(unittest.TestCase):
                     trainer.is_in_train=True;trainer.state.global_step=300
                     samples=[{key:value[start:start+micro] for key,value in inputs.items()} for start in range(0,2,micro)]
                     counts=trainer._get_num_items_in_batch(samples,torch.device('cpu'))
-                    self.assertEqual(counts.tolist(),[9,16] if arm=='P7-simple' else [9,16,9])
+                    self.assertEqual(counts.tolist(),[9,16] if arm in SIMPLE_MEMORY_ARMS else [9,16,9])
                     for sample in samples:trainer.compute_loss(m,sample,num_items_in_batch=counts).backward()
                     gradients.append({name:p.grad.clone() for name,p in m.named_parameters()})
                     summaries.append(summarize_proxy(trainer.step_totals.detach().numpy()[None],m))
                 for name in gradients[0]:torch.testing.assert_close(gradients[0][name],gradients[1][name],rtol=2e-4,atol=2e-6,msg=name)
-                for key in (('aux_loss','cos_loss') if arm=='P7-simple' else ('aux_loss','cos_loss','rel_loss')):
+                for key in (('aux_loss','cos_loss') if arm in SIMPLE_MEMORY_ARMS else ('aux_loss','cos_loss','rel_loss')):
                     self.assertAlmostEqual(summaries[0][key],summaries[1][key],places=5)
 
     def test_real_trainer_resume_eval_reports_and_queue(self):
@@ -383,32 +383,81 @@ class MemoryTests(unittest.TestCase):
                     for name in full:torch.testing.assert_close(resumed[name],full[name],rtol=0,atol=0,msg=name)
                     result=json.loads((destination/arm/'result.json').read_text())
                     if arm=='A':continue
-                    self.assertEqual(result['proxy']['target']['target_version'],'p4p6-r1' if arm=='P7-simple' else 'p7-r1')
+                    self.assertEqual(result['proxy']['target']['target_version'],'p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1')
                     self.assertIn('eval_proxy_layer_2_attention_mass',result['evaluation'])
                     history=json.loads((destination/arm/'trainer_state.json').read_text())['log_history']
-                    self.assertEqual(any('step_proxy_layer_2_rel_loss' in row for row in history),arm!='P7-simple')
-                    if arm=='P7-simple':
+                    self.assertEqual(any('step_proxy_layer_2_rel_loss' in row for row in history),arm not in SIMPLE_MEMORY_ARMS)
+                    if arm in SIMPLE_MEMORY_ARMS:
                         self.assertNotIn('relational',result['proxy']['target'])
                         self.assertNotIn('eval_rel_loss',result['evaluation'])
                     with self.assertRaisesRegex(ValueError,'Resume configuration'):
                         invoke(root,{**args,'attention_backend':'sdpa' if backend=='fa4' else 'fa4'})
-                report(destination,('A',)+MEMORY_ARMS)
-                # Reject a mislabeled simple arm even if result/config agree.
-                path=destination/'P7-simple'/'train_config.json'
-                result_path=destination/'P7-simple'/'result.json'
-                original_config=path.read_text();original_result=result_path.read_text()
-                for change in ({'relational':{'weight':.5}}, {'quantity':'four_block_increment'}):
-                    changed=json.loads(original_config);changed_result=json.loads(original_result)
-                    changed['proxy_target'].update(change)
-                    changed_result['proxy']['target'].update(change)
-                    path.write_text(json.dumps(changed));result_path.write_text(json.dumps(changed_result))
-                    with self.assertRaisesRegex(ValueError,'target metadata'):
-                        report(destination,('A','P7-simple'))
-                path.write_text(original_config);result_path.write_text(original_result)
+                comparison=report(destination,('A',)+MEMORY_ARMS)
+                for variant in P7_P6_VARIANTS:
+                    self.assertIn(variant+'-P7-simple',comparison['nll_differences'])
+                    with self.assertRaisesRegex(ValueError,'Resume configuration'):
+                        invoke(root,{**recipe,'attention_backend':backend,'arm':'P7-simple','output_dir':str(destination/variant)})
+                # Reject wrong metadata even when recipe and result agree.
+                for variant in SIMPLE_MEMORY_ARMS:
+                    path=destination/variant/'train_config.json'
+                    result_path=destination/variant/'result.json'
+                    original_config=path.read_text();original_result=result_path.read_text()
+                    for change in ({'relational':{'weight':.5}}, {'quantity':'four_block_increment'},
+                                   {'lookahead':3},{'bands':[28]}):
+                        changed=json.loads(original_config);changed_result=json.loads(original_result)
+                        changed['proxy_target'].update(change)
+                        changed_result['proxy']['target'].update(change)
+                        path.write_text(json.dumps(changed));result_path.write_text(json.dumps(changed_result))
+                        with self.assertRaisesRegex(ValueError,'target metadata'):
+                            report(destination,('A',variant))
+                    path.write_text(original_config);result_path.write_text(original_result)
             path=root/'queue.json';path.write_text(json.dumps(recipe))
             queue=jobs(path,arms=['A',*MEMORY_ARMS],seeds=[42])
             runs=[job for job in queue['jobs'] if 'gpus' in job]
             self.assertEqual(len(runs),1+len(MEMORY_ARMS));self.assertTrue(all(job['gpus']==list(range(8)) for job in runs))
+
+    def test_p6_variants_full_depth_contract(self):
+        c=config();c.num_hidden_layers=28;c.layer_types=['full_attention']*28
+        opts=ProxySettings(width=8,features=9,chunk_size=2)
+        for backend in ('sdpa','fa4'):
+            parent=ProxyModel.from_scratch(c,'P7-simple',proxy_settings=opts,attention_backend=backend)
+            for arm,control_arm in zip(P7_P6_VARIANTS,('P6-iso-sparse','P6-iso-short')):
+                with self.subTest(arm=arm,backend=backend):
+                    m=ProxyModel.from_scratch(c,arm,proxy_settings=opts,attention_backend=backend)
+                    control=ProxyModel.from_scratch(c,control_arm,proxy_settings=opts,attention_backend=backend)
+                    expected_layers=(2,6,10,14,18,22) if arm=='P7-simple-sparse' else tuple(range(2,25,2))
+                    span=4 if arm=='P7-simple-sparse' else 2
+                    self.assertEqual(m.layers,expected_layers);self.assertEqual(m.layers,control.layers)
+                    self.assertEqual(m.settings.lookahead,span)
+                    self.assertFalse(m.relational_proxy or m.increment_target)
+                    self.assertEqual(m.auxiliary_weight(250),.1)
+                    self.assertFalse(any('alpha' in name for name,_ in m.heads.named_parameters()))
+                    for key,head in m.heads.items():
+                        for name,value in head.state_dict().items():
+                            torch.testing.assert_close(value,parent.heads[key].state_dict()[name],rtol=0,atol=0)
+                        for name in ('w1','w2'):
+                            torch.testing.assert_close(getattr(head,name).weight,getattr(control.heads[key],name).weight,rtol=0,atol=0)
+                    mlps={};raw={};handles=[]
+                    for i,layer in enumerate(m.backbone.model.layers,1):
+                        handles.append(layer.mlp.register_forward_hook(lambda mod,args,out,i=i:mlps.__setitem__(i,out.detach().float())))
+                    normalizer=m.normalize_target
+                    def capture(value,key,**kwargs):
+                        self.assertFalse(value.requires_grad);raw[key]=value.clone()
+                        return normalizer(value,key,**kwargs)
+                    try:
+                        with patch.object(m,'normalize_target',side_effect=capture):m(batch())
+                    finally:
+                        for handle in handles:handle.remove()
+                    self.assertEqual(tuple(raw),expected_layers)
+                    for key,value in raw.items():
+                        torch.testing.assert_close(value,sum(mlps[i] for i in range(key,key+span)),rtol=0,atol=0)
+                    self.assertEqual(expected_layers[-1]+span-1,25)
+                    with m.without_proxy(),control.without_proxy():
+                        a=m(batch(),collect_target_statistics=True);b=control(batch(),collect_target_statistics=True)
+                        for key in ('lm_sum','aux_sum','aux_count','center_sums','center_squares','center_counts'):
+                            torch.testing.assert_close(a[key],b[key],rtol=2e-5,atol=1e-6,msg=key)
+                    for wrong in (dict(lookahead=2 if span==4 else 4),dict(layers=[2]),dict(isolate_estimator=False),dict(alpha_init=.1)):
+                        with self.assertRaises(ValueError):model(arm,**wrong)
 
     def test_budget_parameter_counts(self):
         c=config();settings=ProxySettings(width=8,features=9,chunk_size=2)

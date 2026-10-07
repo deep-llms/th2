@@ -1,6 +1,6 @@
 """Supervised English sentence-pair adaptation with the standard HF Trainer.
 
-Supports A/P6/P6-iso, its sparse/short variants, and P7-simple. Each pair is one causal document,
+Supports A, P6/P6-iso and P7-simple families. Each pair is one causal document,
 ending in EOS; classification reads that EOS hidden state. Padding is an
 isolated dummy document. This does not call the inference-only eval adapter.
 """
@@ -26,7 +26,7 @@ from safetensors.torch import load_file
 from transformers import AutoTokenizer, HfArgumentParser, Trainer, TrainerCallback, TrainingArguments, set_seed
 
 from deep_kv.model import Context
-from deep_kv import P6_VARIANTS
+from deep_kv import P6_VARIANTS, SIMPLE_MEMORY_ARMS
 from deep_kv.training import save_module
 from eval.benchmarks import local_dataset_paths
 from eval.models import load_checkpoint, file_hash
@@ -35,7 +35,7 @@ TASKS = {'paws': ('paws_en', ('sentence1', 'sentence2'), ['different', 'paraphra
          'nli': ('xnli_en', ('premise', 'hypothesis'), ['entailment', 'neutral', 'contradiction']),
          'stsb': ('stsb', ('sentence1', 'sentence2'), ['similarity']),
          'boolq': ('boolq', ('passage', 'question'), ['False', 'True'])}
-ARMS = ('A', 'P6', 'P6-iso', 'P7-simple') + P6_VARIANTS
+ARMS = ('A', 'P6', 'P6-iso') + P6_VARIANTS + SIMPLE_MEMORY_ARMS
 
 
 def write_json(path, value):
@@ -69,7 +69,7 @@ class PairClassifier(nn.Module):
         self.config = backbone.backbone.config
         # Plain task mode flag is deliberately not persisted in pretraining state.
         # This wrapper always re-enables it when reconstructing a fine-tuned model.
-        if backbone.arm in ('P6-iso', 'P7-simple') + P6_VARIANTS:
+        if backbone.arm in ('P6-iso',) + P6_VARIANTS + SIMPLE_MEMORY_ARMS:
             for head in backbone.heads.values():
                 head.task_finetuning = True
         # The language-model output projection is not used. Preserve tied input

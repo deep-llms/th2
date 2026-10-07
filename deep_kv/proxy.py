@@ -12,7 +12,7 @@ from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb, eager
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
 from .model import DeepKV, normalize_code
-from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout
+from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout
 
 
 @dataclass
@@ -45,14 +45,14 @@ def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
     new = arm in ANTICIPATORY_ARMS
     memory = arm in MEMORY_ARMS
-    expected_lookahead = 2 if arm == 'P6-iso-short' else 4
+    expected_lookahead = 2 if arm in ('P6-iso-short','P7-simple-short') else 4
     if settings.lookahead is None:settings.lookahead = expected_lookahead
     if memory:
-        version = 'p4p6-r1' if arm=='P7-simple' else 'p7-r1'
+        version = 'p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1'
         if settings.target_version is None:settings.target_version = version
         if settings.isolate_estimator is None:settings.isolate_estimator = True
         if settings.alpha_init is None:settings.alpha_init = 0.  # No gate parameter in P7.
-        if (settings.target_version != version or settings.lookahead != 4 or settings.groups != 2
+        if (settings.target_version != version or settings.lookahead != expected_lookahead or settings.groups != 2
                 or settings.loss_form != 'cosine' or settings.kv_mode != 'kv'
                 or settings.layers is not None or not settings.isolate_estimator
                 or settings.alpha_init != 0 or settings.aux_recompute or settings.compile_estimator):
@@ -137,6 +137,13 @@ def compute_budget(config, settings, sequence_length=2048):
     result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
         for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
         'relational_forward_macs_per_token':0}
+    for arm in P7_P6_VARIANTS:
+        count = len(simple_memory_layout(arm,n)[0])
+        per_layer = 2*d*settings.width+projections
+        result[arm] = dict(extra_parameters=count*(per_layer+h),
+            extra_macs_per_token=count*(per_layer+extra_attention),
+            fa4_extra_macs_per_token=count*(per_layer+(2*nq//nk)*h*(3*sequence_length+1)),
+            relational_forward_macs_per_token=0,fa4_note=result['P7']['fa4_note'])
     result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
         layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1),
         'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']+
@@ -216,7 +223,7 @@ class ProxyModel(DeepKV):
         cfg = backbone.config
         if channel_mask is not None:
             raise ValueError('Revision r7 does not use a static channel mask')
-        if (settings.target_version != ('p4p6-r1' if new or arm=='P7-simple' else 'p7-r1' if memory else 'r7') or settings.loss_form not in ('cosine','smooth_l1')
+        if (settings.target_version != ('p4p6-r1' if new or arm in SIMPLE_MEMORY_ARMS else 'p7-r1' if memory else 'r7') or settings.loss_form not in ('cosine','smooth_l1')
                 or not 0 < settings.variance_floor <= 1 or not 0 < settings.target_clip < float('inf')
                 or not 0 <= settings.momentum < 1):
             raise ValueError('Invalid r7 target normalization/loss settings')
@@ -255,9 +262,9 @@ class ProxyModel(DeepKV):
         self._fa4_observer = None
         self.anticipatory = new
         self.memory_proxy = memory
-        self.relational_proxy = memory and arm != 'P7-simple'
-        self.increment_target = memory and arm not in ('P7-mlp','P7-simple')
-        if arm=='P7-simple' and cfg.num_attention_heads//cfg.num_key_value_heads != 2:
+        self.relational_proxy = memory and arm not in SIMPLE_MEMORY_ARMS
+        self.increment_target = memory and arm not in ('P7-mlp',)+SIMPLE_MEMORY_ARMS
+        if arm in SIMPLE_MEMORY_ARMS and cfg.num_attention_heads//cfg.num_key_value_heads != 2:
             raise ValueError('P7-simple requires four query heads in two complete KV groups')
         self._proxy_mass = None
         self.value_groups = cfg.num_key_value_heads
@@ -270,6 +277,7 @@ class ProxyModel(DeepKV):
         self.routing = 'flow' if arm.endswith('flow') else 'block'
         self.layers = proxy_layers(cfg, 'P1' if new or memory else self.family, settings.lookahead, settings.layers) if self.family else ()
         if new:self.layers = anticipatory_layout(arm, cfg.num_hidden_layers)[0]
+        if arm in SIMPLE_MEMORY_ARMS:self.layers = simple_memory_layout(arm, cfg.num_hidden_layers)[0]
         if self.family and not self.layers:
             raise ValueError('Model has no eligible proxy layers')
         self.heads = nn.ModuleDict()
@@ -277,9 +285,9 @@ class ProxyModel(DeepKV):
             torch.random.default_generator.manual_seed(settings.module_seed if settings.module_seed is not None else kwargs.get('seed',42)+1)
             # Preserve the parent's initial weights at retained locations. The
             # discarded heads exist only during sparse-arm initialization.
-            initialization_layers = anticipatory_layout('P6-iso', cfg.num_hidden_layers)[0] if arm=='P6-iso-sparse' else self.layers
+            initialization_layers = anticipatory_layout('P6-iso', cfg.num_hidden_layers)[0] if arm in ('P6-iso-sparse','P7-simple-sparse') else self.layers
             for layer in initialization_layers:
-                if arm=='P7-simple':
+                if arm in SIMPLE_MEMORY_ARMS:
                     from .proxy_memory import SimpleMemoryHead
                     self.heads[str(layer)] = SimpleMemoryHead(cfg,settings)
                 elif memory:
@@ -290,9 +298,11 @@ class ProxyModel(DeepKV):
                     head = AnticipatoryHead(cfg,settings,stream=self.family=='P5',first=layer==self.layers[0])
                     if layer in self.layers:self.heads[str(layer)] = head
                 else:self.heads[str(layer)] = ProxyHead(cfg, self.family, settings)
-            if arm=='P7-simple':
+            if arm in SIMPLE_MEMORY_ARMS:
                 for head in self.heads.values():head.initialize_projections(cfg)
-        if new or arm=='P7-simple':
+                for key in tuple(self.heads):
+                    if int(key) not in self.layers:del self.heads[key]
+        if new or arm in SIMPLE_MEMORY_ARMS:
             from .proxy_estimators import gated_prediction, cosine_loss
             self.gated_prediction,self.cosine_loss = gated_prediction,cosine_loss
             if settings.compile_estimator:

@@ -1,3 +1,27 @@
+## P7-simple counterparts of the P6-iso variants — 8 October 2026
+
+Implemented the two recent P6-iso ablations with P7-simple consumption:
+P7-simple-sparse uses blocks 2,6,10,14,18,22 and four-MLP targets;
+P7-simple-short keeps blocks 2,4,...,24 and two-MLP targets. Both retain four
+query heads/two KV groups, a tokenwise isolated predictor, cosine-only loss,
+auxiliary ramp to .1, no gate, and joint native/proxy attention. Sparse initial
+predictor/projection weights match the retained parent heads. These are fresh
+arms; no residual injection is added and the predictor remains auxiliary-only.
+
+Training, queues, strict resume/report checks, evaluation and optional supervised
+fine-tuning are integrated. Both SDPA and FA4 reuse the existing attention paths.
+The CUDA checkpoint validator expects 34 attention calls for sparse and 40 for
+short at full depth. Definitions: docs/P7_IMPLEMENTATION.md. Full-size CUDA
+validation and research runs remain pending. No remote push or GPU workload was
+launched; B200 continues its previously accepted evaluation queue. commands #0.
+
+Local verification: all 41 regression tests passed in 353.541 seconds, including
+full-depth target/initialization checks, gradient routing and accumulation,
+two-rank CPU DDP, exact Trainer resume, report guards, evaluation and fine-tuning.
+Three focused checks also passed (2.084 seconds). Logs:
+temp/p7-p6-regression.log and temp/p7-p6-focused.log. Both attention interfaces
+were tested on CPU; FA4 used an independent SDPA oracle, not its CUDA kernel.
+
 ## B200 STS-B/BoolQ fitting progress — 8 October 2026, 04:48 Singapore
 
 Read-only monitor b855d9d verified the existing supervised-stsb-boolq-20261008-a03
