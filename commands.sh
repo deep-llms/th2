@@ -1,4 +1,4 @@
-#1 +30+a
+#0
 #th2-tjx3-fewshot-monitor-20261007-a04
 set -euo pipefail
 cd /mnt/local/@PROJECT@

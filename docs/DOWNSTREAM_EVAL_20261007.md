@@ -234,3 +234,16 @@ full/smoke request matching and rejection of changed second-choice prompts.
 All real benchmark prompts fit: maxima 676 tokens for the 5-shot group,
 1,180 for HellaSwag 10-shot, 1,232 for ARC-Challenge 25-shot. Zero truncation.
 Generated 12-stage manifest and both pool shells passed parser/syntax checks.
+
+### Accepted launch and running evidence
+
+Launch commit `686637b`. Monitor `3999100`, 16:20:24 UTC, confirms all four
+numerical gates, all smoke evaluations and all three prompt/result validators
+passed; full evaluation running. All eight model workers present, numerical
+checks exercised real FA4 and active proxy paths with unchanged buffers.
+No final scores available at this snapshot. Evidence: 55 SHA256-verified JSON
+artifacts in `artifacts/fewshot-monitor-20261007-a04/`. The copied Accelerate
+config was verified; known burn workers 351289–351296 alone were reclaimed,
+and all GPUs were free before evaluation. Final communicating burns are
+configured for either success or failure; they are not running during eval.
+`commands.sh` restored to #0; detached queue continues.

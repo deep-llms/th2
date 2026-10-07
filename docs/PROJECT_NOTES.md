@@ -3551,3 +3551,18 @@ Belebele excluded (test-split demonstration pool). Fresh root fewshot-2500-
 20261007-a01; numerical gates, prompt audits, smoke, full evaluation, automatic
 communicating burn restoration. See docs/DOWNSTREAM_EVAL_20261007.md.
 Preparing launch; not yet submitted. No further weight updates authorized.
+
+## Task-specific few-shot evaluation running — 7 October 2026
+
+Launch `686637b`; monitor `3999100` at 16:20:24 UTC verifies all four CUDA
+numerical gates, smoke evaluations and three smoke validators passed. Full
+evaluation running, GPU workers 353458–353465. A/P6/P6-iso/P7-simple original
+seed42 step2500; HellaSwag10, ARC-Challenge25, other six tasks5. Exact matching
+prompts, separate training demonstrations and zero truncation. No final scores.
+Accelerate cache copied/verified. Reclaimed only verified burn workers
+351289–351296 at 16:14:27 UTC; all GPUs free at 16:14:57. Automatic communicating
+burn restoration remains configured after success/failure. commands #0 leaves
+the detached queue running; do not relaunch. Evidence: 55 verified artifacts in
+artifacts/fewshot-monitor-20261007-a04/. Root:
+`/mnt/local/_outputs/deep-llms_th2/fewshot-2500-20261007-a01`.
+Protocol and additional task shortlist: docs/DOWNSTREAM_EVAL_20261007.md.
