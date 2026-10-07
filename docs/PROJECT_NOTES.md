@@ -1,3 +1,15 @@
+## Supervised study complete — 7 October 2026
+
+Monitor `57be0de`, 13:41:06 UTC: all 58 stages passed, including 24 full fits
+and 18 final tests. Queue ended 12:37:41 UTC; automatic communicating burns
+verified 12:38:52, workers 341142–341149 still active at 100% on all eight GPUs.
+Mean test accuracy (three fine-tuning seeds): PAWS-X A 91.850%, P6 90.300%,
+P7-simple 90.917%; English XNLI A 78.922%, P6 79.188%, P7-simple 78.696%.
+P6's small NLI gain is not an established robust win; one pretraining seed.
+Full protocol/results: docs/SUPERVISED_FINETUNING_20261007.md.
+Evidence: artifacts/finetune-monitor-20261007-a07/ (64 verified JSON artifacts).
+No training queued. commands #0. Do not relaunch without a new request.
+
 ## Supervised study reviewed, still running — 7 October 2026
 
 Monitor `790694a`, 11:07:15 UTC / 19:07:15 Singapore: 14/24 production fits

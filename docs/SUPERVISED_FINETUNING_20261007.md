@@ -179,3 +179,39 @@ Focused test log: `temp/finetune-review-tests-20261007-a01.log`.
 The earlier 11-model, nine-task zero-shot evaluation is complete. The supervised
 comparison is still pending; commands returned to #0 without stopping the
 accepted detached queue or its automatic final burn handoff.
+
+## Supervised study complete — 7 October 2026
+
+Read-only monitor `57be0de` at 13:41:06 UTC verified all 58 queue stages passed:
+24 full fitting runs, six development LR selections, 18 final tests, numerical
+and distributed smoke/reload gates, and the final prediction validator.
+Queue finished 12:37:41 UTC (20:37:41 Singapore), elapsed 3 h 9 min 30 s
+including gates, preprocessing, fitting, selection and testing. All six
+selectors chose LR 3e-5. Each test uses 2,000 PAWS-X or 5,010 English XNLI
+examples. Local checks matched all 18 result receipts to the summary.
+
+Test accuracy, percent, mean ± sample standard deviation across fine-tuning
+seeds 42/43/44:
+
+| Arm | PAWS-X | English XNLI |
+|---|---:|---:|
+| A | 91.850 ± 0.278 | 78.922 ± 0.111 |
+| P6 | 90.300 ± 0.218 | 79.188 ± 0.579 |
+| P7-simple | 90.917 ± 0.029 | 78.696 ± 0.306 |
+
+A leads PAWS-X. P6's NLI mean gain is only 0.266 percentage points, smaller
+than its across-seed standard deviation; this does not establish a reliable
+improvement. P7-simple trails A on both task means. These are three fine-tuning
+seeds from one pretraining seed, with exploratory arm selection.
+
+Automatic communicating burns were verified at 12:38:52 UTC. The 13:41:06
+snapshot matches the same workers 341142–341149 on all eight GPUs at 100%
+utilization. No training remains queued. commands returned to #0.
+
+64 source-hash-verified JSON artifacts:
+`artifacts/finetune-monitor-20261007-a07/`.
+Log `temp/finetune-monitor-20261007-a07.log`, SHA256
+`6d663b9f48eee94c00bac799480c0fc298fd6c0820870b340458f465213b5de6`.
+Per-example prediction arrays remain on B200; the successful remote summary
+validator checked their shapes, finite values, label/order consistency, and
+recomputed accuracy. Small result receipts and summary have been pulled locally.
