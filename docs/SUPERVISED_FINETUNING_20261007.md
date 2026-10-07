@@ -113,3 +113,22 @@ there is no upload branch or upload-specific code. The generated, fixed job
 configs do not enable publishing, external reporting is disabled, and HF
 libraries run offline. Fresh retry: `supervised-finetune-20261007-a03`. Neither
 blocked submission changed GPU ownership or started any training.
+
+## Remote acceptance progress
+
+Accepted launch `0765d2e`, actual root `supervised-finetune-20261007-a03`.
+Environment/data/checkpoint preflight passed. Project Accelerate config copied
+and byte-verified; accelerate env reports MULTI_GPU, 8 processes, BF16. Known
+burn workers 314038–314045 stopped at 17:27:42 Singapore; after 30 seconds,
+all eight GPUs had no compute processes at 17:28:12.
+
+All three full-checkpoint FA4-vs-SDPA gradient comparisons passed: relative L2
+A .0106580, P6 .0109333, P7-simple .0107938. Every task-connected parameter had
+a finite gradient; proxy aggregate gradients were nonzero. Buffers unchanged.
+
+Monitor `9cff5a2`, 17:34:45 Singapore: A and P6 four-update training on all eight
+GPUs and strict reload evaluations passed. Saved and reloaded development
+loss/accuracy agree exactly, as do weight hashes and example-order hashes.
+P7-simple distributed smoke still in progress; production fitting is not yet
+verified. Evidence: artifacts/finetune-monitor-20261007-a03/ (11 verified JSON
+artifacts). Log SHA256 db1d665882848b1e224983b13d9966f4c28d21c3fa68c3e277869da22496d427.

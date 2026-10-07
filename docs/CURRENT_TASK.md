@@ -1,3 +1,15 @@
+## Supervised B200 gates progressing — 7 October 2026
+
+Accepted launch `0765d2e`, root supervised-finetune-20261007-a03. Monitor
+`9cff5a2` at 17:34:45 Singapore: all three full-checkpoint numerical gates
+passed; A/P6 eight-GPU four-update smoke and strict reload completed. Reload
+loss/accuracy, selected-weight hashes and development-example hashes match.
+P7-simple distributed smoke is in progress; production fitting not yet
+verified. All eight GPUs were verified free at 17:28:12 after stopping only
+known burn workers 314038–314045. Config copied and accelerate env checked.
+Evidence: artifacts/finetune-monitor-20261007-a03/. Full protocol and queue:
+docs/SUPERVISED_FINETUNING_20261007.md. Automatic final burns remain configured.
+
 ## Authorized supervised adaptation — 7 October 2026
 
 User selected A, P6 (not P6-iso), and P7-simple for the proposed English
