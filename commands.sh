@@ -1,10 +1,10 @@
 #1 +60+a
-#th2-tjx3-supervised-finetune-20261007-a01
+#th2-tjx3-supervised-finetune-20261007-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
-TASK_ROOT=/mnt/local/_outputs/@PROJECT@/supervised-finetune-20261007-a01
-TASK_SESSION=tjx3-supervised-finetune-20261007-a01
+TASK_ROOT=/mnt/local/_outputs/@PROJECT@/supervised-finetune-20261007-a02
+TASK_SESSION=tjx3-supervised-finetune-20261007-a02
 test ! -e "$TASK_ROOT"
 if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
 mkdir -p "$TASK_ROOT"
@@ -74,7 +74,7 @@ print('SUPERVISED_PREFLIGHT_PASSED',list(checkpoints),len(jobs),flush=True)
 PY
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" --output "$TASK_ROOT/supervised" \
  --inspection "$TASK_ROOT/inspection.json" --host thiennh-p6-tjx3-worker-0 \
- --burn-session tjx3-supervised-finetune-20261007-a01-final-burn
+ --burn-session tjx3-supervised-finetune-20261007-a02-final-burn
 LAUNCH
 bash -n "$TASK_ROOT/launch.sh"
 printf -v TASK_CMD 'exec bash %q %q >%q 2>&1' "$TASK_ROOT/launch.sh" "$TASK_ROOT" "$TASK_ROOT/launch.log"

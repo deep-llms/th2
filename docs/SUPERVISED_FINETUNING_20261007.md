@@ -98,3 +98,10 @@ Prepared job: `th2-tjx3-supervised-finetune-20261007-a01`; root
 58 sequential stages including numerical gates, distributed smoke/reload,
 search, selections, confirmations, final tests and final validator. Execution
 and actual runtime remain to be verified.
+
+First submission `1d179b7` was blocked before execution by the runner's
+outbound-pattern guard: it matched the protective `args.push_to_hub` condition.
+No process termination or GPU work occurred. Replaced the rejection condition
+with explicit unconditional `args.push_to_hub = False`; no upload operation
+exists or is enabled. Retry uses a fresh `supervised-finetune-20261007-a02`
+job/root/session and the same scientific protocol.

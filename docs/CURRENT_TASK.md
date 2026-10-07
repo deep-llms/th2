@@ -3,7 +3,7 @@
 User selected A, P6 (not P6-iso), and P7-simple for the proposed English
 PAWS-X/NLI fine-tuning study. Implementing HF Trainer/Accelerate task head,
 matched two-LR development search and three fine-tuning seeds, then final test.
-Prepared gated submission `th2-tjx3-supervised-finetune-20261007-a01`;
+Prepared gated submission `th2-tjx3-supervised-finetune-20261007-a02`;
 execution not yet verified. Existing eval/ was inference-only.
 Protocol: docs/SUPERVISED_FINETUNING_20261007.md. B200 gates/smoke must pass
 before production. Retain automatic burn handoff and all-eight-GPU training.
