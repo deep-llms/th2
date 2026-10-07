@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "repositories": [
+    {
+      "repo_id": "nyu-mll/glue",
+      "revision": "bcdcba79d07bc864c1c254ccfcedcce55bcc9a8c",
+      "path": "stsb",
+      "tasks": [
+        "stsb"
+      ],
+      "files": [
+        {
+          "path": "stsb/train-00000-of-00001.parquet",
+          "bytes": 502065,
+          "sha256": "bbd93bbb988fd18437e02185fe3b2bd9a18350376c392e7820de9df1b247ed1f"
+        },
+        {
+          "path": "stsb/validation-00000-of-00001.parquet",
+          "bytes": 150622,
+          "sha256": "152de7cf1fa34ee4df1c243bd209b02ade21a1d5c4fb3b7da5240f78e4000aa9"
+        }
+      ],
+      "load_configs": {
+        "stsb": {
+          "loader": "parquet",
+          "data_files": {
+            "train": [
+              "stsb/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "stsb/validation-00000-of-00001.parquet"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "repo_id": "aps/super_glue",
+      "revision": "3de24cf8022e94f4ee4b9d55a6f539891524d646",
+      "path": "boolq",
+      "tasks": [
+        "boolq"
+      ],
+      "files": [
+        {
+          "path": "boolq/train-00000-of-00001.parquet",
+          "bytes": 3846588,
+          "sha256": "41e2ce07ac0d3bcd411bd4b6326bab2cff5fa67bacdbbcea74bb9e001ec635d3"
+        },
+        {
+          "path": "boolq/validation-00000-of-00001.parquet",
+          "bytes": 1313731,
+          "sha256": "f46438b8cce048184552a2bfcdb8252eadb3a2602f0c22334caccd9b6ea547d6"
+        }
+      ],
+      "load_configs": {
+        "boolq": {
+          "loader": "parquet",
+          "data_files": {
+            "train": [
+              "boolq/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "boolq/validation-00000-of-00001.parquet"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

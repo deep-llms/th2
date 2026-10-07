@@ -1,3 +1,18 @@
+## STS-B and BoolQ fine-tuning authorized — 8 October 2026
+
+User approved the recommended STS-B + BoolQ extension for A, P6, P6-iso,
+P7-simple, starting from original seed42 step2500 pretraining checkpoints.
+Two learning rates (1e-5/3e-5) on seed42, selected-rate confirmations43/44;
+3 epochs per task, same eight-GPU HF Trainer recipe. STS-B scalar MSE head,
+Pearson/Spearman reporting and their mean for selection. BoolQ cross-entropy
+and accuracy. No SST-2/WiC or pretraining queued in this extension.
+Pinned raw train/validation files: resources/supervised_english_20261008.json.
+Public validation is the final holdout; fixed grouped 10% of training for
+selection, seed42 independent of fine-tuning seed. Official test files unused.
+Download via controller #d while implementing/testing locally; GPU burns stay
+running until numerical/smoke launch preflight. New root planned:
+/mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a01.
+
 ## Task-specific few-shot evaluation complete — 8 October 2026
 
 Monitor `d815726`, 01:28:45 Singapore: all 12 stages passed, including full
