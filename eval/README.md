@@ -127,3 +127,12 @@ full-checkpoint CUDA loss equivalence/isolation/active proxies/unchanged buffers
 and complete results with matching per-example hashes across checkpoints.
 Smoke and full evaluations must have separate output directories. Full results
 are accepted only with no example limit and all nine task counts verified.
+
+## Supervised sentence-pair fine-tuning
+
+`python -m eval.finetune /path/to/config.json` uses the standard HF Trainer
+with a task classification head and the full custom backbone. This is separate
+from the inference-only `EvaluationModel`. The initial supported arms are A,
+P6 and P7-simple, on English PAWS-X/NLI. See
+[the fixed protocol](../docs/SUPERVISED_FINETUNING_20261007.md) for gradient
+routing, seeds, LR selection, split handling and the gated B200 study.

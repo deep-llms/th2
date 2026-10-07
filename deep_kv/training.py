@@ -71,6 +71,18 @@ def offline_wandb_run(args):
 
 
 
+def save_module(trainer, output_dir=None, state_dict=None):
+    """HF nn.Module saving with explicit copies of genuinely shared storage."""
+    state = dict(trainer.model.state_dict() if state_dict is None else state_dict)
+    seen = set()
+    for name, value in state.items():
+        key = (value.device, value.untyped_storage().data_ptr())
+        if key in seen:
+            state[name] = value.clone()
+        seen.add(key)
+    Trainer._save(trainer, output_dir, state_dict=state)
+
+
 class DeepKVTrainer(Trainer):
     """Keep the HF loop; customize loss and compact evaluation."""
 
@@ -167,14 +179,7 @@ class DeepKVTrainer(Trainer):
     def _save(self, output_dir=None, state_dict=None):
         # nn.Module wrappers do not get PreTrainedModel's tied-weight handling.
         # Preserve BOTH names for strict restore, cloning only shared storage.
-        state = dict(self.model.state_dict() if state_dict is None else state_dict)
-        seen = set()
-        for name, value in state.items():
-            key = (value.device, value.untyped_storage().data_ptr())
-            if key in seen:
-                state[name] = value.clone()
-            seen.add(key)
-        super()._save(output_dir, state_dict=state)
+        save_module(self, output_dir, state_dict)
 
     def _load_optimizer_and_scheduler(self, checkpoint):
         # Accelerate 1.13 can expose cpu:0 in multi-CPU runs. Trainer 5.9

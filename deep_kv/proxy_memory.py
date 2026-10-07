@@ -90,7 +90,10 @@ class MemoryHead(nn.Module):
 
     def entries(self, prediction, rotary, native_values):
         with torch.autocast(prediction.device.type, enabled=False):
-            value = prediction.detach().float()
+            # Opt-in supervised adaptation keeps identical forward values while
+            # allowing task gradients into the pretrained estimator. Pretraining
+            # and likelihood evaluation retain the original routing by default.
+            value = (prediction if getattr(self, 'task_finetuning', False) else prediction.detach()).float()
             p = (value*torch.rsqrt(value.square().mean(-1, keepdim=True)+1e-6)).to(prediction.dtype)
         shape = (*p.shape[:-1], 2, -1)
         k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)
@@ -118,7 +121,8 @@ class SimpleMemoryHead(MemoryHead):
             nn.init.normal_(module.weight, std=config.initializer_range)
 
     def estimate(self, u, plan):
-        return self.w2(F.silu(self.w1(u.detach())))
+        source = u if getattr(self, 'task_finetuning', False) else u.detach()
+        return self.w2(F.silu(self.w1(source)))
 
 
 def rectangular_mask(mask, disabled=False):
