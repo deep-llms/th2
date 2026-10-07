@@ -1,3 +1,18 @@
+## Task-output acceptance correction prepared — 8 October 2026
+
+Retry 969d197 failed before production at P7-simple/BoolQ real-input gate;
+seven other gates passed. Raw logits relative error3.725%, but max probability
+error .002215, CE difference .003893, hidden .825%, gradient1.502%. See
+artifacts/stsb-boolq-monitor-20261008-a05/. Gate fp32_task_v2 replaces only the
+classification raw-logit criterion with max probability difference<.01 AND
+CE difference<.01 versus FP32 math; retain hidden<2%, gradient<5%, regression
+output<2%, finite/gradient/buffer checks. Raw logits remain recorded. This is
+an explicit metric correction, not proof of all long-run numerical behavior.
+Training code/recipe unchanged. Fresh root supervised-stsb-boolq-20261008-a03
+is being prepared; all eight gates and distributed smoke/reload still required.
+Previous failures preserved. No new benchmark scores. More detail in
+SUPERVISED_FINETUNING_20261007.md.
+
 ## STS-B/BoolQ FP32-reference retry prepared — 8 October 2026
 
 User authorized fixing the failed acceptance checks. B200 diagnostic a9a8a75 /

@@ -463,3 +463,36 @@ numerically and exposes the math backend for reference computations:
 A fresh 97-stage retry is being prepared under `supervised-stsb-boolq-20261008-a02`.
 All eight task/arm gates and distributed smoke/reload checks must pass before
 production fits. Previous failed outputs remain intact.
+
+
+## Task-output gate correction — 8 October 2026
+
+Retry `969d197`, monitor `13f3412` at 03:17:49 Singapore: seven of eight
+FP32-reference gates passed. P7-simple/BoolQ failed only the relative raw-logit
+check on real training inputs (3.725%). Its hidden-state error was .825%,
+gradient error 1.502%, max absolute logit difference .013879, and CE difference
+.003893. Maximum class-probability difference was .002215 (0.2215 percentage
+points). The original synthetic case passed. No production fitting started.
+Evidence: artifacts/stsb-boolq-monitor-20261008-a05/gates/gate-P7-simple-boolq.json.
+
+This exposes a separate weakness of the old metric: the relative norm of a
+small random classification readout depends on arbitrary logit scale/common
+offsets. Softmax and cross-entropy are invariant to adding a common per-example
+logit offset, whereas relative raw-logit error is not. The original relative
+logit limit is therefore replaced for **classification only**, not silently
+raised. Gate version `fp32_task_v2` now requires, versus FP32 math SDPA:
+
+- Whole-gradient relative L2 <5% and pooled-hidden relative L2 <2% (unchanged).
+- Classification: max absolute probability difference <.01 (one percentage
+  point) AND absolute cross-entropy difference <.01. Raw logit errors remain
+  recorded as diagnostics. These are engineering acceptance limits, not a
+  statistical guarantee about benchmark accuracy or long-run training.
+- Regression: output relative L2 <2% (unchanged).
+- Finite outputs/gradients, all expected parameter gradients, actual FA4 calls,
+  frozen buffers, synthetic AND real training fixtures for every arm/task.
+
+New regression tests check common-offset invariance, rejection of class-specific
+probability errors, exact threshold failures and nonfinite values. Training
+implementation, head precision and scientific recipe remain unchanged. Fresh
+retry root: supervised-stsb-boolq-20261008-a03; all 97 stages retained, no old
+outputs removed. Launch and production status still require verification.

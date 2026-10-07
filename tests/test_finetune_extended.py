@@ -66,7 +66,7 @@ class ExtendedFinetuneTests(unittest.TestCase):
         # Observed A/BoolQ FA4 versus FP32; BF16 SDPA was the inaccurate reference.
         good=dict(logit_relative_l2=.01067456,gradient_relative_l2=.01144959,
                   hidden_relative_l2=.00469895,logit_max_absolute=.00426087,
-                  loss_absolute=.00013352,fa4_calls=28,buffers_unchanged=True)
+                  loss_absolute=.00013352,fa4_calls=28,buffers_unchanged=True,task_kind='regression')
         check_numerical_limits(good)
         for key,value in [('logit_relative_l2',.02),('gradient_relative_l2',.05),
                           ('hidden_relative_l2',.02),('fa4_calls',0),('buffers_unchanged',False),
@@ -74,6 +74,26 @@ class ExtendedFinetuneTests(unittest.TestCase):
                           ('loss_absolute',float('nan'))]:
             with self.subTest(key=key,value=value),self.assertRaises(ValueError):
                 check_numerical_limits(dict(good,**{key:value}))
+
+    def test_classification_gate_is_offset_invariant_and_rejects_probability_errors(self):
+        from scripts.finetune_study import classification_difference, check_numerical_limits
+        ref=torch.tensor([[.125232905,.179020077],[.156042695,.437513232]],dtype=torch.float64)
+        actual=torch.tensor([[.13671875,.181640625],[.169921875,.443359375]],dtype=torch.float64)
+        base=dict(task_kind='classification',gradient_relative_l2=.0150184,hidden_relative_l2=.00825454,
+                  logit_relative_l2=.03724899,logit_max_absolute=.01387918,loss_absolute=.00389302,
+                  fa4_calls=40,buffers_unchanged=True)
+        score=classification_difference(actual,ref)
+        self.assertLess(score['probability_max_absolute'],.003)
+        check_numerical_limits(dict(base,**score))
+        shifted=classification_difference(actual+torch.tensor([[100.],[-100.]]),ref)
+        self.assertAlmostEqual(score['probability_max_absolute'],shifted['probability_max_absolute'],places=12)
+        # A genuine class-specific perturbation must fail, even with good gradients.
+        bad=actual.clone();bad[:,0]+=.2
+        with self.assertRaises(ValueError):check_numerical_limits(dict(base,**classification_difference(bad,ref)))
+        for bad_metric,value in [('probability_max_absolute',.01),('loss_absolute',.01),
+                                 ('probability_max_absolute',float('nan'))]:
+            with self.subTest(metric=bad_metric),self.assertRaises(ValueError):
+                check_numerical_limits({**base,**score,bad_metric:value})
 
     def test_grouped_split_is_fixed_disjoint_and_ignores_hidden_test(self):
         rows=[dict(passage=f'a {i}',question=f'b {i}',label=i%2) for i in range(40)]

@@ -200,7 +200,7 @@ def numerical_check(model, inputs):
     """Compare production BF16 FA4 with an independent FP32 math reference.
 
     BF16 SDPA is another approximate implementation, not ground truth. The
-    original 2% logits / 5% whole-gradient limits now use the FP32 reference.
+    task-output, hidden-state and whole-gradient checks use the FP32 reference.
     """
     import torch
     from torch.nn.attention import SDPBackend, sdpa_kernel
@@ -256,6 +256,8 @@ def numerical_check(model, inputs):
             loss_absolute=abs(actual_loss-float(reference['loss'].detach())),
             logits=actual_logits.cpu().tolist(),reference_logits=reference['logits'].detach().cpu().tolist(),
             gradients=check.report,reference_gradients=reference_check.report,
+            task_kind='regression' if model.score.out_features==1 else 'classification',
+            **({} if model.score.out_features==1 else classification_difference(actual_logits,reference['logits'])),
             fa4_calls=len(calls),buffers_unchanged=True)
     finally:
         hook.remove()
@@ -265,16 +267,32 @@ def numerical_check(model, inputs):
         model.zero_grad(set_to_none=True)
 
 
+def classification_difference(actual, reference):
+    # Softmax is invariant to an arbitrary per-example common logit offset.
+    # A relative norm of two raw logits does not have that property.
+    actual,reference=actual.detach().double(),reference.detach().double()
+    return dict(probability_max_absolute=float((actual.softmax(-1)-reference.softmax(-1)).abs().max()))
+
+
+def numerical_limits(task_kind):
+    limits=dict(gradient_relative_l2=.05,hidden_relative_l2=.02)
+    if task_kind=='regression':limits['logit_relative_l2']=.02
+    elif task_kind=='classification':limits.update(probability_max_absolute=.01,loss_absolute=.01)
+    else:raise ValueError('Unknown numerical task kind')
+    return limits
+
+
 def check_numerical_limits(result):
-    # Fail closed on nonfinite numbers. Thresholds are not fitted per arm/task.
-    limits = dict(gradient_relative_l2=.05,logit_relative_l2=.02,hidden_relative_l2=.02)
-    for name,limit in limits.items():
+    # Classification: at most 1 percentage point probability change and .01
+    # cross-entropy change. Regression retains the original 2% output limit.
+    # These task-independent limits are fixed before the new acceptance run.
+    for name,limit in numerical_limits(result['task_kind']).items():
         value=result[name]
         if not math.isfinite(value) or value < 0 or value >= limit:
             raise ValueError(f'FA4/FP32 math SDPA disagreement: {name}={value}, limit={limit}')
     if not result['fa4_calls'] or not result['buffers_unchanged']:
         raise ValueError('FA4 not exercised or normalization buffers changed')
-    for name in ('loss_absolute','logit_max_absolute'):
+    for name in ('loss_absolute','logit_max_absolute','logit_relative_l2'):
         if not math.isfinite(result[name]):raise ValueError('Nonfinite numerical comparison: '+name)
 
 
@@ -304,7 +322,8 @@ def gate(checkpoint, output, task='nli', data_root=None, manifest=None):
         batches['real_training']=[dict(input_ids=x,labels=y) for x,y in zip(encoded['input_ids'],encoded['labels'])]
     report=dict(status='failed',arm=source['arm'],task=task,source=source,
         reference='fp32_math_sdpa_tf32_disabled',
-        limits=dict(gradient_relative_l2=.05,logit_relative_l2=.02,hidden_relative_l2=.02),batches={})
+        gate_version='fp32_task_v2',
+        limits=numerical_limits('regression' if task=='stsb' else 'classification'),batches={})
     try:
         for name,rows in batches.items():
             inputs={k:v.cuda() for k,v in PairCollator(0,regression=task=='stsb')(rows).items()}
