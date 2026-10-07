@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "repositories": [
+    {
+      "repo": "Rowan/hellaswag",
+      "revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+      "path": "Rowan--hellaswag",
+      "tasks": [
+        "hellaswag"
+      ],
+      "files": [
+        {
+          "path": "Rowan--hellaswag/README.md",
+          "sha256": "cfe6e26e7e936a447a12f7eee50f2bffb0355c3b97459496d8c7296f65c5b353",
+          "bytes": 7019,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/README.md"
+        },
+        {
+          "path": "Rowan--hellaswag/data/test-00000-of-00001.parquet",
+          "sha256": "e572fd5579bd1768b1985f47234f8bbe29247aca200a778b635bffc637714a41",
+          "bytes": 6112397,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "Rowan--hellaswag/data/train-00000-of-00001.parquet",
+          "sha256": "cacb12587faa63d7f723a72d61d12bfa94b140446f5a6a0a2e1c6906ab88bf02",
+          "bytes": 24365524,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "Rowan--hellaswag/data/validation-00000-of-00001.parquet",
+          "sha256": "899813071e1e95efafec90f856e1987d2150fa4d020fc005df6962c259f660cd",
+          "bytes": 6315951,
+          "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet"
+        }
+      ]
+    },
+    {
+      "repo": "facebook/xnli",
+      "revision": "b8dd5d7af51114dbda02c0e3f6133f332186418e",
+      "path": "facebook--xnli",
+      "tasks": [
+        "xnli_en"
+      ],
+      "files": [
+        {
+          "path": "facebook--xnli/README.md",
+          "sha256": "e951158edde65027380c20e827c3c2ac7ca9903bff0ff65209806b9d71a0607a",
+          "bytes": 20789,
+          "url": "https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/README.md"
+        },
+        {
+          "path": "facebook--xnli/en/test-00000-of-00001.parquet",
+          "sha256": "8f0fd1e105091e0f11cd37f9b2bc382f16de9949aa9471e1366b2605ba037167",
+          "bytes": 308237,
+          "url": "https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "facebook--xnli/en/train-00000-of-00001.parquet",
+          "sha256": "6be63cec9ec932a5790de82caee7ee4d00e5a50ef19b79f23b740732da143424",
+          "bytes": 50161923,
+          "url": "https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "facebook--xnli/en/validation-00000-of-00001.parquet",
+          "sha256": "42961a7b66dee147da655d78db8cbaac97b3dbcf898009acffec6cda2d80f2bf",
+          "bytes": 157207,
+          "url": "https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/validation-00000-of-00001.parquet"
+        }
+      ]
+    },
+    {
+      "repo": "facebook/belebele",
+      "revision": "7899cdfa4e1e0d733fd77c848e2c273cb1d32be2",
+      "path": "facebook--belebele",
+      "tasks": [
+        "belebele_eng_Latn"
+      ],
+      "files": [
+        {
+          "path": "facebook--belebele/README.md",
+          "sha256": "311c1a2dc30595eb6c7788c0c20548ea00169eef93dc5b0436c7ccdacaf84231",
+          "bytes": 25535,
+          "url": "https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/README.md"
+        },
+        {
+          "path": "facebook--belebele/data/eng_Latn.jsonl",
+          "sha256": "15af884c2b5994fdc71199e79d553a1864b08ce1b31894aa87f6be925a064a31",
+          "bytes": 836071,
+          "url": "https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/data/eng_Latn.jsonl"
+        }
+      ]
+    },
+    {
+      "repo": "juletxara/xstory_cloze",
+      "revision": "c4c2d88a1ec8b37fe22166d2a610f272726724b6",
+      "path": "juletxara--xstory_cloze",
+      "tasks": [
+        "xstorycloze_en"
+      ],
+      "files": [
+        {
+          "path": "juletxara--xstory_cloze/README.md",
+          "sha256": "7ae19327bcfcc0b792396559609c8c86047b1ba78de899ea44e376eb6356c52a",
+          "bytes": 15638,
+          "url": "https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/README.md"
+        },
+        {
+          "path": "juletxara--xstory_cloze/spring2016.val.en.tsv.split_20_80_eval.tsv",
+          "sha256": "0ac164df73d7fc953e572c49e668d14e059bc7dc3829255efcc573c164e52748",
+          "bytes": 460945,
+          "url": "https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_eval.tsv"
+        },
+        {
+          "path": "juletxara--xstory_cloze/spring2016.val.en.tsv.split_20_80_train.tsv",
+          "sha256": "375aef673686c2e9e908aebd81985942894433adf1e3407114dbe369f81aaaea",
+          "bytes": 110331,
+          "url": "https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_train.tsv"
+        }
+      ]
+    },
+    {
+      "repo": "google-research-datasets/paws-x",
+      "revision": "4cd8187c404bda33cb1f62b49b001115862acf37",
+      "path": "google-research-datasets--paws-x",
+      "tasks": [
+        "paws_en"
+      ],
+      "files": [
+        {
+          "path": "google-research-datasets--paws-x/README.md",
+          "sha256": "a497f37155a0812792b18c2914614112171a520c7cd47ab624dcce0885488303",
+          "bytes": 12870,
+          "url": "https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/README.md"
+        },
+        {
+          "path": "google-research-datasets--paws-x/en/test-00000-of-00001.parquet",
+          "sha256": "fdb1e43f1068cf0cec955327cfdedc2d3065f15d3cd673c9d0002e6e87cc7915",
+          "bytes": 309849,
+          "url": "https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "google-research-datasets--paws-x/en/train-00000-of-00001.parquet",
+          "sha256": "0de6e8a4ba4bd88ee79c883349d112ec1ca85cda78726b59c215fab5849e49f3",
+          "bytes": 8428142,
+          "url": "https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "google-research-datasets--paws-x/en/validation-00000-of-00001.parquet",
+          "sha256": "e91c4c89a3d74deaf82bf2e87e626cf8d69d85f3c8e736b1ab3b6c3503ff26da",
+          "bytes": 307014,
+          "url": "https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/validation-00000-of-00001.parquet"
+        }
+      ]
+    },
+    {
+      "repo": "baber/piqa",
+      "revision": "142f6d7367fd9877f0fb3b5734ea6a545f54cdd1",
+      "path": "baber--piqa",
+      "tasks": [
+        "piqa"
+      ],
+      "files": [
+        {
+          "path": "baber--piqa/piqa_test.parquet",
+          "sha256": "037e4175b967f4082e45a5ccf5c9d31ca3fd73030804aa7d4db0f7ca1fcd9b34",
+          "bytes": 496219,
+          "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_test.parquet"
+        },
+        {
+          "path": "baber--piqa/piqa_train.parquet",
+          "sha256": "3114602b31fa724309a6c493cc86368c4eab7ab6e79e285056fd5ce3b60ddf02",
+          "bytes": 2638413,
+          "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_train.parquet"
+        },
+        {
+          "path": "baber--piqa/piqa_validation.parquet",
+          "sha256": "2b17ee1215b1ceb2ddabf4c90a05c5a8b833bef9d207960f57d111c43a2080f3",
+          "bytes": 299694,
+          "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_validation.parquet"
+        }
+      ]
+    },
+    {
+      "repo": "allenai/ai2_arc",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "path": "allenai--ai2_arc",
+      "tasks": [
+        "arc_easy",
+        "arc_challenge"
+      ],
+      "files": [
+        {
+          "path": "allenai--ai2_arc/ARC-Challenge/test-00000-of-00001.parquet",
+          "sha256": "62f03257e737aed263f55c6abf87c7bb0028a44a6bdd2a26eb1279eb42c1d1e9",
+          "bytes": 203808,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Challenge/train-00000-of-00001.parquet",
+          "sha256": "e488c1587ffdcfc8443f916c53488a95cd471c5790e0746c6bfe4cecf20962cb",
+          "bytes": 189909,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Challenge/validation-00000-of-00001.parquet",
+          "sha256": "395a5c88d1580d69855fbaee9450270578df1ad5af6259771cd0a42c20e99f05",
+          "bytes": 55743,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Easy/test-00000-of-00001.parquet",
+          "sha256": "4160597d618ae851c7eb04e281574f3f654776216ac6b6641588d64527b47177",
+          "bytes": 346257,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Easy/train-00000-of-00001.parquet",
+          "sha256": "b315db8a4be597dc7daa50a4e70d48dd7c990c32085629e6ccd8c926beaa80b5",
+          "bytes": 330598,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/ARC-Easy/validation-00000-of-00001.parquet",
+          "sha256": "ed890ff1e4cef7a7140d3a30dcea3ed2c9d467c6458f447ad9ef0176d8dcbb74",
+          "bytes": 86080,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/validation-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--ai2_arc/README.md",
+          "sha256": "4a293e352253d771604725c978adcea71ee6504e89ed40e1cb0024ecafa9b37e",
+          "bytes": 9001,
+          "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/README.md"
+        }
+      ]
+    },
+    {
+      "repo": "allenai/winogrande",
+      "revision": "01e74176c63542e6b0bcb004dcdea22d94fb67b5",
+      "path": "allenai--winogrande",
+      "tasks": [
+        "winogrande"
+      ],
+      "files": [
+        {
+          "path": "allenai--winogrande/README.md",
+          "sha256": "fd653689cc77706672b40cd040156ad57f4969656d25a14be645cffa8ef55176",
+          "bytes": 11171,
+          "url": "https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/README.md"
+        },
+        {
+          "path": "allenai--winogrande/winogrande_xl/test-00000-of-00001.parquet",
+          "sha256": "100885ec03a67f318d50f8a485cb7e55c9ed88fcefbc565c2907fc98de7f8444",
+          "bytes": 117656,
+          "url": "https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/test-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--winogrande/winogrande_xl/train-00000-of-00001.parquet",
+          "sha256": "5d8c38ad12b9a6c88f79b6e00aaf0f40781f93d4f94816f6cff2b67625d67399",
+          "bytes": 2058506,
+          "url": "https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/train-00000-of-00001.parquet"
+        },
+        {
+          "path": "allenai--winogrande/winogrande_xl/validation-00000-of-00001.parquet",
+          "sha256": "f9d914d1818c0aba98cabdf8af2bc4bd943c462b9c5e7062647e05c2ce3315d1",
+          "bytes": 85928,
+          "url": "https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/validation-00000-of-00001.parquet"
+        }
+      ]
+    }
+  ]
+}

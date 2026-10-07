@@ -1,2 +1,33 @@
-#i envs/eval_fa4.txt +a
-#th2-tjx3-eval-fa4-env-20261007-a01
+#d +a
+#datasets
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag/data
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag/data
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag/data
+--url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli
+--url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli/en
+--url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli/en
+--url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli/en
+--url https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--belebele
+--url https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/data/eng_Latn.jsonl /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--belebele/data
+--url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/juletxara--xstory_cloze
+--url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_eval.tsv /mnt/local/_data/@PROJECT@/downstream-english-20261007/juletxara--xstory_cloze
+--url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_train.tsv /mnt/local/_data/@PROJECT@/downstream-english-20261007/juletxara--xstory_cloze
+--url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x
+--url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x/en
+--url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x/en
+--url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x/en
+--url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_test.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/baber--piqa
+--url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_train.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/baber--piqa
+--url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_validation.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/baber--piqa
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Challenge
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Challenge
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Challenge
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Easy
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Easy
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Easy
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande/winogrande_xl
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande/winogrande_xl
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande/winogrande_xl
