@@ -1,3 +1,27 @@
+## P6-iso sparse and short-target variants — 8 October 2026
+
+User requested implementation of the two proposed P6 follow-ups. New arms:
+`P6-iso-sparse` retains six locations (2,6,10,14,18,22) and four-MLP targets;
+`P6-iso-short` keeps the original twelve locations (2,4,...,24) and two-MLP
+targets. Both retain P6-iso isolation, gate 0.1, auxiliary schedule, normalization,
+and the existing train.py Trainer/Accelerate path. Sparse initialization matches
+the parent's retained heads. Both support SDPA/FA4, sequential queues, strict
+resume/target reporting, checkpoint evaluation and optional task fine-tuning.
+No running queue or runner commands were changed; commands.sh remains #0.
+Full-size CUDA validation and research runs for the new arms remain pending.
+Definitions and usage: docs/P4_P5_P6_IMPLEMENTATION.md, P6-iso follow-ups section.
+The prior B200 status below is historical, not a new monitoring result.
+
+Local verification: 90 of 94 CPU tests passed in 481.898 seconds. All new-arm
+checks passed: exact targets/placement and initial weights, LM/auxiliary gradient
+routing, BF16/recomputation/compilation, document isolation, two-rank DDP, gradient
+accumulation, exact Trainer resume, SDPA versus the independent CPU FA4 oracle,
+checkpoint reload, queue arguments and report rejection checks. Four existing
+evaluation-harness tests could not import the missing local lm_eval package;
+no numerical/assertion failures were reported. The focused two-test run also
+passed. Logs: temp/p6-variants-regression.log and temp/p6-variants-focused.log.
+CUDA kernels were not exercised by these CPU tests.
+
 ## Runner recovered; numerical gates and smoke checks progressing — 8 October 2026
 
 Read-only monitor 48e3b5e, GPU timestamp 2026-10-07 19:45:30 UTC

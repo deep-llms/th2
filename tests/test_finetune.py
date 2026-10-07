@@ -16,6 +16,7 @@ from eval.finetune import PairClassifier, PairCollator, encode_pairs, metrics, S
 from tests.test_eval import make_model
 from tests.test_train import fixture
 from tests.test_fa4_baseline import reference_kernel
+from deep_kv import P6_VARIANTS
 
 
 class FinetuneTests(unittest.TestCase):
@@ -26,7 +27,7 @@ class FinetuneTests(unittest.TestCase):
     def test_forward_identical_and_all_branches_learn(self):
         for backend in ('sdpa', 'fa4'):
             with patch('deep_kv.fa4.load_kernel', return_value=(reference_kernel, {'version': 'CPU-test-double'})):
-                for arm in ('A', 'P6', 'P6-iso', 'P7-simple'):
+                for arm in ('A', 'P6', 'P6-iso', 'P7-simple') + P6_VARIANTS:
                     with self.subTest(backend=backend, arm=arm):
                         backbone = make_model(arm, backend)
                         rows = [dict(input_ids=[2, 4, 3, 31], labels=0),

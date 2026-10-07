@@ -7,7 +7,7 @@ import statistics
 import sys
 
 ARMS = ('A', 'P6', 'P7-simple')
-SUPPORTED_ARMS = (*ARMS, 'P6-iso')
+SUPPORTED_ARMS = (*ARMS, 'P6-iso', 'P6-iso-sparse', 'P6-iso-short')
 TASKS = ('paws', 'nli')
 SUPPORTED_TASKS = (*TASKS, 'stsb', 'boolq')
 

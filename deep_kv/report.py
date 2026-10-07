@@ -2,7 +2,7 @@
 import json
 import copy
 from pathlib import Path
-from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, code_loss_weight, kv_loss_weight
+from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARIANTS, anticipatory_layout, code_loss_weight, kv_loss_weight
 
 
 def comparable_config(config):
@@ -24,10 +24,14 @@ def comparable_config(config):
             config['pilot'].pop(key,None)
     if arm in ANTICIPATORY_ARMS:
         expected=dict(proxy_alpha_init=.1 if arm.startswith('P6') else 1.,
-                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso','P4-iso-4h'),
-                      proxy_target_version='p4p6-r1',proxy_lookahead=4,proxy_loss_form='cosine')
-        if any(config['pilot'].get(k)!=v for k,v in expected.items()):
+                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS,
+                      proxy_target_version='p4p6-r1',proxy_lookahead=2 if arm=='P6-iso-short' else 4,proxy_loss_form='cosine')
+        if (any(config['pilot'].get(k)!=v for k,v in expected.items())
+                or config['pilot'].get('proxy_layers') is not None
+                or config['pilot'].get('proxy_kv_mode','kv') != 'kv'):
             raise ValueError('P4/P5/P6 configuration does not match its arm definition')
+        # Only the arm-defined target ablation is allowed to differ from A/P6.
+        config['pilot']['proxy_lookahead'] = 4
         for key in ('proxy_alpha_init','proxy_isolate_estimator','proxy_module_seed',
                     'proxy_aux_recompute','proxy_compile_estimator'):
             config['pilot'].pop(key,None)
@@ -95,8 +99,9 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             if not target or target.get('target_version') != version or config['pilot'].get('proxy_channel_mask'):
                 raise ValueError('Proxy arms require their versioned target definition without a channel mask')
             if arm in ANTICIPATORY_ARMS:
-                expected_target = dict(quantity='mlp_window_sum',lookahead=4,
-                    bands=list(range(2,config['model_config']['num_hidden_layers']-2,2)),
+                bands, lookahead = anticipatory_layout(arm, config['model_config']['num_hidden_layers'])
+                expected_target = dict(quantity='mlp_window_sum',lookahead=lookahead,
+                    bands=list(bands),
                     normalization='running_per_channel',epsilon=1e-6,loss_form='cosine')
                 if (any(target.get(k)!=v for k,v in expected_target.items())
                         or result.get('proxy',{}).get('target') != target):
@@ -116,6 +121,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             for other, definition in targets.items():
                 # Families differ only in the raw target quantity and target index set.
                 ignored = set() if other[:2] == arm[:2] else {'quantity','bands'}
+                if arm in P6_VARIANTS or other in P6_VARIANTS:
+                    ignored |= {'bands','lookahead'}  # Validated arm-specific layouts above.
                 if arm in MEMORY_ARMS or other in MEMORY_ARMS:
                     ignored |= {'quantity','bands','target_version','relational'}
                 if ({k:v for k,v in target.items() if k not in ignored} !=
@@ -166,6 +173,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 if arm in nll and 'A' in nll:summary['nll_differences'][arm+'-A']=nll[arm]-nll['A']
             for arm,control in (('P4-4h','P4'),('P4-iso-4h','P4-iso'),('P4-iso-4h','P4-4h')):
                 if arm in nll and control in nll:summary['nll_differences'][arm+'-'+control]=nll[arm]-nll[control]
+            for arm in P6_VARIANTS:
+                if arm in nll and 'P6-iso' in nll:summary['nll_differences'][arm+'-P6-iso']=nll[arm]-nll['P6-iso']
             for arm in MEMORY_ARMS[1:]:
                 if arm in nll and 'P7' in nll:summary['nll_differences'][arm+'-P7']=nll[arm]-nll['P7']
             summary['interpretation']='Token-matched exploratory comparison; time-matched A and initialization-seed spread are required for a screen success claim.'

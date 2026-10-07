@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import torch
 
-from deep_kv import PROXY_ARMS
+from deep_kv import PROXY_ARMS, P6_VARIANTS
 from deep_kv.model import Context
 from deep_kv.proxy import ProxyModel
 from tests.test_fa4_baseline import reference_kernel
@@ -33,7 +33,7 @@ class FA4ProxyTests(unittest.TestCase):
         mock.start();self.addCleanup(mock.stop)
 
     def test_all_arms_active_gates_losses_gradients_statistics_and_checkpoint_replay(self):
-        for arm in PROXY_ARMS:
+        for arm in PROXY_ARMS + P6_VARIANTS:
             for checkpoint in (False,True):
                 with self.subTest(arm=arm,checkpoint=checkpoint):
                     dense=make(arm,'sdpa',checkpoint);flash=make(arm,'fa4',checkpoint)
@@ -62,7 +62,7 @@ class FA4ProxyTests(unittest.TestCase):
                         self.assertGreater(p.grad.abs().sum().item(),0,name)
 
     def test_active_proxy_document_isolation_and_auxiliary_routing(self):
-        for arm in ('P1-block','P1-flow','P3-block','P3-flow','P4-4h','P4-iso-4h'):
+        for arm in ('P1-block','P1-flow','P3-block','P3-flow','P4-4h','P4-iso-4h') + P6_VARIANTS:
             m=make(arm,'fa4');ctx=batch()
             with torch.no_grad():
                 for head in m.heads.values():head.alpha.fill_(.2)
@@ -76,7 +76,7 @@ class FA4ProxyTests(unittest.TestCase):
                 torch.testing.assert_close(hidden[:,3:],m.hidden_states(altered)[0][:,3:],rtol=0,atol=0)
                 m.zero_grad(set_to_none=True);out=m(ctx);out['aux_sum'].backward()
                 backbone=[p.grad for p in m.backbone.parameters() if p.grad is not None]
-                if arm.endswith('block') or arm.startswith('P4'):self.assertFalse(backbone)
+                if arm.endswith('block') or arm.startswith('P4') or arm in P6_VARIANTS:self.assertFalse(backbone)
                 else:self.assertGreater(sum(g.abs().sum().item() for g in backbone),0)
             finally:handle.remove()
 
@@ -110,7 +110,7 @@ class FA4ProxyTests(unittest.TestCase):
         from safetensors.torch import load_file
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);config=proxy_fixture(root)
-            for arm in ('P1-block','P3-flow','P3-lambda0','P4-4h','P4-iso-4h'):
+            for arm in ('P1-block','P3-flow','P3-lambda0','P4-4h','P4-iso-4h') + P6_VARIANTS:
                 args={**config,'arm':arm,'attention_backend':'fa4','output_dir':str(root/arm)}
                 invoke(root,{**args,'stop_after':2})
                 before=load_file(root/arm/'checkpoint-2/model.safetensors')

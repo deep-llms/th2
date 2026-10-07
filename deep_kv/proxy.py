@@ -12,13 +12,13 @@ from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb, eager
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
 from .model import DeepKV, normalize_code
-from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS
+from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout
 
 
 @dataclass
 class ProxySettings:
     groups: int = 2
-    lookahead: int = 4
+    lookahead: int | None = None
     width: int = 256
     features: int = 255
     chunk_size: int = 64
@@ -45,6 +45,8 @@ def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
     new = arm in ANTICIPATORY_ARMS
     memory = arm in MEMORY_ARMS
+    expected_lookahead = 2 if arm == 'P6-iso-short' else 4
+    if settings.lookahead is None:settings.lookahead = expected_lookahead
     if memory:
         version = 'p4p6-r1' if arm=='P7-simple' else 'p7-r1'
         if settings.target_version is None:settings.target_version = version
@@ -58,10 +60,10 @@ def resolve_proxy_settings(arm, settings=None):
         if settings.module_seed is None:settings.module_seed = 43
     if settings.alpha_init is None:settings.alpha_init = (.1 if arm.startswith('P6') else 1.) if new else 0.
     if settings.target_version is None:settings.target_version = 'p4p6-r1' if new else 'r7'
-    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h')
+    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS
     if settings.isolate_estimator is None:settings.isolate_estimator = isolation
     if new:
-        if (settings.target_version != 'p4p6-r1' or settings.lookahead != 4
+        if (settings.target_version != 'p4p6-r1' or settings.lookahead != expected_lookahead
                 or settings.loss_form != 'cosine' or settings.kv_mode != 'kv'
                 or settings.layers is not None or settings.isolate_estimator != isolation
                 or settings.alpha_init != (.1 if arm.startswith('P6') else 1.)):
@@ -92,7 +94,7 @@ def compute_budget(config, settings, sequence_length=2048):
         raise ValueError('Positive EMS chunk_size must divide sequence length')
     d, n, h = config.hidden_size, config.num_hidden_layers, config.head_dim
     nq, nk = config.num_attention_heads, config.num_key_value_heads
-    p1n = len(proxy_layers(config, 'P1', settings.lookahead, settings.layers))
+    p1n = len(proxy_layers(config, 'P1', settings.lookahead if settings.lookahead is not None else 4, settings.layers))
     p3n = len(proxy_layers(config, 'P3'))
     p1 = p1n * 2 * d * settings.width
     p3 = p3n * (d * settings.width + settings.width * settings.features + settings.features * d)
@@ -114,6 +116,10 @@ def compute_budget(config, settings, sequence_length=2048):
     stream = plain+max(0,layers-1)*3*settings.width**2
     for family,mac in [('P4',plain),('P5',stream),('P6',plain)]:
         result[family] = dict(extra_macs_per_token=mac,extra_parameters=mac+layers*d,gate_parameters=layers*d)
+    for arm in P6_VARIANTS:
+        count = len(anticipatory_layout(arm, n)[0])
+        mac = count*2*d*settings.width
+        result[arm] = dict(extra_macs_per_token=mac,extra_parameters=mac+count*d,gate_parameters=count*d)
     estimator = 2*d*settings.width+4*settings.width
     projections = 4*h*d
     extra_attention = (2*nq//nk)*h*(sequence_length+1)
@@ -263,12 +269,16 @@ class ProxyModel(DeepKV):
         self.family = arm[:2] if new or memory or arm.startswith(('P1','P3')) else None
         self.routing = 'flow' if arm.endswith('flow') else 'block'
         self.layers = proxy_layers(cfg, 'P1' if new or memory else self.family, settings.lookahead, settings.layers) if self.family else ()
+        if new:self.layers = anticipatory_layout(arm, cfg.num_hidden_layers)[0]
         if self.family and not self.layers:
             raise ValueError('Model has no eligible proxy layers')
         self.heads = nn.ModuleDict()
         with torch.random.fork_rng(devices=[]):
             torch.random.default_generator.manual_seed(settings.module_seed if settings.module_seed is not None else kwargs.get('seed',42)+1)
-            for layer in self.layers:
+            # Preserve the parent's initial weights at retained locations. The
+            # discarded heads exist only during sparse-arm initialization.
+            initialization_layers = anticipatory_layout('P6-iso', cfg.num_hidden_layers)[0] if arm=='P6-iso-sparse' else self.layers
+            for layer in initialization_layers:
                 if arm=='P7-simple':
                     from .proxy_memory import SimpleMemoryHead
                     self.heads[str(layer)] = SimpleMemoryHead(cfg,settings)
@@ -277,7 +287,8 @@ class ProxyModel(DeepKV):
                     self.heads[str(layer)] = MemoryHead(cfg,settings,native_values=arm=='P7-kq')
                 elif new:
                     from .proxy_estimators import AnticipatoryHead
-                    self.heads[str(layer)] = AnticipatoryHead(cfg,settings,stream=self.family=='P5',first=layer==self.layers[0])
+                    head = AnticipatoryHead(cfg,settings,stream=self.family=='P5',first=layer==self.layers[0])
+                    if layer in self.layers:self.heads[str(layer)] = head
                 else:self.heads[str(layer)] = ProxyHead(cfg, self.family, settings)
             if arm=='P7-simple':
                 for head in self.heads.values():head.initialize_projections(cfg)

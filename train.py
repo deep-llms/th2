@@ -66,7 +66,7 @@ class PilotArguments:
     stop_after: int | None = None
     proxy_screen: bool = False
     proxy_groups: int = 2
-    proxy_lookahead: int = 4
+    proxy_lookahead: int | None = None
     proxy_width: int = 256
     proxy_features: int = 255
     proxy_chunk_size: int = 64

@@ -16,7 +16,7 @@ random-initialization experiments, not conversions of trained P1 checkpoints.
 | `P6` | Residual before the block, scaled by detached input RMS | 0.1 | Yes |
 | `P6-iso` | Same as P6 | 0.1 | No |
 
-Placement is blocks 2, 4, …, 24 in the 28-block model. P4/P6 use independent
+Original-arm placement is blocks 2, 4, …, 24 in the 28-block model. P4/P6 use independent
 two-linear SiLU estimators. P5 has distinct down/up projections at each block,
 and residual two-linear updates after the first proxy block. Its stream mixes
 depth only and remains connected across proxy blocks for auxiliary gradients.
@@ -35,7 +35,7 @@ all-head parent. The arm name fixes the selection and is checked on resume.
 Architectures that cannot represent exactly four query heads using complete
 GQA groups are rejected. These variants do not reduce estimator parameter count.
 
-Every target is the detached sum of four consecutive MLP outputs starting at
+For the original arms, each target is the detached sum of four consecutive MLP outputs starting at
 the injection block, with the existing two-pass bootstrap, running per-channel
 standardization, relative variance floor and clipping. Target identity is
 `p4p6-r1`. Auxiliary cosine loss is averaged across tokens and layers and has
@@ -58,6 +58,63 @@ is saved in the recipe. Adding heads does not alter backbone initialization or
 the global RNG stream. The arm names fix isolation and initial gate values;
 contradictory overrides are rejected. All new settings participate in strict
 resume validation. Defaults of existing A/P1/P3 recipes remain compatible.
+
+## P6-iso follow-ups: sparse placement and shorter targets
+
+Two separate arms extend P6-iso; neither combines the two changes.
+
+| Arm | Injection blocks (1-based, 28-block model) | Detached raw target at block `l` |
+|---|---|---|
+| `P6-iso` | 2, 4, …, 24 | `m_l + m_(l+1) + m_(l+2) + m_(l+3)` |
+| `P6-iso-sparse` | 2, 6, 10, 14, 18, 22 | Same four-MLP sum |
+| `P6-iso-short` | 2, 4, …, 24 | `m_l + m_(l+1)` |
+
+Here `m_l` is the actual MLP output in the current forward pass. The short
+variant keeps twelve locations; it does not add an injection at block 26.
+Both retain the width-256 SiLU estimator, residual injection scaled by detached
+input RMS, initial channel gate 0.1, and predictor isolation from LM gradients.
+The backbone and gates still learn from LM loss; auxiliary gradients train only
+the predictor. Running target normalization, cosine loss, and the auxiliary
+ramp to 0.1 over 250 updates are unchanged. Auxiliary loss remains averaged over
+tokens and active locations, so using six locations does not halve its weight.
+
+Sparse initialization preserves the parent's initial predictor weights at each
+retained location without retaining the unused modules. Its estimator forward
+MACs/token drop from 6,291,456 to 3,145,728, and extra parameters including gates
+from 6,303,744 to 3,151,872. The short variant has the parent's parameter count
+and estimator cost. These counts do not predict total training throughput.
+
+Select either arm by name in `train.py` or the existing sequential queue:
+
+```bash
+python -m deep_kv make-jobs --config proxy_heads.b200.json \
+  --arms P6-iso-sparse P6-iso-short --seeds 42 --stop-after 2500 \
+  --output temp/p6-variants-jobs.json
+```
+
+This writes a queue only. Dense SDPA and FA4 use the existing attention paths;
+packing, document isolation, reset positions, optimizer and schedule are shared
+with P6-iso. Omit `proxy_lookahead` to resolve it from the arm (4 or 2). Explicit
+contradictory lookahead, placement, isolation or gate overrides fail. Existing
+arms still resolve an omitted lookahead to 4, preserving their saved recipes.
+New arms require fresh training; changing arm or target while resuming is
+rejected. Saved target metadata records the exact locations and target length,
+and matched reports validate them before allowing these intended differences.
+Checkpoint evaluation and optional supervised fine-tuning support both arms;
+fine-tuning enables task gradients into the predictor, as for P6-iso.
+
+These variants are implemented but have no full-size CUDA validation or research
+results yet. They are not added to the running B200 queue.
+
+Local verification: 90 of 94 CPU tests passed in 481.898 seconds. All new-arm
+checks passed: exact targets/placement and initial weights, LM/auxiliary gradient
+routing, BF16/recomputation/compilation, document isolation, two-rank DDP, gradient
+accumulation, exact Trainer resume, SDPA versus the independent CPU FA4 oracle,
+checkpoint reload, queue arguments and report rejection checks. Four existing
+evaluation-harness tests could not import the missing local lm_eval package;
+no numerical/assertion failures were reported. The focused two-test run also
+passed. Logs: temp/p6-variants-regression.log and temp/p6-variants-focused.log.
+CUDA kernels were not exercised by these CPU tests.
 
 ## Usage and comparison
 

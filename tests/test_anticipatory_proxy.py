@@ -12,8 +12,8 @@ from unittest.mock import patch
 import torch
 from safetensors.torch import load_file
 from transformers import TrainingArguments
-from deep_kv import ANTICIPATORY_ARMS
-from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget
+from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS
+from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget, resolve_proxy_settings
 from deep_kv.proxy_estimators import BlockMLP
 from deep_kv.proxy_training import ProxyTrainer
 from deep_kv.packing import isolated_data_collator
@@ -34,7 +34,7 @@ class AnticipatoryTests(unittest.TestCase):
         for arm in ANTICIPATORY_ARMS:
             m=model(arm)
             full=ProxyModel.from_scratch(config,arm,proxy_settings=settings())
-            self.assertEqual(full.layers,tuple(range(2,25,2)))
+            self.assertEqual(full.layers,(2,6,10,14,18,22) if arm=='P6-iso-sparse' else tuple(range(2,25,2)))
             for key,value in base.backbone.state_dict().items():
                 torch.testing.assert_close(m.backbone.state_dict()[key],value,rtol=0,atol=0)
             with torch.no_grad():
@@ -70,6 +70,65 @@ class AnticipatoryTests(unittest.TestCase):
                 expected=layer.self_attn.v_proj(z).view(1,8,2,8).transpose(1,2)
                 torch.testing.assert_close(captured[1][2],expected,rtol=0,atol=0)
                 self.assertTrue(all((captured[0][2][:,i]-expected[:,i]).abs().max()>0 for i in range(2)))
+
+    def test_p6_variants_fixed_layout_defaults_and_parent_initialization(self):
+        config=cfg();config.num_hidden_layers=28;config.layer_types=['full_attention']*28
+        parent=ProxyModel.from_scratch(config,'P6-iso',proxy_settings=settings())
+        for arm in P6_VARIANTS:
+            rng=torch.random.get_rng_state().clone()
+            m=ProxyModel.from_scratch(config,arm,proxy_settings=settings())
+            torch.testing.assert_close(torch.random.get_rng_state(),rng,rtol=0,atol=0)
+            self.assertEqual(m.layers,(2,6,10,14,18,22) if arm=='P6-iso-sparse' else tuple(range(2,25,2)))
+            self.assertEqual(tuple(m.mean_layers),m.layers)
+            self.assertEqual(m.settings.lookahead,2 if arm=='P6-iso-short' else 4)
+            self.assertTrue(m.settings.isolate_estimator)
+            self.assertEqual(m.settings.alpha_init,.1)
+            self.assertEqual(m.auxiliary_weight(125),.05)
+            self.assertEqual(m.auxiliary_weight(250),.1)
+            for layer in m.layers:
+                for name,value in m.heads[str(layer)].state_dict().items():
+                    torch.testing.assert_close(value,parent.heads[str(layer)].state_dict()[name],rtol=0,atol=0)
+            for name,value in m.backbone.state_dict().items():
+                torch.testing.assert_close(value,parent.backbone.state_dict()[name],rtol=0,atol=0)
+            budget=compute_budget(config,m.settings,8)[arm]
+            self.assertEqual(sum(p.numel() for p in m.heads.parameters()),budget['extra_parameters'])
+            for options in (dict(lookahead=4 if arm=='P6-iso-short' else 2),dict(layers=[2]),
+                            dict(isolate_estimator=False),dict(alpha_init=1),dict(kv_mode='v')):
+                with self.assertRaises(ValueError):resolve_proxy_settings(arm,settings(**options))
+        # Previously saved explicit defaults and newly omitted defaults agree.
+        self.assertEqual(resolve_proxy_settings('P6-iso',settings()),resolve_proxy_settings('P6-iso',settings(lookahead=4)))
+
+    def test_p6_variant_queue_resume_reload_and_report_guards(self):
+        from transformers import HfArgumentParser
+        from train import ModelArguments, DataArguments, PilotArguments
+        from eval.models import load_checkpoint
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);recipe=proxy_fixture(root)
+            for arm in ('P6-iso',)+P6_VARIANTS:
+                args={**recipe,'arm':arm,'output_dir':str(root/arm)}
+                invoke(root,args)
+                loaded,_,_=load_checkpoint(root/arm,device='cpu',attention_backend='sdpa')
+                self.assertEqual(loaded.wrapped.arm,arm)
+                self.assertEqual(loaded.wrapped.settings.lookahead,2 if arm=='P6-iso-short' else 4)
+                with self.assertRaisesRegex(ValueError,'Resume configuration'):
+                    invoke(root,{**args,'arm':'P6-iso' if arm in P6_VARIANTS else 'P6-iso-short'})
+            result=report(root,('P6-iso',)+P6_VARIANTS)
+            for arm in P6_VARIANTS:
+                self.assertIn(arm+'-P6-iso',result['nll_differences'])
+                path=root/arm/'train_config.json';saved=path.read_text()
+                for key,value in (('bands',[2,6]),('lookahead',3)):
+                    bad=json.loads(saved);bad['proxy_target'][key]=value;path.write_text(json.dumps(bad))
+                    with self.assertRaisesRegex(ValueError,'target metadata'):report(root,('P6-iso',arm))
+                path.write_text(saved)
+            path=root/'recipe.json';path.write_text(json.dumps(recipe))
+            queue=jobs(path,arms=list(P6_VARIANTS),seeds=[42])
+            parser=HfArgumentParser((ModelArguments,DataArguments,PilotArguments,TrainingArguments))
+            for job,arm in zip(queue['jobs'][:2],P6_VARIANTS):
+                argv=job['argv'];_,_,pilot,_=parser.parse_args_into_dataclasses(argv[argv.index(str(Path('train.py').resolve()))+1:])
+                resolved=resolve_proxy_settings(pilot.arm,ProxySettings(**{k:getattr(pilot,'proxy_'+k) for k in ProxySettings.__dataclass_fields__}))
+                self.assertEqual(pilot.arm,arm)
+                self.assertEqual(resolved.lookahead,2 if arm=='P6-iso-short' else 4)
+                self.assertEqual(job['gpus'],list(range(8)))
 
     def test_four_head_gqa_mapping_and_unchanged_parameters(self):
         config=cfg();config.num_attention_heads=16;config.num_key_value_heads=8
@@ -207,7 +266,8 @@ class AnticipatoryTests(unittest.TestCase):
                 before={k:v.clone() for k,v in m.named_buffers()}
                 with patch.object(m,'normalize_target',side_effect=target):actual=m(batch(),collect_target_statistics=True)
                 for key,value in targets.items():
-                    torch.testing.assert_close(value,sum(mlps[i].float() for i in range(key,key+4)),rtol=0,atol=0)
+                    span = 2 if arm=='P6-iso-short' else 4
+                    torch.testing.assert_close(value,sum(mlps[i].float() for i in range(key,key+span)),rtol=0,atol=0)
                 objective(m,actual).backward()
                 for h in hooks:h.remove()
                 for key,value in m.named_buffers():torch.testing.assert_close(value,before[key],rtol=0,atol=0)
@@ -297,7 +357,7 @@ class AnticipatoryTests(unittest.TestCase):
         # Real DDP catches unused-estimator hooks at lambda=0 followed by >0.
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);recipe=proxy_fixture(root,world=2)
-            for arm in ('P4-iso','P5','P6'):
+            for arm in ('P4-iso','P5','P6') + P6_VARIANTS:
                 args={**recipe,'arm':arm,'output_dir':str(root/arm),'ddp_backend':'gloo',
                       'ddp_find_unused_parameters':False,'logging_steps':2,'eval_on_start':False}
                 path=root/'ddp.json';path.write_text(json.dumps(args))
@@ -328,7 +388,7 @@ class AnticipatoryTests(unittest.TestCase):
         ctx=batch();row=dict(input_ids=ctx.input_ids[0].tolist(),labels=ctx.labels[0].tolist(),attention_mask=[1]*8)
         rows=[{**row,'segments':segments} for segments in ([0]*3+[1]*5,[0]*4+[1]*4,[0]+[1]*2+[2]*5)]
         micro=[isolated_data_collator([row]) for row in rows]
-        for arm in ('P4-iso','P5','P6'):
+        for arm in ('P4-iso','P5','P6') + P6_VARIANTS:
             models=[model(arm),model(arm)]
             with tempfile.TemporaryDirectory() as tmp:
                 trainers=[ProxyTrainer(model=m,args=TrainingArguments(output_dir=tmp,use_cpu=True,report_to=[])) for m in models]
