@@ -116,6 +116,15 @@ no numerical/assertion failures were reported. The focused two-test run also
 passed. Logs: temp/p6-variants-regression.log and temp/p6-variants-focused.log.
 CUDA kernels were not exercised by these CPU tests.
 
+Follow-up review (8 October): no production-code defect found. An additional
+28-block regression passed in FP32/BF16 on SDPA and the CPU FA4 oracle, checking
+parent-equivalent LM outputs/gradients and exact detached targets through block
+25. The local dependency gap was resolved in the separate ignored
+`temp/p6-review-env`; all 11 evaluation tests now pass, including the four
+previously blocked by missing `lm_eval`. Existing train environments and B200
+were unchanged. Logs: `temp/p6-full-depth-review.log` (2.997 s) and
+`temp/p6-eval-review.log` (75.652 s). CUDA validation is still pending.
+
 ## Usage and comparison
 
 Train directly with the existing entry point and recipe, selecting `--arm

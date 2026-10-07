@@ -1,3 +1,26 @@
+## P6 variant follow-up review — 8 October 2026
+
+Reviewed the P6-iso sparse/short implementation, gradient routing, target windows,
+normalization, resume guards, queue arguments, and downstream wrappers. No
+production-code defect was found; this review adds a stronger regression test.
+The full 28-block test passed (2.997 seconds), using tiny hidden dimensions with
+FP32 and BF16 on SDPA and the independent CPU FA4 oracle. Sparse matches the
+parent with only excluded injection gates zeroed; short matches the parent's LM
+output and gradients. Both produce the exact intended detached MLP sums at all
+locations, ending at block 25, with the original auxiliary token denominator.
+
+Resolved the previous missing-lm_eval test gap in ignored temp/p6-review-env,
+a separate system-site-packages virtual environment over sampling_b200. Installed
+lm_eval[hf]==0.4.10 there after checking the dry-run plan; existing training
+environments and B200 were not modified. Core versions remain torch 2.14.0,
+Transformers 5.9.0, datasets 4.8.5 and Accelerate 1.13.0. All 11 evaluation tests
+passed in 75.652 seconds, including all four previously blocked tests. Together
+with the prior 90 passes, the original 94-test set has no outstanding failures;
+this is verification across runs, not a new combined suite invocation.
+Evidence: temp/p6-full-depth-review.log, temp/p6-eval-review.log and
+temp/p6-review-eval-install-plan.log. Full-size B200/CUDA validation of these
+new variants remains pending. No new experiment or remote push in this review.
+
 ## P6-iso sparse and short-target variants — 8 October 2026
 
 User requested implementation of the two proposed P6 follow-ups. New arms:

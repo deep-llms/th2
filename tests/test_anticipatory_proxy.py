@@ -130,6 +130,57 @@ class AnticipatoryTests(unittest.TestCase):
                 self.assertEqual(resolved.lookahead,2 if arm=='P6-iso-short' else 4)
                 self.assertEqual(job['gpus'],list(range(8)))
 
+    def test_p6_variants_full_depth_parent_reference(self):
+        """Exercise all 28 blocks, including the final targets, on both paths."""
+        from tests.test_fa4_baseline import reference_kernel
+        config=cfg();config.num_hidden_layers=28;config.layer_types=['full_attention']*28
+        for backend in ('sdpa','fa4'):
+            for arm in P6_VARIANTS:
+                with self.subTest(backend=backend,arm=arm), patch('deep_kv.fa4.load_kernel',
+                        return_value=(reference_kernel,{'version':'CPU-test-double'})):
+                    args=dict(proxy_settings=settings(),attention_backend=backend,
+                              checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False)
+                    parent=ProxyModel.from_scratch(config,'P6-iso',**args)
+                    variant=ProxyModel.from_scratch(config,arm,**args)
+                    # Removing injections must equal zeroing precisely those
+                    # parent gates, with identical retained head weights.
+                    with torch.no_grad():
+                        for key,head in parent.heads.items():
+                            if int(key) not in variant.layers:head.alpha.zero_()
+                    for dtype in (torch.float32,torch.bfloat16):
+                        parent.zero_grad(set_to_none=True);variant.zero_grad(set_to_none=True)
+                        mlps={};targets={};hooks=[]
+                        for i,layer in enumerate(variant.backbone.model.layers,1):
+                            hooks.append(layer.mlp.register_forward_hook(self.capture(mlps,i)))
+                        normalize=variant.normalize_target
+                        def capture_target(raw,key,**kwargs):
+                            self.assertFalse(raw.requires_grad)
+                            targets[key]=raw.clone()
+                            return normalize(raw,key,**kwargs)
+                        try:
+                            with torch.autocast('cpu',dtype=dtype,enabled=dtype==torch.bfloat16):
+                                expected=parent(batch(),compute_auxiliary_losses=False)
+                                with patch.object(variant,'normalize_target',side_effect=capture_target):
+                                    actual=variant(batch(),collect_target_statistics=True)
+                            torch.testing.assert_close(actual['lm_sum'],expected['lm_sum'],rtol=0,atol=0)
+                            expected['lm_sum'].backward();actual['lm_sum'].backward()
+                            reference=dict(parent.named_parameters())
+                            for name,p in variant.named_parameters():
+                                q=reference[name]
+                                self.assertEqual(p.grad is None,q.grad is None,name)
+                                if p.grad is not None:torch.testing.assert_close(p.grad,q.grad,rtol=0,atol=0,msg=name)
+                            span=2 if arm=='P6-iso-short' else 4
+                            self.assertEqual(tuple(targets),variant.layers)
+                            for index,key in enumerate(variant.layers):
+                                raw=sum(mlps[i].float() for i in range(key,key+span))
+                                torch.testing.assert_close(targets[key],raw,rtol=0,atol=0)
+                                torch.testing.assert_close(actual['center_sums'][index],raw.sum((0,1)),rtol=0,atol=0)
+                                self.assertEqual(int(actual['center_counts'][index]),8)
+                            self.assertEqual(variant.layers[-1]+span-1,25)
+                            self.assertEqual(int(actual['aux_count']),8)
+                        finally:
+                            for hook in hooks:hook.remove()
+
     def test_four_head_gqa_mapping_and_unchanged_parameters(self):
         config=cfg();config.num_attention_heads=16;config.num_key_value_heads=8
         ctx=batch();u=torch.randn(1,8,32);z=(u+torch.randn_like(u)).requires_grad_()
