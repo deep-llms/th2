@@ -280,3 +280,39 @@ nonzero aggregate predictor gradients, buffers unchanged. FA4-vs-SDPA
 relative L2: gradients .0096595060, logits .0047431584.
 Source monitor log SHA256:
 `25afdd2b2c7fc5e53bfb4594c5e7e1682d83beaabd6cbcee57deb5bb3b568724`.
+
+## P6-iso supervised evaluation complete — 7 October 2026
+
+Monitor `6ef6e1d`, 23:41:08 Singapore: all 20 stages passed, including 8 full
+fits and 6 final tests. Queue finished 23:21:40 Singapore (63 min 34 s).
+Mean test accuracy ± sample SD across fine-tuning seeds 42/43/44: PAWS-X
+90.717 ± .751%, English XNLI 78.955 ± .445%. Compared with A: -1.133 pp
+PAWS-X, +.033 pp NLI; no convincing downstream gain. Both LR selections 3e-5.
+Data/tokenizer and example-order hashes match A's completed evaluation.
+Automatic communicating burns verified 23:22:46; same workers 351289–351296
+active at 100% on all eight GPUs in current snapshot. No training queued.
+Evidence: artifacts/p6iso-finetune-monitor-20261007-a03/ (26 verified JSON
+artifacts). Full report: docs/SUPERVISED_FINETUNING_20261007.md.
+commands #0. Do not relaunch without a new request.
+
+Final comparison, test accuracy percent (mean ± sample SD, three fine-tuning
+seeds; one pretraining seed):
+
+| Arm | PAWS-X | English XNLI |
+|---|---:|---:|
+| A | 91.850 ± .278 | 78.922 ± .111 |
+| P6 | 90.300 ± .218 | 79.188 ± .579 |
+| P7-simple | 90.917 ± .029 | 78.696 ± .306 |
+| P6-iso | 90.717 ± .751 | 78.955 ± .445 |
+
+P6-iso seed accuracies 42/43/44: PAWS-X 91.15/89.85/91.15%;
+XNLI 78.4431/79.2415/79.1816%. These results do not show a convincing
+supervised downstream advantage despite its best LM validation loss.
+
+Local verification checked all expected counts, summary against six result
+receipts, matching data/tokenizer/example-order hashes versus A, and matching
+current GPU worker identities to the successful burn receipt. The remote
+summary validator also recomputed accuracy from finite per-example prediction
+arrays and checked shapes/label order; those arrays remain on B200.
+Source log: temp/p6iso-finetune-monitor-20261007-a03.log, SHA256
+`8b1668ddcb0d559e71706f0c12d5da54a4e6c094b013314f80b4168766c3fbee`.

@@ -1,4 +1,4 @@
-#1 +30+a
+#0
 #th2-tjx3-p6iso-finetune-monitor-20261007-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
