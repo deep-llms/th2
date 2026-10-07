@@ -247,3 +247,37 @@ config was verified; known burn workers 351289–351296 alone were reclaimed,
 and all GPUs were free before evaluation. Final communicating burns are
 configured for either success or failure; they are not running during eval.
 `commands.sh` restored to #0; detached queue continues.
+
+## Completed few-shot results — 8 October 2026
+
+Monitor `d815726` at 01:28:45 Singapore confirms all 12 stages passed.
+Queue ended 00:27:35, 12 min 37 s after the numerical gates started.
+All 32 arm/task results passed completeness and full-prompt validation:
+90,784 scored examples, no truncation, original checkpoints unchanged.
+Final communicating burns verified 00:28:46; workers 354407–354414 remain
+active at 100% across all eight GPUs. Current progress advances from cycle
+4,030 / 4,474.72 GiB logical collective payload to 4,040 / 4,485.82 GiB.
+Evidence: `artifacts/fewshot-monitor-20261008-a01/` (77 verified JSON artifacts).
+
+Scores below are percentages: acc_norm for ARC-C/E, HellaSwag and PIQA,
+acc for other tasks. The mean is an equally weighted descriptive composite,
+not an official aggregate or evidence of significance.
+
+| Task | Shots | A | P6 | P6-iso | P7-simple |
+|---|---:|---:|---:|---:|---:|
+| arc_challenge | 25 | 22.782 | 22.355 | 21.416 | 22.611 |
+| arc_easy | 5 | 36.532 | 35.985 | 36.827 | 35.522 |
+| hellaswag | 10 | 29.297 | 29.138 | 29.257 | 29.227 |
+| paws_en | 5 | 49.450 | 51.050 | 49.250 | 50.550 |
+| piqa | 5 | 61.153 | 61.045 | 61.045 | 61.317 |
+| winogrande | 5 | 50.987 | 49.645 | 51.855 | 49.882 |
+| xnli_en | 5 | 38.394 | 36.426 | 37.068 | 37.912 |
+| xstorycloze_en | 5 | 54.136 | 54.666 | 54.600 | 54.600 |
+| **Mean** | — | 42.841 | 42.539 | 42.665 | 42.702 |
+
+A remains highest on the aggregate. P7-simple is 0.139 percentage points below
+A, P6-iso 0.177 below, P6 0.303 below. Individual-task proxy gains exist but do
+not establish an overall improvement. One pretraining seed and one demonstration
+seed; no paired significance test has been performed. Do not compare this
+eight-task mean directly against the earlier nine-task zero-shot mean, which
+included Belebele. No new training or extra benchmarks were launched.

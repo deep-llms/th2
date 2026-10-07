@@ -1,3 +1,18 @@
+## Task-specific few-shot evaluation complete — 8 October 2026
+
+Monitor `d815726`, 01:28:45 Singapore: all 12 stages passed, including full
+5/10/25-shot validators. Four original seed42 step2500 checkpoints, eight tasks,
+90,784 scored examples; exact audited prompts match across arms, no truncation.
+Queue finished 00:27:35 Singapore after 12 min 37 s (including GPU gates/smoke).
+Descriptive eight-task mean (acc_norm where available, otherwise acc):
+A 42.841%, P7-simple 42.702%, P6-iso 42.665%, P6 42.539%. A remains highest;
+no established proxy advantage. Single pretraining/demonstration seed only.
+Automatic communicating burns verified at 00:28:46; same workers 354407–354414
+remain at 100% on all eight GPUs. Current log confirms advancing cycles and
+collective payload. No evaluation/training queued. commands #0.
+Evidence: 77 SHA256-verified artifacts in artifacts/fewshot-monitor-20261008-a01/.
+Full per-task results: docs/DOWNSTREAM_EVAL_20261007.md. Do not relaunch.
+
 ## Task-specific few-shot evaluation running — 7 October 2026
 
 Launch `686637b`; monitor `3999100` at 16:20:24 UTC verifies all four CUDA
