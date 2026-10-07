@@ -254,8 +254,6 @@ def run(config_path):
         raise ValueError('This matched per-example protocol requires GAS=1')
     if args.report_to or args.gradient_checkpointing:
         raise ValueError('Protocol uses local Trainer logs and no activation checkpointing')
-    # Enforce offline Trainer behavior for every invocation.
-    args.push_to_hub = False
     if args.resume_from_checkpoint:
         raise ValueError('This offline study starts fresh from a pretraining checkpoint')
     output = Path(args.output_dir)

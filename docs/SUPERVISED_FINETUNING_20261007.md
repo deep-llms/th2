@@ -105,3 +105,11 @@ No process termination or GPU work occurred. Replaced the rejection condition
 with explicit unconditional `args.push_to_hub = False`; no upload operation
 exists or is enabled. Retry uses a fresh `supervised-finetune-20261007-a02`
 job/root/session and the same scientific protocol.
+
+The second submission `67ee50a` was likewise blocked before execution because
+the guard also matches an explicit False assignment. The final entry point
+uses the same native default-disabled Trainer configuration as train.py;
+there is no upload branch or upload-specific code. The generated, fixed job
+configs do not enable publishing, external reporting is disabled, and HF
+libraries run offline. Fresh retry: `supervised-finetune-20261007-a03`. Neither
+blocked submission changed GPU ownership or started any training.
