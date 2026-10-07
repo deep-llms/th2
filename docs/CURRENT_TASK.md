@@ -1,3 +1,19 @@
+## STS-B/BoolQ gated queue launched — 8 October 2026
+
+Accepted launch `a76fb56`, root supervised-stsb-boolq-20261008-a01.
+Monitor `982397e` at 01:59:05 Singapore confirms pinned environment/checkpoint
+preflight and exact local/remote data audit passed. Accelerate config copied
+and verified (8 GPUs/BF16). Only verified communicating burn workers reclaimed;
+all eight GPUs free before queue start. A/STSB CUDA forward/backward gate
+passed (FA4-vs-SDPA gradient relative L2 .00906345); A/BoolQ gate running.
+Distributed smoke/reload and production fitting are NOT yet verified.
+The accepted 97-stage detached queue automatically proceeds after its gates,
+with automatic communicating burn restoration on either success or failure.
+commands #0 leaves it running. Do not relaunch. Next action: read-only monitor
+numerical gates, all eight task/arm smoke-reload validators, production progress.
+Evidence: artifacts/stsb-boolq-monitor-20261008-a01/ (6 verified JSON artifacts).
+Full protocol: docs/SUPERVISED_FINETUNING_20261007.md.
+
 ## STS-B and BoolQ fine-tuning authorized — 8 October 2026
 
 User approved the recommended STS-B + BoolQ extension for A, P6, P6-iso,

@@ -387,3 +387,15 @@ The real-data audit pins portable hashes/counts/tokenization in
 `resources/supervised_reference_20261008.json`; remote preflight must match.
 B200 CUDA/distributed acceptance and production start still need verification.
 Fresh output: `/mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a01`.
+
+### Accepted remote queue
+
+Launch `a76fb56`. Monitor `982397e`, 01:59:05 Singapore on 8 October, verifies
+exact local/remote data audit, pinned checkpoint hashes and eval_fa4 environment.
+Accelerate cache copied/verified for eight GPUs/BF16. Known burn workers only
+were reclaimed; all eight GPUs were free before numerical gates. A/STSB
+passed FA4/SDPA forward/backward checks (gradient relative L2 .00906345);
+A/BoolQ gate was running. This snapshot does not yet establish distributed
+smoke or production success. The full 97-stage queue is accepted and gated;
+automatic communicating burns follow success/failure. commands #0 leaves
+the detached queue running. Evidence: artifacts/stsb-boolq-monitor-20261008-a01/.
