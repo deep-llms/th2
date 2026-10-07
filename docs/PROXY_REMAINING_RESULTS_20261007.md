@@ -1,6 +1,38 @@
 # Remaining proxy arms: interim results
 
-Latest status: **7 October, 03:33:24 Singapore**, monitor `a2b6e36`:
+## Updated snapshot — 7 October 2026, 11:19:26 Singapore
+
+Read-only monitor `5b3e750`, job `th2-tjx3-proxy-remaining-results-20261007-a02`.
+Seven of ten production arms completed 2500 steps and passed checkpoint/backend
+validation. Shared `comparable_config` equals the reused A recipe for all seven.
+No failed stages. P7-ems is running on eight GPUs at step 1250/2500 in the
+captured log, checkpoint-1000 present, approximately 2.64 seconds/update.
+P4 (all heads) and P6-iso remain queued afterward. Supervisor remains running;
+final completion and burn receipts are not yet due. Queue unchanged.
+
+| Arm | Held-out LM loss | Difference from A | Trainer runtime |
+|---|---:|---:|---:|
+| A, reused FA4 baseline | 3.4771733830 | — | 88.30 min |
+| P7-simple | 3.4745054830 | -0.0026679000 | 102.02 min |
+| P7 | 3.4769314640 | -0.0002419190 | 110.91 min |
+| P4-iso | 3.4896725928 | +0.0124992098 | 95.55 min |
+| P6 | 3.4782647578 | +0.0010913748 | 99.93 min |
+| P5 | 3.4838803344 | +0.0067069514 | 95.85 min |
+| P7-mlp | 3.4773446524 | +0.0001712694 | 111.76 min |
+| P7-kq | 3.4777975959 | +0.0006242128 | 110.88 min |
+
+P7-simple remains best by a small margin. P6/P7-mlp/P7-kq are numerically close
+to A but slightly worse; P5 and all-head P4-iso are further behind. These are
+single-seed, equal-token results, not statistical or downstream conclusions.
+Runtime includes Trainer validation/checkpoints, excluding startup/smoke gates.
+
+Pulled and SHA256-verified 33 JSON artifacts under
+`artifacts/proxy-remaining-results-20261007-a02/`; queue.json is also retained.
+Log: `temp/remaining-results-20261007-a02.log`, SHA256
+`0ca9725339eed1d2d64fcd5a9f1901aa3cf6f18de995506d5cfde61df55431ef`.
+No model weights pulled and no training/environment/data/queue mutations.
+
+Earlier status: **7 October, 03:33:24 Singapore**, monitor `a2b6e36`:
 P6 production running at step 620/2500, checkpoint-500 saved. Started at
 03:07:51 Singapore. All eight GPUs active (94–100% utilization), finite latest
 loss/gradient logs, approximately 2.35 seconds/update. First three completed
