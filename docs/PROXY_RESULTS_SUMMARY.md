@@ -1,6 +1,6 @@
 # Proxy arms: perplexity and downstream results
 
-Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. STS-B/BoolQ final results were not available in the last verified snapshot (01:59 Singapore); this document does not claim a fresh remote status check.
+Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. B200 checked at 02:40 Singapore: STS-B/BoolQ stopped at a numerical acceptance check before fine-tuning, so there are no final scores for those tasks.
 
 ## Setup and interpretation
 
@@ -173,7 +173,7 @@ Per-seed test accuracy (%), in seed order 42 / 43 / 44.
 
 Sources: [A/P6/P7-simple results](../artifacts/finetune-monitor-20261007-a07/summary.json), [P6-iso results](../artifacts/p6iso-finetune-monitor-20261007-a03/summary.json), [fine-tuning protocol](SUPERVISED_FINETUNING_20261007.md).
 
-**STS-B and BoolQ:** authorized for the same four arms, but no verified final scores in this snapshot. STS-B uses official train/dev/test with Pearson/Spearman correlation; BoolQ uses a fixed training-derived development split and public validation as final holdout. Do not treat missing results as zero.
+**STS-B and BoolQ: no final results.** The queue stopped before fine-tuning: A/STSB passed its numerical gate, but A/BoolQ exceeded the FA4-versus-SDPA logit relative-L2 limit (2.175% versus 2%). Gradient relative L2 was 1.261%, within its 5% limit. These checks used synthetic inputs, not benchmark test scores; the cause needs investigation. Automatic burns resumed on all eight GPUs. Planned evaluation remains STS-B official test Pearson/Spearman and BoolQ public-validation accuracy, with separate development data for selection. [Failure record](SUPERVISED_FINETUNING_20261007.md#sts-bboolq-stopped-at-numerical-gate--8-october-2026).
 
 ## Evaluation-only proxy ablations
 

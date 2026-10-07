@@ -1,4 +1,4 @@
-#1 +30+a
+#0
 #th2-tjx3-stsb-boolq-monitor-20261008-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@

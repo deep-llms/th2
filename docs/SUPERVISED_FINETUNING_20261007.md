@@ -399,3 +399,21 @@ A/BoolQ gate was running. This snapshot does not yet establish distributed
 smoke or production success. The full 97-stage queue is accepted and gated;
 automatic communicating burns follow success/failure. commands #0 leaves
 the detached queue running. Evidence: artifacts/stsb-boolq-monitor-20261008-a01/.
+
+## STS-B/BoolQ stopped at numerical gate — 8 October 2026
+
+Monitor `e525455`, 02:40:08 Singapore: queue failed at 01:59:06 Singapore,
+before distributed smoke or any production fitting. A/STSB numerical gate
+passed; A/BoolQ failed the FA4-vs-SDPA logit relative-L2 check: .02175061
+(limit .02). Gradient relative L2 .01261112 passed its .05 limit. Inputs were
+two synthetic sequences, not final benchmark examples. This is an acceptance
+check failure; its underlying numerical cause has not yet been diagnosed.
+No new STS-B/BoolQ scores and no changes to previously completed results.
+Automatic communicating burn restoration verified at 02:00:17 Singapore.
+Current workers 356295–356302 match that receipt, all eight GPUs at 100%;
+burn log shows advancing cycles/collective payload. Seven source-SHA256-verified
+artifacts: artifacts/stsb-boolq-monitor-20261008-a02/. Source log:
+temp/stsb-boolq-monitor-20261008-a02.log, SHA256
+8c211dd0343bda3c08c86eb8ede1d4280e46538e99760d4b014c3ffa3a1d79cb.
+commands #0. Read-only check only; no relaunch, threshold change, process stop,
+or cleanup. Next step is diagnose the backend comparison before a new launch.
