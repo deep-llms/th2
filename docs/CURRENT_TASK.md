@@ -7,7 +7,10 @@ step2500 checkpoints; HellaSwag10, ARC-Challenge25, Winogrande5; project-chosen
 Belebele excluded (test-split demonstration pool). Fresh root fewshot-2500-
 20261007-a01; numerical gates, prompt audits, smoke, full evaluation, automatic
 communicating burn restoration. See docs/DOWNSTREAM_EVAL_20261007.md.
-Preparing launch; not yet submitted. No further weight updates authorized.
+Launch accepted as `686637b`; receipt verifies pinned eval_fa4 environment,
+benchmark hashes and copied eight-GPU BF16 Accelerate config. Remote prompt
+audit started; GPU gates/full inference not yet verified. Read-only monitor
+`f4298bf` submitted. No further weight updates authorized.
 
 ## P6-iso supervised evaluation complete — 7 October 2026
 
