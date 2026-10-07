@@ -1,0 +1,126 @@
+{
+  "5": {
+    "status": "passed",
+    "tasks": {
+      "xnli_en": {
+        "rows": 2490,
+        "requests": 7470,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 392702,
+        "max_input_tokens": 467,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "e789970d76dce1a8ba6f05851b5f53691d6a9d00f44b99b4b51b2f6d905c6081",
+        "smoke_requests_sha256": "9fa494dab970fc38e0d8c93ad7868c5b341c39c14e309743b3c2e4387036f35d"
+      },
+      "xstorycloze_en": {
+        "rows": 1511,
+        "requests": 3022,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 360,
+        "max_input_tokens": 360,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "8787605121d6fa6a8fe5f668f4209ca7dd361107ecd9595b3397631a826a20b8",
+        "smoke_requests_sha256": "2fecd6f90fc579fe60b1de450e21ead65ca770fe20aed29a5aa5ea1f3c974706"
+      },
+      "paws_en": {
+        "rows": 2000,
+        "requests": 4000,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 49401,
+        "max_input_tokens": 498,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "70a41cb127be01cd30fc691b8f4d9ec817eed61fa64310ee65c024b77622b27d",
+        "smoke_requests_sha256": "8604b09c78b4af4b02aebfc393f6e51856e99707e1b3ed68bce65449e57c98cc"
+      },
+      "piqa": {
+        "rows": 1838,
+        "requests": 3676,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 16113,
+        "max_input_tokens": 676,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "aa7e9651deed25d54a1d546d52a14c99888312f67360efe3b765f174e0dded06",
+        "smoke_requests_sha256": "8fb58208f8f0db3671f2d6fbc644db7d905aaa4d0a9003c82713ebc9f3ce6457"
+      },
+      "arc_easy": {
+        "rows": 2376,
+        "requests": 9501,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 2251,
+        "max_input_tokens": 385,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "578bcc1aed9f37a7b951e8e298f637e888eb94ad84b4e1055a4f5000b6cf78f1",
+        "smoke_requests_sha256": "1d83b930ae240d5be314a6cf6c02bd7a1c640214bbfb8b35b1cf4071abe00c6e"
+      },
+      "winogrande": {
+        "rows": 1267,
+        "requests": 2534,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 40398,
+        "max_input_tokens": 169,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "681864e0a96035492f88c7c9517d4c38a223ee0c49d8502cdf8f56ba8fa5f605",
+        "smoke_requests_sha256": "b78f89fc964b974c505f732e1f007367e685cc329d9ffce66d5c166043660a7d"
+      }
+    },
+    "num_fewshot": 5,
+    "seed": 42,
+    "max_length": 2048,
+    "smoke_limit": 8,
+    "manifest_sha256": "10ab854354c302a7bc5d91709fafd68a3b1fba1707d0cdac4e4c04c004c31a17",
+    "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+    "truncation_policy": "Unchanged HFLM left truncation to trained context; requested shots may be partially removed"
+  },
+  "10": {
+    "status": "passed",
+    "tasks": {
+      "hellaswag": {
+        "rows": 10042,
+        "requests": 40168,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 39905,
+        "max_input_tokens": 1180,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "d0c2386b38c273358441c39d202dbf907bea76c2bb0057f52acf10f5beab549d",
+        "smoke_requests_sha256": "3dc0f6888dc8fcbd8a172e7225931e93ead7b9d47560ffefec680cedba7e1171"
+      }
+    },
+    "num_fewshot": 10,
+    "seed": 42,
+    "max_length": 2048,
+    "smoke_limit": 8,
+    "manifest_sha256": "10ab854354c302a7bc5d91709fafd68a3b1fba1707d0cdac4e4c04c004c31a17",
+    "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+    "truncation_policy": "Unchanged HFLM left truncation to trained context; requested shots may be partially removed"
+  },
+  "25": {
+    "status": "passed",
+    "tasks": {
+      "arc_challenge": {
+        "rows": 1172,
+        "requests": 4687,
+        "demonstration_split": "train",
+        "demonstration_pool_rows": 1119,
+        "max_input_tokens": 1232,
+        "truncated_requests": 0,
+        "truncated_documents": 0,
+        "requests_sha256": "dd56a92ff207a81641e4590060f5f1175860786924835e77ad487bc67189d6fd",
+        "smoke_requests_sha256": "5f4997e70b602d18206280b1dfdc4e73a42aa0e8fe68f02bbfa3bdbe1ac82f3b"
+      }
+    },
+    "num_fewshot": 25,
+    "seed": 42,
+    "max_length": 2048,
+    "smoke_limit": 8,
+    "manifest_sha256": "10ab854354c302a7bc5d91709fafd68a3b1fba1707d0cdac4e4c04c004c31a17",
+    "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+    "truncation_policy": "Unchanged HFLM left truncation to trained context; requested shots may be partially removed"
+  }
+}

@@ -163,3 +163,74 @@ which limits the strength of architectural conclusions from this short run.
 | P4 | 18.09 | 38.72 | 22.89 | 28.17 | 47.55 | 61.59 | 50.99 | 41.61 | 54.93 |
 | P7-mlp | 18.52 | 39.77 | 23.00 | 28.18 | 46.85 | 62.30 | 51.54 | 39.60 | 55.53 |
 | P7 | 17.83 | 40.07 | 23.00 | 28.16 | 49.35 | 62.35 | 51.14 | 37.55 | 55.13 |
+
+## Task-specific few-shot screen — 7 October 2026
+
+Authorized: in-context evaluation of original seed-42 step-2,500 checkpoints
+A, P6, P6-iso and P7-simple. No weight updates; do not use downstream-fine-tuned
+checkpoints. The initial uniform 1/5-shot proposal was superseded by the user's
+request to follow task-specific conventions before any remote launch.
+
+| Task | Demonstrations | Basis |
+|---|---:|---|
+| HellaSwag | 10 | Open LLM Leaderboard v1 convention |
+| ARC-Challenge | 25 | Open LLM Leaderboard v1 convention |
+| Winogrande | 5 | Open LLM Leaderboard v1 convention |
+| English XNLI, XStoryCloze, PAWS-X, PIQA, ARC-Easy | 5 | Explicit project choice; not a universal benchmark standard |
+
+The [archived leaderboard protocol](https://huggingface.co/docs/leaderboards/en/open_llm_leaderboard/archive)
+also uses **5-shot MMLU**, not 10-shot. We borrow the listed shot counts, not a
+claim of exact reproduction of that older harness revision. Prompt templates,
+current pinned harness, splits, scoring and seed remain explicit here.
+No extra 1-shot sweep. All four arms receive identical demonstrations and
+scored examples. Eight tasks, 22,696 examples per arm, 90,784 scored examples
+in production and 32 arm/task results. Existing zero-shot scores are reused.
+Belebele is excluded because its installed few-shot configuration samples
+from the test split; no held-out test examples become demonstrations here.
+
+`scripts/check_downstream_eval.py fewshot` builds every likelihood request
+on CPU, verifies separate training demonstration splits, hashes every option's
+prompt and audits token lengths against the trained 2,048-token context.
+`resources/fewshot_reference_20261007.json` pins the local audits; the remote
+must reproduce them exactly and have zero truncated documents before GPU
+reclaim. Smoke and full result validation match actual harness request hashes
+against these audits. No score-informed shot-count selection is performed.
+
+The existing eval entry points/model/scoring remain unchanged. Two concurrent
+four-GPU pools evaluate four checkpoints each: GPU 0–3 run the six 5-shot tasks;
+GPU 4–7 run HellaSwag followed by ARC-Challenge. Four numerical gates and an
+8-example-per-task smoke precede full evaluation, with validation after each
+phase. Twelve queue stages in total. Verified burn reclaim, free-GPU check,
+Accelerate config copy/verification and automatic communicating burns after
+success/failure follow the previous accepted supervisor workflow. Fresh root:
+`/mnt/local/_outputs/deep-llms_th2/fewshot-2500-20261007-a01`.
+
+### Additional task shortlist (researched, not queued)
+
+- **BoolQ**, **COPA**, **RTE/CB**, **WiC**: passage comprehension, causal
+  reasoning, entailment and contextual word meaning. Established in
+  [SuperGLUE](https://arxiv.org/abs/1905.00537); [BoolQ paper](https://aclanthology.org/N19-1300/).
+  My first additions would be BoolQ and COPA, then RTE/WiC. Their prompts,
+  splits and demonstration counts should be pinned before evaluation.
+- **SST-2**, **CoLA**, **MRPC**, **QNLI**, **STS-B**: useful supervised and
+  limited-label fine-tuning comparisons, as studied by
+  [LM-BFF](https://aclanthology.org/2021.acl-long.295/) and its
+  [official implementation](https://github.com/princeton-nlp/LM-BFF).
+  STS-B is a similarity/regression task; use a scalar prediction head and
+  correlation metrics rather than treating it as ordinary multiple choice.
+- **OpenBookQA** adds science reasoning
+  ([paper](https://aclanthology.org/D18-1260/)); **MMLU** adds broad knowledge
+  ([paper](https://arxiv.org/abs/2009.03300)). MMLU is worth considering, but my
+  concern for this 0.6B model is limited sensitivity near chance; inspect
+  baseline performance before investing in a large extended sweep.
+
+Few-shot fine-tuning (few labeled training examples, optimizer updates) and
+in-context few-shot evaluation (demonstrations only) are different protocols.
+This queue is only the latter. Do not infer authorization for additional
+fine-tuning or downloads from this shortlist.
+
+Local validation: real-harness CPU tests passed at 5/10/25 shots, including
+full/smoke request matching and rejection of changed second-choice prompts.
+All real benchmark prompts fit: maxima 676 tokens for the 5-shot group,
+1,180 for HellaSwag 10-shot, 1,232 for ARC-Challenge 25-shot. Zero truncation.
+Generated 12-stage manifest and both pool shells passed parser/syntax checks.

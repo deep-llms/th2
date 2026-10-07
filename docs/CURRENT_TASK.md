@@ -1,3 +1,14 @@
+## Task-specific few-shot evaluation authorized — 7 October 2026
+
+User requested few-shot before further fine-tuning and clarified that shot
+counts should follow task conventions. A/P6/P6-iso/P7-simple original seed42
+step2500 checkpoints; HellaSwag10, ARC-Challenge25, Winogrande5; project-chosen
+5-shot XNLI-en/XStoryCloze-en/PAWS-en/PIQA/ARC-Easy. No universal 1/5 sweep.
+Belebele excluded (test-split demonstration pool). Fresh root fewshot-2500-
+20261007-a01; numerical gates, prompt audits, smoke, full evaluation, automatic
+communicating burn restoration. See docs/DOWNSTREAM_EVAL_20261007.md.
+Preparing launch; not yet submitted. No further weight updates authorized.
+
 ## P6-iso supervised evaluation complete — 7 October 2026
 
 Monitor `6ef6e1d`, 23:41:08 Singapore: all 20 stages passed, including 8 full
