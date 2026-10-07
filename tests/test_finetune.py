@@ -87,8 +87,6 @@ class FinetuneTests(unittest.TestCase):
             np.testing.assert_allclose(result['logits'].numpy(),prediction.predictions,rtol=1e-5,atol=1e-6)
 
 
-if __name__ == '__main__': unittest.main()
-
 class EntryTests(unittest.TestCase):
     def test_actual_entry_train_then_test(self):
         import hashlib
@@ -163,3 +161,6 @@ class StudyTests(unittest.TestCase):
             self.assertEqual(len(fits),24);self.assertEqual(len(tests),18)
             self.assertLess(max(fits),min(tests))
             self.assertTrue(all(jobs[i]['gpus']==list(range(8)) for i in fits))
+
+
+if __name__ == '__main__': unittest.main()
