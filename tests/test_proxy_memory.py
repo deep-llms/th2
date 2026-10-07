@@ -459,6 +459,75 @@ class MemoryTests(unittest.TestCase):
                     for wrong in (dict(lookahead=2 if span==4 else 4),dict(layers=[2]),dict(isolate_estimator=False),dict(alpha_init=.1)):
                         with self.assertRaises(ValueError):model(arm,**wrong)
 
+    def test_p6_variants_full_depth_lm_parent_equivalence(self):
+        # Short changes supervision only; sparse bypasses exactly six consumers.
+        c=config();c.num_hidden_layers=28;c.layer_types=['full_attention']*28
+        for backend in ('sdpa','fa4'):
+            for bf16 in (False,True):
+                for arm in P7_P6_VARIANTS:
+                    with self.subTest(arm=arm,backend=backend,bf16=bf16):
+                        opts=ProxySettings(width=8,features=9,chunk_size=2,module_seed=77)
+                        m=ProxyModel.from_scratch(c,arm,proxy_settings=opts,attention_backend=backend)
+                        parent=ProxyModel.from_scratch(c,'P7-simple',proxy_settings=opts,attention_backend=backend)
+                        original=parent.memory_attention
+                        def selected(layer,u,head,prediction,mask,rotary,plan):
+                            if layer.self_attn.layer_idx+1 not in m.layers:
+                                return parent.attention(layer,u,None,mask,rotary)
+                            return original(layer,u,head,prediction,mask,rotary,plan)
+                        with patch.object(parent,'memory_attention',side_effect=selected), \
+                             torch.autocast('cpu',dtype=torch.bfloat16,enabled=bf16):
+                            actual=m.hidden_states(batch())[0]
+                            expected=parent.hidden_states(batch())[0]
+                            torch.testing.assert_close(actual,expected,rtol=0,atol=0)
+                            m.lm_statistics(batch(),actual)[0].sum().backward()
+                            parent.lm_statistics(batch(),expected)[0].sum().backward()
+                        reference=dict(parent.named_parameters())
+                        for name,p in m.named_parameters():
+                            q=reference[name]
+                            if name.startswith('heads.') and ('.w1.' in name or '.w2.' in name):
+                                self.assertIsNone(p.grad);self.assertIsNone(q.grad)
+                            else:
+                                self.assertIsNotNone(p.grad)
+                                torch.testing.assert_close(p.grad,q.grad,rtol=0,atol=0,msg=name)
+                        for key in set(parent.heads)-set(m.heads):
+                            self.assertTrue(all(p.grad is None for p in parent.heads[key].parameters()))
+
+    def test_p6_variants_auxiliary_matches_independent_full_depth_loss(self):
+        c=config();c.num_hidden_layers=28;c.layer_types=['full_attention']*28
+        for arm in P7_P6_VARIANTS:
+            m=ProxyModel.from_scratch(c,arm,proxy_settings=ProxySettings(width=8,features=9,chunk_size=2))
+            # Nontrivial moments exercise per-location indexing and clipping.
+            m.mu.copy_(torch.linspace(-.2,.2,m.mu.numel()).reshape_as(m.mu))
+            m.sigma2.copy_(torch.linspace(0,.02,m.sigma2.numel()).reshape_as(m.sigma2))
+            m.mu_initialized.fill_(True)
+            predictions={};mlps={};hooks=[]
+            for key,head in m.heads.items():
+                hooks.append(head.w2.register_forward_hook(lambda mod,args,out,key=int(key):predictions.__setitem__(key,out)))
+            for i,layer in enumerate(m.backbone.model.layers,1):
+                hooks.append(layer.mlp.register_forward_hook(lambda mod,args,out,i=i:mlps.__setitem__(i,out.detach().float())))
+            try:out=m(batch())
+            finally:
+                for hook in hooks:hook.remove()
+            span=4 if arm=='P7-simple-sparse' else 2
+            losses=[]
+            for i,key in enumerate(m.layers):
+                raw=sum(mlps[j] for j in range(key,key+span))
+                variance=m.sigma2[i].clamp_min(.01*m.sigma2[i].median())
+                target=((raw-m.mu[i])/torch.sqrt(variance+1e-6)).clamp(-10,10)
+                cosine=F.cosine_similarity(predictions[key].float(),target,dim=-1,eps=1e-6)
+                losses.append(((1-cosine)*batch().valid).sum())
+            expected=torch.stack(losses).mean()/batch().valid.sum()
+            actual=out['aux_sum']/out['aux_count']
+            torch.testing.assert_close(actual,expected,rtol=1e-6,atol=1e-7)
+            parameters=tuple(m.parameters())
+            gradients=torch.autograd.grad(actual,parameters,allow_unused=True,retain_graph=True)
+            reference=torch.autograd.grad(expected,parameters,allow_unused=True)
+            for (name,_),a,b in zip(m.named_parameters(),gradients,reference):
+                if name.startswith('heads.') and ('.w1.' in name or '.w2.' in name):
+                    self.assertIsNotNone(a)
+                    torch.testing.assert_close(a,b,rtol=2e-5,atol=1e-7,msg=name)
+                else:self.assertIsNone(a);self.assertIsNone(b)
+
     def test_budget_parameter_counts(self):
         c=config();settings=ProxySettings(width=8,features=9,chunk_size=2)
         budget=compute_budget(c,settings,8)

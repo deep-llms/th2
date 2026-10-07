@@ -1,3 +1,23 @@
+## P7 P6-variant follow-up review
+
+No production-code defect was found. Added two independent full-depth regression
+checks using 28 blocks with tiny hidden dimensions. In FP32 and BF16, on dense
+SDPA and the CPU FA4 oracle, short exactly matches the parent's initial LM
+hidden states and gradients; sparse exactly matches P7-simple with only the
+omitted memory consumers bypassed. The independent cosine-loss calculation uses
+nontrivial per-layer means/variances and clipping, confirms averaging over tokens
+and active locations, and confirms that only predictor parameters receive
+auxiliary gradients. Three full-depth checks passed in 9.575 seconds; strict
+checkpoint reload and supervised gradient-routing checks passed in 3.995 seconds.
+Logs: temp/p7-p6-review-full-depth.log and temp/p7-p6-review-reload.log.
+The three integration checks (exact Trainer resume/report/queue, accumulation,
+and screen-result validation) also passed in temp/p7-p6-review-integration.log.
+That invocation included a misspelled evaluation test class; the correctly named
+reload test passed in the separate two-test run above. Eight intended checks
+passed across these runs; the previous complete 41-test regression also passed.
+Actual FA4 CUDA kernels/full-size B200 validation remain pending. Existing
+training code and B200 workloads were not changed during this review.
+
 ## P7-simple counterparts of the P6-iso variants — 8 October 2026
 
 Implemented the two recent P6-iso ablations with P7-simple consumption:
