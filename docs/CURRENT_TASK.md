@@ -1,4 +1,110 @@
+## Authorized downstream evaluation — 7 October 2026
+
+User authorized downstream evaluation of A plus all ten completed P4–P7 arms.
+Use checkpoint-2500, FA4, zero-shot, seed 42, nine English tasks: HellaSwag,
+XNLI validation, Belebele, XStoryCloze, PAWS-X, PIQA, ARC-Easy/Challenge,
+WinoGrande. One checkpoint per GPU, up to eight concurrently. No retraining.
+User also explicitly confirmed benchmark download. Controller download
+`f025c70`, id `2026-10-07_08-06-59`, supplies 31 pinned raw files (104884425 bytes)
+to `/mnt/local/_data/deep-llms_th2/downstream-english-20261007`.
+Separate `eval_fa4` env installed by `4e07abc`; runtime verification pending.
+Training/attention_bench/original eval environments remain untouched.
+
+Required addition: verified local dataset mapping through existing task templates;
+no Hub access from B200. Local nine-task raw-data/labels/document hashes passed,
+reference under resources/downstream_english_reference_20261007.json. Ten existing
+CPU groups passed; expanded nine-template test passed; added local-file test
+passed after correcting its fixture to include the required training split.
+Logs: temp/downstream-final-local-tests.log (one fixture error), then
+ temp/downstream-local-files-test.log (corrected test passed).
+
+Prepared gated launch `th2-tjx3-downstream-2500-20261007-a01`, root
+`/mnt/local/_outputs/deep-llms_th2/downstream-2500-20261007-a01`.
+Preflight waits for all files while burns continue, verifies environment/data,
+then copies/checks Accelerate config and checks checkpoint recipes/ownership.
+Supervisor rechecks/stops only authorized burn workers, verifies free GPUs,
+runs eleven full-checkpoint CUDA numerical gates, an 8-example-per-task smoke
+for all eleven models, validates counts/provenance, then full evaluation and
+final validation. Automatic communicating-burn handoff on success/failure.
+Do not claim full evaluation started until CUDA/smoke gates actually pass.
+
+## Ten-arm queue complete — 7 October 2026
+
+Monitor `a9289bf`, 15:55:24 Singapore: all ten arms completed 2500 steps;
+all 63 stages and production validators passed. New best P6-iso loss
+3.4662995700 versus A 3.4771733830; P7-simple 3.4745054830 is second.
+P7-ems 3.4777271990; P4 all-head 3.4822870036. Single-seed, equal-token only;
+downstream evaluation and seed confirmation pending. No new launch authorized.
+Queue ended 15:37:34; automatic communicating burns verified 15:38:45.
+Current snapshot confirms the same workers 308656–308663, all eight GPUs 100%.
+47 small artifacts source-hash-verified; full report:
+`docs/PROXY_REMAINING_RESULTS_20261007.md`. Commands returned to #0.
+
+## Seven remaining-arm results verified — 7 October 2026
+
+Monitor `5b3e750`, 11:19:26 Singapore: seven arms finished and passed validation.
+New losses: P6 3.4782647578, P5 3.4838803344, P7-mlp 3.4773446524,
+P7-kq 3.4777975959; A 3.4771733830, P7-simple remains best at 3.4745054830.
+P7-ems at 1250/2500 on all eight GPUs; P4 then P6-iso remain queued.
+No failures or queue changes. 33 small artifacts hash-verified; see
+`docs/PROXY_REMAINING_RESULTS_20261007.md`. Single-seed/downstream caveats remain.
+
 # Current task
+
+## P6 production status — 7 October 2026
+
+Monitor `a2b6e36`, 03:33:24 Singapore: P6 production at step 620/2500 with
+checkpoint-500 saved, all eight GPUs active, finite loss/gradient logs and
+~2.35 s/update. First three arms remain completed; six follow P6:
+P5 → P7-mlp → P7-kq → P7-ems → P4 → P6-iso. No queue changes or failures.
+Log: `temp/remaining-queue-status-20261007-a01.log`.
+
+## B200 interim results verified — 7 October 2026
+
+Read-only monitor `c642279` at 03:07:16 Singapore (6 October 19:07:16 UTC):
+P7-simple/P7/all-head P4-iso finished and validated at 2500 updates. Held-out
+LM losses 3.4745054830 / 3.4769314640 / 3.4896725928 versus A 3.4771733830.
+Shared recipes/data match; the small P7-simple gain is single-seed/token-matched.
+P6 smoke occupied all eight GPUs; seven production arms remain in the original
+order. No failures or queue changes; automatic final burns are not due yet.
+Fifteen small artifacts downloaded and hash-verified. Details:
+`docs/PROXY_REMAINING_RESULTS_20261007.md`.
+
+## Evaluation correctness review — 7 October 2026
+
+Rechecked the evaluation implementation. Fixed invalid segment layouts that
+could differ between SDPA and FA4: repeated noncontiguous document IDs, internal
+padding holes, nonbinary masks and noninteger segment IDs now fail clearly.
+Saved NumPy/tensor scores remain JSON numbers/arrays rather than strings; nonfinite
+benchmark output is rejected. Invalid zero/one-token PPL windows fail before load.
+
+Ten local test groups passed in 70.408 seconds, including all proxy arms,
+strict restoration, unchanged buffers, BF16, padded SDPA/FA4 reference paths,
+the real harness and the full benchmark CLI using the five registered English
+task templates with synthetic local datasets. No actual benchmark downloads,
+B200 execution, training changes, remote push or queue modifications. Full-model
+CUDA downstream acceptance remains pending. Log: `/tmp/deep2shallow-eval-review-tests.log`.
+
+## Local downstream evaluation support — 6 October 2026
+
+Extended `eval/` for strict custom-checkpoint restoration and an inference-only
+logits adapter over the existing full model path. Training forwards remain
+unchanged: they compute chunked vocabulary logits and return loss statistics.
+The adapter keeps proxy consumers active, disables auxiliary target/loss work,
+and preserves document isolation/reset positions, including internal EMS padding.
+Added English-only task selection (XCOPA has no English subset), saved evaluation
+provenance/per-example scores, and fixed parallel option forwarding/failure status.
+Perplexity now evaluates independent EOS-terminated documents; its context policy
+is explicitly different from packed training validation. See `eval/README.md`.
+
+All seven local test groups passed in 55.354 seconds, covering every proxy arm,
+SDPA and FA4 reference-oracle paths, legacy A/B/F/G, plain HF checkpoints, BF16
+autocast, strict state restore, a real Trainer checkpoint, actual harness scoring
+on a local synthetic multiple-choice task, PPL CLI and launcher failures.
+Used an isolated temporary venv over the local sampling environment; no existing
+training environment changed. Full-model CUDA downstream smoke and benchmark
+dataset availability remain unverified. No B200 action, push, or queue change;
+the previously authorized ten-arm queue below remains the active remote scope.
 
 ## Remaining-arm production startup verified — 6 October 2026
 

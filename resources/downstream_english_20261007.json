@@ -33,7 +33,24 @@
           "bytes": 6315951,
           "url": "https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet"
         }
-      ]
+      ],
+      "load_configs": {
+        "hellaswag": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "Rowan--hellaswag/data/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "Rowan--hellaswag/data/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "Rowan--hellaswag/data/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     },
     {
       "repo": "facebook/xnli",
@@ -67,7 +84,24 @@
           "bytes": 157207,
           "url": "https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/validation-00000-of-00001.parquet"
         }
-      ]
+      ],
+      "load_configs": {
+        "xnli_en": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "facebook--xnli/en/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "facebook--xnli/en/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "facebook--xnli/en/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     },
     {
       "repo": "facebook/belebele",
@@ -89,7 +123,18 @@
           "bytes": 836071,
           "url": "https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/data/eng_Latn.jsonl"
         }
-      ]
+      ],
+      "load_configs": {
+        "belebele_eng_Latn": {
+          "loader": "json",
+          "data_files": {
+            "test": [
+              "facebook--belebele/data/eng_Latn.jsonl"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     },
     {
       "repo": "juletxara/xstory_cloze",
@@ -117,7 +162,23 @@
           "bytes": 110331,
           "url": "https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_train.tsv"
         }
-      ]
+      ],
+      "load_configs": {
+        "xstorycloze_en": {
+          "loader": "csv",
+          "data_files": {
+            "eval": [
+              "juletxara--xstory_cloze/spring2016.val.en.tsv.split_20_80_eval.tsv"
+            ],
+            "train": [
+              "juletxara--xstory_cloze/spring2016.val.en.tsv.split_20_80_train.tsv"
+            ]
+          },
+          "kwargs": {
+            "sep": "\t"
+          }
+        }
+      }
     },
     {
       "repo": "google-research-datasets/paws-x",
@@ -151,7 +212,24 @@
           "bytes": 307014,
           "url": "https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/validation-00000-of-00001.parquet"
         }
-      ]
+      ],
+      "load_configs": {
+        "paws_en": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "google-research-datasets--paws-x/en/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "google-research-datasets--paws-x/en/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "google-research-datasets--paws-x/en/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     },
     {
       "repo": "baber/piqa",
@@ -179,7 +257,24 @@
           "bytes": 299694,
           "url": "https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_validation.parquet"
         }
-      ]
+      ],
+      "load_configs": {
+        "piqa": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "baber--piqa/piqa_test.parquet"
+            ],
+            "train": [
+              "baber--piqa/piqa_train.parquet"
+            ],
+            "validation": [
+              "baber--piqa/piqa_validation.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     },
     {
       "repo": "allenai/ai2_arc",
@@ -232,7 +327,39 @@
           "bytes": 9001,
           "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/README.md"
         }
-      ]
+      ],
+      "load_configs": {
+        "arc_easy": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "allenai--ai2_arc/ARC-Easy/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "allenai--ai2_arc/ARC-Easy/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "allenai--ai2_arc/ARC-Easy/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        },
+        "arc_challenge": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "allenai--ai2_arc/ARC-Challenge/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "allenai--ai2_arc/ARC-Challenge/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "allenai--ai2_arc/ARC-Challenge/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     },
     {
       "repo": "allenai/winogrande",
@@ -266,7 +393,24 @@
           "bytes": 85928,
           "url": "https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/validation-00000-of-00001.parquet"
         }
-      ]
+      ],
+      "load_configs": {
+        "winogrande": {
+          "loader": "parquet",
+          "data_files": {
+            "test": [
+              "allenai--winogrande/winogrande_xl/test-00000-of-00001.parquet"
+            ],
+            "train": [
+              "allenai--winogrande/winogrande_xl/train-00000-of-00001.parquet"
+            ],
+            "validation": [
+              "allenai--winogrande/winogrande_xl/validation-00000-of-00001.parquet"
+            ]
+          },
+          "kwargs": {}
+        }
+      }
     }
   ]
 }

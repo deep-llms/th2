@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "tasks": {
+    "hellaswag": {
+      "rows": 10042,
+      "documents_sha256": "9dd7c8458e3a37f3876ba3811f5710719151b3bcfc1a51ad0567a8f990d84d9c"
+    },
+    "xnli_en": {
+      "rows": 2490,
+      "documents_sha256": "ecb30b359b7ffefa201cfddf14445d98ccd0257f4ff358d312b9e8d0c031e687"
+    },
+    "belebele_eng_Latn": {
+      "rows": 900,
+      "documents_sha256": "c15f7a934bc710ddd3d943eeccef9c97a58f8243486b87dfb5a2a1cb5455c935"
+    },
+    "xstorycloze_en": {
+      "rows": 1511,
+      "documents_sha256": "40915567d5fc8c1a8b763943be506ee123ea1a16aaad7578b5ee0897a264ce42"
+    },
+    "paws_en": {
+      "rows": 2000,
+      "documents_sha256": "66c205ffeeb300ecd7ef2c859ff01d465b76343aeeeea4b9b3845dd77d3e3d51"
+    },
+    "piqa": {
+      "rows": 1838,
+      "documents_sha256": "c85e341b3fa35066f64f5e7838116fe1421484424e9ce20abb54496b69970ee2"
+    },
+    "arc_easy": {
+      "rows": 2376,
+      "documents_sha256": "09ab01ecb7493f88ebe45f4183360b102937d3879f566216e62f4ddeececdf56"
+    },
+    "arc_challenge": {
+      "rows": 1172,
+      "documents_sha256": "86ccaace4cd159b5c02b6b3339ebe8a7022a54f1b488e433c060b3bc38ac1f63"
+    },
+    "winogrande": {
+      "rows": 1267,
+      "documents_sha256": "107b28ed11d47c6ef804585e5f1998f2bf88e8e44e2fbbd52a3a4c4afaadc482"
+    }
+  },
+  "manifest_sha256": "10ab854354c302a7bc5d91709fafd68a3b1fba1707d0cdac4e4c04c004c31a17"
+}

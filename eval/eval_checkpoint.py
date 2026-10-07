@@ -16,15 +16,20 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
-from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer
+from eval.models import load_checkpoint
 
 
-def load_model(checkpoint_path, device, dtype=None):
-    config = AutoConfig.from_pretrained(checkpoint_path)
-    model = AutoModelForCausalLM.from_pretrained(checkpoint_path, config=config, torch_dtype=dtype)
-    model.to(device)
-    model.eval()
-    return model
+def json_default(value):
+    """Keep numerical scores numeric; string conversion is for config objects."""
+    import numpy as np
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, torch.Tensor):
+        return value.detach().cpu().tolist()
+    return str(value)
 
 
 def main():
@@ -34,9 +39,11 @@ def main():
     parser.add_argument("--tokenizer-name", default=None, help="Tokenizer (default: from checkpoint)")
     parser.add_argument("--device", default="cuda", help="Device")
     parser.add_argument("--bf16", action="store_true", help="Use bfloat16")
+    parser.add_argument('--attention-backend', choices=['sdpa', 'fa4'], default=None,
+                        help='Default: saved backend; explicit overrides are recorded')
 
     # PPL args
-    parser.add_argument("--block-size", type=int, default=2048, help="PPL context window size")
+    parser.add_argument("--block-size", type=int, default=None, help="PPL window (default: trained limit, at most 2048)")
     parser.add_argument("--stride", type=int, default=None, help="PPL sliding window stride")
     parser.add_argument("--langs", nargs="+", default=None, help="Languages to evaluate")
 
@@ -44,6 +51,11 @@ def main():
     parser.add_argument("--tasks", nargs="+", default=None, help="Benchmark groups (default: all)")
     parser.add_argument("--num-fewshot", type=int, default=0, help="Few-shot examples")
     parser.add_argument("--batch-size", type=int, default=16, help="Benchmark batch size")
+    parser.add_argument('--english-only', action='store_true', help='Select only English subsets')
+    parser.add_argument('--seed', type=int, default=42, help='All evaluation/few-shot RNG seeds')
+    parser.add_argument('--limit', type=int, default=None, help='Diagnostic examples per benchmark; omit for full results')
+    parser.add_argument('--dataset-root', help='Local raw benchmark snapshots')
+    parser.add_argument('--dataset-manifest', help='Pinned file hashes and task-to-snapshot mapping')
 
     # Mode
     parser.add_argument("--ppl-only", action="store_true", help="Only run perplexity")
@@ -63,22 +75,54 @@ def main():
 
     if run_ppl and args.eval_dir is None:
         parser.error("--eval-dir is required for perplexity evaluation")
+    if args.batch_size < 1 or args.num_fewshot < 0 or args.limit is not None and args.limit < 1:
+        parser.error('Batch size/limit must be positive and num-fewshot nonnegative')
+    if args.block_size is not None and args.block_size < 2:
+        parser.error('--block-size must be at least two')
+    dataset_paths = None
+    if bool(args.dataset_root) != bool(args.dataset_manifest):
+        parser.error('--dataset-root and --dataset-manifest must be supplied together')
+    if run_bench:
+        from eval.benchmarks import resolve_tasks, local_dataset_paths, task_configs
+        names = resolve_tasks(args.tasks, args.english_only)
+        if args.dataset_root:
+            dataset_paths = local_dataset_paths(args.dataset_root, args.dataset_manifest)
+            task_configs(names, dataset_paths)  # Fail before loading expensive weights.
+    outputs = ['eval_metadata.json']
+    if run_ppl:
+        outputs.append('eval_ppl.json')
+    if run_bench:
+        outputs.extend(['eval_benchmarks.json', 'eval_benchmarks_full.json', 'eval_samples.jsonl'])
+    if any(os.path.exists(os.path.join(args.output_dir, name)) for name in outputs):
+        parser.error('Evaluation output already exists; choose a fresh --output-dir')
 
     # Load model once
     dtype = torch.bfloat16 if args.bf16 else None
-    tokenizer_name = args.tokenizer_name or args.checkpoint
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+    model, source, metadata = load_checkpoint(args.checkpoint, args.device, dtype, args.attention_backend)
+    tokenizer_name = args.tokenizer_name or source
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, local_files_only=True)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
     print("=" * 60)
     print(f"  Checkpoint: {args.checkpoint}")
-    model = load_model(args.checkpoint, args.device, dtype=dtype)
     print(f"  Device:     {args.device}")
     print("=" * 60)
 
     os.makedirs(args.output_dir, exist_ok=True)
-    all_results = {}
+    metadata.update(arguments=vars(args), tokenizer_source=tokenizer_name, status='started')
+    if dataset_paths is not None:
+        from eval.models import file_hash
+        metadata['dataset_manifest_sha256'] = file_hash(args.dataset_manifest)
+        metadata['dataset_paths'] = dataset_paths
+    from importlib.metadata import version
+    metadata['packages'] = {p: version(p) for p in ('torch', 'transformers', 'datasets', 'accelerate')}
+    if run_bench:
+        metadata['packages']['lm_eval'] = version('lm_eval')
+    def save_metadata():
+        with open(os.path.join(args.output_dir, 'eval_metadata.json'), 'w') as f:
+            json.dump(metadata, f, indent=2)
+    save_metadata()
 
     # --- Perplexity ---
     if run_ppl:
@@ -89,13 +133,12 @@ def main():
         from eval.ppl import eval_ppl, print_ppl_results
         ppl_results = eval_ppl(
             model, tokenizer, args.eval_dir,
-            block_size=args.block_size,
+            block_size=args.block_size or min(2048, model.config.max_position_embeddings),
             stride=args.stride,
             device=args.device,
             langs=args.langs,
         )
         print_ppl_results(ppl_results)
-        all_results["perplexity"] = ppl_results
 
         with open(os.path.join(args.output_dir, "eval_ppl.json"), "w") as f:
             json.dump(ppl_results, f, indent=2)
@@ -106,20 +149,29 @@ def main():
         print("  BENCHMARK EVALUATION")
         print("-" * 60)
 
-        from eval.benchmarks import eval_benchmarks, print_benchmark_results, TASK_CONFIGS
-        task_groups = args.tasks or list(TASK_CONFIGS.keys())
+        from eval.benchmarks import eval_benchmarks, print_benchmark_results
         bench_results = eval_benchmarks(
             model, tokenizer,
-            task_groups=task_groups,
+            task_groups=args.tasks,
             num_fewshot=args.num_fewshot,
             batch_size=args.batch_size,
             device=args.device,
+            english_only=args.english_only, seed=args.seed, limit=args.limit,
+            dataset_paths=dataset_paths,
         )
         print_benchmark_results(bench_results)
-        all_results["benchmarks"] = bench_results["results"]
 
         with open(os.path.join(args.output_dir, "eval_benchmarks.json"), "w") as f:
-            json.dump(bench_results["results"], f, indent=2, default=str)
+            json.dump(bench_results["results"], f, indent=2, default=json_default, allow_nan=False)
+        with open(os.path.join(args.output_dir, 'eval_benchmarks_full.json'), 'w') as f:
+            json.dump({k: v for k, v in bench_results.items() if k != 'samples'}, f,
+                      indent=2, default=json_default, allow_nan=False)
+        with open(os.path.join(args.output_dir, 'eval_samples.jsonl'), 'w') as f:
+            for task, samples in bench_results.get('samples', {}).items():
+                for sample in samples:
+                    f.write(json.dumps(dict(task=task, **sample), default=json_default, allow_nan=False) + '\n')
+    metadata['status'] = 'completed'
+    save_metadata()
 
     # --- Summary ---
     print("\n" + "=" * 60)
