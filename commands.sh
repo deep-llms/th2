@@ -1,5 +1,5 @@
-#0
-#th2-tjx3-fewshot-monitor-20261007-a04
+#1 +30+a
+#th2-tjx3-fewshot-monitor-20261008-a01
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -37,6 +37,10 @@ for phase in ('smoke-5shot','smoke-10shot','smoke-25shot','full-5shot','full-10s
     artifact(folder/name,phase+'/'+folder.name+'/'+name)
    p=folder/'eval.log'
    if p.is_file():print('EVAL_LOG',phase,folder.name,p.read_text()[-1300:],flush=True)
+p=root/'supervised/burn.log'
+if p.is_file():
+ with p.open('rb') as stream:
+  stream.seek(max(0,p.stat().st_size-16000));print('BURN_LOG',stream.read().decode(errors='replace'),flush=True)
 print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
 print('MONITOR_FINISHED',flush=True)
 PY
