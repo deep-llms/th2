@@ -132,3 +132,23 @@ loss/accuracy agree exactly, as do weight hashes and example-order hashes.
 P7-simple distributed smoke still in progress; production fitting is not yet
 verified. Evidence: artifacts/finetune-monitor-20261007-a03/ (11 verified JSON
 artifacts). Log SHA256 db1d665882848b1e224983b13d9966f4c28d21c3fa68c3e277869da22496d427.
+
+## Production fitting verified
+
+Monitor `3717b86` at **17:41:09 Singapore, 7 October**: all three numerical
+gates plus all six eight-GPU training/reload smoke stages passed. Reloaded
+development loss and accuracy match the saved-checkpoint evaluation exactly
+for all three arms, as do weight hashes and document-order hashes.
+
+First production run, A / PAWS-X / seed 42 / LR 1e-5, was running on all eight
+GPUs with finite loss/gradient logs, past epoch 2 (last log epoch 2.655).
+Development accuracy was .879 after epoch 1 and .8885 after epoch 2. These
+are development measurements for selection, not final test results; the other
+arms and three-seed comparison remain pending.
+
+Evidence: artifacts/finetune-monitor-20261007-a05/ (13 source-hash-verified JSON
+artifacts), temp/finetune-monitor-20261007-a05.log SHA256
+`120bcfe128d742442e85656de486c0201d082998a91b63535a2bdac22f1a22e0`.
+The accepted detached queue continues through all remaining stages. Commands
+returned to #0 to prevent accidental resubmission; automatic communicating
+burn restoration remains configured on success/failure. Do not relaunch.

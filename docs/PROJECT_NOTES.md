@@ -1,3 +1,18 @@
+## Supervised fine-tuning running — 7 October 2026
+
+Accepted launch `0765d2e`; root
+`/mnt/local/_outputs/deep-llms_th2/supervised-finetune-20261007-a03`.
+Monitor `3717b86` at 17:41:09 Singapore verified all three CUDA gates and all
+six distributed smoke/reload stages passed. A/P6/P7-simple reload development
+loss/accuracy and weight hashes match exactly. Production A PAWS-X LR 1e-5
+was beyond epoch 2 (logged epoch 2.655), all eight GPUs active, finite losses
+and gradients. Development accuracy .8885 after epoch 2 is interim, not test.
+No final comparison yet. Queue: 24 fitting runs, 18 selected-model final tests;
+all use the documented matched protocol. Automatic communicating burns remain
+configured after success/failure. commands #0 does not stop the detached queue.
+Evidence: artifacts/finetune-monitor-20261007-a05/ (13 source-hash-verified JSON
+artifacts); docs/SUPERVISED_FINETUNING_20261007.md. Do not relaunch the queue.
+
 ## Downstream evaluation complete — 7 October 2026
 
 Monitor `764d872`, 16:41:20 Singapore: all 15 stages and all 99 model–task
