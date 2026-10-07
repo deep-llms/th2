@@ -152,3 +152,30 @@ artifacts), temp/finetune-monitor-20261007-a05.log SHA256
 The accepted detached queue continues through all remaining stages. Commands
 returned to #0 to prevent accidental resubmission; automatic communicating
 burn restoration remains configured on success/failure. Do not relaunch.
+
+## Fine-tuning review and progress — 7 October 2026
+
+Read-only monitor `790694a` at **11:07:15 UTC (19:07:15 Singapore)**:
+14 of 24 production fitting runs completed: all 12 LR-search runs and PAWS-X
+A confirmations at seeds 43/44. PAWS-X P6 seed 43 is running on eight GPU
+workers 328924–328931. All six development selectors chose LR 3e-5.
+No final test stage has run yet; all 18 tests follow completion of all fitting.
+Queue and supervisor report running, with no failed stages. Do not relaunch.
+
+Re-reviewed the task head, task-connected proxy gradients, standard Trainer/DDP
+loss reduction (GAS=1), padding isolation, matched data/seeds, development-only
+selection, and strict checkpoint restoration. No correctness defect found.
+Six focused CPU tests passed again (3.923 s), including real entry-point
+train/save/reload/test. Existing B200 numerical gates and all eight-GPU smoke/
+reload stages passed. This evidence supports the implementation; it is not a
+proof of absence of every possible bug. P7-simple deliberately enables
+end-to-end task gradients only in the downstream wrapper; no pretraining
+auxiliary loss is used.
+
+Evidence: `artifacts/finetune-monitor-20261007-a06/`, 33 source-hash-verified
+JSON artifacts. Source log SHA256
+`0c2bcfdbf167f033a921b3c5632bfff0d5ee6c61ac6a5dfb2562422c0d538049`.
+Focused test log: `temp/finetune-review-tests-20261007-a01.log`.
+The earlier 11-model, nine-task zero-shot evaluation is complete. The supervised
+comparison is still pending; commands returned to #0 without stopping the
+accepted detached queue or its automatic final burn handoff.

@@ -1,3 +1,15 @@
+## Supervised study reviewed, still running — 7 October 2026
+
+Monitor `790694a`, 11:07:15 UTC / 19:07:15 Singapore: 14/24 production fits
+completed, all six LR selectors chose 3e-5 using development accuracy only.
+Current: PAWS-X P6 seed 43, eight GPU workers 328924–328931. Final 18 tests
+have not started; they follow all fitting. No failed queue stages. Six focused
+CPU tests passed again; code review found no correctness defect. Earlier
+zero-shot evaluation is complete. Details/evidence:
+docs/SUPERVISED_FINETUNING_20261007.md and
+artifacts/finetune-monitor-20261007-a06/ (33 verified JSON artifacts).
+Do not relaunch. commands #0 leaves accepted queue and final burn handoff active.
+
 ## Supervised fine-tuning running — 7 October 2026
 
 Accepted launch `0765d2e`; root
