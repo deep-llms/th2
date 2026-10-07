@@ -316,3 +316,74 @@ summary validator also recomputed accuracy from finite per-example prediction
 arrays and checked shapes/label order; those arrays remain on B200.
 Source log: temp/p6iso-finetune-monitor-20261007-a03.log, SHA256
 `8b1668ddcb0d559e71706f0c12d5da54a4e6c094b013314f80b4168766c3fbee`.
+
+## STS-B and BoolQ extension — 8 October 2026
+
+User authorized both tasks for A/P6/P6-iso/P7-simple. Start each fit from its
+original seed42 step2500 pretraining checkpoint, not an existing downstream
+model. Reuse the HF Trainer/Accelerate pipeline and eight GPUs per fit. Same
+optimizer, BF16, FA4, batch 128 (microbatch16/GAS1), max length512, warmup6%,
+no activation checkpointing. Three epochs per task. LR1e-5/3e-5 search with
+seed42; choose on development only, then confirm selected LR with seeds43/44.
+32 production fits and 24 final evaluations; all final scoring follows fitting.
+The 97-stage queue includes eight per-arm/task CUDA forward/backward gates,
+eight distributed training smoke tests, eight reload tests and eight reload
+validators, plus LR selections and final summary. Automatic communicating burns
+restore after success/failure. No new pretraining, SST-2 or WiC in this queue.
+
+### Labeled data and the user's development-split clarification
+
+The initial GLUE-only STS-B download (77a41a6) was superseded before training.
+GLUE packaging masks test labels, but the
+[Sentence Transformers STS-B release](https://huggingface.co/datasets/sentence-transformers/stsb)
+provides original train/dev/test with gold scores. Its source scores are 0–1;
+convert them to 0–5 (multiply by5) for scalar MSE regression. Use official dev
+for selection and official test for final scoring. No custom STS-B train/dev
+split. This is sentence-pair regression through one causal forward pass, not
+independent sentence embedding/cosine evaluation.
+
+Pinned final manifest: `resources/supervised_english_20261008_v2.json`.
+STS-B revision ab7a5ac0e35aa22088bdcf23e7fd99b220e53308; BoolQ SuperGLUE
+revision 3de24cf8022e94f4ee4b9d55a6f539891524d646. Source files and byte/hash
+checks remain immutable. Local and remote roots end in
+`supervised-data-20261008-v2` and `supervised-english-20261008-v2`, respectively.
+Official hidden-label BoolQ test files are never downloaded or used.
+
+STS-B: raw train5749/dev1500/test1379. Filter 24 training rows matching held-out
+pairs and three development rows matching test pairs (whitespace normalized,
+sentence order symmetric). Final train5725/dev1497/test1379. Test untouched;
+filtering uses text identity only. No test metric drives selection.
+
+BoolQ: raw train9427/public validation3270. Public validation is final holdout.
+Fixed hash ranking (`split-42`) of distinct passage/question pairs chooses 10%
+of training groups as development, independent of fine-tuning seed. Identical
+inputs cannot cross partitions. Final train8485/dev942/holdout3270; zero removed
+train/holdout overlaps. Development supports LR/epoch selection; public
+validation is scored only at the final stage. This is not an official hidden-test
+leaderboard result. [BoolQ source](https://huggingface.co/datasets/aps/super_glue).
+
+### Necessary implementation changes and validation
+
+`eval/finetune.py` adds a one-output regression head with float labels and MSE,
+Pearson/Spearman reporting, and their mean as STS-B selection metric. Constant
+predictions have correlation0 by declared convention; nonfinite values fail.
+No clipping of regression predictions. BoolQ keeps cross-entropy/accuracy with
+`Passage / Question / Answer` formatting. Longest-first truncation retains both
+inputs and final EOS; dataset caching, Trainer and proxy gradient behavior are
+reused. BoolQ truncation affects 15 training, 2 development and 10 final-holdout
+examples; STS-B has no truncation. Counts are pinned in the data audit.
+
+`scripts/finetune_study.py` accepts explicit task sets while retaining PAWS/NLI
+defaults. Final summaries recompute metrics from saved per-example predictions,
+check all task/arm/seed identities and equal data/tokenizer/order hashes, then
+report per-seed and mean/SD metrics. Reload gates compare saved/reloaded weights,
+example order and all task metrics. No optimizer-state resume is involved.
+
+Fourteen focused CPU tests passed, including old PAWS/NLI paths, regression
+loss/gradients, known correlation values, duplicate-safe partitions, official
+STS-B dev preservation, real training/save/reload/final-scoring entry points
+for both new tasks, development-only selection and sequential queue counts.
+The real-data audit pins portable hashes/counts/tokenization in
+`resources/supervised_reference_20261008.json`; remote preflight must match.
+B200 CUDA/distributed acceptance and production start still need verification.
+Fresh output: `/mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a01`.

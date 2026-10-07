@@ -12,8 +12,10 @@ train/dev/test with public test labels (score 0–1 converted back to 0–5).
 BoolQ uses public validation as final holdout and fixed grouped 10% of training
 for development. Initial GLUE-only download 77a41a6 completed but is superseded;
 no training used it. New data root supervised-english-20261008-v2.
-Download via controller #d while implementing/testing locally; GPU burns stay
-running until numerical/smoke launch preflight. New root planned:
+All five final files downloaded successfully (62e4c50). Fourteen local tests
+passed, including real train/reload, regression metrics and result validation.
+Submitting 97-stage gated queue; production start still requires verification.
+GPU burns stay running until verified reclaim after launch preflight. New root planned:
 /mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a01.
 
 ## Task-specific few-shot evaluation complete — 8 October 2026

@@ -31,7 +31,9 @@ from eval.benchmarks import local_dataset_paths
 from eval.models import load_checkpoint, file_hash
 
 TASKS = {'paws': ('paws_en', ('sentence1', 'sentence2'), ['different', 'paraphrase']),
-         'nli': ('xnli_en', ('premise', 'hypothesis'), ['entailment', 'neutral', 'contradiction'])}
+         'nli': ('xnli_en', ('premise', 'hypothesis'), ['entailment', 'neutral', 'contradiction']),
+         'stsb': ('stsb', ('sentence1', 'sentence2'), ['similarity']),
+         'boolq': ('boolq', ('passage', 'question'), ['False', 'True'])}
 ARMS = ('A', 'P6', 'P6-iso', 'P7-simple')
 
 
@@ -98,13 +100,15 @@ class PairClassifier(nn.Module):
         logits = self.score(last).float()
         out = {'logits': logits}
         if labels is not None:
-            out['loss'] = F.cross_entropy(logits, labels)
+            out['loss'] = (F.mse_loss(logits.squeeze(-1), labels.float())
+                           if self.score.out_features == 1 else F.cross_entropy(logits, labels))
         return out
 
 
 class PairCollator:
-    def __init__(self, pad_id):
+    def __init__(self, pad_id, regression=False):
         self.pad_id = pad_id
+        self.regression = regression
 
     def __call__(self, rows):
         length = ((max(len(x['input_ids']) for x in rows) + 7) // 8) * 8
@@ -115,17 +119,19 @@ class PairCollator:
             ids[i, :n] = torch.tensor(row['input_ids'])
             mask[i, :n] = 1
         return dict(input_ids=ids, attention_mask=mask,
-                    labels=torch.tensor([x['labels'] for x in rows], dtype=torch.long))
+                    labels=torch.tensor([x['labels'] for x in rows],
+                                        dtype=torch.float32 if self.regression else torch.long))
 
 
-def encode_pairs(batch, tokenizer, fields, max_length):
+def encode_pairs(batch, tokenizer, fields, max_length, task_name=None):
     # Tokenize the two strings separately, then longest-first truncate. This
     # prevents a long first sentence from removing the second one entirely.
     first = tokenizer(batch[fields[0]], add_special_tokens=False)['input_ids']
     second = tokenizer(batch[fields[1]], add_special_tokens=False)['input_ids']
-    prefix = tokenizer.encode('Sentence 1: ', add_special_tokens=False)
-    middle = tokenizer.encode('\nSentence 2: ', add_special_tokens=False)
-    suffix = tokenizer.encode('\nRelationship:', add_special_tokens=False) + [tokenizer.eos_token_id]
+    template = ('Passage: ', '\nQuestion: ', '\nAnswer:') if task_name == 'boolq' else (
+        'Sentence 1: ', '\nSentence 2: ', '\nSimilarity:' if task_name == 'stsb' else '\nRelationship:')
+    prefix, middle, suffix = [tokenizer.encode(t, add_special_tokens=False) for t in template]
+    suffix += [tokenizer.eos_token_id]
     budget = max_length - len(prefix) - len(middle) - len(suffix)
     if budget < 2:
         raise ValueError('Context too short for sentence-pair template')
@@ -147,6 +153,34 @@ def document_key(row, fields, symmetric):
     return hashlib.sha256(json.dumps(pair, ensure_ascii=False).encode()).hexdigest()
 
 
+def supervised_splits(raw, task_name):
+    """Freeze train-derived development data; public validation is final holdout.
+
+    BoolQ official test labels are hidden. Never load/use that split here.
+    Group identical inputs before a fixed 10% split,
+    so repeated inputs cannot cross training/development boundaries.
+    """
+    from datasets import DatasetDict
+    if task_name == 'stsb':
+        fields = TASKS[task_name][1]
+        heldout = {document_key(row, fields, True) for row in raw['test']}
+        keep = [i for i,row in enumerate(raw['validation']) if document_key(row, fields, True) not in heldout]
+        return DatasetDict(train=raw['train'], validation=raw['validation'].select(keep), test=raw['test'])
+    if task_name != 'boolq':
+        return raw
+    fields = TASKS[task_name][1]
+    symmetric = False
+    heldout = {document_key(row, fields, symmetric) for row in raw['validation']}
+    keys = [document_key(row, fields, symmetric) for row in raw['train']]
+    groups = sorted(set(keys)-heldout, key=lambda key: hashlib.sha256(('split-42:'+key).encode()).hexdigest())
+    if len(groups) < 10:
+        raise ValueError('Too few distinct training groups for fixed development split')
+    development = set(groups[:max(1, len(groups)//10)])
+    train = [i for i,key in enumerate(keys) if key not in heldout and key not in development]
+    dev = [i for i,key in enumerate(keys) if key in development]
+    return DatasetDict(train=raw['train'].select(train), validation=raw['train'].select(dev), test=raw['validation'])
+
+
 def prepare_data(task, tokenizer, train_args):
     if task.task not in TASKS or task.max_length % 8 or task.max_length > 2048:
         raise ValueError('Unsupported task/context length')
@@ -157,15 +191,25 @@ def prepare_data(task, tokenizer, train_args):
     config = mappings[name]
     with train_args.main_process_first(desc='local supervised data and tokenization'):
         raw = load_dataset(config['dataset_path'], **config['dataset_kwargs'])
-        if raw['train'].features['label'].names != (['0', '1'] if task.task == 'paws' else label_names):
+        if task.task == 'stsb':
+            for split in ('train', 'validation', 'test'):
+                labels = np.asarray(raw[split]['score'])
+                if not np.isfinite(labels).all() or not ((labels >= 0) & (labels <= 1)).all():
+                    raise ValueError('Pinned STS-B source requires finite normalized 0–1 scores')
+                raw[split] = raw[split].map(lambda batch: {'label':[5.0*x for x in batch['score']]},
+                    batched=True, remove_columns=['score'], desc='Restore STS-B 0–5 scale')
+        elif raw['train'].features['label'].names != (['0', '1'] if task.task == 'paws' else label_names):
             raise ValueError('Unexpected dataset label ordering')
+        source_train_rows = len(raw['train'])
+        source_dev_rows = len(raw['validation'])
+        raw = supervised_splits(raw, task.task)
         # Hold out validation and test sentence pairs. Inspect text identity only,
         # never use test labels to filter, tune, or select hyperparameters.
-        heldout = {document_key(r, fields, task.task == 'paws')
+        heldout = {document_key(r, fields, task.task in ('paws', 'stsb'))
                    for split in ('validation', 'test') for r in raw[split]}
         keep, digest = [], hashlib.sha256()
         for i, row in enumerate(raw['train']):
-            key = document_key(row, fields, task.task == 'paws')
+            key = document_key(row, fields, task.task in ('paws', 'stsb'))
             if key not in heldout:
                 keep.append(i)
                 digest.update((key + ':' + str(row['label']) + '\n').encode())
@@ -187,7 +231,7 @@ def prepare_data(task, tokenizer, train_args):
                     order.update((document_key(row, fields, False)+':'+str(row['label'])+'\n').encode())
                 order_hashes[split] = order.hexdigest()
             part = part.map(encode_pairs, batched=True, num_proc=task.preprocessing_num_workers,
-                            fn_kwargs=dict(tokenizer=tokenizer, fields=fields, max_length=task.max_length),
+                            fn_kwargs=dict(tokenizer=tokenizer, fields=fields, max_length=task.max_length, task_name=task.task),
                             remove_columns=part.column_names, desc=f'Tokenize {task.task}/{split}')
             counts[split] = len(part)
             truncation[split] = sum(part['truncated'])
@@ -198,15 +242,38 @@ def prepare_data(task, tokenizer, train_args):
                 dataset_manifest_sha256=file_hash(task.dataset_manifest),
                 fingerprints={k: v._fingerprint for k, v in encoded.items()},
                 split_order_sha256=order_hashes,
-                evaluation_split='validation' if task.smoke else 'test',
+                evaluation_split='validation' if task.smoke or not task.evaluate_run else 'test',
                 tokenizer_sha256=hashlib.sha256(tokenizer.backend_tokenizer.to_str().encode()).hexdigest())
+    if task.task == 'stsb':
+        info.update(split_policy='official train/dev/test; source score multiplied by 5; dev/test exact pairs removed from dev',
+                    development_overlap_removed=source_dev_rows-len(raw['validation']),
+                    final_source_split='test', final_rows=len(raw['test']))
+    if task.task == 'boolq':
+        info.update(split_policy='train-derived 10% grouped development, fixed split-42; public validation final holdout',
+                    source_train_rows=source_train_rows, development_rows=len(raw['validation']),
+                    final_source_split='validation', final_rows=len(raw['test']),
+                    heldout_overlap_removed=source_train_rows-len(raw['train'])-len(raw['validation']))
     return encoded, info
 
 
 def metrics(prediction):
-    logits, labels = prediction
-    if not np.isfinite(logits).all():
-        raise ValueError('Nonfinite classification logits')
+    logits, labels = map(np.asarray, prediction)
+    if not np.isfinite(logits).all() or not np.isfinite(labels).all():
+        raise ValueError('Nonfinite task predictions/labels')
+    if logits.ndim == 2 and logits.shape[1] == 1:
+        from scipy.stats import rankdata
+        predicted = logits[:, 0]
+        if predicted.shape != labels.shape or len(labels) < 2:
+            raise ValueError('Invalid regression prediction shape/count')
+        def correlation(a, b):
+            # Defined protocol for a constant predictor: no correlation skill.
+            if np.ptp(a) == 0 or np.ptp(b) == 0:
+                return 0.0
+            return float(np.corrcoef(a, b)[0, 1])
+        pearson = correlation(predicted, labels)
+        spearman = correlation(rankdata(predicted), rankdata(labels))
+        return dict(pearson=pearson, spearman=spearman, correlation=(pearson+spearman)/2,
+                    mse=float(np.mean((predicted-labels)**2)))
     return {'accuracy': float((logits.argmax(-1) == labels).mean())}
 
 
@@ -306,12 +373,12 @@ def run(config_path):
     initial_buffers = {k: v.clone() for k, v in wrapped.named_buffers()}
     trainer = SupervisedTrainer(model=model, args=args, processing_class=tokenizer,
         train_dataset=data.get('train'), eval_dataset=data.get('validation'),
-        data_collator=PairCollator(tokenizer.eos_token_id), compute_metrics=metrics,
+        data_collator=PairCollator(tokenizer.eos_token_id, regression=task.task == 'stsb'), compute_metrics=metrics,
         callbacks=[callback])
     # Trainer initializes its own output directory; only rank zero writes shared artifacts.
     if trainer.is_world_process_zero():
         write_json(output/'protocol.json', dict(task=vars(task), training=args.to_dict(), source=source, data=data_info,
-                    adaptation='task-only end-to-end classification; no auxiliary loss; fixed normalization buffers'))
+                    adaptation='task-only end-to-end supervised learning; no auxiliary loss; fixed normalization buffers'))
     start = time.monotonic()
     if task.evaluate_run:
         prediction = trainer.predict(data['test'], metric_key_prefix='test')

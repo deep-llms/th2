@@ -3581,3 +3581,18 @@ remain at 100% on all eight GPUs. Current log confirms advancing cycles and
 collective payload. No evaluation/training queued. commands #0.
 Evidence: 77 SHA256-verified artifacts in artifacts/fewshot-monitor-20261008-a01/.
 Full per-task results: docs/DOWNSTREAM_EVAL_20261007.md. Do not relaunch.
+
+## STS-B/BoolQ extension authorized and prepared — 8 October 2026
+
+User approved STS-B/BoolQ for A/P6/P6-iso/P7-simple, original step2500 weights.
+Following clarification, STS-B uses sentence-transformers/stsb official
+train/dev/test with public gold test labels; its 0–1 scores are restored to0–5.
+Initial GLUE-only download superseded without training. Final controller
+download 62e4c50 completed five files. BoolQ public validation stays final
+holdout, with fixed train-derived development data. Exact-overlap filters
+produce STS5725/1497/1379 and BoolQ8485/942/3270 train/dev/final counts.
+Fourteen CPU tests passed. Same HF Trainer/Accelerate recipe, eight GPUs per
+fit, three epochs, matched two-rate search and three seeds.97 stages including
+CUDA/smoke/reload gates,32 fits,24 final evaluations and validated summary.
+Fresh root supervised-stsb-boolq-20261008-a01. No new pretraining or SST-2/WiC.
+Full protocol: docs/SUPERVISED_FINETUNING_20261007.md.

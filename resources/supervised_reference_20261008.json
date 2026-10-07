@@ -1,0 +1,123 @@
+{
+  "status": "passed",
+  "tasks": {
+    "stsb": {
+      "training": {
+        "task": "stsb",
+        "label_names": [
+          "similarity"
+        ],
+        "rows": {
+          "train": 5725,
+          "validation": 1497
+        },
+        "truncated_rows": {
+          "train": 0,
+          "validation": 0
+        },
+        "train_rows_before_filter": 5749,
+        "train_rows_after_filter": 5725,
+        "heldout_overlap_removed": 24,
+        "train_order_sha256": "c64218ebc5f6282c26def79d46a49d9d60bc67e7ba1864e21912d3565aa0dd84",
+        "dataset_manifest_sha256": "791a20c3a3340980e856bf81bae4ed7b2dd620a511dd383b9b0bcff05bae3c4e",
+        "split_order_sha256": {
+          "train": "c64218ebc5f6282c26def79d46a49d9d60bc67e7ba1864e21912d3565aa0dd84",
+          "validation": "2312b3baf65c3fc923bd26d3f25350084b02991bb2c5c92f663e5f5e2d52e8b3"
+        },
+        "evaluation_split": "validation",
+        "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+        "split_policy": "official train/dev/test; source score multiplied by 5; dev/test exact pairs removed from dev",
+        "development_overlap_removed": 3,
+        "final_source_split": "test",
+        "final_rows": 1379
+      },
+      "final": {
+        "task": "stsb",
+        "label_names": [
+          "similarity"
+        ],
+        "rows": {
+          "test": 1379
+        },
+        "truncated_rows": {
+          "test": 0
+        },
+        "train_rows_before_filter": 5749,
+        "train_rows_after_filter": 5725,
+        "heldout_overlap_removed": 24,
+        "train_order_sha256": "c64218ebc5f6282c26def79d46a49d9d60bc67e7ba1864e21912d3565aa0dd84",
+        "dataset_manifest_sha256": "791a20c3a3340980e856bf81bae4ed7b2dd620a511dd383b9b0bcff05bae3c4e",
+        "split_order_sha256": {
+          "test": "0cf60fda57a8dc0b11edf9b7a1b278ea817984c10858878063ad6bb326fcd37a"
+        },
+        "evaluation_split": "test",
+        "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+        "split_policy": "official train/dev/test; source score multiplied by 5; dev/test exact pairs removed from dev",
+        "development_overlap_removed": 3,
+        "final_source_split": "test",
+        "final_rows": 1379
+      }
+    },
+    "boolq": {
+      "training": {
+        "task": "boolq",
+        "label_names": [
+          "False",
+          "True"
+        ],
+        "rows": {
+          "train": 8485,
+          "validation": 942
+        },
+        "truncated_rows": {
+          "train": 15,
+          "validation": 2
+        },
+        "train_rows_before_filter": 8485,
+        "train_rows_after_filter": 8485,
+        "heldout_overlap_removed": 0,
+        "train_order_sha256": "3053e86693d50a0acfe11550b58ab3733f15d10d3647fc93bdb8ffc023fddfd4",
+        "dataset_manifest_sha256": "791a20c3a3340980e856bf81bae4ed7b2dd620a511dd383b9b0bcff05bae3c4e",
+        "split_order_sha256": {
+          "train": "3053e86693d50a0acfe11550b58ab3733f15d10d3647fc93bdb8ffc023fddfd4",
+          "validation": "110af308d34987a76ae4a402d3aa95a61271becc0c6f7befde5a6bd3d02b74cc"
+        },
+        "evaluation_split": "validation",
+        "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+        "split_policy": "train-derived 10% grouped development, fixed split-42; public validation final holdout",
+        "source_train_rows": 9427,
+        "development_rows": 942,
+        "final_source_split": "validation",
+        "final_rows": 3270
+      },
+      "final": {
+        "task": "boolq",
+        "label_names": [
+          "False",
+          "True"
+        ],
+        "rows": {
+          "test": 3270
+        },
+        "truncated_rows": {
+          "test": 10
+        },
+        "train_rows_before_filter": 8485,
+        "train_rows_after_filter": 8485,
+        "heldout_overlap_removed": 0,
+        "train_order_sha256": "3053e86693d50a0acfe11550b58ab3733f15d10d3647fc93bdb8ffc023fddfd4",
+        "dataset_manifest_sha256": "791a20c3a3340980e856bf81bae4ed7b2dd620a511dd383b9b0bcff05bae3c4e",
+        "split_order_sha256": {
+          "test": "8ddf1173e8fb78fbb3fd733ccb6437199aac9bfdd0c6385e243e8ccf91f74c21"
+        },
+        "evaluation_split": "test",
+        "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+        "split_policy": "train-derived 10% grouped development, fixed split-42; public validation final holdout",
+        "source_train_rows": 9427,
+        "development_rows": 942,
+        "final_source_split": "validation",
+        "final_rows": 3270
+      }
+    }
+  }
+}
