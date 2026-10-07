@@ -1,4 +1,44 @@
-# Remaining proxy arms: interim results
+# Remaining proxy arms: results
+
+## Final results — 7 October 2026, 15:55:24 Singapore
+
+Read-only monitor `a9289bf`, job `th2-tjx3-proxy-remaining-results-20261007-a03`.
+All ten arms finished at 2500 updates. All 63 stages exited successfully,
+including all production checkpoint/backend validators and final comparisons.
+Shared recipes match A under `comparable_config`. Queue completed at
+15:37:34 Singapore; automatic burn restoration verified at 15:38:45 after
+all GPUs were checked free. At 15:55:24 the same eight burn workers
+308656–308663 occupied all eight GPUs at 100% utilization (~155212 MiB each).
+Communicating collective progress was verified by the supervisor.
+
+| Arm | Held-out LM loss | Difference from A | Trainer runtime |
+|---|---:|---:|---:|
+| A, reused FA4 baseline | 3.4771733830 | — | 88.30 min |
+| P6-iso | 3.4662995700 | -0.0108738130 | 96.48 min |
+| P7-simple | 3.4745054830 | -0.0026679000 | 102.02 min |
+| P7 | 3.4769314640 | -0.0002419190 | 110.91 min |
+| P7-mlp | 3.4773446524 | +0.0001712694 | 111.76 min |
+| P7-ems | 3.4777271990 | +0.0005538160 | 111.72 min |
+| P7-kq | 3.4777975959 | +0.0006242128 | 110.88 min |
+| P6 | 3.4782647578 | +0.0010913748 | 99.93 min |
+| P4 | 3.4822870036 | +0.0051136206 | 97.30 min |
+| P5 | 3.4838803344 | +0.0067069514 | 95.85 min |
+| P4-iso | 3.4896725928 | +0.0124992098 | 95.55 min |
+
+P6-iso is the strongest single-seed validation result: loss lower by
+0.0108738130 (~1.0815% lower perplexity), versus 0.0026679000 for P7-simple.
+P6-iso is also better than LM-trained P6, which cautions against assuming that
+LM gradients into the predictor help. These results do not establish a causal
+mechanism or downstream/seed robustness; those evaluations remain pending.
+All comparisons are equal-token, not equal-time. Trainer runtime includes
+validation/checkpointing, excluding startup and separate acceptance gates.
+
+Downloaded and source-SHA256-verified 47 small JSON artifacts under
+`artifacts/proxy-remaining-results-20261007-a03/`, including final comparison,
+complete.json, supervisor and burn receipt. queue.json and gpus.json also saved.
+Source log: `temp/remaining-results-20261007-a03.log`, SHA256
+`a89bda91ee38b0598779a767ee8f893922fff93033232388ec144a265076f95a`.
+No new training, evaluation, process termination or queue changes performed.
 
 ## Updated snapshot — 7 October 2026, 11:19:26 Singapore
 
