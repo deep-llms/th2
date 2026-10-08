@@ -1,3 +1,35 @@
+## P6-iso weighted and per-layer-normalized targets — 8 October 2026
+
+Implemented P6-iso-weighted and P6-iso-layernorm as separate target-only changes.
+Weighted uses coefficients 1.6/1.2/0.8/0.4 on the current and next three MLP
+outputs. Layernorm applies parameter-free per-token hidden-channel LayerNorm
+(epsilon 1e-6, FP32) separately to all four outputs before summing. Both then
+use the existing running standardization/clipping and cosine auxiliary loss.
+All twelve P6-iso locations, four-block windows (last window 24–27), predictor,
+initialization, gate 0.1, isolated gradient routing and lambda schedule remain.
+Both normalization-bootstrap passes use the transformed target; inference does
+not construct targets. Metadata records the exact transformation and prevents
+incompatible resume. Reports allow only the registered target differences.
+
+Both use existing Trainer/Accelerate, SDPA/FA4, sequential eight-GPU queues,
+checkpoint evaluation and optional supervised fine-tuning. The only train.py
+change records the target metadata. No training-loop/data/packing/env change,
+remote push, or B200 workload. CUDA validation and research runs are pending.
+See docs/P4_P5_P6_IMPLEMENTATION.md for definitions and queue command. Generated
+local review queue: temp/p6-target-variants-review-jobs.json (not submitted).
+
+Local validation: all 55 regression tests passed in 403.788 seconds. Four
+focused final checks also passed in 61.152 seconds. Coverage includes exact
+full-depth targets and parent-equivalent initial LM outputs/gradients, FP32/BF16,
+independent LayerNorm/bootstrap/loss/gradient calculations, document isolation,
+recomputation/compilation, two-rank CPU DDP, accumulation, exact Trainer resume,
+metadata tampering, sequential queues, checkpoint evaluation and task fine-tuning.
+FA4 used the independent CPU attention oracle; actual CUDA kernels were not run.
+Evidence: temp/p6-target-variants-regression.log and
+ temp/p6-target-variants-final-targets.log. The first focused run exposed an old
+test expectation (last target block 25) that was corrected to 27 for these
+four-block, twelve-location arms before the passing regression.
+
 ## B200 STS-B/BoolQ completed — 8 October 2026, 00:01 UTC
 
 Read-only monitor a825a1e on thiennh-p6-tjx3-worker-0 returned a fresh snapshot

@@ -12,7 +12,7 @@ from unittest.mock import patch
 import torch
 from safetensors.torch import load_file
 from transformers import TrainingArguments
-from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS
+from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS, P6_TARGET_VARIANTS
 from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget, resolve_proxy_settings
 from deep_kv.proxy_estimators import BlockMLP
 from deep_kv.proxy_training import ProxyTrainer
@@ -22,6 +22,14 @@ from deep_kv.__main__ import jobs
 from tests.test_proxy_heads import model, batch, cfg, settings, objective
 from tests.test_proxy_training import proxy_fixture
 from tests.test_train import invoke
+
+
+def raw_target(arm, mlps, key, span):
+    values=[mlps[i].float() for i in range(key,key+span)]
+    if arm=='P6-iso-weighted':values=[x*w for x,w in zip(values,(1.6,1.2,.8,.4))]
+    if arm=='P6-iso-layernorm':
+        values=[torch.nn.functional.layer_norm(x,(x.shape[-1],),eps=1e-6) for x in values]
+    return sum(values)
 
 
 class AnticipatoryTests(unittest.TestCase):
@@ -120,10 +128,22 @@ class AnticipatoryTests(unittest.TestCase):
                     bad=json.loads(saved);bad['proxy_target'][key]=value;path.write_text(json.dumps(bad))
                     with self.assertRaisesRegex(ValueError,'target metadata'):report(root,('P6-iso',arm))
                 path.write_text(saved)
+            # Wrong transformations must fail even if both saved copies agree.
+            for arm in ('P6-iso',)+P6_TARGET_VARIANTS:
+                path=root/arm/'train_config.json';result_path=root/arm/'result.json'
+                saved=path.read_text();saved_result=result_path.read_text()
+                for change in ({'quantity':'mlp_window_sum' if arm!='P6-iso' else 'weighted_mlp_window_sum'},
+                               {'layer_weights':[1,1,1,1]},
+                               {'per_layer_normalization':{'type':'rms_norm'}}):
+                    bad=json.loads(saved);bad_result=json.loads(saved_result)
+                    bad['proxy_target'].update(change);bad_result['proxy']['target'].update(change)
+                    path.write_text(json.dumps(bad));result_path.write_text(json.dumps(bad_result))
+                    with self.assertRaisesRegex(ValueError,'target metadata'):report(root,(arm,))
+                path.write_text(saved);result_path.write_text(saved_result)
             path=root/'recipe.json';path.write_text(json.dumps(recipe))
             queue=jobs(path,arms=list(P6_VARIANTS),seeds=[42])
             parser=HfArgumentParser((ModelArguments,DataArguments,PilotArguments,TrainingArguments))
-            for job,arm in zip(queue['jobs'][:2],P6_VARIANTS):
+            for job,arm in zip(queue['jobs'][:len(P6_VARIANTS)],P6_VARIANTS):
                 argv=job['argv'];_,_,pilot,_=parser.parse_args_into_dataclasses(argv[argv.index(str(Path('train.py').resolve()))+1:])
                 resolved=resolve_proxy_settings(pilot.arm,ProxySettings(**{k:getattr(pilot,'proxy_'+k) for k in ProxySettings.__dataclass_fields__}))
                 self.assertEqual(pilot.arm,arm)
@@ -172,14 +192,70 @@ class AnticipatoryTests(unittest.TestCase):
                             span=2 if arm=='P6-iso-short' else 4
                             self.assertEqual(tuple(targets),variant.layers)
                             for index,key in enumerate(variant.layers):
-                                raw=sum(mlps[i].float() for i in range(key,key+span))
+                                raw=raw_target(arm,mlps,key,span)
                                 torch.testing.assert_close(targets[key],raw,rtol=0,atol=0)
                                 torch.testing.assert_close(actual['center_sums'][index],raw.sum((0,1)),rtol=0,atol=0)
                                 self.assertEqual(int(actual['center_counts'][index]),8)
-                            self.assertEqual(variant.layers[-1]+span-1,25)
+                            self.assertEqual(variant.layers[-1]+span-1,27 if arm in P6_TARGET_VARIANTS else 25)
                             self.assertEqual(int(actual['aux_count']),8)
                         finally:
                             for hook in hooks:hook.remove()
+
+    def test_transformed_target_bootstrap_and_independent_auxiliary_loss(self):
+        # Use an explicit mean/variance LayerNorm oracle, not the implementation
+        # helper, and verify target transformations are used in BOTH bootstrap passes.
+        F=torch.nn.functional
+        for arm in P6_TARGET_VARIANTS:
+            for bf16 in (False,True):
+                with self.subTest(arm=arm,bf16=bf16):
+                    m=model(arm);mlps={};predictions={};hooks=[]
+                    for i,layer in enumerate(m.backbone.model.layers,1):
+                        hooks.append(layer.mlp.register_forward_hook(self.capture(mlps,i)))
+                    for key,head in m.heads.items():
+                        hooks.append(head.w2.register_forward_hook(lambda mod,args,out,key=int(key):predictions.__setitem__(key,out)))
+                    def reference():
+                        targets=[]
+                        for key in m.layers:
+                            values=[mlps[i].float() for i in range(key,key+4)]
+                            if arm=='P6-iso-weighted':values=[x*w for x,w in zip(values,(1.6,1.2,.8,.4))]
+                            else:
+                                centered=[x-x.mean(-1,keepdim=True) for x in values]
+                                values=[x/torch.sqrt(x.square().mean(-1,keepdim=True)+1e-6) for x in centered]
+                            targets.append(sum(values))
+                        return targets
+                    try:
+                        for phase in ('mean','variance'):
+                            with torch.no_grad(),torch.autocast('cpu',dtype=torch.bfloat16,enabled=bf16):
+                                out=m(batch(),compute_auxiliary_losses=False,collect_target_statistics=True,statistics_mode=phase)
+                            raw=reference()
+                            expected_mean=torch.stack([x.mean((0,1)) for x in raw])
+                            expected_variance=torch.stack([((x-m.mu[i])**2).mean((0,1)) for i,x in enumerate(raw)])
+                            m.update_statistics(*(out[k] for k in ('center_sums','center_squares','center_counts')),initialize=phase)
+                            torch.testing.assert_close(m.mu if phase=='mean' else m.sigma2,
+                                                       expected_mean if phase=='mean' else expected_variance,rtol=3e-5,atol=1e-7)
+                        before={k:v.clone() for k,v in m.named_buffers()}
+                        with torch.autocast('cpu',dtype=torch.bfloat16,enabled=bf16):out=m(batch())
+                        losses=[]
+                        for i,(key,raw) in enumerate(zip(m.layers,reference())):
+                            variance=m.sigma2[i].clamp_min(.01*m.sigma2[i].median())
+                            target=((raw-m.mu[i])/torch.sqrt(variance+1e-6)).clamp(-10,10)
+                            losses.append((1-F.cosine_similarity(predictions[key].float(),target,dim=-1,eps=1e-6)).mean())
+                        expected=torch.stack(losses).mean();actual=out['aux_sum']/out['aux_count']
+                        torch.testing.assert_close(actual,expected,rtol=3e-5,atol=1e-7)
+                        parameters=tuple(m.parameters())
+                        actual_grads=torch.autograd.grad(actual,parameters,allow_unused=True,retain_graph=True)
+                        expected_grads=torch.autograd.grad(expected,parameters,allow_unused=True)
+                        for (name,_),a,b in zip(m.named_parameters(),actual_grads,expected_grads):
+                            if name.startswith('heads.') and not name.endswith('.alpha'):
+                                self.assertIsNotNone(a)
+                                torch.testing.assert_close(a,b,rtol=.02 if bf16 else 3e-5,atol=2e-5 if bf16 else 1e-7,msg=name)
+                            else:self.assertIsNone(a);self.assertIsNone(b)
+                        for key,value in m.named_buffers():torch.testing.assert_close(value,before[key],rtol=0,atol=0)
+                        # No target-normalization work in inference.
+                        with patch('deep_kv.proxy.F.layer_norm',side_effect=AssertionError('target work during inference')):
+                            m.hidden_states(batch())
+                    finally:
+                        for hook in hooks:hook.remove()
 
     def test_four_head_gqa_mapping_and_unchanged_parameters(self):
         config=cfg();config.num_attention_heads=16;config.num_key_value_heads=8
@@ -318,7 +394,7 @@ class AnticipatoryTests(unittest.TestCase):
                 with patch.object(m,'normalize_target',side_effect=target):actual=m(batch(),collect_target_statistics=True)
                 for key,value in targets.items():
                     span = 2 if arm=='P6-iso-short' else 4
-                    torch.testing.assert_close(value,sum(mlps[i].float() for i in range(key,key+span)),rtol=0,atol=0)
+                    torch.testing.assert_close(value,raw_target(arm,mlps,key,span),rtol=0,atol=0)
                 objective(m,actual).backward()
                 for h in hooks:h.remove()
                 for key,value in m.named_buffers():torch.testing.assert_close(value,before[key],rtol=0,atol=0)

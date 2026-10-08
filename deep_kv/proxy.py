@@ -13,6 +13,7 @@ from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
 from .model import DeepKV, normalize_code
 from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout
+from . import P6_TARGET_WEIGHTS
 
 
 @dataclass
@@ -591,10 +592,19 @@ class ProxyModel(DeepKV):
             if not need_targets:
                 continue
             if self.family != 'P3':
+                # Target-only work: FP32, detached, once per contributing block.
+                # Inference never enters this path. Overlapping windows share LN.
+                if not self.increment_target and sources:
+                    with torch.no_grad(), torch.autocast(mlp.device.type,enabled=False):
+                        contribution = mlp.detach().float()
+                        if self.arm == 'P6-iso-layernorm':
+                            contribution = F.layer_norm(contribution,(contribution.shape[-1],),eps=1e-6)
                 for proxy in tuple(sources):
                     if not self.increment_target:
                         with torch.no_grad():
-                            windows[proxy] = windows[proxy] + mlp.float() if proxy in windows else mlp.float()
+                            value = (contribution*P6_TARGET_WEIGHTS[layer-proxy]
+                                     if self.arm == 'P6-iso-weighted' else contribution)
+                            windows[proxy] = windows[proxy] + value if proxy in windows else value
                     if layer == proxy+self.settings.lookahead-1:
                         raw = (hidden.detach().float()-bases.pop(proxy) if self.increment_target
                                else windows.pop(proxy))

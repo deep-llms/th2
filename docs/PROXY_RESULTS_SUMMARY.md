@@ -1,6 +1,6 @@
 # Proxy arms: perplexity and downstream results
 
-Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. B200 checked at 04:48 Singapore: all STS-B/BoolQ numerical and smoke/reload checks passed; 27 of 32 production fine-tuning fits are complete, with P6/BoolQ seed 44 running. Final test-set evaluations and scores remain pending.
+Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. The STS-B/BoolQ fine-tuning queue completed all 97 stages; final results are included below. The newly implemented P6/P7 follow-ups are untrained.
 
 ## Setup and interpretation
 
@@ -28,6 +28,8 @@ The gradient descriptions below refer to pretraining. Supervised fine-tuning del
 | P5 | P4-style all-head value injection, but replace independent predictors with a width-256 residual stream carried between proxy blocks. The stream learns only from auxiliary loss. |
 | P6 | Same tokenwise predictor and target as P4, but add the RMS-normalized prediction **directly to the residual stream before the block**. Scale it by detached input RMS and a trainable channel gate initialized to 0.1. LM and auxiliary losses both train the predictors. |
 | P6-iso | Exactly P6 with predictor LM gradients stopped. Auxiliary loss trains the predictors; LM loss still trains the gates and backbone. |
+| P6-iso-weighted (untrained) | P6-iso with fixed target coefficients 1.6, 1.2, 0.8, 0.4 on the current and next three MLP outputs, before the existing running standardization. |
+| P6-iso-layernorm (untrained) | P6-iso with each of the four MLP outputs individually normalized by parameter-free, per-token LayerNorm before summation and the existing running standardization. |
 | P7 | Preserve native K/V entries and add separate proxy K/V entries. Four query heads attend jointly to both through **one softmax**, with no gate. Predictor uses a width-256 bottleneck and a causal four-tap convolution. Target is the four-block residual increment (attention + MLP contributions). Auxiliary objective is cosine + 0.5 × relational KL. Predictor learns only from auxiliary loss; LM trains proxy projections and backbone. |
 | P7-mlp | P7 with the target changed to the four-block **MLP sum**. It retains the convolution and relational KL; the name does not mean those were removed. |
 | P7-ems | P7 plus document-reset exponential moving summaries of the width-256 input features, at decays 0.9 and 0.99. Add both summaries to the convolution output before SiLU. Keep P7's target, attention and auxiliary losses. |

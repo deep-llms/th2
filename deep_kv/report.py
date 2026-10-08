@@ -3,6 +3,7 @@ import json
 import copy
 from pathlib import Path
 from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout, code_loss_weight, kv_loss_weight
+from . import P6_TARGET_VARIANTS, anticipatory_target_metadata
 
 
 def comparable_config(config):
@@ -101,10 +102,11 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 raise ValueError('Proxy arms require their versioned target definition without a channel mask')
             if arm in ANTICIPATORY_ARMS:
                 bands, lookahead = anticipatory_layout(arm, config['model_config']['num_hidden_layers'])
-                expected_target = dict(quantity='mlp_window_sum',lookahead=lookahead,
+                expected_target = dict(**anticipatory_target_metadata(arm),lookahead=lookahead,
                     bands=list(bands),
                     normalization='running_per_channel',epsilon=1e-6,loss_form='cosine')
                 if (any(target.get(k)!=v for k,v in expected_target.items())
+                        or any(k in target and k not in expected_target for k in ('layer_weights','per_layer_normalization'))
                         or result.get('proxy',{}).get('target') != target):
                     raise ValueError('P4/P5/P6 target metadata does not match its definition or saved result')
             targets[arm] = target
@@ -119,6 +121,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 if arm in SIMPLE_MEMORY_ARMS:expected_target.pop('relational')
                 if (any(target.get(k)!=v for k,v in expected_target.items())
                         or (arm in SIMPLE_MEMORY_ARMS and 'relational' in target)
+                        or any(k in target for k in ('layer_weights','per_layer_normalization'))
                         or result.get('proxy',{}).get('target')!=target):
                     raise ValueError('P7 target metadata does not match its definition or saved result')
             for other, definition in targets.items():
@@ -126,6 +129,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 ignored = set() if other[:2] == arm[:2] else {'quantity','bands'}
                 if arm in P6_VARIANTS+P7_P6_VARIANTS or other in P6_VARIANTS+P7_P6_VARIANTS:
                     ignored |= {'bands','lookahead'}  # Validated arm-specific layouts above.
+                if arm in P6_TARGET_VARIANTS or other in P6_TARGET_VARIANTS:
+                    ignored |= {'quantity','layer_weights','per_layer_normalization'}
                 if arm in MEMORY_ARMS or other in MEMORY_ARMS:
                     ignored |= {'quantity','bands','target_version','relational'}
                 if ({k:v for k,v in target.items() if k not in ignored} !=

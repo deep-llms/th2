@@ -28,6 +28,7 @@ from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
 from deep_kv import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS
+from deep_kv import anticipatory_target_metadata
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
@@ -245,6 +246,8 @@ def main():
                 normalization='running_per_channel',variance_floor=proxy_settings.variance_floor,
                 clip=proxy_settings.target_clip,momentum=proxy_settings.momentum,epsilon=1e-6,
                 lookahead=proxy_settings.lookahead,bands=[list(key) if isinstance(key,tuple) else key for key in model.mean_layers],loss_form=proxy_settings.loss_form)
+            if model.anticipatory:
+                experiment['proxy_target'].update(anticipatory_target_metadata(pilot.arm))
             if model.relational_proxy:
                 experiment['proxy_target']['relational'] = dict(weight=.5,temperature=.1,queries=256,
                     candidates='strictly_earlier_same_document',sampling='step_and_global_update_row_v1',

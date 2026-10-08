@@ -59,6 +59,72 @@ the global RNG stream. The arm names fix isolation and initial gate values;
 contradictory overrides are rejected. All new settings participate in strict
 resume validation. Defaults of existing A/P1/P3 recipes remain compatible.
 
+## P6-iso target variants: weighted and per-layer normalized (8 October 2026)
+
+Two additional, separate arms change only the detached target used to supervise
+P6-iso. Both keep all twelve injection blocks (2,4,...,24), a four-block target
+window, the same 1024→256→1024 predictor and initialization, isolated gradient
+routing, residual injection, gate initialization 0.1, and auxiliary schedule
+`0.1 * min(step / 250, 1)`. They do not combine the sparse or short variants.
+
+Let `m_i` be block i's MLP output in the actual current forward pass, and `N`
+be the existing running per-channel standardization and clipping. Targets are:
+
+| Arm | Target at block l |
+| --- | --- |
+| `P6-iso` | `stopgrad(N(m_l + m_(l+1) + m_(l+2) + m_(l+3)))` |
+| `P6-iso-weighted` | `stopgrad(N(1.6*m_l + 1.2*m_(l+1) + 0.8*m_(l+2) + 0.4*m_(l+3)))` |
+| `P6-iso-layernorm` | `stopgrad(N(LN(m_l) + LN(m_(l+1)) + LN(m_(l+2)) + LN(m_(l+3))))` |
+
+Weights are fixed and ordered from current to deepest block; no learned target
+weights are introduced. LN is parameter-free LayerNorm over each token's hidden
+channels: subtract the channel mean, divide by the square root of the biased
+channel variance plus 1e-6. It is not RMSNorm and does not mix tokens/documents.
+The complete target construction is detached and FP32 under mixed precision.
+For LN, each contributing block is normalized once and shared across overlapping
+windows. The final window is blocks 24–27. Inference skips target construction.
+
+Both normalization-bootstrap passes and subsequent running-statistic updates
+use the transformed raw target. After summation, `N`, cosine loss and averaging
+over tokens/active locations are unchanged. The target itself cannot train the
+backbone or the gate. LM gradients still train the backbone/gate but not the
+isolated predictor; auxiliary gradients train the predictor only.
+
+The existing `p4p6-r1` standardization version is retained. Saved target metadata
+records `quantity=weighted_mlp_window_sum` plus `layer_weights`, or
+`quantity=layernorm_mlp_window_sum` plus the exact `per_layer_normalization`
+settings (axis, epsilon, affine and dtype). Reports validate those definitions
+before allowing the intended target difference. Resume requires identical arm
+and saved recipe/target metadata; these experiments require fresh training.
+Old arm definitions and checkpoint metadata remain unchanged.
+
+Both reuse train.py's Trainer/Accelerate, packing/cache, SDPA/FA4, checkpointing,
+evaluation and optional supervised fine-tuning. Parameters/inference architecture
+are identical to P6-iso (6,303,744 extra parameters for Qwen3-0.6B). Target-only
+arithmetic adds no learned parameters; its training-time cost is not included in
+the architecture MAC estimate and must be measured on B200.
+
+```bash
+python -m deep_kv make-jobs --config proxy_heads.b200.json \
+  --arms P6-iso-weighted P6-iso-layernorm --seeds 42 --stop-after 2500 \
+  --output temp/p6-target-variants-jobs.json
+```
+
+This only writes a sequential eight-GPU queue. Neither arm has been launched;
+full-size FA4 CUDA validation and research results remain pending.
+
+Local validation: all 55 regression tests passed in 403.788 seconds. Four
+focused final checks also passed in 61.152 seconds. Coverage includes exact
+full-depth targets and parent-equivalent initial LM outputs/gradients, FP32/BF16,
+independent LayerNorm/bootstrap/loss/gradient calculations, document isolation,
+recomputation/compilation, two-rank CPU DDP, accumulation, exact Trainer resume,
+metadata tampering, sequential queues, checkpoint evaluation and task fine-tuning.
+FA4 used the independent CPU attention oracle; actual CUDA kernels were not run.
+Evidence: temp/p6-target-variants-regression.log and
+ temp/p6-target-variants-final-targets.log. The first focused run exposed an old
+test expectation (last target block 25) that was corrected to 27 for these
+four-block, twelve-location arms before the passing regression.
+
 ## P6-iso follow-ups: sparse placement and shorter targets
 
 Two separate arms extend P6-iso; neither combines the two changes.
