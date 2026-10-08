@@ -1,5 +1,8 @@
 # P4/P5/P6 implementation
 
+Forward-local target-normalization optimization is documented in
+[the 8 October performance review](PROXY_OPTIMIZATION_20261008.md).
+
 Implements revision 3 of [the specification](proxy_arms_P4_P5_P6_spec.md).
 Uses the existing `train.py`, HF Trainer/Accelerate, EOS document packing,
 document-isolated attention and per-document reset positions. No new training

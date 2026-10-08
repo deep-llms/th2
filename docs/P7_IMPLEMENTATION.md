@@ -1,5 +1,8 @@
 # P7 implementation and validation
 
+Forward-local normalization/layout reuse and proxy-key RoPE optimization are
+documented in [the 8 October performance review](PROXY_OPTIMIZATION_20261008.md).
+
 Implemented against `proxy_arm_P7_spec.md`, Revision 2. The operator explicitly
 requested both dense SDPA and FA4; this extends the specification's SDPA-only
 implementation wording without changing the attention function or objective.

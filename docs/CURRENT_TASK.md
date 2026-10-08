@@ -1,3 +1,21 @@
+## P6/P7 execution optimization — 8 October 2026
+
+Removed repeated target-normalization work (batched scales, reused centered
+values/token counts, skipped unused clipping counts), redundant P7 proxy-key
+RoPE and repeated FA4 doubled-layout construction. Forward-local caches only;
+no architecture, objective, parameter/checkpoint format, optimizer, data or
+training-loop changes. All 16 full-depth before/after FP32/BF16 comparisons
+matched every output and gradient exactly. All 94 tests passed across three
+invocations: 3 focused optimization (8.655 s), 12 shared-head (11.481 s), and
+79 regression tests (661.568 s), including CPU DDP, exact Trainer resume,
+checkpoint evaluation and supervised fine-tuning. FA4 used the CPU oracle.
+
+CPU operator counts confirm reduced work, but noisy timings do not establish
+an overall speedup, especially for P7. Full-size CUDA/B200 numerical and timing
+validation remains pending. No B200 access, deployment or environment change.
+Details and evidence: docs/PROXY_OPTIMIZATION_20261008.md and
+ temp/proxy-optimization-20261008/. New model variants remain local/untrained.
+
 ## P6-iso weighted and per-layer-normalized targets — 8 October 2026
 
 Implemented P6-iso-weighted and P6-iso-layernorm as separate target-only changes.

@@ -376,12 +376,15 @@ class ProxyModel(DeepKV):
         self.sigma2.mul_(momentum).add_(variance,alpha=1-momentum)
         return diagnostics
 
-    def normalize_target(self, value, key, *, return_clipped=False):
+    def normalize_target(self, value, key, *, return_clipped=False, inverse_scale=None, centered=None):
         with torch.no_grad(), torch.autocast(device_type=value.device.type, enabled=False):
             index = self.mean_index[key]
-            variance = self.sigma2[index]
-            floor = self.settings.variance_floor*variance.median()
-            standardized = (value.detach().float()-self.mu[index])*torch.rsqrt(variance.clamp_min(floor)+1e-6)
+            if inverse_scale is None:
+                variance = self.sigma2[index]
+                floor = self.settings.variance_floor*variance.median()
+                inverse_scale = torch.rsqrt(variance.clamp_min(floor)+1e-6)
+            if centered is None:centered = value.detach().float()-self.mu[index]
+            standardized = centered*inverse_scale
             normalized = standardized.clamp(-self.settings.target_clip,self.settings.target_clip)
             if return_clipped:
                 return normalized, (standardized.abs()>self.settings.target_clip).sum()
@@ -440,8 +443,11 @@ class ProxyModel(DeepKV):
             native = attention(qn,kn,vn,mask,a.scaling,self.fa4_kernel)
             if self._fa4_observer is not None:
                 self._fa4_observer(qn,kn,vn,mask)
+            if not hasattr(plan,'doubled_layout'):
+                plan.doubled_layout = (mask[0]*2,mask[1]*2)
             proxy = flash_joint_attention(q[:,split:],k[:,-2:],v[:,-2:],kp,vp,mask,
-                                          a.scaling,self.fa4_kernel,self._fa4_observer)
+                                          a.scaling,self.fa4_kernel,self._fa4_observer,
+                                          doubled_layout=plan.doubled_layout)
         else:
             interface = ALL_ATTENTION_FUNCTIONS.get_interface('sdpa',eager_attention_forward)
             if not hasattr(plan,'joint_mask'):
@@ -556,17 +562,29 @@ class ProxyModel(DeepKV):
         counts = self.mu.new_zeros(len(self.mean_layers))
         clipped = torch.zeros_like(counts)
         need_targets = bool(self.family and (compute_auxiliary_losses or collect_target_statistics))
+        inverse_scales = None
+        if need_targets and (compute_auxiliary_losses or (collect_target_statistics and statistics_mode is None)):
+            # Frozen within this forward. No persistent cache can survive a
+            # statistics update, resume, or evaluation with different buffers.
+            with torch.no_grad(), torch.autocast(hidden.device.type,enabled=False):
+                floors = self.settings.variance_floor*self.sigma2.median(dim=-1,keepdim=True).values
+                inverse_scales = torch.rsqrt(self.sigma2.clamp_min(floors)+1e-6)
+        target_count = context.valid.sum() if need_targets and collect_target_statistics else None
         def record(key, raw):
             with torch.no_grad(), torch.autocast(device_type=raw.device.type,enabled=False):
                 index = self.mean_index[key]
+                shifted = None
                 if collect_target_statistics:
                     shifted = raw.detach().float() if statistics_mode == 'mean' else raw.detach().float()-self.mu[index]
                     sums[index] = shifted.sum((0,1))
                     squares[index] = shifted.square().sum((0,1)) if statistics_mode != 'mean' else 0
-                    counts[index] = context.valid.sum()
+                    counts[index] = target_count
                 if compute_auxiliary_losses or (collect_target_statistics and statistics_mode is None):
-                    normalized, entries = self.normalize_target(raw,key,return_clipped=True)
-                    if collect_target_statistics:clipped[index] = entries
+                    normalized = self.normalize_target(raw,key,return_clipped=collect_target_statistics,
+                        inverse_scale=inverse_scales[index],centered=shifted if statistics_mode!='mean' else None)
+                    if collect_target_statistics:
+                        normalized,entries = normalized
+                        clipped[index] = entries
                     return normalized
                 return None
         for index in range(len(self.backbone.model.layers)):

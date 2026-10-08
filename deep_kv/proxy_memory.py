@@ -8,7 +8,7 @@ import math
 import torch
 from torch import nn
 from torch.nn import functional as F
-from transformers.models.qwen3.modeling_qwen3 import Qwen3RMSNorm, apply_rotary_pos_emb
+from transformers.models.qwen3.modeling_qwen3 import Qwen3RMSNorm, rotate_half
 
 
 def eligible_queries(documents):
@@ -97,8 +97,10 @@ class MemoryHead(nn.Module):
             p = (value*torch.rsqrt(value.square().mean(-1, keepdim=True)+1e-6)).to(prediction.dtype)
         shape = (*p.shape[:-1], 2, -1)
         k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)
-        # apply_rotary_pos_emb handles both tensors independently.
-        k, _ = apply_rotary_pos_emb(k, k, *rotary)
+        # Only keys need rotating; calling the Q/K helper with (k,k) did twice
+        # the same work and discarded one result.
+        cos,sin = (x.unsqueeze(1) for x in rotary)
+        k = k*cos+rotate_half(k)*sin
         v = native_values if self.v_proj is None else self.v_proj(p).view(shape).transpose(1, 2)
         return k, v
 
@@ -129,7 +131,7 @@ def rectangular_mask(mask, disabled=False):
     return torch.cat((mask, torch.zeros_like(mask) if disabled else mask), dim=-1)
 
 
-def flash_joint_attention(q, k, v, kp, vp, layout, scaling, kernel, observer=None):
+def flash_joint_attention(q, k, v, kp, vp, layout, scaling, kernel, observer=None, *, doubled_layout=None):
     """Interleave [native_j, proxy_j], duplicate queries, retain odd outputs.
 
     Query 2*t+1 sees exactly both entries of tokens j <= t. Even query outputs
@@ -141,7 +143,7 @@ def flash_joint_attention(q, k, v, kp, vp, layout, scaling, kernel, observer=Non
     query = q.repeat_interleave(2, dim=2)
     key = torch.stack((k, kp), dim=3).flatten(2, 3)
     value = torch.stack((v, vp), dim=3).flatten(2, 3)
-    doubled = (layout[0]*2, layout[1]*2)
+    doubled = (layout[0]*2, layout[1]*2) if doubled_layout is None else doubled_layout
     output = attention(query, key, value, doubled, scaling, kernel)
     if observer is not None:
         observer(query, key, value, doubled)

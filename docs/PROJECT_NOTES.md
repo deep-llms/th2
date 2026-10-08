@@ -1,3 +1,12 @@
+## P6/P7 execution-only optimization (8 October 2026)
+
+Target scales and doubled FA4 document layouts are cached only for one forward,
+never across statistics updates or checkpoint loads. P7 rotates proxy keys once;
+shared target statistics reuse centering and token counts. The objective,
+state dict and training recipe are unchanged. Exact local FP32/BF16 reference
+checks pass; CPU operation counts decrease but no B200 speedup is established.
+See PROXY_OPTIMIZATION_20261008.md for measurements and validation limits.
+
 ## P6-iso weighted and per-layer-normalized targets — 8 October 2026
 
 Implemented P6-iso-weighted and P6-iso-layernorm as separate target-only changes.
