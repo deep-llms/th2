@@ -1,5 +1,15 @@
 ## Authorized replacement with fresh 10,000-step A/P6-iso pair — 8 October 2026
 
+The corrected recovery command was **not delivered to the B200**. Runner status
+at13:40:32 UTC reports job `th2-tjx3-recover-A-P6iso-10k-launch-20261008-a02`,
+commit75e0d47, `FAILED(rc=255): ssh: Could not resolve hostname <host>`.
+This is a controller/SSH failure, not a project traceback. Per AGENT_GUIDE,
+do not resubmit, kill, clean, or claim success until the operator restores
+access. The earlier verified SIGTERM is known; its final burn handoff and any
+new training launch remain unverified. The fresh five-stage queue is prepared
+and locally tested but has no verified B200 execution. `commands.sh` is reset
+to inactive `#0` while waiting for infrastructure repair.
+
 At13:33 UTC the exact verified supervisor PID486855 received SIGTERM; the
 controller log confirms the identity-checked signal. The first stop/launch
 command remains in its handoff wait. Its receipt predicate mistakenly expected
