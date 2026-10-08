@@ -163,7 +163,14 @@ def validate(args):
         if backend=='fa4':
             assert result['attention_runtime']['version']=='4.0.0b33' and not result['sdpa_receipts']
         logs=[row for row in state['log_history'] if 'loss' in row]
-        assert logs and logs[-1]['step']==args.steps
+        interval=int(config['training']['logging_steps'])
+        assert interval>=1 and interval==config['training']['logging_steps']
+        expected=set(range(interval,args.steps+1,interval))
+        observed={row['step'] for row in logs}
+        assert logs and expected.issubset(observed)
+        # A forced cutoff need not coincide with a scheduled loss log. The
+        # final step is independently checked in result/state/checkpoint above.
+        assert logs[-1]['step'] in {args.steps,args.steps//interval*interval}
         assert all(math.isfinite(row['loss']) and math.isfinite(row['grad_norm']) for row in logs)
         assert config['training']['seed']==config['training']['data_seed']==args.seed
         assert config['world_size']==8

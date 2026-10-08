@@ -1,4 +1,5 @@
 import importlib
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -121,6 +122,35 @@ class ValidationTests(unittest.TestCase):
             report=json.loads(args.output.read_text())
             self.assertEqual(report['status'],'failed')
             self.assertEqual({x['arm'] for x in report['cases']},set((*NEW_ARMS,'P6-iso','P7-simple','P7')))
+
+    def test_continuation_preserves_completed_outputs_and_checks_hashes(self):
+        from scripts.proxy_speed_validation import ROOT
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);source=root/'old/supervised/run';source.mkdir(parents=True)
+            jobs=make(root/'old',Path('proxy_heads.b200.json'),Path('/rows'))
+            hashes={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in
+                    ('deep_kv/proxy.py','deep_kv/proxy_memory.py','deep_kv/proxy_training.py','train.py')}
+            (root/'old/preflight.json').write_text(json.dumps({'source_sha256':hashes}))
+            completed=[]
+            for job in jobs[:7]:
+                artifacts=[]
+                for out in job['required_outputs']:
+                    path=source/out['path'];path.parent.mkdir(parents=True,exist_ok=True);path.write_text('{}')
+                    artifacts.append(dict(path=out['path'],sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+                completed.append(dict(name=job['name'],status='ok',artifacts=artifacts))
+            (source/'run.json').write_text(json.dumps(dict(status='failed',jobs=completed+[dict(name='validate-smoke',status='failed')])))
+            remaining=make(root/'next',Path('proxy_heads.b200.json'),Path('/rows'),continuation=source)
+            self.assertEqual(len(remaining),31)
+            self.assertEqual(remaining[0]['name'],'validate-smoke')
+            self.assertIn(str(source/'smoke'),remaining[0]['argv'])
+            self.assertEqual(remaining[0]['argv'][-1],'{run_dir}/smoke-validated.json')
+            self.assertEqual(remaining[0]['required_outputs'][0]['path'],'smoke-validated.json')
+            for job in remaining:
+                if job['name'].startswith('copy-resume-'):
+                    self.assertTrue(job['argv'][job['argv'].index('--source')+1].startswith(str(source/'smoke')))
+            path.write_text('changed')
+            with self.assertRaises(AssertionError):
+                make(root/'corrupt',Path('proxy_heads.b200.json'),Path('/rows'),continuation=source)
 
     def test_repeatability_is_measurement_not_acceptance(self):
         with tempfile.TemporaryDirectory() as tmp:

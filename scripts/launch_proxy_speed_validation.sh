@@ -3,6 +3,7 @@
 set -euo pipefail
 TASK_ROOT=$1
 TASK_MODE=${2:-study}
+TASK_SOURCE=${3:-}
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -11,7 +12,7 @@ export NCCL_NVLS_ENABLE=0 WANDB_MODE=offline WANDB_PROJECT=deep2shallow
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=42 TOKENIZERS_PARALLELISM=false
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-python -u - "$TASK_ROOT" "$TASK_MODE" <<'PY'
+python -u - "$TASK_ROOT" "$TASK_MODE" "$TASK_SOURCE" <<'PY'
 import hashlib,importlib.metadata as md,json,shutil,subprocess,sys
 from pathlib import Path
 from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
@@ -21,7 +22,8 @@ from scripts.proxy_speed_queue import make
 from scripts.proxy_speed_validation import REFERENCE
 from train import load_text
 root=Path(sys.argv[1]);project=Path.cwd();mode=sys.argv[2]
-assert mode in ('study','diagnostic')
+assert mode in ('study','diagnostic','continue')
+assert bool(sys.argv[3])==(mode=='continue')
 versions={p:md.version(p) for p in ('torch','transformers','accelerate','datasets','flash-attn-4','nvidia-cutlass-dsl')}
 for p,v in [('torch','2.14.1'),('transformers','5.9.0'),('accelerate','1.13.0'),('datasets','4.8.5'),('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0')]:
  assert versions[p].split('+')[0]==v,(p,versions[p])
@@ -49,7 +51,8 @@ assert len(inspection['gpus'])==8 and all('B200' in g['name'] for g in inspectio
 assert digest('/mnt/local/_gpu_guard/gpu_guard.sh')==GUARD_HASH
 approved={**APPROVED_BURNS,str(project/'resources/llm_pretrain_burn.py'):BURN_HASH}
 assert all(approved_launcher(pid,approved) or approved_launcher(process(pid)['ppid'],approved) for pid in inspection['workers'])
-items=make(root,project/'proxy_heads.b200.json',rows,diagnostic=mode=='diagnostic')
+items=make(root,project/'proxy_heads.b200.json',rows,diagnostic=mode=='diagnostic',
+           continuation=Path(sys.argv[3]) if mode=='continue' else None)
 (root/'inspection.json').write_text(json.dumps(inspection,indent=2))
 (root/'preflight.json').write_text(json.dumps(dict(status='passed',versions=versions,data=data,
  environment=sys.executable,reference=reference,rows_sha256=digest(rows),stages=len(items),

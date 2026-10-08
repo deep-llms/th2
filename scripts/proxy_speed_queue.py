@@ -1,6 +1,7 @@
 """Build the explicitly authorized CUDA gates, 25-step smokes and timing study."""
 import argparse
 import copy
+import hashlib
 from pathlib import Path
 
 from deep_kv.__main__ import jobs
@@ -8,7 +9,7 @@ from run_experiments import load_jobs
 from scripts.proxy_speed_validation import NEW_ARMS, BENCH_ARMS, ROOT, read, write
 
 
-def make(root, recipe_path, rows, diagnostic=False):
+def make(root, recipe_path, rows, diagnostic=False, continuation=None):
     root=Path(root)
     recipe=read(recipe_path)
     recipe.update(attention_backend='fa4',checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,
@@ -67,6 +68,40 @@ def make(root, recipe_path, rows, diagnostic=False):
             train(arm,'benchmark/'+impl,impl,profile=True)
     for impl in ('previous','optimized'):validate('benchmark/'+impl,list(BENCH_ARMS))
     cpu('summarize','summary',['--run-dir','{run_dir}'],'summary.json')
+    if continuation is not None:
+        source=Path(continuation).resolve(strict=True)
+        previous=read(source/'run.json')
+        completed=['numerics-all',*['smoke-'+arm for arm in NEW_ARMS]]
+        assert previous['status']=='failed'
+        assert [j['name'] for j in previous['jobs']]==completed+['validate-smoke']
+        assert all(j['status']=='ok' for j in previous['jobs'][:-1])
+        assert previous['jobs'][-1]['status']=='failed'
+        assert read(source.parents[1]/'validation-recipe.json')==recipe
+        before=read(source.parents[1]/'preflight.json')['source_sha256']
+        for name in ('deep_kv/proxy.py','deep_kv/proxy_memory.py','deep_kv/proxy_training.py','train.py'):
+            assert hashlib.sha256((ROOT/name).read_bytes()).hexdigest()==before[name],name
+        artifacts=[]
+        for job in previous['jobs'][:-1]:
+            for artifact in job['artifacts']:
+                path=(source/artifact['path']).resolve(strict=True)
+                assert path.is_relative_to(source)
+                assert hashlib.sha256(path.read_bytes()).hexdigest()==artifact['sha256']
+                artifacts.append(artifact)
+        assert [j['name'] for j in items[:7]]==completed
+        items=items[7:]
+        # Completed training outputs remain read-only in their original root.
+        # All new validation reports, resume copies and benchmarks are fresh.
+        for job in items:
+            if job['name']=='validate-smoke':
+                mapping={'{run_dir}/smoke/validated.json':'{run_dir}/smoke-validated.json',
+                         '{run_dir}/smoke':str(source/'smoke')}
+                job['argv']=[mapping.get(v,v) for v in job['argv']]
+                job['required_outputs'][0]['path']='smoke-validated.json'
+            elif job['name'].startswith(('copy-resume-','check-resume-')):
+                job['argv']=[v.replace('{run_dir}/smoke',str(source/'smoke')) for v in job['argv']]
+        write(root/'continuation.json',dict(source=str(source),artifacts=artifacts,
+              run_sha256=hashlib.sha256((source/'run.json').read_bytes()).hexdigest(),
+              note='Reuse verified numerical/smoke outputs; rerun corrected validator, then resume/timing stages.'))
     path=root/'jobs.json';write(path,dict(jobs=items));load_jobs(path)
     return items
 

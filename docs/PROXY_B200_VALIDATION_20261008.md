@@ -177,3 +177,26 @@ Burn restoration after the targeted control was independently confirmed by
 artifacts/proxy-fa4-repeatability-monitor-20261008-a02/ (fresh snapshot
 03:54:15 UTC). Four focused override/gate/queue/real-resume tests passed in
 44.708 s before the next launch.
+
+## Controlled numerical checks and six training smokes completed
+
+Study a04: all nine arms matched **every output and gradient exactly** under
+math SDPA and deterministic FA4, checkpointing off/on (36 old/new pairs).
+All six 25-step, eight-GPU smokes completed successfully; peaks were 108.7–114.2
+GiB. No architecture, objective or production training code was changed.
+
+The post-run checker then failed because it required a loss log at step 25
+although this study logs every 10 steps. This was a validator assumption, not
+a training failure. Fixed it to require all scheduled logs (10 and 20 here),
+while independently requiring step 25 in result, Trainer state and checkpoint.
+Added coverage for non-aligned cutoffs and rejection of missing scheduled logs.
+
+Continuation **proxy-speed-validation-20261008-a05** reuses the completed
+a04 artifacts after checking their saved hashes, production-module hashes and
+identical recipe. Source outputs remain read-only. Its 31 stages rerun the
+corrected checker, perform the six resume comparisons and eight native-FA4
+timing runs, with fresh output paths and automatic burn restoration.
+Source evidence: artifacts/proxy-speed-monitor-20261008-a12/, source log SHA256
+`a34cf455e9687451de20c38a6bf5d0accde34d39ee651696a6d5ac6fe97d34b3`.
+Local checker regression passed (0.199 s); continuation/queue tests passed
+(0.069 s), including rejection of corrupted source evidence.

@@ -14,6 +14,7 @@ from deep_kv import MEMORY_ARMS, SIMPLE_MEMORY_ARMS
 class ScreenValidationTests(unittest.TestCase):
     def test_smoke_and_screen_cutoffs_and_missing_rank_state(self):
         for backend,variant,steps,interval in (('fa4','P3-block',3,1),('fa4','P3-block',2500,10),
+                                             ('fa4','P6-iso-sparse',25,10),('fa4','P7-simple-short',25,10),
                                              ('fa4','P4-4h',25,1),('fa4','P4-iso-4h',2500,10),
                                              ('sdpa','P4-4h',3,1),('sdpa','P4-iso-4h',2500,10),
                                              ('fa4','P7',25,1),('fa4','P7-kq',25,1),('sdpa','P7-ems',25,1),
@@ -26,7 +27,7 @@ class ScreenValidationTests(unittest.TestCase):
                 checkpoint.mkdir(parents=True)
                 config=dict(pilot=dict(attention_backend=backend,checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False),
                     data=dict(isolate_documents=True,eval_rows=32),world_size=8,
-                    training=dict(per_device_train_batch_size=16,gradient_accumulation_steps=4,warmup_steps=1430,seed=42,data_seed=42))
+                    training=dict(per_device_train_batch_size=16,gradient_accumulation_steps=4,warmup_steps=1430,seed=42,data_seed=42,logging_steps=interval))
                 state=dict(global_step=steps,max_steps=28600,log_history=[dict(step=i,loss=3.,grad_norm=.2) for i in range(interval,steps+1,interval)])
                 result=dict(arm=variant,global_step=steps,status='stopped',schedule_steps=28600,input_tokens=steps*1048576,
                     attention_runtime=dict(version='4.0.0b33'),sdpa_receipts=[],fa4_receipts=['train.json','eval.json'],
@@ -64,6 +65,11 @@ class ScreenValidationTests(unittest.TestCase):
                 args.output=str(root/'bad.json');args.steps=steps+1
                 with self.assertRaises(AssertionError):validate(args)
                 args.steps=steps
+                if steps==25 and interval==10:
+                    path=arm/'trainer_state.json';broken={**state,'log_history':state['log_history'][:-1]}
+                    path.write_text(json.dumps(broken))
+                    with self.assertRaises(AssertionError):validate(args)
+                    path.write_text(json.dumps(state))
                 if backend=='sdpa':
                     path=arm/'train.json';receipt=json.loads(path.read_text());receipt['has_math']=True
                     path.write_text(json.dumps(receipt))

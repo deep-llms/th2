@@ -1,16 +1,14 @@
 ## Authorized B200 proxy validation — 8 October 2026
 
-User authorized numerical checks, six new-arm 25-step eight-GPU smokes/resume,
-and paired timing for A/P6-iso/P7-simple/P7. No research runs.
-Eight of nine arms passed initial full CUDA checks; P7-simple-short showed a
-0.494% native-FA4 gradient difference with identical outputs. Its serial repeat
-was near-exact (7.5e-8), and deterministic FA4 old/old and old/new were exact.
-Math SDPA was exact for all nine arms. Failed queues restored burns correctly.
-Final a04 study uses math SDPA/deterministic FA4 numerical gates and
-deterministic FA4 smokes/resumes. Data hashes, normalization, scheduler and
-RNG are exact; model/optimizer have an eight-FP32-epsilon bound. Throughput
-pairs retain native FA4; production defaults are unchanged. Full results
-pending. See PROXY_B200_VALIDATION_20261008.md for evidence and test modes.
+All nine arms matched outputs/gradients exactly on math SDPA and deterministic
+FA4, checkpointing off/on. All six new arms completed 25-step eight-GPU smokes,
+peaking at 108.7–114.2 GiB. No research runs or production-default changes.
+Post-run validator incorrectly expected a loss log at step 25 despite interval
+10. Checker fixed/tested; final step remains checked independently in result,
+state and checkpoint. Source a04 outputs preserved.
+Continuation a05 verifies source hashes/recipe, revalidates smokes, then performs
+six controlled resume checks and native-FA4 before/after timing. Results pending.
+See PROXY_B200_VALIDATION_20261008.md for exact test modes and evidence.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 
