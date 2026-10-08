@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-tjx3-proxy-speed-monitor-20261008-a25
+#th2-tjx3-proxy-speed-monitor-20261008-a26
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -30,6 +30,9 @@ for p in sorted((run/'numerics').glob('*.log')):
  print('NUMERIC_LOG',p.name,p.read_text()[-2200:],flush=True)
 artifact(run/'smoke-validated.json','smoke-validated.json')
 artifact(run/'summary.json','summary.json')
+source=Path(json.loads((root/'continuation.json').read_text())['source'])
+for phase,parent in (('smoke',source/'smoke'),('resume',run/'resume')):
+ for p in sorted(parent.rglob('update25-rank*.json')):artifact(p,phase+'/'+str(p.relative_to(parent)))
 p=root/'supervised/burn.log'
 if p.is_file():
  with p.open('rb') as stream:
