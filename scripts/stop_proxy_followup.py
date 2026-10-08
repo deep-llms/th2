@@ -12,6 +12,7 @@ from scripts.train_then_burn import GPUS
 from scripts.verified_gpu_reclaim import ownership,pidfd_open,pidfd_send_signal,process
 
 SESSION='tjx3-proxy-followup-2500-20261008-a01'
+BURN_SESSION='proxy-followup-2500-20261008-a01-final-burn'
 ROOT=Path('/mnt/local/_outputs/deep-llms_th2/proxy-followup-2500-20261008-a01')
 HOST='thiennh-p6-tjx3-worker-0'
 
@@ -29,7 +30,7 @@ def handed_off():
     a,b=read(receipt),read(burn)
     return (bool(a.get('finished_at')) and 'burn' in a and
             b.get('collective_progress_verified') is True and
-            b.get('session')==SESSION+'-final-burn' and
+            b.get('session')==BURN_SESSION and
             not Path('/mnt/local/_gpu_guard/DISABLED').exists())
 
 

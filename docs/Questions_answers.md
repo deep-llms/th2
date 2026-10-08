@@ -26,7 +26,21 @@ The non-iso two-output gradient split is implemented in [`BlockMLP.apply`](../de
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Mean \|α\| | .1128 | .0993 | .0888 | .0776 | .0774 | .0731 | .0672 | .0636 | .0616 | .0604 | .0636 | .0720 |
 
-Layer 2 rose modestly above 0.1 (about 13%); no layer is *well* above initialization. Deeper gates fell to roughly 0.06–0.09, but none collapsed to zero. The local result bundle only preserves the last few training-log entries, so a 0/250/…/2,500 trajectory and independently read checkpoint tensor values are **not yet available locally**. A read-only B200 checkpoint/`trainer_state.json` extraction was submitted; this answer should be amended only when that receipt arrives. Do not infer the intermediate trajectory from the endpoints.
+Layer 2 rose modestly above 0.1 (about 13%); no layer is *well* above initialization. Deeper gates fell to roughly 0.06–0.09, but none collapsed to zero. A read-only B200 extraction subsequently verified the final checkpoint tensors and the complete every-250-step log trajectory below. The checkpoint tensor means agree with the step-2,500 logged values to the displayed precision. Source: `trainer_state.json` and `checkpoint-2500/model.safetensors` under `/mnt/local/_outputs/deep-llms_th2/proxy-remaining-2500-20261006-a01/supervised/run/training/seed-42/P6-iso`; the retrieved extraction log is `temp/p6-questions-readonly-a01.log` (SHA256 `ae295d5b708ac29f64ccbe4954f1846a7f781371ab1a1e6fda74f65f9da591b3`).
+
+| Step | 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 18 | 20 | 22 | 24 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 | .1000 |
+| 250 | .1000 | .0999 | .0999 | .0998 | .0998 | .0998 | .0998 | .0997 | .0998 | .0997 | .0997 | .0997 |
+| 500 | .1004 | .1000 | .0998 | .0996 | .0994 | .0992 | .0991 | .0991 | .0991 | .0991 | .0992 | .0993 |
+| 750 | .1015 | .1005 | .0999 | .0992 | .0988 | .0984 | .0980 | .0978 | .0978 | .0979 | .0982 | .0986 |
+| 1,000 | .1034 | .1015 | .0997 | .0978 | .0975 | .0967 | .0957 | .0951 | .0951 | .0954 | .0959 | .0971 |
+| 1,250 | .1056 | .1024 | .0992 | .0956 | .0950 | .0935 | .0915 | .0905 | .0903 | .0907 | .0917 | .0941 |
+| 1,500 | .1080 | .1030 | .0981 | .0924 | .0917 | .0892 | .0862 | .0845 | .0842 | .0844 | .0860 | .0900 |
+| 1,750 | .1098 | .1027 | .0961 | .0885 | .0878 | .0844 | .0805 | .0782 | .0776 | .0776 | .0797 | .0852 |
+| 2,000 | .1112 | .1019 | .0937 | .0845 | .0839 | .0801 | .0753 | .0726 | .0716 | .0713 | .0738 | .0804 |
+| 2,250 | .1122 | .1007 | .0912 | .0808 | .0805 | .0763 | .0709 | .0677 | .0662 | .0655 | .0685 | .0761 |
+| 2,500 | .1128 | .0993 | .0888 | .0776 | .0774 | .0731 | .0672 | .0636 | .0616 | .0604 | .0636 | .0720 |
 
 **4. Auxiliary cosine.** These are full-validation `eval_proxy_layer_<layer>_cosine_0` metrics, i.e. mean cosine between the predictor and normalized target over valid tokens; they are **not** a cosine derived from scalar aggregate loss. See [`proxy_training.py`](../deep_kv/proxy_training.py#L16-L50). Sources: [P6-iso](../artifacts/proxy-remaining-results-20261007-a03/training/P6-iso/result.json), [short](../artifacts/proxy-followup-monitor-20261008-a04/seed-42/P6-iso-short/result.json), [sparse](../artifacts/proxy-followup-monitor-20261008-a04/seed-42/P6-iso-sparse/result.json).
 

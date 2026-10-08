@@ -36,9 +36,9 @@ class Proxy10KQueueTests(unittest.TestCase):
             supervised=root/'supervised'
             supervised.mkdir()
             (supervised/'supervisor.json').write_text(json.dumps({
-                'finished_at':'done','burn':{'session':stop_proxy_followup.SESSION+'-final-burn'}}))
+                'finished_at':'done','burn':{'session':stop_proxy_followup.BURN_SESSION}}))
             (supervised/'burn-verified.json').write_text(json.dumps({
-                'session':stop_proxy_followup.SESSION+'-final-burn',
+                'session':stop_proxy_followup.BURN_SESSION,
                 'collective_progress_verified':True}))
             original_exists=Path.exists
             with patch.object(stop_proxy_followup,'ROOT',root):

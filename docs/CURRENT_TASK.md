@@ -1,5 +1,14 @@
 ## Authorized replacement with fresh 10,000-step A/P6-iso pair — 8 October 2026
 
+At13:33 UTC the exact verified supervisor PID486855 received SIGTERM; the
+controller log confirms the identity-checked signal. The first stop/launch
+command remains in its handoff wait. Its receipt predicate mistakenly expected
+the burn session with a `tjx3-` prefix, while the established supervisor uses
+`proxy-followup-2500-20261008-a01-final-burn`. That predicate cannot complete,
+so the first command will **not** launch new training. A corrected follow-up
+command waits for the old supervisor's actual verified burn receipt and then
+starts the fresh pair. Do not infer new training has started from the signal.
+
 User changed priority: stop the current nine-run follow-up, preserve completed
 results, and start fresh A and P6-iso at seed1042, each to10,000 total updates.
 Both use all eight B200s sequentially, identical data/optimizer/full28,600-step
