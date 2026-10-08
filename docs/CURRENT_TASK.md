@@ -1,3 +1,21 @@
+## Nine-run follow-up status — 8 October 2026, 07:21:50 UTC
+
+Read-only monitor c340b3d: P6-iso-sparse seed42 completed2500 updates; training
+and independent checkpoint/backend/metric validator both passed. Full4882-row
+validation (9,981,660 target tokens): LM NLL3.4712737578871504, PPL32.1777029553.
+Trainer runtime92.36min; end-to-end training job93.44min. Compared with prior
+seed42 results, PPL is0.59% lower than A but0.50% higher than original P6-iso.
+One seed only; sparse placement has not improved on its parent in this run.
+
+P6-iso-short now training, latest visible step402/2500, finite metrics, ~2.24–2.25
+seconds/update. All8GPUs active at97–99%, workers492889–492896. Seven further
+training jobs remain queued; no stage failed. Automatic burn restoration remains
+configured in the live supervisor. No workload stopped/restarted or code changed.
+Evidence:20 SHA256-verified artifacts in artifacts/proxy-followup-monitor-20261008-a02/;
+completed-job artifact hashes independently match queue receipts. Raw log SHA256
+4353ecfd4b9d8b2f69aba117d0c6e90f5dae7a283afb5bcbce13b59b1e3611db.
+commands.sh #0 leaves the queue running. Do not relaunch.
+
 ## Nine-run proxy follow-up authorized — 8 October 2026
 
 User authorized six new arms at seed42 and A plus the previous best P6/P7 at

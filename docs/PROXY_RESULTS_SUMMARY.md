@@ -74,6 +74,18 @@ Main completed screen. Runtime is Trainer time including evaluation/checkpointin
 | P5 | 3.483880 | 32.5859 | 95.85 |
 | P4-iso | 3.489673 | 32.7752 | 95.55 |
 
+Follow-up queue, checked 8 October 2026 at 07:21:50 UTC:
+
+| Arm | Seed | LM loss ↓ | PPL ↓ | Trainer time (min) |
+| --- | ---: | ---: | ---: | ---: |
+| P6-iso-sparse | 42 | 3.471274 | 32.1777 | 92.36 |
+
+This six-location variant passed its checkpoint/backend/metric validator at
+2,500 steps. PPL is 0.59% below A but 0.50% above its original P6-iso parent;
+this is a single-seed comparison. P6-iso-short is still training; other follow-up
+arms and the second-seed runs have no completed results yet. Evidence:
+[completed result](../artifacts/proxy-followup-monitor-20261008-a02/seed-42/P6-iso-sparse/result.json).
+
 Earlier completed 2,500-step runs on the same isolated-document validation recipe. Downstream evaluations below did not include these variants.
 
 | Arm | LM loss ↓ | PPL ↓ |
@@ -232,6 +244,6 @@ Sources: main comparison above; [P1 gate sweep](../artifacts/proxy-gate-sweep-20
 - **A has the highest primary zero-shot and few-shot averages** (normalized accuracy where available). P6-iso has the highest raw-accuracy few-shot average, so that ranking depends on the metric. Fine-tuning has not shown a consistent proxy advantage: A wins PAWS-X; P6's small XNLI gain is within the observed fine-tuning-seed spread.
 - Proxy-disabled degradation shows that models use their branches. It does not establish benefit over A, significance, or superiority at equal training time.
 - Two corresponding P7 variants are **implemented, not trained**: `P7-simple-sparse` uses the same six locations/four-block target as P6-iso-sparse; `P7-simple-short` uses the same twelve locations/two-block target as P6-iso-short. Both retain P7-simple's four-head joint native/proxy attention, isolated tokenwise predictor and cosine-only loss. [Definitions](P7_IMPLEMENTATION.md#p7-simple-variants-based-on-p6-iso-8-october-2026).
-- Two P6-iso variants are **implemented, not trained**, with no results: `P6-iso-sparse` uses six injection locations `{2, 6, 10, 14, 18, 22}` with the original four-block target; `P6-iso-short` retains all twelve locations and uses `m_l + m_(l+1)`. These are separate experiments; all other P6-iso settings remain the same. [Implementation and usage](P4_P5_P6_IMPLEMENTATION.md#p6-iso-follow-ups-sparse-placement-and-shorter-targets). V1/V3 and uncompleted P1/P3 ablations are not assigned scores.
+- Two P6-iso placement/target variants are implemented (sparse completed above; short currently training): `P6-iso-sparse` uses six injection locations `{2, 6, 10, 14, 18, 22}` with the original four-block target; `P6-iso-short` retains all twelve locations and uses `m_l + m_(l+1)`. These are separate experiments; all other P6-iso settings remain the same. [Implementation and usage](P4_P5_P6_IMPLEMENTATION.md#p6-iso-follow-ups-sparse-placement-and-shorter-targets). V1/V3 and uncompleted P1/P3 ablations are not assigned scores.
 
 Earlier B/F/G and task-/consumer-aware experiments used different training/attention protocols and are not pooled into these tables. Their records remain in [PROJECT_NOTES.md](PROJECT_NOTES.md); pretrained-weight probes are separate from this from-scratch screen.
