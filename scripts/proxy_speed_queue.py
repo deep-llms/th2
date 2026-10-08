@@ -42,7 +42,7 @@ def make(root, recipe_path, rows, diagnostic=False):
         for out in item['required_outputs']:out['path']=namespace+'/'+out['path']
         pos=item['argv'].index(str(ROOT/'train.py'))
         item['argv'][pos:pos+1]=['--module','scripts.proxy_speed_validation','train','--implementation',impl,
-                              *(['--profile'] if profile else ['--audit-update25']),'--']
+                              *(['--profile'] if profile else ['--audit-update25','--deterministic-fa4']),'--']
         item['timeout_seconds']=7200
         items.append(item)
     def validate(namespace,arms):

@@ -80,6 +80,25 @@ def rounding_violations(a, differences):
             d['max_abs'] > ROUNDING_LIMIT*float(a[d['key']].abs().max())]
 
 
+@contextmanager
+def deterministic_fa4(enabled):
+    """Validation-process override only; production defaults are untouched."""
+    if not enabled:
+        yield
+        return
+    from functools import partial
+    import inspect
+    from deep_kv import fa4
+    original=fa4.load_kernel
+    def load():
+        kernel,metadata=original()
+        assert 'deterministic' in inspect.signature(kernel).parameters
+        return partial(kernel,deterministic=True),{**metadata,'deterministic':True,'validation_only':True}
+    fa4.load_kernel=load
+    try:yield
+    finally:fa4.load_kernel=original
+
+
 def capture(arm, backend, checkpoint, recipe, rows):
     import torch
     from transformers import AutoConfig
@@ -135,7 +154,7 @@ def gate(args):
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     recipe,rows=read(args.recipe),read(args.rows)
     cases=[]
-    for backend in ('sdpa_math','fa4'):
+    for backend in ('sdpa_math','fa4_deterministic'):
         for checkpoint in (False,True):
             baseline=None
             for name in ('previous','optimized'):
@@ -147,7 +166,7 @@ def gate(args):
                 assert baseline['initial']==value['initial'],'Initial weights/buffers differ'
                 errors={k:exact_tensors(baseline[k],value[k]) for k in ('outputs','gradients')}
                 differences=errors
-                if backend=='fa4':
+                if backend=='fa4_deterministic':
                     errors={**errors,'gradients':rounding_violations(baseline['gradients'],errors['gradients'])}
                 case=dict(backend=backend,implementation=name,checkpoint=checkpoint,errors=errors,differences=differences,
                           loss=value['loss'],peak_gib=value['peak_gib'])
@@ -158,7 +177,7 @@ def gate(args):
                 if value is not baseline:del value
             del baseline
     write(args.output,dict(status='passed',arm=args.arm,cases=cases,
-                          criterion='Exact outputs and math-SDPA gradients; FA4 gradients bounded by eight FP32 epsilons',
+                          criterion='Exact outputs and math-SDPA gradients; deterministic FA4 gradients bounded by eight FP32 epsilons',
                           rounding_limit=ROUNDING_LIMIT,
                           reference_commit=read(REFERENCE/'manifest.json')['commit']))
 
@@ -166,7 +185,8 @@ def gate(args):
 def training(args, rest):
     if rest and rest[0]=='--':rest=rest[1:]
     sys.argv=['train.py',*rest]
-    with implementation(args.implementation):
+    assert not (args.profile and args.deterministic_fa4),'Timing must use production FA4'
+    with deterministic_fa4(args.deterministic_fa4),implementation(args.implementation):
         records=[];location=None
         if args.audit_update25:
             from deep_kv.proxy_training import ProxyTrainer
@@ -270,6 +290,7 @@ def check_resume(args):
     torch.set_num_threads(4)
     a,b=Path(args.source)/'checkpoint-25',Path(args.destination)/'checkpoint-25'
     for p in (a,b):assert read(p/'trainer_state.json')['global_step']==25
+    for p in (a,b):assert read(p.parent/'result.json')['attention_runtime']['deterministic'] is True
     for rank in range(8):
         name=f'update25-rank{rank}.json'
         assert read(a.parent/name)==read(b.parent/name),'Resumed data differs: '+name
@@ -309,6 +330,7 @@ def summary(args):
         for name in ('previous','optimized'):
             folder=root/'benchmark'/name/'seed-42'/arm
             result=read(folder/'result.json');timing=read(folder/'step-profile.json')
+            assert not result['attention_runtime'].get('deterministic',False)
             times=[r['seconds'] for r in timing['steps'] if 10<=r['step']<=25]
             assert len(times)==16 and all(x>0 for x in times)
             profile=read(folder/'component-profile.json');assert profile['kernel_milliseconds']
@@ -332,6 +354,7 @@ def main():
     t=s.add_parser('train');t.add_argument('--implementation',choices=('previous','optimized'),required=True)
     t.add_argument('--profile',action='store_true')
     t.add_argument('--audit-update25',action='store_true')
+    t.add_argument('--deterministic-fa4',action='store_true')
     for name in ('copy-resume','check-resume'):
         q=s.add_parser(name)
         for key in ('source','destination','output'):q.add_argument('--'+key,required=True)

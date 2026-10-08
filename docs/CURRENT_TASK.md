@@ -2,18 +2,15 @@
 
 User authorized numerical checks, six new-arm 25-step eight-GPU smokes/resume,
 and paired timing for A/P6-iso/P7-simple/P7. No research runs.
-First default-SDPA gate found ordinary backward variability: old/old 0.774%
-versus old/new 0.782% max per-tensor relative L2. Math SDPA matched exactly.
-Next FA4 gate caught one tensor's 3.6e-12 absolute / 1.1e-8 relative rounding
-difference; outputs and math-SDPA gradients exactly match. Both failed queues
-stopped and restored all eight burns, verified by fresh inspections.
-Fresh a03 study keeps math-SDPA exact; FA4 gradients/model/optimizer allow
-only eight FP32 epsilons, with exact outputs, normalization, scheduler/RNG
-and explicit per-rank update-25 data hashes. See PROXY_B200_VALIDATION_20261008.md
-for all evidence and explicit criterion changes. Eight of nine CUDA arms
-passed; P7-simple-short has a 0.494% FA4 gradient discrepancy despite exact
-math SDPA. Queue stopped and burns verified. Targeted native/deterministic
-FA4 repeatability diagnostic pending; smoke/resume/timing not started.
+Eight of nine arms passed initial full CUDA checks; P7-simple-short showed a
+0.494% native-FA4 gradient difference with identical outputs. Its serial repeat
+was near-exact (7.5e-8), and deterministic FA4 old/old and old/new were exact.
+Math SDPA was exact for all nine arms. Failed queues restored burns correctly.
+Final a04 study uses math SDPA/deterministic FA4 numerical gates and
+deterministic FA4 smokes/resumes. Data hashes, normalization, scheduler and
+RNG are exact; model/optimizer have an eight-FP32-epsilon bound. Throughput
+pairs retain native FA4; production defaults are unchanged. Full results
+pending. See PROXY_B200_VALIDATION_20261008.md for evidence and test modes.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 

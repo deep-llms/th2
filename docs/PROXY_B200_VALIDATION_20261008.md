@@ -15,11 +15,11 @@ log: `temp/proxy-validation-inspection-20261008-a01.log`, SHA256
 1. Nine numerical gates: P6-iso-sparse, P6-iso-short, P6-iso-weighted,
    P6-iso-layernorm, P7-simple-sparse, P7-simple-short, P6-iso, P7-simple and P7.
    Full-size Qwen, two real packed 2048-token rows, BF16 CUDA, both forced math SDPA and
-   FA4. Compare previous/optimized code at the same weights and checkpointing
+   deterministic FA4. Compare previous/optimized code at the same weights and checkpointing
    setting, separately with checkpointing off/on. Up to eight independent gate processes run concurrently, one per GPU.
    Two-pass bootstrap, hidden
    outputs, losses, every gradient, normalization moments and updated buffers
-   must match exactly for math SDPA. FA4 outputs must match exactly; gradients
+   must match exactly for math SDPA. Deterministic FA4 outputs must match exactly; gradients
    use the explicitly revised FP32 bound below. Failures stop the queue.
 2. Six new arms each train 25 steps on all eight GPUs. Validate finite metrics,
    backend receipts, schedule, normalization and checkpoint contents. Copy the
@@ -34,10 +34,13 @@ log: `temp/proxy-validation-inspection-20261008-a01.log`, SHA256
    all 16 timings and peak allocated/reserved memory. One pair per arm is a
    screening measurement, not a precise estimate of small speed differences.
 
-All training uses the existing train.py/Accelerate recipe: microbatch 16,
+The existing train.py/Accelerate recipe is retained: microbatch 16,
 accumulation 4, eight GPUs, 1,048,576 input tokens/update, sequence 2048,
 document isolation/reset positions, seed 42, schedule 28,600, warmup 1,430,
-activation checkpointing off, FA4. Logging stays every ten steps so the new
+activation checkpointing off, FA4. Correctness smokes/resumes use a validation-only
+`deterministic=True` kernel override; throughput runs use normal FA4.
+The override is recorded in attention-runtime receipts and never affects
+production defaults. Logging stays every ten steps so the new
 clipping optimization is exercised. Disposable eval/monitor subsets use 32
 rows, and saves occur at 24 plus the forced final step 25.
 
@@ -149,3 +152,28 @@ a deterministic=True option. A targeted P7-simple-short previous/previous
 and previous/optimized diagnostic now compares native FA4 and deterministic
 FA4. It is measurement only; production settings and acceptance bounds are
 unchanged. Fresh root: proxy-fa4-repeatability-20261008-a01.
+
+## Controlled FA4 result and final test mode
+
+P7-simple-short diagnostic completed (105 s). Native FA4 old/old was exact;
+old/optimized had four gradient tensors differing, maximum relative L2
+7.50660e-8. Deterministic FA4 old/old and old/optimized were **exact** for
+all outputs and gradients. The earlier 0.494% difference did not recur in this
+serial control; this does not establish universal native-kernel repeatability.
+Evidence: artifacts/proxy-fa4-repeatability-monitor-20261008-a01/, source log
+SHA256 `137285522c5f7c3850395c4280b150fa167ee77ddd698976ccb38b3f8a19b312`.
+
+Fresh final study: **proxy-speed-validation-20261008-a04**. Numerical checks
+use math SDPA and deterministic FA4, checkpointing off/on. Six 25-step
+correctness smokes and their resumes also use deterministic FA4, making a
+strict resume comparison meaningful. All four before/after throughput pairs
+use native FA4; the wrapper and summary reject deterministic timing runs.
+The tight eight-FP32-epsilon bound is retained; no BF16-scale tolerance added.
+This is a controlled correctness experiment, not a switch of production
+backends/defaults. Native FA4 already produced identical forward outputs for
+all nine arms in a03; its gradients are not claimed to be bitwise reproducible.
+
+Burn restoration after the targeted control was independently confirmed by
+artifacts/proxy-fa4-repeatability-monitor-20261008-a02/ (fresh snapshot
+03:54:15 UTC). Four focused override/gate/queue/real-resume tests passed in
+44.708 s before the next launch.

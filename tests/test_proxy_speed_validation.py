@@ -13,7 +13,7 @@ from unittest.mock import patch
 import torch
 
 from scripts.proxy_speed_queue import make
-from scripts.proxy_speed_validation import implementation, exact_tensors, rounding_violations, gate, gate_all, diagnose, NEW_ARMS, BENCH_ARMS
+from scripts.proxy_speed_validation import implementation, exact_tensors, rounding_violations, deterministic_fa4, gate, gate_all, diagnose, NEW_ARMS, BENCH_ARMS
 from tests.test_proxy_memory import config, batch, objective
 
 
@@ -67,6 +67,18 @@ class ValidationTests(unittest.TestCase):
         zeros={'p':torch.zeros(2)}
         self.assertTrue(rounding_violations(zeros,exact_tensors(zeros,{'p':torch.full((2,),1e-20)})))
 
+    def test_deterministic_kernel_override_is_scoped(self):
+        from deep_kv import fa4
+        def kernel(*args,deterministic=False):return deterministic
+        loader=lambda:(kernel,{'version':'test'})
+        with patch.object(fa4,'load_kernel',loader):
+            with deterministic_fa4(True):
+                fn,metadata=fa4.load_kernel()
+                self.assertTrue(fn());self.assertTrue(metadata['deterministic'])
+                self.assertTrue(metadata['validation_only'])
+            self.assertIs(fa4.load_kernel,loader)
+            self.assertFalse(fa4.load_kernel()[0]())
+
     def test_manifest_scope_and_identical_training_recipe(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
@@ -86,6 +98,7 @@ class ValidationTests(unittest.TestCase):
                 self.assertEqual(a[a.index('--logging_steps')+1],'10')
                 self.assertIn('--module',a)
                 self.assertEqual('--audit-update25' in a,'--profile' not in a)
+                self.assertEqual('--deterministic-fa4' in a,'--profile' not in a)
             for arm in NEW_ARMS:
                 names=[x['name'] for x in items]
                 self.assertLess(names.index('smoke-'+arm),names.index('copy-resume-'+arm))
