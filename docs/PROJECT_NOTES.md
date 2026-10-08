@@ -1,3 +1,15 @@
+## Safe follow-up proxy execution changes (8 October 2026)
+
+Only exact-operation proposals 1.2/2.1/2.3 from PROXY_SPEED_OPPORTUNITIES_20261008.md
+were implemented. Convolution mask caches belong to one forward; target windows
+may mutate only after their second contribution creates private storage.
+Clipping counts follow the existing Trainer diagnostic-step schedule, while
+normalization updates and distributed reduction shapes/order remain unchanged.
+Never publish an unmeasured clip fraction as zero. Model-call clipping defaults
+stay compatible. LSE attention merging, custom gradients and compiled/fused
+reductions remain deferred. CPU exact-reference checks pass; no B200 performance
+gain or actual-CUDA validation is established for these changes.
+
 ## P6/P7 execution-only optimization (8 October 2026)
 
 Target scales and doubled FA4 document layouts are cached only for one forward,

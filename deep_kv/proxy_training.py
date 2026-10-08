@@ -69,8 +69,10 @@ class ProxyCallback(PilotCallback):
             sums, squares, counts, clipped = reduce_moments(trainer.accelerator,trainer.center_totals,
                                                           model.anticipatory or model.memory_proxy)
             trainer.normalization_metrics = model.update_statistics(sums,squares,counts)
-            trainer.normalization_metrics['clip_fraction'] = clipped/(counts*model.mu.shape[-1])
+            if trainer.collect_clip_statistics:
+                trainer.normalization_metrics['clip_fraction'] = clipped/(counts*model.mu.shape[-1])
             trainer.center_totals = None
+            trainer.collect_clip_statistics = False
         if args.device.type == 'cuda':
             torch.cuda.synchronize(args.device)
         self.seconds_per_update = time.perf_counter()-self.started
@@ -102,6 +104,7 @@ class ProxyTrainer(DeepKVTrainer):
         self.model_accepts_loss_kwargs = True
         self.center_totals = None
         self.normalization_metrics = {}
+        self.collect_clip_statistics = False
         self._memory_eval_offset = 0
 
     def log(self,logs,start_time=None):
@@ -157,6 +160,10 @@ class ProxyTrainer(DeepKVTrainer):
         weight = self.model.auxiliary_weight(self.state.global_step)
         interval = max(1,self.state.logging_steps or int(self.args.logging_steps))
         diagnostic = (self.state.global_step+1)%interval==0 or (self.args.logging_first_step and self.state.global_step==0)
+        # Keep legacy collection for non-step logging schedules; only the
+        # standard step schedule tells us in advance that a count is unused.
+        collect_clipping = diagnostic or self.args.logging_strategy != 'steps'
+        if training:self.collect_clip_statistics = collect_clipping
         # At lambda=0 an isolated estimator still needs zero-gradient DDP hooks.
         isolated_training = training and (self.model.anticipatory or self.model.memory_proxy) and self.model.settings.isolate_estimator
         compute_aux = bool(self.model.family and (not training or weight>0 or diagnostic or isolated_training))
@@ -170,7 +177,8 @@ class ProxyTrainer(DeepKVTrainer):
             memory_kwargs = dict(relational_step=self.state.global_step,sequence_indices=indices)
         outputs = model(self.context(inputs),compute_auxiliary_losses=compute_aux,
                         auxiliary_grad=model.training and (weight>0 or isolated_training),
-                        collect_target_statistics=training and bool(self.model.family),**memory_kwargs)
+                        collect_target_statistics=training and bool(self.model.family),
+                        collect_clip_statistics=collect_clipping if training else True,**memory_kwargs)
         counts = (num_items_in_batch if num_items_in_batch is not None else
                   torch.stack((outputs['lm_count'],outputs['aux_count'])))
         loss = outputs['lm_sum']/counts[0].clamp_min(1)

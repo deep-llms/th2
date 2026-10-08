@@ -22,6 +22,7 @@ class MemoryPlan:
         self.documents, self.ems = documents, ems
         self.conv_masks = tuple((documents[:, lag:] == documents[:, :-lag]).unsqueeze(-1)
                                 for lag in range(1, min(4, documents.shape[1]))) if convolution else ()
+        self._typed_conv_masks = {}
         self._relational_layout = None
         self.queries = []
         if not sample_queries:
@@ -42,6 +43,12 @@ class MemoryPlan:
             selections.append(indices)
         # One transfer per microbatch, with views for the individual sequences.
         self.queries = list(torch.cat(selections).to(documents.device).split([len(q) for q in selections]))
+
+    def convolution_masks(self, dtype):
+        # One conversion per forward/dtype, shared by layers and checkpoint replay.
+        if dtype not in self._typed_conv_masks:
+            self._typed_conv_masks[dtype] = tuple(mask.to(dtype=dtype) for mask in self.conv_masks)
+        return self._typed_conv_masks[dtype]
 
     def relational_layout(self):
         """Immutable padded indices/masks shared by every proxy layer and replay."""
@@ -82,8 +89,10 @@ class MemoryHead(nn.Module):
     def estimate(self, u, plan):
         x = self.w_in(u.detach())  # Structural isolation, not a zero upstream VJP.
         c = x*self.conv[0]
-        for lag, same in enumerate(plan.conv_masks, start=1):
-            c = c + F.pad(x[:, :-lag]*self.conv[lag]*same, (0, 0, lag, 0))
+        for lag, same in enumerate(plan.convolution_masks(c.dtype), start=1):
+            # c owns storage and is not saved by the multiply's backward.
+            # Preserve lag/addition order without padded full-length temporaries.
+            c[:, lag:].add_(x[:, :-lag]*self.conv[lag]*same)
         if plan.ems is not None:
             c = c + (plan.ems.apply(x, 1)+plan.ems.apply(x, 2)).to(c.dtype)
         return self.w_out(F.silu(c))

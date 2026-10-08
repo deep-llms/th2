@@ -538,7 +538,8 @@ class ProxyModel(DeepKV):
             return compute(u,raw_target,*estimates)
 
     def _run_backbone(self, context, *, compute_auxiliary_losses, auxiliary_grad, collect_target_statistics,
-                      block_observer=None, statistics_mode=None, relational_step=0, sequence_indices=None):
+                      block_observer=None, statistics_mode=None, relational_step=0, sequence_indices=None,
+                      collect_clip_statistics=True):
         if context.segments is None or not bool(context.valid.all()):
             raise ValueError('Proxy screen requires packed, document-isolated inputs')
         if self.attention_backend == 'fa4':
@@ -563,7 +564,8 @@ class ProxyModel(DeepKV):
         clipped = torch.zeros_like(counts)
         need_targets = bool(self.family and (compute_auxiliary_losses or collect_target_statistics))
         inverse_scales = None
-        if need_targets and (compute_auxiliary_losses or (collect_target_statistics and statistics_mode is None)):
+        count_clipped = collect_target_statistics and collect_clip_statistics
+        if need_targets and (compute_auxiliary_losses or (count_clipped and statistics_mode is None)):
             # Frozen within this forward. No persistent cache can survive a
             # statistics update, resume, or evaluation with different buffers.
             with torch.no_grad(), torch.autocast(hidden.device.type,enabled=False):
@@ -579,10 +581,10 @@ class ProxyModel(DeepKV):
                     sums[index] = shifted.sum((0,1))
                     squares[index] = shifted.square().sum((0,1)) if statistics_mode != 'mean' else 0
                     counts[index] = target_count
-                if compute_auxiliary_losses or (collect_target_statistics and statistics_mode is None):
-                    normalized = self.normalize_target(raw,key,return_clipped=collect_target_statistics,
+                if compute_auxiliary_losses or (count_clipped and statistics_mode is None):
+                    normalized = self.normalize_target(raw,key,return_clipped=count_clipped,
                         inverse_scale=inverse_scales[index],centered=shifted if statistics_mode!='mean' else None)
-                    if collect_target_statistics:
+                    if count_clipped:
                         normalized,entries = normalized
                         clipped[index] = entries
                     return normalized
@@ -622,7 +624,12 @@ class ProxyModel(DeepKV):
                         with torch.no_grad():
                             value = (contribution*P6_TARGET_WEIGHTS[layer-proxy]
                                      if self.arm == 'P6-iso-weighted' else contribution)
-                            windows[proxy] = windows[proxy] + value if proxy in windows else value
+                            if layer <= proxy+1:
+                                # First value may alias the detached decoder output.
+                                # The second contribution creates private window storage.
+                                windows[proxy] = windows[proxy]+value if proxy in windows else value
+                            else:
+                                windows[proxy].add_(value)
                     if layer == proxy+self.settings.lookahead-1:
                         raw = (hidden.detach().float()-bases.pop(proxy) if self.increment_target
                                else windows.pop(proxy))
@@ -654,11 +661,11 @@ class ProxyModel(DeepKV):
         return hidden, None, None
 
     def forward(self, context, *, compute_auxiliary_losses=True, auxiliary_grad=True, collect_target_statistics=False,
-                statistics_mode=None, relational_step=0, sequence_indices=None):
+                statistics_mode=None, relational_step=0, sequence_indices=None, collect_clip_statistics=True):
         hidden, cosines, sums, squares, counts, clipped = self._run_backbone(context,
             compute_auxiliary_losses=compute_auxiliary_losses, auxiliary_grad=auxiliary_grad,
             collect_target_statistics=collect_target_statistics,statistics_mode=statistics_mode,
-            relational_step=relational_step,sequence_indices=sequence_indices)
+            relational_step=relational_step,sequence_indices=sequence_indices,collect_clip_statistics=collect_clip_statistics)
         if statistics_mode is not None:
             return dict(center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped)
         lm_rows, target_counts, tokens = self.lm_statistics(context,hidden)

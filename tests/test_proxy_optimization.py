@@ -36,6 +36,16 @@ def legacy_entries(self, prediction, rotary, native_values):
     return k, v
 
 
+def legacy_estimate(self, u, plan):
+    x = self.w_in(u.detach())
+    c = x*self.conv[0]
+    for lag, same in enumerate(plan.conv_masks, start=1):
+        c = c + torch.nn.functional.pad(x[:, :-lag]*self.conv[lag]*same, (0, 0, lag, 0))
+    if plan.ems is not None:
+        c = c + (plan.ems.apply(x, 1)+plan.ems.apply(x, 2)).to(c.dtype)
+    return self.w_out(torch.nn.functional.silu(c))
+
+
 @contextmanager
 def legacy_operations(m):
     def uncached_joint(*args, **kwargs):
@@ -43,6 +53,7 @@ def legacy_operations(m):
         return flash_joint_attention(*args, **kwargs)
     with patch.object(m, 'normalize_target', side_effect=lambda *a, **kw: legacy_normalize(m, *a, **kw)), \
          patch.object(MemoryHead, 'entries', legacy_entries), \
+         patch.object(MemoryHead, 'estimate', legacy_estimate), \
          patch('deep_kv.proxy_memory.flash_joint_attention', side_effect=uncached_joint):
         yield
 
@@ -57,7 +68,7 @@ class ProxyOptimizationTests(unittest.TestCase):
         kernel.start(); self.addCleanup(kernel.stop)
 
     def test_full_model_reference_outputs_gradients_and_buffers(self):
-        arms = ('P6', 'P6-iso', *P6_VARIANTS, *SIMPLE_MEMORY_ARMS, 'P7')
+        arms = ('P6', 'P6-iso', *P6_VARIANTS, *SIMPLE_MEMORY_ARMS, 'P7', 'P7-kq', 'P7-ems', 'P7-mlp')
         for arm in arms:
             for backend in ('sdpa', 'fa4'):
                 for bf16 in (False, True):
@@ -71,8 +82,7 @@ class ProxyOptimizationTests(unittest.TestCase):
                         with torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
                             actual = m(batch(), collect_target_statistics=True)
                         objective(actual).backward()
-                        with patch.object(reference, 'normalize_target', side_effect=lambda *a, **kw: legacy_normalize(reference, *a, **kw)), \
-                             patch.object(MemoryHead, 'entries', legacy_entries):
+                        with legacy_operations(reference):
                             with torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
                                 expected = reference(batch(), collect_target_statistics=True)
                             objective(expected).backward()

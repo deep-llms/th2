@@ -1,3 +1,26 @@
+## Remaining exact proxy optimizations — 8 October 2026
+
+Implemented items 1.2, 2.1 and 2.3 of PROXY_SPEED_OPPORTUNITIES_20261008.md:
+forward-local typed convolution masks and slice accumulation, clipping counts
+only on logging steps, and owned MLP-window storage reused after the second
+contribution. No target, loss, parameter, normalization rule, checkpoint format,
+attention kernel or training recipe change. Normalization moments and the same
+distributed reduction layout remain active every step. Clipping diagnostics
+are omitted when unmeasured, not reported as zero. Equivalent/fused/LSE/compile
+proposals remain deferred pending their separate CUDA gates.
+
+Forty-eight exact comparisons against saved pre-change code passed: twelve arms,
+28 tiny blocks, FP32/BF16, SDPA/FA4 CPU oracle and checkpoint replay. Five expanded
+optimization tests passed (32.199 s) and three new speed-safety tests passed
+(6.265 s), including native BF16 convolution and actual Trainer/AdamW state
+equivalence with clipping on/off, accumulation, first-step and epoch logging.
+Non-step logging retains legacy per-step clipping collection.
+Broader regression passed: 91 tests in 675.339 s, including CPU DDP, accumulation,
+exact Trainer resume, earlier proxy heads, evaluation and fine-tuning. Total
+99 tests passed across the selected invocations, plus the 48 full-depth cases.
+Evidence: temp/proxy-safe-speed-20261008/.
+No B200 access/deployment; full-size CUDA correctness/performance gates pending.
+
 ## P6/P7 execution optimization — 8 October 2026
 
 Follow-up review found no production-code defect. Five optimization tests passed
