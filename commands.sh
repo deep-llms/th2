@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-tjx3-proxy-speed-monitor-20261008-a04
+#th2-tjx3-proxy-speed-monitor-20261008-a05
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
@@ -34,5 +34,9 @@ if p.is_file():
  with p.open('rb') as stream:
   stream.seek(max(0,p.stat().st_size-5000));print('BURN_LOG',stream.read().decode(errors='replace'),flush=True)
 print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
+import inspect
+from deep_kv.fa4 import load_kernel
+kernel,version=load_kernel()
+print('FA4_SIGNATURE',str(inspect.signature(kernel)),version,flush=True)
 print('MONITOR_FINISHED',flush=True)
 CHECK
