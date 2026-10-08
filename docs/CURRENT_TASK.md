@@ -1,5 +1,14 @@
 ## Authorized replacement with fresh 10,000-step A/P6-iso pair — 8 October 2026
 
+An **hourly dev-machine Dropbox monitor** is installed in user crontab at minute
+0, using `scripts/monitor_b200_dropbox.py`. Its ignored state is
+`temp/b200_hourly_monitor/status.json`; the first successful read at14:30 UTC
+still reports the same13:40 UTC controller SSH DNS failure and no later runner
+success. The cron job is read-only and does not submit runner commands or launch
+training. Dropbox receipts are passive, so lack of new files cannot prove that
+the B200 is still down, and a new file alone cannot prove GPU availability.
+The fresh pair remains pending a verified runner recovery and live preflight.
+
 The corrected recovery command was **not delivered to the B200**. Runner status
 at13:40:32 UTC reports job `th2-tjx3-recover-A-P6iso-10k-launch-20261008-a02`,
 commit75e0d47, `FAILED(rc=255): ssh: Could not resolve hostname <host>`.
