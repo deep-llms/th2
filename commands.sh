@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-tjx3-proxy-speed-monitor-20261008-a02
+#th2-tjx3-proxy-speed-monitor-20261008-a03
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
