@@ -1,16 +1,36 @@
-#1 +60+a
-#th2-tjx3-proxy-speed-validation-20261008-a02
+#1 +30+a
+#th2-tjx3-proxy-speed-monitor-20261008-a02
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
-TASK_ROOT=/mnt/local/_outputs/@PROJECT@/proxy-speed-validation-20261008-a02
-TASK_SESSION=tjx3-proxy-speed-validation-20261008-a02
-test ! -e "$TASK_ROOT"
-if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
-mkdir -p "$TASK_ROOT"
-printf -v TASK_CMD 'exec bash %q %q >%q 2>&1' "$PWD/scripts/launch_proxy_speed_validation.sh" "$TASK_ROOT" "$TASK_ROOT/launch.log"
-tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
-tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
-sleep 45
-tail -n 80 "$TASK_ROOT/launch.log"
-test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
+date -u
+/mnt/local/conda-py311/envs/attention_bench/bin/python -u - <<'CHECK'
+import hashlib,json
+from pathlib import Path
+from scripts.gpu_status import snapshot
+root=Path('/mnt/local/_outputs/deep-llms_th2/proxy-speed-validation-20261008-a02');run=root/'supervised/run'
+def artifact(p,name):
+ if p.is_file():
+  raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(name=name,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+p=root/'launch.log'
+if p.is_file():print('LAUNCH_LOG',p.read_text()[-7000:],flush=True)
+for name in ('preflight.json','validation-recipe.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/supervisor.json','supervised/burn-verified.json','supervised/run/complete.json'):
+ artifact(root/name,name)
+p=run/'run.json'
+if p.is_file():
+ state=json.loads(p.read_text());print('QUEUE',json.dumps(state),flush=True)
+ for job in state['jobs'][-3:]:
+  p=run/(job['name']+'.log')
+  if p.is_file():print('JOB_LOG',job['name'],p.read_text()[-6000:],flush=True)
+for folder in ('numerics','resume-ready','resume-checks'):
+ for p in sorted((run/folder).glob('*.json')):artifact(p,str(p.relative_to(run)))
+for name in ('result.json','validated.json','step-profile.json','component-profile.json'):
+ for p in sorted(run.rglob(name)):artifact(p,str(p.relative_to(run)))
+artifact(run/'summary.json','summary.json')
+p=root/'supervised/burn.log'
+if p.is_file():
+ with p.open('rb') as stream:
+  stream.seek(max(0,p.stat().st_size-5000));print('BURN_LOG',stream.read().decode(errors='replace'),flush=True)
+print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
+print('MONITOR_FINISHED',flush=True)
+CHECK
