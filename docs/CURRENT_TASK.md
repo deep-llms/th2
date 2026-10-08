@@ -1,3 +1,27 @@
+## Nine-run proxy follow-up authorized — 8 October 2026
+
+User authorized six new arms at seed42 and A plus the previous best P6/P7 at
+second seed, all 2500 steps. Best is selected by prior validation PPL: P6-iso
+and P7-simple. Second seed1042 follows the screening seed list; explicit proxy
+module seeds43/1043, with Trainer/data/Python hash seeds42/1042 respectively.
+Queue order: P6-iso-sparse, P6-iso-short, P6-iso-weighted, P6-iso-layernorm,
+P7-simple-sparse, P7-simple-short (seed42), then A, P6-iso, P7-simple (seed1042).
+Every fit uses all8GPUs; existing train.py/Accelerate, native FA4, micro16/GAS4,
+2048 tokens, EOS/document isolation/reset positions, full28600/warmup1430.
+No pretrained checkpoint resume: all nine are fresh from-scratch experiments.
+Full4882-row evaluation; save250/keep2; checkpointing disabled as validated.
+
+Existing sequential runner supports heterogeneous argv/arms/seeds. The thin
+scripts/proxy_followup_queue.py builder produces20 stages:9 fits,9 individual
+checkpoint/backend/metric validators,2 within-seed comparisons. It does not
+pool different arms into a cross-seed report. One focused queue test passed;
+production training/architecture/loss code unchanged. Fresh output root:
+/mnt/local/_outputs/deep-llms_th2/proxy-followup-2500-20261008-a01.
+Launch verifies pinned environment/data, copies/checks Accelerate config and
+accelerate env, inspects/reclaims only approved burns, and verifies all GPUs
+free. Existing supervisor restores communicating burns on success/failure.
+Preparing submission; launch/start not yet verified. No cache/output deletion.
+
 ## Authorized B200 proxy validation completed — 8 October 2026
 
 All three requested stages passed: 36 exact old/optimized CUDA comparisons
