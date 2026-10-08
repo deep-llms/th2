@@ -1,3 +1,20 @@
+## B200 proxy optimization validation completed (8 October 2026)
+
+Nine-arm CUDA old/optimized checks passed exactly for math SDPA and deterministic
+FA4, checkpointing off/on. Six new arms passed 25-step eight-GPU smokes and
+checkpoint-24→25 resume checks, including identical per-rank data hashes across
+arms/resumes and exact normalization/scheduler/RNG state. Tight FP32 bounds apply
+to resumed model/optimizer state; native FA4 is not claimed bitwise reproducible.
+Deterministic FA4 is a validation-only override. Native production FA4 timings
+showed modest screening gains: P6-iso 0.77%, P7-simple 1.11%, P7 0.92%; A unchanged.
+P7 peak allocation increased 2.27 GiB. One short timing pair is not a precise
+estimate of sustained speedup. No architecture/loss/production-default changes.
+The smoke checker now validates scheduled loss logs independently of final-step
+checkpoint/state checks, allowing cutoffs not divisible by logging_steps.
+All eight communicating burns restored/verified; no long research runs launched.
+See PROXY_B200_VALIDATION_20261008.md for full evidence and numerical caveats.
+This completed study supersedes pending CUDA/performance notes below.
+
 ## Safe follow-up proxy execution changes (8 October 2026)
 
 Only exact-operation proposals 1.2/2.1/2.3 from PROXY_SPEED_OPPORTUNITIES_20261008.md

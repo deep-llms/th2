@@ -1,14 +1,23 @@
-## Authorized B200 proxy validation — 8 October 2026
+## Authorized B200 proxy validation completed — 8 October 2026
 
-All nine arms matched outputs/gradients exactly on math SDPA and deterministic
-FA4, checkpointing off/on. All six new arms completed 25-step eight-GPU smokes,
-peaking at 108.7–114.2 GiB. No research runs or production-default changes.
-Post-run validator incorrectly expected a loss log at step 25 despite interval
-10. Checker fixed/tested; final step remains checked independently in result,
-state and checkpoint. Source a04 outputs preserved.
-Continuation a05 verifies source hashes/recipe, revalidates smokes, then performs
-six controlled resume checks and native-FA4 before/after timing. Results pending.
-See PROXY_B200_VALIDATION_20261008.md for exact test modes and evidence.
+All three requested stages passed: 36 exact old/optimized CUDA comparisons
+(nine arms, math SDPA/deterministic FA4, checkpointing off/on), six 25-step
+all-eight-GPU smokes, six verified checkpoint-24→25 resumes, and four paired
+native-FA4 throughput measurements. Resume data/normalization/scheduler/RNG
+matched exactly; parameter/optimizer residuals were below 9.50e-8 relative L2.
+Update-25 data also matched across all six arms.
+
+Measured throughput gains: A 0.03%, P6-iso 0.77%, P7-simple 1.11%, P7 0.92%.
+One short pair per arm establishes only modest screening gains. P7 peak memory
+rose from 116.3 to 118.5 GiB. Production defaults/environment/drivers unchanged.
+All 31 continuation stages completed at 04:58:09 UTC. All eight communicating
+burns restored and independently verified at 05:01:52 UTC. commands.sh inactive;
+no long research runs launched. The logging-cadence checker was fixed without
+retraining the completed smokes. See PROXY_B200_VALIDATION_20261008.md for results,
+exact test modes, earlier failures and locally verified evidence.
+
+Historical entries below describe the state at their respective checkpoints;
+the completed CUDA validation above supersedes their pending-validation notes.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 

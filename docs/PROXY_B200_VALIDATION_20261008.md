@@ -3,6 +3,62 @@
 Authorized scope: CUDA correctness, 25-step eight-GPU smokes/resume checks,
 and before/after throughput. **No 2,500-step research runs.**
 
+## Completed results — 8 October 2026, 05:02 UTC
+
+All three authorized stages passed. The continuation completed all 31 stages
+at 04:58:09 UTC. No long research training was launched.
+
+- **Correctness:** nine arms × two backends × checkpointing off/on = 36
+  old/optimized pairs. Every output, loss, gradient, normalization statistic
+  and buffer matched exactly. Backends were math SDPA and deterministic FA4;
+  this does not establish bitwise reproducibility of native FA4 backward.
+- **Training:** all six new arms completed 25 updates on eight B200s, with
+  finite metrics and complete checkpoints. Peak allocated memory was
+  108.7–114.2 GiB.
+- **Resume:** all six checkpoint-24→25 checks passed. Normalization, scheduler
+  and all eight RNG states matched exactly. Model/optimizer differences were
+  tiny FP32 residuals: maximum relative L2 across arms was 9.50e-8, within both
+  prescribed bounds. All 48 source/resume data-audit pairs matched byte for
+  byte; update-25 data also matched across all six arms on every rank.
+
+Native-FA4 throughput, median full optimizer-update time over steps 10–25:
+
+| Arm | Before (s/update) | After (s/update) | Throughput gain | Peak allocated GiB, before → after |
+|---|---:|---:|---:|---:|
+| A | 2.0704 | 2.0698 | 0.03% | 103.6 → 103.6 |
+| P6-iso | 2.2571 | 2.2399 | 0.77% | 111.6 → 111.6 |
+| P7-simple | 2.3911 | 2.3648 | 1.11% | 114.2 → 114.2 |
+| P7 | 2.6084 | 2.5846 | 0.92% | 116.3 → 118.5 |
+
+These are whole training updates, not attention-only timings; startup,
+checkpoint I/O and the component-profile update are excluded. One short pair
+per arm is a screening measurement, so differences around 1% should not be
+treated as a precise sustained speedup. P7 used 2.27 GiB more peak memory.
+The component profile supports reduced work: P6 target setup/normalization
+kernel sums fell from 55.60 to 37.46 ms; these sums are not wall-clock critical
+path timings. Production FA4 settings, environment and drivers were unchanged.
+
+Burn restoration passed at 04:59:21 UTC. An independent 05:01:52 UTC snapshot
+confirmed all eight GPUs at 100% utilization, with workers 485959–485966 matching
+the supervisor's verified communicating burns. `commands.sh` is left inactive.
+
+Final evidence is in `artifacts/proxy-speed-monitor-20261008-a26/`:
+`summary.json`, `supervised/run/complete.json`, the six `resume-checks/` reports,
+all 96 data-audit files, per-arm benchmark reports, and burn/GPU receipts.
+All completion-output hashes and all 16 reused source-output hashes were
+independently verified locally. Numerical/smoke source reports are in
+`artifacts/proxy-speed-monitor-20261008-a13/`.
+
+Final Dropbox log: `_run-2026-10-08_05-01-41-th2-tjx3-proxy-speed-monitor-20261008-a26.log`,
+local copy `temp/proxy-speed-monitor-a26.log`, SHA256
+`07df85353653dd5a9c9fd36dba272f7ecf8e389e0a9a3bfd275fbbbb36a5f2c0`.
+Source a13 log SHA256:
+`7c0fa9b72453ede3a702c7927974329d003fb6ee1ccebad221bafefda2cf2404`.
+Artifacts and raw logs are local, Git-ignored evidence; this report is tracked.
+
+The sections below retain the protocol and failed-attempt history, including
+native-kernel numerical variability and the corrected logging-cadence checker.
+
 Initial output root: `/mnt/local/_outputs/deep-llms_th2/proxy-speed-validation-20261008-a01`.
 Machine: `thiennh-p6-tjx3-worker-0`. Read-only inspection at 02:37:27 UTC on
 8 October verified eight B200s, only the known communicating burn workers
@@ -62,7 +118,7 @@ across eight GPUs. Training jobs remain sequential, each using all eight GPUs.
 Local preparation: four tests passed in 37.776 s, including actual old/new
 train.py wrapper runs and identical saved tiny-model weights. A separate gate
 control test checks pairing and failure behavior. Local tests use CPU only.
-Remote completion and numerical/performance results remain pending.
+Final completion and numerical/performance results are recorded above.
 
 ## First remote gate: stopped, 8 October 02:57 UTC
 
