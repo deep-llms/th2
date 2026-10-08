@@ -1,16 +1,16 @@
 # Proxy arms: perplexity and downstream results
 
-Snapshot: 8 October 2026. This summarizes the completed **document-isolated P1–P7 screen**, including the chat-designed variants. The STS-B/BoolQ fine-tuning queue completed all 97 stages; final results are included below. The newly implemented P6/P7 follow-ups are untrained.
+Snapshot: **8 October 2026, 07:21:50 UTC** (latest verified B200 results). This summarizes the **document-isolated P1–P7 screen**, including the chat-designed variants, all completed downstream evaluations, and the nine-run follow-up queue. P6-iso-sparse is complete, P6-iso-short is running, and seven runs are queued. Status below is as of this snapshot, not a live feed.
 
 ## Setup and interpretation
 
-Qwen3-0.6B architecture trained **from scratch**, English `cx_sampled_old`, seed 42. Each run stops at 2,500 updates: 2.62144B input tokens, 1,048,576 tokens/update, sequence length 2,048. EOS separates documents; attention is document-isolated and RoPE positions reset per document. Full schedule: 28,600 updates, 1,430 warmup updates. FA4 unless explicitly labeled SDPA.
+Qwen3-0.6B architecture trained **from scratch**, English `cx_sampled_old`, pretraining seed 42 unless explicitly labeled 1042. Each run stops at 2,500 updates: 2.62144B input tokens, 1,048,576 tokens/update, sequence length 2,048. EOS separates documents; attention is document-isolated and RoPE positions reset per document. Full schedule: 28,600 updates, 1,430 warmup updates. FA4 unless explicitly labeled SDPA.
 
 LM loss is token-weighted validation NLL, excluding auxiliary loss; **PPL = exp(LM loss)**. Validation contains 4,882 packed sequences and 9,981,660 eligible next-token targets. Lower loss/PPL is better; higher downstream scores are better. Comparisons match training tokens, not training time. One pretraining seed does not establish robustness.
 
 ## What the arms change
 
-Block numbers are 1-based. Unless stated otherwise, proxies occur at blocks 2, 4, …, 24. A four-block MLP target means the sum of MLP outputs from the current block through the next three, standardized per channel and detached. Auxiliary weight ramps from 0 to 0.1 over 250 updates.
+Block numbers are 1-based; `m_l` denotes block `l`'s MLP output. Unless stated otherwise, proxies occur at blocks 2, 4, …, 24. A four-block MLP target means the sum of MLP outputs from the current block through the next three, standardized per channel and detached. Auxiliary weight ramps from 0 to 0.1 over 250 updates.
 
 **Names:** `-iso` means isolating the predictor from **LM gradients**, not document isolation (all these runs already isolate documents). `-block` in P1/P3 means blocking **auxiliary gradients into the backbone**; LM gradients can still train their predictors. `-4h` means four **query heads**, not four KV heads: query heads 12–15 use KV groups 6–7 (zero-based). P7 and all its variants use this same four-head allocation; the other twelve heads retain native attention.
 
@@ -28,13 +28,19 @@ The gradient descriptions below refer to pretraining. Supervised fine-tuning del
 | P5 | P4-style all-head value injection, but replace independent predictors with a width-256 residual stream carried between proxy blocks. The stream learns only from auxiliary loss. |
 | P6 | Same tokenwise predictor and target as P4, but add the RMS-normalized prediction **directly to the residual stream before the block**. Scale it by detached input RMS and a trainable channel gate initialized to 0.1. LM and auxiliary losses both train the predictors. |
 | P6-iso | Exactly P6 with predictor LM gradients stopped. Auxiliary loss trains the predictors; LM loss still trains the gates and backbone. |
-| P6-iso-weighted (untrained) | P6-iso with fixed target coefficients 1.6, 1.2, 0.8, 0.4 on the current and next three MLP outputs, before the existing running standardization. |
-| P6-iso-layernorm (untrained) | P6-iso with each of the four MLP outputs individually normalized by parameter-free, per-token LayerNorm before summation and the existing running standardization. |
+| P6-iso-sparse | P6-iso at only six blocks **{2, 6, 10, 14, 18, 22}**, instead of twelve. Keep the four-block MLP target, residual injection, gate 0.1 and gradient isolation. Tests whether fewer proxy interventions preserve the benefit at lower cost. |
+| P6-iso-short | P6-iso at all twelve original blocks, but predict **`m_l + m_(l+1)`**, instead of four MLP outputs. Same predictor and consumer; tests a shorter prediction horizon. Do not add a block-26 predictor. |
+| P6-iso-weighted | P6-iso with fixed target coefficients 1.6, 1.2, 0.8, 0.4 on the current and next three MLP outputs, before the existing running standardization. Keep all twelve locations; changes only the target, emphasizing nearer blocks. |
+| P6-iso-layernorm | P6-iso with each of the four MLP outputs individually normalized by **parameter-free LayerNorm over hidden channels** (FP32, epsilon 1e-6), then summed and passed through the existing running standardization. Keep all twelve locations; tests removing differences in scale between target blocks. This changes target construction, not the backbone normalization. |
 | P7 | Preserve native K/V entries and add separate proxy K/V entries. Four query heads attend jointly to both through **one softmax**, with no gate. Predictor uses a width-256 bottleneck and a causal four-tap convolution. Target is the four-block residual increment (attention + MLP contributions). Auxiliary objective is cosine + 0.5 × relational KL. Predictor learns only from auxiliary loss; LM trains proxy projections and backbone. |
 | P7-mlp | P7 with the target changed to the four-block **MLP sum**. It retains the convolution and relational KL; the name does not mean those were removed. |
 | P7-ems | P7 plus document-reset exponential moving summaries of the width-256 input features, at decays 0.9 and 0.99. Add both summaries to the convolution output before SiLU. Keep P7's target, attention and auxiliary losses. |
 | P7-kq | P7 with proxy **keys**, but reuse native values for the proxy entries. No separate proxy-value projection. Queries remain native. |
 | P7-simple | P7's same four-head joint native/proxy attention, but a **tokenwise 1024→256→1024 SiLU predictor, no convolution/EMS, four-block MLP-sum target, cosine-only auxiliary loss**. No relational KL or gate. Predictor is auxiliary-only; LM trains the separate proxy K/V projections and backbone. |
+| P7-simple-sparse | P7-simple at the same six blocks as P6-iso-sparse, keeping its four-block MLP target. Retain four-head joint native/proxy attention, isolated tokenwise predictor and cosine-only loss. Tests fewer proxy attention locations. |
+| P7-simple-short | P7-simple at all twelve original blocks, but predict `m_l + m_(l+1)`, matching P6-iso-short. Retain P7-simple's attention consumer and cosine-only loss; no convolution, relational KL, residual injection or gate is added. |
+
+The six new arms are **separate ablations**, not combinations. P6 variants inherit P6-iso's residual injection and gate; P7 variants inherit P7-simple's joint attention without a gate. All retain running target standardization/clipping, predictor isolation from LM gradients and the auxiliary ramp to 0.1. Auxiliary loss is averaged over tokens and active locations: halving the locations does **not** halve its coefficient. Sparse variants preserve their parent's initial weights at retained locations under the same seeds.
 
 ### P7-simple compared directly with original P7
 
@@ -74,17 +80,31 @@ Main completed screen. Runtime is Trainer time including evaluation/checkpointin
 | P5 | 3.483880 | 32.5859 | 95.85 |
 | P4-iso | 3.489673 | 32.7752 | 95.55 |
 
-Follow-up queue, checked 8 October 2026 at 07:21:50 UTC:
+### Follow-up results and running queue
 
-| Arm | Seed | LM loss ↓ | PPL ↓ | Trainer time (min) |
-| --- | ---: | ---: | ---: | ---: |
-| P6-iso-sparse | 42 | 3.471274 | 32.1777 | 92.36 |
+Verified **8 October 2026, 07:21:50 UTC**. Every run is fresh training to 2,500 steps, sequentially using all eight B200 GPUs. A completed result is shown only after its checkpoint/backend/metric validator passes. `—` means no final result yet; intermediate training loss is not substituted for full validation loss.
 
-This six-location variant passed its checkpoint/backend/metric validator at
-2,500 steps. PPL is 0.59% below A but 0.50% above its original P6-iso parent;
-this is a single-seed comparison. P6-iso-short is still training; other follow-up
-arms and the second-seed runs have no completed results yet. Evidence:
-[completed result](../artifacts/proxy-followup-monitor-20261008-a02/seed-42/P6-iso-sparse/result.json).
+| Order | Arm | Seed | Status at snapshot | Final LM loss ↓ | Final PPL ↓ | Trainer time (min) |
+| ---: | --- | ---: | --- | ---: | ---: | ---: |
+| 1 | P6-iso-sparse | 42 | Complete; validated | 3.471274 | 32.1777 | 92.36 |
+| 2 | P6-iso-short | 42 | Running, 402/2,500 steps | — | — | — |
+| 3 | P6-iso-weighted | 42 | Queued | — | — | — |
+| 4 | P6-iso-layernorm | 42 | Queued | — | — | — |
+| 5 | P7-simple-sparse | 42 | Queued | — | — | — |
+| 6 | P7-simple-short | 42 | Queued | — | — | — |
+| 7 | A | 1042 | Queued; second-seed baseline | — | — | — |
+| 8 | P6-iso | 1042 | Queued; second-seed replication | — | — | — |
+| 9 | P7-simple | 1042 | Queued; second-seed replication | — | — | — |
+
+The first six designs are explained above. The last three retain their original architectures and losses: they test whether the baseline and the best previous P6/P7 variants **by validation PPL** reproduce under another pretraining seed. Backbone/Trainer, data-order and Python hash seeds change from 42 to 1042; proxy initialization changes from 43 to 1043 (A has no proxy). These are not checkpoint resumes or new architectures. Validation data remains fixed; compare each proxy against A at the **same seed**.
+
+All nine retain the same full schedule, warmup and data/packing recipe. Microbatch 16 × accumulation 4 × eight GPUs × 2,048 tokens gives 1,048,576 tokens/update; activation checkpointing is off. They use the validated execution optimizations, so historical runtime differences also include those code changes. The six new arms and seed-1042 checkpoints have **no downstream scores yet**; the tables below describe the earlier seed-42 checkpoints.
+
+P6-iso-sparse has **0.59% lower PPL than A**, but **0.50% higher PPL than its original P6-iso parent**. It therefore preserves part of the parent's improvement in this single-seed run, without improving on the parent. Trainer time is 92.36 minutes; the complete training job including startup took 93.44 minutes.
+
+Sources: [completed sparse result](../artifacts/proxy-followup-monitor-20261008-a02/seed-42/P6-iso-sparse/result.json), [passed validator](../artifacts/proxy-followup-monitor-20261008-a02/seed-42-validate-P6-iso-sparse.json), [queue snapshot](../artifacts/proxy-followup-monitor-20261008-a02/queue.json). Future order and seed settings come from [the submitted queue](../artifacts/proxy-followup-monitor-20261008-a02/jobs.json).
+
+### Earlier completed runs
 
 Earlier completed 2,500-step runs on the same isolated-document validation recipe. Downstream evaluations below did not include these variants.
 
@@ -240,10 +260,9 @@ Sources: main comparison above; [P1 gate sweep](../artifacts/proxy-gate-sweep-20
 
 ## What the results currently support
 
-- **P6-iso has the lowest validation PPL** (about 1.08% below A), with about 9.3% more Trainer time. P7-simple is second, with a smaller gain and greater runtime overhead.
+- **P6-iso has the lowest validation PPL** (about 1.08% below A), with about 9.3% more Trainer time. The new P6-iso-sparse is next (0.59% below A), followed by P7-simple. Sparse has not improved on its P6-iso parent; seed-1042 replications are still queued.
 - **A has the highest primary zero-shot and few-shot averages** (normalized accuracy where available). P6-iso has the highest raw-accuracy few-shot average, so that ranking depends on the metric. Fine-tuning has not shown a consistent proxy advantage: A wins PAWS-X; P6's small XNLI gain is within the observed fine-tuning-seed spread.
 - Proxy-disabled degradation shows that models use their branches. It does not establish benefit over A, significance, or superiority at equal training time.
-- Two corresponding P7 variants are **implemented, not trained**: `P7-simple-sparse` uses the same six locations/four-block target as P6-iso-sparse; `P7-simple-short` uses the same twelve locations/two-block target as P6-iso-short. Both retain P7-simple's four-head joint native/proxy attention, isolated tokenwise predictor and cosine-only loss. [Definitions](P7_IMPLEMENTATION.md#p7-simple-variants-based-on-p6-iso-8-october-2026).
-- Two P6-iso placement/target variants are implemented (sparse completed above; short currently training): `P6-iso-sparse` uses six injection locations `{2, 6, 10, 14, 18, 22}` with the original four-block target; `P6-iso-short` retains all twelve locations and uses `m_l + m_(l+1)`. These are separate experiments; all other P6-iso settings remain the same. [Implementation and usage](P4_P5_P6_IMPLEMENTATION.md#p6-iso-follow-ups-sparse-placement-and-shorter-targets). V1/V3 and uncompleted P1/P3 ablations are not assigned scores.
+- The follow-up queue above separates **completed, running and queued** runs. Their designs test proxy placement, prediction horizon and target construction; no benefit is claimed for unfinished runs. V1/V3 and uncompleted P1/P3 ablations are not assigned scores.
 
 Earlier B/F/G and task-/consumer-aware experiments used different training/attention protocols and are not pooled into these tables. Their records remain in [PROJECT_NOTES.md](PROJECT_NOTES.md); pretrained-weight probes are separate from this from-scratch screen.
