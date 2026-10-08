@@ -1,4 +1,4 @@
-## Authorized B200 proxy validation being prepared — 8 October 2026
+## Authorized B200 proxy validation: investigating numerical gate — 8 October 2026
 
 User authorized CUDA correctness, 25-step eight-GPU smokes with resume, and
 before/after timing for A/P6-iso/P7-simple/P7. No research training authorized
@@ -7,7 +7,10 @@ Read-only inspection 721b0f3 verified machine/env/known burns at 02:37:27 UTC.
 Prepared 46-stage queue, reference sources from 4f8208b, same training recipe,
 automatic final burns and fresh root proxy-speed-validation-20261008-a01.
 See PROXY_B200_VALIDATION_20261008.md for protocol, scripts and evidence.
-Preparation tests passed; launch and remote results remain pending.
+First SDPA gate failed strict gradient equality; outputs/statistics match exactly.
+No smoke/timing runs started. All eight burns restored and verified. A separate
+old/old versus old/new repeatability diagnostic is being launched before
+interpreting the difference; full validation remains pending.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 

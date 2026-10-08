@@ -1,6 +1,6 @@
 """Disposable proxy optimization checks; never imported by ordinary training."""
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 import gc
 import hashlib
 import importlib
@@ -145,6 +145,30 @@ def training(args, rest):
         runpy.run_module('scripts.profile_proxy_training' if args.profile else 'train',run_name='__main__')
 
 
+def diagnose(args):
+    """Measure unchanged-code repeatability before interpreting a gate failure."""
+    import torch
+    from torch.nn.attention import sdpa_kernel, SDPBackend
+    torch.set_num_threads(2)
+    torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
+    recipe,rows=read(args.recipe),read(args.rows);cases=[]
+    for backend in ('sdpa','sdpa_math','fa4'):
+        baseline=None
+        for label,name in (('reference','previous'),('repeat_reference','previous'),('optimized','optimized')):
+            print('REPEATABILITY',backend,label,flush=True)
+            context=sdpa_kernel([SDPBackend.MATH]) if backend=='sdpa_math' else nullcontext()
+            with context,implementation(name):
+                value=capture(args.arm,'sdpa' if backend=='sdpa_math' else backend,False,recipe,rows)
+            if baseline is None:baseline=value
+            assert baseline['initial']==value['initial']
+            comparisons={k:exact_tensors(baseline[k],value[k]) for k in ('outputs','gradients')}
+            cases.append(dict(backend=backend,label=label,differences=comparisons,loss=value['loss'],peak_gib=value['peak_gib']))
+            if value is not baseline:del value
+        del baseline
+    write(args.output,dict(status='measured',arm=args.arm,cases=cases,
+                          note='Repeatability diagnostic, not a relaxed acceptance gate.'))
+
+
 def copy_resume(args):
     source,destination=Path(args.source),Path(args.destination)
     assert not destination.exists()
@@ -216,8 +240,9 @@ def summary(args):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);s=p.add_subparsers(dest='mode',required=True)
-    g=s.add_parser('gate')
-    for name in ('arm','recipe','rows','output'):g.add_argument('--'+name,required=True)
+    for mode in ('gate','diagnose'):
+        g=s.add_parser(mode)
+        for name in ('arm','recipe','rows','output'):g.add_argument('--'+name,required=True)
     t=s.add_parser('train');t.add_argument('--implementation',choices=('previous','optimized'),required=True)
     t.add_argument('--profile',action='store_true')
     for name in ('copy-resume','check-resume'):
@@ -228,7 +253,7 @@ def main():
     if args.mode=='train':training(args,rest)
     else:
         if rest:p.error('Unrecognized arguments: '+repr(rest))
-        {'gate':gate,'copy-resume':copy_resume,'check-resume':check_resume,'summary':summary}[args.mode](args)
+        {'gate':gate,'diagnose':diagnose,'copy-resume':copy_resume,'check-resume':check_resume,'summary':summary}[args.mode](args)
 
 
 if __name__=='__main__':main()

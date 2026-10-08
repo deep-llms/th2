@@ -56,3 +56,21 @@ Local preparation: four tests passed in 37.776 s, including actual old/new
 train.py wrapper runs and identical saved tiny-model weights. A separate gate
 control test checks pairing and failure behavior. Local tests use CPU only.
 Remote completion and numerical/performance results remain pending.
+
+## First remote gate: stopped, 8 October 02:57 UTC
+
+The first SDPA/checkpoint-off P6-iso-sparse comparison failed strict gradient
+equality. All outputs, losses and normalization statistics were exactly equal;
+307 gradient tensors differed, maximum per-tensor relative L2 0.00784866
+(0.785%), maximum absolute difference 0.00055997. No smoke or timing jobs ran.
+The supervisor restored and verified communicating burns on all eight GPUs
+(workers 405378–405385); fresh inspection at 02:59:53 confirmed them.
+Evidence: artifacts/proxy-speed-monitor-20261008-a01/, source log SHA256
+`deffe5ba5e3cfd40a8aae938be8a4685ac2380a53c295caefb1d4c8a75c285ad`.
+
+This is not yet evidence of an optimization defect: earlier SDPA backend
+checks documented non-bitwise repeated backwards. A separate disposable
+repeatability diagnostic compares previous/previous and previous/optimized
+at identical weights under SDPA, explicitly forced math SDPA and FA4. It
+records differences without declaring acceptance or relaxing the study gate.
+Root: proxy-speed-repeatability-20261008-a01. No production recipe change.

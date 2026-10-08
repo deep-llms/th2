@@ -8,7 +8,7 @@ from run_experiments import load_jobs
 from scripts.proxy_speed_validation import NEW_ARMS, BENCH_ARMS, ROOT, read, write
 
 
-def make(root, recipe_path, rows):
+def make(root, recipe_path, rows, diagnostic=False):
     root=Path(root)
     recipe=read(recipe_path)
     recipe.update(attention_backend='fa4',checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,
@@ -17,6 +17,13 @@ def make(root, recipe_path, rows):
                     max_steps=28600,warmup_steps=1430,isolate_documents=True,seed=42,data_seed=42).items():
         assert recipe[k]==v,(k,recipe[k])
     saved=root/'validation-recipe.json';write(saved,recipe)
+    if diagnostic:
+        items=[dict(name='repeatability',gpus=[0],timeout_seconds=3600,
+            argv=['{python}','-u','-m','scripts.proxy_speed_validation','diagnose','--arm','P6-iso-sparse',
+                  '--recipe',str(saved),'--rows',str(rows),'--output','{run_dir}/repeatability.json'],
+            required_outputs=[dict(path='repeatability.json',json_equals={'status':'measured'})])]
+        path=root/'jobs.json';write(path,dict(jobs=items));load_jobs(path)
+        return items
     items=[]
     def cpu(name,mode,arguments,result):
         items.append(dict(name=name,argv=['{python}','-u','-m','scripts.proxy_speed_validation',mode,*arguments,

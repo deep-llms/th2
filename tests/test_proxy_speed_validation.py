@@ -12,7 +12,7 @@ from unittest.mock import patch
 import torch
 
 from scripts.proxy_speed_queue import make
-from scripts.proxy_speed_validation import implementation, exact_tensors, gate, NEW_ARMS, BENCH_ARMS
+from scripts.proxy_speed_validation import implementation, exact_tensors, gate, diagnose, NEW_ARMS, BENCH_ARMS
 from tests.test_proxy_memory import config, batch, objective
 
 
@@ -81,6 +81,25 @@ class ValidationTests(unittest.TestCase):
                 self.assertLess(names.index('resume-'+arm),names.index('check-resume-'+arm))
             self.assertEqual(len([x for x in training if '--profile' in x['argv']]),2*len(BENCH_ARMS))
             self.assertEqual(items[-1]['name'],'summarize')
+
+    def test_repeatability_is_measurement_not_acceptance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            items=make(root,Path('proxy_heads.b200.json'),Path('/real/rows.json'),diagnostic=True)
+            self.assertEqual(len(items),1)
+            args=SimpleNamespace(arm='P6-iso-sparse',recipe=root/'validation-recipe.json',
+                                 rows=root/'rows.json',output=root/'measured.json')
+            args.rows.write_text('[]')
+            calls=[]
+            def capture(arm,backend,checkpoint,*unused):
+                calls.append((backend,checkpoint))
+                return dict(initial='same',outputs={'x':torch.zeros(1)},
+                            gradients={'p':torch.tensor([float(len(calls))])},loss=0.,peak_gib=1.)
+            with patch('scripts.proxy_speed_validation.capture',side_effect=capture):diagnose(args)
+            report=json.loads(args.output.read_text())
+            self.assertEqual(report['status'],'measured')
+            self.assertEqual(calls,[('sdpa',False)]*6+[('fa4',False)]*3)
+            self.assertTrue(report['cases'][1]['differences']['gradients'])
 
     def test_profile_uses_existing_step_timer(self):
         from scripts.profile_proxy_training import Capture
