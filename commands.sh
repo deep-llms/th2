@@ -1,18 +1,16 @@
 #1 +60+a
-#th2-tjx3-proxy-validation-inspect-20261008-a01
+#th2-tjx3-proxy-speed-validation-20261008-a01
 set -euo pipefail
 cd /mnt/local/@PROJECT@
 test "$(hostname)" = thiennh-p6-tjx3-worker-0
-date -u
-/mnt/local/conda-py311/envs/attention_bench/bin/python -u - <<'CHECK'
-import json,sys,shutil,importlib.metadata as md
-from pathlib import Path
-from scripts.verified_gpu_reclaim import inspect
-print('INSPECTION',json.dumps(inspect()),flush=True)
-print('ENVIRONMENT',json.dumps({p:md.version(p) for p in ('torch','transformers','accelerate','datasets','flash-attn-4','nvidia-cutlass-dsl')}),flush=True)
-print('FREE_GIB',shutil.disk_usage('/mnt/local').free/2**30,flush=True)
-for p in ('/mnt/local/_outputs/deep-llms_th2/supervised-stsb-boolq-20261008-a03/supervised/supervisor.json','/mnt/local/_outputs/deep-llms_th2/proxy-final-attention-check-20261005-a01/prepared/train.json'):
- f=Path(p);print('INPUT',p,f.is_file(),f.stat().st_size if f.is_file() else None,flush=True)
- if f.name=='supervisor.json' and f.is_file():print('PREVIOUS_HANDOFF',f.read_text(),flush=True)
-print('INSPECTION_FINISHED',flush=True)
-CHECK
+TASK_ROOT=/mnt/local/_outputs/@PROJECT@/proxy-speed-validation-20261008-a01
+TASK_SESSION=tjx3-proxy-speed-validation-20261008-a01
+test ! -e "$TASK_ROOT"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
+mkdir -p "$TASK_ROOT"
+printf -v TASK_CMD 'exec bash %q %q >%q 2>&1' "$PWD/scripts/launch_proxy_speed_validation.sh" "$TASK_ROOT" "$TASK_ROOT/launch.log"
+tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+tail -n 80 "$TASK_ROOT/launch.log"
+test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
