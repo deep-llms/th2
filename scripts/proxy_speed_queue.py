@@ -19,7 +19,8 @@ def make(root, recipe_path, rows, diagnostic=False):
     saved=root/'validation-recipe.json';write(saved,recipe)
     if diagnostic:
         items=[dict(name='repeatability',gpus=[0],timeout_seconds=3600,
-            argv=['{python}','-u','-m','scripts.proxy_speed_validation','diagnose','--arm','P6-iso-sparse',
+            argv=['{python}','-u','-m','scripts.proxy_speed_validation','diagnose','--arm','P7-simple-short',
+                  '--backends','fa4','fa4_deterministic',
                   '--recipe',str(saved),'--rows',str(rows),'--output','{run_dir}/repeatability.json'],
             required_outputs=[dict(path='repeatability.json',json_equals={'status':'measured'})])]
         path=root/'jobs.json';write(path,dict(jobs=items));load_jobs(path)

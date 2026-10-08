@@ -133,3 +133,19 @@ invocations/full-suite coverage, including the real 24→25 resume with identica
 per-microbatch data hashes and model weights (45.225 s). The parallel-gate
 control deliberately injects a failed arm and confirms that training cannot
 proceed. Environment: sampling_b200, Transformers 5.9.0, CPU.
+
+## Nine-arm CUDA result: eight passed, P7-simple-short isolated
+
+Study a03 completed all nine numerical checks in 257 s. Eight passed both
+math SDPA and FA4, checkpointing off/on. P7-simple-short passed math SDPA
+exactly but failed FA4/checkpoint-off gradients: 134 tensors, maximum relative
+L2 0.00494480 (0.494%). All outputs exactly match. No smoke/timing started.
+All eight burns restored and verified (workers 409228–409235). Evidence:
+artifacts/proxy-speed-monitor-20261008-a05/, source log SHA256
+`73e983efeed546a7aa86c7111fd571a6c24d7a074ca0883dd278aec8c9501882`.
+
+The installed 4.0.0b33 signature confirms deterministic=False by default and
+a deterministic=True option. A targeted P7-simple-short previous/previous
+and previous/optimized diagnostic now compares native FA4 and deterministic
+FA4. It is measurement only; production settings and acceptance bounds are
+unchanged. Fresh root: proxy-fa4-repeatability-20261008-a01.

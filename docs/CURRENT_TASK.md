@@ -10,7 +10,10 @@ stopped and restored all eight burns, verified by fresh inspections.
 Fresh a03 study keeps math-SDPA exact; FA4 gradients/model/optimizer allow
 only eight FP32 epsilons, with exact outputs, normalization, scheduler/RNG
 and explicit per-rank update-25 data hashes. See PROXY_B200_VALIDATION_20261008.md
-for all evidence and explicit criterion changes. Full study pending.
+for all evidence and explicit criterion changes. Eight of nine CUDA arms
+passed; P7-simple-short has a 0.494% FA4 gradient discrepancy despite exact
+math SDPA. Queue stopped and burns verified. Targeted native/deterministic
+FA4 repeatability diagnostic pending; smoke/resume/timing not started.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 

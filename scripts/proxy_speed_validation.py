@@ -89,8 +89,14 @@ def capture(arm, backend, checkpoint, recipe, rows):
     from scripts.check_trained_attention import fingerprint
     cfg=AutoConfig.from_pretrained(recipe['config_name'],local_files_only=True)
     cfg._attn_implementation='sdpa';cfg.use_cache=False
-    m=ProxyModel.from_scratch(cfg,arm,attention_backend=backend,seed=42,
+    deterministic=backend=='fa4_deterministic'
+    m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4' if deterministic else backend,seed=42,
         checkpoint_layers=checkpoint,checkpoint_aux=checkpoint,checkpoint_lm=checkpoint,lm_chunk=128).cuda().train()
+    if deterministic:
+        from functools import partial
+        import inspect
+        assert 'deterministic' in inspect.signature(m.fa4_kernel).parameters
+        m.fa4_kernel=partial(m.fa4_kernel,deterministic=True)
     ctx=ProxyTrainer.context({k:v.cuda() for k,v in isolated_data_collator(rows[:2]).items()})
     assert ctx.input_ids.shape==(2,2048) and len(set(rows[0]['segments']))>1
     initial=fingerprint(m)
@@ -219,7 +225,7 @@ def diagnose(args):
     torch.set_num_threads(2)
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     recipe,rows=read(args.recipe),read(args.rows);cases=[]
-    for backend in ('sdpa','sdpa_math','fa4'):
+    for backend in getattr(args,'backends',('sdpa','sdpa_math','fa4')):
         baseline=None
         for label,name in (('reference','previous'),('repeat_reference','previous'),('optimized','optimized')):
             print('REPEATABILITY',backend,label,flush=True)
@@ -320,6 +326,7 @@ def main():
     for mode in ('gate','diagnose'):
         g=s.add_parser(mode)
         for name in ('arm','recipe','rows','output'):g.add_argument('--'+name,required=True)
+        if mode=='diagnose':g.add_argument('--backends',nargs='+',choices=('sdpa','sdpa_math','fa4','fa4_deterministic'),default=('sdpa','sdpa_math','fa4'))
     g=s.add_parser('gate-all')
     for name in ('recipe','rows','output'):g.add_argument('--'+name,required=True)
     t=s.add_parser('train');t.add_argument('--implementation',choices=('previous','optimized'),required=True)
