@@ -1,3 +1,22 @@
+## Authorized replacement with fresh 10,000-step A/P6-iso pair — 8 October 2026
+
+User changed priority: stop the current nine-run follow-up, preserve completed
+results, and start fresh A and P6-iso at seed1042, each to10,000 total updates.
+Both use all eight B200s sequentially, identical data/optimizer/full28,600-step
+schedule and1,430-step warmup, FA4, and the same 1,048,576-token global batch.
+P6-iso uses proxy module seed1043. This is fresh training, not a checkpoint
+continuation. Keep save every250/retain2; no all-checkpoints policy was requested.
+
+Read-only runner inspection 6fb8e9f at13:28 UTC found the nine-run queue still
+running P7-simple-sparse. Supervisor PID486855 is the tmux pane process; all
+eight GPU workers509914–509921 descend through its Accelerate launcher509908.
+The first four P6-iso seed42 variants and validators are complete; remaining
+stages have not been claimed complete. The supervisor/GPU identities must be
+rechecked immediately before signaling. The replacement queue has five stages:
+A, A checkpoint validator, P6-iso, P6-iso checkpoint validator, matched report.
+The existing burn-restoring supervisor remains responsible for both handoffs.
+No queue stop or new training launch has been verified yet.
+
 ## Nine-run follow-up status — 8 October 2026, 12:15:21 UTC
 
 Read-only monitor438bdab: all four new P6-iso seed42 arms completed2500 updates

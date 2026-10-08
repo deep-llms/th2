@@ -1,3 +1,16 @@
+## Replacement 10,000-step comparison authorized (8 October 2026)
+
+The operator chose to stop the active nine-run follow-up and start a fresh
+seed1042 A/P6-iso pair to10,000 updates each. Preserve completed old outputs.
+Use the proven full28,600-step LR schedule with1,430-step warmup, unchanged
+1,048,576-token global batch, FA4 and document isolation. Both arms use the
+same new backbone/data/Trainer/Python-hash seed1042; P6-iso module seed1043.
+The queue is sequential across arms, all eight GPUs per arm, with per-arm
+checkpoint validation and a same-seed comparison. Saving remains every250
+updates with two checkpoints retained. The verified current queue supervisor
+must be stopped by identity, not by matching GPU PIDs or a process-group name;
+its automatic burn handoff must finish before the new supervisor starts.
+
 ## Nine-run mixed-seed follow-up launched (8 October 2026)
 
 User authorized six new P6/P7 variants at2500 updates and second-seed A/bestP6/
