@@ -1,6 +1,6 @@
 # Proxy arms: perplexity and downstream results
 
-Snapshot: **8 October 2026, 11:49:43 UTC** (latest verified B200 results). This summarizes the **document-isolated P1–P7 screen**, including the chat-designed variants, all completed downstream evaluations, and the nine-run follow-up queue. P6-iso-sparse, P6-iso-short and P6-iso-weighted are complete; P6-iso-layernorm is running, and five runs are queued. Status below is as of this snapshot, not a live feed.
+Snapshot: **8 October 2026, 12:15:21 UTC** (latest verified B200 results). This summarizes the **document-isolated P1–P7 screen**, including the chat-designed variants, all completed downstream evaluations, and the nine-run follow-up queue. All four new P6-iso variants are complete; P7-simple-sparse is running, and four runs are queued. Status below is as of this snapshot, not a live feed.
 
 ## Setup and interpretation
 
@@ -82,15 +82,15 @@ Main completed screen. Runtime is Trainer time including evaluation/checkpointin
 
 ### Follow-up results and running queue
 
-Verified **8 October 2026, 11:49:43 UTC**. Every run is fresh training to 2,500 steps, sequentially using all eight B200 GPUs. A completed result is shown only after its checkpoint/backend/metric validator passes. `—` means no final result yet; intermediate training loss is not substituted for full validation loss.
+Verified **8 October 2026, 12:15:21 UTC**. Every run is fresh training to 2,500 steps, sequentially using all eight B200 GPUs. A completed result is shown only after its checkpoint/backend/metric validator passes. `—` means no final result yet; intermediate training loss is not substituted for full validation loss.
 
 | Order | Arm | Seed | Status at snapshot | Final LM loss ↓ | Final PPL ↓ | Trainer time (min) |
 | ---: | --- | ---: | --- | ---: | ---: | ---: |
 | 1 | P6-iso-sparse | 42 | Complete; validated | 3.471274 | 32.1777 | 92.36 |
 | 2 | P6-iso-short | 42 | Complete; validated | 3.469407 | 32.1177 | 95.30 |
 | 3 | P6-iso-weighted | 42 | Complete; validated | 3.466397 | 32.0212 | 95.94 |
-| 4 | P6-iso-layernorm | 42 | Running, 2,345/2,500 steps | — | — | — |
-| 5 | P7-simple-sparse | 42 | Queued | — | — | — |
+| 4 | P6-iso-layernorm | 42 | Complete; validated | 3.466117 | 32.0122 | 95.87 |
+| 5 | P7-simple-sparse | 42 | Running, 489/2,500 steps | — | — | — |
 | 6 | P7-simple-short | 42 | Queued | — | — | — |
 | 7 | A | 1042 | Queued; second-seed baseline | — | — | — |
 | 8 | P6-iso | 1042 | Queued; second-seed replication | — | — | — |
@@ -100,17 +100,18 @@ The first six designs are explained above. The last three retain their original 
 
 All nine retain the same full schedule, warmup and data/packing recipe. Microbatch 16 × accumulation 4 × eight GPUs × 2,048 tokens gives 1,048,576 tokens/update; activation checkpointing is off. They use the validated execution optimizations, so historical runtime differences also include those code changes. The six new arms and seed-1042 checkpoints have **no downstream scores yet**; the tables below describe the earlier seed-42 checkpoints.
 
-All three completed follow-ups improve on the earlier A at this seed, but none improves on the original P6-iso:
+All four completed follow-ups improve on the earlier A at this seed. Layernorm is slightly below the original P6-iso; weighted is slightly above it:
 
 | Follow-up | PPL change vs A | PPL change vs original P6-iso |
 | --- | ---: | ---: |
 | P6-iso-sparse | −0.59% | +0.50% |
 | P6-iso-short | −0.77% | +0.31% |
 | P6-iso-weighted | −1.07% | +0.010% |
+| P6-iso-layernorm | −1.10% | −0.018% |
 
-Weighted is effectively tied with its parent at this precision; its NLL is only 0.000097 higher. Short improves on sparse, but not on the parent. These remain single-seed results, not evidence of a robust ranking. All three training jobs and their independent validators passed; the queue is running with no failures.
+Layernorm has the lowest observed PPL, but its NLL is only 0.000183 below the parent; weighted is 0.000097 above it. These differences are too small to establish a clear improvement from one seed. Short improves on sparse, but not on the parent. All four training jobs and their independent validators passed; the queue is running with no failures.
 
-Sources: completed [sparse](../artifacts/proxy-followup-monitor-20261008-a03/seed-42/P6-iso-sparse/result.json), [short](../artifacts/proxy-followup-monitor-20261008-a03/seed-42/P6-iso-short/result.json), and [weighted](../artifacts/proxy-followup-monitor-20261008-a03/seed-42/P6-iso-weighted/result.json) results; [queue snapshot and validation receipts](../artifacts/proxy-followup-monitor-20261008-a03/queue.json). Future order and seed settings come from [the submitted queue](../artifacts/proxy-followup-monitor-20261008-a03/jobs.json).
+Sources: completed [sparse](../artifacts/proxy-followup-monitor-20261008-a04/seed-42/P6-iso-sparse/result.json), [short](../artifacts/proxy-followup-monitor-20261008-a04/seed-42/P6-iso-short/result.json), [weighted](../artifacts/proxy-followup-monitor-20261008-a04/seed-42/P6-iso-weighted/result.json), and [layernorm](../artifacts/proxy-followup-monitor-20261008-a04/seed-42/P6-iso-layernorm/result.json) results; [queue snapshot and validation receipts](../artifacts/proxy-followup-monitor-20261008-a04/queue.json). Future order and seed settings come from [the submitted queue](../artifacts/proxy-followup-monitor-20261008-a04/jobs.json).
 
 ### Earlier completed runs
 
@@ -268,7 +269,7 @@ Sources: main comparison above; [P1 gate sweep](../artifacts/proxy-gate-sweep-20
 
 ## What the results currently support
 
-- **P6-iso has the lowest validation PPL** (about 1.08% below A), with about 9.3% more Trainer time. P6-iso-weighted effectively matches it; short and sparse retain smaller gains over A. None of the three completed new arms improves on the parent; seed-1042 replications are still queued.
+- **P6-iso-layernorm has the lowest observed validation PPL**, about 1.10% below A but only 0.018% below original P6-iso. Layernorm, original P6-iso and weighted are effectively tied at this scale; no robust improvement is established. Short and sparse retain smaller gains over A. Seed-1042 parent replications are still queued; the new target variants currently have only seed-42 results.
 - **A has the highest primary zero-shot and few-shot averages** (normalized accuracy where available). P6-iso has the highest raw-accuracy few-shot average, so that ranking depends on the metric. Fine-tuning has not shown a consistent proxy advantage: A wins PAWS-X; P6's small XNLI gain is within the observed fine-tuning-seed spread.
 - Proxy-disabled degradation shows that models use their branches. It does not establish benefit over A, significance, or superiority at equal training time.
 - The follow-up queue above separates **completed, running and queued** runs. Their designs test proxy placement, prediction horizon and target construction; no benefit is claimed for unfinished runs. V1/V3 and uncompleted P1/P3 ablations are not assigned scores.
