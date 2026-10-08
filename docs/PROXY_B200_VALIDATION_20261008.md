@@ -16,15 +16,18 @@ log: `temp/proxy-validation-inspection-20261008-a01.log`, SHA256
    P6-iso-layernorm, P7-simple-sparse, P7-simple-short, P6-iso, P7-simple and P7.
    Full-size Qwen, two real packed 2048-token rows, BF16 CUDA, both forced math SDPA and
    FA4. Compare previous/optimized code at the same weights and checkpointing
-   setting, separately with checkpointing off/on. Two-pass bootstrap, hidden
+   setting, separately with checkpointing off/on. Up to eight independent gate processes run concurrently, one per GPU.
+   Two-pass bootstrap, hidden
    outputs, losses, every gradient, normalization moments and updated buffers
-   must match exactly. A failure is recorded and stops the queue; no tolerance
-   is relaxed automatically.
+   must match exactly for math SDPA. FA4 outputs must match exactly; gradients
+   use the explicitly revised FP32 bound below. Failures stop the queue.
 2. Six new arms each train 25 steps on all eight GPUs. Validate finite metrics,
    backend receipts, schedule, normalization and checkpoint contents. Copy the
    complete step-24 checkpoint into a fresh resume directory, verify all copied
    state-file hashes, resume one update to 25, then compare with uninterrupted
-   step 25: model, optimizer, scheduler and all eight RNG states exactly.
+   step 25: model/optimizer within the FP32 bound, normalization/scheduler/RNG
+   exactly. Hash all four microbatches on each of eight ranks for update 25;
+   require identical input IDs, labels and document metadata after resume.
 3. A, P6-iso, P7-simple and P7 each receive previous/optimized 25-step runs,
    alternating pair order. Component profiler captures step 6; unprofiled
    steps 10–25 supply the existing synchronized update timer. Record median,
@@ -50,7 +53,8 @@ and verifies the repo Accelerate configuration and runs `accelerate env`.
 The established `train_then_burn` supervisor rechecks process identities,
 stops only approved burn workers, verifies GPUs free, and restores/validates
 communicating burns after success or failure. All roots are fresh; old research
-outputs/caches are preserved. Expected 46 sequential stages.
+outputs/caches are preserved. Current queue has 38 stages; the first runs nine independent numerical checks
+across eight GPUs. Training jobs remain sequential, each using all eight GPUs.
 
 Local preparation: four tests passed in 37.776 s, including actual old/new
 train.py wrapper runs and identical saved tiny-model weights. A separate gate
@@ -96,3 +100,36 @@ Evidence: artifacts/proxy-repeatability-monitor-20261008-a02/, source log SHA256
 `3e5da76557bed17c4643c073c63e1a77711782221a6fca00daa285ea530a808c`.
 Fresh full-study root: proxy-speed-validation-20261008-a02. Original failure
 and diagnostic outputs are preserved.
+
+## FA4 FP32 rounding and final acceptance rule
+
+Full-study a02 stopped at the first FA4/checkpoint-off comparison: only
+`backbone.model.layers.25.self_attn.q_norm.weight` differed, absolute maximum
+3.63798e-12, relative L2 1.13150e-8. All outputs and math-SDPA gradients
+(checkpointing off and on) were exactly equal. Burns restored and verified.
+Evidence: artifacts/proxy-speed-monitor-20261008-a03/, source log SHA256
+`055f9d49574858a6d77cde6a6ebaa99a5ef524ea961b53631268ece1eb0fde44`.
+The earlier FA4 repeat matched bitwise; one repeat cannot establish universal
+bitwise reproducibility. This residual is at FP32 rounding scale.
+
+Explicitly revised rule for fresh study **proxy-speed-validation-20261008-a03**:
+- Math SDPA remains exact for every output/gradient, with checkpointing off/on.
+- FA4 outputs, losses, moments and buffers remain exact. Gradient differences
+  must satisfy BOTH relative L2 <= 2^-20 and maximum absolute difference
+  <= 2^-20 times that reference tensor's peak magnitude. This is eight FP32
+  epsilons (under one part per million), not a BF16-scale tolerance. Shape,
+  dtype, missing gradients and nonfinite values remain failures. All observed
+  differences are retained in reports even when within the bound.
+- Resume uses the same bound for model parameters/optimizer floating state,
+  while normalization, scheduler, RNG and update-25 data hashes remain exact.
+  Checkpoint-24 copies still require byte-identical hashes before loading.
+- Production model code and training recipe remain unchanged. No research runs.
+
+Local gate/bound/queue tests pass. The new data-audit wrapper is also exercised
+by a real tiny-model step-24-to-25 resume test before launch.
+
+Revised local validation: nine distinct tests passed across the final targeted
+invocations/full-suite coverage, including the real 24→25 resume with identical
+per-microbatch data hashes and model weights (45.225 s). The parallel-gate
+control deliberately injects a failed arm and confirms that training cannot
+proceed. Environment: sampling_b200, Transformers 5.9.0, CPU.

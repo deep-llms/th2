@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import tempfile
 import subprocess
+import shutil
 import sys
 from types import SimpleNamespace
 import unittest
@@ -12,7 +13,7 @@ from unittest.mock import patch
 import torch
 
 from scripts.proxy_speed_queue import make
-from scripts.proxy_speed_validation import implementation, exact_tensors, gate, diagnose, NEW_ARMS, BENCH_ARMS
+from scripts.proxy_speed_validation import implementation, exact_tensors, rounding_violations, gate, gate_all, diagnose, NEW_ARMS, BENCH_ARMS
 from tests.test_proxy_memory import config, batch, objective
 
 
@@ -57,13 +58,23 @@ class ValidationTests(unittest.TestCase):
                 with self.assertRaises(AssertionError):gate(args)
             self.assertEqual(json.loads(args.output.read_text())['status'],'failed')
 
+    def test_rounding_bound_rejects_nonfinite_and_substantive_changes(self):
+        a={'p':torch.tensor([1.,2.])}
+        for b,allowed in (({'p':torch.tensor([1.+2**-23,2.])},True),
+                          ({'p':torch.tensor([1.001,2.])},False),
+                          ({'p':torch.tensor([float('nan'),2.])},False)):
+            self.assertEqual(not rounding_violations(a,exact_tensors(a,b)),allowed)
+        zeros={'p':torch.zeros(2)}
+        self.assertTrue(rounding_violations(zeros,exact_tensors(zeros,{'p':torch.full((2,),1e-20)})))
+
     def test_manifest_scope_and_identical_training_recipe(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
             items=make(root,Path('proxy_heads.b200.json'),Path('/real/rows.json'))
             numerics=[x for x in items if x['name'].startswith('numerics-')]
-            self.assertEqual(len(numerics),9)
-            training=[x for x in items if x.get('gpus')==list(range(8))]
+            self.assertEqual(len(numerics),1)
+            self.assertEqual(len(numerics[0]['required_outputs']),10)
+            training=[x for x in items if x.get('gpus')==list(range(8)) and '--implementation' in x['argv']]
             self.assertEqual(len(training),20)  # Six fresh, six resume, eight benchmark.
             for x in training:
                 a=x['argv']
@@ -74,6 +85,7 @@ class ValidationTests(unittest.TestCase):
                 self.assertEqual(a[a.index('--gradient_accumulation_steps')+1],'4')
                 self.assertEqual(a[a.index('--logging_steps')+1],'10')
                 self.assertIn('--module',a)
+                self.assertEqual('--audit-update25' in a,'--profile' not in a)
             for arm in NEW_ARMS:
                 names=[x['name'] for x in items]
                 self.assertLess(names.index('smoke-'+arm),names.index('copy-resume-'+arm))
@@ -81,6 +93,21 @@ class ValidationTests(unittest.TestCase):
                 self.assertLess(names.index('resume-'+arm),names.index('check-resume-'+arm))
             self.assertEqual(len([x for x in training if '--profile' in x['argv']]),2*len(BENCH_ARMS))
             self.assertEqual(items[-1]['name'],'summarize')
+
+    def test_parallel_gates_cover_all_arms_and_stop_on_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            args=SimpleNamespace(recipe='recipe',rows='rows',output=root/'summary.json')
+            def run(command,**kwargs):
+                arm=command[command.index('--arm')+1]
+                self.assertEqual(len(kwargs['env']['CUDA_VISIBLE_DEVICES'].split(',')),1)
+                Path(command[-1]).write_text(json.dumps({'status':'failed' if arm=='P7' else 'passed'}))
+                return SimpleNamespace(returncode=int(arm=='P7'))
+            with patch.dict(os.environ,CUDA_VISIBLE_DEVICES='0,1,2,3,4,5,6,7'),patch('subprocess.run',side_effect=run):
+                with self.assertRaises(AssertionError):gate_all(args)
+            report=json.loads(args.output.read_text())
+            self.assertEqual(report['status'],'failed')
+            self.assertEqual({x['arm'] for x in report['cases']},set((*NEW_ARMS,'P6-iso','P7-simple','P7')))
 
     def test_repeatability_is_measurement_not_acceptance(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -130,4 +157,33 @@ class ValidationTests(unittest.TestCase):
                 self.assertEqual(result.returncode,0,result.stdout[-3000:]+result.stderr[-3000:])
                 self.assertEqual(json.loads((root/name/'result.json').read_text())['global_step'],1)
                 values.append(load_file(root/name/'model.safetensors'))
+            self.assertEqual(exact_tensors(*values),[])
+
+    def test_real_wrapper_audits_resumed_data(self):
+        from datasets import Dataset
+        from safetensors.torch import load_file
+        from tests.test_proxy_training import proxy_fixture
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);base=proxy_fixture(root)
+            shutil.rmtree(root/'train')
+            Dataset.from_dict({'text':[' '.join(str((row+j)%30) for j in range(7)) for row in range(250)]}).save_to_disk(root/'train/en')
+            values=[];records=[]
+            for name in ('full','resumed'):
+                folder=root/name
+                if name=='resumed':
+                    folder.mkdir()
+                    shutil.copy2(root/'full/train_config.json',folder/'train_config.json')
+                    shutil.copytree(root/'full/checkpoint-24',folder/'checkpoint-24')
+                cfg={**base,'arm':'P6-iso-weighted','max_steps':30,'stop_after':25,
+                     'save_steps':24,'gradient_accumulation_steps':4,'output_dir':str(folder)}
+                path=root/(name+'.json');path.write_text(json.dumps(cfg))
+                result=subprocess.run([sys.executable,'-m','scripts.proxy_speed_validation','train',
+                    '--implementation','optimized','--audit-update25','--',str(path)],
+                    capture_output=True,text=True,
+                    env={**os.environ,'CUDA_VISIBLE_DEVICES':'','OMP_NUM_THREADS':'1','MKL_NUM_THREADS':'1'},timeout=180)
+                self.assertEqual(result.returncode,0,result.stdout[-3000:]+result.stderr[-3000:])
+                records.append(json.loads((folder/'update25-rank0.json').read_text()))
+                values.append(load_file(folder/'model.safetensors'))
+            self.assertEqual(records[0],records[1])
+            self.assertEqual(len(records[0]['microbatches']),4)
             self.assertEqual(exact_tensors(*values),[])

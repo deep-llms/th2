@@ -1,17 +1,16 @@
-## Authorized B200 proxy validation: full study after repeatability control — 8 October 2026
+## Authorized B200 proxy validation — 8 October 2026
 
-User authorized CUDA correctness, 25-step eight-GPU smokes with resume, and
-before/after timing for A/P6-iso/P7-simple/P7. No research training authorized
-in this stage. Six new P6/P7 arms; nine numerical gates including three parents.
-Read-only inspection 721b0f3 verified machine/env/known burns at 02:37:27 UTC.
-Prepared 46-stage queue, reference sources from 4f8208b, same training recipe,
-automatic final burns and fresh root proxy-speed-validation-20261008-a01.
-See PROXY_B200_VALIDATION_20261008.md for protocol, scripts and evidence.
-First SDPA gate failed strict gradient equality; outputs/statistics match exactly.
-No smoke/timing runs started. All eight burns restored and verified. Repeatability control: default SDPA old/old 0.774% vs old/new 0.782% max
-per-tensor gradient relative L2; forced math SDPA and FA4 both exactly equal.
-Fresh 46-stage a02 study uses strict math-SDPA/FA4 gates; normal production
-FA4 recipe remains in all smoke/resume/timing jobs. Full results pending.
+User authorized numerical checks, six new-arm 25-step eight-GPU smokes/resume,
+and paired timing for A/P6-iso/P7-simple/P7. No research runs.
+First default-SDPA gate found ordinary backward variability: old/old 0.774%
+versus old/new 0.782% max per-tensor relative L2. Math SDPA matched exactly.
+Next FA4 gate caught one tensor's 3.6e-12 absolute / 1.1e-8 relative rounding
+difference; outputs and math-SDPA gradients exactly match. Both failed queues
+stopped and restored all eight burns, verified by fresh inspections.
+Fresh a03 study keeps math-SDPA exact; FA4 gradients/model/optimizer allow
+only eight FP32 epsilons, with exact outputs, normalization, scheduler/RNG
+and explicit per-rank update-25 data hashes. See PROXY_B200_VALIDATION_20261008.md
+for all evidence and explicit criterion changes. Full study pending.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 

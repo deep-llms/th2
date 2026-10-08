@@ -28,10 +28,11 @@ def make(root, recipe_path, rows, diagnostic=False):
     def cpu(name,mode,arguments,result):
         items.append(dict(name=name,argv=['{python}','-u','-m','scripts.proxy_speed_validation',mode,*arguments,
                       '--output','{run_dir}/'+result],required_outputs=[dict(path=result,json_equals={'status':'passed'})]))
-    for arm in (*NEW_ARMS,'P6-iso','P7-simple','P7'):
-        cpu('numerics-'+arm,'gate',['--arm',arm,'--recipe',str(saved),'--rows',str(rows)],'numerics/'+arm+'.json')
-        items[-1]['gpus']=[0]
-        items[-1]['timeout_seconds']=3600
+    cpu('numerics-all','gate-all',['--recipe',str(saved),'--rows',str(rows)],'numerics/summary.json')
+    items[-1]['gpus']=list(range(8))
+    items[-1]['timeout_seconds']=3600
+    items[-1]['required_outputs'] += [dict(path='numerics/'+arm+'.json',json_equals={'status':'passed'})
+                                    for arm in (*NEW_ARMS,'P6-iso','P7-simple','P7')]
 
     def train(arm,namespace,impl='optimized',profile=False):
         item=next(x for x in jobs(saved,stop_after=25,arms=[arm],seeds=[42])['jobs'] if 'gpus' in x)
@@ -40,7 +41,7 @@ def make(root, recipe_path, rows, diagnostic=False):
         for out in item['required_outputs']:out['path']=namespace+'/'+out['path']
         pos=item['argv'].index(str(ROOT/'train.py'))
         item['argv'][pos:pos+1]=['--module','scripts.proxy_speed_validation','train','--implementation',impl,
-                              *(['--profile'] if profile else []),'--']
+                              *(['--profile'] if profile else ['--audit-update25']),'--']
         item['timeout_seconds']=7200
         items.append(item)
     def validate(namespace,arms):
