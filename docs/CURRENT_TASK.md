@@ -1,3 +1,14 @@
+## Authorized B200 proxy validation being prepared — 8 October 2026
+
+User authorized CUDA correctness, 25-step eight-GPU smokes with resume, and
+before/after timing for A/P6-iso/P7-simple/P7. No research training authorized
+in this stage. Six new P6/P7 arms; nine numerical gates including three parents.
+Read-only inspection 721b0f3 verified machine/env/known burns at 02:37:27 UTC.
+Prepared 46-stage queue, reference sources from 4f8208b, same training recipe,
+automatic final burns and fresh root proxy-speed-validation-20261008-a01.
+See PROXY_B200_VALIDATION_20261008.md for protocol, scripts and evidence.
+Preparation tests passed; launch and remote results remain pending.
+
 ## Remaining exact proxy optimizations — 8 October 2026
 
 Implemented items 1.2, 2.1 and 2.3 of PROXY_SPEED_OPPORTUNITIES_20261008.md:

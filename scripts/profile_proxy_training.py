@@ -60,6 +60,10 @@ def summarize(trace):
 
 
 class Capture(TrainerCallback):
+    def __init__(self,trainer):
+        self.trainer=trainer
+        self.steps=[]
+
     def on_step_begin(self,args,state,control,**kwargs):
         global ACTIVE
         if state.global_step==5 and args.process_index==0:
@@ -68,6 +72,9 @@ class Capture(TrainerCallback):
 
     def on_step_end(self,args,state,control,**kwargs):
         global ACTIVE
+        if args.process_index==0:
+            callback=next(c for c in self.trainer.callback_handler.callbacks if isinstance(c,training.ProxyCallback))
+            self.steps.append(dict(step=state.global_step,seconds=callback.seconds_per_update))
         if state.global_step==6 and args.process_index==0:
             torch.cuda.synchronize();ACTIVE=False;self.trace.__exit__(None,None,None)
             path=Path(args.output_dir)/'component-profile.json'
@@ -79,6 +86,11 @@ class Capture(TrainerCallback):
                      'mask creation and RoPE outside decoder blocks. '
                      'Use unprofiled steps 10-25 for end-to-end throughput.'))
             self.trace=None
+
+    def on_train_end(self,args,state,control,**kwargs):
+        if args.process_index==0:
+            write(Path(args.output_dir)/'step-profile.json',dict(status='profiled',steps=self.steps,
+                note='Existing ProxyCallback synchronized update timer; includes no additional per-step GPU synchronization.'))
 
 
 def main():
@@ -101,7 +113,7 @@ def main():
     training.reduce_moments=annotate(training.reduce_moments,'statistics_all_reduce')
     original=training.ProxyTrainer.__init__
     def init(self,*args,**kwargs):
-        original(self,*args,**kwargs);self.add_callback(Capture())
+        original(self,*args,**kwargs);self.add_callback(Capture(self))
     training.ProxyTrainer.__init__=init
     runpy.run_module('train',run_name='__main__')
 
