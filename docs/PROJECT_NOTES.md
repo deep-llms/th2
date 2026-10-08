@@ -1,3 +1,22 @@
+## Nine-run mixed-seed follow-up launched (8 October 2026)
+
+User authorized six new P6/P7 variants at2500 updates and second-seed A/bestP6/
+bestP7. Validation-PPL selection gives P6-iso and P7-simple. New arms use seed42,
+proxy43; second seed is1042, proxy1043. Explicit per-job Python hash/Trainer/data
+seeds avoid leaving the new proxy initialization at its historical43 default.
+A has no proxy module seed. Existing run_experiments.py supports heterogeneous
+sequential argv; thin proxy_followup_queue.py adds9 fits,9 per-arm validators,
+and2 within-seed comparisons. No misleading comparison across unequal arm sets.
+Production model/loss/training code unchanged. Native FA4, all8GPUs per fit,
+micro16/GAS4,2048,EOS/isolation/reset positions,full28600/warmup1430,cutoff2500.
+
+Launch edfbf3f; root proxy-followup-2500-20261008-a01. Verified05:34:08 UTC:
+Accelerate copied/checked, approved burn workers reclaimed, all GPUs free before
+launch, first P6-iso-sparse finite throughstep20; remaining8 fits queued.
+Automatic communicating burn restoration on completion/failure. commands #0
+leaves independent supervisor running. No env/driver modification or deletion.
+Evidence: artifacts/proxy-followup-monitor-20261008-a01/; see CURRENT_TASK.md.
+
 ## B200 proxy optimization validation completed (8 October 2026)
 
 Nine-arm CUDA old/optimized checks passed exactly for math SDPA and deterministic

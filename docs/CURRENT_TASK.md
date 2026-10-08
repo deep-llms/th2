@@ -20,7 +20,19 @@ production training/architecture/loss code unchanged. Fresh output root:
 Launch verifies pinned environment/data, copies/checks Accelerate config and
 accelerate env, inspects/reclaims only approved burns, and verifies all GPUs
 free. Existing supervisor restores communicating burns on success/failure.
-Preparing submission; launch/start not yet verified. No cache/output deletion.
+Launch edfbf3f accepted. Monitor ed53943 at05:34:08 UTC verifies preflight,
+Accelerate cache byte-copy plus accelerate env, known burn PID-only reclamation,
+and all8GPUs free at05:32:14 before queue start. P6-iso-sparse is training through
+step20 with finite loss/gradients (~2.17s/update), native BF16 FA4 train/eval
+receipts, seeds42/42/module43, workers487207–487214 (97–99% utilization).
+All9 generated CLIs also parsed successfully with the pinned local HF parser
+in CPU mode; model settings resolved to the intended seeds. No cache/output
+deletion. commands.sh #0 leaves the detached queue running; do not relaunch.
+Evidence:10 SHA256-verified artifacts in artifacts/proxy-followup-monitor-20261008-a01/.
+Log temp/proxy-followup-monitor-a01.log SHA256
+c65b5e329ee8458b5d7e4d307942ba84a79528cbf7a661053f40ed3db5c2531e.
+Next action: read-only status/results; supervisor restores communicating burns
+after completion/failure. No completed research result yet.
 
 ## Authorized B200 proxy validation completed — 8 October 2026
 
