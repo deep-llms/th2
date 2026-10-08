@@ -173,7 +173,28 @@ Per-seed test accuracy (%), in seed order 42 / 43 / 44.
 
 Sources: [A/P6/P7-simple results](../artifacts/finetune-monitor-20261007-a07/summary.json), [P6-iso results](../artifacts/p6iso-finetune-monitor-20261007-a03/summary.json), [fine-tuning protocol](SUPERVISED_FINETUNING_20261007.md).
 
-**STS-B and BoolQ: no final results.** Two acceptance attempts stopped before fitting. The first used BF16 SDPA as the reference; the second exposed sensitivity of relative raw logits from a random two-class head. The corrected gate uses FP32 math SDPA, bounds classification probability/loss differences, and retains hidden-state/gradient checks and the regression output check. The fresh retry is launched with the training model and recipe unchanged. All eight numerical gates and all eight smoke/save/reload validations passed. At 04:48 Singapore, 27 of 32 production fits were complete; P6/BoolQ seed 44 was running. All eight development selectors chose 3e-5. The 24 final evaluations have not started. [Diagnosis and acceptance criteria](SUPERVISED_FINETUNING_20261007.md#task-output-gate-correction--8-october-2026).
+**STS-B and BoolQ: completed.** All 97 stages passed, including numerical gates,
+smoke/reload checks, 32 production fits and 24 final evaluations. The queue
+finished on 7 October 2026 at 21:21 UTC; automatic burns were restored and
+verified on all eight GPUs. Each arm/task selected LR 3e-5 using development
+data only. Mean ± sample standard deviation over fine-tuning seeds 42/43/44:
+
+| Arm | STS-B correlation ×100 | BoolQ accuracy (%) |
+| --- | ---: | ---: |
+| A | 78.631 ± 0.494 | 70.887 ± 0.186 |
+| P6 | 80.003 ± 0.560 | 70.387 ± 0.377 |
+| P6-iso | 79.076 ± 0.135 | 69.817 ± 0.081 |
+| P7-simple | 79.379 ± 0.375 | 70.031 ± 0.295 |
+
+STS-B correlation is the mean of Pearson and Spearman on 1,379 held-out examples;
+BoolQ uses 3,270 held-out examples (the public validation split, withheld from
+LR/checkpoint selection). P6 has the highest STS-B mean; A has the highest BoolQ
+mean. These are three fine-tuning seeds over one pretraining seed, so the results
+do not establish robustness to pretraining randomness.
+
+Sources: [verified final summary](../artifacts/stsb-boolq-monitor-20261008-a10/summary.json),
+[completed queue](../artifacts/stsb-boolq-monitor-20261008-a10/supervised/run/complete.json),
+[diagnosis and acceptance criteria](SUPERVISED_FINETUNING_20261007.md#task-output-gate-correction--8-october-2026).
 
 ## Evaluation-only proxy ablations
 

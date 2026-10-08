@@ -1,3 +1,31 @@
+## B200 STS-B/BoolQ completed — 8 October 2026, 00:01 UTC
+
+Read-only monitor a825a1e on thiennh-p6-tjx3-worker-0 returned a fresh snapshot
+at 2026-10-08 00:01:51 UTC. All 97/97 stages finished successfully: eight
+numerical gates, eight smoke/reload/validation triples, 32 production fits,
+eight development-only LR selections, 24 final evaluations and the summary.
+The queue finished at 2026-10-07 21:21:03 UTC. Supervisor exit is zero; final
+burn restoration was verified at 21:22:14 UTC. The fresh snapshot confirms the
+same burn workers 401980–401987 on all eight B200s, each at 100% utilization
+and 155212 MiB used; the burn log shows ongoing collective/GEMM progress.
+
+Pulled 104 source-SHA256-verified artifacts into
+artifacts/stsb-boolq-monitor-20261008-a10/. Additionally verified all 97 stage
+artifact hashes against complete.json and summary means/stdevs against all
+24 evaluation result files. Predictions remain on B200; the remote summary
+stage recomputed their metrics and validated provenance/order. Final means:
+STS-B correlation (Pearson/Spearman average) ×100: A 78.631, P6 80.003,
+P6-iso 79.076, P7-simple 79.379. BoolQ accuracy (%): A 70.887, P6 70.387,
+P6-iso 69.817, P7-simple 70.031. Three fine-tuning seeds, one pretraining seed;
+P6 is strongest on STS-B, while A remains strongest on BoolQ.
+
+Source log temp/stsb-boolq-monitor-20261008-a10.log SHA256
+1c6445e0cda8b0e30d8e773fba9009a9fbd7c0bc7d13438bae312ef82b929846.
+Monitoring used the status-only worktree; no new model code, training, stopping,
+cleanup or environment changes were deployed. Remote main 03a96a2 deactivates
+the acknowledged monitor (commands #0). Status-only commits merged locally.
+The new P6/P7 variants remain local and untrained.
+
 ## P7 P6-variant follow-up review
 
 No production-code defect was found. Added two independent full-depth regression
