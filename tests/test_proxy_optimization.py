@@ -1,5 +1,7 @@
 """Reference equivalence for forward-local target caches and proxy-key RoPE."""
 import copy
+from contextlib import contextmanager
+import io
 import unittest
 from unittest.mock import patch
 
@@ -7,7 +9,8 @@ import torch
 from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb
 
 from deep_kv import P6_VARIANTS, SIMPLE_MEMORY_ARMS
-from deep_kv.proxy_memory import MemoryHead
+from deep_kv.model import Context
+from deep_kv.proxy_memory import MemoryHead, flash_joint_attention
 from tests.test_proxy_memory import model, batch, objective
 from tests.test_fa4_baseline import reference_kernel
 
@@ -31,6 +34,17 @@ def legacy_entries(self, prediction, rotary, native_values):
     k, _ = apply_rotary_pos_emb(k, k, *rotary)
     v = native_values if self.v_proj is None else self.v_proj(p).view(shape).transpose(1, 2)
     return k, v
+
+
+@contextmanager
+def legacy_operations(m):
+    def uncached_joint(*args, **kwargs):
+        kwargs.pop('doubled_layout', None)
+        return flash_joint_attention(*args, **kwargs)
+    with patch.object(m, 'normalize_target', side_effect=lambda *a, **kw: legacy_normalize(m, *a, **kw)), \
+         patch.object(MemoryHead, 'entries', legacy_entries), \
+         patch('deep_kv.proxy_memory.flash_joint_attention', side_effect=uncached_joint):
+        yield
 
 
 class ProxyOptimizationTests(unittest.TestCase):
@@ -111,3 +125,92 @@ class ProxyOptimizationTests(unittest.TestCase):
             doubled.clear(); native.clear()
             m(batch())
             self.assertIsNot(previous, doubled[0])
+
+    def assert_nested_equal(self, actual, expected):
+        if isinstance(actual, torch.Tensor):
+            torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+        elif isinstance(actual, dict):
+            self.assertEqual(actual.keys(), expected.keys())
+            for key in actual:
+                self.assert_nested_equal(actual[key], expected[key])
+        elif isinstance(actual, (list, tuple)):
+            self.assertEqual(len(actual), len(expected))
+            for x, y in zip(actual, expected):
+                self.assert_nested_equal(x, y)
+        else:
+            self.assertEqual(actual, expected)
+
+    def test_optimizer_statistics_trajectory_and_reload_match_legacy(self):
+        arms = ('P6-iso-weighted', 'P6-iso-layernorm', 'P7-simple-sparse', 'P7-simple-short')
+        for arm in arms:
+            for backend in ('sdpa', 'fa4'):
+                for bf16 in (False, True):
+                    with self.subTest(arm=arm, backend=backend, bf16=bf16):
+                        m = model(arm, backend, checkpoint=True)
+                        reference = copy.deepcopy(m)
+                        opt = torch.optim.AdamW(m.parameters(), lr=3e-4)
+                        ref_opt = torch.optim.AdamW(reference.parameters(), lr=3e-4)
+                        # Exercise actual two-pass initialization before optimizer updates.
+                        for phase in ('mean', 'variance'):
+                            with torch.no_grad(), torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
+                                actual = m(batch(), compute_auxiliary_losses=False,
+                                           collect_target_statistics=True, statistics_mode=phase)
+                                with legacy_operations(reference):
+                                    expected = reference(batch(), compute_auxiliary_losses=False,
+                                                         collect_target_statistics=True, statistics_mode=phase)
+                            self.assert_nested_equal(actual, expected)
+                            for current, out in ((m, actual), (reference, expected)):
+                                current.update_statistics(out['center_sums'], out['center_squares'],
+                                                          out['center_counts'], initialize=phase)
+                        for step in range(3):
+                            opt.zero_grad(set_to_none=True); ref_opt.zero_grad(set_to_none=True)
+                            with torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
+                                actual = m(batch(), collect_target_statistics=True)
+                            objective(actual).backward()
+                            with legacy_operations(reference):
+                                with torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
+                                    expected = reference(batch(), collect_target_statistics=True)
+                                objective(expected).backward()
+                            self.assert_nested_equal(actual, expected)
+                            self.assert_nested_equal([p.grad for p in m.parameters()],
+                                                     [p.grad for p in reference.parameters()])
+                            opt.step(); ref_opt.step()
+                            for current, out in ((m, actual), (reference, expected)):
+                                current.update_statistics(out['center_sums'], out['center_squares'], out['center_counts'])
+                            self.assert_nested_equal(m.state_dict(), reference.state_dict())
+                            self.assert_nested_equal(opt.state_dict(), ref_opt.state_dict())
+                            if step == 1:
+                                # Resume into a new model/optimizer; reference remains uninterrupted.
+                                saved = io.BytesIO()
+                                torch.save(dict(model=m.state_dict(), optimizer=opt.state_dict()), saved)
+                                saved.seek(0); state = torch.load(saved, weights_only=True)
+                                m = model(arm, backend, checkpoint=True)
+                                m.load_state_dict(state['model'], strict=True)
+                                opt = torch.optim.AdamW(m.parameters(), lr=3e-4)
+                                opt.load_state_dict(state['optimizer'])
+
+    def test_outstanding_forwards_with_different_documents_match_uncached_replay(self):
+        # Single-token documents, unequal fragments, and a changed batch/sequence
+        # shape must all keep their own FA4 layout until their backward completes.
+        contexts = [batch()]
+        for segments in (torch.tensor([[0, 1, 1, 2, 2, 2]]), torch.tensor([[0, 0, 0], [0, 1, 1]])):
+            positions = torch.zeros_like(segments)
+            for t in range(1, segments.shape[1]):
+                positions[:, t] = torch.where(segments[:, t] == segments[:, t-1], positions[:, t-1]+1, 0)
+            ids = torch.arange(segments.numel()).reshape_as(segments)+3
+            contexts.append(Context(ids, torch.ones_like(ids, dtype=torch.bool), positions, segments))
+        for arm in SIMPLE_MEMORY_ARMS:
+            for bf16 in (False, True):
+                with self.subTest(arm=arm, bf16=bf16):
+                    m = model(arm, 'fa4', checkpoint=True)
+                    reference = copy.deepcopy(m)
+                    with torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
+                        actual = [m(ctx, collect_target_statistics=True) for ctx in contexts]
+                    sum(objective(out) for out in reversed(actual)).backward()
+                    with legacy_operations(reference):
+                        with torch.autocast('cpu', dtype=torch.bfloat16, enabled=bf16):
+                            expected = [reference(ctx, collect_target_statistics=True) for ctx in contexts]
+                        sum(objective(out) for out in reversed(expected)).backward()
+                    self.assert_nested_equal(actual, expected)
+                    self.assert_nested_equal([p.grad for p in m.parameters()],
+                                             [p.grad for p in reference.parameters()])

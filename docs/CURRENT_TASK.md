@@ -1,5 +1,12 @@
 ## P6/P7 execution optimization — 8 October 2026
 
+Follow-up review found no production-code defect. Five optimization tests passed
+in 23.695 s, including two new tests: exact old/new AdamW and normalization-state
+trajectories through bootstrap, three updates and save/load; and FA4 checkpoint
+replay for multiple outstanding forwards with different document/batch shapes.
+FP32/BF16, CPU SDPA and FA4 oracle. Tests/docs only; no B200 access or deployment.
+Evidence: temp/proxy-optimization-20261008/review-tests.log.
+
 Removed repeated target-normalization work (batched scales, reused centered
 values/token counts, skipped unused clipping counts), redundant P7 proxy-key
 RoPE and repeated FA4 doubled-layout construction. Forward-local caches only;

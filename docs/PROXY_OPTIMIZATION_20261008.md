@@ -1,5 +1,29 @@
 # P6/P7 execution optimization — 8 October 2026
 
+## Follow-up correctness review
+
+No production-code defect found. Added two regression checks for cache lifetime
+and state evolution; all five optimization tests passed in **23.695 seconds**
+on the dev CPU (`review-tests.log` in the artifact directory below).
+
+- Weighted/layer-normalized P6 targets and sparse/short P7 targets: two-pass
+  normalization bootstrap, three AdamW updates, and a model/optimizer save/load
+  after update two. Every output, gradient, normalization buffer, parameter and
+  AdamW state matches the old calculations exactly, including the uninterrupted
+  reference after resume. FP32/BF16, SDPA/FA4 CPU oracle, checkpointing enabled.
+- All P7-simple variants: multiple outstanding forwards with unequal documents,
+  one-token documents, different batch/sequence shapes, then combined backward
+  with checkpoint replay. Outputs and gradients exactly match independently
+  reconstructed FA4 layouts and old proxy-key/normalization operations.
+
+Also checked the installed Qwen RoPE helper and Trainer statistics-update order:
+the key expression is unchanged, and running statistics update after backward.
+This review changed tests/docs only. Previous 94-test regression evidence still
+applies; it was not rerun wholesale. No B200 access or environment changes.
+Actual CUDA-kernel and B200 performance validation remains pending.
+
+## Implementation
+
 This changes execution of the existing arms, not their definitions. Targets,
 gradient routing, losses, gates, parameter initialization, optimizer, data order,
 document isolation and attention backends are unchanged. No new CLI options,
