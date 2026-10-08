@@ -1,20 +1,24 @@
-## Nine-run follow-up status — 8 October 2026, 07:21:50 UTC
+## Nine-run follow-up status — 8 October 2026, 11:49:43 UTC
 
-Read-only monitor c340b3d: P6-iso-sparse seed42 completed2500 updates; training
-and independent checkpoint/backend/metric validator both passed. Full4882-row
-validation (9,981,660 target tokens): LM NLL3.4712737578871504, PPL32.1777029553.
-Trainer runtime92.36min; end-to-end training job93.44min. Compared with prior
-seed42 results, PPL is0.59% lower than A but0.50% higher than original P6-iso.
-One seed only; sparse placement has not improved on its parent in this run.
+Read-only monitor a78600d: three seed42 arms completed2500 updates and passed
+independent checkpoint/backend/metric validation. Full4882-row results:
 
-P6-iso-short now training, latest visible step402/2500, finite metrics, ~2.24–2.25
-seconds/update. All8GPUs active at97–99%, workers492889–492896. Seven further
-training jobs remain queued; no stage failed. Automatic burn restoration remains
-configured in the live supervisor. No workload stopped/restarted or code changed.
-Evidence:20 SHA256-verified artifacts in artifacts/proxy-followup-monitor-20261008-a02/;
-completed-job artifact hashes independently match queue receipts. Raw log SHA256
-4353ecfd4b9d8b2f69aba117d0c6e90f5dae7a283afb5bcbce13b59b1e3611db.
-commands.sh #0 leaves the queue running. Do not relaunch.
+- P6-iso-sparse: NLL3.4712737578871504, PPL32.1777029553, Trainer92.36min.
+- P6-iso-short: NLL3.4694066796556644, PPL32.1176807171, Trainer95.30min.
+- P6-iso-weighted: NLL3.4663973720846024, PPL32.0211740193, Trainer95.94min.
+
+Weighted essentially matches the original P6-iso(PPL32.0180); no new arm beats
+its parent at this seed. All three improve over A(PPL32.3681).
+
+P6-iso-layernorm now training, latest visible step2345/2500, finite metrics,
+~2.26seconds/update. All8GPUs active96–99%, workers504220–504227. Five further
+fits queued: P7-simple-sparse/short seed42, then A/P6-iso/P7-simple seed1042.
+No stage failed. Automatic burn restoration remains configured. No workload
+stopped/restarted and no training code changes. commands.sh #0; do not relaunch.
+Evidence: artifacts/proxy-followup-monitor-20261008-a03/; exported SHA256s and
+all six completed-job artifact hashes verified locally. Raw log SHA256:
+8dc9e1aff7d31721a2e5a0e3bd4a83360e7c09d48bdfc868c5557e62ff296740.
+Detailed scores and arm explanations: PROXY_RESULTS_SUMMARY.md.
 
 ## Nine-run proxy follow-up authorized — 8 October 2026
 
