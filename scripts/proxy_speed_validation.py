@@ -113,16 +113,19 @@ def capture(arm, backend, checkpoint, recipe, rows):
 
 def gate(args):
     import torch
+    from torch.nn.attention import sdpa_kernel, SDPBackend
     torch.set_num_threads(2)
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     recipe,rows=read(args.recipe),read(args.rows)
     cases=[]
-    for backend in ('sdpa','fa4'):
+    for backend in ('sdpa_math','fa4'):
         for checkpoint in (False,True):
             baseline=None
             for name in ('previous','optimized'):
                 print('CAPTURE',args.arm,backend,name,checkpoint,flush=True)
-                with implementation(name):value=capture(args.arm,backend,checkpoint,recipe,rows)
+                context=sdpa_kernel([SDPBackend.MATH]) if backend=='sdpa_math' else nullcontext()
+                with context,implementation(name):
+                    value=capture(args.arm,'sdpa' if backend=='sdpa_math' else backend,checkpoint,recipe,rows)
                 if baseline is None:baseline=value
                 assert baseline['initial']==value['initial'],'Initial weights/buffers differ'
                 errors={k:exact_tensors(baseline[k],value[k]) for k in ('outputs','gradients')}

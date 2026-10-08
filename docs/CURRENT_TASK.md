@@ -1,4 +1,4 @@
-## Authorized B200 proxy validation: investigating numerical gate — 8 October 2026
+## Authorized B200 proxy validation: full study after repeatability control — 8 October 2026
 
 User authorized CUDA correctness, 25-step eight-GPU smokes with resume, and
 before/after timing for A/P6-iso/P7-simple/P7. No research training authorized
@@ -8,9 +8,10 @@ Prepared 46-stage queue, reference sources from 4f8208b, same training recipe,
 automatic final burns and fresh root proxy-speed-validation-20261008-a01.
 See PROXY_B200_VALIDATION_20261008.md for protocol, scripts and evidence.
 First SDPA gate failed strict gradient equality; outputs/statistics match exactly.
-No smoke/timing runs started. All eight burns restored and verified. A separate
-old/old versus old/new repeatability diagnostic is being launched before
-interpreting the difference; full validation remains pending.
+No smoke/timing runs started. All eight burns restored and verified. Repeatability control: default SDPA old/old 0.774% vs old/new 0.782% max
+per-tensor gradient relative L2; forced math SDPA and FA4 both exactly equal.
+Fresh 46-stage a02 study uses strict math-SDPA/FA4 gates; normal production
+FA4 recipe remains in all smoke/resume/timing jobs. Full results pending.
 
 ## Remaining exact proxy optimizations — 8 October 2026
 

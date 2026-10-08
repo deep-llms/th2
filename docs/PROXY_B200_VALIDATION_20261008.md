@@ -3,7 +3,7 @@
 Authorized scope: CUDA correctness, 25-step eight-GPU smokes/resume checks,
 and before/after throughput. **No 2,500-step research runs.**
 
-Fresh output root: `/mnt/local/_outputs/deep-llms_th2/proxy-speed-validation-20261008-a01`.
+Initial output root: `/mnt/local/_outputs/deep-llms_th2/proxy-speed-validation-20261008-a01`.
 Machine: `thiennh-p6-tjx3-worker-0`. Read-only inspection at 02:37:27 UTC on
 8 October verified eight B200s, only the known communicating burn workers
 401980–401987, and the expected attention_bench package versions. Inspection
@@ -14,7 +14,7 @@ log: `temp/proxy-validation-inspection-20261008-a01.log`, SHA256
 
 1. Nine numerical gates: P6-iso-sparse, P6-iso-short, P6-iso-weighted,
    P6-iso-layernorm, P7-simple-sparse, P7-simple-short, P6-iso, P7-simple and P7.
-   Full-size Qwen, two real packed 2048-token rows, BF16 CUDA, both SDPA and
+   Full-size Qwen, two real packed 2048-token rows, BF16 CUDA, both forced math SDPA and
    FA4. Compare previous/optimized code at the same weights and checkpointing
    setting, separately with checkpointing off/on. Two-pass bootstrap, hidden
    outputs, losses, every gradient, normalization moments and updated buffers
@@ -74,3 +74,25 @@ repeatability diagnostic compares previous/previous and previous/optimized
 at identical weights under SDPA, explicitly forced math SDPA and FA4. It
 records differences without declaring acceptance or relaxing the study gate.
 Root: proxy-speed-repeatability-20261008-a01. No production recipe change.
+
+## Repeatability result and corrected strict gate
+
+The diagnostic completed normally; all eight burns restored/verified again.
+At identical weights on P6-iso-sparse:
+
+| Backend | Previous/previous max gradient relative L2 | Previous/optimized | Outputs |
+|---|---:|---:|---|
+| Default SDPA | 0.00774436 | 0.00781674 | Exactly equal |
+| Forced math SDPA | 0 | 0 | Exactly equal |
+| Production FA4 | 0 | 0 | Exactly equal |
+
+Thus the default SDPA comparison is limited by observed backward variability.
+The fresh full study uses **math SDPA and production FA4 for strict equality**;
+no numerical tolerance is added. This backend restriction applies only to the
+numerical oracle; all smoke/resume/timing jobs retain production FA4.
+This does not claim bitwise repeatability for default SDPA.
+
+Evidence: artifacts/proxy-repeatability-monitor-20261008-a02/, source log SHA256
+`3e5da76557bed17c4643c073c63e1a77711782221a6fca00daa285ea530a808c`.
+Fresh full-study root: proxy-speed-validation-20261008-a02. Original failure
+and diagnostic outputs are preserved.
