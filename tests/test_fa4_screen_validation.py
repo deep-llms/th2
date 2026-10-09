@@ -62,6 +62,24 @@ class ScreenValidationTests(unittest.TestCase):
                     **heads),checkpoint/'model.safetensors')
                 args=SimpleNamespace(run_dir=str(root),output=str(root/'passed.json'),steps=steps,seed=42,arms=[variant],attention_backend=backend)
                 validate(args);self.assertEqual(json.loads((root/'passed.json').read_text())['steps'],steps)
+                # Disposable smoke schedules must be explicit; production defaults
+                # still reject artifacts with an unexpected schedule or warmup.
+                args.output=str(root/'wrong-schedule.json');args.schedule_steps=28601
+                with self.assertRaises(AssertionError):validate(args)
+                args.schedule_steps=28600;args.warmup_steps=1431
+                with self.assertRaises(AssertionError):validate(args)
+                args.warmup_steps=1430
+                if steps < 100:
+                    smoke_config={**config,'training':{**config['training'],'warmup_steps':5}}
+                    smoke_state={**state,'max_steps':100}
+                    smoke_result={**result,'schedule_steps':100}
+                    for name,value in [('train_config',smoke_config),('trainer_state',smoke_state),('result',smoke_result)]:
+                        (arm/f'{name}.json').write_text(json.dumps(value))
+                    args.output=str(root/'smoke.json');args.schedule_steps=100;args.warmup_steps=5
+                    validate(args)
+                    for name,value in [('train_config',config),('trainer_state',state),('result',result)]:
+                        (arm/f'{name}.json').write_text(json.dumps(value))
+                    args.schedule_steps=28600;args.warmup_steps=1430
                 args.output=str(root/'bad.json');args.steps=steps+1
                 with self.assertRaises(AssertionError):validate(args)
                 args.steps=steps

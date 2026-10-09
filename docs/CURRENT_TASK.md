@@ -1,3 +1,22 @@
+## Authorized 50-step real-training smoke on q359 — 9 October 2026
+
+User accepted a real training-entry smoke and allowed 50–100 steps. Queue runs
+A then P6-iso for 50 updates each, seed1042 (proxy1043), all eight GPUs, full
+28-layer model, microbatch16/GAS4, sequence2048, FA4 document isolation with
+EOS boundaries/reset positions and decoder/LM/aux checkpointing disabled.
+Disposable raw-text subsets: first300k train/2048 validation documents;
+train.py performs normal tokenization/packing with shared HF caches in this
+smoke folder. Smoke-only schedule100/warmup5, proxy warmup10, save/eval every25,
+logging every5, final eval128 rows. Production recipe remains unchanged.
+Each arm is checked by the existing validator with explicit schedule/warmup
+expectations; checks include finite losses, actual FA4 forward/backward receipts,
+optimizer/scheduler/all8 RNG files, target statistics/gates and memory usage.
+CPU validator tests and queue/shell/Python syntax checks pass locally.
+Output root: `/mnt/local/_outputs/deep-llms_th2/q359-proxy-training-smoke50-20261009-a01`.
+Launch copies/rechecks Accelerate configuration, freshly identifies the reviewed
+burn workers, and uses the existing supervisor to reclaim GPUs and restore the
+communicating burn after success/failure. No long scientific run is included.
+
 ## Qwen assets verified on q359 — 9 October 2026
 
 Download 99c251c completed all three requested files. CPU-only verification

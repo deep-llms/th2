@@ -148,17 +148,19 @@ def validate(args):
     """Fail closed on actual backend, full recipe, final state, or normalization errors."""
     from safetensors import safe_open
     root=Path(args.run_dir);results=[]
-    assert 1 <= args.steps < 28600 and args.arms and len(set(args.arms))==len(args.arms)
+    schedule=getattr(args,'schedule_steps',28600)
+    warmup=getattr(args,'warmup_steps',1430)
+    assert 0 <= warmup < schedule and 1 <= args.steps < schedule and args.arms and len(set(args.arms))==len(args.arms)
     for arm in args.arms:
         folder=root/f'seed-{args.seed}'/arm
         result,state,config=(read(folder/name) for name in ('result.json','trainer_state.json','train_config.json'))
         assert result['arm']==arm and result['global_step']==state['global_step']==args.steps
-        assert result['status']=='stopped' and result['schedule_steps']==state['max_steps']==28600
+        assert result['status']=='stopped' and result['schedule_steps']==state['max_steps']==schedule
         assert result['input_tokens']==args.steps*1048576
         backend=getattr(args,'attention_backend','fa4')
         assert config['pilot'].get('attention_backend','sdpa')==backend and config['data']['isolate_documents']
         assert config['training']['per_device_train_batch_size']==16 and config['training']['gradient_accumulation_steps']==4
-        assert config['training']['warmup_steps']==1430
+        assert config['training']['warmup_steps']==warmup
         assert not any(config['pilot'][key] for key in ('checkpoint_layers','checkpoint_lm','checkpoint_aux'))
         if backend=='fa4':
             assert result['attention_runtime']['version']=='4.0.0b33' and not result['sdpa_receipts']
@@ -230,6 +232,8 @@ def main():
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
     p.add_argument('--arm',choices=ALL_PROXY_ARMS,help='Explicit arm for a numerical worker')
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
+    p.add_argument('--schedule-steps',type=int,default=28600,help='Expected full schedule; override only for disposable smokes')
+    p.add_argument('--warmup-steps',type=int,default=1430,help='Expected warmup; override only for disposable smokes')
     p.add_argument('--arms',nargs='+',choices=('A',)+ALL_PROXY_ARMS,default=('A',)+PROXY_ARMS)
     p.add_argument('--attention-backend',choices=('fa4','sdpa'),default='fa4',help='Backend expected by validate mode')
     args=p.parse_args();globals()[args.mode](args)
