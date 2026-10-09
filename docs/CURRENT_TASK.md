@@ -15,9 +15,17 @@ node. It verifies the Qwen asset hashes and all352 English release files
 Checks fresh-cache disk space, copies/verifies Accelerate config and checks
 versions/ownership before the existing burn-restoring supervisor reclaims GPUs.
 Production data processing remains inside train.py with160 workers and shared
-HF caches. Launch and startup receipts are pending; do not claim optimizer
-updates until the live training log confirms them. Local queue/validator tests
-(3) and launcher shell/embedded-Python syntax checks passed.
+HF caches. Launch5920a03 was verified by startup inspectionbb71213:
+all352 English files and all Qwen assets passed hash checks; Accelerate config
+was copied and verified. The supervisor stopped verified burn workers9776–9783,
+recorded all8GPUs at0MiB/no compute PIDs at15:28:31UTC, and started A.
+At15:31UTC A was tokenizing the full36,595,514-document training split;
+optimizer updates had not yet started. P6-iso is queued after A validation.
+Supervisor PID10598 and tmux session were live; automatic communicating-burn
+restoration remains armed for queue success/failure. Evidence:
+temp/remote_logs/q359-10k-startup-status-a01.log.
+Local queue/validator tests (3) and launcher shell/embedded-Python syntax checks
+passed. commands.sh is now inactive (#0); the persistent queue keeps running.
 
 ## A/P6-iso 50-step full-model smoke passed — 9 October 2026
 
