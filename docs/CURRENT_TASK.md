@@ -1,3 +1,13 @@
+## New machine read-only runner check — 9 October 2026
+
+User provided the new q359 Dropbox share (stored only in ignored local config)
+and authorized a simple `nvidia-smi` submission to test runner/Dropbox response.
+Job `th2-q359-nvidia-smi-check-20261009-a01` prints UTC time, hostname, GPU status,
+and `TH2_Q359_NVIDIA_SMI_CHECK_OK` on success; `#1 +60+a` requests full logs.
+No environment activation, process termination, or training is involved.
+The prior install commit d11140d has a STARTED receipt; completion is unverified.
+Verify the new job's exact receipt and output in the q359 share.
+
 ## New machine environment installation — 9 October 2026
 
 User reports a replacement machine and authorizes environment installation via

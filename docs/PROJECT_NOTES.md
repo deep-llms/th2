@@ -1,3 +1,11 @@
+## New runner response check (9 October 2026)
+
+The operator supplied the q359 Dropbox share and authorized a read-only
+`nvidia-smi` job through th2. Its local label is `th2-q359`, configured in
+ignored `temp/dropbox_q359_folders.txt`. The previous tjx3 share/monitor does
+not describe this node. Installation d11140d has only a STARTED receipt so far;
+a successful GPU-status check alone will not verify the Python environments.
+
 ## Replacement machine environment setup (9 October 2026)
 
 User authorized installing environments on a new machine through `deep-llms/th2`.
