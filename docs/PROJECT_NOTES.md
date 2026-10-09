@@ -1,3 +1,15 @@
+## Qwen assets download on q359 — 9 October 2026
+
+User authorized downloading Qwen assets. Controller request reuses the three
+pinned files in `resources/qwen3_base_assets.json` (Qwen3-0.6B-Base revision
+`da87bfb608c14b7cf20ba1ce41287e8de496c0cd`): config.json, tokenizer.json and
+tokenizer_config.json, at the existing recipe model directory. The current
+recipe initializes random weights and needs these config/tokenizer files.
+Download completion, SHA256 matches and offline loading must be verified.
+User asked whether another smoke is needed: recommend only 2–3 updates through
+the actual training entry to cover data packing, auxiliary loss, memory and
+checkpointing; no additional GPU test is launched by this download request.
+
 ## q359 smoke completion and live burn confirmed — 9 October 2026
 
 Read-only verification 25ca059 returned `FA4_SMOKE_AND_BURN_HANDOFF_CONFIRMED`.
