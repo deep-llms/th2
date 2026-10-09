@@ -1,25 +1,23 @@
 #1 +60+a
-#th2-q359-A-P6iso-10k-seed1042-20261009-a01
+#th2-q359-10k-startup-status-20261009-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-test "$(hostname)" = thiennh-p6-q359-worker-0
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01
-TASK_SESSION=q359-proxy-10k-seed1042-20261009-a01
-test ! -e "$TASK_ROOT"
-if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
-mkdir -p "$TASK_ROOT"
-tmux new-session -d -s "$TASK_SESSION" "exec bash scripts/launch_proxy_10k_fresh.sh '$TASK_ROOT' thiennh-p6-q359-worker-0 >'$TASK_ROOT/supervisor.log' 2>&1"
-tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
-sleep 45
-cat "$TASK_ROOT/supervisor.log"
-if [ "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 1 ]; then
-  /mnt/local/conda-py311/envs/attention_bench/bin/python3.11 - "$TASK_ROOT" <<'PYREMOTE'
-import json,sys
+/mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
+import json,subprocess
 from pathlib import Path
-r=json.loads((Path(sys.argv[1])/'supervised/supervisor.json').read_text())
-assert r['training_status']=='ok' and r['training_returncode']==0 and r['burn']['collective_progress_verified'],r
-print('PROXY_10K_QUEUE_AND_BURN_COMPLETE',flush=True)
+from scripts.gpu_status import snapshot
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01')
+for path in (root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',root/'supervised/run/run.json'):
+    if path.is_file():print(path.name,path.read_text(),flush=True)
+print('SUPERVISOR_TAIL','\n'.join((root/'supervisor.log').read_text(errors='replace').splitlines()[-15:]),flush=True)
+for path in sorted((root/'supervised/run').glob('*.log')):
+    print('JOB_TAIL',path.name,'\n'.join(path.read_text(errors='replace').splitlines()[-15:]),flush=True)
+print('TMUX',subprocess.run(['tmux','display-message','-p','-t',root.name,'#{pane_dead} #{pane_pid}'],capture_output=True,text=True,check=True).stdout.strip(),flush=True)
+print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
+for arm in ('A','P6-iso'):
+    path=root/'supervised/run/seed-1042'/arm/'train_config.json'
+    if path.is_file():
+        c=json.loads(path.read_text())
+        print('TRAIN_CONFIG',arm,json.dumps({k:c[k] for k in ('world_size','tokens_per_update','train_fingerprint','eval_fingerprint')}),flush=True)
+        print('CHECKPOINTS',arm,[p.name for p in path.parent.glob('checkpoint-*')],flush=True)
 PYREMOTE
-else
-  echo 'PROXY_10K_SUPERVISOR_ACTIVE; inspect preflight and live progress.'
-fi
