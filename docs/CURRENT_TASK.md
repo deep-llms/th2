@@ -1,3 +1,14 @@
+## Live production health verified — 10 October 2026, 01:58 SGT
+
+Read-only inspection1d76e2e confirmed A advancing from step3780 to3787 in15s;
+stop target remains10,000 (progress bar denominator28,600 is the full LR schedule).
+Recent loss3.30–3.33, grad norm0.13–0.15, LR~2.951e-4, steady update~2.06s.
+All8 B200 GPUs97–99% busy,110448MiB each, same owned training PIDs10958–10965.
+Checkpoints3500/3750 present, latest trainer_state at3750;23TiB disk available.
+Supervisor/queue/tmux live, P6-iso still queued. No errors/nonfinite metrics in
+inspected recent logs. Evidence:temp/remote_logs/q359-10k-health-20261010-a01.log.
+No training configuration or running processes changed. commands.sh reset to#0.
+
 ## Fresh A/P6-iso 10,000-step production queue on q359 — 9 October 2026
 
 User requested continuing the previously planned experiments after both 50-step
