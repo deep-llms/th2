@@ -1,3 +1,20 @@
+## q359 FA4 runtime smoke passed (9 October 2026)
+
+Launch 6eb7654 ran the real pinned FA4 kernel on all eight B200 GPUs with
+synthetic 2048-token inputs, 16 query/8 KV heads and head dimension 128.
+Relative L2 errors against FP32 math SDPA: output 0.00197505, Q gradient
+0.00250610, K gradient 0.00248637, V gradient 0.00228929. Exact document
+isolation passed. Three Accelerate/DDP optimizer steps (accumulation 2)
+produced identical gradients and updated weights across ranks.
+The supervisor recorded training_status=ok and verified eight-rank burn
+collective progress at 2026-10-09 14:33:33 UTC. Evidence:
+`temp/remote_logs/q359-fa4-runtime-smoke-a01-full.log`.
+The outer log watcher then errored on an empty tmux pane exit-status field;
+this happened after test completion and burn handoff. A read-only follow-up
+verifies saved completion receipts and advancing live burn cycles directly.
+No kernel/full-training code was changed; full-model smoke still needs local
+model configuration/tokenizer assets.
+
 ## q359 dataset download request (9 October 2026)
 
 Reuse the proven controller download for `nht10/cx_sampled_old` into
