@@ -1,3 +1,24 @@
+## Fresh A/P6-iso 10,000-step production queue on q359 — 9 October 2026
+
+User requested continuing the previously planned experiments after both 50-step
+smokes passed. Submit fresh A then P6-iso, seed1042/proxy1043, 10,000 updates each,
+full28,600 schedule/1,430 warmup, LR3e-4, all8GPUs, micro16/GAS4, sequence2048,
+1,048,576tokens/update, FA4 document isolation/reset RoPE/EOS. No smoke checkpoints
+or short schedules are reused. Save every250 and retain2, as previously agreed.
+Five stages: A fit/validate, P6-iso fit/validate, matched comparison.
+Output root `/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01`.
+Launcher now takes an explicit verified hostname instead of assuming the retired
+node. It verifies the Qwen asset hashes and all352 English release files
+(134,739,753,089 bytes) against dataset_manifest.json from public release
+2c425f4e1d4467008a0afce00de0ae8a33c8e834, whose SHA256 is
+`dbba73b7a95ebc530297bac5a2151be6292f080e80e9b3101302a905806dde9a`.
+Checks fresh-cache disk space, copies/verifies Accelerate config and checks
+versions/ownership before the existing burn-restoring supervisor reclaims GPUs.
+Production data processing remains inside train.py with160 workers and shared
+HF caches. Launch and startup receipts are pending; do not claim optimizer
+updates until the live training log confirms them. Local queue/validator tests
+(3) and launcher shell/embedded-Python syntax checks passed.
+
 ## A/P6-iso 50-step full-model smoke passed — 9 October 2026
 
 Launch61e761a finished both train.py fits and both checkpoint validators with
