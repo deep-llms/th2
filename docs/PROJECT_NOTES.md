@@ -1,3 +1,14 @@
+## q359 smoke completion and live burn confirmed — 9 October 2026
+
+Read-only verification 25ca059 returned `FA4_SMOKE_AND_BURN_HANDOFF_CONFIRMED`.
+The smoke job exited zero in 34.7 seconds; saved queue completion and supervisor
+receipts agree. At 14:39 UTC, verified burn workers 6044–6051 were active on all
+eight GPUs, with rank-0 collective cycles advancing 390 to 400 during the check
+and the GPU guard enabled. Evidence: `temp/remote_logs/q359-smoke-final-verification-a01.log`.
+The tmux exit-status watcher error did not affect the completed smoke or burn.
+`commands.sh` is inactive after verification. Remaining full-model preparation:
+download the pinned Qwen config/tokenizer, then test the actual training entry.
+
 ## q359 FA4 runtime smoke passed (9 October 2026)
 
 Launch 6eb7654 ran the real pinned FA4 kernel on all eight B200 GPUs with
