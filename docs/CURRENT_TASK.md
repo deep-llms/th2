@@ -1,4 +1,21 @@
-## Authorized replacement with fresh 10,000-step A/P6-iso pair — 8 October 2026
+## New machine environment installation — 9 October 2026
+
+User reports a replacement machine and authorizes environment installation via
+the existing `deep-llms/th2` execution repository. Prepared controller request
+`th2-new-machine-install-envs-20261009-a01` installs `train_env`, `eval`,
+`attention_bench`, and `eval_fa4` with full logs. The FA4 training specification
+now explicitly pins CUTLASS DSL 4.8.0, matching the validated runtime and launch
+preflight. Other package versions are unchanged.
+
+Installation success is pending runner logs and runtime verification. Obtain
+the new Dropbox folder and verify each environment's imports and CUDA runtime
+before proceeding. This request does not launch training. The old-node hourly
+Dropbox monitor still targets the old share; it cannot establish new-node
+status. Old hostname-specific launch/stop scripts must not be used unchanged
+on the replacement machine. The authorized fresh 10k A/P6-iso pair remains
+pending environment, dataset, machine identity, and GPU preflight checks.
+
+## Historical: authorized replacement with fresh 10,000-step A/P6-iso pair — 8 October 2026
 
 An **hourly dev-machine Dropbox monitor** is installed in user crontab at minute
 0, using `scripts/monitor_b200_dropbox.py`. Its ignored state is

@@ -1,7 +1,7 @@
 # manager: conda
 # fresh: true
 # python: 3.11
-# Experimental environment only; never reinstall train_env for kernel tests.
+# Validated FA4 training runtime, separate from the standard train_env.
 torch==2.14.1
 transformers==5.9.0
 datasets==4.8.5
@@ -12,3 +12,4 @@ pyarrow==25.0.1
 huggingface_hub==1.33.0
 openai==3.19.2
 flash-attn-4[cu13]==4.0.0b33
+nvidia-cutlass-dsl==4.8.0

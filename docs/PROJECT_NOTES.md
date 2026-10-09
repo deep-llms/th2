@@ -1,3 +1,14 @@
+## Replacement machine environment setup (9 October 2026)
+
+User authorized installing environments on a new machine through `deep-llms/th2`.
+Keep standard `train_env`/`eval` and the actual FA4 runtimes
+`attention_bench`/`eval_fa4`. All use the existing pinned package recipes;
+`attention_bench` additionally pins `nvidia-cutlass-dsl==4.8.0`, already required
+by production launch preflight and pinned in `eval_fa4`. Use controller `#i`
+with full logs. Submission is not evidence of successful installation; verify
+each environment on the new node. Old node identities and Dropbox monitoring
+do not transfer automatically. No new training is included in this install.
+
 ## Replacement 10,000-step comparison authorized (8 October 2026)
 
 The operator chose to stop the active nine-run follow-up and start a fresh
