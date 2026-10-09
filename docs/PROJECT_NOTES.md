@@ -1,3 +1,22 @@
+## q359 dataset download request (9 October 2026)
+
+Reuse the proven controller download for `nht10/cx_sampled_old` into
+`/mnt/local/_data/deep-llms_th2/cx_sampled_old`. This preserves existing recipe
+paths. The prepared text dataset needs no sampling rerun. Verify download
+completion and files against its manifest before training.
+
+## All four environments verified on q359 — 9 October 2026
+
+Verification job `th2-q359-verify-envs-20261009-a01`, commit `fd5e5f9`,
+returned `ALL_FOUR_ENVS_VERIFIED` from `thiennh-p6-q359-worker-0`.
+Evidence: `temp/remote_logs/q359-verify-envs-a01.log` (Dropbox snapshot
+2026-10-09 13:20:18 UTC). All pins match and pip check passes in train_env,
+eval, attention_bench, and eval_fa4. Python 3.11.15; torch 2.14.1/CUDA 13.0;
+eight visible GPUs and sm_100 support; distributed/NCCL available. Training
+and lm-eval imports pass, as do FA4 4.0.0b33/CUTLASS 4.8.0 imports in the two
+FA4 environments. This verifies installation/imports and CUDA availability,
+not FA4 kernel execution or distributed training. No GPU workloads were stopped.
+
 ## New runner response check (9 October 2026)
 
 The operator supplied the q359 Dropbox share and authorized a read-only
