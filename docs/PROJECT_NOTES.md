@@ -1,3 +1,13 @@
+## Qwen assets verified on q359 — 9 October 2026
+
+Download 99c251c completed all three requested files. CPU-only verification
+08db35e checked every SHA256 against resources/qwen3_base_assets.json and loaded
+AutoConfig/AutoTokenizer offline. Qwen3: 28 layers, vocabulary 151936, tokenizer
+EOS 151643. Receipt: temp/remote_logs/q359-verify-qwen-assets-a01.log, Dropbox
+14:51:16 UTC. These config/tokenizer assets support the existing random-weight
+training recipe; pretrained weights were not requested for that recipe.
+No further GPU smoke or training was launched. commands.sh is inactive.
+
 ## Qwen assets download on q359 — 9 October 2026
 
 User authorized downloading Qwen assets. Controller request reuses the three
