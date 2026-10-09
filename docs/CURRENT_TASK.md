@@ -1,3 +1,24 @@
+## A/P6-iso 50-step full-model smoke passed — 9 October 2026
+
+Launch61e761a finished both train.py fits and both checkpoint validators with
+exit0. Final verificationfbb56e4 returned `BOTH_50_STEP_SMOKES_AND_LIVE_BURN_VERIFIED`.
+Evidence: temp/remote_logs/q359-training-smoke50-status-a04.log; extracted result,
+validation and loss-history JSONs in temp/q359-training-smoke50-results/.
+All8GPUs, full28-layer model, micro16/GAS4,2048,FA4: both ran50updates/52,428,800
+input tokens. Final held-out LM loss: A7.59823, P6-iso7.69922 (128 packed rows).
+First/last logged training loss: A11.46297→7.61298; P6-iso11.48109→7.72558.
+P6 auxiliary loss0.92603→0.15165; lambda reaches0.1. Steady step times about
+2.05s A/2.22s P6-iso; peak allocated memory103.62/109.38GiB. No OOM/nonfinite
+training failures. Validators checked step50, actual FA4 forward/backward,
+optimizer/scheduler/all8RNG artifacts, normalization/gates and finite eval.
+Matching train/eval fingerprints:127b9996aba89b6f/3718bcedcdba1921.
+Both fits finished at15:04:19UTC; supervisor verified communicating burn at
+15:05:30UTC. Follow-up verified workers9776–9783, enabled guard and advancing
+collective cycles130→150. commands.sh is inactive; no scientific run launched.
+These are functional smoke results with schedule100/warmup5/proxy-warmup10
+and disposable text subsets, not a method ranking or long-training result.
+Checkpoint presence/state was checked; this smoke did not test resumption.
+
 ## Authorized 50-step real-training smoke on q359 — 9 October 2026
 
 User accepted a real training-entry smoke and allowed 50–100 steps. Queue runs
