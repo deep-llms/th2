@@ -1,28 +1,19 @@
 #1 +60+a
-#th2-q359-check-cx-sampled-old-20261009-a01
+#th2-q359-smoke-preflight-20261009-a01
 set -euo pipefail
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
-export WANDB_MODE=offline OMP_NUM_THREADS=1
-/mnt/local/conda-py311/envs/train_env/bin/python3.11 - <<'PY'
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
+/mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
+import json
 from pathlib import Path
-import datasets
-
-root = Path('/mnt/local/_data/deep-llms_th2/cx_sampled_old')
-assert root.is_dir(), root
-print('ROOT', root, flush=True)
-print('ROOT_ENTRIES', sorted(p.name for p in root.iterdir()), flush=True)
-for split in ('train', 'validation'):
-    path = root / 'subsets' / 'qwen3_0.6b_base_en_30B' / split
-    assert path.is_dir(), path
-    shards = sorted(p for p in path.glob('shard_*') if p.is_dir())
-    assert shards, path
-    rows = 0
-    for shard in shards:
-        assert (shard / 'state.json').is_file(), shard
-        dataset = datasets.load_from_disk(str(shard))
-        assert 'text' in dataset.column_names and len(dataset) > 0, shard
-        rows += len(dataset)
-    print('SPLIT', split, 'SHARDS', len(shards), 'ROWS', rows, flush=True)
-    assert rows > 1000000 if split == 'train' else rows > 1000
-print('CX_SAMPLED_OLD_LOCAL_CHECK_OK', flush=True)
-PY
+from scripts.verified_gpu_reclaim import inspect
+from scripts.train_then_burn import APPROVED_BURNS, GUARD_HASH, digest, approved_launcher
+print('INSPECTION', json.dumps(inspect()), flush=True)
+for path, expected in {**APPROVED_BURNS, '/mnt/local/_gpu_guard/gpu_guard.sh': GUARD_HASH}.items():
+    p=Path(path)
+    print('SOURCE', path, 'exists', p.is_file(), 'sha256', digest(p) if p.is_file() else None, 'expected', expected, flush=True)
+record=inspect()
+print('BURN_IDENTIFIED', {str(pid): (approved_launcher(pid,APPROVED_BURNS) or (record['processes'][str(pid)]['ppid']>1 and approved_launcher(record['processes'][str(pid)]['ppid'],APPROVED_BURNS))) for pid in record['workers']}, flush=True)
+recipe=json.loads(Path('proxy_heads.b200.json').read_text())
+print('ASSETS', {key:Path(recipe[key]).exists() for key in ('config_name','tokenizer_name','data_dir','eval_data_dir')}, flush=True)
+print('SMOKE_PREFLIGHT_COMPLETE', flush=True)
+PYREMOTE
