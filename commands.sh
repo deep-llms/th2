@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-training-smoke50-status-20261009-a02
+#th2-q359-training-smoke50-status-20261009-a03
 set -euo pipefail
 /mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
 import json
@@ -17,6 +17,12 @@ for arm in ('A','P6-iso'):
     if result.is_file():print('RESULT',arm,result.read_text(),flush=True)
     validation=root/'supervised/run'/('validate-'+arm+'.json')
     if validation.is_file():print('VALIDATION',arm,validation.read_text(),flush=True)
+    state=folder/'trainer_state.json'
+    if state.is_file():
+        history=[x for x in json.loads(state.read_text())['log_history'] if 'loss' in x]
+        if history:
+            keys=('step','loss','grad_norm','seconds_per_update','step_lm_loss','proxy_lambda','step_aux_loss')
+            print('LOSS_HISTORY',arm,json.dumps([{k:r[k] for k in keys if k in r} for r in history]),flush=True)
 print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
 final=root/'supervised/supervisor.json'
 if final.is_file():
@@ -39,5 +45,9 @@ if final.is_file():
         assert live['host']=='thiennh-p6-q359-worker-0' and not live['guard_disabled']
         assert len(live['workers'])==8 and all(len(g['pids'])==1 for g in live['gpus'])
         assert all(approved_launcher(process(pid)['ppid'],approved) for pid in live['workers'])
+        configs=[json.loads((root/'supervised/run/seed-1042'/arm/'train_config.json').read_text()) for arm in ('A','P6-iso')]
+        assert configs[0]['train_fingerprint']==configs[1]['train_fingerprint']
+        assert configs[0]['eval_fingerprint']==configs[1]['eval_fingerprint']
+        print('MATCHED_DATA_FINGERPRINTS',configs[0]['train_fingerprint'],configs[0]['eval_fingerprint'],flush=True)
         print('BOTH_50_STEP_SMOKES_AND_LIVE_BURN_VERIFIED',before,after,flush=True)
 PYREMOTE
