@@ -1,3 +1,19 @@
+## q359 FA4 runtime smoke — 9 October 2026
+
+User accepted the short FA4 forward/backward and distributed smoke test.
+Preflight fbf0c00 verified runner burn workers 499–506 under launcher 432,
+with known source/guard hashes. The existing supervisor rechecks identities,
+stops only approved workers, verifies free GPUs, and restores the communicating
+burn after success/failure. Runtime test uses synthetic 2048-token inputs,
+16 query/8 KV heads, head dimension 128, BF16 FA4 versus FP32 dense attention,
+exact document isolation, and three Accelerate/DDP updates with accumulation 2.
+Accelerate config is copied from resources and verified with accelerate env.
+This is a kernel/distributed runtime test, not full-model training.
+Output root: `/mnt/local/_outputs/deep-llms_th2/q359-fa4-runtime-smoke-20261009-a01`.
+The model config/tokenizer paths are absent; download them before full-model work.
+Dataset download and all English Arrow split loads passed: 35 train shards /
+36,595,514 rows and one validation shard / 11,822 rows (c15510f).
+
 ## Prepared dataset download on q359 — 9 October 2026
 
 User authorized downloading `nht10/cx_sampled_old`. The controller `#d +a`
