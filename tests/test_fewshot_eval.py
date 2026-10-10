@@ -18,6 +18,31 @@ from tests.test_train import fixture
 
 
 class FewshotTests(unittest.TestCase):
+    def test_mixed_steps_and_duplicate_architecture_require_exact_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); mapping={}; spec={}
+            for label,arm,step in [('A-10000','A',10000),('P6-iso-10000','P6-iso',10000),('A-10800','A',10800)]:
+                dest=root/label;dest.mkdir();checkpoint='/source/'+label
+                mapping[checkpoint]=str(dest)
+                spec[checkpoint]=dict(label=label,arm=arm,step=step,checkpoint_sha256=label)
+                (dest/'eval_metadata.json').write_text(json.dumps(dict(status='completed',step=step,arm=arm,
+                    checkpoint=checkpoint,checkpoint_sha256=label,attention_backend='fa4',dataset_manifest_sha256='data',
+                    arguments=dict(limit=None,seed=42,num_fewshot=5))))
+                (dest/'eval_benchmarks_full.json').write_text(json.dumps({'n-samples':{'piqa':{'effective':1}},'n-shot':{'piqa':5}}))
+                (dest/'eval_benchmarks.json').write_text(json.dumps({'piqa':{'acc,none':1.0}}))
+                (dest/'eval_samples.jsonl').write_text(json.dumps(dict(task='piqa',doc_id=0,doc_hash='doc',prompt_hash='prompt',target_hash='target')))
+            for name,data in [('checkpoints.json',mapping),('spec.json',spec),('data.json',dict(tasks={'piqa':{'rows':1}},manifest_sha256='data'))]:
+                (root/name).write_text(json.dumps(data))
+            args=argparse.Namespace(directory=str(root),data_check=str(root/'data.json'),count=3,
+                limit=None,seed=42,num_fewshot=5,fewshot_audit=None,checkpoint_spec=str(root/'spec.json'),output=str(root/'passed.json'))
+            validate(args)
+            self.assertEqual(set(json.loads((root/'passed.json').read_text())['arms']),{v['label'] for v in spec.values()})
+            for key,value in [('step',10000),('checkpoint_sha256','wrong'),('arm','P6-iso')]:
+                path=root/'A-10800/eval_metadata.json';saved=path.read_text();meta=json.loads(saved);meta[key]=value
+                path.write_text(json.dumps(meta));args.output=str(root/'bad.json')
+                with self.assertRaises(ValueError):validate(args)
+                path.write_text(saved)
+
     def test_audit_matches_real_harness_and_rejects_changed_prompts(self):
         torch.set_num_threads(1)
         with tempfile.TemporaryDirectory() as tmp:

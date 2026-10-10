@@ -136,3 +136,12 @@ from the inference-only `EvaluationModel`. The initial supported arms are A,
 P6 and P7-simple, on English PAWS-X/NLI. See
 [the fixed protocol](../docs/SUPERVISED_FINETUNING_20261007.md) for gradient
 routing, seeds, LR selection, split handling and the gated B200 study.
+
+For later checkpoints, fine-tuning configs must set `expected_step` to the
+requested pretraining step (default 2500 preserves older studies). The
+downstream validator accepts an explicit checkpoint specification with labels,
+steps and weight hashes, so two checkpoints of A can be compared safely.
+`scripts/checkpoint_downstream_study.py` composes the established few-shot and
+fine-tuning studies without changing model forward, loss, or optimization.
+Fine-tuning now retains all epoch model snapshots; the best epoch is still
+selected on development data.

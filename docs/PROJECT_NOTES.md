@@ -1,3 +1,34 @@
+## Authorized downstream comparison of A-10k, P6-iso-10k, A-10.8k — 10 October 2026
+
+User requested few-shot evaluation and supervised fine-tuning for these three
+seed-1042 checkpoints. Original checkpoint files remain read-only. Retain the
+established English protocol: HellaSwag 10-shot, ARC-Challenge 25-shot, and
+XNLI/XStoryCloze/PAWS-X/PIQA/ARC-Easy/Winogrande 5-shot, demonstration seed 42.
+Belebele excluded because its available demonstration pool overlaps evaluation.
+Fine-tune PAWS-X, NLI, STS-B, BoolQ using the existing task-only HF Trainer:
+LRs 1e-5/3e-5 selected on development with seed 42, selected LR repeated with
+seeds 43/44, then final held-out tests. All fits use eight GPUs, same FA4/BF16,
+512-token context and global batch 128; no proxy auxiliary loss or normalization
+updates. Keep all epoch checkpoints (model-only, as the established protocol).
+48 production fits plus numerical gates, smoke/reload checks and final testing.
+
+Benchmark download8729087 retrieves 36 pinned files (110,765,643 bytes) through
+controller #d. Existing two manifests/paths reused. No remote direct network.
+New composition helper reuses the established evaluators and fine-tuning study,
+with separate named study roots for duplicate architecture A at different steps.
+Explicit source-step checks replace hardcoded 2500; few-shot validation checks
+exact path/arm/step/weight SHA256 plus identical prompt hashes across models.
+Global summary verifies matched fine-tuning data/order across all checkpoints.
+
+Local 19 checks passed in the pinned sampling_b200 environment; harness prompt
+test needs lm_eval, absent there. Complete 20-test suite must pass in eval_fa4
+on B200 before GPU reclamation. Dataset/prompt audits must match existing
+references. Burns continue during controller downloads and CPU checks; then
+copy/verify Accelerate config, reclaim only known burns, require free GPUs,
+run the gated queue, restore communicating burns on success/failure.
+Root: /mnt/local/_outputs/deep-llms_th2/q359-downstream-10k-10800-20261010-a01
+Launch/startup pending. Original pretraining and time-match outputs unchanged.
+
 ## A time-matched continuation completed — verified 10 October 2026, 21:33 SGT
 
 A reached10,800 updates; staging, fit, validator and timing report all exited0.

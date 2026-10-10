@@ -57,6 +57,7 @@ class TaskArguments:
     selection_file: str | None = None
     evaluate_run: str | None = None
     smoke: bool = False
+    expected_step: int = 2500
 
 
 class PairClassifier(nn.Module):
@@ -329,7 +330,7 @@ def run(config_path):
         raise ValueError('Fine-tuning output must be fresh')
     set_seed(args.seed)
     adapter, tok_source, source = load_checkpoint(task.checkpoint, 'cpu', attention_backend='sdpa')
-    if source['arm'] not in ARMS or source['step'] != 2500 and not task.smoke:
+    if task.expected_step <= 0 or source['arm'] not in ARMS or source['step'] != task.expected_step and not task.smoke:
         raise ValueError('Unexpected source checkpoint arm/step')
     if task.max_length > source['context_length']:
         raise ValueError('Downstream context exceeds the pretrained context limit')

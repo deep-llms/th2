@@ -1,38 +1,26 @@
-#d +a
-#datasets
---url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag
---url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag/data
---url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag/data
---url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/Rowan--hellaswag/data
---url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli
---url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli/en
---url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli/en
---url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--xnli/en
---url https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--belebele
---url https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/data/eng_Latn.jsonl /mnt/local/_data/@PROJECT@/downstream-english-20261007/facebook--belebele/data
---url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/juletxara--xstory_cloze
---url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_eval.tsv /mnt/local/_data/@PROJECT@/downstream-english-20261007/juletxara--xstory_cloze
---url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_train.tsv /mnt/local/_data/@PROJECT@/downstream-english-20261007/juletxara--xstory_cloze
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x/en
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x/en
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/google-research-datasets--paws-x/en
---url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_test.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/baber--piqa
---url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_train.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/baber--piqa
---url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_validation.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/baber--piqa
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Challenge
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Challenge
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Challenge
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Easy
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Easy
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc/ARC-Easy
---url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--ai2_arc
---url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/README.md /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande
---url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande/winogrande_xl
---url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande/winogrande_xl
---url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/downstream-english-20261007/allenai--winogrande/winogrande_xl
---url https://huggingface.co/datasets/sentence-transformers/stsb/resolve/ab7a5ac0e35aa22088bdcf23e7fd99b220e53308/data/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/supervised-english-20261008-v2/stsb
---url https://huggingface.co/datasets/sentence-transformers/stsb/resolve/ab7a5ac0e35aa22088bdcf23e7fd99b220e53308/data/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/supervised-english-20261008-v2/stsb
---url https://huggingface.co/datasets/sentence-transformers/stsb/resolve/ab7a5ac0e35aa22088bdcf23e7fd99b220e53308/data/test-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/supervised-english-20261008-v2/stsb
---url https://huggingface.co/datasets/aps/super_glue/resolve/3de24cf8022e94f4ee4b9d55a6f539891524d646/boolq/train-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/supervised-english-20261008-v2/boolq
---url https://huggingface.co/datasets/aps/super_glue/resolve/3de24cf8022e94f4ee4b9d55a6f539891524d646/boolq/validation-00000-of-00001.parquet /mnt/local/_data/@PROJECT@/supervised-english-20261008-v2/boolq
+#1 +60+a
+#th2-q359-downstream-10k-10800-20261010-a01
+set -euo pipefail
+cd /mnt/local/deep-llms_th2
+test "$(hostname)" = thiennh-p6-q359-worker-0
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-downstream-10k-10800-20261010-a01
+TASK_SESSION=q359-downstream-10k-10800-20261010-a01
+test ! -e "$TASK_ROOT"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
+mkdir -p "$TASK_ROOT"
+tmux new-session -d -s "$TASK_SESSION" "exec bash scripts/launch_checkpoint_downstream.sh '$TASK_ROOT' thiennh-p6-q359-worker-0 >'$TASK_ROOT/supervisor.log' 2>&1"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+tail -45 "$TASK_ROOT/supervisor.log"
+if [ "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 1 ]; then
+  if [ -f "$TASK_ROOT/cpu-tests.log" ]; then tail -65 "$TASK_ROOT/cpu-tests.log"; fi
+  /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - "$TASK_ROOT" <<'PYREMOTE'
+import json,sys
+from pathlib import Path
+r=json.loads((Path(sys.argv[1])/'supervised/supervisor.json').read_text())
+assert r['training_status']=='ok' and r['training_returncode']==0 and r['burn']['collective_progress_verified'],r
+print('DOWNSTREAM_STUDY_AND_BURN_COMPLETE',flush=True)
+PYREMOTE
+else
+  echo 'DOWNSTREAM_SUPERVISOR_ACTIVE; awaiting CPU preflight or running queue.'
+fi

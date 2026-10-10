@@ -59,8 +59,11 @@ def resolve_eval(config, selection, output):
     write(output, config)
 
 
-def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS):
+def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, checkpoint_steps=None):
     arms = tuple(checkpoints)
+    checkpoint_steps = checkpoint_steps or {arm: 2500 for arm in arms}
+    if set(checkpoint_steps) != set(arms) or any(type(s) is not int or s <= 0 for s in checkpoint_steps.values()):
+        raise ValueError('Specify one positive source step per checkpoint')
     if not tasks or len(set(tasks)) != len(tasks) or any(t not in SUPPORTED_TASKS for t in tasks):
         raise ValueError('Select distinct supported tasks')
     if not arms or any(arm not in SUPPORTED_ARMS for arm in arms):
@@ -72,7 +75,7 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS):
         jobs.append(dict(name=name, argv=argv, **({'gpus':list(range(8))} if gpu else {}),
             timeout_seconds=14400, required_outputs=[dict(path=output,json_equals=expected or {'status':'completed'})]))
     def config_for(arm, task, seed, rate, dest, smoke=False, evaluation=None, selection=None):
-        return dict(checkpoint=checkpoints[arm], task=task, dataset_root=str(data_root), dataset_manifest=str(manifest),
+        return dict(checkpoint=checkpoints[arm], expected_step=checkpoint_steps[arm], task=task, dataset_root=str(data_root), dataset_manifest=str(manifest),
             max_length=512, preprocessing_num_workers=8, attention_backend='fa4', smoke=smoke,
             evaluate_run=evaluation, selection_file=selection, output_dir=str(run/dest),
             bf16=True, tf32=True, seed=seed, data_seed=seed, report_to='none',
@@ -82,7 +85,7 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS):
             optim='adamw_torch_fused', max_grad_norm=1., gradient_checkpointing=False,
             eval_strategy='no' if evaluation else 'steps' if smoke else 'epoch', eval_steps=2 if smoke else None,
             save_strategy='no' if evaluation else 'steps' if smoke else 'epoch', save_steps=2 if smoke else 500,
-            save_total_limit=1, save_only_model=True, load_best_model_at_end=not bool(evaluation),
+            save_total_limit=0, save_only_model=True, load_best_model_at_end=not bool(evaluation),
             metric_for_best_model=score_name(task), greater_is_better=True, logging_steps=25, logging_first_step=True,
             logging_nan_inf_filter=False, dataloader_num_workers=2, dataloader_pin_memory=True,
             ddp_find_unused_parameters=False, ddp_broadcast_buffers=False, disable_tqdm=True)
@@ -108,11 +111,10 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS):
             train_job('smoke-'+tag,config_for(arm,task,42,1e-5,dest,smoke=True))
             train_job('smoke-reload-'+tag,config_for(arm,task,42,1e-5,reload,
                                                   smoke=True,evaluation=str(run/dest)))
-            if extended:
-                out='smoke-checks/'+tag+'.json'
-                add('verify-reload-'+tag,['{python}','-m','scripts.finetune_study','verify-reload',
-                    '--trained',str(run/dest),'--reloaded',str(run/reload),'--output','{run_dir}/'+out],
-                    out,False,{'status':'passed'})
+            out='smoke-checks/'+tag+'.json'
+            add('verify-reload-'+tag,['{python}','-m','scripts.finetune_study','verify-reload',
+                '--trained',str(run/dest),'--reloaded',str(run/reload),'--output','{run_dir}/'+out],
+                out,False,{'status':'passed'})
     for task in tasks:
         for arm in arms:
             paths=[]

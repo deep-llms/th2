@@ -104,7 +104,7 @@ def check_numerics(args):
     from eval.models import load_checkpoint
     torch.manual_seed(42)
     model, _, meta = load_checkpoint(args.checkpoint, 'cuda', attention_backend='fa4')
-    require(meta['step'] == 2500, 'Wrong checkpoint step')
+    require(meta['step'] == getattr(args, 'expected_step', 2500), 'Wrong checkpoint step')
     wrapped = model.wrapped
     buffers = {k: v.clone() for k, v in wrapped.named_buffers()}
     calls = []
@@ -157,6 +157,10 @@ def validate(args):
     root = Path(args.directory)
     expected = json.loads(Path(args.data_check).read_text())
     mapping = json.loads((root / 'checkpoints.json').read_text())
+    spec_path = getattr(args, 'checkpoint_spec', None)
+    spec = json.loads(Path(spec_path).read_text()) if spec_path else None
+    if spec is not None:
+        require(set(spec) == set(mapping), 'Checkpoint set differs from requested comparison')
     audit = json.loads(Path(args.fewshot_audit).read_text()) if args.fewshot_audit else None
     if audit:
         require(audit['status']=='passed' and audit['seed']==args.seed and
@@ -170,7 +174,11 @@ def validate(args):
         meta = json.loads((dest / 'eval_metadata.json').read_text())
         full = json.loads((dest / 'eval_benchmarks_full.json').read_text())
         metrics = json.loads((dest / 'eval_benchmarks.json').read_text())
-        require(meta['status'] == 'completed' and meta['step'] == 2500, 'Incomplete checkpoint evaluation')
+        requested = spec[checkpoint] if spec else dict(step=2500, arm=meta['arm'], label=meta['arm'])
+        require(meta['status'] == 'completed' and meta['step'] == requested['step'], 'Incomplete checkpoint evaluation')
+        require(meta['arm'] == requested['arm'], 'Wrong checkpoint arm')
+        if spec is not None:
+            require(meta['checkpoint_sha256'] == requested['checkpoint_sha256'], 'Wrong checkpoint weights')
         require(meta['checkpoint'] == checkpoint and meta['attention_backend'] == 'fa4', 'Wrong model/backend')
         require(meta['dataset_manifest_sha256'] == expected['manifest_sha256'], 'Data manifest changed')
         require(meta['arguments']['limit'] == args.limit, 'Diagnostic/full evaluation mismatch')
@@ -198,7 +206,7 @@ def validate(args):
             for key, value in metrics[name].items():
                 if key.startswith(('acc,', 'acc_norm,')):
                     require(isinstance(value, (float, int)) and math.isfinite(value) and 0 <= value <= 1, 'Invalid accuracy')
-        arm = meta['arm']; require(arm not in results, 'Duplicate arm')
+        arm = requested['label']; require(arm not in results, 'Duplicate comparison label')
         results[arm] = metrics
         if signatures:
             require(samples == signatures, 'Models were scored on different documents/prompts/targets')
@@ -230,6 +238,7 @@ def main():
     fewshot.set_defaults(action=check_fewshot)
     numerics = commands.add_parser('numerics')
     numerics.add_argument('--checkpoint', required=True)
+    numerics.add_argument('--expected-step', type=int, default=2500)
     numerics.set_defaults(action=check_numerics)
     check = commands.add_parser('validate')
     check.add_argument('--directory', required=True)
@@ -239,6 +248,7 @@ def main():
     check.add_argument('--num-fewshot', type=int, default=0)
     check.add_argument('--seed', type=int, default=42)
     check.add_argument('--fewshot-audit')
+    check.add_argument('--checkpoint-spec', help='Exact checkpoint paths, labels, arms, steps and weight hashes')
     check.set_defaults(action=validate)
     for subparser in (data, fewshot, numerics, check):
         subparser.add_argument('--output', required=True)

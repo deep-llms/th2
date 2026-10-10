@@ -122,11 +122,12 @@ class EntryTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 root=Path(tmp); fixture(root)
                 backbone=make_model(arm)
-                checkpoint=root/'checkpoint-2500';checkpoint.mkdir()
+                source_step=10000 if arm=='P6-iso' else 10800
+                checkpoint=root/f'checkpoint-{source_step}';checkpoint.mkdir()
                 from transformers import AutoTokenizer
                 tok=AutoTokenizer.from_pretrained(root/'model',local_files_only=True);tok.save_pretrained(checkpoint)
                 save_file({k:v.clone() for k,v in backbone.state_dict().items()},checkpoint/'model.safetensors')
-                (checkpoint/'trainer_state.json').write_text(json.dumps(dict(global_step=2500)))
+                (checkpoint/'trainer_state.json').write_text(json.dumps(dict(global_step=source_step)))
                 recipe=dict(model_config=config().to_dict(),model=dict(tokenizer_name=str(checkpoint)),
                     data=dict(block_size=32),training=dict(seed=42,bf16=False),
                     pilot=dict(arm=arm,proxy_screen=True,consumer=2,deep_target=8,lm_chunk=3,
@@ -142,13 +143,16 @@ class EntryTests(unittest.TestCase):
                     data_files[split]=[rel]
                 manifest=root/'manifest.json';manifest.write_text(json.dumps(dict(schema_version=1,repositories=[
                     dict(path='paws',files=files,tasks=['paws_en'],load_configs=dict(paws_en=dict(loader='parquet',data_files=data_files)))])))
-                cfg=dict(checkpoint=str(checkpoint),task='paws',dataset_root=str(root/'raw'),dataset_manifest=str(manifest),
+                cfg=dict(checkpoint=str(checkpoint),expected_step=source_step,task='paws',dataset_root=str(root/'raw'),dataset_manifest=str(manifest),
                     max_length=32,preprocessing_num_workers=1,attention_backend='sdpa',output_dir=str(root/'fitted'),
                     use_cpu=True,report_to='none',seed=42,data_seed=42,max_steps=2,learning_rate=1e-3,
                     per_device_train_batch_size=2,per_device_eval_batch_size=2,eval_strategy='steps',eval_steps=1,
                     save_strategy='steps',save_steps=1,load_best_model_at_end=True,metric_for_best_model='accuracy',
                     greater_is_better=True,save_only_model=True,save_total_limit=1,disable_tqdm=True)
-                path=root/'args.json';path.write_text(json.dumps(cfg));run(path)
+                path=root/'args.json'
+                path.write_text(json.dumps({**cfg, 'expected_step': 2500}))
+                with self.assertRaisesRegex(ValueError, 'source checkpoint'): run(path)
+                path.write_text(json.dumps(cfg));run(path)
                 result=json.loads((root/'fitted/result.json').read_text())
                 self.assertEqual(result['global_step'],2)
                 cfg.update(evaluate_run=str(root/'fitted'),output_dir=str(root/'test'),eval_strategy='no',save_strategy='no',
@@ -169,7 +173,7 @@ class StudyTests(unittest.TestCase):
             make_jobs(old, Path.cwd(), '/data', '/manifest', {'P6':'/P6'})
             jobs = make_jobs(new, Path.cwd(), '/data', '/manifest', {'P6-iso':'/P6-iso'})
             load_jobs(new/'jobs.json')
-            self.assertEqual(len(jobs), 20)
+            self.assertEqual(len(jobs), 21)
             fits = [i for i,j in enumerate(jobs) if j['name'].startswith(('search-', 'confirm-'))]
             tests = [i for i,j in enumerate(jobs) if j['name'].startswith('test-')]
             self.assertEqual(len(fits), 8); self.assertEqual(len(tests), 6)
