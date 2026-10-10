@@ -1,3 +1,21 @@
+## A/P6-iso 10k queue completed successfully — verified 10 October 2026
+
+Delayed status requeste6f9beb returned at19:49SGT on10October. Both fits,
+both validators, and matched comparison exited0. Each arm stopped as requested
+at10,000 updates/10,485,760,000 input tokens, preserving28,600-step LR schedule.
+A final eval LM loss3.023769271527453 (PPL20.56867467); P6-iso3.019880417442181
+(PPL20.48884143), approximately0.388% lower PPL at equal updates, one seed1042.
+Both evaluated4,882 packed rows/9,981,660 target tokens. P6-iso no-proxy loss
+3.0842712254000397; disabling its proxy increases loss by0.06439080795785879.
+Trainer runtime A21,059.0039s (~5h51m), P6-iso22,743.7338s (~6h19m);
+job wall time including setup A22,119.31s, P6-iso22,810.66s.
+A finished05:37SGT, P6-iso11:57SGT; burn restoration verified11:58SGT.
+Checkpoints9750/10000 retained for both. Latest19:49SGT snapshot confirms
+burn PIDs32773–32780 at100% utilization/155212MiB each; communicating burn
+log has advancing cycles30610→30720. Supervisor training_status=ok, returncode0.
+Evidence:temp/remote_logs/q359-10k-health-20261010-a02.log; extracted result
+JSONs in temp/q359-10k-results/. commands.sh reset to#0. No further training queued.
+
 ## Live production health verified — 10 October 2026, 01:58 SGT
 
 Read-only inspection1d76e2e confirmed A advancing from step3780 to3787 in15s;
