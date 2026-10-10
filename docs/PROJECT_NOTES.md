@@ -1,3 +1,17 @@
+## A time-matched continuation completed — verified 10 October 2026, 21:33 SGT
+
+A reached10,800 updates; staging, fit, validator and timing report all exited0.
+Fit finished20:54SGT; communicating burn restored20:55SGT. Read-only checkbf08a3a
+at21:33SGT confirmed all8 burns100% busy, PIDs40498–40505, collective cycles
+2490→2510. All expected continuation checkpoints10000,10250,10500,10750,10800
+are present; original10k outputs unchanged. Retention fix passed final checks.
+A cumulative Trainer runtime22,758.6961s vs P6-iso22,743.7338s:14.9623s or0.0658%
+longer. A10800 loss3.007632362511146/PPL20.2394235344; P6-iso10000
+loss3.019880417442181/PPL20.4888414296. Thus A is better at approximately equal
+training time for this seed1042. A10000 PPL20.5686746736 remains available.
+Evidence:temp/remote_logs/q359-A-time-match-health-a02.log; extracted results
+in temp/q359-A-time-match-results/. commands.sh inactive; no training queued.
+
 ## A time-matched continuation verified running — 10 October 2026, 20:26 SGT
 
 Launch1ec24d8 passed the real-entry CPU retention/resume equivalence test and
