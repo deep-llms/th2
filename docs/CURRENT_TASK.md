@@ -1,3 +1,24 @@
+## Downstream evaluation completed — verified 11 October 2026, 02:56 SGT
+
+Receipt2052a68 confirms all18 outer stages completed successfully, including
+all few-shot validators, six fine-tuning studies, and final cross-checkpoint
+summary. Queue finished02:38:15SGT. Supervisor returned0, confirmed GPUs free,
+and restored communicating burns02:39:25SGT. At02:56 all8 approved burn workers
+102775–102782 remain at100% utilization. No further evaluation queued.
+Final summary downloaded and checksum verified against run.json artifact;
+local temp/q359-downstream-results/downstream-summary.json. All six per-study
+summaries also saved locally. Source checkpoints remain unchanged.
+Three-seed held-out means:
+| Source | PAWS accuracy | NLI accuracy | STS-B correlation | BoolQ accuracy |
+|---|---:|---:|---:|---:|
+| A-10000 | 0.932333 | 0.836926 | 0.843316 | 0.739653 |
+| P6-iso-10000 | 0.926333 | 0.839454 | 0.844724 | 0.722630 |
+| A-10800 | 0.928667 | 0.840452 | 0.838765 | 0.735678 |
+STS-B correlation is average Pearson/Spearman. These are three fine-tuning
+seeds from one pretraining seed, not evidence of statistically significant
+method superiority. P6-iso has mixed downstream results, no consistent win.
+Evidence:temp/remote_logs/q359-downstream-health-a09.log. commands.sh now#0.
+
 ## Downstream progress — verified 11 October 2026, 02:11:40 SGT
 
 Read-only receipt e5b7cd3: all few-shot evaluations and five of six fine-tuning
