@@ -1,3 +1,14 @@
+## P6-iso speed trial authorized — 11 October 2026
+
+User requested step1: reduce P6-iso overhead with correctness checks and real
+training timing. Experimental function-only compilation; production defaults
+and train.py/model untouched. Plan/local evidence: P6_COMPILE_TRIAL_20261011.md.
+Fresh root q359-p6-compile-20261011-a01, source P6iso checkpoint10000 read-only.
+Eight CUDA numerical cases gate six100-step eight-GPU Trainer timings (A/eager
+P6/compiled cosine, reverse-order repeats), original schedule/data recipe.
+Existing safe supervisor restores communicating burns on completion/failure.
+No production continuation or environment changes. Submission pending.
+
 ## Recurrent real-target evaluation completed — 11 October 2026, 05:45 SGT
 
 Retry218f166 passed six CPU tests, GPU smoke and128-row full-length diagnostic.
