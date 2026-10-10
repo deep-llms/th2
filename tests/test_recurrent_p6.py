@@ -1,4 +1,5 @@
 import unittest
+import tempfile
 import torch
 
 from deep_kv.model import Context
@@ -19,6 +20,15 @@ class RecurrentP6Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         torch.set_num_threads(1)
+
+    def test_hf_runtime_does_not_reset_accelerator_after_creation(self):
+        from scripts.evaluate_recurrent_p6 import evaluation_runtime
+        with tempfile.TemporaryDirectory() as output:
+            args, accelerator = evaluation_runtime(dict(use_cpu=True, bf16=False), output)
+            with args.main_process_first(desc='CPU cache setup regression'):
+                self.assertEqual(accelerator.process_index, 0)
+                self.assertEqual(accelerator.num_processes, 1)
+            accelerator.wait_for_everyone()
 
     def test_native_matches_parallel_and_disabled_without_mutation(self):
         m = model('P6-iso').eval(); ctx = batch()

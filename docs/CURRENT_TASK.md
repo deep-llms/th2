@@ -1,3 +1,15 @@
+## Recurrent diagnostic retry — 11 October 2026
+
+First launch79a2763 passed CPU preflight, copied/verified Accelerate, reclaimed
+only approved burn workers and verified all8GPUs free. GPU smoke failed BEFORE
+scoring: TrainingArguments device setup reset an already-created Accelerator.
+Fixed driver setup order: TrainingArguments/device first, Accelerator second.
+Added a real CPU runtime regression; model/target/cache code and numerical gates
+unchanged. First output is preserved. All8 communicating burns restored and
+verified in temp/remote_logs/q359-recurrent-health-a02.log, workers104874–104881.
+Fresh retry root:/mnt/local/_outputs/deep-llms_th2/q359-recurrent-p6-20261011-a02.
+Same smoke and128-row diagnostic; original trained checkpoint untouched.
+
 ## Authorized recurrent real-target evaluation — 11 October 2026
 
 User explicitly chose real targets only: no current-token learned proxy in the

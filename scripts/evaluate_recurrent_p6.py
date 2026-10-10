@@ -23,19 +23,28 @@ def write(path, value):
         json.dump(value, stream, indent=2, allow_nan=False)
 
 
-def run(args):
+def evaluation_runtime(saved_training, output):
+    # HF TrainingArguments initializes/resets distributed state while setting
+    # up its device. Complete that setup BEFORE constructing Accelerator.
+    training_args = TrainingArguments(**{**saved_training, 'output_dir':str(output), 'report_to':[]})
+    _ = training_args.device
     accelerator = Accelerator(mixed_precision='bf16')
+    return training_args, accelerator
+
+
+def run(args):
+    checkpoint = Path(args.checkpoint)
+    output = Path(args.output)
+    saved = json.loads((checkpoint.parent/'train_config.json').read_text())
+    training_args, accelerator = evaluation_runtime(saved['training'], output)
     if accelerator.num_processes != 8 or accelerator.device.type != 'cuda':
         raise ValueError('Run the real checkpoint diagnostic on all eight B200 GPUs')
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
     torch.set_num_threads(1)
-    output = Path(args.output)
     if accelerator.is_main_process:
         output.mkdir(parents=True, exist_ok=False)
     accelerator.wait_for_everyone()
-    checkpoint = Path(args.checkpoint)
-    saved = json.loads((checkpoint.parent/'train_config.json').read_text())
     model, _, metadata = load_checkpoint(checkpoint, accelerator.device, attention_backend='fa4')
     if metadata['arm'] != 'P6-iso' or metadata['step'] != 10000:
         raise ValueError('Expected P6-iso checkpoint-10000')
@@ -47,7 +56,6 @@ def run(args):
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     # Use the original train.py validation packing and its shared HF cache.
-    training_args = TrainingArguments(**{**saved['training'], 'output_dir':str(output), 'report_to':[]})
     dataset = preprocess_dataset(load_text(saved['data']['eval_data_dir']), tokenizer,
         saved['data']['block_size'], training_args, num_proc=1,
         isolate_documents=saved['data']['isolate_documents']).select(range(saved['data']['eval_rows']))
