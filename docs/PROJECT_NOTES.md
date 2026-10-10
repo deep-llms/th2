@@ -1,3 +1,16 @@
+## Downstream progress — verified 10 October 2026, 15:02:44 UTC
+
+Read-only receipt 63aa1ab confirms full few-shot evaluation completed for all
+three checkpoints; 5/10/25-shot validators passed. Results pulled into
+local temp/q359-downstream-results/. Fine-tuning remains active in the first
+nested study, A-10000/pairs. PAWS confirmation fits and NLI seed43 finished;
+NLI seed44 was progressing from epoch0.87 to0.92 between snapshots, finite
+losses, all eight GPUs active. No final held-out fine-tuning summary yet.
+Remaining A-10000/extended, P6-iso-10000/pairs+extended, and A-10800/pairs+extended
+are queued. Supervisor remains active; burns are reserved for queue termination.
+Evidence: temp/remote_logs/q359-downstream-health-a06.log. No training state
+changed by this check. commands.sh returned to #0; persistent queue continues.
+
 ## Downstream queue verified running — 10 October 2026, 14:07 UTC
 
 Launch 731e752 is active in persistent tmux on q359. Status receipt 4cec904
