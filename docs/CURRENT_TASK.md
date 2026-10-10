@@ -1,3 +1,19 @@
+## Further P6-iso speed trial — 11 October 2026
+
+User requested further throughput work while preserving correctness. Extend the
+existing disposable wrapper only: (1) compiled FP32 target scaling/clipping,
+with centering and running-moment reductions unchanged; (2) additionally retry
+gate normalization with Inductor emulate_precision_casts=True. Both include the
+previously validated cosine compilation. Production defaults unchanged.
+Seven CPU tests passed16.276s. B200 gate at original P6iso10000 weights requires
+EXACT LM outputs/backbone+gate gradients/moments/buffers, same existing auxiliary
+tolerances. Two lengths64/2048, checkpointing off/on, eight cases. If neither
+candidate passes, stop; otherwise four100-step eight-GPU Trainer runs compare
+cosine-only with selected candidate, reverse-order repeats, full recipe retained.
+Fresh root q359-p6-further-20261011-a01; existing checkpoint/data/env untouched.
+Standard safe supervisor verifies ownership/free GPUs and restores communicating
+burns on success/failure. Submission pending; no claimed speed improvement yet.
+
 ## P6-iso speed trial completed — verified 11 October 2026, 07:11 SGT
 
 All eight stages passed: CUDA numerical checks, six100-step eight-GPU Trainer

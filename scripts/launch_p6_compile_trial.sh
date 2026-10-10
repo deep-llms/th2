@@ -3,6 +3,7 @@
 set -euo pipefail
 TASK_ROOT=$1
 TASK_HOST=${2:?Pass verified hostname}
+TASK_COMPARISON=${3:-original}
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -13,7 +14,7 @@ export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=1042 TOKENIZERS_PARALL
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 export TORCHINDUCTOR_CACHE_DIR="$TASK_ROOT/compiler-cache"
 export TORCHINDUCTOR_COMPILE_THREADS=1
-python -u - "$TASK_ROOT" "$TASK_HOST" <<'PY'
+python -u - "$TASK_ROOT" "$TASK_HOST" "$TASK_COMPARISON" <<'PY'
 import copy,importlib.metadata as md,json,os,shutil,subprocess,sys
 from pathlib import Path
 from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
@@ -21,7 +22,9 @@ from scripts.verified_gpu_reclaim import inspect,process
 from scripts.train_then_burn import approved_launcher,APPROVED_BURNS,BURN_HASH,GUARD_HASH,digest
 from run_experiments import load_jobs
 from deep_kv.__main__ import jobs
+from scripts.p6_compile_trial import RUNS
 root,host=Path(sys.argv[1]),sys.argv[2];project=Path.cwd()
+comparison=sys.argv[3];assert comparison in RUNS
 for p,v in [('torch','2.14.1'),('transformers','5.9.0'),('accelerate','1.13.0'),('datasets','4.8.5'),
             ('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0'),('wandb','0.30.0')]:
     assert md.version(p).split('+')[0]==v,(p,md.version(p))
@@ -49,14 +52,17 @@ for key,value in dict(block_size=2048,per_device_train_batch_size=16,gradient_ac
 # Final evaluation is bounded; full production training order/schedule are retained.
 recipe.update(eval_rows=32,monitor_rows=32,save_steps=100,save_total_limit=0,seed=1042,data_seed=1042)
 path=root/'recipe.json';path.write_text(json.dumps(recipe,indent=2))
+gate_extra = [] if comparison=='original' else ['--candidates','target','precision','--prefer','precision','target']
+gate_expected = dict(status='passed',checkpoint_unchanged=True)
+if comparison=='original':gate_expected['selected']='cosine'
 items=[dict(name='numerics',gpus=list(range(8)),timeout_seconds=2400,
     argv=['{python}','-m','accelerate.commands.launch','--config_file',str(source),
           '--main_process_port','29651','--module','scripts.p6_compile_trial','gate',
-          '--checkpoint',str(checkpoint),'--checkpoint-sha256',expected,'--output','{run_dir}/numerics'],
-    required_outputs=[dict(path='numerics/summary.json',json_equals=dict(status='passed',selected='cosine',checkpoint_unchanged=True))])]
-for name,arm,mode in [('A-first','A','eager'),('P6-eager-first','P6-iso','eager'),
-                      ('P6-compiled-first','P6-iso','selected'),('P6-compiled-second','P6-iso','selected'),
-                      ('P6-eager-second','P6-iso','eager'),('A-second','A','eager')]:
+          '--checkpoint',str(checkpoint),'--checkpoint-sha256',expected,'--output','{run_dir}/numerics',*gate_extra],
+    required_outputs=[dict(path='numerics/summary.json',json_equals=gate_expected)])]
+for name in RUNS[comparison]:
+    arm='A' if name.startswith('A-') else 'P6-iso'
+    mode='selected' if 'compiled' in name else ('cosine' if 'cosine' in name else 'eager')
     job=copy.deepcopy(next(j for j in jobs(path,stop_after=100,arms=[arm],seeds=[1042])['jobs'] if 'gpus' in j))
     job['name']=name;job['timeout_seconds']=3600
     job['argv']=[v.replace('{run_dir}','{run_dir}/'+name) for v in job['argv']]
@@ -67,7 +73,8 @@ for name,arm,mode in [('A-first','A','eager'),('P6-eager-first','P6-iso','eager'
     for rank in range(8):
         job['required_outputs'].append(dict(path=f'{name}/seed-1042/{arm}/compile-trial-rank{rank}.json',json_equals=dict(status='complete')))
     items.append(job)
-items.append(dict(name='summary',argv=['{python}','-m','scripts.p6_compile_trial','summary','--run-dir','{run_dir}'],
+items.append(dict(name='summary',argv=['{python}','-m','scripts.p6_compile_trial','summary','--run-dir','{run_dir}',
+                                     '--comparison',comparison],
                   required_outputs=[dict(path='summary.json',json_equals=dict(status='passed',production_defaults_changed=False))]))
 (root/'jobs.json').write_text(json.dumps(dict(jobs=items),indent=2));load_jobs(root/'jobs.json')
 inspection=inspect();assert inspection['host']==host and not inspection['guard_disabled']

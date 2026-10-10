@@ -21,22 +21,51 @@ def write(path, value):
         json.dump(value, stream, indent=2, allow_nan=False)
 
 
+def target_tail(centered, inverse_scale, clip, return_clipped):
+    """Only independent FP32 scaling/clipping; no EMA or moment reductions."""
+    standardized = centered * inverse_scale
+    normalized = standardized.clamp(-clip, clip)
+    if return_clipped:
+        return normalized, (standardized.abs() > clip).sum()
+    return normalized
+
+
 @contextmanager
 def implementation(mode, backend='inductor'):
     """Patch function symbols before model construction, never parameters/modules."""
     import torch
     import deep_kv.proxy_estimators as estimators
-    if mode not in ('eager', 'cosine', 'pointwise'):
+    from deep_kv.proxy import ProxyModel
+    if mode not in ('eager', 'cosine', 'pointwise', 'target', 'precision'):
         raise ValueError(mode)
     names = [] if mode == 'eager' else ['cosine_loss']
-    if mode == 'pointwise':
+    if mode in ('pointwise', 'precision'):
         names.append('gated_prediction')
     original = {name: getattr(estimators, name) for name in names}
+    normalize = ProxyModel.normalize_target
     try:
         for name, function in original.items():
-            setattr(estimators, name, torch.compile(function, backend=backend, fullgraph=True, dynamic=False))
+            options = ({'emulate_precision_casts': True}
+                       if mode == 'precision' and name == 'gated_prediction' and backend == 'inductor' else {})
+            setattr(estimators, name, torch.compile(function, backend=backend, fullgraph=True, dynamic=False, options=options))
+        if mode in ('target', 'precision'):
+            tail = torch.compile(target_tail, backend=backend, fullgraph=True, dynamic=False)
+            def normalize_target(self, value, key, *, return_clipped=False, inverse_scale=None, centered=None):
+                # Preserve the original preprocessing outside compilation. The
+                # common training path supplies both centered and inverse_scale.
+                with torch.no_grad(), torch.autocast(value.device.type, enabled=False):
+                    index = self.mean_index[key]
+                    if inverse_scale is None:
+                        variance = self.sigma2[index]
+                        floor = self.settings.variance_floor * variance.median()
+                        inverse_scale = torch.rsqrt(variance.clamp_min(floor) + 1e-6)
+                    if centered is None:
+                        centered = value.detach().float() - self.mu[index]
+                    return tail(centered, inverse_scale, self.settings.target_clip, return_clipped)
+            ProxyModel.normalize_target = normalize_target
         yield
     finally:
+        ProxyModel.normalize_target = normalize
         for name, function in original.items():
             setattr(estimators, name, function)
 
@@ -84,7 +113,7 @@ def gate(args):
                                  num_proc=1, isolate_documents=True).select(range(saved['data']['eval_rows']))
     if dataset._fingerprint != saved['eval_fingerprint']:
         raise ValueError('Validation identity changed')
-    candidate = ('cosine', 'pointwise')[rank % 2]
+    candidate = args.candidates[rank % 2]
     checkpointing = bool((rank//2) % 2)
     length = (64, 2048)[rank//4]
     rows = [{k:v[:length] for k,v in dataset[i].items()} for i in (0, 1)]
@@ -94,24 +123,24 @@ def gate(args):
         torch.cuda.reset_peak_memory_stats()
         with implementation(mode), deterministic_fa4(True):
             adapter, _, metadata = load_checkpoint(args.checkpoint, accelerator.device, attention_backend='fa4')
-        if metadata['arm'] != 'P6-iso' or metadata['step'] != 10000 or metadata['checkpoint_sha256'] != args.checkpoint_sha256:
-            raise ValueError('Wrong source checkpoint')
-        m = adapter.wrapped.train()
-        m.checkpoint_layers = m.checkpoint_aux = m.checkpoint_lm = checkpointing
-        outputs = {}
-        handle = m.backbone.model.norm.register_forward_hook(lambda module, inputs, value: outputs.update(hidden=value.detach().cpu()))
-        with torch.autocast('cuda', dtype=torch.bfloat16):
-            out = m(ctx, collect_target_statistics=True)
-            loss = out['lm_sum']/out['lm_count'] + .1*out['aux_sum']/out['aux_count']
-        loss.backward()
-        handle.remove()
-        outputs.update({k:v.detach().cpu().clone() for k,v in out.items()})
-        gradients = {k:p.grad.detach().cpu().clone() for k,p in m.named_parameters() if p.grad is not None}
-        # Actual per-step buffer update, with the same rule as the Trainer.
-        m.update_statistics(out['center_sums'], out['center_squares'], out['center_counts'])
-        buffers = {k:v.detach().cpu().clone() for k,v in m.named_buffers()}
-        captures.append(dict(outputs=outputs, gradients=gradients, buffers=buffers, loss=float(loss.detach()),
-                             peak_gib=torch.cuda.max_memory_allocated()/2**30))
+            if metadata['arm'] != 'P6-iso' or metadata['step'] != 10000 or metadata['checkpoint_sha256'] != args.checkpoint_sha256:
+                raise ValueError('Wrong source checkpoint')
+            m = adapter.wrapped.train()
+            m.checkpoint_layers = m.checkpoint_aux = m.checkpoint_lm = checkpointing
+            outputs = {}
+            handle = m.backbone.model.norm.register_forward_hook(lambda module, inputs, value: outputs.update(hidden=value.detach().cpu()))
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                out = m(ctx, collect_target_statistics=True)
+                loss = out['lm_sum']/out['lm_count'] + .1*out['aux_sum']/out['aux_count']
+            loss.backward()
+            handle.remove()
+            outputs.update({k:v.detach().cpu().clone() for k,v in out.items()})
+            gradients = {k:p.grad.detach().cpu().clone() for k,p in m.named_parameters() if p.grad is not None}
+            # Actual per-step buffer update, with the same rule as the Trainer.
+            m.update_statistics(out['center_sums'], out['center_squares'], out['center_counts'])
+            buffers = {k:v.detach().cpu().clone() for k,v in m.named_buffers()}
+            captures.append(dict(outputs=outputs, gradients=gradients, buffers=buffers, loss=float(loss.detach()),
+                                 peak_gib=torch.cuda.max_memory_allocated()/2**30))
         del m, adapter, out, loss
         gc.collect()
         torch.cuda.empty_cache()
@@ -119,7 +148,7 @@ def gate(args):
     comparison = dict(outputs=compare(a['outputs'], b['outputs'], relative=1e-4, peak=1e-4),
                       gradients=compare(a['gradients'], b['gradients']),
                       buffers=compare(a['buffers'], b['buffers'], relative=1e-4, peak=1e-4))
-    if candidate == 'cosine':
+    if candidate != 'pointwise':
         # Compilation of isolated auxiliary loss must leave the LM path EXACT.
         keys = set(a['outputs'])-{'aux_sum','statistics'}
         # cosine diagnostics appear inside statistics; auxiliary tensor is the only other affected output.
@@ -134,18 +163,18 @@ def gate(args):
     accelerator.wait_for_everyone()
     if accelerator.is_main_process:
         reports = [read(Path(args.output)/f'rank-{i}.json') for i in range(8)]
-        accepted = [mode for mode in ('cosine','pointwise') if all(r['status']=='passed' for r in reports if r['mode']==mode)]
-        # Prefer the narrowest successful optimization. Timing tests cosine first.
-        selected = 'cosine' if 'cosine' in accepted else None
+        accepted = [mode for mode in args.candidates if all(r['status']=='passed' for r in reports if r['mode']==mode)]
+        selected = next((mode for mode in args.prefer if mode in accepted), None)
         if file_hash(Path(args.checkpoint)/'model.safetensors') != args.checkpoint_sha256:
             raise ValueError('Source weights changed')
         write(Path(args.output)/'summary.json',dict(status='passed' if selected else 'failed',selected=selected,
             accepted=accepted, reports=reports, checkpoint_unchanged=True,
             criterion='Outputs/buffers <=1e-4 relative L2 and peak-scaled max; gradients <=1%; cosine LM path and buffers exact. '
+                      'All new candidates require exact LM path and buffers. '
                       'Numerical equivalence, not bitwise predictor-gradient equivalence; no production/resume adoption.'))
     accelerator.wait_for_everyone()
     if read(Path(args.output)/'summary.json')['status'] != 'passed':
-        raise ValueError('Cosine numerical gate failed; no training benchmark')
+        raise ValueError('Numerical gate failed; no training benchmark')
 
 
 def train(args, rest):
@@ -192,10 +221,17 @@ def train(args, rest):
         runpy.run_module('train',run_name='__main__')
 
 
+RUNS = {
+    'original': ('A-first','P6-eager-first','P6-compiled-first','P6-compiled-second','P6-eager-second','A-second'),
+    'further': ('P6-cosine-first','P6-compiled-first','P6-compiled-second','P6-cosine-second'),
+}
+
+
 def summary(args):
     root = Path(args.run_dir)
     runs = []
-    for name in ('A-first','P6-eager-first','P6-compiled-first','P6-compiled-second','P6-eager-second','A-second'):
+    comparison = getattr(args, 'comparison', 'original')
+    for name in RUNS[comparison]:
         arm = 'A' if name.startswith('A-') else 'P6-iso'
         folder = root/name/'seed-1042'/arm
         reports = [read(folder/f'compile-trial-rank{i}.json') for i in range(8)]
@@ -220,11 +256,12 @@ def summary(args):
             implementation=reports[0]['implementation'],
             final_eval={k:v for k,v in result['evaluation'].items() if k in ('eval_lm_loss','eval_aux_loss','eval_rows','eval_target_tokens')},
             training_cost=result['training_cost']))
-    medians={key:statistics.mean(r['median_seconds'] for r in runs if r['name'].startswith(key))
-             for key in ('A-','P6-eager-','P6-compiled-')}
+    baseline = 'P6-eager-' if comparison == 'original' else 'P6-cosine-'
+    prefixes = ('A-',baseline,'P6-compiled-') if comparison == 'original' else (baseline,'P6-compiled-')
+    medians={key:statistics.mean(r['median_seconds'] for r in runs if r['name'].startswith(key)) for key in prefixes}
     write(root/'summary.json',dict(status='passed',runs=runs,median_step_seconds=medians,
-        p6_speedup=medians['P6-eager-']/medians['P6-compiled-'],
-        optimized_overhead_vs_A=medians['P6-compiled-']/medians['A-']-1,
+        p6_speedup=medians[baseline]/medians['P6-compiled-'],
+        optimized_overhead_vs_A=medians['P6-compiled-']/medians['A-']-1 if 'A-' in medians else None,
         production_defaults_changed=False, note='100 actual Trainer updates per run, eight GPUs, identical batches; '
         'steps 21–90 measured, reverse-order repeats. Compilation/startup/final evaluation excluded.'))
 
@@ -233,9 +270,12 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='command',required=True)
     g=sub.add_parser('gate')
     for key in ('checkpoint','checkpoint-sha256','output'):g.add_argument('--'+key,required=True)
-    t=sub.add_parser('train');t.add_argument('--implementation',choices=('eager','selected'),required=True)
+    g.add_argument('--candidates',nargs=2,choices=('cosine','pointwise','target','precision'),default=['cosine','pointwise'])
+    g.add_argument('--prefer',nargs='+',choices=('cosine','target','precision'),default=['cosine'])
+    t=sub.add_parser('train');t.add_argument('--implementation',choices=('eager','cosine','selected'),required=True)
     t.add_argument('--gate',required=True)
     s=sub.add_parser('summary');s.add_argument('--run-dir',required=True)
+    s.add_argument('--comparison',choices=tuple(RUNS),default='original')
     args,rest=p.parse_known_args()
     if args.command=='train':train(args,rest)
     else:

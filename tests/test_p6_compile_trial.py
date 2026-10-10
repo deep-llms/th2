@@ -14,6 +14,64 @@ class CompileTrialTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):torch.set_num_threads(1)
 
+    def test_target_tail_exact_all_normalization_branches(self):
+        from deep_kv.proxy import ProxyModel
+        m = model('P6-iso')
+        key = next(iter(m.mean_index))
+        torch.manual_seed(22)
+        with torch.no_grad():
+            m.mu.normal_()
+            m.sigma2.uniform_(0, 3)
+            m.sigma2[:, :3] = 0
+        original = ProxyModel.normalize_target
+        for dtype in (torch.float32, torch.bfloat16):
+            value = (torch.randn(2, 7, m.mu.shape[-1]) * 100).to(dtype).requires_grad_()
+            for provided in (False, True):
+                extra = dict(centered=value.detach().float()-m.mu[m.mean_index[key]],
+                             inverse_scale=torch.rand(m.mu.shape[-1])) if provided else {}
+                for clipped in (False, True):
+                    a = m.normalize_target(value, key, return_clipped=clipped, **extra)
+                    with implementation('target'):
+                        b = m.normalize_target(value, key, return_clipped=clipped, **extra)
+                    self.assertIs(ProxyModel.normalize_target, original)
+                    for x, y in zip(a if clipped else (a,), b if clipped else (b,)):
+                        torch.testing.assert_close(x, y, rtol=0, atol=0)
+                        self.assertFalse(y.requires_grad)
+
+    def test_precision_cast_gate_retains_bf16_rounding(self):
+        torch.manual_seed(9)
+        reference = proxy_estimators.gated_prediction
+        with implementation('precision'):
+            compiled = proxy_estimators.gated_prediction
+        for dtype in (torch.float32, torch.bfloat16):
+            x = torch.randn(2, 8, 64).to(dtype)
+            source = torch.zeros_like(x)
+            alpha = torch.tensor([.123456], requires_grad=True)
+            a = reference(x, alpha, source)
+            a.sum().backward(); grad = alpha.grad.clone(); alpha.grad = None
+            b = compiled(x, alpha, source)
+            b.sum().backward()
+            torch.testing.assert_close(a, b, rtol=2e-6, atol=2e-6)
+            torch.testing.assert_close(grad, alpha.grad, rtol=2e-6, atol=2e-6)
+
+    def test_new_modes_full_model_aot_routing(self):
+        for mode in ('target', 'precision'):
+            for checkpoint in (False, True):
+                captures = []
+                for selected in ('eager', mode):
+                    with implementation(selected, backend='aot_eager'):
+                        m = model('P6-iso', checkpoint=checkpoint)
+                        with torch.no_grad():
+                            for head in m.heads.values():head.alpha.fill_(.2)
+                        out = m(batch(), collect_target_statistics=True)
+                        objective(out).backward()
+                        m.update_statistics(out['center_sums'], out['center_squares'], out['center_counts'])
+                        captures.append(dict(outputs={k:v.detach() for k,v in out.items()},
+                            gradients={k:p.grad for k,p in m.named_parameters() if p.grad is not None},
+                            buffers={k:v.clone() for k,v in m.named_buffers()}))
+                for name in captures[0]:
+                    self.assertFalse(compare(captures[0][name], captures[1][name], exact=True)['failures'])
+
     def test_compiled_cosine_epsilon_mask_and_detached_target(self):
         reference = proxy_estimators.cosine_loss
         torch.manual_seed(17)

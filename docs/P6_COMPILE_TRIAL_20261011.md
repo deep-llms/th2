@@ -142,3 +142,39 @@ Evidence:temp/remote_logs/p6-compile-health-a02.log.
 An additional local real train.py wrapper test completed three updates each with
 eager and compiled cosine; actual first-update batch hashes matched.
 Log:temp/p6-compile-trainer-cpu.log. No GPU use for that check.
+
+## Follow-up: target scaling and BF16 cast preservation (pending)
+
+The user requested further optimization without compromising correctness.
+Two experimental modes extend the same wrapper:
+
+- `target`: compiled cosine plus only FP32 target multiply/clamp and the optional
+  integer clip count. Centering, sums, squared sums, variance floors, EMA updates,
+  and their operation order stay eager. No state or parameter schema changes.
+- `precision`: the above plus compiled gated_prediction with
+  `emulate_precision_casts=True`. Installed PyTorch source documents this option
+  as preserving eager intermediate low-precision truncations otherwise elided by
+  fusion. Whether it resolves the previous CUDA mismatch is unproven.
+
+Neither candidate may change LM outputs, backbone/gate gradients, target moments
+or normalization buffers at the test checkpoint: these must be bitwise exact.
+Auxiliary outputs retain1e-4 and predictor gradients1% relative L2/peak-scaled
+bounds. No tolerances are relaxed to admit gate compilation. All eight CUDA
+cases must pass for the selected mode (four per candidate,64/2048 tokens,
+checkpointing off/on). Prefer precision if it passes; otherwise target; if
+neither passes, no timing runs. Tests alone cannot guarantee all future inputs.
+
+Local seven-test suite passed16.276s in sampling_b200, CUDA disabled. Tests cover
+all normalization argument branches, FP32/BF16 inputs, clipping, detached targets,
+full-model AOT routing/buffers and checkpointing, plus actual CPU Inductor gate
+rounding. The runtime patch remains active during forward/backward as well as
+construction, because normalization is a class method rather than a stored
+callable. Production files/train.py/recipes remain unchanged.
+
+Fresh root q359-p6-further-20261011-a01: numeric gate then four100-step fits:
+cosine-only → selected → selected → cosine-only. Existing original recipe and
+trial seeds1042/43; all eight GPUs per fit. Same first/final batch hashes and
+steps21–90 timing, no new graphs during measured window, save all trial finals.
+The comparison isolates incremental gains beyond cosine; it does not rerun A.
+Pinned attention_bench, Accelerate copy+verification and safe supervisor retained.
+Source weights read-only; no package/driver/cache modifications. Results pending.
