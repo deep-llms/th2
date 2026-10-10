@@ -1,5 +1,73 @@
 # P6-iso function compilation trial
 
+**Completed on eight B200s, 11 October 2026.** Compiling only the existing
+auxiliary cosine loss improves measured steady-state throughput by **2.57%**
+using all measured update times, or **2.96%** using per-run medians. It saves
+about **3.0 GiB** peak allocated memory per GPU. P6-iso remains slower than A.
+The broader gate/code-normalization compilation failed the numerical criteria
+and was excluded. **Production defaults and existing research runs are unchanged.**
+
+| Version | Mean update (s) | Mean of run medians (s) | Peak allocated/GPU (GiB) |
+|---|---:|---:|---:|
+| A | 2.05617 | 2.05555 | 103.623 |
+| P6-iso, eager | 2.22381 | 2.22229 | 111.620 |
+| P6-iso, compiled cosine | 2.16813 | 2.15838 | 108.626 |
+
+Each version ran **100 real Trainer updates twice**, all eight GPUs, in order
+A → eager P6 → compiled P6 → compiled P6 → eager P6 → A. Statistics use
+steps21–90 of each run (140 updates/version). All measured updates are retained:
+the second compiled run had slower updates66 (2.929s) and73 (2.592s), explaining
+its mean/median difference. No cause is established for these two pauses.
+Mean P6 overhead versus A falls from **8.15% to5.45%**; median overhead falls
+from8.11% to5.00%. This closes part of the gap, not all of it.
+
+At identical trained step10000 weights, cosine compilation preserves **exact**
+LM outputs, backbone/gate gradients and target-normalization buffers in all four
+64/2048-token, checkpointing off/on cases. Maximum predictor-weight gradient
+relative L2 difference is **0.04461%** (0.02962% at2048tokens), from floating-point
+execution changes; predictor gradients are not bitwise identical. The CPU tests
+also cover masked/zero/near-epsilon inputs and detached targets.
+
+After100 fresh updates, 32-row evaluation LM NLL was9.306579/9.306574 for eager
+P6 and9.306547/9.306553 for compiled P6. This is a short numerical sanity check,
+not a downstream result or proof of identical long-run trajectories. Both runs
+use the same original mathematical loss and gradient routing.
+
+Both compiled timing runs captured only two graphs, with no new compiler graphs
+during steps20–90. Dataset fingerprints and first/final update hashes (four
+microbatches on every rank) match across all six runs. HF Trainer/Accelerate,
+FA4, document isolation/reset RoPE/EOS, global batch1048576, micro16/GAS4 and
+full28600-step/1430-warmup schedule are unchanged. Benchmarks use backbone/data
+seed1042 and the generator's default proxy seed43 consistently across the four
+P6 timings; they are fresh disposable runs, not continuations of the original
+proxy-seed1043 checkpoint used for the numerical gate. Compiler cache is shared
+within the trial; these timings do not measure fully cold compiler startup.
+
+All six fits and the aggregate validator passed. Queue completed23:06:44UTC;
+communicating burns restored and verified23:07:55UTC (11October07:07:55SGT),
+workers133155–133162. Source checkpoints and environments remain unchanged.
+Final local four-test suite passed in8.681s. Additional real train.py CPU wrapper
+smokes ran three updates each with matching eager/compiled batches.
+
+Results: [timing summary](../artifacts/p6-compile-20261011/summary.json) and
+[full numerical checks](../artifacts/p6-compile-20261011/numerics.json).
+SHA256 `ec35fd007ce2012dd0c013023a8870181121863543d8ae0356873349616587e8`,
+verified against the runner's artifact record. Successful launch5b03fd6;
+root `/mnt/local/_outputs/deep-llms_th2/q359-p6-compile-20261011-a02`.
+Evidence: `temp/remote_logs/p6-compile-health-a14.log`; final read-only receipt
+`temp/remote_logs/p6-compile-results-a01.log` confirms all eight burns at100%
+at23:11:51UTC, advancing collective progress, unchanged source checkpoint SHA,
+and the exact seeds/fingerprints above. Numerical artifact SHA256:
+`6d24ba13e6c954bdb184425dd9a501bc9215fdad849d1fb1dc8f40f06338dbca`.
+
+**Decision:** retain this as a tested, opt-in experimental wrapper. Do not enable
+the broad existing `proxy_compile_estimator` switch: it also compiles functions
+that failed this trial. No existing research checkpoint is automatically resumed
+with a changed numerical implementation. A normal training option and a targeted
+resume check would be needed before deploying cosine compilation to those runs.
+
+## Original protocol and implementation
+
 User requested reducing P6-iso overhead without changing its architecture or
 objective. Production model/train.py/defaults remain unchanged. The experimental
 wrapper `scripts/p6_compile_trial.py` compiles existing functions, never modules:

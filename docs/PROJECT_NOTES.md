@@ -1,3 +1,30 @@
+## P6-iso speed trial completed — verified 11 October 2026, 07:11 SGT
+
+All eight stages passed: CUDA numerical checks, six100-step eight-GPU Trainer
+runs, aggregate validator. Source checkpoint hash unchanged after completion.
+Cosine-only compilation: mean step2.16813s versus eager2.22381s (2.57% throughput
+increase); A2.05617s. Median comparison gives2.96%. All measured updates retained,
+including two slower updates in compiled repeat2. Mean overhead versus A drops
+8.15%→5.45%; peak allocated111.620→108.626GiB per GPU. Not speed parity with A.
+At identical trained weights: exact LM outputs/backbone+gate gradients and
+normalization buffers; maximum predictor-gradient relative L2 difference0.04461%.
+Gate/code-normalization compilation FAILED criteria and was excluded. No new
+compiler graphs in timing window; matching dataset fingerprints and first/final
+update batch hashes across all ranks/runs. Production defaults remain unchanged;
+trial wrapper is experimental, not an approved exact-resume switch.
+
+Fresh timing models use backbone/data seed1042 and proxy seed43 consistently;
+trained numerical source uses original proxy seed1043. Full original28600/1430
+schedule, micro16/GAS4/8GPUs, seq2048/FA4/EOS/isolation/reset RoPE retained.
+Queue finished23:06:44UTC; communicating burns restored23:07:55UTC. Final read-only
+receipt3e95eae at23:11:51UTC verifies all8 burns100%, workers133155–133162, advancing
+collective progress. Final4 CPU tests passed8.681s. No package/driver changes.
+Artifacts SHA256 verified and archived in artifacts/p6-compile-20261011/.
+Report:docs/P6_COMPILE_TRIAL_20261011.md. Source/root successful launch5b03fd6,
+q359-p6-compile-20261011-a02. Initial failed root preserved (missing W&B in our
+incorrectly selected eval environment, before training); retry used existing
+attention_bench. commands.sh now#0; no further experiments queued.
+
 ## P6 compilation gate passed; fresh timing retry — 11 October 2026
 
 GPU numerical results: cosine-only passes all four 64/2048-token/checkpointing

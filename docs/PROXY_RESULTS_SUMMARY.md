@@ -308,3 +308,21 @@ Implementation:eval/recurrent_p6.py, scripts/evaluate_recurrent_p6.py.
 Six CPU tests and the eight-GPU smoke passed. The first launch failed before
 scoring because of HF/Accelerate initialization order; fixed and retested in a
 fresh output directory. Production training/model code and checkpoint unchanged.
+
+
+## P6-iso throughput trial — 11 October 2026
+
+Two100-step eight-B200 runs each of A, eager P6-iso and cosine-compiled P6-iso;
+steps21–90 measured. Mean update times: **2.05617 /2.22381 /2.16813 seconds**.
+Cosine compilation improves P6 steady-state throughput **2.57%** (median-based
+comparison2.96%) and saves **2.995GiB** peak allocation/GPU. Mean overhead versus
+A falls8.15%→5.45%. Both slower updates in compiled repeat2 remain in the mean.
+
+Same trained weights: exact LM outputs/backbone+gate gradients/normalization
+buffers; predictor-gradient relative L2 difference at most0.04461%. Broader gate
+compilation failed numerical criteria and was excluded. Dataset/order audits and
+compiler-stability checks passed. These are disposable timing fits, not new
+research PPL results. Production defaults unchanged; no exact-resume claim.
+All eight communicating burns restored and verified. See
+[P6 compilation trial](P6_COMPILE_TRIAL_20261011.md) for protocol, limitations,
+per-run results and SHA256-verified artifacts.
