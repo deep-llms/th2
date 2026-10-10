@@ -1,3 +1,19 @@
+## Downstream progress — verified 11 October 2026, 02:11:40 SGT
+
+Read-only receipt e5b7cd3: all few-shot evaluations and five of six fine-tuning
+studies completed and validated. A-10000 and P6-iso-10000 are fully complete.
+A-10800 PAWS/NLI completed; its final STS-B/BoolQ study is running initial gates.
+No reported failures; final combined validation and automatic burn restoration
+remain pending. Based on the earlier A extended study (~28 minutes), approximate
+completion is02:40SGT, subject to remaining fits and validation.
+P6-iso three-seed means: PAWS0.9263333, NLI0.8394544,
+STS-B average Pearson/Spearman0.8447241, BoolQ0.7226300.
+A-10800 available means: PAWS0.9286667, NLI0.8404524.
+Completed summaries saved in temp/q359-downstream-results/finetune/.
+Evidence: temp/remote_logs/q359-downstream-health-a08.log. commands.sh returned
+to #0; persistent queue continues. The brief idle GPU snapshot is between gates,
+not evidence of final completion. Next check final summary and restored burns.
+
 ## Downstream progress — verified 10 October 2026, 16:00:40 UTC
 
 Receipt 67b5adc: few-shot remains complete for all three sources. A-10000 has
