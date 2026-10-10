@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-recurrent-health-20261011-a01
+#th2-q359-recurrent-health-20261011-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
@@ -15,6 +15,7 @@ def tail(path,n=16):
     with path.open('rb') as f:
         f.seek(max(0,path.stat().st_size-40000));data=f.read().decode(errors='replace')
     print('TAIL',str(path),'\n'+'\n'.join(data.splitlines()[-n:]),flush=True)
+if (run/'smoke.log').is_file():print('FULL_SMOKE_LOG', (run/'smoke.log').read_text(), flush=True)
 for sample in range(2):
     print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
     tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',12)
