@@ -1,3 +1,18 @@
+## A time-matched continuation verified running — 10 October 2026, 20:26 SGT
+
+Launch1ec24d8 passed the real-entry CPU retention/resume equivalence test and
+queue/report tests in B200's pinned environment before touching GPUs. Accelerate
+config was copied and rechecked. Only verified burn workers32773–32780 stopped;
+all8GPUs free at12:24:27UTC. Existing staging helper copied/checksummed16 files
+from original A/checkpoint-10000; original10k A/P6-iso outputs remain untouched.
+Read-only receipt74b661e confirms step10019→10026 in15s, finite losses3.029/3.042,
+~2.06s/update, all8GPUs97–99%,110232MiB each. Resume transition contains ONLY
+save_total_limit2→0; save_steps250, seed/data_seed1042, schedule28600,warmup1430,
+ignore_data_skip=false. Target10800; validator and actual cumulative-runtime
+comparison follow training. Supervisor restores communicating burn automatically.
+Evidence:temp/remote_logs/q359-A-time-match-health-a01.log. commands.sh now#0;
+persistent training continues. New periodic checkpoints are all retained.
+
 ## Authorized A continuation for matching P6-iso training time — 10 October 2026
 
 User requested fixing retention then resuming A to match P6-iso compute time.
