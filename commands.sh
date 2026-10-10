@@ -1,9 +1,9 @@
 #1 +60+a
-#th2-q359-recurrent-health-20261011-a04
+#th2-q359-recurrent-health-20261011-a05
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
-import json,socket,subprocess,time
+import json,socket,subprocess,time,hashlib
 from datetime import datetime,timezone
 from pathlib import Path
 from scripts.gpu_status import snapshot
@@ -18,6 +18,8 @@ def tail(path,n=16):
 if (run/'smoke.log').is_file():
     lines=(run/'smoke.log').read_text().splitlines()
     print('SMOKE_ERRORS', '\n'.join(line for line in lines if '[rank' in line or 'Error:' in line), flush=True)
+for p in sorted((run/'diagnostic').glob('rank-[0-9].json')):
+    print('ROW_RESULT',p.name,hashlib.sha256(p.read_bytes()).hexdigest(),p.read_text(),flush=True)
 for sample in range(2):
     print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
     tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',12)
