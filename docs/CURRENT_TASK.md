@@ -1,3 +1,23 @@
+## Recurrent real-target evaluation completed — 11 October 2026, 05:45 SGT
+
+Retry218f166 passed six CPU tests, GPU smoke and128-row full-length diagnostic.
+Both jobs exited0; finished05:42:20SGT. Burn restoration verified05:43:31SGT;
+read-only receipt790a18d at05:45:57 confirms all8 burns100% busy, workers106225–106232.
+Original checkpoint SHA and in-memory weights/normalization buffers unchanged.
+Summaries and eight per-rank reports downloaded with verified SHA256; all128
+unique row records reproduce aggregate scores.261712 scored tokens,2048 context:
+parallel original P6 PPL20.4195259; native sequential20.4198265;
+past-only predicted memory21.7096859; past-only real-target memory21.7203633.
+Experimental pass uses NO learned predictor or current-token proxy injection.
+The two past-only passes share the same update rule and differ only in memory
+content. Real targets are slightly worse (+0.049% PPL); no evidence of benefit
+from this intervention. This does not prove predictor fidelity because the
+inference rule differs from training. Not the full10M validation dataset.
+Artifacts:artifacts/recurrent-p6-20261011/{summary.json,paired-rows.json}.
+Report:docs/PROXY_RESULTS_SUMMARY.md (new final section).
+Evidence:temp/remote_logs/q359-recurrent-health-a05.log. commands.sh now#0;
+no additional experiments queued. Source weights and original outputs preserved.
+
 ## Recurrent diagnostic retry — 11 October 2026
 
 First launch79a2763 passed CPU preflight, copied/verified Accelerate, reclaimed

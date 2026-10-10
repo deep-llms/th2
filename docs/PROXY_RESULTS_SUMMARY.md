@@ -275,3 +275,36 @@ Sources: main comparison above; [P1 gate sweep](../artifacts/proxy-gate-sweep-20
 - The follow-up queue above separates **completed, running and queued** runs. Their designs test proxy placement, prediction horizon and target construction; no benefit is claimed for unfinished runs. V1/V3 and uncompleted P1/P3 ablations are not assigned scores.
 
 Earlier B/F/G and task-/consumer-aware experiments used different training/attention protocols and are not pooled into these tables. Their records remain in [PROJECT_NOTES.md](PROJECT_NOTES.md); pretrained-weight probes are separate from this from-scratch screen.
+
+
+### Recurrent real-target diagnostic — 11 October 2026
+
+P6-iso, seed1042, checkpoint10000; **128 evenly spread validation rows of2048
+tokens**,261712 scored targets. This is a subset diagnostic, not the full10M-token
+PPL reported for the training run. No training or weight/statistics updates.
+
+| Inference rule | LM loss ↓ | PPL ↓ |
+|---|---:|---:|
+| Original P6, parallel FA4 | 3.016492 | 20.4195 |
+| Original P6, sequential SDPA | 3.016506 | 20.4198 |
+| Past-only predicted memory, no current-token injection | 3.077759 | 21.7097 |
+| Past-only real-target memory, no current-token injection | 3.078250 | 21.7204 |
+
+Real-target mode never calls the learned predictor. Token t is processed with
+native current residuals and previously published memory. After its decoder
+finishes, each P6 site's actual four-MLP sum is standardized/clipped with frozen
+checkpoint statistics, then substituted into the existing gate/RMS injection
+formula using the saved pre-injection residual. Only token t's shallow cached
+K/V are rebuilt for future tokens; old outputs are not replayed. Targets come
+from this same recurrence. Document boundaries and reset RoPE are preserved.
+The past-only predicted control follows the same cache-publication rule but uses
+the predictor. Original sequential P6 verifies the cached implementation against
+the parallel control. Real targets did not improve this intervention (PPL+0.049%
+versus matched predicted memory). This is not an oracle upper bound or a pure
+measure of predictor fidelity; no statistical advantage is claimed.
+
+Source:[validated diagnostic](../artifacts/recurrent-p6-20261011/summary.json).
+Implementation:eval/recurrent_p6.py, scripts/evaluate_recurrent_p6.py.
+Six CPU tests and the eight-GPU smoke passed. The first launch failed before
+scoring because of HF/Accelerate initialization order; fixed and retested in a
+fresh output directory. Production training/model code and checkpoint unchanged.
