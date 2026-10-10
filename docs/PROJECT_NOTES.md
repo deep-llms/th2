@@ -1,3 +1,20 @@
+## Authorized A continuation for matching P6-iso training time — 10 October 2026
+
+User requested fixing retention then resuming A to match P6-iso compute time.
+Target10,800 updates: round(10,000 *22,743.7338/21,059.0039), using measured
+Trainer runtime. Preserve full28,600 schedule/1,430 warmup, seed1042, FA4,
+all8GPUs, micro16/GAS4 and data order. Only retention changes2→0; save every250.
+Source10k A is copied with all model/optimizer/scheduler/RNG files and checked
+SHA256, into a fresh run; original results and checkpoints remain untouched.
+Resume guard now allows/logs only retention changes without performance override;
+scientific/data/schedule changes still fail. CPU real-entry retention test on
+B200 gates GPU reclamation (dev env cannot run it: Transformers version mismatch).
+Local queue tests pass. Copy/Accelerate config+env verification and existing
+supervisor restore burns after success/failure. Final report includes measured
+cumulative runtime difference;10,800 is an estimated time match, not exact.
+Root:/mnt/local/_outputs/deep-llms_th2/q359-A-time-match10800-seed1042-20261010-a01
+Submission/startup pending. Do not infer launch success from controller receipt.
+
 ## Checkpoint retention correction — 10 October 2026
 
 User wanted all periodic checkpoints retained. The completed A/P6-iso10k

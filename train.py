@@ -104,9 +104,16 @@ def resume_performance_changes(previous, requested, allow=False):
         before['pilot'][key] = after['pilot'][key] = default
         if old != new:
             changes[key] = dict(before=old, after=new)
+    performance_changed = bool(changes)
+    # Retention controls only deletion of old checkpoint directories. It does
+    # not change optimization, RNG restoration, data skipping, or the schedule.
+    old_limit = before['training'].pop('save_total_limit', None)
+    new_limit = after['training'].pop('save_total_limit', None)
+    if old_limit != new_limit:
+        changes['save_total_limit'] = dict(before=old_limit, after=new_limit)
     if before != after:
         raise ValueError("Resume configuration/data differs from the saved run")
-    if changes and not allow:
+    if performance_changed and not allow:
         raise ValueError("Resume configuration changes require allow_performance_change_on_resume")
     return changes
 

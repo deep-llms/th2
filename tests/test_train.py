@@ -244,6 +244,37 @@ class TrainingTests(unittest.TestCase):
                 self.assertEqual(record['previous'], metadata)
                 self.assertNotIn('allow_performance_change_on_resume', record['requested']['pilot'])
 
+    def test_resume_retention_keeps_checkpoints_without_changing_training(self):
+        from scripts.check_optimized_resume import state_hash
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cfg = {**fixture(root), 'max_steps': 5}
+            control, keep = root / 'control', root / 'keep'
+            invoke(root, {**cfg, 'output_dir': str(control), 'stop_after': 2})
+            shutil.copytree(control, keep)
+            previous = json.loads((keep / 'train_config.json').read_text())
+            for field, value in [('seed', 43), ('learning_rate', .001),
+                                 ('ignore_data_skip', True), ('save_steps', 2)]:
+                changed = copy.deepcopy(previous)
+                changed['training'].update(save_total_limit=0, **{field: value})
+                with self.assertRaisesRegex(ValueError, 'Resume configuration'):
+                    train.resume_performance_changes(previous, changed)
+            invoke(root, {**cfg, 'output_dir': str(control)})
+            invoke(root, {**cfg, 'output_dir': str(keep), 'save_total_limit': 0})
+            self.assertEqual({p.name for p in keep.glob('checkpoint-*')},
+                             {f'checkpoint-{i}' for i in range(1, 6)})
+            self.assertEqual(len(list(control.glob('checkpoint-*'))), 2)
+            for name, value in load_file(keep / 'model.safetensors').items():
+                torch.testing.assert_close(value, load_file(control / 'model.safetensors')[name], rtol=0, atol=0)
+            for name in ('optimizer.pt', 'scheduler.pt', 'rng_state.pth'):
+                states = [torch.load(p / 'checkpoint-5' / name, map_location='cpu',
+                                     weights_only=name != 'rng_state.pth') for p in (control, keep)]
+                self.assertEqual(state_hash(states[0]), state_hash(states[1]), name)
+            records = list(keep.glob('resume-transition-*.json'))
+            self.assertEqual(len(records), 1)
+            self.assertEqual(json.loads(records[0].read_text())['changes'],
+                             {'save_total_limit': {'before': 2, 'after': 0}})
+
     def test_invalid_cutoff_and_chunk_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); config = fixture(root)
