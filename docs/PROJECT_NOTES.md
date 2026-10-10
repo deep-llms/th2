@@ -1,3 +1,17 @@
+## Downstream progress — verified 10 October 2026, 16:00:40 UTC
+
+Receipt 67b5adc: few-shot remains complete for all three sources. A-10000 has
+completed both fine-tuning groups, all tests and summaries passed. Three-seed
+held-out means: PAWS accuracy0.9323333; NLI accuracy0.8369261; STS-B average
+Pearson/Spearman0.8433158; BoolQ accuracy0.7396534. Summaries pulled into
+local temp/q359-downstream-results/finetune/A-10000/.
+P6-iso-10000/pairs is active, starting its second NLI LR search after the first
+finished successfully. Eight distributed workers are loading the next fit;
+zero utilization in that startup snapshot is not a completion signal.
+P6-iso/extended and both A-10800 groups remain queued. No reported failures.
+Evidence: temp/remote_logs/q359-downstream-health-a07.log. Commands returned to
+#0; persistent supervisor continues and will restore burns at termination.
+
 ## Downstream progress — verified 10 October 2026, 15:02:44 UTC
 
 Read-only receipt 63aa1ab confirms full few-shot evaluation completed for all
