@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-downstream-health-20261010-a02
+#th2-q359-downstream-health-20261010-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
@@ -18,6 +18,7 @@ def tail(path,n=16):
 for sample in range(2):
     print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
     tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',8)
+    print('AUDIT_FILES',[p.name for p in root.glob('*validation*.json')]+[p.name for p in root.glob('prompt-audit*.json')],flush=True)
     for p in (root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',run/'run.json',run/'downstream-summary.json'):
         if p.is_file():print('STATE',str(p),p.read_text(),flush=True)
     for p in sorted(run.rglob('run.json')):
