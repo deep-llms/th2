@@ -1,3 +1,20 @@
+## Downstream queue verified running — 10 October 2026, 14:07 UTC
+
+Launch 731e752 is active in persistent tmux on q359. Status receipt 4cec904
+confirmed all three source-checkpoint CUDA numerical gates and all 5/10/25-shot
+smoke validators passed. Full few-shot evaluation is running; the six nested
+fine-tuning studies follow automatically. All 20 CPU tests passed in eval_fa4.
+Dataset, split and demonstration audits matched the established references.
+Accelerate configuration was copied and verified; only identified burn workers
+40498–40505 were stopped, and all eight GPUs were confirmed free before launch.
+Original checkpoints remain unchanged. All fine-tuning epoch model checkpoints
+are retained. Supervisor restores communicating burns on completion or failure.
+Evidence: temp/remote_logs/q359-downstream-health-a05.log.
+Root: /mnt/local/_outputs/deep-llms_th2/q359-downstream-10k-10800-20261010-a01
+Completion artifact: supervised/run/downstream-summary.json. No final downstream
+results yet. commands.sh is inactive (#0); the persistent queue continues.
+Next check: full few-shot validation and nested fine-tuning progress.
+
 ## Authorized downstream comparison of A-10k, P6-iso-10k, A-10.8k — 10 October 2026
 
 User requested few-shot evaluation and supervised fine-tuning for these three
@@ -27,7 +44,7 @@ references. Burns continue during controller downloads and CPU checks; then
 copy/verify Accelerate config, reclaim only known burns, require free GPUs,
 run the gated queue, restore communicating burns on success/failure.
 Root: /mnt/local/_outputs/deep-llms_th2/q359-downstream-10k-10800-20261010-a01
-Launch/startup pending. Original pretraining and time-match outputs unchanged.
+Launch verified running; see the newer status above. Original outputs unchanged.
 
 ## A time-matched continuation completed — verified 10 October 2026, 21:33 SGT
 
