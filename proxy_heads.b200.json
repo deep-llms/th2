@@ -31,7 +31,7 @@
   "max_grad_norm": 1.0,
   "logging_steps": 10,
   "save_steps": 250,
-  "save_total_limit": 2,
+  "save_total_limit": 0,
   "eval_strategy": "steps",
   "eval_steps": 512,
   "eval_on_start": true,

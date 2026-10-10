@@ -14,7 +14,7 @@ STEPS=10000
 def make(recipe_path, output):
     recipe=json.loads(Path(recipe_path).read_text())
     expected=dict(max_steps=28600,warmup_steps=1430,save_steps=250,
-                  save_total_limit=2,block_size=2048,isolate_documents=True,
+                  save_total_limit=0,block_size=2048,isolate_documents=True,
                   attention_backend='fa4',per_device_train_batch_size=16,
                   gradient_accumulation_steps=4,checkpoint_layers=False,
                   checkpoint_lm=False,checkpoint_aux=False)

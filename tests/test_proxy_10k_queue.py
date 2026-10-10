@@ -23,7 +23,7 @@ class Proxy10KQueueTests(unittest.TestCase):
                 for flag,expected in [('--arm',arm),('--seed','1042'),('--data_seed','1042'),
                                       ('--max_steps','28600'),('--warmup_steps','1430'),
                                       ('--stop_after','10000'),('--save_steps','250'),
-                                      ('--save_total_limit','2')]:
+                                      ('--save_total_limit','0')]:
                     self.assertEqual(argv[argv.index(flag)+1],expected)
                 self.assertNotIn('--resume_from_checkpoint',argv)
             self.assertNotIn('--proxy_module_seed',items[0]['argv'])

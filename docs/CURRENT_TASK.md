@@ -1,3 +1,15 @@
+## Checkpoint retention correction — 10 October 2026
+
+User wanted all periodic checkpoints retained. The completed A/P6-iso10k
+launch incorrectly inherited save_total_limit=2; the earlier claim that this
+was agreed was incorrect. Verified remote listings contain only9750/10000
+for each arm. Older deleted checkpoints cannot be restored by a config change;
+no backup of them has been verified. Production recipes now explicitly use
+save_steps=250 and save_total_limit=0 (HF Trainer disables checkpoint rotation).
+The10k queue guard/test enforce unlimited retention. Smoke-test retention is
+unchanged. These changes apply to future launches, not the completed run.
+No rerun/resume or GPU workload is authorized by this correction alone.
+
 ## A/P6-iso 10k queue completed successfully — verified 10 October 2026
 
 Delayed status requeste6f9beb returned at19:49SGT on10October. Both fits,
@@ -33,7 +45,7 @@ User requested continuing the previously planned experiments after both 50-step
 smokes passed. Submit fresh A then P6-iso, seed1042/proxy1043, 10,000 updates each,
 full28,600 schedule/1,430 warmup, LR3e-4, all8GPUs, micro16/GAS4, sequence2048,
 1,048,576tokens/update, FA4 document isolation/reset RoPE/EOS. No smoke checkpoints
-or short schedules are reused. Save every250 and retain2, as previously agreed.
+or short schedules are reused. Executed with save every250 and retain2; this was an agent error, corrected below in the newer retention note.
 Five stages: A fit/validate, P6-iso fit/validate, matched comparison.
 Output root `/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01`.
 Launcher now takes an explicit verified hostname instead of assuming the retired
