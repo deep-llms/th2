@@ -1,3 +1,18 @@
+## P6 compilation gate passed; fresh timing retry — 11 October 2026
+
+GPU numerical results: cosine-only passes all four 64/2048-token/checkpointing
+cases. LM outputs, backbone/gate gradients and normalization buffers EXACT;
+maximum predictor-gradient relative L2 0.00044610 (0.0446%). Gate/code-normalization
+compilation rejected: hidden relative L2 up to0.00411, gradients up to0.01932.
+Only cosine proceeds to timing. Original checkpoint SHA unchanged.
+Initial A timing job failed BEFORE training: eval_fa4 lacks wandb. Our launcher
+selected the evaluation environment incorrectly. Use existing original training
+attention_bench, verify wandb0.30.0 before GPU reclamation, reinstall nothing.
+All8 burns restored and verified in health-a02 (workers110063–110070).
+Fresh retry q359-p6-compile-20261011-a02 repeats gates in the training environment
+and six100-step timing runs. First root/results/cache preserved.
+Evidence:temp/remote_logs/p6-compile-health-a02.log. Submission pending.
+
 ## P6-iso speed trial authorized — 11 October 2026
 
 User requested step1: reduce P6-iso overhead with correctness checks and real

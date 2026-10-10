@@ -200,6 +200,8 @@ def summary(args):
         folder = root/name/'seed-1042'/arm
         reports = [read(folder/f'compile-trial-rank{i}.json') for i in range(8)]
         config, result = read(folder/'train_config.json'), read(folder/'result.json')
+        if any(len(r['data_sha256']) != 8 for r in reports):
+            raise ValueError('Expected first/final four-microbatch audits on every rank')
         if any(r['graph_counts']['20'] != r['graph_counts']['90'] for r in reports):
             raise ValueError('Compiler generated new graphs within measured window')
         if result['global_step'] != 100:
@@ -215,7 +217,9 @@ def summary(args):
         runs.append(dict(name=name, median_seconds=statistics.median(times), mean_seconds=statistics.mean(times),
             times=times, peak_gib=max(r['peak_gib'] for r in reports), compile_counters=reports[0]['compile_counters'],
             train_fingerprint=config['train_fingerprint'],data_sha256=[r['data_sha256'] for r in reports],
-            implementation=reports[0]['implementation']))
+            implementation=reports[0]['implementation'],
+            final_eval={k:v for k,v in result['evaluation'].items() if k in ('eval_lm_loss','eval_aux_loss','eval_rows','eval_target_tokens')},
+            training_cost=result['training_cost']))
     medians={key:statistics.mean(r['median_seconds'] for r in runs if r['name'].startswith(key))
              for key in ('A-','P6-eager-','P6-compiled-')}
     write(root/'summary.json',dict(status='passed',runs=runs,median_step_seconds=medians,

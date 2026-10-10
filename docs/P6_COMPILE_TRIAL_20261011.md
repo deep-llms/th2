@@ -24,7 +24,7 @@ no local GPU execution or environment changes are performed.
 B200 plan, fresh root `q359-p6-compile-20261011-a01`:
 
 - Copy/verify resources Accelerate config and run accelerate env. Verify pinned
-  eval_fa4 packages, source checkpoint SHA and known burn identities. Reuse
+  attention_bench packages (original training environment), source checkpoint SHA and known burn identities. Reuse
   existing supervisor for verified burn-worker stopping, all-eight-GPU free
   checks and automatic communicating burn restoration on success/failure.
 - Eight numerical cases: two candidate functions selections, checkpointing on/off,
@@ -48,3 +48,29 @@ No full research continuation, environment reinstall, driver modification,
 cache deletion, production compile switch or original-checkpoint write is part
 of this trial. Even successful timing does not authorize changing a resumed
 research run's numerical execution. Results pending.
+
+## First CUDA results and startup correction
+
+Launch f6c6499 numerical stage passed. Cosine-only: exact LM outputs, LM/gate
+gradients, moments and normalization buffers at identical checkpoint weights.
+Largest predictor-gradient relative L2 was0.00044610 at64tokens and0.00029616
+at2048tokens, with checkpointing on/off. Auxiliary output differences were at
+FP32 rounding scale. Both cosine cases at2048 had only statistics different,
+relative L2 2.93e-8; LM and auxiliary summed loss were exact there.
+
+Broader cosine+gate compilation was rejected, not benchmarked: hidden relative
+L2 0.00363–0.00411, worst parameter-gradient relative L2 0.01837–0.01932.
+The existing eager gate/code normalization remains unchanged.
+
+The first A timing job failed before training because eval_fa4 lacked W&B. This
+was our launcher environment selection error. No optimization was active in A.
+All eight communicating burns were restored and verified (110063–110070).
+The launcher now selects the existing original attention_bench environment and
+verifies wandb0.30.0 alongside all pinned CUDA/model packages before reclaiming
+GPUs. No environment or driver changes. Fresh root q359-p6-compile-20261011-a02
+repeats gates and timings; prior outputs remain intact.
+Evidence:temp/remote_logs/p6-compile-health-a02.log.
+
+An additional local real train.py wrapper test completed three updates each with
+eager and compiled cosine; actual first-update batch hashes matched.
+Log:temp/p6-compile-trainer-cpu.log. No GPU use for that check.

@@ -6,7 +6,7 @@ TASK_HOST=${2:?Pass verified hostname}
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
-conda activate eval_fa4
+conda activate attention_bench
 export NCCL_NVLS_ENABLE=0 WANDB_MODE=offline WANDB_PROJECT=deep2shallow
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=1042 TOKENIZERS_PARALLELISM=false
@@ -23,7 +23,7 @@ from run_experiments import load_jobs
 from deep_kv.__main__ import jobs
 root,host=Path(sys.argv[1]),sys.argv[2];project=Path.cwd()
 for p,v in [('torch','2.14.1'),('transformers','5.9.0'),('accelerate','1.13.0'),('datasets','4.8.5'),
-            ('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0')]:
+            ('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0'),('wandb','0.30.0')]:
     assert md.version(p).split('+')[0]==v,(p,md.version(p))
 assert shutil.disk_usage(root).free>200*2**30
 with (root/'cpu-tests.log').open('x') as log:
