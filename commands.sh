@@ -1,26 +1,30 @@
 #1 +60+a
-#th2-q359-downstream-10k-10800-20261010-a01
+#th2-q359-downstream-health-20261010-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-test "$(hostname)" = thiennh-p6-q359-worker-0
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-downstream-10k-10800-20261010-a01
-TASK_SESSION=q359-downstream-10k-10800-20261010-a01
-test ! -e "$TASK_ROOT"
-if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
-mkdir -p "$TASK_ROOT"
-tmux new-session -d -s "$TASK_SESSION" "exec bash scripts/launch_checkpoint_downstream.sh '$TASK_ROOT' thiennh-p6-q359-worker-0 >'$TASK_ROOT/supervisor.log' 2>&1"
-tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
-sleep 45
-tail -45 "$TASK_ROOT/supervisor.log"
-if [ "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 1 ]; then
-  if [ -f "$TASK_ROOT/cpu-tests.log" ]; then tail -65 "$TASK_ROOT/cpu-tests.log"; fi
-  /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - "$TASK_ROOT" <<'PYREMOTE'
-import json,sys
+/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
+import json,socket,subprocess,time
+from datetime import datetime,timezone
 from pathlib import Path
-r=json.loads((Path(sys.argv[1])/'supervised/supervisor.json').read_text())
-assert r['training_status']=='ok' and r['training_returncode']==0 and r['burn']['collective_progress_verified'],r
-print('DOWNSTREAM_STUDY_AND_BURN_COMPLETE',flush=True)
+from scripts.gpu_status import snapshot
+assert socket.gethostname()=='thiennh-p6-q359-worker-0'
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-downstream-10k-10800-20261010-a01')
+run=root/'supervised/run'
+def tail(path,n=16):
+    if not path.is_file():return
+    with path.open('rb') as f:
+        f.seek(max(0,path.stat().st_size-40000));data=f.read().decode(errors='replace')
+    print('TAIL',str(path),'\n'+'\n'.join(data.splitlines()[-n:]),flush=True)
+for sample in range(2):
+    print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
+    tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',8)
+    for p in (root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',run/'run.json',run/'downstream-summary.json'):
+        if p.is_file():print('STATE',str(p),p.read_text(),flush=True)
+    for p in sorted(run.rglob('run.json')):
+        if p!=run/'run.json':
+            r=json.loads(p.read_text());print('NESTED_RUN',str(p),r['status'],'LAST_JOBS',json.dumps(r.get('jobs',[])[-3:]),flush=True)
+    for p in sorted(run.rglob('*.log'),key=lambda p:p.stat().st_mtime)[-4:]:tail(p)
+    print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
+    print('TMUX',subprocess.run(['tmux','list-panes','-t',root.name,'-F','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout,flush=True)
+    if sample==0:time.sleep(15)
 PYREMOTE
-else
-  echo 'DOWNSTREAM_SUPERVISOR_ACTIVE; awaiting CPU preflight or running queue.'
-fi
