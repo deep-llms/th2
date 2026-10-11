@@ -53,6 +53,9 @@ def summarize_proxy(statistics, model):
 
 class ProxyCallback(PilotCallback):
     def on_train_begin(self,args,state,control,**kwargs):
+        # Trainer has restored model buffers by this point. Reset on each train()
+        # call; never retain a Python flag across a different checkpoint load.
+        self.trainer._normalization_ready = None
         if self.trainer.model.anticipatory and state.global_step==0:
             self.trainer.log({f'proxy_layer_{name}_mean_abs_alpha_{c}':float(value)
                 for name,head in self.trainer.model.heads.items()
@@ -68,7 +71,8 @@ class ProxyCallback(PilotCallback):
         if trainer.center_totals is not None:
             sums, squares, counts, clipped = reduce_moments(trainer.accelerator,trainer.center_totals,
                                                           model.anticipatory or model.memory_proxy)
-            trainer.normalization_metrics = model.update_statistics(sums,squares,counts)
+            options = dict(diagnostics=trainer.collect_clip_statistics) if trainer.sync_optimization else {}
+            trainer.normalization_metrics = model.update_statistics(sums,squares,counts,**options)
             if trainer.collect_clip_statistics:
                 trainer.normalization_metrics['clip_fraction'] = clipped/(counts*model.mu.shape[-1])
             trainer.center_totals = None
@@ -106,6 +110,8 @@ class ProxyTrainer(DeepKVTrainer):
         self.normalization_metrics = {}
         self.collect_clip_statistics = False
         self._memory_eval_offset = 0
+        self.sync_optimization = False
+        self._normalization_ready = None
 
     def log(self,logs,start_time=None):
         # Enrich before HF copies log_history and dispatches W&B callbacks.
@@ -142,7 +148,10 @@ class ProxyTrainer(DeepKVTrainer):
         return self.accelerator.reduce(counts,reduction='sum')
 
     def training_step(self,model,inputs,num_items_in_batch=None):
-        if not bool(self.model.mu_initialized):
+        if self.sync_optimization and self._normalization_ready is None:
+            self._normalization_ready = bool(self.model.mu_initialized)
+        ready = self._normalization_ready if self.sync_optimization else bool(self.model.mu_initialized)
+        if not ready:
             # Reuse exactly the same prepared microbatch and weights for both passes.
             prepared = self._prepare_inputs(inputs)
             for phase in ('mean','variance'):
@@ -153,6 +162,8 @@ class ProxyTrainer(DeepKVTrainer):
                     tuple(outputs[key] for key in ('center_sums','center_squares','center_counts')),
                     self.model.anticipatory or self.model.memory_proxy)
                 self.model.update_statistics(sums,squares,counts,initialize=phase)
+            if self.sync_optimization:
+                self._normalization_ready = True
         return super().training_step(model,inputs,num_items_in_batch)
 
     def compute_loss(self,model,inputs,return_outputs=False,num_items_in_batch=None):

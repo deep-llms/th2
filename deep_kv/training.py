@@ -193,6 +193,16 @@ class DeepKVTrainer(Trainer):
         else:
             super()._load_optimizer_and_scheduler(checkpoint)
 
+    def create_scheduler(self, num_training_steps, optimizer=None):
+        fresh = self.lr_scheduler is None
+        scheduler = super().create_scheduler(num_training_steps, optimizer)
+        if fresh and getattr(self, 'cooldown', None) is not None:
+            from .cooldown import schedule
+            if not isinstance(scheduler, torch.optim.lr_scheduler.LambdaLR):
+                raise ValueError('Controlled cooldown requires a LambdaLR schedule')
+            scheduler.lr_lambdas = [schedule(f, *self.cooldown) for f in scheduler.lr_lambdas]
+        return scheduler
+
 
 
 class PilotCallback(TrainerCallback):
@@ -208,9 +218,13 @@ class PilotCallback(TrainerCallback):
         if totals is None:
             raise ValueError("Missing training statistics")
         totals = self.trainer.accelerator.reduce(totals, reduction="sum")
-        if int(totals[-1]) != self.tokens_per_update:
+        # One transfer is enough for both checks and diagnostics; retain all
+        # validation every update. Legacy path stays available for exact trials.
+        fast = getattr(self.trainer, 'sync_optimization', False)
+        host_totals = totals.cpu().numpy() if fast else None
+        if int(host_totals[-1] if fast else totals[-1]) != self.tokens_per_update:
             raise ValueError("Incomplete global token batch; check dataset capacity")
-        self.latest = self.trainer.summarize_statistics(totals.cpu().numpy()[None])
+        self.latest = self.trainer.summarize_statistics((host_totals if fast else totals.cpu().numpy())[None])
         if state.global_step >= self.end:
             control.should_training_stop = control.should_save = True
         return control

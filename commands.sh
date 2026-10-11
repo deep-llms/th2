@@ -1,43 +1,26 @@
 #1 +60+a
-#th2-q359-p6-profile-health-20261011-a03
+#th2-q359-p6-sync-20261011-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
-import json,socket,subprocess,time,hashlib
-from datetime import datetime,timezone
+test "$(hostname)" = thiennh-p6-q359-worker-0
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-p6-sync-20261011-a01
+TASK_SESSION=q359-p6-sync-20261011-a01
+test ! -e "$TASK_ROOT"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
+mkdir -p "$TASK_ROOT"
+tmux new-session -d -s "$TASK_SESSION" "exec bash scripts/launch_p6_sync_trial.sh '$TASK_ROOT' thiennh-p6-q359-worker-0 >'$TASK_ROOT/supervisor.log' 2>&1"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+tail -45 "$TASK_ROOT/supervisor.log"
+if [ "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 1 ]; then
+  if [ -f "$TASK_ROOT/cpu-tests.log" ]; then tail -65 "$TASK_ROOT/cpu-tests.log"; fi
+  /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - "$TASK_ROOT" <<'PYREMOTE'
+import json,sys
 from pathlib import Path
-from scripts.gpu_status import snapshot
-assert socket.gethostname()=='thiennh-p6-q359-worker-0'
-root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p6-profile-20261011-a01');run=root/'supervised/run'
-def tail(path,n=12):
-    if not path.is_file():return
-    with path.open('rb') as f:
-        f.seek(max(0,path.stat().st_size-50000));data=f.read().decode(errors='replace')
-    print('TAIL',str(path),'\n'+'\n'.join(data.splitlines()[-n:]),flush=True)
-for sample in range(2):
-    print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
-    tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',12)
-    for p in (root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',run/'run.json',root/'supervised/burn-verified.json',run/'summary.json'):
-        if p.is_file():print('STATE',str(p),p.read_text(),flush=True)
-    for p in sorted((run/'numerics').glob('rank-*.json')):
-        r=json.loads(p.read_text());print('NUMERIC',p.name,r['status'],r['mode'],r['sequence_length'],r['checkpointing'],flush=True)
-        for name,c in r['comparisons'].items():
-            print('NUMERIC_COMPONENT',name,'differences',len(c['differences']),'failures',len(c['failures']),
-                  'max_relative_l2',max((d.get('relative_l2',0) for d in c['differences']),default=0),'example_failures',c['failures'][:3],flush=True)
-    p=run/'numerics/summary.json'
-    if p.is_file():
-        r=json.loads(p.read_text());print('NUMERIC_SUMMARY',{k:v for k,v in r.items() if k!='reports'},flush=True)
-    for arm in ('A','P6-iso'):
-        p=run/f'seed-1042/{arm}/component-profile.json'
-        if p.is_file():print('PROFILE',arm,p.read_text(),flush=True)
-        p=run/f'seed-1042/{arm}/step-profile-rank0.json'
-        if p.is_file():print('TIMING',arm,p.read_text(),flush=True)
-    for arm in ('A','P6-iso'):
-        for p in sorted((run/f'seed-1042/{arm}').glob('step-profile-rank*.json')):
-            print('ARTIFACT',str(p),p.read_text(),flush=True)
-    tail(root/'supervised/burn.log',8)
-    for p in sorted(run.glob('*.log'),key=lambda p:p.stat().st_mtime)[-3:]:tail(p,22)
-    print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
-    print('TMUX',subprocess.run(['tmux','list-panes','-t',root.name,'-F','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout,flush=True)
-    if sample==0:time.sleep(15)
+r=json.loads((Path(sys.argv[1])/'supervised/supervisor.json').read_text())
+assert r['training_status']=='ok' and r['training_returncode']==0 and r['burn']['collective_progress_verified'],r
+print('SYNC_STUDY_AND_BURN_COMPLETE',flush=True)
 PYREMOTE
+else
+  echo 'SYNC_SUPERVISOR_ACTIVE; awaiting CPU preflight or running queue.'
+fi

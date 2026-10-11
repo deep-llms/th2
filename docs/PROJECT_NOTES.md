@@ -1,3 +1,17 @@
+## Exact synchronization trial submitted — 11 October 2026
+
+Profile completed on q359; A2.06056s vs P6-iso2.22968s complete max-rank update
+intervals. Profile artifacts pulled with matching SHA256. Original checkpoints
+unchanged; eight communicating burns restored00:39:17UTC, verified00:42UTC.
+CPU14 tests pass for exact synchronization candidate, cooldown fork/resume and
+previous compilation code; two legacy resume/bootstrap regressions pass too.
+Submit q359-p6-sync-20261011-a01: copied10k P6 deterministic-FA4 exact-state
+resume gate, then eight100-step A/P6 reference/optimized fits in reverse-order
+repeats. Original model/loss/EMA arithmetic unchanged, no compilation. Complete
+update intervals include all statistics/logging/data-delivery callbacks. Same
+safe Accelerate/env/burn procedure; no production cooldown launched yet.
+Details: P6_SYNC_AND_COOLDOWN_20261011.md. Pending GPU acceptance/timing.
+
 ## P6 exact optimization and cooldown workflow authorized — 11 October 2026
 
 User approved profiling → exact synchronization/diagnostic optimizations →

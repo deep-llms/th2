@@ -65,6 +65,9 @@ class PilotArguments:
     causal_attention: bool = False
     allow_performance_change_on_resume: bool = False
     stop_after: int | None = None
+    cooldown_start: int | None = None
+    cooldown_steps: int | None = None
+    proxy_sync_optimization: bool = False
     proxy_screen: bool = False
     proxy_groups: int = 2
     proxy_lookahead: int | None = None
@@ -96,7 +99,7 @@ def resume_performance_changes(previous, requested, allow=False):
     """Keep the scientific recipe strict; explicitly permit execution-only changes."""
     before, after = copy.deepcopy(previous), copy.deepcopy(requested)
     defaults = dict(checkpoint_layers=True, checkpoint_lm=True, checkpoint_aux=True,
-                    causal_attention=False, lm_chunk=128)
+                    causal_attention=False, lm_chunk=128, proxy_sync_optimization=False)
     changes = {}
     for key, default in defaults.items():
         old = before['pilot'].get(key, default)
@@ -157,6 +160,11 @@ def main():
     end = training_args.max_steps if pilot.stop_after is None else pilot.stop_after
     if type(end) is not int or not 1 <= end <= training_args.max_steps:
         raise ValueError("stop_after must be an integer within the full training schedule")
+    from deep_kv.cooldown import validate as validate_cooldown
+    validate_cooldown(pilot.cooldown_start, pilot.cooldown_steps, training_args.max_steps,
+                      training_args.get_warmup_steps(training_args.max_steps))
+    if pilot.cooldown_start is not None and end > pilot.cooldown_start + pilot.cooldown_steps:
+        raise ValueError('Cutoff exceeds cooldown endpoint')
     if not 0 < data_args.monitor_rows <= data_args.eval_rows or data_args.block_size < 2:
         raise ValueError("Invalid context/evaluation sizes")
     if Path(data_args.data_dir).resolve() == Path(data_args.eval_data_dir).resolve():
@@ -234,6 +242,8 @@ def main():
     experiment = json.loads(json.dumps({"model": asdict(model_args), "model_config": config.to_dict(),
                   "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
                       if k not in ("stop_after", "allow_performance_change_on_resume")
+                      and (k not in ('cooldown_start','cooldown_steps') or v is not None)
+                      and (k != 'proxy_sync_optimization' or v)
                       and (k != 'attention_backend' or v != 'sdpa')
                       and (k != 'proxy_alpha_init' or v not in (None,0.))  # Preserve pre-option checkpoint recipes.
                       and (k != 'proxy_kv_mode' or v != 'kv')
@@ -269,7 +279,10 @@ def main():
         if Path(checkpoint).resolve().parent != output.resolve():
             raise ValueError("Resume checkpoint must belong to this output directory")
         previous = json.loads((output / "train_config.json").read_text())
-        changes = resume_performance_changes(previous, experiment, pilot.allow_performance_change_on_resume)
+        from deep_kv.cooldown import transition
+        compared, cooldown_changes = transition(previous, experiment, checkpoint, output)
+        changes = resume_performance_changes(previous, compared, pilot.allow_performance_change_on_resume)
+        changes.update(cooldown_changes)
         state = TrainerState.load_from_json(str(Path(checkpoint) / "trainer_state.json"))
         if state.max_steps != training_args.max_steps:
             raise ValueError("Checkpoint training schedule differs from the saved run")
@@ -277,6 +290,8 @@ def main():
             raise ValueError("Cutoff precedes checkpoint")
     elif output.exists() and any(output.iterdir()):
         raise ValueError("Output is nonempty without a resumable checkpoint; use a fresh directory")
+    elif pilot.cooldown_start is not None:
+        raise ValueError('Cooldown requires a verified checkpoint fork')
     # Finish every rank's fresh/resume checks before rank zero creates outputs.
     training_args.distributed_state.wait_for_everyone()
     if training_args.should_save:
@@ -302,6 +317,14 @@ def main():
                                data_collator=isolated_data_collator if data_args.isolate_documents else default_data_collator,
                                compute_metrics=compute_metrics, callbacks=[callback])
         callback.trainer = trainer
+        if pilot.proxy_sync_optimization:
+            if not pilot.proxy_screen:
+                raise ValueError('proxy_sync_optimization requires the proxy Trainer')
+            trainer.sync_optimization = True
+            # compute_loss already raises on EVERY nonfinite objective before
+            # backward. HF's per-microbatch NaN logging filter is redundant.
+            trainer.args.logging_nan_inf_filter = False
+        trainer.cooldown = (pilot.cooldown_start, pilot.cooldown_steps) if pilot.cooldown_start is not None else None
         starting_step = state.global_step if checkpoint else 0
         train_result = None
         if (model.bottleneck or pilot.proxy_screen) and training_args.device.type == "cuda":
@@ -341,6 +364,10 @@ def main():
                       "input_tokens": end * tokens_per_update,
                       "status": "complete" if end == training_args.max_steps else "stopped", "evaluation": metrics,
                       "sdpa_receipts": trainer._sdpa_receipts}
+            if pilot.cooldown_start is not None:
+                result['cooldown'] = dict(start=pilot.cooldown_start, steps=pilot.cooldown_steps,
+                    end=pilot.cooldown_start+pilot.cooldown_steps,
+                    complete=end == pilot.cooldown_start+pilot.cooldown_steps)
             if model.bottleneck or pilot.proxy_screen:
                 result["training_cost"] = training_cost
             if pilot.proxy_screen:

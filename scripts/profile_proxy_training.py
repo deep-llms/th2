@@ -74,7 +74,7 @@ class Capture(TrainerCallback):
         if hasattr(self,'last_begin'):
             self.steps[-1]['interval_seconds']=now-self.last_begin
         self.last_begin=now
-        if state.global_step==5 and args.process_index==0:
+        if state.global_step==int(os.environ.get('P6_PROFILE_UPDATE','6'))-1 and args.process_index==0:
             torch.cuda.synchronize();self.trace=profile(activities=[ProfilerActivity.CPU,ProfilerActivity.CUDA])
             self.trace.__enter__();ACTIVE=True
 
@@ -85,7 +85,7 @@ class Capture(TrainerCallback):
         torch.cuda.synchronize(args.device)
         self.steps.append(dict(step=state.global_step,seconds=time.perf_counter()-self.last_begin,
                               legacy_seconds=callback.seconds_per_update if args.process_index==0 else None))
-        if state.global_step==6 and args.process_index==0:
+        if state.global_step==int(os.environ.get('P6_PROFILE_UPDATE','6')) and args.process_index==0:
             torch.cuda.synchronize();ACTIVE=False;self.trace.__exit__(None,None,None)
             path=Path(args.output_dir)/'component-profile.json'
             times=summarize(self.trace)

@@ -345,7 +345,7 @@ class ProxyModel(DeepKV):
         return result
 
     @torch.no_grad()
-    def update_statistics(self, sums, squares, counts, *, initialize=None):
+    def update_statistics(self, sums, squares, counts, *, initialize=None, diagnostics=True):
         """Sums are raw only in initialization pass 1; otherwise shifted by frozen mu."""
         if not self.family:
             return {}
@@ -365,12 +365,12 @@ class ProxyModel(DeepKV):
         # Diagnostics describe pre-update statistics, the ones used by this step.
         # Diagnostic ratios retain every positive variance; guard only exact zeros.
         # FP64 here avoids overflow when a dead channel becomes active.
-        scale = self.sigma2.double().clamp_min(torch.finfo(self.sigma2.dtype).tiny)
+        scale = self.sigma2.double().clamp_min(torch.finfo(self.sigma2.dtype).tiny) if diagnostics else None
         diagnostics = dict(mean_lag=(delta.double().abs()/scale.sqrt()).median(-1).values,
                            variance_lag=(variance.double()/scale).median(-1).values,
                            median_variance=self.sigma2.median(-1).values,
                            floored_channels=(self.sigma2 < self.settings.variance_floor*
-                               self.sigma2.median(-1,keepdim=True).values).sum(-1))
+                               self.sigma2.median(-1,keepdim=True).values).sum(-1)) if diagnostics else {}
         momentum = self.settings.momentum
         self.mu.add_(delta, alpha=1-momentum)
         self.sigma2.mul_(momentum).add_(variance,alpha=1-momentum)
