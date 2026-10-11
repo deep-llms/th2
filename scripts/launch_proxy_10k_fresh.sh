@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Fresh seed-1042 A/P6-iso fits; all eight B200s per arm and verified final burn.
+# Fresh A/P6-iso fits; optional predecessor-gated replication with cooldowns.
 set -euo pipefail
 TASK_ROOT=$1
 TASK_HOST=${2:?Pass the verified target hostname}
+TASK_SEED=${3:-1042}
+TASK_PREDECESSOR=${4:-}
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
 conda activate attention_bench
 export NCCL_NVLS_ENABLE=0 WANDB_MODE=offline WANDB_PROJECT=deep2shallow
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
-export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=1042 TOKENIZERS_PARALLELISM=false
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED="$TASK_SEED" TOKENIZERS_PARALLELISM=false
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-python -u - "$TASK_ROOT" "$TASK_HOST" <<'PY'
-import hashlib,importlib.metadata as md,json,shutil,subprocess,sys
+python -u - "$TASK_ROOT" "$TASK_HOST" "$TASK_SEED" "$TASK_PREDECESSOR" <<'PY'
+import hashlib,importlib.metadata as md,json,os,shutil,subprocess,sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
@@ -22,12 +24,22 @@ from scripts.proxy_10k_fresh_queue import make
 from train import load_text
 
 root=Path(sys.argv[1]);project=Path.cwd()
+seed=int(sys.argv[3]);assert seed>=0
+predecessor=sys.argv[4]
+if predecessor:
+    from scripts.proxy_replication_queue import wait_for_predecessor
+    wait_for_predecessor(Path(predecessor))
+    with (root/'cpu-tests.log').open('x') as log:
+        subprocess.run([sys.executable,'-m','unittest','tests.test_proxy_replication_queue',
+            'tests.test_proxy_10k_queue','tests.test_cooldown','tests.test_proxy_sync','-v'],
+            stdout=log,stderr=subprocess.STDOUT,check=True,env={**os.environ,'CUDA_VISIBLE_DEVICES':''})
 versions={p:md.version(p) for p in ('torch','transformers','accelerate','datasets','flash-attn-4','nvidia-cutlass-dsl')}
 for p,v in [('torch','2.14.1'),('transformers','5.9.0'),('accelerate','1.13.0'),
-            ('datasets','4.8.5'),('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0')]:
+            ('datasets','4.8.5'),('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0'),('wandb','0.30.0')]:
+    versions[p]=md.version(p)
     assert versions[p].split('+')[0]==v,(p,versions[p])
 free=shutil.disk_usage(root).free
-assert free>300*2**30,free
+assert free>(1024 if predecessor else 300)*2**30,free
 recipe=json.loads((project/'proxy_heads.b200.json').read_text())
 for key in ('config_name','tokenizer_name','data_dir','eval_data_dir'):
     assert Path(recipe[key]).exists(),key
@@ -79,11 +91,18 @@ assert digest('/mnt/local/_gpu_guard/gpu_guard.sh')==GUARD_HASH
 approved={**APPROVED_BURNS,str(project/'resources/llm_pretrain_burn.py'):BURN_HASH}
 assert all(approved_launcher(pid,approved) or approved_launcher(process(pid)['ppid'],approved)
            for pid in inspection['workers'])
-items=make(project/'proxy_heads.b200.json',root/'jobs.json')
+recipe_path=project/'proxy_heads.b200.json'
+if predecessor:
+    from scripts.proxy_replication_queue import make as make_replication
+    recipe.update(seed=seed,data_seed=seed,proxy_sync_optimization=True)
+    recipe_path=root/'recipe.json';recipe_path.write_text(json.dumps(recipe,indent=2))
+    items=make_replication(recipe_path,root/'jobs.json',seed)
+else:
+    items=make(recipe_path,root/'jobs.json',seed)
 (root/'inspection.json').write_text(json.dumps(inspection,indent=2))
 (root/'preflight.json').write_text(json.dumps(dict(status='passed',versions=versions,data=data,
   dataset_manifest_sha256=digest(manifest_path),verified_data_files=len(entries),verified_data_bytes=verified_bytes,
-  environment=sys.executable,stages=len(items),free_bytes=free,
+  environment=sys.executable,stages=len(items),free_bytes=free,seed=seed,predecessor=predecessor,
   accelerate_cache=str(destination),accelerate_sha256=digest(destination),
   source_sha256={name:digest(project/name) for name in
     ('deep_kv/proxy.py','deep_kv/proxy_training.py','train.py','scripts/proxy_10k_fresh_queue.py',

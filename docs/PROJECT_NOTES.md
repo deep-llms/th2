@@ -1,3 +1,25 @@
+## Seed-42 overnight replication authorized — 11 October 2026
+
+User selected A + P6-iso with seed42 (proxy initialization43), fresh10k fits and
+1000-step cooldown branches, after the current seed1042 cooldown study succeeds
+and restores verified communicating burns. Seed42 was used in the earlier2.5k
+screen; this is a second10k seed alongside1042, not a third independent seed.
+Queue: A10k → validate → P6-iso10k → validate/compare → copy/hash originals →
+A cooldown to11k → P6-iso cooldown to11k → full4882-row PPL and final validation.
+These are equal-step/token comparisons; no equal-time extension was requested.
+Original28600 schedule/warmup1430, FA4/document isolation/reset positions/EOS,
+1,048,576-token batch, micro16/GAS4, all8GPUs, no activation checkpointing.
+Exact synchronization option on for both; cosine compilation off. Save every250
+steps and retain all checkpoints. Native Trainer, models/losses remain unchanged.
+Existing launcher gains optional seed/predecessor arguments; default1042 path
+retained. New orchestration waits read-only, verifies completion/burn/guard,
+checks CPU tests, env/data/storage/Accelerate, reclaims only verified burns and
+uses existing train_then_burn automatic restoration for success/failure.
+Fresh root: q359-proxy-10k-seed42-20261011-a01. Parent dependency:
+q359-p6-cooldown-20261011-a01. Local15 tests passed13.175s. Launch pending;
+final artifact will be supervised/run/cooldown/summary.json. No preexisting
+output or cache will be deleted. Shared training code stays unchanged.
+
 ## Timing study passed; P6 cooldown active — verified 11 October 2026, 01:39UTC
 
 Read-only receipt77ab71a confirms all14 synchronization-study stages passed.

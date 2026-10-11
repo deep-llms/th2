@@ -145,3 +145,18 @@ Burn restoration remains configured for success/failure.
 Results were pulled and SHA256-verified into `artifacts/p6-workflow-20261011/`.
 Read-only receipt77ab71a, local log `temp/remote_logs/p6-workflow-health-a02.log`,
 SHA256 `25b6360200911eac788201790594de1f2c0c6d7f439711cfb8c268b6512c013d`.
+
+## Seed-42 replication queued next
+
+User approved fresh A/P6-iso10k fits with seed42 and proxy seed43, followed by
+separate1000-step cooldowns of both. Seed42 appeared in the earlier2.5k screen;
+this adds a second10k seed alongside1042. Same native training recipe, exact
+synchronization option on, compilation off. Retain every250-step checkpoint.
+This is an equal-token replication; no additional equal-time A continuation.
+
+The persistent launcher waits for the current study's success and verified burns,
+then repeats environment/data/storage/Accelerate checks and safe GPU reclamation.
+Original10k checkpoints are copied with hashes for cooldown and checked again
+afterward. Final summary: `q359-proxy-10k-seed42-20261011-a01/supervised/run/`
+`cooldown/summary.json`. The existing supervisor restores burns on success/failure.
+Local15 tests passed; the waiter must still be verified after submission.
