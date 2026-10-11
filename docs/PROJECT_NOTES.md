@@ -1,3 +1,30 @@
+## Original seed1042 pair to20k authorized; seed42 cancelled — 11 October 2026
+
+User superseded the fresh seed42 queue: stop it, resume original pre-cooldown
+A/P6-iso checkpoint10000 to20000. Verified supervisor203574 received SIGTERM;
+owned workers exited, communicating burns217654–217661 restored04:24:41UTC,
+GPU guard released. Receipt9b2770a confirms seed42 A checkpoints250..1250
+preserved and no P6-iso stage started. Cancellation is recorded as failed with
+"Supervisor received signal15"; this is the authorized cancellation, not a fault.
+Evidence temp/remote_logs/stop-seed42-verified.log SHA256
+9734ca639c20cfab1a2bbd8dbe833f973a827d245fed7f2bc2acc46876e722eb.
+
+New root q359-proxy-resume20k-seed1042-20261011-a01. Source:
+q359-proxy-10k-seed1042-20261009-a01/supervised/run/seed-1042/{A,P6-iso}/checkpoint-10000.
+Copy/hash all model/optimizer/scheduler/eight-rank RNG state; never alter originals.
+Replay exact original job argv, changing ONLY stop_after20000, save_total_limit0,
+and explicit copied resume path. No cooldown, synchronization optimization or
+compilation enabled. Original28600 LR schedule,1430warmup,FA4,EOS/isolation/reset
+positions, micro16/GAS4/all8GPUs, training/data seed1042 and proxy seed1043.
+A20k → validate → P6-iso20k → validate/full PPL/matched report. Retain every250
+checkpoint (41 per continuation including copied10000). No additional cooldown.
+Launch gates: verified cancellation/burn handoff, CPU resume tests, pinned env,
+Accelerate cache copy+byte check+accelerate env, approved burn identity checks,
+guard, stop only verified workers, wait and all8 free. Existing supervisor restores
+communicating burns after success/failure. Local12 targeted tests passed4.179s,
+including unchanged model/optimizer state under changed retention. Training code
+unchanged. Launch submitted; remote preflight/training confirmation pending.
+
 ## Cooldown complete; seed42 A training — verified 11 October 2026, 04:18UTC
 
 Receipt e746709 confirms all8 seed1042 cooldown stages succeeded. Final PPL:
