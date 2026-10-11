@@ -1,3 +1,21 @@
+## A20k complete; P6-iso14486 active — verified 11 October 2026, 13:14UTC
+
+Read-only receipt5c5be12: A finished20000 at10:23:56UTC, native validator passed.
+Full4882-row LM NLL2.884035908911387, PPL17.886315243302665. Resumed10000 updates
+cost21057.2239s (5h50m57s Trainer runtime); job elapsed5h51m57s. All41 checkpoints
+10000,10250,..,20000 retained. P6-iso started10:23:57UTC; live samples advance
+14479→14486 over15s,2.24s/update, all8GPUs99% utilized in second sample. Latest
+saved14250; all18 expected checkpoint directories10000..14250 present. Finite
+loss/gradient values, no errors in sampled production logs,21.576TiB free.
+ETA about16:45UTC (roughly3.5h remaining at snapshot), including periodic saves.
+P6 full final PPL pending. Supervisor218376 owns guard; original28600-step
+schedule/cutoff20000 unchanged. Final validations and communicating burns remain
+configured; no additional training launched or existing work changed.
+Artifacts hash-verified under artifacts/resume20k-status-20261011-1314/.
+Receipt temp/remote_logs/resume20k-status-a03.log SHA256
+be315c4fec954d1eb82556dd81f69f5e2471f3881c77564b1421121d4df97cd4.
+commands.sh returned to#0. Next: P6 completion, comparison and burn verification.
+
 ## Original seed1042 continuation running — verified 11 October 2026, 04:35UTC
 
 Launch22e3dc7 passed11 remote CPU tests, environment/Accelerate verification;

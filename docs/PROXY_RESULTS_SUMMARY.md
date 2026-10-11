@@ -362,7 +362,29 @@ unchanged original checkpoint hashes.
 The study completed successfully and restored verified communicating burns at
 03:32:08UTC. Seed42 replication then passed its environment/data/Accelerate
 checks, safely reclaimed those burns and started03:34:05UTC. At04:18UTC A had
-reached1249/10000; P6-iso10k and two1000-step cooldowns remain queued.
+reached1249/10000. The user subsequently cancelled this seed42 queue; its
+saved A checkpoints through1250 were preserved. Original seed1042 continuations
+to20000 replaced it, as recorded below.
 
 Source: [validated cooldown summary](../artifacts/proxy-status-20261011-0418/q359-p6-cooldown-20261011-a01/supervised/run/branches/summary.json).
 Receipt e746709, SHA256 `83c3ed11148b0d6e3082e4b909a031581005785ca4a0b7e0797aefd92291c7c4`.
+
+
+## Original-schedule 20k continuation — 11 October 2026, 13:14UTC
+
+Seed1042, resumed original checkpoint10000 for each arm; no cooldown or new
+optimization. Same28600-step LR schedule and1430 warmup. Full fixed4882-row
+validation; all250-step checkpoints retained. Model/optimizer/scheduler/RNG
+copies were hash-verified before training.
+
+| Arm | Step | Status | Full LM loss | Full PPL |
+|---|---:|---|---:|---:|
+| A | 20000 | Complete; validator passed | 2.884036 | 17.8863 |
+| P6-iso | 14486 /20000 | Training; final evaluation pending | — | — |
+
+A's additional10000 updates took5h50m57s Trainer runtime. All41 checkpoint
+directories10000..20000 retained. P6-iso currently2.24s/update; expected finish
+around16:45UTC. No20k comparison is available until P6-iso finishes validation.
+
+Source: [A20k result](../artifacts/resume20k-status-20261011-1314/q359-proxy-resume20k-seed1042-20261011-a01/supervised/run/seed-1042/A/result.json).
+Receipt5c5be12, SHA256 `be315c4fec954d1eb82556dd81f69f5e2471f3881c77564b1421121d4df97cd4`.
