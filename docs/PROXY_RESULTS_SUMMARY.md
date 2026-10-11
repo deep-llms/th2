@@ -1,7 +1,7 @@
 # Proxy arms: perplexity and downstream results
 
 Latest update: **12 October 2026**. A and P6-iso both completed 20k
-with seed 1042; full-validation PPL at 15k–20k is in the last section. Earlier screen and queue
+with seed 1042; full-validation PPL at 15k–20k is below. The 20k downstream study is running. Earlier screen and queue
 tables retain their explicitly dated historical snapshots.
 
 ## Setup and interpretation
@@ -432,3 +432,16 @@ Implementation: `scripts/checkpoint_ppl_study.py`.
 
 All stages completed successfully; communicating GPU burns were automatically
 restored and verified on all eight GPUs. No experiments remain queued.
+
+## 20k downstream study — running, 12 October 2026
+
+A-20000 and P6-iso-20000 are being evaluated with the same few-shot and
+fine-tuning protocols as the completed 10k/10.8k study. Same eight English
+few-shot tasks (5/10/25 shots, depending on task) and demonstration seed 42.
+Fine-tuning: PAWS-X, NLI, STS-B and BoolQ; development-only LR selection over
+1e-5/3e-5, then held-out results for seeds 42/43/44. All fits use eight GPUs.
+
+Both CUDA numerical checks and all few-shot smoke validators passed. Full
+few-shot evaluation is running, followed automatically by four fine-tuning
+studies. **No final 20k downstream results yet.** Output root:
+`q359-downstream-20k-20261012-a01`; final `supervised/run/downstream-summary.json`.

@@ -1,3 +1,25 @@
+## 20k downstream queue verified running — 12 October 2026, 03:06 SGT
+
+Launch cbd8e25 on q359 is active under persistent supervisor253720.
+Read-only receipt ea85d89 confirms all21 remote CPU tests passed, pinned eval_fa4
+packages and dataset/prompt audits passed. Both20k checkpoint hashes match the
+just-completed PPL study. Resources Accelerate config copied to actual
+/dev/shm/.cache/huggingface/accelerate/default_config.yaml and accelerate env
+verified (8GPU,BF16,MULTI_GPU; SHA923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5).
+Only verified burn workers252590–252597 stopped; all8GPUs free19:04:34UTC.
+Both checkpoint CUDA numerical gates and all5/10/25-shot smoke validators passed.
+Full few-shot evaluation is now running; four fine-tuning studies follow:
+A20k PAWS/NLI → A20k STS-B/BoolQ → P6-iso20k PAWS/NLI → P6-iso20k STS-B/BoolQ.
+32 production fits using original protocol; final summary and automatic
+communicating burn restoration remain pending. No final downstream scores yet.
+Source weights unchanged; all fine-tuning epoch checkpoints retained.
+Root q359-downstream-20k-20261012-a01; completion supervised/run/downstream-summary.json.
+Evidence artifacts/downstream-20k-health-a03/ and
+temp/remote_logs/downstream-20k-health-a03.log SHA256
+5528d7207a36d0347bb12f15ecaba60efd2fd8c737d74b518f27430032188eca.
+commands.sh returned to#0; persistent queue continues. Next action: read-only
+progress check, validate final results and confirm communicating burn restoration.
+
 ## Downstream evaluation of both20k checkpoints authorized — 12 October 2026
 
 User requests few-shot and fine-tuning evaluation at20k. Scope: A and P6-iso,
