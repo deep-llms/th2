@@ -326,3 +326,15 @@ research PPL results. Production defaults unchanged; no exact-resume claim.
 All eight communicating burns restored and verified. See
 [P6 compilation trial](P6_COMPILE_TRIAL_20261011.md) for protocol, limitations,
 per-run results and SHA256-verified artifacts.
+
+## Further P6-iso speed trial — 11 October 2026
+
+Target scaling/clipping fusion passed strict numerical checks but added only
+0.31% mean /0.22% median throughput beyond compiled cosine, with no meaningful
+memory saving. Two100-step runs each/all8B200; mean update2.17135s cosine versus
+2.16464s with target fusion. Short32-row LM NLLs9.30654–9.30658; not research PPL.
+Gate/code-normalization compilation still fails even with precision casts
+preserved; excluded. Production defaults unchanged; recommend cosine-only as the
+experimental option, not adding target fusion for this marginal result.
+Full protocol, per-run metrics and numerical checks:
+[P6 compilation report](P6_COMPILE_TRIAL_20261011.md).

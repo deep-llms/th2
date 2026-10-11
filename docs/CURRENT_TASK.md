@@ -1,18 +1,24 @@
-## Further P6-iso speed trial — 11 October 2026
+## Further P6 speed trial completed — 11 October 2026
 
-User requested further throughput work while preserving correctness. Extend the
-existing disposable wrapper only: (1) compiled FP32 target scaling/clipping,
-with centering and running-moment reductions unchanged; (2) additionally retry
-gate normalization with Inductor emulate_precision_casts=True. Both include the
-previously validated cosine compilation. Production defaults unchanged.
-Seven CPU tests passed16.276s. B200 gate at original P6iso10000 weights requires
-EXACT LM outputs/backbone+gate gradients/moments/buffers, same existing auxiliary
-tolerances. Two lengths64/2048, checkpointing off/on, eight cases. If neither
-candidate passes, stop; otherwise four100-step eight-GPU Trainer runs compare
-cosine-only with selected candidate, reverse-order repeats, full recipe retained.
-Fresh root q359-p6-further-20261011-a01; existing checkpoint/data/env untouched.
-Standard safe supervisor verifies ownership/free GPUs and restores communicating
-burns on success/failure. Submission pending; no claimed speed improvement yet.
+Four100-step eight-GPU fits completed successfully; target scaling/clipping fusion
+adds only0.310% measured throughput by means (0.216% medians), essentially no
+memory saving. Cosine-only2.171355s/update vs target+cosine2.164644s; final short
+LM NLLs9.30654–9.30658. All batches/fingerprints match, no timed recompilation.
+Target passes all four CUDA numerical cases with exact LM outputs/backbone+gate
+gradients/moments/buffers. Predictor differences remain tiny as for cosine-only.
+Gate compilation with preserved precision casts still FAILS; excluded from fits.
+Recommendation: keep cosine-only as the supported experimental option; the extra
+fusion is not worth production complexity on this evidence. No default changes,
+no resumed research training, no environment/driver changes or cache deletion.
+
+Launch c31fc36, root q359-p6-further-20261011-a01; six stages finished00:02:11UTC,
+communicating burns restored00:03:22UTC. Receipt a7fe4d8 at00:03:54UTC verifies all8
+burns100%, workers149790–149797. CPU tests7passed locally16.276s /B20016.708s.
+Report:docs/P6_COMPILE_TRIAL_20261011.md. Artifacts verified by SHA256 and archived
+in artifacts/p6-further-20261011/. Receipt2fa533f at00:07:20UTC confirms source
+checkpoint unchanged, all8burns100% and advancing collectives. commands.sh now#0;
+no experiments queued. Target numerical comparison records equal prior cosine
+records for all four cases.
 
 ## P6-iso speed trial completed — verified 11 October 2026, 07:11 SGT
 

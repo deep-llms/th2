@@ -143,7 +143,7 @@ An additional local real train.py wrapper test completed three updates each with
 eager and compiled cosine; actual first-update batch hashes matched.
 Log:temp/p6-compile-trainer-cpu.log. No GPU use for that check.
 
-## Follow-up: target scaling and BF16 cast preservation (pending)
+## Follow-up: target scaling and BF16 cast preservation — completed
 
 The user requested further optimization without compromising correctness.
 Two experimental modes extend the same wrapper:
@@ -159,8 +159,8 @@ Two experimental modes extend the same wrapper:
 Neither candidate may change LM outputs, backbone/gate gradients, target moments
 or normalization buffers at the test checkpoint: these must be bitwise exact.
 Auxiliary outputs retain1e-4 and predictor gradients1% relative L2/peak-scaled
-bounds. No tolerances are relaxed to admit gate compilation. All eight CUDA
-cases must pass for the selected mode (four per candidate,64/2048 tokens,
+bounds. No tolerances are relaxed to admit gate compilation. All four CUDA
+cases must pass for the selected mode (eight total across both candidates,64/2048 tokens,
 checkpointing off/on). Prefer precision if it passes; otherwise target; if
 neither passes, no timing runs. Tests alone cannot guarantee all future inputs.
 
@@ -177,4 +177,63 @@ trial seeds1042/43; all eight GPUs per fit. Same first/final batch hashes and
 steps21–90 timing, no new graphs during measured window, save all trial finals.
 The comparison isolates incremental gains beyond cosine; it does not rerun A.
 Pinned attention_bench, Accelerate copy+verification and safe supervisor retained.
-Source weights read-only; no package/driver/cache modifications. Results pending.
+Source weights read-only; no package/driver changes or deletion of existing caches. A fresh compiler cache is local to this trial.
+
+### Follow-up result and decision
+
+**Target scaling/clipping passes, but its extra speed gain is too small to justify
+production adoption.** Retain cosine-only as the recommended experimental option.
+Gate compilation still fails even with `emulate_precision_casts=True`; that option
+did not resolve the discrepancy. Do not present BF16 cast elision as an established
+explanation of the earlier failure. Production defaults remain unchanged.
+
+| Version | Mean update (s) | Mean of run medians (s) | Peak allocated/GPU (GiB) |
+|---|---:|---:|---:|
+| Compiled cosine only | 2.171355 | 2.160154 | 108.62566 |
+| Compiled cosine + target scaling/clipping | 2.164644 | 2.155497 | 108.62614 |
+
+Incremental measured throughput improvement: **0.310% by means, 0.216% by medians**.
+Memory use is essentially unchanged. These are two100-step runs per version,
+140 measured updates per version, all eight GPUs. A small bounded trial does not
+establish a durable sub-percent gain. A was not rerun here; do not combine these
+numbers with its earlier timing as a new matched comparison.
+
+| Run | Mean update (s) | Median update (s) | Final32-row LM NLL |
+|---|---:|---:|---:|
+| cosine-first | 2.162414 | 2.160651 | 9.306554989 |
+| target-first | 2.156986 | 2.156113 | 9.306584808 |
+| target-second | 2.172301 | 2.154882 | 9.306558183 |
+| cosine-second | 2.180295 | 2.159657 | 9.306539020 |
+
+All timing samples are retained. Slow updates in the second target run:
+step55=2.812s and62=2.664s; second cosine run: step66=3.065s and73=2.642s.
+No cause is established for these pauses. Compiler graph counts stayed unchanged
+from step20 to90: two graphs for cosine, four for target. All four runs share
+train fingerprint844ca94060eee9cb and matching first/final four microbatch hashes
+on each rank. The production recipe, schedule, target updates, seeds1042/43, loss
+weights, gradient routing, packing and attention semantics remain unchanged.
+
+Target mode passed all four64/2048-token/checkpointing cases at the trained10k
+checkpoint: exact LM outputs, backbone/gate gradients, moments and normalization
+buffers. Maximum predictor gradient relative L2 difference0.04461%, as in the
+original cosine trial. Auxiliary output differences are at FP32 rounding scale.
+Gate compilation failed all four cases again: hidden relative L2 up to0.004114,
+gradient relative L2 up to0.019317; excluded from all timing runs. These checks
+are numerical evidence, not a guarantee of bitwise identical long-run/resume
+trajectories. No research run was resumed with either implementation.
+
+Launch c31fc36; fresh root q359-p6-further-20261011-a01. All six stages passed
+(numerical gate, four fits, aggregate validator), finished11October00:02:11UTC.
+GPU burns restored and collective progress verified00:03:22UTC, workers149790–149797;
+read-only receipt a7fe4d8 confirms all eight burns at100% at00:03:54UTC.
+Seven CPU tests also passed on B200 in16.708s before GPU reclamation. Evidence:
+temp/remote_logs/p6-further-health-a09.log. Artifacts: [timing summary](../artifacts/p6-further-20261011/summary.json) and
+[numerical checks](../artifacts/p6-further-20261011/numerics.json). SHA256 respectively:
+`8480c27ed20c8844fa8fe2907c61301e256380b2aa529d665b839d6cad156fca` and
+`0b67c6896b68edf0157f6c01ccb6565e79e0a06bab899e2bf339b429a2050a70`.
+Verified against runner file hashes; every target-mode comparison record and
+loss pair matches the corresponding earlier cosine-only numerical report.
+Final read-only receipt2fa533f at00:07:20UTC confirms source checkpoint SHA
+unchanged, exact seeds/fingerprints above, all eight burns100%, and advancing
+collective cycles. Log:temp/remote_logs/p6-further-results-a01.log. commands.sh
+returned to#0; no experiments queued.
