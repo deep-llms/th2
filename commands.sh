@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-checkpoint-ppl-status-20261012-a03
+#th2-q359-checkpoint-ppl-error-20261012-a04
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
@@ -21,6 +21,7 @@ def tail(p,n=10):
         print('TAIL',str(p),'\n'+'\n'.join(s.splitlines()[-n:]),flush=True)
 for rel in ('preflight.json','supervised/gpus-free-before-training.json','supervised/run/summary.json','supervised/run/complete.json'):artifact(root/rel)
 for p in sorted(run.glob('*/summary.json')):artifact(p)
+artifact(run/'A-17000.log')
 tail(root/'cpu-tests.log',5)
 for sample in range(2):
     print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
