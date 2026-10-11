@@ -160,3 +160,9 @@ Original10k checkpoints are copied with hashes for cooldown and checked again
 afterward. Final summary: `q359-proxy-10k-seed42-20261011-a01/supervised/run/`
 `cooldown/summary.json`. The existing supervisor restores burns on success/failure.
 Local15 tests passed; the waiter must still be verified after submission.
+
+**Seed-42 waiter verified02:03UTC:** launch24fab0e, live tmux PID203574,
+`WAITING_FOR_COOLDOWN_SUCCESS_AND_BURN`. Node has23TiB free. It will start the
+approved replication after predecessor success and verified burn handoff.
+Receipt SHA256 `08c3a171b6fd6dc2f360fdd48e71b294da8cb2cc31cbe963c1a2b23310a1e240`.
+The runner command is now inactive; persistent current and waiting jobs continue.
