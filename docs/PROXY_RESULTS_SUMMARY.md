@@ -1,6 +1,8 @@
 # Proxy arms: perplexity and downstream results
 
-Snapshot: **8 October 2026, 12:15:21 UTC** (latest verified B200 results). This summarizes the **document-isolated P1–P7 screen**, including the chat-designed variants, all completed downstream evaluations, and the nine-run follow-up queue. All four new P6-iso variants are complete; P7-simple-sparse is running, and four runs are queued. Status below is as of this snapshot, not a live feed.
+Latest update: **12 October 2026, 00:57 SGT**. A and P6-iso both completed20k
+with seed1042; final results are in the last section. Earlier screen and queue
+tables retain their explicitly dated historical snapshots.
 
 ## Setup and interpretation
 
@@ -370,21 +372,26 @@ Source: [validated cooldown summary](../artifacts/proxy-status-20261011-0418/q35
 Receipt e746709, SHA256 `83c3ed11148b0d6e3082e4b909a031581005785ca4a0b7e0797aefd92291c7c4`.
 
 
-## Original-schedule 20k continuation — 11 October 2026, 13:14UTC
+## Completed original-schedule 20k continuation — 12 October 2026
 
 Seed1042, resumed original checkpoint10000 for each arm; no cooldown or new
 optimization. Same28600-step LR schedule and1430 warmup. Full fixed4882-row
-validation; all250-step checkpoints retained. Model/optimizer/scheduler/RNG
-copies were hash-verified before training.
+validation. Both arm validators and the combined continuation validator passed.
 
-| Arm | Step | Status | Full LM loss | Full PPL |
-|---|---:|---|---:|---:|
-| A | 20000 | Complete; validator passed | 2.884036 | 17.8863 |
-| P6-iso | 14486 /20000 | Training; final evaluation pending | — | — |
+| Arm | Final step | Full LM loss | Full PPL | Cumulative Trainer time (h) |
+|---|---:|---:|---:|---:|
+| A | 20000 | 2.884036 | 17.8863 | 11.6990 |
+| P6-iso | 20000 | 2.881533 | 17.8416 | 12.6409 |
 
-A's additional10000 updates took5h50m57s Trainer runtime. All41 checkpoint
-directories10000..20000 retained. P6-iso currently2.24s/update; expected finish
-around16:45UTC. No20k comparison is available until P6-iso finishes validation.
+P6-iso improves PPL by0.2500% at equal steps/tokens, with8.0515% greater
+cumulative Trainer runtime. This remains a small single-seed advantage; it does
+not establish an equal-time improvement. Additional10000-update Trainer time:
+A5h50m57s; P6-iso6h19m23s. Both retain all41 checkpoints10000,10250,..,20000.
+Original and copied10000 checkpoints remain byte-identical to the staging receipt.
 
-Source: [A20k result](../artifacts/resume20k-status-20261011-1314/q359-proxy-resume20k-seed1042-20261011-a01/supervised/run/seed-1042/A/result.json).
-Receipt5c5be12, SHA256 `be315c4fec954d1eb82556dd81f69f5e2471f3881c77564b1421121d4df97cd4`.
+All6 queue stages finished00:45:04SGT on12October. Communicating burns restored
+00:46:15SGT; live00:57SGT check verified all8GPUs100%, approved worker identities,
+advancing collectives and released guard. No further experiments queued.
+
+Source: [validated continuation summary](../artifacts/resume20k-final-20261012/q359-proxy-resume20k-seed1042-20261011-a01/supervised/run/continuation-summary.json).
+Receipt67c5314, SHA256 `55ef9f73a5e0afdb44b46f1a41e2751f3aa9edfe42d966dd8954f6999c89dece`.

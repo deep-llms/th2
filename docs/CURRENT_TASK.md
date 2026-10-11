@@ -1,3 +1,21 @@
+## Both20k complete; communicating burns verified — 12 October 2026, 00:57SGT
+
+Read-only receipt67c5314 confirms all6 stages succeeded. A/P6-iso20000 final
+validators and combined continuation validator passed. Full4882-row validation:
+A NLL2.884035908911387/PPL17.886315243302665; P6-iso NLL2.881532900308893/
+PPL17.841601625011805. P6 PPL about0.25% lower at equal steps/tokens (one seed),
+with8.05% greater cumulative Trainer runtime. No cooldown used.
+Each arm retains all41 checkpoints10000,10250,..,20000. Original and copied10k
+checkpoint hashes unchanged; only retention differs from saved recipes.
+P6 training finished00:44:32SGT; final comparison00:45:04; burns restored and
+verified00:46:15. At00:57:32/47 all8GPUs100%, workers239661–239668 have approved
+burn parents, collective cycles760→770 and payload843.87→854.97GiB. Guard released,
+supervisor exited successfully; no experiments queued.21.408TiB free.
+Results hash-verified locally under artifacts/resume20k-final-20261012/.
+Receipt temp/remote_logs/resume20k-final-a04.log SHA256
+55ef9f73a5e0afdb44b46f1a41e2751f3aa9edfe42d966dd8954f6999c89dece.
+commands.sh returned to#0. No new training or process changes submitted.
+
 ## A20k complete; P6-iso14486 active — verified 11 October 2026, 13:14UTC
 
 Read-only receipt5c5be12: A finished20000 at10:23:56UTC, native validator passed.
