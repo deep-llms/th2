@@ -177,3 +177,31 @@ wait and all-eight-GPU free check precede training. The runner checks GPU freedo
 again before each GPU job. Twelve CPU handoff/queue tests pass, including changed
 PID rejection and stop→wait→free ordering. No production-code changes needed.
 Receipt39f1129 SHA256 `45647a9a95aa6346209a944855ffe3b35c575877ba7c4e2f0803d2ad630197b0`.
+
+## Completed cooldown comparison — 11 October 2026
+
+Seed1042, full fixed4882-row validation. Each branch resumes a copy of its
+original checkpoint, retains optimizer/RNG/data order, then linearly reduces LR
+to zero. Original28600-step schedule applies before the fork. Exact synchronization
+option is enabled; cosine compilation is off. These are single-seed results.
+
+| Arm | Original step | Cooldown updates | Final step | LM loss | PPL | Cumulative time (h) |
+|---|---:|---:|---:|---:|---:|---:|
+| P6-iso | 10000 | 1000 | 11000 | 2.955112 | 19.2039 | 6.9517 |
+| A, equal tokens | 10000 | 1000 | 11000 | 2.958448 | 19.2680 | 6.4356 |
+| A, approximately equal time | 10800 | 1075 | 11875 | 2.944287 | 18.9971 | 6.9535 |
+
+P6-iso's PPL is0.333% lower at equal steps/tokens, but1.088% higher than the
+time-matched A. Actual cumulative time differs by only6.5561seconds (0.0262%).
+Cooldown preserves a small token-efficiency advantage but provides no equal-time
+advantage in this seed. It does not establish how the gap evolves at20k.
+All final validation/checkpoint checks passed, including zero final LR and
+unchanged original checkpoint hashes.
+
+The study completed successfully and restored verified communicating burns at
+03:32:08UTC. Seed42 replication then passed its environment/data/Accelerate
+checks, safely reclaimed those burns and started03:34:05UTC. At04:18UTC A had
+reached1249/10000; P6-iso10k and two1000-step cooldowns remain queued.
+
+Source: [validated cooldown summary](../artifacts/proxy-status-20261011-0418/q359-p6-cooldown-20261011-a01/supervised/run/branches/summary.json).
+Receipt e746709, SHA256 `83c3ed11148b0d6e3082e4b909a031581005785ca4a0b7e0797aefd92291c7c4`.

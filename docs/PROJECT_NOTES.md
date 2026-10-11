@@ -1,3 +1,23 @@
+## Cooldown complete; seed42 A training — verified 11 October 2026, 04:18UTC
+
+Receipt e746709 confirms all8 seed1042 cooldown stages succeeded. Final PPL:
+P6-iso11000=19.2038743; A11000=19.2680412; time-matched A11875=18.9971154.
+P6 improves0.333% at equal steps but is1.088% worse at equal actual time. Time
+mismatch is only0.0262% (A6.5561s longer). All source checkpoints unchanged;
+full4882-row validation and zero final LR passed. Communicating burns restored
+and verified03:32:08UTC; seed42 preflight then passed, verified burns stopped
+03:33:34UTC, all8GPUs free03:34:04UTC, training started03:34:05UTC. Accelerate
+cache verified at /dev/shm/.cache/huggingface/accelerate/default_config.yaml.
+Seed42 A advanced1242→1249/10000 across15s, about2.06s/update, no errors observed.
+Its approved P6-iso10k and both1000-step cooldowns remain queued. Old seed1042
+A/P6-iso10k checkpoints contain optimizer/scheduler/all8RNG files; reusable.
+User proposes extending previous runs to20k. Recommended appending seed1042
+continuations after the current seed42 queue; scheduling clarification pending.
+No20k training submitted, no running job interrupted. Resume from original
+pre-cooldown checkpoints, retain28600 schedule/1430warmup, all checkpoints.
+Artifacts hash-verified under artifacts/proxy-status-20261011-0418/. Receipt log
+SHA25683c3ed11148b0d6e3082e4b909a031581005785ca4a0b7e0797aefd92291c7c4.
+
 ## Seed-42 handoff re-audited — verified 11 October 2026, 02:12UTC
 
 Read-only receipt39f1129 confirms parent cooldown still owns the guard (PID170012)
