@@ -1,3 +1,21 @@
+## Seed-42 handoff re-audited — verified 11 October 2026, 02:12UTC
+
+Read-only receipt39f1129 confirms parent cooldown still owns the guard (PID170012)
+and all8GPUs; seed42 waiterPID203574 is live, still waiting, with no reclamation or
+training output. Both samples show current training98–99% GPU utilization. Remote
+launcher, waiter, supervisor and Accelerate source SHA256 match the reviewed local
+files. Waiting requires parent success + completed validation + all-rank burn
+readiness/advancing collectives + guard release. Only afterward: CPU/env/data
+checks → Accelerate cache copy/byte check + accelerate env → fresh burn identity
+inspection → exclusive guard hold +30s → PID-handle identity recheck/verified
+workers only →30s → all8GPUs free → per-job free check → training. Automatic burn
+restoration retains guard ownership until handoff finishes. No launch-order defect
+found; production code/current jobs unchanged. Twelve local CPU handoff/queue tests
+passed1.506s, including new regressions for PID identity reuse and wait/free order.
+Receipt temp/remote_logs/seed42-handoff-check-a01.log SHA256
+45647a9a95aa6346209a944855ffe3b35c575877ba7c4e2f0803d2ad630197b0.
+commands.sh returned to#0; waiting and training processes continue unchanged.
+
 ## Seed-42 replication waiter verified live — 11 October 2026, 02:03UTC
 
 Launch24fab0e received on q359. Log confirms WAITING_FOR_COOLDOWN_SUCCESS_AND_BURN

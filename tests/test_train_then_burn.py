@@ -59,6 +59,35 @@ class HandoffTests(unittest.TestCase):
                 handoff.stop_burns(Path(tmp), {})
             send.assert_not_called()
 
+    def test_changed_burn_identity_never_signaled(self):
+        gpu = [{'index': 0, 'uuid': 'test', 'pids': [123]}]
+        before = dict(pid=123, ppid=124, start_ticks=10)
+        after = dict(before, start_ticks=11)
+        with tempfile.TemporaryDirectory() as tmp, patch.object(handoff, 'snapshot', return_value=gpu), \
+             patch.object(handoff, 'process', side_effect=[before, before, after]), \
+             patch.object(handoff, 'approved_launcher', return_value=True), \
+             patch.object(handoff, 'pidfd_open', return_value=90), patch.object(handoff.os, 'close'), \
+             patch.object(handoff, 'pidfd_send_signal') as send:
+            with self.assertRaisesRegex(RuntimeError, 'identity changed'):
+                handoff.stop_burns(Path(tmp), {})
+            send.assert_not_called()
+
+    def test_verified_stop_waits_before_requiring_free_gpus(self):
+        gpu = [{'index': 0, 'uuid': 'test', 'pids': [123]}]
+        record = dict(pid=123, ppid=124, start_ticks=10)
+        events = []
+        with tempfile.TemporaryDirectory() as tmp, patch.object(handoff, 'snapshot', return_value=gpu), \
+             patch.object(handoff, 'process', return_value=record), \
+             patch.object(handoff, 'approved_launcher', return_value=True), \
+             patch.object(handoff, 'pidfd_open', return_value=90), patch.object(handoff.os, 'close'), \
+             patch.object(handoff, 'pidfd_send_signal', side_effect=lambda fd,sig: events.append(('signal',fd,sig))), \
+             patch.object(handoff.time, 'sleep', side_effect=lambda seconds: events.append(('wait',seconds))), \
+             patch.object(handoff, 'require_free', side_effect=lambda gpus: events.append(('free',gpus)) or []):
+            handoff.stop_burns(Path(tmp), {})
+            self.assertEqual(events,[('signal',90,signal.SIGKILL),('wait',30),('free',list(range(8)))])
+            receipt=json.loads((Path(tmp)/'gpus-free-before-training.json').read_text())
+            self.assertEqual(receipt['gpus'],[])
+
     def test_subreaper_cleans_owned_orphans_only(self):
         # Isolate subreaper and signal side effects in a fresh Python process.
         # An unrelated sibling sleeper must survive the owned orphan cleanup.

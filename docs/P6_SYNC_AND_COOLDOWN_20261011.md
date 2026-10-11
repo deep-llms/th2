@@ -166,3 +166,14 @@ Local15 tests passed; the waiter must still be verified after submission.
 approved replication after predecessor success and verified burn handoff.
 Receipt SHA256 `08c3a171b6fd6dc2f360fdd48e71b294da8cb2cc31cbe963c1a2b23310a1e240`.
 The runner command is now inactive; persistent current and waiting jobs continue.
+
+**Handoff re-audit02:12UTC:** parent PID170012 still owns the guard and all GPUs;
+seed42 waiterPID203574 remains live and read-only. Source hashes of the deployed
+launcher/waiter/supervisor/Accelerate resource match local review. The gate requires
+parent success, validated burn collective progress and guard release before
+Accelerate/cache preflight and fresh burn identity checks. An exclusive guard,
+30-second settling interval, PID-handle identity verification, another30-second
+wait and all-eight-GPU free check precede training. The runner checks GPU freedom
+again before each GPU job. Twelve CPU handoff/queue tests pass, including changed
+PID rejection and stop→wait→free ordering. No production-code changes needed.
+Receipt39f1129 SHA256 `45647a9a95aa6346209a944855ffe3b35c575877ba7c4e2f0803d2ad630197b0`.
