@@ -118,9 +118,15 @@ def stop(output):
 
 
 def main():
+    global ROOT,SESSION,HOST,BURN_SESSION
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--root',type=Path,default=ROOT)
+    p.add_argument('--session',default=SESSION)
+    p.add_argument('--host',default=HOST)
+    p.add_argument('--burn-session',default=BURN_SESSION)
     a=p.parse_args()
+    ROOT,SESSION,HOST,BURN_SESSION=a.root.resolve(),a.session,a.host,a.burn_session
     stop(a.output)
 
 
