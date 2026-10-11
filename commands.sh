@@ -1,2 +1,41 @@
-#0
-# 20k downstream queue verified running; persistent supervisor restores burns on exit.
+#1 +60+a
+#th2-q359-downstream-20k-health-20261012-a04
+set -euo pipefail
+cd /mnt/local/deep-llms_th2
+/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
+import hashlib,json,socket,subprocess,time
+from datetime import datetime,timezone
+from pathlib import Path
+from scripts.gpu_status import snapshot
+from scripts.train_then_burn import burn_progress, approved_launcher, BURN_HASH
+from scripts.verified_gpu_reclaim import process
+assert socket.gethostname()=='thiennh-p6-q359-worker-0'
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-downstream-20k-20261012-a01')
+run=root/'supervised/run'
+def tail(path,n=16):
+    if not path.is_file():return
+    with path.open('rb') as f:
+        f.seek(max(0,path.stat().st_size-40000));data=f.read().decode(errors='replace')
+    print('TAIL',str(path),'\n'+'\n'.join(data.splitlines()[-n:]),flush=True)
+for sample in range(2):
+    print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
+    tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',8)
+    print('AUDIT_FILES',[p.name for p in root.glob('*validation*.json')]+[p.name for p in root.glob('prompt-audit*.json')],flush=True)
+    for p in (root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',run/'run.json',run/'downstream-summary.json',root/'supervised/burn-verified.json'):
+        if p.is_file():
+            raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=str(p),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+    for p in sorted(run.glob('*validation.json'))+sorted((run/'numerics').glob('*.json'))+sorted((run/'finetune').glob('*/*/summary.json')):
+        raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=str(p),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+    for p in sorted(run.rglob('run.json')):
+        if p!=run/'run.json':
+            r=json.loads(p.read_text());print('NESTED_RUN',str(p),r['status'],'LAST_JOBS',json.dumps(r.get('jobs',[])[-3:]),flush=True)
+    for p in sorted(run.rglob('*.log'),key=lambda p:p.stat().st_mtime)[-4:]:tail(p)
+    gpus=snapshot(list(range(8)));print('GPUS',json.dumps(gpus),flush=True)
+    tail(root/'supervised/burn.log',5)
+    if (root/'supervised/burn-verified.json').exists():
+        workers=sorted({p for g in gpus for p in g['pids']})
+        print('LIVE_BURNS',json.dumps(dict(workers=workers,approved_parents=len(workers)==8 and all(approved_launcher(process(p)['ppid'],{str(Path.cwd()/'resources/llm_pretrain_burn.py'):BURN_HASH}) for p in workers),collective_progress=burn_progress((root/'supervised/burn.log').read_text()))),flush=True)
+    guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.exists() else 'released',flush=True)
+    print('TMUX',subprocess.run(['tmux','list-panes','-t',root.name,'-F','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout,flush=True)
+    if sample==0:time.sleep(15)
+PYREMOTE
