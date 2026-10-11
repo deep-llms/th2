@@ -1,3 +1,24 @@
+## Original seed1042 continuation running — verified 11 October 2026, 04:35UTC
+
+Launch22e3dc7 passed11 remote CPU tests, environment/Accelerate verification;
+only verified burn workers217654–217661 stopped. All8GPUs free04:31:25UTC.
+Both original10000 checkpoints copied and hash-verified (model, optimizer,
+scheduler, training args, all8RNG states) in33.22s. A training started04:31:59;
+latest samples advance10072→10079, about2.07s/update, all8GPUs98–99% utilized.
+Resume transition permits ONLY retention2→0; source recipe/fingerprints match,
+LR2.381e-4 at10070 follows original28600/1430 schedule, no cooldown/restart.
+P6-iso10000→20000 is queued after A20000 and validation; no seed42 jobs remain.
+Keep all250-step checkpoints; final full PPL/matched report and automatic
+communicating burn restoration on success/failure. Estimate12–13h for both.
+
+Read-only receipt452c895 archived under artifacts/resume20k-20261011-a02/.
+Log temp/remote_logs/resume20k-health-a02.log SHA256
+adb094eff92b97101be4639034925404c86f3cfe1365c3733e2ef0be6332d8d4.
+First health probe used the unactivated shell's default Accelerate path and
+stopped early; corrected probe verified actual recorded/dev/shm cache hash.
+Training was unaffected. commands.sh returned to#0; tmux supervisor218376
+continues. Next action is read-only progress/terminal-result verification.
+
 ## Original seed1042 pair to20k authorized; seed42 cancelled — 11 October 2026
 
 User superseded the fresh seed42 queue: stop it, resume original pre-cooldown
