@@ -4,14 +4,44 @@ import tempfile
 import unittest
 
 import torch
-from scripts.checkpoint_ppl_study import evaluate, make, report, ARMS, STEPS
+from scripts.checkpoint_ppl_study import evaluate, make, report, prepare_output, ARMS, STEPS
 from tests.test_proxy_training import proxy_fixture
 from tests.test_train import invoke
+
+
+def output_worker(rank, tmp):
+    from datetime import timedelta
+    import time
+    import torch.distributed as dist
+    root = Path(tmp)
+    dist.init_process_group('gloo', init_method=f'file://{root}/rendezvous',
+        rank=rank, world_size=2, timeout=timedelta(seconds=20))
+    try:
+        if rank == 1:
+            # Force rank zero to create the directory before this worker checks it.
+            deadline = time.monotonic() + 10
+            while not (root/'output').exists():
+                if time.monotonic() > deadline: raise TimeoutError('Main rank did not create output')
+                time.sleep(.01)
+        prepare_output(root/'source', root/'output', is_main_process=rank == 0)
+        assert (root/'output').is_dir()
+        try:
+            prepare_output(root/'source', root/'output', is_main_process=rank == 0)
+        except ValueError as exc:
+            assert 'fresh evaluation' in str(exc)
+        else:
+            raise AssertionError('Existing output accepted')
+    finally:
+        dist.destroy_process_group()
 
 
 class CheckpointPPLTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls): torch.set_num_threads(1)
+
+    def test_output_reservation_with_late_distributed_worker(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            torch.multiprocessing.spawn(output_worker, args=(tmp,), nprocs=2, join=True)
 
     def test_saved_final_control_and_intermediate_checkpoint(self):
         for arm in ARMS:

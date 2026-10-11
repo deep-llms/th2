@@ -10,6 +10,23 @@ ARMS = ('A', 'P6-iso')
 STEPS = (20000, 15000, 16000, 17000, 18000, 19000)
 
 
+def prepare_output(arm_dir, output, *, is_main_process):
+    """Reserve the shared output once; broadcast failures to every worker."""
+    import torch.distributed as dist
+    error = [None]
+    if is_main_process:
+        try:
+            if output.exists() or output.is_relative_to(arm_dir):
+                raise ValueError('Use a fresh evaluation output outside the source arm')
+            output.mkdir(parents=True, exist_ok=False)
+        except (OSError, ValueError) as exc:
+            error[0] = str(exc)
+    if dist.is_initialized():
+        dist.broadcast_object_list(error, src=0)
+    if error[0] is not None:
+        raise ValueError(error[0])
+
+
 def evaluate(arm_dir, output, step):
     import torch
     from transformers import AutoTokenizer, TrainingArguments, TrainerState, set_seed
@@ -25,13 +42,11 @@ def evaluate(arm_dir, output, step):
     if (saved['pilot']['arm'] not in ARMS or state.global_step != step
             or state.max_steps != saved['training']['max_steps']):
         raise ValueError('Unsupported arm or checkpoint step/schedule mismatch')
-    if output.exists() or output.is_relative_to(arm_dir):
-        raise ValueError('Use a fresh evaluation output outside the source arm')
     args = TrainingArguments(**{**saved['training'], 'output_dir': str(output),
         'report_to': [], 'run_name': 'checkpoint-ppl', 'disable_tqdm': True})
     if args.world_size != saved['world_size']:
         raise ValueError('Use the original world size for comparable evaluation')
-    if args.should_save: output.mkdir(parents=True, exist_ok=False)
+    prepare_output(arm_dir, output, is_main_process=args.process_index == 0)
     args.distributed_state.wait_for_everyone()
     set_seed(args.seed)
     adapter, _, metadata = load_checkpoint(checkpoint, args.device)

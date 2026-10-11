@@ -1,3 +1,19 @@
+## Checkpoint PPL retry after output-directory race — 12 October 2026
+
+First queue passed A/P6-iso at15k,16k,20k (both20k controls matched exactly),
+then A17k failed before evaluation because rank0 created its output while late
+ranks still checked nonexistence. This is an evaluation-script race, not a
+model/checkpoint or GPU infrastructure failure. Completed scores are preserved.
+Fix: only global rank0 checks/reserves output after distributed initialization;
+creation errors broadcast to all ranks. Added a two-process Gloo regression
+forcing the late worker to arrive after directory creation, including stale
+output rejection on both ranks. All3 CPU tests passed locally.
+First supervisor restored/verified communicating burns and released guard;
+workers244463–244470 showed all8GPUs100% and advancing collectives17:32/33UTC.
+Fresh retry root q359-checkpoint-ppl-20261012-a02 reruns both final controls and
+all15k..19k pairs with original preflight, all8GPUs and automatic burn restoration.
+Source checkpoints and first evaluation outputs are untouched.
+
 ## Intermediate checkpoint PPL authorized — 12 October 2026
 
 User requested retained checkpoint PPL at15000,16000,17000,... . Evaluate both
