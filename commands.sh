@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-checkpoint-ppl-retry-status-20261012-a03
+#th2-q359-checkpoint-ppl-retry-status-20261012-a04
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
