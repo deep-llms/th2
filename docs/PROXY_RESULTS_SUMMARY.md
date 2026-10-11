@@ -1,7 +1,7 @@
 # Proxy arms: perplexity and downstream results
 
-Latest update: **12 October 2026, 00:57 SGT**. A and P6-iso both completed20k
-with seed1042; final results are in the last section. Earlier screen and queue
+Latest update: **12 October 2026**. A and P6-iso both completed 20k
+with seed 1042; full-validation PPL at 15k–20k is in the last section. Earlier screen and queue
 tables retain their explicitly dated historical snapshots.
 
 ## Setup and interpretation
@@ -395,3 +395,40 @@ advancing collectives and released guard. No further experiments queued.
 
 Source: [validated continuation summary](../artifacts/resume20k-final-20261012/q359-proxy-resume20k-seed1042-20261011-a01/supervised/run/continuation-summary.json).
 Receipt67c5314, SHA256 `55ef9f73a5e0afdb44b46f1a41e2751f3aa9edfe42d966dd8954f6999c89dece`.
+
+## Intermediate checkpoints: A versus P6-iso, seed 1042 — 12 October 2026
+
+Evaluated the original continuation checkpoints at 15k–19k every 1,000 steps,
+plus both 20k controls. Same full validation set and original `ProxyTrainer`
+evaluation: 4,882 packed rows, 9,981,660 eligible target tokens, FA4, eight GPUs,
+document isolation and reset positions. PPL excludes auxiliary loss. No training,
+optimizer updates, or model/checkpoint modifications occurred.
+
+| Step | A PPL | P6-iso PPL | P6-iso PPL reduction |
+|---:|---:|---:|---:|
+| 15,000 | 18.9221 | 18.8700 | 0.275% |
+| 16,000 | 18.6847 | 18.6416 | 0.231% |
+| 17,000 | 18.4656 | 18.4159 | 0.269% |
+| 18,000 | 18.2516 | 18.2096 | 0.231% |
+| 19,000 | 18.0684 | 18.0192 | 0.272% |
+| 20,000 | 17.8863 | 17.8416 | 0.250% |
+
+P6-iso's advantage is consistently small (0.23–0.28%) across these checkpoints;
+it does not visibly widen with longer training in this interval. These are
+correlated checkpoints from one seed, not independent replications or an
+equal-training-time comparison. Both models' PPL continues to decrease.
+
+Both re-evaluated 20k losses exactly matched their saved final evaluations.
+All twelve evaluations and the paired comparison passed, including validation
+fingerprint/count checks and unchanged model-state/checkpoint checks. The first
+attempt hit a distributed output-directory race before A17k evaluation; it was
+fixed and tested with a delayed-worker regression, then the complete study was
+rerun in a fresh folder. The repeated 15k/16k/20k results matched exactly.
+
+Results: `q359-checkpoint-ppl-20261012-a02/supervised/run/summary.json` on B200;
+hash-verified local copy under
+`artifacts/checkpoint-ppl-final-20261012/q359-checkpoint-ppl-20261012-a02/`.
+Implementation: `scripts/checkpoint_ppl_study.py`.
+
+All stages completed successfully; communicating GPU burns were automatically
+restored and verified on all eight GPUs. No experiments remain queued.

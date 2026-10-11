@@ -1,3 +1,26 @@
+## Full intermediate checkpoint PPL complete — 12 October 2026, 01:55 SGT
+
+Fresh retry q359-checkpoint-ppl-20261012-a02 completed all12 eight-GPU evaluations
+and paired comparison successfully. A/P6-iso PPL respectively:
+15k18.9221/18.8700;16k18.6847/18.6416;17k18.4656/18.4159;
+18k18.2516/18.2096;19k18.0684/18.0192;20k17.8863/17.8416.
+P6 advantage0.23–0.28% across all checked steps, small and not widening.
+Same full4882-row validation,9981660 targets,fingerprint08432871cf987d61.
+Both20k controls exactly match saved results; all model state/source checkpoint
+checks passed. No training/optimizer updates. Tables added to PROXY_RESULTS_SUMMARY.
+
+First attempt's output-directory race was fixed with global-rank0 reservation
+and broadcast errors; local and remote3-test suites passed (including two-rank
+late-arrival regression). Fresh retry copied/verified Accelerate config and
+confirmed all8GPUs free before eval. Earlier scores matched exactly on retry.
+Supervisor succeeded and restored communicating burns17:53:22UTC. Read-only
+17:55:24/39UTC checks show workers252590–252597,all8GPUs100%,approved parents,
+collective cycles150→170/payload166.55→188.76GiB. Guard released; no queue remains.
+Hash-verified results under artifacts/checkpoint-ppl-final-20261012/.
+Receipt temp/remote_logs/checkpoint-ppl-retry-status-a06.log SHA256
+ebb194e489c451bdf1b7cf04b27b63781e647f0c7c45ddf4ac8030c19d87acfa.
+commands.sh returned to#0; no further workload submitted.
+
 ## Checkpoint PPL retry after output-directory race — 12 October 2026
 
 First queue passed A/P6-iso at15k,16k,20k (both20k controls matched exactly),
