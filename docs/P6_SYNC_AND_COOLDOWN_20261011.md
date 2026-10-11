@@ -106,3 +106,10 @@ deterministic FA4. Gate and rank0 audit artifacts pulled with matching SHA256 to
 `artifacts/p6-sync-20261011/`. Production-FA4 repeated timings are active (first A
 fit complete). Cooldown waiter is live; no cooldown training or final evaluation
 has completed yet.
+
+**Verified 01:13UTC (receipt ebdf2cc):** four of eight timing fits complete;
+A-optimized-repeat is active, followed by the remaining three repeats. All eight
+GPUs show99% utilization. Exact-state gate remains passed. Cooldown waiter is
+live and has not started training; final timing summary and cooldown PPL are
+still pending. Read-only receipt SHA256:
+`3b376351398d956b476f1fe95b90287424ffa8f1a15543f9258b975d3b16bc7a`.

@@ -1,3 +1,17 @@
+## Workflow healthy; timing repeats active — verified 11 October 2026, 01:13UTC
+
+Read-only receipt ebdf2cc confirms the eight-GPU exact-state gate passed and
+four of eight 100-update timing runs completed: A-reference, P6-reference,
+P6-optimized, A-optimized. A-optimized-repeat is running; P6-optimized-repeat,
+P6-reference-repeat and A-reference-repeat follow. Both snapshots show all eight
+B200s at 99% utilization, 110448 MiB each; no traceback in the sampled logs.
+Cooldown waiter remains live and has not started training. It will proceed only
+after the timing validator succeeds and benchmark burns are restored. No final
+speedup or cooldown PPL is available yet. Original checkpoints remain untouched
+by this read-only check. Receipt: temp/remote_logs/p6-workflow-health-a01.log,
+SHA256 3b376351398d956b476f1fe95b90287424ffa8f1a15543f9258b975d3b16bc7a.
+commands.sh returned to #0; existing supervisors continue unchanged.
+
 ## Exact GPU gate passed; measurements active — verified 11 October 2026, 00:57UTC
 
 Read-only receipt3e9c93a confirms copied-checkpoint reference and optimized P6
