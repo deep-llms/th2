@@ -1,3 +1,19 @@
+## Controlled cooldown queue prepared — 11 October 2026
+
+Nine CPU synchronization/cooldown tests pass, plus the strict recipe-transition
+check. Cooldown stays behind the real eight-GPU exact-state gate and repeated
+throughput study q359-p6-sync-20261011-a01. New persistent launcher waits without
+touching GPUs until that study succeeds and restores verified burns; any failure
+prevents cooldown launch. Then repeat env/Accelerate checks and safe reclamation.
+Fresh q359-p6-cooldown-20261011-a01: copied-checkpoint two-step cooldown smoke →
+P6-iso10k+1000 → A10k+1000 → compute A10.8k cooldown duration from actual cumulative
+runtime → A time comparison → full fixed4882-row validation/report. Original
+checkpoints retained unchanged, all periodic branch checkpoints kept. No new
+architecture arms, no further fine-tuning jobs. Normal production defaults stay
+unchanged; adopt exact sync option for all three only if measured criteria pass.
+Cooldown source-code additions do not alter the running benchmark's training code.
+Submission pending; do not infer GPU gate success or cooldown start from this entry.
+
 ## Exact synchronization trial submitted — 11 October 2026
 
 Profile completed on q359; A2.06056s vs P6-iso2.22968s complete max-rank update

@@ -80,3 +80,21 @@ claim a time match if the difference exceeds the declared tolerance. Full
 fixed validation PPL is the first outcome; no new architecture arms are queued.
 
 GPU exact/timing checks and cooldown runs have not yet completed.
+
+## Execution status
+
+Profile complete; all8 communicating burns restored00:39:17UTC and verified in
+receipt72aab3c. Raw profile artifacts match runner SHA256. Exact/timing study
+submitted as e70bbde; preflight passed and reference10k checkpoint restore was
+running at00:48UTC. No model/loss code changes during this study.
+
+Cooldown orchestration waits for successful study completion and burn restoration,
+then verifies its own environment and Accelerate configuration. Any failed gate
+prevents launch. A separate two-update, eight-GPU cooldown smoke must finish with
+zero final LR before the1000-update branches. The time baseline duration uses
+completed P6/A suffix runtimes and the actual original cumulative costs. Final
+report verifies zero LR, complete optimizer/RNG checkpoints, matching data recipes,
+unchanged source files, PPL and the actual residual time gap.
+
+For this decision stage, evaluation is full fixed validation PPL; no new
+fine-tuning studies or architecture arms are launched.

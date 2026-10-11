@@ -79,5 +79,54 @@ class CooldownTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(FileNotFoundError): transition(previous, requested, tmp, tmp)
 
+    def test_time_budget_keeps_actual_past_cost_and_queue_is_sequential(self):
+        from scripts.p6_cooldown_study import duration_for_budget, make_jobs
+        from run_experiments import load_jobs
+        # Existing A is already 15 seconds dearer. Only the suffix is repriced.
+        self.assertEqual(duration_for_budget(22743+2200,22758,2.1),1040)
+        for values in ((1,2,1),(1,2,float('nan')),(30000,1,.01)):
+            with self.assertRaises(ValueError):duration_for_budget(*values)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            make_jobs(root,root/'benchmark')
+            load_jobs(root/'cooldown-jobs.json')
+            jobs=json.loads((root/'cooldown-jobs.json').read_text())['jobs']
+            self.assertEqual([j['name'] for j in jobs],['prepare','cooldown-smoke','validate-smoke','cooldown-P6','cooldown-A-token',
+                                                     'time-budget','cooldown-A-time','validate'])
+            for j in jobs:
+                if j['name'].startswith('cooldown-'):self.assertEqual(j['gpus'],list(range(8)))
+
+    def test_gpu_smoke_contract_rejects_original_nonzero_scheduler(self):
+        from scripts.p6_cooldown_study import validate_smoke
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);folder=root/'smoke';checkpoint=folder/'checkpoint-10002'
+            checkpoint.mkdir(parents=True)
+            (folder/'result.json').write_text(json.dumps(dict(global_step=10002,cooldown=dict(complete=True),
+                evaluation=dict(eval_lm_loss=3.))))
+            (checkpoint/'trainer_state.json').write_text(json.dumps(dict(max_steps=28600)))
+            torch.save(dict(last_epoch=10002,_last_lr=[.0001]),checkpoint/'scheduler.pt')
+            with self.assertRaises(ValueError):validate_smoke(root)
+            torch.save(dict(last_epoch=10002,_last_lr=[0.,0.]),checkpoint/'scheduler.pt')
+            validate_smoke(root)
+            self.assertEqual(json.loads((root/'smoke-verified.json').read_text())['status'],'passed')
+
+    def test_cooldown_guard_does_not_allow_other_recipe_changes(self):
+        import train
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);checkpoint=root/'checkpoint-2';checkpoint.mkdir()
+            previous=dict(pilot={},training=dict(max_steps=5,learning_rate=.001))
+            requested=json.loads(json.dumps(previous))
+            requested['pilot'].update(cooldown_start=2,cooldown_steps=2)
+            (checkpoint/'trainer_state.json').write_text(json.dumps(dict(global_step=2)))
+            receipt=dict(status='verified',source_step=2,checkpoint=str(checkpoint),source_config=previous,
+                         source_checkpoint='/different/source/checkpoint-2',cooldown_start=2,cooldown_steps=2)
+            (root/'cooldown_source.json').write_text(json.dumps(receipt))
+            normalized,changes=transition(previous,requested,checkpoint,root)
+            self.assertEqual(train.resume_performance_changes(previous,normalized),{})
+            self.assertEqual(set(changes),{'cooldown_start','cooldown_steps'})
+            normalized['training']['learning_rate']=.002
+            with self.assertRaisesRegex(ValueError,'configuration/data differs'):
+                train.resume_performance_changes(previous,normalized,allow=True)
+
 
 if __name__ == '__main__': unittest.main()
