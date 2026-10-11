@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-p6-profile-health-20261011-a01
+#th2-q359-p6-profile-health-20261011-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
@@ -14,6 +14,12 @@ def tail(path,n=12):
     with path.open('rb') as f:
         f.seek(max(0,path.stat().st_size-50000));data=f.read().decode(errors='replace')
     print('TAIL',str(path),'\n'+'\n'.join(data.splitlines()[-n:]),flush=True)
+source=Path('/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01/supervised/run/seed-1042')
+for arm in ('A','P6-iso'):
+    for name in ('result.json','train_config.json'):
+        p=source/arm/name
+        if p.is_file():print('SOURCE',arm,name,p.read_text(),flush=True)
+    print('CHECKPOINTS',arm,[p.name for p in (source/arm).glob('checkpoint-*')],flush=True)
 for sample in range(2):
     print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
     tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',12)
