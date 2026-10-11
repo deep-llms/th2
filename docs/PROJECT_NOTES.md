@@ -1,3 +1,19 @@
+## Intermediate checkpoint PPL authorized — 12 October 2026
+
+User requested retained checkpoint PPL at15000,16000,17000,... . Evaluate both
+A/P6-iso at15000..19000 every1000; re-evaluate both20000 controls first, requiring
+saved full-validation LM loss within1e-5 before proceeding. Original ProxyTrainer,
+unchanged FA4 model forward and full4882-row packed validation fingerprint/counts.
+No optimizer/scheduler or training calls. Verify model weights/buffers and source
+checkpoint hashes unchanged. Independent eval outputs; no overwrite of checkpoints.
+Two local CPU tests passed4.120s covering A/P6 saved final+intermediate checkpoints,
+matched counts, unchanged state, fingerprint rejection and controlled queue order.
+Remote CPU tests/pinned env/Accelerate copy+env precede verified burn reclamation,
+wait/free checks and12 sequential8GPU evaluations plus comparison; existing
+supervisor restores communicating burns on success/failure. Root:
+q359-checkpoint-ppl-20261012-a01. Source q359-proxy-resume20k-seed1042-20261011-a01.
+Final artifact supervised/run/summary.json. Submission pending; no extra training.
+
 ## Both20k complete; communicating burns verified — 12 October 2026, 00:57SGT
 
 Read-only receipt67c5314 confirms all6 stages succeeded. A/P6-iso20000 final
