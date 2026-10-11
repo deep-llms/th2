@@ -1,35 +1,32 @@
 #1 +60+a
-#th2-q359-p6-further-health-20261011-a09
+#th2-q359-p6-further-results-20261011-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PYREMOTE'
-import json,socket,subprocess,time,hashlib
+/mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
+import json,socket,hashlib
 from datetime import datetime,timezone
 from pathlib import Path
 from scripts.gpu_status import snapshot
+from scripts.train_then_burn import digest
 assert socket.gethostname()=='thiennh-p6-q359-worker-0'
 root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p6-further-20261011-a01');run=root/'supervised/run'
-def tail(path,n=12):
-    if not path.is_file():return
-    with path.open('rb') as f:
-        f.seek(max(0,path.stat().st_size-50000));data=f.read().decode(errors='replace')
-    print('TAIL',str(path),'\n'+'\n'.join(data.splitlines()[-n:]),flush=True)
-for sample in range(2):
-    print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
-    tail(root/'supervisor.log',25);tail(root/'cpu-tests.log',12)
-    for p in (root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',run/'run.json',root/'supervised/burn-verified.json',run/'summary.json'):
-        if p.is_file():print('STATE',str(p),p.read_text(),flush=True)
-    for p in sorted((run/'numerics').glob('rank-*.json')):
-        r=json.loads(p.read_text());print('NUMERIC',p.name,r['status'],r['mode'],r['sequence_length'],r['checkpointing'],flush=True)
-        for name,c in r['comparisons'].items():
-            print('NUMERIC_COMPONENT',name,'differences',len(c['differences']),'failures',len(c['failures']),
-                  'max_relative_l2',max((d.get('relative_l2',0) for d in c['differences']),default=0),'example_failures',c['failures'][:3],flush=True)
-    p=run/'numerics/summary.json'
-    if p.is_file():
-        r=json.loads(p.read_text());print('NUMERIC_SUMMARY',{k:v for k,v in r.items() if k!='reports'},flush=True)
-    tail(root/'supervised/burn.log',8)
-    for p in sorted(run.glob('*.log'),key=lambda p:p.stat().st_mtime)[-3:]:tail(p,22)
-    print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
-    print('TMUX',subprocess.run(['tmux','list-panes','-t',root.name,'-F','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout,flush=True)
-    if sample==0:time.sleep(15)
+for relative in ('numerics/summary.json','summary.json'):
+    p=run/relative
+    print('ARTIFACT_JSON',relative,digest(p),p.read_text(),flush=True)
+for name in ('P6-cosine-first','P6-compiled-first','P6-compiled-second','P6-cosine-second'):
+    arm='A' if name.startswith('A-') else 'P6-iso'
+    r=json.loads((run/name/'seed-1042'/arm/'train_config.json').read_text())
+    print('RECIPE',json.dumps(dict(name=name,arm=r['pilot']['arm'],seed=r['training']['seed'],data_seed=r['training']['data_seed'],
+        proxy_module_seed=r['pilot'].get('proxy_module_seed'),world_size=r['world_size'],tokens_per_update=r['tokens_per_update'],
+        train_fingerprint=r['train_fingerprint'],eval_fingerprint=r['eval_fingerprint'])),flush=True)
+checkpoint=Path('/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01/supervised/run/seed-1042/P6-iso/checkpoint-10000/model.safetensors')
+assert digest(checkpoint)=='3e04cc0a27f1e0d5a1e97efdc1e34c11d4e821f9b34fb76898a0652fd8d28442'
+print('SOURCE_CHECKPOINT_STILL_UNCHANGED',flush=True)
+print('AT',datetime.now(timezone.utc).isoformat(),flush=True)
+print('SUPERVISOR',(root/'supervised/supervisor.json').read_text(),flush=True)
+print('GPUS',json.dumps(snapshot(list(range(8)))),flush=True)
+p=root/'supervised/burn.log'
+with p.open('rb') as f:
+    f.seek(max(0,p.stat().st_size-15000));data=f.read().decode(errors='replace')
+print('BURN_PROGRESS','\n'.join(data.splitlines()[-8:]),flush=True)
 PYREMOTE
