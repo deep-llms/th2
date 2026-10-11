@@ -1,3 +1,26 @@
+## Downstream evaluation of both20k checkpoints authorized — 12 October 2026
+
+User requests few-shot and fine-tuning evaluation at20k. Scope: A and P6-iso,
+seed1042, source q359-proxy-resume20k-seed1042-20261011-a01/supervised/run.
+Reuse the completed10k study's exact English protocols, manifests and prompts:
+5-shot XNLI/XStoryCloze/PAWS-X/PIQA/ARC-Easy/Winogrande,10-shot HellaSwag,
+25-shot ARC-Challenge; demonstration seed42. Fine-tune PAWS/NLI/STS-B/BoolQ,
+LR1e-5/3e-5 development selection with seed42 then selected LR seeds43/44,
+held-out testing only afterward.32 production fits, all8GPUs per fit, same
+FA4/BF16,512tokens,global batch128, task-only losses, frozen normalization stats,
+all epoch checkpoints retained. Source pretraining checkpoints remain read-only.
+
+Only orchestration changed: checkpoint count derives from spec (two here;
+three-source regression retained), launcher accepts explicit checkpoint requests.
+Existing numerical gates, smoke/reload tests, data/prompt references, full
+few-shot validators and cross-arm source/data-order checks remain mandatory.
+Remote CPU tests and data audits run before verified burn reclamation. Copy
+resources Accelerate config to actual cache and verify accelerate env, then
+verify known burns, stop them by checked identities, wait and require free GPUs.
+Automatic communicating burn restoration on success/failure via original supervisor.
+Fresh root q359-downstream-20k-20261012-a01; final artifact
+supervised/run/downstream-summary.json. Submission pending verification.
+
 ## Full intermediate checkpoint PPL complete — 12 October 2026, 01:55 SGT
 
 Fresh retry q359-checkpoint-ppl-20261012-a02 completed all12 eight-GPU evaluations

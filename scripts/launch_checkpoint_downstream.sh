@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Three-checkpoint downstream study using existing evaluation/training entry points.
+# Named-checkpoint downstream study using existing evaluation/training entry points.
 set -euo pipefail
 TASK_ROOT=$1
 TASK_HOST=${2:?Pass verified hostname}
+TASK_CHECKPOINTS=${3:?Pass checkpoint request JSON}
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -12,7 +13,7 @@ export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISA
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=42 TOKENIZERS_PARALLELISM=false
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 python -m pip check
-python -u - "$TASK_ROOT" "$TASK_HOST" <<'PY'
+python -u - "$TASK_ROOT" "$TASK_HOST" "$TASK_CHECKPOINTS" <<'PY'
 import copy,importlib.metadata as md,json,shutil,subprocess,sys,time
 from pathlib import Path
 from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
@@ -22,6 +23,8 @@ from scripts.stage_deep_kv_resume import digest as file_digest
 from scripts.checkpoint_downstream_study import make,GROUPS
 from deep_kv.report import comparable_config
 root,host=Path(sys.argv[1]),sys.argv[2];project=Path.cwd()
+requests=json.loads(Path(sys.argv[3]).read_text())
+assert requests and len({r['label'] for r in requests})==len(requests)
 versions={p:md.version(p) for p in ('torch','transformers','accelerate','datasets','lm_eval','flash-attn-4','nvidia-cutlass-dsl')}
 for p,v in [('torch','2.14.1'),('transformers','5.9.0'),('accelerate','1.13.0'),('datasets','4.8.5'),
             ('lm_eval','0.4.10'),('flash-attn-4','4.0.0b33'),('nvidia-cutlass-dsl','4.8.0')]:
@@ -32,11 +35,12 @@ with (root/'cpu-tests.log').open('x') as log:
         'tests.test_finetune_extended','tests.test_checkpoint_downstream_study','-q'],
         stdout=log,stderr=subprocess.STDOUT,check=True,env={**__import__('os').environ,'CUDA_VISIBLE_DEVICES':''})
 print('DOWNSTREAM_CPU_TESTS_PASSED',flush=True)
-old=Path('/mnt/local/_outputs/deep-llms_th2/q359-proxy-10k-seed1042-20261009-a01/supervised/run')
-continuation=Path('/mnt/local/_outputs/deep-llms_th2/q359-A-time-match10800-seed1042-20261010-a01/supervised/run')
-for source in (old,continuation):assert json.loads((source/'run.json').read_text())['status']=='ok'
 spec={}; common=None; tokenizer=None
-for label,arm,step,source in [('A-10000','A',10000,old),('P6-iso-10000','P6-iso',10000,old),('A-10800','A',10800,continuation)]:
+for request in requests:
+    label,arm,step,source=request['label'],request['arm'],request['step'],Path(request['source_run'])
+    assert label and Path(label).name==label and label not in ('.','..')
+    assert arm in ('A','P6-iso') and type(step) is int and step>0
+    assert json.loads((source/'run.json').read_text())['status']=='ok'
     folder=source/'seed-1042'/arm; checkpoint=folder/f'checkpoint-{step}'
     assert json.loads((checkpoint/'trainer_state.json').read_text())['global_step']==step
     result=json.loads((folder/'result.json').read_text());assert result['arm']==arm and result['global_step']==step
@@ -49,6 +53,7 @@ for label,arm,step,source in [('A-10000','A',10000,old),('P6-iso-10000','P6-iso'
     if tokenizer is None:tokenizer=cfg['model']['tokenizer_name']
     else:assert tokenizer==cfg['model']['tokenizer_name']
     assert (checkpoint/'model.safetensors').stat().st_size>1000000000
+    assert str(checkpoint) not in spec,'Duplicate source checkpoint'
     spec[str(checkpoint)]=dict(label=label,arm=arm,step=step,checkpoint_sha256=file_digest(checkpoint/'model.safetensors'))
 print('CHECKPOINT_IDENTITIES_VERIFIED',json.dumps(spec),flush=True)
 data_roots=dict(pairs=Path('/mnt/local/_data/deep-llms_th2/downstream-english-20261007'),
@@ -96,7 +101,8 @@ approved={**APPROVED_BURNS,str(project/'resources/llm_pretrain_burn.py'):BURN_HA
 assert all(approved_launcher(pid,approved) or approved_launcher(process(pid)['ppid'],approved) for pid in inspection['workers'])
 (root/'inspection.json').write_text(json.dumps(inspection,indent=2))
 (root/'preflight.json').write_text(json.dumps(dict(status='passed',checkpoints=spec,versions=versions,
-    accelerate_sha256=digest(destination),manifest_sha256={k:digest(v) for k,v in manifests.items()},stages=len(items)),indent=2))
+    accelerate_cache=str(destination),accelerate_sha256=digest(destination),
+    manifest_sha256={k:digest(v) for k,v in manifests.items()},stages=len(items)),indent=2))
 print('DOWNSTREAM_PREFLIGHT_PASSED',len(items),flush=True)
 PY
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" --output "$TASK_ROOT/supervised" \

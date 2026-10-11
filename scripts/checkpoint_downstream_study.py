@@ -21,7 +21,7 @@ def make(root, project, spec, data_roots, manifests):
     root,project=Path(root).resolve(),Path(project).resolve()
     run=root/'supervised/run'; items=[]
     checkpoints=list(spec)
-    assert len(checkpoints)==3 and len({v['label'] for v in spec.values()})==3
+    assert checkpoints and len({v['label'] for v in spec.values()})==len(checkpoints)
     spec_path=root/'checkpoint-spec.json';write(spec_path,spec)
     for checkpoint,entry in spec.items():
         label=entry['label'];dest=f'numerics/{label}.json'
@@ -52,7 +52,7 @@ def make(root, project, spec, data_roots, manifests):
         for shot in GROUPS:
             dest=f'{phase}-{shot}shot';out=dest+'-validation.json'
             argv=['{python}','-m','scripts.check_downstream_eval','validate','--directory','{run_dir}/'+dest,
-                '--data-check',str(root/f'data-validation-{shot}.json'),'--count','3','--num-fewshot',str(shot),
+                '--data-check',str(root/f'data-validation-{shot}.json'),'--count',str(len(checkpoints)),'--num-fewshot',str(shot),
                 '--seed','42','--fewshot-audit',str(root/f'prompt-audit-{shot}.json'),
                 '--checkpoint-spec',str(spec_path),'--output','{run_dir}/'+out]
             if limit:argv+=['--limit',str(limit)]

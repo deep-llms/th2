@@ -5,6 +5,26 @@ import unittest
 from scripts.checkpoint_downstream_study import make
 
 class CheckpointStudyTests(unittest.TestCase):
+    def test_two_20k_checkpoints_use_matching_validator_counts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            requests=json.loads(Path('resources/downstream_checkpoints_20k_20261012.json').read_text())
+            spec={str(Path(r['source_run'])/'seed-1042'/r['arm']/f"checkpoint-{r['step']}"):
+                  dict(label=r['label'],arm=r['arm'],step=r['step'],checkpoint_sha256=r['label'])
+                  for r in requests}
+            root=Path(tmp)/'study'
+            jobs=make(root,Path.cwd(),spec,dict(pairs='/data',extended='/more-data'),
+                      dict(pairs='/manifest',extended='/more-manifest'))
+            self.assertEqual(len(jobs),15)
+            self.assertEqual(len([j for j in jobs if j['name'].startswith('finetune-')]),4)
+            for job in jobs:
+                if job['name'].startswith('validate-'):
+                    self.assertEqual(job['argv'][job['argv'].index('--count')+1],'2')
+            for path in (root/'finetune-plans').rglob('configs/*.json'):
+                cfg=json.loads(path.read_text())
+                self.assertIn(cfg['checkpoint'],spec)
+                self.assertEqual(cfg['expected_step'],20000)
+                self.assertEqual(cfg['save_total_limit'],0)
+
     def test_three_checkpoints_keep_separate_outputs_and_exact_sources(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)/'study'
