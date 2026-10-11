@@ -98,3 +98,11 @@ unchanged source files, PPL and the actual residual time gap.
 
 For this decision stage, evaluation is full fixed validation PPL; no new
 fine-tuning studies or architecture arms are launched.
+
+**Verified00:57UTC:** the two-update eight-GPU exact-state gate passed. Reference
+and optimized restored model/optimizer/scheduler/RNG, every audited batch, clipped
+gradients and final model/optimizer/scheduler hashes match exactly with
+deterministic FA4. Gate and rank0 audit artifacts pulled with matching SHA256 to
+`artifacts/p6-sync-20261011/`. Production-FA4 repeated timings are active (first A
+fit complete). Cooldown waiter is live; no cooldown training or final evaluation
+has completed yet.

@@ -1,3 +1,26 @@
+## Exact GPU gate passed; measurements active — verified 11 October 2026, 00:57UTC
+
+Read-only receipt3e9c93a confirms copied-checkpoint reference and optimized P6
+fits and exact validator all passed on eight B200s. After two resumed updates:
+restored model/optimizer/scheduler/RNG, eight microbatch hashes per rank, clipped
+gradients, final model/optimizer/scheduler match exactly under deterministic FA4.
+Gate/rank0 receipts pulled with matching runner SHA256 into artifacts/p6-sync-20261011.
+Production-FA4 timing study: A-reference100 updates complete, P6-reference starting;
+six more100-step fits and max-rank interval validator follow. No final speedup yet.
+
+Cooldown waiter3bdd3a1 is live (tmux PID170012), waiting read-only for successful
+benchmark completion and restored burns. It will repeat CPU/env/Accelerate checks,
+reclaim only verified burns, run two-update cooldown smoke, P6/A token-matched
+1000-update cooldowns, then A10.8k with measured time-budgeted cooldown and full
+validation. Failure prevents dependent stages; each supervisor restores burns.
+No production cooldown has started. Current active roots:
+- /mnt/local/_outputs/deep-llms_th2/q359-p6-sync-20261011-a01
+- /mnt/local/_outputs/deep-llms_th2/q359-p6-cooldown-20261011-a01
+Final result: second root/supervised/run/branches/summary.json.
+Ten targeted CPU tests now passed; production training code frozen during timing.
+commands.sh #0; persistent queues continue. Next check: timing summary, then
+cooldown smoke/training progress. No new architecture arms authorized here.
+
 ## Controlled cooldown queue prepared — 11 October 2026
 
 Nine CPU synchronization/cooldown tests pass, plus the strict recipe-transition
