@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-proxy-resume20k-health-20261011-a01
+#th2-q359-proxy-resume20k-health-20261011-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 /mnt/local/conda-py311/envs/attention_bench/bin/python3.11 -u - <<'PYREMOTE'
@@ -23,7 +23,7 @@ def tail(p,n=15):
 for rel in ('preflight.json','jobs.json','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/seed-1042/resume_inputs.json'):
     artifact(root/rel)
 tail(root/'retention-test.log',8)
-cache=Path(default_yaml_config_file)
+cache=Path(json.loads((root/'preflight.json').read_text())['accelerate_cache'])
 print('ACCELERATE_CACHE',str(cache),hashlib.sha256(cache.read_bytes()).hexdigest(),flush=True)
 assert cache.read_bytes()==Path('resources/accelerate_config.yaml').read_bytes()
 for arm in ('A','P6-iso'):
