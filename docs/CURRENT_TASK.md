@@ -1,3 +1,16 @@
+## P6 exact optimization and cooldown workflow authorized — 11 October 2026
+
+User approved profiling → exact synchronization/diagnostic optimizations →
+remeasure A/P6 → controlled cooldown branches → evaluation before new arms.
+First stage: two disposable30-step eight-GPU A/P6 profiles, production FA4,
+micro16/GAS4, original28600/1430 schedule, unchanged model arithmetic. Instrument
+complete update callbacks and start-to-start intervals on all ranks; profile
+CPU synchronization events and component kernels on rank0 at update6. Fresh
+root q359-p6-profile-20261011-a01; source10k checkpoints remain untouched.
+Existing launcher verifies environment/Accelerate, reclaims only approved burns,
+checks all8 GPUs free and restores communicating burns on success/failure.
+No cooldown has launched yet; implementation and strict resume validation follow.
+
 ## Further P6 speed trial completed — 11 October 2026
 
 Four100-step eight-GPU fits completed successfully; target scaling/clipping fusion

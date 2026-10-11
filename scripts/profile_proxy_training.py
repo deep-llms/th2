@@ -5,6 +5,7 @@ confined to this process; ordinary training never imports this module.
 """
 from contextlib import nullcontext
 import os
+import time
 from pathlib import Path
 import runpy
 
@@ -66,6 +67,13 @@ class Capture(TrainerCallback):
 
     def on_step_begin(self,args,state,control,**kwargs):
         global ACTIVE
+        # Includes the preceding update's callbacks/logging/data delivery. The
+        # final callback timer below measures just the complete update itself.
+        torch.cuda.synchronize(args.device)
+        now=time.perf_counter()
+        if hasattr(self,'last_begin'):
+            self.steps[-1]['interval_seconds']=now-self.last_begin
+        self.last_begin=now
         if state.global_step==5 and args.process_index==0:
             torch.cuda.synchronize();self.trace=profile(activities=[ProfilerActivity.CPU,ProfilerActivity.CUDA])
             self.trace.__enter__();ACTIVE=True
@@ -74,13 +82,20 @@ class Capture(TrainerCallback):
         global ACTIVE
         if args.process_index==0:
             callback=next(c for c in self.trainer.callback_handler.callbacks if isinstance(c,training.ProxyCallback))
-            self.steps.append(dict(step=state.global_step,seconds=callback.seconds_per_update))
+        torch.cuda.synchronize(args.device)
+        self.steps.append(dict(step=state.global_step,seconds=time.perf_counter()-self.last_begin,
+                              legacy_seconds=callback.seconds_per_update if args.process_index==0 else None))
         if state.global_step==6 and args.process_index==0:
             torch.cuda.synchronize();ACTIVE=False;self.trace.__exit__(None,None,None)
             path=Path(args.output_dir)/'component-profile.json'
             times=summarize(self.trace)
             write(path,dict(status='profiled',step=6,rank=0,world_size=args.world_size,
                 kernel_milliseconds=times,auxiliary_recomputation=False,
+                cpu_events=[dict(name=e.key,count=e.count,self_cpu_ms=e.self_cpu_time_total/1000,
+                                 cpu_ms=e.cpu_time_total/1000,device_ms=e.device_time_total/1000)
+                            for e in self.trace.key_averages()
+                            if e.key.startswith(PREFIX) or any(s in e.key.lower() for s in
+                                ('synchroniz','item','local_scalar','nonzero','memcpy'))],
                 note='Exclusive summed kernel durations, not critical-path wall time. '
                      'Target/mask/setup includes incremental target sums, moment accumulation, '
                      'mask creation and RoPE outside decoder blocks. '
@@ -88,9 +103,12 @@ class Capture(TrainerCallback):
             self.trace=None
 
     def on_train_end(self,args,state,control,**kwargs):
+        write(Path(args.output_dir)/f'step-profile-rank{args.process_index}.json',dict(status='profiled',steps=self.steps,
+            peak_gib=torch.cuda.max_memory_allocated()/2**30,
+            note='Complete callback update and start-to-start intervals on every rank. '
+                 'Exclude profiled update 6 and its following interval; compilation/startup/eval/save excluded.'))
         if args.process_index==0:
-            write(Path(args.output_dir)/'step-profile.json',dict(status='profiled',steps=self.steps,
-                note='Existing ProxyCallback synchronized update timer; includes no additional per-step GPU synchronization.'))
+            write(Path(args.output_dir)/'step-profile.json',dict(status='profiled',steps=self.steps))
 
 
 def main():
@@ -98,6 +116,7 @@ def main():
     for cls,name,label in [
         (ProxyModel,'_run_backbone','target_mask_and_statistics_setup'),
         (ProxyModel,'block','remaining_decoder'),
+        (ProxyModel,'attention','attention'),
         (ProxyModel,'normalize_target','target_normalization'),
         (ProxyModel,'layer_cosines','auxiliary_cosine'),
         (ProxyModel,'update_statistics','normalization_update'),
@@ -111,6 +130,11 @@ def main():
     _MLPPath.backward=staticmethod(annotate(_MLPPath.backward,'estimator_backward'))
     memory.relational_losses=annotate(memory.relational_losses,'auxiliary_relational')
     training.reduce_moments=annotate(training.reduce_moments,'statistics_all_reduce')
+    training.ProxyTrainer.training_step=annotate(training.ProxyTrainer.training_step,'training_microbatch')
+    training.ProxyTrainer.compute_loss=annotate(training.ProxyTrainer.compute_loss,'forward_and_loss')
+    training.ProxyCallback.on_step_end=annotate(training.ProxyCallback.on_step_end,'complete_statistics_callback')
+    from deep_kv.training import PilotCallback
+    PilotCallback.on_step_end=annotate(PilotCallback.on_step_end,'diagnostic_reduce_and_cpu')
     original=training.ProxyTrainer.__init__
     def init(self,*args,**kwargs):
         original(self,*args,**kwargs);self.add_callback(Capture(self))
