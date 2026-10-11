@@ -1,3 +1,17 @@
+## 20k downstream progress — verified 12 October 2026, 03:53 SGT
+
+Read-only receipt bf9f5f8: full few-shot evaluations and all5/10/25-shot
+validators passed for both checkpoints. First fine-tuning study A20k PAWS/NLI
+is running NLI seed43 confirmation (epoch0.1385→0.22 over15s), finite losses,
+all8GPUs active. A extended and both P6-iso groups remain queued. No final
+held-out fine-tuning summary yet; supervisor253720 remains active, no errors.
+Automatic communicating burn restoration remains configured for queue end.
+Few-shot results pulled/checksum-verified and added to PROXY_RESULTS_SUMMARY.
+Evidence artifacts/downstream-20k-health-a04/; receipt
+ temp/remote_logs/downstream-20k-health-a04.log SHA256
+f0587a33ac05b12e2650209cd9fd5b775ec5e159f5ead8cb6e0292359a99ecbf.
+commands.sh returned to#0; current queue untouched.
+
 ## 20k downstream queue verified running — 12 October 2026, 03:06 SGT
 
 Launch cbd8e25 on q359 is active under persistent supervisor253720.

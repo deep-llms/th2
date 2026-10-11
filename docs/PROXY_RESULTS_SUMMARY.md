@@ -441,7 +441,25 @@ few-shot tasks (5/10/25 shots, depending on task) and demonstration seed 42.
 Fine-tuning: PAWS-X, NLI, STS-B and BoolQ; development-only LR selection over
 1e-5/3e-5, then held-out results for seeds 42/43/44. All fits use eight GPUs.
 
-Both CUDA numerical checks and all few-shot smoke validators passed. Full
-few-shot evaluation is running, followed automatically by four fine-tuning
-studies. **No final 20k downstream results yet.** Output root:
+Both CUDA numerical checks and all few-shot validators passed. Few-shot is
+complete; A PAWS/NLI fine-tuning is running, followed by A STS-B/BoolQ and both
+P6-iso studies. **No final 20k fine-tuning results yet.** Output root:
 `q359-downstream-20k-20261012-a01`; final `supervised/run/downstream-summary.json`.
+
+Few-shot results verified 12 October, 03:53 SGT. Percent accuracy; normalized
+accuracy for ARC-C, ARC-E, HellaSwag and PIQA, raw accuracy for the other tasks.
+
+| Task | Shots | A-20k | P6-iso-20k |
+|---|---:|---:|---:|
+| ARC-C | 25 | 25.512 | 25.085 |
+| ARC-E | 5 | 49.705 | 48.232 |
+| HellaSwag | 10 | 42.920 | 42.790 |
+| PAWS-X | 5 | 49.850 | 50.900 |
+| PIQA | 5 | 68.335 | 69.750 |
+| WinoGrande | 5 | 52.960 | 51.460 |
+| XNLI | 5 | 44.177 | 45.100 |
+| XStoryCloze | 5 | 63.005 | 62.210 |
+
+Results are mixed: P6-iso leads on three of eight primary task metrics.
+These are one pretraining seed with identical demonstrations, not independent
+replications. Source: `artifacts/downstream-20k-health-a04/`.
