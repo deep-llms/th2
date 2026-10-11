@@ -1,3 +1,22 @@
+## Timing study passed; P6 cooldown active — verified 11 October 2026, 01:39UTC
+
+Read-only receipt77ab71a confirms all14 synchronization-study stages passed.
+Eight100-step timing fits: A2.061121→2.053581s/update, P6-iso2.228933→2.221586s;
+throughput gains0.367%/0.331%. P6 relative overhead remains8.18% versus8.14%
+reference. Exact-state gate passed; tiny timing gain is not a material overhead
+reduction. Hash-verified result artifacts are in artifacts/p6-workflow-20261011/.
+Benchmark supervisor restored verified communicating burns01:32:07UTC. Cooldown
+preflight then passed, reclaimed those burns, and started01:33:54UTC. Preparation,
+two-update smoke and smoke validator passed (step10002, both final group LRs0).
+P6-iso cooldown advanced10055→10062 across15seconds; all8B200s98–99% utilized.
+Next: P6 to11000 → A from10000 to11000 → A from10800 with measured time budget →
+full fixed validation PPL and source-checkpoint identity checks. Optimization is
+selected for all three branches by the predetermined threshold. Final PPL and
+cooldown comparison remain pending; automatic burns restoration remains enabled.
+Receipt temp/remote_logs/p6-workflow-health-a02.log SHA256
+25b6360200911eac788201790594de1f2c0c6d7f439711cfb8c268b6512c013d.
+commands.sh returned to#0; active queue and training code unchanged.
+
 ## Workflow healthy; timing repeats active — verified 11 October 2026, 01:13UTC
 
 Read-only receipt ebdf2cc confirms the eight-GPU exact-state gate passed and

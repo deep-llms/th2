@@ -79,7 +79,8 @@ runtime, then report actual cumulative time and residual mismatch. Do not
 claim a time match if the difference exceeds the declared tolerance. Full
 fixed validation PPL is the first outcome; no new architecture arms are queued.
 
-GPU exact/timing checks and cooldown runs have not yet completed.
+The GPU exact/timing checks have completed; cooldown training remains active
+as of 01:39 UTC. See the latest results below.
 
 ## Execution status
 
@@ -113,3 +114,34 @@ GPUs show99% utilization. Exact-state gate remains passed. Cooldown waiter is
 live and has not started training; final timing summary and cooldown PPL are
 still pending. Read-only receipt SHA256:
 `3b376351398d956b476f1fe95b90287424ffa8f1a15543f9258b975d3b16bc7a`.
+
+## Completed timing results and cooldown progress — 01:39 UTC
+
+All fourteen study stages passed, including the exact-state audit and repeated
+production-FA4 timing validation. Complete max-rank intervals21–90, two fits per
+condition, with outliers retained:
+
+| Arm | Reference seconds/update | Optimized seconds/update | Throughput gain |
+|---|---:|---:|---:|
+| A | 2.061121 | 2.053581 | 0.367% |
+| P6-iso | 2.228933 | 2.221586 | 0.331% |
+
+The improvement is small and does not reduce P6's relative overhead:8.18%
+optimized versus8.14% reference. It should not be presented as a substantial
+speedup. Within-architecture short validation NLL spread is below0.00005;
+these100-step fits are execution checks, not research quality comparisons.
+The predetermined performance threshold selects the optimized path for all
+three cooldown branches. Production defaults remain unchanged.
+
+Benchmark burns were restored with verified collective progress at01:32:07UTC.
+The cooldown supervisor subsequently passed its checks and started01:33:54UTC.
+The real eight-GPU two-update smoke passed, with both final scheduler LRs zero
+and finite full4882-row validation. P6 cooldown is active:step10055→10062 across
+the two status snapshots, all eight GPUs98–99% utilized. Its target is11000;
+A-token and A-time follow automatically. No final cooldown PPL is available yet.
+Original source checkpoints are preserved; final validation will recheck hashes.
+Burn restoration remains configured for success/failure.
+
+Results were pulled and SHA256-verified into `artifacts/p6-workflow-20261011/`.
+Read-only receipt77ab71a, local log `temp/remote_logs/p6-workflow-health-a02.log`,
+SHA256 `25b6360200911eac788201790594de1f2c0c6d7f439711cfb8c268b6512c013d`.
