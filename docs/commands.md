@@ -130,7 +130,9 @@ The following are examples, not a selected dataset or model for your project:
 
 There must be no blank line between sections. Dataset item formats are
 `--hf-dataset <repo> <dest>`, `--url <url> <dest>`, or a controller-local
-`<path> <dest>`. A single HF dataset file can use a direct
+`<path> <dest>`. For dataset URLs, `<dest>` is the destination **directory**;
+the downloaded file keeps its source filename. This differs from single-file
+model URLs below, which require the complete destination filename. A single HF dataset file can use a direct
 `https://huggingface.co/datasets/<org>/<repo>/resolve/<revision>/<file>` URL;
 the revision is a branch/tag/commit, not a token. Prefer immutable revisions
 or a trusted file manifest when exact reproducibility matters.
