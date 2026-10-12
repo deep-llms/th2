@@ -1,25 +1,21 @@
 #1 +60+a
-#th2-q359-expanded-paired-20k-20261012-a02
+#th2-q359-expanded-paired-health-20261012-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a02
-TASK_SESSION=q359-expanded-paired-20k-20261012-a02
-test ! -e "$TASK_ROOT"
-if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
-mkdir -p "$TASK_ROOT"
-tmux new-session -d -s "$TASK_SESSION" "exec bash scripts/launch_expanded_evaluation.sh '$TASK_ROOT' thiennh-p6-q359-worker-0 2000 resources/position_extension_selection_20261012.json >'$TASK_ROOT/supervisor.log' 2>&1"
-tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
-sleep 45
-tail -35 "$TASK_ROOT/supervisor.log"
-if [ "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 1 ]; then
-  /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - "$TASK_ROOT" <<'PYREMOTE'
-import json,sys
+python3 -u - <<'PY'
+import datetime,json,subprocess
 from pathlib import Path
-r=json.loads((Path(sys.argv[1])/'supervised/supervisor.json').read_text())
-assert r['training_status']=='ok' and r['training_returncode']==0 and r['burn']['collective_progress_verified'],r
-print('EXPANDED_PAIRED_STUDY_AND_BURN_COMPLETE',flush=True)
-PYREMOTE
-else
-  echo 'EXPANDED_PAIRED_SUPERVISOR_ACTIVE: downloads/preflight or evaluation queue.'
-fi
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a02')
+print(datetime.datetime.now(datetime.timezone.utc).isoformat())
+for rel in ('supervisor.log','preflight.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/supervisor.json'):
+ p=root/rel
+ if p.exists():print(rel,p.read_text()[-24000:],flush=True)
+p=root/'position-sample.json'
+if p.exists():
+ s=json.loads(p.read_text());print('POSITION_SAMPLE',len(s['rows']),s['sample_sha256'],s.get('selection_sha256'))
+for p in sorted((root/'supervised/run').glob('*.log')):
+ print('JOB_LOG',p.name,p.read_text()[-2500:],flush=True)
+subprocess.run(['tmux','list-panes','-t',root.name,'-F','#{pane_pid} #{pane_dead} #{pane_current_command}'],check=True)
+subprocess.run(['nvidia-smi','--query-compute-apps=pid,used_memory','--format=csv'],check=True)
+PY
