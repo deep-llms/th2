@@ -1,4 +1,4 @@
-#1 +60+a
+#0
 #th2-q359-expanded-paired-status-20261012-a06
 set -euo pipefail
 cd /mnt/local/deep-llms_th2

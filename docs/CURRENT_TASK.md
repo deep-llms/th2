@@ -1,3 +1,17 @@
+## Expanded evaluation status — 12 October 2026, 15:52 UTC
+
+Expanded benchmarks remain complete (validated summary passed). Fine-tuning
+has advanced beyond smoke/reload gates to full learning-rate search. CoLA
+search/selection completed for both arms; SST-2 A search/selection and P6-iso
+1e-5 completed. Current job: P6-iso SST-2 3e-5, eight workers initializing.
+98 nested jobs passed, one current; no failed job in recorded state. These
+counts include checks/selection, not 98 full training runs. Paired analysis
+has not started. Supervisor remains running; do not report study complete.
+
+Receipt: `temp/remote_logs/expanded-paired-status-a06.log`, SHA256
+`bbd5a962ff932bb223a6ba6f818795a57bed9c03a26dfd1296ba7e41faf1268b`.
+Read-only status request made no workload changes; commands.sh restored to #0.
+
 ## Expanded evaluation status — 12 October 2026, 14:35 UTC
 
 All eight expanded benchmark jobs completed; full summary status passed at
