@@ -1,3 +1,33 @@
+## Paired serialization repair and fresh retry — 13 October 2026, 03:56 Singapore
+
+Read-only receipt at03:47SGT: fine-tuning summary passed at03:07:53SGT,
+all56 reduced-queue stages successful (13new fits,22final scores). Paired GPU
+scoring completed all30 precision jobs on8GPUs in149s, but comparison failed:
+`Paired task configs differ`. Exact field diff identifies only HellaSwag nested
+fewshot_config.process_docs repr addresses; other four precision task configs
+match. This is serialization/provenance failure, not failed numerical tolerance.
+The supervisor restored and verified communicating burns at03:12:10SGT;
+workers367392–367399 still occupied all8GPUs at03:47SGT.
+
+Repair: recursively serialize nested callable identities before saving harness
+results, using existing protocol.serial; do not weaken config alignment, sample
+identity or precision gates.18 paired regression tests passed in122.890s,
+including actual cross-process HellaSwag config/score equivalence and rejection
+of genuine config changes.2 fresh-retry safety tests passed in0.023s.
+
+Authorized paired-only retry: q359-paired-parallel-repair-20261013-a01.
+Fresh protocol and output, identical scientific settings and2,000 token rows;
+only eval/paired/run.py implementation hash may change. All original artifacts
+preserved. No fine-tuning or expanded-suite rerun. Six stages: paired plan,
+8GPU evaluate, F/Z/probes/position analyses. Copy/verify Accelerate, verify
+prior dead supervisor and burn handoff, inspect burn identities, reclaim only
+verified workers, wait/recheck all8free, unchanged automatic final burn handoff.
+Launch prepared; awaiting remote acknowledgement. No supported finish ETA yet.
+Evidence: temp/remote_logs/paired-parallel-health-a01.log SHA256
+2accc92fb068892119da93b5608fb43c510f1fcc087a6bba7fa9b6199e1d9c7c;
+paired-config-diff-a01.log SHA256
+6c0c848829a93bbbc3ac85cd3ff00e4382a9466b18a3ffd674780e3773f05d0b.
+
 ## Parallel paired deployment verified — 13 October 2026, 02:47 Singapore
 
 B200 acknowledged the parallel scheduler deployment without stopping fine-tuning.

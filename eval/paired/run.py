@@ -93,7 +93,10 @@ def evaluate(checkpoint,task,suite,output,frozen_path,dataset_root,manifest,
                 raise ValueError('Harness did not evaluate the frozen precision selection')
             result['n-samples'][sub]['effective']=len(rows)
     # Round-trip exactly as the saved artifact before validating.
-    result=json.loads(json.dumps(result,default=json_default,allow_nan=False))
+    # Harness 0.4.10 leaves callables inside nested fewshot_config fields.
+    # str(function) includes a process-specific address; use the same stable
+    # module/qualified-name serialization as the frozen protocol before JSON.
+    result=json.loads(json.dumps(protocol.serial(result),default=json_default,allow_nan=False))
     artifacts.validate(result,result['samples'],task,shots,selection)
     meta['context_audit']=lm.context_audit
     with (output/'eval_samples.jsonl').open('x') as stream:

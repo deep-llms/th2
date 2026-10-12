@@ -399,7 +399,10 @@ class PairedHarnessTests(unittest.TestCase):
             root=Path(tmp);fixture(root);ckpt=checkpoint(root)
             raw=root/'raw';raw.mkdir()
             rows=[dict(context='2',question='3',answerA='4',answerB='5 6',answerC='7',label=str(i%3+1)) for i in range(4)]
-            manifest=root/'manifest.json';manifest.write_text(json.dumps(dict(schema_version=1,repositories=[snapshot(raw,'social_iqa_norm',rows,['train','validation'])])))
+            hellaswag_rows=[dict(ctx_a='2',ctx_b='3',activity_label='4',endings=['5','6','7','8'],label=str(i%4)) for i in range(4)]
+            manifest=root/'manifest.json';manifest.write_text(json.dumps(dict(schema_version=1,repositories=[
+                snapshot(raw,'social_iqa_norm',rows,['train','validation']),
+                snapshot(raw,'hellaswag',hellaswag_rows,['train','validation'])])))
             frozen_path=root/'protocol.json';frozen=protocol.freeze(frozen_path)
             protocol.read(frozen_path)
             selected={'social_iqa_norm':[1,3]}
@@ -442,10 +445,24 @@ class PairedHarnessTests(unittest.TestCase):
             # deliberately force fresh loads and were verified separately above.
             evaluate(ckpt,'social_iqa_norm','Z',root/'full-serial',frozen_path,raw,manifest,'cpu',2,'reference')
             full=artifacts.read(root/'full-serial','social_iqa_norm',0,frozen)
+            evaluate(ckpt,'hellaswag','Z',root/'hellaswag-serial',frozen_path,raw,manifest,'cpu',2,'reference')
+            hellaswag=artifacts.read(root/'hellaswag-serial','hellaswag',0,frozen)
             with Pool([None,None],root/'pool') as pool:
                 pool.run([worker_cmd('parallel-0'),worker_cmd('parallel-1')])
                 pool.run([worker_cmd('parallel-2'),worker_cmd('parallel-3')])
                 self.assertEqual([r['model_loaded'] for r in pool.records],[True,True,False,False])
+                commands=[]
+                for i in range(2):
+                    cmd=worker_cmd(f'hellaswag-{i}');cmd[cmd.index('--task')+1]='hellaswag';commands.append(cmd)
+                pool.run(commands)
+            for i in range(2):
+                other=artifacts.read(root/f'hellaswag-{i}','hellaswag',0,frozen)
+                for differences in artifacts.align(hellaswag,other).values():self.assertTrue((differences==0).all())
+                config=artifacts.load_json(root/f'hellaswag-{i}'/'eval_benchmarks_full.json')['configs']['hellaswag']
+                self.assertNotIn(' at 0x',json.dumps(config))
+                # Keep config validation strict: a genuine change still fails.
+                changed=copy.deepcopy(other);changed['config_hashes']['hellaswag']='changed'
+                with self.assertRaisesRegex(ValueError,'configs differ'):artifacts.align(hellaswag,changed)
             for i in range(4):
                 other=artifacts.read(root/f'parallel-{i}','social_iqa_norm',0,frozen)
                 for differences in artifacts.align(full,other).values():self.assertTrue((differences==0).all())

@@ -1,23 +1,19 @@
 #1 +60+a
-#th2-q359-paired-config-diff-20261013-a01
+#th2-q359-paired-parallel-repair-20261013-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-/mnt/local/conda-py311/envs/eval_fa4/bin/python -u - <<'REMOTE'
-import json
-from pathlib import Path
-root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01/supervised/run/paired/precision')
-def diff(a,b,path=''):
- if isinstance(a,dict) and isinstance(b,dict):
-  for k in sorted(a.keys()|b.keys()):diff(a.get(k),b.get(k),path+'/'+k)
- elif a!=b:print(path,repr(a)[:1200],repr(b)[:1200])
-for task in sorted((root/'reference/A20').iterdir()):
- name=task.name
- if not task.is_dir():continue
- print('TASK',name)
- a=json.loads((task/'eval_benchmarks_full.json').read_text())['configs']
- for mode in ('reference','production','repeat'):
-  for arm in ('A20','P20'):
-   b=json.loads((root/mode/arm/name/'eval_benchmarks_full.json').read_text())['configs']
-   print('COMPARE',mode,arm);diff(a,b)
-REMOTE
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a01
+TASK_SOURCE=/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01
+TASK_SESSION=q359-paired-parallel-repair-20261013-a01
+test ! -e "$TASK_ROOT"
+test ! -e "${TASK_ROOT}-launch.log"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
+printf -v TASK_CMD 'exec bash scripts/launch_paired_restart.sh %q %q %q >%q 2>&1' \
+  "$TASK_SOURCE" "$TASK_ROOT" thiennh-p6-q359-worker-0 "${TASK_ROOT}-launch.log"
+tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+tail -n 60 "${TASK_ROOT}-launch.log"
+if [ -f "$TASK_ROOT/supervised/supervisor.json" ]; then cat "$TASK_ROOT/supervised/supervisor.json"; fi
+test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
