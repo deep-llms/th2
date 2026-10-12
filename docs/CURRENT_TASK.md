@@ -1,3 +1,19 @@
+## Reduced queue timing — 13 October 2026, 00:52 Singapore
+
+P6-iso QQP fixed1e-5 is actively training, epoch1.172/3, loss0.1324 and finite
+gradients. Eight GPUs occupied (~21–30GB,50–85% utilization). Original A QQP
+fit took1139.8s (~19m); original SST-2 fits ~5m and CoLA/MRPC ~2m. No new
+failure. Base fine-tuning/final-score ETA is roughly04:00–06:00SGT13October;
+paired stage is not yet timed and may add4–10h, especially on FP32 fallback.
+These are planning ranges, not measured completion promises.
+
+Isolation reviewed: eval.finetune requires a fresh output directory, sets seed,
+loads original source checkpoint and invokes trainer.train() with no resume.
+Seven previous completed identical1e-5 fits are reused intentionally; remaining
+fits have new optimizer/scheduler state. Partial3e-5 output is not reused.
+Receipt temp/remote_logs/reduced-seed42-health-a02.log SHA256
+ e11bd9f397370ba5891efa3dcce99e64ba6e0e57bd30fe353e650cba0ebefab7.
+
 ## Reduced queue verified live — 13 October 2026, 00:44 Singapore
 
 New single-seed/fixed1e-5 queue is active. Seven complete fits reused (A/P6-iso
