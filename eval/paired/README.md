@@ -35,6 +35,8 @@ Admission and the label-symmetric subset remain descriptive. Output includes
 unrounded checkpoint means, accuracy, natural effects, standardized effects,
 intervals and average rows. These are checkpoint-level comparisons; the report
 discloses that previous accuracies/fine-tuning/PPL informed this research.
+Admission/filter tables apply to Suite Z only. bAbI uses story-cluster statistics
+and does not report independent-question standard errors.
 
 Corrections retained from the review:
 
@@ -139,11 +141,16 @@ Execution checks checkpoint, recipe, dataset and protocol hashes and runs one
 checkpoint/task subprocess at a time. It reuses completed matching outputs;
 partial or mismatched outputs stop the queue. Move an incomplete diagnostic
 directory aside deliberately before restarting; the runner never deletes data.
+The frozen position sample is verified before the first job and again before
+position extraction. Reused position outputs must also match the recipe,
+tokenizer and batch size.
 
 The first stage evaluates both arms twice in production precision and once in
 FP32 SDPA on the five frozen precision tasks. Production means the saved backend
 (including FA4) with BF16 autocast and FP32 softmax. Reference explicitly disables
 autocast and TF32; `--path sdpa-bf16` is also available for attribution tests.
+The gate verifies these settings in the saved metadata and requires repeated
+production evaluations to use the same numeric settings and attention runtime.
 The strict revision-3 variance/bias gates are preserved. If any gate fails,
 Suite Z and both mechanism probes use FP32 SDPA; Suite F remains descriptive
 production scoring. Passing five tasks is not an all-task numerical guarantee.
@@ -153,6 +160,8 @@ A20 and P20 run everything. Position extraction independently checks the exact
 same inputs against the training code's LM sum within 1e-4 nats (T8). This
 does **not** reproduce packed-validation PPL. A precision or T8 discrepancy
 is reported/fails as specified; weights are never changed to make a check pass.
+Analysis enforces the study's precision decision for both Z and bAbI. Position
+comparisons reject mixed numeric settings and non-finite native-loss checks.
 
 The queue itself does not manage GPU burns, Accelerate configuration, environment
 installation, or deployment. Those remain the existing authorized runner's job.

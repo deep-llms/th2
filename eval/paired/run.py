@@ -165,6 +165,7 @@ def execute(plan_path):
     """Sequential, restartable at completed tasks; incomplete outputs fail closed."""
     from eval.models import file_hash
     from .analysis import precision
+    from .position import read_sample
     value=artifacts.load_json(plan_path);body={k:v for k,v in value.items() if k!='plan_sha256'}
     if protocol.digest(body)!=value['plan_sha256']: raise ValueError('Plan was modified')
     frozen=protocol.read(value['protocol']);root=Path(value['output'])
@@ -174,6 +175,8 @@ def execute(plan_path):
         if file_hash(Path(obj['path'])/'model.safetensors')!=obj['sha256'] or file_hash(obj['recipe'])!=obj['recipe_sha256']:
             raise ValueError('Checkpoint or recipe changed since planning')
     if file_hash(value['calibration'])!=value['calibration_sha256']:raise ValueError('Calibration report changed')
+    sample=read_sample(value['position_sample'],frozen)
+    if sample['sample_sha256']!=value['sample_sha256']:raise ValueError('Position sample changed since planning')
     legacy=None
     if value['legacy_f']:
         if file_hash(value['legacy_f'])!=value['legacy_f_sha256']:raise ValueError('Historical mapping changed')
@@ -221,7 +224,7 @@ def execute(plan_path):
                     if obj['metadata']['checkpoint_sha256']!=value['checkpoints'][arm]['sha256']:
                         raise ValueError('Historical checkpoint differs')
                 else:job(arm,task,suite,selected if suite in ('Z','probes') else 'production',root/arm/suite/task)
-    from .position import read_sample
+    # Recheck after the benchmark jobs as well: inputs may change during a long queue.
     sample=read_sample(value['position_sample'],frozen)
     if sample['sample_sha256']!=value['sample_sha256']:raise ValueError('Position sample changed since planning')
     for arm in ('A10','A20','P20'):
@@ -232,6 +235,8 @@ def execute(plan_path):
                 '--path',selected,'--device',value['device']],check=True)
         meta=artifacts.load_json(output/'metadata.json')
         if (meta['status']!='completed' or meta['checkpoint_sha256']!=value['checkpoints'][arm]['sha256'] or
+            meta['recipe_sha256']!=value['checkpoints'][arm]['recipe_sha256'] or meta['batch_size']!=1 or
+            meta['tokenizer_sha256']!=sample['tokenizer_sha256'] or
             meta['sample_sha256']!=value['sample_sha256'] or meta['protocol_sha256']!=frozen['protocol_sha256'] or
             meta['precision_path']!=selected or meta['T8_max_abs_error']>1e-4 or
             file_hash(output/'losses.npy')!=meta['losses_sha256']):raise ValueError('Position job does not match plan')

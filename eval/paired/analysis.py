@@ -36,16 +36,16 @@ def suite(root, frozen, name='Z', legacy_f=None):
                 difference='P20 minus A20',tasks={},averages={},provenance={})
     differences={};references={};clusters={};symmetric=[];names=protocol.tasks(name)
     selected_path=None;identities={};plan=None
-    if name=='Z':
+    if name in ('Z','probes'):
         from eval.models import file_hash
         from . import audit
         plan=artifacts.load_json(root/'plan.json')
         if plan.get('plan_sha256')!=protocol.digest({k:v for k,v in plan.items() if k!='plan_sha256'}) or plan['protocol_sha256']!=frozen['protocol_sha256']:
-            raise ValueError('Suite Z requires its frozen study plan')
+            raise ValueError('Suite Z/probes require their frozen study plan')
         calibration=artifacts.load_json(plan['calibration'])
         if (not calibration['full_protocol'] or not calibration['passed'] or calibration['statistics_sha256']!=file_hash(stats.__file__)
             or calibration.get('calibration_code_sha256')!=file_hash(audit.__file__)
-            or file_hash(plan['calibration'])!=plan['calibration_sha256']):raise ValueError('Suite Z calibration gate failed')
+            or file_hash(plan['calibration'])!=plan['calibration_sha256']):raise ValueError('Suite Z/probes calibration gate failed')
         precision_report=artifacts.load_json(root/'precision.json')
         if (precision_report['protocol_sha256']!=frozen['protocol_sha256'] or precision_report.get('plan_sha256')!=plan['plan_sha256']
             or set(precision_report['tasks'])!=set(protocol.PRECISION)):
@@ -67,7 +67,7 @@ def suite(root, frozen, name='Z', legacy_f=None):
             return obj
         a,b=get('A20'),get('P20')
         if selected_path is not None and any(o['metadata']['precision_path']!=selected_path for o in (a,b)):
-            raise ValueError('Suite Z precision path differs from gate decision')
+            raise ValueError('Suite Z/probes precision path differs from gate decision')
         report['provenance'][task]={arm:obj['metadata'] for arm,obj in [('A20',a),('P20',b)]}
         clusters[task]=a['clusters']
         if name=='paloma':
@@ -80,12 +80,14 @@ def suite(root, frozen, name='Z', legacy_f=None):
             continue
         table,differences[task]=summarize(a,b,B,seed+10*i)
         report['tasks'][task]=dict(metrics=table)
-        pooled=(a['metrics']['ACC'].mean()+b['metrics']['ACC'].mean())/2
-        n=len(a['ids']); se=math.sqrt(pooled*(1-pooled)/n)
-        selected=pooled-a['chance']>=3*se
-        if selected:symmetric.append(task)
-        report['tasks'][task]['symmetric_filter']=dict(pooled_accuracy=float(pooled),chance=a['chance'],
-            se=se,kept=bool(selected),status='descriptive only')
+        n=len(a['ids'])
+        if name=='Z':
+            pooled=(a['metrics']['ACC'].mean()+b['metrics']['ACC'].mean())/2
+            se=math.sqrt(pooled*(1-pooled)/n)
+            selected=pooled-a['chance']>=3*se
+            if selected:symmetric.append(task)
+            report['tasks'][task]['symmetric_filter']=dict(pooled_accuracy=float(pooled),chance=a['chance'],
+                se=se,kept=bool(selected),status='descriptive only')
         if name in ('Z','probes'):
             c=get('A10'); artifacts.align(c,b)
             if selected_path is not None and c['metadata']['precision_path']!=selected_path:raise ValueError('A10 precision path differs')
@@ -95,6 +97,7 @@ def suite(root, frozen, name='Z', legacy_f=None):
             report['tasks'][task]['progress_ratio']={m:stats.progress_ratio(
                 [(differences[task][m],references[task][m])],B,seed+10*i,[a['clusters']])
                 for m in ('M1','M2','ACC') if m in differences[task]}
+        if name=='Z':
             acc=a['metrics']['ACC']; gain=references[task]['ACC'];se20=float(np.sqrt(acc.mean()*(1-acc.mean())/n))
             gse=float(gain.std(ddof=1)/np.sqrt(n))
             report['tasks'][task]['admission_description']=dict(
@@ -147,15 +150,23 @@ def precision(reference_a,reference_b,prod_a,prod_b,repeat_a,repeat_b,full_size)
         if any(o['metadata']['checkpoint_sha256']!=ref_obj['metadata']['checkpoint_sha256'] for o in (p,rep)):
             raise ValueError('Precision check requires identical weights across paths')
         if (ref_obj['metadata']['precision_path']!='reference' or ref_obj['metadata']['attention_backend']!='sdpa'
-            or ref_obj['metadata']['weights_dtype']!='torch.float32' or ref_obj['metadata']['autocast_dtype']!='None'):
-            raise ValueError('Precision reference must use FP32 SDPA')
-        for key in ('precision_path','attention_backend','batch_size','seed','autocast_dtype'):
+            or ref_obj['metadata']['weights_dtype']!='torch.float32' or ref_obj['metadata']['autocast_dtype']!='None'
+            or ref_obj['metadata'].get('matmul_tf32') is not False or ref_obj['metadata'].get('cudnn_tf32') is not False):
+            raise ValueError('Precision reference must use FP32 SDPA with TF32 disabled')
+        if (p['metadata']['precision_path']!='production' or p['metadata']['weights_dtype']!='torch.float32'
+            or p['metadata']['autocast_dtype']!='torch.bfloat16'):
+            raise ValueError('Precision production must use FP32 master weights and BF16 autocast')
+        for key in ('precision_path','attention_backend','batch_size','seed','autocast_dtype','weights_dtype',
+                    'matmul_tf32','cudnn_tf32','attention_runtime'):
             if p['metadata'][key]!=rep['metadata'][key]:raise ValueError('Repeatability settings differ')
     ra=artifacts.align(prod_a,repeat_a);rb=artifacts.align(prod_b,repeat_b)
     output={}
     for metric in ('M1','M2'):
         if metric not in ref:continue
-        d=ref[metric]; error=prod[metric]-d;n=len(d)
+        d=ref[metric]
+        with np.errstate(over='ignore',invalid='ignore'):error=prod[metric]-d
+        if not np.isfinite(error).all():raise ValueError('Non-finite precision error')
+        n=len(d)
         if full_size<n or n<2: raise ValueError('Invalid precision sample size')
         sd=float(d.std(ddof=1)); noise=float(error.std(ddof=1))
         repeat={}

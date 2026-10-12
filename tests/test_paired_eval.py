@@ -98,6 +98,29 @@ class StatisticsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Non-finite'):
             precision(a,obj(np.full(10,np.nan)),a,b,a,b,1000)
 
+    def test_precision_enforces_numeric_paths(self):
+        def obj(x,path):
+            return dict(ids=list(range(10)),sizes={'x':10},rule='ll',
+                records=[dict(identity=i) for i in range(10)],metrics=dict(M1=np.asarray(x)),clusters=None,
+                metadata=dict(checkpoint_sha256='weights',tokenizer_sha256='tok',dataset_manifest_sha256='data',
+                    precision_path=path,attention_backend='sdpa',weights_dtype='torch.float32',
+                    autocast_dtype='None' if path=='reference' else 'torch.bfloat16',
+                    matmul_tf32=False,cudnn_tf32=False,batch_size=2,seed=42,attention_runtime=dict(backend='sdpa')))
+        ra=obj(np.zeros(10),'reference');rb=obj(np.linspace(0,.2,10),'reference')
+        pa=obj(np.zeros(10),'production');pb=obj(np.linspace(0,.2,10),'production')
+        self.assertTrue(precision(ra,rb,pa,pb,pa,pb,1000)['passed'])
+        for field,value in [('matmul_tf32',True),('cudnn_tf32',True),('weights_dtype','torch.bfloat16')]:
+            changed=copy.deepcopy(ra);changed['metadata'][field]=value
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'reference'):
+                precision(changed,rb,pa,pb,pa,pb,1000)
+        for field,value in [('precision_path','reference'),('autocast_dtype','None')]:
+            changed=copy.deepcopy(pa);changed['metadata'][field]=value
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'production'):
+                precision(ra,rb,changed,pb,changed,pb,1000)
+        changed=copy.deepcopy(pa);changed['metadata']['matmul_tf32']=True
+        with self.assertRaisesRegex(ValueError,'Repeatability'):
+            precision(ra,rb,pa,pb,changed,pb,1000)
+
     def test_position_profiles_joint_reference_and_empty_bucket(self):
         from eval.paired.position import analyze
         from eval.models import file_hash
@@ -110,16 +133,34 @@ class StatisticsTests(unittest.TestCase):
                 np.save(dest/'losses.npy',base+offset)
                 protocol.write_json(dest/'metadata.json',dict(status='completed',protocol_sha256='fixture',
                     T8_max_abs_error=0.,rows=[dict(document_id=str(i),token_sha256=str(i)) for i in range(20)],
-                    tokenizer_sha256='tok',sample_sha256='sample',policy='fixture',losses_sha256=file_hash(dest/'losses.npy')))
+                    tokenizer_sha256='tok',sample_sha256='sample',policy='fixture',losses_sha256=file_hash(dest/'losses.npy'),
+                    precision_path='reference',weights_dtype='torch.float32',autocast_dtype='None',softmax_dtype='float32',
+                    matmul_tf32=False,cudnn_tf32=False,batch_size=1))
             result=analyze(directories,frozen)
             self.assertIsNone(result['pairs']['P20-A20']['buckets']['8:9'])
             self.assertIsNone(result['difference_of_profiles']['8:9'])
             for bucket in ('1:3','3:5','5:8'):
                 self.assertAlmostEqual(result['pairs']['P20-A20']['buckets'][bucket]['normalized_profile']['ratio'],1.)
                 self.assertAlmostEqual(result['difference_of_profiles'][bucket]['estimate'],0.)
-            changed=artifacts.load_json(root/'P20'/'metadata.json');changed['rows'][0]['token_sha256']='changed'
+            original=artifacts.load_json(root/'P20'/'metadata.json')
+            changed=copy.deepcopy(original);changed['precision_path']='production'
+            (root/'P20'/'metadata.json').write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError,'numeric settings'):analyze(directories,frozen)
+            changed=copy.deepcopy(original);changed['rows'][0]['token_sha256']='changed'
             (root/'P20'/'metadata.json').write_text(json.dumps(changed))
             with self.assertRaisesRegex(ValueError,'identities'):analyze(directories,frozen)
+
+    def test_position_native_loss_check_rejects_nan(self):
+        from types import SimpleNamespace
+        from eval.paired.position import losses
+        class Model:
+            autocast_dtype=None
+            def __call__(self,ids):
+                return SimpleNamespace(logits=torch.zeros(*ids.shape,4))
+            def wrapped(self,*args,**kwargs):
+                return dict(lm_sum=torch.tensor(float('nan')),lm_count=torch.tensor(2))
+        with self.assertRaisesRegex(ValueError,'T8'):
+            losses(Model(),torch.tensor([[1,2,3]]))
 
 
 class QueueTests(unittest.TestCase):
@@ -171,6 +212,19 @@ class QueueTests(unittest.TestCase):
             self.assertAlmostEqual(result['progress_ratios']['M1']['ratio'],1.)
             means=result['averages']['M1'];self.assertAlmostEqual(means['B']-means['A'],means['mean'])
             json.dumps(result,allow_nan=False)
+            def clustered_read(*args,**kwargs):
+                obj=read(*args,**kwargs);obj['clusters']=[str(i//4) for i in range(80)]
+                return obj
+            with patch('eval.paired.artifacts.read',side_effect=clustered_read):
+                probes=suite(root,frozen,'probes')
+            for table in probes['tasks'].values():
+                self.assertNotIn('admission_description',table);self.assertNotIn('symmetric_filter',table)
+                self.assertEqual(table['metrics']['M1']['units'],20)
+            self.assertEqual(len(probes['contrasts']),2)
+            def wrong_path(*args,**kwargs):
+                obj=clustered_read(*args,**kwargs);obj['metadata']['precision_path']='reference';return obj
+            with patch('eval.paired.artifacts.read',side_effect=wrong_path),self.assertRaisesRegex(ValueError,'precision path'):
+                suite(root,frozen,'probes')
 
     def test_precision_fallback_sequence_resume_and_changed_data_rejection(self):
         from eval.paired.run import execute
@@ -199,7 +253,8 @@ class QueueTests(unittest.TestCase):
                     precision_path=opt['--path'],batch_size=2,protocol_sha256='hash')
                 if command=='position':
                     (dest/'losses.npy').write_bytes(b'fixture')
-                    meta.update(sample_sha256='sample-hash',T8_max_abs_error=0.,losses_sha256=file_hash(dest/'losses.npy'))
+                    meta.update(sample_sha256='sample-hash',tokenizer_sha256='tok',batch_size=1,
+                                T8_max_abs_error=0.,losses_sha256=file_hash(dest/'losses.npy'))
                 protocol.write_json(dest/('metadata.json' if command=='position' else 'eval_metadata.json'),meta)
             def read(directory,*args,**kwargs):
                 meta=artifacts.load_json(Path(directory)/'eval_metadata.json')
@@ -210,8 +265,11 @@ class QueueTests(unittest.TestCase):
                  patch('eval.paired.protocol.PRECISION',['piqa']), \
                  patch('eval.paired.artifacts.read',side_effect=read), \
                  patch('eval.paired.analysis.precision',return_value={'passed':False}), \
-                 patch('eval.paired.position.read_sample',return_value={'sample_sha256':'sample-hash'}), \
+                 patch('eval.paired.position.read_sample',return_value={'sample_sha256':'sample-hash','tokenizer_sha256':'tok'}), \
                  patch('eval.paired.run.subprocess.run',side_effect=launch):
+                with patch('eval.paired.position.read_sample',return_value={'sample_sha256':'changed'}):
+                    with self.assertRaisesRegex(ValueError,'Position sample changed'):execute(plan)
+                    self.assertEqual(calls,[])  # Reject changed input before any GPU job.
                 execute(plan)
                 self.assertEqual(len(calls),19)
                 for cmd in calls[6:]:
@@ -219,6 +277,11 @@ class QueueTests(unittest.TestCase):
                     expected='production' if opts.get('--suite') in ('F','paloma') else 'reference'
                     self.assertEqual(opts['--path'],expected)
                 execute(plan);self.assertEqual(len(calls),19)  # Completed task reuse, no duplicate execution.
+                pos=study/'A20'/'position'/'metadata.json'
+                original=artifacts.load_json(pos);meta=copy.deepcopy(original);meta['recipe_sha256']='wrong'
+                pos.write_text(json.dumps(meta))
+                with self.assertRaisesRegex(ValueError,'Position job'):execute(plan)
+                pos.write_text(json.dumps(original))
                 bad=study/'A20'/'Z'/'piqa'/'eval_metadata.json'
                 meta=artifacts.load_json(bad);meta['dataset_manifest_sha256']='wrong';bad.write_text(json.dumps(meta))
                 with self.assertRaisesRegex(ValueError,'queued job'):execute(plan)

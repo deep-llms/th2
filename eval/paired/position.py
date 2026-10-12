@@ -51,7 +51,7 @@ def losses(model,ids):
         with torch.autocast(ids.device.type,dtype=model.autocast_dtype,enabled=model.autocast_dtype is not None):
             trained=model.wrapped(context,compute_auxiliary_losses=False)
         delta=abs(float(loss.mean())-float(trained['lm_sum']/trained['lm_count']))
-        if delta>1e-4: raise ValueError(f'T8 native training loss disagrees: {delta}')
+        if not math.isfinite(delta) or delta>1e-4: raise ValueError(f'T8 native training loss disagrees: {delta}')
     return loss.double().cpu().numpy(),delta
 
 
@@ -90,8 +90,9 @@ def analyze(directories,frozen):
             raise ValueError('Invalid position loss array')
         arrays[arm]=array;metas[arm]=meta
     if set(arrays)!={'A10','A20','P20'}:raise ValueError('Position probe requires both pairs')
-    for key in ('rows','policy','sample_sha256','tokenizer_sha256'):
-        if any(m[key]!=metas['A20'][key] for m in metas.values()):raise ValueError('Position document/token identities differ')
+    for key in ('rows','policy','sample_sha256','tokenizer_sha256','precision_path','weights_dtype','autocast_dtype',
+                'softmax_dtype','matmul_tf32','cudnn_tf32','batch_size'):
+        if any(m[key]!=metas['A20'][key] for m in metas.values()):raise ValueError('Position identities or numeric settings differ: '+key)
     B=frozen['resamples'];seed=frozen['analysis_seed'];out=dict(provenance=metas,pairs={},difference_of_profiles={})
     for name,a,b in [('P20-A20','A20','P20'),('A20-A10','A10','A20')]:
         reduction=arrays[a]-arrays[b];all_s=reduction[:,1:].sum(1);all_c=np.full(len(all_s),reduction.shape[1]-1)

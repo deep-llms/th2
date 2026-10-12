@@ -1,3 +1,32 @@
+## Paired evaluation follow-up review — 12 October 2026
+
+Reviewed the paired adapter, statistics, queue and position probe. Fixed missing
+validation around precision metadata (FP32 reference with TF32 disabled, BF16
+production and identical repeat settings), and applied the frozen precision
+decision to bAbI analysis as well as Suite Z. Restricted the descriptive
+independent-question admission/filter tables to Suite Z; bAbI retains its
+story-cluster tests and joint-bootstrap contrasts.
+
+The queue now validates the position sample before launching any job, and again
+before position extraction. Completed position outputs must match the planned
+recipe, tokenizer and batch size too. Position comparisons reject mixed numeric
+settings; the native-loss agreement check explicitly rejects NaN/Inf.
+
+The statistical implementation and calibration code are unchanged; the saved
+full calibration source hashes still match. Original evaluation/training code,
+runner commands and environments are unchanged. No B200 job or push requested.
+
+Verification: the 32-test CPU regression ran 31 checks successfully, with one
+queue-fixture mismatch because the process had loaded the fixture before the
+final position-reuse guard was added. Fresh execution of all 11 affected
+statistics/queue and real-model entry-point tests passed, including that queue
+case. Evidence: `temp/paired-review-regression.log` and
+`temp/paired-review-final.log`. The broad run covers the existing evaluator,
+few-shot protocol and expanded-suite behavior; the final run uses saved tiny
+P6-iso weights in FP32 and CPU BF16. Real-data audits and B200 precision checks
+remain required before launching the study. Freeze a fresh protocol after these
+implementation changes.
+
 ## Separate paired evaluation implemented — 12 October 2026
 
 User authorized the revision-3 paired design while explicitly retaining the
