@@ -1,21 +1,19 @@
 #1 +60+a
-#th2-q359-expanded-paired-health-20261012-a02
+#th2-q359-expanded-smoke-filters-20261012-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-test "$(hostname)" = thiennh-p6-q359-worker-0
 python3 -u - <<'PY'
-import datetime,json,subprocess
 from pathlib import Path
-root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a02')
-print(datetime.datetime.now(datetime.timezone.utc).isoformat())
-for rel in ('supervisor.log','preflight.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/supervisor.json'):
- p=root/rel
- if p.exists():print(rel,p.read_text()[-24000:],flush=True)
-p=root/'position-sample.json'
-if p.exists():
- s=json.loads(p.read_text());print('POSITION_SAMPLE',len(s['rows']),s['sample_sha256'],s.get('selection_sha256'))
-for p in sorted((root/'supervised/run').glob('*.log')):
- print('JOB_LOG',p.name,p.read_text()[-2500:],flush=True)
-subprocess.run(['tmux','list-panes','-t',root.name,'-F','#{pane_pid} #{pane_dead} #{pane_current_command}'],check=True)
-subprocess.run(['nvidia-smi','--query-compute-apps=pid,used_memory','--format=csv'],check=True)
+from collections import Counter
+import json
+r=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a02')
+for name in ('supervised/supervisor.json','supervised/burn.log'):
+ p=r/name
+ if p.exists():print(name,p.read_text()[-8000:])
+for path in sorted((r/'supervised/run/expanded-smoke').glob('*/*/eval_samples.jsonl')):
+ rows=[json.loads(x) for x in path.read_text().splitlines()];counts=Counter((x['task'],x['doc_id']) for x in rows)
+ duplicate={key:n for key,n in counts.items() if n>1}
+ print('SAMPLE_FILE',str(path.relative_to(r)),'rows',len(rows),'unique_docs',len(counts),'filters',dict(Counter(x.get('filter','none') for x in rows)))
+ if duplicate:
+  key=next(iter(duplicate));print('FIRST_MULTIPLE_RECORD',key,[(x.get('filter'),sorted(x)) for x in rows if (x['task'],x['doc_id'])==key])
 PY
