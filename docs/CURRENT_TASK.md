@@ -1,3 +1,19 @@
+## Full result reports retrieved — 13 October 2026, 05:02 Singapore
+
+Export command4023e8f acknowledged: all seven original JSON reports downloaded
+into artifacts/paired-final-20261013/ and their SHA256 values match the remote
+receipts: paired-F/Z/probes/position, precision, finetune-summary, expanded-summary.
+commands.sh returned to#0. No new GPU work requested; prior completed status and
+verified burns unchanged. User requested results, not another experiment.
+
+At20k, held-out PPL A17.886315/P6-iso17.841602. Expanded eight-benchmark
+multiple-choice mean A40.2798%/P6-iso40.0569%; canonical few-shot eight-task
+mean49.5579%/49.4411%; single-seed42/LR1e-5 fine-tune eleven-score mean
+76.9720%/76.2409%. These are descriptive means, not official combined scores.
+Paired Z confirms improved correct-answer log likelihood, but not relative
+correct-choice probability or accuracy. bAbI mean accuracy24.7122%/22.1089%.
+One pretraining seed; do not infer across-seed robustness or downstream gains.
+
 ## Paired study complete — 13 October 2026, verified 04:55 Singapore
 
 Root q359-paired-parallel-repair-20261013-a02 completed successfully at04:34:21SGT.

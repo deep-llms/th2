@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02/supervised/run/paired-F.json,/mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02/supervised/run/paired-Z.json,/mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02/supervised/run/paired-probes.json,/mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02/supervised/run/paired-position.json,/mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02/supervised/run/paired/precision.json,/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01/supervised/run/finetune/summary.json,/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a03/supervised/run/expanded-full/summary.json
-#th2-q359-paired-final-reports-20261013-a01
+#0
+# Paired-study reports exported and verified locally; no workload requested.
