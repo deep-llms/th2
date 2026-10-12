@@ -1,3 +1,24 @@
+## Reduced queue verified live — 13 October 2026, 00:44 Singapore
+
+New single-seed/fixed1e-5 queue is active. Seven complete fits reused (A/P6-iso
+CoLA, SST-2, MRPC; A QQP), leaving13 fits. Reuse hash validation passed on B200.
+Current first new fit is P6-iso QQP1e-5; all8 distributed workers initialized.
+Do not report full study complete. Expanded benchmarks remain in original a03.
+
+Old supervisor305589 was identity-checked and stopped via pidfd SIGTERM;
+its own cleanup verified8free GPUs and restored communicating burns at00:37:53
+SGT. New launch waited for verified handoff/dead pane, copied Accelerate to
+/dev/shm/.cache/huggingface/accelerate/default_config.yaml and checked accelerate
+env (8GPU, bf16). New supervisor stopped only verified burn workers344580–344587,
+verified8free GPUs, and started the reduced queue. Automatic final burn remains.
+
+Evidence: temp/remote_logs/reduced-seed42-health-a01.log SHA256
+67892b05edcf5b1e5a3490a4565807c6fd2bb31b0ee61fcc9d46401295d5436b.
+Launch receipt: temp/remote_logs/reduced-seed42-launch-a01.log SHA256
+072fb80a54ca38baeefed41432c7bdb238b4402e0ae2af909905e814e41c027b.
+Status command acknowledged; commands.sh restored to#0. Fixed rate chosen
+before new final test scoring; previous3e-5 artifacts retained but excluded.
+
 ## Reduced downstream budget — 13 October 2026 (Singapore)
 
 User requested base results first: one fine-tuning seed and one learning rate.

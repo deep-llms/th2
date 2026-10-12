@@ -1,4 +1,4 @@
-#1 +60+a
+#0
 #th2-q359-expanded-single-seed42-health-20261013-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
