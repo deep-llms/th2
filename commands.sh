@@ -1,22 +1,25 @@
 #1 +60+a
-#th2-q359-position-extension-source-check-20261012-a01
+#th2-q359-expanded-paired-20k-20261012-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
-/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - <<'PY'
-import hashlib,json
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a02
+TASK_SESSION=q359-expanded-paired-20k-20261012-a02
+test ! -e "$TASK_ROOT"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
+mkdir -p "$TASK_ROOT"
+tmux new-session -d -s "$TASK_SESSION" "exec bash scripts/launch_expanded_evaluation.sh '$TASK_ROOT' thiennh-p6-q359-worker-0 2000 resources/position_extension_selection_20261012.json >'$TASK_ROOT/supervisor.log' 2>&1"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 45
+tail -35 "$TASK_ROOT/supervisor.log"
+if [ "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 1 ]; then
+  /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - "$TASK_ROOT" <<'PYREMOTE'
+import json,sys
 from pathlib import Path
-from transformers import AutoTokenizer
-from eval.paired.run import token_hash
-root=Path('/mnt/local/_data/deep-llms_th2')
-p=root/'cx_sampled_old/dataset_manifest.json';print('OLD_MANIFEST_SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
-for split in ('validation','train'):
- p=root/f'position-extension-20261012/subsets/qwen3_0.6b_base_en_30B/{split}/shard_000000/data-00000-of-00001.arrow'
- print('EXTENSION_SOURCE',split,p.stat().st_size,hashlib.sha256(p.read_bytes()).hexdigest())
-cfg=json.loads(Path('/mnt/local/_outputs/deep-llms_th2/q359-proxy-resume20k-seed1042-20261011-a01/supervised/run/seed-1042/A/train_config.json').read_text())
-t=AutoTokenizer.from_pretrained(cfg['model']['tokenizer_name'],local_files_only=True)
-if t.pad_token is None:t.pad_token=t.eos_token
-print('REMOTE_TOKENIZER',token_hash(t))
-print('VALIDATION_SOURCE',cfg['data']['eval_data_dir'])
-PY
+r=json.loads((Path(sys.argv[1])/'supervised/supervisor.json').read_text())
+assert r['training_status']=='ok' and r['training_returncode']==0 and r['burn']['collective_progress_verified'],r
+print('EXPANDED_PAIRED_STUDY_AND_BURN_COMPLETE',flush=True)
+PYREMOTE
+else
+  echo 'EXPANDED_PAIRED_SUPERVISOR_ACTIVE: downloads/preflight or evaluation queue.'
+fi

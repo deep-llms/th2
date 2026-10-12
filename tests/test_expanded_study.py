@@ -68,6 +68,66 @@ class StudyTests(unittest.TestCase):
             (root/'xcsqa_en.parquet').write_bytes(b'bad')
             with self.assertRaisesRegex(ValueError,'checksum'):materialize(root,source,root/'bad.json')
 
+    def test_extended_position_identity_and_duplicate_guards(self):
+        import hashlib
+        from transformers import AutoTokenizer
+        from scripts.extended_position_sample import materialize as extended,sha
+        from eval.paired.run import token_hash
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);fixture(root)
+            tok=AutoTokenizer.from_pretrained(root/'model',local_files_only=True)
+            texts=['1 2 3 4 5','6 7 8 9 10']
+            Dataset.from_dict({'text':[texts[1]]}).save_to_disk(root/'new')
+            arrow=next((root/'new').glob('*.arrow'))
+            old_manifest=root/'old.json';training_file='subsets/qwen3_0.6b_base_en_30B/train/fixture.arrow'
+            file_spec=dict(bytes=1,sha256='fixture')
+            old_manifest.write_text(json.dumps(dict(files={training_file:file_spec})))
+            audit=root/'overlap.json';audit.write_text(json.dumps(dict(old_manifest_sha256=sha(old_manifest),
+                excluded_text_sha256=[],files=[dict(path=training_file,**file_spec)])))
+            records=[]
+            for source,text in zip(('old_validation','new_validation'),texts):
+                records.append(dict(source=source,row=0,text_sha256=hashlib.sha256(text.encode()).hexdigest(),
+                    prefix_sha256=hashlib.sha256(json.dumps(tok(text)['input_ids'][:4]).encode()).hexdigest()))
+            selection=dict(rows=records,old_manifest_sha256=sha(old_manifest),tokenizer_sha256=token_hash(tok),
+                overlap_audit_file='overlap.json',overlap_audit_sha256=sha(audit),sources=dict(new_validation=dict(path=str(arrow.relative_to(root)),
+                    bytes=arrow.stat().st_size,sha256=sha(arrow))))
+            frozen=dict(protocol_sha256='fixture',position=dict(documents=2,length=4))
+            path=root/'selection.json';path.write_text(json.dumps(selection));old=Dataset.from_dict({'text':[texts[0]]})
+            sample=extended(path,old,root,old_manifest,tok,root/'sample.json',frozen)
+            self.assertEqual(len(sample['rows']),2)
+            self.assertTrue(sample['rows'][1]['document_id'].startswith('new_validation:0:'))
+            selection['rows'][1]=dict(selection['rows'][0]);path.write_text(json.dumps(selection))
+            with self.assertRaisesRegex(ValueError,'duplicated'):
+                extended(path,old,root,old_manifest,tok,root/'duplicate.json',frozen)
+            old_manifest.write_text('changed')
+            with self.assertRaisesRegex(ValueError,'training manifest differs'):
+                extended(path,old,root,old_manifest,tok,root/'bad-source.json',frozen)
+
+    def test_overlap_scan_finds_training_match_and_checks_file_integrity(self):
+        import hashlib
+        from scripts.prepare_position_extension import overlap,SUBSET
+        from scripts.extended_position_sample import sha
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);dest=root/SUBSET/'train/shard_000000'
+            Dataset.from_dict({'text':['duplicate text','different text']}).save_to_disk(dest)
+            path=next(dest.glob('*.arrow'))
+            (root/'dataset_manifest.json').write_text(json.dumps(dict(files={str(path.relative_to(root)):
+                dict(bytes=path.stat().st_size,sha256=sha(path))})))
+            result=overlap(root,[dict(text='duplicate text'),dict(text='new text')])
+            self.assertEqual(result['training_documents'],2)
+            self.assertEqual(result['excluded_text_sha256'],[hashlib.sha256(b'duplicate text').hexdigest()])
+            path.write_bytes(b'corrupted')
+            with self.assertRaisesRegex(ValueError,'Training file differs'):
+                overlap(root,[dict(text='new text')])
+
+    def test_queue_can_recompute_historical_scores_without_legacy_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            jobs=make(Path(tmp)/'study',Path.cwd(),{'A10':'/a10','A20':'/a20','P20':'/p20'},
+                '/data','/manifest','/protocol','/position',None)
+            for job in jobs:
+                self.assertNotIn('--legacy-f',job['argv'])
+                self.assertNotIn(None,job['argv'])
+
     def test_queue_order_and_unchanged_finetune_protocol(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)/'study'

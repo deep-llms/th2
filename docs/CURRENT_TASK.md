@@ -1,3 +1,48 @@
+## Position probe extension approved — 12 October 2026
+
+User rejected the882-document fallback and authorized extending to2,000 with
+English documents from nht10/cx_sampled. The new pool is already local. Its
+validation split supplies866 additional unique2048-token prefixes (old882 plus
+new866 gives1748 before training-overlap exclusions). Fill the remainder from
+new-pool train shard000000 only after excluding exact full-text matches against
+ALL36,595,514 old English training documents. That newer train split was not
+used by these checkpoints. Exclude duplicate texts and duplicate2048-token
+prefixes. This is exact-match screening, not a near-duplicate guarantee.
+
+The CPU audit verifies all278 old training Arrow files against the published
+manifest while checking candidate membership. Commit only row identities/hashes,
+source pins and audit receipts; no documents or token arrays. Freeze before any
+model scores. Use the same selection for A10/A20/P20. Scripts:
+`prepare_position_extension.py` creates candidates/audit/selection;
+`extended_position_sample.py` verifies and materializes them offline.
+
+Downloaded only the new validation and first training Arrow shards (231,810,872
+bytes) via87bdf8d, revision9d5b93963a98f0e576f4d8a8361f214a30f6de0a. Receipt8de54c2
+verifies both B200 file hashes, old manifest hash and tokenizer hash match local.
+See temp/remote_logs/position-extension-source-check-a01.log.
+
+Final selection:881 original-validation documents +865 new-validation documents
++254 new-pool documents unused by these checkpoints =2,000. Scanned all36,595,514
+old training documents and verified278 Arrow hashes; excluded4 matches among
+3,555 candidates. Metadata/audit are frozen in
+`resources/position_extension_selection_20261012.json` and
+`resources/position_extension_overlap_20261012.json`. Both sources were checked
+against immutable HF revision and B200 source hashes. No near-duplicate claim.
+
+Status correction: the original a01 queue completed all245 benchmark downloads
+but failed CPU preflight because historical F logs lack tokenizer_sha256. No
+GPU evaluations started; burns293909–293916 remained active. Preserve a01;
+relaunch into `/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a02`
+with2,000 documents and the frozen selection. Recompute paired Suite F
+with its existing canonical tasks/shots, rather than fabricating missing metadata.
+Expanded benchmarks remain first, then GLUE/SQuAD fine-tuning, then paired study.
+Paloma remains deferred. GPU handoff/burn restoration logic is unchanged.
+
+Verification so far:20 expanded/paired regression tests passed; the final8-test
+launch suite additionally covers full training-file audit and corruption rejection.
+Evidence: temp/position-extension-final-tests.log and position-extension-study-final.log.
+The following section records the superseded882-document launch.
+
 ## Expanded + paired 20k evaluation launch — 12 October 2026
 
 User authorized both studies, expanded benchmarks first. Verified q359 live at

@@ -40,14 +40,15 @@ def make(root,project,checkpoints,data_root,manifest,protocol,position,legacy):
     args=['{python}','-m','eval.paired','plan','--protocol',protocol,'--calibration',project/'docs/PAIRED_LOGPROB_CALIBRATION_20261012.json',
         '--position-sample',position,'--a10',checkpoints['A10'],'--a20',checkpoints['A20'],'--p20',checkpoints['P20'],
         '--dataset-root',data_root,'--manifest',manifest,'--batch-size','16','--output','{run_dir}/paired',
-        '--legacy-f',legacy,'--defer-paloma']
+        '--defer-paloma']
+    if legacy:args+=['--legacy-f',legacy]
     add('paired-plan',args,[dict(path='paired/plan.json')],timeout=7200)
     add('paired-evaluate',['{python}','-m','eval.paired','run','--plan','{run_dir}/paired/plan.json'],
         [dict(path=f'paired/{a}/position/metadata.json',json_equals=dict(status='completed')) for a in checkpoints]+[dict(path='paired/precision.json')],list(range(8)),604800)
     for suite in ('F','Z','probes'):
         args=['{python}','-m','eval.paired','analyze','--root','{run_dir}/paired','--protocol',protocol,
               '--suite',suite,'--output','{run_dir}/paired-'+suite+'.json']
-        if suite=='F':args+=['--legacy-f',legacy]
+        if suite=='F' and legacy:args+=['--legacy-f',legacy]
         add('analyze-'+suite,args,[dict(path='paired-'+suite+'.json')],timeout=43200)
     add('analyze-position',['{python}','-m','eval.paired','analyze-position','--protocol',protocol,
         '--a10','{run_dir}/paired/A10/position','--a20','{run_dir}/paired/A20/position','--p20','{run_dir}/paired/P20/position',
@@ -60,14 +61,14 @@ def make(root,project,checkpoints,data_root,manifest,protocol,position,legacy):
     return jobs
 
 
-def prepare(root,host,position_documents):
+def prepare(root,host,position_documents,position_selection=None):
     """Offline CPU preflight, while the approved burns keep running."""
     import importlib.metadata as md
-    import shutil,socket,subprocess,sys
+    import shutil,socket,subprocess
     from accelerate.commands.config.config_args import default_yaml_config_file,load_config_from_file
     from transformers import AutoTokenizer
     from train import load_text
-    from eval.paired import protocol,position,audit,artifacts
+    from eval.paired import protocol,position,audit
     from scripts.materialize_expanded_inputs import materialize
     from scripts.train_then_burn import digest,approved_launcher,APPROVED_BURNS,BURN_HASH,GUARD_HASH
     from scripts.verified_gpu_reclaim import inspect,process
@@ -95,20 +96,18 @@ def prepare(root,host,position_documents):
     frozen_path=root/'paired-protocol.json';frozen=protocol.freeze(frozen_path,position_documents)
     write(root/'paired-data-audit.json',audit.data(data,manifest,frozen))
     position_path=root/'position-sample.json'
-    position.freeze(load_text(cfg['data']['eval_data_dir']),tok,position_path,frozen)
-    # Original 20k F artifacts already passed the established validators. Reuse their sample logs.
-    old=base/'q359-downstream-20k-20261012-a01/supervised/run';legacy={a:{} for a in ('A20','P20')}
-    for task,shots in protocol.F.items():
-        destinations=json.loads((old/f'full-{shots}shot/checkpoints.json').read_text())
-        for arm in legacy:legacy[arm][task]=destinations[checkpoints[arm]]
-    legacy_path=root/'legacy-f.json';write(legacy_path,legacy)
-    for task,shots in protocol.F.items():
-        a,b=[artifacts.read(legacy[arm][task],task,shots,frozen,legacy=True) for arm in ('A20','P20')]
-        artifacts.align(a,b)
-        for arm,obj in (('A20',a),('P20',b)):
-            if obj['metadata']['checkpoint_sha256']!=digest(Path(checkpoints[arm])/'model.safetensors'):
-                raise ValueError('Historical F checkpoint differs')
-    print('HISTORICAL_F_ARTIFACTS_VERIFIED',flush=True)
+    if position_selection:
+        from scripts.extended_position_sample import materialize as extended_sample
+        extended_sample(position_selection,load_text(cfg['data']['eval_data_dir']),
+            '/mnt/local/_data/deep-llms_th2/position-extension-20261012',
+            '/mnt/local/_data/deep-llms_th2/cx_sampled_old/dataset_manifest.json',tok,position_path,frozen)
+    else:
+        position.freeze(load_text(cfg['data']['eval_data_dir']),tok,position_path,frozen)
+    # Historical F logs lack tokenizer provenance required by the new protocol.
+    # Recompute using the same canonical tasks/shots; never fabricate metadata.
+    legacy_path=None
+    write(root/'legacy-f-decision.json',dict(mode='recompute',
+        reason='Historical F artifacts lack tokenizer_sha256 required by paired validation'))
     source=project/'resources/accelerate_config.yaml';dest=Path(default_yaml_config_file)
     dest.parent.mkdir(parents=True,exist_ok=True)
     if dest.exists():shutil.copy2(dest,root/'accelerate.previous.yaml')
@@ -117,7 +116,7 @@ def prepare(root,host,position_documents):
     ac=load_config_from_file(str(dest)).to_dict()
     if ac['num_processes']!=8 or ac['mixed_precision']!='bf16' or ac['distributed_type']!='MULTI_GPU':raise ValueError('Wrong Accelerate configuration')
     subprocess.run(['accelerate','env'],check=True)
-    make(root,project,checkpoints,str(data),str(manifest),str(frozen_path),str(position_path),str(legacy_path))
+    make(root,project,checkpoints,str(data),str(manifest),str(frozen_path),str(position_path),legacy_path)
     status=inspect()
     if status['host']!=host or status['guard_disabled'] or len(status['gpus'])!=8 or any('B200' not in g['name'] for g in status['gpus']):raise ValueError('Unexpected GPU ownership/state')
     if digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH:raise ValueError('Unknown GPU guard')
@@ -132,4 +131,5 @@ def prepare(root,host,position_documents):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',required=True);p.add_argument('--host',required=True)
     p.add_argument('--position-documents',type=int,required=True)
-    a=p.parse_args();prepare(a.root,a.host,a.position_documents)
+    p.add_argument('--position-selection')
+    a=p.parse_args();prepare(a.root,a.host,a.position_documents,a.position_selection)
