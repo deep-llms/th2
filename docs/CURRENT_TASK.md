@@ -1,3 +1,27 @@
+## Reduced downstream budget — 13 October 2026 (Singapore)
+
+User requested base results first: one fine-tuning seed and one learning rate.
+Use seed42, fixed1e-5 for A20/P6-iso20, three epochs as before:20 total fits and
+22 final task/split evaluations. No seeds43/44, 3e-5 trial, or LR search. Existing
+selection files are recomputed with the sole fixed-rate candidate. Single-seed
+summaries have null standard deviation, not zero or fabricated multi-seed claims.
+
+The original a03 supervisor was signaled via the existing identity-checked,
+pidfd-based stop helper; its final cleanup/verified communicating-burn handoff
+must finish before replacement. Original outputs/checkpoints remain intact.
+New root: /mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01.
+New launch log is adjacent: q359-expanded-single-seed42-20261013-a01-launch.log.
+
+`reduce_expanded_study.py` builds a fresh queue, verifies recorded artifact hashes
+and best-weight hashes, and reuses only successful identical1e-5 fits and passed
+gates. Failed/partial fits restart under the fresh root. Completed expanded
+benchmarks are retained; the paired study still follows fine-tuning unchanged.
+`launch_reduced_expanded.sh` waits for the source stop receipt and dead supervisor
+pane, copies/verifies Accelerate, inspects ownership, then uses the unchanged
+safe burn-reclaim/free-check/final-burn supervisor. No remote success implied yet.
+22 targeted CPU tests passed (11.232s), including continuation tamper rejection,
+fixed-rate selection, one-seed summary, and existing three-seed behavior.
+
 ## Expanded evaluation status — 12 October 2026, 15:52 UTC
 
 Expanded benchmarks remain complete (validated summary passed). Fine-tuning

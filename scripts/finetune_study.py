@@ -31,15 +31,23 @@ def write(path, data):
         json.dump(data, stream, indent=2, allow_nan=False)
 
 
-def select(paths, output):
+def validate_design(seeds, rates):
+    seeds, rates = tuple(seeds), tuple(rates)
+    if seeds not in ((42,), SEEDS) or rates not in ((1e-5,), (3e-5,), RATES):
+        raise ValueError('Use seed 42 or seeds 42/43/44 and one or both supported rates')
+    return seeds, rates
+
+
+def select(paths, output, rates=RATES):
+    _, rates = validate_design((42,), rates)
     candidates = []
     for path in paths:
         data = json.loads((Path(path)/'result.json').read_text())
         if data['status'] != 'completed' or data['smoke'] or data['evaluate_run']:
             raise ValueError('LR selection requires complete production training results')
         candidates.append((path, data))
-    if len(candidates) != 2 or {d['learning_rate'] for _,d in candidates} != set(RATES):
-        raise ValueError('Both predetermined learning rates are required')
+    if len(candidates) != len(rates) or {d['learning_rate'] for _,d in candidates} != set(rates):
+        raise ValueError('All predetermined learning rates are required')
     first = candidates[0][1]
     for _, other in candidates:
         for key in ('source', 'data', 'seed', 'global_step', 'world_size', 'max_length', 'attention_backend'):
@@ -65,7 +73,8 @@ def resolve_eval(config, selection, output):
     write(output, config)
 
 
-def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, checkpoint_steps=None):
+def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, checkpoint_steps=None, seeds=SEEDS, rates=RATES):
+    seeds, rates = validate_design(seeds, rates)
     arms = tuple(checkpoints)
     checkpoint_steps = checkpoint_steps or {arm: 2500 for arm in arms}
     if set(checkpoint_steps) != set(arms) or any(type(s) is not int or s <= 0 for s in checkpoint_steps.values()):
@@ -127,17 +136,17 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
     for task in fit_tasks:
         for arm in arms:
             paths=[]
-            for rate in RATES:
+            for rate in rates:
                 dest=f'search/{task}/{arm}/lr-{rate:g}'
                 train_job(f'search-{task}-{arm}-{rate:g}',config_for(arm,task,42,rate,dest))
                 paths.append(str(run/dest))
             out=f'selections/{task}-{arm}.json'
-            add(f'select-{task}-{arm}',['{python}','-m','scripts.finetune_study','select','--runs',*paths,'--output','{run_dir}/'+out],
+            add(f'select-{task}-{arm}',['{python}','-m','scripts.finetune_study','select','--runs',*paths,'--rates',*map(str,rates),'--output','{run_dir}/'+out],
                 out,False,{'status':'selected','arm':arm,'task':task})
     for task in fit_tasks:
         for arm in arms:
             selection=str(run/f'selections/{task}-{arm}.json')
-            for seed in SEEDS[1:]:
+            for seed in seeds[1:]:
                 train_job(f'confirm-{task}-{arm}-{seed}',config_for(arm,task,seed,1e-5,
                     f'confirm/{task}/{arm}/seed-{seed}',selection=selection))
     # No test scoring until every development search/confirmation run completes.
@@ -145,7 +154,7 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
         for arm in arms:
             fitted_task=training_task(task)
             selection=str(run/f'selections/{fitted_task}-{arm}.json')
-            for seed in SEEDS:
+            for seed in seeds:
                 name=f'test-{task}-{arm}-{seed}';dest=f'test/{task}/{arm}/seed-{seed}'
                 cfg=config_for(arm,task,seed,1e-5,dest,evaluation=str(run/f'confirm/{fitted_task}/{arm}/seed-{seed}'),selection=selection)
                 if seed==42:
@@ -155,13 +164,14 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
                           '--selection',selection,'--resolved',str(resolved),'--project',str(project)]
                     add(name,argv,dest+'/result.json')
                 else: train_job(name,cfg)
-    add('summary',['{python}','-m','scripts.finetune_study','summary','--root','{run_dir}','--output','{run_dir}/summary.json',*(['--tasks',*tasks] if extended else []),'--arms',*arms],
+    add('summary',['{python}','-m','scripts.finetune_study','summary','--root','{run_dir}','--output','{run_dir}/summary.json',*(['--tasks',*tasks] if extended else []),'--arms',*arms,'--seeds',*map(str,seeds)],
         'summary.json',False,{'status':'passed'})
     write(root/'jobs.json',{'jobs':jobs})
     return jobs
 
 
-def summary(root, output, arms=ARMS, tasks=TASKS):
+def summary(root, output, arms=ARMS, tasks=TASKS, seeds=SEEDS):
+    seeds, _ = validate_design(seeds, RATES)
     import numpy as np
     if not arms or len(set(arms)) != len(arms) or any(arm not in SUPPORTED_ARMS for arm in arms):
         raise ValueError('Select distinct supported fine-tuning arms')
@@ -174,7 +184,7 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
             scores=[]; measured=[]
             fitted_task='glue_mnli_matched' if task == 'glue_mnli_mismatched' and 'glue_mnli_matched' in tasks else task
             selection=json.loads((root/f'selections/{fitted_task}-{arm}.json').read_text())
-            for seed in SEEDS:
+            for seed in seeds:
                 folder=root/f'test/{task}/{arm}/seed-{seed}'
                 result=json.loads((folder/'result.json').read_text())
                 if (result['status']!='completed' or result['source']['arm']!=arm or result['data']['task']!=task
@@ -226,11 +236,11 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
                 for name,value in calculated.items():
                     if abs(value-result['metrics']['test_'+name])>1e-10:raise ValueError('Metric mismatch: '+name)
                 scores.append(calculated[score_name(task)]); measured.append(calculated)
-            table[task][arm]=dict(metric=score_name(task),seed_scores=scores,mean=statistics.mean(scores),stdev=statistics.stdev(scores),
+            table[task][arm]=dict(metric=score_name(task),seed_scores=scores,mean=statistics.mean(scores),stdev=statistics.stdev(scores) if len(scores)>1 else None,
                                  learning_rate=selection['learning_rate'],
                                  metrics={name:dict(values=[m[name] for m in measured],
                                      mean=statistics.mean(m[name] for m in measured),
-                                     stdev=statistics.stdev(m[name] for m in measured)) for name in measured[0]})
+                                     stdev=statistics.stdev(m[name] for m in measured) if len(measured)>1 else None) for name in measured[0]})
             if score_name(task) == 'accuracy':table[task][arm]['seed_accuracies']=scores
     averages={arm:statistics.mean(table[t][arm]['mean'] for t in tasks) for arm in arms}
     glue_tasks=[t for t in tasks if t.startswith('glue_')]
@@ -238,10 +248,10 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
     if len(glue_tasks)==10:
         from eval.reporting import glue_average
         glue_scores={arm:glue_average({t:table[t][arm]['mean'] for t in glue_tasks}) for arm in arms}
-    write(output,dict(status='passed',tasks=table,seeds=list(SEEDS),average=averages,
+    write(output,dict(status='passed',tasks=table,seeds=list(seeds),average=averages,
                      average_definition='unweighted mean of listed task/split primary metrics; mixed metrics, not official GLUE',
                      **(dict(glue_local_validation_average=glue_scores) if glue_scores else {}),
-                     caveat='Three fine-tuning seeds; one pretraining seed; exploratory arm selection.'))
+                     caveat=f'{len(seeds)} fine-tuning seed(s); one pretraining seed; exploratory arm selection.'))
 
 
 def numerical_check(model, inputs):
@@ -454,10 +464,14 @@ def main():
     s=sub.add_parser('build')
     for name in ('root','project','data-root','manifest','checkpoints'):s.add_argument('--'+name,required=True)
     s.add_argument('--step',type=int,required=True)
+    s.add_argument('--seeds',type=int,nargs='+',default=SEEDS)
+    s.add_argument('--rates',type=float,nargs='+',default=RATES)
     s.add_argument('--tasks',nargs='+',choices=SUPPORTED_TASKS,required=True)
     s=sub.add_parser('select');s.add_argument('--runs',nargs='+',required=True);s.add_argument('--output',required=True)
+    s.add_argument('--rates',type=float,nargs='+',default=RATES)
     s=sub.add_parser('summary');s.add_argument('--root',required=True);s.add_argument('--output',required=True)
     s.add_argument('--arms',nargs='+',choices=SUPPORTED_ARMS,default=ARMS)
+    s.add_argument('--seeds',type=int,nargs='+',default=SEEDS)
     s.add_argument('--tasks',nargs='+',choices=SUPPORTED_TASKS,default=TASKS)
     s=sub.add_parser('gate');s.add_argument('--checkpoint',required=True);s.add_argument('--output',required=True)
     s.add_argument('--task',choices=SUPPORTED_TASKS,default='nli')
@@ -471,9 +485,9 @@ def main():
     args=p.parse_args()
     if args.mode=='build':
         checkpoints=json.loads(Path(args.checkpoints).read_text())
-        make_jobs(args.root,args.project,args.data_root,args.manifest,checkpoints,args.tasks,{arm:args.step for arm in checkpoints})
-    elif args.mode=='select':select(args.runs,args.output)
-    elif args.mode=='summary':summary(args.root,args.output,args.arms,args.tasks)
+        make_jobs(args.root,args.project,args.data_root,args.manifest,checkpoints,args.tasks,{arm:args.step for arm in checkpoints},seeds=args.seeds,rates=args.rates)
+    elif args.mode=='select':select(args.runs,args.output,args.rates)
+    elif args.mode=='summary':summary(args.root,args.output,args.arms,args.tasks,args.seeds)
     elif args.mode=='gate':gate(args.checkpoint,args.output,args.task,args.data_root,args.manifest)
     elif args.mode=='verify-reload':verify_reload(args.trained,args.reloaded,args.output)
     elif args.mode=='audit-data':audit_data(args.dataset_root,args.manifest,args.tokenizer,args.output)

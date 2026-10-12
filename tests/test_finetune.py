@@ -178,7 +178,7 @@ class StudyTests(unittest.TestCase):
             tests = [i for i,j in enumerate(jobs) if j['name'].startswith('test-')]
             self.assertEqual(len(fits), 8); self.assertEqual(len(tests), 6)
             self.assertLess(max(fits), min(tests))
-            self.assertEqual(jobs[-1]['argv'][-2:], ['--arms', 'P6-iso'])
+            self.assertEqual(jobs[-1]['argv'][-6:], ['--arms', 'P6-iso', '--seeds', '42', '43', '44'])
             for p in (new/'configs').glob('*.json'):
                 matched = old/'configs'/p.name.replace('P6-iso', 'P6')
                 new_config = json.loads(p.read_text().replace(str(new), str(old)).replace('P6-iso', 'P6'))

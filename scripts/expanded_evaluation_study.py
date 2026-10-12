@@ -10,7 +10,7 @@ SUPERVISED=['glue_'+s for s in ('cola','sst2','mrpc','qqp','stsb','mnli_matched'
 GROUPS=['zero','five','math','continuation']  # Paloma is explicitly deferred: gated access unavailable.
 
 
-def make(root,project,checkpoints,data_root,manifest,protocol,position,legacy):
+def make(root,project,checkpoints,data_root,manifest,protocol,position,legacy, seeds=(42,43,44), rates=(1e-5,3e-5)):
     root,project=Path(root).resolve(),Path(project).resolve();run=root/'supervised/run';jobs=[]
     if set(checkpoints)!={'A10','A20','P20'}:raise ValueError('Need all three named checkpoints')
     def add(name,argv,outputs,gpus=None,timeout=172800):
@@ -28,10 +28,10 @@ def make(root,project,checkpoints,data_root,manifest,protocol,position,legacy):
             '--attention-backend','fa4','--groups',*GROUPS,'--new-only','--workers','8']
         if phase=='smoke':args+=['--limit','2']
         add('expanded-'+phase,args,[passed(dest+'/summary.json')],list(range(8)))
-    # Use the existing three-seed study, development-only LR selection and reload gates.
+    # Retain the established fitting/reload protocol with explicit seed/rate budgets.
     fit=root/'finetune-plan'
     items=finetune_jobs(fit,project,data_root,manifest,{'A':checkpoints['A20'],'P6-iso':checkpoints['P20']},
-        tasks=SUPERVISED,checkpoint_steps={'A':20000,'P6-iso':20000})
+        tasks=SUPERVISED,checkpoint_steps={'A':20000,'P6-iso':20000},seeds=seeds,rates=rates)
     for file in fit.rglob('*.json'):
         file.write_text(file.read_text().replace(str(fit/'supervised/run'),str(run/'finetune')))
     load_jobs(fit/'jobs.json')
@@ -55,7 +55,7 @@ def make(root,project,checkpoints,data_root,manifest,protocol,position,legacy):
         '--output','{run_dir}/paired-position.json'],[dict(path='paired-position.json')],timeout=43200)
     write(root/'jobs.json',dict(jobs=jobs));load_jobs(root/'jobs.json')
     write(root/'study-scope.json',dict(checkpoints=checkpoints,order=[j['name'] for j in jobs],
-        new_benchmark_groups=GROUPS,supervised_tasks=SUPERVISED,fine_tune_seeds=[42,43,44],
+        new_benchmark_groups=GROUPS,supervised_tasks=SUPERVISED,fine_tune_seeds=list(seeds),fine_tune_rates=list(rates),
         source_step=20000,reference_step=10000,fit_stages=len(items),
         deferred={'paloma':'Existing HF credential lacks gated dataset access; never silently replace this corpus'}))
     return jobs

@@ -182,6 +182,11 @@ class ExtendedFinetuneTests(unittest.TestCase):
             summary(root,root/'summary.json',arms=['A'],tasks=['stsb'])
             value=json.loads((root/'summary.json').read_text())['tasks']['stsb']['A']
             self.assertAlmostEqual(value['metrics']['pearson']['mean'],1.)
+            summary(root,root/'single-summary.json',arms=['A'],tasks=['stsb'],seeds=(42,))
+            single=json.loads((root/'single-summary.json').read_text())
+            self.assertEqual(single['seeds'],[42])
+            self.assertIsNone(single['tasks']['stsb']['A']['stdev'])
+            self.assertIsNone(single['tasks']['stsb']['A']['metrics']['pearson']['stdev'])
             result['metrics']['test_pearson']=.4
             (folder/'result.json').write_text(json.dumps(result))
             with self.assertRaisesRegex(ValueError,'Metric mismatch'):
