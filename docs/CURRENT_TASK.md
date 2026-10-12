@@ -1,3 +1,24 @@
+## Parallel paired deployment verified — 13 October 2026, 02:47 Singapore
+
+B200 acknowledged the parallel scheduler deployment without stopping fine-tuning.
+Protocol refresh passed, with exact scientific-rule equality and unchanged2,000
+position rows (rows SHA2563867288ee637a70cd2c20c9dd20ac809233e49c94c14c9a9530842aca3ff6961).
+New protocol SHA2566a59b182ad7e4bd8c395ddde374c01aa662d852551fc6d9a006084b0da02f52c;
+new sample SHA25617e32080f720969170d6963e087c20e7fe66a232169e56071e95ae77f81e99ff
+(changed only because it binds the updated protocol). Original inputs preserved.
+Current evaluation was A MNLI matched; paired planning still has not started.
+Its already queued CLI run automatically selects8workers from the allocation.
+No B200 GPU throughput claim yet. Automatic supervisor/burn handoff unchanged.
+
+Validation: all18 local paired/scheduler/protocol-refresh tests passed in108.297s,
+including real spawned tiny-model scores equal to serial/cached scores, parallel
+process isolation, crash cancellation, original precision fallback and resume.
+All3 CPU process-management tests also passed on B200 (1.679s). These did not
+acquire GPUs or interfere with current downstream evaluation.
+Evidence temp/remote_logs/paired-parallel-enable-a01.log SHA256
+ eb36fa6f46c5bdd5d9a9cb38bc779efdb34c6c15204ceb015e170cd80c5b5d36.
+commands.sh returned to#0 after acknowledgement.
+
 ## Paired evaluation parallel scheduling — 13 October 2026
 
 User explicitly requested efficient multi-GPU paired evaluation. Implemented
@@ -21,9 +42,7 @@ statistics/calibration sources are unchanged; do not rerun or weaken calibration
 
 Validation: spawned worker concurrency/isolation, failure/crash cleanup, original
 precision fallback/resume checks, and tiny-model fresh vs cached vs real spawned
-scores agree exactly. The18-test run passed all scheduler/scoring checks; one migration-test fixture
-exposed shared mock mutation, fixed by copying the definition. All8 targeted
-refresh/scheduler/queue tests now pass; full rerun in progress.
+scores agree exactly. Full18-test regression now passes; see the verified deployment record above.
 No measured B200 speedup yet; do not repeat the unsupported4–10hour ETA as fact.
 
 ## Reduced queue timing — 13 October 2026, 00:52 Singapore
