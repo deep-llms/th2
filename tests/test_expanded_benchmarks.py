@@ -402,6 +402,31 @@ class ExpandedProtocolTests(unittest.TestCase):
             path.write_text(path.read_text().replace('yes','no'))
             with self.assertRaisesRegex(ValueError,'prompts differ'):collect(root,checkpoints,limit=1)
 
+    def test_suite_counts_each_document_once_across_harness_filters(self):
+        from eval.suite import collect
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);checkpoints=['/A','/P6'];protocols={'math':(5,['gsm8k'])}
+            for i,ckpt in enumerate(checkpoints):
+                dest=root/f'{i:02d}'/'math';dest.mkdir(parents=True)
+                (dest/'eval_metadata.json').write_text(json.dumps(dict(status='completed',checkpoint=ckpt,
+                    checkpoint_sha256=ckpt,tokenizer_sha256='tok',dataset_manifest_sha256='data',attention_backend='fa4',
+                    arguments=dict(num_fewshot=5,seed=42,limit=2))))
+                (dest/'eval_benchmarks.json').write_text(json.dumps({'gsm8k':{
+                    'exact_match,strict-match':.5,'exact_match,flexible-extract':.5}}))
+                (dest/'eval_benchmarks_full.json').write_text(json.dumps({'n-samples':{'gsm8k':dict(original=1319,effective=2)},'n-shot':{'gsm8k':5}}))
+                rows=[dict(task='gsm8k',doc_id=j,filter=f,doc={'question':str(j)},arguments=[str(j)],target='1')
+                      for f in ('strict-match','flexible-extract') for j in range(2)]
+                (dest/'eval_samples.jsonl').write_text('\n'.join(json.dumps(x) for x in rows))
+            report=collect(root,checkpoints,2,protocols)
+            self.assertEqual(report['checkpoints']['/A']['sample_counts']['gsm8k'],2)
+            path=root/'01/math/eval_samples.jsonl';original=path.read_text()
+            path.write_text(original+'\n'+original.splitlines()[0])
+            with self.assertRaisesRegex(ValueError,'Duplicate scored example'):
+                collect(root,checkpoints,2,protocols)
+            path.write_text('\n'.join(original.splitlines()[:-1]))
+            with self.assertRaisesRegex(ValueError,'filter sample count'):
+                collect(root,checkpoints,2,protocols)
+
     def test_fixed_qa_threshold_and_shared_mnli_protocol(self):
         from eval.qa import QAMetrics
         from eval.finetune import same_finetuning_task

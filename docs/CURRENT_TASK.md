@@ -1,3 +1,25 @@
+## Expanded smoke collector correction — 12 October 2026
+
+The2,000-document sample passed full local reconstruction and B200 preflight;
+its sample hash matches across machines. a02 copied/verified Accelerate, stopped
+only the known burns, verified all8 GPUs free, and passed A20/P20 numerical gates.
+All8 benchmark smoke subprocesses returned successfully, but collection rejected
+GSM8K's canonical per-filter records as duplicate documents. This is a result
+collector bug. lm-eval0.4.10 logs one record per document per scoring filter.
+
+Collector now requires unique(task,document,filter), complete matching document
+sets for each reported filter, and counts each document once. Scores/prompts and
+harness filters are unchanged.12 targeted tests passed, including multi-filter
+counts, duplicate/filter omissions and the position source/overlap checks.
+
+Retry a03 first requires completed and verified a02 burn restoration, then
+revalidates all saved real smoke outputs on CPU with the corrected collector.
+Only if those pass does it start a fresh full queue. Preserve a01/a02 artifacts.
+Fresh root: /mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a03.
+Evidence: temp/remote_logs/position-2000-health-a02.log and
+ temp/expanded-filter-regression.log. Normal/paired evaluation metrics and model
+code are unchanged; the frozen2,000-document cohort is retained.
+
 ## Position probe extension approved — 12 October 2026
 
 User rejected the882-document fallback and authorized extending to2,000 with

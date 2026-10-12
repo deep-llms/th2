@@ -87,12 +87,14 @@ def collect(root, checkpoints, limit=None, protocols=None):
             if set(values)!=expected:raise ValueError('Incomplete task group')
             if set(scores)&expected:raise ValueError('Duplicate benchmark result')
             samples=[json.loads(line) for line in (folder/'eval_samples.jsonl').read_text().splitlines()]
-            seen=set()
+            seen=set();documents=set()
             for sample in samples:
                 key=(sample['task'],sample['doc_id'])
-                if key in seen:raise ValueError('Duplicate scored example')
-                seen.add(key)
-                counts[sample['task']]+=1
+                record=(*key,sample.get('filter','none'))
+                if record in seen:raise ValueError('Duplicate scored example within a filter')
+                seen.add(record)
+                if key not in documents:counts[sample['task']]+=1
+                documents.add(key)
                 if sample['task'].startswith('blimp_'):
                     phenomenon=sample['doc'].get('linguistics_term')
                     if phenomenon:
@@ -103,7 +105,13 @@ def collect(root, checkpoints, limit=None, protocols=None):
                 if identity[key]!=digest:raise ValueError('Examples/prompts differ between checkpoints')
             if {k[0] for k in seen}!=expected:raise ValueError('Missing scored task samples')
             for task in expected:
-                observed=sum(k[0]==task for k in seen)
+                doc_ids={k[1] for k in documents if k[0]==task}
+                observed=len(doc_ids)
+                filters={k.rsplit(',',1)[1] for k in values[task] if ',' in k}
+                if not filters or {k[2] for k in seen if k[0]==task}!=filters:
+                    raise ValueError('Scored filters differ from reported metrics')
+                if any({k[1] for k in seen if k[0]==task and k[2]==f}!=doc_ids for f in filters):
+                    raise ValueError('Incomplete benchmark filter sample count')
                 count=full['n-samples'][task]
                 if observed!=count['effective'] or limit is None and count['effective']!=count['original']:
                     raise ValueError('Incomplete benchmark sample count')
