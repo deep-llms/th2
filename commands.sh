@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-paired-parallel-repair-health-20261013-a01
+#th2-q359-paired-parallel-repair-health-20261013-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
