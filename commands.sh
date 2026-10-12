@@ -1,5 +1,5 @@
-#0
-#th2-q359-expanded-single-seed42-health-20261013-a02
+#1 +60+a
+#th2-q359-paired-parallel-inspect-20261013-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -21,6 +21,9 @@ for base in (old,root):
    if j['name'].startswith('search-'):print('FIT_TIMING',base.name,j['name'],j.get('status'),j.get('elapsed_seconds'))
 p=Path(str(root)+'-launch.log')
 print('LAUNCH_TAIL','\n'.join(p.read_text().splitlines()[-20:]))
+for p in sorted((root/'supervised/run').glob('paired*.log')):
+ print('PAIRED_LOG',str(p),'\n'.join(p.read_text().splitlines()[-12:]))
+print('PAIRED_EXISTS',(root/'supervised/run/paired').exists())
 fit=root/'supervised/run/finetune'
 for p in sorted(fit.glob('*.log'),key=lambda x:x.stat().st_mtime)[-2:]:
  print('FIT_LOG',str(p),'\n'.join(p.read_text().splitlines()[-15:]))
