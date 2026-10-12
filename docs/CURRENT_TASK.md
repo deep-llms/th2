@@ -1,3 +1,18 @@
+## Expanded evaluation status — 12 October 2026, 14:35 UTC
+
+All eight expanded benchmark jobs completed; full summary status passed at
+14:04:50 UTC (2h06m). Expanded fine-tuning is running its train/save/reload smoke
+checks: 35 subjobs passed, A STS-B reload is current. Full fine-tuning and paired
+analysis are not complete. No failed job appears in this snapshot. GPU query
+caught the transition into the next eight-worker reload, with no compute PIDs;
+this is not an overall completion signal. The supervisor remains running.
+
+Evidence: `temp/remote_logs/expanded-paired-status-a05.log`, SHA256
+`6b60da18caf0ce5aa1de3747ccafb245a69e6b04c467024f2851a4ac808d3ca2`.
+Full benchmark summary SHA256:
+`868190a224e6131c0faeeb077b05a1f10a3d8e233de6f7a118fed361ab05a4db`.
+Status command acknowledged; return commands.sh to #0. No workloads changed.
+
 ## Expanded evaluation status — 12 October 2026, 13:22 UTC
 
 Fresh a04 read-only receipt confirms a03 is running. Both numerical gates and
