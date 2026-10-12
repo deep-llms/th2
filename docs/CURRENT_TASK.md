@@ -1,3 +1,18 @@
+## Expanded evaluation status — 12 October 2026, 13:22 UTC
+
+Fresh a04 read-only receipt confirms a03 is running. Both numerical gates and
+expanded smoke passed. Six of eight full benchmark workers saved results:
+zero/five/continuation groups for A20 and P6-iso20. Both GSM8K workers remain
+active on GPUs2/6 (~40–44% utilization, ~32GB each); full collection has not
+finished. Fine-tuning and paired analysis have not started. No failure is
+reported in this snapshot. Do not call the overall study complete.
+
+Evidence: `temp/remote_logs/expanded-paired-status-a04.log`, SHA256
+`7e9126e5f815fcdb8582dde1cb6b9225c1c200494b68eb0acd19e34859aa1190`.
+The receipt also confirms Accelerate verification, stopping only authorized
+burn workers, and all eight GPUs free before a03. Status request made no GPU
+changes. Restore commands.sh to #0 after its acknowledged receipt.
+
 ## Expanded smoke collector correction — 12 October 2026
 
 The2,000-document sample passed full local reconstruction and B200 preflight;
