@@ -1,19 +1,23 @@
 #1 +60+a
-#th2-q359-expanded-single-seed42-20261013-a01
+#th2-q359-expanded-single-seed42-health-20261013-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01
-TASK_SOURCE=/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a03
-TASK_SESSION=q359-expanded-single-seed42-20261013-a01
-test ! -e "$TASK_ROOT"
-test ! -e "${TASK_ROOT}-launch.log"
-if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
-printf -v TASK_CMD 'exec bash scripts/launch_reduced_expanded.sh %q %q %q >%q 2>&1' \
-  "$TASK_SOURCE" "$TASK_ROOT" thiennh-p6-q359-worker-0 "${TASK_ROOT}-launch.log"
-tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
-tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
-sleep 45
-tail -n 60 "${TASK_ROOT}-launch.log"
-if [ -f "$TASK_ROOT/supervised/supervisor.json" ]; then cat "$TASK_ROOT/supervised/supervisor.json"; fi
-test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
+python3 -u - <<'REMOTE'
+import datetime,json,subprocess
+from pathlib import Path
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01')
+old=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a03')
+print('UTC',datetime.datetime.now(datetime.timezone.utc).isoformat())
+for p in (old/'supervised/supervisor.json',old/'supervised/burn-verified.json',root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/run/run.json',root/'supervised/run/finetune/run.json'):
+ if p.exists():
+  obj=json.loads(p.read_text())
+  if 'jobs' in obj:obj={**obj,'jobs':obj['jobs'][-5:],'completed_count':sum(j['status']=='ok' for j in obj['jobs'])}
+  print(str(p),json.dumps(obj),flush=True)
+p=Path(str(root)+'-launch.log')
+print('LAUNCH_TAIL','\n'.join(p.read_text().splitlines()[-20:]))
+fit=root/'supervised/run/finetune'
+for p in sorted(fit.glob('*.log'),key=lambda x:x.stat().st_mtime)[-2:]:
+ print('FIT_LOG',str(p),'\n'.join(p.read_text().splitlines()[-15:]))
+subprocess.run(['nvidia-smi','--query-gpu=index,utilization.gpu,memory.used','--format=csv'],check=True)
+REMOTE
