@@ -16,6 +16,18 @@ Social IQa's legacy loading script is avoided using its pinned HF Parquet
 conversion. No new benchmark data is published or included in Git.
 
 Fresh queue root: `/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a01`.
+Launch commitd996f54 is active as a CPU waiter. Corrected controller download
+commitd4bb848 was acknowledged as batch2026-10-12_11-06-37. Read-only health
+receipt1f18da7 confirms input progress212→215/245 at11:08:49–11:09:49UTC;
+the corrected directory layout is reaching the waiting launcher. At this receipt,
+GPU evaluation had not started. Original burn workers293909–293916 were verified
+unchanged during repair; existing source checkpoints were not modified. Evidence:
+`temp/remote_logs/expanded-layout-repair-20261012-a01.log` and
+`temp/remote_logs/expanded-paired-health-20261012-a01.log`. Next check: all245
+input hashes, preflight.json, supervised/run/run.json and numerical/smoke results.
+Return commands.sh to#0 after acknowledgement; this does not cancel either
+the controller download or detached study launcher.
+
 Order: checkpoint numerical checks → expanded smoke → expanded full → GLUE and
 SQuAD v2 fine-tuning → paired planning/evaluation → paired reports. Expanded
 likelihood uses the established shot counts, excludes the eight already completed
