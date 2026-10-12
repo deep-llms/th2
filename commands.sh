@@ -1,22 +1,23 @@
-#d +a
-#datasets
---url https://huggingface.co/datasets/truthfulqa/truthful_qa/resolve/741b8276f2d1982aa3d5b832d3ee81ed3b896490/multiple_choice/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/truthfulqa--truthful_qa/multiple_choice
---url https://huggingface.co/datasets/facebook/belebele/resolve/7899cdfa4e1e0d733fd77c848e2c273cb1d32be2/data/eng_Latn.jsonl /mnt/local/_data/deep-llms_th2/expanded-20261012/facebook--belebele/data
---hf-dataset nyu-mll/blimp /mnt/local/_data/deep-llms_th2/expanded-20261012/nyu-mll--blimp
---hf-dataset cais/mmlu /mnt/local/_data/deep-llms_th2/expanded-20261012/cais--mmlu
---url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/facebook--xnli/en
---url https://huggingface.co/datasets/facebook/xnli/resolve/b8dd5d7af51114dbda02c0e3f6133f332186418e/en/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/facebook--xnli/en
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/google-research-datasets--paws-x/en
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/google-research-datasets--paws-x/en
---url https://huggingface.co/datasets/google-research-datasets/paws-x/resolve/4cd8187c404bda33cb1f62b49b001115862acf37/en/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/google-research-datasets--paws-x/en
---url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_train.tsv /mnt/local/_data/deep-llms_th2/expanded-20261012/juletxara--xstory_cloze
---url https://huggingface.co/datasets/juletxara/xstory_cloze/resolve/c4c2d88a1ec8b37fe22166d2a610f272726724b6/spring2016.val.en.tsv.split_20_80_eval.tsv /mnt/local/_data/deep-llms_th2/expanded-20261012/juletxara--xstory_cloze
---url https://huggingface.co/datasets/openai/gsm8k/resolve/740312add88f781978c0658806c59bc2815b9866/main/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/openai--gsm8k/main
---url https://huggingface.co/datasets/openai/gsm8k/resolve/740312add88f781978c0658806c59bc2815b9866/main/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/openai--gsm8k/main
---hf-dataset nyu-mll/glue /mnt/local/_data/deep-llms_th2/expanded-20261012/nyu-mll--glue
---url https://huggingface.co/datasets/rajpurkar/squad_v2/resolve/3ffb306f725f7d2ce8394bc1873b24868140c412/squad_v2/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/rajpurkar--squad_v2/squad_v2
---url https://huggingface.co/datasets/rajpurkar/squad_v2/resolve/3ffb306f725f7d2ce8394bc1873b24868140c412/squad_v2/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/rajpurkar--squad_v2/squad_v2
---url https://huggingface.co/datasets/lighteval/siqa/resolve/54c6a1f8cb6daf4f5abf24a601852612fb35eb25/data/train-00000-of-00001-da17dfc1120ed1ee.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/lighteval--siqa/data
---url https://huggingface.co/datasets/lighteval/siqa/resolve/54c6a1f8cb6daf4f5abf24a601852612fb35eb25/data/validation-00000-of-00001-90bb85eab85fcfa8.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/lighteval--siqa/data
---url https://huggingface.co/datasets/tau/commonsense_qa/resolve/94630fe30dad47192a8546eb75f094926d47e155/data/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/tau--commonsense_qa/data
---url https://huggingface.co/datasets/tau/commonsense_qa/resolve/94630fe30dad47192a8546eb75f094926d47e155/data/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/expanded-20261012/tau--commonsense_qa/data
+#1 +60+a
+#th2-q359-expanded-paired-health-20261012-a01
+set -euo pipefail
+cd /mnt/local/deep-llms_th2
+test "$(hostname)" = thiennh-p6-q359-worker-0
+python3 -u - <<'PY'
+import datetime,json,subprocess,time
+from pathlib import Path
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a01')
+data=Path('/mnt/local/_data/deep-llms_th2/expanded-20261012')
+manifest=json.loads(Path('resources/expanded_inputs_20261012.json').read_text());files={f['path']:f['bytes'] for r in manifest['repositories'] for f in r['files']}
+for i in range(30):
+    ready=sum((data/p).is_file() and (data/p).stat().st_size==size for p,size in files.items())
+    print('STATUS',datetime.datetime.now(datetime.timezone.utc).isoformat(),'INPUT_FILES',ready,'/',len(files),flush=True)
+    if (root/'supervisor.log').exists():print('\n'.join((root/'supervisor.log').read_text().splitlines()[-12:]),flush=True)
+    for rel in ('preflight.json','supervised/run/run.json','supervised/supervisor.json'):
+        p=root/rel
+        if p.exists():print(rel,p.read_text()[-14000:],flush=True)
+    dead=subprocess.check_output(['tmux','display-message','-p','-t',root.name,'#{pane_dead}'],text=True).strip()
+    if dead=='1' or (root/'supervised/run/run.json').exists():break
+    time.sleep(20)
+subprocess.run(['nvidia-smi','--query-compute-apps=pid,used_memory','--format=csv'],check=True)
+PY
