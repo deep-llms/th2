@@ -31,6 +31,9 @@ ARC/HellaSwag/PIQA/WinoGrande/XNLI/PAWS/XStoryCloze recipes and adds:
 | LAMBADA OpenAI | Zero-shot final-word likelihood, including all tokens of the final word | Accuracy and target-word perplexity; PPL excluded from accuracy averages |
 | BLiMP | Zero-shot, all 67 subsets | Macro-subset accuracy and linguistic-phenomenon breakdowns |
 | MMLU | 5-shot, first five official subject dev examples, all 57 subjects | Accuracy weighted by evaluated examples across subjects |
+| MMLU continuation | 5-shot, same official dev examples and 57 subjects; score complete answer texts instead of A/B/C/D letters | Raw accuracy weighted by evaluated examples; separate diagnostic, not a second MMLU vote in the multiple-choice average |
+| SciQ | Zero-shot canonical prompt, including the supplied support passage | Raw accuracy (length-normalized accuracy also retained) |
+| Paloma | Zero-shot rolling likelihood, all 16 English/code sources, official test splits | Word perplexity, byte perplexity, bits per byte; separate from accuracy and packed training-validation token PPL |
 | OpenBookQA | 5-shot from train | Length-normalized accuracy (raw also retained) |
 | Social IQa | 5-shot from train | Accuracy |
 | BoolQ | 5-shot from train, no fine-tuning | Accuracy; separate from supervised BoolQ |
@@ -42,7 +45,28 @@ All likelihood definitions come from `lm_eval==0.4.10`; XCSR uses the authors'
 HF dataset with a small normalized local adapter. X-CODAH's blank question is
 normalized to an empty string so the harness correctly scores whole candidate
 sentences from its prefix token. English-only results imply no multilingual claim.
-SciQ, Natural Questions and TriviaQA remain optional and are not part of this suite.
+Natural Questions and TriviaQA remain optional and are not part of this suite.
+
+Select `sciq`, `mmlu_continuation`, and `paloma` with `--tasks`. Individual
+continuation subjects (e.g. `mmlu_anatomy_continuation`) and Paloma sources
+(e.g. `paloma_c4_en`) also work. Quoted `'paloma_*'` is an alias for all 16
+sources; other wildcard patterns are not accepted. The sequential suite includes
+SciQ in its zero-shot stage, plus separate continuation and Paloma stages.
+
+Paloma reuses the pinned harness's rolling likelihood implementation through
+the complete custom model, with learned proxies active. Documents start from
+the harness prefix token and never share context; long documents use rolling
+windows bounded by the trained context (at most 2048), scoring each token once.
+Logits caching is disabled as required by the harness's Paloma guide. Corpus
+metrics are point estimates: bootstrap resampling is disabled for a request
+containing Paloma (the harness default is 100,000 resamples). Summaries retain
+every source's three metrics, plus explicitly labeled descriptive source means;
+these means are not pooled corpus perplexity. Word/byte normalization differs
+from our training-validation token PPL, so those numbers are not comparable.
+This is the harness protocol, not a claim to reproduce every experimental
+control in the original Paloma paper. The gated `allenai/paloma` dataset requires
+HF access; preparation uses the account's existing credentials and source lock.
+No access agreement is accepted automatically.
 
 GSM8K uses `eval/generation.py`: full-prefix forward passes through the complete
 custom architecture, with the learned proxy active. This avoids introducing an
@@ -85,7 +109,8 @@ a nine-task local aggregate with MNLI's two splits combined into one vote.
 ```bash
 python -m scripts.prepare_expanded_benchmarks \
   --output /path/to/benchmarks --source-lock /path/to/sources.json \
-  --tasks xcsr truthfulqa belebele lambada blimp mmlu openbookqa social_iqa boolq gsm8k \
+  --tasks xcsr truthfulqa belebele lambada blimp mmlu mmlu_continuation sciq paloma \
+          openbookqa social_iqa boolq gsm8k \
           hellaswag piqa arc_easy arc_challenge winogrande xnli paws-x xstorycloze \
   --supervised glue_cola glue_sst2 glue_mrpc glue_qqp glue_stsb \
                glue_mnli_matched glue_mnli_mismatched glue_qnli glue_rte glue_wnli squad_v2
@@ -128,6 +153,9 @@ References: [XCSR](https://github.com/INK-USC/XCSR),
 [BLiMP](https://arxiv.org/abs/1912.00582),
 [GSM8K](https://github.com/openai/grade-school-math),
 [MMLU](https://github.com/hendrycks/test),
+[SciQ](https://huggingface.co/datasets/allenai/sciq),
+[Paloma dataset](https://huggingface.co/datasets/allenai/paloma),
+[Paloma harness protocol](https://github.com/EleutherAI/lm-evaluation-harness/blob/v0.4.10/lm_eval/tasks/paloma/README.md),
 [OLMES task suites](https://github.com/allenai/olmes/blob/main/oe_eval/configs/task_suites.py),
 [GLUE](https://gluebenchmark.com/),
 [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/).
@@ -261,3 +289,12 @@ steps and weight hashes, so two checkpoints of A can be compared safely.
 fine-tuning studies without changing model forward, loss, or optimization.
 Fine-tuning now retains all epoch model snapshots; the best epoch is still
 selected on development data.
+
+## Optional paired likelihood protocol
+
+The existing evaluation methods above remain available with their original
+scoring. A separate `python -m eval.paired` workflow adds fixed-suite paired
+likelihood statistics, precision gates, bAbI and position probes, and sequential
+checkpoint evaluation. See [paired/README.md](paired/README.md) for protocols,
+data preparation, tests and commands. Do not mix its zero-shot/normalized
+results with the historical suite's five-shot/raw results.

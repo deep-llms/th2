@@ -13,9 +13,19 @@ from pathlib import Path
 from eval.benchmarks import resolve_tasks, task_configs
 
 
-def specifications(tasks, supervised=()):
+def specifications(tasks, supervised=(), profile='standard'):
     from lm_eval.tasks import TaskManager
     from lm_eval.utils import load_yaml_config
+    if profile not in ('standard','paired'): raise ValueError('Unknown benchmark profile')
+    if profile=='paired':
+        from eval.paired.protocol import configs
+        result={}
+        for task in tasks:
+            for config in configs(task):
+                splits=list(dict.fromkeys(config[k] for k in ('training_split','validation_split','test_split','fewshot_split') if config.get(k)))
+                result[config['task']]=(config['dataset_path'],config.get('dataset_name'),splits)
+        if supervised: raise ValueError('Use the standard profile for supervised data')
+        return result
     manager = TaskManager()
     result = {}
     for name in resolve_tasks(tasks, english_only=True) if tasks else []:
@@ -46,12 +56,12 @@ def normalize_xcsr(row):
                 label=choices['label'].index(row['answerKey']))
 
 
-def freeze(output, lock_path, tasks, supervised=()):
+def freeze(output, lock_path, tasks, supervised=(), profile='standard'):
     from datasets import load_dataset, Dataset
     from huggingface_hub import HfApi
     from importlib.metadata import version
     if version('lm_eval') != '0.4.10': raise ValueError('Require lm_eval==0.4.10')
-    specs = specifications(tasks, supervised)
+    specs = specifications(tasks, supervised, profile)
     root = Path(output); root.mkdir(parents=True, exist_ok=True)
     lock_path = Path(lock_path)
     if lock_path.exists():
@@ -99,9 +109,10 @@ def main():
     p.add_argument('--output', required=True); p.add_argument('--source-lock', required=True)
     p.add_argument('--tasks', nargs='*', default=[])
     p.add_argument('--supervised', nargs='*', default=[])
+    p.add_argument('--profile', choices=['standard','paired'], default='standard')
     args = p.parse_args()
     if not args.tasks and not args.supervised: p.error('Select benchmark or supervised tasks')
-    print(freeze(args.output, args.source_lock, args.tasks, args.supervised))
+    print(freeze(args.output, args.source_lock, args.tasks, args.supervised, args.profile))
 
 
 if __name__ == '__main__': main()

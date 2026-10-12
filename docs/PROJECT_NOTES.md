@@ -1,3 +1,42 @@
+## Paired likelihood is an additional protocol — 12 October 2026
+
+Keep the established harness-based benchmark suite, few-shot, fine-tuning and
+PPL methods. The separate `eval.paired` package uses the same exact custom model
+loader and lm-eval 0.4.10; no architecture/training changes. The new zero-shot
+normalized-scoring suite must not replace or relabel historical five-shot/raw
+scores. Source definitions and numerical/statistical gates are frozen by hash.
+
+Use fixed all-14-task Suite Z for H1 and the 13 MC tasks for conditional H2.
+Admission/symmetric filtering and A10→A20 ratios are descriptive; the ratios do
+not follow from a validation-PPL ratio. bAbI inference resamples stories;
+mechanism comparisons use joint differences of contrasts sharing A20. Precision
+checks use seeded samples, maximum repeatability errors and the strict revision-3
+bias/variance gates. Failed production precision switches Z/probes to FP32 SDPA.
+Retain checkpoint-level claims and disclose prior result knowledge. Calibration
+does not establish joint exchangeability for real benchmark differences.
+
+Commands and artifact contracts: `eval/paired/README.md`. Full CPU calibration
+is recorded in `docs/PAIRED_LOGPROB_CALIBRATION_20261012.json`; only reuse it while
+its statistics/calibration source hashes match. Real-data/B200 checks still
+precede launch. This implementation request authorizes no remote submission.
+
+## SciQ, MMLU continuation and Paloma — 12 October 2026
+
+User requested the missing harness benchmarks. They now use the existing pinned
+lm_eval 0.4.10 templates and portable snapshot preparation. Sequential suite:
+SciQ zero-shot with its canonical support passage and raw accuracy;
+MMLU continuation five-shot, all 57 subjects, full answer texts rather than letters;
+Paloma zero-shot, all 16 English/code sources, official test splits. Individual
+task names work; quoted `paloma_*` aliases the full Paloma inventory.
+
+Keep continuation's example-weighted accuracy separate from standard MMLU in
+averages. Paloma reports word/byte perplexity and bits per byte separately from
+accuracy and training-validation token PPL. Its source averages are descriptive
+unweighted means, not pooled corpus PPL. Reuse canonical rolling windows through
+the complete custom model; disable logits caching and bootstrap resampling for
+Paloma. Dataset access is gated; use existing HF access, never accept agreements
+automatically. No new GPU jobs or remote submissions authorized by this change.
+
 ## Expanded benchmark protocols — 12 October 2026
 
 The approved suite now includes XCSR (English labeled validation), TruthfulQA

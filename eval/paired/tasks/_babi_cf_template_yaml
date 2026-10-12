@@ -1,0 +1,13 @@
+dataset_path: RMT-team/babilong-1k-samples
+dataset_name: 0k
+output_type: multiple_choice
+doc_to_text: "{{input.strip()}}\nQuestion: {{question.strip()}}\nAnswer:"
+doc_to_choice: ["bathroom", "bedroom", "garden", "hallway", "kitchen", "office"]
+doc_to_target: "{{['bathroom', 'bedroom', 'garden', 'hallway', 'kitchen', 'office'].index(target.strip())}}"
+num_fewshot: 2
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0

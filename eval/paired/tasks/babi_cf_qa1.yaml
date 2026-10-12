@@ -1,0 +1,12 @@
+include: _babi_cf_template_yaml
+task: babi_cf_qa1
+test_split: qa1
+fewshot_config:
+  sampler: first_n
+  samples:
+    - input: "Daniel journeyed to the office. Sandra went to the garden."
+      question: "Where is Daniel?"
+      target: "office"
+    - input: "John moved to the kitchen. Mary travelled to the bedroom. John went back to the hallway."
+      question: "Where is John?"
+      target: "hallway"

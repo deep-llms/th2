@@ -1,3 +1,75 @@
+## Separate paired evaluation implemented — 12 October 2026
+
+User authorized the revision-3 paired design while explicitly retaining the
+existing evaluation methods. Added `python -m eval.paired`; ordinary benchmark,
+few-shot, fine-tuning and PPL entry points keep their scoring and defaults.
+Reuse the existing checkpoint loader and harness adapter. Only the dataset
+snapshot preparer gains an opt-in `--profile paired`; its default is unchanged.
+
+Implementation/commands: [../eval/paired/README.md](../eval/paired/README.md).
+Includes protocol/source hashes, strict project-artifact parsing, M1–M3/ACC,
+fixed H1→H2 analysis, descriptive filtering and A10 progress ratios, joint
+probe contrasts, story clustering, all 16 Paloma sources, position inputs/losses
+and T8, representative precision subsets, BF16/FP32 gates and an ordered queue.
+Queue completion reuse verifies checkpoint/recipe/data/protocol identities;
+incomplete outputs stop rather than being overwritten. GPU management remains
+in the established deployment workflow, not this evaluation package.
+
+Local CPU verification: 30 regression tests passed (paired protocol plus original
+evaluator/few-shot/scoring/queue behavior). Subsequent provenance and nonfinite
+checks have targeted tests. Tests use actual lm-eval 0.4.10 artifact generation,
+all paired task templates on fixtures, and saved tiny P6-iso weights in FP32 and
+CPU BF16. These are implementation checks, not B200 numerical validation.
+Full T4a–e calibration passed: 1,000 datasets/case, B=2,000 for T4a and 1,000
+otherwise; all exact comparisons within 3 Monte Carlo SE. Story-level rejection
+5.6%, versus 28.6% for the deliberately invalid example-level control.
+Saved evidence: [PAIRED_LOGPROB_CALIBRATION_20261012.json](PAIRED_LOGPROB_CALIBRATION_20261012.json),
+including source hashes, per-task/aggregate interval coverage and RNG settings.
+Ignored detailed logs: `temp/paired-regression.log`, `paired-provenance-final.log`,
+`paired-release-checks.log`, `paired-calibration-complete.log`.
+
+No real benchmark download, checkpoint analysis, B200 job or remote push was
+performed. Before a real study, freeze the final protocol, audit pinned real
+data, freeze original validation documents, and run the numerical gates on the
+target machine. Do not claim five precision tasks prove equivalence everywhere.
+
+## Paired likelihood review and plan — 12 October 2026
+
+User requested documentation of the review of the revision-2 downstream paired
+analysis spec, reference Python script and temp/custom_tasks.zip. Findings and
+staged plan: [PAIRED_LOGPROB_REVIEW_AND_PLAN_20261012.md](PAIRED_LOGPROB_REVIEW_AND_PLAN_20261012.md).
+Recommend paired likelihood metrics alongside accuracy, with fixed-suite main
+analysis and descriptive admission. Reproduced missing-subtask/count validation,
+constant-effect and nonfinite-input issues. All five custom tasks loaded on
+fixture data under pinned lm_eval 0.4.10; real-data/model validation remains.
+Next proposed work is an adapter for current sample artifacts and statistical
+tests, then reuse of saved few-shot samples. Documentation only in this turn;
+reference files unchanged, no new analysis implementation or GPU jobs submitted.
+
+## Missing benchmark support complete — 12 October 2026
+
+Added requested SciQ, MMLU continuation (57 subjects), and Paloma (16 sources)
+using canonical lm_eval 0.4.10 definitions. Existing snapshot preparation picks
+up their pinned repositories/configs/splits through the shared task inventory.
+The sequential suite adds zero-shot SciQ, five-shot continuation and zero-shot
+Paloma. `paloma`, quoted `paloma_*`, and individual source names work.
+
+Continuation accuracy is example-weighted and reported separately from standard
+MMLU. Paloma uses unchanged custom-model rolling likelihood with logits caching
+disabled; word/byte PPL and bits per byte are separate from accuracy averages.
+Report descriptive selected-source means, not pooled PPL; bootstrap resampling
+is disabled for Paloma. The HF corpus is gated; no agreements were accepted.
+
+Local CPU checks passed: missing-benchmarks-tests.log (3 tests, including all
+207 canonical/custom templates on fixture rows), missing-benchmarks-rolling-final.log
+(1 test, A/P6-iso/P7-simple direct-forward comparisons, exact rolling token-count
+oracle, unchanged weights/buffers and public-entry-point cache/scoring policy),
+missing-benchmarks-regression.log (25 tests, existing evaluator/few-shot and
+expanded protocols). Logs are under ignored temp/. Syntax and diff checks passed.
+These are implementation tests, not real benchmark results or B200 GPU checks.
+No training code, dependencies, commands.sh or remote workloads changed.
+Usage/protocol details: eval/README.md. No new evaluation jobs launched.
+
 ## Expanded English benchmark implementation — 12 October 2026
 
 User authorized implementation of the previously planned suite plus MMLU,
