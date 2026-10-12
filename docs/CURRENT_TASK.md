@@ -1,3 +1,21 @@
+## Sparse downstream evaluation blocked by missing checkpoint — 13 October 2026
+
+User approved inference-only evaluation of P6-iso-sparse at step2500, seed42,
+against matched A/P6-iso, reusing compatible historical scores. No new training.
+Read-only inventory command67a80c1 completed on thiennh-p6-q359-worker-0 at
+06:34:50SGT. Searched all project output/model trees:672 weight directories in
+outputs, none for sparse; the old proxy-followup-2500-20261008-a01 root is absent.
+No sparse weights found in local project artifacts/outputs/temp or the known
+/home/users/thien/deep2shallow-backups tree. Saved result/config/validation
+receipts remain available, but do not contain the model parameters.
+
+No GPU workloads stopped; all8B200 GPUs were100%utilized by the existing idle
+workload at inspection. No evaluation or training launched. commands.sh#0.
+Evaluation requires locating/restoring the original checkpoint plus recipe;
+do not silently reconstruct it by new pretraining or substitute a20k model.
+Evidence:temp/remote_logs/sparse-checkpoint-inventory-20261013-a01.log,
+SHA256 d1524131f8c2209c2cc844c84d09c2602efb53b6e0afb296c6c89662fed655d2.
+
 ## Full result reports retrieved — 13 October 2026, 05:02 Singapore
 
 Export command4023e8f acknowledged: all seven original JSON reports downloaded
