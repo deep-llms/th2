@@ -38,6 +38,37 @@ class ExpandedTests(unittest.TestCase):
         self.assertEqual(config['dataset_path'],'parquet')
         self.assertEqual(config['test_split'],'validation')
 
+    def test_additional_inventory_sources_and_aggregation(self):
+        from scripts.prepare_expanded_benchmarks import specifications
+        from eval.reporting import benchmark_averages
+        continuation=resolve_tasks(['mmlu_continuation'],True)
+        self.assertEqual(len(continuation),57)
+        self.assertTrue(all(n.endswith('_continuation') for n in continuation))
+        paloma=resolve_tasks(['paloma'],True)
+        self.assertEqual(len(paloma),16)
+        self.assertEqual(resolve_tasks(['paloma_*','paloma_c4_en'],True),paloma)
+        with self.assertRaises(ValueError):resolve_tasks(['paloma_unknown'],True)
+        specs=specifications(['sciq','mmlu_continuation','paloma'])
+        self.assertEqual(specs['sciq'],('allenai/sciq',None,['train','validation','test']))
+        self.assertEqual(specs['mmlu_anatomy_continuation'],('cais/mmlu','anatomy',['test','dev']))
+        self.assertTrue(all(specs[n]==('allenai/paloma',n.removeprefix('paloma_'),['val','test']) for n in paloma))
+        standard=resolve_tasks(['mmlu'],True)
+        scores={n:{'acc,none':.2} for n in standard}
+        scores.update({n:{'acc,none':.8} for n in continuation})
+        scores['sciq']={'acc,none':.6,'acc_norm,none':.9}
+        scores['paloma_c4_en']={'word_perplexity,none':20.,'byte_perplexity,none':2.,'bits_per_byte,none':1.}
+        scores['paloma_ptb']={'word_perplexity,none':40.,'byte_perplexity,none':4.,'bits_per_byte,none':2.}
+        counts={n:i+1 for i,n in enumerate(standard+continuation)}
+        scores[continuation[-1]]['acc,none']=.9
+        groups=benchmark_averages(scores,counts)['groups']
+        self.assertAlmostEqual(groups['multiple_choice']['average'],.4)
+        expected=sum(scores[n]['acc,none']*counts[n] for n in continuation)/sum(counts[n] for n in continuation)
+        self.assertAlmostEqual(groups['continuation_diagnostics']['scores']['mmlu_continuation'],expected)
+        self.assertEqual(groups['corpus_likelihood']['average']['word_perplexity'],30.)
+        self.assertEqual(groups['corpus_likelihood']['source_count'],2)
+        del scores[continuation[0]]
+        with self.assertRaisesRegex(ValueError,'Incomplete mmlu_continuation'):benchmark_averages(scores,counts)
+
     def test_greedy_matches_direct_custom_forward_and_preserves_state(self):
         class Tokenizer:
             eos_token_id=31
@@ -171,12 +202,15 @@ class ExpandedIntegrationTests(unittest.TestCase):
                 'xcsqa_en':dict(question='2',choices=['3','4'],label=0),
                 'xcodah_en':dict(question='',choices=['2 3','2 4'],label=0),
                 'gsm8k':dict(question='2',answer='3 #### 4')}
+            rows['sciq']=dict(support='2',question='3',distractor1='4',distractor2='5',distractor3='6',correct_answer='7')
             for name in expanded_groups()['mmlu']:rows[name]=dict(question='2',choices=['3','4','5','6'],answer=0)
+            for name in expanded_groups()['mmlu_continuation']:rows[name]=dict(question='2',choices=['3','4','5','6'],answer=0)
             for name in expanded_groups()['blimp']:rows[name]=dict(sentence_good='2 3',sentence_bad='3 2')
+            for name in expanded_groups()['paloma']:rows[name]=dict(text='2 3 4')
             for name,row in rows.items():
                 file=root/(name+'.jsonl');file.write_text(json.dumps(row)+'\n')
                 config=task_configs([name],{name:dict(dataset_path='json',dataset_name=None,
-                    dataset_kwargs=dict(data_files={s:str(file) for s in ('train','validation','test','dev')},keep_in_memory=True))})[0]
+                    dataset_kwargs=dict(data_files={s:str(file) for s in ('train','validation','test','dev','val')},keep_in_memory=True))})[0]
                 config['num_fewshot']=0
                 if name=='gsm8k':config['generation_kwargs']=dict(until=['Question:'],max_gen_toks=2,do_sample=False,temperature=0)
                 configs.append(config)
@@ -185,7 +219,7 @@ class ExpandedIntegrationTests(unittest.TestCase):
             self.assertEqual(len(task_dict),len(rows))
             model=EvaluationModel(make_model('P6-iso'),8)
             model.config.max_position_embeddings=512
-            lm=harness_model_class()(pretrained=model,tokenizer=tok,backend='causal',device='cpu',batch_size=2,max_length=512,softmax_dtype='float32')
+            lm=harness_model_class()(pretrained=model,tokenizer=tok,backend='causal',device='cpu',batch_size=2,max_length=512,softmax_dtype='float32',logits_cache=False)
             # Exercise every template's actual request and metric processing.
             result=evaluator.evaluate(lm,task_dict,limit=1,bootstrap_iters=0,log_samples=True)
             self.assertEqual(set(result['results']),set(rows))
@@ -202,6 +236,67 @@ class ExpandedIntegrationTests(unittest.TestCase):
             lambada=task_dict['lambada_openai']
             self.assertEqual(lambada.doc_to_target(lambada.eval_docs[0]),' 4')
             self.assertEqual(lambada.process_results(lambada.eval_docs[0],[(-2.,True)])['acc'],1.)
+            sciq=task_dict['sciq'];doc=sciq.eval_docs[0]
+            self.assertTrue(sciq.doc_to_text(doc).startswith('2\nQuestion:'))
+            self.assertEqual(sciq.process_results(doc,[(-2.,False)]*3+[(-1.,True)])['acc'],1.)
+            continuation=task_dict['mmlu_anatomy_continuation'];doc=continuation.eval_docs[0]
+            self.assertEqual(continuation.doc_to_text(doc),'Question: 2\nAnswer:')
+            self.assertEqual(continuation.doc_to_choice(doc),['3','4','5','6'])
+            self.assertEqual(task_dict['mmlu_anatomy'].doc_to_choice(doc),['A','B','C','D'])
+            for name in expanded_groups()['paloma']:
+                self.assertIn('bits_per_byte,none',result['results'][name])
+
+    def test_paloma_rolling_likelihood_through_custom_models(self):
+        import math
+        from lm_eval.api.instance import Instance
+        from eval.generation import harness_model_class
+        from eval.benchmarks import eval_benchmarks
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);fixture(root);tok=AutoTokenizer.from_pretrained(root/'model')
+            tok.pad_token=tok.eos_token
+            texts=['2 3 4','5',' '.join(['2','3','4']*9)]
+            file=root/'paloma.jsonl';file.write_text('\n'.join(json.dumps(dict(text=t)) for t in texts))
+            mapping={'paloma_c4_en':dict(dataset_path='json',dataset_name=None,
+                dataset_kwargs=dict(data_files={'test':str(file),'val':str(file)}))}
+            for arm in ('A','P6-iso','P7-simple'):
+                model=EvaluationModel(make_model(arm),8)
+                before={k:v.clone() for k,v in model.state_dict().items()}
+                lm=harness_model_class()(pretrained=model,tokenizer=tok,backend='causal',device='cpu',
+                    batch_size=2,max_length=8,softmax_dtype='float32',logits_cache=False)
+                requests=[Instance(request_type='loglikelihood_rolling',doc={},arguments=(t,),idx=i) for i,t in enumerate(texts)]
+                actual=lm.loglikelihood_rolling(requests)
+                # Short documents: independent teacher-forced forward, including
+                # the first token conditioned only on the harness EOS prefix.
+                for i in range(2):
+                    ids=tok.encode(texts[i],add_special_tokens=False)
+                    logits=model(torch.tensor([[tok.eos_token_id]+ids[:-1]])).logits[0].float()
+                    expected=logits.log_softmax(-1)[torch.arange(len(ids)),ids].sum().item()
+                    self.assertAlmostEqual(actual[i],expected,places=5)
+                # A long document's result must not depend on other requests.
+                self.assertAlmostEqual(actual[2],lm.loglikelihood_rolling(requests[2:])[0],places=5)
+                for k,v in model.state_dict().items():torch.testing.assert_close(v,before[k],rtol=0,atol=0)
+                # Uniform vocabulary gives an independent exact token-count
+                # oracle across multiple rolling windows and their last tails.
+                with torch.no_grad():model.wrapped.backbone.lm_head.weight.zero_()
+                counts=[len(tok.encode(t,add_special_tokens=False)) for t in texts]
+                actual=lm.loglikelihood_rolling(requests)
+                for value,count in zip(actual,counts):self.assertAlmostEqual(value,-count*math.log(32),places=4)
+            # Exercise the public entry point, including its mandatory cache
+            # policy and canonical word/byte denominators over all documents.
+            from unittest.mock import Mock
+            constructor=Mock(wraps=harness_model_class())
+            with patch('eval.generation.harness_model_class',return_value=constructor):
+                result=eval_benchmarks(model,tok,['paloma_c4_en'],device='cpu',batch_size=2,
+                    english_only=True,dataset_paths=mapping)
+            self.assertIs(constructor.call_args.kwargs['logits_cache'],False)
+            self.assertEqual(result['config']['bootstrap_iters'],0)
+            scores=result['results']['paloma_c4_en']
+            nll=sum(counts)*math.log(32);words=sum(len(t.split()) for t in texts);size=sum(len(t.encode('utf-8')) for t in texts)
+            self.assertAlmostEqual(scores['word_perplexity,none'],math.exp(nll/words),places=4)
+            self.assertAlmostEqual(scores['byte_perplexity,none'],math.exp(nll/size),places=4)
+            self.assertAlmostEqual(scores['bits_per_byte,none'],nll/size/math.log(2),places=5)
+            with self.assertRaisesRegex(ValueError,'zero-shot'):
+                eval_benchmarks(model,tok,['paloma'],num_fewshot=1,device='cpu')
 
     def test_glue_and_qa_real_trainer_reload(self):
         from dataclasses import asdict
@@ -283,7 +378,7 @@ class ExpandedProtocolTests(unittest.TestCase):
                 self.assertIn('gate-A-'+task,names)
                 self.assertIn('verify-reload-A-'+task,names)
             plans=commands(['/A','/B'],'/out','/data','/manifest')
-            self.assertEqual(len(plans),10)
+            self.assertEqual(len(plans),14)
             self.assertEqual([x['group'] for x in plans[:5]],['zero','five','ten','twentyfive','math'])
             self.assertTrue(all('--seed' in x['argv'] for x in plans))
 

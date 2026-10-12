@@ -15,12 +15,14 @@ from eval.benchmarks import resolve_tasks, local_dataset_paths, task_configs
 from eval.reporting import benchmark_averages
 
 PROTOCOLS = {
-    'zero': (0, ['xcsr','truthfulqa','belebele','lambada','blimp']),
+    'zero': (0, ['xcsr','truthfulqa','belebele','lambada','blimp','sciq']),
     'five': (5, ['mmlu','openbookqa','social_iqa','boolq','piqa','arc_easy','winogrande',
                  'xnli','paws-x','xstorycloze']),
     'ten': (10, ['hellaswag']),
     'twentyfive': (25, ['arc_challenge']),
     'math': (5, ['gsm8k']),
+    'continuation': (5, ['mmlu_continuation']),
+    'paloma': (0, ['paloma']),
 }
 
 

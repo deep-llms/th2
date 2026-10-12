@@ -5,9 +5,20 @@ import statistics
 
 def benchmark_averages(results, sample_counts=None):
     grouped = {}
+    paloma = {}
     for task, metrics in results.items():
+        if task.startswith('paloma_'):
+            values = {}
+            for name in ('word_perplexity', 'byte_perplexity', 'bits_per_byte'):
+                value = float(metrics[name+',none'])
+                if not math.isfinite(value) or value < (0 if name == 'bits_per_byte' else 1):
+                    raise ValueError('Invalid Paloma metric: '+task+'/'+name)
+                values[name] = value
+            paloma[task] = values
+            continue
         if task.startswith('mmlu_'):
-            group, metric = 'mmlu', 'acc,none'
+            group = 'mmlu_continuation' if task.endswith('_continuation') else 'mmlu'
+            metric = 'acc,none'
         elif task.startswith('blimp_'):
             group, metric = 'blimp', 'acc,none'
         elif task.startswith('truthfulqa_mc'):
@@ -23,22 +34,29 @@ def benchmark_averages(results, sample_counts=None):
         value = float(metrics[metric])
         if not math.isfinite(value): raise ValueError('Nonfinite benchmark score')
         grouped.setdefault(group, []).append((task,value))
-    for name, count in [('mmlu',57),('blimp',67),('truthfulqa',2),('xcsr',2)]:
+    for name, count in [('mmlu',57),('mmlu_continuation',57),('blimp',67),('truthfulqa',2),('xcsr',2)]:
         if name in grouped and len(grouped[name]) != count:
             raise ValueError(f'Incomplete {name}; do not label a subset as the full benchmark')
     means = {name:statistics.mean(v for _,v in rows) for name,rows in grouped.items()}
-    if 'mmlu' in grouped:
-        if sample_counts is None or any(sample_counts.get(t,0)<=0 for t,_ in grouped['mmlu']):
-            raise ValueError('MMLU requires per-subject scored example counts')
-        means['mmlu'] = sum(v*sample_counts[t] for t,v in grouped['mmlu'])/sum(sample_counts[t] for t,_ in grouped['mmlu'])
-    categories = {'language_diagnostics': ('blimp','lambada_openai'), 'generation': ('gsm8k',)}
+    for name in ('mmlu', 'mmlu_continuation'):
+        if name in grouped:
+            if sample_counts is None or any(sample_counts.get(t,0)<=0 for t,_ in grouped[name]):
+                raise ValueError('MMLU requires per-subject scored example counts')
+            means[name] = sum(v*sample_counts[t] for t,v in grouped[name])/sum(sample_counts[t] for t,_ in grouped[name])
+    categories = {'language_diagnostics': ('blimp','lambada_openai'), 'generation': ('gsm8k',),
+                  'continuation_diagnostics': ('mmlu_continuation',)}
     groups = {}
     for category, names in categories.items():
         values = {k:v for k,v in means.items() if k in names}
         if values: groups[category] = dict(scores=values, average=statistics.mean(values.values()))
     values = {k:v for k,v in means.items() if k not in sum(categories.values(), ())}
     if values: groups['multiple_choice'] = dict(scores=values, average=statistics.mean(values.values()))
-    return dict(groups=groups, aggregation='unweighted benchmark means; MMLU weighted by scored examples; BLiMP macro-subset; TruthfulQA mean MC1/MC2; XCSR mean of its two tasks; all scores on 0–1 scale')
+    if paloma:
+        groups['corpus_likelihood'] = dict(scores=paloma, higher_is_better=False,
+            average={metric:statistics.mean(row[metric] for row in paloma.values()) for metric in next(iter(paloma.values()))},
+            aggregation='descriptive unweighted mean across selected sources, not pooled corpus perplexity',
+            source_count=len(paloma))
+    return dict(groups=groups, aggregation='unweighted benchmark means; MMLU variants separately weighted by scored examples; BLiMP macro-subset; TruthfulQA mean MC1/MC2; XCSR mean of its two tasks; accuracy scores on 0–1 scale; Paloma likelihood metrics separate')
 
 
 def glue_average(scores):

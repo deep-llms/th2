@@ -35,6 +35,7 @@ ENGLISH_TASKS = {
     'arc_challenge': ['arc_challenge'],
     'winogrande': ['winogrande'],
     'openbookqa': ['openbookqa'],
+    'sciq': ['sciq'],
     'social_iqa': ['social_iqa'],
     'boolq': ['boolq'],
     'truthfulqa': ['truthfulqa_mc1', 'truthfulqa_mc2'],
@@ -46,8 +47,8 @@ ENGLISH_TASKS = {
 
 @lru_cache(maxsize=1)
 def expanded_groups():
-    # Enumerate only the pinned canonical templates, not wildcard variants
-    # (MMLU also has CoT/generative/continuation configurations).
+    # Enumerate pinned templates explicitly; never include CoT/generative
+    # variants in the standard or continuation MMLU groups.
     from importlib.metadata import version
     from pathlib import Path
     import lm_eval
@@ -57,22 +58,27 @@ def expanded_groups():
     root = Path(lm_eval.__file__).parent / 'tasks'
     groups = {
         'mmlu': [yaml.safe_load(p.read_text())['task'] for p in sorted((root/'mmlu/default').glob('mmlu_*.yaml'))],
+        'mmlu_continuation': [yaml.safe_load(p.read_text())['task'] for p in sorted((root/'mmlu/continuation').glob('mmlu_*.yaml'))],
         'blimp': yaml.safe_load((root/'blimp/_blimp.yaml').read_text())['task'],
+        'paloma': [yaml.safe_load(p.read_text())['task'] for p in sorted((root/'paloma').glob('paloma_*.yaml'))],
     }
-    if len(groups['mmlu']) != 57 or len(groups['blimp']) != 67:
-        raise ValueError('Unexpected canonical MMLU/BLiMP task inventory')
+    if any(len(groups[name]) != count for name,count in
+           [('mmlu',57),('mmlu_continuation',57),('blimp',67),('paloma',16)]):
+        raise ValueError('Unexpected canonical MMLU/BLiMP/Paloma task inventory')
     return groups
 
 
 def resolve_tasks(task_groups=None, english_only=False):
     default = task_groups is None
     groups = list(TASK_CONFIGS) if default else task_groups
-    extra = expanded_groups() if any(g in ('mmlu', 'blimp') or g.startswith(('mmlu_', 'blimp_')) for g in groups) else {}
+    extra = expanded_groups() if any(g in ('mmlu', 'blimp', 'paloma') or g.startswith(('mmlu_', 'blimp_', 'paloma_')) for g in groups) else {}
     known = {task for group in TASK_CONFIGS.values() for task in group}
     english = {task for group in ENGLISH_TASKS.values() for task in group}
     english.update(task for group in extra.values() for task in group)
     selected = []
     for group in groups:
+        if group == 'paloma_*':
+            group = 'paloma'
         if english_only and group == 'xcopa':
             if not default:
                 raise ValueError('XCOPA has no English subset; select other tasks')
@@ -164,8 +170,8 @@ def eval_benchmarks(model, tokenizer, task_groups=None, num_fewshot=0, batch_siz
     from eval.generation import harness_model_class
 
     task_list = resolve_tasks(task_groups, english_only)
-    if num_fewshot and any(t in ('belebele_eng_Latn', 'xcsqa_en', 'xcodah_en', 'lambada_openai', 'truthfulqa_mc1', 'truthfulqa_mc2') or t.startswith('blimp_') for t in task_list):
-        raise ValueError('Belebele/XCSR/LAMBADA/BLiMP/TruthfulQA protocol requires zero-shot; run separate shot groups')
+    if num_fewshot and any(t in ('belebele_eng_Latn', 'xcsqa_en', 'xcodah_en', 'lambada_openai', 'truthfulqa_mc1', 'truthfulqa_mc2') or t.startswith(('blimp_', 'paloma_')) for t in task_list):
+        raise ValueError('Belebele/XCSR/LAMBADA/BLiMP/TruthfulQA/Paloma protocol requires zero-shot; run separate shot groups')
     if dataset_paths is None and any(t in ('xcsqa_en', 'xcodah_en') for t in task_list):
         raise ValueError('XCSR requires a verified local dataset manifest')
 
@@ -177,6 +183,8 @@ def eval_benchmarks(model, tokenizer, task_groups=None, num_fewshot=0, batch_siz
         backend='causal',
         max_length=min(2048, model.config.max_position_embeddings),
         softmax_dtype='float32',
+        # Required by the canonical Paloma guide, especially its code corpus.
+        logits_cache=not any(t.startswith('paloma_') for t in task_list),
     )
 
     results = lm_eval.simple_evaluate(
@@ -186,6 +194,9 @@ def eval_benchmarks(model, tokenizer, task_groups=None, num_fewshot=0, batch_siz
         random_seed=seed, numpy_random_seed=seed, torch_random_seed=seed, fewshot_random_seed=seed,
         apply_chat_template=False, log_samples=True, limit=limit,
         task_manager=benchmark_task_manager() if any(t in ('xcsqa_en','xcodah_en') for t in task_list) else None,
+        # Paloma reports point estimates. The harness default bootstraps
+        # corpus perplexity 100,000 times, which is impractical at this size.
+        **({'bootstrap_iters': 0} if any(t.startswith('paloma_') for t in task_list) else {}),
     )
 
     return results
