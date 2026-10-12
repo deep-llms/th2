@@ -1,7 +1,7 @@
 # Proxy arms: perplexity and downstream results
 
 Latest update: **12 October 2026**. A and P6-iso both completed 20k
-with seed 1042; full-validation PPL at 15k–20k is below. The 20k downstream study is running. Earlier screen and queue
+with seed 1042; full-validation PPL at 15k–20k is below. The 20k downstream study is complete. Earlier screen and queue
 tables retain their explicitly dated historical snapshots.
 
 ## Setup and interpretation
@@ -433,17 +433,16 @@ Implementation: `scripts/checkpoint_ppl_study.py`.
 All stages completed successfully; communicating GPU burns were automatically
 restored and verified on all eight GPUs. No experiments remain queued.
 
-## 20k downstream study — running, 12 October 2026
+## 20k downstream study — complete, 12 October 2026
 
-A-20000 and P6-iso-20000 are being evaluated with the same few-shot and
+A-20000 and P6-iso-20000 were evaluated with the same few-shot and
 fine-tuning protocols as the completed 10k/10.8k study. Same eight English
 few-shot tasks (5/10/25 shots, depending on task) and demonstration seed 42.
 Fine-tuning: PAWS-X, NLI, STS-B and BoolQ; development-only LR selection over
 1e-5/3e-5, then held-out results for seeds 42/43/44. All fits use eight GPUs.
 
-Both CUDA numerical checks and all few-shot validators passed. Few-shot is
-complete; A PAWS/NLI fine-tuning is running, followed by A STS-B/BoolQ and both
-P6-iso studies. **No final 20k fine-tuning results yet.** Output root:
+All 15 stages passed: CUDA numerical checks, few-shot smoke/full validators,
+four fine-tuning studies and the final cross-checkpoint summary. Output root:
 `q359-downstream-20k-20261012-a01`; final `supervised/run/downstream-summary.json`.
 
 Few-shot results verified 12 October, 03:53 SGT. Percent accuracy; normalized
@@ -463,3 +462,25 @@ accuracy for ARC-C, ARC-E, HellaSwag and PIQA, raw accuracy for the other tasks.
 Results are mixed: P6-iso leads on three of eight primary task metrics.
 These are one pretraining seed with identical demonstrations, not independent
 replications. Source: `artifacts/downstream-20k-health-a04/`.
+
+Fine-tuning held-out results: mean ± sample SD across seeds 42/43/44. Accuracy
+in percent; STS-B is 100 × mean(Pearson, Spearman). Differences use the same
+100-point scale. All task/arm combinations selected LR 3e-5 using development data.
+
+| Task | A-20k | P6-iso-20k | P6 minus A |
+|---|---:|---:|---:|
+| PAWS-X | 93.733 ± 0.236 | 93.183 ± 0.448 | -0.550 |
+| NLI | 84.943 ± 0.280 | 85.689 ± 0.364 | +0.745 |
+| STS-B | 84.851 ± 0.166 | 84.818 ± 0.510 | -0.032 |
+| BoolQ | 75.280 ± 0.380 | 75.525 ± 1.210 | +0.245 |
+
+P6-iso improves NLI by 0.745 points and BoolQ by 0.245 points, but loses PAWS-X
+by 0.550 points; STS-B is nearly tied. BoolQ's small mean gain is accompanied
+by larger seed variation. Together with the mixed few-shot results, this does
+not establish a consistent downstream advantage. These remain three fine-tuning
+seeds from one pretraining seed.
+
+Queue finished successfully; communicating burns were automatically restored at
+06:13 SGT and verified live at 10:31 SGT on all eight GPUs. Guard released; no
+further experiments queued. Hash-verified final summary and all four study
+summaries are under `artifacts/downstream-20k-final-20261012/`.

@@ -1,3 +1,23 @@
+## 20k downstream study complete — verified 12 October 2026, 10:31 SGT
+
+Read-only receipt6ab8909: all15 stages passed, including all few-shot validators,
+four fine-tuning studies and final cross-checkpoint validation. Held-out means
+A/P6-iso: PAWS93.733/93.183%,NLI84.943/85.689%,STS-B84.851/84.818,
+BoolQ75.280/75.525%. STS-B is100×mean(Pearson,Spearman). Three fine-tuning seeds
+42/43/44,one pretraining seed1042. All selected LR3e-5 on development data.
+Results remain mixed; detailed table/SD added to PROXY_RESULTS_SUMMARY.md.
+Final summaries pulled and SHA-verified against runner artifact records.
+Source weights unchanged; all epoch model checkpoints retained.
+
+Supervisor completed22:13:47UTC11October (06:13:47SGT12October), no errors,
+automatic communicating burns restored/verified. Live02:31:22/38UTC12October
+checks: approved workers293909–293916,all8GPUs100%,cycles16830→16850 and
+collective payload18687.22→18709.42GiB. Guard released; no further jobs queued.
+Evidence artifacts/downstream-20k-final-20261012/; receipt
+ temp/remote_logs/downstream-20k-health-a05.log SHA256
+fd82f8f0f30af90bfdfc2eaaf083a5f1392568586725399e2553c2815e546bc2.
+commands.sh returned to#0. No workloads changed during this read-only check.
+
 ## 20k downstream progress — verified 12 October 2026, 03:53 SGT
 
 Read-only receipt bf9f5f8: full few-shot evaluations and all5/10/25-shot
