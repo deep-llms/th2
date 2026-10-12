@@ -10,10 +10,16 @@ ARMS = ('A', 'P6', 'P7-simple')
 SUPPORTED_ARMS = (*ARMS, 'P6-iso', 'P6-iso-sparse', 'P6-iso-short', 'P6-iso-weighted',
                   'P6-iso-layernorm', 'P7-simple-sparse', 'P7-simple-short')
 TASKS = ('paws', 'nli')
-SUPPORTED_TASKS = (*TASKS, 'stsb', 'boolq')
+SUPPORTED_TASKS = (*TASKS, 'stsb', 'boolq', 'glue_cola', 'glue_sst2', 'glue_mrpc',
+    'glue_qqp', 'glue_stsb', 'glue_mnli_matched', 'glue_mnli_mismatched',
+    'glue_qnli', 'glue_rte', 'glue_wnli', 'squad_v2')
 
 def score_name(task):
-    return 'correlation' if task == 'stsb' else 'accuracy'
+    if task in ('stsb','glue_stsb'): return 'correlation'
+    if task == 'glue_cola': return 'matthews_correlation'
+    if task in ('glue_mrpc','glue_qqp'): return 'accuracy_f1'
+    if task == 'squad_v2': return 'f1'
+    return 'accuracy'
 
 RATES = (1e-5, 3e-5)
 SEEDS = (42, 43, 44)
@@ -94,7 +100,10 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
         argv=['{python}','-m','accelerate.commands.launch','--config_file',str(project/'resources/accelerate_config.yaml'),
               '--main_process_port','29647','--module','eval.finetune',str(file)]
         add(name,argv,str(Path(cfg['output_dir']).relative_to(run)/'result.json'))
-    extended = any(t in ('stsb', 'boolq') for t in tasks)
+    extended = any(t not in TASKS for t in tasks)
+    def training_task(task):
+        return 'glue_mnli_matched' if task == 'glue_mnli_mismatched' and 'glue_mnli_matched' in tasks else task
+    fit_tasks = tuple(dict.fromkeys(training_task(t) for t in tasks))
     gate_tasks = tasks if extended else ('nli',)
     smoke_tasks = tasks if extended else ('paws',)
     for arm in arms:
@@ -115,7 +124,7 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
             add('verify-reload-'+tag,['{python}','-m','scripts.finetune_study','verify-reload',
                 '--trained',str(run/dest),'--reloaded',str(run/reload),'--output','{run_dir}/'+out],
                 out,False,{'status':'passed'})
-    for task in tasks:
+    for task in fit_tasks:
         for arm in arms:
             paths=[]
             for rate in RATES:
@@ -125,7 +134,7 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
             out=f'selections/{task}-{arm}.json'
             add(f'select-{task}-{arm}',['{python}','-m','scripts.finetune_study','select','--runs',*paths,'--output','{run_dir}/'+out],
                 out,False,{'status':'selected','arm':arm,'task':task})
-    for task in tasks:
+    for task in fit_tasks:
         for arm in arms:
             selection=str(run/f'selections/{task}-{arm}.json')
             for seed in SEEDS[1:]:
@@ -134,10 +143,11 @@ def make_jobs(root, project, data_root, manifest, checkpoints, tasks=TASKS, chec
     # No test scoring until every development search/confirmation run completes.
     for task in tasks:
         for arm in arms:
-            selection=str(run/f'selections/{task}-{arm}.json')
+            fitted_task=training_task(task)
+            selection=str(run/f'selections/{fitted_task}-{arm}.json')
             for seed in SEEDS:
                 name=f'test-{task}-{arm}-{seed}';dest=f'test/{task}/{arm}/seed-{seed}'
-                cfg=config_for(arm,task,seed,1e-5,dest,evaluation=str(run/f'confirm/{task}/{arm}/seed-{seed}'),selection=selection)
+                cfg=config_for(arm,task,seed,1e-5,dest,evaluation=str(run/f'confirm/{fitted_task}/{arm}/seed-{seed}'),selection=selection)
                 if seed==42:
                     template=configs/(name+'-template.json');resolved=configs/(name+'.json');write(template,cfg)
                     # Resolve config inside a dedicated small launcher, without a shell.
@@ -162,7 +172,8 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
         labels_ref=None
         for arm in arms:
             scores=[]; measured=[]
-            selection=json.loads((root/f'selections/{task}-{arm}.json').read_text())
+            fitted_task='glue_mnli_matched' if task == 'glue_mnli_mismatched' and 'glue_mnli_matched' in tasks else task
+            selection=json.loads((root/f'selections/{fitted_task}-{arm}.json').read_text())
             for seed in SEEDS:
                 folder=root/f'test/{task}/{arm}/seed-{seed}'
                 result=json.loads((folder/'result.json').read_text())
@@ -170,12 +181,19 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
                     or result['seed']!=seed or result['smoke'] or result['world_size']!=8
                     or result['attention_backend']!='fa4' or result['learning_rate']!=selection['learning_rate']):
                     raise ValueError('Invalid test provenance')
-                n={'paws':2000,'nli':5010,'stsb':1379,'boolq':3270}[task]
+                if task.startswith('glue_mnli_'):
+                    key=('mnli_weights',arm,seed)
+                    expected_hashes.setdefault(key,result['weight_sha256'])
+                    if expected_hashes[key]!=result['weight_sha256']:
+                        raise ValueError('MNLI matched/mismatched must use identical fitted weights')
+                n={'paws':2000,'nli':5010,'stsb':1379,'boolq':3270}.get(task, result['data']['rows']['test'])
                 if result['data']['rows']!={'test':n}:raise ValueError('Wrong test count')
                 p=np.load(folder/'predictions.npz')
-                if p['logits'].shape!=(n, {'paws':2,'nli':3,'stsb':1,'boolq':2}[task]) or not np.isfinite(p['logits']).all():
+                from eval.finetune import TASKS as definitions
+                expected_shape = ((n, p['logits'].shape[1], 2) if task == 'squad_v2' else (n, len(definitions[task][2])))
+                if p['logits'].shape!=expected_shape or not np.isfinite(p['logits']).all():
                     raise ValueError('Invalid predictions')
-                if p['labels'].shape!=(n,) or not np.isfinite(p['labels']).all():raise ValueError('Invalid label shape/values')
+                if p['labels'].shape!=((2,n) if task == 'squad_v2' else (n,)) or not np.isfinite(p['labels']).all():raise ValueError('Invalid label shape/values')
                 if labels_ref is None:labels_ref=p['labels']
                 if not np.array_equal(labels_ref,p['labels']):raise ValueError('Test label order differs')
                 for key in ('train_order_sha256','dataset_manifest_sha256','tokenizer_sha256'):
@@ -185,7 +203,26 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
                 if result['data']['split_order_sha256']['test']!=expected_hashes[task,'test_order']:
                     raise ValueError('Unmatched test examples/order')
                 from eval.finetune import metrics
-                calculated=metrics((p['logits'],p['labels']))
+                if task == 'squad_v2':
+                    from eval.qa import prepare_data, decode_spans, score_answers
+                    from eval.finetune import TaskArguments
+                    from transformers import AutoTokenizer, TrainingArguments
+                    protocol=json.loads((folder/'protocol.json').read_text())
+                    arguments=TaskArguments(**protocol['task'])
+                    source_path=Path(arguments.checkpoint)
+                    tokenizer_path=(str(source_path) if (source_path/'tokenizer_config.json').exists() else
+                        json.loads(Path(result['source']['recipe']).read_text())['model']['tokenizer_name'])
+                    tokenizer=AutoTokenizer.from_pretrained(tokenizer_path,local_files_only=True)
+                    data,info=prepare_data(arguments,tokenizer,TrainingArguments(output_dir=str(folder/'summary-cache'),use_cpu=True,report_to=[]))
+                    if info!=result['data']:raise ValueError('QA data provenance changed')
+                    metadata,examples=data['_qa']
+                    decoded=decode_spans(p['logits'],metadata['test'],examples['test'])
+                    stored=json.loads((folder/'qa_predictions.json').read_text())
+                    if decoded!=stored['predictions'] or stored['threshold']!=result['qa_threshold']:
+                        raise ValueError('QA decoded predictions differ')
+                    calculated=score_answers(decoded,examples['test'],stored['threshold'])
+                else:
+                    calculated=metrics((p['logits'],p['labels']),task)
                 for name,value in calculated.items():
                     if abs(value-result['metrics']['test_'+name])>1e-10:raise ValueError('Metric mismatch: '+name)
                 scores.append(calculated[score_name(task)]); measured.append(calculated)
@@ -194,8 +231,16 @@ def summary(root, output, arms=ARMS, tasks=TASKS):
                                  metrics={name:dict(values=[m[name] for m in measured],
                                      mean=statistics.mean(m[name] for m in measured),
                                      stdev=statistics.stdev(m[name] for m in measured)) for name in measured[0]})
-            if task != 'stsb':table[task][arm]['seed_accuracies']=scores
-    write(output,dict(status='passed',tasks=table,seeds=list(SEEDS),
+            if score_name(task) == 'accuracy':table[task][arm]['seed_accuracies']=scores
+    averages={arm:statistics.mean(table[t][arm]['mean'] for t in tasks) for arm in arms}
+    glue_tasks=[t for t in tasks if t.startswith('glue_')]
+    glue_scores={}
+    if len(glue_tasks)==10:
+        from eval.reporting import glue_average
+        glue_scores={arm:glue_average({t:table[t][arm]['mean'] for t in glue_tasks}) for arm in arms}
+    write(output,dict(status='passed',tasks=table,seeds=list(SEEDS),average=averages,
+                     average_definition='unweighted mean of listed task/split primary metrics; mixed metrics, not official GLUE',
+                     **(dict(glue_local_validation_average=glue_scores) if glue_scores else {}),
                      caveat='Three fine-tuning seeds; one pretraining seed; exploratory arm selection.'))
 
 
@@ -252,15 +297,21 @@ def numerical_check(model, inputs):
             return float((a-b).norm()/b.norm().clamp_min(1e-30))
         for k,v in backbone.named_buffers():
             if not torch.equal(v,buffers[k]):raise ValueError('Unexpected buffer mutation')
+        span = actual_logits.ndim == 3
+        ref_logits = reference['logits'].detach()
+        probabilities = (float((actual_logits.transpose(1,2).double().softmax(-1)-
+                                ref_logits.transpose(1,2).double().softmax(-1)).abs().max()) if span else None)
+        if span:
+            actual_logits,ref_logits=actual_logits[inputs['attention_mask'].bool()],ref_logits[inputs['attention_mask'].bool()]
         return dict(gradient_relative_l2=(numer/max(denom,1e-30))**.5,
-            logit_relative_l2=relative(actual_logits,reference['logits']),
+            logit_relative_l2=relative(actual_logits,ref_logits),
             hidden_relative_l2=relative(actual_hidden,expected_hidden),
-            logit_max_absolute=float((actual_logits-reference['logits'].detach()).abs().max()),
+            logit_max_absolute=float((actual_logits-ref_logits).abs().max()),
             loss_absolute=abs(actual_loss-float(reference['loss'].detach())),
-            logits=actual_logits.cpu().tolist(),reference_logits=reference['logits'].detach().cpu().tolist(),
+            logits=actual_logits.cpu().tolist(),reference_logits=ref_logits.cpu().tolist(),
             gradients=check.report,reference_gradients=reference_check.report,
             task_kind='regression' if model.score.out_features==1 else 'classification',
-            **({} if model.score.out_features==1 else classification_difference(actual_logits,reference['logits'])),
+            **(dict(probability_max_absolute=probabilities) if span else {} if model.score.out_features==1 else classification_difference(actual_logits,ref_logits)),
             fa4_calls=len(calls),buffers_unchanged=True)
     finally:
         hook.remove()
@@ -302,34 +353,45 @@ def check_numerical_limits(result):
 def gate(checkpoint, output, task='nli', data_root=None, manifest=None):
     import torch
     from eval.models import load_checkpoint
-    from eval.finetune import PairClassifier, PairCollator, encode_pairs
+    from eval.finetune import PairClassifier, PairCollator, encode_pairs, TASKS as task_definitions, regression_task
     torch.manual_seed(42)
     adapter,tokenizer_path,source=load_checkpoint(checkpoint,'cuda',attention_backend='fa4')
-    model=PairClassifier(adapter.wrapped,{'nli':3,'paws':2,'boolq':2,'stsb':1}[task],42).to('cuda')
+    if task == 'squad_v2':
+        from eval.qa import SpanClassifier, SpanCollator, features
+        model=SpanClassifier(adapter.wrapped,42).to('cuda')
+    else:
+        model=PairClassifier(adapter.wrapped,len(task_definitions[task][2]),42).to('cuda')
     # Preserve the original synthetic fixture, including its RNG order.
     ids=torch.randint(10,10000,(2,64)).tolist()
-    batches={'synthetic':[dict(input_ids=ids[0][:37],labels=.5 if task=='stsb' else 0),
-                           dict(input_ids=ids[1],labels=3.5 if task=='stsb' else 1)]}
+    batches={'synthetic':[dict(input_ids=ids[0][:37],labels=.5 if regression_task(task) else 0),
+                           dict(input_ids=ids[1],labels=3.5 if regression_task(task) else 1)]}
+    if task == 'squad_v2':
+        batches={'synthetic':[dict(input_ids=row['input_ids'],start_positions=3,end_positions=5) for row in batches['synthetic']]}
     if (data_root is None) != (manifest is None):raise ValueError('Both data root and manifest are required')
     if data_root:
         from datasets import load_dataset
         from transformers import AutoTokenizer
         from eval.benchmarks import local_dataset_paths
         from eval.finetune import TASKS as task_definitions
-        mapping=local_dataset_paths(data_root,manifest)[task_definitions[task][0]]
+        mapping=local_dataset_paths(data_root,manifest)['squad_v2' if task == 'squad_v2' else task_definitions[task][0]]
         raw=load_dataset(mapping['dataset_path'],**mapping['dataset_kwargs'])['train']
         rows=raw.select([0,1]).to_dict()
         if task=='stsb':rows['label']=[5*x for x in rows['score']]
         tokenizer=AutoTokenizer.from_pretrained(tokenizer_path,local_files_only=True)
-        encoded=encode_pairs(rows,tokenizer,task_definitions[task][1],512,task_name=task)
-        batches['real_training']=[dict(input_ids=x,labels=y) for x,y in zip(encoded['input_ids'],encoded['labels'])]
+        if task == 'squad_v2':
+            encoded,_=features(raw.select([0,1]),tokenizer,512)
+            batches['real_training']=list(encoded.select(range(min(2,len(encoded)))))
+        else:
+            encoded=encode_pairs(rows,tokenizer,task_definitions[task][1],512,task_name=task)
+            batches['real_training']=[dict(input_ids=x,labels=y) for x,y in zip(encoded['input_ids'],encoded['labels'])]
     report=dict(status='failed',arm=source['arm'],task=task,source=source,
         reference='fp32_math_sdpa_tf32_disabled',
         gate_version='fp32_task_v2',
-        limits=numerical_limits('regression' if task=='stsb' else 'classification'),batches={})
+        limits=numerical_limits('regression' if regression_task(task) else 'classification'),batches={})
     try:
         for name,rows in batches.items():
-            inputs={k:v.cuda() for k,v in PairCollator(0,regression=task=='stsb')(rows).items()}
+            collator=SpanCollator(0) if task == 'squad_v2' else PairCollator(0,regression=regression_task(task))
+            inputs={k:v.cuda() for k,v in collator(rows).items()}
             result=numerical_check(model,inputs)
             result['lengths']=[len(r['input_ids']) for r in rows]
             report['batches'][name]=result
@@ -389,6 +451,10 @@ def audit_data(dataset_root, manifest, tokenizer_path, output):
 
 def main():
     p=argparse.ArgumentParser();sub=p.add_subparsers(dest='mode',required=True)
+    s=sub.add_parser('build')
+    for name in ('root','project','data-root','manifest','checkpoints'):s.add_argument('--'+name,required=True)
+    s.add_argument('--step',type=int,required=True)
+    s.add_argument('--tasks',nargs='+',choices=SUPPORTED_TASKS,required=True)
     s=sub.add_parser('select');s.add_argument('--runs',nargs='+',required=True);s.add_argument('--output',required=True)
     s=sub.add_parser('summary');s.add_argument('--root',required=True);s.add_argument('--output',required=True)
     s.add_argument('--arms',nargs='+',choices=SUPPORTED_ARMS,default=ARMS)
@@ -403,7 +469,10 @@ def main():
     s=sub.add_parser('selected-test')
     for name in ('config','selection','resolved','project'):s.add_argument('--'+name,required=True)
     args=p.parse_args()
-    if args.mode=='select':select(args.runs,args.output)
+    if args.mode=='build':
+        checkpoints=json.loads(Path(args.checkpoints).read_text())
+        make_jobs(args.root,args.project,args.data_root,args.manifest,checkpoints,args.tasks,{arm:args.step for arm in checkpoints})
+    elif args.mode=='select':select(args.runs,args.output)
     elif args.mode=='summary':summary(args.root,args.output,args.arms,args.tasks)
     elif args.mode=='gate':gate(args.checkpoint,args.output,args.task,args.data_root,args.manifest)
     elif args.mode=='verify-reload':verify_reload(args.trained,args.reloaded,args.output)

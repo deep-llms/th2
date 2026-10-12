@@ -16,6 +16,122 @@ The training implementation and checkpoint format are unchanged.
 
 ## English benchmarks
 
+### Expanded English suite (12 October 2026)
+
+Implemented locally; production B200 numerical gates and smoke runs are still
+required before a full study. Defaults for existing commands remain unchanged.
+The explicit sequential suite is `python -m eval.suite`; it retains existing
+ARC/HellaSwag/PIQA/WinoGrande/XNLI/PAWS/XStoryCloze recipes and adds:
+
+| Benchmark | Protocol | Primary reporting |
+|---|---|---|
+| XCSR | English X-CSQA (1,000) and X-CODAH (300), zero-shot labeled validation | Accuracy for each and their mean; public test labels are hidden |
+| TruthfulQA | Zero-shot canonical harness MC1 and MC2 | Both metrics, one benchmark vote via their mean |
+| Belebele | English, zero-shot; no demonstrations from evaluation pool | Accuracy |
+| LAMBADA OpenAI | Zero-shot final-word likelihood, including all tokens of the final word | Accuracy and target-word perplexity; PPL excluded from accuracy averages |
+| BLiMP | Zero-shot, all 67 subsets | Macro-subset accuracy and linguistic-phenomenon breakdowns |
+| MMLU | 5-shot, first five official subject dev examples, all 57 subjects | Accuracy weighted by evaluated examples across subjects |
+| OpenBookQA | 5-shot from train | Length-normalized accuracy (raw also retained) |
+| Social IQa | 5-shot from train | Accuracy |
+| BoolQ | 5-shot from train, no fine-tuning | Accuracy; separate from supervised BoolQ |
+| GSM8K | Pinned harness 5-shot worked examples, greedy decoding, 256 new tokens | Strict numeric-answer exact match; flexible extraction also retained |
+| GLUE | Supervised CoLA/SST-2/MRPC/QQP/STS-B/MNLI/QNLI/RTE/WNLI | Official task metrics, with both MNLI splits; local validation aggregate |
+| SQuAD v2 | Supervised causal span head, sliding context windows | Exact match, F1, development-calibrated no-answer threshold |
+
+All likelihood definitions come from `lm_eval==0.4.10`; XCSR uses the authors'
+HF dataset with a small normalized local adapter. X-CODAH's blank question is
+normalized to an empty string so the harness correctly scores whole candidate
+sentences from its prefix token. English-only results imply no multilingual claim.
+SciQ, Natural Questions and TriviaQA remain optional and are not part of this suite.
+
+GSM8K uses `eval/generation.py`: full-prefix forward passes through the complete
+custom architecture, with the learned proxy active. This avoids introducing an
+untested incremental proxy cache. It is intentionally slower than cached decoding.
+EOS and text stops are honored; prompt plus generation budget exceeding the
+trained context raises an error instead of silently deleting demonstrations.
+No sampling, chat template or instruction-tuning transformation is added.
+Likelihood tasks retain the existing harness left-truncation policy; inspect its
+warnings/context audits when interpreting nominal shot counts.
+
+GLUE uses official `nyu-mll/glue` data, separate from the older normalized STS-B
+source. Scores remain on the official 0–5 regression scale. CoLA uses Matthews
+correlation; MRPC/QQP report accuracy and F1 (their mean selects checkpoints);
+STS-B reports Pearson/Spearman (their mean selects checkpoints). Other tasks use
+accuracy. Training-derived development splits group duplicate inputs; public
+validation is final holdout. Both MNLI validation splits are excluded from
+training/development, and the study queue reuses one fitted model for both.
+WNLI is included explicitly. These are local held-out scores, not submissions
+to the official hidden-test GLUE leaderboard.
+
+SQuAD groups training/development by context, excludes final-validation context
+overlaps, places the question before the context, and keeps causal attention.
+Token offsets and overlapping windows map predictions back to original text.
+EOS after each window is the no-answer position, whose hidden state sees the
+whole window. Span length is capped at 30 tokens. Threshold selection maximizes
+F1 on development only; the saved threshold is reused on final validation.
+The head, Trainer, source hash checks, frozen proxy statistics and task-only
+backbone gradients follow the existing supervised implementation.
+
+The existing fine-tuning study builder supports the new tasks, with development
+LR selection and three confirmation seeds. It keeps all epoch checkpoints.
+Per-task results remain visible; averages use unrounded values. The likelihood
+suite averages benchmarks once, separates generation/language diagnostics from
+multiple-choice tasks, and verifies matching examples/prompts across checkpoints.
+The supervised report includes a labeled task mean and, for all GLUE tasks,
+a nine-task local aggregate with MNLI's two splits combined into one vote.
+
+#### Prepare pinned local inputs (networked dev machine)
+
+```bash
+python -m scripts.prepare_expanded_benchmarks \
+  --output /path/to/benchmarks --source-lock /path/to/sources.json \
+  --tasks xcsr truthfulqa belebele lambada blimp mmlu openbookqa social_iqa boolq gsm8k \
+          hellaswag piqa arc_easy arc_challenge winogrande xnli paws-x xstorycloze \
+  --supervised glue_cola glue_sst2 glue_mrpc glue_qqp glue_stsb \
+               glue_mnli_matched glue_mnli_mismatched glue_qnli glue_rte glue_wnli squad_v2
+```
+
+The source lock pins HF commit IDs before downloads. The portable parquet
+manifest records file hashes, sizes, split mappings and source revisions. Reuse
+that lock to reproduce snapshots; different existing outputs are rejected.
+GPU nodes must receive inputs through the established controller download path,
+then use the manifest offline. This command is for the dev machine only.
+
+#### Sequential evaluation and supervised job construction
+
+```bash
+python -m eval.suite --checkpoints /path/to/A /path/to/P6-iso \
+  --dataset-root /path/to/benchmarks --manifest /path/to/benchmarks/manifest.json \
+  --output /path/to/fresh-evaluation --attention-backend fa4 --plan-only
+
+python -m scripts.finetune_study build \
+  --root /path/to/fresh-study --project /path/to/project \
+  --data-root /path/to/benchmarks --manifest /path/to/benchmarks/manifest.json \
+  --checkpoints /path/to/checkpoints.json --step 20000 \
+  --tasks glue_cola glue_sst2 glue_mrpc glue_qqp glue_stsb glue_mnli_matched \
+          glue_mnli_mismatched glue_qnli glue_rte glue_wnli squad_v2
+```
+
+`checkpoints.json` maps arm names to checkpoint directories, e.g.
+`{"A": "/path/to/A", "P6-iso": "/path/to/P6-iso"}`. The supervised builder only
+writes configs/jobs for the existing experiment runner. It includes numerical
+gates, smoke/reload checks, selection, fitting and final validation. No process
+management or remote submission is performed. `eval.suite --plan-only` similarly
+writes a plan; remove that flag **with a fresh output** to execute sequentially.
+Use `--limit 2` for a diagnostic likelihood/generation smoke run. That result is
+marked diagnostic and must not be presented as a full benchmark score.
+
+References: [XCSR](https://github.com/INK-USC/XCSR),
+[TruthfulQA](https://github.com/sylinrl/TruthfulQA),
+[Belebele](https://github.com/facebookresearch/belebele),
+[LAMBADA](https://arxiv.org/abs/1606.06031),
+[BLiMP](https://arxiv.org/abs/1912.00582),
+[GSM8K](https://github.com/openai/grade-school-math),
+[MMLU](https://github.com/hendrycks/test),
+[OLMES task suites](https://github.com/allenai/olmes/blob/main/oe_eval/configs/task_suites.py),
+[GLUE](https://gluebenchmark.com/),
+[SQuAD](https://rajpurkar.github.io/SQuAD-explorer/).
+
 ```bash
 python eval/eval_checkpoint.py \
   --checkpoint /path/to/P7-simple/checkpoint-2500 \
@@ -49,8 +165,8 @@ autocast setting. The saved attention backend is used unless explicitly
 overridden with `--attention-backend sdpa` or `fa4`; overrides are recorded.
 FA4 requires the existing compatible CUDA/BF16 environment and pinned FA4
 package; there is no silent backend fallback. Use SDPA explicitly for CPU
-checks of FA4 checkpoints. Current custom support is likelihood scoring, not
-generation or incremental KV caching. Benchmark context is capped at the
+checks of FA4 checkpoints. Custom generation uses full-prefix recomputation;
+incremental KV caching is not implemented. Benchmark context is capped at the
 trained context length (and 2048).
 
 Use `--tokenizer-name /local/tokenizer` if the tokenizer path recorded in the

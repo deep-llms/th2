@@ -1,0 +1,14 @@
+task: xcsqa_en
+dataset_path: json
+output_type: multiple_choice
+test_split: validation
+num_fewshot: 0
+doc_to_text: question
+doc_to_choice: choices
+doc_to_target: label
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0

@@ -1,3 +1,42 @@
+## Expanded English benchmark implementation — 12 October 2026
+
+User authorized implementation of the previously planned suite plus MMLU,
+OpenBookQA, Social IQa and unsupervised BoolQ. No B200 launch was requested.
+Added canonical lm_eval 0.4.10 task selection (57 MMLU subjects, 67 BLiMP
+subsets), local XCSR adapters, greedy full-prefix GSM8K generation, and
+sequential suite validation/benchmark-level averages. Added official GLUE
+transfer tasks (including WNLI and both MNLI splits) and SQuAD v2 span transfer
+through the existing Trainer, including cached sliding windows and development-
+only no-answer calibration. The queue shares fitted MNLI weights between its
+matched/mismatched final splits. Source checkpoints remain unchanged.
+
+Networked dev preparation freezes HF source commits and exports checksummed
+portable parquet snapshots. XCSR uses labeled English validation only; its
+public test labels are hidden. GLUE/SQuAD use train-derived grouped development
+splits and public validation as final holdout. No hidden-test leaderboard claim.
+GSM8K retains the learned proxy, recomputes complete prefixes without a KV cache,
+and rejects overlength prompts plus generation budget. Existing likelihood
+truncation behavior remains unchanged and must be reported in context audits.
+
+Local CPU evidence in ignored temp/: expanded-final-tests.log (9 tests,
+including 133 real harness templates and 11 Trainer train/reload configurations),
+expanded-trainer-final.log (recheck including shared MNLI reload and cached QA),
+expanded-last-fixes.log (4 passed, including suite identity/count validation and
+existing custom test-task compatibility), expanded-span-gate.log (A/P6-iso/
+P7-simple span gradients versus CPU FA4 reference kernel). Combined regression
+expanded-complete-regression.log ran 41 methods: 40 passed, one old-task-manager
+compatibility error was fixed and its targeted rerun passed in last-fixes.
+Two added checks also passed; 43 distinct test methods now have passing coverage.
+Real-source/Qwen-tokenizer audit: expanded-real-audit.json verifies XCSR
+1,000/300 labeled rows, TruthfulQA 817 rows, official CoLA/STS-B preprocessing,
+and SQuAD span/offset roundtrip (synthetic perfect logits, not model accuracy).
+
+No pretraining code/weights, commands.sh, remote environment or GPU workload changed.
+commands.sh remains inactive. Before a real expanded study: deliver pinned data,
+run the existing B200 numerical gates and smoke/reload checks, audit context
+lengths (especially GSM8K), then launch only the authorized scope. See eval/README.md
+for exact task protocols and CLI examples. No benchmark results were added.
+
 ## 20k downstream study complete — verified 12 October 2026, 10:31 SGT
 
 Read-only receipt6ab8909: all15 stages passed, including all few-shot validators,

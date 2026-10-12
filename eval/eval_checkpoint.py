@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -111,6 +112,8 @@ def main():
 
     os.makedirs(args.output_dir, exist_ok=True)
     metadata.update(arguments=vars(args), tokenizer_source=tokenizer_name, status='started')
+    if hasattr(tokenizer, 'backend_tokenizer'):
+        metadata['tokenizer_sha256'] = hashlib.sha256(tokenizer.backend_tokenizer.to_str().encode()).hexdigest()
     if dataset_paths is not None:
         from eval.models import file_hash
         metadata['dataset_manifest_sha256'] = file_hash(args.dataset_manifest)

@@ -35,6 +35,36 @@ TASKS = {'paws': ('paws_en', ('sentence1', 'sentence2'), ['different', 'paraphra
          'nli': ('xnli_en', ('premise', 'hypothesis'), ['entailment', 'neutral', 'contradiction']),
          'stsb': ('stsb', ('sentence1', 'sentence2'), ['similarity']),
          'boolq': ('boolq', ('passage', 'question'), ['False', 'True'])}
+GLUE_TASKS = {
+    'cola': (('sentence',), ['unacceptable', 'acceptable']),
+    'sst2': (('sentence',), ['negative', 'positive']),
+    'mrpc': (('sentence1', 'sentence2'), ['not_equivalent', 'equivalent']),
+    'qqp': (('question1', 'question2'), ['not_duplicate', 'duplicate']),
+    'stsb': (('sentence1', 'sentence2'), ['similarity']),
+    'mnli_matched': (('premise', 'hypothesis'), ['entailment', 'neutral', 'contradiction']),
+    'mnli_mismatched': (('premise', 'hypothesis'), ['entailment', 'neutral', 'contradiction']),
+    'qnli': (('question', 'sentence'), ['entailment', 'not_entailment']),
+    'rte': (('sentence1', 'sentence2'), ['entailment', 'not_entailment']),
+    'wnli': (('sentence1', 'sentence2'), ['not_entailment', 'entailment']),
+}
+TASKS.update({'glue_'+name: ('glue_'+name, fields, labels)
+              for name, (fields, labels) in GLUE_TASKS.items()})
+
+
+def regression_task(task):
+    return task in ('stsb', 'glue_stsb')
+
+
+def score_name(task):
+    if regression_task(task): return 'correlation'
+    if task == 'glue_cola': return 'matthews_correlation'
+    if task in ('glue_mrpc', 'glue_qqp'): return 'accuracy_f1'
+    if task == 'squad_v2': return 'f1'
+    return 'accuracy'
+
+
+def same_finetuning_task(first, second):
+    return first == second or {first, second} == {'glue_mnli_matched', 'glue_mnli_mismatched'}
 ARMS = ('A', 'P6', 'P6-iso') + P6_VARIANTS + SIMPLE_MEMORY_ARMS
 
 
@@ -129,9 +159,16 @@ def encode_pairs(batch, tokenizer, fields, max_length, task_name=None):
     # Tokenize the two strings separately, then longest-first truncate. This
     # prevents a long first sentence from removing the second one entirely.
     first = tokenizer(batch[fields[0]], add_special_tokens=False)['input_ids']
+    if len(fields) == 1:
+        prefix = tokenizer.encode('Sentence: ', add_special_tokens=False)
+        suffix = tokenizer.encode('\nLabel:', add_special_tokens=False) + [tokenizer.eos_token_id]
+        budget = max_length - len(prefix) - len(suffix)
+        if budget < 1: raise ValueError('Context too short for single-sentence template')
+        return dict(input_ids=[prefix + a[:budget] + suffix for a in first],
+                    labels=batch['label'], truncated=[len(a) > budget for a in first])
     second = tokenizer(batch[fields[1]], add_special_tokens=False)['input_ids']
     template = ('Passage: ', '\nQuestion: ', '\nAnswer:') if task_name == 'boolq' else (
-        'Sentence 1: ', '\nSentence 2: ', '\nSimilarity:' if task_name == 'stsb' else '\nRelationship:')
+        'Sentence 1: ', '\nSentence 2: ', '\nSimilarity:' if regression_task(task_name) else '\nRelationship:')
     prefix, middle, suffix = [tokenizer.encode(t, add_special_tokens=False) for t in template]
     suffix += [tokenizer.eos_token_id]
     budget = max_length - len(prefix) - len(middle) - len(suffix)
@@ -168,11 +205,14 @@ def supervised_splits(raw, task_name):
         heldout = {document_key(row, fields, True) for row in raw['test']}
         keep = [i for i,row in enumerate(raw['validation']) if document_key(row, fields, True) not in heldout]
         return DatasetDict(train=raw['train'], validation=raw['validation'].select(keep), test=raw['test'])
-    if task_name != 'boolq':
+    if task_name != 'boolq' and not task_name.startswith('glue_'):
         return raw
     fields = TASKS[task_name][1]
-    symmetric = False
-    heldout = {document_key(row, fields, symmetric) for row in raw['validation']}
+    symmetric = task_name in ('glue_mrpc', 'glue_qqp', 'glue_stsb')
+    final_split = ('validation_'+task_name.removeprefix('glue_mnli_')
+                   if task_name.startswith('glue_mnli_') else 'validation')
+    final_splits = ('validation_matched', 'validation_mismatched') if task_name.startswith('glue_mnli_') else (final_split,)
+    heldout = {document_key(row, fields, symmetric) for split in final_splits for row in raw[split]}
     keys = [document_key(row, fields, symmetric) for row in raw['train']]
     groups = sorted(set(keys)-heldout, key=lambda key: hashlib.sha256(('split-42:'+key).encode()).hexdigest())
     if len(groups) < 10:
@@ -180,7 +220,7 @@ def supervised_splits(raw, task_name):
     development = set(groups[:max(1, len(groups)//10)])
     train = [i for i,key in enumerate(keys) if key not in heldout and key not in development]
     dev = [i for i,key in enumerate(keys) if key in development]
-    return DatasetDict(train=raw['train'].select(train), validation=raw['train'].select(dev), test=raw['validation'])
+    return DatasetDict(train=raw['train'].select(train), validation=raw['train'].select(dev), test=raw[final_split])
 
 
 def prepare_data(task, tokenizer, train_args):
@@ -200,18 +240,25 @@ def prepare_data(task, tokenizer, train_args):
                     raise ValueError('Pinned STS-B source requires finite normalized 0–1 scores')
                 raw[split] = raw[split].map(lambda batch: {'label':[5.0*x for x in batch['score']]},
                     batched=True, remove_columns=['score'], desc='Restore STS-B 0–5 scale')
+        elif task.task == 'glue_stsb':
+            for split, part in raw.items():
+                if split.startswith('test'): continue
+                labels = np.asarray(part['label'])
+                if not np.isfinite(labels).all() or not ((labels >= 0) & (labels <= 5)).all():
+                    raise ValueError('Official GLUE STS-B requires finite 0–5 labels')
         elif raw['train'].features['label'].names != (['0', '1'] if task.task == 'paws' else label_names):
             raise ValueError('Unexpected dataset label ordering')
         source_train_rows = len(raw['train'])
-        source_dev_rows = len(raw['validation'])
+        source_dev_rows = len(raw['validation_matched' if task.task.startswith('glue_mnli_') else 'validation'])
         raw = supervised_splits(raw, task.task)
         # Hold out validation and test sentence pairs. Inspect text identity only,
         # never use test labels to filter, tune, or select hyperparameters.
-        heldout = {document_key(r, fields, task.task in ('paws', 'stsb'))
+        symmetric = task.task in ('paws', 'stsb', 'glue_mrpc', 'glue_qqp', 'glue_stsb')
+        heldout = {document_key(r, fields, symmetric)
                    for split in ('validation', 'test') for r in raw[split]}
         keep, digest = [], hashlib.sha256()
         for i, row in enumerate(raw['train']):
-            key = document_key(row, fields, task.task in ('paws', 'stsb'))
+            key = document_key(row, fields, symmetric)
             if key not in heldout:
                 keep.append(i)
                 digest.update((key + ':' + str(row['label']) + '\n').encode())
@@ -250,15 +297,16 @@ def prepare_data(task, tokenizer, train_args):
         info.update(split_policy='official train/dev/test; source score multiplied by 5; dev/test exact pairs removed from dev',
                     development_overlap_removed=source_dev_rows-len(raw['validation']),
                     final_source_split='test', final_rows=len(raw['test']))
-    if task.task == 'boolq':
+    if task.task == 'boolq' or task.task.startswith('glue_'):
         info.update(split_policy='train-derived 10% grouped development, fixed split-42; public validation final holdout',
                     source_train_rows=source_train_rows, development_rows=len(raw['validation']),
-                    final_source_split='validation', final_rows=len(raw['test']),
+                    final_source_split=('validation_'+task.task.removeprefix('glue_mnli_')
+                        if task.task.startswith('glue_mnli_') else 'validation'), final_rows=len(raw['test']),
                     heldout_overlap_removed=source_train_rows-len(raw['train'])-len(raw['validation']))
     return encoded, info
 
 
-def metrics(prediction):
+def metrics(prediction, task=None):
     logits, labels = map(np.asarray, prediction)
     if not np.isfinite(logits).all() or not np.isfinite(labels).all():
         raise ValueError('Nonfinite task predictions/labels')
@@ -276,7 +324,16 @@ def metrics(prediction):
         spearman = correlation(rankdata(predicted), rankdata(labels))
         return dict(pearson=pearson, spearman=spearman, correlation=(pearson+spearman)/2,
                     mse=float(np.mean((predicted-labels)**2)))
-    return {'accuracy': float((logits.argmax(-1) == labels).mean())}
+    predicted = logits.argmax(-1)
+    result = {'accuracy': float((predicted == labels).mean())}
+    if task == 'glue_cola':
+        from sklearn.metrics import matthews_corrcoef
+        result['matthews_correlation'] = float(matthews_corrcoef(labels, predicted))
+    if task in ('glue_mrpc', 'glue_qqp'):
+        from sklearn.metrics import f1_score
+        result['f1'] = float(f1_score(labels, predicted, zero_division=0))
+        result['accuracy_f1'] = (result['accuracy'] + result['f1']) / 2
+    return result
 
 
 class GradientCheck(TrainerCallback):
@@ -325,6 +382,8 @@ def run(config_path):
         raise ValueError('Protocol uses local Trainer logs and no activation checkpointing')
     if args.resume_from_checkpoint:
         raise ValueError('This offline study starts fresh from a pretraining checkpoint')
+    if task.max_length < 16 or task.max_length % 8 or task.max_length > 2048:
+        raise ValueError('Context must be a multiple of eight in [16,2048]')
     output = Path(args.output_dir)
     if output.exists():
         raise ValueError('Fine-tuning output must be fresh')
@@ -348,19 +407,28 @@ def run(config_path):
     tokenizer = AutoTokenizer.from_pretrained(tok_source, local_files_only=True)
     if tokenizer.eos_token_id is None:
         raise ValueError('Tokenizer must define EOS')
-    data, data_info = prepare_data(task, tokenizer, args)
-    model = PairClassifier(wrapped, len(TASKS[task.task][2]), args.seed)
+    qa = task.task == 'squad_v2'
+    if qa:
+        from eval.qa import prepare_data as prepare_qa, SpanClassifier, SpanCollator, QAMetrics
+        data, data_info = prepare_qa(task, tokenizer, args)
+        qa_metadata, qa_examples = data.pop('_qa')
+        model = SpanClassifier(wrapped, args.seed)
+    else:
+        data, data_info = prepare_data(task, tokenizer, args)
+        model = PairClassifier(wrapped, len(TASKS[task.task][2]), args.seed)
     del adapter
     selection = None
     if task.selection_file:
         selection = json.loads(Path(task.selection_file).read_text())
-        if selection['arm'] != source['arm'] or selection['task'] != task.task or selection['status'] != 'selected':
+        if selection['arm'] != source['arm'] or not same_finetuning_task(selection['task'], task.task) or selection['status'] != 'selected':
             raise ValueError('Wrong LR selection')
         args.learning_rate = selection['learning_rate']
     if task.evaluate_run:
         saved = json.loads((Path(task.evaluate_run)/'result.json').read_text())
-        if saved['source']['checkpoint_sha256'] != source['checkpoint_sha256'] or saved['data']['task'] != task.task:
+        if saved['source']['checkpoint_sha256'] != source['checkpoint_sha256'] or not same_finetuning_task(saved['data']['task'], task.task):
             raise ValueError('Fine-tuned model/source/task mismatch')
+        if saved['data']['train_order_sha256'] != data_info['train_order_sha256']:
+            raise ValueError('Fine-tuned training split/order mismatch')
         if saved['data']['tokenizer_sha256'] != data_info['tokenizer_sha256']:
             raise ValueError('Fine-tuned tokenizer mismatch')
         if saved['data']['dataset_manifest_sha256'] != data_info['dataset_manifest_sha256']:
@@ -373,9 +441,18 @@ def run(config_path):
         model.load_state_dict(load_file(str(weights)), strict=True)
     callback = GradientCheck()
     initial_buffers = {k: v.clone() for k, v in wrapped.named_buffers()}
+    if qa:
+        split = 'test' if task.evaluate_run else 'validation'
+        compute_metrics = QAMetrics(qa_metadata[split], qa_examples[split],
+                                   saved['qa_threshold'] if task.evaluate_run else None)
+        collator = SpanCollator(tokenizer.eos_token_id)
+        args.label_names = ['start_positions', 'end_positions']
+    else:
+        compute_metrics = lambda p: metrics(p, task.task)
+        collator = PairCollator(tokenizer.eos_token_id, regression=regression_task(task.task))
     trainer = SupervisedTrainer(model=model, args=args, processing_class=tokenizer,
         train_dataset=data.get('train'), eval_dataset=data.get('validation'),
-        data_collator=PairCollator(tokenizer.eos_token_id, regression=task.task == 'stsb'), compute_metrics=metrics,
+        data_collator=collator, compute_metrics=compute_metrics,
         callbacks=[callback])
     # Trainer initializes its own output directory; only rank zero writes shared artifacts.
     if trainer.is_world_process_zero():
@@ -385,7 +462,7 @@ def run(config_path):
     if task.evaluate_run:
         prediction = trainer.predict(data['test'], metric_key_prefix='test')
         results = prediction.metrics
-        if len(prediction.label_ids) != len(data['test']):
+        if len(prediction.predictions) != len(data['test']):
             raise ValueError('Incorrect test example count')
         if trainer.is_world_process_zero():
             np.savez_compressed(output/'predictions.npz', logits=prediction.predictions, labels=prediction.label_ids)
@@ -409,7 +486,11 @@ def run(config_path):
              gradients=gradient_report, elapsed_seconds=time.monotonic()-start,
              world_size=args.world_size, max_length=task.max_length, smoke=task.smoke,
              attention_backend=task.attention_backend, evaluate_run=task.evaluate_run,
+             **(dict(qa_threshold=compute_metrics.threshold) if qa else {}),
              weight_sha256=file_hash(output/'best/model.safetensors') if not task.evaluate_run else file_hash(weights)))
+        if qa:
+            write_json(output/'qa_predictions.json', dict(threshold=compute_metrics.threshold,
+                        predictions=compute_metrics.decoded))
     trainer.accelerator.wait_for_everyone()
 
 

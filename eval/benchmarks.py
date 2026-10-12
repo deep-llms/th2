@@ -1,4 +1,5 @@
 """Core benchmark evaluation using lm-evaluation-harness."""
+from functools import lru_cache
 
 TASK_CONFIGS = {
     "xnli": [
@@ -33,14 +34,43 @@ ENGLISH_TASKS = {
     'arc_easy': ['arc_easy'],
     'arc_challenge': ['arc_challenge'],
     'winogrande': ['winogrande'],
+    'openbookqa': ['openbookqa'],
+    'social_iqa': ['social_iqa'],
+    'boolq': ['boolq'],
+    'truthfulqa': ['truthfulqa_mc1', 'truthfulqa_mc2'],
+    'lambada': ['lambada_openai'],
+    'gsm8k': ['gsm8k'],
+    'xcsr': ['xcsqa_en', 'xcodah_en'],
 }
+
+
+@lru_cache(maxsize=1)
+def expanded_groups():
+    # Enumerate only the pinned canonical templates, not wildcard variants
+    # (MMLU also has CoT/generative/continuation configurations).
+    from importlib.metadata import version
+    from pathlib import Path
+    import lm_eval
+    import yaml
+    if version('lm_eval') != '0.4.10':
+        raise ValueError('Expanded benchmarks require pinned lm_eval==0.4.10')
+    root = Path(lm_eval.__file__).parent / 'tasks'
+    groups = {
+        'mmlu': [yaml.safe_load(p.read_text())['task'] for p in sorted((root/'mmlu/default').glob('mmlu_*.yaml'))],
+        'blimp': yaml.safe_load((root/'blimp/_blimp.yaml').read_text())['task'],
+    }
+    if len(groups['mmlu']) != 57 or len(groups['blimp']) != 67:
+        raise ValueError('Unexpected canonical MMLU/BLiMP task inventory')
+    return groups
 
 
 def resolve_tasks(task_groups=None, english_only=False):
     default = task_groups is None
     groups = list(TASK_CONFIGS) if default else task_groups
+    extra = expanded_groups() if any(g in ('mmlu', 'blimp') or g.startswith(('mmlu_', 'blimp_')) for g in groups) else {}
     known = {task for group in TASK_CONFIGS.values() for task in group}
     english = {task for group in ENGLISH_TASKS.values() for task in group}
+    english.update(task for group in extra.values() for task in group)
     selected = []
     for group in groups:
         if english_only and group == 'xcopa':
@@ -48,7 +78,9 @@ def resolve_tasks(task_groups=None, english_only=False):
                 raise ValueError('XCOPA has no English subset; select other tasks')
             print('Skipping XCOPA: no English subset')
             continue
-        if group in TASK_CONFIGS or group in ENGLISH_TASKS:
+        if group in extra:
+            tasks = extra[group]
+        elif group in TASK_CONFIGS or group in ENGLISH_TASKS:
             tasks = (ENGLISH_TASKS[group] if english_only else
                      TASK_CONFIGS.get(group, ENGLISH_TASKS.get(group)))
         elif group in known | english and (not english_only or group in english):
@@ -100,25 +132,44 @@ def local_dataset_paths(root, manifest):
 
 def task_configs(names, dataset_paths=None):
     # Override renamed dataset repositories in memory, never edit site-packages.
-    overrides = {'xnli_': 'facebook/xnli', 'xcopa_': 'cambridgeltl/xcopa',
+    overrides = {'xnli_': 'facebook/xnli', 'xcopa_': 'cambridgeltl/xcopa', 'blimp_': 'nyu-mll/blimp',
                  'paws_': 'google-research-datasets/paws-x'}
+    custom = {name: xcsr_config(name) for name in names if name in ('xcsqa_en', 'xcodah_en')}
     if dataset_paths is not None:
         missing = set(names) - dataset_paths.keys()
         if missing:
             raise ValueError(f'Missing local datasets for tasks: {sorted(missing)}')
-        return [dict(task=name, **dataset_paths[name]) for name in names]
-    return [dict(task=name, **next(({'dataset_path': repo} for prefix, repo in overrides.items()
+        return [{**custom.get(name, {'task': name}), **dataset_paths[name]} for name in names]
+    return [custom[name] if name in custom else dict(task=name, **next(({'dataset_path': repo} for prefix, repo in overrides.items()
                                   if name.startswith(prefix)), {})) for name in names]
+
+
+def xcsr_config(name):
+    # Local, normalized official XCSR files; never silently substitute another task.
+    return dict(task=name, dataset_path='json', output_type='multiple_choice',
+                test_split='validation', num_fewshot=0,
+                doc_to_text='question', doc_to_choice='choices', doc_to_target='label',
+                metric_list=[dict(metric='acc', aggregation='mean', higher_is_better=True)])
+
+
+def benchmark_task_manager():
+    from pathlib import Path
+    from lm_eval.tasks import TaskManager
+    return TaskManager(include_path=str(Path(__file__).parent/'tasks'))
 
 
 def eval_benchmarks(model, tokenizer, task_groups=None, num_fewshot=0, batch_size=16,
                     device='cuda', english_only=False, seed=42, limit=None, dataset_paths=None):
     import lm_eval
-    from lm_eval.models.huggingface import HFLM
+    from eval.generation import harness_model_class
 
     task_list = resolve_tasks(task_groups, english_only)
+    if num_fewshot and any(t in ('belebele_eng_Latn', 'xcsqa_en', 'xcodah_en', 'lambada_openai', 'truthfulqa_mc1', 'truthfulqa_mc2') or t.startswith('blimp_') for t in task_list):
+        raise ValueError('Belebele/XCSR/LAMBADA/BLiMP/TruthfulQA protocol requires zero-shot; run separate shot groups')
+    if dataset_paths is None and any(t in ('xcsqa_en', 'xcodah_en') for t in task_list):
+        raise ValueError('XCSR requires a verified local dataset manifest')
 
-    lm = HFLM(
+    lm = harness_model_class()(
         pretrained=model,
         tokenizer=tokenizer,
         batch_size=batch_size,
@@ -134,6 +185,7 @@ def eval_benchmarks(model, tokenizer, task_groups=None, num_fewshot=0, batch_siz
         num_fewshot=num_fewshot,
         random_seed=seed, numpy_random_seed=seed, torch_random_seed=seed, fewshot_random_seed=seed,
         apply_chat_template=False, log_samples=True, limit=limit,
+        task_manager=benchmark_task_manager() if any(t in ('xcsqa_en','xcodah_en') for t in task_list) else None,
     )
 
     return results

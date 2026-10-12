@@ -1,3 +1,35 @@
+## Expanded benchmark protocols — 12 October 2026
+
+The approved suite now includes XCSR (English labeled validation), TruthfulQA
+MC1/MC2, Belebele English, LAMBADA OpenAI, all BLiMP subsets, GSM8K, MMLU,
+OpenBookQA, Social IQa, unsupervised BoolQ, full GLUE transfer and SQuAD v2
+transfer. Existing few-shot tasks remain available. SciQ/NQ/TriviaQA are deferred.
+Implementation and CPU testing only; no expanded B200 job submitted.
+
+Keep canonical harness scoring pinned to lm_eval 0.4.10. Generation recomputes
+full causal prefixes with proxies active, uses greedy decoding, and refuses
+prompt/budget overflow. GLUE and SQuAD use train-derived grouped development
+splits, leaving public validation for final local scores. Use official GLUE
+STS-B separately from the older STS-B source. Include WNLI; reuse the same
+fitted MNLI model for matched/mismatched scores. SQuAD's no-answer position is
+trailing EOS, and its threshold is selected on development only. All epoch
+fine-tuning checkpoints remain retained. No change to pretraining architecture.
+
+Aggregate MMLU by evaluated examples, BLiMP by subset, then give each benchmark
+one vote. Report both TruthfulQA metrics but combine them for its benchmark
+vote. Keep generation, language diagnostics and supervised transfer separate.
+All stored accuracy/F1/EM metrics are fractions; display percentages in tables.
+GLUE's full local aggregate combines MNLI splits before averaging nine tasks.
+Details and local validation evidence: eval/README.md and CURRENT_TASK.md.
+
+## Reporting preference — 12 October 2026
+
+User requests an average row in future downstream comparison tables. Report
+an unweighted task mean from unrounded scores, retaining established per-task
+metric choices; state the aggregation and any mixed metrics. Do not average
+standard deviations. Added the20k few-shot average to PROXY_RESULTS_SUMMARY:
+A49.5579129446%,P6-iso49.4410820720% (A+0.1168308726 percentage points).
+
 ## 20k downstream study complete — verified 12 October 2026, 10:31 SGT
 
 Read-only receipt6ab8909: all15 stages passed, including all few-shot validators,
