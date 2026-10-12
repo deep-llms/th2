@@ -1,3 +1,34 @@
+## Paired study complete — 13 October 2026, verified 04:55 Singapore
+
+Root q359-paired-parallel-repair-20261013-a02 completed successfully at04:34:21SGT.
+All100 GPU scoring jobs and all6 outer stages passed. Scoring took18m08s;
+planning plus scoring plus four analyses took23m46s. All F/Z/probes/position
+reports exist and their hashes match the successful runner records. Earlier
+expanded benchmark and single-seed/fixed-LR fine-tuning are already complete.
+Paloma remains the explicitly deferred suite (gated source unavailable).
+
+Supervisor verified all8GPUs free, then restored communicating burns at04:35:27.
+Fresh04:55:27SGT inspection: same workers379567–379574,100%utilization on all8,
+advancing collective cycles through1330 and1476.77GiB collective payload.
+No training/evaluation running or queued. commands.sh#0; do not relaunch.
+
+Initial paired result: Z M1(correct-answer log likelihood/character) favours
+P6-iso:mean gain0.002715998,95%CI[0.000970197,0.004431836];standardized test
+p=0.0000999900,H1rejected. M2(correct-choice relative probability) gain
+-0.000102400,p_std=.26757,H2notrejected. Zaccuracy:A47.7275%,P6-iso47.3353%;
+Faccuracy:A49.5579%,P6-iso49.4411%. These are fixed-suite checkpoint-level
+comparisons, one pretraining seed; likelihood benefit is not an accuracy gain.
+Z/probes/position used mandated FP32 SDPA fallback; F retained production.
+
+Evidence: temp/remote_logs/paired-completion-check-a01.log SHA256
+50569cfd1f2e2d98fdc7bf2b734403f8b6b1417e37066315b4f2129199c757fe.
+Locally extracted status and report summaries: artifacts/paired-completion-20261013/.
+These are summaries, not complete copies of the four original remote reports.
+Original report hashes:F e8298001125752b9eaf533073c4f4164e538799d6def2d7ed6c7c4acbdba744c;
+Z808ea923455b73f50632695bbcea6261c162e4e4fb7417381db82721e752384f;
+probes0b3a95d2db4ce8e7e8760f9b54c5af97ca677f649dc179673746af98eb8fb0ff;
+position316d8cc839e2581b2912773ef097db538f303aec811efa38dc392933def7f6a1.
+
 ## Repaired paired run verified healthy — 13 October 2026, 04:15 Singapore
 
 Current root: /mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02.
