@@ -122,7 +122,7 @@ coverage bands. The deliberately invalid example-level clustered control had
 28.6% rejection, compared with 5.6% for story-level inference. These simulations
 are not measurements of either trained checkpoint's performance.
 
-## Sequential study
+## Parallel study
 
 ```bash
 python -m eval.paired plan \
@@ -136,13 +136,25 @@ python -m eval.paired plan \
   --manifest /data/paired-benchmarks/manifest.json \
   --batch-size 16 --output artifacts/paired/study
 
-python -m eval.paired run --plan artifacts/paired/study/plan.json
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -m eval.paired run \
+  --plan artifacts/paired/study/plan.json --workers 8
 ```
 
 Planning checks arm/step identities, requires a full passing calibration, audits
 the five custom tasks and freezes precision example IDs before scoring.
-Execution checks checkpoint, recipe, dataset and protocol hashes and runs one
-checkpoint/task subprocess at a time. It reuses completed matching outputs;
+Execution checks checkpoint, recipe, dataset and protocol hashes. The CLI defaults
+to one persistent worker per GPU in the explicit `CUDA_VISIBLE_DEVICES` allocation;
+`--workers 1` retains the serial reference. Each spawned worker sees only its GPU.
+Independent checkpoint/task jobs run concurrently, with long groups scheduled
+first and preference for each worker's resident checkpoint. Main scoring reuses
+that model; precision/repeat jobs deliberately reload to keep checks independent.
+Precision jobs finish and pass artifact validation before the main scoring backend
+is selected. The three position jobs run concurrently after benchmark scoring.
+Task prompts, shots, seeds, batch sizes, example IDs, metrics and statistics are
+unchanged. No task uses distributed reductions or changes its batch composition.
+`parallel-status.json` records GPU assignment, task time and model loads; each task
+has a sibling `.worker.log`. On failure/cancellation only owned worker processes
+are stopped. Completed matching outputs are reused;
 partial or mismatched outputs stop the queue. Move an incomplete diagnostic
 directory aside deliberately before restarting; the runner never deletes data.
 The frozen position sample is verified before the first job and again before
@@ -217,3 +229,13 @@ Source documents: `docs/downstream_paired_logprob_analysis_spec.md`,
 `docs/paired_logprob_review_response_rev3.md`, and
 `docs/PAIRED_LOGPROB_REVIEW_AND_PLAN_20261012.md`. Their reference script is
 preserved as supplied; this package is the tested project implementation.
+
+
+The first deployment of parallel scheduling refreshes the frozen execution hashes
+before paired planning starts. `scripts/refresh_paired_schedule.py` requires the
+queue still be in fine-tuning, checks the exact reviewed source delta, preserves
+old protocol/sample files as backups, and rejects any scientific-rule or document
+change. The position rows, tokenizer, order and token IDs remain identical. This
+is an explicit pre-scoring protocol revision, not reuse of scored results under
+new provenance. Existing calibration remains valid because statistics and its
+calibration implementation are unchanged.

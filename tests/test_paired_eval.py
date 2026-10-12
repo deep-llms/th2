@@ -290,7 +290,15 @@ class QueueTests(unittest.TestCase):
                 deferred['output']=str(other);deferred['deferred_suites']=['paloma']
                 deferred['plan_sha256']=protocol.digest({k:v for k,v in deferred.items() if k!='plan_sha256'})
                 protocol.write_json(other/'plan.json',deferred);calls.clear()
-                execute(other/'plan.json');self.assertEqual(len(calls),17)
+                class FakePool:
+                    def __init__(self,devices,root):self.devices=devices
+                    def __enter__(self):return self
+                    def __exit__(self,*args):pass
+                    def run(self,commands):
+                        for command in commands:launch(command,check=True)
+                with patch.dict('os.environ',{'CUDA_VISIBLE_DEVICES':'2,5'}),patch('eval.paired.parallel.Pool',FakePool):
+                    execute(other/'plan.json',workers=2)
+                self.assertEqual(len(calls),17)
                 actual=[dict(zip(c[4::2],c[5::2])).get('--suite') for c in calls]
                 self.assertNotIn('paloma',actual);self.assertIn('Z',actual);self.assertIn('probes',actual)
 
@@ -403,6 +411,44 @@ class PairedHarnessTests(unittest.TestCase):
             evaluate(ckpt,'social_iqa_norm','Z',root/'production',frozen_path,raw,manifest,'cpu',2,'production',selected)
             production=artifacts.read(root/'production','social_iqa_norm',0,frozen,selection=selected)
             self.assertTrue(precision(result,result,production,production,production,production,4)['passed'])
+            from eval.paired.parallel import ModelCache
+            cache=ModelCache()
+            bundle,loaded=cache.get(str(ckpt),'cpu','reference')
+            self.assertTrue(loaded)
+            original_meta=copy.deepcopy(bundle[2])
+            before_cache={k:v.clone() for k,v in bundle[0].state_dict().items()}
+            for i in range(2):
+                same,loaded=cache.get(str(ckpt),'cpu','reference')
+                self.assertFalse(loaded)
+                evaluate(ckpt,'social_iqa_norm','Z',root/f'cached-{i}',frozen_path,raw,manifest,
+                         'cpu',2,'reference',selected,model_bundle=same)
+                cached=artifacts.read(root/f'cached-{i}','social_iqa_norm',0,frozen,selection=selected)
+                for differences in artifacts.align(result,cached).values():
+                    self.assertTrue((differences==0).all())
+                self.assertEqual(bundle[2],original_meta)
+            for k,v in bundle[0].state_dict().items():torch.testing.assert_close(v,before_cache[k],rtol=0,atol=0)
+            _,loaded=cache.get(str(ckpt),'cpu','reference',fresh=True)
+            self.assertTrue(loaded)
+            # Real spawned workers score the same tiny model and frozen examples.
+            from eval.paired.parallel import Pool
+            import sys
+            selection_file=root/'selection.json';selection_file.write_text(json.dumps(selected))
+            def worker_cmd(name):
+                return [sys.executable,'-m','eval.paired','evaluate','--checkpoint',str(ckpt),
+                    '--task','social_iqa_norm','--suite','Z','--output',str(root/name),
+                    '--protocol',str(frozen_path),'--dataset-root',str(raw),'--manifest',str(manifest),
+                    '--device','cpu','--batch-size','2','--path','reference']
+            # Full-task calls exercise cached model reuse; precision subset calls
+            # deliberately force fresh loads and were verified separately above.
+            evaluate(ckpt,'social_iqa_norm','Z',root/'full-serial',frozen_path,raw,manifest,'cpu',2,'reference')
+            full=artifacts.read(root/'full-serial','social_iqa_norm',0,frozen)
+            with Pool([None,None],root/'pool') as pool:
+                pool.run([worker_cmd('parallel-0'),worker_cmd('parallel-1')])
+                pool.run([worker_cmd('parallel-2'),worker_cmd('parallel-3')])
+                self.assertEqual([r['model_loaded'] for r in pool.records],[True,True,False,False])
+            for i in range(4):
+                other=artifacts.read(root/f'parallel-{i}','social_iqa_norm',0,frozen)
+                for differences in artifacts.align(full,other).values():self.assertTrue((differences==0).all())
             with self.assertRaises(ValueError):artifacts.read(root/'result','social_iqa_norm',0,frozen)
             with self.assertRaises(ValueError):evaluate(ckpt,'social_iqa_norm','Z',root/'result',frozen_path,raw,manifest,'cpu',2,'reference',selected)
             model,tok,meta=load_model(ckpt,'cpu','reference')

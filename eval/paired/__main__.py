@@ -14,6 +14,7 @@ def main():
     plan.add_argument('--legacy-f',help='Optional historical Suite F directory mapping')
     plan.add_argument('--defer-paloma',action='store_true',help='Record unavailable Paloma; keep Z and probes complete')
     run=sub.add_parser('run');run.add_argument('--plan',required=True)
+    run.add_argument('--workers',type=int,default=None,help='Default: one worker per explicitly visible GPU; 1 for serial')
     ev=sub.add_parser('evaluate')
     for key in ('checkpoint','task','output','protocol','dataset-root','manifest'):ev.add_argument('--'+key,required=True)
     ev.add_argument('--suite',choices=['Z','F','probes','paloma'],required=True)
@@ -45,7 +46,7 @@ def main():
                    args.position_sample,args.calibration,args.batch_size,args.device,args.legacy_f,args.defer_paloma))
     elif args.command=='run':
         from .run import execute
-        execute(args.plan)
+        execute(args.plan,workers=args.workers)
     elif args.command=='evaluate':
         from .run import evaluate
         evaluate(args.checkpoint,args.task,args.suite,args.output,args.protocol,args.dataset_root,args.manifest,

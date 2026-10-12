@@ -1,31 +1,21 @@
 #1 +60+a
-#th2-q359-paired-parallel-inspect-20261013-a01
+#th2-q359-paired-parallel-enable-20261013-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-python3 -u - <<'REMOTE'
-import datetime,json,subprocess
+export CUDA_VISIBLE_DEVICES="" OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
+TASK_PYTHON=/mnt/local/conda-py311/envs/eval_fa4/bin/python
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01
+"$TASK_PYTHON" -u -m scripts.refresh_paired_schedule --root "$TASK_ROOT" \
+ --expected resources/paired_parallel_refresh_20261013.json --output "$TASK_ROOT/parallel-refresh.json"
+cat "$TASK_ROOT/parallel-refresh.json"
+"$TASK_PYTHON" -m unittest tests.test_paired_parallel -q
+"$TASK_PYTHON" -u - "$TASK_ROOT" <<'REMOTE'
+import json,sys
 from pathlib import Path
-root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01')
-old=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a03')
-print('UTC',datetime.datetime.now(datetime.timezone.utc).isoformat())
-for p in (root/'preflight.json',root/'supervised/supervisor.json',root/'supervised/run/run.json',root/'supervised/run/finetune/run.json'):
- if p.exists():
-  obj=json.loads(p.read_text())
-  if 'jobs' in obj:obj={**obj,'jobs':obj['jobs'][-5:],'completed_count':sum(j['status']=='ok' for j in obj['jobs'])}
-  print(str(p),json.dumps(obj),flush=True)
-for base in (old,root):
- p=base/'supervised/run/finetune/run.json'
- if p.exists():
-  for j in json.loads(p.read_text())['jobs']:
-   if j['name'].startswith('search-'):print('FIT_TIMING',base.name,j['name'],j.get('status'),j.get('elapsed_seconds'))
-p=Path(str(root)+'-launch.log')
-print('LAUNCH_TAIL','\n'.join(p.read_text().splitlines()[-20:]))
-for p in sorted((root/'supervised/run').glob('paired*.log')):
- print('PAIRED_LOG',str(p),'\n'.join(p.read_text().splitlines()[-12:]))
-print('PAIRED_EXISTS',(root/'supervised/run/paired').exists())
-fit=root/'supervised/run/finetune'
-for p in sorted(fit.glob('*.log'),key=lambda x:x.stat().st_mtime)[-2:]:
- print('FIT_LOG',str(p),'\n'.join(p.read_text().splitlines()[-15:]))
-subprocess.run(['nvidia-smi','--query-gpu=index,utilization.gpu,memory.used','--format=csv'],check=True)
+root=Path(sys.argv[1])
+for path in (root/'supervised/run/run.json',root/'supervised/run/finetune/run.json'):
+ value=json.loads(path.read_text());value['jobs']=value['jobs'][-2:];print(path,json.dumps(value))
+print('PARALLEL_PAIRED_SCHEDULER_INSTALLED; active fine-tuning left running',flush=True)
 REMOTE

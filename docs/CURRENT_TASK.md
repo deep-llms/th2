@@ -1,3 +1,31 @@
+## Paired evaluation parallel scheduling — 13 October 2026
+
+User explicitly requested efficient multi-GPU paired evaluation. Implemented
+one persistent spawned worker per explicitly visible GPU, automatic8workers
+in the existing GPU queue. `--workers 1` retains the serial reference. Independent
+checkpoint/task jobs execute concurrently; long groups first, checkpoint affinity
+and resident-model reuse. Precision subsets/repeats deliberately reload models.
+A barrier and original artifact/precision validation still precede main scoring.
+Three position jobs run concurrently; scoring batch sizes/formulas unchanged.
+Worker status/timing/model-load records: paired/parallel-status.json and sibling
+*.worker.log files. Failure/cancellation stops only owned spawned processes.
+
+At02:41SGT, B200 had completed all13 remaining fits and was doing final test
+scoring (P6-iso QQP); paired output did not yet exist. No workload stop is needed.
+Refresh frozen execution hashes before paired planning with
+scripts/refresh_paired_schedule.py; requires active fine-tuning and absent paired
+output, exact reviewed implementation delta, unchanged science and position rows.
+Preserve original protocol/sample files as *.before-parallel-20261013. Both
+protocol/sample paths remain usable by the already loaded outer queue. Frozen
+statistics/calibration sources are unchanged; do not rerun or weaken calibration.
+
+Validation: spawned worker concurrency/isolation, failure/crash cleanup, original
+precision fallback/resume checks, and tiny-model fresh vs cached vs real spawned
+scores agree exactly. The18-test run passed all scheduler/scoring checks; one migration-test fixture
+exposed shared mock mutation, fixed by copying the definition. All8 targeted
+refresh/scheduler/queue tests now pass; full rerun in progress.
+No measured B200 speedup yet; do not repeat the unsupported4–10hour ETA as fact.
+
 ## Reduced queue timing — 13 October 2026, 00:52 Singapore
 
 P6-iso QQP fixed1e-5 is actively training, epoch1.172/3, loss0.1324 and finite

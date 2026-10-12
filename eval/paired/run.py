@@ -1,5 +1,6 @@
 """Opt-in evaluation runner, reusing the existing checkpoint and harness adapters."""
 import json
+import copy
 import os
 from pathlib import Path
 import subprocess
@@ -41,7 +42,7 @@ def load_model(checkpoint,device,path):
 
 
 def evaluate(checkpoint,task,suite,output,frozen_path,dataset_root,manifest,
-             device='cuda',batch_size=16,path='production',selection=None):
+             device='cuda',batch_size=16,path='production',selection=None,model_bundle=None):
     import lm_eval
     from importlib.metadata import version
     from eval.benchmarks import local_dataset_paths
@@ -55,7 +56,8 @@ def evaluate(checkpoint,task,suite,output,frozen_path,dataset_root,manifest,
     if output.exists(): raise ValueError('Choose a fresh output directory')
     mapping=local_dataset_paths(dataset_root,manifest)
     configs=protocol.configs(task,mapping)
-    model,tokenizer,meta=load_model(checkpoint,device,path)
+    model,tokenizer,meta=model_bundle if model_bundle is not None else load_model(checkpoint,device,path)
+    meta=copy.deepcopy(meta)
     class AuditedLM(harness_model_class()):
         def _loglikelihood_tokens(self,requests,*args,**kwargs):
             for _,context,continuation in requests:
@@ -162,8 +164,17 @@ def plan(output,protocol_path,checkpoints,dataset_root,manifest,position_sample,
     return output/'plan.json'
 
 
-def execute(plan_path):
-    """Sequential, restartable at completed tasks; incomplete outputs fail closed."""
+def execute(plan_path, workers=1):
+    from .parallel import Pool, visible_devices
+    devices = visible_devices(workers)
+    if len(devices) > 1:
+        with Pool(devices, Path(plan_path).parent) as pool:
+            return _execute(plan_path, pool)
+    return _execute(plan_path)
+
+
+def _execute(plan_path, pool=None):
+    """Stage barriers and artifact validation; incomplete outputs fail closed."""
     from eval.models import file_hash
     from .analysis import precision
     from .position import read_sample
@@ -183,7 +194,7 @@ def execute(plan_path):
     if value['legacy_f']:
         if file_hash(value['legacy_f'])!=value['legacy_f_sha256']:raise ValueError('Historical mapping changed')
         legacy=artifacts.load_json(value['legacy_f'])
-    def job(arm,task,suite,path,output,selection=None):
+    def job(arm,task,suite,path,output,selection=None,deferred=None):
         if not output.exists():
             cmd=[sys.executable,'-m','eval.paired','evaluate','--checkpoint',value['checkpoints'][arm]['path'],
                  '--task',task,'--suite',suite,'--output',str(output),'--protocol',value['protocol'],
@@ -194,6 +205,9 @@ def execute(plan_path):
                 if not selected.exists(): protocol.write_json(selected,selection)
                 if artifacts.load_json(selected)!=selection: raise ValueError('Changed selection file')
                 cmd+=['--selection',str(selected)]
+            if deferred is not None:
+                deferred.append(cmd)
+                return
             subprocess.run(cmd,check=True)
         obj=artifacts.read(output,task,protocol.tasks(suite)[task],frozen,selection=selection)
         meta=obj['metadata']
@@ -203,6 +217,14 @@ def execute(plan_path):
             meta['precision_path']!=path or meta['batch_size']!=value['batch_size']):
             raise ValueError('Existing output does not match queued job')
         return obj
+    if pool is not None:
+        pending=[]
+        for task in protocol.PRECISION:
+            for path in ('reference','production','repeat'):
+                for arm in ('A20','P20'):
+                    job(arm,task,'Z','production' if path=='repeat' else path,
+                        root/'precision'/path/arm/task,value['selection'][task],deferred=pending)
+        pool.run(pending)
     checks={}
     for task in protocol.PRECISION:
         objects={}
@@ -218,6 +240,8 @@ def execute(plan_path):
     if report.exists():
         if artifacts.load_json(report)!=check: raise ValueError('Precision decision changed')
     else: protocol.write_json(report,check)
+    pending=[]
+    queued=[]
     for suite in ('F','Z','probes','paloma'):
         if suite in value.get('deferred_suites',[]):continue
         for arm in (('A10','A20','P20') if suite in ('Z','probes') else ('A20','P20')):
@@ -226,10 +250,26 @@ def execute(plan_path):
                     obj=artifacts.read(legacy[arm][task],task,protocol.F[task],frozen,legacy=True)
                     if obj['metadata']['checkpoint_sha256']!=value['checkpoints'][arm]['sha256']:
                         raise ValueError('Historical checkpoint differs')
-                else:job(arm,task,suite,selected if suite in ('Z','probes') else 'production',root/arm/suite/task)
+                else:
+                    args=(arm,task,suite,selected if suite in ('Z','probes') else 'production',root/arm/suite/task)
+                    job(*args,deferred=pending if pool is not None else None)
+                    queued.append(args)
+    if pool is not None:
+        pool.run(pending)
+        for args in queued:job(*args)
+
     # Recheck after the benchmark jobs as well: inputs may change during a long queue.
     sample=read_sample(value['position_sample'],frozen)
     if sample['sample_sha256']!=value['sample_sha256']:raise ValueError('Position sample changed since planning')
+    if pool is not None:
+        pending=[]
+        for arm in ('A10','A20','P20'):
+            output=root/arm/'position'
+            if not output.exists():
+                pending.append([sys.executable,'-m','eval.paired','position','--checkpoint',value['checkpoints'][arm]['path'],
+                    '--sample',value['position_sample'],'--output',str(output),'--protocol',value['protocol'],
+                    '--path',selected,'--device',value['device']])
+        pool.run(pending)
     for arm in ('A10','A20','P20'):
         output=root/arm/'position'
         if not output.exists():

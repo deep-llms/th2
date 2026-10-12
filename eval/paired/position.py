@@ -55,14 +55,15 @@ def losses(model,ids):
     return loss.double().cpu().numpy(),delta
 
 
-def evaluate(checkpoint,sample_path,output,frozen_path,device='cuda',path='production',batch_size=1):
+def evaluate(checkpoint,sample_path,output,frozen_path,device='cuda',path='production',batch_size=1,model_bundle=None):
     import torch
     from .run import load_model
     frozen=protocol.read(frozen_path);sample=read_sample(sample_path,frozen)
     output=Path(output)
     if output.exists():raise ValueError('Choose a fresh position output')
     if batch_size<1:raise ValueError('Positive batch size required')
-    model,tokenizer,meta=load_model(checkpoint,device,path)
+    model,tokenizer,meta=model_bundle if model_bundle is not None else load_model(checkpoint,device,path)
+    meta=dict(meta)
     if token_hash(tokenizer)!=sample['tokenizer_sha256']:raise ValueError('Position tokenizer differs')
     all_losses=np.full((len(sample['rows']),sample['length']),np.nan);errors=[]
     for start in range(0,len(all_losses),batch_size):
