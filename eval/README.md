@@ -145,6 +145,12 @@ management or remote submission is performed. `eval.suite --plan-only` similarly
 writes a plan; remove that flag **with a fresh output** to execute sequentially.
 Use `--limit 2` for a diagnostic likelihood/generation smoke run. That result is
 marked diagnostic and must not be presented as a full benchmark score.
+For the new tasks only, use `--groups zero five math continuation --new-only`.
+This preserves the declared shot counts and excludes the eight already completed
+few-shot tasks. Paloma can run as its own group when gated access is available.
+`--workers 8` runs independent checkpoint/group evaluations on eight explicitly
+allocated `CUDA_VISIBLE_DEVICES`; the default remains sequential. Fine-tuning
+continues to use the existing eight-GPU Accelerate/Trainer study.
 
 References: [XCSR](https://github.com/INK-USC/XCSR),
 [TruthfulQA](https://github.com/sylinrl/TruthfulQA),

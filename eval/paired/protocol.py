@@ -83,7 +83,9 @@ def tasks(suite):
     raise ValueError('Unknown paired suite: ' + suite)
 
 
-def definition():
+def definition(position_documents=2000):
+    if type(position_documents) is not int or not 2<=position_documents<=2000:
+        raise ValueError('Position document count must be an integer between 2 and 2000')
     if version('lm_eval') != '0.4.10':
         raise ValueError('Paired evaluation requires lm_eval==0.4.10')
     directory=Path(__file__).parent
@@ -106,11 +108,11 @@ def definition():
             resample_degeneracy='infinite standardized resample statistics retained for ordering; nonfinite CI unavailable'),
         precision=dict(tasks=PRECISION, per_task=1000, per_mmlu_subject=18,
                        variance_tolerance=.10, bias_se_tolerance=.10),
-        position=dict(documents=2000, length=2048, buckets=[[1,64],[64,128],[128,256],[256,512],[512,1024],[1024,2048]]))
+        position=dict(documents=position_documents, length=2048, buckets=[[1,64],[64,128],[128,256],[256,512],[512,1024],[1024,2048]]))
 
 
-def freeze(path):
-    value = definition()
+def freeze(path, position_documents=2000):
+    value = definition(position_documents)
     value['protocol_sha256'] = digest(value)
     write_json(path, value)
     return value
@@ -119,6 +121,6 @@ def freeze(path):
 def read(path):
     value = json.loads(Path(path).read_text())
     body = {k:v for k,v in value.items() if k != 'protocol_sha256'}
-    if value.get('protocol_sha256') != digest(body) or body != definition():
+    if value.get('protocol_sha256') != digest(body) or body != definition(body['position']['documents']):
         raise ValueError('Frozen protocol differs from this implementation')
     return value

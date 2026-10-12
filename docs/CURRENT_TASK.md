@@ -1,3 +1,46 @@
+## Expanded + paired 20k evaluation launch — 12 October 2026
+
+User authorized both studies, expanded benchmarks first. Verified q359 live at
+10:36 UTC: eight B200 GPUs running the approved communicating burn, no active
+evaluation, expected eval_fa4 versions, and all three source checkpoints present.
+Inputs submitted via controller download commit `4337a35`: 245 immutable HF
+files, 263,061,811 bytes, checksums in `resources/expanded_inputs_20261012.json`.
+The downloaded native snapshots are used offline; XCSR alone is normalized.
+Social IQa's legacy loading script is avoided using its pinned HF Parquet
+conversion. No new benchmark data is published or included in Git.
+
+Fresh queue root: `/mnt/local/_outputs/deep-llms_th2/q359-expanded-paired-20k-20261012-a01`.
+Order: checkpoint numerical checks → expanded smoke → expanded full → GLUE and
+SQuAD v2 fine-tuning → paired planning/evaluation → paired reports. Expanded
+likelihood uses the established shot counts, excludes the eight already completed
+few-shot tasks, and runs independent groups on the eight allocated GPUs.
+Fine-tuning retains eight-GPU Accelerate/Trainer, development-only selection over
+1e-5/3e-5, seeds42/43/44, all epoch checkpoints, and common fitted MNLI weights.
+Use A/P6-iso seed1042 step20k; A10 is the original non-cooldown step10k reference.
+Reuse the original20k Suite F sample artifacts after frozen-protocol validation.
+
+Paloma is explicitly deferred: the existing HF credential lacks gated access.
+An input-only audit of all11,822 original English validation documents found only
+882 with at least2,048 tokens. Use all882, explicitly frozen before scoring;
+do not duplicate documents or substitute packed sequences. The fixed14-task
+paired Suite Z, hypotheses and statistical calibration are unchanged.
+
+Local verification: all21 final CPU tests passed in48.907s, including real
+harness/model artifacts, queued reuse/fallback, explicit position sample counts,
+parallel allocation, offline XCSR and existing expanded protocols. Real-data
+audits passed: Social IQa1954, CommonsenseQA1221, bAbI199/200/200 story clusters.
+All1319 GSM8K five-shot prompts fit: maximum1561 prompt tokens +256 generation.
+Evidence: `temp/expanded-launch-final-tests.log`, `expanded-real-audits.log`,
+`expanded-real-paired-audit-20261012.json`, `expanded-gsm8k-prompt-audit.json`,
+`position-pool-audit-20261012.json`, and `remote_logs/expanded-eval-preflight-20261012-a01.log`.
+
+The launcher waits for controller file sizes, verifies all checksums, performs
+CPU/data preflight, copies and verifies the Accelerate cache config, checks
+approved burn ownership, then invokes the established train_then_burn supervisor.
+Burns stay active while downloads/preflight run. The supervisor verifies free
+GPUs before evaluation and restores/verifies burns after completion or failure.
+No environment or driver installation/change is part of this launch.
+
 ## Paired evaluation follow-up review — 12 October 2026
 
 Reviewed the paired adapter, statistics, queue and position probe. Fixed missing

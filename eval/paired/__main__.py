@@ -7,10 +7,12 @@ from . import artifacts, protocol
 def main():
     p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='command',required=True)
     f=sub.add_parser('freeze');f.add_argument('--output',required=True)
+    f.add_argument('--position-documents',type=int,default=2000,help='Freeze an explicit smaller count when the original pool is insufficient')
     plan=sub.add_parser('plan')
     for key in ('protocol','a10','a20','p20','dataset-root','manifest','output','position-sample','calibration'):plan.add_argument('--'+key,required=True)
     plan.add_argument('--batch-size',type=int,default=16);plan.add_argument('--device',default='cuda')
     plan.add_argument('--legacy-f',help='Optional historical Suite F directory mapping')
+    plan.add_argument('--defer-paloma',action='store_true',help='Record unavailable Paloma; keep Z and probes complete')
     run=sub.add_parser('run');run.add_argument('--plan',required=True)
     ev=sub.add_parser('evaluate')
     for key in ('checkpoint','task','output','protocol','dataset-root','manifest'):ev.add_argument('--'+key,required=True)
@@ -36,11 +38,11 @@ def main():
     cal.add_argument('--datasets',type=int,default=1000);cal.add_argument('--resamples',type=int,default=1000)
     cal.add_argument('--workers',type=int,default=1,help='Independent CPU workers; RNGs do not depend on this')
     args=p.parse_args()
-    if args.command=='freeze':protocol.freeze(args.output)
+    if args.command=='freeze':protocol.freeze(args.output,args.position_documents)
     elif args.command=='plan':
         from .run import plan
         print(plan(args.output,args.protocol,dict(A10=args.a10,A20=args.a20,P20=args.p20),args.dataset_root,args.manifest,
-                   args.position_sample,args.calibration,args.batch_size,args.device,args.legacy_f))
+                   args.position_sample,args.calibration,args.batch_size,args.device,args.legacy_f,args.defer_paloma))
     elif args.command=='run':
         from .run import execute
         execute(args.plan)

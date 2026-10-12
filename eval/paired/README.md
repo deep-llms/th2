@@ -103,6 +103,10 @@ fresh protocol/study; existing output directories are never overwritten.
 Position input accepts one language's original Arrow dataset or sorted parquet
 files, never a packed token cache. It fails if 2,000 qualifying documents cannot
 be obtained. Document identities and token hashes travel with every loss array.
+If an input-only audit finds fewer eligible documents, explicitly freeze the
+available count using `freeze --position-documents N` before opening results.
+This changes the declared position sample size only; it does not change Suite Z.
+Never duplicate documents or silently lower the requested count during scoring.
 
 Full calibration uses 1,000 datasets per case, B=2,000 for T4a and B=1,000 for
 the other cases. `--datasets`/`--resamples` can make a smoke check shorter, but
@@ -144,6 +148,9 @@ directory aside deliberately before restarting; the runner never deletes data.
 The frozen position sample is verified before the first job and again before
 position extraction. Reused position outputs must also match the recipe,
 tokenizer and batch size.
+If Paloma access is unavailable, `plan --defer-paloma` records that descriptive
+corpus as deferred. All Z, F, bAbI and position stages still run; a deferred
+Paloma stage is never reported as a completed corpus evaluation.
 
 The first stage evaluates both arms twice in production precision and once in
 FP32 SDPA on the five frozen precision tasks. Production means the saved backend

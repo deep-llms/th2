@@ -123,7 +123,7 @@ def freeze_selection(frozen,dataset_root,manifest):
 
 
 def plan(output,protocol_path,checkpoints,dataset_root,manifest,position_sample,calibration,
-         batch_size=16,device='cuda',legacy_f=None):
+         batch_size=16,device='cuda',legacy_f=None,defer_paloma=False):
     from eval.models import file_hash
     from . import stats, position
     from . import audit as audits
@@ -155,6 +155,7 @@ def plan(output,protocol_path,checkpoints,dataset_root,manifest,position_sample,
         position_sample=str(Path(position_sample).resolve()),sample_sha256=sample['sample_sha256'],
         calibration=str(Path(calibration).resolve()),calibration_sha256=file_hash(calibration),
         legacy_f=str(Path(legacy_f).resolve()) if legacy_f else None,legacy_f_sha256=file_hash(legacy_f) if legacy_f else None,
+        deferred_suites=['paloma'] if defer_paloma else [],
         order=['precision','F','Z','probes','paloma','position'],output=str(output))
     value['plan_sha256']=protocol.digest(value)
     output.mkdir(parents=True);protocol.write_json(output/'plan.json',value);protocol.write_json(output/'data_audit.json',audit)
@@ -168,6 +169,7 @@ def execute(plan_path):
     from .position import read_sample
     value=artifacts.load_json(plan_path);body={k:v for k,v in value.items() if k!='plan_sha256'}
     if protocol.digest(body)!=value['plan_sha256']: raise ValueError('Plan was modified')
+    if value.get('deferred_suites',[]) not in ([],['paloma']):raise ValueError('Only descriptive Paloma may be deferred')
     frozen=protocol.read(value['protocol']);root=Path(value['output'])
     if frozen['protocol_sha256']!=value['protocol_sha256'] or file_hash(value['manifest'])!=value['manifest_sha256']:
         raise ValueError('Protocol or dataset manifest changed since planning')
@@ -217,6 +219,7 @@ def execute(plan_path):
         if artifacts.load_json(report)!=check: raise ValueError('Precision decision changed')
     else: protocol.write_json(report,check)
     for suite in ('F','Z','probes','paloma'):
+        if suite in value.get('deferred_suites',[]):continue
         for arm in (('A10','A20','P20') if suite in ('Z','probes') else ('A20','P20')):
             for task in protocol.tasks(suite):
                 if suite=='F' and legacy:

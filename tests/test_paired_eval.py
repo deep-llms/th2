@@ -285,6 +285,14 @@ class QueueTests(unittest.TestCase):
                 bad=study/'A20'/'Z'/'piqa'/'eval_metadata.json'
                 meta=artifacts.load_json(bad);meta['dataset_manifest_sha256']='wrong';bad.write_text(json.dumps(meta))
                 with self.assertRaisesRegex(ValueError,'queued job'):execute(plan)
+                # Deferring the gated descriptive corpus must not skip Z or probes.
+                deferred=copy.deepcopy(value);other=root/'deferred';other.mkdir()
+                deferred['output']=str(other);deferred['deferred_suites']=['paloma']
+                deferred['plan_sha256']=protocol.digest({k:v for k,v in deferred.items() if k!='plan_sha256'})
+                protocol.write_json(other/'plan.json',deferred);calls.clear()
+                execute(other/'plan.json');self.assertEqual(len(calls),17)
+                actual=[dict(zip(c[4::2],c[5::2])).get('--suite') for c in calls]
+                self.assertNotIn('paloma',actual);self.assertIn('Z',actual);self.assertIn('probes',actual)
 
 
 class PairedHarnessTests(unittest.TestCase):
