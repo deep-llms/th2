@@ -1,2 +1,2 @@
-#2 +a
-#th2-q359-paired-repair-progress-20261013-a04
+#0
+# Paired retry a02 is running; see docs/CURRENT_TASK.md.

@@ -1,3 +1,30 @@
+## Repaired paired run verified healthy — 13 October 2026, 04:15 Singapore
+
+Current root: /mnt/local/_outputs/deep-llms_th2/q359-paired-parallel-repair-20261013-a02.
+Launch d55a875; monitor0b153f9 / pull5895e81. All18group/140task loaders passed
+on both dev and B200 before GPU reclamation. Accelerate copied/verified; only
+verified burns reclaimed and all8GPUs empty before start at04:10:35SGT.
+Precision30/30 score jobs completed; config alignment repaired and all strict
+numerical checks ran, selecting FP32 SDPA for Z/probes/position. F retains its
+production path. No thresholds or prompts changed.
+
+At04:15:09SGT:41jobs completed (30precision+11full),8running,0failed. P20 F
+XStoryCloze finished in27.87s, resolving the second failure. Cached-model reuse
+is recorded model_loaded=false across finished full tasks. Eight distinct CUDA
+workers373115–373122 on physical GPUs0–7; MMLU/BLiMP and remaining F tasks active.
+The frozen study has100 GPU jobs total (30precision,67benchmarks/probes,3position),
+then CPU reports. No further fine-tuning. Original completed summary is saved
+locally in artifacts/expanded-single-seed42-20261013/finetune-summary.json.
+
+Validation:18 paired regression tests (including real spawned HellaSwag
+serialization/score equality) and3 parser/restart tests passed. All actual
+TSV rows agree with canonical CSV reader. Estimate04:45–05:15SGT13October,
+provisional from observed small-task timings; full position/report runtime not
+measured yet. Automatic final communicating burn restoration unchanged.
+Evidence temp/remote_logs/paired-parallel-repair-health-a03-final.log SHA256
+ ae2d53215b8242aa5a9ac33e2ae34510b291e358352957bf046082841d19e267.
+commands.sh returned to#0 after acknowledgement; do not relaunch.
+
 ## Second paired input repair — 13 October 2026, 04:08 Singapore
 
 First fresh retry passed the previous config-comparison failure and completed
