@@ -1,21 +1,36 @@
-#0
-#th2-q359-paired-parallel-enable-20261013-a01
+#1 +60+a
+#th2-q359-paired-parallel-health-20261013-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-export CUDA_VISIBLE_DEVICES="" OMP_NUM_THREADS=1 MKL_NUM_THREADS=1
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
-TASK_PYTHON=/mnt/local/conda-py311/envs/eval_fa4/bin/python
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01
-"$TASK_PYTHON" -u -m scripts.refresh_paired_schedule --root "$TASK_ROOT" \
- --expected resources/paired_parallel_refresh_20261013.json --output "$TASK_ROOT/parallel-refresh.json"
-cat "$TASK_ROOT/parallel-refresh.json"
-"$TASK_PYTHON" -m unittest tests.test_paired_parallel -q
-"$TASK_PYTHON" -u - "$TASK_ROOT" <<'REMOTE'
-import json,sys
+date -u
+/mnt/local/conda-py311/envs/eval_fa4/bin/python -u - <<'REMOTE'
+import json,time
 from pathlib import Path
-root=Path(sys.argv[1])
-for path in (root/'supervised/run/run.json',root/'supervised/run/finetune/run.json'):
- value=json.loads(path.read_text());value['jobs']=value['jobs'][-2:];print(path,json.dumps(value))
-print('PARALLEL_PAIRED_SCHEDULER_INSTALLED; active fine-tuning left running',flush=True)
+from collections import Counter
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-expanded-single-seed42-20261013-a01')
+for rel in ['supervised/supervisor.json','supervised/run/run.json','supervised/run/finetune/run.json','supervised/run/finetune/summary.json','supervised/run/complete.json','supervised/burn-verified.json','supervised/run/paired/precision.json','supervised/run/paired/parallel-status.json']:
+ p=root/rel
+ print('FILE',rel,'EXISTS',p.exists())
+ if not p.exists():continue
+ value=json.loads(p.read_text())
+ print('MTIME',time.strftime('%Y-%m-%d %H:%M:%S UTC',time.gmtime(p.stat().st_mtime)))
+ if 'jobs' in value:
+  jobs=value['jobs']; print('COUNTS',dict(Counter(j.get('status') for j in jobs)))
+  if 'parallel-status' in rel:
+   print('DEVICES',value.get('devices'));print('JOBS',json.dumps(jobs))
+  else:
+   value['jobs']=jobs[-5:];print(json.dumps(value))
+ else:print(json.dumps(value)[:18000])
+for p in [root.with_name(root.name+'-launch.log'),*sorted((root/'supervised/run').glob('paired*.log'))]:
+ print('LOG',str(p))
+ if p.exists():print(p.read_text(errors='replace')[-9000:])
+p=root/'supervised/run/paired/parallel-status.json'
+if p.exists():
+ for job in json.loads(p.read_text())['jobs']:
+  if job['status']!='running':continue
+  q=Path(job['output']).with_suffix('.worker.log');print('WORKER_LOG',str(q))
+  if q.exists():print(q.read_text(errors='replace')[-1800:])
 REMOTE
+nvidia-smi --query-gpu=index,utilization.gpu,memory.used --format=csv
+nvidia-smi --query-compute-apps=pid,gpu_uuid,used_gpu_memory --format=csv
