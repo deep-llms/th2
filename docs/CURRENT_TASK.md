@@ -20,6 +20,14 @@ Evidence: temp/remote_logs/position-2000-health-a02.log and
  temp/expanded-filter-regression.log. Normal/paired evaluation metrics and model
 code are unchanged; the frozen2,000-document cohort is retained.
 
+Retry416cf2f acknowledged in a03 receipt: prior communicating-burn restoration
+verified, all8 actual B200 smoke outputs pass the corrected collector, and fresh
+a03 launcher is active in CPU preflight. Receipt observed19:56SGT12October:
+`temp/remote_logs/expanded-a03-launch.log`, SHA256
+606709b7515813bde54f7241a6a05703c2c32c56689b0b56139e0c48f8ed1dd0.
+Do not report full evaluation complete. Next check a03/supervised/run/run.json
+and its numerical/smoke/full status; commands.sh returns to#0 after acknowledgement.
+
 ## Position probe extension approved — 12 October 2026
 
 User rejected the882-document fallback and authorized extending to2,000 with
