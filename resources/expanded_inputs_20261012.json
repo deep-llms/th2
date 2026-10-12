@@ -5153,6 +5153,9 @@
             "eval": [
               "juletxara--xstory_cloze/spring2016.val.en.tsv.split_20_80_eval.tsv"
             ]
+          },
+          "kwargs": {
+            "sep": "\t"
           }
         }
       }

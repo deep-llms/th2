@@ -1,3 +1,16 @@
+## Stable nested harness config provenance — 13 October 2026
+
+lm-eval0.4.10 TaskConfig.to_dict serializes top-level callables but leaves
+callables inside fewshot_config. json_default=str then embeds process-specific
+addresses (observed HellaSwag process_docs), causing false paired config
+mismatches even with identical tasks. Paired evaluation now applies the existing
+protocol.serial recursively before JSON encoding, storing module/qualified-name
+identities. Config equality, full prompt/document/target equality, hashes and
+precision gates stay strict. Real spawned tiny-model HellaSwag outputs now agree
+with serial outputs; deliberately changed config hashes are still rejected.
+Fresh repaired study preserves old artifacts and scientific settings; do not
+rewrite already frozen result provenance merely to bypass validation.
+
 ## Paired likelihood is an additional protocol — 12 October 2026
 
 Keep the established harness-based benchmark suite, few-shot, fine-tuning and

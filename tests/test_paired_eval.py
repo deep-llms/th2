@@ -307,6 +307,29 @@ class PairedHarnessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):torch.set_num_threads(1)
 
+    def test_pinned_xstorycloze_tsv_loader(self):
+        import csv
+        from lm_eval.tasks import get_task_dict
+        from eval.benchmarks import local_dataset_paths
+        from eval.models import file_hash
+        spec=artifacts.load_json(Path(__file__).parents[1]/'resources/expanded_inputs_20261012.json')
+        config=next(r['load_configs']['xstorycloze_en'] for r in spec['repositories'] if 'xstorycloze_en' in r['tasks'])
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);file=root/'stories.tsv'
+            row=dict(story_id='story-1',input_sentence_1='One, two, three.',input_sentence_2='Four.',input_sentence_3='Five.',
+                     input_sentence_4='Six.',sentence_quiz1='Yes, indeed.',sentence_quiz2='No.',answer_right_ending=1)
+            with file.open('w') as stream:
+                writer=csv.DictWriter(stream,fieldnames=list(row),delimiter='\t');writer.writeheader();writer.writerow(row)
+            manifest=root/'manifest.json'
+            manifest.write_text(json.dumps(dict(schema_version=1,repositories=[dict(path='.',tasks=['xstorycloze_en'],
+                files=[dict(path=file.name,bytes=file.stat().st_size,sha256=file_hash(file))],
+                load_configs={'xstorycloze_en':dict(loader=config['loader'],kwargs=config['kwargs'],data_files={'train':[file.name],'eval':[file.name]})})])))
+            mapping=local_dataset_paths(root,manifest)
+            task=get_task_dict(protocol.configs('xstorycloze_en',mapping),task_manager=protocol.manager())['xstorycloze_en']
+            self.assertEqual(dict(task.eval_docs[0]),row)
+            self.assertEqual(task.doc_to_choice(row),['Yes, indeed.','No.'])
+            self.assertEqual(int(task.doc_to_target(row)),0)
+
     def test_custom_data_audit_and_snapshot_profile(self):
         from eval.paired.audit import data
         from scripts.prepare_expanded_benchmarks import specifications

@@ -25,6 +25,21 @@ pane=subprocess.run(['tmux','display-message','-p','-t',source.name,'#{pane_dead
 if pane.returncode!=0 or pane.stdout.strip()!='1':raise RuntimeError('Prior supervisor is not verified stopped')
 prepare(source,root)
 print('PAIRED_ONLY_RESTART_PREPARED',flush=True)
+# Exercise every paired task's real offline loader before reclaiming GPUs.
+from eval.paired import protocol
+from eval.benchmarks import local_dataset_paths
+from lm_eval.tasks import get_task_dict
+jobs=json.loads((root/'jobs.json').read_text())['jobs']
+args=jobs[0]['argv'];data=args[args.index('--dataset-root')+1]
+mapping=local_dataset_paths(data,root/'manifest.json')
+for name in protocol.RULES:
+    loaded=get_task_dict(protocol.configs(name,mapping),task_manager=protocol.manager())
+    for task in loaded.values():
+        rows=task.eval_docs
+        if not len(rows):raise ValueError('Empty evaluation task: '+name)
+        row=rows[0];task.doc_to_text(row);task.doc_to_target(row)
+        if task.config.output_type=='multiple_choice':task.doc_to_choice(row)
+    print('PAIRED_DATA_LOAD_PASSED',name,flush=True)
 config=project/'resources/accelerate_config.yaml';cache=Path(default_yaml_config_file)
 cache.parent.mkdir(parents=True,exist_ok=True)
 if cache.exists():shutil.copy2(cache,root/'accelerate.previous.yaml')

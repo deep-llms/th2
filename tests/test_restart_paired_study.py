@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -24,7 +25,9 @@ class RestartTests(unittest.TestCase):
         rows=[dict(document_id=str(i),input_ids=[1,i],token_sha256=protocol.digest([1,i])) for i in range(2)]
         data=dict(rows=rows,length=2,tokenizer_sha256='tok',protocol_sha256=old['protocol_sha256'])
         data['sample_sha256']=protocol.digest(data);write(sample,data)
-        plan=dict(protocol=str(frozen),protocol_sha256=old['protocol_sha256'],position_sample=str(sample),sample_sha256=data['sample_sha256'])
+        manifest=source/'manifest.json'
+        write(manifest,dict(repositories=[dict(load_configs={'xstorycloze_en':dict(loader='csv',data_files={'eval':['input.tsv']})})]))
+        plan=dict(manifest=str(manifest),manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest(),protocol=str(frozen),protocol_sha256=old['protocol_sha256'],position_sample=str(sample),sample_sha256=data['sample_sha256'])
         plan['plan_sha256']=protocol.digest(plan);write(run/'paired/plan.json',plan)
         jobs=[dict(name=s,argv=['python','--protocol',str(frozen),'--position-sample',str(sample)],required_outputs=[dict(path=s+'.json')]) for s in STAGES]
         jobs[1]['gpus']=list(range(8))
@@ -40,6 +43,7 @@ class RestartTests(unittest.TestCase):
             with patch('eval.paired.protocol.definition',return_value=new):prepare(source,target)
             for p,data in before.items():self.assertEqual(p.read_bytes(),data)
             receipt=json.loads((target/'restart-receipt.json').read_text());self.assertTrue(receipt['rows_unchanged'])
+            self.assertEqual(json.loads((target/'manifest.json').read_text())['repositories'][0]['load_configs']['xstorycloze_en']['kwargs'],{'sep':'\t'})
             jobs=json.loads((target/'jobs.json').read_text())['jobs']
             self.assertEqual([j['name'] for j in jobs],STAGES)
             self.assertEqual(jobs[1]['gpus'],list(range(8)))

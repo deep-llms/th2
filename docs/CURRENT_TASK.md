@@ -1,3 +1,24 @@
+## Second paired input repair — 13 October 2026, 04:08 Singapore
+
+First fresh retry passed the previous config-comparison failure and completed
+its precision gate. All five diagnostic tasks failed production equivalence;
+the frozen rule correctly selected FP32 SDPA for Z/probes/position. No tolerance
+was changed. Main scoring then failed on XStoryCloze: the raw manifest omitted
+TSV separator, so datasets CSV parsing used commas. All worker children cleaned
+up; communicating burns restored/verified by04:02:48SGT, PIDs371644–371651.
+
+Fix the pinned source manifest to specify sep=tab. Retry preparation creates a
+new manifest with that one loader-field repair and unchanged raw files/hashes;
+all old manifests/results remain immutable. The paired protocol/scoring source
+is unchanged from the callable fix. Actual dev TSV verification compares every
+field, prompt, choice and target for360train/1511eval rows against csv.DictReader:
+all pass. New parser regression and retry tests:3passed in4.138s. Added preflight
+loads every actual paired task before burns are reclaimed. Fresh a02 retry uses
+q359-paired-parallel-repair-20261013-a02, original reduced study as input; no fits
+rerun, all precision/scoring outputs fresh. Still awaiting verified healthy run.
+Evidence temp/remote_logs/paired-parallel-repair-health-a02.log SHA256
+6b44ff18d24a79816dda689292a253f9c9e1ad5538b842e2ed33ce3022feb01c.
+
 ## Paired serialization repair and fresh retry — 13 October 2026, 03:56 Singapore
 
 Read-only receipt at03:47SGT: fine-tuning summary passed at03:07:53SGT,

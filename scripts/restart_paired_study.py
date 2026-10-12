@@ -4,6 +4,7 @@ The failed study and completed fine-tuning artifacts remain immutable. Freeze
 the repaired implementation with identical scientific settings and token rows.
 """
 import copy
+import hashlib
 from pathlib import Path
 
 from eval.paired import artifacts, position, protocol
@@ -57,14 +58,32 @@ def prepare(source, destination):
     new_sample['sample_sha256'] = protocol.digest({k:v for k,v in new_sample.items() if k != 'sample_sha256'})
     sample_path = destination/'position-sample.json'
     protocol.write_json(sample_path,new_sample)
+    manifest = artifacts.load_json(old_plan['manifest'])
+    if hashlib.sha256(Path(old_plan['manifest']).read_bytes()).hexdigest() != old_plan['manifest_sha256']:
+        raise ValueError('Source dataset manifest changed')
+    repaired = []
+    for repo in manifest['repositories']:
+        config = repo.get('load_configs',{}).get('xstorycloze_en')
+        if config is not None and config['loader'] == 'csv':
+            if config.get('kwargs',{}) not in ({}, {'sep':'\t'}):
+                raise ValueError('Unexpected XStoryCloze parser settings')
+            if not all(f.endswith('.tsv') for files in config['data_files'].values() for f in files):
+                raise ValueError('Expected XStoryCloze TSV files')
+            config['kwargs'] = {'sep':'\t'}
+            repaired.append('xstorycloze_en: explicit TSV separator')
+    manifest_path = destination/'manifest.json'
+    protocol.write_json(manifest_path,manifest)
     for job in jobs:
         job['argv'] = [str(frozen_path) if arg == old_plan['protocol'] else
-                       str(sample_path) if arg == old_plan['position_sample'] else arg for arg in job['argv']]
+                       str(sample_path) if arg == old_plan['position_sample'] else
+                       str(manifest_path) if arg == old_plan['manifest'] else arg for arg in job['argv']]
     protocol.write_json(destination/'jobs.json',dict(jobs=jobs))
     load_jobs(destination/'jobs.json')
     protocol.read(frozen_path);position.read_sample(sample_path,new)
     protocol.write_json(destination/'restart-receipt.json',dict(status='passed',source=str(source),
         previous_protocol_sha256=old['protocol_sha256'],protocol_sha256=new['protocol_sha256'],
         changed=sorted(changed),rows_unchanged=new_sample['rows']==sample['rows'],
+        data_loading_repairs=repaired,previous_manifest_sha256=old_plan['manifest_sha256'],
+        manifest_sha256=hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         rows_sha256=protocol.digest(sample['rows']),stages=STAGES,
         policy='fresh paired outputs; preserve all old artifacts; no fine-tuning rerun'))
