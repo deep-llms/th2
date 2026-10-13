@@ -1,3 +1,15 @@
+## Screen22 queue status — 13 October 2026, 22:46 SGT
+
+Read-only command cbca3a8 confirms 13 production arms completed and validated.
+P6-iso-depth-current finished at 22:43:54 SGT; P6-iso-deep is now running,
+at 67/2500 updates in the snapshot. Eight production arms remain after it:
+deep-shallow, sparse-targetgrad, sparse-deep, P7-simple-targetgrad,
+P7-simple-lm, delayed, sparse-delayed, P7-simple-delayed (P6-iso prefix
+omitted for its suffix variants). Both consumer arms remain deferred.
+Supervisor reports running. No workload changes; commands.sh returned to #0.
+Evidence: temp/remote_logs/screen22-queue-20261013-a06.log,
+SHA256 e818559dbd0222eff5ebedbf1a3f8ed894897d3314fd413263cca07e869b9905.
+
 ## Screen22 interim results — 13 October 2026, 21:56 SGT
 
 Read-only command3d0ca03 verified12 completed/validated arms, all at2500updates,
