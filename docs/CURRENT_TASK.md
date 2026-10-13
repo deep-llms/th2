@@ -1,3 +1,19 @@
+## Screen22 results — 14 October 2026, 03:10 SGT
+
+Read-only command f340fb9 confirms 18 production arms completed at2500updates
+and all18 validators passed; no failed stage. New finals since prior snapshot:
+P6-iso-sparse-targetgrad loss3.619002/PPL37.3003;
+P6-iso-sparse-deep loss3.587493/PPL36.1434;
+P7-simple-targetgrad loss3.613619/PPL37.1001.
+P6-iso-deep remains best: loss3.585239/PPL36.0620, versus A36.2769.
+P7-simple-lm running at970/2500, about1.17s/update. Three arms follow:
+P6-iso-delayed, P6-iso-sparse-delayed, P7-simple-delayed.
+Single-seed12-layer screen only; no downstream evaluation in this queue.
+No workload changes; commands.sh returned to#0. Supervisor running.
+Evidence: temp/remote_logs/screen22-results-20261014-a09.log,
+SHA256 871a8607e49fa3a4ae0f24a56f27c2b75e60419efa0d4f26472fd06b834d820d.
+Parsed results: temp/screen22-results-a09.json.
+
 ## P6-iso-deep-shallow completed — 14 October 2026, 00:51 SGT snapshot
 
 Read-only command ab3c246 verified P6-iso-deep-shallow completed 2500 updates
