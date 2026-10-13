@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-q359-screen22-health-20261013-a01
+#th2-q359-screen22-health-20261013-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -22,8 +22,9 @@ for p in (run/'run.json',run/'complete.json'):
  if p.exists():print('QUEUE',p.name,p.read_text(),flush=True)
 tail(root/'supervisor.log')
 for p in sorted((run/'numerics').glob('case-*.json')):
- x=json.loads(p.read_text());print('NUMERIC',p.name,json.dumps({k:x.get(k) for k in ('status','arm','losses','peak_allocated_gib','comparison','proxy_comparison')}),flush=True)
-for p in sorted((run/'numerics').glob('case-*.log')):tail(p,7)
+ x=json.loads(p.read_text());print('NUMERIC',p.name,json.dumps({**{k:x.get(k) for k in ('status','arm','losses','peak_allocated_gib')},'gradient_relative_l2':x['comparison']['gradient_relative_l2'],'proxy_gradient_relative_l2':x['proxy_comparison']['gradient_relative_l2']}),flush=True)
+for p in sorted((run/'numerics').glob('case-*.log')):
+ if not p.with_suffix('.json').exists():tail(p,12)
 for p in sorted(run.glob('*.log'),key=lambda p:p.stat().st_mtime)[-3:]:tail(p,30)
 for sub in ('smoke/seed-42','seed-42'):
  for p in sorted((run/sub).glob('*/result.json')):
