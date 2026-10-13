@@ -1,3 +1,23 @@
+## Screen22 interim results — 13 October 2026, 21:56 SGT
+
+Read-only command3d0ca03 verified12 completed/validated arms, all at2500updates,
+matching train/eval fingerprints and seed42/data42. P6-iso-depth finished with
+loss3.5868324/PPL36.1195, essentially equal to parent P6-iso36.1173. Next arm
+P6-iso-depth-current running at35/2500. All8GPUs99%busy; no failed queue stage.
+
+PPL ranking of completed arms: adapter36.0679, adapter-shallow36.1091,
+shallowgrad36.1144, P6-iso36.1173, depth36.1195, P7-simple36.1257,
+sparse36.1586, A36.2769, P6 36.3095, lowaux36.3243,
+bothgrad37.6266, targetgrad37.6281. P6-iso prefixes are omitted in this sentence
+for the named suffix variants. Best observed adapter gain vsA is0.576%PPL,
+vsP6-iso only0.137%; one-seed screen, no robustness/downstream claim.
+Target-gradient variants regress about3.72%PPL vsA in this configuration.
+
+Evidence:temp/remote_logs/screen22-results-20261013-a05.log,
+SHA256 0fff1c414040f428f184f074180e74a3db466d485318b7019999277a929b72c0.
+Parsed results:temp/screen22-results-parsed-a05.json. Workload unchanged;
+commands.sh returned to#0, automatic final burn restoration still configured.
+
 ## Screen22 live status and ETA — 13 October 2026, 21:37 SGT
 
 Read-only command7132c00 confirms11/22 production arms completed and validated.
