@@ -1,3 +1,25 @@
+## Screen22 live status and ETA — 13 October 2026, 21:37 SGT
+
+Read-only command7132c00 confirms11/22 production arms completed and validated.
+Newly completed since prior check: P6-iso-sparse, P7-simple, P6-iso-adapter and
+P6-iso-adapter-shallow. Current12th arm P6-iso-depth at1572/2500, about1.12s/update;
+10full arms remain afterward. All8GPUs95–99%busy, about65–66GiB device memory.
+No failed stage; supervisor and checkpoint retention healthy.
+
+Observed completed wall times46.1–50.2minutes/arm. Estimated remaining8.55hours
+from21:37SGT, finish about06:10SGT14October; practical window05:30–07:00 if
+throughput remains stable and no failure. Estimate uses each remaining arm's
+third smoke-update timing scaled by median completed wall/(2500*smoke timing)
+factor1.0536; delayed variants use20%dormant/80%parent active timing, plus current
+remaining steps and final validation/burn handoff allowance. This is an estimate,
+not a completion guarantee. Current arm should finish around21:56SGT.
+
+Additional final PPL: sparse36.1586, P7-simple36.1257, adapter36.0679,
+adapter-shallow36.1091 (A36.2769). Single-seed exploratory results only.
+Evidence:temp/remote_logs/screen22-health-20261013-a04.log,
+SHA256 5c69196353dabdf05b861762e04981db87e88d7615f52569e5223e5de8bbea9f.
+No workload changes. commands.sh returned to#0; final burns remain configured.
+
 ## Screen22 live status — 13 October 2026, 10:02 UTC
 
 Read-only command04ef4ae confirms q359 healthy. All21 CUDA numerical cases and
