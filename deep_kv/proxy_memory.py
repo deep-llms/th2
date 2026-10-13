@@ -102,7 +102,7 @@ class MemoryHead(nn.Module):
             # Opt-in supervised adaptation keeps identical forward values while
             # allowing task gradients into the pretrained estimator. Pretraining
             # and likelihood evaluation retain the original routing by default.
-            value = (prediction if getattr(self, 'task_finetuning', False) else prediction.detach()).float()
+            value = (prediction if getattr(self, 'task_finetuning', False) or getattr(self,'lm_predictor',False) else prediction.detach()).float()
             p = (value*torch.rsqrt(value.square().mean(-1, keepdim=True)+1e-6)).to(prediction.dtype)
         shape = (*p.shape[:-1], 2, -1)
         k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)

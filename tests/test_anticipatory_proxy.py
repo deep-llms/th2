@@ -14,6 +14,10 @@ from safetensors.torch import load_file
 from transformers import TrainingArguments
 from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS, P6_TARGET_VARIANTS, P6_ROUTING_ARMS
 from deep_kv import P6_EXTENSION_ARMS
+from deep_kv import FOLLOWUP_ARMS
+# These original contracts assume immediate injection and cosine-only targets.
+# The new follow-up contracts are exercised in test_proxy_screen24.
+ANTICIPATORY_ARMS=tuple(a for a in ANTICIPATORY_ARMS if a not in FOLLOWUP_ARMS)
 from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget, resolve_proxy_settings
 from deep_kv.proxy_estimators import BlockMLP
 from deep_kv.proxy_training import ProxyTrainer

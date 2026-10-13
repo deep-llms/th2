@@ -28,7 +28,7 @@ from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
 from deep_kv import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS
-from deep_kv import anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes
+from deep_kv import anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes, followup_metadata
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
@@ -281,6 +281,7 @@ def main():
                 experiment['proxy_target'].update(anticipatory_target_metadata(pilot.arm))
             if pilot.arm in P6_ROUTING_ARMS:
                 experiment['proxy_target']['auxiliary_routes'] = auxiliary_routes(pilot.arm)
+            experiment['proxy_target'].update(followup_metadata(pilot.arm))
             if model.relational_proxy:
                 experiment['proxy_target']['relational'] = dict(weight=.5,temperature=.1,queries=256,
                     candidates='strictly_earlier_same_document',sampling='step_and_global_update_row_v1',

@@ -14,6 +14,7 @@ import sys
 
 from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_layout, anticipatory_target_metadata
+from deep_kv import P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, followup_metadata
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -43,6 +44,7 @@ def worker(args):
     m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=42,
         consumer=recipe.get('consumer',5),deep_target=recipe.get('deep_target',21),
         checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
+    if arm in DELAYED_ARMS:m.set_training_step(PROXY_DELAY_STEPS+250)
     rows=read(args.rows)[:2]
     assert len(rows)==2 and all(len(r['input_ids'])==2048 for r in rows)
     assert len(set(rows[0]['segments']))>1
@@ -77,7 +79,7 @@ def worker(args):
                 out=m(ctx,auxiliary_grad=not arm.endswith('lambda0'),collect_target_statistics=True)
                 lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count'].clamp_min(1)
                 if m.relational_proxy:aux=aux+.5*out['rel_sum']/out['rel_count'].clamp_min(1)
-                loss=lm+m.auxiliary_weight(250)*aux
+                loss=lm+m.auxiliary_weight(PROXY_DELAY_STEPS+250 if arm in DELAYED_ARMS else 250)*aux
             loss.backward()
         finally:handle.remove()
         grads={n:p.grad.detach().float().cpu().clone() for n,p in m.named_parameters() if p.grad is not None}
@@ -119,7 +121,7 @@ def worker(args):
         kernel=m.attention_runtime,rows_sha256=file_hash(args.rows),batch=2,sequence_length=2048,
         active_gate_std=None if m.anticipatory or m.memory_proxy else .05,
         active_gate_init=m.settings.alpha_init if m.anticipatory else None,
-        auxiliary_weight=m.auxiliary_weight(250),comparison=comparison,
+        auxiliary_weight=m.auxiliary_weight(PROXY_DELAY_STEPS+250 if arm in DELAYED_ARMS else 250),comparison=comparison,
         proxy_comparison=proxy_comparison,losses=losses,parameters_unchanged=unchanged,
         cross_document_gradient_max=forbidden,cross_document_output_max=difference,
         peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30)
@@ -192,21 +194,32 @@ def validate(args):
         receipt_names=result[backend+'_receipts']
         receipts=[read(folder/name) for name in receipt_names]
         assert {r['phase'] for r in receipts}=={'train','eval'}
+        if arm in DELAYED_ARMS and args.steps > PROXY_DELAY_STEPS:
+            assert {r['phase'] for r in receipts if r['global_step']>=PROXY_DELAY_STEPS}=={'train','eval'}
         memory_layers = simple_memory_layout(arm,depth)[0] if arm in SIMPLE_MEMORY_ARMS else tuple(range(2,depth-2,2))
-        attention_calls=depth+len(memory_layers) if arm in MEMORY_ARMS else depth
         for r in receipts:
             assert r['arm']==arm and r['world_size']==8
+            dormant=arm in DELAYED_ARMS and r['global_step'] < PROXY_DELAY_STEPS
+            attention_calls=depth+len(memory_layers) if arm in MEMORY_ARMS and not dormant else depth
+            gradient_calls=attention_calls
+            if arm in P6_CONSUMER_ARMS:
+                sites=len(anticipatory_layout(arm,depth)[0])
+                attention_calls+=2*sites
+                gradient_calls+=sites  # Teacher has no gradient; student does.
             if backend=='fa4':
                 assert r['calls']==attention_calls
                 assert r['kernel_dtype']=='torch.bfloat16' and r['positions']=='reset_per_document'
                 assert r['document_isolation'] and r['causal'] and not r['dense_mask']
-                if r['phase']=='train':assert all(r[k+'_gradient_calls']==attention_calls for k in ('query','key','value'))
+                if r['phase']=='train':assert all(r[k+'_gradient_calls']==gradient_calls for k in ('query','key','value'))
             else:
                 assert len(r['calls'])==attention_calls and not r['has_math']
                 assert not r['unattributed_calls'] and not r['unattributed_backward']
                 assert all(c['mask']['dtype']=='torch.bool' and not c['is_causal'] for c in r['calls'])
                 assert not any(r['checkpointing'].values())
-                if r['phase']=='train':assert all(c['backward_operators'] for c in r['calls'])
+                if r['phase']=='train':
+                    assert sum(bool(c['backward_operators']) for c in r['calls'])==gradient_calls
+                    if arm in P6_CONSUMER_ARMS:
+                        assert all(bool(c['backward_operators'])==any(c[k]['requires_grad'] for k in ('query','key','value')) for c in r['calls'])
         checkpoint=folder/f'checkpoint-{args.steps}'
         for name in ['model.safetensors','optimizer.pt','scheduler.pt','trainer_state.json',*[f'rng_state_{i}.pth' for i in range(8)]]:
             assert (checkpoint/name).stat().st_size>0,name
@@ -214,6 +227,8 @@ def validate(args):
         with safe_open(checkpoint/'model.safetensors',framework='pt',device='cpu') as weights:
             import torch
             assert bool(weights.get_tensor('mu_initialized'))
+            if arm in DELAYED_ARMS:assert int(weights.get_tensor('proxy_updates'))==args.steps
+            for key,value in followup_metadata(arm).items():assert config['proxy_target'][key]==value
             if arm.startswith('P'):
                 for name in ('mu','sigma2'):
                     value=weights.get_tensor(name)
@@ -232,7 +247,7 @@ def validate(args):
                     assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
                 else:
                     assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
-                if arm in P6_EXTENSION_ARMS:
+                if arm in P6_EXTENSION_ARMS+P6_SPARSE_DEEP:
                     assert config['proxy_target']['extension']==anticipatory_target_metadata(arm)['extension']
                     for layer in anticipatory_layout(arm,depth)[0]:
                         suffixes=('weight',) if arm in P6_DEPTH_ARMS else ('down.weight','up.weight')

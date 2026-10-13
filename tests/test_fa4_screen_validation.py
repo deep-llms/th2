@@ -10,6 +10,7 @@ from safetensors.torch import save_file
 from scripts.check_fa4_proxy import validate
 from deep_kv import MEMORY_ARMS, SIMPLE_MEMORY_ARMS
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_target_metadata
+from deep_kv import FOLLOWUP_ARMS, DELAYED_ARMS, P6_CONSUMER_ARMS, P6_SPARSE_DEEP, followup_metadata
 
 
 class ScreenValidationTests(unittest.TestCase):
@@ -22,9 +23,9 @@ class ScreenValidationTests(unittest.TestCase):
                                              ('fa4','P7-simple',25,1),('sdpa','P7-simple',25,1),
                                              ('fa4','P7-simple-sparse',25,1),('sdpa','P7-simple-sparse',25,1),
                                              ('fa4','P7-simple-short',25,1),('sdpa','P7-simple-short',25,1)) + tuple(
-                (backend,arm,25,1) for arm in P6_EXTENSION_ARMS for backend in ('sdpa','fa4')):
+                (backend,arm,25,1) for arm in P6_EXTENSION_ARMS+FOLLOWUP_ARMS for backend in ('sdpa','fa4')):
             with self.subTest(steps=steps,arm=variant),tempfile.TemporaryDirectory() as tmp:
-                layers=(2,6,10,14,18,22) if variant=='P7-simple-sparse' else tuple(range(2,25,2))
+                layers=(2,6,10,14,18,22) if '-sparse' in variant else tuple(range(2,25,2))
                 root=Path(tmp);arm=root/f'seed-42/{variant}';checkpoint=arm/f'checkpoint-{steps}'
                 checkpoint.mkdir(parents=True)
                 config=dict(pilot=dict(attention_backend=backend,checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False),
@@ -41,18 +42,24 @@ class ScreenValidationTests(unittest.TestCase):
                     result['evaluation'].update(eval_cos_loss=1.,eval_aux_loss=1.)
                     if variant not in SIMPLE_MEMORY_ARMS:result['evaluation'].update(eval_rel_loss=.5,eval_aux_loss=1.25)
                     result['evaluation'].update({f'eval_proxy_layer_{layer}_attention_mass':.5 for layer in layers})
-                if variant in P6_EXTENSION_ARMS:
+                if variant in P6_EXTENSION_ARMS+P6_SPARSE_DEEP:
                     config['proxy_target']=anticipatory_target_metadata(variant)
+                if variant in FOLLOWUP_ARMS:config.setdefault('proxy_target',{}).update(followup_metadata(variant))
                 for name,value in (('train_config',config),('trainer_state',state),('result',result)):
                     (arm/f'{name}.json').write_text(json.dumps(value))
                 (checkpoint/'trainer_state.json').write_text(json.dumps(state))
                 for phase in ('train','eval'):
-                    calls=28+len(layers) if variant in MEMORY_ARMS else 28
+                    calls=28+len(layers) if variant in MEMORY_ARMS and variant not in DELAYED_ARMS else 28
+                    gradients=calls
+                    if variant in P6_CONSUMER_ARMS:
+                        calls+=2*len(layers);gradients+=len(layers)
                     receipt=dict(arm=variant,phase=phase,calls=calls,world_size=8,kernel_dtype='torch.bfloat16',
                         positions='reset_per_document',document_isolation=True,causal=True,dense_mask=False,
-                        query_gradient_calls=calls,key_gradient_calls=calls,value_gradient_calls=calls)
+                        query_gradient_calls=gradients,key_gradient_calls=gradients,value_gradient_calls=gradients,global_step=0)
                     if backend=='sdpa':
-                        receipt.update(calls=[dict(mask=dict(dtype='torch.bool'),is_causal=False,backward_operators=['fused_backward'])]*calls,
+                        receipt.update(calls=[dict(mask=dict(dtype='torch.bool'),is_causal=False,
+                            backward_operators=['fused_backward'] if i<gradients else [],
+                            **{k:dict(requires_grad=i<gradients) for k in ('query','key','value')}) for i in range(calls)],
                             has_math=False,unattributed_calls=[],unattributed_backward=[],
                             checkpointing=dict(checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False))
                     (arm/f'{phase}.json').write_text(json.dumps(receipt))
@@ -62,13 +69,28 @@ class ScreenValidationTests(unittest.TestCase):
                         for suffix in (('w1.weight','w2.weight') if variant in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight'))+('k_proj.weight','k_norm.weight')+
                         (() if variant=='P7-kq' else ('v_proj.weight',))} if variant in MEMORY_ARMS else
                        {'heads.2.alpha':torch.ones(1,3)*.1})
-                if variant in P6_EXTENSION_ARMS:
+                if variant in P6_EXTENSION_ARMS+P6_SPARSE_DEEP:
                     heads.update({f'extensions.{layer}.{suffix}':torch.ones(3) for layer in layers
                         for suffix in (('weight',) if variant in P6_DEPTH_ARMS else ('down.weight','up.weight'))})
+                if variant in DELAYED_ARMS:heads['proxy_updates']=torch.tensor(steps,dtype=torch.long)
                 save_file(dict(mu_initialized=torch.tensor(True),mu=torch.ones(2,3),sigma2=torch.ones(2,3),
                     **heads),checkpoint/'model.safetensors')
                 args=SimpleNamespace(run_dir=str(root),output=str(root/'passed.json'),steps=steps,seed=42,arms=[variant],attention_backend=backend)
                 validate(args);self.assertEqual(json.loads((root/'passed.json').read_text())['steps'],steps)
+                if variant in DELAYED_ARMS:
+                    # A long delayed run must contain post-introduction receipts.
+                    # Correct final weights and only dormant audits are insufficient.
+                    late_steps=501
+                    late_state={**state,'global_step':late_steps,'log_history':[
+                        dict(step=i,loss=3.,grad_norm=.2) for i in range(1,late_steps+1)]}
+                    late_result={**result,'global_step':late_steps,'input_tokens':late_steps*1048576}
+                    for name,value in [('trainer_state',late_state),('result',late_result)]:
+                        (arm/f'{name}.json').write_text(json.dumps(value))
+                    args.steps=late_steps;args.output=str(root/'missing-active-audit.json')
+                    with self.assertRaises(AssertionError):validate(args)
+                    self.assertFalse(Path(args.output).exists())
+                    (arm/'trainer_state.json').write_text(json.dumps(state))
+                    (arm/'result.json').write_text(json.dumps(result));args.steps=steps
                 # Disposable smoke schedules must be explicit; production defaults
                 # still reject artifacts with an unexpected schedule or warmup.
                 args.output=str(root/'wrong-schedule.json');args.schedule_steps=28601

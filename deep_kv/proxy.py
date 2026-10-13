@@ -15,6 +15,7 @@ from .model import DeepKV, normalize_code
 from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout
 from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS, P6_ADAPTER_WIDTH
+from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS
 
 
 @dataclass
@@ -65,7 +66,7 @@ def resolve_proxy_settings(arm, settings=None):
         if settings.module_seed is None:settings.module_seed = 43
     if settings.alpha_init is None:settings.alpha_init = (.1 if arm.startswith('P6') else 1.) if new else 0.
     if settings.target_version is None:settings.target_version = 'p4p6-r1' if new else 'r7'
-    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS
+    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + FOLLOWUP_ARMS
     if settings.isolate_estimator is None:settings.isolate_estimator = isolation
     if new:
         if (settings.target_version != 'p4p6-r1' or settings.lookahead != expected_lookahead
@@ -121,12 +122,15 @@ def compute_budget(config, settings, sequence_length=2048):
     stream = plain+max(0,layers-1)*3*settings.width**2
     for family,mac in [('P4',plain),('P5',stream),('P6',plain)]:
         result[family] = dict(extra_macs_per_token=mac,extra_parameters=mac+layers*d,gate_parameters=layers*d)
-    for arm in P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + ('P6-lowaux',):
+    for arm in dict.fromkeys(P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + ('P6-lowaux',) +
+                             tuple(a for a in FOLLOWUP_ARMS if a in ANTICIPATORY_ARMS)):
         count = len(anticipatory_layout(arm, n)[0])
         mac = count*2*d*settings.width
-        if arm in P6_EXTENSION_ARMS:
+        if arm in P6_EXTENSION_ARMS + P6_SPARSE_DEEP:
             mac += count*d*(settings.width if arm in P6_DEPTH_ARMS else 2*P6_ADAPTER_WIDTH)
         result[arm] = dict(extra_macs_per_token=mac,extra_parameters=mac+count*d,gate_parameters=count*d)
+        if arm in P6_CONSUMER_ARMS:
+            result[arm]['training_only_consumer_block_forwards'] = 2*count
     estimator = 2*d*settings.width+4*settings.width
     projections = 4*h*d
     extra_attention = (2*nq//nk)*h*(sequence_length+1)
@@ -144,7 +148,7 @@ def compute_budget(config, settings, sequence_length=2048):
     result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
         for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
         'relational_forward_macs_per_token':0}
-    for arm in P7_P6_VARIANTS:
+    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + DELAYED_ARMS[2:]:
         count = len(simple_memory_layout(arm,n)[0])
         per_layer = 2*d*settings.width+projections
         result[arm] = dict(extra_parameters=count*(per_layer+h),
@@ -295,7 +299,7 @@ class ProxyModel(DeepKV):
             torch.random.default_generator.manual_seed(settings.module_seed if settings.module_seed is not None else kwargs.get('seed',42)+1)
             # Preserve the parent's initial weights at retained locations. The
             # discarded heads exist only during sparse-arm initialization.
-            initialization_layers = anticipatory_layout('P6-iso', cfg.num_hidden_layers)[0] if arm in ('P6-iso-sparse','P7-simple-sparse') else self.layers
+            initialization_layers = anticipatory_layout('P6-iso', cfg.num_hidden_layers)[0] if '-sparse' in arm else self.layers
             for layer in initialization_layers:
                 if arm in SIMPLE_MEMORY_ARMS:
                     from .proxy_memory import SimpleMemoryHead
@@ -313,14 +317,14 @@ class ProxyModel(DeepKV):
                 for key in tuple(self.heads):
                     if int(key) not in self.layers:del self.heads[key]
             # Initialize after ALL parent heads so their RNG/weights stay exact.
-            for layer in self.layers if arm in P6_EXTENSION_ARMS else ():
+            for layer in initialization_layers if arm in P6_EXTENSION_ARMS + P6_SPARSE_DEEP else ():
                 if arm in P6_DEPTH_ARMS:
                     extension = nn.Linear(cfg.hidden_size, settings.width, bias=False)
                     nn.init.zeros_(extension.weight)
                 else:
                     from .proxy_estimators import ResidualAdapter
                     extension = ResidualAdapter(cfg, P6_ADAPTER_WIDTH)
-                self.extensions[str(layer)] = extension
+                if layer in self.layers:self.extensions[str(layer)] = extension
         if new or arm in SIMPLE_MEMORY_ARMS:
             from .proxy_estimators import gated_prediction, cosine_loss, depth_prediction
             self.gated_prediction,self.cosine_loss = gated_prediction,cosine_loss
@@ -346,6 +350,26 @@ class ProxyModel(DeepKV):
             self.register_buffer('channel_mask', torch.ones(cfg.hidden_size,dtype=torch.bool))
         self.register_buffer('gamma', torch.tensor([.5,.9,.99], dtype=torch.float32))
         self.gates_disabled = False
+        for head in self.heads.values():head.lm_predictor = arm == 'P7-simple-lm'
+        if arm in DELAYED_ARMS:
+            self.register_buffer('proxy_updates',torch.tensor(0,dtype=torch.long))
+        self._injection_enabled = arm not in DELAYED_ARMS
+
+    def set_training_step(self, step):
+        """Completed updates; persisted for standalone evaluation and exact resume."""
+        if self.arm in DELAYED_ARMS:
+            if type(step) is not int or step < 0:raise ValueError('Invalid proxy introduction step')
+            self.proxy_updates.fill_(step)
+            self._injection_enabled = step >= PROXY_DELAY_STEPS
+
+    def _load_from_state_dict(self, *args, **kwargs):
+        super()._load_from_state_dict(*args, **kwargs)
+        if self.arm in DELAYED_ARMS:
+            self._injection_enabled = int(self.proxy_updates) >= PROXY_DELAY_STEPS
+
+    @property
+    def proxy_enabled(self):
+        return self._injection_enabled and not self.gates_disabled
 
     @classmethod
     def from_scratch(cls, config, arm, *, proxy_settings=None, sequence_length=2048, **kwargs):
@@ -359,7 +383,8 @@ class ProxyModel(DeepKV):
     def auxiliary_weight(self, step):
         if not self.family or self.arm.endswith('lambda0'):
             return 0.
-        result = self.settings.lambda_max * min(max(step,0)/self.settings.warmup_steps,1.)
+        elapsed = step-PROXY_DELAY_STEPS if self.arm in DELAYED_ARMS else step
+        result = self.settings.lambda_max * min(max(elapsed,0)/self.settings.warmup_steps,1.)
         if self.settings.decay_start is not None and step > self.settings.decay_start:
             result *= max(0.,(self.settings.decay_end-step)/(self.settings.decay_end-self.settings.decay_start))
         return result
@@ -442,7 +467,7 @@ class ProxyModel(DeepKV):
 
     def memory_attention(self, layer, u, head, prediction, mask, rotary, plan):
         from .proxy_memory import rectangular_mask, flash_joint_attention, proxy_mass
-        if self.gates_disabled:
+        if not self.proxy_enabled:
             # Equivalent to masking the entire proxy half; retain the original
             # native kernel shape for exact baseline comparison.
             return self.attention(layer,u,None,mask,rotary)
@@ -484,6 +509,10 @@ class ProxyModel(DeepKV):
     def proxy_attention_mass(self, context):
         if not self.memory_proxy or self.gates_disabled or self._proxy_mass is not None:
             raise ValueError('Attention mass requires an enabled P7 model')
+        if not self._injection_enabled:
+            mass=self.mu.new_zeros((len(self.layers),2))
+            mass[:,1]=context.input_ids.numel()*4  # Four selected query heads.
+            return mass
         self._proxy_mass = {}
         try:
             self.hidden_states(context)
@@ -500,7 +529,7 @@ class ProxyModel(DeepKV):
             attended = self.memory_attention(layer,u,head,prediction,mask,rotary,plan)
             residual = hidden+layer.self_attn.o_proj(attended.reshape(*u.shape[:-1],-1).contiguous())
             mlp = layer.mlp(layer.post_attention_layernorm(residual))
-            return residual+mlp,mlp.detach(),u,prediction
+            return residual+mlp,mlp if self.aux_target_grad else mlp.detach(),u,prediction
         if self.anticipatory and head is not None:
             if self.family=='P5':
                 aux,stream=head.stream_step(u,stream)
@@ -516,7 +545,7 @@ class ProxyModel(DeepKV):
                 injected = value if getattr(head, 'task_finetuning', False) else value.detach()
                 aux = estimate() if self.settings.aux_recompute else value
             else:injected,aux=head.routed(u,self.settings,aux_input_grad=self.aux_input_grad)
-            gate=torch.zeros_like(head.alpha) if self.gates_disabled else head.alpha
+            gate=torch.zeros_like(head.alpha) if not self.proxy_enabled else head.alpha
             delta=self.gated_prediction(injected,gate,u)
             if self.arm in P6_ADAPTER_ARMS:
                 adapter_input = u.detach() if self.arm.endswith('-shallow') else injected.detach()
@@ -537,7 +566,7 @@ class ProxyModel(DeepKV):
         attended = self.attention(layer,u,z,mask,rotary)
         residual = hidden + layer.self_attn.o_proj(attended.reshape(*u.shape[:-1],-1).contiguous())
         mlp = layer.mlp(layer.post_attention_layernorm(residual))
-        return (residual+mlp,mlp if self.aux_target_grad else mlp.detach(),u,stream) if self.anticipatory else (residual+mlp, mlp.detach(), u, *estimates)
+        return (residual+mlp,mlp if self.aux_target_grad else mlp.detach(),u,stream) if self.anticipatory else (residual+mlp, mlp if self.aux_target_grad else mlp.detach(), u, *estimates)
 
     def layer_cosines(self, layer, u, estimates, raw_target, plan, valid, auxiliary_grad):
         head = self.heads[str(layer)]
@@ -594,7 +623,7 @@ class ProxyModel(DeepKV):
         hidden = self.backbone.model.embed_tokens(context.input_ids)
         rotary = self.backbone.model.rotary_emb(hidden,context.position_ids)
         sources, windows, cosines, bases = {}, {}, {}, {}
-        history, deep_messages = [], {}
+        history, deep_messages, consumer_inputs = [], {}, {}
         stream,aux_stream=None,None
         sums = self.mu.new_zeros(self.mu.shape)
         squares = torch.zeros_like(sums)
@@ -662,6 +691,8 @@ class ProxyModel(DeepKV):
                 return self.block(i,x,mask,rotary,plan,previous,depth_input=depth)
             if layer in self.layers and need_targets:
                 sources[layer] = None
+                if self.arm in P6_CONSUMER_ARMS and compute_auxiliary_losses:
+                    consumer_inputs[layer] = hidden.detach()
                 if self.family == 'P3' or self.increment_target:
                     bases[layer] = hidden.detach().float()
             result = (checkpoint(call,hidden,stream,depth_input,use_reentrant=False)
@@ -672,7 +703,7 @@ class ProxyModel(DeepKV):
                 if self.family=='P5' and self.settings.aux_recompute and layer in self.layers and compute_auxiliary_losses:
                     prediction,aux_stream=self.heads[str(layer)].stream_step(u,aux_stream)
                     estimates=[prediction]
-            if self.arm in P6_DEEP_ARMS and layer in self.layers:
+            if self.arm in P6_DEEP_ARMS + P6_SPARSE_DEEP and layer in self.layers:
                 # Keep this live predictor path independently of auxiliary loss
                 # and target collection: it is also part of real inference.
                 deep_messages[layer+self.settings.lookahead-1] = (
@@ -708,6 +739,20 @@ class ProxyModel(DeepKV):
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
                             cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,auxiliary_grad)
+                            if self.arm in P6_CONSUMER_ARMS:
+                                from .proxy_estimators import consumer_effect_loss
+                                layer_module = self.backbone.model.layers[proxy-1]
+                                gate=self.heads[str(proxy)].alpha
+                                if not self.proxy_enabled:gate=torch.zeros_like(gate)
+                                def effect(x, prediction, target, block=layer_module, alpha=gate):
+                                    return consumer_effect_loss(block,self.attention,x,prediction,target,
+                                        alpha.detach(),mask,rotary,context.valid)
+                                with torch.set_grad_enabled(torch.is_grad_enabled() and auxiliary_grad):
+                                    inputs=(consumer_inputs.pop(proxy),source[1][0],normalized)
+                                    loss=(checkpoint(effect,*inputs,use_reentrant=False)
+                                          if self.training and self.checkpoint_aux and torch.is_grad_enabled() else effect(*inputs))
+                                cos,base_loss=cosines[proxy]
+                                cosines[proxy]=(cos,loss+(base_loss if not self.arm.endswith('-only') else 0.))
             else:
                 for proxy in tuple(sources):
                     if proxy+2 <= layer <= min(proxy+6,len(self.backbone.model.layers)):
@@ -749,6 +794,10 @@ class ProxyModel(DeepKV):
         losses = (torch.stack([cosines[layer][1] for layer in self.layers],dim=1).flatten(1)
                   if cosines else torch.zeros_like(values))
         auxiliary = losses.mean(-1).sum() if cosines else lm_rows.sum()*0
+        if self.arm in DELAYED_ARMS and not self._injection_enabled and torch.is_grad_enabled():
+            # Dormant P7 projections do not enter attention. Keep DDP hooks for
+            # all proxy parameters; the callback removes their grads before AdamW.
+            auxiliary = auxiliary+sum(p.reshape(-1)[0]*0 for p in self.heads.parameters())
         relational = {}
         extra = ()
         if self.relational_proxy:

@@ -19,6 +19,40 @@ class ResidualAdapter(nn.Module):
         return self.up(F.silu(self.down(normalize_code(value).to(value.dtype))))
 
 
+class _ConsumerBlock(nn.Module):
+    """Temporary functional view, not an additional registered model copy."""
+    def __init__(self, layer, attention):
+        super().__init__()
+        self.layer, self.attention = layer, attention
+
+    def forward(self, hidden, message, alpha, mask, rotary):
+        with torch.autocast(hidden.device.type,enabled=False):
+            scale=(hidden.float().square().mean(-1,keepdim=True)+1e-6).sqrt()
+        injected=hidden+(gated_prediction(message,alpha,hidden)*scale).to(hidden.dtype)
+        u=self.layer.input_layernorm(injected)
+        attended=self.attention(self.layer,u,None,mask,rotary)
+        residual=injected+self.layer.self_attn.o_proj(attended.reshape(*u.shape[:-1],-1).contiguous())
+        return residual+self.layer.mlp(self.layer.post_attention_layernorm(residual))
+
+
+def consumer_effect_loss(layer, attention, hidden, prediction, target, alpha, mask, rotary, valid):
+    """Match the actual frozen shallow decoder's response; teacher has no gradients.
+
+    Two local block forwards, not two backbone forwards. Functional parameters
+    are detached views; the predictor alone receives this auxiliary gradient.
+    """
+    consumer=_ConsumerBlock(layer,attention)
+    frozen={name:p.detach() for name,p in consumer.named_parameters()}
+    frozen.update({name:b.detach() for name,b in consumer.named_buffers()})
+    args=(hidden.detach(),target.detach(),alpha.detach(),mask,rotary)
+    with torch.no_grad():teacher=torch.func.functional_call(consumer,frozen,args)
+    student=torch.func.functional_call(consumer,frozen,(hidden.detach(),prediction,alpha.detach(),mask,rotary))
+    with torch.autocast(hidden.device.type,enabled=False):
+        error=(student.float()-teacher.float()).square().mean(-1)
+        scale=teacher.float().square().mean(-1)+1e-6
+        return ((error/scale)*valid).sum(-1)[:,None]
+
+
 def gated_prediction(prediction, alpha, source):
     return alpha[0]*normalize_code(prediction).to(source.dtype)
 

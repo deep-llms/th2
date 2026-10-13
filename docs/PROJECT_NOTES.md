@@ -1,3 +1,120 @@
+## Complete 24-arm implementation — 13 October 2026
+
+User requested implementation of enough additional variants to reach24 arms.
+Added nine, retaining the previous15 and the existing Trainer/data pipeline.
+All24 are fresh, random-init12-layer,2500-update, PPL-only experiments under
+`proxy_heads.12layer.b200.json`. No training or remote submission was launched.
+The full2500-step LR schedule,125-step LR warmup,1M-token global batch, EOS
+document boundaries, document isolation/reset positions and all250-step
+checkpoints are unchanged. This is distinct from the historical long schedule.
+
+| Order | Arm | Definition |
+|---|---|---|
+| 1 | A | Plain backbone control |
+| 2 | P6-iso | Dense isolated proxy control |
+| 3 | P6-iso-targetgrad | Auxiliary gradient through deep target |
+| 4 | P6-iso-shallowgrad | Auxiliary gradient through shallow input |
+| 5 | P6-iso-bothgrad | Both auxiliary backbone routes |
+| 6 | P6 | LM also trains predictor through shallow injection |
+| 7 | P6-lowaux | P6 with lambda0.03 |
+| 8 | P6-iso-sparse | Sites2/6 rather than2/4/6/8 |
+| 9 | P7-simple | Isolated tokenwise predictor, four query heads attend to proxy memory |
+| 10 | P6-iso-adapter | Width32 shallow adapter reads detached prediction |
+| 11 | P6-iso-adapter-shallow | Matched shallow-feature adapter control |
+| 12 | P6-iso-depth | Predictor also reads recent depth change |
+| 13 | P6-iso-depth-current | Same additional projection reads current hidden |
+| 14 | P6-iso-deep | Live prediction also feeds deep residual adapter |
+| 15 | P6-iso-deep-shallow | Deep adapter reads detached shallow feature |
+| 16 | P6-iso-sparse-targetgrad | Sparse P6 plus target-gradient route |
+| 17 | P6-iso-sparse-deep | Sparse placement of the deep-residual idea |
+| 18 | P7-simple-targetgrad | P7-simple plus auxiliary target-gradient route |
+| 19 | P7-simple-lm | P7 memory projections receive live prediction, so LM trains predictor; its input and auxiliary target stay detached |
+| 20 | P6-iso-consumer | Cosine plus frozen-consumer response matching |
+| 21 | P6-iso-consumer-only | Consumer response matching alone; cosine is diagnostic |
+| 22 | P6-iso-delayed | Dense injection starts after500 completed updates |
+| 23 | P6-iso-sparse-delayed | Sparse injection starts after500 completed updates |
+| 24 | P7-simple-delayed | Proxy memory starts after500 completed updates |
+
+Names16–24 are the nine additions. The formulas for10–15 and gradient routes
+are documented below. These are distinct architectural/objective/schedule arms,
+not additional seeds counted as arms. Default lambda remains0.1 except arm7.
+This completes this screen, not every possible proposal from the discussion.
+
+**Sparse and P7 additions.** Sparse layouts use the same target windows (four
+MLP contributions) at retained locations. Parent predictor initialization is
+preserved; sparse-deep also preserves its dense parent's adapters at retained
+sites. P7-simple-targetgrad keeps LM prediction detachment, while auxiliary
+gradients pass through the normalized/clipped target and its backbone history.
+P7-simple-lm keeps the shallow predictor input detached and changes only the
+prediction-to-memory gradient route; the cosine target remains detached.
+Both preserve P7-simple's forward values, four query heads/two KV groups,
+document mask, positional handling and non-relational loss.
+
+**Consumer-aware objective.** These are response-matching P6 variants, not the
+older bottleneck Consumer-Aware architecture or a separately learned teacher.
+At site l, save detached h_{l-1}. When its normal four-MLP target y is available,
+let C_l(h,x) be the actual shallow block: inject
+`s(h) * alpha_l * R(x)` before input normalization, then run its attention and
+MLP. Reuse the same mask/RoPE and SDPA or FA4 backend. All block parameters,
+alpha and h are detached in this training-only consumer. Define per-token
+
+`effect = mean((C_l(h,p) - stopgrad(C_l(h,y)))^2) / (mean(C_l(h,y)^2) + 1e-6)`.
+
+The target y is the existing standardized/clipped detached MLP sum. The full
+arm uses `1-cos(p,y) + effect`; the only arm uses `effect`. Each is averaged
+over tokens/sites with the existing global denominator, then multiplied by
+the original lambda ramp. Only predictor parameters get these auxiliary
+gradients; the backbone/gate still learn from the real LM pass. Cosine and
+consumer-effect diagnostics are logged separately. No oracle target enters
+the real shallow computation. This probes whether matching the consumer's
+response is a better direction to learn; it does not prove the real target
+would improve LM loss. There are two additional local block forwards per site
+(frozen teacher and differentiable student), one student backward, and no
+additional backbone pass. Extra memory/latency must be measured before launch.
+Normal likelihood inference uses the unchanged P6-iso architecture and skips
+consumer recomputation; Trainer's auxiliary-loss evaluation includes it.
+
+**Delayed introduction.** First500 updates use ordinary backbone attention:
+no P6 injection and no P7 memory. Dormant proxy parameters remain byte-identical
+to initialization: DDP zero-gradient hooks run, then the existing Trainer
+callback clears those parameter gradients before AdamW so moments, weight decay
+and optimizer state do not advance. Target moments still follow the backbone.
+After500 completed updates, injection becomes active at its original strength;
+the auxiliary ramp is `0.1 * clamp((global_step-500)/250,0,1)`. Thus update501
+uses the proxy with auxiliary weight0, following the existing zero-first-update
+ramp convention. The remaining2000 updates are active; total training stays2500.
+LR, data order and backbone optimizer are never reset. This is a fresh delayed
+schedule, not transplanting modules into an old A checkpoint. No random toggles.
+
+The completed-update counter is a checkpoint buffer and is checked against
+Trainer state on resume; standalone loading restores the correct phase.
+The injection phase is cached in Python, avoiding per-forward GPU scalar reads.
+At introduction the backend audit is renewed; long-run validation requires
+active train AND eval receipts, not only dormant baseline-attention receipts.
+`proxy_enabled_for_update` reports the phase of the logged training update.
+
+Prepare, but do not execute, the complete queue:
+
+```bash
+python -m scripts.proxy_12layer_queue --all-arms --output /absolute/path/new-jobs.json
+```
+
+It contains24 sequential eight-GPU jobs, one validator after each, and two
+final report jobs. The original nine-arm default and15-arm --extensions option
+remain available. Metadata validation distinguishes routing, consumer objectives
+and delayed schedules. Backend validation accounts separately for frozen teacher
+calls, gradient-carrying student calls and inactive P7 memory. Cost comparisons
+must use measured training time as well as the equal-token/step comparison.
+
+Local CPU checks cover independent target-gradient/consumer-loss references,
+all nine new arms under two-rank Gloo, dormant optimizer state, exact resume
+across introduction, strict reload/metadata validation, initial parent identity,
+FP32/BF16/checkpoint/compiled paths, global accumulation denominators, causal
+document isolation, and twelve-layer SDPA versus an independent FA4-layout CPU
+reference. Actual CUDA FA4, eight-GPU capacity and B200 throughput remain untested.
+Evidence: /tmp/proxy-screen24*.log; no remote push, GPU-management or real-data
+training commands were submitted. commands.sh remains#0.
+
 ## Paired adapter, depth-input and deep-residual arms — 13 October 2026
 
 Reviewed the four new gradient-routing/weight arms and added six more arms.

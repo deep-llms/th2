@@ -1,3 +1,30 @@
+## Complete 24-arm screen implemented locally — 13 October 2026
+
+User asked to implement the other arms to reach24; no launch requested.
+Nine additions: P6-iso-sparse-targetgrad, P6-iso-sparse-deep,
+P7-simple-targetgrad, P7-simple-lm, P6-iso-consumer, P6-iso-consumer-only,
+P6-iso-delayed, P6-iso-sparse-delayed, P7-simple-delayed. Exact definitions and
+the full numbered24-arm queue are at the top of PROJECT_NOTES.md.
+
+All use the existing train.py/Trainer/data pipeline, random-init12layers,
+2500updates and PPL-only reporting. The delayed variants retain500 baseline
+updates inside that budget; proxies are frozen until introduction, and only
+their auxiliary ramp starts then. A saved counter governs resume/evaluation.
+Consumer-aware variants match a frozen shallow decoder's response to proxy
+versus target (with or without cosine), adding two local block forwards/site.
+
+scripts.proxy_12layer_queue --all-arms prepares24 sequential eight-GPU jobs
+with validators and final reports. It does not launch them. Default9 and
+--extensions15 remain compatible. Delayed runs re-audit attention at activation;
+validators distinguish frozen teacher calls and actual gradient-carrying calls.
+
+Local synthetic CPU checks include independent objectives/gradients, exact
+resume, two-rank Gloo for every new arm, frozen dormant optimizer state,
+FP32/BF16/recomputation, global loss scaling, isolation and FA4-layout references.
+No real CUDA FA4 or B200 capacity/speed test performed. No training launched,
+GPU workloads touched or remote changes pushed. commands.sh remains#0.
+Unrelated user docs are preserved. Real-data launch remains a later step.
+
 ## Six additional paired arms implemented locally — 13 October 2026
 
 Current request: review the new arms and implement other arms; continue the

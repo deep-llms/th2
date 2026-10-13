@@ -4,6 +4,7 @@ import numpy as np
 import torch
 
 from .training import DeepKVTrainer, PilotCallback
+from . import DELAYED_ARMS, PROXY_DELAY_STEPS, P6_CONSUMER_ARMS
 
 
 def reduce_moments(accelerator, values, fused):
@@ -37,10 +38,15 @@ def summarize_proxy(statistics, model):
         else:
             result['aux_loss'] = float(losses.mean())
         if model.memory_proxy:result['cos_loss'] = float(losses.mean())
+        if model.arm in P6_CONSUMER_ARMS:
+            result['cos_loss']=float((1-cosines).mean())
+            result['consumer_effect_loss']=float(losses.mean())-(result['cos_loss'] if model.arm.endswith('consumer') else 0.)
         width = 3 if model.family == 'P3' else 1
         for index, layer in enumerate(model.layers):
             row = cosines[index*width:(index+1)*width]
             result[f'proxy_layer_{layer}_aux_loss'] = float(losses[index*width:(index+1)*width].mean())
+            if model.arm in P6_CONSUMER_ARMS:
+                result[f'proxy_layer_{layer}_consumer_effect_loss']=float(losses[index])-(1-float(cosines[index]) if model.arm.endswith('consumer') else 0.)
             if model.memory_proxy:
                 result[f'proxy_layer_{layer}_cos_loss'] = float(losses[index])
             if model.relational_proxy:
@@ -56,6 +62,9 @@ class ProxyCallback(PilotCallback):
         # Trainer has restored model buffers by this point. Reset on each train()
         # call; never retain a Python flag across a different checkpoint load.
         self.trainer._normalization_ready = None
+        if self.trainer.model.arm in DELAYED_ARMS and int(self.trainer.model.proxy_updates)!=state.global_step:
+            raise ValueError('Delayed proxy checkpoint step differs from Trainer state')
+        self.trainer.model.set_training_step(state.global_step)
         if self.trainer.model.anticipatory and state.global_step==0:
             self.trainer.log({f'proxy_layer_{name}_mean_abs_alpha_{c}':float(value)
                 for name,head in self.trainer.model.heads.items()
@@ -64,10 +73,24 @@ class ProxyCallback(PilotCallback):
 
     def on_step_begin(self,args,state,control,**kwargs):
         self.started = time.perf_counter()
+        self.trainer.model.set_training_step(state.global_step)
+        if self.trainer.model.arm in DELAYED_ARMS and state.global_step == PROXY_DELAY_STEPS:
+            # The initial receipt only observed baseline attention. Capture the
+            # actual active backend again at introduction, including later eval.
+            self.trainer._sdpa_seen.clear()
+
+    def on_pre_optimizer_step(self,args,state,control,**kwargs):
+        model=self.trainer.model
+        if model.arm in DELAYED_ARMS and state.global_step < PROXY_DELAY_STEPS:
+            # Zero-gradient DDP participation must not age Adam moments, apply
+            # weight decay, or allocate optimizer state for dormant parameters.
+            for parameter in model.heads.parameters():parameter.grad=None
+        return control
 
     def on_step_end(self,args,state,control,**kwargs):
         trainer = self.trainer
         model = trainer.model
+        model.set_training_step(state.global_step)
         if trainer.center_totals is not None:
             sums, squares, counts, clipped = reduce_moments(trainer.accelerator,trainer.center_totals,
                                                           model.anticipatory or model.memory_proxy)
@@ -87,9 +110,11 @@ class ProxyCallback(PilotCallback):
     def enrich_log(self,logs,state):
         if 'loss' in logs:
             logs['step_lm_loss'] = self.latest['lm_loss']
-            logs.update({f'step_{k}':v for k,v in self.latest.items() if k.startswith('proxy_') or k=='aux_loss'})
+            logs.update({f'step_{k}':v for k,v in self.latest.items() if k.startswith('proxy_') or k in ('aux_loss','consumer_effect_loss')})
             logs['seconds_per_update'] = self.seconds_per_update
             logs['proxy_lambda'] = self.trainer.model.auxiliary_weight(max(0,state.global_step-1))
+            if self.trainer.model.arm in DELAYED_ARMS:
+                logs['proxy_enabled_for_update']=state.global_step-1 >= PROXY_DELAY_STEPS
             for metric, values in self.trainer.normalization_metrics.items():
                 for key, value in zip(self.trainer.model.mean_layers,values.detach().cpu().tolist()):
                     suffix = str(key) if isinstance(key,int) else f'{key[0]}_deep_{key[1]}'
