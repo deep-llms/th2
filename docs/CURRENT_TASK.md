@@ -19,7 +19,13 @@ Predecessor:q359-proxy-12layer-screen22-20261013-a01. No old output/cache deleti
 Local new tests/validator passed. All35 broader regression tests passed in537.469s,
 including the original24-arm Trainer/resume/report and CPU two-rank tests.
 Six new tests passed (including the baseline-summary mismatch guard).
-Launch not yet verified; do not infer remote execution from this plan.
+Launch045238b acknowledged14October04:49SGT. Independent tmux session
+q359-proxy-followup11-20261014-a01 is alive (pane PID581217, pane_dead=0),
+logging WAITING_FOR_SCREEN_AND_BURN. Predecessor still running
+seed-42-arm-P6-iso-sparse-delayed; it was not interrupted. Follow-up training
+and remote CUDA gates have not started yet. commands.sh returned to#0.
+Evidence:temp/remote_logs/proxy-followup11-launch-20261014-a01.log,
+SHA256 5fe4ce1748629f0d7126c1ed6f18f23d7b5e3a3bdf083fc5ec265d60bc92b867.
 
 ## Screen22 results — 14 October 2026, 03:10 SGT
 
