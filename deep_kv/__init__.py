@@ -8,7 +8,12 @@ P6_TARGET_VARIANTS = ("P6-iso-weighted", "P6-iso-layernorm")
 P6_VARIANTS = ("P6-iso-sparse", "P6-iso-short") + P6_TARGET_VARIANTS
 P6_TARGET_WEIGHTS = (1.6, 1.2, 0.8, 0.4)
 P6_ROUTING_ARMS = ("P6-iso-targetgrad", "P6-iso-shallowgrad", "P6-iso-bothgrad")
-ANTICIPATORY_ARMS = ("P4-iso", "P6", "P5", "P4", "P6-iso", "P4-4h", "P4-iso-4h", "P6-lowaux") + P6_VARIANTS + P6_ROUTING_ARMS
+P6_ADAPTER_ARMS = ("P6-iso-adapter", "P6-iso-adapter-shallow")
+P6_DEPTH_ARMS = ("P6-iso-depth", "P6-iso-depth-current")
+P6_DEEP_ARMS = ("P6-iso-deep", "P6-iso-deep-shallow")
+P6_EXTENSION_ARMS = P6_ADAPTER_ARMS + P6_DEPTH_ARMS + P6_DEEP_ARMS
+P6_ADAPTER_WIDTH = 32
+ANTICIPATORY_ARMS = ("P4-iso", "P6", "P5", "P4", "P6-iso", "P4-4h", "P4-iso-4h", "P6-lowaux") + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS
 P7_P6_VARIANTS = ("P7-simple-sparse", "P7-simple-short")
 SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS
 MEMORY_ARMS = ("P7", "P7-kq", "P7-ems", "P7-mlp") + SIMPLE_MEMORY_ARMS
@@ -48,6 +53,17 @@ def anticipatory_target_metadata(arm):
     if arm == "P6-iso-layernorm":
         return dict(quantity="layernorm_mlp_window_sum", per_layer_normalization=dict(
             type="layer_norm", axis="hidden", epsilon=1e-6, affine=False, dtype="float32"))
+    if arm in P6_EXTENSION_ARMS:
+        # Versioned architecture contract also checked on reports and resume.
+        kind = ('shallow_adapter' if arm in P6_ADAPTER_ARMS else
+                'depth_input' if arm in P6_DEPTH_ARMS else 'deep_residual')
+        source = ('current_hidden' if arm.endswith('-current') else
+                  'shallow_norm' if arm.endswith('-shallow') else
+                  'depth_difference' if arm in P6_DEPTH_ARMS else 'prediction')
+        return dict(quantity="mlp_window_sum", extension=dict(version=1, kind=kind, source=source,
+            width="predictor_width" if arm in P6_DEPTH_ARMS else P6_ADAPTER_WIDTH,
+            initialization="zero_added_output", lm_to_predictor=arm == 'P6-iso-deep',
+            deep_injection="after_target_window" if arm in P6_DEEP_ARMS else None))
     return dict(quantity="mlp_window_sum")
 
 

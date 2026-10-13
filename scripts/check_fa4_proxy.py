@@ -13,6 +13,7 @@ import subprocess
 import sys
 
 from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
+from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_layout, anticipatory_target_metadata
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -51,6 +52,11 @@ def worker(args):
     with torch.no_grad():
         if not m.anticipatory and not m.memory_proxy:
             for head in m.heads.values():head.alpha.normal_(0,.05)
+        # Zero-output extension initialization would hide errors in its actual
+        # learned path. This numerical worker never writes a training checkpoint.
+        for extension in m.extensions.values():
+            parameter=extension.weight if arm in P6_DEPTH_ARMS else extension.up.weight
+            parameter.normal_(0,.02)
         if m.family:
             for mode in ('mean','variance'):
                 with torch.autocast('cuda',dtype=torch.bfloat16):
@@ -85,9 +91,9 @@ def worker(args):
     proxy_comparison=None
     if m.family:
         # The much larger backbone must not hide a proxy-only gradient error.
-        proxy_comparison=compare({**dense,'grads':{n:g for n,g in dense['grads'].items() if n.startswith('heads.')}},
-                                 {**flash,'grads':{n:g for n,g in flash['grads'].items() if n.startswith('heads.')}},False)
-        assert all(g.abs().sum()>0 for n,g in flash['grads'].items() if n.startswith('heads.'))
+        proxy_comparison=compare({**dense,'grads':{n:g for n,g in dense['grads'].items() if n.startswith(('heads.','extensions.'))}},
+                                 {**flash,'grads':{n:g for n,g in flash['grads'].items() if n.startswith(('heads.','extensions.'))}},False)
+        assert all(g.abs().sum()>0 for n,g in flash['grads'].items() if n.startswith(('heads.','extensions.')))
     losses={k:[dense[k],flash[k]] for k in ('lm_loss','aux_loss')}
     del dense,flash
     # End-to-end document isolation includes P3's EMS and nonzero proxy gates.
@@ -226,6 +232,13 @@ def validate(args):
                     assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
                 else:
                     assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
+                if arm in P6_EXTENSION_ARMS:
+                    assert config['proxy_target']['extension']==anticipatory_target_metadata(arm)['extension']
+                    for layer in anticipatory_layout(arm,depth)[0]:
+                        suffixes=('weight',) if arm in P6_DEPTH_ARMS else ('down.weight','up.weight')
+                        for suffix in suffixes:
+                            value=weights.get_tensor(f'extensions.{layer}.{suffix}')
+                            assert torch.isfinite(value).all() and value.abs().sum()>0
         peak=result['training_cost']['peak_cuda_allocated_bytes'];assert peak<160*2**30
         results.append(dict(arm=arm,peak_gib=peak/2**30,eval_lm_loss=result['evaluation']['eval_lm_loss'],receipts=receipt_names))
     write(args.output,dict(status='passed',steps=args.steps,arms=results))

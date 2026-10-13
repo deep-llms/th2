@@ -13,6 +13,7 @@ import torch
 from safetensors.torch import load_file
 from transformers import TrainingArguments
 from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS, P6_TARGET_VARIANTS, P6_ROUTING_ARMS
+from deep_kv import P6_EXTENSION_ARMS
 from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget, resolve_proxy_settings
 from deep_kv.proxy_estimators import BlockMLP
 from deep_kv.proxy_training import ProxyTrainer
@@ -361,8 +362,8 @@ class AnticipatoryTests(unittest.TestCase):
 
     def test_isolation_gradient_paths_and_stream_recurrence(self):
         for arm in ANTICIPATORY_ARMS:
-            if arm in P6_ROUTING_ARMS:
-                continue  # Both auxiliary backbone routes have independent VJP tests.
+            if arm in P6_ROUTING_ARMS + P6_EXTENSION_ARMS:
+                continue  # New routes/modules have independent gradient contract tests.
             m=model(arm)
             for auxiliary in (False,True):
                 m.zero_grad(set_to_none=True);out=m(batch());out['aux_sum' if auxiliary else 'lm_sum'].backward()
@@ -517,8 +518,11 @@ class AnticipatoryTests(unittest.TestCase):
         ctx=batch();row=dict(input_ids=ctx.input_ids[0].tolist(),labels=ctx.labels[0].tolist(),attention_mask=[1]*8)
         rows=[{**row,'segments':segments} for segments in ([0]*3+[1]*5,[0]*4+[1]*4,[0]+[1]*2+[2]*5)]
         micro=[isolated_data_collator([row]) for row in rows]
-        for arm in ('P4-iso','P5','P6') + P6_VARIANTS + P6_ROUTING_ARMS + ('P6-lowaux',):
+        for arm in ('P4-iso','P5','P6') + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + ('P6-lowaux',):
             models=[model(arm),model(arm)]
+            if arm in P6_EXTENSION_ARMS:
+                from tests.test_proxy_extensions import activate
+                for current in models:activate(current)
             with tempfile.TemporaryDirectory() as tmp:
                 trainers=[ProxyTrainer(model=m,args=TrainingArguments(output_dir=tmp,use_cpu=True,report_to=[])) for m in models]
                 for t in trainers:t.is_in_train=True;t.state.global_step=250

@@ -1,3 +1,97 @@
+## Paired adapter, depth-input and deep-residual arms — 13 October 2026
+
+Reviewed the four new gradient-routing/weight arms and added six more arms.
+Implementation and local synthetic CPU tests only; nothing submitted to B200.
+The existing `train.py`, HF Trainer, packing, optimizer and scheduler are reused.
+All six use P6-iso's sites, four-MLP targets, running standardization, clipped
+targets, cosine auxiliary loss, lambda0.1/ramp250 and initial gate0.1.
+The new branches stay present at inference; no random switching is used.
+
+| Arm | Difference from P6-iso | Matched control |
+|---|---|---|
+| `P6-iso-adapter` | Add a width32 LM-trained adapter of the detached proxy alongside the existing shallow injection | `P6-iso-adapter-shallow`: adapter reads the detached shallow normalized hidden vector |
+| `P6-iso-depth` | Predictor also reads the recent change across depth | `P6-iso-depth-current`: same additional projection reads the current hidden vector |
+| `P6-iso-deep` | Also inject a learned transformation of the live proxy after the target window; this deep LM path trains the predictor | `P6-iso-deep-shallow`: deep adapter reads the detached shallow normalized hidden vector |
+
+Precise definitions, with 1-based block l, h0=token embedding, h_j=block-j
+output, u_l=input_layernorm(h_{l-1}), R=parameter-free RMS normalization
+(epsilon1e-6), and s(x)=sqrt(mean(stopgrad(x)^2)+1e-6):
+
+- Adapter arms retain the parent's predictor p and add
+  `s(h) * U SiLU(D R(x))` at the shallow residual injection, with
+  x=stopgrad(p) or stopgrad(u_l). D has32 rows, U has32 columns, no biases.
+  The original `s(h) * alpha * R(stopgrad(p))` remains. Both adapter weights
+  receive only LM gradients; the predictor still receives only cosine gradients.
+- Depth arms predict
+  `p = W2 SiLU(W1 stopgrad(u_l) + Wd R(stopgrad(z)))`, where
+  z=h_{l-1}-h_{max(0,l-3)}; the capacity control uses z=h_{l-1}.
+  Thus at the first site l=2 the difference is h1-h0, and at l=4 it is h3-h1.
+  The extra projection has predictor_width rows (256 in the recipe).
+  W1/W2/Wd learn only from cosine loss; no LM or auxiliary gradient reaches
+  either input through this predictor. Parent shallow injection is unchanged.
+- Deep arms retain the parent shallow injection. Immediately after block l+3,
+  add `s(h_{l+3}) * U SiLU(D R(x))`, with x=p (live) or stopgrad(u_l).
+  The target MLP sum is measured BEFORE this direct residual is added.
+  Subsequent layers, and overlapping windows containing their outputs, naturally
+  see the modified state. This is an architectural change, not an oracle target
+  substitution. **The predictor in P6-iso-deep is deliberately LM-trained through
+  the deep branch**, despite retaining isolation at its shallow injection/input.
+  Its shallow-feature control's predictor remains auxiliary-only. The pair tests
+  the complete source/routing design, not a perfectly identical gradient graph.
+
+Adapter D is random normal with the backbone initialization standard deviation;
+U is zero. Wd is zero. There is no second zero gate that could prevent learning.
+This gives exact initial forward/auxiliary equality with P6-iso, while U or Wd
+has a nonzero first gradient. All parent heads are initialized BEFORE any new
+modules, inside the existing forked RNG context. Parent backbone/head tensors,
+the caller RNG, and paired-control initial tensors therefore remain identical.
+These are fresh-run architectures; changing an existing checkpoint's arm is
+rejected, not treated as ordinary resume. Delayed insertion/continuation branches
+and the new learned-teacher/consumer-aware proposals remain unimplemented.
+The older bottleneck Consumer-Aware arms already exist, but their separate code
+extractor/KV consumer objective is not interchangeable with a P6 residual arm.
+
+Implementation is in existing `deep_kv/proxy.py`, `proxy_estimators.py` and
+arm registries; no new training loop or preprocessing stage. The six arms share
+one backbone forward, one attention mask/layout and the usual target windows.
+Depth context retains only two detached earlier states; deep messages are freed
+at their destination. No extra attention or teacher pass is introduced. Compared
+with P6-iso, forward projection MACs per site rise by d*width for depth arms or
+2*d*32 for adapter/deep arms; normalization work is excluded from this estimate.
+Actual B200 throughput/memory are unmeasured. Existing estimator compilation and
+activation-checkpoint options work; the screen recipe still leaves them off.
+
+Generate the full fifteen-arm queue without executing it:
+
+```bash
+python -m scripts.proxy_12layer_queue --extensions --output /absolute/path/new-jobs.json
+```
+
+The original nine-arm default is unchanged. With --extensions, these six follow
+in table order, each candidate then its control. Each job uses all8GPUs, then
+strict artifact/backend validation; final reports include each candidate minus
+its control and minus P6-iso/A. Versioned architecture metadata is checked on
+resume and reports; validators also require the saved extension weights to be
+finite and nonzero. Numerical FA4 workers activate the added branches before
+comparing outputs/gradients, so zero initialization cannot hide an error.
+
+CPU acceptance includes independent active forward/gradient formulas, exact
+parent initialization, parameter/MAC counts, initial learnability, LM/auxiliary
+isolation, causal/document isolation, disabled-proxy identity, BF16/FP32,
+activation recomputation, AOT-eager compiled estimators, twelve-layer SDPA versus
+FA4-layout reference comparisons, real Trainer exact resume/reload, metadata
+tamper rejection, token-denominator accumulation and two-rank Gloo for all six
+arms from lambda0 to active auxiliary loss. FA4 tests use a CPU kernel substitute;
+they do not validate the actual CUDA kernel, B200 capacity or production speed.
+No real-data training, GPU management, remote push or downstream eval launched.
+
+Review also preserved the old block-call interface for non-depth arms (required
+by the existing calibration hook). Local evidence logs: /tmp/proxy-extensions-
+final.log, /tmp/proxy-extensions-ddp.log, /tmp/proxy-extensions-compile.log,
+/tmp/proxy-extensions-verify.log, /tmp/proxy-extensions-integration.log and
+/tmp/proxy-extension-compatibility.log. The last log verifies the calibration
+compatibility fix plus active formulas and BF16/checkpoint recomputation.
+
 ## 12-layer PPL screen and auxiliary routes — 13 October 2026
 
 Implementation only; no B200 submission or real-data training authorized in

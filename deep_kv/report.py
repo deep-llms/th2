@@ -4,6 +4,7 @@ import copy
 from pathlib import Path
 from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout, code_loss_weight, kv_loss_weight
 from . import P6_TARGET_VARIANTS, anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes
+from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS
 
 
 def comparable_config(config):
@@ -26,7 +27,7 @@ def comparable_config(config):
             config['pilot'].pop(key,None)
     if arm in ANTICIPATORY_ARMS:
         expected=dict(proxy_alpha_init=.1 if arm.startswith('P6') else 1.,
-                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS + P6_ROUTING_ARMS,
+                      proxy_isolate_estimator=arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS,
                       proxy_target_version='p4p6-r1',proxy_lookahead=2 if arm=='P6-iso-short' else 4,proxy_loss_form='cosine')
         if (any(config['pilot'].get(k)!=v for k,v in expected.items())
                 or config['pilot'].get('proxy_layers') is not None
@@ -113,7 +114,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 if arm in P6_ROUTING_ARMS:
                     expected_target['auxiliary_routes'] = auxiliary_routes(arm)
                 if (any(target.get(k)!=v for k,v in expected_target.items())
-                        or any(k in target and k not in expected_target for k in ('layer_weights','per_layer_normalization','auxiliary_routes'))
+                        or any(k in target and k not in expected_target for k in ('layer_weights','per_layer_normalization','auxiliary_routes','extension'))
                         or result.get('proxy',{}).get('target') != target):
                     raise ValueError('P4/P5/P6 target metadata does not match its definition or saved result')
             targets[arm] = target
@@ -140,6 +141,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     ignored |= {'quantity','layer_weights','per_layer_normalization'}
                 if arm in P6_ROUTING_ARMS or other in P6_ROUTING_ARMS:
                     ignored |= {'auxiliary_routes'}  # Explicit arm contract checked above.
+                if arm in P6_EXTENSION_ARMS or other in P6_EXTENSION_ARMS:
+                    ignored |= {'extension'}  # Versioned architecture checked above.
                 if arm in MEMORY_ARMS or other in MEMORY_ARMS:
                     ignored |= {'quantity','bands','target_version','relational'}
                 if ({k:v for k,v in target.items() if k not in ignored} !=
@@ -190,8 +193,10 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 if arm in nll and 'A' in nll:summary['nll_differences'][arm+'-A']=nll[arm]-nll['A']
             for arm,control in (('P4-4h','P4'),('P4-iso-4h','P4-iso'),('P4-iso-4h','P4-4h')):
                 if arm in nll and control in nll:summary['nll_differences'][arm+'-'+control]=nll[arm]-nll[control]
-            for arm in P6_VARIANTS + P6_ROUTING_ARMS:
+            for arm in P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS:
                 if arm in nll and 'P6-iso' in nll:summary['nll_differences'][arm+'-P6-iso']=nll[arm]-nll['P6-iso']
+            for arm,control in (P6_ADAPTER_ARMS,P6_DEPTH_ARMS,P6_DEEP_ARMS):
+                if arm in nll and control in nll:summary['nll_differences'][arm+'-'+control]=nll[arm]-nll[control]
             if 'P6-lowaux' in nll and 'P6' in nll:
                 summary['nll_differences']['P6-lowaux-P6']=nll['P6-lowaux']-nll['P6']
             summary['auxiliary_max_weights'] = {

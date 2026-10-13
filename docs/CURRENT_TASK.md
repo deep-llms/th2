@@ -1,3 +1,29 @@
+## Six additional paired arms implemented locally — 13 October 2026
+
+Current request: review the new arms and implement other arms; continue the
+implementation-only scope. No training launch, remote push or GPU management.
+commands.sh remains#0. Unrelated user documents are preserved.
+
+Added P6-iso-adapter / adapter-shallow, P6-iso-depth / depth-current, and
+P6-iso-deep / deep-shallow. Each pair has identical additional capacity and
+starts at P6-iso's forward function. The deep-proxy arm deliberately adds an LM
+gradient route into its predictor; its shallow injection remains detached.
+See PROJECT_NOTES.md for exact formulas, initialization and gradient contracts.
+No additional backbone/attention pass; two-state depth history and short-lived
+deep-message storage. Actual B200 speed and memory have not been measured.
+
+`scripts.proxy_12layer_queue --extensions` prepares fifteen sequential
+2500-step/12-layer PPL runs; default remains the earlier nine arms. Shared
+Trainer, data/cache/packing, schedule and checkpoint rules remain in use.
+New architecture metadata and trained extension tensors are checked by reports
+and validators. Delayed introduction and new consumer-aware/teacher variants
+remain separate, unimplemented follow-ups; do not queue names for them.
+
+Local synthetic CPU tests exercise active branches, gradient paths, isolation,
+exact resume/reload, BF16, recomputation, compiled estimators, two-rank Gloo,
+global loss scaling, queue/report validation and FA4-layout reference agreement.
+CUDA FA4/B200 performance tests and real training have not been run.
+
 ## 12-layer proxy screen implemented locally — 13 October 2026
 
 Current request: implement the first variants, improve throughput where safe,

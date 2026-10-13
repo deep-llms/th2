@@ -2,12 +2,14 @@
 
 Uses train.py / Accelerate / run_experiments unchanged. The historical 28-layer
 recipe is separate; this is a full 2,500-step schedule with 5% warmup.
+--extensions adds six paired adapter/depth/deep-residual arms, for fifteen total.
 """
 import argparse
 import json
 from pathlib import Path
 
 from deep_kv.__main__ import jobs
+from deep_kv import P6_EXTENSION_ARMS
 from run_experiments import load_jobs
 
 
@@ -15,7 +17,7 @@ ARMS = ('A', 'P6-iso', 'P6-iso-targetgrad', 'P6-iso-shallowgrad',
         'P6-iso-bothgrad', 'P6', 'P6-lowaux', 'P6-iso-sparse', 'P7-simple')
 
 
-def make(recipe_path, output, seed=42):
+def make(recipe_path, output, seed=42, extensions=False):
     recipe = json.loads(Path(recipe_path).read_text())
     expected = dict(num_hidden_layers=12, consumer=2, deep_target=12,
                     max_steps=2500, stop_after=2500, warmup_steps=125,
@@ -29,7 +31,7 @@ def make(recipe_path, output, seed=42):
     if (type(seed) is not int or seed < 0 or recipe.get('proxy_lambda_max') is not None
             or recipe.get('proxy_module_seed') is not None or recipe.get('resume_from_checkpoint')):
         raise ValueError('Use fresh runs and arm-defined lambda / per-seed proxy initialization')
-    generated = jobs(recipe_path, arms=ARMS, seeds=[seed])['jobs']
+    generated = jobs(recipe_path, arms=ARMS + (P6_EXTENSION_ARMS if extensions else ()), seeds=[seed])['jobs']
     items = []
     for item in generated:
         if 'gpus' not in item:
@@ -60,5 +62,6 @@ if __name__ == '__main__':
     parser.add_argument('--recipe', default='proxy_heads.12layer.b200.json')
     parser.add_argument('--output', required=True)
     parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--extensions', action='store_true', help='Include the six adapter/depth/deep-residual arms and controls')
     args = parser.parse_args()
-    make(args.recipe, args.output, args.seed)
+    make(args.recipe, args.output, args.seed, args.extensions)

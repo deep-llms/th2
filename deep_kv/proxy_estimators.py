@@ -5,8 +5,27 @@ from torch.nn import functional as F
 from .model import normalize_code
 
 
+class ResidualAdapter(nn.Module):
+    """Zero-output, bias-free adapter; its up projection learns immediately."""
+    def __init__(self, config, width):
+        super().__init__()
+        self.down = nn.Linear(config.hidden_size, width, bias=False)
+        self.up = nn.Linear(width, config.hidden_size, bias=False)
+        nn.init.normal_(self.down.weight, std=config.initializer_range)
+        nn.init.zeros_(self.up.weight)
+
+    def forward(self, value):
+        # Same RMS convention as the parent predictor injection, not unit L2.
+        return self.up(F.silu(self.down(normalize_code(value).to(value.dtype))))
+
+
 def gated_prediction(prediction, alpha, source):
     return alpha[0]*normalize_code(prediction).to(source.dtype)
+
+
+def depth_prediction(source, depth, w1, w2, depth_weight):
+    extra = normalize_code(depth).to(source.dtype)
+    return F.linear(F.silu(F.linear(source,w1)+F.linear(extra,depth_weight)),w2)
 
 
 def cosine_loss(prediction, target, valid, target_grad=False):

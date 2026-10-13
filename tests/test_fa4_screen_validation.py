@@ -9,6 +9,7 @@ import torch
 from safetensors.torch import save_file
 from scripts.check_fa4_proxy import validate
 from deep_kv import MEMORY_ARMS, SIMPLE_MEMORY_ARMS
+from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_target_metadata
 
 
 class ScreenValidationTests(unittest.TestCase):
@@ -20,7 +21,8 @@ class ScreenValidationTests(unittest.TestCase):
                                              ('fa4','P7',25,1),('fa4','P7-kq',25,1),('sdpa','P7-ems',25,1),
                                              ('fa4','P7-simple',25,1),('sdpa','P7-simple',25,1),
                                              ('fa4','P7-simple-sparse',25,1),('sdpa','P7-simple-sparse',25,1),
-                                             ('fa4','P7-simple-short',25,1),('sdpa','P7-simple-short',25,1)):
+                                             ('fa4','P7-simple-short',25,1),('sdpa','P7-simple-short',25,1)) + tuple(
+                (backend,arm,25,1) for arm in P6_EXTENSION_ARMS for backend in ('sdpa','fa4')):
             with self.subTest(steps=steps,arm=variant),tempfile.TemporaryDirectory() as tmp:
                 layers=(2,6,10,14,18,22) if variant=='P7-simple-sparse' else tuple(range(2,25,2))
                 root=Path(tmp);arm=root/f'seed-42/{variant}';checkpoint=arm/f'checkpoint-{steps}'
@@ -39,6 +41,8 @@ class ScreenValidationTests(unittest.TestCase):
                     result['evaluation'].update(eval_cos_loss=1.,eval_aux_loss=1.)
                     if variant not in SIMPLE_MEMORY_ARMS:result['evaluation'].update(eval_rel_loss=.5,eval_aux_loss=1.25)
                     result['evaluation'].update({f'eval_proxy_layer_{layer}_attention_mass':.5 for layer in layers})
+                if variant in P6_EXTENSION_ARMS:
+                    config['proxy_target']=anticipatory_target_metadata(variant)
                 for name,value in (('train_config',config),('trainer_state',state),('result',result)):
                     (arm/f'{name}.json').write_text(json.dumps(value))
                 (checkpoint/'trainer_state.json').write_text(json.dumps(state))
@@ -58,6 +62,9 @@ class ScreenValidationTests(unittest.TestCase):
                         for suffix in (('w1.weight','w2.weight') if variant in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight'))+('k_proj.weight','k_norm.weight')+
                         (() if variant=='P7-kq' else ('v_proj.weight',))} if variant in MEMORY_ARMS else
                        {'heads.2.alpha':torch.ones(1,3)*.1})
+                if variant in P6_EXTENSION_ARMS:
+                    heads.update({f'extensions.{layer}.{suffix}':torch.ones(3) for layer in layers
+                        for suffix in (('weight',) if variant in P6_DEPTH_ARMS else ('down.weight','up.weight'))})
                 save_file(dict(mu_initialized=torch.tensor(True),mu=torch.ones(2,3),sigma2=torch.ones(2,3),
                     **heads),checkpoint/'model.safetensors')
                 args=SimpleNamespace(run_dir=str(root),output=str(root/'passed.json'),steps=steps,seed=42,arms=[variant],attention_backend=backend)
@@ -105,6 +112,12 @@ class ScreenValidationTests(unittest.TestCase):
                 args.output=str(root/'bad.json');args.steps=steps+1
                 with self.assertRaises(AssertionError):validate(args)
                 args.steps=steps
+                if variant in P6_EXTENSION_ARMS:
+                    # A label alone cannot masquerade as the corresponding control.
+                    path=arm/'train_config.json';bad=json.loads(path.read_text())
+                    bad['proxy_target']['extension']['source']='incorrect';path.write_text(json.dumps(bad))
+                    with self.assertRaises(AssertionError):validate(args)
+                    path.write_text(json.dumps(config))
                 if steps==25 and interval==10:
                     path=arm/'trainer_state.json';broken={**state,'log_history':state['log_history'][:-1]}
                     path.write_text(json.dumps(broken))
