@@ -131,16 +131,25 @@ def worker(args):
 
 
 def run(args):
+    arms=tuple(getattr(args,'worker_arms',None) or PROXY_ARMS)
+    if len(set(arms))!=len(arms) or any(a not in ALL_PROXY_ARMS for a in arms):
+        raise ValueError('Numerical workers require distinct proxy arms')
     root=Path(args.output);root.mkdir(parents=True,exist_ok=False)
     visible=os.environ['CUDA_VISIBLE_DEVICES'].split(',');assert len(visible)==8
     children=[];logs=[]
     try:
-        for index,gpu in enumerate(visible):
-            log=(root/f'case-{index}.log').open('x');logs.append(log)
-            command=[sys.executable,'-u','-m','scripts.check_fa4_proxy','worker','--recipe',args.recipe,
-                     '--rows',args.rows,'--index',str(index),'--output',str(root/f'case-{index}.json')]
-            children.append(subprocess.Popen(command,env={**os.environ,'CUDA_VISIBLE_DEVICES':gpu},stdout=log,stderr=subprocess.STDOUT))
-        codes=[p.wait() for p in children]
+        codes=[]
+        for start in range(0,len(arms),len(visible)):
+            wave=[]
+            for offset,arm in enumerate(arms[start:start+len(visible)]):
+                index=start+offset;gpu=visible[offset]
+                log=(root/f'case-{index}.log').open('x');logs.append(log)
+                command=[sys.executable,'-u','-m','scripts.check_fa4_proxy','worker','--recipe',args.recipe,
+                         '--rows',args.rows,'--index',str(offset),'--arm',arm,'--output',str(root/f'case-{index}.json')]
+                child=subprocess.Popen(command,env={**os.environ,'CUDA_VISIBLE_DEVICES':gpu},stdout=log,stderr=subprocess.STDOUT)
+                children.append(child);wave.append(child)
+            wave_codes=[p.wait() for p in wave];codes.extend(wave_codes)
+            if any(wave_codes):break
     finally:
         for p in children:
             if p.poll() is None:p.terminate()
@@ -148,8 +157,8 @@ def run(args):
             try:p.wait(timeout=20)
             except subprocess.TimeoutExpired:p.kill();p.wait()
         for log in logs:log.close()
-    results=[read(root/f'case-{i}.json') for i in range(8) if (root/f'case-{i}.json').exists()]
-    passed=codes==[0]*8 and len(results)==8 and all(r['status']=='passed' and r['arm']==PROXY_ARMS[i] for i,r in enumerate(results))
+    results=[read(root/f'case-{i}.json') for i in range(len(arms)) if (root/f'case-{i}.json').exists()]
+    passed=codes==[0]*len(arms) and len(results)==len(arms) and all(r['status']=='passed' and r['arm']==arms[i] for i,r in enumerate(results))
     write(root/'summary.json',dict(status='passed' if passed else 'failed',exit_codes=codes,cases=results,
         tolerances=dict(loss_absolute=.01,gradient_relative_l2=.03,proxy_gradient_relative_l2=.03,output_relative_l2=.02)))
     assert passed,codes
@@ -264,6 +273,7 @@ def main():
     p.add_argument('--recipe');p.add_argument('--rows');p.add_argument('--run-dir')
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
     p.add_argument('--arm',choices=ALL_PROXY_ARMS,help='Explicit arm for a numerical worker')
+    p.add_argument('--worker-arms',nargs='+',choices=ALL_PROXY_ARMS,help='Numerical cases, in waves of at most eight GPUs')
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
     p.add_argument('--schedule-steps',type=int,default=28600,help='Expected full schedule; override only for disposable smokes')
     p.add_argument('--warmup-steps',type=int,default=1430,help='Expected warmup; override only for disposable smokes')

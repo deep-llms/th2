@@ -79,6 +79,44 @@ class Screen24Tests(unittest.TestCase):
             for name,value in sparse.extensions[str(layer)].state_dict().items():
                 torch.testing.assert_close(value,dense.extensions[str(layer)].state_dict()[name],rtol=0,atol=0)
 
+    def test_deferred_consumer_launch_is_gated_and_separate(self):
+        from scripts.proxy_12layer_queue import ALL_SCREEN_ARMS,make,launch_jobs
+        selected=tuple(a for a in ALL_SCREEN_ARMS if a not in P6_CONSUMER_ARMS)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with self.assertRaises(ValueError):make('proxy_heads.12layer.b200.json',root/'bad.json',defer_consumer=True)
+            items=launch_jobs('proxy_heads.12layer.b200.json',root/'jobs.json',root/'rows.json')
+            self.assertEqual(len(items),91)
+            numerics=[items[0]]
+            smokes=[j for j in items if j['name'].startswith('smoke-') and 'gpus' in j]
+            production=[j for j in items if j['name'].startswith('seed-42-arm-')]
+            args=numerics[0]['argv'];start=args.index('--worker-arms')+1
+            self.assertEqual(args[start:start+21],list(selected[1:]))
+            self.assertEqual(numerics[0]['gpus'],list(range(8)))
+            for group in (smokes,production):
+                self.assertEqual([j['argv'][j['argv'].index('--arm')+1] for j in group],list(selected))
+                self.assertTrue(all(j['gpus']==list(range(8)) for j in group))
+            self.assertLess(max(items.index(j) for j in numerics),min(items.index(j) for j in smokes))
+            self.assertLess(max(items.index(j) for j in smokes),min(items.index(j) for j in production))
+            for smoke,full in zip(smokes,production):
+                def arg(job,key):return job['argv'][job['argv'].index('--'+key)+1]
+                for key in ('max_steps','warmup_steps','seed','data_seed','num_hidden_layers',
+                            'per_device_train_batch_size','gradient_accumulation_steps','data_dir',
+                            'eval_data_dir','preprocessing_num_workers','save_total_limit'):
+                    self.assertEqual(arg(smoke,key),arg(full,key))
+                self.assertEqual(arg(smoke,'stop_after'),'3');self.assertEqual(arg(full,'stop_after'),'2500')
+                self.assertIn('/smoke/',arg(smoke,'output_dir'));self.assertNotIn('/smoke/',arg(full,'output_dir'))
+                for job in (smoke,full):
+                    self.assertNotIn('--resume_from_checkpoint',job['argv'])
+                    validator=items[items.index(job)+1]
+                    self.assertNotIn('gpus',validator)
+                    self.assertEqual(validator['required_outputs'][0]['json_equals'],{'status':'passed'})
+            for report in items[-2:]:
+                args=report['argv'];start=args.index('--arms')+1
+                self.assertEqual(args[start:start+22],list(selected))
+            outputs=[o['path'] for j in items for o in j['required_outputs']]
+            self.assertEqual(len(outputs),len(set(outputs)))
+
     def test_target_routes_against_independent_graph(self):
         for arm in ('P6-iso-sparse-targetgrad','P7-simple-targetgrad'):
             actual=model(arm);ref=model(parent(arm));ctx=batch();mlps={};sources={};handles=[]
@@ -103,6 +141,36 @@ class Screen24Tests(unittest.TestCase):
                 self.assertEqual(p.grad is None,q.grad is None,n)
                 if p.grad is not None:torch.testing.assert_close(p.grad,q.grad,rtol=3e-5,atol=2e-6,msg=arm+'/'+n)
             for h in handles:h.remove()
+
+    def test_numerical_workers_use_bounded_gpu_waves_and_fail_closed(self):
+        from types import SimpleNamespace
+        from scripts import check_fa4_proxy as check
+        from scripts.proxy_12layer_queue import ALL_SCREEN_ARMS
+        arms=[a for a in ALL_SCREEN_ARMS if a!='A' and a not in P6_CONSUMER_ARMS]
+        for failing in (False,True):
+            live=set();launched=[];peak=[]
+            class Child:
+                def __init__(self,argv,env,**kwargs):
+                    self.gpu=env['CUDA_VISIBLE_DEVICES'];self.code=None
+                    self.arm=argv[argv.index('--arm')+1]
+                    self.output=Path(argv[argv.index('--output')+1])
+                    assert self.gpu not in live
+                    live.add(self.gpu);peak.append(len(live));launched.append(self.arm)
+                def wait(self,timeout=None):
+                    if self.code is None:
+                        self.code=int(failing and self.arm==arms[0]);live.remove(self.gpu)
+                        self.output.write_text(json.dumps(dict(arm=self.arm,status='failed' if self.code else 'passed')))
+                    return self.code
+                def poll(self):return self.code
+            with tempfile.TemporaryDirectory() as tmp,patch.object(check.subprocess,'Popen',Child),patch.dict(os.environ,CUDA_VISIBLE_DEVICES='0,1,2,3,4,5,6,7'):
+                root=Path(tmp)/'numerics'
+                args=SimpleNamespace(output=str(root),recipe='recipe.json',rows='rows.json',worker_arms=arms)
+                if failing:
+                    with self.assertRaises(AssertionError):check.run(args)
+                else:check.run(args)
+                self.assertEqual(json.loads((root/'summary.json').read_text())['status'],'failed' if failing else 'passed')
+            self.assertEqual(launched,arms[:8] if failing else arms)
+            self.assertEqual(max(peak),8);self.assertFalse(live)
 
     def test_p7_lm_route_and_frozen_auxiliary_backbone(self):
         a,b=model('P7-simple'),model('P7-simple-lm')

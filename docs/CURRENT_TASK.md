@@ -1,3 +1,24 @@
+## B200 22-arm launch authorized — 13 October 2026
+
+User approved the complete screen, deferring consumer-aware experiments. Run22
+arms: all24 except P6-iso-consumer and P6-iso-consumer-only. Same12-layer random
+initialization, seed42/proxy43,2500updates,125LR warmup,1,048,576tokens/update,
+FA4 isolated documents/reset RoPE and all250-step checkpoints. No downstream.
+
+Read-only preflight0093324 verified q359 at03:33:01UTC, all8B200s, pinned
+attention_bench packages, expected model/data paths and20.6TiB free. Only the
+approved communicating burn workers379567–379574 were observed. Reclamation
+will recheck identities; no arbitrary process or process group is authorized.
+
+Launch root q359-proxy-12layer-screen22-20261013-a01. Existing supervisor will
+restore and verify communicating burns after success or failure. Preflight
+hashes assets/data, copies resources/accelerate_config.yaml into its actual
+cache and runs accelerate env. Numerical cases run in up-to-eight-GPU waves,
+then each arm gets a separate three-update all8GPU training/validation smoke.
+Only after all gates pass do22 fresh production runs start sequentially.
+Production checkpoints never resume smoke outputs. Existing full-data packing
+and HF caches remain shared and untouched. Launch pending at this entry.
+
 ## 24-arm correctness re-review — 13 October 2026
 
 Reviewed the current gradient routes, consumer objectives, delayed activation,
