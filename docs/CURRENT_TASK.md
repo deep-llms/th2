@@ -1,3 +1,37 @@
+## 12-layer proxy screen implemented locally — 13 October 2026
+
+Current request: implement the first variants, improve throughput where safe,
+and do NOT launch training. commands.sh remains#0. No remote pushes, GPU
+management, real-data training or downstream evaluation in this implementation.
+
+New arms: P6-iso-targetgrad, P6-iso-shallowgrad, P6-iso-bothgrad, P6-lowaux.
+The first three expose the named auxiliary gradient paths with prediction
+injection still detached. P6-lowaux is ordinary P6 with lambda_max0.03 instead
+of0.1. Existing target statistics remain detached; target-adaptive gradients
+pass through the actual MLP sum, standardization and clipping. Arm/routing
+metadata and strict reload/resume/report validation included.
+
+train.py supports an explicit random-init depth override. A separate
+proxy_heads.12layer.b200.json uses12layers,2500steps,125LR-warmup steps,
+1,048,576tokens/update, FA4, EOS/document isolation and all250-step checkpoints.
+The auxiliary ramp remains250steps. scripts.proxy_12layer_queue generates nine
+sequential arms (A, P6-iso, three routes, P6, lowaux, sparse, P7-simple), each
+followed by validation, then PPL reports; it never executes the queue itself.
+Delayed introduction, adapters and consumer-aware methods are not implemented.
+
+Throughput work: existing no-checkpoint/synchronization optimization recipe,
+one backbone forward, shared target contributions, shared centered FP32 values
+for differentiable targets and detached statistics. No speculative kernel change.
+CPU tests cover independent gradient references, exact unchanged LM-only paths,
+FP32/BF16/checkpoint/compiled regressions, Trainer save/reload and exact resume,
+two-rank Gloo from lambda0 to active auxiliary loss, global accumulation scaling,
+12-layer full-schedule validation, and FA4-layout reference equivalence (CPU
+kernel substitute, not CUDA validation). No B200 speed/memory claims.
+
+Details and queue-generation command are at the top of PROJECT_NOTES.md.
+Next step is user review; any GPU numerical/performance smoke and production
+launch need a subsequent launch request. Existing unrelated dirty docs preserved.
+
 ## Sparse downstream evaluation blocked by missing checkpoint — 13 October 2026
 
 User approved inference-only evaluation of P6-iso-sparse at step2500, seed42,

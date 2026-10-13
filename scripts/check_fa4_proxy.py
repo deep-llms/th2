@@ -36,8 +36,11 @@ def worker(args):
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     arm=args.arm if args.arm is not None else PROXY_ARMS[args.index];recipe=read(args.recipe)
     cfg=AutoConfig.from_pretrained(recipe['config_name'],local_files_only=True)
+    from train import configure_depth
+    configure_depth(cfg, recipe.get('num_hidden_layers'))
     cfg._attn_implementation='sdpa';cfg.use_cache=False
     m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=42,
+        consumer=recipe.get('consumer',5),deep_target=recipe.get('deep_target',21),
         checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
     rows=read(args.rows)[:2]
     assert len(rows)==2 and all(len(r['input_ids'])==2048 for r in rows)
@@ -150,12 +153,14 @@ def validate(args):
     root=Path(args.run_dir);results=[]
     schedule=getattr(args,'schedule_steps',28600)
     warmup=getattr(args,'warmup_steps',1430)
-    assert 0 <= warmup < schedule and 1 <= args.steps < schedule and args.arms and len(set(args.arms))==len(args.arms)
+    depth=getattr(args,'num_hidden_layers',28)
+    assert 0 <= warmup < schedule and 1 <= args.steps <= schedule and args.arms and len(set(args.arms))==len(args.arms)
     for arm in args.arms:
         folder=root/f'seed-{args.seed}'/arm
         result,state,config=(read(folder/name) for name in ('result.json','trainer_state.json','train_config.json'))
         assert result['arm']==arm and result['global_step']==state['global_step']==args.steps
-        assert result['status']=='stopped' and result['schedule_steps']==state['max_steps']==schedule
+        assert result['status']==('complete' if args.steps==schedule else 'stopped') and result['schedule_steps']==state['max_steps']==schedule
+        assert config.get('model_config',{}).get('num_hidden_layers',28)==depth
         assert result['input_tokens']==args.steps*1048576
         backend=getattr(args,'attention_backend','fa4')
         assert config['pilot'].get('attention_backend','sdpa')==backend and config['data']['isolate_documents']
@@ -181,8 +186,8 @@ def validate(args):
         receipt_names=result[backend+'_receipts']
         receipts=[read(folder/name) for name in receipt_names]
         assert {r['phase'] for r in receipts}=={'train','eval'}
-        memory_layers = simple_memory_layout(arm,28)[0] if arm in SIMPLE_MEMORY_ARMS else tuple(range(2,25,2))
-        attention_calls=28+len(memory_layers) if arm in MEMORY_ARMS else 28
+        memory_layers = simple_memory_layout(arm,depth)[0] if arm in SIMPLE_MEMORY_ARMS else tuple(range(2,depth-2,2))
+        attention_calls=depth+len(memory_layers) if arm in MEMORY_ARMS else depth
         for r in receipts:
             assert r['arm']==arm and r['world_size']==8
             if backend=='fa4':
@@ -234,6 +239,7 @@ def main():
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
     p.add_argument('--schedule-steps',type=int,default=28600,help='Expected full schedule; override only for disposable smokes')
     p.add_argument('--warmup-steps',type=int,default=1430,help='Expected warmup; override only for disposable smokes')
+    p.add_argument('--num-hidden-layers',type=int,default=28,help='Expected decoder depth')
     p.add_argument('--arms',nargs='+',choices=('A',)+ALL_PROXY_ARMS,default=('A',)+PROXY_ARMS)
     p.add_argument('--attention-backend',choices=('fa4','sdpa'),default='fa4',help='Backend expected by validate mode')
     args=p.parse_args();globals()[args.mode](args)

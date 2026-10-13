@@ -13,7 +13,7 @@ from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
 
 from .model import DeepKV, normalize_code
 from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout
-from . import P6_TARGET_WEIGHTS
+from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 
 
 @dataclass
@@ -23,7 +23,7 @@ class ProxySettings:
     width: int = 256
     features: int = 255
     chunk_size: int = 64
-    lambda_max: float = .1
+    lambda_max: float | None = None
     warmup_steps: int = 250
     alpha_init: float | None = None
     kv_mode: str = 'kv'
@@ -44,6 +44,9 @@ class ProxySettings:
 
 def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
+    if settings.lambda_max is None:settings.lambda_max = .03 if arm == 'P6-lowaux' else .1
+    if arm == 'P6-lowaux' and settings.lambda_max != .03:
+        raise ValueError('P6-lowaux requires lambda_max=0.03')
     new = arm in ANTICIPATORY_ARMS
     memory = arm in MEMORY_ARMS
     expected_lookahead = 2 if arm in ('P6-iso-short','P7-simple-short') else 4
@@ -61,7 +64,7 @@ def resolve_proxy_settings(arm, settings=None):
         if settings.module_seed is None:settings.module_seed = 43
     if settings.alpha_init is None:settings.alpha_init = (.1 if arm.startswith('P6') else 1.) if new else 0.
     if settings.target_version is None:settings.target_version = 'p4p6-r1' if new else 'r7'
-    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS
+    isolation = arm in ('P4-iso','P5','P6-iso','P4-iso-4h') + P6_VARIANTS + P6_ROUTING_ARMS
     if settings.isolate_estimator is None:settings.isolate_estimator = isolation
     if new:
         if (settings.target_version != 'p4p6-r1' or settings.lookahead != expected_lookahead
@@ -117,7 +120,7 @@ def compute_budget(config, settings, sequence_length=2048):
     stream = plain+max(0,layers-1)*3*settings.width**2
     for family,mac in [('P4',plain),('P5',stream),('P6',plain)]:
         result[family] = dict(extra_macs_per_token=mac,extra_parameters=mac+layers*d,gate_parameters=layers*d)
-    for arm in P6_VARIANTS:
+    for arm in P6_VARIANTS + P6_ROUTING_ARMS + ('P6-lowaux',):
         count = len(anticipatory_layout(arm, n)[0])
         mac = count*2*d*settings.width
         result[arm] = dict(extra_macs_per_token=mac,extra_parameters=mac+count*d,gate_parameters=count*d)
@@ -254,6 +257,8 @@ class ProxyModel(DeepKV):
             raise ValueError('Proxy screen requires document isolation')
         super().__init__(backbone, 'A', **kwargs)
         self.arm, self.proxy_screen, self.settings = arm, True, settings
+        routes = auxiliary_routes(arm)
+        self.aux_input_grad, self.aux_target_grad = routes['shallow'], routes['target']
         self.attention_backend = attention_backend
         self.attention_runtime = {'backend': attention_backend}
         if attention_backend == 'fa4':
@@ -376,14 +381,15 @@ class ProxyModel(DeepKV):
         self.sigma2.mul_(momentum).add_(variance,alpha=1-momentum)
         return diagnostics
 
-    def normalize_target(self, value, key, *, return_clipped=False, inverse_scale=None, centered=None):
-        with torch.no_grad(), torch.autocast(device_type=value.device.type, enabled=False):
+    def normalize_target(self, value, key, *, return_clipped=False, inverse_scale=None, centered=None,
+                         target_grad=False):
+        with torch.set_grad_enabled(torch.is_grad_enabled() and target_grad), torch.autocast(device_type=value.device.type, enabled=False):
             index = self.mean_index[key]
             if inverse_scale is None:
                 variance = self.sigma2[index]
                 floor = self.settings.variance_floor*variance.median()
                 inverse_scale = torch.rsqrt(variance.clamp_min(floor)+1e-6)
-            if centered is None:centered = value.detach().float()-self.mu[index]
+            if centered is None:centered = (value if target_grad else value.detach()).float()-self.mu[index]
             standardized = centered*inverse_scale
             normalized = standardized.clamp(-self.settings.target_clip,self.settings.target_clip)
             if return_clipped:
@@ -484,7 +490,7 @@ class ProxyModel(DeepKV):
             if self.family=='P5':
                 aux,stream=head.stream_step(u,stream)
                 injected=aux.detach()
-            else:injected,aux=head.routed(u,self.settings)
+            else:injected,aux=head.routed(u,self.settings,aux_input_grad=self.aux_input_grad)
             gate=torch.zeros_like(head.alpha) if self.gates_disabled else head.alpha
             delta=self.gated_prediction(injected,gate,u)
             if self.family=='P6':
@@ -496,13 +502,13 @@ class ProxyModel(DeepKV):
             else:attended=self.attention(layer,u,u+delta,mask,rotary)
             residual=hidden+layer.self_attn.o_proj(attended.reshape(*u.shape[:-1],-1).contiguous())
             mlp=layer.mlp(layer.post_attention_layernorm(residual))
-            return residual+mlp,mlp.detach(),u,aux,stream
+            return residual+mlp,mlp if self.aux_target_grad else mlp.detach(),u,aux,stream
         estimates = head.estimates(u,plan) if head is not None else ()
         z = head.inject(u,estimates,self.gates_disabled) if head is not None else None
         attended = self.attention(layer,u,z,mask,rotary)
         residual = hidden + layer.self_attn.o_proj(attended.reshape(*u.shape[:-1],-1).contiguous())
         mlp = layer.mlp(layer.post_attention_layernorm(residual))
-        return (residual+mlp,mlp.detach(),u,stream) if self.anticipatory else (residual+mlp, mlp.detach(), u, *estimates)
+        return (residual+mlp,mlp if self.aux_target_grad else mlp.detach(),u,stream) if self.anticipatory else (residual+mlp, mlp.detach(), u, *estimates)
 
     def layer_cosines(self, layer, u, estimates, raw_target, plan, valid, auxiliary_grad):
         head = self.heads[str(layer)]
@@ -515,6 +521,8 @@ class ProxyModel(DeepKV):
                     rel_sum, rel_count = relational_losses(prediction,target,plan)
                     return cosines[:,None],(valid.sum(-1)-cosines)[:,None],rel_sum,rel_count
             elif self.anticipatory or self.memory_proxy:
+                if self.aux_target_grad:
+                    return self.cosine_loss(forward_estimates[0],target,valid,target_grad=True)
                 return self.cosine_loss(forward_estimates[0],target,valid)
             elif self.routing == 'block':
                 predictions = head.estimates(source.detach(),plan)
@@ -563,6 +571,7 @@ class ProxyModel(DeepKV):
         counts = self.mu.new_zeros(len(self.mean_layers))
         clipped = torch.zeros_like(counts)
         need_targets = bool(self.family and (compute_auxiliary_losses or collect_target_statistics))
+        target_grad = self.aux_target_grad and compute_auxiliary_losses and auxiliary_grad and torch.is_grad_enabled()
         inverse_scales = None
         count_clipped = collect_target_statistics and collect_clip_statistics
         if need_targets and (compute_auxiliary_losses or (count_clipped and statistics_mode is None)):
@@ -573,22 +582,31 @@ class ProxyModel(DeepKV):
                 inverse_scales = torch.rsqrt(self.sigma2.clamp_min(floors)+1e-6)
         target_count = context.valid.sum() if need_targets and collect_target_statistics else None
         def record(key, raw):
+            index = self.mean_index[key]
+            # Share the centered value with detached statistics without severing
+            # the target's gradient. Running moments never join autograd.
+            centered = None
+            if target_grad:
+                with torch.autocast(device_type=raw.device.type,enabled=False):
+                    centered = raw.float()-self.mu[index]
             with torch.no_grad(), torch.autocast(device_type=raw.device.type,enabled=False):
-                index = self.mean_index[key]
                 shifted = None
                 if collect_target_statistics:
-                    shifted = raw.detach().float() if statistics_mode == 'mean' else raw.detach().float()-self.mu[index]
+                    shifted = (raw.detach().float() if statistics_mode == 'mean' else
+                               centered.detach() if centered is not None else raw.detach().float()-self.mu[index])
                     sums[index] = shifted.sum((0,1))
                     squares[index] = shifted.square().sum((0,1)) if statistics_mode != 'mean' else 0
                     counts[index] = target_count
-                if compute_auxiliary_losses or (count_clipped and statistics_mode is None):
-                    normalized = self.normalize_target(raw,key,return_clipped=count_clipped,
-                        inverse_scale=inverse_scales[index],centered=shifted if statistics_mode!='mean' else None)
-                    if count_clipped:
-                        normalized,entries = normalized
-                        clipped[index] = entries
-                    return normalized
-                return None
+            if compute_auxiliary_losses or (count_clipped and statistics_mode is None):
+                normalized = self.normalize_target(raw,key,return_clipped=count_clipped,
+                    inverse_scale=inverse_scales[index],
+                    centered=centered if target_grad else shifted if statistics_mode!='mean' else None,
+                    **({'target_grad':True} if target_grad else {}))
+                if count_clipped:
+                    normalized,entries = normalized
+                    clipped[index] = entries
+                return normalized
+            return None
         for index in range(len(self.backbone.model.layers)):
             layer = index+1
             def call(x, previous=None, i=index):
@@ -615,16 +633,16 @@ class ProxyModel(DeepKV):
                 # Target-only work: FP32, detached, once per contributing block.
                 # Inference never enters this path. Overlapping windows share LN.
                 if not self.increment_target and sources:
-                    with torch.no_grad(), torch.autocast(mlp.device.type,enabled=False):
-                        contribution = mlp.detach().float()
+                    with torch.set_grad_enabled(target_grad), torch.autocast(mlp.device.type,enabled=False):
+                        contribution = (mlp if target_grad else mlp.detach()).float()
                         if self.arm == 'P6-iso-layernorm':
                             contribution = F.layer_norm(contribution,(contribution.shape[-1],),eps=1e-6)
                 for proxy in tuple(sources):
                     if not self.increment_target:
-                        with torch.no_grad():
+                        with torch.set_grad_enabled(target_grad):
                             value = (contribution*P6_TARGET_WEIGHTS[layer-proxy]
                                      if self.arm == 'P6-iso-weighted' else contribution)
-                            if layer <= proxy+1:
+                            if layer <= proxy+1 or target_grad:
                                 # First value may alias the detached decoder output.
                                 # The second contribution creates private window storage.
                                 windows[proxy] = windows[proxy]+value if proxy in windows else value

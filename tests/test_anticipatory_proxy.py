@@ -12,7 +12,7 @@ from unittest.mock import patch
 import torch
 from safetensors.torch import load_file
 from transformers import TrainingArguments
-from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS, P6_TARGET_VARIANTS
+from deep_kv import ANTICIPATORY_ARMS, P6_VARIANTS, P6_TARGET_VARIANTS, P6_ROUTING_ARMS
 from deep_kv.proxy import ProxyModel, ProxySettings, compute_budget, resolve_proxy_settings
 from deep_kv.proxy_estimators import BlockMLP
 from deep_kv.proxy_training import ProxyTrainer
@@ -361,6 +361,8 @@ class AnticipatoryTests(unittest.TestCase):
 
     def test_isolation_gradient_paths_and_stream_recurrence(self):
         for arm in ANTICIPATORY_ARMS:
+            if arm in P6_ROUTING_ARMS:
+                continue  # Both auxiliary backbone routes have independent VJP tests.
             m=model(arm)
             for auxiliary in (False,True):
                 m.zero_grad(set_to_none=True);out=m(batch());out['aux_sum' if auxiliary else 'lm_sum'].backward()
@@ -388,7 +390,7 @@ class AnticipatoryTests(unittest.TestCase):
                     hooks.append(layer.mlp.register_forward_hook(self.capture(mlps,i)))
                 original=m.normalize_target
                 def target(value,key,**kwargs):
-                    self.assertFalse(value.requires_grad);targets[key]=value.clone()
+                    self.assertEqual(value.requires_grad,m.aux_target_grad);targets[key]=value.clone()
                     return original(value,key,**kwargs)
                 before={k:v.clone() for k,v in m.named_buffers()}
                 with patch.object(m,'normalize_target',side_effect=target):actual=m(batch(),collect_target_statistics=True)
@@ -515,7 +517,7 @@ class AnticipatoryTests(unittest.TestCase):
         ctx=batch();row=dict(input_ids=ctx.input_ids[0].tolist(),labels=ctx.labels[0].tolist(),attention_mask=[1]*8)
         rows=[{**row,'segments':segments} for segments in ([0]*3+[1]*5,[0]*4+[1]*4,[0]+[1]*2+[2]*5)]
         micro=[isolated_data_collator([row]) for row in rows]
-        for arm in ('P4-iso','P5','P6') + P6_VARIANTS:
+        for arm in ('P4-iso','P5','P6') + P6_VARIANTS + P6_ROUTING_ARMS + ('P6-lowaux',):
             models=[model(arm),model(arm)]
             with tempfile.TemporaryDirectory() as tmp:
                 trainers=[ProxyTrainer(model=m,args=TrainingArguments(output_dir=tmp,use_cpu=True,report_to=[])) for m in models]

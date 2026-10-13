@@ -9,9 +9,10 @@ def gated_prediction(prediction, alpha, source):
     return alpha[0]*normalize_code(prediction).to(source.dtype)
 
 
-def cosine_loss(prediction, target, valid):
+def cosine_loss(prediction, target, valid, target_grad=False):
     with torch.autocast(prediction.device.type, enabled=False):
-        cosine = (F.cosine_similarity(prediction.float(),target.detach().float(),dim=-1,eps=1e-6)*valid).sum(-1)
+        truth = target if target_grad else target.detach()
+        cosine = (F.cosine_similarity(prediction.float(),truth.float(),dim=-1,eps=1e-6)*valid).sum(-1)
         return cosine[:,None], (valid.sum(-1)-cosine)[:,None]
 
 
@@ -83,15 +84,16 @@ class AnticipatoryHead(nn.Module):
         if self.stream:raise ValueError('P5 requires its previous depth-stream state')
         return (self.w2(F.silu(self.w1(u))),)
 
-    def routed(self,u,settings):
+    def routed(self,u,settings,aux_input_grad=False):
         # Downstream classification has no auxiliary loss. Opt into full task
         # gradients only through its wrapper; pretraining isolation is unchanged.
         if getattr(self, 'task_finetuning', False):
             value = self.estimates(u)[0]
             return value, value
         if settings.isolate_estimator:
-            value = self.estimates(u.detach())[0]
-            return value.detach(), self.estimates(u.detach())[0] if settings.aux_recompute else value
+            source = u if aux_input_grad else u.detach()
+            value = self.estimates(source)[0]
+            return value.detach(), self.estimates(source)[0] if settings.aux_recompute else value
         if settings.aux_recompute:
             return self.estimates(u)[0],self.estimates(u.detach())[0]
         return BlockMLP.apply(u,self.w1.weight,self.w2.weight)

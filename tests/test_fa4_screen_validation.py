@@ -80,6 +80,28 @@ class ScreenValidationTests(unittest.TestCase):
                     for name,value in [('train_config',config),('trainer_state',state),('result',result)]:
                         (arm/f'{name}.json').write_text(json.dumps(value))
                     args.schedule_steps=28600;args.warmup_steps=1430
+                if variant=='P6-iso-sparse' and backend=='fa4':
+                    # A completed 12-layer schedule, rather than a forced cutoff.
+                    small_config={**config,'model_config':{'num_hidden_layers':12},
+                                  'training':{**config['training'],'warmup_steps':1}}
+                    small_state={**state,'max_steps':steps}
+                    small_result={**result,'schedule_steps':steps,'status':'complete'}
+                    saved_receipts={}
+                    for name,value in [('train_config',small_config),('trainer_state',small_state),('result',small_result)]:
+                        (arm/f'{name}.json').write_text(json.dumps(value))
+                    for phase in ('train','eval'):
+                        path=arm/f'{phase}.json';saved_receipts[phase]=path.read_text()
+                        value=json.loads(saved_receipts[phase]);value['calls']=12
+                        for key in ('query_gradient_calls','key_gradient_calls','value_gradient_calls'):value[key]=12
+                        path.write_text(json.dumps(value))
+                    args.output=str(root/'twelve-layer.json');args.schedule_steps=steps;args.warmup_steps=1;args.num_hidden_layers=12
+                    validate(args)
+                    args.output=str(root/'wrong-depth.json');args.num_hidden_layers=28
+                    with self.assertRaises(AssertionError):validate(args)
+                    for name,value in [('train_config',config),('trainer_state',state),('result',result)]:
+                        (arm/f'{name}.json').write_text(json.dumps(value))
+                    for phase,value in saved_receipts.items():(arm/f'{phase}.json').write_text(value)
+                    args.schedule_steps=28600;args.warmup_steps=1430
                 args.output=str(root/'bad.json');args.steps=steps+1
                 with self.assertRaises(AssertionError):validate(args)
                 args.steps=steps

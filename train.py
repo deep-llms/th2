@@ -28,7 +28,7 @@ from transformers.trainer_callback import TrainerState
 
 from deep_kv.model import DeepKV
 from deep_kv import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS
-from deep_kv import anticipatory_target_metadata
+from deep_kv import anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes
 from deep_kv.packing import preprocess_dataset, isolated_data_collator
 from deep_kv.training import DeepKVTrainer, PilotCallback, compute_metrics, offline_wandb_run
 
@@ -39,6 +39,19 @@ logger = logging.getLogger(__name__)
 class ModelArguments:
     config_name: str = field(metadata={"help": "Local Qwen3 config file or directory; random initialization"})
     tokenizer_name: str = field(metadata={"help": "Local tokenizer directory"})
+    num_hidden_layers: int | None = field(default=None, metadata={"help": "Optional depth for random initialization; does not truncate pretrained weights"})
+
+
+def configure_depth(config, depth):
+    """Override only decoder depth, keeping Qwen width/tokenizer unchanged."""
+    if depth is None:
+        return
+    if type(depth) is not int or depth < 2:
+        raise ValueError('num_hidden_layers must be an integer >= 2')
+    if config.model_type != 'qwen3' or any(t != 'full_attention' for t in config.layer_types):
+        raise ValueError('Depth override requires full-attention Qwen3')
+    config.num_hidden_layers = depth
+    config.layer_types = ['full_attention'] * depth
 
 
 @dataclass
@@ -74,7 +87,7 @@ class PilotArguments:
     proxy_width: int = 256
     proxy_features: int = 255
     proxy_chunk_size: int = 64
-    proxy_lambda_max: float = .1
+    proxy_lambda_max: float | None = None
     proxy_warmup_steps: int = 250
     proxy_alpha_init: float | None = None
     proxy_kv_mode: str = 'kv'
@@ -193,6 +206,7 @@ def main():
         config = AutoConfig.from_pretrained(model_args.config_name, local_files_only=True)
     if config.model_type != "qwen3":
         raise ValueError("This pilot implements Qwen3")
+    configure_depth(config, model_args.num_hidden_layers)
     config._attn_implementation = "sdpa"
     config.use_cache = False
     tokenizer = AutoTokenizer.from_pretrained(model_args.tokenizer_name, local_files_only=True)
@@ -239,7 +253,7 @@ def main():
     settings = training_args.to_dict()
     for key in ("output_dir", "logging_dir", "run_name", "resume_from_checkpoint", "local_rank"):
         settings.pop(key, None)
-    experiment = json.loads(json.dumps({"model": asdict(model_args), "model_config": config.to_dict(),
+    experiment = json.loads(json.dumps({"model": {k:v for k,v in asdict(model_args).items() if v is not None}, "model_config": config.to_dict(),
                   "data": asdict(data_args), "pilot": {k: v for k, v in asdict(pilot).items()
                       if k not in ("stop_after", "allow_performance_change_on_resume")
                       and (k not in ('cooldown_start','cooldown_steps') or v is not None)
@@ -265,6 +279,8 @@ def main():
                 lookahead=proxy_settings.lookahead,bands=[list(key) if isinstance(key,tuple) else key for key in model.mean_layers],loss_form=proxy_settings.loss_form)
             if model.anticipatory:
                 experiment['proxy_target'].update(anticipatory_target_metadata(pilot.arm))
+            if pilot.arm in P6_ROUTING_ARMS:
+                experiment['proxy_target']['auxiliary_routes'] = auxiliary_routes(pilot.arm)
             if model.relational_proxy:
                 experiment['proxy_target']['relational'] = dict(weight=.5,temperature=.1,queries=256,
                     candidates='strictly_earlier_same_document',sampling='step_and_global_update_row_v1',

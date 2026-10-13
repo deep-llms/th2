@@ -1,3 +1,69 @@
+## 12-layer PPL screen and auxiliary routes — 13 October 2026
+
+Implementation only; no B200 submission or real-data training authorized in
+this step. Use the existing train.py HF Trainer/Accelerate, EOS packing,
+document-isolated attention and per-document RoPE positions. No token-export
+stage, new training loop, downstream evaluation, or change to the old recipe.
+
+Four new named arms:
+
+| Arm | Auxiliary through predictor input | Auxiliary through target | LM into predictor | Maximum auxiliary weight |
+|---|---|---|---|---|
+| P6-iso-targetgrad | no | yes | no | 0.1 |
+| P6-iso-shallowgrad | yes | no | no | 0.1 |
+| P6-iso-bothgrad | yes | yes | no | 0.1 |
+| P6-lowaux | no | no | yes, ordinary P6 | 0.03 |
+
+All retain the original four-MLP sum, cosine objective, normalized residual
+injection and channel gate initialized at0.1. All predictor outputs remain
+LM-detached in the three routing arms. Auxiliary gradients through the target
+or input can also reach earlier backbone layers and gates on those graph paths;
+this does not mean only the last target block changes. Target gradients pass
+through FP32 standardization and clipping (zero derivative outside the clip),
+but never through running moments, variance floors or statistics updates.
+Statistics are collected from detached values. Existing arms retain their
+previous detached targets and routing. P6-lowaux changes only the coefficient;
+the auxiliary ramp remains250 updates. Changing arms/depth/routing on resume
+is rejected; intentional continuation branches are not implemented by this work.
+
+`proxy_heads.12layer.b200.json` is a separate from-scratch recipe: override
+num_hidden_layers=12 while keeping model width/tokenizer; full2500-step cosine
+schedule,125-step LR warmup, original LR3e-4 and min-LR ratio0.1. This is not the
+historical28600-step schedule. Dense sites2/4/6/8, sparse2/6, four-block targets.
+The legacy wrapper coordinates consumer2/deep_target12 are valid but do not
+control proxy placement. Model construction is random initialization, not
+truncation of pretrained weights. Depth and complete layer_types are recorded
+in the checkpoint recipe and checked on reload/resume.
+
+Batch16 × accumulation4 × eightGPUs ×2048 =1,048,576 input tokens/update;
+2500updates =2,621,440,000 input tokens. Same seed42/data seed42, proxy seed43.
+All checkpoints retained every250updates. Monitoring128 packed rows, final4882;
+shared sampled text, cache and deterministic packing/order stay unchanged.
+
+Generate a queue without executing it:
+
+```bash
+python -m scripts.proxy_12layer_queue --output /absolute/path/to/new-jobs.json
+```
+
+The nine arms are A, P6-iso, the three routing arms, P6, P6-lowaux,
+P6-iso-sparse, P7-simple. Each uses all8GPUs sequentially, followed by a strict
+checkpoint/backend validator before proceeding. Final reports compare held-out
+LM loss/PPL and training cost, including the named lambda difference. Generation
+refuses an existing output file and incompatible protocol settings. It neither
+launches jobs nor manages GPUs. Production launch must still use the existing
+supervisor/Accelerate verification/GPU-ownership/burn-restoration procedure.
+
+Throughput: reuse proxy_sync_optimization, no decoder/LM/aux activation
+checkpointing, no auxiliary predictor recomputation, existing FA4 document
+layout, and one backbone forward per microbatch. Shared MLP contributions feed
+overlapping target windows; target-adaptive arms reuse centered FP32 values for
+detached statistics instead of centering twice. Keep target graphs only when
+auxiliary gradients are enabled. No additional teacher forward. Actual B200
+speed and peak memory of the new gradient routes remain unmeasured; no speedup
+or capacity claim. Consumer adapters, delayed introduction, deep residual
+supervision and consumer-aware teachers are still deferred.
+
 ## Stable nested harness config provenance — 13 October 2026
 
 lm-eval0.4.10 TaskConfig.to_dict serializes top-level callables but leaves
