@@ -1,3 +1,26 @@
+## Authorized overnight follow-up — 14 October 2026
+
+User requested additional implemented arms to run after the current screen while
+away about11hours, explicitly including lower/higher auxiliary weights and more
+P7/P6-style variants. Eleven selected cases and exact definitions are recorded
+at the top of PROJECT_NOTES.md. Consumer-aware experiments are now included.
+Same12-layer2500-step recipe,seed42/data42/proxy43,all8GPUs/experiment,
+FA4/document isolation/reset positions and all250-step checkpoints.
+
+New queue uses scripts/proxy_overnight_queue.py and the existing launcher with
+an optional predecessor root. It waits for screen22 success, all22validators,
+communicating-burn verification and guard release. Fresh preflight then copies
+Accelerate config/verifies env, checks pinned assets/data and GPU ownership;
+existing supervisor reclaims only verified burns and verifies free GPUs. All9
+architecture numerical cases and all11eight-GPU smokes must pass before fresh
+production. Burns are restored on success/failure. Separate output root:
+/mnt/local/_outputs/deep-llms_th2/q359-proxy-followup11-20261014-a01.
+Predecessor:q359-proxy-12layer-screen22-20261013-a01. No old output/cache deletion.
+Local new tests/validator passed. All35 broader regression tests passed in537.469s,
+including the original24-arm Trainer/resume/report and CPU two-rank tests.
+Six new tests passed (including the baseline-summary mismatch guard).
+Launch not yet verified; do not infer remote execution from this plan.
+
 ## Screen22 results — 14 October 2026, 03:10 SGT
 
 Read-only command f340fb9 confirms 18 production arms completed at2500updates

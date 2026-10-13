@@ -15,7 +15,7 @@ from .model import DeepKV, normalize_code
 from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout
 from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS, P6_ADAPTER_WIDTH
-from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS
+from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS, P7_DEEP_ARMS
 
 
 @dataclass
@@ -148,9 +148,9 @@ def compute_budget(config, settings, sequence_length=2048):
     result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
         for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
         'relational_forward_macs_per_token':0}
-    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + DELAYED_ARMS[2:]:
+    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:]:
         count = len(simple_memory_layout(arm,n)[0])
-        per_layer = 2*d*settings.width+projections
+        per_layer = 2*d*settings.width+projections+(2*d*P6_ADAPTER_WIDTH if arm in P7_DEEP_ARMS else 0)
         result[arm] = dict(extra_parameters=count*(per_layer+h),
             extra_macs_per_token=count*(per_layer+extra_attention),
             fa4_extra_macs_per_token=count*(per_layer+(2*nq//nk)*h*(3*sequence_length+1)),
@@ -317,7 +317,7 @@ class ProxyModel(DeepKV):
                 for key in tuple(self.heads):
                     if int(key) not in self.layers:del self.heads[key]
             # Initialize after ALL parent heads so their RNG/weights stay exact.
-            for layer in initialization_layers if arm in P6_EXTENSION_ARMS + P6_SPARSE_DEEP else ():
+            for layer in initialization_layers if arm in P6_EXTENSION_ARMS + P6_SPARSE_DEEP + P7_DEEP_ARMS else ():
                 if arm in P6_DEPTH_ARMS:
                     extension = nn.Linear(cfg.hidden_size, settings.width, bias=False)
                     nn.init.zeros_(extension.weight)
@@ -703,7 +703,7 @@ class ProxyModel(DeepKV):
                 if self.family=='P5' and self.settings.aux_recompute and layer in self.layers and compute_auxiliary_losses:
                     prediction,aux_stream=self.heads[str(layer)].stream_step(u,aux_stream)
                     estimates=[prediction]
-            if self.arm in P6_DEEP_ARMS + P6_SPARSE_DEEP and layer in self.layers:
+            if self.arm in P6_DEEP_ARMS + P6_SPARSE_DEEP + P7_DEEP_ARMS and layer in self.layers:
                 # Keep this live predictor path independently of auxiliary loss
                 # and target collection: it is also part of real inference.
                 deep_messages[layer+self.settings.lookahead-1] = (

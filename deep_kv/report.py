@@ -5,7 +5,7 @@ from pathlib import Path
 from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARIANTS, anticipatory_layout, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS, simple_memory_layout, code_loss_weight, kv_loss_weight
 from . import P6_TARGET_VARIANTS, anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS
-from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, followup_metadata
+from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, followup_metadata, P7_DEEP_ARMS
 
 
 def comparable_config(config):
@@ -146,7 +146,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     ignored |= {'quantity','layer_weights','per_layer_normalization'}
                 if arm in P6_ROUTING_ARMS or other in P6_ROUTING_ARMS:
                     ignored |= {'auxiliary_routes'}  # Explicit arm contract checked above.
-                if arm in P6_EXTENSION_ARMS+P6_SPARSE_DEEP or other in P6_EXTENSION_ARMS+P6_SPARSE_DEEP:
+                if arm in P6_EXTENSION_ARMS+P6_SPARSE_DEEP+P7_DEEP_ARMS or other in P6_EXTENSION_ARMS+P6_SPARSE_DEEP+P7_DEEP_ARMS:
                     ignored |= {'extension'}  # Versioned architecture checked above.
                 if arm in MEMORY_ARMS or other in MEMORY_ARMS:
                     ignored |= {'quantity','bands','target_version','relational'}

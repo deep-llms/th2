@@ -16,12 +16,13 @@ P6_SPARSE_DEEP = ("P6-iso-sparse-deep",)
 P6_CONSUMER_ARMS = ("P6-iso-consumer", "P6-iso-consumer-only")
 DELAYED_ARMS = ("P6-iso-delayed", "P6-iso-sparse-delayed", "P7-simple-delayed")
 PROXY_DELAY_STEPS = 500
+P7_DEEP_ARMS = ("P7-simple-deep", "P7-simple-deep-shallow")
 P7_ROUTING_ARMS = ("P7-simple-targetgrad", "P7-simple-lm")
 FOLLOWUP_ARMS = ("P6-iso-sparse-targetgrad",) + P6_SPARSE_DEEP + P7_ROUTING_ARMS + P6_CONSUMER_ARMS + DELAYED_ARMS
 P6_ADAPTER_WIDTH = 32
 ANTICIPATORY_ARMS = ("P4-iso", "P6", "P5", "P4", "P6-iso", "P4-4h", "P4-iso-4h", "P6-lowaux", "P6-iso-sparse-targetgrad") + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + P6_SPARSE_DEEP + P6_CONSUMER_ARMS + DELAYED_ARMS[:2]
 P7_P6_VARIANTS = ("P7-simple-sparse", "P7-simple-short")
-SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS + P7_ROUTING_ARMS + DELAYED_ARMS[2:]
+SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:]
 MEMORY_ARMS = ("P7", "P7-kq", "P7-ems", "P7-mlp") + SIMPLE_MEMORY_ARMS
 ALL_PROXY_ARMS = PROXY_ARMS + ANTICIPATORY_ARMS + MEMORY_ARMS
 SCREEN_ARMS = ("A", "V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block")
@@ -41,6 +42,11 @@ def followup_metadata(arm):
     if arm in P7_ROUTING_ARMS:
         result['auxiliary_routes'] = auxiliary_routes(arm)
         result['lm_to_predictor'] = arm == 'P7-simple-lm'
+    if arm in P7_DEEP_ARMS:
+        result['extension'] = dict(version=1, kind='deep_residual',
+            source='shallow_norm' if arm.endswith('-shallow') else 'prediction',
+            width=P6_ADAPTER_WIDTH, initialization='zero_added_output',
+            lm_to_predictor=arm=='P7-simple-deep', deep_injection='after_target_window')
     if arm in DELAYED_ARMS:
         result['introduction'] = dict(version=1, step=PROXY_DELAY_STEPS,
             freeze_proxy_before=True, auxiliary_warmup='relative_to_introduction')
@@ -65,7 +71,7 @@ def simple_memory_layout(arm, num_hidden_layers):
     """P7-simple uses the same locations and targets as its P6-iso counterpart."""
     parents = {"P7-simple": "P6-iso", "P7-simple-sparse": "P6-iso-sparse",
                "P7-simple-short": "P6-iso-short"}
-    if arm in P7_ROUTING_ARMS + DELAYED_ARMS[2:]:return anticipatory_layout('P6-iso',num_hidden_layers)
+    if arm in P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:]:return anticipatory_layout('P6-iso',num_hidden_layers)
     return anticipatory_layout(parents[arm], num_hidden_layers)
 
 

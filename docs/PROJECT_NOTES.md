@@ -1,3 +1,71 @@
+## Overnight follow-up screen — 14 October 2026
+
+User requested implemented follow-up arms to run automatically after the current
+screen while away about11hours, including lower/higher auxiliary weights and
+more P7/P6-style ideas. This supersedes the earlier consumer-aware deferral for
+this follow-up only. No existing run is stopped or resumed. Eleven fresh runs
+retain the exact12-layer seed42/data42/proxy43,2500-update/125-warmup recipe,
+1,048,576inputtokens/update,FA4/document isolation/reset positions,Trainer/data
+pipeline and all250-step checkpoints. Original screen22 and its controls remain
+intact; the new queue waits for successful completion AND verified burn handoff.
+
+| Order | Run label | Architecture | Auxiliary lambda | Question |
+|---|---|---|---|---|
+| 1 | p7-deep | P7-simple-deep | 0.1 | P7 memory plus live proxy fed through a deep adapter |
+| 2 | p7-deep-shallow | P7-simple-deep-shallow | 0.1 | Matched deep adapter reads detached shallow features |
+| 3 | consumer | P6-iso-consumer | 0.1 | Cosine plus frozen shallow-block response matching |
+| 4 | consumer-only | P6-iso-consumer-only | 0.1 | Response matching without cosine |
+| 5 | p7-lm-low | P7-simple-lm | 0.03 | Less target matching versus LM feedback |
+| 6 | p7-lm-high | P7-simple-lm | 0.3 | More target matching versus LM feedback |
+| 7 | p6-high | P6 | 0.3 | More target matching in the LM-trained residual predictor |
+| 8 | p6-higher | P6 | 1.0 | Stronger auxiliary-weight probe |
+| 9 | targetgrad-low | P6-iso-targetgrad | 0.01 | Can weaker backbone pressure avoid the observed regression? |
+| 10 | p7-sparse | P7-simple-sparse | 0.1 | Two memory sites2/6 instead of four2/4/6/8 |
+| 11 | p7-short | P7-simple-short | 0.1 | Two-block target at original four sites |
+
+P7 deep variants retain the exact parent tokenwise1024->256->1024 predictor,
+four-query-head/two-KV-group proxy memory, and four-MLP-sum cosine target.
+At each source l, an additional width32 SiLU adapter is added after block l+3,
+after collecting its own target, scaled by that deep hidden state's detached
+RMS. Adapter up projection initializes to zero. Parent head/projection RNG is
+unchanged. Prediction remains detached for shallow memory K/V; its deep branch
+is live only in P7-simple-deep. The control reads detached normalized shallow
+input. Therefore the pair tests source AND predictor-gradient routing, as in
+P6's deep pair. Auxiliary inputs/targets remain detached, and adapter/backbone
+receive only LM gradients. No extra target pass at inference.
+
+Auxiliary-weight sweeps use the existing --proxy_lambda_max interface, not new
+architecture aliases. Labels have separate output trees label/seed-42/arm;
+max weight is checked by the checkpoint validator. This avoids duplicate
+output collisions and preserves checkpoint reload/resume architecture identity.
+Warmup remains250updates for all auxiliary losses. No lambda-only isolated
+P6-iso sweep is included; weights here change LM/auxiliary competition or the
+backbone auxiliary route. Existing P6-lowaux0.03 is already a control.
+
+Implementation: scripts/proxy_overnight_queue.py; existing launch_proxy_12layer.sh
+accepts an optional predecessor root. The gate requires all22 train+validator
+stages, final successful run/supervisor, verified communicating burns, and guard
+release. Preflight retains asset/data hashing, pinned packages, Accelerate cache
+copy/byte comparison/accelerate env, and fresh GPU ownership inspection. Existing
+train_then_burn rechecks exact known burn PIDs, stops only those workers, verifies
+free GPUs, and restores communicating burns after success/failure. CUDA numerical
+checks for all9distinct architectures and3-step all8GPU smokes for all11settings
+precede every production fit. A failure stops the queue and triggers burn handoff.
+Summary verifies matching data fingerprints across cases and the preceding A.
+
+CPU tests: tests.test_proxy_overnight passed5tests (11.040s); final rerun with
+extended checkpoint validator passed6tests (11.542s). Includes independent
+active forward/gradient reference, parent initialization, isolated auxiliary
+routes, document/causal isolation, FA4 CPU-reference agreement, BF16/checkpoint
+replay, exact real-Trainer uninterrupted/resume equality, inference reload and
+report metadata, lambda scaling, output uniqueness and predecessor fail-closed.
+Actual CUDA numerics are a mandatory remote gate, not claimed by CPU tests.
+Broader regression:35 tests passed537.469s (screen24,extensions,aux_routes,
+checkpoint validator), including two-rank Gloo training. Additional summary
+mismatch/reused-baseline test passed0.012s. Logs:/tmp/proxy-overnight-tests.log,
+/tmp/proxy-overnight-final-tests.log,/tmp/proxy-overnight-regressions.log,
+/tmp/proxy-overnight-summary-test.log.
+
 ## Authorized B200 screen: 22 arms, consumer-aware deferred — 13 October 2026
 
 User approved launching the full screen except consumer-aware experiments.

@@ -14,7 +14,7 @@ import sys
 
 from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_layout, anticipatory_target_metadata
-from deep_kv import P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, followup_metadata
+from deep_kv import P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, followup_metadata, P7_DEEP_ARMS
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -198,6 +198,8 @@ def validate(args):
         assert all(math.isfinite(row['loss']) and math.isfinite(row['grad_norm']) for row in logs)
         assert config['training']['seed']==config['training']['data_seed']==args.seed
         assert config['world_size']==8
+        if getattr(args,'expected_lambda',None) is not None:
+            assert config['pilot']['proxy_lambda_max']==args.expected_lambda
         assert result['evaluation']['eval_rows']==config['data']['eval_rows']
         assert math.isfinite(result['evaluation']['eval_lm_loss'])
         receipt_names=result[backend+'_receipts']
@@ -256,9 +258,9 @@ def validate(args):
                     assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
                 else:
                     assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
-                if arm in P6_EXTENSION_ARMS+P6_SPARSE_DEEP:
-                    assert config['proxy_target']['extension']==anticipatory_target_metadata(arm)['extension']
-                    for layer in anticipatory_layout(arm,depth)[0]:
+                if arm in P6_EXTENSION_ARMS+P6_SPARSE_DEEP+P7_DEEP_ARMS:
+                    assert config['proxy_target']['extension']==(followup_metadata(arm) if arm in P7_DEEP_ARMS else anticipatory_target_metadata(arm))['extension']
+                    for layer in (memory_layers if arm in P7_DEEP_ARMS else anticipatory_layout(arm,depth)[0]):
                         suffixes=('weight',) if arm in P6_DEPTH_ARMS else ('down.weight','up.weight')
                         for suffix in suffixes:
                             value=weights.get_tensor(f'extensions.{layer}.{suffix}')
@@ -274,6 +276,7 @@ def main():
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
     p.add_argument('--arm',choices=ALL_PROXY_ARMS,help='Explicit arm for a numerical worker')
     p.add_argument('--worker-arms',nargs='+',choices=ALL_PROXY_ARMS,help='Numerical cases, in waves of at most eight GPUs')
+    p.add_argument('--expected-lambda',type=float,help='Validate resolved auxiliary weight for a sweep case')
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
     p.add_argument('--schedule-steps',type=int,default=28600,help='Expected full schedule; override only for disposable smokes')
     p.add_argument('--warmup-steps',type=int,default=1430,help='Expected warmup; override only for disposable smokes')
