@@ -1,3 +1,16 @@
+## P6-iso-deep completed — 13 October 2026, 23:51 SGT snapshot
+
+Read-only command bb24612 verified P6-iso-deep completed 2500 updates at
+23:33:31 SGT, exit 0, and its validator passed. Wall time 49m35s.
+Full validation (4882 rows): LM loss 3.5852392901, PPL 36.0620.
+PPL is 0.592% lower than A and 0.153% lower than P6-iso; this remains a
+single-seed 12-layer screen. Depth-current also completed: loss3.5858574634.
+14 production arms are complete. P6-iso-deep-shallow is running at892/2500;
+seven remain after it. Supervisor still running. No workload changes.
+Evidence: temp/remote_logs/screen22-deep-status-20261013-a07.log,
+SHA256 10d73d383d0bd58f2cf3ba1e0d528d22143dddd609b0b8935bf3755447462639.
+commands.sh returned to #0; automatic final burn restoration unchanged.
+
 ## Screen22 queue status — 13 October 2026, 22:46 SGT
 
 Read-only command cbca3a8 confirms 13 production arms completed and validated.
