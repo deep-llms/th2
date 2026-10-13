@@ -17,7 +17,19 @@ cache and runs accelerate env. Numerical cases run in up-to-eight-GPU waves,
 then each arm gets a separate three-update all8GPU training/validation smoke.
 Only after all gates pass do22 fresh production runs start sequentially.
 Production checkpoints never resume smoke outputs. Existing full-data packing
-and HF caches remain shared and untouched. Launch pending at this entry.
+and HF caches remain shared and untouched.
+
+Launch c743fa5 acknowledged. At03:45UTC all21 active CUDA numerical cases had
+passed, including the new routes, adapters, deep branches and delayed arms.
+A and P6-iso all8GPU three-update smokes and validators passed; targetgrad smoke
+was running with finite losses/gradients. Remaining smokes and all production
+fits proceed automatically under the91-stage manifest, stopping on any failure.
+No production result yet. Initial burn workers were identity-verified and stopped;
+all8GPUs recorded free at03:39:48UTC before any numerical/training work.
+All352 English files (134,739,753,089bytes) passed release hashes. Accelerate
+cache copy/byte equality and accelerate env confirmed8processes/BF16. Latest
+receipt:temp/remote_logs/screen22-health-20261013-a02.log. commands.sh returned
+to#0 after status retrieval; the independent tmux supervisor keeps running.
 
 ## 24-arm correctness re-review — 13 October 2026
 

@@ -1,3 +1,38 @@
+## Authorized B200 screen: 22 arms, consumer-aware deferred — 13 October 2026
+
+User approved launching the full screen except consumer-aware experiments.
+The selected queue is the24-arm order below with P6-iso-consumer and
+P6-iso-consumer-only removed. All runs are fresh12-layer random initialization,
+seed42/data42/proxy43,2500updates,125LR warmup,1,048,576tokens/update,FA4,
+EOS/document isolation/reset RoPE and retained250-step checkpoints.
+
+Launcher:scripts/launch_proxy_12layer.sh. Queue:scripts/proxy_12layer_queue.py,
+--all-arms --defer-consumer. launch_jobs adds a parallel actual-CUDA numerical
+gate (21proxy cases in8GPU waves),22 separate3-update all8GPU Trainer smokes
+with validators, then22production fits with validators and two reports:
+91stages. Each smoke retains the production schedule/batch/data/cache and uses
+a distinct smoke subtree; production does not resume it. Local4 targeted tests
+passed3.721s, including bounded GPU assignment, failure gating and queue contracts.
+
+Launch c743fa5 on thiennh-p6-q359-worker-0. Root:
+/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01.
+The attention_bench pins match(torch2.14.1,transformers5.9.0,accelerate1.13.0,
+datasets4.8.5,FA4b33,CUTLASS4.8.0,wandb0.30.0).352 English release files totaling
+134,739,753,089bytes passed SHA256/size checks. Accelerate resource config was
+copied into the actual HF cache, byte-compared and verified with accelerate env.
+Only recognized burn workers379567–379574 were stopped via rechecked identities;
+all8GPUs were verified empty at03:39:48UTC. Existing train_then_burn supervisor
+owns the queue and restores/verifies communicating burns on success/failure.
+
+At03:45UTC: all21 numerical cases passed actual FA4 versus dense SDPA, including
+output/loss/gradient checks and document isolation. Numerical gate took127.4s.
+A and P6-iso eight-GPU smokes passed and validated in about68s each;
+P6-iso-targetgrad smoke was atupdate2 with finite loss/gradients. Production
+has not yet been observed; it starts automatically only after remaining gates.
+Full evidence:temp/remote_logs/screen22-launch-20261013-a01.log and
+screen22-health-20261013-a01.log/-a02.log. No old outputs/cache deleted.
+commands.sh returned to#0; live tmux supervisor remains independent.
+
 ## 24-arm review evidence — 13 October 2026
 
 Re-reviewed arm definitions against gradient routing, frozen consumer evaluation,
