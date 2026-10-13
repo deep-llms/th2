@@ -1,3 +1,27 @@
+## Automatic follow-up reconfirmed — 14 October 2026, 05:18 SGT
+
+User explicitly reconfirmed that the new arms must follow the current run,
+waiting for communicating GPU burns to be started and verified before reclaim.
+Read-only command873b29b confirms the existing follow-up waiter is alive:
+one tmux pane,PID581217,pane_dead0, exact launcher with the screen22 predecessor.
+No duplicate queue was created. Screen22 is on its final arm P7-simple-delayed
+(started05:17SGT);87stages passed. Follow-up logs WAITING_FOR_SCREEN_AND_BURN50
+and predecessor_ready=False, as required. All11cases match the approved list;
+launcher, queue, supervisor, model, shared-loss/Trainer helpers and Accelerate
+resource hashes match reviewed local source.
+
+Handoff: current screen+validators succeed -> all-rank communicating burns
+verified and guard released -> fresh preflight/copy Accelerate/accelerate env ->
+new guard and exact verified burn-worker identities -> stop only those workers
+via pidfds ->30seconds and all8GPUs verified free -> CUDA numerics/all8GPU smokes
+->11fresh2500-step runs sequentially,all8GPUs each. Supervisor restores/verifies
+burns on completion or failure after cleaning its own workers. Unknown GPU work
+or failed predecessor validation prevents launch. No current workload stopped.
+
+Receipt:temp/remote_logs/followup-handoff-verify-20261014-a01.log,
+SHA2564dc4d74b80361b2fca74a913249a51cd0ec26f64811ed35f286b7b70131a8bb1.
+commands.sh returned to#0; independent tmux waiter continues automatically.
+
 ## Consumer review and exact overhead reductions — 14 October 2026
 
 Both consumer-aware variants remain included as follow-up runs3/4; P7 deep and
