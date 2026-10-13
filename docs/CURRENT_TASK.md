@@ -1,3 +1,17 @@
+## P6-iso-deep-shallow completed — 14 October 2026, 00:51 SGT snapshot
+
+Read-only command ab3c246 verified P6-iso-deep-shallow completed 2500 updates
+at 00:22:43 SGT, exit 0, validator passed. Wall time 49m10s. Final validation
+LM loss3.5872892363/PPL36.1360, versus deep3.5852392901/36.0620 and
+P6-iso3.5867720296/36.1173. The proxy-fed deep branch beats its shallow-feature
+control by0.002050nats (about0.205%PPL); one-seed evidence only, with different
+predictor LM-gradient routing as well as adapter input between these arms.
+15 production arms complete; sparse-targetgrad running at1471/2500, six queued
+after it. Supervisor running. No workload changes; commands.sh returned to#0.
+Evidence: temp/remote_logs/screen22-deep-shallow-status-20261014-a08.log,
+SHA256 8035b4df36d11c0c9bda3cd3c489d6a09c542eb89b512b633f26686628067ab7.
+Parsed results: temp/screen22-results-a08.json.
+
 ## P6-iso-deep completed — 13 October 2026, 23:51 SGT snapshot
 
 Read-only command bb24612 verified P6-iso-deep completed 2500 updates at
