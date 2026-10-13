@@ -1,3 +1,25 @@
+## Additional implementation review — 14 October 2026
+
+No new production-code correctness issue found. Rechecked consumer functional
+parameter detachment/restoration, per-forward shared counts and checkpoint
+closures, P7 deep LM/auxiliary routes, weight-sweep paths, resume metadata and
+predecessor completion/burn gating. Supervisor JSON writes are atomic.
+
+Added two regression tests in tests/test_proxy_shared_work.py:
+- Multiple outstanding forwards of different sequence lengths, followed by
+  checkpoint replay: exact outputs and accumulated gradients against separate
+  forwards, FP32/BF16, covering P1/P3, target-gradient P6, both consumers and P7 deep.
+- Consumer response loss: no future-token or cross-document gradient leakage;
+  identical predictor/target gives zero loss and gradient; an injected student
+  failure restores the original live decoder Parameter objects and a subsequent
+  LM backward still works. Tested SDPA and the CPU FA4 reference.
+
+These two tests plus all six overnight queue/model/resume tests passed in18.413s
+(/tmp/proxy-careful-rereview.log). Production implementation and queue unchanged;
+no B200 action, environment change or training interruption in this review.
+This adds edge-case evidence to the previous83local/5B200-CPU checks, not a new
+actual-CUDA or throughput claim. Runner command remains inactive#0.
+
 ## Consumer-aware review and shared-work optimization — 14 October 2026
 
 Both consumer-aware variants are already in the follow-up queue, after the two

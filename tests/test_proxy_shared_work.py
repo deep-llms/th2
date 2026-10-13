@@ -98,5 +98,70 @@ class SharedWorkTests(unittest.TestCase):
         self.assertTrue(all(x is second[0] for x in second))
         self.assertIsNot(first[0],second[0])
 
+    def test_outstanding_forwards_keep_checkpoint_contexts_separate(self):
+        from deep_kv.packing import isolated_data_collator
+        long = DeepKVTrainer.context(isolated_data_collator([dict(
+            input_ids=[3,4,5,31,6,7,8,9,10,11,12,31],
+            labels=[3,4,5,31,6,7,8,9,10,11,12,31],
+            attention_mask=[1]*12, segments=[0]*4+[1]*8)]))
+        for arm in ('P1-block','P3-flow','P6-iso-targetgrad','P6-iso-consumer',
+                    'P6-iso-consumer-only','P7-simple-deep'):
+            for bf16 in (False,True):
+                with self.subTest(arm=arm,bf16=bf16):
+                    m=model(arm,checkpoint=True);active(m);reference=copy.deepcopy(m)
+                    with torch.autocast('cpu',dtype=torch.bfloat16,enabled=bf16):
+                        short_out=m(batch());long_out=m(long)
+                    # Replay the older graph after a different-shaped forward.
+                    for ctx,actual in ((batch(),short_out),(long,long_out)):
+                        with torch.autocast('cpu',dtype=torch.bfloat16,enabled=bf16):
+                            expected=reference(ctx)
+                        for key in actual:
+                            torch.testing.assert_close(actual[key],expected[key],rtol=0,atol=0)
+                        objective(m,actual).backward();objective(reference,expected).backward()
+                    for (name,p),(_,q) in zip(m.named_parameters(),reference.named_parameters()):
+                        self.assertEqual(p.grad is None,q.grad is None,name)
+                        if p.grad is not None:torch.testing.assert_close(p.grad,q.grad,rtol=0,atol=0,msg=name)
+
+    def test_consumer_causality_identity_and_exception_restoration(self):
+        from deep_kv.proxy_estimators import consumer_effect_loss
+        from deep_kv.fa4 import document_layout
+        from tests.test_fa4_baseline import reference_kernel
+        for backend in ('sdpa','fa4'):
+            with self.subTest(backend=backend), patch('deep_kv.fa4.load_kernel',
+                    return_value=(reference_kernel,{'version':'CPU-reference'})):
+                m=model('P6-iso-consumer',backend=backend);ctx=batch()
+                block=m.backbone.model.layers[1];parameters=dict(block.named_parameters())
+                hidden=torch.randn(1,8,32,requires_grad=True)
+                prediction=torch.randn_like(hidden,requires_grad=True)
+                target=torch.randn_like(hidden,requires_grad=True)
+                rotary=m.backbone.model.rotary_emb(hidden,ctx.position_ids)
+                mask=document_layout(ctx) if backend=='fa4' else ctx.allowed()
+                valid=torch.zeros_like(ctx.valid);valid[:,4]=True
+                args=(hidden,prediction,target,m.heads['2'].alpha,mask,rotary,valid)
+                consumer_effect_loss(block,m.attention,*args).sum().backward()
+                self.assertEqual(prediction.grad[:,:3].count_nonzero(),0)
+                self.assertEqual(prediction.grad[:,5:].count_nonzero(),0)
+                self.assertGreater(prediction.grad[:,3:5].abs().sum(),0)
+                self.assertIsNone(hidden.grad);self.assertIsNone(target.grad)
+                self.assertTrue(all(p.grad is None for p in m.parameters()))
+                prediction.grad=None
+                zero=consumer_effect_loss(block,m.attention,hidden,prediction,prediction,
+                    m.heads['2'].alpha,mask,rotary,valid).sum()
+                self.assertEqual(zero.item(),0);zero.backward()
+                self.assertEqual(prediction.grad.count_nonzero(),0)
+                calls=0
+                def fail_student(*a,**kw):
+                    nonlocal calls
+                    calls+=1
+                    if calls==2:raise RuntimeError('injected student failure')
+                    return m.attention(*a,**kw)
+                with self.assertRaisesRegex(RuntimeError,'injected student failure'):
+                    consumer_effect_loss(block,fail_student,*args)
+                for name,p in block.named_parameters():
+                    self.assertIs(p,parameters[name]);self.assertTrue(p.requires_grad)
+                # A failed functional view must not poison the subsequent LM path.
+                m(batch())['lm_sum'].backward()
+                self.assertGreater(block.mlp.down_proj.weight.grad.abs().sum(),0)
+
 
 if __name__=='__main__':unittest.main()
