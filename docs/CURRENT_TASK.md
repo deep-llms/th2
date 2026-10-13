@@ -1,3 +1,19 @@
+## 24-arm correctness re-review — 13 October 2026
+
+Reviewed the current gradient routes, consumer objectives, delayed activation,
+resume, sequential queue and result validation. No new training-logic defect
+was found. Expanded the actual train.py integration test from13 to all24 arms:
+each trains on a tiny synthetic CPU fixture, saves/resumes, reloads for inference,
+and enters one matched report. Existing new-arm uninterrupted/resumed weights
+remain checked for exact equality. Corrected superseded scope notes below.
+
+All44 relevant local tests passed (15 screen/backend-validator tests and29
+routing/extension/normalization/synchronization/queue regressions), plus the
+expanded24-arm integration test rerun. These include two-rank Gloo, BF16,
+checkpoint recomputation, independent gradient references and dormant optimizer
+state. No actual CUDA FA4 or B200 capacity/throughput validation was performed.
+No production training, GPU operations or push; commands.sh remains#0.
+
 ## Complete 24-arm screen implemented locally — 13 October 2026
 
 User asked to implement the other arms to reach24; no launch requested.
@@ -43,8 +59,8 @@ deep-message storage. Actual B200 speed and memory have not been measured.
 2500-step/12-layer PPL runs; default remains the earlier nine arms. Shared
 Trainer, data/cache/packing, schedule and checkpoint rules remain in use.
 New architecture metadata and trained extension tensors are checked by reports
-and validators. Delayed introduction and new consumer-aware/teacher variants
-remain separate, unimplemented follow-ups; do not queue names for them.
+and validators. This historical fifteen-arm scope is superseded by the complete
+24-arm implementation above, including delayed and frozen-consumer variants.
 
 Local synthetic CPU tests exercise active branches, gradient paths, isolation,
 exact resume/reload, BF16, recomputation, compiled estimators, two-rank Gloo,
@@ -70,7 +86,8 @@ proxy_heads.12layer.b200.json uses12layers,2500steps,125LR-warmup steps,
 The auxiliary ramp remains250steps. scripts.proxy_12layer_queue generates nine
 sequential arms (A, P6-iso, three routes, P6, lowaux, sparse, P7-simple), each
 followed by validation, then PPL reports; it never executes the queue itself.
-Delayed introduction, adapters and consumer-aware methods are not implemented.
+Adapters, delayed introduction and frozen-consumer methods were added in the
+subsequent implementation entries above.
 
 Throughput work: existing no-checkpoint/synchronization optimization recipe,
 one backbone forward, shared target contributions, shared centered FP32 values

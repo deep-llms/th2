@@ -275,10 +275,11 @@ class Screen24Tests(unittest.TestCase):
         from safetensors.torch import load_file
         from eval.models import load_checkpoint
         from deep_kv.report import report
+        from scripts.proxy_12layer_queue import ALL_SCREEN_ARMS
         # Bring the exact production transition into a three-update CPU fixture.
         with patch('deep_kv.proxy.PROXY_DELAY_STEPS',1),patch('deep_kv.proxy_training.PROXY_DELAY_STEPS',1),tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);recipe=fixture(root)
-            for arm in ('A','P6-iso','P6-iso-sparse','P7-simple')+FOLLOWUP_ARMS:
+            for arm in ALL_SCREEN_ARMS:
                 args={**recipe,'arm':arm,'output_dir':str(root/arm)}
                 invoke(root,{**args,'stop_after':1});invoke(root,args)
                 loaded,_,_=load_checkpoint(root/arm,device='cpu',attention_backend='sdpa')
@@ -298,8 +299,9 @@ class Screen24Tests(unittest.TestCase):
                         self.assertTrue(loaded.wrapped.proxy_enabled)
                         optimizer=torch.load(root/arm/'checkpoint-1/optimizer.pt',weights_only=True)
                         self.assertEqual(len(optimizer['state']),len(list(init.backbone.parameters())))
-            arms=('A','P6-iso','P6-iso-sparse','P7-simple')+FOLLOWUP_ARMS
+            arms=ALL_SCREEN_ARMS
             result=report(root,arms)
+            self.assertEqual(set(result['lm_loss']),set(ALL_SCREEN_ARMS))
             self.assertIn('P7-simple-lm-P7-simple',result['nll_differences'])
             for arm in FOLLOWUP_ARMS:
                 p=root/arm/'train_config.json';original=p.read_text();value=json.loads(original)

@@ -1,3 +1,29 @@
+## 24-arm review evidence — 13 October 2026
+
+Re-reviewed arm definitions against gradient routing, frozen consumer evaluation,
+delayed head freezing/activation, checkpoint state and queue/report contracts.
+No additional production-code defect found. The integration test now exercises
+all24 arms together through actual train.py save/resume, inference reload and
+combined reporting, rather than validating only subsets together. This passed;
+the nine follow-ups also retain exact uninterrupted/resumed-weight comparisons.
+Historical statements that these arms were unimplemented are corrected below.
+
+Local CPU verification, using sampling_b200 with CUDA_VISIBLE_DEVICES empty:
+
+- tests.test_proxy_screen24 and tests.test_fa4_screen_validation:15 passed,
+  287.713s; /tmp/proxy-screen24-review.log.
+- tests.test_proxy_aux_routes, tests.test_proxy_extensions,
+  tests.test_proxy_sync, tests.test_proxy_normalization and
+  tests.test_proxy_followup_queue:29 passed,233.392s;
+  /tmp/proxy-screen24-review-regressions.log.
+- Expanded all24-arm Trainer/resume/report integration rerun:1 passed,58.265s;
+  /tmp/proxy-screen24-review-full-report.log.
+
+The first suite started before expansion of the integration test; the separate
+rerun verifies its final version. These are44 unique tests,45 executions.
+FA4 checks use a CPU reference kernel, not the actual CUDA implementation.
+No real-data training, B200 operation, remote push, or measured speed claim.
+
 ## Complete 24-arm implementation — 13 October 2026
 
 User requested implementation of enough additional variants to reach24 arms.
@@ -163,8 +189,9 @@ has a nonzero first gradient. All parent heads are initialized BEFORE any new
 modules, inside the existing forked RNG context. Parent backbone/head tensors,
 the caller RNG, and paired-control initial tensors therefore remain identical.
 These are fresh-run architectures; changing an existing checkpoint's arm is
-rejected, not treated as ordinary resume. Delayed insertion/continuation branches
-and the new learned-teacher/consumer-aware proposals remain unimplemented.
+rejected, not treated as ordinary resume. The subsequent 24-arm extension above
+adds delayed introduction in fresh runs and frozen-consumer response matching;
+checkpoint-transplant continuation and learned-teacher proposals remain separate.
 The older bottleneck Consumer-Aware arms already exist, but their separate code
 extractor/KV consumer objective is not interchangeable with a P6 residual arm.
 
