@@ -1,3 +1,52 @@
+## Consumer-aware review and shared-work optimization — 14 October 2026
+
+Both consumer-aware variants are already in the follow-up queue, after the two
+P7 deep variants. No additional architecture is needed for this request:
+
+- `P6-iso-consumer`: parent P6-iso inference; auxiliary objective is cosine loss
+  plus relative output MSE between the frozen shallow decoder's responses to
+  predictor and true target messages.
+- `P6-iso-consumer-only`: same architecture and response objective, without the
+  cosine term. Cosine remains a diagnostic. Both use maximum lambda0.1 and the
+  existing250-update auxiliary ramp.
+
+The true-target response is detached; source, gate and decoder parameters are
+frozen for the response loss. Only the predictor receives its auxiliary gradient.
+The normal LM forward still trains the backbone/gate. Each site adds two local
+block forwards during auxiliary evaluation, not two full-model forwards; no
+consumer-only operations run at inference. Teacher/student share causal,
+document-isolated attention and reset positions. This is local response matching,
+not an assertion that a perfect predictor must improve downstream performance.
+
+Exact-work reuse implemented in deep_kv/training.py, proxy.py and
+proxy_estimators.py: avoid eager allocation of unused default masks/positions;
+share integer valid-token counts across all proxy sites within one forward;
+reuse frozen source RMS between consumer responses and the teacher FP32 cast
+inside its relative-MSE objective. No persistent activation cache, changed
+precision, altered floating-point reductions, new kernel, loss/routing change,
+data/schedule change or checkpoint-format change. Shared trainer cleanup also
+applies to A; shared auxiliary counts apply across P1/P3/P4/P5/P6/P7 families.
+These are small overhead removals, not a measured B200 throughput percentage.
+The expensive consumer block forwards and P7 attention remain necessary.
+
+New tests.test_proxy_shared_work passed3tests in49.464s: all registered proxy
+arms plus A (48 architectures), FP32/BF16, checkpoint replay, active adapters/delayed arms, exact
+outputs/gradients/AdamW updates and optimizer state against repeated-work
+references; also supplied/default input fields and forward-local count reuse.
+Existing independent copied/frozen-block consumer reference and cross-document
+auxiliary-gradient tests passed. All80 broader regression tests passed in847.649s,
+including real Trainer training/resume, distributed Gloo runs, compiled paths,
+FA4 CPU reference, loss scaling, normalization and old P1/P3/P4/P5/P6/P7 arms.
+Logs:/tmp/proxy-shared-work-tests.log and /tmp/proxy-review-all-tests.log.
+CPU-only validation does not establish real FA4 CUDA numerical equivalence.
+Queued actual CUDA checks and eight-GPU Trainer smokes remain mandatory.
+
+Read-only B200 receipt at14October04:54:52SGT: screen22 running its21st arm,
+P6-iso-sparse-delayed,1323/2500;85stages passed, no failed stage. Follow-up still
+WAITING_FOR_SCREEN_AND_BURN; no training interruption or GPU process action.
+Evidence:temp/remote_logs/followup-review-20261014-a01.log,
+SHA256838fdd154f60d80edb87b0882261a3b6a113ffcaa1a257a16719af4ad22b9bab.
+
 ## Overnight follow-up screen — 14 October 2026
 
 Launch045238b verified04:49SGT: independent waiter pane581217 alive,

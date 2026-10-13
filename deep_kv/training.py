@@ -115,8 +115,11 @@ class DeepKVTrainer(Trainer):
     @staticmethod
     def context(inputs):
         ids = inputs["input_ids"]
-        return Context(ids, inputs.get("attention_mask", torch.ones_like(ids)).bool(),
-                       inputs.get("position_ids", torch.arange(ids.shape[1], device=ids.device).expand_as(ids)),
+        # dict.get evaluates its default even when the packed batch has the key.
+        valid = inputs["attention_mask"] if "attention_mask" in inputs else torch.ones_like(ids)
+        positions = (inputs["position_ids"] if "position_ids" in inputs else
+                     torch.arange(ids.shape[1], device=ids.device).expand_as(ids))
+        return Context(ids, valid.bool(), positions,
                        inputs.get("segments"), inputs.get("labels"))
 
     def _get_num_items_in_batch(self, batch_samples, device):

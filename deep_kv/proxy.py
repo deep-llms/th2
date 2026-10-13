@@ -568,8 +568,9 @@ class ProxyModel(DeepKV):
         mlp = layer.mlp(layer.post_attention_layernorm(residual))
         return (residual+mlp,mlp if self.aux_target_grad else mlp.detach(),u,stream) if self.anticipatory else (residual+mlp, mlp if self.aux_target_grad else mlp.detach(), u, *estimates)
 
-    def layer_cosines(self, layer, u, estimates, raw_target, plan, valid, auxiliary_grad):
+    def layer_cosines(self, layer, u, estimates, raw_target, plan, valid, auxiliary_grad, valid_counts=None):
         head = self.heads[str(layer)]
+        valid_counts = valid.sum(-1) if valid_counts is None else valid_counts
         def compute(source, target, *forward_estimates):
             if self.relational_proxy:
                 from .proxy_memory import relational_losses
@@ -577,11 +578,11 @@ class ProxyModel(DeepKV):
                 with torch.autocast(source.device.type,enabled=False):
                     cosines = (F.cosine_similarity(prediction.float(),target.detach().float(),dim=-1,eps=1e-6)*valid).sum(-1)
                     rel_sum, rel_count = relational_losses(prediction,target,plan)
-                    return cosines[:,None],(valid.sum(-1)-cosines)[:,None],rel_sum,rel_count
+                    return cosines[:,None],(valid_counts-cosines)[:,None],rel_sum,rel_count
             elif self.anticipatory or self.memory_proxy:
                 if self.aux_target_grad:
-                    return self.cosine_loss(forward_estimates[0],target,valid,target_grad=True)
-                return self.cosine_loss(forward_estimates[0],target,valid)
+                    return self.cosine_loss(forward_estimates[0],target,valid,target_grad=True,valid_counts=valid_counts)
+                return self.cosine_loss(forward_estimates[0],target,valid,valid_counts=valid_counts)
             elif self.routing == 'block':
                 predictions = head.estimates(source.detach(),plan)
             else:
@@ -594,7 +595,7 @@ class ProxyModel(DeepKV):
                     targets = tuple(plan.apply(target,c).detach() for c in range(3))
                 cosines = torch.stack([(F.cosine_similarity(pred.float(),truth,dim=-1,eps=1e-6)*valid).sum(-1)
                                        for pred,truth in zip(predictions,targets)],dim=-1)
-                losses = (valid.sum(-1)[:,None]-cosines if self.settings.loss_form == 'cosine' else
+                losses = (valid_counts[:,None]-cosines if self.settings.loss_form == 'cosine' else
                     torch.stack([(F.smooth_l1_loss(pred.float(),truth,reduction='none',beta=1.).mean(-1)*valid).sum(-1)
                                  for pred,truth in zip(predictions,targets)],dim=-1))
                 return cosines, losses
@@ -630,6 +631,8 @@ class ProxyModel(DeepKV):
         counts = self.mu.new_zeros(len(self.mean_layers))
         clipped = torch.zeros_like(counts)
         need_targets = bool(self.family and (compute_auxiliary_losses or collect_target_statistics))
+        # Per-forward integer counts shared by every site and checkpoint replay.
+        valid_counts = context.valid.sum(-1) if compute_auxiliary_losses and self.family else None
         target_grad = self.aux_target_grad and compute_auxiliary_losses and auxiliary_grad and torch.is_grad_enabled()
         inverse_scales = None
         count_clipped = collect_target_statistics and collect_clip_statistics
@@ -738,7 +741,7 @@ class ProxyModel(DeepKV):
                         normalized = record(proxy,raw)
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
-                            cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,auxiliary_grad)
+                            cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,auxiliary_grad,valid_counts=valid_counts)
                             if self.arm in P6_CONSUMER_ARMS:
                                 from .proxy_estimators import consumer_effect_loss
                                 layer_module = self.backbone.model.layers[proxy-1]
@@ -766,7 +769,7 @@ class ProxyModel(DeepKV):
                             bases.pop(proxy)
                             if compute_auxiliary_losses:
                                 raw = windows.pop(proxy)/(layer-proxy-1)
-                                cosines[proxy] = self.layer_cosines(proxy,*source,raw,plan,context.valid,auxiliary_grad)
+                                cosines[proxy] = self.layer_cosines(proxy,*source,raw,plan,context.valid,auxiliary_grad,valid_counts=valid_counts)
             # Collect the real MLP target BEFORE its own added deep residual.
             hidden = finish_block(layer,hidden)
         if sources or windows or deep_messages:

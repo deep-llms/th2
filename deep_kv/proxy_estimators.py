@@ -25,9 +25,7 @@ class _ConsumerBlock(nn.Module):
         super().__init__()
         self.layer, self.attention = layer, attention
 
-    def forward(self, hidden, message, alpha, mask, rotary):
-        with torch.autocast(hidden.device.type,enabled=False):
-            scale=(hidden.float().square().mean(-1,keepdim=True)+1e-6).sqrt()
+    def forward(self, hidden, message, alpha, mask, rotary, scale):
         injected=hidden+(gated_prediction(message,alpha,hidden)*scale).to(hidden.dtype)
         u=self.layer.input_layernorm(injected)
         attended=self.attention(self.layer,u,None,mask,rotary)
@@ -44,13 +42,17 @@ def consumer_effect_loss(layer, attention, hidden, prediction, target, alpha, ma
     consumer=_ConsumerBlock(layer,attention)
     frozen={name:p.detach() for name,p in consumer.named_parameters()}
     frozen.update({name:b.detach() for name,b in consumer.named_buffers()})
-    args=(hidden.detach(),target.detach(),alpha.detach(),mask,rotary)
+    # Both responses use exactly the same frozen source and injection scale.
+    with torch.no_grad(), torch.autocast(hidden.device.type,enabled=False):
+        scale=(hidden.detach().float().square().mean(-1,keepdim=True)+1e-6).sqrt()
+    args=(hidden.detach(),target.detach(),alpha.detach(),mask,rotary,scale)
     with torch.no_grad():teacher=torch.func.functional_call(consumer,frozen,args)
-    student=torch.func.functional_call(consumer,frozen,(hidden.detach(),prediction,alpha.detach(),mask,rotary))
+    student=torch.func.functional_call(consumer,frozen,(hidden.detach(),prediction,alpha.detach(),mask,rotary,scale))
     with torch.autocast(hidden.device.type,enabled=False):
-        error=(student.float()-teacher.float()).square().mean(-1)
-        scale=teacher.float().square().mean(-1)+1e-6
-        return ((error/scale)*valid).sum(-1)[:,None]
+        teacher_fp32=teacher.float()
+        error=(student.float()-teacher_fp32).square().mean(-1)
+        denominator=teacher_fp32.square().mean(-1)+1e-6
+        return ((error/denominator)*valid).sum(-1)[:,None]
 
 
 def gated_prediction(prediction, alpha, source):
@@ -62,11 +64,12 @@ def depth_prediction(source, depth, w1, w2, depth_weight):
     return F.linear(F.silu(F.linear(source,w1)+F.linear(extra,depth_weight)),w2)
 
 
-def cosine_loss(prediction, target, valid, target_grad=False):
+def cosine_loss(prediction, target, valid, target_grad=False, valid_counts=None):
     with torch.autocast(prediction.device.type, enabled=False):
         truth = target if target_grad else target.detach()
         cosine = (F.cosine_similarity(prediction.float(),truth.float(),dim=-1,eps=1e-6)*valid).sum(-1)
-        return cosine[:,None], (valid.sum(-1)-cosine)[:,None]
+        counts = valid.sum(-1) if valid_counts is None else valid_counts
+        return cosine[:,None], (counts-cosine)[:,None]
 
 
 class _MLPPath(torch.autograd.Function):

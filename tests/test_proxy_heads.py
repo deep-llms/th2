@@ -127,7 +127,7 @@ class ProxyHeadTests(unittest.TestCase):
             def capture_scan(plan,*args):
                 result=original_scan(plan,*args);scan_states.append(result.detach()[:,3:].clone());return result
             original=m.layer_cosines
-            def doc2(layer,u,estimates,raw,plan,valid,auxiliary_grad):
+            def doc2(layer,u,estimates,raw,plan,valid,auxiliary_grad,valid_counts=None):
                 targets.append(raw.detach().clone())
                 eligible=valid.clone();eligible[:,:3]=False
                 return original(layer,u,estimates,raw,plan,eligible,auxiliary_grad)
@@ -153,10 +153,10 @@ class ProxyHeadTests(unittest.TestCase):
             m=model(arm)
             originals=[]
             original=m.layer_cosines
-            def capture(layer,u,estimates,raw,*args):
+            def capture(layer,u,estimates,raw,*args,**kwargs):
                 self.assertFalse(raw.requires_grad)
                 originals.append(raw)
-                return original(layer,u,estimates,raw,*args)
+                return original(layer,u,estimates,raw,*args,**kwargs)
             with patch.object(m,'layer_cosines',side_effect=capture):out=m(batch())
             self.assertTrue(originals);self.assertTrue(torch.isfinite(out['aux_sum']))
             out['aux_sum'].backward()

@@ -1,3 +1,20 @@
+## Consumer review and exact overhead reductions — 14 October 2026
+
+Both consumer-aware variants remain included as follow-up runs3/4; P7 deep and
+its shallow-source control run first. Reviewed all arm families; implemented
+reuse of per-forward valid counts, frozen consumer RMS/teacher FP32 values, and
+removed eager allocation of unused Trainer masks/positions. Scientific recipes,
+architecture, gradient routes and checkpoint formats remain unchanged.
+
+Three new exact-comparison tests passed49.464s (A plus all47proxy arms,
+FP32/BF16/checkpoint replay, gradients and AdamW state). All80 broader regression
+tests passed847.649s, including distributed training/resume, independent consumer
+objectives and document isolation. B200 throughput gain has not been measured.
+Read-only04:54SGT receipt confirmed screen22 on arm21 and follow-up waiting for
+success plus verified burns. Next action: sync and CPU-only recheck on B200 in a
+separate q359-shared-work-verify-20261014-a01 output directory. No GPU stop/test
+now; existing queued CUDA numerics and8GPU smokes remain mandatory.
+
 ## Authorized overnight follow-up — 14 October 2026
 
 User requested additional implemented arms to run after the current screen while

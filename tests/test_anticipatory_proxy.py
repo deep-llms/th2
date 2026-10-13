@@ -421,7 +421,7 @@ class AnticipatoryTests(unittest.TestCase):
             m=model(arm,checkpoint=True);ctx=batch();inputs=[];targets=[];streams=[]
             h=m.backbone.model.embed_tokens.register_forward_hook(lambda mod,args,out:inputs.append(out))
             original=m.layer_cosines;block=m.block
-            def cosine(layer,u,estimates,raw,plan,valid,auxiliary_grad):
+            def cosine(layer,u,estimates,raw,plan,valid,auxiliary_grad,valid_counts=None):
                 targets.append(raw[:,3:].detach().clone());eligible=valid.clone();eligible[:,:3]=False
                 return original(layer,u,estimates,raw,plan,eligible,auxiliary_grad)
             def observed(*args,**kw):
