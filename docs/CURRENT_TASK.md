@@ -1,3 +1,21 @@
+## Screen22 live status — 13 October 2026, 10:02 UTC
+
+Read-only command04ef4ae confirms q359 healthy. All21 CUDA numerical cases and
+all22 eight-GPU training smokes/validators passed. Seven production arms finished
+and validated at2500updates: A, P6-iso, targetgrad, shallowgrad, bothgrad, P6,
+P6-lowaux. Eighth arm P6-iso-sparse running at570/2500, about1.09s/update;
+14arms remain after it. All8GPUs active at96–99%, roughly64–65GiB allocated
+device memory reported by nvidia-smi. No failed queue stage; supervisor active.
+Completed arms retain all10 checkpoints from250 through2500.
+
+Full-validation LM losses: A3.5911805111, P6-iso3.5867720296,
+P6-iso-targetgrad3.6277512592, P6-iso-shallowgrad3.5866927335,
+P6-iso-bothgrad3.6277105874, P6 3.5920788962, P6-lowaux3.5924878404.
+These are the new12-layer2500-update screen, not historical28-layer results.
+Evidence:temp/remote_logs/screen22-health-20261013-a03.log,
+SHA256 fdaeb20220425336d2c200b7af62d34f55d0690437a75336eed6565de3ab484d.
+No workload changed; commands.sh returned to#0. Final burns remain configured.
+
 ## B200 22-arm launch authorized — 13 October 2026
 
 User approved the complete screen, deferring consumer-aware experiments. Run22
