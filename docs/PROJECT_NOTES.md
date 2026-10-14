@@ -1,3 +1,23 @@
+## P7 consumer screen running — 15 October 2026, 02:11 SGT
+
+Launch36e5f71; read-only63cd00e at02:11:46SGT verifies all four CUDA numerical
+cases, all four eight-GPU3step smokes and their validators passed. Existing
+numerical thresholds were unchanged; overall gradient relativeL2 about0.0055.
+Production consumer-only started02:08:51SGT and reached97/2500steps,
+~1.27s/update, finite losses/gradients; all8GPUs98–99%,68538–69716MiB each.
+Next: consumer+cosine, consumer+targetgrad, targetgrad lambda.01, then same9tasks.
+Rough full-queue estimate about4hours including evaluation; not a guarantee.
+
+Data/environment/evaluation preflights passed. Accelerate resource copied and
+verified, SHA256923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5.
+Exact known burn workers770790–770797 reclaimed; all8GPUs verified free at
+02:03:25SGT. Supervisor owns guard; automatically restores/verifies communicating
+burns after completion/failure. No new environment installation or data cleanup.
+Root:/mnt/local/_outputs/deep-llms_th2/q359-p7-consumer4-20261015-a01.
+Receipt:temp/remote_logs/p7-consumer-health-20261015-a03.log, SHA256
+c416719f19bbf9af13acdf3427594e512980eb0e13fc2442afa199ce8f00fd19.
+commands.sh returned to#0; detached queue continues. Do not relaunch.
+
 ## Consumer-aware P7 four-run screen authorized — 15 October 2026
 
 User requested further method exploration, consumer-aware experiments and runs.

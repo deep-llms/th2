@@ -85,3 +85,15 @@ arm, queue contracts and historical regression checks. After audit changes,
 Q/K/V gradient counts. Logs:temp/p7-consumer-acceptance-20261015.log and
 temp/p7-consumer-final-core-20261015.log. Remote full-shape CUDA numerical and
 all four eight-GPU smoke gates remain required before production.
+
+
+## B200 acceptance and launch
+
+All four full-shape CUDA numerical checks and all four eight-GPU3step smokes
+with validators passed. Production consumer-only is advancing at97/2500steps
+as of15October02:11:46SGT (~1.27s/update); other runs/evaluation follow.
+Accelerate verified, known burns safely reclaimed, GPUs verified free before
+launch. Automatic burn restoration remains enabled. Source launch36e5f71;
+receipt temp/remote_logs/p7-consumer-health-20261015-a03.log, SHA256
+c416719f19bbf9af13acdf3427594e512980eb0e13fc2442afa199ce8f00fd19.
+No production result is available yet.
