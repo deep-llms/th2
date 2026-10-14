@@ -1,5 +1,5 @@
-#0
-#th2-q359-followup-results-20261014-a02
+#1 +15+a
+#th2-q359-followup-results-20261014-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
