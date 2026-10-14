@@ -1,3 +1,29 @@
+## B200 recovered; original screen complete, follow-up healthy — 14 October 2026, 13:28 SGT
+
+Read-only request1bc81c5 succeeded. Previous hostname-resolution error was an
+access failure; no restart was needed. Screen22 completed all22arms/validators
+and comparisons at06:06:53SGT; supervisor verified communicating burns on all8
+GPUs at06:07:59. Follow-up preflight passed, Accelerate cache hash matched the
+resource, exact burn workers were reclaimed and all8GPUs were free at06:09:46.
+CUDA numerics and all11eight-GPU smoke/validation pairs passed.
+
+Follow-up has7/11production runs and validators complete; P6 lambda1 (case8)
+is running at2343/2500, all8GPUs98–99% utilization. Remaining after this:
+P6-iso-targetgrad lambda.01, P7-simple-sparse, P7-simple-short. No failed stages.
+Estimated finish about16:00–16:15SGT today from observed49–51min/run; estimate,
+not completion. Automatic communicating burns remain configured after exit.
+
+Completed follow-up PPL (2500steps,12layers,seed42):
+P7-simple-deep36.080857; deep-shallow36.071237;
+P6-iso-consumer36.131321; consumer-only36.219153;
+P7-simple-lm lambda.0336.093250, lambda.336.111052;
+P6 lambda.336.325693. BaselineA36.276876; originalP6-iso36.117302;
+best originalP6-iso-deep36.061986. These are single-seed screening results.
+
+Evidence:temp/remote_logs/followup-results-20261014-a03.log, SHA256
+0a72dde828bef0436a4556dfb5e12915c545b93fb914556638fa5a1ba8756cf0.
+commands.sh returned to#0; running queue untouched. Next action read-only status.
+
 ## Status unavailable — 14 October 2026, 12:36 SGT
 
 Read-only status request34ce131 failed before reaching q359: runner SSH could
