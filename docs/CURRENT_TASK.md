@@ -1,3 +1,17 @@
+## P7-targetgrad throughput optimization authorized — 15 October 2026
+
+User requested optimization, including custom kernels if useful. First profile
+A and P7-simple-targetgrad with existing12layer/8GPU/micro16/GAS4/2048/FA4
+recipe in fresh disposable50step runs. Retain production checkpoints/configs.
+Audit pinned FA4 b33 LSE backward support before an attention candidate.
+Then validate candidate forward/backward, live target gradients, normalization
+state and updates; measure complete eight-GPU Trainer throughput. No new long
+scientific training or environment changes. Profile root:
+q359-p7-speed-profile-20261015-a01. Predecessor teacher probe completed with
+verified burns. Copy/verify Accelerate, reclaim only identified known burns,
+verify all8GPUs free; existing supervisor restores/verifies burns after exit.
+Queue construction and shell syntax passed locally; remote submission pending.
+
 ## P7 teacher investigation complete — 15 October 2026, 07:16 SGT
 
 Frozen-weight probe passed for P7-simple, P7-simple-lm, P7-simple-deep and
