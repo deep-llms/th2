@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-q359-proxy12-remaining-health-20261014-a01
+#th2-q359-proxy12-remaining-health-20261014-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -13,7 +13,7 @@ base=Path('/mnt/local/_outputs/deep-llms_th2')
 for name in ('q359-proxy12-eval-20261014-a01','q359-proxy12-eval-remaining27-20261014-a01'):
  root=base/name
  print('ROOT',name)
- for leaf in ('supervised/supervisor.json','supervised/burn-verified.json','supervised/run/run.json'):
+ for leaf in ('supervised/supervisor.json','supervised/burn-verified.json','supervised/run/run.json','supervised/reclaim.json','supervised/gpus-free-before-training.json'):
   p=root/leaf
   if p.exists():print('STATE',leaf,p.read_text())
  p=root/'preflight.json'
