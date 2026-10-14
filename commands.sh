@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-speed-trial-health-20261015-a01
+#th2-q359-p7-speed-trial-health-20261015-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -12,14 +12,16 @@ from scripts.train_then_burn import burn_progress,approved_launcher,process,BURN
 from scripts.verified_gpu_reclaim import ownership
 root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-speed-trial-20261015-a01')
 print('AT',datetime.now(timezone.utc).isoformat())
-for leaf in ('preflight.json','fa4-api.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/gate/summary.json','supervised/run/timings/run.json','supervised/run/timing-summary.json','supervised/burn-verified.json'):
+for leaf in ('preflight.json','fa4-api.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/timings/run.json','supervised/run/timing-summary.json','supervised/burn-verified.json'):
  p=root/leaf
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
-for p in sorted((root/'supervised/run/gate').glob('rank-*.json')):
- d=json.loads(p.read_text());print('GATE_WORKER',p.name,json.dumps(d))
+for folder in sorted((root/'supervised/run/timings').glob('*/seed-42/P7-simple-targetgrad')):
+ for leaf in ('step-profile-rank0.json','component-profile.json','result.json'):
+  p=folder/leaf
+  if p.exists():print('TIMING_ARTIFACT',str(folder),leaf,p.read_text())
 for p in sorted((root/'supervised/run').glob('*.log'))+sorted((root/'supervised/run/timings').glob('*.log')):
- print('JOB_TAIL',str(p),p.read_text(errors='replace')[-5000:])
+ print('JOB_TAIL',str(p),p.read_text(errors='replace')[-2500:])
 p=root/'supervisor.log'
 if p.exists():print('SUPERVISOR_TAIL',p.read_text()[-8000:])
 status=snapshot(list(range(8)));print('GPU_SNAPSHOT',json.dumps(status))

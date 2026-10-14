@@ -30,7 +30,7 @@ not assumed from another wheel. No FA version, environment or driver changes.
 CPU tests compare an independent joint-attention oracle, all five Q/K/V/proxy
 input gradients, document isolation, causality, full-model LM and auxiliary
 gradient routes, normalization buffers and an AdamW update. They also reject
-the deliberately incorrect detached-LSE gradient. All three tests passed.
+the deliberately incorrect detached-LSE gradient. All four tests passed, including zero/tiny norms and fully masked rows.
 
 CUDA acceptance uses the existing trained step-2,500 checkpoint, deterministic
 FA4 backward, short/checkpointed and full 2,048-token/micro16 cases. Eager/eager
@@ -51,5 +51,26 @@ Each supervised stage copies/verifies Accelerate, reclaims only identified
 burn workers, verifies all GPUs free, then restores/verifies communicating
 burns after success or failure. Existing training checkpoints are read-only.
 
-Results: pending CUDA gates and complete-step timing. Do not enable these
-experimental switches in a production experiment on the basis of CPU tests.
+## Results so far
+
+The original A and P7 50-step profiles completed successfully. Their final
+summary script initially misclassified intentional force-stopping as an error;
+this reporting check was fixed. The original failure history is retained, and
+every recorded result/timing artifact hash was reverified before recomputing
+[the summary](results/p7_speed_profile_20261015.json) in the new trial root.
+Burns were restored/verified after that stage.
+
+All-rank median intervals: A **1.049218 s**, P7 **1.170189 s** (**11.53%**
+overhead). P7 cosine forward/backward sums to **36.56 ms** of GPU kernel time
+per update. Kernel sums are explanatory, not independently additive wall time.
+
+[CUDA acceptance](results/p7_speed_numerical_20261015.json) passed for all three
+candidates in both tested shapes. Eager/eager was exact. At sequence2048 and
+micro16, cosine-only retained exact forward outputs and buffers, with0.370%
+overall gradient relative L2 difference. LSE/both had about1.260% gradient
+relative L2 difference,0.623% hidden relative L2,0.246% logits relative L2,
+and0.000175 absolute total-loss difference. Predictor gradients were checked
+separately and passed. Source checkpoint was unchanged.
+
+Complete-step timing is running. Production remains unchanged. Passing these
+numerical checks alone does not establish a speedup or bitwise resume identity.
