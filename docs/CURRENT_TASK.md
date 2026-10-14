@@ -1,3 +1,32 @@
+## Consumer screen complete — 15 October 2026, 06:20 SGT
+
+Read-only f7b1558 at06:20:18SGT verifies all21queue stages succeeded, all four
+fresh12layer runs reached2500steps, validators passed, downstream numerical/smoke
+and full9benchmark evaluations passed (diagnostic=false). Evaluation completed
+06:00:27SGT; supervisor exited0 and verified communicating burns06:01:38SGT.
+All8current burn workers match recorded ownership and approved parents, collectives
+advance, log age1.82s, GPU guard released. No queued follow-up or fine-tuning.
+
+| Arm (seed42) | PPL | MC mean (%) | BLiMP (%) | LAMBADA (%) |
+|---|---:|---:|---:|---:|
+| A (existing baseline) | 36.2769 | 45.5798 | 74.2866 | 14.9233 |
+| Consumer-only | 36.1319 | 44.5497 | 67.1985 | 16.3594 |
+| Consumer + cosine | 36.0724 | 45.1166 | 69.3821 | 15.6802 |
+| Consumer + targetgrad | 37.4417 | 44.2936 | 74.1239 | 15.4085 |
+| Targetgrad lambda0.01 | 36.0871 | 45.2179 | 70.2806 | 16.3206 |
+
+MC mean is the unweighted average of the seven multiple-choice benchmarks.
+Consumer-only, consumer+cosine and targetgrad lambda0.01 improve PPL versus same-seed A, but none
+beats A on MC mean. Consumer+cosine is best PPL in this batch; its BLiMP score
+is4.90percentage points below A. Lower targetgrad weight recovers PPL but does
+not retain the earlier lambda0.1MC advantage. These are single-seed results,
+not evidence of a broad downstream improvement.
+Root:q359-p7-consumer4-20261015-a01. Receipt:
+temp/remote_logs/p7-consumer-completion-20261015-a01.log, SHA256
+3f06791b09d8aea030ff6683412722e447702a98222d96aae7699047929a3049.
+Compact local results:temp/results/p7-consumer4-20261015.json.
+commands.sh returned to#0. No new workload launched.
+
 ## Consumer queue ETA — 15 October 2026, 03:39 SGT
 
 Read-only c59c929 at03:39:16SGT: consumer-only reached2500 and validator passed

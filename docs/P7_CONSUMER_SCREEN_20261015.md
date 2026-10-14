@@ -97,3 +97,46 @@ launch. Automatic burn restoration remains enabled. Source launch36e5f71;
 receipt temp/remote_logs/p7-consumer-health-20261015-a03.log, SHA256
 c416719f19bbf9af13acdf3427594e512980eb0e13fc2442afa199ce8f00fd19.
 No production result is available yet.
+
+
+## Completed results — 15 October 2026
+
+Read-only f7b1558 at06:20:18SGT verifies all21queue stages succeeded, all four
+fresh12layer runs reached2500steps, validators passed, downstream numerical/smoke
+and full9benchmark evaluations passed (diagnostic=false). Evaluation completed
+06:00:27SGT; supervisor exited0 and verified communicating burns06:01:38SGT.
+All8current burn workers match recorded ownership and approved parents, collectives
+advance, log age1.82s, GPU guard released. No queued follow-up or fine-tuning.
+
+| Arm (seed42) | PPL | MC mean (%) | BLiMP (%) | LAMBADA (%) |
+|---|---:|---:|---:|---:|
+| A (existing baseline) | 36.2769 | 45.5798 | 74.2866 | 14.9233 |
+| Consumer-only | 36.1319 | 44.5497 | 67.1985 | 16.3594 |
+| Consumer + cosine | 36.0724 | 45.1166 | 69.3821 | 15.6802 |
+| Consumer + targetgrad | 37.4417 | 44.2936 | 74.1239 | 15.4085 |
+| Targetgrad lambda0.01 | 36.0871 | 45.2179 | 70.2806 | 16.3206 |
+
+MC mean is the unweighted average of the seven multiple-choice benchmarks.
+Consumer-only, consumer+cosine and targetgrad lambda0.01 improve PPL versus same-seed A, but none
+beats A on MC mean. Consumer+cosine is best PPL in this batch; its BLiMP score
+is4.90percentage points below A. Lower targetgrad weight recovers PPL but does
+not retain the earlier lambda0.1MC advantage. These are single-seed results,
+not evidence of a broad downstream improvement.
+Root:q359-p7-consumer4-20261015-a01. Receipt:
+temp/remote_logs/p7-consumer-completion-20261015-a01.log, SHA256
+3f06791b09d8aea030ff6683412722e447702a98222d96aae7699047929a3049.
+Compact local results:temp/results/p7-consumer4-20261015.json.
+commands.sh returned to#0. No new workload launched.
+
+| Benchmark (%) | A | Consumer-only | Consumer + cosine | Consumer + targetgrad | Targetgrad lambda0.01 |
+|---|---:|---:|---:|---:|---:|
+| sciq | 64.00 | 64.20 | 63.90 | 63.80 | 63.80 |
+| arc_easy | 35.27 | 36.66 | 35.86 | 35.10 | 36.24 |
+| boolq | 56.82 | 52.02 | 55.66 | 53.43 | 56.02 |
+| piqa | 60.39 | 58.98 | 59.96 | 59.41 | 59.85 |
+| winogrande | 53.67 | 51.30 | 52.09 | 49.80 | 50.36 |
+| hellaswag | 27.83 | 27.87 | 27.70 | 27.52 | 28.16 |
+| arc_challenge | 21.08 | 20.82 | 20.65 | 20.99 | 22.10 |
+| blimp | 74.29 | 67.20 | 69.38 | 74.12 | 70.28 |
+| lambada_openai | 14.92 | 16.36 | 15.68 | 15.41 | 16.32 |
+| **Seven-task MC average** | 45.58 | 44.55 | 45.12 | 44.29 | 45.22 |
