@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-teacher-health-20261015-a01
+#th2-q359-p7-teacher-completion-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -17,8 +17,9 @@ for leaf in ('preflight.json','supervised/supervisor.json','supervised/run/run.j
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
 for stage in ('smoke','full'):
- for p in sorted((root/'supervised/run'/stage).glob('*.log')):
-  print('WORKER_TAIL',str(p),p.read_text()[-1600:])
+ for p in sorted((root/'supervised/run'/stage).glob('*/result.json')):
+  d=json.loads(p.read_text())
+  print('WORKER_CHECK',stage,json.dumps({k:v for k,v in d.items() if k!='rows'}))
 p=root/'supervisor.log'
 if p.exists():print('SUPERVISOR_TAIL',p.read_text()[-8000:])
 status=snapshot(list(range(8)));print('GPU_SNAPSHOT',json.dumps(status))
