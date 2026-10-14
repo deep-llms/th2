@@ -1,3 +1,18 @@
+## P7 throughput candidates — 15 October 2026
+
+Profile A/P7 jobs both succeeded (50steps), but summary incorrectly required
+complete instead of intentionally stopped. Fixed; preserve failed summary
+history. Burns verified/live ownership at07:51:33SGT, guard released.
+Trial preflight revalidates every recorded profile artifact hash and recomputes
+summary into NEW root, accepts only this exact documented postprocessing failure.
+Rank0medians1.0492/1.1702seconds; all-rank aggregation pending preflight.
+Three CPU tests pass, including checkpointing and LM/aux routing. Candidate
+cosine compile, live-LSE merge, both: full CUDA gates before real Trainer timing,
+50steps each with eager controls before/after. No production/default changes.
+New root:q359-p7-speed-trial-20261015-a01. Auto burn restoration verified by
+existing supervisor. No long scientific training. Report:
+docs/P7_TARGETGRAD_SPEED_20261015.md. Submission pending.
+
 ## P7-targetgrad throughput optimization authorized — 15 October 2026
 
 User requested optimization, including custom kernels if useful. First profile

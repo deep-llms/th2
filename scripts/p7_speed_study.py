@@ -27,6 +27,38 @@ def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED')):
         raise ValueError('Predecessor and verified burn handoff must be complete')
 
 
+def profile_predecessor_ready(root, receipt):
+    """Accept only the documented summary-only failure, preserving its history."""
+    import hashlib
+    root=Path(root)
+    state,run,burn=(read(root/'supervised'/p) for p in ('supervisor.json','run/run.json','burn-verified.json'))
+    if state.get('training_status')=='ok':
+        predecessor_ready(root)
+    else:
+        jobs=run.get('jobs',[])
+        if (root.name!='q359-p7-speed-profile-20261015-a01'
+                or state.get('training_status')!='failed' or not state.get('finished_at')
+                or run.get('status')!='failed' or run.get('error')!='summarize exited with code 1'
+                or [j['name'] for j in jobs]!=['A-profile','P7-simple-targetgrad-profile','summarize']
+                or any(j.get('status')!='ok' or j.get('returncode')!=0 for j in jobs[:2])
+                or jobs[2].get('status')!='failed' or jobs[2].get('returncode')!=1
+                or not burn.get('collective_progress_verified')
+                or not state.get('burn',{}).get('collective_progress_verified')
+                or burn['session']!=state['burn']['session']
+                or Path('/mnt/local/_gpu_guard/DISABLED').exists()):
+            raise ValueError('Not the verified profile-summary-only failure')
+        for job in jobs[:2]:
+            for artifact in job['artifacts']:
+                if hashlib.sha256((root/'supervised/run'/artifact['path']).read_bytes()).hexdigest()!=artifact['sha256']:
+                    raise ValueError('Completed profiling artifact changed')
+    # Recompute the corrected summary into the NEW study root. Do not erase
+    # the original failure or rewrite its supervisor/run/completion records.
+    report=profile_report(root/'supervised/run')
+    report['source_summary_failed']=state['training_status']=='failed'
+    write(receipt,report)
+    print('VERIFIED_PROFILE_SUMMARY',json.dumps(report),flush=True)
+
+
 def make_jobs(root, recipe_path, trial=False):
     from deep_kv.__main__ import jobs
     recipe=read(recipe_path)
@@ -79,7 +111,8 @@ def prepare(args):
     from run_experiments import load_jobs
     root=Path(args.root)
     if socket.gethostname()!=args.host:raise ValueError('Wrong host')
-    predecessor_ready(args.predecessor)
+    if args.trial:profile_predecessor_ready(args.predecessor,root/'profile-summary.json')
+    else:predecessor_ready(args.predecessor)
     expected=dict(torch='2.14.1',transformers='5.9.0',accelerate='1.13.0',datasets='4.8.5',
         **{'flash-attn-4':'4.0.0b33','nvidia-cutlass-dsl':'4.8.0'})
     versions={k:md.version(k) for k in expected}
@@ -118,8 +151,8 @@ def prepare(args):
     print('P7_SPEED_PREFLIGHT_PASSED',flush=True)
 
 
-def summarize(args):
-    root=Path(args.root);results={}
+def profile_report(root):
+    root=Path(root);results={}
     for arm in ('A','P7-simple-targetgrad'):
         folder=root/'seed-42'/arm;result=read(folder/'result.json')
         if result['status']!='stopped' or result['global_step']!=50:raise ValueError('Incomplete timing run')
@@ -131,8 +164,12 @@ def summarize(args):
         results[arm]=dict(median_seconds=statistics.median(values),mean_seconds=statistics.mean(values),
             step_range=[20,49],intervals=values,peak_gib=max(r['peak_gib'] for r in ranks),
             components=read(folder/'component-profile.json')['kernel_milliseconds'])
-    report=dict(status='passed',results=results,
+    return dict(status='passed',results=results,
         overhead_percent=100*(results['P7-simple-targetgrad']['median_seconds']/results['A']['median_seconds']-1))
+
+
+def summarize(args):
+    root=Path(args.root);report=profile_report(root)
     write(root/'summary.json',report);print('P7_SPEED_SUMMARY',json.dumps(report),flush=True)
 
 
@@ -159,16 +196,23 @@ def benchmark(args):
         items.append(job)
     path=root/'timing-jobs.json';write(path,dict(jobs=items));load_jobs(path)
     subprocess.run([sys.executable,'run_experiments.py','--config',str(path),'--run-dir',str(root/'timings')],check=True)
-    results={}
+    results={}; data_reference=None
     for label,mode in cases:
         folder=root/'timings'/label/'seed-42'/'P7-simple-targetgrad'
         result=read(folder/'result.json')
         if result['status']!='stopped' or result['global_step']!=50:raise ValueError('Incomplete training')
         ranks=[read(folder/f'step-profile-rank{rank}.json') for rank in range(8)]
+        audits=[read(folder/f'speed-trial-rank{rank}.json') for rank in range(8)]
+        data=[a['data_hashes'] for a in audits]
+        if any(len(hashes)!=8 for hashes in data):raise ValueError('Incomplete data-order audit')
+        if data_reference is None:data_reference=data
+        elif data!=data_reference:raise ValueError('Different training samples/order')
+        if any(a['graphs']['20']!=a['graphs']['49'] for a in audits):raise ValueError('Compilation inside measured interval')
         if any([s['step'] for s in r['steps']]!=list(range(1,51)) for r in ranks):raise ValueError('Incomplete timing')
         values=[max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(19,49)]
         results[label]=dict(mode=mode,median_seconds=statistics.median(values),mean_seconds=statistics.mean(values),
-            intervals=values,peak_gib=max(r['peak_gib'] for r in ranks),evaluation=result['evaluation'])
+            intervals=values,peak_gib=max(r['peak_gib'] for r in ranks),evaluation=result['evaluation'],
+            data_order_verified=True,graph_counts=[a['graphs'] for a in audits])
     reference=statistics.mean(results[label]['median_seconds'] for label in ('reference-before','reference-after'))
     for label in gate['accepted']:results[label]['speedup_percent']=100*(reference/results[label]['median_seconds']-1)
     write(root/'timing-summary.json',dict(status='passed',results=results,reference_seconds=reference,

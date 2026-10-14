@@ -84,8 +84,36 @@ def implementation(mode, backend='inductor'):
 
 
 def train(mode, arguments):
+    import hashlib
+    from pathlib import Path
     import runpy
     import sys
+    from transformers import TrainerCallback
+    import deep_kv.proxy_training as training
+    from scripts.p7_speed_study import write
+    class Audit(TrainerCallback):
+        def __init__(self): self.hashes=[]; self.graphs={}
+        def on_step_end(self, args, state, control, **kwargs):
+            if state.global_step in (20,49):
+                from torch._dynamo.utils import counters
+                self.graphs[str(state.global_step)]=dict(counters['stats'])
+        def on_train_end(self, args, state, control, **kwargs):
+            write(Path(args.output_dir)/f'speed-trial-rank{args.process_index}.json',
+                dict(mode=mode, data_hashes=self.hashes, graphs=self.graphs))
+    original_init, original_step=training.ProxyTrainer.__init__,training.ProxyTrainer.training_step
+    def initialize(self, *args, **kwargs):
+        original_init(self,*args,**kwargs)
+        self.speed_audit=Audit(); self.add_callback(self.speed_audit)
+    def step(self, model, inputs, *args, **kwargs):
+        # Outside measured updates20–49. Verify the identical data order at
+        # both ends; no new tokenization/sampling or changes to the dataloader.
+        if self.state.global_step in (0,49):
+            h=hashlib.sha256()
+            for key,value in sorted(inputs.items()):
+                h.update(key.encode());h.update(value.detach().cpu().contiguous().numpy().tobytes())
+            self.speed_audit.hashes.append(h.hexdigest())
+        return original_step(self,model,inputs,*args,**kwargs)
+    training.ProxyTrainer.__init__,training.ProxyTrainer.training_step=initialize,step
     with implementation(mode):
         sys.argv = ['scripts.profile_proxy_training', *arguments]
         runpy.run_module('scripts.profile_proxy_training', run_name='__main__')
