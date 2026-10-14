@@ -1,3 +1,31 @@
+## P7 confirmation complete — 15 October 2026, 01:47 SGT
+
+Read-only commit7eac4f0 verifies all17stages succeeded: three fresh12layer
+2500-step runs, validators, and full nine-benchmark evaluations (no fine-tuning).
+Evaluation finished14October23:43:45SGT; burns restored/verified23:44:56SGT.
+At15October01:47:54SGT all8live burn workers match the recorded ownership,
+approved parents and advancing collectives; log age5.24s, GPU guard released.
+
+| Arm | Seed | LM loss | PPL | Seven-task MC mean (%) | BLiMP (%) | LAMBADA (%) |
+|---|---:|---:|---:|---:|---:|---:|
+| A (previous baseline) | 42 | 3.591181 | 36.2769 | 45.5798 | 74.2866 | 14.9233 |
+| A | 1042 | 3.590607 | 36.2561 | 45.0288 | 74.3627 | 15.9519 |
+| P7-simple-targetgrad | 1042 | 3.614167 | 37.1204 | 45.2418 | 74.9955 | 15.1174 |
+| P7-simple-targetgrad-lm | 42 | 3.638429 | 38.0320 | 44.1116 | 74.2642 | 15.1368 |
+
+Compare within seed: targetgrad1042 is+0.213percentage points on MC mean
+but+0.023560nats worse on validation loss versus A1042. Earlier seed42
+MC advantage was+0.312pp. Two small same-direction results are encouraging,
+not a demonstrated statistically reliable downstream win. Combined targetgrad-lm42
+is-1.468pp and+0.047248nats versus A42; this test does not support that change.
+Root:/mnt/local/_outputs/deep-llms_th2/q359-p7-confirmation3-20261014-a01.
+Receipt:temp/remote_logs/p7-confirmation-completion-20261015-a01.log, SHA256
+b65e043e9c336e5f423255ab1281cc13adcc4081217f4afabe05d26bda9ce80c.
+Compact results:temp/results/p7-confirmation-20261015.json.
+Full downstream summary SHA256:
+3a91352acf251bce5cadd4fdd3e355c3830a16abde62218db1479d6a2f669f88.
+commands.sh returned to#0. No new training or evaluation queued.
+
 ## P7 confirmation queue running — 14 October 2026, 21:08 SGT
 
 Launch commit 7fe8d34; read-only receipt 229a7e6 at 13:08:23 UTC verifies
