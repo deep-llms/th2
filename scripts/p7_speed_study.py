@@ -27,7 +27,7 @@ def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED')):
         raise ValueError('Predecessor and verified burn handoff must be complete')
 
 
-def make_jobs(root, recipe_path):
+def make_jobs(root, recipe_path, trial=False):
     from deep_kv.__main__ import jobs
     recipe=read(recipe_path)
     for key,value in dict(num_hidden_layers=12,block_size=2048,per_device_train_batch_size=16,
@@ -36,6 +36,21 @@ def make_jobs(root, recipe_path):
         if recipe[key]!=value:raise ValueError(('Unexpected recipe',key,recipe[key]))
     recipe.update(eval_rows=32,monitor_rows=32,save_steps=1000,save_total_limit=0)
     root=Path(root);path=root/'recipe.json';write(path,recipe)
+    if trial:
+        checkpoint='/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500'
+        rows='/mnt/local/_outputs/deep-llms_th2/q359-p7-teacher-probe-20261015-a01/rows.json'
+        items=[dict(name='numerical-gate',gpus=list(range(8)),timeout_seconds=1800,
+            argv=['{python}','-m','accelerate.commands.launch','--config_file',
+                str(Path('resources/accelerate_config.yaml').resolve()),'--module','scripts.p7_speed_trial','gate',
+                '--checkpoint',checkpoint,'--checkpoint-sha256','be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45',
+                '--rows',rows,'--rows-sha256','00cd77dc6923216b065855bdc40cf6105afa7a70d305452aa0a92a4c7e728bcc',
+                '--output','{run_dir}/gate'],
+            required_outputs=[dict(path='gate/summary.json',json_equals={'status':'passed'})]),
+            dict(name='accepted-candidate-timings',timeout_seconds=5400,
+                argv=['{python}','-m','scripts.p7_speed_study','benchmark','--root','{run_dir}',
+                      '--recipe',str(path)],
+                required_outputs=[dict(path='timing-summary.json',json_equals={'status':'passed'})])]
+        write(root/'jobs.json',dict(jobs=items));return items
     items=[]
     for arm in ('A','P7-simple-targetgrad'):
         job=copy.deepcopy(next(j for j in jobs(path,stop_after=50,arms=[arm],seeds=[42])['jobs'] if 'gpus' in j))
@@ -89,7 +104,7 @@ def prepare(args):
     if source.read_bytes()!=destination.read_bytes() or cfg['num_processes']!=8 or cfg['mixed_precision']!='bf16':
         raise ValueError('Accelerate mismatch')
     subprocess.run(['accelerate','env'],check=True)
-    make_jobs(root,'proxy_heads.12layer.b200.json');load_jobs(root/'jobs.json')
+    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial);load_jobs(root/'jobs.json')
     status=inspect()
     if (status['host']!=args.host or status['guard_disabled'] or len(status['gpus'])!=8
             or any('B200' not in g['name'] for g in status['gpus'])
@@ -121,7 +136,47 @@ def summarize(args):
     write(root/'summary.json',report);print('P7_SPEED_SUMMARY',json.dumps(report),flush=True)
 
 
+def benchmark(args):
+    import subprocess
+    import sys
+    from deep_kv.__main__ import jobs
+    from run_experiments import load_jobs
+    root=Path(args.root);gate=read(root/'gate/summary.json')
+    if gate['status']!='passed' or not gate['checkpoint_unchanged']:
+        raise ValueError('Numerical acceptance required before timing')
+    cases=[('reference-before','eager')]+[(mode,mode) for mode in gate['accepted']]+[('reference-after','eager')]
+    items=[]
+    for label,mode in cases:
+        arm='P7-simple-targetgrad'
+        job=copy.deepcopy(next(j for j in jobs(args.recipe,stop_after=50,arms=[arm],seeds=[42])['jobs'] if 'gpus' in j))
+        pos=next(i for i,a in enumerate(job['argv']) if a.endswith('/train.py'))
+        job['argv'][pos:pos+1]=['--module','scripts.p7_speed_trial','train','--implementation',mode,'--']
+        job['argv']=[v.replace('{run_dir}','{run_dir}/'+label) for v in job['argv']]
+        for output in job['required_outputs']:output['path']=label+'/'+output['path']
+        job['name']=label;job['timeout_seconds']=1200
+        for rank in range(8):
+            job['required_outputs'].append(dict(path=f'{label}/seed-42/{arm}/step-profile-rank{rank}.json',json_equals={'status':'profiled'}))
+        items.append(job)
+    path=root/'timing-jobs.json';write(path,dict(jobs=items));load_jobs(path)
+    subprocess.run([sys.executable,'run_experiments.py','--config',str(path),'--run-dir',str(root/'timings')],check=True)
+    results={}
+    for label,mode in cases:
+        folder=root/'timings'/label/'seed-42'/'P7-simple-targetgrad'
+        result=read(folder/'result.json')
+        if result['status']!='stopped' or result['global_step']!=50:raise ValueError('Incomplete training')
+        ranks=[read(folder/f'step-profile-rank{rank}.json') for rank in range(8)]
+        if any([s['step'] for s in r['steps']]!=list(range(1,51)) for r in ranks):raise ValueError('Incomplete timing')
+        values=[max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(19,49)]
+        results[label]=dict(mode=mode,median_seconds=statistics.median(values),mean_seconds=statistics.mean(values),
+            intervals=values,peak_gib=max(r['peak_gib'] for r in ranks),evaluation=result['evaluation'])
+    reference=statistics.mean(results[label]['median_seconds'] for label in ('reference-before','reference-after'))
+    for label in gate['accepted']:results[label]['speedup_percent']=100*(reference/results[label]['median_seconds']-1)
+    write(root/'timing-summary.json',dict(status='passed',results=results,reference_seconds=reference,
+        scope='Disposable 50-step eight-GPU Trainer trials; steps20-49; not a long training equivalence claim'))
+
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('mode',choices=('prepare','summarize'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('mode',choices=('prepare','summarize','benchmark'))
     p.add_argument('--root',required=True);p.add_argument('--host');p.add_argument('--predecessor')
+    p.add_argument('--trial',action='store_true');p.add_argument('--recipe')
     a=p.parse_args();globals()[a.mode](a)
