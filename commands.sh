@@ -1,5 +1,5 @@
-#0
-#th2-q359-followup-results-20261014-a03
+#1 +15+a
+#th2-q359-screen-eval-preflight-20261014-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -38,3 +38,15 @@ for name in ('q359-proxy-12layer-screen22-20261013-a01','q359-proxy-followup11-2
  print('PANE',r.returncode,r.stdout.strip(),flush=True)
 subprocess.run(['nvidia-smi','--query-gpu=index,name,utilization.gpu,memory.used','--format=csv'],check=True)
 PYREMOTE
+/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 - <<'PYENV'
+import importlib.metadata as md,json
+from pathlib import Path
+print('EVAL_VERSIONS',json.dumps({p:md.version(p) for p in ('torch','transformers','accelerate','datasets','lm_eval','flash-attn-4','nvidia-cutlass-dsl')}))
+base=Path('/mnt/local/_outputs/deep-llms_th2')
+for p in base.glob('q359-expanded*/manifest.json'): print('BENCHMARK_MANIFEST',str(p),p.stat().st_size)
+root=base/'q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42'
+for arm in ('A','P6-iso','P6-iso-deep','P6-iso-adapter','P7-simple','P7-simple-lm'):
+ p=root/arm/'checkpoint-2500';c=json.loads((p.parent/'train_config.json').read_text());t=json.loads((p/'trainer_state.json').read_text())
+ print('EVAL_CHECKPOINT',arm,p.exists(),t['global_step'],c['model_config']['num_hidden_layers'],c['pilot']['proxy_lambda_max'],(p/'model.safetensors').stat().st_size)
+print('DATA_EXISTS',Path('/mnt/local/_data/deep-llms_th2/expanded-20261012').is_dir())
+PYENV
