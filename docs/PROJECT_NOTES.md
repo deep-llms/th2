@@ -1,3 +1,30 @@
+## P7 teacher investigation complete — 15 October 2026, 07:16 SGT
+
+Frozen-weight probe passed for P7-simple, P7-simple-lm, P7-simple-deep and
+consumer+cosine, 12 layers/seed42/step2500. All four sites tested separately
+on identical 512 validation rows (1,046,840 scored tokens per checkpoint).
+Full teacher-response replacement worsens LM loss in all 16 model/site cases,
+consistent in both row halves. 10% movement yields no clear improvement;
+all negative-delta exploratory intervals include zero. Some LM-trained and
+deep-arm sites worsen even at 10%. Opposite-direction controls also show no
+established improvement. Decision: do not spend another training sweep simply
+strengthening imitation of this teacher. This local frozen-teacher test is not
+an oracle/recurrent upper bound and does not rule out other proxy designs.
+
+Protocol, all per-site results and caveats:docs/P7_TEACHER_INVESTIGATION_20261015.md.
+Exact summary:docs/results/p7_teacher_probe_20261015.json; SHA256
+0acb49fc27dacf0daab550e6c242cedf6e29fb56fcdf1c8fa0363201fa86e269.
+Smoke 36.31s/full 57.89s; completed 07:12:21 SGT, no training. All 16 worker reports
+verify unchanged state, exact identity, and zero consumer-objective mismatch.
+Accelerate copy/env verified, original validation fingerprint 08432871cf987d61,
+known burns reclaimed and all eight GPUs verified free before evaluation.
+Supervisor restored/verified burns 07:13:32 SGT. Read-only ae122b5 at 07:16:24 SGT:
+all eight live workers match ownership/approved parents, advancing collectives,
+log age 2.64s, GPU guard released. commands.sh returned to #0; nothing queued.
+Root:q359-p7-teacher-probe-20261015-a01. Receipt:
+temp/remote_logs/p7-teacher-completion-20261015-a01.log, SHA256
+c96a1bd0f8bab4aa54daaae48562c5876af754c5336125cc58128e09fd12b616.
+
 ## Consumer screen complete — 15 October 2026, 06:20 SGT
 
 Read-only f7b1558 at06:20:18SGT verifies all21queue stages succeeded, all four
