@@ -1,4 +1,4 @@
-#1 +15+a
+#0
 #th2-q359-proxy12-eval-eta-20261014-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2

@@ -1,3 +1,13 @@
+## Evaluation ETA snapshot — 14 October 2026, 17:11 SGT
+
+Read-onlya3ff667:19/30checkpoint/task-group jobs completed;7started,4pending.
+A, P6-iso and P6-iso-deep have all five groups complete. No failure reported.
+Latest HellaSwag scoring ~298requests/s; remaining P7 jobs and final summary/
+burn restoration imply estimated finish17:20–17:25SGT, not verified completion.
+Full stage remains running. commands.sh returned to#0; no workload changes.
+Receipt:temp/remote_logs/proxy12-eval-eta-20261014-a01.log, SHA256
+05509b8e5cca28af4939edb2631ea68af69756a3578fc708f8f816d64f053605.
+
 ## Full 12-layer downstream evaluation running — 14 October 2026, 17:04 SGT
 
 Launch1ad321c accepted; detached tmux PID696398 remains alive. Receipt60ae197
