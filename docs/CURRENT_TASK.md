@@ -1,3 +1,15 @@
+## Status unavailable — 14 October 2026, 12:36 SGT
+
+Read-only status request34ce131 failed before reaching q359: runner SSH could
+not resolve the machine hostname (rc255). This is an access failure, not evidence
+that training failed or completed. Latest verified state remains05:18SGT:
+screen22 on final P7-simple-delayed; follow-up11 waiter alive and correctly
+waiting for predecessor success and verified communicating burns. Completion,
+handoff and new results remain unverified. No GPU workload was stopped or
+restarted. commands.sh returned to#0. Do not submit a duplicate queue.
+Evidence:temp/remote_logs/q359-status-20261014-0437.log, SHA256
+6415b24356e20b3369ab517424a25751db48caebbfb7535ae54f60aa7cafe063.
+
 ## Automatic follow-up reconfirmed — 14 October 2026, 05:18 SGT
 
 User explicitly reconfirmed that the new arms must follow the current run,
