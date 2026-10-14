@@ -65,28 +65,32 @@ def wait_for_predecessor(root):
     raise RuntimeError('Timed out waiting for previous screen; no GPU action taken')
 
 
-def make(recipe_path, output, rows, predecessor=None):
+def make(recipe_path, output, rows, predecessor=None, *, cases=None, summary_job=None):
     output=Path(output)
     # Reuse the existing fixed 12-layer recipe checks (without launching it).
     validate_recipe(recipe_path,output.with_name('recipe-validation-jobs.json'))
     base=read(recipe_path)
-    selected=list(dict.fromkeys(arm for _,arm,_ in CASES))
+    cases = tuple((label,arm,weight,42) for label,arm,weight in CASES) if cases is None else tuple(cases)
+    if (not cases or len({c[0] for c in cases}) != len(cases)
+            or any(type(seed) is not int or seed < 0 for _,_,_,seed in cases)):
+        raise ValueError('Cases require distinct labels and nonnegative integer seeds')
+    selected=list(dict.fromkeys(arm for _,arm,_,_ in cases if arm != 'A'))
     items=[dict(name='numerics',gpus=list(range(8)),argv=[
         '{python}','-u','-m','scripts.check_fa4_proxy','run','--recipe',str(recipe_path),
         '--rows',str(rows),'--worker-arms',*selected,'--output','{run_dir}/numerics'],
         required_outputs=[dict(path='numerics/summary.json',json_equals={'status':'passed'})])]
     production=[]
-    for label,arm,weight in CASES:
-        recipe={**base,'seed':42,'data_seed':42,'proxy_module_seed':43,'proxy_lambda_max':weight}
+    for label,arm,weight,seed in cases:
+        recipe={**base,'seed':seed,'data_seed':seed,'proxy_module_seed':seed+1 if arm!='A' else None,'proxy_lambda_max':weight}
         job=arm_jobs(recipe,None,[arm])['jobs'][0]
-        prefix=label+'/seed-42/'
+        prefix=f'{label}/seed-{seed}/'
         job['name']=label+'-train'
-        job['argv']=['env','PYTHONHASHSEED=42',*[a.replace('{run_dir}','{run_dir}/'+label+'/seed-42') for a in job['argv']]]
+        job['argv']=['env',f'PYTHONHASHSEED={seed}',*[a.replace('{run_dir}','{run_dir}/'+prefix.rstrip('/')) for a in job['argv']]]
         job['argv'][job['argv'].index('--run_name')+1]='screen-followup-'+label
         for r in job['required_outputs']:r['path']=prefix+r['path']
         validator=dict(name=label+'-validate',argv=[
             '{python}','-m','scripts.check_fa4_proxy','validate','--run-dir','{run_dir}/'+label,
-            '--steps','2500','--seed','42','--schedule-steps','2500','--warmup-steps','125',
+            '--steps','2500','--seed',str(seed),'--schedule-steps','2500','--warmup-steps','125',
             '--num-hidden-layers','12','--arms',arm,'--attention-backend','fa4',
             '--expected-lambda',str(weight),'--output','{run_dir}/'+label+'/validated.json'],
             required_outputs=[dict(path=label+'/validated.json',json_equals={'status':'passed'})])
@@ -104,7 +108,7 @@ def make(recipe_path, output, rows, predecessor=None):
         for r in check['required_outputs']:r['path']='smoke/'+r['path']
         items += [smoke,check]
     items += production
-    items.append(dict(name='summarize',argv=['{python}','-m','scripts.proxy_overnight_queue',
+    items.append(summary_job if summary_job is not None else dict(name='summarize',argv=['{python}','-m','scripts.proxy_overnight_queue',
         'summarize','--root','{run_dir}',*(['--baseline',str(Path(predecessor)/'supervised/run/seed-42/A')] if predecessor else [])],required_outputs=[dict(path='summary.json',json_equals={'status':'passed'})]))
     with output.open('x') as f:json.dump(dict(jobs=items),f,indent=2)
     load_jobs(output)

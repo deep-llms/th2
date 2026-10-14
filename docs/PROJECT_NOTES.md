@@ -1,3 +1,26 @@
+## Authorized P7 confirmation queue — 14 October 2026
+
+User accepted three new runs: A/seed1042, P7-simple-targetgrad/seed1042,
+and P7-simple-targetgrad-lm/seed42. Proxy seeds1043/43 follow the existing
+seed+1 convention. Fresh12layer2500-step training, unchanged full screen recipe,
+then same nine downstream benchmarks (evaluation seed42). No fine-tuning.
+New combined arm keeps detached predictor inputs, permits LM -> predictor,
+and permits cosine auxiliary -> live target/backbone (including graph paths
+back to predictor through the target). No architecture/forward/init changes.
+
+scripts/proxy_confirmation_queue.py reuses the overnight queue's numerical
+checks,8GPU smokes,train.py and validators; the existing evaluation suite runs
+automatically afterward using eval_fa4. Gate on completed remaining27evaluation
+and its verified burn handoff; check eval dependencies/data before training,
+copy/verify Accelerate, inspect/reclaim only known burns, verify8GPUs free.
+Existing supervisor restores/verifies burns after completion/failure.
+
+Local17test acceptance passed; final queue tests cover mixed seeds, matched
+PPL comparisons, frozen downstream scope and predecessor/burn gates.
+Fresh intended root:/mnt/local/_outputs/deep-llms_th2/q359-p7-confirmation3-20261014-a01.
+Predecessor:/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01.
+Remote launch and CUDA acceptance pending. Preserve all existing outputs/caches.
+
 ## All33 downstream checkpoint evaluations complete — 14 October 2026, 19:52 SGT
 
 Read-only bcaa6be at19:52:02SGT verifies both queues succeeded: six original

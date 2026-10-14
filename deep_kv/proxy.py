@@ -16,6 +16,7 @@ from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_V
 from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS, P6_ADAPTER_WIDTH
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS, P7_DEEP_ARMS
+from . import P7_COMBINED_ARMS, P7_LM_PREDICTOR_ARMS
 
 
 @dataclass
@@ -148,7 +149,7 @@ def compute_budget(config, settings, sequence_length=2048):
     result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
         for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
         'relational_forward_macs_per_token':0}
-    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:]:
+    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS:
         count = len(simple_memory_layout(arm,n)[0])
         per_layer = 2*d*settings.width+projections+(2*d*P6_ADAPTER_WIDTH if arm in P7_DEEP_ARMS else 0)
         result[arm] = dict(extra_parameters=count*(per_layer+h),
@@ -350,7 +351,7 @@ class ProxyModel(DeepKV):
             self.register_buffer('channel_mask', torch.ones(cfg.hidden_size,dtype=torch.bool))
         self.register_buffer('gamma', torch.tensor([.5,.9,.99], dtype=torch.float32))
         self.gates_disabled = False
-        for head in self.heads.values():head.lm_predictor = arm == 'P7-simple-lm'
+        for head in self.heads.values():head.lm_predictor = arm in P7_LM_PREDICTOR_ARMS
         if arm in DELAYED_ARMS:
             self.register_buffer('proxy_updates',torch.tensor(0,dtype=torch.long))
         self._injection_enabled = arm not in DELAYED_ARMS

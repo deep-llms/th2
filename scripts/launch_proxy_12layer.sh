@@ -5,6 +5,8 @@ TASK_ROOT=$1
 TASK_HOST=${2:?Pass the verified target hostname}
 TASK_SEED=42
 TASK_PREDECESSOR=${3:-}
+TASK_MODE=${4:-followup}
+[[ "$TASK_MODE" == followup || "$TASK_MODE" == confirmation ]] || exit 1
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -13,7 +15,7 @@ export NCCL_NVLS_ENABLE=0 WANDB_MODE=offline WANDB_PROJECT=deep2shallow
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED="$TASK_SEED" TOKENIZERS_PARALLELISM=false
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-python -u - "$TASK_ROOT" "$TASK_HOST" "$TASK_SEED" "$TASK_PREDECESSOR" <<'PY'
+python -u - "$TASK_ROOT" "$TASK_HOST" "$TASK_SEED" "$TASK_PREDECESSOR" "$TASK_MODE" <<'PY'
 import hashlib,importlib.metadata as md,json,os,shutil,subprocess,sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -26,13 +28,20 @@ from train import load_text
 root=Path(sys.argv[1]);project=Path.cwd()
 seed=int(sys.argv[3]);assert seed>=0
 predecessor=sys.argv[4]
-if predecessor:
+mode=sys.argv[5]
+if mode=='confirmation':
+    if not predecessor:raise ValueError('Confirmation requires the completed evaluation root')
+    from scripts.proxy_screen_evaluation import predecessor_ready
+    from scripts.proxy_confirmation_queue import make
+    from functools import partial
+    if not predecessor_ready(predecessor,evaluation=True,expected_count=27):
+        raise RuntimeError('Previous evaluation/burn handoff not complete; GPUs untouched')
+    launch_jobs=partial(make,predecessor=predecessor)
+elif predecessor:
     from scripts.proxy_overnight_queue import wait_for_predecessor, make
     from functools import partial
     launch_jobs=partial(make,predecessor=predecessor)
     wait_for_predecessor(Path(predecessor))
-    # Fresh live inspection follows this success+burn gate; no process from
-    # the preceding training queue is ever reclaimed by this launcher.
     with (root/'cpu-tests.log').open('x') as log:
         subprocess.run([sys.executable,'-m','unittest','tests.test_proxy_overnight','-v'],
             stdout=log,stderr=subprocess.STDOUT,check=True,
@@ -88,6 +97,10 @@ assert source.read_bytes()==destination.read_bytes()
 config=load_config_from_file(str(destination)).to_dict()
 assert config['num_processes']==8 and config['mixed_precision']=='bf16' and config['distributed_type']=='MULTI_GPU'
 subprocess.run(['accelerate','env'],check=True)
+if mode=='confirmation':
+    from scripts.proxy_confirmation_queue import EVAL_PYTHON
+    subprocess.run([EVAL_PYTHON,'-u','-m','scripts.proxy_confirmation_queue','preflight',
+                    '--root',str(root),'--reference',predecessor],check=True)
 inspection=inspect()
 assert inspection['host']==sys.argv[2] and not inspection['guard_disabled']
 assert len(inspection['gpus'])==8 and all('B200' in g['name'] for g in inspection['gpus'])
@@ -112,11 +125,12 @@ items=launch_jobs(project/'proxy_heads.12layer.b200.json',root/'jobs.json',rows_
 (root/'inspection.json').write_text(json.dumps(inspection,indent=2))
 (root/'preflight.json').write_text(json.dumps(dict(status='passed',versions=versions,data=data,
   dataset_manifest_sha256=digest(manifest_path),verified_data_files=len(entries),verified_data_bytes=verified_bytes,
-  environment=sys.executable,stages=len(items),free_bytes=free,seed=seed,arms=11 if predecessor else 22,consumer_deferred=not bool(predecessor),predecessor=predecessor,
+  environment=sys.executable,stages=len(items),free_bytes=free,seed=seed,arms=3 if mode=='confirmation' else 11 if predecessor else 22,mode=mode,consumer_deferred=not bool(predecessor),predecessor=predecessor,
   accelerate_cache=str(destination),accelerate_sha256=digest(destination),
   source_sha256={name:digest(project/name) for name in
     ('deep_kv/__init__.py','deep_kv/proxy.py','deep_kv/proxy_training.py','train.py','scripts/proxy_12layer_queue.py',
-     'scripts/check_fa4_proxy.py','scripts/train_then_burn.py','scripts/proxy_overnight_queue.py')}),indent=2))
+     'scripts/check_fa4_proxy.py','scripts/train_then_burn.py','scripts/proxy_overnight_queue.py',
+     'scripts/proxy_confirmation_queue.py','scripts/proxy_screen_evaluation.py')}),indent=2))
 print('SCREEN_PREFLIGHT_PASSED',len(items),inspection['workers'],flush=True)
 PY
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" \

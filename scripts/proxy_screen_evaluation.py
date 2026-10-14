@@ -23,7 +23,7 @@ def read(path):
     return json.loads(Path(path).read_text())
 
 
-def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED'), evaluation=False):
+def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED'), evaluation=False, expected_count=6):
     """Require complete success and verified final burn handoff before reclaim."""
     root = Path(root) / 'supervised'
     if not (root / 'supervisor.json').exists():
@@ -45,7 +45,7 @@ def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED'), evalua
             or not (root / 'run/complete.json').is_file()
             or summary['status'] != 'passed'
             or (evaluation and (summary.get('diagnostic') is not False
-                                or len(summary.get('checkpoints', {})) != len(ARMS)))
+                                or len(summary.get('checkpoints', {})) != expected_count))
             or not burn.get('collective_progress_verified')
             or not state.get('burn', {}).get('collective_progress_verified')
             or burn.get('session') != state['burn'].get('session')):
@@ -73,7 +73,16 @@ def checkpoint_cases(screen, followup=None):
 
 def validate_scope(scope):
     checkpoints = scope['checkpoints']
-    if scope.get('source_followup'):
+    if scope.get('kind') == 'confirmation3':
+        from scripts.proxy_confirmation_queue import CASES, checkpoint_path
+        expected = [str(checkpoint_path(scope['training_root'], case)) for case in CASES]
+        if checkpoints != expected:
+            raise ValueError('Wrong confirmation checkpoint set')
+        for ck, (label, arm, weight, seed) in zip(checkpoints, CASES):
+            spec = scope['specs'][ck]
+            if (spec['label'], spec['arm'], spec['lambda_max'], spec['seed'], spec['step']) != (label, arm, weight, seed, 2500):
+                raise ValueError('Wrong confirmation checkpoint identity')
+    elif scope.get('source_followup'):
         expected = checkpoint_cases(scope['source_screen'], scope['source_followup'])
         if checkpoints != [str(folder / 'checkpoint-2500') for _, _, _, folder in expected]:
             raise ValueError('Wrong remaining checkpoints or order')

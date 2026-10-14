@@ -1,5 +1,41 @@
 # P7 implementation and validation
 
+## Combined target and LM gradients — 14 October 2026
+
+`P7-simple-targetgrad-lm` is P7-simple-targetgrad with LM gradients enabled
+through the predicted memory entries into the predictor. Predictor inputs remain
+detached. Architecture, initial weights, four query heads, target windows,
+standardization/clipping, cosine auxiliary loss and its ramp to lambda0.1 stay
+identical. There is no convolution, relational KL or deep residual adapter.
+
+The target is live in the auxiliary graph. Consequently auxiliary gradients
+can also follow target -> memory -> predictor paths in this combined arm;
+this is intentional, and the independent reference retains the complete graph.
+Running normalization statistics remain detached. Inference forward values are
+unchanged by gradient routing; different learned weights may change results.
+The completed24-arm screen membership remains frozen; the new arm is registered
+separately. Both dense SDPA and FA4 use the existing attention implementations.
+
+Approved confirmation queue: fresh A and P7-simple-targetgrad at training/data
+seed1042 (proxy seed1043), and the combined arm at seed42 (proxy seed43).
+Same12layers,2500-step full schedule,125-step LR warmup,1,048,576tokens/update,
+sequence2048,EOS boundaries,document isolation/reset RoPE,FA4,micro16/GAS4,
+and all checkpoints retained every250steps. Production uses train.py/Trainer
+and Accelerate unchanged. No continuation of the old2500-step schedule.
+After training/validators, automatically run the same nine English benchmarks
+with fixed evaluation seed42 in eval_fa4, then restore/verify communicating burns.
+
+Local evidence:17checks passed (40.632s), including independent gradients,
+exact checkpointing, actual Trainer resume/reload, two-rank CPU training,
+all-arm inference and historical queue compatibility. The CPU BF16 FA4 oracle
+had gradient relativeL2 .00748 versus native SDPA; checkpointing was exact.
+The new CPU cross-backend test uses the existing3%gradient relativeL2 bound
+separately for backbone, predictor and projections; FP32 checks stay strict.
+No production CUDA tolerance changed. Remote CUDA numerics and three eight-GPU
+smokes must pass before any production run. Logs:temp/p7-confirmation-tests-20261014.log
+and temp/p7-confirmation-queue-final-20261014.log. Remote acceptance pending.
+
+
 Forward-local normalization/layout reuse and proxy-key RoPE optimization are
 documented in [the 8 October performance review](PROXY_OPTIMIZATION_20261008.md).
 
