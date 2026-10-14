@@ -1,31 +1,23 @@
-#0
-#th2-q359-proxy12-eval-eta-20261014-a01
+#1 +60+a
+#th2-q359-proxy12-eval-remaining27-20261014-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
-/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PY'
-from pathlib import Path
-from datetime import datetime,timezone
-import json,subprocess
-root=Path('/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-20261014-a01')
-print('AT',datetime.now(timezone.utc).isoformat())
-for name in ('supervised/supervisor.json','supervised/run/run.json'):
- p=root/name
- if p.exists():print('STATUS',name,p.read_text())
-def tail(p,n=5):
- if not p.exists():return
- with p.open('rb') as f:
-  f.seek(max(0,p.stat().st_size-16000));s=f.read().decode(errors='replace')
- print('TAIL',str(p),'\n'+'\n'.join(s.splitlines()[-n:]))
-full=root/'supervised/run/full'
-plan=full/'plan.json'
-if plan.exists():
- for j in json.loads(plan.read_text()):
-  dest=Path(j['output']);meta=dest/'eval_metadata.json';log=dest.with_suffix('.log')
-  state=json.loads(meta.read_text()) if meta.exists() else {}
-  print('JOB',j['checkpoint'].split('/')[-2],j['group'],state.get('status','started' if log.exists() else 'pending'),state.get('elapsed_seconds'), 'log_mtime',log.stat().st_mtime if log.exists() else None)
-  if log.exists():tail(log,4)
-for name in ('supervisor.log','supervised/run/full.log','supervised/burn.log'):tail(root/name)
-if (full/'summary.json').exists():print('SUMMARY',json.loads((full/'summary.json').read_text())['status'])
-subprocess.run(['nvidia-smi','--query-gpu=index,utilization.gpu,memory.used','--format=csv'])
-PY
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01
+TASK_SESSION=q359-proxy12-eval-remaining27-20261014-a01
+TASK_PREDECESSOR=/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-20261014-a01
+TASK_SCREEN=/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01
+TASK_FOLLOWUP=/mnt/local/_outputs/deep-llms_th2/q359-proxy-followup11-20261014-a01
+test ! -e "$TASK_ROOT"
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then
+  echo 'REFUSE: evaluation session already exists' >&2
+  exit 1
+fi
+mkdir "$TASK_ROOT"
+printf -v TASK_COMMAND 'bash scripts/launch_proxy_screen_evaluation.sh %q %q %q %q %q >%q 2>&1' \
+  "$TASK_ROOT" thiennh-p6-q359-worker-0 "$TASK_PREDECESSOR" "$TASK_SCREEN" "$TASK_FOLLOWUP" "$TASK_ROOT/supervisor.log"
+tmux new-session -d -s "$TASK_SESSION" "$TASK_COMMAND"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 5
+tmux list-panes -t "$TASK_SESSION" -F '#{pane_dead} #{pane_pid} #{pane_current_command}'
+tail -n 15 "$TASK_ROOT/supervisor.log"

@@ -1,3 +1,26 @@
+## Remaining 12-layer checkpoint evaluation authorized — 14 October 2026
+
+User authorized evaluating all other checkpoints or fine-tuning the current six
+while away. Chosen action: evaluate the remaining 27 final step-2500 checkpoints
+(16 original screen runs and all 11 follow-ups), preserving distinct loss-weight
+labels. Together with the current six this covers all 33 completed training runs.
+No intermediate snapshots or historical 28-layer checkpoints are in this queue.
+
+Same nine English benchmarks, shot counts, seed42, pinned eval_fa4 environment,
+full splits and eight concurrent single-GPU workers. Each checkpoint first passes
+real CUDA numerical checks and two-example task-group smokes. Fresh output root:
+/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01.
+Predecessor: q359-proxy12-eval-20261014-a01. Launcher waits for its successful
+full summary, complete marker, supervisor completion, verified communicating
+burns and released guard. Then it copies/verifies Accelerate, checks GPU ownership,
+reclaims only approved burns, verifies GPUs free and evaluates. Existing supervisor
+restores/verifies burns after success/failure. Training/model code is unchanged.
+
+Local validation: all six orchestration tests passed, including original six-arm
+compatibility, remaining-checkpoint selection, repeated architecture/weight labels,
+and evaluation/burn handoff gating. Shell syntax and diff checks passed.
+Launch submission/remote acceptance still pending; do not claim running yet.
+
 ## Evaluation ETA snapshot — 14 October 2026, 17:11 SGT
 
 Read-onlya3ff667:19/30checkpoint/task-group jobs completed;7started,4pending.

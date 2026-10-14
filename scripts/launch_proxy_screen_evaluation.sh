@@ -2,8 +2,15 @@
 set -euo pipefail
 TASK_ROOT=${1:?Pass fresh output root}
 TASK_HOST=${2:?Pass verified hostname}
-TASK_PREDECESSOR=${3:?Pass follow-up training root}
+TASK_PREDECESSOR=${3:?Pass predecessor training or evaluation root}
 TASK_SCREEN=${4:?Pass original screen root}
+TASK_EXTRA=()
+if [[ $# -eq 5 ]]; then
+  TASK_EXTRA=(--followup "$5")
+elif [[ $# -ne 4 ]]; then
+  echo 'Expected four arguments, or five for remaining-arm evaluation' >&2
+  exit 1
+fi
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -13,6 +20,6 @@ export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISA
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=42 TOKENIZERS_PARALLELISM=false
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 python -u -m scripts.proxy_screen_evaluation prepare --root "$TASK_ROOT" --host "$TASK_HOST" \
-  --predecessor "$TASK_PREDECESSOR" --screen "$TASK_SCREEN"
+  --predecessor "$TASK_PREDECESSOR" --screen "$TASK_SCREEN" "${TASK_EXTRA[@]}"
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" --output "$TASK_ROOT/supervised" \
   --inspection "$TASK_ROOT/inspection.json" --host "$TASK_HOST" --burn-session "$(basename "$TASK_ROOT")-final-burn"

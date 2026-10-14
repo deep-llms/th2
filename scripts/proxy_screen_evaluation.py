@@ -1,4 +1,4 @@
-"""Fixed six-checkpoint downstream screen, reusing the existing harness pipeline."""
+"""Downstream screen and remaining-arm evaluation using the existing harness."""
 import argparse
 import json
 from pathlib import Path
@@ -23,8 +23,8 @@ def read(path):
     return json.loads(Path(path).read_text())
 
 
-def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED')):
-    """Require the follow-up's complete success and verified final burn handoff."""
+def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED'), evaluation=False):
+    """Require complete success and verified final burn handoff before reclaim."""
     root = Path(root) / 'supervised'
     if not (root / 'supervisor.json').exists():
         return False
@@ -36,17 +36,53 @@ def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED')):
     from scripts.proxy_overnight_queue import CASES
     run = read(root / 'run/run.json')
     burn = read(root / 'burn-verified.json')
-    required = {f'{label}-{kind}' for label, _, _ in CASES for kind in ('train', 'validate')}
+    required = ({'numerics', 'smoke', 'full'} if evaluation else
+                {f'{label}-{kind}' for label, _, _ in CASES for kind in ('train', 'validate')})
+    summary = read(root / ('run/full/summary.json' if evaluation else 'run/summary.json'))
     passed = {j['name'] for j in run['jobs'] if j['status'] == 'ok'}
     if (state.get('training_status') != 'ok' or state.get('training_returncode') != 0
             or run['status'] != 'ok' or not required.issubset(passed)
             or not (root / 'run/complete.json').is_file()
-            or read(root / 'run/summary.json')['status'] != 'passed'
+            or summary['status'] != 'passed'
+            or (evaluation and (summary.get('diagnostic') is not False
+                                or len(summary.get('checkpoints', {})) != len(ARMS)))
             or not burn.get('collective_progress_verified')
             or not state.get('burn', {}).get('collective_progress_verified')
             or burn.get('session') != state['burn'].get('session')):
         raise RuntimeError('Predecessor completion or burn verification is invalid')
     return not guard.exists()
+
+
+def checkpoint_cases(screen, followup=None):
+    """Explicit final checkpoints only; preserve distinct loss-weight runs."""
+    if followup is None:
+        return [(arm, arm, .1, Path(screen) / 'supervised/run/seed-42' / arm) for arm in ARMS]
+    from scripts.proxy_12layer_queue import ALL_SCREEN_ARMS
+    from deep_kv import P6_CONSUMER_ARMS
+    from scripts.proxy_overnight_queue import CASES
+    cases = [(arm, arm, .03 if arm == 'P6-lowaux' else .1,
+              Path(screen) / 'supervised/run/seed-42' / arm)
+             for arm in ALL_SCREEN_ARMS if arm not in (*P6_CONSUMER_ARMS, *ARMS)]
+    cases += [('followup-' + label, arm, weight,
+               Path(followup) / 'supervised/run' / label / 'seed-42' / arm)
+              for label, arm, weight in CASES]
+    if len(cases) != 27 or len({c[0] for c in cases}) != 27 or len({c[3] for c in cases}) != 27:
+        raise ValueError('Remaining screen scope changed; review before launching')
+    return cases
+
+
+def validate_scope(scope):
+    checkpoints = scope['checkpoints']
+    if scope.get('source_followup'):
+        expected = checkpoint_cases(scope['source_screen'], scope['source_followup'])
+        if checkpoints != [str(folder / 'checkpoint-2500') for _, _, _, folder in expected]:
+            raise ValueError('Wrong remaining checkpoints or order')
+        for ck, (label, arm, weight, _) in zip(checkpoints, expected):
+            spec = scope['specs'][ck]
+            if (spec['label'], spec['arm'], spec['lambda_max'], spec['step']) != (label, arm, weight, 2500):
+                raise ValueError('Wrong remaining checkpoint identity')
+    elif len(checkpoints) != 6 or [scope['specs'][p]['arm'] for p in checkpoints] != list(ARMS):
+        raise ValueError('Wrong checkpoint shortlist')
 
 
 def make_jobs(scope_path):
@@ -85,7 +121,7 @@ def audit_zero_shot(mapping, tokenizer, output):
     save(output, dict(status='passed', tasks=reports, max_length=2048, num_fewshot=0))
 
 
-def prepare(root, host, predecessor, screen):
+def prepare(root, host, predecessor, screen, followup=None):
     import importlib.metadata as md
     import shutil
     import socket
@@ -99,10 +135,10 @@ def prepare(root, host, predecessor, screen):
     if socket.gethostname() != host:
         raise ValueError('Wrong target host')
     for attempt in range(1440):
-        if predecessor_ready(predecessor):
+        if predecessor_ready(predecessor, evaluation=followup is not None):
             break
         if attempt % 10 == 0:
-            print('WAITING_FOR_TRAINING_AND_VERIFIED_BURNS', attempt, flush=True)
+            print('WAITING_FOR_PREDECESSOR_AND_VERIFIED_BURNS', attempt, flush=True)
         time.sleep(30)
     else:
         raise RuntimeError('Predecessor wait timed out; GPUs untouched')
@@ -124,25 +160,33 @@ def prepare(root, host, predecessor, screen):
     mapping = local_dataset_paths(data, manifest)
     if set(mapping) != names:
         raise ValueError('Benchmark manifest does not cover the exact suite')
-    checkpoints = []; specs = {}; fingerprints = None; tokenizer = None
-    for arm in ARMS:
-        folder = Path(screen) / 'supervised/run/seed-42' / arm
+    reference = read(Path(screen) / 'supervised/run/seed-42/A/train_config.json')
+    fingerprints = (reference['train_fingerprint'], reference['eval_fingerprint'])
+    tokenizer = reference['model']['tokenizer_name']
+    if followup is not None:
+        previous = read(Path(predecessor) / 'scope.json')
+        validate_scope(previous)
+        if (previous.get('source_followup') or previous['source_screen'] != str(screen)
+                or previous['manifest_sha256'] != digest(manifest)
+                or previous['protocols'] != {k: [n, ts] for k, (n, ts) in PROTOCOLS.items()}):
+            raise ValueError('Predecessor evaluated a different screen or benchmark protocol')
+    checkpoints = []; specs = {}
+    for label, arm, weight, folder in checkpoint_cases(screen, followup):
         ck = folder / 'checkpoint-2500'; cfg = read(folder / 'train_config.json')
         result = read(folder / 'result.json')
         if (cfg['pilot']['arm'] != arm or cfg['model_config']['num_hidden_layers'] != 12
                 or cfg['training']['seed'] != 42 or cfg['training']['data_seed'] != 42
                 or cfg['pilot']['attention_backend'] != 'fa4' or not cfg['training']['bf16']
-                or cfg['pilot']['proxy_lambda_max'] != .1
+                or cfg['pilot']['proxy_lambda_max'] != weight
                 or read(ck / 'trainer_state.json')['global_step'] != 2500
                 or result['global_step'] != 2500 or result['status'] != 'complete'):
             raise ValueError('Unexpected source checkpoint: ' + arm)
         pair = (cfg['train_fingerprint'], cfg['eval_fingerprint'])
-        if fingerprints is None:
-            fingerprints = pair; tokenizer = cfg['model']['tokenizer_name']
         if pair != fingerprints or tokenizer != cfg['model']['tokenizer_name']:
             raise ValueError('Source data/tokenizer mismatch')
         checkpoints.append(str(ck))
-        specs[str(ck)] = dict(arm=arm, step=2500, checkpoint_sha256=digest(ck / 'model.safetensors'))
+        specs[str(ck)] = dict(arm=arm, label=label, lambda_max=weight, step=2500,
+                              checkpoint_sha256=digest(ck / 'model.safetensors'))
     # Reuse the established prompt audit. Demonstrations must come from train,
     # and every requested few-shot prompt must fit without left truncation.
     for group, (shots, tasks) in PROTOCOLS.items():
@@ -175,8 +219,9 @@ def prepare(root, host, predecessor, screen):
     scope = root / 'scope.json'
     save(scope, dict(checkpoints=checkpoints, specs=specs, protocols=PROTOCOLS, data_root=data,
         manifest=str(manifest), manifest_sha256=digest(manifest), versions=versions,
-        predecessor=str(predecessor), source_screen=str(screen), seed=42,
+        predecessor=str(predecessor), source_screen=str(screen), source_followup=str(followup) if followup else None, seed=42,
         paired_loss=False, finetuning=False))
+    validate_scope(read(scope))
     save(root / 'jobs.json', dict(jobs=make_jobs(scope)))
     load_jobs(root / 'jobs.json')
     save(root / 'inspection.json', status)
@@ -190,8 +235,7 @@ def run(stage, root, scope_path):
     from eval.models import file_hash
     root = Path(root); root.mkdir(parents=True, exist_ok=False)
     scope = read(scope_path); checkpoints = scope['checkpoints']
-    if len(checkpoints) != 6 or [scope['specs'][p]['arm'] for p in checkpoints] != list(ARMS):
-        raise ValueError('Wrong checkpoint shortlist')
+    validate_scope(scope)
     if scope['protocols'] != {k: [n, ts] for k, (n, ts) in PROTOCOLS.items()}:
         raise ValueError('Changed task protocol')
     if file_hash(scope['manifest']) != scope['manifest_sha256']:
@@ -203,7 +247,8 @@ def run(stage, root, scope_path):
         suite.execute(jobs, 8)
         reports = [read(root / f'{i}.json') for i in range(len(checkpoints))]
         for ck, report in zip(checkpoints, reports):
-            if report['status'] != 'passed' or any(report[k] != v for k, v in scope['specs'][ck].items()):
+            if report['status'] != 'passed' or any(report[k] != scope['specs'][ck][k]
+                    for k in ('arm', 'step', 'checkpoint_sha256')):
                 raise ValueError('Checkpoint numerical acceptance failed')
         save(root / 'summary.json', dict(status='passed', checkpoints=reports))
         return
@@ -215,7 +260,7 @@ def run(stage, root, scope_path):
     for ck, report in result['checkpoints'].items():
         if report['checkpoint_sha256'] != scope['specs'][ck]['checkpoint_sha256']:
             raise ValueError('Checkpoint changed since preflight')
-    result['labels'] = {ck: scope['specs'][ck]['arm'] for ck in checkpoints}
+    result['labels'] = {ck: scope['specs'][ck].get('label', scope['specs'][ck]['arm']) for ck in checkpoints}
     save(root / 'summary.json', result)
 
 
@@ -224,11 +269,12 @@ if __name__ == '__main__':
     p.add_argument('stage', choices=('prepare', 'numerics', 'smoke', 'full'))
     p.add_argument('--root', required=True); p.add_argument('--scope')
     p.add_argument('--host'); p.add_argument('--predecessor'); p.add_argument('--screen')
+    p.add_argument('--followup', help='Evaluate remaining screen and follow-up checkpoints after the six-arm evaluation')
     a = p.parse_args()
     if a.stage == 'prepare':
         if not all((a.host, a.predecessor, a.screen)):
             p.error('Preparation needs host, predecessor and screen')
-        prepare(a.root, a.host, a.predecessor, a.screen)
+        prepare(a.root, a.host, a.predecessor, a.screen, a.followup)
     else:
         if not a.scope:
             p.error('Evaluation needs a frozen scope')
