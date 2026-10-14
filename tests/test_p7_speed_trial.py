@@ -62,6 +62,27 @@ class P7SpeedTests(unittest.TestCase):
             self.assertEqual(gradient[:, :, :4].abs().max().item(), 0)
             self.assertEqual(gradient[:, :, 6:].abs().max().item(), 0)
 
+    def test_compiled_cosine_zero_norms_masked_rows_and_target_routes(self):
+        import deep_kv.proxy_estimators as estimators
+        torch.manual_seed(18)
+        prediction=torch.randn(3, 5, 8); target=torch.randn_like(prediction)
+        prediction[0,0]=0; target[0,1]=0
+        prediction[1]*=1e-8; target[1]*=1e-8
+        valid=torch.ones(3,5,dtype=torch.bool); valid[2]=False
+        for target_grad in (False,True):
+            captures=[]
+            for mode in ('eager','cosine'):
+                a=prediction.clone().requires_grad_();b=target.clone().requires_grad_()
+                with implementation(mode,backend='aot_eager'):
+                    out=estimators.cosine_loss(a,b,valid,target_grad=target_grad,valid_counts=valid.sum(-1))
+                    out[1].sum().backward()
+                self.assertEqual(b.grad is not None,target_grad)
+                self.assertEqual(a.grad[2].abs().max().item(),0)
+                captures.append((out,a.grad,b.grad))
+            for a,b in zip(*captures):
+                if a is None:self.assertIsNone(b)
+                else:torch.testing.assert_close(a,b,rtol=1e-6,atol=1e-6)
+
     def test_complete_model_objectives_buffers_and_optimizer(self):
         with patch('deep_kv.fa4.load_kernel', return_value=(reference_kernel, {})):
             for checkpoint in (False, True):
