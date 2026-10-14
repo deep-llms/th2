@@ -1,3 +1,17 @@
+## Consumer queue ETA — 15 October 2026, 03:39 SGT
+
+Read-only c59c929 at03:39:16SGT: consumer-only reached2500 and validator passed
+(55m01s including startup/save/evaluation). Consumer+cosine is1586/2500,
+~1.28s/update, all8GPUs99%, finite losses/gradients. Consumer+targetgrad and
+targetgrad lambda.01 remain queued, followed by nine-benchmark evaluation.
+Estimated full completion about06:00–06:15SGT today, allowing saves/evaluation;
+this is an estimate, not completion. Automatic burn restoration stays configured.
+Consumer-only log reports eval LM loss3.58718 (rounded); full result extraction
+and downstream interpretation remain pending.
+Evidence:temp/remote_logs/p7-consumer-eta-20261015-a01.log, SHA256
+eda3955c9e74933e6cda4f51f170e237ca7f3efa6c12cfb1365a94bf6eeb4898.
+Root:q359-p7-consumer4-20261015-a01. commands.sh returned to#0; queue untouched.
+
 ## P7 consumer screen running — 15 October 2026, 02:11 SGT
 
 Launch36e5f71; read-only63cd00e at02:11:46SGT verifies all four CUDA numerical
