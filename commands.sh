@@ -1,6 +1,7 @@
-#1 +15+a
-#th2-q359-proxy12-eval-health-20261014-a01
+#1 +60+a
+#th2-q359-proxy12-eval-health-20261014-a02
 set -euo pipefail
+sleep 45
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
 /mnt/local/conda-py311/envs/eval_fa4/bin/python3.11 -u - <<'PY'
