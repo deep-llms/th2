@@ -1,3 +1,41 @@
+## Authorized 12-layer downstream screen — 14 October 2026
+
+User requested evaluation after training. Read-only0f7d88a at16:44:49SGT confirms
+all22original arms and all11follow-ups completed successfully, including result
+validators and summaries. Follow-up summary completed15:59:52SGT; communicating
+burn restoration verified16:01:03SGT. All8GPUs show the expected burn load.
+All6selected step2500/12layer checkpoints and eval_fa4 dependency pins verified.
+Receipt:temp/remote_logs/screen-eval-preflight-20261014-a01.log, SHA256
+8a61165d97ed2c15dfd35276b6aee6340616e62f6f480d8fdb2e4c5454915eeb.
+
+Scope frozen before downstream scores: A, P6-iso, P6-iso-deep,
+P6-iso-adapter, P7-simple, P7-simple-lm(lambda.1). Same12layer2500step seed42.
+Tasks: HellaSwag10shot; ARC-C25shot; PIQA/ARC-E/WinoGrande/BoolQ5shot;
+SciQ/LAMBADA OpenAI/BLiMP(all67)0shot. Existing pinned harness scoring;
+seven-task multiple-choice mean, language diagnostics separate. No finetuning,
+paired-loss study, generation tasks or new pretraining authorized by this stage.
+
+scripts/proxy_screen_evaluation.py reuses eval.suite commands/execute/collect
+and existing downstream numerical/prompt checks. Eight independent GPU workers,
+fresh outputs, full splits after six-checkpoint CUDA numerics and full-suite
+2-example smokes. Checkpoint hashes, seed, architecture/depth, data provenance,
+BF16/FA4 and identical benchmark prompts validated; no silent truncation.
+Existing supervisor reclaims only verified burns, checks GPUs free and restores
+communicating burns automatically on success/failure. Preflight copies/verifies
+Accelerate although scoring itself uses independent workers rather than DDP.
+Local review:16test run found only6subcase failures in one outdated delayed-arm
+fixture(active-proxy assertion at step0). Updated test fixture to2500; all5focused
+rechecks passed12.894s, including inference equivalence/strict loading across all
+arms and three new queue/gate tests. Remaining15original tests passed. No model
+or training implementation changed. Actual local zero/five-shot prompts fit;
+remote preflight rechecks every task before any GPU reclamation.
+Target fresh root:q359-proxy12-eval-20261014-a01. Launch receipt still pending.
+
+Latest four follow-up PPLs: P6 lambda1=36.352774;
+P6-iso-targetgrad lambda.01=36.153596;
+P7-simple-sparse=36.189873; P7-simple-short=36.141397.
+Best remains P6-iso-deep36.061986 vsA36.276876, single-seed screen only.
+
 ## B200 recovered; original screen complete, follow-up healthy — 14 October 2026, 13:28 SGT
 
 Read-only request1bc81c5 succeeded. Previous hostname-resolution error was an

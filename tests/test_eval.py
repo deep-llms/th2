@@ -40,6 +40,9 @@ def make_model(arm, backend='sdpa'):
                 head.alpha.fill_(.7)  # Exercise learned proxy use, not the zero-gate baseline.
         m.mu.normal_()
         m.mu_initialized.fill_(True)
+    # Exercise the trained inference path, including arms introduced at step 500.
+    # A fresh delayed arm intentionally has no proxy contribution at step zero.
+    m.set_training_step(2500)
     return m.eval()
 
 
