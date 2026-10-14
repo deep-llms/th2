@@ -15,6 +15,7 @@ import sys
 from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_layout, anticipatory_target_metadata
 from deep_kv import P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, followup_metadata, P7_DEEP_ARMS
+from deep_kv import P7_CONSUMER_ARMS
 
 
 def read(path):return json.loads(Path(path).read_text())
@@ -217,11 +218,18 @@ def validate(args):
                 sites=len(anticipatory_layout(arm,depth)[0])
                 attention_calls+=2*sites
                 gradient_calls+=sites  # Teacher has no gradient; student does.
+            query_gradient_calls=gradient_calls
+            if arm in P7_CONSUMER_ARMS:
+                sites=len(memory_layers)
+                attention_calls+=2*sites
+                gradient_calls+=sites  # Frozen queries; only student K/V are live.
             if backend=='fa4':
                 assert r['calls']==attention_calls
                 assert r['kernel_dtype']=='torch.bfloat16' and r['positions']=='reset_per_document'
                 assert r['document_isolation'] and r['causal'] and not r['dense_mask']
-                if r['phase']=='train':assert all(r[k+'_gradient_calls']==gradient_calls for k in ('query','key','value'))
+                if r['phase']=='train':
+                    assert r['query_gradient_calls']==query_gradient_calls
+                    assert all(r[k+'_gradient_calls']==gradient_calls for k in ('key','value'))
             else:
                 assert len(r['calls'])==attention_calls and not r['has_math']
                 assert not r['unattributed_calls'] and not r['unattributed_backward']

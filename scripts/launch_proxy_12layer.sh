@@ -6,7 +6,7 @@ TASK_HOST=${2:?Pass the verified target hostname}
 TASK_SEED=42
 TASK_PREDECESSOR=${3:-}
 TASK_MODE=${4:-followup}
-[[ "$TASK_MODE" == followup || "$TASK_MODE" == confirmation ]] || exit 1
+[[ "$TASK_MODE" == followup || "$TASK_MODE" == confirmation || "$TASK_MODE" == consumer ]] || exit 1
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 source /mnt/local/conda-py311/etc/profile.d/conda.sh
@@ -29,7 +29,12 @@ root=Path(sys.argv[1]);project=Path.cwd()
 seed=int(sys.argv[3]);assert seed>=0
 predecessor=sys.argv[4]
 mode=sys.argv[5]
-if mode=='confirmation':
+if mode=='consumer':
+    from scripts.proxy_consumer_queue import predecessor_reference, make
+    from functools import partial
+    predecessor=predecessor_reference(predecessor)
+    launch_jobs=partial(make,predecessor=predecessor)
+elif mode=='confirmation':
     if not predecessor:raise ValueError('Confirmation requires the completed evaluation root')
     from scripts.proxy_screen_evaluation import predecessor_ready
     from scripts.proxy_confirmation_queue import make
@@ -97,7 +102,7 @@ assert source.read_bytes()==destination.read_bytes()
 config=load_config_from_file(str(destination)).to_dict()
 assert config['num_processes']==8 and config['mixed_precision']=='bf16' and config['distributed_type']=='MULTI_GPU'
 subprocess.run(['accelerate','env'],check=True)
-if mode=='confirmation':
+if mode in ('confirmation','consumer'):
     from scripts.proxy_confirmation_queue import EVAL_PYTHON
     subprocess.run([EVAL_PYTHON,'-u','-m','scripts.proxy_confirmation_queue','preflight',
                     '--root',str(root),'--reference',predecessor],check=True)
@@ -125,12 +130,13 @@ items=launch_jobs(project/'proxy_heads.12layer.b200.json',root/'jobs.json',rows_
 (root/'inspection.json').write_text(json.dumps(inspection,indent=2))
 (root/'preflight.json').write_text(json.dumps(dict(status='passed',versions=versions,data=data,
   dataset_manifest_sha256=digest(manifest_path),verified_data_files=len(entries),verified_data_bytes=verified_bytes,
-  environment=sys.executable,stages=len(items),free_bytes=free,seed=seed,arms=3 if mode=='confirmation' else 11 if predecessor else 22,mode=mode,consumer_deferred=not bool(predecessor),predecessor=predecessor,
+  environment=sys.executable,stages=len(items),free_bytes=free,seed=seed,arms=4 if mode=='consumer' else 3 if mode=='confirmation' else 11 if predecessor else 22,mode=mode,consumer_deferred=not bool(predecessor),predecessor=predecessor,
   accelerate_cache=str(destination),accelerate_sha256=digest(destination),
   source_sha256={name:digest(project/name) for name in
     ('deep_kv/__init__.py','deep_kv/proxy.py','deep_kv/proxy_training.py','train.py','scripts/proxy_12layer_queue.py',
      'scripts/check_fa4_proxy.py','scripts/train_then_burn.py','scripts/proxy_overnight_queue.py',
-     'scripts/proxy_confirmation_queue.py','scripts/proxy_screen_evaluation.py')}),indent=2))
+     'scripts/proxy_confirmation_queue.py','scripts/proxy_screen_evaluation.py','scripts/proxy_consumer_queue.py',
+     'deep_kv/proxy_memory.py','deep_kv/proxy_estimators.py')}),indent=2))
 print('SCREEN_PREFLIGHT_PASSED',len(items),inspection['workers'],flush=True)
 PY
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" \

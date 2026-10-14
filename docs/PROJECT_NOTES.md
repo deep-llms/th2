@@ -1,3 +1,24 @@
+## Consumer-aware P7 four-run screen authorized — 15 October 2026
+
+User requested further method exploration, consumer-aware experiments and runs.
+Implement three P7-simple consumer variants, then run these fresh cases in order:
+consumer-only(.1), consumer+cosine(.1), consumer+live-target cosine(.1), and
+existing P7-simple-targetgrad with lambda.01. All12layers,2500steps,seed42,
+proxy seed43, existing1M-token/2048/FA4/BF16/micro16/GAS4recipe. Same9benchmark
+evaluations afterwards. Reuse existing baselines; no new fine-tuning/long run.
+Definition and gradient contract:docs/P7_CONSUMER_SCREEN_20261015.md.
+
+Local28regression/integration tests passed195.241s; final11targeted tests
+passed3.838s. No train.py, optimizer, scheduler, dataset/packing or kernel changes.
+Queue reuses confirmation/training/evaluation workflows; historic scopes frozen.
+Remote launch and full-shape acceptance pending. Root:
+/mnt/local/_outputs/deep-llms_th2/q359-p7-consumer4-20261015-a01.
+Predecessor:q359-p7-confirmation3-20261014-a01, completed and burns verified.
+Require predecessor success/burn release, env/data checks, Accelerate copy/env,
+known-worker reclamation and all8GPUs free, CUDA numerics and all4smokes before
+production. Existing supervisor restores/verifies communicating burns on exit.
+No existing outputs or caches removed; preserve unrelated user edits.
+
 ## P7 confirmation complete — 15 October 2026, 01:47 SGT
 
 Read-only commit7eac4f0 verifies all17stages succeeded: three fresh12layer

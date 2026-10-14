@@ -73,8 +73,10 @@ def checkpoint_cases(screen, followup=None):
 
 def validate_scope(scope):
     checkpoints = scope['checkpoints']
-    if scope.get('kind') == 'confirmation3':
+    if scope.get('kind') in ('confirmation3','consumer4'):
         from scripts.proxy_confirmation_queue import CASES, checkpoint_path
+        if scope['kind']=='consumer4':
+            from scripts.proxy_consumer_queue import CASES
         expected = [str(checkpoint_path(scope['training_root'], case)) for case in CASES]
         if checkpoints != expected:
             raise ValueError('Wrong confirmation checkpoint set')

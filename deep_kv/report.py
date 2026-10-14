@@ -6,7 +6,7 @@ from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARI
 from . import P6_TARGET_VARIANTS, anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, followup_metadata, P7_DEEP_ARMS
-from . import P7_COMBINED_ARMS
+from . import P7_COMBINED_ARMS, P7_CONSUMER_ARMS
 
 
 def comparable_config(config):
@@ -141,7 +141,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 ignored = set() if other[:2] == arm[:2] else {'quantity','bands'}
                 if arm in P6_VARIANTS+P7_P6_VARIANTS or other in P6_VARIANTS+P7_P6_VARIANTS:
                     ignored |= {'bands','lookahead'}  # Validated arm-specific layouts above.
-                if arm in FOLLOWUP_ARMS+P7_COMBINED_ARMS or other in FOLLOWUP_ARMS+P7_COMBINED_ARMS:
+                if arm in FOLLOWUP_ARMS+P7_COMBINED_ARMS+P7_CONSUMER_ARMS or other in FOLLOWUP_ARMS+P7_COMBINED_ARMS+P7_CONSUMER_ARMS:
                     ignored |= {'bands','auxiliary_routes','lm_to_predictor','consumer_loss','introduction'}
                 if arm in P6_TARGET_VARIANTS or other in P6_TARGET_VARIANTS:
                     ignored |= {'quantity','layer_weights','per_layer_normalization'}

@@ -97,12 +97,12 @@ class MemoryHead(nn.Module):
             c = c + (plan.ems.apply(x, 1)+plan.ems.apply(x, 2)).to(c.dtype)
         return self.w_out(F.silu(c))
 
-    def entries(self, prediction, rotary, native_values):
+    def entries(self, prediction, rotary, native_values, *, input_grad=False):
         with torch.autocast(prediction.device.type, enabled=False):
             # Opt-in supervised adaptation keeps identical forward values while
             # allowing task gradients into the pretrained estimator. Pretraining
             # and likelihood evaluation retain the original routing by default.
-            value = (prediction if getattr(self, 'task_finetuning', False) or getattr(self,'lm_predictor',False) else prediction.detach()).float()
+            value = (prediction if input_grad or getattr(self, 'task_finetuning', False) or getattr(self,'lm_predictor',False) else prediction.detach()).float()
             p = (value*torch.rsqrt(value.square().mean(-1, keepdim=True)+1e-6)).to(prediction.dtype)
         shape = (*p.shape[:-1], 2, -1)
         k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)
@@ -138,6 +138,63 @@ class SimpleMemoryHead(MemoryHead):
 
 def rectangular_mask(mask, disabled=False):
     return torch.cat((mask, torch.zeros_like(mask) if disabled else mask), dim=-1)
+
+
+class _MemoryConsumer(nn.Module):
+    """Functional view of the existing memory projections; no copied parameters."""
+    def __init__(self, head, backend, kernel, scaling, observer):
+        super().__init__()
+        self.head, self.backend, self.kernel, self.scaling = head, backend, kernel, scaling
+        self.observer=observer
+
+    def forward(self, prediction, q, k, v, rotary, mask, plan, attention_module):
+        kp,vp=self.head.entries(prediction,rotary,v,input_grad=True)
+        if self.backend=='fa4':
+            return flash_joint_attention(q,k,v,kp,vp,mask,self.scaling,self.kernel,
+                self.observer,doubled_layout=plan.doubled_layout)
+        # Identical selected-head joint softmax to the production SDPA consumer.
+        from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
+        output,_=ALL_ATTENTION_FUNCTIONS['sdpa'](attention_module,q,torch.cat((k,kp),dim=2),
+            torch.cat((v,vp),dim=2),plan.joint_mask,dropout=0.,
+            scaling=self.scaling,is_causal=False)
+        return output
+
+
+def memory_consumer_loss(layer, head, source, prediction, target, mask, rotary,
+                         plan, valid, backend, kernel=None, observer=None):
+    """Distill four joint-attention head outputs into the predictor only.
+
+    Native queries/keys/values and projection parameters are frozen. The teacher
+    substitutes a detached standardized deep target for the proxy. It is a local
+    training target, not an oracle recurrent rollout or an extra inference path.
+    Native QKV are shared by teacher and student; no decoder/MLP is replayed.
+    """
+    from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb
+    a=layer.self_attn
+    with torch.no_grad():
+        u=source.detach();shape=(*u.shape[:-1],-1,a.head_dim)
+        q=a.q_norm(a.q_proj(u).view(shape)).transpose(1,2)
+        k=a.k_norm(a.k_proj(u).view(shape)).transpose(1,2)
+        v=a.v_proj(u).view(shape).transpose(1,2)
+        rotary=tuple(x.detach() for x in rotary)
+        q,k=apply_rotary_pos_emb(q,k,*rotary)
+        q,k,v=q[:,-4:],k[:,-2:],v[:,-2:]
+    if backend=='fa4' and not hasattr(plan,'doubled_layout'):
+        plan.doubled_layout=(mask[0]*2,mask[1]*2)
+    if backend=='sdpa' and not hasattr(plan,'joint_mask'):
+        plan.joint_mask=rectangular_mask(mask)
+    consumer=_MemoryConsumer(head,backend,kernel,a.scaling,observer)
+    frozen={name:p.detach() for name,p in consumer.named_parameters()}
+    frozen.update({name:b.detach() for name,b in consumer.named_buffers()})
+    args=(q,k,v,rotary,mask,plan,a)
+    with torch.no_grad():
+        teacher=torch.func.functional_call(consumer,frozen,(target.detach().to(prediction.dtype),*args))
+    student=torch.func.functional_call(consumer,frozen,(prediction,*args))
+    with torch.autocast(source.device.type,enabled=False):
+        truth=teacher.float()
+        error=(student.float()-truth).square().mean((-1,-2))
+        energy=truth.square().mean((-1,-2))+1e-6
+        return ((error/energy)*valid).sum(-1)[:,None]
 
 
 def flash_joint_attention(q, k, v, kp, vp, layout, scaling, kernel, observer=None, *, doubled_layout=None):

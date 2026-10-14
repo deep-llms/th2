@@ -16,7 +16,7 @@ from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_V
 from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS, P6_ADAPTER_WIDTH
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS, P7_DEEP_ARMS
-from . import P7_COMBINED_ARMS, P7_LM_PREDICTOR_ARMS
+from . import P7_COMBINED_ARMS, P7_LM_PREDICTOR_ARMS, P7_CONSUMER_ARMS
 
 
 @dataclass
@@ -149,13 +149,15 @@ def compute_budget(config, settings, sequence_length=2048):
     result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
         for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
         'relational_forward_macs_per_token':0}
-    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS:
+    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS:
         count = len(simple_memory_layout(arm,n)[0])
         per_layer = 2*d*settings.width+projections+(2*d*P6_ADAPTER_WIDTH if arm in P7_DEEP_ARMS else 0)
         result[arm] = dict(extra_parameters=count*(per_layer+h),
             extra_macs_per_token=count*(per_layer+extra_attention),
             fa4_extra_macs_per_token=count*(per_layer+(2*nq//nk)*h*(3*sequence_length+1)),
             relational_forward_macs_per_token=0,fa4_note=result['P7']['fa4_note'])
+        if arm in P7_CONSUMER_ARMS:
+            result[arm]['training_only_selected_attention_forwards']=2*count
     result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
         layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1),
         'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']+
@@ -753,6 +755,20 @@ class ProxyModel(DeepKV):
                                         alpha.detach(),mask,rotary,context.valid)
                                 with torch.set_grad_enabled(torch.is_grad_enabled() and auxiliary_grad):
                                     inputs=(consumer_inputs.pop(proxy),source[1][0],normalized)
+                                    loss=(checkpoint(effect,*inputs,use_reentrant=False)
+                                          if self.training and self.checkpoint_aux and torch.is_grad_enabled() else effect(*inputs))
+                                cos,base_loss=cosines[proxy]
+                                cosines[proxy]=(cos,loss+(base_loss if not self.arm.endswith('-only') else 0.))
+                            if self.arm in P7_CONSUMER_ARMS:
+                                from .proxy_memory import memory_consumer_loss
+                                def effect(u,prediction,target,block=self.backbone.model.layers[proxy-1],head=self.heads[str(proxy)]):
+                                    if not self.proxy_enabled:
+                                        return prediction.sum((-1,-2))[:,None]*0.
+                                    return memory_consumer_loss(block,head,u,prediction,target,
+                                        mask,rotary,plan,context.valid,self.attention_backend,
+                                        getattr(self,'fa4_kernel',None),self._fa4_observer)
+                                with torch.set_grad_enabled(torch.is_grad_enabled() and auxiliary_grad):
+                                    inputs=(source[0].detach(),source[1][0],normalized.detach())
                                     loss=(checkpoint(effect,*inputs,use_reentrant=False)
                                           if self.training and self.checkpoint_aux and torch.is_grad_enabled() else effect(*inputs))
                                 cos,base_loss=cosines[proxy]

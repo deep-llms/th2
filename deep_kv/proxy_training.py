@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from .training import DeepKVTrainer, PilotCallback
-from . import DELAYED_ARMS, PROXY_DELAY_STEPS, P6_CONSUMER_ARMS
+from . import DELAYED_ARMS, PROXY_DELAY_STEPS, P6_CONSUMER_ARMS, P7_CONSUMER_ARMS
 
 
 def reduce_moments(accelerator, values, fused):
@@ -38,17 +38,17 @@ def summarize_proxy(statistics, model):
         else:
             result['aux_loss'] = float(losses.mean())
         if model.memory_proxy:result['cos_loss'] = float(losses.mean())
-        if model.arm in P6_CONSUMER_ARMS:
+        if model.arm in P6_CONSUMER_ARMS + P7_CONSUMER_ARMS:
             result['cos_loss']=float((1-cosines).mean())
-            result['consumer_effect_loss']=float(losses.mean())-(result['cos_loss'] if model.arm.endswith('consumer') else 0.)
+            result['consumer_effect_loss']=float(losses.mean())-(result['cos_loss'] if not model.arm.endswith('-only') else 0.)
         width = 3 if model.family == 'P3' else 1
         for index, layer in enumerate(model.layers):
             row = cosines[index*width:(index+1)*width]
             result[f'proxy_layer_{layer}_aux_loss'] = float(losses[index*width:(index+1)*width].mean())
-            if model.arm in P6_CONSUMER_ARMS:
-                result[f'proxy_layer_{layer}_consumer_effect_loss']=float(losses[index])-(1-float(cosines[index]) if model.arm.endswith('consumer') else 0.)
+            if model.arm in P6_CONSUMER_ARMS + P7_CONSUMER_ARMS:
+                result[f'proxy_layer_{layer}_consumer_effect_loss']=float(losses[index])-(1-float(cosines[index]) if not model.arm.endswith('-only') else 0.)
             if model.memory_proxy:
-                result[f'proxy_layer_{layer}_cos_loss'] = float(losses[index])
+                result[f'proxy_layer_{layer}_cos_loss'] = float(1-cosines[index]) if model.arm in P7_CONSUMER_ARMS else float(losses[index])
             if model.relational_proxy:
                 result[f'proxy_layer_{layer}_rel_loss'] = float(relational[index])
                 result[f'proxy_layer_{layer}_aux_loss'] += .5*float(relational[index])
