@@ -1,4 +1,4 @@
-#1 +60+a
+#0
 #th2-q359-proxy12-eval-health-20261014-a03
 set -euo pipefail
 sleep 45

@@ -1,3 +1,27 @@
+## Full 12-layer downstream evaluation running — 14 October 2026, 17:04 SGT
+
+Launch1ad321c accepted; detached tmux PID696398 remains alive. Receipt60ae197
+at17:04:10 confirms all CPU preflight/prompt audits, all6real CUDA checkpoint
+numerical checks and all30checkpoint/group smokes passed. Full stage is running
+with8independent GPU workers. FA4/SDPA logit relativeL2 .00260–.00295;
+padding delta0; active proxies and unchanged buffers verified. Smoke scores are
+diagnostic only and must not be reported as benchmark results.
+
+Exact approved burn workers695375–695382 were reclaimed; all8GPUs verified free
+at17:00:50SGT. Accelerate resource copied and verified in eval_fa4's cache. No
+environment/driver/training-weight changes. Local and remote full prompt audits
+agree: max2042tokens(five-shot),1180(HellaSwag10),1232(ARC-C25),656(zero-shot).
+No truncation. Existing supervisor will restore/verify communicating burns on
+success or failure after cleaning only its own workers.
+
+Root:/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-20261014-a01.
+Expected result:supervised/run/full/summary.json,status=passed,diagnostic=false;
+then successful supervisor.json and verified final burns. Current status is
+RUNNING, not completed. Scope remains6arms/9benchmarks, no finetuning or paired
+loss. commands.sh returned to#0; do not relaunch this queue.
+Evidence:temp/remote_logs/proxy12-eval-health-20261014-a03.log, SHA256
+46ee07af874c1fabeb8f88911777b764fc0e84a2fb4f260fa1b1de5f77ee4c75.
+
 ## Authorized 12-layer downstream screen — 14 October 2026
 
 User requested evaluation after training. Read-only0f7d88a at16:44:49SGT confirms
