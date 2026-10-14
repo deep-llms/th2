@@ -107,7 +107,7 @@ def summarize(args):
     root=Path(args.root);results={}
     for arm in ('A','P7-simple-targetgrad'):
         folder=root/'seed-42'/arm;result=read(folder/'result.json')
-        if result['status']!='complete' or result['global_step']!=50:raise ValueError('Incomplete timing run')
+        if result['status']!='stopped' or result['global_step']!=50:raise ValueError('Incomplete timing run')
         ranks=[read(folder/f'step-profile-rank{i}.json') for i in range(8)]
         if any([s['step'] for s in r['steps']]!=list(range(1,51)) for r in ranks):raise ValueError('Incomplete rank timing')
         # Warm-up/profile excluded. Max rank start-to-start includes logging and
