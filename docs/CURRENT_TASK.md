@@ -1,3 +1,29 @@
+## Remaining 27-checkpoint evaluation launched — 14 October 2026, 17:31 SGT
+
+Launch da91b12 accepted on q359, detached tmux pane PID704925. Read-only receipt
+7f6227a at17:31 confirms all27 checkpoint/data/prompt preflights passed. Accelerate
+resource copied to /dev/shm/.cache/huggingface/accelerate/default_config.yaml;
+SHA256 923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5.
+Exact approved burn workers704220–704227 under launcher704151 were reclaimed
+at17:30:34. All8GPUs were verified empty at17:31:04, then numerics started.
+At this snapshot the numerical stage is RUNNING, not yet verified passed.
+Smoke (135 checkpoint/task groups), then full evaluation follow automatically
+only on success; supervisor restores/verifies communicating burns after exit.
+
+Root: /mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01.
+Expected: supervised/run/full/summary.json status=passed, diagnostic=false,
+27 checkpoint entries, then complete.json, successful supervisor and burn receipt.
+commands.sh returned to#0; do not relaunch this detached queue.
+Evidence: temp/remote_logs/proxy12-remaining-health-20261014-a02.log, SHA256
+981899a6cce965b5b9c1e461a788799dc8abddc0435a76676f734eec72322314.
+
+Predecessor six-checkpoint evaluation completed17:17:44SGT, all30full groups
+passed; full stage847.997s. Burns verified17:18:55 before the new handoff.
+Its full summary hash is c18c4bc8fe739ff5b7de7b12c5341f047d01adb2d82d40fc100b5c85a72341bb.
+This action chose remaining-arm evaluation from the user's evaluate-or-finetune
+request. No fine-tuning or new training is queued. All33final step2500runs will
+have the same nine-task protocol once the remaining batch succeeds.
+
 ## Remaining 12-layer checkpoint evaluation authorized — 14 October 2026
 
 User authorized evaluating all other checkpoints or fine-tuning the current six
