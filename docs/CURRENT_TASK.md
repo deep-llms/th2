@@ -1,3 +1,21 @@
+## Consumer-teacher investigation authorized — 15 October 2026
+
+User requested only decision-relevant investigation of the current design.
+Run frozen-weight single-site teacher-response interventions for P7-simple,
+P7-simple-lm, P7-simple-deep and consumer+cosine, existing seed42/2500 weights.
+No new training or downstream sweep.512 fixed validation rows per checkpoint,
+alpha +.1/-.1/1 at sites2/4/6/8; two halves per model across eight GPUs.
+Protocol and interpretation:docs/P7_TEACHER_INVESTIGATION_20261015.md.
+Four local tests passed5.682s, including eight model/backend combinations,
+independent targets/teacher/downstream references, causality/isolation,
+state preservation and coverage rejection. Used sampling_b200; legacy local
+train_env was correctly rejected for transformers4.57.1, no env was modified.
+Fresh root:q359-p7-teacher-probe-20261015-a01. Preflight checks completed
+consumer queue/burn handoff, hashes and original validation fingerprint;
+copy/verify Accelerate, inspect/reclaim known burns, verify all8GPUs free.
+CUDA smoke must pass before full probe; supervisor restores/verifies burns.
+Remote execution pending. Preserve existing checkpoints and user document edits.
+
 ## Consumer screen complete — 15 October 2026, 06:20 SGT
 
 Read-only f7b1558 at06:20:18SGT verifies all21queue stages succeeded, all four
