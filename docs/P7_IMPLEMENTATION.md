@@ -33,7 +33,15 @@ The new CPU cross-backend test uses the existing3%gradient relativeL2 bound
 separately for backbone, predictor and projections; FP32 checks stay strict.
 No production CUDA tolerance changed. Remote CUDA numerics and three eight-GPU
 smokes must pass before any production run. Logs:temp/p7-confirmation-tests-20261014.log
-and temp/p7-confirmation-queue-final-20261014.log. Remote acceptance pending.
+and temp/p7-confirmation-queue-final-20261014.log.
+
+Remote acceptance passed on B200: both proxy arms passed the existing CUDA
+numerical tolerances, then all three eight-GPU training smokes and validators
+passed. Combined-arm overall gradient relativeL2 was0.005532 (predictor0.004678),
+with zero cross-document effect. Production A began13:04:21UTC on14October2026;
+the other two arms follow sequentially. Evidence:
+temp/remote_logs/p7-confirmation-health-20261014-a02.log, SHA256
+b4cc8764f73165d05886feebf469dc9df70e7ee00f7778c5b2e4c6f42d795844.
 
 
 Forward-local normalization/layout reuse and proxy-key RoPE optimization are

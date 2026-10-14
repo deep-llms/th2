@@ -1,3 +1,23 @@
+## P7 confirmation queue running — 14 October 2026, 21:08 SGT
+
+Launch commit 7fe8d34; read-only receipt 229a7e6 at 13:08:23 UTC verifies
+CUDA numerical acceptance and all three eight-GPU smokes plus validators passed.
+Fresh A/seed1042 production started at 13:04:21 UTC and reached step181/2500;
+all eight GPUs active at 98–100%, about 63,428 MiB each, 1.06s/update.
+Next: P7-simple-targetgrad/seed1042, then P7-simple-targetgrad-lm/seed42,
+each fresh12layer2500steps, then the same nine downstream benchmarks.
+No production result is available yet. Do not relaunch this detached queue.
+
+Data/environment/evaluation preflights passed. Accelerate config copied and
+verified at /dev/shm/.cache/huggingface/accelerate/default_config.yaml,
+SHA256 923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5.
+Known burns reclaimed and all8GPUs verified free before training at13:00:16UTC.
+Supervisor owns the GPU guard and restores/verifies communicating burns on exit.
+Root: /mnt/local/_outputs/deep-llms_th2/q359-p7-confirmation3-20261014-a01.
+Receipt: temp/remote_logs/p7-confirmation-health-20261014-a02.log, SHA256
+b4cc8764f73165d05886feebf469dc9df70e7ee00f7778c5b2e4c6f42d795844.
+commands.sh returned to #0; this does not stop the detached queue.
+
 ## Authorized P7 confirmation queue — 14 October 2026
 
 User accepted three new runs: A/seed1042, P7-simple-targetgrad/seed1042,
