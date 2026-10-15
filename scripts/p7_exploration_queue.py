@@ -130,10 +130,10 @@ def verify_smokes(root, reference):
          train_fingerprint=reference_config['train_fingerprint'],reference=str(original/'A')))
 
 
-def validate_training(root):
+def validate_training(root, cases=CASES):
     from deep_kv.report import report
     rows=[];fingerprints=None
-    for case in CASES:
+    for case in cases:
         label,arm,steps,weight=case;ck=checkpoint_path(root,case);folder=ck.parent
         c=read(folder/'train_config.json');r=read(folder/'result.json')
         if (read(Path(root)/label/'validated.json')['status']!='passed'
