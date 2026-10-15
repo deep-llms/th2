@@ -131,4 +131,14 @@ ends agree across arms/ranks, and graph counters are stable during timing.
 Both use the original train fingerprint `6e4708f1e818fb44`; validation uses
 32 rows for these disposable tests. All original research checkpoints remain
 untouched. The default settings for ordinary launches are still disabled.
-Final automatic burn handoff verification is pending.
+All integration jobs and the summary succeeded; complete marker exists.
+The supervisor restored and verified eight communicating burns at
+2026-10-15 00:17:24 UTC. Read-only verification at 00:19:54 UTC confirmed
+all eight worker identities/approved parents, advancing collectives and a
+released GPU guard. Final receipt:
+`temp/remote_logs/p7-speed-final-burn-20261015-a01.log`, SHA256
+`6281217fe27e5412e92b3060708560973f2347c3c6acfbfebb41825c4ebb6483`.
+
+Code integration: `a1a40f0`. Final run root:
+`/mnt/local/_outputs/deep-llms_th2/q359-p7-speed-integrated-20261015-a01`.
+No long training is queued. `commands.sh` is returned to inactive mode.

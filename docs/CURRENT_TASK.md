@@ -1,3 +1,40 @@
+## P7 throughput optimization complete — 15 October 2026, 00:19 UTC
+
+User requested optimization of P7-simple-targetgrad, lambda0.1. Implemented
+opt-in proxy_compile_auxiliary (Inductor cosine fusion) and proxy_lse_attention
+(live-LSE joint softmax without duplicate queries). Defaults remainfalse;
+validated for this arm, harmless for A, other arms rejected until validated.
+Flags recorded in recipes; toggling on resume requires explicit
+allow_performance_change_on_resume. State names/shapes, optimizer grouping,
+loss/gradient routes, schedules, document isolation and data order unchanged.
+BF16 rounding differs: numerical equivalence, not bitwise future weights.
+
+Eight-GPU12layer/2048/micro16/GAS4 timing, steps20–49 of disposable50step runs:
+oldP7 controls1.169309/1.169598s; cosine1.137384s, LSE1.146433s,
+both1.112883s =5.08% throughput gain (4.84% less update time).
+Normal train.py integration repeated A1.049506s / optimizedP71.111457s:
+remaining overhead5.90%. Same per-rank endpoint data hashes; stable compiler
+counters. Original train fingerprint6e4708f1e818fb44, short-test eval32rows.
+Six CPU tests, combined-flags actual-entry resume and legacy FA4 baseline
+resume passed. Eight trained-checkpoint CUDA gates passed at short/checkpointed
+and fullseq2048/micro16 shapes; full-shape gradient relativeL2 .370% cosine,
+~1.26% LSE/both within pre-existing3% tolerance; cosine LM forward/buffers exact.
+Only disposable test outputs written; original research weights/environments
+untouched. Full report/use flags:docs/P7_TARGETGRAD_SPEED_20261015.md.
+
+Integration root:q359-p7-speed-integrated-20261015-a01. All3jobs/supervisor
+successful; complete marker verified. Burns restored/verified00:17:24UTC.
+Read-onlya9ec9e5 at00:19:54UTC verifies all8live approved worker identities,
+advancing collective progress, logage7.88s, guardreleased. Final receipt:
+temp/remote_logs/p7-speed-final-burn-20261015-a01.log; SHA256
+6281217fe27e5412e92b3060708560973f2347c3c6acfbfebb41825c4ebb6483.
+Code integrationa1a40f0. commands.sh returned to#0; nothing queued.
+
+Historical profile postprocessing failed only because it expected complete
+instead of intentional stopped. Both training jobs succeeded; all recorded
+artifact hashes reverified, corrected summary saved separately. Original
+failure history preserved. No rerun/overwrite of those completed profiles.
+
 ## P7 optimized integration test — 15 October 2026
 
 All eight trained-checkpoint CUDA gates passed. Preliminary medians: old P7
