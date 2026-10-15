@@ -4,9 +4,11 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from run_experiments import run_jobs
 from scripts.reorder_p7_tuning import PRIORITY, remaining_jobs, boundary_finished
+from scripts.train_then_burn import digest
 
 
 class ReorderTests(unittest.TestCase):
@@ -61,6 +63,35 @@ class ReorderTests(unittest.TestCase):
             (source/'supervised/supervisor.json').write_text(json.dumps(dict(finished_at='now')))
             with self.assertRaises(ValueError):
                 boundary_finished(source, source)
+
+    def test_requires_verified_burn_after_expected_boundary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp)/'old'
+            root = Path(tmp)/'new'
+            root.mkdir()
+            run = source/'supervised/run'
+            run.mkdir(parents=True)
+            barrier = run/'tg-heads8-train.log'
+            barrier.write_text('authorized boundary')
+            (root/'boundary-installed.json').write_text(json.dumps(dict(path=str(barrier), sha256=digest(barrier))))
+            state = dict(status='failed', error='[Errno 17] File exists: next log', jobs=[
+                dict(name='tg-heads2-train', status='ok'),
+                dict(name='tg-heads2-validate', status='ok'),
+                dict(name='tg-heads8-train', status='failed')])
+            (run/'run.json').write_text(json.dumps(state))
+            burn = dict(collective_progress_verified=True, session='expected')
+            receipt = dict(training_status='failed', finished_at='now', burn=burn)
+            (source/'supervised/supervisor.json').write_text(json.dumps(receipt))
+            (source/'supervised/burn-verified.json').write_text(json.dumps(burn))
+            original = Path.exists
+            def exists(path):
+                return False if str(path)=='/mnt/local/_gpu_guard/DISABLED' else original(path)
+            with patch.object(Path, 'exists', exists):
+                self.assertTrue(boundary_finished(source, root))
+                receipt['burn']['collective_progress_verified'] = False
+                (source/'supervised/supervisor.json').write_text(json.dumps(receipt))
+                with self.assertRaises(ValueError):
+                    boundary_finished(source, root)
 
 
 if __name__ == '__main__':
