@@ -1,0 +1,2308 @@
+{
+  "status": "passed",
+  "accepted": [
+    "head_batch",
+    "target_kernel",
+    "kernel_both"
+  ],
+  "reports": [
+    {
+      "status": "passed",
+      "mode": "entries",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 64,
+      "micro_batch": 2,
+      "checkpointing": true,
+      "comparisons": {
+        "model": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.284268379211426,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.284268379211426,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "heads.2.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.284268379211426,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [],
+        "failures": []
+      },
+      "exact_forward": {
+        "differences": [],
+        "failures": []
+      },
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "head_batch",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 64,
+      "micro_batch": 2,
+      "checkpointing": true,
+      "comparisons": {
+        "model": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.285243511199951,
+          "loss_abs_diff": 0.0009751319885253906,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.004080139966911812,
+            "relative_max": 0.0066925934213981925
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.008611306620509998,
+          "gradient_cosine": 0.9999630147538722,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.9.self_attn.k_norm.weight",
+              "relative_l2": 0.0162822006125036
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.q_norm.weight",
+              "relative_l2": 0.013476756912961217
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_norm.weight",
+              "relative_l2": 0.013395733149460829
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.012506348436072812
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_proj.weight",
+              "relative_l2": 0.012324323831670755
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.011957030538404448
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_proj.weight",
+              "relative_l2": 0.011789487382822757
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.011708412402108955
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.285243511199951,
+          "loss_abs_diff": 0.0009751319885253906,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.004080139966911812,
+            "relative_max": 0.0066925934213981925
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.007877382429927875,
+          "gradient_cosine": 0.9999690187609033,
+          "worst_parameters": [
+            {
+              "name": "heads.8.k_norm.weight",
+              "relative_l2": 0.010590428971982176
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.010298233139684929
+            },
+            {
+              "name": "heads.8.w1.weight",
+              "relative_l2": 0.00976227492184607
+            },
+            {
+              "name": "heads.8.k_proj.weight",
+              "relative_l2": 0.00953862540319488
+            },
+            {
+              "name": "heads.4.k_norm.weight",
+              "relative_l2": 0.008896688396372
+            },
+            {
+              "name": "heads.6.w1.weight",
+              "relative_l2": 0.008319572693811195
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.008290382209206703
+            },
+            {
+              "name": "heads.8.v_proj.weight",
+              "relative_l2": 0.008042372829668068
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.285243511199951,
+          "loss_abs_diff": 0.0009751319885253906,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.004080139966911812,
+            "relative_max": 0.0066925934213981925
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.008619331294826473,
+          "gradient_cosine": 0.9999629462470154,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.9.self_attn.k_norm.weight",
+              "relative_l2": 0.0162822006125036
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.q_norm.weight",
+              "relative_l2": 0.013476756912961217
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_norm.weight",
+              "relative_l2": 0.013395733149460829
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.012506348436072812
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_proj.weight",
+              "relative_l2": 0.012324323831670755
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.011957030538404448
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_proj.weight",
+              "relative_l2": 0.011789487382822757
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.011708412402108955
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [
+          {
+            "key": "mu",
+            "relative_l2": 1.8632988994693724e-05,
+            "max_abs": 3.3989548683166504e-05,
+            "peak_scaled": 1.768437711421729e-05
+          },
+          {
+            "key": "sigma2",
+            "relative_l2": 5.717937892083241e-06,
+            "max_abs": 0.00016450881958007812,
+            "peak_scaled": 1.1412074530571758e-05
+          }
+        ],
+        "failures": []
+      },
+      "exact_forward": null,
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "target_kernel",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 64,
+      "micro_batch": 2,
+      "checkpointing": true,
+      "comparisons": {
+        "model": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.284268379211426,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.284268379211426,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "heads.2.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.284268379211426,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [
+          {
+            "key": "mu",
+            "relative_l2": 7.300855658183181e-09,
+            "max_abs": 5.960464477539063e-08,
+            "peak_scaled": 3.1011621419057065e-08
+          },
+          {
+            "key": "sigma2",
+            "relative_l2": 4.651599448075577e-09,
+            "max_abs": 9.5367431640625e-07,
+            "peak_scaled": 6.615695380041598e-08
+          }
+        ],
+        "failures": []
+      },
+      "exact_forward": {
+        "differences": [],
+        "failures": []
+      },
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "kernel_both",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 64,
+      "micro_batch": 2,
+      "checkpointing": true,
+      "comparisons": {
+        "model": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.285243511199951,
+          "loss_abs_diff": 0.0009751319885253906,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.004080139966911812,
+            "relative_max": 0.0066925934213981925
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.008611306620509998,
+          "gradient_cosine": 0.9999630147538722,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.9.self_attn.k_norm.weight",
+              "relative_l2": 0.0162822006125036
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.q_norm.weight",
+              "relative_l2": 0.013476756912961217
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_norm.weight",
+              "relative_l2": 0.013395733149460829
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.012506348436072812
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_proj.weight",
+              "relative_l2": 0.012324323831670755
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.011957030538404448
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_proj.weight",
+              "relative_l2": 0.011789487382822757
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.011708412402108955
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.285243511199951,
+          "loss_abs_diff": 0.0009751319885253906,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.004080139966911812,
+            "relative_max": 0.0066925934213981925
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.007877382429927875,
+          "gradient_cosine": 0.9999690187609033,
+          "worst_parameters": [
+            {
+              "name": "heads.8.k_norm.weight",
+              "relative_l2": 0.010590428971982176
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.010298233139684929
+            },
+            {
+              "name": "heads.8.w1.weight",
+              "relative_l2": 0.00976227492184607
+            },
+            {
+              "name": "heads.8.k_proj.weight",
+              "relative_l2": 0.00953862540319488
+            },
+            {
+              "name": "heads.4.k_norm.weight",
+              "relative_l2": 0.008896688396372
+            },
+            {
+              "name": "heads.6.w1.weight",
+              "relative_l2": 0.008319572693811195
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.008290382209206703
+            },
+            {
+              "name": "heads.8.v_proj.weight",
+              "relative_l2": 0.008042372829668068
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 4.284268379211426,
+          "candidate_loss": 4.285243511199951,
+          "loss_abs_diff": 0.0009751319885253906,
+          "targets": [
+            126,
+            126
+          ],
+          "hidden": {
+            "relative_l2": 0.004080139966911812,
+            "relative_max": 0.0066925934213981925
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.008619331294826473,
+          "gradient_cosine": 0.9999629462470154,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.9.self_attn.k_norm.weight",
+              "relative_l2": 0.0162822006125036
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.q_norm.weight",
+              "relative_l2": 0.013476756912961217
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_norm.weight",
+              "relative_l2": 0.013395733149460829
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.012506348436072812
+            },
+            {
+              "name": "backbone.model.layers.9.self_attn.q_proj.weight",
+              "relative_l2": 0.012324323831670755
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.011957030538404448
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_proj.weight",
+              "relative_l2": 0.011789487382822757
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.011708412402108955
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [
+          {
+            "key": "mu",
+            "relative_l2": 1.8632858902411525e-05,
+            "max_abs": 3.3989548683166504e-05,
+            "peak_scaled": 1.768437711421729e-05
+          },
+          {
+            "key": "sigma2",
+            "relative_l2": 5.717886349492758e-06,
+            "max_abs": 0.00016450881958007812,
+            "peak_scaled": 1.1412074530571758e-05
+          }
+        ],
+        "failures": []
+      },
+      "exact_forward": null,
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "entries",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 2048,
+      "micro_batch": 16,
+      "checkpointing": false,
+      "comparisons": {
+        "model": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5514113903045654,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5514113903045654,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "heads.2.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5514113903045654,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [],
+        "failures": []
+      },
+      "exact_forward": {
+        "differences": [],
+        "failures": []
+      },
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "head_batch",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 2048,
+      "micro_batch": 16,
+      "checkpointing": false,
+      "comparisons": {
+        "model": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5513148307800293,
+          "loss_abs_diff": 9.655952453613281e-05,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.005165042893971993,
+            "relative_max": 0.008624498082706508
+          },
+          "logits": {
+            "relative_l2": 0.0020369429454105007,
+            "relative_max": 0.0051813471502590676
+          },
+          "gradient_relative_l2": 0.010726537315857869,
+          "gradient_cosine": 0.9999424699037146,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.2.self_attn.q_norm.weight",
+              "relative_l2": 0.016359254754106625
+            },
+            {
+              "name": "backbone.model.layers.2.self_attn.k_norm.weight",
+              "relative_l2": 0.015545898423112282
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.015443878302158787
+            },
+            {
+              "name": "backbone.model.layers.4.self_attn.q_norm.weight",
+              "relative_l2": 0.01427232533849005
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.014042039819845765
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.013918811186410937
+            },
+            {
+              "name": "backbone.model.layers.1.self_attn.k_norm.weight",
+              "relative_l2": 0.01387790991775466
+            },
+            {
+              "name": "backbone.model.layers.8.self_attn.q_norm.weight",
+              "relative_l2": 0.013844890277502592
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5513148307800293,
+          "loss_abs_diff": 9.655952453613281e-05,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.005165042893971993,
+            "relative_max": 0.008624498082706508
+          },
+          "logits": {
+            "relative_l2": 0.0020369429454105007,
+            "relative_max": 0.0051813471502590676
+          },
+          "gradient_relative_l2": 0.009791146248691441,
+          "gradient_cosine": 0.9999521165506569,
+          "worst_parameters": [
+            {
+              "name": "heads.4.k_norm.weight",
+              "relative_l2": 0.0124932178045634
+            },
+            {
+              "name": "heads.2.k_norm.weight",
+              "relative_l2": 0.012439288551363429
+            },
+            {
+              "name": "heads.2.k_proj.weight",
+              "relative_l2": 0.011712457351316864
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.010550040541832877
+            },
+            {
+              "name": "heads.6.k_norm.weight",
+              "relative_l2": 0.00999050198843002
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.00994990321232745
+            },
+            {
+              "name": "heads.8.k_proj.weight",
+              "relative_l2": 0.009662940724127671
+            },
+            {
+              "name": "heads.4.v_proj.weight",
+              "relative_l2": 0.009456976609698298
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5513148307800293,
+          "loss_abs_diff": 9.655952453613281e-05,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.005165042893971993,
+            "relative_max": 0.008624498082706508
+          },
+          "logits": {
+            "relative_l2": 0.0020369429454105007,
+            "relative_max": 0.0051813471502590676
+          },
+          "gradient_relative_l2": 0.010732481650464759,
+          "gradient_cosine": 0.999942406222606,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.2.self_attn.q_norm.weight",
+              "relative_l2": 0.016359254754106625
+            },
+            {
+              "name": "backbone.model.layers.2.self_attn.k_norm.weight",
+              "relative_l2": 0.015545898423112282
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.015443878302158787
+            },
+            {
+              "name": "backbone.model.layers.4.self_attn.q_norm.weight",
+              "relative_l2": 0.01427232533849005
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.014042039819845765
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.013918811186410937
+            },
+            {
+              "name": "backbone.model.layers.1.self_attn.k_norm.weight",
+              "relative_l2": 0.01387790991775466
+            },
+            {
+              "name": "backbone.model.layers.8.self_attn.q_norm.weight",
+              "relative_l2": 0.013844890277502592
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [
+          {
+            "key": "mu",
+            "relative_l2": 1.549766769798252e-06,
+            "max_abs": 3.0994415283203125e-06,
+            "peak_scaled": 1.615242020098705e-06
+          },
+          {
+            "key": "sigma2",
+            "relative_l2": 5.03122767142701e-07,
+            "max_abs": 1.621246337890625e-05,
+            "peak_scaled": 1.1201764132886923e-06
+          }
+        ],
+        "failures": []
+      },
+      "exact_forward": null,
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "target_kernel",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 2048,
+      "micro_batch": 16,
+      "checkpointing": false,
+      "comparisons": {
+        "model": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5514113903045654,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5514113903045654,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "heads.2.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.2.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w1.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.w2.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5514113903045654,
+          "loss_abs_diff": 0.0,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "logits": {
+            "relative_l2": 0.0,
+            "relative_max": 0.0
+          },
+          "gradient_relative_l2": 0.0,
+          "gradient_cosine": 1.0,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.embed_tokens.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.v_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.o_proj.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.q_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.self_attn.k_norm.weight",
+              "relative_l2": 0.0
+            },
+            {
+              "name": "backbone.model.layers.0.mlp.gate_proj.weight",
+              "relative_l2": 0.0
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [
+          {
+            "key": "mu",
+            "relative_l2": 4.499276721267666e-09,
+            "max_abs": 5.960464477539063e-08,
+            "peak_scaled": 3.1062346540359714e-08
+          },
+          {
+            "key": "sigma2",
+            "relative_l2": 7.105484312578319e-09,
+            "max_abs": 9.5367431640625e-07,
+            "peak_scaled": 6.589273019345248e-08
+          }
+        ],
+        "failures": []
+      },
+      "exact_forward": {
+        "differences": [],
+        "failures": []
+      },
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    },
+    {
+      "status": "passed",
+      "mode": "kernel_both",
+      "primitive_checks": [
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 1,
+          "channels": 1,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 17,
+          "channels": 9,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 65,
+          "channels": 131,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": false,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": false,
+          "status": "passed"
+        },
+        {
+          "rows": 128,
+          "channels": 1024,
+          "statistics": true,
+          "clipping": true,
+          "status": "passed"
+        }
+      ],
+      "sequence_length": 2048,
+      "micro_batch": 16,
+      "checkpointing": false,
+      "comparisons": {
+        "model": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5513148307800293,
+          "loss_abs_diff": 9.655952453613281e-05,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.005165042893971993,
+            "relative_max": 0.008624498082706508
+          },
+          "logits": {
+            "relative_l2": 0.0020369429454105007,
+            "relative_max": 0.0051813471502590676
+          },
+          "gradient_relative_l2": 0.010726537315857869,
+          "gradient_cosine": 0.9999424699037146,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.2.self_attn.q_norm.weight",
+              "relative_l2": 0.016359254754106625
+            },
+            {
+              "name": "backbone.model.layers.2.self_attn.k_norm.weight",
+              "relative_l2": 0.015545898423112282
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.015443878302158787
+            },
+            {
+              "name": "backbone.model.layers.4.self_attn.q_norm.weight",
+              "relative_l2": 0.01427232533849005
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.014042039819845765
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.013918811186410937
+            },
+            {
+              "name": "backbone.model.layers.1.self_attn.k_norm.weight",
+              "relative_l2": 0.01387790991775466
+            },
+            {
+              "name": "backbone.model.layers.8.self_attn.q_norm.weight",
+              "relative_l2": 0.013844890277502592
+            }
+          ]
+        },
+        "proxy": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5513148307800293,
+          "loss_abs_diff": 9.655952453613281e-05,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.005165042893971993,
+            "relative_max": 0.008624498082706508
+          },
+          "logits": {
+            "relative_l2": 0.0020369429454105007,
+            "relative_max": 0.0051813471502590676
+          },
+          "gradient_relative_l2": 0.009791146248691441,
+          "gradient_cosine": 0.9999521165506569,
+          "worst_parameters": [
+            {
+              "name": "heads.4.k_norm.weight",
+              "relative_l2": 0.0124932178045634
+            },
+            {
+              "name": "heads.2.k_norm.weight",
+              "relative_l2": 0.012439288551363429
+            },
+            {
+              "name": "heads.2.k_proj.weight",
+              "relative_l2": 0.011712457351316864
+            },
+            {
+              "name": "heads.4.k_proj.weight",
+              "relative_l2": 0.010550040541832877
+            },
+            {
+              "name": "heads.6.k_norm.weight",
+              "relative_l2": 0.00999050198843002
+            },
+            {
+              "name": "heads.2.v_proj.weight",
+              "relative_l2": 0.00994990321232745
+            },
+            {
+              "name": "heads.8.k_proj.weight",
+              "relative_l2": 0.009662940724127671
+            },
+            {
+              "name": "heads.4.v_proj.weight",
+              "relative_l2": 0.009456976609698298
+            }
+          ]
+        },
+        "backbone": {
+          "reference_loss": 3.5514113903045654,
+          "candidate_loss": 3.5513148307800293,
+          "loss_abs_diff": 9.655952453613281e-05,
+          "targets": [
+            32705,
+            32705
+          ],
+          "hidden": {
+            "relative_l2": 0.005165042893971993,
+            "relative_max": 0.008624498082706508
+          },
+          "logits": {
+            "relative_l2": 0.0020369429454105007,
+            "relative_max": 0.0051813471502590676
+          },
+          "gradient_relative_l2": 0.010732481650464759,
+          "gradient_cosine": 0.999942406222606,
+          "worst_parameters": [
+            {
+              "name": "backbone.model.layers.2.self_attn.q_norm.weight",
+              "relative_l2": 0.016359254754106625
+            },
+            {
+              "name": "backbone.model.layers.2.self_attn.k_norm.weight",
+              "relative_l2": 0.015545898423112282
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.k_norm.weight",
+              "relative_l2": 0.015443878302158787
+            },
+            {
+              "name": "backbone.model.layers.4.self_attn.q_norm.weight",
+              "relative_l2": 0.01427232533849005
+            },
+            {
+              "name": "backbone.model.layers.10.self_attn.q_norm.weight",
+              "relative_l2": 0.014042039819845765
+            },
+            {
+              "name": "backbone.model.layers.11.self_attn.k_norm.weight",
+              "relative_l2": 0.013918811186410937
+            },
+            {
+              "name": "backbone.model.layers.1.self_attn.k_norm.weight",
+              "relative_l2": 0.01387790991775466
+            },
+            {
+              "name": "backbone.model.layers.8.self_attn.q_norm.weight",
+              "relative_l2": 0.013844890277502592
+            }
+          ]
+        }
+      },
+      "buffers": {
+        "differences": [
+          {
+            "key": "mu",
+            "relative_l2": 1.5496113450511836e-06,
+            "max_abs": 3.0994415283203125e-06,
+            "peak_scaled": 1.615242020098705e-06
+          },
+          {
+            "key": "sigma2",
+            "relative_l2": 5.031246185983536e-07,
+            "max_abs": 1.621246337890625e-05,
+            "peak_scaled": 1.1201764132886923e-06
+          }
+        ],
+        "failures": []
+      },
+      "exact_forward": null,
+      "checkpoint": {
+        "kind": "custom",
+        "arm": "P7-simple-targetgrad",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "checkpoint_sha256": "be0de11aba95411521a521c59c21b19777a36c92d418ef9647d4baa6a3845b45",
+        "recipe": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/train_config.json",
+        "recipe_sha256": "52057dd35e552bc98fd3696c4ebc590aeac85c042547f6e2898b540eb49f1bf9",
+        "step": 2500,
+        "attention_backend": "fa4",
+        "trained_attention_backend": "fa4",
+        "autocast_dtype": "torch.bfloat16",
+        "master_dtype": "torch.float32",
+        "context_length": 2048,
+        "boundary_policy": "explicit segments; otherwise one document per request",
+        "positions": "reset_per_document"
+      }
+    }
+  ],
+  "checkpoint_unchanged": true,
+  "thresholds": {
+    "loss_absolute": 0.01,
+    "gradient_relative_l2": 0.03,
+    "output_relative_l2": 0.02,
+    "buffer_relative_l2": 0.02,
+    "buffer_peak_scaled": 0.02
+  }
+}

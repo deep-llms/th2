@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-kernel-health-20261015-a03
+#th2-q359-p7-kernel-completion-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -11,6 +11,18 @@ from scripts.gpu_status import snapshot
 from scripts.train_then_burn import burn_progress,approved_launcher,process,BURN_HASH
 from scripts.verified_gpu_reclaim import ownership
 root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-kernel-trial-20261015-a02')
+import statistics
+for attempt in range(45):
+ print('POLL',datetime.now(timezone.utc).isoformat(),flush=True)
+ for p in root.glob('supervised/run/timings/*/seed-42/*/step-profile-rank0.json'):
+  try:
+   ranks=[json.loads((p.parent/f'step-profile-rank{i}.json').read_text()) for i in range(8)]
+   median=statistics.median(max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(19,49))
+   print('COMPLETED_TIMING',p.parent.parent.parent.name,median,flush=True)
+  except (FileNotFoundError,json.JSONDecodeError,IndexError):pass
+ state=root/'supervised/supervisor.json'
+ if state.exists() and json.loads(state.read_text()).get('finished_at'):break
+ time.sleep(20)
 print('AT',datetime.now(timezone.utc).isoformat())
 for leaf in ('preflight.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/gate/summary.json','supervised/run/timings/run.json','supervised/run/timing-summary.json','supervised/burn-verified.json'):
  p=root/leaf
