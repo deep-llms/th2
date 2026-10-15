@@ -62,7 +62,16 @@ def inspect_owned():
     running=read(supervised/'run/run.json')
     if report.get('training_status')!='running' or running.get('status')!='running':
         raise RuntimeError('Follow-up queue is not running; inspect its terminal state')
-    pid=pane_pid()
+    pane=pane_pid()
+    guard=Path('/mnt/local/_gpu_guard/DISABLED')
+    if not guard.is_file():
+        raise RuntimeError('GPU guard is not owned by this supervisor')
+    pid=read(guard).get('owner_pid')
+    # Tmux may retain a shell wrapper above the exec'ed supervisor. The guard
+    # identifies the owner, but does not authorize it: require pane ancestry,
+    # the exact supervisor argv below, and ownership of every GPU worker.
+    if type(pid) is not int or pid<=1 or not belongs_to(pid,pane):
+        raise RuntimeError('Guard owner is not inside the expected tmux pane')
     identity=process(pid)
     argv=[x.decode(errors='replace') for x in (Path('/proc')/str(pid)/'cmdline').read_bytes().split(b'\0') if x]
     if (pid<=1 or 'scripts.train_then_burn' not in argv
@@ -70,7 +79,6 @@ def inspect_owned():
             or '--config' not in argv or argv[argv.index('--config')+1]!=str(ROOT/'jobs.json')
             or '--host' not in argv or argv[argv.index('--host')+1]!=HOST):
         raise RuntimeError('Tmux pane is not the expected owned supervisor')
-    guard=Path('/mnt/local/_gpu_guard/DISABLED')
     if not guard.is_file() or read(guard).get('owner_pid')!=pid:
         raise RuntimeError('GPU guard is not owned by this supervisor')
     gpus=snapshot(GPUS)

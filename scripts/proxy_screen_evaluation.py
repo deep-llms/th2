@@ -73,7 +73,10 @@ def checkpoint_cases(screen, followup=None):
 
 def validate_scope(scope):
     checkpoints = scope['checkpoints']
-    if scope.get('kind') == 'p7-exploration8':
+    if scope.get('kind') == 'p7-completed':
+        from scripts.p7_completed_evaluation import validate_scope as validate_completed
+        validate_completed(scope)
+    elif scope.get('kind') == 'p7-exploration8':
         from scripts.p7_exploration_queue import validate_scope as validate_exploration
         validate_exploration(scope)
     elif scope.get('kind') in ('confirmation3','consumer4'):
