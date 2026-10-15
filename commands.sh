@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-speed-trial-health-20261015-a02
+#th2-q359-p7-speed-trial-health-20261015-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -16,12 +16,16 @@ for leaf in ('preflight.json','fa4-api.json','supervised/supervisor.json','super
  p=root/leaf
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
+import statistics
 for folder in sorted((root/'supervised/run/timings').glob('*/seed-42/P7-simple-targetgrad')):
- for leaf in ('step-profile-rank0.json','component-profile.json','result.json'):
-  p=folder/leaf
-  if p.exists():print('TIMING_ARTIFACT',str(folder),leaf,p.read_text())
+ paths=[folder/f'step-profile-rank{rank}.json' for rank in range(8)]
+ if all(p.exists() for p in paths):
+  ranks=[json.loads(p.read_text()) for p in paths]
+  values=[max(r['steps'][i]['interval_seconds'] for r in ranks) for i in range(19,49)]
+  result=json.loads((folder/'result.json').read_text())
+  print('TIMING',folder.parents[1].name,json.dumps(dict(median=statistics.median(values),intervals=values,peak_gib=max(r['peak_gib'] for r in ranks),evaluation=result['evaluation'])))
 for p in sorted((root/'supervised/run').glob('*.log'))+sorted((root/'supervised/run/timings').glob('*.log')):
- print('JOB_TAIL',str(p),p.read_text(errors='replace')[-2500:])
+ print('JOB_TAIL',str(p),p.read_text(errors='replace')[-1800:])
 p=root/'supervisor.log'
 if p.exists():print('SUPERVISOR_TAIL',p.read_text()[-8000:])
 status=snapshot(list(range(8)));print('GPU_SNAPSHOT',json.dumps(status))
