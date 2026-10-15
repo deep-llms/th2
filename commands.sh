@@ -1,2 +1,2 @@
-#2 +a
-#th2-q359-p7-target-final-refresh-20261015-a01
+#0
+# No queued action; target-kernel verification complete and eight burns verified.

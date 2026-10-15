@@ -1,3 +1,45 @@
+## P7 custom target-kernel optimization complete — 15 October 2026, 02:23 UTC
+
+Implemented opt-in proxy_fused_targets (Triton four-block target sum,
+normalization/clipping, moment partials and first-order backward). Use with the
+existing compile_auxiliary/lse_attention/compile_entries optimizations. Default
+false; targetgrad/A only; CUDA torch2.14. Checkpoint Parameters and optimizer
+groups unchanged. Flag saved; resume toggles require explicit performance-change
+allowance. No architecture, loss weights, gradient routes, data order, schedule,
+environment or driver changes. Head-batched FA4 rejected: about2.06% slower.
+
+Five50step eight-GPU trials: controls1.098117/1.096338s, target1.087154s:
++0.9266% throughput, 10.07ms/update saved, matched-trial peak0.375GiB lower.
+Control drift0.162%. Normal-CLI final pair: A1.049351s, P71.086724s; remaining
+P7 overhead3.5615% (previous4.43%). Final peaks58.38/62.21GiB. All-rank endpoint
+data hashes agree; compilation counters stable. These are short steady-state
+measurements, not a full2500step result or downstream equivalence claim.
+
+Initial kernel failed the exact-clamp-endpoint oracle before training; fixed
+to pinned torch2.14's strict derivative, retained failed artifacts. Added explicit
+NaN propagation.13CUDA primitive cases pass on every rank. Target-only kernel
+matched previous optimized loss/hidden/logits/all gradients exactly in both
+shapes; running-buffer relativeL2<7.4e-9. Final combined optimizations vs ORIGINAL
+checkpoint: loss abs.000171661, hidden relL2.006238, logits.002448,
+gradients.0126126, unchanged acceptance thresholds. All8cases passed.
+Nine CPU tests passed35.978s incl real Trainer resume; updated13-case interpreter
+regression passed12.988s. Ordinary training never imports experimental head
+batching. Production integration:d1b3336.
+
+Final root:q359-p7-target-integrated-20261015-a01. All4jobs, summary and supervisor
+succeeded; complete marker exists. Burns restored/verified02:23:40UTC. Read-only
+verification02:23:49UTC:8correctworker identities, approvedparents, advancing
+collectives, logage5.75s, GPUguardreleased. Final receipt:
+temp/remote_logs/p7-target-completion-final-20261015-a01.log
+SHA256d62c085ae54486c52ce360a86fe3e9cddf227e3bf3f96eac6bbdba0e46065e60.
+Raw gate/summary hashes checked against recorded job artifacts. Results:
+docs/results/p7_kernel_numerical_20261015.json,
+docs/results/p7_kernel_trial_20261015.json,
+docs/results/p7_target_original_numerical_20261015.json,
+docs/results/p7_target_integrated_20261015.json.
+Report:docs/P7_TARGETGRAD_SPEED_20261015.md. No long training queued.
+commands.sh returned to#0. Unrelated user docs left untouched.
+
 ## P7 custom target-kernel integration — 15 October 2026
 
 CUDA gates passed after fixing torch2.14 clamp endpoint semantics. Target-only

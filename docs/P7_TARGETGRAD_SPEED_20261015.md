@@ -331,4 +331,55 @@ and a13th primitive test for nonfinite forward values and their clamp gradients.
 The interpreter regression passed12.988s. Final CUDA integration reruns this
 updated kernel against the original checkpoint implementation, then runs A/P7
 through ordinary CLI flags. Production integration commit:d1b3336; root:
-`q359-p7-target-integrated-20261015-a01`. Completion evidence pending.
+`q359-p7-target-integrated-20261015-a01`. Completion evidence follows.
+
+
+### Final production verification
+
+The [direct-original CUDA comparison](results/p7_target_original_numerical_20261015.json)
+passed on all eight ranks, including all13 primitive cases with the updated
+NaN-preserving kernel. At sequence2048/micro16, the accumulated optimizations
+vs ORIGINAL eager checkpoint had total-loss absolute difference0.000171661,
+hidden relativeL2 0.6238%, logits0.2448%, overall parameter gradients1.2613%.
+These include earlier compiled-entries/LSE rounding differences; the target
+kernel alone had exact tested gradients against the prior optimized reference.
+All thresholds stayed unchanged. Original checkpoint hash remained unchanged.
+
+The [normal-CLI50step pair](results/p7_target_integrated_20261015.json) passed:
+
+| Arm | Median seconds/update | Peak allocated memory |
+|---|---:|---:|
+| A | 1.049351 | 58.38GiB |
+| P7 with all four optimizations | 1.086724 | 62.21GiB |
+
+Remaining P7 update-time overhead is **3.56%**, down from4.43% in the preceding
+integrated measurement. The separately bracketed incremental gain is **0.93%**.
+Relative to the earlier original P7 control around1.1695s, the accumulated
+steady-state throughput gain is approximately7.6%; that cross-round estimate
+is less controlled than the individual bracketed comparisons.
+
+Enable using the existing recipe/CLI:
+
+```text
+--attention_backend fa4
+--proxy_compile_auxiliary true
+--proxy_lse_attention true
+--proxy_compile_entries true
+--proxy_fused_targets true
+```
+
+Final data-order audits agreed across all ranks and both arms; no graph
+recompilation occurred in measured updates20–49. No new long scientific run
+was launched. Nine CPU tests passed, including reference-path production
+parity, gradient routing, real Trainer save/resume and interpreter regression;
+the additional nonfinite interpreter test also passed. CUDA used the actual
+kernel. This evidence does not establish bitwise long-training trajectories.
+
+All four final jobs and the supervisor succeeded. Eight communicating burns
+were restored/verified at02:23:40UTC; read-only verification at02:23:49UTC found
+matching worker identities, approved parents, advancing collectives and a
+released GPU guard. Final receipt:
+`temp/remote_logs/p7-target-completion-final-20261015-a01.log`, SHA256
+`d62c085ae54486c52ce360a86fe3e9cddf227e3bf3f96eac6bbdba0e46065e60`.
+The raw gate/summary hashes matched the supervisor's recorded job artifacts.
+`commands.sh` is inactive again. No environment or NVIDIA driver was changed.
