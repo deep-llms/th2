@@ -1,3 +1,23 @@
+## Completed downstream evaluation — 15 October 2026
+
+Verified at 15:54:33 UTC: q359-p7-completed-eval-20261015-a02 finished successfully.
+Numerics, smoke and full stages all passed; all 40 benchmark groups completed
+for eight checkpoints. Full evaluation ran 15:21:45–15:39:38 UTC (17m53s).
+Supervisor finished restoring verified communicating burns at 15:40:49 UTC.
+Current burn log shows advancing collectives, eight workers, all GPUs 100% busy.
+No remaining training or evaluation is queued. The 20 new tuning cases remain
+prepared only, unlaunched and unpushed.
+
+Final summary saved to docs/results/p7_completed_downstream_20261015.json;
+reconstructed bytes match the runner artifact SHA256 exactly:
+935934d86378d13211963e964bd0c983cfd98fdf8ed0aa9a2e6c99e8be047a71.
+Completion and burn receipts: docs/results/p7_completed_downstream_completion_20261015.json.
+Source log temp/remote_logs/p7-eval-eta-20261015-1553.log SHA256
+57cd21213b865a30a1ac004a6503f3fa3e50d86cb9533c8f897c5c89057a9a97.
+Read-only status request d9d4708; commands.sh returned to #0. User's unrelated
+docs/PROXY_RESULTS_SUMMARY.md changes preserved. Results have not yet been
+interpreted or merged into that summary in this status-only turn.
+
 ## Full completed-arm evaluation verified — 15 October 2026, 15:23 UTC
 
 Active evaluation: /mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a02.
