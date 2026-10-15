@@ -1,0 +1,675 @@
+{
+  "launch_commit": "cdb0904",
+  "root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03",
+  "observed_at": "2026-10-15T16:50:54.128143+00:00",
+  "preflight": {
+    "status": "passed",
+    "versions": {
+      "torch": "2.14.1",
+      "transformers": "5.9.0",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "flash-attn-4": "4.0.0b33",
+      "nvidia-cutlass-dsl": "4.8.0"
+    },
+    "environment": "/mnt/local/conda-py311/envs/attention_bench/bin/python",
+    "predecessor": "/mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a02",
+    "source": "/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03",
+    "cleanup_target": "/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux",
+    "cases": [
+      [
+        "lm-noaux",
+        "P7-simple-lm-noaux",
+        0.0,
+        42
+      ],
+      [
+        "lm-nexttoken",
+        "P7-simple-lm-nexttoken",
+        0.1,
+        42
+      ],
+      [
+        "tg-lambda003",
+        "P7-simple-targetgrad",
+        0.03,
+        42
+      ],
+      [
+        "tg-lambda03",
+        "P7-simple-targetgrad",
+        0.3,
+        42
+      ],
+      [
+        "tg-short",
+        "P7-simple-targetgrad-short",
+        0.1,
+        42
+      ],
+      [
+        "tg-sparse",
+        "P7-simple-targetgrad-sparse",
+        0.1,
+        42
+      ],
+      [
+        "tg-heads2",
+        "P7-simple-targetgrad-heads2",
+        0.1,
+        42
+      ],
+      [
+        "tg-heads8",
+        "P7-simple-targetgrad-heads8",
+        0.1,
+        42
+      ],
+      [
+        "tg-keyonly",
+        "P7-simple-targetgrad-keyonly",
+        0.1,
+        42
+      ],
+      [
+        "tg-valueonly",
+        "P7-simple-targetgrad-valueonly",
+        0.1,
+        42
+      ],
+      [
+        "lm-lambda001",
+        "P7-simple-lm",
+        0.01,
+        42
+      ],
+      [
+        "lm-lambda1",
+        "P7-simple-lm",
+        1.0,
+        42
+      ],
+      [
+        "lm-sparse-noaux",
+        "P7-simple-lm-sparse-noaux",
+        0.0,
+        42
+      ],
+      [
+        "lm-keyonly-noaux",
+        "P7-simple-lm-keyonly-noaux",
+        0.0,
+        42
+      ],
+      [
+        "lm-valueonly-noaux",
+        "P7-simple-lm-valueonly-noaux",
+        0.0,
+        42
+      ],
+      [
+        "lm-valueonly-gated",
+        "P7-simple-lm-valueonly-gated",
+        0.1,
+        42
+      ],
+      [
+        "a-seed2042",
+        "A",
+        0.1,
+        2042
+      ],
+      [
+        "lm-noaux-seed2042",
+        "P7-simple-lm-noaux",
+        0.0,
+        2042
+      ],
+      [
+        "tg-medium",
+        "P7-simple-targetgrad-medium",
+        0.1,
+        42
+      ],
+      [
+        "tg-weighted",
+        "P7-simple-targetgrad-weighted",
+        0.1,
+        42
+      ],
+      [
+        "tg-huber",
+        "P7-simple-targetgrad-huber",
+        0.1,
+        42
+      ],
+      [
+        "tg-nonlinear",
+        "P7-simple-targetgrad-nonlinear",
+        0.1,
+        42
+      ]
+    ],
+    "accelerate_sha256": "923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5",
+    "rows_sha256": "00cd77dc6923216b065855bdc40cf6105afa7a70d305452aa0a92a4c7e728bcc"
+  },
+  "free_gpus": {
+    "at": "2026-10-15T16:19:41.766954+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ]
+  },
+  "status": "all gates passed; interrupted output cleaned; fresh lm-noaux training running",
+  "earlier_attempts": [
+    {
+      "id": "a01",
+      "reason": "Git revision diagnostic in synced non-Git directory",
+      "started_gpu_work": false
+    },
+    {
+      "id": "a02",
+      "reason": "Cleanup preflight rejected W&B symlinks; inspected exact links before handling",
+      "started_gpu_work": false
+    }
+  ],
+  "evidence": "temp/remote_logs/p7-tuning-health-20261015-a01.log",
+  "evidence_sha256": "bb3657a79daa05e3dd16c1a20f51caffe449721d02b4f94190f452dbe35e5b7f",
+  "latest_smoke_observation": {
+    "at": "2026-10-15T16:33:19.020786+00:00",
+    "completed_smokes": 9,
+    "running": "tg-valueonly",
+    "numerical_cases_passed": 21,
+    "source_log": "temp/remote_logs/p7-tuning-health-20261015-a05.log",
+    "source_sha256": "e003dc1d8266b251b1b6fa16ab3e3bc993aa22258b87f4e6a9fab7bc5019892b"
+  },
+  "numerical_summary": {
+    "maximum_loss_abs_diff": 0.0001201629638671875,
+    "maximum_gradient_relative_l2": 0.006267133246136934,
+    "cross_document_gradient_max": 0.0,
+    "cross_document_output_max": 0.0
+  },
+  "final_launch_evidence": {
+    "path": "temp/remote_logs/p7-tuning-health-20261015-a10.log",
+    "sha256": "50799710ff60a7a9b224c39754b9e9e662b0fff787afa018f0e46e6a9d234029"
+  },
+  "stages": [
+    {
+      "name": "numerics",
+      "status": "ok",
+      "started_at": "2026-10-15T16:19:42.038645+00:00",
+      "finished_at": "2026-10-15T16:22:21.110741+00:00"
+    },
+    {
+      "name": "smoke-lm-noaux-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:22:21.110784+00:00",
+      "finished_at": "2026-10-15T16:23:28.351821+00:00"
+    },
+    {
+      "name": "smoke-lm-noaux-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:23:28.351866+00:00",
+      "finished_at": "2026-10-15T16:23:29.657703+00:00"
+    },
+    {
+      "name": "smoke-lm-nexttoken-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:23:29.657739+00:00",
+      "finished_at": "2026-10-15T16:24:37.827875+00:00"
+    },
+    {
+      "name": "smoke-lm-nexttoken-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:24:37.827918+00:00",
+      "finished_at": "2026-10-15T16:24:39.122853+00:00"
+    },
+    {
+      "name": "smoke-tg-lambda003-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:24:39.122886+00:00",
+      "finished_at": "2026-10-15T16:25:58.759117+00:00"
+    },
+    {
+      "name": "smoke-tg-lambda003-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:25:58.759157+00:00",
+      "finished_at": "2026-10-15T16:26:00.130972+00:00"
+    },
+    {
+      "name": "smoke-tg-lambda03-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:26:00.131008+00:00",
+      "finished_at": "2026-10-15T16:27:11.096313+00:00"
+    },
+    {
+      "name": "smoke-tg-lambda03-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:27:11.096360+00:00",
+      "finished_at": "2026-10-15T16:27:12.404224+00:00"
+    },
+    {
+      "name": "smoke-tg-short-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:27:12.404267+00:00",
+      "finished_at": "2026-10-15T16:28:21.433379+00:00"
+    },
+    {
+      "name": "smoke-tg-short-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:28:21.433420+00:00",
+      "finished_at": "2026-10-15T16:28:22.725729+00:00"
+    },
+    {
+      "name": "smoke-tg-sparse-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:28:22.725759+00:00",
+      "finished_at": "2026-10-15T16:29:30.363980+00:00"
+    },
+    {
+      "name": "smoke-tg-sparse-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:29:30.364024+00:00",
+      "finished_at": "2026-10-15T16:29:31.658604+00:00"
+    },
+    {
+      "name": "smoke-tg-heads2-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:29:31.658634+00:00",
+      "finished_at": "2026-10-15T16:30:38.676636+00:00"
+    },
+    {
+      "name": "smoke-tg-heads2-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:30:38.676676+00:00",
+      "finished_at": "2026-10-15T16:30:40.007456+00:00"
+    },
+    {
+      "name": "smoke-tg-heads8-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:30:40.007489+00:00",
+      "finished_at": "2026-10-15T16:31:49.819110+00:00"
+    },
+    {
+      "name": "smoke-tg-heads8-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:31:49.819150+00:00",
+      "finished_at": "2026-10-15T16:31:51.119361+00:00"
+    },
+    {
+      "name": "smoke-tg-keyonly-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:31:51.119399+00:00",
+      "finished_at": "2026-10-15T16:33:00.129623+00:00"
+    },
+    {
+      "name": "smoke-tg-keyonly-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:33:00.129665+00:00",
+      "finished_at": "2026-10-15T16:33:01.418479+00:00"
+    },
+    {
+      "name": "smoke-tg-valueonly-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:33:01.418510+00:00",
+      "finished_at": "2026-10-15T16:34:09.965503+00:00"
+    },
+    {
+      "name": "smoke-tg-valueonly-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:34:09.965544+00:00",
+      "finished_at": "2026-10-15T16:34:11.251879+00:00"
+    },
+    {
+      "name": "smoke-lm-lambda001-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:34:11.251911+00:00",
+      "finished_at": "2026-10-15T16:35:19.639093+00:00"
+    },
+    {
+      "name": "smoke-lm-lambda001-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:35:19.639141+00:00",
+      "finished_at": "2026-10-15T16:35:20.979293+00:00"
+    },
+    {
+      "name": "smoke-lm-lambda1-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:35:20.979326+00:00",
+      "finished_at": "2026-10-15T16:36:29.957228+00:00"
+    },
+    {
+      "name": "smoke-lm-lambda1-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:36:29.957266+00:00",
+      "finished_at": "2026-10-15T16:36:31.302264+00:00"
+    },
+    {
+      "name": "smoke-lm-sparse-noaux-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:36:31.302292+00:00",
+      "finished_at": "2026-10-15T16:37:40.140062+00:00"
+    },
+    {
+      "name": "smoke-lm-sparse-noaux-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:37:40.140100+00:00",
+      "finished_at": "2026-10-15T16:37:41.472482+00:00"
+    },
+    {
+      "name": "smoke-lm-keyonly-noaux-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:37:41.472509+00:00",
+      "finished_at": "2026-10-15T16:38:50.002107+00:00"
+    },
+    {
+      "name": "smoke-lm-keyonly-noaux-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:38:50.002150+00:00",
+      "finished_at": "2026-10-15T16:38:51.406692+00:00"
+    },
+    {
+      "name": "smoke-lm-valueonly-noaux-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:38:51.406728+00:00",
+      "finished_at": "2026-10-15T16:40:01.159918+00:00"
+    },
+    {
+      "name": "smoke-lm-valueonly-noaux-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:40:01.159961+00:00",
+      "finished_at": "2026-10-15T16:40:02.466615+00:00"
+    },
+    {
+      "name": "smoke-lm-valueonly-gated-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:40:02.466640+00:00",
+      "finished_at": "2026-10-15T16:41:18.648198+00:00"
+    },
+    {
+      "name": "smoke-lm-valueonly-gated-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:41:18.648235+00:00",
+      "finished_at": "2026-10-15T16:41:19.985679+00:00"
+    },
+    {
+      "name": "smoke-a-seed2042-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:41:19.985711+00:00",
+      "finished_at": "2026-10-15T16:42:31.200947+00:00"
+    },
+    {
+      "name": "smoke-a-seed2042-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:42:31.200985+00:00",
+      "finished_at": "2026-10-15T16:42:32.515440+00:00"
+    },
+    {
+      "name": "smoke-lm-noaux-seed2042-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:42:32.515472+00:00",
+      "finished_at": "2026-10-15T16:43:39.960104+00:00"
+    },
+    {
+      "name": "smoke-lm-noaux-seed2042-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:43:39.960149+00:00",
+      "finished_at": "2026-10-15T16:43:41.377994+00:00"
+    },
+    {
+      "name": "smoke-tg-medium-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:43:41.378033+00:00",
+      "finished_at": "2026-10-15T16:44:50.228698+00:00"
+    },
+    {
+      "name": "smoke-tg-medium-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:44:50.228741+00:00",
+      "finished_at": "2026-10-15T16:44:51.601633+00:00"
+    },
+    {
+      "name": "smoke-tg-weighted-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:44:51.601666+00:00",
+      "finished_at": "2026-10-15T16:46:02.480648+00:00"
+    },
+    {
+      "name": "smoke-tg-weighted-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:46:02.480689+00:00",
+      "finished_at": "2026-10-15T16:46:03.941185+00:00"
+    },
+    {
+      "name": "smoke-tg-huber-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:46:03.941223+00:00",
+      "finished_at": "2026-10-15T16:47:12.843894+00:00"
+    },
+    {
+      "name": "smoke-tg-huber-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:47:12.843933+00:00",
+      "finished_at": "2026-10-15T16:47:14.252847+00:00"
+    },
+    {
+      "name": "smoke-tg-nonlinear-train",
+      "status": "ok",
+      "started_at": "2026-10-15T16:47:14.252884+00:00",
+      "finished_at": "2026-10-15T16:48:23.550501+00:00"
+    },
+    {
+      "name": "smoke-tg-nonlinear-validate",
+      "status": "ok",
+      "started_at": "2026-10-15T16:48:23.550569+00:00",
+      "finished_at": "2026-10-15T16:48:24.981337+00:00"
+    },
+    {
+      "name": "smoke-recipes",
+      "status": "ok",
+      "started_at": "2026-10-15T16:48:24.981365+00:00",
+      "finished_at": "2026-10-15T16:48:29.843950+00:00"
+    },
+    {
+      "name": "clean-interrupted",
+      "status": "ok",
+      "started_at": "2026-10-15T16:48:29.843985+00:00",
+      "finished_at": "2026-10-15T16:48:30.260061+00:00"
+    },
+    {
+      "name": "lm-noaux-train",
+      "status": "running",
+      "started_at": "2026-10-15T16:48:30.260087+00:00",
+      "finished_at": "None"
+    }
+  ],
+  "completed_distributed_smokes": 22,
+  "cleanup": {
+    "status": "passed",
+    "deleted": "/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux",
+    "preserved": "Completed arms, queue logs, receipts and shared dataset caches"
+  },
+  "smoke_recipes": {
+    "status": "passed",
+    "data_fingerprints": {
+      "42": [
+        "6e4708f1e818fb44",
+        "456eadfc28899e98"
+      ],
+      "2042": [
+        "16b17b8909334a72",
+        "456eadfc28899e98"
+      ]
+    }
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 67594.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        1087402
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 67594.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        1087403
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 66416.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        1087404
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 67594.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        1087405
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 67594.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        1087406
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 67594.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        1087407
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 67594.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        1087408
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 66416.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        1087409
+      ]
+    }
+  ],
+  "latest_production_step": 80,
+  "completed_old_preserved": [
+    "a-long",
+    "targetgrad-long",
+    "lm-long",
+    "lm-sparse",
+    "lm-keyonly",
+    "lm-valueonly"
+  ],
+  "old_partial_removed": true
+}
