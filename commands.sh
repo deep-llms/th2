@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-tuning-health-20261015-a03
+#th2-q359-p7-tuning-health-20261015-a04
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -29,5 +29,21 @@ for p in (root/'supervised/run').glob('*/seed-*/*/trainer_state.json'):
  v=json.loads(p.read_text());print('TRAIN_STATE',str(p),v.get('global_step'),v.get('log_history',[])[-2:])
 p=Path(str(root)+'.launch.log')
 if p.exists():print('LAUNCH_LOG',p.read_bytes()[-3000:].decode(errors='replace'))
+from deep_kv.report import comparable_config
+from scripts.p7_tuning_queue import ALL_CASES
+old=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/train_config.json')
+def norm(p):
+ v=comparable_config(json.loads(p.read_text()))
+ for k in ('logging_steps','save_steps','eval_steps','eval_on_start'):v['training'].pop(k,None)
+ for k in ('eval_rows','monitor_rows'):v['data'].pop(k,None)
+ v.pop('eval_fingerprint',None);v['pilot']['proxy_lambda_max']=.1
+ return v
+if old.exists():
+ expected=norm(old)
+ for label,arm,_,seed in ALL_CASES:
+  p=root/'supervised/run/smoke'/label/f'seed-{seed}'/arm/'train_config.json'
+  if seed==42 and p.exists():
+   actual=norm(p);print('EARLY_REFERENCE_MATCH',label,actual==expected)
+   if actual!=expected:print('DIFF',{k:(expected.get(k),v) for k,v in actual.items() if expected.get(k)!=v})
 print('GPUS',json.dumps(snapshot(list(range(8)))))
 PY
