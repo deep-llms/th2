@@ -1,3 +1,20 @@
+## Exploration status — 15 October 2026, 13:57 UTC / 21:57 SGT
+
+Read-only request 0200f2c verified q359-p7-exploration8-20261015-a03 healthy.
+A, targetgrad and LM completed 7,500 steps; sparse completed 2,500 steps.
+LM full validation loss 3.23075363 (A 3.23501613); sparse loss 3.58987207.
+Key-only running 1,886/2,500 at about 1.17 seconds/update, latest saved 1,750.
+All eight B200 GPUs at 98–99% utilization. No failed stage observed.
+Remaining: key-only completion, value-only, noaux, nexttoken, then downstream.
+Provisional remaining estimate 3–4 hours including downstream, around 17:00–18:00
+UTC on 15 October (01:00–02:00 SGT on 16 October). New-arm/eval timings uncertain.
+The newly prepared 20-case tuning queue is not included and has not launched.
+
+Receipt temp/remote_logs/p7-exploration-status-20261015-1357.log SHA256
+ e05ef8f792ec493d4270ed0f7af14ab0410a776723afdd04c9c10db72f1ea1a0.
+Only status inspection submitted; commands.sh returned to #0. No workload or
+implementation changes deployed. Local tuning commits remain unpushed.
+
 ## P7 tuning follow-up review — 15 October 2026
 
 Fixed two validation gaps: numerical probes now use each case's actual lambda,
