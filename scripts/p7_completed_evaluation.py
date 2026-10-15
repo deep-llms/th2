@@ -85,7 +85,22 @@ def build_scope(training_root, reference):
     return scope, rows
 
 
-def prepare(root, source, reference, host):
+def retry_burn(predecessor, scope):
+    predecessor = Path(predecessor)
+    previous = read(predecessor / 'supervised/supervisor.json')
+    run = read(predecessor / 'supervised/run/run.json')
+    burn = read(predecessor / 'supervised/burn-verified.json')
+    if (read(predecessor / 'scope.json') != scope or previous.get('training_status') != 'failed'
+            or run.get('status') != 'failed' or not previous.get('finished_at')
+            or not previous.get('burn', {}).get('collective_progress_verified')
+            or not burn.get('collective_progress_verified')
+            or burn['session'] != predecessor.name + '-final-burn'
+            or previous['burn']['session'] != burn['session']):
+        raise ValueError('Retry predecessor scope/final burn handoff differs')
+    return burn
+
+
+def prepare(root, source, reference, host, predecessor=None):
     import shutil
     import socket
     import subprocess
@@ -112,6 +127,10 @@ def prepare(root, source, reference, host):
     root.mkdir(parents=True)
     preflight(root, reference)
     scope, rows = build_scope(source / 'supervised/run', reference)
+    burn_source = source
+    if predecessor is not None:
+        burn_source = Path(predecessor)
+        burn = retry_burn(burn_source, scope)
     config_source = Path('resources/accelerate_config.yaml'); destination = Path(default_yaml_config_file)
     destination.parent.mkdir(parents=True, exist_ok=True)
     if destination.exists():
@@ -123,7 +142,7 @@ def prepare(root, source, reference, host):
         raise ValueError('Accelerate configuration differs')
     subprocess.run([str(Path(sys.executable).parent / 'accelerate'), 'env'], check=True)
     status = inspect()
-    log = source / 'supervised/burn.log'
+    log = burn_source / 'supervised/burn.log'
     if (status['host'] != host or status['guard_disabled'] or len(status['gpus']) != 8
             or any('B200' not in g['name'] or len(g['pids']) != 1 for g in status['gpus'])
             or len(status['workers']) != 8 or ownership(status['gpus']) != ownership(burn['gpus'])
@@ -139,7 +158,8 @@ def prepare(root, source, reference, host):
     load_jobs(root / 'jobs.json')
     save(root / 'inspection.json', status)
     save(root / 'preflight.json', dict(status='passed', checkpoints=scope['checkpoints'],
-         accelerate_sha256=digest(destination), source=str(source), reference=str(reference)))
+         accelerate_sha256=digest(destination), source=str(source), reference=str(reference),
+         retry_predecessor=str(predecessor) if predecessor is not None else None))
     print('COMPLETED_EXPLORATION_EVALUATION_READY', scope['completed_labels'], flush=True)
 
 
@@ -147,5 +167,6 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', required=True); p.add_argument('--source', required=True)
     p.add_argument('--reference', required=True); p.add_argument('--host', required=True)
+    p.add_argument('--predecessor', help='Explicit failed evaluation root for a fresh retry')
     a = p.parse_args()
-    prepare(a.root, a.source, a.reference, a.host)
+    prepare(a.root, a.source, a.reference, a.host, a.predecessor)
