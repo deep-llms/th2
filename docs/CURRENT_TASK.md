@@ -1,3 +1,19 @@
+## P7 numerical-input correction and fresh retry — 15 October 2026 (SGT)
+
+Launch49875aa reached preflight: pinned env and Accelerate MULTI_GPU/8/bf16
+verified, exact burn workers911718–911725 reclaimed, free-GPU receipt saved.
+Only numerics ran and failed with KeyError input_ids: teacher probe rows are
+{index,data} records, not bare packed rows. No Trainer step ran. Supervisor
+restored burns; retry explicitly requires completed failed-gate handoff, live
+verified burn identities/collective progress and released guard before launch.
+
+Fixed numerical loader to accept both formats, select a genuine multi-document
+row deterministically, and validate all packed fields BEFORE GPU reclamation.
+Tokens/labels/segmentation and scientific recipes unchanged. Added local format
+regression. Fresh rootq359-p7-exploration8-20261015-a03; preserve a02 failure.
+Evidence temp/remote_logs/p7-exploration-health-20261015-a01.log,
+SHA2568cb90d9aad99c9921d102ca71eb5a6b3232a4f4fb2e8d3f1f73545b44da65644.
+
 ## P7 exploration submission retry — 15 October 2026, 05:04 UTC
 
 First launch19812e5 exited before nvidia-smi/tmux/preflight or any GPU signals:

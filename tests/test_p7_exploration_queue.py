@@ -11,6 +11,22 @@ from run_experiments import load_jobs
 
 
 class ExplorationQueueTests(unittest.TestCase):
+    def test_diagnostic_rows_support_frozen_probe_envelopes_and_fail_closed(self):
+        from scripts.check_fa4_proxy import diagnostic_rows
+        with tempfile.TemporaryDirectory() as tmp:
+            p=Path(tmp)/'rows.json'
+            rows=[dict(input_ids=[1,2,3,4],labels=[1,2,3,4],attention_mask=[1]*4,
+                       segments=segments) for segments in ([0]*4,[1,1,2,2],[3]*4)]
+            for records in (rows,[dict(index=i*10,data=r) for i,r in enumerate(rows)]):
+                p.write_text(json.dumps(records))
+                self.assertEqual(diagnostic_rows(p,4),[rows[1],rows[0]])
+            for records in ([rows[0]],[rows[0],rows[2]],
+                            [{**rows[1],'attention_mask':[1,1,0,0]},rows[0]],
+                            [{**rows[1],'labels':[1]},rows[0]],
+                            [dict(index=1,data={'segments':[0,1]}),rows[0]]):
+                p.write_text(json.dumps(records))
+                with self.assertRaises(ValueError):diagnostic_rows(p,4)
+
     def test_all_gates_precede_fresh_runs_and_mixed_schedules(self):
         with tempfile.TemporaryDirectory() as tmp:
             path=Path(tmp)/'jobs.json'

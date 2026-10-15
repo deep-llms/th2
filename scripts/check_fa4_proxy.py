@@ -21,6 +21,28 @@ from deep_kv import P7_CONSUMER_ARMS
 def read(path):return json.loads(Path(path).read_text())
 
 
+def diagnostic_rows(path, length=2048):
+    """Accept packed rows or the frozen teacher probe's {index,data} records.
+
+    Deterministically put a genuine multi-document row first for the isolation
+    check; never synthesize boundaries or alter the tokens/labels.
+    """
+    records=read(path)
+    if not isinstance(records,list) or len(records)<2:
+        raise ValueError('Need at least two packed numerical rows')
+    rows=[r.get('data',r) for r in records]
+    for row in rows:
+        if not isinstance(row,dict) or any(
+                not isinstance(row.get(k),list) or len(row[k])!=length
+                for k in ('input_ids','segments','attention_mask','labels')):
+            raise ValueError('Numerical rows require equal-length packed IDs, segments, mask and labels')
+        if any(v!=1 for v in row['attention_mask']):raise ValueError('Numerical rows must be fully packed')
+    first=next((i for i,r in enumerate(rows) if len(set(r['segments']))>1),None)
+    if first is None:raise ValueError('Need a real document boundary for the isolation check')
+    second=next(i for i in range(len(rows)) if i!=first)
+    return [rows[first],rows[second]]
+
+
 def write(path,value):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     with path.open('x') as handle:json.dump(value,handle,indent=2,allow_nan=False)
@@ -38,6 +60,7 @@ def worker(args):
     torch.set_num_threads(2);torch.manual_seed(42)
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     arm=args.arm if args.arm is not None else PROXY_ARMS[args.index];recipe=read(args.recipe)
+    rows=diagnostic_rows(args.rows)
     cfg=AutoConfig.from_pretrained(recipe['config_name'],local_files_only=True)
     from train import configure_depth
     configure_depth(cfg, recipe.get('num_hidden_layers'))
@@ -46,9 +69,6 @@ def worker(args):
         consumer=recipe.get('consumer',5),deep_target=recipe.get('deep_target',21),
         checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
     if arm in DELAYED_ARMS:m.set_training_step(PROXY_DELAY_STEPS+250)
-    rows=read(args.rows)[:2]
-    assert len(rows)==2 and all(len(r['input_ids'])==2048 for r in rows)
-    assert len(set(rows[0]['segments']))>1
     ctx=ProxyTrainer.context({k:v.cuda() for k,v in isolated_data_collator(rows).items()})
     # Nonzero gates exercise proxy K/V injection and its gradients, not only the
     # vanilla-equivalent zero-gate initialization. Bootstrap on one fixed backend.

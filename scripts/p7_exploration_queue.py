@@ -244,6 +244,8 @@ def prepare(root, host, predecessor, reference, rows):
     for key in ('config_name','tokenizer_name','data_dir','eval_data_dir'):
         if not Path(recipe[key]).exists():raise ValueError('Missing local '+key)
     if not Path(rows).is_file():raise ValueError('Missing packed numerical rows')
+    from scripts.check_fa4_proxy import diagnostic_rows
+    diagnostic_rows(rows)  # Validate the actual format/boundaries before reclaiming GPUs.
     # This command checks the pinned evaluation environment and local benchmark
     # files; it neither allocates GPUs nor downloads anything.
     root.mkdir()
