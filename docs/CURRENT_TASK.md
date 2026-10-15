@@ -1,3 +1,19 @@
+## P7 tuning partial results — 15 October 2026, 22:23 UTC
+
+Read-only80f2c16 verified6/22 arms complete and validated; tg-heads2 running
+1856/2500,all8 GPUs98–99%. Fifteen arms remain after current. Current arm ETA
+approximately22:38UTC. Queue unchanged: user asked advice/status, not termination.
+At2500steps,12layers,seed42,full English validation: A loss3.591180511/PPL36.276876;
+lm-nexttoken3.587211216/36.133168;lm-noaux3.587291522/36.136069;
+tg-lambda0033.588982720/36.197234;tg-lambda03 3.737762423/42.003898;
+tg-short3.614224154/37.122533;tg-sparse3.613022971/37.077969.
+Best new result improves A PPL0.396%, but previous P7-simple-lm PPL36.078235
+is still lower. No downstream results for these six new runs yet.
+Receipt docs/results/p7_tuning22_partial_20261015_2223.json; source
+ temp/remote_logs/p7-tuning-results-20261015-2223.log SHA256
+ dd2824d4d08aebb838d1b3e82c45ee0275e915097e89dae63ba17046f747fc6d.
+Commands returned to#0; persistent supervisor/burn restoration unchanged.
+
 ## P7 tuning queue status and ETA — 15 October 2026, 20:25 UTC
 
 Read-only request51875e5 verified q359-p7-tuning22-20261015-a03 running normally
