@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-speed-integrated-health-20261015-a01
+#th2-q359-p7-speed-integrated-completion-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -16,13 +16,9 @@ for leaf in ('preflight.json','supervised/supervisor.json','supervised/run/run.j
  p=root/leaf
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
-previous=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-speed-trial-20261015-a01')
-for leaf in ('supervised/run/timing-summary.json','supervised/supervisor.json','supervised/burn-verified.json'):
- p=previous/leaf
- if p.exists():print('PREVIOUS',leaf,p.read_text())
 for arm in ('A','P7-simple-targetgrad'):
  folder=root/'supervised/run/seed-42'/arm
- for leaf in ('step-profile-rank0.json','result.json','train_config.json'):
+ for leaf in ('result.json','train_config.json'):
   p=folder/leaf
   if p.exists():print('INTEGRATED',arm,leaf,p.read_text())
 for p in sorted((root/'supervised/run').glob('*.log')):

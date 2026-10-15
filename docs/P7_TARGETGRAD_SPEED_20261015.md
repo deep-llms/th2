@@ -2,7 +2,7 @@
 
 Scope: optimize the existing 12-layer, lambda=0.1 arm without changing its
 architecture, objective, gradient routing, data order or effective batch size.
-No new long scientific training. Production remains unchanged pending results.
+No new long scientific training. Default behavior is unchanged; validated optimizations are opt-in.
 
 Previous 2,500-step training runtimes were about 45.3 minutes for A and 50.4
 minutes for P7-simple-targetgrad: approximately 11% overhead in both seeds.
@@ -72,5 +72,52 @@ relative L2 difference,0.623% hidden relative L2,0.246% logits relative L2,
 and0.000175 absolute total-loss difference. Predictor gradients were checked
 separately and passed. Source checkpoint was unchanged.
 
-Complete-step timing is running. Production remains unchanged. Passing these
-numerical checks alone does not establish a speedup or bitwise resume identity.
+## Complete candidate timing
+
+All five jobs completed, all per-rank data hashes agreed, and no recompilation
+occurred in updates20–49. [Full timing report](results/p7_speed_trial_20261015.json).
+
+| Implementation | Median seconds/update | Throughput gain vs eager controls |
+|---|---:|---:|
+| Eager, before | 1.169309 | — |
+| Compiled cosine | 1.137384 | 2.82% |
+| LSE attention | 1.146433 | 2.01% |
+| Both | 1.112883 | 5.08% |
+| Eager, after | 1.169598 | — |
+
+The eager controls differ by0.025%. The combined result reduces elapsed update
+time by4.84% (throughput increases5.08%). Relative to the initial A measurement,
+P7 overhead falls from11.5% to about6.1%. These are steady-state short-run
+measurements, excluding compilation and checkpoint/evaluation overhead, not
+measured completion times for a full2,500-step experiment.
+
+## Normal training interface
+
+Use the existing P7-simple-targetgrad recipe and add:
+
+```text
+--proxy_compile_auxiliary true --proxy_lse_attention true
+```
+
+The same keys work in the JSON recipe passed to the existing sequential queue.
+Both default tofalse. They are validated for P7-simple-targetgrad; A accepts
+these settings without changing its computation. Other proxy arms fail closed
+until validated. Dense SDPA retains its original attention path; the LSE option
+is used only with FA4. Cosine compilation does not change the LM forward path.
+
+Production changes are in `deep_kv/fa4.py`, `deep_kv/proxy_memory.py`,
+`deep_kv/proxy.py` and the CLI/configuration guards in `train.py` and
+`deep_kv/report.py`. Experimental benchmarking remains in `scripts/`.
+No parameter names/shapes, optimizer grouping, data/packing, schedule or loss
+weights change. Both flags are saved in the recipe; enabling/disabling them
+on resume requires `--allow_performance_change_on_resume true`. Existing
+checkpoints with absent flags meanfalse and retain their original behavior.
+Normal optimizer/scheduler/RNG/data restoration is unchanged. Floating-point
+rounding differs, so identical future weights are not promised.
+
+Six local tests passed, including exact prototype/production outputs and
+parameter gradients, actual train.py save/resume, and checkpoint state names.
+An additional combined-flags real-entry resume and legacy FA4 baseline test
+passed. The final integrated eight-GPU A/P7 timing pair is running; this uses
+normal CLI flags, not runtime prototype patches. Burns will be verified before
+calling the study complete.
