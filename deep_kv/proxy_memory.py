@@ -197,6 +197,19 @@ def memory_consumer_loss(layer, head, source, prediction, target, mask, rotary,
         return ((error/energy)*valid).sum(-1)[:,None]
 
 
+def merge_attention(native, proxy, native_lse, proxy_lse):
+    """Reconstruct one joint softmax from its two partitions, with live LSEs.
+
+    Both partitions contain the current token, so neither normalizer is -inf.
+    Keep the first native heads and merge only the selected four proxy heads.
+    """
+    with torch.autocast(native.device.type, enabled=False):
+        split = native.shape[2]-proxy.shape[2]
+        weight = torch.sigmoid(native_lse[:, :, split:].float()-proxy_lse.float())[..., None]
+        selected = weight*native[:, :, split:].float()+(1-weight)*proxy.float()
+        return torch.cat((native[:, :, :split], selected.to(native.dtype)), dim=2)
+
+
 def flash_joint_attention(q, k, v, kp, vp, layout, scaling, kernel, observer=None, *, doubled_layout=None):
     """Interleave [native_j, proxy_j], duplicate queries, retain odd outputs.
 

@@ -27,6 +27,23 @@ def predecessor_ready(root, guard=Path('/mnt/local/_gpu_guard/DISABLED')):
         raise ValueError('Predecessor and verified burn handoff must be complete')
 
 
+def await_previous(args):
+    import time
+    deadline=time.monotonic()+600
+    while True:
+        try:
+            predecessor_ready(args.root)
+            return
+        except (FileNotFoundError, ValueError):
+            path=Path(args.root)/'supervised/supervisor.json'
+            state=read(path) if path.exists() else {}
+            if state.get('finished_at') and state.get('training_status')!='ok':
+                raise ValueError('Predecessor failed; no integration launch')
+            if time.monotonic()>=deadline:raise TimeoutError('No verified predecessor burn handoff in ten minutes')
+            print('WAITING_FOR_VERIFIED_PREDECESSOR_BURNS',flush=True)
+            time.sleep(10)
+
+
 def profile_predecessor_ready(root, receipt):
     """Accept only the documented summary-only failure, preserving its history."""
     import hashlib
@@ -59,7 +76,7 @@ def profile_predecessor_ready(root, receipt):
     print('VERIFIED_PROFILE_SUMMARY',json.dumps(report),flush=True)
 
 
-def make_jobs(root, recipe_path, trial=False):
+def make_jobs(root, recipe_path, trial=False, integration=False):
     from deep_kv.__main__ import jobs
     recipe=read(recipe_path)
     for key,value in dict(num_hidden_layers=12,block_size=2048,per_device_train_batch_size=16,
@@ -88,7 +105,10 @@ def make_jobs(root, recipe_path, trial=False):
         job=copy.deepcopy(next(j for j in jobs(path,stop_after=50,arms=[arm],seeds=[42])['jobs'] if 'gpus' in j))
         job['name']=arm+'-profile';job['timeout_seconds']=1800
         pos=next(i for i,a in enumerate(job['argv']) if a.endswith('/train.py'))
-        job['argv'][pos:pos+1]=['--module','scripts.profile_proxy_training']
+        job['argv'][pos:pos+1]=(['--module','scripts.p7_speed_trial','train','--implementation','configured','--']
+                              if integration else ['--module','scripts.profile_proxy_training'])
+        if integration and arm=='P7-simple-targetgrad':
+            job['argv']+=['--proxy_compile_auxiliary','true','--proxy_lse_attention','true']
         for rank in range(8):
             job['required_outputs'].append(dict(path=f'seed-42/{arm}/step-profile-rank{rank}.json',json_equals={'status':'profiled'}))
         job['required_outputs'].append(dict(path=f'seed-42/{arm}/component-profile.json',json_equals={'status':'profiled'}))
@@ -113,6 +133,10 @@ def prepare(args):
     if socket.gethostname()!=args.host:raise ValueError('Wrong host')
     if args.trial:profile_predecessor_ready(args.predecessor,root/'profile-summary.json')
     else:predecessor_ready(args.predecessor)
+    if args.integration:
+        timing=read(Path(args.predecessor)/'supervised/run/timing-summary.json')
+        if timing['status']!='passed' or timing['results']['both']['speedup_percent']<=1:
+            raise ValueError('Integrated candidate must have a verified measured improvement')
     expected=dict(torch='2.14.1',transformers='5.9.0',accelerate='1.13.0',datasets='4.8.5',
         **{'flash-attn-4':'4.0.0b33','nvidia-cutlass-dsl':'4.8.0'})
     versions={k:md.version(k) for k in expected}
@@ -137,7 +161,7 @@ def prepare(args):
     if source.read_bytes()!=destination.read_bytes() or cfg['num_processes']!=8 or cfg['mixed_precision']!='bf16':
         raise ValueError('Accelerate mismatch')
     subprocess.run(['accelerate','env'],check=True)
-    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial);load_jobs(root/'jobs.json')
+    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial,args.integration);load_jobs(root/'jobs.json')
     status=inspect()
     if (status['host']!=args.host or status['guard_disabled'] or len(status['gpus'])!=8
             or any('B200' not in g['name'] for g in status['gpus'])
@@ -152,7 +176,7 @@ def prepare(args):
 
 
 def profile_report(root):
-    root=Path(root);results={}
+    root=Path(root);results={};data_reference=None
     for arm in ('A','P7-simple-targetgrad'):
         folder=root/'seed-42'/arm;result=read(folder/'result.json')
         if result['status']!='stopped' or result['global_step']!=50:raise ValueError('Incomplete timing run')
@@ -164,6 +188,14 @@ def profile_report(root):
         results[arm]=dict(median_seconds=statistics.median(values),mean_seconds=statistics.mean(values),
             step_range=[20,49],intervals=values,peak_gib=max(r['peak_gib'] for r in ranks),
             components=read(folder/'component-profile.json')['kernel_milliseconds'])
+        if (folder/'speed-trial-rank0.json').exists():
+            audits=[read(folder/f'speed-trial-rank{rank}.json') for rank in range(8)]
+            data=[a['data_hashes'] for a in audits]
+            if any(len(hashes)!=8 for hashes in data):raise ValueError('Incomplete data-order audit')
+            if data_reference is None:data_reference=data
+            elif data!=data_reference:raise ValueError('Training sample/order mismatch')
+            if any(a['graphs']['20']!=a['graphs']['49'] for a in audits):raise ValueError('Recompilation in measured interval')
+            results[arm].update(data_order_verified=True,graph_counts=[a['graphs'] for a in audits])
     return dict(status='passed',results=results,
         overhead_percent=100*(results['P7-simple-targetgrad']['median_seconds']/results['A']['median_seconds']-1))
 
@@ -220,7 +252,8 @@ def benchmark(args):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('mode',choices=('prepare','summarize','benchmark'))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('mode',choices=('prepare','summarize','benchmark','await_previous'))
     p.add_argument('--root',required=True);p.add_argument('--host');p.add_argument('--predecessor')
     p.add_argument('--trial',action='store_true');p.add_argument('--recipe')
+    p.add_argument('--integration',action='store_true')
     a=p.parse_args();globals()[a.mode](a)

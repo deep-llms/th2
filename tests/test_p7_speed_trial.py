@@ -1,5 +1,8 @@
 """Independent attention oracle and live-target tests, not a CUDA speed claim."""
 import copy
+import json
+from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -113,6 +116,60 @@ class P7SpeedTests(unittest.TestCase):
                         self.assertEqual(a.keys(), b.keys())
                         for key in a:
                             torch.testing.assert_close(a[key], b[key], rtol=4e-4, atol=3e-6, msg=f'{mode}/{checkpoint}/{key}')
+
+    def test_production_flag_saved_resume_and_legacy_compatibility(self):
+        from safetensors.torch import load_file
+        from tests.test_proxy_memory import config
+        from tests.test_proxy_training import proxy_fixture
+        from tests.test_train import invoke
+        from deep_kv.proxy import resolve_proxy_settings, ProxySettings
+        from deep_kv.report import comparable_config
+        import train
+        before=dict(pilot=dict(arm='P7-simple-targetgrad'),training={})
+        after=copy.deepcopy(before);after['pilot']['proxy_compile_auxiliary']=False
+        self.assertEqual(train.resume_performance_changes(before,after),{})
+        after['pilot']['proxy_compile_auxiliary']=True
+        with self.assertRaisesRegex(ValueError,'allow_performance_change'):
+            train.resume_performance_changes(before,after)
+        self.assertEqual(set(train.resume_performance_changes(before,after,True)),{'proxy_compile_auxiliary'})
+        for arm in ('P7','P6-iso','P7-simple'):
+            with self.assertRaisesRegex(ValueError,'validated only'):
+                resolve_proxy_settings(arm,ProxySettings(compile_auxiliary=True))
+        compiler=torch.compile
+        def cpu_compile(fn,**kwargs):
+            return compiler(fn,**{**kwargs,'backend':'aot_eager'})
+        with tempfile.TemporaryDirectory() as tmp, patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
+            root=Path(tmp);recipe=proxy_fixture(root);config().save_pretrained(root/'model')
+            recipe.update(proxy_groups=2,arm='P7-simple-targetgrad',proxy_compile_auxiliary=True,
+                          proxy_lse_attention=True,attention_backend='fa4')
+            invoke(root,{**recipe,'stop_after':2})
+            saved=json.loads((root/'run/train_config.json').read_text())
+            self.assertTrue(saved['pilot']['proxy_compile_auxiliary'])
+            self.assertTrue(saved['pilot']['proxy_lse_attention'])
+            self.assertNotIn('proxy_compile_auxiliary',comparable_config(saved)['pilot'])
+            invoke(root,recipe)
+            invoke(root,{**recipe,'output_dir':str(root/'full')})
+            resumed=load_file(root/'run/model.safetensors');full=load_file(root/'full/model.safetensors')
+            self.assertEqual(resumed.keys(),full.keys())
+            self.assertFalse(any('_orig_mod' in name for name in full))
+            for name in full:torch.testing.assert_close(resumed[name],full[name],rtol=0,atol=0,msg=name)
+
+    def test_production_flags_match_validated_candidates(self):
+        compiler=torch.compile
+        def cpu_compile(fn,**kwargs):return compiler(fn,**{**kwargs,'backend':'aot_eager'})
+        with patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
+            for mode in ('cosine','lse','both'):
+                captures=[]
+                for production in (False,True):
+                    settings=(dict(compile_auxiliary=mode in ('cosine','both'),lse_attention=mode in ('lse','both'))
+                              if production else {})
+                    with implementation('eager' if production else mode,backend='aot_eager'):
+                        m=model('P7-simple-targetgrad','fa4',**settings)
+                        out=m(batch(),collect_target_statistics=True);objective(out).backward()
+                        captures.append((out,{n:p.grad.clone() for n,p in m.named_parameters() if p.grad is not None}))
+                for a,b in zip(*captures):
+                    self.assertEqual(a.keys(),b.keys())
+                    for key in a:torch.testing.assert_close(a[key],b[key],rtol=0,atol=0,msg=mode+'/'+key)
 
 
 if __name__ == '__main__': unittest.main()

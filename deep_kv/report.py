@@ -13,6 +13,10 @@ def comparable_config(config):
     """Compare the shared recipe; proxy target identity is checked separately."""
     config = copy.deepcopy(config)
     arm=config['pilot'].pop('arm')
+    compiled=config['pilot'].pop('proxy_compile_auxiliary',False)
+    lse=config['pilot'].pop('proxy_lse_attention',False)
+    if (compiled or lse) and arm not in ('A','P7-simple-targetgrad'):
+        raise ValueError('These execution optimizations were not validated for this arm')
     if arm in MEMORY_ARMS:
         expected=dict(proxy_isolate_estimator=True,proxy_target_version='p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1',
                       proxy_lookahead=2 if arm=='P7-simple-short' else 4,proxy_loss_form='cosine',proxy_groups=2)

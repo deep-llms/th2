@@ -35,6 +35,8 @@ class ProxySettings:
     module_seed: int | None = None
     aux_recompute: bool = False
     compile_estimator: bool = False
+    compile_auxiliary: bool = False
+    lse_attention: bool = False
     target_version: str | None = None
     variance_floor: float = .01
     target_clip: float = 10.
@@ -47,6 +49,8 @@ class ProxySettings:
 
 def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
+    if (settings.compile_auxiliary or settings.lse_attention) and arm not in ('A', 'P7-simple-targetgrad'):
+        raise ValueError('These optimizations are validated only for P7-simple-targetgrad (and unchanged A)')
     if settings.lambda_max is None:settings.lambda_max = .03 if arm == 'P6-lowaux' else .1
     if arm == 'P6-lowaux' and settings.lambda_max != .03:
         raise ValueError('P6-lowaux requires lambda_max=0.03')
@@ -271,6 +275,9 @@ class ProxyModel(DeepKV):
         self.aux_input_grad, self.aux_target_grad = routes['shallow'], routes['target']
         self.attention_backend = attention_backend
         self.attention_runtime = {'backend': attention_backend}
+        if settings.lse_attention and memory:
+            from .proxy_memory import merge_attention
+            self.merge_memory_attention=torch.compile(merge_attention,fullgraph=True,dynamic=False)
         if attention_backend == 'fa4':
             from .fa4 import load_kernel
             self.fa4_kernel, metadata = load_kernel()
@@ -332,6 +339,10 @@ class ProxyModel(DeepKV):
             from .proxy_estimators import gated_prediction, cosine_loss, depth_prediction
             self.gated_prediction,self.cosine_loss = gated_prediction,cosine_loss
             self.depth_prediction = depth_prediction
+            if settings.compile_auxiliary:
+                # Same function and live-target routing; no module/parameter or
+                # state_dict changes. Opt-in because reduction rounding differs.
+                self.cosine_loss=torch.compile(cosine_loss,fullgraph=True,dynamic=False)
             if settings.compile_estimator:
                 # Compile functions, not modules: state_dict names stay identical.
                 self.gated_prediction=torch.compile(gated_prediction)
@@ -487,6 +498,15 @@ class ProxyModel(DeepKV):
             name = str(a.layer_idx+1)
             self._proxy_mass[name] = proxy_mass(q[:,split:],k[:,-2:],kp,plan.documents,a.scaling)
         if self.attention_backend == 'fa4':
+            if self.settings.lse_attention:
+                from .fa4 import attention_with_lse
+                native, native_lse = attention_with_lse(q,k,v,mask,a.scaling,self.fa4_kernel)
+                qp=q[:,split:]
+                proxy, proxy_lse = attention_with_lse(qp,kp,vp,mask,a.scaling,self.fa4_kernel)
+                if self._fa4_observer is not None:
+                    self._fa4_observer(q,k,v,mask)
+                    self._fa4_observer(qp,kp,vp,mask)
+                return self.merge_memory_attention(native,proxy,native_lse,proxy_lse)
             from .fa4 import attention
             qn,kn,vn = q[:,:split],k[:,:-2],v[:,:-2]
             native = attention(qn,kn,vn,mask,a.scaling,self.fa4_kernel)

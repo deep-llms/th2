@@ -47,6 +47,24 @@ def attention(query, key, value, layout, scaling, kernel):
     return output.reshape(b, length, heads, dim)
 
 
+def attention_with_lse(query, key, value, layout, scaling, kernel):
+    """Equal-length causal attention with LIVE natural-log softmax normalizers.
+
+    The pinned b33 ordinary varlen backward consumes dlse. Detaching these
+    normalizers would make partitioned joint attention's gradient incorrect.
+    """
+    b, heads, length, dim = query.shape
+    def flatten(x):
+        return x.to(value.dtype).transpose(1, 2).reshape(b*length, x.shape[1], dim).contiguous()
+    cu, maximum = layout
+    output, lse = kernel(*map(flatten, (query, key, value)), cu_seqlens_q=cu, cu_seqlens_k=cu,
+        max_seqlen_q=maximum, max_seqlen_k=maximum, causal=True,
+        softmax_scale=scaling, return_lse=True)
+    if lse.shape != (heads, b*length):
+        raise ValueError(f'Unexpected pinned FA4 LSE layout: {lse.shape}')
+    return output.reshape(b, length, heads, dim), lse.T.reshape(b, length, heads)
+
+
 @contextmanager
 def trainer_audit(trainer, phase):
     """Record actual FA4 wrapper calls and gradients on the first GPU microbatch."""

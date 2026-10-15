@@ -1,3 +1,20 @@
+## P7 optimized integration test — 15 October 2026
+
+All eight trained-checkpoint CUDA gates passed. Preliminary medians: old P7
+1.1693s, cosine1.1374s, LSE1.1464s, both1.1129s; final eager control/summary
+still finishing. Production CLI now has opt-in proxy_compile_auxiliary and
+proxy_lse_attention, defaults false. CPU exact prototype/integration checks,
+actual train.py save/resume, legacy baseline resume passed; new flags are
+serialized and require explicit performance-change allowance on resume.
+No model state, optimizer, scheduler, data or environment changes.
+
+Queue one final50step A/P7 pair via actual integrated flags, no prototype
+patch. Freshroot:q359-p7-speed-integrated-20261015-a01. Launcher MUST wait
+for successful q359-p7-speed-trial-20261015-a01 and verified burns/guard
+release, then require measured combined gain>1%, copy/verify Accelerate,
+inspect/reclaim known burns, verify8GPUsfree. Supervisor restores/verifies
+burns after exit. Existing checkpoints untouched. Submission pending.
+
 ## P7 throughput candidates — 15 October 2026
 
 Profile A/P7 jobs both succeeded (50steps), but summary incorrectly required

@@ -114,7 +114,7 @@ def train(mode, arguments):
             self.speed_audit.hashes.append(h.hexdigest())
         return original_step(self,model,inputs,*args,**kwargs)
     training.ProxyTrainer.__init__,training.ProxyTrainer.training_step=initialize,step
-    with implementation(mode):
+    with implementation('eager' if mode == 'configured' else mode):
         sys.argv = ['scripts.profile_proxy_training', *arguments]
         runpy.run_module('scripts.profile_proxy_training', run_name='__main__')
 
@@ -217,7 +217,7 @@ if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('mode', choices=('train', 'gate'))
-    p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both'))
+    p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both', 'configured'))
     p.add_argument('--checkpoint'); p.add_argument('--checkpoint-sha256')
     p.add_argument('--rows'); p.add_argument('--rows-sha256'); p.add_argument('--output')
     args, rest = p.parse_known_args()
