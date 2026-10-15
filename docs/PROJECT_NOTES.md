@@ -1,3 +1,25 @@
+## Authorized P7 tuning and unfinished-arm restart — 15 October 2026
+
+User authorized checking new arms, deleting only the last interrupted model
+output, and running remaining old arms plus all prepared tuning cases.
+Fresh queue: 22 cases, old lm-noaux then lm-nexttoken then the 20 cases in
+scripts/p7_tuning_queue.py. All fresh 2,500 steps, 12 layers, FA4, eight GPUs,
+microbatch16/GAS4/seq2048,125 warmup; all checkpoints retained every250 steps.
+Numerical checks and all distributed smokes must pass before cleanup/training.
+Cleanup is restricted to the interrupted model directory, archives diagnostic
+JSON/file inventory, refuses final results/checkpoints and symlinks, and checks
+same-seed training recipe/fingerprint against the stopped run. Completed arms,
+shared dataset caches, logs and receipts are preserved. Supervisor restores
+verified communicating burns on success/failure.
+
+Read-only request6f53c13 verified at16:05:08UTC: old noaux has train_config and
+FA4 receipts but no checkpoint/result; nexttoken production absent. Current
+completed-eval-a02 burns advance normally. Free space18,187GiB. Local launch,
+cleanup, recipe, prior exploration and eval-compile checks passed (14 unique
+methods); full tuning model regression rerun underway. B200 gates/launch pending.
+Evidence temp/remote_logs/p7-tuning-inspect-20261015-a01.log SHA256
+60a69a81bdc02f58406b801b907ea23cbda442f6ee7f27c600b9e54795b83b6c.
+
 ## Completed downstream evaluation — 15 October 2026
 
 Verified at 15:54:33 UTC: q359-p7-completed-eval-20261015-a02 finished successfully.

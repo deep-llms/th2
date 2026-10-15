@@ -33,6 +33,11 @@ CASES = (
     ('tg-huber', 'P7-simple-targetgrad-huber', .1, 42),
     ('tg-nonlinear', 'P7-simple-targetgrad-nonlinear', .1, 42),
 )
+LEFTOVER_CASES = (
+    ('lm-noaux', 'P7-simple-lm-noaux', 0., 42),
+    ('lm-nexttoken', 'P7-simple-lm-nexttoken', .1, 42),
+)
+ALL_CASES = LEFTOVER_CASES + CASES
 SMOKE_OVERRIDES = dict(stop_after=3,save_steps=3,logging_steps=1,eval_steps=3,
                       eval_rows=16,monitor_rows=16,eval_on_start=False)
 
@@ -65,7 +70,7 @@ def verify(root, config_root, labels, smoke=False):
     """Gate same-seed data order, common recipes and checkpoint retention."""
     from deep_kv.report import comparable_config, report
     root=Path(root);config_root=Path(config_root)
-    cases=tuple(c for c in CASES if c[0] in labels)
+    cases=tuple(c for c in ALL_CASES if c[0] in labels)
     if not labels or len(cases)!=len(labels) or len(set(labels))!=len(labels):
         raise ValueError('Select distinct known case labels')
     phase_root=root/'smoke' if smoke else root
@@ -113,7 +118,7 @@ def make(recipe_path, output, rows, labels=None):
     base=json.loads(Path(recipe_path).read_text())
     output=Path(output)
     if output.exists():raise FileExistsError(output)
-    cases=CASES if labels is None else tuple(c for c in CASES if c[0] in labels)
+    cases=CASES if labels is None else tuple(c for c in ALL_CASES if c[0] in labels)
     if labels is not None and (not labels or len(set(labels))!=len(labels) or len(cases)!=len(labels)):
         raise ValueError('Select distinct known case labels')
     config_root=output.with_suffix('.config');config_root.mkdir(parents=True,exist_ok=False)
@@ -176,7 +181,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--recipe');p.add_argument('--output');p.add_argument('--rows')
     p.add_argument('--verify-root');p.add_argument('--config-root');p.add_argument('--smoke',action='store_true')
-    p.add_argument('--cases',nargs='+',choices=[c[0] for c in CASES])
+    p.add_argument('--cases',nargs='+',choices=[c[0] for c in ALL_CASES])
     a=p.parse_args()
     if a.verify_root:
         if not a.config_root or not a.cases:p.error('Verification requires --config-root and --cases')
