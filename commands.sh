@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-fusion-health-20261015-a01
+#th2-q359-p7-fusion-health-20261015-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -17,7 +17,7 @@ for leaf in ('preflight.json','supervised/reclaim.json','supervised/gpus-free-be
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
 print('COMPLETE_MARKER',(root/'supervised/run/complete.json').exists())
-for pattern in ('supervisor.log','supervised/run/logs/*.log','supervised/run/timings/logs/*.log'):
+for pattern in ('supervisor.log','supervised/run/*.log','supervised/run/timings/*.log'):
  for p in root.glob(pattern):print('LOG_TAIL',str(p.relative_to(root)),p.read_text()[-6000:])
 status=snapshot(list(range(8)));print('GPU_SNAPSHOT',json.dumps(status))
 b=root/'supervised/burn-verified.json';log=root/'supervised/burn.log'

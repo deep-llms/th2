@@ -1,3 +1,17 @@
+## P7 further fusion: numerical gates passed — 15 October 2026, 01:09 UTC
+
+Launch36fafe3; read-onlydf275fb confirms all8CUDA cases pass for fused_aux,
+entries and packed-KV candidates against the existing BOTH optimization.
+Fullseq2048 fused_aux: exact LM forward/buffers, grad relativeL2 .0018493.
+Compiled entries/packedKV: loss absolute delta .000003338, hidden relativeL2
+.0062045, grad relativeL2 .0126110. Thresholds unchanged. Source checkpoint
+hash unchanged. Eight CPU tests passed15.986s. Accelconfig copied/verified
+SHA923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5.
+Verified known-burn reclaim01:07:15UTC, all8GPUsfree01:07:45UTC.
+50step candidate timings running; no speed conclusion or production adoption yet.
+Root:q359-p7-fusion-trial-20261015-a01. Auto burn restoration configured.
+Numerical report:docs/results/p7_fusion_numerical_20261015.json.
+
 ## P7 further fusion study — 15 October 2026
 
 User accepted testing further method-preserving optimizations. Experimental
