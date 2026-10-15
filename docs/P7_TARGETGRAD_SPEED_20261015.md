@@ -237,3 +237,35 @@ recorded ownership, approved parents, advancing collective progress, log age
 The collector's early Dropbox snapshot was refreshed with `#2 +a`; an unchanged
 snapshot was not evidence that training was still running. No relaunch occurred.
 Code integration: `46adec6`. `commands.sh` returned to inactive `#0`.
+
+## Custom-kernel follow-up (in progress)
+
+Current reference is the validated compiled-cosine/LSE/compiled-entries path.
+Three experimental candidates are being checked:
+
+- `head_batch`: place native and proxy heads into one FA4 call (20 Q heads,
+  10 KV heads, unchanged GQA ratio), split the outputs, then perform the same
+  live-LSE joint-softmax merge. Heads remain independent inside attention.
+- `target_kernel`: a custom Triton kernel sums the original four FP32 block
+  contributions, subtracts the frozen channel mean, scales/clips the target,
+  and computes moment/clipping partials. A second reduction combines moments.
+  Backward applies the inclusive clamp derivative and inverse scale to all
+  four operands. Shared FP32 contributions retain overlapping-window gradient
+  accumulation before the upstream BF16 cast. Original cosine loss unchanged.
+- `kernel_both`: both candidates together.
+
+The custom autograd path supports first-order training only. It is CUDA-only,
+requires contiguous FP32 target contributions, and is not enabled by ordinary
+training. Statistics/bootstrap-only passes keep the existing implementation.
+Moment reduction order can change rounding; this is checked separately from
+LM forward equivalence. No approximate gradient, detached LSE, changed target,
+or new parameter is introduced.
+
+Eight CPU tests passed in 23.170 seconds, including reference implementations
+of all candidates, isolated LM/auxiliary routes, optimizer/statistics updates,
+checkpointed execution and existing production save/resume. These CPU checks
+do not execute the Triton kernel. CUDA must additionally pass its independent
+primitive oracle (irregular dimensions, clamp boundaries and overlapping
+windows), followed by the trained-checkpoint full-model gates. Only accepted
+candidates enter 50-step eight-GPU Trainer timings with bracketing controls.
+Launch `77bf1e3`, root `q359-p7-kernel-trial-20261015-a01`.
