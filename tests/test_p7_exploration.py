@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import nullcontext
 from unittest.mock import patch
 
 import torch
@@ -36,6 +37,10 @@ class ExplorationTests(unittest.TestCase):
             self.assertEqual(m.layers,(2,6) if arm.endswith('-sparse') else (2,4,6,8))
             self.assertEqual(compute_budget(config(),m.settings,8)[arm]['extra_parameters'],
                              sum(p.numel() for p in m.heads.parameters()))
+            if arm.endswith('-valueonly'):
+                budget=compute_budget(config(),m.settings,8)[arm]
+                self.assertEqual(budget['extra_macs_per_token'],budget['fa4_extra_macs_per_token'])
+                self.assertEqual(budget['extra_macs_per_token'],budget['extra_parameters'])
             self.assertTrue(followup_metadata(arm)['lm_to_predictor'])
             sources=[]
             hooks=[h.w1.register_forward_pre_hook(lambda module,args:sources.append(args[0].requires_grad)) for h in m.heads.values()]
@@ -106,6 +111,39 @@ class ExplorationTests(unittest.TestCase):
         zero=next_token_loss(p,masked,norm,weight,1e-6,2)
         self.assertEqual(float(zero.sum()),0)
         self.assertEqual(float(torch.autograd.grad(zero.sum(),p)[0].abs().sum()),0)
+
+    def test_value_merge_full_model_and_attention_call_count(self):
+        from deep_kv.proxy import ProxyModel
+        def duplicate_entries(self,a,q,k,v,vp,mask,plan):
+            return self.joint_memory_attention(a,q,k,v,k[:,-2:],vp,mask,plan)
+        for backend in ('sdpa','fa4'):
+            for bf16 in (False,True):
+                with self.subTest(backend=backend,bf16=bf16):
+                    with patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
+                        merged=model('P7-simple-lm-valueonly',backend=backend)
+                        reference=model('P7-simple-lm-valueonly',backend=backend)
+                    calls=[]
+                    if backend=='fa4':merged._fa4_observer=lambda *args:calls.append(args)
+                    with torch.autocast('cpu',dtype=torch.bfloat16) if bf16 else nullcontext():
+                        out=merged(batch(),collect_target_statistics=True);objective(merged,out).backward()
+                        with patch.object(ProxyModel,'value_memory_attention',duplicate_entries):
+                            old=reference(batch(),collect_target_statistics=True);objective(reference,old).backward()
+                    self.assertLess(float((out['lm_sum']/out['lm_count']-old['lm_sum']/old['lm_count']).detach().abs()),.01 if bf16 else 1e-6)
+                    self.assertLess(float((out['aux_sum']/out['aux_count']-old['aux_sum']/old['aux_count']).detach().abs()),.01 if bf16 else 1e-6)
+                    for prefix in ('heads.','backbone.'):
+                        pairs=[(p,q) for (name,p),(_,q) in zip(merged.named_parameters(),reference.named_parameters()) if name.startswith(prefix)]
+                        for p,q in pairs:self.assertEqual(p.grad is None,q.grad is None)
+                        a=torch.cat([p.grad.flatten().float() for p,q in pairs if p.grad is not None])
+                        b=torch.cat([q.grad.flatten().float() for p,q in pairs if q.grad is not None])
+                        self.assertLess(float((a-b).norm()/b.norm().clamp_min(1e-8)),.03 if bf16 else 2e-5)
+                    merged.zero_grad(set_to_none=True);reference.zero_grad(set_to_none=True)
+                    with torch.no_grad(),(torch.autocast('cpu',dtype=torch.bfloat16) if bf16 else nullcontext()):
+                        a=merged.hidden_states(batch())[0]
+                        with patch.object(ProxyModel,'value_memory_attention',duplicate_entries):b=reference.hidden_states(batch())[0]
+                        self.assertLess(float((a.float()-b.float()).norm()/b.float().norm()),.02 if bf16 else 1e-6)
+                    if backend=='fa4':
+                        self.assertEqual(len(calls),2*config().num_hidden_layers)
+                        self.assertTrue(all(args[0].shape[-2]==8 for args in calls))
 
     def test_backend_checkpoint_equivalence_and_document_isolation(self):
         for arm in P7_EXPLORATION_ARMS:

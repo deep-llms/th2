@@ -54,6 +54,7 @@ class ScreenValidationTests(unittest.TestCase):
                 (checkpoint/'trainer_state.json').write_text(json.dumps(state))
                 for phase in ('train','eval'):
                     calls=28+len(layers) if variant in MEMORY_ARMS and variant not in DELAYED_ARMS else 28
+                    if variant=='P7-simple-lm-valueonly':calls=28
                     gradients=calls
                     if variant in P6_CONSUMER_ARMS:
                         calls+=2*len(layers);gradients+=len(layers)

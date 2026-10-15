@@ -1,3 +1,25 @@
+## P7 exploration review and value-only optimization — 15 October 2026 (SGT)
+
+Preparation only remains in force; commands.sh stays #0. No push, launch or
+B200 process/environment changes. Reviewed short-arm priorities: noaux, sparse,
+key-only, value-only, next-token (most speculative). Eight-run scope/order and
+fresh 7500/2500-step schedules unchanged. Reasoning in
+docs/P7_EXPLORATION_QUEUE_20261015.md.
+
+Value-only now merges duplicate-key values as (native+proxy)/2 and uses one
+native-size SDPA/FA4 attention call across all heads: 12 rather than 16 calls
+for the 12-layer model. Same real-valued function/gradient, not bitwise BF16.
+Saved memory_entries version2 records implementation. Updated MAC estimates,
+receipt validator and prepared CUDA gate; gate compares against original
+duplicate entries on both backends before production. CUDA timing/acceptance
+pending; do not report a measured whole-training speedup.
+
+31 targeted CPU tests pass, including independent attention/gradient equations,
+BF16, full-model equivalence, exact Trainer resume and two-rank runs for all
+five arms, queue/receipt checks, consumer/combined/optimized-targetgrad regression.
+Initial regression invocation had a misspelled test module; corrected module
+passes. Logs temp/p7-exploration-review-*-20261015.log. No environment changes.
+
 ## P7 exploration prepared, NOT launched — 15 October 2026 (SGT)
 
 User requested overnight exploration, then explicitly selected preparation only.

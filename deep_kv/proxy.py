@@ -169,7 +169,11 @@ def compute_budget(config, settings, sequence_length=2048):
         if arm in ('P7-simple-lm-keyonly','P7-simple-lm-valueonly'):
             for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token'):
                 result[arm][key] -= count*2*h*d
-            if arm.endswith('-valueonly'):result[arm]['extra_parameters'] -= count*h
+            if arm.endswith('-valueonly'):
+                result[arm]['extra_parameters'] -= count*h
+                result[arm]['extra_macs_per_token'] -= count*extra_attention
+                result[arm]['fa4_extra_macs_per_token'] = result[arm]['extra_macs_per_token']
+                result[arm]['fa4_note'] = 'Duplicate keys collapsed; one native-size attention call per block'
         if arm == 'P7-simple-lm-nexttoken':
             result[arm]['training_only_readout_macs_per_sequence'] = ((sequence_length-2)//8+1)*d*config.vocab_size
     result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
@@ -503,7 +507,7 @@ class ProxyModel(DeepKV):
         return output
 
     def memory_attention(self, layer, u, head, prediction, mask, rotary, plan):
-        from .proxy_memory import rectangular_mask, flash_joint_attention, proxy_mass
+        from .proxy_memory import proxy_mass
         if not self.proxy_enabled:
             # Equivalent to masking the entire proxy half; retain the original
             # native kernel shape for exact baseline comparison.
@@ -521,6 +525,33 @@ class ProxyModel(DeepKV):
         if self._proxy_mass is not None:
             name = str(a.layer_idx+1)
             self._proxy_mass[name] = proxy_mass(q[:,split:],k[:,-2:],kp,plan.documents,a.scaling)
+        if self.arm == 'P7-simple-lm-valueonly':
+            return self.value_memory_attention(a,q,k,v,vp,mask,plan)
+        return self.joint_memory_attention(a,q,k,v,kp,vp,mask,plan)
+
+    def value_memory_attention(self, a, q, k, v, vp, mask, plan):
+        # Identical keys and masks give each copy half the original probability:
+        # softmax([QK,QK]) @ [V,Vp] == softmax(QK) @ ((V+Vp)/2).
+        # All heads now fit in one ordinary attention call. Average in FP32 to
+        # avoid low-precision overflow, then use the backend's required dtype.
+        # This preserves the real-valued function/VJP, not BF16 bitwise results.
+        with torch.autocast(v.device.type,enabled=False):
+            merged=((v[:,-2:].float()+vp.float())*.5).to(v.dtype)
+        values=torch.cat((v[:,:-2],merged),dim=1)
+        if self.attention_backend == 'fa4':
+            from .fa4 import attention
+            output=attention(q,k,values,mask,a.scaling,self.fa4_kernel)
+            if self._fa4_observer is not None:self._fa4_observer(q,k,values,mask)
+            return output
+        interface=ALL_ATTENTION_FUNCTIONS.get_interface('sdpa',eager_attention_forward)
+        output,_=interface(a,q,k,values,mask,dropout=0.,scaling=a.scaling,is_causal=False)
+        return output
+
+    def joint_memory_attention(self, a, q, k, v, kp, vp, mask, plan):
+        """Original duplicate-entry path, also the value-only numerical oracle."""
+        from .proxy_memory import rectangular_mask, flash_joint_attention
+        groups=self.backbone.config.num_key_value_heads
+        split=(groups-2)*self.backbone.config.num_attention_heads//groups
         if self.attention_backend == 'fa4':
             if self.settings.lse_attention:
                 from .fa4 import attention_with_lse

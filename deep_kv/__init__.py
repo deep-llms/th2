@@ -77,6 +77,8 @@ def followup_metadata(arm):
             auxiliary_objective=dict(version=1, kind=(
                 'next_token_ce' if arm.endswith('-nexttoken') else
                 'none' if arm.endswith('-noaux') else 'cosine')))
+        if arm.endswith('-valueonly'):
+            result['memory_entries'].update(version=2,implementation='average_values_single_attention')
         if arm.endswith('-nexttoken'):
             result['auxiliary_objective'].update(site='last_proxy', packed_stride=8,
                 readout='detached_current_final_norm_and_lm_head',

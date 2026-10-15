@@ -67,7 +67,9 @@ allows the current token's causal prediction; no future hidden state is an input
   keys and learned proxy values. Proxy key projection/norm are removed. With
   duplicate native keys, joint attention is mathematically equivalent to
   attending to `(native_value + proxy_value)/2`. This is a controlled content
-  ablation, not independently addressable additional memory.
+  ablation, not independently addressable additional memory. The implementation
+  now averages the selected values and uses one native-size attention call for
+  all heads. See the numerical qualification below.
 - **No auxiliary loss:** exactly the parent's forward architecture, trained
   solely by the main LM loss. Cosine/target statistics remain detached
   diagnostics; the returned auxiliary objective and logged auxiliary loss are
@@ -93,6 +95,84 @@ The next-token arm is a hypothesis, not a guarantee of useful deep information.
 Its comparison against noaux asks whether direct predictor supervision helps;
 comparison against the parent asks whether it is better than hidden matching.
 Cosine remains available as a diagnostic, explicitly separate from CE metrics.
+
+## Review: which experiments are worth their cost?
+
+These are controlled tests of different explanations, not eight equally
+promising candidates. My priority among the five short variants is:
+
+| Priority | Variant | Why run it / limitation |
+|---|---|---|
+| 1 | LM-only, no auxiliary loss | Most direct test of whether hidden matching helps or conflicts with LM learning. A win alone would support extra LM-trained capacity, not useful deep-state prediction. |
+| 2 | Sparse | Tests whether dense intervention is counterproductive and halves predictor sites. Any win also changes capacity and cost; it does not isolate overlap alone. |
+| 3 | Key-only | Tests learned routing over existing native content. Distinct from predicting additional value content. |
+| 4 | Value-only | Useful content control, now with cheaper attention. Duplicate keys reduce it to a fixed half-native/half-proxy value mixture, so it is not an independently addressable memory method. |
+| 5 | Next-token | Tests direct predictive supervision instead of matching a hidden vector. Lowest confidence: the detached readout is itself learning from scratch, its feature space may poorly suit shallow memory, and CE weight 0.1 is not scale-matched to cosine weight 0.1. |
+
+The longer matched A/targetgrad/LM comparison is defensible as a single bounded
+test of training horizon. Targetgrad has small same-direction downstream gains
+across two seeds, not an established reliable win; LM is a useful utility-trained
+reference, not the best observed downstream method. A longer run might help or
+erase the difference. Do not commit to another sweep solely because one seed
+or one benchmark improves. Inspect PPL, the existing downstream aggregate, and
+actual time together. These eight runs do not cover every cross-product of
+routing, loss and density, and should not expand automatically.
+
+The prepared manifest's order and eight-run scope are unchanged. If the budget
+must shrink, retain noaux and sparse before the more speculative short variants.
+No new run has been authorized or launched by this review.
+
+## Value-only throughput change and numerical limits
+
+With identical keys and identical masks for the two copies, zero-dropout
+attention satisfies, in real arithmetic:
+
+`softmax([QK, QK]) [V; Vp] = softmax(QK) ((V + Vp) / 2)`.
+
+Only the selected two KV groups use the mean; every other group retains its
+native values. The keys remain live: the gradient to the single native key
+equals the sum of gradients through its two copies. No detach, parameter,
+initialization, optimizer group, objective, data order or schedule changes.
+The disabled-proxy baseline path is unchanged.
+
+Previously each proxy site used native-head attention plus a doubled-entry
+selected-head attention. The new value-only implementation uses one ordinary
+attention over all heads, on both SDPA and FA4. At 12 layers/four sites this
+reduces attention calls from 16 to 12 and eliminates doubled FA4 queries at
+those sites. MAC estimates and runtime receipt validation reflect that change.
+Saved `memory_entries` metadata is version 2 with
+`implementation=average_values_single_attention`, so the earlier prototype is
+not silently treated as identical metadata during resume/report checks.
+
+The average is formed in FP32 and cast back to the attention dtype. Algebraic
+equivalence does **not** promise bitwise BF16 equivalence: rounding and backend
+reduction order change. The original duplicate-entry path remains available
+as a numerical reference. CPU tests compare independent attention equations,
+full-model outputs, backbone/predictor gradients, BF16, checkpoint replay,
+document isolation, save/reload, actual Trainer resume and two-rank training.
+The prepared CUDA gate additionally compares the merged implementation against
+the original calculation separately for **both** backends, including predictor
+gradients. It uses the existing limits (loss difference <0.01; gradient relative
+L2 <3%; hidden/logit relative L2 <2%) and fails the queue before production.
+
+This is a reduction in redundant work, **not a measured B200 throughput gain**.
+CUDA acceptance and whole-update timing remain pending. No custom kernel or
+environment change was needed. Sparse sites and removed key/value projections
+already avoid unused work. Noaux/next-token already omit cosine backward;
+next-token computes one sampled readout at only the last site. Keep their
+existing detached diagnostics for interpretability. Do not extend targetgrad's
+compile/custom-kernel flags to these LM-gradient routes without separate checks.
+
+Review validation (local CPU, 15 October): 31 relevant tests passed: eight
+exploration tests (140.985 s), four queue tests plus one artifact validator and
+six consumer regressions, four combined-route regressions (31.698 s), and eight
+existing speed-path regressions (23.615 s). The initial regression command
+misspelled `tests.test_p7_combined` as `tests.test_proxy_combined`; its 11 actual
+tests passed, and the corrected four-test module passed separately. This was
+a test-collection error, not a model failure. Logs:
+`temp/p7-exploration-review-{full,regression,combined,speed-regression}-20261015.log`.
+Python compilation and `git diff --check` passed. These are targeted tests, not
+a claim that every repository test or real CUDA execution has passed.
 
 ## Comparisons and automatic checks
 

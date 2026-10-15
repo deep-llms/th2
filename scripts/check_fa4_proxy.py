@@ -98,6 +98,24 @@ def worker(args):
                                  {**flash,'grads':{n:g for n,g in flash['grads'].items() if n.startswith(('heads.','extensions.'))}},False)
         assert all(g.abs().sum()>0 for n,g in flash['grads'].items() if n.startswith(('heads.','extensions.')))
     losses={k:[dense[k],flash[k]] for k in ('lm_loss','aux_loss')}
+    value_merge_checks=[]
+    if arm=='P7-simple-lm-valueonly':
+        # Compare against the original duplicated keys, not just two backends
+        # that both use the new algebraic reduction. Keep the existing limits.
+        from unittest.mock import patch
+        def duplicate_entries(self,a,q,k,v,vp,mask,plan):
+            return self.joint_memory_attention(a,q,k,v,k[:,-2:],vp,mask,plan)
+        for backend,merged in (('sdpa',dense),('fa4',flash)):
+            with patch.object(type(m),'value_memory_attention',duplicate_entries):
+                reference=capture(backend)
+            full=compare(reference,merged,False)
+            proxy=compare({**reference,'grads':{n:g for n,g in reference['grads'].items() if n.startswith('heads.')}},
+                          {**merged,'grads':{n:g for n,g in merged['grads'].items() if n.startswith('heads.')}},False)
+            loss_diffs={k:abs(reference[k]-merged[k]) for k in ('lm_loss','aux_loss')}
+            value_merge_checks.append(dict(backend=backend,comparison=full,proxy_comparison=proxy,
+                loss_absolute_differences=loss_diffs,
+                passed=acceptable(full) and acceptable(proxy) and all(x<.01 for x in loss_diffs.values())))
+            del reference
     del dense,flash
     # End-to-end document isolation includes P3's EMS and nonzero proxy gates.
     m.zero_grad(set_to_none=True)
@@ -115,7 +133,8 @@ def worker(args):
         with torch.no_grad(),torch.autocast('cuda',dtype=torch.bfloat16):after=m.hidden_states(changed)[0]
         difference=float((hidden[:,boundary:]-after[:,boundary:]).abs().max())
     finally:handle.remove()
-    passed=(acceptable(comparison) and (proxy_comparison is None or acceptable(proxy_comparison))
+    passed=(acceptable(comparison) and all(r['passed'] for r in value_merge_checks)
+            and (proxy_comparison is None or acceptable(proxy_comparison))
             and all(abs(a-b)<.01 for a,b in losses.values()) and forbidden==difference==0)
     unchanged=fingerprint(m)==initial
     result=dict(status='passed' if passed and unchanged else 'failed',arm=arm,index=args.index,
@@ -123,7 +142,7 @@ def worker(args):
         active_gate_std=None if m.anticipatory or m.memory_proxy else .05,
         active_gate_init=m.settings.alpha_init if m.anticipatory else None,
         auxiliary_weight=m.auxiliary_weight(PROXY_DELAY_STEPS+250 if arm in DELAYED_ARMS else 250),comparison=comparison,
-        proxy_comparison=proxy_comparison,losses=losses,parameters_unchanged=unchanged,
+        proxy_comparison=proxy_comparison,losses=losses,value_merge_checks=value_merge_checks,parameters_unchanged=unchanged,
         cross_document_gradient_max=forbidden,cross_document_output_max=difference,
         peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30)
     write(args.output,result)
@@ -213,6 +232,7 @@ def validate(args):
             assert r['arm']==arm and r['world_size']==8
             dormant=arm in DELAYED_ARMS and r['global_step'] < PROXY_DELAY_STEPS
             attention_calls=depth+len(memory_layers) if arm in MEMORY_ARMS and not dormant else depth
+            if arm=='P7-simple-lm-valueonly':attention_calls=depth
             gradient_calls=attention_calls
             if arm in P6_CONSUMER_ARMS:
                 sites=len(anticipatory_layout(arm,depth)[0])
