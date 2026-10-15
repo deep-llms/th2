@@ -1,3 +1,30 @@
+## Full completed-arm evaluation verified — 15 October 2026, 15:23 UTC
+
+Active evaluation: /mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a02.
+All eight CUDA numerical checks and all 40 benchmark smoke groups passed. Full
+nine-benchmark evaluation began 15:21:45 UTC and was healthy at 15:23:55 UTC,
+with workers distributed across all eight GPUs. Final results are pending.
+Training remains stopped; original completed/partial outputs are preserved.
+Eight evaluated checkpoints are the six completed exploration arms plus the
+original 2,500-step A/LM controls (scope described below). No new tuning arms.
+
+The initial evaluation a01 failed in targetgrad BLiMP: fixed-shape torch.compile
+entries exhausted Dynamo's recompilation limit of eight on variable lengths.
+Its supervisor restored verified burns. Fixed downstream loading to construct
+original eager functions via compile_execution=False; weights, scientific
+settings and LSE/FA4 attention are retained. Training defaults remain unchanged.
+Local tests compare eager/compiled functions, many sequence lengths, strict
+loading and handoff guards. Latest targeted suite: 11 tests passed, plus five
+existing exploration regressions earlier in this turn (16 unique methods).
+
+Fresh retry dfffc04 verified the failed predecessor's identical scope and final
+burn handoff; copied/verified Accelerate again; rechecked exact burn identities;
+all GPUs free at 15:18:20 UTC. Final verified burns will run on success/failure.
+commands.sh returned to #0 (48776e4). New 20-case tuning code remains unpushed.
+Evidence: docs/results/p7_completed_evaluation_retry_20261015.json.
+Health log temp/remote_logs/p7-completed-eval-health-20261015-a05.log SHA256
+bf68d0acdfdcf9ad8204ef8d2045cda60c79e53eda5edd1f458c164455c7e692.
+
 ## Completed exploration evaluation running — 15 October 2026, 15:04 UTC
 
 User authorized stopping remaining training once key-only completed and running
