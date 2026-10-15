@@ -1,13 +1,13 @@
 #1 +60+a
-#th2-q359-p7-tuning22-20261015-a01
+#th2-q359-p7-tuning22-20261015-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
 date -u
-git rev-parse HEAD
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a01
-TASK_SESSION=q359-p7-tuning22-20261015-a01
-TASK_LOG=/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a01.launch.log
+printf 'SOURCE_IMPLEMENTATION 4d7ee57\n'
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a02
+TASK_SESSION=q359-p7-tuning22-20261015-a02
+TASK_LOG=/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a02.launch.log
 TASK_PREDECESSOR=/mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a02
 TASK_SOURCE=/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03
 TASK_ROWS=/mnt/local/_outputs/deep-llms_th2/q359-p7-teacher-probe-20261015-a01/rows.json
