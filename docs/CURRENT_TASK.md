@@ -1,3 +1,20 @@
+## Exploration status — 15 October 2026, 12:18 UTC / 20:18 SGT
+
+Read-only requesta2b381c verified q359-p7-exploration8-20261015-a03 healthy.
+A and targetgrad completed/validated7500steps, all30checkpoints each retained.
+Full validation: A loss3.23501613/PPL25.4068; targetgrad loss3.24556588/PPL25.6762.
+Targetgrad is+0.01055nats worse in LMloss; downstream not yet evaluated.
+Training runtime A8134.672s, targetgrad8413.6666s (~3.43% longer).
+P7-lm running6914/7500 at~1.17s/update,~12–15min remaining; saved through6750.
+All8B20098–100%utilization,~65.9–67.0GiB used. Supervisor/queue running; no failure.
+Five2500-step variants remain (sparse,keyonly,valueonly,noaux,nexttoken), then
+downstream. Wholequeue remaining roughly4–6hours provisionally.
+
+Receipt temp/remote_logs/p7-exploration-status-20261015-1218.log SHA256
+053b94c0d33b0abc15dca293bf126458cb6964594a59d7f8a160eb615b6dfb6d.
+Targetgrad result docs/results/p7_exploration_targetgrad_7500_20261015.json.
+No workload/config changes; commands.sh returned to#0. Unrelated docs preserved.
+
 ## Exploration status — 15 October 2026, 09:29 UTC / 17:29 SGT
 
 Read-only requestaca0c97 verified activeq359-p7-exploration8-20261015-a03.
