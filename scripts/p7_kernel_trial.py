@@ -94,4 +94,15 @@ def primitive_gate(device):
                     else:torch.testing.assert_close(x,y,rtol=2e-5,atol=3e-5,
                         msg=f'rows={n}, channels={h}, stats={stats}, clips={clips}, group={group}, item={item}')
             reports.append(dict(rows=n,channels=h,statistics=stats,clipping=clips,status='passed'))
+    # Preserve nonfinite forward values: never hide a diverging target behind
+    # min/max instructions that select the finite operand when given NaN.
+    initial=torch.tensor([float('nan'),float('inf'),-float('inf'),3.,-3.,0.],device=device).view(1,1,6)
+    outputs=[]
+    for fn in (target_reference,target_window):
+        values=[initial.clone().requires_grad_()]+[torch.zeros_like(initial,requires_grad=True) for _ in range(3)]
+        out=fn(values,torch.zeros(6,device=device),torch.ones(6,device=device),3.,False,True)
+        out[0].sum().backward()
+        outputs.append((out[0],out[3],*[v.grad for v in values]))
+    for x,y in zip(*outputs):torch.testing.assert_close(x,y,rtol=0,atol=0,equal_nan=True)
+    reports.append(dict(case='nonfinite_forward_and_clamp_gradient',status='passed'))
     return reports

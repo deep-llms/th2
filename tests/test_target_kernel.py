@@ -21,7 +21,7 @@ from unittest.mock import patch
 from scripts.p7_kernel_trial import primitive_gate
 with patch.object(torch.Tensor, 'is_cuda', property(lambda self: True)):
     results = primitive_gate(torch.device('cpu'))
-assert len(results) == 12 and all(r['status'] == 'passed' for r in results)
+assert len(results) == 13 and all(r['status'] == 'passed' for r in results)
 """
         result = subprocess.run([sys.executable, '-c', code],
             cwd=Path(__file__).resolve().parents[1],

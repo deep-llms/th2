@@ -76,7 +76,7 @@ def profile_predecessor_ready(root, receipt):
     print('VERIFIED_PROFILE_SUMMARY',json.dumps(report),flush=True)
 
 
-def make_jobs(root, recipe_path, trial=False, integration=False, refinement=False, entries_integration=False, kernel_study=False):
+def make_jobs(root, recipe_path, trial=False, integration=False, refinement=False, entries_integration=False, kernel_study=False, target_integration=False):
     from deep_kv.__main__ import jobs
     recipe=read(recipe_path)
     for key,value in dict(num_hidden_layers=12,block_size=2048,per_device_train_batch_size=16,
@@ -116,6 +116,7 @@ def make_jobs(root, recipe_path, trial=False, integration=False, refinement=Fals
         if integration and arm=='P7-simple-targetgrad':
             job['argv']+=['--proxy_compile_auxiliary','true','--proxy_lse_attention','true']
             if entries_integration:job['argv']+=['--proxy_compile_entries','true']
+            if target_integration:job['argv']+=['--proxy_fused_targets','true']
         for rank in range(8):
             job['required_outputs'].append(dict(path=f'seed-42/{arm}/step-profile-rank{rank}.json',json_equals={'status':'profiled'}))
         job['required_outputs'].append(dict(path=f'seed-42/{arm}/component-profile.json',json_equals={'status':'profiled'}))
@@ -125,8 +126,8 @@ def make_jobs(root, recipe_path, trial=False, integration=False, refinement=Fals
     if entries_integration:
         # Reuse the trained-checkpoint gate, now comparing the accumulated
         # optimizations directly to the ORIGINAL implementation as well.
-        gate=make_jobs(root/'original-gate-config',recipe_path,refinement=True)[0]
-        gate['argv']+=['--original-reference','--require-candidate','entries']
+        gate=make_jobs(root/'original-gate-config',recipe_path,refinement=not target_integration,kernel_study=target_integration)[0]
+        gate['argv']+=['--original-reference','--require-candidate','target_kernel' if target_integration else 'entries']
         items.insert(0,gate)
     write(root/'jobs.json',dict(jobs=items))
     return items
@@ -148,7 +149,15 @@ def prepare(args):
     else:predecessor_ready(args.predecessor)
     if args.integration:
         timing=read(Path(args.predecessor)/'supervised/run/timing-summary.json')
-        if timing['status']!='passed' or timing['results']['entries' if args.entries_integration else 'both']['speedup_percent']<=1:
+        if args.target_integration:
+            # The pointwise target kernel gains about 1%, not a large speedup.
+            # Require >=0.5% against EACH control and <=0.5% control drift.
+            result=timing['results'];candidate=result['target_kernel']['median_seconds']
+            controls=[result[k]['median_seconds'] for k in ('reference-before','reference-after')]
+            if (timing['status']!='passed' or min(100*(c/candidate-1) for c in controls)<=.5
+                    or 100*(max(controls)/min(controls)-1)>.5):
+                raise ValueError('Target kernel gain must exceed both stable controls')
+        elif timing['status']!='passed' or timing['results']['entries' if args.entries_integration else 'both']['speedup_percent']<=1:
             raise ValueError('Integrated candidate must have a verified measured improvement')
     expected=dict(torch='2.14.1',transformers='5.9.0',accelerate='1.13.0',datasets='4.8.5',
         **{'flash-attn-4':'4.0.0b33','nvidia-cutlass-dsl':'4.8.0'})
@@ -174,7 +183,7 @@ def prepare(args):
     if source.read_bytes()!=destination.read_bytes() or cfg['num_processes']!=8 or cfg['mixed_precision']!='bf16':
         raise ValueError('Accelerate mismatch')
     subprocess.run(['accelerate','env'],check=True)
-    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial,args.integration,args.refinement,args.entries_integration,args.kernel_study);load_jobs(root/'jobs.json')
+    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial,args.integration,args.refinement,args.entries_integration,args.kernel_study,args.target_integration);load_jobs(root/'jobs.json')
     status=inspect()
     if (status['host']!=args.host or status['guard_disabled'] or len(status['gpus'])!=8
             or any('B200' not in g['name'] for g in status['gpus'])
@@ -273,6 +282,8 @@ if __name__=='__main__':
     p.add_argument('--refinement',action='store_true')
     p.add_argument('--kernel-study',action='store_true')
     p.add_argument('--entries-integration',action='store_true')
+    p.add_argument('--target-integration',action='store_true')
     a=p.parse_args()
     if a.entries_integration and not a.integration:p.error('--entries-integration requires --integration')
+    if a.target_integration and not a.entries_integration:p.error('--target-integration requires --entries-integration')
     globals()[a.mode](a)

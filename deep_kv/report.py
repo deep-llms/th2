@@ -16,7 +16,8 @@ def comparable_config(config):
     compiled=config['pilot'].pop('proxy_compile_auxiliary',False)
     lse=config['pilot'].pop('proxy_lse_attention',False)
     entries=config['pilot'].pop('proxy_compile_entries',False)
-    if (compiled or lse or entries) and arm not in ('A','P7-simple-targetgrad'):
+    targets=config['pilot'].pop('proxy_fused_targets',False)
+    if (compiled or lse or entries or targets) and arm not in ('A','P7-simple-targetgrad'):
         raise ValueError('These execution optimizations were not validated for this arm')
     if arm in MEMORY_ARMS:
         expected=dict(proxy_isolate_estimator=True,proxy_target_version='p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1',

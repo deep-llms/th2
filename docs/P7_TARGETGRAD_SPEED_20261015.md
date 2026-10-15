@@ -276,3 +276,19 @@ exact clamp boundaries, whereas the initial kernel used inclusive comparisons.
 Local torch2.14.0 reproduced it. Fixed to strict comparisons, strengthened both
 endpoint tests, and kept all tolerances unchanged. Failed a01 artifacts remain;
 retry uses a fresh a02 root after verified burn restoration.
+
+The corrected CUDA primitive oracle passed all 12 cases on every rank, and all
+three full-model candidates passed both short/checkpointed and full2048/micro16
+gates ([raw report](results/p7_kernel_numerical_20261015.json)). The target-only
+kernel matched loss, hidden states, sampled logits and **all parameter gradients
+exactly** against compiled entries in these checks. Updated mean/variance buffers
+had relative L2 below 7.4e-9; moment reduction order still prevents a bitwise
+long-run equivalence claim. Head batching changed overall gradients by 1.073%
+relative L2 at full shape, within the unchanged 3% limit.
+
+Preliminary full-update medians: first control1.098117s, head batching1.120300s,
+target kernel1.087154s, combined1.109421s. Head batching is slower and will not
+be promoted. The target-only kernel is about1% faster; final bracketing control
+and integrated production verification remain pending. Nine local tests passed
+35.978s, including the standalone Triton interpreter regression and actual
+Trainer save/resume with a reference implementation of the opt-in target path.

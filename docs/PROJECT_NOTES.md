@@ -1,3 +1,25 @@
+## P7 custom target-kernel integration — 15 October 2026
+
+CUDA gates passed after fixing torch2.14 clamp endpoint semantics. Target-only
+kernel exactly matches tested loss/hidden/logits/all parameter gradients;
+updated running-buffer relativeL2 below7.4e-9. All12primitive cases pass on8ranks.
+Nine CPU tests passed35.978s, including actual Trainer resume and interpreter.
+Added a13th nonfinite-value case and explicit NaN propagation; interpreter
+regression passed12.988s. CUDA integration gate will rerun the updated kernel.
+
+Five timing runs completed: controls1.098117/1.096338s, target_kernel1.087154s,
+head_batch1.120300s, combined1.109421s. Target gain0.927%, better than both
+controls by0.84–1.01%; control drift0.162%. Head batching rejected as slower.
+Keep target preparation opt-in with proxy_fused_targets; defaultfalse, limited
+to targetgrad/A and torch2.14 runtime. Unchanged parameters/optimizer state;
+flag persisted; toggling resume requires explicit performance-change allowance.
+Final normal-CLI A/P7 pair plus direct-original-checkpoint gate planned at
+q359-p7-target-integrated-20261015-a01, following verified trial burn handoff.
+For this small gain, launch requires >0.5% gain against EACH control and <0.5%
+control drift; actual timing values remain reported without rounding up.
+Copy/verify Accelerate, reclaim only known burns, verify GPUs free, automatically
+restore/verify burns afterward. No long scientific training.
+
 ## P7 custom target-kernel boundary fix — 15 October 2026
 
 First CUDA primitive gate rejected the experimental kernel before any model

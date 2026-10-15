@@ -37,6 +37,7 @@ class ProxySettings:
     compile_estimator: bool = False
     compile_auxiliary: bool = False
     compile_entries: bool = False
+    fused_targets: bool = False
     lse_attention: bool = False
     target_version: str | None = None
     variance_floor: float = .01
@@ -50,7 +51,7 @@ class ProxySettings:
 
 def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
-    if (settings.compile_auxiliary or settings.lse_attention or settings.compile_entries) and arm not in ('A', 'P7-simple-targetgrad'):
+    if (settings.compile_auxiliary or settings.lse_attention or settings.compile_entries or settings.fused_targets) and arm not in ('A', 'P7-simple-targetgrad'):
         raise ValueError('These optimizations are validated only for P7-simple-targetgrad (and unchanged A)')
     if settings.lambda_max is None:settings.lambda_max = .03 if arm == 'P6-lowaux' else .1
     if arm == 'P6-lowaux' and settings.lambda_max != .03:
@@ -352,6 +353,9 @@ class ProxyModel(DeepKV):
                 for head in self.heads.values():
                     if self.family=='P5':head.stream_step=torch.compile(head.stream_step)
                     else:head.routed=torch.compile(head.routed)
+        if settings.fused_targets and arm == 'P7-simple-targetgrad':
+            from .target_kernel import target_window
+            self._target_window = target_window
         if settings.compile_entries:
             # Compile the existing method, not the module. Keep the separate
             # K/V Parameters, initialization, optimizer groups and state names.
@@ -671,7 +675,7 @@ class ProxyModel(DeepKV):
             with torch.no_grad(), torch.autocast(hidden.device.type,enabled=False):
                 floors = self.settings.variance_floor*self.sigma2.median(dim=-1,keepdim=True).values
                 inverse_scales = torch.rsqrt(self.sigma2.clamp_min(floors)+1e-6)
-        # Experimental hook; absent by default. Preserve the original path for
+        # Optional fused target preparation. Preserve the original path for
         # bootstrap/statistics-only passes and every other architecture.
         target_window = getattr(self, '_target_window', None)
         fused_window = (target_window is not None and self.arm == 'P7-simple-targetgrad'

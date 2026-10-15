@@ -197,25 +197,34 @@ class P7SpeedTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'allow_performance_change'):
             train.resume_performance_changes(before,entries)
         self.assertEqual(set(train.resume_performance_changes(before,entries,True)),{'proxy_compile_entries'})
+        targets=copy.deepcopy(before);targets['pilot']['proxy_fused_targets']=True
+        with self.assertRaisesRegex(ValueError,'allow_performance_change'):
+            train.resume_performance_changes(before,targets)
+        self.assertEqual(set(train.resume_performance_changes(before,targets,True)),{'proxy_fused_targets'})
         for arm in ('P7','P6-iso','P7-simple'):
             with self.assertRaisesRegex(ValueError,'validated only'):
                 resolve_proxy_settings(arm,ProxySettings(compile_auxiliary=True))
             with self.assertRaisesRegex(ValueError,'validated only'):
                 resolve_proxy_settings(arm,ProxySettings(compile_entries=True))
+            with self.assertRaisesRegex(ValueError,'validated only'):
+                resolve_proxy_settings(arm,ProxySettings(fused_targets=True))
         compiler=torch.compile
         def cpu_compile(fn,**kwargs):
             return compiler(fn,**{**kwargs,'backend':'aot_eager'})
-        with tempfile.TemporaryDirectory() as tmp, patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
+        from scripts.p7_kernel_trial import target_reference
+        with tempfile.TemporaryDirectory() as tmp, patch('deep_kv.target_kernel.target_window',target_reference), patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
             root=Path(tmp);recipe=proxy_fixture(root);config().save_pretrained(root/'model')
             recipe.update(proxy_groups=2,arm='P7-simple-targetgrad',proxy_compile_auxiliary=True,
-                          proxy_lse_attention=True,proxy_compile_entries=True,attention_backend='fa4')
+                          proxy_lse_attention=True,proxy_compile_entries=True,proxy_fused_targets=True,attention_backend='fa4')
             invoke(root,{**recipe,'stop_after':2})
             saved=json.loads((root/'run/train_config.json').read_text())
             self.assertTrue(saved['pilot']['proxy_compile_auxiliary'])
             self.assertTrue(saved['pilot']['proxy_lse_attention'])
             self.assertTrue(saved['pilot']['proxy_compile_entries'])
+            self.assertTrue(saved['pilot']['proxy_fused_targets'])
             self.assertNotIn('proxy_compile_auxiliary',comparable_config(saved)['pilot'])
             self.assertNotIn('proxy_compile_entries',comparable_config(saved)['pilot'])
+            self.assertNotIn('proxy_fused_targets',comparable_config(saved)['pilot'])
             invoke(root,recipe)
             invoke(root,{**recipe,'output_dir':str(root/'full')})
             resumed=load_file(root/'run/model.safetensors');full=load_file(root/'full/model.safetensors')
@@ -226,11 +235,12 @@ class P7SpeedTests(unittest.TestCase):
     def test_production_flags_match_validated_candidates(self):
         compiler=torch.compile
         def cpu_compile(fn,**kwargs):return compiler(fn,**{**kwargs,'backend':'aot_eager'})
-        with patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
-            for mode in ('cosine','lse','both','entries'):
+        from scripts.p7_kernel_trial import target_reference
+        with patch('deep_kv.target_kernel.target_window',target_reference), patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
+            for mode in ('cosine','lse','both','entries','target_kernel'):
                 captures=[]
                 for production in (False,True):
-                    settings=(dict(compile_auxiliary=mode in ('cosine','both','entries'),lse_attention=mode in ('lse','both','entries'),compile_entries=mode=='entries')
+                    settings=(dict(compile_auxiliary=mode in ('cosine','both','entries','target_kernel'),lse_attention=mode in ('lse','both','entries','target_kernel'),compile_entries=mode in ('entries','target_kernel'),fused_targets=mode=='target_kernel')
                               if production else {})
                     with implementation('eager' if production else mode,backend='aot_eager'):
                         m=model('P7-simple-targetgrad','fa4',**settings)

@@ -204,6 +204,10 @@ def gate(args):
             {**b, 'grads': {k: v for k, v in b['grads'].items() if k.startswith(prefix)}}, False)
     # Existing FA4 model acceptance thresholds; no post-hoc widening.
     passed = all(acceptable(row) for row in comparisons.values())
+    if candidate == 'target_kernel' and not args.original_reference:
+        # Pointwise fusion preserves this single-forward loss and all gradients.
+        passed = passed and all(row['loss_abs_diff'] == 0 and row['gradient_relative_l2'] == 0
+                                for row in comparisons.values())
     buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in exact_modes and candidate!='target_kernel')
     passed = passed and not buffers['failures']
     exact = None

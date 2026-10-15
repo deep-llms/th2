@@ -9,6 +9,9 @@ import triton
 import triton.language as tl
 from torch.autograd.function import once_differentiable
 
+if tuple(torch.__version__.split("+")[0].split(".")[:2]) != ("2", "14"):
+    raise RuntimeError("Fused target clamp gradients require the validated PyTorch 2.14 runtime")
+
 
 @triton.jit
 def _prepare(A, B, C, D, MU, INV, OUT, MASK, SUM, SQUARE, CLIPPED,
@@ -25,7 +28,8 @@ def _prepare(A, B, C, D, MU, INV, OUT, MASK, SUM, SQUARE, CLIPPED,
     raw = raw+tl.load(D+offsets, valid, 0)
     centered = raw-tl.load(MU+cols, cols<H, 0)[None, :]
     z = centered*tl.load(INV+cols, cols<H, 0)[None, :]
-    tl.store(OUT+offsets, tl.minimum(tl.maximum(z, -CLIP), CLIP), valid)
+    tl.store(OUT+offsets, tl.minimum(tl.maximum(z, -CLIP, propagate_nan=tl.PropagateNan.ALL),
+                             CLIP, propagate_nan=tl.PropagateNan.ALL), valid)
     if SAVE:
         # Match the pinned torch 2.14.1 clamp derivative: zero at boundaries.
         # The primitive oracle explicitly checks both exact endpoints.

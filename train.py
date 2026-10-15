@@ -98,6 +98,7 @@ class PilotArguments:
     proxy_compile_estimator: bool = False
     proxy_compile_auxiliary: bool = False
     proxy_compile_entries: bool = False
+    proxy_fused_targets: bool = False
     proxy_lse_attention: bool = False
     proxy_target_centering: bool = True  # Legacy CLI: False is no longer supported.
     proxy_target_version: str | None = None
@@ -116,7 +117,7 @@ def resume_performance_changes(previous, requested, allow=False):
     before, after = copy.deepcopy(previous), copy.deepcopy(requested)
     defaults = dict(checkpoint_layers=True, checkpoint_lm=True, checkpoint_aux=True,
                     causal_attention=False, lm_chunk=128, proxy_sync_optimization=False,
-                    proxy_compile_auxiliary=False, proxy_lse_attention=False, proxy_compile_entries=False)
+                    proxy_compile_auxiliary=False, proxy_lse_attention=False, proxy_compile_entries=False, proxy_fused_targets=False)
     changes = {}
     for key, default in defaults.items():
         old = before['pilot'].get(key, default)
@@ -262,7 +263,7 @@ def main():
                       if k not in ("stop_after", "allow_performance_change_on_resume")
                       and (k not in ('cooldown_start','cooldown_steps') or v is not None)
                       and (k != 'proxy_sync_optimization' or v)
-                      and (k not in ('proxy_compile_auxiliary','proxy_lse_attention','proxy_compile_entries') or v)
+                      and (k not in ('proxy_compile_auxiliary','proxy_lse_attention','proxy_compile_entries','proxy_fused_targets') or v)
                       and (k != 'attention_backend' or v != 'sdpa')
                       and (k != 'proxy_alpha_init' or v not in (None,0.))  # Preserve pre-option checkpoint recipes.
                       and (k != 'proxy_kv_mode' or v != 'kv')
