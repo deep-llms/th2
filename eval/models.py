@@ -148,7 +148,11 @@ def load_checkpoint(checkpoint, device='cpu', dtype=None, attention_backend=None
         settings = ProxySettings(**{f.name: pilot['proxy_' + f.name] for f in fields(ProxySettings)
                                     if 'proxy_' + f.name in pilot})
         model = ProxyModel.from_scratch(config, pilot['arm'], proxy_settings=settings,
-            sequence_length=saved['data']['block_size'], attention_backend=backend, **options)
+            sequence_length=saved['data']['block_size'], attention_backend=backend,
+            # Harness requests vary in batch/sequence shape. Keep the exact
+            # functions and LSE attention path, without fixed-shape Dynamo
+            # wrappers that fail once their recompilation limit is exhausted.
+            compile_execution=False, **options)
     else:
         if backend != 'sdpa':
             raise ValueError('Legacy DeepKV checkpoints require SDPA')
@@ -175,6 +179,7 @@ def load_checkpoint(checkpoint, device='cpu', dtype=None, attention_backend=None
         checkpoint_sha256=file_hash(weights), recipe=str(recipe_path), recipe_sha256=file_hash(recipe_path),
         step=json.loads(trainer_state.read_text())['global_step'] if trainer_state.is_file() else None,
         attention_backend=backend, trained_attention_backend=pilot.get('attention_backend', 'sdpa'),
+        torch_compile=False,
         autocast_dtype=str(dtype), master_dtype='torch.float32', context_length=saved['data']['block_size'],
         boundary_policy='explicit segments; otherwise one document per request', positions='reset_per_document')
     return adapter, tokenizer_source, metadata

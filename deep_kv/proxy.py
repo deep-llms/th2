@@ -248,7 +248,7 @@ class ProxyHead(nn.Module):
 class ProxyModel(DeepKV):
     """Shared Qwen backbone. Targets never mutate during checkpoint replay."""
     def __init__(self, backbone, arm, *, proxy_settings=None, channel_mask=None,
-                 attention_backend='sdpa', **kwargs):
+                 attention_backend='sdpa', compile_execution=True, **kwargs):
         settings = resolve_proxy_settings(arm,proxy_settings)
         new = arm in ANTICIPATORY_ARMS
         memory = arm in MEMORY_ARMS
@@ -291,7 +291,8 @@ class ProxyModel(DeepKV):
         self.attention_runtime = {'backend': attention_backend}
         if settings.lse_attention and memory:
             from .proxy_memory import merge_attention
-            self.merge_memory_attention=torch.compile(merge_attention,fullgraph=True,dynamic=False)
+            self.merge_memory_attention=(torch.compile(merge_attention,fullgraph=True,dynamic=False)
+                                         if compile_execution else merge_attention)
         if attention_backend == 'fa4':
             from .fa4 import load_kernel
             self.fa4_kernel, metadata = load_kernel()
@@ -358,11 +359,11 @@ class ProxyModel(DeepKV):
             from .proxy_estimators import gated_prediction, cosine_loss, depth_prediction
             self.gated_prediction,self.cosine_loss = gated_prediction,cosine_loss
             self.depth_prediction = depth_prediction
-            if settings.compile_auxiliary:
+            if settings.compile_auxiliary and compile_execution:
                 # Same function and live-target routing; no module/parameter or
                 # state_dict changes. Opt-in because reduction rounding differs.
                 self.cosine_loss=torch.compile(cosine_loss,fullgraph=True,dynamic=False)
-            if settings.compile_estimator:
+            if settings.compile_estimator and compile_execution:
                 # Compile functions, not modules: state_dict names stay identical.
                 self.gated_prediction=torch.compile(gated_prediction)
                 self.cosine_loss=torch.compile(cosine_loss)
@@ -373,7 +374,7 @@ class ProxyModel(DeepKV):
         if settings.fused_targets and arm == 'P7-simple-targetgrad':
             from .target_kernel import target_window
             self._target_window = target_window
-        if settings.compile_entries:
+        if settings.compile_entries and compile_execution:
             # Compile the existing method, not the module. Keep the separate
             # K/V Parameters, initialization, optimizer groups and state names.
             for head in self.heads.values():

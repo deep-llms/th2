@@ -5,6 +5,7 @@ TASK_ROOT=${1:?Pass fresh evaluation root}
 TASK_SOURCE=${2:?Pass authorized source queue root}
 TASK_REFERENCE=${3:?Pass existing remaining-27 evaluation root}
 TASK_HOST=${4:?Pass verified hostname}
+TASK_PREDECESSOR=${5:-}
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = "$TASK_HOST"
 test ! -e "$TASK_ROOT"
@@ -22,10 +23,17 @@ from scripts.p7_completed_evaluation import build_scope
 scope, _ = build_scope(Path(sys.argv[1]) / 'supervised/run', sys.argv[2])
 print('VERIFIED_COMPLETED_CHECKPOINTS', scope['completed_labels'], flush=True)
 PY
-python -u -m scripts.stop_proxy_followup --root "$TASK_SOURCE" --session "$(basename "$TASK_SOURCE")" \
-  --host "$TASK_HOST" --burn-session "$(basename "$TASK_SOURCE")-final-burn" \
-  --output "$TASK_SOURCE/user-stop-after-keyonly.json"
+TASK_RETRY_ARGS=()
+if [[ -n "$TASK_PREDECESSOR" ]]; then
+  # Preflight below requires this exact failed evaluation to have completed its
+  # burn handoff, with an identical frozen checkpoint scope. Never restop training.
+  TASK_RETRY_ARGS=(--predecessor "$TASK_PREDECESSOR")
+else
+  python -u -m scripts.stop_proxy_followup --root "$TASK_SOURCE" --session "$(basename "$TASK_SOURCE")" \
+    --host "$TASK_HOST" --burn-session "$(basename "$TASK_SOURCE")-final-burn" \
+    --output "$TASK_SOURCE/user-stop-after-keyonly.json"
+fi
 python -u -m scripts.p7_completed_evaluation --root "$TASK_ROOT" --source "$TASK_SOURCE" \
-  --reference "$TASK_REFERENCE" --host "$TASK_HOST"
+  --reference "$TASK_REFERENCE" --host "$TASK_HOST" "${TASK_RETRY_ARGS[@]}"
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" --output "$TASK_ROOT/supervised" \
   --inspection "$TASK_ROOT/inspection.json" --host "$TASK_HOST" --burn-session "$(basename "$TASK_ROOT")-final-burn"

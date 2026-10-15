@@ -7,12 +7,27 @@ import unittest
 from unittest.mock import patch
 
 from scripts.p7_exploration_queue import CASES, checkpoint_path
-from scripts.p7_completed_evaluation import selected_cases, build_scope, validate_scope
+from scripts.p7_completed_evaluation import selected_cases, build_scope, validate_scope, retry_burn
 from scripts.proxy_screen_evaluation import PROTOCOLS, make_jobs, validate_scope as shared_validate
 from run_experiments import load_jobs
 
 
 class CompletedEvaluationTests(unittest.TestCase):
+    def test_retry_requires_identical_scope_and_terminal_verified_burns(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'supervised/run').mkdir(parents=True)
+            scope={'checkpoints':['frozen-checkpoint']}
+            burn=dict(session=root.name+'-final-burn',collective_progress_verified=True)
+            state=dict(training_status='failed',finished_at='time',burn=burn)
+            for path,value in [('scope.json',scope),('supervised/run/run.json',dict(status='failed')),
+                               ('supervised/burn-verified.json',burn),('supervised/supervisor.json',state)]:
+                (root/path).write_text(json.dumps(value))
+            self.assertEqual(retry_burn(root,scope),burn)
+            with self.assertRaises(ValueError):retry_burn(root,{'checkpoints':['different']})
+            for override in (dict(training_status='running'),dict(finished_at=None),dict(burn={})):
+                (root/'supervised/supervisor.json').write_text(json.dumps({**state,**override}))
+                with self.assertRaises(ValueError):retry_burn(root,scope)
+
     def test_selection_requires_keyonly_and_skips_partial(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
