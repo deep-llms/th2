@@ -249,7 +249,7 @@ Three experimental candidates are being checked:
 - `target_kernel`: a custom Triton kernel sums the original four FP32 block
   contributions, subtracts the frozen channel mean, scales/clips the target,
   and computes moment/clipping partials. A second reduction combines moments.
-  Backward applies the inclusive clamp derivative and inverse scale to all
+  Backward applies the pinned torch clamp derivative and inverse scale to all
   four operands. Shared FP32 contributions retain overlapping-window gradient
   accumulation before the upstream BF16 cast. Original cosine loss unchanged.
 - `kernel_both`: both candidates together.
@@ -269,3 +269,10 @@ primitive oracle (irregular dimensions, clamp boundaries and overlapping
 windows), followed by the trained-checkpoint full-model gates. Only accepted
 candidates enter 50-step eight-GPU Trainer timings with bracketing controls.
 Launch `77bf1e3`, root `q359-p7-kernel-trial-20261015-a01`.
+
+The first CUDA primitive gate correctly rejected an endpoint-gradient mismatch
+before model testing or benchmarks: pinned torch2.14.1 gives zero derivative at
+exact clamp boundaries, whereas the initial kernel used inclusive comparisons.
+Local torch2.14.0 reproduced it. Fixed to strict comparisons, strengthened both
+endpoint tests, and kept all tolerances unchanged. Failed a01 artifacts remain;
+retry uses a fresh a02 root after verified burn restoration.

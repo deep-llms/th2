@@ -1,3 +1,15 @@
+## P7 custom target-kernel boundary fix — 15 October 2026
+
+First CUDA primitive gate rejected the experimental kernel before any model
+training/timing. torch 2.14.x clamp has zero derivative at either exact endpoint;
+the first implementation incorrectly used inclusive comparisons. Reproduced
+locally with torch2.14.0 and remotely with pinned2.14.1. Changed kernel mask to
+strict comparisons and added positive/negative endpoints, zero and outside
+clipping tests. Tolerances unchanged. Original failed root and logs preserved.
+Retry fresh root:q359-p7-kernel-trial-20261015-a02. Additional launch guard
+requires the failed primitive-only run's terminal state, restored verified burns
+and released GPU guard before the ordinary known-burn reclaim/free-GPU protocol.
+
 ## P7 custom-kernel optimization study — 15 October 2026
 
 User requested further throughput optimization, including a custom kernel if

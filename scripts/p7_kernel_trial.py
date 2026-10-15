@@ -75,8 +75,9 @@ def primitive_gate(device):
         initial=[torch.randn(1,n,h,device=device) for _ in range(5)]
         mu=torch.randn(h,device=device);inverse=torch.rand(h,device=device)+.5
         # Exact clamp boundaries, zero, and outside-clamp entries.
-        initial[0][0,0,0]=3.;mu[0]=0.;inverse[0]=1.
-        for v in initial[1:]:v[0,0,0]=0.
+        for channel,value in enumerate((3.,-3.,0.,4.,-4.)[:h]):
+            initial[0][0,0,channel]=value;mu[channel]=0.;inverse[channel]=1.
+            for v in initial[1:]:v[0,0,channel]=0.
         for stats,clips in ((False,False),(True,False),(True,True)):
             captures=[]
             for fn in (target_reference,target_window):
@@ -87,9 +88,10 @@ def primitive_gate(device):
                 # upstream BF16 cast, exactly as the backbone implementation.
                 (left[0].square().sum()+.7*right[0].sum()).backward()
                 captures.append((left,right,[v.grad for v in values]))
-            for a,b in zip(*captures):
-                for x,y in zip(a,b):
+            for group,(a,b) in enumerate(zip(*captures)):
+                for item,(x,y) in enumerate(zip(a,b)):
                     if x is None:assert y is None
-                    else:torch.testing.assert_close(x,y,rtol=2e-5,atol=3e-5)
+                    else:torch.testing.assert_close(x,y,rtol=2e-5,atol=3e-5,
+                        msg=f'rows={n}, channels={h}, stats={stats}, clips={clips}, group={group}, item={item}')
             reports.append(dict(rows=n,channels=h,statistics=stats,clipping=clips,status='passed'))
     return reports

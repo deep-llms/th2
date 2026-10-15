@@ -27,8 +27,9 @@ def _prepare(A, B, C, D, MU, INV, OUT, MASK, SUM, SQUARE, CLIPPED,
     z = centered*tl.load(INV+cols, cols<H, 0)[None, :]
     tl.store(OUT+offsets, tl.minimum(tl.maximum(z, -CLIP), CLIP), valid)
     if SAVE:
-        # torch.clamp's derivative includes values exactly on either boundary.
-        tl.store(MASK+offsets, (z>=-CLIP)&(z<=CLIP), valid)
+        # Match the pinned torch 2.14.1 clamp derivative: zero at boundaries.
+        # The primitive oracle explicitly checks both exact endpoints.
+        tl.store(MASK+offsets, (z>-CLIP)&(z<CLIP), valid)
     if STATS:
         x = tl.where(valid, centered, 0.)
         partial = tl.program_id(0)*H+cols
