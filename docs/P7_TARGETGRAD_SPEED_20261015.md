@@ -203,6 +203,38 @@ retain-graph gradient probe. Isolating compiler caches between tests fixed this
 test-process interaction; no production compiler settings were changed.
 
 Fusion trial completed with successful supervisor status and verified burn
-restoration at 01:21:18 UTC. Final normal-CLI A/P7 repeat is running in
-`q359-p7-entries-integrated-20261015-a01`, after a verified burn handoff and
-Accelerate/free-GPU checks. No full scientific training is queued.
+restoration at 01:21:18 UTC. The [final normal-CLI repeat](results/p7_entries_integrated_20261015.json)
+completed in `q359-p7-entries-integrated-20261015-a01`, after a verified burn
+handoff and Accelerate/free-GPU checks:
+
+| Arm | Seconds/update | Peak allocated GPU memory |
+|---|---:|---:|
+| A | 1.049507 | 59.67 GiB |
+| P7, all three production optimizations | 1.095953 | 61.28 GiB |
+
+Remaining overhead over A is **4.43%**, versus 5.90% before this follow-up.
+All-rank endpoint data hashes agree and compiler counters remain stable.
+The prototype projection result (1.096631 s) reproduces through the real CLI
+(1.095953 s). These are complete steady-state update intervals in disposable
+50-step runs, not total wall time including compilation, save and evaluation.
+Compared with the original P7's earlier 1.169-second controls, total throughput
+improvement is approximately 6.7%; that cumulative estimate spans the two
+study rounds, while the additional 1.60% uses this round's bracketing controls.
+
+Use the ordinary recipe plus:
+
+```text
+--proxy_compile_auxiliary true --proxy_lse_attention true --proxy_compile_entries true
+```
+
+No long training is queued. All four final stages succeeded; complete marker
+exists. Supervisor exited zero and restored/verified burns at 01:29:58 UTC.
+Read-only verification at 01:30:13 UTC confirms eight live workers matching
+recorded ownership, approved parents, advancing collective progress, log age
+1.05 seconds and released GPU guard. Receipt:
+`temp/remote_logs/p7-entries-completion-20261015-a01.log`, SHA256
+`7209fb90a44c8f49dd6fdcc00fb333207920c20fe6026262f9aa4d812a5581ff`.
+The collector's early Dropbox snapshot was refreshed with `#2 +a`; an unchanged
+snapshot was not evidence that training was still running. No relaunch occurred.
+Code integration: `46adec6`. `commands.sh` returned to inactive `#0`.
+

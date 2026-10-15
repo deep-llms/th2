@@ -1,0 +1,248 @@
+{
+  "status": "passed",
+  "results": {
+    "A": {
+      "median_seconds": 1.0495070780161768,
+      "mean_seconds": 1.050835493474733,
+      "step_range": [
+        20,
+        49
+      ],
+      "intervals": [
+        1.0524564640363678,
+        1.0476822530617937,
+        1.048545620054938,
+        1.048983286949806,
+        1.0486552900401875,
+        1.049558424972929,
+        1.0493656529579312,
+        1.0484493819531053,
+        1.0484080389142036,
+        1.0494557310594246,
+        1.0508896589744836,
+        1.048442784929648,
+        1.04612904204987,
+        1.0481076060095802,
+        1.0476841870695353,
+        1.0467660090653226,
+        1.0477817460196093,
+        1.0495785049861297,
+        1.0504092590417713,
+        1.048075454076752,
+        1.0685379420174286,
+        1.0650303469737992,
+        1.0534226250601932,
+        1.0540927510010079,
+        1.0538261629408225,
+        1.0500940440688282,
+        1.0512812370434403,
+        1.0496131950058043,
+        1.0518679799279198,
+        1.0518741239793599
+      ],
+      "peak_gib": 59.66691064834595,
+      "components": {
+        "training_microbatch": 0.018845000000044822,
+        "forward_and_loss": 0.2269189999999984,
+        "remaining_optimizer_communication_and_model": 13.956493999999426,
+        "target_mask_and_statistics_setup": 1.627165999999728,
+        "remaining_decoder": 69.0217489999997,
+        "attention": 166.29429500000222,
+        "lm_loss": 128.07240799999877,
+        "training_microbatch_backward": 0.0076450000000186265,
+        "forward_and_loss_backward": 0.018432000000029803,
+        "lm_loss_backward": 149.00548300000082,
+        "target_mask_and_statistics_setup_backward": 5.3670619999993345,
+        "remaining_decoder_backward": 151.40552700000094,
+        "attention_backward": 359.5766499999959,
+        "diagnostic_reduce_and_cpu": 0.022208000000100585
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        },
+        {
+          "20": {},
+          "49": {}
+        }
+      ]
+    },
+    "P7-simple-targetgrad": {
+      "median_seconds": 1.09595317451749,
+      "mean_seconds": 1.0967763216545185,
+      "step_range": [
+        20,
+        49
+      ],
+      "intervals": [
+        1.1021719679702073,
+        1.0947690699249506,
+        1.096234570024535,
+        1.0951153310015798,
+        1.0949531400110573,
+        1.0954875180032104,
+        1.0944323389558122,
+        1.0959671239834279,
+        1.0951306669740006,
+        1.0937600940233096,
+        1.1017315160715953,
+        1.0947135799797252,
+        1.0944112340221182,
+        1.0961891869083047,
+        1.0938009299570695,
+        1.095143741928041,
+        1.095939225051552,
+        1.0944385270122439,
+        1.0953781800344586,
+        1.096019716002047,
+        1.1048254889901727,
+        1.0962081600446254,
+        1.0982057469664142,
+        1.0960013519506902,
+        1.0953721969854087,
+        1.0973201770102605,
+        1.0981164069380611,
+        1.098566333996132,
+        1.1044805449200794,
+        1.098405583994463
+      ],
+      "peak_gib": 61.282726764678955,
+      "components": {
+        "training_microbatch": 0.01277000000036787,
+        "forward_and_loss": 0.3247360000001439,
+        "remaining_optimizer_communication_and_model": 13.989957999999756,
+        "target_mask_and_statistics_setup": 12.0597070000001,
+        "remaining_decoder": 69.14491000000382,
+        "attention": 110.85462400000046,
+        "estimator_forward": 1.2489930000012957,
+        "proxy_memory_attention": 59.372144000003054,
+        "target_normalization": 2.0818619999990333,
+        "auxiliary_cosine": 0.5380489999995917,
+        "lm_loss": 128.06800999999825,
+        "training_microbatch_backward": 0.007264000000082887,
+        "forward_and_loss_backward": 0.04176000000030034,
+        "lm_loss_backward": 149.09271299999716,
+        "target_mask_and_statistics_setup_backward": 8.008686999998982,
+        "remaining_decoder_backward": 152.83737199999945,
+        "attention_backward": 241.9460949999962,
+        "auxiliary_cosine_backward": 1.957605000000331,
+        "target_normalization_backward": 4.356043999999529,
+        "proxy_memory_attention_backward": 130.3854359999985,
+        "estimator_forward_backward": 1.4314250000005122,
+        "statistics_all_reduce": 0.030015999999828638,
+        "normalization_update": 0.06108699999982491,
+        "diagnostic_reduce_and_cpu": 0.025119999999878927
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {
+            "calls_captured": 206,
+            "unique_graphs": 9
+          },
+          "49": {
+            "calls_captured": 206,
+            "unique_graphs": 9
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        }
+      ]
+    }
+  },
+  "overhead_percent": 4.42551531802029
+}

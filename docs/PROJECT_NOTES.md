@@ -1,3 +1,36 @@
+## P7 projection optimization complete — 15 October 2026, 01:30 UTC
+
+Follow-up measured another1.60% throughput gain from compiling existing proxy
+normalization/K/V/RoPE entries. Opt-in --proxy_compile_entries true, alongside
+--proxy_compile_auxiliary true --proxy_lse_attention true. All defaultfalse;
+only targetgrad/A accepted. No changed parameter names/shapes, optimizer groups,
+architecture, aux objective/routing, data/order, environments or drivers.
+Performance flag persisted and toggling on resume requires explicit allowance.
+Target-loss fusion gained0.42% and packedKV1.50%; neither promoted to production.
+
+All8CPU tests passed18.618s: objective/gradient routes, optimizer/state, exact
+prototype/production outputs+gradients, actual Trainer save/resume and legacy
+compatibility. Per-test compiler caches isolated for retained-graph probes.
+All8CUDA cases passed against optimized control AND directly against original
+eager checkpoint; fullseq2048/micro16 accumulated grad relativeL2 1.2629%,
+hidden .6238%, logits .2452%, loss absolute .000181675. Thresholds unchanged.
+
+Final integrated normalCLI50step pair: A1.049507s/update, P71.095953s/update,
+remaining overhead4.43% (previous5.90%). Peak59.67/61.28GiB. All-rank endpoint
+data hashes agree and compiler counters stable. Full report/limits/artifacts:
+docs/P7_TARGETGRAD_SPEED_20261015.md. Only32evalrows/50steps; no full2500step
+or downstream equivalence claim. Approx6.7% cumulative throughput vs original
+P7 from earlier round; additional1.60% measured with current bracketing controls.
+
+Root:q359-p7-entries-integrated-20261015-a01. All4stages/supervisor succeeded,
+complete marker verified; burns restored/verified01:29:58UTC. Read-only collector
+01:30:13UTC: all8worker identities/approved parents match, collectives advance,
+logage1.05s, guardreleased. Receipt:temp/remote_logs/p7-entries-completion-20261015-a01.log
+SHA2567209fb90a44c8f49dd6fdcc00fb333207920c20fe6026262f9aa4d812a5581ff.
+A timed #1 snapshot was static; #2 +a fetched its completed log. Do not infer
+continued training from an unrefreshed snapshot. No retry/cleanup was needed.
+Production integration46adec6. commands.sh returned to#0. Nothing queued.
+
 ## P7 projection compilation integration — 15 October 2026
 
 Fusion trial has finished four of five50step jobs. Preliminary medians:
