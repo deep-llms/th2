@@ -1,3 +1,36 @@
+## Completed exploration evaluation running — 15 October 2026, 15:04 UTC
+
+User authorized stopping remaining training once key-only completed and running
+evaluation. Key-only completed 2,500 steps at 14:10 UTC (LM loss 3.59118553).
+First stop request refused before signals because tmux retained a shell wrapper.
+Read-only inspection verified supervisor PID 914336 beneath pane 914333. The
+stop helper now resolves the guard owner inside that pane, still checks exact
+supervisor arguments and every GPU worker's ancestry, and rechecks identities
+before signaling through pidfd. Local tests reject unrelated owners/workers.
+
+Launch 2351da5 stopped that supervisor, verified its final communicating burns,
+copied/verified Accelerate and reclaimed verified burn workers. All eight GPUs
+were recorded free at 15:03:45 UTC before evaluation. Existing model code and
+training outputs were preserved. No remaining training is queued here.
+
+Evaluation root: /mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a01.
+Eight checkpoints: A/targetgrad/LM at 7,500; sparse/key-only/value-only at 2,500;
+original A/LM at 2,500 as matched short-schedule controls. Value-only finished
+before the successful stop. Unfinished noaux and queued nexttoken are excluded.
+Nine existing benchmarks, same shots/prompts/data/seed, eight concurrent GPU
+workers; numerical gates -> two-item task smokes -> full evaluation. No new
+finetuning or paired-loss study. All eight CUDA numerical checks passed; smoke
+stage was running at 15:04:40 UTC. Full benchmark results not yet available.
+Supervisor restores verified burns on success or failure.
+
+11 unique targeted local tests passed (completed selection, scope/controls,
+wrapper ownership, existing exploration regressions). Receipt:
+docs/results/p7_completed_evaluation_launch_20261015.json.
+Remote health log: temp/remote_logs/p7-completed-eval-health-20261015-a01.log,
+SHA256 bd7c5e4ad96fa020fe2ccf8a4a5452ed56f71af782b087378b19b6dea3030d00.
+Only evaluation/stop changes deployed; the prepared 20-case tuning queue and its
+model changes remain unpushed. Unrelated user documentation remains untouched.
+
 ## Exploration status — 15 October 2026, 13:57 UTC / 21:57 SGT
 
 Read-only request 0200f2c verified q359-p7-exploration8-20261015-a03 healthy.
