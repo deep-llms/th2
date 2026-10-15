@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-speed-integrated-completion-20261015-a01
+#th2-q359-p7-speed-final-burn-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -16,13 +16,7 @@ for leaf in ('preflight.json','supervised/supervisor.json','supervised/run/run.j
  p=root/leaf
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
-for arm in ('A','P7-simple-targetgrad'):
- folder=root/'supervised/run/seed-42'/arm
- for leaf in ('result.json','train_config.json'):
-  p=folder/leaf
-  if p.exists():print('INTEGRATED',arm,leaf,p.read_text())
-for p in sorted((root/'supervised/run').glob('*.log')):
- print('JOB_TAIL',str(p),p.read_text(errors='replace')[-2000:])
+print('COMPLETE_MARKER', (root/'supervised/run/complete.json').is_file())
 p=root/'supervisor.log'
 if p.exists():print('SUPERVISOR_TAIL',p.read_text()[-8000:])
 status=snapshot(list(range(8)));print('GPU_SNAPSHOT',json.dumps(status))

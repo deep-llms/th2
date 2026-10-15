@@ -33,7 +33,7 @@ gradient routes, normalization buffers and an AdamW update. They also reject
 the deliberately incorrect detached-LSE gradient. All four tests passed, including zero/tiny norms and fully masked rows.
 
 CUDA acceptance uses the existing trained step-2,500 checkpoint, deterministic
-FA4 backward, short/checkpointed and full 2,048-token/micro16 cases. Eager/eager
+FA4 backward, short/checkpointed and full 2,048-token/micro-batch 16 cases. Eager/eager
 controls run alongside the three candidates. Backbone and proxy gradients
 are checked separately using the existing FA4 model thresholds: loss absolute
 error <0.01, output relative L2 <2%, gradient relative L2 <3%. Cosine-only must
@@ -41,9 +41,9 @@ retain exact forward outputs and normalization buffers. These are numerical
 equivalence checks, not a claim of bitwise training equivalence.
 
 Accepted candidates then run disposable 50-step jobs through the real
-eight-GPU HF Trainer: micro16, accumulation4, sequence2048, unchanged schedule,
+eight-GPU HF Trainer: micro-batch 16, accumulation4, sequence 2048, unchanged schedule,
 optimizer, seed42 and dataset. Timing uses the slowest rank's start-to-start
-interval for updates20–49, excluding profiling, compilation, saves and eval.
+interval for updates 20–49, excluding profiling, compilation, saves and eval.
 Eager controls bracket the candidates. Per-rank sample hashes check data order
 at both ends; compiler counters must remain stable during measurement.
 
@@ -65,17 +65,17 @@ overhead). P7 cosine forward/backward sums to **36.56 ms** of GPU kernel time
 per update. Kernel sums are explanatory, not independently additive wall time.
 
 [CUDA acceptance](results/p7_speed_numerical_20261015.json) passed for all three
-candidates in both tested shapes. Eager/eager was exact. At sequence2048 and
-micro16, cosine-only retained exact forward outputs and buffers, with0.370%
-overall gradient relative L2 difference. LSE/both had about1.260% gradient
-relative L2 difference,0.623% hidden relative L2,0.246% logits relative L2,
-and0.000175 absolute total-loss difference. Predictor gradients were checked
+candidates in both tested shapes. Eager/eager was exact. At sequence 2048 and
+micro-batch 16, cosine-only retained exact forward outputs and buffers, with 0.370%
+overall gradient relative L2 difference. LSE/both had about 1.260% gradient
+relative L2 difference, 0.623% hidden relative L2, 0.246% logits relative L2,
+and 0.000175 absolute total-loss difference. Predictor gradients were checked
 separately and passed. Source checkpoint was unchanged.
 
 ## Complete candidate timing
 
 All five jobs completed, all per-rank data hashes agreed, and no recompilation
-occurred in updates20–49. [Full timing report](results/p7_speed_trial_20261015.json).
+occurred in updates 20–49. [Full timing report](results/p7_speed_trial_20261015.json).
 
 | Implementation | Median seconds/update | Throughput gain vs eager controls |
 |---|---:|---:|
@@ -85,11 +85,11 @@ occurred in updates20–49. [Full timing report](results/p7_speed_trial_20261015
 | Both | 1.112883 | 5.08% |
 | Eager, after | 1.169598 | — |
 
-The eager controls differ by0.025%. The combined result reduces elapsed update
-time by4.84% (throughput increases5.08%). Relative to the initial A measurement,
-P7 overhead falls from11.5% to about6.1%. These are steady-state short-run
+The eager controls differ by 0.025%. The combined result reduces elapsed update
+time by 4.84% (throughput increases 5.08%). Relative to the initial A measurement,
+P7 overhead falls from 11.5% to about 6.1%. These are steady-state short-run
 measurements, excluding compilation and checkpoint/evaluation overhead, not
-measured completion times for a full2,500-step experiment.
+measured completion times for a full 2,500-step experiment.
 
 ## Normal training interface
 
@@ -100,7 +100,7 @@ Use the existing P7-simple-targetgrad recipe and add:
 ```
 
 The same keys work in the JSON recipe passed to the existing sequential queue.
-Both default tofalse. They are validated for P7-simple-targetgrad; A accepts
+Both default to false. They are validated for P7-simple-targetgrad; A accepts
 these settings without changing its computation. Other proxy arms fail closed
 until validated. Dense SDPA retains its original attention path; the LSE option
 is used only with FA4. Cosine compilation does not change the LM forward path.
@@ -111,13 +111,24 @@ Production changes are in `deep_kv/fa4.py`, `deep_kv/proxy_memory.py`,
 No parameter names/shapes, optimizer grouping, data/packing, schedule or loss
 weights change. Both flags are saved in the recipe; enabling/disabling them
 on resume requires `--allow_performance_change_on_resume true`. Existing
-checkpoints with absent flags meanfalse and retain their original behavior.
+checkpoints with absent flags mean false and retain their original behavior.
 Normal optimizer/scheduler/RNG/data restoration is unchanged. Floating-point
 rounding differs, so identical future weights are not promised.
 
 Six local tests passed, including exact prototype/production outputs and
 parameter gradients, actual train.py save/resume, and checkpoint state names.
 An additional combined-flags real-entry resume and legacy FA4 baseline test
-passed. The final integrated eight-GPU A/P7 timing pair is running; this uses
-normal CLI flags, not runtime prototype patches. Burns will be verified before
-calling the study complete.
+passed. The [final integrated eight-GPU pair](results/p7_speed_integrated_20261015.json)
+also passed through normal CLI flags, without runtime prototype patches:
+
+| Arm | Median seconds/update | Peak allocated GPU memory |
+|---|---:|---:|
+| A, unchanged | 1.049506 | 59.67 GiB |
+| P7, both optimizations | 1.111457 | 61.41 GiB |
+
+P7's remaining update-time overhead over A is **5.90%**. Data hashes at both
+ends agree across arms/ranks, and graph counters are stable during timing.
+Both use the original train fingerprint `6e4708f1e818fb44`; validation uses
+32 rows for these disposable tests. All original research checkpoints remain
+untouched. The default settings for ordinary launches are still disabled.
+Final automatic burn handoff verification is pending.
