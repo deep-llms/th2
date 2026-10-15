@@ -1,3 +1,14 @@
+## P7 exploration submission retry — 15 October 2026, 05:04 UTC
+
+First launch19812e5 exited before nvidia-smi/tmux/preflight or any GPU signals:
+runner source copy has no.git, so the diagnostic git rev-parse HEAD failed.
+No training/output/cache was created by that shell. Removed this source-copy
+assumption; retry uses fresh q359-p7-exploration8-20261015-a02 root/session.
+Implementation6ce50b3 and scientific config unchanged. Receipt:
+temp/remote_logs/p7-exploration-launch-20261015-a01.log,
+SHA2565b57c35e3db5f613b763909bc7bf1232ee2cb7ad6f91373477c1d3d2abeb29bb.
+This is a delivered shell error, not a controller failure. Remote retry pending.
+
 ## Eight-arm P7 exploration authorized — 15 October 2026 (SGT)
 
 User now explicitly requested launch of the prepared eight runs. Supersedes

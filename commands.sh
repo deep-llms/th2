@@ -1,14 +1,14 @@
 #1 +60+a
-#th2-q359-p7-exploration8-20261015-a01
+#th2-q359-p7-exploration8-20261015-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
 date -u
-git rev-parse HEAD
+printf 'SOURCE_IMPLEMENTATION 6ce50b3\n'
 nvidia-smi
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a01
-TASK_SESSION=q359-p7-exploration8-20261015-a01
-TASK_LOG=/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a01.launch.log
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a02
+TASK_SESSION=q359-p7-exploration8-20261015-a02
+TASK_LOG=/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a02.launch.log
 TASK_PREDECESSOR=/mnt/local/_outputs/deep-llms_th2/q359-p7-target-integrated-20261015-a01
 TASK_REFERENCE=/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01
 TASK_ROWS=/mnt/local/_outputs/deep-llms_th2/q359-p7-teacher-probe-20261015-a01/rows.json
