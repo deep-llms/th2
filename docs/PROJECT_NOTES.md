@@ -1,3 +1,56 @@
+## P7 tuning production launched and verified — 15 October 2026
+
+Active root /mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03.
+At 2026-10-15T16:50:54.128143+00:00 fresh P7-simple-lm-noaux reached80/2500 at about1.15s/update,
+finite loss/gradients, all8 GPUs active. Production began16:48:30UTC.
+Queue: lm-noaux → lm-nexttoken → all20 tuning cases in scripts/p7_tuning_queue.py,
+each2500steps;12layers,FA4,micro16/GAS4/seq2048,125warmup,allcheckpoints every250.
+
+All23 local test methods,21 CUDA numerical cases and22 eight-rank training
+smokes passed. Full aggregate recipe/data/checkpoint gate passed. Cross-document
+output/gradient changes were zero; maximum FA4/SDPA loss difference0.00012017,
+relative gradient L2 difference0.006267 (existing limit0.03).
+Accelerate config copied/verified; exact burn workers stopped; all GPUs free
+16:19:41UTC. After gates, cleanup removed only the old interrupted noaux model
+output, archived its diagnostic JSON/file manifest, left external W&B logs,
+completed arms and shared dataset caches intact. All six completed old outputs
+confirmed present. New run uses a fresh root without resume/old checkpoint state.
+Supervisor automatically restores verified communicating burns on success/failure.
+No new downstream evaluation appended to this training-only queue.
+
+Launchcdb0904; final read-only verification16071b7. Full receipt:
+docs/results/p7_tuning22_launch_20261015.json. Log
+temp/remote_logs/p7-tuning-health-20261015-a10.log SHA256
+50799710ff60a7a9b224c39754b9e9e662b0fff787afa018f0e46e6a9d234029.
+Earlier a01/a02 preflight failures are documented below; neither touched GPUs
+or deleted output. The corrected a03 passed every gate. No model-code changes
+were needed in this review. User's unrelated documentation remains untouched.
+
+## P7 tuning numerical gates passed; distributed smokes running — 15 October 2026
+
+Active root /mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03,
+launch cdb0904. At16:26:23UTC all21 CUDA numerical cases passed, including
+FA4/SDPA gradients, isolation, and independent value-mixing equations. Largest
+loss difference0.00012017. All23 unique local regression methods also passed,
+including all14 tuning architectures under actual Trainer resume and two-rank
+Gloo. Artifacts: docs/results/p7_tuning22_cuda_numerics_20261015.json,
+p7_tuning_launch_local_checks_20261015.json, p7_tuning22_launch_20261015.json.
+
+Accelerate copied and verified; exact eight existing burn workers reclaimed;
+all GPUs free16:19:41UTC. First3 of22 distributed smokes passed; fourth running.
+Remaining gates, cleanup and production pending. Production order: fresh
+lm-noaux, lm-nexttoken, then20 tuning cases. All2500steps/eightGPUs/retained
+checkpoints as below. Supervisor restores verified burns on success/failure.
+No model implementation changed in this launch review.
+
+Earlier a01 failed on Git revision printing (runner directory lacks .git);
+a02 rejected W&B symlinks in preflight. Both stopped before any GPU reclamation,
+cleanup or output-root creation. Exact links inspected: internal W&B links and
+one debug-core link to /dev/shm. Cleanup now records/unlinks those without
+following external targets; rejects any unrecognized external link. Tests
+verify external logs and completed neighboring outputs are preserved.
+User's unrelated documentation remains untouched.
+
 ## Authorized P7 tuning and unfinished-arm restart — 15 October 2026
 
 User authorized checking new arms, deleting only the last interrupted model
