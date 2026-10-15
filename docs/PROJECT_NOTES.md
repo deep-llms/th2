@@ -1,3 +1,51 @@
+## P7 remaining fifteen reordered — 15 October 2026, 22:42 UTC
+
+User authorized finishing the active arm, then running eight selected arms before
+all seven other pending arms. `tg-heads2` finished successfully at22:36:51UTC;
+its validator passed at22:36:53. Completed outputs were preserved.
+
+New root: `/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01`.
+Order (first eight prioritized):
+1. tg-valueonly
+2. tg-keyonly
+3. lm-valueonly-noaux
+4. lm-keyonly-noaux
+5. lm-sparse-noaux
+6. a-seed2042
+7. lm-noaux-seed2042
+8. tg-heads8
+9. lm-lambda001
+10. lm-lambda1
+11. lm-valueonly-gated
+12. tg-medium
+13. tg-weighted
+14. tg-huber
+15. tg-nonlinear
+
+Original train/validate commands, configurations, seeds and 2,500-step cutoff
+are unchanged; outputs use the fresh root. All fifteen remain authorized.
+Existing numerical/distributed smoke gates already covered every variant.
+Priority covers key/value ablations, no matching loss, sparse placement,
+second-seed baseline comparison, and head count. No downstream stage added.
+
+`scripts/reorder_p7_tuning.py` reserved the old next-job log exclusively,
+allowing current training plus validation to finish. The old runner then stopped
+before Popen. Its FileExistsError/failed status is an **intentional pre-launch
+queue boundary**, not a model failure. Do not rerun completed arms to repair it.
+The waiter requires this exact boundary, successful current validation, unchanged
+manifest hashes, verified burn receipt/progress and released GPU guard.
+Four CPU tests passed, including actual run_jobs boundary behavior.
+
+Burn collective progress was verified22:38:04UTC; handoff verified22:38:12;
+Accelerate config copied and `accelerate env` confirmed8 ranks/MULTI_GPU/bf16.
+Only verified burn workers were reclaimed, GPUs rechecked empty22:39:13;
+tg-valueonly started22:39:13. New supervisor restores communicating burns
+on queue success/failure. Source launch deb1391; verification d321f8f;
+receipt docs/results/p7_priority15_handoff_20261015.json.
+Read-only health d8578a4 at 22:42:33 UTC confirmed tg-valueonly step 130/2500,
+finite loss/gradients, 1.14 s/update and all eight GPUs 96–99% utilized.
+Commands returned to inactive #0; persistent queue remains running.
+
 ## P7 tuning partial results — 15 October 2026, 22:23 UTC
 
 Read-only80f2c16 verified6/22 arms complete and validated; tg-heads2 running
