@@ -292,3 +292,43 @@ be promoted. The target-only kernel is about1% faster; final bracketing control
 and integrated production verification remain pending. Nine local tests passed
 35.978s, including the standalone Triton interpreter regression and actual
 Trainer save/resume with a reference implementation of the opt-in target path.
+
+
+### Completed custom-kernel timing
+
+[All five trials](results/p7_kernel_trial_20261015.json) passed, with identical
+per-rank endpoint data hashes and stable compiler counters in updates20–49.
+
+| Candidate | Seconds/update | Throughput change vs bracketing controls |
+|---|---:|---:|
+| Current optimized control, before | 1.098117 | — |
+| Head-batched FA4 | 1.120300 | -2.06% |
+| Custom target kernel | 1.087154 | +0.93% |
+| Both candidates | 1.109421 | -1.10% |
+| Current optimized control, after | 1.096338 | — |
+
+The target kernel saves about10ms/update and0.375GiB peak allocated memory in
+these trials. Its gain against the individual controls is0.84–1.01%; controls
+drift0.162%. The gain is small, so it remains optional. The integration gate
+requires >0.5% gain against each control and <=0.5% control drift. Head batching
+is rejected as slower; ordinary attention is unchanged by the new option.
+
+Diagnostic32-row validation LM losses after50steps: controls7.966937/7.966930,
+target kernel7.966979. These are small diagnostic evaluations, not a downstream
+or long-training equivalence claim. The trial completed successfully and
+restored/verified eight burns at02:12:04UTC before the final integration launch.
+
+Use `--proxy_fused_targets true` with the existing three optimization flags.
+It defaults false, supports the validated P7-simple-targetgrad arm (A stays
+unchanged), and requires the torch2.14 runtime. Normal training requires CUDA;
+first-order autograd only. A version guard prevents silently reusing its clamp
+subgradient with another torch release. Resume toggles require the existing
+`--allow_performance_change_on_resume true` acknowledgement. No parameter/state
+names, optimizer grouping, schedule, data packing/order or loss weights change.
+
+A final review added explicit NaN propagation to the Triton min/max operations
+and a13th primitive test for nonfinite forward values and their clamp gradients.
+The interpreter regression passed12.988s. Final CUDA integration reruns this
+updated kernel against the original checkpoint implementation, then runs A/P7
+through ordinary CLI flags. Production integration commit:d1b3336; root:
+`q359-p7-target-integrated-20261015-a01`. Completion evidence pending.

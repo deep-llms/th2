@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-target-health-20261015-a01
+#th2-q359-p7-target-completion-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -11,6 +11,12 @@ from scripts.gpu_status import snapshot
 from scripts.train_then_burn import burn_progress,approved_launcher,process,BURN_HASH
 from scripts.verified_gpu_reclaim import ownership
 root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-target-integrated-20261015-a01')
+for attempt in range(30):
+ state=root/'supervised/supervisor.json'
+ run=root/'supervised/run/run.json'
+ print('POLL',datetime.now(timezone.utc).isoformat(),run.read_text() if run.exists() else 'not started',flush=True)
+ if state.exists() and json.loads(state.read_text()).get('finished_at'):break
+ time.sleep(20)
 print('AT',datetime.now(timezone.utc).isoformat())
 previous=root.parent/'q359-p7-kernel-trial-20261015-a02'
 for leaf in ('supervised/run/timing-summary.json','supervised/supervisor.json','supervised/burn-verified.json'):
