@@ -1,0 +1,870 @@
+{
+  "status": "passed",
+  "results": {
+    "reference-before": {
+      "mode": "both",
+      "median_seconds": 1.1152356105158105,
+      "mean_seconds": 1.115812653345832,
+      "intervals": [
+        1.1190898889908567,
+        1.1154809029540047,
+        1.1247765779262409,
+        1.1176588180242106,
+        1.1112544079078361,
+        1.1125707851024345,
+        1.1113543370738626,
+        1.1121730480808765,
+        1.116656077094376,
+        1.1103977230377495,
+        1.1187635760288686,
+        1.1106178059708327,
+        1.113145192968659,
+        1.1127407799940556,
+        1.1205141430255026,
+        1.1136306050466374,
+        1.1144824200309813,
+        1.112638061051257,
+        1.1142077021067962,
+        1.1136096889385954,
+        1.1201358910184354,
+        1.114019516040571,
+        1.1155509139643982,
+        1.1152414369862527,
+        1.1152297840453684,
+        1.116541460971348,
+        1.1243712319992483,
+        1.1231545470654964,
+        1.1177225349238142,
+        1.116649742005393
+      ],
+      "peak_gib": 61.407240867614746,
+      "evaluation": {
+        "eval_lm_loss": 7.966991533811742,
+        "eval_loss": 7.966991533811742,
+        "eval_input_tokens": 65536,
+        "eval_target_tokens": 65434,
+        "eval_rows": 32,
+        "eval_aux_loss": 0.1787374005652964,
+        "eval_cos_loss": 0.1787374005652964,
+        "eval_proxy_layer_2_aux_loss": 0.2381601780653,
+        "eval_proxy_layer_2_cos_loss": 0.2381601780653,
+        "eval_proxy_layer_2_cosine_0": 0.7618398219347,
+        "eval_proxy_layer_4_aux_loss": 0.17175464518368244,
+        "eval_proxy_layer_4_cos_loss": 0.17175464518368244,
+        "eval_proxy_layer_4_cosine_0": 0.8282453548163176,
+        "eval_proxy_layer_6_aux_loss": 0.1527079977095127,
+        "eval_proxy_layer_6_cos_loss": 0.1527079977095127,
+        "eval_proxy_layer_6_cosine_0": 0.8472920022904873,
+        "eval_proxy_layer_8_aux_loss": 0.1523267813026905,
+        "eval_proxy_layer_8_cos_loss": 0.1523267813026905,
+        "eval_proxy_layer_8_cosine_0": 0.8476732186973095,
+        "eval_runtime": 0.5664,
+        "eval_samples_per_second": 56.496,
+        "eval_steps_per_second": 1.765,
+        "eval_no_proxy_lm_loss": 7.972298422838279,
+        "eval_no_proxy_loss": 7.972298422838279,
+        "eval_no_proxy_input_tokens": 65536,
+        "eval_no_proxy_target_tokens": 65434,
+        "eval_no_proxy_rows": 32,
+        "eval_no_proxy_aux_loss": 0.177512320689857,
+        "eval_no_proxy_cos_loss": 0.177512320689857,
+        "eval_no_proxy_proxy_layer_2_aux_loss": 0.23432550951838493,
+        "eval_no_proxy_proxy_layer_2_cos_loss": 0.23432550951838493,
+        "eval_no_proxy_proxy_layer_2_cosine_0": 0.7656744904816151,
+        "eval_no_proxy_proxy_layer_4_aux_loss": 0.17261761240661144,
+        "eval_no_proxy_proxy_layer_4_cos_loss": 0.17261761240661144,
+        "eval_no_proxy_proxy_layer_4_cosine_0": 0.8273823875933886,
+        "eval_no_proxy_proxy_layer_6_aux_loss": 0.15019037202000618,
+        "eval_no_proxy_proxy_layer_6_cos_loss": 0.15019037202000618,
+        "eval_no_proxy_proxy_layer_6_cosine_0": 0.8498096279799938,
+        "eval_no_proxy_proxy_layer_8_aux_loss": 0.15291578881442547,
+        "eval_no_proxy_proxy_layer_8_cos_loss": 0.15291578881442547,
+        "eval_no_proxy_proxy_layer_8_cosine_0": 0.8470842111855745,
+        "eval_no_proxy_runtime": 0.6539,
+        "eval_no_proxy_samples_per_second": 48.934,
+        "eval_no_proxy_steps_per_second": 1.529,
+        "eval_reliance_loss_increase": 0.005306889026537753,
+        "eval_proxy_layer_2_attention_mass": 0.8215124011039734,
+        "eval_proxy_layer_4_attention_mass": 0.6009470224380493,
+        "eval_proxy_layer_6_attention_mass": 0.5638308525085449,
+        "eval_proxy_layer_8_attention_mass": 0.9403547048568726
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        }
+      ]
+    },
+    "fused_aux": {
+      "mode": "fused_aux",
+      "median_seconds": 1.1094937084708363,
+      "mean_seconds": 1.110031994288632,
+      "intervals": [
+        1.116032099002041,
+        1.1077417170163244,
+        1.1106403300072998,
+        1.108770065009594,
+        1.1072223299415782,
+        1.1088980770437047,
+        1.1062183619942516,
+        1.1091583010274917,
+        1.108582858927548,
+        1.1079690660117194,
+        1.1144736440619454,
+        1.107345717959106,
+        1.1068666009232402,
+        1.1068132249638438,
+        1.1098291159141809,
+        1.114792944979854,
+        1.1132236110279337,
+        1.106502334936522,
+        1.108596546924673,
+        1.1062520149862394,
+        1.1159061379730701,
+        1.108959311968647,
+        1.111197822028771,
+        1.1120610299985856,
+        1.1099519520066679,
+        1.1113675499800593,
+        1.1112004939932376,
+        1.1120210960507393,
+        1.1123785589588806,
+        1.1099869130412117
+      ],
+      "peak_gib": 62.20657539367676,
+      "evaluation": {
+        "eval_lm_loss": 7.966938104497471,
+        "eval_loss": 7.966938104497471,
+        "eval_input_tokens": 65536,
+        "eval_target_tokens": 65434,
+        "eval_rows": 32,
+        "eval_aux_loss": 0.1787522966042161,
+        "eval_cos_loss": 0.1787522966042161,
+        "eval_proxy_layer_2_aux_loss": 0.23818598501384258,
+        "eval_proxy_layer_2_cos_loss": 0.23818598501384258,
+        "eval_proxy_layer_2_cosine_0": 0.7618140149861574,
+        "eval_proxy_layer_4_aux_loss": 0.17176643572747707,
+        "eval_proxy_layer_4_cos_loss": 0.17176643572747707,
+        "eval_proxy_layer_4_cosine_0": 0.8282335642725229,
+        "eval_proxy_layer_6_aux_loss": 0.1527225859463215,
+        "eval_proxy_layer_6_cos_loss": 0.1527225859463215,
+        "eval_proxy_layer_6_cosine_0": 0.8472774140536785,
+        "eval_proxy_layer_8_aux_loss": 0.15233417972922325,
+        "eval_proxy_layer_8_cos_loss": 0.15233417972922325,
+        "eval_proxy_layer_8_cosine_0": 0.8476658202707767,
+        "eval_runtime": 0.5165,
+        "eval_samples_per_second": 61.961,
+        "eval_steps_per_second": 1.936,
+        "eval_no_proxy_lm_loss": 7.972333719019355,
+        "eval_no_proxy_loss": 7.972333719019355,
+        "eval_no_proxy_input_tokens": 65536,
+        "eval_no_proxy_target_tokens": 65434,
+        "eval_no_proxy_rows": 32,
+        "eval_no_proxy_aux_loss": 0.1775246551260352,
+        "eval_no_proxy_cos_loss": 0.1775246551260352,
+        "eval_no_proxy_proxy_layer_2_aux_loss": 0.23433705046772957,
+        "eval_no_proxy_proxy_layer_2_cos_loss": 0.23433705046772957,
+        "eval_no_proxy_proxy_layer_2_cosine_0": 0.7656629495322704,
+        "eval_no_proxy_proxy_layer_4_aux_loss": 0.17262683436274529,
+        "eval_no_proxy_proxy_layer_4_cos_loss": 0.17262683436274529,
+        "eval_no_proxy_proxy_layer_4_cosine_0": 0.8273731656372547,
+        "eval_no_proxy_proxy_layer_6_aux_loss": 0.15020352229475975,
+        "eval_no_proxy_proxy_layer_6_cos_loss": 0.15020352229475975,
+        "eval_no_proxy_proxy_layer_6_cosine_0": 0.8497964777052402,
+        "eval_no_proxy_proxy_layer_8_aux_loss": 0.15293121337890625,
+        "eval_no_proxy_proxy_layer_8_cos_loss": 0.15293121337890625,
+        "eval_no_proxy_proxy_layer_8_cosine_0": 0.8470687866210938,
+        "eval_no_proxy_runtime": 0.6171,
+        "eval_no_proxy_samples_per_second": 51.852,
+        "eval_no_proxy_steps_per_second": 1.62,
+        "eval_reliance_loss_increase": 0.0053956145218840845,
+        "eval_proxy_layer_2_attention_mass": 0.8213657140731812,
+        "eval_proxy_layer_4_attention_mass": 0.6009981632232666,
+        "eval_proxy_layer_6_attention_mass": 0.5639543533325195,
+        "eval_proxy_layer_8_attention_mass": 0.9402661919593811
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 83,
+            "unique_graphs": 5
+          }
+        }
+      ],
+      "speedup_percent": 0.41832448105192377
+    },
+    "entries": {
+      "mode": "entries",
+      "median_seconds": 1.0966309870127589,
+      "mean_seconds": 1.0975741864958157,
+      "intervals": [
+        1.1011757439700887,
+        1.0974801440024748,
+        1.0961489119799808,
+        1.1040235180407763,
+        1.0946585159981623,
+        1.096703732968308,
+        1.0960850960109383,
+        1.0955285610398278,
+        1.095234289066866,
+        1.0967998299747705,
+        1.1011445350013673,
+        1.098585719941184,
+        1.094890020089224,
+        1.0951840589987114,
+        1.0950485130306333,
+        1.0956507489318028,
+        1.0957441419595852,
+        1.0965582410572097,
+        1.0983995739370584,
+        1.1019839890068397,
+        1.1028869739966467,
+        1.0961612890241668,
+        1.0961678010644391,
+        1.0965507189976051,
+        1.0962937559233978,
+        1.097736481926404,
+        1.0992195560829714,
+        1.0985590239288285,
+        1.0980778669472784,
+        1.0985442419769242
+      ],
+      "peak_gib": 61.282726764678955,
+      "evaluation": {
+        "eval_lm_loss": 7.966965908635037,
+        "eval_loss": 7.966965908635037,
+        "eval_input_tokens": 65536,
+        "eval_target_tokens": 65434,
+        "eval_rows": 32,
+        "eval_aux_loss": 0.17876501195132732,
+        "eval_cos_loss": 0.17876501195132732,
+        "eval_proxy_layer_2_aux_loss": 0.2381890006363392,
+        "eval_proxy_layer_2_cos_loss": 0.2381890006363392,
+        "eval_proxy_layer_2_cosine_0": 0.7618109993636608,
+        "eval_proxy_layer_4_aux_loss": 0.17178228124976158,
+        "eval_proxy_layer_4_cos_loss": 0.17178228124976158,
+        "eval_proxy_layer_4_cosine_0": 0.8282177187502384,
+        "eval_proxy_layer_6_aux_loss": 0.1527308076620102,
+        "eval_proxy_layer_6_cos_loss": 0.1527308076620102,
+        "eval_proxy_layer_6_cosine_0": 0.8472691923379898,
+        "eval_proxy_layer_8_aux_loss": 0.15235795825719833,
+        "eval_proxy_layer_8_cos_loss": 0.15235795825719833,
+        "eval_proxy_layer_8_cosine_0": 0.8476420417428017,
+        "eval_runtime": 0.5014,
+        "eval_samples_per_second": 63.817,
+        "eval_steps_per_second": 1.994,
+        "eval_no_proxy_lm_loss": 7.97228208063182,
+        "eval_no_proxy_loss": 7.97228208063182,
+        "eval_no_proxy_input_tokens": 65536,
+        "eval_no_proxy_target_tokens": 65434,
+        "eval_no_proxy_rows": 32,
+        "eval_no_proxy_aux_loss": 0.17755110515281558,
+        "eval_no_proxy_cos_loss": 0.17755110515281558,
+        "eval_no_proxy_proxy_layer_2_aux_loss": 0.23436670564115047,
+        "eval_no_proxy_proxy_layer_2_cos_loss": 0.23436670564115047,
+        "eval_no_proxy_proxy_layer_2_cosine_0": 0.7656332943588495,
+        "eval_no_proxy_proxy_layer_4_aux_loss": 0.17265471443533897,
+        "eval_no_proxy_proxy_layer_4_cos_loss": 0.17265471443533897,
+        "eval_no_proxy_proxy_layer_4_cosine_0": 0.827345285564661,
+        "eval_no_proxy_proxy_layer_6_aux_loss": 0.1502241399139166,
+        "eval_no_proxy_proxy_layer_6_cos_loss": 0.1502241399139166,
+        "eval_no_proxy_proxy_layer_6_cosine_0": 0.8497758600860834,
+        "eval_no_proxy_proxy_layer_8_aux_loss": 0.15295886062085629,
+        "eval_no_proxy_proxy_layer_8_cos_loss": 0.15295886062085629,
+        "eval_no_proxy_proxy_layer_8_cosine_0": 0.8470411393791437,
+        "eval_no_proxy_runtime": 0.6585,
+        "eval_no_proxy_samples_per_second": 48.596,
+        "eval_no_proxy_steps_per_second": 1.519,
+        "eval_reliance_loss_increase": 0.005316171996783581,
+        "eval_proxy_layer_2_attention_mass": 0.8214170932769775,
+        "eval_proxy_layer_4_attention_mass": 0.6007852554321289,
+        "eval_proxy_layer_6_attention_mass": 0.5638174414634705,
+        "eval_proxy_layer_8_attention_mass": 0.9403039813041687
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 173,
+            "unique_graphs": 8
+          }
+        }
+      ],
+      "speedup_percent": 1.5961618323427906
+    },
+    "kv": {
+      "mode": "kv",
+      "median_seconds": 1.0976822925149463,
+      "mean_seconds": 1.0986659415337878,
+      "intervals": [
+        1.1025673530530185,
+        1.097271119011566,
+        1.0957282219314948,
+        1.0956927839433774,
+        1.0961273630382493,
+        1.0969269439810887,
+        1.0994345739018172,
+        1.102472122060135,
+        1.097945248009637,
+        1.0955387650756165,
+        1.101395147969015,
+        1.0974316750653088,
+        1.0946315419860184,
+        1.0955821690149605,
+        1.0943408999592066,
+        1.0949351749150082,
+        1.0947239380329847,
+        1.0964264150243253,
+        1.0986161479959264,
+        1.0979329099645838,
+        1.1050900690024719,
+        1.1122478269971907,
+        1.0966155290370807,
+        1.0956595690222457,
+        1.1085960540222004,
+        1.0992068119812757,
+        1.0986918719718233,
+        1.0990676369983703,
+        1.0981146140256897,
+        1.1009677490219474
+      ],
+      "peak_gib": 62.643568992614746,
+      "evaluation": {
+        "eval_lm_loss": 7.966959625467074,
+        "eval_loss": 7.966959625467074,
+        "eval_input_tokens": 65536,
+        "eval_target_tokens": 65434,
+        "eval_rows": 32,
+        "eval_aux_loss": 0.1787664694711566,
+        "eval_cos_loss": 0.1787664694711566,
+        "eval_proxy_layer_2_aux_loss": 0.23819345235824585,
+        "eval_proxy_layer_2_cos_loss": 0.23819345235824585,
+        "eval_proxy_layer_2_cosine_0": 0.7618065476417542,
+        "eval_proxy_layer_4_aux_loss": 0.17178266122937202,
+        "eval_proxy_layer_4_cos_loss": 0.17178266122937202,
+        "eval_proxy_layer_4_cosine_0": 0.828217338770628,
+        "eval_proxy_layer_6_aux_loss": 0.1527368426322937,
+        "eval_proxy_layer_6_cos_loss": 0.1527368426322937,
+        "eval_proxy_layer_6_cosine_0": 0.8472631573677063,
+        "eval_proxy_layer_8_aux_loss": 0.1523529216647148,
+        "eval_proxy_layer_8_cos_loss": 0.1523529216647148,
+        "eval_proxy_layer_8_cosine_0": 0.8476470783352852,
+        "eval_runtime": 0.4817,
+        "eval_samples_per_second": 66.437,
+        "eval_steps_per_second": 2.076,
+        "eval_no_proxy_lm_loss": 7.972259216467165,
+        "eval_no_proxy_loss": 7.972259216467165,
+        "eval_no_proxy_input_tokens": 65536,
+        "eval_no_proxy_target_tokens": 65434,
+        "eval_no_proxy_rows": 32,
+        "eval_no_proxy_aux_loss": 0.17753734020516276,
+        "eval_no_proxy_cos_loss": 0.17753734020516276,
+        "eval_no_proxy_proxy_layer_2_aux_loss": 0.23435576260089874,
+        "eval_no_proxy_proxy_layer_2_cos_loss": 0.23435576260089874,
+        "eval_no_proxy_proxy_layer_2_cosine_0": 0.7656442373991013,
+        "eval_no_proxy_proxy_layer_4_aux_loss": 0.17264308221638203,
+        "eval_no_proxy_proxy_layer_4_cos_loss": 0.17264308221638203,
+        "eval_no_proxy_proxy_layer_4_cosine_0": 0.827356917783618,
+        "eval_no_proxy_proxy_layer_6_aux_loss": 0.15021343901753426,
+        "eval_no_proxy_proxy_layer_6_cos_loss": 0.15021343901753426,
+        "eval_no_proxy_proxy_layer_6_cosine_0": 0.8497865609824657,
+        "eval_no_proxy_proxy_layer_8_aux_loss": 0.15293707698583603,
+        "eval_no_proxy_proxy_layer_8_cos_loss": 0.15293707698583603,
+        "eval_no_proxy_proxy_layer_8_cosine_0": 0.847062923014164,
+        "eval_no_proxy_runtime": 0.6405,
+        "eval_no_proxy_samples_per_second": 49.961,
+        "eval_no_proxy_steps_per_second": 1.561,
+        "eval_reliance_loss_increase": 0.005299591000091475,
+        "eval_proxy_layer_2_attention_mass": 0.8213719725608826,
+        "eval_proxy_layer_4_attention_mass": 0.6008015275001526,
+        "eval_proxy_layer_6_attention_mass": 0.5638076066970825,
+        "eval_proxy_layer_8_attention_mass": 0.9402936697006226
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          },
+          "49": {
+            "calls_captured": 182,
+            "unique_graphs": 8
+          }
+        }
+      ],
+      "speedup_percent": 1.4988580818279251
+    },
+    "reference-after": {
+      "mode": "both",
+      "median_seconds": 1.1130343740223907,
+      "mean_seconds": 1.1143145971776296,
+      "intervals": [
+        1.1193825619993731,
+        1.1130377179943025,
+        1.1286357860080898,
+        1.1130989659577608,
+        1.1106271190801635,
+        1.1128599600633606,
+        1.1115631759166718,
+        1.1105889830505475,
+        1.1118371849879622,
+        1.118455795920454,
+        1.1183533580042422,
+        1.114754568086937,
+        1.1127021600259468,
+        1.1123452970059589,
+        1.112352708936669,
+        1.1114902840927243,
+        1.110728258965537,
+        1.1124547929503024,
+        1.1121487750206143,
+        1.1150259289424866,
+        1.1173412260832265,
+        1.1129190460778773,
+        1.1130310300504789,
+        1.1126105929724872,
+        1.113691130070947,
+        1.1154797240160406,
+        1.114487219019793,
+        1.1145637159934267,
+        1.1164979810127988,
+        1.1163728670217097
+      ],
+      "peak_gib": 62.706068992614746,
+      "evaluation": {
+        "eval_lm_loss": 7.966971878390821,
+        "eval_loss": 7.966971878390821,
+        "eval_input_tokens": 65536,
+        "eval_target_tokens": 65434,
+        "eval_rows": 32,
+        "eval_aux_loss": 0.17873283615335822,
+        "eval_cos_loss": 0.17873283615335822,
+        "eval_proxy_layer_2_aux_loss": 0.23817228339612484,
+        "eval_proxy_layer_2_cos_loss": 0.23817228339612484,
+        "eval_proxy_layer_2_cosine_0": 0.7618277166038752,
+        "eval_proxy_layer_4_aux_loss": 0.1717534102499485,
+        "eval_proxy_layer_4_cos_loss": 0.1717534102499485,
+        "eval_proxy_layer_4_cosine_0": 0.8282465897500515,
+        "eval_proxy_layer_6_aux_loss": 0.15268895588815212,
+        "eval_proxy_layer_6_cos_loss": 0.15268895588815212,
+        "eval_proxy_layer_6_cosine_0": 0.8473110441118479,
+        "eval_proxy_layer_8_aux_loss": 0.15231669507920742,
+        "eval_proxy_layer_8_cos_loss": 0.15231669507920742,
+        "eval_proxy_layer_8_cosine_0": 0.8476833049207926,
+        "eval_runtime": 0.5043,
+        "eval_samples_per_second": 63.45,
+        "eval_steps_per_second": 1.983,
+        "eval_no_proxy_lm_loss": 7.972318242427484,
+        "eval_no_proxy_loss": 7.972318242427484,
+        "eval_no_proxy_input_tokens": 65536,
+        "eval_no_proxy_target_tokens": 65434,
+        "eval_no_proxy_rows": 32,
+        "eval_no_proxy_aux_loss": 0.17752603255212307,
+        "eval_no_proxy_cos_loss": 0.17752603255212307,
+        "eval_no_proxy_proxy_layer_2_aux_loss": 0.23435216583311558,
+        "eval_no_proxy_proxy_layer_2_cos_loss": 0.23435216583311558,
+        "eval_no_proxy_proxy_layer_2_cosine_0": 0.7656478341668844,
+        "eval_no_proxy_proxy_layer_4_aux_loss": 0.17263401485979557,
+        "eval_no_proxy_proxy_layer_4_cos_loss": 0.17263401485979557,
+        "eval_no_proxy_proxy_layer_4_cosine_0": 0.8273659851402044,
+        "eval_no_proxy_proxy_layer_6_aux_loss": 0.15019183419644833,
+        "eval_no_proxy_proxy_layer_6_cos_loss": 0.15019183419644833,
+        "eval_no_proxy_proxy_layer_6_cosine_0": 0.8498081658035517,
+        "eval_no_proxy_proxy_layer_8_aux_loss": 0.1529261153191328,
+        "eval_no_proxy_proxy_layer_8_cos_loss": 0.1529261153191328,
+        "eval_no_proxy_proxy_layer_8_cosine_0": 0.8470738846808672,
+        "eval_no_proxy_runtime": 0.6748,
+        "eval_no_proxy_samples_per_second": 47.418,
+        "eval_no_proxy_steps_per_second": 1.482,
+        "eval_reliance_loss_increase": 0.005346364036662443,
+        "eval_proxy_layer_2_attention_mass": 0.8214256167411804,
+        "eval_proxy_layer_4_attention_mass": 0.6008689403533936,
+        "eval_proxy_layer_6_attention_mass": 0.5637823343276978,
+        "eval_proxy_layer_8_attention_mass": 0.9405077695846558
+      },
+      "data_order_verified": true,
+      "graph_counts": [
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        },
+        {
+          "20": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          },
+          "49": {
+            "calls_captured": 74,
+            "unique_graphs": 5
+          }
+        }
+      ]
+    }
+  },
+  "reference_seconds": 1.1141349922691006,
+  "scope": "Disposable 50-step eight-GPU Trainer trials; steps20-49; not a long training equivalence claim"
+}

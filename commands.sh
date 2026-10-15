@@ -1,5 +1,5 @@
-#1 +15+a
-#th2-q359-p7-entries-health-20261015-a01
+#1 +60+a
+#th2-q359-p7-entries-completion-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -11,6 +11,13 @@ from scripts.gpu_status import snapshot
 from scripts.train_then_burn import burn_progress,approved_launcher,process,BURN_HASH
 from scripts.verified_gpu_reclaim import ownership
 root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-entries-integrated-20261015-a01')
+deadline=time.monotonic()+300
+while time.monotonic()<deadline:
+ p=root/'supervised/supervisor.json'
+ state=json.loads(p.read_text()) if p.exists() else {}
+ if state.get('finished_at'):break
+ print('WAIT_FOR_COMPLETION',datetime.now(timezone.utc).isoformat(),state.get('training_status'),flush=True)
+ time.sleep(15)
 print('AT',datetime.now(timezone.utc).isoformat())
 previous=root.parent/'q359-p7-fusion-trial-20261015-a01'
 for leaf in ('supervised/run/timing-summary.json','supervised/supervisor.json','supervised/burn-verified.json'):

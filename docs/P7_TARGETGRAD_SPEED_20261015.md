@@ -143,7 +143,7 @@ Code integration: `a1a40f0`. Final run root:
 `/mnt/local/_outputs/deep-llms_th2/q359-p7-speed-integrated-20261015-a01`.
 No long training is queued. `commands.sh` is returned to inactive mode.
 
-## Follow-up fusion experiment (pending)
+## Follow-up fusion experiment
 
 The next bounded trial compares the validated combined optimization against:
 
@@ -159,3 +159,50 @@ These remain process-local experiments in `scripts/p7_fusion_trial.py`. CUDA
 acceptance and full-update timing must pass before recommending any production
 change. The reference now includes BOTH earlier optimizations. No additional
 throughput gain is established yet. Output: `q359-p7-fusion-trial-20261015-a01`.
+
+The [completed follow-up timing](results/p7_fusion_trial_20261015.json) gives:
+
+| Extra change over the previously optimized P7 | Seconds/update | Throughput gain |
+|---|---:|---:|
+| Control before | 1.115236 | — |
+| Fused target normalization + cosine | 1.109494 | 0.42% |
+| Compile existing proxy entries | 1.096631 | **1.60%** |
+| Compile packed K/V entries | 1.097682 | 1.50% |
+| Control after | 1.113034 | — |
+
+Reference drift is 0.20%; gains use the mean of the two reference medians.
+All five 50-step jobs succeeded, endpoint data hashes match across all ranks,
+and compiler counters are stable throughout the measured interval. Final
+32-row LM losses are 7.9669915 / 7.9669381 / 7.9669659 / 7.9669596 / 7.9669719
+in the table order. This remains a short-run numerical check, not full-length
+PPL/downstream equivalence evidence.
+
+Choose **compiling the existing entries method**. Packed K/V gives no extra
+measured benefit, and the 0.42% target-loss fusion gain does not justify its
+deferred-target plumbing. Those alternatives remain isolated research scripts,
+not production behavior. The new production flag is `--proxy_compile_entries true`,
+used alongside `--proxy_compile_auxiliary true --proxy_lse_attention true`.
+It defaults false, is restricted to the validated arm (and unchanged A), is
+recorded in recipes, and requires explicit performance-change allowance when
+toggled on resume. It compiles the existing bound method; it does not wrap the
+module or rename/reinitialize Parameters. Legacy absent flags mean false.
+
+[Refinement CUDA tests](results/p7_fusion_numerical_20261015.json) passed at
+short/checkpointed and full 2048/micro16 shapes. An additional
+[direct comparison against original eager P7](results/p7_entries_original_numerical_20261015.json)
+also passed for the accumulated optimizations: at full shape, total-loss
+absolute difference 0.000181675, hidden relative L2 0.6238%, logits relative
+L2 0.2452%, overall gradient relative L2 1.2629%. Predictor/backbone checks
+passed separately; thresholds unchanged. Eager/eager control is exact.
+
+Eight CPU tests passed in 18.618 seconds, including exact prototype/integration
+output and gradient comparison, gradient routing, optimizer/state checks, actual
+Trainer save/resume, and old-recipe compatibility. One initial combined test
+run reused an AOT donated-buffer graph from a single-backward test in a later
+retain-graph gradient probe. Isolating compiler caches between tests fixed this
+test-process interaction; no production compiler settings were changed.
+
+Fusion trial completed with successful supervisor status and verified burn
+restoration at 01:21:18 UTC. Final normal-CLI A/P7 repeat is running in
+`q359-p7-entries-integrated-20261015-a01`, after a verified burn handoff and
+Accelerate/free-GPU checks. No full scientific training is queued.
