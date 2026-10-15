@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-kernel-health-20261015-a02
+#th2-q359-p7-kernel-health-20261015-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -16,6 +16,8 @@ for leaf in ('preflight.json','supervised/reclaim.json','supervised/gpus-free-be
  p=root/leaf
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
+for p in root.glob('supervised/run/timings/*/seed-42/*/step-profile-rank0.json'):
+ data=json.loads(p.read_text());print('PARTIAL_TIMING',str(p.relative_to(root)),json.dumps(data))
 print('COMPLETE_MARKER',(root/'supervised/run/complete.json').exists())
 for pattern in ('supervisor.log','supervised/run/*.log','supervised/run/timings/*.log'):
  for p in root.glob(pattern):print('LOG_TAIL',str(p.relative_to(root)),p.read_text()[-6000:])
