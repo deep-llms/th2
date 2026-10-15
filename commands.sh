@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-tuning-health-20261015-a08
+#th2-q359-p7-tuning-health-20261015-a09
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -29,5 +29,9 @@ for p in (root/'supervised/run').glob('*/seed-*/*/trainer_state.json'):
  v=json.loads(p.read_text());print('TRAIN_STATE',str(p),v.get('global_step'),v.get('log_history',[])[-2:])
 p=Path(str(root)+'.launch.log')
 if p.exists():print('LAUNCH_LOG',p.read_bytes()[-3000:].decode(errors='replace'))
+old=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03/supervised/run')
+print('OLD_PARTIAL_EXISTS',(old/'lm-noaux/seed-42/P7-simple-lm-noaux').exists())
+for label,arm in [('a-long','A'),('targetgrad-long','P7-simple-targetgrad'),('lm-long','P7-simple-lm'),('lm-sparse','P7-simple-lm-sparse'),('lm-keyonly','P7-simple-lm-keyonly'),('lm-valueonly','P7-simple-lm-valueonly')]:
+ print('COMPLETED_OLD_PRESERVED',label,(old/label/'seed-42'/arm/'result.json').is_file())
 print('GPUS',json.dumps(snapshot(list(range(8)))))
 PY
