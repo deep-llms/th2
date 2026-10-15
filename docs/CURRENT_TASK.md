@@ -1,3 +1,167 @@
+## Authorized P7 tuning and unfinished-arm restart — 15 October 2026
+
+User authorized checking new arms, deleting only the last interrupted model
+output, and running remaining old arms plus all prepared tuning cases.
+Fresh queue: 22 cases, old lm-noaux then lm-nexttoken then the 20 cases in
+scripts/p7_tuning_queue.py. All fresh 2,500 steps, 12 layers, FA4, eight GPUs,
+microbatch16/GAS4/seq2048,125 warmup; all checkpoints retained every250 steps.
+Numerical checks and all distributed smokes must pass before cleanup/training.
+Cleanup is restricted to the interrupted model directory, archives diagnostic
+JSON/file inventory, refuses final results/checkpoints and symlinks, and checks
+same-seed training recipe/fingerprint against the stopped run. Completed arms,
+shared dataset caches, logs and receipts are preserved. Supervisor restores
+verified communicating burns on success/failure.
+
+Read-only request6f53c13 verified at16:05:08UTC: old noaux has train_config and
+FA4 receipts but no checkpoint/result; nexttoken production absent. Current
+completed-eval-a02 burns advance normally. Free space18,187GiB. Local launch,
+cleanup, recipe, prior exploration and eval-compile checks passed (14 unique
+methods); full tuning model regression rerun underway. B200 gates/launch pending.
+Evidence temp/remote_logs/p7-tuning-inspect-20261015-a01.log SHA256
+60a69a81bdc02f58406b801b907ea23cbda442f6ee7f27c600b9e54795b83b6c.
+
+## Completed downstream evaluation — 15 October 2026
+
+Verified at 15:54:33 UTC: q359-p7-completed-eval-20261015-a02 finished successfully.
+Numerics, smoke and full stages all passed; all 40 benchmark groups completed
+for eight checkpoints. Full evaluation ran 15:21:45–15:39:38 UTC (17m53s).
+Supervisor finished restoring verified communicating burns at 15:40:49 UTC.
+Current burn log shows advancing collectives, eight workers, all GPUs 100% busy.
+No remaining training or evaluation is queued. The 20 new tuning cases remain
+prepared only, unlaunched and unpushed.
+
+Final summary saved to docs/results/p7_completed_downstream_20261015.json;
+reconstructed bytes match the runner artifact SHA256 exactly:
+935934d86378d13211963e964bd0c983cfd98fdf8ed0aa9a2e6c99e8be047a71.
+Completion and burn receipts: docs/results/p7_completed_downstream_completion_20261015.json.
+Source log temp/remote_logs/p7-eval-eta-20261015-1553.log SHA256
+57cd21213b865a30a1ac004a6503f3fa3e50d86cb9533c8f897c5c89057a9a97.
+Read-only status request d9d4708; commands.sh returned to #0. User's unrelated
+docs/PROXY_RESULTS_SUMMARY.md changes preserved. Results have not yet been
+interpreted or merged into that summary in this status-only turn.
+
+## Full completed-arm evaluation verified — 15 October 2026, 15:23 UTC
+
+Active evaluation: /mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a02.
+All eight CUDA numerical checks and all 40 benchmark smoke groups passed. Full
+nine-benchmark evaluation began 15:21:45 UTC and was healthy at 15:23:55 UTC,
+with workers distributed across all eight GPUs. Final results are pending.
+Training remains stopped; original completed/partial outputs are preserved.
+Eight evaluated checkpoints are the six completed exploration arms plus the
+original 2,500-step A/LM controls (scope described below). No new tuning arms.
+
+The initial evaluation a01 failed in targetgrad BLiMP: fixed-shape torch.compile
+entries exhausted Dynamo's recompilation limit of eight on variable lengths.
+Its supervisor restored verified burns. Fixed downstream loading to construct
+original eager functions via compile_execution=False; weights, scientific
+settings and LSE/FA4 attention are retained. Training defaults remain unchanged.
+Local tests compare eager/compiled functions, many sequence lengths, strict
+loading and handoff guards. Latest targeted suite: 11 tests passed, plus five
+existing exploration regressions earlier in this turn (16 unique methods).
+
+Fresh retry dfffc04 verified the failed predecessor's identical scope and final
+burn handoff; copied/verified Accelerate again; rechecked exact burn identities;
+all GPUs free at 15:18:20 UTC. Final verified burns will run on success/failure.
+commands.sh returned to #0 (48776e4). New 20-case tuning code remains unpushed.
+Evidence: docs/results/p7_completed_evaluation_retry_20261015.json.
+Health log temp/remote_logs/p7-completed-eval-health-20261015-a05.log SHA256
+bf68d0acdfdcf9ad8204ef8d2045cda60c79e53eda5edd1f458c164455c7e692.
+
+## Completed exploration evaluation running — 15 October 2026, 15:04 UTC
+
+User authorized stopping remaining training once key-only completed and running
+evaluation. Key-only completed 2,500 steps at 14:10 UTC (LM loss 3.59118553).
+First stop request refused before signals because tmux retained a shell wrapper.
+Read-only inspection verified supervisor PID 914336 beneath pane 914333. The
+stop helper now resolves the guard owner inside that pane, still checks exact
+supervisor arguments and every GPU worker's ancestry, and rechecks identities
+before signaling through pidfd. Local tests reject unrelated owners/workers.
+
+Launch 2351da5 stopped that supervisor, verified its final communicating burns,
+copied/verified Accelerate and reclaimed verified burn workers. All eight GPUs
+were recorded free at 15:03:45 UTC before evaluation. Existing model code and
+training outputs were preserved. No remaining training is queued here.
+
+Evaluation root: /mnt/local/_outputs/deep-llms_th2/q359-p7-completed-eval-20261015-a01.
+Eight checkpoints: A/targetgrad/LM at 7,500; sparse/key-only/value-only at 2,500;
+original A/LM at 2,500 as matched short-schedule controls. Value-only finished
+before the successful stop. Unfinished noaux and queued nexttoken are excluded.
+Nine existing benchmarks, same shots/prompts/data/seed, eight concurrent GPU
+workers; numerical gates -> two-item task smokes -> full evaluation. No new
+finetuning or paired-loss study. All eight CUDA numerical checks passed; smoke
+stage was running at 15:04:40 UTC. Full benchmark results not yet available.
+Supervisor restores verified burns on success or failure.
+
+11 unique targeted local tests passed (completed selection, scope/controls,
+wrapper ownership, existing exploration regressions). Receipt:
+docs/results/p7_completed_evaluation_launch_20261015.json.
+Remote health log: temp/remote_logs/p7-completed-eval-health-20261015-a01.log,
+SHA256 bd7c5e4ad96fa020fe2ccf8a4a5452ed56f71af782b087378b19b6dea3030d00.
+Only evaluation/stop changes deployed; the prepared 20-case tuning queue and its
+model changes remain unpushed. Unrelated user documentation remains untouched.
+
+## Exploration status — 15 October 2026, 13:57 UTC / 21:57 SGT
+
+Read-only request 0200f2c verified q359-p7-exploration8-20261015-a03 healthy.
+A, targetgrad and LM completed 7,500 steps; sparse completed 2,500 steps.
+LM full validation loss 3.23075363 (A 3.23501613); sparse loss 3.58987207.
+Key-only running 1,886/2,500 at about 1.17 seconds/update, latest saved 1,750.
+All eight B200 GPUs at 98–99% utilization. No failed stage observed.
+Remaining: key-only completion, value-only, noaux, nexttoken, then downstream.
+Provisional remaining estimate 3–4 hours including downstream, around 17:00–18:00
+UTC on 15 October (01:00–02:00 SGT on 16 October). New-arm/eval timings uncertain.
+The newly prepared 20-case tuning queue is not included and has not launched.
+
+Receipt temp/remote_logs/p7-exploration-status-20261015-1357.log SHA256
+ e05ef8f792ec493d4270ed0f7af14ab0410a776723afdd04c9c10db72f1ea1a0.
+Only status inspection submitted; commands.sh returned to #0. No workload or
+implementation changes deployed. Local tuning commits remain unpushed.
+
+## P7 tuning follow-up review — 15 October 2026
+
+Fixed two validation gaps: numerical probes now use each case's actual lambda,
+seeds and optimization settings, with recipe hashes; queue gates now compare
+resolved recipes and same-seed data fingerprints, and verify checkpoint retention.
+The full 20-case manifest has 83 stages and 19 explicit proxy numerical cases.
+
+27 targeted test methods passed in this review, including all 14 new variants
+through actual Trainer exact resume/reload and two-rank CPU Gloo. Independent
+attention/gradient/isolation tests and existing queue/validation/speed regressions
+passed. No new model-computation error found; model code and train.py unchanged.
+Evidence: docs/results/p7_tuning_review_20261015.json.
+Actual CUDA FA4 and B200 throughput checks remain pending. No push, launch,
+process stop, environment change or change to the running queue; commands.sh
+remains inactive. Unrelated user documentation was preserved.
+
+## P7 tuning implemented locally — 15 October 2026
+
+User requested all discussed variants and safe throughput optimization, not a
+new launch. Implemented14 new named architectures:10 targetgrad (2/3-block,
+weighted, SmoothL1, K-only, V-only, nonlinear transforms, sparse,2/8 query heads)
+and4 LM variants (sparse/K-only/V-only noaux and per-query gated V mixing).
+Prepared20case sequential manifest including4 lambda sweeps and A/dense-noaux
+seed2042 replication. All fresh2500steps,125scheduler warmup,250aux ramp,
+8GPUs pertrain, saveall every250; manifest gates numerics/allsmokes before full
+training. No B200 push, stop, launch, environment/config/cache changes.
+commands.sh remains#0. Existing active queue unchanged; prior status below is
+historical, not a fresh machine observation.
+
+Value-only collapses duplicate keys into one attention call; gated values use
+one native-length call with expanded GQA entries and independent query gates.
+No measured B200 throughput claim. Saved metadata/report/reload/receipts support
+all variants. Parent old scientific definitions and train.py loop preserved.
+New variants keep fixed-four-block custom kernels disabled; parent lambda cases
+retain its previously validated optimizations. GPU numerical/DDP gates pending.
+
+36unique targeted test methods passed across recorded runs (some repeated).
+All14 newarms passed actual Trainer exactresume/reload/report and2rankGloo.
+FP32/BF16 referencebackend gradients, independent equations, isolation,
+checkpoint replay, attention-call counts, gate logging, metadata rejection,
+newrecipe and receipt checks passed. Existing P7 regression suite passed.
+Evidence:docs/results/p7_tuning_local_checks_20261015.json; definitions/usage:
+docs/P7_TUNING_VARIANTS_20261015.md. All20cases exceed the earlier12hour estimate;
+select launch scope separately. Unrelated user documentation remains untouched.
+
 ## Exploration status — 15 October 2026, 12:18 UTC / 20:18 SGT
 
 Read-only requesta2b381c verified q359-p7-exploration8-20261015-a03 healthy.

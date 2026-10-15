@@ -23,12 +23,14 @@ P7_COMBINED_ARMS = ("P7-simple-targetgrad-lm",)
 P7_CONSUMER_ARMS = ("P7-simple-consumer-only", "P7-simple-consumer", "P7-simple-consumer-targetgrad")
 P7_EXPLORATION_ARMS = ("P7-simple-lm-sparse", "P7-simple-lm-keyonly",
                        "P7-simple-lm-valueonly", "P7-simple-lm-noaux", "P7-simple-lm-nexttoken")
-P7_LM_PREDICTOR_ARMS = ("P7-simple-lm",) + P7_COMBINED_ARMS + P7_EXPLORATION_ARMS
+from .p7_variants import TUNING_ARMS, TUNING_SPECS, TARGETGRAD_VARIANTS, LM_VARIANTS, tuning_metadata
+
+P7_LM_PREDICTOR_ARMS = ("P7-simple-lm",) + P7_COMBINED_ARMS + P7_EXPLORATION_ARMS + tuple(LM_VARIANTS)
 FOLLOWUP_ARMS = ("P6-iso-sparse-targetgrad",) + P6_SPARSE_DEEP + P7_ROUTING_ARMS + P6_CONSUMER_ARMS + DELAYED_ARMS
 P6_ADAPTER_WIDTH = 32
 ANTICIPATORY_ARMS = ("P4-iso", "P6", "P5", "P4", "P6-iso", "P4-4h", "P4-iso-4h", "P6-lowaux", "P6-iso-sparse-targetgrad") + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + P6_SPARSE_DEEP + P6_CONSUMER_ARMS + DELAYED_ARMS[:2]
 P7_P6_VARIANTS = ("P7-simple-sparse", "P7-simple-short")
-SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS + P7_EXPLORATION_ARMS
+SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS + P7_EXPLORATION_ARMS + TUNING_ARMS
 MEMORY_ARMS = ("P7", "P7-kq", "P7-ems", "P7-mlp") + SIMPLE_MEMORY_ARMS
 ALL_PROXY_ARMS = PROXY_ARMS + ANTICIPATORY_ARMS + MEMORY_ARMS
 SCREEN_ARMS = ("A", "V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block")
@@ -38,12 +40,13 @@ ALL_ARMS = ARMS + ALL_PROXY_ARMS
 def auxiliary_routes(arm):
     """Explicit auxiliary routes; LM-to-estimator routing is independent."""
     return dict(shallow=arm in ("P6-iso-shallowgrad", "P6-iso-bothgrad"),
-                target=arm in ("P6-iso-targetgrad", "P6-iso-bothgrad", "P6-iso-sparse-targetgrad", "P7-simple-targetgrad", "P7-simple-consumer-targetgrad") + P7_COMBINED_ARMS)
+                target=arm in ("P6-iso-targetgrad", "P6-iso-bothgrad", "P6-iso-sparse-targetgrad", "P7-simple-targetgrad", "P7-simple-consumer-targetgrad") + P7_COMBINED_ARMS + tuple(TARGETGRAD_VARIANTS))
 
 
 def followup_metadata(arm):
     """Additional fixed scientific contracts, shared by recording and validation."""
     result = {}
+    if arm in TUNING_ARMS:return tuning_metadata(arm)
     if arm == 'P6-iso-sparse-targetgrad':result['auxiliary_routes'] = auxiliary_routes(arm)
     if arm in P7_ROUTING_ARMS + P7_COMBINED_ARMS:
         result['auxiliary_routes'] = auxiliary_routes(arm)
@@ -100,6 +103,9 @@ def simple_memory_layout(arm, num_hidden_layers):
     """P7-simple uses the same locations and targets as its P6-iso counterpart."""
     parents = {"P7-simple": "P6-iso", "P7-simple-sparse": "P6-iso-sparse",
                "P7-simple-short": "P6-iso-short"}
+    if arm in TUNING_ARMS:
+        spec=TUNING_SPECS[arm]
+        return anticipatory_layout('P6-iso-sparse' if spec.get('sparse') else 'P6-iso',num_hidden_layers)[0], spec.get('lookahead',4)
     if arm in P7_EXPLORATION_ARMS:
         return anticipatory_layout('P6-iso-sparse' if arm.endswith('-sparse') else 'P6-iso',num_hidden_layers)
     if arm in P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS:return anticipatory_layout('P6-iso',num_hidden_layers)

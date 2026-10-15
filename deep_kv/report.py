@@ -7,6 +7,7 @@ from . import P6_TARGET_VARIANTS, anticipatory_target_metadata, P6_ROUTING_ARMS,
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, followup_metadata, P7_DEEP_ARMS
 from . import P7_COMBINED_ARMS, P7_CONSUMER_ARMS, P7_EXPLORATION_ARMS
+from .p7_variants import TUNING_ARMS, TUNING_SPECS, NOAUX_ARMS
 
 
 def comparable_config(config):
@@ -21,7 +22,8 @@ def comparable_config(config):
         raise ValueError('These execution optimizations were not validated for this arm')
     if arm in MEMORY_ARMS:
         expected=dict(proxy_isolate_estimator=True,proxy_target_version='p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1',
-                      proxy_lookahead=2 if arm=='P7-simple-short' else 4,proxy_loss_form='cosine',proxy_groups=2)
+                      proxy_lookahead=TUNING_SPECS.get(arm,{}).get('lookahead',2 if arm=='P7-simple-short' else 4),
+                      proxy_loss_form=TUNING_SPECS.get(arm,{}).get('loss','cosine'),proxy_groups=TUNING_SPECS.get(arm,{}).get('groups',2))
         if (any(config['pilot'].get(k)!=v for k,v in expected.items())
                 or config['pilot'].get('proxy_alpha_init',0)!=0
                 or config['pilot'].get('proxy_kv_mode','kv')!='kv'
@@ -30,6 +32,7 @@ def comparable_config(config):
                 or config['pilot'].get('proxy_compile_estimator',False)):
             raise ValueError('P7 configuration does not match its arm definition')
         config['pilot']['proxy_lookahead'] = 4
+        config['pilot']['proxy_groups'] = 2
         for key in ('proxy_alpha_init','proxy_isolate_estimator','proxy_module_seed',
                     'proxy_aux_recompute','proxy_compile_estimator'):
             config['pilot'].pop(key,None)
@@ -51,9 +54,9 @@ def comparable_config(config):
             raise ValueError('P6-lowaux requires lambda_max=0.03')
         # The named coefficient ablation is the only permitted difference.
         config['pilot']['proxy_lambda_max'] = .1
-    if arm == 'P7-simple-lm-noaux':
+    if arm in NOAUX_ARMS:
         if config['pilot'].get('proxy_lambda_max') != 0:
-            raise ValueError('P7-simple-lm-noaux requires lambda_max=0')
+            raise ValueError(f'{arm} requires lambda_max=0')
         config['pilot']['proxy_lambda_max'] = .1
     if config['pilot'].get('proxy_screen'):
         config['pilot'].pop('proxy_channel_mask', None)
@@ -136,7 +139,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     if arm in SIMPLE_MEMORY_ARMS else (tuple(range(2,config['model_config']['num_hidden_layers']-2,2)),4))
                 expected_target = dict(quantity='mlp_window_sum' if arm in ('P7-mlp',)+SIMPLE_MEMORY_ARMS else 'four_block_increment',
                     lookahead=lookahead,bands=list(bands),
-                    normalization='running_per_channel',epsilon=1e-6,loss_form='cosine',
+                    normalization='running_per_channel',epsilon=1e-6,loss_form=TUNING_SPECS.get(arm,{}).get('loss','cosine'),
                     relational=dict(weight=.5,temperature=.1,queries=256,candidates='strictly_earlier_same_document',
                                     sampling='step_and_global_update_row_v1',normalization_epsilon=1e-6))
                 if arm in SIMPLE_MEMORY_ARMS:expected_target.pop('relational')
@@ -153,7 +156,9 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     ignored |= {'bands','lookahead'}  # Validated arm-specific layouts above.
                 if arm in FOLLOWUP_ARMS+P7_COMBINED_ARMS+P7_CONSUMER_ARMS or other in FOLLOWUP_ARMS+P7_COMBINED_ARMS+P7_CONSUMER_ARMS:
                     ignored |= {'bands','auxiliary_routes','lm_to_predictor','consumer_loss','introduction'}
-                if arm in P7_EXPLORATION_ARMS or other in P7_EXPLORATION_ARMS:
+                if arm in TUNING_ARMS or other in TUNING_ARMS:
+                    ignored |= {'lookahead','loss_form','layer_weights'}
+                if arm in P7_EXPLORATION_ARMS+TUNING_ARMS or other in P7_EXPLORATION_ARMS+TUNING_ARMS:
                     ignored |= {'bands','auxiliary_routes','lm_to_predictor','memory_entries','auxiliary_objective'}
                 if arm in P6_TARGET_VARIANTS or other in P6_TARGET_VARIANTS:
                     ignored |= {'quantity','layer_weights','per_layer_normalization'}

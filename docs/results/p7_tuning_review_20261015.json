@@ -1,0 +1,43 @@
+{
+  "status": "passed_local_cuda_pending",
+  "date": "2026-10-15",
+  "unique_test_methods": 27,
+  "checks": [
+    {
+      "path": "temp/p7-tuning-review-models.log",
+      "sha256": "743baee25720435be5905ec313849d332629c2212bdf87a25149bf084f1629ff",
+      "tests": 9,
+      "seconds": 409.845,
+      "status": "passed"
+    },
+    {
+      "path": "temp/p7-tuning-review-gates-final.log",
+      "sha256": "42304409cd1fd0074dab20a427d3f78165c243ae861a4ba66dc9034b42a89c64",
+      "tests": 4,
+      "seconds": 4.426,
+      "status": "passed"
+    },
+    {
+      "path": "temp/p7-tuning-review-regression.log",
+      "sha256": "e390fca2dca0afe6449548724bcc3536161dca2d459eb55a4abb4885950b9402",
+      "tests": 14,
+      "seconds": 25.447,
+      "status": "passed"
+    }
+  ],
+  "corrected": [
+    "Numerical gates now use every actual per-case recipe, including lambda, seeds and optimization flags; repeated arms are preserved and recipe hashes verified.",
+    "Preproduction cross-case gate verifies resolved recipes and same-seed data fingerprints; final gate also verifies all 250-step checkpoints are retained."
+  ],
+  "coverage": [
+    "All 14 new variants: exact Trainer resume/reload and two-rank CPU Gloo",
+    "Independent attention/target/loss equations, gradient routing, FP32/BF16 reference backend comparisons, isolation and checkpoint replay",
+    "Actual train.py configurations at two seeds; queue guards reject altered recipes, same-seed data mismatches and missing checkpoints",
+    "Existing exploration queue, FA4 validation and P7 speed-trial regression tests"
+  ],
+  "limitations": [
+    "No CUDA FA4 kernel or B200 throughput measurements in this review",
+    "Local CPU profiler emitted a CUDA driver compatibility warning; no environment or driver changes",
+    "No push, launch or change to the current B200 queue"
+  ]
+}

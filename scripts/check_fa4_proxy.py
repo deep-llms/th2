@@ -5,6 +5,7 @@ training dataset/cache for Trainer jobs. No custom optimizer or training loop.
 """
 import argparse
 import copy
+import hashlib
 import json
 import math
 import os
@@ -12,6 +13,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+from deep_kv.p7_variants import NOAUX_ARMS, KEYONLY_ARMS, VALUEONLY_ARMS, TUNING_ARMS, settings_overrides
 from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_layout, anticipatory_target_metadata
 from deep_kv import P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, followup_metadata, P7_DEEP_ARMS
@@ -48,9 +50,26 @@ def write(path,value):
     with path.open('x') as handle:json.dump(value,handle,indent=2,allow_nan=False)
 
 
+def numerical_settings(arm, recipe, exact=False):
+    """Legacy probes keep their defaults; tuning probes use the full recipe."""
+    from deep_kv.proxy import ProxySettings, resolve_proxy_settings
+    if exact:
+        if recipe.get('arm')!=arm:raise ValueError('Numerical recipe arm differs from requested case')
+        options={key:recipe['proxy_'+key] for key in ProxySettings.__dataclass_fields__
+                 if 'proxy_'+key in recipe}
+        seed=recipe['seed']
+        if type(seed) is not int or seed<0 or recipe.get('data_seed')!=seed:
+            raise ValueError('Exact numerical recipe requires explicit matching seeds')
+    else:
+        options={k.removeprefix('proxy_'):v for k,v in settings_overrides(arm).items()} if arm in TUNING_ARMS else {}
+        seed=42
+    return resolve_proxy_settings(arm,ProxySettings(**options)),seed
+
+
 def worker(args):
     import torch
     from transformers import AutoConfig
+    from dataclasses import asdict
     from deep_kv.proxy import ProxyModel
     from deep_kv.proxy_training import ProxyTrainer
     from deep_kv.packing import isolated_data_collator
@@ -60,12 +79,16 @@ def worker(args):
     torch.set_num_threads(2);torch.manual_seed(42)
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     arm=args.arm if args.arm is not None else PROXY_ARMS[args.index];recipe=read(args.recipe)
+    recipe_hash=file_hash(args.recipe)
+    exact=getattr(args,'exact_recipe',False)
+    settings,seed=numerical_settings(arm,recipe,exact)
+    torch.manual_seed(seed)
     rows=diagnostic_rows(args.rows)
     cfg=AutoConfig.from_pretrained(recipe['config_name'],local_files_only=True)
     from train import configure_depth
     configure_depth(cfg, recipe.get('num_hidden_layers'))
     cfg._attn_implementation='sdpa';cfg.use_cache=False
-    m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=42,
+    m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=seed,proxy_settings=settings,
         consumer=recipe.get('consumer',5),deep_target=recipe.get('deep_target',21),
         checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
     if arm in DELAYED_ARMS:m.set_training_step(PROXY_DELAY_STEPS+250)
@@ -77,6 +100,10 @@ def worker(args):
             for head in m.heads.values():head.alpha.normal_(0,.05)
         # Zero-output extension initialization would hide errors in its actual
         # learned path. This numerical worker never writes a training checkpoint.
+        for head in m.heads.values():
+            for name in ('key_transform','value_transform'):
+                if hasattr(head,name):getattr(head,name)[2].weight.normal_(0,.02)
+            if hasattr(head,'value_gate'):head.value_gate.add_(torch.linspace(-.2,.2,len(head.value_gate),device=head.value_gate.device))
         for extension in m.extensions.values():
             parameter=extension.weight if arm in P6_DEPTH_ARMS else extension.up.weight
             parameter.normal_(0,.02)
@@ -100,7 +127,8 @@ def worker(args):
                 out=m(ctx,auxiliary_grad=not arm.endswith('lambda0'),collect_target_statistics=True)
                 lm=out['lm_sum']/out['lm_count'];aux=out['aux_sum']/out['aux_count'].clamp_min(1)
                 if m.relational_proxy:aux=aux+.5*out['rel_sum']/out['rel_count'].clamp_min(1)
-                loss=lm+m.auxiliary_weight(PROXY_DELAY_STEPS+250 if arm in DELAYED_ARMS else 250)*aux
+                weight_step=(PROXY_DELAY_STEPS if arm in DELAYED_ARMS else 0)+m.settings.warmup_steps
+                loss=lm+m.auxiliary_weight(weight_step)*aux
             loss.backward()
         finally:handle.remove()
         grads={n:p.grad.detach().float().cpu().clone() for n,p in m.named_parameters() if p.grad is not None}
@@ -119,14 +147,33 @@ def worker(args):
         assert all(g.abs().sum()>0 for n,g in flash['grads'].items() if n.startswith(('heads.','extensions.')))
     losses={k:[dense[k],flash[k]] for k in ('lm_loss','aux_loss')}
     value_merge_checks=[]
-    if arm=='P7-simple-lm-valueonly':
+    if arm in VALUEONLY_ARMS:
         # Compare against the original duplicated keys, not just two backends
         # that both use the new algebraic reduction. Keep the existing limits.
         from unittest.mock import patch
         def duplicate_entries(self,a,q,k,v,vp,mask,plan):
-            return self.joint_memory_attention(a,q,k,v,k[:,-2:],vp,mask,plan)
+            return self.joint_memory_attention(a,q,k,v,k[:,-self.settings.groups:],vp,mask,plan)
+        def gated_outputs(self,a,q,k,v,vp,gate,mask):
+            # Independent oracle: two native-length attentions, then blend
+            # outputs. Production blends values and performs one attention.
+            groups=self.settings.groups
+            split=q.shape[1]-groups*self.backbone.config.num_attention_heads//self.backbone.config.num_key_value_heads
+            if self.attention_backend=='fa4':
+                from deep_kv.fa4 import attention
+                native=attention(q,k,v,mask,a.scaling,self.fa4_kernel)
+                proxy=attention(q[:,split:],k[:,-groups:],vp,mask,a.scaling,self.fa4_kernel)
+            else:
+                from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
+                interface=ALL_ATTENTION_FUNCTIONS['sdpa']
+                native=interface(a,q,k,v,mask,dropout=0.,scaling=a.scaling,is_causal=False)[0]
+                proxy=interface(a,q[:,split:],k[:,-groups:],vp,mask,dropout=0.,scaling=a.scaling,is_causal=False)[0]
+            with torch.autocast(q.device.type,enabled=False):
+                g=gate.float().sigmoid()[None,None,:,None]
+                selected=((1-g)*native[:,:,split:].float()+g*proxy.float()).to(native.dtype)
+            return torch.cat((native[:,:,:split],selected),dim=2)
+        method,reference_fn=('gated_value_memory_attention',gated_outputs) if arm=='P7-simple-lm-valueonly-gated' else ('value_memory_attention',duplicate_entries)
         for backend,merged in (('sdpa',dense),('fa4',flash)):
-            with patch.object(type(m),'value_memory_attention',duplicate_entries):
+            with patch.object(type(m),method,reference_fn):
                 reference=capture(backend)
             full=compare(reference,merged,False)
             proxy=compare({**reference,'grads':{n:g for n,g in reference['grads'].items() if n.startswith('heads.')}},
@@ -161,7 +208,8 @@ def worker(args):
         kernel=m.attention_runtime,rows_sha256=file_hash(args.rows),batch=2,sequence_length=2048,
         active_gate_std=None if m.anticipatory or m.memory_proxy else .05,
         active_gate_init=m.settings.alpha_init if m.anticipatory else None,
-        auxiliary_weight=m.auxiliary_weight(PROXY_DELAY_STEPS+250 if arm in DELAYED_ARMS else 250),comparison=comparison,
+        auxiliary_weight=m.auxiliary_weight((PROXY_DELAY_STEPS if arm in DELAYED_ARMS else 0)+m.settings.warmup_steps),comparison=comparison,
+        exact_recipe=exact,recipe_sha256=recipe_hash,seed=seed,proxy_settings=asdict(m.settings),
         proxy_comparison=proxy_comparison,losses=losses,value_merge_checks=value_merge_checks,parameters_unchanged=unchanged,
         cross_document_gradient_max=forbidden,cross_document_output_max=difference,
         peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30)
@@ -172,8 +220,21 @@ def worker(args):
 
 def run(args):
     arms=tuple(getattr(args,'worker_arms',None) or PROXY_ARMS)
-    if len(set(arms))!=len(arms) or any(a not in ALL_PROXY_ARMS for a in arms):
-        raise ValueError('Numerical workers require distinct proxy arms')
+    manifest=getattr(args,'case_manifest',None)
+    if manifest:
+        if getattr(args,'worker_arms',None):raise ValueError('Choose a case manifest or worker arms')
+        cases=read(manifest)
+        if (not isinstance(cases,list) or not cases or any(not isinstance(c,dict) for c in cases)
+                or any(set(c)!={'label','arm','recipe'} for c in cases)
+                or any(not isinstance(c['label'],str) or not c['label'] for c in cases)
+                or len({c['label'] for c in cases})!=len(cases)
+                or any(c['arm'] not in ALL_PROXY_ARMS or not Path(c['recipe']).is_file() for c in cases)):
+            raise ValueError('Invalid numerical case manifest')
+        arms=tuple(c['arm'] for c in cases)
+    else:
+        if len(set(arms))!=len(arms) or any(a not in ALL_PROXY_ARMS for a in arms):
+            raise ValueError('Numerical workers require distinct proxy arms')
+        cases=[dict(label=a,arm=a,recipe=args.recipe) for a in arms]
     root=Path(args.output);root.mkdir(parents=True,exist_ok=False)
     visible=os.environ['CUDA_VISIBLE_DEVICES'].split(',');assert len(visible)==8
     children=[];logs=[]
@@ -184,9 +245,12 @@ def run(args):
             for offset,arm in enumerate(arms[start:start+len(visible)]):
                 index=start+offset;gpu=visible[offset]
                 log=(root/f'case-{index}.log').open('x');logs.append(log)
-                command=[sys.executable,'-u','-m','scripts.check_fa4_proxy','worker','--recipe',args.recipe,
+                command=[sys.executable,'-u','-m','scripts.check_fa4_proxy','worker','--recipe',cases[index]['recipe'],
                          '--rows',args.rows,'--index',str(offset),'--arm',arm,'--output',str(root/f'case-{index}.json')]
-                child=subprocess.Popen(command,env={**os.environ,'CUDA_VISIBLE_DEVICES':gpu},stdout=log,stderr=subprocess.STDOUT)
+                if manifest:command.append('--exact-recipe')
+                environment={**os.environ,'CUDA_VISIBLE_DEVICES':gpu}
+                if manifest:environment['PYTHONHASHSEED']=str(read(cases[index]['recipe'])['seed'])
+                child=subprocess.Popen(command,env=environment,stdout=log,stderr=subprocess.STDOUT)
                 children.append(child);wave.append(child)
             wave_codes=[p.wait() for p in wave];codes.extend(wave_codes)
             if any(wave_codes):break
@@ -199,6 +263,11 @@ def run(args):
         for log in logs:log.close()
     results=[read(root/f'case-{i}.json') for i in range(len(arms)) if (root/f'case-{i}.json').exists()]
     passed=codes==[0]*len(arms) and len(results)==len(arms) and all(r['status']=='passed' and r['arm']==arms[i] for i,r in enumerate(results))
+    if manifest:
+        passed=passed and all(r.get('exact_recipe') and
+            r.get('recipe_sha256')==hashlib.sha256(Path(c['recipe']).read_bytes()).hexdigest()
+            for r,c in zip(results,cases))
+        for r,c in zip(results,cases):r['case_label']=c['label']
     write(root/'summary.json',dict(status='passed' if passed else 'failed',exit_codes=codes,cases=results,
         tolerances=dict(loss_absolute=.01,gradient_relative_l2=.03,proxy_gradient_relative_l2=.03,output_relative_l2=.02)))
     assert passed,codes
@@ -252,7 +321,7 @@ def validate(args):
             assert r['arm']==arm and r['world_size']==8
             dormant=arm in DELAYED_ARMS and r['global_step'] < PROXY_DELAY_STEPS
             attention_calls=depth+len(memory_layers) if arm in MEMORY_ARMS and not dormant else depth
-            if arm=='P7-simple-lm-valueonly':attention_calls=depth
+            if arm in VALUEONLY_ARMS:attention_calls=depth
             gradient_calls=attention_calls
             if arm in P6_CONSUMER_ARMS:
                 sites=len(anticipatory_layout(arm,depth)[0])
@@ -288,6 +357,8 @@ def validate(args):
             assert bool(weights.get_tensor('mu_initialized'))
             if arm in DELAYED_ARMS:assert int(weights.get_tensor('proxy_updates'))==args.steps
             for key,value in followup_metadata(arm).items():assert config['proxy_target'][key]==value
+            if arm in TUNING_ARMS:
+                for key,value in settings_overrides(arm).items():assert config['pilot'][key]==value
             if arm.startswith('P'):
                 for name in ('mu','sigma2'):
                     value=weights.get_tensor(name)
@@ -298,15 +369,29 @@ def validate(args):
                     assert not gates and config['pilot']['proxy_target_version']==('p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1')
                     for layer in memory_layers:
                         estimator=('w1.weight','w2.weight') if arm in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight')
-                        projections = (() if arm=='P7-simple-lm-valueonly' else ('k_proj.weight','k_norm.weight'))
-                        projections += () if arm in ('P7-kq','P7-simple-lm-keyonly') else ('v_proj.weight',)
+                        projections = (() if arm in VALUEONLY_ARMS else ('k_proj.weight','k_norm.weight'))
+                        projections += () if arm in ('P7-kq',)+KEYONLY_ARMS else ('v_proj.weight',)
                         for suffix in estimator+projections:
                             value=weights.get_tensor(f'heads.{layer}.{suffix}')
                             assert torch.isfinite(value).all() and value.abs().sum()>0
+                        if arm in TUNING_ARMS:
+                            mc=config['model_config'];groups=settings_overrides(arm)['proxy_groups']
+                            for suffix in projections:
+                                value=weights.get_tensor(f'heads.{layer}.{suffix}')
+                                expected=(mc['head_dim'],) if suffix=='k_norm.weight' else (groups*mc['head_dim'],mc['hidden_size'])
+                                assert tuple(value.shape)==expected
+                            if arm.endswith('-nonlinear'):
+                                for kind in ('key_transform','value_transform'):
+                                    for index in (0,2):
+                                        value=weights.get_tensor(f'heads.{layer}.{kind}.{index}.weight')
+                                        assert torch.isfinite(value).all() and value.abs().sum()>0
+                            if arm.endswith('-gated'):
+                                value=weights.get_tensor(f'heads.{layer}.value_gate')
+                                assert tuple(value.shape)==(2*groups,) and torch.isfinite(value).all()
                         mass=result['evaluation'][f'eval_proxy_layer_{layer}_attention_mass']
                         assert math.isfinite(mass) and 0<=mass<=1
                     assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
-                    if arm=='P7-simple-lm-noaux':
+                    if arm in NOAUX_ARMS:
                         assert config['pilot']['proxy_lambda_max']==0 and result['evaluation']['eval_aux_loss']==0
                     if arm=='P7-simple-lm-nexttoken':
                         assert result['evaluation']['eval_next_token_targets']>0
@@ -331,6 +416,8 @@ def main():
     p.add_argument('--output',required=True);p.add_argument('--index',type=int,choices=range(8))
     p.add_argument('--arm',choices=ALL_PROXY_ARMS,help='Explicit arm for a numerical worker')
     p.add_argument('--worker-arms',nargs='+',choices=ALL_PROXY_ARMS,help='Numerical cases, in waves of at most eight GPUs')
+    p.add_argument('--case-manifest',help='Exact per-case recipes, including repeated arms at different lambda/seed')
+    p.add_argument('--exact-recipe',action='store_true',help='Worker: load all proxy settings and seeds from recipe')
     p.add_argument('--expected-lambda',type=float,help='Validate resolved auxiliary weight for a sweep case')
     p.add_argument('--steps',type=int,default=3);p.add_argument('--seed',type=int,default=42)
     p.add_argument('--schedule-steps',type=int,default=28600,help='Expected full schedule; override only for disposable smokes')

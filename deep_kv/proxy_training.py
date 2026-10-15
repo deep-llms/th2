@@ -4,6 +4,7 @@ import numpy as np
 import torch
 
 from .training import DeepKVTrainer, PilotCallback
+from .p7_variants import NOAUX_ARMS
 from . import DELAYED_ARMS, PROXY_DELAY_STEPS, P6_CONSUMER_ARMS, P7_CONSUMER_ARMS
 
 
@@ -43,7 +44,7 @@ def summarize_proxy(statistics, model):
             result['aux_loss'] = float((losses+.5*relational).mean())
         else:
             result['aux_loss'] = float(losses.mean())
-        if model.memory_proxy:result['cos_loss'] = float(losses.mean())
+        if model.memory_proxy:result['cos_loss'] = float((1-cosines).mean()) if model.settings.loss_form=='smooth_l1' else float(losses.mean())
         if model.arm in P6_CONSUMER_ARMS + P7_CONSUMER_ARMS:
             result['cos_loss']=float((1-cosines).mean())
             result['consumer_effect_loss']=float(losses.mean())-(result['cos_loss'] if not model.arm.endswith('-only') else 0.)
@@ -54,7 +55,7 @@ def summarize_proxy(statistics, model):
             if model.arm in P6_CONSUMER_ARMS + P7_CONSUMER_ARMS:
                 result[f'proxy_layer_{layer}_consumer_effect_loss']=float(losses[index])-(1-float(cosines[index]) if not model.arm.endswith('-only') else 0.)
             if model.memory_proxy:
-                result[f'proxy_layer_{layer}_cos_loss'] = float(1-cosines[index]) if model.arm in P7_CONSUMER_ARMS else float(losses[index])
+                result[f'proxy_layer_{layer}_cos_loss'] = float(1-cosines[index]) if model.arm in P7_CONSUMER_ARMS or model.settings.loss_form=='smooth_l1' else float(losses[index])
             if model.relational_proxy:
                 result[f'proxy_layer_{layer}_rel_loss'] = float(relational[index])
                 result[f'proxy_layer_{layer}_aux_loss'] += .5*float(relational[index])
@@ -65,7 +66,7 @@ def summarize_proxy(statistics, model):
         result['next_token_targets'] = int(ce_count)
         for layer in model.layers:
             result[f'proxy_layer_{layer}_aux_loss'] = result['aux_loss'] if layer == model.layers[-1] else 0.
-    if model.arm == 'P7-simple-lm-noaux':
+    if model.arm in NOAUX_ARMS:
         result['aux_loss'] = 0.
         for layer in model.layers:result[f'proxy_layer_{layer}_aux_loss'] = 0.
     return result
@@ -134,6 +135,10 @@ class ProxyCallback(PilotCallback):
                     suffix = str(key) if isinstance(key,int) else f'{key[0]}_deep_{key[1]}'
                     logs[f'target_layer_{suffix}_{metric}'] = value
             for name, head in self.trainer.model.heads.items():
+                if hasattr(head,'value_gate'):
+                    # Only at normal log intervals; one host transfer per site.
+                    for index,value in enumerate(head.value_gate.detach().float().sigmoid().cpu().tolist()):
+                        logs[f'proxy_layer_{name}_value_mix_head_{index}'] = value
                 if not hasattr(head,'alpha'):continue
                 for c, value in enumerate(head.alpha.detach().abs().mean(-1)):
                     logs[f'proxy_layer_{name}_mean_abs_alpha_{c}'] = float(value)
