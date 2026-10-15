@@ -1,3 +1,21 @@
+## Exploration status — 15 October 2026, 09:29 UTC / 17:29 SGT
+
+Read-only requestaca0c97 verified activeq359-p7-exploration8-20261015-a03.
+A completed/validated7500steps; full4882-row validationLMloss3.23501613,
+PPL25.4068, trainruntime8134.672s (2h15m35s). All30 checkpoints250..7500 retained.
+Targetgrad is5860/7500, ~1.092s/update, ~30–35min to completion. Latest saved5750;
+all23 checkpoints250..5750 retained. All8B20096–99%utilization,~64.73GiB used each.
+Supervisor/queue running, no failed stage. Six remaining arms:lm7500 then
+sparse/keyonly/valueonly/noaux/nexttoken2500each; downstream follows. Do not
+compare targetgrad training loss to A's full held-out result. Remaining queue
+provisionally7–9hours; other-arm timings/evaluation still pending.
+
+Receipt:temp/remote_logs/p7-exploration-status-20261015-0928.log SHA256
+2cc57bf2a80085e6ff59c7129878d6407300ade28a81a4872f985d92cec5789f.
+A compact result:docs/results/p7_exploration_A_7500_20261015.json.
+Only read-only inspection performed; no workload/config/data/env changes.
+commands.sh returned to#0. Unrelated user docs remain unstaged.
+
 ## P7 eight-arm queue running; production verified — 15 October 2026, 05:28 UTC
 
 Active root:/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03.

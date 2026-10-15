@@ -1,0 +1,32 @@
+{
+  "arm": "A",
+  "global_step": 7500,
+  "schedule_steps": 7500,
+  "input_tokens": 7864320000,
+  "status": "complete",
+  "evaluation": {
+    "eval_lm_loss": 3.2350161318049686,
+    "eval_loss": 3.2350161318049686,
+    "eval_input_tokens": 9998336,
+    "eval_target_tokens": 9981660,
+    "eval_rows": 4882,
+    "eval_runtime": 4.1054,
+    "eval_samples_per_second": 1189.177,
+    "eval_steps_per_second": 9.5
+  },
+  "training_cost": {
+    "parameters": {
+      "total": 344354816,
+      "inference": 344354816,
+      "training_only": 0
+    },
+    "optimizer_steps": 7500,
+    "runtime_seconds": 8134.672,
+    "input_tokens_per_second": 966765.4700767284,
+    "peak_cuda_allocated_bytes": 62689580544,
+    "peak_cuda_reserved_bytes": 64504201216
+  },
+  "perplexity": 25.40678163278868,
+  "source_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03",
+  "verified_at": "2026-10-15T09:29:31Z"
+}
