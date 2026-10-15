@@ -1,3 +1,19 @@
+## P7 tuning queue status and ETA — 15 October 2026, 20:25 UTC
+
+Read-only request51875e5 verified q359-p7-tuning22-20261015-a03 running normally
+at20:25:48UTC. Four of22 production arms completed with validation: lm-noaux
+(50m15s), lm-nexttoken (51m38s), tg-lambda003 (47m52s), tg-lambda03 (47m46s).
+Fifth arm tg-short was950/2500 at about1.18s/update;17 arms remain after it.
+All8 B200 GPUs98–99% utilized; active loss/gradients finite. Current arm expected
+to finish around21:00UTC. Extrapolating observed48–52min completed-arm times,
+full queue estimated around11:00UTC16October, with10:00–13:00UTC planning range
+for variant-specific speed and checkpoint/evaluation overhead. This is an
+estimate, not a guarantee; no queue changes, cleanup, signals or training launch.
+Supervisor remains configured to restore verified burns on success/failure.
+Evidence temp/remote_logs/p7-tuning-eta-20261015-2027.log SHA256
+01c77bf7e75e48d4dbc91b2026ce6917bd963ec830169fed70c72a0686f9b3fc.
+Commands returned to inactive #0 after inspection.
+
 ## P7 tuning production launched and verified — 15 October 2026
 
 Active root /mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03.
