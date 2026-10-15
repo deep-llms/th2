@@ -6,7 +6,7 @@ from . import ALL_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, BOTTLENECK_ARMS, P6_VARI
 from . import P6_TARGET_VARIANTS, anticipatory_target_metadata, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, followup_metadata, P7_DEEP_ARMS
-from . import P7_COMBINED_ARMS, P7_CONSUMER_ARMS
+from . import P7_COMBINED_ARMS, P7_CONSUMER_ARMS, P7_EXPLORATION_ARMS
 
 
 def comparable_config(config):
@@ -50,6 +50,10 @@ def comparable_config(config):
         if config['pilot'].get('proxy_lambda_max') != .03:
             raise ValueError('P6-lowaux requires lambda_max=0.03')
         # The named coefficient ablation is the only permitted difference.
+        config['pilot']['proxy_lambda_max'] = .1
+    if arm == 'P7-simple-lm-noaux':
+        if config['pilot'].get('proxy_lambda_max') != 0:
+            raise ValueError('P7-simple-lm-noaux requires lambda_max=0')
         config['pilot']['proxy_lambda_max'] = .1
     if config['pilot'].get('proxy_screen'):
         config['pilot'].pop('proxy_channel_mask', None)
@@ -139,7 +143,7 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                 expected_target.update(followup_metadata(arm))
                 if (any(target.get(k)!=v for k,v in expected_target.items())
                         or (arm in SIMPLE_MEMORY_ARMS and 'relational' in target)
-                        or any(k in target and k not in expected_target for k in ('layer_weights','per_layer_normalization','auxiliary_routes','introduction','consumer_loss','lm_to_predictor','extension'))
+                        or any(k in target and k not in expected_target for k in ('layer_weights','per_layer_normalization','auxiliary_routes','introduction','consumer_loss','lm_to_predictor','extension','memory_entries','auxiliary_objective'))
                         or result.get('proxy',{}).get('target')!=target):
                     raise ValueError('P7 target metadata does not match its definition or saved result')
             for other, definition in targets.items():
@@ -149,6 +153,8 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
                     ignored |= {'bands','lookahead'}  # Validated arm-specific layouts above.
                 if arm in FOLLOWUP_ARMS+P7_COMBINED_ARMS+P7_CONSUMER_ARMS or other in FOLLOWUP_ARMS+P7_COMBINED_ARMS+P7_CONSUMER_ARMS:
                     ignored |= {'bands','auxiliary_routes','lm_to_predictor','consumer_loss','introduction'}
+                if arm in P7_EXPLORATION_ARMS or other in P7_EXPLORATION_ARMS:
+                    ignored |= {'bands','auxiliary_routes','lm_to_predictor','memory_entries','auxiliary_objective'}
                 if arm in P6_TARGET_VARIANTS or other in P6_TARGET_VARIANTS:
                     ignored |= {'quantity','layer_weights','per_layer_normalization'}
                 if arm in P6_ROUTING_ARMS or other in P6_ROUTING_ARMS:
@@ -212,6 +218,9 @@ def report(directory, arms="ABCD", baseline_dir=None, expected_step=None, expect
             for arm in FOLLOWUP_ARMS:
                 control='P7-simple' if arm.startswith('P7') else 'P6-iso-sparse' if '-sparse' in arm else 'P6-iso'
                 if arm in nll and control in nll:summary['nll_differences'][arm+'-'+control]=nll[arm]-nll[control]
+            for arm in P7_EXPLORATION_ARMS:
+                if arm in nll and 'P7-simple-lm' in nll:
+                    summary['nll_differences'][arm+'-P7-simple-lm']=nll[arm]-nll['P7-simple-lm']
             if 'P6-lowaux' in nll and 'P6' in nll:
                 summary['nll_differences']['P6-lowaux-P6']=nll['P6-lowaux']-nll['P6']
             summary['auxiliary_max_weights'] = {

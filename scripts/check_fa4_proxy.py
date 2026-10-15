@@ -258,12 +258,19 @@ def validate(args):
                     assert not gates and config['pilot']['proxy_target_version']==('p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1')
                     for layer in memory_layers:
                         estimator=('w1.weight','w2.weight') if arm in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight')
-                        for suffix in estimator+('k_proj.weight','k_norm.weight')+(() if arm=='P7-kq' else ('v_proj.weight',)):
+                        projections = (() if arm=='P7-simple-lm-valueonly' else ('k_proj.weight','k_norm.weight'))
+                        projections += () if arm in ('P7-kq','P7-simple-lm-keyonly') else ('v_proj.weight',)
+                        for suffix in estimator+projections:
                             value=weights.get_tensor(f'heads.{layer}.{suffix}')
                             assert torch.isfinite(value).all() and value.abs().sum()>0
                         mass=result['evaluation'][f'eval_proxy_layer_{layer}_attention_mass']
                         assert math.isfinite(mass) and 0<=mass<=1
                     assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
+                    if arm=='P7-simple-lm-noaux':
+                        assert config['pilot']['proxy_lambda_max']==0 and result['evaluation']['eval_aux_loss']==0
+                    if arm=='P7-simple-lm-nexttoken':
+                        assert result['evaluation']['eval_next_token_targets']>0
+                        assert result['evaluation']['eval_next_token_loss']==result['evaluation']['eval_aux_loss']
                 else:
                     assert gates and all(torch.isfinite(g).all() and g.abs().sum()>0 for g in gates)
                 if arm in P6_EXTENSION_ARMS+P6_SPARSE_DEEP+P7_DEEP_ARMS:

@@ -73,7 +73,10 @@ def checkpoint_cases(screen, followup=None):
 
 def validate_scope(scope):
     checkpoints = scope['checkpoints']
-    if scope.get('kind') in ('confirmation3','consumer4'):
+    if scope.get('kind') == 'p7-exploration8':
+        from scripts.p7_exploration_queue import validate_scope as validate_exploration
+        validate_exploration(scope)
+    elif scope.get('kind') in ('confirmation3','consumer4'):
         from scripts.proxy_confirmation_queue import CASES, checkpoint_path
         if scope['kind']=='consumer4':
             from scripts.proxy_consumer_queue import CASES
@@ -253,7 +256,7 @@ def run(stage, root, scope_path):
         raise ValueError('Data manifest changed')
     if stage == 'numerics':
         jobs = [dict(output=str(root / f'{i}.json'), argv=[sys.executable, '-m', 'scripts.check_downstream_eval',
-            'numerics', '--checkpoint', ck, '--expected-step', '2500', '--output', str(root / f'{i}.json')])
+            'numerics', '--checkpoint', ck, '--expected-step', str(scope['specs'][ck]['step']), '--output', str(root / f'{i}.json')])
             for i, ck in enumerate(checkpoints)]
         suite.execute(jobs, 8)
         reports = [read(root / f'{i}.json') for i in range(len(checkpoints))]

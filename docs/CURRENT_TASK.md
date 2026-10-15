@@ -1,3 +1,33 @@
+## P7 exploration prepared, NOT launched — 15 October 2026 (SGT)
+
+User requested overnight exploration, then explicitly selected preparation only.
+commands.sh remains #0. Do not launch or reclaim GPUs without new authorization.
+Five new P7-simple-lm variants: sparse sites, proxy keys only, proxy values only,
+no auxiliary loss, and last-site next-token CE through a detached current
+final norm/LM head (packed stride8, same-document labels, global selected-token
+normalization). Main LM trains predictors in every new arm. Target/shallow
+auxiliary routes remain detached. Existing train.py entry point unchanged.
+
+Schedule finding: original12layer runs completed full2500step cosine schedules
+with125warmup and10%minimumLR. Proposed ordinary resume to10k would not preserve
+that schedule. Prepared clean alternative: fresh A/optimizedtargetgrad/lm at7500
+steps,375warmup; five new variants2500steps,125warmup. Seed/data42/proxy43,
+8GPUs micro16 GAS4 seq2048 EOS/resetpositions/FA4. Save all checkpoints every250.
+Provisional budget11–13hours including overhead; new CUDA timings pending.
+
+38stage queue: numerical gate,8smokes+validators,preproductionrecipe/data gate,
+8fullruns+validators,matchedsummary,9benchmark numerical/smoke/full evaluation.
+Existing verified-burn supervisor and copy/verify Accelerate preserved. No
+remote submission, B200 inspection/work, environment/driver change or deletion.
+New code is PREPARED, not GPU-validated: mandatory CUDA/DDP gates remain queued.
+
+Local evidence: six new testgroups138.347s incl actual Trainer exactresume and
+2rankGloo runs for all5arms; additionalBF16 group1.687s. Broader32tests:28passed,
+4blocked by missing local lm_eval (no installs). Existing consumer/combined
+parents10tests121.486s passed. Final4queue checks16.041s passed. Shellsyntax and
+diffcheck passed. Previewtemp/p7-exploration-prepared-final-20261015/jobs.json.
+Details/definitions/limitations:docs/P7_EXPLORATION_QUEUE_20261015.md.
+
 ## P7 custom target-kernel optimization complete — 15 October 2026, 02:23 UTC
 
 Implemented opt-in proxy_fused_targets (Triton four-block target sum,

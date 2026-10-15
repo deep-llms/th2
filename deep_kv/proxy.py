@@ -16,7 +16,7 @@ from . import ALL_PROXY_ARMS as PROXY_ARMS, ANTICIPATORY_ARMS, MEMORY_ARMS, P6_V
 from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS, P6_ADAPTER_WIDTH
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS, P7_DEEP_ARMS
-from . import P7_COMBINED_ARMS, P7_LM_PREDICTOR_ARMS, P7_CONSUMER_ARMS
+from . import P7_COMBINED_ARMS, P7_LM_PREDICTOR_ARMS, P7_CONSUMER_ARMS, P7_EXPLORATION_ARMS
 
 
 @dataclass
@@ -53,7 +53,9 @@ def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
     if (settings.compile_auxiliary or settings.lse_attention or settings.compile_entries or settings.fused_targets) and arm not in ('A', 'P7-simple-targetgrad'):
         raise ValueError('These optimizations are validated only for P7-simple-targetgrad (and unchanged A)')
-    if settings.lambda_max is None:settings.lambda_max = .03 if arm == 'P6-lowaux' else .1
+    if settings.lambda_max is None:settings.lambda_max = 0. if arm == 'P7-simple-lm-noaux' else .03 if arm == 'P6-lowaux' else .1
+    if arm == 'P7-simple-lm-noaux' and settings.lambda_max != 0:
+        raise ValueError('P7-simple-lm-noaux requires lambda_max=0')
     if arm == 'P6-lowaux' and settings.lambda_max != .03:
         raise ValueError('P6-lowaux requires lambda_max=0.03')
     new = arm in ANTICIPATORY_ARMS
@@ -155,7 +157,7 @@ def compute_budget(config, settings, sequence_length=2048):
     result['P7-simple'] = {**result['P7'], **{key:result['P7'][key]-layers*4*settings.width
         for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token')},
         'relational_forward_macs_per_token':0}
-    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS:
+    for arm in P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS + P7_EXPLORATION_ARMS:
         count = len(simple_memory_layout(arm,n)[0])
         per_layer = 2*d*settings.width+projections+(2*d*P6_ADAPTER_WIDTH if arm in P7_DEEP_ARMS else 0)
         result[arm] = dict(extra_parameters=count*(per_layer+h),
@@ -164,6 +166,12 @@ def compute_budget(config, settings, sequence_length=2048):
             relational_forward_macs_per_token=0,fa4_note=result['P7']['fa4_note'])
         if arm in P7_CONSUMER_ARMS:
             result[arm]['training_only_selected_attention_forwards']=2*count
+        if arm in ('P7-simple-lm-keyonly','P7-simple-lm-valueonly'):
+            for key in ('extra_parameters','extra_macs_per_token','fa4_extra_macs_per_token'):
+                result[arm][key] -= count*2*h*d
+            if arm.endswith('-valueonly'):result[arm]['extra_parameters'] -= count*h
+        if arm == 'P7-simple-lm-nexttoken':
+            result[arm]['training_only_readout_macs_per_sequence'] = ((sequence_length-2)//8+1)*d*config.vocab_size
     result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
         layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1),
         'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']+
@@ -328,6 +336,11 @@ class ProxyModel(DeepKV):
                 for head in self.heads.values():head.initialize_projections(cfg)
                 for key in tuple(self.heads):
                     if int(key) not in self.layers:del self.heads[key]
+                # Initialize exactly like the parent before removing unused
+                # projections, preserving every retained parameter's RNG draw.
+                for head in self.heads.values():
+                    if arm == 'P7-simple-lm-keyonly':head.v_proj = None
+                    if arm == 'P7-simple-lm-valueonly':head.k_proj = head.k_norm = None
             # Initialize after ALL parent heads so their RNG/weights stay exact.
             for layer in initialization_layers if arm in P6_EXTENSION_ARMS + P6_SPARSE_DEEP + P7_DEEP_ARMS else ():
                 if arm in P6_DEPTH_ARMS:
@@ -503,7 +516,8 @@ class ProxyModel(DeepKV):
         q,k = apply_rotary_pos_emb(q,k,*rotary)
         groups = self.backbone.config.num_key_value_heads
         split = (groups-2)*self.backbone.config.num_attention_heads//groups
-        kp,vp = head.entries(prediction,rotary,v[:,-2:])
+        kp,vp = (head.entries(prediction,rotary,v[:,-2:],native_keys=k[:,-2:])
+                 if self.arm == 'P7-simple-lm-valueonly' else head.entries(prediction,rotary,v[:,-2:]))
         if self._proxy_mass is not None:
             name = str(a.layer_idx+1)
             self._proxy_mass[name] = proxy_mass(q[:,split:],k[:,-2:],kp,plan.documents,a.scaling)
@@ -790,7 +804,16 @@ class ProxyModel(DeepKV):
                             normalized = record(proxy,raw)
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
-                            cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,auxiliary_grad,valid_counts=valid_counts)
+                            diagnostic_only = self.arm in ('P7-simple-lm-noaux','P7-simple-lm-nexttoken')
+                            cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,
+                                auxiliary_grad and not diagnostic_only,valid_counts=valid_counts)
+                            if self.arm == 'P7-simple-lm-nexttoken' and proxy == self.layers[-1]:
+                                from .proxy_memory import next_token_loss
+                                with torch.set_grad_enabled(torch.is_grad_enabled() and auxiliary_grad):
+                                    cosines['next_token'] = next_token_loss(source[1][0],context,
+                                        self.backbone.model.norm.weight,self.backbone.lm_head.weight,
+                                        self.backbone.config.rms_norm_eps,self.lm_chunk,
+                                        checkpoint_loss=self.training and self.checkpoint_aux and torch.is_grad_enabled())
                             if self.arm in P6_CONSUMER_ARMS:
                                 from .proxy_estimators import consumer_effect_loss
                                 layer_module = self.backbone.model.layers[proxy-1]
@@ -873,6 +896,18 @@ class ProxyModel(DeepKV):
             extra = (rel_rows.detach(),rel_counts[:,None])
         statistics = torch.cat((lm_rows.detach()[:,None],target_counts[:,None],auxiliary_counts[:,None],
                                 values.detach(),losses.detach(),*extra,tokens[:,None]),dim=1).double()
+        if self.arm == 'P7-simple-lm-nexttoken':
+            from .proxy_memory import next_token_mask
+            ce_rows = cosines.get('next_token', lm_rows.new_zeros(len(lm_rows)))
+            auxiliary_counts = next_token_mask(context).sum(-1) if cosines else torch.zeros_like(tokens)
+            auxiliary = ce_rows.sum()
+            # Keep the existing cosine diagnostics and their token denominator;
+            # append CE's independent sum/count before the final input-token column.
+            statistics = torch.cat((statistics[:,:-1],ce_rows.detach()[:,None].double(),
+                                    auxiliary_counts[:,None].double(),statistics[:,-1:]),dim=1)
+        elif self.arm == 'P7-simple-lm-noaux':
+            auxiliary = lm_rows.new_zeros(())
+            auxiliary_counts = torch.zeros_like(tokens)
         return dict(lm_sum=lm_rows.sum(),lm_count=target_counts.sum(),aux_sum=auxiliary,
                     aux_count=auxiliary_counts.sum(),statistics=statistics,
                     center_sums=sums,center_squares=squares,center_counts=counts,clip_counts=clipped,**relational)

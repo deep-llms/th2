@@ -97,7 +97,7 @@ class MemoryHead(nn.Module):
             c = c + (plan.ems.apply(x, 1)+plan.ems.apply(x, 2)).to(c.dtype)
         return self.w_out(F.silu(c))
 
-    def entries(self, prediction, rotary, native_values, *, input_grad=False):
+    def entries(self, prediction, rotary, native_values, *, input_grad=False, native_keys=None):
         with torch.autocast(prediction.device.type, enabled=False):
             # Opt-in supervised adaptation keeps identical forward values while
             # allowing task gradients into the pretrained estimator. Pretraining
@@ -105,11 +105,14 @@ class MemoryHead(nn.Module):
             value = (prediction if input_grad or getattr(self, 'task_finetuning', False) or getattr(self,'lm_predictor',False) else prediction.detach()).float()
             p = (value*torch.rsqrt(value.square().mean(-1, keepdim=True)+1e-6)).to(prediction.dtype)
         shape = (*p.shape[:-1], 2, -1)
-        k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)
-        # Only keys need rotating; calling the Q/K helper with (k,k) did twice
-        # the same work and discarded one result.
-        cos,sin = (x.unsqueeze(1) for x in rotary)
-        k = k*cos+rotate_half(k)*sin
+        if self.k_proj is None:
+            if native_keys is None:raise ValueError('Value-only memory requires native rotated keys')
+            k = native_keys
+        else:
+            k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)
+            # Only proxy keys need rotating; native keys are already rotated.
+            cos,sin = (x.unsqueeze(1) for x in rotary)
+            k = k*cos+rotate_half(k)*sin
         v = native_values if self.v_proj is None else self.v_proj(p).view(shape).transpose(1, 2)
         return k, v
 
@@ -134,6 +137,39 @@ class SimpleMemoryHead(MemoryHead):
     def estimate(self, u, plan):
         source = u if getattr(self, 'task_finetuning', False) else u.detach()
         return self.w2(F.silu(self.w1(source)))
+
+
+def next_token_mask(context):
+    """One fixed packed position in eight, with the main LM's label exclusions."""
+    return context.targets()[:, ::8]
+
+
+def next_token_loss(prediction, context, norm_weight, lm_weight, epsilon, chunk_size,
+                    checkpoint_loss=False):
+    """Last-site prediction -> frozen current readout; never train the readout.
+
+    Sampling is fixed by packed offset, not RNG or microbatch size. No future
+    hidden state enters the predictor. Only labels are shifted to t+1.
+    """
+    from torch.utils.checkpoint import checkpoint
+    valid = next_token_mask(context)
+    labels = (context.input_ids if context.labels is None else context.labels)[:, 1::8]
+    labels = labels.masked_fill(~valid, -100)
+    selected = prediction[:, :-1:8]
+    rows = prediction.new_zeros(len(prediction), dtype=torch.float32)
+    def ce(value, targets):
+        with torch.autocast(value.device.type, enabled=False):
+            h = value.float()
+            h = h*torch.rsqrt(h.square().mean(-1, keepdim=True)+epsilon)
+            h = (h*norm_weight.detach().float()).to(value.dtype)
+        logits = F.linear(h, lm_weight.detach()).float()
+        return F.cross_entropy(logits.flatten(0, 1), targets.flatten(),
+            ignore_index=-100, reduction='none').view_as(targets).sum(-1)
+    for start in range(0, labels.shape[1], chunk_size):
+        y = labels[:, start:start+chunk_size]
+        x = selected[:, start:start+y.shape[1]]
+        rows = rows+(checkpoint(ce, x, y, use_reentrant=False) if checkpoint_loss else ce(x, y))
+    return rows
 
 
 def rectangular_mask(mask, disabled=False):

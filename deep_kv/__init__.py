@@ -21,12 +21,14 @@ P7_ROUTING_ARMS = ("P7-simple-targetgrad", "P7-simple-lm")
 # Keep the completed 24-arm screen's membership stable when adding new arms.
 P7_COMBINED_ARMS = ("P7-simple-targetgrad-lm",)
 P7_CONSUMER_ARMS = ("P7-simple-consumer-only", "P7-simple-consumer", "P7-simple-consumer-targetgrad")
-P7_LM_PREDICTOR_ARMS = ("P7-simple-lm",) + P7_COMBINED_ARMS
+P7_EXPLORATION_ARMS = ("P7-simple-lm-sparse", "P7-simple-lm-keyonly",
+                       "P7-simple-lm-valueonly", "P7-simple-lm-noaux", "P7-simple-lm-nexttoken")
+P7_LM_PREDICTOR_ARMS = ("P7-simple-lm",) + P7_COMBINED_ARMS + P7_EXPLORATION_ARMS
 FOLLOWUP_ARMS = ("P6-iso-sparse-targetgrad",) + P6_SPARSE_DEEP + P7_ROUTING_ARMS + P6_CONSUMER_ARMS + DELAYED_ARMS
 P6_ADAPTER_WIDTH = 32
 ANTICIPATORY_ARMS = ("P4-iso", "P6", "P5", "P4", "P6-iso", "P4-4h", "P4-iso-4h", "P6-lowaux", "P6-iso-sparse-targetgrad") + P6_VARIANTS + P6_ROUTING_ARMS + P6_EXTENSION_ARMS + P6_SPARSE_DEEP + P6_CONSUMER_ARMS + DELAYED_ARMS[:2]
 P7_P6_VARIANTS = ("P7-simple-sparse", "P7-simple-short")
-SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS
+SIMPLE_MEMORY_ARMS = ("P7-simple",) + P7_P6_VARIANTS + P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS + P7_EXPLORATION_ARMS
 MEMORY_ARMS = ("P7", "P7-kq", "P7-ems", "P7-mlp") + SIMPLE_MEMORY_ARMS
 ALL_PROXY_ARMS = PROXY_ARMS + ANTICIPATORY_ARMS + MEMORY_ARMS
 SCREEN_ARMS = ("A", "V1", "V3", "P1-lambda0", "P1-block", "P1-flow", "P3-lambda0", "P3-block")
@@ -66,6 +68,20 @@ def followup_metadata(arm):
                 cosine_weight=0. if arm.endswith('-only') else 1.,
                 source_detached=True, teacher_detached=True, parameters_detached=True,
                 query_heads=4, output='before_o_proj', teacher='standardized_mlp_window_sum'))
+    if arm in P7_EXPLORATION_ARMS:
+        result.update(auxiliary_routes=auxiliary_routes(arm), lm_to_predictor=True,
+            memory_entries=dict(version=1,
+                keys='native' if arm.endswith('-valueonly') else 'proxy',
+                values='native' if arm.endswith('-keyonly') else 'proxy',
+                normalization='joint_softmax_with_native_entries'),
+            auxiliary_objective=dict(version=1, kind=(
+                'next_token_ce' if arm.endswith('-nexttoken') else
+                'none' if arm.endswith('-noaux') else 'cosine')))
+        if arm.endswith('-nexttoken'):
+            result['auxiliary_objective'].update(site='last_proxy', packed_stride=8,
+                readout='detached_current_final_norm_and_lm_head',
+                labels='same_document_next_token', reduction='global_selected_token_mean',
+                cosine='diagnostic_only')
     return result
 
 
@@ -82,6 +98,8 @@ def simple_memory_layout(arm, num_hidden_layers):
     """P7-simple uses the same locations and targets as its P6-iso counterpart."""
     parents = {"P7-simple": "P6-iso", "P7-simple-sparse": "P6-iso-sparse",
                "P7-simple-short": "P6-iso-short"}
+    if arm in P7_EXPLORATION_ARMS:
+        return anticipatory_layout('P6-iso-sparse' if arm.endswith('-sparse') else 'P6-iso',num_hidden_layers)
     if arm in P7_ROUTING_ARMS + P7_DEEP_ARMS + DELAYED_ARMS[2:] + P7_COMBINED_ARMS + P7_CONSUMER_ARMS:return anticipatory_layout('P6-iso',num_hidden_layers)
     return anticipatory_layout(parents[arm], num_hidden_layers)
 

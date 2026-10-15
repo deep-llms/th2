@@ -8,7 +8,10 @@ from unittest.mock import patch
 import torch
 from transformers.models.qwen3.modeling_qwen3 import apply_rotary_pos_emb
 
-from deep_kv import P6_VARIANTS, SIMPLE_MEMORY_ARMS
+from deep_kv import P6_VARIANTS, SIMPLE_MEMORY_ARMS, P7_EXPLORATION_ARMS
+# Historical implementation parity applies to the architectures that existed
+# then. New entry layouts/objectives have independent tests in test_p7_exploration.
+SIMPLE_MEMORY_ARMS = tuple(a for a in SIMPLE_MEMORY_ARMS if a not in P7_EXPLORATION_ARMS)
 from deep_kv.model import Context
 from deep_kv.proxy_memory import MemoryHead, flash_joint_attention
 from tests.test_proxy_memory import model, batch, objective

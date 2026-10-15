@@ -16,6 +16,12 @@ def reduce_moments(accelerator, values, fused):
 
 def summarize_proxy(statistics, model):
     values = np.asarray(statistics,dtype=np.float64)
+    next_token = model.arm == 'P7-simple-lm-nexttoken'
+    if next_token:
+        ce_sum, ce_count = values[:,-3:-1].sum(0)
+        if not np.isfinite(values).all() or ce_count < 0:
+            raise ValueError('Invalid next-token auxiliary statistics')
+        values = np.concatenate((values[:,:-3],values[:,-1:]),axis=1)
     totals = values.sum(0)
     lm, targets, auxiliary_count, *rest = totals.tolist()
     if targets <= 0 or totals[-1] <= 0 or not np.isfinite(values).all():
@@ -54,6 +60,14 @@ def summarize_proxy(statistics, model):
                 result[f'proxy_layer_{layer}_aux_loss'] += .5*float(relational[index])
             for c, cosine in enumerate(row):
                 result[f'proxy_layer_{layer}_cosine_{c}'] = float(cosine)
+    if next_token:
+        result['aux_loss'] = result['next_token_loss'] = float(ce_sum/max(ce_count,1))
+        result['next_token_targets'] = int(ce_count)
+        for layer in model.layers:
+            result[f'proxy_layer_{layer}_aux_loss'] = result['aux_loss'] if layer == model.layers[-1] else 0.
+    if model.arm == 'P7-simple-lm-noaux':
+        result['aux_loss'] = 0.
+        for layer in model.layers:result[f'proxy_layer_{layer}_aux_loss'] = 0.
     return result
 
 
@@ -110,7 +124,7 @@ class ProxyCallback(PilotCallback):
     def enrich_log(self,logs,state):
         if 'loss' in logs:
             logs['step_lm_loss'] = self.latest['lm_loss']
-            logs.update({f'step_{k}':v for k,v in self.latest.items() if k.startswith('proxy_') or k in ('aux_loss','consumer_effect_loss')})
+            logs.update({f'step_{k}':v for k,v in self.latest.items() if k.startswith('proxy_') or k in ('aux_loss','consumer_effect_loss','next_token_loss','next_token_targets')})
             logs['seconds_per_update'] = self.seconds_per_update
             logs['proxy_lambda'] = self.trainer.model.auxiliary_weight(max(0,state.global_step-1))
             if self.trainer.model.arm in DELAYED_ARMS:
@@ -160,7 +174,11 @@ class ProxyTrainer(DeepKVTrainer):
         offset = 0
         for inputs in batch_samples:
             ctx = self.context(inputs)
-            counts[:2] += torch.stack((ctx.targets().sum(),ctx.valid.sum())).to(device)
+            if self.model.arm == 'P7-simple-lm-nexttoken':
+                from .proxy_memory import next_token_mask
+                aux_count = next_token_mask(ctx).sum()
+            else:aux_count = ctx.valid.sum()
+            counts[:2] += torch.stack((ctx.targets().sum(),aux_count)).to(device)
             if memory:
                 from .proxy_memory import eligible_queries
                 counts[2] += eligible_queries(ctx.segments).sum(-1).clamp_max(256).sum().to(device)

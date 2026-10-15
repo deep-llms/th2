@@ -16,10 +16,10 @@ from datasets import Dataset
 from transformers import TrainingArguments, AutoTokenizer, TrainerControl
 
 from deep_kv import MEMORY_ARMS, SIMPLE_MEMORY_ARMS, P7_P6_VARIANTS
-from deep_kv import FOLLOWUP_ARMS
+from deep_kv import FOLLOWUP_ARMS, P7_EXPLORATION_ARMS
 # Original P7 contracts; new gradient/delayed variants have independent tests.
-MEMORY_ARMS=tuple(a for a in MEMORY_ARMS if a not in FOLLOWUP_ARMS)
-SIMPLE_MEMORY_ARMS=tuple(a for a in SIMPLE_MEMORY_ARMS if a not in FOLLOWUP_ARMS)
+MEMORY_ARMS=tuple(a for a in MEMORY_ARMS if a not in FOLLOWUP_ARMS + P7_EXPLORATION_ARMS)
+SIMPLE_MEMORY_ARMS=tuple(a for a in SIMPLE_MEMORY_ARMS if a not in FOLLOWUP_ARMS + P7_EXPLORATION_ARMS)
 from deep_kv.fa4 import document_layout
 from deep_kv.model import Context
 from deep_kv.proxy import ProxyModel, ProxySettings, EMSPlan, compute_budget
