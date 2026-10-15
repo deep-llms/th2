@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-completed-eval-health-20261015-a03
+#th2-q359-p7-completed-eval-health-20261015-a04
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -16,5 +16,11 @@ for p in [source/'user-stop-after-keyonly.json',source/'supervised/supervisor.js
 for p in [Path(str(root)+'.launch.log'),root/'supervised/run/numerics.log',root/'supervised/run/smoke.log',root/'supervised/run/full.log']:
  if p.exists():
   with p.open('rb') as f:f.seek(max(0,p.stat().st_size-7000));print('LOG',str(p),f.read().decode(errors='replace'))
+for phase in ('smoke','full'):
+ p=root/'supervised/run'/phase
+ finished=list(p.glob('*/*/eval_metadata.json'))
+ print('BENCHMARK_PROGRESS',phase,len(finished),'of 40 groups')
+ for f in sorted(p.glob('01/*.log')):
+  with f.open('rb') as h:h.seek(max(0,f.stat().st_size-1500));print('TARGETGRAD_LOG',f,h.read().decode(errors='replace'))
 print('GPU_SNAPSHOT',json.dumps(snapshot(list(range(8)))))
 REMOTE
