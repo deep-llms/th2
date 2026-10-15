@@ -8,6 +8,7 @@ import unittest
 import torch
 from safetensors.torch import save_file
 from scripts.check_fa4_proxy import validate
+from deep_kv.p7_variants import TUNING_ARMS, NOAUX_ARMS, KEYONLY_ARMS, VALUEONLY_ARMS, settings_overrides
 from deep_kv import MEMORY_ARMS, SIMPLE_MEMORY_ARMS, P7_EXPLORATION_ARMS
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_target_metadata
 from deep_kv import FOLLOWUP_ARMS, DELAYED_ARMS, P6_CONSUMER_ARMS, P6_SPARSE_DEEP, followup_metadata, P7_DEEP_ARMS
@@ -23,7 +24,7 @@ class ScreenValidationTests(unittest.TestCase):
                                              ('fa4','P7-simple',25,1),('sdpa','P7-simple',25,1),
                                              ('fa4','P7-simple-sparse',25,1),('sdpa','P7-simple-sparse',25,1),
                                              ('fa4','P7-simple-short',25,1),('sdpa','P7-simple-short',25,1)) + tuple(
-                (backend,arm,25,1) for arm in P6_EXTENSION_ARMS+FOLLOWUP_ARMS+P7_DEEP_ARMS+P7_EXPLORATION_ARMS for backend in ('sdpa','fa4')):
+                (backend,arm,25,1) for arm in P6_EXTENSION_ARMS+FOLLOWUP_ARMS+P7_DEEP_ARMS+P7_EXPLORATION_ARMS+TUNING_ARMS for backend in ('sdpa','fa4')):
             with self.subTest(steps=steps,arm=variant),tempfile.TemporaryDirectory() as tmp:
                 layers=(2,6,10,14,18,22) if '-sparse' in variant else tuple(range(2,25,2))
                 root=Path(tmp);arm=root/f'seed-42/{variant}';checkpoint=arm/f'checkpoint-{steps}'
@@ -44,17 +45,20 @@ class ScreenValidationTests(unittest.TestCase):
                     result['evaluation'].update({f'eval_proxy_layer_{layer}_attention_mass':.5 for layer in layers})
                 if variant in P6_EXTENSION_ARMS+P6_SPARSE_DEEP:
                     config['proxy_target']=anticipatory_target_metadata(variant)
-                if variant in FOLLOWUP_ARMS+P7_DEEP_ARMS+P7_EXPLORATION_ARMS:config.setdefault('proxy_target',{}).update(followup_metadata(variant))
-                if variant=='P7-simple-lm-noaux':
+                if variant in FOLLOWUP_ARMS+P7_DEEP_ARMS+P7_EXPLORATION_ARMS+TUNING_ARMS:config.setdefault('proxy_target',{}).update(followup_metadata(variant))
+                if variant in NOAUX_ARMS:
                     config['pilot']['proxy_lambda_max']=0.;result['evaluation']['eval_aux_loss']=0.
                 if variant=='P7-simple-lm-nexttoken':
                     result['evaluation'].update(eval_next_token_loss=1.,eval_next_token_targets=8)
+                if variant in TUNING_ARMS:
+                    config['pilot'].update(settings_overrides(variant))
+                    config['model_config']=dict(num_hidden_layers=28,num_attention_heads=16,num_key_value_heads=8,head_dim=8,hidden_size=32)
                 for name,value in (('train_config',config),('trainer_state',state),('result',result)):
                     (arm/f'{name}.json').write_text(json.dumps(value))
                 (checkpoint/'trainer_state.json').write_text(json.dumps(state))
                 for phase in ('train','eval'):
                     calls=28+len(layers) if variant in MEMORY_ARMS and variant not in DELAYED_ARMS else 28
-                    if variant=='P7-simple-lm-valueonly':calls=28
+                    if variant in VALUEONLY_ARMS:calls=28
                     gradients=calls
                     if variant in P6_CONSUMER_ARMS:
                         calls+=2*len(layers);gradients+=len(layers)
@@ -72,9 +76,19 @@ class ScreenValidationTests(unittest.TestCase):
                     (checkpoint/name).write_bytes(b'fixture')
                 heads=({f'heads.{layer}.{suffix}':torch.ones(3) for layer in layers
                         for suffix in (('w1.weight','w2.weight') if variant in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight'))+
-                        (() if variant=='P7-simple-lm-valueonly' else ('k_proj.weight','k_norm.weight'))+
-                        (() if variant in ('P7-kq','P7-simple-lm-keyonly') else ('v_proj.weight',))} if variant in MEMORY_ARMS else
+                        (() if variant in VALUEONLY_ARMS else ('k_proj.weight','k_norm.weight'))+
+                        (() if variant in ('P7-kq',)+KEYONLY_ARMS else ('v_proj.weight',))} if variant in MEMORY_ARMS else
                        {'heads.2.alpha':torch.ones(1,3)*.1})
+                if variant in TUNING_ARMS:
+                    g=settings_overrides(variant)['proxy_groups']
+                    for layer in layers:
+                        for suffix in ('k_proj.weight','v_proj.weight','k_norm.weight'):
+                            name=f'heads.{layer}.{suffix}'
+                            if name in heads:heads[name]=torch.ones(8) if suffix=='k_norm.weight' else torch.ones(g*8,32)
+                        if variant.endswith('-nonlinear'):
+                            for kind in ('key_transform','value_transform'):
+                                for index in (0,2):heads[f'heads.{layer}.{kind}.{index}.weight']=torch.ones(32,32)
+                        if variant.endswith('-gated'):heads[f'heads.{layer}.value_gate']=torch.ones(2*g)
                 if variant in P6_EXTENSION_ARMS+P6_SPARSE_DEEP+P7_DEEP_ARMS:
                     heads.update({f'extensions.{layer}.{suffix}':torch.ones(3) for layer in layers
                         for suffix in (('weight',) if variant in P6_DEPTH_ARMS else ('down.weight','up.weight'))})
@@ -88,7 +102,7 @@ class ScreenValidationTests(unittest.TestCase):
                 args.expected_lambda=.1;args.output=str(root/'wrong-lambda.json')
                 with self.assertRaises(AssertionError):validate(args)
                 args.expected_lambda=.3;args.output=str(root/'right-lambda.json')
-                if variant=='P7-simple-lm-noaux':
+                if variant in NOAUX_ARMS:
                     with self.assertRaises(AssertionError):validate(args)
                     config['pilot']['proxy_lambda_max']=0.
                     (arm/'train_config.json').write_text(json.dumps(config))

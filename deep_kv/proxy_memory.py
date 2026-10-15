@@ -104,16 +104,18 @@ class MemoryHead(nn.Module):
             # and likelihood evaluation retain the original routing by default.
             value = (prediction if input_grad or getattr(self, 'task_finetuning', False) or getattr(self,'lm_predictor',False) else prediction.detach()).float()
             p = (value*torch.rsqrt(value.square().mean(-1, keepdim=True)+1e-6)).to(prediction.dtype)
-        shape = (*p.shape[:-1], 2, -1)
+        shape = (*p.shape[:-1], getattr(self, 'groups', 2), -1)
+        key_input = p if not hasattr(self, 'key_transform') else p+self.key_transform(p)
+        value_input = p if not hasattr(self, 'value_transform') else p+self.value_transform(p)
         if self.k_proj is None:
             if native_keys is None:raise ValueError('Value-only memory requires native rotated keys')
             k = native_keys
         else:
-            k = self.k_norm(self.k_proj(p).view(shape)).transpose(1, 2)
+            k = self.k_norm(self.k_proj(key_input).view(shape)).transpose(1, 2)
             # Only proxy keys need rotating; native keys are already rotated.
             cos,sin = (x.unsqueeze(1) for x in rotary)
             k = k*cos+rotate_half(k)*sin
-        v = native_values if self.v_proj is None else self.v_proj(p).view(shape).transpose(1, 2)
+        v = native_values if self.v_proj is None else self.v_proj(value_input).view(shape).transpose(1, 2)
         return k, v
 
 
@@ -126,13 +128,29 @@ class SimpleMemoryHead(MemoryHead):
         for module in (self.w1, self.w2):
             nn.init.normal_(module.weight, std=config.initializer_range)
 
-    def initialize_projections(self, config):
+    def initialize_projections(self, config, groups=2):
         # Called after ALL estimators: preserve P4-iso's estimator RNG sequence.
-        self.k_proj = nn.Linear(config.hidden_size, 2*config.head_dim, bias=False)
-        self.v_proj = nn.Linear(config.hidden_size, 2*config.head_dim, bias=False)
+        self.groups = groups
+        self.k_proj = nn.Linear(config.hidden_size, groups*config.head_dim, bias=False)
+        self.v_proj = nn.Linear(config.hidden_size, groups*config.head_dim, bias=False)
         self.k_norm = Qwen3RMSNorm(config.head_dim, eps=config.rms_norm_eps)
         for module in (self.k_proj, self.v_proj):
             nn.init.normal_(module.weight, std=config.initializer_range)
+
+    def initialize_tuning(self, config, spec):
+        if 'transform_width' in spec:
+            # Input is already RMS-normalized. Separate low-rank residuals;
+            # zero up-projections reproduce the parent's initial forward exactly.
+            for name in ('key_transform', 'value_transform'):
+                down = nn.Linear(config.hidden_size, spec['transform_width'], bias=False)
+                up = nn.Linear(spec['transform_width'], config.hidden_size, bias=False)
+                nn.init.normal_(down.weight, std=config.initializer_range)
+                nn.init.zeros_(up.weight)
+                setattr(self, name, nn.Sequential(down, nn.SiLU(), up))
+        if 'mix_init' in spec:
+            count = self.groups*config.num_attention_heads//config.num_key_value_heads
+            p = spec['mix_init']
+            self.value_gate = nn.Parameter(torch.full((count,), math.log(p/(1-p))))
 
     def estimate(self, u, plan):
         source = u if getattr(self, 'task_finetuning', False) else u.detach()

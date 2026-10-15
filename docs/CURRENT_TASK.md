@@ -1,3 +1,32 @@
+## P7 tuning implemented locally — 15 October 2026
+
+User requested all discussed variants and safe throughput optimization, not a
+new launch. Implemented14 new named architectures:10 targetgrad (2/3-block,
+weighted, SmoothL1, K-only, V-only, nonlinear transforms, sparse,2/8 query heads)
+and4 LM variants (sparse/K-only/V-only noaux and per-query gated V mixing).
+Prepared20case sequential manifest including4 lambda sweeps and A/dense-noaux
+seed2042 replication. All fresh2500steps,125scheduler warmup,250aux ramp,
+8GPUs pertrain, saveall every250; manifest gates numerics/allsmokes before full
+training. No B200 push, stop, launch, environment/config/cache changes.
+commands.sh remains#0. Existing active queue unchanged; prior status below is
+historical, not a fresh machine observation.
+
+Value-only collapses duplicate keys into one attention call; gated values use
+one native-length call with expanded GQA entries and independent query gates.
+No measured B200 throughput claim. Saved metadata/report/reload/receipts support
+all variants. Parent old scientific definitions and train.py loop preserved.
+New variants keep fixed-four-block custom kernels disabled; parent lambda cases
+retain its previously validated optimizations. GPU numerical/DDP gates pending.
+
+36unique targeted test methods passed across recorded runs (some repeated).
+All14 newarms passed actual Trainer exactresume/reload/report and2rankGloo.
+FP32/BF16 referencebackend gradients, independent equations, isolation,
+checkpoint replay, attention-call counts, gate logging, metadata rejection,
+newrecipe and receipt checks passed. Existing P7 regression suite passed.
+Evidence:docs/results/p7_tuning_local_checks_20261015.json; definitions/usage:
+docs/P7_TUNING_VARIANTS_20261015.md. All20cases exceed the earlier12hour estimate;
+select launch scope separately. Unrelated user documentation remains untouched.
+
 ## Exploration status — 15 October 2026, 12:18 UTC / 20:18 SGT
 
 Read-only requesta2b381c verified q359-p7-exploration8-20261015-a03 healthy.

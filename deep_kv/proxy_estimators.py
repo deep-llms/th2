@@ -72,6 +72,16 @@ def cosine_loss(prediction, target, valid, target_grad=False, valid_counts=None)
         return cosine[:,None], (counts-cosine)[:,None]
 
 
+def smooth_l1_loss(prediction, target, valid, target_grad=False):
+    """Coordinate/magnitude regression, preserving the live-target gradient route."""
+    with torch.autocast(prediction.device.type, enabled=False):
+        truth = (target if target_grad else target.detach()).float()
+        prediction = prediction.float()
+        cosine = (F.cosine_similarity(prediction, truth, dim=-1, eps=1e-6)*valid).sum(-1)
+        loss = (F.smooth_l1_loss(prediction, truth, reduction='none', beta=1.).mean(-1)*valid).sum(-1)
+        return cosine[:,None], loss[:,None]
+
+
 class _MLPPath(torch.autograd.Function):
     """One gradient path over shared, already-computed estimator activations."""
     @staticmethod

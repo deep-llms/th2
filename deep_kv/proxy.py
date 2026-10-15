@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import copy
 import math
 from dataclasses import dataclass
+from types import SimpleNamespace
 
 import torch
 from torch import nn
@@ -17,6 +18,8 @@ from . import P6_TARGET_WEIGHTS, P6_ROUTING_ARMS, auxiliary_routes
 from . import P6_EXTENSION_ARMS, P6_ADAPTER_ARMS, P6_DEPTH_ARMS, P6_DEEP_ARMS, P6_ADAPTER_WIDTH
 from . import FOLLOWUP_ARMS, P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, P7_ROUTING_ARMS, P7_DEEP_ARMS
 from . import P7_COMBINED_ARMS, P7_LM_PREDICTOR_ARMS, P7_CONSUMER_ARMS, P7_EXPLORATION_ARMS
+
+from .p7_variants import TUNING_ARMS, TUNING_SPECS, NOAUX_ARMS, KEYONLY_ARMS, VALUEONLY_ARMS
 
 
 @dataclass
@@ -53,25 +56,26 @@ def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
     if (settings.compile_auxiliary or settings.lse_attention or settings.compile_entries or settings.fused_targets) and arm not in ('A', 'P7-simple-targetgrad'):
         raise ValueError('These optimizations are validated only for P7-simple-targetgrad (and unchanged A)')
-    if settings.lambda_max is None:settings.lambda_max = 0. if arm == 'P7-simple-lm-noaux' else .03 if arm == 'P6-lowaux' else .1
-    if arm == 'P7-simple-lm-noaux' and settings.lambda_max != 0:
-        raise ValueError('P7-simple-lm-noaux requires lambda_max=0')
+    if settings.lambda_max is None:settings.lambda_max = 0. if arm in NOAUX_ARMS else .03 if arm == 'P6-lowaux' else .1
+    if arm in NOAUX_ARMS and settings.lambda_max != 0:
+        raise ValueError(f'{arm} requires lambda_max=0')
     if arm == 'P6-lowaux' and settings.lambda_max != .03:
         raise ValueError('P6-lowaux requires lambda_max=0.03')
     new = arm in ANTICIPATORY_ARMS
     memory = arm in MEMORY_ARMS
-    expected_lookahead = 2 if arm in ('P6-iso-short','P7-simple-short') else 4
+    spec = TUNING_SPECS.get(arm,{})
+    expected_lookahead = spec.get('lookahead',2 if arm in ('P6-iso-short','P7-simple-short') else 4)
     if settings.lookahead is None:settings.lookahead = expected_lookahead
     if memory:
         version = 'p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1'
         if settings.target_version is None:settings.target_version = version
         if settings.isolate_estimator is None:settings.isolate_estimator = True
         if settings.alpha_init is None:settings.alpha_init = 0.  # No gate parameter in P7.
-        if (settings.target_version != version or settings.lookahead != expected_lookahead or settings.groups != 2
-                or settings.loss_form != 'cosine' or settings.kv_mode != 'kv'
+        if (settings.target_version != version or settings.lookahead != expected_lookahead or settings.groups != spec.get('groups',2)
+                or settings.loss_form != spec.get('loss','cosine') or settings.kv_mode != 'kv'
                 or settings.layers is not None or not settings.isolate_estimator
                 or settings.alpha_init != 0 or settings.aux_recompute or settings.compile_estimator):
-            raise ValueError('P7 requires its specified target, two groups, isolated estimator and no gate')
+            raise ValueError('P7 requires its arm-defined target, groups, loss, isolated estimator and no injection gate')
         if settings.module_seed is None:settings.module_seed = 43
     if settings.alpha_init is None:settings.alpha_init = (.1 if arm.startswith('P6') else 1.) if new else 0.
     if settings.target_version is None:settings.target_version = 'p4p6-r1' if new else 'r7'
@@ -176,6 +180,22 @@ def compute_budget(config, settings, sequence_length=2048):
                 result[arm]['fa4_note'] = 'Duplicate keys collapsed; one native-size attention call per block'
         if arm == 'P7-simple-lm-nexttoken':
             result[arm]['training_only_readout_macs_per_sequence'] = ((sequence_length-2)//8+1)*d*config.vocab_size
+    for arm, spec in TUNING_SPECS.items():
+        count=len(simple_memory_layout(arm,n)[0]); groups=spec.get('groups',2)
+        projection_count=1 if arm in KEYONLY_ARMS+VALUEONLY_ARMS else 2
+        projection=projection_count*groups*h*d
+        norm=0 if arm in VALUEONLY_ARMS else h
+        transform=4*d*spec.get('transform_width',0)
+        gates=groups*nq//nk if 'mix_init' in spec else 0
+        mac=2*d*settings.width+projection+transform
+        attention=0 if arm in VALUEONLY_ARMS else (groups*nq//nk)*h*(sequence_length+1)
+        fa4_attention=0 if arm in VALUEONLY_ARMS else (groups*nq//nk)*h*(3*sequence_length+1)
+        result[arm]=dict(extra_parameters=count*(mac+norm+gates),
+            extra_macs_per_token=count*(mac+attention),
+            fa4_extra_macs_per_token=count*(mac+fa4_attention),
+            relational_forward_macs_per_token=0,
+            fa4_note=('Value-only uses one native-length attention; gated variant expands GQA entries'
+                      if arm in VALUEONLY_ARMS else result['P7']['fa4_note']))
     result['P7-ems'] = {**result['P7'], 'extra_macs_per_token':result['P7']['extra_macs_per_token']+
         layers*2*settings.width*(settings.chunk_size+chunks/settings.chunk_size+1),
         'fa4_extra_macs_per_token':result['P7']['fa4_extra_macs_per_token']+
@@ -302,7 +322,7 @@ class ProxyModel(DeepKV):
         self.relational_proxy = memory and arm not in SIMPLE_MEMORY_ARMS
         self.increment_target = memory and arm not in ('P7-mlp',)+SIMPLE_MEMORY_ARMS
         if arm in SIMPLE_MEMORY_ARMS and cfg.num_attention_heads//cfg.num_key_value_heads != 2:
-            raise ValueError('P7-simple requires four query heads in two complete KV groups')
+            raise ValueError('P7-simple requires two query heads per KV group')
         self._proxy_mass = None
         self.value_groups = cfg.num_key_value_heads
         if arm in ('P4-4h','P4-iso-4h'):
@@ -337,14 +357,17 @@ class ProxyModel(DeepKV):
                     if layer in self.layers:self.heads[str(layer)] = head
                 else:self.heads[str(layer)] = ProxyHead(cfg, self.family, settings)
             if arm in SIMPLE_MEMORY_ARMS:
-                for head in self.heads.values():head.initialize_projections(cfg)
+                for head in self.heads.values():head.initialize_projections(cfg, groups=settings.groups)
                 for key in tuple(self.heads):
                     if int(key) not in self.layers:del self.heads[key]
                 # Initialize exactly like the parent before removing unused
                 # projections, preserving every retained parameter's RNG draw.
                 for head in self.heads.values():
-                    if arm == 'P7-simple-lm-keyonly':head.v_proj = None
-                    if arm == 'P7-simple-lm-valueonly':head.k_proj = head.k_norm = None
+                    if arm in KEYONLY_ARMS:head.v_proj = None
+                    if arm in VALUEONLY_ARMS:head.k_proj = head.k_norm = None
+                # New modules are initialized after all parent projections.
+                for head in self.heads.values():
+                    if arm in TUNING_ARMS:head.initialize_tuning(cfg,TUNING_SPECS[arm])
             # Initialize after ALL parent heads so their RNG/weights stay exact.
             for layer in initialization_layers if arm in P6_EXTENSION_ARMS + P6_SPARSE_DEEP + P7_DEEP_ARMS else ():
                 if arm in P6_DEPTH_ARMS:
@@ -519,13 +542,23 @@ class ProxyModel(DeepKV):
         v = a.v_proj(u).view(shape).transpose(1,2)
         q,k = apply_rotary_pos_emb(q,k,*rotary)
         groups = self.backbone.config.num_key_value_heads
-        split = (groups-2)*self.backbone.config.num_attention_heads//groups
-        kp,vp = (head.entries(prediction,rotary,v[:,-2:],native_keys=k[:,-2:])
-                 if self.arm == 'P7-simple-lm-valueonly' else head.entries(prediction,rotary,v[:,-2:]))
+        selected=self.settings.groups
+        split = (groups-selected)*self.backbone.config.num_attention_heads//groups
+        kp,vp = (head.entries(prediction,rotary,v[:,-selected:],native_keys=k[:,-selected:])
+                 if self.arm in VALUEONLY_ARMS else head.entries(prediction,rotary,v[:,-selected:]))
         if self._proxy_mass is not None:
             name = str(a.layer_idx+1)
-            self._proxy_mass[name] = proxy_mass(q[:,split:],k[:,-2:],kp,plan.documents,a.scaling)
-        if self.arm == 'P7-simple-lm-valueonly':
+            if self.arm in VALUEONLY_ARMS and self.arm in TUNING_ARMS:
+                # Duplicate native keys give exactly 1/2 mass. The gated arm
+                # reports effective value mixture weight, explicitly in metadata.
+                count=q.shape[0]*q[:,split:].shape[1]*q.shape[2]
+                weight=head.value_gate.float().sigmoid().mean() if hasattr(head,'value_gate') else q.new_tensor(.5,dtype=torch.float32)
+                self._proxy_mass[name]=torch.stack((weight*count,weight.new_tensor(count)))
+            else:
+                self._proxy_mass[name] = proxy_mass(q[:,split:],k[:,-selected:],kp,plan.documents,a.scaling)
+        if self.arm == 'P7-simple-lm-valueonly-gated':
+            return self.gated_value_memory_attention(a,q,k,v,vp,head.value_gate,mask)
+        if self.arm in VALUEONLY_ARMS:
             return self.value_memory_attention(a,q,k,v,vp,mask,plan)
         return self.joint_memory_attention(a,q,k,v,kp,vp,mask,plan)
 
@@ -535,9 +568,10 @@ class ProxyModel(DeepKV):
         # All heads now fit in one ordinary attention call. Average in FP32 to
         # avoid low-precision overflow, then use the backend's required dtype.
         # This preserves the real-valued function/VJP, not BF16 bitwise results.
+        selected=self.settings.groups
         with torch.autocast(v.device.type,enabled=False):
-            merged=((v[:,-2:].float()+vp.float())*.5).to(v.dtype)
-        values=torch.cat((v[:,:-2],merged),dim=1)
+            merged=((v[:,-selected:].float()+vp.float())*.5).to(v.dtype)
+        values=torch.cat((v[:,:-selected],merged),dim=1)
         if self.attention_backend == 'fa4':
             from .fa4 import attention
             output=attention(q,k,values,mask,a.scaling,self.fa4_kernel)
@@ -547,11 +581,35 @@ class ProxyModel(DeepKV):
         output,_=interface(a,q,k,values,mask,dropout=0.,scaling=a.scaling,is_causal=False)
         return output
 
+    def gated_value_memory_attention(self,a,q,k,v,vp,gate,mask):
+        # Independent query-head gates require expanding the two heads sharing
+        # each KV group. One native-length attention; no duplicated token axis.
+        repeats=self.backbone.config.num_attention_heads//self.backbone.config.num_key_value_heads
+        selected=self.settings.groups*repeats
+        keys=k.repeat_interleave(repeats,dim=1)
+        native=v.repeat_interleave(repeats,dim=1)
+        proxy=vp.repeat_interleave(repeats,dim=1)
+        with torch.autocast(v.device.type,enabled=False):
+            weight=gate.float().sigmoid()[None,:,None,None]
+            merged=((1-weight)*native[:,-selected:].float()+weight*proxy.float()).to(v.dtype)
+        values=torch.cat((native[:,:-selected],merged),dim=1)
+        if self.attention_backend=='fa4':
+            from .fa4 import attention
+            out=attention(q,keys,values,mask,a.scaling,self.fa4_kernel)
+            if self._fa4_observer is not None:self._fa4_observer(q,keys,values,mask)
+            return out
+        # Entries are already expanded. A metadata-only view prevents a second
+        # GQA repeat while retaining HF's layer attribution in the SDPA audit.
+        view=SimpleNamespace(num_key_value_groups=1,layer_idx=a.layer_idx,training=a.training)
+        interface=ALL_ATTENTION_FUNCTIONS.get_interface('sdpa',eager_attention_forward)
+        return interface(view,q,keys,values,mask,dropout=0.,scaling=a.scaling,is_causal=False)[0]
+
     def joint_memory_attention(self, a, q, k, v, kp, vp, mask, plan):
         """Original duplicate-entry path, also the value-only numerical oracle."""
         from .proxy_memory import rectangular_mask, flash_joint_attention
         groups=self.backbone.config.num_key_value_heads
-        split=(groups-2)*self.backbone.config.num_attention_heads//groups
+        selected=self.settings.groups
+        split=(groups-selected)*self.backbone.config.num_attention_heads//groups
         if self.attention_backend == 'fa4':
             if self.settings.lse_attention:
                 from .fa4 import attention_with_lse
@@ -563,23 +621,23 @@ class ProxyModel(DeepKV):
                     self._fa4_observer(qp,kp,vp,mask)
                 return self.merge_memory_attention(native,proxy,native_lse,proxy_lse)
             from .fa4 import attention
-            qn,kn,vn = q[:,:split],k[:,:-2],v[:,:-2]
+            qn,kn,vn = q[:,:split],k[:,:-selected],v[:,:-selected]
             native = attention(qn,kn,vn,mask,a.scaling,self.fa4_kernel)
             if self._fa4_observer is not None:
                 self._fa4_observer(qn,kn,vn,mask)
             if not hasattr(plan,'doubled_layout'):
                 plan.doubled_layout = (mask[0]*2,mask[1]*2)
-            proxy = flash_joint_attention(q[:,split:],k[:,-2:],v[:,-2:],kp,vp,mask,
+            proxy = flash_joint_attention(q[:,split:],k[:,-selected:],v[:,-selected:],kp,vp,mask,
                                           a.scaling,self.fa4_kernel,self._fa4_observer,
                                           doubled_layout=plan.doubled_layout)
         else:
             interface = ALL_ATTENTION_FUNCTIONS.get_interface('sdpa',eager_attention_forward)
             if not hasattr(plan,'joint_mask'):
                 plan.joint_mask = rectangular_mask(mask)  # Shared by all P7 blocks and replay.
-            native,_ = interface(a,q[:,:split],k[:,:-2],v[:,:-2],mask,
+            native,_ = interface(a,q[:,:split],k[:,:-selected],v[:,:-selected],mask,
                                   dropout=0.,scaling=a.scaling,is_causal=False)
-            proxy,_ = interface(a,q[:,split:],torch.cat((k[:,-2:],kp),dim=2),
-                                 torch.cat((v[:,-2:],vp),dim=2),plan.joint_mask,
+            proxy,_ = interface(a,q[:,split:],torch.cat((k[:,-selected:],kp),dim=2),
+                                 torch.cat((v[:,-selected:],vp),dim=2),plan.joint_mask,
                                  dropout=0.,scaling=a.scaling,is_causal=False)
         return torch.cat((native,proxy),dim=2)
 
@@ -589,7 +647,7 @@ class ProxyModel(DeepKV):
             raise ValueError('Attention mass requires an enabled P7 model')
         if not self._injection_enabled:
             mass=self.mu.new_zeros((len(self.layers),2))
-            mass[:,1]=context.input_ids.numel()*4  # Four selected query heads.
+            mass[:,1]=context.input_ids.numel()*self.settings.groups*self.backbone.config.num_attention_heads//self.backbone.config.num_key_value_heads
             return mass
         self._proxy_mass = {}
         try:
@@ -658,6 +716,9 @@ class ProxyModel(DeepKV):
                     rel_sum, rel_count = relational_losses(prediction,target,plan)
                     return cosines[:,None],(valid_counts-cosines)[:,None],rel_sum,rel_count
             elif self.anticipatory or self.memory_proxy:
+                if self.settings.loss_form=='smooth_l1':
+                    from .proxy_estimators import smooth_l1_loss
+                    return smooth_l1_loss(forward_estimates[0],target,valid,target_grad=self.aux_target_grad)
                 if self.aux_target_grad:
                     return self.cosine_loss(forward_estimates[0],target,valid,target_grad=True,valid_counts=valid_counts)
                 return self.cosine_loss(forward_estimates[0],target,valid,valid_counts=valid_counts)
@@ -811,7 +872,9 @@ class ProxyModel(DeepKV):
                     if not self.increment_target:
                         with torch.set_grad_enabled(target_grad):
                             value = (contribution*P6_TARGET_WEIGHTS[layer-proxy]
-                                     if self.arm == 'P6-iso-weighted' else contribution)
+                                     if self.arm == 'P6-iso-weighted' else
+                                     contribution*TUNING_SPECS[self.arm]['weights'][layer-proxy]
+                                     if 'weights' in TUNING_SPECS.get(self.arm,{}) else contribution)
                             if fused_window:
                                 windows[proxy] = (*windows.get(proxy, ()), value)
                             elif layer <= proxy+1 or target_grad:
@@ -835,7 +898,7 @@ class ProxyModel(DeepKV):
                             normalized = record(proxy,raw)
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
-                            diagnostic_only = self.arm in ('P7-simple-lm-noaux','P7-simple-lm-nexttoken')
+                            diagnostic_only = self.arm in NOAUX_ARMS+('P7-simple-lm-nexttoken',)
                             cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,
                                 auxiliary_grad and not diagnostic_only,valid_counts=valid_counts)
                             if self.arm == 'P7-simple-lm-nexttoken' and proxy == self.layers[-1]:
@@ -936,7 +999,7 @@ class ProxyModel(DeepKV):
             # append CE's independent sum/count before the final input-token column.
             statistics = torch.cat((statistics[:,:-1],ce_rows.detach()[:,None].double(),
                                     auxiliary_counts[:,None].double(),statistics[:,-1:]),dim=1)
-        elif self.arm == 'P7-simple-lm-noaux':
+        elif self.arm in NOAUX_ARMS:
             auxiliary = lm_rows.new_zeros(())
             auxiliary_counts = torch.zeros_like(tokens)
         return dict(lm_sum=lm_rows.sum(),lm_count=target_counts.sum(),aux_sum=auxiliary,

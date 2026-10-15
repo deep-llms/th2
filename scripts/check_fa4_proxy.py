@@ -12,6 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+from deep_kv.p7_variants import NOAUX_ARMS, KEYONLY_ARMS, VALUEONLY_ARMS, TUNING_ARMS, settings_overrides
 from deep_kv import PROXY_ARMS, ALL_PROXY_ARMS, MEMORY_ARMS, SIMPLE_MEMORY_ARMS, simple_memory_layout
 from deep_kv import P6_EXTENSION_ARMS, P6_DEPTH_ARMS, anticipatory_layout, anticipatory_target_metadata
 from deep_kv import P6_SPARSE_DEEP, P6_CONSUMER_ARMS, DELAYED_ARMS, PROXY_DELAY_STEPS, followup_metadata, P7_DEEP_ARMS
@@ -51,7 +52,7 @@ def write(path,value):
 def worker(args):
     import torch
     from transformers import AutoConfig
-    from deep_kv.proxy import ProxyModel
+    from deep_kv.proxy import ProxyModel, ProxySettings
     from deep_kv.proxy_training import ProxyTrainer
     from deep_kv.packing import isolated_data_collator
     from scripts.benchmark_document_training import compare
@@ -65,7 +66,8 @@ def worker(args):
     from train import configure_depth
     configure_depth(cfg, recipe.get('num_hidden_layers'))
     cfg._attn_implementation='sdpa';cfg.use_cache=False
-    m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=42,
+    options={k.removeprefix('proxy_'):v for k,v in settings_overrides(arm).items()} if arm in TUNING_ARMS else {}
+    m=ProxyModel.from_scratch(cfg,arm,attention_backend='fa4',seed=42,proxy_settings=ProxySettings(**options),
         consumer=recipe.get('consumer',5),deep_target=recipe.get('deep_target',21),
         checkpoint_layers=False,checkpoint_lm=False,checkpoint_aux=False,lm_chunk=128).cuda().train()
     if arm in DELAYED_ARMS:m.set_training_step(PROXY_DELAY_STEPS+250)
@@ -77,6 +79,10 @@ def worker(args):
             for head in m.heads.values():head.alpha.normal_(0,.05)
         # Zero-output extension initialization would hide errors in its actual
         # learned path. This numerical worker never writes a training checkpoint.
+        for head in m.heads.values():
+            for name in ('key_transform','value_transform'):
+                if hasattr(head,name):getattr(head,name)[2].weight.normal_(0,.02)
+            if hasattr(head,'value_gate'):head.value_gate.add_(torch.linspace(-.2,.2,len(head.value_gate),device=head.value_gate.device))
         for extension in m.extensions.values():
             parameter=extension.weight if arm in P6_DEPTH_ARMS else extension.up.weight
             parameter.normal_(0,.02)
@@ -119,14 +125,33 @@ def worker(args):
         assert all(g.abs().sum()>0 for n,g in flash['grads'].items() if n.startswith(('heads.','extensions.')))
     losses={k:[dense[k],flash[k]] for k in ('lm_loss','aux_loss')}
     value_merge_checks=[]
-    if arm=='P7-simple-lm-valueonly':
+    if arm in VALUEONLY_ARMS:
         # Compare against the original duplicated keys, not just two backends
         # that both use the new algebraic reduction. Keep the existing limits.
         from unittest.mock import patch
         def duplicate_entries(self,a,q,k,v,vp,mask,plan):
-            return self.joint_memory_attention(a,q,k,v,k[:,-2:],vp,mask,plan)
+            return self.joint_memory_attention(a,q,k,v,k[:,-self.settings.groups:],vp,mask,plan)
+        def gated_outputs(self,a,q,k,v,vp,gate,mask):
+            # Independent oracle: two native-length attentions, then blend
+            # outputs. Production blends values and performs one attention.
+            groups=self.settings.groups
+            split=q.shape[1]-groups*self.backbone.config.num_attention_heads//self.backbone.config.num_key_value_heads
+            if self.attention_backend=='fa4':
+                from deep_kv.fa4 import attention
+                native=attention(q,k,v,mask,a.scaling,self.fa4_kernel)
+                proxy=attention(q[:,split:],k[:,-groups:],vp,mask,a.scaling,self.fa4_kernel)
+            else:
+                from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
+                interface=ALL_ATTENTION_FUNCTIONS['sdpa']
+                native=interface(a,q,k,v,mask,dropout=0.,scaling=a.scaling,is_causal=False)[0]
+                proxy=interface(a,q[:,split:],k[:,-groups:],vp,mask,dropout=0.,scaling=a.scaling,is_causal=False)[0]
+            with torch.autocast(q.device.type,enabled=False):
+                g=gate.float().sigmoid()[None,None,:,None]
+                selected=((1-g)*native[:,:,split:].float()+g*proxy.float()).to(native.dtype)
+            return torch.cat((native[:,:,:split],selected),dim=2)
+        method,reference_fn=('gated_value_memory_attention',gated_outputs) if arm=='P7-simple-lm-valueonly-gated' else ('value_memory_attention',duplicate_entries)
         for backend,merged in (('sdpa',dense),('fa4',flash)):
-            with patch.object(type(m),'value_memory_attention',duplicate_entries):
+            with patch.object(type(m),method,reference_fn):
                 reference=capture(backend)
             full=compare(reference,merged,False)
             proxy=compare({**reference,'grads':{n:g for n,g in reference['grads'].items() if n.startswith('heads.')}},
@@ -252,7 +277,7 @@ def validate(args):
             assert r['arm']==arm and r['world_size']==8
             dormant=arm in DELAYED_ARMS and r['global_step'] < PROXY_DELAY_STEPS
             attention_calls=depth+len(memory_layers) if arm in MEMORY_ARMS and not dormant else depth
-            if arm=='P7-simple-lm-valueonly':attention_calls=depth
+            if arm in VALUEONLY_ARMS:attention_calls=depth
             gradient_calls=attention_calls
             if arm in P6_CONSUMER_ARMS:
                 sites=len(anticipatory_layout(arm,depth)[0])
@@ -288,6 +313,8 @@ def validate(args):
             assert bool(weights.get_tensor('mu_initialized'))
             if arm in DELAYED_ARMS:assert int(weights.get_tensor('proxy_updates'))==args.steps
             for key,value in followup_metadata(arm).items():assert config['proxy_target'][key]==value
+            if arm in TUNING_ARMS:
+                for key,value in settings_overrides(arm).items():assert config['pilot'][key]==value
             if arm.startswith('P'):
                 for name in ('mu','sigma2'):
                     value=weights.get_tensor(name)
@@ -298,15 +325,29 @@ def validate(args):
                     assert not gates and config['pilot']['proxy_target_version']==('p4p6-r1' if arm in SIMPLE_MEMORY_ARMS else 'p7-r1')
                     for layer in memory_layers:
                         estimator=('w1.weight','w2.weight') if arm in SIMPLE_MEMORY_ARMS else ('conv','w_in.weight','w_out.weight')
-                        projections = (() if arm=='P7-simple-lm-valueonly' else ('k_proj.weight','k_norm.weight'))
-                        projections += () if arm in ('P7-kq','P7-simple-lm-keyonly') else ('v_proj.weight',)
+                        projections = (() if arm in VALUEONLY_ARMS else ('k_proj.weight','k_norm.weight'))
+                        projections += () if arm in ('P7-kq',)+KEYONLY_ARMS else ('v_proj.weight',)
                         for suffix in estimator+projections:
                             value=weights.get_tensor(f'heads.{layer}.{suffix}')
                             assert torch.isfinite(value).all() and value.abs().sum()>0
+                        if arm in TUNING_ARMS:
+                            mc=config['model_config'];groups=settings_overrides(arm)['proxy_groups']
+                            for suffix in projections:
+                                value=weights.get_tensor(f'heads.{layer}.{suffix}')
+                                expected=(mc['head_dim'],) if suffix=='k_norm.weight' else (groups*mc['head_dim'],mc['hidden_size'])
+                                assert tuple(value.shape)==expected
+                            if arm.endswith('-nonlinear'):
+                                for kind in ('key_transform','value_transform'):
+                                    for index in (0,2):
+                                        value=weights.get_tensor(f'heads.{layer}.{kind}.{index}.weight')
+                                        assert torch.isfinite(value).all() and value.abs().sum()>0
+                            if arm.endswith('-gated'):
+                                value=weights.get_tensor(f'heads.{layer}.value_gate')
+                                assert tuple(value.shape)==(2*groups,) and torch.isfinite(value).all()
                         mass=result['evaluation'][f'eval_proxy_layer_{layer}_attention_mass']
                         assert math.isfinite(mass) and 0<=mass<=1
                     assert all(math.isfinite(result['evaluation'][key]) for key in (('eval_cos_loss','eval_aux_loss') if arm in SIMPLE_MEMORY_ARMS else ('eval_cos_loss','eval_rel_loss','eval_aux_loss')))
-                    if arm=='P7-simple-lm-noaux':
+                    if arm in NOAUX_ARMS:
                         assert config['pilot']['proxy_lambda_max']==0 and result['evaluation']['eval_aux_loss']==0
                     if arm=='P7-simple-lm-nexttoken':
                         assert result['evaluation']['eval_next_token_targets']>0
