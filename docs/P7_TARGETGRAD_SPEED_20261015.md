@@ -383,3 +383,29 @@ released GPU guard. Final receipt:
 `d62c085ae54486c52ce360a86fe3e9cddf227e3bf3f96eac6bbdba0e46065e60`.
 The raw gate/summary hashes matched the supervisor's recorded job artifacts.
 `commands.sh` is inactive again. No environment or NVIDIA driver was changed.
+
+### Follow-up correctness review — 15 October 2026
+
+No additional production-code defect was found in the target kernel, live-LSE
+gradient path, opt-in settings, saved configuration or resume guards. The
+optimization remains restricted to the validated arm/runtime described above.
+
+Added a local regression using the **actual Triton target kernel in interpreter
+mode inside the production model**, rather than the torch reference function.
+It compares two AdamW updates with checkpointing both on and off, separate LM
+and auxiliary gradient routes, all parameter gradients, updated weights and
+running statistics. It also checks disabled auxiliary gradients and no-gradient
+evaluation. Only the kernel's CUDA device guard is bypassed; tensors stay on
+CPU. This complements the existing compiled-kernel B200 evidence.
+
+The focused suite passed **10 tests in 53.850 seconds**, including the 13-case
+primitive oracle, production-option parity and real Trainer save/resume checks.
+Command: `python -m unittest tests.test_target_kernel tests.test_p7_speed_trial`
+in `sampling_b200`, with CUDA hidden and one CPU thread. Local log:
+`temp/p7-optimization-review-20261015.log`. All four saved B200 result artifacts
+report success, and the final receipt SHA256 matches the value above.
+
+This review changed tests and documentation only. No B200 job was submitted;
+no runtime, driver, checkpoint or training recipe was changed. The previous
+CUDA checks and short timings remain the GPU evidence; this review does not
+establish bitwise equivalence over a long training run.
