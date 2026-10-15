@@ -237,4 +237,3 @@ recorded ownership, approved parents, advancing collective progress, log age
 The collector's early Dropbox snapshot was refreshed with `#2 +a`; an unchanged
 snapshot was not evidence that training was still running. No relaunch occurred.
 Code integration: `46adec6`. `commands.sh` returned to inactive `#0`.
-
