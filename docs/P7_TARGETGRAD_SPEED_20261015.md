@@ -142,3 +142,20 @@ released GPU guard. Final receipt:
 Code integration: `a1a40f0`. Final run root:
 `/mnt/local/_outputs/deep-llms_th2/q359-p7-speed-integrated-20261015-a01`.
 No long training is queued. `commands.sh` is returned to inactive mode.
+
+## Follow-up fusion experiment (pending)
+
+The next bounded trial compares the validated combined optimization against:
+
+- `fused_aux`: defer target standardization/clipping until the compiled cosine
+  calculation. Preserve the live target gradient, frozen normalization scales,
+  original running-moment updates and clipped-channel diagnostics.
+- `entries`: compile the original proxy normalization, projections and RoPE.
+- `kv`: compile those entries with one concatenated K/V GEMM; the original
+  separate Parameters, initialization, optimizer groups and state names stay
+  unchanged. There is no persistent concatenated weight cache.
+
+These remain process-local experiments in `scripts/p7_fusion_trial.py`. CUDA
+acceptance and full-update timing must pass before recommending any production
+change. The reference now includes BOTH earlier optimizations. No additional
+throughput gain is established yet. Output: `q359-p7-fusion-trial-20261015-a01`.

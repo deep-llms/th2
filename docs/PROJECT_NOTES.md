@@ -1,3 +1,18 @@
+## P7 further fusion study — 15 October 2026
+
+User accepted testing further method-preserving optimizations. Experimental
+candidates: fuse target normalization/clipping with cosine (live target grads),
+compile proxy entries, and compile entries with a packed K/V GEMM retaining the
+original separate Parameters. Compare against the previously validated BOTH
+optimization, not original eager. No production defaults or scientific runs change.
+CPU numerical/gradient/state checks first; then eight trained-checkpoint CUDA
+cases (short/checkpointed and full2048/micro16), followed by accepted-candidate
+50step eight-GPU Trainer timings with bracketing controls/data-order hashes.
+Fresh root:q359-p7-fusion-trial-20261015-a01. Require completed integrated-study
+handoff; copy/verify Accelerate; inspect/reclaim only known burns; verify free
+GPUs. Existing supervisor restores/verifies burns on completion/failure.
+Remote submission pending. Preserve existing checkpoints/environments.
+
 ## P7 throughput optimization complete — 15 October 2026, 00:19 UTC
 
 User requested optimization of P7-simple-targetgrad, lambda0.1. Implemented

@@ -117,6 +117,61 @@ class P7SpeedTests(unittest.TestCase):
                         for key in a:
                             torch.testing.assert_close(a[key], b[key], rtol=4e-4, atol=3e-6, msg=f'{mode}/{checkpoint}/{key}')
 
+    def test_refinements_preserve_model_routes_state_and_optimizer(self):
+        with patch('deep_kv.fa4.load_kernel', return_value=(reference_kernel, {})):
+            for checkpointed in (False, True):
+                for candidate in ('fused_aux', 'entries', 'kv'):
+                    captures=[]
+                    for mode in ('both', candidate):
+                        with implementation(mode, backend='aot_eager'):
+                            m=model('P7-simple-targetgrad','fa4',checkpointed)
+                            # Nontrivial running statistics and actual clipping.
+                            m.mu.fill_(.3);m.sigma2.fill_(.02)
+                            optimizer=torch.optim.AdamW(m.parameters(),lr=.0003)
+                            out=m(batch(),collect_target_statistics=True)
+                            named=dict(m.named_parameters())
+                            gradients={}
+                            for label,loss in (('lm',out['lm_sum']/out['lm_count']),('aux',out['aux_sum']/out['aux_count'])):
+                                values=torch.autograd.grad(loss,list(named.values()),allow_unused=True,retain_graph=True)
+                                gradients.update({label+'/'+n:v.clone() for n,v in zip(named,values) if v is not None})
+                            self.assertFalse(any(n.startswith('lm/heads.') and '.w1.' in n for n in gradients))
+                            self.assertTrue(any(n.startswith('aux/backbone.') and v.abs().sum()>0 for n,v in gradients.items()))
+                            self.assertTrue(any(n.startswith('lm/heads.') and '.k_proj.' in n for n in gradients))
+                            objective(out).backward();optimizer.step()
+                            m.update_statistics(out['center_sums'],out['center_squares'],out['center_counts'])
+                            with torch.no_grad():
+                                inference=m.hidden_states(batch())[0]
+                                # Stats-only/bootstrap and disabled clipping paths.
+                                statistics=m(batch(),compute_auxiliary_losses=False,collect_target_statistics=True)
+                                without_clips=m(batch(),collect_target_statistics=True,collect_clip_statistics=False)
+                            captures.append((out,gradients,copy.deepcopy(m.state_dict()),dict(hidden=inference),statistics,without_clips))
+                    for a,b in zip(*captures):
+                        self.assertEqual(a.keys(),b.keys())
+                        for key in a:
+                            torch.testing.assert_close(a[key],b[key],rtol=5e-4,atol=5e-6,msg=candidate+'/'+key)
+
+    def test_fused_normalization_clipping_and_small_norm_gradients(self):
+        from scripts.p7_fusion_trial import normalized_cosine
+        from deep_kv.proxy_estimators import cosine_loss
+        torch.manual_seed(71)
+        pred=torch.randn(3,5,8);center=torch.randn_like(pred)*5
+        pred[0,0]=0;center[0,1]=0;pred[1]*=1e-8;center[1]*=1e-8
+        # Include points exactly at the clipping threshold.
+        center[0,2]=3.;center[0,3]=-3.
+        inverse=torch.ones(8);valid=torch.ones(3,5,dtype=torch.bool);valid[2]=False
+        fn=torch.compile(normalized_cosine,backend='aot_eager',fullgraph=True)
+        for live in (False,True):
+            captures=[]
+            for fused in (False,True):
+                p=pred.clone().requires_grad_();c=center.clone().requires_grad_()
+                outputs=(fn(p,c,inverse,valid,valid.sum(-1),3.,live) if fused else
+                         cosine_loss(p,(c*inverse).clamp(-3,3),valid,target_grad=live,valid_counts=valid.sum(-1)))
+                outputs[1].sum().backward();captures.append((outputs,p.grad,c.grad))
+                self.assertEqual(c.grad is not None,live)
+            for a,b in zip(*captures):
+                if a is None:self.assertIsNone(b)
+                else:torch.testing.assert_close(a,b,rtol=1e-6,atol=1e-6)
+
     def test_production_flag_saved_resume_and_legacy_compatibility(self):
         from safetensors.torch import load_file
         from tests.test_proxy_memory import config

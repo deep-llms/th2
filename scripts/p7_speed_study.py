@@ -76,7 +76,7 @@ def profile_predecessor_ready(root, receipt):
     print('VERIFIED_PROFILE_SUMMARY',json.dumps(report),flush=True)
 
 
-def make_jobs(root, recipe_path, trial=False, integration=False):
+def make_jobs(root, recipe_path, trial=False, integration=False, refinement=False):
     from deep_kv.__main__ import jobs
     recipe=read(recipe_path)
     for key,value in dict(num_hidden_layers=12,block_size=2048,per_device_train_batch_size=16,
@@ -85,7 +85,7 @@ def make_jobs(root, recipe_path, trial=False, integration=False):
         if recipe[key]!=value:raise ValueError(('Unexpected recipe',key,recipe[key]))
     recipe.update(eval_rows=32,monitor_rows=32,save_steps=1000,save_total_limit=0)
     root=Path(root);path=root/'recipe.json';write(path,recipe)
-    if trial:
+    if trial or refinement:
         checkpoint='/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-targetgrad/checkpoint-2500'
         rows='/mnt/local/_outputs/deep-llms_th2/q359-p7-teacher-probe-20261015-a01/rows.json'
         items=[dict(name='numerical-gate',gpus=list(range(8)),timeout_seconds=1800,
@@ -99,6 +99,9 @@ def make_jobs(root, recipe_path, trial=False, integration=False):
                 argv=['{python}','-m','scripts.p7_speed_study','benchmark','--root','{run_dir}',
                       '--recipe',str(path)],
                 required_outputs=[dict(path='timing-summary.json',json_equals={'status':'passed'})])]
+        if refinement:
+            items[0]['argv'].append('--refinement')
+            items[1]['argv'].append('--refinement')
         write(root/'jobs.json',dict(jobs=items));return items
     items=[]
     for arm in ('A','P7-simple-targetgrad'):
@@ -161,7 +164,7 @@ def prepare(args):
     if source.read_bytes()!=destination.read_bytes() or cfg['num_processes']!=8 or cfg['mixed_precision']!='bf16':
         raise ValueError('Accelerate mismatch')
     subprocess.run(['accelerate','env'],check=True)
-    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial,args.integration);load_jobs(root/'jobs.json')
+    make_jobs(root,'proxy_heads.12layer.b200.json',args.trial,args.integration,args.refinement);load_jobs(root/'jobs.json')
     status=inspect()
     if (status['host']!=args.host or status['guard_disabled'] or len(status['gpus'])!=8
             or any('B200' not in g['name'] for g in status['gpus'])
@@ -213,7 +216,8 @@ def benchmark(args):
     root=Path(args.root);gate=read(root/'gate/summary.json')
     if gate['status']!='passed' or not gate['checkpoint_unchanged']:
         raise ValueError('Numerical acceptance required before timing')
-    cases=[('reference-before','eager')]+[(mode,mode) for mode in gate['accepted']]+[('reference-after','eager')]
+    reference_mode='both' if args.refinement else 'eager'
+    cases=[('reference-before',reference_mode)]+[(mode,mode) for mode in gate['accepted']]+[('reference-after',reference_mode)]
     items=[]
     for label,mode in cases:
         arm='P7-simple-targetgrad'
@@ -256,4 +260,5 @@ if __name__=='__main__':
     p.add_argument('--root',required=True);p.add_argument('--host');p.add_argument('--predecessor')
     p.add_argument('--trial',action='store_true');p.add_argument('--recipe')
     p.add_argument('--integration',action='store_true')
+    p.add_argument('--refinement',action='store_true')
     a=p.parse_args();globals()[a.mode](a)

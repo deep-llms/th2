@@ -59,6 +59,11 @@ def implementation(mode, backend='inductor'):
     import torch
     import deep_kv.proxy_estimators as estimators
     from deep_kv.proxy import ProxyModel
+    if mode in ('fused_aux', 'entries', 'kv'):
+        from scripts.p7_fusion_trial import refinement
+        with implementation('both', backend=backend), refinement(mode, backend=backend):
+            yield
+        return
     if mode not in ('eager', 'cosine', 'lse', 'both'):
         raise ValueError(mode)
     original_attention = ProxyModel.memory_attention
@@ -145,11 +150,12 @@ def gate(args):
     if hashlib.sha256(raw).hexdigest() != args.rows_sha256:
         raise ValueError('Frozen validation rows changed')
     length, micro = (64, 2) if rank < 4 else (2048, 16)
-    candidate = ('eager', 'cosine', 'lse', 'both')[rank % 4]
+    modes = ('both', 'fused_aux', 'entries', 'kv') if args.refinement else ('eager', 'cosine', 'lse', 'both')
+    candidate = modes[rank % 4]
     rows = [{k: v[:length] for k, v in row['data'].items()} for row in read(args.rows)[:micro]]
     ctx = ProxyTrainer.context({k: v.to(accelerator.device) for k, v in isolated_data_collator(rows).items()})
     captures = []
-    for mode in ('eager', candidate):
+    for mode in (modes[0], candidate):
         with implementation(mode), deterministic_fa4(True):
             adapter, _, metadata = load_checkpoint(args.checkpoint, accelerator.device, attention_backend='fa4')
             if metadata['arm'] != 'P7-simple-targetgrad' or metadata['step'] != 2500 or metadata['checkpoint_sha256'] != args.checkpoint_sha256:
@@ -184,10 +190,10 @@ def gate(args):
             {**b, 'grads': {k: v for k, v in b['grads'].items() if k.startswith(prefix)}}, False)
     # Existing FA4 model acceptance thresholds; no post-hoc widening.
     passed = all(acceptable(row) for row in comparisons.values())
-    buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in ('eager', 'cosine'))
+    buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in (modes[0], 'cosine', 'fused_aux'))
     passed = passed and not buffers['failures']
     exact = None
-    if candidate in ('eager', 'cosine'):
+    if candidate in (modes[0], 'cosine', 'fused_aux'):
         keys = ('hidden', 'logits', 'lm_sum', 'lm_count', 'center_sums', 'center_squares', 'center_counts')
         exact = compare({k: a[k] for k in keys}, {k: b[k] for k in keys}, exact=True)
         passed = passed and not exact['failures']
@@ -198,9 +204,9 @@ def gate(args):
     accelerator.wait_for_everyone()
     if accelerator.is_main_process:
         reports = [read(Path(args.output)/f'rank-{i}.json') for i in range(8)]
-        accepted = [mode for mode in ('cosine', 'lse', 'both')
+        accepted = [mode for mode in modes[1:]
                     if all(r['status']=='passed' for r in reports if r['mode']==mode)]
-        if not all(r['status']=='passed' for r in reports if r['mode']=='eager'):
+        if not all(r['status']=='passed' for r in reports if r['mode']==modes[0]):
             raise ValueError('Same-implementation numerical control failed')
         if file_hash(Path(args.checkpoint)/'model.safetensors') != args.checkpoint_sha256:
             raise ValueError('Source checkpoint changed')
@@ -217,7 +223,8 @@ if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('mode', choices=('train', 'gate'))
-    p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both', 'configured'))
+    p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both', 'configured', 'fused_aux', 'entries', 'kv'))
+    p.add_argument('--refinement', action='store_true')
     p.add_argument('--checkpoint'); p.add_argument('--checkpoint-sha256')
     p.add_argument('--rows'); p.add_argument('--rows-sha256'); p.add_argument('--output')
     args, rest = p.parse_known_args()
