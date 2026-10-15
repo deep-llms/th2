@@ -1,8 +1,24 @@
 # P7 longer runs and five controlled variants
 
-**Prepared only. The user explicitly requested no launch.** `commands.sh` stays
-at `#0`. No B200 work, burn reclamation, environment installation or remote push
-is part of this preparation.
+**Authorized and running as of 15 October, 13:28 Singapore time.** The user
+subsequently requested launch. All numerical and distributed smoke gates passed;
+A was at step 238/7,500 on all eight B200 GPUs. Active run:
+`q359-p7-exploration8-20261015-a03`. `commands.sh` is inactive after submission;
+the independent supervisor continues the queue and restores/verifies burns on
+exit. Earlier preparation-only statements below describe the pre-launch review.
+
+Two startup issues were corrected before any production training: the runner's
+source copy has no `.git`, and the frozen diagnostic rows use `{index,data}`
+envelopes. No training/data cache was reused from either failed attempt. The
+second attempt restored verified communicating burns before the fresh retry.
+
+CUDA numerical evidence is in
+[the saved gate results](results/p7_exploration_numerics_20261015.json). Value-only
+merged vs original attention passed on both backends: full-gradient relative L2
+0.498% (SDPA), 0.484% (FA4); predictor-gradient relative L2 0.395%/0.385%.
+All eight real Trainer smokes and the original training-data/recipe comparison
+passed. A's early steady updates are about 1.058 s; full new-arm throughput is
+still pending. Keep the provisional 11–13-hour whole-queue estimate.
 
 ## Schedule correction and queue
 

@@ -1,3 +1,39 @@
+## P7 eight-arm queue running; production verified — 15 October 2026, 05:28 UTC
+
+Active root:/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a03.
+Launch4358d84. All7 CUDA proxy gates and all8 three-update/eight-rank smokes plus
+validators passed; original-control recipe/data gate passed (train fingerprint
+6e4708f1e818fb44). Production A began05:23UTC (13:23SGT). Verified05:28UTC:
+A238/7500, finite decreasing LM loss (step230 loss6.079, stepLM6.033),1.058s/update,
+8train.py workers943677–943684 under launcher943666, all8B20099%utilization and
+about61.94GiB used each. No production failure. Retention0(save all)/250,
+warmup375 and7500-step schedule,seed/data42,micro16/GAS4 confirmed in config.
+
+Queue:A7500 → targetgrad7500 → lm7500 → sparse2500 → keyonly2500 → valueonly2500
+→ noaux2500 → nexttoken2500 → nine-benchmark downstream evaluation. All fresh,
+12layers,FA4; all8GPUs per training job. Expected wholequeue roughly11–13hours,
+new-arm full timings pending. Existing supervisor automatically restores and
+verifies burns on success/failure. commands.sh returned to#0, which does not
+stop the independent active tmux/supervisor. Do not resubmit the launch.
+
+Successful launch copied/verified Accelerate8GPU/bf16 with sourceSHA
+923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5.
+Explicitly verified a02 failed-gate burns restored/live before retry, then
+reclaimed exact workers913630–913637. All8 GPUs free05:12:35UTC before gates.
+Failures a01(no.git shell check) and a02(wrapped numerical-row format) preserved;
+neither reached a Trainer step. Corrected loader validates before reclamation;
+5local queue tests passed16.429s. No training data/cache/env/driver changes.
+
+CUDA value-only merge vs original duplicate entries: gradientrelL2 .004978SDPA,
+.004840FA4; predictor .003950/.003851; both passed existing limits. Full new-arm
+FA4vsSDPA gradientrelL2 .00567–.00602. Results saved
+ docs/results/p7_exploration_numerics_20261015.json.
+Evidence:temp/remote_logs/p7-exploration-health-20261015-a06.log SHA256
+c8ab942c80955e1abae7195fb81ed1fc506b709b994f7ab4c680efd43d51e970;
+temp/remote_logs/p7-exploration-production-20261015-a01.log SHA256
+63b8f1058567afd1b5888389ddb4f1db391ff8e6e3fb696fab69fafedb74affb.
+Unrelated user docs preserved unstaged. Next action is read-only progress check.
+
 ## P7 numerical-input correction and fresh retry — 15 October 2026 (SGT)
 
 Launch49875aa reached preflight: pinned env and Accelerate MULTI_GPU/8/bf16
