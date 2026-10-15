@@ -59,6 +59,11 @@ def implementation(mode, backend='inductor'):
     import torch
     import deep_kv.proxy_estimators as estimators
     from deep_kv.proxy import ProxyModel
+    if mode in ('head_batch', 'target_kernel', 'kernel_both'):
+        from scripts.p7_kernel_trial import candidate
+        with implementation('entries', backend=backend), candidate(mode, backend=backend):
+            yield
+        return
     if mode in ('fused_aux', 'entries', 'kv'):
         from scripts.p7_fusion_trial import refinement
         with implementation('both', backend=backend), refinement(mode, backend=backend):
@@ -150,12 +155,17 @@ def gate(args):
     if hashlib.sha256(raw).hexdigest() != args.rows_sha256:
         raise ValueError('Frozen validation rows changed')
     length, micro = (64, 2) if rank < 4 else (2048, 16)
-    modes = ('both', 'fused_aux', 'entries', 'kv') if args.refinement else ('eager', 'cosine', 'lse', 'both')
+    modes = (('entries','head_batch','target_kernel','kernel_both') if args.kernel_study else
+             ('both', 'fused_aux', 'entries', 'kv') if args.refinement else ('eager', 'cosine', 'lse', 'both'))
+    primitives=None
+    if args.kernel_study:
+        from scripts.p7_kernel_trial import primitive_gate
+        primitives=primitive_gate(accelerator.device)
     if args.original_reference:
-        if not args.refinement:raise ValueError('Original reference applies to refinement study')
+        if not (args.refinement or args.kernel_study):raise ValueError('Original reference applies to refinement study')
         modes=('eager',*modes[1:])
     candidate = modes[rank % 4]
-    exact_modes=(modes[0], 'cosine') + (() if args.original_reference else ('fused_aux',))
+    exact_modes=(modes[0], 'cosine') + (() if args.original_reference else ('fused_aux','target_kernel'))
     rows = [{k: v[:length] for k, v in row['data'].items()} for row in read(args.rows)[:micro]]
     ctx = ProxyTrainer.context({k: v.to(accelerator.device) for k, v in isolated_data_collator(rows).items()})
     captures = []
@@ -194,15 +204,16 @@ def gate(args):
             {**b, 'grads': {k: v for k, v in b['grads'].items() if k.startswith(prefix)}}, False)
     # Existing FA4 model acceptance thresholds; no post-hoc widening.
     passed = all(acceptable(row) for row in comparisons.values())
-    buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in exact_modes)
+    buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in exact_modes and candidate!='target_kernel')
     passed = passed and not buffers['failures']
     exact = None
     if candidate in exact_modes:
         keys = ('hidden', 'logits', 'lm_sum', 'lm_count', 'center_sums', 'center_squares', 'center_counts')
+        if candidate=='target_kernel':keys=('hidden','logits','lm_sum','lm_count','center_counts')
         exact = compare({k: a[k] for k in keys}, {k: b[k] for k in keys}, exact=True)
         passed = passed and not exact['failures']
     write(Path(args.output)/f'rank-{rank}.json', dict(status='passed' if passed else 'failed',
-        mode=candidate, sequence_length=length, micro_batch=micro, checkpointing=rank < 4,
+        mode=candidate, primitive_checks=primitives, sequence_length=length, micro_batch=micro, checkpointing=rank < 4,
         comparisons=comparisons, buffers=buffers, exact_forward=exact, checkpoint=metadata))
     del captures, a, b
     accelerator.wait_for_everyone()
@@ -230,8 +241,9 @@ if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('mode', choices=('train', 'gate'))
-    p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both', 'configured', 'fused_aux', 'entries', 'kv'))
+    p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both', 'configured', 'fused_aux', 'entries', 'kv', 'head_batch', 'target_kernel', 'kernel_both'))
     p.add_argument('--refinement', action='store_true')
+    p.add_argument('--kernel-study', action='store_true')
     p.add_argument('--original-reference', action='store_true')
     p.add_argument('--require-candidate')
     p.add_argument('--checkpoint'); p.add_argument('--checkpoint-sha256')

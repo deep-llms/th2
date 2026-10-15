@@ -671,6 +671,11 @@ class ProxyModel(DeepKV):
             with torch.no_grad(), torch.autocast(hidden.device.type,enabled=False):
                 floors = self.settings.variance_floor*self.sigma2.median(dim=-1,keepdim=True).values
                 inverse_scales = torch.rsqrt(self.sigma2.clamp_min(floors)+1e-6)
+        # Experimental hook; absent by default. Preserve the original path for
+        # bootstrap/statistics-only passes and every other architecture.
+        target_window = getattr(self, '_target_window', None)
+        fused_window = (target_window is not None and self.arm == 'P7-simple-targetgrad'
+                        and compute_auxiliary_losses and statistics_mode is None)
         target_count = context.valid.sum() if need_targets and collect_target_statistics else None
         def record(key, raw):
             index = self.mean_index[key]
@@ -758,16 +763,27 @@ class ProxyModel(DeepKV):
                         with torch.set_grad_enabled(target_grad):
                             value = (contribution*P6_TARGET_WEIGHTS[layer-proxy]
                                      if self.arm == 'P6-iso-weighted' else contribution)
-                            if layer <= proxy+1 or target_grad:
+                            if fused_window:
+                                windows[proxy] = (*windows.get(proxy, ()), value)
+                            elif layer <= proxy+1 or target_grad:
                                 # First value may alias the detached decoder output.
                                 # The second contribution creates private window storage.
                                 windows[proxy] = windows[proxy]+value if proxy in windows else value
                             else:
                                 windows[proxy].add_(value)
                     if layer == proxy+self.settings.lookahead-1:
-                        raw = (hidden.detach().float()-bases.pop(proxy) if self.increment_target
-                               else windows.pop(proxy))
-                        normalized = record(proxy,raw)
+                        if fused_window:
+                            slot = self.mean_index[proxy]
+                            normalized, moment, square, clip_count = target_window(
+                                windows.pop(proxy), self.mu[slot], inverse_scales[slot],
+                                self.settings.target_clip, collect_target_statistics, count_clipped)
+                            if collect_target_statistics:
+                                sums[slot], squares[slot], counts[slot] = moment, square, target_count
+                            if count_clipped:clipped[slot] = clip_count
+                        else:
+                            raw = (hidden.detach().float()-bases.pop(proxy) if self.increment_target
+                                   else windows.pop(proxy))
+                            normalized = record(proxy,raw)
                         source = sources.pop(proxy)
                         if compute_auxiliary_losses:
                             cosines[proxy] = self.layer_cosines(proxy,*source,normalized,plan,context.valid,auxiliary_grad,valid_counts=valid_counts)

@@ -12,12 +12,12 @@ export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISA
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONHASHSEED=42 TOKENIZERS_PARALLELISM=false
 export CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 TASK_EXTRA=()
-if [[ ${4:-profile} == trial || ${4:-profile} == integration || ${4:-profile} == refinement ]]; then
+if [[ ${4:-profile} == trial || ${4:-profile} == integration || ${4:-profile} == refinement || ${4:-profile} == kernel-study ]]; then
   TASK_EXTRA=("--$4")
   export TORCHINDUCTOR_CACHE_DIR="$TASK_ROOT/inductor" TRITON_CACHE_DIR="$TASK_ROOT/triton"
   export TORCHINDUCTOR_COMPILE_THREADS=1
 fi
-if [[ ${4:-profile} == integration || ${4:-profile} == refinement ]]; then
+if [[ ${4:-profile} == integration || ${4:-profile} == refinement || ${4:-profile} == kernel-study ]]; then
   python -u -m scripts.p7_speed_study await_previous --root "$TASK_PREDECESSOR"
 fi
 if [[ ${5:-} == entries ]]; then TASK_EXTRA+=(--entries-integration); fi

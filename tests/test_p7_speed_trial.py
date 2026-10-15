@@ -126,9 +126,9 @@ class P7SpeedTests(unittest.TestCase):
     def test_refinements_preserve_model_routes_state_and_optimizer(self):
         with patch('deep_kv.fa4.load_kernel', return_value=(reference_kernel, {})):
             for checkpointed in (False, True):
-                for candidate in ('fused_aux', 'entries', 'kv'):
+                for candidate in ('fused_aux', 'entries', 'kv', 'head_batch', 'target_kernel', 'kernel_both'):
                     captures=[]
-                    for mode in ('both', candidate):
+                    for mode in ('entries' if candidate in ('head_batch','target_kernel','kernel_both') else 'both', candidate):
                         with implementation(mode, backend='aot_eager'):
                             m=model('P7-simple-targetgrad','fa4',checkpointed)
                             # Nontrivial running statistics and actual clipping.

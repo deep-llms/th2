@@ -1,3 +1,20 @@
+## P7 custom-kernel optimization study — 15 October 2026
+
+User requested further throughput optimization, including a custom kernel if
+useful. Test head-batched FA4 (independent native/proxy heads in one call) and a
+Triton four-block target-preparation kernel, separately and together. Preserve
+joint-softmax derivatives, live target gradients, detached predictor input and
+injection, objective, statistics, data order and checkpoint parameters.
+Compare against the current validated compiled-entries implementation.
+CPU route/state tests, CUDA primitive oracle and eight trained-checkpoint gates
+precede accepted-candidate 50-step eight-GPU Trainer timings. Experimental only
+until correctness and a measured gain are established. No long training or
+changes to environments/drivers. Fresh root:q359-p7-kernel-trial-20261015-a01;
+predecessor:q359-p7-entries-integrated-20261015-a01. Copy/verify Accelerate,
+inspect/reclaim only verified authorized burns, verify GPUs free, then use the
+existing supervisor for automatic restoration/verification on success/failure.
+Remote submission pending.
+
 ## P7 projection optimization complete — 15 October 2026, 01:30 UTC
 
 Follow-up measured another1.60% throughput gain from compiling existing proxy
