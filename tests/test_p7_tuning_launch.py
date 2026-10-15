@@ -36,11 +36,16 @@ class TuningLaunchTests(unittest.TestCase):
             (target/'escape').symlink_to(sibling,target_is_directory=True)
             with self.assertRaises(ValueError):cleanup_target(source)
             (target/'escape').unlink()
+            (target/'latest-run').symlink_to('checkpoint-250',target_is_directory=True)
+            self.assertEqual(cleanup_target(source),target)
             with patch('scripts.gpu_status.require_free',side_effect=RuntimeError('busy')):
                 with self.assertRaises(RuntimeError):cleanup(source,run)
             self.assertTrue(target.exists())
-            with patch('scripts.gpu_status.require_free') as free, patch('scripts.p7_tuning_launch.verify_reference'):
+            external=root/'external-wandb.log';external.write_text('preserve')
+            (target/'debug-core.log').symlink_to(external)
+            with patch('scripts.gpu_status.require_free') as free, patch('scripts.p7_tuning_launch.verify_reference'), patch('scripts.p7_tuning_launch.EXTERNAL_LOG_LINKS',{'debug-core.log':str(external)}):
                 cleanup(source,run)
+            self.assertEqual(external.read_text(),'preserve')
             free.assert_called_once_with(list(range(8)))
             self.assertFalse(target.exists());self.assertTrue((sibling/'keep').exists())
             receipt=json.loads((run/'interrupted-output-before-cleanup.json').read_text())

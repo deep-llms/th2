@@ -9,6 +9,11 @@ from scripts.train_then_burn import digest
 
 OLD_NAME = 'q359-p7-exploration8-20261015-a03'
 PARTIAL = Path('supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux')
+# Inspected W&B link: unlink it without reading/deleting its external target.
+EXTERNAL_LOG_LINKS = {
+    'wandb/offline-run-20261015_150008-ailzd8af/logs/debug-core.log':
+    '/dev/shm/.cache/wandb/logs/core-debug-20261015_150008.log',
+}
 
 
 def read(path):
@@ -30,8 +35,10 @@ def cleanup_target(source):
     target = source / PARTIAL
     if not target.is_dir() or target.resolve() != target:
         raise ValueError('Interrupted model directory missing or redirected')
-    if any(p.is_symlink() for p in target.rglob('*')):
-        raise ValueError('Refuse symlinks in cleanup tree')
+    for p in target.rglob('*'):
+        if p.is_symlink() and not p.resolve().is_relative_to(target):
+            if EXTERNAL_LOG_LINKS.get(str(p.relative_to(target))) != str(p.readlink()):
+                raise ValueError('Unrecognized external link in cleanup tree')
     if (target / 'result.json').exists() or (target.parent.parent / 'validated.json').exists():
         raise ValueError('Refuse to delete a completed/result-bearing arm')
     c = read(target / 'train_config.json')
@@ -75,8 +82,9 @@ def cleanup(source, run):
     target = cleanup_target(source)
     verify_reference(source, run)
     # Preserve a manifest and small diagnostic JSON before the authorized delete.
-    files = [p for p in target.rglob('*') if p.is_file()]
-    archive = dict(target=str(target), files=[dict(path=str(p.relative_to(target)), bytes=p.stat().st_size)
+    files = [p for p in target.rglob('*') if p.is_file() and not p.is_symlink()]
+    links = {str(p.relative_to(target)):str(p.readlink()) for p in target.rglob('*') if p.is_symlink()}
+    archive = dict(target=str(target), symlinks=links, files=[dict(path=str(p.relative_to(target)), bytes=p.stat().st_size)
                    for p in files], json_files={str(p.relative_to(target)):read(p)
                    for p in files if p.suffix == '.json' and p.stat().st_size < 2**20})
     save(run / 'interrupted-output-before-cleanup.json', archive)
