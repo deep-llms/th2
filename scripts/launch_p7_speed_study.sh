@@ -20,6 +20,7 @@ fi
 if [[ ${4:-profile} == integration || ${4:-profile} == refinement ]]; then
   python -u -m scripts.p7_speed_study await_previous --root "$TASK_PREDECESSOR"
 fi
+if [[ ${5:-} == entries ]]; then TASK_EXTRA+=(--entries-integration); fi
 python -u -m scripts.p7_speed_study prepare --root "$TASK_ROOT" --host "$TASK_HOST" --predecessor "$TASK_PREDECESSOR" "${TASK_EXTRA[@]}"
 exec python -u -m scripts.train_then_burn --config "$TASK_ROOT/jobs.json" --output "$TASK_ROOT/supervised" \
   --inspection "$TASK_ROOT/inspection.json" --host "$TASK_HOST" --burn-session "$(basename "$TASK_ROOT")-final-burn"

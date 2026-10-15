@@ -1,3 +1,23 @@
+## P7 projection compilation integration — 15 October 2026
+
+Fusion trial has finished four of five50step jobs. Preliminary medians:
+optimized reference1.115236s, fused_aux1.109494s, entries1.096631s,
+packedKV1.097682s; final bracketing control pending. Prefer entries: compile
+original existing method without changing K/V GEMM structure or target path.
+Opt-in proxy_compile_entries implemented, defaultfalse, restricted to targetgrad/A.
+Serialized recipe, explicit performance-change-on-resume, unchanged state names.
+Eight CPU tests passed18.618s including actual Trainer save/resume and exact
+prototype/integration matching. Test compiler caches isolated between separate
+single-backward and retained-graph probes; no runtime/compiler settings changed.
+
+Final verification root:q359-p7-entries-integrated-20261015-a01. Launcher waits
+for successful fusion trial and restored/verified burns/guardrelease, requires
+entries measured gain>1%, copies/verifies Accelerate, reclaims only identified
+burns, verifies all8GPUsfree. First compare accumulated optimizations directly
+to ORIGINAL eager trained checkpoint (unchanged thresholds), requiring entries
+acceptance. Then normal CLI50step A/P7 pair, all8GPUs, no prototype patch for
+training. Auto restore/verify burns afterwards. Submission pending.
+
 ## P7 further fusion: numerical gates passed — 15 October 2026, 01:09 UTC
 
 Launch36fafe3; read-onlydf275fb confirms all8CUDA cases pass for fused_aux,

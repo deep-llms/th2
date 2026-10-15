@@ -36,6 +36,7 @@ class ProxySettings:
     aux_recompute: bool = False
     compile_estimator: bool = False
     compile_auxiliary: bool = False
+    compile_entries: bool = False
     lse_attention: bool = False
     target_version: str | None = None
     variance_floor: float = .01
@@ -49,7 +50,7 @@ class ProxySettings:
 
 def resolve_proxy_settings(arm, settings=None):
     settings = copy.deepcopy(settings or ProxySettings())
-    if (settings.compile_auxiliary or settings.lse_attention) and arm not in ('A', 'P7-simple-targetgrad'):
+    if (settings.compile_auxiliary or settings.lse_attention or settings.compile_entries) and arm not in ('A', 'P7-simple-targetgrad'):
         raise ValueError('These optimizations are validated only for P7-simple-targetgrad (and unchanged A)')
     if settings.lambda_max is None:settings.lambda_max = .03 if arm == 'P6-lowaux' else .1
     if arm == 'P6-lowaux' and settings.lambda_max != .03:
@@ -351,6 +352,11 @@ class ProxyModel(DeepKV):
                 for head in self.heads.values():
                     if self.family=='P5':head.stream_step=torch.compile(head.stream_step)
                     else:head.routed=torch.compile(head.routed)
+        if settings.compile_entries:
+            # Compile the existing method, not the module. Keep the separate
+            # K/V Parameters, initialization, optimizer groups and state names.
+            for head in self.heads.values():
+                head.entries=torch.compile(head.entries,fullgraph=True,dynamic=False)
         self.mean_layers = (self.layers if self.family and self.family != 'P3' else
             tuple((layer, deep) for layer in self.layers
                   for deep in range(layer+2,min(layer+6,cfg.num_hidden_layers)+1)))

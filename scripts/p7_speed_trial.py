@@ -151,7 +151,11 @@ def gate(args):
         raise ValueError('Frozen validation rows changed')
     length, micro = (64, 2) if rank < 4 else (2048, 16)
     modes = ('both', 'fused_aux', 'entries', 'kv') if args.refinement else ('eager', 'cosine', 'lse', 'both')
+    if args.original_reference:
+        if not args.refinement:raise ValueError('Original reference applies to refinement study')
+        modes=('eager',*modes[1:])
     candidate = modes[rank % 4]
+    exact_modes=(modes[0], 'cosine') + (() if args.original_reference else ('fused_aux',))
     rows = [{k: v[:length] for k, v in row['data'].items()} for row in read(args.rows)[:micro]]
     ctx = ProxyTrainer.context({k: v.to(accelerator.device) for k, v in isolated_data_collator(rows).items()})
     captures = []
@@ -190,10 +194,10 @@ def gate(args):
             {**b, 'grads': {k: v for k, v in b['grads'].items() if k.startswith(prefix)}}, False)
     # Existing FA4 model acceptance thresholds; no post-hoc widening.
     passed = all(acceptable(row) for row in comparisons.values())
-    buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in (modes[0], 'cosine', 'fused_aux'))
+    buffers = compare(a['buffers'], b['buffers'], relative=.02, peak=.02, exact=candidate in exact_modes)
     passed = passed and not buffers['failures']
     exact = None
-    if candidate in (modes[0], 'cosine', 'fused_aux'):
+    if candidate in exact_modes:
         keys = ('hidden', 'logits', 'lm_sum', 'lm_count', 'center_sums', 'center_squares', 'center_counts')
         exact = compare({k: a[k] for k in keys}, {k: b[k] for k in keys}, exact=True)
         passed = passed and not exact['failures']
@@ -215,8 +219,11 @@ def gate(args):
             thresholds=dict(loss_absolute=.01, gradient_relative_l2=.03, output_relative_l2=.02,
                             buffer_relative_l2=.02, buffer_peak_scaled=.02)))
     accelerator.wait_for_everyone()
-    if read(Path(args.output)/'summary.json')['status'] != 'passed':
+    summary=read(Path(args.output)/'summary.json')
+    if summary['status'] != 'passed':
         raise ValueError('No numerical candidate accepted')
+    if args.require_candidate and args.require_candidate not in summary['accepted']:
+        raise ValueError('Required candidate failed numerical acceptance')
 
 
 if __name__ == '__main__':
@@ -225,6 +232,8 @@ if __name__ == '__main__':
     p.add_argument('mode', choices=('train', 'gate'))
     p.add_argument('--implementation', choices=('eager', 'cosine', 'lse', 'both', 'configured', 'fused_aux', 'entries', 'kv'))
     p.add_argument('--refinement', action='store_true')
+    p.add_argument('--original-reference', action='store_true')
+    p.add_argument('--require-candidate')
     p.add_argument('--checkpoint'); p.add_argument('--checkpoint-sha256')
     p.add_argument('--rows'); p.add_argument('--rows-sha256'); p.add_argument('--output')
     args, rest = p.parse_known_args()

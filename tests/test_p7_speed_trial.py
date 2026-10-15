@@ -33,6 +33,12 @@ class P7SpeedTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls): torch.set_num_threads(1)
 
+    def setUp(self):
+        # Tests mix ordinary single-backward Trainer runs with retain_graph
+        # gradient-route probes. Do not reuse AOT donated-buffer graphs from a
+        # previous test; real study jobs run in separate Python processes.
+        torch._dynamo.reset()
+
     def test_joint_output_and_all_five_gradients(self):
         torch.manual_seed(33)
         # Two packed rows, including singleton documents and row boundaries.
@@ -187,21 +193,29 @@ class P7SpeedTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'allow_performance_change'):
             train.resume_performance_changes(before,after)
         self.assertEqual(set(train.resume_performance_changes(before,after,True)),{'proxy_compile_auxiliary'})
+        entries=copy.deepcopy(before);entries['pilot']['proxy_compile_entries']=True
+        with self.assertRaisesRegex(ValueError,'allow_performance_change'):
+            train.resume_performance_changes(before,entries)
+        self.assertEqual(set(train.resume_performance_changes(before,entries,True)),{'proxy_compile_entries'})
         for arm in ('P7','P6-iso','P7-simple'):
             with self.assertRaisesRegex(ValueError,'validated only'):
                 resolve_proxy_settings(arm,ProxySettings(compile_auxiliary=True))
+            with self.assertRaisesRegex(ValueError,'validated only'):
+                resolve_proxy_settings(arm,ProxySettings(compile_entries=True))
         compiler=torch.compile
         def cpu_compile(fn,**kwargs):
             return compiler(fn,**{**kwargs,'backend':'aot_eager'})
         with tempfile.TemporaryDirectory() as tmp, patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
             root=Path(tmp);recipe=proxy_fixture(root);config().save_pretrained(root/'model')
             recipe.update(proxy_groups=2,arm='P7-simple-targetgrad',proxy_compile_auxiliary=True,
-                          proxy_lse_attention=True,attention_backend='fa4')
+                          proxy_lse_attention=True,proxy_compile_entries=True,attention_backend='fa4')
             invoke(root,{**recipe,'stop_after':2})
             saved=json.loads((root/'run/train_config.json').read_text())
             self.assertTrue(saved['pilot']['proxy_compile_auxiliary'])
             self.assertTrue(saved['pilot']['proxy_lse_attention'])
+            self.assertTrue(saved['pilot']['proxy_compile_entries'])
             self.assertNotIn('proxy_compile_auxiliary',comparable_config(saved)['pilot'])
+            self.assertNotIn('proxy_compile_entries',comparable_config(saved)['pilot'])
             invoke(root,recipe)
             invoke(root,{**recipe,'output_dir':str(root/'full')})
             resumed=load_file(root/'run/model.safetensors');full=load_file(root/'full/model.safetensors')
@@ -213,10 +227,10 @@ class P7SpeedTests(unittest.TestCase):
         compiler=torch.compile
         def cpu_compile(fn,**kwargs):return compiler(fn,**{**kwargs,'backend':'aot_eager'})
         with patch('torch.compile',side_effect=cpu_compile), patch('deep_kv.fa4.load_kernel',return_value=(reference_kernel,{})):
-            for mode in ('cosine','lse','both'):
+            for mode in ('cosine','lse','both','entries'):
                 captures=[]
                 for production in (False,True):
-                    settings=(dict(compile_auxiliary=mode in ('cosine','both'),lse_attention=mode in ('lse','both'))
+                    settings=(dict(compile_auxiliary=mode in ('cosine','both','entries'),lse_attention=mode in ('lse','both','entries'),compile_entries=mode=='entries')
                               if production else {})
                     with implementation('eager' if production else mode,backend='aot_eager'):
                         m=model('P7-simple-targetgrad','fa4',**settings)
