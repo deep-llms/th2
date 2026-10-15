@@ -1,3 +1,22 @@
+## Eight-arm P7 exploration authorized — 15 October 2026 (SGT)
+
+User now explicitly requested launch of the prepared eight runs. Supersedes
+preparation-only restrictions below. Fresh root intended:
+/mnt/local/_outputs/deep-llms_th2/q359-p7-exploration8-20261015-a01.
+Source implementation6ce50b3. Three fresh7500-step controls (A,targetgrad,lm),
+five fresh2500-step variants (sparse,keyonly,valueonly,noaux,nexttoken), then
+nine-benchmark evaluation. Seed42/proxy43,12layers,FA4,8GPUs per training job,
+all checkpoints retained every250. No changes to existing outputs or caches.
+
+38-stage manifest gates numerics and all distributed smokes before full runs.
+Predecessor:q359-p7-target-integrated-20261015-a01, must be complete with verified
+burn handoff. Preflight checks env/data/eval/disk, copies and verifies Accelerate,
+inspects known GPU ownership. Existing supervisor revalidates exact burn worker
+identities before signals, waits/rechecks free GPUs, restores/verifies burns on
+queue success/failure. Launch log lives beside root so prepare can create a
+fresh root itself. GitHub fetched, no divergence; previous status has no new
+controller error. Submission/remote confirmation pending at this entry.
+
 ## P7 exploration review and value-only optimization — 15 October 2026 (SGT)
 
 Preparation only remains in force; commands.sh stays #0. No push, launch or
