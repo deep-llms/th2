@@ -263,7 +263,19 @@ class TuningTests(unittest.TestCase):
         self.assertEqual(set(TUNING_ARMS),{a for _,a,_,_ in CASES if a in TUNING_ARMS})
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);jobs=make('proxy_heads.12layer.b200.json',root/'jobs.json','/local/rows.json')
-            self.assertEqual(len(jobs),81)
+            self.assertEqual(len(jobs),83)
+            numerical=json.loads((root/'jobs.config/numerical-cases.json').read_text())
+            self.assertEqual(len(numerical),19)
+            from scripts.check_fa4_proxy import numerical_settings
+            for case in numerical:
+                recipe=json.loads(Path(case['recipe']).read_text())
+                settings,seed=numerical_settings(case['arm'],recipe,exact=True)
+                expected=next(c for c in CASES if c[0]==case['label'])
+                self.assertEqual(settings.lambda_max,expected[2]);self.assertEqual(seed,expected[3])
+                self.assertEqual(settings.module_seed,seed+1)
+                self.assertEqual(settings.fused_targets,case['arm']=='P7-simple-targetgrad')
+            gate=next(i for i,j in enumerate(jobs) if j['name']=='smoke-recipes')
+            self.assertEqual(jobs[-1]['name'],'summary')
             for label,arm,weight,seed in CASES:
                 job=next(j for j in jobs if j['name']==label+'-train');argv=job['argv']
                 get=lambda k:argv[argv.index('--'+k)+1]
@@ -272,6 +284,7 @@ class TuningTests(unittest.TestCase):
                 self.assertEqual(get('save_total_limit'),'0');self.assertEqual(get('save_steps'),'250')
                 self.assertEqual(float(get('proxy_lambda_max')),weight);self.assertEqual(job['gpus'],list(range(8)))
                 self.assertGreater(jobs.index(job),max(i for i,j in enumerate(jobs) if j['name'].startswith('smoke-')))
+                self.assertGreater(jobs.index(job),gate)
             with self.assertRaises(FileExistsError):make('proxy_heads.12layer.b200.json',root/'jobs.json','rows')
 
 

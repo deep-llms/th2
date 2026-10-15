@@ -1,3 +1,19 @@
+## P7 tuning follow-up review — 15 October 2026
+
+Fixed two validation gaps: numerical probes now use each case's actual lambda,
+seeds and optimization settings, with recipe hashes; queue gates now compare
+resolved recipes and same-seed data fingerprints, and verify checkpoint retention.
+The full 20-case manifest has 83 stages and 19 explicit proxy numerical cases.
+
+27 targeted test methods passed in this review, including all 14 new variants
+through actual Trainer exact resume/reload and two-rank CPU Gloo. Independent
+attention/gradient/isolation tests and existing queue/validation/speed regressions
+passed. No new model-computation error found; model code and train.py unchanged.
+Evidence: docs/results/p7_tuning_review_20261015.json.
+Actual CUDA FA4 and B200 throughput checks remain pending. No push, launch,
+process stop, environment change or change to the running queue; commands.sh
+remains inactive. Unrelated user documentation was preserved.
+
 ## P7 tuning implemented locally — 15 October 2026
 
 User requested all discussed variants and safe throughput optimization, not a

@@ -106,8 +106,13 @@ are compared to independent duplicate-entry or two-output-attention references.
 
 Definitions: `deep_kv/p7_variants.py`; model/loss implementation uses the existing
 proxy modules. `scripts/p7_tuning_queue.py` prepares a sequential manifest:
-numerical gates, all selected three-step distributed smokes and validators, then
-full training/validation per case. Each case has its own output directory.
+numerical gates, all selected three-step distributed smokes and validators, a
+shared-recipe/data gate, then full training/validation per case and an aggregate
+summary/retention check. Each case has its own output directory. The full manifest
+has 83 stages. Numerical probes cover 19 explicit proxy cases, preserving repeated
+arms at different lambda/seed values, with each case's actual proxy settings and
+optimization flags; A is covered by its distributed smoke. Recipe hashes are
+recorded and checked before accepting the numerical summary.
 
 ```bash
 python -m scripts.p7_tuning_queue \
@@ -121,7 +126,11 @@ subset in the fixed priority order. Generation refuses to overwrite a manifest
 or configuration directory. The manifest uses eight GPUs per train/smoke,
 microbatch 16, accumulation 4, sequence length 2048, 125 scheduler warmup steps,
 250 auxiliary ramp steps, seed/data 42 and proxy seed 43 except the replication
-pair. It keeps every checkpoint at 250-step intervals. No resume from a completed
+pair. The preproduction gate compares each resolved smoke configuration against
+its requested recipe, then checks identical training/evaluation fingerprints
+within each seed and a common evaluation fingerprint across seeds. A different
+seed intentionally changes the shuffled training fingerprint. It keeps and
+verifies every checkpoint at 250-step intervals. No resume from a completed
 2,500-step schedule is implied.
 
 The generator supplies required `proxy_groups`, `proxy_lookahead` and
@@ -152,3 +161,9 @@ new arms through real Trainer resume/reload and two-rank Gloo. See
 [the validation record](results/p7_tuning_local_checks_20261015.json) for log
 hashes, durations and review corrections. B200 numerical/timing checks remain
 pending; no new queue was launched.
+
+Follow-up review: **27 targeted test methods passed**, including a fresh rerun of
+all 14 variants through exact Trainer resume/reload and two-rank Gloo. Fixed
+per-case numerical recipe coverage and added shared-recipe/data and checkpoint
+retention gates. Model computation was unchanged by this review. See the
+[follow-up validation record](results/p7_tuning_review_20261015.json).
