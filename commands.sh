@@ -1,5 +1,5 @@
 #1 +15+a
-#th2-q359-p7-speed-trial-health-20261015-a03
+#th2-q359-p7-speed-trial-completion-20261015-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 test "$(hostname)" = thiennh-p6-q359-worker-0
@@ -12,7 +12,7 @@ from scripts.train_then_burn import burn_progress,approved_launcher,process,BURN
 from scripts.verified_gpu_reclaim import ownership
 root=Path('/mnt/local/_outputs/deep-llms_th2/q359-p7-speed-trial-20261015-a01')
 print('AT',datetime.now(timezone.utc).isoformat())
-for leaf in ('preflight.json','fa4-api.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/timings/run.json','supervised/run/timing-summary.json','supervised/burn-verified.json'):
+for leaf in ('preflight.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/timings/run.json','supervised/run/timing-summary.json','supervised/burn-verified.json'):
  p=root/leaf
  if p.exists():print('STATE',leaf,p.read_text())
  else:print('MISSING',leaf)
