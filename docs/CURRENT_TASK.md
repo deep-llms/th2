@@ -1,3 +1,17 @@
+## Bounded teacher-first pilot prepared — 16 October 2026
+
+User authorized reassessment and a cheap trial of the teacher-first idea.
+Implement only its prerequisite: frozen 12-layer A step2500, learned deep-memory
+branch vs identical shallow-memory control, actual frozen LM-tail CE. One site
+(block4 input / block8 output), width128, two heads, strict past/document isolation.
+Each256 updates, eight GPUs, global32768 tokens; fixed8.39M train/1.05M eval input
+tokens. Early runtime gate and15min per-job timeout; no automatic student/sweep.
+Protocol docs/TEACHER_FIRST_PILOT_20261016.md; source checkpoint SHA256 verified
+by read-only19c3c11 at10:52:17UTC. Previous evaluation complete; verified burns
+live, progress fresh1.72s; no other workload. Local GPUs occupied, untouched.
+Local CPU correctness checks in progress; B200 numerical/DDP smoke gates precede
+both fits. No scientific training launched yet. Existing production code unchanged.
+
 ## P7 tuning downstream evaluation complete — 16 October 2026
 
 Read-only 80f593f verified success at 09:48:28 UTC. All20 checkpoints passed
