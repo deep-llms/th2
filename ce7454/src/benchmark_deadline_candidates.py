@@ -1,6 +1,7 @@
 """Bounded CUDA readiness checks; generated checkpoints are not scientific runs."""
 import argparse
 import json
+from itertools import islice
 from pathlib import Path
 import time
 
@@ -48,9 +49,7 @@ def main():
     times, end_to_end_times, losses = [], [], []
     torch.cuda.reset_peak_memory_stats()
     last = time.perf_counter()
-    for step, (x, y) in enumerate(loader):
-        if step == args.steps:
-            break
+    for step, (x, y) in enumerate(islice(loader, args.steps)):
         torch.cuda.synchronize()
         t0 = time.perf_counter()
         x = normalize(x.cuda(non_blocking=True)).flatten(0, 1).contiguous(memory_format=torch.channels_last)
@@ -74,6 +73,8 @@ def main():
     peak = torch.cuda.max_memory_allocated()
     # Independent FP32 reference at identical weights with frozen BN/dropout.
     model.eval()
+    if len(times) != args.steps or x.ndim != 4 or y.ndim != 1:
+        raise ValueError('Incomplete benchmark or invalid last processed batch')
     sample = x[:2, :, :64, :64].detach().clone()
     target = y[:2]
     model.zero_grad(set_to_none=True)

@@ -20,6 +20,7 @@ CACHE = RAW.parent / 'cache'
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--reuse-verified-cache', action='store_true')
     args = p.parse_args()
     project = Path.cwd().resolve()
     sys.path.insert(0, str(project))
@@ -51,9 +52,28 @@ def main():
     subprocess.run([VISION, '-m', 'unittest', 'discover', '-s', str(code), '-p', 'test_deadline*.py', '-v'],
                    check=True, env=env)
     if CACHE.exists():
-        raise FileExistsError('Expected a fresh CE7454 cache; inspect before reusing')
-    subprocess.run([VISION, '-u', str(code / 'prepare_b200_data.py'), '--raw', str(RAW),
-                    '--cache', str(CACHE), '--workers', '16'], check=True, env=env)
+        if not args.reuse_verified_cache:
+            raise FileExistsError('Existing cache requires explicit verified reuse')
+        check = '''
+import hashlib, json, numpy as np
+from pathlib import Path
+raw=Path('/mnt/local/_data/deep-llms_th2/ce7454/raw')
+cache=raw.parent/'cache'
+expected='ef57baacee12b92038a845308b0911dd71c5b564bdda43b516ed2f90fbb08ce3'
+with (raw/'train.zip').open('rb') as f: assert hashlib.file_digest(f,'sha256').hexdigest()==expected
+ready=json.loads((cache/'ready.json').read_text())
+assert ready['archive_sha256']==expected and ready['images']==15000
+manifest=json.loads((raw/'manifest.json').read_text())
+meta=json.loads((cache/'train_meta.json').read_text())
+assert meta=={'filenames':[r['filename'] for r in manifest['images']], 'labels':[r['label'] for r in manifest['images']]}
+a=np.load(cache/'train_images.npy',mmap_mode='r')
+assert a.shape==(15000,512,512,3) and a.dtype==np.uint8
+with (cache/'train_images.npy').open('rb') as f: print('REUSED_CACHE_SHA256',hashlib.file_digest(f,'sha256').hexdigest(),flush=True)
+'''
+        subprocess.run([VISION, '-c', check], check=True, env=env)
+    else:
+        subprocess.run([VISION, '-u', str(code / 'prepare_b200_data.py'), '--raw', str(RAW),
+                        '--cache', str(CACHE), '--workers', '16'], check=True, env=env)
     fresh = inspect()
     (args.output / 'inspection.json').write_text(json.dumps(fresh, indent=2) + '\n')
     jobs = {'jobs': [{'name': 'ce7454-study',
@@ -65,7 +85,7 @@ def main():
     print('CPU_PREFLIGHT_PASSED', datetime.now(timezone.utc).isoformat(), flush=True)
     subprocess.run([SUPERVISOR, '-u', '-m', 'scripts.train_then_burn', '--config', str(args.output / 'jobs.json'),
                     '--output', str(args.output / 'supervised'), '--inspection', str(args.output / 'inspection.json'),
-                    '--host', HOST, '--burn-session', 'ce7454_final_burn_20261016_a01'], check=True)
+                    '--host', HOST, '--burn-session', args.output.name + '_final_burn'], check=True)
 
 
 if __name__ == '__main__':
