@@ -1,3 +1,31 @@
+## Handoff update reviewed; odd-size evaluation fixed —18:08UTC16October
+
+Reread CE7454/docs/handoff_main_agent_20261017.md updated17:56UTC, supporting
+Y review, experiment ledger and prior phase/wavelet implementations. Keep8
+current fits; no more architectures now. Strong augmentation remains main
+recipe; moderate arm still mandatoryJPEG. Clean/source validation cannot select
+winner reliably; next priority newer-batch DEV evaluation, not more sourcePPL.
+Dev labels are estimated; earlier Y label/BN-calibration recommendations are
+superseded by newer handoff. Prior phase model used normalized complex-filter
+correlations; ours uses raw spatial phases. Prior wavelet was a detail-logit
+branch continued fromGRIP; ours is all-band mainstem scratch. These distinctions
+do not establish a gain; use cautious single-seed claims, no test-based tuning.
+Only supplied train pool currently on B200; dev export/eval is not yet queued.
+
+Found automatic social robustness protocol can resize to odd dimensions.
+Band/phase stem required even dimensions, which would fail that evaluation.
+Fix replicate-pads only final odd row/column; native512 unchanged. Seven CPU
+checks passed; old/new native512 outputs and even-size training gradients exact.
+B200 CPU old/new checks passed18:08:05UTC; deployed commit9ab5a75. Existing
+trainers were NOT restarted/modified in memory. All8 GPUs still80–97% utilization.
+Only new root code/research_band_stem.py has evaluation compatibility overlay;
+original saved as research_band_stem.training.py, source_manifest retained as
+training provenance, odd_evaluation_patch.json records hashes. Newsha572de8f5;
+originalsha b73b13e4. Evidence docs/results/ce7454_odd_evaluation_fix_20261016.json.
+Original4 code and coordinated burn handoff unchanged. Commands#0.
+
+---
+
 ## CE7454 ALL EIGHT training —verified17:28:24UTC16October
 
 Launch2c875ba, health17b143d. All GPUs91–96% utilization. Existing a04 fits
