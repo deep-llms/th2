@@ -13,14 +13,19 @@ All8 original trainer PIDs unchanged before/after; no model/BN/grad mutation;
 GRIP9.75s/1.72GB allocated, Haar5.58s/.412GB. Several training epochs advanced;
 smoke duration shorter than one GRIP epoch, recheck its later progress.
 
-Preparing periodic watcher root q359-ce7454-interim-watch-20261016-a01.
+Periodic watcher0a50083 installed and verified19:15:19UTC, PID1271652, root
+q359-ce7454-interim-watch-20261016-a01. First evaluation passed; all8 first-cycle
+results awaiting retrieval. All8 training advanced, GRIP296->306; GPU memory
+returns to baseline after standalone smoke.
 Single small GPU0 evaluator, batch8, cap10%memory, each1800seconds all8arms.
 Snapshot last.pt with stable-read/stat+load verification; immutable copies saved.
 No training stop/restart/schedule/weights changes. Stop on original failure or
 02:00UTC deadline. Original future evaluation gate requests watcher STOP and
 waits for its evaluator exit before final eval/burn handoff; band4–7 untouched.
-Local CLI resume timer for THIS existing conversation is being prepared, not yet
-verified running. Do not claim scheduled agent wake until timer is installed.
+Local CLI resume timer for THIS conversation installed and verified waiting,
+PID2384904, tmux ce7454_agent_watch_20261016. First wake19:45:18UTC/03:45SGT,
+then30min, ends06:30UTC17Oct. First actual CLI model turn not yet observed.
+Read docs/CE7454_OVERNIGHT_WATCH.md for exact paths/actions and stop conditions.
 Test scores reported separately; never choose training changes from test scores.
 
 ---

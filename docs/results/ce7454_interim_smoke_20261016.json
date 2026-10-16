@@ -118,5 +118,12 @@
         }
       }
     }
-  ]
+  ],
+  "evidence": {
+    "commit": "a6bf32b",
+    "log_sha256": "9faccea4202dc40225cde4e1a012e27c5de0411a3927aba4086a23f2b84edbc6",
+    "all_eight_training_pids_unchanged": true,
+    "evaluated_model_state_unchanged": true,
+    "all_counts_verified": true
+  }
 }

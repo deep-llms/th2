@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "session": "q359-ce7454-interim-watch-20261016-a01",
+  "watcher": {
+    "owner": {
+      "pid": 1236924,
+      "start_ticks": 112404742,
+      "cmd_sha256": "b98a2ce892920ef54ca2c0c755ceee6be3f61cd7c3e32d1408a1284dd2db080f"
+    },
+    "watcher": {
+      "pid": 1271652,
+      "start_ticks": 113276294,
+      "cmd_sha256": "1b3484e258ade1b8e30cc0a432de5741d3a69a5129f0294663bc0ad3ce8bfc73"
+    }
+  },
+  "old_gate_sha256": "20c45d7c24d98da8a4af465cea954ae28f730462f2bc2c8ec3f1eec5fcbd52e1",
+  "new_gate_sha256": "a6e35ed1a516677b2fa3534fff21449fc5f032dc500e6a840578acf05e4aa0c3",
+  "interval_seconds": 1800,
+  "gpu": 0,
+  "batch_size": 8,
+  "training_stopped": false,
+  "original_burn_handoff_preserved": true
+}
