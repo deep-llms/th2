@@ -194,3 +194,40 @@ is discussion only; no such follow-up is queued. Existing handoff preserved.
 
 Evidence: docs/results/ce7454_watch_review_20261016_a03.json. Commands#0
 after acknowledged receipts. Existing timer continues; next review21:15UTC.
+
+## Scheduled review —21:18UTC /05:18SGT
+
+All eight arms remain active, all40 interim evaluations across cycles0–4 passed
+with900dev/1500test each. No reported error, final-result or complete marker.
+GRIP and GRIPstats completed450base and entered their planned40epoch full512
+fine-tunes; current epochs31 and11. GRIPstats new trainer PID1297316 is the
+expected stage transition. Original supervisor, companion and watcher continue.
+
+Latest completed cycle4,21:15–21:17UTC:
+
+| Arm | Evaluated epoch / stage | Dev accuracy | Official test accuracy |
+|---|---|---:|---:|
+| grip_nodown | 30 / full512 fine-tune after base450 | 97.00% | 95.53% |
+| band_strong | 400 / native512 scratch | 96.00% | 94.00% |
+| band_ibn_strong | 365 / native512 scratch | 93.89% | 91.00% |
+| srresnet | 423 / base256 | 97.33% | 95.47% |
+| band_moderate | 435 / native512 scratch | 97.78% | 71.47% |
+| phase_strong | 397 / native512 scratch | 95.89% | 95.47% |
+| grip_nodown_stats | 10 / full512 fine-tune after base450 | 95.67% | 93.80% |
+| srresnet_stats | 424 / base256 | 97.56% | 95.47% |
+
+GRIP dev recovered from91.56% at fine-tune12 to97.00% at30. This supports
+waiting for the planned endpoint; it does not establish a final improvement.
+No method or checkpoint selected from official-test scores. Dev labels remain
+estimates; all interim comparisons involve different training stages.
+
+Live21:18UTC: GRIP31/40, GRIPstats11/40; SR427/450base and SRstats426/450base;
+Haarstrong405/450, IBN369/450, moderate439/450, phase400/450. GRIP training
+estimated05:33–05:40SGT, moderate~05:24SGT, last SR stage~07:05SGT; allow
+~07:30SGT for final evaluation/variation. No final completion claimed.
+
+Next review05:45SGT may find periodic watcher stopped: the first original
+final evaluator intentionally requests STOP and waits for its release. Do not
+restart it. Retrieve normal final prediction files and verify companion/burn
+handoff. No new jobs, schedule or environment changes. Commands#0 after
+acknowledged export. Evidence: results/ce7454_watch_review_20261016_a04.json.
