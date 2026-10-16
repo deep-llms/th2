@@ -1,0 +1,17 @@
+{
+  "repository": "nht10/cedar-finch-7454",
+  "revision": "7117f0f096106515660b864ebd1ef5b5937cdb6f",
+  "url": "https://huggingface.co/datasets/nht10/cedar-finch-7454/commit/7117f0f096106515660b864ebd1ef5b5937cdb6f",
+  "splits": {
+    "dev": {
+      "images": 900,
+      "bytes": 127042928,
+      "sha256": "8aa9ecbb53b008a905d9034558d37a40d61c57c111f31fd7beb8a5b7a4cb112a"
+    },
+    "test_official": {
+      "images": 1500,
+      "bytes": 128327763,
+      "sha256": "46b3554e15e306b36439b4b04f30b45a0eb625b912ac73ebc63abff9c4fd44ae"
+    }
+  }
+}
