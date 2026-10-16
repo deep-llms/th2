@@ -1,3 +1,27 @@
+## P7 priority queue results — 16 October 2026, 07:31 UTC
+
+Read-only ea88c4e confirms all eight prioritized arms plus lm-lambda001 and
+lm-lambda1 complete and validated: 10/15 reordered, 17/22 total.
+Active lm-valueonly-gated is 1694/2500, 1.16 s/update; all eight GPUs98–99%.
+Remaining after current: tg-medium, tg-weighted, tg-huber, tg-nonlinear.
+Estimated finish about 11:10 UTC (roughly 10:50–11:40), based on observed
+completed-arm times; no queue or model changes made.
+
+At step2500, seed42 A PPL36.276876. New completed PPL: LM lambda0.01
+36.110832; LM lambda1 36.159594; LM sparse/noaux36.142995;
+LM value-only/noaux36.219817; LM key-only/noaux36.227724;
+targetgrad heads8 37.083008, key-only37.245019, value-only37.265277.
+Second seed2042 A36.339047 vs LM-noaux36.214297 (0.343% lower PPL),
+consistent with seed42's 0.388% gain. These are small held-out LM gains;
+no downstream evaluation added or completed for this tuning queue.
+Previous P7-simple-lm seed42 PPL36.078235 is still lower than all completed
+new candidates. All compared at 12layers/2500steps, not equal wall time.
+
+Receipt: docs/results/p7_priority15_partial_20261016_0731.json.
+Source temp/remote_logs/p7-priority-results-20261016-0730.log, SHA256
+09ee4af0c6658d25ef13e9fd7e329e406c6702572cc8b252b8ee59a8a645380a.
+Commands restored to #0; persistent queue and automatic final burn unchanged.
+
 ## P7 remaining fifteen reordered — 15 October 2026, 22:42 UTC
 
 User authorized finishing the active arm, then running eight selected arms before
