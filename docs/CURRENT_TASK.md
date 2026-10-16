@@ -1,3 +1,32 @@
+## CE7454 four scratch arms training — verified16:52:30UTC,16October
+
+Launch c6c6f94, monitor27ac619. Root q359-ce7454-scratch-20261016-a04.
+All4 arms passed30-step CUDA finite-gradient checks and both native-resolution
+FP32/BF16 checks at256/512, exact checkpoint reload and full512 inference.
+All4 first scientific epochs completed with finite losses: GRIP29s, GRIP stats33s,
+SRResNet39s, SRResNet stats39s. GPUs0–3 train independently;4–7 free.
+Shared schedule fixed BEFORE fits:450 epochs256/source batch32/two views,
+then own-last-checkpoint40 epochs512/source batch16. No pretrained weights;
+seed0, data/split seed42. Full512 stage is fresh-optimizer continuation of its
+own scratch run. All source frozen under root/code; prior smoke states unused.
+
+Measured slowest per-epoch cost40.31s base/138.85s full512. Conservative32583.68s
+budget includes30% margin and30min evaluation reserve, forecast~01:55UTC17Oct
+(09:55SGT), target10:00SGT; actual first epochs slightly faster. Phase deadline
+15:55SGT. Monitor early epochs for ETA drift; do not modify an active LR schedule.
+Known burns verified from previous handoff, exact workers reclaimed16:50–16:51,
+all8 GPUs verified free before start. Existing supervisor automatically restores
+verified8-rank burns after success/failure. No extra arms queued.
+
+Evidence temp/remote_logs/ce7454-health-20261016-a04.log SHA256
+cf323891d3ae41596931b87bb9b448907f9c5728ea463392fd618b4edc2bb3cb.
+Optional wide variant held after one failed native AMP gradient check.
+BandStemResNet research prototype remains LOCAL ONLY, untrained,11,291,651 params;
+matching phase control shares exact parameters/initial weights. CPU checks passed;
+see CE7454/runs/band_stem_research_20261016.json for independent proposal/sources.
+
+---
+
 ## CE7454 numerical gates: four candidates pass; wider variant held
 
 Native-resolution FP32/BF16 comparisons passed both8-image groups at256 and512

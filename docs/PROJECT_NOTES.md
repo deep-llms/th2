@@ -6617,3 +6617,23 @@ commands #0 leaves it running. Do not relaunch. Next action: read-only monitor
 numerical gates, all eight task/arm smoke-reload validators, production progress.
 Evidence: artifacts/stsb-boolq-monitor-20261008-a01/ (6 verified JSON artifacts).
 Full protocol: docs/SUPERVISED_FINETUNING_20261007.md.
+
+
+## CE7454 execution scope —16October2026
+
+Operator confirmed th2/q359 for scratch-only CE7454 image classification.
+Training supplied15k images uploaded public nht10/cedar-finch-7454 at immutable
+90bc1ed893c5dd6dc73f96d2d3e62cf417ffab5d; archive SHA
+ef57baacee12b92038a845308b0911dd71c5b564bdda43b516ed2f90fbb08ce3.
+No pretrained weights, external images, dev/test fitting, ensembles or TTA.
+Separate ce7454_env torch2.13.0+cu130/torchvision0.28.0+cu130, verifiedpipcheck.
+Existing eval_fa4/driver/burn unchanged. Four candidates seed0 run individually
+on GPUs0–3 under tested all8-GPU burn supervisor; code frozen under outputroot.
+First epochs verified16:52UTC,450+40 shared schedule, conservative09:55SGT ETA.
+Root q359-ce7454-scratch-20261016-a04; previous roots contain smoke tests only.
+Early benchmark bugs/gates and held wide model documented in CURRENT_TASK.md.
+
+A new local BandStemResNet prototype (11.292M) preserves all Haar bands and
+processes them nonlinearly before one shared body. It is NOT queued/trained.
+Classmate100% report reviewed critically: baseline already99.467%, no retrained
+component ablations establishing cause. New proposal is not a reproduction.
