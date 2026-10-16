@@ -75,21 +75,32 @@ def main():
     model.eval()
     if len(times) != args.steps or x.ndim != 4 or y.ndim != 1:
         raise ValueError('Incomplete benchmark or invalid last processed batch')
-    sample = x[:2, :, :64, :64].detach().clone()
-    target = y[:2]
-    model.zero_grad(set_to_none=True)
-    ref = F.cross_entropy(model(sample).float(), target)
-    ref.backward()
-    ref_grad = torch.cat([p.grad.detach().float().reshape(-1) for p in model.parameters()])
-    model.zero_grad(set_to_none=True)
-    with torch.autocast('cuda', dtype=torch.bfloat16):
-        amp = F.cross_entropy(model(sample).float(), target)
-    amp.backward()
-    amp_grad = torch.cat([p.grad.detach().float().reshape(-1) for p in model.parameters()])
-    rel = ((amp_grad - ref_grad).norm() / ref_grad.norm().clamp_min(1e-12)).item()
-    cosine = F.cosine_similarity(ref_grad, amp_grad, dim=0).item()
-    if abs(ref.item() - amp.item()) > 0.05 or rel > 0.15 or cosine < 0.98:
-        raise ValueError(f'FP32/BF16 numerical gate failed: loss {ref.item()}/{amp.item()}, grad {rel}/{cosine}')
+    def numerical_check(sample, target):
+        model.zero_grad(set_to_none=True)
+        ref = F.cross_entropy(model(sample).float(), target)
+        ref.backward()
+        ref_grad = torch.cat([p.grad.detach().float().reshape(-1) for p in model.parameters()])
+        model.zero_grad(set_to_none=True)
+        with torch.autocast('cuda', dtype=torch.bfloat16):
+            amp = F.cross_entropy(model(sample).float(), target)
+        amp.backward()
+        amp_grad = torch.cat([p.grad.detach().float().reshape(-1) for p in model.parameters()])
+        rel = ((amp_grad - ref_grad).norm() / ref_grad.norm().clamp_min(1e-12)).item()
+        cosine = F.cosine_similarity(ref_grad, amp_grad, dim=0).item()
+        return {'shape': list(sample.shape), 'fp32_loss': ref.item(), 'bf16_loss': amp.item(),
+                'gradient_relative_l2': rel, 'gradient_cosine': cosine,
+                'passed': abs(ref.item()-amp.item()) <= .05 and rel <= .15 and cosine >= .98}
+    # Retain the failed tiny-crop diagnostic instead of hiding it. Gate on TWO
+    # actual-resolution groups, with unchanged tolerances. A 64px crop is not
+    # either training resolution and has very different pooled feature support.
+    numerics = {'tiny64_diagnostic': numerical_check(x[:2, :, :64, :64].detach(), y[:2]),
+                'native_first8': numerical_check(x[:8].detach(), y[:8]),
+                'native_last8': numerical_check(x[-8:].detach(), y[-8:])}
+    (args.output / 'numerics.json').write_text(json.dumps(numerics, indent=2) + '\n')
+    print('NUMERICS', json.dumps(numerics), flush=True)
+    if not all(numerics[key]['passed'] for key in ('native_first8', 'native_last8')):
+        raise ValueError('Native-resolution FP32/BF16 numerical gate failed; see numerics.json')
+    ref = numerics['native_first8']
     # Use a fit image, not dev/test; check full-size inference and exact reload.
     full_ds = CachedImageDataset(args.cache, 'train', fit[:1], labels[fit[:1]])
     full = normalize(full_ds[0][0].unsqueeze(0).cuda()).contiguous(memory_format=torch.channels_last)
@@ -118,8 +129,9 @@ def main():
         'mean_end_to_end_step_seconds_after_warmup': float(np.mean(end_to_end_times[5:])),
         'full512_eval_batch32_seconds': float(np.median(eval_times[1:])),
         'gpu_allocated_peak_gib': peak / 2**30, 'losses': losses,
-        'fp32_loss': ref.item(), 'bf16_loss': amp.item(), 'gradient_relative_l2': rel,
-        'gradient_cosine': cosine, 'full512_reload_exact': True,
+        'fp32_loss': ref['fp32_loss'], 'bf16_loss': ref['bf16_loss'],
+        'gradient_relative_l2': ref['gradient_relative_l2'],
+        'gradient_cosine': ref['gradient_cosine'], 'numerics': numerics, 'full512_reload_exact': True,
         'torch': torch.__version__, 'cuda': torch.version.cuda,
         'note': 'Compute timing includes finite-gradient checks; excludes loader wait. Not an accuracy result.'}
     (args.output / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
