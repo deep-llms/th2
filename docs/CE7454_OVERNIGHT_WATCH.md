@@ -231,3 +231,40 @@ final evaluator intentionally requests STOP and waits for its release. Do not
 restart it. Retrieve normal final prediction files and verify companion/burn
 handoff. No new jobs, schedule or environment changes. Commands#0 after
 acknowledged export. Evidence: results/ce7454_watch_review_20261016_a04.json.
+
+## Scheduled review —21:46UTC /05:46SGT: first final results
+
+Three fixed-endpoint evaluations passed, with checkpoint identity and exact
+900dev/1500test filenames verified locally. Prediction-file SHA256 matches
+remote receipts; finite logits, argmax predictions and counts also verified.
+
+| Arm | Completed training | Final dev accuracy | Final official test accuracy |
+|---|---|---:|---:|
+| GRIP |450base256 +40fine-tune512|96.78% (871/900)|96.13% (1442/1500)|
+| Haar strong |450native512|96.78% (871/900)|94.53% (1418/1500)|
+| Haar moderate |450native512|97.89% (881/900)|71.67% (1075/1500)|
+
+These are final checkpoints, not selected best interim epochs. Dev labels are
+estimates; official test is reported separately and not used to modify training.
+GRIP's final dev is similar to its recent late-base snapshots; the fine-tuning
+recovery does not establish a meaningful dev improvement by itself. Preserve
+all endpoints for comparison; remaining five arms have not finished.
+
+Current: GRIPstats25/40fine-tune, SR6/40fine-tune, SRstats5/40fine-tune;
+HaarIBN414/450, spatialphase449/450. SR and SRstats completed450base before
+their new trainers. No reported errors. Original supervisor and companion
+remain running; both study-complete receipts and companion-release absent.
+
+The periodic watcher stopped successfully21:32:04UTC/05:32SGT at the original
+final-evaluation gate; own_evaluator_exited:true verified. This is intentional.
+Do NOT restart it. GRIP evaluation exited and its CPU gate is waiting for the
+companion's verified release. GPU guard still belongs to original PID1236924.
+GPUs0,4,5 currently free; GPUs1,2,3,6,7 train. Do not start burns or additional
+fits on free GPUs: preserve the existing all8 supervisor handoff. No burn
+receipt yet. Existing dev review timer continues; next22:15UTC/06:15SGT.
+
+ETA: IBN~06:09SGT, GRIPstats~06:15SGT, SR/SRstats~07:03–07:06SGT;
+allow~07:30SGT for all final evaluations/variation. No training/eval restart,
+model/env changes or new fits. Commands#0 after verified receipt. Evidence:
+results/ce7454_watch_review_20261016_a05.json. Full predictions saved locally
+in ignored temp/ce7454_eval_upload/final-review-a05/.

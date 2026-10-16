@@ -1,3 +1,27 @@
+## Scheduled CE7454 review —21:46UTC16October /05:46SGT17October
+
+Monitor604ee56 verifies three final evaluations passed: GRIP450+40 dev96.78
+(871/900)/test96.13(1442/1500); Haarstrong450 dev96.78/test94.53; moderate450
+dev97.89/test71.67. ReceiptSHA/checkpoint/manifest/exactnames/counts/logits
+verified locally; labels remain local. Dev estimated, official test reporting
+only. All final scores in CE7454_OVERNIGHT_WATCH.md and
+results/ce7454_watch_review_20261016_a05.json.
+
+Five arms still train: GRIPstats25/40, SR6/40, SRstats5/40 full512 afterbase450;
+IBN414/450, phase449/450. Original supervisor and companion active, no errors.
+Periodic watcher stopped/released21:32:04UTC with own_evaluator_exited:true
+at first original final evaluation. Expected; DO NOT restart. Forty interim
+evaluations total. Normal final evaluators continue. GRIP CPU gate waits for
+companion release. GPU guard owner1236924 intact; no burn receipt. GPUs0,4,5
+free; others train. Do not launch extra fits/burns on free GPUs.
+
+Next review22:15UTC/06:15SGT: retrieve additional fixed final results. ETA last
+training07:03–07:06SGT; all final eval~07:30SGT. Keep timer until both study
+completion and original burn verification; commands#0 afterreceipt. No changes
+to training, handoff or environment.
+
+---
+
 ## Scheduled CE7454 review —21:18UTC16October /05:18SGT17October
 
 Monitor5a814c5, complete-log export36bc89a: all8arms active and40interim
