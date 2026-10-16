@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/q359-teacher-first-20261016-a01.launch.log,/mnt/local/_outputs/deep-llms_th2/q359-teacher-first-20261016-a01/preflight.json,/mnt/local/_outputs/deep-llms_th2/q359-teacher-first-20261016-a01/supervised/supervisor.json,/mnt/local/_outputs/deep-llms_th2/q359-teacher-first-20261016-a01/supervised/run/run.json,/mnt/local/_outputs/deep-llms_th2/q359-teacher-first-20261016-a01/supervised/run/summary.json
-#th2-q359-teacher-first-artifacts-20261016-a01
+#0
+# Teacher-first pilot already submitted; never duplicate launch from stale logs.

@@ -1,3 +1,22 @@
+## Teacher-first pilot submitted; live execution unverified — 16 October 2026
+
+Launch51d370c acknowledged10:58:53UTC, root
+/mnt/local/_outputs/deep-llms_th2/q359-teacher-first-20261016-a01.
+Five CPU checks passed, including actual HF Trainer and independent uneven-rank
+token normalization. Two numerical/DDP smokes then two256-step fits are queued;
+all eight GPUs per fit, existing supervisor restores verified burns on success/failure.
+No GPU-stage receipt or scientific result has been retrieved yet. Last verified
+machine state10:52:17UTC: checkpoint SHA matches, prior evaluation complete and
+approved burns progressing. Dropbox controller status last modified11:00:35UTC;
+launch snapshot empty. Inspectionea444c9 and artifact requeste626208 unacknowledged
+as of11:11UTC. No delivered project error or confirmed infrastructure failure.
+Do NOT duplicate launch, stop unknown processes or clean output based on stale
+status. Next: retrieve root.launch.log, preflight, supervisor/run/summary JSON.
+Padding fallback now explicitly matches train.py (ed096b3); this does not change
+packing; initial code omitted the fallback only when tokenizer had no pad token.
+Preserve original checkpoints/data and user's unrelated dirty documents.
+Receipt docs/results/teacher_first_submission_20261016.json.
+
 ## Bounded teacher-first pilot prepared — 16 October 2026
 
 User authorized reassessment and a cheap trial of the teacher-first idea.

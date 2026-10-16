@@ -1,3 +1,25 @@
+## Bounded teacher-first trial — 16 October 2026
+
+User authorized reassessment and a cheap test of the teacher-first proposal.
+Protocol docs/TEACHER_FIRST_PILOT_20261016.md: frozen existing12-layer A2500,
+learned deep-memory versus matched shallow-memory branches at block4 input,
+source block8 output of unchanged A; strict past/same-document,128code/two heads,
+actual frozen-tail LM loss. Two256-step eight-GPU HF Trainer fits,32k input tokens
+per update; same8.39M training/1.05M evaluation input tokens. No proxy distillation,
+sweep or longer training automatically follows. CPU correctness tests passed5/5;
+all production arm code and source checkpoint/data remain unchanged.
+
+Read-only19c3c11 verified expected A SHA and live prior burns10:52:17UTC.
+Launch51d370c acknowledged10:58:53UTC. Root q359-teacher-first-20261016-a01;
+preflight requires original fingerprints, copied/verified Accelerate and exact
+known burns, then existing supervisor stops verified workers, checks free GPUs,
+runs numerical/DDP smokes and fits, restores verified burns on success/failure.
+Each fit job caps15min; at16updates projected fit>10min aborts. Padding fallback
+explicitly aligned with train.py ined096b3. GPU execution remains UNVERIFIED:
+Dropbox status stale since11:00:35UTC and launch snapshot empty; status/artifact
+requests have not returned. Do not infer failure/success or repeat launch.
+Receipt docs/results/teacher_first_submission_20261016.json. No scientific result.
+
 ## P7 tuning downstream evaluation complete — 16 October 2026
 
 Read-only 80f593f verified success at 09:48:28 UTC. All20 checkpoints passed
