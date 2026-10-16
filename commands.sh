@@ -1,21 +1,19 @@
-#1 +60+a
-#th2-q359-ce7454-scratch-study-20261016-a04
+#1 +30+a
+#th2-q359-ce7454-study-health-20261016-a04
 set -euo pipefail
-test "$(hostname)" = thiennh-p6-q359-worker-0
-test "$PWD" = /mnt/local/deep-llms_th2
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04
-TASK_PY=/mnt/local/conda-py311/envs/eval_fa4/bin/python
-TASK_SESSION=ce7454_scratch_20261016_a04
-test ! -e "$TASK_ROOT"
-test ! -e "$TASK_ROOT.log"
-if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then
-  echo 'REFUSE: CE7454 session already exists' >&2
-  exit 1
-fi
-printf -v TASK_CMD 'exec %q -u %q --output %q --reuse-verified-cache --previous-output /mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a03 >%q 2>&1' \
-  "$TASK_PY" "$PWD/ce7454/src/launch_b200_study.py" "$TASK_ROOT" "$TASK_ROOT.log"
-tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
-tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
-echo "CE7454_LAUNCH_SUBMITTED $TASK_ROOT"
-sleep 10
-tail -n 25 "$TASK_ROOT.log"
+date -u
+hostname
+nvidia-smi --query-gpu=index,name,memory.used,utilization.gpu --format=csv
+/mnt/local/conda-py311/envs/eval_fa4/bin/python - <<'CHECK'
+from pathlib import Path
+import json
+root=Path('/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04')
+print('LAUNCH_LOG',Path(str(root)+'.log').read_text()[-7000:])
+for name in ['supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/run/ce7454-study.log','supervised/run/study/schedule.json','supervised/burn-verified.json']:
+ p=root/name
+ if p.exists(): print(str(p),p.read_text()[-5000:])
+for p in sorted((root/'supervised/run/study').glob('*.log')):
+ print('STUDY_LOG',p.name,p.read_text()[-1800:])
+for p in sorted((root/'supervised/run/study').glob('benchmark_*/result.json')):
+ d=json.loads(p.read_text()); d.pop('losses',None); print('BENCHMARK',p.parent.name,d)
+CHECK

@@ -1,3 +1,20 @@
+## CE7454 numerical gates: four candidates pass; wider variant held
+
+Native-resolution FP32/BF16 comparisons passed both8-image groups at256 and512
+for GRIP, GRIP stats, SRResNet and SRResNet stats. The optional widened SR model
+failed one native256 gradient comparison (.1672 relative L2 versus .15 gate),
+so it is held, not promoted by relaxing tolerance. Tiny64 diagnostics remain
+recorded; ordinary SR variants fail those small out-of-training-resolution crops
+but pass both representative native groups at both actual resolutions.
+No scientific fit in a01–a03. All failed smokes restore burns automatically.
+
+Four-arm retry c6c6f94/a04 acknowledged16:49UTC; requires successful previous
+burn receipt AND current exact GPU/PID ownership matching before reclamation.
+Fresh root q359-ce7454-scratch-20261016-a04; same scratch/data/schedule rules.
+Next: read-only verify schedule, first epochs and ETA. Code frozen per launch.
+
+---
+
 ## CE7454 scratch-only study and research — 16 October 2026
 
 Active source project `/disk/thuat/CE7454`; user confirmed th2/q359 B200 and
