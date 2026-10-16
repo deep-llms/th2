@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/q359-ce7454-interim-watch-20261016-a01/watch.log,/mnt/local/_outputs/deep-llms_th2/q359-ce7454-interim-watch-20261016-a01/watch/latest_status.json
-#th2-q359-ce7454-watch-cycle2-results-20261016-a01
+#0
+# CE7454 monitoring verified; eight fits and periodic evaluation continue.

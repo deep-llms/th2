@@ -6694,3 +6694,12 @@ thread; test queued successfully (message01a14654-b9b0-7a22-9c21-8486c5e446c8).
 Old timer gracefully stopped. New tmux ce7454_queue_watch_20261016/state
 temp/ce7454_queue_watch_20261016, first20:15:18UTC then30min, end06:30UTC.
 No B200/training/evaluation changes; no phone notification promise.
+
+
+CE7454 scheduled wake now verified end to end: delivery test ack20:09:48UTC,
+first real queued monitoring turn20:15UTC. Health efafa2c/export9cdf538 verify
+all8 training fits progressing and24 successful interim evaluations through
+20:17UTC. No finalized arm yet. Latest table/evidence in
+CE7454_OVERNIGHT_WATCH.md and results/ce7454_watch_review_20261016_a02.json.
+No model/schedule changes; continue to fixed endpoints. Next review20:45UTC.
+Estimated last training stage23:05UTC/07:05SGT, final evals roughly by07:30SGT.

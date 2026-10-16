@@ -1,3 +1,24 @@
+## First scheduled CE7454 review completed —20:17UTC16October
+
+Wake delivery verified end to end: test acknowledged20:09:48UTC, this scheduled
+turn started20:15:18UTC. Timer remains running, next20:45:18UTC/04:45SGT.
+Remote health efafa2c and export9cdf538: all8 original trainer PIDs unchanged,
+coordinators/supervisor running; no final evaluation/complete/burn receipts yet.
+All24 periodic evaluations across cycles0–2 passed; latest round20:15–20:17UTC.
+Complete scores and stage details: docs/CE7454_OVERNIGHT_WATCH.md and
+ docs/results/ce7454_watch_review_20261016_a02.json.
+Latest: SRstats328 dev98.11/test92.93; moderate322 dev98.00/test65.20;
+GRIP432 dev96.56/test95.93. Dev labels estimated; official test reported only.
+No training selection/change from test. Preserve schedules; current checkpoints
+unequal stages, dev unstable, original four still need40epoch full512 stage.
+Live epochs20:17: GRIP435, GRIPstats379, SR329, SRstats328; Haarstrong298,
+IBN272, moderate323, phase295. Base/full native targets450. Estimated last
+training completion07:05SGT, allow~07:30SGT for final eval/variation.
+Read-only checks only this turn; no GPU stop/start, code/env/data changes.
+Commands#0 after verified receipt; existing watchdog/burn handoff unchanged.
+
+---
+
 ## Wake timer repair —20:10UTC16October2026
 
 The first CLI exec/resume tick at19:45 FAILED with thread-store conflict:
@@ -5,8 +26,8 @@ this conversation already has an active app-server writer. No automatic agent
 review occurred on that tick. B200 periodic evaluator is independent.
 Repaired local script to use supported `codex queue --remote unix:// --thread`
 instead, inheriting existing thread settings. Real delivery test accepted by
-app server, queued message01a14654-b9b0-7a22-9c21-8486c5e446c8; actual test-turn
-acknowledgement pending. Do not claim an executed review from queue acceptance.
+app server, queued message01a14654-b9b0-7a22-9c21-8486c5e446c8; test message delivered and acknowledged20:09:48UTC. First scheduled review
+started20:15:18UTC; queued waking is now verified end to end.
 Old timer stopped via its STOP file, confirmed stopped, no process kills.
 New timer tmux ce7454_queue_watch_20261016, state/prompt/logs in ignored
  temp/ce7454_queue_watch_20261016/. Next tick20:15:18UTC/04:15SGT then30min;

@@ -17,7 +17,8 @@ fits are queued by this watcher. Deadline:17October2026 15:55SGT (07:55UTC).
   Local state/prompt/logs: `temp/ce7454_queue_watch_20261016/` (ignored).
   The old exec/resume timer failed with an active-writer conflict at19:45 and
   was stopped. The replacement uses the existing app server; a real test message
-  was accepted into the queue. Queue acceptance is not a completed review.
+  was delivered and acknowledged20:09:48UTC. The20:15:18UTC scheduled message
+  started a real monitoring turn, verifying the wake path end to end.
   It depends on this dev machine, the app server, CLI authentication,
   and model availability. No promise of a phone notification.
 
@@ -119,3 +120,38 @@ Evidence: docs/results/ce7454_interim_cycle000_20261016.json. These are
 intermediate checkpoints at unequal stages; no arm replaced or stopped.
 Across even a few epochs scores fluctuate, so do not prune from one reading.
 Next remote round starts approximately19:45UTC; local review scheduled19:45UTC.
+
+## Scheduled review —20:17UTC /04:17SGT
+
+The repaired timer delivered its test20:09UTC and started the20:15UTC review.
+All eight trainers and both coordinators remain active; no final evaluation
+or burn handoff yet. All24 evaluations across cycles0–2 passed; no reported
+evaluation failures. Each used900dev/1500official-test images.
+
+Latest completed cycle2,20:15–20:17UTC:
+
+| Arm | Evaluated epoch / crop | Dev accuracy | Official test accuracy |
+|---|---|---:|---:|
+| grip_nodown | 432 / 256 | 96.56% | 95.93% |
+| band_strong | 295 / 512 | 90.00% | 88.53% |
+| band_ibn_strong | 270 / 512 | 89.67% | 85.80% |
+| srresnet | 327 / 256 | 95.78% | 95.20% |
+| band_moderate | 322 / 512 | 98.00% | 65.20% |
+| phase_strong | 293 / 512 | 94.56% | 95.60% |
+| grip_nodown_stats | 378 / 256 | 95.89% | 94.53% |
+| srresnet_stats | 328 / 256 | 98.11% | 92.93% |
+
+Training at20:17UTC: GRIP435/450, GRIPstats379/450, SR329/450,
+SRstats328/450, Haarstrong298/450, HaarIBN272/450, Haarmoderate323/450,
+phase295/450. Original four still require their planned40epoch full512 stage.
+Using recent base epoch times plus the preflight full512 timings, the last
+training stage is estimated near23:05UTC/07:05SGT; allow until roughly07:30SGT
+for final evaluations and variation. This is an estimate, not completion.
+
+Recommendation: preserve the current schedules. SRstats98.11 and moderate98.00
+differ by one dev image, below confidence warranted by estimated labels. Haar
+strong and IBN dev results fluctuate substantially; no evidence to replace the
+baseline from these snapshots. No tests are used for training selection, no
+fits stopped or restarted, no new architectures. Next review04:45SGT.
+
+Evidence: docs/results/ce7454_watch_review_20261016_a02.json.
