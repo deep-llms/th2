@@ -45,6 +45,7 @@ def main():
     p.add_argument('--checkpoint', type=Path, required=True)
     p.add_argument('--cache', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--external-cache', type=Path, default=None)
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     torch.set_num_threads(1)
@@ -80,6 +81,10 @@ def main():
               'epoch': ck['epoch'], 'metrics': metrics,
               'processed_mean_accuracy': float(np.mean([metrics[n]['accuracy'] for n in PROTOCOLS])),
               'dev_test_used': False, 'tta': False}
+    if args.external_cache is not None:
+        from predict_external import predict_external
+        result['external_predictions'] = predict_external(
+            model, args.external_cache, args.output/'external', sha)
     (args.output / 'results.json').write_text(json.dumps(result, indent=2, allow_nan=False) + '\n')
 
 

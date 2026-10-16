@@ -1,3 +1,23 @@
+## Dev AND official test transfer/evaluation authorized —16October2026
+
+User explicitly requested transfer both sets and evaluation on BOTH. HF public
+nht10/cedar-finch-7454/evaluation at7117f0f096106515660b864ebd1ef5b5937cdb6f
+contains only images+manifest, no label files. Dev900/127042928bytes, official
+released test1500/128327763bytes. Original test_images.zip ONLY; no old copy.
+Download1f62e46 confirmed all3items18:27:54UTC into separate
+/mnt/local/_data/deep-llms_th2/ce7454/evaluation/raw. Training caches untouched.
+ManifestSHA99ff5ec0bcb187ec7678ae436b0cc0cb7d9349d5431ca1bee8b39b8fc48cc42e.
+
+Preparing verified isolated evaluation/cache and future fixed-endpoint evaluators
+for all8 arms: existing clean+9processed validation plus single-pass dev/test
+predictions. Original guard/companion handoff remains unchanged. Labels stay
+local; retrieve filename-aligned logits and score locally against estimated dev
+and user-provided official test labels. Three local tests passed (both900/1500
+rows, no weight/BN mutations, exact-name scoring, untrusted-manifest rejection).
+Deployment/decoded-cache verification pending. Interim evaluation not yet queued.
+
+---
+
 ## Handoff update reviewed; odd-size evaluation fixed —18:08UTC16October
 
 Reread CE7454/docs/handoff_main_agent_20261017.md updated17:56UTC, supporting
