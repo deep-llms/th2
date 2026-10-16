@@ -268,3 +268,40 @@ allow~07:30SGT for all final evaluations/variation. No training/eval restart,
 model/env changes or new fits. Commands#0 after verified receipt. Evidence:
 results/ce7454_watch_review_20261016_a05.json. Full predictions saved locally
 in ignored temp/ce7454_eval_upload/final-review-a05/.
+
+## Scheduled review —22:16UTC /06:16SGT: six final endpoints
+
+Six final evaluations now verified. Newly finished: GRIPstats, HaarIBN and
+spatialphase. All900dev/1500test predictions pass exact-name, SHA, checkpoint,
+finite-logit and argmax verification. Interim watcher remains correctly stopped;
+its40 earlier results were rescored, no new interim jobs.
+
+| Arm | Completed training | Final dev | Final official test |
+|---|---|---:|---:|
+| grip_nodown | 450base256 +40fine-tune512 | 96.78% | 96.13% |
+| grip_nodown_stats | 450base256 +40fine-tune512 | 94.67% | 94.73% |
+| band_ibn_strong | 450native512 | 93.56% | 91.20% |
+| band_moderate | 450native512 | 97.89% | 71.67% |
+| band_strong | 450native512 | 96.78% | 94.53% |
+| phase_strong | 450native512 | 96.44% | 95.60% |
+
+Only SRNet and SRNetstats remain: both19/40epochs full512 fine-tuning after
+450base. GPUs1/2 hold their two known trainer processes; other GPUs are free.
+No errors reported. Both GRIP endpoints and all four companion endpoints have
+saved passing final evaluation receipts, not merely vanished processes.
+
+Companion controller and study status passed at22:09:53UTC/06:09SGT; verified
+release says GPUs4–7 free. Original supervisor remains running; original-study
+completion and burn receipt absent because SR training continues. Guard and
+automatic eight-GPU burn handoff unchanged. Do not start extra jobs/burns.
+
+Dev-only interpretation: GRIPstats and HaarIBN did not improve over GRIP on
+these final endpoints. Finish the two SR variants before overall conclusions.
+Dev labels remain estimates; official test reported separately, not used to
+select training changes. No new architectures or continuation fits queued.
+
+Remaining training~47minutes from06:16SGT, expected07:03–07:05SGT, with
+final evaluation and burn verification roughly07:15–07:30SGT. Existing timer
+continues, next06:45SGT. Commands#0 after receipt. Evidence:
+results/ce7454_watch_review_20261016_a06.json; full local predictions in
+ignored temp/ce7454_eval_upload/final-review-a06/.
