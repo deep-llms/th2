@@ -6665,3 +6665,23 @@ All8 final checkpoints predict both splits automatically without TTA; retrieve
 filename-aligned predictions for local accuracy/confusion scoring. No scientific
 score yet; no interim evaluation queued. Existing GPU guard/handoff preserved.
 Evidence: docs/results/ce7454_external_evaluation_ready_20261016.json.
+
+
+## CE7454 concurrent interim evaluation and wake timer —16October2026
+
+User explicitly authorized30min monitoring, both dev/test, and evaluation
+alongside training on the same B200. No trainer stops. Concurrent two-checkpoint
+smoke a6bf32b passed; periodic watcher0a50083 installed, health93c6e8c confirms
+all8 first-cycle predictions passed19:17UTC with same trainer PIDs. GPU0 batch8,
+immutable stable-read checkpoint snapshots; weight/BN unchanged/no grads.
+Each round106s incl startup, up to3.03GB reserved. Sharing temporarily slows
+GPU0 training (28s->36–38s/epoch), not a guarantee of zero runtime overhead.
+LatestGRIP306: dev97.44/test94.60; all scores/stages in
+docs/CE7454_OVERNIGHT_WATCH.md. Dev estimated, test supplied official; use dev
+for decisions, report test separately. No arm was stopped/replaced.
+Future original final-eval gate requests watcher STOP and verifies its child
+exited; preserves original companion-release/burn handoff. Watcher stops on
+original failure or02:00UTC. Separate dev timer resumes the existing thread
+every30min, first19:45:18UTC, end06:30UTC17Oct; verified waiting but first actual
+model wake still pending. State temp/ce7454_resume_watch_20261016, tmux
+ce7454_agent_watch_20261016. No new architecture training queued.

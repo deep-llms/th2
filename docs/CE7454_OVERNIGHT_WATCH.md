@@ -94,3 +94,27 @@ python3 ce7454/src/score_interim_log.py \
 
 No uploads or outbound network from GPU code. Labels remain local. Do not touch
 other agents' CE7454 local GPU experiments or publish a contest submission.
+
+## First complete periodic round —19:15–19:17UTC16October
+
+All eight arms passed. Same eight trainer PIDs before/after, all progressing.
+Total round106seconds including process startup and checkpoint snapshots;
+maximum reserved PyTorch memory3.03GB (GRIPstats). GPU0 epochs temporarily
+rose from28.1s to36.2–37.9s during shared evaluation. No training interruption
+or weight/BN/optimizer changes; zero performance interference is not claimed.
+
+| Arm | Epoch / training crop | Dev accuracy | Official test accuracy |
+|---|---|---:|---:|
+| grip_nodown | 306 / 256 | 97.44% | 94.60% |
+| band_strong | 191 / 512 | 94.56% | 92.73% |
+| band_ibn_strong | 175 / 512 | 95.22% | 85.53% |
+| srresnet | 231 / 256 | 95.56% | 92.20% |
+| band_moderate | 208 / 512 | 97.22% | 62.07% |
+| phase_strong | 190 / 512 | 92.00% | 89.93% |
+| grip_nodown_stats | 267 / 256 | 94.78% | 81.93% |
+| srresnet_stats | 232 / 256 | 94.67% | 91.73% |
+
+Evidence: docs/results/ce7454_interim_cycle000_20261016.json. These are
+intermediate checkpoints at unequal stages; no arm replaced or stopped.
+Across even a few epochs scores fluctuate, so do not prune from one reading.
+Next remote round starts approximately19:45UTC; local review scheduled19:45UTC.

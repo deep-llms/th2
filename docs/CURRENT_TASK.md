@@ -11,11 +11,13 @@ Evidence docs/results/ce7454_interim_smoke_20261016.json; raw log ignored
 9faccea4202dc40225cde4e1a012e27c5de0411a3927aba4086a23f2b84edbc6.
 All8 original trainer PIDs unchanged before/after; no model/BN/grad mutation;
 GRIP9.75s/1.72GB allocated, Haar5.58s/.412GB. Several training epochs advanced;
-smoke duration shorter than one GRIP epoch, recheck its later progress.
+later monitoring confirms GRIP296->306->309; continued training verified.
 
 Periodic watcher0a50083 installed and verified19:15:19UTC, PID1271652, root
-q359-ce7454-interim-watch-20261016-a01. First evaluation passed; all8 first-cycle
-results awaiting retrieval. All8 training advanced, GRIP296->306; GPU memory
+q359-ce7454-interim-watch-20261016-a01. All8 first-cycle results verified19:17:05UTC (health93c6e8c);
+see docs/CE7454_OVERNIGHT_WATCH.md and results/ce7454_interim_cycle000_20261016.json.
+Round106s; shared GPU0 temporarily slowed28s->36–38s/epoch; no pauses/mutations.
+Same8 trainer PIDs remain, watcher alive and sleeping between rounds. All8 training advanced, GRIP296->306; GPU memory
 returns to baseline after standalone smoke.
 Single small GPU0 evaluator, batch8, cap10%memory, each1800seconds all8arms.
 Snapshot last.pt with stable-read/stat+load verification; immutable copies saved.
