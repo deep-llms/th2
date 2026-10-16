@@ -100,3 +100,39 @@ paths to agree with it within those tolerances. Failed a01 evidence is retained.
 Final paired validation is also repeated with dense SDPA for both fitted branches
 and A. The teacher signal must meet the same scientific gate in BOTH backends;
 the scientific effect threshold is not relaxed. All8-rank smokes must still pass.
+
+## Completed result
+
+Retry a02 completed all five jobs successfully at11:26:05UTC. Both8-rank smokes,
+independent FP32 references, exact zero identity, frozen-weight verification and
+save/reload checks passed. Largest gradient relative L2 against FP32 was1.2451%.
+Verified communicating burns were restored11:27:15UTC; the11:27:17 live check
+confirmed matching ownership, advancing progress (log5.03seconds old) and a
+released GPU guard. No remaining training or student distillation is queued.
+
+On the fixed512-row validation probe (these are **not full validation PPLs**):
+
+| Method | FA4 LM loss | FA4 PPL |
+|---|---:|---:|
+| Frozen A | 3.60070445 | 36.624025 |
+| Learned shallow-memory control | 3.60019471 | 36.605361 |
+| Learned real-deep-memory teacher | 3.60018137 | 36.604873 |
+
+Deep minus shallow: -0.00001333 nats/token, exploratory packed-row95% CI
+[-0.00008960,+0.00005979]. One row half favors shallow. Dense SDPA independently
+gives -0.00000109, CI[-0.00007650,+0.00007023], also effectively tied.
+Both branches improve over A by about0.0005 nats/token, but there is no evidence
+of an advantage specifically from real deep features. The preregistered gate
+returns **stop_no_teacher_advantage**. Do not proceed to student distillation
+or interpret this short, single-seed pilot as a universal impossibility result.
+
+Actual fitting: shallow19.30seconds, deep21.07seconds. Successful numerical
+gates, both fits and dual-backend validation together took285.55seconds (4m46s)
+across eight GPUs, plus45.17seconds for a01's failed initial numerical smoke.
+These times exclude preparation, burn handoffs and delayed controller reporting.
+
+Exact remote summary bytes reconstructed locally and SHA256 verified:
+`7d1bdccac1ee030b1850e0242d0687c80c9e3b2d80f813bb5b229adf520d4290`.
+Results: [teacher_first_pilot_20261016.json](results/teacher_first_pilot_20261016.json).
+Numerical/preflight/completion/live-burn receipts:
+[teacher_first_completion_20261016.json](results/teacher_first_completion_20261016.json).

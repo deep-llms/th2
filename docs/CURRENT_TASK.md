@@ -1,3 +1,29 @@
+## Teacher-first pilot complete: no deep-specific advantage — 16 October 2026
+
+Retrya02 completed all five jobs11:26:05UTC. Read-only40a55f2 at11:27:17UTC
+verified success and restored live communicating burns (matching workers,
+progress fresh5.03s, guard released). No training, proxy distillation or follow-up
+queued. Both8-rank numerical/DDP smokes and both256-update fits passed; independent
+full-FP32 checks, exact zero identity, unchanged frozen backbone and branch reload
+passed. Same original source checkpoint/data fingerprints, Accelerate copied and
+verified before launch, exact known burns reclaimed and GPUs checked free.
+
+Fixed512-row FA4 probe losses/PPL: A3.60070445/36.624025;
+shallow control3.60019471/36.605361; deep teacher3.60018137/36.604873.
+Deep-minus-shallow=-0.00001333 nats, packed-row95% CI[-0.00008960,+0.00005979].
+Dense SDPA repeats the tie (-0.00000109, CI[-0.00007650,+0.00007023]).
+Both improve about0.0005 nats over A; no deep-specific advantage. Preregistered
+gate stop_no_teacher_advantage; no justification to train its student now.
+Short single-seed trial, not a universal negative result or full validation PPL.
+
+Fit times19.30/21.07seconds; successful gates+fits+validation4m46s on8GPUs,
+plus45s initial failed numerical smoke. Preparation/reporting/handoffs excluded.
+Protocol docs/TEACHER_FIRST_PILOT_20261016.md includes first-smoke threshold issue,
+independent FP32 correction and complete results. Exact remote summary SHA
+7d1bdccac1ee030b1850e0242d0687c80c9e3b2d80f813bb5b229adf520d4290 verified.
+Saved docs/results/teacher_first_pilot_20261016.json and
+ docs/results/teacher_first_completion_20261016.json. Commands#0; burns remain.
+
 ## Teacher-first retry active; first8-rank smoke passed — 16 October 2026
 
 Retry67f7271 root q359-teacher-first-20261016-a02. Read-onlyb5e6097 at11:22:47UTC

@@ -18,5 +18,7 @@
   "gpu_preflight_verified": false,
   "gpu_training_verified": false,
   "scientific_results_available": false,
-  "warning": "Do not relaunch or clean based on stale status. No software/infrastructure failure has been delivered."
+  "warning": "Do not relaunch or clean based on stale status. No software/infrastructure failure has been delivered.",
+  "superseded_by": "teacher_first_completion_20261016.json",
+  "historical_submission_record": true
 }
