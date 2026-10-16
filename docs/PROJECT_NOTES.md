@@ -6685,3 +6685,12 @@ original failure or02:00UTC. Separate dev timer resumes the existing thread
 every30min, first19:45:18UTC, end06:30UTC17Oct; verified waiting but first actual
 model wake still pending. State temp/ce7454_resume_watch_20261016, tmux
 ce7454_agent_watch_20261016. No new architecture training queued.
+
+
+CE7454 wake timer correction20:10UTC: first exec/resume tick FAILED due to
+active app-server writer; earlier waiting-status verification was not end-to-end
+wake verification. Replaced with supported codex queue --remote unix:// to same
+thread; test queued successfully (message01a14654-b9b0-7a22-9c21-8486c5e446c8).
+Old timer gracefully stopped. New tmux ce7454_queue_watch_20261016/state
+temp/ce7454_queue_watch_20261016, first20:15:18UTC then30min, end06:30UTC.
+No B200/training/evaluation changes; no phone notification promise.

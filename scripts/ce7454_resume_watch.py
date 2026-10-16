@@ -1,7 +1,7 @@
 """Wake the explicitly selected existing Codex conversation every 30 minutes.
 
 Local-only; no API keys, new agents, GPU management, or remote shell access.
-A single serialized CLI resume per tick. Ends at the fixed deadline or STOP.
+Queues a message on the existing app server; never opens a competing writer. Ends at the fixed deadline or STOP.
 """
 import argparse
 from datetime import datetime, timezone
@@ -25,6 +25,7 @@ def main():
     p.add_argument('--state',type=Path,required=True)
     p.add_argument('--interval',type=int,default=1800)
     p.add_argument('--until',required=True)
+    p.add_argument('--first-at')
     p.add_argument('--codex',default='/home/users/thien/.local/bin/codex')
     a=p.parse_args()
     if a.interval<1800:raise ValueError('Minimum interval30min')
@@ -33,7 +34,7 @@ def main():
     with (a.state/'lock').open('w') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         # Let the current user-facing turn finish before resuming this same thread.
-        next_run=time.time()+a.interval
+        next_run=datetime.fromisoformat(a.first_at).timestamp() if a.first_at else time.time()+a.interval
         tick=0
         while time.time()<end and not (a.state/'STOP').exists():
             status={'pid':os.getpid(),'thread':a.thread,'tick':tick,'status':'waiting',
@@ -43,19 +44,19 @@ def main():
             while time.time()<min(next_run,end) and not (a.state/'STOP').exists():time.sleep(1)
             if time.time()>=end or (a.state/'STOP').exists():break
             stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-            output=a.state/(stamp+'.md');log=a.state/(stamp+'.log')
-            argv=[a.codex,'exec','-s','danger-full-access','-c','approval_policy="never"',
-                  'resume',a.thread,'--output-last-message',str(output),'-']
+            log=a.state/(stamp+'.log')
+            argv=[a.codex,'queue','--remote','unix://','--thread',a.thread,
+                  '--message',a.prompt.read_text()]
             status.update(status='running',started_utc=stamp,log=str(log));write(a.state/'status.json',status)
-            # Never overlap another scheduled resume. Inherit existing model/auth.
+            # App server queues behind an active turn; preserve its model and permissions.
             with log.open('x') as handle:
                 try:
-                    result=subprocess.run(argv,input=a.prompt.read_text(),text=True,cwd=a.cwd,
-                                          stdout=handle,stderr=subprocess.STDOUT,timeout=1200)
+                    result=subprocess.run(argv,text=True,cwd=a.cwd,
+                                          stdout=handle,stderr=subprocess.STDOUT,timeout=60)
                     returncode=result.returncode
                 except subprocess.TimeoutExpired:
                     returncode=124
-            status.update(status='finished_tick',returncode=returncode)
+            status.update(status='queued' if returncode == 0 else 'delivery_failed',returncode=returncode)
             write(a.state/(stamp+'.json'),status)
             tick+=1
             next_run=max(next_run+a.interval,time.time()+60)

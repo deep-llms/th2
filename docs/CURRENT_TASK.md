@@ -1,3 +1,20 @@
+## Wake timer repair —20:10UTC16October2026
+
+The first CLI exec/resume tick at19:45 FAILED with thread-store conflict:
+this conversation already has an active app-server writer. No automatic agent
+review occurred on that tick. B200 periodic evaluator is independent.
+Repaired local script to use supported `codex queue --remote unix:// --thread`
+instead, inheriting existing thread settings. Real delivery test accepted by
+app server, queued message01a14654-b9b0-7a22-9c21-8486c5e446c8; actual test-turn
+acknowledgement pending. Do not claim an executed review from queue acceptance.
+Old timer stopped via its STOP file, confirmed stopped, no process kills.
+New timer tmux ce7454_queue_watch_20261016, state/prompt/logs in ignored
+ temp/ce7454_queue_watch_20261016/. Next tick20:15:18UTC/04:15SGT then30min;
+ends06:30UTC17Oct. Stop this NEW timer with its STOP file after completion.
+Phone notifications are not configured or guaranteed. No B200 changes this turn.
+
+---
+
 ## CE7454 interim evaluation smoke passed; watcher authorized —19:14UTC16October
 
 User requests30min agent wake/monitor, earlier dev AND official test evaluation,

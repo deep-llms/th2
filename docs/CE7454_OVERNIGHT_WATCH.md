@@ -10,14 +10,15 @@ fits are queued by this watcher. Deadline:17October2026 15:55SGT (07:55UTC).
   available checkpoint from every arm once per30minutes, beginning immediately.
   GPU0 only, one evaluator at a time, batch8,10% allocator-memory ceiling.
   It never signals trainers, writes their checkpoints, or changes their schedule.
-- Dev-machine timer: tmux `ce7454_agent_watch_20261016`, script
-  `scripts/ce7454_resume_watch.py`, resumes the existing conversation
-  `01a120fe-ea0e-7030-a337-dd3f52f3c625` via Codex CLI. First scheduled tick
-  19:45:18UTC16Oct /03:45:18SGT17Oct, then30minutes; deadline06:30UTC17Oct.
-  Local state/prompt/logs: `temp/ce7454_resume_watch_20261016/` (ignored).
-  Timer PID2384904 at installation. Verify PID identity before management.
-  The timer was verified waiting; the first actual CLI resume was not yet
-  observed at installation. It depends on this dev machine, CLI authentication,
+- Dev-machine timer (repaired): tmux `ce7454_queue_watch_20261016`, script
+  `scripts/ce7454_resume_watch.py`, queues a follow-up to the existing conversation
+  `01a120fe-ea0e-7030-a337-dd3f52f3c625` through `codex queue --remote unix://`. Next scheduled tick after repair:
+  20:15:18UTC16Oct /04:15:18SGT17Oct, then30minutes; deadline06:30UTC17Oct.
+  Local state/prompt/logs: `temp/ce7454_queue_watch_20261016/` (ignored).
+  The old exec/resume timer failed with an active-writer conflict at19:45 and
+  was stopped. The replacement uses the existing app server; a real test message
+  was accepted into the queue. Queue acceptance is not a completed review.
+  It depends on this dev machine, the app server, CLI authentication,
   and model availability. No promise of a phone notification.
 
 ## Verified smoke
