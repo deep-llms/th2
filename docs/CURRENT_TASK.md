@@ -8246,3 +8246,5 @@ scientific evidence of PCC benefit. B200 remains untouched.
 
 See `PCC_AUTOMATION.md`, `PCC_DATA_HANDOFF.md`, `PCC_DIAGNOSTICS.md`, and
 `PCC_EXPERIMENT.md` for current commands, behavior, and contract coverage.
+
+Timer exit verified23:18:26UTC/07:18:26SGT: status=stopped, old PID2397805 absent.

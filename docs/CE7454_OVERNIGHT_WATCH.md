@@ -364,3 +364,5 @@ After final results AND burn handoff verification, requested local timer stop
 via temp/ce7454_queue_watch_20261016/STOP. No new monitors/timers. Commands#0.
 Evidence: results/ce7454_final_20261017.json; final predictions and completion
 receipts locally in ignored temp/ce7454_eval_upload/final-review-a08/.
+
+Timer exit verified23:18:26UTC/07:18:26SGT: status=stopped, old PID2397805 absent.
