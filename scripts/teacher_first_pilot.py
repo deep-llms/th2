@@ -61,6 +61,8 @@ def prepare(args):
         raise ValueError('Baseline identity differs')
     root.mkdir(parents=True)
     tokenizer=AutoTokenizer.from_pretrained(recipe['model']['tokenizer_name'],local_files_only=True)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token=tokenizer.eos_token
     data=recipe['data']; dummy=SimpleNamespace(main_process_first=lambda **kw:nullcontext())
     # Reuse train.py's existing HF cache, EOS packing, document isolation and
     # shuffle. Only small fixed subsets are snapshotted inside this pilot root.
