@@ -1,0 +1,537 @@
+{
+  "evidence": {
+    "monitor_commit": "433d61b",
+    "export_commit": "2342f8f",
+    "observed_utc": "2026-10-16T20:47:07.306743+00:00",
+    "all_eight_training_arms_active": true,
+    "final_results_present": false,
+    "successful_interim_evaluations": 32,
+    "evaluation_errors_observed": false,
+    "watcher_and_original_supervisor_active": true,
+    "watch_log_sha256": "19ddc19f83275c3d09157c9aade041aab5865e1a08b74fad520745dadf72527d",
+    "health_log_sha256": "ac897979e926b2f6958d7598963d7c143e0f8046fa04b6ec17d363fe93aa160f",
+    "status_sha256": "dc64fefb238d364ede3e9148d0594ca90ab452101261af89e9322459071e5679"
+  },
+  "training_progress": {
+    "grip_nodown": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04/supervised/run/study/grip_nodown_base/log.csv": [
+        "449,3.655394e-09,0.040477,0.998515,0.004210,0.998000,28.2",
+        "450,0.000000e+00,0.042308,0.998738,0.004937,0.998000,28.2"
+      ],
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04/supervised/run/study/grip_nodown_full512/log.csv": [
+        "12,7.938926e-05,0.057185,0.998147,0.024284,0.991333,100.3",
+        "13,7.612493e-05,0.062297,0.997109,0.027692,0.992000,113.1"
+      ]
+    },
+    "band_strong": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-band-20261016-a01/study/band_strong/log.csv": [
+        "349,3.576925e-05,0.031060,0.999703,0.006787,0.997333,33.9",
+        "350,3.509333e-05,0.031698,0.999703,0.009596,0.996000,33.5"
+      ]
+    },
+    "band_ibn_strong": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-band-20261016-a01/study/band_ibn_strong/log.csv": [
+        "319,5.847823e-05,0.035110,0.999703,0.014663,0.995333,37.6",
+        "320,5.765078e-05,0.033166,1.000000,0.011516,0.995333,37.4"
+      ]
+    },
+    "srresnet": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04/supervised/run/study/srresnet_base/log.csv": [
+        "376,1.957576e-05,0.056174,0.997996,0.004694,0.997333,37.3",
+        "377,1.906169e-05,0.055934,0.998070,0.004931,0.998667,37.3"
+      ]
+    },
+    "band_moderate": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-band-20261016-a01/study/band_moderate/log.csv": [
+        "379,1.805271e-05,0.006260,1.000000,0.012371,0.998000,31.6",
+        "380,1.755786e-05,0.006377,1.000000,0.011654,0.997333,31.5"
+      ]
+    },
+    "phase_strong": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-band-20261016-a01/study/phase_strong/log.csv": [
+        "345,3.852828e-05,0.028639,0.999778,0.015745,0.996000,34.6",
+        "346,3.783029e-05,0.028768,0.999703,0.014709,0.995333,34.4"
+      ]
+    },
+    "grip_nodown_stats": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04/supervised/run/study/grip_nodown_stats_base/log.csv": [
+        "433,1.055174e-06,0.046579,0.998144,0.017486,0.996000,32.4",
+        "434,9.348121e-07,0.047939,0.997031,0.019030,0.996667,32.4"
+      ]
+    },
+    "srresnet_stats": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04/supervised/run/study/srresnet_stats_base/log.csv": [
+        "375,2.009619e-05,0.057875,0.996808,0.008587,0.996667,37.4",
+        "376,1.957576e-05,0.056382,0.997402,0.008112,0.997333,37.4"
+      ]
+    }
+  },
+  "results": [
+    {
+      "model": "grip_nodown",
+      "epoch": 12,
+      "training_crop": 512,
+      "checkpoint_sha256": "539600b5d2ba13d654b7da484df0f3d4ece044af5790149395c3dd379ba3e903",
+      "inference_seconds": 10.11583661288023,
+      "arm": "grip_nodown",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 824,
+          "accuracy": 0.9155555555555556,
+          "confusion": [
+            [
+              226,
+              49,
+              23
+            ],
+            [
+              0,
+              301,
+              0
+            ],
+            [
+              4,
+              0,
+              297
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1367,
+          "accuracy": 0.9113333333333333,
+          "confusion": [
+            [
+              404,
+              85,
+              11
+            ],
+            [
+              10,
+              488,
+              2
+            ],
+            [
+              17,
+              8,
+              475
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "full512 fine-tune after base450"
+    },
+    {
+      "model": "band_stem",
+      "epoch": 348,
+      "training_crop": 512,
+      "checkpoint_sha256": "1324ba0e7ce187ac5de746d8220d5c01f5efe310b9d6297df1e1dcaeed84e31d",
+      "inference_seconds": 5.424236701801419,
+      "arm": "band_strong",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 880,
+          "accuracy": 0.9777777777777777,
+          "confusion": [
+            [
+              282,
+              9,
+              7
+            ],
+            [
+              1,
+              300,
+              0
+            ],
+            [
+              3,
+              0,
+              298
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1381,
+          "accuracy": 0.9206666666666666,
+          "confusion": [
+            [
+              486,
+              9,
+              5
+            ],
+            [
+              42,
+              453,
+              5
+            ],
+            [
+              55,
+              3,
+              442
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "native512 scratch"
+    },
+    {
+      "model": "band_stem_ibn",
+      "epoch": 318,
+      "training_crop": 512,
+      "checkpoint_sha256": "54e8226476c910d9565768b70f6bc1ed27f6a73edfe962b7e455f4d1168ec7fa",
+      "inference_seconds": 5.739841558970511,
+      "arm": "band_ibn_strong",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 848,
+          "accuracy": 0.9422222222222222,
+          "confusion": [
+            [
+              260,
+              10,
+              28
+            ],
+            [
+              9,
+              290,
+              2
+            ],
+            [
+              3,
+              0,
+              298
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1345,
+          "accuracy": 0.8966666666666666,
+          "confusion": [
+            [
+              441,
+              32,
+              27
+            ],
+            [
+              51,
+              440,
+              9
+            ],
+            [
+              32,
+              4,
+              464
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "native512 scratch"
+    },
+    {
+      "model": "srresnet",
+      "epoch": 375,
+      "training_crop": 256,
+      "checkpoint_sha256": "abcbea72eb5a612a64e5fd81065e5c436447449734c66b93723b9a8a8d30b8c5",
+      "inference_seconds": 11.634038351941854,
+      "arm": "srresnet",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 879,
+          "accuracy": 0.9766666666666667,
+          "confusion": [
+            [
+              279,
+              3,
+              16
+            ],
+            [
+              0,
+              301,
+              0
+            ],
+            [
+              2,
+              0,
+              299
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1414,
+          "accuracy": 0.9426666666666667,
+          "confusion": [
+            [
+              482,
+              11,
+              7
+            ],
+            [
+              45,
+              455,
+              0
+            ],
+            [
+              23,
+              0,
+              477
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "base256"
+    },
+    {
+      "model": "band_stem",
+      "epoch": 378,
+      "training_crop": 512,
+      "checkpoint_sha256": "6c8912462820714da949694c341aed54b5bec5d6e0c1626290e90b4e0a5a0a50",
+      "inference_seconds": 5.443645566003397,
+      "arm": "band_moderate",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 881,
+          "accuracy": 0.9788888888888889,
+          "confusion": [
+            [
+              282,
+              1,
+              15
+            ],
+            [
+              1,
+              300,
+              0
+            ],
+            [
+              2,
+              0,
+              299
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1061,
+          "accuracy": 0.7073333333333334,
+          "confusion": [
+            [
+              499,
+              1,
+              0
+            ],
+            [
+              201,
+              298,
+              1
+            ],
+            [
+              235,
+              1,
+              264
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "native512 scratch"
+    },
+    {
+      "model": "phase_stem",
+      "epoch": 345,
+      "training_crop": 512,
+      "checkpoint_sha256": "9fc425a2f60db4dc04d7f055e5a369a53b12ace31d7f1ccdd3c16e2ae33a4b7d",
+      "inference_seconds": 5.43416244792752,
+      "arm": "phase_strong",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 866,
+          "accuracy": 0.9622222222222222,
+          "confusion": [
+            [
+              268,
+              15,
+              15
+            ],
+            [
+              1,
+              299,
+              1
+            ],
+            [
+              2,
+              0,
+              299
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1433,
+          "accuracy": 0.9553333333333334,
+          "confusion": [
+            [
+              468,
+              27,
+              5
+            ],
+            [
+              10,
+              486,
+              4
+            ],
+            [
+              20,
+              1,
+              479
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "native512 scratch"
+    },
+    {
+      "model": "grip_nodown_stats",
+      "epoch": 433,
+      "training_crop": 256,
+      "checkpoint_sha256": "0fc1a8962de7d75562761d58437979a2caa0bf5a040b62c2f1ec163e33d43ed3",
+      "inference_seconds": 10.813227300997823,
+      "arm": "grip_nodown_stats",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 860,
+          "accuracy": 0.9555555555555556,
+          "confusion": [
+            [
+              261,
+              11,
+              26
+            ],
+            [
+              0,
+              300,
+              1
+            ],
+            [
+              2,
+              0,
+              299
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1421,
+          "accuracy": 0.9473333333333334,
+          "confusion": [
+            [
+              460,
+              24,
+              16
+            ],
+            [
+              21,
+              477,
+              2
+            ],
+            [
+              14,
+              2,
+              484
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "base256"
+    },
+    {
+      "model": "srresnet_stats",
+      "epoch": 376,
+      "training_crop": 256,
+      "checkpoint_sha256": "57db386e50633f0024256afaddaf373206f7868124bca34411bb5dee912164c0",
+      "inference_seconds": 11.720064868917689,
+      "arm": "srresnet_stats",
+      "cycle": 3,
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 880,
+          "accuracy": 0.9777777777777777,
+          "confusion": [
+            [
+              282,
+              3,
+              13
+            ],
+            [
+              0,
+              300,
+              1
+            ],
+            [
+              3,
+              0,
+              298
+            ]
+          ],
+          "labels_sha256": "909e50082e8801dc42ab6426ee013da772cf955cfb59ce558dd5478f7bb5c8bb"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1423,
+          "accuracy": 0.9486666666666667,
+          "confusion": [
+            [
+              488,
+              8,
+              4
+            ],
+            [
+              31,
+              469,
+              0
+            ],
+            [
+              30,
+              4,
+              466
+            ]
+          ],
+          "labels_sha256": "6b85522496ea28957e3811ea89f66a7b7118e248eed4ada4f26fd48b33a8b40a"
+        }
+      },
+      "stage": "base256"
+    }
+  ],
+  "selection_policy": "Dev only; estimated dev labels. Official test reported separately, no training changes.",
+  "recommendation": "Continue existing schedules; GRIP early fine-tune drop is not a final-stage comparison. No new fits."
+}

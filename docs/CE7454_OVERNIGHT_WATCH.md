@@ -155,3 +155,42 @@ baseline from these snapshots. No tests are used for training selection, no
 fits stopped or restarted, no new architectures. Next review04:45SGT.
 
 Evidence: docs/results/ce7454_watch_review_20261016_a02.json.
+
+## Scheduled review —20:47UTC /04:47SGT
+
+All eight training arms continue, and all32 interim evaluations across cycles0–3
+passed (900dev/1500official-test each). Original supervisor and periodic watcher
+remain active; no final results, study-complete markers or burn handoff yet.
+GRIP completed its450epoch base and automatically entered the planned40epoch
+full512 fine-tune, now13/40. Its new trainer PID1289808 replaces the completed
+base trainer as expected; the other seven trainer PIDs are unchanged. No manual
+training interruption, model/code/environment change or new evaluation job.
+
+Latest completed cycle3,20:45–20:47UTC:
+
+| Arm | Evaluated epoch / stage | Dev accuracy | Official test accuracy |
+|---|---|---:|---:|
+| grip_nodown | 12 / full512 fine-tune after base450 | 91.56% | 91.13% |
+| band_strong | 348 / native512 scratch | 97.78% | 92.07% |
+| band_ibn_strong | 318 / native512 scratch | 94.22% | 89.67% |
+| srresnet | 375 / base256 | 97.67% | 94.27% |
+| band_moderate | 378 / native512 scratch | 97.89% | 70.73% |
+| phase_strong | 345 / native512 scratch | 96.22% | 95.53% |
+| grip_nodown_stats | 433 / base256 | 95.56% | 94.73% |
+| srresnet_stats | 376 / base256 | 97.78% | 94.87% |
+
+GRIP's early fine-tune dev91.56% is below the previous base snapshot96.56%.
+This is a real observed drop, not evidence that full512 fine-tuning has finished
+or failed: only12/40epochs were evaluated and the LR was restarted as planned.
+Continue the fixed stage, then compare final dev performance; no test-based
+selection. Haarstrong recovered on dev, confirming earlier snapshot instability.
+
+Live progress20:47UTC: GRIP13/40full512, GRIPstats434/450base, SR377/450base,
+SRstats376/450base, Haarstrong350/450, HaarIBN320/450, moderate380/450,
+phase346/450. GRIP expected to finish training05:30–05:40SGT; last SR stage
+about07:05SGT, allow~07:30SGT for final evaluation and timing variation.
+These remain estimates. User's possible later all8GPU single-model training
+is discussion only; no such follow-up is queued. Existing handoff preserved.
+
+Evidence: docs/results/ce7454_watch_review_20261016_a03.json. Commands#0
+after acknowledged receipts. Existing timer continues; next review21:15UTC.
