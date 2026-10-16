@@ -1,3 +1,24 @@
+## P7 tuning downstream evaluation complete — 16 October 2026
+
+Read-only 80f593f verified success at 09:48:28 UTC. All20 checkpoints passed
+numerical gates, all100 smoke groups and all100 full benchmark groups.
+Full evaluation ran 08:40:10–09:20:05 UTC (39m55s). Supervisor restored verified
+communicating burns at09:21:16UTC. Live burn check at09:48 confirms matching
+worker ownership, recent advancing collectives and released supervisor guard.
+No training is queued; interrupted/unfinished arms remain stopped.
+
+Complete nine-task scores, per-benchmark averages, sample counts and checkpoint
+hashes saved to docs/results/p7_tuning_downstream_20261016.json; reconstructed
+file bytes match the runner SHA256 exactly. Completion/active-burn receipts:
+docs/results/p7_tuning_downstream_completion_20261016.json.
+Unweighted nine-benchmark averages (descriptive, no significance inference):
+seed42 A45.363%, previous LM45.376%, targetgrad-short45.478%, heads2 45.427%,
+LM-sparse-noaux45.400%. Seed2042 A45.294% vs LM-noaux44.767%.
+Seven multiple-choice task means: A45.580%, LM-lambda1 45.690%; the two
+language diagnostics are reported separately in the saved summary. Do not
+infer a robust gain from selecting the highest of many small differences.
+Commands returned to #0; results retrieval did not change workloads.
+
 ## P7 tuning stopped; downstream evaluation launched — 16 October 2026
 
 User authorized stopping current training and evaluating completed checkpoints.
