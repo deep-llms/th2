@@ -1,4 +1,4 @@
-"""Five independent single-GPU fits, with a shared budget fixed from timings.
+"""Four independent single-GPU fits, with a shared budget fixed from timings.
 
 Run beneath the existing train_then_burn supervisor; never reclaim GPUs here.
 All child processes stay in the supervisor-owned process session.
@@ -15,8 +15,7 @@ import subprocess
 import sys
 import time
 
-ARMS = ['grip_nodown', 'srresnet', 'srresnet_stats',
-        'grip_nodown_stats', 'srresnet_wide_stats']
+ARMS = ['grip_nodown', 'srresnet', 'srresnet_stats', 'grip_nodown_stats']
 SRC = Path(__file__).resolve().parent
 FINISH_BY = '2026-10-17T02:00:00+00:00'
 

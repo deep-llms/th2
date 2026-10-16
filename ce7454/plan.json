@@ -1,6 +1,6 @@
 {
   "created_utc": "2026-10-16",
-  "status": "authorized; local six CPU checks passed; B200 CUDA tests and fits pending",
+  "status": "Four validated candidates queued; optional wide model held; no scientific fits yet.",
   "scope": "CE7454 supplied-training-only scratch models, <=12.3M trainable parameters, one inference pass",
   "data": {
     "repo": "nht10/cedar-finch-7454",
@@ -52,11 +52,6 @@
       "name": "grip_nodown_stats",
       "parameters": 11180739,
       "role": "same GRIP backbone with early/intermediate mean+std and deep mean; one head"
-    },
-    {
-      "name": "srresnet_wide_stats",
-      "parameters": 12063299,
-      "role": "final stage widened 512 to 536 channels; capacity ablation"
     }
   ],
   "optional": "grip_nodown_ibna_stats supports local source-only checkpoint adaptation; no eligible parent currently located on this machine",
@@ -105,5 +100,13 @@
   "target_completion_utc": "2026-10-17T02:00:00+00:00",
   "handoff_review": "Source validation saturated; stats heads low-confidence; heavy augmentation preserved; no exact test-processing replay; comparison to matched control is not proof of beating stronger IBN/soup submission.",
   "scratch_only": true,
-  "external_weights": false
+  "external_weights": false,
+  "held_out_arms": [
+    {
+      "name": "srresnet_wide_stats",
+      "parameters": 12063299,
+      "role": "final stage widened 512 to 536 channels; capacity ablation"
+    }
+  ],
+  "held_out_reason": "Optional srresnet_wide_stats failed one native256 AMP gradient check (relativeL2 .1672 > .15); not authorized to bypass numerical gate. Four core models passed both groups at both native resolutions."
 }

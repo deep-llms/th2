@@ -21,6 +21,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--reuse-verified-cache', action='store_true')
+    p.add_argument('--previous-output', type=Path)
     args = p.parse_args()
     project = Path.cwd().resolve()
     sys.path.insert(0, str(project))
@@ -31,6 +32,14 @@ def main():
     before = inspect()
     if before['guard_disabled']:
         raise RuntimeError('Another GPU workflow holds the guard')
+    if args.previous_output:
+        previous = json.loads((args.previous_output / 'supervised/supervisor.json').read_text())
+        burn = previous.get('burn', {})
+        if not burn.get('collective_progress_verified') or 'finished_at' not in previous:
+            raise RuntimeError('Previous supervisor has not verified final burn handoff')
+        from scripts.verified_gpu_reclaim import ownership
+        if ownership(burn['gpus']) != ownership(before['gpus']):
+            raise RuntimeError('Current GPU identities differ from verified final burns')
     approved = {**APPROVED_BURNS, str(project / 'resources/llm_pretrain_burn.py'): BURN_HASH}
     for pid in before['workers']:
         parent = before['processes'][str(pid)]['ppid']
