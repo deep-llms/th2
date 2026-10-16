@@ -1,3 +1,41 @@
+## P7 tuning stopped; downstream evaluation launched — 16 October 2026
+
+User authorized stopping current training and evaluating completed checkpoints.
+Stop request e084e96 verified supervisor1128738 and all eight worker identities
+and ancestry, then signaled only the owned supervisor via pidfd at08:26:28UTC.
+The supervisor cancelled its owned child and restored verified communicating
+burns at08:27:40UTC. No output/checkpoint/cache was removed.
+
+Gated LM value-only had completed/validated at07:48UTC. Targetgrad medium was
+interrupted; weighted/Huber/nonlinear remain unrun. Training is no longer queued.
+Evaluation root: /mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01.
+Launch867b387 froze20 checkpoints:18 completed tuning cases across original and
+reordered roots, plus seed42 A and P7-simple-lm controls from original screen.
+Both seed2042 A and LM-noaux are included. Interrupted checkpoints are excluded.
+
+Existing nine-benchmark protocol unchanged: BLiMP/SciQ/LAMBADA zero-shot;
+PIQA/ARC-Easy/WinoGrande/BoolQ five-shot; HellaSwag ten-shot; ARC-Challenge
+25-shot. Evaluation seed42/identical demonstrations, no fine-tuning or paired
+loss stage. Eight concurrent GPU workers; numerical gates -> two-item smokes ->
+full evaluation, with verified burns restored automatically on success/failure.
+
+Added scripts/p7_tuning_evaluation.py to select validated completed cases from
+split roots, verify original recipes/checkpoint hashes/seeds and matching data,
+and reuse existing evaluation preparation/dispatcher. Existing exploration mode
+unchanged. Ten focused CPU regression tests passed, including interrupted/duplicate
+checkpoint rejection, two-seed identity checks and supervisor ownership tests.
+Environment/data/checkpoint preflight passed; Accelerate copied and verified;
+exact restored burn workers reclaimed; all GPUs verified free at 08:32:25 UTC.
+All 20 checkpoint numerics passed at 08:33:48 UTC. All 100 benchmark smoke
+groups passed at 08:40:10 UTC; full evaluation started immediately afterward.
+Read-only cdf34b6 verified full-stage start at 08:40:12 UTC. Estimate 45–60 min
+for full stage (about 09:25–09:40 UTC), based on the previous eight-checkpoint
+suite, not a guaranteed completion time. Commands restored to inactive #0;
+persistent evaluation continues independently. See
+ docs/results/p7_tuning_evaluation_launch_20261016.json.
+Latest log temp/remote_logs/p7-tuning-eval-health-20261016-a02-final.log SHA256
+cd9db832c0793b910e4c49dd950dd930523213e8a744a9d23f34327fdf2f91b1.
+
 ## P7 priority queue results — 16 October 2026, 07:31 UTC
 
 Read-only ea88c4e confirms all eight prioritized arms plus lm-lambda001 and

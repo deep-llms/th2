@@ -1,2 +1,2 @@
-#2 +a
-#th2-q359-p7-tuning-eval-pull-20261016-a03
+#0
+# Training stopped; twenty-checkpoint downstream evaluation is running independently.

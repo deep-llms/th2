@@ -1,0 +1,2554 @@
+{
+  "stop_commit": "e084e96",
+  "launch_commit": "867b387",
+  "verification_commit": "60a7635",
+  "source_log": "temp/remote_logs/p7-tuning-eval-health-20261016-a01.log",
+  "sha256": "0c6bac1cb26f104c5480a0332a335f65f9010c9cb4384243b9bfab366041a2fa",
+  "at": "2026-10-16T08:32:16.460525+00:00",
+  "states": {
+    "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/user-stop-for-evaluation.json": {
+      "status": "stop_requested",
+      "at": "2026-10-16T08:26:28.149585+00:00",
+      "supervisor": {
+        "pid": 1128738,
+        "ppid": 5625,
+        "start_ticks": 105818040,
+        "command_sha256": "c55acfcb93960c0a63e46b0fc48e1d7610b58c4ec518c6da9ad42e662693345f",
+        "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "workers": {
+        "1195237": {
+          "pid": 1195237,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195238": {
+          "pid": 1195238,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195239": {
+          "pid": 1195239,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195240": {
+          "pid": 1195240,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195241": {
+          "pid": 1195241,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195242": {
+          "pid": 1195242,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195243": {
+          "pid": 1195243,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "1195244": {
+          "pid": 1195244,
+          "ppid": 1195231,
+          "start_ticks": 109154275,
+          "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        }
+      },
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 69486.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195237
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 68296.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195238
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 69486.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195239
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 68296.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195240
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 69484.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195241
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 69484.0,
+          "utilization_percent": 98.0,
+          "pids": [
+            1195242
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 69484.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195243
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 69484.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            1195244
+          ]
+        }
+      ],
+      "previous_supervisor_final": {
+        "started_at": "2026-10-15T22:39:13.643347+00:00",
+        "training_status": "failed",
+        "training_error": "KeyboardInterrupt('Supervisor received signal 15')",
+        "free_after_training": [
+          {
+            "index": 0,
+            "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          }
+        ],
+        "burn": {
+          "at": "2026-10-16T08:27:40.985413+00:00",
+          "session": "q359-p7-priority15-20261015-a01-final-burn",
+          "gpus": [
+            {
+              "index": 0,
+              "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200126
+              ]
+            },
+            {
+              "index": 1,
+              "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200127
+              ]
+            },
+            {
+              "index": 2,
+              "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200128
+              ]
+            },
+            {
+              "index": 3,
+              "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200129
+              ]
+            },
+            {
+              "index": 4,
+              "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200130
+              ]
+            },
+            {
+              "index": 5,
+              "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200131
+              ]
+            },
+            {
+              "index": 6,
+              "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200132
+              ]
+            },
+            {
+              "index": 7,
+              "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200133
+              ]
+            }
+          ],
+          "collective_progress_verified": true
+        },
+        "finished_at": "2026-10-16T08:27:40.985678+00:00"
+      },
+      "burn_handoff": {
+        "at": "2026-10-16T08:27:40.985413+00:00",
+        "session": "q359-p7-priority15-20261015-a01-final-burn",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200126
+            ]
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200127
+            ]
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200128
+            ]
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200129
+            ]
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200130
+            ]
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200131
+            ]
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200132
+            ]
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1200133
+            ]
+          }
+        ],
+        "collective_progress_verified": true
+      }
+    },
+    "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/run.json": {
+      "status": "failed",
+      "started_at": "2026-10-15T22:39:13.643615+00:00",
+      "jobs": [
+        {
+          "name": "tg-valueonly-train",
+          "started_at": "2026-10-15T22:39:13.644982+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 2978.218038928928,
+          "artifacts": [
+            {
+              "path": "tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/result.json",
+              "sha256": "d915d0e3c9f1d860cd767aa59b5fb2b1a55c47798c8878eadd0bc93bd1dd9d54",
+              "bytes": 21282
+            }
+          ],
+          "finished_at": "2026-10-15T23:28:52.385926+00:00"
+        },
+        {
+          "name": "tg-valueonly-validate",
+          "started_at": "2026-10-15T23:28:52.385971+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.300311307888478,
+          "artifacts": [
+            {
+              "path": "tg-valueonly/validated.json",
+              "sha256": "92e7954e1e29177c44487aebffe79e40a4af6c1f3161810dd152009f0ae61f9a",
+              "bytes": 318
+            }
+          ],
+          "finished_at": "2026-10-15T23:28:53.687330+00:00"
+        },
+        {
+          "name": "tg-keyonly-train",
+          "started_at": "2026-10-15T23:28:53.687366+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3080.5265071149915,
+          "artifacts": [
+            {
+              "path": "tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/result.json",
+              "sha256": "0bf460ab6cfe02a6f51605ec5d8cf2aa90228e9b7dfa2b2566f0acff18211bf3",
+              "bytes": 21282
+            }
+          ],
+          "finished_at": "2026-10-16T00:20:14.741169+00:00"
+        },
+        {
+          "name": "tg-keyonly-validate",
+          "started_at": "2026-10-16T00:20:14.741215+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.2880885179620236,
+          "artifacts": [
+            {
+              "path": "tg-keyonly/validated.json",
+              "sha256": "69d46fcdf6141fec93ce03c5eabb43a80a30aeef0a5348d4413f8edf23039728",
+              "bytes": 319
+            }
+          ],
+          "finished_at": "2026-10-16T00:20:16.030246+00:00"
+        },
+        {
+          "name": "lm-valueonly-noaux-train",
+          "started_at": "2026-10-16T00:20:16.030276+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 2908.156273920089,
+          "artifacts": [
+            {
+              "path": "lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/result.json",
+              "sha256": "d029a4e2974636b1499ae25f8ff8cca029de643d5b81d9ed8e5637d49d120efd",
+              "bytes": 21138
+            }
+          ],
+          "finished_at": "2026-10-16T01:08:44.738354+00:00"
+        },
+        {
+          "name": "lm-valueonly-noaux-validate",
+          "started_at": "2026-10-16T01:08:44.738445+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.3210650780238211,
+          "artifacts": [
+            {
+              "path": "lm-valueonly-noaux/validated.json",
+              "sha256": "7640b4d69271ca9d898386ee9e1970efd74f5b28d580d917848d6fc525346197",
+              "bytes": 318
+            }
+          ],
+          "finished_at": "2026-10-16T01:08:46.061620+00:00"
+        },
+        {
+          "name": "lm-keyonly-noaux-train",
+          "started_at": "2026-10-16T01:08:46.061653+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3005.5708839639556,
+          "artifacts": [
+            {
+              "path": "lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/result.json",
+              "sha256": "a515b6b3a24dc8e8753ec5e52d86db63e040a3448a0ee4df882bd3d2cc665cc6",
+              "bytes": 21137
+            }
+          ],
+          "finished_at": "2026-10-16T01:58:52.155767+00:00"
+        },
+        {
+          "name": "lm-keyonly-noaux-validate",
+          "started_at": "2026-10-16T01:58:52.155811+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.3823965550400317,
+          "artifacts": [
+            {
+              "path": "lm-keyonly-noaux/validated.json",
+              "sha256": "01120247bd31399518652d83e312b08e3babac05916fc7502a36077cffab09ca",
+              "bytes": 316
+            }
+          ],
+          "finished_at": "2026-10-16T01:58:53.539121+00:00"
+        },
+        {
+          "name": "lm-sparse-noaux-train",
+          "started_at": "2026-10-16T01:58:53.539154+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 2896.4184820740484,
+          "artifacts": [
+            {
+              "path": "lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/result.json",
+              "sha256": "4cd5d316d34e268aeefd5f443dab120f86272e6b1f01fa5584672c588d083308",
+              "bytes": 20324
+            }
+          ],
+          "finished_at": "2026-10-16T02:47:10.494538+00:00"
+        },
+        {
+          "name": "lm-sparse-noaux-validate",
+          "started_at": "2026-10-16T02:47:10.494583+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.290017575956881,
+          "artifacts": [
+            {
+              "path": "lm-sparse-noaux/validated.json",
+              "sha256": "5f829ce49629154663b01db2ee041f5e69e9caa2562745ad8a91b80edf07f9e4",
+              "bytes": 316
+            }
+          ],
+          "finished_at": "2026-10-16T02:47:11.785576+00:00"
+        },
+        {
+          "name": "a-seed2042-train",
+          "started_at": "2026-10-16T02:47:11.785608+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 2762.787187465001,
+          "artifacts": [
+            {
+              "path": "a-seed2042/seed-2042/A/result.json",
+              "sha256": "19599b56892a204872a2b2df7079418ba494e9d93a5fde249e16f84bb9f862fb",
+              "bytes": 18192
+            }
+          ],
+          "finished_at": "2026-10-16T03:33:15.105397+00:00"
+        },
+        {
+          "name": "a-seed2042-validate",
+          "started_at": "2026-10-16T03:33:15.105438+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.2617074279114604,
+          "artifacts": [
+            {
+              "path": "a-seed2042/validated.json",
+              "sha256": "aacbf9db0ee0df02b3eb5d3694af69773f19e56d584d76627d86a8e203c9ab1b",
+              "bytes": 290
+            }
+          ],
+          "finished_at": "2026-10-16T03:33:16.368072+00:00"
+        },
+        {
+          "name": "lm-noaux-seed2042-train",
+          "started_at": "2026-10-16T03:33:16.368101+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3007.226476398995,
+          "artifacts": [
+            {
+              "path": "lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/result.json",
+              "sha256": "5ee21e20d3447fbf9f4e6b317c9dbcb523bb6e70983905357a0369cdab3ff0c0",
+              "bytes": 21059
+            }
+          ],
+          "finished_at": "2026-10-16T04:23:24.146440+00:00"
+        },
+        {
+          "name": "lm-noaux-seed2042-validate",
+          "started_at": "2026-10-16T04:23:24.146483+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.2963730250485241,
+          "artifacts": [
+            {
+              "path": "lm-noaux-seed2042/validated.json",
+              "sha256": "4b1ade1704efa8645e307cb4e4ad605600179ac9375bcfa3b6ab36047b810546",
+              "bytes": 308
+            }
+          ],
+          "finished_at": "2026-10-16T04:23:25.443850+00:00"
+        },
+        {
+          "name": "tg-heads8-train",
+          "started_at": "2026-10-16T04:23:25.443884+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3141.154319585068,
+          "artifacts": [
+            {
+              "path": "tg-heads8/seed-42/P7-simple-targetgrad-heads8/result.json",
+              "sha256": "ceb198b2e7a26c25f3890bb355bd53ad31dc337917a91622266d1351c6ebfff2",
+              "bytes": 21283
+            }
+          ],
+          "finished_at": "2026-10-16T05:15:47.145460+00:00"
+        },
+        {
+          "name": "tg-heads8-validate",
+          "started_at": "2026-10-16T05:15:47.145645+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.489572644000873,
+          "artifacts": [
+            {
+              "path": "tg-heads8/validated.json",
+              "sha256": "b3eb76a5007be07f45ac65fda7b8e122b82abf974e0bc7b98d9ebef08a383716",
+              "bytes": 316
+            }
+          ],
+          "finished_at": "2026-10-16T05:15:48.637404+00:00"
+        },
+        {
+          "name": "lm-lambda001-train",
+          "started_at": "2026-10-16T05:15:48.637443+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3055.182085030945,
+          "artifacts": [
+            {
+              "path": "lm-lambda001/seed-42/P7-simple-lm/result.json",
+              "sha256": "dcba398c18e8bcbe288fff0a6045d38ff0a4808be6fa77b1d81ec1ab3c52c70d",
+              "bytes": 20924
+            }
+          ],
+          "finished_at": "2026-10-16T06:06:44.353595+00:00"
+        },
+        {
+          "name": "lm-lambda001-validate",
+          "started_at": "2026-10-16T06:06:44.353642+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.4001732089091092,
+          "artifacts": [
+            {
+              "path": "lm-lambda001/validated.json",
+              "sha256": "09688a27068285d1eb13d57ad3d1e835d3569b63f4edbfe45566872c32d0fdce",
+              "bytes": 302
+            }
+          ],
+          "finished_at": "2026-10-16T06:06:45.754954+00:00"
+        },
+        {
+          "name": "lm-lambda1-train",
+          "started_at": "2026-10-16T06:06:45.754989+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3050.6790319110733,
+          "artifacts": [
+            {
+              "path": "lm-lambda1/seed-42/P7-simple-lm/result.json",
+              "sha256": "28a2fdf1b958332bdfc1143869e8c48b26d6408e7b456a9415867201c7d658d8",
+              "bytes": 20919
+            }
+          ],
+          "finished_at": "2026-10-16T06:57:36.998133+00:00"
+        },
+        {
+          "name": "lm-lambda1-validate",
+          "started_at": "2026-10-16T06:57:36.998173+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.2811648128554225,
+          "artifacts": [
+            {
+              "path": "lm-lambda1/validated.json",
+              "sha256": "138198c37faf19158cca809f8b01b4b5a287831475f356b5dc35f341eed848b4",
+              "bytes": 300
+            }
+          ],
+          "finished_at": "2026-10-16T06:57:38.280397+00:00"
+        },
+        {
+          "name": "lm-valueonly-gated-train",
+          "started_at": "2026-10-16T06:57:38.280427+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3031.7722947790753,
+          "artifacts": [
+            {
+              "path": "lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/result.json",
+              "sha256": "96997776148abe635d9ce078d7c7989a2c80c50ad73c7e17d15dfdc2d1ba7bc4",
+              "bytes": 21473
+            }
+          ],
+          "finished_at": "2026-10-16T07:48:10.581967+00:00"
+        },
+        {
+          "name": "lm-valueonly-gated-validate",
+          "started_at": "2026-10-16T07:48:10.582005+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1.2946343249641359,
+          "artifacts": [
+            {
+              "path": "lm-valueonly-gated/validated.json",
+              "sha256": "3b9e7549fa692fca1f0086b7b2d551725b85b260fbddcee92b79e49c5cd43279",
+              "bytes": 318
+            }
+          ],
+          "finished_at": "2026-10-16T07:48:11.877754+00:00"
+        },
+        {
+          "name": "tg-medium-train",
+          "started_at": "2026-10-16T07:48:11.877784+00:00",
+          "status": "failed"
+        }
+      ],
+      "finished_at": "2026-10-16T08:26:29.114439+00:00",
+      "error": "Supervisor received signal 15"
+    },
+    "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/preflight.json": {
+      "status": "passed",
+      "checkpoints": [
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-nexttoken/seed-42/P7-simple-lm-nexttoken/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda003/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda03/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-short/seed-42/P7-simple-targetgrad-short/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-sparse/seed-42/P7-simple-targetgrad-sparse/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-heads2/seed-42/P7-simple-targetgrad-heads2/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-heads8/seed-42/P7-simple-targetgrad-heads8/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda001/seed-42/P7-simple-lm/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda1/seed-42/P7-simple-lm/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/a-seed2042/seed-2042/A/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/A/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-lm/checkpoint-2500"
+      ],
+      "accelerate_sha256": "923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5",
+      "source": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01",
+      "reference": "/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01",
+      "retry_predecessor": null
+    },
+    "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/scope.json": {
+      "kind": "p7-tuning-completed",
+      "training_roots": [
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run"
+      ],
+      "completed": [
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "lm-noaux"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "lm-nexttoken"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "tg-lambda003"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "tg-lambda03"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "tg-short"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "tg-sparse"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "label": "tg-heads2"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "tg-heads8"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "tg-keyonly"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "tg-valueonly"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-lambda001"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-lambda1"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-sparse-noaux"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-keyonly-noaux"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-valueonly-noaux"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-valueonly-gated"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "a-seed2042"
+        },
+        {
+          "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+          "label": "lm-noaux-seed2042"
+        }
+      ],
+      "completed_labels": [
+        "lm-noaux",
+        "lm-nexttoken",
+        "tg-lambda003",
+        "tg-lambda03",
+        "tg-short",
+        "tg-sparse",
+        "tg-heads2",
+        "tg-heads8",
+        "tg-keyonly",
+        "tg-valueonly",
+        "lm-lambda001",
+        "lm-lambda1",
+        "lm-sparse-noaux",
+        "lm-keyonly-noaux",
+        "lm-valueonly-noaux",
+        "lm-valueonly-gated",
+        "a-seed2042",
+        "lm-noaux-seed2042"
+      ],
+      "reference_screen": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01",
+      "reference": "/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01",
+      "protocols": {
+        "grammar": [
+          0,
+          [
+            "blimp"
+          ]
+        ],
+        "zero": [
+          0,
+          [
+            "sciq",
+            "lambada"
+          ]
+        ],
+        "five": [
+          5,
+          [
+            "piqa",
+            "arc_easy",
+            "winogrande",
+            "boolq"
+          ]
+        ],
+        "ten": [
+          10,
+          [
+            "hellaswag"
+          ]
+        ],
+        "twentyfive": [
+          25,
+          [
+            "arc_challenge"
+          ]
+        ]
+      },
+      "data_root": "/mnt/local/_data/deep-llms_th2/expanded-20261012",
+      "manifest": "/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01/manifest.json",
+      "manifest_sha256": "40e4255b07dd07c2028e4ef872e24844e83b6084aec6d18242634181ace696b4",
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "lm_eval": "0.4.10",
+        "flash-attn-4": "4.0.0b33",
+        "nvidia-cutlass-dsl": "4.8.0"
+      },
+      "evaluation_seed": 42,
+      "finetuning": false,
+      "paired_loss": false,
+      "checkpoints": [
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-nexttoken/seed-42/P7-simple-lm-nexttoken/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda003/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda03/seed-42/P7-simple-targetgrad/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-short/seed-42/P7-simple-targetgrad-short/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-sparse/seed-42/P7-simple-targetgrad-sparse/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-heads2/seed-42/P7-simple-targetgrad-heads2/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-heads8/seed-42/P7-simple-targetgrad-heads8/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda001/seed-42/P7-simple-lm/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda1/seed-42/P7-simple-lm/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/a-seed2042/seed-2042/A/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/A/checkpoint-2500",
+        "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-lm/checkpoint-2500"
+      ],
+      "specs": {
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/checkpoint-2500": {
+          "label": "lm-noaux",
+          "arm": "P7-simple-lm-noaux",
+          "step": 2500,
+          "lambda_max": 0.0,
+          "seed": 42,
+          "checkpoint_sha256": "6b68cc51d6314a73cc4f13f60a22869b7816979bab185c296b08b0c9a840375d"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-nexttoken/seed-42/P7-simple-lm-nexttoken/checkpoint-2500": {
+          "label": "lm-nexttoken",
+          "arm": "P7-simple-lm-nexttoken",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "d852b6195c587f0b91bd5e463117f0dbd9c41817d6245a031acfa480db455bb6"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda003/seed-42/P7-simple-targetgrad/checkpoint-2500": {
+          "label": "tg-lambda003",
+          "arm": "P7-simple-targetgrad",
+          "step": 2500,
+          "lambda_max": 0.03,
+          "seed": 42,
+          "checkpoint_sha256": "2c51339101387c41cda99d9a206c2605f6dd569d00e758e0506ee2b6e9417c66"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda03/seed-42/P7-simple-targetgrad/checkpoint-2500": {
+          "label": "tg-lambda03",
+          "arm": "P7-simple-targetgrad",
+          "step": 2500,
+          "lambda_max": 0.3,
+          "seed": 42,
+          "checkpoint_sha256": "2f65f83432ccce3fd5ac2e23ceaeb17fbcc90a4ace4f76e5598a1e705429da8c"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-short/seed-42/P7-simple-targetgrad-short/checkpoint-2500": {
+          "label": "tg-short",
+          "arm": "P7-simple-targetgrad-short",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "691b8cf3c63ca0fc2624ce5a6a6d603877d20f320da30f3382eea8bbc3fbd4f5"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-sparse/seed-42/P7-simple-targetgrad-sparse/checkpoint-2500": {
+          "label": "tg-sparse",
+          "arm": "P7-simple-targetgrad-sparse",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "4da9fa86066d09339aa602bd72eb46475d00bdedd139c2083969564639ee260c"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-heads2/seed-42/P7-simple-targetgrad-heads2/checkpoint-2500": {
+          "label": "tg-heads2",
+          "arm": "P7-simple-targetgrad-heads2",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "5b9044196e705d9659a8b096cd36a8cf91a2a6cfc4b7afa6b7ea38eb65db55d1"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-heads8/seed-42/P7-simple-targetgrad-heads8/checkpoint-2500": {
+          "label": "tg-heads8",
+          "arm": "P7-simple-targetgrad-heads8",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "5c8129957f2b540035658113b1a34807294ad004597558a7d1b2decc10ac0f07"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/checkpoint-2500": {
+          "label": "tg-keyonly",
+          "arm": "P7-simple-targetgrad-keyonly",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "598534011b0a4829e0a04966f7e29368e99bb1375c3d62b5316fce8f7c08826a"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/checkpoint-2500": {
+          "label": "tg-valueonly",
+          "arm": "P7-simple-targetgrad-valueonly",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "2d39a4271df9b79e839a1779489bbc82c97b431481b2187b807efd4e51d2c31e"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda001/seed-42/P7-simple-lm/checkpoint-2500": {
+          "label": "lm-lambda001",
+          "arm": "P7-simple-lm",
+          "step": 2500,
+          "lambda_max": 0.01,
+          "seed": 42,
+          "checkpoint_sha256": "2c2dd3e7649ebc7fc6d80eb9444156290446fac4e0261bf8c1e3a3756dab3fb8"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda1/seed-42/P7-simple-lm/checkpoint-2500": {
+          "label": "lm-lambda1",
+          "arm": "P7-simple-lm",
+          "step": 2500,
+          "lambda_max": 1.0,
+          "seed": 42,
+          "checkpoint_sha256": "ed8344041ed1dab06b922b4b4446fe9a6f8f69ebb274e05266e34fd3be73643c"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/checkpoint-2500": {
+          "label": "lm-sparse-noaux",
+          "arm": "P7-simple-lm-sparse-noaux",
+          "step": 2500,
+          "lambda_max": 0.0,
+          "seed": 42,
+          "checkpoint_sha256": "39ad1368d34befabf3d017f7933cc93d2293b47688ebef998e13f1ed1058bf16"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/checkpoint-2500": {
+          "label": "lm-keyonly-noaux",
+          "arm": "P7-simple-lm-keyonly-noaux",
+          "step": 2500,
+          "lambda_max": 0.0,
+          "seed": 42,
+          "checkpoint_sha256": "2d8fd1733edecb1962db3e8f89d72becb252161948b7ad036eae34a909e792d5"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/checkpoint-2500": {
+          "label": "lm-valueonly-noaux",
+          "arm": "P7-simple-lm-valueonly-noaux",
+          "step": 2500,
+          "lambda_max": 0.0,
+          "seed": 42,
+          "checkpoint_sha256": "851ce26a4dab62062b8d40ec05152564d227180e99b1894949d2743d27a501b4"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/checkpoint-2500": {
+          "label": "lm-valueonly-gated",
+          "arm": "P7-simple-lm-valueonly-gated",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "17860f1ea5b3b3ca58f35aa3252aff7439d3fea06b72d5e5bc5824de061e19a6"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/a-seed2042/seed-2042/A/checkpoint-2500": {
+          "label": "a-seed2042",
+          "arm": "A",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 2042,
+          "checkpoint_sha256": "f1aaea65e876a7c1265e0bdf16b0ebc5b38cf90b5f048541d635119fcd952e7d"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/checkpoint-2500": {
+          "label": "lm-noaux-seed2042",
+          "arm": "P7-simple-lm-noaux",
+          "step": 2500,
+          "lambda_max": 0.0,
+          "seed": 2042,
+          "checkpoint_sha256": "9ad4fb5fe2147618e7616219fca4b2429ee32cc6ee86125f1b679f61edeb7ea6"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/A/checkpoint-2500": {
+          "label": "reference-A",
+          "arm": "A",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "ecc2643c3b13ec32bf70aecd29c945b495df8c0296a2aea942e37b3ad8dd15c7"
+        },
+        "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-lm/checkpoint-2500": {
+          "label": "reference-lm",
+          "arm": "P7-simple-lm",
+          "step": 2500,
+          "lambda_max": 0.1,
+          "seed": 42,
+          "checkpoint_sha256": "e82153e847d5d2ae32b623b29fdd53a933717e1eccd50ff748c2d577e19e49dc"
+        }
+      }
+    }
+  },
+  "numerics_and_smoke_status": {
+    "status": "running",
+    "started_at": "2026-10-16T08:32:25.882271+00:00",
+    "jobs": [
+      {
+        "name": "numerics",
+        "started_at": "2026-10-16T08:32:25.882507+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 81.7700634370558,
+        "artifacts": [
+          {
+            "path": "numerics/summary.json",
+            "sha256": "70e4714503436dd2539cebd0c85db7ff2b10d4235cade3a95fa695f781fdcf5a",
+            "bytes": 13432
+          }
+        ],
+        "finished_at": "2026-10-16T08:33:48.190398+00:00"
+      },
+      {
+        "name": "smoke",
+        "started_at": "2026-10-16T08:33:48.190442+00:00",
+        "status": "running"
+      }
+    ]
+  },
+  "full_evaluation_verification": {
+    "at": "2026-10-16T08:40:12.947271+00:00",
+    "request_commit": "cdf34b6",
+    "source_log": "temp/remote_logs/p7-tuning-eval-health-20261016-a02-final.log",
+    "sha256": "cd9db832c0793b910e4c49dd950dd930523213e8a744a9d23f34327fdf2f91b1",
+    "states": {
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/user-stop-for-evaluation.json": {
+        "status": "stop_requested",
+        "at": "2026-10-16T08:26:28.149585+00:00",
+        "supervisor": {
+          "pid": 1128738,
+          "ppid": 5625,
+          "start_ticks": 105818040,
+          "command_sha256": "c55acfcb93960c0a63e46b0fc48e1d7610b58c4ec518c6da9ad42e662693345f",
+          "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "workers": {
+          "1195237": {
+            "pid": 1195237,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195238": {
+            "pid": 1195238,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195239": {
+            "pid": 1195239,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195240": {
+            "pid": 1195240,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195241": {
+            "pid": 1195241,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195242": {
+            "pid": 1195242,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195243": {
+            "pid": 1195243,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          },
+          "1195244": {
+            "pid": 1195244,
+            "ppid": 1195231,
+            "start_ticks": 109154275,
+            "command_sha256": "7d7118ed543f4bb1a230236695f0f42ced729e9db5db91fe509bf9a3822ed81d",
+            "exe": "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+            "command_prefix": [
+              "/mnt/local/conda-py311/envs/attention_bench/bin/python3.11",
+              "-u",
+              "/mnt/local/deep-llms_th2/train.py"
+            ],
+            "launcher_kind": null
+          }
+        },
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 69486.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195237
+            ]
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 68296.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195238
+            ]
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 69486.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195239
+            ]
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 68296.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195240
+            ]
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 69484.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195241
+            ]
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 69484.0,
+            "utilization_percent": 98.0,
+            "pids": [
+              1195242
+            ]
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 69484.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195243
+            ]
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 69484.0,
+            "utilization_percent": 99.0,
+            "pids": [
+              1195244
+            ]
+          }
+        ],
+        "previous_supervisor_final": {
+          "started_at": "2026-10-15T22:39:13.643347+00:00",
+          "training_status": "failed",
+          "training_error": "KeyboardInterrupt('Supervisor received signal 15')",
+          "free_after_training": [
+            {
+              "index": 0,
+              "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 1,
+              "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 2,
+              "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 3,
+              "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 4,
+              "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 5,
+              "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 6,
+              "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            },
+            {
+              "index": 7,
+              "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 0.0,
+              "utilization_percent": 0.0,
+              "pids": []
+            }
+          ],
+          "burn": {
+            "at": "2026-10-16T08:27:40.985413+00:00",
+            "session": "q359-p7-priority15-20261015-a01-final-burn",
+            "gpus": [
+              {
+                "index": 0,
+                "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200126
+                ]
+              },
+              {
+                "index": 1,
+                "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200127
+                ]
+              },
+              {
+                "index": 2,
+                "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200128
+                ]
+              },
+              {
+                "index": 3,
+                "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200129
+                ]
+              },
+              {
+                "index": 4,
+                "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200130
+                ]
+              },
+              {
+                "index": 5,
+                "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200131
+                ]
+              },
+              {
+                "index": 6,
+                "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200132
+                ]
+              },
+              {
+                "index": 7,
+                "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+                "name": "NVIDIA B200",
+                "memory_total_mib": 183359.0,
+                "memory_used_mib": 155212.0,
+                "utilization_percent": 100.0,
+                "pids": [
+                  1200133
+                ]
+              }
+            ],
+            "collective_progress_verified": true
+          },
+          "finished_at": "2026-10-16T08:27:40.985678+00:00"
+        },
+        "burn_handoff": {
+          "at": "2026-10-16T08:27:40.985413+00:00",
+          "session": "q359-p7-priority15-20261015-a01-final-burn",
+          "gpus": [
+            {
+              "index": 0,
+              "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200126
+              ]
+            },
+            {
+              "index": 1,
+              "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200127
+              ]
+            },
+            {
+              "index": 2,
+              "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200128
+              ]
+            },
+            {
+              "index": 3,
+              "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200129
+              ]
+            },
+            {
+              "index": 4,
+              "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200130
+              ]
+            },
+            {
+              "index": 5,
+              "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200131
+              ]
+            },
+            {
+              "index": 6,
+              "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200132
+              ]
+            },
+            {
+              "index": 7,
+              "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                1200133
+              ]
+            }
+          ],
+          "collective_progress_verified": true
+        }
+      },
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/run.json": {
+        "status": "failed",
+        "started_at": "2026-10-15T22:39:13.643615+00:00",
+        "jobs": [
+          {
+            "name": "tg-valueonly-train",
+            "started_at": "2026-10-15T22:39:13.644982+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 2978.218038928928,
+            "artifacts": [
+              {
+                "path": "tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/result.json",
+                "sha256": "d915d0e3c9f1d860cd767aa59b5fb2b1a55c47798c8878eadd0bc93bd1dd9d54",
+                "bytes": 21282
+              }
+            ],
+            "finished_at": "2026-10-15T23:28:52.385926+00:00"
+          },
+          {
+            "name": "tg-valueonly-validate",
+            "started_at": "2026-10-15T23:28:52.385971+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.300311307888478,
+            "artifacts": [
+              {
+                "path": "tg-valueonly/validated.json",
+                "sha256": "92e7954e1e29177c44487aebffe79e40a4af6c1f3161810dd152009f0ae61f9a",
+                "bytes": 318
+              }
+            ],
+            "finished_at": "2026-10-15T23:28:53.687330+00:00"
+          },
+          {
+            "name": "tg-keyonly-train",
+            "started_at": "2026-10-15T23:28:53.687366+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3080.5265071149915,
+            "artifacts": [
+              {
+                "path": "tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/result.json",
+                "sha256": "0bf460ab6cfe02a6f51605ec5d8cf2aa90228e9b7dfa2b2566f0acff18211bf3",
+                "bytes": 21282
+              }
+            ],
+            "finished_at": "2026-10-16T00:20:14.741169+00:00"
+          },
+          {
+            "name": "tg-keyonly-validate",
+            "started_at": "2026-10-16T00:20:14.741215+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.2880885179620236,
+            "artifacts": [
+              {
+                "path": "tg-keyonly/validated.json",
+                "sha256": "69d46fcdf6141fec93ce03c5eabb43a80a30aeef0a5348d4413f8edf23039728",
+                "bytes": 319
+              }
+            ],
+            "finished_at": "2026-10-16T00:20:16.030246+00:00"
+          },
+          {
+            "name": "lm-valueonly-noaux-train",
+            "started_at": "2026-10-16T00:20:16.030276+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 2908.156273920089,
+            "artifacts": [
+              {
+                "path": "lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/result.json",
+                "sha256": "d029a4e2974636b1499ae25f8ff8cca029de643d5b81d9ed8e5637d49d120efd",
+                "bytes": 21138
+              }
+            ],
+            "finished_at": "2026-10-16T01:08:44.738354+00:00"
+          },
+          {
+            "name": "lm-valueonly-noaux-validate",
+            "started_at": "2026-10-16T01:08:44.738445+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.3210650780238211,
+            "artifacts": [
+              {
+                "path": "lm-valueonly-noaux/validated.json",
+                "sha256": "7640b4d69271ca9d898386ee9e1970efd74f5b28d580d917848d6fc525346197",
+                "bytes": 318
+              }
+            ],
+            "finished_at": "2026-10-16T01:08:46.061620+00:00"
+          },
+          {
+            "name": "lm-keyonly-noaux-train",
+            "started_at": "2026-10-16T01:08:46.061653+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3005.5708839639556,
+            "artifacts": [
+              {
+                "path": "lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/result.json",
+                "sha256": "a515b6b3a24dc8e8753ec5e52d86db63e040a3448a0ee4df882bd3d2cc665cc6",
+                "bytes": 21137
+              }
+            ],
+            "finished_at": "2026-10-16T01:58:52.155767+00:00"
+          },
+          {
+            "name": "lm-keyonly-noaux-validate",
+            "started_at": "2026-10-16T01:58:52.155811+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.3823965550400317,
+            "artifacts": [
+              {
+                "path": "lm-keyonly-noaux/validated.json",
+                "sha256": "01120247bd31399518652d83e312b08e3babac05916fc7502a36077cffab09ca",
+                "bytes": 316
+              }
+            ],
+            "finished_at": "2026-10-16T01:58:53.539121+00:00"
+          },
+          {
+            "name": "lm-sparse-noaux-train",
+            "started_at": "2026-10-16T01:58:53.539154+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 2896.4184820740484,
+            "artifacts": [
+              {
+                "path": "lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/result.json",
+                "sha256": "4cd5d316d34e268aeefd5f443dab120f86272e6b1f01fa5584672c588d083308",
+                "bytes": 20324
+              }
+            ],
+            "finished_at": "2026-10-16T02:47:10.494538+00:00"
+          },
+          {
+            "name": "lm-sparse-noaux-validate",
+            "started_at": "2026-10-16T02:47:10.494583+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.290017575956881,
+            "artifacts": [
+              {
+                "path": "lm-sparse-noaux/validated.json",
+                "sha256": "5f829ce49629154663b01db2ee041f5e69e9caa2562745ad8a91b80edf07f9e4",
+                "bytes": 316
+              }
+            ],
+            "finished_at": "2026-10-16T02:47:11.785576+00:00"
+          },
+          {
+            "name": "a-seed2042-train",
+            "started_at": "2026-10-16T02:47:11.785608+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 2762.787187465001,
+            "artifacts": [
+              {
+                "path": "a-seed2042/seed-2042/A/result.json",
+                "sha256": "19599b56892a204872a2b2df7079418ba494e9d93a5fde249e16f84bb9f862fb",
+                "bytes": 18192
+              }
+            ],
+            "finished_at": "2026-10-16T03:33:15.105397+00:00"
+          },
+          {
+            "name": "a-seed2042-validate",
+            "started_at": "2026-10-16T03:33:15.105438+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.2617074279114604,
+            "artifacts": [
+              {
+                "path": "a-seed2042/validated.json",
+                "sha256": "aacbf9db0ee0df02b3eb5d3694af69773f19e56d584d76627d86a8e203c9ab1b",
+                "bytes": 290
+              }
+            ],
+            "finished_at": "2026-10-16T03:33:16.368072+00:00"
+          },
+          {
+            "name": "lm-noaux-seed2042-train",
+            "started_at": "2026-10-16T03:33:16.368101+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3007.226476398995,
+            "artifacts": [
+              {
+                "path": "lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/result.json",
+                "sha256": "5ee21e20d3447fbf9f4e6b317c9dbcb523bb6e70983905357a0369cdab3ff0c0",
+                "bytes": 21059
+              }
+            ],
+            "finished_at": "2026-10-16T04:23:24.146440+00:00"
+          },
+          {
+            "name": "lm-noaux-seed2042-validate",
+            "started_at": "2026-10-16T04:23:24.146483+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.2963730250485241,
+            "artifacts": [
+              {
+                "path": "lm-noaux-seed2042/validated.json",
+                "sha256": "4b1ade1704efa8645e307cb4e4ad605600179ac9375bcfa3b6ab36047b810546",
+                "bytes": 308
+              }
+            ],
+            "finished_at": "2026-10-16T04:23:25.443850+00:00"
+          },
+          {
+            "name": "tg-heads8-train",
+            "started_at": "2026-10-16T04:23:25.443884+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3141.154319585068,
+            "artifacts": [
+              {
+                "path": "tg-heads8/seed-42/P7-simple-targetgrad-heads8/result.json",
+                "sha256": "ceb198b2e7a26c25f3890bb355bd53ad31dc337917a91622266d1351c6ebfff2",
+                "bytes": 21283
+              }
+            ],
+            "finished_at": "2026-10-16T05:15:47.145460+00:00"
+          },
+          {
+            "name": "tg-heads8-validate",
+            "started_at": "2026-10-16T05:15:47.145645+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.489572644000873,
+            "artifacts": [
+              {
+                "path": "tg-heads8/validated.json",
+                "sha256": "b3eb76a5007be07f45ac65fda7b8e122b82abf974e0bc7b98d9ebef08a383716",
+                "bytes": 316
+              }
+            ],
+            "finished_at": "2026-10-16T05:15:48.637404+00:00"
+          },
+          {
+            "name": "lm-lambda001-train",
+            "started_at": "2026-10-16T05:15:48.637443+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3055.182085030945,
+            "artifacts": [
+              {
+                "path": "lm-lambda001/seed-42/P7-simple-lm/result.json",
+                "sha256": "dcba398c18e8bcbe288fff0a6045d38ff0a4808be6fa77b1d81ec1ab3c52c70d",
+                "bytes": 20924
+              }
+            ],
+            "finished_at": "2026-10-16T06:06:44.353595+00:00"
+          },
+          {
+            "name": "lm-lambda001-validate",
+            "started_at": "2026-10-16T06:06:44.353642+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.4001732089091092,
+            "artifacts": [
+              {
+                "path": "lm-lambda001/validated.json",
+                "sha256": "09688a27068285d1eb13d57ad3d1e835d3569b63f4edbfe45566872c32d0fdce",
+                "bytes": 302
+              }
+            ],
+            "finished_at": "2026-10-16T06:06:45.754954+00:00"
+          },
+          {
+            "name": "lm-lambda1-train",
+            "started_at": "2026-10-16T06:06:45.754989+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3050.6790319110733,
+            "artifacts": [
+              {
+                "path": "lm-lambda1/seed-42/P7-simple-lm/result.json",
+                "sha256": "28a2fdf1b958332bdfc1143869e8c48b26d6408e7b456a9415867201c7d658d8",
+                "bytes": 20919
+              }
+            ],
+            "finished_at": "2026-10-16T06:57:36.998133+00:00"
+          },
+          {
+            "name": "lm-lambda1-validate",
+            "started_at": "2026-10-16T06:57:36.998173+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.2811648128554225,
+            "artifacts": [
+              {
+                "path": "lm-lambda1/validated.json",
+                "sha256": "138198c37faf19158cca809f8b01b4b5a287831475f356b5dc35f341eed848b4",
+                "bytes": 300
+              }
+            ],
+            "finished_at": "2026-10-16T06:57:38.280397+00:00"
+          },
+          {
+            "name": "lm-valueonly-gated-train",
+            "started_at": "2026-10-16T06:57:38.280427+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3031.7722947790753,
+            "artifacts": [
+              {
+                "path": "lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/result.json",
+                "sha256": "96997776148abe635d9ce078d7c7989a2c80c50ad73c7e17d15dfdc2d1ba7bc4",
+                "bytes": 21473
+              }
+            ],
+            "finished_at": "2026-10-16T07:48:10.581967+00:00"
+          },
+          {
+            "name": "lm-valueonly-gated-validate",
+            "started_at": "2026-10-16T07:48:10.582005+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 1.2946343249641359,
+            "artifacts": [
+              {
+                "path": "lm-valueonly-gated/validated.json",
+                "sha256": "3b9e7549fa692fca1f0086b7b2d551725b85b260fbddcee92b79e49c5cd43279",
+                "bytes": 318
+              }
+            ],
+            "finished_at": "2026-10-16T07:48:11.877754+00:00"
+          },
+          {
+            "name": "tg-medium-train",
+            "started_at": "2026-10-16T07:48:11.877784+00:00",
+            "status": "failed"
+          }
+        ],
+        "finished_at": "2026-10-16T08:26:29.114439+00:00",
+        "error": "Supervisor received signal 15"
+      },
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/preflight.json": {
+        "status": "passed",
+        "checkpoints": [
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-nexttoken/seed-42/P7-simple-lm-nexttoken/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda003/seed-42/P7-simple-targetgrad/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda03/seed-42/P7-simple-targetgrad/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-short/seed-42/P7-simple-targetgrad-short/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-sparse/seed-42/P7-simple-targetgrad-sparse/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-heads2/seed-42/P7-simple-targetgrad-heads2/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-heads8/seed-42/P7-simple-targetgrad-heads8/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda001/seed-42/P7-simple-lm/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda1/seed-42/P7-simple-lm/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/a-seed2042/seed-2042/A/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/A/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-lm/checkpoint-2500"
+        ],
+        "accelerate_sha256": "923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5",
+        "source": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01",
+        "reference": "/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01",
+        "retry_predecessor": null
+      },
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/scope.json": {
+        "kind": "p7-tuning-completed",
+        "training_roots": [
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run"
+        ],
+        "completed": [
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "lm-noaux"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "lm-nexttoken"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "tg-lambda003"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "tg-lambda03"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "tg-short"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "tg-sparse"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run",
+            "label": "tg-heads2"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "tg-heads8"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "tg-keyonly"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "tg-valueonly"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-lambda001"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-lambda1"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-sparse-noaux"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-keyonly-noaux"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-valueonly-noaux"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-valueonly-gated"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "a-seed2042"
+          },
+          {
+            "training_root": "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run",
+            "label": "lm-noaux-seed2042"
+          }
+        ],
+        "completed_labels": [
+          "lm-noaux",
+          "lm-nexttoken",
+          "tg-lambda003",
+          "tg-lambda03",
+          "tg-short",
+          "tg-sparse",
+          "tg-heads2",
+          "tg-heads8",
+          "tg-keyonly",
+          "tg-valueonly",
+          "lm-lambda001",
+          "lm-lambda1",
+          "lm-sparse-noaux",
+          "lm-keyonly-noaux",
+          "lm-valueonly-noaux",
+          "lm-valueonly-gated",
+          "a-seed2042",
+          "lm-noaux-seed2042"
+        ],
+        "reference_screen": "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01",
+        "reference": "/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01",
+        "protocols": {
+          "grammar": [
+            0,
+            [
+              "blimp"
+            ]
+          ],
+          "zero": [
+            0,
+            [
+              "sciq",
+              "lambada"
+            ]
+          ],
+          "five": [
+            5,
+            [
+              "piqa",
+              "arc_easy",
+              "winogrande",
+              "boolq"
+            ]
+          ],
+          "ten": [
+            10,
+            [
+              "hellaswag"
+            ]
+          ],
+          "twentyfive": [
+            25,
+            [
+              "arc_challenge"
+            ]
+          ]
+        },
+        "data_root": "/mnt/local/_data/deep-llms_th2/expanded-20261012",
+        "manifest": "/mnt/local/_outputs/deep-llms_th2/q359-proxy12-eval-remaining27-20261014-a01/manifest.json",
+        "manifest_sha256": "40e4255b07dd07c2028e4ef872e24844e83b6084aec6d18242634181ace696b4",
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "lm_eval": "0.4.10",
+          "flash-attn-4": "4.0.0b33",
+          "nvidia-cutlass-dsl": "4.8.0"
+        },
+        "evaluation_seed": 42,
+        "finetuning": false,
+        "paired_loss": false,
+        "checkpoints": [
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-nexttoken/seed-42/P7-simple-lm-nexttoken/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda003/seed-42/P7-simple-targetgrad/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda03/seed-42/P7-simple-targetgrad/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-short/seed-42/P7-simple-targetgrad-short/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-sparse/seed-42/P7-simple-targetgrad-sparse/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-heads2/seed-42/P7-simple-targetgrad-heads2/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-heads8/seed-42/P7-simple-targetgrad-heads8/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda001/seed-42/P7-simple-lm/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda1/seed-42/P7-simple-lm/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/a-seed2042/seed-2042/A/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/A/checkpoint-2500",
+          "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-lm/checkpoint-2500"
+        ],
+        "specs": {
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-noaux/seed-42/P7-simple-lm-noaux/checkpoint-2500": {
+            "label": "lm-noaux",
+            "arm": "P7-simple-lm-noaux",
+            "step": 2500,
+            "lambda_max": 0.0,
+            "seed": 42,
+            "checkpoint_sha256": "6b68cc51d6314a73cc4f13f60a22869b7816979bab185c296b08b0c9a840375d"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/lm-nexttoken/seed-42/P7-simple-lm-nexttoken/checkpoint-2500": {
+            "label": "lm-nexttoken",
+            "arm": "P7-simple-lm-nexttoken",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "d852b6195c587f0b91bd5e463117f0dbd9c41817d6245a031acfa480db455bb6"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda003/seed-42/P7-simple-targetgrad/checkpoint-2500": {
+            "label": "tg-lambda003",
+            "arm": "P7-simple-targetgrad",
+            "step": 2500,
+            "lambda_max": 0.03,
+            "seed": 42,
+            "checkpoint_sha256": "2c51339101387c41cda99d9a206c2605f6dd569d00e758e0506ee2b6e9417c66"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-lambda03/seed-42/P7-simple-targetgrad/checkpoint-2500": {
+            "label": "tg-lambda03",
+            "arm": "P7-simple-targetgrad",
+            "step": 2500,
+            "lambda_max": 0.3,
+            "seed": 42,
+            "checkpoint_sha256": "2f65f83432ccce3fd5ac2e23ceaeb17fbcc90a4ace4f76e5598a1e705429da8c"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-short/seed-42/P7-simple-targetgrad-short/checkpoint-2500": {
+            "label": "tg-short",
+            "arm": "P7-simple-targetgrad-short",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "691b8cf3c63ca0fc2624ce5a6a6d603877d20f320da30f3382eea8bbc3fbd4f5"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-sparse/seed-42/P7-simple-targetgrad-sparse/checkpoint-2500": {
+            "label": "tg-sparse",
+            "arm": "P7-simple-targetgrad-sparse",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "4da9fa86066d09339aa602bd72eb46475d00bdedd139c2083969564639ee260c"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning22-20261015-a03/supervised/run/tg-heads2/seed-42/P7-simple-targetgrad-heads2/checkpoint-2500": {
+            "label": "tg-heads2",
+            "arm": "P7-simple-targetgrad-heads2",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "5b9044196e705d9659a8b096cd36a8cf91a2a6cfc4b7afa6b7ea38eb65db55d1"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-heads8/seed-42/P7-simple-targetgrad-heads8/checkpoint-2500": {
+            "label": "tg-heads8",
+            "arm": "P7-simple-targetgrad-heads8",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "5c8129957f2b540035658113b1a34807294ad004597558a7d1b2decc10ac0f07"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-keyonly/seed-42/P7-simple-targetgrad-keyonly/checkpoint-2500": {
+            "label": "tg-keyonly",
+            "arm": "P7-simple-targetgrad-keyonly",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "598534011b0a4829e0a04966f7e29368e99bb1375c3d62b5316fce8f7c08826a"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/tg-valueonly/seed-42/P7-simple-targetgrad-valueonly/checkpoint-2500": {
+            "label": "tg-valueonly",
+            "arm": "P7-simple-targetgrad-valueonly",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "2d39a4271df9b79e839a1779489bbc82c97b431481b2187b807efd4e51d2c31e"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda001/seed-42/P7-simple-lm/checkpoint-2500": {
+            "label": "lm-lambda001",
+            "arm": "P7-simple-lm",
+            "step": 2500,
+            "lambda_max": 0.01,
+            "seed": 42,
+            "checkpoint_sha256": "2c2dd3e7649ebc7fc6d80eb9444156290446fac4e0261bf8c1e3a3756dab3fb8"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-lambda1/seed-42/P7-simple-lm/checkpoint-2500": {
+            "label": "lm-lambda1",
+            "arm": "P7-simple-lm",
+            "step": 2500,
+            "lambda_max": 1.0,
+            "seed": 42,
+            "checkpoint_sha256": "ed8344041ed1dab06b922b4b4446fe9a6f8f69ebb274e05266e34fd3be73643c"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-sparse-noaux/seed-42/P7-simple-lm-sparse-noaux/checkpoint-2500": {
+            "label": "lm-sparse-noaux",
+            "arm": "P7-simple-lm-sparse-noaux",
+            "step": 2500,
+            "lambda_max": 0.0,
+            "seed": 42,
+            "checkpoint_sha256": "39ad1368d34befabf3d017f7933cc93d2293b47688ebef998e13f1ed1058bf16"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-keyonly-noaux/seed-42/P7-simple-lm-keyonly-noaux/checkpoint-2500": {
+            "label": "lm-keyonly-noaux",
+            "arm": "P7-simple-lm-keyonly-noaux",
+            "step": 2500,
+            "lambda_max": 0.0,
+            "seed": 42,
+            "checkpoint_sha256": "2d8fd1733edecb1962db3e8f89d72becb252161948b7ad036eae34a909e792d5"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-noaux/seed-42/P7-simple-lm-valueonly-noaux/checkpoint-2500": {
+            "label": "lm-valueonly-noaux",
+            "arm": "P7-simple-lm-valueonly-noaux",
+            "step": 2500,
+            "lambda_max": 0.0,
+            "seed": 42,
+            "checkpoint_sha256": "851ce26a4dab62062b8d40ec05152564d227180e99b1894949d2743d27a501b4"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-valueonly-gated/seed-42/P7-simple-lm-valueonly-gated/checkpoint-2500": {
+            "label": "lm-valueonly-gated",
+            "arm": "P7-simple-lm-valueonly-gated",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "17860f1ea5b3b3ca58f35aa3252aff7439d3fea06b72d5e5bc5824de061e19a6"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/a-seed2042/seed-2042/A/checkpoint-2500": {
+            "label": "a-seed2042",
+            "arm": "A",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 2042,
+            "checkpoint_sha256": "f1aaea65e876a7c1265e0bdf16b0ebc5b38cf90b5f048541d635119fcd952e7d"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-p7-priority15-20261015-a01/supervised/run/lm-noaux-seed2042/seed-2042/P7-simple-lm-noaux/checkpoint-2500": {
+            "label": "lm-noaux-seed2042",
+            "arm": "P7-simple-lm-noaux",
+            "step": 2500,
+            "lambda_max": 0.0,
+            "seed": 2042,
+            "checkpoint_sha256": "9ad4fb5fe2147618e7616219fca4b2429ee32cc6ee86125f1b679f61edeb7ea6"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/A/checkpoint-2500": {
+            "label": "reference-A",
+            "arm": "A",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "ecc2643c3b13ec32bf70aecd29c945b495df8c0296a2aea942e37b3ad8dd15c7"
+          },
+          "/mnt/local/_outputs/deep-llms_th2/q359-proxy-12layer-screen22-20261013-a01/supervised/run/seed-42/P7-simple-lm/checkpoint-2500": {
+            "label": "reference-lm",
+            "arm": "P7-simple-lm",
+            "step": 2500,
+            "lambda_max": 0.1,
+            "seed": 42,
+            "checkpoint_sha256": "e82153e847d5d2ae32b623b29fdd53a933717e1eccd50ff748c2d577e19e49dc"
+          }
+        }
+      },
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/supervised/supervisor.json": {
+        "started_at": "2026-10-16T08:32:25.881998+00:00",
+        "training_status": "running"
+      },
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/supervised/gpus-free-before-training.json": {
+        "at": "2026-10-16T08:32:25.616010+00:00",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          }
+        ]
+      },
+      "/mnt/local/_outputs/deep-llms_th2/q359-p7-tuning-eval-20261016-a01/supervised/run/run.json": {
+        "status": "running",
+        "started_at": "2026-10-16T08:32:25.882271+00:00",
+        "jobs": [
+          {
+            "name": "numerics",
+            "started_at": "2026-10-16T08:32:25.882507+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 81.7700634370558,
+            "artifacts": [
+              {
+                "path": "numerics/summary.json",
+                "sha256": "70e4714503436dd2539cebd0c85db7ff2b10d4235cade3a95fa695f781fdcf5a",
+                "bytes": 13432
+              }
+            ],
+            "finished_at": "2026-10-16T08:33:48.190398+00:00"
+          },
+          {
+            "name": "smoke",
+            "started_at": "2026-10-16T08:33:48.190442+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 381.60275977896526,
+            "artifacts": [
+              {
+                "path": "smoke/summary.json",
+                "sha256": "fb8e10b64f8366252b2c25875e081bc7e7be04678129dd9f2d68947d4cad5472",
+                "bytes": 286012
+              }
+            ],
+            "finished_at": "2026-10-16T08:40:10.321630+00:00"
+          },
+          {
+            "name": "full",
+            "started_at": "2026-10-16T08:40:10.321672+00:00",
+            "status": "running"
+          }
+        ]
+      }
+    },
+    "numerical_checks_passed": 20,
+    "smoke_groups_passed": 100
+  }
+}
