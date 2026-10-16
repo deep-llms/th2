@@ -1,3 +1,24 @@
+## CE7454 live status —17:07:19UTC16October (01:07SGT17October)
+
+Monitor7fefd31: four original scratch fits healthy on GPUs0–3 (95–98% utilization),
+GPUs4–7 confirmed idle. Completed base epochs: GRIP33/450, GRIPstats29/450,
+SR25/450, SRstats25/450. Recent epoch times27.9/32.1/37.1/37.1seconds.
+All still owe40 native512 epochs and evaluation. Using recent base times plus
+original full512 timing estimates: training ends~05:30/06:12/07:03/07:03SGT;
+allow evaluation and slowdown; existing conservative overall target10:00SGT.
+No errors in delivered logs; validation noisy early, not a final ranking.
+
+User requests all8 GPUs. Asked whether to add four Band/Phase stem x
+moderate/strong augmentation variants or use two GPUs per existing fit.
+No answer yet, no extra jobs launched. Existing frozen supervisor owns all8 and
+will restore burns when its original four finish; MUST coordinate new work
+before using4–7. Do not start independent work that conflicts with that handoff.
+No existing fit stopped/restarted/altered. New prototype remains local only.
+Evidence temp/remote_logs/ce7454-health-20261016-a05.log SHA256
+4a55399134ef0b965650a141fd5c89a56aa80139e2663e150bf95e94ab5e801a.
+
+---
+
 ## CE7454 four scratch arms training — verified16:52:30UTC,16October
 
 Launch c6c6f94, monitor27ac619. Root q359-ce7454-scratch-20261016-a04.
