@@ -1,0 +1,58 @@
+{
+  "deployment_commit": "52fa43c",
+  "verified_at_utc": "2026-10-16T18:31:28Z",
+  "log_sha256": "e759d82139af6d4b5d58e9a5ffabbb44aa067ce6181f695587c3ca5fe5a40c58",
+  "remote_cpu_tests": {
+    "passed": 3,
+    "seconds": 12.041
+  },
+  "receipts": [
+    {
+      "status": "passed",
+      "purpose": "evaluation_only",
+      "manifest_sha256": "99ff5ec0bcb187ec7678ae436b0cc0cb7d9349d5431ca1bee8b39b8fc48cc42e",
+      "splits": {
+        "dev": {
+          "images": 900,
+          "archive_sha256": "8aa9ecbb53b008a905d9034558d37a40d61c57c111f31fd7beb8a5b7a4cb112a",
+          "images_sha256": "da3fd4498ab36537bbeeb9558d3784afb388ce4fdaa0c4a4ed131d348f857f40",
+          "meta_sha256": "11e2042bf59c89f11178ff84c3e467e595c7f4eaca3a33efcca2472ddf5e284d"
+        },
+        "test_official": {
+          "images": 1500,
+          "archive_sha256": "46b3554e15e306b36439b4b04f30b45a0eb625b912ac73ebc63abff9c4fd44ae",
+          "images_sha256": "67c60b40b677ef1a2cdfd7266589e98bc341d48cf2376a6992ed2b102ec5ec61",
+          "meta_sha256": "fe5e19eaf6e5382dc943881dc1186a97a5c83cda19a162e887ebcaf5ef0cbf22"
+        }
+      }
+    },
+    {
+      "status": "passed",
+      "evaluator": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a04/code/evaluate_deadline_original.py",
+      "before_sha256": "71861e6b559065b21d67d2c0f9b545942b2a6a32ae9b03b189b06e94113516cf",
+      "after_sha256": "c44c39e1f7fbbd309ef4a5523cd8bef2024975301586bf9b1c0fb18052b67e29",
+      "cache": "/mnt/local/_data/deep-llms_th2/ce7454/evaluation/cache",
+      "manifest_sha256": "99ff5ec0bcb187ec7678ae436b0cc0cb7d9349d5431ca1bee8b39b8fc48cc42e",
+      "splits": {
+        "dev": 900,
+        "test_official": 1500
+      },
+      "training_changed": false,
+      "scope": "Future fixed-endpoint eval adds single-pass dev and official-test predictions; local labels score them after retrieval."
+    },
+    {
+      "status": "passed",
+      "evaluator": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-band-20261016-a01/code/evaluate_deadline.py",
+      "before_sha256": "71861e6b559065b21d67d2c0f9b545942b2a6a32ae9b03b189b06e94113516cf",
+      "after_sha256": "c44c39e1f7fbbd309ef4a5523cd8bef2024975301586bf9b1c0fb18052b67e29",
+      "cache": "/mnt/local/_data/deep-llms_th2/ce7454/evaluation/cache",
+      "manifest_sha256": "99ff5ec0bcb187ec7678ae436b0cc0cb7d9349d5431ca1bee8b39b8fc48cc42e",
+      "splits": {
+        "dev": 900,
+        "test_official": 1500
+      },
+      "training_changed": false,
+      "scope": "Future fixed-endpoint eval adds single-pass dev and official-test predictions; local labels score them after retrieval."
+    }
+  ]
+}

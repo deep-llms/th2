@@ -8,13 +8,20 @@ Download1f62e46 confirmed all3items18:27:54UTC into separate
 /mnt/local/_data/deep-llms_th2/ce7454/evaluation/raw. Training caches untouched.
 ManifestSHA99ff5ec0bcb187ec7678ae436b0cc0cb7d9349d5431ca1bee8b39b8fc48cc42e.
 
-Preparing verified isolated evaluation/cache and future fixed-endpoint evaluators
+Verified isolated evaluation/cache and future fixed-endpoint evaluators
 for all8 arms: existing clean+9processed validation plus single-pass dev/test
 predictions. Original guard/companion handoff remains unchanged. Labels stay
 local; retrieve filename-aligned logits and score locally against estimated dev
 and user-provided official test labels. Three local tests passed (both900/1500
 rows, no weight/BN mutations, exact-name scoring, untrusted-manifest rejection).
-Deployment/decoded-cache verification pending. Interim evaluation not yet queued.
+Deployment52fa43c verified18:31:28UTC: both decoded caches match manifest;
+all3 CPU tests passed on B200; both future evaluator patches report passed.
+All8 fits continue; no training/guard changes. Final checkpoints automatically
+predict BOTH splits. No scientific dev/test scores yet. Interim evaluation not
+yet queued. Commands#0. Evidence:
+docs/results/ce7454_external_evaluation_ready_20261016.json.
+Next: monitor training, retrieve final prediction JSONs, score labels locally
+and report dev/test accuracy plus confusion matrices separately.
 
 ---
 

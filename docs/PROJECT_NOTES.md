@@ -6651,3 +6651,17 @@ an audited CPU wait wrapper around exact saved evaluator; it waits until new
 companion verifies4–7free. Companion stops only its own children if original
 queue fails. Root q359-ce7454-band-20261016-a01; originalroot a04. No other
 GPU management or automatic follow-up authorized by these receipts.
+
+
+## CE7454 dev and official test evaluation ready —16October2026
+
+User authorized both sets. Image-only HF revision7117f0f096106515660b864ebd1ef5b5937cdb6f
+in nht10/cedar-finch-7454; separate B200 evaluation/raw and evaluation/cache.
+Verified900 dev and1500 official test images; no old test copy or training-cache
+changes. Labels remain local (estimated dev, user-provided official test).
+Deployment52fa43c verified18:31UTC: all3 remote CPU tests pass, exact manifest
+and decoded hashes saved, both groups of final evaluators patched successfully.
+All8 final checkpoints predict both splits automatically without TTA; retrieve
+filename-aligned predictions for local accuracy/confusion scoring. No scientific
+score yet; no interim evaluation queued. Existing GPU guard/handoff preserved.
+Evidence: docs/results/ce7454_external_evaluation_ready_20261016.json.
