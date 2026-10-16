@@ -63,6 +63,19 @@ class BandTests(unittest.TestCase):
         self.assertLess(s['estimated_seconds_with_margin'],30000)
         with self.assertRaises(RuntimeError):choose_epochs(r,100)
 
+    def test_odd_evaluation_shapes(self):
+        # Explicit even extension is an independent expected input. Covers
+        # odd width, odd height, and both from random social resizing.
+        for name in ('band_stem','phase_stem','band_stem_ibn'):
+            m=build_model(name).eval()
+            with torch.no_grad():
+                for h,w in ((201,200),(200,201),(201,203)):
+                    x=torch.randn(1,3,h,w)
+                    expected=torch.nn.functional.pad(x,(0,w%2,0,h%2),mode='replicate')
+                    result=m(x)
+                    self.assertTrue(torch.isfinite(result).all())
+                    torch.testing.assert_close(result,m(expected),rtol=0,atol=0)
+
     def test_release_wait_and_fail_closed(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'release.json'; done=threading.Event()

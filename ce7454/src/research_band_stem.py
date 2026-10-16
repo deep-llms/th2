@@ -53,6 +53,12 @@ class BandStemResNet(nn.Module):
         nn.init.zeros_(self.fc[1].bias)
 
     def forward(self, x):
+        if x.ndim != 4:
+            raise ValueError('Band stem input must be NCHW')
+        # Robustness evaluation includes arbitrary downscaled image sizes.
+        # Extend only an odd final row/column; native512 training is unchanged.
+        if x.shape[-2] % 2 or x.shape[-1] % 2:
+            x = torch.nn.functional.pad(x, (0, x.shape[-1] % 2, 0, x.shape[-2] % 2), mode='replicate')
         if self.transform == 'haar':
             x = haar_bands(x)
         else:
