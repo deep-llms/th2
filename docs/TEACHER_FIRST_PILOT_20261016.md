@@ -81,3 +81,22 @@ workflow. Preflight verifies completed prior evaluation, live communicating burn
 ownership, source checkpoint hash, environment, data and Accelerate cache.
 Existing `train_then_burn` rechecks and stops only verified burn workers, verifies
 empty GPUs, executes the jobs, and restores verified burns on success/failure.
+
+## First attempt and numerical-reference correction
+
+Attempt a01 passed checkpoint/data/environment preflight, copied and verified
+Accelerate, reclaimed exact known burns and verified all GPUs free. Its first
+smoke stopped before fitting: BF16 FA4 vs SDPA loss gap0.00184155 exceeded the
+newly introduced0.001 threshold; gradient relative L2 was0.010645. Burns were
+automatically restored and verified at11:01:49UTC. No full fits ran.
+
+Retry retains the same scientific scope, weights/data/branch initialization and
+fresh outputs. It uses the existing trained-checkpoint numerical tolerances from
+`scripts/check_proxy_trained_attention.py`: absolute loss0.01, gradient relative
+L2 0.03. To investigate rather than merely waive the first failure, it adds an
+independent full-FP32 math-SDPA forward/backward reference and requires BOTH BF16
+paths to agree with it within those tolerances. Failed a01 evidence is retained.
+
+Final paired validation is also repeated with dense SDPA for both fitted branches
+and A. The teacher signal must meet the same scientific gate in BOTH backends;
+the scientific effect threshold is not relaxed. All8-rank smokes must still pass.

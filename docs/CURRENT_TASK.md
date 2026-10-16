@@ -1,3 +1,22 @@
+## Teacher pilot smoke failure diagnosed; bounded retry prepared — 16 October 2026
+
+Delayed ea444c9 inspection arrived: a01 preflight passed, Accelerate copied and
+verified8-rank/BF16, exact original burns reclaimed, all GPUs free10:59:53UTC.
+First shallow smoke failed before optimizer fitting at11:00:38UTC on the new
+0.001 BF16 FA4/SDPA absolute-loss gate (observed0.00184155; gradientL2 0.010645).
+Supervisor restored verified communicating burns11:01:49UTC; same worker PIDs
+live11:13:36UTC. No full fits ran. Source log
+ temp/remote_logs/teacher-first-health-20261016-a01.log SHA256
+ fa9708e2183df181051e82dd740563af9b0bae53e84302c3ae5ff78d46c4f141.
+
+Retry uses established trained-checkpoint numerical tolerance0.01 loss/0.03
+relative gradient L2 and adds independent full-FP32 math-SDPA reference, requiring
+both BF16 backends to pass. Final held-out paired comparison repeated on both
+backends; scientific threshold unchanged and must pass in BOTH. Same frozen
+scope/data/checkpoint; failed smoke outputs preserved. Verify a01 final burn and
+released guard before retry; never restart over unknown workload.
+New root q359-teacher-first-20261016-a02 prepared, not yet submitted.
+
 ## Teacher-first pilot submitted; live execution unverified — 16 October 2026
 
 Launch51d370c acknowledged10:58:53UTC, root

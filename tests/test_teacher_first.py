@@ -120,5 +120,31 @@ class TeacherFirstTests(unittest.TestCase):
         for a,b,want in zip(*rank_grads,expected):
             torch.testing.assert_close((a+b)/2,want,atol=2e-7,rtol=2e-5)
 
+    def test_scientific_gate_requires_both_backends_and_matching_rows(self):
+        import json
+        from types import SimpleNamespace
+        from scripts.teacher_first_pilot import summarize,CHECKPOINT_HASH
+        from scripts.train_then_burn import digest
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'scope.json').write_text('{}')
+            for agree in (True,False):
+                out=root/str(agree)
+                for source in ('shallow','deep'):
+                    folder=out/('full-'+source);folder.mkdir(parents=True)
+                    value=29.9 if source=='shallow' else 29.8
+                    dense=value if agree or source=='shallow' else 30.1
+                    result=dict(status='passed',source=source,steps=256,scope_sha256=digest(root/'scope.json'),
+                        checkpoint_sha256=CHECKPOINT_HASH,frozen_backbone_unchanged=True,baseline_identity_exact=True,
+                        reload_exact=True,rows=[[value,30,10]]*512,sdpa_rows=[[dense,30,10]]*512,
+                        elapsed_seconds=1,baseline_nll=3,nll=value/10)
+                    (folder/'result.json').write_text(json.dumps(result))
+                summarize(SimpleNamespace(root=root,output=out))
+                result=json.loads((out/'summary.json').read_text())
+                self.assertEqual(result['scientific_gate'],'promising_teacher' if agree else 'stop_no_teacher_advantage')
+            out=root/'False';p=out/'full-deep/result.json'
+            changed=json.loads(p.read_text());changed['sdpa_rows'][0][2]=9;p.write_text(json.dumps(changed))
+            with self.assertRaisesRegex(ValueError,'Paired evaluation differs'):
+                summarize(SimpleNamespace(root=root,output=out))
+
 
 if __name__=='__main__':unittest.main()
