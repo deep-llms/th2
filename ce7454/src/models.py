@@ -1092,7 +1092,18 @@ def _texture_cov_patch_forward(self, x):
 
 
 def build_model(name, num_classes=3):
-    if name in ("srresnet", "srresnet_stats", "srresnet_wide_stats"):
+    if name in ("band_stem", "phase_stem", "band_stem_ibn"):
+        from research_band_stem import BandStemResNet
+        if num_classes != 3:
+            raise ValueError("Band stem study requires three classes")
+        model = BandStemResNet('phases' if name == 'phase_stem' else 'haar')
+        if name == 'band_stem_ibn':
+            # Preserve the stem's weak residual magnitudes; normalize only
+            # half of intermediate body channels for appearance robustness.
+            for layer in (model.layer1, model.layer2, model.layer3):
+                for block in layer:
+                    block.bn1 = IBN(block.bn1.num_features)
+    elif name in ("srresnet", "srresnet_stats", "srresnet_wide_stats"):
         from deadline_candidates import SRResNet
         model = SRResNet(stats=name.endswith("_stats"), num_classes=num_classes,
                          final_width=536 if name == "srresnet_wide_stats" else 512)

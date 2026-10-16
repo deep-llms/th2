@@ -1,3 +1,25 @@
+## CE7454 GPU4–7 extension authorized —16October2026
+
+User requests all8 GPUs and only promising additions. Four native512 scratch
+arms: band_strong, band_moderate (mandatoryJPEG60–100, mildRRC), phase_strong,
+band_ibn_strong. 11,291,651 parameters each; seed0/data-split42, originaltrainonly.
+Evidence/design: ce7454/band_plan.json. Six new CPU tests and six existing
+model/schedule tests passed. B20030-update native numerics + real one-epoch
+entrypoint/reload must pass before fresh scientific fitting; no smoke weights
+reused. Largest shared450/384/300/250/200/150 epochs fitting02:00UTC17Oct with
+30% margin+30min evaluation, fixed before fitting. All native512 from scratch.
+
+Original a04 four trainers/schedules/weights unchanged. Companion controller
+attaches an audited CPU-only wrapper around original future evaluator, which
+runs exact original code then waits for companion verified-free4–7 receipt.
+Existing supervisor remains single all8 burn owner. Companion watches original
+failure and cleans only its own child session. Never start a competing burn.
+Companion root q359-ce7454-band-20261016-a01; requires free4–7 and verified
+original guard owner/current source hashes before launch. Status: submitting,
+GPU smoke and actual fitting not yet verified. Do not duplicate launch.
+
+---
+
 ## CE7454 live status —17:07:19UTC16October (01:07SGT17October)
 
 Monitor7fefd31: four original scratch fits healthy on GPUs0–3 (95–98% utilization),

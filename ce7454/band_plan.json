@@ -1,0 +1,33 @@
+{
+  "status": "authorized; local CPU tests passed; B200 gates precede fitting",
+  "arms": {
+    "band_strong": "Haar all-band nonlinear stem, existing strong two-view augmentation",
+    "band_moderate": "Same model, mandatory JPEG60\u2013100 on processed view plus RRCp.2 area.64\u20131; no heavy blur/sharpen",
+    "phase_strong": "Same parameters and initial learned weights, spatial phases instead of Haar bands; strong augmentation",
+    "band_ibn_strong": "Haar strong plus IBN-a on bn1 of body stages1\u20133; preserve stem normalization"
+  },
+  "parameters_each": 11291651,
+  "scratch": true,
+  "native_resolution": 512,
+  "seed": 0,
+  "data_split_seed": 42,
+  "schedule": "Largest shared450/384/300/250/200/150 native512 epochs fitting02:00UTC17October, measured before fits, 30% margin+30min evaluation",
+  "reference_limit": "Existing four arms use256->512 training. New vs old is a combined architecture/native-resolution recipe comparison, not isolated architecture evidence.",
+  "research": [
+    {
+      "url": "https://arxiv.org/abs/2403.17608",
+      "lesson": "JPEG/size shortcuts warrant label-independent processing augmentation"
+    },
+    {
+      "url": "https://ws.binghamton.edu/fridrich/Research/SRNet.pdf",
+      "lesson": "Preserve weak local residuals before pooling; steganalysis is supporting analogy, not task evidence"
+    },
+    {
+      "url": "https://www.ecva.net/papers/eccv_2018/papers_ECCV/html/Xingang_Pan_Two_at_Once_ECCV_2018_paper.php",
+      "lesson": "Partial IN offers appearance robustness; may also erase forensic amplitude, hence keep a no-IN main arm"
+    }
+  ],
+  "other_report": "Reviewed LeDucDong_CE7454.pdf. Reported100% does not establish which component caused improvement; do not copy6-branch design or assume guaranteed win.",
+  "selection": "Only train-derived clean/processed holdout currently available; no test feedback or leaderboard submission",
+  "handoff": "Original four trainers untouched. Audited CPU wrapper around future original evaluator waits for new controller GPU4\u20137 free receipt. Existing all8 supervisor alone restores burns; companion watches original failure and cleans only its own session."
+}
