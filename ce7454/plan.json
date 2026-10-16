@@ -1,0 +1,109 @@
+{
+  "created_utc": "2026-10-16",
+  "status": "authorized; local six CPU checks passed; B200 CUDA tests and fits pending",
+  "scope": "CE7454 supplied-training-only scratch models, <=12.3M trainable parameters, one inference pass",
+  "data": {
+    "repo": "nht10/cedar-finch-7454",
+    "revision": "90bc1ed893c5dd6dc73f96d2d3e62cf417ffab5d",
+    "sha256": "ef57baacee12b92038a845308b0911dd71c5b564bdda43b516ed2f90fbb08ce3",
+    "bytes": 2085082891,
+    "public": true,
+    "verified": true
+  },
+  "sources": [
+    {
+      "url": "https://ws.binghamton.edu/fridrich/Research/SRNet.pdf",
+      "use": "learned deep unpooled stem for weak residual evidence; steganalysis evidence, not CE7454 result"
+    },
+    {
+      "url": "https://arxiv.org/abs/1807.09441",
+      "use": "IBN normalization precedent, already useful locally"
+    },
+    {
+      "url": "https://arxiv.org/abs/1906.06423",
+      "use": "high-resolution final fine-tuning precedent; transfer to forensic crops is a hypothesis"
+    },
+    {
+      "url": "https://arxiv.org/abs/2412.17671",
+      "use": "data shortcuts limit architecture gains; original generators and pretrained backbone are ineligible"
+    },
+    {
+      "url": "https://openaccess.thecvf.com/content_iccv_2015/html/Lin_Bilinear_CNN_Models_ICCV_2015_paper.html",
+      "use": "spatial statistics precedent only; proposed head uses diagonal variance, not full bilinear covariance"
+    }
+  ],
+  "arms": [
+    {
+      "name": "grip_nodown",
+      "role": "matched known backbone control",
+      "parameters": 11178051
+    },
+    {
+      "name": "srresnet",
+      "parameters": 11320835,
+      "role": "learned thin deep front; late spatial integration; average head"
+    },
+    {
+      "name": "srresnet_stats",
+      "parameters": 11322371,
+      "role": "same SR backbone with mean and standard deviation head; isolates head effect"
+    },
+    {
+      "name": "grip_nodown_stats",
+      "parameters": 11180739,
+      "role": "same GRIP backbone with early/intermediate mean+std and deep mean; one head"
+    },
+    {
+      "name": "srresnet_wide_stats",
+      "parameters": 12063299,
+      "role": "final stage widened 512 to 536 channels; capacity ablation"
+    }
+  ],
+  "optional": "grip_nodown_ibna_stats supports local source-only checkpoint adaptation; no eligible parent currently located on this machine",
+  "existing_evidence": "SR-ResNet was proposed but not run in research_20261015/W_steganalysis_architectures.md. This is a tested implementation of that direction, not a claim of a new literature invention.",
+  "main_risks": [
+    "Extra residual front may remove useful evidence or overfit",
+    "Pooling variance can encode processing shortcuts",
+    "Source validation is nearly saturated",
+    "Internal test labels are estimates; selecting repeatedly on them cannot establish independent generalization"
+  ],
+  "proposed_training": {
+    "base_recipe": "s119_scratch2v_e450_seed2/args.json (matched s27 recipe, change training seed to 0)",
+    "epochs": "450 preferred, else 300 or 200 based on measured slowest-arm runtime; fixed common schedule before any fit",
+    "crop": 256,
+    "source_batch_size": 32,
+    "views": 2,
+    "optim": "adam",
+    "lr": 0.0003,
+    "weight_decay": 0.0001,
+    "warmup_epochs": 0,
+    "schedule": "cosine",
+    "split_seed": 42,
+    "val_fraction": 0.1,
+    "final_stage": "same-architecture fine-tune 40 epochs at 512 with crop-upscale; exact runtime must fit deadline before launch",
+    "data_seed": 42,
+    "data_order": "New optional --data-seed makes the loader independent of model initialization; keep identical batch size and workers across arms. No weighted sampling in this study."
+  },
+  "proposed_selection": "freeze one endpoint and train-derived corruption suite before scoring; compare clean accuracy and equally weighted processed conditions. No fitting on inferred dev/test labels.",
+  "gpu_strategy": "parallel independent single-GPU runs preserve source batch and BatchNorm behavior; do not naively split batch32 over 8 DDP ranks",
+  "checks": {
+    "cpu_tests": 4,
+    "passed": true,
+    "covered": [
+      "parameter cap",
+      "finite gradients including flat stats",
+      "2 optimizer steps per new model",
+      "exact state-dict reload",
+      "full512 inference",
+      "function-preserving stats extension",
+      "SR head ablation shares exact initial backbone"
+    ]
+  },
+  "limitations": "Not a full code audit; no GPU performance or accuracy improvement established. No scientific training launched.",
+  "seed_policy": "One training seed (0), data/split seed42; no second-seed sweep. Other machines already run baseline seeds.",
+  "deadline_utc": "2026-10-17T07:55:00+00:00",
+  "target_completion_utc": "2026-10-17T02:00:00+00:00",
+  "handoff_review": "Source validation saturated; stats heads low-confidence; heavy augmentation preserved; no exact test-processing replay; comparison to matched control is not proof of beating stronger IBN/soup submission.",
+  "scratch_only": true,
+  "external_weights": false
+}
