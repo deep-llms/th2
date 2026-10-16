@@ -100,7 +100,8 @@ def retry_burn(predecessor, scope):
     return burn
 
 
-def prepare(root, source, reference, host, predecessor=None):
+def prepare(root, source, reference, host, predecessor=None, *, tuning_sources=None,
+            stop_receipt='user-stop-after-keyonly.json'):
     import shutil
     import socket
     import subprocess
@@ -113,7 +114,7 @@ def prepare(root, source, reference, host, predecessor=None):
     root, source = Path(root), Path(source)
     if socket.gethostname() != host or root.exists():
         raise ValueError('Wrong host or output already exists')
-    stop = read(source / 'user-stop-after-keyonly.json')
+    stop = read(source / stop_receipt)
     state = read(source / 'supervised/supervisor.json')
     burn = read(source / 'supervised/burn-verified.json')
     if (stop['status'] not in ('stop_requested', 'already_terminal') or not state.get('finished_at')
@@ -126,7 +127,11 @@ def prepare(root, source, reference, host, predecessor=None):
     # Existing benchmark and environment preflight is reused unchanged.
     root.mkdir(parents=True)
     preflight(root, reference)
-    scope, rows = build_scope(source / 'supervised/run', reference)
+    if tuning_sources is None:
+        scope, rows = build_scope(source / 'supervised/run', reference)
+    else:
+        from scripts.p7_tuning_evaluation import build_scope as build_tuning_scope
+        scope, rows = build_tuning_scope(tuning_sources, reference)
     burn_source = source
     if predecessor is not None:
         burn_source = Path(predecessor)
@@ -168,5 +173,8 @@ if __name__ == '__main__':
     p.add_argument('--root', required=True); p.add_argument('--source', required=True)
     p.add_argument('--reference', required=True); p.add_argument('--host', required=True)
     p.add_argument('--predecessor', help='Explicit failed evaluation root for a fresh retry')
+    p.add_argument('--tuning-sources', nargs='+', help='Completed tuning run directories, frozen before evaluation')
+    p.add_argument('--stop-receipt', default='user-stop-after-keyonly.json')
     a = p.parse_args()
-    prepare(a.root, a.source, a.reference, a.host, a.predecessor)
+    prepare(a.root, a.source, a.reference, a.host, a.predecessor,
+            tuning_sources=a.tuning_sources, stop_receipt=a.stop_receipt)
