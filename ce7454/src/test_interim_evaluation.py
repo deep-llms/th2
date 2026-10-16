@@ -47,4 +47,20 @@ class InterimTests(unittest.TestCase):
             self.assertEqual(checkpoint_for('grip_nodown',ORIGINAL/'supervised/run/study').parent.name,'grip_nodown_base')
 
 
+class GateTests(unittest.TestCase):
+    def test_gate_releases_only_after_own_evaluator_exits(self):
+        import json
+        from extension_gate import stop_interim
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)
+            (p/'released.json').write_text(json.dumps({'own_evaluator_exited':True}))
+            stop_interim(p,timeout=1)
+            self.assertTrue((p/'STOP').exists())
+            (p/'released.json').write_text('{}')
+            with self.assertRaises(RuntimeError):stop_interim(p,timeout=1)
+    def test_gate_timeout_fails_closed(self):
+        from extension_gate import stop_interim
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(RuntimeError):stop_interim(Path(d),timeout=0)
+
 if __name__=='__main__':unittest.main()

@@ -1,3 +1,30 @@
+## CE7454 interim evaluation smoke passed; watcher authorized —19:14UTC16October
+
+User requests30min agent wake/monitor, earlier dev AND official test evaluation,
+without stopping any training. Explicitly allows concurrent eval on same B200.
+Smoke a6bf32b at19:10:30–19:10:56UTC verified both900dev/1500test predictions:
+GRIP epoch296 base256: dev95.7778%, test94.20%; Haarstrong epoch182 native512:
+dev96.6667%, test90.3333%. Not matched training stages or final selection.
+Dev labels estimated; test user-provided official, filename-joined locally only.
+Evidence docs/results/ce7454_interim_smoke_20261016.json; raw log ignored
+ temp/remote_logs/ce7454-interim-smoke-a01.log SHA
+9faccea4202dc40225cde4e1a012e27c5de0411a3927aba4086a23f2b84edbc6.
+All8 original trainer PIDs unchanged before/after; no model/BN/grad mutation;
+GRIP9.75s/1.72GB allocated, Haar5.58s/.412GB. Several training epochs advanced;
+smoke duration shorter than one GRIP epoch, recheck its later progress.
+
+Preparing periodic watcher root q359-ce7454-interim-watch-20261016-a01.
+Single small GPU0 evaluator, batch8, cap10%memory, each1800seconds all8arms.
+Snapshot last.pt with stable-read/stat+load verification; immutable copies saved.
+No training stop/restart/schedule/weights changes. Stop on original failure or
+02:00UTC deadline. Original future evaluation gate requests watcher STOP and
+waits for its evaluator exit before final eval/burn handoff; band4–7 untouched.
+Local CLI resume timer for THIS existing conversation is being prepared, not yet
+verified running. Do not claim scheduled agent wake until timer is installed.
+Test scores reported separately; never choose training changes from test scores.
+
+---
+
 ## Dev AND official test transfer/evaluation authorized —16October2026
 
 User explicitly requested transfer both sets and evaluation on BOTH. HF public

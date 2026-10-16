@@ -48,7 +48,11 @@ def observe(output, cycle):
     progress = {}
     for name, _, root in ARMS:
         progress[name] = {}
-        for path in root.glob(name+'*/log.csv'):
+        folders = [root/name] if root == BAND/'study' else [root/(name+'_base'),root/(name+'_full512')]
+        for folder in folders:
+            path = folder/'log.csv'
+            if not path.exists():
+                continue
             lines = path.read_text().splitlines()
             progress[name][str(path)] = lines[-2:]
     result = {'utc': datetime.now(timezone.utc).isoformat(), 'cycle': cycle,
