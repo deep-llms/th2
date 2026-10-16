@@ -305,3 +305,22 @@ final evaluation and burn verification roughly07:15–07:30SGT. Existing timer
 continues, next06:45SGT. Commands#0 after receipt. Evidence:
 results/ce7454_watch_review_20261016_a06.json; full local predictions in
 ignored temp/ce7454_eval_upload/final-review-a06/.
+
+## Scheduled review —22:47UTC /06:47SGT: final two fine-tunes
+
+SRNet33/40 and SRNetstats32/40 full512 epochs, after450base each. Same known
+trainer PIDs1305002/1305226 onGPUs1/2,99–100% approximate utilization;
+134.4/135.1seconds per epoch. No errors. Six final prediction sets reverified
+against receipts and local labels; results identical to06:16SGT table above.
+
+Companion remains passed/released, periodic watcher remains stopped as intended.
+Original supervisor/guard active; original complete and burn receipt absent.
+No GPU-management or training changes. Expected remaining training16–18minutes
+from06:47SGT (~07:03–07:05SGT), then final evaluation/burn verification.
+Allow~07:15–07:30SGT. Existing timer next07:15SGT should check all final scores,
+original exit/completion and actual advancing burn collective cycles. Do not
+stop timer or infer completion from PID absence before verification.
+
+Commands#0 after receipt. Evidence: results/ce7454_watch_review_20261016_a07.json;
+local log temp/remote_logs/ce7454-watch-review-a07.log. Dev-only decisions;
+no new fits, no changes based on official-test results.
