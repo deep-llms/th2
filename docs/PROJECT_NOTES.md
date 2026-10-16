@@ -6637,3 +6637,17 @@ A new local BandStemResNet prototype (11.292M) preserves all Haar bands and
 processes them nonlinearly before one shared body. It is NOT queued/trained.
 Classmate100% report reviewed critically: baseline already99.467%, no retrained
 component ablations establishing cause. New proposal is not a reproduction.
+
+
+## CE7454 eight independent fits verified —16October2026
+
+User authorized four additional prospective candidates on GPUs4–7: Haar strong,
+Haar mandatoryJPEG/mildRRC, spatial-phase strong, Haar IBN-a strong. All11.292M,
+native512 from random weights, seed0/data42,450epochs, single-model inference.
+Existing GPUs0–3 scratch fits untouched. Engineering gates and real epochs
+verified17:28UTC; evidence docs/results/ce7454_eight_start_20261016.json.
+One original supervisor remains all8 burn owner: future original evaluator has
+an audited CPU wait wrapper around exact saved evaluator; it waits until new
+companion verifies4–7free. Companion stops only its own children if original
+queue fails. Root q359-ce7454-band-20261016-a01; originalroot a04. No other
+GPU management or automatic follow-up authorized by these receipts.

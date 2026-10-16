@@ -1,0 +1,272 @@
+{
+  "observed_utc": "2026-10-16T17:28:24+00:00",
+  "launch_commit": "2c875ba",
+  "monitor_commit": "17b143d",
+  "status": "eight scientific fits running; not final accuracy results",
+  "log_sha256": "1bf2dae39ff59f21d75646fbb107deb567e4d548da345ec2ce67dc424c867eb1",
+  "new_arm_epochs": 450,
+  "new_arm_completed_epochs": 3,
+  "gpu_utilization_percent": [
+    96,
+    93,
+    96,
+    96,
+    94,
+    93,
+    91,
+    94
+  ],
+  "new_native512_numerics": {
+    "smoke_band_ibn_strong": {
+      "model": "band_stem_ibn",
+      "parameters": 11291651,
+      "steps": 30,
+      "source_batch_size": 16,
+      "views": 2,
+      "crop": 512,
+      "median_step_seconds_after_warmup": 0.043586498126387596,
+      "mean_end_to_end_step_seconds_after_warmup": 0.044197806315496566,
+      "full512_eval_batch32_seconds": 0.012304452015087008,
+      "gpu_allocated_peak_gib": 5.978623390197754,
+      "fp32_loss": 0.46607470512390137,
+      "bf16_loss": 0.4660874605178833,
+      "gradient_relative_l2": 0.03223097696900368,
+      "gradient_cosine": 0.9994827508926392,
+      "numerics": {
+        "tiny64_diagnostic": {
+          "shape": [
+            2,
+            3,
+            64,
+            64
+          ],
+          "fp32_loss": 1.0927753448486328,
+          "bf16_loss": 1.094440221786499,
+          "gradient_relative_l2": 0.2513882517814636,
+          "gradient_cosine": 0.9679000377655029,
+          "passed": false
+        },
+        "native_first8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 0.46607470512390137,
+          "bf16_loss": 0.4660874605178833,
+          "gradient_relative_l2": 0.03223097696900368,
+          "gradient_cosine": 0.9994827508926392,
+          "passed": true
+        },
+        "native_last8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.117612600326538,
+          "bf16_loss": 1.1167349815368652,
+          "gradient_relative_l2": 0.07050472497940063,
+          "gradient_cosine": 0.9976156949996948,
+          "passed": true
+        }
+      },
+      "full512_reload_exact": true,
+      "torch": "2.13.0+cu130",
+      "cuda": "13.0",
+      "note": "Compute timing includes finite-gradient checks; excludes loader wait. Not an accuracy result."
+    },
+    "smoke_band_moderate": {
+      "model": "band_stem",
+      "parameters": 11291651,
+      "steps": 30,
+      "source_batch_size": 16,
+      "views": 2,
+      "crop": 512,
+      "median_step_seconds_after_warmup": 0.03734694398008287,
+      "mean_end_to_end_step_seconds_after_warmup": 0.03792910293675959,
+      "full512_eval_batch32_seconds": 0.01085605495609343,
+      "gpu_allocated_peak_gib": 5.977719306945801,
+      "fp32_loss": 1.4003100395202637,
+      "bf16_loss": 1.4018467664718628,
+      "gradient_relative_l2": 0.010198901407420635,
+      "gradient_cosine": 0.9999568462371826,
+      "numerics": {
+        "tiny64_diagnostic": {
+          "shape": [
+            2,
+            3,
+            64,
+            64
+          ],
+          "fp32_loss": 1.4926707744598389,
+          "bf16_loss": 1.4929600954055786,
+          "gradient_relative_l2": 0.030829960480332375,
+          "gradient_cosine": 0.9995259046554565,
+          "passed": true
+        },
+        "native_first8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.4003100395202637,
+          "bf16_loss": 1.4018467664718628,
+          "gradient_relative_l2": 0.010198901407420635,
+          "gradient_cosine": 0.9999568462371826,
+          "passed": true
+        },
+        "native_last8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.3840867280960083,
+          "bf16_loss": 1.3843355178833008,
+          "gradient_relative_l2": 0.023229502141475677,
+          "gradient_cosine": 0.9997310638427734,
+          "passed": true
+        }
+      },
+      "full512_reload_exact": true,
+      "torch": "2.13.0+cu130",
+      "cuda": "13.0",
+      "note": "Compute timing includes finite-gradient checks; excludes loader wait. Not an accuracy result."
+    },
+    "smoke_band_strong": {
+      "model": "band_stem",
+      "parameters": 11291651,
+      "steps": 30,
+      "source_batch_size": 16,
+      "views": 2,
+      "crop": 512,
+      "median_step_seconds_after_warmup": 0.037097624968737364,
+      "mean_end_to_end_step_seconds_after_warmup": 0.03793058262206614,
+      "full512_eval_batch32_seconds": 0.01085068890824914,
+      "gpu_allocated_peak_gib": 5.977719306945801,
+      "fp32_loss": 1.4003100395202637,
+      "bf16_loss": 1.4018467664718628,
+      "gradient_relative_l2": 0.010198901407420635,
+      "gradient_cosine": 0.9999568462371826,
+      "numerics": {
+        "tiny64_diagnostic": {
+          "shape": [
+            2,
+            3,
+            64,
+            64
+          ],
+          "fp32_loss": 1.4926707744598389,
+          "bf16_loss": 1.4929600954055786,
+          "gradient_relative_l2": 0.030829960480332375,
+          "gradient_cosine": 0.9995259046554565,
+          "passed": true
+        },
+        "native_first8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.4003100395202637,
+          "bf16_loss": 1.4018467664718628,
+          "gradient_relative_l2": 0.010198901407420635,
+          "gradient_cosine": 0.9999568462371826,
+          "passed": true
+        },
+        "native_last8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.3840867280960083,
+          "bf16_loss": 1.3843355178833008,
+          "gradient_relative_l2": 0.023229502141475677,
+          "gradient_cosine": 0.9997310638427734,
+          "passed": true
+        }
+      },
+      "full512_reload_exact": true,
+      "torch": "2.13.0+cu130",
+      "cuda": "13.0",
+      "note": "Compute timing includes finite-gradient checks; excludes loader wait. Not an accuracy result."
+    },
+    "smoke_phase_strong": {
+      "model": "phase_stem",
+      "parameters": 11291651,
+      "steps": 30,
+      "source_batch_size": 16,
+      "views": 2,
+      "crop": 512,
+      "median_step_seconds_after_warmup": 0.036461537005379796,
+      "mean_end_to_end_step_seconds_after_warmup": 0.036944712502881887,
+      "full512_eval_batch32_seconds": 0.010503209196031094,
+      "gpu_allocated_peak_gib": 5.977719306945801,
+      "fp32_loss": 1.5546830892562866,
+      "bf16_loss": 1.5539426803588867,
+      "gradient_relative_l2": 0.017749184742569923,
+      "gradient_cosine": 0.999855637550354,
+      "numerics": {
+        "tiny64_diagnostic": {
+          "shape": [
+            2,
+            3,
+            64,
+            64
+          ],
+          "fp32_loss": 1.3042140007019043,
+          "bf16_loss": 1.3051574230194092,
+          "gradient_relative_l2": 0.08137936890125275,
+          "gradient_cosine": 0.9966838359832764,
+          "passed": true
+        },
+        "native_first8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.5546830892562866,
+          "bf16_loss": 1.5539426803588867,
+          "gradient_relative_l2": 0.017749184742569923,
+          "gradient_cosine": 0.999855637550354,
+          "passed": true
+        },
+        "native_last8": {
+          "shape": [
+            8,
+            3,
+            512,
+            512
+          ],
+          "fp32_loss": 1.301417350769043,
+          "bf16_loss": 1.2999954223632812,
+          "gradient_relative_l2": 0.022394796833395958,
+          "gradient_cosine": 0.9997491240501404,
+          "passed": true
+        }
+      },
+      "full512_reload_exact": true,
+      "torch": "2.13.0+cu130",
+      "cuda": "13.0",
+      "note": "Compute timing includes finite-gradient checks; excludes loader wait. Not an accuracy result."
+    }
+  },
+  "original_completed_epochs": {
+    "grip_nodown": 78,
+    "grip_nodown_stats": 68,
+    "srresnet": 59,
+    "srresnet_stats": 59
+  },
+  "handoff": "original all8 supervisor waits for verified companion4\u20137 release; no original fit restarted"
+}

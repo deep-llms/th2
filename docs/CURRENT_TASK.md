@@ -1,3 +1,38 @@
+## CE7454 ALL EIGHT training —verified17:28:24UTC16October
+
+Launch2c875ba, health17b143d. All GPUs91–96% utilization. Existing a04 fits
+unchanged: GRIP78, GRIPstats68, SR59, SRstats59 of450 base epochs, then40full512.
+New root q359-ce7454-band-20261016-a01: band_strong(GPU4), band_moderate(5),
+phase_strong(6), band_ibn_strong(7); all completed3/450 native512 scratch epochs,
+finite/decreasing training losses. Same11,291,651 parameters each, seed0,
+data/split42. Schedule450 chosen from throughput BEFORE fresh fits. New training
+~31.5–37.4sec/epoch: expected05:25–06:10SGT + evaluation; conservative new-group
+budget7h08 ->~08:35SGT. Whole8 conservative by10:00SGT17Oct.
+
+Six new tests passed both CPUdev and B200env; six old tests passed CPUdev.
+All4 passed30-update finite-gradient checks, TWO native512 FP32/BF16 gates,
+exact full512 checkpoint reload, actual one-epoch training/validation/reload.
+Native gradientrelativeL2 max.0705, lossdifference max.00154. IBN tiny64
+out-of-training-resolution diagnostic fails. This is retained, not hidden;
+preregistered gate uses actual512 resolution, tolerances unchanged. All actual
+training/evaluation is512 for these new arms. No smoke weights reused.
+
+Preflight verified GPUs4–7 free and original supervisor identity/sourcehashes.
+Original trainer/model/data/schedule files remain byte-identical. Only its future
+evaluator entrypoint wrapped: run exact preserved evaluator subprocess, then
+CPU-wait for companion verified-free receipt. Existing supervisor alone owns
+all8 burn restoration; companion watches original failure and cleans only its
+own child session. Do not launch another burn/supervisor over these fits.
+Do not reattach: original extension-lease already held; source manifest now
+has intentional audited evaluator wrapper patch. No new jobs queued beyond8.
+
+Evidence docs/results/ce7454_eight_start_20261016.json and log SHA
+1bf2dae39ff59f21d75646fbb107deb567e4d548da345ec2ce67dc424c867eb1.
+Commands#0 leaves both detached coordinators active. Next: read-only health
+or final results; no guaranteed task win from initial losses/engineering tests.
+
+---
+
 ## CE7454 GPU4–7 extension authorized —16October2026
 
 User requests all8 GPUs and only promising additions. Four native512 scratch
