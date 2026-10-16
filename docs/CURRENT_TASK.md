@@ -1,3 +1,27 @@
+## CE7454 overnight task COMPLETE —07:16SGT17October2026
+
+Monitor78db321 verifies all8 arms completed and passed final evaluation.
+Original queue exited0 at07:05:08SGT; companion completed06:09SGT.
+Final dev/test: GRIP96.78/96.13; GRIPstats94.67/94.73; SR97.11/95.87;
+SRstats97.56/95.00; Haarstrong96.78/94.53; HaarIBN93.56/91.20;
+moderate97.89/71.67; spatialphase96.44/95.60. Exact900/1500filenames,
+checkpoint identity, manifest, allpredictionSHA/logits verified locally.
+Dev labels estimated; test reporting only. No new training/submissions.
+
+Burn restored07:06:19SGT, reverified07:16SGT after supervisor exit. Eight
+ranks ready/probesum36, one worker per GPU(PIDs1309669–1309676), collective
+cycles650->660->670 andpayload721.73->732.83->743.94GiB;155212MiB/GPU.
+Original supervisor verified all8free before burn; no lingering training.
+Periodic watcher released05:32SGT normally. Requested local queued timer
+STOP after all completion and burn checks. Commands#0; do not restart watchers.
+
+Evidence docs/results/ce7454_final_20261017.json and full comparison in
+docs/CE7454_OVERNIGHT_WATCH.md. Local predictions/receipts:
+temp/ce7454_eval_upload/final-review-a08/. Await user direction for any new
+training. Use dev for recommendations; no automatic all8GPU follow-up queued.
+
+---
+
 ## Scheduled CE7454 review —22:47UTC16October /06:47SGT17October
 
 Monitor407a76a: SRNet33/40 and SRNetstats32/40 full512 after450base, same

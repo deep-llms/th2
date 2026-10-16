@@ -324,3 +324,43 @@ stop timer or infer completion from PID absence before verification.
 Commands#0 after receipt. Evidence: results/ce7454_watch_review_20261016_a07.json;
 local log temp/remote_logs/ce7454-watch-review-a07.log. Dev-only decisions;
 no new fits, no changes based on official-test results.
+
+## Final completion verified —07:16SGT17October2026
+
+All eight arms completed and passed final evaluation. Original four-arm queue
+exited0 at23:05:08UTC16October/07:05SGT17October; both study-complete
+receipts passed. Companion finished06:09SGT and verified4–7 free. Final
+checkpoint identities and all16 prediction files verified locally: exact
+900dev/1500official-test names, manifest, receiptSHA, finite logits/argmax.
+
+| Arm | Training | Final dev | Final official test |
+|---|---|---:|---:|
+| grip_nodown | 450base256 +40fine-tune512 | 96.78% (871/900) | 96.13% (1442/1500) |
+| grip_nodown_stats | 450base256 +40fine-tune512 | 94.67% (852/900) | 94.73% (1421/1500) |
+| srresnet | 450base256 +40fine-tune512 | 97.11% (874/900) | 95.87% (1438/1500) |
+| srresnet_stats | 450base256 +40fine-tune512 | 97.56% (878/900) | 95.00% (1425/1500) |
+| band_ibn_strong | 450native512 | 93.56% (842/900) | 91.20% (1368/1500) |
+| band_moderate | 450native512 | 97.89% (881/900) | 71.67% (1075/1500) |
+| band_strong | 450native512 | 96.78% (871/900) | 94.53% (1418/1500) |
+| phase_strong | 450native512 | 96.44% (868/900) | 95.60% (1434/1500) |
+
+Dev labels are best estimates (known residual uncertainty); official test is
+reported separately, never used for training changes. No best-interim selection:
+these are the fixed final endpoints. SRNet-stats is strongest on estimated dev
+among the original four. Moderate is highest overall, only3dev images ahead
+of SRNet-stats; do not overstate that small difference. No new fit or extension
+automatically launched, and no course submission published.
+
+Original supervisor verified all8 GPUs free after all children exited, then
+restored the authorized burn at23:06:19UTC/07:06SGT. Independent07:16SGT
+check confirms all8rank readiness with world_size8 and probe sum36; rank0
+collectives advance650->660->670cycles and721.73->732.83->743.94GiB.
+Eight GPU worker PIDs1309669–1309676 match the verified receipt, one per GPU;
+each155212MiB occupied and100%utilization. Supervisor completed; burn
+persists independently. This is live collective evidence, not utilization alone.
+
+Periodic evaluator released normally05:32SGT;40interim evaluations passed.
+After final results AND burn handoff verification, requested local timer stop
+via temp/ce7454_queue_watch_20261016/STOP. No new monitors/timers. Commands#0.
+Evidence: results/ce7454_final_20261017.json; final predictions and completion
+receipts locally in ignored temp/ce7454_eval_upload/final-review-a08/.
