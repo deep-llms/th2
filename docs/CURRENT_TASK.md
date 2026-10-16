@@ -1,3 +1,19 @@
+## Teacher-first retry active; first8-rank smoke passed — 16 October 2026
+
+Retry67f7271 root q359-teacher-first-20261016-a02. Read-onlyb5e6097 at11:22:47UTC
+confirms preflight passed with identical frozen scope/checkpoint/data, copied and
+verified Accelerate, exact failed-smoke burns reclaimed and all GPUs free11:21:17.
+Shallow2-step smoke passed in64.2s total (7.64s fitting); deep smoke running.
+Shallow numerical gate: FA4 vs SDPA loss0.00184155/gradientL2 0.010645;
+FA4 vs full-FP32 math loss0.00275373/gradientL2 0.012451; SDPA vsFP32
+loss0.00091219/gradientL2 0.012082. All below existing0.01/0.03 tolerances.
+Zero-initialized identity, unchanged frozen baseline and branch reload exact.
+Six localCPU tests passed. No full scientific result yet. Deep smoke must pass
+before both256-step fits; same15min job caps/automatic verified-burn restoration.
+Log temp/remote_logs/teacher-first-health-20261016-a02.log SHA256
+ e279980fdcc92182d10099afea56846d0c48f3ef378ecf9e1ac612a58ee6adc0.
+Commands returned#0; persistent supervisor continues independently. Do not restart.
+
 ## Teacher pilot smoke failure diagnosed; bounded retry prepared — 16 October 2026
 
 Delayed ea444c9 inspection arrived: a01 preflight passed, Accelerate copied and
