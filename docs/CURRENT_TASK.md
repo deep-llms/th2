@@ -1,3 +1,42 @@
+## CE7454 scratch-only study and research — 16 October 2026
+
+Active source project `/disk/thuat/CE7454`; user confirmed th2/q359 B200 and
+public HF supplied-training-only upload. No pretrained weights/external images.
+HF nht10/cedar-finch-7454 train archive SHA256
+`ef57baacee12b92038a845308b0911dd71c5b564bdda43b516ed2f90fbb08ce3`;
+verified/decoded 15k images at `/mnt/local/_data/deep-llms_th2/ce7454/cache`.
+New isolated ce7454_env torch2.13.0/torchvision0.28.0; existing burn env unchanged.
+
+Authorized five single-GPU arms seed0: GRIP control, SRResNet, SRResNet stats,
+GRIP multi-depth stats, SRResNet wide stats (12.063M; all <=12.3M).
+Data/split seed42; 13,500 fit /1,500 validation, no dev/test fitting.
+Deadline 17 October07:55UTC; target02:00UTC per handoff selection window.
+Benchmark chooses common450/300/200 base epochs +40 full512 epochs before fits,
+with 30% runtime margin/evaluation reserve; fails if none fits. Never shortens
+an in-progress schedule. All initial fits random weights;512 continues its OWN
+scratch checkpoint. Six CPU checks passed locally and on B200.
+
+First launch e56fff1/a01 failed in smoke-only FP32 reference after30 benchmark
+updates: loop fetched a raw fifth-dimension batch before break. No scientific
+fit. islice fix preserves last processed4D batch. Original burns reclaimed via
+exact worker identities, GPUs verified free; failure restored verified burns
+at16:32:44UTC. Evidence temp/remote_logs/ce7454-health-20261016-a01.log.
+Retry7ba47fb/a02 accepted16:36UTC; fresh output root
+`/mnt/local/_outputs/deep-llms_th2/q359-ce7454-scratch-20261016-a02`.
+Explicit verified decoded-cache reuse; smoke weights never reused for fitting.
+Code frozen under root/code; supervisor resumes burns on success/failure.
+Latest state: retry submitted; successful CUDA gates/full fits not yet verified.
+Do not relaunch over this queue. Next: read-only health, measured budget/ETA.
+
+User also requested independent architecture research using classmate report
+and handoff critically. Local prototype src/research_band_stem.py (11,291,651
+parameters) passed CPU checks; not in B200 queue. Retains all Haar bands with
+separate nonlinear processing before fusion, one random CNN and3-class head.
+Research proposal/risks/sources in runs/band_stem_research_20261016.json.
+No new training authorization inferred solely from this research request.
+
+---
+
 ## Teacher-first pilot complete: no deep-specific advantage — 16 October 2026
 
 Retrya02 completed all five jobs11:26:05UTC. Read-only40a55f2 at11:27:17UTC
