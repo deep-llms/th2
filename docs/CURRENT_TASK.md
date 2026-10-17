@@ -1,3 +1,25 @@
+## Full-model real-data template pilot COMPLETE — 17 October 2026
+
+Corrected run931839d, q359-template-realdata-20261017-a02, passed all12 stages.
+Full28-layer Qwen3-0.6B scratch baseline on existing English data: SDPA and FA4,
+each all8 GPUs,2048 context,microbatch16,GAS4,BF16,activation checkpointing,
+seed42. Native checkpoint25→resume50; schedule28600/warmup1430 verified from
+saved recipes AND logged learning rates. Finite gradients, all8 RNG files and
+standalone/periodic validation agreement verified. No OOM; observed~74GiB/GPU.
+Final held-out loss: SDPA11.692120793; FA4 11.692118750,194222 valid targets.
+These are pipeline/capacity checks, not long-run or research-quality evidence.
+
+Queue completed19:22:38UTC; supervisor returned0 and restored verified burns
+19:23:49. Read-only19:26:07 confirmed all8 matching burn workers, released guard,
+and collective cycles90→170. commands.sh #0. No env/driver changes or downloads.
+Initial a01 was stopped for a conflicting warmup option; its outputs were not
+resumed and are excluded. Corrected helper now checks effective HF scheduling
+before reclaiming GPUs. Native training core was unchanged.
+Evidence docs/results/template_realdata_pilot_20261017.json and local receipts
+/disk/thuat/deep2shallow/temp/template-realdata-20261017/.
+
+---
+
 ## Real-data pilot warmup corrected; fresh run submitted — 17 October 2026
 
 Initial pilot a01 ran normally on all eight GPUs (~75,432MiB each), with finite

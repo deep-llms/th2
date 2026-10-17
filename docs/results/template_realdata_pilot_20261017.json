@@ -1,0 +1,2202 @@
+{
+  "status": "passed",
+  "launch_commit": "931839d",
+  "checked_at": "2026-10-17T19:26:07.926072+00:00",
+  "source_receipts": {
+    "launch-a02.log": {
+      "path": "/disk/thuat/deep2shallow/temp/template-realdata-20261017/launch-a02.log",
+      "sha256": "ea0c1d231a6616a2b2bd9d4f65c6263675dfdee7c9a04ec9f4d744e4ea4abc16"
+    },
+    "review-a05.log": {
+      "path": "/disk/thuat/deep2shallow/temp/template-realdata-20261017/review-a05.log",
+      "sha256": "311faca335a32561049c1569761d9d2ca0ac78d0ac7c48d35890be96c9ce526b"
+    },
+    "final-a01.log": {
+      "path": "/disk/thuat/deep2shallow/temp/template-realdata-20261017/final-a01.log",
+      "sha256": "d18c8b889ba46431687a5a4c17dec58bd92a84ef4b2b9fbadc6e5353f6c6ed1b"
+    }
+  },
+  "checks": [
+    "12 queue stages successful",
+    "native 25-to-50 resume",
+    "all eight RNG files",
+    "exact declared warmup in logs",
+    "finite gradient norms",
+    "periodic/standalone loss equality",
+    "eight-GPU burn handoff and progressing collectives"
+  ],
+  "recipes": [
+    {
+      "backend": "sdpa",
+      "execution": {
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "deterministic_algorithms": false,
+        "device_type": "cuda",
+        "distributed_type": "DistributedType.MULTI_GPU",
+        "float32_matmul_precision": "highest",
+        "global_batch_size": 512,
+        "mixed_precision": "bf16",
+        "train_batch_size_per_process": 16,
+        "world_size": 8
+      },
+      "warmup_steps": 1430.0,
+      "max_steps": 28600
+    },
+    {
+      "backend": "fa4",
+      "execution": {
+        "cuda_matmul_allow_tf32": false,
+        "cudnn_allow_tf32": true,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": false,
+        "deterministic_algorithms": false,
+        "device_type": "cuda",
+        "distributed_type": "DistributedType.MULTI_GPU",
+        "float32_matmul_precision": "highest",
+        "global_batch_size": 512,
+        "mixed_precision": "bf16",
+        "train_batch_size_per_process": 16,
+        "world_size": 8
+      },
+      "warmup_steps": 1430.0,
+      "max_steps": 28600
+    }
+  ],
+  "inspection": {
+    "host": "thiennh-p6-q359-worker-0",
+    "time": "2026-10-17T19:26:07.926072+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354936
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354937
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354938
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354939
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354940
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354941
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354942
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          1354943
+        ]
+      }
+    ],
+    "workers": [
+      1354936,
+      1354937,
+      1354938,
+      1354939,
+      1354940,
+      1354941,
+      1354942,
+      1354943
+    ],
+    "stop_roots": [
+      1354837
+    ],
+    "processes": {
+      "1354936": {
+        "pid": 1354936,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "6c4816d4796b3074602a6898dabedddaed8d7779fdcbe358ec120a30c3041527",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354937": {
+        "pid": 1354937,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "036a102efd68550d6690d09806ba361c2e3ee9fd61945331e75b38ed549be151",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354938": {
+        "pid": 1354938,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "0c4a39a61861f8260904d49c253189ea71dcc3a962bc1674b4c890d3d19ae628",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354939": {
+        "pid": 1354939,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "479fb928352d913e415dc91350d5c77b2b4745373d474eb828ce6cc852ab67d2",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354940": {
+        "pid": 1354940,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "255c09c6e7302bef8e523d5bbb176896478874ee86ae3c4f0b1716606002d45f",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354941": {
+        "pid": 1354941,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "982e7bba1df523a7b48dfadca6cd0a7ee50d0ae7633a1ff364014396c7a8ac2f",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354942": {
+        "pid": 1354942,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "d0108ee178f66d18b039dbff1078579eb209b797987d4cd0e932a21ab40c5cfa",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354943": {
+        "pid": 1354943,
+        "ppid": 1354837,
+        "start_ticks": 121963478,
+        "command_sha256": "70ebe55f11c61690c60ac41999f7c61cc730da0b99032918fbf6df3ee7ba52ee",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "1354837": {
+        "pid": 1354837,
+        "ppid": 5625,
+        "start_ticks": 121963354,
+        "command_sha256": "6feee2285b09b4aa5d627bae160029837e69894b22742c8347e922103d53282a",
+        "exe": "/mnt/local/conda-py311/envs/eval_fa4/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/eval_fa4/bin/python",
+          "/mnt/local/deep-llms_th2/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "guard_disabled": false
+  },
+  "results": {
+    "supervisor.json": {
+      "started_at": "2026-10-17T19:12:52.970783+00:00",
+      "training_status": "ok",
+      "training_returncode": 0,
+      "free_after_training": [
+        {
+          "index": 0,
+          "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        }
+      ],
+      "burn": {
+        "at": "2026-10-17T19:23:49.749177+00:00",
+        "session": "template_realdata_20261017_a02_final_burn",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354936
+            ]
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354937
+            ]
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354938
+            ]
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354939
+            ]
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354940
+            ]
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354941
+            ]
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354942
+            ]
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              1354943
+            ]
+          }
+        ],
+        "collective_progress_verified": true
+      },
+      "finished_at": "2026-10-17T19:23:49.749430+00:00"
+    },
+    "run/run.json": {
+      "status": "ok",
+      "started_at": "2026-10-17T19:12:52.971005+00:00",
+      "jobs": [
+        {
+          "name": "sdpa-train",
+          "started_at": "2026-10-17T19:12:52.971477+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 157.9669227548875,
+          "artifacts": [
+            {
+              "path": "sdpa/training/checkpoint-25/trainer_state.json",
+              "sha256": "bfc08f9370ebfbb106bd59e0963998c6f276ba6ce800d2eccdf3856fdb92eac4",
+              "bytes": 2021
+            }
+          ],
+          "finished_at": "2026-10-17T19:15:31.464072+00:00"
+        },
+        {
+          "name": "sdpa-verify-train",
+          "started_at": "2026-10-17T19:15:31.464107+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06390871782787144,
+          "artifacts": [
+            {
+              "path": "sdpa/checks/train.json",
+              "sha256": "9293928f94104cfe53c8d19f31e90f8d6533940e335fcbf614c14d2f0ac96f9c",
+              "bytes": 3519
+            }
+          ],
+          "finished_at": "2026-10-17T19:15:31.528766+00:00"
+        },
+        {
+          "name": "sdpa-resume",
+          "started_at": "2026-10-17T19:15:31.528784+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 117.91119948797859,
+          "artifacts": [
+            {
+              "path": "sdpa/training/checkpoint-50/trainer_state.json",
+              "sha256": "13465074fcd53906582c27aa803653ac6ff6fa15902a988b22fb258c3958be96",
+              "bytes": 3250
+            }
+          ],
+          "finished_at": "2026-10-17T19:17:29.954849+00:00"
+        },
+        {
+          "name": "sdpa-verify-resume",
+          "started_at": "2026-10-17T19:17:29.954882+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06398359499871731,
+          "artifacts": [
+            {
+              "path": "sdpa/checks/resume.json",
+              "sha256": "353d77840cd504f88df6d1a82e5fce0669a2b554a404891326252cee69c75ac4",
+              "bytes": 3519
+            }
+          ],
+          "finished_at": "2026-10-17T19:17:30.019622+00:00"
+        },
+        {
+          "name": "sdpa-evaluate",
+          "started_at": "2026-10-17T19:17:30.019641+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 38.16257558600046,
+          "artifacts": [
+            {
+              "path": "sdpa/evaluation.json",
+              "sha256": "4c056fc9a0e3bb0bec1cd00f42ca27815b74396ffc5befc6fe83168d5cb2601a",
+              "bytes": 4208
+            }
+          ],
+          "finished_at": "2026-10-17T19:18:08.696730+00:00"
+        },
+        {
+          "name": "sdpa-summarize",
+          "started_at": "2026-10-17T19:18:08.696768+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.11394173302687705,
+          "artifacts": [
+            {
+              "path": "sdpa/summary.json",
+              "sha256": "a65b9ad7431db304428d208bb788ab25f4d1956215d31fb23923787d3578a0a8",
+              "bytes": 1456
+            },
+            {
+              "path": "sdpa/summary.md",
+              "sha256": "0444f60a84fea29c82877a99cc370097fe35c9e1e62ae28b51b55244c1453671",
+              "bytes": 599
+            }
+          ],
+          "finished_at": "2026-10-17T19:18:08.811695+00:00"
+        },
+        {
+          "name": "fa4-train",
+          "started_at": "2026-10-17T19:18:08.811715+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 115.21284282789566,
+          "artifacts": [
+            {
+              "path": "fa4/training/checkpoint-25/trainer_state.json",
+              "sha256": "e448c43803db921d018bfe4b6044e7afc4d8ffa6f7386036ccae26d25c0fb7fe",
+              "bytes": 2019
+            }
+          ],
+          "finished_at": "2026-10-17T19:20:04.537009+00:00"
+        },
+        {
+          "name": "fa4-verify-train",
+          "started_at": "2026-10-17T19:20:04.537058+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06396686704829335,
+          "artifacts": [
+            {
+              "path": "fa4/checks/train.json",
+              "sha256": "57eedb34fccae70cfb33e00903883182624451f4018addcbdd280aa91eadb90e",
+              "bytes": 3518
+            }
+          ],
+          "finished_at": "2026-10-17T19:20:04.602010+00:00"
+        },
+        {
+          "name": "fa4-resume",
+          "started_at": "2026-10-17T19:20:04.602029+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 119.52679009013809,
+          "artifacts": [
+            {
+              "path": "fa4/training/checkpoint-50/trainer_state.json",
+              "sha256": "4fadeee8ae7ad910d49471f461263ed12904834cbd9f25198b85c71cce1b2e75",
+              "bytes": 3246
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:04.624523+00:00"
+        },
+        {
+          "name": "fa4-verify-resume",
+          "started_at": "2026-10-17T19:22:04.624564+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.0639598339330405,
+          "artifacts": [
+            {
+              "path": "fa4/checks/resume.json",
+              "sha256": "08e4e1485be8383cbaa93959a4474e75e5d1fc9d25f3fad38dec023354ccce6f",
+              "bytes": 3518
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:04.689464+00:00"
+        },
+        {
+          "name": "fa4-evaluate",
+          "started_at": "2026-10-17T19:22:04.689484+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 33.61134032695554,
+          "artifacts": [
+            {
+              "path": "fa4/evaluation.json",
+              "sha256": "f88284593f3d19c972869939a9142b67df76a34aa42cb1efa948b41f0c68cdbc",
+              "bytes": 4385
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:38.780299+00:00"
+        },
+        {
+          "name": "fa4-summarize",
+          "started_at": "2026-10-17T19:22:38.780344+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.11404449492692947,
+          "artifacts": [
+            {
+              "path": "fa4/summary.json",
+              "sha256": "6ddb1725a332ce360e8e7e1d233d1f5bb09dd690629cdd5098d60142da6632b1",
+              "bytes": 1463
+            },
+            {
+              "path": "fa4/summary.md",
+              "sha256": "0ea600206988d680346562b3cdc13a21d39a29b2b782c178faecc098c19a08a4",
+              "bytes": 599
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:38.895597+00:00"
+        }
+      ],
+      "finished_at": "2026-10-17T19:22:38.895620+00:00"
+    },
+    "run/complete.json": {
+      "status": "ok",
+      "started_at": "2026-10-17T19:12:52.971005+00:00",
+      "jobs": [
+        {
+          "name": "sdpa-train",
+          "started_at": "2026-10-17T19:12:52.971477+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 157.9669227548875,
+          "artifacts": [
+            {
+              "path": "sdpa/training/checkpoint-25/trainer_state.json",
+              "sha256": "bfc08f9370ebfbb106bd59e0963998c6f276ba6ce800d2eccdf3856fdb92eac4",
+              "bytes": 2021
+            }
+          ],
+          "finished_at": "2026-10-17T19:15:31.464072+00:00"
+        },
+        {
+          "name": "sdpa-verify-train",
+          "started_at": "2026-10-17T19:15:31.464107+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06390871782787144,
+          "artifacts": [
+            {
+              "path": "sdpa/checks/train.json",
+              "sha256": "9293928f94104cfe53c8d19f31e90f8d6533940e335fcbf614c14d2f0ac96f9c",
+              "bytes": 3519
+            }
+          ],
+          "finished_at": "2026-10-17T19:15:31.528766+00:00"
+        },
+        {
+          "name": "sdpa-resume",
+          "started_at": "2026-10-17T19:15:31.528784+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 117.91119948797859,
+          "artifacts": [
+            {
+              "path": "sdpa/training/checkpoint-50/trainer_state.json",
+              "sha256": "13465074fcd53906582c27aa803653ac6ff6fa15902a988b22fb258c3958be96",
+              "bytes": 3250
+            }
+          ],
+          "finished_at": "2026-10-17T19:17:29.954849+00:00"
+        },
+        {
+          "name": "sdpa-verify-resume",
+          "started_at": "2026-10-17T19:17:29.954882+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06398359499871731,
+          "artifacts": [
+            {
+              "path": "sdpa/checks/resume.json",
+              "sha256": "353d77840cd504f88df6d1a82e5fce0669a2b554a404891326252cee69c75ac4",
+              "bytes": 3519
+            }
+          ],
+          "finished_at": "2026-10-17T19:17:30.019622+00:00"
+        },
+        {
+          "name": "sdpa-evaluate",
+          "started_at": "2026-10-17T19:17:30.019641+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 38.16257558600046,
+          "artifacts": [
+            {
+              "path": "sdpa/evaluation.json",
+              "sha256": "4c056fc9a0e3bb0bec1cd00f42ca27815b74396ffc5befc6fe83168d5cb2601a",
+              "bytes": 4208
+            }
+          ],
+          "finished_at": "2026-10-17T19:18:08.696730+00:00"
+        },
+        {
+          "name": "sdpa-summarize",
+          "started_at": "2026-10-17T19:18:08.696768+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.11394173302687705,
+          "artifacts": [
+            {
+              "path": "sdpa/summary.json",
+              "sha256": "a65b9ad7431db304428d208bb788ab25f4d1956215d31fb23923787d3578a0a8",
+              "bytes": 1456
+            },
+            {
+              "path": "sdpa/summary.md",
+              "sha256": "0444f60a84fea29c82877a99cc370097fe35c9e1e62ae28b51b55244c1453671",
+              "bytes": 599
+            }
+          ],
+          "finished_at": "2026-10-17T19:18:08.811695+00:00"
+        },
+        {
+          "name": "fa4-train",
+          "started_at": "2026-10-17T19:18:08.811715+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 115.21284282789566,
+          "artifacts": [
+            {
+              "path": "fa4/training/checkpoint-25/trainer_state.json",
+              "sha256": "e448c43803db921d018bfe4b6044e7afc4d8ffa6f7386036ccae26d25c0fb7fe",
+              "bytes": 2019
+            }
+          ],
+          "finished_at": "2026-10-17T19:20:04.537009+00:00"
+        },
+        {
+          "name": "fa4-verify-train",
+          "started_at": "2026-10-17T19:20:04.537058+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06396686704829335,
+          "artifacts": [
+            {
+              "path": "fa4/checks/train.json",
+              "sha256": "57eedb34fccae70cfb33e00903883182624451f4018addcbdd280aa91eadb90e",
+              "bytes": 3518
+            }
+          ],
+          "finished_at": "2026-10-17T19:20:04.602010+00:00"
+        },
+        {
+          "name": "fa4-resume",
+          "started_at": "2026-10-17T19:20:04.602029+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 119.52679009013809,
+          "artifacts": [
+            {
+              "path": "fa4/training/checkpoint-50/trainer_state.json",
+              "sha256": "4fadeee8ae7ad910d49471f461263ed12904834cbd9f25198b85c71cce1b2e75",
+              "bytes": 3246
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:04.624523+00:00"
+        },
+        {
+          "name": "fa4-verify-resume",
+          "started_at": "2026-10-17T19:22:04.624564+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.0639598339330405,
+          "artifacts": [
+            {
+              "path": "fa4/checks/resume.json",
+              "sha256": "08e4e1485be8383cbaa93959a4474e75e5d1fc9d25f3fad38dec023354ccce6f",
+              "bytes": 3518
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:04.689464+00:00"
+        },
+        {
+          "name": "fa4-evaluate",
+          "started_at": "2026-10-17T19:22:04.689484+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 33.61134032695554,
+          "artifacts": [
+            {
+              "path": "fa4/evaluation.json",
+              "sha256": "f88284593f3d19c972869939a9142b67df76a34aa42cb1efa948b41f0c68cdbc",
+              "bytes": 4385
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:38.780299+00:00"
+        },
+        {
+          "name": "fa4-summarize",
+          "started_at": "2026-10-17T19:22:38.780344+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.11404449492692947,
+          "artifacts": [
+            {
+              "path": "fa4/summary.json",
+              "sha256": "6ddb1725a332ce360e8e7e1d233d1f5bb09dd690629cdd5098d60142da6632b1",
+              "bytes": 1463
+            },
+            {
+              "path": "fa4/summary.md",
+              "sha256": "0ea600206988d680346562b3cdc13a21d39a29b2b782c178faecc098c19a08a4",
+              "bytes": 599
+            }
+          ],
+          "finished_at": "2026-10-17T19:22:38.895597+00:00"
+        }
+      ],
+      "finished_at": "2026-10-17T19:22:38.895620+00:00"
+    },
+    "gpus-free-before-training.json": {
+      "at": "2026-10-17T19:12:52.667919+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        }
+      ]
+    },
+    "run/sdpa/training/train_results.json": {
+      "before_init_mem_cpu": 3063529472,
+      "before_init_mem_gpu": 0,
+      "epoch": 0.6309148264984227,
+      "global_step": 50,
+      "init_mem_cpu_alloc_delta": -310833152,
+      "init_mem_cpu_peaked_delta": 311173120,
+      "init_mem_gpu_alloc_delta": 1192115200,
+      "init_mem_gpu_peaked_delta": 0,
+      "schedule_steps": 28600,
+      "train_loss": 5.965861282348633,
+      "train_mem_cpu_alloc_delta": 871231488,
+      "train_mem_cpu_peaked_delta": 680161280,
+      "train_mem_gpu_alloc_delta": 3643596288,
+      "train_mem_gpu_peaked_delta": 63173046784,
+      "train_runtime": 78.5638,
+      "train_samples": 40497,
+      "train_samples_per_second": 186385.993,
+      "train_steps_per_second": 364.035
+    },
+    "run/sdpa/evaluation.json": {
+      "status": "ok",
+      "loss": 11.69212079278201,
+      "perplexity": 119625.43831000349,
+      "nll_sum": 2270867.0846157074,
+      "num_tokens": 194222,
+      "num_sequences": 95,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-50",
+      "global_step": 50,
+      "attention_backend": "sdpa",
+      "training_attention_backend": "sdpa",
+      "precision": "bf16",
+      "world_size": 8,
+      "batch_size_per_rank": 2,
+      "selection": {
+        "full_sequences": 95,
+        "max_sequences": 128,
+        "shuffle_seed": 0
+      },
+      "training_recipe_sha256": "71c6feacba6d36e7853477ad4cbb3d26cc3d16455821e8bfb58acc45a7da2c30",
+      "data_recipe": {
+        "policy": "document_segments_map_v2",
+        "sources": [
+          {
+            "format": "saved",
+            "sources": [
+              "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation"
+            ],
+            "files": [
+              {
+                "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation/state.json",
+                "bytes": 247,
+                "mtime_ns": 1792264308001405623
+              },
+              {
+                "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation/dataset_info.json",
+                "bytes": 165,
+                "mtime_ns": 1792264308001405623
+              },
+              {
+                "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation/data-00000-of-00001.arrow",
+                "bytes": 898024,
+                "mtime_ns": 1792264308001405623
+              }
+            ],
+            "rows": 256,
+            "fingerprint": "124d492a27f83042"
+          }
+        ],
+        "raw_fingerprint": "e2cbf6d93ec3b374",
+        "raw_documents": 256,
+        "tokenizer": {
+          "class": "Qwen2Tokenizer",
+          "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+          "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+          "special_tokens": {
+            "eos_token": "<|endoftext|>",
+            "pad_token": "<|endoftext|>"
+          },
+          "model_max_length": 131072,
+          "padding_side": "right",
+          "truncation_side": "right"
+        },
+        "tokenizer_files": [
+          {
+            "name": "tokenizer.json",
+            "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+          },
+          {
+            "name": "tokenizer_config.json",
+            "sha256": "cbea7bca9904d56693d2226b00fd564e3be053609d1e50f8f1885510f0f6e790"
+          }
+        ],
+        "document_end": {
+          "token": "<|endoftext|>",
+          "id": 151643,
+          "selection": "explicit"
+        },
+        "block_size": 2048,
+        "map_batch_size": 1000,
+        "requested_workers": 8,
+        "effective_workers": 8,
+        "shuffle_seed": 0,
+        "add_special_tokens": false,
+        "append_boundary": "one_after_every_document_including_empty",
+        "remainder": "drop_per_map_batch_within_worker_shard",
+        "attention": "causal_within_document",
+        "positions": "reset_per_document_fragment",
+        "labels": "ignore_first_and_document_starts",
+        "attention_backend": "sdpa",
+        "boundary_code_sha256": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "code_sha256": "37982be7fe0ddf3a068c7d625125eae6da3ea2073a9e88a97f02474d86ff7028",
+        "versions": {
+          "datasets": "4.8.5",
+          "transformers": "5.9.0",
+          "tokenizers": "0.22.2",
+          "pyarrow": "26.0.0"
+        },
+        "tokenized_fingerprint": "4271005855517876f34f9d336cd7ebc0",
+        "packed_fingerprint": "9fa7221eec32187b",
+        "shuffled_fingerprint": "7fbbd4ef2a7c584d",
+        "packed_sequences": 95,
+        "packed_input_tokens": 194560,
+        "scored_target_tokens": 194222
+      },
+      "evaluator_sha256": "103d1c5256da259a5c199079c108b056797cceef84e63a8f0601b42dae8203bd",
+      "scoring_sha256": "e8ad9b65831ed44522670b229e8724e9e3ff69163c79f901371fb20c274877e7",
+      "weights": [
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-50/model.safetensors",
+          "bytes": 1192135096,
+          "mtime_ns": 1792264642751395059
+        }
+      ],
+      "config_sha256": "573579635c6e6e35fa8cae66b8189842631167226582efad35fc1d809e576534",
+      "torch_version": "2.14.1+cu130"
+    },
+    "run/sdpa/summary.json": {
+      "status": "ok",
+      "schema": 1,
+      "stages": [
+        {
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-25",
+          "start_step": 0,
+          "step": 25,
+          "schedule_steps": 28600,
+          "stage_train_seconds": 78.2824,
+          "validation": {
+            "step": 25,
+            "loss": 12.078832209307283,
+            "perplexity": 176104.38755498506,
+            "num_tokens": 194222,
+            "num_sequences": 95
+          }
+        },
+        {
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-50",
+          "start_step": 25,
+          "step": 50,
+          "schedule_steps": 28600,
+          "stage_train_seconds": 78.5638,
+          "validation": {
+            "step": 50,
+            "loss": 11.69212079278201,
+            "perplexity": 119625.43831000349,
+            "num_tokens": 194222,
+            "num_sequences": 95
+          }
+        }
+      ],
+      "evaluation": {
+        "file": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/evaluation.json",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-50",
+        "step": 50,
+        "attention_backend": "sdpa",
+        "precision": "bf16",
+        "loss": 11.69212079278201,
+        "perplexity": 119625.43831000349,
+        "num_tokens": 194222,
+        "num_sequences": 95
+      },
+      "total_stage_train_seconds": 156.8462
+    },
+    "run/sdpa/training/trainer_state.json": {
+      "best_global_step": null,
+      "best_metric": null,
+      "best_model_checkpoint": null,
+      "epoch": 0.6309148264984227,
+      "eval_steps": 25,
+      "global_step": 50,
+      "is_hyper_param_search": false,
+      "is_local_process_zero": true,
+      "is_world_process_zero": true,
+      "log_history": [
+        {
+          "epoch": 0.06309148264984227,
+          "grad_norm": 2.109375,
+          "learning_rate": 8.39160839160839e-07,
+          "loss": 12.123643493652343,
+          "step": 5
+        },
+        {
+          "epoch": 0.12618296529968454,
+          "grad_norm": 2.125,
+          "learning_rate": 1.888111888111888e-06,
+          "loss": 12.1210205078125,
+          "step": 10
+        },
+        {
+          "epoch": 0.1892744479495268,
+          "grad_norm": 2.171875,
+          "learning_rate": 2.937062937062937e-06,
+          "loss": 12.117266845703124,
+          "step": 15
+        },
+        {
+          "epoch": 0.25236593059936907,
+          "grad_norm": 2.125,
+          "learning_rate": 3.9860139860139855e-06,
+          "loss": 12.109089660644532,
+          "step": 20
+        },
+        {
+          "epoch": 0.31545741324921134,
+          "grad_norm": 2.171875,
+          "learning_rate": 5.034965034965035e-06,
+          "loss": 12.089134216308594,
+          "step": 25
+        },
+        {
+          "epoch": 0.31545741324921134,
+          "eval_loss": 12.078832209307283,
+          "eval_nll_sum": 2345974.949356079,
+          "eval_num_sequences": 95,
+          "eval_num_tokens": 194222,
+          "eval_perplexity": 176104.38755498506,
+          "eval_runtime": 0.3813,
+          "eval_samples_per_second": 249.159,
+          "eval_steps_per_second": 15.736,
+          "step": 25
+        },
+        {
+          "epoch": 0.3785488958990536,
+          "grad_norm": 2.203125,
+          "learning_rate": 6.083916083916083e-06,
+          "loss": 12.059052276611329,
+          "step": 30
+        },
+        {
+          "epoch": 0.4416403785488959,
+          "grad_norm": 2.203125,
+          "learning_rate": 7.132867132867132e-06,
+          "loss": 12.023103332519531,
+          "step": 35
+        },
+        {
+          "epoch": 0.5047318611987381,
+          "grad_norm": 2.46875,
+          "learning_rate": 8.181818181818181e-06,
+          "loss": 11.974382019042968,
+          "step": 40
+        },
+        {
+          "epoch": 0.5678233438485805,
+          "grad_norm": 2.890625,
+          "learning_rate": 9.23076923076923e-06,
+          "loss": 11.869009399414063,
+          "step": 45
+        },
+        {
+          "epoch": 0.6309148264984227,
+          "grad_norm": 3.0,
+          "learning_rate": 1.027972027972028e-05,
+          "loss": 11.733065795898437,
+          "step": 50
+        },
+        {
+          "epoch": 0.6309148264984227,
+          "eval_loss": 11.69212079278201,
+          "eval_nll_sum": 2270867.0846157074,
+          "eval_num_sequences": 95,
+          "eval_num_tokens": 194222,
+          "eval_perplexity": 119625.43831000349,
+          "eval_runtime": 0.3917,
+          "eval_samples_per_second": 242.502,
+          "eval_steps_per_second": 15.316,
+          "step": 50
+        },
+        {
+          "before_init_mem_cpu": 3063529472,
+          "before_init_mem_gpu": 0,
+          "epoch": 0.6309148264984227,
+          "init_mem_cpu_alloc_delta": -310833152,
+          "init_mem_cpu_peaked_delta": 311173120,
+          "init_mem_gpu_alloc_delta": 1192115200,
+          "init_mem_gpu_peaked_delta": 0,
+          "step": 50,
+          "total_flos": 1.385590809427968e+17,
+          "train_loss": 5.965861282348633,
+          "train_mem_cpu_alloc_delta": 871231488,
+          "train_mem_cpu_peaked_delta": 680161280,
+          "train_mem_gpu_alloc_delta": 3643596288,
+          "train_mem_gpu_peaked_delta": 63173046784,
+          "train_runtime": 78.5638,
+          "train_samples_per_second": 186385.993,
+          "train_steps_per_second": 364.035
+        }
+      ],
+      "logging_steps": 5,
+      "max_steps": 28600,
+      "num_input_tokens_seen": 0,
+      "num_train_epochs": 358,
+      "save_steps": 500,
+      "stateful_callbacks": {
+        "TrainerControl": {
+          "args": {
+            "should_epoch_stop": false,
+            "should_evaluate": false,
+            "should_log": false,
+            "should_save": true,
+            "should_training_stop": true
+          },
+          "attributes": {}
+        }
+      },
+      "total_flos": 1.385590809427968e+17,
+      "train_batch_size": 16,
+      "trial_name": null,
+      "trial_params": null
+    },
+    "run/sdpa/checks/train.json": {
+      "status": "ok",
+      "kind": "training_stage",
+      "schema": 1,
+      "checked_at": "2026-10-17T19:15:31.513359+00:00",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-25",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training",
+      "start_step": 0,
+      "global_step": 25,
+      "schedule_steps": 28600,
+      "stage_train_seconds": 78.2824,
+      "train_loss": 12.11203094482422,
+      "validation": {
+        "step": 25,
+        "loss": 12.078832209307283,
+        "perplexity": 176104.38755498506,
+        "num_tokens": 194222,
+        "num_sequences": 95
+      },
+      "training_recipe_sha256": "dec6e858c7015ca5fd9546737c78cc2cfc3b671555c159d4db5ee19eebd7f41a",
+      "data_recipe_sha256": "71c6feacba6d36e7853477ad4cbb3d26cc3d16455821e8bfb58acc45a7da2c30",
+      "files": [
+        {
+          "path": "config.json",
+          "bytes": 1417,
+          "mtime_ns": 1792264522931397625,
+          "sha256": "573579635c6e6e35fa8cae66b8189842631167226582efad35fc1d809e576534"
+        },
+        {
+          "path": "data_recipe.json",
+          "bytes": 2821,
+          "mtime_ns": 1792264526441397524,
+          "sha256": "d1203d012015510be38080bfdf6c5a94737f5d8c46fe312c9d20859038a4fc50"
+        },
+        {
+          "path": "model.safetensors",
+          "bytes": 1192135096,
+          "mtime_ns": 1792264524331397585
+        },
+        {
+          "path": "optimizer.pt",
+          "bytes": 2384464715,
+          "mtime_ns": 1792264526441397524
+        },
+        {
+          "path": "rng_state_0.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264526441397524
+        },
+        {
+          "path": "rng_state_1.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "rng_state_2.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "rng_state_3.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "rng_state_4.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "rng_state_5.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "rng_state_6.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "rng_state_7.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264522931397625
+        },
+        {
+          "path": "scheduler.pt",
+          "bytes": 1465,
+          "mtime_ns": 1792264526441397524
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 11422650,
+          "mtime_ns": 1792264524421397583,
+          "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 695,
+          "mtime_ns": 1792264524351397583,
+          "sha256": "cbea7bca9904d56693d2226b00fd564e3be053609d1e50f8f1885510f0f6e790"
+        },
+        {
+          "path": "train_config.json",
+          "bytes": 3812,
+          "mtime_ns": 1792264526441397524,
+          "sha256": "164a7980a70145c58d45fa432e55fbf4d0ea4b4cd96dcafc9884b6368c52214f"
+        },
+        {
+          "path": "trainer_state.json",
+          "bytes": 2021,
+          "mtime_ns": 1792264526441397524,
+          "sha256": "bfc08f9370ebfbb106bd59e0963998c6f276ba6ce800d2eccdf3856fdb92eac4"
+        },
+        {
+          "path": "training_recipe.json",
+          "bytes": 8918,
+          "mtime_ns": 1792264526441397524,
+          "sha256": "21f97abf1a44956a9d23d40b4e2d28736aad075851ca40672cce91ad70af8a3e"
+        }
+      ],
+      "weights": [
+        "model.safetensors"
+      ],
+      "validation_scope": "File completeness and metadata; tensors are loaded by HF resume/evaluation"
+    },
+    "run/sdpa/checks/resume.json": {
+      "status": "ok",
+      "kind": "training_stage",
+      "schema": 1,
+      "checked_at": "2026-10-17T19:17:30.005707+00:00",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training/checkpoint-50",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/sdpa/training",
+      "start_step": 25,
+      "global_step": 50,
+      "schedule_steps": 28600,
+      "stage_train_seconds": 78.5638,
+      "train_loss": 5.965861282348633,
+      "validation": {
+        "step": 50,
+        "loss": 11.69212079278201,
+        "perplexity": 119625.43831000349,
+        "num_tokens": 194222,
+        "num_sequences": 95
+      },
+      "training_recipe_sha256": "dec6e858c7015ca5fd9546737c78cc2cfc3b671555c159d4db5ee19eebd7f41a",
+      "data_recipe_sha256": "71c6feacba6d36e7853477ad4cbb3d26cc3d16455821e8bfb58acc45a7da2c30",
+      "files": [
+        {
+          "path": "config.json",
+          "bytes": 1417,
+          "mtime_ns": 1792264641231395068,
+          "sha256": "573579635c6e6e35fa8cae66b8189842631167226582efad35fc1d809e576534"
+        },
+        {
+          "path": "data_recipe.json",
+          "bytes": 2821,
+          "mtime_ns": 1792264644891395046,
+          "sha256": "d1203d012015510be38080bfdf6c5a94737f5d8c46fe312c9d20859038a4fc50"
+        },
+        {
+          "path": "model.safetensors",
+          "bytes": 1192135096,
+          "mtime_ns": 1792264642751395059
+        },
+        {
+          "path": "optimizer.pt",
+          "bytes": 2384464715,
+          "mtime_ns": 1792264644891395046
+        },
+        {
+          "path": "rng_state_0.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264644891395046
+        },
+        {
+          "path": "rng_state_1.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "rng_state_2.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "rng_state_3.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "rng_state_4.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "rng_state_5.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "rng_state_6.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "rng_state_7.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264641231395068
+        },
+        {
+          "path": "scheduler.pt",
+          "bytes": 1465,
+          "mtime_ns": 1792264644891395046
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 11422650,
+          "mtime_ns": 1792264642841395059,
+          "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 695,
+          "mtime_ns": 1792264642781395059,
+          "sha256": "cbea7bca9904d56693d2226b00fd564e3be053609d1e50f8f1885510f0f6e790"
+        },
+        {
+          "path": "train_config.json",
+          "bytes": 3958,
+          "mtime_ns": 1792264644891395046,
+          "sha256": "937e23ae8f483204106e10e29cdc18ad3fd7ed860c47d0d3f306f463abec4f73"
+        },
+        {
+          "path": "trainer_state.json",
+          "bytes": 3250,
+          "mtime_ns": 1792264644891395046,
+          "sha256": "13465074fcd53906582c27aa803653ac6ff6fa15902a988b22fb258c3958be96"
+        },
+        {
+          "path": "training_recipe.json",
+          "bytes": 8918,
+          "mtime_ns": 1792264644891395046,
+          "sha256": "21f97abf1a44956a9d23d40b4e2d28736aad075851ca40672cce91ad70af8a3e"
+        }
+      ],
+      "weights": [
+        "model.safetensors"
+      ],
+      "validation_scope": "File completeness and metadata; tensors are loaded by HF resume/evaluation"
+    },
+    "run/fa4/training/train_results.json": {
+      "before_init_mem_cpu": 3198963712,
+      "before_init_mem_gpu": 0,
+      "epoch": 0.6309148264984227,
+      "global_step": 50,
+      "init_mem_cpu_alloc_delta": -310833152,
+      "init_mem_cpu_peaked_delta": 311173120,
+      "init_mem_gpu_alloc_delta": 1192115200,
+      "init_mem_gpu_peaked_delta": 0,
+      "schedule_steps": 28600,
+      "train_loss": 5.965860137939453,
+      "train_mem_cpu_alloc_delta": 935059456,
+      "train_mem_cpu_peaked_delta": 678064128,
+      "train_mem_gpu_alloc_delta": 3643596288,
+      "train_mem_gpu_peaked_delta": 63104891392,
+      "train_runtime": 77.4998,
+      "train_samples": 40497,
+      "train_samples_per_second": 188945.032,
+      "train_steps_per_second": 369.033
+    },
+    "run/fa4/evaluation.json": {
+      "status": "ok",
+      "loss": 11.692118750112401,
+      "perplexity": 119625.19395500582,
+      "nll_sum": 2270866.6878843307,
+      "num_tokens": 194222,
+      "num_sequences": 95,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-50",
+      "global_step": 50,
+      "attention_backend": "fa4",
+      "training_attention_backend": "fa4",
+      "precision": "bf16",
+      "world_size": 8,
+      "batch_size_per_rank": 2,
+      "selection": {
+        "full_sequences": 95,
+        "max_sequences": 128,
+        "shuffle_seed": 0
+      },
+      "training_recipe_sha256": "874d809f32484495c0ec79b2088d51282938d31180b760850e15c9975c348fba",
+      "data_recipe": {
+        "policy": "document_segments_map_v2",
+        "sources": [
+          {
+            "format": "saved",
+            "sources": [
+              "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation"
+            ],
+            "files": [
+              {
+                "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation/state.json",
+                "bytes": 247,
+                "mtime_ns": 1792264308001405623
+              },
+              {
+                "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation/dataset_info.json",
+                "bytes": 165,
+                "mtime_ns": 1792264308001405623
+              },
+              {
+                "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/input/validation/data-00000-of-00001.arrow",
+                "bytes": 898024,
+                "mtime_ns": 1792264308001405623
+              }
+            ],
+            "rows": 256,
+            "fingerprint": "124d492a27f83042"
+          }
+        ],
+        "raw_fingerprint": "e2cbf6d93ec3b374",
+        "raw_documents": 256,
+        "tokenizer": {
+          "class": "Qwen2Tokenizer",
+          "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+          "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+          "special_tokens": {
+            "eos_token": "<|endoftext|>",
+            "pad_token": "<|endoftext|>"
+          },
+          "model_max_length": 131072,
+          "padding_side": "right",
+          "truncation_side": "right"
+        },
+        "tokenizer_files": [
+          {
+            "name": "tokenizer.json",
+            "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+          },
+          {
+            "name": "tokenizer_config.json",
+            "sha256": "cbea7bca9904d56693d2226b00fd564e3be053609d1e50f8f1885510f0f6e790"
+          }
+        ],
+        "document_end": {
+          "token": "<|endoftext|>",
+          "id": 151643,
+          "selection": "explicit"
+        },
+        "block_size": 2048,
+        "map_batch_size": 1000,
+        "requested_workers": 8,
+        "effective_workers": 8,
+        "shuffle_seed": 0,
+        "add_special_tokens": false,
+        "append_boundary": "one_after_every_document_including_empty",
+        "remainder": "drop_per_map_batch_within_worker_shard",
+        "attention": "causal_within_document",
+        "positions": "reset_per_document_fragment",
+        "labels": "ignore_first_and_document_starts",
+        "attention_backend": "fa4",
+        "boundary_code_sha256": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "code_sha256": "37982be7fe0ddf3a068c7d625125eae6da3ea2073a9e88a97f02474d86ff7028",
+        "versions": {
+          "datasets": "4.8.5",
+          "transformers": "5.9.0",
+          "tokenizers": "0.22.2",
+          "pyarrow": "26.0.0"
+        },
+        "tokenized_fingerprint": "4271005855517876f34f9d336cd7ebc0",
+        "packed_fingerprint": "9fa7221eec32187b",
+        "shuffled_fingerprint": "7fbbd4ef2a7c584d",
+        "packed_sequences": 95,
+        "packed_input_tokens": 194560,
+        "scored_target_tokens": 194222,
+        "fa4_runtime": {
+          "package": "flash-attn-4",
+          "version": "4.0.0b33",
+          "adapter_sha256": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be"
+        }
+      },
+      "evaluator_sha256": "103d1c5256da259a5c199079c108b056797cceef84e63a8f0601b42dae8203bd",
+      "scoring_sha256": "e8ad9b65831ed44522670b229e8724e9e3ff69163c79f901371fb20c274877e7",
+      "weights": [
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-50/model.safetensors",
+          "bytes": 1192135096,
+          "mtime_ns": 1792264916701383715
+        }
+      ],
+      "config_sha256": "573579635c6e6e35fa8cae66b8189842631167226582efad35fc1d809e576534",
+      "torch_version": "2.14.1+cu130"
+    },
+    "run/fa4/summary.json": {
+      "status": "ok",
+      "schema": 1,
+      "stages": [
+        {
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-25",
+          "start_step": 0,
+          "step": 25,
+          "schedule_steps": 28600,
+          "stage_train_seconds": 76.4122,
+          "validation": {
+            "step": 25,
+            "loss": 12.078842287005363,
+            "perplexity": 176106.16229077612,
+            "num_tokens": 194222,
+            "num_sequences": 95
+          }
+        },
+        {
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-50",
+          "start_step": 25,
+          "step": 50,
+          "schedule_steps": 28600,
+          "stage_train_seconds": 77.4998,
+          "validation": {
+            "step": 50,
+            "loss": 11.692118750112401,
+            "perplexity": 119625.19395500582,
+            "num_tokens": 194222,
+            "num_sequences": 95
+          }
+        }
+      ],
+      "evaluation": {
+        "file": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/evaluation.json",
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-50",
+        "step": 50,
+        "attention_backend": "fa4",
+        "precision": "bf16",
+        "loss": 11.692118750112401,
+        "perplexity": 119625.19395500582,
+        "num_tokens": 194222,
+        "num_sequences": 95
+      },
+      "total_stage_train_seconds": 153.91199999999998
+    },
+    "run/fa4/training/trainer_state.json": {
+      "best_global_step": null,
+      "best_metric": null,
+      "best_model_checkpoint": null,
+      "epoch": 0.6309148264984227,
+      "eval_steps": 25,
+      "global_step": 50,
+      "is_hyper_param_search": false,
+      "is_local_process_zero": true,
+      "is_world_process_zero": true,
+      "log_history": [
+        {
+          "epoch": 0.06309148264984227,
+          "grad_norm": 2.109375,
+          "learning_rate": 8.39160839160839e-07,
+          "loss": 12.12364501953125,
+          "step": 5
+        },
+        {
+          "epoch": 0.12618296529968454,
+          "grad_norm": 2.125,
+          "learning_rate": 1.888111888111888e-06,
+          "loss": 12.121014404296876,
+          "step": 10
+        },
+        {
+          "epoch": 0.1892744479495268,
+          "grad_norm": 2.171875,
+          "learning_rate": 2.937062937062937e-06,
+          "loss": 12.117266845703124,
+          "step": 15
+        },
+        {
+          "epoch": 0.25236593059936907,
+          "grad_norm": 2.125,
+          "learning_rate": 3.9860139860139855e-06,
+          "loss": 12.109091186523438,
+          "step": 20
+        },
+        {
+          "epoch": 0.31545741324921134,
+          "grad_norm": 2.171875,
+          "learning_rate": 5.034965034965035e-06,
+          "loss": 12.0891357421875,
+          "step": 25
+        },
+        {
+          "epoch": 0.31545741324921134,
+          "eval_loss": 12.078842287005363,
+          "eval_nll_sum": 2345976.9066667557,
+          "eval_num_sequences": 95,
+          "eval_num_tokens": 194222,
+          "eval_perplexity": 176106.16229077612,
+          "eval_runtime": 3.6605,
+          "eval_samples_per_second": 25.952,
+          "eval_steps_per_second": 1.639,
+          "step": 25
+        },
+        {
+          "epoch": 0.3785488958990536,
+          "grad_norm": 2.203125,
+          "learning_rate": 6.083916083916083e-06,
+          "loss": 12.059059143066406,
+          "step": 30
+        },
+        {
+          "epoch": 0.4416403785488959,
+          "grad_norm": 2.203125,
+          "learning_rate": 7.132867132867132e-06,
+          "loss": 12.023106384277344,
+          "step": 35
+        },
+        {
+          "epoch": 0.5047318611987381,
+          "grad_norm": 2.46875,
+          "learning_rate": 8.181818181818181e-06,
+          "loss": 11.974382019042968,
+          "step": 40
+        },
+        {
+          "epoch": 0.5678233438485805,
+          "grad_norm": 2.890625,
+          "learning_rate": 9.23076923076923e-06,
+          "loss": 11.869003295898438,
+          "step": 45
+        },
+        {
+          "epoch": 0.6309148264984227,
+          "grad_norm": 3.0,
+          "learning_rate": 1.027972027972028e-05,
+          "loss": 11.733050537109374,
+          "step": 50
+        },
+        {
+          "epoch": 0.6309148264984227,
+          "eval_loss": 11.692118750112401,
+          "eval_nll_sum": 2270866.6878843307,
+          "eval_num_sequences": 95,
+          "eval_num_tokens": 194222,
+          "eval_perplexity": 119625.19395500582,
+          "eval_runtime": 3.6354,
+          "eval_samples_per_second": 26.132,
+          "eval_steps_per_second": 1.65,
+          "step": 50
+        },
+        {
+          "before_init_mem_cpu": 3198963712,
+          "before_init_mem_gpu": 0,
+          "epoch": 0.6309148264984227,
+          "init_mem_cpu_alloc_delta": -310833152,
+          "init_mem_cpu_peaked_delta": 311173120,
+          "init_mem_gpu_alloc_delta": 1192115200,
+          "init_mem_gpu_peaked_delta": 0,
+          "step": 50,
+          "total_flos": 1.385590809427968e+17,
+          "train_loss": 5.965860137939453,
+          "train_mem_cpu_alloc_delta": 935059456,
+          "train_mem_cpu_peaked_delta": 678064128,
+          "train_mem_gpu_alloc_delta": 3643596288,
+          "train_mem_gpu_peaked_delta": 63104891392,
+          "train_runtime": 77.4998,
+          "train_samples_per_second": 188945.032,
+          "train_steps_per_second": 369.033
+        }
+      ],
+      "logging_steps": 5,
+      "max_steps": 28600,
+      "num_input_tokens_seen": 0,
+      "num_train_epochs": 358,
+      "save_steps": 500,
+      "stateful_callbacks": {
+        "TrainerControl": {
+          "args": {
+            "should_epoch_stop": false,
+            "should_evaluate": false,
+            "should_log": false,
+            "should_save": true,
+            "should_training_stop": true
+          },
+          "attributes": {}
+        }
+      },
+      "total_flos": 1.385590809427968e+17,
+      "train_batch_size": 16,
+      "trial_name": null,
+      "trial_params": null
+    },
+    "run/fa4/checks/train.json": {
+      "status": "ok",
+      "kind": "training_stage",
+      "schema": 1,
+      "checked_at": "2026-10-17T19:20:04.587899+00:00",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-25",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training",
+      "start_step": 0,
+      "global_step": 25,
+      "schedule_steps": 28600,
+      "stage_train_seconds": 76.4122,
+      "train_loss": 12.112030639648438,
+      "validation": {
+        "step": 25,
+        "loss": 12.078842287005363,
+        "perplexity": 176106.16229077612,
+        "num_tokens": 194222,
+        "num_sequences": 95
+      },
+      "training_recipe_sha256": "4ef71846fae03c1c9a138635a51ebd3e84cd7b7ca4ea360ccf8b501123d98658",
+      "data_recipe_sha256": "874d809f32484495c0ec79b2088d51282938d31180b760850e15c9975c348fba",
+      "files": [
+        {
+          "path": "config.json",
+          "bytes": 1417,
+          "mtime_ns": 1792264795171391150,
+          "sha256": "573579635c6e6e35fa8cae66b8189842631167226582efad35fc1d809e576534"
+        },
+        {
+          "path": "data_recipe.json",
+          "bytes": 2991,
+          "mtime_ns": 1792264798721390863,
+          "sha256": "f46e2c679008c73e23e4734bb0ddfca4bd9bbae401a9d2431e9fa684975b8729"
+        },
+        {
+          "path": "model.safetensors",
+          "bytes": 1192135096,
+          "mtime_ns": 1792264796571391036
+        },
+        {
+          "path": "optimizer.pt",
+          "bytes": 2384464715,
+          "mtime_ns": 1792264798711390863
+        },
+        {
+          "path": "rng_state_0.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264798721390863
+        },
+        {
+          "path": "rng_state_1.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "rng_state_2.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "rng_state_3.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "rng_state_4.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "rng_state_5.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "rng_state_6.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "rng_state_7.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264795171391150
+        },
+        {
+          "path": "scheduler.pt",
+          "bytes": 1465,
+          "mtime_ns": 1792264798711390863
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 11422650,
+          "mtime_ns": 1792264796671391028,
+          "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 695,
+          "mtime_ns": 1792264796601391033,
+          "sha256": "cbea7bca9904d56693d2226b00fd564e3be053609d1e50f8f1885510f0f6e790"
+        },
+        {
+          "path": "train_config.json",
+          "bytes": 3810,
+          "mtime_ns": 1792264798721390863,
+          "sha256": "8a30aca09b5e03c6f5be87eee0976a7f0e63efc0874ca763a569adc5cda601ad"
+        },
+        {
+          "path": "trainer_state.json",
+          "bytes": 2019,
+          "mtime_ns": 1792264798721390863,
+          "sha256": "e448c43803db921d018bfe4b6044e7afc4d8ffa6f7386036ccae26d25c0fb7fe"
+        },
+        {
+          "path": "training_recipe.json",
+          "bytes": 9107,
+          "mtime_ns": 1792264798721390863,
+          "sha256": "0b1ec8b6c12047fe103985a42e1f6d88fb4c7def775f44fe15c47cd04c00c0ad"
+        }
+      ],
+      "weights": [
+        "model.safetensors"
+      ],
+      "validation_scope": "File completeness and metadata; tensors are loaded by HF resume/evaluation"
+    },
+    "run/fa4/checks/resume.json": {
+      "status": "ok",
+      "kind": "training_stage",
+      "schema": 1,
+      "checked_at": "2026-10-17T19:22:04.675263+00:00",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training/checkpoint-50",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02/supervised/run/fa4/training",
+      "start_step": 25,
+      "global_step": 50,
+      "schedule_steps": 28600,
+      "stage_train_seconds": 77.4998,
+      "train_loss": 5.965860137939453,
+      "validation": {
+        "step": 50,
+        "loss": 11.692118750112401,
+        "perplexity": 119625.19395500582,
+        "num_tokens": 194222,
+        "num_sequences": 95
+      },
+      "training_recipe_sha256": "4ef71846fae03c1c9a138635a51ebd3e84cd7b7ca4ea360ccf8b501123d98658",
+      "data_recipe_sha256": "874d809f32484495c0ec79b2088d51282938d31180b760850e15c9975c348fba",
+      "files": [
+        {
+          "path": "config.json",
+          "bytes": 1417,
+          "mtime_ns": 1792264915231383758,
+          "sha256": "573579635c6e6e35fa8cae66b8189842631167226582efad35fc1d809e576534"
+        },
+        {
+          "path": "data_recipe.json",
+          "bytes": 2991,
+          "mtime_ns": 1792264918931383651,
+          "sha256": "f46e2c679008c73e23e4734bb0ddfca4bd9bbae401a9d2431e9fa684975b8729"
+        },
+        {
+          "path": "model.safetensors",
+          "bytes": 1192135096,
+          "mtime_ns": 1792264916701383715
+        },
+        {
+          "path": "optimizer.pt",
+          "bytes": 2384464715,
+          "mtime_ns": 1792264918931383651
+        },
+        {
+          "path": "rng_state_0.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264918931383651
+        },
+        {
+          "path": "rng_state_1.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "rng_state_2.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "rng_state_3.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "rng_state_4.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "rng_state_5.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "rng_state_6.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "rng_state_7.pth",
+          "bytes": 16389,
+          "mtime_ns": 1792264915231383758
+        },
+        {
+          "path": "scheduler.pt",
+          "bytes": 1465,
+          "mtime_ns": 1792264918931383651
+        },
+        {
+          "path": "tokenizer.json",
+          "bytes": 11422650,
+          "mtime_ns": 1792264916801383713,
+          "sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "bytes": 695,
+          "mtime_ns": 1792264916731383714,
+          "sha256": "cbea7bca9904d56693d2226b00fd564e3be053609d1e50f8f1885510f0f6e790"
+        },
+        {
+          "path": "train_config.json",
+          "bytes": 3955,
+          "mtime_ns": 1792264918931383651,
+          "sha256": "baf98f754212753442b8433ca3e8923f407449959851e9870cf9f1ae9ee07d06"
+        },
+        {
+          "path": "trainer_state.json",
+          "bytes": 3246,
+          "mtime_ns": 1792264918931383651,
+          "sha256": "4fadeee8ae7ad910d49471f461263ed12904834cbd9f25198b85c71cce1b2e75"
+        },
+        {
+          "path": "training_recipe.json",
+          "bytes": 9107,
+          "mtime_ns": 1792264918931383651,
+          "sha256": "0b1ec8b6c12047fe103985a42e1f6d88fb4c7def775f44fe15c47cd04c00c0ad"
+        }
+      ],
+      "weights": [
+        "model.safetensors"
+      ],
+      "validation_scope": "File completeness and metadata; tensors are loaded by HF resume/evaluation"
+    },
+    "burn-verified.json": {
+      "at": "2026-10-17T19:23:49.749177+00:00",
+      "session": "template_realdata_20261017_a02_final_burn",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354936
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354937
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354938
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354939
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354940
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354941
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354942
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            1354943
+          ]
+        }
+      ],
+      "collective_progress_verified": true
+    }
+  }
+}
