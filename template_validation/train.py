@@ -69,6 +69,9 @@ class DataArguments:
 
 @dataclass
 class BaselineTrainingArguments(TrainingArguments):
+    # This offline entry point never accepts Hub publication as a CLI/JSON option.
+    push_to_hub: bool = field(default=False, init=False)
+
     stop_after: int | None = field(default=None, metadata={
         "help": "Absolute optimizer step to stop/save at; max_steps remains the full LR schedule"})
 
@@ -219,8 +222,8 @@ def main():
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     # Only offline reporting is supported by this runner-facing entry point.
-    if training_args.push_to_hub or set(training_args.report_to or []) - {"wandb", "tensorboard"}:
-        raise ValueError("Use push_to_hub=False and report_to=none, wandb (offline), or tensorboard")
+    if set(training_args.report_to or []) - {"wandb", "tensorboard"}:
+        raise ValueError("Use report_to=none, wandb (offline), or tensorboard")
     wants_eval = training_args.do_eval or training_args.eval_strategy != "no" or training_args.eval_on_start
     if bool(data_args.eval_data_dir) != bool(wants_eval):
         raise ValueError("Provide eval_data_dir together with do_eval, eval_on_start or eval_strategy")

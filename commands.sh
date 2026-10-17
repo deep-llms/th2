@@ -1,10 +1,10 @@
 #1 +60+a
-#th2-q359-template-smoke-20261017-a01
+#th2-q359-template-smoke-20261017-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-q359-worker-0
 TASK_PYTHON=/mnt/local/conda-py311/envs/eval_fa4/bin/python
-TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-template-smoke-20261017-a01
-TASK_SESSION=template_smoke_20261017_a01
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-template-smoke-20261017-a02
+TASK_SESSION=template_smoke_20261017_a02
 test ! -e "$TASK_ROOT"
 mkdir "$TASK_ROOT"
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 WANDB_MODE=offline NCCL_NVLS_ENABLE=0 OMP_NUM_THREADS=1
