@@ -1,26 +1,23 @@
-## CE7454 follow-up authorized —17October2026,08:40SGT
+## CE7454 follow-up authorized and corrected —17October2026
 
-User explicitly approved preparing and launching eight parallel checkpoint-based
-follow-ups after the completed study. GPUs0/1: GRIP IBN-a seeds1/2; GPUs2/3:
-GRIP IBN-b seeds1/2; GPUs4/5: SRNet continuation seeds1/2; GPUs6/7: SRNet-stats
-continuation seeds1/2.40epochs512 each, sourcebatch16/twoviews; same split42
-and .1holdout, seed-dependent data seeds43/44 matched across variants.
-GRIP parents: verified base450, LR1e-4; SR parents: verified final40full512
-(afterbase450), LR3e-5. New optimizers/cosine schedules, not exact resumes.
-Only own scratch-trained weights, cap12.3M, no external labels in training.
+User approved launch, then corrected scope BEFORE submission: ONE seed per
+version, also extend plain GRIP. Five fits, one GPU each (0–4): GRIP IBN-a,
+GRIP IBN-b, plain GRIP continuation, SRNet continuation, SRNet-stats continuation.
+All seed1/data43, fixed split42/.1holdout;40epochs512, sourcebatch16/twoviews.
+IBN parents=GRIP base450, LR1e-4; three unchanged-model parents=their own
+final full51240 checkpoints, LR3e-5. Fresh optimizers/cosine schedules. No
+second seeds. No new fits on remaining GPUs5–7; supervisor retains all8
+ownership to preserve existing automatic burn handoff.
 
-New followup_study.py reuses trainer, checkpoint validation, evaluator and
-existing burn supervisor. All8 smoke fits must pass before scientific fits.
-New IBN architectures also run established full512 FP32/BF16 gradient gates.
-Actual parents are SHA-pinned; smoke checkpoints discarded.40epoch endpoints
-produce900dev/1500test predictions. Deadline04:30UTC/12:30SGT, reserve before
-course15:55SGT. No model selection from test. No automatic further fits.
-
-Planned new root q359-ce7454-followup-20261017-a01; original completed outputs
-preserved. Verified previous burn ownership required before reclaim. Persistent
-launcher/supervisor restores eight-GPU burn on success or failure after cleanup.
-Previous overnight timer is stopped; do not claim monitoring is running.
-Launch/remote verification pending.
+Own scratch-trained weights only, <=12.3M parameters, no external labels.
+New followup_study.py reuses trainer/checkpoint/evaluator/burn supervisor.
+New IBN numerical gates and five real one-epoch entrypoint checks must pass
+before40epoch scientific fits; smoke checkpoints discarded. Parent SHA pinned.
+Finish-by04:30UTC/12:30SGT; course deadline15:55SGT. Final900dev/1500test
+predictions, labels local, selection dev-only. Root planned:
+q359-ce7454-followup-20261017-a01. Previous completed outputs preserved.
+Verified old burn reclaim and automatic restoration on success/failure.
+Launch and remote verification pending; old overnight timer remains stopped.
 
 ---
 

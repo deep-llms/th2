@@ -1,4 +1,4 @@
-"""Eight authorized, checkpoint-based follow-ups; external labels stay local.
+"""Five authorized, checkpoint-based follow-ups; external labels stay local.
 
 The existing supervisor owns reclaim, cancellation and automatic burn restoration.
 One fit per physical GPU; smoke checkpoints are never scientific parents.
@@ -23,6 +23,7 @@ EXTERNAL = Path('/mnt/local/_data/deep-llms_th2/ce7454/evaluation/cache')
 FINISH_BY = '2026-10-17T04:30:00+00:00'
 PARENTS = {
     'grip_nodown': ('grip_nodown_base', 450, 'cd87bc0dbc5cc884203c9cfba1d97e5fd4992923729da9e8555f0ac5e4cb88d1'),
+    'grip_nodown_full512': ('grip_nodown_full512', 40, '29090be74fddeb5a77e43795d8c798aef61f26332ff971883631e829dc58fb8c'),
     'srresnet': ('srresnet_full512', 40, '46da5542ff9e7e9ff103db9cb8e4e8e3e7b24ed1506d778d62495b86b43b0571'),
     'srresnet_stats': ('srresnet_stats_full512', 40, 'e16f3c6c23b58e49cd7a4335144ca18a81faf203acbeba98a9a189f9bdfe93b6'),
 }
@@ -32,9 +33,10 @@ ARMS = [dict(name=f'{model}_s{seed}', model=model, parent=parent, lr=lr,
             (model, parent, lr, seed)
             for model, parent, lr in [('grip_nodown_ibna', 'grip_nodown', 1e-4),
                                      ('grip_nodown_ibnb', 'grip_nodown', 1e-4),
+                                     ('grip_nodown', 'grip_nodown_full512', 3e-5),
                                      ('srresnet', 'srresnet', 3e-5),
                                      ('srresnet_stats', 'srresnet_stats', 3e-5)]
-            for seed in (1, 2))]
+            for seed in (1,))]
 
 
 def parent_path(arm):
@@ -63,7 +65,8 @@ def verify_parents():
         ck = torch.load(path, map_location='cpu', weights_only=False)
         a = ck['args']
         if ck['epoch'] != epoch or any(a.get(k) != v for k, v in
-                {'model': model, 'train_split': 'train', 'split_seed': 42,
+                {'model': folder.removesuffix('_base').removesuffix('_full512'),
+                 'train_split': 'train', 'split_seed': 42,
                  'val_frac': .1, 'seed': 0, 'data_seed': 42, 'kd_teacher': None}.items()):
             raise ValueError(f'Wrong parent recipe: {path}')
         receipts[model] = {'path': str(path), 'sha256': actual, 'epoch': epoch}
@@ -118,7 +121,7 @@ def main():
     def smoke(arm):
         name, gpu = arm['name'], arm['gpu']
         # New normalization architectures receive the established numerical gate.
-        if arm['model'].startswith('grip_'):
+        if arm['model'] in ('grip_nodown_ibna', 'grip_nodown_ibnb'):
             dest = args.output/('numerics_'+name)
             run_child([sys.executable, '-u', str(SRC/'benchmark_deadline_candidates.py'),
                        '--model', arm['model'], '--cache', str(args.cache),
@@ -132,7 +135,7 @@ def main():
                   args.output/(name+'_entrypoint.log'), deadline)
         return validate_fit(arm, dest, 1)
 
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=len(ARMS)) as pool:
         smokes = list(pool.map(smoke, ARMS))
     estimate = max(r['last_epoch_seconds'] for r in smokes)*40*1.5+1200
     if estimate >= deadline-time.time():
@@ -160,7 +163,7 @@ def main():
             raise ValueError('Incomplete external predictions')
         return {'arm': name, 'checkpoint': checkpoint, 'evaluation': result}
 
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=len(ARMS)) as pool:
         results = list(pool.map(fit, ARMS))
     if verify_parents() != parents:
         raise ValueError('Parent checkpoint changed during follow-up')

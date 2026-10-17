@@ -8,8 +8,9 @@ from followup_study import ARMS, command, parent_path, validate_fit
 
 class FollowupTests(unittest.TestCase):
     def test_queue_uses_only_existing_training_parents_and_fixed_split(self):
-        self.assertEqual([a['gpu'] for a in ARMS], list(range(8)))
-        self.assertEqual(len({a['name'] for a in ARMS}), 8)
+        self.assertEqual([a['gpu'] for a in ARMS], list(range(5)))
+        self.assertEqual(len({a['name'] for a in ARMS}), 5)
+        self.assertEqual({a['seed'] for a in ARMS}, {1})
         for arm in ARMS:
             cmd = command(arm, Path('/cache'), Path('/fresh')/arm['name'])
             get = lambda flag: cmd[cmd.index(flag)+1]
@@ -24,7 +25,7 @@ class FollowupTests(unittest.TestCase):
             self.assertEqual(int(get('--data-seed')), 42+arm['seed'])
             self.assertNotIn('--kd-teacher', cmd)
             self.assertNotIn('--resume', cmd)
-            if arm['model'].startswith('grip'):
+            if arm['model'] in ('grip_nodown_ibna', 'grip_nodown_ibnb'):
                 self.assertIn('grip_nodown_base', str(parent_path(arm)))
                 self.assertEqual(float(get('--lr')), 1e-4)
             else:
