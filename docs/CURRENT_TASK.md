@@ -4,8 +4,9 @@ User approved launch, then corrected scope BEFORE submission: ONE seed per
 version, also extend plain GRIP. Five fits, one GPU each (0–4): GRIP IBN-a,
 GRIP IBN-b, plain GRIP continuation, SRNet continuation, SRNet-stats continuation.
 All seed1/data43, fixed split42/.1holdout;40epochs512, sourcebatch16/twoviews.
-IBN parents=GRIP base450, LR1e-4; three unchanged-model parents=their own
-final full51240 checkpoints, LR3e-5. Fresh optimizers/cosine schedules. No
+Latest user correction: ALL parents are first-phase base450 checkpoints.
+IBN parents=GRIP base450, LR1e-4; unchanged GRIP/SR/SR-stats use their own
+base450, LR3e-5. No full512 checkpoint is used. Fresh optimizers/cosine schedules. No
 second seeds. No new fits on remaining GPUs5–7; supervisor retains all8
 ownership to preserve existing automatic burn handoff.
 
@@ -15,7 +16,9 @@ New IBN numerical gates and five real one-epoch entrypoint checks must pass
 before40epoch scientific fits; smoke checkpoints discarded. Parent SHA pinned.
 Finish-by04:30UTC/12:30SGT; course deadline15:55SGT. Final900dev/1500test
 predictions, labels local, selection dev-only. Root planned:
-q359-ce7454-followup-20261017-a01. Previous completed outputs preserved.
+q359-ce7454-followup-20261017-a02. Previous completed outputs preserved.
+Earlier a01 was submitted before parent correction; safe supervisor stop
+requested by commit7cc136d, burn restoration must verify before a02.
 Verified old burn reclaim and automatic restoration on success/failure.
 Launch and remote verification pending; old overnight timer remains stopped.
 

@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from followup_study import ARMS, command, parent_path, validate_fit
+from followup_study import ARMS, PARENTS, command, parent_path, validate_fit
 
 
 class FollowupTests(unittest.TestCase):
@@ -11,6 +11,8 @@ class FollowupTests(unittest.TestCase):
         self.assertEqual([a['gpu'] for a in ARMS], list(range(5)))
         self.assertEqual(len({a['name'] for a in ARMS}), 5)
         self.assertEqual({a['seed'] for a in ARMS}, {1})
+        self.assertTrue(all(epoch == 450 and folder.endswith('_base')
+                            for folder, epoch, sha in PARENTS.values()))
         for arm in ARMS:
             cmd = command(arm, Path('/cache'), Path('/fresh')/arm['name'])
             get = lambda flag: cmd[cmd.index(flag)+1]
@@ -29,7 +31,7 @@ class FollowupTests(unittest.TestCase):
                 self.assertIn('grip_nodown_base', str(parent_path(arm)))
                 self.assertEqual(float(get('--lr')), 1e-4)
             else:
-                self.assertIn(arm['model']+'_full512', str(parent_path(arm)))
+                self.assertIn(arm['model']+'_base', str(parent_path(arm)))
                 self.assertEqual(float(get('--lr')), 3e-5)
 
     def test_smoke_cannot_become_scientific_parent(self):

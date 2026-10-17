@@ -23,9 +23,8 @@ EXTERNAL = Path('/mnt/local/_data/deep-llms_th2/ce7454/evaluation/cache')
 FINISH_BY = '2026-10-17T04:30:00+00:00'
 PARENTS = {
     'grip_nodown': ('grip_nodown_base', 450, 'cd87bc0dbc5cc884203c9cfba1d97e5fd4992923729da9e8555f0ac5e4cb88d1'),
-    'grip_nodown_full512': ('grip_nodown_full512', 40, '29090be74fddeb5a77e43795d8c798aef61f26332ff971883631e829dc58fb8c'),
-    'srresnet': ('srresnet_full512', 40, '46da5542ff9e7e9ff103db9cb8e4e8e3e7b24ed1506d778d62495b86b43b0571'),
-    'srresnet_stats': ('srresnet_stats_full512', 40, 'e16f3c6c23b58e49cd7a4335144ca18a81faf203acbeba98a9a189f9bdfe93b6'),
+    'srresnet': ('srresnet_base', 450, '0203387a9180d40856f493dbb584959507692f1af3f4fdff755d8b7d999bef65'),
+    'srresnet_stats': ('srresnet_stats_base', 450, '3023329b27e704d9a056eae0b879f383438b23b2c8f74c7ec5afbf4f01961962'),
 }
 ARMS = [dict(name=f'{model}_s{seed}', model=model, parent=parent, lr=lr,
              seed=seed, data_seed=42+seed, gpu=gpu)
@@ -33,7 +32,7 @@ ARMS = [dict(name=f'{model}_s{seed}', model=model, parent=parent, lr=lr,
             (model, parent, lr, seed)
             for model, parent, lr in [('grip_nodown_ibna', 'grip_nodown', 1e-4),
                                      ('grip_nodown_ibnb', 'grip_nodown', 1e-4),
-                                     ('grip_nodown', 'grip_nodown_full512', 3e-5),
+                                     ('grip_nodown', 'grip_nodown', 3e-5),
                                      ('srresnet', 'srresnet', 3e-5),
                                      ('srresnet_stats', 'srresnet_stats', 3e-5)]
             for seed in (1,))]
