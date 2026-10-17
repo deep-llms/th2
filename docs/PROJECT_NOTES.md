@@ -1,3 +1,16 @@
+## CE7454 follow-up parents fixed — 17 October 2026
+
+User requires first-phase450-epoch parents for every continuation, one seed
+per arm. q359 followup-a02 launched047b3ed after safely cancelling a01 and
+verifying its burn restoration. Five independent40epoch512 fits: GRIP IBNa,
+IBNb, plain GRIP, SRNet, SRNet-stats. These are fresh optimizer adaptations
+from own scratch-trained checkpoints, not exact optimizer resumes. Parent
+hashes/epochs are pinned; allsmokes passed and production processes verified.
+See CURRENT_TASK and results/ce7454_followup_20261017.json for receipts.
+Final dev/test prediction and automatic burn restoration are in the queue.
+
+---
+
 ## Teacher-first pilot complete: no deep-specific advantage — 16 October 2026
 
 Retrya02 completed all five jobs11:26:05UTC. Read-only40a55f2 at11:27:17UTC

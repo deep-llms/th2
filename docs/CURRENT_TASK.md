@@ -1,3 +1,37 @@
+## CE7454 corrected follow-up RUNNING — 08:58 SGT, 17 October 2026
+
+Latest user correction is applied: ALL five fits start from the first-phase
+450-epoch checkpoint, one seed each. GRIP IBN-a / IBN-b / plain GRIP all use
+GRIP base450; SRNet / SRNet-stats use their corresponding base450. No later
+full512 checkpoint is used. Seed1/data43, fixed split42, 13,500 train/1,500
+internal validation. 40 additional epochs at512, batch16/twoviews, fresh Adam
+and cosine schedules (not an optimizer-state resume); IBN LR1e-4, others3e-5.
+
+Corrected launch047b3ed, root q359-ce7454-followup-20261017-a02. Five parallel
+fits on GPUs0–4; supervisor owns all8 for automatic burn restoration on exit.
+Nine CPU tests, both IBN numerical/reload gates, and five real one-epoch trainer
+checks passed. All parent SHA/epoch identities verified. All8 GPUs were free
+before launch after verified reclaim of burn workers1311519–1311526.
+Production processes1312802/3/5/6/7 verified08:58SGT, all use originalbase450
+parents. Plain GRIP finished first production epoch; all five live, no errors.
+
+Epoch seconds from smokes: IBN-a189.7, IBN-b154.2, GRIP101.1, SR136.7,
+SR-stats136.4. Expected final evaluations ~11:15–11:45SGT; conservative queue
+finish-by12:30SGT, before15:55SGT deadline. Dev900/test1500 predictions run
+automatically after each fit; labels stay local and selection uses dev only.
+No old periodic watcher restarted; original external queue timer remains stopped.
+
+Earlier a01 submitted before parent correction was cancelled by exact verified
+supervisor PID1311021 via SIGTERM (7cc136d). Cleanup verified all8free, then
+restored communicating eight-GPU burns08:47:45SGT. Fresh a02 reverified that
+handoff before reclaim. Original checkpoints, a01 outputs and cache preserved.
+Evidence: docs/results/ce7454_followup_20261017.json, local
+ temp/remote_logs/ce7454-followup-a02-five-fits.log (d75b51559962b8d56d91f44480473f49230df1326a1ae7bc43e877b54744a214).
+Commands#0 after verified launch. Next action: inspect training/final receipts;
+no further architecture fits automatically authorized. Do not rerun launcher.
+
+---
+
 ## CE7454 follow-up authorized and corrected —17October2026
 
 User approved launch, then corrected scope BEFORE submission: ONE seed per
