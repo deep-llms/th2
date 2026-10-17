@@ -1,3 +1,26 @@
+## CE7454 all staged/soup evaluations COMPLETE — verified17October14:33SGT
+
+Stagedstudy passed13:45:45SGT andburnhandoff13:46:57. Soup successor waited
+andverifiedthat handoff13:47:05, passedCPUpreflight13:47:36, completedallthree
+evaluations13:50:25 andrestoredverified8GPUburn13:51:36. Currentread-only
+7326f9b snapshot14:33:44SGT confirms same8burnworkerPIDs1323269–1323276,
+parent1323200, allGPUs100%, guardreleased, advancingcollectivecycles2750→2770.
+Bothsupervisorsstatusok/returncode0. Oldburn'sSIGKILLtraceback is expected
+fromauthorizedreclaim for soup successor, not a failedtraining/evaluation.
+
+Finaldev/test: stagedIBNa97.44/95.87; IBNa50/50soup98.22/95.53;
+stagedIBNb98.11/95.60; IBNb50/50soup98.22/95.07; plainGRIPsoup96.22/96.33;
+SRResNetsoup97.00/96.27; SRResNet-statssoup97.22/95.00.
+All7 verifiedlocallywith900dev/1500test, hashes, filenames, finiteargmax.
+PreviousdirectIBNb98.33dev remainsbestcompletedB200dev; testreportingonly.
+No newtraining/evalqueued. Commands#0. Do not stopburns/newfitswithoutrequest.
+Evidence results/ce7454_staged_and_soups_final_20261017.json; all downloaded
+predictions/results temp/ce7454_eval_upload/final-soups-review-a01/;
+rawlog temp/ce7454_followup_20261017/final_review_0633.log.
+CE7454/docs/B200_METHODS_AND_RESULTS_20261017.md updatedwithfinalresults.
+
+---
+
 ## Three fixed soups queued and waiting — 17 October, 13:35 SGT
 
 Launch217db3a accepted on q359. Receipt at05:33:55UTC confirms

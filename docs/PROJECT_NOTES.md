@@ -1,3 +1,18 @@
+## CE7454 staged and uniform-soup studies complete — 17 October 2026
+
+Both queued studies exited0; last evaluations13:50SGT, burnsrestored13:51,
+live8GPUownership/progressverified14:33. All sevennew900dev/1500test prediction
+sets verifiedlocally. No newdevleader: directIBNb98.33% remainshighestB200dev.
+FinalstagedIBNa97.44/95.87dev/test, its soup98.22/95.53; stagedIBNb98.11/95.60,
+its soup98.22/95.07. PlainGRIP/SRResNet/SRResNet-statssoups96.22/96.33,
+97.00/96.27,97.22/95.00. Testreportingonly. Fixed equalweights, sameparentand
+architecture, noBNrecalibration or newtraining for threeadditionalaverages.
+Finalevidence docs/results/ce7454_staged_and_soups_final_20261017.json;
+localpredictions temp/ce7454_eval_upload/final-soups-review-a01/.
+No submissions or furtherfitsmade; commandsinactive, burnsleft running.
+
+---
+
 ## CE7454 staged IBN round — 17 October 2026
 
 Followup-a02 allfive completed; new staged-a01 ownsGPUs after verified final
