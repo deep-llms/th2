@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-q359-template-realdata-review-20261017-a02
+#th2-q359-template-realdata-review-20261017-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-q359-worker-0
 /mnt/local/conda-py311/envs/eval_fa4/bin/python -B - <<'PY'
@@ -17,5 +17,8 @@ for backend in ('sdpa','fa4'):
 for p in paths:
  if p.exists():print('RESULT',json.dumps({'path':str(p),'data':json.loads(p.read_text())}))
 for p in [root/'supervisor.log',root/'supervised/burn.log',*sorted((root/'supervised/run').glob('*.log'))]:
- if p.exists():print('LOG',str(p),'\n'.join(p.read_text(errors='replace').splitlines()[-20:]))
+ if p.exists():
+  lines=p.read_text(errors='replace').splitlines()
+  print('LOG',str(p),'\n'.join(lines[-20:]))
+  print('METRICS',str(p),'\n'.join(x for x in lines if x.startswith('{') and 'learning_rate' in x)[-6000:])
 PY
