@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-q359-ce7454-staged-health-20261017-a01
+#th2-q359-ce7454-staged-health-20261017-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-q359-worker-0
 /mnt/local/conda-py311/envs/eval_fa4/bin/python -u - <<'REMOTE'
@@ -11,7 +11,9 @@ root=Path('/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01')
 old=Path('/mnt/local/_outputs/deep-llms_th2/q359-ce7454-followup-20261017-a02')
 study=root/'supervised/run/study'
 print('TIME',datetime.now(timezone.utc).isoformat())
-print('GPUS',json.dumps(snapshot(list(range(8)))))
+status=snapshot(list(range(8))); print('GPUS',json.dumps(status))
+for pid in sorted({p for g in status for p in g['pids']}):
+    print('PROCESS',pid,(Path('/proc')/str(pid)/'cmdline').read_bytes().replace(b'\0',b' ').decode())
 for path in [old/'supervised/supervisor.json',old/'supervised/burn-verified.json',Path('/mnt/local/_gpu_guard/DISABLED'),root/'supervised/supervisor.json',root/'supervised/gpus-free-before-training.json',root/'supervised/run/run.json',study/'manifest.json',study/'best_evaluations_complete.json',study/'complete.json']:
     print('STATUS',json.dumps({'path':str(path),'data':json.loads(path.read_text()) if path.exists() else None}))
 for path in [Path(str(root)+'.log'),root/'supervised/run/ce7454-study.log',old/'supervised/burn.log',*sorted(study.glob('*.log')),*sorted(study.glob('*/log.csv')),*sorted(study.glob('*smoke_passed.json'))]:
