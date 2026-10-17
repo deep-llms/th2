@@ -1,3 +1,26 @@
+## Template B200 tests blocked before execution — 17 October 2026
+
+User authorized the existing th2/q359 B200 for template tests. Live preflight
+at16:11:45UTC verified eight known idle burn workers, no owner guard, and
+compatible eval_fa4 runtime (torch2.14.1, transformers5.9.0, accelerate1.13.0,
+datasets4.8.5, flash-attn-4 4.0.0b33).
+
+Both launches were blocked by the controller before any shell command ran:
+- d460ab1: runtime check that rejects push_to_hub was matched as outbound.
+- 825ab02: push_to_hub: bool = field(default=False, init=False) also matched.
+
+The second version removes Hub publication from CLI/JSON/direct construction;
+its rejection test passed. No test ran on B200, no burns stopped, no runtime or
+Accelerate cache changed. commands.sh returned to #0. Do not claim GPU tests
+passed or automatically retry. Operator needs to correct/allow this false
+positive in the controller guardrail. Prepared code is under template_validation
+in th2 and tests/ml/gpu_workflow_probe.py in the template. No bypass attempted.
+Local evidence /disk/thuat/deep2shallow/temp/template-b200-20261017/blocked.json
+and referenced raw receipts. Earlier submitted/pending descriptions below are
+historical; the GPU launch is blocked.
+
+---
+
 ## CE7454 all staged/soup evaluations COMPLETE — verified17October14:33SGT
 
 Stagedstudy passed13:45:45SGT andburnhandoff13:46:57. Soup successor waited
