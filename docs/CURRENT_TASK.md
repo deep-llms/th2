@@ -1,3 +1,29 @@
+## CE7454 follow-up authorized —17October2026,08:40SGT
+
+User explicitly approved preparing and launching eight parallel checkpoint-based
+follow-ups after the completed study. GPUs0/1: GRIP IBN-a seeds1/2; GPUs2/3:
+GRIP IBN-b seeds1/2; GPUs4/5: SRNet continuation seeds1/2; GPUs6/7: SRNet-stats
+continuation seeds1/2.40epochs512 each, sourcebatch16/twoviews; same split42
+and .1holdout, seed-dependent data seeds43/44 matched across variants.
+GRIP parents: verified base450, LR1e-4; SR parents: verified final40full512
+(afterbase450), LR3e-5. New optimizers/cosine schedules, not exact resumes.
+Only own scratch-trained weights, cap12.3M, no external labels in training.
+
+New followup_study.py reuses trainer, checkpoint validation, evaluator and
+existing burn supervisor. All8 smoke fits must pass before scientific fits.
+New IBN architectures also run established full512 FP32/BF16 gradient gates.
+Actual parents are SHA-pinned; smoke checkpoints discarded.40epoch endpoints
+produce900dev/1500test predictions. Deadline04:30UTC/12:30SGT, reserve before
+course15:55SGT. No model selection from test. No automatic further fits.
+
+Planned new root q359-ce7454-followup-20261017-a01; original completed outputs
+preserved. Verified previous burn ownership required before reclaim. Persistent
+launcher/supervisor restores eight-GPU burn on success or failure after cleanup.
+Previous overnight timer is stopped; do not claim monitoring is running.
+Launch/remote verification pending.
+
+---
+
 ## CE7454 overnight task COMPLETE —07:16SGT17October2026
 
 Monitor78db321 verifies all8 arms completed and passed final evaluation.

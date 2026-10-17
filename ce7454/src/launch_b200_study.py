@@ -22,7 +22,10 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--reuse-verified-cache', action='store_true')
     p.add_argument('--previous-output', type=Path)
+    p.add_argument('--study', choices=('scratch', 'followup'), default='scratch')
     args = p.parse_args()
+    if args.study == 'followup' and not args.previous_output:
+        raise ValueError('Follow-up requires the verified previous supervisor output')
     project = Path.cwd().resolve()
     sys.path.insert(0, str(project))
     from scripts.verified_gpu_reclaim import inspect
@@ -60,6 +63,11 @@ def main():
                MKL_NUM_THREADS='2', OPENBLAS_NUM_THREADS='1', PYTHONUNBUFFERED='1')
     subprocess.run([VISION, '-m', 'unittest', 'discover', '-s', str(code), '-p', 'test_deadline*.py', '-v'],
                    check=True, env=env)
+    if args.study == 'followup':
+        subprocess.run([VISION, '-m', 'unittest', 'discover', '-s', str(code),
+                        '-p', 'test_followup*.py', '-v'], check=True, env=env)
+        subprocess.run([VISION, str(code/'followup_study.py'), '--preflight-only'],
+                       check=True, env=env)
     if CACHE.exists():
         if not args.reuse_verified_cache:
             raise FileExistsError('Existing cache requires explicit verified reuse')
@@ -86,9 +94,9 @@ with (cache/'train_images.npy').open('rb') as f: print('REUSED_CACHE_SHA256',has
     fresh = inspect()
     (args.output / 'inspection.json').write_text(json.dumps(fresh, indent=2) + '\n')
     jobs = {'jobs': [{'name': 'ce7454-study',
-        'argv': [VISION, '-u', str(code / 'deadline_study.py'), '--cache', str(CACHE),
+        'argv': [VISION, '-u', str(code / ('followup_study.py' if args.study == 'followup' else 'deadline_study.py')), '--cache', str(CACHE),
                  '--output', '{run_dir}/study'], 'gpus': list(range(8)),
-        'timeout_seconds': 14 * 3600,
+        'timeout_seconds': (4 if args.study == 'followup' else 14) * 3600,
         'required_outputs': [{'path': 'study/complete.json', 'json_equals': {'status': 'passed'}}]}]}
     (args.output / 'jobs.json').write_text(json.dumps(jobs, indent=2) + '\n')
     print('CPU_PREFLIGHT_PASSED', datetime.now(timezone.utc).isoformat(), flush=True)

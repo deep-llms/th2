@@ -85,12 +85,12 @@ def run_child(cmd, gpu, log, deadline):
                        check=True, timeout=remaining)
 
 
-def validate_checkpoint(path, name, epochs, parent=None):
+def validate_checkpoint(path, name, epochs, parent=None, *, seed=0, data_seed=42):
     import torch
     from models import build_model, count_trainable
     ck = torch.load(path, map_location='cpu', weights_only=False)
     ca = ck['args']
-    expected = {'model': name, 'epochs': epochs, 'seed': 0, 'data_seed': 42,
+    expected = {'model': name, 'epochs': epochs, 'seed': seed, 'data_seed': data_seed,
                 'split_seed': 42, 'val_frac': 0.1, 'train_split': 'train', 'views': 2,
                 'jsd_lambda': 0.0, 'clip_grad': 0.0, 'norm': 'imagenet',
                 'init_from': None if parent is None else str(parent), 'kd_teacher': None}
