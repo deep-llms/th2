@@ -69,9 +69,6 @@ class DataArguments:
 
 @dataclass
 class BaselineTrainingArguments(TrainingArguments):
-    # This offline entry point never accepts Hub publication as a CLI/JSON option.
-    push_to_hub: bool = field(default=False, init=False)
-
     stop_after: int | None = field(default=None, metadata={
         "help": "Absolute optimizer step to stop/save at; max_steps remains the full LR schedule"})
 
