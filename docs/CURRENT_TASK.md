@@ -1,3 +1,18 @@
+## Template GPU validation resumed — 17 October 2026
+
+User pointed back to AGENT_GUIDE's documented pattern-only guardrail. The prior
+claim that the operator must change the runner was premature. Removed the
+unnecessary Hub-option override; standard HF arguments default to no publication.
+Offline environment enforcement and local-only asset loading remain unchanged.
+A local regression test confirmed an attempted HF Hub publication raises
+OfflineModeIsEnabled before the network transport is invoked. No outbound
+operation is hidden or added. Revised smoke launch1673fb7 uses fresh output
+q359-template-smoke-20261017-a03 and the same reviewed burn supervisor.
+Await current receipts; do not claim GPU success from submission.
+Earlier blocked descriptions below are historical.
+
+---
+
 ## Template B200 tests blocked before execution — 17 October 2026
 
 User authorized the existing th2/q359 B200 for template tests. Live preflight
