@@ -386,3 +386,33 @@ IBN-b is strongest among these completed runs on dev. No recommendations are
 selected by test. IBN-a ETA including evaluation11:05–11:15SGT. Original
 supervisor still ownsGPUguard; burn handoff pending finalarm, as intended.
 Evidence: results/ce7454_followup_review_20261017_a01.json.
+
+
+## Five follow-ups complete, 17 October 2026, 11:04 SGT
+
+Direct IBN-a finished40/40 and scored97.67%dev/96.13%test. Other final
+results are unchanged from10:47review. Allfive finalpredictions verified.
+Supervisor exited0 and verified eight communicating burns11:04:56SGT.
+The authorized staged successor reclaimed those verified burns, checked all8
+GPUsfree11:06:34SGT, then started its work. No overlapping GPU owners.
+Evidence: results/ce7454_followup_final_20261017.json.
+
+
+## Fixed best-checkpoint evaluations, 17 October 2026
+
+The five best.pt files were selected by original internal validation only.
+All900dev/1500test predictions and hashes verified locally. No result beats
+the direct IBN-b final checkpoint's98.33%dev. Dev labels remain estimated.
+
+| Model | Best checkpoint epoch | Dev | Test |
+|---|---:|---:|---:|
+| GRIP IBN-a | 12 | 97.56% | 93.13% |
+| GRIP IBN-b | 8 | 97.44% | 93.20% |
+| GRIP | 10 | 95.44% | 94.47% |
+| SRNet | 32 | 97.33% | 95.87% |
+| SRNet-stats | 14 | 95.78% | 94.13% |
+
+Staged IBN-a and IBN-b chains passed256->512 real trainer smoke/reload gates.
+Fixed finalstage and equal direct/staged weight-average evaluations remain
+automatically queued. Neither mixture weights nor endpoints depend on test.
+Evidence: results/ce7454_staged_launch_20261017.json.

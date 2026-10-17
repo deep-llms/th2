@@ -1,3 +1,17 @@
+## CE7454 staged IBN round — 17 October 2026
+
+Followup-a02 allfive completed; new staged-a01 ownsGPUs after verified final
+burnhandoff. Best-checkpoint evaluations finished; no newdevleader. User
+approved two single-seed stage chains from original450epochGRIP:30epochs256
+then40epochs512, followed by fixed equaldirect/staged weightaverages within
+IBNa/IBNb. Both real chain smokes and productionepoch advancementverified.
+Existingtrainer/model/data/eval unchanged; new orchestration/soup has CPU
+exactaverage, incompatiblemodelrejection and strictrealmodelreloadtests.
+See CURRENT_TASK and results/ce7454_staged_launch_20261017.json. Deadline
+14:30SGT with autoeval/burn restoration; no submissions automaticallymade.
+
+---
+
 ## CE7454 follow-up parents fixed — 17 October 2026
 
 User requires first-phase450-epoch parents for every continuation, one seed

@@ -1,3 +1,39 @@
+## CE7454 staged round RUNNING — 17 October 2026, verified11:19SGT
+
+Authorized newqueue q359-ce7454-staged-20261017-a01 launchedcfcf377.
+Previous followup-a02 completedall5 finalevals successfully; IBN-a97.67dev/
+96.13test, IBN-b98.33/95.33, GRIP96.44/95.73, SR96.78/96.07,
+SRstats97.33/94.80. Oldsupervisor exited0 andverified8GPUburn11:04:56SGT.
+Newlauncher waitedfor thisreceipt/guardrelease, verifiedcurrentburnidentities,
+reclaimed knownburnworkers andverifiedall8free11:06:34SGT. New supervisor
+1318233 owns guard and automatic finalburnrestoration. Do not stop/relaunch.
+
+Five best.pt evaluations completed,900dev/1500test predictions/hashverified:
+IBNa bestepoch12:97.56/93.13; IBNb epoch8:97.44/93.20;
+GRIP epoch10:95.44/94.47; SR epoch32:97.33/95.87;
+SRstats epoch14:95.78/94.13. These checkpoints were selectedby internalval,
+no dev/testselection. DirectIBNb last remainsstrongestdev98.33 amongcompleted.
+Test reportingonly; dev labelsestimated.
+
+Both staged realentrypoint256->512 smokes passed, measuredbudgetpassed.
+Scientific firststage epochCSV pullsverify IBNa5/30 andIBNb7/30 withfinite
+fallinglosses (~50.7/41.7seconds/epoch), from untouchedoriginal GRIPbase450.
+GPUs0/1 train30epochs256 then40epochs512, one seed1/data43/split42.
+After eachfinalfit: fixedlast evaluation, equal0.5directlast+0.5stagedlast
+withinarchitecture, strictreload, single-modelsoupevaluation. No extra seeds,
+no mixturetuning, no BNrecalibration, no TTA, no externaltrainingdata.
+Expectedallresults13:45–14:10SGT, hard finish-by14:30SGT; deadline15:55SGT.
+Automaticburns onexit, no newperiodicmonitorcreated. Commands#0.
+
+Evidence results/ce7454_staged_launch_20261017.json and
+results/ce7454_followup_final_20261017.json. Localscores
+ temp/ce7454_eval_upload/staged-production-a01/, firstepochsCSV
+ temp/ce7454_followup_20261017/staged_ibn{a,b}_first_epochs.csv.
+Nextread-onlyreview: progress/stagechain and finalsingle/soup predictions;
+preservefinalhandoff. No additionalfits beyond thisqueue authorized.
+
+---
+
 ## CE7454 final staged round authorized — 17 October 2026
 
 User approved best-checkpoint evaluations, two staged IBN fits and fixed equal
