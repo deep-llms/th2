@@ -1,3 +1,22 @@
+## Three fixed soups queued and waiting — 17 October, 13:35 SGT
+
+Launch217db3a accepted on q359. Receipt at05:33:55UTC confirms
+WAITING_FOR_PREVIOUS_BURN_HANDOFF. No currenttraining interrupted.
+Root /mnt/local/_outputs/deep-llms_th2/q359-ce7454-soups-20261017-a01;
+tmux ce7454_soups_20261017_a01. Three existingfinalpairs (GRIP, SRResNet,
+SRResNet-stats), uniform50/50, no newtraining. After stagedqueue succeeds,
+its8-rankburn is verified andguardreleased, successor verifies/reclaims burns,
+verifiesfreeGPUs, runs CPUinput/modelchecks then threeparallel evaluations,
+and restoresburns automatically. No othernewfits authorized. Expectedresults
+around13:50–14:05SGT ifpriorqueuekeepspace; not yet observedstarted.
+Local Python3.11 realmodel averaging/reload/recipe guards and existing staged
+averaging tests passed5tests. Initial local3.10 lackedhashlib.file_digest;
+rerun in3.11 matchingB200Python; no productioncompatibilitypatchneeded.
+Nextcheck soup launcher/preflight/eval, stagedIBNa final/soup results and
+bothhandoffreceipts. Commands#0 after verifiedsubmission.
+
+---
+
 ## Authorized quick uniform-soup evaluation — 17 October, 13:30 SGT
 
 User requested trying CE7454/docs/SOUP_METHOD_FOR_B200_20261017.md quickly.
@@ -9,7 +28,7 @@ Successor must wait stagedqueue success, verified8GPUburnhandoff and guard
 release, then reclaim onlyverifiedburnworkers, verifyfree, run three existing
 evaluators concurrently, and restoreburns automatically onexit. No interruption
 of runningIBNa. Soup launchdeadline06:30UTC and evaluationdeadline07:00UTC,
-55min beforecourseclosing. Current implementation/testing; launchpending.
+55min beforecourseclosing. Implementation/tests passed; launch217db3a verifiedwaiting at05:33:55UTC.
 New files ce7454/src/soup_study.py, test_soup_study.py; reuses validated
 staged_study.average_states and evaluate_deadline. Parent and ingredient hashes
 pinned from alreadydownloaded fixed-final receipts. Existing training unchanged.
