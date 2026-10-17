@@ -1,3 +1,70 @@
+## Authorized quick uniform-soup evaluation — 17 October, 13:30 SGT
+
+User requested trying CE7454/docs/SOUP_METHOD_FOR_B200_20261017.md quickly.
+Implement three fixed50/50 pairs of existing final512 checkpoints: plainGRIP,
+SRResNet and SRResNet-stats, originalseed0 plus low-LRseed1, each from its own
+same pinnedepoch450parent. No additional training, no ingredient/weight search,
+no BNrecalibration, no predictionensemble/TTA. IBNsoups alreadyin stagedqueue.
+Successor must wait stagedqueue success, verified8GPUburnhandoff and guard
+release, then reclaim onlyverifiedburnworkers, verifyfree, run three existing
+evaluators concurrently, and restoreburns automatically onexit. No interruption
+of runningIBNa. Soup launchdeadline06:30UTC and evaluationdeadline07:00UTC,
+55min beforecourseclosing. Current implementation/testing; launchpending.
+New files ce7454/src/soup_study.py, test_soup_study.py; reuses validated
+staged_study.average_states and evaluate_deadline. Parent and ingredient hashes
+pinned from alreadydownloaded fixed-final receipts. Existing training unchanged.
+
+---
+
+## CE7454 IBN-b complete; IBN-a final stage33/40 — 17 October, 13:22 SGT
+
+Read-only e8ea954 verified remote05:22:29UTC. Both256 stages30/30;
+IBN-b512 stage40/40 and final/soup evaluations passed. Local scoring verified
+900dev/1500test exact coverage, hashes and argmax: stagedIBNb98.11dev/95.60test;
+equaldirect+stagedsoup98.22/95.07. PreviousdirectIBNb98.33dev remainsleader.
+IBN-a512 stage33/40, finite loss,188.3s/epoch, GPU0at100%; supervisor still
+running under originalguard, no completion/finalburnreceipt yet. ETAremaining
+fit~22min fromsnapshot, wholequeue~13:45–13:55SGT estimate. Automatic final
+eval/weightaverage/burnhandoff unchanged; no newfits or restarts.
+Evidence results/ce7454_staged_progress_20261017_0522.json; predictions and
+scores temp/ce7454_eval_upload/staged-review-a03/; rawlog
+ temp/ce7454_followup_20261017/progress_0522.log. Restoringcommands#0.
+
+---
+
+## CE7454 connection recovered; staged training active — 17 October, 11:55 SGT snapshot
+
+Read-only command 5a57fa4 subsequently executed successfully after the runner's
+transient SSH hostname-resolution failure. Remote timestamp03:55:47UTC.
+Both 30-epoch256 stages completed. IBN-a is6/40 at512 (~188.6s/epoch),
+IBN-b9/40 (~152.8s/epoch), finite losses. GPUs0/1 at100% utilization;
+supervisor1318233 stillowns guard, run statusrunning; no completion or final
+burn receipt yet. No training was stopped or restarted by this status review.
+Estimated fit ends13:43/13:15SGT respectively; allow final single/soup evals,
+overall13:45–14:10 estimate. Automatic evaluation/burn restoration unchanged.
+Evidence results/ce7454_staged_progress_20261017_0355.json and
+ temp/ce7454_followup_20261017/progress_recovered_0404.log.
+
+---
+
+## CE7454 status check blocked — 17 October 2026, 11:52 SGT
+
+Fresh read-only monitoring command 5a57fa4 failed in the controller before
+remote execution: `FAILED(rc=255) | ssh: Could not resolve hostname <host>:
+nodename nor servname provided, or not known`. Dropbox remains readable.
+This is not evidence that training crashed or finished. Last verified staged
+progress remains 11:19 SGT: IBN-a 5/30 and IBN-b 7/30 at crop 256, followed
+by their queued 40-epoch crop-512 stages and final evaluations/weight averages.
+Current training, completion and burn handoff cannot be verified.
+Stopped remote writes per infrastructure-failure policy; no training stopped
+or relaunched. Execution commands.sh remains the failed READ-ONLY inspection,
+not a training launcher; do not repush it unchanged. Await controller repair,
+then obtain a fresh status receipt and restore #0 after verified actions.
+Evidence: results/ce7454_staged_status_20261017_0352.json; local downloaded
+controller log temp/ce7454_followup_20261017/status_0352.log.
+
+---
+
 ## CE7454 staged round RUNNING — 17 October 2026, verified11:19SGT
 
 Authorized newqueue q359-ce7454-staged-20261017-a01 launchedcfcf377.

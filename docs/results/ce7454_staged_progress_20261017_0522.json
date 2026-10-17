@@ -1,0 +1,217 @@
+{
+  "observed_remote_utc": "2026-10-17T05:22:29.641040+00:00",
+  "monitor_commit": "e8ea954",
+  "log_path": "/disk/thuat/deep2shallow/temp/ce7454_followup_20261017/progress_0522.log",
+  "log_sha256": "eb2560cafe6b2c71bf34a5fdff07e2cdbfdf6a483a05271b544b64d13d9d0c3d",
+  "epochs": [
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibna_stage256/log.csv",
+      "epochs": 30,
+      "last": [
+        {
+          "epoch": "29",
+          "lr": "2.739052e-07",
+          "train_loss": "0.052941",
+          "train_acc": "0.997476",
+          "val_loss": "0.007069",
+          "val_acc": "0.998667",
+          "sec": "50.7"
+        },
+        {
+          "epoch": "30",
+          "lr": "0.000000e+00",
+          "train_loss": "0.052156",
+          "train_acc": "0.997031",
+          "val_loss": "0.005941",
+          "val_acc": "0.998667",
+          "sec": "50.7"
+        }
+      ]
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibna_stage512/log.csv",
+      "epochs": 33,
+      "last": [
+        {
+          "epoch": "32",
+          "lr": "9.549150e-06",
+          "train_loss": "0.026410",
+          "train_acc": "1.000000",
+          "val_loss": "0.005602",
+          "val_acc": "0.998667",
+          "sec": "188.4"
+        },
+        {
+          "epoch": "33",
+          "lr": "7.367992e-06",
+          "train_loss": "0.027294",
+          "train_acc": "0.999703",
+          "val_loss": "0.005189",
+          "val_acc": "0.998667",
+          "sec": "188.3"
+        }
+      ]
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibnb_stage256/log.csv",
+      "epochs": 30,
+      "last": [
+        {
+          "epoch": "29",
+          "lr": "2.739052e-07",
+          "train_loss": "0.075010",
+          "train_acc": "0.993691",
+          "val_loss": "0.005839",
+          "val_acc": "0.998667",
+          "sec": "41.7"
+        },
+        {
+          "epoch": "30",
+          "lr": "0.000000e+00",
+          "train_loss": "0.071425",
+          "train_acc": "0.993394",
+          "val_loss": "0.005340",
+          "val_acc": "0.997333",
+          "sec": "41.8"
+        }
+      ]
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibnb_stage512/log.csv",
+      "epochs": 40,
+      "last": [
+        {
+          "epoch": "39",
+          "lr": "1.541333e-07",
+          "train_loss": "0.029172",
+          "train_acc": "0.999778",
+          "val_loss": "0.003762",
+          "val_acc": "0.998667",
+          "sec": "152.9"
+        },
+        {
+          "epoch": "40",
+          "lr": "0.000000e+00",
+          "train_loss": "0.028384",
+          "train_acc": "0.999703",
+          "val_loss": "0.003548",
+          "val_acc": "0.998667",
+          "sec": "152.9"
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "arm": "grip_nodown_ibnb_soup",
+      "epoch": 40,
+      "checkpoint_sha256": "8dbbf2b8f04e1e1bc83592b37599dfa107deeb6313bd329c1a73a5dcac30f0de",
+      "evaluation_status": "passed",
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 884,
+          "accuracy": 0.9822222222222222,
+          "confusion": [
+            [
+              284,
+              8,
+              6
+            ],
+            [
+              1,
+              300,
+              0
+            ],
+            [
+              1,
+              0,
+              300
+            ]
+          ],
+          "prediction_sha256": "d262ffea9746db8712bbf244349bb3ab9274c8eb00dbf968a27f8f75c1e22aa0"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1426,
+          "accuracy": 0.9506666666666667,
+          "confusion": [
+            [
+              477,
+              16,
+              7
+            ],
+            [
+              21,
+              475,
+              4
+            ],
+            [
+              25,
+              1,
+              474
+            ]
+          ],
+          "prediction_sha256": "7f5297c69f198584c5067e14fa592bc24d03fc6020dbe68bed50d4a6d1cf341d"
+        }
+      }
+    },
+    {
+      "arm": "grip_nodown_ibnb_staged",
+      "epoch": 40,
+      "checkpoint_sha256": "508f5fb50f3fc43a8e5f1deabe5430ead989ded7b8f2dc336a1637655c5ef5db",
+      "evaluation_status": "passed",
+      "metrics": {
+        "dev": {
+          "n": 900,
+          "correct": 883,
+          "accuracy": 0.9811111111111112,
+          "confusion": [
+            [
+              284,
+              6,
+              8
+            ],
+            [
+              1,
+              300,
+              0
+            ],
+            [
+              2,
+              0,
+              299
+            ]
+          ],
+          "prediction_sha256": "63bb0e9746b5ab78eded9efc06dd60b3d9b522bd85041b311b0a456ba815ea8f"
+        },
+        "test_official": {
+          "n": 1500,
+          "correct": 1434,
+          "accuracy": 0.956,
+          "confusion": [
+            [
+              480,
+              13,
+              7
+            ],
+            [
+              24,
+              471,
+              5
+            ],
+            [
+              16,
+              1,
+              483
+            ]
+          ],
+          "prediction_sha256": "930e0e049a481b1fcc9f2952d1b71026f8c002797cbeb2da2a4cf454507c85eb"
+        }
+      }
+    }
+  ],
+  "status": "IBN-b training and both evaluations complete; IBN-a final stage33/40; supervisor still running",
+  "burn_restoration": "pending until entire queue exits",
+  "eta_sgt": "approximately13:45\u201313:55 including remaining evaluations; estimate"
+}

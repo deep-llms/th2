@@ -24,9 +24,9 @@ def main():
     p.add_argument('--reuse-verified-cache', action='store_true')
     p.add_argument('--previous-output', type=Path)
     p.add_argument('--wait-previous', action='store_true')
-    p.add_argument('--study', choices=('scratch', 'followup', 'staged'), default='scratch')
+    p.add_argument('--study', choices=('scratch', 'followup', 'staged', 'soup'), default='scratch')
     args = p.parse_args()
-    if args.study in ('followup', 'staged') and not args.previous_output:
+    if args.study in ('followup', 'staged', 'soup') and not args.previous_output:
         raise ValueError('Follow-up requires the verified previous supervisor output')
     project = Path.cwd().resolve()
     sys.path.insert(0, str(project))
@@ -35,9 +35,10 @@ def main():
     if project != Path('/mnt/local/deep-llms_th2') or socket.gethostname() != HOST:
         raise RuntimeError('Wrong project/machine')
     if args.wait_previous:
-        if args.study != 'staged' or not args.previous_output:
+        if args.study not in ('staged', 'soup') or not args.previous_output:
             raise ValueError('Waiting is only supported for the approved staged successor')
-        limit = datetime.fromisoformat('2026-10-17T03:30:00+00:00').timestamp()
+        limit = datetime.fromisoformat('2026-10-17T06:30:00+00:00' if args.study == 'soup'
+                                       else '2026-10-17T03:30:00+00:00').timestamp()
         while True:
             if time.time() >= limit:
                 raise TimeoutError('Previous queue has not released GPUs before launch deadline')
@@ -95,6 +96,11 @@ def main():
                         '-p', 'test_staged*.py', '-v'], check=True, env=env)
         subprocess.run([VISION, str(code/'staged_study.py'), '--preflight-only'],
                        check=True, env=env)
+    if args.study == 'soup':
+        subprocess.run([VISION, '-m', 'unittest', 'discover', '-s', str(code),
+                        '-p', 'test_soup*.py', '-v'], check=True, env=env)
+        subprocess.run([VISION, str(code/'soup_study.py'), '--preflight-only'],
+                       check=True, env=env)
     if CACHE.exists():
         if not args.reuse_verified_cache:
             raise FileExistsError('Existing cache requires explicit verified reuse')
@@ -121,9 +127,9 @@ with (cache/'train_images.npy').open('rb') as f: print('REUSED_CACHE_SHA256',has
     fresh = inspect()
     (args.output / 'inspection.json').write_text(json.dumps(fresh, indent=2) + '\n')
     jobs = {'jobs': [{'name': 'ce7454-study',
-        'argv': [VISION, '-u', str(code / {'scratch': 'deadline_study.py', 'followup': 'followup_study.py', 'staged': 'staged_study.py'}[args.study]), '--cache', str(CACHE),
+        'argv': [VISION, '-u', str(code / {'scratch': 'deadline_study.py', 'followup': 'followup_study.py', 'staged': 'staged_study.py', 'soup': 'soup_study.py'}[args.study]), '--cache', str(CACHE),
                  '--output', '{run_dir}/study'], 'gpus': list(range(8)),
-        'timeout_seconds': (4 if args.study in ('followup', 'staged') else 14) * 3600,
+        'timeout_seconds': (1 if args.study == 'soup' else 4 if args.study in ('followup', 'staged') else 14) * 3600,
         'required_outputs': [{'path': 'study/complete.json', 'json_equals': {'status': 'passed'}}]}]}
     (args.output / 'jobs.json').write_text(json.dumps(jobs, indent=2) + '\n')
     print('CPU_PREFLIGHT_PASSED', datetime.now(timezone.utc).isoformat(), flush=True)

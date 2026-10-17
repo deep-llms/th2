@@ -1,0 +1,185 @@
+{
+  "source": "/disk/thuat/deep2shallow/temp/ce7454_followup_20261017/progress_recovered_0404.log",
+  "sha256": "4e6ad50de24e0b700737ab4590e14fdf4acb873bd07b83e2745e8aa91f0d26ad",
+  "observed_remote_utc": "2026-10-17T03:55:47.412864+00:00",
+  "status": "running",
+  "connection": "recovered",
+  "epochs": [
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibna_stage256/log.csv",
+      "epochs": 30,
+      "last": [
+        {
+          "epoch": "29",
+          "lr": "2.739052e-07",
+          "train_loss": "0.052941",
+          "train_acc": "0.997476",
+          "val_loss": "0.007069",
+          "val_acc": "0.998667",
+          "sec": "50.7"
+        },
+        {
+          "epoch": "30",
+          "lr": "0.000000e+00",
+          "train_loss": "0.052156",
+          "train_acc": "0.997031",
+          "val_loss": "0.005941",
+          "val_acc": "0.998667",
+          "sec": "50.7"
+        }
+      ]
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibna_stage512/log.csv",
+      "epochs": 6,
+      "last": [
+        {
+          "epoch": "5",
+          "lr": "9.619398e-05",
+          "train_loss": "0.068857",
+          "train_acc": "0.997034",
+          "val_loss": "0.014755",
+          "val_acc": "0.994667",
+          "sec": "188.6"
+        },
+        {
+          "epoch": "6",
+          "lr": "9.455033e-05",
+          "train_loss": "0.065453",
+          "train_acc": "0.997479",
+          "val_loss": "0.015618",
+          "val_acc": "0.993333",
+          "sec": "188.6"
+        }
+      ]
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibnb_stage256/log.csv",
+      "epochs": 30,
+      "last": [
+        {
+          "epoch": "29",
+          "lr": "2.739052e-07",
+          "train_loss": "0.075010",
+          "train_acc": "0.993691",
+          "val_loss": "0.005839",
+          "val_acc": "0.998667",
+          "sec": "41.7"
+        },
+        {
+          "epoch": "30",
+          "lr": "0.000000e+00",
+          "train_loss": "0.071425",
+          "train_acc": "0.993394",
+          "val_loss": "0.005340",
+          "val_acc": "0.997333",
+          "sec": "41.8"
+        }
+      ]
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-staged-20261017-a01/supervised/run/study/grip_nodown_ibnb_stage512/log.csv",
+      "epochs": 9,
+      "last": [
+        {
+          "epoch": "8",
+          "lr": "9.045085e-05",
+          "train_loss": "0.070909",
+          "train_acc": "0.996664",
+          "val_loss": "0.008300",
+          "val_acc": "0.998667",
+          "sec": "152.8"
+        },
+        {
+          "epoch": "9",
+          "lr": "8.802030e-05",
+          "train_loss": "0.070259",
+          "train_acc": "0.996367",
+          "val_loss": "0.009239",
+          "val_acc": "0.997333",
+          "sec": "152.8"
+        }
+      ]
+    }
+  ],
+  "gpu_snapshot": [
+    {
+      "index": 0,
+      "uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 28524.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        1320069
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 29548.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        1319853
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    }
+  ],
+  "completion_verified": false,
+  "eta_sgt": "IBN-b approximately13:15; IBN-a approximately13:43; allow final evaluations, total13:45\u201314:10"
+}
