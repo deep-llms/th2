@@ -1,3 +1,26 @@
+## Full-model real-data template pilot submitted — 17 October 2026
+
+User explicitly requested training with model/data already on B200. Read-only
+preflight18:58UTC confirmed q359, full28-layer Qwen3-0.6B config/tokenizer,
+English cx_sampled_old saved splits, and only the known eight-GPU burn with
+released guard. Launch5a6e9a5 runs SDPA then FA4 on all eight GPUs. Standard
+scratch baseline; existing local config/tokenizer (no pretrained weight files
+present in that model folder). No downloads or env/driver changes.
+
+Each backend: 2048 tokens, microbatch16, accumulation4 (1,048,576 input tokens
+per update), BF16, activation checkpointing, seed/data_seed42, 28,600-step
+schedule with1,430 warmup; stop/save25, native resume50, verify checkpoints,
+standalone evaluation and summary. Fixed first100,000 training documents and
+256 validation documents from existing sorted sources; text slicing only,
+normal train.py tokenization/packing/cache. Source/selection receipts recorded.
+Local preparation and manifest checks passed before launch. No claim of remote
+training success until receipts are verified. Supervisor rechecks/reclaims only
+known burns and automatically restores verified eight-GPU burns on exit.
+Remote root /mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a01.
+Local evidence /disk/thuat/deep2shallow/temp/template-realdata-20261017/.
+
+---
+
 ## Template B200 smoke validation COMPLETE — 17 October 2026
 
 All five checks passed: real FA4 numerical/isolation probe, and SDPA/FA4
