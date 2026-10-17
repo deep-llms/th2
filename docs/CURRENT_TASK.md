@@ -1,3 +1,24 @@
+## Real-data pilot warmup corrected; fresh run submitted — 17 October 2026
+
+Initial pilot a01 ran normally on all eight GPUs (~75,432MiB each), with finite
+loss/gradients. Its generated config accidentally supplied warmup_ratio=0 along
+with warmup_steps=1430. Installed HF5.9 prioritizes the deprecated ratio, so the
+observed LR incorrectly started at3e-4. This was a pilot-manifest error, not a
+change to the training core. Do not use a01 as the declared-schedule result.
+
+Authorized correction ceedf08 revalidated and signaled only the owned pilot
+supervisor PID1335763/start_ticks121835795 to trigger its existing cleanup/burn
+handoff. Snapshot confirms that signal; later launch verifies full handoff.
+Fresh launch931839d uses q359-template-realdata-20261017-a02, discards neither
+old outputs nor caches, and never resumes a01. It first waits for and verifies
+predecessor burn workers and released guard. The corrected helper omits the
+conflicting ratio and parses every stage through actual HF arguments on CPU,
+asserting warmup1430/schedule28600/cutoff25 or50 before GPU reclamation.
+Positive and injected-conflict negative tests passed locally. Await fresh
+training metrics and completion; no success claim yet.
+
+---
+
 ## Full-model real-data template pilot submitted — 17 October 2026
 
 User explicitly requested training with model/data already on B200. Read-only
