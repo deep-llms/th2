@@ -12,5 +12,6 @@
   "scripts/verify_manifest.py": "4be05466e3a0144cbb6930438e0c94df8597e7ae725c27ff20fe3db340db13c7",
   "scripts/training_results.py": "de631f088ec98a573e5044245cb63412d177fb654a623eb278cf315bf697ded3",
   "tests/ml/fa4_gpu_probe.py": "8af2b1b499f5ae66723b10d4cec8d4ade0712aca87a55d66bced3eb443b36c72",
-  "tests/ml/gpu_workflow_probe.py": "01d0c09610f90d385c3ec3e7d4e0ce3337f5bf1185a8e99955e6d0519b78716a"
+  "tests/ml/gpu_workflow_probe.py": "01d0c09610f90d385c3ec3e7d4e0ce3337f5bf1185a8e99955e6d0519b78716a",
+  "tests/ml/real_data_pilot.py": "fae739ec2c16756759b1ff327190ad44c3258415b8b4dbfaddddca7fd5f9eef2"
 }
