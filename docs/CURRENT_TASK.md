@@ -1,3 +1,31 @@
+## CE7454 final staged round authorized — 17 October 2026
+
+User approved best-checkpoint evaluations, two staged IBN fits and fixed equal
+weight averages. New queue q359-ce7454-staged-20261017-a01 must WAIT for
+followup-a02 success plus final burn verification/guard release. No stopping
+current IBN-a or overlapping GPU owners. Latest launch03:30UTC, finish-by
+06:30UTC/14:30SGT (85min reserve before15:55SGT deadline).
+
+Five direct best.pt evaluations on GPUs2–6. Each best is selected by internal
+validation, no dev/test tuning. GPUs0/1 train IBN-a/IBN-b from original GRIP
+base450:30epochs256 batch32 then40epochs512 batch16, LR1e-4 with fresh Adam
+cosine schedules each stage, seed1/data43/split42, strong augmentations kept.
+Same-architecture256->512 loading gets a real one-epoch smoke; both scientific
+chains restart from untouchedbase450, never from smoke checkpoints. Parameter
+cap12.3M. Measured timings must fit reserveddeadline.
+
+After each staged final evaluation, average directlast and stagedlast weights
+at exactly0.5/0.5 within that architecture. Float BN buffers also averaged;
+integer BN counters use max. No BN recalibration, no prediction ensemble/TTA,
+no inherited validation metric. Strict reload/identity checked. Evaluate fixed
+single and soup endpoints; selection val/dev only, labels remain local.
+
+CPU tests passed3/3 (stage settings, exact averaging/rejection, realmodel
+reload/identity/parametercount). Preparation and live launch verification pending.
+Automatic final burns via unchanged train_then_burn supervisor on success/failure.
+
+---
+
 ## CE7454 follow-up status — 10:47 SGT, 17 October 2026
 
 Read-only f4de2ba confirms four completed40epoch fits with finaldev/test

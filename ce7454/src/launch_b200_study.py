@@ -9,6 +9,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import time
 
 VISION = '/mnt/local/conda-py311/envs/ce7454_env/bin/python'
 SUPERVISOR = '/mnt/local/conda-py311/envs/eval_fa4/bin/python'
@@ -22,9 +23,10 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--reuse-verified-cache', action='store_true')
     p.add_argument('--previous-output', type=Path)
-    p.add_argument('--study', choices=('scratch', 'followup'), default='scratch')
+    p.add_argument('--wait-previous', action='store_true')
+    p.add_argument('--study', choices=('scratch', 'followup', 'staged'), default='scratch')
     args = p.parse_args()
-    if args.study == 'followup' and not args.previous_output:
+    if args.study in ('followup', 'staged') and not args.previous_output:
         raise ValueError('Follow-up requires the verified previous supervisor output')
     project = Path.cwd().resolve()
     sys.path.insert(0, str(project))
@@ -32,6 +34,26 @@ def main():
     from scripts.train_then_burn import approved_launcher, APPROVED_BURNS, BURN_HASH
     if project != Path('/mnt/local/deep-llms_th2') or socket.gethostname() != HOST:
         raise RuntimeError('Wrong project/machine')
+    if args.wait_previous:
+        if args.study != 'staged' or not args.previous_output:
+            raise ValueError('Waiting is only supported for the approved staged successor')
+        limit = datetime.fromisoformat('2026-10-17T03:30:00+00:00').timestamp()
+        while True:
+            if time.time() >= limit:
+                raise TimeoutError('Previous queue has not released GPUs before launch deadline')
+            path = args.previous_output/'supervised/supervisor.json'
+            previous = json.loads(path.read_text()) if path.exists() else {}
+            if 'finished_at' in previous:
+                if previous.get('training_status') != 'ok' or not previous.get('burn', {}).get('collective_progress_verified'):
+                    raise RuntimeError('Previous study failed or burn handoff was not verified')
+                complete = json.loads((args.previous_output/'supervised/run/study/complete.json').read_text())
+                if complete['status'] != 'passed':
+                    raise RuntimeError('Previous study completion invalid')
+                if not Path('/mnt/local/_gpu_guard/DISABLED').exists():
+                    print('PREVIOUS_STUDY_AND_BURN_VERIFIED', datetime.now(timezone.utc).isoformat(), flush=True)
+                    break
+            print('WAITING_FOR_PREVIOUS_BURN_HANDOFF', datetime.now(timezone.utc).isoformat(), flush=True)
+            time.sleep(10)
     before = inspect()
     if before['guard_disabled']:
         raise RuntimeError('Another GPU workflow holds the guard')
@@ -68,6 +90,11 @@ def main():
                         '-p', 'test_followup*.py', '-v'], check=True, env=env)
         subprocess.run([VISION, str(code/'followup_study.py'), '--preflight-only'],
                        check=True, env=env)
+    if args.study == 'staged':
+        subprocess.run([VISION, '-m', 'unittest', 'discover', '-s', str(code),
+                        '-p', 'test_staged*.py', '-v'], check=True, env=env)
+        subprocess.run([VISION, str(code/'staged_study.py'), '--preflight-only'],
+                       check=True, env=env)
     if CACHE.exists():
         if not args.reuse_verified_cache:
             raise FileExistsError('Existing cache requires explicit verified reuse')
@@ -94,9 +121,9 @@ with (cache/'train_images.npy').open('rb') as f: print('REUSED_CACHE_SHA256',has
     fresh = inspect()
     (args.output / 'inspection.json').write_text(json.dumps(fresh, indent=2) + '\n')
     jobs = {'jobs': [{'name': 'ce7454-study',
-        'argv': [VISION, '-u', str(code / ('followup_study.py' if args.study == 'followup' else 'deadline_study.py')), '--cache', str(CACHE),
+        'argv': [VISION, '-u', str(code / {'scratch': 'deadline_study.py', 'followup': 'followup_study.py', 'staged': 'staged_study.py'}[args.study]), '--cache', str(CACHE),
                  '--output', '{run_dir}/study'], 'gpus': list(range(8)),
-        'timeout_seconds': (4 if args.study == 'followup' else 14) * 3600,
+        'timeout_seconds': (4 if args.study in ('followup', 'staged') else 14) * 3600,
         'required_outputs': [{'path': 'study/complete.json', 'json_equals': {'status': 'passed'}}]}]}
     (args.output / 'jobs.json').write_text(json.dumps(jobs, indent=2) + '\n')
     print('CPU_PREFLIGHT_PASSED', datetime.now(timezone.utc).isoformat(), flush=True)

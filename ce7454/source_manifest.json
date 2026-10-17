@@ -12,7 +12,7 @@
   "install_interim_watch.py": "fadb72b2e3247cfaf800bf1e03ef17349052efd98de0da1ae242cc2c8275ddcf",
   "interim_evaluation.py": "5935fdeaf24756ebdedd98a0865e9c0d83798a51b273bbbdf1a70beebeb877f1",
   "interim_watch.py": "298586548cdfbcadb0ac72532b578b07af946b8cea0f1aec62a73f67e15d7cb2",
-  "launch_b200_study.py": "f7ba14bd25e045df58536c482a61b8fc67e803bfb951c2e0f6e1c4ab22a59f51",
+  "launch_b200_study.py": "c13d2f8fbbebdee945c347c3541d26d2000ad6057a89f7ee282f6ea64e83f709",
   "make_protocols.py": "c7464cb3db5b513fa7eefa7d0137b48a64e51722db32e179a5ead8c8f295e1c5",
   "models.py": "1d75306510528b0505970a5bcf9bd02f6b690771f962f0e07d42611c88894d50",
   "predict_external.py": "ba9861e6cae218ea833e36e208ad27eecf08b645bf8a84b433611667f98c90c4",
@@ -21,11 +21,13 @@
   "prepare_evaluation_data.py": "a20d939448f5c80428bc1c56e2e4f67101fb8b7af51cf2648c6402628dee9e98",
   "research_band_stem.py": "572de8f56643b9e17fc44a126eb660dc5f47bffa8f72cec503560beba9f1c707",
   "score_interim_log.py": "57e23bbb5ba756e480eca4ef133d734bb9fd5a98aa93591ebd5c2e64a7f05084",
+  "staged_study.py": "0636c3082894870fc3f7de6f9c5271d09ec4ecbda69245c81f8a526c261a78d6",
   "test_band_study.py": "d396a2dfc3fe8c2a03637568b2aff3512657952177691d84a5ff0207cc45a3e0",
   "test_deadline_candidates.py": "928ab7119587f2ae6f87a4a5ba6c8c664655871ee68f6e5bfe8353198a0d9688",
   "test_deadline_study.py": "b8e496bf1a00b9a6a520cec785ff15aacab5d59952bab012dbd2bb3935bf48e2",
   "test_external_evaluation.py": "6eb7feda66cdfade2c66174fea4a37809c9c9f39c23a5996fadde6581c567b52",
   "test_followup_study.py": "d3bea9ffb0b14d2fa69172825321a918b2624e3ad4c1c2fea5991bc293104f53",
   "test_interim_evaluation.py": "19956eadf1e493625756bbdc88d0db07d2eb9780165bfdbd01f1bc294a51efd1",
+  "test_staged_study.py": "a26c5c61b5d5d3029858a45ad54adf0184335c7c7cbc8b2bbe2bf442637a44c8",
   "train.py": "bcc3652c827dbe580a2d25b6d837584611e52dbf37767337fbaf08732d38172e"
 }
