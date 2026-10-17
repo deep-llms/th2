@@ -32,11 +32,14 @@ def make_jobs(model_config, tokenizer, train, validation, accelerate, cache):
                 if key in a: a[a.index(key)+1] = str(value)
                 else: a.extend([key, str(value)])
             if name in ('train', 'resume'):
+                # HF 5.9 maps the deprecated ratio onto warmup_steps, even if zero.
+                index = a.index('--warmup_ratio')
+                del a[index:index+2]
                 settings = {'--use_cpu':'false', '--attention_backend':backend, '--block_size':2048,
                     '--max_steps':28600, '--stop_after':25 if name=='train' else 50,
                     '--per_device_train_batch_size':16, '--gradient_accumulation_steps':4,
                     '--per_device_eval_batch_size':2, '--learning_rate':0.0003,
-                    '--lr_scheduler_type':'cosine_with_min_lr', '--warmup_ratio':0.,
+                    '--lr_scheduler_type':'cosine_with_min_lr',
                     '--warmup_steps':1430, '--lr_scheduler_kwargs':'{"min_lr_rate": 0.1}',
                     '--weight_decay':0.1, '--adam_beta1':0.9, '--adam_beta2':0.95,
                     '--logging_steps':5, '--eval_steps':25, '--bf16':'true',
@@ -65,6 +68,26 @@ def make_jobs(model_config, tokenizer, train, validation, accelerate, cache):
                     elif key in ('max_steps','schedule_steps'): spec['json_equals'][key]=28600
             jobs.append(job)
     return {'jobs':jobs}
+
+
+
+def validate_schedule(jobs):
+    # Parse with the installed HF version before reclaiming GPUs. Device and
+    # precision are changed only for this CPU validation, not in the job argv.
+    from transformers import HfArgumentParser
+    from train import ModelArguments, DataArguments, BaselineTrainingArguments
+    for job in jobs['jobs']:
+        if job['name'] not in ('sdpa-train', 'sdpa-resume', 'fa4-train', 'fa4-resume'):
+            continue
+        argv = job['argv']
+        argv = argv[argv.index(str(ROOT/'train.py'))+1:]
+        argv[argv.index('--use_cpu')+1] = 'true'
+        argv[argv.index('--bf16')+1] = 'false'
+        _, _, args = HfArgumentParser((ModelArguments, DataArguments,
+            BaselineTrainingArguments)).parse_args_into_dataclasses(argv)
+        expected = 25 if job['name'].endswith('-train') else 50
+        if args.max_steps != 28600 or args.get_warmup_steps(args.max_steps) != 1430 or args.stop_after != expected:
+            raise ValueError('Native HF schedule differs from the declared pilot recipe')
 
 
 def main():
@@ -97,6 +120,7 @@ def main():
     (args.output/'data-selection.json').write_text(json.dumps(receipt,indent=2)+'\n')
     jobs=make_jobs(config['config_name'],config['tokenizer_name'],args.output/'train',
         args.output/'validation',args.accelerate,args.output/'hf-cache')
+    validate_schedule(jobs)
     manifest=args.output/'jobs.json';manifest.write_text(json.dumps(jobs,indent=2)+'\n')
     from run_experiments import load_jobs
     load_jobs(manifest)

@@ -1,34 +1,56 @@
 #1 +60+a
-#th2-q359-template-realdata-correct-schedule-20261017-a01
+#th2-q359-template-realdata-20261017-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-q359-worker-0
-/mnt/local/conda-py311/envs/eval_fa4/bin/python -B - <<'PY'
-import json,signal,os,time
+TASK_PYTHON=/mnt/local/conda-py311/envs/eval_fa4/bin/python
+TASK_ROOT=/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a02
+TASK_SESSION=template_realdata_20261017_a02
+"$TASK_PYTHON" -B - <<'GATE'
+import json,time
 from pathlib import Path
-from scripts.verified_gpu_reclaim import process,pidfd_open,pidfd_send_signal,inspect
-root=Path('/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a01/supervised')
-guard=Path('/mnt/local/_gpu_guard/DISABLED')
-if guard.exists():
- marker=guard.read_text();owner=json.loads(marker)
- assert owner['output']==str(root),'Different GPU owner; refuse'
- pid=owner['owner_pid'];before=process(pid)
- argv=[x.decode() for x in (Path('/proc')/str(pid)/'cmdline').read_bytes().split(b'\0') if x]
- assert 'scripts.train_then_burn' in argv and str(root) in argv,argv
- fd=pidfd_open(pid)
- try:
-  assert process(pid)==before and guard.read_text()==marker,'Owner identity changed'
-  print('STOP_OWN_TEMPLATE_PILOT_SUPERVISOR',pid,before['start_ticks'],flush=True)
-  pidfd_send_signal(fd,signal.SIGTERM)
- finally:os.close(fd)
-else:print('NO_ACTIVE_GUARD',flush=True)
+from scripts.verified_gpu_reclaim import inspect
+previous=Path('/mnt/local/_outputs/deep-llms_th2/q359-template-realdata-20261017-a01/supervised')
 for _ in range(60):
- p=root/'burn-verified.json'
- if not guard.exists() and p.exists():
-  receipt=json.loads(p.read_text());now=inspect()
-  assert receipt['collective_progress_verified'] and [g['pids'] for g in receipt['gpus']]==[g['pids'] for g in now['gpus']]
-  print('PREVIOUS_PILOT_BURN_HANDOFF_VERIFIED',json.dumps(now),flush=True)
-  print('SUPERVISOR', (root/'supervisor.json').read_text(),flush=True)
-  break
- time.sleep(5)
-else:raise RuntimeError('Handoff not yet verified; do not launch a competing job')
+    p=previous/'burn-verified.json'
+    if p.exists() and not Path('/mnt/local/_gpu_guard/DISABLED').exists():
+        receipt=json.loads(p.read_text());live=inspect()
+        assert receipt['collective_progress_verified']
+        assert [g['pids'] for g in receipt['gpus']]==[g['pids'] for g in live['gpus']]
+        assert len(live['workers'])==8 and not live['guard_disabled']
+        print('PREDECESSOR_BURN_HANDOFF_VERIFIED',json.dumps(live),flush=True)
+        break
+    time.sleep(5)
+else:raise RuntimeError('Predecessor burn handoff not verified; refusing new pilot')
+GATE
+test ! -e "$TASK_ROOT"
+mkdir "$TASK_ROOT"
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 WANDB_MODE=offline NCCL_NVLS_ENABLE=0 OMP_NUM_THREADS=1
+"$TASK_PYTHON" - "$TASK_ROOT" <<'PY'
+import hashlib,json,shutil,sys
+from pathlib import Path
+from accelerate.commands.config.config_args import default_config_file
+from scripts.verified_gpu_reclaim import inspect
+root=Path(sys.argv[1]); source=Path('template_validation')
+for name,expected in json.loads((source/'source_manifest.json').read_text()).items():
+    assert hashlib.sha256((source/name).read_bytes()).hexdigest()==expected,name
+inspection=inspect()
+assert not inspection['guard_disabled'],'GPU owner guard held'
+(root/'inspection.json').write_text(json.dumps(inspection,indent=2))
+target=Path(default_config_file); target.parent.mkdir(parents=True,exist_ok=True)
+if target.exists(): shutil.copy2(target,root/'previous_accelerate.yaml')
+shutil.copy2('resources/accelerate_config.yaml',target)
+assert target.read_bytes()==Path('resources/accelerate_config.yaml').read_bytes()
+print('ACCELERATE_CONFIG_COPIED',target)
 PY
+"$TASK_PYTHON" -m accelerate.commands.env | tee "$TASK_ROOT/accelerate-env.txt"
+CUDA_VISIBLE_DEVICES='' "$TASK_PYTHON" -c 'import sys; sys.path.insert(0,"template_validation"); import train; from importlib.metadata import version; assert version("flash-attn-4")=="4.0.0b33"; print("TEMPLATE_IMPORT_OK")'
+CUDA_VISIBLE_DEVICES='' "$TASK_PYTHON" template_validation/tests/ml/real_data_pilot.py --source-config "$PWD/deep_kv.b200.json" --accelerate "$PWD/resources/accelerate_config.yaml" --output "$TASK_ROOT/input"
+"$TASK_PYTHON" run_experiments.py --config "$TASK_ROOT/input/jobs.json" --list
+if tmux has-session -t "$TASK_SESSION" 2>/dev/null; then exit 1; fi
+printf -v TASK_CMD 'exec %q -B -m scripts.train_then_burn --config %q --output %q --inspection %q --host thiennh-p6-q359-worker-0 --burn-session %q >%q 2>&1' "$TASK_PYTHON" "$TASK_ROOT/input/jobs.json" "$TASK_ROOT/supervised" "$TASK_ROOT/inspection.json" "${TASK_SESSION}_final_burn" "$TASK_ROOT/supervisor.log"
+tmux new-session -d -s "$TASK_SESSION" "$TASK_CMD"
+tmux set-option -w -t "$TASK_SESSION" remain-on-exit on
+sleep 5
+test "$(tmux display-message -p -t "$TASK_SESSION" '#{pane_dead}')" = 0
+cat "$TASK_ROOT/supervisor.log"
+echo TEMPLATE_REALDATA_SUPERVISOR_STARTED
