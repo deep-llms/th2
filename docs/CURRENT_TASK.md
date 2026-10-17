@@ -1,3 +1,23 @@
+## CE7454 follow-up status — 10:47 SGT, 17 October 2026
+
+Read-only f4de2ba confirms four completed40epoch fits with finaldev/test
+predictions verified locally (900/1500 filenames, SHA, checkpointidentity,
+finite logits, argmax). IBN-b98.33/95.33; GRIP96.44/95.73;
+SR96.78/96.07; SRstats97.33/94.80 (dev/test percentages).
+IBN-a still healthy35/40, ~188s/epoch, GPU0 PID1312802. Supervisor1312229
+owns guard; otherGPUsfree, burns intentionally absent until allworkfinishes.
+Do not launch a competingburn. No errors or newfits. ETAremaining training,
+evaluation andhandoff~11:05–11:15SGT. IBN-b strongest completeddev result;
+use dev only for recommendations; officialtest reportingonly.
+
+Evidence results/ce7454_followup_review_20261017_a01.json; localpredictions
+ temp/ce7454_eval_upload/followup-review-a01/. Full healthlogSHA
+48ac98ade7923b0b5bca33d7535e8006b7db9454499664455820e84b3d1a6a0f.
+Commands#0 after statusquery. NextcheckfinalIBNa, complete.json, supervisor
+completion, actualcommunicating8GPUburn andguardrelease. No timer restarted.
+
+---
+
 ## CE7454 corrected follow-up RUNNING — 08:58 SGT, 17 October 2026
 
 Latest user correction is applied: ALL five fits start from the first-phase

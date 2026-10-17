@@ -1,0 +1,275 @@
+{
+  "observed_utc": "2026-10-17T02:47:36.649506+00:00",
+  "remote_commit": "f4de2ba",
+  "status": [
+    {
+      "path": "/mnt/local/_gpu_guard/DISABLED",
+      "data": {
+        "owner_pid": 1312229,
+        "output": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-followup-20261017-a02/supervised",
+        "at": "2026-10-17T00:51:21.919220+00:00"
+      }
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-followup-20261017-a02/supervised/supervisor.json",
+      "data": {
+        "started_at": "2026-10-17T00:52:22.741630+00:00",
+        "training_status": "running"
+      }
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-followup-20261017-a02/supervised/burn-verified.json",
+      "data": null
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-followup-20261017-a02/supervised/run/run.json",
+      "data": {
+        "status": "running",
+        "started_at": "2026-10-17T00:52:22.741878+00:00",
+        "jobs": [
+          {
+            "name": "ce7454-study",
+            "started_at": "2026-10-17T00:52:22.742052+00:00",
+            "status": "running"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/q359-ce7454-followup-20261017-a02/supervised/run/study/complete.json",
+      "data": null
+    }
+  ],
+  "scores": {
+    "results": [
+      {
+        "arm": "grip_nodown_ibnb_s1",
+        "epoch": 40,
+        "checkpoint_sha256": "d0addd22b13858a717d52bd8a1a7dd86b50425ef906e99a7bff95e4c1759eb15",
+        "evaluation_status": "passed",
+        "metrics": {
+          "dev": {
+            "n": 900,
+            "correct": 885,
+            "accuracy": 0.9833333333333333,
+            "confusion": [
+              [
+                285,
+                5,
+                8
+              ],
+              [
+                1,
+                300,
+                0
+              ],
+              [
+                1,
+                0,
+                300
+              ]
+            ],
+            "prediction_sha256": "fd84e42be8a08c9bee817cc886261a4e8bd8c82948e12541dc2d90bff6771a1a"
+          },
+          "test_official": {
+            "n": 1500,
+            "correct": 1430,
+            "accuracy": 0.9533333333333334,
+            "confusion": [
+              [
+                480,
+                13,
+                7
+              ],
+              [
+                27,
+                470,
+                3
+              ],
+              [
+                19,
+                1,
+                480
+              ]
+            ],
+            "prediction_sha256": "7c32f8aa2e8db97ac418fbc32943f7d69d092cf0e3cbcce31ab8b97a8d183d0f"
+          }
+        }
+      },
+      {
+        "arm": "grip_nodown_s1",
+        "epoch": 40,
+        "checkpoint_sha256": "66debf7e7f22bef034be371f702ad1dc7eb5514233f0618f0f20d2aa6d710af4",
+        "evaluation_status": "passed",
+        "metrics": {
+          "dev": {
+            "n": 900,
+            "correct": 868,
+            "accuracy": 0.9644444444444444,
+            "confusion": [
+              [
+                271,
+                9,
+                18
+              ],
+              [
+                1,
+                299,
+                1
+              ],
+              [
+                3,
+                0,
+                298
+              ]
+            ],
+            "prediction_sha256": "377310b5a25d7b5577735629518c1de6e7ac8502403d0a6e993b1d6dbf656c4e"
+          },
+          "test_official": {
+            "n": 1500,
+            "correct": 1436,
+            "accuracy": 0.9573333333333334,
+            "confusion": [
+              [
+                482,
+                11,
+                7
+              ],
+              [
+                18,
+                479,
+                3
+              ],
+              [
+                23,
+                2,
+                475
+              ]
+            ],
+            "prediction_sha256": "6dd5cb15bb08708f9cf0109d6d0d251e43032d46b013405d99cb1c8a9075eac4"
+          }
+        }
+      },
+      {
+        "arm": "srresnet_s1",
+        "epoch": 40,
+        "checkpoint_sha256": "f3face904542159ef64f7f42b7115227fffc2adf4d93fca4edd319add2881f6e",
+        "evaluation_status": "passed",
+        "metrics": {
+          "dev": {
+            "n": 900,
+            "correct": 871,
+            "accuracy": 0.9677777777777777,
+            "confusion": [
+              [
+                272,
+                8,
+                18
+              ],
+              [
+                0,
+                300,
+                1
+              ],
+              [
+                2,
+                0,
+                299
+              ]
+            ],
+            "prediction_sha256": "2c4b3f9583d3103903742ff7dd81b262c69427827563bcc78ce3482151231cad"
+          },
+          "test_official": {
+            "n": 1500,
+            "correct": 1441,
+            "accuracy": 0.9606666666666667,
+            "confusion": [
+              [
+                473,
+                19,
+                8
+              ],
+              [
+                13,
+                487,
+                0
+              ],
+              [
+                18,
+                1,
+                481
+              ]
+            ],
+            "prediction_sha256": "b4cc048a0acb39d0bacbe5e5d811b95182fd602fe43d8ce8d80d98f8b4275e60"
+          }
+        }
+      },
+      {
+        "arm": "srresnet_stats_s1",
+        "epoch": 40,
+        "checkpoint_sha256": "47a494f3cf3f5191a84c022000f4b956cedd4a8fe18aded2a0011ca2ab469ce3",
+        "evaluation_status": "passed",
+        "metrics": {
+          "dev": {
+            "n": 900,
+            "correct": 876,
+            "accuracy": 0.9733333333333334,
+            "confusion": [
+              [
+                279,
+                6,
+                13
+              ],
+              [
+                1,
+                298,
+                2
+              ],
+              [
+                2,
+                0,
+                299
+              ]
+            ],
+            "prediction_sha256": "993a08fc65ad67f9d9ce1c7b5a64ec5be9d01afca4319968143913076b9232df"
+          },
+          "test_official": {
+            "n": 1500,
+            "correct": 1422,
+            "accuracy": 0.948,
+            "confusion": [
+              [
+                484,
+                9,
+                7
+              ],
+              [
+                29,
+                471,
+                0
+              ],
+              [
+                30,
+                3,
+                467
+              ]
+            ],
+            "prediction_sha256": "2d02a307b809353e603d9a45fc3a29ff85c581824f14a28da092d59289694c87"
+          }
+        }
+      }
+    ],
+    "health_log_sha256": "48ac98ade7923b0b5bca33d7535e8006b7db9454499664455820e84b3d1a6a0f",
+    "verification": "receipt SHA, checkpoint identity, manifest, exact filenames/counts, finite logits/argmax, prediction counts"
+  },
+  "running": {
+    "arm": "grip_nodown_ibna_s1",
+    "epoch": 35,
+    "target_epochs": 40,
+    "gpu": 0,
+    "pid": 1312802,
+    "epoch_seconds": 188.4
+  },
+  "eta_sgt": "2026-10-17 11:05\u201311:15 including evaluation, estimate",
+  "selection": "Dev only; test reported separately; dev labels are estimated"
+}

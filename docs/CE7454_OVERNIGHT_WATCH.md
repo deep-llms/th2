@@ -366,3 +366,23 @@ Evidence: results/ce7454_final_20261017.json; final predictions and completion
 receipts locally in ignored temp/ce7454_eval_upload/final-review-a08/.
 
 Timer exit verified23:18:26UTC/07:18:26SGT: status=stopped, old PID2397805 absent.
+
+
+## Follow-up review, 17 October 2026, 10:47 SGT
+
+Four of five follow-ups finished from original450epoch parents. Each completed
+40 additional epochs at512 with one seed. Final checkpoint scoring verified
+900dev/1500test filenames, hashes and logits. Dev uses estimated labels.
+
+| Follow-up | Dev accuracy | Test accuracy | Status |
+|---|---:|---:|---|
+| GRIP IBN-b | 98.33% | 95.33% | Complete |
+| GRIP | 96.44% | 95.73% | Complete |
+| SRNet | 96.78% | 96.07% | Complete |
+| SRNet-stats | 97.33% | 94.80% | Complete |
+| GRIP IBN-a | — | — | 35/40 epochs, healthy |
+
+IBN-b is strongest among these completed runs on dev. No recommendations are
+selected by test. IBN-a ETA including evaluation11:05–11:15SGT. Original
+supervisor still ownsGPUguard; burn handoff pending finalarm, as intended.
+Evidence: results/ce7454_followup_review_20261017_a01.json.
