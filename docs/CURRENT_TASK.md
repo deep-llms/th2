@@ -1,3 +1,26 @@
+## Template B200 smoke validation COMPLETE — 17 October 2026
+
+All five checks passed: real FA4 numerical/isolation probe, and SDPA/FA4
+single-GPU/two-GPU train/validate/checkpoint/resume/final-evaluation workflows.
+Every workflow matched uninterrupted weights and optimizer state exactly;
+scheduler and all-rank RNG comparisons passed. Seven validation sequences,
+433 valid target tokens, and periodic/standalone loss agreement checked.
+Tiny synthetic two-layer Qwen3 only; not production throughput/long-run proof.
+
+Launch1673fb7 on q359, output q359-template-smoke-20261017-a03. Tests completed
+16:36:50UTC, supervisor succeeded and restored verified eight-GPU burns16:38:02.
+Read-only receipt16:38:27 confirmed same eight burn workers, guard released,
+and advancing collective cycles10→50. No environment or driver changes.
+Accelerate resources config copied and verified before launch. commands.sh #0.
+Evidence docs/results/template_b200_smoke_20261017.json; local raw receipts
+/disk/thuat/deep2shallow/temp/template-b200-20261017/final-a01.log.
+
+The guide's known pattern rejection was resolved by removing unnecessary
+Hub-option code while keeping offline/local-only behavior. No controller change
+was needed; earlier claims requiring one are superseded.
+
+---
+
 ## Template GPU validation resumed — 17 October 2026
 
 User pointed back to AGENT_GUIDE's documented pattern-only guardrail. The prior
