@@ -82,11 +82,13 @@ if settings.bf16:
     # first step converts those into a full +/-LR update even in the reference
     # backend. Use identical nonzero moments to test distributed optimizer math
     # without that sign discontinuity, also checking unused momentum is skipped.
-    for optimizer,parameters in ((t.optimizer,m.parameters()),(opt,ref.parameters())):
-        for parameter in parameters:
-            optimizer.state[parameter] = dict(step=torch.tensor(5.),
-                exp_avg=torch.full_like(parameter,.001),
-                exp_avg_sq=torch.full_like(parameter,.0001))
+    for optimizer in (t.optimizer,opt):
+        for group in optimizer.param_groups:
+            for parameter in group['params']:
+                step_device=parameter.device if group.get('fused') or group.get('capturable') else 'cpu'
+                optimizer.state[parameter] = dict(step=torch.tensor(5.,device=step_device),
+                    exp_avg=torch.full_like(parameter,.001),
+                    exp_avg_sq=torch.full_like(parameter,.0001))
 inputs=model_inputs({k:v.to(device) for k,v in PackedCollator()(rows).items()})
 forced=torch.tensor([0,1,0,1],device=device)[None,:,None].expand(4,4,6)
 if settings.no_reuse or settings.home_only:
