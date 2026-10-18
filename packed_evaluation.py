@@ -56,13 +56,13 @@ def summed_nll(logits, labels, chunk_size=1024):
 
 
 @torch.inference_mode()
-def evaluate_packed(model, dataset, collator, accelerator, batch_size=1):
+def evaluate_packed(model, dataset, collator, accelerator, batch_size=1, *, batch_observer=None):
     loader = packed_eval_loader(dataset, collator, accelerator, batch_size)
-    return score_packed_loader(model, loader, accelerator)
+    return score_packed_loader(model, loader, accelerator, batch_observer=batch_observer)
 
 
 @torch.inference_mode()
-def score_packed_loader(model, loader, accelerator):
+def score_packed_loader(model, loader, accelerator, *, batch_observer=None):
     expected = "template_fa4" if loader.collate_fn.attention_backend == "fa4" else "sdpa"
     if model.config._attn_implementation != expected:
         raise ValueError("Model and evaluation collator attention backends must match")
@@ -76,13 +76,17 @@ def score_packed_loader(model, loader, accelerator):
         count = int(batch["labels"][:, 1:].ne(-100).sum())  # CPU, before transfer.
         num_sequences += batch["input_ids"].shape[0]
         num_tokens += count
-        if not count:  # An all-boundary batch contributes zero, not mean-loss NaN.
+        if not count and batch_observer is None and not hasattr(model, 'eval_counter'):
+            # B-DOT always visits all-boundary batches so standalone and route
+            # study evaluations have identical RNG advancement and route scope.
             continue
         inputs = model_inputs({k: v.to(accelerator.device) if isinstance(v, torch.Tensor) else v
                                for k, v in batch.items()})
         labels = inputs.pop("labels")
         with accelerator.autocast():
             logits = model(**inputs).logits
+        if batch_observer is not None:
+            batch_observer(batch, model)
         if getattr(model, "capture_routes", False) and model.last_routes is not None:
             routes = model.last_routes
             steps = routes.shape[0]
@@ -113,5 +117,5 @@ def score_packed_loader(model, loader, accelerator):
     if getattr(model, "capture_routes", False):
         off, reused_tokens, decisions, input_tokens = accelerator.reduce(route_totals, reduction="sum").tolist()
         result.update(off_default_share=off/max(decisions, 1), reuse_rate=reused_tokens/max(input_tokens, 1),
-                      routing_decisions=decisions)
+                      routing_decisions=decisions, routing_input_tokens=input_tokens)
     return result

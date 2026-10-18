@@ -41,6 +41,10 @@ class EvalArguments:
     validation_manifest: str | None = None
     routing_override: str | None = None  # fixed/random route intervention, evaluation only
     routing_seed: int = 0
+    route_study: bool = False  # All three routing modes, one checkpoint/data load.
+    route_sequences: int = 4096
+    route_artifact_sequences: int = 256
+    compare_routes: str | None = None  # Earlier routes_sample.npz on identical tokens.
 
 
 def data_arguments(recipe, path, cache_dir=None, overwrite=False):
@@ -103,6 +107,18 @@ def main():
     checkpoint, output = Path(args.checkpoint).resolve(), Path(args.output_file).absolute()
     if output.exists() or output.is_symlink():
         raise ValueError("Output already exists; choose a fresh output_file")
+    route_sample = output.parent / "routes_sample.npz"
+    if args.route_study:
+        if args.routing_override is not None:
+            raise ValueError("route_study evaluates all overrides; do not set routing_override")
+        if route_sample.exists() or route_sample.is_symlink():
+            raise ValueError("Route artifact already exists; use a fresh output directory")
+        if not 1 <= args.route_artifact_sequences <= args.route_sequences:
+            raise ValueError("Require 1 <= route_artifact_sequences <= route_sequences")
+        if args.compare_routes is not None and not Path(args.compare_routes).is_file():
+            raise ValueError("compare_routes must point to an existing routes_sample.npz")
+    elif args.compare_routes is not None:
+        raise ValueError("compare_routes requires route_study")
     receipt_path = checkpoint / "data_recipe.json"
     if not receipt_path.is_file():
         raise ValueError("Packed evaluation requires this template's checkpoint data_recipe.json")
@@ -153,8 +169,15 @@ def main():
         model.routing_override = args.routing_override
         model.eval_seed = args.routing_seed
         model.capture_routes = True
-    metrics = evaluate_packed(model, dataset,
-        PackedCollator(data.isolate_documents, data.reset_document_positions, backend), accelerator, args.batch_size)
+    collator = PackedCollator(data.isolate_documents, data.reset_document_positions, backend)
+    study = sample = None
+    if args.route_study:
+        from eval.route_study import run_route_study
+        metrics, study, sample = run_route_study(model, dataset, collator, accelerator, args.batch_size,
+            route_sequences=args.route_sequences, artifact_sequences=args.route_artifact_sequences,
+            routing_seed=args.routing_seed)
+    else:
+        metrics = evaluate_packed(model, dataset, collator, accelerator, args.batch_size)
     if len(dataset) == full_size and metrics["num_tokens"] != recipe["scored_target_tokens"]:
         raise RuntimeError("Evaluation token count differs from the packed-data receipt")
     state_path = checkpoint / "trainer_state.json"
@@ -172,8 +195,31 @@ def main():
         config_sha256=hashlib.sha256((checkpoint / "config.json").read_bytes()).hexdigest(),
         torch_version=torch.__version__)
     if accelerator.is_main_process:
+        if args.route_study:
+            from eval.route_study import write_route_sample, compare_route_samples
+            training_path = checkpoint / "training_recipe.json"
+            training = json.loads(training_path.read_text()) if training_path.is_file() else {}
+            metadata = dict(format_version=1,
+                layout={key: getattr(model.options, key) for key in ("mode", "S", "n_stem", "n_coda", "kv_mode")},
+                evaluation_contract=dict(attention_backend=backend, precision=args.precision,
+                    tokenizer_sha256=digest(train_recipe["tokenizer"]), block_size=data.block_size,
+                    isolate_documents=data.isolate_documents, reset_document_positions=data.reset_document_positions),
+                checkpoint=str(checkpoint), global_step=state.get("global_step"),
+                model_seed=training.get("training", {}).get("seed"),
+                data_seed=training.get("training", {}).get("data_seed"),
+                bdot_options=model.options.to_dict(), config_sha256=result["config_sha256"],
+                training_recipe_sha256=result["training_recipe_sha256"],
+                routing_seed=args.routing_seed, world_size=accelerator.num_processes, batch_size=args.batch_size)
+            write_route_sample(route_sample, sample, metadata)
+            study["route_artifact"] = dict(path=str(route_sample),
+                sha256=hashlib.sha256(route_sample.read_bytes()).hexdigest())
+            study["exporter_sha256"] = hashlib.sha256(Path(__file__).with_name("route_study.py").read_bytes()).hexdigest()
+            if args.compare_routes is not None:
+                study["cross_seed_agreement"] = compare_route_samples(args.compare_routes, route_sample)
+            result["route_study"] = study
         write_result(output, result)
-        print(json.dumps(metrics, indent=2, allow_nan=False))
+        print(json.dumps(dict(**metrics, **({"route_study": study} if study is not None else {})),
+                         indent=2, allow_nan=False))
     accelerator.wait_for_everyone()
 
 

@@ -13,6 +13,44 @@ from scripts import train_then_burn as handoff
 
 
 class HandoffTests(unittest.TestCase):
+    def test_guard_stays_held_after_partial_reclaim_or_unverified_handoff(self):
+        for targets, receipt, release in [
+                (None, None, True), ([], None, True), ([123], None, False),
+                ([123], {'training_status': 'failed'}, False),
+                ([123], {'burn': {}}, False),
+                ([123], {'burn': {'collective_progress_verified': True}}, True)]:
+            with self.subTest(targets=targets, receipt=receipt), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                guard = root / 'DISABLED'
+                guard.write_text('owner')
+                if targets is not None:
+                    (root/'reclaim.json').write_text(json.dumps({'signal_targets': targets}))
+                if receipt is not None:
+                    (root/'supervisor.json').write_text(json.dumps(receipt))
+                self.assertEqual(handoff.release_guard_if_safe(guard, guard.stat().st_ino, 'owner', root), release)
+                self.assertEqual(guard.exists(), not release)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); guard = root/'DISABLED'; guard.write_text('another owner')
+            self.assertFalse(handoff.release_guard_if_safe(guard, guard.stat().st_ino, 'owner', root))
+            self.assertTrue(guard.exists())
+
+    def test_failed_free_check_after_signal_retains_guard_without_supervisor_receipt(self):
+        gpu = [{'index': 0, 'uuid': 'test', 'pids': [123]}]
+        record = dict(pid=123, ppid=124, start_ticks=10)
+        with tempfile.TemporaryDirectory() as tmp, patch.object(handoff, 'snapshot', return_value=gpu), \
+             patch.object(handoff, 'process', return_value=record), \
+             patch.object(handoff, 'approved_launcher', return_value=True), \
+             patch.object(handoff, 'pidfd_open', return_value=90), patch.object(handoff.os, 'close'), \
+             patch.object(handoff, 'pidfd_send_signal') as send, patch.object(handoff.time, 'sleep'), \
+             patch.object(handoff, 'require_free', side_effect=RuntimeError('still occupied')):
+            root = Path(tmp); guard = root/'DISABLED'; guard.write_text('owner')
+            with self.assertRaisesRegex(RuntimeError, 'still occupied'):
+                handoff.stop_burns(root, {})
+            send.assert_called_once_with(90, signal.SIGKILL)
+            self.assertFalse((root/'supervisor.json').exists())
+            self.assertFalse(handoff.release_guard_if_safe(guard, guard.stat().st_ino, 'owner', root))
+            self.assertTrue(guard.exists())
+
     def test_progress_requires_all_ranks_and_advancing_collectives(self):
         ready = '\n'.join(f'gpu_burn_ready rank={r} device=NVIDIA B200 world_size=8 collective_probe_sum=36.0 comm_total_mib=1137' for r in range(8))
         p1 = '\ngpu_burn_progress rank=0 completed_cycles=10 completed_gemms=300 completed_collective_payload_gib=11.10 average_cycle_seconds=0.8'

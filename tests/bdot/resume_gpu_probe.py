@@ -136,7 +136,7 @@ def worker(config, traces):
         torch.distributed.destroy_process_group()
 
 
-def prepare(out, backend, world, steps, split, soft_split, use_cpu):
+def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backend='reference', curriculum='B'):
     import torch
     from datasets import Dataset
     from tokenizers import Tokenizer
@@ -161,7 +161,8 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu):
                num_attention_heads=4, num_key_value_heads=2, head_dim=128,
                eos_token_id=1)
     # Diagnostic: nontrivial routes, with exploration still active after step100.
-    cfg['bdot'].update(default_prior=0., explore_eps_max=.8, explore_end_frac=1., seed=17)
+    cfg['bdot'].update(default_prior=0. if curriculum=='B' else 1., explore_eps_max=.8,
+                      explore_end_frac=1., seed=17, expert_backend=expert_backend, curriculum=curriculum)
     write(out/'model.json',cfg)
     base = dict(config_name=str(out/'model.json'), tokenizer_name=str(out/'tokenizer'),
         data_dir=str(out/'data'), data_order='document_stream', dataset_revision='synthetic-resume-v1',
@@ -173,7 +174,8 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu):
         warmup_steps=soft_split, lr_scheduler_type='cosine', adam_beta2=.95,
         per_device_train_batch_size=1, gradient_accumulation_steps=2,
         dataloader_num_workers=0, disable_tqdm=True, gradient_checkpointing=False,
-        seed=42, data_seed=0, train_sampling_strategy='sequential')
+        seed=42, data_seed=0, train_sampling_strategy='sequential',
+        eval_strategy='steps', eval_steps=soft_split, per_device_eval_batch_size=1)
     jobs = [('full',None,steps),('resume_hard',split,steps),
             ('resume_soft',soft_split,min(2*soft_split,steps))]
     for name,start,end in jobs:
@@ -229,6 +231,8 @@ def main():
     p.add_argument('--steps',type=int,default=200)
     p.add_argument('--split',type=int,default=100)
     p.add_argument('--soft-split',type=int,default=20)
+    p.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
+    p.add_argument('--curriculum',choices=['A','B'],default='B')
     a=p.parse_args();out=a.output.resolve()
     if a.mode=='worker':
         worker(a.config,out)
@@ -237,7 +241,8 @@ def main():
     if not 0<a.soft_split<a.split<a.steps or a.split%a.soft_split:
         p.error('Require 0 < soft-split < split < steps, and split divisible by soft-split')
     if a.mode=='compare':return compare(out,world,a.split,a.soft_split,a.steps)
-    jobs=prepare(out,'sdpa' if a.cpu else 'fa4',world,a.steps,a.split,a.soft_split,a.cpu)
+    jobs=prepare(out,'sdpa' if a.cpu else 'fa4',world,a.steps,a.split,a.soft_split,a.cpu,
+                 a.expert_backend,a.curriculum)
     for name,_,_ in jobs:
         argv=[sys.executable]
         if not a.cpu:

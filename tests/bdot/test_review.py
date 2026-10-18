@@ -112,7 +112,9 @@ class ReviewTests(unittest.TestCase):
                 hooks=[step.router.register_forward_hook(lambda m,i,o:seen.append(o.dtype)) for step in b.routed_steps]
                 with torch.autocast('cpu',dtype=torch.bfloat16):
                     x=a(**batch());y=b(**batch())
-                self.assertEqual(seen,[torch.float32]*4)
+                # The last no-reuse choice is forced and now bypasses its
+                # router. Every router that does execute must still be FP32.
+                self.assertEqual(seen,[torch.float32]*(4 if reuse else 3))
                 torch.testing.assert_close(x.logits,y.logits,atol=0,rtol=0)
                 x.loss.backward();y.loss.backward()
                 for p,q in zip(a.parameters(),b.parameters()):

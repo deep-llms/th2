@@ -23,6 +23,10 @@ torch.set_num_threads(1)
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('output');parser.add_argument('--checkpointing',action='store_true')
 parser.add_argument('--soft',action='store_true')
+parser.add_argument('--no-reuse',action='store_true')
+parser.add_argument('--home-only',action='store_true')
+parser.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
+parser.add_argument('--bf16',action='store_true')
 parser.add_argument('--device',choices=['cpu','cuda'],default='cpu')
 settings=parser.parse_args()
 if settings.device=='cuda':
@@ -40,7 +44,12 @@ ds=Dataset.from_list(rows)
 
 class ForcedTrainer(BDOTTrainer):
     def compute_loss(self,model,inputs,return_outputs=False,num_items_in_batch=None):
-        inputs=dict(inputs,bdot_forced_routes=torch.full((4,*inputs['input_ids'].shape),rank,dtype=torch.long,device=device))
+        if settings.no_reuse or settings.home_only:
+            path = [1,0,2,3] if rank == 1 and not settings.home_only else [0,1,2,3]
+            forced = torch.tensor(path, device=device)[:,None,None].expand(4,*inputs['input_ids'].shape)
+        else:
+            forced = torch.full((4,*inputs['input_ids'].shape),rank,dtype=torch.long,device=device)
+        inputs=dict(inputs,bdot_forced_routes=forced)
         return super().compute_loss(model,inputs,return_outputs,num_items_in_batch)
 
 class Gradients(TrainerCallback):
@@ -48,9 +57,12 @@ class Gradients(TrainerCallback):
         self.grads={n:p.grad.detach().clone() if p.grad is not None else None for n,p in model.named_parameters()}
         self.counts=model.load_counts.clone()
 
-m=model(r=3,curriculum='B' if settings.soft else 'none',default_prior=0.).to(device)
+m=model(r=1 if settings.no_reuse or settings.home_only else 3,
+        reuse=not settings.no_reuse,
+        curriculum='A' if settings.home_only else 'B' if settings.soft else 'none',default_prior=0.,
+        expert_backend=settings.expert_backend).to(device)
 ref=copy.deepcopy(m)
-args=BaselineTrainingArguments(output_dir=str(root/'training'),use_cpu=settings.device=='cpu',report_to='none',
+args=BaselineTrainingArguments(output_dir=str(root/'training'),use_cpu=settings.device=='cpu',report_to='none',bf16=settings.bf16,
     max_steps=1,save_strategy='no',logging_strategy='no',per_device_train_batch_size=1,
     gradient_accumulation_steps=2,learning_rate=.001,weight_decay=.1,max_grad_norm=0.,
     remove_unused_columns=False,disable_tqdm=True,dataloader_pin_memory=False,
@@ -67,7 +79,11 @@ groups=[{**{k:v for k,v in group.items() if k!='params'},
 opt=torch.optim.AdamW(groups,lr=.001)
 inputs=model_inputs({k:v.to(device) for k,v in PackedCollator()(rows).items()})
 forced=torch.tensor([0,1,0,1],device=device)[None,:,None].expand(4,4,6)
-loss=ref(**inputs,**({} if settings.soft else dict(bdot_forced_routes=forced))).loss
+if settings.no_reuse or settings.home_only:
+    paths = [[1,0,2,3] if i%2 and not settings.home_only else [0,1,2,3] for i in range(4)]
+    forced = torch.tensor(paths, device=device).T[:,:,None].expand(4,4,6)
+with torch.autocast(device.type,dtype=torch.bfloat16,enabled=settings.bf16):
+    loss=ref(**inputs,**({} if settings.soft else dict(bdot_forced_routes=forced))).loss
 loss.backward()
 t.train()
 max_error=0.
@@ -77,7 +93,8 @@ for name,p in ref.named_parameters():
         assert a is None,(name,'globally unused got a gradient')
     else:
         assert a is not None,name
-        torch.testing.assert_close(a,b,atol=1e-5,rtol=1e-5)
+        torch.testing.assert_close(a,b,atol=1e-3 if settings.bf16 else 1e-5,
+                                   rtol=.03 if settings.bf16 else 1e-5)
         max_error=max(max_error,float((a-b).abs().max()))
 counts=probe.counts.clone();torch.distributed.all_reduce(counts)
 torch.testing.assert_close(counts,ref.load_counts,atol=0,rtol=0)
@@ -88,8 +105,11 @@ expected_lm = float(loss.detach()) - ref.options.z_loss_coef * float(ref.metric_
 assert abs(m.last_update_metrics['lm_loss_last_update']-expected_lm) < 1e-5
 opt.step()
 for name,p in m.named_parameters():
-    torch.testing.assert_close(p,refs[name],atol=1e-5,rtol=1e-5)
+    torch.testing.assert_close(p,refs[name],atol=1e-4 if settings.bf16 else 1e-5,
+                               rtol=.01 if settings.bf16 else 1e-5)
 (root/f'rank{rank}.json').write_text(json.dumps(dict(status='passed',max_gradient_error=max_error,
     counts=counts.tolist(),balance_bias=m.balance_bias.tolist(),reference_loss=loss.item(),
-    checkpointing=settings.checkpointing,soft=settings.soft,device=str(device),torch=torch.__version__))+'\n')
+    checkpointing=settings.checkpointing,soft=settings.soft,device=str(device),torch=torch.__version__,
+    expert_backend=settings.expert_backend,bf16=settings.bf16,no_reuse=settings.no_reuse,
+    home_only=settings.home_only))+'\n')
 torch.distributed.barrier();torch.distributed.destroy_process_group()

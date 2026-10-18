@@ -2,6 +2,13 @@
 
 Version 1.3, 2026-10-18. Audience: an engineering agent who will implement the model, test it and run the experiments.
 
+**Code-review amendments, 2026-10-18:** the user authorized fixes to
+`BDOT_PHASE_A_CODE_REVIEW_20261018.md`. Sections 3.7 and 5 now specify forced-choice
+router freezing, masked z-loss with the original denominator, dual-policy
+validation, and explicit LM/objective labels. T8/Gate 0a use matched dense D as
+the throughput denominator. These amendments supersede the earlier literal
+all-decisions z-loss prescription.
+
 What changed in each version (Appendix B lists the details):
 - **Version 1.2** answers the implementation review of version 1.1.
 - **Version 1.3** switches every layer to the Qwen3 architecture: the design of the released Qwen3-0.6B, trained from scratch, with 12 layers in the main experiments.
@@ -418,7 +425,9 @@ Shapes: `w` is `[S, M, d]`, `b` is `[S, M]`, `U` is `[S, M, M]`, and the balance
   - **Load and target:** `load[m]` is the mean of `share_s(m)` over the non-skipped steps. `target[m]` is the same mean taken for the default path, where `default_share_s(m)` is 1 for the home module of step `s` (0.5 for each of the two home experts in `capacity` mode) and 0 otherwise.
   - **Update:** once per training step, after the backward pass: `beta[m] += balance_rate · sign(target[m] - load[m])`. A model on the default path therefore never moves `beta`, with or without STOP.
   - **Timing:** `beta` stays fixed within a training step and during evaluation, so no sequence's routing depends on its own or later tokens. It is saved in checkpoints.
-- **z-loss:** add `z_loss_coef · mean(logsumexp(z over candidates)^2)` to the loss. The mean is over every router decision of an active token in both passes, with the sum and the count reduced over micro-batches and ranks. Reported loss and perplexity exclude router terms.
+- **z-loss:** add `z_loss_coef · sum(1[n_candidates > 1] · logsumexp(z over candidates)^2) / N`, where `N` remains **all active token-step decisions**, including forced choices. Sum and denominator cover the full accumulation window and all ranks. Forced single-candidate choices contribute zero to the numerator; this is deliberately not a mean over only multi-candidate choices. Reported LM loss and perplexity exclude router terms.
+  - When all choices at a step are forced, bypass that router entirely. In curriculum A's reach-0 phase, every router parameter has `grad=None` and receives no AdamW update, weight decay or momentum update. This preserves the home prior until widening.
+  - In a mixed batch, forced rows contribute neither a routing LM gradient nor z-loss gradient. Shared router parameters can still update from the other, multi-candidate rows.
 - **Exploration:** in training only, with probability `explore_eps`, replace `m*` with a uniformly random allowed candidate.
 - **Soft phase (curriculum B):**
   - Choose the top two allowed candidates by `z + beta`, as for top-1, and weight them by `p` renormalised over the pair.
@@ -626,15 +635,27 @@ Do not train STOP jointly with ACT- or PonderNet-style objectives. Unsupervised 
 ## 5. Evaluation and metrics
 
 **Log every 100 training steps:**
-- train loss and router z-loss;
+- token-weighted LM training loss (`lm_loss`) and normalized router z-loss over the logging interval; HF's native optimization-objective mean is separately labeled `objective_loss`;
 - per-module load (max/min ratio);
 - off-default share per step;
 - reuse rate: the fraction of tokens whose path uses some module more often than its default schedule does;
 - router entropy;
 - for STOP and re-entry runs: the histogram of exit steps or re-entry pairs;
-- tokens per second and peak memory.
+- input tokens per wall-clock second and peak allocated/reserved GPU memory over the interval (maximum across ranks). Wall time includes intervening validation/checkpoint work; T8 separately measures training throughput.
 
 **Validation:** loss on a fixed 1M-token subset of the held-out set, every 100 training steps in Stages 0a and 0b and every 250 otherwise. Use the full 10M tokens at the end of each run. Reported loss and perplexity never include router terms.
+
+Periodic validation reports both policies, with exploration disabled:
+- `eval_loss`: target window and hard top-1, the final inference policy.
+- `eval_curriculum_loss`: the reach and soft/hard phase at `completed_updates / full_schedule` (the policy for the next update), with `eval_curriculum_reach` and `eval_curriculum_soft` recorded.
+- `eval_spike_loss` aliases **curriculum loss** and defines the Gate 0a spike criterion. Use its running minimum. When the two policies coincide, evaluate once and reuse the metrics.
+
+End-of-run full validation and route studies use target-window hard routing.
+No evaluation policy changes training mode, optimizer state or training RNG.
+Run-level `train_lm_loss` is cumulative token-weighted LM loss, preserved across
+resume; `train_objective_loss` is HF's native invocation aggregate (including
+HF's resume/rank-aggregation semantics), and is not used to compare checkpoint
+quality. The `*_last_update` diagnostics remain explicitly last-update values.
 
 **At the end of each run** (routing as trained: argmax, no exploration):
 - Validation loss.
@@ -725,7 +746,7 @@ Rerun T2 and T10 whenever STOP or re-entry is added.
 | T5 | **Controls.** | `hash` gives the same routes on repeated calls; `random` differs between calls; both stay inside the windows |
 | T6 | **STOP bookkeeping.** `stop.policy = random`, training mode. | A token stopped after step `s` has `s + 1` runs; its state does not change after stopping; its K/V are still written |
 | T7 | **Re-entry bookkeeping**, with the `random` and `forced` policies. | Total runs ≤ `S + max_extra_steps`; the second pass reads first-pass caches; at most one re-entry per token |
-| T8 | **Speed.** Benchmark dense vs `compute_matched` absolute `r = 1`. | Report both. Gate 0a needs routed training throughput of at least 60% of dense; below that, improve the dispatch before judging the pilot. |
+| T8 | **Speed.** Benchmark matched dense D (same FiLM) vs `compute_matched` absolute `r = 1`. | Gate 0a needs routed training throughput of at least 60% of **D**. Also report native Qwen3 throughput and routed/native ratio separately. Below the D threshold, improve dispatch before judging the pilot. |
 | T9 | **Parameter counts.** | Match section 3.11 within 0.5% |
 | T10 | **Decode consistency.** Eval mode, fp32, deterministic routing (`learned`, `fixed` or `hash`). For every `kv_mode`, and with STOP or re-entry on where supported, decode token by token with the KV cache and compare with one full-sequence forward pass. | Max abs logit difference < 1e-4 at every position |
 | T11 | **Distributed correctness.** Two ranks, fp32, one global batch, learned routing with gradient accumulation of 2. Arrange one case where a module is used on one rank only, and one where a module is used on no rank. Compare with a single process on the same global batch. | Loss, gradients, balancing counts and `beta` match within 1e-5; no hang or unused-parameter error |
@@ -882,7 +903,7 @@ Run D, P1-A and P1-B first, choose the P1 winner, then run R and N.
 
 **Choosing the P1 winner.** Differences below 0.01 nats of validation loss count as ties.
 - Measure the off-default share with the end-of-run diagnostics (section 5).
-- A spike means the 1M-token validation loss, measured every 100 training steps, rises more than 0.1 nats above its running minimum.
+- A spike means the 1M-token **current-curriculum** validation loss (`eval_spike_loss`), measured every 100 training steps, rises more than 0.1 nats above its running minimum. Target-policy loss is logged alongside it.
 - Keep the curriculum with the lower validation loss among those that reach an off-default share of at least 5% and show no spike. Ties go to B.
 - If neither qualifies but at least one did not spike, rerun the better non-spiking one once with `default_prior = 0.5` and `explore_eps_max = 0.1`, and keep these values for all later routed runs.
 - If both spiked, continue with the one with lower loss and flag it in the report.
@@ -893,7 +914,7 @@ Run D, P1-A and P1-B first, choose the P1 winner, then run R and N.
 3. **The learned deviations matter:** the default-path test (section 5) raises its validation loss by at least 0.01 nats.
 4. **Learned beats chance:** its validation loss is at least 0.01 nats below run R's.
 5. **Quality:** its validation loss is at most 0.01 nats above run D's.
-6. **Runtime:** routed training throughput is at least 60% of dense (T8).
+6. **Runtime:** routed training throughput is at least 60% of matched dense **D**, with the same FiLM option (T8). The native-Qwen ratio is reported separately, not used for this gate.
 
 How to read the outcome:
 - **All six hold, and the P1 winner also beats D by at least 0.01 nats:** a strong signal.

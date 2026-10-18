@@ -83,6 +83,109 @@ spec. Training logs also contain router entropy, per-step off-default shares
 and per-module counts. These fields explicitly describe the last optimizer
 update; they are not averages over the entire logging interval.
 
+### Training and validation metrics
+
+The authorized scientific-review fixes amend spec v1.3 as follows:
+
+- Forced single-candidate choices contribute zero z-loss. The denominator is
+  still all input-token × routing-step decisions across accumulation and ranks.
+  Entirely forced routers are bypassed; home-only router parameters have no
+  gradient and receive no AdamW decay or momentum update.
+- Periodic `eval_loss` measures target-window hard routing.
+  `eval_curriculum_loss` measures the phase at completed updates / full schedule,
+  with its reach/soft flag recorded and exploration disabled. `eval_spike_loss`
+  aliases curriculum loss for Gate 0a. Identical policies share one scoring pass.
+  Final full validation and standalone route studies use only the target policy.
+- `objective_loss` is HF's logged optimization objective. `lm_loss` is the
+  token-weighted LM aggregate since the previous training log, with `lm_tokens`
+  and `input_tokens` recorded. `router_z_loss` uses the same interval and the
+  router denominator above. The `*_last_update` fields keep their narrower scope.
+- `train_lm_loss` is cumulative across resume, using checkpointed sums and a
+  checkpointed logging cursor. `train_objective_loss` preserves HF's native
+  invocation/rank/resume aggregation semantics; use held-out loss for model
+  comparisons. The artifact validator accepts these explicit names and the
+  unchanged native-baseline names.
+- `input_tokens_per_second_interval_wall` includes validation/checkpoint work
+  between logs. `peak_allocated_bytes` and `peak_reserved_bytes` are interval
+  maxima across GPUs (null on CPU). T8 remains a separate training benchmark,
+  with matched D as its gate denominator and native Qwen also reported.
+
+Validation restores training modes, routing state and RNG. Logging sums/cursors
+are model buffers saved by HF; native optimizer/scheduler saving is unchanged.
+These changes intentionally do not bypass the strict source/state resume guard
+for older checkpoints. Use fresh runs with the corrected policy.
+
+### Route study
+
+Use the same evaluator with `--route_study true`, on one device or through
+Accelerate. It loads the checkpoint and held-out data once. Each rank scores
+disjoint whole sequences without padding or duplicate rows.
+
+```bash
+accelerate launch --config_file resources/accelerate_b200.yaml \
+  eval/packed_ppl.py \
+  --checkpoint /absolute/pilot/P1-B/checkpoint-1907 \
+  --eval_data_dir /absolute/raw-corpus \
+  --output_file /absolute/new/route-study/final_eval.json \
+  --precision bf16 --batch_size 16 --route_study true
+```
+
+The backend, tokenizer, document boundaries, position resets and validation
+manifest come from the checkpoint receipts. Keep the training backend for the
+study. The output contains:
+
+- Full selected-validation LM loss/PPL for routing as trained, forced default
+  paths and random paths. No exploration or soft routing is used. Positive
+  `default_path_loss_increase` means learned deviations help this checkpoint.
+  These interventions are **not** the separately trained D/R controls needed
+  for Gate 0a. Identical passes for fixed/random controls are reused.
+- Route diagnostics on the first **4,096** validation sequences: off-default
+  share (overall/per step), module counts, reuse, distinct paths and path length.
+  Routing denominators include all input tokens, including EOS and document
+  starts. LM loss still excludes the usual masked prediction targets.
+- `distinct_paths_per_10000_tokens`: mean distinct paths over complete,
+  contiguous 10,000-token windows in validation order. The final partial window
+  is excluded and its length recorded; with no complete window the value is
+  null. The global distinct count is also reported.
+- `routes_sample.npz`: paths for the first **256** sequences, with shape
+  `[sequence, token, routing_step]`, zero-based module IDs, input IDs, sequence
+  indices, and hashes covering tokens, masked labels and positions. The file
+  also records checkpoint, routing configuration, available training seeds,
+  precision/backend and evaluation layout. Loading requires no pickle.
+
+The study refuses insufficient validation data instead of silently shrinking
+the sample. For small smoke tests set `--route_sequences` and
+`--route_artifact_sequences` explicitly. `--max_sequences` limits **all three**
+loss evaluations; omit it for the full-validation Gate 0a report. Random-route
+replay requires the same evaluation seed, world size and per-rank batch size,
+because it uses the existing rank/batch-indexed evaluation stream.
+Both standalone B-DOT evaluation and the study now visit all-boundary batches.
+Their random streams and whole-validation routing denominators therefore match
+for identical layouts. `routing_input_tokens` states the latter denominator;
+the separate diagnostic-prefix statistics retain their explicitly smaller scope.
+
+To compare another seed, add `--compare_routes /previous/routes_sample.npz`, or
+compare two existing artifacts without GPU inference:
+
+```bash
+python -m eval.route_study /seed0/routes_sample.npz /seed1/routes_sample.npz \
+  /absolute/new/route_agreement.json
+```
+
+Agreement is measured over the **exported sample**, with both per-step and
+complete-path agreement. Token identities/order/boundaries, model layout,
+tokenizer, backend and precision must match. Set `--route_artifact_sequences 4096`
+for both exports to compare the entire diagnostic prefix instead of 256 rows.
+An identical-checkpoint comparison is a repeatability check, not independent-seed
+evidence. Existing JSON/NPZ outputs are never overwritten.
+
+Local verification on 2026-10-18 passed 32 B-DOT tests and 8 existing evaluation
+tests. This covers route-count oracles, state/RNG preservation, matching LM
+scoring, artifact identity guards, fixed-control pass reuse, two-rank CLI runs
+with uneven diagnostic shards and an empty rank, and FA4 adapter wiring with a
+CPU reference kernel. [Receipt](results/bdot_route_study_review_20261018.json).
+This exporter has not yet been run on a scientific pilot checkpoint.
+
 `eval/bdot_harness.py` passes the constructed model to the native lm-eval HFLM
 adapter and keeps the harness's task/scoring definitions. Each invocation uses one
 explicit device; independent task/checkpoint invocations can be scheduled in
@@ -150,9 +253,17 @@ uses sorted token groups and PyTorch operations, without a custom grouped-GEMM
 kernel. Both matched D and native dense timings are reported; the throughput
 gate is passed by the synthetic eight-B200 test at 524,288 input tokens/update.
 
-The full route-study exporter (4,096-sequence path statistics and the
-256-sequence routes_sample.npz artifact), cross-seed comparison reporting remain to finish before the pilot's final Gate 0a
-report. The subsequent [eight-B200 FA4 resume test](BDOT_FA4_RESUME_20261018.md)
+The route-study exporter and artifact comparisons are implemented above. They
+still require actual trained checkpoints for a scientific Gate 0a report.
+The subsequent [eight-B200 FA4 resume test](BDOT_FA4_RESUME_20261018.md)
 passes exactly on all ranks with fresh processes and the real train.py entry point.
 Actual benchmark scores require trained checkpoints and cached task data.
 No scientific result is inferred from tiny local fixtures.
+
+The subsequent [scientific code review](BDOT_PHASE_A_CODE_REVIEW_20261018.md)
+identified and reproduced curriculum-A prior cancellation, an evaluation-policy
+ambiguity and training-loss labeling. All three are now fixed as described
+above, together with the minor evaluation and handoff issues. See
+[fix evidence](results/bdot_phase_a_fixes_20261018.json). Revalidate these training
+changes on B200/FA4 before a scientific pilot; earlier GPU receipts cover the
+previous implementation. Decode/prefill speed measurement remains unimplemented.

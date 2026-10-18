@@ -1,5 +1,74 @@
 # Current task
 
+## Grouped expert execution — in progress, 2026-10-18
+
+The user authorized implementing grouped GEMM and checking correctness and
+complete-update throughput. `bdot/grouped.py` groups Q/O/MLP projections using
+the pinned PyTorch CUDA BF16 primitive. `bdot.expert_backend` selects `reference`
+(unchanged default) or `grouped`; original parameters/state names are preserved.
+Only occupied experts enter autograd, preserving absent gradients for unused
+parameters. CPU reference-kernel checks pass; real CUDA verification follows.
+
+q359 read-only preflight `614c5d5` confirms the existing eight known communicating
+burn workers and matching environment. Planned bounded verification reuses the
+established supervisor, Accelerate installation/check, exact-PID reclamation,
+free-GPU verification and automatic burn restoration. Output root:
+`/mnt/local/_outputs/deep-llms_th2/q359-dot-grouped-20261018-a01/`.
+No pilot training is part of this optimization task. Existing scientific-review
+fixes below are included in the version to be verified.
+
+## Scientific-code review fixes — 2026-10-18
+
+The user authorized fixing the verified findings in
+[BDOT_PHASE_A_CODE_REVIEW_20261018.md](BDOT_PHASE_A_CODE_REVIEW_20261018.md).
+All three main findings and four minor issues are addressed locally:
+
+- Bypass forced-choice routers, leaving their gradients absent so AdamW cannot
+  decay weights or apply momentum. Mask forced rows out of the z-loss numerator;
+  retain the global all-token-step denominator.
+- Periodic validation logs target and current-curriculum policies, without
+  exploration. `eval_spike_loss` uses curriculum loss; final evaluation uses
+  target-window hard routing.
+- Separate optimization-objective labels from token-weighted LM aggregates,
+  including checkpointed cumulative sums and logging cursors. Add interval
+  throughput and peak GPU memory metrics.
+- Align standalone/study boundary-batch routing and RNG; retain the GPU guard
+  after an uncertain burn reclamation; specify matched D for the runtime gate.
+
+The original 100-update CPU reproduction now stays at **0% off-default** with
+z-loss enabled (previously **52.9419%**). Local regression and distributed test
+evidence is recorded in [the fix receipt](results/bdot_phase_a_fixes_20261018.json).
+The spec and implementation guide document these explicit policy amendments.
+No remote job, process stop, deployment or research training was submitted.
+DOT's commands.sh remains #0.
+
+Before a pilot, revalidate the changed training paths on B200/FA4. The earlier
+GPU evidence below predates these fixes. Strict resume remains enabled: earlier
+code's checkpoints are not silently migrated to this changed objective/state
+schema. Decode/prefill performance measurement remains separate unfinished work.
+
+## Route-study implementation — historical, before the fixes above
+
+The user requested the Phase-A route-study exporter, then asked to check
+[BDOT_PHASE_A_CODE_REVIEW_20261018.md](BDOT_PHASE_A_CODE_REVIEW_20261018.md).
+The exporter now extends the existing packed evaluator: one model/data load,
+paired as-trained/fixed/random full-validation losses, 4,096-sequence route
+statistics, a 256-sequence NPZ artifact and identity-checked sample comparisons.
+It supports unpadded distributed evaluation. See
+[usage](BDOT_IMPLEMENTATION.md#route-study). Local validation passed: **32 B-DOT
+tests and 8 native evaluation tests**, including two-rank CLI coverage, an empty
+rank and FA4 adapter wiring against a CPU reference kernel. See
+[evidence](results/bdot_route_study_review_20261018.json). No B200 commands,
+deployment or research training were submitted.
+
+The review initially reproduced finding 1: home-only
+curriculum A plus z-loss gives 46.6309% off-default evaluation routes at update
+50 and 52.9419% at 100; the zero-z-loss control stays at 0%. The review follow-up
+records the optimizer/normalization details needed for a fix. The evaluation
+policy ambiguity and objective-vs-LM training-log labeling are also confirmed.
+The exporter work did not change training; the later fixes above address these
+findings.
+
 ## GPU FA4 resume verification — passed
 
 The user explicitly requested the remaining B200 resume check. Launch `82f6428`
@@ -88,12 +157,14 @@ explicitly rejects this dev machine's A100 (SM80); forward-only results are sepa
 
 ## Remaining before a pilot
 
-- Pinned-runtime backward, synthetic eight-GPU throughput and GPU FA4 resume
-  checks passed. Revalidate if the pilot recipe changes materially.
-- Finish full route-study export/reporting before Gate 0a: 4,096-sequence path
-  statistics, 256-sequence route artifact and cross-seed comparisons. Current
-  code reports off-default share/reuse and supports fixed/random interventions.
-- Pin/download the actual dataset/tokenizer and freeze its validation manifest.
+- Revalidate pinned-runtime FA4/DDP/resume after the scientific-review fixes.
+  Earlier GPU tests passed for the preceding code version.
+- Measure decode/prefill speed separately; training throughput is not inference
+  throughput.
+- Run the implemented route exporter on actual pilot checkpoints for Gate 0a.
+- Pin the actual dataset/tokenizer and record the validation split/manifest.
+  Existing English cx_sampled_old on B200 can be reused; preserve its old
+  training/validation split if selected. No new download is inherently needed.
   No scientific performance claim follows from the tiny local test fixtures.
 
 ## Assigned execution target and cleanup preparation — 2026-10-18

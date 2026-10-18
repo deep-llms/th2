@@ -31,6 +31,41 @@ FiLM; native-equivalence tests turn FiLM off. They are different references.
 - Pilot queue default: D, P1-A, P1-B. R and the matching N follow explicit
   curriculum selection. The queue generator does not launch or select winners.
 
+## Route study and scientific-review decisions
+
+`eval/packed_ppl.py --route_study true` reuses packed evaluation for full selected
+validation losses under as-trained/fixed/random routes. It collects a fixed
+4,096-sequence diagnostic prefix and exports 256 sequences by default. Cross-seed
+agreement requires matching exported token identities and evaluation contracts;
+it is explicitly sample-scoped. The comparison can use all 4,096 by requesting
+that artifact size for both runs. Fixed/random interventions are not replacements
+for separately trained D/R controls. See the implementation guide for usage.
+
+The user subsequently authorized the 2026-10-18 review fixes. Whole forced-choice
+routers are bypassed (`grad=None`, including at the optimizer boundary during
+the home-only phase); forced rows in mixed batches contribute zero z-loss.
+Normalization deliberately remains **all input tokens × routing steps**, summed
+over accumulation and ranks. AdamW momentum/decay must not update an inactive
+router. The original reproduction changes from 52.9419% off-default at update
+100 to 0%, with the default z-loss coefficient unchanged.
+
+Periodic evaluation logs target hard-routing loss and the curriculum loss at
+completed updates / full schedule, both without exploration. Gate 0a uses the
+curriculum loss (`eval_spike_loss`) for stability; final studies use the target
+policy. Native HF objective aggregates are explicitly labeled separately from
+token-weighted LM loss. Cumulative LM sums and logging cursors are checkpointed;
+interval wall throughput includes validation/checkpoint overhead. Peak memory
+is the maximum across ranks. The training runtime gate compares against matched
+D, with native Qwen timing also reported.
+
+Standalone B-DOT evaluation and route studies visit all packed batches, including
+all-boundary batches, so route counts and random-route streams agree for the
+same layout/seed. No-reuse and curriculum CPU DDP/accumulation tests cover the
+new loss semantics. See [resolution](BDOT_PHASE_A_CODE_REVIEW_20261018.md#resolution-after-authorized-fixes)
+and [fix receipt](results/bdot_phase_a_fixes_20261018.json). GPU/FA4 validation of
+these changes is still needed before a pilot. Strict source/state resume checks
+remain in force; do not bypass them to resume checkpoints made before this fix.
+
 ## Runtime and evidence
 
 The local train_env was recreated on 2026-10-18: Python 3.11.15, PyTorch 2.14.1,

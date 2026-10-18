@@ -102,9 +102,17 @@ class RoutedStep(nn.Module):
             allowed = ((modules - self.step).abs() <= context.reach).expand(n, -1)
         else:
             allowed = getattr(self, f'allowed_{min(context.reach, opt.S-1)}')[context.state]
-        z = self.router(h.flatten(0, 1), context.visits, allowed) if self.router is not None else None
+        # Forced choices contain no routing decision to learn. In particular,
+        # bypass the entire router at reach zero: grad=None prevents AdamW from
+        # decaying its weights or applying momentum during the home-only phase.
+        multiple = allowed.sum(-1) > 1
+        learnable = (self.router is not None and context.reach > 0 and opt.S > 1
+                     and (opt.reuse or bool(multiple.any())))
+        z = self.router(h.flatten(0, 1), context.visits, allowed) if learnable else None
         if z is not None:
-            context.z_losses.append(torch.logsumexp(z, -1).square().sum())
+            # Keep the global S * input-token denominator, masking only the
+            # numerator. No data-dependent denominator/prepass is introduced.
+            context.z_losses.append(torch.logsumexp(z, -1).masked_fill(~multiple, 0).square().sum())
             if self.training:
                 with torch.no_grad():
                     logp = z.log_softmax(-1)
@@ -117,6 +125,8 @@ class RoutedStep(nn.Module):
             choice = torch.full((n, 1), self.step, device=h.device, dtype=torch.long)
         elif routing == 'random':
             choice = torch.multinomial(allowed.float(), 1, generator=context.generator)
+        elif z is None:
+            choice = allowed.long().argmax(-1, keepdim=True)  # Sole feasible module.
         else:
             # Stable sorting implements the specified lowest-id tie break.
             k = min(2 if context.soft else 1, opt.S)
@@ -168,11 +178,17 @@ class RoutedStep(nn.Module):
                 groups.append((m, order[start:start+size]))
             start += size
         q = x.new_zeros(branches*n, self.config.num_attention_heads*self.head_dim)
-        for m, idx in groups:
-            expert = self.experts[m]
-            selected = x.reshape(n, d)[idx % n]
-            projected = expert.q_proj(selected).view(-1, self.config.num_attention_heads, self.head_dim)
-            q = q.index_copy(0, idx, expert.q_norm(projected).flatten(1))
+        grouped = self.options.expert_backend == 'grouped' and bool(groups)
+        if grouped:
+            from . import grouped as grouped_ops
+            order, experts, group_sizes, offsets, projected = grouped_ops.queries(self, x, groups)
+            q = q.index_copy(0, order, projected)
+        else:
+            for m, idx in groups:
+                expert = self.experts[m]
+                selected = x.reshape(n, d)[idx % n]
+                projected = expert.q_proj(selected).view(-1, self.config.num_attention_heads, self.head_dim)
+                q = q.index_copy(0, idx, expert.q_norm(projected).flatten(1))
         interface = ALL_ATTENTION_FUNCTIONS.get_interface(self.config._attn_implementation, eager_attention_forward)
         attention = []
         for branch in range(branches):
@@ -183,13 +199,17 @@ class RoutedStep(nn.Module):
             attention.append(a.reshape(n, -1))
         attention = torch.cat(attention)
         result = h.new_zeros(branches*n, d)
-        for m, idx in groups:
-            expert = self.experts[m]
-            h1 = h.reshape(n, d)[idx % n] + expert.o_proj(attention[idx])
-            u = expert.mlp_norm(h1)
-            if self.options.step_film:
-                u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
-            result = result.index_copy(0, idx, h1 + expert.mlp(u))
+        if grouped:
+            projected = grouped_ops.outputs(self, h, attention, order, experts, group_sizes, offsets)
+            result = result.index_copy(0, order, projected)
+        else:
+            for m, idx in groups:
+                expert = self.experts[m]
+                h1 = h.reshape(n, d)[idx % n] + expert.o_proj(attention[idx])
+                u = expert.mlp_norm(h1)
+                if self.options.step_film:
+                    u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
+                result = result.index_copy(0, idx, h1 + expert.mlp(u))
         result = result.view(branches, b, t, d)
         weights = weights.T.reshape(branches, b, t, 1).to(h.dtype)
         if branches == 1:
@@ -235,12 +255,17 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         self.register_buffer('balance_bias', torch.zeros(options.S))
         self.register_buffer('routing_counter', torch.zeros((), dtype=torch.long))
         self.register_buffer('completed_steps', torch.zeros((), dtype=torch.long))
+        # Global cumulative sums and logging cursor survive ordinary HF resume.
+        # NLL sum, LM targets, z sum, token-step denominator, input tokens.
+        self.register_buffer('training_totals', torch.zeros(5, dtype=torch.float64))
+        self.register_buffer('logged_training_totals', torch.zeros(5, dtype=torch.float64))
         self.register_buffer('load_counts', torch.zeros(options.S, options.S, dtype=torch.long), persistent=False)
         self.register_buffer('metric_totals', torch.zeros(9, dtype=torch.float64), persistent=False)
         self.last_update_metrics = {}
         self.progress = 0.
         self.eval_seed = options.seed
         self.eval_counter = 0
+        self.evaluation_policy = 'target'
         self.routing_override = None
         self.capture_routes = False
         self.last_routes = None
@@ -254,6 +279,8 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         if isinstance(module, BDOTForCausalLM) and hasattr(module, 'load_counts'):
             hf_init.zeros_(module.load_counts)
             hf_init.zeros_(module.metric_totals)
+            hf_init.zeros_(module.training_totals)
+            hf_init.zeros_(module.logged_training_totals)
             # RoutedStep is inside a native Qwen3Model: HF dispatches that
             # child's initializer there, so restore our tables at this root.
             if not module.options.reuse:
@@ -273,7 +300,8 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         shape = input_ids.shape if input_ids is not None else inputs_embeds.shape[:2]
         device = input_ids.device if input_ids is not None else inputs_embeds.device
         n = math.prod(shape)
-        reach, soft, eps = self.options.phase(self.progress, self.training)
+        reach, soft, eps = self.options.phase(self.progress, self.training,
+                                              evaluation_policy=self.evaluation_policy)
         # A rank-local, stateless substream indexed by a checkpointed invocation
         # counter. Equal-batch DDP keeps counters equal; rank selects disjoint draws.
         rank = torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
@@ -305,11 +333,13 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
             denominator = bdot_num_decisions if bdot_num_decisions is not None else n*self.options.S
             with torch.no_grad():
                 lm_count = labels[:, 1:].ne(-100).sum()
-                lm_denominator = kwargs.get('num_items_in_batch', lm_count)
+                lm_denominator = kwargs.get('num_items_in_batch')
+                if lm_denominator is None:
+                    lm_denominator = lm_count
                 routes = torch.stack(context.routes)
                 off_default = (routes != torch.arange(self.options.S, device=device)[:, None, None]).sum()
                 entropy = torch.stack(context.entropies).sum() if context.entropies else z_sum.new_zeros(())
-                self.metric_totals.add_(torch.stack((output.loss.detach()*lm_denominator,
+                self.metric_totals.add_(torch.stack((output.loss.detach().double()*lm_denominator,
                     lm_count, z_sum.detach(), lm_count.new_tensor(n*self.options.S),
                     off_default, lm_count.new_tensor(n*self.options.S), entropy,
                     context.visits.gt(1).any(-1).sum(), lm_count.new_tensor(n))).double())
@@ -321,6 +351,8 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         if torch.distributed.is_initialized():
             torch.distributed.all_reduce(self.load_counts)
             torch.distributed.all_reduce(self.metric_totals)
+        self.training_totals[:4].add_(self.metric_totals[:4])
+        self.training_totals[4].add_(self.metric_totals[8])
         totals = self.load_counts.sum(-1)
         active = totals > 0
         if self.options.routing == 'learned' and bool(active.any()):

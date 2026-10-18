@@ -218,6 +218,27 @@ def execute_queue(jobs, project, output, session):
     return code
 
 
+def release_guard_if_safe(guard, inode, marker, output):
+    """Never hand uncertain GPU ownership back to an automatic burn launcher.
+
+    reclaim.json is atomically written before the first worker signal. It also
+    covers a partial stop or a failure of require_free before execute_queue can
+    create supervisor.json. A conservative hold is preferable to a burn race.
+    """
+    receipt_path = output / 'supervisor.json'
+    receipt = json.loads(receipt_path.read_text()) if receipt_path.exists() else {}
+    reclaim_path = output / 'reclaim.json'
+    reclaimed = (reclaim_path.exists()
+                 and bool(json.loads(reclaim_path.read_text()).get('signal_targets')))
+    verified = bool(receipt.get('burn', {}).get('collective_progress_verified'))
+    if (receipt_path.exists() or reclaimed) and not verified:
+        return False
+    if guard.exists() and guard.stat().st_ino == inode and guard.read_text() == marker:
+        guard.unlink()
+        return True
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
@@ -255,13 +276,7 @@ def main():
         stop_burns(args.output, approved)
         return execute_queue(jobs, project, args.output, args.burn_session)
     finally:
-        # Leave the guard held if cleanup/handoff failed: it must not start a
-        # competing burn over unverified residual training workers.
-        receipt_path = args.output / 'supervisor.json'
-        handoff_failed = receipt_path.exists() and 'burn' not in json.loads(receipt_path.read_text())
-        # Restore only the marker this process created; never remove another hold.
-        if not handoff_failed and guard.exists() and guard.stat().st_ino == inode and guard.read_text() == marker:
-            guard.unlink()
+        release_guard_if_safe(guard, inode, marker, args.output)
 
 
 if __name__ == '__main__':

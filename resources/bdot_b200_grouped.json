@@ -1,0 +1,10 @@
+{
+  "jobs": [{
+    "name": "grouped_verification",
+    "argv": ["{python}", "scripts/bdot_grouped_verify.py", "--output", "{run_dir}/checks",
+             "--accelerate-config", "{project_dir}/resources/accelerate_b200.yaml"],
+    "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+    "timeout_seconds": 3600,
+    "required_outputs": [{"path": "checks/summary.json", "json_equals": {"status": "passed"}}]
+  }]
+}

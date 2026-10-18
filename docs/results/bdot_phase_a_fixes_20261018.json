@@ -1,0 +1,468 @@
+{
+  "timestamp_utc": "2026-10-18T21:02:23.174919+00:00",
+  "status": "local_fixes_verified",
+  "pilot_status": "revalidate_changed_training_on_B200_FA4",
+  "runtime": {
+    "python": "/home/users/thien/miniconda3/envs/train_env/bin/python",
+    "device": "cpu",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.9.0",
+    "accelerate": "1.13.0",
+    "datasets": "4.8.5"
+  },
+  "fixed": [
+    "home-only router prior erosion and AdamW momentum/decay",
+    "forced-row z-loss, retaining all-token-step global denominator",
+    "dual target/curriculum periodic evaluation, curriculum spike metric",
+    "explicit objective vs token-weighted LM loss labels with checkpointed totals/cursor",
+    "standalone/study all-boundary RNG and routing scope",
+    "guard retained after uncertain prelaunch burn reclamation",
+    "matched D runtime-gate denominator documented",
+    "periodic wall throughput and peak allocated/reserved memory logging"
+  ],
+  "tests": [
+    {
+      "name": "bdot",
+      "unique_tests": 37,
+      "status": "passed_after_test_expectation_update",
+      "full_run": {
+        "passed": 36,
+        "failed": 1,
+        "seconds": 172.422,
+        "log": "temp/scientific_review_bdot_all.log"
+      },
+      "targeted_rerun": {
+        "passed": 1,
+        "seconds": 0.711,
+        "log": "temp/scientific_review_bf16.log"
+      },
+      "note": "Old BF16 assertion required four router calls; forced final no-reuse choice now skips its router. Updated to three calls for this fixture. Numerical tolerances unchanged."
+    },
+    {
+      "name": "native_baseline_and_evaluation",
+      "tests": 16,
+      "seconds": 346.532,
+      "status": "passed",
+      "log": "temp/scientific_review_native_all.log"
+    },
+    {
+      "name": "utilities",
+      "tests": 49,
+      "seconds": 3.294,
+      "status": "passed",
+      "log": "temp/scientific_review_utilities.log"
+    }
+  ],
+  "unique_unit_tests": 102,
+  "distributed_probes": [
+    {
+      "case": "no_reuse",
+      "world_size": 2,
+      "checkpointing": true,
+      "device": "cpu",
+      "ranks": [
+        {
+          "status": "passed",
+          "max_gradient_error": 4.842877388000488e-08,
+          "counts": [
+            [
+              12,
+              12,
+              0,
+              0
+            ],
+            [
+              12,
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              24
+            ]
+          ],
+          "balance_bias": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reference_loss": 3.65039324760437,
+          "checkpointing": true,
+          "soft": false,
+          "device": "cpu",
+          "torch": "2.14.1+cu130"
+        },
+        {
+          "status": "passed",
+          "max_gradient_error": 4.842877388000488e-08,
+          "counts": [
+            [
+              12,
+              12,
+              0,
+              0
+            ],
+            [
+              12,
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              24
+            ]
+          ],
+          "balance_bias": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reference_loss": 3.65039324760437,
+          "checkpointing": true,
+          "soft": false,
+          "device": "cpu",
+          "torch": "2.14.1+cu130"
+        }
+      ],
+      "directory": "temp/scientific_review_ddp_no_reuse",
+      "log": "temp/scientific_review_ddp_no_reuse.log"
+    },
+    {
+      "case": "home",
+      "world_size": 2,
+      "checkpointing": true,
+      "device": "cpu",
+      "ranks": [
+        {
+          "status": "passed",
+          "max_gradient_error": 5.960464477539063e-08,
+          "counts": [
+            [
+              24,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              24,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              24
+            ]
+          ],
+          "balance_bias": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reference_loss": 3.6479671001434326,
+          "checkpointing": true,
+          "soft": false,
+          "device": "cpu",
+          "torch": "2.14.1+cu130"
+        },
+        {
+          "status": "passed",
+          "max_gradient_error": 5.960464477539063e-08,
+          "counts": [
+            [
+              24,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              24,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              24
+            ]
+          ],
+          "balance_bias": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "reference_loss": 3.6479671001434326,
+          "checkpointing": true,
+          "soft": false,
+          "device": "cpu",
+          "torch": "2.14.1+cu130"
+        }
+      ],
+      "directory": "temp/scientific_review_ddp_home",
+      "log": "temp/scientific_review_ddp_home.log"
+    },
+    {
+      "case": "soft",
+      "world_size": 2,
+      "checkpointing": true,
+      "device": "cpu",
+      "ranks": [
+        {
+          "status": "passed",
+          "max_gradient_error": 5.960464477539063e-08,
+          "counts": [
+            [
+              1,
+              7,
+              8,
+              8
+            ],
+            [
+              15,
+              4,
+              5,
+              0
+            ],
+            [
+              12,
+              1,
+              11,
+              0
+            ],
+            [
+              0,
+              11,
+              2,
+              11
+            ]
+          ],
+          "balance_bias": [
+            -0.0010000000474974513,
+            0.0010000000474974513,
+            -0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "reference_loss": 3.6408660411834717,
+          "checkpointing": true,
+          "soft": true,
+          "device": "cpu",
+          "torch": "2.14.1+cu130"
+        },
+        {
+          "status": "passed",
+          "max_gradient_error": 5.960464477539063e-08,
+          "counts": [
+            [
+              1,
+              7,
+              8,
+              8
+            ],
+            [
+              15,
+              4,
+              5,
+              0
+            ],
+            [
+              12,
+              1,
+              11,
+              0
+            ],
+            [
+              0,
+              11,
+              2,
+              11
+            ]
+          ],
+          "balance_bias": [
+            -0.0010000000474974513,
+            0.0010000000474974513,
+            -0.0010000000474974513,
+            0.0010000000474974513
+          ],
+          "reference_loss": 3.6408660411834717,
+          "checkpointing": true,
+          "soft": true,
+          "device": "cpu",
+          "torch": "2.14.1+cu130"
+        }
+      ],
+      "directory": "temp/scientific_review_ddp_soft",
+      "log": "temp/scientific_review_ddp_soft.log"
+    }
+  ],
+  "prior_reproduction": {
+    "before": {
+      "0.001": [
+        {
+          "step": 0,
+          "off_default": 0.0
+        },
+        {
+          "step": 25,
+          "off_default": 0.0
+        },
+        {
+          "step": 50,
+          "off_default": 0.46630859375
+        },
+        {
+          "step": 100,
+          "off_default": 0.5294189453125
+        }
+      ],
+      "0.0": [
+        {
+          "step": 0,
+          "off_default": 0.0
+        },
+        {
+          "step": 25,
+          "off_default": 0.0
+        },
+        {
+          "step": 50,
+          "off_default": 0.0
+        },
+        {
+          "step": 100,
+          "off_default": 0.0
+        }
+      ]
+    },
+    "after": {
+      "0.001": [
+        {
+          "step": 0,
+          "off_default": 0.0
+        },
+        {
+          "step": 25,
+          "off_default": 0.0
+        },
+        {
+          "step": 50,
+          "off_default": 0.0
+        },
+        {
+          "step": 100,
+          "off_default": 0.0
+        }
+      ],
+      "0.0": [
+        {
+          "step": 0,
+          "off_default": 0.0
+        },
+        {
+          "step": 25,
+          "off_default": 0.0
+        },
+        {
+          "step": 50,
+          "off_default": 0.0
+        },
+        {
+          "step": 100,
+          "off_default": 0.0
+        }
+      ]
+    },
+    "script": "temp/check_review_prior_fixed.py",
+    "log": "temp/review_prior_fixed.log",
+    "config": {
+      "layers": 12,
+      "hidden_size": 128,
+      "S": 8,
+      "r": 1,
+      "curriculum": "A",
+      "progress": 0.05,
+      "optimizer": "AdamW",
+      "lr": 0.0003,
+      "betas": [
+        0.9,
+        0.95
+      ],
+      "batch": 8,
+      "sequence_length": 128,
+      "updates": 100
+    }
+  },
+  "invariants": [
+    "exact CPU model/AdamW resume across home-only to widening",
+    "periodic dual evaluation on/off preserves CPU training state and RNG",
+    "interval and cumulative LM sums match independent recorded update sums",
+    "globally normalized forced-row z gradients match across accumulation/ranks"
+  ],
+  "limitations": [
+    "No B200 work, deployment, GPU process stops or research training in this turn.",
+    "FA4 adapter checks use a CPU reference kernel, not real FA4 CUDA execution.",
+    "GPU peak-memory logger and changed routing/DDP/resume require B200 validation.",
+    "Decode/prefill performance measurement remains separate unfinished work.",
+    "Strict resume rejects changed source/state; older checkpoints are not silently migrated."
+  ],
+  "source_sha256": {
+    "bdot/model.py": "6ed658c98a27f061f79d31412228f8e9d7f84f06f969ceae56a6b49ea9b2e593",
+    "bdot/routing.py": "5bc39aedad5ff18e8be91f1fbaec4c93ccef5c191953fc1d1dc19037a0124185",
+    "bdot/trainer.py": "9628300b4dabec8d2b31c3c4b7830b59783fe640dee6dec703fc19c6ad73d3a5",
+    "train.py": "ac0446981bb0dc365478467e44347d721fc34692898956bf4f5ccb72fcff8513",
+    "packed_evaluation.py": "87adf0d017466dc032ff4494e6bdfa85a9bb911bf991864601a7b98d9d55a617",
+    "eval/route_study.py": "fd49d38deb9eff9fe0b59fe39b85f2f6b64790e11015248ae93b7a561b767947",
+    "scripts/train_then_burn.py": "dc606901da07109b4c94606ee731aeaee9fa93e6df7c34830fe4b7332ca6a866",
+    "scripts/training_results.py": "b62affc4da1be0ec9432b677c857fa630ebb528ba2f070a143fff07982e41fea",
+    "tests/bdot/test_scientific_review.py": "5aceda0bfba1ce02ab399f8bc4ec312b202bd4db52bbb7428abea2af4d6cfc83",
+    "tests/bdot/test_review.py": "63bb1004e6e7f57f77a9c994ffe13987731aed294b463862573a0d51d0bc8bfd",
+    "tests/bdot/test_route_study.py": "d4fd58cbb31e3e91a8775b7881c6ae527aa5874667212c8eb524a71bc8c154f3",
+    "tests/bdot/ddp_probe.py": "d4ccbbcba1ca32febf7cdc95c1e1623ec54591299a8d09e2717eedecc39e5dad",
+    "tests/test_train_then_burn.py": "356f38fb0dbcbbeb5d44161bfce46dc5555af11235ca2d2424c7ed9ea52f6f87",
+    "tests/test_training_results.py": "d45f89a28d280f698f8574f9c859203e95d799956ff60229562cbb36cbe9ec3d"
+  },
+  "log_sha256": {
+    "temp/scientific_review_bdot_all.log": "1e385695f3c88725d76e3db0ef67d3b384d2ccf8c4038aea4b40aee3e597cdaf",
+    "temp/scientific_review_bf16.log": "47ab86cb44dc230790b04d9fcb039654cde3bd640647192068d9552fc72471d2",
+    "temp/scientific_review_native_all.log": "978453b1a147e8f9915551501345116502e7348718dd5a5373c7f35fecb0fe7f",
+    "temp/scientific_review_utilities.log": "4fb774731da488670a32a4f6af0f5ad078a64477419d7b2d5fc26e0bd8e18b35",
+    "temp/review_prior_fixed.log": "48e47b762452463adde726f9b14f0444ae94535eae336cf5f24085e8c570c86d"
+  }
+}

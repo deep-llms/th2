@@ -48,7 +48,7 @@ def build_training_recipe(model, args, attention_backend, accelerator=None):
     source = Path(__file__).parent
     code_files = ['train.py', 'resume_recipe.py', 'packed_training.py', 'packed_evaluation.py']
     if hasattr(model.config, 'bdot'):
-        code_files += ['bdot/model.py', 'bdot/routing.py', 'bdot/trainer.py', 'bdot/data.py']
+        code_files += ['bdot/model.py', 'bdot/routing.py', 'bdot/trainer.py', 'bdot/data.py', 'bdot/grouped.py']
     return canonical({
         'schema': SCHEMA,
         'model': {'class': type(model).__module__ + '.' + type(model).__qualname__,

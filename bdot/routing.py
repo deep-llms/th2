@@ -31,6 +31,7 @@ class RoutingConfig:
     explore_end_frac: float = 0.5
     widen_every_frac: float = 0.1
     seed: int = 0
+    expert_backend: str = 'reference'
 
     def __post_init__(self):
         for key in ('S', 'n_stem', 'n_coda', 'r', 'seed'):
@@ -44,6 +45,8 @@ class RoutingConfig:
             raise ValueError('Unsupported routing/gate')
         if self.curriculum not in ('A', 'B', 'none'):
             raise ValueError('curriculum must be A, B or none')
+        if self.expert_backend not in ('reference', 'grouped'):
+            raise ValueError('expert_backend must be reference or grouped')
         if self.routing != 'learned' and self.curriculum != 'none':
             raise ValueError('Fixed/random controls require curriculum=none')
         if not 0 < self.soft_phase_frac < self.explore_end_frac <= 1:
@@ -58,8 +61,13 @@ class RoutingConfig:
     def to_dict(self):
         return asdict(self)
 
-    def phase(self, progress, training):
+    def phase(self, progress, training, *, evaluation_policy='target'):
         """Progress is completed optimizer steps / full schedule (equal fixed batches)."""
+        if evaluation_policy not in ('target', 'curriculum'):
+            raise ValueError('evaluation_policy must be target or curriculum')
+        if not training and evaluation_policy == 'curriculum':
+            reach, soft, _ = self.phase(progress, True)
+            return reach, soft, 0.  # Never turn exploration on for validation.
         if not training or self.routing != 'learned' or self.curriculum == 'none':
             return self.r, False, 0.
         if self.curriculum == 'B':

@@ -168,6 +168,15 @@ unchanged. Use the same verified-worker-PID stopping procedure for either file.
 Do not automatically run a new burn on failure while the failed job may still
 have workers. Preserve logs, determine ownership, and report uncertainty.
 
+The project's `scripts/train_then_burn.py` records intended worker signals in
+`reclaim.json` before signaling. If reclamation or the following free-GPU check
+fails before `supervisor.json` exists, it retains its ownership guard when that
+record contains signal targets. It also retains the guard after an unverified
+final burn handoff. Only the supervisor's exact guard inode/owner marker can be
+released, after verified handoff or a failure before any possible worker signal.
+An uncertain handoff requires inspection; an automatic guard burn must not race
+to occupy those GPUs.
+
 ## Training → evaluation → next stage
 
 Require successful exit and project-specific result/checkpoint validation,

@@ -129,7 +129,8 @@ def check_training(output_dir, step, schedule, start_step=0):
     records = file_records(checkpoint, names)
     validation = None
     for entry in state['log_history']:
-        for key in ('loss', 'train_loss', 'eval_loss'):
+        for key in ('loss', 'train_loss', 'eval_loss', 'objective_loss', 'lm_loss',
+                    'train_objective_loss', 'train_lm_loss', 'eval_curriculum_loss'):
             if key in entry:
                 number(entry[key], key)
         if 'eval_loss' in entry:
@@ -137,11 +138,15 @@ def check_training(output_dir, step, schedule, start_step=0):
                               **check_metric(entry, 'eval_'))
             if validation['step'] > step:
                 raise ValueError('Validation is from a future step')
+    if 'train_objective_loss' in metrics:
+        losses = {key: number(metrics[key], key) for key in ('train_objective_loss', 'train_lm_loss')}
+    else:
+        losses = dict(train_loss=number(metrics['train_loss'], 'train_loss'))
     return dict(status='ok', kind='training_stage', schema=1,
         checked_at=datetime.now(timezone.utc).isoformat(), checkpoint=str(checkpoint),
         output_dir=str(output_dir), start_step=start_step, global_step=step, schedule_steps=schedule,
         stage_train_seconds=number(metrics['train_runtime'], 'train_runtime'),
-        train_loss=number(metrics['train_loss'], 'train_loss'), validation=validation,
+        **losses, validation=validation,
         training_recipe_sha256=digest(recipe), data_recipe_sha256=digest(data),
         files=records, weights=weight_names(checkpoint),
         validation_scope='File completeness and metadata; tensors are loaded by HF resume/evaluation')

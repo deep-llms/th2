@@ -32,6 +32,7 @@ def main():
     p.add_argument('--progress', type=float, default=1.)
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--router-prior', type=float, help='Diagnostic override; record separately from production config')
+    p.add_argument('--expert-backend', choices=['reference', 'grouped'], default='reference')
     a = p.parse_args()
     if min(a.batch_size, a.accumulation, a.steps, a.warmup) < 1 or min(a.length, a.document_length) < 2:
         p.error('Invalid benchmark sizes')
@@ -64,6 +65,14 @@ def main():
     )
     set_seed(a.seed)
     model = build_model(ModelArguments(config_name=a.config, attention_backend=a.attention_backend))
+    if hasattr(model, 'options'):
+        from dataclasses import replace
+        model.options = replace(model.options, expert_backend=a.expert_backend)
+        model.config.bdot = model.options.to_dict()
+        for step in model.routed_steps:
+            step.options = model.options
+    elif a.expert_backend != 'reference':
+        p.error('Grouped expert execution applies to B-DOT models only')
     if a.router_prior is not None:
         if not hasattr(model, 'routed_steps') or model.options.routing != 'learned':
             p.error('--router-prior requires learned routing')
@@ -141,7 +150,7 @@ def main():
             scope='Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. '
                   'Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.',
             source_sha256={f: hashlib.sha256((root/f).read_bytes()).hexdigest() for f in
-                           ['bdot/model.py', 'bdot/trainer.py', 'packed_fa4.py',
+                           ['bdot/model.py', 'bdot/grouped.py', 'bdot/trainer.py', 'packed_fa4.py',
                             'packed_training.py', 'train.py', 'scripts/benchmark_bdot.py']},
         )
         out.parent.mkdir(parents=True, exist_ok=True)

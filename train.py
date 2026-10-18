@@ -373,7 +373,7 @@ def main():
         full_eval, _ = prepare_validation_data(replace(data_args, eval_max_sequences=None),
             training_args, tokenizer, tokenizer_name, block_size, model_args.attention_backend, data_recipe)
         model.capture_routes = True
-        final_metrics = trainer.evaluate(full_eval)
+        final_metrics = trainer.evaluate(full_eval, include_curriculum=False)
         model.capture_routes = False
         trainer.save_metrics("final_eval", final_metrics)
         if training_args.should_save:

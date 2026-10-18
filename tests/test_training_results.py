@@ -13,6 +13,18 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class TrainingResultTests(unittest.TestCase):
+    def test_bdot_objective_and_lm_labels_are_preserved(self):
+        self.stage()
+        path = self.output / 'train_results.json'
+        data = json.loads(path.read_text())
+        data['train_objective_loss'] = data.pop('train_loss')
+        data['train_lm_loss'] = 2.0
+        self.write(path, data)
+        result = results.check_training(self.output, 2, 8)
+        self.assertEqual(result['train_objective_loss'], 2.1)
+        self.assertEqual(result['train_lm_loss'], 2.0)
+        self.assertNotIn('train_loss', result)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

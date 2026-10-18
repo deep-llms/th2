@@ -1,0 +1,111 @@
+{
+  "timestamp_utc": "2026-10-18T20:33:37.587660+00:00",
+  "implementation_status": "route_exporter_tested",
+  "pilot_status": "resolve_scientific_code_review_before_launch",
+  "runtime": "local train_env, CPU; FA4 adapter tested with explicit CPU reference kernel only",
+  "tests": [
+    {
+      "name": "bdot_suite",
+      "tests": 32,
+      "seconds": 177.432,
+      "status": "passed",
+      "log": "temp/route_study_bdot_regression.log"
+    },
+    {
+      "name": "native_evaluation_suite",
+      "tests": 8,
+      "seconds": 69.661,
+      "status": "passed",
+      "log": "temp/route_study_native_regression.log"
+    }
+  ],
+  "tests_total": 40,
+  "covered": [
+    "known route-count and diversity oracle",
+    "model/RNG/mode preservation",
+    "token-weighted intervention losses",
+    "SDPA/FA4-reference adapter equivalence",
+    "no-reuse constraints",
+    "fixed control duplicate-pass elimination",
+    "NPZ identity checks and no-overwrite",
+    "real checkpoint single-process and two-rank CLI",
+    "uneven diagnostic shards and empty rank",
+    "native periodic evaluation and resume regressions"
+  ],
+  "review_prior_reproduction": {
+    "0.001": [
+      {
+        "step": 0,
+        "off_default": 0.0
+      },
+      {
+        "step": 25,
+        "off_default": 0.0
+      },
+      {
+        "step": 50,
+        "off_default": 0.46630859375
+      },
+      {
+        "step": 100,
+        "off_default": 0.5294189453125
+      }
+    ],
+    "0.0": [
+      {
+        "step": 0,
+        "off_default": 0.0
+      },
+      {
+        "step": 25,
+        "off_default": 0.0
+      },
+      {
+        "step": 50,
+        "off_default": 0.0
+      },
+      {
+        "step": 100,
+        "off_default": 0.0
+      }
+    ]
+  },
+  "review_reproduction_config": {
+    "num_layers": 12,
+    "hidden_size": 128,
+    "intermediate_size": 384,
+    "vocab_size": 512,
+    "S": 8,
+    "r": 1,
+    "curriculum": "A",
+    "fixed_training_progress": 0.05,
+    "batch_size": 8,
+    "sequence_length": 128,
+    "steps": 100,
+    "optimizer": "AdamW",
+    "lr": 0.0003,
+    "betas": [
+      0.9,
+      0.95
+    ],
+    "weight_decay": 0.1,
+    "model_seed": 0,
+    "data_generator_seed": 1
+  },
+  "limitations": [
+    "No trained-corpus route result yet",
+    "No B200 execution or deployment this turn",
+    "Cross-seed agreement is on exported tokens (256 by default; configurable)",
+    "Scientific review findings have been verified, not fixed; model/loss policy is unchanged"
+  ],
+  "source_sha256": {
+    "eval/route_study.py": "4c3967201cf10eec87906d761d15ac90d61fc4cc395707010db44ab575ae482e",
+    "eval/packed_ppl.py": "482e077a6833a3d07905efec057ff8a623841a68fe16a9eaf407fe4b2d6e663d",
+    "packed_evaluation.py": "7140b1ab1d9e3d026890cb79d9356b39abaf54c6aadcf3211ceefb1b09621075",
+    "tests/bdot/test_route_study.py": "6d0eb3612e8f8517cd3c1292e6970965a2fdd0052eeefe056c038287605e5a91",
+    "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+    "bdot/routing.py": "aea3467061c1e43bc76626ca00a2818aa6665c5275d77cdf863417bafc204d05",
+    "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+    "temp/check_review_prior.py": "b8976cee03012b2f28c76fa3342e721e0b4bb60f508d811af03f6d2745b4af12"
+  }
+}
