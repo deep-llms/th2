@@ -181,3 +181,14 @@ normal guarded burn handoff, but remote telemetry has not advanced past
 22:07 UTC as of 22:20 UTC. Their outcome and final burn status are unverified;
 no speed claim or default switch is justified yet. See
 [verification notes](BDOT_GROUPED_GEMM_20261018.md). No pilot was launched.
+
+## Replacement node environments — 2026-10-18
+
+The user confirms q359 is dead. Submit only the controller installation directive
+to th2: `#i envs/train.txt envs/eval.txt +a`. The two self-contained specifications
+create fresh Python 3.11 `train`/`eval` environments with matching training pins
+and the previously verified CUDA 13 FA4 4.0.0b33, CUTLASS DSL 4.8.0 and Quack 0.6.5.
+Eval retains the project's lm-eval 0.4.13 pin, with HF support and SentencePiece.
+Installation and GPU imports must be verified later; do not monitor Dropbox
+until the user asks. Replacement node identity/mapping is pending, so old
+q359 launchers and environment paths must not be reused without inspection.

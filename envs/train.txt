@@ -1,7 +1,7 @@
 # manager: conda
 # fresh: true
 # python: 3.11
-# Tested CPU path; CUDA execution also requires a compatible driver.
+# B200 CUDA 13 runtime; use SDPA or the pinned FA4 adapter.
 pip
 torch==2.14.1
 transformers==5.9.0
@@ -9,3 +9,6 @@ accelerate==1.13.0
 datasets==4.8.5
 tokenizers==0.22.2
 safetensors==0.8.0
+flash-attn-4[cu13]==4.0.0b33
+nvidia-cutlass-dsl==4.8.0
+quack-kernels==0.6.5

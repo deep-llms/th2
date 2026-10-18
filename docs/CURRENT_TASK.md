@@ -1,5 +1,26 @@
 # Current task
 
+## Replacement node environment installation — 2026-10-18
+
+The user confirms q359 is dead and requests an installation command pushed to
+`deep-llms/th2` for the replacement node. **Do not monitor Dropbox until the user
+asks.** The replacement hostname, GPU identity and Dropbox mapping are not yet
+supplied; do not reuse q359-specific launch/preflight assumptions.
+
+The execution checkout is `/disk/thuat/DOT-th2-inventory`, main. Its command is
+`#i envs/train.txt envs/eval.txt +a`, job
+`th2-dot-new-node-install-envs-20261018-a01`. This requests fresh Python 3.11
+conda environments named `train` and `eval`. Both retain the existing model/data
+library pins and add the old B200's validated FA4 4.0.0b33 (CUDA 13), CUTLASS DSL
+4.8.0 and Quack 0.6.5. Eval uses the project's lm-eval 0.4.13 pin with its HF
+extra and SentencePiece 0.2.2. The files are self-contained package lists.
+
+Only installation is submitted. Installation success and CUDA functionality
+remain unverified until the user requests a check. No training, download,
+process stop, or automatic monitoring is queued. The old grouped verification
+below has no retrieved final result; do not treat it as completed. DOT's source
+commands.sh remains inactive; the execution checkout carries the install action.
+
 ## Grouped expert execution — implemented; remote verification incomplete, 2026-10-18
 
 The user authorized implementing grouped GEMM and checking correctness and
@@ -37,6 +58,18 @@ The submitted supervisor restores/verifies burns on success or failure, but its
 final handoff is not yet observed. Do not resubmit the GPU job. Retrieve the
 pending receipt first; final source/results publication must use `#0`.
 See [grouped verification notes](BDOT_GROUPED_GEMM_20261018.md).
+
+User-authorized runner retry at 22:54 UTC: pushed `5c90b84` to th2 main,
+verified the remote head, and submitted fresh read-only job
+`th2-q359-dot-grouped-status-20261018-a02`. Its commands.sh includes an added
+blank line, unique heartbeat/timestamp, existing result reads and bounded
+nvidia-smi queries. It does not launch or stop GPU work. As of 22:58 UTC the
+latest Dropbox listing and fresh `_RUN_STATUS_.log` download still end at
+22:07:25 UTC; the retry commit has no returned acknowledgement. Local evidence:
+`temp/grouped_retry_2257_list.jsonl` and `temp/grouped_retry_2257_status.log`.
+Execution commands.sh remains this harmless read-only probe; DOT's source
+commands.sh remains #0. Do not infer the current training/burn state from this
+missing response, or resubmit the GPU verification job.
 
 No pilot training is part of this optimization task. Existing scientific-review
 fixes below are included in the version to be verified.

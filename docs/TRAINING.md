@@ -30,6 +30,10 @@ Accelerate, Tokenizers and Safetensors. Create a project-specific environment
 specification as described in [commands.md](commands.md#1-install-environments);
 this project now provides envs/train.txt and envs/eval.txt. See
 [BDOT_IMPLEMENTATION.md](BDOT_IMPLEMENTATION.md) for the new model and runtime.
+The runner installs these as conda environments `train` and `eval` under its
+Python 3.11 prefix. Both specs include the tested CUDA 13 FA4 dependencies;
+`eval` additionally includes the pinned lm-eval Hugging Face integration and
+SentencePiece. Each file is self-contained for the controller installer.
 Add W&B or TensorBoard only if requested.
 Tested locally on CPU with torch 2.14.0+cu130, transformers 5.9.0,
 datasets 4.8.5 and accelerate 1.13.0; these are a test receipt, not a GPU lockfile.
@@ -196,7 +200,8 @@ Neither path uses a training KV cache.
 FA4 requires a compatible CUDA environment, BF16/FP16 mixed precision, and the
 pinned **flash-attn-4==4.0.0b33** API validated for this template (its CUDA 13
 runtime used `flash-attn-4[cu13]==4.0.0b33` and `nvidia-cutlass-dsl==4.8.0`).
-These optional dependencies are not installed automatically. Missing or wrong
+The B200 environment specs include these dependencies and `quack-kernels==0.6.5`.
+Copying the source alone does not install them. Missing or wrong
 versions fail explicitly; there is no silent SDPA fallback. This adapter requires
 full-attention Qwen3, default RoPE, zero attention dropout, full unpadded blocks,
 and document isolation. Position resets may be enabled or disabled independently
