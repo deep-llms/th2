@@ -165,3 +165,19 @@ No deterministic override or production model change was necessary. See
 The supervisor restored communicating burns on success. A final live check at
 19:56:35 UTC verified all eight workers, advancing collectives and released guard.
 commands.sh returns to #0. No pilot was launched.
+
+
+## Grouped expert execution, 2026-10-18
+
+`bdot.expert_backend` now supports optional CUDA BF16 `grouped` projections;
+`reference` remains the default. Original expert parameter names and unused
+parameter/AdamW semantics are preserved. CPU tests (40 B-DOT, 49 utilities),
+real B200 SDPA/FA4 numerical cases and three checkpointed two-rank BF16 tests
+pass. Same-route fixture logits/losses match exactly; gradient relative error
+is at most 0.325%, with explicit first-AdamW roundoff sensitivity recorded.
+
+Eight-rank A/B resume and 50-update full-size timings were submitted under the
+normal guarded burn handoff, but remote telemetry has not advanced past
+22:07 UTC as of 22:20 UTC. Their outcome and final burn status are unverified;
+no speed claim or default switch is justified yet. See
+[verification notes](BDOT_GROUPED_GEMM_20261018.md). No pilot was launched.

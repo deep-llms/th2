@@ -1,6 +1,6 @@
 # Current task
 
-## Grouped expert execution — in progress, 2026-10-18
+## Grouped expert execution — implemented; remote verification incomplete, 2026-10-18
 
 The user authorized implementing grouped GEMM and checking correctness and
 complete-update throughput. `bdot/grouped.py` groups Q/O/MLP projections using
@@ -13,7 +13,31 @@ q359 read-only preflight `614c5d5` confirms the existing eight known communicati
 burn workers and matching environment. Planned bounded verification reuses the
 established supervisor, Accelerate installation/check, exact-PID reclamation,
 free-GPU verification and automatic burn restoration. Output root:
-`/mnt/local/_outputs/deep-llms_th2/q359-dot-grouped-20261018-a01/`.
+`/mnt/local/_outputs/deep-llms_th2/q359-dot-grouped-20261018-a03/`.
+Initial launch `ff5452b` passed projection/model gradient checks but stopped at
+an overstrict fresh-AdamW coordinate tolerance (max 0.000600 at LR 0.000300).
+The unchanged CPU BF16 reference independently reproduces the near-zero-gradient
+first-step sensitivity. The revised probe records whole-update RMS drift and
+checks identical existing moments separately. Initial supervisor restored and
+verified all eight burns at 21:54:37 UTC. a02 passes real grouped projection and
+all eight same-route SDPA/FA4 model cases (identical logits/losses; max relative
+gradient difference 0.003245). A seeded fused-AdamW counter-device bug in the
+DDP test fixture then stopped that suite; model code was unchanged. Launch
+`ec19fe8` fixes the fixture and requires verified a02 burn restoration before a
+fresh a03 preflight/launch. a03 passes CUDA numerics and all three checkpointed
+two-rank BF16 probes (no-reuse, soft, home-only). Eight-rank A/B resume and
+full-update benchmarks were submitted; their current status is unverified. Latest retrieved snapshot: 22:07 UTC;
+local evidence `temp/grouped_a03_summary1.json`. Initial numerical evidence is
+also in `temp/grouped_a02_summary1.json`.
+At 22:20 UTC, Dropbox/controller status still ends at 22:07:25 UTC. Export
+request `12881a3` and read-only live-status request `098061b` have no returned
+receipt yet. No AWS/controller error has been returned, so the cause of the
+missing updates is unknown. Do not infer completion, failure, or live burns.
+The submitted supervisor restores/verifies burns on success or failure, but its
+final handoff is not yet observed. Do not resubmit the GPU job. Retrieve the
+pending receipt first; final source/results publication must use `#0`.
+See [grouped verification notes](BDOT_GROUPED_GEMM_20261018.md).
+
 No pilot training is part of this optimization task. Existing scientific-review
 fixes below are included in the version to be verified.
 
