@@ -1,5 +1,20 @@
 # Current task
 
+## GPU FA4 resume verification — active
+
+The user explicitly requested the remaining B200 resume test. Read-only
+preflight `d83b8a0` confirms q359, released guard and the same eight known burn
+workers. Use existing eval_fa4, all eight GPUs and the established supervisor.
+The probe runs the real train.py and strict checkpoint/data checks, with a
+12-layer reduced-width synthetic fixture. Full schedule 200 steps; restart
+from 100 to 200, and from 20 to 40 across the soft/hard boundary. Trace all
+ranks: inputs, RNG, both routing branches, loss, optimizer/scheduler/balancing
+state. Local six-step CPU end-to-end test passes exactly. Production model and
+FA4 defaults remain unchanged. Output root:
+`/mnt/local/_outputs/deep-llms_th2/q359-dot-resume-20261018-a01/`.
+Automatic communicating burn restoration is required on success or failure.
+
+
 ## B200 verification complete — 2026-10-18
 
 The user authorized publishing DOT to `deep-llms/th2` main and running GPU

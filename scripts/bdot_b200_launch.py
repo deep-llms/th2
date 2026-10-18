@@ -18,6 +18,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--session', required=True)
+    p.add_argument('--jobs-config', type=Path, default=ROOT/'resources/bdot_b200_verification.json')
     args = p.parse_args()
     root = args.root.resolve()
     inspection = root/'preflight.json'
@@ -56,14 +57,15 @@ def main():
     print('ACCELERATE_CONFIG_VERIFIED '+str(target), flush=True)
     print(result.stdout, flush=True)
     from run_experiments import load_jobs
-    load_jobs(ROOT/'resources/bdot_b200_verification.json')
+    jobs_config = args.jobs_config.resolve()
+    load_jobs(jobs_config)
     if subprocess.run(['tmux','has-session','-t',args.session], capture_output=True).returncode == 0:
         raise ValueError('Session already exists')
     environment = dict(HF_HUB_OFFLINE='1', HF_DATASETS_OFFLINE='1', TRANSFORMERS_OFFLINE='1',
         HF_HUB_DISABLE_TELEMETRY='1', WANDB_MODE='offline', NCCL_NVLS_ENABLE='0',
         OMP_NUM_THREADS='1', TOKENIZERS_PARALLELISM='false', PYTHONDONTWRITEBYTECODE='1')
     argv = ['env', *(k+'='+v for k,v in environment.items()), sys.executable,
-            '-m','scripts.train_then_burn','--config',str(ROOT/'resources/bdot_b200_verification.json'),
+            '-m','scripts.train_then_burn','--config',str(jobs_config),
             '--output',str(root/'supervised'),'--inspection',str(inspection),
             '--host',old['host'],'--burn-session',args.session+'_burn']
     command = 'cd '+shlex.quote(str(ROOT))+' && exec '+shlex.join(argv)
@@ -72,7 +74,7 @@ def main():
     subprocess.run(['tmux','set-option','-w','-t',args.session,'remain-on-exit','on'],check=True)
     receipt = dict(status='submitted', session=args.session, root=str(root),
                    python=sys.executable, versions=actual, accelerate_cache=str(target),
-                   environment=environment)
+                   environment=environment, jobs_config=str(jobs_config))
     with (root/'launch.json').open('x') as handle:
         json.dump(receipt,handle,indent=2)
     print('BDOT_VERIFICATION_SUBMITTED '+json.dumps(receipt),flush=True)
