@@ -1,0 +1,2101 @@
+{
+  "status": "passed",
+  "failed_required": [],
+  "results": [
+    {
+      "name": "cpu_bdot",
+      "returncode": 0,
+      "seconds": 37.89083409309387,
+      "required": true,
+      "passed": true
+    },
+    {
+      "name": "native_math",
+      "returncode": 0,
+      "seconds": 17.233473300933838,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "transformers": "5.9.0",
+        "gpu": "NVIDIA B200",
+        "fa4": null,
+        "checks": [
+          {
+            "name": "fixed_native",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 6.234903366930666e-07,
+              "max_abs": 1.2433156371116638e-07,
+              "worst_parameter": "embedding",
+              "finite": true
+            },
+            "bf16": false,
+            "backend": "sdpa"
+          },
+          {
+            "name": "fixed_native_adamw",
+            "bf16": false,
+            "parameters": {
+              "relative_l2": 4.432557147993066e-07,
+              "max_abs": 6.378069519996643e-05,
+              "worst_parameter": "0.self_attn.o_proj.weight",
+              "finite": true
+            }
+          },
+          {
+            "name": "fixed_native",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 1.2435640295294093e-09,
+              "max_abs": 3.725290298461914e-09,
+              "worst_parameter": "embedding",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa"
+          },
+          {
+            "name": "fixed_native_adamw",
+            "bf16": true,
+            "parameters": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "embedding",
+              "finite": true
+            }
+          }
+        ],
+        "settings": {
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/native_math.json",
+          "fa4": false,
+          "full_native": true,
+          "native_only": true,
+          "routing_only": false,
+          "stable_router_bias": false,
+          "reference_math": true,
+          "native_self_control": false
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "native_default",
+      "returncode": 0,
+      "seconds": 17.89826774597168,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "transformers": "5.9.0",
+        "gpu": "NVIDIA B200",
+        "fa4": null,
+        "checks": [
+          {
+            "name": "fixed_native",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 6.481920991063816e-07,
+              "max_abs": 1.043081283569336e-07,
+              "worst_parameter": "embedding",
+              "finite": true
+            },
+            "bf16": false,
+            "backend": "sdpa"
+          },
+          {
+            "name": "fixed_native_adamw",
+            "bf16": false,
+            "parameters": {
+              "relative_l2": 5.044448698754422e-07,
+              "max_abs": 4.449300467967987e-05,
+              "worst_parameter": "0.self_attn.q_proj.weight",
+              "finite": true
+            }
+          },
+          {
+            "name": "fixed_native",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 1.2435640295294093e-09,
+              "max_abs": 3.725290298461914e-09,
+              "worst_parameter": "embedding",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa"
+          },
+          {
+            "name": "fixed_native_adamw",
+            "bf16": true,
+            "parameters": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "embedding",
+              "finite": true
+            }
+          }
+        ],
+        "settings": {
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/native_default.json",
+          "fa4": false,
+          "full_native": true,
+          "native_only": true,
+          "routing_only": false,
+          "stable_router_bias": false,
+          "reference_math": false,
+          "native_self_control": false
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "native_self",
+      "returncode": 0,
+      "seconds": 16.67282795906067,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "transformers": "5.9.0",
+        "gpu": "NVIDIA B200",
+        "fa4": null,
+        "checks": [
+          {
+            "name": "fixed_native",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 5.49083097212133e-07,
+              "max_abs": 1.1920928955078125e-07,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": false,
+            "backend": "sdpa"
+          },
+          {
+            "name": "fixed_native_adamw",
+            "bf16": false,
+            "parameters": {
+              "relative_l2": 4.2370018604742654e-07,
+              "max_abs": 3.307778388261795e-05,
+              "worst_parameter": "model.layers.0.self_attn.v_proj.weight",
+              "finite": true
+            }
+          },
+          {
+            "name": "fixed_native",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa"
+          },
+          {
+            "name": "fixed_native_adamw",
+            "bf16": true,
+            "parameters": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            }
+          }
+        ],
+        "settings": {
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/native_self.json",
+          "fa4": false,
+          "full_native": true,
+          "native_only": true,
+          "routing_only": false,
+          "stable_router_bias": false,
+          "reference_math": false,
+          "native_self_control": true
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "native_fa4",
+      "returncode": 0,
+      "seconds": 17.163876056671143,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "torch": "2.14.1+cu130",
+        "fa4": "4.0.0b33",
+        "gpu": "NVIDIA B200",
+        "dtype": "bf16 autocast, FP32 weights",
+        "note": "Tiny real-kernel smoke only; not throughput or long-run validation",
+        "checks": [
+          {
+            "checkpointing": false,
+            "sdpa_loss": 4.912927627563477,
+            "fa4_loss": 4.912957191467285,
+            "logits_relative_l2": 0.00299418275244534,
+            "gradients_relative_l2": 0.005630481522530317
+          },
+          {
+            "checkpointing": true,
+            "sdpa_loss": 4.903985977172852,
+            "fa4_loss": 4.90399169921875,
+            "logits_relative_l2": 0.002727433340623975,
+            "gradients_relative_l2": 0.005309161730110645
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "name": "routed_fa4_natural",
+      "returncode": 1,
+      "seconds": 16.77988362312317,
+      "required": false,
+      "receipt": {
+        "status": "running",
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "transformers": "5.9.0",
+        "gpu": "NVIDIA B200",
+        "fa4": "4.0.0b33",
+        "checks": [
+          {
+            "name": "reuse=True,progress=0.01,checkpointed_sdpa",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "sdpa",
+            "reuse": true,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "sdpa",
+            "reuse": true,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=True,progress=0.01,checkpointed_fa4",
+            "loss_abs": 0.000690460205078125,
+            "logits": {
+              "relative_l2": 0.027898244559764862,
+              "max_abs": 0.330078125,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.029192717745900154,
+              "max_abs": 0.004609942436218262,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "fa4",
+            "route_disagreement_fraction": 0.0029296875,
+            "all_branch_disagreements": 15
+          }
+        ]
+      },
+      "passed": false
+    },
+    {
+      "name": "routed_fa4_stable",
+      "returncode": 0,
+      "seconds": 22.826563119888306,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "transformers": "5.9.0",
+        "gpu": "NVIDIA B200",
+        "fa4": "4.0.0b33",
+        "checks": [
+          {
+            "name": "reuse=True,progress=0.01,checkpointed_sdpa",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "sdpa",
+            "reuse": true,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "sdpa",
+            "reuse": true,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=True,progress=0.01,checkpointed_fa4",
+            "loss_abs": 9.5367431640625e-07,
+            "logits": {
+              "relative_l2": 0.0035066576674580574,
+              "max_abs": 0.0078125,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.005478043109178543,
+              "max_abs": 0.0009452700614929199,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "fa4",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "fa4",
+            "reuse": true,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "fa4",
+            "reuse": true,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=True,progress=0.7,checkpointed_sdpa",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "sdpa",
+            "reuse": true,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "sdpa",
+            "reuse": true,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=True,progress=0.7,checkpointed_fa4",
+            "loss_abs": 0.0002288818359375,
+            "logits": {
+              "relative_l2": 0.0032218601554632187,
+              "max_abs": 0.0078125,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.005320827942341566,
+              "max_abs": 0.0009424611926078796,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "fa4",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "fa4",
+            "reuse": true,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "fa4",
+            "reuse": true,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=False,progress=0.01,checkpointed_sdpa",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "sdpa",
+            "reuse": false,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "sdpa",
+            "reuse": false,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=False,progress=0.01,checkpointed_fa4",
+            "loss_abs": 8.106231689453125e-06,
+            "logits": {
+              "relative_l2": 0.003571727080270648,
+              "max_abs": 0.0078125,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0054314578883349895,
+              "max_abs": 0.0009562671184539795,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "fa4",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "fa4",
+            "reuse": false,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "fa4",
+            "reuse": false,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=False,progress=0.7,checkpointed_sdpa",
+            "loss_abs": 0.0,
+            "logits": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.0,
+              "max_abs": 0.0,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "sdpa",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "sdpa",
+            "reuse": false,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "sdpa",
+            "reuse": false,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          },
+          {
+            "name": "reuse=False,progress=0.7,checkpointed_fa4",
+            "loss_abs": 2.6226043701171875e-05,
+            "logits": {
+              "relative_l2": 0.0030089253559708595,
+              "max_abs": 0.0078125,
+              "worst_parameter": "logits",
+              "finite": true
+            },
+            "gradients": {
+              "relative_l2": 0.005224376451224089,
+              "max_abs": 0.0008624084293842316,
+              "worst_parameter": "model.embed_tokens.weight",
+              "finite": true
+            },
+            "bf16": true,
+            "backend": "fa4",
+            "route_disagreement_fraction": 0.0,
+            "all_branch_disagreements": 0
+          },
+          {
+            "name": "natural_route_bf16_grouping_effect",
+            "backend": "fa4",
+            "reuse": false,
+            "max_abs": 0.0,
+            "route_changes": 0
+          },
+          {
+            "name": "causality_and_isolation",
+            "backend": "fa4",
+            "reuse": false,
+            "status": "passed",
+            "fixed_route_bitwise": true,
+            "cross_document_gradient": 0
+          }
+        ],
+        "settings": {
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/routed_fa4_stable.json",
+          "fa4": true,
+          "full_native": false,
+          "native_only": false,
+          "routing_only": true,
+          "stable_router_bias": true,
+          "reference_math": false,
+          "native_self_control": false
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "ddp_hard",
+      "returncode": 0,
+      "seconds": 13.060430765151978,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "max_gradient_error": 1.341104507446289e-07,
+        "counts": [
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.639134168624878,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:0",
+        "torch": "2.14.1+cu130"
+      },
+      "passed": true
+    },
+    {
+      "name": "ddp_soft",
+      "returncode": 0,
+      "seconds": 14.256294965744019,
+      "required": true,
+      "receipt": {
+        "status": "passed",
+        "max_gradient_error": 1.341104507446289e-07,
+        "counts": [
+          [
+            1,
+            7,
+            8,
+            8
+          ],
+          [
+            15,
+            4,
+            5,
+            0
+          ],
+          [
+            12,
+            1,
+            11,
+            0
+          ],
+          [
+            0,
+            11,
+            2,
+            11
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6408660411834717,
+        "checkpointing": true,
+        "soft": true,
+        "device": "cuda:0",
+        "torch": "2.14.1+cu130"
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_sdpa_native",
+      "returncode": 0,
+      "seconds": 42.483522176742554,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/dense_native.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_sdpa_native.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "sdpa",
+          "progress": 1.0,
+          "seed": 0,
+          "router_prior": null
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344354816,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 6.485675578005612,
+        "seconds_per_update": 0.6485675578005612,
+        "rank0_update_seconds": [
+          0.6219773429911584,
+          0.6247740068938583,
+          0.6241993051953614,
+          0.6225977151188999,
+          0.6202740059234202,
+          0.6204003000166267,
+          0.6213023769669235,
+          0.6204394700471312,
+          0.6212641019374132,
+          0.6196390609256923
+        ],
+        "rank0_median_update_seconds": 0.6212832394521683,
+        "tokens_per_second": 808378.3928045658,
+        "peak_allocated_bytes": 55067018752,
+        "peak_reserved_bytes": 55972986880,
+        "routing_metrics": null,
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_sdpa_D",
+      "returncode": 0,
+      "seconds": 43.193976163864136,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/D.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_sdpa_D.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "sdpa",
+          "progress": 1.0,
+          "seed": 0,
+          "router_prior": null
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344371200,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "bdot": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "r": 0,
+            "reuse": true,
+            "routing": "fixed",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "none",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0
+          },
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 7.405006693908945,
+        "seconds_per_update": 0.7405006693908944,
+        "rank0_update_seconds": [
+          0.7121995608322322,
+          0.7296338719315827,
+          0.70987912802957,
+          0.7087746991310269,
+          0.7070696828886867,
+          0.7083492169622332,
+          0.7079528120812029,
+          0.7068930098321289,
+          0.7094938720110804,
+          0.7092887591570616
+        ],
+        "rank0_median_update_seconds": 0.7090317291440442,
+        "tokens_per_second": 708018.2661161642,
+        "peak_allocated_bytes": 57755406848,
+        "peak_reserved_bytes": 58669924352,
+        "routing_metrics": {
+          "lm_loss_last_update": 12.090962027001568,
+          "router_z_loss_last_update": 0.0,
+          "off_default_share_last_update": 0.0,
+          "router_entropy_last_update": 0.0,
+          "reuse_rate_last_update": 0.0,
+          "module_load_max_min_ratio_last_update": 1.0,
+          "off_default_step_0_last_update": 0.0,
+          "off_default_step_1_last_update": 0.0,
+          "off_default_step_2_last_update": 0.0,
+          "off_default_step_3_last_update": 0.0,
+          "off_default_step_4_last_update": 0.0,
+          "off_default_step_5_last_update": 0.0,
+          "off_default_step_6_last_update": 0.0,
+          "off_default_step_7_last_update": 0.0,
+          "module_0_decisions_last_update": 524288,
+          "module_1_decisions_last_update": 524288,
+          "module_2_decisions_last_update": 524288,
+          "module_3_decisions_last_update": 524288,
+          "module_4_decisions_last_update": 524288,
+          "module_5_decisions_last_update": 524288,
+          "module_6_decisions_last_update": 524288,
+          "module_7_decisions_last_update": 524288
+        },
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_sdpa_hard_mixed",
+      "returncode": 0,
+      "seconds": 45.416054248809814,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/P1-B.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_sdpa_hard_mixed.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "sdpa",
+          "progress": 0.7,
+          "seed": 0,
+          "router_prior": 0.0
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344445504,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "bdot": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "B",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0
+          },
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 8.304427684983239,
+        "seconds_per_update": 0.8304427684983239,
+        "rank0_update_seconds": [
+          0.802826015977189,
+          0.8009796300902963,
+          0.7991608679294586,
+          0.7964886641129851,
+          0.7968868010211736,
+          0.7975704427808523,
+          0.8028125520795584,
+          0.803536213003099,
+          0.8127957629039884,
+          0.8113688360899687
+        ],
+        "rank0_median_update_seconds": 0.8018960910849273,
+        "tokens_per_second": 631335.4994325032,
+        "peak_allocated_bytes": 59446823936,
+        "peak_reserved_bytes": 60651732992,
+        "routing_metrics": {
+          "lm_loss_last_update": 12.1330287062277,
+          "router_z_loss_last_update": 0.9830798991024494,
+          "off_default_share_last_update": 0.6310498714447021,
+          "router_entropy_last_update": 0.9927345998585224,
+          "reuse_rate_last_update": 0.9899063110351562,
+          "module_load_max_min_ratio_last_update": 1.361795020831577,
+          "off_default_step_0_last_update": 0.4399223327636719,
+          "off_default_step_1_last_update": 0.6492195129394531,
+          "off_default_step_2_last_update": 0.6625423431396484,
+          "off_default_step_3_last_update": 0.716033935546875,
+          "off_default_step_4_last_update": 0.6941871643066406,
+          "off_default_step_5_last_update": 0.7517604827880859,
+          "off_default_step_6_last_update": 0.7439498901367188,
+          "off_default_step_7_last_update": 0.39078330993652344,
+          "module_0_decisions_last_update": 450758,
+          "module_1_decisions_last_update": 578409,
+          "module_2_decisions_last_update": 535242,
+          "module_3_decisions_last_update": 545186,
+          "module_4_decisions_last_update": 613840,
+          "module_5_decisions_last_update": 480515,
+          "module_6_decisions_last_update": 480113,
+          "module_7_decisions_last_update": 510241
+        },
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_sdpa_soft_mixed",
+      "returncode": 0,
+      "seconds": 49.3103711605072,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/P1-B.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_sdpa_soft_mixed.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "sdpa",
+          "progress": 0.01,
+          "seed": 0,
+          "router_prior": 0.0
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344445504,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "bdot": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "B",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0
+          },
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 10.851384815992787,
+        "seconds_per_update": 1.0851384815992788,
+        "rank0_update_seconds": [
+          1.0615108378697187,
+          1.05594233982265,
+          1.0568541910033673,
+          1.0554836650844663,
+          1.0584442061372101,
+          1.0537065360695124,
+          1.0604785601608455,
+          1.0555203731637448,
+          1.0539718188811094,
+          1.0599205980543047
+        ],
+        "rank0_median_update_seconds": 1.0563982654130086,
+        "tokens_per_second": 483153.0803582816,
+        "peak_allocated_bytes": 71801467904,
+        "peak_reserved_bytes": 73320628224,
+        "routing_metrics": {
+          "lm_loss_last_update": 12.12541090597318,
+          "router_z_loss_last_update": 0.9448599759489298,
+          "off_default_share_last_update": 0.5421438217163086,
+          "router_entropy_last_update": 0.9914763644337654,
+          "reuse_rate_last_update": 0.9834613800048828,
+          "module_load_max_min_ratio_last_update": 1.6893139256235024,
+          "off_default_step_0_last_update": 0.40154075622558594,
+          "off_default_step_1_last_update": 0.6198329925537109,
+          "off_default_step_2_last_update": 0.5312919616699219,
+          "off_default_step_3_last_update": 0.6086978912353516,
+          "off_default_step_4_last_update": 0.6049346923828125,
+          "off_default_step_5_last_update": 0.6489734649658203,
+          "off_default_step_6_last_update": 0.5921955108642578,
+          "off_default_step_7_last_update": 0.3296833038330078,
+          "module_0_decisions_last_update": 458423,
+          "module_1_decisions_last_update": 543932,
+          "module_2_decisions_last_update": 553417,
+          "module_3_decisions_last_update": 543106,
+          "module_4_decisions_last_update": 647139,
+          "module_5_decisions_last_update": 383078,
+          "module_6_decisions_last_update": 478661,
+          "module_7_decisions_last_update": 586548
+        },
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_fa4_native",
+      "returncode": 0,
+      "seconds": 48.800966024398804,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/dense_native.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_fa4_native.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "fa4",
+          "progress": 1.0,
+          "seed": 0,
+          "router_prior": null
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344354816,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 6.136142944917083,
+        "seconds_per_update": 0.6136142944917082,
+        "rank0_update_seconds": [
+          0.5851211480330676,
+          0.58389803301543,
+          0.5913120158948004,
+          0.5855888789519668,
+          0.5857177751604468,
+          0.5846410768572241,
+          0.5847023997921497,
+          0.584234792040661,
+          0.584165341919288,
+          0.5848175210412592
+        ],
+        "rank0_median_update_seconds": 0.5847599604167044,
+        "tokens_per_second": 854425.9882900832,
+        "peak_allocated_bytes": 53841749504,
+        "peak_reserved_bytes": 54777610240,
+        "routing_metrics": null,
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_fa4_D",
+      "returncode": 0,
+      "seconds": 50.090956687927246,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/D.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_fa4_D.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "fa4",
+          "progress": 1.0,
+          "seed": 0,
+          "router_prior": null
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344371200,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "bdot": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "r": 0,
+            "reuse": true,
+            "routing": "fixed",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "none",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0
+          },
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 6.986607976956293,
+        "seconds_per_update": 0.6986607976956293,
+        "rank0_update_seconds": [
+          0.6728279150556773,
+          0.6705115819349885,
+          0.670392339117825,
+          0.6709209580440074,
+          0.6710160949733108,
+          0.6709895010571927,
+          0.6701479291077703,
+          0.6709002810530365,
+          0.6699181238655001,
+          0.6737025000620633
+        ],
+        "rank0_median_update_seconds": 0.6709106195485219,
+        "tokens_per_second": 750418.517439711,
+        "peak_allocated_bytes": 56530137600,
+        "peak_reserved_bytes": 57457770496,
+        "routing_metrics": {
+          "lm_loss_last_update": 12.091118699922337,
+          "router_z_loss_last_update": 0.0,
+          "off_default_share_last_update": 0.0,
+          "router_entropy_last_update": 0.0,
+          "reuse_rate_last_update": 0.0,
+          "module_load_max_min_ratio_last_update": 1.0,
+          "off_default_step_0_last_update": 0.0,
+          "off_default_step_1_last_update": 0.0,
+          "off_default_step_2_last_update": 0.0,
+          "off_default_step_3_last_update": 0.0,
+          "off_default_step_4_last_update": 0.0,
+          "off_default_step_5_last_update": 0.0,
+          "off_default_step_6_last_update": 0.0,
+          "off_default_step_7_last_update": 0.0,
+          "module_0_decisions_last_update": 524288,
+          "module_1_decisions_last_update": 524288,
+          "module_2_decisions_last_update": 524288,
+          "module_3_decisions_last_update": 524288,
+          "module_4_decisions_last_update": 524288,
+          "module_5_decisions_last_update": 524288,
+          "module_6_decisions_last_update": 524288,
+          "module_7_decisions_last_update": 524288
+        },
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_fa4_hard_mixed",
+      "returncode": 0,
+      "seconds": 53.641982555389404,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/P1-B.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_fa4_hard_mixed.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "fa4",
+          "progress": 0.7,
+          "seed": 0,
+          "router_prior": 0.0
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344445504,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "bdot": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "B",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0
+          },
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 8.135618726024404,
+        "seconds_per_update": 0.8135618726024404,
+        "rank0_update_seconds": [
+          0.784604734973982,
+          0.7815189710818231,
+          0.781161499908194,
+          0.7796813428867608,
+          0.7844644549768418,
+          0.7857262881007046,
+          0.7806697310879827,
+          0.788372753886506,
+          0.7876312390435487,
+          0.787320737959817
+        ],
+        "rank0_median_update_seconds": 0.7845345949754119,
+        "tokens_per_second": 644435.3129810465,
+        "peak_allocated_bytes": 58218882048,
+        "peak_reserved_bytes": 59378761728,
+        "routing_metrics": {
+          "lm_loss_last_update": 12.13260737742026,
+          "router_z_loss_last_update": 0.9841458313167095,
+          "off_default_share_last_update": 0.620936393737793,
+          "router_entropy_last_update": 0.9927197657525539,
+          "reuse_rate_last_update": 0.9890975952148438,
+          "module_load_max_min_ratio_last_update": 1.5526093148521554,
+          "off_default_step_0_last_update": 0.4896583557128906,
+          "off_default_step_1_last_update": 0.5967197418212891,
+          "off_default_step_2_last_update": 0.6796989440917969,
+          "off_default_step_3_last_update": 0.7143440246582031,
+          "off_default_step_4_last_update": 0.6853866577148438,
+          "off_default_step_5_last_update": 0.7117958068847656,
+          "off_default_step_6_last_update": 0.7206878662109375,
+          "off_default_step_7_last_update": 0.3691997528076172,
+          "module_0_decisions_last_update": 425514,
+          "module_1_decisions_last_update": 660657,
+          "module_2_decisions_last_update": 517537,
+          "module_3_decisions_last_update": 524633,
+          "module_4_decisions_last_update": 593112,
+          "module_5_decisions_last_update": 488669,
+          "module_6_decisions_last_update": 464849,
+          "module_7_decisions_last_update": 519333
+        },
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "bench_fa4_soft_mixed",
+      "returncode": 0,
+      "seconds": 54.580153703689575,
+      "required": true,
+      "receipt": {
+        "status": "completed",
+        "settings": {
+          "config": "configs/bdot/P1-B.json",
+          "output": "/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/supervised/run/checks/bench_fa4_soft_mixed.json",
+          "device": "cuda",
+          "batch_size": 16,
+          "accumulation": 4,
+          "length": 1024,
+          "document_length": 128,
+          "warmup": 3,
+          "steps": 10,
+          "bf16": true,
+          "checkpointing": false,
+          "attention_backend": "fa4",
+          "progress": 0.01,
+          "seed": 0,
+          "router_prior": 0.0
+        },
+        "versions": {
+          "torch": "2.14.1",
+          "transformers": "5.9.0",
+          "accelerate": "1.13.0",
+          "datasets": "4.8.5",
+          "flash-attn-4": "4.0.0b33"
+        },
+        "torch": "2.14.1+cu130",
+        "cuda": "13.0",
+        "world_size": 8,
+        "gpu": "NVIDIA B200",
+        "parameters": 344445504,
+        "config": {
+          "transformers_version": "5.9.0",
+          "architectures": null,
+          "output_hidden_states": false,
+          "return_dict": true,
+          "dtype": null,
+          "chunk_size_feed_forward": 0,
+          "is_encoder_decoder": false,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "problem_type": null,
+          "vocab_size": 151936,
+          "hidden_size": 1024,
+          "intermediate_size": 3072,
+          "num_hidden_layers": 12,
+          "num_attention_heads": 16,
+          "num_key_value_heads": 8,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "max_position_embeddings": 1024,
+          "initializer_range": 0.02,
+          "rms_norm_eps": 1e-06,
+          "use_cache": false,
+          "tie_word_embeddings": true,
+          "rope_parameters": {
+            "rope_type": "default",
+            "rope_theta": 1000000.0
+          },
+          "attention_bias": false,
+          "use_sliding_window": false,
+          "sliding_window": null,
+          "max_window_layers": 28,
+          "layer_types": [
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention",
+            "full_attention"
+          ],
+          "attention_dropout": 0.0,
+          "pad_token_id": null,
+          "bos_token_id": null,
+          "eos_token_id": 151643,
+          "_name_or_path": "",
+          "bdot": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "B",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0
+          },
+          "model_type": "qwen3",
+          "output_attentions": false
+        },
+        "seconds": 10.281057214131579,
+        "seconds_per_update": 1.028105721413158,
+        "rank0_update_seconds": [
+          1.0169377310667187,
+          1.0167004419490695,
+          0.9939329279586673,
+          0.9976526941172779,
+          0.9930777219124138,
+          0.9949776879511774,
+          1.0001649300102144,
+          0.997754376847297,
+          0.995951124932617,
+          0.9976094188168645
+        ],
+        "rank0_median_update_seconds": 0.9976310564670712,
+        "tokens_per_second": 509955.3373551434,
+        "peak_allocated_bytes": 69500002816,
+        "peak_reserved_bytes": 81031856128,
+        "routing_metrics": {
+          "lm_loss_last_update": 12.125771740290123,
+          "router_z_loss_last_update": 0.9430511891841888,
+          "off_default_share_last_update": 0.5488543510437012,
+          "router_entropy_last_update": 0.9915797002613544,
+          "reuse_rate_last_update": 0.9845867156982422,
+          "module_load_max_min_ratio_last_update": 1.7481144036485543,
+          "off_default_step_0_last_update": 0.4202156066894531,
+          "off_default_step_1_last_update": 0.6349716186523438,
+          "off_default_step_2_last_update": 0.5554122924804688,
+          "off_default_step_3_last_update": 0.6627273559570312,
+          "off_default_step_4_last_update": 0.5670166015625,
+          "off_default_step_5_last_update": 0.616485595703125,
+          "off_default_step_6_last_update": 0.5832233428955078,
+          "off_default_step_7_last_update": 0.3507823944091797,
+          "module_0_decisions_last_update": 474750,
+          "module_1_decisions_last_update": 537347,
+          "module_2_decisions_last_update": 529893,
+          "module_3_decisions_last_update": 526791,
+          "module_4_decisions_last_update": 674225,
+          "module_5_decisions_last_update": 385687,
+          "module_6_decisions_last_update": 491212,
+          "module_7_decisions_last_update": 574399
+        },
+        "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+        "source_sha256": {
+          "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+          "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+          "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+          "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+          "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+          "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+        }
+      },
+      "passed": true
+    }
+  ],
+  "throughput": {
+    "sdpa": {
+      "tokens_per_second": {
+        "native": 808378.3928045658,
+        "D": 708018.2661161642,
+        "hard_mixed": 631335.4994325032,
+        "soft_mixed": 483153.0803582816
+      },
+      "hard_over_D": 0.8916938017654482,
+      "hard_over_native": 0.78099007228801,
+      "soft_over_D": 0.6824019993278125,
+      "soft_over_native": 0.5976818339763431,
+      "hard_runtime_gate": true
+    },
+    "fa4": {
+      "tokens_per_second": {
+        "native": 854425.9882900832,
+        "D": 750418.517439711,
+        "hard_mixed": 644435.3129810465,
+        "soft_mixed": 509955.3373551434
+      },
+      "hard_over_D": 0.8587678715335283,
+      "hard_over_native": 0.7542318724067841,
+      "soft_over_D": 0.6795612388337864,
+      "soft_over_native": 0.596839684588351,
+      "hard_runtime_gate": true
+    }
+  },
+  "scope": "Synthetic numerical checks and complete HF Trainer updates; no research training."
+}

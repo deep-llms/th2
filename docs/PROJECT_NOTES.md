@@ -82,13 +82,37 @@ commands.sh, controller logs/status files and resources/llm_pretrain_burn.py,
 which is used by the existing eight-GPU burn. All eight worker identities and
 the launcher were unchanged; no signals, new GPU work or environment changes
 occurred. Data/model/output/conda roots were not modified. Commit `162455c`
-deactivates the command and removes its cleanup body. GitHub still contains
-only commands.sh. See [cleanup receipt](results/dot_th2_cleanup_20261018.json).
+deactivates the command and removes its cleanup body. GitHub contained only commands.sh at that point. See [cleanup receipt](results/dot_th2_cleanup_20261018.json).
 
 DOT itself currently has no initialized Git repository; its commands.sh is #0.
-Actual asset/environment paths still require verification. Assets and library
+Actual research assets still require selection and verification. Assets and library
 execution are offline; no weights/data have been downloaded for the research
 run. Credentials and shared URLs remain outside Git. Existing approved Dropbox
 credentials are read from the old development project's ignored temp directory;
 the q359 folder mapping and downloaded receipts are in DOT's ignored
 `temp/dot_th2_inventory_20261018/`.
+
+
+## B200 verification — 2026-10-18
+
+Published DOT to the authorized th2 main branch from DOT-th2-inventory. Preflight
+`0f37b2c` verified q359 and the existing eval_fa4 interpreter: all training-library
+pins match, with FA4 4.0.0b33 and CUDA 13. No reinstall/driver changes. The
+lm-eval version is older than our eval pin and was not used for these checks.
+Launch `c3ce8d1` copied/verified Accelerate's eight-GPU configuration and reclaimed
+only verified burn workers. The numerical suite and eight-GPU benchmarks passed
+all 16 required cases; one optional natural near-tie route comparison differed.
+Keep the attention backend fixed for an experiment. Same-route comparisons pass;
+this does not promise identical routing trajectories across kernels.
+
+Hard mixed routing is 89.2% of matched D throughput on SDPA and 85.9% on FA4;
+relative to native Qwen these are 78.1% and 75.4%. Both pass the 60%-of-D runtime
+gate in this synthetic setup. Full report, limitations and receipts are in
+[BDOT_B200_VERIFICATION_20261018.md](BDOT_B200_VERIFICATION_20261018.md).
+No research pilot or corpus download was launched. The source code remains in
+DOT; the separate Git checkout publishes it without tracking temp credentials.
+
+The supervisor finished at 19:27:32 UTC and a separate live check at 19:30:53 UTC
+verified eight communicating burns, advancing collectives and released guard.
+See [handoff receipt](results/bdot_b200_handoff_20261018.json). commands.sh returns
+to #0 with the final code/results publication; no unattended pilot is queued.

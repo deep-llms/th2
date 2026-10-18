@@ -36,11 +36,11 @@ The mixed hard case is above 60% of both references locally, but only narrowly a
 
 ## FA4: actual kernel attempt
 
-The [pinned package](https://pypi.org/project/flash-attn-4/4.0.0b33/) has an SM80 forward path. Its backward dispatcher explicitly requires compute capability 9.x or newer (`flash_attn/cute/interface.py:2278` in the installed wheel). The real native-Qwen3 probe reached backward and failed on that guard. It was not removed. Therefore no FA4 training throughput or gradient-equivalence result is available.
+The [pinned package](https://pypi.org/project/flash-attn-4/4.0.0b33/) has an SM80 forward path. Its backward dispatcher explicitly requires compute capability 9.x or newer (`flash_attn/cute/interface.py:2278` in the installed wheel). The real native-Qwen3 probe reached backward and failed on that guard. It was not removed. Therefore this A100 test provides no FA4 training throughput or gradient-equivalence result.
 
 Forward-only B-DOT comparisons on the actual FA4 kernel gave roughly 0.33–0.34% relative logit L2 error for identical hard/no-reuse choices. The soft reuse-on case had 0.98% error and **one changed secondary route** (primary routes unchanged); its maximum individual logit difference was 0.1993. That case is a natural-routing comparison, not an identical-path kernel comparison. The updated probe checks both selected branches to avoid overlooking this. Forward-only evidence is not training approval.
 
-An H100/B200-class execution target must be confirmed for FA4 backward, complete updates and distributed checks. DOT has no assigned execution repository or machine.
+At the time of these local checks, DOT had no assigned execution target. The user subsequently assigned th2/q359 B200; the [B200 report](BDOT_B200_VERIFICATION_20261018.md) records successful FA4 backward, full updates and distributed checks on the pinned runtime.
 
 ## Code and artifacts
 

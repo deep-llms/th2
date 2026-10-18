@@ -139,19 +139,20 @@ its CUDA 13 build, so tests in that environment use CPU. Separate compatible
 environments were used for the local GPU checks below. No driver changes were made.
 
 The subsequent [local GPU report](BDOT_GPU_VERIFICATION_20261018.md) records
-CUDA numerical, NCCL and SDPA throughput checks. The actual pinned runtime and
-FA4 training still require a compatible execution machine before pilot launch.
+CUDA numerical, NCCL and SDPA throughput checks. The later
+[B200 verification](BDOT_B200_VERIFICATION_20261018.md) validates the pinned
+training runtime, real FA4 backward and eight-GPU complete-update throughput.
 `scripts/benchmark_bdot.py` now uses the actual PackedTrainer/BDOTTrainer for
 complete forward/backward/clipping/AdamW/scheduler/routing updates, with explicit
 backend, accumulation and curriculum phase. It supports single-device or torchrun
 DDP and records the world size; local timings are not eight-GPU results. Dispatch currently
 uses sorted token groups and PyTorch operations, without a custom grouped-GEMM
 kernel. Both matched D and native dense timings are reported; the throughput
-gate at the intended distributed batch/runtime remains outstanding.
+gate is passed by the synthetic eight-B200 test at 524,288 input tokens/update.
 
 The full route-study exporter (4,096-sequence path statistics and the
-256-sequence routes_sample.npz artifact), cross-seed comparison reporting and
-production-runtime GPU speed diagnostics remain to finish before the pilot's
-final Gate 0a report.
+256-sequence routes_sample.npz artifact), cross-seed comparison reporting remain to finish before the pilot's final Gate 0a
+report. Routed FA4 resume parity also needs a GPU check; existing exact resume
+evidence is CPU-only.
 Actual benchmark scores require trained checkpoints and cached task data.
 No scientific result is inferred from tiny local fixtures.

@@ -1,39 +1,43 @@
 # Current task
 
-## B200 verification in progress — 2026-10-18
+## B200 verification complete — 2026-10-18
 
-The user authorized publishing DOT to th2 and running B200 verification.
-Source was published at `5d1f037`; the controller blocked its preflight before
-execution on a redundant test assertion mentioning a Hub publication option.
-Removed only that assertion; the actual offline network-denial test remains.
-Fresh read-only preflight `9b52375`, job `th2-q359-dot-preflight-20261018-a02`,
-uses `/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a02/`.
-Do not infer environment validity or GPU verification from submission alone.
+The user authorized publishing DOT to `deep-llms/th2` main and running GPU
+verification on q359. DOT is published from `/disk/thuat/DOT-th2-inventory`;
+local DOT remains the source directory and its commands.sh is inactive.
+Launch commit `c3ce8d1` completed the synthetic suite: **16 required checks pass**.
+This includes full-size native equivalence, real FA4 forward/backward,
+checkpoint/isolation checks, two-rank NCCL accumulation and eight-GPU Trainer
+benchmarks. One optional natural near-tie route comparison changes discrete
+paths across backends; separate same-route checks pass. Keep the backend fixed.
 
-The next authorized stage is synthetic numerical/FA4/backward/NCCL and complete
-Trainer-update verification, followed by automatic verified burn restoration.
-The old q359 supervisor is reused with its PID-handle helpers and seven passing
-CPU ownership/handoff tests; its obsolete standalone reclamation CLI was not
-copied. `resources/accelerate_b200.yaml` is the previously validated eight-GPU
-configuration, distinct from the generic single-process example. Copy to the
-selected interpreter's actual Accelerate cache and verify before reclaiming
-known burns. Research pilot training and corpus downloads are not part of this
-verification. Local receipts: `temp/bdot_b200_verification_20261018/`.
+Hard-routing throughput is 89.2% of matched dense D with SDPA and 85.9% with
+FA4, exceeding the 60% runtime gate in this setup. Relative to native Qwen these
+are 78.1% and 75.4%. These are short synthetic measurements, not pilot results.
+See [B200 report](BDOT_B200_VERIFICATION_20261018.md) and
+[machine-readable summary](results/bdot_b200_20261018.json).
 
-The prepared suite retains failed independent checks and exits unsuccessfully
-if any required check fails. It reports natural near-tie route changes separately
-from same-route kernel checks using explicit separated diagnostic router biases.
-Neither diagnostic changes production model initialization. Throughput uses the
-full 12-layer models, eight ranks, microbatch16, accumulation4, length1024,
-524,288 input tokens/update, BF16, checkpointing off, 3 warmup +10 measured
-updates per native/D/mixed-hard/mixed-soft case, separately for SDPA and FA4.
+The selected existing eval_fa4 environment matches the training pins. Accelerate's
+resource config was copied bytewise and verified as eight-process BF16. Exact
+known burn workers were reclaimed and all eight GPUs verified free before tests.
+Supervisor restoration finished successfully at 19:27:32 UTC. Final read-only
+inspection `d0a24cc` at 19:30:53 UTC confirms all eight communicating burns remain
+live, collectives advance and ownership is released. Training losses are finite
+and benchmark source hashes match. A parser-only issue in the preceding check
+was fixed; no GPU tests were restarted. The final code/results push uses #0.
+
+Remote artifacts:
+`/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a03/`.
+Local receipts: `temp/bdot_b200_verification_20261018/`.
+No research pilot, corpus download, package reinstall or driver change occurred.
+The existing environment's older lm-eval version was not used or validated.
 
 ## Previous implementation and setup evidence
 
 Updated 2026-10-18. The Phase A foundation is implemented and CPU-validated;
 local A100 numerical, NCCL and SDPA throughput checks have also been run.
-No research training or dataset download has been launched. A read-only remote
-project inventory has now completed as described below.
+No research training or dataset download has been launched. The inventory and cleanup history is recorded below; subsequent B200
+verification is summarized above.
 
 Design: [BDOT_v2_spec.md](BDOT_v2_spec.md), **v1.3**, and
 [review response](BDOT_v2_review_response.md). The current architecture is a
@@ -65,12 +69,9 @@ explicitly rejects this dev machine's A100 (SM80); forward-only results are sepa
 
 ## Remaining before a pilot
 
-- Verify the assigned execution machine's environment/assets. Local CUDA
-  tests used compatible older PyTorch builds, not train_env's CUDA 13 build.
-- Validate the pinned runtime and FA4 backward on a confirmed compatible GPU;
-  measure full-update throughput at the actual distributed pilot batch. Local
-  mixed hard routing was 76.5% of current D / 61.7% of native dense. This is
-  preliminary, not eight-GPU T8 clearance.
+- Verify routed FA4 checkpoint/resume parity on GPU. Existing 200-step exact
+  resume evidence is CPU-only. Pinned-runtime backward and synthetic eight-GPU
+  throughput gates are now passed; remeasure if the pilot recipe changes.
 - Finish full route-study export/reporting before Gate 0a: 4,096-sequence path
   statistics, 256-sequence route artifact and cross-seed comparisons. Current
   code reports off-default share/reuse and supports fixed/random interventions.
