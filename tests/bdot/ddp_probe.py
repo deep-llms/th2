@@ -77,6 +77,16 @@ refs=dict(ref.named_parameters())
 groups=[{**{k:v for k,v in group.items() if k!='params'},
          'params':[refs[name_by_id[id(p)]] for p in group['params']]} for group in t.optimizer.param_groups]
 opt=torch.optim.AdamW(groups,lr=.001)
+if settings.bf16:
+    # BF16 batch-shape rounding can flip almost-zero gradients; a fresh AdamW
+    # first step converts those into a full +/-LR update even in the reference
+    # backend. Use identical nonzero moments to test distributed optimizer math
+    # without that sign discontinuity, also checking unused momentum is skipped.
+    for optimizer,parameters in ((t.optimizer,m.parameters()),(opt,ref.parameters())):
+        for parameter in parameters:
+            optimizer.state[parameter] = dict(step=torch.tensor(5.),
+                exp_avg=torch.full_like(parameter,.001),
+                exp_avg_sq=torch.full_like(parameter,.0001))
 inputs=model_inputs({k:v.to(device) for k,v in PackedCollator()(rows).items()})
 forced=torch.tensor([0,1,0,1],device=device)[None,:,None].expand(4,4,6)
 if settings.no_reuse or settings.home_only:
@@ -106,7 +116,7 @@ assert abs(m.last_update_metrics['lm_loss_last_update']-expected_lm) < 1e-5
 opt.step()
 for name,p in m.named_parameters():
     torch.testing.assert_close(p,refs[name],atol=1e-4 if settings.bf16 else 1e-5,
-                               rtol=.01 if settings.bf16 else 1e-5)
+                               rtol=.01 if settings.bf16 else 1e-5,msg=name)
 (root/f'rank{rank}.json').write_text(json.dumps(dict(status='passed',max_gradient_error=max_error,
     counts=counts.tolist(),balance_bias=m.balance_bias.tolist(),reference_loss=loss.item(),
     checkpointing=settings.checkpointing,soft=settings.soft,device=str(device),torch=torch.__version__,

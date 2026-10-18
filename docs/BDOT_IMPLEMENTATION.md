@@ -249,9 +249,19 @@ training runtime, real FA4 backward and eight-GPU complete-update throughput.
 complete forward/backward/clipping/AdamW/scheduler/routing updates, with explicit
 backend, accumulation and curriculum phase. It supports single-device or torchrun
 DDP and records the world size; local timings are not eight-GPU results. Dispatch currently
-uses sorted token groups and PyTorch operations, without a custom grouped-GEMM
-kernel. Both matched D and native dense timings are reported; the throughput
+uses sorted token groups and PyTorch operations. Both matched D and native dense timings are reported; the throughput
 gate is passed by the synthetic eight-B200 test at 524,288 input tokens/update.
+
+An opt-in `bdot.expert_backend: "grouped"` uses PyTorch's CUDA BF16
+`torch.nn.functional.grouped_mm` for expert Q/O and MLP projections. The default
+is `"reference"`. It preserves the original parameters and state-dict names;
+only occupied experts are stacked, so unused expert gradients remain absent
+and AdamW does not start updating unused parameters. Shared step K/V, attention,
+normalization, routing and loss definitions are unchanged. Weight packing is
+included in complete-update benchmarks. Single-expert steps use ordinary linear
+layers. CPU/FP32 multi-expert execution must use the reference backend. The
+backend is part of the strict resume recipe: do not silently switch existing
+runs. GPU verification of this optional path is in progress.
 
 The route-study exporter and artifact comparisons are implemented above. They
 still require actual trained checkpoints for a scientific Gate 0a report.

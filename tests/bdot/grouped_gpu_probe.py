@@ -12,7 +12,7 @@ sys.path.insert(0,str(ROOT))
 
 
 def relative(a,b):
-    return float((a.float()-b.float()).norm()/b.float().norm().clamp_min(1e-12))
+    return float((a.detach().float()-b.detach().float()).norm()/b.detach().float().norm().clamp_min(1e-12))
 
 
 def main():
@@ -47,6 +47,7 @@ def main():
         assert max(errors.values()) < .01,errors
         assert layers[1].weight.grad is None
         records.append(dict(case='projection',sizes=sizes,errors=errors))
+        print('GROUPED_CASE '+json.dumps(records[-1]),flush=True)
     del layers,ref,x,y,a,b
     rows=[dict(input_ids=torch.randint(2,256,(64,)).tolist(),labels=[0]*64,
                attention_mask=[1]*64,segments=[0]*17+[1]*47) for _ in range(2)]
@@ -87,12 +88,33 @@ def main():
             errors=dict(logits=relative(ob.logits,oa.logits),gradient=(squared/max(norm,1e-30))**.5,
                         loss_absolute=abs(float(oa.loss)-float(ob.loss)))
             assert errors['logits']<.02 and errors['gradient']<.05,errors
-            for m in (a,b):torch.optim.AdamW(m.parameters(),lr=3e-4,weight_decay=.1).step();m.finish_update()
-            delta=max(float((pa-pb).abs().max()) for pa,pb in zip(a.parameters(),b.parameters()))
-            assert delta<1e-4,('AdamW parameter difference',delta)
+            # First-step AdamW is discontinuous near zero gradients: BF16
+            # rounding can reverse one coordinate's full +/-LR step. Report
+            # its maximum and whole-update relative error; do not call it exact.
+            before=[pa.detach().clone() for pa in a.parameters()]
+            for m in (a,b):torch.optim.AdamW(m.parameters(),lr=3e-4,weight_decay=.1).step()
+            delta=max(float((pa-pb).detach().abs().max()) for pa,pb in zip(a.parameters(),b.parameters()))
+            update_difference=sum(float((pa-pb).detach().square().sum()) for pa,pb in zip(a.parameters(),b.parameters()))
+            update_norm=sum(float((pa-original).detach().square().sum()) for pa,original in zip(a.parameters(),before))
+            first_update_relative=(update_difference/max(update_norm,1e-30))**.5
+            print('GROUPED_FIRST_ADAMW '+json.dumps(dict(backend=backend,reuse=reuse,phase=phase,
+                errors=errors,max_abs=delta,update_relative=first_update_relative)),flush=True)
+            assert first_update_relative<.10,('First AdamW RMS update difference',first_update_relative)
+            # Independent optimizer-state check away from that discontinuity.
+            for m in (a,b):
+                optimizer=torch.optim.AdamW(m.parameters(),lr=3e-4,weight_decay=.1)
+                for parameter,original in zip(m.parameters(),before):
+                    with torch.no_grad():parameter.copy_(original)
+                    optimizer.state[parameter]=dict(step=torch.tensor(5.),
+                        exp_avg=torch.full_like(parameter,.001),
+                        exp_avg_sq=torch.full_like(parameter,.0001))
+                optimizer.step();m.finish_update()
+            mature_delta=max(float((pa-pb).detach().abs().max()) for pa,pb in zip(a.parameters(),b.parameters()))
+            assert mature_delta<1e-5,('AdamW existing-state difference',mature_delta)
             assert torch.equal(a.balance_bias,b.balance_bias)
             records.append(dict(case='model',backend=backend,reuse=reuse,phase=phase,
-                checkpointing=checkpointing,errors=errors,adamw_max_abs=delta))
+                checkpointing=checkpointing,errors=errors,adamw_first_max_abs=delta,
+                adamw_first_update_relative=first_update_relative,adamw_existing_state_max_abs=mature_delta))
             print('GROUPED_CASE '+json.dumps(records[-1]),flush=True)
             del a,b,oa,ob,inputs
     result=dict(status='passed',torch=torch.__version__,gpu=torch.cuda.get_device_name(),cases=records)
