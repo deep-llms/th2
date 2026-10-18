@@ -1,4 +1,4 @@
-#1 +30+a
+#0
 #th2-q359-dot-project-inventory-20261018-a01
 set -euo pipefail
 
