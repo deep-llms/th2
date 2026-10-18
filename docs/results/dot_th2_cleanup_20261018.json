@@ -1,0 +1,215 @@
+{
+  "job": "th2-q359-dot-project-cleanup-20261018-a01",
+  "submitted_commit": "1676c1233e6af406b284dff485a344319f777b7e",
+  "status": "verified_success",
+  "preflight": {
+    "commands_sha256": "9b85e76693c396213e9e1780dddbcfcf2ee36bd0f5286f9c6b407554d0cdfd81",
+    "gpu_processes": [
+      {
+        "gpu_uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354943,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354936,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354939,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354937,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354938,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354940,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354942,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354941,
+        "start_ticks": 121963478
+      }
+    ],
+    "hostname": "thiennh-p6-q359-worker-0",
+    "preserved_resource": "llm_pretrain_burn.py",
+    "preserving": [
+      "_dl_active.txt",
+      "_install_active.txt",
+      "_previous_run_status.log",
+      "_run_log_",
+      "commands.sh",
+      "resources"
+    ],
+    "project_dir": "/mnt/local/deep-llms_th2",
+    "removing": [
+      ".gitignore",
+      "AGENTS.md",
+      "README.md",
+      "artifacts",
+      "baseline_a_fa4.b200.json",
+      "ce7454",
+      "deep_kv",
+      "deep_kv.b200.json",
+      "docs",
+      "envs",
+      "eval",
+      "jobs.example.json",
+      "prepare_data.py",
+      "project.example.json",
+      "proxy_heads.12layer.b200.json",
+      "proxy_heads.b200.json",
+      "requirements.txt",
+      "run_experiments.py",
+      "scripts",
+      "template_validation",
+      "tests",
+      "train.py",
+      "resources/accelerate_config.yaml",
+      "resources/culturax_raw_manifest.tsv",
+      "resources/downstream_checkpoints_20k_20261012.json",
+      "resources/downstream_english_20261007.json",
+      "resources/downstream_english_reference_20261007.json",
+      "resources/expanded_inputs_20261012.json",
+      "resources/fewshot_reference_20261007.json",
+      "resources/p7_teacher_probe_20261015.json",
+      "resources/paired_parallel_refresh_20261013.json",
+      "resources/position_extension_overlap_20261012.json",
+      "resources/position_extension_selection_20261012.json",
+      "resources/proxy_reference_4f8208b",
+      "resources/qwen3_base_assets.json",
+      "resources/qwen3_joint_assets.json",
+      "resources/sdpa_repeat_200_source.json",
+      "resources/sdpa_repeat_200_source.patch",
+      "resources/supervised_english_20261008.json",
+      "resources/supervised_english_20261008_v2.json",
+      "resources/supervised_reference_20261008.json"
+    ],
+    "utc": "2026-10-18T18:52:52.186637+00:00"
+  },
+  "result": {
+    "burn_sha256": "2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174",
+    "commands_sha256": "9b85e76693c396213e9e1780dddbcfcf2ee36bd0f5286f9c6b407554d0cdfd81",
+    "gpu_processes": [
+      {
+        "gpu_uuid": "GPU-2c60a8f9-543d-4c11-4b63-2f98c05314ba",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354943,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-2d82fde6-e252-dcc1-d38f-fb18974c5e8f",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354936,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-5e59e815-8da1-7619-0acf-0191c23f62dd",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354939,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-7bde2323-0633-5918-917e-cb69045686e8",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354937,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-7db30280-30ab-ff64-1c31-69cb1feb982a",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354938,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-97f19b8a-7408-31b7-5b8c-8552fca4c5ab",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354940,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-b064b9f8-e0b3-4374-27c1-732554e11c65",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354942,
+        "start_ticks": 121963478
+      },
+      {
+        "gpu_uuid": "GPU-b8941e77-d76d-d93b-73ac-eca2155c2844",
+        "launcher_pid": 1354837,
+        "launcher_start_ticks": 121963354,
+        "pid": 1354941,
+        "start_ticks": 121963478
+      }
+    ],
+    "gpu_processes_unchanged": true,
+    "remaining": [
+      "_dl_active.txt",
+      "_install_active.txt",
+      "_previous_run_status.log",
+      "_run_log_",
+      "commands.sh",
+      "resources"
+    ],
+    "removed_entries": 41,
+    "resources": [
+      "llm_pretrain_burn.py"
+    ],
+    "utc": "2026-10-18T18:53:02.455193+00:00"
+  },
+  "log_path": "/disk/thuat/DOT/temp/dot_th2_inventory_20261018/cleanup_a01.log",
+  "log_sha256": "af25257197fda12537d89a20207b4ec1068860c2445621b4787789fbf8d31887",
+  "local_checks": [
+    "shell_and_python_syntax",
+    "unknown_entry_refusal",
+    "GPU_check_refusal",
+    "external_symlink_preservation",
+    "runtime_preservation",
+    "scoped_deletion",
+    "idempotence"
+  ],
+  "untouched_roots": [
+    "/mnt/local/_data/deep-llms_th2",
+    "/mnt/local/_models/deep-llms_th2",
+    "/mnt/local/_outputs/deep-llms_th2",
+    "/mnt/local/conda-py311"
+  ],
+  "inactive_commit": "162455c056ad2ccfe6361f007f4f6a366940dbc7"
+}

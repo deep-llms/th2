@@ -1,0 +1,250 @@
+{
+  "jobs": [
+    {
+      "name": "train",
+      "argv": [
+        "{python}",
+        "{project_dir}/train.py",
+        "--config_name",
+        "/absolute/model/config.json",
+        "--tokenizer_name",
+        "/absolute/tokenizer",
+        "--data_dir",
+        "/absolute/data/train",
+        "--eval_data_dir",
+        "/absolute/data/validation",
+        "--output_dir",
+        "{run_dir}/training",
+        "--use_cpu",
+        "true",
+        "--report_to",
+        "none",
+        "--attention_backend",
+        "sdpa",
+        "--block_size",
+        "32",
+        "--max_steps",
+        "8",
+        "--per_device_train_batch_size",
+        "2",
+        "--gradient_accumulation_steps",
+        "2",
+        "--per_device_eval_batch_size",
+        "2",
+        "--learning_rate",
+        "0.001",
+        "--lr_scheduler_type",
+        "cosine",
+        "--warmup_ratio",
+        "0.5",
+        "--seed",
+        "42",
+        "--data_seed",
+        "42",
+        "--eval_strategy",
+        "steps",
+        "--eval_steps",
+        "2",
+        "--logging_steps",
+        "2",
+        "--save_strategy",
+        "no",
+        "--dataloader_pin_memory",
+        "false",
+        "--disable_tqdm",
+        "true",
+        "--stop_after",
+        "2"
+      ],
+      "required_outputs": [
+        {
+          "path": "training/checkpoint-2/trainer_state.json",
+          "json_equals": {
+            "global_step": 2,
+            "max_steps": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "verify-train",
+      "argv": [
+        "{python}",
+        "{project_dir}/scripts/training_results.py",
+        "check",
+        "--output-dir",
+        "{run_dir}/training",
+        "--expected-step",
+        "2",
+        "--schedule-steps",
+        "8",
+        "--start-step",
+        "0",
+        "--output",
+        "{run_dir}/checks/train.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "checks/train.json",
+          "json_equals": {
+            "status": "ok",
+            "global_step": 2,
+            "schedule_steps": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "resume",
+      "argv": [
+        "{python}",
+        "{project_dir}/train.py",
+        "--config_name",
+        "/absolute/model/config.json",
+        "--tokenizer_name",
+        "/absolute/tokenizer",
+        "--data_dir",
+        "/absolute/data/train",
+        "--eval_data_dir",
+        "/absolute/data/validation",
+        "--output_dir",
+        "{run_dir}/training",
+        "--use_cpu",
+        "true",
+        "--report_to",
+        "none",
+        "--attention_backend",
+        "sdpa",
+        "--block_size",
+        "32",
+        "--max_steps",
+        "8",
+        "--per_device_train_batch_size",
+        "2",
+        "--gradient_accumulation_steps",
+        "2",
+        "--per_device_eval_batch_size",
+        "2",
+        "--learning_rate",
+        "0.001",
+        "--lr_scheduler_type",
+        "cosine",
+        "--warmup_ratio",
+        "0.5",
+        "--seed",
+        "42",
+        "--data_seed",
+        "42",
+        "--eval_strategy",
+        "steps",
+        "--eval_steps",
+        "2",
+        "--logging_steps",
+        "2",
+        "--save_strategy",
+        "no",
+        "--dataloader_pin_memory",
+        "false",
+        "--disable_tqdm",
+        "true",
+        "--stop_after",
+        "4",
+        "--resume_from_checkpoint",
+        "{run_dir}/training/checkpoint-2"
+      ],
+      "required_outputs": [
+        {
+          "path": "training/checkpoint-4/trainer_state.json",
+          "json_equals": {
+            "global_step": 4,
+            "max_steps": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "verify-resume",
+      "argv": [
+        "{python}",
+        "{project_dir}/scripts/training_results.py",
+        "check",
+        "--output-dir",
+        "{run_dir}/training",
+        "--expected-step",
+        "4",
+        "--schedule-steps",
+        "8",
+        "--start-step",
+        "2",
+        "--output",
+        "{run_dir}/checks/resume.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "checks/resume.json",
+          "json_equals": {
+            "status": "ok",
+            "global_step": 4,
+            "schedule_steps": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "evaluate",
+      "argv": [
+        "{python}",
+        "{project_dir}/eval/packed_ppl.py",
+        "--checkpoint",
+        "{run_dir}/training/checkpoint-4",
+        "--eval_data_dir",
+        "/absolute/data/validation",
+        "--output_file",
+        "{run_dir}/evaluation.json",
+        "--use_cpu",
+        "true",
+        "--precision",
+        "fp32",
+        "--batch_size",
+        "2"
+      ],
+      "required_outputs": [
+        {
+          "path": "evaluation.json",
+          "json_equals": {
+            "status": "ok",
+            "global_step": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "summarize",
+      "argv": [
+        "{python}",
+        "{project_dir}/scripts/training_results.py",
+        "summary",
+        "--reports",
+        "{run_dir}/checks/train.json",
+        "{run_dir}/checks/resume.json",
+        "--evaluation",
+        "{run_dir}/evaluation.json",
+        "--output",
+        "{run_dir}/summary.json",
+        "--markdown",
+        "{run_dir}/summary.md"
+      ],
+      "required_outputs": [
+        {
+          "path": "summary.json",
+          "json_equals": {
+            "status": "ok"
+          }
+        },
+        {
+          "path": "summary.md"
+        }
+      ]
+    }
+  ]
+}

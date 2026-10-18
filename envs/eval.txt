@@ -1,0 +1,5 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+-r train.txt
+lm-eval==0.4.13

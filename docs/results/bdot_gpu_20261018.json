@@ -1,0 +1,1679 @@
+{
+  "utc": "2026-10-18T18:13:47.948484+00:00",
+  "status": "local_sdpa_validation_complete_fa4_training_blocked",
+  "production_runtime_validated": false,
+  "pilot_launch_cleared": false,
+  "environment": {
+    "utc": "2026-10-18T18:02:17.433411+00:00",
+    "driver": "525.125.06",
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "fa4_version": "4.0.0b33",
+    "fa4_wheel_sha256": "7ffbb0c2e2a03ee0ba7f00997d5dbcfcd0ab22cbcbccbe2c9195527583ce14e4",
+    "fa4_sm80_path": "Pinned wheel interface.py supports compute capability 8.x and imports SM80 forward/backward.",
+    "original_environment_unchanged": true,
+    "driver_unchanged": true,
+    "cuda126_attempt": {
+      "torch": "2.14.1+cu126",
+      "cuda_available": true,
+      "device_properties_ok": true,
+      "error": "torch.ones(1,device=cuda): CUDA-capable device(s) is/are busy or unavailable",
+      "loaded_driver": "/usr/lib/x86_64-linux-gnu/libcuda.so.525.125.06",
+      "loaded_runtime": "/disk/thuat/DOT/temp/bdot_gpu_verification/venv/lib/python3.11/site-packages/nvidia/cuda_runtime/lib/libcudart.so.12"
+    },
+    "sdpa_test_runtime": {
+      "torch": "2.7.1+cu118",
+      "transformers": "5.9.0",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5"
+    },
+    "fa4_status": "Training blocked by pinned FA4 backward SM80 architecture guard; forward-only tested with torch 2.8.0+cu126.",
+    "compatible_fa4_forward_runtime": {
+      "torch": "2.8.0+cu126",
+      "cuda": "12.6",
+      "cutlass": "4.8.1",
+      "quack": "0.6.5",
+      "cuda_bindings": "12.9.10",
+      "pip_check": "passed"
+    },
+    "fa4_backward_error": "Unsupported compute capability. Supported: 9.x, 10.x, 11.x, 12.x",
+    "fa4_backward_source_line": 2278
+  },
+  "sdpa_numerics": {
+    "status": "passed",
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "transformers": "5.9.0",
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "fa4": null,
+    "checks": [
+      {
+        "name": "fixed_native",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 2.6372782713224296e-07,
+          "max_abs": 4.284083843231201e-08,
+          "worst_parameter": "embedding",
+          "finite": true
+        },
+        "bf16": false,
+        "backend": "sdpa"
+      },
+      {
+        "name": "fixed_native_adamw",
+        "bf16": false,
+        "parameters": {
+          "relative_l2": 2.6299335331714246e-07,
+          "max_abs": 1.5310943126678467e-05,
+          "worst_parameter": "3.v_proj",
+          "finite": true
+        }
+      },
+      {
+        "name": "fixed_native",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 2.030726818702533e-06,
+          "max_abs": 7.62939453125e-06,
+          "worst_parameter": "0.self_attn.o_proj.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa"
+      },
+      {
+        "name": "fixed_native_adamw",
+        "bf16": true,
+        "parameters": {
+          "relative_l2": 2.7470592467437882e-09,
+          "max_abs": 3.2782554626464844e-07,
+          "worst_parameter": "0.self_attn.q_proj.weight",
+          "finite": true
+        }
+      },
+      {
+        "name": "reuse=True,progress=0.01,checkpointed_sdpa",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa",
+        "route_disagreement_fraction": 0.0,
+        "all_branch_disagreements": 0
+      },
+      {
+        "name": "natural_route_bf16_grouping_effect",
+        "backend": "sdpa",
+        "reuse": true,
+        "max_abs": 0.0078125,
+        "route_changes": 0
+      },
+      {
+        "name": "causality_and_isolation",
+        "backend": "sdpa",
+        "reuse": true,
+        "status": "passed",
+        "fixed_route_bitwise": true,
+        "cross_document_gradient": 0
+      },
+      {
+        "name": "reuse=True,progress=0.7,checkpointed_sdpa",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa",
+        "route_disagreement_fraction": 0.0,
+        "all_branch_disagreements": 0
+      },
+      {
+        "name": "natural_route_bf16_grouping_effect",
+        "backend": "sdpa",
+        "reuse": true,
+        "max_abs": 0.0078125,
+        "route_changes": 0
+      },
+      {
+        "name": "causality_and_isolation",
+        "backend": "sdpa",
+        "reuse": true,
+        "status": "passed",
+        "fixed_route_bitwise": true,
+        "cross_document_gradient": 0
+      },
+      {
+        "name": "reuse=False,progress=0.01,checkpointed_sdpa",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa",
+        "route_disagreement_fraction": 0.0,
+        "all_branch_disagreements": 0
+      },
+      {
+        "name": "natural_route_bf16_grouping_effect",
+        "backend": "sdpa",
+        "reuse": false,
+        "max_abs": 0.00390625,
+        "route_changes": 0
+      },
+      {
+        "name": "causality_and_isolation",
+        "backend": "sdpa",
+        "reuse": false,
+        "status": "passed",
+        "fixed_route_bitwise": true,
+        "cross_document_gradient": 0
+      },
+      {
+        "name": "reuse=False,progress=0.7,checkpointed_sdpa",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa",
+        "route_disagreement_fraction": 0.0,
+        "all_branch_disagreements": 0
+      },
+      {
+        "name": "natural_route_bf16_grouping_effect",
+        "backend": "sdpa",
+        "reuse": false,
+        "max_abs": 0.00390625,
+        "route_changes": 0
+      },
+      {
+        "name": "causality_and_isolation",
+        "backend": "sdpa",
+        "reuse": false,
+        "status": "passed",
+        "fixed_route_bitwise": true,
+        "cross_document_gradient": 0
+      }
+    ],
+    "settings": {
+      "output": "temp/bdot_gpu_verification/sdpa_trace_final.json",
+      "fa4": false,
+      "full_native": false,
+      "native_only": false,
+      "reference_math": true,
+      "native_self_control": false
+    }
+  },
+  "full_size_fp32_math_reference": {
+    "status": "passed",
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "transformers": "5.9.0",
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "fa4": null,
+    "checks": [
+      {
+        "name": "fixed_native",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 5.24190227224608e-07,
+          "max_abs": 8.940696716308594e-08,
+          "worst_parameter": "embedding",
+          "finite": true
+        },
+        "bf16": false,
+        "backend": "sdpa"
+      },
+      {
+        "name": "fixed_native_adamw",
+        "bf16": false,
+        "parameters": {
+          "relative_l2": 4.052767792472878e-07,
+          "max_abs": 4.816427826881409e-05,
+          "worst_parameter": "0.self_attn.v_proj.weight",
+          "finite": true
+        }
+      },
+      {
+        "name": "fixed_native",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 2.030726818702533e-06,
+          "max_abs": 7.62939453125e-06,
+          "worst_parameter": "0.self_attn.o_proj.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa"
+      },
+      {
+        "name": "fixed_native_adamw",
+        "bf16": true,
+        "parameters": {
+          "relative_l2": 2.7470592467437882e-09,
+          "max_abs": 3.2782554626464844e-07,
+          "worst_parameter": "0.self_attn.q_proj.weight",
+          "finite": true
+        }
+      }
+    ],
+    "settings": {
+      "output": "temp/bdot_gpu_verification/t1_math.json",
+      "fa4": false,
+      "full_native": true,
+      "native_only": true,
+      "reference_math": true,
+      "native_self_control": false
+    }
+  },
+  "native_against_native_control": {
+    "status": "passed",
+    "torch": "2.7.1+cu118",
+    "cuda": "11.8",
+    "transformers": "5.9.0",
+    "gpu": "NVIDIA A100-PCIE-40GB",
+    "fa4": null,
+    "checks": [
+      {
+        "name": "fixed_native",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 4.649560025882238e-07,
+          "max_abs": 1.1548399925231934e-07,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        },
+        "bf16": false,
+        "backend": "sdpa"
+      },
+      {
+        "name": "fixed_native_adamw",
+        "bf16": false,
+        "parameters": {
+          "relative_l2": 4.4837315726908855e-07,
+          "max_abs": 5.921674892306328e-05,
+          "worst_parameter": "model.layers.0.self_attn.v_proj.weight",
+          "finite": true
+        }
+      },
+      {
+        "name": "fixed_native",
+        "loss_abs": 0.0,
+        "logits": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "gradients": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        },
+        "bf16": true,
+        "backend": "sdpa"
+      },
+      {
+        "name": "fixed_native_adamw",
+        "bf16": true,
+        "parameters": {
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "worst_parameter": "model.embed_tokens.weight",
+          "finite": true
+        }
+      }
+    ],
+    "settings": {
+      "output": "temp/bdot_gpu_verification/t1_self_control.json",
+      "fa4": false,
+      "full_native": true,
+      "native_only": true,
+      "reference_math": false,
+      "native_self_control": true
+    }
+  },
+  "default_sdpa_adamw_caveat": {
+    "status": "failed_strict_1e-4_update_threshold_on_repeat",
+    "logits_max_abs": 0.0,
+    "gradients_max_abs": 9.685754776000977e-08,
+    "updated_parameter_max_abs": 0.00010274909436702728,
+    "log": "temp/bdot_gpu_verification/sdpa_final.log",
+    "note": "Preserved failure; math-reference T1 passes. Native-vs-native also exhibits default SDPA backward variation."
+  },
+  "ddp": {
+    "hard": [
+      {
+        "status": "passed",
+        "max_gradient_error": 1.4901161193847656e-07,
+        "counts": [
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6391336917877197,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:0",
+        "torch": "2.7.1+cu118"
+      },
+      {
+        "status": "passed",
+        "max_gradient_error": 1.4901161193847656e-07,
+        "counts": [
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6391336917877197,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:1",
+        "torch": "2.7.1+cu118"
+      }
+    ],
+    "soft": [
+      {
+        "status": "passed",
+        "max_gradient_error": 1.7881393432617188e-07,
+        "counts": [
+          [
+            1,
+            7,
+            8,
+            8
+          ],
+          [
+            15,
+            4,
+            5,
+            0
+          ],
+          [
+            12,
+            1,
+            11,
+            0
+          ],
+          [
+            0,
+            11,
+            2,
+            11
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6408660411834717,
+        "checkpointing": true,
+        "soft": true,
+        "device": "cuda:0",
+        "torch": "2.7.1+cu118"
+      },
+      {
+        "status": "passed",
+        "max_gradient_error": 1.7881393432617188e-07,
+        "counts": [
+          [
+            1,
+            7,
+            8,
+            8
+          ],
+          [
+            15,
+            4,
+            5,
+            0
+          ],
+          [
+            12,
+            1,
+            11,
+            0
+          ],
+          [
+            0,
+            11,
+            2,
+            11
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6408660411834717,
+        "checkpointing": true,
+        "soft": true,
+        "device": "cuda:1",
+        "torch": "2.7.1+cu118"
+      }
+    ]
+  },
+  "benchmarks": {
+    "D": {
+      "status": "completed",
+      "settings": {
+        "config": "configs/bdot/D.json",
+        "output": "temp/bdot_gpu_verification/bench_sdpa_D.json",
+        "device": "cuda",
+        "batch_size": 2,
+        "accumulation": 2,
+        "length": 1024,
+        "document_length": 128,
+        "warmup": 3,
+        "steps": 10,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "sdpa",
+        "progress": 1.0,
+        "seed": 0,
+        "router_prior": null
+      },
+      "versions": {
+        "torch": "2.7.1+cu118",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": null
+      },
+      "torch": "2.7.1+cu118",
+      "cuda": "11.8",
+      "world_size": 1,
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "parameters": 344371200,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": null,
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": null,
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_type": "default",
+          "rope_theta": 1000000.0
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": null,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "bdot": {
+          "n_stem": 2,
+          "n_coda": 2,
+          "S": 8,
+          "mode": "compute_matched",
+          "window": "absolute",
+          "kv_mode": "step",
+          "route_scope": "qo_mlp",
+          "r": 0,
+          "reuse": true,
+          "routing": "fixed",
+          "step_film": true,
+          "visit_scale": "none",
+          "gate": "st",
+          "default_prior": 1.0,
+          "init_std_scale": 0.1,
+          "balance_rate": 0.001,
+          "z_loss_coef": 0.001,
+          "explore_eps_max": 0.05,
+          "curriculum": "none",
+          "soft_phase_frac": 0.15,
+          "explore_end_frac": 0.5,
+          "widen_every_frac": 0.1,
+          "seed": 0
+        },
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 2.5894602462649345,
+      "seconds_per_update": 0.25894602462649347,
+      "rank0_update_seconds": [
+        0.2494228482246399,
+        0.24839965254068375,
+        0.248283289372921,
+        0.2489195242524147,
+        0.25016453117132187,
+        0.2495332509279251,
+        0.24870584905147552,
+        0.24815156310796738,
+        0.24869238585233688,
+        0.24790842831134796
+      ],
+      "rank0_median_update_seconds": 0.2486991174519062,
+      "tokens_per_second": 15817.968265425641,
+      "peak_allocated_bytes": 12482526720,
+      "peak_reserved_bytes": 12738101248,
+      "routing_metrics": {
+        "lm_loss_last_update": 12.097748523622048,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 4096,
+        "module_1_decisions_last_update": 4096,
+        "module_2_decisions_last_update": 4096,
+        "module_3_decisions_last_update": 4096,
+        "module_4_decisions_last_update": 4096,
+        "module_5_decisions_last_update": 4096,
+        "module_6_decisions_last_update": 4096,
+        "module_7_decisions_last_update": 4096
+      },
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+        "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+        "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+        "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+        "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+      },
+      "ratio_to_matched_D": 1.0,
+      "ratio_to_native_dense": 0.8064397604002661,
+      "update_time_cv": 0.0028297183143867633
+    },
+    "P1B_hard": {
+      "status": "completed",
+      "settings": {
+        "config": "configs/bdot/P1-B.json",
+        "output": "temp/bdot_gpu_verification/bench_sdpa_P1B_hard.json",
+        "device": "cuda",
+        "batch_size": 2,
+        "accumulation": 2,
+        "length": 1024,
+        "document_length": 128,
+        "warmup": 3,
+        "steps": 10,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "sdpa",
+        "progress": 0.7,
+        "seed": 0,
+        "router_prior": null
+      },
+      "versions": {
+        "torch": "2.7.1+cu118",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": null
+      },
+      "torch": "2.7.1+cu118",
+      "cuda": "11.8",
+      "world_size": 1,
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "parameters": 344445504,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": null,
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": null,
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_type": "default",
+          "rope_theta": 1000000.0
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": null,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "bdot": {
+          "n_stem": 2,
+          "n_coda": 2,
+          "S": 8,
+          "mode": "compute_matched",
+          "window": "absolute",
+          "kv_mode": "step",
+          "route_scope": "qo_mlp",
+          "r": 1,
+          "reuse": true,
+          "routing": "learned",
+          "step_film": true,
+          "visit_scale": "none",
+          "gate": "st",
+          "default_prior": 1.0,
+          "init_std_scale": 0.1,
+          "balance_rate": 0.001,
+          "z_loss_coef": 0.001,
+          "explore_eps_max": 0.05,
+          "curriculum": "B",
+          "soft_phase_frac": 0.15,
+          "explore_end_frac": 0.5,
+          "widen_every_frac": 0.1,
+          "seed": 0
+        },
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 2.620979495346546,
+      "seconds_per_update": 0.2620979495346546,
+      "rank0_update_seconds": [
+        0.25143007934093475,
+        0.25005625933408737,
+        0.24949321895837784,
+        0.24862456321716309,
+        0.2487827092409134,
+        0.24830739200115204,
+        0.24871374666690826,
+        0.24939636886119843,
+        0.28175827860832214,
+        0.24911903589963913
+      ],
+      "rank0_median_update_seconds": 0.24925770238041878,
+      "tokens_per_second": 15627.745303892301,
+      "peak_allocated_bytes": 12688066560,
+      "peak_reserved_bytes": 12943622144,
+      "routing_metrics": {
+        "lm_loss_last_update": 12.097183347687007,
+        "router_z_loss_last_update": 2.2323930263519287,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.8745306432247162,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 4096,
+        "module_1_decisions_last_update": 4096,
+        "module_2_decisions_last_update": 4096,
+        "module_3_decisions_last_update": 4096,
+        "module_4_decisions_last_update": 4096,
+        "module_5_decisions_last_update": 4096,
+        "module_6_decisions_last_update": 4096,
+        "module_7_decisions_last_update": 4096
+      },
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+        "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+        "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+        "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+        "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+      },
+      "ratio_to_matched_D": 0.987974248124576,
+      "ratio_to_native_dense": 0.796741715939216,
+      "update_time_cv": 0.04076317243020377
+    },
+    "P1B_hard_mixed": {
+      "status": "completed",
+      "settings": {
+        "config": "configs/bdot/P1-B.json",
+        "output": "temp/bdot_gpu_verification/bench_sdpa_P1B_hard_mixed.json",
+        "device": "cuda",
+        "batch_size": 2,
+        "accumulation": 2,
+        "length": 1024,
+        "document_length": 128,
+        "warmup": 3,
+        "steps": 10,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "sdpa",
+        "progress": 0.7,
+        "seed": 0,
+        "router_prior": 0.0
+      },
+      "versions": {
+        "torch": "2.7.1+cu118",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": null
+      },
+      "torch": "2.7.1+cu118",
+      "cuda": "11.8",
+      "world_size": 1,
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "parameters": 344445504,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": null,
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": null,
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_type": "default",
+          "rope_theta": 1000000.0
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": null,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "bdot": {
+          "n_stem": 2,
+          "n_coda": 2,
+          "S": 8,
+          "mode": "compute_matched",
+          "window": "absolute",
+          "kv_mode": "step",
+          "route_scope": "qo_mlp",
+          "r": 1,
+          "reuse": true,
+          "routing": "learned",
+          "step_film": true,
+          "visit_scale": "none",
+          "gate": "st",
+          "default_prior": 1.0,
+          "init_std_scale": 0.1,
+          "balance_rate": 0.001,
+          "z_loss_coef": 0.001,
+          "explore_eps_max": 0.05,
+          "curriculum": "B",
+          "soft_phase_frac": 0.15,
+          "explore_end_frac": 0.5,
+          "widen_every_frac": 0.1,
+          "seed": 0
+        },
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 3.384858414530754,
+      "seconds_per_update": 0.3384858414530754,
+      "rank0_update_seconds": [
+        0.3359326496720314,
+        0.335091270506382,
+        0.33602017164230347,
+        0.325004979968071,
+        0.32432327419519424,
+        0.33194784820079803,
+        0.32440176606178284,
+        0.32616616785526276,
+        0.31334349513053894,
+        0.33434298634529114
+      ],
+      "rank0_median_update_seconds": 0.3290570080280304,
+      "tokens_per_second": 12100.949281708234,
+      "peak_allocated_bytes": 12751602176,
+      "peak_reserved_bytes": 13042188288,
+      "routing_metrics": {
+        "lm_loss_last_update": 12.12945556640625,
+        "router_z_loss_last_update": 1.0231758952140808,
+        "off_default_share_last_update": 0.57440185546875,
+        "router_entropy_last_update": 0.9925545454025269,
+        "reuse_rate_last_update": 0.98291015625,
+        "module_load_max_min_ratio_last_update": 1.9876847290640394,
+        "off_default_step_0_last_update": 0.23193359375,
+        "off_default_step_1_last_update": 0.545654296875,
+        "off_default_step_2_last_update": 0.769287109375,
+        "off_default_step_3_last_update": 0.586181640625,
+        "off_default_step_4_last_update": 0.566650390625,
+        "off_default_step_5_last_update": 0.60400390625,
+        "off_default_step_6_last_update": 0.66015625,
+        "off_default_step_7_last_update": 0.63134765625,
+        "module_0_decisions_last_update": 4226,
+        "module_1_decisions_last_update": 4435,
+        "module_2_decisions_last_update": 4055,
+        "module_3_decisions_last_update": 3867,
+        "module_4_decisions_last_update": 3024,
+        "module_5_decisions_last_update": 4670,
+        "module_6_decisions_last_update": 5649,
+        "module_7_decisions_last_update": 2842
+      },
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+        "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+        "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+        "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+        "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+      },
+      "ratio_to_matched_D": 0.765012868824504,
+      "ratio_to_native_dense": 0.6169367946379533,
+      "update_time_cv": 0.022281730111796717
+    },
+    "P1B_soft": {
+      "status": "completed",
+      "settings": {
+        "config": "configs/bdot/P1-B.json",
+        "output": "temp/bdot_gpu_verification/bench_sdpa_P1B_soft.json",
+        "device": "cuda",
+        "batch_size": 2,
+        "accumulation": 2,
+        "length": 1024,
+        "document_length": 128,
+        "warmup": 3,
+        "steps": 10,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "sdpa",
+        "progress": 0.01,
+        "seed": 0,
+        "router_prior": null
+      },
+      "versions": {
+        "torch": "2.7.1+cu118",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": null
+      },
+      "torch": "2.7.1+cu118",
+      "cuda": "11.8",
+      "world_size": 1,
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "parameters": 344445504,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": null,
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": null,
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_type": "default",
+          "rope_theta": 1000000.0
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": null,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "bdot": {
+          "n_stem": 2,
+          "n_coda": 2,
+          "S": 8,
+          "mode": "compute_matched",
+          "window": "absolute",
+          "kv_mode": "step",
+          "route_scope": "qo_mlp",
+          "r": 1,
+          "reuse": true,
+          "routing": "learned",
+          "step_film": true,
+          "visit_scale": "none",
+          "gate": "st",
+          "default_prior": 1.0,
+          "init_std_scale": 0.1,
+          "balance_rate": 0.001,
+          "z_loss_coef": 0.001,
+          "explore_eps_max": 0.05,
+          "curriculum": "B",
+          "soft_phase_frac": 0.15,
+          "explore_end_frac": 0.5,
+          "widen_every_frac": 0.1,
+          "seed": 0
+        },
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 3.5617560297250748,
+      "seconds_per_update": 0.3561756029725075,
+      "rank0_update_seconds": [
+        0.34806858003139496,
+        0.35047902166843414,
+        0.34667087346315384,
+        0.34421107172966003,
+        0.3452036827802658,
+        0.34736938774585724,
+        0.3455757275223732,
+        0.3460751250386238,
+        0.34703991562128067,
+        0.3461661711335182
+      ],
+      "rank0_median_update_seconds": 0.34641852229833603,
+      "tokens_per_second": 11499.945436510323,
+      "peak_allocated_bytes": 14274672128,
+      "peak_reserved_bytes": 14573109248,
+      "routing_metrics": {
+        "lm_loss_last_update": 12.10158220426304,
+        "router_z_loss_last_update": 2.249630331993103,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.8643816709518433,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 4096,
+        "module_1_decisions_last_update": 4096,
+        "module_2_decisions_last_update": 4096,
+        "module_3_decisions_last_update": 4096,
+        "module_4_decisions_last_update": 4096,
+        "module_5_decisions_last_update": 4096,
+        "module_6_decisions_last_update": 4096,
+        "module_7_decisions_last_update": 4096
+      },
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+        "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+        "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+        "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+        "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+      },
+      "ratio_to_matched_D": 0.7270178599135578,
+      "ratio_to_native_dense": 0.5862961087554038,
+      "update_time_cv": 0.005004312115823495
+    },
+    "P1B_soft_mixed": {
+      "status": "completed",
+      "settings": {
+        "config": "configs/bdot/P1-B.json",
+        "output": "temp/bdot_gpu_verification/bench_sdpa_P1B_soft_mixed.json",
+        "device": "cuda",
+        "batch_size": 2,
+        "accumulation": 2,
+        "length": 1024,
+        "document_length": 128,
+        "warmup": 3,
+        "steps": 10,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "sdpa",
+        "progress": 0.01,
+        "seed": 0,
+        "router_prior": 0.0
+      },
+      "versions": {
+        "torch": "2.7.1+cu118",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": null
+      },
+      "torch": "2.7.1+cu118",
+      "cuda": "11.8",
+      "world_size": 1,
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "parameters": 344445504,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": null,
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": null,
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_type": "default",
+          "rope_theta": 1000000.0
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": null,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "bdot": {
+          "n_stem": 2,
+          "n_coda": 2,
+          "S": 8,
+          "mode": "compute_matched",
+          "window": "absolute",
+          "kv_mode": "step",
+          "route_scope": "qo_mlp",
+          "r": 1,
+          "reuse": true,
+          "routing": "learned",
+          "step_film": true,
+          "visit_scale": "none",
+          "gate": "st",
+          "default_prior": 1.0,
+          "init_std_scale": 0.1,
+          "balance_rate": 0.001,
+          "z_loss_coef": 0.001,
+          "explore_eps_max": 0.05,
+          "curriculum": "B",
+          "soft_phase_frac": 0.15,
+          "explore_end_frac": 0.5,
+          "widen_every_frac": 0.1,
+          "seed": 0
+        },
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 3.6147609427571297,
+      "seconds_per_update": 0.361476094275713,
+      "rank0_update_seconds": [
+        0.35679467022418976,
+        0.3539229854941368,
+        0.3506605327129364,
+        0.3535320907831192,
+        0.3505966290831566,
+        0.35113633424043655,
+        0.3538390100002289,
+        0.3503773361444473,
+        0.3491580858826637,
+        0.3489573821425438
+      ],
+      "rank0_median_update_seconds": 0.3508984334766865,
+      "tokens_per_second": 11331.316413073251,
+      "peak_allocated_bytes": 14283366912,
+      "peak_reserved_bytes": 14636023808,
+      "routing_metrics": {
+        "lm_loss_last_update": 12.115460253137304,
+        "router_z_loss_last_update": 1.0284024477005005,
+        "off_default_share_last_update": 0.686553955078125,
+        "router_entropy_last_update": 0.9911773800849915,
+        "reuse_rate_last_update": 0.993896484375,
+        "module_load_max_min_ratio_last_update": 2.4098284654612887,
+        "off_default_step_0_last_update": 0.3935546875,
+        "off_default_step_1_last_update": 0.802490234375,
+        "off_default_step_2_last_update": 0.826904296875,
+        "off_default_step_3_last_update": 0.711669921875,
+        "off_default_step_4_last_update": 0.467529296875,
+        "off_default_step_5_last_update": 0.64111328125,
+        "off_default_step_6_last_update": 0.89697265625,
+        "off_default_step_7_last_update": 0.752197265625,
+        "module_0_decisions_last_update": 3618,
+        "module_1_decisions_last_update": 4544,
+        "module_2_decisions_last_update": 4841,
+        "module_3_decisions_last_update": 3365,
+        "module_4_decisions_last_update": 4048,
+        "module_5_decisions_last_update": 4997,
+        "module_6_decisions_last_update": 5198,
+        "module_7_decisions_last_update": 2157
+      },
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+        "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+        "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+        "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+        "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+      },
+      "ratio_to_matched_D": 0.7163572604859022,
+      "ratio_to_native_dense": 0.577698977507242,
+      "update_time_cv": 0.007138205069778578
+    },
+    "dense_native": {
+      "status": "completed",
+      "settings": {
+        "config": "configs/bdot/dense_native.json",
+        "output": "temp/bdot_gpu_verification/bench_sdpa_dense_native.json",
+        "device": "cuda",
+        "batch_size": 2,
+        "accumulation": 2,
+        "length": 1024,
+        "document_length": 128,
+        "warmup": 3,
+        "steps": 10,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "sdpa",
+        "progress": 1.0,
+        "seed": 0,
+        "router_prior": null
+      },
+      "versions": {
+        "torch": "2.7.1+cu118",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": null
+      },
+      "torch": "2.7.1+cu118",
+      "cuda": "11.8",
+      "world_size": 1,
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "parameters": 344354816,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": null,
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": null,
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_type": "default",
+          "rope_theta": 1000000.0
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": null,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 2.0882437005639076,
+      "seconds_per_update": 0.20882437005639076,
+      "rank0_update_seconds": [
+        0.19940420985221863,
+        0.19933469593524933,
+        0.19822070002555847,
+        0.20039622485637665,
+        0.19776172190904617,
+        0.1993817389011383,
+        0.19923387467861176,
+        0.19846320897340775,
+        0.20007507503032684,
+        0.19904587417840958
+      ],
+      "rank0_median_update_seconds": 0.19928428530693054,
+      "tokens_per_second": 19614.56892648075,
+      "peak_allocated_bytes": 12146749952,
+      "peak_reserved_bytes": 12421431296,
+      "routing_metrics": null,
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+        "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+        "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+        "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+        "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+        "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1"
+      },
+      "ratio_to_matched_D": 1.2400182246764009,
+      "ratio_to_native_dense": 1.0,
+      "update_time_cv": 0.00404469473545385
+    }
+  },
+  "fa4_forward_only": {
+    "status": "forward_only_passed",
+    "torch": "2.8.0+cu126",
+    "checks": [
+      {
+        "all_branch_disagreements": 1,
+        "reuse": true,
+        "progress": 0.01,
+        "logits": {
+          "relative_l2": 0.009848556481301785,
+          "max_abs": 0.19927978515625,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "loss_abs": 0.00019598007202148438,
+        "primary_route_difference": 0.0
+      },
+      {
+        "all_branch_disagreements": 0,
+        "reuse": true,
+        "progress": 0.7,
+        "logits": {
+          "relative_l2": 0.0033299035858362913,
+          "max_abs": 0.0078125,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "loss_abs": 1.4781951904296875e-05,
+        "primary_route_difference": 0.0
+      },
+      {
+        "all_branch_disagreements": 0,
+        "reuse": false,
+        "progress": 0.01,
+        "logits": {
+          "relative_l2": 0.003438400337472558,
+          "max_abs": 0.0078125,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "loss_abs": 8.106231689453125e-06,
+        "primary_route_difference": 0.0
+      },
+      {
+        "all_branch_disagreements": 0,
+        "reuse": false,
+        "progress": 0.7,
+        "logits": {
+          "relative_l2": 0.0033299035858362913,
+          "max_abs": 0.0078125,
+          "worst_parameter": "logits",
+          "finite": true
+        },
+        "loss_abs": 1.4781951904296875e-05,
+        "primary_route_difference": 0.0
+      }
+    ],
+    "warning": "No backward validation: pinned FA4 rejects SM80 in backward. Not a training clearance."
+  },
+  "fa4_backward": {
+    "status": "unsupported_hardware",
+    "log": "temp/bdot_gpu_verification/native_fa4_torch28.log",
+    "note": "Pinned FA4 forward accepts SM80; backward rejects SM80. Guard was not changed."
+  },
+  "test_corrections": [
+    "Initial BF16 isolation test expected bitwise equality with changed dynamic expert group sizes. Added frozen-route bitwise and zero cross-document gradient checks; production model unchanged.",
+    "Full GPU probe now traces both soft choices, not only primary routes; FA4 forward changed one secondary selection in the reuse-on soft fixture. That case is not an identical-path comparison."
+  ],
+  "source_sha256": {
+    "bdot/model.py": "726804befbdc08f3c4be9aafa56b01f80c247421043de600106c7f41a1bd864f",
+    "bdot/trainer.py": "a445cf48e3b65fcaa107c122fe3ed708b22bc9a048b8eb9157087aaa3886cb28",
+    "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+    "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+    "train.py": "77518ff2571532f8cdda17b2b1028a6727a6db66368e83a43d0831442e9fec45",
+    "scripts/benchmark_bdot.py": "a01bc0266ef6e92de9c196c05109a704e2200a2193be3a8739cad90dc11d3da1",
+    "tests/bdot/gpu_probe.py": "5d32b9c552c7fe35107ba04cab31db69bd52e4e9198f567e4172b624c1e1871f",
+    "tests/bdot/ddp_probe.py": "25afe9b47682219947c3910f23329ac72453b9f052cddd6a1a534f4eb57b7d9a",
+    "tests/bdot/test_model.py": "13d5c401cecc39cb492ffe815fa05a7fa1da104fc769b2cb7048997aa382cd7f"
+  },
+  "raw_artifact_root": "/disk/thuat/DOT/temp/bdot_gpu_verification",
+  "gpus_after": [
+    {
+      "index": 0,
+      "uuid": "GPU-d86f2572-aba2-7e83-3496-855082f8efca",
+      "name": "NVIDIA A100-PCIE-40GB",
+      "memory_total_mib": 40960.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-82dcf514-0655-4b3e-5b7d-0a8251ac6483",
+      "name": "NVIDIA A100-PCIE-40GB",
+      "memory_total_mib": 40960.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-98d5146e-a91f-a706-514b-d27ab58b06dc",
+      "name": "NVIDIA A100-PCIE-40GB",
+      "memory_total_mib": 40960.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-1f0c9352-ead7-0aed-4e50-3bf1016a6488",
+      "name": "NVIDIA A100-PCIE-40GB",
+      "memory_total_mib": 40960.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    }
+  ]
+}

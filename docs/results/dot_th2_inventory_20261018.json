@@ -1,0 +1,235 @@
+{
+  "checked_at_utc": "2026-10-18T18:35:40.211125+00:00",
+  "execution_repository": "https://github.com/deep-llms/th2",
+  "execution_branch": "main",
+  "machine_label": "q359",
+  "execution_checkout": "/disk/thuat/DOT-th2-inventory",
+  "previous_head": "624d63a2bd5ff1c94b38dc55a9537f265ea2377f",
+  "submitted_commit": "4831f9a267ebc7697ef229d8062fcff4d8d160d3",
+  "job": "th2-q359-dot-project-inventory-20261018-a01",
+  "tracked_tree": [
+    "commands.sh"
+  ],
+  "history_preserved": true,
+  "remote_completion": "verified_success",
+  "expected_marker": "DOT_TH2_PROJECT_INVENTORY_OK",
+  "scope": "Read-only metadata inventory of /mnt/local/deep-llms_th2",
+  "last_dropbox_status_modified_utc": "2026-10-17T19:27:14Z",
+  "local_evidence": "temp/dot_th2_inventory_20261018/",
+  "inventory_start": {
+    "cwd": "/mnt/local/deep-llms_th2",
+    "hostname": "thiennh-p6-q359-worker-0",
+    "job": "th2-q359-dot-project-inventory-20261018-a01",
+    "project_dir": "/mnt/local/deep-llms_th2",
+    "utc": "2026-10-18T18:32:47.260453+00:00"
+  },
+  "inventory_summary": {
+    "commands_sha256": "b921ff8ef63e106d712f3779db03ba4ddf9b773a630ba18e382ffe0429b5678c",
+    "errors": [],
+    "root_entries": 28,
+    "scope": "Top-level metadata plus at most 100 children per directory; no file contents"
+  },
+  "root_entries": [
+    {
+      "bytes": 349,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": ".gitignore",
+      "type": "file"
+    },
+    {
+      "bytes": 890,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "AGENTS.md",
+      "type": "file"
+    },
+    {
+      "bytes": 4473,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "README.md",
+      "type": "file"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o644",
+      "modified_utc": "2026-10-16T18:27:54+00:00",
+      "path": "_dl_active.txt",
+      "type": "file"
+    },
+    {
+      "bytes": 0,
+      "mode": "0o644",
+      "modified_utc": "2026-10-16T16:00:00+00:00",
+      "path": "_install_active.txt",
+      "type": "file"
+    },
+    {
+      "bytes": 44,
+      "mode": "0o644",
+      "modified_utc": "2026-10-17T19:29:51+00:00",
+      "path": "_previous_run_status.log",
+      "type": "file"
+    },
+    {
+      "bytes": 36864,
+      "mode": "0o755",
+      "modified_utc": "2026-10-18T18:32:47.217053+00:00",
+      "path": "_run_log_",
+      "type": "directory"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-11T00:09:57+00:00",
+      "path": "artifacts",
+      "type": "directory"
+    },
+    {
+      "bytes": 1490,
+      "mode": "0o644",
+      "modified_utc": "2026-10-10T12:22:47+00:00",
+      "path": "baseline_a_fa4.b200.json",
+      "type": "file"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-17T05:33:24+00:00",
+      "path": "ce7454",
+      "type": "directory"
+    },
+    {
+      "bytes": 2592,
+      "mode": "0o755",
+      "modified_utc": "2026-10-18T18:32:47.207053+00:00",
+      "path": "commands.sh",
+      "type": "file"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-16T10:58:00+00:00",
+      "path": "deep_kv",
+      "type": "directory"
+    },
+    {
+      "bytes": 1346,
+      "mode": "0o644",
+      "modified_utc": "2026-10-10T12:22:47+00:00",
+      "path": "deep_kv.b200.json",
+      "type": "file"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-17T19:13:47+00:00",
+      "path": "docs",
+      "type": "directory"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-16T15:53:21+00:00",
+      "path": "envs",
+      "type": "directory"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-15T15:16:02+00:00",
+      "path": "eval",
+      "type": "directory"
+    },
+    {
+      "bytes": 297,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "jobs.example.json",
+      "type": "file"
+    },
+    {
+      "bytes": 19377,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "prepare_data.py",
+      "type": "file"
+    },
+    {
+      "bytes": 421,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "project.example.json",
+      "type": "file"
+    },
+    {
+      "bytes": 1587,
+      "mode": "0o644",
+      "modified_utc": "2026-10-13T03:32:20+00:00",
+      "path": "proxy_heads.12layer.b200.json",
+      "type": "file"
+    },
+    {
+      "bytes": 1487,
+      "mode": "0o644",
+      "modified_utc": "2026-10-10T12:22:47+00:00",
+      "path": "proxy_heads.b200.json",
+      "type": "file"
+    },
+    {
+      "bytes": 133,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "requirements.txt",
+      "type": "file"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-14T23:08:48+00:00",
+      "path": "resources",
+      "type": "directory"
+    },
+    {
+      "bytes": 10569,
+      "mode": "0o644",
+      "modified_utc": "2026-10-09T08:30:49+00:00",
+      "path": "run_experiments.py",
+      "type": "file"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-16T20:09:34+00:00",
+      "path": "scripts",
+      "type": "directory"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-17T19:11:12+00:00",
+      "path": "template_validation",
+      "type": "directory"
+    },
+    {
+      "bytes": 4096,
+      "mode": "0o755",
+      "modified_utc": "2026-10-16T11:19:25+00:00",
+      "path": "tests",
+      "type": "directory"
+    },
+    {
+      "bytes": 24693,
+      "mode": "0o644",
+      "modified_utc": "2026-10-15T02:14:47+00:00",
+      "path": "train.py",
+      "type": "file"
+    }
+  ],
+  "synchronization_removes_old_files": false,
+  "remote_files_deleted": false,
+  "inventory_log": "temp/dot_th2_inventory_20261018/inventory_a01.log",
+  "inventory_log_sha256": "205c5e8b1c5673acafcf54fcce0e0fe5061ace5750d47295796989bc11268f30",
+  "inactive_commit": "5e395c75894203d5d3009ad130d8316703602886"
+}

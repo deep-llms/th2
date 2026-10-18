@@ -1,0 +1,11 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+# Tested CPU path; CUDA execution also requires a compatible driver.
+pip
+torch==2.14.1
+transformers==5.9.0
+accelerate==1.13.0
+datasets==4.8.5
+tokenizers==0.22.2
+safetensors==0.8.0
