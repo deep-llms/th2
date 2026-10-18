@@ -1,19 +1,23 @@
 # Current task
 
-## GPU FA4 resume verification — active
+## GPU FA4 resume verification — passed
 
-The user explicitly requested the remaining B200 resume test. Read-only
-preflight `d83b8a0` confirms q359, released guard and the same eight known burn
-workers. Use existing eval_fa4, all eight GPUs and the established supervisor.
-The probe runs the real train.py and strict checkpoint/data checks, with a
-12-layer reduced-width synthetic fixture. Full schedule 200 steps; restart
-from 100 to 200, and from 20 to 40 across the soft/hard boundary. Trace all
-ranks: inputs, RNG, both routing branches, loss, optimizer/scheduler/balancing
-state. Local six-step CPU end-to-end test passes exactly. Production model and
-FA4 defaults remain unchanged. Output root:
-`/mnt/local/_outputs/deep-llms_th2/q359-dot-resume-20261018-a01/`.
-Automatic communicating burn restoration is required on success or failure.
+The user explicitly requested the remaining B200 resume check. Launch `82f6428`
+on q359 completed the real train.py/Trainer FA4 test on all eight GPUs. The
+uninterrupted 200-step run and fresh-process restarts (100→200 and 20→40) match
+exactly on all ranks: data, RNG, both routing branches, loss, model, AdamW,
+scheduler and routing state. Maximum loss difference is 0.0. This used the
+existing FA4 defaults and a 12-layer reduced-width synthetic fixture; no model
+or attention-kernel change was needed. See [resume report](BDOT_FA4_RESUME_20261018.md).
 
+Accelerate was copied and verified. All eight GPUs were free at 19:48:20 UTC
+before the test. Supervisor and automatic burn handoff finished successfully at
+19:53:15 UTC. Final read-only inspection `7c49881` at 19:56:35 UTC verified
+eight active burns, advancing collectives and released ownership. The final
+source/results publication uses #0. No research training is queued.
+
+Remote root: `/mnt/local/_outputs/deep-llms_th2/q359-dot-resume-20261018-a01/`.
+Local evidence: `temp/bdot_b200_resume_20261018/`.
 
 ## B200 verification complete — 2026-10-18
 
@@ -84,9 +88,8 @@ explicitly rejects this dev machine's A100 (SM80); forward-only results are sepa
 
 ## Remaining before a pilot
 
-- Verify routed FA4 checkpoint/resume parity on GPU. Existing 200-step exact
-  resume evidence is CPU-only. Pinned-runtime backward and synthetic eight-GPU
-  throughput gates are now passed; remeasure if the pilot recipe changes.
+- Pinned-runtime backward, synthetic eight-GPU throughput and GPU FA4 resume
+  checks passed. Revalidate if the pilot recipe changes materially.
 - Finish full route-study export/reporting before Gate 0a: 4,096-sequence path
   statistics, 256-sequence route artifact and cross-seed comparisons. Current
   code reports off-default share/reuse and supports fixed/random interventions.

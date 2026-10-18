@@ -152,7 +152,7 @@ gate is passed by the synthetic eight-B200 test at 524,288 input tokens/update.
 
 The full route-study exporter (4,096-sequence path statistics and the
 256-sequence routes_sample.npz artifact), cross-seed comparison reporting remain to finish before the pilot's final Gate 0a
-report. Routed FA4 resume parity also needs a GPU check; existing exact resume
-evidence is CPU-only.
+report. The subsequent [eight-B200 FA4 resume test](BDOT_FA4_RESUME_20261018.md)
+passes exactly on all ranks with fresh processes and the real train.py entry point.
 Actual benchmark scores require trained checkpoints and cached task data.
 No scientific result is inferred from tiny local fixtures.

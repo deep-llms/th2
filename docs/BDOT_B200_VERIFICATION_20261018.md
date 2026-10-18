@@ -102,6 +102,7 @@ to 240 (255.38 to 266.48 GiB cumulative payload). No training workers remained.
 The final inspection also checks benchmark source hashes and finite printed
 training losses for every backend/model case. Its first attempt needed a parser
 fix for Trainer's string-formatted loss values; no GPU tests were restarted.
-GPU resume parity for the routed FA4 model is not established by these tests;
-the 200-step route/RNG/optimizer resume test remains CPU evidence. Actual corpus
-selection and the full Gate 0a route-study exporter also remain before a pilot.
+A subsequent [eight-GPU FA4 resume test](BDOT_FA4_RESUME_20261018.md) passed
+200-step checkpoint/route/RNG/optimizer comparisons exactly on a reduced-width
+12-layer fixture. Actual corpus selection and the full Gate 0a route-study
+exporter remain before a pilot.

@@ -116,3 +116,17 @@ The supervisor finished at 19:27:32 UTC and a separate live check at 19:30:53 UT
 verified eight communicating burns, advancing collectives and released guard.
 See [handoff receipt](results/bdot_b200_handoff_20261018.json). commands.sh returns
 to #0 with the final code/results publication; no unattended pilot is queued.
+
+
+## GPU FA4 resume evidence — 2026-10-18
+
+Launch `82f6428` ran a 200-step uninterrupted reference, then fresh-process
+checkpoint continuations 100→200 and 20→40 through real train.py on eight B200s.
+All ranks match exactly for data/RNG, both routing branches, loss, model, AdamW,
+scheduler and balancing state. Maximum loss difference is zero. The fixture
+uses 12 layers with reduced width/vocabulary, BF16 and the existing FA4 defaults.
+No deterministic override or production model change was necessary. See
+[resume report](BDOT_FA4_RESUME_20261018.md) and its all-rank JSON receipt.
+The supervisor restored communicating burns on success. A final live check at
+19:56:35 UTC verified all eight workers, advancing collectives and released guard.
+commands.sh returns to #0. No pilot was launched.
