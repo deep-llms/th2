@@ -100,7 +100,11 @@ def main():
     p.add_argument('--output', required=True)
     p.add_argument('--fa4', action='store_true')
     p.add_argument('--full-native', action='store_true')
-    p.add_argument('--native-only', action='store_true')
+    modes = p.add_mutually_exclusive_group()
+    modes.add_argument('--native-only', action='store_true')
+    modes.add_argument('--routing-only', action='store_true')
+    p.add_argument('--stable-router-bias', action='store_true',
+                   help='Separated diagnostic biases keep both soft branches identical across kernels')
     p.add_argument('--reference-math', action='store_true', help='FP32 T1 uses deterministic SDPA math reference')
     p.add_argument('--native-self-control', action='store_true', help='Compare native Qwen3 against an identical native copy')
     a = p.parse_args()
@@ -157,7 +161,7 @@ def main():
         return first, second, rec
 
     # T1: compare mapped native parameters, gradients and one AdamW update.
-    for bf16 in (False, True):
+    for bf16 in (() if a.routing_only else (False, True)):
         x = make_model(routing='fixed', curriculum='none', step_film=False)
         if a.full_native and not bf16:
             del x
@@ -191,6 +195,15 @@ def main():
         for progress in (.01, .7):
             for backend in (['sdpa', 'fa4'] if a.fa4 else ['sdpa']):
                 x = make_model(reuse=reuse, default_prior=0., curriculum='B')
+                if a.stable_router_bias:
+                    # Test kernel/gradient equivalence on the same discrete graph.
+                    # Natural near-tie route stability is a separate diagnostic;
+                    # production initialization is never changed by this fixture.
+                    gen = torch.Generator().manual_seed(991)
+                    with torch.no_grad():
+                        for step in x.routed_steps:
+                            bias = torch.randperm(x.options.S, generator=gen).float() * .25
+                            step.router.bias.copy_(bias.to(step.router.bias))
                 y = copy.deepcopy(x)
                 x.progress = y.progress = progress
                 x.capture_routes = y.capture_routes = True

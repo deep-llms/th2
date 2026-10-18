@@ -81,4 +81,3 @@ def inspect():
     return {'host':socket.gethostname(),'time':datetime.now(timezone.utc).isoformat(),
             'gpus':status,'workers':workers,'stop_roots':sorted(set(roots)-set(workers)),
             'processes':records,'guard_disabled':Path('/mnt/local/_gpu_guard/DISABLED').exists()}
-

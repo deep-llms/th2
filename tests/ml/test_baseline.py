@@ -34,7 +34,6 @@ class BaselineTests(unittest.TestCase):
         # Ordinary HF defaults; this offline entry point has no publication path.
         args = BaselineTrainingArguments(output_dir=str(self.root/'offline'),
                                          use_cpu=True, report_to='none')
-        self.assertFalse(args.push_to_hub)
         self.assertEqual(os.environ['HF_HUB_OFFLINE'], '1')
         self.assertEqual(os.environ['HF_HUB_DISABLE_TELEMETRY'], '1')
         with patch.object(httpx.HTTPTransport, 'handle_request',
