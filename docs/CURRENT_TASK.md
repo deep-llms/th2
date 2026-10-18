@@ -1,5 +1,35 @@
 # Current task
 
+## B200 verification in progress — 2026-10-18
+
+The user authorized publishing DOT to th2 and running B200 verification.
+Source was published at `5d1f037`; the controller blocked its preflight before
+execution on a redundant test assertion mentioning a Hub publication option.
+Removed only that assertion; the actual offline network-denial test remains.
+Fresh read-only preflight `9b52375`, job `th2-q359-dot-preflight-20261018-a02`,
+uses `/mnt/local/_outputs/deep-llms_th2/q359-dot-verification-20261018-a02/`.
+Do not infer environment validity or GPU verification from submission alone.
+
+The next authorized stage is synthetic numerical/FA4/backward/NCCL and complete
+Trainer-update verification, followed by automatic verified burn restoration.
+The old q359 supervisor is reused with its PID-handle helpers and seven passing
+CPU ownership/handoff tests; its obsolete standalone reclamation CLI was not
+copied. `resources/accelerate_b200.yaml` is the previously validated eight-GPU
+configuration, distinct from the generic single-process example. Copy to the
+selected interpreter's actual Accelerate cache and verify before reclaiming
+known burns. Research pilot training and corpus downloads are not part of this
+verification. Local receipts: `temp/bdot_b200_verification_20261018/`.
+
+The prepared suite retains failed independent checks and exits unsuccessfully
+if any required check fails. It reports natural near-tie route changes separately
+from same-route kernel checks using explicit separated diagnostic router biases.
+Neither diagnostic changes production model initialization. Throughput uses the
+full 12-layer models, eight ranks, microbatch16, accumulation4, length1024,
+524,288 input tokens/update, BF16, checkpointing off, 3 warmup +10 measured
+updates per native/D/mixed-hard/mixed-soft case, separately for SDPA and FA4.
+
+## Previous implementation and setup evidence
+
 Updated 2026-10-18. The Phase A foundation is implemented and CPU-validated;
 local A100 numerical, NCCL and SDPA throughput checks have also been run.
 No research training or dataset download has been launched. A read-only remote
