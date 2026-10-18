@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-q359-dot-final-verification-20261018-a01
+#th2-q359-dot-final-verification-20261018-a02
 set -euo pipefail
 TASK_PYTHON=/mnt/local/conda-py311/envs/eval_fa4/bin/python
 "$TASK_PYTHON" - <<'PY'
@@ -29,7 +29,9 @@ for r in summary['results']:
         assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==expected, name
     lines=(root/'supervised/run/checks'/(r['name']+'.log')).read_text().splitlines()
     rows=[ast.literal_eval(line) for line in lines if line.startswith("{'train_runtime':")]
-    assert len(rows)==1 and math.isfinite(rows[0]['train_loss']) and rows[0]['train_loss']>0
+    assert len(rows)==1
+    loss=float(rows[0]['train_loss'])
+    assert math.isfinite(loss) and loss>0
     losses[r['name']]=rows[0]
 first=inspect()
 assert not first['guard_disabled']
@@ -58,6 +60,6 @@ assert second['workers']==first['workers']
 for pid in first['workers']:
     assert first['processes'][str(pid)]==second['processes'][str(pid)]
 result=dict(status='passed',summary_sha256=hashlib.sha256((root/'supervised/run/checks/summary.json').read_bytes()).hexdigest(),supervisor=supervisor,training_metrics=losses,burn_cycles_before=before,burn_cycles_after=after,inspection=second)
-with (root/'final_verification.json').open('x') as f:json.dump(result,f,indent=2)
+with (root/'final_verification_a02.json').open('x') as f:json.dump(result,f,indent=2)
 print('DOT_FINAL_VERIFICATION '+json.dumps(result),flush=True)
 PY
