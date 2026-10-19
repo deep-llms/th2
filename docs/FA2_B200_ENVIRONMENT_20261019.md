@@ -1,0 +1,68 @@
+# Isolated FA2 environment for the replacement B200
+
+The user authorized creating a separate FA2 test environment. Submit only:
+
+```text
+#i envs/train_fa2.txt +a
+#th2-fa2-isolated-env-20261019-a01
+```
+
+The runner names this Python 3.11 conda environment `train_fa2`. The spec uses
+`fresh: false` and names no existing production environment. It retains all
+model/data pins from `envs/train.txt`: torch 2.14.1, Transformers 5.9.0,
+Accelerate 1.13.0, Datasets 4.8.5, Tokenizers 0.22.2 and Safetensors 0.8.0.
+It installs FA2 instead of the FA4/CUTLASS/Quack dependencies. Einops is pinned
+to 0.8.2, matching the successful local FA2 test runtime.
+
+The production `train`/`eval` specifications and NVIDIA driver are unchanged.
+There are no training launches, process stops or GPU allocations in this
+installation request. The earlier instruction to defer Dropbox monitoring
+remains in effect.
+
+## Required compiled wheel
+
+FA2 is a compiled PyTorch extension. The matching artifact requested through
+the runner's documented special-wheel mechanism is:
+
+```text
+flash_attn-2.8.3.post2+cu13torch2.14cxx11abiTRUE-cp311-cp311-linux_x86_64.whl
+```
+
+This name follows the upstream [2.8.3.post2 build script](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3.post2/setup.py).
+The local pinned torch 2.14.1 package reports CUDA 13.0 and C++11 ABI enabled.
+The actual replacement-node runtime must still be verified before use.
+
+The matching wheel is absent from the upstream release asset list inspected
+for the local FA2 test. Its availability in the runner's internal wheel store
+is **unknown**. Requesting it does not establish installation success. If the
+installer reports it missing, the operator must provide a wheel built against
+torch 2.14.1/CUDA 13/Python 3.11 with SM100 support. Do not rename a torch 2.8
+wheel, silently downgrade torch, or run network package installation in a `#1`
+job. The runner's special-wheel rule was checked in the local operator guide;
+that private guide is not included in Git.
+
+## Verification before the comparison
+
+When the user requests the new-node check:
+
+1. Inspect every package result in the installation log. A created conda
+   directory or successful torch installation alone does not mean FA2 installed.
+2. Resolve the actual `train` and `train_fa2` interpreter paths. The expected
+   new path is `/mnt/local/conda-py311/envs/train_fa2/bin/python3.11`; never use
+   an unqualified system `python` or mutate the production environment.
+3. Read package versions from both environments and verify shared pins, CUDA
+   runtime and ABI. Compare common dependency versions as well; the top-level
+   pin list is not a full transitive lockfile.
+4. Import `flash_attn` and `flash_attn_2_cuda` using only `train_fa2`. Validate
+   the compiled extension against the actual runtime before allocating GPUs.
+5. Verify machine/GPU identity and workloads, then use the established safe
+   GPU handoff and explicit Accelerate configuration for any distributed test.
+6. Reuse the [local numerical and full-update comparison](FA2_LOCAL_VERIFICATION_20261018.md)
+   with separate output folders and explicit actual-kernel labels. Keep batch,
+   precision, data, model, checkpointing and routing settings matched. Add the
+   save/resume check before adopting FA2 for production training.
+
+The local probe currently uses a test-only FA2 substitution, not a public
+`--attention_backend fa2` option. No production default is changed by this
+environment specification. B200 FA2 installation, numerics, throughput and
+resume behavior remain unverified until actual receipts are returned.

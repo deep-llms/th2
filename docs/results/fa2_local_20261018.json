@@ -1,0 +1,683 @@
+{
+  "status": "passed",
+  "scope": "Local A100 numerical checks and synthetic HF Trainer timings; not B200 approval",
+  "environment": {
+    "python": "3.11.15 (main, Jun 11 2026, 15:20:16) [GCC 14.3.0]",
+    "interpreter": "/disk/thuat/DOT/temp/bdot_gpu_verification/fa4_compat/bin/python",
+    "packages": {
+      "torch": "2.8.0+cu126",
+      "transformers": "5.9.0",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0",
+      "einops": "0.8.2"
+    },
+    "test_only_fa2_path": "/disk/thuat/DOT/temp/fa2_local_20261018/packages",
+    "driver": "525.125.06",
+    "torch_cuda_runtime": "12.6",
+    "production_environment_changed": false,
+    "driver_changed": false,
+    "remote_actions": false
+  },
+  "wheel": {
+    "name": "flash_attn-2.8.3.post2+cu12torch2.8cxx11abiTRUE-cp311-cp311-linux_x86_64.whl",
+    "sha256": "92aabf18ecfcf5d620ac7fe97fafe88f83e714b7a790e4bf219dff4a404cfb38",
+    "bytes": 256238631,
+    "url": "https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3.post2/flash_attn-2.8.3.post2%2Bcu12torch2.8cxx11abiTRUE-cp311-cp311-linux_x86_64.whl"
+  },
+  "numerical": {
+    "kernel": {
+      "status": "passed",
+      "checks": [
+        {
+          "lengths": [
+            1,
+            17,
+            37,
+            73
+          ],
+          "logits_relative_l2": 0.0017605976900085807,
+          "qkv_gradient_relative_l2": [
+            0.0026137446984648705,
+            0.0030761559028178453,
+            0.00277655734680593
+          ]
+        },
+        {
+          "lengths": [
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128,
+            128
+          ],
+          "logits_relative_l2": 0.001894524903036654,
+          "qkv_gradient_relative_l2": [
+            0.0025705555453896523,
+            0.003063399577513337,
+            0.0028299514669924974
+          ]
+        },
+        {
+          "lengths": [
+            2048
+          ],
+          "logits_relative_l2": 0.002022998873144388,
+          "qkv_gradient_relative_l2": [
+            0.00242661964148283,
+            0.0029308469966053963,
+            0.0028861151076853275
+          ]
+        }
+      ],
+      "reference": "FP32 SDPA math, TF32 disabled, separate causal documents",
+      "tolerances": {
+        "output_relative_l2": 0.01,
+        "gradient_relative_l2": 0.02
+      },
+      "actual_kernel": "FA2",
+      "actual_kernel_version": "2.8.3.post2",
+      "fa2_kernel_forward_calls": 3,
+      "torch": "2.8.0+cu126",
+      "cuda": "12.6",
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "experiment_note": "FA2 substituted in local test process only. Any fa4 backend labels refer to reused packed-layout transport, NOT the executed kernel.",
+      "probe_sha256": "49555bb9a5cd7821d243c60a93c4ccceac24a92371076741a242926581796018"
+    },
+    "native": {
+      "status": "passed",
+      "torch": "2.8.0+cu126",
+      "fa4": "4.0.0b33",
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "dtype": "bf16 autocast, FP32 weights",
+      "note": "Tiny real-kernel smoke only; not throughput or long-run validation",
+      "checks": [
+        {
+          "checkpointing": false,
+          "sdpa_loss": 4.912805080413818,
+          "fa4_loss": 4.9127936363220215,
+          "logits_relative_l2": 0.00296786124818027,
+          "gradients_relative_l2": 0.005805637687444687
+        },
+        {
+          "checkpointing": true,
+          "sdpa_loss": 4.904017448425293,
+          "fa4_loss": 4.904022693634033,
+          "logits_relative_l2": 0.0026958833914250135,
+          "gradients_relative_l2": 0.005407914984971285
+        }
+      ],
+      "actual_kernel": "FA2",
+      "actual_kernel_version": "2.8.3.post2",
+      "fa2_kernel_forward_calls": 10,
+      "cuda": "12.6",
+      "experiment_note": "FA2 substituted in local test process only. Any fa4 backend labels refer to reused packed-layout transport, NOT the executed kernel.",
+      "probe_sha256": "49555bb9a5cd7821d243c60a93c4ccceac24a92371076741a242926581796018"
+    },
+    "routed": {
+      "status": "passed",
+      "torch": "2.8.0+cu126",
+      "cuda": "12.6",
+      "transformers": "5.9.0",
+      "gpu": "NVIDIA A100-PCIE-40GB",
+      "fa4": "4.0.0b33",
+      "checks": [
+        {
+          "name": "reuse=True,progress=0.01,checkpointed_sdpa",
+          "loss_abs": 0.0,
+          "logits": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "sdpa",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "sdpa",
+          "reuse": true,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "sdpa",
+          "reuse": true,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=True,progress=0.01,checkpointed_fa4",
+          "loss_abs": 0.00010776519775390625,
+          "logits": {
+            "relative_l2": 0.0035491823218762875,
+            "max_abs": 0.0078125,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.005819486919790506,
+            "max_abs": 0.0009785518050193787,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "fa4",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "fa4",
+          "reuse": true,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "fa4",
+          "reuse": true,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=True,progress=0.7,checkpointed_sdpa",
+          "loss_abs": 0.0,
+          "logits": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "sdpa",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "sdpa",
+          "reuse": true,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "sdpa",
+          "reuse": true,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=True,progress=0.7,checkpointed_fa4",
+          "loss_abs": 2.9087066650390625e-05,
+          "logits": {
+            "relative_l2": 0.003143893787637353,
+            "max_abs": 0.0078125,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.005529995542019606,
+            "max_abs": 0.0009272955358028412,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "fa4",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "fa4",
+          "reuse": true,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "fa4",
+          "reuse": true,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=False,progress=0.01,checkpointed_sdpa",
+          "loss_abs": 0.0,
+          "logits": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "sdpa",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "sdpa",
+          "reuse": false,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "sdpa",
+          "reuse": false,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=False,progress=0.01,checkpointed_fa4",
+          "loss_abs": 0.00017881393432617188,
+          "logits": {
+            "relative_l2": 0.003355117980390787,
+            "max_abs": 0.0078125,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.005521421320736408,
+            "max_abs": 0.0008417116478085518,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "fa4",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "fa4",
+          "reuse": false,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "fa4",
+          "reuse": false,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=False,progress=0.7,checkpointed_sdpa",
+          "loss_abs": 0.0,
+          "logits": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "sdpa",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "sdpa",
+          "reuse": false,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "sdpa",
+          "reuse": false,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        },
+        {
+          "name": "reuse=False,progress=0.7,checkpointed_fa4",
+          "loss_abs": 1.3828277587890625e-05,
+          "logits": {
+            "relative_l2": 0.0032385371159762144,
+            "max_abs": 0.0078125,
+            "worst_parameter": "logits",
+            "finite": true
+          },
+          "gradients": {
+            "relative_l2": 0.005555568728595972,
+            "max_abs": 0.000789940357208252,
+            "worst_parameter": "model.embed_tokens.weight",
+            "finite": true
+          },
+          "bf16": true,
+          "backend": "fa4",
+          "route_disagreement_fraction": 0.0,
+          "all_branch_disagreements": 0
+        },
+        {
+          "name": "natural_route_bf16_grouping_effect",
+          "backend": "fa4",
+          "reuse": false,
+          "max_abs": 0.0,
+          "route_changes": 0
+        },
+        {
+          "name": "causality_and_isolation",
+          "backend": "fa4",
+          "reuse": false,
+          "status": "passed",
+          "fixed_route_bitwise": true,
+          "cross_document_gradient": 0
+        }
+      ],
+      "settings": {
+        "output": "/disk/thuat/DOT/temp/fa2_local_20261018/routed.json",
+        "fa4": true,
+        "full_native": false,
+        "native_only": false,
+        "routing_only": true,
+        "stable_router_bias": true,
+        "reference_math": false,
+        "native_self_control": false
+      },
+      "actual_kernel": "FA2",
+      "actual_kernel_version": "2.8.3.post2",
+      "fa2_kernel_forward_calls": 362,
+      "experiment_note": "FA2 substituted in local test process only. Any fa4 backend labels refer to reused packed-layout transport, NOT the executed kernel.",
+      "probe_sha256": "49555bb9a5cd7821d243c60a93c4ccceac24a92371076741a242926581796018"
+    }
+  },
+  "benchmark": {
+    "status": "completed",
+    "runs": [
+      {
+        "name": "bench_native_sdpa_r1",
+        "repeat": 1,
+        "model": "native",
+        "backend": "sdpa",
+        "seconds_per_update": 0.2086396910250187,
+        "tokens_per_second": 19631.930913417786,
+        "peak_allocated_gib": 11.31254243850708,
+        "fa2_calls": 0
+      },
+      {
+        "name": "bench_native_fa2_r1",
+        "repeat": 1,
+        "model": "native",
+        "backend": "fa2",
+        "seconds_per_update": 0.18788617079456646,
+        "tokens_per_second": 21800.433649151008,
+        "peak_allocated_gib": 11.17189359664917,
+        "fa2_calls": 840
+      },
+      {
+        "name": "bench_D_sdpa_r1",
+        "repeat": 1,
+        "model": "D",
+        "backend": "sdpa",
+        "seconds_per_update": 0.2365703451136748,
+        "tokens_per_second": 17314.088957480384,
+        "peak_allocated_gib": 11.62525987625122,
+        "fa2_calls": 0
+      },
+      {
+        "name": "bench_D_fa2_r1",
+        "repeat": 1,
+        "model": "D",
+        "backend": "fa2",
+        "seconds_per_update": 0.21588476325074832,
+        "tokens_per_second": 18973.085169714042,
+        "peak_allocated_gib": 11.48436689376831,
+        "fa2_calls": 840
+      },
+      {
+        "name": "bench_hard_mixed_sdpa_r1",
+        "repeat": 1,
+        "model": "hard_mixed",
+        "backend": "sdpa",
+        "seconds_per_update": 0.3411781686047713,
+        "tokens_per_second": 12005.457490877447,
+        "peak_allocated_gib": 11.868724346160889,
+        "fa2_calls": 0
+      },
+      {
+        "name": "bench_hard_mixed_fa2_r1",
+        "repeat": 1,
+        "model": "hard_mixed",
+        "backend": "fa2",
+        "seconds_per_update": 0.3352112921575705,
+        "tokens_per_second": 12219.158768895591,
+        "peak_allocated_gib": 11.726808071136475,
+        "fa2_calls": 840
+      },
+      {
+        "name": "bench_native_fa2_r2",
+        "repeat": 2,
+        "model": "native",
+        "backend": "fa2",
+        "seconds_per_update": 0.18772642066081366,
+        "tokens_per_second": 21818.985231709616,
+        "peak_allocated_gib": 11.17189359664917,
+        "fa2_calls": 840
+      },
+      {
+        "name": "bench_native_sdpa_r2",
+        "repeat": 2,
+        "model": "native",
+        "backend": "sdpa",
+        "seconds_per_update": 0.20909975344936052,
+        "tokens_per_second": 19588.736631351232,
+        "peak_allocated_gib": 11.31254243850708,
+        "fa2_calls": 0
+      },
+      {
+        "name": "bench_D_fa2_r2",
+        "repeat": 2,
+        "model": "D",
+        "backend": "fa2",
+        "seconds_per_update": 0.21626983483632406,
+        "tokens_per_second": 18939.30331569314,
+        "peak_allocated_gib": 11.48436689376831,
+        "fa2_calls": 840
+      },
+      {
+        "name": "bench_D_sdpa_r2",
+        "repeat": 2,
+        "model": "D",
+        "backend": "sdpa",
+        "seconds_per_update": 0.23774635220567386,
+        "tokens_per_second": 17228.445198000594,
+        "peak_allocated_gib": 11.62525987625122,
+        "fa2_calls": 0
+      },
+      {
+        "name": "bench_hard_mixed_fa2_r2",
+        "repeat": 2,
+        "model": "hard_mixed",
+        "backend": "fa2",
+        "seconds_per_update": 0.3416549784441789,
+        "tokens_per_second": 11988.702809636425,
+        "peak_allocated_gib": 11.726808071136475,
+        "fa2_calls": 840
+      },
+      {
+        "name": "bench_hard_mixed_sdpa_r2",
+        "repeat": 2,
+        "model": "hard_mixed",
+        "backend": "sdpa",
+        "seconds_per_update": 0.34249880562225976,
+        "tokens_per_second": 11959.165792004127,
+        "peak_allocated_gib": 11.868724346160889,
+        "fa2_calls": 0
+      }
+    ]
+  },
+  "table": [
+    {
+      "model": "native",
+      "sdpa_seconds_per_update": 0.2088697222371896,
+      "fa2_seconds_per_update": 0.18780629572769006,
+      "fa2_throughput_gain_percent": 11.215506076559056,
+      "fa2_step_time_reduction_percent": 10.084480547917906,
+      "sdpa_peak_allocated_gib": 11.31254243850708,
+      "fa2_peak_allocated_gib": 11.17189359664917,
+      "repeats": {
+        "sdpa": [
+          0.2086396910250187,
+          0.20909975344936052
+        ],
+        "fa2": [
+          0.18788617079456646,
+          0.18772642066081366
+        ]
+      }
+    },
+    {
+      "model": "D",
+      "sdpa_seconds_per_update": 0.23715834865967433,
+      "fa2_seconds_per_update": 0.21607729904353618,
+      "fa2_throughput_gain_percent": 9.75625376171083,
+      "fa2_step_time_reduction_percent": 8.889018554598627,
+      "sdpa_peak_allocated_gib": 11.62525987625122,
+      "fa2_peak_allocated_gib": 11.48436689376831,
+      "repeats": {
+        "sdpa": [
+          0.2365703451136748,
+          0.23774635220567386
+        ],
+        "fa2": [
+          0.21588476325074832,
+          0.21626983483632406
+        ]
+      }
+    },
+    {
+      "model": "hard_mixed",
+      "sdpa_seconds_per_update": 0.3418384871135155,
+      "fa2_seconds_per_update": 0.3384331353008747,
+      "fa2_throughput_gain_percent": 1.0062111115725525,
+      "fa2_step_time_reduction_percent": 0.9961873636276541,
+      "sdpa_peak_allocated_gib": 11.868724346160889,
+      "fa2_peak_allocated_gib": 11.726808071136475,
+      "repeats": {
+        "sdpa": [
+          0.3411781686047713,
+          0.34249880562225976
+        ],
+        "fa2": [
+          0.3352112921575705,
+          0.3416549784441789
+        ]
+      }
+    }
+  ],
+  "reported_aggregate_losses": {
+    "bench_native_sdpa_r1": {
+      "train_loss": 12.07
+    },
+    "bench_native_fa2_r1": {
+      "train_loss": 12.07
+    },
+    "bench_D_sdpa_r1": {
+      "train_objective_loss": 12.07,
+      "train_lm_loss": 12.07,
+      "train_router_z_loss": 0.0
+    },
+    "bench_D_fa2_r1": {
+      "train_objective_loss": 12.07,
+      "train_lm_loss": 12.07,
+      "train_router_z_loss": 0.0
+    },
+    "bench_hard_mixed_sdpa_r1": {
+      "train_objective_loss": 12.12,
+      "train_lm_loss": 12.12,
+      "train_router_z_loss": 1.015
+    },
+    "bench_hard_mixed_fa2_r1": {
+      "train_objective_loss": 12.12,
+      "train_lm_loss": 12.12,
+      "train_router_z_loss": 1.015
+    },
+    "bench_native_fa2_r2": {
+      "train_loss": 12.07
+    },
+    "bench_native_sdpa_r2": {
+      "train_loss": 12.07
+    },
+    "bench_D_fa2_r2": {
+      "train_objective_loss": 12.07,
+      "train_lm_loss": 12.07,
+      "train_router_z_loss": 0.0
+    },
+    "bench_D_sdpa_r2": {
+      "train_objective_loss": 12.07,
+      "train_lm_loss": 12.07,
+      "train_router_z_loss": 0.0
+    },
+    "bench_hard_mixed_fa2_r2": {
+      "train_objective_loss": 12.12,
+      "train_lm_loss": 12.12,
+      "train_router_z_loss": 1.015
+    },
+    "bench_hard_mixed_sdpa_r2": {
+      "train_objective_loss": 12.12,
+      "train_lm_loss": 12.12,
+      "train_router_z_loss": 1.015
+    }
+  },
+  "source_sha256": {
+    "temp/fa2_local_20261018/probe.py": "49555bb9a5cd7821d243c60a93c4ccceac24a92371076741a242926581796018",
+    "temp/fa2_local_20261018/benchmark_queue.py": "8296c24dfbae2dc3828372ce77823d352d1535fc51419ed576b8712c483d109c",
+    "tests/bdot/gpu_probe.py": "7f682c2d0cd4cdcd23926ae222f299df44469ac0699910f44a0b0d39dcec540f",
+    "tests/ml/fa4_gpu_probe.py": "8af2b1b499f5ae66723b10d4cec8d4ade0712aca87a55d66bced3eb443b36c72",
+    "scripts/benchmark_bdot.py": "486cfde5cb991629580ba4170abcd466773f0a6cc3c5061ee333f913313b6c00",
+    "packed_fa4.py": "0e2fb01603c7fdcb1ac40d4fb85c4838b127d5fc54d643ff6728bce3d08304be",
+    "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+    "bdot/model.py": "86d99f684e524f6dba53f879644b2b5fe47e63859681887fd675817fa3250a0f"
+  }
+}

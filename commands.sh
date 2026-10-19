@@ -1,2 +1,2 @@
-#i envs/train.txt envs/eval.txt +a
-#th2-dot-new-node-install-envs-20261018-a01
+#i envs/train_fa2.txt +a
+#th2-fa2-isolated-env-20261019-a01

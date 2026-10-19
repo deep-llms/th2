@@ -1,5 +1,42 @@
 # Current task
 
+## Isolated B200 FA2 environment — installation request, 2026-10-19
+
+The user authorized creating `train_fa2` for a later FA2 comparison without
+modifying the current training environment. Submit only
+`#i envs/train_fa2.txt +a`, job `th2-fa2-isolated-env-20261019-a01`, to th2.
+The Python 3.11 spec uses `fresh: false`, retains the existing torch/HF pins,
+and requests the exact FA2 2.8.3.post2 CUDA 13 / torch 2.14 / C++11 ABI wheel.
+The upstream release lacks this wheel; internal runner availability is unknown.
+If missing, the operator must supply a matching build. Do not change torch or
+reuse the local torch 2.8 wheel merely to complete installation.
+
+See [installation and verification notes](FA2_B200_ENVIRONMENT_20261019.md).
+Production environment specs, model code and drivers are unchanged. Installation
+is unverified; no GPU tests/training/process stops are queued. Continue to defer
+Dropbox monitoring until the user asks. The replacement Dropbox label recorded
+in PROJECT_NOTES is 6Y3O; its hostname/runtime remain unverified. DOT source
+commands.sh stays inactive; only the execution checkout carries the #i action.
+
+## Local FA2 comparison — completed, 2026-10-18
+
+The user asked whether stable FA2 should replace FA4, then requested testing on
+the development machine only. FA2 2.8.3.post2 passes the local A100 kernel,
+native-Qwen and routed B-DOT numerical, causality/isolation and activation
+checkpointing checks. Two full-update timing repeats per model/backend give
+FA2 throughput gains versus dense isolated SDPA of 11.22% for native Qwen,
+9.76% for matched D, and 1.01% for hard mixed routing. The routed difference
+is small relative to variation. All twelve runs completed; used GPUs are free.
+
+This uses an isolated package overlay and the existing local torch 2.8.0+cu126
+test runtime. Production model/backend code, train_env and drivers are unchanged.
+The test reuses the FA4 packed-layout transport but executes the real FA2 kernel;
+receipts label that substitution explicitly. There is no public FA2 training
+option yet. This is not B200 performance, distributed/resume or long-run evidence.
+See [report](FA2_LOCAL_VERIFICATION_20261018.md) and
+[receipt](results/fa2_local_20261018.json). No new push or remote action occurred;
+th2 still has the installation commit `e2dabb0`. Dropbox remains unchecked.
+
 ## Replacement node environment installation — 2026-10-18
 
 The user confirms q359 is dead and requests an installation command pushed to

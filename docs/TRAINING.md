@@ -34,6 +34,9 @@ The runner installs these as conda environments `train` and `eval` under its
 Python 3.11 prefix. Both specs include the tested CUDA 13 FA4 dependencies;
 `eval` additionally includes the pinned lm-eval Hugging Face integration and
 SentencePiece. Each file is self-contained for the controller installer.
+`envs/train_fa2.txt` separately requests an experimental FA2 environment with
+matching shared pins; its compiled wheel availability and B200 behavior are
+unverified. See [FA2 environment notes](FA2_B200_ENVIRONMENT_20261019.md).
 Add W&B or TensorBoard only if requested.
 Tested locally on CPU with torch 2.14.0+cu130, transformers 5.9.0,
 datasets 4.8.5 and accelerate 1.13.0; these are a test receipt, not a GPU lockfile.

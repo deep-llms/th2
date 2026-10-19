@@ -192,3 +192,33 @@ Eval retains the project's lm-eval 0.4.13 pin, with HF support and SentencePiece
 Installation and GPU imports must be verified later; do not monitor Dropbox
 until the user asks. Replacement node identity/mapping is pending, so old
 q359 launchers and environment paths must not be reused without inspection.
+
+On 2026-10-19 the user supplied the replacement node's Dropbox folder,
+`deep-llms_th2_thiennh-p6-6y3o` (label `6Y3O`). Its shared URL is stored only in
+ignored `temp/dot_th2_6y3o/dropbox_folders.txt`. Machine identity, GPU count,
+paths and `#i` installation results are still unverified, pending the first
+status listing.
+
+## FA2 local comparison — 2026-10-18
+
+Stable FA2 2.8.3.post2 passes local A100 numerical/model/packing checks via a
+test-only kernel substitution. In two repeats of full HF Trainer updates,
+throughput versus dense isolated SDPA improves 11.22% for native Qwen, 9.76%
+for matched D and only 1.01% for mixed hard routing (within observed variation).
+See [report](FA2_LOCAL_VERIFICATION_20261018.md). The local CUDA-compatible
+torch 2.8 runtime differs from B200's pinned runtime; A100 cannot run the pinned
+FA4 backward. No FA2-versus-FA4 B200 ranking follows from these measurements.
+No production backend, environment specification, driver or remote command was
+changed. Keep the B200 install directive in place until the user requests a check.
+
+## Isolated FA2 runtime request — 2026-10-19
+
+The user authorized a separate `train_fa2` environment. Its standalone spec
+preserves the production torch 2.14.1/HF pins and requests a matching FA2
+2.8.3.post2 CUDA 13 compiled wheel through `#i envs/train_fa2.txt +a` only.
+The production `train` and `eval` specs are unchanged. The required wheel is
+not an upstream release asset; runner-store availability and installation are
+unverified. A missing-wheel result requires an operator-supplied matching build,
+not a silent torch downgrade or a mismatched wheel. See
+[environment notes](FA2_B200_ENVIRONMENT_20261019.md). No GPU work or Dropbox
+monitoring is part of this installation request.
