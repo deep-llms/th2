@@ -1,5 +1,31 @@
 # Current task
 
+## Node health after the failed FA2 request — 2026-10-19
+
+The user emphasized preserving B200 stability. Read-only inspection `161d804`
+completed at **23:27:14 UTC** on 6Y3O. All eight GPUs respond with unchanged
+UUIDs and driver 580.167.08, zero volatile uncorrectable ECC counts, and the
+same GPU PIDs 500–507. Their parent 433 runs `/tmp/llm_pretrain_burn.py` through
+system Python 3.10; all eight GPUs remain 98% busy. No processes were signaled.
+`train` and `eval` match the earlier checked versions and again pass core/FA4
+imports. Host available RAM is about 1.83 TiB and local free disk about 24.1 TiB;
+cgroup OOM/kill counters are zero. No sign of damage was found in these checks.
+This is not a full hardware stress test or a pre-install file comparison.
+See [health receipt](results/b200_6y3o_health_20261019.json).
+
+No further install, build or GPU test was launched. commands.sh returns to #0.
+Future FA2 work must stay in `train_fa2` and a dedicated build directory,
+preserve production environments/system CUDA/drivers, and bound compiler
+parallelism after checking memory/disk availability.
+
+The user also identified the official PyPI FA2 source distribution. Dev-only
+inspection verified its published SHA256 and bundled CUTLASS header; the
+GitHub tag source archive omits that header. Both setup scripts include SM100
+build flags. An offline source build is another possible route, subject to
+toolchain/dependency verification; an operator-supplied wheel is not the only
+option. This corrects the overly restrictive earlier wording below. No source
+archive has been downloaded to B200 and no source build has been submitted.
+
 ## FA2 installation failure diagnosed — 2026-10-19
 
 The user requested the reason for the failed FA2 install. Read-only discovery
@@ -13,9 +39,10 @@ This confirms an unavailable requested prebuilt dependency, before FA2 kernel
 execution; the controller's upstream wheel-store contents were not audited.
 
 The install specification named the runtime-compatible artifact without first
-establishing its availability. The corrective prerequisite is a matching
+establishing its availability. Reusing that prebuilt request requires a matching
 torch 2.14.1 / CUDA 13 / Python 3.11 / C++11-ABI FA2 build made available through
-the operator's wheel store. Do not repeat the same failed request, substitute
+the operator's wheel store; see the source-build alternative above. Do not
+repeat the same failed request, substitute
 an incompatible wheel, or change production torch/FA4 environments.
 
 See [failure receipt](results/fa2_install_failure_20261019.json) and

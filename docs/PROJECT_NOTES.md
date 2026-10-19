@@ -252,3 +252,22 @@ prebuilt dependency lookup failure, not a failed GPU numerical test. No
 environment/driver or workload changes were made. See
 [diagnostic receipt](results/fa2_install_failure_20261019.json). The detailed
 diagnosis supersedes the earlier unknown-cause note; commands.sh returns to #0.
+
+The user then identified the PyPI source archive and emphasized node stability.
+Source compilation is an alternative to the prebuilt-wheel request; the earlier
+wording that only an operator-supplied wheel could resolve this was too strict.
+The verified PyPI archive bundles CUTLASS headers and has an SM100 build target;
+the GitHub automatic source archive omits the CUTLASS submodule. No B200 source
+download/build was submitted. Any future attempt stays isolated, with bounded
+compiler parallelism and verified resources/toolchain; preserve production
+environments, system CUDA and drivers.
+
+Fresh read-only check `161d804` at 23:27 UTC found all eight GPUs responsive,
+same UUIDs/driver/PID mappings, zero volatile uncorrectable ECC and cgroup OOM
+counters, about 1.83 TiB host RAM available and 24.1 TiB disk free. Production
+versions match the preceding snapshot and core/FA4 imports pass. GPU PIDs
+500–507 belong to burn launcher 433 (`/tmp/llm_pretrain_burn.py`, system Python
+3.10), independent of the project environments. No process or environment
+changes were made. See [health receipt](results/b200_6y3o_health_20261019.json).
+These checks show no sign of damage, without claiming a full hardware audit
+or pre-install file comparison. commands.sh returns to #0; no FA2 retry queued.
