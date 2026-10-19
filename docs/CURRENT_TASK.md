@@ -21,7 +21,13 @@ Package metadata fingerprints for train/eval and existing train_fa2 packages
 are compared before/after installation. FA2 extension imports are required for
 success; GPU numerics remain a separate task.
 
-Planned fresh output: `/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a01/`.
+Build a01 (`6d551cb`) passed the CUDA compiler check but failed in 16 seconds:
+FA2 requests C++17 while torch headers use C++20 (`std::strong_ordering`).
+The log was retrieved by `ee142e1`; no FA2 installation took place. The retry
+changes only four exact C++ standard flags in extracted setup.py to C++20,
+records original/patched hashes, and labels the wheel accordingly. Kernel
+source remains unchanged. Fresh retry output:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a02/`.
 Expect `build.log`, `build_config.json`, a built wheel and `result.json`; failures
 must retain logs and cannot be counted as success. Local helper validation:
 syntax/help, wrong-interpreter refusal before writes, official archive member

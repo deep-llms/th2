@@ -122,12 +122,21 @@ def main() -> None:
     source = work / 'source/flash_attn-2.8.3.post2'
     if not (source / 'csrc/cutlass/include/cutlass/cutlass.h').is_file():
         raise RuntimeError('Bundled CUTLASS header missing')
+    # This pinned PyTorch runtime uses C++20 constructs in its public headers.
+    # FA2 2.8.3.post2 hard-codes C++17. Patch only its build flags, not kernels.
+    setup = source / 'setup.py'
+    setup_before = digest(setup)
+    setup_text = setup.read_text()
+    if setup_text.count('"-std=c++17"') != 4:
+        raise RuntimeError('Unexpected upstream compiler flags; refuse a broad patch')
+    setup.write_text(setup_text.replace('"-std=c++17"', '"-std=c++20"'))
 
     env = dict(os.environ)
     env.update(CUDA_HOME=str(cuda), PATH=f'{PREFIX}/bin:{cuda}/bin:' + env['PATH'],
                CPATH=str(cuda / 'include/cccl'),
                CUDA_VISIBLE_DEVICES='', FLASH_ATTENTION_FORCE_BUILD='TRUE',
                FLASH_ATTENTION_SKIP_CUDA_BUILD='FALSE', BUILD_TARGET='cuda',
+               FLASH_ATTN_LOCAL_VERSION='cu13torch2.14cxx11abitrue.cxx20.sm100',
                FLASH_ATTN_CUDA_ARCHS='100', MAX_JOBS='4', NVCC_THREADS='1',
                OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1',
                PIP_NO_INDEX='1', PIP_DISABLE_PIP_VERSION_CHECK='1', PIP_NO_CACHE_DIR='1',
@@ -137,6 +146,8 @@ def main() -> None:
                '--no-cache-dir', '--verbose', '--wheel-dir', str(work / 'wheels'), str(source)]
     report = dict(source_sha256=SOURCE_SHA256, torch=torch.__version__, cuda_home=str(cuda),
                   nvcc=nvcc, max_jobs=4, nvcc_threads=1, arch='100', per_process_as_limit=64 * GIB,
+                  cxx_standard=20, setup_original_sha256=setup_before,
+                  setup_patched_sha256=digest(setup), build_flag_patch_count=4,
                   tree_rss_limit=96 * GIB, timeout_seconds=5400, stage='building')
     (work / 'build_config.json').write_text(json.dumps(report, indent=2) + '\n')
     started = time.monotonic()
@@ -147,7 +158,7 @@ def main() -> None:
                                 '__global__ void compiler_check(float* p) { p[0] = 1.0f; }\n')
         compiler = subprocess.Popen(
             ['nice', '-n', '10', 'prlimit', f'--as={64 * GIB}', '--',
-             str(cuda / 'bin/nvcc'), '-arch=sm_100', '-c', str(smoke_source),
+             str(cuda / 'bin/nvcc'), '-std=c++20', '-arch=sm_100', '-c', str(smoke_source),
              '-o', str(work / 'compiler_check.o')], env=env, start_new_session=True)
         try:
             if compiler.wait(timeout=120):
