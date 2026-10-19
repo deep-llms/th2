@@ -1,0 +1,145 @@
+{
+  "inspection_commit": "5f06832788cc7488161d36c9f0fd09bc523e60a7",
+  "job": "th2-6y3o-attention-env-inspect-20261019-a01",
+  "scope": "Read-only package/import and nvidia-smi inspection; no tensor execution or GPU process changes",
+  "host": {
+    "utc": "2026-10-19T23:05:47.078319+00:00",
+    "hostname": "thiennh-p6-6y3o-worker-0",
+    "cwd": "/mnt/local/deep-llms_th2"
+  },
+  "environments": {
+    "train": {
+      "python": "3.11.15 (main, Jun 11 2026, 15:20:16) [GCC 14.3.0]",
+      "executable": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+      "prefix": "/mnt/local/conda-py311/envs/train",
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "tokenizers": "0.22.2",
+        "safetensors": "0.8.0",
+        "flash-attn": null,
+        "flash-attn-4": "4.0.0b33",
+        "nvidia-cutlass-dsl": "4.8.0",
+        "quack-kernels": "0.6.5",
+        "einops": "0.8.2",
+        "lm-eval": null,
+        "nvidia-cuda-runtime-cu13": null,
+        "nvidia-cudnn-cu13": "9.24.0.43"
+      },
+      "imports": {
+        "torch": "ok",
+        "transformers": "ok",
+        "accelerate": "ok",
+        "datasets": "ok",
+        "tokenizers": "ok",
+        "safetensors": "ok",
+        "FA4": "ok"
+      },
+      "torch_cuda": "13.0",
+      "cxx11_abi": true
+    },
+    "eval": {
+      "python": "3.11.15 (main, Jun 11 2026, 15:20:16) [GCC 14.3.0]",
+      "executable": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+      "prefix": "/mnt/local/conda-py311/envs/eval",
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "tokenizers": "0.22.2",
+        "safetensors": "0.8.0",
+        "flash-attn": null,
+        "flash-attn-4": "4.0.0b33",
+        "nvidia-cutlass-dsl": "4.8.0",
+        "quack-kernels": "0.6.5",
+        "einops": "0.8.2",
+        "lm-eval": "0.4.13",
+        "nvidia-cuda-runtime-cu13": null,
+        "nvidia-cudnn-cu13": "9.24.0.43"
+      },
+      "imports": {
+        "torch": "ok",
+        "transformers": "ok",
+        "accelerate": "ok",
+        "datasets": "ok",
+        "tokenizers": "ok",
+        "safetensors": "ok",
+        "FA4": "ok"
+      },
+      "torch_cuda": "13.0",
+      "cxx11_abi": true
+    },
+    "train_fa2": {
+      "python": "3.11.15 (main, Jun 11 2026, 15:20:16) [GCC 14.3.0]",
+      "executable": "/mnt/local/conda-py311/envs/train_fa2/bin/python3.11",
+      "prefix": "/mnt/local/conda-py311/envs/train_fa2",
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "tokenizers": "0.22.2",
+        "safetensors": "0.8.0",
+        "flash-attn": null,
+        "flash-attn-4": null,
+        "nvidia-cutlass-dsl": null,
+        "quack-kernels": null,
+        "einops": "0.8.2",
+        "lm-eval": null,
+        "nvidia-cuda-runtime-cu13": null,
+        "nvidia-cudnn-cu13": "9.24.0.43"
+      },
+      "imports": {
+        "torch": "ok",
+        "transformers": "ok",
+        "accelerate": "ok",
+        "datasets": "ok",
+        "tokenizers": "ok",
+        "safetensors": "ok"
+      },
+      "torch_cuda": "13.0",
+      "cxx11_abi": true
+    }
+  },
+  "gpu_queries": [
+    {
+      "args": [
+        "--query-gpu=index,name,uuid,driver_version,memory.total,memory.used,utilization.gpu",
+        "--format=csv"
+      ],
+      "returncode": 0,
+      "stdout": "index, name, uuid, driver_version, memory.total [MiB], memory.used [MiB], utilization.gpu [%]\n0, NVIDIA B200, GPU-90eef51a-3614-2801-475c-b7b7b592397c, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n1, NVIDIA B200, GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n2, NVIDIA B200, GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n3, NVIDIA B200, GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n4, NVIDIA B200, GPU-b755571d-58df-0910-0013-12fc8f77beeb, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n5, NVIDIA B200, GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n6, NVIDIA B200, GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n7, NVIDIA B200, GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328, 580.167.08, 183359 MiB, 2510 MiB, 98 %\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--query-compute-apps=pid,gpu_uuid,used_memory",
+        "--format=csv"
+      ],
+      "returncode": 0,
+      "stdout": "pid, gpu_uuid, used_gpu_memory [MiB]\n500, GPU-90eef51a-3614-2801-475c-b7b7b592397c, 2496 MiB\n501, GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c, 2496 MiB\n502, GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1, 2496 MiB\n503, GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e, 2496 MiB\n504, GPU-b755571d-58df-0910-0013-12fc8f77beeb, 2496 MiB\n505, GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2, 2496 MiB\n506, GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6, 2496 MiB\n507, GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328, 2496 MiB\n",
+      "stderr": ""
+    }
+  ],
+  "evidence": [
+    {
+      "local_path": "temp/dot_th2_6y3o/runtime_20261019_a01.log",
+      "sha256": "52fb5fc9a493c69240b8d89c8909236081d9032ac4c47216139c8ef0086f3388",
+      "bytes": 4508
+    },
+    {
+      "local_path": "temp/dot_th2_6y3o/status_20261019_a03.log",
+      "sha256": "4f2424a27923cac4dd8fe9718a06d3da80f4662e2f7ce3c44f717abd57b5ae46",
+      "bytes": 3386
+    }
+  ],
+  "limitations": [
+    "FA2 installer exited 3; detailed installer error was not exported by ordinary #2.",
+    "train_fa2 base libraries import, but flash-attn is absent. Missing wheel is a possible cause, not established by the returned installer summary.",
+    "FA4 import success does not verify CUDA kernels, training, numerical accuracy or throughput.",
+    "GPU process identities were not inspected; they cannot be classified as burns from this receipt."
+  ]
+}

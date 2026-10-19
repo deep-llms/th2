@@ -4,14 +4,32 @@
 
 The user clarified that Dropbox checks may resume freely now that the new
 6Y3O folder is available. This supersedes the earlier monitoring deferral.
-At 23:02 UTC, the downloaded `_RUN_STATUS_.log` (Dropbox modified 22:48:16 UTC)
-reports `OK env eval`, `OK env train`, and overall success for installation
-commit `e2dabb0`. The isolated FA2 installation `960bbc9` reports
-`FAIL(exit=3) env train_fa2`. Package-level details are not yet returned;
-retrieve the full installer log before diagnosing or changing the environment.
-Local evidence: `temp/dot_th2_6y3o/status_20261019_a01.log`, SHA256
-`41bcba6dd634c2900853b9db9659df1a3412b370320d7dac479f9238a879fc1d`.
-Runtime imports, GPU identity and FA2 wheel availability remain unverified.
+The controller reports installation success for `train` and `eval` at
+`e2dabb0`; the separate `train_fa2` request at `960bbc9` failed with exit 3.
+Ordinary log export `2efa752` could not retrieve installer details because
+there were no normal job logs yet. No installation was repeated.
+
+Read-only inspection `5f06832`, job
+`th2-6y3o-attention-env-inspect-20261019-a01`, completed on
+`thiennh-p6-6y3o-worker-0` (started **2026-10-19 23:05:47 UTC**). All three
+environments have the expected torch 2.14.1, CUDA 13.0, Python 3.11.15 and HF
+pins; core imports pass. `train` and `eval` also import FA4 4.0.0b33 successfully.
+Eval has lm-eval 0.4.13 installed; its task execution was not tested.
+`train_fa2` has **no flash-attn package**, so installation is incomplete and
+FA2 testing remains blocked. The exact installer error/wheel-store availability
+is still unknown; do not diagnose exit 3 from the summary alone.
+
+The node exposes eight B200s with driver 580.167.08 and 183359 MiB each. All
+eight had active GPU processes; their identities were not checked or changed.
+This inspection did not allocate tensors, test kernels or launch training.
+Verified package/import data and raw-log hashes:
+[receipt](results/b200_6y3o_environment_20261019.json). Raw files:
+`temp/dot_th2_6y3o/runtime_20261019_a01.log` and `status_20261019_a03.log`.
+Source and execution commands.sh return to **#0** with this receipt publication.
+
+Next: obtain the FA2 installer detail or operator confirmation of the required
+compatible wheel. Preserve production environments and driver. CUDA numerical,
+throughput and resume verification on this node remains separate future work.
 
 ## Isolated B200 FA2 environment — installation request, 2026-10-19
 
@@ -25,11 +43,10 @@ If missing, the operator must supply a matching build. Do not change torch or
 reuse the local torch 2.8 wheel merely to complete installation.
 
 See [installation and verification notes](FA2_B200_ENVIRONMENT_20261019.md).
-Production environment specs, model code and drivers are unchanged. Installation
-is unverified; no GPU tests/training/process stops are queued. The earlier
-Dropbox deferral is superseded by the authorization above. The replacement label recorded
-in PROJECT_NOTES is 6Y3O; its hostname/runtime remain unverified. DOT source
-commands.sh stays inactive; only the execution checkout carries the #i action.
+Production environment specs, model code and drivers are unchanged. The request
+failed and its partial runtime was inspected as recorded above; no GPU tests,
+training or process stops are queued. The earlier Dropbox deferral is superseded
+by the authorization above. Both commands.sh copies return to #0 after inspection.
 
 ## Local FA2 comparison — completed, 2026-10-18
 

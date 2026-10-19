@@ -1,6 +1,7 @@
 # Isolated FA2 environment for the replacement B200
 
-The user authorized creating a separate FA2 test environment. Submit only:
+The user authorized creating a separate FA2 test environment. The submitted
+request was:
 
 ```text
 #i envs/train_fa2.txt +a
@@ -19,6 +20,23 @@ There are no training launches, process stops or GPU allocations in this
 installation request. The user subsequently authorized routine Dropbox checks
 on 2026-10-19 now that the replacement folder is available.
 
+## Observed installation status — 2026-10-19
+
+The controller reports `train_fa2` installation failure (exit 3) for commit
+`960bbc9`. Read-only inspection `5f06832` at 23:05 UTC confirms the conda
+environment exists and the shared torch/HF pins and core imports pass, but
+**flash-attn is not installed**. FA2 is not usable yet. The controller summary
+does not contain the actual installer error; an ordinary #2 export could not
+retrieve installer details. A missing compatible wheel is possible, not proven.
+
+On `thiennh-p6-6y3o-worker-0`, the separate production `train` and `eval`
+environments have their expected versions and successfully import FA4 4.0.0b33.
+Their runtime is Python 3.11.15, torch 2.14.1, CUDA 13.0, C++11 ABI enabled.
+The node has eight B200s, driver 580.167.08. No CUDA workload or process stop
+was performed. See the [verified inspection receipt](results/b200_6y3o_environment_20261019.json).
+commands.sh returns to #0. Do not resubmit an installation without diagnosing
+the failure or confirming the required wheel is available.
+
 ## Required compiled wheel
 
 FA2 is a compiled PyTorch extension. The matching artifact requested through
@@ -30,7 +48,7 @@ flash_attn-2.8.3.post2+cu13torch2.14cxx11abiTRUE-cp311-cp311-linux_x86_64.whl
 
 This name follows the upstream [2.8.3.post2 build script](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3.post2/setup.py).
 The local pinned torch 2.14.1 package reports CUDA 13.0 and C++11 ABI enabled.
-The actual replacement-node runtime must still be verified before use.
+The replacement-node inspection confirms these runtime and ABI values.
 
 The matching wheel is absent from the upstream release asset list inspected
 for the local FA2 test. Its availability in the runner's internal wheel store
@@ -43,7 +61,8 @@ that private guide is not included in Git.
 
 ## Verification before the comparison
 
-When the user requests the new-node check:
+The import/identity inspection above completes part of this checklist; kernel
+execution and training comparisons still require their own verification:
 
 1. Inspect every package result in the installation log. A created conda
    directory or successful torch installation alone does not mean FA2 installed.
@@ -64,5 +83,5 @@ When the user requests the new-node check:
 
 The local probe currently uses a test-only FA2 substitution, not a public
 `--attention_backend fa2` option. No production default is changed by this
-environment specification. B200 FA2 installation, numerics, throughput and
-resume behavior remain unverified until actual receipts are returned.
+environment specification. FA2 installation is incomplete; B200 FA2 numerics,
+throughput and resume behavior remain untested.

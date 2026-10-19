@@ -228,3 +228,15 @@ deferral applied only while waiting for a replacement share. The first retrieved
 status confirms installer success for `train` and `eval` at `e2dabb0`, but the
 isolated `train_fa2` request at `960bbc9` failed with exit 3. Retrieve the detailed
 installer log before attributing that failure or modifying any environment.
+
+Read-only inspection `5f06832` on 2026-10-19 at 23:05 UTC verifies replacement
+host `thiennh-p6-6y3o-worker-0`, eight B200s and driver 580.167.08. Both production
+environments match the requested top-level pins and import the core libraries
+and FA4 4.0.0b33. The partial `train_fa2` runtime has the same shared torch/HF
+pins and successful core imports, but no flash-attn package. Its installer
+failure cause is not returned by the status summary; wheel availability remains
+unconfirmed. No environment/driver changes or GPU workload changes were made
+during inspection. Eight active GPU processes were observed but not identified
+as burns. This is package/import evidence, not CUDA kernel or training evidence.
+See [receipt](results/b200_6y3o_environment_20261019.json) for exact versions,
+GPU queries and downloaded-log hashes. Both commands.sh copies return to #0.
