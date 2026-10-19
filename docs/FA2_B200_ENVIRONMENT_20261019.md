@@ -16,8 +16,8 @@ to 0.8.2, matching the successful local FA2 test runtime.
 
 The production `train`/`eval` specifications and NVIDIA driver are unchanged.
 There are no training launches, process stops or GPU allocations in this
-installation request. The earlier instruction to defer Dropbox monitoring
-remains in effect.
+installation request. The user subsequently authorized routine Dropbox checks
+on 2026-10-19 now that the replacement folder is available.
 
 ## Required compiled wheel
 

@@ -222,3 +222,9 @@ unverified. A missing-wheel result requires an operator-supplied matching build,
 not a silent torch downgrade or a mismatched wheel. See
 [environment notes](FA2_B200_ENVIRONMENT_20261019.md). No GPU work or Dropbox
 monitoring is part of this installation request.
+
+On 2026-10-19 the user restored ordinary Dropbox checks for 6Y3O; the earlier
+deferral applied only while waiting for a replacement share. The first retrieved
+status confirms installer success for `train` and `eval` at `e2dabb0`, but the
+isolated `train_fa2` request at `960bbc9` failed with exit 3. Retrieve the detailed
+installer log before attributing that failure or modifying any environment.

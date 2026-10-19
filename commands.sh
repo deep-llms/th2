@@ -1,2 +1,2 @@
-#i envs/train_fa2.txt +a
-#th2-fa2-isolated-env-20261019-a01
+#2 +a
+#th2-6y3o-env-install-log-20261019-a01

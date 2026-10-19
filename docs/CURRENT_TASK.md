@@ -1,5 +1,18 @@
 # Current task
 
+## Replacement-node Dropbox checks authorized — 2026-10-19
+
+The user clarified that Dropbox checks may resume freely now that the new
+6Y3O folder is available. This supersedes the earlier monitoring deferral.
+At 23:02 UTC, the downloaded `_RUN_STATUS_.log` (Dropbox modified 22:48:16 UTC)
+reports `OK env eval`, `OK env train`, and overall success for installation
+commit `e2dabb0`. The isolated FA2 installation `960bbc9` reports
+`FAIL(exit=3) env train_fa2`. Package-level details are not yet returned;
+retrieve the full installer log before diagnosing or changing the environment.
+Local evidence: `temp/dot_th2_6y3o/status_20261019_a01.log`, SHA256
+`41bcba6dd634c2900853b9db9659df1a3412b370320d7dac479f9238a879fc1d`.
+Runtime imports, GPU identity and FA2 wheel availability remain unverified.
+
 ## Isolated B200 FA2 environment — installation request, 2026-10-19
 
 The user authorized creating `train_fa2` for a later FA2 comparison without
@@ -13,8 +26,8 @@ reuse the local torch 2.8 wheel merely to complete installation.
 
 See [installation and verification notes](FA2_B200_ENVIRONMENT_20261019.md).
 Production environment specs, model code and drivers are unchanged. Installation
-is unverified; no GPU tests/training/process stops are queued. Continue to defer
-Dropbox monitoring until the user asks. The replacement Dropbox label recorded
+is unverified; no GPU tests/training/process stops are queued. The earlier
+Dropbox deferral is superseded by the authorization above. The replacement label recorded
 in PROJECT_NOTES is 6Y3O; its hostname/runtime remain unverified. DOT source
 commands.sh stays inactive; only the execution checkout carries the #i action.
 
