@@ -16,7 +16,13 @@ timeout. GPU visibility is disabled. Production package metadata and existing
 isolated-environment package metadata are checked before/after; compiled
 extension imports are required. The build directory is
 `/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a01/`.
-Success is pending the final `result.json`; submission alone is not success.
+Attempt a01 failed before installation: the torch headers use C++20 while FA2
+requests C++17. Retry `2f8b97e` changes exactly four compiler-standard flags
+in the extracted setup.py to C++20 and records both setup hashes. No kernel
+source is changed. The wheel carries a local build tag identifying CUDA 13,
+torch 2.14, C++20 and SM100. Retry directory ends in `a02`; its initial log
+confirms compilation progress. Success is pending the final `result.json`;
+submission alone is not success.
 
 `envs/train_fa2.txt` now lists the runtime and source-build prerequisites;
 it no longer requests the nonexistent prebuilt wheel. Installing that file
