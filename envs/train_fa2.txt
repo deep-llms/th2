@@ -2,7 +2,8 @@
 # fresh: false
 # python: 3.11
 # Isolated FA2 test environment; preserve the train/eval environments.
-# Shared model/data pins match train.txt. Install the matching compiled wheel.
+# Shared model/data pins match train.txt. These are source-build prerequisites.
+# FA2 is built offline from the verified PyPI archive after this #i succeeds.
 pip
 torch==2.14.1
 transformers==5.9.0
@@ -11,4 +12,14 @@ datasets==4.8.5
 tokenizers==0.22.2
 safetensors==0.8.0
 einops==0.8.2
-flash_attn-2.8.3.post2+cu13torch2.14cxx11abiTRUE-cp311-cp311-linux_x86_64.whl
+ninja==1.13.0
+packaging==26.0
+wheel==0.47.0
+setuptools==83.0.0
+psutil==7.2.2
+# Environment-local CUDA 13 compiler and headers; no driver/system CUDA changes.
+nvidia-cuda-nvcc==13.0.88
+nvidia-cuda-crt==13.0.88
+nvidia-nvvm==13.0.88
+nvidia-cuda-cccl==13.0.85
+nvidia-cuda-runtime==13.0.96
