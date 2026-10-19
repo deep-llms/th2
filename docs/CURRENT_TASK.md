@@ -1,5 +1,29 @@
 # Current task
 
+## FA2 installation failure diagnosed — 2026-10-19
+
+The user requested the reason for the failed FA2 install. Read-only discovery
+`6bb2024` located `/mnt/local/_env_status/train_fa2.status.json`; inspection
+`d3434c5` at **23:18:04 UTC** returned its exact failure:
+`result: missing`, `source: gap`, `overall: incomplete`. Its sole gap is
+`flash_attn-2.8.3.post2+cu13torch2.14cxx11abiTRUE-cp311-cp311-linux_x86_64.whl`.
+Other requested packages report success. The node cache contains no matching
+FA2 wheel. A fresh official release asset check also finds no matching wheel.
+This confirms an unavailable requested prebuilt dependency, before FA2 kernel
+execution; the controller's upstream wheel-store contents were not audited.
+
+The install specification named the runtime-compatible artifact without first
+establishing its availability. The corrective prerequisite is a matching
+torch 2.14.1 / CUDA 13 / Python 3.11 / C++11-ABI FA2 build made available through
+the operator's wheel store. Do not repeat the same failed request, substitute
+an incompatible wheel, or change production torch/FA4 environments.
+
+See [failure receipt](results/fa2_install_failure_20261019.json) and
+[environment notes](FA2_B200_ENVIRONMENT_20261019.md). Local sanitized diagnostic:
+`temp/dot_th2_6y3o/fa2_failure_detail_20261019_a01.log`. No reinstall, source
+build, training or process stop was performed. Source and execution commands.sh
+return to #0 with this diagnosis publication.
+
 ## Replacement-node Dropbox checks authorized — 2026-10-19
 
 The user clarified that Dropbox checks may resume freely now that the new
@@ -16,8 +40,8 @@ environments have the expected torch 2.14.1, CUDA 13.0, Python 3.11.15 and HF
 pins; core imports pass. `train` and `eval` also import FA4 4.0.0b33 successfully.
 Eval has lm-eval 0.4.13 installed; its task execution was not tested.
 `train_fa2` has **no flash-attn package**, so installation is incomplete and
-FA2 testing remains blocked. The exact installer error/wheel-store availability
-is still unknown; do not diagnose exit 3 from the summary alone.
+FA2 testing remains blocked. At this stage the installer error was unknown;
+the subsequent diagnostic above establishes the missing-wheel result.
 
 The node exposes eight B200s with driver 580.167.08 and 183359 MiB each. All
 eight had active GPU processes; their identities were not checked or changed.
@@ -27,9 +51,9 @@ Verified package/import data and raw-log hashes:
 `temp/dot_th2_6y3o/runtime_20261019_a01.log` and `status_20261019_a03.log`.
 Source and execution commands.sh return to **#0** with this receipt publication.
 
-Next: obtain the FA2 installer detail or operator confirmation of the required
-compatible wheel. Preserve production environments and driver. CUDA numerical,
-throughput and resume verification on this node remains separate future work.
+The subsequent diagnostic above resolves the installer error. Preserve
+production environments and driver. CUDA numerical, throughput and resume
+verification on this node remains separate future work.
 
 ## Isolated B200 FA2 environment — installation request, 2026-10-19
 

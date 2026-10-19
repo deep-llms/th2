@@ -240,3 +240,15 @@ during inspection. Eight active GPU processes were observed but not identified
 as burns. This is package/import evidence, not CUDA kernel or training evidence.
 See [receipt](results/b200_6y3o_environment_20261019.json) for exact versions,
 GPU queries and downloaded-log hashes. Both commands.sh copies return to #0.
+
+Follow-up `d3434c5` at 23:18 UTC diagnoses the FA2 failure from the node's
+`/mnt/local/_env_status/train_fa2.status.json`: the requested FA2 CUDA 13 /
+torch 2.14 / cp311 wheel is the sole `gap`, with `result: missing` and overall
+`incomplete`; other packages succeeded. No matching wheel is in the inspected
+node cache or the official release assets checked that evening. A compatible
+operator-supplied build is needed before retrying this installation. The request
+used the expected wheel name without establishing availability. This was a
+prebuilt dependency lookup failure, not a failed GPU numerical test. No
+environment/driver or workload changes were made. See
+[diagnostic receipt](results/fa2_install_failure_20261019.json). The detailed
+diagnosis supersedes the earlier unknown-cause note; commands.sh returns to #0.

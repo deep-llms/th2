@@ -26,8 +26,30 @@ The controller reports `train_fa2` installation failure (exit 3) for commit
 `960bbc9`. Read-only inspection `5f06832` at 23:05 UTC confirms the conda
 environment exists and the shared torch/HF pins and core imports pass, but
 **flash-attn is not installed**. FA2 is not usable yet. The controller summary
-does not contain the actual installer error; an ordinary #2 export could not
-retrieve installer details. A missing compatible wheel is possible, not proven.
+alone did not contain the actual installer error; an ordinary #2 export could
+not retrieve installer details.
+
+The subsequent read-only inspection `d3434c5` at **23:18:04 UTC** found the
+saved per-environment status at `/mnt/local/_env_status/train_fa2.status.json`.
+It explicitly reports:
+
+```text
+spec: flash_attn-2.8.3.post2+cu13torch2.14cxx11abiTRUE-cp311-cp311-linux_x86_64.whl
+result: missing
+source: gap
+overall: incomplete
+```
+
+This wheel is its only gap; other requested packages succeeded. The inspected
+node wheel cache has no matching file. The installer handles a `.whl` entry
+as an exact cached file, so this request does not compile FA2 from source.
+The failure occurred before FA2 kernel execution. See the
+[diagnostic receipt](results/fa2_install_failure_20261019.json).
+
+The specification requested the correctly named compatible artifact without
+confirming it was available. To proceed while keeping the shared runtime
+unchanged, the operator must supply a matching build through the supported
+wheel store. Repeating this unchanged request will not supply the missing file.
 
 On `thiennh-p6-6y3o-worker-0`, the separate production `train` and `eval`
 environments have their expected versions and successfully import FA4 4.0.0b33.
@@ -50,10 +72,11 @@ This name follows the upstream [2.8.3.post2 build script](https://github.com/Dao
 The local pinned torch 2.14.1 package reports CUDA 13.0 and C++11 ABI enabled.
 The replacement-node inspection confirms these runtime and ABI values.
 
-The matching wheel is absent from the upstream release asset list inspected
-for the local FA2 test. Its availability in the runner's internal wheel store
-is **unknown**. Requesting it does not establish installation success. If the
-installer reports it missing, the operator must provide a wheel built against
+The matching wheel is absent from the upstream release asset list, rechecked
+through the official GitHub API on 2026-10-19 at 23:14:57 UTC. Its 48 assets
+contain CUDA 12 / torch 2.4–2.8 wheels, with no torch 2.14 wheel. The runner
+reports the requested wheel **missing**; its controller-side store was not
+separately audited. The operator must provide a wheel built against
 torch 2.14.1/CUDA 13/Python 3.11 with SM100 support. Do not rename a torch 2.8
 wheel, silently downgrade torch, or run network package installation in a `#1`
 job. The runner's special-wheel rule was checked in the local operator guide;
@@ -64,8 +87,9 @@ that private guide is not included in Git.
 The import/identity inspection above completes part of this checklist; kernel
 execution and training comparisons still require their own verification:
 
-1. Inspect every package result in the installation log. A created conda
-   directory or successful torch installation alone does not mean FA2 installed.
+1. Resolve the missing wheel, then inspect every package result in a deliberate
+   retry. A conda directory or successful torch installation alone does not
+   mean FA2 installed.
 2. Resolve the actual `train` and `train_fa2` interpreter paths. The expected
    new path is `/mnt/local/conda-py311/envs/train_fa2/bin/python3.11`; never use
    an unqualified system `python` or mutate the production environment.
