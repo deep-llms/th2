@@ -1,5 +1,31 @@
 # Isolated FA2 environment for the replacement B200
 
+## Current retry — offline wheel build
+
+The user authorized the official-source installation after the missing-wheel
+diagnosis below. Dependency request `0fc0af9` successfully installed the CUDA
+13 compiler/header packages and Ninja into `train_fa2` only. The system CUDA
+12.9 compiler is unsuitable for the existing CUDA 13 PyTorch build and is not
+modified. Controller download `0c2daa0` successfully staged the verified PyPI
+source archive under `/mnt/local/_data/deep-llms_th2/build_inputs/`.
+
+Build request `6d551cb` uses `scripts/install_fa2_offline.py` to produce and
+install a matching wheel, entirely offline. It compiles SM100 only, with four
+CPU jobs, one NVCC thread, low CPU priority, memory limits and a 90-minute
+timeout. GPU visibility is disabled. Production package metadata and existing
+isolated-environment package metadata are checked before/after; compiled
+extension imports are required. The build directory is
+`/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a01/`.
+Success is pending the final `result.json`; submission alone is not success.
+
+`envs/train_fa2.txt` now lists the runtime and source-build prerequisites;
+it no longer requests the nonexistent prebuilt wheel. Installing that file
+alone does not install FA2. The historical diagnosis and original request
+below are retained as evidence. GPU numerics and throughput remain separate
+from installation/import verification.
+
+## Original prebuilt-wheel request
+
 The user authorized creating a separate FA2 test environment. The submitted
 request was:
 
