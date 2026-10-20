@@ -37,6 +37,26 @@ FiLM; native-equivalence tests turn FiLM off. They are different references.
 - Pilot queue default: D, P1-A, P1-B. R and the matching N follow explicit
   curriculum selection. The queue generator does not launch or select winners.
 
+## Stage 0a launch — 2026-10-20
+
+User authorized the minimal research queue after dispatch optimization.
+Launch d24bf55 on 6Y3O prepares and verifies the pinned English pool, then
+runs T12 → T14 → D → P1-A → P1-B under the existing GPU supervisor.
+All three pilots explicitly use FA4/grouped experts, seed 0 and the complete
+4,768-step / 96-warmup schedule; ordinary HF cache/order is shared. R/N await
+curriculum selection. No Phase B or extra seeds are queued.
+
+All 3,008 input hashes pass; exact raw-text overlap scan finds zero validation
+documents in training. Frozen validation contains 1,024 periodic / 9,704 final
+sequences. Accelerate config was copied and checked with accelerate env;
+known burns were reclaimed by identity, all eight GPUs were empty before tests.
+T12 has exact state and zero loss differences on every rank. Full-width T14
+passes: training gap 0.003070 and validation gap 0.004109 nats (<0.01).
+D began at 19:51:44 UTC; automatic burn restoration covers completion/failure.
+See [launch evidence](results/bdot_pilot_launch_20261020.json) and CURRENT_TASK
+for live-state timestamp and output paths. The old native 5k run remains a
+separate long-schedule reference, not this pilot's D.
+
 ## Route study and scientific-review decisions
 
 `eval/packed_ppl.py --route_study true` reuses packed evaluation for full selected

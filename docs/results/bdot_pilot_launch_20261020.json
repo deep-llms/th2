@@ -1,0 +1,489 @@
+{
+  "status": "gates_passed_D_running",
+  "launch_commit": "d24bf55bb3bf35689f6fa8ae49c14fb680f246aa",
+  "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01",
+  "queue": [
+    "T12",
+    "T14",
+    "D",
+    "P1-A",
+    "P1-B"
+  ],
+  "T12": {
+    "status": "passed",
+    "world_size": 8,
+    "steps": 200,
+    "schedule_steps": 1000,
+    "split": 100,
+    "soft_split": 20,
+    "results": [
+      {
+        "case": "resume_hard",
+        "rank": 0,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 1,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 2,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 3,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 4,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 5,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 6,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 7,
+        "status": "passed",
+        "errors": [],
+        "batches": 200,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 0,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 1,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 2,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 3,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 4,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 5,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 6,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 7,
+        "status": "passed",
+        "errors": [],
+        "batches": 40,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      }
+    ],
+    "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
+  },
+  "T14_initial": {
+    "status": "passed",
+    "initialization": "random from config; no pretrained weights",
+    "seed": 0,
+    "native_mapped_state_sha256": "e45d94d267b2c4a557971c4b4f206a19f55594f16f6f00cf3731542a7d41f394",
+    "parameters": 344354816,
+    "layers": 12
+  },
+  "validation": {
+    "schema": "packed_validation_v1",
+    "overlap_check": "exact UTF-8 text SHA256, all train and validation documents",
+    "train_documents": 36495424,
+    "validation_documents": 11717,
+    "overlapping_validation_documents": [],
+    "dropped_sequences": [],
+    "packed_sequences": 9704
+  },
+  "periodic_sequences": 1024,
+  "final_sequences": 9704,
+  "proof_files": {
+    "accelerate_env.txt": {
+      "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+      "bytes": 797
+    },
+    "launch.json": {
+      "sha256": "859df30e12d519c81520e3e0a3a53e63e22560b2ad018e55fbaaa1c597fafa4a",
+      "bytes": 919
+    },
+    "cache-ready.json": {
+      "sha256": "5eda20b2120eed79e82aa3b2897169e87d4ef66746457fcfe5b3be58e118a561",
+      "bytes": 919404
+    },
+    "prepared/validation.json": {
+      "sha256": "d364c648ca6bbcd4fb323a8f8d920da0a72c868f2aa2bd0b1cb25a95bd938fbd",
+      "bytes": 105869
+    },
+    "supervised/gpus-free-before-training.json": {
+      "sha256": "b8f9957a451b14c7b3d29e35111252c4926e35fed8ba15f66a32c751a556c781",
+      "bytes": 1943
+    },
+    "supervised/reclaim.json": {
+      "sha256": "b1c55c4a0295de3024bc4d078378c947f2fbb3a8acfeb2235d7dd0eb1198d9f9",
+      "bytes": 6009
+    },
+    "supervised_run_T12/summary.json": {
+      "sha256": "54afdc1c8bd4a62f1510e19b954c2458f145cbb233fb2fa2b1a05840df2b87a8",
+      "bytes": 7059
+    },
+    "supervised_run_T14/initial.json": {
+      "sha256": "6fd765c63b1a07d7d5303bc8947bd5ec2629a188df63e8801037895fb661a039",
+      "bytes": 245
+    },
+    "supervised_run_T14/summary.json": {
+      "sha256": "c10a411efd5f8ef431ad95accbe54f17a29b8e9572bc2001a154c4c90a06b7cf",
+      "bytes": 748
+    }
+  },
+  "observed_utc": "2026-10-20T19:52:47.546479+00:00",
+  "status_commit": "86b659fe2adb51a69227cde9eb391b5fe5c4a333",
+  "T14": {
+    "status": "passed",
+    "absolute_gaps": {
+      "last_window_lm_loss": 0.0030699997763079523,
+      "periodic_validation_loss": 0.004108778794212675
+    },
+    "tolerance_nats": 0.01,
+    "native": {
+      "last_window_lm_loss": 5.269115104675292,
+      "periodic_validation_loss": 5.2248284472487425,
+      "validation_tokens": 1046305,
+      "validation_sequences": 1024,
+      "trainer_seconds": 309.6585,
+      "input_tokens_per_second_including_eval_save": 846558.386093067
+    },
+    "bdot": {
+      "last_window_lm_loss": 5.266045104898984,
+      "periodic_validation_loss": 5.22071966845453,
+      "validation_tokens": 1046305,
+      "validation_sequences": 1024,
+      "trainer_seconds": 334.5682,
+      "input_tokens_per_second_including_eval_save": 783529.3372173447
+    }
+  },
+  "T14_summary_sha256": "c10a411efd5f8ef431ad95accbe54f17a29b8e9572bc2001a154c4c90a06b7cf",
+  "jobs": [
+    {
+      "name": "T12",
+      "started_at": "2026-10-20T19:35:27.532654+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 224.8770812191069,
+      "artifacts": [
+        {
+          "path": "T12/summary.json",
+          "sha256": "54afdc1c8bd4a62f1510e19b954c2458f145cbb233fb2fa2b1a05840df2b87a8",
+          "bytes": 7059
+        }
+      ],
+      "finished_at": "2026-10-20T19:39:12.948824+00:00"
+    },
+    {
+      "name": "T14",
+      "started_at": "2026-10-20T19:39:12.948875+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 751.2864394970238,
+      "artifacts": [
+        {
+          "path": "T14/summary.json",
+          "sha256": "c10a411efd5f8ef431ad95accbe54f17a29b8e9572bc2001a154c4c90a06b7cf",
+          "bytes": 748
+        }
+      ],
+      "finished_at": "2026-10-20T19:51:44.783855+00:00"
+    },
+    {
+      "name": "D",
+      "started_at": "2026-10-20T19:51:44.783893+00:00",
+      "status": "running"
+    }
+  ],
+  "latest_D_metrics": {
+    "step": 20,
+    "grad_norm": 1.9419695138931274,
+    "learning_rate": 5.937499999999999e-05,
+    "objective_loss": 10.527573394775391,
+    "lm_loss_last_update": 10.216217368841171,
+    "router_z_loss_last_update": 0.0,
+    "off_default_share_last_update": 0.0,
+    "router_entropy_last_update": 0.0,
+    "reuse_rate_last_update": 0.0,
+    "module_load_max_min_ratio_last_update": 1.0,
+    "off_default_step_0_last_update": 0.0,
+    "off_default_step_1_last_update": 0.0,
+    "off_default_step_2_last_update": 0.0,
+    "off_default_step_3_last_update": 0.0,
+    "off_default_step_4_last_update": 0.0,
+    "off_default_step_5_last_update": 0.0,
+    "off_default_step_6_last_update": 0.0,
+    "off_default_step_7_last_update": 0.0,
+    "module_0_decisions_last_update": 524288,
+    "module_1_decisions_last_update": 524288,
+    "module_2_decisions_last_update": 524288,
+    "module_3_decisions_last_update": 524288,
+    "module_4_decisions_last_update": 524288,
+    "module_5_decisions_last_update": 524288,
+    "module_6_decisions_last_update": 524288,
+    "module_7_decisions_last_update": 524288,
+    "lm_loss": 10.527565430044334,
+    "router_z_loss": 0.0,
+    "lm_tokens": 5231530,
+    "input_tokens": 5242880,
+    "input_tokens_per_second_interval_wall": 821031.3289354565,
+    "interval_wall_seconds": 6.385724655352533,
+    "peak_allocated_bytes": 56530137600,
+    "peak_reserved_bytes": 57457770496
+  },
+  "latest_status_log": {
+    "path": "temp/pilot_20261020/_run-2026-10-20_19-52-37-th2-6y3o-dot-pilot-status-20261020-a08.log",
+    "sha256": "a1d7c7328f91c77a1f0080d95b673c87df4b04f1b71809a2c16847893999c6c6"
+  },
+  "T14_summary_retrieval": "Complete JSON from read-only runner status; reconstructed bytes match runner completion SHA256."
+}

@@ -4,30 +4,53 @@
 
 User authorized running the necessary experiments after dispatch verification.
 Design: `docs/BDOT_v2_spec.md` v1.4 and its curriculum review response.
-Queue: T12 (1,000-step horizon, stop200/resume100) → T14 (fresh native and
+Queue: T12 (1,000-step horizon, stop 200/resume 100) → T14 (fresh native and
 fixed B-DOT without FiLM, 500 updates each) → D → P1-A → P1-B. Failed checks
 stop the queue and restore burns. R/N follow curriculum selection later; no
 Phase B or extra seeds are launched automatically.
 
-Pilot: random initialization, seed0, 12 layers, FA4/grouped experts, all8 B200s,
-seq1024, micro16 × accumulation4 =524,288 input tokens/update, 4,768 complete
-updates, 96 warmup, cosine floor0.1, peakLR3e-4. No pilot cutoff. Eval100 plus
-curriculum boundaries; save250 and retain all checkpoints. Shared existing
-English train/validation split, EOS/isolation/reset positions, seed0 packed order.
+Pilot: random initialization, seed 0, 12 layers, FA4/grouped experts, all eight B200s,
+sequence 1,024, microbatch 16 × accumulation 4 = 524,288 input tokens/update, 4,768 complete
+updates, 96 warmup, cosine floor 0.1, peak LR 3e-4. No pilot cutoff. Evaluate every 100 steps plus
+curriculum boundaries; save every 250 steps and retain all checkpoints. Shared existing
+English train/validation split, EOS/isolation/reset positions, seed 0 packed order.
 CPU preparation verifies input hashes and exact document overlap once, while
 burns continue; no exported token dataset is introduced.
 
 Execution checkout `/disk/thuat/DOT-th2-inventory`, th2/main, host
-`thiennh-p6-6y3o-worker-0`. Read-only preflight215b5c7 at19:23UTC passed:
-prior burn identities match, guard released, assets/cache exist, ~25TB free.
+`thiennh-p6-6y3o-worker-0`. Read-only preflight 215b5c7 at 19:23 UTC passed:
+prior burn identities match, guard released, assets/cache exist, ~25 TB free.
 New output root `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01`.
 Preparation session `dot_pilot_prepare_20261020_a01`; GPU supervisor session
-`dot_pilot_train_20261020_a01`. Launch pending. Local tests of initialization,
+`dot_pilot_train_20261020_a01`. Launch **d24bf55** acknowledged at 19:29 UTC; CPU preparation completed.
+Read-only status **9d4e80a** observed at 19:36 UTC confirms preparation passed: all
+3,008 hashes verified, 29,278,633 train sequences, zero exact document overlap;
+1,024 periodic / 9,704 final validation sequences. Accelerate copied and verified
+at `/dev/shm/.cache/huggingface/accelerate/default_config.yaml`. Known burn
+workers 125740–125747 were reclaimed by identity, all eight GPUs empty at
+19:35:27 UTC, then the supervisor started T12. Do not relaunch. Local tests of initialization,
 fail-closed loss gate, full-schedule cache preparation and generated queue all
 pass; config regression passes. Training model/loss/optimizer code is unchanged.
-Next: launch through existing supervisor, verify Accelerate copy/env and actual
-GPU start, and restore commands.sh to #0 after acknowledgement.
+T12 passed at 19:39:12 UTC (eight ranks, 200 updates, horizon 1,000):
+16 comparisons, zero loss differences, exact restored/final state.
+T14 passed at 19:51:44 UTC: native/B-DOT last-100 training loss
+5.26911510 / 5.26604510 and periodic validation 5.22482845 / 5.22071967.
+Gaps 0.003070 / 0.004109 nats, both below 0.01. Initial weights match exactly;
+validation uses identical 1,046,305 scored tokens. Native/B-DOT throughput
+846,558 / 783,529 input tokens/s including eval/save.
 
+D started automatically at 19:51:44 UTC. Status 86b659f observed at
+19:52:47 UTC confirms step 20, finite decreasing loss, all eight GPU workers
+active and supervisor ownership held. P1-A then P1-B are queued. Estimated
+remaining wall time is about 3–4 hours, pending actual routed timings.
+Evidence: `docs/results/bdot_pilot_launch_20261020.json`; raw files under
+`temp/pilot_20261020/`. T12 and T14 summary hashes match runner completion
+receipts. Final documentation push returns execution commands.sh to #0;
+source commands.sh is also #0. The independent supervisor remains running.
+
+Next: retrieve D/P1-A/P1-B results and final burn handoff, then apply the
+spec's curriculum selection before proposing R/N. No extra automatic runs.
+The supervisor will restore verified communicating burns on success or failure.
 
 ## Dispatch overhead optimization passed — 2026-10-20
 

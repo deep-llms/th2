@@ -45,6 +45,10 @@ python scripts/make_bdot_pilot.py \
   --output /absolute/new/pilot-plan
 ```
 
+For the validated B200 grouped implementation, add `--expert-backend grouped`;
+the generator default remains `reference`. Keep this setting fixed across the
+comparison and on resume.
+
 The default queue contains D → P1-A → P1-B. R and the matching N follow selection
 of the curriculum; they are not selected automatically. The generator supports
 `--arms R N-A` or `--arms R N-B`. It records the rounded token budget and separate
@@ -126,7 +130,16 @@ The scientific-review behavior, including the v1.4 curriculum changes:
 
 Schedule checks reject warmup extending to the first curriculum boundary.
 `tests/bdot/test_pilot.py` covers T13 and a small CPU T14 pair over 500 updates;
-the full-model B200 pipeline comparison remains a pre-launch check. The resume
+the full-model B200 pipeline comparison is a pre-launch check. It passed on
+2026-10-20; see [pilot launch evidence](results/bdot_pilot_launch_20261020.json).
+`scripts/bdot_pipeline_check.py` implements that check through unchanged
+`train.py`: exact seed-initialization mapping, two fresh 500-update runs,
+last-100-update LM loss and periodic validation comparison. It runs a fresh native
+numerical control if the 0.01-nat gate fails, then stops for review. The authorized
+`scripts/bdot_pilot_pipeline.py` reuses the existing cache helper, sequential
+runner and burn supervisor to order T12 → T14 → D → P1-A → P1-B. A failed check
+prevents pilot training. CPU cache preparation performs the one-time exact
+train/validation overlap check before GPU reclamation. The resume
 test covers a 1,000-step horizon stopped at 200, resuming at 100 across B's
 soft-to-hard boundary. The GPU resume probe supports the same setup with
 `--schedule-steps 1000 --steps 200 --split 100 --soft-split 20`.
