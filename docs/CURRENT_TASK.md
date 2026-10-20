@@ -156,6 +156,24 @@ all eight original verified burns remain active. Evidence:
 `temp/attention_study_20261020/pipeline_status04.log` and `batch_status25.log`.
 Continue through CPU cache preparation, GPU resume/smoke gates and real training.
 
+GPU queue started at 04:07:56 UTC after successful cache preparation
+(1,230.74 seconds; 29,278,633 train sequences, 9,704 validation sequences).
+The actual Accelerate cache in the tmux environment is
+`/dev/shm/.cache/huggingface/accelerate/default_config.yaml`; the launcher
+resolved that path, copied/byte-checked resources/accelerate_b200.yaml, and
+verified the selected Python reports MULTI_GPU / 8 / BF16 / B200. It invokes
+Accelerate via the explicit conda Python module, not the PATH console script.
+Reclamation signaled only freshly verified workers 12643–12650, then logged
+ALL_EIGHT_GPUS_VERIFIED_FREE. Guard is held by the active supervisor.
+
+Selected FA4 eight-rank resume verification passed: max weight error
+3.7253e-9, optimizer tensor error 2.3283e-10, scheduler and all eight RNG states
+match. Seven-sequence distributed evaluation also passed, exercising an empty
+rank. Receipts downloaded to temp/attention_study_20261020/: cache-ready.json,
+launch.json, accelerate_env.txt, selected_accelerate_env.txt, reclaim.json,
+resume-complete.json. The remaining automatic stages are real-smoke25,
+resume50, and fresh baseline5000. Continue to verify actual baseline progress.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while
