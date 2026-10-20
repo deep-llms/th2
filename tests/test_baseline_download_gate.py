@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from scripts.native_baseline_pipeline import wait_for_download
+from scripts.native_baseline_pipeline import wait_for_download, validate_burn_handoff
 
 
 class DownloadGateTests(unittest.TestCase):
@@ -66,6 +66,31 @@ class DownloadGateTests(unittest.TestCase):
         with patch('scripts.native_baseline_pipeline.time.sleep', side_effect=rewrite_once), patch('builtins.print'):
             wait_for_download(self.data, self.model, self.contract, 100)
         self.assertEqual(len(calls), 2)
+
+
+class BurnPredecessorTests(unittest.TestCase):
+    def test_failed_training_requires_completed_safe_handoff(self):
+        import copy
+        gpus=[dict(index=i,uuid=f'GPU-{i}',pids=[100+i]) for i in range(8)]
+        proof=dict(collective_progress_verified=True,gpus=gpus)
+        state=dict(training_status='failed',finished_at='finished',burn=proof,
+                   free_after_training=[dict(index=i,pids=[]) for i in range(8)])
+        live=dict(gpus=gpus,guard_disabled=False)
+        validate_burn_handoff(state,proof,live)
+        self.assertEqual(state['training_status'],'failed')
+        for key,value in [('finished_at',None),('training_status','running'),
+                          ('handoff_error','failed'),('burn',{}),
+                          ('free_after_training',[])]:
+            with self.subTest(key=key), self.assertRaises(RuntimeError):
+                validate_burn_handoff({**state,key:value},proof,live)
+        with self.assertRaises(RuntimeError):
+            validate_burn_handoff(state,proof,{**live,'guard_disabled':True})
+        changed=copy.deepcopy(live);changed['gpus'][0]['pids']=[999]
+        with self.assertRaises(RuntimeError):
+            validate_burn_handoff(state,proof,changed)
+        changed=copy.deepcopy(state);changed['free_after_training'][0]['pids']=[99]
+        with self.assertRaises(RuntimeError):
+            validate_burn_handoff(changed,proof,live)
 
 
 if __name__ == '__main__':

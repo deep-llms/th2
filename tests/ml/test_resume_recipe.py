@@ -9,10 +9,39 @@ from types import SimpleNamespace
 from test_document_isolation import model, torch
 from train import BaselineTrainingArguments
 from resume_recipe import (build_training_recipe, differences, require_resume_training,
-                           save_training_recipe, FILENAME)
+                           save_training_recipe, fp32_precision_settings, FILENAME)
 
 
 class ResumeRecipeTests(unittest.TestCase):
+    @unittest.skipUnless(hasattr(torch.backends, 'fp32_precision'), 'Requires new precision API')
+    def test_independent_cudnn_precision_is_read_only_and_resume_checked(self):
+        conv, rnn = torch.backends.cudnn.conv, torch.backends.cudnn.rnn
+        original = conv.fp32_precision, rnn.fp32_precision
+        try:
+            conv.fp32_precision, rnn.fp32_precision = 'ieee', 'tf32'
+            with self.assertRaises(RuntimeError):
+                _ = torch.backends.cudnn.allow_tf32
+            with tempfile.TemporaryDirectory() as d:
+                root=Path(d);m=model();args=self.args(root)
+                before=fp32_precision_settings(torch)
+                recipe=build_training_recipe(m,args,'sdpa')
+                self.assertEqual(before,fp32_precision_settings(torch))
+                self.assertEqual(recipe['execution']['fp32_precision']['cudnn_conv'],'ieee')
+                self.assertEqual(recipe['execution']['fp32_precision']['cudnn_rnn'],'tf32')
+                self.checkpoint(root,recipe)
+                rnn.fp32_precision='ieee'
+                with self.assertRaisesRegex(ValueError,'cudnn_rnn'):
+                    require_resume_training(root,build_training_recipe(m,args,'sdpa'),args)
+        finally:
+            conv.fp32_precision, rnn.fp32_precision = original
+
+    def test_old_runtime_precision_reader(self):
+        fake=SimpleNamespace(get_float32_matmul_precision=lambda:'highest',
+            backends=SimpleNamespace(cuda=SimpleNamespace(matmul=SimpleNamespace(allow_tf32=False)),
+                                     cudnn=SimpleNamespace(allow_tf32=True)))
+        self.assertEqual(fp32_precision_settings(fake),dict(float32_matmul_precision='highest',
+            cuda_matmul_allow_tf32=False,cudnn_allow_tf32=True))
+
     def args(self, root, **changes):
         return BaselineTrainingArguments(**dict(output_dir=str(root),use_cpu=True,report_to='none',
             max_steps=8,stop_after=6,per_device_train_batch_size=1,gradient_accumulation_steps=2,

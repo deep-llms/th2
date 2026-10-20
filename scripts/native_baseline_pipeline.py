@@ -68,22 +68,37 @@ def wait_for_download(data_root, model_root, contract, timeout_seconds):
         time.sleep(min(30, remaining))
 
 
-def burn_gate(comparison):
-    from scripts.gpu_process import inspect, ownership
-    state = json.loads((comparison/'supervised/supervisor.json').read_text())
-    proof = json.loads((comparison/'supervised/burn-verified.json').read_text())
-    live = inspect()
-    if state.get('training_status') != 'ok' or state.get('handoff_error'):
-        raise RuntimeError('Comparison or its final burn handoff did not pass')
-    if (not proof['collective_progress_verified'] or live['guard_disabled']
+def validate_burn_handoff(state, proof, live):
+    """A failed job can release GPUs safely; its scientific result stays failed."""
+    from scripts.gpu_process import ownership
+    free = state.get('free_after_training', [])
+    if (state.get('training_status') not in ('ok', 'failed')
+            or not state.get('finished_at') or state.get('handoff_error')
+            or state.get('burn') != proof
+            or len(free) != 8 or {g['index'] for g in free} != set(range(8))
+            or any(g['pids'] for g in free)):
+        raise RuntimeError('Predecessor has no complete, verified final burn handoff')
+    if (not proof.get('collective_progress_verified') or live['guard_disabled']
+            or len(proof['gpus']) != 8
+            or any(len(g['pids']) != 1 for g in proof['gpus'])
             or ownership(proof['gpus']) != ownership(live['gpus'])):
         raise RuntimeError('Predecessor burn workers or ownership changed')
+
+
+def burn_gate(predecessor):
+    from scripts.gpu_process import inspect
+    state = json.loads((predecessor/'supervised/supervisor.json').read_text())
+    proof = json.loads((predecessor/'supervised/burn-verified.json').read_text())
+    live = inspect()
+    validate_burn_handoff(state, proof, live)
     print('PREDECESSOR_BURN_HANDOFF_VERIFIED', flush=True)
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--comparison', type=Path, required=True)
+    p.add_argument('--burn-predecessor', type=Path,
+                   help='Most recent completed GPU queue; defaults to comparison')
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--data-root', type=Path, required=True)
     p.add_argument('--model-root', type=Path, required=True)
@@ -95,7 +110,8 @@ def main():
         p.error('--wait-for-download-seconds must be nonnegative')
     a.output.mkdir(parents=True, exist_ok=False)
     try:
-        burn_gate(a.comparison)
+        predecessor = a.burn_predecessor or a.comparison
+        burn_gate(predecessor)
         selection = a.comparison/'supervised/run/checks/selection.json'
         selected = json.loads(selection.read_text())
         if selected['status'] != 'passed':
@@ -123,7 +139,7 @@ def main():
             '--assets', assets, '--output', prepared)
         run('scripts/warm_training_cache.py', '--arguments', prepared/'baseline.json',
             '--output', a.output/'cache-ready.json')
-        burn_gate(a.comparison)
+        burn_gate(predecessor)
         run('scripts/attention_env_inventory.py', '--host', a.host,
             '--compare', a.comparison/'preflight.json', '--output', a.output/'preflight.json',
             interpreter=sys.executable)

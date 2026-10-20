@@ -174,6 +174,26 @@ launch.json, accelerate_env.txt, selected_accelerate_env.txt, reclaim.json,
 resume-complete.json. The remaining automatic stages are real-smoke25,
 resume50, and fresh baseline5000. Continue to verify actual baseline progress.
 
+
+At 04:11 UTC, a01 real-smoke25 failed before the first optimizer update:
+the legacy torch.backends.cudnn.allow_tf32 getter raises when HF sets
+convolution precision to IEEE independently of RNN precision. This was a
+resume-metadata compatibility bug, not a kernel/data/OOM failure. Supervisor
+finished at 04:12:27 with all GPUs free before verified communicating burns
+93042–93049, guard released. Full local evidence: smoke25-failure.log and
+pipeline_status09.log under temp/attention_study_20261020/.
+
+Fix: read public per-operator precision fields on modern torch without changing
+any flags; retain legacy reader for older torch. Seven resume-recipe tests pass,
+including the exact split-cuDNN-policy reproduction and mismatch rejection.
+The GPU parity probe now explicitly uses tf32=False, matching the real recipe.
+All data hashes and caches remain valid. Retry uses fresh a02 outputs, retaining
+a01 evidence. Its separate burn-predecessor gate requires completed cleanup,
+matching verified burn receipts/live ownership and released guard, even though
+a01 training failed; runtime comparison still independently must pass. Five
+download/handoff tests pass. The same eight-GPU parity, smoke25/resume50 and
+fresh baseline5000 stages remain mandatory. No precision/runtime/data change.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while

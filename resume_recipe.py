@@ -30,6 +30,28 @@ def canonical(value):
     return json.loads(json.dumps(value, sort_keys=True, allow_nan=False))
 
 
+def fp32_precision_settings(torch):
+    """Read precision policy without changing it or mixing precision APIs.
+
+    Modern HF sets cuDNN convolution precision independently of RNN precision.
+    In that valid state PyTorch's legacy aggregate cudnn.allow_tf32 getter
+    raises, so record the public per-operator settings on newer runtimes.
+    """
+    result = {'float32_matmul_precision': torch.get_float32_matmul_precision()}
+    if hasattr(torch.backends, 'fp32_precision'):
+        result['fp32_precision'] = {
+            'global': torch.backends.fp32_precision,
+            'cuda_matmul': torch.backends.cuda.matmul.fp32_precision,
+            'cudnn': torch.backends.cudnn.fp32_precision,
+            'cudnn_conv': torch.backends.cudnn.conv.fp32_precision,
+            'cudnn_rnn': torch.backends.cudnn.rnn.fp32_precision,
+        }
+    else:
+        result.update(cuda_matmul_allow_tf32=torch.backends.cuda.matmul.allow_tf32,
+                      cudnn_allow_tf32=torch.backends.cudnn.allow_tf32)
+    return result
+
+
 def build_training_recipe(model, args, attention_backend, accelerator=None):
     import torch
     options = {k: v for k, v in args.to_dict().items()
@@ -65,9 +87,7 @@ def build_training_recipe(model, args, attention_backend, accelerator=None):
                       'distributed_type': str(args.distributed_state.distributed_type),
                       'train_batch_size_per_process': args.train_batch_size,
                       'global_batch_size': args.train_batch_size * args.world_size * args.gradient_accumulation_steps,
-                      'float32_matmul_precision': torch.get_float32_matmul_precision(),
-                      'cuda_matmul_allow_tf32': torch.backends.cuda.matmul.allow_tf32,
-                      'cudnn_allow_tf32': torch.backends.cudnn.allow_tf32,
+                      **fp32_precision_settings(torch),
                       'cudnn_benchmark': torch.backends.cudnn.benchmark,
                       'cudnn_deterministic': torch.backends.cudnn.deterministic,
                       'deterministic_algorithms': torch.are_deterministic_algorithms_enabled()},

@@ -75,7 +75,7 @@ def main():
             else:
                 a[a.index('--attention_backend')+1] = args.backend
                 a[a.index('--block_size')+1] = '64'
-                a += ['--bf16', 'true', '--gradient_checkpointing', 'true', '--eval_max_sequences', '7']
+                a += ['--bf16', 'true', '--tf32', 'false', '--gradient_checkpointing', 'true', '--eval_max_sequences', '7']
         job['argv'] = a
         job['timeout_seconds'] = 600
     manifest = out/'jobs.json'

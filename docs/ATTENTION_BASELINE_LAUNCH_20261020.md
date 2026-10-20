@@ -93,3 +93,30 @@ SHA256 validation remains pending. With 192 unrestricted CPU cores and ~1.96 TB
 available RAM verified, the initial HF map/cache uses 128 processes, fixed in
 the recipe. A local CPU data-only check confirmed identical recipes and cache
 reuse on the second call. This is not a second token-export format.
+
+## Preparation and smoke correction
+
+All 3,008 dataset hashes, six tokenizer/config hashes, and document counts
+passed. Exact HF caches contain 29,278,633 train sequences and 9,704 validation
+sequences.
+
+At 04:11 UTC, a01 real-smoke25 failed before the first optimizer update:
+the legacy torch.backends.cudnn.allow_tf32 getter raises when HF sets
+convolution precision to IEEE independently of RNN precision. This was a
+resume-metadata compatibility bug, not a kernel/data/OOM failure. Supervisor
+finished at 04:12:27 with all GPUs free before verified communicating burns
+93042–93049, guard released. Full local evidence: smoke25-failure.log and
+pipeline_status09.log under temp/attention_study_20261020/.
+
+Fix: read public per-operator precision fields on modern torch without changing
+any flags; retain legacy reader for older torch. Seven resume-recipe tests pass,
+including the exact split-cuDNN-policy reproduction and mismatch rejection.
+The GPU parity probe now explicitly uses tf32=False, matching the real recipe.
+All data hashes and caches remain valid. Retry uses fresh a02 outputs, retaining
+a01 evidence. Its separate burn-predecessor gate requires completed cleanup,
+matching verified burn receipts/live ownership and released guard, even though
+a01 training failed; runtime comparison still independently must pass. Five
+download/handoff tests pass. The same eight-GPU parity, smoke25/resume50 and
+fresh baseline5000 stages remain mandatory. No precision/runtime/data change.
+
+Precision API reference: [official PyTorch CUDA notes](https://docs.pytorch.org/docs/2.14/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices).
