@@ -70,6 +70,46 @@ files), pinned revisions and unique destination paths. Model weights are not
 needed for random initialization. Full schedule defaults to 57,220 steps,
 cutoff 5,000, warmup 1,145; optional schedule question remains unanswered.
 
+Download update (~02:14 UTC): the initial single-file list would take many
+hours because of controller per-file overhead. Its exact task
+`2026-10-20_01-51-37` was stopped (41647a8); existing files retained. Repartitioned
+into eight disjoint shard groups, preserving all 3,016 requested inputs.
+Batch commands: ignored `temp/attention_study_20261020/download_batch_0.sh`
+through `_7.sh`. Six batches acknowledged; batch 6 currently being submitted.
+
+| Index | Commit | Controller task ID |
+|---|---|---|
+| 0 | 398324c | 2026-10-20_01-58-08 |
+| 1 | 7675f26 | 2026-10-20_01-59-36 |
+| 2 | 25edec4 | 2026-10-20_02-01-18 |
+| 3 | 8d623e9 | 2026-10-20_02-08-49 |
+| 4 | 2276f60 | 2026-10-20_02-09-50 |
+| 5 | 1ee6e34 | 2026-10-20_02-11-59 |
+| 6 | 5c8756a | 2026-10-20_02-14-37 |
+| 7 | being submitted | pending |
+
+Controller per-task progress lines can be stale. Read-only node inspection
+15322e4 at 02:06 UTC showed groups 0/1/2 all receiving files despite their stale
+controller lines. All six tokenizer/config SHA256s passed. All eight verified
+burns 12643–12650 remained at 100% utilization, guard released. No node/process
+damage observed. Source: `temp/attention_study_20261020/corpus_arrival01.log`.
+A local archive fallback was briefly prepared, then its exact owned CPU process
+was stopped and its output removed when concurrency was confirmed. Nothing was
+uploaded to HF; no dataset source was changed.
+
+Next: acknowledge group 6, submit group 7, monitor all eight and verify actual
+file arrival/completion. Then use the reviewed
+`temp/attention_study_20261020/launch_baseline_commands.sh` to run
+`scripts/native_baseline_pipeline.py` under production train in a tmux session.
+Fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-native12-cx-en-20261020-a01`.
+Pipeline: verify every dataset/model SHA256 and document count → prepare native
+12-layer jobs → CPU-only exact Trainer cache fill while burns continue → require
+predecessor verified burn ownership → fresh inventory/Accelerate copy+env check
+→ supervised eight-rank resume test → real smoke25/resume50 → fresh baseline5000.
+The GPU supervisor always restores and verifies communicating burns on exit.
+Keep working until baseline training actually starts; do not end at download
+or cache preparation. No other research arms are authorized.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while
