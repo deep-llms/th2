@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-grouped-preflight-20261020-a01
+#th2-6y3o-dot-grouped-preflight-20261020-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
@@ -26,8 +26,7 @@ report['versions']={p:md.version(p) for p in expected}
 assert all(report['versions'][p].split('+')[0]==v for p,v in expected.items())
 report['commit']=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
 root.mkdir(parents=True)
-(root/'preflight.json').write_text(json.dumps(report,indent=2)+'
-')
+(root/'preflight.json').write_text(json.dumps(report,indent=2))
 print('GROUPED_PREFLIGHT',json.dumps(report),flush=True)
 print('GROUPED_PREFLIGHT_PASSED',flush=True)
 REMOTE_PY
