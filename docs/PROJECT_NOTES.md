@@ -73,6 +73,12 @@ reuse forbidden, keeping P1-A's curriculum and full recipe. This asks whether
 repetition/omission contributes to the regression through training; it is not
 an inference-time route intervention. This authorization does not expand to
 R, Phase B or additional seeds. See CURRENT_TASK for launch state.
+Launched as **0bde7f9**, fresh root `6y3o-dot-N-20261020-a01`, with source and
+data/validation recipe equality verified against P1-A before GPU reclamation.
+The established supervisor copied/verified Accelerate, reclaimed identified
+burns, confirmed all eight GPUs free and started N-A. Initial optimizer progress
+is verified; completion and final burn restoration remain pending. Evidence:
+[N launch receipt](results/bdot_N_launch_20261020.json).
 
 ## Route study and scientific-review decisions
 

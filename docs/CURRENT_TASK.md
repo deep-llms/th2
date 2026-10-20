@@ -24,8 +24,30 @@ Four local configuration/no-reuse/forced-choice-gradient tests pass. A local
 generation compared with the actual remote P1-A arguments confirms only the
 reuse flag and new output/config paths differ. Launch preparation will also
 check training source hashes and complete data/validation recipes before GPU
-reclamation. Status: submitting preparation and the supervised N-A job.
-Evidence: `temp/pilot_N_20261020/`.
+reclamation.
+
+Launch **0bde7f9** acknowledged; N-A began at 23:40:04 UTC. Control comparison
+passed on B200: training source hashes unchanged, only `reuse=false` and new
+output/config paths differ, complete data/validation recipes match P1-A.
+Shared cache check took 10.55 seconds. Accelerate was copied to
+`/dev/shm/.cache/huggingface/accelerate/default_config.yaml` and `accelerate env`
+confirmed eight-GPU BF16. Exact known burn workers were reclaimed at 23:39:34;
+all eight GPUs were free at 23:40:04 before training.
+
+Read-only status **9b258da**, observed 23:43:27 UTC, confirms step 220, finite
+loss/gradient norm, and eight active workers (92–99% GPU utilization). Current
+home-only phase has zero reuse and exactly equal per-module counts, as expected;
+the routing window opens after update 477. Step-200 periodic validation loss
+is 5.79365. Do not interpret this early loss as a method result. Keep training
+to 4,768; approximate runtime is about one hour, subject to routed-phase speed.
+
+Expected outputs: `prepared/runs/N-A/{train_results.json,final_eval.json}`, all
+20 checkpoints, `supervised/run/complete.json`, and verified burn handoff under
+`supervised/`. Next check: confirm progress after the routing transition, then
+collect final PPL and compare against D/P1-A. No further runs are queued.
+Execution commands return to #0; the independent supervisor continues running.
+Evidence: [N launch receipt](results/bdot_N_launch_20261020.json), raw logs under
+`temp/pilot_N_20261020/`.
 
 ## Pilot complete — verified 2026-10-20 23:05 UTC
 
