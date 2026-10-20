@@ -1,17 +1,14 @@
 # B-DOT v2: Implementation and Experiment Specification
 
-Version 1.3, 2026-10-18. Audience: an engineering agent who will implement the model, test it and run the experiments.
-
-**Code-review amendments, 2026-10-18:** the user authorized fixes to
-`BDOT_PHASE_A_CODE_REVIEW_20261018.md`. Sections 3.7 and 5 now specify forced-choice
-router freezing, masked z-loss with the original denominator, dual-policy
-validation, and explicit LM/objective labels. T8/Gate 0a use matched dense D as
-the throughput denominator. These amendments supersede the earlier literal
-all-decisions z-loss prescription.
+Version 1.4, 2026-10-20. Audience: an engineering agent who will implement the model, test it and run the experiments.
 
 What changed in each version (Appendix B lists the details):
 - **Version 1.2** answers the implementation review of version 1.1.
 - **Version 1.3** switches every layer to the Qwen3 architecture: the design of the released Qwen3-0.6B, trained from scratch, with 12 layers in the main experiments.
+- **Version 1.4** answers the curriculum-horizon review:
+  - every run has one complete schedule, shared by the LR and the routing curriculum;
+  - Stages 0a and 0b train 2.5B tokens;
+  - the data is the prepared English pool.
 
 ---
 
@@ -425,9 +422,7 @@ Shapes: `w` is `[S, M, d]`, `b` is `[S, M]`, `U` is `[S, M, M]`, and the balance
   - **Load and target:** `load[m]` is the mean of `share_s(m)` over the non-skipped steps. `target[m]` is the same mean taken for the default path, where `default_share_s(m)` is 1 for the home module of step `s` (0.5 for each of the two home experts in `capacity` mode) and 0 otherwise.
   - **Update:** once per training step, after the backward pass: `beta[m] += balance_rate · sign(target[m] - load[m])`. A model on the default path therefore never moves `beta`, with or without STOP.
   - **Timing:** `beta` stays fixed within a training step and during evaluation, so no sequence's routing depends on its own or later tokens. It is saved in checkpoints.
-- **z-loss:** add `z_loss_coef · sum(1[n_candidates > 1] · logsumexp(z over candidates)^2) / N`, where `N` remains **all active token-step decisions**, including forced choices. Sum and denominator cover the full accumulation window and all ranks. Forced single-candidate choices contribute zero to the numerator; this is deliberately not a mean over only multi-candidate choices. Reported LM loss and perplexity exclude router terms.
-  - When all choices at a step are forced, bypass that router entirely. In curriculum A's reach-0 phase, every router parameter has `grad=None` and receives no AdamW update, weight decay or momentum update. This preserves the home prior until widening.
-  - In a mixed batch, forced rows contribute neither a routing LM gradient nor z-loss gradient. Shared router parameters can still update from the other, multi-candidate rows.
+- **z-loss:** add `z_loss_coef · mean(logsumexp(z over candidates)^2)` to the loss. The mean is over every router decision of an active token in both passes, with the sum and the count reduced over micro-batches and ranks. Reported loss and perplexity exclude router terms.
 - **Exploration:** in training only, with probability `explore_eps`, replace `m*` with a uniformly random allowed candidate.
 - **Soft phase (curriculum B):**
   - Choose the top two allowed candidates by `z + beta`, as for top-1, and weight them by `p` renormalised over the pair.
@@ -574,31 +569,48 @@ Grid comparisons are at equal tokens, not at equal total training compute.
 
 | Setting | Value |
 |---|---|
-| Data | FineWeb-Edu `sample-10BT` from the Hugging Face dataset `HuggingFaceFW/fineweb-edu`, at a pinned revision recorded in every `config.json`. Use `sample-100BT` beyond 10B tokens. |
-| Validation | A fixed manifest of document ids, chosen once before any training: shuffle the `sample-10BT` documents with seed 0, then take documents from the end of the list until they total at least 10M tokens. The same manifest serves every run, budget and stage; Stage 5 removes those ids from `sample-100BT`. No document is split between training and validation. |
-| Training stream | The remaining documents, in the shuffled order, tokenized and packed. A run with a budget of N tokens uses the first N tokens, rounded down to whole training steps; record the rounding. |
+| Data | The English pool `qwen3_0.6b_base_en_30B` of the Hugging Face dataset `nht10/cx_sampled` (about 30B tokens, Qwen3 tokenizer), at a pinned revision recorded in every `config.json`. It covers every stage, Stage 5 included. |
+| Validation | The pool's existing validation split, packed like the training data and shuffled once at the sequence level with seed 0. The periodic set is the first 1,024 of these sequences (1,048,576 tokens). The final set is the first 10,240 (10,485,760 tokens), or all of them if the split is smaller. The validation manifest stores the sequence indices of both sets, which serve every run, budget and stage. Before any training, check that no document appears in both splits, by document id or, where ids are missing, by content hash. Drop any validation sequence that contains a training document, and record the check. |
+| Training stream | The pool's training split, packed (next row) and then shuffled once at the sequence level with seed 0 (`packed_shuffle`). Exactly one shuffle defines this order: make sure nothing else reshuffles it (the Hugging Face Trainer's default sampler does). Every run reads the order from the start, with two exceptions: Stages 4 and 5 interleave the two-hop sequences of section 10.3, and a run that continues from a trained trunk (head training and labelling, Stage 3's fine-tuned pruned baselines) reads on from the first sequence after the trunk's last one. A run with a budget of N tokens uses the first `floor(N / batch_tokens)` training steps' worth of sequences; record the rounding. |
 | Packing | Documents are separated by the end-of-text token `<|endoftext|>` and packed into 1,024-token sequences. Attention is blocked by document: no token attends across a document boundary, and RoPE positions restart at 0 at each document start. Every `kv_mode` applies its own mask on top of the document mask. |
 | Random streams | Separate generators for data order (fixed, seed 0), model initialisation (`seeds.model`) and routing randomness (`seeds.routing`: exploration, random routing, random STOP and re-entry, label sampling). Evaluation uses its own fixed generator and never advances the training generators. |
 | Tokenizer | The Qwen3 tokenizer, from `Qwen/Qwen3-0.6B-Base`. The embedding has 151,936 rows, as in the released model; this is more than the tokenizer uses, and the unused rows are never trained toward. |
 | Context | 1,024 |
 | Batch | 512 sequences × 1,024 = 0.5M tokens (use gradient accumulation as needed) |
 | Optimiser | AdamW, betas (0.9, 0.95), weight decay 0.1 (none on norms, biases, router biases, FiLM vectors) |
-| LR | Peak 3e-4, linear warm-up over 2% of training steps, cosine decay to 10% of peak |
+| LR | Peak 3e-4, linear warm-up over `ceil(0.02 · max_steps)` training steps, then cosine decay to 10% of peak at `max_steps` |
+| Schedule | Every run has one complete schedule: `max_steps = floor(tokens / batch_tokens)`. The LR schedule and the routing curriculum (section 4.2) share this horizon. A run used by a gate or a comparison trains all `max_steps` steps; it is never a longer schedule stopped early. An interrupted run is resumed, not shortened, and a larger budget is a new run with its own schedule. Epoch-based runs (section 10) use `max_steps = epochs × steps per epoch`, rounded down; section 10.1 gives the one allowed extension. |
+| Early stop | `train.stop_after = N` ends a run after N completed steps without changing `max_steps`, so the LR and the curriculum still follow the full schedule. Use it only in tests (T12, T14) and in runs labelled exploratory. Gate and grid runs leave it unset. |
 | Precision | bf16 (router in fp32), grad clip 1.0 |
 | Init | As in the Hugging Face Qwen3 implementation: every linear and embedding weight normal with std 0.02, norm weights 1. Routers, FiLM and the re-injection layer use their own initialisation (sections 3.7, 3.8 and 3.10). |
-| Tokens | 1B (Stage 0a and 0b), 2.5B (Stage 2 grid), 5B (finalists, Stages 3 and 4) |
+| Tokens | 2.5B (Stages 0a and 0b, and the Stage 2 grid: 4,768 training steps), 5B (finalists, Stages 3 and 4: 9,536 training steps). Stage 5 has its own table. |
 
 ### 4.2 Routing curriculum (`router.curriculum`)
 
+**Horizon.**
+- Every fraction below is a fraction of the run's own schedule: `progress = completed training steps / max_steps`, with the `max_steps` of section 4.1.
+- A new phase starts with the first training step taken after `progress` reaches its fraction.
+- Every transition comes after the LR warm-up. The config loader rejects a run whose number of warm-up steps (`warmup_steps` if set, otherwise `ceil(warmup_frac · max_steps)`) is not smaller than its first boundary: `ceil(widen_every_frac · max_steps)` for A, `ceil(soft_phase_frac · max_steps)` for B (477 and 716 when `max_steps = 4,768`).
+
 - **A, narrow to wide:**
-  - For the first 10% of tokens, allow only the home module(s) of each step: the default path, or in `capacity` mode a choice between the two home experts. This holds for every window type.
-  - Then the reach grows by 1 every 10% of tokens until it reaches the target. For bucket windows, switch from size 1 straight to the target size.
+  - For the first 10% of the schedule, allow only the home module(s) of each step: the default path, or in `capacity` mode a choice between the two home experts. This holds for every window type.
+  - Then the reach grows by 1 every 10% of the schedule until it reaches the target. For bucket windows, switch from size 1 straight to the target size.
   - At each widening, `explore_eps` jumps to `explore_eps_max` and decays linearly to 0 over the next 10%.
 - **B, soft then hard:**
   - The target window from the start.
-  - Soft top-2 mixing for the first 15% of tokens, then hard top-1. No exploration during the soft phase.
-  - `explore_eps` decays linearly from `explore_eps_max` to 0 between `soft_phase_frac` (15%) and `explore_end_frac` (50%) of tokens.
+  - Soft top-2 mixing for the first 15% of the schedule, then hard top-1. No exploration during the soft phase.
+  - `explore_eps` decays linearly from `explore_eps_max` to 0 between `soft_phase_frac` (15%) and `explore_end_frac` (50%) of the schedule.
 - **none:** the target window and hard top-1 from the start, with no exploration. Use only for `r = 0` and for the `random` and `hash` controls.
+
+For a 2.5B-token run (4,768 training steps) with target `r = 1`, the boundaries fall at these counts of completed training steps (the next step uses the new phase):
+
+| Event | Completed steps |
+|---|---:|
+| LR warm-up ends | 96 |
+| A: the window opens to `r = 1` (10%) | 477 |
+| A: exploration reaches 0 (20%) | 954 |
+| B: soft top-2 ends, hard top-1 starts (15%) | 716 |
+| B: exploration reaches 0 (50%) | 2,384 |
 
 Stage 0a decides between A and B. The `free` window always uses B.
 
@@ -635,32 +647,28 @@ Do not train STOP jointly with ACT- or PonderNet-style objectives. Unsupervised 
 ## 5. Evaluation and metrics
 
 **Log every 100 training steps:**
-- token-weighted LM training loss (`lm_loss`) and normalized router z-loss over the logging interval; HF's native optimization-objective mean is separately labeled `objective_loss`;
+- train loss and router z-loss;
 - per-module load (max/min ratio);
 - off-default share per step;
 - reuse rate: the fraction of tokens whose path uses some module more often than its default schedule does;
 - router entropy;
 - for STOP and re-entry runs: the histogram of exit steps or re-entry pairs;
-- input tokens per wall-clock second and peak allocated/reserved GPU memory over the interval (maximum across ranks). Wall time includes intervening validation/checkpoint work; T8 separately measures training throughput.
+- tokens per second and peak memory.
 
-**Validation:** loss on a fixed 1M-token subset of the held-out set, every 100 training steps in Stages 0a and 0b and every 250 otherwise. Use the full 10M tokens at the end of each run. Reported loss and perplexity never include router terms.
+**Validation:** loss on the periodic validation set (1M tokens, section 4.1), every 100 training steps in Stages 0a and 0b and every 250 otherwise. Use the final validation set (about 10M tokens) at the end of each run. Reported loss and perplexity never include router terms.
+- **Routing during periodic validation:** the routing the model is currently trained with, without exploration.
+  - Learned routing: soft top-2 during curriculum B's soft phase, and hard argmax over the current window otherwise.
+  - `fixed`, `hash` and `random` routing: that routing. `random` draws from the fixed evaluation generator.
+  - STOP and re-entry trunks trained with random policies: policy `none`.
+- **During the soft phase:** also log the validation loss with hard argmax routing. Its gap to the soft loss shows how far soft training is from the deployed policy.
+- **At each curriculum transition** (A's widening, B's switch to hard routing):
+  - validate the weights at the transition step twice, once with the old phase's routing and once with the new one's;
+  - log the jump: new minus old.
 
-Periodic validation reports both policies, with exploration disabled:
-- `eval_loss`: target window and hard top-1, the final inference policy.
-- `eval_curriculum_loss`: the reach and soft/hard phase at `completed_updates / full_schedule` (the policy for the next update), with `eval_curriculum_reach` and `eval_curriculum_soft` recorded.
-- `eval_spike_loss` aliases **curriculum loss** and defines the Gate 0a spike criterion. Use its running minimum. When the two policies coincide, evaluate once and reuse the metrics.
-
-End-of-run full validation and route studies use target-window hard routing.
-No evaluation policy changes training mode, optimizer state or training RNG.
-Run-level `train_lm_loss` is cumulative token-weighted LM loss, preserved across
-resume; `train_objective_loss` is HF's native invocation aggregate (including
-HF's resume/rank-aggregation semantics), and is not used to compare checkpoint
-quality. The `*_last_update` diagnostics remain explicitly last-update values.
-
-**At the end of each run** (routing as trained: argmax, no exploration):
+**At the end of each run** (routing as trained, without exploration: argmax for learned routing; the controls as in periodic validation):
 - Validation loss.
 - Zero-shot accuracy with lm-eval-harness on `hellaswag`, `arc_easy`, `arc_challenge`, `piqa`, `winogrande` and `lambada_openai`. Use `acc_norm` where the harness provides it. Report each task and the average. All six tasks are scored by log-likelihood, so the model only needs the harness's log-likelihood interface. (Stage 5's generation tasks also need `generate_until`; see section 9.)
-- Route diagnostics on 4,096 validation sequences:
+- Route diagnostics on the first 4,096 sequences of the final validation set:
   - off-default share;
   - reuse rate;
   - distinct paths per 10,000 tokens;
@@ -674,7 +682,7 @@ quality. The `*_last_update` diagnostics remain explicitly last-update values.
   - decode tokens/s at batch 1 and batch 32 with a KV cache;
   - prefill tokens/s.
 
-**Files per run:** `config.json`, `metrics.jsonl`, `final_eval.json`, and `routes_sample.npz` (the chosen module per step for 256 validation sequences).
+**Files per run:** `config.json`, `metrics.jsonl`, `final_eval.json`, and `routes_sample.npz` (the chosen module per step for the first 256 sequences of the final validation set).
 
 ---
 
@@ -692,14 +700,14 @@ Implement the B-DOT model on its own, not by modifying an existing example model
 **Phase A, before Stage 0a (the minimal pilot):**
 
 0. **Infrastructure:** the data pipeline and validation manifest (section 4.1), the training loop with logging (section 5), saving and resuming of checkpoints, and the lm-eval-harness wrapper.
-1. **Dense baseline:** the Qwen3 architecture of section 3.1 with `n_stem + S + n_coda` layers, from random initialisation. Hugging Face `Qwen3ForCausalLM` with the Qwen3-0.6B config and `num_hidden_layers = 12` can serve directly.
+1. **Native dense reference:** the Qwen3 architecture of section 3.1 with `n_stem + S + n_coda` layers, from random initialisation. Hugging Face `Qwen3ForCausalLM` with the Qwen3-0.6B config and `num_hidden_layers = 12` can serve directly. It is the reference for T1 and T14. It is **not** run D of Stage 0a: D is the B-DOT model at `r = 0` with `routing = fixed` and the routed runs' FiLM option.
 2. **B-DOT core, minimal:**
    - `mode = compute_matched`, `window = absolute`, `kv_mode = step`;
    - `routing = fixed`, `learned` and `random`;
    - `reuse = true` and `false` (with the feasibility tables);
    - balancing, z-loss, exploration, soft top-2, curricula A and B;
    - KV-cache decoding for `step`.
-3. **Pass:** T1 to T3, plus T4, T5, T9 and T10 for this subset; then T8, T11 and T12.
+3. **Pass:** T1 to T3, plus T4, T5, T9 and T10 for this subset; then T8 and T11 to T14.
 
 **Phase B, only after Gate 0a passes (before Stage 0b):**
 
@@ -730,8 +738,8 @@ Implement the B-DOT model on its own, not by modifying an existing example model
 ## 7. Acceptance tests
 
 When they must pass:
-- before Stage 0a: T1 to T5 and T8 to T12, for the Phase A subset;
-- before Stage 0b: the same tests for everything Phase B adds;
+- before Stage 0a: T1 to T5 and T8 to T14, for the Phase A subset;
+- before Stage 0b: T1, T2, T4, T5, T9 and T10 for everything Phase B adds (section 6);
 - T7 before Stage 1;
 - T6 before Stage 3.
 
@@ -746,11 +754,13 @@ Rerun T2 and T10 whenever STOP or re-entry is added.
 | T5 | **Controls.** | `hash` gives the same routes on repeated calls; `random` differs between calls; both stay inside the windows |
 | T6 | **STOP bookkeeping.** `stop.policy = random`, training mode. | A token stopped after step `s` has `s + 1` runs; its state does not change after stopping; its K/V are still written |
 | T7 | **Re-entry bookkeeping**, with the `random` and `forced` policies. | Total runs ≤ `S + max_extra_steps`; the second pass reads first-pass caches; at most one re-entry per token |
-| T8 | **Speed.** Benchmark matched dense D (same FiLM) vs `compute_matched` absolute `r = 1`. | Gate 0a needs routed training throughput of at least 60% of **D**. Also report native Qwen3 throughput and routed/native ratio separately. Below the D threshold, improve dispatch before judging the pilot. |
+| T8 | **Speed.** Benchmark the native dense reference, D, and `compute_matched` absolute `r = 1`, with the same micro-batch layout, compile settings and logging. Time training steps only, without validation or checkpoint saves. | Report all three. Gate 0a needs routed training throughput of at least 60% of the native dense reference's; below that, improve the dispatch before judging the pilot. |
 | T9 | **Parameter counts.** | Match section 3.11 within 0.5% |
 | T10 | **Decode consistency.** Eval mode, fp32, deterministic routing (`learned`, `fixed` or `hash`). For every `kv_mode`, and with STOP or re-entry on where supported, decode token by token with the KV cache and compare with one full-sequence forward pass. | Max abs logit difference < 1e-4 at every position |
 | T11 | **Distributed correctness.** Two ranks, fp32, one global batch, learned routing with gradient accumulation of 2. Arrange one case where a module is used on one rank only, and one where a module is used on no rank. Compare with a single process on the same global batch. | Loss, gradients, balancing counts and `beta` match within 1e-5; no hang or unused-parameter error |
-| T12 | **Resume.** Train 200 training steps with exploration on; save at step 100, resume, and compare steps 101 to 200 with an uninterrupted run (deterministic kernels). The checkpoint must hold `beta`, curriculum progress, and the routing and data generators, as well as the optimizer state. If activation checkpointing is used, the recomputed forward pass must reuse the stored routes. | Identical routes; losses within 1e-6 |
+| T12 | **Resume.** Train curriculum B with `max_steps = 1,000` and `stop_after = 200`, so that steps 151 to 200 run hard routing with exploration on. Save at step 100, resume, and compare steps 101 to 200 with an uninterrupted run (deterministic kernels). The checkpoint must hold `beta`, curriculum progress, and the routing and data generators, as well as the optimizer state. If activation checkpointing is used, the recomputed forward pass must reuse the stored routes. | Identical routes; losses within 1e-6 |
+| T13 | **Schedule horizon.** Build the LR schedule and both curricula for `train.tokens = 2.5e9` and `batch_tokens = 524288`, without training. Also load a curriculum-A config and a curriculum-B config, each with `warmup_frac = 0.2`. | `max_steps = 4,768`. The LR rises linearly for 96 steps, then follows the cosine to 10% of peak at step 4,768. The phase boundaries match the table in section 4.2. Both `warmup_frac = 0.2` configs are rejected. |
+| T14 | **Pipeline check.** Build the B-DOT model in the row 17 configuration (`r = 0`, `routing = fixed`, `step_film = false`) and give it the native dense reference's initial weights (T1 mapping). Train both models for 500 steps with exactly the same recipe: initial weights, data order, batch layout and LR schedule. Either train a fresh pair on a complete 500-step schedule, or reuse a completed native run: give the B-DOT model that run's schedule with `stop_after = 500` (for the current native baseline, `max_steps = 57,220` with 1,145 warm-up steps). | Mean training loss over steps 401–500, and periodic validation loss at step 500, agree within 0.01 nats. If they do not, train the native model a second time with the same recipe: a similar gap between the two native runs means the difference is numerical noise, not a pipeline bug. Report both models' tokens per second. |
 
 ---
 
@@ -784,10 +794,11 @@ model:
   visit_scale: none         # none | inv
   route_scope: qo_mlp       # qo_mlp | mlp (MLP-only routing; kv_mode = step only)
 data:
-  dataset: HuggingFaceFW/fineweb-edu
-  subset: sample-10BT       # sample-100BT beyond 10B tokens (minus the validation ids)
+  dataset: nht10/cx_sampled
+  subset: qwen3_0.6b_base_en_30B   # English pool, about 30B tokens; used by every stage
   revision: null            # pin a commit hash and record it
-  validation_manifest: null # path to the fixed list of validation document ids
+  order: packed_shuffle     # pack the training split, then shuffle the sequences once (seeds.data)
+  validation_manifest: null # path to the fixed periodic (1,024 seq) and final (10,240 seq) validation sets
   doc_mask: true            # attention blocked by document; positions restart per document
 lol:                        # used only when kv_mode = lol_chunk
   chunk_size: 128
@@ -833,19 +844,20 @@ heads:                      # STOP head and re-entry head training (trunk frozen
   label_batches: 200        # re-entry labelling: fixed batches
   label_frac: 0.1           # re-entry labelling: share of tokens picked per batch
 train:
-  tokens: 2.5e9
+  tokens: 2.5e9             # max_steps = floor(tokens / batch_tokens): one horizon for the LR and the curriculum
   epochs: null              # synthetic tasks: train for this many epochs instead of 'tokens'
   batch_tokens: 524288
+  stop_after: null          # gate and grid runs: must be null (never stop a longer schedule early)
   lr: 3.0e-4
   lr_schedule: cosine       # cosine | constant
-  warmup_frac: 0.02
+  warmup_frac: 0.02         # warm-up = ceil(warmup_frac · max_steps); must end before the first curriculum boundary
   warmup_steps: null        # if set, overrides warmup_frac
   min_lr_frac: 0.1
   weight_decay: 0.1
   grad_clip: 1.0
   precision: bf16
 seeds:
-  data: 0                   # document order; the same for every run
+  data: 0                   # data order (packed_shuffle); the same for every run
   model: 0                  # initialisation; varies across seeds of a run
   routing: 0                # exploration, random routing, random STOP/re-entry, label sampling
 ```
@@ -886,14 +898,18 @@ ffn_moe: {n_experts: 9, expert_width: 1536}   # d_ff / 4; matches the capacity r
 - An H100 at about 200 TFLOP/s effective.
 - The 12-layer Qwen3 dense model costs about 2.2 GFLOP per training token, which is about 3.1 H100-hours per 1B tokens. The large LM head is 45% of the weight FLOPs, so this is about 2.8× the cost of a GPT-2-small-sized model.
 - Routed runs are assumed to cost 1.5 to 2.5× dense until the dispatch is optimised.
+- **Measured** on the implementer's 8-GPU node (2026-10-20; record the GPU type with the measurement): the native 12-layer dense model trained 2.62B tokens in about 51 minutes. That is about 6.8 GPU-hours, or 2.6 GPU-hours per 1B tokens. The H100-hour figures in this section are planning estimates; scale them by measured throughput.
 
-### Stage 0a: minimal pilot (12-layer Qwen3, 1B tokens each, about 30 H100-hours)
+### Stage 0a: minimal pilot (12-layer Qwen3, 2.5B tokens each, about 70 H100-hours)
 
-Built from Phase A only (section 6). All routed runs use `compute_matched`, absolute `r = 1` and `kv_mode = step`.
+Built from Phase A only (section 6).
+- **Routed runs:** all use `compute_matched`, absolute `r = 1` and `kv_mode = step`.
+- **Shared settings:** every run has the complete 4,768-step schedule of section 4.1, with the same data order, validation sets and batch layout.
+- **Budget:** these runs use the Stage 2 budget on purpose. A run whose configuration matches a Stage 2 row becomes that row's seed-0 run (see Stage 2).
 
 | Run | Setting | Purpose |
 |---|---|---|
-| D | dense (`r = 0`, `routing = fixed`) | Reference |
+| D | the B-DOT model at `r = 0` with `routing = fixed`, `step_film = true`, `kv_mode = step` and curriculum `none`; not the native Qwen3 model | Reference |
 | P1-A | learned, reuse on, curriculum A | Which curriculum works? |
 | P1-B | learned, reuse on, curriculum B | |
 | R | the P1 winner's setting with `routing = random` (curriculum `none`) | Chance control in the same window |
@@ -903,7 +919,7 @@ Run D, P1-A and P1-B first, choose the P1 winner, then run R and N.
 
 **Choosing the P1 winner.** Differences below 0.01 nats of validation loss count as ties.
 - Measure the off-default share with the end-of-run diagnostics (section 5).
-- A spike means the 1M-token **current-curriculum** validation loss (`eval_spike_loss`), measured every 100 training steps, rises more than 0.1 nats above its running minimum. Target-policy loss is logged alongside it.
+- A spike means the periodic validation loss, measured every 100 training steps, rises more than 0.1 nats above its running minimum. At each curriculum transition the running minimum restarts from the new phase's validation loss at the transition step; the jump itself is reported separately (section 5).
 - Keep the curriculum with the lower validation loss among those that reach an off-default share of at least 5% and show no spike. Ties go to B.
 - If neither qualifies but at least one did not spike, rerun the better non-spiking one once with `default_prior = 0.5` and `explore_eps_max = 0.1`, and keep these values for all later routed runs.
 - If both spiked, continue with the one with lower loss and flag it in the report.
@@ -914,7 +930,7 @@ Run D, P1-A and P1-B first, choose the P1 winner, then run R and N.
 3. **The learned deviations matter:** the default-path test (section 5) raises its validation loss by at least 0.01 nats.
 4. **Learned beats chance:** its validation loss is at least 0.01 nats below run R's.
 5. **Quality:** its validation loss is at most 0.01 nats above run D's.
-6. **Runtime:** routed training throughput is at least 60% of matched dense **D**, with the same FiLM option (T8). The native-Qwen ratio is reported separately, not used for this gate.
+6. **Runtime:** routed training throughput is at least 60% of the native dense reference's (T8).
 
 How to read the outcome:
 - **All six hold, and the P1 winner also beats D by at least 0.01 nats:** a strong signal.
@@ -922,9 +938,9 @@ How to read the outcome:
 - **Routing is unused (criterion 2) or no better than chance (criterion 4) after the rerun:** stop and report that bounded learned routing does not help at this scale. Do not try STOP, re-entry or a larger model as a rescue.
 - **Run N** is reported but does not gate. It separates ordering (reuse off) from substitution (reuse on); see "How to read the table" in Stage 2.
 
-### Stage 0b: remaining pilots (only if Gate 0a passed; 12-layer Qwen3, 1B tokens each, 1 seed, about 65 H100-hours)
+### Stage 0b: remaining pilots (only if Gate 0a passed; 12-layer Qwen3, 2.5B tokens each, 1 seed, about 160 H100-hours)
 
-Build Phase B first. Then run these pilots in parallel, with the curriculum chosen in Stage 0a (free windows always use B).
+Build Phase B first. Then run these pilots in parallel, with the curriculum chosen in Stage 0a (free windows always use B). As in Stage 0a, every run has the complete 4,768-step schedule, and matching runs carry over into Stage 2.
 
 | Pilot | Runs (`compute_matched`, reuse on, unless stated) | Question |
 |---|---|---|
@@ -935,7 +951,7 @@ Build Phase B first. Then run these pilots in parallel, with the curriculum chos
 
 **Gate 0b.** Differences below 0.01 nats of validation loss count as ties.
 
-- **Window for the reuse-on rows:** the best in P2. Ties go to `absolute`, then `relative`, then `bucket`.
+- **Window for the rows marked W in Stage 2 (rows 3, 5, 7, 8 and 10):** the best in P2. Ties go to `absolute`, then `relative`, then `bucket`.
 - **`kv_mode`:** the better of `step` and `module_band` in P3a. Ties go to `step`, which is cheaper.
 - **`visit_scale` for grid rows 11 to 13:** the better in P4. Ties go to `none`. Row 16 and the Stage 1 looped runs always use `none`.
 - **Record from P3b:** whether `module_mixed` was unstable (spikes or divergence), and how `step` compares with `lol_chunk` and `exclude`. This is context for interpreting rows 6 and 14; it does not gate anything.
@@ -968,7 +984,24 @@ The tasks are specified in section 10, and their configs in section 8 ("Other si
 
 ### Stage 2: main grid (12-layer Qwen3, 2.5B tokens, 2 seeds)
 
-**Cost:** about 480 H100-hours for the grid, plus about 650 for the 5B reruns. If the budget is tight, run the grid at 1.5B tokens (about 290 H100-hours) and keep 5B for the reruns.
+**Cost:**
+- **Grid:** about 380 to 430 H100-hours for the runs not already done in Stages 0a and 0b, depending on how many carry over (about 480 for all 36).
+- **5B reruns:** about 650.
+- **If the budget is tight:** run the grid at 1.5B tokens (about 290 H100-hours) and keep 5B for the reruns. Then nothing carries over from Stages 0a and 0b.
+
+**Runs carried over from Stages 0a and 0b.** A Stage 0a or 0b run whose configuration matches a row exactly, after the Gate 0b choices, is that row's seed-0 run. A seed-1 rerun from Stage 0a is likewise that row's seed-1 run. Before reusing a run, check it:
+- load its final checkpoint with the current code: parameter names and shapes must match;
+- re-evaluate it: its final validation loss must match the logged value within 1e-3, and its routes on the route sample must be identical;
+- confirm in version control that the training code for its features (router, balancing, curriculum, data pipeline) has not changed since it ran.
+
+If any check fails, rerun it.
+
+| Gate 0b outcome | Carried-over runs |
+|---|---|
+| Any | D → row 1; P3b's free-window `step` run → row 6; P3b's `lol_chunk` run → row 14; the P4 run with the chosen `visit_scale` → row 13 |
+| `step` K/V kept | Also N → row 2 |
+| `step` K/V and the absolute window both kept | Also the P1 winner → row 3 and R → row 7 |
+| Another window or `module_band` chosen | The winning P2 or P3a run becomes row 3, if its configuration matches |
 
 | # | `mode` | Window | `reuse` | `routing` | Notes | Purpose |
 |---|---|---|---|---|---|---|
@@ -996,7 +1029,7 @@ The tasks are specified in section 10, and their configs in section 8 ("Other si
   - "W 1" means absolute `r = 1`, relative `r = 1` (with `drift_cap = 2`), or bucket 2;
   - "W 2" means absolute or relative `r = 2` (with `drift_cap = 2`), or bucket 4.
 - **Curriculum:** learned rows use the one chosen in Stage 0a (always B for the free window). The `r = 0` rows (1, 9, 11, 16, 17) and the `random` and `hash` controls (rows 7 and 8) use curriculum `none`.
-- **`kv_mode`:** the Gate 0b choice applies to the `compute_matched` rows 2–5, 7 and 8. Rows 6, 9–13 and 18 always use `kv_mode = step`:
+- **`kv_mode`:** the Gate 0b choice applies to the `compute_matched` rows 2–5, 7 and 8. Rows 1 and 17 use `step`, which at `r = 0` is identical to `module_band`. Rows 6, 9–13 and 18 always use `kv_mode = step`:
   - a band over a free window (row 6) would compute K/V for every module;
   - a band in `capacity` mode would break the parameter and FLOP matching with row 15;
   - a band in `depth` mode would add K/V FLOPs to rows 12 and 13 relative to their baselines (rows 11 and 16);
@@ -1006,7 +1039,7 @@ The tasks are specified in section 10, and their configs in section 8 ("Other si
   - A win by a reuse-on row (3, 5, 10, 13) shows that per-token module selection helps, which may come from substitution or repetition.
   - It shows that *order* helps only if the matching reuse-off row (2, 4 or 12) also wins.
   - Report the two claims separately.
-- **Attention routing:** row 3 vs row 18 shows what routing `W_Q` and `W_O` adds over MLP-only routing.
+- **Attention routing:** row 3 vs row 18 shows what routing `W_Q` and `W_O` adds over MLP-only routing, when row 3 uses `step` K/V. If Gate 0b picks `module_band`, row 3's modules also own their K/V, so compare row 18 with the `step`-K/V run of row 3's window instead (the P1 winner for the absolute window, otherwise the P2 winner), and give that run a second seed.
 
 **Row 15:** the 12-layer dense model, but each of the 8 middle layers' MLP is a mixture of 10 SwiGLU experts of width `d_ff / 4` (768 here). It uses top-4 softmax routing, so the active MLP width stays 3072, and loss-free balancing (a per-layer `beta`, as in section 3.7).
 - **Parameters:** 457.7M total and 344.4M active, against row 9's 453.6M and 344.5M. The totals differ by 0.9%, because no whole number of experts of this width matches exactly.
@@ -1074,9 +1107,9 @@ If none does, stop and write up the grid as a controlled negative result. Do not
 At this stage, also report knowledge-heavy and reasoning-heavy evaluations separately (for example ARC and TriviaQA vs the section 10.3 probes, and GSM8K). Looped models typically lose on the first kind and gain on the second. TriviaQA and GSM8K need the harness's `generate_until` (greedy, with KV-cache decoding).
 
 **Total plan:**
-- Through Stage 5 at size 1: roughly 1,600 to 1,900 H100-hours, if every gate passes. Most of it is Stage 2.
+- Through Stage 5 at size 1: roughly 1,600 to 2,050 H100-hours, if every gate passes. Most of it is Stage 2.
 - The optional size 2 adds about 900 to 2,100.
-- The gates stop spending early: Stage 0a alone (about 30 H100-hours) decides whether anything else runs.
+- The gates stop spending early: Stage 0a alone (about 70 H100-hours) decides whether anything else runs.
 
 ---
 
@@ -1100,7 +1133,9 @@ At this stage, also report knowledge-heavy and reasoning-heavy evaluations separ
 - **Model:** small Qwen3 layers: `d = 256`, 4 query heads and 2 K/V heads of `head_dim = 64`, `d_ff = 768`; `n_stem = 1`, `S = 6`, `n_coda = 1` (8 layers). The full config is in section 8.
 - **Training:** AdamW, weight decay 0.1, batch 4,096 facts, 1,000 warm-up training steps, then constant LR. One fact per sequence.
   - Pick the LR from {3e-4, 1e-3} by the dense baseline's ID-dev accuracy after 500 epochs, then use it for every configuration.
-  - Train for 2,000 epochs (about 153k training steps), logging dev accuracies every 50 epochs. If any configuration's OOD-dev accuracy is still rising at 2,000 epochs, extend all two-hop runs together, up to 10,000 epochs.
+  - Train for 2,000 epochs (about 153k training steps), logging dev accuracies every 50 epochs. If any configuration's OOD-dev accuracy is still rising at 2,000 epochs, extend all two-hop runs together to 10,000 epochs, and judge Gate 1a at 10,000 epochs.
+  - **Horizon:** `max_steps` is the 2,000-epoch step count. The extension is the one allowed continuation of a run (section 4.1): the LR is constant after warm-up, so continuing changes no schedule. The curriculum never restarts or stretches; the extra epochs stay in its final phase (hard top-1, no exploration).
+  - Picking the LR after 500 epochs is a training choice made on dev data, not a comparison between configurations, so it is allowed.
   - OOD composition, if it appears, appears late. Published looped models needed thousands of epochs.
 - **Forced re-entry:** at the last re-entry point (after step 3), the `rel2` token always re-enters at step 0, for a total of 10 module runs. This is a capacity check.
 - **Optional:** train on chains of up to 2 hops and test on 3 hops, allowing more re-entries or loops.
@@ -1131,7 +1166,11 @@ At this stage, also report knowledge-heavy and reasoning-heavy evaluations separ
 - **Text templates:**
   - atomic: `The {rel} of {a} is {b}.`
   - two-hop: `The {rel2} of the {rel1} of {a} is {c}.`
-- **Mix:** these sentences make up 2% of training tokens, packed like ordinary documents.
+- **Mix:**
+  - Pack these sentences into their own 1,024-token sequences, each sentence a document: separated by the end-of-text token and document-blocked like the pool.
+  - In every training step, 2% of the sequences, rounded down, are two-hop sequences: 10 of 512, or 20 of 1,024 at Stage 5 size 2. Their positions in the step are drawn with seed 0; the other sequences continue the pool order of section 4.1.
+  - The two-hop sequences cycle in a fixed order, reshuffled with seed 0 at each pass.
+  - All Stage 4 and Stage 5 runs share this mixed order.
 - **Probes:** the OOD two-hop facts (both hops OOD), written with the two-hop template. A probe counts as correct if greedy decoding after `is` produces `c` exactly. The `forced` policy applies to the token `is`.
 
 ---
@@ -1139,6 +1178,7 @@ At this stage, also report knowledge-heavy and reasoning-heavy evaluations separ
 ## 11. Baselines and matching rules
 
 - Every comparison uses the same data order, number of tokens, optimiser, schedule, batch size and context length.
+- A longer schedule stopped early is never a reference or a comparison arm (section 4.1).
 - The main comparison for any routed setting is **the same mode at `r = 0`**. Random and hash routes are diagnostics, not the bar.
 - Report for every run:
   - unique parameters;
@@ -1183,6 +1223,14 @@ Found while checking this spec:
 14. **Balancing from the current batch leaks information.** Update `beta` only after the backward pass, from that training step's all-reduced counts, never inside a forward pass (section 3.7).
 15. **Dynamic routing and DDP.** A module unused on one rank gets no gradient there. Enable unused-parameter handling (or an equivalent) and keep T11 passing.
 16. **Activation checkpointing re-runs the forward pass.** Store the routes and random draws from the first forward pass and reuse them during recomputation, or the backward pass will not match the forward pass (T12).
+
+Found while preparing the pilots:
+
+17. **A long schedule stopped early is not a short run.** Take a 30B-token schedule (57,220 steps) stopped after 5,000 steps:
+    - its LR is still at 99% of peak, so every loss is measured before any substantial decay;
+    - its routing curriculum, measured against the long horizon, never reaches hard routing (curriculum B) or never opens the window (curriculum A).
+
+    Give every run its own complete schedule (section 4.1).
 
 ---
 
@@ -1237,12 +1285,12 @@ Any prediction that fails in the hopeful direction becomes the headline result. 
 ## Appendix A. Checklist
 
 **Phase A** (section 6)
-- [ ] Infrastructure, including the validation manifest, document masking and the separate random streams.
-- [ ] Dense baseline trains with a normal loss curve (no spikes).
+- [ ] Infrastructure, including the data recipe of section 4.1 (pinned pool revision, `packed_shuffle` order, validation manifest, document-disjointness check), document masking and the separate random streams.
+- [ ] Native dense reference trains with a normal loss curve (no spikes).
 - [ ] Minimal B-DOT: `compute_matched`, absolute window, `step` K/V, fixed/learned/random routing, reuse on and off, router extras, `step` decoding.
-- [ ] T1 to T5 and T8 to T12 pass for this subset; T8 throughput recorded.
+- [ ] T1 to T5 and T8 to T14 pass for this subset; T8 throughput recorded.
 
-**Stage 0a** (minimal pilot, 1B tokens)
+**Stage 0a** (minimal pilot, 2.5B tokens, complete schedules)
 - [ ] D, P1-A and P1-B; P1 winner chosen; then R and N.
 - [ ] Gate 0a recorded (all six criteria, with second-seed reruns where a result was within noise). If it fails: report and stop.
 
@@ -1262,7 +1310,7 @@ Any prediction that fails in the hopeful direction becomes the headline result. 
 - [ ] Gate 1a (re-entry) and Gate 1b (order rows) recorded.
 
 **Stage 2** (2.5B tokens)
-- [ ] Rows 1 to 18, 2 seeds.
+- [ ] Rows 1 to 18, 2 seeds (seed-0 runs carried over from Stages 0a and 0b where they match).
 - [ ] 5B reruns of the top four learned rows, their `r = 0` rows and row 14, 3 seeds.
 - [ ] Gate 2 recorded. If it fails: write up the negative result and stop.
 
@@ -1279,11 +1327,46 @@ Any prediction that fails in the hopeful direction becomes the headline result. 
 
 **Every run**
 - [ ] `config.json` (with the dataset revision and seeds), `metrics.jsonl`, `final_eval.json`, `routes_sample.npz`.
+- [ ] `max_steps`, warm-up steps and curriculum boundaries recorded.
+- [ ] Gate and grid runs only: `stop_after` unset, and the run reached `max_steps`.
 - [ ] Parameters (unique and active), nominal LE, executed training FLOPs, KV bytes and measured speed reported.
 
 ---
 
 ## Appendix B. Change log
+
+### Version 1.4: schedule horizon, pilot budget and data
+
+Version 1.4 answers the curriculum-horizon review of 2026-10-20 (see `BDOT_curriculum_context_review_response.md`). The changes:
+
+- **One horizon** (sections 4.1, 4.2 and 11; pitfall 17).
+  - Every run has one complete schedule, `max_steps = floor(tokens / batch_tokens)`, shared by the LR schedule and the routing curriculum. Epoch-based runs use `epochs × steps per epoch`.
+  - A longer schedule stopped early is never used by a gate or a comparison. `train.stop_after` is defined (it ends a run without changing `max_steps`) and is allowed only in tests and exploratory runs.
+  - The Stage 1 two-hop extension is the one allowed continuation of a run (section 10.1). It now has a fixed end at 10,000 epochs.
+- **Transitions after warm-up.**
+  - Warm-up is `ceil(0.02 · max_steps)` steps, and it must end before the first curriculum boundary; the config loader checks this.
+  - Section 4.2 lists the boundaries for 2.5B tokens, and new test T13 checks them.
+- **Pilot budget.** Stages 0a and 0b train 2.5B tokens (4,768 steps), up from 1B, so that a viable method is less likely to be stopped for lack of training.
+  - Matching runs carry over into Stage 2, as seed-0 runs (and Stage 0a's seed-1 reruns as seed-1 runs).
+  - Before reuse, each carried-over run passes a check of its checkpoint, routes and code.
+- **Data.**
+  - The prepared English pool `nht10/cx_sampled` (`qwen3_0.6b_base_en_30B`) replaces FineWeb-Edu.
+  - It is read in the `packed_shuffle` order, which nothing else may reshuffle, with fixed periodic and final subsets of the pool's shuffled validation split and a document-disjointness check.
+  - Stages 4 and 5 interleave the two-hop sequences at 2% of every step (section 10.3). Runs that continue from a trunk read on after the trunk's data.
+- **Reference runs.** D is stated explicitly as the B-DOT model at `r = 0` with FiLM, `step` K/V and curriculum `none`, not the native Qwen3 model. New test T14 checks the B-DOT training pipeline against the native model.
+- **Validation** (sections 5 and 9).
+  - Periodic validation uses the routing currently being trained. Control runs use their own routing, and STOP and re-entry trunks use policy `none`.
+  - At each curriculum transition, the same weights are validated under the old and the new routing. The spike rule restarts from the new value.
+  - The route diagnostics and the route sample are named sequences of the final validation set.
+- **Tests.**
+  - T8 times training steps only, with the same layout for every model. Gate 0a's runtime bar is now the native dense reference.
+  - T12 now runs curriculum B with `max_steps = 1,000`, so exploration is on after the resume.
+  - The Stage 0b test list matches section 6.
+- **Stage 2 notes.**
+  - Rows 1 and 17 use `step` K/V.
+  - Gate 0b's window choice applies to the rows marked W.
+  - Row 3 vs row 18 is read as attention routing only with `step` K/V.
+- **Costs.** Stage budgets updated, and the measured dense throughput added (section 9).
 
 ### Version 1.3: Qwen3 architecture
 

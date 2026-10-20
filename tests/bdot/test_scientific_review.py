@@ -143,7 +143,35 @@ class ScientificReviewTests(unittest.TestCase):
                 m.evaluation_policy = 'target'
                 final = t.evaluate(include_curriculum=False)
                 self.assertNotIn('eval_curriculum_loss', final)
-                self.assertAlmostEqual(final['eval_loss'], metrics['eval_loss'], places=7)
+                self.assertAlmostEqual(final['eval_loss'], metrics['eval_target_loss'], places=7)
+                self.assertEqual(metrics['eval_loss'],metrics['eval_curriculum_loss'])
+
+    def test_transition_eval_at_exact_boundary_and_resume(self):
+        for curriculum, boundary in [('A',2),('B',3)]:
+            with self.subTest(curriculum=curriculum), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory)
+                full,_=trainer(root/'full',curriculum=curriculum,validation=True)
+                full.args.eval_steps=5  # The transition is not a regular eval step.
+                full.train()
+                transition=[x for x in full.state.log_history if 'eval_transition_jump' in x]
+                self.assertEqual([x['step'] for x in transition],[boundary])
+                row=transition[0]
+                self.assertEqual(row['eval_transition_new_loss'],row['eval_loss'])
+                self.assertAlmostEqual(row['eval_transition_jump'],
+                    row['eval_transition_new_loss']-row['eval_transition_old_loss'])
+                self.assertTrue(row['eval_spike_reset'])
+                self.assertFalse(row['eval_spike'])
+                first,_=trainer(root/'split',curriculum=curriculum,stop=1,validation=True)
+                first.args.eval_steps=5;first.train()
+                resumed,_=trainer(root/'split',curriculum=curriculum,validation=True)
+                resumed.args.eval_steps=5
+                resumed.train(resume_from_checkpoint=str(root/'split/checkpoint-1'))
+                for k,v in full.model.state_dict().items():
+                    torch.testing.assert_close(v,resumed.model.state_dict()[k],rtol=0,atol=0)
+                actual=[x for x in resumed.state.log_history if 'eval_transition_jump' in x]
+                scientific=lambda rows: [{k:v for k,v in row.items()
+                    if not k.endswith(('runtime','per_second'))} for row in rows]
+                self.assertEqual(scientific(actual),scientific(transition))
 
     def test_logging_sums_resume_before_widening_and_monitoring_do_not_change_training(self):
         with tempfile.TemporaryDirectory() as directory:

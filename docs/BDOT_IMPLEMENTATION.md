@@ -1,6 +1,6 @@
 # B-DOT Phase A implementation
 
-Implements the Phase A subset of [spec v1.3](BDOT_v2_spec.md). No dataset download,
+Implements the Phase A subset and pilot recipe of [spec v1.4](BDOT_v2_spec.md). No dataset download,
 remote deployment or research training is part of this implementation turn.
 
 ## What is reused
@@ -18,9 +18,9 @@ Qwen3 still uses the native model. The matched dense control adds only step FiLM
 - `bdot/routing.py`: Phase A configuration, curricula and exact no-reuse tables.
 - `bdot/trainer.py`: global router-loss denominator, one balance update per
   optimizer step, router metrics and ordinary DDP unused-parameter handling.
-- `bdot/data.py`: frozen validation document IDs, document shuffle seed 0, and
-  continuous packing with only the final remainder dropped. Uses HF caches;
-  no separate token-export command is required.
+- `bdot/data.py`: shared packed-validation indices and a one-time exact
+  train/validation document-overlap check. Legacy document-stream helpers remain
+  available. Both use ordinary HF caches; there is no token-export step.
 
 Other modes/windows/KV designs, STOP and re-entry fail rather than silently falling
 back to Phase A. They are later phases, conditional on the pilot result.
@@ -36,9 +36,10 @@ To prepare a sequential queue (this command does not launch anything):
 ```bash
 python scripts/make_bdot_pilot.py \
   --tokenizer /absolute/local/Qwen3-tokenizer \
-  --data /absolute/local/fineweb-edu-sample-10BT \
+  --data /absolute/local/qwen3_0.6b_base_en_30B/train \
+  --eval-data /absolute/local/qwen3_0.6b_base_en_30B/validation \
   --revision DATASET_COMMIT_HASH \
-  --manifest /absolute/local/fineweb-validation.json \
+  --manifest /absolute/local/cx-packed-validation.json \
   --accelerate-config /absolute/local/accelerate.yaml \
   --world-size 8 --micro-batch 16 \
   --output /absolute/new/pilot-plan
@@ -48,8 +49,10 @@ The default queue contains D → P1-A → P1-B. R and the matching N follow sele
 of the curriculum; they are not selected automatically. The generator supports
 `--arms R N-A` or `--arms R N-B`. It records the rounded token budget and separate
 model/routing seeds. Eight ranks × 16 sequences × accumulation 4 gives 512 × 1024
-input tokens/update. A 1B request rounds down to 1,907 updates (999,817,216 tokens).
-The full schedule has 2% warmup; the inherited `stop_after` cutoff remains available.
+input tokens/update. The default 2.5B request rounds down to 4,768 updates
+(2,499,805,184 tokens), with 96 warmup updates. LR and routing share that complete
+schedule. The generator does not set `stop_after`; the pilot job rejects an
+early-cutoff run. Tests/exploratory runs may still use the inherited cutoff.
 Checkpoint retention is unlimited unless explicitly changed.
 
 The generated `jobs.json` works with the existing runner. Device allocation,
@@ -57,13 +60,21 @@ runner authorization and availability must be established separately. `commands.
 remains inactive. Every job checks for fresh output and verifies the final step
 and saved weights before declaring completion.
 
-The local raw dataset must contain `text` and unique, nonnull `id` columns. The
-manifest fixes the revision, tokenizer and validation documents. Training uses a
-sequential prefix after document shuffling, independent of model seed. A budget
-larger than the packed corpus is rejected instead of repeating the corpus.
-Periodic evaluation uses a fixed approximately 1M-input-token prefix; final
-`final_eval.json` scores the complete frozen validation split. Router regularizers
-never enter reported validation loss/PPL.
+The local data needs a `text` column. All arms reuse the existing training and
+validation splits, HF maps and seed-0 packed shuffle, with a sequential sampler.
+Defaults preserve the native baseline's preprocessing: 128 workers and map batch
+size 1,000. Keep these settings fixed; `--preprocessing-workers` is explicit.
+FA4 is the generator default; `--backend sdpa` remains available.
+
+The first arm creates the shared validation manifest automatically. It hashes
+the raw text to detect exact document overlap, removes affected validation
+sequences without changing training, and freezes the first 1,024 eligible
+sequences for periodic evaluation and first 10,240 for final evaluation (or all
+if fewer exist). Later arms reuse the manifest and caches. Changed source
+fingerprints are rejected. The full manifest is embedded in checkpoint training
+receipts, so standalone evaluation does not need the training corpus. Actual
+pool disjointness is only established when this check runs on the real data.
+Router regularizers never enter reported validation loss/PPL.
 
 ## Checkpoints and evaluation
 
@@ -72,10 +83,10 @@ Load routed checkpoints through `train.build_model()` or
 Qwen3 config; an unmodified AutoModel loader alone does not reconstruct the router.
 The project's training and evaluation entry points use the correct loader.
 
-`eval/packed_ppl.py` supports the document-stream manifest and B-DOT checkpoints.
-For these checkpoints, `--eval_data_dir` points to the original raw corpus; the
-manifest selects held-out documents. `--validation_manifest` relocates the same
-manifest if needed. `--routing_override fixed` or `random` performs the specified
+`eval/packed_ppl.py` loads B-DOT checkpoints and their frozen packed-validation
+selection; `--eval_data_dir` points to the existing validation split.
+Legacy document-stream checkpoints still take their original corpus path and
+document manifest. `--routing_override fixed` or `random` performs the specified
 route intervention; `--routing_seed` selects a repeatable evaluation stream.
 Off-default share and repeated-module fraction are included in the result.
 Reuse means the fraction of tokens whose path repeats any module, as in the
@@ -85,17 +96,20 @@ update; they are not averages over the entire logging interval.
 
 ### Training and validation metrics
 
-The authorized scientific-review fixes amend spec v1.3 as follows:
+The scientific-review behavior, including the v1.4 curriculum changes:
 
 - Forced single-candidate choices contribute zero z-loss. The denominator is
   still all input-token × routing-step decisions across accumulation and ranks.
   Entirely forced routers are bypassed; home-only router parameters have no
   gradient and receive no AdamW decay or momentum update.
-- Periodic `eval_loss` measures target-window hard routing.
-  `eval_curriculum_loss` measures the phase at completed updates / full schedule,
-  with its reach/soft flag recorded and exploration disabled. `eval_spike_loss`
-  aliases curriculum loss for Gate 0a. Identical policies share one scoring pass.
-  Final full validation and standalone route studies use only the target policy.
+- Periodic `eval_loss`, `eval_curriculum_loss`, and `eval_spike_loss` measure the
+  current curriculum with exploration disabled. `eval_target_loss` also records
+  the target hard policy; identical policies share one scoring pass.
+  Every widening/soft-to-hard transition triggers validation on the same weights
+  under both phases, including when the transition is between periodic evaluations.
+  The transition jump is logged and the spike minimum resets to the new loss.
+  Trainer's checkpointed log history preserves that minimum on resume.
+  Final validation and standalone route studies use only the target policy.
 - `objective_loss` is HF's logged optimization objective. `lm_loss` is the
   token-weighted LM aggregate since the previous training log, with `lm_tokens`
   and `input_tokens` recorded. `router_z_loss` uses the same interval and the
@@ -108,7 +122,14 @@ The authorized scientific-review fixes amend spec v1.3 as follows:
 - `input_tokens_per_second_interval_wall` includes validation/checkpoint work
   between logs. `peak_allocated_bytes` and `peak_reserved_bytes` are interval
   maxima across GPUs (null on CPU). T8 remains a separate training benchmark,
-  with matched D as its gate denominator and native Qwen also reported.
+  against native Qwen for the v1.4 gate, with matched D also reported.
+
+Schedule checks reject warmup extending to the first curriculum boundary.
+`tests/bdot/test_pilot.py` covers T13 and a small CPU T14 pair over 500 updates;
+the full-model B200 pipeline comparison remains a pre-launch check. The resume
+test covers a 1,000-step horizon stopped at 200, resuming at 100 across B's
+soft-to-hard boundary. The GPU resume probe supports the same setup with
+`--schedule-steps 1000 --steps 200 --split 100 --soft-split 20`.
 
 Validation restores training modes, routing state and RNG. Logging sums/cursors
 are model buffers saved by HF; native optimizer/scheduler saving is unchanged.
@@ -124,8 +145,8 @@ disjoint whole sequences without padding or duplicate rows.
 ```bash
 accelerate launch --config_file resources/accelerate_b200.yaml \
   eval/packed_ppl.py \
-  --checkpoint /absolute/pilot/P1-B/checkpoint-1907 \
-  --eval_data_dir /absolute/raw-corpus \
+  --checkpoint /absolute/pilot/P1-B/checkpoint-4768 \
+  --eval_data_dir /absolute/local/qwen3_0.6b_base_en_30B/validation \
   --output_file /absolute/new/route-study/final_eval.json \
   --precision bf16 --batch_size 16 --route_study true
 ```

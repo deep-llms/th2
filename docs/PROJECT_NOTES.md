@@ -2,7 +2,7 @@
 
 ## Research scope
 
-[BDOT_v2_spec.md](BDOT_v2_spec.md) v1.3 defines the research. Implement Phase A
+[BDOT_v2_spec.md](BDOT_v2_spec.md) v1.4 defines the research. Implement Phase A
 first: compute-matched bounded routing, absolute windows and step-owned K/V.
 Do not build capacity/depth modes, other KV designs, STOP or re-entry until the
 specified pilot gate passes. Configurations reject unsupported modes explicitly.
@@ -19,15 +19,21 @@ FiLM; native-equivalence tests turn FiLM off. They are different references.
   unvalidated FSDP/DeepSpeed/compile/reentrant-checkpoint paths.
 - Model initialization follows the model seed. Routing draws use a separate
   checkpointed stream/counter and rank; evaluation never advances that stream.
-- B-DOT's document_stream mode freezes a validation ID manifest before training,
-  shuffles documents with seed 0, carries packing remainders between map batches,
-  and uses a sequential prefix. It rejects budgets larger than the corpus.
+- The v1.4 pilot uses the existing CulturaX English train/validation splits,
+  ordinary HF map packing and one seed-0 packed shuffle with a sequential sampler.
+  Keep preprocessing at 128 workers/map batch 1,000 to match the native baseline.
+  A shared manifest checks exact text overlap once, drops contaminated validation
+  sequences and fixes periodic/final selections. Legacy document_stream remains
+  supported for old tests/checkpoints; it is no longer the pilot default.
 - Append document EOS, isolate documents and reset positions per fragment.
   LM target tokens and router decisions have separate denominators. Validation
   loss excludes router terms. The inherited packed_shuffle mode is unchanged.
 - max_steps defines the full schedule; stop_after is an absolute cutoff. Keep
   all checkpoints by leaving save_total_limit unset. Strict resume compares
   data, source, runtime, model and training receipts before loading state.
+- Gate pilots complete 2.5B tokens rounded to 4,768 updates, warmup 96, cosine
+  floor 10%, with no stop_after. LR and routing share the same horizon. The
+  completed native 30B-schedule/cutoff-5k run remains a separate reference.
 - Pilot queue default: D, P1-A, P1-B. R and the matching N follow explicit
   curriculum selection. The queue generator does not launch or select winners.
 
@@ -49,14 +55,15 @@ over accumulation and ranks. AdamW momentum/decay must not update an inactive
 router. The original reproduction changes from 52.9419% off-default at update
 100 to 0%, with the default z-loss coefficient unchanged.
 
-Periodic evaluation logs target hard-routing loss and the curriculum loss at
-completed updates / full schedule, both without exploration. Gate 0a uses the
-curriculum loss (`eval_spike_loss`) for stability; final studies use the target
-policy. Native HF objective aggregates are explicitly labeled separately from
+Periodic eval_loss is now the curriculum loss at completed updates / full
+schedule, with target hard-routing loss logged separately; both omit exploration.
+Transitions evaluate both phases on identical weights and reset the spike minimum.
+Gate 0a uses curriculum loss; final studies use the target policy.
+Native HF objective aggregates are explicitly labeled separately from
 token-weighted LM loss. Cumulative LM sums and logging cursors are checkpointed;
 interval wall throughput includes validation/checkpoint overhead. Peak memory
-is the maximum across ranks. The training runtime gate compares against matched
-D, with native Qwen timing also reported.
+is the maximum across ranks. The v1.4 training runtime gate compares against native
+Qwen, with matched D timing also reported.
 
 Standalone B-DOT evaluation and route studies visit all packed batches, including
 all-boundary batches, so route counts and random-route streams agree for the

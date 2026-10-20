@@ -61,6 +61,16 @@ class RoutingConfig:
     def to_dict(self):
         return asdict(self)
 
+    def validate_schedule(self, max_steps, warmup_steps):
+        """Keep the existing single horizon; reject overlapping warmup/transition."""
+        if self.routing != 'learned' or self.curriculum == 'none':
+            return
+        fraction = self.widen_every_frac if self.curriculum == 'A' else self.soft_phase_frac
+        boundary = math.ceil(fraction * max_steps)
+        if warmup_steps >= boundary:
+            raise ValueError(f'LR warmup ({warmup_steps}) must end before curriculum '
+                             f'{self.curriculum} first boundary ({boundary})')
+
     def phase(self, progress, training, *, evaluation_policy='target'):
         """Progress is completed optimizer steps / full schedule (equal fixed batches)."""
         if evaluation_policy not in ('target', 'curriculum'):

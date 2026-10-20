@@ -136,13 +136,15 @@ def worker(config, traces):
         torch.distributed.destroy_process_group()
 
 
-def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backend='reference', curriculum='B'):
+def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backend='reference', curriculum='B',
+            schedule_steps=None):
     import torch
     from datasets import Dataset
     from tokenizers import Tokenizer
     from tokenizers.models import WordLevel
     from tokenizers.pre_tokenizers import Whitespace
     from transformers import PreTrainedTokenizerFast
+    schedule_steps = schedule_steps or steps
     out.mkdir(parents=True, exist_ok=False)
     vocab = {'[UNK]': 0, '[EOS]': 1, **{f'w{i}': i+2 for i in range(510)}}
     tok = Tokenizer(WordLevel(vocab, unk_token='[UNK]'))
@@ -152,7 +154,7 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backe
     tok.save_pretrained(out/'tokenizer')
     # Plenty of distinct documents for a single full schedule without repeating.
     gen = torch.Generator().manual_seed(0)
-    n = (steps*world*2*128 + 16384)//127 + 1
+    n = (schedule_steps*world*2*128 + 16384)//127 + 1
     rows = torch.randint(510, (n,126), generator=gen).tolist()
     Dataset.from_dict({'id':[str(i) for i in range(n)],
         'text':[' '.join(f'w{x}' for x in row) for row in rows]}).save_to_disk(out/'data')
@@ -169,9 +171,11 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backe
         validation_manifest=str(out/'validation.json'), validation_tokens=1024,
         data_cache_dir=str(out/'cache'), map_batch_size=31, block_size=128,
         attention_backend=backend, use_cpu=use_cpu, bf16=not use_cpu,
-        max_steps=steps, save_steps=soft_split, save_total_limit=None,
+        max_steps=schedule_steps, save_steps=soft_split, save_total_limit=None,
         logging_steps=soft_split, report_to='none', learning_rate=3e-4,
-        warmup_steps=soft_split, lr_scheduler_type='cosine', adam_beta2=.95,
+        warmup_steps=min(math.ceil(.02*schedule_steps),
+                        math.ceil((.1 if curriculum=='A' else .15)*schedule_steps)-1),
+        lr_scheduler_type='cosine', adam_beta2=.95,
         per_device_train_batch_size=1, gradient_accumulation_steps=2,
         dataloader_num_workers=0, disable_tqdm=True, gradient_checkpointing=False,
         seed=42, data_seed=0, train_sampling_strategy='sequential',
@@ -186,7 +190,8 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backe
     return jobs
 
 
-def compare(out, world, split, soft_split, steps):
+def compare(out, world, split, soft_split, steps, schedule_steps=None):
+    schedule_steps = schedule_steps or steps
     results=[]
     for name,start,end in [('resume_hard',split,steps),('resume_soft',soft_split,min(2*soft_split,steps))]:
         for rank in range(world):
@@ -209,12 +214,12 @@ def compare(out, world, split, soft_split, steps):
             if not final_ok:errors.append('final_state')
             updates=[x for x in full['updates'] if start<x['step']<=end]
             if updates!=resumed['updates']:errors.append('update_state')
-            if resumed['global_step']!=end or resumed['max_steps']!=steps:errors.append('schedule')
+            if resumed['global_step']!=end or resumed['max_steps']!=schedule_steps:errors.append('schedule')
             results.append(dict(case=name,rank=rank,status='failed' if errors else 'passed',
                 errors=errors,batches=len(actual),mismatches=mismatches,max_loss_abs=loss_max,
                 restored_state_exact=initial_ok,final_state_exact=final_ok))
     report=dict(status='passed' if all(r['status']=='passed' for r in results) else 'failed',
-        world_size=world,steps=steps,split=split,soft_split=soft_split,results=results,
+        world_size=world,steps=steps,schedule_steps=schedule_steps,split=split,soft_split=soft_split,results=results,
         scope='Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture.')
     write(out/'summary.json',report)
     print('RESUME_SUMMARY '+json.dumps(report),flush=True)
@@ -229,6 +234,8 @@ def main():
     p.add_argument('--accelerate-config',type=Path)
     p.add_argument('--cpu',action='store_true')
     p.add_argument('--steps',type=int,default=200)
+    p.add_argument('--schedule-steps',type=int,
+                   help='Full horizon; use 1000 with --steps 200 for spec v1.4 T12')
     p.add_argument('--split',type=int,default=100)
     p.add_argument('--soft-split',type=int,default=20)
     p.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
@@ -240,9 +247,11 @@ def main():
     world=1 if a.cpu else 8
     if not 0<a.soft_split<a.split<a.steps or a.split%a.soft_split:
         p.error('Require 0 < soft-split < split < steps, and split divisible by soft-split')
-    if a.mode=='compare':return compare(out,world,a.split,a.soft_split,a.steps)
+    if a.schedule_steps is not None and a.schedule_steps<a.steps:
+        p.error('schedule-steps must be at least steps')
+    if a.mode=='compare':return compare(out,world,a.split,a.soft_split,a.steps,a.schedule_steps)
     jobs=prepare(out,'sdpa' if a.cpu else 'fa4',world,a.steps,a.split,a.soft_split,a.cpu,
-                 a.expert_backend,a.curriculum)
+                 a.expert_backend,a.curriculum,a.schedule_steps)
     for name,_,_ in jobs:
         argv=[sys.executable]
         if not a.cpu:
@@ -261,7 +270,7 @@ def main():
         if r.returncode:
             write(out/'failure.json',dict(status='failed',case=name,returncode=r.returncode))
             raise RuntimeError(f'{name} failed; inspect its log')
-    return compare(out,world,a.split,a.soft_split,a.steps)
+    return compare(out,world,a.split,a.soft_split,a.steps,a.schedule_steps)
 
 
 if __name__=='__main__':

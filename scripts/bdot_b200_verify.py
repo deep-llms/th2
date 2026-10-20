@@ -105,7 +105,7 @@ def main():
                 hard_over_native=speed['hard_mixed']/speed['native'],
                 soft_over_D=speed['soft_mixed']/speed['D'],
                 soft_over_native=speed['soft_mixed']/speed['native'],
-                hard_runtime_gate=speed['hard_mixed']/speed['D'] >= .6)
+                hard_runtime_gate=speed['hard_mixed']/speed['native'] >= .6)
     failed = [r['name'] for r in results if r['required'] and not r['passed']]
     summary = dict(status='failed' if failed else 'passed', failed_required=failed,
                    results=results, throughput=ratios,

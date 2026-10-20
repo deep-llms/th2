@@ -29,12 +29,22 @@ class ConfigTests(unittest.TestCase):
             out=Path(directory)/'plan'
             result=subprocess.run([sys.executable,str(ROOT/'scripts/make_bdot_pilot.py'),
                 '--tokenizer','/assets/tokenizer','--data','/assets/data','--revision','a'*40,
+                '--eval-data','/assets/validation',
                 '--manifest','/assets/validation.json','--accelerate-config','/assets/accelerate.yaml',
                 '--output',str(out)],capture_output=True,text=True)
             self.assertEqual(result.returncode,0,result.stdout+result.stderr)
             jobs=load_jobs(out/'jobs.json');self.assertEqual([j['name'] for j in jobs],['D','P1-A','P1-B'])
             config=json.loads((out/'P1-A.train.json').read_text())
             self.assertEqual(config['per_device_train_batch_size']*8*config['gradient_accumulation_steps'],512)
-            self.assertEqual(config['max_steps'],1_000_000_000//524288)
+            self.assertEqual(config['max_steps'],4768)
+            self.assertEqual(config['warmup_steps'],96)
+            self.assertNotIn('stop_after',config)
+            self.assertEqual(config['data_order'],'packed_shuffle')
+            self.assertEqual(config['train_sampling_strategy'],'sequential')
+            self.assertEqual(config['preprocessing_num_workers'],128)
+            self.assertEqual(config['eval_max_sequences'],1024)
+            self.assertEqual(config['eval_data_dir'],'/assets/validation')
+            self.assertEqual(jobs[0]['gpus'],list(range(8)))
+            self.assertIsNone(config['save_total_limit'])
 
 if __name__=='__main__':unittest.main()

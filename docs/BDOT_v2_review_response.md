@@ -1,13 +1,6 @@
 # B-DOT v2: response to the pre-implementation review
 
-Date: 2026-10-18. This responds to "B-DOT v2: assessment and questions before implementation", a review of spec version 1.1. Spec version 1.3 later switched every layer to the Qwen3 architecture, trained from scratch; the decisions below still apply. Every decision below is now written into [BDOT_v2_spec.md](BDOT_v2_spec.md) version 1.2, and section numbers refer to that version. Appendix B of the spec lists all the changes.
-
-Later code-review amendments on the same date refine Q4's z-loss prescription:
-forced choices contribute zero numerator, with the all-token-step denominator
-retained. They also distinguish periodic curriculum/target validation and name
-matched D as the runtime-gate reference. The current spec and
-[code-review resolution](BDOT_PHASE_A_CODE_REVIEW_20261018.md#resolution-after-authorized-fixes)
-take precedence over the historical wording below.
+Date: 2026-10-18. This responds to "B-DOT v2: assessment and questions before implementation", a review of spec version 1.1. Spec version 1.3 later switched every layer to the Qwen3 architecture, trained from scratch; the decisions below still apply. Spec version 1.4 later moved Stages 0a and 0b to 2.5B tokens, changed the data pool, and added tests T13 and T14 before Stage 0a; see [BDOT_curriculum_context_review_response.md](BDOT_curriculum_context_review_response.md). Every decision below is now written into [BDOT_v2_spec.md](BDOT_v2_spec.md) version 1.2, and section numbers refer to that version. Appendix B of the spec lists all the changes.
 
 ## Summary
 

@@ -72,7 +72,8 @@ def data_arguments(recipe, path, cache_dir=None, overwrite=False):
         document_split="validation" if stream else "train",
         validation_manifest=manifest.get("path"), dataset_revision=identity.get("revision"),
         validation_tokens=identity.get("minimum_tokens", 10_000_000),
-        document_end_token=recipe["document_end"]["token"],
+        document_end_token=(recipe["document_end"]["token"]
+                            if recipe["document_end"].get("selection") == "explicit" else None),
         map_batch_size=recipe["map_batch_size"], preprocessing_num_workers=recipe["requested_workers"],
         isolate_documents=isolated,
         reset_document_positions=recipe["positions"] == "reset_per_document_fragment",
@@ -152,11 +153,21 @@ def main():
     dataset, recipe = prepare_training_data(data, prep_args, tokenizer, tokenizer_dir,
         data.block_size, attention_backend=backend)
     require_held_out(train_recipe, recipe)
+    full_size = len(dataset)  # Receipt token count describes this unfiltered split.
+    frozen_manifest = None
+    # v1.4 pilots freeze indices after an exact document-overlap check. Use the
+    # checkpoint's embedded manifest so evaluation does not need the train corpus.
+    training_path = checkpoint / "training_recipe.json"
+    if data.data_order == "packed_shuffle" and training_path.is_file():
+        validation = json.loads(training_path.read_text()).get("validation") or {}
+        if validation.get("manifest") is not None:
+            from bdot.data import select_packed_validation
+            frozen_manifest = validation["manifest"]
+            dataset = select_packed_validation(dataset, recipe, frozen_manifest)
     if recipe["document_end"]["id"] != train_recipe["document_end"]["id"]:
         raise ValueError("Evaluation document-end token ID differs from training")
-    full_size = len(dataset)
     if args.max_sequences is not None:
-        dataset = dataset.select(range(min(args.max_sequences, full_size)))
+        dataset = dataset.select(range(min(args.max_sequences, len(dataset))))
     # Each process owns an independent evaluation replica; autocast is explicit
     # to avoid converting the full vocabulary-sized output to FP32 in Accelerate.
     model = build_model(ModelArguments(model_name_or_path=str(checkpoint), attention_backend=backend),
@@ -194,6 +205,8 @@ def main():
                                                *checkpoint.glob("pytorch_model*.bin")})],
         config_sha256=hashlib.sha256((checkpoint / "config.json").read_bytes()).hexdigest(),
         torch_version=torch.__version__)
+    if frozen_manifest is not None:
+        result["selection"]["validation_manifest_sha256"] = digest(frozen_manifest)
     if accelerator.is_main_process:
         if args.route_study:
             from eval.route_study import write_route_sample, compare_route_samples

@@ -51,7 +51,7 @@ class ModelArguments:
 class DataArguments:
     data_dir: str = field(default="data/sampled", metadata={
         "help": "Local Parquet file/directory or saved HF Dataset; select one split explicitly"})
-    data_order: str = "packed_shuffle"  # or document_stream (B-DOT spec)
+    data_order: str = "packed_shuffle"  # legacy document_stream is also supported
     dataset_revision: str | None = None
     validation_manifest: str | None = None
     validation_tokens: int = 10_000_000
@@ -202,6 +202,12 @@ def prepare_validation_data(data_args, training_args, tokenizer, tokenizer_name,
         dataset, recipe = prepare_training_data(eval_data, eval_args, tokenizer, tokenizer_name,
                                                 block_size, attention_backend=backend)
     require_held_out(train_recipe, recipe)
+    manifest = None
+    if data_args.data_order == "packed_shuffle" and data_args.validation_manifest:
+        from bdot.data import packed_validation_manifest, select_packed_validation
+        with training_args.main_process_first(desc="freeze packed validation and check document overlap"):
+            manifest = packed_validation_manifest(dataset, recipe, train_recipe, data_args)
+        dataset = select_packed_validation(dataset, recipe, manifest)
     full_size = len(dataset)
     if data_args.eval_max_sequences is not None:
         if data_args.eval_max_sequences < 1:
@@ -209,6 +215,8 @@ def prepare_validation_data(data_args, training_args, tokenizer, tokenizer_name,
         dataset = dataset.select(range(min(data_args.eval_max_sequences, full_size)))
     receipt = dict(data_recipe=recipe, selection=dict(full_sequences=full_size,
         selected_sequences=len(dataset), max_sequences=data_args.eval_max_sequences, shuffle_seed=0))
+    if manifest is not None:
+        receipt["manifest"] = manifest
     return dataset, receipt
 
 
@@ -239,8 +247,8 @@ def main():
     wants_eval = training_args.do_eval or training_args.eval_strategy != "no" or training_args.eval_on_start
     if data_args.data_order not in ("packed_shuffle", "document_stream"):
         raise ValueError("Unknown data_order")
-    if data_args.data_order != "document_stream" and data_args.validation_manifest is not None:
-        raise ValueError("validation_manifest requires data_order=document_stream")
+    if data_args.data_order == "packed_shuffle" and data_args.validation_manifest and not data_args.eval_data_dir:
+        raise ValueError("Packed validation_manifest requires the existing eval_data_dir split")
     if data_args.data_order == "document_stream":
         if data_args.eval_data_dir or data_args.document_split != "train":
             raise ValueError("document_stream training uses its manifest for validation, not eval_data_dir")
@@ -323,12 +331,13 @@ def main():
     train_dataset, data_recipe = prepare_training_data(
         data_args, training_args, tokenizer, tokenizer_name, block_size,
         attention_backend=model_args.attention_backend)
-    if data_args.data_order == "document_stream" and training_args.max_steps > 0:
+    if (data_args.data_order == "document_stream" or data_args.validation_manifest) and training_args.max_steps > 0:
         required_sequences = (training_args.max_steps * training_args.per_device_train_batch_size
                               * training_args.world_size * training_args.gradient_accumulation_steps)
         if required_sequences > len(train_dataset):
-            raise ValueError("The requested document-stream budget exceeds the corpus; refusing to repeat data")
-        train_dataset = train_dataset.select(range(required_sequences))
+            raise ValueError("The requested training budget exceeds the corpus; refusing to repeat data")
+        if data_args.data_order == "document_stream":
+            train_dataset = train_dataset.select(range(required_sequences))
     if checkpoint is not None:
         require_resume_data(checkpoint, data_recipe)
     logger.info("Training: %s sequences, document-end token %s; data fingerprint %s",

@@ -15,6 +15,7 @@ class RoutingUpdateCallback(TrainerCallback):
     def on_train_begin(self, args, state, control, model=None, **kwargs):
         if int(model.completed_steps) != state.global_step:
             raise ValueError('Routing state and Trainer optimizer step disagree on resume')
+        model.options.validate_schedule(state.max_steps, args.get_warmup_steps(state.max_steps))
         model.progress = state.global_step / state.max_steps
         self.trainer._reset_timing()
 
@@ -24,6 +25,12 @@ class RoutingUpdateCallback(TrainerCallback):
     def on_step_end(self, args, state, control, model=None, **kwargs):
         model.finish_update()
         model.progress = state.global_step / state.max_steps
+        previous = (state.global_step - 1) / state.max_steps
+        if (self.trainer.eval_dataset is not None and args.eval_strategy != 'no'
+                and model.options.phase(previous, True)[:2] !=
+                    model.options.phase(model.progress, True)[:2]):
+            self.trainer._transition_previous_progress = previous
+            control.should_evaluate = True
         return control
 
     def on_pre_optimizer_step(self, args, state, control, model=None, **kwargs):
@@ -53,11 +60,15 @@ class BDOTTrainer(PackedTrainer):
                 raise ValueError('B-DOT supports nonreentrant checkpointing only')
             training_args.gradient_checkpointing_kwargs = dict(options, use_reentrant=False)
         super().__init__(*args, **kwargs)
+        if self.args.max_steps > 0:
+            self.model.options.validate_schedule(self.args.max_steps,
+                                                 self.args.get_warmup_steps(self.args.max_steps))
         if self.is_fsdp_enabled or self.is_deepspeed_enabled or self.args.n_gpu > 1:
             raise ValueError('B-DOT Phase A supports ordinary single-device or DDP only')
         if self.args.torch_compile:
             raise ValueError('Dynamic dispatch with torch_compile has not been validated')
         self._include_curriculum_eval = True
+        self._transition_previous_progress = None
         self._interval_started = None
         self.add_callback(RoutingUpdateCallback(self))
 
@@ -134,25 +145,48 @@ class BDOTTrainer(PackedTrainer):
                         ignore_keys=None, metric_key_prefix='eval'):
         from packed_evaluation import score_packed_loader
         model = self.accelerator.unwrap_model(self.model_wrapped)
-        original = (model.evaluation_policy, model.eval_counter, model.last_routes)
+        original = (model.evaluation_policy, model.eval_counter, model.last_routes, model.progress)
         try:
-            model.evaluation_policy = 'target'
+            model.evaluation_policy = 'curriculum' if self._include_curriculum_eval else 'target'
             result = super().evaluation_loop(dataloader, description, prediction_loss_only,
                                              ignore_keys, metric_key_prefix)
             if self._include_curriculum_eval:
                 reach, soft, _ = model.options.phase(model.progress, False, evaluation_policy='curriculum')
+                current = {k[len(metric_key_prefix)+1:]: v for k, v in result.metrics.items()}
                 if (reach, soft) == (model.options.r, False):
-                    current = {k[len(metric_key_prefix)+1:]: v for k, v in result.metrics.items()}
+                    target = current
                 else:
-                    model.evaluation_policy = 'curriculum'
-                    current = score_packed_loader(model, dataloader, self.accelerator)
+                    model.evaluation_policy = 'target'
+                    target = score_packed_loader(model, dataloader, self.accelerator)
                 result.metrics.update({f'{metric_key_prefix}_curriculum_{k}': v for k, v in current.items()})
+                result.metrics.update({f'{metric_key_prefix}_target_{k}': v for k, v in target.items()})
                 result.metrics.update({f'{metric_key_prefix}_curriculum_reach': reach,
                                        f'{metric_key_prefix}_curriculum_soft': soft,
                                        f'{metric_key_prefix}_spike_loss': current['loss']})
+                transition = self._transition_previous_progress is not None
+                if transition:
+                    model.progress = self._transition_previous_progress
+                    model.evaluation_policy = 'curriculum'
+                    before = score_packed_loader(model, dataloader, self.accelerator)
+                    result.metrics.update({
+                        f'{metric_key_prefix}_transition_old_loss': before['loss'],
+                        f'{metric_key_prefix}_transition_new_loss': current['loss'],
+                        f'{metric_key_prefix}_transition_jump': current['loss'] - before['loss']})
+                # Trainer already checkpoints log_history; no new persistent state.
+                prior = next((row for row in reversed(self.state.log_history)
+                              if f'{metric_key_prefix}_spike_min' in row), None)
+                reset = (transition or prior is None
+                         or prior.get(f'{metric_key_prefix}_curriculum_reach') != reach
+                         or prior.get(f'{metric_key_prefix}_curriculum_soft') != soft)
+                minimum = current['loss'] if reset else prior[f'{metric_key_prefix}_spike_min']
+                result.metrics.update({
+                    f'{metric_key_prefix}_spike': current['loss'] > minimum + .1,
+                    f'{metric_key_prefix}_spike_min': min(minimum, current['loss']),
+                    f'{metric_key_prefix}_spike_reset': reset})
             return result
         finally:
-            model.evaluation_policy, model.eval_counter, model.last_routes = original
+            model.evaluation_policy, model.eval_counter, model.last_routes, model.progress = original
+            self._transition_previous_progress = None
 
     def get_decay_parameter_names(self, model):
         names = super().get_decay_parameter_names(model)

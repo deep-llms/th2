@@ -73,7 +73,7 @@ class RouteTrace(TrainerCallback):
 class TrainerTests(unittest.TestCase):
     def make_trainer(self,path,steps=200,cutoff=None,checkpointing=False):
         from train import StopAfterCallback
-        m=model(curriculum='A',default_prior=0.,explore_eps_max=.8)
+        m=model(curriculum='B',default_prior=0.,explore_eps_max=.8)
         m.capture_routes=True
         ds=Dataset.from_dict({'input_ids':[[2,3,4,5,6,7],[3,4,5,6,2,8]]*12,
                              'attention_mask':[[1]*6]*24,
@@ -97,9 +97,9 @@ class TrainerTests(unittest.TestCase):
     def test_resume_and_eval(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
-            full,ft=self.make_trainer(root/'full');full.train()
-            first,at=self.make_trainer(root/'split',cutoff=100);first.train()
-            resumed,bt=self.make_trainer(root/'split');resumed.train(resume_from_checkpoint=str(root/'split/checkpoint-100'))
+            full,ft=self.make_trainer(root/'full',steps=1000,cutoff=200);full.train()
+            first,at=self.make_trainer(root/'split',steps=1000,cutoff=100);first.train()
+            resumed,bt=self.make_trainer(root/'split',steps=1000,cutoff=200);resumed.train(resume_from_checkpoint=str(root/'split/checkpoint-100'))
             self.assertEqual(len(ft.routes),len(at.routes)+len(bt.routes))
             for a,b in zip(ft.routes,at.routes+bt.routes): torch.testing.assert_close(a,b,atol=0,rtol=0)
             self.assertEqual(ft.lrs,at.lrs+bt.lrs)

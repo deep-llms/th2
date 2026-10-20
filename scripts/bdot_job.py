@@ -16,7 +16,11 @@ def main():
     if not command:p.error('Missing training command')
     subprocess.run(command,check=True)
     metrics=json.loads((out/'train_results.json').read_text())
-    if metrics.get('global_step')!=a.steps:raise RuntimeError('Trainer did not reach the declared budget')
+    if metrics.get('global_step')!=a.steps or metrics.get('schedule_steps')!=a.steps:
+        raise RuntimeError('Pilot must complete its declared full schedule')
+    config=json.loads((out/'train_config.json').read_text())
+    if config['training'].get('stop_after') is not None:
+        raise RuntimeError('Gate pilots must not use stop_after')
     if not list(out.glob('*.safetensors')):raise RuntimeError('Missing final model weights')
     receipt.parent.mkdir(parents=True,exist_ok=True)
     with receipt.open('x') as handle:json.dump(dict(status='ok',global_step=a.steps,output_dir=str(out)),handle)

@@ -1,5 +1,60 @@
 # Current task
 
+## Authorized grouped-expert comparison — 2026-10-20
+
+The user authorized completing the original-versus-grouped comparison on the
+current 6Y3O B200, using the existing FA4/train environment. Reuse the numerical,
+two-rank distributed and eight-rank resume checks, followed by two repetitions
+of full-update native/D/hard/soft timings at sequence 1,024 and 524,288 tokens
+per update. Alternate reference/grouped order between repeats. No research
+pilot or environment installation is included; the default remains reference.
+Design: `docs/BDOT_v2_spec.md`; grouped implementation:
+`docs/BDOT_GROUPED_GEMM_20261018.md`.
+
+Execution checkout: `/disk/thuat/DOT-th2-inventory`, authorized th2/main.
+Planned fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01`.
+Inspect live ownership first; copy and verify Accelerate; reclaim only verified
+burn workers; require free GPUs; restore and verify communicating burns even
+on test failure. Local evidence: `temp/grouped_20261020/`.
+
+## Complete pilot recipe implemented and locally checked — 2026-10-20
+
+The user accepted the complete short schedule in `docs/BDOT_v2_spec.md` v1.4
+and `docs/BDOT_curriculum_context_review_response.md`, with minimal changes to
+the existing infrastructure. No new training launch is authorized in this turn.
+Pilot D → P1-A → P1-B uses 4,768 updates, 96 warmup updates, ordinary HF packing,
+seed-0 packed order and the existing English train/validation splits.
+The generator, shared validation selection/overlap check, warmup guard and
+transition evaluation are implemented. LR and routing use the same full horizon;
+the pilot has no early cutoff. The prior independent-router-horizon proposal
+below is superseded. See [implementation](BDOT_IMPLEMENTATION.md).
+
+Local CPU verification covers the 500-update native/B-DOT equivalence fixture,
+curriculum boundaries, transition evaluation, checkpoint resume and frozen
+validation reuse by standalone evaluation. The 46-test ML suite passed.
+The B-DOT suite passed 43/45 initially; both CLI failures were resolved and their
+affected cases rerun successfully. One was a source-receipt change during the
+test; the packed case exposed checkpoint tokenizer metadata and filtered-token
+count checks, now corrected without changing packed data or training math.
+Evidence: `temp/pilot_v14/bdot_suite.log`, `ml_suite.log`,
+`cli_verified.log` (legacy CLI passed), `packed_cli_verified.log` (packed CLI
+passed after fixes), and `manifest_resume_verified.log`.
+Syntax checks pass for all 14 changed Python files.
+
+No remote command, push or B200 training was submitted; commands.sh stays #0.
+The real-pool overlap check and full-model B200 pipeline verification are still
+pending before a research launch. CPU tests do not establish GPU throughput.
+
+## Curriculum/context review requested — 2026-10-20
+
+The user requested a document for another agent to review before choosing the
+routed pilot schedule. See
+[curriculum and context review](BDOT_CURRICULUM_AND_CONTEXT_REVIEW_20261020.md).
+It confirms the full English pool/full 57,220-step LR schedule with cutoff 5,000,
+distinguishes the existing complete short-pilot generator from the proposed
+long-schedule routed screen, and explains the sequence-length speed comparison.
+No training configuration/code changes or new launches were made for this review.
+
 ## Baseline completed — verified 2026-10-20 09:40 UTC
 
 Native Qwen3 12-layer FA4 baseline finished **5,000 updates successfully** at

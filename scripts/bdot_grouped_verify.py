@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import statistics
 import subprocess
 import sys
 
@@ -14,7 +15,11 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--accelerate-config',type=Path,required=True)
-    a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+    p.add_argument('--repeats',type=int,default=2)
+    a=p.parse_args()
+    if a.repeats < 1:
+        p.error('--repeats must be positive')
+    a.output.mkdir(parents=True,exist_ok=False)
     report=dict(status='running',checks={},benchmarks={})
     def save():
         (a.output/'summary.json').write_text(json.dumps(report,indent=2)+'\n')
@@ -41,19 +46,32 @@ def main():
                 '--soft-split','10','--expert-backend','grouped','--curriculum',curriculum],
                 gpus='0,1,2,3,4,5,6,7')
             report['checks']['resume_'+curriculum]=json.loads((path/'summary.json').read_text());save()
-        for label,config,progress,prior in [('native','dense_native',1.,None),('D','D',1.,None),
-                                          ('hard','P1-B',1.,0.),('soft','P1-B',.01,0.)]:
-            for implementation in (['reference'] if label=='native' else ['reference','grouped']):
-                name=label+'_'+implementation;path=a.output/(name+'.json')
-                command=['-m','accelerate.commands.launch','--config_file',a.accelerate_config,
-                    '--main_process_port','0','scripts/benchmark_bdot.py',
-                    '--config',ROOT/'configs/bdot'/f'{config}.json','--output',path,'--device','cuda',
-                    '--batch-size','16','--accumulation','4','--length','1024','--document-length','128',
-                    '--warmup','5','--steps','50','--bf16','--attention-backend','fa4',
-                    '--progress',str(progress),'--expert-backend',implementation]
-                if prior is not None:command+=['--router-prior',str(prior)]
-                run(name,command,gpus='0,1,2,3,4,5,6,7')
-                report['benchmarks'][name]=json.loads(path.read_text());save()
+        for repeat in range(a.repeats):
+            for label,config,progress,prior in [('native','dense_native',1.,None),('D','D',1.,None),
+                                              ('hard','P1-B',1.,0.),('soft','P1-B',.01,0.)]:
+                implementations = ['reference'] if label=='native' else ['reference','grouped']
+                # Reverse the pair order on alternating repeats to reduce order bias.
+                if repeat % 2:
+                    implementations.reverse()
+                for implementation in implementations:
+                    name=f'{label}_{implementation}_r{repeat+1}';path=a.output/(name+'.json')
+                    command=['-m','accelerate.commands.launch','--config_file',a.accelerate_config,
+                        '--main_process_port','0','scripts/benchmark_bdot.py',
+                        '--config',ROOT/'configs/bdot'/f'{config}.json','--output',path,'--device','cuda',
+                        '--batch-size','16','--accumulation','4','--length','1024','--document-length','128',
+                        '--warmup','5','--steps','50','--bf16','--attention-backend','fa4',
+                        '--progress',str(progress),'--expert-backend',implementation]
+                    if prior is not None:command+=['--router-prior',str(prior)]
+                    run(name,command,gpus='0,1,2,3,4,5,6,7')
+                    report['benchmarks'][name]=json.loads(path.read_text());save()
+        report['comparison'] = {}
+        for label in ('D','hard','soft'):
+            times = {backend: [report['benchmarks'][f'{label}_{backend}_r{i+1}']['seconds_per_update']
+                               for i in range(a.repeats)] for backend in ('reference','grouped')}
+            report['comparison'][label] = dict(
+                seconds_per_update=times,
+                grouped_throughput_ratio=statistics.mean(times['reference'])/statistics.mean(times['grouped']),
+                grouped_faster_in_every_repeat=max(times['grouped']) < min(times['reference']))
         report['status']='passed'
     except Exception as error:
         report.update(status='failed',error=repr(error));save();raise
