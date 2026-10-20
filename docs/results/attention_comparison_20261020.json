@@ -1,0 +1,119 @@
+{
+  "status": "passed",
+  "selected": "fa4",
+  "python": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+  "backend": "fa4",
+  "policy": "Numerical eligibility; FA4 wins ties. Switch only for >5% native speed gain, disjoint repeat ranges, routed regression <=2%.",
+  "training_resume_verification_pending": true,
+  "results": [
+    {
+      "name": "fa4",
+      "eligible": true,
+      "reason": null,
+      "benchmarks": [
+        {
+          "model": "native",
+          "repeat": 1,
+          "seconds_per_update": 0.6143858953999977,
+          "peak_allocated_bytes": 53841749504
+        },
+        {
+          "model": "routed",
+          "repeat": 1,
+          "seconds_per_update": 0.8321500358637423,
+          "peak_allocated_bytes": 58226314752
+        },
+        {
+          "model": "native",
+          "repeat": 2,
+          "seconds_per_update": 0.6157937021926045,
+          "peak_allocated_bytes": 53841749504
+        },
+        {
+          "model": "routed",
+          "repeat": 2,
+          "seconds_per_update": 0.9189632903939734,
+          "peak_allocated_bytes": 58226314752
+        }
+      ]
+    },
+    {
+      "name": "fa2_stock",
+      "eligible": true,
+      "reason": null,
+      "benchmarks": [
+        {
+          "model": "native",
+          "repeat": 1,
+          "seconds_per_update": 0.6271933123314132,
+          "peak_allocated_bytes": 53791686144
+        },
+        {
+          "model": "routed",
+          "repeat": 1,
+          "seconds_per_update": 1.4818026980074743,
+          "peak_allocated_bytes": 58175020544
+        },
+        {
+          "model": "native",
+          "repeat": 2,
+          "seconds_per_update": 0.6265590494653831,
+          "peak_allocated_bytes": 53791686144
+        },
+        {
+          "model": "routed",
+          "repeat": 2,
+          "seconds_per_update": 1.4826988217886536,
+          "peak_allocated_bytes": 58175020544
+        }
+      ]
+    },
+    {
+      "name": "fa2_fixed",
+      "eligible": true,
+      "reason": null,
+      "benchmarks": [
+        {
+          "model": "native",
+          "repeat": 1,
+          "seconds_per_update": 0.6083046337589622,
+          "peak_allocated_bytes": 53841755648
+        },
+        {
+          "model": "routed",
+          "repeat": 1,
+          "seconds_per_update": 0.8218884175022443,
+          "peak_allocated_bytes": 58226779136
+        },
+        {
+          "model": "native",
+          "repeat": 2,
+          "seconds_per_update": 0.6118014302880813,
+          "peak_allocated_bytes": 53841755648
+        },
+        {
+          "model": "routed",
+          "repeat": 2,
+          "seconds_per_update": 0.8226293850690126,
+          "peak_allocated_bytes": 58226779136
+        }
+      ]
+    }
+  ],
+  "source_receipt": "temp/attention_study_20261020/compare_status05.log",
+  "source_sha256": "659e5de2fecffef9db10e65fc4aa612a08ee2de9cf0bcac1611317f911c7dc3c",
+  "burn_handoff": {
+    "matches": true,
+    "guard_disabled": false,
+    "workers": [
+      12643,
+      12644,
+      12645,
+      12646,
+      12647,
+      12648,
+      12649,
+      12650
+    ]
+  }
+}

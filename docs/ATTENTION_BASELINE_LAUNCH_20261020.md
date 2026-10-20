@@ -73,3 +73,15 @@ checks. At 01:36 UTC, first native complete-update timing was 0.614386 s (FA4)
 versus 0.627193 s (stock FA2/torch 2.8); repeats/selection pending. FA4 peak
 allocated memory was 53,841,749,504 bytes (~50.1 GiB). These are full training
 updates, excluding dataset preparation, evaluation and checkpoint writes.
+
+Final comparison completed at 01:48:24 UTC: **FA4 selected**. All nine numerical
+checks and twelve complete-update timing jobs passed. Mean native seconds/update:
+FA4 0.615090, stock FA2/torch 2.8 0.626876, patched FA2 0.610053. Mean routed:
+FA4 0.875557, stock FA2 1.482251, patched FA2 0.822259. FA4 routed repeats varied
+by about 10%; this comparison does not establish a precise small routed speed
+advantage. The patched build fails the required >5% native improvement.
+See [compact receipt](results/attention_comparison_20261020.json).
+Eight enhanced burn workers and advancing collectives were verified, and the
+guard was released. Live PID ownership matched at 01:48:31 UTC. Data download
+uses the controller's established single-file #models URL route with exact
+file destinations; only English pool files and tokenizer/config inputs are listed.

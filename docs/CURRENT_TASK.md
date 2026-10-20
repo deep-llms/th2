@@ -47,24 +47,23 @@ remain identical. The controller cache lacked the wheel; initial #datasets
 request failed before creating a destination. Established #models single-file
 request 16adf56 succeeded, then f8f9b75 performed the isolated offline install.
 
-Comparison 4e1b1f6 is running at
-`/mnt/local/_outputs/deep-llms_th2/6y3o-attention-compare-20261020-a01`.
-Accelerate resource YAML copied and verified in both train and train_fa2_t28.
-Supervisor verified and stopped only burn workers 500–507, then confirmed all
-eight GPUs free at 01:31 UTC. First exported evidence: FA4 kernel/native/routed
-numerics pass; stock FA2 kernel passes, subsequent checks/timings still pending.
-Latest read-only status request 6751e92. Do not relaunch comparison. Its final
-supervisor must verify automatic burns before the next GPU workload.
+Comparison 4e1b1f6 completed successfully at 01:48:24 UTC. FA4 selected:
+mean native update 0.615090 s, stock FA2/torch2.8 0.626876 s, patched FA2
+0.610053 s. All nine numerical checks and all twelve timing jobs passed.
+All eight enhanced communicating burn workers 12643–12650 were verified,
+with matching live ownership and guard released, by 512d624 at 01:48:31 UTC.
+See `docs/results/attention_comparison_20261020.json` for the compact receipt.
+The selected-runtime distributed resume and real-data smoke gates remain.
 
 Plan: `docs/ATTENTION_BASELINE_LAUNCH_20261020.md`. Implementation committed in
 f8f9b75: explicit public FA2 backend sharing FA4's document-layout transport,
 comparison/asset/queue helpers, local 44 ML regressions + seven old-torch CPU
 adapter checks + four selection tests + queue preparation contract passing.
-New source-only `scripts/native_baseline_pipeline.py` prepares exact Trainer
+Committed `scripts/native_baseline_pipeline.py` prepares exact Trainer
 caches while burns remain active, then gates the verification/baseline queue.
-Its handoff test passes; it has not been copied/pushed yet.
+Its handoff test passes; committed in 7495e85.
 
-Download command prepared, not submitted:
+Submitting the English-only download after selection/burn verification:
 `temp/attention_study_20261020/download_commands.sh`, 3,016 exact single-file
 #models URLs (3,008 English files, two pool manifests, six tokenizer/config
 files), pinned revisions and unique destination paths. Model weights are not
