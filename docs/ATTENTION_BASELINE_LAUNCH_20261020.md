@@ -85,3 +85,11 @@ Eight enhanced burn workers and advancing collectives were verified, and the
 guard was released. Live PID ownership matched at 01:48:31 UTC. Data download
 uses the controller's established single-file #models URL route with exact
 file destinations; only English pool files and tokenizer/config inputs are listed.
+
+Data-transfer update: eight disjoint controller batches are active. Direct node
+checks are required because the controller's per-task progress lines can lag.
+At 02:21 UTC, 463/3,008 files were present at expected size (~21.36 GB); final
+SHA256 validation remains pending. With 192 unrestricted CPU cores and ~1.96 TB
+available RAM verified, the initial HF map/cache uses 128 processes, fixed in
+the recipe. A local CPU data-only check confirmed identical recipes and cache
+reuse on the second call. This is not a second token-export format.

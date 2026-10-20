@@ -75,7 +75,7 @@ hours because of controller per-file overhead. Its exact task
 `2026-10-20_01-51-37` was stopped (41647a8); existing files retained. Repartitioned
 into eight disjoint shard groups, preserving all 3,016 requested inputs.
 Batch commands: ignored `temp/attention_study_20261020/download_batch_0.sh`
-through `_7.sh`. Six batches acknowledged; batch 6 currently being submitted.
+through `_7.sh`. All eight batches acknowledged by 02:17 UTC.
 
 | Index | Commit | Controller task ID |
 |---|---|---|
@@ -86,7 +86,7 @@ through `_7.sh`. Six batches acknowledged; batch 6 currently being submitted.
 | 4 | 2276f60 | 2026-10-20_02-09-50 |
 | 5 | 1ee6e34 | 2026-10-20_02-11-59 |
 | 6 | 5c8756a | 2026-10-20_02-14-37 |
-| 7 | being submitted | pending |
+| 7 | 28ff772 | 2026-10-20_02-16-05 |
 
 Controller per-task progress lines can be stale. Read-only node inspection
 15322e4 at 02:06 UTC showed groups 0/1/2 all receiving files despite their stale
@@ -97,7 +97,7 @@ A local archive fallback was briefly prepared, then its exact owned CPU process
 was stopped and its output removed when concurrency was confirmed. Nothing was
 uploaded to HF; no dataset source was changed.
 
-Next: acknowledge group 6, submit group 7, monitor all eight and verify actual
+Next: monitor all eight and verify actual
 file arrival/completion. Then use the reviewed
 `temp/attention_study_20261020/launch_baseline_commands.sh` to run
 `scripts/native_baseline_pipeline.py` under production train in a tmux session.
@@ -109,6 +109,17 @@ predecessor verified burn ownership → fresh inventory/Accelerate copy+env chec
 The GPU supervisor always restores and verifies communicating burns on exit.
 Keep working until baseline training actually starts; do not end at download
 or cache preparation. No other research arms are authorized.
+
+At 02:21:54 UTC, node inspection f668079 observed 463/3,008 data files at
+expected size (~21.36 GB), every group advancing. Node has 192 CPUs, unrestricted
+CPU quota, ~1.96 TB MemAvailable. Baseline preprocessing is fixed to 128 workers
+(before any real cache/training), leaving CPU capacity for the node; this value
+is saved in the data recipe and must match future runs. Cache-helper CPU smoke
+using SDPA metadata passed twice with identical train/validation recipes and
+cache reuse (2,052 train sequences, 64 validation). FA4 numerical checks remain
+the separate completed B200 evidence. Initial local FA4 cache-fixture attempt
+failed only because local train_env has no FA4 package metadata; no production
+code change was needed. Source log: `cache_helper_sdpa_test.log`.
 
 ## Isolated FA2 installation complete — 2026-10-20
 

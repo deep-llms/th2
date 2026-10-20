@@ -20,7 +20,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--schedule-steps',type=int,default=30_000_000_000//524288)
     p.add_argument('--stop-after',type=int,default=5000)
-    p.add_argument('--preprocessing-workers',type=int,default=64)
+    p.add_argument('--preprocessing-workers',type=int,default=128)
     a=p.parse_args()
     if not 50<a.stop_after<=a.schedule_steps:raise ValueError('Invalid full schedule/cutoff')
     selected=json.loads(a.selection.read_text());assets=json.loads(a.assets.read_text())
