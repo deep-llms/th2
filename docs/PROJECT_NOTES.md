@@ -57,6 +57,17 @@ See [launch evidence](results/bdot_pilot_launch_20261020.json) and CURRENT_TASK
 for live-state timestamp and output paths. The old native 5k run remains a
 separate long-schedule reference, not this pilot's D.
 
+The queue completed successfully at 22:46:31 UTC. All D/P1-A/P1-B runs reached
+4,768 steps and retained 20 checkpoints each, including final weights,
+optimizer, scheduler and eight rank RNG states. Full-validation loss/PPL:
+D **3.49446352 / 32.9326**, P1-A **3.61594091 / 37.1863**, P1-B
+**3.63270401 / 37.8149**. Both routed arms miss Gate 0a's D + 0.01-nat quality
+threshold. R/N and route interventions remain unrun; no additional experiments
+were launched. Burns restored automatically at 22:47:42 UTC and verified live
+at 23:05:08 UTC on all eight GPUs, with supervisor guard released.
+Final exports are hash-verified locally in `temp/pilot_final_20261020/`;
+see [completion evidence](results/bdot_pilot_final_20261020.json).
+
 ## Route study and scientific-review decisions
 
 `eval/packed_ppl.py --route_study true` reuses packed evaluation for full selected

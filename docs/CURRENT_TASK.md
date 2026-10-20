@@ -1,5 +1,41 @@
 # Current task
 
+## Pilot complete — verified 2026-10-20 23:05 UTC
+
+Read-only status **7a4497a** resolved the earlier delayed acknowledgement.
+T12, T14, D, P1-A and P1-B all exited successfully. The queue finished at
+22:46:31 UTC; automatic burn restoration was verified at 22:47:42 UTC.
+Fresh observation at 23:05:08 UTC confirms eight identified burn workers,
+100% utilization on every GPU, all-rank readiness/progress records and the
+supervisor guard released. No handoff error was reported.
+
+All three runs completed the full 4,768-step schedule. Final validation uses
+the same 9,704 sequences / 9,915,698 scored tokens:
+
+| Arm | Final loss | PPL | Trainer runtime |
+|---|---:|---:|---:|
+| D | 3.49446352 | 32.9326 | 53m08s |
+| P1-A | 3.61594091 | 37.1863 | 58m20s |
+| P1-B | 3.63270401 | 37.8149 | 60m40s |
+
+Each output retains all 20 checkpoints. Final checkpoint metadata is at step
+4,768; model weights, optimizer, scheduler and all eight rank RNG files exist
+and are nonempty. This inspection does not constitute a new resume test.
+P1-A is better than P1-B by 0.01676 nats, but both fail Gate 0a's quality
+condition (at most D + 0.01 nats). R/N and route interventions were not run;
+no claim is made that the remaining gate criteria were evaluated. No further
+experiments were launched.
+
+Export **fa9f74e** was acknowledged with 12 files pulled, zero skipped. All
+nine result-file SHA-256 hashes match the node receipt; supervisor/run/burn
+JSON matches the read-only observation. Raw local results:
+`temp/pilot_final_20261020/{D,P1-A,P1-B}/`, with handoff receipts under
+`temp/pilot_final_20261020/supervised/`. Durable evidence:
+[final receipt](results/bdot_pilot_final_20261020.json).
+Remote root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01`.
+Commands return to #0 after the acknowledged export. No model, environment,
+data or GPU process was changed during this status check.
+
 ## P1-A loss-history analysis — 2026-10-20
 
 User asked why P1-A loses to D. Read-only export a9f888f retrieved completed
