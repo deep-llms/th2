@@ -147,6 +147,15 @@ already submitted and waiting; do not submit the launch a second time. Latest
 execution command only reads status. Continue until hash/cache/resume/smoke
 checks pass and the real baseline advances.
 
+All eight controller download batches ended by 03:45:21 UTC. Read-only
+inspection 4df3fe2 at 03:45:55 UTC confirms assets-verified.json status passed:
+all 3,008 dataset file SHA256s, metadata/model/tokenizer checks, 36,495,424
+training documents across 751 shards and 11,717 validation documents in one
+shard. Pipeline is preparing the exact native-baseline/cache configuration;
+all eight original verified burns remain active. Evidence:
+`temp/attention_study_20261020/pipeline_status04.log` and `batch_status25.log`.
+Continue through CPU cache preparation, GPU resume/smoke gates and real training.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while
