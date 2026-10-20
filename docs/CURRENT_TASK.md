@@ -1,5 +1,45 @@
 # Current task
 
+## Authorized overnight baseline workflow — 2026-10-20
+
+The user authorized: install a separate older-PyTorch/FA2 environment; compare
+it with production FA4 and the locally built FA2+C++20 environment; select a
+correct, fast runtime; download only `nht10/cx_sampled`'s English
+`qwen3_0.6b_base_en_30B` subset; run needed training/resume checks; launch the
+original native Qwen3 architecture with 12 layers for 5,000 optimizer updates.
+The design remains `docs/BDOT_v2_spec.md`. This baseline has no routers/FiLM and
+is randomly initialized, as the spec requires. No further research arms are
+authorized. All eight GPUs are used for complete-update timings and training.
+
+Tie preference: FA4 approximately stock FA2+older PyTorch, both ahead of the
+patched-source FA2 build. A speed win must exceed repeat variability and 5%
+on native full updates without hurting the relevant routed-case throughput.
+Every eligible choice must pass numerical checks; the selected choice must
+also pass distributed training/checkpoint/resume verification before training.
+
+Keep train/eval/train_fa2, system CUDA and the NVIDIA driver unchanged. New env:
+`train_fa2_t28`, torch 2.8.0 / CUDA 12.8 and official FA2 2.8.3.post2 wheel.
+Check compiled SM100 support and imports before GPU use. If incompatible, leave
+it unused and compare FA4 with the fixed FA2 build, per the user's correction.
+Use the established verified-burn handoff and restore burns on completion/error.
+
+Read-only preflight `8b56289` verified 6Y3O at 01:03:55 UTC: protected imports
+pass; known guard/burn hashes match; eight original burn workers remain active;
+zero volatile uncorrectable ECC. The new environment is absent. This replacement
+node has no project dataset/model, so tokenizer/config assets must also be
+downloaded through the controller. Source commands.sh stays inactive.
+
+Proposed recipe: spec sequence 1,024, 524,288 input tokens/update, seed 0,
+EOS/isolation/reset positions, AdamW 3e-4 and 2% warmup. An optional question is
+pending about full schedule vs cutoff. If unanswered, preserve continuation:
+full 30B-token schedule, stop_after=5000. Record exact schedule, data revision,
+preprocessing and validation split before launch; reuse the pool's existing
+validation split rather than holding out training documents a second time.
+
+Execution checkout: `/disk/thuat/DOT-th2-inventory`, th2 main. Current study root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-attention-study-20261020-a01/`.
+Local evidence: `temp/attention_study_20261020/`.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while
