@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-dispatch-status-20261020-a01
+#th2-6y3o-dot-dispatch-status-20261020-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 python3 - <<'REMOTE_PY'
