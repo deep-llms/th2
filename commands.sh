@@ -1,10 +1,11 @@
 #1 +30+a
-#th2-6y3o-corpus-transfer-status-20261020-a02
+#th2-6y3o-corpus-transfer-status-20261020-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 python3 - <<'CHECK'
 from pathlib import Path
-import json,datetime,hashlib,subprocess,re
+import json,datetime,hashlib,subprocess,re,os
+print('CPU_RESOURCES',json.dumps(dict(logical_cpus=os.cpu_count(),affinity_cpus=len(os.sched_getaffinity(0)),cpu_max=Path('/sys/fs/cgroup/cpu.max').read_text() if Path('/sys/fs/cgroup/cpu.max').exists() else None,mem_available=next(l for l in Path('/proc/meminfo').read_text().splitlines() if l.startswith('MemAvailable:')))),flush=True)
 root=Path('/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513')
 sub=root/'subsets/qwen3_0.6b_base_en_30B'
 m=json.loads((sub/'manifest.json').read_text())
