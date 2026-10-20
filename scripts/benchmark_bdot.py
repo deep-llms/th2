@@ -64,13 +64,15 @@ def main():
         from bdot.model import RoutedStep, BDOTForCausalLM
         from bdot import grouped
         def instrument(owner, name):
+            if not hasattr(owner, name):
+                return
             original = getattr(owner, name)
             @wraps(original)
             def measured(*args, **kwargs):
                 with torch.profiler.record_function('bdot::'+name):
                     return original(*args, **kwargs)
             setattr(owner, name, measured)
-        for owner, names in [(RoutedStep, ('select', 'execute')),
+        for owner, names in [(RoutedStep, ('select', 'execute', 'execute_home')),
                              (BDOTForCausalLM, ('finish_update',)),
                              (grouped, ('queries', 'outputs', 'linear'))]:
             for name in names:
@@ -196,7 +198,9 @@ def main():
             routing_metrics=getattr(model, 'last_update_metrics', None),
             scope='Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. '
                   'Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.',
-            source_sha256={f: hashlib.sha256((root/f).read_bytes()).hexdigest() for f in
+            source_sha256={f: hashlib.sha256(
+                ((a.bdot_source.resolve() if a.bdot_source and f.startswith('bdot/') else root)/f
+                 ).read_bytes()).hexdigest() for f in
                            ['bdot/model.py', 'bdot/grouped.py', 'bdot/trainer.py', 'packed_fa4.py',
                             'packed_fa2.py', 'packed_training.py', 'train.py', 'scripts/benchmark_bdot.py']},
         )

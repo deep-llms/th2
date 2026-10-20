@@ -12,7 +12,7 @@ from torch.utils.checkpoint import checkpoint
 from transformers import Qwen3ForCausalLM
 from transformers import initialization as hf_init
 from transformers.models.qwen3.modeling_qwen3 import (
-    Qwen3RMSNorm, apply_rotary_pos_emb, ALL_ATTENTION_FUNCTIONS, eager_attention_forward,
+    Qwen3RMSNorm, apply_rotary_pos_emb, rotate_half, ALL_ATTENTION_FUNCTIONS, eager_attention_forward,
 )
 
 from .routing import RoutingConfig, quota_table
@@ -130,7 +130,10 @@ class RoutedStep(nn.Module):
         else:
             # Stable sorting implements the specified lowest-id tie break.
             k = min(2 if context.soft else 1, opt.S)
-            choice = torch.argsort(z + context.beta, dim=-1, descending=True, stable=True)[:, :k]
+            scores = z + context.beta
+            # argmax chooses the first maximum, preserving the lowest-id tie rule.
+            choice = (scores.argmax(-1, keepdim=True) if k == 1 else
+                      torch.argsort(scores, dim=-1, descending=True, stable=True)[:, :k])
             if self.training and context.explore:
                 replace = torch.rand(n, 1, device=h.device, generator=context.generator) < context.explore
                 random_choice = torch.multinomial(allowed.float(), 1, generator=context.generator)
@@ -151,10 +154,40 @@ class RoutedStep(nn.Module):
         if not opt.reuse:
             context.state = getattr(self, f'transitions_{min(context.reach, opt.S-1)}')[context.state, top]
         context.routes.append(top.reshape(h.shape[:2]).detach())
-        context.counts.append(torch.bincount(top, minlength=opt.S))
+        # The module range is known. bincount still discovers its input range on
+        # CUDA and synchronizes with the host, even with minlength supplied.
+        context.counts.append(torch.zeros(opt.S, dtype=torch.long, device=h.device).scatter_add_(
+            0, top, torch.ones_like(top)))
         return choice, weights
 
-    def execute(self, h, choice, weights, attention_mask, position_embeddings, past_key_values, kwargs):
+    def execute_home(self, h, attention_mask, position_embeddings, past_key_values, kwargs):
+        """Known home-only path: native projections without sorting or dispatch.
+
+        Called only when routing semantics guarantee the home module and a
+        constant unit gate. FiLM, norms, attention and all parameters stay intact.
+        """
+        b, t, _ = h.shape
+        expert = self.experts[self.step]
+        x = self.input_layernorm(h)
+        k = self.k_norm(self.k_proj(x).view(b, t, -1, self.head_dim)).transpose(1, 2)
+        v = self.v_proj(x).view(b, t, -1, self.head_dim).transpose(1, 2)
+        q = expert.q_norm(expert.q_proj(x).view(b, t, -1, self.head_dim)).transpose(1, 2)
+        q, k = apply_rotary_pos_emb(q, k, *position_embeddings)
+        if past_key_values is not None:
+            if self.training:
+                raise ValueError('KV caching supports hard evaluation only')
+            k, v = past_key_values.update(k, v, self.layer_idx)
+        interface = ALL_ATTENTION_FUNCTIONS.get_interface(self.config._attn_implementation, eager_attention_forward)
+        a, _ = interface(self, q, k, v, attention_mask, dropout=0., scaling=self.scaling,
+                         sliding_window=None, **kwargs)
+        h1 = h + expert.o_proj(a.reshape(b, t, -1))
+        u = expert.mlp_norm(h1)
+        if self.options.step_film:
+            u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
+        return h1 + expert.mlp(u)
+
+    def execute(self, h, choice, weights, attention_mask, position_embeddings, past_key_values, kwargs,
+                *, all_executed=False):
         b, t, d = h.shape
         n, branches = b*t, choice.shape[1]
         x = self.input_layernorm(h)
@@ -162,16 +195,28 @@ class RoutedStep(nn.Module):
         v = self.v_proj(x).view(b, t, -1, self.head_dim).transpose(1, 2)
         cos, sin = position_embeddings
         # Rotate K once. Q is produced per candidate; do not duplicate K/V projections.
-        _, k = apply_rotary_pos_emb(k, k, cos, sin)
+        # The native pair helper would rotate the same tensor twice and discard
+        # one output. Use its identical single-tensor formula here.
+        cos, sin = cos.unsqueeze(1), sin.unsqueeze(1)
+        k = (k * cos) + (rotate_half(k) * sin)
         if past_key_values is not None:
             if branches != 1 or self.training:
                 raise ValueError('KV caching supports hard evaluation only')
             k, v = past_key_values.update(k, v, self.layer_idx)
         # Branch-major dispatch: only execute selected tokens for each expert.
         flat_choices = choice.T.reshape(-1)
-        executed = weights.T.reshape(-1).detach().ne(0).nonzero().flatten()
-        order = executed[torch.argsort(flat_choices[executed], stable=True)]
-        sizes = torch.bincount(flat_choices[executed], minlength=self.options.S).tolist()
+        if all_executed:
+            # Hard straight-through gates are exactly one. No device-side
+            # filtering/nonzero is needed. Scale and soft gates retain filtering,
+            # including zero/underflow cases and single-feasible-candidate rows.
+            selected_choices = flat_choices
+            order = torch.argsort(selected_choices, stable=True)
+        else:
+            executed = weights.T.reshape(-1).detach().ne(0).nonzero().flatten()
+            selected_choices = flat_choices[executed]
+            order = executed[torch.argsort(selected_choices, stable=True)]
+        sizes = torch.zeros(self.options.S, dtype=torch.long, device=h.device).scatter_add_(
+            0, selected_choices, torch.ones_like(selected_choices)).tolist()
         groups, start = [], 0
         for m, size in enumerate(sizes):
             if size:
@@ -184,16 +229,19 @@ class RoutedStep(nn.Module):
             order, experts, group_sizes, offsets, projected = grouped_ops.queries(self, x, groups)
             q = q.index_copy(0, order, projected)
         else:
+            projections = []
             for m, idx in groups:
                 expert = self.experts[m]
                 selected = x.reshape(n, d)[idx % n]
                 projected = expert.q_proj(selected).view(-1, self.config.num_attention_heads, self.head_dim)
-                q = q.index_copy(0, idx, expert.q_norm(projected).flatten(1))
+                projections.append(expert.q_norm(projected).flatten(1).to(q.dtype))
+            if projections:
+                q = q.index_copy(0, order, torch.cat(projections))
         interface = ALL_ATTENTION_FUNCTIONS.get_interface(self.config._attn_implementation, eager_attention_forward)
         attention = []
         for branch in range(branches):
             qb = q[branch*n:(branch+1)*n].view(b, t, -1, self.head_dim).transpose(1, 2)
-            qb, _ = apply_rotary_pos_emb(qb, qb, cos, sin)
+            qb = (qb * cos) + (rotate_half(qb) * sin)
             a, _ = interface(self, qb, k, v, attention_mask, dropout=0., scaling=self.scaling,
                              sliding_window=None, **kwargs)
             attention.append(a.reshape(n, -1))
@@ -203,13 +251,16 @@ class RoutedStep(nn.Module):
             projected = grouped_ops.outputs(self, h, attention, order, experts, group_sizes, offsets)
             result = result.index_copy(0, order, projected)
         else:
+            projections = []
             for m, idx in groups:
                 expert = self.experts[m]
                 h1 = h.reshape(n, d)[idx % n] + expert.o_proj(attention[idx])
                 u = expert.mlp_norm(h1)
                 if self.options.step_film:
                     u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
-                result = result.index_copy(0, idx, h1 + expert.mlp(u))
+                projections.append((h1 + expert.mlp(u)).to(result.dtype))
+            if projections:
+                result = result.index_copy(0, order, torch.cat(projections))
         result = result.view(branches, b, t, d)
         weights = weights.T.reshape(branches, b, t, 1).to(h.dtype)
         if branches == 1:
@@ -223,10 +274,17 @@ class RoutedStep(nn.Module):
         if bdot_context is None:
             raise ValueError('Routed steps require BDOTForCausalLM.forward')
         choice, weights = self.select(hidden_states, bdot_context)
+        home_only = (bdot_context.forced is None and
+                     ((bdot_context.routing or self.options.routing) == 'fixed'
+                      or bdot_context.reach == 0 or self.options.S == 1))
+        all_executed = not bdot_context.soft and self.options.gate == 'st'
         # Route/RNG/count bookkeeping occurs once outside the checkpoint. Gates
         # remain attached to autograd; nonreentrant replay handles unused experts.
         def run(h, gate):
-            return self.execute(h, choice, gate, attention_mask, position_embeddings, past_key_values, kwargs)
+            if home_only:
+                return self.execute_home(h, attention_mask, position_embeddings, past_key_values, kwargs)
+            return self.execute(h, choice, gate, attention_mask, position_embeddings, past_key_values, kwargs,
+                                all_executed=all_executed)
         if self.gradient_checkpointing and self.training:
             if past_key_values is not None:
                 raise ValueError('Training checkpointing cannot mutate a KV cache')
@@ -261,7 +319,8 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         self.register_buffer('logged_training_totals', torch.zeros(5, dtype=torch.float64))
         self.register_buffer('load_counts', torch.zeros(options.S, options.S, dtype=torch.long), persistent=False)
         self.register_buffer('metric_totals', torch.zeros(9, dtype=torch.float64), persistent=False)
-        self.last_update_metrics = {}
+        self._last_update_metrics = {}
+        self._last_update_snapshot = None
         self.progress = 0.
         self.eval_seed = options.seed
         self.eval_counter = 0
@@ -359,24 +418,39 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
             shares = self.load_counts[active].float() / totals[active, None]
             target = torch.eye(self.options.S, device=shares.device)[active].mean(0)
             self.balance_bias.add_(self.options.balance_rate * (target - shares.mean(0)).sign())
-        values = self.metric_totals.tolist()
-        self.last_update_metrics = dict(lm_loss_last_update=values[0]/max(values[1],1),
+        # Keep diagnostics on device until a logger/reader actually needs them.
+        # Balancing and cumulative loss accounting still happen on every update.
+        self._last_update_snapshot = (self.metric_totals.clone(), self.load_counts.clone())
+        self._last_update_metrics = None
+        self.metric_totals.zero_()
+        self.load_counts.zero_()
+        self.completed_steps.add_(1)
+
+    @property
+    def last_update_metrics(self):
+        if self._last_update_metrics is not None:
+            return self._last_update_metrics
+        metrics, counts = self._last_update_snapshot
+        values = metrics.tolist()
+        # One small count transfer replaces separate transfers for sums/diagonal.
+        counts = counts.cpu()
+        totals = counts.sum(-1)
+        result = dict(lm_loss_last_update=values[0]/max(values[1],1),
             router_z_loss_last_update=values[2]/max(values[3],1),
             off_default_share_last_update=values[4]/max(values[5],1),
             router_entropy_last_update=values[6]/max(values[3],1),
             reuse_rate_last_update=values[7]/max(values[8],1))
         # All ranks have the global counts here. A zero-load module is reported
         # explicitly; do not hide it with an epsilon in a max/min ratio.
-        module_loads = self.load_counts.sum(0).tolist()
+        module_loads = counts.sum(0).tolist()
         min_load, max_load = min(module_loads), max(module_loads)
-        self.last_update_metrics['module_load_max_min_ratio_last_update'] = max_load/min_load if min_load else None
-        for s, (total, default) in enumerate(zip(totals.tolist(), self.load_counts.diag().tolist())):
-            self.last_update_metrics[f'off_default_step_{s}_last_update'] = 1-default/total if total else 0.
+        result['module_load_max_min_ratio_last_update'] = max_load/min_load if min_load else None
+        for s, (total, default) in enumerate(zip(totals.tolist(), counts.diag().tolist())):
+            result[f'off_default_step_{s}_last_update'] = 1-default/total if total else 0.
         for m, load in enumerate(module_loads):
-            self.last_update_metrics[f'module_{m}_decisions_last_update'] = load
-        self.metric_totals.zero_()
-        self.load_counts.zero_()
-        self.completed_steps.add_(1)
+            result[f'module_{m}_decisions_last_update'] = load
+        self._last_update_metrics = result
+        return result
 
     def native_reference(self):
         """Plain Qwen3 with identical backbone weights, for T1 (FiLM must be off)."""

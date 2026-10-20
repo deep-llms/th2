@@ -1,5 +1,24 @@
 # Current task
 
+## Dispatch overhead optimization in progress — 2026-10-20
+
+User authorized identifying and fixing remaining runtime overhead. Design remains
+`docs/BDOT_v2_spec.md`; no architecture, data, optimizer or research pilot changes.
+B200 profile on 6Y3O confirms excessive synchronization/dispatch operations.
+Original code is frozen at the profile output root under `reference/bdot`.
+Profile launch 5062ed2 succeeded; burn handoff and live collectives independently
+verified at 15:41 UTC. CPU 45-test suite and final 20-test focused suite pass;
+eight old/new three-update comparisons pass with exact final weights.
+
+Implemented direct home execution, hard-ST filtering bypass, fixed-size counts,
+single-scatter reference dispatch, top-1 argmax, nonduplicated RoPE and lazy
+metric formatting. Full GPU parity, DDP, resume and unprofiled before/after
+timings are being submitted to
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a01`.
+Supervisor uses the usual Accelerate copy/verification, exact burn identities,
+free-GPU checks and automatic burn restoration. Do not launch twice.
+
+
 ## Grouped-expert comparison completed — 2026-10-20
 
 The authorized reference-versus-grouped comparison on 6Y3O completed successfully
