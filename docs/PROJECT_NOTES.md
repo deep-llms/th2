@@ -362,3 +362,24 @@ Receipt: `docs/results/native_baseline_launch_20261020.json`; report:
 retry_smoke25.json/retry_smoke50.json. Next status check should read the existing
 queue, final baseline-5000.json, supervisor and burn-verified receipts; require
 step5000/artifact success and live verified burns before declaring completion.
+
+## Baseline completed — verified 2026-10-20 09:40 UTC
+
+Native Qwen3 12-layer FA4 baseline finished **5,000 updates successfully** at
+05:22:42 UTC. Runtime was 3,040.22 seconds in Trainer (50m40s), 3,083.11 seconds
+for the complete baseline job (51m23s). Full schedule remains 57,220 steps;
+all 20 checkpoints, every 250 steps through 5,000, are retained. The fresh
+final-artifact check passed: weights, optimizer, scheduler, all-rank RNG files,
+recipe and step metadata. Final held-out loss **3.46775378**, PPL **32.06463718**,
+over 9,915,698 scored tokens in 9,704 sequences. Mean training loss 4.22683868
+is the entire-run average, not the final validation metric.
+
+Supervisor restored communicating burns by 05:23:48 UTC. Live check at 09:40 UTC
+matched all eight workers 104144–104151 to the verified burn launcher, confirmed
+the guard was released, and observed collective cycles advance 17,640→17,660.
+No new training/evaluation was launched. commands.sh is returned to #0.
+Final checkpoint: `/mnt/local/_outputs/deep-llms_th2/6y3o-native12-cx-en-20261020-a02/prepared/baseline/checkpoint-5000`.
+Evidence: `docs/results/native_baseline_final_20261020.json` and local
+`temp/attention_study_20261020/final_status01.log` (read-only inspection e19e34d).
+The authorized baseline workflow is complete; further method training needs
+its own scope from the user. Historical launch observations follow below.
