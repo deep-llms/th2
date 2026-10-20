@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-grouped-preflight-20261020-a02
+#th2-6y3o-dot-grouped-preflight-20261020-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
@@ -24,7 +24,7 @@ for pid in report['workers']:
 expected={'torch':'2.14.1','transformers':'5.9.0','accelerate':'1.13.0','datasets':'4.8.5','tokenizers':'0.22.2','safetensors':'0.8.0','flash-attn-4':'4.0.0b33'}
 report['versions']={p:md.version(p) for p in expected}
 assert all(report['versions'][p].split('+')[0]==v for p,v in expected.items())
-report['commit']=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+report['source_sha256']={name:digest(name) for name in ('bdot/model.py','bdot/grouped.py','bdot/trainer.py','train.py','scripts/bdot_grouped_verify.py')}
 root.mkdir(parents=True)
 (root/'preflight.json').write_text(json.dumps(report,indent=2))
 print('GROUPED_PREFLIGHT',json.dumps(report),flush=True)
