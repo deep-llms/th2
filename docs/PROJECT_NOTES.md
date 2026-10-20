@@ -320,3 +320,45 @@ and fresh native12 baseline5000. CPU preprocessing uses 128 workers, fixed
 in the data recipe. Inputs and validation split remain unchanged. The supervisor
 restores verified communicating burns after the GPU queue succeeds or fails.
 The node acknowledged the waiting stage; this is not yet a training-start claim.
+
+## Live baseline verified — 2026-10-20 04:35 UTC
+
+The authorized setup/comparison/download/verification sequence is complete;
+the fresh 5,000-update native Qwen3 12-layer baseline is actively training.
+Execution root: `/mnt/local/_outputs/deep-llms_th2/6y3o-native12-cx-en-20261020-a02`,
+output `prepared/baseline`, supervisor session `native12_train_20261020_a02`.
+Implementation/launch commit caea83d; subsequent commits only retrieve status.
+**Do not launch it again.** Source/execution commands.sh are returned to #0.
+
+FA4/train selected after stock torch2.8/FA2 and compiler-fixed FA2 comparisons.
+All 3,008 English dataset files and six tokenizer/config files pass pinned
+SHA256 checks. Caches reused in 8.917 seconds with 29,278,633 train and 9,704
+validation sequences. Original train/validation split, EOS, within-document
+causality and reset positions are verified. Protected train/eval environments
+and the NVIDIA driver remained unchanged.
+
+Corrected eight-rank resume parity passed (weights max abs 3.7253e-9,
+optimizer 2.3283e-10; scheduler/eight-rank RNG match). Real-model smoke25 and
+resume50 both passed with matching training/data receipts. The first a01 smoke
+failed before training due solely to the modern-cuDNN metadata getter; its
+outputs remain separate. Only that reader changed; no precision flags changed.
+
+At 04:35:32 UTC, baseline had logged step 340 (loss ~6.228), checkpoint250
+complete including optimizer, scheduler, all eight RNG files, and matching
+recipe. Validation250: loss 6.60917368, PPL 741.869745 over 9,915,698 scored
+tokens/9,704 sequences. GPUs 0–7 each have one training worker, 97–99% utilization,
+54,110 MiB device usage; guard held by the supervisor. No run failure observed.
+
+Recipe: seed0, seq1024, micro16 × accumulation4 ×8 GPUs =524,288 input tokens,
+full schedule57,220/cutoff5,000/warmup1,145, BF16, tf32False, checkpointingFalse,
+AdamW3e-4 cosine floor.1, eval/save250, retain all checkpoints. The supervisor
+will restore and verify communicating burns automatically after success/failure.
+Estimated completion around 05:30 UTC (roughly one hour total, including eval/
+saving; estimate from early observed progress, not a completion promise).
+
+Receipt: `docs/results/native_baseline_launch_20261020.json`; report:
+`docs/ATTENTION_BASELINE_LAUNCH_20261020.md`. Raw local evidence in
+`temp/attention_study_20261020/`, especially baseline_health01.log and
+retry_smoke25.json/retry_smoke50.json. Next status check should read the existing
+queue, final baseline-5000.json, supervisor and burn-verified receipts; require
+step5000/artifact success and live verified burns before declaring completion.
