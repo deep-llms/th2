@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-attention-compare-status-20261020-a02
+#th2-6y3o-attention-compare-status-20261020-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 python3 - <<'CHECK'
