@@ -1,6 +1,25 @@
 # Isolated FA2 environment for the replacement B200
 
-## Current retry — offline wheel build
+## Completed installation — 2026-10-20
+
+FA2 2.8.3.post2 is installed in `train_fa2` with torch 2.14.1+cu130.
+The offline wheel build completed in 1,625 seconds (~27 minutes). A separate
+clean-subprocess check verifies imports of the compiled extension and its
+fixed/variable-length forward/backward interfaces. Production and existing
+isolated-environment package metadata are unchanged; production FA4 imports
+still pass. At 00:14:41 UTC all eight original burn workers remain active,
+with zero volatile uncorrectable ECC and cgroup OOM/kill counts.
+
+The [machine-readable receipt](results/fa2_install_success_20261020.json)
+contains the exact wheel path/hash, build details and local log paths/hashes.
+The wheel is tagged `2.8.3.post2+cu13torch2.14cxx11abitrue.cxx20.sm100`.
+This is a locally built wheel from official PyPI source, not an upstream
+prebuilt release asset. Kernel source is unchanged; build flags use C++20.
+
+GPU numerical/throughput/resume tests remain unperformed. Production attention
+settings are unchanged, and commands.sh returns to #0.
+
+## Offline build procedure and resolved failures
 
 The user authorized the official-source installation after the missing-wheel
 diagnosis below. Dependency request `0fc0af9` successfully installed the CUDA
@@ -20,9 +39,23 @@ Attempt a01 failed before installation: the torch headers use C++20 while FA2
 requests C++17. Retry `2f8b97e` changes exactly four compiler-standard flags
 in the extracted setup.py to C++20 and records both setup hashes. No kernel
 source is changed. The wheel carries a local build tag identifying CUDA 13,
-torch 2.14, C++20 and SM100. Retry directory ends in `a02`; its initial log
-confirms compilation progress. Success is pending the final `result.json`;
-submission alone is not success.
+torch 2.14, C++20 and SM100. Retry directory ends in `a02`; its final
+`result.json` and the independent verification log confirm installation/import
+success.
+
+The compiler-standard change matches the issue addressed by upstream
+[PR 2879](https://github.com/Dao-AILab/flash-attention/pull/2879).
+NVIDIA's pip runtime supplies `libcudart.so.13` without `libcudart.so`; request
+`c11e34a` created that development linker symlink inside `train_fa2` only.
+Its target hash and creation time are recorded in the build's `linker_name.json`.
+The reusable builder now includes the same checked link setup for future builds.
+
+FA2's tagged setup.py explicitly compiles SM100 with CUDA 12.8+, but its README
+still lists Ampere/Ada/Hopper in the support summary. An upstream user reports
+FA2 working on [GB200](https://github.com/Dao-AILab/flash-attention/issues/2003).
+This supports trying a matching build, not treating installation/imports as
+proof of B200 numerical correctness or performance. A GPU forward/backward and
+model-level comparison remains necessary before adopting it.
 
 `envs/train_fa2.txt` now lists the runtime and source-build prerequisites;
 it no longer requests the nonexistent prebuilt wheel. Installing that file
@@ -131,7 +164,8 @@ build dependencies verified first. External inputs must use controller #i/#d;
 any local build must suppress automatic wheel downloads, stay within the
 separate `train_fa2` environment/build directory and limit compiler parallelism.
 Do not modify the production environments, system CUDA or NVIDIA driver.
-No source build has been submitted.
+At that earlier inspection no source build had been submitted; the completed
+build and compatibility fixes are recorded above.
 
 At the user's request, read-only health inspection `161d804` completed at
 23:27:14 UTC. All eight GPUs respond, volatile uncorrectable ECC counters are
@@ -166,5 +200,5 @@ execution and training comparisons still require their own verification:
 
 The local probe currently uses a test-only FA2 substitution, not a public
 `--attention_backend fa2` option. No production default is changed by this
-environment specification. FA2 installation is incomplete; B200 FA2 numerics,
-throughput and resume behavior remain untested.
+environment specification. FA2 installation/import verification is complete;
+B200 FA2 numerics, throughput and resume behavior remain untested.

@@ -1,39 +1,41 @@
 # Current task
 
-## Authorized isolated FA2 source installation — 2026-10-19, in progress
+## Isolated FA2 installation complete — 2026-10-20
 
-The user authorized installing FA2 from official GitHub/PyPI inputs while
-preserving node stability. The verified PyPI 2.8.3.post2 source archive is used
-to produce a wheel matching the existing torch 2.14.1/CUDA 13 runtime.
-Preflight `722cc18` found only system CUDA 12.9. Dependency request `0fc0af9`
-successfully added CUDA 13.0 compiler/header packages and Ninja **only** to
-`train_fa2`; system CUDA and production environment specs are unchanged.
-Controller download `0c2daa0` stages the source at
-`/mnt/local/_data/deep-llms_th2/build_inputs/flash_attn-2.8.3.post2.tar.gz`.
+The user authorized installation from official GitHub/PyPI inputs while
+preserving B200 6Y3O stability. FA2 **2.8.3.post2** is now installed in
+`/mnt/local/conda-py311/envs/train_fa2` against torch **2.14.1+cu130**.
+The wheel was built offline from the SHA256-verified PyPI source with
+CUDA 13.0.88, C++11 ABI enabled and SM100 only. The successful build took
+1,625 seconds (~27 minutes), using four compiler jobs and one NVCC thread;
+peak sampled build-process RSS was 16.55 GiB. No GPU workload was launched
+or stopped, and no production backend or driver was changed.
 
-`scripts/install_fa2_offline.py` verifies the source SHA256 and exact interpreter,
-uses environment-local CUDA/Ninja, and compiles only SM100. It runs four compile
-jobs with one NVCC thread each, nice 10, 64 GiB virtual memory per subprocess,
-96 GiB aggregate RSS guard, a 90-minute build timeout and free-memory/disk
-thresholds. Only its own spawned build process group can be stopped. No GPU
-allocations, driver changes, production environment writes or burn stops occur.
-Package metadata fingerprints for train/eval and existing train_fa2 packages
-are compared before/after installation. FA2 extension imports are required for
-success; GPU numerics remain a separate task.
+The first source attempt (`6d551cb`) failed on C++17 versus the newer torch
+headers. Retry `2f8b97e` changed exactly four setup.py compiler flags to C++20,
+without kernel-source edits. `c11e34a` added the missing `libcudart.so` linker
+symlink inside train_fa2 only. `scripts/install_fa2_offline.py` now includes
+both build compatibility fixes for reproducibility. The env text installs
+prerequisites; FA2 itself still requires this separate offline wheel build.
 
-Build a01 (`6d551cb`) passed the CUDA compiler check but failed in 16 seconds:
-FA2 requests C++17 while torch headers use C++20 (`std::strong_ordering`).
-The log was retrieved by `ee142e1`; no FA2 installation took place. The retry
-changes only four exact C++ standard flags in extracted setup.py to C++20,
-records original/patched hashes, and labels the wheel accordingly. Kernel
-source remains unchanged. Fresh retry output:
-`/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a02/`.
-Expect `build.log`, `build_config.json`, a built wheel and `result.json`; failures
-must retain logs and cannot be counted as success. Local helper validation:
-syntax/help, wrong-interpreter refusal before writes, official archive member
-validation, metadata snapshots and cleanup of an explicitly spawned local child.
-Do not relaunch a still-running build. Observe its terminal result before any
-retry. Return execution commands.sh to #0 when finished.
+Read-only final verification `d09dc58` completed at **00:14:41 UTC**:
+compiled FA2 fixed/variable-length forward/backward interfaces import in a
+clean subprocess; train/eval and existing train_fa2 package metadata are
+unchanged. Production imports including FA4 pass. All eight original burn
+workers 500–507 under launcher 433 remain active at 98% GPU utilization;
+volatile uncorrectable ECC and cgroup OOM/kill counts are zero.
+
+Artifacts: `/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a02/`
+contains `build.log`, `result.json`, `linker_name.json`, and the built wheel.
+Wheel SHA256: `a34f9f06f824a60e233df06dc60668526b97c3cdf12cf00bbc39478008c9aadd`.
+See [installation receipt](results/fa2_install_success_20261020.json) and
+[environment/build notes](FA2_B200_ENVIRONMENT_20261019.md) for local log paths,
+checksums, exact wheel tag, and upstream support evidence.
+
+**Remaining:** GPU numerical, throughput and resume tests are not performed
+by installation/import verification. Do not adopt FA2 for production based
+only on these receipts. Source and execution commands.sh return to #0;
+no build, test or new workload remains queued by this task.
 
 ## Node health after the failed FA2 request — 2026-10-19
 

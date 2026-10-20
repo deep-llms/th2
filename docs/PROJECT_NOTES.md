@@ -271,3 +271,28 @@ versions match the preceding snapshot and core/FA4 imports pass. GPU PIDs
 changes were made. See [health receipt](results/b200_6y3o_health_20261019.json).
 These checks show no sign of damage, without claiming a full hardware audit
 or pre-install file comparison. commands.sh returns to #0; no FA2 retry queued.
+
+
+## Completed isolated FA2 source installation — 2026-10-20
+
+The user authorized a compatible installation from official GitHub/PyPI inputs.
+Controller #i installed CUDA 13 compiler/header packages only in train_fa2;
+#d fetched the official PyPI 2.8.3.post2 sdist with a verified SHA256. No matching
+upstream prebuilt wheel existed for torch 2.14.1. The initial source build failed
+because FA2 selected C++17 while torch headers require C++20. Retry `2f8b97e`
+changed only build-standard flags and compiled unchanged kernels for SM100.
+`c11e34a` added an environment-local libcudart.so -> libcudart.so.13 link.
+These fixes are preserved in `scripts/install_fa2_offline.py`.
+
+The offline wheel installed successfully in 27 minutes; independent check
+`d09dc58` completed 00:14:41 UTC. FA2 and compiled fixed/varlen forward/backward
+interfaces import; existing package metadata is unchanged. Production train/eval
+FA4 imports pass. All eight original burn workers remain, driver/GPU identities
+match, and volatile uncorrectable ECC plus cgroup OOM/kill counts are zero.
+See [receipt](results/fa2_install_success_20261020.json) and
+[build notes](FA2_B200_ENVIRONMENT_20261019.md). commands.sh returns to #0.
+
+This verifies installation/imports only. No B200 FA2 numerical, training,
+throughput or resume test ran. GPU validation remains necessary before use;
+production still uses its existing attention configuration. The env text lists
+build prerequisites, not the now-nonexistent prebuilt-wheel request.

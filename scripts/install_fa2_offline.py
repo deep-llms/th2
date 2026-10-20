@@ -130,6 +130,17 @@ def main() -> None:
     if setup_text.count('"-std=c++17"') != 4:
         raise RuntimeError('Unexpected upstream compiler flags; refuse a broad patch')
     setup.write_text(setup_text.replace('"-std=c++17"', '"-std=c++20"'))
+    # NVIDIA's pip runtime ships only the versioned shared library; -lcudart
+    # needs the development linker name. Create it only within train_fa2.
+    runtime = cuda / 'lib/libcudart.so.13'
+    linker = cuda / 'lib/libcudart.so'
+    if not runtime.is_file() or not runtime.resolve().is_relative_to(PREFIX):
+        raise RuntimeError('Expected environment-local CUDA runtime library')
+    if linker.exists() or linker.is_symlink():
+        if linker.resolve() != runtime.resolve():
+            raise RuntimeError('Unexpected existing CUDA linker name; refuse overwrite')
+    else:
+        linker.symlink_to(runtime.name)
 
     env = dict(os.environ)
     env.update(CUDA_HOME=str(cuda), PATH=f'{PREFIX}/bin:{cuda}/bin:' + env['PATH'],
@@ -147,6 +158,7 @@ def main() -> None:
     report = dict(source_sha256=SOURCE_SHA256, torch=torch.__version__, cuda_home=str(cuda),
                   nvcc=nvcc, max_jobs=4, nvcc_threads=1, arch='100', per_process_as_limit=64 * GIB,
                   cxx_standard=20, setup_original_sha256=setup_before,
+                  runtime_linker_name=str(linker), runtime_sha256=digest(runtime),
                   setup_patched_sha256=digest(setup), build_flag_patch_count=4,
                   tree_rss_limit=96 * GIB, timeout_seconds=5400, stage='building')
     (work / 'build_config.json').write_text(json.dumps(report, indent=2) + '\n')

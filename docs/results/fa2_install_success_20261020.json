@@ -1,0 +1,250 @@
+{
+  "status": "installation_and_import_verified_gpu_numerics_pending",
+  "build_commit": "2f8b97eb136a16458740f45c708f608aaa03349c",
+  "linker_commit": "c11e34aaf464e3d63a95c9b443c870fc72e797d3",
+  "verification_commit": "d09dc58fa25161811a7cf719aa05c77b91b2fabd",
+  "verified_utc": "2026-10-20T00:14:41.452865+00:00",
+  "build": {
+    "source_sha256": "d0f9f0b08a986cdeadbffcf5ec8b3a8f514366c68ad1853d3ab061bc83cc340b",
+    "torch": "2.14.1+cu130",
+    "cuda_home": "/mnt/local/conda-py311/envs/train_fa2/lib/python3.11/site-packages/nvidia/cu13",
+    "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Wed_Aug_20_01:58:59_PM_PDT_2025\nCuda compilation tools, release 13.0, V13.0.88\nBuild cuda_13.0.r13.0/compiler.36424714_0\n",
+    "max_jobs": 4,
+    "nvcc_threads": 1,
+    "arch": "100",
+    "per_process_as_limit": 68719476736,
+    "cxx_standard": 20,
+    "setup_original_sha256": "152570de3092218ebbb0969281b6e0f58fea62ec65fd6029c7a20ea6589aacf4",
+    "setup_patched_sha256": "8582c79a835e3ee501d017eedfe5a6fc2fa8f463194b27def0f7ddb58993c1e0",
+    "build_flag_patch_count": 4,
+    "tree_rss_limit": 103079215104,
+    "timeout_seconds": 5400,
+    "stage": "complete",
+    "wheel": "/mnt/local/_outputs/deep-llms_th2/6y3o-fa2-build-20261019-a02/wheels/flash_attn-2.8.3.post2+cu13torch2.14cxx11abitrue.cxx20.sm100-cp311-cp311-linux_x86_64.whl",
+    "wheel_sha256": "a34f9f06f824a60e233df06dc60668526b97c3cdf12cf00bbc39478008c9aadd",
+    "import_check": "2.8.3.post2 /mnt/local/conda-py311/envs/train_fa2/lib/python3.11/site-packages/flash_attn_2_cuda.cpython-311-x86_64-linux-gnu.so",
+    "installed_version": "2.8.3.post2+cu13torch2.14cxx11abitrue.cxx20.sm100",
+    "production_metadata_unchanged": true,
+    "isolated_existing_metadata_unchanged": true,
+    "elapsed_seconds": 1625.2164331716485
+  },
+  "linker": {
+    "utc": "2026-10-20T00:11:35.982413+00:00",
+    "created": true,
+    "link": "/mnt/local/conda-py311/envs/train_fa2/lib/python3.11/site-packages/nvidia/cu13/lib/libcudart.so",
+    "target": "/mnt/local/conda-py311/envs/train_fa2/lib/python3.11/site-packages/nvidia/cu13/lib/libcudart.so.13",
+    "target_sha256": "96c42e418cec19054186b9429c321603cc190bf26a18104e19408117a2a817b0"
+  },
+  "clean_import": {
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "fa2": "2.8.3.post2",
+    "extension": "/mnt/local/conda-py311/envs/train_fa2/lib/python3.11/site-packages/flash_attn_2_cuda.cpython-311-x86_64-linux-gnu.so",
+    "symbols": {
+      "fwd": true,
+      "bwd": true,
+      "varlen_fwd": true,
+      "varlen_bwd": true
+    }
+  },
+  "max_sampled_build_tree_rss_gib": 16.55,
+  "health": {
+    "host": {
+      "utc": "2026-10-20T00:14:31.095080+00:00",
+      "host": "thiennh-p6-6y3o-worker-0",
+      "uptime": "2395841.17 415976400.93",
+      "loadavg": "23.88 26.24 24.76 12/6545 6619"
+    },
+    "memory": {
+      "MemTotal": "2092983700 kB",
+      "MemAvailable": "1967260388 kB",
+      "SwapTotal": "0 kB",
+      "SwapFree": "0 kB"
+    },
+    "cgroups": [
+      {
+        "name": "memory.events",
+        "value": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0"
+      },
+      {
+        "name": "memory.max",
+        "value": "1978662912000"
+      },
+      {
+        "name": "memory.current",
+        "value": "36539277312"
+      }
+    ],
+    "environments": [
+      {
+        "name": "train",
+        "rc": 0,
+        "stdout": {
+          "executable": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "versions": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "accelerate": "1.13.0",
+            "datasets": "4.8.5",
+            "tokenizers": "0.22.2",
+            "safetensors": "0.8.0",
+            "flash-attn-4": "4.0.0b33",
+            "nvidia-cutlass-dsl": "4.8.0",
+            "quack-kernels": "0.6.5",
+            "lm-eval": null
+          },
+          "imports": {
+            "torch": "ok",
+            "transformers": "ok",
+            "accelerate": "ok",
+            "datasets": "ok",
+            "tokenizers": "ok",
+            "safetensors": "ok",
+            "FA4": "ok"
+          },
+          "cuda": "13.0",
+          "cxx11abi": true
+        },
+        "stderr": ""
+      },
+      {
+        "name": "eval",
+        "rc": 0,
+        "stdout": {
+          "executable": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "versions": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "accelerate": "1.13.0",
+            "datasets": "4.8.5",
+            "tokenizers": "0.22.2",
+            "safetensors": "0.8.0",
+            "flash-attn-4": "4.0.0b33",
+            "nvidia-cutlass-dsl": "4.8.0",
+            "quack-kernels": "0.6.5",
+            "lm-eval": "0.4.13"
+          },
+          "imports": {
+            "torch": "ok",
+            "transformers": "ok",
+            "accelerate": "ok",
+            "datasets": "ok",
+            "tokenizers": "ok",
+            "safetensors": "ok",
+            "FA4": "ok"
+          },
+          "cuda": "13.0",
+          "cxx11abi": true
+        },
+        "stderr": ""
+      }
+    ],
+    "gpus": [
+      {
+        "args": [
+          "--query-gpu=index,name,uuid,driver_version,memory.total,memory.used,utilization.gpu,temperature.gpu,ecc.errors.uncorrected.volatile.total",
+          "--format=csv"
+        ],
+        "rc": 0,
+        "stdout": "index, name, uuid, driver_version, memory.total [MiB], memory.used [MiB], utilization.gpu [%], temperature.gpu, ecc.errors.uncorrected.volatile.total\n0, NVIDIA B200, GPU-90eef51a-3614-2801-475c-b7b7b592397c, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 71, 0\n1, NVIDIA B200, GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 61, 0\n2, NVIDIA B200, GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 69, 0\n3, NVIDIA B200, GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 61, 0\n4, NVIDIA B200, GPU-b755571d-58df-0910-0013-12fc8f77beeb, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 69, 0\n5, NVIDIA B200, GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 61, 0\n6, NVIDIA B200, GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 70, 0\n7, NVIDIA B200, GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328, 580.167.08, 183359 MiB, 2510 MiB, 98 %, 61, 0\n",
+        "stderr": ""
+      },
+      {
+        "args": [
+          "--query-compute-apps=pid,gpu_uuid,used_memory",
+          "--format=csv,noheader"
+        ],
+        "rc": 0,
+        "stdout": "500, GPU-90eef51a-3614-2801-475c-b7b7b592397c, 2496 MiB\n501, GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c, 2496 MiB\n502, GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1, 2496 MiB\n503, GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e, 2496 MiB\n504, GPU-b755571d-58df-0910-0013-12fc8f77beeb, 2496 MiB\n505, GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2, 2496 MiB\n506, GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6, 2496 MiB\n507, GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328, 2496 MiB\n",
+        "stderr": ""
+      }
+    ],
+    "processes": [
+      {
+        "pid": 500,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 433,
+        "ppid": 1,
+        "start_ticks": 238816254,
+        "exe": "/usr/bin/python3.10",
+        "scripts": [
+          "/tmp/llm_pretrain_burn.py"
+        ]
+      },
+      {
+        "pid": 501,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 502,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 503,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 504,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 505,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 506,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      },
+      {
+        "pid": 507,
+        "ppid": 433,
+        "start_ticks": 238816375,
+        "exe": "/usr/bin/python3.10",
+        "scripts": []
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "build",
+      "local_path": "temp/dot_th2_6y3o/fa2_build_20261020_a02_final.log",
+      "sha256": "e46861073ca106f77652c272e91456677a529ba768464f39b16e8cf181729ba2",
+      "bytes": 6924
+    },
+    {
+      "kind": "verification",
+      "local_path": "temp/dot_th2_6y3o/fa2_final_verification_20261020_a01.log",
+      "sha256": "3caf305ec375167f47535546a486bc693f6b0f661dd25cdf60365dea190e90fa",
+      "bytes": 7068
+    },
+    {
+      "kind": "linker",
+      "local_path": "temp/dot_th2_6y3o/fa2_linker_name_20261020_a01.log",
+      "sha256": "8b942a8e92b60465aad6a29f9d1a8bc898fa31185d3ee9896616c4cd433fd853",
+      "bytes": 407
+    }
+  ]
+}
