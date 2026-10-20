@@ -66,3 +66,10 @@ Evidence lives in ignored `temp/attention_study_20261020/`. Local regression:
 44 ML tests, 7 old-torch CPU adapter tests, four runtime-selection tests pass;
 the baseline queue builder's schedule/retention contract also passes. GPU
 results and the actual launch receipt will be recorded when available.
+
+Initial B200 evidence: stock wheel installed after published SHA256 validation
+at 01:27 UTC. All three environments passed kernel/native/routed numerical
+checks. At 01:36 UTC, first native complete-update timing was 0.614386 s (FA4)
+versus 0.627193 s (stock FA2/torch 2.8); repeats/selection pending. FA4 peak
+allocated memory was 53,841,749,504 bytes (~50.1 GiB). These are full training
+updates, excluding dataset preparation, evaluation and checkpoint writes.

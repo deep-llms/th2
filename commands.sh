@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-attention-compare-status-20261020-a03
+#th2-6y3o-attention-compare-status-20261020-a04
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 python3 - <<'CHECK'
@@ -23,5 +23,9 @@ for name in ('progress.json','selection.json'):
    if not c['passed']:
     log=checks/(c['name']+'.log')
     if log.exists():print('FAILED_CHECK_LOG',log.read_text()[-5000:])
+if (root/'supervised/burn-verified.json').exists():
+ from scripts.gpu_process import inspect, ownership
+ proof=json.loads((root/'supervised/burn-verified.json').read_text());live=inspect()
+ print('LIVE_BURN_HANDOFF',json.dumps(dict(matches=ownership(proof['gpus'])==ownership(live['gpus']),guard_disabled=live['guard_disabled'],workers=live['workers'])))
 print(subprocess.check_output(['nvidia-smi','--query-gpu=index,memory.used,utilization.gpu,ecc.errors.uncorrected.volatile.total','--format=csv'],text=True))
 CHECK

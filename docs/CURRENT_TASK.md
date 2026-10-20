@@ -40,22 +40,36 @@ Execution checkout: `/disk/thuat/DOT-th2-inventory`, th2 main. Current study roo
 `/mnt/local/_outputs/deep-llms_th2/6y3o-attention-study-20261020-a01/`.
 Local evidence: `temp/attention_study_20261020/`.
 
-Runtime update, 01:23 UTC: torch 2.8.0 / CUDA 12.8 imports and reports SM100.
-Protected train/eval/train_fa2 snapshots are identical. The controller wheel
-store lacks the official cp311 torch-2.8 FA2 artifact. Initial #datasets URL
-request 0747e70 failed before creating the destination; read-only 36f53fd
-confirmed this. Exact cause was not returned. 16adf56 now requests the same
-published wheel using the established #models single-file route (as 0c2daa0),
-with literal '+' and an exact file destination. Expected SHA256:
-92aabf18ecfcf5d620ac7fe97fafe88f83e714b7a790e4bf219dff4a404cfb38.
-No GPU processes have been signaled. Environment comparison has not launched.
+Runtime update, 01:35 UTC: stock FA2 2.8.3.post2 installed offline in
+train_fa2_t28 after SHA256 verification. torch 2.8.0 / CUDA 12.8, C++11 ABI,
+SM100 and compiled FA2 imports pass. Protected train/eval/train_fa2 snapshots
+remain identical. The controller cache lacked the wheel; initial #datasets
+request failed before creating a destination. Established #models single-file
+request 16adf56 succeeded, then f8f9b75 performed the isolated offline install.
 
-Prepared implementation/plan: `docs/ATTENTION_BASELINE_LAUNCH_20261020.md`.
-The public `fa2` backend shares layout/transport with FA4 and selects only its
-kernel explicitly. Source changes are staged for review in the execution tree
-but not committed yet; no production run uses them. 44 ML regressions, seven
-CPU adapter tests under old torch, selection tests and queue-builder contract
-pass. Comparison root will be `6y3o-attention-compare-20261020-a01` (fresh).
+Comparison 4e1b1f6 is running at
+`/mnt/local/_outputs/deep-llms_th2/6y3o-attention-compare-20261020-a01`.
+Accelerate resource YAML copied and verified in both train and train_fa2_t28.
+Supervisor verified and stopped only burn workers 500–507, then confirmed all
+eight GPUs free at 01:31 UTC. First exported evidence: FA4 kernel/native/routed
+numerics pass; stock FA2 kernel passes, subsequent checks/timings still pending.
+Latest read-only status request 6751e92. Do not relaunch comparison. Its final
+supervisor must verify automatic burns before the next GPU workload.
+
+Plan: `docs/ATTENTION_BASELINE_LAUNCH_20261020.md`. Implementation committed in
+f8f9b75: explicit public FA2 backend sharing FA4's document-layout transport,
+comparison/asset/queue helpers, local 44 ML regressions + seven old-torch CPU
+adapter checks + four selection tests + queue preparation contract passing.
+New source-only `scripts/native_baseline_pipeline.py` prepares exact Trainer
+caches while burns remain active, then gates the verification/baseline queue.
+Its handoff test passes; it has not been copied/pushed yet.
+
+Download command prepared, not submitted:
+`temp/attention_study_20261020/download_commands.sh`, 3,016 exact single-file
+#models URLs (3,008 English files, two pool manifests, six tokenizer/config
+files), pinned revisions and unique destination paths. Model weights are not
+needed for random initialization. Full schedule defaults to 57,220 steps,
+cutoff 5,000, warmup 1,145; optional schedule question remains unanswered.
 
 ## Isolated FA2 installation complete — 2026-10-20
 
