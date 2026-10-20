@@ -1,15 +1,16 @@
 #1 +30+a
-#th2-6y3o-dot-grouped-status-20261020-a01
+#th2-6y3o-dot-grouped-status-20261020-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 python3 - <<'REMOTE_PY'
 from pathlib import Path
-import datetime,json,re,time
+import datetime,hashlib,json,re,time
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01')
 print('OBSERVED_UTC',datetime.datetime.now(datetime.timezone.utc).isoformat(),flush=True)
 for name in ['launch.json','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/run/checks/summary.json','supervised/burn-verified.json']:
  p=root/name
  if not p.exists():print('MISSING',name,flush=True);continue
+ print('RECEIPT_SHA256',name,hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
  j=json.loads(p.read_text())
  if name.endswith('summary.json'):
   j={**{k:v for k,v in j.items() if k not in ('checks','benchmarks')},'checks':{k:(v.get('status') if isinstance(v,dict) else [x.get('status','recorded') for x in v]) for k,v in j.get('checks',{}).items()},'benchmarks':{k:{q:v[q] for q in ('seconds_per_update','tokens_per_second','peak_allocated_bytes')} for k,v in j.get('benchmarks',{}).items()}}
