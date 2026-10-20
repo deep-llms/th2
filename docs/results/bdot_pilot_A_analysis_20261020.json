@@ -1,0 +1,242 @@
+{
+  "scope": "Read-only analysis of completed D/P1-A histories; P1-B left running.",
+  "final_loss_gap": 0.12147738455253876,
+  "relative_ppl_increase": 0.12916382909114343,
+  "periodic_eval": [
+    {
+      "step": 400,
+      "D": 4.914292389556222,
+      "P1_A": 4.880227823990784,
+      "gap": -0.03406456556543791
+    },
+    {
+      "step": 500,
+      "D": 4.611022349182187,
+      "P1_A": 4.611575058456187,
+      "gap": 0.0005527092739994188
+    },
+    {
+      "step": 1000,
+      "D": 4.034777452749321,
+      "P1_A": 4.110238035775416,
+      "gap": 0.07546058302609548
+    },
+    {
+      "step": 1500,
+      "D": 3.838462411519739,
+      "P1_A": 3.896737316930696,
+      "gap": 0.05827490541095681
+    },
+    {
+      "step": 2500,
+      "D": 3.6529576381708164,
+      "P1_A": 3.770928592728761,
+      "gap": 0.11797095455794437
+    },
+    {
+      "step": 4000,
+      "D": 3.5366000292009154,
+      "P1_A": 3.6526960405239213,
+      "gap": 0.11609601132300584
+    },
+    {
+      "step": 4768,
+      "D": 3.5146906440990997,
+      "P1_A": 3.6344690196806337,
+      "gap": 0.11977837558153404
+    }
+  ],
+  "route_snapshots": [
+    {
+      "step": 470,
+      "off_default_share_last_update": 0.0,
+      "router_entropy_last_update": 0.0,
+      "reuse_rate_last_update": 0.0,
+      "module_load_max_min_ratio_last_update": 1.0,
+      "module_0_decisions_last_update": 524288,
+      "module_1_decisions_last_update": 524288,
+      "module_2_decisions_last_update": 524288,
+      "module_3_decisions_last_update": 524288,
+      "module_4_decisions_last_update": 524288,
+      "module_5_decisions_last_update": 524288,
+      "module_6_decisions_last_update": 524288,
+      "module_7_decisions_last_update": 524288,
+      "lm_loss": 4.684062715913005
+    },
+    {
+      "step": 480,
+      "off_default_share_last_update": 0.031111478805541992,
+      "router_entropy_last_update": 0.8563583176583052,
+      "reuse_rate_last_update": 0.22224998474121094,
+      "module_load_max_min_ratio_last_update": 1.0170817341451919,
+      "module_0_decisions_last_update": 519795,
+      "module_1_decisions_last_update": 528674,
+      "module_2_decisions_last_update": 524386,
+      "module_3_decisions_last_update": 524495,
+      "module_4_decisions_last_update": 524075,
+      "module_5_decisions_last_update": 524252,
+      "module_6_decisions_last_update": 528657,
+      "module_7_decisions_last_update": 519970,
+      "lm_loss": 4.664292824269765
+    },
+    {
+      "step": 600,
+      "off_default_share_last_update": 0.023925065994262695,
+      "router_entropy_last_update": 0.005550018875510432,
+      "reuse_rate_last_update": 0.1737518310546875,
+      "module_load_max_min_ratio_last_update": 1.016078573887027,
+      "module_0_decisions_last_update": 520071,
+      "module_1_decisions_last_update": 528433,
+      "module_2_decisions_last_update": 524374,
+      "module_3_decisions_last_update": 524148,
+      "module_4_decisions_last_update": 524499,
+      "module_5_decisions_last_update": 523529,
+      "module_6_decisions_last_update": 528035,
+      "module_7_decisions_last_update": 521215,
+      "lm_loss": 4.4593120428687865
+    },
+    {
+      "step": 1000,
+      "off_default_share_last_update": 0.0005311965942382812,
+      "router_entropy_last_update": 0.0003531500265125942,
+      "reuse_rate_last_update": 0.00424957275390625,
+      "module_load_max_min_ratio_last_update": 1.0085161809353242,
+      "module_0_decisions_last_update": 522065,
+      "module_1_decisions_last_update": 526511,
+      "module_2_decisions_last_update": 524288,
+      "module_3_decisions_last_update": 524288,
+      "module_4_decisions_last_update": 524288,
+      "module_5_decisions_last_update": 524288,
+      "module_6_decisions_last_update": 524291,
+      "module_7_decisions_last_update": 524285,
+      "lm_loss": 4.095007181753575
+    },
+    {
+      "step": 1500,
+      "off_default_share_last_update": 0.0490415096282959,
+      "router_entropy_last_update": 0.0556769851827994,
+      "reuse_rate_last_update": 0.3559703826904297,
+      "module_load_max_min_ratio_last_update": 1.8180690161106368,
+      "module_0_decisions_last_update": 513111,
+      "module_1_decisions_last_update": 540677,
+      "module_2_decisions_last_update": 522233,
+      "module_3_decisions_last_update": 513647,
+      "module_4_decisions_last_update": 596966,
+      "module_5_decisions_last_update": 348962,
+      "module_6_decisions_last_update": 634437,
+      "module_7_decisions_last_update": 524271,
+      "lm_loss": 3.8787008055003973
+    },
+    {
+      "step": 2000,
+      "off_default_share_last_update": 0.21161484718322754,
+      "router_entropy_last_update": 0.15695524588227272,
+      "reuse_rate_last_update": 0.8165836334228516,
+      "module_load_max_min_ratio_last_update": 4.617283155737265,
+      "module_0_decisions_last_update": 512992,
+      "module_1_decisions_last_update": 808706,
+      "module_2_decisions_last_update": 263881,
+      "module_3_decisions_last_update": 284083,
+      "module_4_decisions_last_update": 860560,
+      "module_5_decisions_last_update": 186378,
+      "module_6_decisions_last_update": 757300,
+      "module_7_decisions_last_update": 520404,
+      "lm_loss": 3.8038458676129854
+    },
+    {
+      "step": 2500,
+      "off_default_share_last_update": 0.3542592525482178,
+      "router_entropy_last_update": 0.13698916556313634,
+      "reuse_rate_last_update": 0.9642047882080078,
+      "module_load_max_min_ratio_last_update": 11.961107448912326,
+      "module_0_decisions_last_update": 512609,
+      "module_1_decisions_last_update": 968065,
+      "module_2_decisions_last_update": 95571,
+      "module_3_decisions_last_update": 126214,
+      "module_4_decisions_last_update": 1143135,
+      "module_5_decisions_last_update": 135386,
+      "module_6_decisions_last_update": 938266,
+      "module_7_decisions_last_update": 275058,
+      "lm_loss": 3.7567318857201037
+    },
+    {
+      "step": 4000,
+      "off_default_share_last_update": 0.4484436511993408,
+      "router_entropy_last_update": 0.08592527429573238,
+      "reuse_rate_last_update": 0.9981422424316406,
+      "module_load_max_min_ratio_last_update": 60.903419072931214,
+      "module_0_decisions_last_update": 513219,
+      "module_1_decisions_last_update": 1037348,
+      "module_2_decisions_last_update": 22199,
+      "module_3_decisions_last_update": 51865,
+      "module_4_decisions_last_update": 1062902,
+      "module_5_decisions_last_update": 95632,
+      "module_6_decisions_last_update": 1351995,
+      "module_7_decisions_last_update": 59144,
+      "lm_loss": 3.638415445811144
+    },
+    {
+      "step": 4760,
+      "off_default_share_last_update": 0.4521322250366211,
+      "router_entropy_last_update": 0.08414026885293424,
+      "reuse_rate_last_update": 0.9985237121582031,
+      "module_load_max_min_ratio_last_update": 63.968616262482165,
+      "module_0_decisions_last_update": 512535,
+      "module_1_decisions_last_update": 1038113,
+      "module_2_decisions_last_update": 21731,
+      "module_3_decisions_last_update": 52761,
+      "module_4_decisions_last_update": 1035374,
+      "module_5_decisions_last_update": 90721,
+      "module_6_decisions_last_update": 1390102,
+      "module_7_decisions_last_update": 52967,
+      "lm_loss": 3.6098728377728877
+    }
+  ],
+  "sources": {
+    "D": {
+      "path": "temp/pilot_analysis_20261020/D.metrics.jsonl",
+      "sha256": "d6c43b777876e395d819f9cca91b653742dccfd431f3ba38323e55ce70f61ee5",
+      "rows": 526
+    },
+    "P1-A": {
+      "path": "temp/pilot_analysis_20261020/P1-A.metrics.jsonl",
+      "sha256": "b5b2df4bce3c89533003df6c502c42c276860b2cece46be3fc4a5fa8da66aa66",
+      "rows": 527
+    }
+  },
+  "transition": {
+    "step": 477,
+    "eval_loss": 4.658503514792117,
+    "eval_perplexity": 105.47811754762346,
+    "eval_nll_sum": 4874215.520044566,
+    "eval_num_tokens": 1046305,
+    "eval_num_sequences": 1024,
+    "eval_curriculum_loss": 4.658503514792117,
+    "eval_curriculum_perplexity": 105.47811754762346,
+    "eval_curriculum_nll_sum": 4874215.520044566,
+    "eval_curriculum_num_tokens": 1046305,
+    "eval_curriculum_num_sequences": 1024,
+    "eval_target_loss": 4.658503514792117,
+    "eval_target_perplexity": 105.47811754762346,
+    "eval_target_nll_sum": 4874215.520044566,
+    "eval_target_num_tokens": 1046305,
+    "eval_target_num_sequences": 1024,
+    "eval_curriculum_reach": 1,
+    "eval_curriculum_soft": false,
+    "eval_spike_loss": 4.658503514792117,
+    "eval_transition_old_loss": 4.658503514792117,
+    "eval_transition_new_loss": 4.658503514792117,
+    "eval_transition_jump": 0.0,
+    "eval_spike": false,
+    "eval_spike_min": 4.658503514792117,
+    "eval_spike_reset": true,
+    "eval_runtime": 0.9429,
+    "eval_samples_per_second": 1086.063,
+    "eval_steps_per_second": 8.485
+  },
+  "spike_steps": {
+    "D": [],
+    "P1-A": []
+  },
+  "interpretation": "Evidence is consistent with early hard/exploratory routing harming optimization, followed by strongly concentrated module use. This is a hypothesis, not a causal attribution; no route-intervention or balancing ablation has run. Reuse alone is not a defect."
+}

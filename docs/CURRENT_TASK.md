@@ -1,5 +1,29 @@
 # Current task
 
+## P1-A loss-history analysis — 2026-10-20
+
+User asked why P1-A loses to D. Read-only export a9f888f retrieved completed
+D/P1-A metrics; no training changes or new GPU work. Same 1,024-sequence periodic
+validation: P1-A minus D is -0.03406 nats at 400, +0.00055 at 500, +0.07546 at
+1,000, +0.11797 at 2,500 and +0.11978 at 4,768. Full-validation gap is +0.12148
+(12.92% higher PPL). The opening at 477 has exactly zero immediate validation
+jump, and neither run has a flagged >0.1-nat within-phase spike.
+
+Early exploration coincides with the initial regression; learned router
+probabilities become very sharp. At update 1,000 routes are still almost all
+home (off-default 0.05%) despite the loss gap. Later module concentration grows:
+max/min load ratio 1.01 at 1,000, 11.96 at 2,500, 63.97 at 4,760. At 4,760,
+module 6 receives 33.14% of choices and module 2 only 0.52%; uniform baseline
+share is 12.5%. Final validation off-default share 45.21%; 99.86% of tokens
+reuse at least one module (not 99.86% of routing decisions).
+
+Interpretation: evidence suggests an optimization problem during hard-routing
+exploration followed by concentrated/repetitive module use. Causality is not
+proved, and no routing-specific bug is excluded by the dense-equivalence check.
+Wait for the already-running soft-to-hard P1-B before choosing another action.
+Evidence: `docs/results/bdot_pilot_A_analysis_20261020.json`; raw histories:
+`temp/pilot_analysis_20261020/`. Commands return to #0.
+
 ## Pilot progress — observed 2026-10-20 21:47 UTC
 
 Read-only status a984b0f confirms D and P1-A completed all 4,768 updates,
