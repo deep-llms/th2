@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-native12-pipeline-status-20261020-a01
+#th2-6y3o-native12-pipeline-status-20261020-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 python3 - <<'PY'
@@ -23,8 +23,11 @@ for p in [Path(str(root)+'.prepare.log'),root/'supervisor.log',*(root/'supervise
  print('LOG_TAIL',str(p),flush=True)
  print('\n'.join(lines[-12:]),flush=True)
 for session in ['native12_prepare_20261020_a01','native12_train_20261020_a01']:
- r=subprocess.run(['tmux','display-message','-p','-t',session,'#{session_name} pane_dead=#{pane_dead} pane_pid=#{pane_pid}'],capture_output=True,text=True)
- print('SESSION',session,r.returncode,r.stdout.strip(),flush=True)
+ exists=subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0
+ if exists:
+  r=subprocess.run(['tmux','display-message','-p','-t',session,'#{session_name} pane_dead=#{pane_dead} pane_pid=#{pane_pid}'],capture_output=True,text=True)
+  print('SESSION',session,r.returncode,r.stdout.strip(),flush=True)
+ else:print('SESSION',session,'absent',flush=True)
 from scripts.gpu_process import inspect
 live=inspect()
 print('GPU_LIVE',json.dumps({'time':live['time'],'gpus':live['gpus'],'guard_disabled':live['guard_disabled']}),flush=True)
