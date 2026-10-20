@@ -1,6 +1,28 @@
 # Current task
 
+## Authorized no-reuse control N-A — 2026-10-20
+
+User approved one additional matched training run after reviewing the failed
+quality gate. Follow `docs/BDOT_v2_spec.md` Phase A control N with curriculum A:
+fresh random initialization, seed 0, 4,768 steps, same data/order, schedule,
+batch and FA4/grouped implementation as completed P1-A; only `reuse=false`.
+Every token must use each of the eight middle modules exactly once.
+No R, Phase B, extra seeds or longer training are authorized by this request.
+
+Execution target remains th2/main on `thiennh-p6-6y3o-worker-0`, Dropbox 6Y3O.
+Fresh output: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-N-20261020-a01`.
+First inspect the completed pilot's current burns and shared assets. Reuse
+existing generators, training and supervision; compare N's generated recipe
+with the completed P1-A arguments. Copy/verify Accelerate, reclaim only known
+burn workers, require all eight GPUs free, then train. Existing supervisor
+restores and verifies communicating burns after success or failure. Preserve
+all prior outputs, shared HF caches and all N checkpoints. Status: preparing
+read-only preflight; not yet launched.
+
 ## Pilot complete — verified 2026-10-20 23:05 UTC
+
+Concise experiment definitions and results:
+[BDOT_PILOT_RESULTS_20261020.md](BDOT_PILOT_RESULTS_20261020.md).
 
 Read-only status **7a4497a** resolved the earlier delayed acknowledgement.
 T12, T14, D, P1-A and P1-B all exited successfully. The queue finished at

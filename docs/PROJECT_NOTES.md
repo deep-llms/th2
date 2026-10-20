@@ -68,6 +68,12 @@ at 23:05:08 UTC on all eight GPUs, with supervisor guard released.
 Final exports are hash-verified locally in `temp/pilot_final_20261020/`;
 see [completion evidence](results/bdot_pilot_final_20261020.json).
 
+After reviewing these results, the user authorized one matched N-A run with
+reuse forbidden, keeping P1-A's curriculum and full recipe. This asks whether
+repetition/omission contributes to the regression through training; it is not
+an inference-time route intervention. This authorization does not expand to
+R, Phase B or additional seeds. See CURRENT_TASK for launch state.
+
 ## Route study and scientific-review decisions
 
 `eval/packed_ppl.py --route_study true` reuses packed evaluation for full selected
