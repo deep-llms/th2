@@ -121,6 +121,21 @@ the separate completed B200 evidence. Initial local FA4 cache-fixture attempt
 failed only because local train_env has no FA4 package metadata; no production
 code change was needed. Source log: `cache_helper_sdpa_test.log`.
 
+At 02:32:32 UTC, read-only inspection ffe57c7 showed 820/3,008 data
+files present at the expected size; all eight transfer groups advance and all
+six tokenizer/config hashes pass. The same eight burn workers remain healthy.
+Source: `temp/attention_study_20261020/corpus_arrival04.log`.
+
+The baseline pipeline now supports a bounded six-hour input wait before its
+existing verification/preparation sequence. It authenticates the downloaded
+manifest against the pinned SHA256, waits for every data/tokenizer file at its
+expected size and unchanged timestamps over two observations 30 seconds apart,
+then verifies every SHA256. Four CPU tests cover missing/partial inputs,
+same-size rewrites, timeout and invalid metadata. It does not retry transfers,
+modify inputs, or touch GPUs during waiting. Submit the prepared launch now;
+continue monitoring until actual baseline training starts. The fresh output
+root remains the a01 root above. Background controller transfers stay active.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while
