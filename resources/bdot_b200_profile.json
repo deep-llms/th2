@@ -1,0 +1,168 @@
+{
+  "jobs": [
+    {
+      "name": "native",
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "{project_dir}/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "0",
+        "scripts/benchmark_bdot.py",
+        "--config",
+        "configs/bdot/dense_native.json",
+        "--output",
+        "{run_dir}/native.json",
+        "--device",
+        "cuda",
+        "--batch-size",
+        "16",
+        "--accumulation",
+        "4",
+        "--length",
+        "1024",
+        "--warmup",
+        "5",
+        "--steps",
+        "1",
+        "--bf16",
+        "--attention-backend",
+        "fa4",
+        "--expert-backend",
+        "reference",
+        "--profile"
+      ],
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 600,
+      "required_outputs": [
+        {
+          "path": "native.json",
+          "json_equals": {
+            "status": "completed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "D",
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "{project_dir}/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "0",
+        "scripts/benchmark_bdot.py",
+        "--config",
+        "configs/bdot/D.json",
+        "--output",
+        "{run_dir}/D.json",
+        "--device",
+        "cuda",
+        "--batch-size",
+        "16",
+        "--accumulation",
+        "4",
+        "--length",
+        "1024",
+        "--warmup",
+        "5",
+        "--steps",
+        "1",
+        "--bf16",
+        "--attention-backend",
+        "fa4",
+        "--expert-backend",
+        "reference",
+        "--profile"
+      ],
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 600,
+      "required_outputs": [
+        {
+          "path": "D.json",
+          "json_equals": {
+            "status": "completed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "hard",
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "{project_dir}/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "0",
+        "scripts/benchmark_bdot.py",
+        "--config",
+        "configs/bdot/P1-B.json",
+        "--output",
+        "{run_dir}/hard.json",
+        "--device",
+        "cuda",
+        "--batch-size",
+        "16",
+        "--accumulation",
+        "4",
+        "--length",
+        "1024",
+        "--warmup",
+        "5",
+        "--steps",
+        "1",
+        "--bf16",
+        "--attention-backend",
+        "fa4",
+        "--expert-backend",
+        "grouped",
+        "--profile",
+        "--router-prior",
+        "0"
+      ],
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 600,
+      "required_outputs": [
+        {
+          "path": "hard.json",
+          "json_equals": {
+            "status": "completed"
+          }
+        }
+      ]
+    }
+  ]
+}

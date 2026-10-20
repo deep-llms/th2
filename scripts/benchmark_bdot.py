@@ -33,6 +33,10 @@ def main():
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--router-prior', type=float, help='Diagnostic override; record separately from production config')
     p.add_argument('--expert-backend', choices=['reference', 'grouped'], default='reference')
+    p.add_argument('--bdot-source', type=Path,
+                   help='Diagnostic only: directory containing an immutable bdot package snapshot')
+    p.add_argument('--profile', action='store_true',
+                   help='Profile measured updates on rank zero; timings are not throughput evidence')
     a = p.parse_args()
     if min(a.batch_size, a.accumulation, a.steps, a.warmup) < 1 or min(a.length, a.document_length) < 2:
         p.error('Invalid benchmark sizes')
@@ -45,11 +49,32 @@ def main():
     if a.device != 'cpu' and not os.environ.get('CUDA_VISIBLE_DEVICES'):
         p.error('Set CUDA_VISIBLE_DEVICES to the explicitly allocated physical GPU(s)')
     import torch
+    if a.bdot_source:
+        if not (a.bdot_source/'bdot/model.py').is_file():
+            p.error('--bdot-source must contain bdot/model.py')
+        import bdot
+        bdot.__path__ = [str(a.bdot_source.resolve()/'bdot')]
     from datasets import Dataset
     from transformers import TrainerCallback, set_seed
     from train import ModelArguments, BaselineTrainingArguments, build_model
     from packed_training import PackedCollator, PackedTrainer
     from bdot.trainer import BDOTTrainer
+    if a.profile:
+        from functools import wraps
+        from bdot.model import RoutedStep, BDOTForCausalLM
+        from bdot import grouped
+        def instrument(owner, name):
+            original = getattr(owner, name)
+            @wraps(original)
+            def measured(*args, **kwargs):
+                with torch.profiler.record_function('bdot::'+name):
+                    return original(*args, **kwargs)
+            setattr(owner, name, measured)
+        for owner, names in [(RoutedStep, ('select', 'execute')),
+                             (BDOTForCausalLM, ('finish_update',)),
+                             (grouped, ('queries', 'outputs', 'linear'))]:
+            for name in names:
+                instrument(owner, name)
 
     args = BaselineTrainingArguments(
         output_dir=str(run_dir), use_cpu=a.device == 'cpu', bf16=a.bf16,
@@ -120,6 +145,27 @@ def main():
                   data_collator=PackedCollator(attention_backend=a.attention_backend))
     timer = Timing()
     trainer.add_callback(timer)
+    class Profile(TrainerCallback):
+        def on_step_begin(self, args, state, control, **kwargs):
+            if state.global_step == a.warmup and trainer.is_world_process_zero():
+                activities = [torch.profiler.ProfilerActivity.CPU]
+                if args.device.type == 'cuda':
+                    activities.append(torch.profiler.ProfilerActivity.CUDA)
+                self.profiler = torch.profiler.profile(activities=activities)
+                self.profiler.start()
+
+        def on_train_end(self, args, state, control, **kwargs):
+            if trainer.is_world_process_zero():
+                self.profiler.stop()
+                events = [dict(name=e.key, count=e.count,
+                               cpu_total_us=e.cpu_time_total, cpu_self_us=e.self_cpu_time_total,
+                               device_total_us=e.device_time_total, device_self_us=e.self_device_time_total)
+                          for e in self.profiler.key_averages()]
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.with_suffix('.profile.json').write_text(json.dumps(events, indent=2))
+                self.profiler.export_chrome_trace(str(out.with_suffix('.trace.json.gz')))
+    if a.profile:
+        trainer.add_callback(Profile())
     trainer.train()
     if len(timer.durations) != a.steps:
         raise AssertionError('Incomplete measured update count')
@@ -137,7 +183,8 @@ def main():
                 versions[package] = None
         root = Path(__file__).resolve().parents[1]
         result = dict(
-            status='completed', settings=vars(a), versions=versions, torch=torch.__version__,
+            status='completed', settings={k: str(v) if isinstance(v, Path) else v for k,v in vars(a).items()},
+            versions=versions, torch=torch.__version__,
             cuda=torch.version.cuda, world_size=args.world_size,
             gpu=torch.cuda.get_device_name(args.device) if args.device.type == 'cuda' else None,
             parameters=sum(p.numel() for p in model.parameters()), config=model.config.to_dict(),
