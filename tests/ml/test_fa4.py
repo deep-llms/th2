@@ -140,7 +140,7 @@ class FA4Tests(unittest.TestCase):
             m.config.save_pretrained(folder)
             with self.assertRaisesRegex(ValueError, "attention_dropout=0"):
                 build_model(ModelArguments(config_name=folder, attention_backend="fa4"))
-            with self.assertRaisesRegex(ValueError, "sdpa or fa4"):
+            with self.assertRaisesRegex(ValueError, "attention_backend must be"):
                 build_model(ModelArguments(config_name=folder, attention_backend="typo"))
 
     def test_trainer_rejects_metadata_splitting_and_backend_mismatch(self):

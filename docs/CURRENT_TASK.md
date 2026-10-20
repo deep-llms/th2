@@ -40,6 +40,23 @@ Execution checkout: `/disk/thuat/DOT-th2-inventory`, th2 main. Current study roo
 `/mnt/local/_outputs/deep-llms_th2/6y3o-attention-study-20261020-a01/`.
 Local evidence: `temp/attention_study_20261020/`.
 
+Runtime update, 01:23 UTC: torch 2.8.0 / CUDA 12.8 imports and reports SM100.
+Protected train/eval/train_fa2 snapshots are identical. The controller wheel
+store lacks the official cp311 torch-2.8 FA2 artifact. Initial #datasets URL
+request 0747e70 failed before creating the destination; read-only 36f53fd
+confirmed this. Exact cause was not returned. 16adf56 now requests the same
+published wheel using the established #models single-file route (as 0c2daa0),
+with literal '+' and an exact file destination. Expected SHA256:
+92aabf18ecfcf5d620ac7fe97fafe88f83e714b7a790e4bf219dff4a404cfb38.
+No GPU processes have been signaled. Environment comparison has not launched.
+
+Prepared implementation/plan: `docs/ATTENTION_BASELINE_LAUNCH_20261020.md`.
+The public `fa2` backend shares layout/transport with FA4 and selects only its
+kernel explicitly. Source changes are staged for review in the execution tree
+but not committed yet; no production run uses them. 44 ML regressions, seven
+CPU adapter tests under old torch, selection tests and queue-builder contract
+pass. Comparison root will be `6y3o-attention-compare-20261020-a01` (fresh).
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while

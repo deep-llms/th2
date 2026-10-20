@@ -47,6 +47,10 @@ def build_training_recipe(model, args, attention_backend, accelerator=None):
                'buffers': {n: [list(b.shape), str(b.dtype)] for n, b in model.named_buffers()}}
     source = Path(__file__).parent
     code_files = ['train.py', 'resume_recipe.py', 'packed_training.py', 'packed_evaluation.py']
+    if attention_backend in ('fa4', 'fa2'):
+        code_files += ['packed_fa4.py']
+        if attention_backend == 'fa2':
+            code_files += ['packed_fa2.py']
     if hasattr(model.config, 'bdot'):
         code_files += ['bdot/model.py', 'bdot/routing.py', 'bdot/trainer.py', 'bdot/data.py', 'bdot/grouped.py']
     return canonical({

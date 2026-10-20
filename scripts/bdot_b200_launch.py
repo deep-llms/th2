@@ -18,12 +18,16 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--session', required=True)
+    p.add_argument('--host', default='thiennh-p6-q359-worker-0',
+                   help='Explicit authorized node; must match the fresh preflight receipt')
+    p.add_argument('--verify-python', type=Path,
+                   help='Also verify Accelerate in the selected training interpreter')
     p.add_argument('--jobs-config', type=Path, default=ROOT/'resources/bdot_b200_verification.json')
     args = p.parse_args()
     root = args.root.resolve()
     inspection = root/'preflight.json'
     old = json.loads(inspection.read_text())
-    if socket.gethostname() != old['host'] or old['host'] != 'thiennh-p6-q359-worker-0':
+    if socket.gethostname() != old['host'] or old['host'] != args.host:
         raise ValueError('Node identity differs from preflight')
     if (root/'supervised').exists() or (root/'supervisor.log').exists():
         raise ValueError('Choose a fresh verification output')
@@ -56,6 +60,13 @@ def main():
     (root/'accelerate_env.txt').write_text(result.stdout+result.stderr)
     print('ACCELERATE_CONFIG_VERIFIED '+str(target), flush=True)
     print(result.stdout, flush=True)
+    if args.verify_python:
+        if not args.verify_python.is_file():
+            raise ValueError('Selected training interpreter is missing')
+        selected = subprocess.run([str(args.verify_python), '-m', 'accelerate.commands.env'],
+                                  text=True, capture_output=True, check=True)
+        (root/'selected_accelerate_env.txt').write_text(selected.stdout+selected.stderr)
+        print('SELECTED_ACCELERATE_ENV '+selected.stdout, flush=True)
     from run_experiments import load_jobs
     jobs_config = args.jobs_config.resolve()
     load_jobs(jobs_config)

@@ -44,7 +44,7 @@ class ModelArguments:
         default=None, metadata={"help": "Local tokenizer directory; defaults to model_name_or_path"})
     cache_dir: str | None = None
     trust_remote_code: bool = False
-    attention_backend: str = field(default="sdpa", metadata={"help": "sdpa or fa4; FA4 requires its optional pinned CUDA kernel"})
+    attention_backend: str = field(default="sdpa", metadata={"help": "sdpa, fa4 or fa2; FlashAttention requires its optional pinned CUDA kernel"})
 
 
 @dataclass
@@ -130,10 +130,10 @@ class StopAfterCallback(TrainerCallback):
 
 def build_model(model_args, isolate_documents=True):
     """Model extension point; keep the baseline Trainer/data pipeline unchanged."""
-    if model_args.attention_backend not in ("sdpa", "fa4"):
-        raise ValueError("attention_backend must be sdpa or fa4")
-    if model_args.attention_backend == "fa4" and not isolate_documents:
-        raise ValueError("FA4 currently requires document isolation")
+    if model_args.attention_backend not in ("sdpa", "fa4", "fa2"):
+        raise ValueError("attention_backend must be sdpa, fa4 or fa2")
+    if model_args.attention_backend in ("fa4", "fa2") and not isolate_documents:
+        raise ValueError("FlashAttention currently requires document isolation")
     config_path = model_args.config_name or model_args.model_name_or_path
     if config_path is None or not Path(config_path).exists():
         raise ValueError("Supply an existing local --config_name or --model_name_or_path")
@@ -152,11 +152,11 @@ def build_model(model_args, isolate_documents=True):
         if config.rope_parameters["rope_type"] != "default":
             raise ValueError("Document isolation requires validated default RoPE; sequence-dependent RoPE needs separate validation")
     backend = "sdpa"
-    if model_args.attention_backend == "fa4":
+    if model_args.attention_backend in ("fa4", "fa2"):
         if config.attention_dropout != 0.:
-            raise ValueError("FA4 requires attention_dropout=0; dropout is never silently dropped")
-        from packed_fa4 import register_backend
-        backend = register_backend()
+            raise ValueError("FlashAttention requires attention_dropout=0; dropout is never silently dropped")
+        from importlib import import_module
+        backend = import_module("packed_" + model_args.attention_backend).register_backend()
     model_class = AutoModelForCausalLM
     if hasattr(config, "bdot"):
         from bdot.model import BDOTForCausalLM
@@ -263,9 +263,9 @@ def main():
                    training_args.process_index, training_args.device,
                    training_args.world_size, training_args.bf16, training_args.fp16)
     set_seed(training_args.seed)
-    if model_args.attention_backend == "fa4" and (
+    if model_args.attention_backend in ("fa4", "fa2") and (
             training_args.device.type != "cuda" or not (training_args.bf16 or training_args.fp16)):
-        raise ValueError("FA4 training requires a CUDA device and --bf16 true or --fp16 true")
+        raise ValueError("FlashAttention training requires a CUDA device and --bf16 true or --fp16 true")
 
     # Preserve ordinary Trainer resume; reject incompatible/incomplete checkpoints first.
     last_checkpoint = None

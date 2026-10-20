@@ -4,6 +4,7 @@ python tests/ml/fa4_gpu_probe.py /absolute/new-receipt.json
 No downloads, process management, environment installation or training job launch.
 This is a tiny numerical smoke check, not long-training or throughput evidence.
 """
+import argparse
 import copy
 import json
 from pathlib import Path
@@ -21,12 +22,17 @@ def relative_error(actual, expected):
 
 
 def main():
-    output = Path(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("output", type=Path)
+    parser.add_argument("--backend", choices=("fa4", "fa2"), default="fa4")
+    args = parser.parse_args()
+    output = args.output
     if output.exists():
         raise ValueError("Choose a fresh receipt path")
     if not torch.cuda.is_available() or not torch.cuda.is_bf16_supported():
         raise RuntimeError("This probe requires an authorized CUDA GPU supporting BF16")
-    backend = register_backend()
+    from importlib import import_module
+    backend = import_module("packed_" + args.backend).register_backend()
     torch.manual_seed(42)
     rows = []
     for boundary in (17, 31):
@@ -50,7 +56,7 @@ def main():
             for model in (dense, fa4):
                 model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            a, b = dense(**inputs("sdpa", rows)), fa4(**inputs("fa4", rows))
+            a, b = dense(**inputs("sdpa", rows)), fa4(**inputs(args.backend, rows))
         a.loss.backward()
         b.loss.backward()
         grads_a = torch.cat([p.grad.flatten() for p in dense.parameters()])
@@ -66,12 +72,13 @@ def main():
         changed = copy.deepcopy(rows)
         changed[0]["input_ids"] = [(x + 7) % 128 for x in rows[0]["input_ids"][:17]] + rows[0]["input_ids"][17:]
         with torch.no_grad(), torch.autocast("cuda", dtype=torch.bfloat16):
-            after = fa4(**inputs("fa4", changed)).logits
+            after = fa4(**inputs(args.backend, changed)).logits
         torch.testing.assert_close(b.logits[0, 17:], after[0, 17:], rtol=0, atol=0)
         torch.testing.assert_close(b.logits[1], after[1], rtol=0, atol=0)
         records.append(record)
         del dense, fa4, a, b, grads_a, grads_b
-    result = dict(status="passed", torch=torch.__version__, fa4=FA4_VERSION,
+    result = dict(status="passed", torch=torch.__version__, backend=args.backend,
+        kernel_version=__import__("importlib.metadata").metadata.version("flash-attn-4" if args.backend == "fa4" else "flash-attn"),
         gpu=torch.cuda.get_device_name(), dtype="bf16 autocast, FP32 weights",
         note="Tiny real-kernel smoke only; not throughput or long-run validation", checks=records)
     with output.open("x") as handle:

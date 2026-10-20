@@ -134,11 +134,11 @@ def main():
     prep_args = TrainingArguments(output_dir=str(output.parent), use_cpu=args.use_cpu,
         report_to="none", seed=0, data_seed=0, bf16=args.precision == "bf16", fp16=args.precision == "fp16")
     accelerator = Accelerator(cpu=args.use_cpu, mixed_precision="no" if args.precision == "fp32" else args.precision)
-    if backend == "fa4" and (accelerator.device.type != "cuda" or args.precision == "fp32"):
-        raise ValueError("FA4 evaluation requires CUDA and bf16/fp16 precision")
-    if backend == "fa4":
-        from packed_fa4 import load_kernel
-        load_kernel()
+    if backend in ("fa4", "fa2") and (accelerator.device.type != "cuda" or args.precision == "fp32"):
+        raise ValueError("FlashAttention evaluation requires CUDA and bf16/fp16 precision")
+    if backend in ("fa4", "fa2"):
+        from importlib import import_module
+        import_module("packed_" + backend).load_kernel()
     tokenizer_dir = args.tokenizer_name or str(checkpoint)
     if not Path(tokenizer_dir).is_dir():
         raise ValueError("Tokenizer must be an existing local directory")

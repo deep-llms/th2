@@ -16,10 +16,10 @@ class PackedCollator:
     attention_backend: str = "sdpa"
 
     def __post_init__(self):
-        if self.attention_backend not in ("sdpa", "fa4"):
-            raise ValueError("attention_backend must be sdpa or fa4")
-        if self.attention_backend == "fa4" and not self.isolate_documents:
-            raise ValueError("FA4 currently requires document isolation")
+        if self.attention_backend not in ("sdpa", "fa4", "fa2"):
+            raise ValueError("attention_backend must be sdpa, fa4 or fa2")
+        if self.attention_backend in ("fa4", "fa2") and not self.isolate_documents:
+            raise ValueError("FlashAttention currently requires document isolation")
         if self.reset_document_positions and not self.isolate_documents:
             raise ValueError("Position reset requires document isolation")
 
@@ -44,7 +44,7 @@ class PackedCollator:
         batch["labels"][:, 0] = -100
         if self.isolate_documents:
             batch["labels"].masked_fill_(starts, -100)
-            if self.attention_backend == "fa4":
+            if self.attention_backend in ("fa4", "fa2"):
                 from packed_fa4 import document_layout
                 batch["fa4_cu_seqlens"], batch["fa4_max_seqlen"] = document_layout(segments)
             else:
@@ -77,11 +77,11 @@ class PackedTrainer(Trainer):
         super().__init__(*args, **kwargs)
         if getattr(self.data_collator, "isolate_documents", False):
             backend = self.data_collator.attention_backend
-            expected = "template_fa4" if backend == "fa4" else "sdpa"
+            expected = "template_" + backend if backend in ("fa4", "fa2") else "sdpa"
             if self.model.config._attn_implementation != expected:
                 raise ValueError("Model attention backend must match PackedCollator")
-            if backend == "fa4" and (self.accelerator.split_batches or self.accelerator.dispatch_batches):
-                raise ValueError("FA4 offsets require per-rank collation: split_batches and dispatch_batches must be false")
+            if backend in ("fa4", "fa2") and (self.accelerator.split_batches or self.accelerator.dispatch_batches):
+                raise ValueError("FlashAttention offsets require per-rank collation: split_batches and dispatch_batches must be false")
         if self.args.remove_unused_columns:
             raise ValueError("PackedTrainer requires remove_unused_columns=False to retain document IDs")
         if not self.model_accepts_loss_kwargs or not self.args.average_tokens_across_devices:

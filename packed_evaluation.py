@@ -63,7 +63,8 @@ def evaluate_packed(model, dataset, collator, accelerator, batch_size=1, *, batc
 
 @torch.inference_mode()
 def score_packed_loader(model, loader, accelerator, *, batch_observer=None):
-    expected = "template_fa4" if loader.collate_fn.attention_backend == "fa4" else "sdpa"
+    backend = loader.collate_fn.attention_backend
+    expected = "template_" + backend if backend in ("fa4", "fa2") else "sdpa"
     if model.config._attn_implementation != expected:
         raise ValueError("Model and evaluation collator attention backends must match")
     model.eval()

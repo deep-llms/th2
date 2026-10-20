@@ -167,8 +167,8 @@ def group_texts(examples, block_size, isolate_documents=True):
 
 
 def prepare_training_data(data_args, training_args, tokenizer, tokenizer_dir, block_size, attention_backend="sdpa"):
-    if attention_backend not in ("sdpa", "fa4"):
-        raise ValueError("attention_backend must be sdpa or fa4")
+    if attention_backend not in ("sdpa", "fa4", "fa2"):
+        raise ValueError("attention_backend must be sdpa, fa4 or fa2")
     if block_size < 2 or data_args.map_batch_size < 1:
         raise ValueError("block_size must be >= 2 and map_batch_size must be positive")
     if data_args.reset_document_positions and not data_args.isolate_documents:
@@ -237,11 +237,13 @@ def prepare_training_data(data_args, training_args, tokenizer, tokenizer_dir, bl
                   shuffled_fingerprint=shuffled._fingerprint, packed_sequences=len(packed),
                   packed_input_tokens=len(packed) * block_size,
                   scored_target_tokens=target_count)
-    if attention_backend == "fa4":
+    if attention_backend in ("fa4", "fa2"):
         from importlib.metadata import version
-        recipe["fa4_runtime"] = {
-            "package": "flash-attn-4", "version": version("flash-attn-4"),
-            "adapter_sha256": hashlib.sha256(Path(__file__).with_name("packed_fa4.py").read_bytes()).hexdigest()}
+        recipe[attention_backend + "_runtime"] = {
+            "package": "flash-attn-4" if attention_backend == "fa4" else "flash-attn",
+            "version": version("flash-attn-4" if attention_backend == "fa4" else "flash-attn"),
+            "shared_adapter_sha256": hashlib.sha256(Path(__file__).with_name("packed_fa4.py").read_bytes()).hexdigest(),
+            "adapter_sha256": hashlib.sha256(Path(__file__).with_name("packed_" + attention_backend + ".py").read_bytes()).hexdigest()}
     return shuffled, recipe
 
 

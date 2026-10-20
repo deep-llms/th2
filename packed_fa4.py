@@ -54,6 +54,18 @@ def validate_kernel_inputs(query, key, value, cu):
 def attention_forward(module, query, key, value, attention_mask, dropout=0.,
                       scaling=None, sliding_window=None, fa4_cu_seqlens=None,
                       fa4_max_seqlen=None, **kwargs):
+    return varlen_attention(load_kernel, module, query, key, value, attention_mask,
+        dropout, scaling, sliding_window, fa4_cu_seqlens, fa4_max_seqlen, **kwargs)
+
+
+def varlen_attention(kernel_loader, module, query, key, value, attention_mask, dropout=0.,
+                     scaling=None, sliding_window=None, fa4_cu_seqlens=None,
+                     fa4_max_seqlen=None, **kwargs):
+    """Shared packed transport; the explicit loader selects the actual kernel.
+
+    The historical fa4_* metadata keys describe document offsets for both FA
+    backends. Keeping them avoids changing preprocessing or model semantics.
+    """
     if attention_mask is not None or fa4_cu_seqlens is None or fa4_max_seqlen is None:
         raise ValueError("FA4 requires PackedCollator/model_inputs document metadata, without a dense mask")
     if dropout or sliding_window is not None or kwargs.get("use_cache", False):
@@ -67,7 +79,7 @@ def attention_forward(module, query, key, value, attention_mask, dropout=0.,
     # retaining autograd through casts and keeping KV heads unexpanded.
     def flatten(x):
         return x.to(value.dtype).transpose(1, 2).reshape(b * length, x.shape[1], dim).contiguous()
-    output, _ = load_kernel()(*map(flatten, (query, key, value)),
+    output, _ = kernel_loader()(*map(flatten, (query, key, value)),
         cu_seqlens_q=fa4_cu_seqlens, cu_seqlens_k=fa4_cu_seqlens,
         max_seqlen_q=fa4_max_seqlen, max_seqlen_k=fa4_max_seqlen,
         causal=True, softmax_scale=scaling)

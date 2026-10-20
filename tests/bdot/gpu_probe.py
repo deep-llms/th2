@@ -98,7 +98,9 @@ def capture_choices(model):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output', required=True)
-    p.add_argument('--fa4', action='store_true')
+    attention = p.add_mutually_exclusive_group()
+    attention.add_argument('--fa4', action='store_true')
+    attention.add_argument('--fa2', action='store_true')
     p.add_argument('--full-native', action='store_true')
     modes = p.add_mutually_exclusive_group()
     modes.add_argument('--native-only', action='store_true')
@@ -116,9 +118,10 @@ def main():
     torch.set_num_threads(1)
     torch.backends.cuda.matmul.allow_tf32 = False
     torch.backends.cudnn.allow_tf32 = False
-    if a.fa4:
-        from packed_fa4 import register_backend
-        register_backend()
+    varlen_backend = 'fa2' if a.fa2 else 'fa4' if a.fa4 else None
+    if varlen_backend:
+        from importlib import import_module
+        import_module('packed_' + varlen_backend).register_backend()
     generator = torch.Generator().manual_seed(9)
     rows = []
     for boundary in (37, 81):
@@ -127,7 +130,8 @@ def main():
                          segments=[0]*boundary + [1]*(128-boundary)))
     result = dict(status='running', torch=torch.__version__, cuda=torch.version.cuda,
                   transformers=version('transformers'), gpu=torch.cuda.get_device_name(),
-                  fa4=version('flash-attn-4') if a.fa4 else None, checks=[])
+                  fa4=version('flash-attn-4') if a.fa4 else None,
+                  fa2=version('flash-attn') if a.fa2 else None, checks=[])
     out.parent.mkdir(parents=True, exist_ok=True)
     def record(value):
         result['checks'].append(value)
@@ -193,7 +197,7 @@ def main():
 
     for reuse in (True, False):
         for progress in (.01, .7):
-            for backend in (['sdpa', 'fa4'] if a.fa4 else ['sdpa']):
+            for backend in (['sdpa', varlen_backend] if varlen_backend else ['sdpa']):
                 x = make_model(reuse=reuse, default_prior=0., curriculum='B')
                 if a.stable_router_bias:
                     # Test kernel/gradient equivalence on the same discrete graph.
@@ -207,8 +211,8 @@ def main():
                 y = copy.deepcopy(x)
                 x.progress = y.progress = progress
                 x.capture_routes = y.capture_routes = True
-                if backend == 'fa4':
-                    y.set_attn_implementation('template_fa4')
+                if backend in ('fa4', 'fa2'):
+                    y.set_attn_implementation('template_' + backend)
                 y.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
                 # Controlled weights keep routes stable across small BF16 kernel
                 # differences; report all natural-route disagreements explicitly.

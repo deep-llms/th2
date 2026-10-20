@@ -28,7 +28,7 @@ def main():
     p.add_argument('--steps', type=int, default=10)
     p.add_argument('--bf16', action='store_true')
     p.add_argument('--checkpointing', action='store_true')
-    p.add_argument('--attention-backend', choices=['sdpa', 'fa4'], default='sdpa')
+    p.add_argument('--attention-backend', choices=['sdpa', 'fa4', 'fa2'], default='sdpa')
     p.add_argument('--progress', type=float, default=1.)
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--router-prior', type=float, help='Diagnostic override; record separately from production config')
@@ -130,7 +130,7 @@ def main():
     if trainer.is_world_process_zero():
         from importlib.metadata import version, PackageNotFoundError
         versions = {}
-        for package in ('torch', 'transformers', 'accelerate', 'datasets', 'flash-attn-4'):
+        for package in ('torch', 'transformers', 'accelerate', 'datasets', 'flash-attn-4', 'flash-attn'):
             try:
                 versions[package] = version(package)
             except PackageNotFoundError:
@@ -151,7 +151,7 @@ def main():
                   'Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.',
             source_sha256={f: hashlib.sha256((root/f).read_bytes()).hexdigest() for f in
                            ['bdot/model.py', 'bdot/grouped.py', 'bdot/trainer.py', 'packed_fa4.py',
-                            'packed_training.py', 'train.py', 'scripts/benchmark_bdot.py']},
+                            'packed_fa2.py', 'packed_training.py', 'train.py', 'scripts/benchmark_bdot.py']},
         )
         out.parent.mkdir(parents=True, exist_ok=True)
         with out.open('x') as handle:
