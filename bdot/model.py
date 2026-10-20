@@ -161,39 +161,18 @@ class RoutedStep(nn.Module):
         return choice, weights
 
     def execute_home(self, h, attention_mask, position_embeddings, past_key_values, kwargs):
-        """Known home-only path: native projections without sorting or dispatch.
+        """Skip route discovery while preserving the original expert autograd path.
 
-        Called only when routing semantics guarantee the home module and a
-        constant unit gate. FiLM, norms, attention and all parameters stay intact.
+        Keep gathers/scatters and gate expression: removing those also changes
+        BF16 gradient accumulation order, despite identical initial forwards.
         """
-        b, t, d = h.shape
-        n = b*t
-        expert = self.experts[self.step]
-        x = self.input_layernorm(h)
-        k = self.k_norm(self.k_proj(x).view(b, t, -1, self.head_dim)).transpose(1, 2)
-        v = self.v_proj(x).view(b, t, -1, self.head_dim).transpose(1, 2)
-        # Preserve the dispatched expert's flattened reduction shapes, including
-        # Q-norm and FiLM gradients. Changing these shapes can change BF16
-        # backward rounding even when the initial forward is identical.
-        q = expert.q_norm(expert.q_proj(x.reshape(n, d)).view(
-            n, self.config.num_attention_heads, self.head_dim))
-        q = q.view(b, t, -1, self.head_dim).transpose(1, 2)
-        q, k = apply_rotary_pos_emb(q, k, *position_embeddings)
-        if past_key_values is not None:
-            if self.training:
-                raise ValueError('KV caching supports hard evaluation only')
-            k, v = past_key_values.update(k, v, self.layer_idx)
-        interface = ALL_ATTENTION_FUNCTIONS.get_interface(self.config._attn_implementation, eager_attention_forward)
-        a, _ = interface(self, q, k, v, attention_mask, dropout=0., scaling=self.scaling,
-                         sliding_window=None, **kwargs)
-        h1 = h.reshape(n, d) + expert.o_proj(a.reshape(n, -1))
-        u = expert.mlp_norm(h1)
-        if self.options.step_film:
-            u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
-        return (h1 + expert.mlp(u)).view(b, t, d)
+        n = h.shape[0]*h.shape[1]
+        choice = torch.full((n, 1), self.step, dtype=torch.long, device=h.device)
+        return self.execute(h, choice, h.new_ones(n, 1), attention_mask,
+                            position_embeddings, past_key_values, kwargs, static_home=True)
 
     def execute(self, h, choice, weights, attention_mask, position_embeddings, past_key_values, kwargs,
-                *, all_executed=False):
+                *, all_executed=False, static_home=False):
         b, t, d = h.shape
         n, branches = b*t, choice.shape[1]
         x = self.input_layernorm(h)
@@ -210,24 +189,31 @@ class RoutedStep(nn.Module):
                 raise ValueError('KV caching supports hard evaluation only')
             k, v = past_key_values.update(k, v, self.layer_idx)
         # Branch-major dispatch: only execute selected tokens for each expert.
-        flat_choices = choice.T.reshape(-1)
-        if all_executed:
-            # Hard straight-through gates are exactly one. No device-side
-            # filtering/nonzero is needed. Scale and soft gates retain filtering,
-            # including zero/underflow cases and single-feasible-candidate rows.
-            selected_choices = flat_choices
-            order = torch.argsort(selected_choices, stable=True)
+        if static_home:
+            # Every token executes home exactly once. No sorting, nonzero or
+            # GPU-to-host group-size discovery; the computational graph below
+            # remains the same as the original one-group dispatch.
+            order = torch.arange(n, device=h.device)
+            groups = [(self.step, order)]
         else:
-            executed = weights.T.reshape(-1).detach().ne(0).nonzero().flatten()
-            selected_choices = flat_choices[executed]
-            order = executed[torch.argsort(selected_choices, stable=True)]
-        sizes = torch.zeros(self.options.S, dtype=torch.long, device=h.device).scatter_add_(
-            0, selected_choices, torch.ones_like(selected_choices)).tolist()
-        groups, start = [], 0
-        for m, size in enumerate(sizes):
-            if size:
-                groups.append((m, order[start:start+size]))
-            start += size
+            flat_choices = choice.T.reshape(-1)
+            if all_executed:
+                # Hard straight-through gates are exactly one. No device-side
+                # filtering/nonzero is needed. Scale and soft gates retain filtering,
+                # including zero/underflow cases and single-feasible-candidate rows.
+                selected_choices = flat_choices
+                order = torch.argsort(selected_choices, stable=True)
+            else:
+                executed = weights.T.reshape(-1).detach().ne(0).nonzero().flatten()
+                selected_choices = flat_choices[executed]
+                order = executed[torch.argsort(selected_choices, stable=True)]
+            sizes = torch.zeros(self.options.S, dtype=torch.long, device=h.device).scatter_add_(
+                0, selected_choices, torch.ones_like(selected_choices)).tolist()
+            groups, start = [], 0
+            for m, size in enumerate(sizes):
+                if size:
+                    groups.append((m, order[start:start+size]))
+                start += size
         q = x.new_zeros(branches*n, self.config.num_attention_heads*self.head_dim)
         grouped = self.options.expert_backend == 'grouped' and bool(groups)
         if grouped:
