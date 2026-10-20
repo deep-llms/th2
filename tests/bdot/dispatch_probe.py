@@ -97,8 +97,36 @@ def main():
                         x = old(**inputs)
                         y = new(**inputs)
                     torch.testing.assert_close(old.last_routes, new.last_routes, atol=0, rtol=0)
-                    torch.testing.assert_close(x.logits, y.logits, atol=.002 if gpu else 1e-6,
-                                               rtol=.002 if gpu else 1e-5)
+                    try:
+                        torch.testing.assert_close(x.logits, y.logits, atol=.002 if gpu else 1e-6,
+                                                   rtol=.002 if gpu else 1e-5)
+                    except AssertionError:
+                        print('DISPATCH_FAILURE_CASE', backend, expert_backend, options, update, flush=True)
+                        seen, hooks = {}, []
+                        for label, model in [('old', old), ('new', new)]:
+                            for key, module in model.named_modules():
+                                if (key.startswith('model.bdot_experts.')
+                                        or key in [f'model.layers.{i}' for i in range(6)]):
+                                    def capture(module, args, result, label=label, key=key):
+                                        if isinstance(result, torch.Tensor):
+                                            seen[label,key] = (args[0].detach().cpu(), result.detach().cpu(),
+                                                               args[0].stride(), result.stride())
+                                    hooks.append(module.register_forward_hook(capture))
+                        with torch.no_grad(), torch.autocast(a.device, dtype=torch.bfloat16, enabled=gpu):
+                            repeated = old(**inputs).logits
+                            new(**inputs)
+                        print('OLD_REPEAT_MAX_ABS', float((repeated-x.logits).abs().max()), flush=True)
+                        for label, key in seen:
+                            if label == 'old' and ('new', key) in seen:
+                                oi, oo, ois, oos = seen[label,key]
+                                ni, no, nis, nos = seen['new',key]
+                                print('ACTIVATION', key, str(oi.dtype), str(ni.dtype), str(oo.dtype),
+                                      str(no.dtype), float((oi.flatten()-ni.flatten()).abs().max()),
+                                      float((oo.flatten()-no.flatten()).abs().max()),
+                                      ois, nis, oos, nos, flush=True)
+                        for hook in hooks:
+                            hook.remove()
+                        raise
                     x.loss.backward()
                     y.loss.backward()
                     numerator = denominator = 0.
