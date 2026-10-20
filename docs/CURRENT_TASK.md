@@ -16,8 +16,16 @@ existing generators, training and supervision; compare N's generated recipe
 with the completed P1-A arguments. Copy/verify Accelerate, reclaim only known
 burn workers, require all eight GPUs free, then train. Existing supervisor
 restores and verifies communicating burns after success or failure. Preserve
-all prior outputs, shared HF caches and all N checkpoints. Status: preparing
-read-only preflight; not yet launched.
+all prior outputs, shared HF caches and all N checkpoints.
+
+Preflight **f5ddec8**, observed 23:36:03 UTC, passed: eight known burn workers
+165144–165151, guard released, prior T12/T14 and pilot complete, ~25 TB free.
+Four local configuration/no-reuse/forced-choice-gradient tests pass. A local
+generation compared with the actual remote P1-A arguments confirms only the
+reuse flag and new output/config paths differ. Launch preparation will also
+check training source hashes and complete data/validation recipes before GPU
+reclamation. Status: submitting preparation and the supervised N-A job.
+Evidence: `temp/pilot_N_20261020/`.
 
 ## Pilot complete — verified 2026-10-20 23:05 UTC
 
