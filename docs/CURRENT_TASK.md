@@ -1,5 +1,31 @@
 # Current task
 
+## Pilot progress — observed 2026-10-20 21:47 UTC
+
+Read-only status a984b0f confirms D and P1-A completed all 4,768 updates,
+with successful job exit and validated completion receipts. All 20 checkpoints
+are retained in each output. D took 53m08s in Trainer (54m job wall time),
+P1-A 58m20s (59m13s job wall time). Full validation uses the same 9,915,698
+scored tokens / 9,704 sequences:
+
+| Arm | Final loss | PPL | Status |
+|---|---:|---:|---|
+| D | 3.49446352 | 32.9326 | Complete |
+| P1-A | 3.61594091 | 37.1863 | Complete |
+| P1-B | pending | pending | Running; step 100 at 21:47 UTC |
+
+P1-A's loss is 0.12147738 nats worse than D. Its off-default share is 45.21%;
+complete stability/route-intervention analysis awaits the full results.
+P1-B began at 21:44:58 UTC and has finite, decreasing training loss on all eight
+GPU workers. Estimate completion around 22:45–23:00 UTC, subject to hard-phase
+speed. No intervention or new experiments. Automatic burn restoration remains
+pending queue completion; supervisor guard is held by the live training queue.
+
+Evidence: `docs/results/bdot_pilot_status_20261020_2147.json` and raw status log
+under `temp/pilot_20261020/`. Execution commands.sh returns to #0 after this
+read-only check. Next: verify P1-B completion, collect all final metrics, verify
+burn restoration, then assess curriculum selection. R/N remain unqueued.
+
 ## Authorized Stage 0a launch — 2026-10-20
 
 User authorized running the necessary experiments after dispatch verification.
