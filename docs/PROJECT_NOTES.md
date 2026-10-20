@@ -402,3 +402,36 @@ Evidence: `docs/results/native_baseline_final_20261020.json` and local
 `temp/attention_study_20261020/final_status01.log` (read-only inspection e19e34d).
 The authorized baseline workflow is complete; further method training needs
 its own scope from the user. Historical launch observations follow below.
+
+
+## Dispatch optimization validated — 2026-10-20
+
+Launch a5f65aa on 6Y3O completed at 16:45:53 UTC. Old code was frozen before
+editing. Accepted changes in bdot/model.py remove redundant route discovery,
+hard-ST zero filtering, range-discovery counts, repeated reference scatters,
+duplicate RoPE work and eager diagnostic transfers. Home execution retains its
+original expert autograd path; the earlier direct shortcut failed multi-update
+GPU parity and was removed. No tolerance was relaxed.
+
+All 32 CUDA old/new cases (SDPA/FA4, reference/grouped, eight routing modes) have
+zero gradient and final-weight differences over three AdamW updates. Two-rank
+checkpointed DDP checks pass; eight-rank A/B resume has exact restored/final
+model, optimizer and scheduler state, exact data/RNG/routes and zero loss error.
+Resume fixtures are reduced-width; this does not replace full-width pilot gates.
+
+Two-repeat, all-eight-GPU full-update timing (FA4, seq1024, micro16×acc4):
+D 0.707021→0.664589s, hard grouped 0.772241→0.733153s, soft grouped
+0.999200→0.956848s. Native 0.617564s. Time reductions 6.0%/5.1%/4.2%; hard still
+18.7% slower than native. Synchronizations per profile update: D 224→28,
+hard 260→96. Synthetic timings exclude data preparation, eval and saves.
+Grouped remains optional; default reference and strict source resume guards
+remain unchanged. No environment, driver, data or research checkpoints changed.
+
+Automatic burn handoff passed at 16:47 UTC. Independent 18:25 UTC inspection matches
+workers 125740–125747, released ownership guard and collective cycles 6840→6850.
+All 14 exported files are local at temp/dispatch_opt_20261020/results/; summary
+SHA256 matches both remote inspection and completion manifest. Report:
+BDOT_DISPATCH_OPTIMIZATION_20261020.md; durable machine-readable receipt:
+results/bdot_dispatch_optimization_20261020.json. No research pilot launched.
+
+Final full local CPU B-DOT suite: 48 tests passed in 321.35 seconds.

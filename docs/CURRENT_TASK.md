@@ -1,22 +1,43 @@
 # Current task
 
-## Dispatch overhead optimization in progress — 2026-10-20
+## Dispatch overhead optimization passed — 2026-10-20
 
-User authorized identifying and fixing remaining runtime overhead. Design remains
-`docs/BDOT_v2_spec.md`; no architecture, data, optimizer or research pilot changes.
-B200 profile on 6Y3O confirms excessive synchronization/dispatch operations.
-Original code is frozen at the profile output root under `reference/bdot`.
-Profile launch 5062ed2 succeeded; burn handoff and live collectives independently
-verified at 15:41 UTC. CPU 45-test suite and final 20-test focused suite pass;
-eight old/new three-update comparisons pass with exact final weights.
+User authorized profiling and reducing overhead while preserving
+`docs/BDOT_v2_spec.md`. Implemented conservative home-route discovery bypass,
+hard-ST filtering bypass, fixed-size counts, one reference scatter per stage,
+top-1 argmax, nonduplicated RoPE and lazy diagnostic formatting. Architecture,
+data, losses, FiLM, optimizer and environments remain unchanged.
 
-Implemented direct home execution, hard-ST filtering bypass, fixed-size counts,
-single-scatter reference dispatch, top-1 argmax, nonduplicated RoPE and lazy
-metric formatting. Full GPU parity, DDP, resume and unprofiled before/after
-timings are being submitted to
-`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a01`.
-Supervisor uses the usual Accelerate copy/verification, exact burn identities,
-free-GPU checks and automatic burn restoration. Do not launch twice.
+Verification **a5f65aa** completed successfully on B200 6Y3O:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a04`.
+CUDA SDPA/FA4 old/new comparisons, checkpointed DDP, eight-rank A/B resume,
+18 unprofiled timing jobs and three profiles passed. No tolerances loosened.
+Earlier a01–a03 direct-home attempts failed a multi-update GPU comparison;
+that shortcut was removed. Each attempt restored verified burns.
+
+Mean seconds/update before → after: D **0.707021 → 0.664589**, hard grouped
+**0.772241 → 0.733153**, soft grouped **0.999200 → 0.956848**.
+Native reference **0.617564**. Time reductions 6.0%, 5.1%, 4.2%; hard remains
+18.7% slower than native (10.3% slower than D). Default backend stays reference.
+Profiler synchronizations: D 224→28, hard 260→96. Full report:
+[dispatch optimization](BDOT_DISPATCH_OPTIMIZATION_20261020.md).
+
+Accelerate was copied/verified before testing, known burns reclaimed by identity,
+and all eight GPUs verified free. Automatic burns verified at **16:47 UTC**;
+independent status **b9829d6** at **18:25 UTC** confirms workers 125740–125747,
+released guard and collective cycles 6840→6850. No research pilot was launched.
+
+All 14 files from export **6b5865a** were downloaded and the summary hash
+verified against remote inspection and completion receipts. Durable evidence:
+`docs/results/bdot_dispatch_optimization_20261020.json`; raw files:
+`temp/dispatch_opt_20261020/results/`. The final full local suite passed
+**48 tests in 321.35s**. Eight old/new CPU three-update cases have zero gradient
+and final-weight differences; all 32 GPU cases also have zero differences.
+
+This optimization task is complete. Final publication leaves both execution
+and source commands.sh at #0. No more verification
+launch is needed for these changes. Further research runs need their own scope;
+the design's full-width pilot acceptance tests remain separate requirements.
 
 
 ## Grouped-expert comparison completed — 2026-10-20
