@@ -142,6 +142,10 @@ def main():
                     for model, optimizer in zip((old, new), optimizers):
                         optimizer.step()
                         model.finish_update()
+                    step_delta = max(float((op-np).detach().abs().max())
+                                     for op,np in zip(old.parameters(),new.parameters()))
+                    print('DISPATCH_UPDATE '+json.dumps(dict(backend=backend, expert_backend=expert_backend,
+                        variant=i, update=update, gradient_relative=error, parameter_max_abs=step_delta)), flush=True)
                     torch.testing.assert_close(old.balance_bias, new.balance_bias, atol=0, rtol=0)
                     torch.testing.assert_close(old.training_totals, new.training_totals,
                                                atol=.01 if gpu else 1e-4, rtol=1e-5)

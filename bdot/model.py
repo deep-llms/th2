@@ -166,12 +166,18 @@ class RoutedStep(nn.Module):
         Called only when routing semantics guarantee the home module and a
         constant unit gate. FiLM, norms, attention and all parameters stay intact.
         """
-        b, t, _ = h.shape
+        b, t, d = h.shape
+        n = b*t
         expert = self.experts[self.step]
         x = self.input_layernorm(h)
         k = self.k_norm(self.k_proj(x).view(b, t, -1, self.head_dim)).transpose(1, 2)
         v = self.v_proj(x).view(b, t, -1, self.head_dim).transpose(1, 2)
-        q = expert.q_norm(expert.q_proj(x).view(b, t, -1, self.head_dim)).transpose(1, 2)
+        # Preserve the dispatched expert's flattened reduction shapes, including
+        # Q-norm and FiLM gradients. Changing these shapes can change BF16
+        # backward rounding even when the initial forward is identical.
+        q = expert.q_norm(expert.q_proj(x.reshape(n, d)).view(
+            n, self.config.num_attention_heads, self.head_dim))
+        q = q.view(b, t, -1, self.head_dim).transpose(1, 2)
         q, k = apply_rotary_pos_emb(q, k, *position_embeddings)
         if past_key_values is not None:
             if self.training:
@@ -180,11 +186,11 @@ class RoutedStep(nn.Module):
         interface = ALL_ATTENTION_FUNCTIONS.get_interface(self.config._attn_implementation, eager_attention_forward)
         a, _ = interface(self, q, k, v, attention_mask, dropout=0., scaling=self.scaling,
                          sliding_window=None, **kwargs)
-        h1 = h + expert.o_proj(a.reshape(b, t, -1))
+        h1 = h.reshape(n, d) + expert.o_proj(a.reshape(n, -1))
         u = expert.mlp_norm(h1)
         if self.options.step_film:
             u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
-        return h1 + expert.mlp(u)
+        return (h1 + expert.mlp(u)).view(b, t, d)
 
     def execute(self, h, choice, weights, attention_mask, position_embeddings, past_key_values, kwargs,
                 *, all_executed=False):

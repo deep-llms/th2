@@ -1,47 +1,42 @@
 #1 +30+a
-#th2-6y3o-dot-dispatch-status-20261020-a04
+#th2-6y3o-dot-dispatch-opt-20261020-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
-python3 - <<'REMOTE_PY'
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
+export CUDA_VISIBLE_DEVICES= PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+/mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE_PY'
 from pathlib import Path
-import datetime,hashlib,json,re,time
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a02')
-print('OBSERVED_UTC',datetime.datetime.now(datetime.timezone.utc).isoformat(),flush=True)
-for name in ['launch.json','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/run/checks/summary.json','supervised/burn-verified.json']:
- p=root/name
- if not p.exists():print('MISSING',name,flush=True);continue
- print('RECEIPT_SHA256',name,hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
- j=json.loads(p.read_text())
- if name.endswith('summary.json'):
-  j={**{k:v for k,v in j.items() if k not in ('checks','benchmarks','profiles')},'checks':{k:(v.get('status') if isinstance(v,dict) else [x.get('status','recorded') for x in v]) for k,v in j.get('checks',{}).items()},'benchmarks':{k:{q:v[q] for q in ('seconds_per_update','tokens_per_second','peak_allocated_bytes')} for k,v in j.get('benchmarks',{}).items()}}
- print('RECEIPT',name,json.dumps(j),flush=True)
-for name in ['supervisor.log','supervised/run/dispatch_verification.log']:
- p=root/name
- if p.exists():
-  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-5000));s=f.read().decode(errors='replace')
-  print('LOG_TAIL',name,'\n'+s,flush=True)
-checks=root/'supervised/run/checks'
-logs=sorted(checks.rglob('*.log'),key=lambda p:p.stat().st_mtime) if checks.exists() else []
-for p in logs[-2:]:
- with p.open('rb') as f:f.seek(max(0,p.stat().st_size-18000));s=f.read().decode(errors='replace')
- print('ACTIVE_LOG',str(p.relative_to(root)),'\n'+s,flush=True)
+import importlib.metadata as md,json,socket,subprocess
 from scripts.gpu_process import inspect,process
-from scripts.train_then_burn import burn_progress,approved_launcher,BURN_HASH
-live=inspect();print('GPU_LIVE',json.dumps(live),flush=True)
-proof=root/'supervised/burn-verified.json'
-if proof.exists():
- j=json.loads(proof.read_text())
- assert j['collective_progress_verified'] and not live['guard_disabled']
- assert {p for g in j['gpus'] for p in g['pids']}==set(live['workers'])
- assert len(live['workers'])==8 and all(len(g['pids'])==1 for g in live['gpus'])
- assert all(approved_launcher(process(pid)['ppid'],{str(Path.cwd()/'resources/llm_pretrain_burn.py'):BURN_HASH}) for pid in live['workers'])
- log=root/'supervised/burn.log';first=log.read_text();time.sleep(10);second=log.read_text()
- pattern=r'gpu_burn_progress rank=0 completed_cycles=(\d+) .*?completed_collective_payload_gib=([\d.]+)'
- a=re.findall(pattern,first)[-1];b=re.findall(pattern,second)[-1]
- assert burn_progress(second) and int(b[0])>int(a[0]) and float(b[1])>float(a[1])
- print('LIVE_BURN_COLLECTIVES_VERIFIED',json.dumps({'before':a,'after':b,'guard_released':True}),flush=True)
-for p in sorted(checks.glob('*.profile.json')):
- events=json.loads(p.read_text())
- names=('cudaStreamSynchronize','cudaLaunchKernel','aten::nonzero','aten::bincount','aten::index_copy','aten::sort')
- print('PROFILE',p.name,json.dumps([e for e in events if e['name'] in names]),flush=True)
+from scripts.train_then_burn import digest,GUARD_HASH,BURN_HASH,APPROVED_BURNS,approved_launcher
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a03')
+assert not root.exists(),'Choose fresh output root'
+previous=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-profile-20261020-a01')
+assert json.loads((previous/'supervised/supervisor.json').read_text())['training_status']=='ok'
+assert json.loads((previous/'supervised/burn-verified.json').read_text())['collective_progress_verified']
+prior=json.loads((previous/'preflight.json').read_text())
+for name in ('bdot/model.py','bdot/grouped.py','bdot/trainer.py'):
+ assert digest(previous/'reference'/name)==prior['source_sha256'][name]
+retry=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a02')
+assert json.loads((retry/'supervised/burn-verified.json').read_text())['collective_progress_verified']
+report=inspect()
+assert report['host']=='thiennh-p6-6y3o-worker-0'
+assert len(report['gpus'])==8 and all('B200' in x['name'] for x in report['gpus'])
+assert not report['guard_disabled'],'Another workload owns the guard'
+assert digest('/mnt/local/_gpu_guard/gpu_guard.sh')==GUARD_HASH
+assert digest('resources/llm_pretrain_burn.py')==BURN_HASH
+approved={**APPROVED_BURNS,str(Path.cwd()/'resources/llm_pretrain_burn.py'):BURN_HASH}
+for pid in report['workers']:
+ launcher=pid if approved_launcher(pid,approved) else process(pid)['ppid']
+ assert launcher>1 and approved_launcher(launcher,approved),'Unrecognized GPU workload'
+expected={'torch':'2.14.1','transformers':'5.9.0','accelerate':'1.13.0','datasets':'4.8.5','tokenizers':'0.22.2','safetensors':'0.8.0','flash-attn-4':'4.0.0b33'}
+report['versions']={p:md.version(p) for p in expected}
+assert all(report['versions'][p].split('+')[0]==v for p,v in expected.items())
+report['source_sha256']={name:digest(name) for name in ('bdot/model.py','bdot/grouped.py','bdot/trainer.py','train.py','scripts/bdot_grouped_verify.py')}
+root.mkdir(parents=True)
+(root/'preflight.json').write_text(json.dumps(report,indent=2))
+print('GROUPED_PREFLIGHT',json.dumps(report),flush=True)
+print('GROUPED_PREFLIGHT_PASSED',flush=True)
 REMOTE_PY
+unset CUDA_VISIBLE_DEVICES
+/mnt/local/conda-py311/envs/train/bin/python3.11 scripts/bdot_b200_launch.py --root /mnt/local/_outputs/deep-llms_th2/6y3o-dot-dispatch-opt-20261020-a03 --session dot_dispatch_opt_20261020_a03 --host thiennh-p6-6y3o-worker-0 --jobs-config resources/bdot_b200_dispatch.json
