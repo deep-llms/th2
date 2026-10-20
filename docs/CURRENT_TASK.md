@@ -138,6 +138,15 @@ modify inputs, or touch GPUs during waiting. Commit c52d603 submitted the prepar
 Continue monitoring until actual baseline training starts. The fresh output
 root remains the a01 root above. Background controller transfers stay active.
 
+Monitoring update, 03:10:27 UTC: commit 7779ab5 read-only inspection shows
+2,091/3,014 data/model files at expected size (~93.45 GB), preparation tmux
+alive (PID 37192), no failure receipt, training session absent as expected.
+All eight burns 12643–12650 remain at 100% with guard released. Evidence:
+`temp/attention_study_20261020/pipeline_status02.log`. The prepared pipeline is
+already submitted and waiting; do not submit the launch a second time. Latest
+execution command only reads status. Continue until hash/cache/resume/smoke
+checks pass and the real baseline advances.
+
 ## Isolated FA2 installation complete — 2026-10-20
 
 The user authorized installation from official GitHub/PyPI inputs while
