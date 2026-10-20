@@ -176,6 +176,18 @@ commands.sh returns to #0. No pilot was launched.
 
 ## Grouped expert execution, 2026-10-18
 
+Completed follow-up on 6Y3O, 2026-10-20: all CUDA/two-rank checks and both
+eight-rank A/B resume suites passed; resume loss difference is zero and state
+is exact. Two 50-update FA4 repetitions at seq1024/global524288 show mean
+reference → grouped times of 0.807290 → 0.768397 s for hard routing (+5.1%
+throughput), 1.026440 → 1.005195 s for soft (+2.1%). Native: 0.615911 s.
+Grouped adds about 0.3 GiB/GPU. It is a modest opt-in optimization; default
+remains reference, and backend changes across resume remain prohibited.
+Tests finished at 14:52:44 UTC; burns restored/verified at 14:53:50 and independently
+checked live at 14:55:56. See [completed comparison](BDOT_GROUPED_GEMM_20261020.md)
+and `results/bdot_grouped_comparison_20261020.json`. Environment, driver, corpus
+and existing baseline artifacts were unchanged. Historical initial attempt:
+
 `bdot.expert_backend` now supports optional CUDA BF16 `grouped` projections;
 `reference` remains the default. Original expert parameter names and unused
 parameter/AdamW semantics are preserved. CPU tests (40 B-DOT, 49 utilities),

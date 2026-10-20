@@ -1,0 +1,1458 @@
+{
+  "status": "passed",
+  "comparison": {
+    "D": {
+      "seconds_per_update": {
+        "reference": [
+          0.7068812874611468,
+          0.7083960274234414
+        ],
+        "grouped": [
+          0.7135678292252123,
+          0.7126870185416192
+        ]
+      },
+      "grouped_throughput_ratio": 0.9923032458754258,
+      "grouped_faster_in_every_repeat": false
+    },
+    "hard": {
+      "seconds_per_update": {
+        "reference": [
+          0.8071079816948622,
+          0.8074728165846318
+        ],
+        "grouped": [
+          0.7697811148967594,
+          0.7670137987006456
+        ]
+      },
+      "grouped_throughput_ratio": 1.0506156572967853,
+      "grouped_faster_in_every_repeat": true
+    },
+    "soft": {
+      "seconds_per_update": {
+        "reference": [
+          1.027704065795988,
+          1.025176156098023
+        ],
+        "grouped": [
+          1.0081532056815923,
+          1.0022366742044688
+        ]
+      },
+      "grouped_throughput_ratio": 1.0211353740053437,
+      "grouped_faster_in_every_repeat": true
+    }
+  },
+  "source_sha256": {
+    "bdot/model.py": "86d99f684e524f6dba53f879644b2b5fe47e63859681887fd675817fa3250a0f",
+    "bdot/grouped.py": "1e46e737242f192c554d9ab00bbe68a8d6e2664a2b2bf1657b2ee18bf0fb71e9",
+    "bdot/trainer.py": "09f6d3abddcb998d0dc6c8b20023818ae74b1ff4f4476976997f356ed4e26dcf"
+  },
+  "checks": {
+    "numerics": {
+      "status": "passed",
+      "torch": "2.14.1+cu130",
+      "gpu": "NVIDIA B200",
+      "cases": [
+        {
+          "case": "projection",
+          "sizes": [
+            1,
+            17,
+            65
+          ],
+          "errors": {
+            "output": 0.0,
+            "input_gradient": 0.0,
+            "weight_gradient": 0.0
+          }
+        },
+        {
+          "case": "projection",
+          "sizes": [
+            128,
+            256,
+            384
+          ],
+          "errors": {
+            "output": 0.0,
+            "input_gradient": 0.0,
+            "weight_gradient": 0.0
+          }
+        },
+        {
+          "case": "model",
+          "backend": "sdpa",
+          "reuse": true,
+          "phase": 0.01,
+          "checkpointing": false,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.0029076028247296782,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.000599931925535202,
+          "adamw_first_update_relative": 0.028313200456376014,
+          "adamw_existing_state_max_abs": 3.480818122625351e-07
+        },
+        {
+          "case": "model",
+          "backend": "sdpa",
+          "reuse": true,
+          "phase": 0.3,
+          "checkpointing": false,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.0017793240620698773,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.0005996599793434143,
+          "adamw_first_update_relative": 0.0221021838345553,
+          "adamw_existing_state_max_abs": 3.91155481338501e-07
+        },
+        {
+          "case": "model",
+          "backend": "sdpa",
+          "reuse": false,
+          "phase": 0.01,
+          "checkpointing": true,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.003244175291235825,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.0005999580025672913,
+          "adamw_first_update_relative": 0.031175531850663275,
+          "adamw_existing_state_max_abs": 4.023313522338867e-07
+        },
+        {
+          "case": "model",
+          "backend": "sdpa",
+          "reuse": false,
+          "phase": 0.3,
+          "checkpointing": true,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.002868461514120909,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.0005998751148581505,
+          "adamw_first_update_relative": 0.032736311625541706,
+          "adamw_existing_state_max_abs": 3.2689422369003296e-07
+        },
+        {
+          "case": "model",
+          "backend": "fa4",
+          "reuse": true,
+          "phase": 0.01,
+          "checkpointing": false,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.0027524364033994506,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.0005999505519866943,
+          "adamw_first_update_relative": 0.032384762766921954,
+          "adamw_existing_state_max_abs": 3.427267074584961e-07
+        },
+        {
+          "case": "model",
+          "backend": "fa4",
+          "reuse": true,
+          "phase": 0.3,
+          "checkpointing": false,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.0016247937059288686,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.0005999505519866943,
+          "adamw_first_update_relative": 0.02245547581894394,
+          "adamw_existing_state_max_abs": 2.3050233721733093e-07
+        },
+        {
+          "case": "model",
+          "backend": "fa4",
+          "reuse": false,
+          "phase": 0.01,
+          "checkpointing": true,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.0014489806868084204,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.0005998788401484489,
+          "adamw_first_update_relative": 0.018293584021466018,
+          "adamw_existing_state_max_abs": 2.0023435354232788e-07
+        },
+        {
+          "case": "model",
+          "backend": "fa4",
+          "reuse": false,
+          "phase": 0.3,
+          "checkpointing": true,
+          "errors": {
+            "logits": 0.0,
+            "gradient": 0.0023578436364000126,
+            "loss_absolute": 0.0
+          },
+          "adamw_first_max_abs": 0.000599954160861671,
+          "adamw_first_update_relative": 0.025951954733997428,
+          "adamw_existing_state_max_abs": 3.3294782042503357e-07
+        }
+      ]
+    },
+    "ddp_no_reuse": [
+      {
+        "status": "passed",
+        "max_gradient_error": 0.001220703125,
+        "counts": [
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            24,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            24
+          ]
+        ],
+        "balance_bias": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "reference_loss": 3.650275707244873,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:0",
+        "torch": "2.14.1+cu130",
+        "expert_backend": "grouped",
+        "bf16": true,
+        "no_reuse": true,
+        "home_only": false
+      },
+      {
+        "status": "passed",
+        "max_gradient_error": 0.001220703125,
+        "counts": [
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            12,
+            12,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            24,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            24
+          ]
+        ],
+        "balance_bias": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "reference_loss": 3.650275707244873,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:1",
+        "torch": "2.14.1+cu130",
+        "expert_backend": "grouped",
+        "bf16": true,
+        "no_reuse": true,
+        "home_only": false
+      }
+    ],
+    "ddp_soft": [
+      {
+        "status": "passed",
+        "max_gradient_error": 0.001220703125,
+        "counts": [
+          [
+            1,
+            7,
+            8,
+            8
+          ],
+          [
+            15,
+            4,
+            5,
+            0
+          ],
+          [
+            12,
+            1,
+            11,
+            0
+          ],
+          [
+            0,
+            11,
+            2,
+            11
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6408276557922363,
+        "checkpointing": true,
+        "soft": true,
+        "device": "cuda:0",
+        "torch": "2.14.1+cu130",
+        "expert_backend": "grouped",
+        "bf16": true,
+        "no_reuse": false,
+        "home_only": false
+      },
+      {
+        "status": "passed",
+        "max_gradient_error": 0.001220703125,
+        "counts": [
+          [
+            1,
+            7,
+            8,
+            8
+          ],
+          [
+            15,
+            4,
+            5,
+            0
+          ],
+          [
+            12,
+            1,
+            11,
+            0
+          ],
+          [
+            0,
+            11,
+            2,
+            11
+          ]
+        ],
+        "balance_bias": [
+          -0.0010000000474974513,
+          0.0010000000474974513,
+          -0.0010000000474974513,
+          0.0010000000474974513
+        ],
+        "reference_loss": 3.6408276557922363,
+        "checkpointing": true,
+        "soft": true,
+        "device": "cuda:1",
+        "torch": "2.14.1+cu130",
+        "expert_backend": "grouped",
+        "bf16": true,
+        "no_reuse": false,
+        "home_only": false
+      }
+    ],
+    "ddp_home": [
+      {
+        "status": "passed",
+        "max_gradient_error": 0.00146484375,
+        "counts": [
+          [
+            24,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            24,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            24,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            24
+          ]
+        ],
+        "balance_bias": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "reference_loss": 3.647888660430908,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:0",
+        "torch": "2.14.1+cu130",
+        "expert_backend": "grouped",
+        "bf16": true,
+        "no_reuse": false,
+        "home_only": true
+      },
+      {
+        "status": "passed",
+        "max_gradient_error": 0.00146484375,
+        "counts": [
+          [
+            24,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            24,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            24,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            24
+          ]
+        ],
+        "balance_bias": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "reference_loss": 3.647888660430908,
+        "checkpointing": true,
+        "soft": false,
+        "device": "cuda:1",
+        "torch": "2.14.1+cu130",
+        "expert_backend": "grouped",
+        "bf16": true,
+        "no_reuse": false,
+        "home_only": true
+      }
+    ],
+    "resume_A": {
+      "status": "passed",
+      "world_size": 8,
+      "steps": 120,
+      "schedule_steps": 120,
+      "split": 60,
+      "soft_split": 10,
+      "results": [
+        {
+          "case": "resume_hard",
+          "rank": 0,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 1,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 2,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 3,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 4,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 5,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 6,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 7,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 0,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 1,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 2,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 3,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 4,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 5,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 6,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 7,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        }
+      ],
+      "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
+    },
+    "resume_B": {
+      "status": "passed",
+      "world_size": 8,
+      "steps": 120,
+      "schedule_steps": 120,
+      "split": 60,
+      "soft_split": 10,
+      "results": [
+        {
+          "case": "resume_hard",
+          "rank": 0,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 1,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 2,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 3,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 4,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 5,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 6,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_hard",
+          "rank": 7,
+          "status": "passed",
+          "errors": [],
+          "batches": 120,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 0,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 1,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 2,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 3,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 4,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 5,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 6,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 7,
+          "status": "passed",
+          "errors": [],
+          "batches": 20,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        }
+      ],
+      "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
+    }
+  },
+  "benchmarks": {
+    "native_reference_r1": {
+      "seconds_per_update": 0.6162816304620355,
+      "tokens_per_second": 850727.936847531,
+      "peak_allocated_bytes": 53841749504
+    },
+    "D_reference_r1": {
+      "seconds_per_update": 0.7068812874611468,
+      "tokens_per_second": 741691.7229242926,
+      "peak_allocated_bytes": 56530138624
+    },
+    "D_grouped_r1": {
+      "seconds_per_update": 0.7135678292252123,
+      "tokens_per_second": 734741.6440694486,
+      "peak_allocated_bytes": 56530138624
+    },
+    "hard_reference_r1": {
+      "seconds_per_update": 0.8071079816948622,
+      "tokens_per_second": 649588.4217363792,
+      "peak_allocated_bytes": 58226314752
+    },
+    "hard_grouped_r1": {
+      "seconds_per_update": 0.7697811148967594,
+      "tokens_per_second": 681087.1166543438,
+      "peak_allocated_bytes": 58564676096
+    },
+    "soft_reference_r1": {
+      "seconds_per_update": 1.027704065795988,
+      "tokens_per_second": 510154.6422256519,
+      "peak_allocated_bytes": 69504294912
+    },
+    "soft_grouped_r1": {
+      "seconds_per_update": 1.0081532056815923,
+      "tokens_per_second": 520047.9421632542,
+      "peak_allocated_bytes": 69855228416
+    },
+    "native_reference_r2": {
+      "seconds_per_update": 0.6155406493600458,
+      "tokens_per_second": 851752.0338341299,
+      "peak_allocated_bytes": 53841749504
+    },
+    "D_grouped_r2": {
+      "seconds_per_update": 0.7126870185416192,
+      "tokens_per_second": 735649.712089407,
+      "peak_allocated_bytes": 56530138624
+    },
+    "D_reference_r2": {
+      "seconds_per_update": 0.7083960274234414,
+      "tokens_per_second": 740105.7878697118,
+      "peak_allocated_bytes": 56530138624
+    },
+    "hard_grouped_r2": {
+      "seconds_per_update": 0.7670137987006456,
+      "tokens_per_second": 683544.4171775873,
+      "peak_allocated_bytes": 58564676096
+    },
+    "hard_reference_r2": {
+      "seconds_per_update": 0.8074728165846318,
+      "tokens_per_second": 649294.9226669713,
+      "peak_allocated_bytes": 58226314752
+    },
+    "soft_grouped_r2": {
+      "seconds_per_update": 1.0022366742044688,
+      "tokens_per_second": 523117.9555628981,
+      "peak_allocated_bytes": 69855228416
+    },
+    "soft_reference_r2": {
+      "seconds_per_update": 1.025176156098023,
+      "tokens_per_second": 511412.5966365821,
+      "peak_allocated_bytes": 69504294912
+    }
+  },
+  "observed_utc": "2026-10-20T14:53:14.902897+00:00",
+  "launch_commit": "5648b883047ea38add74ea723a1080559af82332",
+  "source_receipt": "temp/grouped_20261020/_run-2026-10-20_14-53-04-th2-6y3o-dot-grouped-status-20261020-a12.log",
+  "full_summary_sha256": "d6db97599f13fcb78a87f7e0b455b9d4de2e594beecacc9a4fc5ae5854f2bf73",
+  "remote_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01",
+  "burn_handoff_status": "verified",
+  "scope": "Two repeats of 50 full training updates after 5 warmup updates; 8 B200, FA4, BF16, 12-layer Qwen3 dimensions, seq1024, micro16, accumulation4, synthetic isolated 128-token documents. No preprocessing/evaluation/checkpoint writes timed; no convergence claim.",
+  "full_summary_local": "temp/grouped_20261020/results/summary.json",
+  "completion": {
+    "status": "ok",
+    "started_at": "2026-10-20T14:23:06.484920+00:00",
+    "jobs": [
+      {
+        "name": "grouped_verification",
+        "started_at": "2026-10-20T14:23:06.485097+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 1777.7654790640809,
+        "artifacts": [
+          {
+            "path": "checks/summary.json",
+            "sha256": "d6db97599f13fcb78a87f7e0b455b9d4de2e594beecacc9a4fc5ae5854f2bf73",
+            "bytes": 126113
+          }
+        ],
+        "finished_at": "2026-10-20T14:52:44.801488+00:00"
+      }
+    ],
+    "finished_at": "2026-10-20T14:52:44.801527+00:00"
+  },
+  "supervisor": {
+    "started_at": "2026-10-20T14:23:06.484674+00:00",
+    "training_status": "ok",
+    "training_returncode": 0,
+    "free_after_training": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ],
+    "burn": {
+      "at": "2026-10-20T14:53:50.773002+00:00",
+      "session": "dot_grouped_20261020_a01_burn",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113695
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113696
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113697
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113698
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113699
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113700
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113701
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            113702
+          ]
+        }
+      ],
+      "collective_progress_verified": true
+    },
+    "finished_at": "2026-10-20T14:53:50.773278+00:00"
+  },
+  "live_burn_check": {
+    "observed_utc": "2026-10-20T14:55:56.045853+00:00",
+    "workers": [
+      113695,
+      113696,
+      113697,
+      113698,
+      113699,
+      113700,
+      113701,
+      113702
+    ],
+    "progress": {
+      "before": [
+        "160",
+        "177.66"
+      ],
+      "after": [
+        "170",
+        "188.76"
+      ],
+      "guard_released": true
+    },
+    "source": "temp/grouped_20261020/_run-2026-10-20_14-55-44-th2-6y3o-dot-grouped-status-20261020-a13.log",
+    "source_sha256": "d3d982d20f560d1f97322354a8c5b367120f6c1d2dc884481e2bd1bc7132b798"
+  },
+  "download_receipts": [
+    {
+      "bytes": 797,
+      "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/accelerate_env.txt"
+    },
+    {
+      "bytes": 899,
+      "sha256": "59ea6e96439359de3d772ac93c5ec3e377673ee6532bddaae13d8d931d562730",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/launch.json"
+    },
+    {
+      "bytes": 2261,
+      "sha256": "3c1d9d77e5ea37cad632b894e026f635470376ac6271f45bcad438dbd38892b2",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/burn-verified.json"
+    },
+    {
+      "bytes": 1943,
+      "sha256": "bfa30821d9c558f689fc124e7889badf58dcb0895dea1d61940b645d6e1036e2",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/gpus-free-before-training.json"
+    },
+    {
+      "bytes": 6009,
+      "sha256": "9924459be26da73c85127c62cd255b705e2512f03982b345970b82529e5508c4",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/reclaim.json"
+    },
+    {
+      "bytes": 4534,
+      "sha256": "b42c1ca0157f3446203e92700b6f02ac89037e1086e1344c80c5169a6e64c415",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/supervisor.json"
+    },
+    {
+      "bytes": 600,
+      "sha256": "618b185bd889c35eb6bd53936743bcde8d4bf3e7098f3ea4633d4d03c72d55ac",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/complete.json"
+    },
+    {
+      "bytes": 126113,
+      "sha256": "d6db97599f13fcb78a87f7e0b455b9d4de2e594beecacc9a4fc5ae5854f2bf73",
+      "local_path": "/disk/thuat/DOT/temp/grouped_20261020/results/summary.json"
+    }
+  ]
+}

@@ -1,21 +1,37 @@
 # Current task
 
-## Authorized grouped-expert comparison — 2026-10-20
+## Grouped-expert comparison completed — 2026-10-20
 
-The user authorized completing the original-versus-grouped comparison on the
-current 6Y3O B200, using the existing FA4/train environment. Reuse the numerical,
-two-rank distributed and eight-rank resume checks, followed by two repetitions
-of full-update native/D/hard/soft timings at sequence 1,024 and 524,288 tokens
-per update. Alternate reference/grouped order between repeats. No research
-pilot or environment installation is included; the default remains reference.
-Design: `docs/BDOT_v2_spec.md`; grouped implementation:
-`docs/BDOT_GROUPED_GEMM_20261018.md`.
+The authorized reference-versus-grouped comparison on 6Y3O completed successfully
+at 14:52:44 UTC. All CUDA numerical, two-rank distributed and eight-rank A/B
+resume checks passed; all 14 complete-update timing runs passed. Both resume
+suites have zero loss difference and exact model/optimizer/scheduler restoration
+and final state across every rank. No research pilot was launched.
 
-Execution checkout: `/disk/thuat/DOT-th2-inventory`, authorized th2/main.
-Planned fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01`.
-Inspect live ownership first; copy and verify Accelerate; reclaim only verified
-burn workers; require free GPUs; restore and verify communicating burns even
-on test failure. Local evidence: `temp/grouped_20261020/`.
+Mean seconds/update (reference → grouped): D 0.707639 → 0.713127;
+hard 0.807290 → 0.768397; soft 1.026440 → 1.005195. Native mean 0.615911.
+Grouped improves hard throughput by 5.1% and soft by 2.1%, with disjoint observed
+repeat ranges. Default expert_backend remains reference; keep backend fixed on
+resume. Report: [grouped comparison](BDOT_GROUPED_GEMM_20261020.md).
+Design remains `docs/BDOT_v2_spec.md`; this comparison does not replace its
+full-width 500-update T14 or revised 1,000-step-horizon T12 pre-pilot checks.
+
+Launch `5648b88`, execution checkout `/disk/thuat/DOT-th2-inventory`, th2/main.
+Root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01`.
+Accelerate was copied and verified; only identified burn workers were reclaimed;
+eight GPUs were confirmed free before testing. Automatic communicating burns
+were verified at 14:53:50 UTC. Independent live observation at 14:55:56 UTC
+confirmed workers 113695–113702, released guard and cycles advancing 160→170.
+No environment, driver, prior baseline output or corpus was changed.
+
+All eight requested result files were exported by `73a9bb5` and downloaded to
+`temp/grouped_20261020/results/`. The final summary matches its remote and
+completion-manifest SHA256. Durable receipt:
+`docs/results/bdot_grouped_comparison_20261020.json`.
+The two initial read-only preflight failures (inline syntax, absent Git metadata)
+were corrected before launch; neither signaled GPUs. Final retrieval was delayed
+but completed without a reported infrastructure failure. Return execution
+commands.sh to #0 with the final report publication; source commands.sh stays #0.
 
 ## Complete pilot recipe implemented and locally checked — 2026-10-20
 

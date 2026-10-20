@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/supervised/run/checks/summary.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/supervised/supervisor.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/supervised/burn-verified.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/supervised/run/complete.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/accelerate_env.txt,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/launch.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/supervised/reclaim.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-grouped-20261020-a01/supervised/gpus-free-before-training.json
-#th2-6y3o-dot-grouped-results-20261020-a01
+#0
+#th2-6y3o-dot-grouped-complete-20261020-a01

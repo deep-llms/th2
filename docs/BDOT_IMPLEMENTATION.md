@@ -282,7 +282,9 @@ normalization, routing and loss definitions are unchanged. Weight packing is
 included in complete-update benchmarks. Single-expert steps use ordinary linear
 layers. CPU/FP32 multi-expert execution must use the reference backend. The
 backend is part of the strict resume recipe: do not silently switch existing
-runs. GPU verification of this optional path is in progress.
+runs. The [completed B200 comparison](BDOT_GROUPED_GEMM_20261020.md) passes
+numerical, distributed and A/B resume checks, with +5.1% hard and +2.1% soft
+throughput in repeated full-update measurements. It remains opt-in.
 
 The route-study exporter and artifact comparisons are implemented above. They
 still require actual trained checkpoints for a scientific Gate 0a report.

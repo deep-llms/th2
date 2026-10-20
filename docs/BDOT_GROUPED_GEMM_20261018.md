@@ -1,5 +1,10 @@
 # Grouped expert GEMM verification — 2026-10-18
 
+**Follow-up:** the replacement-node comparison is complete; see
+[2026-10-20 results](BDOT_GROUPED_GEMM_20261020.md). It passes all tested
+correctness/resume cases and measures +5.1% hard / +2.1% soft throughput.
+The original interrupted-node record below is preserved.
+
 Status: CUDA numerical and two-rank distributed checks pass; eight-rank resume
 and complete-update throughput results are unverified: the latest returned
 remote snapshot is 22:07 UTC, with no newer controller receipt as of 22:20 UTC. No research pilot
