@@ -1,5 +1,34 @@
 # Current task
 
+## Authorized Stage 0a launch — 2026-10-20
+
+User authorized running the necessary experiments after dispatch verification.
+Design: `docs/BDOT_v2_spec.md` v1.4 and its curriculum review response.
+Queue: T12 (1,000-step horizon, stop200/resume100) → T14 (fresh native and
+fixed B-DOT without FiLM, 500 updates each) → D → P1-A → P1-B. Failed checks
+stop the queue and restore burns. R/N follow curriculum selection later; no
+Phase B or extra seeds are launched automatically.
+
+Pilot: random initialization, seed0, 12 layers, FA4/grouped experts, all8 B200s,
+seq1024, micro16 × accumulation4 =524,288 input tokens/update, 4,768 complete
+updates, 96 warmup, cosine floor0.1, peakLR3e-4. No pilot cutoff. Eval100 plus
+curriculum boundaries; save250 and retain all checkpoints. Shared existing
+English train/validation split, EOS/isolation/reset positions, seed0 packed order.
+CPU preparation verifies input hashes and exact document overlap once, while
+burns continue; no exported token dataset is introduced.
+
+Execution checkout `/disk/thuat/DOT-th2-inventory`, th2/main, host
+`thiennh-p6-6y3o-worker-0`. Read-only preflight215b5c7 at19:23UTC passed:
+prior burn identities match, guard released, assets/cache exist, ~25TB free.
+New output root `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01`.
+Preparation session `dot_pilot_prepare_20261020_a01`; GPU supervisor session
+`dot_pilot_train_20261020_a01`. Launch pending. Local tests of initialization,
+fail-closed loss gate, full-schedule cache preparation and generated queue all
+pass; config regression passes. Training model/loss/optimizer code is unchanged.
+Next: launch through existing supervisor, verify Accelerate copy/env and actual
+GPU start, and restore commands.sh to #0 after acknowledgement.
+
+
 ## Dispatch overhead optimization passed — 2026-10-20
 
 User authorized profiling and reducing overhead while preserving

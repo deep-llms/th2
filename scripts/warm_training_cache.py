@@ -30,7 +30,10 @@ def main():
     start=time.time()
     ds,recipe=prepare_training_data(data,args,tokenizer,model.tokenizer_name,data.block_size,model.attention_backend)
     validation,vr=prepare_validation_data(data,args,tokenizer,model.tokenizer_name,data.block_size,model.attention_backend,recipe)
-    if len(ds)<args.stop_after*512:raise ValueError('Insufficient packed data for the authorized cutoff')
+    steps = args.stop_after if args.stop_after is not None else args.max_steps
+    if steps <= 0:
+        raise ValueError('Cache verification requires an explicit positive step budget')
+    if len(ds)<steps*512:raise ValueError('Insufficient packed data for the authorized budget')
     result=dict(status='passed',seconds=time.time()-start,train_sequences=len(ds),
                 validation_sequences=len(validation),data_recipe=recipe,validation_recipe=vr)
     with a.output.open('x') as f:json.dump(result,f,indent=2)

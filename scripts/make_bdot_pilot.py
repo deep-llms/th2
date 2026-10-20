@@ -18,6 +18,7 @@ def main():
     p.add_argument('--seed',type=int,default=0)
     p.add_argument('--routing-seed',type=int,default=0)
     p.add_argument('--backend',choices=['sdpa','fa4'],default='fa4')
+    p.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
     p.add_argument('--arms',nargs='+',choices=['D','P1-A','P1-B','R','N-A','N-B'],default=['D','P1-A','P1-B'])
     a=p.parse_args()
     if (a.world_size < 1 or a.micro_batch < 1 or a.tokens < 524288
@@ -33,6 +34,7 @@ def main():
     for arm in a.arms:
         model=json.loads((project/'configs/bdot'/f'{arm}.json').read_text())
         model['bdot']['seed']=a.routing_seed
+        model['bdot']['expert_backend']=a.expert_backend
         config=out/f'{arm}.model.json';config.write_text(json.dumps(model,indent=2)+'\n')
         args=dict(config_name=str(config),tokenizer_name=str(Path(a.tokenizer).resolve()),
             data_dir=str(Path(a.data).resolve()),output_dir=str(out/'runs'/arm),
@@ -58,6 +60,7 @@ def main():
         jobs.append(dict(name=arm,gpus=list(range(a.world_size)),
             argv=['{python}','-m','accelerate.commands.launch',
             '--config_file',str(Path(a.accelerate_config).resolve()),'--num_processes',str(a.world_size),
+            '--main_process_port','0',
             str(project/'train.py'),str(recipe)],required_outputs=[
                 dict(path=f'{arm}.verified.json',json_equals={'status':'ok'})]))
     # A completion wrapper places a small receipt under the runner's run_dir.
