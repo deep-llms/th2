@@ -132,8 +132,10 @@ manifest against the pinned SHA256, waits for every data/tokenizer file at its
 expected size and unchanged timestamps over two observations 30 seconds apart,
 then verifies every SHA256. Four CPU tests cover missing/partial inputs,
 same-size rewrites, timeout and invalid metadata. It does not retry transfers,
-modify inputs, or touch GPUs during waiting. Submit the prepared launch now;
-continue monitoring until actual baseline training starts. The fresh output
+modify inputs, or touch GPUs during waiting. Commit c52d603 submitted the prepared launch. The node acknowledged it at
+02:35 UTC: PREDECESSOR_BURN_HANDOFF_VERIFIED and 945/3,014 data/model files
+(~42.14 GB). Log: `temp/attention_study_20261020/baseline_wait_launch.log`.
+Continue monitoring until actual baseline training starts. The fresh output
 root remains the a01 root above. Background controller transfers stay active.
 
 ## Isolated FA2 installation complete — 2026-10-20

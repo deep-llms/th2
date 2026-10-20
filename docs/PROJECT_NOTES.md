@@ -195,9 +195,9 @@ q359 launchers and environment paths must not be reused without inspection.
 
 On 2026-10-19 the user supplied the replacement node's Dropbox folder,
 `deep-llms_th2_thiennh-p6-6y3o` (label `6Y3O`). Its shared URL is stored only in
-ignored `temp/dot_th2_6y3o/dropbox_folders.txt`. Machine identity, GPU count,
-paths and `#i` installation results are still unverified, pending the first
-status listing.
+ignored `temp/dot_th2_6y3o/dropbox_folders.txt`. Dropbox credentials are read
+from `/disk/thuat/deep2shallow/temp/dropbox_credentials.txt`. Machine identity
+and environments were verified later; see the 6Y3O entries below.
 
 ## FA2 local comparison — 2026-10-18
 
@@ -296,3 +296,27 @@ This verifies installation/imports only. No B200 FA2 numerical, training,
 throughput or resume test ran. GPU validation remains necessary before use;
 production still uses its existing attention configuration. The env text lists
 build prerequisites, not the now-nonexistent prebuilt-wheel request.
+
+## Native baseline runtime and input contract — 2026-10-20
+
+The user authorized the complete runtime/data/verification/baseline sequence on
+6Y3O. Isolated stock FA2 2.8.3.post2 with torch 2.8.0/CUDA12.8 passes B200
+numerics, but native eight-GPU update timing is not better than production FA4.
+FA4 remains selected in train; production environments and NVIDIA driver are
+unchanged. Full results: `results/attention_comparison_20261020.json` and
+`ATTENTION_BASELINE_LAUNCH_20261020.md`. All nine numerical checks and twelve
+timing jobs passed; stock FA2 is available separately, not adopted globally.
+
+English input: nht10/cx_sampled at dd1b15134dc133a26d04f7edf45d9fe8315f4f52,
+subset qwen3_0.6b_base_en_30B, 3,008 files/~135GB. Trusted per-file hashes,
+metadata hashes and tokenizer revision are in resources/cx_english_20261020.json.
+Eight disjoint controller download groups preserve the exact dataset layout.
+Per-task controller progress lines may lag; actual node file counts advanced.
+
+Commit c52d603 launches a bounded input wait followed automatically by all-file
+hash/document checks, ordinary HF CPU cache fill, Accelerate copy/env check,
+verified burn reclamation, eight-rank resume comparison, real smoke25/resume50,
+and fresh native12 baseline5000. CPU preprocessing uses 128 workers, fixed
+in the data recipe. Inputs and validation split remain unchanged. The supervisor
+restores verified communicating burns after the GPU queue succeeds or fails.
+The node acknowledged the waiting stage; this is not yet a training-start claim.
