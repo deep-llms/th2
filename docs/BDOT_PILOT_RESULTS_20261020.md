@@ -4,6 +4,9 @@
 dense control.** P1-A was slightly better than P1-B. Neither met the quality
 requirement for expanding the research to the next phase.
 
+**21 October update:** the no-reuse control N-A also completed. It substantially
+reduces the deficit, but remains worse than D: loss 3.52600, PPL 33.99.
+
 The experiments follow [BDOT_v2_spec.md](BDOT_v2_spec.md), Stage 0a. Each model
 uses Qwen3-0.6B dimensions with 12 layers: two fixed stem layers, eight middle
 steps, and two fixed coda layers. All were trained from scratch, seed 0.
@@ -20,6 +23,7 @@ step FiLM, a learned per-step scale and shift on the MLP input.
 | **D: dense control** | Fixed module order throughout training, with FiLM and the same B-DOT implementation. This is the matched reference; the earlier native Qwen run used a different schedule. |
 | **P1-A: narrow → wide** | Learns routing after an initial fixed-order phase. After 477 completed updates, the ±1 window opens. Random exploration starts at 5% and decays to zero by update 954. Uses hard top-1 routing. |
 | **P1-B: soft → hard** | Opens the ±1 window immediately. Mixes the updates from two selected modules for the first 716 updates, then uses hard top-1. Exploration starts at 5% at that transition and ends at update 2,384. The soft phase adds compute. |
+| **N-A: no reuse** | Same recipe and curriculum as P1-A, but every token must use each middle module exactly once. Tests ordering without repetition or omission. |
 
 Shared recipe: **4,768 updates, approximately 2.5B input tokens**, sequence
 length 1,024, global batch 524,288 tokens (microbatch 16 × accumulation 4 ×
@@ -37,6 +41,7 @@ better. Runtime is Trainer elapsed time, including periodic evaluation/saving.
 | **D** | **3.49446** | **32.93** | — | — | 53m08s |
 | P1-A | 3.61594 | 37.19 | +0.12148 | +12.92% | 58m20s |
 | P1-B | 3.63270 | 37.81 | +0.13824 | +14.83% | 60m40s |
+| N-A | 3.52600 | 33.99 | +0.03153 | +3.20% | 59m24s |
 
 Both routed models continue learning. On the fixed 1,024-sequence periodic
 validation set, losses decrease as follows (this smaller set differs from the
@@ -60,9 +65,12 @@ training/validation loss gaps were 0.00307/0.00411 nats, both below 0.01.
 These checks support pipeline correctness without excluding every routing bug.
 
 The pilot requires routed loss ≤ D + 0.01 nats; both arms fail that condition
-by a substantial margin. This is a single-seed result at this scale. Random
-routing (R), no-reuse routing (N), route interventions and downstream evaluation
-were not run. There is no evidence here to justify moving to Phase B.
+by a substantial margin. N-A improves on P1-A by 0.08994 nats; its remaining
+gap to D is 0.03153 nats, so it also fails this quality condition. This supports
+investigating constrained routing if work continues, without isolating module
+load balance as the cause. These are single-seed results at this scale.
+Random routing (R) is now authorized; results are pending. Route interventions
+and downstream evaluation were not run. Phase B remains unsupported.
 
 All runs completed successfully, all 20 checkpoints per arm were retained, and
 the eight GPU burns were restored and verified. Results were downloaded and
@@ -73,3 +81,5 @@ Raw local files: [D](../temp/pilot_final_20261020/D/),
 [P1-A](../temp/pilot_final_20261020/P1-A/),
 [P1-B](../temp/pilot_final_20261020/P1-B/) (`final_eval.json`,
 `train_results.json`, `metrics.jsonl`).
+N-A: [final receipt](results/bdot_N_final_20261021.json), including final metrics,
+checkpoint checks, burn verification and source-log path.

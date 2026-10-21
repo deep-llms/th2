@@ -80,6 +80,15 @@ burns, confirmed all eight GPUs free and started N-A. Initial optimizer progress
 is verified; completion and final burn restoration remain pending. Evidence:
 [N launch receipt](results/bdot_N_launch_20261020.json).
 
+N-A completed 4,768 steps at 2026-10-21 00:40:24 UTC: full-validation loss
+3.52599809, PPL 33.9877, Trainer time 59m24s, 20 checkpoints retained. Reuse is
+zero and off-default routing is 24.93%. Its loss gap to D is +0.03153 nats,
+smaller than P1-A's +0.12148, but it still misses the D + 0.01 quality bar.
+Burn restoration and current identities were verified before further work.
+The user now explicitly authorized R after N completion: random routing,
+reuse on, curriculum none, otherwise the same seed-0 4,768-step recipe.
+See [N final evidence](results/bdot_N_final_20261021.json) and CURRENT_TASK.
+
 ## Route study and scientific-review decisions
 
 `eval/packed_ppl.py --route_study true` reuses packed evaluation for full selected

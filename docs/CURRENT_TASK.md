@@ -1,5 +1,28 @@
 # Current task
 
+## R authorized after N-A completion — 2026-10-21
+
+User asked to verify N-A completion and, if complete, run R. R follows
+`docs/BDOT_v2_spec.md` Stage 0a: uniform random routing in the absolute ±1
+window, reuse on, curriculum none; same seed-0 full 4,768-step training recipe
+and data/validation as P1-A. This is fresh training, not checkpoint continuation.
+No additional seeds or Phase B work are authorized.
+
+Read-only request **5480a9f**, observed 00:49:25 UTC, confirms N-A completed
+successfully at 00:40:24 UTC, with burn restoration verified at 00:41:35 UTC.
+Final loss **3.52599809**, PPL **33.9877**, all 4,768 steps and 20 checkpoints;
+final optimizer/scheduler/eight RNG files and weights are present. Same final
+validation: 9,704 sequences / 9,915,698 scored tokens. Trainer time 59m24s.
+Off-default routing 24.93%, reuse 0%. Known live burn workers 174163–174170,
+guard released. Evidence: [N final receipt](results/bdot_N_final_20261021.json).
+
+R preparation/launch is being submitted to this fresh root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01`.
+The established supervisor will verify Accelerate, reclaim identified burns,
+check all eight GPUs free and restore burns after success or failure.
+Three local configuration/random-routing tests and the generated R versus
+P1-A recipe comparison pass. Raw evidence: `temp/pilot_R_20261021/`.
+
 ## Authorized no-reuse control N-A — 2026-10-20
 
 User approved one additional matched training run after reviewing the failed
