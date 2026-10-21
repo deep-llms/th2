@@ -3,7 +3,33 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
-## Latest R status — 21 October 2026, 9:41 a.m. SGT
+## R complete — verified 21 October 2026, 11:54 a.m. SGT
+
+R completed all **4,768 updates** successfully at **9:50:49 a.m. SGT**.
+Final validation loss **3.61016131**, PPL **36.9720**, on the same 9,704
+sequences / 9,915,698 scored tokens as D/P1-A/P1-B/N-A. Trainer runtime
+55m58.7s; complete job 56m48.8s. Random routing off-default share is 62.50%.
+All **20 checkpoints** are retained; final checkpoint step is 4,768 and its
+weights, optimizer, scheduler and eight RNG-state files are present/nonempty.
+This is artifact verification, not a new resume test.
+
+Read-only status **0b891c1** confirms queue/complete/verification receipts all
+successful. Automatic burns were restored and verified at **9:52:00 a.m. SGT**.
+At 11:54 a.m. all eight known workers 182801–182808 still match the handoff,
+all GPUs show 100% utilization, collective cycles advance and guard is released.
+No workload was stopped or launched by this status check.
+
+R is 0.00578 nats better than P1-A, but 0.11570 nats worse than D. Neither
+learned-routing curriculum beats the random-training control in this pilot;
+their routing curricula differ, so this is not an isolated router-only causal
+comparison. N-A remains the best routed arm but still misses D + 0.01 nats.
+No further runs are queued or authorized. Keep execution commands #0.
+Evidence: [R final receipt](results/bdot_R_final_20261021.json),
+[combined report](BDOT_PILOT_RESULTS_20261020.md); raw local evidence in
+`temp/pilot_R_final_20261021/`. All six files exported by c3e9903 are downloaded locally; metric hashes and
+queue/supervisor/burn receipts match the final inspection.
+
+## Historical R progress — 21 October 2026, 9:41 a.m. SGT
 
 Read-only status **dc094ff** confirms R is still running at **4,020/4,768**
 updates (84.3%). All eight GPUs active at 90–98%, finite losses/gradients,

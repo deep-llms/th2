@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01/prepared/runs/R/train_results.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01/prepared/runs/R/final_eval.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01/prepared/runs/R/metrics.jsonl,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01/supervised/supervisor.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01/supervised/burn-verified.json,/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01/supervised/run/run.json
-#th2-6y3o-dot-R-results-20261021-a01
+#0
+# R completed; all eight GPU burns verified. No experiment queued.

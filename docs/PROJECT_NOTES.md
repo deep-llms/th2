@@ -14,17 +14,23 @@ The plain dense reference is native Qwen3ForCausalLM with 12 layers and random
 initialization. B-DOT reuses those Qwen3 components. The matched dense D has
 FiLM; native-equivalence tests turn FiLM off. They are different references.
 
-## Random-routing control R launched — 2026-10-21
+## Random-routing control R complete — 21 October 2026
 
-After N-A completed, the user authorized R. Launch 16dd3d5 / status 2c0676d
-confirms fresh R training began 00:54:00 UTC on all eight 6Y3O B200s; step 300
-verified at 00:58:22. R uses routing=random, curriculum=none, reuse=true with
-otherwise identical P1-A source/data/validation and full 4,768-update recipe.
-Accelerate copied/verified, exact known burns reclaimed, all GPUs verified free.
-No shared data/cache, environment or training source changed. All checkpoints
-are retained and the existing supervisor restores burns after success/failure.
-No further runs queued. R results are pending. Evidence:
-[launch receipt](results/bdot_R_launch_20261021.json), CURRENT_TASK for next check.
+User-authorized R trained from scratch with routing=random, curriculum=none,
+reuse=true; otherwise identical P1-A source/data/validation and full 4,768-step
+recipe. Launch 16dd3d5 verified Accelerate, exact burn reclaim and free GPUs.
+Final inspection 0b891c1: finished **9:50:49 a.m. SGT**, loss **3.61016131**,
+PPL **36.9720**, 9,704 sequences / 9,915,698 scored tokens; Trainer time 55m58.7s.
+All 20 checkpoints and final optimizer/scheduler/eight-rank RNG state retained.
+Burns restored **9:52 a.m. SGT**, still verified live at **11:54 a.m. SGT**
+with collective progress and guard released. No further experiments queued.
+
+R beats P1-A by 0.00578 nats but trails D by 0.11570. Both learned routing
+curricula fail to beat the random-training control on this single-seed pilot;
+this comparison also changes the routing curriculum. N-A remains closest to D
+but fails its D + 0.01 quality threshold. Phase B has not been authorized.
+Evidence: [R final receipt](results/bdot_R_final_20261021.json),
+[combined results](BDOT_PILOT_RESULTS_20261020.md).
 
 ## Training contracts
 
