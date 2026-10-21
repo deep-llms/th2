@@ -12,10 +12,11 @@ uses Qwen3-0.6B dimensions with 12 layers: two fixed stem layers, eight middle
 steps, and two fixed coda layers. All were trained from scratch, seed 0.
 
 In routed models, each token chooses a middle module within one position of
-that step's normal module. Modules can be repeated, leaving others unused.
+that step's normal module. With reuse enabled, modules can be repeated, leaving
+others unused; N-A forbids this.
 The selected module supplies Q, Q normalization, output projection and MLP;
 K/V and the attention-input normalization remain specific to the execution
-step. Every token still executes eight middle steps. All three arms use
+step. Every token still executes eight middle steps. All arms use
 step FiLM, a learned per-step scale and shift on the MLP input.
 
 | Experiment | What it tests |
@@ -24,6 +25,7 @@ step FiLM, a learned per-step scale and shift on the MLP input.
 | **P1-A: narrow → wide** | Learns routing after an initial fixed-order phase. After 477 completed updates, the ±1 window opens. Random exploration starts at 5% and decays to zero by update 954. Uses hard top-1 routing. |
 | **P1-B: soft → hard** | Opens the ±1 window immediately. Mixes the updates from two selected modules for the first 716 updates, then uses hard top-1. Exploration starts at 5% at that transition and ends at update 2,384. The soft phase adds compute. |
 | **N-A: no reuse** | Same recipe and curriculum as P1-A, but every token must use each middle module exactly once. Tests ordering without repetition or omission. |
+| **R: random routing** | Uniform random selection within the ±1 window from the start; reuse allowed, no curriculum. Chance-routing training control; unlike P1-A, it has no initial fixed-order phase. Results pending. |
 
 Shared recipe: **4,768 updates, approximately 2.5B input tokens**, sequence
 length 1,024, global batch 524,288 tokens (microbatch 16 × accumulation 4 ×
@@ -64,16 +66,17 @@ reduced-width 12-layer fixture, with identical routes, losses and final states.
 training/validation loss gaps were 0.00307/0.00411 nats, both below 0.01.
 These checks support pipeline correctness without excluding every routing bug.
 
-The pilot requires routed loss ≤ D + 0.01 nats; both arms fail that condition
+The pilot requires routed loss ≤ D + 0.01 nats; P1-A and P1-B fail that condition
 by a substantial margin. N-A improves on P1-A by 0.08994 nats; its remaining
 gap to D is 0.03153 nats, so it also fails this quality condition. This supports
 investigating constrained routing if work continues, without isolating module
 load balance as the cause. These are single-seed results at this scale.
-Random routing (R) is now authorized; results are pending. Route interventions
+Random routing (R) started on 21 October at 00:54 UTC; step 300 was verified
+at 00:58 UTC. Final results are pending. Route interventions
 and downstream evaluation were not run. Phase B remains unsupported.
 
-All runs completed successfully, all 20 checkpoints per arm were retained, and
-the eight GPU burns were restored and verified. Results were downloaded and
+D, P1-A, P1-B and N-A completed successfully, all 20 checkpoints per arm were
+retained, and the eight GPU burns were restored and verified. Results were downloaded and
 hash-checked. Sources: [final results](results/bdot_pilot_final_20261020.json),
 [T12/T14 checks](results/bdot_pilot_launch_20261020.json),
 [P1-A diagnostics](results/bdot_pilot_A_analysis_20261020.json).
@@ -82,4 +85,8 @@ Raw local files: [D](../temp/pilot_final_20261020/D/),
 [P1-B](../temp/pilot_final_20261020/P1-B/) (`final_eval.json`,
 `train_results.json`, `metrics.jsonl`).
 N-A: [final receipt](results/bdot_N_final_20261021.json), including final metrics,
-checkpoint checks, burn verification and source-log path.
+checkpoint checks, burn verification and verified download hashes.
+[Raw N-A files](../temp/pilot_N_final_20261021/prepared/runs/N-A/) contain
+`final_eval.json`, `train_results.json` and `metrics.jsonl`.
+
+R: [launch and safety checks](results/bdot_R_launch_20261021.json).

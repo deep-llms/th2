@@ -11,6 +11,18 @@ The plain dense reference is native Qwen3ForCausalLM with 12 layers and random
 initialization. B-DOT reuses those Qwen3 components. The matched dense D has
 FiLM; native-equivalence tests turn FiLM off. They are different references.
 
+## Random-routing control R launched — 2026-10-21
+
+After N-A completed, the user authorized R. Launch 16dd3d5 / status 2c0676d
+confirms fresh R training began 00:54:00 UTC on all eight 6Y3O B200s; step 300
+verified at 00:58:22. R uses routing=random, curriculum=none, reuse=true with
+otherwise identical P1-A source/data/validation and full 4,768-update recipe.
+Accelerate copied/verified, exact known burns reclaimed, all GPUs verified free.
+No shared data/cache, environment or training source changed. All checkpoints
+are retained and the existing supervisor restores burns after success/failure.
+No further runs queued. R results are pending. Evidence:
+[launch receipt](results/bdot_R_launch_20261021.json), CURRENT_TASK for next check.
+
 ## Training contracts
 
 - Keep HF Trainer/Accelerate, AdamW/scheduler and checkpoint/resume behavior.

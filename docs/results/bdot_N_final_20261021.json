@@ -616,5 +616,44 @@
   "source_log": {
     "path": "temp/pilot_R_20261021/_run-2026-10-21_00-49-14-th2-6y3o-dot-N-final-R-preflight-20261021-a01.log",
     "sha256": "112ecf0bb855a4e134eaf579c09205653b19cbc8965aca88d2b0ca1fdb0ffb7e"
-  }
+  },
+  "downloaded_results": {
+    "prepared/runs/N-A/train_results.json": {
+      "bytes": 437,
+      "sha256": "fb835c2dc91e71041a7d34779dfb88fe05f66820f8dd4b6858e62734b7ad7f8d",
+      "local_path": "/disk/thuat/DOT/temp/pilot_N_final_20261021/prepared/runs/N-A/train_results.json",
+      "remote_path": "/mnt_local__outputs_deep-llms_th2_6y3o-dot-N-20261020-a01_prepared_runs_N-A/train_results.json"
+    },
+    "prepared/runs/N-A/final_eval.json": {
+      "bytes": 458,
+      "sha256": "e50b5d182921cfe5374aaf7ce8880e27a05248f4a18952357490b2e851724702",
+      "local_path": "/disk/thuat/DOT/temp/pilot_N_final_20261021/prepared/runs/N-A/final_eval.json",
+      "remote_path": "/mnt_local__outputs_deep-llms_th2_6y3o-dot-N-20261020-a01_prepared_runs_N-A/final_eval.json"
+    },
+    "prepared/runs/N-A/metrics.jsonl": {
+      "bytes": 732382,
+      "sha256": "e01707499f05d6adc74cbf60ed2f82b0da421940b6166f70075653e491f45c80",
+      "local_path": "/disk/thuat/DOT/temp/pilot_N_final_20261021/prepared/runs/N-A/metrics.jsonl",
+      "remote_path": "/mnt_local__outputs_deep-llms_th2_6y3o-dot-N-20261020-a01_prepared_runs_N-A/metrics.jsonl"
+    },
+    "supervised/supervisor.json": {
+      "bytes": 4534,
+      "sha256": "d10c56c8bc72ce4d79183cd2dcbbbad1c7fca1bcf2c0cb8cdb74f897c463c9bb",
+      "local_path": "/disk/thuat/DOT/temp/pilot_N_final_20261021/supervised/supervisor.json",
+      "remote_path": "/mnt_local__outputs_deep-llms_th2_6y3o-dot-N-20261020-a01_supervised/supervisor.json"
+    },
+    "supervised/burn-verified.json": {
+      "bytes": 2261,
+      "sha256": "3539a043f76c2215680153fbc48a776c4298b2854780b64ab5fa6600292ba527",
+      "local_path": "/disk/thuat/DOT/temp/pilot_N_final_20261021/supervised/burn-verified.json",
+      "remote_path": "/mnt_local__outputs_deep-llms_th2_6y3o-dot-N-20261020-a01_supervised/burn-verified.json"
+    },
+    "supervised/run/run.json": {
+      "bytes": 577,
+      "sha256": "bb4080bd23209018ca5b62c68fae5cc7a276e4d161f528bdb69f6988543cc869",
+      "local_path": "/disk/thuat/DOT/temp/pilot_N_final_20261021/supervised/run/run.json",
+      "remote_path": "/mnt_local__outputs_deep-llms_th2_6y3o-dot-N-20261020-a01_supervised_run/run.json"
+    }
+  },
+  "export_commit": "017488eecdb9499b8b4e9f3ba829eb3ac700a92a"
 }

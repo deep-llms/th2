@@ -1,6 +1,6 @@
 # Current task
 
-## R authorized after N-A completion — 2026-10-21
+## R running after N-A completion — 2026-10-21
 
 User asked to verify N-A completion and, if complete, run R. R follows
 `docs/BDOT_v2_spec.md` Stage 0a: uniform random routing in the absolute ±1
@@ -13,17 +13,39 @@ successfully at 00:40:24 UTC, with burn restoration verified at 00:41:35 UTC.
 Final loss **3.52599809**, PPL **33.9877**, all 4,768 steps and 20 checkpoints;
 final optimizer/scheduler/eight RNG files and weights are present. Same final
 validation: 9,704 sequences / 9,915,698 scored tokens. Trainer time 59m24s.
-Off-default routing 24.93%, reuse 0%. Known live burn workers 174163–174170,
-guard released. Evidence: [N final receipt](results/bdot_N_final_20261021.json).
+Off-default routing 24.93%, reuse 0%. Six files exported by **017488e** are
+verified locally at `temp/pilot_N_final_20261021/` (three metric SHA256s match
+remote; queue/supervisor/burn JSON matches the final inspection exactly).
+Evidence: [N final receipt](results/bdot_N_final_20261021.json).
 
-R preparation/launch is being submitted to this fresh root:
+R launch **16dd3d5** succeeded at this fresh root:
 `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-R-20261021-a01`.
-The established supervisor will verify Accelerate, reclaim identified burns,
-check all eight GPUs free and restore burns after success or failure.
-Three local configuration/random-routing tests and the generated R versus
-P1-A recipe comparison pass. Raw evidence: `temp/pilot_R_20261021/`.
+On-node comparison passed: training source unchanged, exact data/validation
+recipes match P1-A, only routing=random/curriculum=none and output/config paths
+differ. CPU cache check took 8.53 seconds. The Accelerate resource config was
+copied to `/dev/shm/.cache/huggingface/accelerate/default_config.yaml` and
+`accelerate env` verified MULTI_GPU, 8 processes and BF16.
 
-## Authorized no-reuse control N-A — 2026-10-20
+Known predecessor burn workers 174163–174170 were reverified and reclaimed at
+00:53:30 UTC. All eight GPUs were free at 00:54:00; R started at 00:54:00 UTC.
+Read-only status **2c0676d**, observed 00:58:22 UTC, confirms step **300/4,768**,
+finite losses/gradient norm and eight active workers at 94–98% utilization.
+The first checkpoint (250) exists. Off-default routing 62.51% matches uniform
+choice in the ±1 window; router z-loss is zero as expected for the control.
+Step-300 periodic validation loss is 5.39286; this is not a final comparison.
+
+R trains the full schedule with 96 warmup updates, FA4/grouped experts,
+sequence 1,024 and 524,288 input tokens/update. All checkpoints are retained.
+Independent tmux supervisor `dot_R_train_20261021_a01` automatically restores
+and verifies communicating GPU burns after success or failure. Expected finish
+roughly 01:50–02:00 UTC, subject to remaining eval/save overhead.
+No other experiments are queued. Execution commands return to #0 while R runs.
+Next check: retrieve final metrics, all-checkpoint/final-state checks, queue
+success and verified burn handoff; do not infer success from vanished PIDs.
+Evidence: [R launch receipt](results/bdot_R_launch_20261021.json); raw logs in
+`temp/pilot_R_20261021/`. Three local config/random-routing tests passed.
+
+## Historical N-A launch — 2026-10-20 (completed; see above)
 
 User approved one additional matched training run after reviewing the failed
 quality gate. Follow `docs/BDOT_v2_spec.md` Phase A control N with curriculum A:
