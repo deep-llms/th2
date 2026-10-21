@@ -122,8 +122,9 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
     to downstream router logits. FP32/math SDPA and reference projections avoid
     BF16 quantization defeating finite differences. No weight is updated.
     Also check every router's local gate VJP in FP64 using the actual LM adjoint.
-    Optional centering freezes offsets from the original forward, then tests at
-    uniform allowed logits. ST gates remain one and routes/weights stay fixed;
+    Optional centering freezes offsets from the original forward, then tests one
+    router at a time at uniform allowed logits; others retain original logits.
+    ST gates remain one and routes/weights stay fixed;
     this tests the same machinery without saturated, numerically invisible gates.
     It does not measure the checkpoint's original router-gradient magnitudes.
     """
@@ -162,7 +163,7 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
             def hook(module, inputs, z, index=index):
                 if state['mode'] == 'baseline':
                     offsets[index] = z.detach().masked_fill(~torch.isfinite(z), 0)
-                elif center_logits:
+                elif center_logits and state.get('center_step') == index:
                     z = z - offsets[index]
                 if state['mode'] == 'numeric' and state['perturb_step'] == index:
                     z = z + state['epsilon']*state['direction']
@@ -186,16 +187,26 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
             model.eval(); model.capture_routes = True; model.routing_override = None
             model.evaluation_policy = 'target'; model.eval_counter = 0
             with torch.no_grad():
-                model(**batch)
+                original_loss = float(model(**batch).loss)
                 routes = model.last_routes.clone()
-            state['mode'] = 'analytic'
-            loss = model(**batch, bdot_forced_routes=routes).loss
             size = model.options.S
-            zs, ws = [z_values[i] for i in range(size)], [gates[i] for i in range(size)]
-            grads = torch.autograd.grad(loss, zs+ws)
-            baseline = float(loss.detach())
+            if not center_logits:
+                state['mode'] = 'analytic'
+                loss = model(**batch, bdot_forced_routes=routes).loss
+                zs, ws = [z_values[i] for i in range(size)], [gates[i] for i in range(size)]
+                grads = torch.autograd.grad(loss, zs+ws)
             results = []
-            for index, (z, grad, gate_grad) in enumerate(zip(zs, grads[:size], grads[size:])):
+            for index in range(size):
+                if center_logits:
+                    state.update(mode='analytic', center_step=index)
+                    loss = model(**batch, bdot_forced_routes=routes).loss
+                    z = z_values[index]
+                    grad, gate_grad = torch.autograd.grad(loss, (z, gates[index]))
+                else:
+                    z, grad, gate_grad = zs[index], grads[index], grads[size+index]
+                baseline = float(loss.detach())
+                if baseline != original_loss:
+                    raise RuntimeError('Diagnostic changed the forward LM loss')
                 direction = grad.detach().sign().masked_fill(~torch.isfinite(z), 0)
                 analytic = float((grad*direction).sum())
                 if not analytic > 0 or not torch.isfinite(grad).all():
@@ -215,7 +226,7 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
                 local_numeric = (local(1e-4)-local(-1e-4))/2e-4
                 numeric = []
                 state.update(mode='numeric', perturb_step=index, direction=direction)
-                for eps in (.02, .01):
+                for eps in ((.002, .001) if center_logits else (.02, .01)):
                     values = []
                     for sign in (1, -1):
                         state['epsilon'] = sign*eps
@@ -234,6 +245,7 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
                         sequences=1, tokens=len(row['input_ids']), scored_tokens=int(batch['labels'][:,1:].ne(-100).sum()),
                         backend='FP32/math SDPA/reference experts, same checkpoint weights',
                         centered_logits=center_logits,
+                        centering_scope='one router at a time; other routers retain original logits' if center_logits else None,
                         direction='sign of analytic logit gradient; all routes and base log-prob denominators fixed',
                         tolerances=dict(full_absolute=2e-6,full_relative=.03,local_absolute=2e-6,local_relative=2e-4))
     finally:

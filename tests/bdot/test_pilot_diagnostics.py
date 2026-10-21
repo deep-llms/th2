@@ -102,6 +102,13 @@ class PilotDiagnosticsTests(unittest.TestCase):
         bad=router_gradient_check(m,rows()[0],length=6,center_logits=True)
         self.assertFalse(bad['passed'])
 
+    def test_centered_check_with_large_router_logits(self):
+        m=model(curriculum='A');m.eval()
+        with torch.no_grad():
+            for layer in m.routed_steps:layer.router.weight.mul_(500)
+        checked=router_gradient_check(m,rows()[0],length=6,center_logits=True)
+        self.assertTrue(checked['passed'],checked)
+
     def test_checkpoint_cli_distributed_diagnostics(self):
         from test_data_and_trainer import tokenizer_assets
         from train import DataArguments
