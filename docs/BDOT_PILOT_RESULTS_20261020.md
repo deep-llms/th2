@@ -97,3 +97,12 @@ checkpoint checks, burn verification and verified download hashes.
 R: [launch checks](results/bdot_R_launch_20261021.json),
 [final receipt](results/bdot_R_final_20261021.json),
 [raw files](../temp/pilot_R_final_20261021/prepared/runs/R/).
+
+## Checkpoint diagnostics — 21 October 2026
+
+[Step 1 report](BDOT_PILOT_DIAGNOSTICS_20261021.md): own-route losses reproduce
+exactly; forcing the default path worsens P1-A/B. Both have severe module-load
+imbalance and raw-logit gaps exceeding the balance-bias range. Router machinery
+checks pass with the numerical scopes documented; no trained weights changed.
+The predeclared next candidate is bounded-score balancing P1-A′, not yet launched.
+N-A remains outside D + 0.01, so R_N is not triggered. Gate 0a still fails.

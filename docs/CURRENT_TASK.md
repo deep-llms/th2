@@ -3,6 +3,47 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+## Step 1 diagnostics complete — 21 October 2026, 12:58 p.m. SGT
+
+Followed `docs/BDOT_pilot_results_response.md` Step 1; **no new training**.
+[Full diagnostic report](BDOT_PILOT_DIAGNOSTICS_20261021.md) includes intervention
+PPL, per-step usage maps, beta/load snapshots, z-loss history, gradient checks,
+limitations and decision. [Numerical evidence](results/bdot_pilot_diagnostics_20261021.json)
+and balancing/usage CSVs are saved under docs/results.
+
+Own-route P1-A/P1-B/N-A losses reproduce exactly. Default losses are
+3.745657 / 4.450526 / 3.530833. No illegal choices or nonunit gates; the actual
+balance update has the expected sign on all 476 logged count vectors per arm.
+P1-A/P1-B meet the weak-balancing rule: final median raw gap vs beta range
+15.16 vs 8.58 / 44.61 vs 9.02, with severe module-load imbalance. Mean distinct
+middle modules/token: 4.391 / 5.000, versus N-A's 8. No within-phase spikes;
+P1-B has a separately reported +0.170650 transition jump. T8 throughput 84.2%
+of native passes the 60% requirement. N-A remains D + 0.031535, so no R_N trigger.
+
+Original full-LM finite differences cannot resolve the saturated tiny gradients.
+Stable local gate checks at original logits pass. A first all-router-centered
+probe failed because of an artificial high-gain chain; evidence is retained.
+Corrected one-router-at-a-time probes pass all 16 steps, with identical forward
+losses and maximum relative errors 0.215% / 0.077%, without relaxed tolerances.
+Missing per-update beta/training mean-logsumexp history is explicitly documented.
+
+Main launch **82b3608**, root
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-diagnostics-20261021-a01`, completed
+12:27:06 SGT. Corrected follow-up **30be91e**, root
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-diagnostics-gradient-20261021-a02`,
+completed 12:50:02. Both used copied/verified eight-GPU BF16 Accelerate configs,
+verified known-worker burn reclamation and free-GPU checks. Burns restored at
+12:51:08. Final status **ed4095b** at 12:53:47 verifies workers 189117–189124,
+all eight GPUs at 100%, collective progress and released guard. Export **3399b84**
+retrieves a result-only archive; archive/member, result/route-sample and unchanged
+checkpoint-weight hashes verify locally. Raw evidence:
+`temp/pilot_diagnostics_20261021/`. Commands return to #0.
+
+**Next decision:** the response doc indicates P1-A′ with selection by
+`argmax(softmax(z) + beta)`, keeping the other P1-A settings. It is not implemented
+or launched; await the user's next instruction. No Phase B, extra seeds, longer
+training, or other arms are queued. Keep training source, checkpoints and caches.
+
 ## Authorized checkpoint diagnostics — 21 October 2026
 
 User approved Step 1 of `docs/BDOT_pilot_results_response.md`: evaluate retained

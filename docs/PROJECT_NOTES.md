@@ -508,3 +508,22 @@ BDOT_DISPATCH_OPTIMIZATION_20261020.md; durable machine-readable receipt:
 results/bdot_dispatch_optimization_20261020.json. No research pilot launched.
 
 Final full local CPU B-DOT suite: 48 tests passed in 321.35 seconds.
+
+## 21 October 2026: pilot checkpoint diagnostics
+
+See [Step 1 report](BDOT_PILOT_DIAGNOSTICS_20261021.md) and its JSON/CSV evidence.
+Both learned P1 arms meet the response doc's weak-balancing rule. Default-route
+interventions hurt their adapted checkpoints; trained R remains slightly better
+than P1-A, and N-A still misses D + 0.01. Route/window/gate and balance replay
+checks find no implementation defect. Saturated full-LM finite differences are
+precision-limited; stable local checks plus one-router-at-a-time conditioned
+full-LM probes pass without changing trained weights or relaxing tolerances.
+The failed all-router-centered diagnostic is preserved. No new training ran.
+P1-A′ (`argmax(softmax(z)+beta)`) is the indicated next candidate, not authorization
+to launch it. Final burns/guard verified at 12:53:47 SGT; keep commands #0.
+
+Do not infer historical mean logsumexp from logged mean(logsumexp²), or claim
+an exact per-update beta audit when only periodic loads/checkpoint beta exist.
+Use compact result-only archives with per-file hashes for many exports; the
+latest directory export returned no valid paths. Sequential Dropbox downloads
+avoid the observed parallel-download HTTP 429 limit.
