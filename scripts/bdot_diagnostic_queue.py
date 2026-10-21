@@ -95,15 +95,57 @@ def validate(output):
     print('DIAGNOSTICS_COMPLETE '+json.dumps(results),flush=True)
 
 
+def prepare_gradient(output, study):
+    """Resolve saturated finite differences without redoing full validation."""
+    from run_experiments import load_jobs
+    output.mkdir(parents=True, exist_ok=False)
+    jobs=[]
+    for arm in ('P1-A','P1-B'):
+        config=read(study/'prepared'/(arm+'-4768.eval.json'))
+        config.update(max_sequences=1,route_sequences=1,route_artifact_sequences=1,
+            pilot_diagnostics=False,router_gradient_check=True,router_gradient_center_logits=True,
+            output_file=str(output.parent/'supervised/run'/arm/'result.json'))
+        path=output/(arm+'.eval.json');write(path,config)
+        jobs.append(dict(name=arm,gpus=list(range(8)),timeout_seconds=900,
+            argv=['{python}','-m','accelerate.commands.launch','--config_file',
+                  str(ROOT/'resources/accelerate_b200.yaml'),str(ROOT/'eval/packed_ppl.py'),str(path)],
+            required_outputs=[dict(path=arm+'/result.json',json_equals=dict(status='ok'))]))
+    jobs.append(dict(name='validate',timeout_seconds=120,
+        argv=['{python}',str(ROOT/'scripts/bdot_diagnostic_queue.py'),'gradient-validate','--output',str(output)],
+        required_outputs=[dict(path='summary.json',json_equals=dict(status='ok'))]))
+    write(output/'jobs.json',dict(jobs=jobs));load_jobs(output/'jobs.json')
+
+
+def validate_gradient(output):
+    reports={}
+    for arm in ('P1-A','P1-B'):
+        result=read(output.parent/'supervised/run'/arm/'result.json')['route_study']
+        raw,centered=result['gradient_check'],result['centered_gradient_check']
+        if raw['loss']!=centered['loss']:raise ValueError('Centering changed the forward LM loss')
+        if not centered['passed']:raise ValueError('Well-conditioned gradient check failed')
+        if not all(r['local_pass'] for r in raw['steps']):raise ValueError('Stable gate VJP check failed')
+        reports[arm]=dict(centered_passed=True,forward_loss_unchanged=True,
+            stable_original_gate_vjp_passed=True,
+            original_full_difference_passed=raw['passed'])
+    write(output.parent/'supervised/run/summary.json',dict(status='ok',results=reports,
+        scope='Centered logits test the unchanged ST machinery at a resolvable point; '
+              'original saturated full-LM finite differences remain precision-limited.'))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action',choices=['prepare','validate']);p.add_argument('--output',type=Path,required=True)
+    p.add_argument('action',choices=['prepare','validate','gradient-prepare','gradient-validate']);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--pilot',type=Path);p.add_argument('--no-reuse',type=Path)
+    p.add_argument('--study',type=Path)
     a=p.parse_args()
     if a.action=='prepare':
         if not a.pilot or not a.no_reuse:p.error('prepare requires --pilot and --no-reuse')
         prepare(a.output,a.pilot,a.no_reuse)
-    else:validate(a.output)
+    elif a.action=='validate':validate(a.output)
+    elif a.action=='gradient-prepare':
+        if not a.study:p.error('gradient-prepare requires --study')
+        prepare_gradient(a.output,a.study)
+    else:validate_gradient(a.output)
 
 
 if __name__=='__main__':main()

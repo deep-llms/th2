@@ -87,6 +87,21 @@ class PilotDiagnosticsTests(unittest.TestCase):
             actual,expected=replay_balance_sign(counts,.001)
             torch.testing.assert_close(actual,expected,rtol=1e-6,atol=1e-9)
 
+    def test_centered_gradient_preserves_forward_and_rejects_wrong_sign(self):
+        m=model(curriculum='A');m.eval()
+        ordinary=router_gradient_check(m,rows()[0],length=6)
+        centered=router_gradient_check(m,rows()[0],length=6,center_logits=True)
+        self.assertTrue(centered['passed'],centered)
+        self.assertEqual(centered['loss'],ordinary['loss'])
+        for layer in m.routed_steps:
+            original=layer.select
+            def wrong(this,h,context,original=original):
+                choice,weight=original(h,context)
+                return choice,2-weight
+            layer.select=MethodType(wrong,layer)
+        bad=router_gradient_check(m,rows()[0],length=6,center_logits=True)
+        self.assertFalse(bad['passed'])
+
     def test_checkpoint_cli_distributed_diagnostics(self):
         from test_data_and_trainer import tokenizer_assets
         from train import DataArguments
@@ -107,7 +122,8 @@ class PilotDiagnosticsTests(unittest.TestCase):
                 config=dict(checkpoint=str(p/'checkpoint'),eval_data_dir=str(p/'raw'),
                     output_file=str(p/name/'final.json'),use_cpu=True,batch_size=2,
                     data_cache_dir=str(p/'cache'),route_study=True,route_sequences=5,
-                    route_artifact_sequences=1,pilot_diagnostics=True,router_gradient_check=True)
+                    route_artifact_sequences=1,pilot_diagnostics=True,router_gradient_check=True,
+                    router_gradient_center_logits=True)
                 file=p/(name+'.json');file.write_text(json.dumps(config))
                 cmd=[sys.executable]
                 if multi:cmd+=['-m','torch.distributed.run','--standalone','--nproc_per_node=2']
@@ -118,6 +134,7 @@ class PilotDiagnosticsTests(unittest.TestCase):
                 result=json.loads((p/name/'final.json').read_text())
                 self.assertTrue(result['route_study']['router_health']['passed'])
                 self.assertTrue(result['route_study']['gradient_check']['passed'])
+                self.assertTrue(result['route_study']['centered_gradient_check']['passed'])
                 results.append(result)
             self.assertEqual(results[0]['route_study']['route_diagnostics'],results[1]['route_study']['route_diagnostics'])
             for a,b in zip(results[0]['route_study']['router_health']['steps'],results[1]['route_study']['router_health']['steps']):

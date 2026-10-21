@@ -114,13 +114,18 @@ class RouterObserver:
         return report
 
 
-def router_gradient_check(model, row, *, isolate_documents=True, reset_positions=True, length=128):
+def router_gradient_check(model, row, *, isolate_documents=True, reset_positions=True, length=128,
+                          center_logits=False):
     """Full LM finite difference on one prefix, with routes/denominators frozen.
 
     Production ST autograd is compared with p(z+eps)/p(z0), including changes
     to downstream router logits. FP32/math SDPA and reference projections avoid
     BF16 quantization defeating finite differences. No weight is updated.
     Also check every router's local gate VJP in FP64 using the actual LM adjoint.
+    Optional centering freezes offsets from the original forward, then tests at
+    uniform allowed logits. ST gates remain one and routes/weights stay fixed;
+    this tests the same machinery without saturated, numerically invisible gates.
+    It does not measure the checkpoint's original router-gradient magnitudes.
     """
     from packed_training import PackedCollator, model_inputs
     from packed_evaluation import preserve_rng_and_mode
@@ -136,7 +141,7 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
     old_matmul = torch.backends.cuda.matmul.allow_tf32
     old_select, handles = [], []
     state = dict(mode='baseline', perturb_step=None, epsilon=0.)
-    z_values, gates, denominators = {}, {}, {}
+    z_values, gates, denominators, offsets = {}, {}, {}, {}
     row = {k: v[:length] for k, v in row.items() if k in ('input_ids','labels','segments','attention_mask')}
     batch = model_inputs(PackedCollator(isolate_documents, reset_positions, 'sdpa')([row]))
     batch = {k: v.to(model.device) if isinstance(v, torch.Tensor) else v for k,v in batch.items()}
@@ -155,6 +160,10 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
                 p.requires_grad_(True)
         for index, layer in enumerate(model.routed_steps):
             def hook(module, inputs, z, index=index):
+                if state['mode'] == 'baseline':
+                    offsets[index] = z.detach().masked_fill(~torch.isfinite(z), 0)
+                elif center_logits:
+                    z = z - offsets[index]
                 if state['mode'] == 'numeric' and state['perturb_step'] == index:
                     z = z + state['epsilon']*state['direction']
                 z_values[index] = z
@@ -179,6 +188,7 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
             with torch.no_grad():
                 model(**batch)
                 routes = model.last_routes.clone()
+            state['mode'] = 'analytic'
             loss = model(**batch, bdot_forced_routes=routes).loss
             size = model.options.S
             zs, ws = [z_values[i] for i in range(size)], [gates[i] for i in range(size)]
@@ -192,10 +202,16 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
                     raise RuntimeError('Missing/nonfinite router gradient')
                 chosen = routes[index].reshape(-1,1)
                 zd, dd = z.detach().double(), direction.double()
-                denom = zd.log_softmax(-1).gather(1, chosen)
+                def selected_logp(values):
+                    # Unlike subtracting logsumexp, this retains tiny log p
+                    # when the chosen probability is almost one.
+                    selected = values.gather(1, chosen)
+                    other = values.scatter(1, chosen, -torch.inf).logsumexp(-1, keepdim=True)
+                    return -torch.nn.functional.softplus(other-selected)
+                denom = selected_logp(zd)
                 def local(eps):
-                    weight = ((zd+eps*dd).log_softmax(-1).gather(1,chosen)-denom).exp()
-                    return float((weight*gate_grad.detach().double()).sum())
+                    change = torch.expm1(selected_logp(zd+eps*dd)-denom)
+                    return float((change*gate_grad.detach().double()).sum())
                 local_numeric = (local(1e-4)-local(-1e-4))/2e-4
                 numeric = []
                 state.update(mode='numeric', perturb_step=index, direction=direction)
@@ -210,13 +226,14 @@ def router_gradient_check(model, row, *, isolate_documents=True, reset_positions
                     value = (values[0]-values[1])/(2*eps)
                     numeric.append(dict(epsilon=eps, derivative=value,
                                         absolute_error=abs(value-analytic), relative_error=abs(value-analytic)/analytic))
-                local_pass = abs(local_numeric-analytic) <= 2e-6 + 2e-4*analytic
+                local_pass = local_numeric > 0 and abs(local_numeric-analytic) <= 2e-6 + 2e-4*analytic
                 full_pass = all(n['derivative'] > 0 and n['absolute_error'] <= 2e-6+.03*analytic for n in numeric)
                 results.append(dict(step=index, analytic=analytic, local_numeric=local_numeric,
                                     local_pass=local_pass, full_model=numeric, passed=local_pass and full_pass))
             return dict(passed=all(r['passed'] for r in results), loss=baseline, steps=results,
                         sequences=1, tokens=len(row['input_ids']), scored_tokens=int(batch['labels'][:,1:].ne(-100).sum()),
                         backend='FP32/math SDPA/reference experts, same checkpoint weights',
+                        centered_logits=center_logits,
                         direction='sign of analytic logit gradient; all routes and base log-prob denominators fixed',
                         tolerances=dict(full_absolute=2e-6,full_relative=.03,local_absolute=2e-6,local_relative=2e-4))
     finally:

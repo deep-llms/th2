@@ -47,6 +47,7 @@ class EvalArguments:
     compare_routes: str | None = None  # Earlier routes_sample.npz on identical tokens.
     pilot_diagnostics: bool = False  # Checkpoint-only router/balance observations.
     router_gradient_check: bool = False  # FP32 reference/SDPA finite difference.
+    router_gradient_center_logits: bool = False  # Extra well-conditioned check; keep routes/weights.
 
 
 def data_arguments(recipe, path, cache_dir=None, overwrite=False):
@@ -109,6 +110,8 @@ def main():
         raise ValueError("batch_size and optional max_sequences must be positive")
     if (args.pilot_diagnostics or args.router_gradient_check) and not args.route_study:
         raise ValueError("Pilot diagnostics require route_study")
+    if args.router_gradient_center_logits and not args.router_gradient_check:
+        raise ValueError("Logit centering requires router_gradient_check")
     checkpoint, output = Path(args.checkpoint).resolve(), Path(args.output_file).absolute()
     if output.exists() or output.is_symlink():
         raise ValueError("Output already exists; choose a fresh output_file")
@@ -204,6 +207,10 @@ def main():
                 from eval.pilot_diagnostics import router_gradient_check
                 study['gradient_check'] = router_gradient_check(model, dataset[0],
                     isolate_documents=data.isolate_documents, reset_positions=data.reset_document_positions)
+                if args.router_gradient_center_logits:
+                    study['centered_gradient_check'] = router_gradient_check(model, dataset[0],
+                        isolate_documents=data.isolate_documents, reset_positions=data.reset_document_positions,
+                        center_logits=True)
             accelerator.wait_for_everyone()
     else:
         metrics = evaluate_packed(model, dataset, collator, accelerator, args.batch_size)
