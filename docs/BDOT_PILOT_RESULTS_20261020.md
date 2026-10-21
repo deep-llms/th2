@@ -1,4 +1,4 @@
-# B-DOT pilot results — 20 October 2026
+# B-DOT pilot results — 20–21 October 2026
 
 **Both routing curricula completed training but performed worse than the matched
 dense control.** P1-A was slightly better than P1-B. Neither met the quality
@@ -7,6 +7,9 @@ requirement for expanding the research to the next phase.
 **21 October update:** N-A and random-routing R both completed. N-A reduces
 the deficit but still trails D. R slightly outperforms both learned routing
 curricula; learned routing has not shown an advantage over chance in this pilot.
+Checkpoint diagnostics now show severe module-load imbalance and insufficient
+balancing strength in both learned routers. This supports testing the specified
+balancing correction, but does not establish that it will improve quality.
 
 The experiments follow [BDOT_v2_spec.md](BDOT_v2_spec.md), Stage 0a. Each model
 uses Qwen3-0.6B dimensions with 12 layers: two fixed stem layers, eight middle
@@ -58,9 +61,8 @@ final validation above):
 | 4,768 | 3.51469 | 3.63447 | 3.64903 |
 
 Routing is active: final off-default choices are **45.21% for P1-A** and
-**37.50% for P1-B**. P1-A later concentrates work on a few modules. This
-suggests an optimization/module-utilization problem, but does not establish
-its cause. Soft-start curriculum B did not resolve the quality deficit.
+**37.50% for P1-B**. Both concentrate work on a few modules, as quantified
+below. Soft-start curriculum B did not resolve the quality deficit.
 
 Before the pilots, **T12** passed eight-GPU checkpoint/resume comparisons on a
 reduced-width 12-layer fixture, with identical routes, losses and final states.
@@ -76,12 +78,81 @@ load balance as the cause. These are single-seed results at this scale.
 R beats P1-A by 0.00578 nats and P1-B by 0.02254 nats, while trailing D by
 0.11570 nats. Thus neither learned-routing curriculum beats the random-training
 control here. R has no routing curriculum, so these comparisons do not isolate
-learned selection from curriculum effects. Route interventions and downstream
-evaluation were not run. Phase B remains unsupported.
+learned selection from curriculum effects. Route interventions are now complete
+(below). Downstream evaluation has not been run. Phase B remains unsupported.
+
+## Checkpoint diagnostics — 21 October 2026
+
+At the final checkpoint, own-route losses reproduce the saved results **exactly**.
+The following interventions use the same full validation set and change routing
+only, without retraining. These random-route evaluations are **not** the trained
+random-routing control R in the first table.
+
+| Arm | Own-route loss | Forced default loss | Random-route loss | Default − own |
+|---|---:|---:|---:|---:|
+| P1-A | 3.615941 | 3.745657 | 4.849492 | +0.129716 |
+| P1-B | 3.632704 | 4.450526 | 4.743842 | +0.817822 |
+| N-A | 3.525998 | 3.530833 | 4.054829 | +0.004835 |
+
+Default routing hurts P1-A/B, consistent with modules adapting to their learned
+paths. It does not show an advantage over training with fixed depth. N-A's
+learned ordering improves its own default-path loss by only **0.004835 nats**.
+
+Usage and router statistics below cover the first **4,096 frozen validation
+sequences**, rather than the full loss population. There are eight middle
+modules; balanced load would be 12.5% per module. Reuse rate is the percentage
+of tokens repeating at least one module across their eight middle steps.
+
+| Arm | Mean distinct modules/token | Reuse rate | Smallest / largest module load | Median raw-logit gap | Balance-bias range |
+|---|---:|---:|---:|---:|---:|
+| P1-A | 4.3910 | 99.8617% | 0.5491% / 32.5924% | 15.1621 | 8.5817 |
+| P1-B | 5.0001 | 100.0000% | 0.0000% / 37.5000% | 44.6060 | 9.0157 |
+| N-A | 8.0000 | 0.0000% | 12.5000% / 12.5000% | — | — |
+
+Both P1 arms meet the response document's **weak-balancing condition**, at
+updates 2,500 and 4,768: loads fall below half or above twice the uniform target,
+while the median raw-logit gap exceeds the balance-bias range. P1-B's tiny final
+z-loss still coexists with large gaps; controlling logsumexp does not prevent
+losing candidates from becoming very negative.
+
+Correctness checks found no illegal routes or nonunit gates in seven observed
+checkpoint prefixes. Replaying the actual balance update on 476 logged count
+vectors per arm gives the expected sign throughout. This is not an exact
+historical per-update audit, because beta was not logged at every update.
+
+Gradient checks require a qualification: direct full-LM finite differences at
+the original saturated logits cannot resolve many tiny gradients. Stable local
+gate checks pass at those logits. Conditioned full-LM checks, centering one
+router at a time while retaining weights, routes and forward loss, pass **8/8
+steps per arm** (maximum relative error **0.2147% / 0.0769%** for P1-A/B).
+The initial failed probes and their limitations remain in the detailed report;
+this is evidence for correct gradient machinery, not a conclusive full-LM check
+at every original saturated logit.
+
+There are no flagged within-phase validation spikes. P1-B's soft-to-hard
+transition has a separately reported **+0.170650-nat jump**. Existing full-update
+timing gives hard-routed P1-A **84.2% of native Qwen throughput**, passing the
+60% requirement; this timing excludes evaluation and checkpoint saves.
+
+**Decision:** Gate 0a still fails on quality. N-A remains outside D + 0.01, so
+R_N is not triggered. The predeclared next candidate is **P1-A′**, selecting
+with `argmax(softmax(z) + beta)` over allowed candidates instead of
+`argmax(z + beta)`, otherwise retaining P1-A settings. It is **not implemented
+or launched**. These single-seed results do not yet justify Phase B or longer
+training.
+
+Details and numerical limitations: [Step 1 report](BDOT_PILOT_DIAGNOSTICS_20261021.md).
+Evidence: [diagnostic JSON](results/bdot_pilot_diagnostics_20261021.json),
+[balancing snapshots](results/bdot_pilot_balancing_20261021.csv),
+[per-step module usage](results/bdot_pilot_usage_20261021.csv).
+[Raw diagnostic files](../temp/pilot_diagnostics_20261021/).
+
+## Completion and evidence
 
 D, P1-A, P1-B, N-A and R completed successfully, with all 20 checkpoints per
-arm retained. R finished **21 October at 9:50 a.m. SGT**. The eight GPU burns
-were restored at **9:52 a.m.** and independently verified at **11:54 a.m. SGT**.
+arm retained. R finished **21 October at 9:50 a.m. SGT**. After the diagnostic
+follow-ups, the eight communicating GPU burns were restored at **12:51 p.m.**
+and independently verified at **12:53 p.m. SGT**. No further training is queued.
 Result files were downloaded and hash-checked. Sources: [final results](results/bdot_pilot_final_20261020.json),
 [T12/T14 checks](results/bdot_pilot_launch_20261020.json),
 [P1-A diagnostics](results/bdot_pilot_A_analysis_20261020.json).
@@ -97,12 +168,3 @@ checkpoint checks, burn verification and verified download hashes.
 R: [launch checks](results/bdot_R_launch_20261021.json),
 [final receipt](results/bdot_R_final_20261021.json),
 [raw files](../temp/pilot_R_final_20261021/prepared/runs/R/).
-
-## Checkpoint diagnostics — 21 October 2026
-
-[Step 1 report](BDOT_PILOT_DIAGNOSTICS_20261021.md): own-route losses reproduce
-exactly; forcing the default path worsens P1-A/B. Both have severe module-load
-imbalance and raw-logit gaps exceeding the balance-bias range. Router machinery
-checks pass with the numerical scopes documented; no trained weights changed.
-The predeclared next candidate is bounded-score balancing P1-A′, not yet launched.
-N-A remains outside D + 0.01, so R_N is not triggered. Gate 0a still fails.

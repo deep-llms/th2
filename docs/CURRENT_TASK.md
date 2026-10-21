@@ -3,6 +3,10 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+The [combined pilot results](BDOT_PILOT_RESULTS_20261020.md) now consolidate
+D/P1-A/P1-B/N-A/R final metrics and the completed Step 1 diagnostic results,
+including interventions, usage/balancing, numerical limits and the next decision.
+
 ## Step 1 diagnostics complete — 21 October 2026, 12:58 p.m. SGT
 
 Followed `docs/BDOT_pilot_results_response.md` Step 1; **no new training**.
