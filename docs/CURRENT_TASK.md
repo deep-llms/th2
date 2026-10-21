@@ -3,6 +3,31 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+## Authorized checkpoint diagnostics — 21 October 2026
+
+User approved Step 1 of `docs/BDOT_pilot_results_response.md`: evaluate retained
+P1-A/P1-B checkpoints, route interventions, usage, balancing/logit scale, and
+fixed-route ST-gradient finite differences. Include N-A usage; R/N training
+already completed. No additional training or conditional arms are authorized.
+
+Implementation reuses `eval/packed_ppl.py` and `eval/route_study.py`; temporary
+observers leave checkpoint weights and training code unchanged. Full final
+validation uses FA4, eight ranks, microbatch 16. Router finite differences use
+one 128-token prefix with FP32 math SDPA/reference projections to avoid BF16
+quantization, and explicitly hold routes and base probability denominators fixed.
+Logged z-loss is mean squared logsumexp, not its mean. Historical beta was not
+logged every update: report saved beta, actual-update replay on logged counts,
+and limited interval compatibility; do not invent a full beta or mean-LSE history.
+
+Intended fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-diagnostics-20261021-a01`.
+Target th2/main, B200 6Y3O. Recheck predecessor R burns, copy/verify Accelerate,
+reclaim only verified workers through the existing supervisor, require all GPUs
+free, evaluate, then automatically restore/verify communicating burns on success
+or failure. No training checkpoint or shared data/cache is deleted or modified.
+Local observer/distributed/gradient checks pass, including a deliberately reversed
+gate-gradient rejection. Next: complete B200 run, collect results, apply the doc's
+diagnostic decision rules, and report before any further experiment.
+
 ## R complete — verified 21 October 2026, 11:54 a.m. SGT
 
 R completed all **4,768 updates** successfully at **9:50:49 a.m. SGT**.

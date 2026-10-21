@@ -39,14 +39,22 @@ def summarize_routes(routes):
     windows = len(paths) // 10_000
     diversity = [int(np.unique(keys[i*10_000:(i+1)*10_000]).size) for i in range(windows)]
     off = paths != np.arange(steps)
-    repeated = (np.diff(np.sort(paths, axis=1), axis=1) == 0).any(axis=1)
+    distinct = 1 + (np.diff(np.sort(paths, axis=1), axis=1) != 0).sum(axis=1)
+    repeated = distinct < steps
+    counts = np.array([np.bincount(paths[:, s], minlength=steps) for s in range(steps)])
+    load = counts.sum(0) / paths.size
     return dict(num_sequences=len(routes), input_tokens=len(paths), routing_decisions=paths.size,
         off_default_share=float(off.mean()), off_default_share_by_step=off.mean(0).tolist(),
         reuse_rate=float(repeated.mean()), distinct_paths=int(np.unique(keys).size),
         distinct_paths_per_10000_tokens=float(np.mean(diversity)) if windows else None,
         diversity_complete_windows=windows, diversity_excluded_tail_tokens=len(paths) % 10_000,
         mean_path_length=steps,
-        module_counts_by_step=[np.bincount(paths[:, s], minlength=steps).tolist() for s in range(steps)])
+        module_counts_by_step=counts.tolist(),
+        module_share_by_step=(counts / len(paths)).tolist(),
+        module_load_share=load.tolist(), module_target_share=1 / steps,
+        module_load_over_target=(load * steps).tolist(),
+        distinct_modules_histogram=np.bincount(distinct, minlength=steps+1).tolist(),
+        mean_distinct_modules=float(distinct.mean()))
 
 
 class RouteCollector:

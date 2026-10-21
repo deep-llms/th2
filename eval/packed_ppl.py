@@ -45,6 +45,8 @@ class EvalArguments:
     route_sequences: int = 4096
     route_artifact_sequences: int = 256
     compare_routes: str | None = None  # Earlier routes_sample.npz on identical tokens.
+    pilot_diagnostics: bool = False  # Checkpoint-only router/balance observations.
+    router_gradient_check: bool = False  # FP32 reference/SDPA finite difference.
 
 
 def data_arguments(recipe, path, cache_dir=None, overwrite=False):
@@ -105,6 +107,8 @@ def main():
         raise ValueError("precision must be fp32, bf16 or fp16")
     if args.batch_size < 1 or (args.max_sequences is not None and args.max_sequences < 1):
         raise ValueError("batch_size and optional max_sequences must be positive")
+    if (args.pilot_diagnostics or args.router_gradient_check) and not args.route_study:
+        raise ValueError("Pilot diagnostics require route_study")
     checkpoint, output = Path(args.checkpoint).resolve(), Path(args.output_file).absolute()
     if output.exists() or output.is_symlink():
         raise ValueError("Output already exists; choose a fresh output_file")
@@ -184,9 +188,23 @@ def main():
     study = sample = None
     if args.route_study:
         from eval.route_study import run_route_study
-        metrics, study, sample = run_route_study(model, dataset, collator, accelerator, args.batch_size,
-            route_sequences=args.route_sequences, artifact_sequences=args.route_artifact_sequences,
-            routing_seed=args.routing_seed)
+        from contextlib import nullcontext
+        from eval.pilot_diagnostics import RouterObserver
+        observer = RouterObserver(model, accelerator, args.route_sequences) if args.pilot_diagnostics else None
+        with observer if observer is not None else nullcontext():
+            metrics, study, sample = run_route_study(model, dataset, collator, accelerator, args.batch_size,
+                route_sequences=args.route_sequences, artifact_sequences=args.route_artifact_sequences,
+                routing_seed=args.routing_seed)
+        if observer is not None:
+            extra = observer.finish()
+            if accelerator.is_main_process:
+                study['router_health'] = extra
+        if args.router_gradient_check:
+            if accelerator.is_main_process:
+                from eval.pilot_diagnostics import router_gradient_check
+                study['gradient_check'] = router_gradient_check(model, dataset[0],
+                    isolate_documents=data.isolate_documents, reset_positions=data.reset_document_positions)
+            accelerator.wait_for_everyone()
     else:
         metrics = evaluate_packed(model, dataset, collator, accelerator, args.batch_size)
     if len(dataset) == full_size and metrics["num_tokens"] != recipe["scored_target_tokens"]:
