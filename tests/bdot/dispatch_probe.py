@@ -31,11 +31,18 @@ def main():
     from bdot.model import BDOTForCausalLM
     from bdot.routing import RoutingConfig
     from packed_training import PackedCollator, model_inputs
-    name = 'bdot._pre_dispatch_optimization'
-    spec = importlib.util.spec_from_file_location(name, a.reference/'bdot/model.py')
-    reference = importlib.util.module_from_spec(spec)
-    sys.modules[name] = reference
-    spec.loader.exec_module(reference)
+    # Isolate relative imports too: old model + new grouped/routing helpers
+    # would not be a genuine pre-change reference.
+    import importlib
+    from dataclasses import fields
+    name = '_bdot_frozen_reference'
+    spec = importlib.util.spec_from_file_location(name, a.reference/'bdot/__init__.py',
+        submodule_search_locations=[str(a.reference/'bdot')])
+    package = importlib.util.module_from_spec(spec)
+    sys.modules[name] = package
+    spec.loader.exec_module(package)
+    reference = importlib.import_module(name+'.model')
+    old_fields = {f.name for f in fields(importlib.import_module(name+'.routing').RoutingConfig)}
     torch.set_num_threads(1)
     torch.manual_seed(31)
     variants = [
@@ -67,7 +74,9 @@ def main():
                     config._attn_implementation = register_backend()
                 config.bdot = RoutingConfig(n_stem=1, n_coda=1, S=4, default_prior=0.,
                                             expert_backend=expert_backend, **options).to_dict()
-                old = reference.BDOTForCausalLM(copy.deepcopy(config)).to(a.device)
+                old_config = copy.deepcopy(config)
+                old_config.bdot = {k:v for k,v in config.bdot.items() if k in old_fields}
+                old = reference.BDOTForCausalLM(old_config).to(a.device)
                 new = BDOTForCausalLM(copy.deepcopy(config)).to(a.device)
                 new.load_state_dict(old.state_dict())
                 old.progress = new.progress = progress

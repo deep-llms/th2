@@ -17,7 +17,8 @@ class RouterObserver:
         self.local_sequences = len(range(accelerator.process_index, sequences, accelerator.num_processes))
         self.sequences = sequences
         self.rows = [dict(seen=0, tokens=0, decisions=0, violations=0, gate_errors=0,
-                         lse_sum=0., lse_square_sum=0., lse_count=0, gaps=[], biased_gaps=[])
+                         lse_sum=0., lse_square_sum=0., lse_count=0, gaps=[], biased_gaps=[],
+                         saturated=0, saturated_eligible=0, eligible=0)
                      for _ in model.routed_steps]
         self.restore, self.handles = [], []
         self.latest = {}
@@ -52,6 +53,14 @@ class RouterObserver:
                     row['violations'] += int((~valid.gather(1, choice[:count])).sum())
                     row['gate_errors'] += int(gate[:count].ne(1).sum())
                     z = self.latest.get(index)
+                    probs = (z[:count].detach().softmax(-1) if z is not None
+                             else valid.float()/valid.sum(-1, keepdim=True))
+                    selected_p = probs.gather(1, choice[:count, :1]).flatten()
+                    eligible = valid.sum(-1) > 1
+                    saturated = selected_p > .99
+                    row['saturated'] += int(saturated.sum())
+                    row['saturated_eligible'] += int((saturated & eligible).sum())
+                    row['eligible'] += int(eligible.sum())
                     if z is not None:
                         z = z[:count].detach()
                         multiple = valid.sum(-1) > 1
@@ -59,7 +68,9 @@ class RouterObserver:
                         row['lse_sum'] += float(lse.sum())
                         row['lse_square_sum'] += float(lse.square().sum())
                         row['lse_count'] += len(lse)
-                        for key, values in [('gaps', z), ('biased_gaps', z+context.beta)]:
+                        selected_scores = (probs if layer.options.select_on == 'probs' else z) + context.beta
+                        selected_scores = selected_scores.masked_fill(~valid, -torch.inf)
+                        for key, values in [('gaps', z), ('biased_gaps', selected_scores)]:
                             top = values[multiple].topk(2, dim=-1).values
                             row[key].append((top[:, 0]-top[:, 1]).cpu().numpy())
                 return choice, gate
@@ -90,7 +101,8 @@ class RouterObserver:
         for step in range(self.model.options.S):
             rows = [part[step] for part in parts]
             sums = {k: sum(r[k] for r in rows) for k in
-                    ('seen', 'tokens', 'decisions', 'violations', 'gate_errors', 'lse_sum', 'lse_square_sum', 'lse_count')}
+                    ('seen', 'tokens', 'decisions', 'violations', 'gate_errors', 'lse_sum', 'lse_square_sum', 'lse_count',
+                     'saturated', 'saturated_eligible', 'eligible')}
             if sums['seen'] != self.sequences:
                 raise RuntimeError('Router diagnostic prefix was not visited exactly once')
             out = dict(step=step, **sums,
@@ -108,6 +120,12 @@ class RouterObserver:
         report['raw_gap'] = dict(count=len(values), median=float(np.median(values)) if len(values) else None,
                                  p90=float(np.quantile(values, .9)) if len(values) else None)
         report['window_violations'] = sum(r['violations'] for r in report['steps'])
+        report['saturated_share'] = sum(r['saturated'] for r in report['steps']) / max(
+            sum(r['tokens'] for r in report['steps']), 1)
+        report['saturated_eligible_share'] = sum(r['saturated_eligible'] for r in report['steps']) / max(
+            sum(r['eligible'] for r in report['steps']), 1)
+        report['select_on'] = self.model.options.select_on
+        report['logit_cap'] = self.model.options.logit_cap
         report['nonunit_gates'] = sum(r['gate_errors'] for r in report['steps'])
         report['passed'] = report['window_violations'] == report['nonunit_gates'] == 0
         report['scope'] = 'First frozen validation sequences; only as-trained hard routes. Logit gaps exclude sole-candidate decisions.'

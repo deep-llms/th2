@@ -36,17 +36,21 @@ def queries(step, x, groups):
     offsets = torch.tensor(sizes, device=x.device, dtype=torch.int32).cumsum(0, dtype=torch.int32)
     selected = x.flatten(0, 1)[order % (x.shape[0]*x.shape[1])]
     projected = linear(selected, [e.q_proj for e in experts], offsets)
-    normalized = torch.cat([e.q_norm(part.view(-1, step.config.num_attention_heads, step.head_dim)).flatten(1)
-                            for e, part in zip(experts, projected.split(sizes))])
+    normalized = torch.cat([step.apply_placement(m,
+        e.q_norm(part.view(-1, step.config.num_attention_heads, step.head_dim)).flatten(1), 'query')
+        for (m, _), e, part in zip(groups, experts, projected.split(sizes))])
     return order, experts, sizes, offsets, normalized
 
 
-def outputs(step, h, attention, order, experts, sizes, offsets):
+def outputs(step, h, attention, order, experts, sizes, offsets, groups=None):
     residual = h.flatten(0, 1)[order % (h.shape[0]*h.shape[1])]
     h1 = residual + linear(attention[order], [e.o_proj for e in experts], offsets)
     u = torch.cat([e.mlp_norm(part) for e, part in zip(experts, h1.split(sizes))])
     if step.options.step_film:
         u = u * (1 + step.film_gain.to(u.dtype)) + step.film_bias.to(u.dtype)
+    if step.placement_film:
+        u = torch.cat([step.apply_placement(m, part, 'mlp')
+                       for (m, _), part in zip(groups, u.split(sizes))])
     gate = linear(u, [e.mlp.gate_proj for e in experts], offsets)
     up = linear(u, [e.mlp.up_proj for e in experts], offsets)
     activated = torch.cat([e.mlp.act_fn(part) for e, part in zip(experts, gate.split(sizes))])

@@ -8,6 +8,48 @@ from transformers import TrainerCallback
 from packed_training import PackedTrainer
 
 
+class MilestoneCheckpointCallback(TrainerCallback):
+    """Prune only this run's superseded saves, after the newest save is complete."""
+    def on_step_end(self, args, state, control, **kwargs):
+        if state.global_step in args.keep_checkpoint_steps or state.global_step == state.max_steps:
+            control.should_save = True
+        return control
+
+    def on_save(self, args, state, control, **kwargs):
+        if torch.distributed.is_initialized():
+            torch.distributed.barrier()  # All rank-local RNG files must be closed.
+        if not args.should_save:
+            return
+        import re
+        import shutil
+        root = Path(args.output_dir).resolve()
+        current = root/f'checkpoint-{state.global_step}'
+        required = ['trainer_state.json', 'optimizer.pt', 'scheduler.pt',
+                    'config.json', 'train_config.json', 'data_recipe.json', 'training_recipe.json']
+        required += (['rng_state.pth'] if args.world_size == 1 else
+                     [f'rng_state_{i}.pth' for i in range(args.world_size)])
+        if (not current.is_dir() or current.is_symlink()
+                or any(not (current/f).is_file() or (current/f).stat().st_size == 0 for f in required)
+                or not list(current.glob('*.safetensors'))
+                or json.loads((current/'trainer_state.json').read_text())['global_step'] != state.global_step):
+            raise RuntimeError('Refusing checkpoint pruning: newest checkpoint is incomplete')
+        keep = set(args.keep_checkpoint_steps) | {state.global_step}
+        removed = []
+        for path in sorted(root.glob('checkpoint-*')):
+            match = re.fullmatch(r'checkpoint-(\d+)', path.name)
+            if match and int(match[1]) < state.global_step and int(match[1]) not in keep:
+                if path.is_symlink() or not path.is_dir() or path.resolve().parent != root:
+                    raise RuntimeError('Refusing unsafe checkpoint path: '+str(path))
+                # Require proof this is an actual save, not an unrelated folder.
+                if json.loads((path/'trainer_state.json').read_text())['global_step'] != int(match[1]):
+                    raise RuntimeError('Checkpoint name/state mismatch')
+                shutil.rmtree(path)
+                removed.append(path.name)
+        with (root/'checkpoint_retention.jsonl').open('a') as handle:
+            handle.write(json.dumps(dict(step=state.global_step, removed=removed,
+                retained=sorted(p.name for p in root.glob('checkpoint-*'))))+'\n')
+
+
 class RoutingUpdateCallback(TrainerCallback):
     def __init__(self, trainer):
         self.trainer = trainer
@@ -88,6 +130,8 @@ class BDOTTrainer(PackedTrainer):
         if "loss" in logs:
             logs['objective_loss'] = logs.pop('loss')
             logs.update(self.model.last_update_metrics)
+            if self.state.global_step % 100 == 0:
+                logs.update(self.model.routing_diagnostic_metrics())
             interval = (self.model.training_totals - self.model.logged_training_totals).tolist()
             logs.update(lm_loss=interval[0]/max(interval[1], 1),
                         router_z_loss=interval[2]/max(interval[3], 1),
@@ -190,4 +234,5 @@ class BDOTTrainer(PackedTrainer):
 
     def get_decay_parameter_names(self, model):
         names = super().get_decay_parameter_names(model)
-        return [name for name in names if not any(part in name for part in ('norm', 'bias', 'film_'))]
+        return [name for name in names if not any(part in name for part in
+                ('norm', 'bias', 'film_', 'placement_film'))]

@@ -25,6 +25,7 @@ def main():
     from packed_fa4 import register_backend
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--v3',action='store_true')
     args=p.parse_args()
     if not os.environ.get('CUDA_VISIBLE_DEVICES'):p.error('Explicit GPU allocation required')
     if args.output.exists():p.error('Fresh result path required')
@@ -52,15 +53,25 @@ def main():
     rows=[dict(input_ids=torch.randint(2,256,(64,)).tolist(),labels=[0]*64,
                attention_mask=[1]*64,segments=[0]*17+[1]*47) for _ in range(2)]
     for row in rows:row['labels']=row['input_ids'].copy()
+    variants = [(True,.01,False,'both'),(True,.3,False,'both'),(False,.01,True,'both'),(False,.3,True,'both')]
+    if args.v3:
+        variants = [(reuse,1.,True,scope) for reuse in (False,True) for scope in ('both','query','mlp')]
     for backend in ('sdpa','fa4'):
-        for reuse,phase,checkpointing in [(True,.01,False),(True,.3,False),(False,.01,True),(False,.3,True)]:
+        for reuse,phase,checkpointing,scope in variants:
             c=Qwen3Config(vocab_size=256,hidden_size=256,intermediate_size=768,num_hidden_layers=6,
                 num_attention_heads=4,num_key_value_heads=2,head_dim=128,
                 attention_dropout=0.,tie_word_embeddings=True,rms_norm_eps=1e-6,max_position_embeddings=128)
             c._attn_implementation='sdpa' if backend=='sdpa' else register_backend()
             c.use_cache=False
-            c.bdot=RoutingConfig(n_stem=1,n_coda=1,S=4,r=1,reuse=reuse,explore_eps_max=0.).to_dict()
+            extra = dict(curriculum='none',logit_cap=2.,select_on='probs',placement_film=True,
+                         placement_film_scope=scope) if args.v3 else {}
+            c.bdot=RoutingConfig(n_stem=1,n_coda=1,S=4,r=2 if args.v3 and not reuse else 1,
+                                reuse=reuse,explore_eps_max=0.,**extra).to_dict()
             a=BDOTForCausalLM(c).cuda()
+            if args.v3:
+                with torch.no_grad():
+                    for name,parameter in a.named_parameters():
+                        if 'placement_film' in name:parameter.uniform_(-.1,.1)
             # Clear route margins isolate numerical GEMM checks from discrete ties.
             with torch.no_grad():
                 for s,step in enumerate(a.routed_steps):
@@ -74,6 +85,12 @@ def main():
                 for m in (a,b):m.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
             inputs=model_inputs({k:v.cuda() if isinstance(v,torch.Tensor) else v
                 for k,v in PackedCollator(attention_backend=backend)(rows).items()})
+            if args.v3:
+                # Mixed legal routes exercise occupied off-home PF groups while
+                # holding discrete choices identical for the kernel comparison.
+                paths=torch.tensor([[0,1,2,3],[1,0,3,2],
+                                    [1,0,3,2] if reuse else [2,0,1,3]],device='cuda')
+                inputs['bdot_forced_routes']=paths[torch.arange(128,device='cuda')%3].T.reshape(4,2,64)
             with torch.autocast('cuda',dtype=torch.bfloat16):
                 oa=a(**inputs);ob=b(**inputs)
             assert torch.equal(a.last_routes,b.last_routes),'Route margin fixture changed'
@@ -113,6 +130,7 @@ def main():
             assert mature_delta<1e-5,('AdamW existing-state difference',mature_delta)
             assert torch.equal(a.balance_bias,b.balance_bias)
             records.append(dict(case='model',backend=backend,reuse=reuse,phase=phase,
+                v3=args.v3,placement_film_scope=scope,
                 checkpointing=checkpointing,errors=errors,adamw_first_max_abs=delta,
                 adamw_first_update_relative=first_update_relative,adamw_existing_state_max_abs=mature_delta))
             print('GROUPED_CASE '+json.dumps(records[-1]),flush=True)

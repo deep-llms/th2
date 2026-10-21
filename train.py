@@ -76,6 +76,8 @@ class DataArguments:
 class BaselineTrainingArguments(TrainingArguments):
     stop_after: int | None = field(default=None, metadata={
         "help": "Absolute optimizer step to stop/save at; max_steps remains the full LR schedule"})
+    keep_checkpoint_steps: list[int] | None = field(default=None, metadata={
+        "help": "B-DOT only: retain these milestones plus the latest complete checkpoint"})
 
     @property
     def device(self):
@@ -89,6 +91,12 @@ class BaselineTrainingArguments(TrainingArguments):
 
     def __post_init__(self):
         super().__post_init__()
+        if self.keep_checkpoint_steps is not None:
+            if (not self.keep_checkpoint_steps or any(type(s) is not int or s < 1
+                    for s in self.keep_checkpoint_steps) or self.save_total_limit is not None
+                    or self.save_only_model or self.load_best_model_at_end):
+                raise ValueError('Milestone retention needs positive steps, full saves, '
+                                 'save_total_limit=None and no load_best_model_at_end')
         if self.stop_after is not None:
             if type(self.stop_after) is not int or not 1 <= self.stop_after <= self.max_steps:
                 raise ValueError("stop_after must be an integer in [1, max_steps]; set max_steps to the full schedule")
@@ -367,6 +375,11 @@ def main():
     if checkpoint is not None:
         require_resume_training(checkpoint, training_recipe, training_args)
     trainer.add_callback(SaveConfigCallback(model_args, data_args, data_recipe, training_recipe))
+    if training_args.keep_checkpoint_steps is not None:
+        if not hasattr(model.config, 'bdot'):
+            raise ValueError('Milestone retention is validated for B-DOT only')
+        from bdot.trainer import MilestoneCheckpointCallback
+        trainer.add_callback(MilestoneCheckpointCallback())
     if training_args.should_save:
         save_data_recipe(training_args.output_dir, data_recipe)
         save_training_recipe(training_args.output_dir, training_recipe)

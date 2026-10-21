@@ -32,6 +32,10 @@ class RoutingConfig:
     widen_every_frac: float = 0.1
     seed: int = 0
     expert_backend: str = 'reference'
+    logit_cap: float | None = None
+    select_on: str = 'logits'
+    placement_film: bool = False
+    placement_film_scope: str = 'both'
 
     def __post_init__(self):
         for key in ('S', 'n_stem', 'n_coda', 'r', 'seed'):
@@ -47,6 +51,15 @@ class RoutingConfig:
             raise ValueError('curriculum must be A, B or none')
         if self.expert_backend not in ('reference', 'grouped'):
             raise ValueError('expert_backend must be reference or grouped')
+        if self.select_on not in ('logits', 'probs'):
+            raise ValueError('select_on must be logits or probs')
+        if self.logit_cap is not None and (isinstance(self.logit_cap, bool)
+                or not math.isfinite(self.logit_cap) or self.logit_cap <= 0):
+            raise ValueError('logit_cap must be positive and finite, or null')
+        if type(self.placement_film) is not bool or self.placement_film_scope not in ('both', 'query', 'mlp'):
+            raise ValueError('Invalid placement FiLM configuration')
+        if not self.placement_film and self.placement_film_scope != 'both':
+            raise ValueError('placement_film_scope requires placement_film')
         if self.routing != 'learned' and self.curriculum != 'none':
             raise ValueError('Fixed/random controls require curriculum=none')
         if not 0 < self.soft_phase_frac < self.explore_end_frac <= 1:

@@ -3,7 +3,7 @@
 Only Phase A is implemented. Unsupported scientific variants fail explicitly.
 The native Qwen3 forward retains masks, RoPE, cache ownership and LM loss.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 
 import torch
@@ -35,6 +35,7 @@ class Router(nn.Module):
         self.weight = nn.Parameter(torch.empty(options.S, config.hidden_size))
         self.bias = nn.Parameter(torch.zeros(options.S))
         self.visits = nn.Parameter(torch.zeros(options.S, options.S))
+        self.logit_cap = options.logit_cap
         nn.init.normal_(self.weight, std=options.init_std_scale / math.sqrt(config.hidden_size))
         with torch.no_grad():
             self.bias[step] = options.default_prior
@@ -47,7 +48,26 @@ class Router(nn.Module):
             x = x * self.norm.weight.float()
             z = nn.functional.linear(x, self.weight.float(), self.bias.float())
             z = z + nn.functional.linear(visits.float(), self.visits.float())
+            if self.logit_cap is not None:
+                z = self.logit_cap * torch.tanh(z / self.logit_cap)
             return z.masked_fill(~allowed, -torch.inf)
+
+
+class PlacementFiLM(nn.Module):
+    """Only allowed off-home pairs own parameters; home is an exact bypass."""
+    def __init__(self, config, scope):
+        super().__init__()
+        for name, size in [('query', config.num_attention_heads * config.head_dim),
+                           ('mlp', config.hidden_size)]:
+            if scope in ('both', name):
+                self.register_parameter(name+'_gain', nn.Parameter(torch.zeros(size)))
+                self.register_parameter(name+'_bias', nn.Parameter(torch.zeros(size)))
+
+    def forward(self, value, kind):
+        gain = getattr(self, kind+'_gain', None)
+        if gain is None:
+            return value
+        return value * (1 + gain.to(value.dtype)) + getattr(self, kind+'_bias').to(value.dtype)
 
 
 @dataclass
@@ -65,6 +85,7 @@ class RouteContext:
     entropies: list
     forced: torch.Tensor | None = None
     routing: str | None = None
+    saturation: list = field(default_factory=list)
 
 
 class RoutedStep(nn.Module):
@@ -88,6 +109,10 @@ class RoutedStep(nn.Module):
         if options.step_film:
             self.film_gain = nn.Parameter(torch.zeros(config.hidden_size))
             self.film_bias = nn.Parameter(torch.zeros(config.hidden_size))
+        self.placement_film = nn.ModuleDict({
+            str(m): PlacementFiLM(config, options.placement_film_scope)
+            for m in range(max(0, step-options.r), min(options.S, step+options.r+1))
+            if options.placement_film and m != step})
         if not options.reuse:
             for reach in range(min(options.r, options.S-1)+1):
                 allowed, transitions = quota_table(options.S, reach)
@@ -130,7 +155,10 @@ class RoutedStep(nn.Module):
         else:
             # Stable sorting implements the specified lowest-id tie break.
             k = min(2 if context.soft else 1, opt.S)
-            scores = z + context.beta
+            scores = (z.softmax(-1) if opt.select_on == 'probs' else z) + context.beta
+            # In probability space disallowed candidates have p=0, not -inf.
+            # They must remain impossible even if their balance bias is large.
+            scores = scores.masked_fill(~allowed, -torch.inf)
             # argmax chooses the first maximum, preserving the lowest-id tie rule.
             choice = (scores.argmax(-1, keepdim=True) if k == 1 else
                       torch.argsort(scores, dim=-1, descending=True, stable=True)[:, :k])
@@ -150,6 +178,13 @@ class RoutedStep(nn.Module):
             logp = z.log_softmax(-1).gather(1, choice)
             weights = (logp - logp.detach()).exp() if opt.gate == 'st' else logp.exp()
         top = choice[:, 0]
+        if self.training:
+            with torch.no_grad():
+                prob = (z.softmax(-1).gather(1, top[:, None]).flatten() if z is not None
+                        else allowed.sum(-1).float().reciprocal())
+                saturated = prob > .99
+                context.saturation.append(torch.stack((saturated.sum(),
+                    (saturated & multiple).sum(), multiple.sum())))
         context.visits = context.visits.scatter_add(1, top[:, None], torch.ones(n, 1, device=h.device))
         if not opt.reuse:
             context.state = getattr(self, f'transitions_{min(context.reach, opt.S-1)}')[context.state, top]
@@ -159,6 +194,10 @@ class RoutedStep(nn.Module):
         context.counts.append(torch.zeros(opt.S, dtype=torch.long, device=h.device).scatter_add_(
             0, top, torch.ones_like(top)))
         return choice, weights
+
+    def apply_placement(self, module, value, kind):
+        key = str(module)
+        return self.placement_film[key](value, kind) if key in self.placement_film else value
 
     def execute_home(self, h, attention_mask, position_embeddings, past_key_values, kwargs):
         """Skip route discovery while preserving the original expert autograd path.
@@ -226,7 +265,8 @@ class RoutedStep(nn.Module):
                 expert = self.experts[m]
                 selected = x.reshape(n, d)[idx % n]
                 projected = expert.q_proj(selected).view(-1, self.config.num_attention_heads, self.head_dim)
-                projections.append(expert.q_norm(projected).flatten(1).to(q.dtype))
+                normalized = expert.q_norm(projected).flatten(1)
+                projections.append(self.apply_placement(m, normalized, 'query').to(q.dtype))
             if projections:
                 q = q.index_copy(0, order, torch.cat(projections))
         interface = ALL_ATTENTION_FUNCTIONS.get_interface(self.config._attn_implementation, eager_attention_forward)
@@ -240,7 +280,7 @@ class RoutedStep(nn.Module):
         attention = torch.cat(attention)
         result = h.new_zeros(branches*n, d)
         if grouped:
-            projected = grouped_ops.outputs(self, h, attention, order, experts, group_sizes, offsets)
+            projected = grouped_ops.outputs(self, h, attention, order, experts, group_sizes, offsets, groups)
             result = result.index_copy(0, order, projected)
         else:
             projections = []
@@ -250,6 +290,7 @@ class RoutedStep(nn.Module):
                 u = expert.mlp_norm(h1)
                 if self.options.step_film:
                     u = u * (1 + self.film_gain.to(u.dtype)) + self.film_bias.to(u.dtype)
+                u = self.apply_placement(m, u, 'mlp')
                 projections.append((h1 + expert.mlp(u)).to(result.dtype))
             if projections:
                 result = result.index_copy(0, order, torch.cat(projections))
@@ -310,7 +351,7 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         self.register_buffer('training_totals', torch.zeros(5, dtype=torch.float64))
         self.register_buffer('logged_training_totals', torch.zeros(5, dtype=torch.float64))
         self.register_buffer('load_counts', torch.zeros(options.S, options.S, dtype=torch.long), persistent=False)
-        self.register_buffer('metric_totals', torch.zeros(9, dtype=torch.float64), persistent=False)
+        self.register_buffer('metric_totals', torch.zeros(13, dtype=torch.float64), persistent=False)
         self._last_update_metrics = {}
         self._last_update_snapshot = None
         self.progress = 0.
@@ -390,10 +431,12 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
                 routes = torch.stack(context.routes)
                 off_default = (routes != torch.arange(self.options.S, device=device)[:, None, None]).sum()
                 entropy = torch.stack(context.entropies).sum() if context.entropies else z_sum.new_zeros(())
+                saturation = torch.stack(context.saturation).sum(0)
                 self.metric_totals.add_(torch.stack((output.loss.detach().double()*lm_denominator,
                     lm_count, z_sum.detach(), lm_count.new_tensor(n*self.options.S),
                     off_default, lm_count.new_tensor(n*self.options.S), entropy,
-                    context.visits.gt(1).any(-1).sum(), lm_count.new_tensor(n))).double())
+                    context.visits.gt(1).any(-1).sum(), lm_count.new_tensor(n),
+                    context.visits.gt(0).sum(), *saturation.unbind())).double())
             output.loss = output.loss + self.options.z_loss_coef*z_sum / denominator
         return output
 
@@ -442,6 +485,23 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         for m, load in enumerate(module_loads):
             result[f'module_{m}_decisions_last_update'] = load
         self._last_update_metrics = result
+        return result
+
+    def routing_diagnostic_metrics(self):
+        """Called only on diagnostic logging steps; no per-token CPU transfers."""
+        metrics, counts = self._last_update_snapshot
+        v, pairs = metrics.tolist(), counts.cpu()
+        total = max(int(pairs.sum()), 1)
+        beta = self.balance_bias.tolist()
+        result = dict(mean_distinct_modules_last_update=v[9]/max(v[8], 1),
+            saturated_share_last_update=v[10]/max(v[5], 1),
+            saturated_eligible_share_last_update=v[11]/max(v[12], 1),
+            saturation_eligible_decisions_last_update=int(v[12]))
+        for m in range(self.options.S):
+            result[f'module_{m}_load_last_update'] = int(pairs[:, m].sum())/total
+            result[f'module_{m}_beta_after_update'] = beta[m]
+            for s in range(self.options.S):
+                result[f'placement_{m}_{s}_share_last_update'] = int(pairs[s, m])/total
         return result
 
     def native_reference(self):

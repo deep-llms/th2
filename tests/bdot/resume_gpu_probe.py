@@ -137,7 +137,7 @@ def worker(config, traces):
 
 
 def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backend='reference', curriculum='B',
-            schedule_steps=None):
+            schedule_steps=None, variant_config=None):
     import torch
     from datasets import Dataset
     from tokenizers import Tokenizer
@@ -158,7 +158,7 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backe
     rows = torch.randint(510, (n,126), generator=gen).tolist()
     Dataset.from_dict({'id':[str(i) for i in range(n)],
         'text':[' '.join(f'w{x}' for x in row) for row in rows]}).save_to_disk(out/'data')
-    cfg = json.loads((ROOT/'configs/bdot/P1-B.json').read_text())
+    cfg = json.loads((Path(variant_config) if variant_config else ROOT/'configs/bdot/P1-B.json').read_text())
     cfg.update(vocab_size=512, hidden_size=256, intermediate_size=768,
                num_attention_heads=4, num_key_value_heads=2, head_dim=128,
                eos_token_id=1)
@@ -180,6 +180,8 @@ def prepare(out, backend, world, steps, split, soft_split, use_cpu, expert_backe
         dataloader_num_workers=0, disable_tqdm=True, gradient_checkpointing=False,
         seed=42, data_seed=0, train_sampling_strategy='sequential',
         eval_strategy='steps', eval_steps=soft_split, per_device_eval_batch_size=1)
+    if variant_config:
+        base['keep_checkpoint_steps'] = sorted({soft_split, split, min(2*soft_split,steps), steps})
     jobs = [('full',None,steps),('resume_hard',split,steps),
             ('resume_soft',soft_split,min(2*soft_split,steps))]
     for name,start,end in jobs:
@@ -240,6 +242,7 @@ def main():
     p.add_argument('--soft-split',type=int,default=20)
     p.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
     p.add_argument('--curriculum',choices=['A','B'],default='B')
+    p.add_argument('--variant-config',type=Path,help='New routing options in the same reduced-width resume fixture')
     a=p.parse_args();out=a.output.resolve()
     if a.mode=='worker':
         worker(a.config,out)
@@ -251,7 +254,7 @@ def main():
         p.error('schedule-steps must be at least steps')
     if a.mode=='compare':return compare(out,world,a.split,a.soft_split,a.steps,a.schedule_steps)
     jobs=prepare(out,'sdpa' if a.cpu else 'fa4',world,a.steps,a.split,a.soft_split,a.cpu,
-                 a.expert_backend,a.curriculum,a.schedule_steps)
+                 a.expert_backend,a.curriculum,a.schedule_steps,a.variant_config)
     for name,_,_ in jobs:
         argv=[sys.executable]
         if not a.cpu:

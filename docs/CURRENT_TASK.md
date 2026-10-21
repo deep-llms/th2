@@ -1,5 +1,19 @@
 # Current task
 
+## Active: implement, verify and launch v3 — 21 October 2026
+
+User approved `docs/BDOT_v3_pilot_plan.md`, plus three judged ablations:
+V5 = V4 + both placement FiLM maps; V6/V7 = V2 with query-only/MLP-only PF.
+They are appended outside the predefined candidate pool. With the required
+P1-A′ v2 closure this is 13 training jobs: 12 v3 runs plus that closure.
+User delegated remaining choices and authorized local/B200 verification and
+the full eight-GPU sequential launch, preserving environments/data/old runs.
+Implementation is in progress; no v3 training has launched yet. Keep new options
+off by default, pass local/GPU checks and carry-over checks before launch; copy
+and verify Accelerate, reclaim only verified burns, check all GPUs free, and
+restore communicating burns automatically after success/failure. Older next-step
+statements below are historical and superseded by this authorization.
+
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
