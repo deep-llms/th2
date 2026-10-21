@@ -1,5 +1,8 @@
 # B-DOT v3 implementation and launch
 
+**Completed 22 October:** all 13 runs and evaluations finished; verified results
+and GPU-burn handoff are in [the final report](BDOT_V3_RESULTS_20261022.md).
+
 Specification: [v3 pilot plan](BDOT_v3_pilot_plan.md), inheriting v2 v1.4.
 The user also approved three exploratory ablations and delegated launch choices.
 There are **12 v3 training jobs plus the P1-A′ v2 closure: 13 jobs total**.

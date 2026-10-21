@@ -1,6 +1,32 @@
 # Current task
 
-## Active: implement, verify and launch v3 — 21 October 2026
+## V3 batch complete — verified 22 October 2026, 05:50 SGT
+
+All 13 scheduled training runs and 13 evaluations completed successfully at
+**05:32:12 SGT** (13h14m from first research training), each reaching 4,768
+updates without retries. Full final optimizer/scheduler/eight-rank RNG state
+and checkpoint retention at 1,000/2,500/4,768 are verified for every run.
+No new arm beats D. Best exploratory V6: loss 3.543685 / PPL 34.594, versus
+D seed 0 loss 3.494464 / PPL 32.933. V1 is effectively tied with V6. P1-A′ had
+loss spikes and ended at 5.859132 despite completing all updates. V2's two-seed
+mean is 0.063505 nats worse than D and 0.002109 worse than random C2.
+
+[Final report](BDOT_V3_RESULTS_20261022.md) and
+[machine-readable evidence](results/bdot_v3_final_20261022.json).
+Read-only status **4f48b80**, export **ba4d79b**. All 124 exported files and the
+archive hash are verified locally at `temp/v3_status_20261022/results/`.
+Burns restored at 05:33:23; live check at 05:50:33 matches workers 288996–289003,
+all eight GPUs at 100%, advancing collective cycles/payload and released guard.
+No workload was stopped or launched by this check. Commands return to #0.
+
+The automatic selection is V1 under the PF contingency. Its official two-seed
+gate is pending missing C1/V1 confirmations, **not a pass**. V1 misses two
+known seed 0 quality criteria and does not qualify for the single-near-miss
+second-seed rule. The plan's conditional C1 seed 0 control remains unrun,
+outside the completed thirteen-job batch. No further runs are queued.
+Review these results before authorizing any additional computation.
+
+## Historical v3 implementation and launch — 21 October 2026
 
 User approved `docs/BDOT_v3_pilot_plan.md`, plus three judged ablations:
 V5 = V4 + both placement FiLM maps; V6/V7 = V2 with query-only/MLP-only PF.

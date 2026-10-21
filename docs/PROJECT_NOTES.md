@@ -559,3 +559,21 @@ step 390 with a complete checkpoint-250 and unchanged source hashes. The remaini
 runs/evaluations are automatic; burns restore through the existing supervisor.
 See `BDOT_V3_IMPLEMENTATION_20261021.md` and
 `results/bdot_v3_launch_20261021.json` for precise evidence, scope and limitations.
+
+
+## V3 batch completed — 22 October 2026
+
+All 13 runs/evaluations finished at 05:32:12 SGT without retries; final states
+and milestone retention verified. No new arm beats D. V6/V1 are effectively
+tied near loss 3.5437 versus D seed 0 at 3.494464. V2 loses to D by 0.063505
+and to random C2 by 0.002109 on the two-seed mean. P1-A′ has loss spikes and
+ends at 5.859132. PF and the wider window did not improve quality in this pilot.
+The automatic V1 selection triggers the missing conditional C1 control; its
+formal two-seed gate is pending, not a pass. V1 misses two known quality
+criteria, so it does not qualify for near-miss second-seed confirmation.
+No conditional follow-up was launched during the status check.
+
+Burns restored at 05:33:23 and independently verified at 05:50:33: known workers
+on all eight GPUs, collective progress and released guard. Status 4f48b80 and
+export ba4d79b; all 124 archived files hash-verified locally. See
+`BDOT_V3_RESULTS_20261022.md` and `results/bdot_v3_final_20261022.json`.
