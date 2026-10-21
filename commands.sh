@@ -1,5 +1,5 @@
-#1 +90+a
-#th2-6y3o-dot-diagnostics-gradient-status-20261021-a02
+#1 +30+a
+#th2-6y3o-dot-diagnostics-gradient-status-20261021-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 env CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=1 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'PY'
@@ -7,10 +7,6 @@ from pathlib import Path
 import json,hashlib,tarfile,io
 from scripts.gpu_process import inspect
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-diagnostics-gradient-20261021-a02')
-import time
-end=time.monotonic()+60
-while not (root/'supervised/burn-verified.json').exists() and time.monotonic()<end:
- time.sleep(5)
 for name in ['preparation-failed.json','launch.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/complete.json','supervised/run/summary.json']:
  p=root/name
  if p.exists():print('RECEIPT',name,p.read_text().replace('\n',' '),flush=True)
