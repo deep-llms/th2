@@ -95,6 +95,78 @@ the v3 plan supplies the remaining experiment details.
 
 Local evidence: `temp/v3_implementation_20261021/`. B200 preflight at
 **15:33 SGT, 21 October** verified the prior communicating burn handoff, about
-23,120 GiB free, and an immutable v2 source snapshot. GPU verification and
-research launch receipts will be recorded separately; these local checks alone
-are not a claim that GPU validation or research training has completed.
+23,120 GiB free, and an immutable v2 source snapshot. GPU results follow below.
+
+## B200 throughput checks
+
+All twelve distinct option sets completed 5 warmup and 20 measured HF Trainer
+updates on eight B200s, using the actual width, FA4, sequence 1,024 and
+microbatch 16 × accumulation 4. These are synthetic complete training updates,
+excluding preprocessing, validation and checkpoint saves; they do not predict
+convergence or guarantee the same routing distribution after training.
+
+| Configuration | Seconds/update | Native throughput |
+|---|---:|---:|
+| dense_native | 0.6158 | 100.0% |
+| D | 0.6737 | 91.4% |
+| V3 | 0.7546 | 81.6% |
+| P1-A-prime | 0.7297 | 84.4% |
+| V1 | 0.7377 | 83.5% |
+| V2 | 0.7453 | 82.6% |
+| V4 | 0.7377 | 83.5% |
+| C2 | 0.7313 | 84.2% |
+| C3 | 0.7642 | 80.6% |
+| V5 | 0.7251 | 84.9% |
+| V6 | 0.7385 | 83.4% |
+| V7 | 0.7452 | 82.6% |
+
+V3 passes the required 60% threshold. Its last measured update used 54.9%
+off-home decisions; C2/C3 used 61.1%/76.9%, so the timing checks did exercise
+placement conditioning and non-default dispatch. These shares describe the
+last update, not the average over the timing interval. Detailed timing and
+routing receipts are retained under `supervised/run/checks/T8_*.json`.
+
+## GPU verification and live launch
+
+All acceptance checks passed at **16:18:15 SGT, 21 October 2026**:
+
+- Full-width T1 native-equivalence checks passed.
+- Frozen-v2 CUDA comparison: all 32 cases have zero gradient and final-weight
+  differences over three AdamW updates, including SDPA/FA4 and both execution paths.
+- Twelve new PF/RF model cases and two grouped-projection cases passed the
+  existing tolerances. Model logits/losses were identical; maximum relative
+  gradient difference was 0.391%. Maximum first-Adam-update RMS difference was
+  4.03%; with existing optimizer state, max parameter difference was 5.01e-7.
+  These grouped/reference GPU paths are numerically compatible, not bitwise
+  identical in their gradients.
+- Eight-rank V3 and V5 resume tests: exact restored/final model and optimizer
+  state, scheduler, RNG, batches, routes and loss. Each uses fresh processes
+  and 60 updates on a reduced-width fixture with a 100-update schedule,
+  resuming from both soft and hard phases; production width is covered by T1/T8.
+- Final D/P1-A/N-A/R checkpoints reproduce the original full-validation loss
+  exactly with both code versions; all 256 saved route samples agree exactly.
+
+Implementation **8304de2**, launch **b6a8cf9**. The launch copied the resource
+Accelerate config to the actual Hugging Face cache and verified MULTI_GPU,
+eight processes and BF16 using `accelerate env`. The supervisor revalidated
+known burn workers 189117–189124, stopped only those workers, waited and recorded
+all eight GPUs free. No environment, driver, old checkpoint or shared cache changed.
+
+P1-A′ began at 16:18:15. Health check **5221f19** at **16:23:27 SGT** found
+**390/4,768 updates**, finite losses/gradients and eight active GPU workers.
+The step-250 checkpoint contains weights, optimizer, scheduler, recipes and all
+eight RNG files. Training-source hashes still match the launch recipe. The
+latest ten-update mean LM loss was 4.95276; this early training metric is not
+a validation/final comparison. Radius 0 is expected before update 477.
+
+The thirteen runs and their evaluations proceed sequentially through the
+independent supervisor. Based on previous pilots and these timings, allow
+roughly 13–14 hours from launch, approximately **05:30–06:30 SGT, 22 October**,
+if no retries are needed. This is an estimate, not a completion claim. Burns
+will be restored and collective progress verified after success or failure.
+
+Evidence: [launch receipt](results/bdot_v3_launch_20261021.json),
+[downloaded raw receipts](../temp/v3_implementation_20261021/evidence/).
+All 71 archive members and the archive hash match the remote manifest. Results
+stay under `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01`;
+the automatic final comparison is `supervised/run/v3-results.json` / `.md`.

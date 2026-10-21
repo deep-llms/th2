@@ -8,11 +8,35 @@ They are appended outside the predefined candidate pool. With the required
 P1-A′ v2 closure this is 13 training jobs: 12 v3 runs plus that closure.
 User delegated remaining choices and authorized local/B200 verification and
 the full eight-GPU sequential launch, preserving environments/data/old runs.
-Implementation is in progress; no v3 training has launched yet. Keep new options
-off by default, pass local/GPU checks and carry-over checks before launch; copy
-and verify Accelerate, reclaim only verified burns, check all GPUs free, and
-restore communicating burns automatically after success/failure. Older next-step
-statements below are historical and superseded by this authorization.
+Implementation is committed as **8304de2** in the authorized th2 execution
+checkout. Launch **b6a8cf9** submitted an acceptance-gated queue at
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01` on 6Y3O. At
+**16:18:15 SGT**, all acceptance checks passed: T1, frozen-v2 CUDA parity,
+PF/RF SDPA/FA4 numerics, both eight-rank V3/V5 resume tests, every throughput
+case, and old-checkpoint carry-over. D/P1-A/N-A/R reproduce their original
+losses exactly, with 100% route agreement. P1-A′ started immediately afterward;
+at 16:19:05 all eight workers were active. V3 timing was 0.7546 s/update,
+81.6% of native throughput. At **16:23:27 SGT**, P1-A′ was healthy at
+**390/4,768 updates**, with finite loss/gradients, eight active workers and a
+complete step-250 checkpoint (optimizer, scheduler, eight RNG files and recipes).
+Current training-source hashes still match the launch recipe. This is the
+initial radius-0 curriculum phase, not evidence of final routing quality.
+The new options default off. Accelerate was copied/verified, known predecessor
+burns were reclaimed and all eight GPUs verified free before acceptance tests.
+The independent supervisor restores communicating burns after success/failure.
+Keep training source fixed while this queue runs. Older next-step statements
+below are historical and superseded by this authorization.
+
+Implementation/queue details: [v3 implementation](BDOT_V3_IMPLEMENTATION_20261021.md).
+[Launch and GPU evidence](results/bdot_v3_launch_20261021.json) includes the exact
+queue and safety receipts. Raw evidence is local at
+`temp/v3_implementation_20261021/evidence/`; all 71 archive members and the archive
+SHA256 were verified against the remote manifest. Health inspection **5221f19**.
+Next check should read the existing queue and per-arm verified/evaluation
+receipts; do not relaunch or alter training code. Final report will be
+`supervised/run/v3-results.json` and `.md`. Automatic burn handoff must be verified
+at completion, not inferred from missing workers. Conditional follow-ups are
+reported separately and are not part of the thirteen scheduled training jobs.
 
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.

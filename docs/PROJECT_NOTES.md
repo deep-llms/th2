@@ -527,3 +527,35 @@ an exact per-update beta audit when only periodic loads/checkpoint beta exist.
 Use compact result-only archives with per-file hashes for many exports; the
 latest directory export returned no valid paths. Sequential Dropbox downloads
 avoid the observed parallel-download HTTP 429 limit.
+
+## 21 October 2026: approved v3 batch
+
+The user approved `BDOT_v3_pilot_plan.md`, three additional controlled ablations,
+and delegated remaining operational choices. V5 adds both placement FiLM maps
+to V4; V6/V7 retain only the query/MLP-input map of V2. These exploratory arms
+are excluded from the predeclared gate candidate pool. The agreed count is
+12 v3 jobs plus P1-A′ to close v2, 13 training jobs total. The required seed-1
+D/V2/C2 runs change model/routing seeds only; data seed/order remains zero.
+
+Scientific recipe stays the complete 4,768-update / 96-warmup pilot, FA4,
+sequence 1,024, microbatch 16 × accumulation 4 × eight GPUs. Retain steps
+1,000/2,500/4,768 plus the latest complete optimizer checkpoint, pruning only the new experiment's older
+checkpoints after all-rank RNG/optimizer/recipe files are present. Existing
+v2 outputs and shared caches are preserved. Source/options must stay fixed
+while a feature is in use; numerical/code failures halt for review.
+
+Default options reproduce v2. RF caps the full router logit and selects on
+masked `p + beta`; PF maps only allowed off-home module/step pairs. Its vectors
+start at zero without consuming RNG, use main LR and no decay. The tanh cap
+bounds candidate gaps, but does not guarantee nonzero parameter gradients.
+Missing conditional controls/second seeds must be reported as pending, never
+silently treated as a successful two-seed gate. The current queue contains the
+agreed 13 jobs; conditional follow-ups require applying the plan to their results.
+
+Acceptance passed at 16:18:15 SGT; the research queue started immediately.
+B200 numerical/grouped tests, exact eight-rank V3/V5 resume, T8 and all four
+v2 checkpoint carry-over checks passed. At 16:23:27 SGT, P1-A′ had reached
+step 390 with a complete checkpoint-250 and unchanged source hashes. The remaining
+runs/evaluations are automatic; burns restore through the existing supervisor.
+See `BDOT_V3_IMPLEMENTATION_20261021.md` and
+`results/bdot_v3_launch_20261021.json` for precise evidence, scope and limitations.

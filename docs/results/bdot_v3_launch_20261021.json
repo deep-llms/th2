@@ -1,0 +1,1694 @@
+{
+  "status": "training_running",
+  "implementation_commit": "8304de2",
+  "launch_commit": "b6a8cf97e9d67bcf706cafb2afc05b07caa3b8ff",
+  "evidence_commit": "bcb737d3b16dc77101325ccd1376f5692471df07",
+  "export_commit": "2b4ee8ede3227ecd058ab8ebe2063d2fc8c7b410",
+  "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01",
+  "archive": {
+    "path": "temp/v3_implementation_20261021/launch-evidence-a01.tar.gz",
+    "sha256": "27e7c1a9205fa226a555f0f68c347269bbcf279e40733371b1e1f1e6bb584757",
+    "verified_members": 71
+  },
+  "verification": {
+    "status": "passed",
+    "checks": {
+      "T1": {
+        "status": "passed",
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/supervised/run/checks/T1.json"
+      },
+      "v2_parity": {
+        "status": "passed",
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/supervised/run/checks/v2_parity.json"
+      },
+      "v3_numerics": {
+        "status": "passed",
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/supervised/run/checks/v3_numerics.json"
+      },
+      "resume_V3": {
+        "status": "passed",
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/supervised/run/checks/resume_V3/summary.json"
+      },
+      "resume_V5": {
+        "status": "passed",
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/supervised/run/checks/resume_V5/summary.json"
+      }
+    },
+    "carryover": {
+      "D": {
+        "status": "passed",
+        "v2_loss": 3.4944635246202758,
+        "v3_loss": 3.4944635246202758,
+        "original_loss": 3.4944635246202758,
+        "route_agreement": 1.0
+      },
+      "P1-A": {
+        "status": "passed",
+        "v2_loss": 3.6159409091728145,
+        "v3_loss": 3.6159409091728145,
+        "original_loss": 3.6159409091728145,
+        "route_agreement": 1.0
+      },
+      "N-A": {
+        "status": "passed",
+        "v2_loss": 3.525998089566147,
+        "v3_loss": 3.525998089566147,
+        "original_loss": 3.525998089566147,
+        "route_agreement": 1.0
+      },
+      "R": {
+        "status": "passed",
+        "v2_loss": 3.610161314726686,
+        "v3_loss": 3.610161314726686,
+        "original_loss": 3.610161314726686,
+        "route_agreement": 1.0
+      }
+    },
+    "throughput": {
+      "dense_native": {
+        "seconds_per_update": 0.6157844048459082,
+        "tokens_per_second": 851414.871624097,
+        "native_ratio": 1.0
+      },
+      "D": {
+        "seconds_per_update": 0.6737017562380061,
+        "tokens_per_second": 778219.7317217309,
+        "native_ratio": 0.9140311705352945
+      },
+      "V3": {
+        "seconds_per_update": 0.7545520667452366,
+        "tokens_per_second": 694833.4291383211,
+        "native_ratio": 0.8160926621036199
+      },
+      "P1-A-prime": {
+        "seconds_per_update": 0.7296502582961694,
+        "tokens_per_second": 718546.9943151701,
+        "native_ratio": 0.8439446129764238
+      },
+      "V1": {
+        "seconds_per_update": 0.7377130595967174,
+        "tokens_per_second": 710693.6676525836,
+        "native_ratio": 0.8347207587493933
+      },
+      "V2": {
+        "seconds_per_update": 0.7452852273127064,
+        "tokens_per_second": 703472.9534227296,
+        "native_ratio": 0.8262399176571062
+      },
+      "V4": {
+        "seconds_per_update": 0.7376573174493387,
+        "tokens_per_second": 710747.3722525736,
+        "native_ratio": 0.8347838356367956
+      },
+      "C2": {
+        "seconds_per_update": 0.731301300949417,
+        "tokens_per_second": 716924.7467758356,
+        "native_ratio": 0.8420392580273847
+      },
+      "C3": {
+        "seconds_per_update": 0.764160709339194,
+        "tokens_per_second": 686096.5155528301,
+        "native_ratio": 0.8058310213023203
+      },
+      "V5": {
+        "seconds_per_update": 0.7250828052870929,
+        "tokens_per_second": 723073.2768409958,
+        "native_ratio": 0.8492608021536127
+      },
+      "V6": {
+        "seconds_per_update": 0.7384668083628639,
+        "tokens_per_second": 709968.2667692468,
+        "native_ratio": 0.8338687641372331
+      },
+      "V7": {
+        "seconds_per_update": 0.745198284694925,
+        "tokens_per_second": 703555.0279274154,
+        "native_ratio": 0.8263363154385184
+      }
+    }
+  },
+  "launch": {
+    "status": "submitted",
+    "session": "dot_v3_20261021_a01",
+    "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01",
+    "python": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+    "versions": {
+      "torch": "2.14.1",
+      "transformers": "5.9.0",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0",
+      "flash-attn-4": "4.0.0b33"
+    },
+    "accelerate_cache": "/dev/shm/.cache/huggingface/accelerate/default_config.yaml",
+    "environment": {
+      "HF_HUB_OFFLINE": "1",
+      "HF_DATASETS_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_HUB_DISABLE_TELEMETRY": "1",
+      "WANDB_MODE": "offline",
+      "NCCL_NVLS_ENABLE": "0",
+      "OMP_NUM_THREADS": "1",
+      "TOKENIZERS_PARALLELISM": "false",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "jobs_config": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/gated-jobs.json"
+  },
+  "v2_parity": {
+    "cases": 32,
+    "gradient_difference": 0.0,
+    "weight_difference": 0.0
+  },
+  "v3_numerics": {
+    "model_cases": 12,
+    "projection_cases": 2,
+    "maximum_logits_relative": 0.0,
+    "maximum_gradient_relative": 0.003908538357788297,
+    "maximum_first_adam_update_relative": 0.04028054103223,
+    "maximum_mature_adam_parameter_difference": 5.010515451431274e-07
+  },
+  "resume": {
+    "V3": {
+      "status": "passed",
+      "world_size": 8,
+      "steps": 60,
+      "schedule_steps": 100,
+      "split": 40,
+      "soft_split": 10,
+      "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture.",
+      "restored_and_final_state_exact": true,
+      "data_rng_routes_exact": true,
+      "max_loss_difference": 0.0
+    },
+    "V5": {
+      "status": "passed",
+      "world_size": 8,
+      "steps": 60,
+      "schedule_steps": 100,
+      "split": 40,
+      "soft_split": 10,
+      "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture.",
+      "restored_and_final_state_exact": true,
+      "data_rng_routes_exact": true,
+      "max_loss_difference": 0.0
+    }
+  },
+  "queue": {
+    "status": "running",
+    "started_at": "2026-10-21T07:53:27.010166+00:00",
+    "jobs": [
+      {
+        "name": "v3_acceptance",
+        "started_at": "2026-10-21T07:53:27.010919+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 1488.396301093977,
+        "artifacts": [
+          {
+            "path": "checks/summary.json",
+            "sha256": "fd76a935085f9a9e6d813be273d65844acc7f17a4156a7a45655f1246d6fdd77",
+            "bytes": 3517
+          }
+        ],
+        "finished_at": "2026-10-21T08:18:15.972828+00:00"
+      },
+      {
+        "name": "P1-A-prime-s0",
+        "started_at": "2026-10-21T08:18:15.972868+00:00",
+        "status": "running"
+      }
+    ]
+  },
+  "known_worker_reclaim": {
+    "at": "2026-10-21T07:52:56.736477+00:00",
+    "before": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189117
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189118
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189119
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189120
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189121
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189122
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189123
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          189124
+        ]
+      }
+    ],
+    "identities": {
+      "189117": {
+        "pid": 189117,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189048": {
+        "pid": 189048,
+        "ppid": 9406,
+        "start_ticks": 249880349,
+        "command_sha256": "09d6ae56aaa859661046849efec23a78b655c12f3f3bba81a8baaa42687123a8",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "/mnt/local/deep-llms_th2/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      },
+      "189118": {
+        "pid": 189118,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189119": {
+        "pid": 189119,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189120": {
+        "pid": 189120,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189121": {
+        "pid": 189121,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189122": {
+        "pid": 189122,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189123": {
+        "pid": 189123,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "189124": {
+        "pid": 189124,
+        "ppid": 189048,
+        "start_ticks": 249880469,
+        "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "signal_targets": [
+      189117,
+      189118,
+      189119,
+      189120,
+      189121,
+      189122,
+      189123,
+      189124
+    ]
+  },
+  "gpus_free_before_checks": {
+    "at": "2026-10-21T07:53:26.739496+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ]
+  },
+  "observation": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-21T08:19:05.844738+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          197327
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 98.0,
+        "pids": [
+          197328
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 98.0,
+        "pids": [
+          197329
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 96.0,
+        "pids": [
+          197330
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          197331
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 96.0,
+        "pids": [
+          197332
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 95.0,
+        "pids": [
+          197333
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 56712.0,
+        "utilization_percent": 98.0,
+        "pids": [
+          197334
+        ]
+      }
+    ],
+    "workers": [
+      197327,
+      197328,
+      197329,
+      197330,
+      197331,
+      197332,
+      197333,
+      197334
+    ],
+    "stop_roots": [],
+    "processes": {
+      "197327": {
+        "pid": 197327,
+        "ppid": 197321,
+        "start_ticks": 251127354,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197328": {
+        "pid": 197328,
+        "ppid": 197321,
+        "start_ticks": 251127354,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197329": {
+        "pid": 197329,
+        "ppid": 197321,
+        "start_ticks": 251127354,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197330": {
+        "pid": 197330,
+        "ppid": 197321,
+        "start_ticks": 251127354,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197331": {
+        "pid": 197331,
+        "ppid": 197321,
+        "start_ticks": 251127354,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197332": {
+        "pid": 197332,
+        "ppid": 197321,
+        "start_ticks": 251127355,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197333": {
+        "pid": 197333,
+        "ppid": 197321,
+        "start_ticks": 251127355,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "197334": {
+        "pid": 197334,
+        "ppid": 197321,
+        "start_ticks": 251127355,
+        "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/deep-llms_th2/train.py"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "guard_disabled": true
+  },
+  "health_commit": "5221f197890f2eccaa481f44b49f82e4a2beff51",
+  "health_log_sha256": "2da058a8cf40d422315937682936cac58756dbecad4ca243a8336c849c10cd12",
+  "health": {
+    "live": {
+      "host": "thiennh-p6-6y3o-worker-0",
+      "time": "2026-10-21T08:23:27.472920+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 98.0,
+          "pids": [
+            197327
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            197328
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            197329
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 98.0,
+          "pids": [
+            197330
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            197331
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 91.0,
+          "pids": [
+            197332
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 95.0,
+          "pids": [
+            197333
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 56714.0,
+          "utilization_percent": 99.0,
+          "pids": [
+            197334
+          ]
+        }
+      ],
+      "workers": [
+        197327,
+        197328,
+        197329,
+        197330,
+        197331,
+        197332,
+        197333,
+        197334
+      ],
+      "stop_roots": [],
+      "processes": {
+        "197327": {
+          "pid": 197327,
+          "ppid": 197321,
+          "start_ticks": 251127354,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197328": {
+          "pid": 197328,
+          "ppid": 197321,
+          "start_ticks": 251127354,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197329": {
+          "pid": 197329,
+          "ppid": 197321,
+          "start_ticks": 251127354,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197330": {
+          "pid": 197330,
+          "ppid": 197321,
+          "start_ticks": 251127354,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197331": {
+          "pid": 197331,
+          "ppid": 197321,
+          "start_ticks": 251127354,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197332": {
+          "pid": 197332,
+          "ppid": 197321,
+          "start_ticks": 251127355,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197333": {
+          "pid": 197333,
+          "ppid": 197321,
+          "start_ticks": 251127355,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        },
+        "197334": {
+          "pid": 197334,
+          "ppid": 197321,
+          "start_ticks": 251127355,
+          "command_sha256": "41ddf24d65bf09d15d168ae7263305d25d3c024a42fbf1432617b38371fa8bc2",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-u",
+            "/mnt/local/deep-llms_th2/train.py"
+          ],
+          "launcher_kind": null
+        }
+      },
+      "guard_disabled": true
+    },
+    "queue": {
+      "status": "running",
+      "started_at": "2026-10-21T07:53:27.010166+00:00",
+      "jobs": [
+        {
+          "name": "v3_acceptance",
+          "started_at": "2026-10-21T07:53:27.010919+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 1488.396301093977,
+          "artifacts": [
+            {
+              "path": "checks/summary.json",
+              "sha256": "fd76a935085f9a9e6d813be273d65844acc7f17a4156a7a45655f1246d6fdd77",
+              "bytes": 3517
+            }
+          ],
+          "finished_at": "2026-10-21T08:18:15.972828+00:00"
+        },
+        {
+          "name": "P1-A-prime-s0",
+          "started_at": "2026-10-21T08:18:15.972868+00:00",
+          "status": "running"
+        }
+      ]
+    },
+    "supervisor": {
+      "started_at": "2026-10-21T07:53:27.009919+00:00",
+      "training_status": "running"
+    },
+    "source_hashes_match": true,
+    "train_args": {
+      "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/prepared/P1-A-prime-s0.model.json",
+      "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+      "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/prepared/runs/P1-A-prime-s0",
+      "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+      "data_order": "packed_shuffle",
+      "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+      "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+      "document_end_token": "<|endoftext|>",
+      "preprocessing_num_workers": 128,
+      "map_batch_size": 1000,
+      "block_size": 1024,
+      "attention_backend": "fa4",
+      "isolate_documents": true,
+      "reset_document_positions": true,
+      "seed": 0,
+      "data_seed": 0,
+      "bf16": true,
+      "tf32": false,
+      "gradient_checkpointing": false,
+      "optim": "adamw_torch",
+      "per_device_train_batch_size": 16,
+      "gradient_accumulation_steps": 4,
+      "per_device_eval_batch_size": 16,
+      "max_steps": 4768,
+      "warmup_steps": 96,
+      "learning_rate": 0.0003,
+      "lr_scheduler_type": "cosine_with_min_lr",
+      "lr_scheduler_kwargs": {
+        "min_lr_rate": 0.1
+      },
+      "adam_beta1": 0.9,
+      "adam_beta2": 0.95,
+      "weight_decay": 0.1,
+      "max_grad_norm": 1.0,
+      "logging_steps": 10,
+      "save_steps": 250,
+      "save_total_limit": null,
+      "eval_strategy": "steps",
+      "eval_steps": 100,
+      "eval_max_sequences": 1024,
+      "report_to": "none",
+      "do_eval": true,
+      "disable_tqdm": true,
+      "dataloader_num_workers": 8,
+      "dataloader_drop_last": true,
+      "train_sampling_strategy": "sequential",
+      "ddp_timeout": 21600,
+      "ddp_find_unused_parameters": true,
+      "ddp_broadcast_buffers": false,
+      "keep_checkpoint_steps": [
+        1000,
+        2500,
+        4768
+      ]
+    },
+    "routing": {
+      "n_stem": 2,
+      "n_coda": 2,
+      "S": 8,
+      "curriculum": "A",
+      "select_on": "probs",
+      "seed": 0,
+      "expert_backend": "grouped"
+    },
+    "metrics": [
+      {
+        "step": 260,
+        "grad_norm": 0.45193734765052795,
+        "learning_rate": 0.00029918990074554185,
+        "objective_loss": 5.504660034179688,
+        "lm_loss_last_update": 5.486670732498169,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.504659628931917,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231357,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 511274.2423681554,
+        "interval_wall_seconds": 10.254535757005215,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 270,
+        "grad_norm": 0.33289727568626404,
+        "learning_rate": 0.00029908756857533164,
+        "objective_loss": 5.462076568603516,
+        "lm_loss_last_update": 5.412196785211563,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.4620768212386785,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231228,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 802971.957947508,
+        "interval_wall_seconds": 6.529343830887228,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 280,
+        "grad_norm": 0.6135426163673401,
+        "learning_rate": 0.0002989791734974245,
+        "objective_loss": 5.401889038085938,
+        "lm_loss_last_update": 5.386237189173698,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.401889316908796,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231384,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 811959.198704786,
+        "interval_wall_seconds": 6.457073222845793,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 290,
+        "grad_norm": 0.5981450080871582,
+        "learning_rate": 0.0002988647204130156,
+        "objective_loss": 5.358589935302734,
+        "lm_loss_last_update": 5.330209419131279,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.358590379558249,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231425,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 813185.8316123598,
+        "interval_wall_seconds": 6.4473331877961755,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 300,
+        "grad_norm": 0.3727562427520752,
+        "learning_rate": 0.00029874421449721934,
+        "objective_loss": 5.3325035095214846,
+        "lm_loss_last_update": 5.310441806912422,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "mean_distinct_modules_last_update": 8.0,
+        "saturated_share_last_update": 1.0,
+        "saturated_eligible_share_last_update": 0.0,
+        "saturation_eligible_decisions_last_update": 0,
+        "module_0_load_last_update": 0.125,
+        "module_0_beta_after_update": 0.0,
+        "placement_0_0_share_last_update": 0.125,
+        "placement_0_1_share_last_update": 0.0,
+        "placement_0_2_share_last_update": 0.0,
+        "placement_0_3_share_last_update": 0.0,
+        "placement_0_4_share_last_update": 0.0,
+        "placement_0_5_share_last_update": 0.0,
+        "placement_0_6_share_last_update": 0.0,
+        "placement_0_7_share_last_update": 0.0,
+        "module_1_load_last_update": 0.125,
+        "module_1_beta_after_update": 0.0,
+        "placement_1_0_share_last_update": 0.0,
+        "placement_1_1_share_last_update": 0.125,
+        "placement_1_2_share_last_update": 0.0,
+        "placement_1_3_share_last_update": 0.0,
+        "placement_1_4_share_last_update": 0.0,
+        "placement_1_5_share_last_update": 0.0,
+        "placement_1_6_share_last_update": 0.0,
+        "placement_1_7_share_last_update": 0.0,
+        "module_2_load_last_update": 0.125,
+        "module_2_beta_after_update": 0.0,
+        "placement_2_0_share_last_update": 0.0,
+        "placement_2_1_share_last_update": 0.0,
+        "placement_2_2_share_last_update": 0.125,
+        "placement_2_3_share_last_update": 0.0,
+        "placement_2_4_share_last_update": 0.0,
+        "placement_2_5_share_last_update": 0.0,
+        "placement_2_6_share_last_update": 0.0,
+        "placement_2_7_share_last_update": 0.0,
+        "module_3_load_last_update": 0.125,
+        "module_3_beta_after_update": 0.0,
+        "placement_3_0_share_last_update": 0.0,
+        "placement_3_1_share_last_update": 0.0,
+        "placement_3_2_share_last_update": 0.0,
+        "placement_3_3_share_last_update": 0.125,
+        "placement_3_4_share_last_update": 0.0,
+        "placement_3_5_share_last_update": 0.0,
+        "placement_3_6_share_last_update": 0.0,
+        "placement_3_7_share_last_update": 0.0,
+        "module_4_load_last_update": 0.125,
+        "module_4_beta_after_update": 0.0,
+        "placement_4_0_share_last_update": 0.0,
+        "placement_4_1_share_last_update": 0.0,
+        "placement_4_2_share_last_update": 0.0,
+        "placement_4_3_share_last_update": 0.0,
+        "placement_4_4_share_last_update": 0.125,
+        "placement_4_5_share_last_update": 0.0,
+        "placement_4_6_share_last_update": 0.0,
+        "placement_4_7_share_last_update": 0.0,
+        "module_5_load_last_update": 0.125,
+        "module_5_beta_after_update": 0.0,
+        "placement_5_0_share_last_update": 0.0,
+        "placement_5_1_share_last_update": 0.0,
+        "placement_5_2_share_last_update": 0.0,
+        "placement_5_3_share_last_update": 0.0,
+        "placement_5_4_share_last_update": 0.0,
+        "placement_5_5_share_last_update": 0.125,
+        "placement_5_6_share_last_update": 0.0,
+        "placement_5_7_share_last_update": 0.0,
+        "module_6_load_last_update": 0.125,
+        "module_6_beta_after_update": 0.0,
+        "placement_6_0_share_last_update": 0.0,
+        "placement_6_1_share_last_update": 0.0,
+        "placement_6_2_share_last_update": 0.0,
+        "placement_6_3_share_last_update": 0.0,
+        "placement_6_4_share_last_update": 0.0,
+        "placement_6_5_share_last_update": 0.0,
+        "placement_6_6_share_last_update": 0.125,
+        "placement_6_7_share_last_update": 0.0,
+        "module_7_load_last_update": 0.125,
+        "module_7_beta_after_update": 0.0,
+        "placement_7_0_share_last_update": 0.0,
+        "placement_7_1_share_last_update": 0.0,
+        "placement_7_2_share_last_update": 0.0,
+        "placement_7_3_share_last_update": 0.0,
+        "placement_7_4_share_last_update": 0.0,
+        "placement_7_5_share_last_update": 0.0,
+        "placement_7_6_share_last_update": 0.0,
+        "placement_7_7_share_last_update": 0.125,
+        "lm_loss": 5.3325031997312795,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231499,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 812262.7866595741,
+        "interval_wall_seconds": 6.454659854061902,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 300,
+        "eval_loss": 5.288007677293491,
+        "eval_perplexity": 197.94865468517204,
+        "eval_nll_sum": 5532868.872790566,
+        "eval_num_tokens": 1046305,
+        "eval_num_sequences": 1024,
+        "eval_curriculum_loss": 5.288007677293491,
+        "eval_curriculum_perplexity": 197.94865468517204,
+        "eval_curriculum_nll_sum": 5532868.872790566,
+        "eval_curriculum_num_tokens": 1046305,
+        "eval_curriculum_num_sequences": 1024,
+        "eval_target_loss": 5.288007677293491,
+        "eval_target_perplexity": 197.94865468517204,
+        "eval_target_nll_sum": 5532868.872790566,
+        "eval_target_num_tokens": 1046305,
+        "eval_target_num_sequences": 1024,
+        "eval_curriculum_reach": 0,
+        "eval_curriculum_soft": false,
+        "eval_spike_loss": 5.288007677293491,
+        "eval_spike": false,
+        "eval_spike_min": 5.288007677293491,
+        "eval_spike_reset": false,
+        "eval_runtime": 0.9365,
+        "eval_samples_per_second": 1093.476,
+        "eval_steps_per_second": 8.543
+      },
+      {
+        "step": 310,
+        "grad_norm": 0.5613996982574463,
+        "learning_rate": 0.0002986176611988348,
+        "objective_loss": 5.267529296875,
+        "lm_loss_last_update": 5.248240366578102,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.267530120721406,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231491,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 708859.2432394417,
+        "interval_wall_seconds": 7.396221534814686,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 320,
+        "grad_norm": 0.4582903981208801,
+        "learning_rate": 0.0002984850662401001,
+        "objective_loss": 5.229050064086914,
+        "lm_loss_last_update": 5.221356153488159,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.229049449248566,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231372,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 803105.7568897167,
+        "interval_wall_seconds": 6.528256029821932,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 330,
+        "grad_norm": 0.46638745069503784,
+        "learning_rate": 0.0002983464356164328,
+        "objective_loss": 5.190798950195313,
+        "lm_loss_last_update": 5.169187977910042,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.190799296774327,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231431,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 808906.2222833155,
+        "interval_wall_seconds": 6.48144352901727,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 340,
+        "grad_norm": 0.5225786566734314,
+        "learning_rate": 0.0002982017755961597,
+        "objective_loss": 5.160323715209961,
+        "lm_loss_last_update": 5.172119364142418,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.160323568587154,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231397,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 811193.8434102947,
+        "interval_wall_seconds": 6.463165422901511,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 350,
+        "grad_norm": 0.325298935174942,
+        "learning_rate": 0.0002980510927202327,
+        "objective_loss": 5.107103729248047,
+        "lm_loss_last_update": 5.086041152477264,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.107103979278765,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231447,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 811480.7476265159,
+        "interval_wall_seconds": 6.460880329366773,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 360,
+        "grad_norm": 0.36023807525634766,
+        "learning_rate": 0.0002978943938019335,
+        "objective_loss": 5.06019287109375,
+        "lm_loss_last_update": 5.0459331423044205,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.060192573925996,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231374,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 804172.9442502072,
+        "interval_wall_seconds": 6.519592629279941,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 370,
+        "grad_norm": 0.5928487777709961,
+        "learning_rate": 0.0002977316859265653,
+        "objective_loss": 5.020679473876953,
+        "lm_loss_last_update": 5.001770943403244,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 5.0206790110927235,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231476,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 812357.3172963621,
+        "interval_wall_seconds": 6.453908752184361,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 380,
+        "grad_norm": 0.347994863986969,
+        "learning_rate": 0.0002975629764511324,
+        "objective_loss": 4.99010009765625,
+        "lm_loss_last_update": 4.964930176734924,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 4.99010012346282,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231475,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 808106.9736142858,
+        "interval_wall_seconds": 6.48785392427817,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      },
+      {
+        "step": 390,
+        "grad_norm": 0.4469381272792816,
+        "learning_rate": 0.00029738827300400774,
+        "objective_loss": 4.952757263183594,
+        "lm_loss_last_update": 4.9327980279922485,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 4.952757962343418,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231426,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 801776.2328687976,
+        "interval_wall_seconds": 6.539081335999072,
+        "peak_allocated_bytes": 56530738688,
+        "peak_reserved_bytes": 57457770496
+      }
+    ],
+    "checkpoint": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/prepared/runs/P1-A-prime-s0/checkpoint-250",
+      "global_step": 250,
+      "max_steps": 4768,
+      "files": {
+        "rng_state_4.pth": 16325,
+        "rng_state_6.pth": 16325,
+        "chat_template.jinja": 4116,
+        "tokenizer_config.json": 695,
+        "generation_config.json": 215,
+        "train_config.json": 4128,
+        "scheduler.pt": 1465,
+        "trainer_state.json": 48652,
+        "model.safetensors": 1377802128,
+        "rng_state_0.pth": 16325,
+        "rng_state_2.pth": 16325,
+        "rng_state_3.pth": 16325,
+        "rng_state_7.pth": 16325,
+        "training_args.bin": 5393,
+        "tokenizer.json": 11422650,
+        "optimizer.pt": 2755096075,
+        "config.json": 1767,
+        "training_recipe.json": 159482,
+        "rng_state_1.pth": 16325,
+        "data_recipe.json": 728656,
+        "rng_state_5.pth": 16325
+      }
+    },
+    "retained_checkpoints": [
+      "checkpoint-250"
+    ]
+  }
+}
