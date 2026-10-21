@@ -1,5 +1,8 @@
 # Project notes
 
+User preference (21 October 2026): report times and ETAs in **Singapore time
+(SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
+
 ## Research scope
 
 [BDOT_v2_spec.md](BDOT_v2_spec.md) v1.4 defines the research. Implement Phase A

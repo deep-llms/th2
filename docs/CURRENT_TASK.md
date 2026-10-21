@@ -1,5 +1,21 @@
 # Current task
 
+User preference (21 October 2026): report times and ETAs in **Singapore time
+(SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
+
+## Latest R status — 21 October 2026, 9:41 a.m. SGT
+
+Read-only status **dc094ff** confirms R is still running at **4,020/4,768**
+updates (84.3%). All eight GPUs active at 90–98%, finite losses/gradients,
+16 checkpoints retained through step 4,000. Periodic validation at step 4,000:
+loss **3.64705708**, PPL **38.3616**, on 1,024 sequences / 1,046,305 tokens.
+This is not the final 9,704-sequence validation result. No completion marker
+or final burn receipt yet. Automatic restoration remains configured in the
+running supervisor. Estimated completion **9:50–9:55 a.m. SGT**, including
+remaining eval/save overhead. No new training, process stops or environment
+changes were made. Commands return to #0 while R continues.
+Evidence: [R progress](results/bdot_R_progress_20261021_0941.json).
+
 ## R running after N-A completion — 2026-10-21
 
 User asked to verify N-A completion and, if complete, run R. R follows
