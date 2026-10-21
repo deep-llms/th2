@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-diagnostics-status-20261021-a01
+#th2-6y3o-dot-diagnostics-status-20261021-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 env CUDA_VISIBLE_DEVICES= PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=1 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'PY'
