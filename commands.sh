@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-v3-status-20261021-a01
+#th2-6y3o-dot-v3-status-20261021-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'PY'
@@ -16,6 +16,7 @@ for name in ['prepare.log','preparation-failed.json','launch.json','accelerate_e
 checks=p/'supervised/run/checks'
 if checks.exists():
  logs=sorted(checks.glob('*.log'),key=lambda f:f.stat().st_mtime)[-2:]
+ for f in checks.glob('resume_*/summary.json'):print('RESUME_RESULT',f.parent.name,f.read_text(),flush=True)
  for f in logs:print('V3_CHECK_LOG',f.name,f.read_text(errors='replace')[-5000:],flush=True)
 print('GPU_LIVE',json.dumps(inspect()),flush=True)
 PY
