@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-router-followup-health-20261022-a01
+#th2-6y3o-dot-router-followup-health-20261022-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -8,7 +8,7 @@ from pathlib import Path
 from scripts.gpu_process import inspect,process
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01')
 old=root.parent/'6y3o-dot-mlp-20261022-a01'
-read=lambda p:json.loads(p.read_text())
+read=lambda p:json.loads(Path(p).read_text())
 status=read(root/'wait-status.json');pid=read(root/'wait-owner.json')['pid']
 result={'wait_status':status,'live':inspect(),'wait_log_tail':(root/'wait.log').read_text()[-2000:]}
 if status['status']=='waiting':
@@ -39,6 +39,6 @@ for p in (old/'prepared/runs').glob('*'):
  elif (p/'metrics.jsonl').is_file():result[p.name]={'last_metrics':[json.loads(l) for l in (p/'metrics.jsonl').read_text().splitlines() if l][-2:]}
 for path in ['launch.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/checks/summary.json']:
  if (root/path).is_file():result[path]=read(root/path)
-(root/'status-a01.json').write_text(json.dumps(result,indent=2))
+(root/'status-a02.json').write_text(json.dumps(result,indent=2))
 print('ROUTER_FOLLOWUP_HEALTH '+json.dumps(result),flush=True)
 REMOTE
