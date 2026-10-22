@@ -1,59 +1,44 @@
 #1 +30+a
-#th2-6y3o-dot-router-followup-queue-20261022-a01
+#th2-6y3o-dot-router-followup-health-20261022-a01
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
-env CUDA_VISIBLE_DEVICES= PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
-import json,hashlib,shutil,subprocess,shlex,sys,time,os
+/mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
+import json,hashlib,subprocess
 from pathlib import Path
-from scripts.gpu_process import inspect
-project=Path.cwd()
+from scripts.gpu_process import inspect,process
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01')
 old=root.parent/'6y3o-dot-mlp-20261022-a01'
-pilot=root.parent/'6y3o-dot-pilot-20261020-a01'
-staged=project/'queued/router_followup_20261022'
 read=lambda p:json.loads(p.read_text())
-manifest=staged/'SOURCE_MANIFEST.json'
-assert hashlib.sha256(manifest.read_bytes()).hexdigest()=='65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9'
-for name,value in read(manifest)['files'].items():
- p=staged/name
- assert p.is_file() and not p.is_symlink() and p.resolve().is_relative_to(staged)
- assert hashlib.sha256(p.read_bytes()).hexdigest()==value,name
-# Existing training source is verified, never rewritten by this submission.
-recipes=list((old/'prepared/runs').glob('*/training_recipe.json'))
-assert recipes
-for p in recipes:
- for name,value in read(p)['code_sha256'].items():
-  assert hashlib.sha256((project/name).read_bytes()).hexdigest()==value,name
-before=inspect();assert before['host']=='thiennh-p6-6y3o-worker-0'
-session='dot_router_wait_20261022_a01'
-assert subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode!=0
-root.mkdir(exist_ok=False)
-shutil.copytree(staged,root/'source',ignore=shutil.ignore_patterns('__pycache__'))
-(root/'queue-preflight.json').write_text(json.dumps(dict(before=before,predecessor=str(old),
- source_unchanged=True,source_manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest()),indent=2))
-argv=[sys.executable,'-u',str(root/'source/scripts/bdot_router_followup.py'),'wait',
- '--output',str(root),'--pilot',str(pilot),'--predecessor',str(old),
- '--predecessor-burn-script',str(project/'resources/llm_pretrain_burn.py'),
- '--host',before['host'],'--session','dot_router_20261022_a01']
-command='cd '+shlex.quote(str(root/'source'))+' && exec '+shlex.join(['env','CUDA_VISIBLE_DEVICES=',*argv])
-command+=' >'+shlex.quote(str(root/'wait.log'))+' 2>&1'
-subprocess.run(['tmux','new-session','-d','-s',session,command],check=True)
-subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)
-for _ in range(30):
- time.sleep(1)
- if (root/'wait-status.json').is_file():break
-assert (root/'wait-status.json').is_file(),(root/'wait.log').read_text()[-4000:]
-status=read(root/'wait-status.json');assert status['status']=='waiting',status
-assert subprocess.check_output(['tmux','display-message','-p','-t',session,'#{pane_dead}'],text=True).strip()=='0'
-jobs=read(root/'gated-jobs.json')['jobs']
-assert len(jobs)==14 and jobs[0]['name']=='router_acceptance'
-assert all(j.get('gpus')==list(range(8)) for j in jobs[:-1])
-assert [j['name'] for j in jobs[1:-1:2]]==['Partial-25-detach-s0','Partial-50-detach-s0','Partial-25-cosine-s0','Partial-50-cosine-s0','Partial-25-cosine-detach-s0','Partial-50-cosine-detach-s0']
-for p in recipes:
- assert all(hashlib.sha256((project/n).read_bytes()).hexdigest()==v for n,v in read(p)['code_sha256'].items())
-receipt=dict(status='queued',waiter_session=session,root=str(root),wait_status=status,jobs=[j['name'] for j in jobs],
- source_manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest(),active_source_unchanged=True,
- snapshot_files=len(read(manifest)['files']),live=inspect())
-(root/'queued.json').write_text(json.dumps(receipt,indent=2))
-print('ROUTER_QUEUED '+json.dumps(receipt),flush=True)
+status=read(root/'wait-status.json');pid=read(root/'wait-owner.json')['pid']
+result={'wait_status':status,'live':inspect(),'wait_log_tail':(root/'wait.log').read_text()[-2000:]}
+if status['status']=='waiting':
+ result['waiter']=process(pid)
+ result['waiter_pane_dead']=subprocess.check_output(['tmux','display-message','-p','-t','dot_router_wait_20261022_a01','#{pane_dead}'],text=True).strip()
+ assert result['waiter_pane_dead']=='0' and pid not in result['live']['workers']
+result['original_queue']=read(old/'supervised/run/run.json')
+result['original_source_matches']=all(hashlib.sha256(Path(k).read_bytes()).hexdigest()==v
+ for p in (old/'prepared/runs').glob('*/training_recipe.json') for k,v in read(p)['code_sha256'].items())
+assert result['original_source_matches']
+source=root/'source';manifest=read(source/'SOURCE_MANIFEST.json')
+result['snapshot_matches']=all(hashlib.sha256((source/k).read_bytes()).hexdigest()==v for k,v in manifest['files'].items())
+assert result['snapshot_matches']
+result['recipes']={}
+for path in sorted((root/'prepared').glob('*.train.json')):
+ t=read(path);name=path.name.removesuffix('.train.json');base='-'.join(name.split('-')[:2]);original=read(old/'prepared'/(base+'-s0.train.json'))
+ differences={k:[original.get(k),t.get(k)] for k in original.keys()|t.keys() if original.get(k)!=t.get(k)}
+ assert set(differences)<= {'config_name','output_dir'},differences
+ m=read(t['config_name']);parent=read(old/'prepared'/(base+'-s0.model.json'))
+ flags={k:m['bdot'].pop(k) for k in ['router_detach_input','router_metric']}
+ assert m==parent
+ result['recipes'][name]={'steps':t['max_steps'],'warmup':t['warmup_steps'],'seed':t['seed'],'data_seed':t['data_seed'],
+  'sequence_length':t['block_size'],'microbatch':t['per_device_train_batch_size'],'accumulation':t['gradient_accumulation_steps'],
+  'attention':t['attention_backend'],'flags':flags,'parent_recipe_matches':True}
+result['queue_jobs']=[j['name'] for j in read(root/'gated-jobs.json')['jobs']]
+for p in (old/'prepared/runs').glob('*'):
+ if (p/'final_eval.json').is_file():result[p.name]={'final_loss':read(p/'final_eval.json')['eval_loss']}
+ elif (p/'metrics.jsonl').is_file():result[p.name]={'last_metrics':[json.loads(l) for l in (p/'metrics.jsonl').read_text().splitlines() if l][-2:]}
+for path in ['launch.json','supervised/supervisor.json','supervised/run/run.json','supervised/run/checks/summary.json']:
+ if (root/path).is_file():result[path]=read(root/path)
+(root/'status-a01.json').write_text(json.dumps(result,indent=2))
+print('ROUTER_FOLLOWUP_HEALTH '+json.dumps(result),flush=True)
 REMOTE
