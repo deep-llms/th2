@@ -27,7 +27,11 @@ supervisor copies/checks Accelerate, stops only the verified burns, requires
 free GPUs, runs acceptance gates, then six train/eval pairs, then restores burns.
 An explicit hash-checked predecessor burn-script path bridges source snapshots;
 worker PID/start-time verification and all guard/free-GPU logic remain intact.
-New root `6y3o-dot-router-20261022-a01`. CURRENT_TASK holds status/evidence.
+New root `6y3o-dot-router-20261022-a01`. Launch **b90ec46**, health **48bb88f**
+verified the persistent waiter, exact six recipes, and both source hashes at
+**16:07 SGT**. GPU acceptance remains pending the original queue's handoff.
+[Queue evidence](results/bdot_router_followup_queue_20261022.json).
+CURRENT_TASK holds status/evidence; do not relaunch. Commands return to #0.
 
 ## Fixed-attention partial-MLP study — 22 October 2026
 

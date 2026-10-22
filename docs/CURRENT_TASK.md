@@ -16,11 +16,12 @@ The following factorial is predeclared; same-width original arms supply controls
 | 6 | Partial-50-cosine-detach | Both changes |
 
 **Reasoning:** detaching `u` before the router's own RMSNorm blocks its LM gate
-surrogate and z-loss gradients from changing the backbone, while keeping the
+surrogate and z-loss gradients from flowing directly into the backbone, while keeping the
 router/norm trainable and preserving normal LM gradients through the selected
 MLP and fixed core. It does not detach scores, gates, or expert outputs. At the
 same weights it preserves logits/routes exactly. This is an ablation hypothesis;
-it may also remove useful backbone-router co-adaptation.
+it may also remove useful backbone-router co-adaptation. Shared global gradient
+clipping is unchanged, so optimizer-level coupling between groups remains.
 
 For cosine scoring, let `x = RMSNorm_router(u)` and `W` be the existing router
 weight. Replace only the content term `W x` with
@@ -34,7 +35,7 @@ with epsilon 1e-6. Positive row-norm growth no longer changes the content score.
 [Chi et al., NeurIPS 2022](https://arxiv.org/abs/2204.09179) motivate separating
 routing geometry from representation collapse and normalize token/expert
 directions. Their X-MoE also adds a low-dimensional projection and learned
-temperature: our full-dimensional, fixed-scale cosine-only ablation is **not**+a reproduction or an established cure. [ReXMoE](https://arxiv.org/abs/2510.17483)
+temperature: our full-dimensional, fixed-scale cosine-only ablation is **not** a reproduction or an established cure. [ReXMoE](https://arxiv.org/abs/2510.17483)
 supports studying adjacent-layer expert reuse and gradual candidate expansion;
 it is related work, not evidence that these six variants will win.
 [ST-MoE](https://arxiv.org/abs/2202.08906) motivates retaining the existing
@@ -61,7 +62,7 @@ The immutable source snapshot is staged at
 `queued/router_followup_20261022/` in the th2 execution checkout; local working
 implementation is in the normal DOT source paths. The snapshot has 146 files,
 manifest SHA256 `65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9`.
-Intended new output root:
+New output root:
 `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01`, with source
 copied to its `source/` directory outside Git sync. Never overwrite the active
 source or its cache. The
@@ -74,6 +75,26 @@ the existing supervisor; an explicit hash-checked predecessor burn-script path
 allows safe handoff between the two source snapshots. Unknown ownership,
 predecessor failure, cancellation or source changes prevent launch.
 Raw local tests/receipts: `temp/mlp_followup_20261022/`.
+
+**Queued and verified:** launch **b90ec46**, health **48bb88f**, observed
+**22 October 2026, 16:07:00 SGT**. CPU-only waiter PID 345455/session
+`dot_router_wait_20261022_a01` is live, with an advancing 30-second heartbeat.
+Both original training-code hashes and the immutable snapshot match. All six
+remote model recipes differ from their respective originals only in the two
+router flags; training recipes differ only in config/output paths. Fourteen
+jobs are staged: acceptance, six train/eval pairs, final report.
+
+The original queue remains running: five arms finished, MLP-only-random at
+1,960/4,768 with all eight workers 338851–338858. MLP-only final loss is
+3.556061873193. No current training was stopped or restarted. New GPU acceptance
+has **not run yet**; it must pass after the successful predecessor handoff.
+Allow about **six additional hours** for the new queue, subject to its measured
+throughput. Do not relaunch the existing waiter or overwrite either source.
+
+The first read-only health check (**4f69dc2**) had a string/Path conversion bug;
+**48bb88f** corrected that checker and passed, without changing either training
+queue. [Queue evidence](results/bdot_router_followup_queue_20261022.json).
+`commands.sh` returns to **#0**; both independent queues continue.
 
 ## Authorized partial-MLP study — 22 October 2026
 

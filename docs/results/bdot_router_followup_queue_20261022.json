@@ -1,0 +1,283 @@
+{
+  "status": "queued_waiting_for_predecessor",
+  "scope": "Six from-scratch router-input/metric ablations after the original partial-MLP queue; GPU acceptance pending.",
+  "host": "thiennh-p6-6y3o-worker-0",
+  "remote_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01",
+  "queue_commit": "b90ec4625c9cd5f5a93f242ff880d34a6bc6c849",
+  "health_commit": "48bb88f04997dd3ee4f35bf8063473b63702a235",
+  "queue_observed_at": "2026-10-22T07:59:01.915017+00:00",
+  "source_manifest_sha256": "65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9",
+  "source_snapshot_files": 146,
+  "active_source_unchanged": true,
+  "queue": [
+    "Partial-25-detach-s0",
+    "Partial-50-detach-s0",
+    "Partial-25-cosine-s0",
+    "Partial-50-cosine-s0",
+    "Partial-25-cosine-detach-s0",
+    "Partial-50-cosine-detach-s0"
+  ],
+  "jobs": [
+    "router_acceptance",
+    "Partial-25-detach-s0",
+    "Partial-25-detach-s0-eval",
+    "Partial-50-detach-s0",
+    "Partial-50-detach-s0-eval",
+    "Partial-25-cosine-s0",
+    "Partial-25-cosine-s0-eval",
+    "Partial-50-cosine-s0",
+    "Partial-50-cosine-s0-eval",
+    "Partial-25-cosine-detach-s0",
+    "Partial-25-cosine-detach-s0-eval",
+    "Partial-50-cosine-detach-s0",
+    "Partial-50-cosine-detach-s0-eval",
+    "router_report"
+  ],
+  "schedule": {
+    "steps": 4768,
+    "warmup_steps": 96,
+    "seed": 0,
+    "data_seed": 0,
+    "routing_seed": 0,
+    "sequence_length": 1024,
+    "global_input_tokens_per_update": 524288,
+    "microbatch": 16,
+    "accumulation": 4,
+    "world_size": 8,
+    "attention_backend": "fa4",
+    "from_scratch": true,
+    "full_schedule": true
+  },
+  "local_verification": {
+    "local_suite": {
+      "tests": 84,
+      "status": "passed"
+    },
+    "targeted_tests": 7,
+    "handoff_tests": 9,
+    "old_parity": {
+      "status": "passed",
+      "cases": 14,
+      "max_parameter_difference": 0.0
+    },
+    "cpu_resume": {
+      "status": "passed",
+      "world_size": 1,
+      "steps": 12,
+      "schedule_steps": 20,
+      "split": 8,
+      "soft_split": 2,
+      "results": [
+        {
+          "case": "resume_hard",
+          "rank": 0,
+          "status": "passed",
+          "errors": [],
+          "batches": 8,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        },
+        {
+          "case": "resume_soft",
+          "rank": 0,
+          "status": "passed",
+          "errors": [],
+          "batches": 4,
+          "mismatches": {
+            "step": 0,
+            "input_sha256": 0,
+            "labels_sha256": 0,
+            "rng_sha256": 0,
+            "progress": 0,
+            "routing_counter": 0,
+            "routes": 0
+          },
+          "max_loss_abs": 0.0,
+          "restored_state_exact": true,
+          "final_state_exact": true
+        }
+      ],
+      "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
+    },
+    "snapshot_manifest_sha256": "65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9",
+    "source_manifest_files": 146,
+    "gpu_acceptance": "queued, not yet run",
+    "inherited_active_source_commit": "cf7f20dee7f58bc0bb7dde244f9d2cf405982eff"
+  },
+  "handoff_requirements": [
+    "predecessor success and six scientific results",
+    "verified advancing eight-GPU burns and released guard",
+    "source hashes and live GPU ownership",
+    "copy Accelerate and verify accelerate env",
+    "stop only verified burn workers and require all eight GPUs free",
+    "numerical, resume, throughput and original D checkpoint acceptance",
+    "six sequential train/eval pairs",
+    "automatic burn restoration and verification after success/failure"
+  ],
+  "receipts": {
+    "queue": {
+      "path": "temp/mlp_followup_20261022/queue-receipt.log",
+      "sha256": "a22b05bc01ac59e866591a01aad44c2c3ae8f2306afce1438fabc73bc901e83b"
+    },
+    "initial_health_error": {
+      "path": "temp/mlp_followup_20261022/health-receipt.log",
+      "description": "Read-only health checker passed a string to a Path-only reader; fixed in a02. No training or waiter code was changed."
+    },
+    "health": {
+      "path": "temp/mlp_followup_20261022/health-receipt-a02.log",
+      "sha256": "7c5470c215dcf3c9dc2bb80bca01127e60eb420919e221289a9f3983265d5823"
+    }
+  },
+  "health": {
+    "observed_at": "2026-10-22T08:07:00.199736+00:00",
+    "wait_status": {
+      "status": "waiting",
+      "phase": "waiting_for_completion",
+      "at": "2026-10-22T08:06:30.726538+00:00",
+      "predecessor": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01",
+      "pilot": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01",
+      "source": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source",
+      "session": "dot_router_20261022_a01",
+      "host": "thiennh-p6-6y3o-worker-0",
+      "deadline_seconds": 43200
+    },
+    "waiter": {
+      "pid": 345455,
+      "ppid": 9406,
+      "start_ticks": 259651070,
+      "command_sha256": "8bd40a05b2939498c7750471a1618b22f1b78c593e95e99cd05fb8a98749f8ea",
+      "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "-u",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source/scripts/bdot_router_followup.py"
+      ],
+      "launcher_kind": null
+    },
+    "waiter_pane_dead": "0",
+    "original_source_matches": true,
+    "snapshot_matches": true,
+    "recipes": {
+      "Partial-25-cosine-detach-s0": {
+        "steps": 4768,
+        "warmup": 96,
+        "seed": 0,
+        "data_seed": 0,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention": "fa4",
+        "flags": {
+          "router_detach_input": true,
+          "router_metric": "cosine"
+        },
+        "parent_recipe_matches": true
+      },
+      "Partial-25-cosine-s0": {
+        "steps": 4768,
+        "warmup": 96,
+        "seed": 0,
+        "data_seed": 0,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention": "fa4",
+        "flags": {
+          "router_detach_input": false,
+          "router_metric": "cosine"
+        },
+        "parent_recipe_matches": true
+      },
+      "Partial-25-detach-s0": {
+        "steps": 4768,
+        "warmup": 96,
+        "seed": 0,
+        "data_seed": 0,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention": "fa4",
+        "flags": {
+          "router_detach_input": true,
+          "router_metric": "linear"
+        },
+        "parent_recipe_matches": true
+      },
+      "Partial-50-cosine-detach-s0": {
+        "steps": 4768,
+        "warmup": 96,
+        "seed": 0,
+        "data_seed": 0,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention": "fa4",
+        "flags": {
+          "router_detach_input": true,
+          "router_metric": "cosine"
+        },
+        "parent_recipe_matches": true
+      },
+      "Partial-50-cosine-s0": {
+        "steps": 4768,
+        "warmup": 96,
+        "seed": 0,
+        "data_seed": 0,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention": "fa4",
+        "flags": {
+          "router_detach_input": false,
+          "router_metric": "cosine"
+        },
+        "parent_recipe_matches": true
+      },
+      "Partial-50-detach-s0": {
+        "steps": 4768,
+        "warmup": 96,
+        "seed": 0,
+        "data_seed": 0,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention": "fa4",
+        "flags": {
+          "router_detach_input": true,
+          "router_metric": "linear"
+        },
+        "parent_recipe_matches": true
+      }
+    },
+    "original_queue_status": "running",
+    "current_original_arm": "MLP-only-random-s0",
+    "current_original_step": 1960,
+    "original_gpu_workers": [
+      338851,
+      338852,
+      338853,
+      338854,
+      338855,
+      338856,
+      338857,
+      338858
+    ],
+    "completed_parent_losses": {
+      "MLP-only-s0": 3.556061873192999,
+      "Partial-25-s0": 3.5028789800018627,
+      "Partial-50-s0": 3.530075891696864,
+      "Partial-50-random-s0": 3.52573749655555,
+      "Partial-25-random-s0": 3.5101494758788694
+    }
+  }
+}
