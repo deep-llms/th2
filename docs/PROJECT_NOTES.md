@@ -4,6 +4,21 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Authorized efficiency follow-up — 23 October 2026
+
+User accepted second-seed confirmation followed by a small matched STOP study.
+First confirm Partial-25-cosine and Partial-50-cosine-detach at model/router
+seed 1, fixed data seed 0; reuse D-s1 only after recipe/data and GPU carry checks.
+Unchanged validated source is reused from the completed router snapshot.
+The new `bdot_router_confirm.py` only prepares/checks/reports the two fits;
+no model, loss, backend, scheduler or data code changes. Its six CPU tests pass.
+
+STOP is a new efficiency question, not a rescue of the original quality gates.
+It must be compared against dense+STOP with matched adaptation budgets and
+real cached inference; lower FLOPs alone do not establish speedup. CURRENT_TASK
+records the four-branch plan and numerical/measurement gates. Do not launch
+STOP automatically before second-seed results and implementation verification.
+
 ## Completed partial-MLP/router screen — 23 October 2026
 
 All 12 fits completed 4,768 updates and final evaluation, seed 0. Original

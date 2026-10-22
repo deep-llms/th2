@@ -1,5 +1,74 @@
 # Current task
 
+## Seed confirmation and STOP feasibility — authorized 23 October 2026
+
+The user approved the proposed sequence: confirm the two selected routers at a
+second seed, then test whether routing improves STOP's measured quality/latency
+trade-off relative to a dense STOP control. This is a new efficiency study;
+it does not relabel the original v2/v3 gates as passed. Design references remain
+`docs/BDOT_v2_spec.md` (especially 3.5, 3.9 and 4.3) and the latest chat proposal.
+
+**Immediate queue:** Partial-25-cosine-s1, then Partial-50-cosine-detach-s1.
+Both train from scratch for 4,768 updates, warmup 96, model/router seed 1,
+**data seed 0** to match the existing D-s1 and isolate initialization/router
+variation. All other settings match seed 0: seq 1,024, batch 524,288,
+microbatch 16 × accumulation 4 × eight B200s, FA4, same EOS/isolation/positions,
+optimizer/LR/validation and 1,000/2,500/4,768 checkpoint retention.
+
+Reuse D-s1 loss 3.494008400543 only after reloading its checkpoint and matching
+full validation within 1e-5 nats, with exactly 9,704 sequences / 9,915,698 tokens.
+The queue gates both fits on that carry check, then reports paired gaps to
+same-seed D and both-seed means. A practical screen is gap <=0.01 nats in each
+seed; two seeds cannot establish statistical equivalence. No broad architecture
+sweep, longer full pretraining or automatic scale-up is part of this queue.
+
+Preflight **7f9a1e4** passed at **02:55:08 SGT**: dense/control recipes match
+outside config/output/model seed, the actual packed-data recipes are identical,
+D-s1 has its full checkpoint state, original acceptance passed, source snapshot
+hashes match, and all eight verified communicating burn workers remain live.
+Source is reused unchanged from `6y3o-dot-router-20261022-a01/source/`;
+manifest SHA256 `65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9`.
+Only a small queue/report helper is new; six CPU orchestration tests pass.
+New root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01`.
+Existing supervisor handles copy/verify Accelerate, exact burn-worker reclaim,
+30-second/free-GPU verification, both train/eval pairs and final burn restoration.
+Raw evidence: `temp/router_confirm_20261023/`.
+
+**Next, after confirmation:** use the confirmed routed candidate and D in a
+2×2 warm-start pilot: dense / routed × ordinary continuation / random-STOP
+continuation. Provisional budget is 1,000 additional updates each, with the
+same fresh optimizer/LR schedule and next training-data segment in every arm.
+These are adaptation branches, not exact resumes of the completed cosine
+schedule. Preserve old checkpoints and record/reset counters deliberately;
+do not restart the router's home-only curriculum or silently repeat data.
+
+STOP freezes a token's middle state after at least two middle steps, skips
+remaining Q/attention/O and **both fixed and routed MLP work**, still supplies
+per-step K/V from that frozen state, and runs the ordinary coda. Skipping only
+the routed quarter has too little speed headroom. Train with per-step random
+stop probability 0.05 first; fit a small causal STOP head on training-only
+loss-based labels with the trunk frozen. Those labels are heuristic because
+mixed exits change context; evaluate the deployed mixed policy directly.
+
+Required controls: full-depth endpoints after the same adaptation budget,
+fixed-depth exits, and matched-compute random stopping for both trunks.
+Thresholds use a separate calibration slice, never the final validation set.
+Measure actual cached decode at batch 1 and 32 and prefill, including router,
+K/V, coda and LM-head costs. Proposed go/no-go target: >=10% batch-1 measured
+speedup within 0.01 nats of the matched dense full-depth continuation, and a
+better quality/latency curve than dense+STOP. Check a fixed downstream suite
+before claiming comparable quality. No claim of KV-memory savings: stopped
+tokens still populate all middle K/V caches.
+
+Implementation gates before any STOP training: no-STOP exact old behavior,
+causality/document boundaries/reset positions, cached vs parallel agreement,
+full vs mixed/all-stopped batches, gradient/RNG/resume/DDP correctness, and
+actual skipped kernels in timing. Current packed FA4 requires equal Q/KV
+lengths and no cache; it must not be used as if it already supports the sparse
+or cached STOP path. Preserve the validated training backend and validate any
+new path independently. STOP implementation/launch waits for the confirmation
+results; the current two-fit queue ends with verified burns.
+
 ## Both MLP studies complete — verified 23 October 2026, 00:16 SGT
 
 All **12 training runs and 12 final evaluations** completed successfully at
