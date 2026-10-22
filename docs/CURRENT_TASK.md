@@ -34,6 +34,20 @@ Existing supervisor handles copy/verify Accelerate, exact burn-worker reclaim,
 30-second/free-GPU verification, both train/eval pairs and final burn restoration.
 Raw evidence: `temp/router_confirm_20261023/`.
 
+**Launched:** **8a687c8**, health **3f5141d**. D-s1 carry reproduced loss
+3.4940084005428926 exactly on the full validation set. Accelerate cache was
+copied, byte-verified and `accelerate env` confirmed eight BF16 processes.
+Only verified burn workers 392414–392421 were reclaimed; all GPUs were free
+at **03:02:34 SGT**. Partial-25-cosine-s1 started **03:03:12 SGT**; the
+**03:05:20 SGT** check records step **120/4,768**, finite loss/gradients and
+all eight training workers 395146–395153. Routing is correctly home-only until
+477 completed updates. Partial-50-cosine-detach-s1 follows automatically.
+Source and both seed-only recipes match. Estimated queue finish **05:05–05:20
+SGT, 23 October**, based on the completed seed-0 runtimes; not a completion claim.
+[Launch/health evidence](results/bdot_router_confirmation_launch_20261023.json).
+Commands return to **#0** while the independent supervisor continues and is
+configured to restore/verify burns after success or failure.
+
 **Next, after confirmation:** use the confirmed routed candidate and D in a
 2×2 warm-start pilot: dense / routed × ordinary continuation / random-STOP
 continuation. Provisional budget is 1,000 additional updates each, with the

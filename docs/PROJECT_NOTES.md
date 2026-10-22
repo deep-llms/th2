@@ -12,6 +12,11 @@ seed 1, fixed data seed 0; reuse D-s1 only after recipe/data and GPU carry check
 Unchanged validated source is reused from the completed router snapshot.
 The new `bdot_router_confirm.py` only prepares/checks/reports the two fits;
 no model, loss, backend, scheduler or data code changes. Its six CPU tests pass.
+Launch **8a687c8**, health **3f5141d**: D-s1 GPU carry is exact; Accelerate,
+verified burn reclamation and all-eight-free checks passed. First fit started
+23 October **03:03 SGT**, healthy at step 120 at **03:05 SGT**. Second fit
+is queued. [Evidence](results/bdot_router_confirmation_launch_20261023.json).
+Commands return to #0; the independent supervisor restores burns afterward.
 
 STOP is a new efficiency question, not a rescue of the original quality gates.
 It must be compared against dense+STOP with matched adaptation budgets and
