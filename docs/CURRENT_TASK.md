@@ -1,6 +1,45 @@
 # Current task
 
-## Seed confirmation and STOP feasibility — authorized 23 October 2026
+## Seed confirmation complete — verified 23 October 2026, 05:42 SGT
+
+Both seed-1 fits and their final evaluations completed successfully at **05:00:13
+SGT**, at 4,768 updates, without retries. D-s1 carry evaluation reproduced its
+previous loss exactly. Every comparison uses the same **9,704 sequences /
+9,915,698 scored tokens**, with model/router seeds 0 and 1 and data seed 0.
+
+| Model | Seed 0 loss | Seed 1 loss | Mean loss gap to same-seed D |
+|---|---:|---:|---:|
+| Dense D | 3.494464 | 3.494008 | — |
+| Partial-25-cosine | 3.495407 | 3.496507 | +0.001721 |
+| Partial-50-cosine-detach | 3.497266 | 3.496573 | +0.002684 |
+
+Both pass the predeclared practical screen (gap <=0.01 nats in each seed),
+but neither beats D in either seed. The near-match reproduces across these two
+initializations; it is not statistical equivalence or a quality improvement.
+Partial-25-cosine has the smaller mean gap, corresponding to +0.172% geometric
+mean PPL versus D; the 50% arm is +0.269%. Prefer Partial-25-cosine for the
+already proposed controlled STOP feasibility study. STOP remains **unimplemented
+and unlaunched**; the plan and required correctness gates below still apply.
+No further full pretraining or architecture sweep was submitted by this check.
+
+Final training jobs took **57m54s / 57m20s** (25% / 50%), including their normal
+in-training validation/checkpoint work. Steps 1,000/2,500/4,768 are retained;
+final weights, optimizer, scheduler and all eight RNG files are verified.
+Frozen source and seed-only configuration comparisons still match.
+
+Automatic communicating burns were verified at **05:01:24 SGT**. The fresh
+**05:42:04 SGT** inspection matches workers **409304–409311** under launcher
+409235 on all eight B200s, each at 100% utilization, collective cycles advancing
+2,800→2,810, and the ownership guard released. No experiments remain queued.
+Inspection commit **7dd8c6c**; commands returned to **#0** after retrieval.
+
+[Final results and operational evidence](results/bdot_router_confirmation_final_20261023.json).
+Raw receipt: `temp/router_confirm_20261023/final-status.json`, verified against
+remote SHA256 `ca285d3a0d79eed37262e0ee12296519f44ea6ea116cec7980179dba4cf18b79`.
+Remote root remains
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01`.
+
+## Seed confirmation launch history and STOP feasibility plan — 23 October 2026
 
 The user approved the proposed sequence: confirm the two selected routers at a
 second seed, then test whether routing improves STOP's measured quality/latency

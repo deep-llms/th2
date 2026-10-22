@@ -4,6 +4,25 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Second-seed confirmation completed — 23 October 2026
+
+Both selected routers finished 4,768 steps and full validation, with no retries.
+Partial-25-cosine losses across seeds 0/1: 3.495407 / 3.496507; mean paired gap
+to D +0.001721 nats (+0.172% geometric mean PPL). Partial-50-cosine-detach:
+3.497266 / 3.496573; gap +0.002684 (+0.269%). D: 3.494464 / 3.494008.
+Both pass the <=0.01-nat practical screen in each seed, neither beats D.
+This confirms a near-match over two initializations with fixed data order,
+not statistical equivalence. Prefer Partial-25-cosine for the planned STOP
+study; no STOP implementation/training has run yet.
+
+Queue completed **05:00:13 SGT**, burns restored **05:01:24 SGT**. Inspection
+**7dd8c6c** at **05:42:04 SGT** verified all eight burn workers 409304–409311,
+advancing collective cycles, released guard, immutable source, retained milestone
+checkpoints and full optimizer/scheduler/eight-rank RNG state. No jobs remain
+queued. Commands #0. [Evidence](results/bdot_router_confirmation_final_20261023.json).
+Raw local receipt `temp/router_confirm_20261023/final-status.json` matches remote
+SHA256 `ca285d3a0d79eed37262e0ee12296519f44ea6ea116cec7980179dba4cf18b79`.
+
 ## Authorized efficiency follow-up — 23 October 2026
 
 User accepted second-seed confirmation followed by a small matched STOP study.

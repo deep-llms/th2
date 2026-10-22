@@ -1,0 +1,3239 @@
+{
+  "status": "verified_complete",
+  "inspection_commit": "7dd8c6cca4449884a6b832070e4576b9d12692ef",
+  "observed_at": "2026-10-22T21:42:04.326420+00:00",
+  "source_receipt_sha256": "ca285d3a0d79eed37262e0ee12296519f44ea6ea116cec7980179dba4cf18b79",
+  "source_receipt": "temp/router_confirm_20261023/final-status.json",
+  "log_sha256": "a197fb76387c6ad1953360c3bac65af2683756f05c3c0c67359e20fc772770f6",
+  "comparison": {
+    "status": "ok",
+    "arms": [
+      {
+        "arm": "Partial-25-cosine",
+        "seed_losses": [
+          3.495407258695272,
+          3.4965066446610065
+        ],
+        "seed_gaps_to_D": [
+          0.0009437340749962608,
+          0.002498244118113835
+        ],
+        "mean_loss": 3.4959569516781395,
+        "mean_gap_to_D": 0.0017209890965550478,
+        "within_001_nats_both_seeds": true
+      },
+      {
+        "arm": "Partial-50-cosine-detach",
+        "seed_losses": [
+          3.4972656017974293,
+          3.496573411932522
+        ],
+        "seed_gaps_to_D": [
+          0.002802077177153528,
+          0.0025650113896293902
+        ],
+        "mean_loss": 3.496919506864976,
+        "mean_gap_to_D": 0.002683544283391459,
+        "within_001_nats_both_seeds": true
+      }
+    ],
+    "scope": "Two initialization/router seeds with fixed data order; not a claim of statistical equivalence or an automatic STOP launch."
+  },
+  "evidence": {
+    "live": {
+      "host": "thiennh-p6-6y3o-worker-0",
+      "time": "2026-10-22T21:42:04.326420+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409304
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409305
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409306
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409307
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409308
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409309
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409310
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409311
+          ]
+        }
+      ],
+      "workers": [
+        409304,
+        409305,
+        409306,
+        409307,
+        409308,
+        409309,
+        409310,
+        409311
+      ],
+      "stop_roots": [
+        409235
+      ],
+      "processes": {
+        "409304": {
+          "pid": 409304,
+          "ppid": 409235,
+          "start_ticks": 264341493,
+          "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409305": {
+          "pid": 409305,
+          "ppid": 409235,
+          "start_ticks": 264341493,
+          "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409306": {
+          "pid": 409306,
+          "ppid": 409235,
+          "start_ticks": 264341494,
+          "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409307": {
+          "pid": 409307,
+          "ppid": 409235,
+          "start_ticks": 264341494,
+          "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409308": {
+          "pid": 409308,
+          "ppid": 409235,
+          "start_ticks": 264341494,
+          "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409309": {
+          "pid": 409309,
+          "ppid": 409235,
+          "start_ticks": 264341494,
+          "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409310": {
+          "pid": 409310,
+          "ppid": 409235,
+          "start_ticks": 264341494,
+          "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409311": {
+          "pid": 409311,
+          "ppid": 409235,
+          "start_ticks": 264341494,
+          "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "409235": {
+          "pid": 409235,
+          "ppid": 9406,
+          "start_ticks": 264341375,
+          "command_sha256": "f47ff4ab83df26d0ed1a0cce6c4c28fc4423e89ab8c65ebce442a76e15179702",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source/resources/llm_pretrain_burn.py"
+          ],
+          "launcher_kind": "gpu_burn"
+        }
+      },
+      "guard_disabled": false
+    },
+    "supervisor_tail": "AUTHORIZED_BURN_WORKER_STOP [392414, 392415, 392416, 392417, 392418, 392419, 392420, 392421]\nALL_EIGHT_GPUS_VERIFIED_FREE\nSTART D-s1-carry\nOK D-s1-carry\nSTART confirmation_check\nOK confirmation_check\nSTART Partial-25-cosine-s1\nOK Partial-25-cosine-s1\nSTART Partial-25-cosine-s1-eval\nOK Partial-25-cosine-s1-eval\nSTART Partial-50-cosine-detach-s1\nOK Partial-50-cosine-detach-s1\nSTART Partial-50-cosine-detach-s1-eval\nOK Partial-50-cosine-detach-s1-eval\nSTART confirmation_report\nOK confirmation_report\n",
+    "launch.json": {
+      "status": "submitted",
+      "session": "dot_router_confirm_20261023_a01",
+      "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01",
+      "python": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "tokenizers": "0.22.2",
+        "safetensors": "0.8.0",
+        "flash-attn-4": "4.0.0b33"
+      },
+      "accelerate_cache": "/mnt/local/.cache/huggingface/accelerate/default_config.yaml",
+      "environment": {
+        "HF_HUB_OFFLINE": "1",
+        "HF_DATASETS_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1",
+        "HF_HUB_DISABLE_TELEMETRY": "1",
+        "WANDB_MODE": "offline",
+        "NCCL_NVLS_ENABLE": "0",
+        "OMP_NUM_THREADS": "1",
+        "TOKENIZERS_PARALLELISM": "false",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "jobs_config": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/gated-jobs.json"
+    },
+    "confirmation.json": {
+      "predecessor": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01",
+      "source": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source",
+      "baseline_recipe": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/prepared/D-s1.train.json",
+      "arms": [
+        "Partial-25-cosine",
+        "Partial-50-cosine-detach"
+      ],
+      "seed": 1,
+      "data_seed": 0,
+      "source_manifest_sha256": "65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9"
+    },
+    "supervised/supervisor.json": {
+      "started_at": "2026-10-22T19:02:34.324846+00:00",
+      "training_status": "ok",
+      "training_returncode": 0,
+      "free_after_training": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        }
+      ],
+      "burn": {
+        "at": "2026-10-22T21:01:24.000744+00:00",
+        "session": "dot_router_confirm_20261023_a01_burn",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409304
+            ]
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409305
+            ]
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409306
+            ]
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409307
+            ]
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409308
+            ]
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409309
+            ]
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409310
+            ]
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              409311
+            ]
+          }
+        ],
+        "collective_progress_verified": true
+      },
+      "finished_at": "2026-10-22T21:01:24.001006+00:00"
+    },
+    "supervised/reclaim.json": {
+      "at": "2026-10-22T19:02:04.030427+00:00",
+      "before": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392414
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392415
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392416
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392417
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392418
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392419
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392420
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            392421
+          ]
+        }
+      ],
+      "identities": {
+        "392414": {
+          "pid": 392414,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392345": {
+          "pid": 392345,
+          "ppid": 9406,
+          "start_ticks": 262078305,
+          "command_sha256": "f47ff4ab83df26d0ed1a0cce6c4c28fc4423e89ab8c65ebce442a76e15179702",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source/resources/llm_pretrain_burn.py"
+          ],
+          "launcher_kind": "gpu_burn"
+        },
+        "392415": {
+          "pid": 392415,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392416": {
+          "pid": 392416,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392417": {
+          "pid": 392417,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392418": {
+          "pid": 392418,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392419": {
+          "pid": 392419,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392420": {
+          "pid": 392420,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "392421": {
+          "pid": 392421,
+          "ppid": 392345,
+          "start_ticks": 262078430,
+          "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        }
+      },
+      "signal_targets": [
+        392414,
+        392415,
+        392416,
+        392417,
+        392418,
+        392419,
+        392420,
+        392421
+      ]
+    },
+    "supervised/gpus-free-before-training.json": {
+      "at": "2026-10-22T19:02:34.033879+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        }
+      ]
+    },
+    "supervised/run/run.json": {
+      "status": "ok",
+      "started_at": "2026-10-22T19:02:34.325128+00:00",
+      "jobs": [
+        {
+          "name": "D-s1-carry",
+          "started_at": "2026-10-22T19:02:34.325450+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 37.31288129417226,
+          "artifacts": [
+            {
+              "path": "D-s1-carry/result.json",
+              "sha256": "dca29e1a754226bc268f8c94fef8b12acf1e1cbe83b31e8b2bda3d84f28e87d9",
+              "bytes": 5094
+            }
+          ],
+          "finished_at": "2026-10-22T19:03:12.186108+00:00"
+        },
+        {
+          "name": "confirmation_check",
+          "started_at": "2026-10-22T19:03:12.186154+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06396168703213334,
+          "artifacts": [
+            {
+              "path": "confirmation-check.json",
+              "sha256": "f7ba001c27897024835b9cd7a8fdb2f4297db02cbf12dc164d06c0284380ac44",
+              "bytes": 5404
+            }
+          ],
+          "finished_at": "2026-10-22T19:03:12.250988+00:00"
+        },
+        {
+          "name": "Partial-25-cosine-s1",
+          "started_at": "2026-10-22T19:03:12.251009+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3474.1951147541404,
+          "artifacts": [
+            {
+              "path": "Partial-25-cosine-s1.verified.json",
+              "sha256": "378ac23ba6146a3ebb74581c74812bea2705b2f9a2147294f3dcb776e2b51b3b",
+              "bytes": 2165
+            }
+          ],
+          "finished_at": "2026-10-22T20:01:06.992617+00:00"
+        },
+        {
+          "name": "Partial-25-cosine-s1-eval",
+          "started_at": "2026-10-22T20:01:06.992657+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 51.83135666232556,
+          "artifacts": [
+            {
+              "path": "Partial-25-cosine-s1/result.json",
+              "sha256": "b41e7226b264cb5e1ee6c53d15108b8387e131a410c2e4a168a619a732591153",
+              "bytes": 18489
+            }
+          ],
+          "finished_at": "2026-10-22T20:01:59.337341+00:00"
+        },
+        {
+          "name": "Partial-50-cosine-detach-s1",
+          "started_at": "2026-10-22T20:01:59.337378+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 3440.1919032512233,
+          "artifacts": [
+            {
+              "path": "Partial-50-cosine-detach-s1.verified.json",
+              "sha256": "491d613ac72efb6632d99bd6084511ea69ea13f146fc36065d59e1b4735e4b9a",
+              "bytes": 2179
+            }
+          ],
+          "finished_at": "2026-10-22T20:59:20.020225+00:00"
+        },
+        {
+          "name": "Partial-50-cosine-detach-s1-eval",
+          "started_at": "2026-10-22T20:59:20.020260+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 52.54310357104987,
+          "artifacts": [
+            {
+              "path": "Partial-50-cosine-detach-s1/result.json",
+              "sha256": "f6640b8cd3a75f3b540d12dd481862e04794e4c26385cecf308c7b03b2b43853",
+              "bytes": 18508
+            }
+          ],
+          "finished_at": "2026-10-22T21:00:13.062991+00:00"
+        },
+        {
+          "name": "confirmation_report",
+          "started_at": "2026-10-22T21:00:13.063030+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 0.06393298925831914,
+          "artifacts": [
+            {
+              "path": "confirmation-results.json",
+              "sha256": "d30e8ece721a1f06e91c37eb864381d48722634dd0016e21d1cc20513c788d8f",
+              "bytes": 887
+            }
+          ],
+          "finished_at": "2026-10-22T21:00:13.127702+00:00"
+        }
+      ],
+      "finished_at": "2026-10-22T21:00:13.127721+00:00"
+    },
+    "supervised/run/confirmation-check.json": {
+      "status": "ok",
+      "baseline": {
+        "status": "ok",
+        "loss": 3.4940084005428926,
+        "perplexity": 32.917630659512035,
+        "nll_sum": 34645532.10924636,
+        "num_tokens": 9915698,
+        "num_sequences": 9704,
+        "off_default_share": 0.0,
+        "reuse_rate": 0.0,
+        "routing_decisions": 79495168,
+        "routing_input_tokens": 9936896,
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/prepared/runs/D-s1/checkpoint-4768",
+        "global_step": 4768,
+        "attention_backend": "fa4",
+        "training_attention_backend": "fa4",
+        "precision": "bf16",
+        "world_size": 8,
+        "batch_size_per_rank": 16,
+        "routing_override": null,
+        "routing_seed": 0,
+        "selection": {
+          "full_sequences": 9704,
+          "max_sequences": null,
+          "shuffle_seed": 0,
+          "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+        },
+        "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+        "data_recipe": {
+          "policy": "document_segments_map_v2",
+          "sources": [
+            {
+              "format": "saved",
+              "sources": [
+                "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+              ],
+              "files": [
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                  "bytes": 247,
+                  "mtime_ns": 1792461609078234207
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                  "bytes": 165,
+                  "mtime_ns": 1792461587538373514
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                  "bytes": 44942336,
+                  "mtime_ns": 1792461577068441722
+                }
+              ],
+              "rows": 11717,
+              "fingerprint": "d0696a73ba2e15f6"
+            }
+          ],
+          "raw_fingerprint": "8e4d5df974b46bcc",
+          "raw_documents": 11717,
+          "tokenizer": {
+            "class": "Qwen2Tokenizer",
+            "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+            "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+            "special_tokens": {
+              "eos_token": "<|endoftext|>",
+              "pad_token": "<|endoftext|>"
+            },
+            "model_max_length": 131072,
+            "padding_side": "right",
+            "truncation_side": "right"
+          },
+          "tokenizer_files": [
+            {
+              "name": "merges.txt",
+              "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+            },
+            {
+              "name": "tokenizer.json",
+              "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+            },
+            {
+              "name": "tokenizer_config.json",
+              "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+            },
+            {
+              "name": "vocab.json",
+              "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+            }
+          ],
+          "document_end": {
+            "token": "<|endoftext|>",
+            "id": 151643,
+            "selection": "explicit"
+          },
+          "block_size": 1024,
+          "map_batch_size": 1000,
+          "requested_workers": 128,
+          "effective_workers": 128,
+          "shuffle_seed": 0,
+          "add_special_tokens": false,
+          "append_boundary": "one_after_every_document_including_empty",
+          "remainder": "drop_per_map_batch_within_worker_shard",
+          "attention": "causal_within_document",
+          "positions": "reset_per_document_fragment",
+          "labels": "ignore_first_and_document_starts",
+          "attention_backend": "fa4",
+          "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+          "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+          "versions": {
+            "datasets": "4.8.5",
+            "transformers": "5.9.0",
+            "tokenizers": "0.22.2",
+            "pyarrow": "26.0.0"
+          },
+          "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+          "packed_fingerprint": "98806e57e2a3d990",
+          "shuffled_fingerprint": "b3b53e7dde5c38e7",
+          "packed_sequences": 9704,
+          "packed_input_tokens": 9936896,
+          "scored_target_tokens": 9915698,
+          "fa4_runtime": {
+            "package": "flash-attn-4",
+            "version": "4.0.0b33",
+            "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+            "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+          }
+        },
+        "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+        "scoring_sha256": "8be3d5699d0ad73c4bd3b2fb7b24ed144192c86c9e8e34b72f231fec12b7ba19",
+        "weights": [
+          {
+            "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01/prepared/runs/D-s1/checkpoint-4768/model.safetensors",
+            "bytes": 1377501672,
+            "mtime_ns": 1792599708530820344
+          }
+        ],
+        "config_sha256": "d87bf3cfde2cb7fc0510c26cb91c875b03fa714a3b35cdcb0442f275ef09feda",
+        "torch_version": "2.14.1+cu130"
+      }
+    },
+    "supervised/run/confirmation-results.json": {
+      "status": "ok",
+      "arms": [
+        {
+          "arm": "Partial-25-cosine",
+          "seed_losses": [
+            3.495407258695272,
+            3.4965066446610065
+          ],
+          "seed_gaps_to_D": [
+            0.0009437340749962608,
+            0.002498244118113835
+          ],
+          "mean_loss": 3.4959569516781395,
+          "mean_gap_to_D": 0.0017209890965550478,
+          "within_001_nats_both_seeds": true
+        },
+        {
+          "arm": "Partial-50-cosine-detach",
+          "seed_losses": [
+            3.4972656017974293,
+            3.496573411932522
+          ],
+          "seed_gaps_to_D": [
+            0.002802077177153528,
+            0.0025650113896293902
+          ],
+          "mean_loss": 3.496919506864976,
+          "mean_gap_to_D": 0.002683544283391459,
+          "within_001_nats_both_seeds": true
+        }
+      ],
+      "scope": "Two initialization/router seeds with fixed data order; not a claim of statistical equivalence or an automatic STOP launch."
+    },
+    "supervised/burn-verified.json": {
+      "at": "2026-10-22T21:01:24.000744+00:00",
+      "session": "dot_router_confirm_20261023_a01_burn",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409304
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409305
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409306
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409307
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409308
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409309
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409310
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            409311
+          ]
+        }
+      ],
+      "collective_progress_verified": true
+    },
+    "source_matches": true,
+    "accelerate_cache_matches": true,
+    "accelerate_env": "\nCopy-and-paste the text below in your GitHub issue\n\n- `Accelerate` version: 1.13.0\n- Platform: Linux-6.12.103-127.188.amzn2023.x86_64-x86_64-with-glibc2.39\n- `accelerate` bash location: /usr/local/bin/accelerate\n- Python version: 3.11.15\n- Numpy version: 2.4.6\n- PyTorch version: 2.14.1+cu130\n- PyTorch accelerator: CUDA\n- System RAM: 1996.02 GB\n- GPU type: NVIDIA B200\n- `Accelerate` default config:\n\t- compute_environment: LOCAL_MACHINE\n\t- distributed_type: MULTI_GPU\n\t- mixed_precision: bf16\n\t- use_cpu: False\n\t- debug: False\n\t- num_processes: 8\n\t- machine_rank: 0\n\t- num_machines: 1\n\t- gpu_ids: all\n\t- rdzv_backend: static\n\t- same_network: True\n\t- main_training_function: main\n\t- enable_cpu_affinity: False\n\t- downcast_bf16: no\n\t- tpu_use_cluster: False\n\t- tpu_use_sudo: False\n\t- tpu_env: []\n",
+    "recipes": {
+      "Partial-25-cosine-s1": {
+        "seed": 1,
+        "data_seed": 0,
+        "routing_seed": 1,
+        "max_steps": 4768,
+        "warmup": 96,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention_backend": "fa4",
+        "parent_matches": true
+      },
+      "Partial-50-cosine-detach-s1": {
+        "seed": 1,
+        "data_seed": 0,
+        "routing_seed": 1,
+        "max_steps": 4768,
+        "warmup": 96,
+        "sequence_length": 1024,
+        "microbatch": 16,
+        "accumulation": 4,
+        "attention_backend": "fa4",
+        "parent_matches": true
+      }
+    },
+    "runs": {
+      "Partial-25-cosine-s1": {
+        "train_results.json": {
+          "epoch": 0.08337887286383171,
+          "global_step": 4768,
+          "schedule_steps": 4768,
+          "train_input_tokens": 2499805184,
+          "train_lm_loss": 3.9492332762132203,
+          "train_lm_tokens": 2494329232,
+          "train_objective_loss": 3.9497218232026836,
+          "train_router_z_loss": 0.4608041121155233,
+          "train_runtime": 3422.2366,
+          "train_samples": 29278633,
+          "train_samples_per_second": 713.339,
+          "train_steps_per_second": 1.393
+        },
+        "final_eval.json": {
+          "eval_loss": 3.4965066446610065,
+          "eval_perplexity": 32.99996974543323,
+          "eval_nll_sum": 34670303.94345185,
+          "eval_num_tokens": 9915698,
+          "eval_num_sequences": 9704,
+          "eval_off_default_share": 0.12365575477493172,
+          "eval_reuse_rate": 0.14504096651509688,
+          "eval_routing_decisions": 79495168,
+          "eval_routing_input_tokens": 9936896,
+          "eval_runtime": 4.6124,
+          "eval_samples_per_second": 2103.891,
+          "eval_steps_per_second": 16.477,
+          "epoch": 0.08337887286383171
+        },
+        "train_config.json": {
+          "model": {
+            "model_name_or_path": null,
+            "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/Partial-25-cosine-s1.model.json",
+            "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+            "cache_dir": null,
+            "trust_remote_code": false,
+            "attention_backend": "fa4"
+          },
+          "data": {
+            "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+            "data_order": "packed_shuffle",
+            "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+            "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+            "validation_tokens": 10000000,
+            "document_split": "train",
+            "block_size": 1024,
+            "preprocessing_num_workers": 128,
+            "overwrite_cache": false,
+            "document_end_token": "<|endoftext|>",
+            "map_batch_size": 1000,
+            "isolate_documents": true,
+            "reset_document_positions": true,
+            "data_cache_dir": null,
+            "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+            "eval_max_sequences": 1024
+          },
+          "training": {
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-25-cosine-s1",
+            "per_device_train_batch_size": 16,
+            "num_train_epochs": 3.0,
+            "max_steps": 4768,
+            "learning_rate": 0.0003,
+            "lr_scheduler_type": "cosine_with_min_lr",
+            "lr_scheduler_kwargs": {
+              "min_lr_rate": 0.1
+            },
+            "warmup_steps": 96,
+            "optim": "adamw_torch",
+            "weight_decay": 0.1,
+            "adam_beta1": 0.9,
+            "adam_beta2": 0.95,
+            "adam_epsilon": 1e-08,
+            "gradient_accumulation_steps": 4,
+            "average_tokens_across_devices": true,
+            "max_grad_norm": 1.0,
+            "label_smoothing_factor": 0.0,
+            "bf16": true,
+            "fp16": false,
+            "bf16_full_eval": false,
+            "fp16_full_eval": false,
+            "tf32": false,
+            "gradient_checkpointing": false,
+            "torch_compile": false,
+            "use_liger_kernel": false,
+            "use_cache": false,
+            "auto_find_batch_size": false,
+            "logging_strategy": "steps",
+            "logging_steps": 10,
+            "logging_first_step": false,
+            "log_on_each_node": true,
+            "logging_nan_inf_filter": true,
+            "include_num_input_tokens_seen": "no",
+            "log_level": "passive",
+            "log_level_replica": "warning",
+            "disable_tqdm": true,
+            "report_to": [],
+            "project": "huggingface",
+            "eval_strategy": "steps",
+            "eval_steps": 100,
+            "eval_delay": 0,
+            "per_device_eval_batch_size": 16,
+            "prediction_loss_only": false,
+            "eval_on_start": false,
+            "eval_do_concat_batches": true,
+            "eval_use_gather_object": false,
+            "include_for_metrics": [],
+            "batch_eval_metrics": false,
+            "save_only_model": false,
+            "save_strategy": "steps",
+            "save_steps": 250,
+            "save_on_each_node": false,
+            "enable_jit_checkpoint": false,
+            "push_to_hub": false,
+            "hub_strategy": "every_save",
+            "hub_always_push": false,
+            "load_best_model_at_end": false,
+            "ignore_data_skip": false,
+            "restore_callback_states_from_checkpoint": false,
+            "full_determinism": false,
+            "seed": 1,
+            "data_seed": 0,
+            "use_cpu": false,
+            "accelerator_config": {
+              "split_batches": false,
+              "dispatch_batches": null,
+              "even_batches": true,
+              "use_seedable_sampler": true,
+              "non_blocking": false,
+              "gradient_accumulation_kwargs": null
+            },
+            "dataloader_drop_last": true,
+            "dataloader_num_workers": 8,
+            "dataloader_pin_memory": true,
+            "dataloader_persistent_workers": false,
+            "remove_unused_columns": false,
+            "train_sampling_strategy": "sequential",
+            "length_column_name": "length",
+            "ddp_find_unused_parameters": true,
+            "ddp_broadcast_buffers": false,
+            "ddp_timeout": 21600,
+            "fsdp": [],
+            "fsdp_config": {
+              "min_num_params": 0,
+              "xla": false,
+              "xla_fsdp_v2": false,
+              "xla_fsdp_grad_ckpt": false
+            },
+            "debug": [],
+            "skip_memory_metrics": true,
+            "do_train": false,
+            "do_eval": true,
+            "do_predict": false,
+            "keep_checkpoint_steps": [
+              1000,
+              2500,
+              4768
+            ]
+          }
+        },
+        "latest_metrics": [
+          {
+            "step": 4768,
+            "eval_loss": 3.5145855250901907,
+            "eval_perplexity": 33.60199785226036,
+            "eval_nll_sum": 3677328.407829492,
+            "eval_num_tokens": 1046305,
+            "eval_num_sequences": 1024,
+            "eval_curriculum_loss": 3.5145855250901907,
+            "eval_curriculum_perplexity": 33.60199785226036,
+            "eval_curriculum_nll_sum": 3677328.407829492,
+            "eval_curriculum_num_tokens": 1046305,
+            "eval_curriculum_num_sequences": 1024,
+            "eval_target_loss": 3.5145855250901907,
+            "eval_target_perplexity": 33.60199785226036,
+            "eval_target_nll_sum": 3677328.407829492,
+            "eval_target_num_tokens": 1046305,
+            "eval_target_num_sequences": 1024,
+            "eval_curriculum_reach": 1,
+            "eval_curriculum_soft": false,
+            "eval_spike_loss": 3.5145855250901907,
+            "eval_spike": false,
+            "eval_spike_min": 3.5145855250901907,
+            "eval_spike_reset": false,
+            "eval_runtime": 0.476,
+            "eval_samples_per_second": 2151.177,
+            "eval_steps_per_second": 16.806
+          },
+          {
+            "step": 4768,
+            "train_runtime": 3422.2366,
+            "train_samples_per_second": 713.339,
+            "train_steps_per_second": 1.393,
+            "total_flos": 2.8327249026356347e+18,
+            "train_objective_loss": 3.9497218232026836,
+            "train_lm_loss": 3.9492332762132203,
+            "train_router_z_loss": 0.4608041121155233,
+            "train_lm_tokens": 2494329232,
+            "train_input_tokens": 2499805184
+          },
+          {
+            "step": 4768,
+            "eval_loss": 3.4965066446610065,
+            "eval_perplexity": 32.99996974543323,
+            "eval_nll_sum": 34670303.94345185,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.12365575477493172,
+            "eval_reuse_rate": 0.14504096651509688,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.6124,
+            "eval_samples_per_second": 2103.891,
+            "eval_steps_per_second": 16.477
+          }
+        ],
+        "attempt_log_tail": "3.949', 'train_router_z_loss': '0.4608', 'train_lm_tokens': 2494329232, 'train_input_tokens': 2499805184, 'epoch': '0.08338'}\n\rWriting model shards:   0%|          | 0/1 [00:00<?, ?it/s]\rWriting model shards: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1/1 [00:01<00:00,  1.61s/it]\rWriting model shards: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1/1 [00:01<00:00,  1.61s/it]\n{'eval_loss': '3.497', 'eval_perplexity': '33', 'eval_nll_sum': '3.467e+07', 'eval_num_tokens': 9915698, 'eval_num_sequences': 9704, 'eval_off_default_share': '0.1237', 'eval_reuse_rate': '0.145', 'eval_routing_decisions': 79495168, 'eval_routing_input_tokens': 9936896, 'eval_runtime': '4.612', 'eval_samples_per_second': '2104', 'eval_steps_per_second': '16.48', 'epoch': '0.08338'}\n***** train metrics *****\n  epoch                    =     0.0834\n  global_step              =       4768\n  schedule_steps           =       4768\n  train_input_tokens       = 2499805184\n  train_lm_loss            =     3.9492\n  train_lm_tokens          = 2494329232\n  train_objective_loss     =     3.9497\n  train_router_z_loss      =     0.4608\n  train_runtime            = 0:57:02.23\n  train_samples            =   29278633\n  train_samples_per_second =    713.339\n  train_steps_per_second   =      1.393\nI1022 20:01:04.925000 395140 site-packages/torch/distributed/elastic/agent/server/api.py:932] [default] worker group successfully finished. Waiting 300 seconds for other agents to finish.\nI1022 20:01:04.926000 395140 site-packages/torch/distributed/elastic/agent/server/api.py:985] Local worker group finished (WorkerState.SUCCEEDED). Waiting 300 seconds for other agents to finish\nI1022 20:01:04.926000 395140 site-packages/torch/distributed/elastic/agent/server/api.py:1000] Done waiting for other agents. Elapsed: 0.000301361083984375 seconds\n",
+        "checkpoints": [
+          "checkpoint-2500",
+          "checkpoint-1000",
+          "checkpoint-4768"
+        ],
+        "verified": {
+          "status": "ok",
+          "global_step": 4768,
+          "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-25-cosine-s1",
+          "attempts": [
+            {
+              "attempt": 1,
+              "returncode": 0,
+              "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/supervised/run/Partial-25-cosine-s1.verified.attempt1.log",
+              "resumed_from": null
+            }
+          ],
+          "checkpoint_files": [
+            {
+              "path": "config.json",
+              "bytes": 1861,
+              "mtime_ns": 1792699248362882862,
+              "sha256": "0f16a5c45c6d36efec8c1f151e8ef2ca3beee4dbd90111052b63c2e9601c2825"
+            },
+            {
+              "path": "data_recipe.json",
+              "bytes": 728656,
+              "mtime_ns": 1792699251992859072,
+              "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+            },
+            {
+              "path": "model.safetensors",
+              "bytes": 1377804824,
+              "mtime_ns": 1792699249722873948
+            },
+            {
+              "path": "optimizer.pt",
+              "bytes": 2755736779,
+              "mtime_ns": 1792699251892859726
+            },
+            {
+              "path": "rng_state_0.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699251922859530
+            },
+            {
+              "path": "rng_state_1.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "rng_state_2.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "rng_state_3.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "rng_state_4.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "rng_state_5.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "rng_state_6.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "rng_state_7.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792699248362882862
+            },
+            {
+              "path": "scheduler.pt",
+              "bytes": 1465,
+              "mtime_ns": 1792699251892859726
+            },
+            {
+              "path": "train_config.json",
+              "bytes": 4166,
+              "mtime_ns": 1792699251982859135,
+              "sha256": "632e866f59b97c079ab0f09dcb232f7034f6671edce2e360d06d2217e74ebac1"
+            },
+            {
+              "path": "trainer_state.json",
+              "bytes": 1079917,
+              "mtime_ns": 1792699251972859202,
+              "sha256": "5fee4b5d73c9cfed480a56e18036c58abd42e807ba38daed1ad9dac6c185d4d0"
+            },
+            {
+              "path": "training_recipe.json",
+              "bytes": 159683,
+              "mtime_ns": 1792699251992859072,
+              "sha256": "40037f67787b44e0bf56edba072425d0137444f812b940042b55eea308d8c161"
+            }
+          ],
+          "validation": {
+            "loss": 3.4965066446610065,
+            "perplexity": 32.99996974543323,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          }
+        },
+        "standalone_eval": {
+          "status": "ok",
+          "loss": 3.4965066446610065,
+          "perplexity": 32.99996974543323,
+          "nll_sum": 34670303.94345185,
+          "num_tokens": 9915698,
+          "num_sequences": 9704,
+          "off_default_share": 0.12365575477493172,
+          "reuse_rate": 0.14504096651509688,
+          "routing_decisions": 79495168,
+          "routing_input_tokens": 9936896,
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-25-cosine-s1/checkpoint-4768",
+          "global_step": 4768,
+          "attention_backend": "fa4",
+          "training_attention_backend": "fa4",
+          "precision": "bf16",
+          "world_size": 8,
+          "batch_size_per_rank": 16,
+          "routing_override": null,
+          "routing_seed": 1,
+          "selection": {
+            "full_sequences": 9704,
+            "max_sequences": null,
+            "shuffle_seed": 0,
+            "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+          },
+          "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+          "data_recipe": {
+            "policy": "document_segments_map_v2",
+            "sources": [
+              {
+                "format": "saved",
+                "sources": [
+                  "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+                ],
+                "files": [
+                  {
+                    "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                    "bytes": 247,
+                    "mtime_ns": 1792461609078234207
+                  },
+                  {
+                    "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                    "bytes": 165,
+                    "mtime_ns": 1792461587538373514
+                  },
+                  {
+                    "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                    "bytes": 44942336,
+                    "mtime_ns": 1792461577068441722
+                  }
+                ],
+                "rows": 11717,
+                "fingerprint": "d0696a73ba2e15f6"
+              }
+            ],
+            "raw_fingerprint": "8e4d5df974b46bcc",
+            "raw_documents": 11717,
+            "tokenizer": {
+              "class": "Qwen2Tokenizer",
+              "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+              "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+              "special_tokens": {
+                "eos_token": "<|endoftext|>",
+                "pad_token": "<|endoftext|>"
+              },
+              "model_max_length": 131072,
+              "padding_side": "right",
+              "truncation_side": "right"
+            },
+            "tokenizer_files": [
+              {
+                "name": "merges.txt",
+                "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+              },
+              {
+                "name": "tokenizer.json",
+                "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+              },
+              {
+                "name": "tokenizer_config.json",
+                "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+              },
+              {
+                "name": "vocab.json",
+                "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+              }
+            ],
+            "document_end": {
+              "token": "<|endoftext|>",
+              "id": 151643,
+              "selection": "explicit"
+            },
+            "block_size": 1024,
+            "map_batch_size": 1000,
+            "requested_workers": 128,
+            "effective_workers": 128,
+            "shuffle_seed": 0,
+            "add_special_tokens": false,
+            "append_boundary": "one_after_every_document_including_empty",
+            "remainder": "drop_per_map_batch_within_worker_shard",
+            "attention": "causal_within_document",
+            "positions": "reset_per_document_fragment",
+            "labels": "ignore_first_and_document_starts",
+            "attention_backend": "fa4",
+            "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+            "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+            "versions": {
+              "datasets": "4.8.5",
+              "transformers": "5.9.0",
+              "tokenizers": "0.22.2",
+              "pyarrow": "26.0.0"
+            },
+            "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+            "packed_fingerprint": "98806e57e2a3d990",
+            "shuffled_fingerprint": "b3b53e7dde5c38e7",
+            "packed_sequences": 9704,
+            "packed_input_tokens": 9936896,
+            "scored_target_tokens": 9915698,
+            "fa4_runtime": {
+              "package": "flash-attn-4",
+              "version": "4.0.0b33",
+              "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+              "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+            }
+          },
+          "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+          "scoring_sha256": "8be3d5699d0ad73c4bd3b2fb7b24ed144192c86c9e8e34b72f231fec12b7ba19",
+          "weights": [
+            {
+              "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-25-cosine-s1/checkpoint-4768/model.safetensors",
+              "bytes": 1377804824,
+              "mtime_ns": 1792699249722873948
+            }
+          ],
+          "config_sha256": "0f16a5c45c6d36efec8c1f151e8ef2ca3beee4dbd90111052b63c2e9601c2825",
+          "torch_version": "2.14.1+cu130",
+          "route_study": {
+            "scope": "Phase A: compute_matched, absolute windows, step K/V",
+            "routing_as_trained": "learned",
+            "route_selection": "first sequences in frozen validation order",
+            "diagnostic_sequences": 4096,
+            "artifact_sequences": 256,
+            "route_diagnostics": {
+              "num_sequences": 4096,
+              "input_tokens": 4194304,
+              "routing_decisions": 33554432,
+              "off_default_share": 0.12553852796554565,
+              "off_default_share_by_step": [
+                0.08943438529968262,
+                0.10910606384277344,
+                0.0445554256439209,
+                0.036066293716430664,
+                0.167982816696167,
+                0.16700482368469238,
+                0.20176410675048828,
+                0.18839430809020996
+              ],
+              "reuse_rate": 0.14661884307861328,
+              "distinct_paths": 1098,
+              "distinct_paths_per_10000_tokens": 206.8329355608592,
+              "diversity_complete_windows": 419,
+              "diversity_excluded_tail_tokens": 4304,
+              "mean_path_length": 8,
+              "module_counts_by_step": [
+                [
+                  3819189,
+                  375115,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  352430,
+                  3736680,
+                  105194,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  163283,
+                  4007425,
+                  23596,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  86237,
+                  4043031,
+                  65036,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  65295,
+                  3489733,
+                  639276,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  642400,
+                  3493835,
+                  58069,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  61113,
+                  3348044,
+                  785147
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  790183,
+                  3404121
+                ]
+              ],
+              "module_share_by_step": [
+                [
+                  0.9105656147003174,
+                  0.08943438529968262,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.08402585983276367,
+                  0.8908939361572266,
+                  0.025080204010009766,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.03892970085144043,
+                  0.9554445743560791,
+                  0.005625724792480469,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.020560503005981445,
+                  0.9639337062835693,
+                  0.015505790710449219,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.015567541122436523,
+                  0.832017183303833,
+                  0.15241527557373047,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.15316009521484375,
+                  0.8329951763153076,
+                  0.013844728469848633,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.014570474624633789,
+                  0.7982358932495117,
+                  0.1871936321258545
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.18839430809020996,
+                  0.81160569190979
+                ]
+              ],
+              "module_load_share": [
+                0.12432393431663513,
+                0.1274072527885437,
+                0.1251356601715088,
+                0.12314087152481079,
+                0.12508538365364075,
+                0.12499761581420898,
+                0.1250593662261963,
+                0.12484991550445557
+              ],
+              "module_target_share": 0.125,
+              "module_load_over_target": [
+                0.994591474533081,
+                1.0192580223083496,
+                1.0010852813720703,
+                0.9851269721984863,
+                1.000683069229126,
+                0.9999809265136719,
+                1.0004749298095703,
+                0.9987993240356445
+              ],
+              "distinct_modules_histogram": [
+                0,
+                0,
+                0,
+                0,
+                6,
+                2517,
+                62784,
+                549657,
+                3579340
+              ],
+              "mean_distinct_modules": 7.837207794189453
+            },
+            "interventions": {
+              "as_trained": {
+                "loss": 3.4965066446610065,
+                "perplexity": 32.99996974543323,
+                "nll_sum": 34670303.94345185,
+                "num_tokens": 9915698,
+                "num_sequences": 9704,
+                "off_default_share": 0.12365575477493172,
+                "reuse_rate": 0.14504096651509688,
+                "routing_decisions": 79495168,
+                "routing_input_tokens": 9936896
+              },
+              "fixed": {
+                "loss": 3.49569030083424,
+                "perplexity": 32.97304141673098,
+                "nll_sum": 34662209.32460147,
+                "num_tokens": 9915698,
+                "num_sequences": 9704,
+                "off_default_share": 0.0,
+                "reuse_rate": 0.0,
+                "routing_decisions": 79495168,
+                "routing_input_tokens": 9936896,
+                "loss_delta_vs_as_trained": -0.0008163438267665413
+              },
+              "random": {
+                "loss": 3.5604667876477256,
+                "perplexity": 35.179614722651586,
+                "nll_sum": 35304513.40534498,
+                "num_tokens": 9915698,
+                "num_sequences": 9704,
+                "off_default_share": 0.6249841877181768,
+                "reuse_rate": 0.9883512919929925,
+                "routing_decisions": 79495168,
+                "routing_input_tokens": 9936896,
+                "loss_delta_vs_as_trained": 0.06396014298671915
+              }
+            },
+            "routing_used_criterion_met": true,
+            "default_path_loss_increase": -0.0008163438267665413,
+            "default_path_criterion_met": false,
+            "cross_seed_agreement": null,
+            "router_health": {
+              "sequences": 4096,
+              "beta": [
+                0.010999998077750206,
+                -0.06699995696544647,
+                -0.815993070602417,
+                -0.0639999508857727,
+                -0.008999996818602085,
+                0.42499807476997375,
+                0.5849960446357727,
+                0.9979907870292664
+              ],
+              "beta_range": 1.8139838576316833,
+              "steps": [
+                {
+                  "step": 0,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 657142.7316219211,
+                  "lse_square_sum": 273328.9580137979,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.15667503634021784,
+                  "mean_square_logsumexp": 0.06516670179696032,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.2987474203109741,
+                    "p90": 0.8955039381980896
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.21602952480316162,
+                    "p90": 0.4980493187904358
+                  }
+                },
+                {
+                  "step": 1,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 2993341.8139965534,
+                  "lse_square_sum": 2287267.2400055802,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.7136683020583519,
+                  "mean_square_logsumexp": 0.545327005387683,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.6833781003952026,
+                    "p90": 1.780138373374939
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.16388797760009766,
+                    "p90": 0.39406469464302063
+                  }
+                },
+                {
+                  "step": 2,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 3318328.0451185703,
+                  "lse_square_sum": 2673089.5457776464,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.7911510575100351,
+                  "mean_square_logsumexp": 0.6373142113155476,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 2.3465089797973633,
+                    "p90": 2.412855386734009
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.01267041265964508,
+                    "p90": 0.025875886902213097
+                  }
+                },
+                {
+                  "step": 3,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 2278999.332446635,
+                  "lse_square_sum": 1391844.6260540844,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.5433557826153361,
+                  "mean_square_logsumexp": 0.3318416180739604,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.6349847912788391,
+                    "p90": 1.6129432916641235
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.24052530527114868,
+                    "p90": 0.49287649989128113
+                  }
+                },
+                {
+                  "step": 4,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 3297118.0332740843,
+                  "lse_square_sum": 2667861.912230484,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.7860941966233455,
+                  "mean_square_logsumexp": 0.6360678463531695,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.5693944692611694,
+                    "p90": 1.35104501247406
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.08629003167152405,
+                    "p90": 0.2183687686920166
+                  }
+                },
+                {
+                  "step": 5,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 1861358.0807896852,
+                  "lse_square_sum": 988164.2797037057,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.44378234882108814,
+                  "mean_square_logsumexp": 0.23559672348587649,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.7927589416503906,
+                    "p90": 1.7685277462005615
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.24127906560897827,
+                    "p90": 0.5086177587509155
+                  }
+                },
+                {
+                  "step": 6,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 3438416.219043076,
+                  "lse_square_sum": 2927974.229496668,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.8197823093040171,
+                  "mean_square_logsumexp": 0.6980834554425879,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.5557507872581482,
+                    "p90": 1.4555671215057373
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.1068621277809143,
+                    "p90": 0.2796778380870819
+                  }
+                },
+                {
+                  "step": 7,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 690896.6988116279,
+                  "lse_square_sum": 315130.87636027497,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.16472260923662851,
+                  "mean_square_logsumexp": 0.07513305577284693,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 1.0002212524414062,
+                    "p90": 1.782046914100647
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.7011866569519043,
+                    "p90": 1.1039190292358398
+                  }
+                }
+              ],
+              "raw_gap": {
+                "count": 33554432,
+                "median": 0.7341609001159668,
+                "p90": 2.3232693672180176
+              },
+              "window_violations": 0,
+              "saturated_share": 0.0,
+              "saturated_eligible_share": 0.0,
+              "select_on": "probs",
+              "logit_cap": 2.0,
+              "nonunit_gates": 0,
+              "passed": true,
+              "scope": "First frozen validation sequences; only as-trained hard routes. Logit gaps exclude sole-candidate decisions."
+            },
+            "route_artifact": {
+              "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/supervised/run/Partial-25-cosine-s1/routes_sample.npz",
+              "sha256": "c2dd886162a69d40ff5402feef59759526dc855efb54c2b2db0fe7576f22947c"
+            },
+            "exporter_sha256": "a697132a2259cbed4cf4bb123847772699bde51ecf952db84ff0c12e975e8a57"
+          }
+        },
+        "final_step": 4768,
+        "final_checkpoint_files": {
+          "rng_state_4.pth": 16389,
+          "rng_state_6.pth": 16389,
+          "chat_template.jinja": 4116,
+          "tokenizer_config.json": 695,
+          "generation_config.json": 215,
+          "train_config.json": 4166,
+          "scheduler.pt": 1465,
+          "trainer_state.json": 1079917,
+          "model.safetensors": 1377804824,
+          "rng_state_0.pth": 16389,
+          "rng_state_2.pth": 16389,
+          "rng_state_3.pth": 16389,
+          "rng_state_7.pth": 16389,
+          "training_args.bin": 5393,
+          "tokenizer.json": 11422650,
+          "optimizer.pt": 2755736779,
+          "config.json": 1861,
+          "training_recipe.json": 159683,
+          "rng_state_1.pth": 16389,
+          "data_recipe.json": 728656,
+          "rng_state_5.pth": 16389
+        }
+      },
+      "Partial-50-cosine-detach-s1": {
+        "train_results.json": {
+          "epoch": 0.08337887286383171,
+          "global_step": 4768,
+          "schedule_steps": 4768,
+          "train_input_tokens": 2499805184,
+          "train_lm_loss": 3.9495868850605067,
+          "train_lm_tokens": 2494329232,
+          "train_objective_loss": 3.9502770260676443,
+          "train_router_z_loss": 0.6628902126463042,
+          "train_runtime": 3388.1938,
+          "train_samples": 29278633,
+          "train_samples_per_second": 720.507,
+          "train_steps_per_second": 1.407
+        },
+        "final_eval.json": {
+          "eval_loss": 3.496573411932522,
+          "eval_perplexity": 33.002173136929635,
+          "eval_nll_sum": 34670965.98755249,
+          "eval_num_tokens": 9915698,
+          "eval_num_sequences": 9704,
+          "eval_off_default_share": 0.04744709766510589,
+          "eval_reuse_rate": 0.1235867820293178,
+          "eval_routing_decisions": 79495168,
+          "eval_routing_input_tokens": 9936896,
+          "eval_runtime": 4.6726,
+          "eval_samples_per_second": 2076.799,
+          "eval_steps_per_second": 16.265,
+          "epoch": 0.08337887286383171
+        },
+        "train_config.json": {
+          "model": {
+            "model_name_or_path": null,
+            "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/Partial-50-cosine-detach-s1.model.json",
+            "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+            "cache_dir": null,
+            "trust_remote_code": false,
+            "attention_backend": "fa4"
+          },
+          "data": {
+            "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+            "data_order": "packed_shuffle",
+            "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+            "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+            "validation_tokens": 10000000,
+            "document_split": "train",
+            "block_size": 1024,
+            "preprocessing_num_workers": 128,
+            "overwrite_cache": false,
+            "document_end_token": "<|endoftext|>",
+            "map_batch_size": 1000,
+            "isolate_documents": true,
+            "reset_document_positions": true,
+            "data_cache_dir": null,
+            "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+            "eval_max_sequences": 1024
+          },
+          "training": {
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-50-cosine-detach-s1",
+            "per_device_train_batch_size": 16,
+            "num_train_epochs": 3.0,
+            "max_steps": 4768,
+            "learning_rate": 0.0003,
+            "lr_scheduler_type": "cosine_with_min_lr",
+            "lr_scheduler_kwargs": {
+              "min_lr_rate": 0.1
+            },
+            "warmup_steps": 96,
+            "optim": "adamw_torch",
+            "weight_decay": 0.1,
+            "adam_beta1": 0.9,
+            "adam_beta2": 0.95,
+            "adam_epsilon": 1e-08,
+            "gradient_accumulation_steps": 4,
+            "average_tokens_across_devices": true,
+            "max_grad_norm": 1.0,
+            "label_smoothing_factor": 0.0,
+            "bf16": true,
+            "fp16": false,
+            "bf16_full_eval": false,
+            "fp16_full_eval": false,
+            "tf32": false,
+            "gradient_checkpointing": false,
+            "torch_compile": false,
+            "use_liger_kernel": false,
+            "use_cache": false,
+            "auto_find_batch_size": false,
+            "logging_strategy": "steps",
+            "logging_steps": 10,
+            "logging_first_step": false,
+            "log_on_each_node": true,
+            "logging_nan_inf_filter": true,
+            "include_num_input_tokens_seen": "no",
+            "log_level": "passive",
+            "log_level_replica": "warning",
+            "disable_tqdm": true,
+            "report_to": [],
+            "project": "huggingface",
+            "eval_strategy": "steps",
+            "eval_steps": 100,
+            "eval_delay": 0,
+            "per_device_eval_batch_size": 16,
+            "prediction_loss_only": false,
+            "eval_on_start": false,
+            "eval_do_concat_batches": true,
+            "eval_use_gather_object": false,
+            "include_for_metrics": [],
+            "batch_eval_metrics": false,
+            "save_only_model": false,
+            "save_strategy": "steps",
+            "save_steps": 250,
+            "save_on_each_node": false,
+            "enable_jit_checkpoint": false,
+            "push_to_hub": false,
+            "hub_strategy": "every_save",
+            "hub_always_push": false,
+            "load_best_model_at_end": false,
+            "ignore_data_skip": false,
+            "restore_callback_states_from_checkpoint": false,
+            "full_determinism": false,
+            "seed": 1,
+            "data_seed": 0,
+            "use_cpu": false,
+            "accelerator_config": {
+              "split_batches": false,
+              "dispatch_batches": null,
+              "even_batches": true,
+              "use_seedable_sampler": true,
+              "non_blocking": false,
+              "gradient_accumulation_kwargs": null
+            },
+            "dataloader_drop_last": true,
+            "dataloader_num_workers": 8,
+            "dataloader_pin_memory": true,
+            "dataloader_persistent_workers": false,
+            "remove_unused_columns": false,
+            "train_sampling_strategy": "sequential",
+            "length_column_name": "length",
+            "ddp_find_unused_parameters": true,
+            "ddp_broadcast_buffers": false,
+            "ddp_timeout": 21600,
+            "fsdp": [],
+            "fsdp_config": {
+              "min_num_params": 0,
+              "xla": false,
+              "xla_fsdp_v2": false,
+              "xla_fsdp_grad_ckpt": false
+            },
+            "debug": [],
+            "skip_memory_metrics": true,
+            "do_train": false,
+            "do_eval": true,
+            "do_predict": false,
+            "keep_checkpoint_steps": [
+              1000,
+              2500,
+              4768
+            ]
+          }
+        },
+        "latest_metrics": [
+          {
+            "step": 4768,
+            "eval_loss": 3.5152213313833,
+            "eval_perplexity": 33.623369007193325,
+            "eval_nll_sum": 3677993.6551330034,
+            "eval_num_tokens": 1046305,
+            "eval_num_sequences": 1024,
+            "eval_curriculum_loss": 3.5152213313833,
+            "eval_curriculum_perplexity": 33.623369007193325,
+            "eval_curriculum_nll_sum": 3677993.6551330034,
+            "eval_curriculum_num_tokens": 1046305,
+            "eval_curriculum_num_sequences": 1024,
+            "eval_target_loss": 3.5152213313833,
+            "eval_target_perplexity": 33.623369007193325,
+            "eval_target_nll_sum": 3677993.6551330034,
+            "eval_target_num_tokens": 1046305,
+            "eval_target_num_sequences": 1024,
+            "eval_curriculum_reach": 1,
+            "eval_curriculum_soft": false,
+            "eval_spike_loss": 3.5152213313833,
+            "eval_spike": false,
+            "eval_spike_min": 3.5152213313833,
+            "eval_spike_reset": false,
+            "eval_runtime": 0.4739,
+            "eval_samples_per_second": 2160.746,
+            "eval_steps_per_second": 16.881
+          },
+          {
+            "step": 4768,
+            "train_runtime": 3388.1938,
+            "train_samples_per_second": 720.507,
+            "train_steps_per_second": 1.407,
+            "total_flos": 2.8327249026356347e+18,
+            "train_objective_loss": 3.9502770260676443,
+            "train_lm_loss": 3.9495868850605067,
+            "train_router_z_loss": 0.6628902126463042,
+            "train_lm_tokens": 2494329232,
+            "train_input_tokens": 2499805184
+          },
+          {
+            "step": 4768,
+            "eval_loss": 3.496573411932522,
+            "eval_perplexity": 33.002173136929635,
+            "eval_nll_sum": 34670965.98755249,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.04744709766510589,
+            "eval_reuse_rate": 0.1235867820293178,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.6726,
+            "eval_samples_per_second": 2076.799,
+            "eval_steps_per_second": 16.265
+          }
+        ],
+        "attempt_log_tail": "95', 'train_router_z_loss': '0.6629', 'train_lm_tokens': 2494329232, 'train_input_tokens': 2499805184, 'epoch': '0.08338'}\n\rWriting model shards:   0%|          | 0/1 [00:00<?, ?it/s]\rWriting model shards: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1/1 [00:01<00:00,  1.45s/it]\rWriting model shards: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 1/1 [00:01<00:00,  1.45s/it]\n{'eval_loss': '3.497', 'eval_perplexity': '33', 'eval_nll_sum': '3.467e+07', 'eval_num_tokens': 9915698, 'eval_num_sequences': 9704, 'eval_off_default_share': '0.04745', 'eval_reuse_rate': '0.1236', 'eval_routing_decisions': 79495168, 'eval_routing_input_tokens': 9936896, 'eval_runtime': '4.673', 'eval_samples_per_second': '2077', 'eval_steps_per_second': '16.27', 'epoch': '0.08338'}\n***** train metrics *****\n  epoch                    =     0.0834\n  global_step              =       4768\n  schedule_steps           =       4768\n  train_input_tokens       = 2499805184\n  train_lm_loss            =     3.9496\n  train_lm_tokens          = 2494329232\n  train_objective_loss     =     3.9503\n  train_router_z_loss      =     0.6629\n  train_runtime            = 0:56:28.19\n  train_samples            =   29278633\n  train_samples_per_second =    720.507\n  train_steps_per_second   =      1.407\nI1022 20:59:18.142000 402229 site-packages/torch/distributed/elastic/agent/server/api.py:932] [default] worker group successfully finished. Waiting 300 seconds for other agents to finish.\nI1022 20:59:18.143000 402229 site-packages/torch/distributed/elastic/agent/server/api.py:985] Local worker group finished (WorkerState.SUCCEEDED). Waiting 300 seconds for other agents to finish\nI1022 20:59:18.143000 402229 site-packages/torch/distributed/elastic/agent/server/api.py:1000] Done waiting for other agents. Elapsed: 0.0003082752227783203 seconds\n",
+        "checkpoints": [
+          "checkpoint-2500",
+          "checkpoint-1000",
+          "checkpoint-4768"
+        ],
+        "verified": {
+          "status": "ok",
+          "global_step": 4768,
+          "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-50-cosine-detach-s1",
+          "attempts": [
+            {
+              "attempt": 1,
+              "returncode": 0,
+              "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/supervised/run/Partial-50-cosine-detach-s1.verified.attempt1.log",
+              "resumed_from": null
+            }
+          ],
+          "checkpoint_files": [
+            {
+              "path": "config.json",
+              "bytes": 1859,
+              "mtime_ns": 1792702740810039009,
+              "sha256": "498ed2a44305be8eec49118f12e1b6402db33f99f3b2af3809dcaf984137a33a"
+            },
+            {
+              "path": "data_recipe.json",
+              "bytes": 728656,
+              "mtime_ns": 1792702745130010798,
+              "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+            },
+            {
+              "path": "model.safetensors",
+              "bytes": 1377804896,
+              "mtime_ns": 1792702742300029281
+            },
+            {
+              "path": "optimizer.pt",
+              "bytes": 2755736779,
+              "mtime_ns": 1792702745060011256
+            },
+            {
+              "path": "rng_state_0.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702745060011256
+            },
+            {
+              "path": "rng_state_1.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "rng_state_2.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "rng_state_3.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "rng_state_4.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "rng_state_5.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "rng_state_6.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "rng_state_7.pth",
+              "bytes": 16389,
+              "mtime_ns": 1792702740810039009
+            },
+            {
+              "path": "scheduler.pt",
+              "bytes": 1465,
+              "mtime_ns": 1792702745060011256
+            },
+            {
+              "path": "train_config.json",
+              "bytes": 4180,
+              "mtime_ns": 1792702745110010928,
+              "sha256": "34fdf148bc3a993daa305dfbd30961b61b6885bf88f98f4c06bbc9266935b2bf"
+            },
+            {
+              "path": "trainer_state.json",
+              "bytes": 1080939,
+              "mtime_ns": 1792702745110010928,
+              "sha256": "aea946f8e6007babc3733bf6c167c9a08ef782a83eef3ca7ab86cb4a7b143bb2"
+            },
+            {
+              "path": "training_recipe.json",
+              "bytes": 159681,
+              "mtime_ns": 1792702745130010798,
+              "sha256": "c87a0a5c8edab98eb36e0f240d290317e757189055a2c4ac232ecced1faaff22"
+            }
+          ],
+          "validation": {
+            "loss": 3.496573411932522,
+            "perplexity": 33.002173136929635,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          }
+        },
+        "standalone_eval": {
+          "status": "ok",
+          "loss": 3.496573411932522,
+          "perplexity": 33.002173136929635,
+          "nll_sum": 34670965.98755249,
+          "num_tokens": 9915698,
+          "num_sequences": 9704,
+          "off_default_share": 0.04744709766510589,
+          "reuse_rate": 0.1235867820293178,
+          "routing_decisions": 79495168,
+          "routing_input_tokens": 9936896,
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-50-cosine-detach-s1/checkpoint-4768",
+          "global_step": 4768,
+          "attention_backend": "fa4",
+          "training_attention_backend": "fa4",
+          "precision": "bf16",
+          "world_size": 8,
+          "batch_size_per_rank": 16,
+          "routing_override": null,
+          "routing_seed": 1,
+          "selection": {
+            "full_sequences": 9704,
+            "max_sequences": null,
+            "shuffle_seed": 0,
+            "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+          },
+          "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+          "data_recipe": {
+            "policy": "document_segments_map_v2",
+            "sources": [
+              {
+                "format": "saved",
+                "sources": [
+                  "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+                ],
+                "files": [
+                  {
+                    "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                    "bytes": 247,
+                    "mtime_ns": 1792461609078234207
+                  },
+                  {
+                    "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                    "bytes": 165,
+                    "mtime_ns": 1792461587538373514
+                  },
+                  {
+                    "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                    "bytes": 44942336,
+                    "mtime_ns": 1792461577068441722
+                  }
+                ],
+                "rows": 11717,
+                "fingerprint": "d0696a73ba2e15f6"
+              }
+            ],
+            "raw_fingerprint": "8e4d5df974b46bcc",
+            "raw_documents": 11717,
+            "tokenizer": {
+              "class": "Qwen2Tokenizer",
+              "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+              "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+              "special_tokens": {
+                "eos_token": "<|endoftext|>",
+                "pad_token": "<|endoftext|>"
+              },
+              "model_max_length": 131072,
+              "padding_side": "right",
+              "truncation_side": "right"
+            },
+            "tokenizer_files": [
+              {
+                "name": "merges.txt",
+                "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+              },
+              {
+                "name": "tokenizer.json",
+                "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+              },
+              {
+                "name": "tokenizer_config.json",
+                "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+              },
+              {
+                "name": "vocab.json",
+                "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+              }
+            ],
+            "document_end": {
+              "token": "<|endoftext|>",
+              "id": 151643,
+              "selection": "explicit"
+            },
+            "block_size": 1024,
+            "map_batch_size": 1000,
+            "requested_workers": 128,
+            "effective_workers": 128,
+            "shuffle_seed": 0,
+            "add_special_tokens": false,
+            "append_boundary": "one_after_every_document_including_empty",
+            "remainder": "drop_per_map_batch_within_worker_shard",
+            "attention": "causal_within_document",
+            "positions": "reset_per_document_fragment",
+            "labels": "ignore_first_and_document_starts",
+            "attention_backend": "fa4",
+            "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+            "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+            "versions": {
+              "datasets": "4.8.5",
+              "transformers": "5.9.0",
+              "tokenizers": "0.22.2",
+              "pyarrow": "26.0.0"
+            },
+            "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+            "packed_fingerprint": "98806e57e2a3d990",
+            "shuffled_fingerprint": "b3b53e7dde5c38e7",
+            "packed_sequences": 9704,
+            "packed_input_tokens": 9936896,
+            "scored_target_tokens": 9915698,
+            "fa4_runtime": {
+              "package": "flash-attn-4",
+              "version": "4.0.0b33",
+              "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+              "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+            }
+          },
+          "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+          "scoring_sha256": "8be3d5699d0ad73c4bd3b2fb7b24ed144192c86c9e8e34b72f231fec12b7ba19",
+          "weights": [
+            {
+              "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-50-cosine-detach-s1/checkpoint-4768/model.safetensors",
+              "bytes": 1377804896,
+              "mtime_ns": 1792702742300029281
+            }
+          ],
+          "config_sha256": "498ed2a44305be8eec49118f12e1b6402db33f99f3b2af3809dcaf984137a33a",
+          "torch_version": "2.14.1+cu130",
+          "route_study": {
+            "scope": "Phase A: compute_matched, absolute windows, step K/V",
+            "routing_as_trained": "learned",
+            "route_selection": "first sequences in frozen validation order",
+            "diagnostic_sequences": 4096,
+            "artifact_sequences": 256,
+            "route_diagnostics": {
+              "num_sequences": 4096,
+              "input_tokens": 4194304,
+              "routing_decisions": 33554432,
+              "off_default_share": 0.0481877326965332,
+              "off_default_share_by_step": [
+                0.08522987365722656,
+                0.10574865341186523,
+                0.03072214126586914,
+                0.03599357604980469,
+                0.04732704162597656,
+                0.02750110626220703,
+                0.030053377151489258,
+                0.02292609214782715
+              ],
+              "reuse_rate": 0.1252758502960205,
+              "distinct_paths": 845,
+              "distinct_paths_per_10000_tokens": 138.4343675417661,
+              "diversity_complete_windows": 419,
+              "diversity_excluded_tail_tokens": 4304,
+              "mean_path_length": 8,
+              "module_counts_by_step": [
+                [
+                  3836824,
+                  357480,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  364602,
+                  3750762,
+                  78940,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  119738,
+                  4065446,
+                  9120,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  33806,
+                  4043336,
+                  117162,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  82612,
+                  3995800,
+                  115892,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  91072,
+                  4078956,
+                  24276,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2001,
+                  4068251,
+                  124052
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  96159,
+                  4098145
+                ]
+              ],
+              "module_share_by_step": [
+                [
+                  0.9147701263427734,
+                  0.08522987365722656,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.08692789077758789,
+                  0.8942513465881348,
+                  0.018820762634277344,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.02854776382446289,
+                  0.9692778587341309,
+                  0.00217437744140625,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.008059978485107422,
+                  0.9640064239501953,
+                  0.027933597564697266,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.01969623565673828,
+                  0.9526729583740234,
+                  0.02763080596923828,
+                  0.0,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0217132568359375,
+                  0.972498893737793,
+                  0.005787849426269531,
+                  0.0
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.00047707557678222656,
+                  0.9699466228485107,
+                  0.02957630157470703
+                ],
+                [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.02292609214782715,
+                  0.9770739078521729
+                ]
+              ],
+              "module_load_share": [
+                0.12521225214004517,
+                0.12600362300872803,
+                0.12451982498168945,
+                0.12323462963104248,
+                0.12528997659683228,
+                0.12507584691047668,
+                0.12483257055282593,
+                0.12583127617835999
+              ],
+              "module_target_share": 0.125,
+              "module_load_over_target": [
+                1.0016980171203613,
+                1.0080289840698242,
+                0.9961585998535156,
+                0.9858770370483398,
+                1.0023198127746582,
+                1.0006067752838135,
+                0.9986605644226074,
+                1.0066502094268799
+              ],
+              "distinct_modules_histogram": [
+                0,
+                0,
+                0,
+                0,
+                190,
+                6137,
+                54094,
+                465024,
+                3668859
+              ],
+              "mean_distinct_modules": 7.858764886856079
+            },
+            "interventions": {
+              "as_trained": {
+                "loss": 3.496573411932522,
+                "perplexity": 33.002173136929635,
+                "nll_sum": 34670965.98755249,
+                "num_tokens": 9915698,
+                "num_sequences": 9704,
+                "off_default_share": 0.04744709766510589,
+                "reuse_rate": 0.1235867820293178,
+                "routing_decisions": 79495168,
+                "routing_input_tokens": 9936896
+              },
+              "fixed": {
+                "loss": 3.495431318870911,
+                "perplexity": 32.964503099410756,
+                "nll_sum": 34659641.337665655,
+                "num_tokens": 9915698,
+                "num_sequences": 9704,
+                "off_default_share": 0.0,
+                "reuse_rate": 0.0,
+                "routing_decisions": 79495168,
+                "routing_input_tokens": 9936896,
+                "loss_delta_vs_as_trained": -0.0011420930616110603
+              },
+              "random": {
+                "loss": 3.64292364730467,
+                "perplexity": 38.203366778997555,
+                "nll_sum": 36122130.72373162,
+                "num_tokens": 9915698,
+                "num_sequences": 9704,
+                "off_default_share": 0.6249841877181768,
+                "reuse_rate": 0.9883512919929925,
+                "routing_decisions": 79495168,
+                "routing_input_tokens": 9936896,
+                "loss_delta_vs_as_trained": 0.14635023537214797
+              }
+            },
+            "routing_used_criterion_met": false,
+            "default_path_loss_increase": -0.0011420930616110603,
+            "default_path_criterion_met": false,
+            "cross_seed_agreement": null,
+            "router_health": {
+              "sequences": 4096,
+              "beta": [
+                0.16800016164779663,
+                0.058999959379434586,
+                -0.6769948601722717,
+                0.06699995696544647,
+                0.1530001312494278,
+                0.10200003534555435,
+                -0.7049944996833801,
+                0.10800004005432129
+              ],
+              "beta_range": 0.8729946613311768,
+              "steps": [
+                {
+                  "step": 0,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 1734538.969182089,
+                  "lse_square_sum": 839587.7907701676,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.41354631642868256,
+                  "mean_square_logsumexp": 0.2001733281064433,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.3285759687423706,
+                    "p90": 0.891718327999115
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.2517698109149933,
+                    "p90": 0.5274888873100281
+                  }
+                },
+                {
+                  "step": 1,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 4249785.922544181,
+                  "lse_square_sum": 4429633.751516828,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 1.0132279211388067,
+                  "mean_square_logsumexp": 1.056106984976966,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.5960577726364136,
+                    "p90": 1.6387149095535278
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.16925610601902008,
+                    "p90": 0.3633422553539276
+                  }
+                },
+                {
+                  "step": 2,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 3742282.523915231,
+                  "lse_square_sum": 3402056.250121747,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.8922296819484785,
+                  "mean_square_logsumexp": 0.8111134171776169,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 2.2817749977111816,
+                    "p90": 2.359679698944092
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.01648484170436859,
+                    "p90": 0.03292194753885269
+                  }
+                },
+                {
+                  "step": 3,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 3340312.267823398,
+                  "lse_square_sum": 2747948.329470716,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.7963925046499725,
+                  "mean_square_logsumexp": 0.6551619361569204,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.5256823301315308,
+                    "p90": 1.3712602853775024
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.23283641040325165,
+                    "p90": 0.43226519227027893
+                  }
+                },
+                {
+                  "step": 4,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 1783984.193545282,
+                  "lse_square_sum": 821991.3792138697,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.425334976564713,
+                  "mean_square_logsumexp": 0.19597801666590445,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.7297159433364868,
+                    "p90": 1.5259811878204346
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.33805036544799805,
+                    "p90": 0.6096568703651428
+                  }
+                },
+                {
+                  "step": 5,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 2662721.958083749,
+                  "lse_square_sum": 1796422.6272199939,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.6348423857888577,
+                  "mean_square_logsumexp": 0.42830053024768683,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.6169387102127075,
+                    "p90": 1.4946465492248535
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.2521163821220398,
+                    "p90": 0.4937828779220581
+                  }
+                },
+                {
+                  "step": 6,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 3873268.222195506,
+                  "lse_square_sum": 3594416.4846798866,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.9234591060150876,
+                  "mean_square_logsumexp": 0.8569756709766118,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 2.6663858890533447,
+                    "p90": 2.7550241947174072
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.012699365615844727,
+                    "p90": 0.02605578303337097
+                  }
+                },
+                {
+                  "step": 7,
+                  "seen": 4096,
+                  "tokens": 4194304,
+                  "decisions": 4194304,
+                  "violations": 0,
+                  "gate_errors": 0,
+                  "lse_sum": 1841118.780979216,
+                  "lse_square_sum": 957098.0451751718,
+                  "lse_count": 4194304,
+                  "saturated": 0,
+                  "saturated_eligible": 0,
+                  "eligible": 4194304,
+                  "mean_logsumexp": 0.43895692371826556,
+                  "mean_square_logsumexp": 0.22818995599154754,
+                  "gaps": {
+                    "count": 4194304,
+                    "median": 0.6949582099914551,
+                    "p90": 1.6851601600646973
+                  },
+                  "biased_gaps": {
+                    "count": 4194304,
+                    "median": 0.6244053244590759,
+                    "p90": 1.1952153444290161
+                  }
+                }
+              ],
+              "raw_gap": {
+                "count": 33554432,
+                "median": 0.8272353410720825,
+                "p90": 2.6316962242126465
+              },
+              "window_violations": 0,
+              "saturated_share": 0.0,
+              "saturated_eligible_share": 0.0,
+              "select_on": "probs",
+              "logit_cap": 2.0,
+              "nonunit_gates": 0,
+              "passed": true,
+              "scope": "First frozen validation sequences; only as-trained hard routes. Logit gaps exclude sole-candidate decisions."
+            },
+            "route_artifact": {
+              "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/supervised/run/Partial-50-cosine-detach-s1/routes_sample.npz",
+              "sha256": "0c3d442000be56987bb8f252f495c2e1ec0d45ee0a7e057fdb7d682b093a2217"
+            },
+            "exporter_sha256": "a697132a2259cbed4cf4bb123847772699bde51ecf952db84ff0c12e975e8a57"
+          }
+        },
+        "final_step": 4768,
+        "final_checkpoint_files": {
+          "rng_state_4.pth": 16389,
+          "rng_state_6.pth": 16389,
+          "chat_template.jinja": 4116,
+          "tokenizer_config.json": 695,
+          "generation_config.json": 215,
+          "train_config.json": 4180,
+          "scheduler.pt": 1465,
+          "trainer_state.json": 1080939,
+          "model.safetensors": 1377804896,
+          "rng_state_0.pth": 16389,
+          "rng_state_2.pth": 16389,
+          "rng_state_3.pth": 16389,
+          "rng_state_7.pth": 16389,
+          "training_args.bin": 5457,
+          "tokenizer.json": 11422650,
+          "optimizer.pt": 2755736779,
+          "config.json": 1859,
+          "training_recipe.json": 159681,
+          "rng_state_1.pth": 16389,
+          "data_recipe.json": 728656,
+          "rng_state_5.pth": 16389
+        }
+      }
+    },
+    "queue_jobs": [
+      "D-s1-carry",
+      "confirmation_check",
+      "Partial-25-cosine-s1",
+      "Partial-25-cosine-s1-eval",
+      "Partial-50-cosine-detach-s1",
+      "Partial-50-cosine-detach-s1-eval",
+      "confirmation_report"
+    ],
+    "burn_tail": "gib=2853.60 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2580 completed_gemms=2659980 completed_collective_payload_gib=2864.71 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2590 completed_gemms=2670290 completed_collective_payload_gib=2875.81 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2600 completed_gemms=2680600 completed_collective_payload_gib=2886.91 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2610 completed_gemms=2690910 completed_collective_payload_gib=2898.02 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2620 completed_gemms=2701220 completed_collective_payload_gib=2909.12 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2630 completed_gemms=2711530 completed_collective_payload_gib=2920.22 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2640 completed_gemms=2721840 completed_collective_payload_gib=2931.33 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2650 completed_gemms=2732150 completed_collective_payload_gib=2942.43 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2660 completed_gemms=2742460 completed_collective_payload_gib=2953.54 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2670 completed_gemms=2752770 completed_collective_payload_gib=2964.64 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2680 completed_gemms=2763080 completed_collective_payload_gib=2975.74 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2690 completed_gemms=2773390 completed_collective_payload_gib=2986.85 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2700 completed_gemms=2783700 completed_collective_payload_gib=2997.95 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2710 completed_gemms=2794010 completed_collective_payload_gib=3009.05 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2720 completed_gemms=2804320 completed_collective_payload_gib=3020.16 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2730 completed_gemms=2814630 completed_collective_payload_gib=3031.26 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2740 completed_gemms=2824940 completed_collective_payload_gib=3042.36 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2750 completed_gemms=2835250 completed_collective_payload_gib=3053.47 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2760 completed_gemms=2845560 completed_collective_payload_gib=3064.57 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2770 completed_gemms=2855870 completed_collective_payload_gib=3075.67 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2780 completed_gemms=2866180 completed_collective_payload_gib=3086.78 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2790 completed_gemms=2876490 completed_collective_payload_gib=3097.88 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2800 completed_gemms=2886800 completed_collective_payload_gib=3108.98 average_cycle_seconds=0.876 cycles_per_second=1.142\ngpu_burn_progress rank=0 completed_cycles=2810 completed_gemms=2897110 completed_collective_payload_gib=3120.09 average_cycle_seconds=0.876 cycles_per_second=1.142\n",
+    "burn_live_matches": true,
+    "burn_collective_progress": true,
+    "baseline_seed1": {
+      "eval_loss": 3.4940084005428926,
+      "eval_perplexity": 32.917630659512035,
+      "eval_nll_sum": 34645532.10924636,
+      "eval_num_tokens": 9915698,
+      "eval_num_sequences": 9704,
+      "eval_off_default_share": 0.0,
+      "eval_reuse_rate": 0.0,
+      "eval_routing_decisions": 79495168,
+      "eval_routing_input_tokens": 9936896,
+      "eval_runtime": 4.3482,
+      "eval_samples_per_second": 2231.733,
+      "eval_steps_per_second": 17.479,
+      "epoch": 0.08337887286383171
+    },
+    "baseline_seed0": {
+      "eval_loss": 3.4944635246202758,
+      "eval_perplexity": 32.93261567555772,
+      "eval_nll_sum": 34650044.98215022,
+      "eval_num_tokens": 9915698,
+      "eval_num_sequences": 9704,
+      "eval_off_default_share": 0.0,
+      "eval_reuse_rate": 0.0,
+      "eval_routing_decisions": 79495168,
+      "eval_routing_input_tokens": 9936896,
+      "eval_runtime": 4.4768,
+      "eval_samples_per_second": 2167.605,
+      "eval_steps_per_second": 16.976,
+      "epoch": 0.08337887286383171
+    }
+  }
+}
