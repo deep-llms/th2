@@ -1,5 +1,43 @@
 # Current task
 
+## Longer-training assessment — 23 October 2026, recommendation only
+
+Latest user asks whether to train longer before STOP, and whether throughput
+can improve. Inspection **647ce7c** retrieved the six saved validation curves
+(D and both finalists, seeds 0/1); no GPU evaluation or training was launched.
+[Saved curves and timing evidence](results/bdot_router_curves_20261023.json).
+These periodic curves use 1,024 sequences, distinct from the final 9,704-sequence
+comparison. Loss continues falling for all three models, but routed curves track
+D closely; there is no consistent late closing of the gap. Small final gaps are
+not a demonstrated win, nor can they be declared pure noise from two seeds.
+
+Recommendation: one bounded longer comparison before adding STOP—D,
+Partial-25-cosine and Partial-50-cosine-detach, seed 0, each **10,000 updates
+from scratch** (5.243B input tokens), full cosine schedule, warmup 200, peak
+3e-4/floor 3e-5. Retain current 12 layers, seq 1,024, batch 524,288, data/order,
+model/router settings and curriculum fractions: routing opens after 1,000
+completed updates, exploration ends at 2,000. This follows the existing single
+horizon policy. Current runs have already completed their cosine schedule;
+changing max_steps is not an ordinary resume and is rejected by resume checks.
+A designed continuation is possible but would be a different experiment.
+Budget at measured speed: about two hours each / six hours total, before any
+optimization. This is proposed, **not launched or added to the queue**.
+
+Existing short synthetic eight-GPU complete-update timing (includes backward,
+optimizer, scheduler and routing; excludes evaluation/saves): D 0.6857s,
+Partial-25-cosine 0.7208s (+5.1% time), Partial-50-cosine-detach 0.7072s (+3.1%).
+Approximately 765k / 727k / 741k input tokens/s total across eight GPUs.
+This compares against D, not the native Qwen baseline; timings are not a
+production inference benchmark. Actual seed-1 Trainer times, including periodic
+evaluation/saving, are 53m39s / 57m02s / 56m28s respectively.
+
+First speed candidates: microbatch 32 × accumulation 2, then 64 × 1 only if
+memory permits, keeping the global batch fixed; profile dispatch host syncs,
+sorting/weight stacking and router normalization before any fusion. Apply shared
+optimizations to D too. Keep grouped execution, FA4 and activation checkpointing
+disabled. Preserve unused-parameter semantics; require loss/gradient/update and
+resume checks for changes. No speed gain or bitwise parity is assumed.
+
 ## Seed confirmation complete — verified 23 October 2026, 05:42 SGT
 
 Both seed-1 fits and their final evaluations completed successfully at **05:00:13
