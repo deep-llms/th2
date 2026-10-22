@@ -1,5 +1,39 @@
 # Current task
 
+## Authorized 10k pair — 23 October 2026
+
+User narrowed the longer comparison to **D and Partial-25-cosine only** and
+requested launch. Run both from scratch, seed/model/router/data 0, for the full
+**10,000-step schedule (5,242,880,000 input tokens each)**. LR peak 3e-4, cosine
+floor 3e-5, warmup 200. Keep the validated 12-layer implementation, FA4, length
+1,024, global batch 524,288 (micro16 × accumulation4 × eight B200s), English
+pool/order, EOS, isolation and reset positions. Curriculum fractions unchanged:
+router opens after 1,000 completed updates; exploration ends at 2,000.
+No throughput changes, STOP, or third arm are included in this launch.
+
+**Keep all checkpoints every 250 steps**, with optimizer/scheduler/eight RNG
+files (40 checkpoints per arm). Periodic validation every 100 steps, unchanged
+1,024-sequence selection; full 9,704-sequence validation and route diagnostics
+after each arm. Both new output directories start empty; old outputs/caches stay.
+
+Preparation uses a small queue helper `scripts/bdot_long_pair.py`; scientific
+source is reused unchanged from `6y3o-dot-router-20261022-a01/source`, manifest
+`65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9`.
+Eight CPU contract tests pass, including fresh initialization, unchanged model/
+data, the 10k eval endpoint, mismatched-recipe/carry failures, and all-checkpoint
+retention. Actual routing/scheduler checks pass at 200/1,000/2,000/10,000.
+Preflight **f07ca6c**, **06:01:54 SGT**: exact source and parent data match;
+all eight communicating burn workers verified, guard released, 22,754 GiB free.
+
+Root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01`.
+Session: `dot_long_pair_20261023_a01`. Queue: reload old D / old Partial-25 for
+full-validation carry checks → check → fresh D → final eval → fresh Partial-25
+→ final eval → matched report. Existing supervisor copies/byte-verifies Accelerate,
+runs `accelerate env`, reclaims only freshly verified burn PIDs, waits 30 seconds
+and checks all eight GPUs free, then restores/verifies burns on success/failure.
+Expected training duration about four hours total. Launch/live health pending.
+Evidence and local test logs: `temp/router_long_20261023/`.
+
 ## Longer-training assessment — 23 October 2026, recommendation only
 
 Latest user asks whether to train longer before STOP, and whether throughput

@@ -4,6 +4,18 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Authorized longer pair — 23 October 2026
+
+User selected D and Partial-25-cosine only for fresh 10,000-step training,
+seed 0, full cosine schedule, 200 warmup updates; unchanged scientific code,
+data and micro16×acc4×8 layout. Keep every 250-step checkpoint; no pruning.
+Use the immutable router-study source, and require old D/router carry evaluation
+before either fresh fit. New queue helper only; eight CPU tests and actual
+10k scheduler/curriculum boundary checks pass. Preflight f07ca6c verifies the
+existing burn handoff, source, matched parent recipes/data, and adequate disk.
+Root `6y3o-dot-long-pair-20261023-a01`; CURRENT_TASK tracks launch/health.
+STOP is deferred; no throughput optimization is mixed into this comparison.
+
 ## Second-seed confirmation completed — 23 October 2026
 
 Both selected routers finished 4,768 steps and full validation, with no retries.
