@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-mlp-status-20261022-a02
+#th2-6y3o-dot-mlp-status-20261022-a03
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -40,5 +40,5 @@ for p in sorted((root/'prepared/runs').glob('*')):
 for p in (root/'supervised/run').glob('*.attempt*.log'):
  result[p.name]=p.read_text(errors='replace')[-1800:]
 print('MLP_STATUS '+json.dumps(result),flush=True)
-(root/'status-a02.json').write_text(json.dumps(result,indent=2))
+(root/'status-a03.json').write_text(json.dumps(result,indent=2))
 REMOTE
