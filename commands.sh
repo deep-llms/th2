@@ -1,27 +1,55 @@
-#1 +60+a
-#th2-6y3o-dot-long-pair-launch-20261023-a01
+#1 +30+a
+#th2-6y3o-dot-long-pair-health-20261023-a01
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
-export WANDB_MODE=offline NCCL_NVLS_ENABLE=0 OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false
-export PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES=
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
-import json,hashlib,subprocess,sys
+import json,hashlib
 from pathlib import Path
-base=Path('/mnt/local/_outputs/deep-llms_th2')
-root=base/'6y3o-dot-long-pair-20261023-a01'
-source=base/'6y3o-dot-router-20261022-a01/source'
-assert json.loads((root/'preflight-initial.json').read_text())['status']=='ok'
-payload=Path('scripts/bdot_long_pair.py').read_bytes()
-assert hashlib.sha256(payload).hexdigest()=='b62242de5bc1dd3e0837934cb1d3fcd6a5f46cfc25049030a970f3ac8082b33e'
-with (root/'long_pair.py').open('xb') as f:f.write(payload)
-subprocess.run([sys.executable,str(root/'long_pair.py'),'launch','--output',str(root),
- '--source',str(source),'--predecessor',str(base/'6y3o-dot-router-confirm-20261023-a01'),
- '--dense-recipe',str(base/'6y3o-dot-pilot-20261020-a01/prepared/D.train.json'),
- '--router-recipe',str(base/'6y3o-dot-router-20261022-a01/prepared/Partial-25-cosine-s0.train.json'),
- '--host','thiennh-p6-6y3o-worker-0','--session','dot_long_pair_20261023_a01'],check=True)
-assert subprocess.check_output(['tmux','display-message','-p','-t','dot_long_pair_20261023_a01','#{pane_dead}'],text=True).strip()=='0'
-print('LONG_PAIR_SUBMITTED '+json.dumps({'launch':json.loads((root/'launch.json').read_text()),
- 'jobs':[j['name'] for j in json.loads((root/'gated-jobs.json').read_text())['jobs']],
- 'driver_sha256':hashlib.sha256(payload).hexdigest()}),flush=True)
+from scripts.gpu_process import inspect
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01')
+read=lambda p:json.loads(Path(p).read_text())
+def tail(p,n=5000):
+ if not p.is_file():return ''
+ with p.open('rb') as f:f.seek(max(0,p.stat().st_size-n));return f.read().decode(errors='replace')
+meta=read(root/'long-pair.json');source=Path(meta['source'])
+r={'live':inspect(),'supervisor_tail':tail(root/'supervisor.log',3000)}
+for rel in ['launch.json','long-pair.json','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/run/long-pair-check.json','supervised/run/long-pair-report.json']:
+ if (root/rel).is_file():r[rel]=read(root/rel)
+r['source_matches']=all(hashlib.sha256((source/k).read_bytes()).hexdigest()==v for k,v in read(source/'SOURCE_MANIFEST.json')['files'].items())
+assert r['source_matches']
+r['accelerate_cache_matches']=Path(r['launch.json']['accelerate_cache']).read_bytes()==(source/'resources/accelerate_b200.yaml').read_bytes()
+assert r['accelerate_cache_matches']
+r['accelerate_env']=(root/'accelerate_env.txt').read_text()
+r['recipes']={};r['runs']={}
+for arm in ['D','Partial-25-cosine']:
+ name=arm+'-s0';t=read(root/'prepared'/(name+'.train.json'));old=read(meta['parent_recipes'][arm])
+ changes={k:[old.get(k),t.get(k)] for k in t.keys()|old.keys() if t.get(k)!=old.get(k)}
+ assert set(changes)<={'config_name','output_dir','keep_checkpoint_steps','max_steps','warmup_steps'}
+ assert read(t['config_name'])==read(old['config_name'])
+ assert t['max_steps']==10000 and t['warmup_steps']==200 and t['seed']==t['data_seed']==0
+ assert t.get('keep_checkpoint_steps') is None and t.get('save_total_limit') is None
+ assert t.get('resume_from_checkpoint') is None and t.get('model_name_or_path') is None
+ r['recipes'][name]={'train':t,'model':read(t['config_name']),'parent_differences':changes,'parent_model_identical':True}
+ run=Path(t['output_dir']);v={};r['runs'][name]=v
+ for rel in ['train_results.json','final_eval.json','train_config.json']:
+  if (run/rel).is_file():v[rel]=read(run/rel)
+ if (run/'data_recipe.json').is_file():
+  v['data_matches_parent']=read(run/'data_recipe.json')==read(Path(old['output_dir'])/'data_recipe.json')
+  assert v['data_matches_parent']
+ rows=[]
+ for line in tail(run/'metrics.jsonl',20000).splitlines():
+  try:rows.append(json.loads(line))
+  except json.JSONDecodeError:pass
+ v['latest_metrics']=rows[-3:]
+ v['attempt_log_tail']=tail(root/'supervised/run'/(name+'.verified.attempt1.log'),2500)
+ v['checkpoints']=[p.name for p in run.glob('checkpoint-*')]
+ if v['checkpoints']:
+  cp=max(run.glob('checkpoint-*'),key=lambda p:int(p.name[11:]))
+  v['checkpoint_files']={p.name:p.stat().st_size for p in cp.iterdir() if p.is_file()}
+  if (cp/'trainer_state.json').exists():v['checkpoint_step']=read(cp/'trainer_state.json')['global_step']
+r['queue_jobs']=[j['name'] for j in read(root/'gated-jobs.json')['jobs']]
+out=root/'health-a01.json'
+with out.open('x') as f:f.write(json.dumps(r,indent=2)+'\n')
+print('LONG_PAIR_HEALTH '+json.dumps(r),flush=True)
+print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
 REMOTE
