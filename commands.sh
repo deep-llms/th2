@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-mlp-status-20261022-a03
+#th2-6y3o-dot-mlp-status-20261022-a04
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -33,6 +33,13 @@ for p in sorted((root/'prepared/runs').glob('*')):
   if (p/name).is_file():item[name]=read(p/name)
  if (p/'metrics.jsonl').is_file():item['metrics']=[json.loads(l) for l in (p/'metrics.jsonl').read_text().splitlines() if l][-3:]
  item['checkpoints']=[q.name for q in p.glob('checkpoint-*')]
+ if item['checkpoints']:
+  from scripts.bdot_job import latest_complete_checkpoint
+  try:
+   cp=latest_complete_checkpoint(p)
+   item['checkpoint']={'path':str(cp),'step':read(cp/'trainer_state.json')['global_step'],
+     'files':{f.name:f.stat().st_size for f in cp.iterdir() if f.is_file()}}
+  except RuntimeError as error:item['checkpoint_observation']=str(error)
  if (p/'training_recipe.json').is_file():
   item['source_matches']=all(hashlib.sha256(Path(k).read_bytes()).hexdigest()==v for k,v in read(p/'training_recipe.json')['code_sha256'].items())
   item['data_matches_D']=read(p/'data_recipe.json')==read(root.parent/'6y3o-dot-pilot-20261020-a01/prepared/runs/D/data_recipe.json')
@@ -40,5 +47,5 @@ for p in sorted((root/'prepared/runs').glob('*')):
 for p in (root/'supervised/run').glob('*.attempt*.log'):
  result[p.name]=p.read_text(errors='replace')[-1800:]
 print('MLP_STATUS '+json.dumps(result),flush=True)
-(root/'status-a03.json').write_text(json.dumps(result,indent=2))
+(root/'status-a04.json').write_text(json.dumps(result,indent=2))
 REMOTE
