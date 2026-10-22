@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-mlp-status-20261022-a04
+#th2-6y3o-dot-mlp-status-20261022-a05
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -47,5 +47,31 @@ for p in sorted((root/'prepared/runs').glob('*')):
 for p in (root/'supervised/run').glob('*.attempt*.log'):
  result[p.name]=p.read_text(errors='replace')[-1800:]
 print('MLP_STATUS '+json.dumps(result),flush=True)
-(root/'status-a04.json').write_text(json.dumps(result,indent=2))
+(root/'status-a05.json').write_text(json.dumps(result,indent=2))
+
+if result.get('supervised/run/checks/summary.json',{}).get('status')=='passed':
+ import tarfile,io
+ names=['initial-preflight.json','preflight.json','launch.json','accelerate_env.txt','gated-jobs.json',
+ 'supervised/reclaim.json','supervised/gpus-free-before-training.json','status-a05.json',
+ 'supervised/run/checks/summary.json','supervised/run/checks/old_parity.json',
+ 'supervised/run/checks/mlp_numerics.json','supervised/run/checks/resume_Partial-25/summary.json',
+ 'supervised/run/checks/resume_MLP-only-random/summary.json','supervised/run/checks/carry_D/result.json']
+ names += [str(p.relative_to(root)) for pattern in ['prepared/*.json','supervised/run/checks/T8_*.json',
+ 'prepared/runs/*/training_recipe.json','prepared/runs/*/data_recipe.json'] for p in root.glob(pattern)]
+ data={}
+ for name in sorted(set(names)):
+  p=root/name
+  assert p.is_file() and not p.is_symlink() and p.resolve().is_relative_to(root)
+  data[name]=p.read_bytes()
+ archive=root/'launch-evidence-a01.tar.gz';manifest=root/'launch-evidence-a01.manifest.json'
+ assert not archive.exists() and not manifest.exists()
+ with tarfile.open(archive,'x:gz') as tar:
+  for name,b in data.items():
+   info=tarfile.TarInfo(name);info.size=len(b);info.mode=0o600
+   tar.addfile(info,io.BytesIO(b))
+ value={'archive':archive.name,'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),
+ 'files':{k:{'bytes':len(v),'sha256':hashlib.sha256(v).hexdigest()} for k,v in data.items()}}
+ manifest.write_text(json.dumps(value,indent=2))
+ print('MLP_EVIDENCE '+json.dumps({'archive':str(archive),'manifest':str(manifest),'sha256':value['sha256'],'files':len(data)}),flush=True)
+else:print('MLP_EVIDENCE_PENDING',flush=True)
 REMOTE
