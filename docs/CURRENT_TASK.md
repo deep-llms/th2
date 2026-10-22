@@ -1,5 +1,25 @@
 # Current task
 
+## C1 conditional control authorized — 22 October 2026
+
+User approved the recommended C1 follow-up from `BDOT_v3_pilot_plan.md`
+section 6.1. Scope: C1 seed 0 only, then full-validation route study and comparison
+with existing V1/D. No MLP-only architecture, second seed or longer training.
+Reuse C2's exact recipe and model, changing only placement_film from true to false
+and experiment-owned output/config paths. Random routing, no reuse, radius 1,
+no curriculum; 4,768 full updates / 96 warmup, sequence 1,024, global batch 524,288,
+FA4/grouped, all eight GPUs. Same fixed data/validation and retained milestones.
+
+Preflight **df48831** at **08:02:43 SGT** verifies the completed v3 handoff,
+unchanged training-source hashes, all eight known burn workers 288996–289003,
+released guard and about 22,951 GiB free. Local recipe/queue checks passed.
+Fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-C1-20261022-a01`.
+Launch will use the existing Accelerate-copy/verification and independent
+train/evaluate/burn supervisor; no environment, training source or old outputs
+are changed. Preparation and launch evidence: `temp/c1_20261022/`.
+Training has not yet been verified started; next action is launch and health check.
+
+
 ## V3 batch complete — verified 22 October 2026, 05:50 SGT
 
 All 13 scheduled training runs and 13 evaluations completed successfully at
