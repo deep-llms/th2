@@ -1,40 +1,29 @@
 # Current task
 
-## C1 running — verified 22 October 2026, 08:07:44 SGT
+## C1 complete — verified 22 October 2026, 09:51 SGT
 
-User approved the recommended C1 follow-up from `BDOT_v3_pilot_plan.md`
-section 6.1. Scope: C1 seed 0 only, then full-validation route study and comparison
-with existing V1/D. No MLP-only architecture, second seed or longer training.
-Reuse C2's exact recipe and model, changing only placement_film from true to false
-and experiment-owned output/config paths. Random routing, no reuse, radius 1,
-no curriculum; 4,768 full updates / 96 warmup, sequence 1,024, global batch 524,288,
-FA4/grouped, all eight GPUs. Same fixed data/validation and retained milestones.
+C1 completed its full 4,768-step training, full-validation route study and
+comparison at **09:04:48 SGT**, without retries (58m04s total). Loss **3.55846145**,
+PPL **35.10914**, on the same 9,704 sequences / 9,915,698 scored tokens.
+V1 beats C1 by **0.014539 nats** at seed 0, but V1 remains D + **0.049459**
+and misses the default-path gain requirement. It fails the section 6.2 condition
+for second-seed confirmation; no two-seed V1 result or pilot pass is claimed.
+This comparison also differs in curriculum (V1=A; C1=none), per the plan.
 
-Preflight **df48831** at **08:02:43 SGT** verifies the completed v3 handoff,
-unchanged training-source hashes, all eight known burn workers 288996–289003,
-released guard and about 22,951 GiB free. Local recipe/queue checks passed.
-Fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-C1-20261022-a01`.
-Launch will use the existing Accelerate-copy/verification and independent
-train/evaluate/burn supervisor; no environment, training source or old outputs
-are changed. Preparation and launch evidence: `temp/c1_20261022/`.
-Launch **98c430e** started the queue at **08:06:44 SGT**. Health **9bf815d** at
-**08:07:44 SGT** confirms eight training workers at 93–98% GPU utilization,
-step 10 with finite LM loss/gradients, unchanged source hashes and identical
-training data recipe to C2. This is initial training health, not a quality result.
-Accelerate was copied to `/mnt/local/.cache/huggingface/accelerate/default_config.yaml`
-and verified using `accelerate env` (MULTI_GPU/eight processes/BF16). Reclaim
-receipt identifies only prior burn workers 288996–289003; all GPUs were verified
-free at 08:06:44 before the training command. The independent supervisor owns
-automatic burn restoration after success or failure. Checkpoint save and final
-completion are still pending. Approximate finish **09:10–09:20 SGT**.
+The final optimizer/scheduler/eight-rank RNG state and retained checkpoints
+1,000/2,500/4,768 are verified. Automatic burns restored **09:05:54 SGT**;
+read-only check **cc68ded** at **09:51:00 SGT** verifies workers 298035–298042,
+all eight GPUs at 100%, advancing collective cycles/payload and a released guard.
+Result export **763aa5f**. No processes were stopped or launched by this check.
+Commands return to #0. No new architecture, longer run or additional seed queued.
 
-Queue: `C1-s0` → `C1-s0-eval` (full frozen validation + route study) →
-`C1-report` (step/count/data-identity checks and V1/D comparison) → burns.
-Next check should retrieve `supervised/run/C1-summary.json`, training/evaluation
-receipts, retained checkpoints and verified final burn handoff from the fresh
-root. Do not infer completion from vanished PIDs or relaunch this experiment.
-[Launch evidence](results/bdot_C1_launch_20261022.json). Commands return to #0.
-
+[Updated v3 report](BDOT_V3_RESULTS_20261022.md) and
+[C1 completion evidence](results/bdot_C1_final_20261022.json).
+Remote root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-C1-20261022-a01`.
+All 18 exported files and the archive SHA256 verify locally at
+`temp/c1_final_20261022/results/`. C1 launch **98c430e** followed the
+verified Accelerate/free-GPU/burn-supervisor flow, reusing C2 with only placement
+FiLM disabled; training code, environment and shared data/cache stayed unchanged.
 
 ## V3 batch complete — verified 22 October 2026, 05:50 SGT
 
@@ -55,12 +44,9 @@ Burns restored at 05:33:23; live check at 05:50:33 matches workers 288996–2890
 all eight GPUs at 100%, advancing collective cycles/payload and released guard.
 No workload was stopped or launched by this check. Commands return to #0.
 
-The automatic selection is V1 under the PF contingency. Its official two-seed
-gate is pending missing C1/V1 confirmations, **not a pass**. V1 misses two
-known seed 0 quality criteria and does not qualify for the single-near-miss
-second-seed rule. The plan's conditional C1 seed 0 control remains unrun,
-outside the completed thirteen-job batch. No further runs are queued.
-Review these results before authorizing any additional computation.
+The automatic selection is V1 under the PF contingency. The subsequently
+completed C1 conditional control and final second-seed decision are recorded
+above; the original thirteen-job batch did not include that follow-up.
 
 ## Historical v3 implementation and launch — 21 October 2026
 

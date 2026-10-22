@@ -4,6 +4,10 @@ All **13 training runs and 13 evaluations completed successfully**, without retr
 
 Every run completed 4,768 updates with the same 2.5B-token pilot recipe (sequence 1,024, 524,288 input tokens/update, 96 warmup updates). Model/routing seeds vary as labeled; data order stays fixed. Each final checkpoint contains optimizer/scheduler and eight RNG files; checkpoints 1,000/2,500/4,768 are retained. Architecture definitions and checks are in [the implementation report](BDOT_V3_IMPLEMENTATION_20261021.md).
 
+C1, the conditional random/no-PF control, subsequently completed at **09:04:48 SGT**
+on 22 October. Its result and verified burn handoff are included below; the
+original thirteen-job batch above and this one-run follow-up are separate queues.
+
 ## Final validation
 
 Loss is LM NLL in nats/token; lower is better. All scores use the same 9,704 sequences / 9,915,698 scored tokens. Gap is to D at the same seed. D seed 0 is the verified carry-over from v2.
@@ -24,6 +28,7 @@ Loss is LM NLL in nats/token; lower is better. All scores use the same 9,704 seq
 | V5 | 0 | 3.654560 | 38.650 | +0.160096 |
 | V6 | 0 | 3.543685 | 34.594 | +0.049221 |
 | V7 | 0 | 3.555634 | 35.010 | +0.061171 |
+| C1 (conditional follow-up) | 0 | 3.558461 | 35.109 | +0.063998 |
 
 - **None of the new arms beats D.** V6 (query-only placement FiLM) and V1 (no placement FiLM) are effectively tied: their losses differ by only 0.000237. Both remain about 0.049 nats worse than D.
 - **V2 fails the quality criteria across two seeds.** Its mean loss is 3.557741: 0.063505 above same-seed D and 0.002109 worse than random C2. Own routes help its adapted checkpoint by 0.029907 on average, but this does not translate to beating chance routing or D.
@@ -49,12 +54,32 @@ All three losses use full frozen validation. Positive default−own means learne
 | V5-s0 | 3.654560 | 3.683126 | 3.988671 | +0.028567 |
 | V6-s0 | 3.543685 | 3.549202 | 3.766307 | +0.005517 |
 | V7-s0 | 3.555634 | 3.576783 | 3.704648 | +0.021149 |
+| C1-s0 | 3.558461 | 3.555269 | 3.558461 | -0.003193 |
 
-## Decision and remaining scope
+## C1 conditional control and decision
 
-The predeclared PF contingency triggers: V1 beats V2 by 0.012726, so the automatic selection is V1. The official two-seed gate remains **pending**, because C1 and V1 seed 1 are absent; this is not a gate pass. V1 already misses two known seed 0 criteria: its default-path gain is 0.006035 (<0.01) and its gap to D is 0.049459 (>0.01). It therefore does not meet the single-near-miss rule for second-seed confirmation, regardless of the missing C1 result.
+C1 copies C2 with placement FiLM disabled: random routing, no reuse, radius 1,
+curriculum none, seed 0. Training/model code and all other recipe settings are
+unchanged. The run completes 4,768 updates without retries; training/evaluation/
+comparison take **58m04s** together. The training data recipe matches C2 and V1,
+and evaluation matches their frozen 9,704 sequences / 9,915,698 scored tokens.
 
-The plan specifies a C1 seed 0 control when the PF contingency triggers. That conditional follow-up was outside the agreed 13-run queue and remains unrun. No further workload was launched during this status check. V5/V6/V7 remain exploratory and do not enter the predefined candidate pool.
+**V1 beats C1 by 0.014539 nats**, meeting the 0.01-nat chance-control criterion
+at seed 0. This is a positive single-seed result for V1's complete learned-routing
+recipe, which includes curriculum A; C1 uses no curriculum. It does not isolate
+the effect of learned routing from that curriculum and is not a two-seed finding.
+
+The predeclared PF contingency selects V1 because it beats V2 by 0.012726.
+V1 still misses two seed-0 criteria: default-path gain 0.006035 (<0.01) and
+gap to D 0.049459 (>0.01). It does not qualify for second-seed confirmation under
+section 6.2, so the pilot cannot advance. No two-seed V1 gate result is claimed.
+V5/V6/V7 remain exploratory and outside the predefined candidate pool.
+
+C1 retains checkpoints 1,000/2,500/4,768, with final optimizer, scheduler and
+all eight RNG-state files verified. Communicating burns were restored at
+**09:05:54 SGT**; the **09:51:00 SGT** live check matches workers 298035–298042,
+all eight GPUs at 100%, advancing collective progress and a released guard.
+No additional training is queued.
 
 ## Evidence
 
@@ -64,3 +89,10 @@ The plan specifies a C1 seed 0 control when the PF contingency triggers. That co
 - Remote root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-v3-20261021-a01`.
 
 All **124 exported files** and the result archive match the remote SHA256 manifest.
+
+C1 follow-up evidence: [completion and live burn receipt](results/bdot_C1_final_20261022.json),
+[downloaded results](../temp/c1_final_20261022/results/).
+Remote root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-C1-20261022-a01`.
+
+All **18 C1 result files**, their queue-artifact hashes and the archive SHA256
+are verified locally.

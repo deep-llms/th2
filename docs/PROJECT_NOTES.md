@@ -14,8 +14,13 @@ it is not an isolated intervention on learned router weights.
 Launch **98c430e**, fresh root `6y3o-dot-C1-20261022-a01`; first health **9bf815d**
 confirms actual training and correct free-GPU/Accelerate/data handoffs.
 No MLP-only variant, second seed or longer run is authorized by this follow-up.
-Final comparison and burn verification remain pending; see CURRENT_TASK and
-[launch evidence](results/bdot_C1_launch_20261022.json).
+C1 subsequently finished at **09:04:48 SGT**, loss 3.55846145 / PPL 35.10914.
+V1 beats it by 0.014539 nats in seed 0 but remains 0.049459 above D and fails
+another gate criterion (default-path gain). No second-seed confirmation is
+triggered under the plan. All retained checkpoints and final optimizer state
+are verified. Burns restored 09:05:54, verified live at 09:51:00 SGT.
+See [completion evidence](results/bdot_C1_final_20261022.json) and
+[updated v3 report](BDOT_V3_RESULTS_20261022.md).
 
 ## Research scope
 
