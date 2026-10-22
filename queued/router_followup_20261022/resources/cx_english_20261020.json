@@ -1,0 +1,47 @@
+{
+  "repository": "nht10/cx_sampled",
+  "revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+  "subset": "qwen3_0.6b_base_en_30B",
+  "manifest_sha256": "c027aae3d802ddd2c17259b4ae4a8bfc67bae073338694f528691cc0e3496ade",
+  "completion_sha256": "5613ec2f3fef08639f2529aa1e46b37c1abc6d5227ee19e328016b7a9a12a5fa",
+  "tokenizer_repository": "Qwen/Qwen3-0.6B-Base",
+  "tokenizer_revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+  "files": 3008,
+  "bytes": 134991536132,
+  "totals": {
+    "train": {
+      "documents": 36495424,
+      "tokens": 30000000081
+    },
+    "validation": {
+      "documents": 11717,
+      "tokens": 10000244
+    }
+  },
+  "tokenizer_files": {
+    "config.json": {
+      "bytes": 727,
+      "sha256": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59"
+    },
+    "generation_config.json": {
+      "bytes": 138,
+      "sha256": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8"
+    },
+    "tokenizer.json": {
+      "bytes": 7031645,
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    "tokenizer_config.json": {
+      "bytes": 9678,
+      "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+    },
+    "merges.txt": {
+      "bytes": 1671853,
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+    },
+    "vocab.json": {
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  }
+}

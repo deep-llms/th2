@@ -1,5 +1,80 @@
 # Current task
 
+## Authorized six router follow-ups — 22 October 2026
+
+User requested research, a detached-router option, and six additional runs
+queued after the current six-arm study. The current queue must finish untouched.
+The following factorial is predeclared; same-width original arms supply controls:
+
+| Queue order | Arm | Change from original same-width arm |
+|---|---|---|
+| 1 | Partial-25-detach | Stop gradient at router input only |
+| 2 | Partial-50-detach | Stop gradient at router input only |
+| 3 | Partial-25-cosine | Normalize token and router weight directions |
+| 4 | Partial-50-cosine | Normalize token and router weight directions |
+| 5 | Partial-25-cosine-detach | Both changes |
+| 6 | Partial-50-cosine-detach | Both changes |
+
+**Reasoning:** detaching `u` before the router's own RMSNorm blocks its LM gate
+surrogate and z-loss gradients from changing the backbone, while keeping the
+router/norm trainable and preserving normal LM gradients through the selected
+MLP and fixed core. It does not detach scores, gates, or expert outputs. At the
+same weights it preserves logits/routes exactly. This is an ablation hypothesis;
+it may also remove useful backbone-router co-adaptation.
+
+For cosine scoring, let `x = RMSNorm_router(u)` and `W` be the existing router
+weight. Replace only the content term `W x` with
+`a * normalize(x) @ normalize(W).T`, `a = init_std_scale * sqrt(hidden_size)`
+(3.2 for this recipe), then retain the same home bias, visit term, cap 2,
+candidate mask, probability-plus-balance selection and unit-forward ST gate.
+Fixed scale matches the approximate initial content-logit standard deviation;
+no parameters, projections, losses or expert FLOPs are added. Normalize in FP32
+with epsilon 1e-6. Positive row-norm growth no longer changes the content score.
+
+[Chi et al., NeurIPS 2022](https://arxiv.org/abs/2204.09179) motivate separating
+routing geometry from representation collapse and normalize token/expert
+directions. Their X-MoE also adds a low-dimensional projection and learned
+temperature: our full-dimensional, fixed-scale cosine-only ablation is **not**+a reproduction or an established cure. [ReXMoE](https://arxiv.org/abs/2510.17483)
+supports studying adjacent-layer expert reuse and gradual candidate expansion;
+it is related work, not evidence that these six variants will win.
+[ST-MoE](https://arxiv.org/abs/2202.08906) motivates retaining the existing
+stabilizing z-loss rather than also removing it in this comparison.
+
+At 15:42:32 SGT, Partial-25 finished loss 3.502879 (D +0.008415), beating
+its random control 3.510149. Partial-50 finished 3.530076 versus random
+3.525737. These are single-seed results and explain prioritizing 25% while
+retaining 50% to check whether either router change depends on routed width.
+
+All six follow-ups use the original 4,768-step full schedule, warmup 96,
+seed/data/routing seed 0, seq 1,024, batch 524,288, microbatch 16, accumulation 4,
+FA4 and all eight GPUs. Same optimizer/data/packing/validation; from scratch.
+Only the two router fields differ from their parents. Keep 1,000/2,500/4,768
+and latest checkpoints. No new seed, longer fit or downstream evaluation.
+
+Local verification passed: 84-test B-DOT suite, seven targeted gradient/queue
+tests, nine GPU-handoff tests (mocked, CPU-only), 14 frozen old-code parity
+cases with zero parameter/gradient differences, and exact fresh-process CPU
+resume of Partial-50-cosine-detach. The staged copy also passes all seven
+targeted tests. GPU acceptance is pending the safe handoff below.
+
+The immutable source snapshot is staged at
+`queued/router_followup_20261022/` in the th2 execution checkout; local working
+implementation is in the normal DOT source paths. The snapshot has 146 files,
+manifest SHA256 `65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9`.
+Intended new output root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01`, with source
+copied to its `source/` directory outside Git sync. Never overwrite the active
+source or its cache. The
+CPU-only waiter must require the existing six results and successful queue,
+verified advancing burns, released guard and matching live GPU ownership.
+Then copy/verify Accelerate, reclaim only the known burn worker identities,
+wait/check all eight GPUs free, pass numerical/resume/throughput/D-carry gates,
+run the six train/eval pairs, and restore burns after success/failure. Reuse
+the existing supervisor; an explicit hash-checked predecessor burn-script path
+allows safe handoff between the two source snapshots. Unknown ownership,
+predecessor failure, cancellation or source changes prevent launch.
+Raw local tests/receipts: `temp/mlp_followup_20261022/`.
+
 ## Authorized partial-MLP study — 22 October 2026
 
 User approved all six proposed runs: Partial-25, Partial-25-random,

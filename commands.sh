@@ -1,53 +1,59 @@
 #1 +30+a
-#th2-6y3o-dot-mlp-followup-preflight-20261022-a01
+#th2-6y3o-dot-router-followup-queue-20261022-a01
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
-/mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
-import json,hashlib
+env CUDA_VISIBLE_DEVICES= PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
+import json,hashlib,shutil,subprocess,shlex,sys,time,os
 from pathlib import Path
 from scripts.gpu_process import inspect
-from accelerate.commands.config.config_args import default_config_file
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01')
+project=Path.cwd()
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01')
+old=root.parent/'6y3o-dot-mlp-20261022-a01'
+pilot=root.parent/'6y3o-dot-pilot-20261020-a01'
+staged=project/'queued/router_followup_20261022'
 read=lambda p:json.loads(p.read_text())
-result={'live':inspect()}
-for name in ['launch.json','supervised/reclaim.json','supervised/gpus-free-before-training.json',
-             'supervised/run/run.json','supervised/supervisor.json','supervised/run/checks/summary.json',
-             'supervised/run/complete.json','supervised/run/mlp-results.json']:
- p=root/name
- if p.is_file():result[name]=read(p)
-result['accelerate_cache_matches']=Path(default_config_file).read_bytes()==Path('resources/accelerate_b200.yaml').read_bytes()
-if (root/'accelerate_env.txt').is_file():result['accelerate_env']=(root/'accelerate_env.txt').read_text()
-for name in ['supervisor.log','supervised/run/mlp_acceptance.log']:
- p=root/name
- if p.is_file():result[name]=p.read_text(errors='replace')[-5000:]
-checks=root/'supervised/run/checks'
-if checks.exists():
- result['check_logs']={p.name:p.read_text(errors='replace')[-2000:] for p in checks.glob('*.log')}
- for folder in checks.glob('resume_*'):
-  if folder.is_dir():
-   result[str(folder.relative_to(root))]={p.name:p.read_text(errors='replace')[-1800:] for p in folder.glob('*.log')}
-for p in sorted((root/'prepared/runs').glob('*')):
- if not p.is_dir():continue
- item={}
- for name in ['train_results.json','final_eval.json']:
-  if (p/name).is_file():item[name]=read(p/name)
- if (p/'metrics.jsonl').is_file():item['metrics']=[json.loads(l) for l in (p/'metrics.jsonl').read_text().splitlines() if l][-3:]
- item['checkpoints']=[q.name for q in p.glob('checkpoint-*')]
- if (p/'metrics.jsonl').is_file():
-  item['transition_metrics']=[v for l in (p/'metrics.jsonl').read_text().splitlines() if l for v in [json.loads(l)] if 400<=v.get('step',0)<=600]
- if item['checkpoints']:
-  from scripts.bdot_job import latest_complete_checkpoint
-  try:
-   cp=latest_complete_checkpoint(p)
-   item['checkpoint']={'path':str(cp),'step':read(cp/'trainer_state.json')['global_step'],
-     'files':{f.name:f.stat().st_size for f in cp.iterdir() if f.is_file()}}
-  except RuntimeError as error:item['checkpoint_observation']=str(error)
- if (p/'training_recipe.json').is_file():
-  item['source_matches']=all(hashlib.sha256(Path(k).read_bytes()).hexdigest()==v for k,v in read(p/'training_recipe.json')['code_sha256'].items())
-  item['data_matches_D']=read(p/'data_recipe.json')==read(root.parent/'6y3o-dot-pilot-20261020-a01/prepared/runs/D/data_recipe.json')
- result[p.name]=item
-for p in (root/'supervised/run').glob('*.attempt*.log'):
- result[p.name]=p.read_text(errors='replace')[-1800:]
-print('MLP_STATUS '+json.dumps(result),flush=True)
-(root/'followup-preflight-a01.json').write_text(json.dumps(result,indent=2))
+manifest=staged/'SOURCE_MANIFEST.json'
+assert hashlib.sha256(manifest.read_bytes()).hexdigest()=='65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9'
+for name,value in read(manifest)['files'].items():
+ p=staged/name
+ assert p.is_file() and not p.is_symlink() and p.resolve().is_relative_to(staged)
+ assert hashlib.sha256(p.read_bytes()).hexdigest()==value,name
+# Existing training source is verified, never rewritten by this submission.
+recipes=list((old/'prepared/runs').glob('*/training_recipe.json'))
+assert recipes
+for p in recipes:
+ for name,value in read(p)['code_sha256'].items():
+  assert hashlib.sha256((project/name).read_bytes()).hexdigest()==value,name
+before=inspect();assert before['host']=='thiennh-p6-6y3o-worker-0'
+session='dot_router_wait_20261022_a01'
+assert subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode!=0
+root.mkdir(exist_ok=False)
+shutil.copytree(staged,root/'source',ignore=shutil.ignore_patterns('__pycache__'))
+(root/'queue-preflight.json').write_text(json.dumps(dict(before=before,predecessor=str(old),
+ source_unchanged=True,source_manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest()),indent=2))
+argv=[sys.executable,'-u',str(root/'source/scripts/bdot_router_followup.py'),'wait',
+ '--output',str(root),'--pilot',str(pilot),'--predecessor',str(old),
+ '--predecessor-burn-script',str(project/'resources/llm_pretrain_burn.py'),
+ '--host',before['host'],'--session','dot_router_20261022_a01']
+command='cd '+shlex.quote(str(root/'source'))+' && exec '+shlex.join(['env','CUDA_VISIBLE_DEVICES=',*argv])
+command+=' >'+shlex.quote(str(root/'wait.log'))+' 2>&1'
+subprocess.run(['tmux','new-session','-d','-s',session,command],check=True)
+subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)
+for _ in range(30):
+ time.sleep(1)
+ if (root/'wait-status.json').is_file():break
+assert (root/'wait-status.json').is_file(),(root/'wait.log').read_text()[-4000:]
+status=read(root/'wait-status.json');assert status['status']=='waiting',status
+assert subprocess.check_output(['tmux','display-message','-p','-t',session,'#{pane_dead}'],text=True).strip()=='0'
+jobs=read(root/'gated-jobs.json')['jobs']
+assert len(jobs)==14 and jobs[0]['name']=='router_acceptance'
+assert all(j.get('gpus')==list(range(8)) for j in jobs[:-1])
+assert [j['name'] for j in jobs[1:-1:2]]==['Partial-25-detach-s0','Partial-50-detach-s0','Partial-25-cosine-s0','Partial-50-cosine-s0','Partial-25-cosine-detach-s0','Partial-50-cosine-detach-s0']
+for p in recipes:
+ assert all(hashlib.sha256((project/n).read_bytes()).hexdigest()==v for n,v in read(p)['code_sha256'].items())
+receipt=dict(status='queued',waiter_session=session,root=str(root),wait_status=status,jobs=[j['name'] for j in jobs],
+ source_manifest_sha256=hashlib.sha256(manifest.read_bytes()).hexdigest(),active_source_unchanged=True,
+ snapshot_files=len(read(manifest)['files']),live=inspect())
+(root/'queued.json').write_text(json.dumps(receipt,indent=2))
+print('ROUTER_QUEUED '+json.dumps(receipt),flush=True)
 REMOTE

@@ -4,6 +4,31 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Six router follow-ups — 22 October 2026
+
+User authorized six more runs after the current six-arm queue. Factorial:
+router input detached, cosine scoring, both; each at 25% and 50% routed width.
+Original same-width runs are controls. Detach before the router's own norm;
+keep router LM/z-loss learning and ordinary expert/backbone LM gradients.
+Cosine normalizes existing token/weight directions, fixed score scale 3.2,
+without extra parameters; retain prior, visits, cap, balancing and ST gate.
+Inspired by [representation-collapse work](https://arxiv.org/abs/2204.09179),
+but deliberately omits its extra projection and learned temperature. No claim
+that detachment or this adaptation is already proven superior.
+
+All six use the same from-scratch 4,768-step seed-0 pilot recipe and data.
+Do not patch source underneath the running original queue. th2 stores a
+reviewable copy under `queued/router_followup_20261022/`; the new CPU waiter
+copies/uses an immutable output-owned `source/` tree. Local DOT source contains
+the new implementation; th2's **top-level training code remains the old version**
+for the original queue. Do not blindly synchronize these two roots while it runs.
+After verified predecessor success and communicating-burn handoff, the existing
+supervisor copies/checks Accelerate, stops only the verified burns, requires
+free GPUs, runs acceptance gates, then six train/eval pairs, then restores burns.
+An explicit hash-checked predecessor burn-script path bridges source snapshots;
+worker PID/start-time verification and all guard/free-GPU logic remain intact.
+New root `6y3o-dot-router-20261022-a01`. CURRENT_TASK holds status/evidence.
+
 ## Fixed-attention partial-MLP study — 22 October 2026
 
 User approved six new 4,768-step seed-0 fits, reusing completed D0: learned and
