@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-mlp-health-20261022-a01
+#th2-6y3o-dot-mlp-health-20261022-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -33,6 +33,8 @@ for p in sorted((root/'prepared/runs').glob('*')):
   if (p/name).is_file():item[name]=read(p/name)
  if (p/'metrics.jsonl').is_file():item['metrics']=[json.loads(l) for l in (p/'metrics.jsonl').read_text().splitlines() if l][-3:]
  item['checkpoints']=[q.name for q in p.glob('checkpoint-*')]
+ if (p/'metrics.jsonl').is_file():
+  item['transition_metrics']=[v for l in (p/'metrics.jsonl').read_text().splitlines() if l for v in [json.loads(l)] if 400<=v.get('step',0)<=600]
  if item['checkpoints']:
   from scripts.bdot_job import latest_complete_checkpoint
   try:
@@ -47,5 +49,5 @@ for p in sorted((root/'prepared/runs').glob('*')):
 for p in (root/'supervised/run').glob('*.attempt*.log'):
  result[p.name]=p.read_text(errors='replace')[-1800:]
 print('MLP_STATUS '+json.dumps(result),flush=True)
-(root/'health-a01.json').write_text(json.dumps(result,indent=2))
+(root/'health-a02.json').write_text(json.dumps(result,indent=2))
 REMOTE
