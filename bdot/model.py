@@ -337,12 +337,22 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         super().__init__(config)
         self.options = options
         original = list(self.model.layers[options.n_stem:options.n_stem+options.S])
+        cores = [None] * options.S
+        if options.route_scope == 'mlp':
+            from .partial_mlp import split_mlp
+            for s, layer in enumerate(original):
+                cores[s], layer.mlp = split_mlp(layer.mlp, config, options.routed_mlp_fraction)
         self.model.bdot_experts = nn.ModuleList([Expert(layer) for layer in original])
         # Initialize the entire native backbone before adding routers. Their
         # parameters follow the model-init RNG; routing draws use a separate seed.
         for s, layer in enumerate(original):
-            self.model.layers[options.n_stem+s] = RoutedStep(
-                layer, self.model.bdot_experts, config, options, s)
+            if options.route_scope == 'mlp':
+                from .partial_mlp import RoutedMLPStep
+                step = RoutedMLPStep(layer, self.model.bdot_experts, config, options, s)
+                step.core_mlp = cores[s]
+            else:
+                step = RoutedStep(layer, self.model.bdot_experts, config, options, s)
+            self.model.layers[options.n_stem+s] = step
         self.register_buffer('balance_bias', torch.zeros(options.S))
         self.register_buffer('routing_counter', torch.zeros((), dtype=torch.long))
         self.register_buffer('completed_steps', torch.zeros((), dtype=torch.long))
@@ -527,5 +537,13 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
                 getattr(target.self_attn, name).load_state_dict(getattr(layer, name).state_dict())
             target.input_layernorm.load_state_dict(layer.input_layernorm.state_dict())
             target.post_attention_layernorm.load_state_dict(expert.mlp_norm.state_dict())
-            target.mlp.load_state_dict(expert.mlp.state_dict())
+            if self.options.route_scope == 'mlp' and layer.core_mlp is not None:
+                for name in ('gate_proj', 'up_proj', 'down_proj'):
+                    axis = 1 if name == 'down_proj' else 0
+                    weight = torch.cat([getattr(layer.core_mlp, name).weight,
+                                        getattr(expert.mlp, name).weight], dim=axis)
+                    with torch.no_grad():
+                        getattr(target.mlp, name).weight.copy_(weight)
+            else:
+                target.mlp.load_state_dict(expert.mlp.state_dict())
         return ref

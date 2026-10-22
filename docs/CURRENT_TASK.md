@@ -1,5 +1,45 @@
 # Current task
 
+## Authorized partial-MLP study — 22 October 2026
+
+User approved all six proposed runs: Partial-25, Partial-25-random,
+Partial-50, Partial-50-random, MLP-only, MLP-only-random, in that order.
+This is a new exploratory study following the failed v3 pilot, not a v3 gate pass.
+The inherited design is `docs/BDOT_v2_spec.md` / `docs/BDOT_v3_pilot_plan.md`;
+the latest user-approved architecture overrides whole-module routing as follows.
+
+All attention Q/K/V/O and both norms remain at their depth. Split the 3,072-wide
+SwiGLU into fixed/routed channel counts 2,304/768, 1,536/1,536, or 0/3,072.
+Use the current depth's normalized, step-FiLM-conditioned MLP input for the
+router and both branches. Select one adjacent/current routed component within
+the eight middle layers (radius 1, reuse allowed); its unit-forward ST gate
+multiplies only the routed output. Fixed core receives ordinary LM gradients.
+Keep cap 2/probability selection, no placement FiLM. Split existing native
+weights without changing backbone RNG initialization or total MLP parameters.
+
+Both learned and random controls use curriculum A: home only for the first
+10% of the complete schedule, then adjacent candidates. Learned exploration
+is inherited; the random control samples uniformly from the identical allowed
+set. Old qo_mlp controls retain their original no-curriculum behavior.
+All six train from scratch, model/routing/data seed 0, 4,768 full-schedule
+updates, 96 warmup, 524,288 tokens/update, sequence 1,024, eight B200s, FA4,
+microbatch 16/accumulation 4. Same data, validation, optimizer and LR as D;
+retain checkpoints 1,000/2,500/4,768 and latest. No extra seeds or fits.
+
+Implementation/testing in progress; no research training launched yet.
+Execution target remains th2/main on `thiennh-p6-6y3o-worker-0` (6Y3O).
+Preflight **2fbf070** passed at 10:39:26 SGT: prior C1 complete, eight verified
+communicating burn workers, 22,938 GiB free. Immutable old bdot code saved
+outside Git sync at `6y3o-dot-mlp-20261022-a01/reference`. Existing work unchanged.
+Fresh output root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01`.
+
+Launch requires numerical/old-code parity, eight-rank exact resume for learned
+partial and random full-MLP cases, all-six throughput checks and D checkpoint
+carry-over. Reuse existing supervisor: copy/verify Accelerate, reverify known
+burn identities, reclaim exact workers, confirm eight free GPUs, acceptance
+checks, six sequential train/eval pairs, final report, automatic verified burns
+on success or failure. Do not infer completion from missing PIDs.
+
 ## C1 complete — verified 22 October 2026, 09:51 SGT
 
 C1 completed its full 4,768-step training, full-validation route study and

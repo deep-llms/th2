@@ -15,6 +15,7 @@ class RoutingConfig:
     window: str = 'absolute'
     kv_mode: str = 'step'
     route_scope: str = 'qo_mlp'
+    routed_mlp_fraction: float = 1.0
     r: int = 1
     reuse: bool = True
     routing: str = 'learned'
@@ -42,9 +43,18 @@ class RoutingConfig:
             x = getattr(self, key)
             if type(x) is not int or x < (1 if key == 'S' else 0):
                 raise ValueError(f'Invalid routing {key}: {x}')
-        if (self.mode, self.window, self.kv_mode, self.route_scope, self.visit_scale) != (
-                'compute_matched', 'absolute', 'step', 'qo_mlp', 'none'):
-            raise ValueError('Phase A supports compute_matched/absolute/step/qo_mlp/visit_scale=none only')
+        if (self.mode, self.window, self.kv_mode, self.visit_scale) != (
+                'compute_matched', 'absolute', 'step', 'none'):
+            raise ValueError('Supports compute_matched/absolute/step/visit_scale=none only')
+        if self.route_scope not in ('qo_mlp', 'mlp'):
+            raise ValueError('route_scope must be qo_mlp or mlp')
+        if self.routed_mlp_fraction not in (.25, .5, 1.):
+            raise ValueError('routed_mlp_fraction must be .25, .5 or 1')
+        if self.route_scope == 'qo_mlp' and self.routed_mlp_fraction != 1.:
+            raise ValueError('Partial channels require route_scope=mlp')
+        if self.route_scope == 'mlp' and (self.placement_film or not self.reuse
+                or self.curriculum == 'B' or self.gate != 'st'):
+            raise ValueError('MLP study requires reuse, ST gates, A/none curriculum and no placement FiLM')
         if self.routing not in ('fixed', 'learned', 'random') or self.gate not in ('st', 'scale'):
             raise ValueError('Unsupported routing/gate')
         if self.curriculum not in ('A', 'B', 'none'):
@@ -60,7 +70,8 @@ class RoutingConfig:
             raise ValueError('Invalid placement FiLM configuration')
         if not self.placement_film and self.placement_film_scope != 'both':
             raise ValueError('placement_film_scope requires placement_film')
-        if self.routing != 'learned' and self.curriculum != 'none':
+        if self.routing != 'learned' and self.curriculum != 'none' and not (
+                self.route_scope == 'mlp' and self.routing == 'random' and self.curriculum == 'A'):
             raise ValueError('Fixed/random controls require curriculum=none')
         if not 0 < self.soft_phase_frac < self.explore_end_frac <= 1:
             raise ValueError('Require 0 < soft_phase_frac < explore_end_frac <= 1')
@@ -76,7 +87,7 @@ class RoutingConfig:
 
     def validate_schedule(self, max_steps, warmup_steps):
         """Keep the existing single horizon; reject overlapping warmup/transition."""
-        if self.routing != 'learned' or self.curriculum == 'none':
+        if self.curriculum == 'none':
             return
         fraction = self.widen_every_frac if self.curriculum == 'A' else self.soft_phase_frac
         boundary = math.ceil(fraction * max_steps)
@@ -91,7 +102,7 @@ class RoutingConfig:
         if not training and evaluation_policy == 'curriculum':
             reach, soft, _ = self.phase(progress, True)
             return reach, soft, 0.  # Never turn exploration on for validation.
-        if not training or self.routing != 'learned' or self.curriculum == 'none':
+        if not training or self.curriculum == 'none':
             return self.r, False, 0.
         if self.curriculum == 'B':
             soft = progress < self.soft_phase_frac
@@ -104,7 +115,7 @@ class RoutingConfig:
         eps = 0.
         if 0 < stage <= self.r:
             eps = self.explore_eps_max * max(0., 1. - (progress - stage * self.widen_every_frac) / self.widen_every_frac)
-        return reach, False, eps
+        return reach, False, eps if self.routing == 'learned' else 0.
 
 
 def quota_table(steps, reach):

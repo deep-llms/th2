@@ -8,6 +8,8 @@ from pathlib import Path
 V3_RUNS = [('P1-A-prime', 0), ('V2', 0), ('C2', 0), ('V1', 0),
            ('V3', 0), ('C3', 0), ('V4', 0), ('D', 1), ('V2', 1), ('C2', 1),
            ('V5', 0), ('V6', 0), ('V7', 0)]
+MLP_RUNS = [(name, 0) for base in ('Partial-25', 'Partial-50', 'MLP-only')
+            for name in (base, base+'-random')]
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -22,11 +24,11 @@ def main():
     p.add_argument('--routing-seed',type=int,default=0)
     p.add_argument('--backend',choices=['sdpa','fa4'],default='fa4')
     p.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
-    p.add_argument('--study',choices=['v2','v3'],default='v2')
+    p.add_argument('--study',choices=['v2','v3','mlp'],default='v2')
     p.add_argument('--arms',nargs='+',choices=['D','P1-A','P1-B','R','N-A','N-B'])
     a=p.parse_args()
-    if a.study=='v3' and (a.arms or a.seed!=0 or a.routing_seed!=0 or a.tokens!=2_500_000_000):
-        p.error('v3 uses its declared arm order, model/routing seeds and 2.5B budget')
+    if a.study in ('v3','mlp') and (a.arms or a.seed!=0 or a.routing_seed!=0 or a.tokens!=2_500_000_000):
+        p.error('v3/mlp use their declared arm order, model/routing seeds and 2.5B budget')
     if (a.world_size < 1 or a.micro_batch < 1 or a.tokens < 524288
             or a.seed < 0 or a.routing_seed < 0 or a.preprocessing_workers < 1):
         p.error('Invalid batch, token budget or seed')
@@ -37,11 +39,12 @@ def main():
     out=Path(a.output).resolve();out.mkdir(parents=True,exist_ok=False)
     manifest=Path(a.manifest).resolve() if a.manifest else out/'validation.json'
     steps=a.tokens//524288; jobs=[]
-    runs=V3_RUNS if a.study=='v3' else [(arm,a.seed) for arm in (a.arms or ['D','P1-A','P1-B'])]
+    runs=(MLP_RUNS if a.study=='mlp' else V3_RUNS if a.study=='v3' else
+          [(arm,a.seed) for arm in (a.arms or ['D','P1-A','P1-B'])])
     for arm,seed in runs:
-        name=f'{arm}-s{seed}' if a.study=='v3' else arm
+        name=f'{arm}-s{seed}' if a.study in ('v3','mlp') else arm
         model=json.loads((project/'configs/bdot'/f'{arm}.json').read_text())
-        model['bdot']['seed']=seed if a.study=='v3' else a.routing_seed
+        model['bdot']['seed']=seed if a.study in ('v3','mlp') else a.routing_seed
         model['bdot']['expert_backend']=a.expert_backend
         config=out/f'{name}.model.json';config.write_text(json.dumps(model,indent=2)+'\n')
         args=dict(config_name=str(config),tokenizer_name=str(Path(a.tokenizer).resolve()),
@@ -62,7 +65,7 @@ def main():
             report_to='none',do_eval=True,disable_tqdm=True,
             dataloader_num_workers=8,dataloader_drop_last=True,train_sampling_strategy='sequential',
             ddp_timeout=21600,ddp_find_unused_parameters=True,ddp_broadcast_buffers=False)
-        if a.study=='v3':args['keep_checkpoint_steps']=[1000,2500,steps]
+        if a.study in ('v3','mlp'):args['keep_checkpoint_steps']=[1000,2500,steps]
         recipe=out/f'{name}.train.json';recipe.write_text(json.dumps(args,indent=2)+'\n')
         # Run directories are isolated by run_experiments. Use generated argument
         # JSON inside the existing native train entry point.
@@ -76,10 +79,10 @@ def main():
     for job in jobs:
         arm=job['name']
         job['argv']=['{python}',str(project/'scripts/bdot_job.py'),
-                     *(['--resume-existing','--attempts','2'] if a.study=='v3' else []),
+                     *(['--resume-existing','--attempts','2'] if a.study in ('v3','mlp') else []),
                      '--receipt','{run_dir}/'+arm+'.verified.json',
                      '--output',str(out/'runs'/arm),'--steps',str(steps),'--',*job['argv']]
-    if a.study=='v3':
+    if a.study in ('v3','mlp'):
         ordered=[]
         for job,(arm,seed) in zip(jobs,runs):
             job['timeout_seconds']=10800
