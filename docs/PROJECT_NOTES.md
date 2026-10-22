@@ -3,6 +3,20 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+
+## C1 conditional v3 control — 22 October 2026
+
+The user approved C1 seed 0, the v3 section 6.1 control triggered by V1 beating V2.
+C1 copies C2 with only placement FiLM disabled: random/no-reuse/radius1,
+curriculum none; unchanged 4,768-step FA4/grouped recipe, seeds and data order.
+This comparison retains the plan's learned-versus-random curriculum difference;
+it is not an isolated intervention on learned router weights.
+Launch **98c430e**, fresh root `6y3o-dot-C1-20261022-a01`; first health **9bf815d**
+confirms actual training and correct free-GPU/Accelerate/data handoffs.
+No MLP-only variant, second seed or longer run is authorized by this follow-up.
+Final comparison and burn verification remain pending; see CURRENT_TASK and
+[launch evidence](results/bdot_C1_launch_20261022.json).
+
 ## Research scope
 
 [BDOT_v2_spec.md](BDOT_v2_spec.md) v1.4 defines the research. Implement Phase A

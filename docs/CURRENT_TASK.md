@@ -1,6 +1,6 @@
 # Current task
 
-## C1 conditional control authorized — 22 October 2026
+## C1 running — verified 22 October 2026, 08:07:44 SGT
 
 User approved the recommended C1 follow-up from `BDOT_v3_pilot_plan.md`
 section 6.1. Scope: C1 seed 0 only, then full-validation route study and comparison
@@ -17,7 +17,23 @@ Fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-C1-20261022-a01`.
 Launch will use the existing Accelerate-copy/verification and independent
 train/evaluate/burn supervisor; no environment, training source or old outputs
 are changed. Preparation and launch evidence: `temp/c1_20261022/`.
-Training has not yet been verified started; next action is launch and health check.
+Launch **98c430e** started the queue at **08:06:44 SGT**. Health **9bf815d** at
+**08:07:44 SGT** confirms eight training workers at 93–98% GPU utilization,
+step 10 with finite LM loss/gradients, unchanged source hashes and identical
+training data recipe to C2. This is initial training health, not a quality result.
+Accelerate was copied to `/mnt/local/.cache/huggingface/accelerate/default_config.yaml`
+and verified using `accelerate env` (MULTI_GPU/eight processes/BF16). Reclaim
+receipt identifies only prior burn workers 288996–289003; all GPUs were verified
+free at 08:06:44 before the training command. The independent supervisor owns
+automatic burn restoration after success or failure. Checkpoint save and final
+completion are still pending. Approximate finish **09:10–09:20 SGT**.
+
+Queue: `C1-s0` → `C1-s0-eval` (full frozen validation + route study) →
+`C1-report` (step/count/data-identity checks and V1/D comparison) → burns.
+Next check should retrieve `supervised/run/C1-summary.json`, training/evaluation
+receipts, retained checkpoints and verified final burn handoff from the fresh
+root. Do not infer completion from vanished PIDs or relaunch this experiment.
+[Launch evidence](results/bdot_C1_launch_20261022.json). Commands return to #0.
 
 
 ## V3 batch complete — verified 22 October 2026, 05:50 SGT
