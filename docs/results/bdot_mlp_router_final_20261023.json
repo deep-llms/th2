@@ -1,0 +1,3576 @@
+{
+  "status": "completed",
+  "inspection_commit": "8ee05161865e12780e2481a745a37f85d4f8c658",
+  "observed_at": "2026-10-22T16:16:51.779431+00:00",
+  "host": "thiennh-p6-6y3o-worker-0",
+  "baseline": {
+    "eval_loss": 3.4944635246202758,
+    "eval_perplexity": 32.93261567555772,
+    "eval_nll_sum": 34650044.98215022,
+    "eval_num_tokens": 9915698,
+    "eval_num_sequences": 9704,
+    "eval_off_default_share": 0.0,
+    "eval_reuse_rate": 0.0,
+    "eval_routing_decisions": 79495168,
+    "eval_routing_input_tokens": 9936896,
+    "eval_runtime": 4.4768,
+    "eval_samples_per_second": 2167.605,
+    "eval_steps_per_second": 16.976,
+    "epoch": 0.08337887286383171
+  },
+  "studies": {
+    "6y3o-dot-mlp-20261022-a01": {
+      "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01",
+      "supervisor": {
+        "started_at": "2026-10-22T02:49:54.387489+00:00",
+        "training_status": "ok",
+        "training_returncode": 0,
+        "free_after_training": [
+          {
+            "index": 0,
+            "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          }
+        ],
+        "burn": {
+          "at": "2026-10-22T08:40:06.600486+00:00",
+          "session": "dot_mlp_20261022_a01_burn",
+          "gpus": [
+            {
+              "index": 0,
+              "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346105
+              ]
+            },
+            {
+              "index": 1,
+              "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346106
+              ]
+            },
+            {
+              "index": 2,
+              "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346107
+              ]
+            },
+            {
+              "index": 3,
+              "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346108
+              ]
+            },
+            {
+              "index": 4,
+              "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346109
+              ]
+            },
+            {
+              "index": 5,
+              "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346110
+              ]
+            },
+            {
+              "index": 6,
+              "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346111
+              ]
+            },
+            {
+              "index": 7,
+              "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                346112
+              ]
+            }
+          ],
+          "collective_progress_verified": true
+        },
+        "finished_at": "2026-10-22T08:40:06.600759+00:00"
+      },
+      "queue": {
+        "status": "ok",
+        "started_at": "2026-10-22T02:49:54.387750+00:00",
+        "jobs": [
+          {
+            "name": "mlp_acceptance",
+            "started_at": "2026-10-22T02:49:54.388230+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 850.6471434910782,
+            "artifacts": [
+              {
+                "path": "checks/summary.json",
+                "sha256": "b23a13395d04b5becef0105ee9855aff1d6f8d12611fccae06c40b5dbe8ea3cb",
+                "bytes": 1340
+              }
+            ],
+            "finished_at": "2026-10-22T03:04:05.570286+00:00"
+          },
+          {
+            "name": "Partial-25-s0",
+            "started_at": "2026-10-22T03:04:05.570322+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3388.8433239287697,
+            "artifacts": [
+              {
+                "path": "Partial-25-s0.verified.json",
+                "sha256": "7aa6f0de1aa3731fed3607ae62af7b86a6fa47d957cd48332e7e2bebbbf0c6dd",
+                "bytes": 2129
+              }
+            ],
+            "finished_at": "2026-10-22T04:00:34.948629+00:00"
+          },
+          {
+            "name": "Partial-25-s0-eval",
+            "started_at": "2026-10-22T04:00:34.948691+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 52.080785472877324,
+            "artifacts": [
+              {
+                "path": "Partial-25-s0/result.json",
+                "sha256": "a159b227e8ab9715a1d2659f22a37653620540eef1d0b4bc1f2c937a91729df4",
+                "bytes": 18397
+              }
+            ],
+            "finished_at": "2026-10-22T04:01:27.520609+00:00"
+          },
+          {
+            "name": "Partial-25-random-s0",
+            "started_at": "2026-10-22T04:01:27.520663+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3221.68855088111,
+            "artifacts": [
+              {
+                "path": "Partial-25-random-s0.verified.json",
+                "sha256": "34cd80b87d6d7314d7276e7b88899984cec7281ab641b7df7db1afde50d7267b",
+                "bytes": 2143
+              }
+            ],
+            "finished_at": "2026-10-22T04:55:09.709446+00:00"
+          },
+          {
+            "name": "Partial-25-random-s0-eval",
+            "started_at": "2026-10-22T04:55:09.709481+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 44.21831870498136,
+            "artifacts": [
+              {
+                "path": "Partial-25-random-s0/result.json",
+                "sha256": "1fe8ecc0f534155f472a55d15058c9b0663b5a9fa5731471e8cb9f21d0cde866",
+                "bytes": 17257
+              }
+            ],
+            "finished_at": "2026-10-22T04:55:54.435463+00:00"
+          },
+          {
+            "name": "Partial-50-s0",
+            "started_at": "2026-10-22T04:55:54.435501+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3395.9441071730107,
+            "artifacts": [
+              {
+                "path": "Partial-50-s0.verified.json",
+                "sha256": "7c11a4c8bece897f92ede6d78b989ea49dc37f0caece0fd412230cacbcb28a49",
+                "bytes": 2128
+              }
+            ],
+            "finished_at": "2026-10-22T05:52:30.843135+00:00"
+          },
+          {
+            "name": "Partial-50-s0-eval",
+            "started_at": "2026-10-22T05:52:30.843173+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 51.98173284996301,
+            "artifacts": [
+              {
+                "path": "Partial-50-s0/result.json",
+                "sha256": "27f6322d70f8fc06346ef4ddc83559f6635dc84e00dda7e30fad7da814074f8e",
+                "bytes": 18149
+              }
+            ],
+            "finished_at": "2026-10-22T05:53:23.349750+00:00"
+          },
+          {
+            "name": "Partial-50-random-s0",
+            "started_at": "2026-10-22T05:53:23.349795+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3249.7954165129922,
+            "artifacts": [
+              {
+                "path": "Partial-50-random-s0.verified.json",
+                "sha256": "24365e94a4f5131540057e1805155da8bd356414afceb02c6ecee9aaaf7de037",
+                "bytes": 2141
+              }
+            ],
+            "finished_at": "2026-10-22T06:47:33.694725+00:00"
+          },
+          {
+            "name": "Partial-50-random-s0-eval",
+            "started_at": "2026-10-22T06:47:33.694763+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 46.973989081103355,
+            "artifacts": [
+              {
+                "path": "Partial-50-random-s0/result.json",
+                "sha256": "f003a676aed771e4e534d2c149145d9768ca59350dff992c8d09935a215454dd",
+                "bytes": 17250
+              }
+            ],
+            "finished_at": "2026-10-22T06:48:21.211928+00:00"
+          },
+          {
+            "name": "MLP-only-s0",
+            "started_at": "2026-10-22T06:48:21.211965+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3338.164055497851,
+            "artifacts": [
+              {
+                "path": "MLP-only-s0.verified.json",
+                "sha256": "409eee640134d6d24d40f03ddbaaa23240842c0d3de305e92a9eb8675741e8c3",
+                "bytes": 2124
+              }
+            ],
+            "finished_at": "2026-10-22T07:43:59.903374+00:00"
+          },
+          {
+            "name": "MLP-only-s0-eval",
+            "started_at": "2026-10-22T07:43:59.903410+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 52.63720738980919,
+            "artifacts": [
+              {
+                "path": "MLP-only-s0/result.json",
+                "sha256": "e33d7c77a15e0b8037dd74f5f82714504abd58059839228005d0984cd86121e5",
+                "bytes": 18393
+              }
+            ],
+            "finished_at": "2026-10-22T07:44:53.051986+00:00"
+          },
+          {
+            "name": "MLP-only-random-s0",
+            "started_at": "2026-10-22T07:44:53.052026+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3195.91004005773,
+            "artifacts": [
+              {
+                "path": "MLP-only-random-s0.verified.json",
+                "sha256": "2025d59cfe45012ed435f1896898278329706ac2f5ceb18f648b9368f461011e",
+                "bytes": 2140
+              }
+            ],
+            "finished_at": "2026-10-22T08:38:09.489170+00:00"
+          },
+          {
+            "name": "MLP-only-random-s0-eval",
+            "started_at": "2026-10-22T08:38:09.489207+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 45.67174343392253,
+            "artifacts": [
+              {
+                "path": "MLP-only-random-s0/result.json",
+                "sha256": "43b6a4a35f4cce6d061799576a1c1ee428524f11ce4ceddaca602e58f69ad70a",
+                "bytes": 17255
+              }
+            ],
+            "finished_at": "2026-10-22T08:38:55.675026+00:00"
+          },
+          {
+            "name": "mlp_report",
+            "started_at": "2026-10-22T08:38:55.675068+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 0.06397164892405272,
+            "artifacts": [
+              {
+                "path": "mlp-results.json",
+                "sha256": "b79a89be73964d050eb40a066eaaa50287c2befabd2daf53da335c32d0f9e7f0",
+                "bytes": 1450
+              }
+            ],
+            "finished_at": "2026-10-22T08:38:55.739922+00:00"
+          }
+        ],
+        "finished_at": "2026-10-22T08:38:55.739948+00:00"
+      },
+      "acceptance": {
+        "status": "passed",
+        "checks": {
+          "old_parity": "passed",
+          "mlp_numerics": "passed",
+          "resume_Partial-25": "passed",
+          "resume_MLP-only-random": "passed",
+          "T8_D": "passed",
+          "T8_Partial-25": "passed",
+          "T8_Partial-25-random": "passed",
+          "T8_Partial-50": "passed",
+          "T8_Partial-50-random": "passed",
+          "T8_MLP-only": "passed",
+          "T8_MLP-only-random": "passed",
+          "carry_D": "passed"
+        },
+        "throughput": {
+          "D": {
+            "seconds_per_update": 0.6778132680105046,
+            "ratio_to_D": 1.0
+          },
+          "Partial-25": {
+            "seconds_per_update": 0.7173419993370771,
+            "ratio_to_D": 0.94489555698244
+          },
+          "Partial-25-random": {
+            "seconds_per_update": 0.6802451171446592,
+            "ratio_to_D": 0.9964250399262514
+          },
+          "Partial-50": {
+            "seconds_per_update": 0.7116880973335356,
+            "ratio_to_D": 0.952402141542132
+          },
+          "Partial-50-random": {
+            "seconds_per_update": 0.6768786223139613,
+            "ratio_to_D": 1.0013808172776206
+          },
+          "MLP-only": {
+            "seconds_per_update": 0.6898359164595604,
+            "ratio_to_D": 0.9825717273308128
+          },
+          "MLP-only-random": {
+            "seconds_per_update": 0.6615787140326574,
+            "ratio_to_D": 1.024539111723969
+          }
+        },
+        "baseline": {
+          "loss": 3.4944635246202758,
+          "num_tokens": 9915698,
+          "num_sequences": 9704
+        }
+      },
+      "report": {
+        "status": "ok",
+        "steps": 4768,
+        "baseline_loss": 3.4944635246202758,
+        "runs": [
+          {
+            "arm": "Partial-25",
+            "seed": 0,
+            "loss": 3.5028789800018627,
+            "ppl": 33.21092805357161,
+            "gap_to_D": 0.008415455381586945
+          },
+          {
+            "arm": "Partial-25-random",
+            "seed": 0,
+            "loss": 3.5101494758788694,
+            "ppl": 33.45326786685516,
+            "gap_to_D": 0.015685951258593622
+          },
+          {
+            "arm": "Partial-50",
+            "seed": 0,
+            "loss": 3.530075891696864,
+            "ppl": 34.12655743883221,
+            "gap_to_D": 0.035612367076588214
+          },
+          {
+            "arm": "Partial-50-random",
+            "seed": 0,
+            "loss": 3.52573749655555,
+            "ppl": 33.97882364335641,
+            "gap_to_D": 0.03127397193527415
+          },
+          {
+            "arm": "MLP-only",
+            "seed": 0,
+            "loss": 3.556061873192999,
+            "ppl": 35.02499232847258,
+            "gap_to_D": 0.06159834857272317
+          },
+          {
+            "arm": "MLP-only-random",
+            "seed": 0,
+            "loss": 3.5620834673561554,
+            "ppl": 35.236534890366684,
+            "gap_to_D": 0.06761994273587968
+          }
+        ],
+        "pairs": [
+          {
+            "fraction": 0.25,
+            "learned_gain": 0.007270495877006677
+          },
+          {
+            "fraction": 0.5,
+            "learned_gain": -0.0043383951413140664
+          },
+          {
+            "fraction": 1.0,
+            "learned_gain": 0.006021594163156507
+          }
+        ],
+        "scope": "Exploratory single-seed screen; matching routing curricula, data, active width and backbone parameters."
+      },
+      "runs": {
+        "MLP-only-random-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.5620834673561554,
+            "eval_perplexity": 35.236534890366684,
+            "eval_nll_sum": 35320543.913096495,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.6250103025129778,
+            "eval_reuse_rate": 0.9883028865351917,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.3451,
+            "eval_samples_per_second": 2233.315,
+            "eval_steps_per_second": 17.491,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 4.005964092892707,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 4.005998622251037,
+            "train_router_z_loss": 0.0,
+            "train_runtime": 3143.3237,
+            "train_samples": 29278633,
+            "train_samples_per_second": 776.635,
+            "train_steps_per_second": 1.517
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.5620834673561554,
+              "eval_perplexity": 35.236534890366684,
+              "eval_nll_sum": 35320543.913096495,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.6250103025129778,
+              "eval_reuse_rate": 0.9883028865351917,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.3451,
+              "eval_samples_per_second": 2233.315,
+              "eval_steps_per_second": 17.491
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/prepared/runs/MLP-only-random-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/supervised/run/MLP-only-random-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1794,
+                "mtime_ns": 1792658271609803281,
+                "sha256": "d9b3ce6f0bd03d14e6152c0458c540b367d9316aa3d7eaed555a0e5d33b4104c"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792658275459778410,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377501672,
+                "mtime_ns": 1792658272869795143
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755096011,
+                "mtime_ns": 1792658275399778797
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658275399778797
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792658271609803281
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792658275399778797
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4140,
+                "mtime_ns": 1792658275449778474,
+                "sha256": "de1fde28e012bd660fa5c5882c462b4e59b810f40fa45072f8b74bbdc08ec958"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1050324,
+                "mtime_ns": 1792658275449778474,
+                "sha256": "e1044f7c63da49ce8c08f5a41006ea358aa62a94d0af71a2a734fabe189ccbe7"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159608,
+                "mtime_ns": 1792658275469778347,
+                "sha256": "0423fb541465f9cb77f75e2b0d16bc6152b205aea6f85fba89e1c23dc0e9ffcf"
+              }
+            ],
+            "validation": {
+              "loss": 3.5620834673561554,
+              "perplexity": 35.236534890366684,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.5620834673561554,
+            "perplexity": 35.236534890366684,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4140,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1050324,
+            "model.safetensors": 1377501672,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755096011,
+            "config.json": 1794,
+            "training_recipe.json": 159608,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "MLP-only-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.556061873192999,
+            "eval_perplexity": 35.02499232847258,
+            "eval_nll_sum": 35260835.603896074,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.6678732347606335,
+            "eval_reuse_rate": 0.4759255807849856,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.4852,
+            "eval_samples_per_second": 2163.542,
+            "eval_steps_per_second": 16.944,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.9867210915141387,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.989526171012213,
+            "train_router_z_loss": 2.771580823516667,
+            "train_runtime": 3286.5871,
+            "train_samples": 29278633,
+            "train_samples_per_second": 742.781,
+            "train_steps_per_second": 1.451
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.556061873192999,
+              "eval_perplexity": 35.02499232847258,
+              "eval_nll_sum": 35260835.603896074,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.6678732347606335,
+              "eval_reuse_rate": 0.4759255807849856,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.4852,
+              "eval_samples_per_second": 2163.542,
+              "eval_steps_per_second": 16.944
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/prepared/runs/MLP-only-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/supervised/run/MLP-only-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1795,
+                "mtime_ns": 1792655020960893185,
+                "sha256": "fb4549e68f8579edbaaf9869f438d0878e2a09939c66cbface95af016ae1d0d7"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792655025230865399,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377802128,
+                "mtime_ns": 1792655022330884269
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755716491,
+                "mtime_ns": 1792655025160865856
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655025160865856
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792655020960893185
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792655025160865856
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4126,
+                "mtime_ns": 1792655025210865529,
+                "sha256": "dba9ef91124087ee8e3fb90974188452af0d6b4f1c5f272a07d1cd8433a34bcd"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1071444,
+                "mtime_ns": 1792655025210865529,
+                "sha256": "577b1b1922efb5b1b8e877754cc1fcd40175114a2c070245285ec930f0641634"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159609,
+                "mtime_ns": 1792655025230865399,
+                "sha256": "ad8841280bbd7107f7f797ef3e7bf5507db5d3d1c8e2b25c508ca03ade134fab"
+              }
+            ],
+            "validation": {
+              "loss": 3.556061873192999,
+              "perplexity": 35.02499232847258,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.556061873192999,
+            "perplexity": 35.02499232847258,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4126,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1071444,
+            "model.safetensors": 1377802128,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755716491,
+            "config.json": 1795,
+            "training_recipe.json": 159609,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-25-random-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.5101494758788694,
+            "eval_perplexity": 33.45326786685516,
+            "eval_nll_sum": 34805582.137673154,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.6250103025129778,
+            "eval_reuse_rate": 0.9883028865351917,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.3646,
+            "eval_samples_per_second": 2223.345,
+            "eval_steps_per_second": 17.413,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.961340706368176,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.961371410613092,
+            "train_router_z_loss": 0.0,
+            "train_runtime": 3170.1816,
+            "train_samples": 29278633,
+            "train_samples_per_second": 770.056,
+            "train_steps_per_second": 1.504
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.5101494758788694,
+              "eval_perplexity": 33.45326786685516,
+              "eval_nll_sum": 34805582.137673154,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.6250103025129778,
+              "eval_reuse_rate": 0.9883028865351917,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.3646,
+              "eval_samples_per_second": 2223.345,
+              "eval_steps_per_second": 17.413
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/prepared/runs/Partial-25-random-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/supervised/run/Partial-25-random-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1795,
+                "mtime_ns": 1792644892516807250,
+                "sha256": "5b93fbd56d629a97049d240502060540267c91daaa3e6228090f71b1a90e063d"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792644895456788073,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377504368,
+                "mtime_ns": 1792644893456801119
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755116299,
+                "mtime_ns": 1792644895386788530
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644895386788530
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792644892516807250
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792644895386788530
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4144,
+                "mtime_ns": 1792644895436788205,
+                "sha256": "80bacaceba443875c0528be425c40ba550328a088becb78ea89476184971e18b"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1050177,
+                "mtime_ns": 1792644895436788205,
+                "sha256": "6fb59798ed8cefaf5d2b7c53c1e41188025d23ab714dc7eb373e548ab1e29323"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159609,
+                "mtime_ns": 1792644895456788073,
+                "sha256": "244cbaa42b477f7435fb8b8caefa7aecc4d4425468b6291eb2602a1c22d72494"
+              }
+            ],
+            "validation": {
+              "loss": 3.5101494758788694,
+              "perplexity": 33.45326786685516,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.5101494758788694,
+            "perplexity": 33.45326786685516,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4144,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1050177,
+            "model.safetensors": 1377504368,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755116299,
+            "config.json": 1795,
+            "training_recipe.json": 159609,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-25-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.5028789800018627,
+            "eval_perplexity": 33.21092805357161,
+            "eval_nll_sum": 34733490.09624651,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.587591009305119,
+            "eval_reuse_rate": 0.2384868474018446,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.4969,
+            "eval_samples_per_second": 2157.923,
+            "eval_steps_per_second": 16.9,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.954003649415249,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.955409365212357,
+            "train_router_z_loss": 1.374499917787034,
+            "train_runtime": 3336.0619,
+            "train_samples": 29278633,
+            "train_samples_per_second": 731.766,
+            "train_steps_per_second": 1.429
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.5028789800018627,
+              "eval_perplexity": 33.21092805357161,
+              "eval_nll_sum": 34733490.09624651,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.587591009305119,
+              "eval_reuse_rate": 0.2384868474018446,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.4969,
+              "eval_samples_per_second": 2157.923,
+              "eval_steps_per_second": 16.9
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/prepared/runs/Partial-25-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/supervised/run/Partial-25-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1796,
+                "mtime_ns": 1792641616778198733,
+                "sha256": "0a70bd0b6407b93d86ae3ce1a2ee3b9e3fb1140d148a73610cc8cee3b1c041ea"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792641620678173055,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804824,
+                "mtime_ns": 1792641618048190372
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792641620608173517
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641620608173517
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792641616768198798
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792641620608173517
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4130,
+                "mtime_ns": 1792641620658173187,
+                "sha256": "c7f5f2903301492c003884b559cef70a7f282e9d44ed14b8275b8e3091330ac5"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1072555,
+                "mtime_ns": 1792641620658173187,
+                "sha256": "1cdc1451b1a5ffb3826357347243665d852bee13c43b5759c681a3dc25af9c95"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159610,
+                "mtime_ns": 1792641620678173055,
+                "sha256": "8d8f6c392c16f71148f99e46d94c71c2c97a8fdcce6a79470bdf5c50fe6f5821"
+              }
+            ],
+            "validation": {
+              "loss": 3.5028789800018627,
+              "perplexity": 33.21092805357161,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.5028789800018627,
+            "perplexity": 33.21092805357161,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4130,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1072555,
+            "model.safetensors": 1377804824,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1796,
+            "training_recipe.json": 159610,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-50-random-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.52573749655555,
+            "eval_perplexity": 33.97882364335641,
+            "eval_nll_sum": 34960148.24312087,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.6250103025129778,
+            "eval_reuse_rate": 0.9883028865351917,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.4042,
+            "eval_samples_per_second": 2203.336,
+            "eval_steps_per_second": 17.256,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.9746733496634343,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.974704697228118,
+            "train_router_z_loss": 0.0,
+            "train_runtime": 3197.7669,
+            "train_samples": 29278633,
+            "train_samples_per_second": 763.413,
+            "train_steps_per_second": 1.491
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.52573749655555,
+              "eval_perplexity": 33.97882364335641,
+              "eval_nll_sum": 34960148.24312087,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.6250103025129778,
+              "eval_reuse_rate": 0.9883028865351917,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.4042,
+              "eval_samples_per_second": 2203.336,
+              "eval_steps_per_second": 17.256
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/prepared/runs/Partial-50-random-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/supervised/run/Partial-50-random-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1794,
+                "mtime_ns": 1792651635542942329,
+                "sha256": "bf66006e0e1c5eabce60f58269c6563d88eab8b2f43d5fadfdbe9259fbf8b3ee"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792651639422917617,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377504440,
+                "mtime_ns": 1792651636792934483
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755116299,
+                "mtime_ns": 1792651639352918070
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651639352918070
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635542942329
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635542942329
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635542942329
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635542942329
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635532942392
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635532942392
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792651635532942392
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792651639352918070
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4144,
+                "mtime_ns": 1792651639402917748,
+                "sha256": "b04df46048356bc4643874932a698b4a08365bb84677d865d4823569a4ce9a26"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1050209,
+                "mtime_ns": 1792651639402917748,
+                "sha256": "ecb98cc397f72eec8bb61714f8f51a1eb0463bd2104dda300bcbea73001499a0"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159608,
+                "mtime_ns": 1792651639422917617,
+                "sha256": "cadadb08eed3199f001aa2e52b8b58c3288bbc1ec33695ae3a503ec4f773e6ab"
+              }
+            ],
+            "validation": {
+              "loss": 3.52573749655555,
+              "perplexity": 33.97882364335641,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.52573749655555,
+            "perplexity": 33.97882364335641,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4144,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1050209,
+            "model.safetensors": 1377504440,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755116299,
+            "config.json": 1794,
+            "training_recipe.json": 159608,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-50-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.530075891696864,
+            "eval_perplexity": 34.12655743883221,
+            "eval_nll_sum": 35003166.45914681,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.6740080730441377,
+            "eval_reuse_rate": 1.0,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.4848,
+            "eval_samples_per_second": 2163.74,
+            "eval_steps_per_second": 16.946,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.9668563189483756,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.9695425157579,
+            "train_router_z_loss": 2.6568236608029308,
+            "train_runtime": 3344.7388,
+            "train_samples": 29278633,
+            "train_samples_per_second": 729.867,
+            "train_steps_per_second": 1.426
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.530075891696864,
+              "eval_perplexity": 34.12655743883221,
+              "eval_nll_sum": 35003166.45914681,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.6740080730441377,
+              "eval_reuse_rate": 1.0,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.4848,
+              "eval_samples_per_second": 2163.74,
+              "eval_steps_per_second": 16.946
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/prepared/runs/Partial-50-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01/supervised/run/Partial-50-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1795,
+                "mtime_ns": 1792648332284405112,
+                "sha256": "851e9ecf697ae1eba15b03f3a88379dc20284cf3ae8c988a2d47ad535d141199"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792648336514377629,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804896,
+                "mtime_ns": 1792648333724395759
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792648336444378085
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648336444378085
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792648332284405112
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792648336444378085
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4130,
+                "mtime_ns": 1792648336494377759,
+                "sha256": "11d7bb4471302e9662a6b4a62238f8c423afdf64b11b0d0e36c172d9d2f9590d"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1061799,
+                "mtime_ns": 1792648336494377759,
+                "sha256": "7737befb328035b83357cd06ba0337eef7f2768c0d256b10e98bbde8df5b3fd8"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159609,
+                "mtime_ns": 1792648336514377629,
+                "sha256": "a452d3ba56b4dc20a54b37d0dc6ab2bada51626d2e3b5606e7151f939e5a7196"
+              }
+            ],
+            "validation": {
+              "loss": 3.530075891696864,
+              "perplexity": 34.12655743883221,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.530075891696864,
+            "perplexity": 34.12655743883221,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4130,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1061799,
+            "model.safetensors": 1377804896,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1795,
+            "training_recipe.json": 159609,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        }
+      },
+      "source_matches": null,
+      "source_manifest_sha256": null,
+      "burn_live_matches": false,
+      "burn_collective_progress": true,
+      "burn_log_tail": "mmunication_pattern=interleaved_with_compute ring_equivalent_send_mib_per_rank=1989.75 approx_step_seconds=0.750 calibration_gemms=64 seconds_per_gemm=0.000696 measured_comm_seconds=0.010658 gemms_per_sync=1030\ngpu_burn_progress rank=0 completed_cycles=10 completed_gemms=10300 completed_collective_payload_gib=11.10 average_cycle_seconds=0.887 cycles_per_second=1.128\ngpu_burn_progress rank=0 completed_cycles=20 completed_gemms=20600 completed_collective_payload_gib=22.21 average_cycle_seconds=0.877 cycles_per_second=1.140\ngpu_burn_progress rank=0 completed_cycles=30 completed_gemms=30900 completed_collective_payload_gib=33.31 average_cycle_seconds=0.874 cycles_per_second=1.144\ngpu_burn_progress rank=0 completed_cycles=40 completed_gemms=41200 completed_collective_payload_gib=44.41 average_cycle_seconds=0.873 cycles_per_second=1.146\ngpu_burn_progress rank=0 completed_cycles=50 completed_gemms=51500 completed_collective_payload_gib=55.52 average_cycle_seconds=0.872 cycles_per_second=1.146\ngpu_burn_progress rank=0 completed_cycles=60 completed_gemms=61800 completed_collective_payload_gib=66.62 average_cycle_seconds=0.872 cycles_per_second=1.146\ngpu_burn_progress rank=0 completed_cycles=70 completed_gemms=72100 completed_collective_payload_gib=77.72 average_cycle_seconds=0.873 cycles_per_second=1.146\ngpu_burn_progress rank=0 completed_cycles=80 completed_gemms=82400 completed_collective_payload_gib=88.83 average_cycle_seconds=0.873 cycles_per_second=1.146\ngpu_burn_progress rank=0 completed_cycles=90 completed_gemms=92700 completed_collective_payload_gib=99.93 average_cycle_seconds=0.873 cycles_per_second=1.145\nW1022 08:41:10.314000 346036 site-packages/torch/multiprocessing/spawn.py:165] Terminating process 346106 via signal SIGTERM\nW1022 08:41:10.315000 346036 site-packages/torch/multiprocessing/spawn.py:165] Terminating process 346107 via signal SIGTERM\nW1022 08:41:10.315000 346036 site-packages/torch/multiprocessing/spawn.py:165] Terminating process 346112 via signal SIGTERM\nTraceback (most recent call last):\n  File \"/mnt/local/deep-llms_th2/resources/llm_pretrain_burn.py\", line 272, in <module>\n    main()\n  File \"/mnt/local/deep-llms_th2/resources/llm_pretrain_burn.py\", line 268, in main\n    mp.spawn(burn, args=(world,), nprocs=world)\n  File \"/mnt/local/conda-py311/envs/train/lib/python3.11/site-packages/torch/multiprocessing/spawn.py\", line 340, in spawn\n    return start_processes(fn, args, nprocs, join, daemon, start_method=\"spawn\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/mnt/local/conda-py311/envs/train/lib/python3.11/site-packages/torch/multiprocessing/spawn.py\", line 296, in start_processes\n    while not context.join():\n              ^^^^^^^^^^^^^^\n  File \"/mnt/local/conda-py311/envs/train/lib/python3.11/site-packages/torch/multiprocessing/spawn.py\", line 192, in join\n    raise ProcessExitedException(\ntorch.multiprocessing.spawn.ProcessExitedException: process 3 terminated with signal SIGKILL\n"
+    },
+    "6y3o-dot-router-20261022-a01": {
+      "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01",
+      "supervisor": {
+        "started_at": "2026-10-22T08:41:38.379335+00:00",
+        "training_status": "ok",
+        "training_returncode": 0,
+        "free_after_training": [
+          {
+            "index": 0,
+            "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 0.0,
+            "utilization_percent": 0.0,
+            "pids": []
+          }
+        ],
+        "burn": {
+          "at": "2026-10-22T14:44:13.278872+00:00",
+          "session": "dot_router_20261022_a01_burn",
+          "gpus": [
+            {
+              "index": 0,
+              "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392414
+              ]
+            },
+            {
+              "index": 1,
+              "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392415
+              ]
+            },
+            {
+              "index": 2,
+              "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392416
+              ]
+            },
+            {
+              "index": 3,
+              "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392417
+              ]
+            },
+            {
+              "index": 4,
+              "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392418
+              ]
+            },
+            {
+              "index": 5,
+              "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392419
+              ]
+            },
+            {
+              "index": 6,
+              "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392420
+              ]
+            },
+            {
+              "index": 7,
+              "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+              "name": "NVIDIA B200",
+              "memory_total_mib": 183359.0,
+              "memory_used_mib": 155212.0,
+              "utilization_percent": 100.0,
+              "pids": [
+                392421
+              ]
+            }
+          ],
+          "collective_progress_verified": true
+        },
+        "finished_at": "2026-10-22T14:44:13.279161+00:00"
+      },
+      "queue": {
+        "status": "ok",
+        "started_at": "2026-10-22T08:41:38.379598+00:00",
+        "jobs": [
+          {
+            "name": "router_acceptance",
+            "started_at": "2026-10-22T08:41:38.380102+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 870.3757699811831,
+            "artifacts": [
+              {
+                "path": "checks/summary.json",
+                "sha256": "b04aeacbe26a015c84f905a5094d5b320159117f06399536e2a4542739d191f7",
+                "bytes": 1436
+              }
+            ],
+            "finished_at": "2026-10-22T08:56:09.316870+00:00"
+          },
+          {
+            "name": "Partial-25-detach-s0",
+            "started_at": "2026-10-22T08:56:09.316917+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3336.1715008770116,
+            "artifacts": [
+              {
+                "path": "Partial-25-detach-s0.verified.json",
+                "sha256": "7a65af947569d966d00c99690ac010eebbb2f25ef00b5605ec6b39ad9f7eb94e",
+                "bytes": 2147
+              }
+            ],
+            "finished_at": "2026-10-22T09:51:46.026352+00:00"
+          },
+          {
+            "name": "Partial-25-detach-s0-eval",
+            "started_at": "2026-10-22T09:51:46.026400+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 51.68460712116212,
+            "artifacts": [
+              {
+                "path": "Partial-25-detach-s0/result.json",
+                "sha256": "844aac9dd8308fcc106aa37166e05d63bcf9133a7c4a4ddf268570df98c45dfd",
+                "bytes": 18433
+              }
+            ],
+            "finished_at": "2026-10-22T09:52:38.186950+00:00"
+          },
+          {
+            "name": "Partial-50-detach-s0",
+            "started_at": "2026-10-22T09:52:38.186992+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3344.4204654111527,
+            "artifacts": [
+              {
+                "path": "Partial-50-detach-s0.verified.json",
+                "sha256": "114a555cae34cb10c9f19392dce22e7fdbe2efb56b1165bff38943697741fdb3",
+                "bytes": 2149
+              }
+            ],
+            "finished_at": "2026-10-22T10:48:23.113110+00:00"
+          },
+          {
+            "name": "Partial-50-detach-s0-eval",
+            "started_at": "2026-10-22T10:48:23.113144+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 51.88727173116058,
+            "artifacts": [
+              {
+                "path": "Partial-50-detach-s0/result.json",
+                "sha256": "cd49d340da6ce5c9b2476a60b2ce178b0ffa671a4cc5416a387f3d803c6192dd",
+                "bytes": 18381
+              }
+            ],
+            "finished_at": "2026-10-22T10:49:15.485842+00:00"
+          },
+          {
+            "name": "Partial-25-cosine-s0",
+            "started_at": "2026-10-22T10:49:15.485883+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3474.2956157163717,
+            "artifacts": [
+              {
+                "path": "Partial-25-cosine-s0.verified.json",
+                "sha256": "9eb4e1e5bf2e8bae1574ca107a616fad7dfb0560e1471da3c4ef3898607a9802",
+                "bytes": 2149
+              }
+            ],
+            "finished_at": "2026-10-22T11:47:10.258228+00:00"
+          },
+          {
+            "name": "Partial-25-cosine-s0-eval",
+            "started_at": "2026-10-22T11:47:10.258263+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 52.03407796705142,
+            "artifacts": [
+              {
+                "path": "Partial-25-cosine-s0/result.json",
+                "sha256": "5d7c62c2ebce09e32456095e721f879cef81a92e72efb9c4c4e3d13c3b1056a4",
+                "bytes": 18465
+              }
+            ],
+            "finished_at": "2026-10-22T11:48:02.808360+00:00"
+          },
+          {
+            "name": "Partial-50-cosine-s0",
+            "started_at": "2026-10-22T11:48:02.808401+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3473.6258066613227,
+            "artifacts": [
+              {
+                "path": "Partial-50-cosine-s0.verified.json",
+                "sha256": "ccd24c978a13feb11b04901dd4321821d999ffc8d736612f7f476c2c22549968",
+                "bytes": 2148
+              }
+            ],
+            "finished_at": "2026-10-22T12:45:56.942538+00:00"
+          },
+          {
+            "name": "Partial-50-cosine-s0-eval",
+            "started_at": "2026-10-22T12:45:56.942573+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 51.17821158003062,
+            "artifacts": [
+              {
+                "path": "Partial-50-cosine-s0/result.json",
+                "sha256": "dd5d9238cd27eeea66b568f18b6f343e99913bc08c704e5bd9515becbbbb248e",
+                "bytes": 18455
+              }
+            ],
+            "finished_at": "2026-10-22T12:46:48.608837+00:00"
+          },
+          {
+            "name": "Partial-25-cosine-detach-s0",
+            "started_at": "2026-10-22T12:46:48.608877+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3426.605865080841,
+            "artifacts": [
+              {
+                "path": "Partial-25-cosine-detach-s0.verified.json",
+                "sha256": "15aa6084d27220f21b9b71f6d2ee2e21dddc1a8aad33e2fe20886aa7d619a0f9",
+                "bytes": 2160
+              }
+            ],
+            "finished_at": "2026-10-22T13:43:55.717179+00:00"
+          },
+          {
+            "name": "Partial-25-cosine-detach-s0-eval",
+            "started_at": "2026-10-22T13:43:55.717215+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 52.20488491514698,
+            "artifacts": [
+              {
+                "path": "Partial-25-cosine-detach-s0/result.json",
+                "sha256": "ffd39a700a5d155f94611c64351ed04490834dff9909028a2fce64a501d8ec06",
+                "bytes": 18477
+              }
+            ],
+            "finished_at": "2026-10-22T13:44:48.394119+00:00"
+          },
+          {
+            "name": "Partial-50-cosine-detach-s0",
+            "started_at": "2026-10-22T13:44:48.394159+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 3439.380685786251,
+            "artifacts": [
+              {
+                "path": "Partial-50-cosine-detach-s0.verified.json",
+                "sha256": "a3ee28c89926c03bb54eec908f27202d28bc108c19d226f4a9acade8846db4d3",
+                "bytes": 2163
+              }
+            ],
+            "finished_at": "2026-10-22T14:42:08.250574+00:00"
+          },
+          {
+            "name": "Partial-50-cosine-detach-s0-eval",
+            "started_at": "2026-10-22T14:42:08.250608+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 53.5413539391011,
+            "artifacts": [
+              {
+                "path": "Partial-50-cosine-detach-s0/result.json",
+                "sha256": "2c7da8f9ad293d21512bcd3356d5b28e6bc2c4fd3c327e39011c4a01f8e5a165",
+                "bytes": 18467
+              }
+            ],
+            "finished_at": "2026-10-22T14:43:02.292630+00:00"
+          },
+          {
+            "name": "router_report",
+            "started_at": "2026-10-22T14:43:02.292667+00:00",
+            "status": "ok",
+            "returncode": 0,
+            "elapsed_seconds": 0.11400911211967468,
+            "artifacts": [
+              {
+                "path": "mlp-results.json",
+                "sha256": "22da1538cf7e5325eb52d7137f0c26a68320e9d5e83d25c12249ae75d20a1a8b",
+                "bytes": 1363
+              }
+            ],
+            "finished_at": "2026-10-22T14:43:02.407531+00:00"
+          }
+        ],
+        "finished_at": "2026-10-22T14:43:02.407549+00:00"
+      },
+      "acceptance": {
+        "status": "passed",
+        "checks": {
+          "old_parity": "passed",
+          "mlp_numerics": "passed",
+          "resume_Partial-25-detach": "passed",
+          "resume_Partial-50-cosine-detach": "passed",
+          "T8_D": "passed",
+          "T8_Partial-25-detach": "passed",
+          "T8_Partial-50-detach": "passed",
+          "T8_Partial-25-cosine": "passed",
+          "T8_Partial-50-cosine": "passed",
+          "T8_Partial-25-cosine-detach": "passed",
+          "T8_Partial-50-cosine-detach": "passed",
+          "carry_D": "passed"
+        },
+        "throughput": {
+          "D": {
+            "seconds_per_update": 0.6856666802661493,
+            "ratio_to_D": 1.0
+          },
+          "Partial-25-detach": {
+            "seconds_per_update": 0.699834619788453,
+            "ratio_to_D": 0.9797553034364228
+          },
+          "Partial-50-detach": {
+            "seconds_per_update": 0.6972642964683473,
+            "ratio_to_D": 0.983366972522557
+          },
+          "Partial-25-cosine": {
+            "seconds_per_update": 0.7208330373978242,
+            "ratio_to_D": 0.9512142822162758
+          },
+          "Partial-50-cosine": {
+            "seconds_per_update": 0.7241076721576973,
+            "ratio_to_D": 0.9469126024075929
+          },
+          "Partial-25-cosine-detach": {
+            "seconds_per_update": 0.7083598511992022,
+            "ratio_to_D": 0.9679637815516576
+          },
+          "Partial-50-cosine-detach": {
+            "seconds_per_update": 0.7071852881927043,
+            "ratio_to_D": 0.9695714711747633
+          }
+        },
+        "baseline": {
+          "loss": 3.4944635246202758,
+          "num_tokens": 9915698,
+          "num_sequences": 9704
+        }
+      },
+      "report": {
+        "status": "ok",
+        "steps": 4768,
+        "runs": [
+          {
+            "arm": "Partial-25-detach",
+            "loss": 3.49840325234127,
+            "ppl": 33.06261713147846,
+            "gap_to_D": 0.003939727720994046,
+            "gap_to_parent": -0.004475727660592899
+          },
+          {
+            "arm": "Partial-50-detach",
+            "loss": 3.5051507083125104,
+            "ppl": 33.28646002062429,
+            "gap_to_D": 0.010687183692234647,
+            "gap_to_parent": -0.024925183384353566
+          },
+          {
+            "arm": "Partial-25-cosine",
+            "loss": 3.495407258695272,
+            "ppl": 32.963709977217704,
+            "gap_to_D": 0.0009437340749962608,
+            "gap_to_parent": -0.007471721306590684
+          },
+          {
+            "arm": "Partial-50-cosine",
+            "loss": 3.499307960051219,
+            "ppl": 33.09254267100041,
+            "gap_to_D": 0.00484443543094315,
+            "gap_to_parent": -0.030767931645645064
+          },
+          {
+            "arm": "Partial-25-cosine-detach",
+            "loss": 3.49659619262156,
+            "ppl": 33.0029249577369,
+            "gap_to_D": 0.002132668001284088,
+            "gap_to_parent": -0.006282787380302857
+          },
+          {
+            "arm": "Partial-50-cosine-detach",
+            "loss": 3.4972656017974293,
+            "ppl": 33.02502481463238,
+            "gap_to_D": 0.002802077177153528,
+            "gap_to_parent": -0.032810289899434686
+          }
+        ],
+        "scope": "Single-seed router-input/metric factorial; previous same-width arms supply the unchanged controls."
+      },
+      "runs": {
+        "Partial-25-cosine-detach-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.49659619262156,
+            "eval_perplexity": 33.0029249577369,
+            "eval_nll_sum": 34671191.873985216,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.10410630241073268,
+            "eval_reuse_rate": 0.1844802441325742,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.5683,
+            "eval_samples_per_second": 2124.196,
+            "eval_steps_per_second": 16.636,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.950220368017557,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.9506784465488973,
+            "train_router_z_loss": 0.4273914311560896,
+            "train_runtime": 3372.4138,
+            "train_samples": 29278633,
+            "train_samples_per_second": 723.878,
+            "train_steps_per_second": 1.414
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.49659619262156,
+              "eval_perplexity": 33.0029249577369,
+              "eval_nll_sum": 34671191.873985216,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.10410630241073268,
+              "eval_reuse_rate": 0.1844802441325742,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.5683,
+              "eval_samples_per_second": 2124.196,
+              "eval_steps_per_second": 16.636
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-25-cosine-detach-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/supervised/run/Partial-25-cosine-detach-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1860,
+                "mtime_ns": 1792676617080546509,
+                "sha256": "8b4606c3664c4eb6c55819eaeb583e9b4a8082423ee8630493eb0ecbc49b57df"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792676621050520661,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804824,
+                "mtime_ns": 1792676618450537588
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792676620980521117
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676620980521117
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792676617080546509
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792676620980521117
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4164,
+                "mtime_ns": 1792676621030520791,
+                "sha256": "fdead1957cbe4b736abc5617863a8456d15d67635bbf9079bca61c96b04be711"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1080153,
+                "mtime_ns": 1792676621030520791,
+                "sha256": "65f4043e830e3fcaf5a89f56dfa9b6193c2b29a3d5b158dd3a0048403e944354"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159682,
+                "mtime_ns": 1792676621050520661,
+                "sha256": "dd2d16dd85e7c401c64ed8229024f27f176b792784da95d8d4b15bdab427d86a"
+              }
+            ],
+            "validation": {
+              "loss": 3.49659619262156,
+              "perplexity": 33.0029249577369,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.49659619262156,
+            "perplexity": 33.0029249577369,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4164,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1080153,
+            "model.safetensors": 1377804824,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1860,
+            "training_recipe.json": 159682,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-25-cosine-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.495407258695272,
+            "eval_perplexity": 32.963709977217704,
+            "eval_nll_sum": 34659402.76423019,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.1444795739031585,
+            "eval_reuse_rate": 0.15640628622861708,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.8095,
+            "eval_samples_per_second": 2017.682,
+            "eval_steps_per_second": 15.802,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.948167342155831,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.948664081976718,
+            "train_router_z_loss": 0.46600172900568987,
+            "train_runtime": 3421.4099,
+            "train_samples": 29278633,
+            "train_samples_per_second": 713.512,
+            "train_steps_per_second": 1.394
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.495407258695272,
+              "eval_perplexity": 32.963709977217704,
+              "eval_nll_sum": 34659402.76423019,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.1444795739031585,
+              "eval_reuse_rate": 0.15640628622861708,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.8095,
+              "eval_samples_per_second": 2017.682,
+              "eval_steps_per_second": 15.802
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-25-cosine-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/supervised/run/Partial-25-cosine-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1861,
+                "mtime_ns": 1792669611196157870,
+                "sha256": "a58dc2c34748e715930b56f9e555266365de77d3bff505e5737a2fe58c8a4153"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792669615246131637,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804824,
+                "mtime_ns": 1792669612456149708
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792669615186132026
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669615186132026
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792669611196157870
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792669615186132026
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4150,
+                "mtime_ns": 1792669615236131701,
+                "sha256": "0306a40d5f941e07d3107c1b45c65ae7ea481de709fb6d65d3a13a6820fe8c50"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1079667,
+                "mtime_ns": 1792669615226131766,
+                "sha256": "2a39fe7398ff854693330df3de61e8d267d8df1fba73b3c4f3048a13bf52015e"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159683,
+                "mtime_ns": 1792669615246131637,
+                "sha256": "ae74f6869e854acd37d6ff10b8239c6dc10d5a70894e56baa2268b3a598429ea"
+              }
+            ],
+            "validation": {
+              "loss": 3.495407258695272,
+              "perplexity": 32.963709977217704,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.495407258695272,
+            "perplexity": 32.963709977217704,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4150,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1079667,
+            "model.safetensors": 1377804824,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1861,
+            "training_recipe.json": 159683,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-25-detach-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.49840325234127,
+            "eval_perplexity": 33.06261713147846,
+            "eval_nll_sum": 34689110.132433824,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.27786771895368534,
+            "eval_reuse_rate": 0.309184880268446,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.4978,
+            "eval_samples_per_second": 2157.477,
+            "eval_steps_per_second": 16.897,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.9512459218539355,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.952465617416689,
+            "train_router_z_loss": 1.1904900102700722,
+            "train_runtime": 3285.0692,
+            "train_samples": 29278633,
+            "train_samples_per_second": 743.125,
+            "train_steps_per_second": 1.451
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.49840325234127,
+              "eval_perplexity": 33.06261713147846,
+              "eval_nll_sum": 34689110.132433824,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.27786771895368534,
+              "eval_reuse_rate": 0.309184880268446,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.4978,
+              "eval_samples_per_second": 2157.477,
+              "eval_steps_per_second": 16.897
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-25-detach-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/supervised/run/Partial-25-detach-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1860,
+                "mtime_ns": 1792662688731096499,
+                "sha256": "5815a092e4dbd29a6319044e4250d001d62f982adb5f2696b5f56d9117ca0580"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792662692181074073,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804824,
+                "mtime_ns": 1792662690011088178
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792662692121074464
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662692121074464
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792662688731096499
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792662692121074464
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4150,
+                "mtime_ns": 1792662692171074137,
+                "sha256": "afb478259ebf0e490f2e810d9855c85b1dabaaa71bf57a2d3f9c38a68871a8e3"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1075143,
+                "mtime_ns": 1792662692171074137,
+                "sha256": "1964a56309c35b1fbd98f3abbda6c59b9caa463a0e4405424993db53022efb55"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159682,
+                "mtime_ns": 1792662692191074006,
+                "sha256": "92c2a8a7ae36428f4868455f0921be587232e55c748bed07dd46d60c19462360"
+              }
+            ],
+            "validation": {
+              "loss": 3.49840325234127,
+              "perplexity": 33.06261713147846,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.49840325234127,
+            "perplexity": 33.06261713147846,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4150,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1075143,
+            "model.safetensors": 1377804824,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1860,
+            "training_recipe.json": 159682,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-50-cosine-detach-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.4972656017974293,
+            "eval_perplexity": 33.02502481463238,
+            "eval_nll_sum": 34677829.53321157,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.08886740134947572,
+            "eval_reuse_rate": 0.11740336217667972,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.8251,
+            "eval_samples_per_second": 2011.161,
+            "eval_steps_per_second": 15.751,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.950125312925873,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.9509454741573973,
+            "train_router_z_loss": 0.7895011911356209,
+            "train_runtime": 3386.1632,
+            "train_samples": 29278633,
+            "train_samples_per_second": 720.939,
+            "train_steps_per_second": 1.408
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.4972656017974293,
+              "eval_perplexity": 33.02502481463238,
+              "eval_nll_sum": 34677829.53321157,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.08886740134947572,
+              "eval_reuse_rate": 0.11740336217667972,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.8251,
+              "eval_samples_per_second": 2011.161,
+              "eval_steps_per_second": 15.751
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-50-cosine-detach-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/supervised/run/Partial-50-cosine-detach-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1859,
+                "mtime_ns": 1792680109497703676,
+                "sha256": "2541c227f3a829bb24ef42ad9eec83be52e6c5ca5d6976dfe324a11da25c503f"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792680113387678160,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804896,
+                "mtime_ns": 1792680110777695279
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792680113327678553
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680113327678553
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792680109497703676
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792680113327678553
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4164,
+                "mtime_ns": 1792680113377678226,
+                "sha256": "31db9a7394e934afb7a7e0a35d48d731236ad20100bcade8d28e5569f87af54b"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1080063,
+                "mtime_ns": 1792680113377678226,
+                "sha256": "b947b3e51f5072fe5ba43f93261646a26ebc0ddce963420e9c4ec97ce22c7b65"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159681,
+                "mtime_ns": 1792680113397678095,
+                "sha256": "ce25b2c46cbe9397665096642a6800c5fdd3ce1f4b06b8e3afb739ad43248379"
+              }
+            ],
+            "validation": {
+              "loss": 3.4972656017974293,
+              "perplexity": 33.02502481463238,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.4972656017974293,
+            "perplexity": 33.02502481463238,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4164,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1080063,
+            "model.safetensors": 1377804896,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1859,
+            "training_recipe.json": 159681,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-50-cosine-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.499307960051219,
+            "eval_perplexity": 33.09254267100041,
+            "eval_nll_sum": 34698080.94086395,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.10584186701762804,
+            "eval_reuse_rate": 0.137476632541993,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.5397,
+            "eval_samples_per_second": 2137.601,
+            "eval_steps_per_second": 16.741,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.952313605228801,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.9532526791495766,
+            "train_router_z_loss": 0.9097438115117159,
+            "train_runtime": 3421.7699,
+            "train_samples": 29278633,
+            "train_samples_per_second": 713.437,
+            "train_steps_per_second": 1.393
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.499307960051219,
+              "eval_perplexity": 33.09254267100041,
+              "eval_nll_sum": 34698080.94086395,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.10584186701762804,
+              "eval_reuse_rate": 0.137476632541993,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.5397,
+              "eval_samples_per_second": 2137.601,
+              "eval_steps_per_second": 16.741
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-50-cosine-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/supervised/run/Partial-50-cosine-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1860,
+                "mtime_ns": 1792673138373200504,
+                "sha256": "fa3e1f22539d03868acb40ae03393438f920a79fbaa9b3c80f33f69edb0b0f63"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792673142223175342,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804896,
+                "mtime_ns": 1792673139633192269
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792673142153175799
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673142153175799
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792673138373200504
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792673142153175799
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4150,
+                "mtime_ns": 1792673142203175472,
+                "sha256": "76d18876a9d8ce95bcf13d8b854e140dd13996d936f7fe867f7aecd6be2bd9df"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1080468,
+                "mtime_ns": 1792673142203175472,
+                "sha256": "675e317287a2e13d8405c3dd539956841499b9e49f7604fcd3e47c2db89d916c"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159682,
+                "mtime_ns": 1792673142223175342,
+                "sha256": "e3cc3effa448aaea8d83ef2c7e8da47e81b4e69406b168929d9bdeef4f7300a3"
+              }
+            ],
+            "validation": {
+              "loss": 3.499307960051219,
+              "perplexity": 33.09254267100041,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.499307960051219,
+            "perplexity": 33.09254267100041,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4150,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1080468,
+            "model.safetensors": 1377804896,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1860,
+            "training_recipe.json": 159682,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        },
+        "Partial-50-detach-s0": {
+          "final_eval.json": {
+            "eval_loss": 3.5051507083125104,
+            "eval_perplexity": 33.28646002062429,
+            "eval_nll_sum": 34756015.868112944,
+            "eval_num_tokens": 9915698,
+            "eval_num_sequences": 9704,
+            "eval_off_default_share": 0.6232475790226646,
+            "eval_reuse_rate": 0.5461221492103772,
+            "eval_routing_decisions": 79495168,
+            "eval_routing_input_tokens": 9936896,
+            "eval_runtime": 4.48,
+            "eval_samples_per_second": 2166.078,
+            "eval_steps_per_second": 16.964,
+            "epoch": 0.08337887286383171
+          },
+          "train_results.json": {
+            "epoch": 0.08337887286383171,
+            "global_step": 4768,
+            "schedule_steps": 4768,
+            "train_input_tokens": 2499805184,
+            "train_lm_loss": 3.957772190905779,
+            "train_lm_tokens": 2494329232,
+            "train_objective_loss": 3.959837793503832,
+            "train_router_z_loss": 2.0359668777278945,
+            "train_runtime": 3291.474,
+            "train_samples": 29278633,
+            "train_samples_per_second": 741.679,
+            "train_steps_per_second": 1.449
+          },
+          "latest_metrics": [
+            {
+              "step": 4768,
+              "eval_loss": 3.5051507083125104,
+              "eval_perplexity": 33.28646002062429,
+              "eval_nll_sum": 34756015.868112944,
+              "eval_num_tokens": 9915698,
+              "eval_num_sequences": 9704,
+              "eval_off_default_share": 0.6232475790226646,
+              "eval_reuse_rate": 0.5461221492103772,
+              "eval_routing_decisions": 79495168,
+              "eval_routing_input_tokens": 9936896,
+              "eval_runtime": 4.48,
+              "eval_samples_per_second": 2166.078,
+              "eval_steps_per_second": 16.964
+            }
+          ],
+          "verified": {
+            "status": "ok",
+            "global_step": 4768,
+            "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-50-detach-s0",
+            "attempts": [
+              {
+                "attempt": 1,
+                "returncode": 0,
+                "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/supervised/run/Partial-50-detach-s0.verified.attempt1.log",
+                "resumed_from": null
+              }
+            ],
+            "checkpoint_files": [
+              {
+                "path": "config.json",
+                "bytes": 1859,
+                "mtime_ns": 1792666084089035667,
+                "sha256": "cf3d1dbb6f5e495be9d6ece43dc4c3e4813658c718026d1697871e8e2b5f78d9"
+              },
+              {
+                "path": "data_recipe.json",
+                "bytes": 728656,
+                "mtime_ns": 1792666088089009649,
+                "sha256": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b"
+              },
+              {
+                "path": "model.safetensors",
+                "bytes": 1377804896,
+                "mtime_ns": 1792666085389027211
+              },
+              {
+                "path": "optimizer.pt",
+                "bytes": 2755736779,
+                "mtime_ns": 1792666088019010106
+              },
+              {
+                "path": "rng_state_0.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666088019010106
+              },
+              {
+                "path": "rng_state_1.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "rng_state_2.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "rng_state_3.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "rng_state_4.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "rng_state_5.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "rng_state_6.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "rng_state_7.pth",
+                "bytes": 16325,
+                "mtime_ns": 1792666084089035667
+              },
+              {
+                "path": "scheduler.pt",
+                "bytes": 1465,
+                "mtime_ns": 1792666088019010106
+              },
+              {
+                "path": "train_config.json",
+                "bytes": 4150,
+                "mtime_ns": 1792666088069009779,
+                "sha256": "fc3602556c74706a041e867d83c99336412c1b21f89b9e9cb74e2a306029dcf0"
+              },
+              {
+                "path": "trainer_state.json",
+                "bytes": 1068943,
+                "mtime_ns": 1792666088069009779,
+                "sha256": "b26b014602137b4e3a7bbb4f4839eed6d0c9d270e2824b41759edb27ab534573"
+              },
+              {
+                "path": "training_recipe.json",
+                "bytes": 159681,
+                "mtime_ns": 1792666088089009649,
+                "sha256": "1ad3937d4e59821a11d40190baefeb1bc84781bf5dc858d1442357a0451c210f"
+              }
+            ],
+            "validation": {
+              "loss": 3.5051507083125104,
+              "perplexity": 33.28646002062429,
+              "num_tokens": 9915698,
+              "num_sequences": 9704
+            }
+          },
+          "standalone_eval": {
+            "status": "ok",
+            "global_step": 4768,
+            "loss": 3.5051507083125104,
+            "perplexity": 33.28646002062429,
+            "num_tokens": 9915698,
+            "num_sequences": 9704
+          },
+          "checkpoints": [
+            "checkpoint-1000",
+            "checkpoint-2500",
+            "checkpoint-4768"
+          ],
+          "final_checkpoint_files": {
+            "rng_state_4.pth": 16325,
+            "rng_state_6.pth": 16325,
+            "chat_template.jinja": 4116,
+            "tokenizer_config.json": 695,
+            "generation_config.json": 215,
+            "train_config.json": 4150,
+            "scheduler.pt": 1465,
+            "trainer_state.json": 1068943,
+            "model.safetensors": 1377804896,
+            "rng_state_0.pth": 16325,
+            "rng_state_2.pth": 16325,
+            "rng_state_3.pth": 16325,
+            "rng_state_7.pth": 16325,
+            "training_args.bin": 5393,
+            "tokenizer.json": 11422650,
+            "optimizer.pt": 2755736779,
+            "config.json": 1859,
+            "training_recipe.json": 159681,
+            "rng_state_1.pth": 16325,
+            "data_recipe.json": 728656,
+            "rng_state_5.pth": 16325
+          },
+          "final_step": 4768
+        }
+      },
+      "source_matches": true,
+      "source_manifest_sha256": "65afe4d86c3e154638d512f2e63c38303d9659b57ef1c4ebf96ff7e857c096c9",
+      "burn_live_matches": true,
+      "burn_collective_progress": true,
+      "burn_log_tail": "age_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6230 completed_gemms=6391980 completed_collective_payload_gib=6917.49 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6240 completed_gemms=6402240 completed_collective_payload_gib=6928.59 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6250 completed_gemms=6412500 completed_collective_payload_gib=6939.70 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6260 completed_gemms=6422760 completed_collective_payload_gib=6950.80 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6270 completed_gemms=6433020 completed_collective_payload_gib=6961.90 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6280 completed_gemms=6443280 completed_collective_payload_gib=6973.01 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6290 completed_gemms=6453540 completed_collective_payload_gib=6984.11 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6300 completed_gemms=6463800 completed_collective_payload_gib=6995.21 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6310 completed_gemms=6474060 completed_collective_payload_gib=7006.32 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6320 completed_gemms=6484320 completed_collective_payload_gib=7017.42 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6330 completed_gemms=6494580 completed_collective_payload_gib=7028.53 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6340 completed_gemms=6504840 completed_collective_payload_gib=7039.63 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6350 completed_gemms=6515100 completed_collective_payload_gib=7050.73 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6360 completed_gemms=6525360 completed_collective_payload_gib=7061.84 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6370 completed_gemms=6535620 completed_collective_payload_gib=7072.94 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6380 completed_gemms=6545880 completed_collective_payload_gib=7084.04 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6390 completed_gemms=6556140 completed_collective_payload_gib=7095.15 average_cycle_seconds=0.871 cycles_per_second=1.148\ngpu_burn_progress rank=0 completed_cycles=6400 completed_gemms=6566400 completed_collective_payload_gib=7106.25 average_cycle_seconds=0.871 cycles_per_second=1.148\n"
+    }
+  },
+  "receipt": {
+    "local_path": "temp/router_final_20261023/status.json",
+    "sha256": "2aed9ca6afd5639dd54f1a7e16179ab61e2cc38441b0d264e942674dbf6585c2",
+    "remote_path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/final-status-20261023-a01.json"
+  },
+  "live": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-22T16:16:51.779431+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392414
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392415
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392416
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392417
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392418
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392419
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392420
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          392421
+        ]
+      }
+    ],
+    "workers": [
+      392414,
+      392415,
+      392416,
+      392417,
+      392418,
+      392419,
+      392420,
+      392421
+    ],
+    "stop_roots": [
+      392345
+    ],
+    "processes": {
+      "392414": {
+        "pid": 392414,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392415": {
+        "pid": 392415,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392416": {
+        "pid": 392416,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392417": {
+        "pid": 392417,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392418": {
+        "pid": 392418,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392419": {
+        "pid": 392419,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392420": {
+        "pid": 392420,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392421": {
+        "pid": 392421,
+        "ppid": 392345,
+        "start_ticks": 262078430,
+        "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "392345": {
+        "pid": 392345,
+        "ppid": 9406,
+        "start_ticks": 262078305,
+        "command_sha256": "f47ff4ab83df26d0ed1a0cce6c4c28fc4423e89ab8c65ebce442a76e15179702",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "guard_disabled": false
+  },
+  "verified": {
+    "all_12_fits_and_evals": true,
+    "full_validation_counts_match": true,
+    "all_final_optimizer_scheduler_eight_rng_files": true,
+    "checkpoints_1000_2500_4768": true,
+    "all_gpu_acceptance_checks": true,
+    "immutable_followup_source": true,
+    "live_eight_gpu_burn_handoff": true
+  }
+}

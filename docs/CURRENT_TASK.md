@@ -1,6 +1,54 @@
 # Current task
 
-## Authorized six router follow-ups — 22 October 2026
+## Both MLP studies complete — verified 23 October 2026, 00:16 SGT
+
+All **12 training runs and 12 final evaluations** completed successfully at
+4,768 updates, without retries. The original six-arm study finished on
+22 October at **16:38:55 SGT**. The six router follow-ups finished at
+**22:43:02 SGT**; their automatic burns were verified at **22:44:13 SGT**.
+The fresh **23 October, 00:16:51 SGT** inspection (**8ee0516**) matches all
+eight burn workers 392414–392421, each GPU at 100%, advancing collective
+payload, and a released ownership guard. No experiments remain queued.
+
+All final results use the same **9,704 sequences / 9,915,698 scored tokens**.
+Dense D loss is **3.494463525**, PPL **32.93262**. Lower LM loss is better:
+
+| Router variant | 25% routed MLP | 50% routed MLP | 100% routed MLP |
+|---|---:|---:|---:|
+| Original learned | 3.502879 | 3.530076 | 3.556062 |
+| Random training control | 3.510149 | 3.525737 | 3.562083 |
+| Detached input | 3.498403 | 3.505151 | — |
+| Cosine | **3.495407** | 3.499308 | — |
+| Cosine + detached input | 3.496596 | 3.497266 | — |
+
+Every follow-up improves its same-width original learned router, but **none
+beats D**. Best is Partial-25-cosine: loss 3.495407259, PPL 32.96371,
+D +0.000943734 nats/token (PPL +0.0944%). This is a near-match in one seed,
+not a demonstrated win or statistical equivalence. Detachment improves the
+linear routers; combining it with cosine helps at 50% but hurts at 25%.
+Cosine routing is less disruptive in this screen: off-default share is 14.45%
+for Partial-25-cosine versus 58.76% for original Partial-25. This association
+does not establish a causal mechanism or useful specialization.
+
+All new GPU acceptance checks passed: frozen old-code parity, all six arms'
+SDPA/FA4 and grouped/replay checks, two exact eight-rank resume fixtures,
+full-size throughput, and unchanged D checkpoint loss. New benchmark throughput
+is 94.7–98.3% of D; actual training jobs took 55.6–57.9 minutes each. Original
+and follow-up queues each passed their reports. Checkpoints 1,000/2,500/4,768
+exist for every arm; final optimizer/scheduler and eight RNG files are verified.
+The immutable follow-up source manifest still matches.
+
+[Final results and operational evidence](results/bdot_mlp_router_final_20261023.json).
+The consolidated remote receipt was downloaded and SHA256-verified locally at
+`temp/router_final_20261023/status.json`, hash
+`2aed9ca6afd5639dd54f1a7e16179ab61e2cc38441b0d264e942674dbf6585c2`.
+Remote roots remain `6y3o-dot-mlp-20261022-a01` and
+`6y3o-dot-router-20261022-a01` under `/mnt/local/_outputs/deep-llms_th2/`.
+The old queue's burn PIDs were intentionally reclaimed by the follow-up;
+the follow-up's final burn receipt is the current live ownership proof.
+Commands return to **#0**; no new training or process stops were submitted.
+
+## Six router follow-ups — setup and launch history, 22 October 2026
 
 User requested research, a detached-router option, and six additional runs
 queued after the current six-arm study. The current queue must finish untouched.

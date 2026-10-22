@@ -4,6 +4,24 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Completed partial-MLP/router screen — 23 October 2026
+
+All 12 fits completed 4,768 updates and final evaluation, seed 0. Original
+learned 25%/50%/100% losses: 3.502879 / 3.530076 / 3.556062. Their random
+controls: 3.510149 / 3.525737 / 3.562083. Six router follow-ups all improved
+their same-width original, but none beat dense D (3.494464). Best is
+Partial-25-cosine: 3.495407 / PPL 32.96371, D +0.000944 nats. This is a
+single-seed near-match, not a proven improvement. Cosine + detach is better
+than cosine alone at 50%, worse at 25%. No next experiment is authorized here.
+
+Both queues, final checkpoints, acceptance gates, and follow-up source hashes
+are verified. Follow-up finished 22 October 22:43 SGT; burns restored 22:44.
+Inspection **8ee0516**, 23 October 00:16:51 SGT, verifies all eight current
+burn workers and advancing collectives, guard released. Commands return to #0.
+[Final evidence](results/bdot_mlp_router_final_20261023.json); local raw receipt
+`temp/router_final_20261023/status.json` matches the remote SHA256. CURRENT_TASK
+contains the complete comparison and exact observation timestamps.
+
 ## Six router follow-ups — 22 October 2026
 
 User authorized six more runs after the current six-arm queue. Factorial:
