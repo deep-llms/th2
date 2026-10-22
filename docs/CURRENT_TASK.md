@@ -26,19 +26,63 @@ updates, 96 warmup, 524,288 tokens/update, sequence 1,024, eight B200s, FA4,
 microbatch 16/accumulation 4. Same data, validation, optimizer and LR as D;
 retain checkpoints 1,000/2,500/4,768 and latest. No extra seeds or fits.
 
-Implementation/testing in progress; no research training launched yet.
+Implementation **0bcadad** and launch **13f3940** are deployed. All acceptance
+checks passed, and Partial-25 started **22 October 2026, 11:04:05 SGT**.
+The six train/eval pairs run sequentially, each using all eight GPUs.
 Execution target remains th2/main on `thiennh-p6-6y3o-worker-0` (6Y3O).
 Preflight **2fbf070** passed at 10:39:26 SGT: prior C1 complete, eight verified
 communicating burn workers, 22,938 GiB free. Immutable old bdot code saved
 outside Git sync at `6y3o-dot-mlp-20261022-a01/reference`. Existing work unchanged.
 Fresh output root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-mlp-20261022-a01`.
 
-Launch requires numerical/old-code parity, eight-rank exact resume for learned
-partial and random full-MLP cases, all-six throughput checks and D checkpoint
-carry-over. Reuse existing supervisor: copy/verify Accelerate, reverify known
-burn identities, reclaim exact workers, confirm eight free GPUs, acceptance
-checks, six sequential train/eval pairs, final report, automatic verified burns
-on success or failure. Do not infer completion from missing PIDs.
+Acceptance passed: 32 old-code CUDA cases are unchanged; partial-MLP SDPA/FA4,
+grouped dispatch, checkpoint replay, causality and document isolation pass.
+Both eight-rank fresh-process resume tests (learned Partial-25 and random
+MLP-only) restore exact optimizer/scheduler/RNG/data/routes/loss/final state,
+including the transition out of home-only routing. D's final checkpoint
+reproduces loss 3.4944635246202758 on 9,704 sequences / 9,915,698 scored tokens.
+Local checks include the 78-test suite, seven targeted tests and CPU resume/eval.
+These numerical checks cover bounded fixtures, not long-run bitwise equivalence
+between different arithmetic backends or split/unsplit BF16 MLPs.
+
+Full-size eight-GPU timing, 5 warm-up + 20 measured Trainer updates per case:
+
+| Arm | Seconds/update | Throughput relative to D |
+|---|---:|---:|
+| D | 0.6778 | 100.0% |
+| Partial-25 | 0.7173 | 94.5% |
+| Partial-25-random | 0.6802 | 99.6% |
+| Partial-50 | 0.7117 | 95.2% |
+| Partial-50-random | 0.6769 | 100.1% |
+| MLP-only | 0.6898 | 98.3% |
+| MLP-only-random | 0.6616 | 102.5% |
+
+Timing exercises adjacent dispatch, with the learned router prior temporarily
+zeroed **only in the benchmark**, not in research training. Rough queue ETA:
+**17:00–17:30 SGT on 22 October**, allowing for evaluation/checkpoint overhead.
+
+Accelerate was copied, byte-verified and checked with `accelerate env` (eight
+BF16 processes). Only freshly verified predecessor burn workers 298035–298042
+were stopped; all eight GPUs were empty after the 30-second wait. The existing
+supervisor owns this queue and automatically restores/verifies communicating
+burns after success or failure. Final handoff has not happened yet.
+
+Acceptance/status inspection **d8e219e**, result export **79c201f**. All 37
+exported files and archive SHA256 verify locally at
+`temp/partial_mlp_20261022/evidence/`. Keep training source and existing
+data/cache/checkpoints unchanged. Check the existing queue on follow-up;
+do not relaunch. Do not infer completion from missing PIDs.
+
+Health check **6cb07e3**, **11:12:42 SGT**: Partial-25 at **700/4,768**,
+all eight workers 303357–303364 active, source hashes and data recipe match.
+Checkpoint 500 is complete with optimizer, scheduler, eight RNG files and
+recipes. Routing activated after update 477; off-home share is 7.75% at 700.
+Periodic validation loss declined from 4.649557 (477) to 4.598784 (500),
+4.407834 (600), 4.274015 (700), without a transition-spike flag. This is
+launch health, not a completed scientific result. Remaining five arms queued.
+[Launch evidence](results/bdot_mlp_launch_20261022.json); raw latest observation
+`temp/partial_mlp_20261022/health02.log`. Commands return to **#0** while the
+independent supervisor continues the existing queue.
 
 ## C1 complete — verified 22 October 2026, 09:51 SGT
 

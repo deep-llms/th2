@@ -4,6 +4,40 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Fixed-attention partial-MLP study — 22 October 2026
+
+User approved six new 4,768-step seed-0 fits, reusing completed D0: learned and
+random routing of 25%, 50%, or 100% of each middle layer's SwiGLU channels.
+All attention and norms stay at their original depth; the remaining MLP
+channels form a fixed core. Split original weights without extra backbone
+parameters or different initialization RNG. Route only the selected slice,
+with the unit-forward gate on that slice alone. Both learned/random controls
+share curriculum A (10% home-only, then radius 1 with reuse allowed).
+This is an exploratory follow-up authorized after the failed v3 pilot.
+
+Reuse HF Trainer/Accelerate, packed English data, seed-0 order, FA4 isolation,
+reset positions, EOS boundaries, batch 524,288, length 1,024, microbatch 16,
+accumulation 4, warmup 96 and the full existing pilot LR schedule. No extra
+seed, longer fit or dataset change. Preserve checkpoints 1,000/2,500/4,768
+and latest, as in the preceding v3 queue.
+
+Implementation **0bcadad**, launch **13f3940**, root
+`6y3o-dot-mlp-20261022-a01`. All acceptance gates passed before the first arm
+started **11:04:05 SGT**. Old CUDA behavior and D checkpoint loss are unchanged;
+both learned-partial and random-full eight-rank resume tests are exact.
+Full-size learned throughput is 94.5–98.3% of D; random controls 99.6–102.5%.
+Benchmarks remove the learned router prior to exercise multiple experts;
+research configs keep the original prior. This timing is not final wall time.
+Numerical backend/split comparisons use BF16 tolerances, not bitwise claims.
+
+Copied/verified Accelerate, verified burn-worker reclamation, eight free GPUs
+and automatic success/failure burn restoration use the existing supervisor.
+Verified local launch evidence: `temp/partial_mlp_20261022/evidence/` (37 files).
+Health **6cb07e3** at 11:12:42 SGT confirms Partial-25 step 700, active routing,
+finite gradients, declining validation loss and a complete step-500 checkpoint.
+Source/data match. [Launch receipt](results/bdot_mlp_launch_20261022.json).
+See CURRENT_TASK for progress. Preserve source during the running queue.
+
 ## C1 conditional v3 control — 22 October 2026
 
 The user approved C1 seed 0, the v3 section 6.1 control triggered by V1 beating V2.
