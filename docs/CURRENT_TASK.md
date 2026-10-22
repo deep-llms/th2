@@ -31,8 +31,25 @@ full-validation carry checks → check → fresh D → final eval → fresh Part
 → final eval → matched report. Existing supervisor copies/byte-verifies Accelerate,
 runs `accelerate env`, reclaims only freshly verified burn PIDs, waits 30 seconds
 and checks all eight GPUs free, then restores/verifies burns on success/failure.
-Expected training duration about four hours total. Launch/live health pending.
-Evidence and local test logs: `temp/router_long_20261023/`.
+**Launched 6516ecb**, live health **69d7cdf** at **06:10:52 SGT**. Accelerate
+copied/byte-verified, `accelerate env` reports MULTI_GPU 8/BF16. Only burn
+workers 409304–409311 were reclaimed, followed by 30 seconds and eight free
+GPUs at **06:07:21 SGT**. Both carry evaluations reproduce their original
+full-validation losses exactly: D 3.4944635246202758, Partial-25-cosine
+3.495407258695272. The carry/data check passed before fresh training.
+
+D started **06:08:39 SGT**, healthy at **120/10,000**: LM loss 6.787639,
+grad norm 0.458279, LR 0.0001785 (correct 200-step warmup). All eight training
+workers **411040–411047** match the frozen train entry point, with about 55.4
+GiB device usage each. Source/config/data checks still match; guard held by
+supervisor. Partial-25-cosine follows automatically. All-checkpoint retention
+is configured; first 250-step save is beyond this health observation.
+Expected queue finish **10:00–10:20 SGT, 23 October**. This is an estimate,
+not completion. Supervisor restores/verifies burns after success or failure.
+Commands return to **#0** while the independent queue runs; do not relaunch.
+[Launch and health evidence](results/bdot_long_pair_launch_20261023.json).
+Raw evidence/tests: `temp/router_long_20261023/`; `health-a02.json` matches remote
+SHA256 `95ca73f8a847dda34715563976a47f4826251e92e908cdeb88881820fccd2819`.
 
 ## Longer-training assessment — 23 October 2026, recommendation only
 

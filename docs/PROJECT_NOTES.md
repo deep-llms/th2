@@ -15,6 +15,12 @@ before either fresh fit. New queue helper only; eight CPU tests and actual
 existing burn handoff, source, matched parent recipes/data, and adequate disk.
 Root `6y3o-dot-long-pair-20261023-a01`; CURRENT_TASK tracks launch/health.
 STOP is deferred; no throughput optimization is mixed into this comparison.
+Launch **6516ecb**, health **69d7cdf**: Accelerate copy/env, verified burn reclaim
+and free-GPU checks passed. D and Partial-25 carry losses reproduce exactly.
+Fresh D started **06:08:39 SGT**, healthy at step120 at **06:10:52 SGT**,
+all eight workers on the frozen source; second arm queued. All saves retained
+every250 steps; automatic burn restoration remains enabled. ETA **10:00–10:20
+SGT, 23 October**. Commands #0. [Evidence](results/bdot_long_pair_launch_20261023.json).
 
 ## Second-seed confirmation completed — 23 October 2026
 
