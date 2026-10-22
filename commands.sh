@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-long-pair-health-20261023-a01
+#th2-6y3o-dot-long-pair-health-20261023-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -48,7 +48,7 @@ for arm in ['D','Partial-25-cosine']:
   v['checkpoint_files']={p.name:p.stat().st_size for p in cp.iterdir() if p.is_file()}
   if (cp/'trainer_state.json').exists():v['checkpoint_step']=read(cp/'trainer_state.json')['global_step']
 r['queue_jobs']=[j['name'] for j in read(root/'gated-jobs.json')['jobs']]
-out=root/'health-a01.json'
+out=root/'health-a02.json'
 with out.open('x') as f:f.write(json.dumps(r,indent=2)+'\n')
 print('LONG_PAIR_HEALTH '+json.dumps(r),flush=True)
 print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
