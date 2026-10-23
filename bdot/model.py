@@ -343,6 +343,16 @@ class RoutedStep(nn.Module):
 
 class BDOTForCausalLM(Qwen3ForCausalLM):
     """Qwen3 interface and native loss; BDOTTrainer adds normalized router loss."""
+    @classmethod
+    def from_pretrained(cls, *args, **kwargs):
+        result = super().from_pretrained(*args, **kwargs)
+        model = result[0] if isinstance(result, tuple) else result
+        # HF's tensor materialization can replace constructor Parameters. Restore
+        # this explicit training contract after weights have been installed.
+        if hasattr(model, 'stop_controller'):
+            model.stop_controller.requires_grad_(False)
+        return result
+
     def __init__(self, config):
         options = RoutingConfig(**config.bdot)
         config.bdot = options.to_dict()

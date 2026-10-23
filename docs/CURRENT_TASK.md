@@ -1,5 +1,46 @@
 # Current task
 
+## STOP study — authorized 23 October 2026
+
+Latest user: “ok. lets try STOP”. Implementing the previously agreed dense/routed
+2×2 adaptation study from the finished D and Partial-25-cosine 10k checkpoints.
+Design: `BDOT_v2_spec.md` sections 3.5/3.9 plus the efficiency follow-up below.
+Original no-STOP execution remains a separate bypass. Stopped tokens hold their
+middle state, write K/V at all remaining steps, skip Q/O and both MLP slices,
+and run the coda. Packed FA4 retains unused query rows; cached SDPA compacts
+active single-token queries. No claim of packed-attention or KV-memory savings.
+
+Local checks: 94 B-DOT tests passed, held-state reference forward/gradient,
+isolation/cache equivalence, actual two-process gradient error 7.45e-8, and
+fresh-process Trainer STOP resume exact (weights/optimizer/scheduler/data/STOP RNG).
+Warm-start conversion additionally preserves every backbone/router weight and
+balance bias, resets counters deliberately, and freezes the separately fitted head.
+Caught/fixed HF loading re-enabling frozen Parameters; post-load freeze is explicit.
+
+B200 preflight e53d7ab verified eight communicating burns and completed parents.
+Verification launch 7a5fd63, health request 4437669. Output root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-verify-20261023-a01`.
+Accelerate copy/byte check and `accelerate env` succeeded. Verification supervisor
+reclaims only the known burn workers and restores burns on success/failure.
+Training has NOT yet been launched. All GPU gates passed: held-state oracle and
+no-STOP max logit difference0; FA4/SDPA and cache logit RMS about0.017. Two-GPU
+BF16 gradients pass; eight-GPU resume is exact on all16 rank/case comparisons.
+Verification ended11:35:37SGT; burns restored11:36:43 and independently verified
+11:37:21SGT (workers431219–431226). Batch1 depth8→depth2 decode: D15.476→9.896ms,
+Partial25 19.399→10.726ms; optimistic speed bound, not quality evidence.
+[GPU evidence](results/bdot_stop_verification_20261023.json).
+
+Planned branches: D/Partial-25 × ordinary/random-STOP (p=.05, min middle depth2),
+1,000 additional updates each. New AdamW/cosine schedule, peak3e-5 (old ending LR),
+20 warmup, floor3e-6; same seq1024 and 16×4×8 batch524288. All 250-step saves kept.
+Skip exactly 5,120,000 packed rows after verifying parent data recipe; no replay
+of the old data segment or routing curriculum. This is warm-start adaptation,
+not ordinary resume of the completed schedule. Fit the frozen-trunk STOP head
+on 256 unused training rows after adaptation; use the next256 for calibration;
+freeze threshold before final validation. Include fixed-depth/matched-random
+controls and whole-model cached timing at batch1/32, context128/512.
+
+
 ## Downstream screen completed — 23 October 2026, 11:00 SGT verification
 
 The 10k D / Partial-25-cosine zero-shot English comparison completed at
