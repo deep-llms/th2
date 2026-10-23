@@ -4,7 +4,24 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
-## Authorized longer pair — 23 October 2026
+## Longer pair final result — 23 October 2026
+
+Fresh 10k seed-0 D / Partial-25-cosine completed successfully with full matching
+schedules and 5.243B input tokens each. Loss **3.294948 / 3.297071**, PPL
+**26.976006 / 27.033349** on 9,704 full-validation sequences. Router gap
++0.002123 nats (+0.213% PPL); Trainer runtime 6,754.394 / 7,151.401 seconds
+(+5.88%). Longer training retains the near-match but gives no quality win.
+One seed, equal tokens; no statistical-equivalence or equal-time conclusion.
+Both ran from scratch without retries; all 40 saves per arm retained every 250
+steps, including full resume state. Source, data and final reload checks pass.
+
+Queue ended **10:03:46 SGT**, burns restored **10:04:57** and independently
+verified **10:28 SGT** by **ba57b89**: eight expected workers, advancing
+collectives, guard released. No queued experiments; commands #0.
+[Final evidence](results/bdot_long_pair_final_20261023.json). CURRENT_TASK has
+exact paths, receipt hash and retained checkpoint details. STOP remains deferred.
+
+## Longer pair launch history — 23 October 2026
 
 User selected D and Partial-25-cosine only for fresh 10,000-step training,
 seed 0, full cosine schedule, 200 warmup updates; unchanged scientific code,

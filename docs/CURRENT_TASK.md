@@ -1,6 +1,44 @@
 # Current task
 
-## Authorized 10k pair — 23 October 2026
+## Longer pair completed — 23 October 2026, 10:28 SGT verification
+
+Both fresh seed-0 runs completed **10,000 updates / 5,242,880,000 input tokens**
+with the authorized full cosine schedule, 200 warmup steps, same data order and
+unchanged frozen scientific source. No retries or resume were needed. Final
+checkpoint reload evaluations match training's full-validation results exactly,
+on **9,704 sequences / 9,915,698 scored tokens**.
+
+| Arm | Final loss | PPL | Trainer runtime |
+|---|---:|---:|---:|
+| Dense D | 3.294948 | 26.976006 | 1h 52m 34s |
+| Partial-25-cosine | 3.297071 | 27.033349 | 1h 59m 11s |
+
+Partial-25-cosine remains close but behind: **+0.002123 nats / +0.213% PPL**,
+with **5.88% longer Trainer runtime** (includes in-training validation/saving).
+Longer training has not produced a win. This is one seed at equal tokens,
+not statistical equivalence or an equal-wall-time comparison. Both improve
+substantially over their separate 4,768-step schedules. Routing remains active:
+20.23% off-default choices and 24.10% token reuse in the full validation pass.
+No additional training, optimization or STOP workload was launched by this check.
+
+**All 40 checkpoints per arm** (250, 500, …, 10,000) remain on B200; each has
+optimizer, scheduler, trainer state and all eight rank RNG files. Final checkpoint
+weights/state are verified, data recipe hashes match, and source/Accelerate cache
+checks pass. Both fits completed on their first attempt from scratch.
+
+Queue finished **10:03:46 SGT**; automatic communicating burns verified at
+**10:04:57 SGT**. Fresh inspection **ba57b89** at **10:28 SGT** verifies workers
+**425865–425872** on all eight GPUs at 100% utilization, collective cycles
+1,630→1,640, and released ownership guard. No experiments remain queued.
+Commands returned to **#0** after retrieval.
+
+[Final results, curves and operational evidence](results/bdot_long_pair_final_20261023.json).
+Raw local receipt: `temp/router_long_20261023/final-status.json`, SHA256
+`72ae1fe76c48fe77ae4978ebc75247793c2eea2477f373a7ab636120c06a8270`,
+verified against the remote log. Remote root remains
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01`.
+
+## 10k pair launch history — 23 October 2026
 
 User narrowed the longer comparison to **D and Partial-25-cosine only** and
 requested launch. Run both from scratch, seed/model/router/data 0, for the full
