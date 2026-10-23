@@ -1,0 +1,3602 @@
+{
+  "status": "verified_complete",
+  "launch_commit": "23f704a877187d584a29a18347fa78229fecf1e9",
+  "inspection_commit": "c7fd403cfc3beb339578d6bf79e43eaac25aa9c8",
+  "observed_at": "2026-10-23T03:00:46.338087+00:00",
+  "source_receipt": "temp/downstream_20261023/final.json",
+  "source_receipt_sha256": "58fd1890521f1daefa43df70ecc47af4f4d6f07f1aa18f33010b191acf80795a",
+  "log_sha256": "85c2ab54e8448b259cdb591c7a2f5dec1292d1526060285ccf882250ef5a5955",
+  "comparison": {
+    "status": "ok",
+    "diagnostic": false,
+    "protocol": "zero-shot, seed 42, context 1024",
+    "scores": {
+      "D": {
+        "hellaswag": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.32304321848237405,
+          "examples": 10042,
+          "metrics": {
+            "name": "hellaswag",
+            "alias": "hellaswag",
+            "sample_len": 10042,
+            "acc,none": 0.28958374825731925,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.32304321848237405,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "09464228796402af749cecb86a3f46ac1637d73550e350cb23ee1fc014c15ca2"
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.3956228956228956,
+          "examples": 2376,
+          "metrics": {
+            "name": "arc_easy",
+            "alias": "arc_easy",
+            "sample_len": 2376,
+            "acc,none": 0.44276094276094274,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.3956228956228956,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "1610b4bf1607fb728f45601d35a7406aebc46ca5dc7937a4c3df5330501e5520"
+        },
+        "arc_challenge": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.23378839590443687,
+          "examples": 1172,
+          "metrics": {
+            "name": "arc_challenge",
+            "alias": "arc_challenge",
+            "sample_len": 1172,
+            "acc,none": 0.1825938566552901,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.23378839590443687,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "933af1a53c62430e49667b6149bb3d7ea828d6ac1c12379510e24fc439efaa7e"
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.27,
+          "examples": 500,
+          "metrics": {
+            "name": "openbookqa",
+            "alias": "openbookqa",
+            "sample_len": 500,
+            "acc,none": 0.16,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.27,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a"
+        },
+        "sciq": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.719,
+          "examples": 1000,
+          "metrics": {
+            "name": "sciq",
+            "alias": "sciq",
+            "sample_len": 1000,
+            "acc,none": 0.719,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.629,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "51fe1b04fe84a2d772345d2b690073c9372d79a629ccbad53b2ac9a0c00c195a"
+        },
+        "boolq": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.6137614678899083,
+          "examples": 3270,
+          "metrics": {
+            "name": "boolq",
+            "alias": "boolq",
+            "sample_len": 3270,
+            "acc,none": 0.6137614678899083,
+            "acc_stderr,none": "N/A"
+          },
+          "prompt_sha256": "ab646c2866e7205c79c089a5396dc302245a708586272df247d271e18bf77c62"
+        },
+        "piqa": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.6327529923830251,
+          "examples": 1838,
+          "metrics": {
+            "name": "piqa",
+            "alias": "piqa",
+            "sample_len": 1838,
+            "acc,none": 0.6414581066376496,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.6327529923830251,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "8b99894ea00d95f3fefb1d4d9229f7fd5262b2eba5c743afe7c2f01cf643d510"
+        },
+        "winogrande": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.5114443567482242,
+          "examples": 1267,
+          "metrics": {
+            "name": "winogrande",
+            "alias": "winogrande",
+            "sample_len": 1267,
+            "acc,none": 0.5114443567482242,
+            "acc_stderr,none": "N/A"
+          },
+          "prompt_sha256": "538996388e660721fe9b4ebb13b8915aa01459783357d7f2d9b45067d3071d17"
+        },
+        "lambada_openai": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.23326217737240443,
+          "examples": 5153,
+          "metrics": {
+            "name": "lambada_openai",
+            "alias": "lambada_openai",
+            "sample_len": 5153,
+            "perplexity,none": 102.0428850946688,
+            "perplexity_stderr,none": "N/A",
+            "acc,none": 0.23326217737240443,
+            "acc_stderr,none": "N/A"
+          },
+          "prompt_sha256": "b68412a3a02ca5670dbd47e9919ead132989719157aa52637ca12f6536ed3806"
+        },
+        "multiple_choice_average": 0.462426665878858
+      },
+      "Partial-25-cosine": {
+        "hellaswag": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.321449910376419,
+          "examples": 10042,
+          "metrics": {
+            "name": "hellaswag",
+            "alias": "hellaswag",
+            "sample_len": 10042,
+            "acc,none": 0.2949611631149173,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.321449910376419,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "09464228796402af749cecb86a3f46ac1637d73550e350cb23ee1fc014c15ca2"
+        },
+        "arc_easy": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.3888888888888889,
+          "examples": 2376,
+          "metrics": {
+            "name": "arc_easy",
+            "alias": "arc_easy",
+            "sample_len": 2376,
+            "acc,none": 0.4313973063973064,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.3888888888888889,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "1610b4bf1607fb728f45601d35a7406aebc46ca5dc7937a4c3df5330501e5520"
+        },
+        "arc_challenge": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.23208191126279865,
+          "examples": 1172,
+          "metrics": {
+            "name": "arc_challenge",
+            "alias": "arc_challenge",
+            "sample_len": 1172,
+            "acc,none": 0.17406143344709898,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.23208191126279865,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "933af1a53c62430e49667b6149bb3d7ea828d6ac1c12379510e24fc439efaa7e"
+        },
+        "openbookqa": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.274,
+          "examples": 500,
+          "metrics": {
+            "name": "openbookqa",
+            "alias": "openbookqa",
+            "sample_len": 500,
+            "acc,none": 0.15,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.274,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a"
+        },
+        "sciq": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.718,
+          "examples": 1000,
+          "metrics": {
+            "name": "sciq",
+            "alias": "sciq",
+            "sample_len": 1000,
+            "acc,none": 0.718,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.648,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "51fe1b04fe84a2d772345d2b690073c9372d79a629ccbad53b2ac9a0c00c195a"
+        },
+        "boolq": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.6201834862385321,
+          "examples": 3270,
+          "metrics": {
+            "name": "boolq",
+            "alias": "boolq",
+            "sample_len": 3270,
+            "acc,none": 0.6201834862385321,
+            "acc_stderr,none": "N/A"
+          },
+          "prompt_sha256": "ab646c2866e7205c79c089a5396dc302245a708586272df247d271e18bf77c62"
+        },
+        "piqa": {
+          "primary_metric": "acc_norm,none",
+          "accuracy": 0.6371055495103374,
+          "examples": 1838,
+          "metrics": {
+            "name": "piqa",
+            "alias": "piqa",
+            "sample_len": 1838,
+            "acc,none": 0.6387377584330794,
+            "acc_stderr,none": "N/A",
+            "acc_norm,none": 0.6371055495103374,
+            "acc_norm_stderr,none": "N/A"
+          },
+          "prompt_sha256": "8b99894ea00d95f3fefb1d4d9229f7fd5262b2eba5c743afe7c2f01cf643d510"
+        },
+        "winogrande": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.4877663772691397,
+          "examples": 1267,
+          "metrics": {
+            "name": "winogrande",
+            "alias": "winogrande",
+            "sample_len": 1267,
+            "acc,none": 0.4877663772691397,
+            "acc_stderr,none": "N/A"
+          },
+          "prompt_sha256": "538996388e660721fe9b4ebb13b8915aa01459783357d7f2d9b45067d3071d17"
+        },
+        "lambada_openai": {
+          "primary_metric": "acc,none",
+          "accuracy": 0.2287987580050456,
+          "examples": 5153,
+          "metrics": {
+            "name": "lambada_openai",
+            "alias": "lambada_openai",
+            "sample_len": 5153,
+            "perplexity,none": 105.95123937516979,
+            "perplexity_stderr,none": "N/A",
+            "acc,none": 0.2287987580050456,
+            "acc_stderr,none": "N/A"
+          },
+          "prompt_sha256": "b68412a3a02ca5670dbd47e9919ead132989719157aa52637ca12f6536ed3806"
+        },
+        "multiple_choice_average": 0.45993451544326447
+      }
+    },
+    "metadata": {
+      "D": {
+        "commonsense": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/commonsense.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "hellaswag"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "routed_mlp_fraction": 1.0,
+            "router_detach_input": false,
+            "router_metric": "linear",
+            "r": 0,
+            "reuse": true,
+            "routing": "fixed",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "none",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": null,
+            "select_on": "logits",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 40168,
+          "truncated_requests": 0,
+          "elapsed_seconds": 149.63730735797435
+        },
+        "science": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/science.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "arc_easy",
+              "arc_challenge",
+              "openbookqa",
+              "sciq"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "routed_mlp_fraction": 1.0,
+            "router_detach_input": false,
+            "router_metric": "linear",
+            "r": 0,
+            "reuse": true,
+            "routing": "fixed",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "none",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": null,
+            "select_on": "logits",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 20188,
+          "truncated_requests": 0,
+          "elapsed_seconds": 84.24517734814435
+        },
+        "reading": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/reading.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "boolq",
+              "piqa"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "routed_mlp_fraction": 1.0,
+            "router_detach_input": false,
+            "router_metric": "linear",
+            "r": 0,
+            "reuse": true,
+            "routing": "fixed",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "none",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": null,
+            "select_on": "logits",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 10216,
+          "truncated_requests": 2,
+          "elapsed_seconds": 53.505088484846056
+        },
+        "language": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/language.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "winogrande",
+              "lambada_openai"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "qo_mlp",
+            "routed_mlp_fraction": 1.0,
+            "router_detach_input": false,
+            "router_metric": "linear",
+            "r": 0,
+            "reuse": true,
+            "routing": "fixed",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "none",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": null,
+            "select_on": "logits",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 7687,
+          "truncated_requests": 0,
+          "elapsed_seconds": 61.84002567641437
+        }
+      },
+      "Partial-25-cosine": {
+        "commonsense": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/commonsense.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "hellaswag"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "mlp",
+            "routed_mlp_fraction": 0.25,
+            "router_detach_input": false,
+            "router_metric": "cosine",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "A",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": 2.0,
+            "select_on": "probs",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 40168,
+          "truncated_requests": 0,
+          "elapsed_seconds": 173.2145330030471
+        },
+        "science": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/science.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "arc_easy",
+              "arc_challenge",
+              "openbookqa",
+              "sciq"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "mlp",
+            "routed_mlp_fraction": 0.25,
+            "router_detach_input": false,
+            "router_metric": "cosine",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "A",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": 2.0,
+            "select_on": "probs",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 20188,
+          "truncated_requests": 0,
+          "elapsed_seconds": 97.42065064609051
+        },
+        "reading": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/reading.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "boolq",
+              "piqa"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "mlp",
+            "routed_mlp_fraction": 0.25,
+            "router_detach_input": false,
+            "router_metric": "cosine",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "A",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": 2.0,
+            "select_on": "probs",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 10216,
+          "truncated_requests": 2,
+          "elapsed_seconds": 58.624757195822895
+        },
+        "language": {
+          "status": "ok",
+          "arguments": {
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "tokenizer": null,
+            "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/language.json",
+            "device": "cuda:0",
+            "batch_size": 8,
+            "max_length": 1024,
+            "tasks": [
+              "winogrande",
+              "lambada_openai"
+            ],
+            "attention_backend": "fa4",
+            "precision": "bf16",
+            "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+            "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+            "seed": 42,
+            "num_fewshot": 0,
+            "limit": null
+          },
+          "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+          "global_step": 10000,
+          "routing": {
+            "n_stem": 2,
+            "n_coda": 2,
+            "S": 8,
+            "mode": "compute_matched",
+            "window": "absolute",
+            "kv_mode": "step",
+            "route_scope": "mlp",
+            "routed_mlp_fraction": 0.25,
+            "router_detach_input": false,
+            "router_metric": "cosine",
+            "r": 1,
+            "reuse": true,
+            "routing": "learned",
+            "step_film": true,
+            "visit_scale": "none",
+            "gate": "st",
+            "default_prior": 1.0,
+            "init_std_scale": 0.1,
+            "balance_rate": 0.001,
+            "z_loss_coef": 0.001,
+            "explore_eps_max": 0.05,
+            "curriculum": "A",
+            "soft_phase_frac": 0.15,
+            "explore_end_frac": 0.5,
+            "widen_every_frac": 0.1,
+            "seed": 0,
+            "expert_backend": "grouped",
+            "logit_cap": 2.0,
+            "select_on": "probs",
+            "placement_film": false,
+            "placement_film_scope": "both"
+          },
+          "master_dtype": "torch.float32",
+          "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+          "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+          "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+          "packages": {
+            "torch": "2.14.1",
+            "transformers": "5.9.0",
+            "datasets": "4.8.5",
+            "lm-eval": "0.4.13",
+            "flash-attn-4": "4.0.0b33"
+          },
+          "likelihood_requests": 7687,
+          "truncated_requests": 0,
+          "elapsed_seconds": 66.51775568071753
+        }
+      }
+    },
+    "paired_prompt_hashes": {
+      "hellaswag": "09464228796402af749cecb86a3f46ac1637d73550e350cb23ee1fc014c15ca2",
+      "arc_easy": "1610b4bf1607fb728f45601d35a7406aebc46ca5dc7937a4c3df5330501e5520",
+      "arc_challenge": "933af1a53c62430e49667b6149bb3d7ea828d6ac1c12379510e24fc439efaa7e",
+      "piqa": "8b99894ea00d95f3fefb1d4d9229f7fd5262b2eba5c743afe7c2f01cf643d510",
+      "winogrande": "538996388e660721fe9b4ebb13b8915aa01459783357d7f2d9b45067d3071d17",
+      "boolq": "ab646c2866e7205c79c089a5396dc302245a708586272df247d271e18bf77c62",
+      "openbookqa": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a",
+      "sciq": "51fe1b04fe84a2d772345d2b690073c9372d79a629ccbad53b2ac9a0c00c195a",
+      "lambada_openai": "b68412a3a02ca5670dbd47e9919ead132989719157aa52637ca12f6536ed3806"
+    }
+  },
+  "partial_minus_D_percentage_points": {
+    "hellaswag": -0.1593308105955038,
+    "arc_easy": -0.6734006734006703,
+    "arc_challenge": -0.1706484641638223,
+    "piqa": 0.43525571273123065,
+    "winogrande": -2.3677979479084508,
+    "boolq": 0.6422018348623881,
+    "openbookqa": 0.40000000000000036,
+    "sciq": -0.10000000000000009,
+    "lambada_openai": -0.4463419367358834
+  },
+  "multiple_choice_average_gap_pp": -0.2492150435593532,
+  "interpretation": "Mixed results; no aggregate downstream win in this single-checkpoint-pair zero-shot screen. Not a significance test or an equal-wall-time comparison.",
+  "evidence": {
+    "live": {
+      "host": "thiennh-p6-6y3o-worker-0",
+      "time": "2026-10-23T03:00:46.338087+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429239
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429240
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429241
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429242
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429243
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429244
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429245
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429246
+          ]
+        }
+      ],
+      "workers": [
+        429239,
+        429240,
+        429241,
+        429242,
+        429243,
+        429244,
+        429245,
+        429246
+      ],
+      "stop_roots": [
+        429170
+      ],
+      "processes": {
+        "429239": {
+          "pid": 429239,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "82d9a44121d46b80bb940d1c3e9e1ca3a2f61f898585189e026a6b6ff9cc9f83",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429240": {
+          "pid": 429240,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "a5a3171655f745ddd763543d3e3c4af6516425d54603a659d94de11cd11d470e",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429241": {
+          "pid": 429241,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "cd657be442bd08d305af848109b8fb09826bf7e1f8f5cef0d592a26dfc9b642a",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429242": {
+          "pid": 429242,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "90c2bbf5cb279bf8fb1cdf4128cb5b1464663b59cdfdc9953459e73830a7c747",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429243": {
+          "pid": 429243,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "52879feccbde395f88814123bc49ed1beeebde8ed189c6f431071b82999e88ff",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429244": {
+          "pid": 429244,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "58922dd97f578c0a2cd2b45a4b55a8f173581ea5bf10da5732c273608ca3dd8e",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429245": {
+          "pid": 429245,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "4f5c30ce025f6829eedc888bc42c7d61963403afdfc13ac06b19dffd165a0daf",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429246": {
+          "pid": 429246,
+          "ppid": 429170,
+          "start_ticks": 266493222,
+          "command_sha256": "dd79231387d0b851cb506c9d59389a24f993e1b4a19d4a6b1d5d13ff2a20c123",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "429170": {
+          "pid": 429170,
+          "ppid": 9406,
+          "start_ticks": 266493107,
+          "command_sha256": "24b61866f3fd2cfdcaa5848d0e7616017354362358dc5dec3af91c4199686445",
+          "exe": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+            "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/llm_pretrain_burn.py"
+          ],
+          "launcher_kind": "gpu_burn"
+        }
+      },
+      "guard_disabled": false
+    },
+    "supervisor_tail": "AUTHORIZED_BURN_WORKER_STOP [425865, 425866, 425867, 425868, 425869, 425870, 425871, 425872]\nALL_EIGHT_GPUS_VERIFIED_FREE\nSTART adapter_check\nOK adapter_check\nSTART smoke\nOK smoke\nSTART full\nOK full\n",
+    "launch.json": {
+      "status": "submitted",
+      "session": "dot_downstream_20261023_a01",
+      "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01",
+      "python": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "tokenizers": "0.22.2",
+        "safetensors": "0.8.0",
+        "flash-attn-4": "4.0.0b33"
+      },
+      "accelerate_cache": "/mnt/local/.cache/huggingface/accelerate/default_config.yaml",
+      "environment": {
+        "HF_HUB_OFFLINE": "1",
+        "HF_DATASETS_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1",
+        "HF_HUB_DISABLE_TELEMETRY": "1",
+        "WANDB_MODE": "offline",
+        "NCCL_NVLS_ENABLE": "0",
+        "OMP_NUM_THREADS": "1",
+        "TOKENIZERS_PARALLELISM": "false",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "jobs_config": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/jobs.json"
+    },
+    "preparation.json": {
+      "status": "ok",
+      "parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01",
+      "source": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source",
+      "scientific_source": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source",
+      "overlays": [
+        "eval/bdot_harness.py",
+        "eval/benchmark_data.py",
+        "eval/downstream_suite.py",
+        "scripts/check_downstream_adapter.py",
+        "scripts/bdot_downstream_launch.py",
+        "tests/bdot/test_harness.py",
+        "tests/test_downstream_suite.py",
+        "resources/downstream_english_20261023.json"
+      ],
+      "checkpoints": {
+        "D": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+        "Partial-25-cosine": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000"
+      },
+      "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b"
+    },
+    "supervised/reclaim.json": {
+      "at": "2026-10-23T02:54:26.567076+00:00",
+      "before": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425865
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425866
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425867
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425868
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425869
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425870
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425871
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            425872
+          ]
+        }
+      ],
+      "identities": {
+        "425865": {
+          "pid": 425865,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425796": {
+          "pid": 425796,
+          "ppid": 9406,
+          "start_ticks": 266162703,
+          "command_sha256": "f47ff4ab83df26d0ed1a0cce6c4c28fc4423e89ab8c65ebce442a76e15179702",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source/resources/llm_pretrain_burn.py"
+          ],
+          "launcher_kind": "gpu_burn"
+        },
+        "425866": {
+          "pid": 425866,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425867": {
+          "pid": 425867,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425868": {
+          "pid": 425868,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425869": {
+          "pid": 425869,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425870": {
+          "pid": 425870,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425871": {
+          "pid": 425871,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        },
+        "425872": {
+          "pid": 425872,
+          "ppid": 425796,
+          "start_ticks": 266162827,
+          "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+          "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/train/bin/python3.11",
+            "-B",
+            "-c"
+          ],
+          "launcher_kind": null
+        }
+      },
+      "signal_targets": [
+        425865,
+        425866,
+        425867,
+        425868,
+        425869,
+        425870,
+        425871,
+        425872
+      ]
+    },
+    "supervised/gpus-free-before-training.json": {
+      "at": "2026-10-23T02:54:56.571792+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        }
+      ]
+    },
+    "supervised/supervisor.json": {
+      "started_at": "2026-10-23T02:54:56.851694+00:00",
+      "training_status": "ok",
+      "training_returncode": 0,
+      "free_after_training": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 0.0,
+          "utilization_percent": 0.0,
+          "pids": []
+        }
+      ],
+      "burn": {
+        "at": "2026-10-23T02:59:56.297578+00:00",
+        "session": "dot_downstream_20261023_a01_burn",
+        "gpus": [
+          {
+            "index": 0,
+            "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429239
+            ]
+          },
+          {
+            "index": 1,
+            "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429240
+            ]
+          },
+          {
+            "index": 2,
+            "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429241
+            ]
+          },
+          {
+            "index": 3,
+            "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429242
+            ]
+          },
+          {
+            "index": 4,
+            "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429243
+            ]
+          },
+          {
+            "index": 5,
+            "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429244
+            ]
+          },
+          {
+            "index": 6,
+            "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429245
+            ]
+          },
+          {
+            "index": 7,
+            "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+            "name": "NVIDIA B200",
+            "memory_total_mib": 183359.0,
+            "memory_used_mib": 155212.0,
+            "utilization_percent": 100.0,
+            "pids": [
+              429246
+            ]
+          }
+        ],
+        "collective_progress_verified": true
+      },
+      "finished_at": "2026-10-23T02:59:56.297864+00:00"
+    },
+    "supervised/burn-verified.json": {
+      "at": "2026-10-23T02:59:56.297578+00:00",
+      "session": "dot_downstream_20261023_a01_burn",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429239
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429240
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429241
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429242
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429243
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429244
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429245
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            429246
+          ]
+        }
+      ],
+      "collective_progress_verified": true
+    },
+    "supervised/run/run.json": {
+      "status": "ok",
+      "started_at": "2026-10-23T02:54:56.851959+00:00",
+      "jobs": [
+        {
+          "name": "adapter_check",
+          "started_at": "2026-10-23T02:54:56.852197+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 23.096090319100767,
+          "artifacts": [
+            {
+              "path": "adapter-check.json",
+              "sha256": "2abc5e290fc6cede16ae84eb15465718d0623ef291c4426828f1fe54d45391c3",
+              "bytes": 414
+            }
+          ],
+          "finished_at": "2026-10-23T02:55:20.500185+00:00"
+        },
+        {
+          "name": "smoke",
+          "started_at": "2026-10-23T02:55:20.500228+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 31.413217945955694,
+          "artifacts": [
+            {
+              "path": "smoke/summary.json",
+              "sha256": "e5780beb76837fda4860b0aba364d6a4de71aac77944a38af6670ad13ee98dfc",
+              "bytes": 31161
+            }
+          ],
+          "finished_at": "2026-10-23T02:55:52.438872+00:00"
+        },
+        {
+          "name": "full",
+          "started_at": "2026-10-23T02:55:52.438948+00:00",
+          "status": "ok",
+          "returncode": 0,
+          "elapsed_seconds": 177.51354954997078,
+          "artifacts": [
+            {
+              "path": "full/summary.json",
+              "sha256": "fc2c8dfc6cb1976cbf5de39cfe4c0f7bd1db4ac5cfdb224f1b4dffca04c1f1d2",
+              "bytes": 31840
+            }
+          ],
+          "finished_at": "2026-10-23T02:58:50.457064+00:00"
+        }
+      ],
+      "finished_at": "2026-10-23T02:58:50.457104+00:00"
+    },
+    "supervised/run/adapter-check.json": {
+      "status": "ok",
+      "checkpoints": {
+        "D": {
+          "status": "ok",
+          "packed_logits_max_abs": 0.0,
+          "routes_equal": true,
+          "max_likelihood_error": 0.0,
+          "master_dtype": "torch.float32"
+        },
+        "Partial-25-cosine": {
+          "status": "ok",
+          "packed_logits_max_abs": 0.0,
+          "routes_equal": true,
+          "max_likelihood_error": 0.0,
+          "master_dtype": "torch.float32"
+        }
+      }
+    },
+    "supervised/run/smoke/summary.json": {
+      "status": "ok",
+      "diagnostic": true,
+      "protocol": "zero-shot, seed 42, context 1024",
+      "scores": {
+        "D": {
+          "hellaswag": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.25,
+            "examples": 8,
+            "metrics": {
+              "name": "hellaswag",
+              "alias": "hellaswag",
+              "sample_len": 8,
+              "acc,none": 0.25,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.25,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "ee8714d04c468d78456f84d58db04e47e354fdd59db810fb763d871206952a94"
+          },
+          "arc_easy": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.25,
+            "examples": 8,
+            "metrics": {
+              "name": "arc_easy",
+              "alias": "arc_easy",
+              "sample_len": 8,
+              "acc,none": 0.375,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.25,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "38dd48f2661ccc426060f42ca3dafbfb552abff73e33708f069015e02b90b725"
+          },
+          "arc_challenge": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.125,
+            "examples": 8,
+            "metrics": {
+              "name": "arc_challenge",
+              "alias": "arc_challenge",
+              "sample_len": 8,
+              "acc,none": 0.0,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.125,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "b0d280c9fd397e54c037b3e51769c5fc2ca83afbcb3a7d898fc97af8b125cd3f"
+          },
+          "openbookqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.125,
+            "examples": 8,
+            "metrics": {
+              "name": "openbookqa",
+              "alias": "openbookqa",
+              "sample_len": 8,
+              "acc,none": 0.0,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.125,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "ec0fc71e8c57978db547004c9e8a151d30bb320d5b1164bd3509cead94499eb8"
+          },
+          "sciq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.5,
+            "examples": 8,
+            "metrics": {
+              "name": "sciq",
+              "alias": "sciq",
+              "sample_len": 8,
+              "acc,none": 0.5,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.625,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "8d8da3e8e216761b550c2b9041644ac1e47c22fae79ff6f1839086fc0abbf400"
+          },
+          "boolq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.75,
+            "examples": 8,
+            "metrics": {
+              "name": "boolq",
+              "alias": "boolq",
+              "sample_len": 8,
+              "acc,none": 0.75,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "c66627a1bf809b5fb3fad11f769e9c80b8de4b20c1a3dbbe415d80ac37ba5fe4"
+          },
+          "piqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.625,
+            "examples": 8,
+            "metrics": {
+              "name": "piqa",
+              "alias": "piqa",
+              "sample_len": 8,
+              "acc,none": 0.75,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.625,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "5faa962cf4c2bef40016074a0f7b9e23aeb31f8e93ab05612c6cf9e4a10e611e"
+          },
+          "winogrande": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.75,
+            "examples": 8,
+            "metrics": {
+              "name": "winogrande",
+              "alias": "winogrande",
+              "sample_len": 8,
+              "acc,none": 0.75,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "c58196c581d576bda50a11099910b0abbd639cae1137ae955730487271788e28"
+          },
+          "lambada_openai": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.5,
+            "examples": 8,
+            "metrics": {
+              "name": "lambada_openai",
+              "alias": "lambada_openai",
+              "sample_len": 8,
+              "perplexity,none": 64.46238020814442,
+              "perplexity_stderr,none": "N/A",
+              "acc,none": 0.5,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "4067e0b669ba7538bbd067f9c98a65a75696b307ea2ffdbf7521e1c73026dfc8"
+          },
+          "multiple_choice_average": 0.421875
+        },
+        "Partial-25-cosine": {
+          "hellaswag": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.375,
+            "examples": 8,
+            "metrics": {
+              "name": "hellaswag",
+              "alias": "hellaswag",
+              "sample_len": 8,
+              "acc,none": 0.25,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.375,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "ee8714d04c468d78456f84d58db04e47e354fdd59db810fb763d871206952a94"
+          },
+          "arc_easy": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.25,
+            "examples": 8,
+            "metrics": {
+              "name": "arc_easy",
+              "alias": "arc_easy",
+              "sample_len": 8,
+              "acc,none": 0.375,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.25,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "38dd48f2661ccc426060f42ca3dafbfb552abff73e33708f069015e02b90b725"
+          },
+          "arc_challenge": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.125,
+            "examples": 8,
+            "metrics": {
+              "name": "arc_challenge",
+              "alias": "arc_challenge",
+              "sample_len": 8,
+              "acc,none": 0.0,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.125,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "b0d280c9fd397e54c037b3e51769c5fc2ca83afbcb3a7d898fc97af8b125cd3f"
+          },
+          "openbookqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.125,
+            "examples": 8,
+            "metrics": {
+              "name": "openbookqa",
+              "alias": "openbookqa",
+              "sample_len": 8,
+              "acc,none": 0.0,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.125,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "ec0fc71e8c57978db547004c9e8a151d30bb320d5b1164bd3509cead94499eb8"
+          },
+          "sciq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.625,
+            "examples": 8,
+            "metrics": {
+              "name": "sciq",
+              "alias": "sciq",
+              "sample_len": 8,
+              "acc,none": 0.625,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.625,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "8d8da3e8e216761b550c2b9041644ac1e47c22fae79ff6f1839086fc0abbf400"
+          },
+          "boolq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.75,
+            "examples": 8,
+            "metrics": {
+              "name": "boolq",
+              "alias": "boolq",
+              "sample_len": 8,
+              "acc,none": 0.75,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "c66627a1bf809b5fb3fad11f769e9c80b8de4b20c1a3dbbe415d80ac37ba5fe4"
+          },
+          "piqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.75,
+            "examples": 8,
+            "metrics": {
+              "name": "piqa",
+              "alias": "piqa",
+              "sample_len": 8,
+              "acc,none": 0.75,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.75,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "5faa962cf4c2bef40016074a0f7b9e23aeb31f8e93ab05612c6cf9e4a10e611e"
+          },
+          "winogrande": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.625,
+            "examples": 8,
+            "metrics": {
+              "name": "winogrande",
+              "alias": "winogrande",
+              "sample_len": 8,
+              "acc,none": 0.625,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "c58196c581d576bda50a11099910b0abbd639cae1137ae955730487271788e28"
+          },
+          "lambada_openai": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.5,
+            "examples": 8,
+            "metrics": {
+              "name": "lambada_openai",
+              "alias": "lambada_openai",
+              "sample_len": 8,
+              "perplexity,none": 58.457946941188645,
+              "perplexity_stderr,none": "N/A",
+              "acc,none": 0.5,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "4067e0b669ba7538bbd067f9c98a65a75696b307ea2ffdbf7521e1c73026dfc8"
+          },
+          "multiple_choice_average": 0.453125
+        }
+      },
+      "metadata": {
+        "D": {
+          "commonsense": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/D/commonsense.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "hellaswag"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 32,
+            "truncated_requests": 0,
+            "elapsed_seconds": 26.88577501801774
+          },
+          "science": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/D/science.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "arc_easy",
+                "arc_challenge",
+                "openbookqa",
+                "sciq"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 128,
+            "truncated_requests": 0,
+            "elapsed_seconds": 28.39829327398911
+          },
+          "reading": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/D/reading.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "boolq",
+                "piqa"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 32,
+            "truncated_requests": 0,
+            "elapsed_seconds": 28.3928643129766
+          },
+          "language": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/D/language.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "winogrande",
+                "lambada_openai"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 24,
+            "truncated_requests": 0,
+            "elapsed_seconds": 24.558379895053804
+          }
+        },
+        "Partial-25-cosine": {
+          "commonsense": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/Partial-25-cosine/commonsense.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "hellaswag"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 32,
+            "truncated_requests": 0,
+            "elapsed_seconds": 27.46897535212338
+          },
+          "science": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/Partial-25-cosine/science.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "arc_easy",
+                "arc_challenge",
+                "openbookqa",
+                "sciq"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 128,
+            "truncated_requests": 0,
+            "elapsed_seconds": 28.74880390521139
+          },
+          "reading": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/Partial-25-cosine/reading.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "boolq",
+                "piqa"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 32,
+            "truncated_requests": 0,
+            "elapsed_seconds": 28.42095784796402
+          },
+          "language": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/Partial-25-cosine/language.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "winogrande",
+                "lambada_openai"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": 8
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 24,
+            "truncated_requests": 0,
+            "elapsed_seconds": 24.83121760515496
+          }
+        }
+      },
+      "paired_prompt_hashes": {
+        "hellaswag": "ee8714d04c468d78456f84d58db04e47e354fdd59db810fb763d871206952a94",
+        "arc_easy": "38dd48f2661ccc426060f42ca3dafbfb552abff73e33708f069015e02b90b725",
+        "arc_challenge": "b0d280c9fd397e54c037b3e51769c5fc2ca83afbcb3a7d898fc97af8b125cd3f",
+        "piqa": "5faa962cf4c2bef40016074a0f7b9e23aeb31f8e93ab05612c6cf9e4a10e611e",
+        "winogrande": "c58196c581d576bda50a11099910b0abbd639cae1137ae955730487271788e28",
+        "boolq": "c66627a1bf809b5fb3fad11f769e9c80b8de4b20c1a3dbbe415d80ac37ba5fe4",
+        "openbookqa": "ec0fc71e8c57978db547004c9e8a151d30bb320d5b1164bd3509cead94499eb8",
+        "sciq": "8d8da3e8e216761b550c2b9041644ac1e47c22fae79ff6f1839086fc0abbf400",
+        "lambada_openai": "4067e0b669ba7538bbd067f9c98a65a75696b307ea2ffdbf7521e1c73026dfc8"
+      }
+    },
+    "supervised/run/full/summary.json": {
+      "status": "ok",
+      "diagnostic": false,
+      "protocol": "zero-shot, seed 42, context 1024",
+      "scores": {
+        "D": {
+          "hellaswag": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.32304321848237405,
+            "examples": 10042,
+            "metrics": {
+              "name": "hellaswag",
+              "alias": "hellaswag",
+              "sample_len": 10042,
+              "acc,none": 0.28958374825731925,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.32304321848237405,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "09464228796402af749cecb86a3f46ac1637d73550e350cb23ee1fc014c15ca2"
+          },
+          "arc_easy": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.3956228956228956,
+            "examples": 2376,
+            "metrics": {
+              "name": "arc_easy",
+              "alias": "arc_easy",
+              "sample_len": 2376,
+              "acc,none": 0.44276094276094274,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.3956228956228956,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "1610b4bf1607fb728f45601d35a7406aebc46ca5dc7937a4c3df5330501e5520"
+          },
+          "arc_challenge": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.23378839590443687,
+            "examples": 1172,
+            "metrics": {
+              "name": "arc_challenge",
+              "alias": "arc_challenge",
+              "sample_len": 1172,
+              "acc,none": 0.1825938566552901,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.23378839590443687,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "933af1a53c62430e49667b6149bb3d7ea828d6ac1c12379510e24fc439efaa7e"
+          },
+          "openbookqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.27,
+            "examples": 500,
+            "metrics": {
+              "name": "openbookqa",
+              "alias": "openbookqa",
+              "sample_len": 500,
+              "acc,none": 0.16,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.27,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a"
+          },
+          "sciq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.719,
+            "examples": 1000,
+            "metrics": {
+              "name": "sciq",
+              "alias": "sciq",
+              "sample_len": 1000,
+              "acc,none": 0.719,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.629,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "51fe1b04fe84a2d772345d2b690073c9372d79a629ccbad53b2ac9a0c00c195a"
+          },
+          "boolq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.6137614678899083,
+            "examples": 3270,
+            "metrics": {
+              "name": "boolq",
+              "alias": "boolq",
+              "sample_len": 3270,
+              "acc,none": 0.6137614678899083,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "ab646c2866e7205c79c089a5396dc302245a708586272df247d271e18bf77c62"
+          },
+          "piqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.6327529923830251,
+            "examples": 1838,
+            "metrics": {
+              "name": "piqa",
+              "alias": "piqa",
+              "sample_len": 1838,
+              "acc,none": 0.6414581066376496,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.6327529923830251,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "8b99894ea00d95f3fefb1d4d9229f7fd5262b2eba5c743afe7c2f01cf643d510"
+          },
+          "winogrande": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.5114443567482242,
+            "examples": 1267,
+            "metrics": {
+              "name": "winogrande",
+              "alias": "winogrande",
+              "sample_len": 1267,
+              "acc,none": 0.5114443567482242,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "538996388e660721fe9b4ebb13b8915aa01459783357d7f2d9b45067d3071d17"
+          },
+          "lambada_openai": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.23326217737240443,
+            "examples": 5153,
+            "metrics": {
+              "name": "lambada_openai",
+              "alias": "lambada_openai",
+              "sample_len": 5153,
+              "perplexity,none": 102.0428850946688,
+              "perplexity_stderr,none": "N/A",
+              "acc,none": 0.23326217737240443,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "b68412a3a02ca5670dbd47e9919ead132989719157aa52637ca12f6536ed3806"
+          },
+          "multiple_choice_average": 0.462426665878858
+        },
+        "Partial-25-cosine": {
+          "hellaswag": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.321449910376419,
+            "examples": 10042,
+            "metrics": {
+              "name": "hellaswag",
+              "alias": "hellaswag",
+              "sample_len": 10042,
+              "acc,none": 0.2949611631149173,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.321449910376419,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "09464228796402af749cecb86a3f46ac1637d73550e350cb23ee1fc014c15ca2"
+          },
+          "arc_easy": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.3888888888888889,
+            "examples": 2376,
+            "metrics": {
+              "name": "arc_easy",
+              "alias": "arc_easy",
+              "sample_len": 2376,
+              "acc,none": 0.4313973063973064,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.3888888888888889,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "1610b4bf1607fb728f45601d35a7406aebc46ca5dc7937a4c3df5330501e5520"
+          },
+          "arc_challenge": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.23208191126279865,
+            "examples": 1172,
+            "metrics": {
+              "name": "arc_challenge",
+              "alias": "arc_challenge",
+              "sample_len": 1172,
+              "acc,none": 0.17406143344709898,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.23208191126279865,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "933af1a53c62430e49667b6149bb3d7ea828d6ac1c12379510e24fc439efaa7e"
+          },
+          "openbookqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.274,
+            "examples": 500,
+            "metrics": {
+              "name": "openbookqa",
+              "alias": "openbookqa",
+              "sample_len": 500,
+              "acc,none": 0.15,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.274,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a"
+          },
+          "sciq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.718,
+            "examples": 1000,
+            "metrics": {
+              "name": "sciq",
+              "alias": "sciq",
+              "sample_len": 1000,
+              "acc,none": 0.718,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.648,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "51fe1b04fe84a2d772345d2b690073c9372d79a629ccbad53b2ac9a0c00c195a"
+          },
+          "boolq": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.6201834862385321,
+            "examples": 3270,
+            "metrics": {
+              "name": "boolq",
+              "alias": "boolq",
+              "sample_len": 3270,
+              "acc,none": 0.6201834862385321,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "ab646c2866e7205c79c089a5396dc302245a708586272df247d271e18bf77c62"
+          },
+          "piqa": {
+            "primary_metric": "acc_norm,none",
+            "accuracy": 0.6371055495103374,
+            "examples": 1838,
+            "metrics": {
+              "name": "piqa",
+              "alias": "piqa",
+              "sample_len": 1838,
+              "acc,none": 0.6387377584330794,
+              "acc_stderr,none": "N/A",
+              "acc_norm,none": 0.6371055495103374,
+              "acc_norm_stderr,none": "N/A"
+            },
+            "prompt_sha256": "8b99894ea00d95f3fefb1d4d9229f7fd5262b2eba5c743afe7c2f01cf643d510"
+          },
+          "winogrande": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.4877663772691397,
+            "examples": 1267,
+            "metrics": {
+              "name": "winogrande",
+              "alias": "winogrande",
+              "sample_len": 1267,
+              "acc,none": 0.4877663772691397,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "538996388e660721fe9b4ebb13b8915aa01459783357d7f2d9b45067d3071d17"
+          },
+          "lambada_openai": {
+            "primary_metric": "acc,none",
+            "accuracy": 0.2287987580050456,
+            "examples": 5153,
+            "metrics": {
+              "name": "lambada_openai",
+              "alias": "lambada_openai",
+              "sample_len": 5153,
+              "perplexity,none": 105.95123937516979,
+              "perplexity_stderr,none": "N/A",
+              "acc,none": 0.2287987580050456,
+              "acc_stderr,none": "N/A"
+            },
+            "prompt_sha256": "b68412a3a02ca5670dbd47e9919ead132989719157aa52637ca12f6536ed3806"
+          },
+          "multiple_choice_average": 0.45993451544326447
+        }
+      },
+      "metadata": {
+        "D": {
+          "commonsense": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/commonsense.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "hellaswag"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 40168,
+            "truncated_requests": 0,
+            "elapsed_seconds": 149.63730735797435
+          },
+          "science": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/science.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "arc_easy",
+                "arc_challenge",
+                "openbookqa",
+                "sciq"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 20188,
+            "truncated_requests": 0,
+            "elapsed_seconds": 84.24517734814435
+          },
+          "reading": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/reading.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "boolq",
+                "piqa"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 10216,
+            "truncated_requests": 2,
+            "elapsed_seconds": 53.505088484846056
+          },
+          "language": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/D/language.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "winogrande",
+                "lambada_openai"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "qo_mlp",
+              "routed_mlp_fraction": 1.0,
+              "router_detach_input": false,
+              "router_metric": "linear",
+              "r": 0,
+              "reuse": true,
+              "routing": "fixed",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "none",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": null,
+              "select_on": "logits",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 7687,
+            "truncated_requests": 0,
+            "elapsed_seconds": 61.84002567641437
+          }
+        },
+        "Partial-25-cosine": {
+          "commonsense": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/commonsense.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "hellaswag"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 40168,
+            "truncated_requests": 0,
+            "elapsed_seconds": 173.2145330030471
+          },
+          "science": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/science.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "arc_easy",
+                "arc_challenge",
+                "openbookqa",
+                "sciq"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 20188,
+            "truncated_requests": 0,
+            "elapsed_seconds": 97.42065064609051
+          },
+          "reading": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/reading.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "boolq",
+                "piqa"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 10216,
+            "truncated_requests": 2,
+            "elapsed_seconds": 58.624757195822895
+          },
+          "language": {
+            "status": "ok",
+            "arguments": {
+              "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+              "tokenizer": null,
+              "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/Partial-25-cosine/language.json",
+              "device": "cuda:0",
+              "batch_size": 8,
+              "max_length": 1024,
+              "tasks": [
+                "winogrande",
+                "lambada_openai"
+              ],
+              "attention_backend": "fa4",
+              "precision": "bf16",
+              "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+              "manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/source/resources/downstream_english_20261023.json",
+              "seed": 42,
+              "num_fewshot": 0,
+              "limit": null
+            },
+            "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+            "global_step": 10000,
+            "routing": {
+              "n_stem": 2,
+              "n_coda": 2,
+              "S": 8,
+              "mode": "compute_matched",
+              "window": "absolute",
+              "kv_mode": "step",
+              "route_scope": "mlp",
+              "routed_mlp_fraction": 0.25,
+              "router_detach_input": false,
+              "router_metric": "cosine",
+              "r": 1,
+              "reuse": true,
+              "routing": "learned",
+              "step_film": true,
+              "visit_scale": "none",
+              "gate": "st",
+              "default_prior": 1.0,
+              "init_std_scale": 0.1,
+              "balance_rate": 0.001,
+              "z_loss_coef": 0.001,
+              "explore_eps_max": 0.05,
+              "curriculum": "A",
+              "soft_phase_frac": 0.15,
+              "explore_end_frac": 0.5,
+              "widen_every_frac": 0.1,
+              "seed": 0,
+              "expert_backend": "grouped",
+              "logit_cap": 2.0,
+              "select_on": "probs",
+              "placement_film": false,
+              "placement_film_scope": "both"
+            },
+            "master_dtype": "torch.float32",
+            "tokenizer_sha256": "41e00eccf531cffc2e562d38bdd879d41e5044ea279af5b73c6a32aabcc8fe04",
+            "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+            "weights_sha256": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+            "packages": {
+              "torch": "2.14.1",
+              "transformers": "5.9.0",
+              "datasets": "4.8.5",
+              "lm-eval": "0.4.13",
+              "flash-attn-4": "4.0.0b33"
+            },
+            "likelihood_requests": 7687,
+            "truncated_requests": 0,
+            "elapsed_seconds": 66.51775568071753
+          }
+        }
+      },
+      "paired_prompt_hashes": {
+        "hellaswag": "09464228796402af749cecb86a3f46ac1637d73550e350cb23ee1fc014c15ca2",
+        "arc_easy": "1610b4bf1607fb728f45601d35a7406aebc46ca5dc7937a4c3df5330501e5520",
+        "arc_challenge": "933af1a53c62430e49667b6149bb3d7ea828d6ac1c12379510e24fc439efaa7e",
+        "piqa": "8b99894ea00d95f3fefb1d4d9229f7fd5262b2eba5c743afe7c2f01cf643d510",
+        "winogrande": "538996388e660721fe9b4ebb13b8915aa01459783357d7f2d9b45067d3071d17",
+        "boolq": "ab646c2866e7205c79c089a5396dc302245a708586272df247d271e18bf77c62",
+        "openbookqa": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a",
+        "sciq": "51fe1b04fe84a2d772345d2b690073c9372d79a629ccbad53b2ac9a0c00c195a",
+        "lambada_openai": "b68412a3a02ca5670dbd47e9919ead132989719157aa52637ca12f6536ed3806"
+      }
+    },
+    "source_matches": true,
+    "accelerate_cache_matches": true,
+    "accelerate_env": "\nCopy-and-paste the text below in your GitHub issue\n\n- `Accelerate` version: 1.13.0\n- Platform: Linux-6.12.103-127.188.amzn2023.x86_64-x86_64-with-glibc2.39\n- `accelerate` bash location: /usr/local/bin/accelerate\n- Python version: 3.11.15\n- Numpy version: 2.4.6\n- PyTorch version: 2.14.1+cu130\n- PyTorch accelerator: CUDA\n- System RAM: 1996.02 GB\n- GPU type: NVIDIA B200\n- `Accelerate` default config:\n\t- compute_environment: LOCAL_MACHINE\n\t- distributed_type: MULTI_GPU\n\t- mixed_precision: bf16\n\t- use_cpu: False\n\t- debug: False\n\t- num_processes: 8\n\t- machine_rank: 0\n\t- num_machines: 1\n\t- gpu_ids: all\n\t- rdzv_backend: static\n\t- same_network: True\n\t- main_training_function: main\n\t- enable_cpu_affinity: False\n\t- downcast_bf16: no\n\t- tpu_use_cluster: False\n\t- tpu_use_sudo: False\n\t- tpu_env: []\n",
+    "logs": {
+      "supervised/run/smoke.log": "DOWNSTREAM_SUITE_OK /mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/smoke/summary.json\n",
+      "supervised/run/adapter_check.log": "utlass/base_dsl/dsl.py:2300: UserWarning: Argument aux_data (position 18) cannot be converted to a JitArgument for function 'cutlass___call___flash_attncuteflash_fwd_sm100FlashAttentionForwardSm100_object_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   0%|          | 0/2 [00:00<?, ?it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 2/2 [00:00<00:00, 40.76it/s]\n\rLoading weights:   0%|          | 0/211 [00:00<?, ?it/s]\rLoading weights: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 211/211 [00:00<00:00, 12130.24it/s]\n`pretrained` model kwarg is not of type `str`. Many other model arguments may be ignored. Please do not launch via accelerate or use `parallelize=True` if passing an existing model this way.\nPassed an already-initialized model through `pretrained`, assuming single-process call to evaluate() or custom distributed integration\n\rRunning loglikelihood requests:   0%|          | 0/2 [00:00<?, ?it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 2/2 [00:00<00:00, 86.33it/s]\n",
+      "supervised/run/full.log": "DOWNSTREAM_SUITE_OK /mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/summary.json\n"
+    },
+    "workers": {
+      "supervised/run/smoke/D/commonsense": {
+        "result_bytes": 37155,
+        "log_tail": "dsl/dsl.py:2300: UserWarning: Argument aux_data (position 18) cannot be converted to a JitArgument for function 'cutlass___call___flash_attncuteflash_fwd_sm100FlashAttentionForwardSm100_object_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   3%|\u258e         | 1/32 [00:04<02:04,  4.00s/it]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 32/32 [00:04<00:00,  7.81it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/D/science": {
+        "result_bytes": 125192,
+        "log_tail": "e value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   1%|          | 1/128 [00:05<10:40,  5.05s/it]\rRunning loglikelihood requests:  13%|\u2588\u258e        | 17/128 [00:08<00:43,  2.54it/s]\rRunning loglikelihood requests:  33%|\u2588\u2588\u2588\u258e      | 42/128 [00:10<00:16,  5.09it/s]\rRunning loglikelihood requests:  60%|\u2588\u2588\u2588\u2588\u2588\u2588    | 77/128 [00:10<00:04, 11.78it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 127/128 [00:10<00:00, 24.95it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 128/128 [00:10<00:00, 11.74it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/D/reading": {
+        "result_bytes": 53139,
+        "log_tail": "ject_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   3%|\u258e         | 1/32 [00:05<02:35,  5.02s/it]\rRunning loglikelihood requests:  53%|\u2588\u2588\u2588\u2588\u2588\u258e    | 17/32 [00:08<00:05,  2.52it/s]\rRunning loglikelihood requests:  78%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 25/32 [00:10<00:02,  2.70it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 32/32 [00:10<00:00,  2.97it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/D/language": {
+        "result_bytes": 37663,
+        "log_tail": "JitArgument for function 'cutlass___call___flash_attncuteflash_fwd_sm100FlashAttentionForwardSm100_object_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   4%|\u258d         | 1/24 [00:04<01:39,  4.35s/it]\rRunning loglikelihood requests:  38%|\u2588\u2588\u2588\u258a      | 9/24 [00:07<00:09,  1.52it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 24/24 [00:07<00:00,  3.39it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/Partial-25-cosine/commonsense": {
+        "result_bytes": 37221,
+        "log_tail": "dsl/dsl.py:2300: UserWarning: Argument aux_data (position 18) cannot be converted to a JitArgument for function 'cutlass___call___flash_attncuteflash_fwd_sm100FlashAttentionForwardSm100_object_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   3%|\u258e         | 1/32 [00:04<02:19,  4.49s/it]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 32/32 [00:04<00:00,  6.97it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/Partial-25-cosine/science": {
+        "result_bytes": 125291,
+        "log_tail": "the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   1%|          | 1/128 [00:05<11:18,  5.34s/it]\rRunning loglikelihood requests:  13%|\u2588\u258e        | 17/128 [00:08<00:45,  2.42it/s]\rRunning loglikelihood requests:  33%|\u2588\u2588\u2588\u258e      | 42/128 [00:11<00:17,  4.94it/s]\rRunning loglikelihood requests:  60%|\u2588\u2588\u2588\u2588\u2588\u2588    | 77/128 [00:11<00:04, 11.31it/s]\rRunning loglikelihood requests:  91%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 | 116/128 [00:11<00:00, 21.06it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 128/128 [00:11<00:00, 11.25it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/Partial-25-cosine/reading": {
+        "result_bytes": 53196,
+        "log_tail": "ject_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   3%|\u258e         | 1/32 [00:05<02:41,  5.22s/it]\rRunning loglikelihood requests:  53%|\u2588\u2588\u2588\u2588\u2588\u258e    | 17/32 [00:08<00:06,  2.47it/s]\rRunning loglikelihood requests:  78%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a  | 25/32 [00:10<00:02,  2.70it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 32/32 [00:10<00:00,  2.93it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/smoke/Partial-25-cosine/language": {
+        "result_bytes": 37736,
+        "log_tail": "JitArgument for function 'cutlass___call___flash_attncuteflash_fwd_sm100FlashAttentionForwardSm100_object_at__Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_Tensorgmemoi64i641_None_008838834764831'. Its type `<class 'flash_attn.cute.utils.AuxData'>` is not supported. If the value is known at compile time, annotate it: `aux_data: Constexpr`. Otherwise, implement the `JitArgument` or `DynamicExpression` protocol for type `<class 'flash_attn.cute.utils.AuxData'>`, or register a custom argument adapter.\n  exe_args, func_types, adapted_args = self.generate_mlir_function_types(\n\rRunning loglikelihood requests:   4%|\u258d         | 1/24 [00:04<01:47,  4.67s/it]\rRunning loglikelihood requests:  38%|\u2588\u2588\u2588\u258a      | 9/24 [00:07<00:10,  1.48it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 24/24 [00:07<00:00,  3.27it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/D/commonsense": {
+        "result_bytes": 53209164,
+        "log_tail": "]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 39864/40168 [01:47<00:00, 431.46it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 39912/40168 [01:47<00:00, 425.86it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 39960/40168 [01:47<00:00, 428.09it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40008/40168 [01:47<00:00, 426.53it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40056/40168 [01:47<00:00, 428.98it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40104/40168 [01:48<00:00, 426.72it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40152/40168 [01:48<00:00, 420.10it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 40168/40168 [01:48<00:00, 370.49it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/D/science": {
+        "result_bytes": 15419484,
+        "log_tail": "]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 19765/20188 [00:49<00:00, 526.30it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 19819/20188 [00:49<00:00, 516.40it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 19888/20188 [00:50<00:00, 553.16it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 19955/20188 [00:50<00:00, 567.35it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 20026/20188 [00:50<00:00, 587.64it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 20091/20188 [00:50<00:00, 592.85it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 20159/20188 [00:50<00:00, 598.82it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 20188/20188 [00:50<00:00, 398.98it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/D/reading": {
+        "result_bytes": 13162412,
+        "log_tail": "/s]\rRunning loglikelihood requests:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 9924/10216 [00:27<00:00, 428.75it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 9973/10216 [00:27<00:00, 432.33it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 10021/10216 [00:27<00:00, 431.13it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 10069/10216 [00:27<00:00, 433.57it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 10118/10216 [00:27<00:00, 434.96it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 10166/10216 [00:27<00:00, 433.53it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 10210/10216 [00:27<00:00, 320.95it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 10216/10216 [00:27<00:00, 365.94it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/D/language": {
+        "result_bytes": 9948271,
+        "log_tail": "0:00, 418.16it/s]\rRunning loglikelihood requests:  96%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258c| 7387/7687 [00:29<00:00, 421.21it/s]\rRunning loglikelihood requests:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 7435/7687 [00:29<00:00, 423.38it/s]\rRunning loglikelihood requests:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 7483/7687 [00:29<00:00, 424.51it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 7526/7687 [00:29<00:00, 424.47it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 7571/7687 [00:29<00:00, 418.48it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 7619/7687 [00:29<00:00, 421.84it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 7667/7687 [00:30<00:00, 420.67it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 7687/7687 [00:30<00:00, 254.98it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/Partial-25-cosine/commonsense": {
+        "result_bytes": 53209512,
+        "log_tail": "]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 39905/40168 [02:10<00:00, 282.85it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 39936/40168 [02:10<00:00, 285.24it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 39976/40168 [02:10<00:00, 297.29it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40016/40168 [02:11<00:00, 312.78it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40056/40168 [02:11<00:00, 323.71it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40096/40168 [02:11<00:00, 329.07it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 40136/40168 [02:11<00:00, 330.21it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 40168/40168 [02:11<00:00, 305.49it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/Partial-25-cosine/science": {
+        "result_bytes": 15419735,
+        "log_tail": "]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 19817/20188 [01:02<00:00, 410.55it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 19877/20188 [01:02<00:00, 444.71it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 19934/20188 [01:03<00:00, 455.52it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 19993/20188 [01:03<00:00, 473.60it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 20046/20188 [01:03<00:00, 467.66it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 20102/20188 [01:03<00:00, 478.78it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 20159/20188 [01:03<00:00, 483.75it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 20188/20188 [01:03<00:00, 317.68it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/Partial-25-cosine/reading": {
+        "result_bytes": 13162931,
+        "log_tail": "/s]\rRunning loglikelihood requests:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 9950/10216 [00:32<00:00, 285.26it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 9989/10216 [00:32<00:00, 299.95it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 10029/10216 [00:32<00:00, 311.22it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 10069/10216 [00:32<00:00, 323.07it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 10110/10216 [00:32<00:00, 329.85it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 10150/10216 [00:32<00:00, 337.06it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 10190/10216 [00:32<00:00, 337.83it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 10216/10216 [00:32<00:00, 311.03it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      },
+      "supervised/run/full/Partial-25-cosine/language": {
+        "result_bytes": 9948463,
+        "log_tail": "0:00, 347.88it/s]\rRunning loglikelihood requests:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 7443/7687 [00:34<00:00, 347.98it/s]\rRunning loglikelihood requests:  97%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258b| 7483/7687 [00:34<00:00, 348.59it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 7523/7687 [00:34<00:00, 344.25it/s]\rRunning loglikelihood requests:  98%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258a| 7563/7687 [00:35<00:00, 346.23it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 7603/7687 [00:35<00:00, 347.20it/s]\rRunning loglikelihood requests:  99%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 7643/7687 [00:35<00:00, 344.02it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2589| 7678/7687 [00:35<00:00, 317.21it/s]\rRunning loglikelihood requests: 100%|\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588| 7687/7687 [00:35<00:00, 216.93it/s]\nfatal: not a git repository (or any parent up to mount point /mnt)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n"
+      }
+    },
+    "live_burn_handoff_verified": true,
+    "collective_progress_verified": true,
+    "burn_tail": "_gib=178.35 reserve_gib=148.25 world_size=8 collective_probe_sum=36 comm_total_mib=1137 comm_bucket_mib=25 comm_bucket_count=46 communication_pattern=interleaved_with_compute ring_equivalent_send_mib_per_rank=1989.75 approx_step_seconds=0.750 calibration_gemms=64 seconds_per_gemm=0.000705 measured_comm_seconds=0.011387 gemms_per_sync=1024\ngpu_burn_ready rank=6 device=NVIDIA B200 matrix_size=8192 dtype=torch.bfloat16 target_memory_fraction=0.8500 target_used_gib=151.60 actual_used_gib=151.57 actual_memory_fraction=0.8499 actual_free_gib=26.78 total_gib=178.35 reserve_gib=148.25 world_size=8 collective_probe_sum=36 comm_total_mib=1137 comm_bucket_mib=25 comm_bucket_count=46 communication_pattern=interleaved_with_compute ring_equivalent_send_mib_per_rank=1989.75 approx_step_seconds=0.750 calibration_gemms=64 seconds_per_gemm=0.000692 measured_comm_seconds=0.009262 gemms_per_sync=1024\ngpu_burn_progress rank=0 completed_cycles=10 completed_gemms=10240 completed_collective_payload_gib=11.10 average_cycle_seconds=0.875 cycles_per_second=1.143\ngpu_burn_progress rank=0 completed_cycles=20 completed_gemms=20480 completed_collective_payload_gib=22.21 average_cycle_seconds=0.867 cycles_per_second=1.153\ngpu_burn_progress rank=0 completed_cycles=30 completed_gemms=30720 completed_collective_payload_gib=33.31 average_cycle_seconds=0.864 cycles_per_second=1.157\ngpu_burn_progress rank=0 completed_cycles=40 completed_gemms=40960 completed_collective_payload_gib=44.41 average_cycle_seconds=0.864 cycles_per_second=1.158\ngpu_burn_progress rank=0 completed_cycles=50 completed_gemms=51200 completed_collective_payload_gib=55.52 average_cycle_seconds=0.863 cycles_per_second=1.158\ngpu_burn_progress rank=0 completed_cycles=60 completed_gemms=61440 completed_collective_payload_gib=66.62 average_cycle_seconds=0.864 cycles_per_second=1.158\ngpu_burn_progress rank=0 completed_cycles=70 completed_gemms=71680 completed_collective_payload_gib=77.72 average_cycle_seconds=0.864 cycles_per_second=1.158\n"
+  }
+}

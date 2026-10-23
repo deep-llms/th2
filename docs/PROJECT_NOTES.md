@@ -4,6 +4,22 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Downstream result — 23 October 2026
+
+Both 10k checkpoints completed the full nine-task zero-shot English screen.
+Multiple-choice mean: **D 46.2427% / Partial-25-cosine 45.9935%** (gap −0.2492 pp).
+Router wins BoolQ/PIQA/OpenBookQA, loses the other five MC tasks. LAMBADA
+accuracy 23.3262% / 22.8799%, target-word PPL 102.0429 / 105.9512. Mixed results,
+no aggregate advantage in this single-pair comparison; no significance claim.
+All 26,618 examples/model and paired prompt hashes verified. Two requests/model
+were left-truncated identically to context 1,024; all others fit. See CURRENT_TASK
+for the task table/metrics and [final evidence](results/bdot_downstream_final_20261023.json).
+
+GPU packed-path logits/routes/likelihood checks pass exactly; smoke passes.
+Full evaluation took 177.5 seconds across eight concurrent workers. Queue ended
+**10:58:50 SGT**, burns restored **10:59:56**, verified **11:00:46** (c7fd403).
+Source/checkpoints unchanged, environments preserved; commands #0, no queued jobs.
+
 ## Downstream comparison protocol — 23 October 2026
 
 User authorized a downstream screen of D/Partial-25-cosine 10k checkpoints.

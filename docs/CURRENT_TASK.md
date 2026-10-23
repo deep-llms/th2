@@ -1,6 +1,60 @@
 # Current task
 
-## Authorized downstream screen — 23 October 2026
+## Downstream screen completed — 23 October 2026, 11:00 SGT verification
+
+The 10k D / Partial-25-cosine zero-shot English comparison completed at
+**10:58:50 SGT**. All nine tasks ran in full: **26,618 examples per checkpoint**,
+with matching example IDs, prompt/target hashes and tokenizer. Scores below are
+percentages. HellaSwag/ARC/PIQA/OpenBookQA use length-normalized accuracy; other
+tasks use raw accuracy. The eight-task mean excludes LAMBADA.
+
+| Task | D | Partial-25-cosine |
+|---|---:|---:|
+| HellaSwag | 32.30 | 32.14 |
+| ARC-Easy | 39.56 | 38.89 |
+| ARC-Challenge | 23.38 | 23.21 |
+| PIQA | 63.28 | 63.71 |
+| WinoGrande | 51.14 | 48.78 |
+| BoolQ | 61.38 | 62.02 |
+| OpenBookQA | 27.00 | 27.40 |
+| SciQ | 71.90 | 71.80 |
+| **Eight-task mean** | **46.24** | **45.99** |
+| LAMBADA accuracy (separate) | 23.33 | 22.88 |
+
+The router wins BoolQ, PIQA and OpenBookQA, but its multiple-choice average is
+**0.249 percentage points lower**. LAMBADA target-word PPL is **102.043 / 105.951**
+(D/router; not comparable to corpus token PPL). Results are mixed, with no
+aggregate win. This is one checkpoint pair, not a significance test. Full harness
+metrics, primary metric choices, sample counts, and per-task prompt hashes are
+retained in the evidence. Two likelihood requests per model in the reading group
+exceed 1,024 tokens and receive the same canonical left truncation; all other
+requests fit. No fine-tuning, generation or paired-loss study was run.
+
+GPU adapter check passed for both models with **zero logit/likelihood difference**
+and identical routes versus existing packed inference on the test inputs.
+Eight-example/task smoke and paired-input checks passed before full evaluation.
+Training code/weights remain unchanged; FP32 masters, BF16 autocast, FA4,
+seed 42, no chat template, trained context 1,024. Eight independent workers ran
+four task groups per model. Full screen wall time was **177.5 seconds**;
+adapter gate 23.1 seconds and smoke 31.4 seconds, excluding setup/downloads.
+
+Launch **23f704a** verified all 27 input sizes/SHA256; copied/byte-verified
+Accelerate and checked its eight-GPU BF16 config. Reclaimed only verified old
+burn workers 425865–425872, then waited 30 seconds and verified eight empty GPUs
+at **10:54:56 SGT**. Both validation stages and the full stage exited 0.
+Automatic communicating burns restored at **10:59:56 SGT**; fresh **c7fd403**
+inspection at **11:00:46 SGT** verifies workers **429239–429246**, all eight GPUs
+at 100%, advancing collective cycles 60→70, and released guard. Source/config
+hash checks pass. Commands returned to **#0**; no queued work remains.
+
+[Full comparison and verification](results/bdot_downstream_final_20261023.json).
+Local small summary: `temp/downstream_20261023/summary.json`; raw receipt:
+`temp/downstream_20261023/final.json`, verified remote SHA256
+`58fd1890521f1daefa43df70ecc47af4f4d6f07f1aa18f33010b191acf80795a`.
+Per-example result files remain in each arm/group under
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01/supervised/run/full/`.
+
+## Downstream launch protocol — 23 October 2026
 
 User requests downstream evaluation of the fresh 10k D / Partial-25-cosine pair,
 reusing the deep2shallow approach. First screen: nine English zero-shot tasks,
@@ -34,11 +88,11 @@ Remote preflight **211496b** verified eval pins and existing eight-GPU burn
 handoff. Download **f1e614f** uses controller-only URLs for 27 immutable files;
 verify all bytes/SHA256 before GPU reclaim. Preserve environments/data/weights.
 
-Planned fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01`.
+Fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01`.
 Reuse all scientific files from the trained source snapshot, overlay only the
 new evaluation/queue code and tests. Launch helper performs Accelerate copy/env,
 fresh verified burn-worker reclaim, wait/free checks, and automatic burns on
-success/failure through the established supervisor. No GPU launch claimed yet.
+success/failure through the established supervisor. Launch/results verified above.
 
 ## Longer pair completed — 23 October 2026, 10:28 SGT verification
 
