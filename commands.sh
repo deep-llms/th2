@@ -1,24 +1,29 @@
-#1 +30+a
-#th2-6y3o-dot-downstream-preflight-20261023-a01
-set -euo pipefail
-test "$(hostname)" = thiennh-p6-6y3o-worker-0
-/mnt/local/conda-py311/envs/eval/bin/python3.11 - <<'REMOTE'
-import json, importlib.metadata as m, hashlib, subprocess
-from pathlib import Path
-from scripts.gpu_process import inspect
-from scripts.native_baseline_pipeline import validate_burn_handoff
-from scripts.train_then_burn import burn_progress
-import lm_eval
-from lm_eval.models.huggingface import HFLM
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01')
-read=lambda p:json.loads(p.read_text())
-live=inspect();state=read(root/'supervised/supervisor.json');proof=read(root/'supervised/burn-verified.json')
-validate_burn_handoff(state,proof,live)
-assert burn_progress((root/'supervised/burn.log').read_text())
-versions={k:m.version(k) for k in ['torch','transformers','datasets','accelerate','lm-eval','flash-attn-4','tokenizers','safetensors']}
-data=Path('/mnt/local/_data/deep-llms_th2')
-folders=[str(p) for p in data.iterdir() if p.is_dir()]
-target=data/'benchmarks_zero_20261023';manifest=read(Path('resources/downstream_english_20261023.json'))
-files={f['path']:(target/f['path']).is_file() for r in manifest['repositories'] for f in r['files']}
-print('DOWNSTREAM_PREFLIGHT '+json.dumps(dict(live=live,versions=versions,folders=folders,dataset_files=files,previous_report=read(root/'supervised/run/long-pair-report.json'))),flush=True)
-REMOTE
+#d +a
+#datasets
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/README.md /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/Rowan--hellaswag
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/Rowan--hellaswag/data
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/Rowan--hellaswag/data
+--url https://huggingface.co/datasets/Rowan/hellaswag/resolve/218ec52e09a7e7462a5400043bb9a69a41d06b76/data/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/Rowan--hellaswag/data
+--url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_test.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/baber--piqa
+--url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_train.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/baber--piqa
+--url https://huggingface.co/datasets/baber/piqa/resolve/142f6d7367fd9877f0fb3b5734ea6a545f54cdd1/piqa_validation.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/baber--piqa
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc/ARC-Challenge
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc/ARC-Challenge
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc/ARC-Challenge
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc/ARC-Easy
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc/ARC-Easy
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc/ARC-Easy
+--url https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/README.md /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--ai2_arc
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/README.md /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--winogrande
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--winogrande/winogrande_xl
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--winogrande/winogrande_xl
+--url https://huggingface.co/datasets/allenai/winogrande/resolve/01e74176c63542e6b0bcb004dcdea22d94fb67b5/winogrande_xl/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--winogrande/winogrande_xl
+--url https://huggingface.co/datasets/EleutherAI/lambada_openai/resolve/900124bf3b8235c6daf21033af9948b3f07346c4/default/test/default.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/EleutherAI--lambada_openai/default/test
+--url https://huggingface.co/datasets/allenai/sciq/resolve/2c94ad3e1aafab77146f384e23536f97a4849815/data/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--sciq/data
+--url https://huggingface.co/datasets/allenai/sciq/resolve/2c94ad3e1aafab77146f384e23536f97a4849815/data/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--sciq/data
+--url https://huggingface.co/datasets/allenai/sciq/resolve/2c94ad3e1aafab77146f384e23536f97a4849815/data/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--sciq/data
+--url https://huggingface.co/datasets/allenai/openbookqa/resolve/388097ea7776314e93a529163e0fea805b8a6454/main/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--openbookqa/main
+--url https://huggingface.co/datasets/allenai/openbookqa/resolve/388097ea7776314e93a529163e0fea805b8a6454/main/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--openbookqa/main
+--url https://huggingface.co/datasets/allenai/openbookqa/resolve/388097ea7776314e93a529163e0fea805b8a6454/main/test-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/allenai--openbookqa/main
+--url https://huggingface.co/datasets/aps/super_glue/resolve/3de24cf8022e94f4ee4b9d55a6f539891524d646/boolq/train-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/aps--super_glue/boolq
+--url https://huggingface.co/datasets/aps/super_glue/resolve/3de24cf8022e94f4ee4b9d55a6f539891524d646/boolq/validation-00000-of-00001.parquet /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023/aps--super_glue/boolq
