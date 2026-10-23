@@ -4,6 +4,41 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## STOP pilot implementation — 23 October 2026
+
+User explicitly authorized STOP after the completed 10k pair/downstream screen.
+Use a matched 2×2 study: D/Partial25-cosine × full-depth/random-STOP adaptation.
+Four fresh optimizer branches from 10k, 1k updates, peak LR 3e-5 / warmup 20 / cosine floor 3e-6;
+keep parent weights/learned balance bias, reset counters, disable routing curriculum,
+and skip exactly 5,120,000 previously consumed packed rows (after identity check).
+No parent checkpoints, caches, environments or GPU software are overwritten.
+
+STOP minimum 2 of 8 middle steps; random per-step hazard 0.05; held tokens still write KV
+and execute coda. No-STOP is an exact bypass. Packed FA4 retains inactive query
+rows; Q/O and fixed+routed MLPs compact. Cached SDPA also compacts query attention.
+Compare both methods under the same backend. No KV-memory savings are claimed.
+
+Verification: 94 local B-DOT tests plus nine focused STOP/warm-start/head tests;
+real-checkpoint GPU no-STOP/held-state-oracle logits exact; cross-backend/cache RMS
+about 0.017. Two-GPU BF16 gradients pass; eight-GPU resume exact across all 16 cases.
+Earliest fixed exit provides batch 1 decode headroom (D 15.476→9.896ms; router
+19.399→10.726ms), but that says nothing about its quality. Verification burns
+restored and independently verified11:37 SGT, workers 431219–431226.
+Evidence: docs/results/bdot_stop_verification_20261023.json.
+
+Separate frozen-backbone STOP-head fit: 256 unused training rows after the 1k
+adaptation segment, next 256 for threshold calibration, original held-out validation
+only for final reporting. Fixed-depth loss-difference labels are heuristic; evaluate
+mixed policies directly. Frozen threshold, fixed-depth/matched-random controls,
+whole-model cache timing at batches 1/32 and contexts 128/512, heterogeneous sequences.
+BCE head fits only its linear weight/per-step bias; no trunk updates. Check cached
+policy agreement; do not claim a deployment-quality win from parallel PPL alone.
+
+6a98ef3 submits the adaptation/evaluation queue after verified gates. CURRENT_TASK
+tracks live status. Every training branch uses eight GPUs; four independent head/
+evaluation jobs can run concurrently. The supervisor restores burns on failure or
+success. No additional pretraining arms or downstream claims are automatic.
+
 ## Downstream result — 23 October 2026
 
 Both 10k checkpoints completed the full nine-task zero-shot English screen.

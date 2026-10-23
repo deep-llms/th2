@@ -22,24 +22,46 @@ Verification launch 7a5fd63, health request 4437669. Output root:
 `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-verify-20261023-a01`.
 Accelerate copy/byte check and `accelerate env` succeeded. Verification supervisor
 reclaims only the known burn workers and restores burns on success/failure.
-Training has NOT yet been launched. All GPU gates passed: held-state oracle and
-no-STOP max logit difference0; FA4/SDPA and cache logit RMS about0.017. Two-GPU
-BF16 gradients pass; eight-GPU resume is exact on all16 rank/case comparisons.
-Verification ended11:35:37SGT; burns restored11:36:43 and independently verified
-11:37:21SGT (workers431219–431226). Batch1 depth8→depth2 decode: D15.476→9.896ms,
-Partial25 19.399→10.726ms; optimistic speed bound, not quality evidence.
+All GPU gates passed: no-STOP and held-state-oracle logits match exactly;
+FA4/SDPA and cached/parallel logit RMS are about 0.017 in BF16. Two-GPU gradient
+checks pass; eight-GPU resume matches exactly in all 16 rank/case comparisons.
+Verification ended **11:35:37 SGT**; burns were restored at **11:36:43** and
+independently verified at **11:37:21** (workers 431219–431226).
+Batch-1 depth-8 → depth-2 decode: D **15.476 → 9.896 ms**, Partial-25
+**19.399 → 10.726 ms**. These are optimistic speed bounds, not quality evidence.
 [GPU evidence](results/bdot_stop_verification_20261023.json).
 
-Planned branches: D/Partial-25 × ordinary/random-STOP (p=.05, min middle depth2),
-1,000 additional updates each. New AdamW/cosine schedule, peak3e-5 (old ending LR),
-20 warmup, floor3e-6; same seq1024 and 16×4×8 batch524288. All 250-step saves kept.
-Skip exactly 5,120,000 packed rows after verifying parent data recipe; no replay
-of the old data segment or routing curriculum. This is warm-start adaptation,
-not ordinary resume of the completed schedule. Fit the frozen-trunk STOP head
-on 256 unused training rows after adaptation; use the next256 for calibration;
-freeze threshold before final validation. Include fixed-depth/matched-random
-controls and whole-model cached timing at batch1/32, context128/512.
+**Adaptation launched, 6a98ef3.** At **11:47:53 SGT** (b8381b2), the four-branch
+warm-start/head smoke had passed and **D-continue reached step 90/1,000** with
+finite loss/gradients, all eight workers 432040–432047, and about 812k input
+tokens/s. Accelerate cache and frozen source match. Only the verified burn
+workers were reclaimed; all eight GPUs were empty at **11:45:52 SGT** before
+work began. The original 10k checkpoints remain unchanged.
+[Launch evidence](results/bdot_stop_launch_20261023.json).
 
+Four branches: D/Partial-25 × ordinary/random-STOP (p=0.05, minimum two middle
+steps), 1,000 additional updates each. Fresh AdamW/cosine schedule, peak 3e-5
+(the old ending LR), 20 warmup updates, floor 3e-6; unchanged sequence length
+1,024 and microbatch 16 × accumulation 4 × eight GPUs = 524,288 tokens/update.
+Retain every 250-step checkpoint. The verified data starts at packed row
+**5,120,000**; parent fingerprint `a7d3e88e5670c8a2`, selected tail fingerprint
+`190cb5957440e160`. No old data segment or routing curriculum is replayed.
+These are adaptation branches, not ordinary resumes of a completed schedule.
+
+Fit the frozen-trunk STOP head on 256 unused training rows after adaptation;
+use the next 256 for calibration and freeze the threshold before final validation.
+Include fixed-depth and matched-random controls. Measure whole-model cached
+inference at batches 1/32 and contexts 128/512, using heterogeneous document
+fragments for batch 32. The four head/evaluation jobs run concurrently.
+
+Output: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01`.
+Queue: head smoke → D-continue → D-STOP → Partial-25-cosine-continue →
+Partial-25-cosine-STOP → STOP evaluations → restored/verified burns.
+Approximate finish **12:50–13:20 SGT**, subject to measured STOP adaptation and
+evaluation speed. No STOP quality result exists yet. Input check 09fe427 passed: exact tokenizer/data
+identity, fit rows [5632000, 5632256), calibration [5632256, 5632512), 32 long
+document fragments, and the original 9,704-sequence final validation set.
+Commands return to #0; the independent supervised queue continues.
 
 ## Downstream screen completed — 23 October 2026, 11:00 SGT verification
 
