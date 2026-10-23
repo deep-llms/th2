@@ -1,5 +1,45 @@
 # Current task
 
+## Authorized downstream screen — 23 October 2026
+
+User requests downstream evaluation of the fresh 10k D / Partial-25-cosine pair,
+reusing the deep2shallow approach. First screen: nine English zero-shot tasks,
+seed 42, context 1,024, no chat template or weight updates: HellaSwag, ARC-Easy,
+ARC-Challenge, PIQA, WinoGrande, BoolQ, OpenBookQA, SciQ, LAMBADA OpenAI.
+Use canonical **lm-eval 0.4.13** task templates/scoring with the complete B-DOT
+model and learned routing active. The earlier project's 0.4.10 scores are not
+part of this comparison. This does not launch fine-tuning or paired-loss studies.
+
+Adapter preserves FP32 master parameters/FP64 buffers and uses BF16 autocast,
+FA4, one causal document per request row; literal EOS inside a prompt does not
+split it. Standard right padding cannot influence earlier scored tokens. Saved
+checkpoint tokenizer/context are checked. Truncation counts are reported under
+the ordinary harness context-window policy. Per-example scores/prompts stay on
+B200 and paired prompt hashes/counts are verified before a success summary.
+
+Nine tasks contain **26,618 examples per arm**. Report eight-task multiple-choice
+mean (acc_norm for HellaSwag/ARC/PIQA/OpenBookQA, raw acc for others), and keep
+LAMBADA final-word accuracy/PPL separate. No score-based task selection.
+Eight concurrent workers: four task groups per checkpoint, one GPU per worker;
+each loads its checkpoint once. Existing outer runner handles GPU ownership and
+burn restoration. GPU adapter parity gate → eight-example/task smoke → full
+screen. Full screen starts only after both gates pass.
+
+Local evidence: three adapter tests, three collector tests, all nine pinned
+split/count audits, and a real nine-task CPU smoke with a tiny random model pass.
+Harness 0.4.13 inline dictionaries no longer inherit named-task templates;
+load the complete canonical YAML before overriding only local data locations.
+[Local validation](results/bdot_downstream_local_20261023.json).
+Remote preflight **211496b** verified eval pins and existing eight-GPU burn
+handoff. Download **f1e614f** uses controller-only URLs for 27 immutable files;
+verify all bytes/SHA256 before GPU reclaim. Preserve environments/data/weights.
+
+Planned fresh root: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-downstream-20261023-a01`.
+Reuse all scientific files from the trained source snapshot, overlay only the
+new evaluation/queue code and tests. Launch helper performs Accelerate copy/env,
+fresh verified burn-worker reclaim, wait/free checks, and automatic burns on
+success/failure through the established supervisor. No GPU launch claimed yet.
+
 ## Longer pair completed — 23 October 2026, 10:28 SGT verification
 
 Both fresh seed-0 runs completed **10,000 updates / 5,242,880,000 input tokens**

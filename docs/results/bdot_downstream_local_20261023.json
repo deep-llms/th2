@@ -1,0 +1,68 @@
+{
+  "status": "local_checks_passed",
+  "harness": "lm-eval 0.4.13",
+  "tasks": [
+    "hellaswag",
+    "arc_easy",
+    "arc_challenge",
+    "piqa",
+    "winogrande",
+    "boolq",
+    "openbookqa",
+    "sciq",
+    "lambada_openai"
+  ],
+  "examples_per_model": 26618,
+  "adapter_tests": 3,
+  "collection_tests": 3,
+  "end_to_end_cpu_smoke": "2 real examples per task on a tiny random model; schema/protocol check only",
+  "scope": "FA4 BF16 inference with FP32 parameters; trained context 1024; seed42; zero shot; no chat template; no weight updates",
+  "data_audit": {
+    "lambada_openai": {
+      "examples": 5153,
+      "split": "test",
+      "output_type": "loglikelihood"
+    },
+    "sciq": {
+      "examples": 1000,
+      "split": "test",
+      "output_type": "multiple_choice"
+    },
+    "openbookqa": {
+      "examples": 500,
+      "split": "test",
+      "output_type": "multiple_choice"
+    },
+    "boolq": {
+      "examples": 3270,
+      "split": "validation",
+      "output_type": "multiple_choice"
+    },
+    "winogrande": {
+      "examples": 1267,
+      "split": "validation",
+      "output_type": "multiple_choice"
+    },
+    "piqa": {
+      "examples": 1838,
+      "split": "validation",
+      "output_type": "multiple_choice"
+    },
+    "arc_challenge": {
+      "examples": 1172,
+      "split": "test",
+      "output_type": "multiple_choice"
+    },
+    "arc_easy": {
+      "examples": 2376,
+      "split": "test",
+      "output_type": "multiple_choice"
+    },
+    "hellaswag": {
+      "examples": 10042,
+      "split": "validation",
+      "output_type": "multiple_choice"
+    }
+  },
+  "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b"
+}

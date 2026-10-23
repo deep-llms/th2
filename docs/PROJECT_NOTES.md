@@ -4,6 +4,17 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## Downstream comparison protocol — 23 October 2026
+
+User authorized a downstream screen of D/Partial-25-cosine 10k checkpoints.
+Reuse the deep2shallow harness/verified-local-data/parallel-worker approach;
+keep B-DOT model code unchanged. Start nine English zero-shot tasks, seed42,
+context1024, FA4 BF16/FP32 master parameters; eight concurrent GPU workers.
+Check complete canonical 0.4.13 task templates, not old 0.4.10 inline overrides.
+Preserve prompts/example sets across arms and checkpoint state throughout.
+Report multiple-choice mean plus separate LAMBADA accuracy/PPL. CURRENT_TASK
+records local tests, datasets, exact queue and operational verification status.
+
 ## Longer pair final result — 23 October 2026
 
 Fresh 10k seed-0 D / Partial-25-cosine completed successfully with full matching
