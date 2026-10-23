@@ -1,43 +1,31 @@
-#1 +30+a
-#th2-6y3o-dot-stop-adapt-health-20261023-a01
+#1 +60+a
+#th2-6y3o-dot-stop-eval-inputs-20261023-a01
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
-/mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES=
+cd /mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01/source
+/mnt/local/conda-py311/envs/train/bin/python3.11 - <<'PYREMOTE'
 import json,hashlib
 from pathlib import Path
-from scripts.gpu_process import inspect
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01')
-read=lambda p:json.loads(p.read_text())
-def tail(p,n=2000):
- if not p.is_file():return ''
- with p.open('rb') as f:f.seek(max(0,p.stat().st_size-n));return f.read().decode(errors='replace')
-r={'live':inspect(),'supervisor_tail':tail(root/'supervisor.log')}
-for rel in ['launch.json','adaptation.json','branches.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/supervisor.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/head-smoke.json','supervised/run/evaluation/summary.json']:
- if (root/rel).is_file():r[rel]=read(root/rel)
-if (root/'source/SOURCE_MANIFEST.json').is_file():
- source=root/'source';r['source_matches']=all(hashlib.sha256((source/k).read_bytes()).hexdigest()==v for k,v in read(source/'SOURCE_MANIFEST.json')['files'].items())
- assert r['source_matches']
-if 'launch.json' in r:
- r['accelerate_cache_matches']=Path(r['launch.json']['accelerate_cache']).read_bytes()==(root/'source/resources/accelerate_b200.yaml').read_bytes()
- r['accelerate_env']=(root/'accelerate_env.txt').read_text()
-r['logs']={str(p.relative_to(root)):tail(p,1500) for p in (root/'supervised/run').glob('*.log')}
-r['training']={}
-for p in (root/'prepared/runs').glob('*'):
- entry={'metrics_tail':tail(p/'metrics.jsonl',2500),'checkpoints':sorted(x.name for x in p.glob('checkpoint-*'))}
- for name in ['train_results.json','final_eval.json']:
-  if (p/name).is_file():entry[name]=read(p/name)
- if (p/'data_recipe.json').is_file():
-  data=read(p/'data_recipe.json');entry['data_slice']=data.get('training_slice');entry['parent_fingerprint']=data['shuffled_fingerprint']
- r['training'][p.name]=entry
-if 'supervised/burn-verified.json' in r:
- from scripts.native_baseline_pipeline import validate_burn_handoff
- from scripts.train_then_burn import burn_progress
- validate_burn_handoff(r['supervised/supervisor.json'],r['supervised/burn-verified.json'],r['live'])
- r['live_burn_handoff_verified']=True
- r['collective_progress_verified']=burn_progress((root/'supervised/burn.log').read_text())
- r['burn_tail']=tail(root/'supervised/burn.log')
-out=root/'health-a01.json'
-with out.open('x') as f:f.write(json.dumps(r,indent=2)+'\n')
-print('STOP_HEALTH '+json.dumps(r),flush=True)
-print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
-REMOTE
+from types import SimpleNamespace
+from contextlib import nullcontext
+from dataclasses import replace
+from transformers import AutoTokenizer
+from train import DataArguments,prepare_validation_data
+from training_data import prepare_training_data,require_resume_data
+from eval.stop_study import long_fragments
+parent=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01')
+r=json.loads((parent/'prepared/D-s0.train.json').read_text())
+t=AutoTokenizer.from_pretrained(r['tokenizer_name'],local_files_only=True)
+a=DataArguments(**{k:v for k,v in r.items() if k in DataArguments.__dataclass_fields__})
+s=SimpleNamespace(data_seed=0,seed=0,main_process_first=lambda **kw:nullcontext())
+ds,identity=prepare_training_data(a,s,t,r['tokenizer_name'],1024,'fa4')
+require_resume_data(parent/'prepared/runs/D-s0/checkpoint-10000',identity)
+start=11000*512
+cal=ds.select(range(start+256,start+512));fragments=long_fragments(cal)
+val,_=prepare_validation_data(replace(a,eval_max_sequences=None),s,t,r['tokenizer_name'],1024,'fa4',identity)
+assert len(val)==9704
+result=dict(status='ok',raw_tokenizer_pad=t.pad_token,training_fingerprint=identity['shuffled_fingerprint'],head_fit_range=[start,start+256],calibration_range=[start+256,start+512],num_long_fragments=len(fragments),timing_tokens_sha256=hashlib.sha256(json.dumps(fragments).encode()).hexdigest(),validation_sequences=len(val))
+out=Path('../evaluation-input-check.json');out.write_text(json.dumps(result,indent=2)+'\n')
+print('STOP_EVAL_INPUTS '+json.dumps(result),flush=True)
+PYREMOTE
