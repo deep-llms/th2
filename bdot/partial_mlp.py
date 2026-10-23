@@ -90,7 +90,7 @@ class RoutedMLPStep(RoutedStep):
             update = self.core_mlp(u) + update
         return update
 
-    def forward(self, hidden_states, attention_mask=None, position_embeddings=None,
+    def _forward_full(self, hidden_states, attention_mask=None, position_embeddings=None,
                 past_key_values=None, bdot_context=None, **kwargs):
         if bdot_context is None or bdot_context.soft:
             raise ValueError('MLP routing requires a hard RouteContext')

@@ -16,6 +16,8 @@ class RoutingConfig:
     kv_mode: str = 'step'
     route_scope: str = 'qo_mlp'
     routed_mlp_fraction: float = 1.0
+    router_detach_input: bool = False
+    router_metric: str = 'linear'
     r: int = 1
     reuse: bool = True
     routing: str = 'learned'
@@ -48,6 +50,13 @@ class RoutingConfig:
             raise ValueError('Supports compute_matched/absolute/step/visit_scale=none only')
         if self.route_scope not in ('qo_mlp', 'mlp'):
             raise ValueError('route_scope must be qo_mlp or mlp')
+        if type(self.router_detach_input) is not bool or self.router_metric not in ('linear', 'cosine'):
+            raise ValueError('Invalid router input/metric configuration')
+        if (self.router_detach_input or self.router_metric != 'linear') and (
+                self.route_scope != 'mlp' or self.routing != 'learned'):
+            raise ValueError('Router follow-ups require learned MLP routing')
+        if self.router_metric == 'cosine' and self.init_std_scale <= 0:
+            raise ValueError('Cosine routing requires positive init_std_scale')
         if self.routed_mlp_fraction not in (.25, .5, 1.):
             raise ValueError('routed_mlp_fraction must be .25, .5 or 1')
         if self.route_scope == 'qo_mlp' and self.routed_mlp_fraction != 1.:

@@ -93,6 +93,8 @@ def worker(config, traces):
             if not module.training:
                 return
             self.current.update(loss=float(output.loss.detach()), routes=digest(self.branches))
+            if hasattr(module, 'stop_controller'):
+                self.current['stop_depths'] = digest(module.stop_controller.last_depths)
             self.batches.append(self.current)
             self.current = self.branches = None
 
@@ -205,6 +207,8 @@ def compare(out, world, split, soft_split, steps, schedule_steps=None):
             if len(expected)!=len(actual) or len(actual)!=(end-start)*2:
                 errors.append('batch_count')
             fields=['step','input_sha256','labels_sha256','rng_sha256','progress','routing_counter','routes']
+            if expected and 'stop_depths' in expected[0]:
+                fields.append('stop_depths')
             mismatches={field:sum(a[field]!=b[field] for a,b in zip(expected,actual)) for field in fields}
             errors.extend(k for k,v in mismatches.items() if v)
             loss_max=max((abs(a['loss']-b['loss']) for a,b in zip(expected,actual)),default=0.)
@@ -241,7 +245,7 @@ def main():
     p.add_argument('--split',type=int,default=100)
     p.add_argument('--soft-split',type=int,default=20)
     p.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
-    p.add_argument('--curriculum',choices=['A','B'],default='B')
+    p.add_argument('--curriculum',choices=['A','B','none'],default='B')
     p.add_argument('--variant-config',type=Path,help='New routing options in the same reduced-width resume fixture')
     a=p.parse_args();out=a.output.resolve()
     if a.mode=='worker':

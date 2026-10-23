@@ -36,6 +36,11 @@ class Router(nn.Module):
         self.bias = nn.Parameter(torch.zeros(options.S))
         self.visits = nn.Parameter(torch.zeros(options.S, options.S))
         self.logit_cap = options.logit_cap
+        self.detach_input = options.router_detach_input
+        self.metric = options.router_metric
+        # Match the original random logit's approximate initial std, without
+        # adding parameters or allowing centroid-norm growth to change scores.
+        self.cosine_scale = options.init_std_scale * math.sqrt(config.hidden_size)
         nn.init.normal_(self.weight, std=options.init_std_scale / math.sqrt(config.hidden_size))
         with torch.no_grad():
             self.bias[step] = options.default_prior
@@ -43,10 +48,16 @@ class Router(nn.Module):
     def forward(self, h, visits, allowed):
         # Disable autocast, including matmuls; casting inputs alone does not do so.
         with torch.autocast(device_type=h.device.type, enabled=False):
-            x = h.float()
+            x = (h.detach() if self.detach_input else h).float()
             x = x * torch.rsqrt(x.square().mean(-1, keepdim=True) + self.norm.variance_epsilon)
             x = x * self.norm.weight.float()
-            z = nn.functional.linear(x, self.weight.float(), self.bias.float())
+            if self.metric == 'cosine':
+                z = self.cosine_scale * nn.functional.linear(
+                    nn.functional.normalize(x, dim=-1, eps=1e-6),
+                    nn.functional.normalize(self.weight.float(), dim=-1, eps=1e-6))
+                z = z + self.bias.float()
+            else:
+                z = nn.functional.linear(x, self.weight.float(), self.bias.float())
             z = z + nn.functional.linear(visits.float(), self.visits.float())
             if self.logit_cap is not None:
                 z = self.logit_cap * torch.tanh(z / self.logit_cap)
@@ -86,6 +97,7 @@ class RouteContext:
     forced: torch.Tensor | None = None
     routing: str | None = None
     saturation: list = field(default_factory=list)
+    stop: object | None = None
 
 
 class RoutedStep(nn.Module):
@@ -302,7 +314,11 @@ class RoutedStep(nn.Module):
             return result[0] + (weights[0]-1) * (result[0]-h)
         return (weights * result).sum(0)
 
-    def forward(self, hidden_states, attention_mask=None, position_embeddings=None,
+    def forward(self, hidden_states, **kwargs):
+        from .stopping import forward_with_stop
+        return forward_with_stop(self, self._forward_full, hidden_states, **kwargs)
+
+    def _forward_full(self, hidden_states, attention_mask=None, position_embeddings=None,
                 past_key_values=None, bdot_context=None, **kwargs):
         if bdot_context is None:
             raise ValueError('Routed steps require BDOTForCausalLM.forward')
@@ -371,10 +387,18 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         self.routing_override = None
         self.capture_routes = False
         self.last_routes = None
+        if hasattr(config, 'bdot_stop'):
+            from .stopping import StopController
+            self.stop_controller = StopController(config, options)
 
     @torch.no_grad()
     def _init_weights(self, module):
         super()._init_weights(module)
+        from .stopping import StopController
+        if isinstance(module, StopController):
+            hf_init.zeros_(module.head.weight)
+            hf_init.zeros_(module.bias)
+            hf_init.ones_(module.norm.weight)
         # HF materializes nonpersistent buffers with empty_like when loading
         # from meta. Constructor values do not survive from_pretrained, so
         # deterministic tables and update accumulators must be rebuilt here.
@@ -398,7 +422,7 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
 
     def forward(self, input_ids=None, attention_mask=None, position_ids=None,
                 past_key_values=None, inputs_embeds=None, labels=None, use_cache=None,
-                bdot_num_decisions=None, bdot_forced_routes=None, **kwargs):
+                bdot_num_decisions=None, bdot_forced_routes=None, bdot_stop_depths=None, **kwargs):
         shape = input_ids.shape if input_ids is not None else inputs_embeds.shape[:2]
         device = input_ids.device if input_ids is not None else inputs_embeds.device
         n = math.prod(shape)
@@ -421,11 +445,21 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         context = RouteContext(torch.zeros(n, self.options.S, device=device),
             torch.zeros(n, dtype=torch.long, device=device), generator, reach, soft, eps,
             self.balance_bias.detach().clone(), [], [], [], [], bdot_forced_routes, self.routing_override)
+        ctl = getattr(self, 'stop_controller', None)
+        if bdot_stop_depths is not None and ctl is None:
+            raise ValueError('Explicit STOP depths require bdot_stop configuration')
+        if ctl is not None:
+            context.stop = ctl.start(shape, device, seed, self.training, bdot_stop_depths)
+            if (context.stop.policy == 'none' and bdot_stop_depths is None and not ctl.capture_states):
+                context.stop = None
         if self.training and (use_cache or past_key_values is not None):
             raise ValueError('B-DOT training requires use_cache=False')
         output = super().forward(input_ids=input_ids, inputs_embeds=inputs_embeds,
             attention_mask=attention_mask, position_ids=position_ids, past_key_values=past_key_values,
             labels=labels, use_cache=use_cache, bdot_context=context, **kwargs)
+        if ctl is not None:
+            ctl.last_depths = (context.stop.depths.detach() if context.stop is not None else
+                               torch.full(shape, self.options.S, device=device, dtype=torch.long))
         if self.training:
             self.load_counts.add_(torch.stack(context.counts))
         if self.capture_routes:
@@ -439,12 +473,13 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
                 if lm_denominator is None:
                     lm_denominator = lm_count
                 routes = torch.stack(context.routes)
-                off_default = (routes != torch.arange(self.options.S, device=device)[:, None, None]).sum()
+                active = routes >= 0
+                off_default = ((routes != torch.arange(self.options.S, device=device)[:, None, None]) & active).sum()
                 entropy = torch.stack(context.entropies).sum() if context.entropies else z_sum.new_zeros(())
                 saturation = torch.stack(context.saturation).sum(0)
                 self.metric_totals.add_(torch.stack((output.loss.detach().double()*lm_denominator,
                     lm_count, z_sum.detach(), lm_count.new_tensor(n*self.options.S),
-                    off_default, lm_count.new_tensor(n*self.options.S), entropy,
+                    off_default, active.sum(), entropy,
                     context.visits.gt(1).any(-1).sum(), lm_count.new_tensor(n),
                     context.visits.gt(0).sum(), *saturation.unbind())).double())
             output.loss = output.loss + self.options.z_loss_coef*z_sum / denominator
@@ -461,7 +496,9 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         active = totals > 0
         if self.options.routing == 'learned' and bool(active.any()):
             shares = self.load_counts[active].float() / totals[active, None]
-            target = torch.eye(self.options.S, device=shares.device)[active].mean(0)
+            target = (torch.full((self.options.S,), 1/self.options.S, device=shares.device)
+                      if hasattr(self, 'stop_controller') else
+                      torch.eye(self.options.S, device=shares.device)[active].mean(0))
             self.balance_bias.add_(self.options.balance_rate * (target - shares.mean(0)).sign())
         # Keep diagnostics on device until a logger/reader actually needs them.
         # Balancing and cumulative loss accounting still happen on every update.

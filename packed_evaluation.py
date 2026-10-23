@@ -91,13 +91,15 @@ def score_packed_loader(model, loader, accelerator, *, batch_observer=None):
         if getattr(model, "capture_routes", False) and model.last_routes is not None:
             routes = model.last_routes
             steps = routes.shape[0]
-            off = routes.ne(torch.arange(steps, device=routes.device)[:, None, None]).sum()
-            visits = torch.nn.functional.one_hot(routes, num_classes=steps).sum(0)
+            active = routes.ge(0)
+            off = (routes.ne(torch.arange(steps, device=routes.device)[:, None, None]) & active).sum()
+            visits = (torch.nn.functional.one_hot(routes.clamp_min(0), num_classes=steps)
+                      * active[..., None]).sum(0)
             # Phase A's default schedule visits every module once. The spec's
             # reuse rate counts tokens with any repeated module, not repeated
             # decisions divided by all decisions.
             reused_tokens = visits.gt(1).any(-1).sum()
-            route_totals += torch.stack((off, reused_tokens, off.new_tensor(routes.numel()),
+            route_totals += torch.stack((off, reused_tokens, active.sum(),
                                          off.new_tensor(routes.shape[1] * routes.shape[2])))
         loss_sum += summed_nll(logits, labels)
         del logits

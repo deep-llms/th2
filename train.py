@@ -52,6 +52,8 @@ class DataArguments:
     data_dir: str = field(default="data/sampled", metadata={
         "help": "Local Parquet file/directory or saved HF Dataset; select one split explicitly"})
     data_order: str = "packed_shuffle"  # legacy document_stream is also supported
+    train_start_sequence: int = 0  # warm-start branches: skip consumed packed rows
+    train_parent_checkpoint: str | None = None  # verify the original packed order
     dataset_revision: str | None = None
     validation_manifest: str | None = None
     validation_tokens: int = 10_000_000
@@ -339,6 +341,19 @@ def main():
     train_dataset, data_recipe = prepare_training_data(
         data_args, training_args, tokenizer, tokenizer_name, block_size,
         attention_backend=model_args.attention_backend)
+    if data_args.train_parent_checkpoint is not None:
+        require_resume_data(data_args.train_parent_checkpoint, data_recipe)
+    if type(data_args.train_start_sequence) is not int or data_args.train_start_sequence < 0:
+        raise ValueError('train_start_sequence must be a nonnegative integer')
+    if data_args.train_start_sequence:
+        start = data_args.train_start_sequence
+        if (type(start) is not int or not 0 < start < len(train_dataset)
+                or training_args.train_sampling_strategy != 'sequential'
+                or training_args.dataloader_drop_last is not True):
+            raise ValueError('Training offset needs a valid packed-row prefix, sequential sampling and drop_last')
+        train_dataset = train_dataset.select(range(start, len(train_dataset)))
+        data_recipe = dict(data_recipe, training_slice=dict(start=start,
+            remaining_sequences=len(train_dataset), fingerprint=train_dataset._fingerprint))
     if (data_args.data_order == "document_stream" or data_args.validation_manifest) and training_args.max_steps > 0:
         required_sequences = (training_args.max_steps * training_args.per_device_train_batch_size
                               * training_args.world_size * training_args.gradient_accumulation_steps)

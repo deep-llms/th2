@@ -74,7 +74,7 @@ def build_training_recipe(model, args, attention_backend, accelerator=None):
         if attention_backend == 'fa2':
             code_files += ['packed_fa2.py']
     if hasattr(model.config, 'bdot'):
-        code_files += ['bdot/model.py', 'bdot/routing.py', 'bdot/trainer.py', 'bdot/data.py', 'bdot/grouped.py']
+        code_files += ['bdot/model.py', 'bdot/routing.py', 'bdot/trainer.py', 'bdot/data.py', 'bdot/grouped.py', 'bdot/stopping.py']
         if model.config.bdot.get('route_scope') == 'mlp':
             code_files += ['bdot/partial_mlp.py']
     return canonical({

@@ -25,6 +25,7 @@ parser.add_argument('output');parser.add_argument('--checkpointing',action='stor
 parser.add_argument('--soft',action='store_true')
 parser.add_argument('--no-reuse',action='store_true')
 parser.add_argument('--home-only',action='store_true')
+parser.add_argument('--stop',action='store_true')
 parser.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
 parser.add_argument('--bf16',action='store_true')
 parser.add_argument('--device',choices=['cpu','cuda'],default='cpu')
@@ -50,6 +51,8 @@ class ForcedTrainer(BDOTTrainer):
         else:
             forced = torch.full((4,*inputs['input_ids'].shape),rank,dtype=torch.long,device=device)
         inputs=dict(inputs,bdot_forced_routes=forced)
+        if settings.stop:
+            inputs['bdot_stop_depths'] = inputs['input_ids'].remainder(3) + 2
         return super().compute_loss(model,inputs,return_outputs,num_items_in_batch)
 
 class Gradients(TrainerCallback):
@@ -61,6 +64,16 @@ m=model(r=1 if settings.no_reuse or settings.home_only else 3,
         reuse=not settings.no_reuse,
         curriculum='A' if settings.home_only else 'B' if settings.soft else 'none',default_prior=0.,
         expert_backend=settings.expert_backend).to(device)
+if settings.stop:
+    if settings.soft or settings.no_reuse or settings.home_only:
+        raise ValueError('STOP probe needs ordinary hard routing')
+    # MLP routing permits arbitrary expert choices while sparse attention is
+    # owned by the step. Preserve the existing full-batch normalization probe.
+    m=model(r=3,curriculum='none',default_prior=0.,route_scope='mlp',
+        routed_mlp_fraction=.25,expert_backend=settings.expert_backend).to(device)
+    from bdot.stopping import StopController
+    m.config.bdot_stop=dict(train_random_prob=0.,min_steps=2)
+    m.stop_controller=StopController(m.config,m.options).to(device)
 ref=copy.deepcopy(m)
 args=BaselineTrainingArguments(output_dir=str(root/'training'),use_cpu=settings.device=='cpu',report_to='none',bf16=settings.bf16,
     max_steps=1,save_strategy='no',logging_strategy='no',per_device_train_batch_size=1,
@@ -95,7 +108,8 @@ if settings.no_reuse or settings.home_only:
     paths = [[1,0,2,3] if i%2 and not settings.home_only else [0,1,2,3] for i in range(4)]
     forced = torch.tensor(paths, device=device).T[:,:,None].expand(4,4,6)
 with torch.autocast(device.type,dtype=torch.bfloat16,enabled=settings.bf16):
-    loss=ref(**inputs,**({} if settings.soft else dict(bdot_forced_routes=forced))).loss
+    loss=ref(**inputs,**({} if settings.soft else dict(bdot_forced_routes=forced)),
+        **(dict(bdot_stop_depths=inputs['input_ids'].remainder(3)+2) if settings.stop else {})).loss
 loss.backward()
 t.train()
 max_error=0.
