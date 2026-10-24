@@ -1,5 +1,46 @@
 # Current task
 
+## Long D STOP pair — authorized 24 October 2026
+
+User approved the recommended D-only pair: **D-continue and D-DualCE6**, each
+with **10,000 fresh adaptation updates from the original 10,000-step D parent**.
+This is 20,000 lifetime steps, approximately 5.24B additional input tokens per
+branch. Partial-25 and other methods are not queued. Design remains
+`BDOT_v2_spec.md` sections 3.5/3.9 with the approved DualCE6 extension.
+
+Original backbone/router and loss implementation remain unchanged. Start fresh
+AdamW with LR3e-5, 200 warmup steps, cosine decay to3e-6 over all10,000 updates.
+Same seeds0, FA4, seq1024, micro16 × accumulation4 × eight GPUs, EOS boundaries,
+document isolation/reset, data order and saved validation. Retain every250-step
+checkpoint. Both branches start at packed row5,120,000 and end at10,240,000.
+Head fitting uses [10240000,10240256), calibration [10240256,10240512), beyond
+the entire planned training segment, including during the5k assessment.
+
+Queue: GPU capacity/numerics → eight-GPU resume check → evaluator check on saved
+1k models using the new held-out rows → D-continue to5k → D-DualCE6 to5k →
+paired5k assessment → native resume of D-continue to10k → D-DualCE6 to10k →
+paired final assessment → automatic verified burns. Both stages keep the SAME
+10k schedule; midpoint evaluation uses separate processes and cannot mutate the
+training checkpoints. Scientific failure of the speed–quality target is reported;
+numerical/artifact failures stop the queue and restore burns. No automatic
+architecture changes, additional methods or extra seeds.
+
+Existing `run_checked_training.py` and `training_results.py` verify the stage
+cutoff, full schedule, explicit resume source and complete native checkpoint.
+The native HF training/resume path is reused without modification. Evaluation
+extends the existing STOP evaluator to explicit checkpoint steps and a matched
+control at that same step; rejects calibration overlap and wrong-stage metrics.
+
+Read-only preflight **a87ab41** passed **22:46:41 SGT**: original parent hashes,
+previous snapshot, runtime pins and all eight known burns517315–517322 match;
+23.9TB free. All 12 targeted local tests pass, including exact native checked-stage
+resume (weights/optimizer/scheduler/RNG), warm-start preservation and loss regressions.
+[Local evidence](results/bdot_stop_long_local_20261024.json). Preparing launch;
+GPU and real-data evaluation gates precede training.
+Planned output:`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01`.
+Predecessor:`6y3o-dot-stop-v2-20261024-a01`; original parent:
+`6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000`.
+
 ## STOP-v2 completed — verified 24 October 22:20 SGT
 
 All six branches completed **1,000 updates**, followed by eight-way evaluation

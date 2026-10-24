@@ -36,7 +36,24 @@ def single_exit_model(checkpoint,backend):
     return m
 
 
-def run(checkpoint,parent_recipe,previous,arm,output,progress500):
+def validate_stage(checkpoint, step, fit_start):
+    """Head/calibration rows must remain unused through the FULL planned schedule."""
+    checkpoint=Path(checkpoint)
+    if read(checkpoint/'trainer_state.json')['global_step'] != step:
+        raise ValueError('Unexpected checkpoint step')
+    config=read(checkpoint/'train_config.json')
+    world=read(checkpoint/'training_recipe.json')['execution']['world_size']
+    train=config['training'];data=config['data']
+    end=(data['train_start_sequence'] + train['max_steps'] * world *
+         train['per_device_train_batch_size'] * train['gradient_accumulation_steps'])
+    if type(fit_start) is not int or fit_start < end:
+        raise ValueError('Head/calibration data overlaps the planned training segment')
+    if read(checkpoint.parent/'train_results.json')['global_step'] != step:
+        raise ValueError('Run-root final evaluation belongs to another stage')
+
+
+def run(checkpoint,parent_recipe,previous,arm,output,progress500,*,checkpoint_step=1000,
+        fit_start=5632000,reference_checkpoint=None):
     from packed_fa4 import register_backend
     backend=register_backend();torch.set_num_threads(1)
     recipe=read(parent_recipe)
@@ -45,24 +62,35 @@ def run(checkpoint,parent_recipe,previous,arm,output,progress500):
     settings=SimpleNamespace(data_seed=0,seed=0,main_process_first=lambda **kw:nullcontext())
     train,identity=prepare_training_data(data_args,settings,tokenizer,recipe['tokenizer_name'],1024,'fa4')
     require_resume_data(Path(recipe['output_dir'])/'checkpoint-10000',identity)
-    start=5632000;fit=train.select(range(start,start+256));cal=train.select(range(start+256,start+512))
-    reference=read(previous/'supervised/run/evaluation/summary.json')['results'][arm+'-continue']['calibration'][0]['loss']
+    validate_stage(checkpoint,checkpoint_step,fit_start)
+    if progress500 and checkpoint_step != 1000:
+        raise ValueError('The legacy 500-step curve requires a 1000-step final checkpoint')
+    start=fit_start;fit=train.select(range(start,start+256));cal=train.select(range(start+256,start+512))
+    if reference_checkpoint is not None:
+        validate_stage(reference_checkpoint,checkpoint_step,fit_start)
+        ref=single_exit_model(reference_checkpoint,backend)
+        reference=score(ref,cal,'fa4',dict(policy='none'))['loss']
+        del ref;gc.collect();torch.cuda.empty_cache()
+    else:
+        if previous is None:raise ValueError('Supply a matching reference checkpoint or old study')
+        reference=read(previous/'supervised/run/evaluation/summary.json')['results'][arm+'-continue']['calibration'][0]['loss']
     output.mkdir(parents=True,exist_ok=False)
     progress={}
-    for step in ([500,1000] if progress500 else [1000]):
+    for step in ([500,1000] if progress500 else [checkpoint_step]):
         cp=Path(checkpoint).parent/f'checkpoint-{step}'
         m=single_exit_model(cp,backend)
         if int(m.completed_steps)!=step:raise ValueError('Incomplete checkpoint')
         progress[str(step)]=[score(m,cal,'fa4',p) for p in
                             (dict(policy='none'),dict(policy='fixed',fixed_depth=6))]
-        if step!=1000:del m;gc.collect();torch.cuda.empty_cache()
+        if step!=checkpoint_step:del m;gc.collect();torch.cuda.empty_cache()
     write(output/'progress.json',progress)
     head=fit_head(m,fit,'fa4');torch.save(m.stop_controller.state_dict(),output/'stop_head.pt')
     write(output/'head.json',dict(status='ok',training_rows=[start,start+256],calibration_rows=[start+256,start+512],**head))
     policies=[dict(policy='none'),dict(policy='fixed',fixed_depth=6),
               *[dict(policy='learned',threshold=t) for t in (.1,.25,.4,.5,.6,.7,.8,.9,.95,.99)]]
     calibration=[score(m,cal,'fa4',p) for p in policies]
-    if not progress500 and abs(calibration[0]['loss']-reference)>1e-4:
+    is_reference=(Path(checkpoint)==Path(reference_checkpoint) if reference_checkpoint else not progress500)
+    if is_reference and abs(calibration[0]['loss']-reference)>1e-4:
         raise ValueError('Ordinary-control calibration changed')
     chosen,selection=select_policy(calibration,reference)
     # Exactly one decision at depth 6: E[depth] = 8 - 2*p.
@@ -86,7 +114,9 @@ def run(checkpoint,parent_recipe,previous,arm,output,progress500):
     cached={label:cached_policy_check(m,p,tokens[0]) for label,p in
             [('full',dict(policy='none')),('fixed6',dict(policy='fixed',fixed_depth=6)),('chosen',chosen['policy'])]}
     times=[latency(m,p,tokens,b,context=c) for p in tested for b in (1,32) for c in (128,512)]
-    write(output/'result.json',dict(status='ok',checkpoint=str(checkpoint),checkpoint_step=1000,parent_step=10000,
+    write(output/'result.json',dict(status='ok',checkpoint=str(checkpoint),checkpoint_step=checkpoint_step,parent_step=10000,
+        reference_checkpoint=str(reference_checkpoint) if reference_checkpoint else None,
+        head_training_rows=[start,start+256],calibration_rows=[start+256,start+512],
         chosen=chosen,selection=selection,head=head,calibration=calibration,final=final,latency=times,
         cached_checks=cached,progress=progress,
         scope='One seed, six-only exits, matched ordinary controls; equal tokens/updates, unequal training compute.'))
@@ -94,9 +124,14 @@ def run(checkpoint,parent_recipe,previous,arm,output,progress500):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    for key in ('checkpoint','parent-recipe','previous','output'):p.add_argument('--'+key,type=Path,required=True)
+    for key in ('checkpoint','parent-recipe','output'):p.add_argument('--'+key,type=Path,required=True)
+    p.add_argument('--previous',type=Path)
+    p.add_argument('--reference-checkpoint',type=Path)
+    p.add_argument('--checkpoint-step',type=int,default=1000)
+    p.add_argument('--fit-start',type=int,default=5632000)
     p.add_argument('--arm',required=True);p.add_argument('--progress500',action='store_true')
-    a=p.parse_args();run(a.checkpoint,a.parent_recipe,a.previous,a.arm,a.output,a.progress500)
+    a=p.parse_args();run(a.checkpoint,a.parent_recipe,a.previous,a.arm,a.output,a.progress500,
+        checkpoint_step=a.checkpoint_step,fit_start=a.fit_start,reference_checkpoint=a.reference_checkpoint)
 
 
 if __name__=='__main__':main()

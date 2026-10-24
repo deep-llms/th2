@@ -13,11 +13,14 @@ def write(path,value):
     with Path(path).open('x') as f: json.dump(value,f,indent=2,allow_nan=False);f.write('\n')
 
 
-def initialize(checkpoint, destination, probability, *, stop_settings=None, exit_training=None):
+def initialize(checkpoint, destination, probability, *, stop_settings=None, exit_training=None,
+               schedule_steps=1000):
     import torch
     from safetensors.torch import load_file, save_file
     from bdot.routing import RoutingConfig
     from bdot.stopping import StopConfig
+    if type(schedule_steps) is not int or schedule_steps < 1:
+        raise ValueError('Adaptation schedule must be a positive integer')
     if read(checkpoint/'trainer_state.json')['global_step']!=10000:
         raise ValueError('STOP pilot requires the completed 10k parents')
     cfg=read(checkpoint/'config.json')
@@ -45,7 +48,7 @@ def initialize(checkpoint, destination, probability, *, stop_settings=None, exit
     # All original trainable weights, including balance bias and FiLM, survive.
     write(destination/'initialization.json',dict(parent=str(checkpoint),
         parent_weight_sha256=hashlib.sha256(weights.read_bytes()).hexdigest(),
-        reset_buffers=resets,optimizer='fresh AdamW',schedule='new 1000-step adaptation',
+        reset_buffers=resets,optimizer='fresh AdamW',schedule=f'new {schedule_steps}-step adaptation',
         preserved='all backbone/router weights and learned balance bias',
         changed_config=dict(curriculum='none',bdot_stop=cfg['bdot_stop'],
                             bdot_exit_training=cfg.get('bdot_exit_training'))))

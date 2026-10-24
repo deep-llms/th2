@@ -18,7 +18,9 @@ class StopAdaptationTests(unittest.TestCase):
             root=Path(tmp);cp=root/'parent';m.save_pretrained(cp)
             (cp/'trainer_state.json').write_text(json.dumps(dict(global_step=10000)))
             initialize(cp,root/'new',0.,stop_settings=dict(min_steps=2,exit_steps=[2]),
-                       exit_training=dict(depth=2,ce_weight=.5,kl_weight=.5))
+                       exit_training=dict(depth=2,ce_weight=.5,kl_weight=.5),schedule_steps=10000)
+            self.assertEqual(json.loads((root/'new/initialization.json').read_text())['schedule'],
+                             'new 10000-step adaptation')
             n=BDOTForCausalLM.from_pretrained(root/'new',attn_implementation='sdpa')
             for name,p in m.named_parameters():
                 torch.testing.assert_close(p,n.get_parameter(name),atol=0,rtol=0)
