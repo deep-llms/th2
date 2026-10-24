@@ -24,7 +24,10 @@ retries this error only by bounded ownership rescans (no PID/group fallback);
 refusal. Separate burn recovery root `6y3o-dot-stop-recovery-20261025-a01` verifies
 the exact dead supervisor/stale guard and all GPUs free twice, then starts and
 verifies burns before releasing that guard. It preserves the failed old receipt.
-No optimized B200 fit has started yet.
+Burn recovery succeeded at **25 October01:29:57SGT**, workers535988–535995,
+all8 communicating, guard released. Raw proof: `temp/stop_optimized_20261025/recover.log`.
+The optimized gated queue is being submitted; training remains conditional on
+all mandatory numerical/capacity/distributed/throughput/evaluator checks.
 
 New launch helper `scripts/stop_optimized_launch.py` reuses the old preparation,
 native HF stages, evaluator and burn supervisor. Before training it requires
