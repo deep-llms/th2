@@ -1,5 +1,32 @@
 # Current task
 
+## Current blocker — 25 October 2026, 01:55 SGT
+
+**Corrected optimized 10k pair has NOT been launched.** Numerical/capacity checks
+on B200 passed, but verification-only a01 needed its probe execution flags fixed
+(reference → production grouped). It was signaled through its verified owner
+before any long fit. The first cancellation log confirms signal delivery while
+benchmarking; its final burn handoff is unverified. The last delivered runner
+status is 01:43:20SGT. A fresh #2 pull (`e498261`) and subsequent read-only #1
+inspection (`a23efba`) have not returned new receipts as of01:55SGT. No explicit
+AWS/controller error has arrived; do not infer node death, burn success, or a
+training-code failure from this delivery gap. Stop further remote writes until
+status returns. No environments/drivers were changed.
+
+Local corrected launcher/test changes explicitly select grouped execution for
+DDP/resume/timing and reject mismatched timing receipts. They are ready but NOT
+submitted to B200. The execution checkout may be locally ahead of remote; inspect
+before any push. Its local commands are #0; remote `a23efba` is a read-only status
+request, not a GPU launch. Next: retrieve that receipt, verify a01's supervisor
+finished, all training workers exited and live communicating burns match; then
+submit `temp/stop_optimized_20261025/launch-a02.sh` with the corrected code. It
+creates a fresh root and gates all training on the full B200 tests. Do not skip
+those tests or mutate a01. Original10k parent and all prior outputs remain intact.
+
+[Evidence](results/bdot_stop_optimized_progress_20261025.json). Raw receipts and
+ready commands: `temp/stop_optimized_20261025/`. User authorization to stop old
+queue and train a fresh matched10k pair persists; no new permission needed.
+
 ## Optimized D/DualCE replacement — authorized 25 October 2026, 01:17 SGT
 
 The user explicitly approved stopping the old unoptimized queue, preserving all
@@ -36,7 +63,17 @@ normalization, exact eight-GPU resume, two reversed-order eight-GPU whole-update
 benchmarks of control/original/optimized, and evaluator smoke. Any failed gate
 stops the queue and restores burns. Fresh roots only; no old runtime-resume guard
 bypass or source snapshot mutation. Planned root:
-`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a01`.
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a02`.
+
+Verification-only root a01 (launch208c625) passed real-parent FA4 loss/logit,
+BF16-gradient/update, micro16 capacity, DDP and native8GPU resume checks. Forward
+loss/logits exactly matched; shared-prefix gradient relativeL2 0.2917%, cosine
+0.9999957; nativeCE alone exact. Optimized peak allocated71.50GB. However, generic
+resume/benchmark probes defaulted to reference expert execution, while production
+uses grouped. Own verification queue cancelled4277c62 BEFORE any D training job;
+all old artifacts retained. Fresh a02 sets `--expert-backend grouped` explicitly
+for DDP, resume and both-order timing probes; gate/tests reject a mismatch.
+Source model, objective and production recipe are unchanged by this probe fix.
 
 ## DualCE throughput optimization — local verification, 24 October 2026
 

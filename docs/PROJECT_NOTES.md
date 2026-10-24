@@ -3,6 +3,26 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+## Optimized DualCE B200 verification — 25 October 2026
+
+Real D-parent weights / full-width FA4 BF16 checks passed: nativeCE loss, logits,
+gradients/update exact in the fixture; shared-prefix loss/logits exact with
+0.2917% gradient relativeL2 and cosine0.9999957. Micro16 capacity passed at71.50GB
+peak allocated. Cached decoding and head fitting passed. Resume and DDP passed
+with reference expert execution, but production uses grouped; probe flags are
+now explicit and MUST be rechecked before training. Do not claim reference
+benchmark timings as production timings. No corrected long fit has started;
+CURRENT_TASK records the pending runner status and ready replacement queue.
+
+During cancellation of the original long queue, child cleanup hit pidfd_open
+EINVAL. All GPUs were subsequently verified empty; a separate recovery restored
+and verified eight communicating burns at01:29:57SGT. Preserve the original failed
+receipt. Cleanup now handles EINVAL only with bounded reap/ownership rescans,
+never an unverified PID/group fallback, and still refuses a handoff on persistent
+errors. Eleven CPU ownership tests pass, including real orphan cleanup. No GPU,
+CUDA, driver or environment changes. Final burn handoff after verification-only
+a01 cancellation is not yet verified because fresh runner receipts are pending.
+
 ## Optional DualCE execution optimization — 24 October 2026
 
 The old CE chunks caused full-logit slice-gradient padding/accumulation for every

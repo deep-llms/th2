@@ -38,6 +38,7 @@ def gate(run):
             if (r['status'] != 'completed' or r['world_size'] != 8
                     or r['settings']['batch_size'] != 16 or r['settings']['accumulation'] != 4
                     or r['settings']['length'] != 1024 or r['settings']['attention_backend'] != 'fa4'
+                    or r['settings']['expert_backend'] != 'grouped'
                     or r['settings']['checkpointing'] or not math.isfinite(r['seconds_per_update'])
                     or r['seconds_per_update'] <= 0 or not 0 < r['peak_allocated_bytes'] < .85 * device_bytes):
                 raise ValueError('Wrong throughput workload')
@@ -55,6 +56,7 @@ def gate(run):
 
 def prepare_optimized(parent, smoke_previous, root, source):
     jobs = prepare(parent, smoke_previous, root, source, optimized=True)
+    jobs[1]['argv'] += ['--expert-backend', 'grouped']
     init = root / 'prepared/D-DualCE6-init'
     optimized = read(init / 'config.json')
     reference = copy.deepcopy(optimized)
@@ -74,7 +76,8 @@ def prepare_optimized(parent, smoke_previous, root, source):
         '--batch-size', '2', '--length', '1024'], 'numerics.json')
     ddp = job('optimization_ddp', ['{python}', '-m', 'torch.distributed.run', '--standalone',
         '--nproc_per_node=2', str(source / 'tests/bdot/ddp_probe.py'), '{run_dir}/ddp',
-        '--device', 'cuda', '--bf16', '--exit-training', '--exit-shared-prefix', '--exit-native-ce'], 'ddp/rank0.json')
+        '--device', 'cuda', '--bf16', '--exit-training', '--exit-shared-prefix', '--exit-native-ce',
+        '--expert-backend', 'grouped'], 'ddp/rank0.json')
     launch = ['{python}', '-m', 'accelerate.commands.launch', '--config_file',
               str(source / 'resources/accelerate_b200.yaml'), '--num_processes', '8', '--main_process_port', '0']
     benchmarks = []
@@ -86,7 +89,7 @@ def prepare_optimized(parent, smoke_previous, root, source):
                 '--config', str(root / f'benchmark-{case}.json'), '--output', '{run_dir}/'+name+'.json',
                 '--device', 'cuda', '--batch-size', '16', '--accumulation', '4', '--length', '1024',
                 '--document-length', '1024', '--warmup', '3', '--steps', '15', '--bf16',
-                '--attention-backend', 'fa4'], name+'.json', status='completed'))
+                '--attention-backend', 'fa4', '--expert-backend', 'grouped'], name+'.json', status='completed'))
     checks = job('optimization_gate', ['{python}', str(source / 'scripts/stop_optimized_launch.py'),
                                       'gate', '--run', '{run_dir}'], 'optimization-gate.json')
     # All numerical, capacity, distributed and throughput checks precede any fit.

@@ -1,0 +1,316 @@
+{
+  "status": "b200_numerics_passed_corrected_queue_pending_runner",
+  "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
+  "original_queue": "6y3o-dot-stop-long-20261024-a01",
+  "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
+  "original_queue_last_logged_steps": {
+    "D-continue": 5000,
+    "D-DualCE6": 2180
+  },
+  "original_queue_retained_last_checkpoint": {
+    "D-continue": 5000,
+    "D-DualCE6": 2000
+  },
+  "cleanup_issue": "pidfd_open EINVAL during child shutdown. All GPUs verified empty. Bounded rescan fix tested; no fallback signals.",
+  "recovery": "6y3o-dot-stop-recovery-20261025-a01",
+  "recovery_burn_verified_utc": "2026-10-24T17:29:57.009626+00:00",
+  "verification_only_root": "6y3o-dot-stop-optimized-20261025-a01",
+  "verification_launch": "208c625820ec2f9f14cb64e533494b32fba2123c",
+  "numerical": {
+    "status": "passed",
+    "torch": "2.14.1+cu130",
+    "gpu": "NVIDIA B200",
+    "backend": "fa4",
+    "config": {
+      "architectures": [
+        "BDOTForCausalLM"
+      ],
+      "attention_bias": false,
+      "attention_dropout": 0.0,
+      "bdot": {
+        "S": 8,
+        "balance_rate": 0.001,
+        "curriculum": "none",
+        "default_prior": 1.0,
+        "expert_backend": "grouped",
+        "explore_end_frac": 0.5,
+        "explore_eps_max": 0.05,
+        "gate": "st",
+        "init_std_scale": 0.1,
+        "kv_mode": "step",
+        "logit_cap": null,
+        "mode": "compute_matched",
+        "n_coda": 2,
+        "n_stem": 2,
+        "placement_film": false,
+        "placement_film_scope": "both",
+        "r": 0,
+        "reuse": true,
+        "route_scope": "qo_mlp",
+        "routed_mlp_fraction": 1.0,
+        "router_detach_input": false,
+        "router_metric": "linear",
+        "routing": "fixed",
+        "seed": 0,
+        "select_on": "logits",
+        "soft_phase_frac": 0.15,
+        "step_film": true,
+        "visit_scale": "none",
+        "widen_every_frac": 0.1,
+        "window": "absolute",
+        "z_loss_coef": 0.001
+      },
+      "bos_token_id": null,
+      "dtype": "float32",
+      "eos_token_id": 151643,
+      "head_dim": 128,
+      "hidden_act": "silu",
+      "hidden_size": 1024,
+      "initializer_range": 0.02,
+      "intermediate_size": 3072,
+      "layer_types": [
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention",
+        "full_attention"
+      ],
+      "max_position_embeddings": 1024,
+      "max_window_layers": 28,
+      "model_type": "qwen3",
+      "num_attention_heads": 16,
+      "num_hidden_layers": 12,
+      "num_key_value_heads": 8,
+      "pad_token_id": 151643,
+      "rms_norm_eps": 1e-06,
+      "rope_parameters": {
+        "rope_theta": 1000000.0,
+        "rope_type": "default"
+      },
+      "sliding_window": null,
+      "tie_word_embeddings": true,
+      "transformers_version": "5.9.0",
+      "use_cache": false,
+      "use_sliding_window": false,
+      "vocab_size": 151936,
+      "bdot_stop": {
+        "min_steps": 6,
+        "train_random_prob": 0.0,
+        "exit_steps": [
+          6
+        ]
+      },
+      "bdot_exit_training": {
+        "depth": 6,
+        "ce_weight": 0.5,
+        "kl_weight": 0.0,
+        "ce_backend": "native",
+        "shared_prefix": true
+      }
+    },
+    "batch_size": 2,
+    "length": 1024,
+    "comparisons": {
+      "reference_repeat": {
+        "passed": true,
+        "loss_abs": 0.0,
+        "full_logits_max_abs": 0.0,
+        "gradient_relative_l2": 0.0,
+        "gradient_cosine": 1.0,
+        "gradient_max_abs": 0.0,
+        "weight_max_abs_after_adamw": 0.0,
+        "state_max_abs": {
+          "routing_counter": 0.0,
+          "completed_steps": 0.0,
+          "training_totals": 0.0,
+          "exit_training_totals": 0.0,
+          "balance_bias": 0.0
+        },
+        "loss": 19.81014060974121,
+        "grad_norm": 60.661468505859375
+      },
+      "native_ce": {
+        "passed": true,
+        "loss_abs": 0.0,
+        "full_logits_max_abs": 0.0,
+        "gradient_relative_l2": 0.0,
+        "gradient_cosine": 1.0,
+        "gradient_max_abs": 0.0,
+        "weight_max_abs_after_adamw": 0.0,
+        "state_max_abs": {
+          "routing_counter": 0.0,
+          "completed_steps": 0.0,
+          "training_totals": 0.0,
+          "exit_training_totals": 0.0,
+          "balance_bias": 0.0
+        },
+        "loss": 19.81014060974121,
+        "grad_norm": 60.661468505859375
+      },
+      "shared_prefix_native_ce": {
+        "passed": true,
+        "loss_abs": 0.0,
+        "full_logits_max_abs": 0.0,
+        "gradient_relative_l2": 0.002917070713144818,
+        "gradient_cosine": 0.999995720561633,
+        "gradient_max_abs": 0.00390625,
+        "weight_max_abs_after_adamw": 5.971081554889679e-05,
+        "state_max_abs": {
+          "routing_counter": 0.0,
+          "completed_steps": 0.0,
+          "training_totals": 0.0,
+          "exit_training_totals": 0.0,
+          "balance_bias": 0.0
+        },
+        "loss": 19.81014060974121,
+        "grad_norm": 60.6657600402832
+      }
+    },
+    "model_path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a01/prepared/D-DualCE6-init",
+    "source_sha256": "07a3b1e93b83121b7a38f173c97079a8b3eaa3aa6cfc880c5af3cb8bc0927913",
+    "scope": "Full model/vocabulary, BF16 one-update CUDA numerical test; not convergence or DDP validation."
+  },
+  "capacity": {
+    "status": "ok",
+    "branches": {
+      "D-continue": {
+        "loss_fa4": 11.865358352661133,
+        "loss_sdpa": 11.863974571228027,
+        "gradient_norms": [
+          23.795217514038086,
+          23.773303985595703
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.15459632081910968,
+        "peak_allocated_bytes": 58752531456,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.011272195726633072,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": 0.002270123455673456,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.25,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.577991247177124
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "D-DualCE6": {
+        "loss_fa4": 17.783123016357422,
+        "loss_sdpa": 17.782564163208008,
+        "gradient_norms": [
+          32.095619201660156,
+          32.073463439941406
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.20248995581641793,
+        "peak_allocated_bytes": 71500530688,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.011825593188405037,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0006568924291059375,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.375,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.6327592730522156
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      }
+    },
+    "note": "Synthetic numerical/capacity gate; wall time is not a real-data training ETA."
+  },
+  "fixture_correction": "Resume, DDP and timing probes must explicitly use expert_backend=grouped. Production-model numerical/capacity tests already used grouped. The reference-backend timings are not the production speed claim.",
+  "verification_only_cancel": "4277c62d72764fcc492d89cb7e67a621ed9cdc42",
+  "verification_cancel_confirmed_before_any_long_fit": true,
+  "final_handoff_confirmed": false,
+  "latest_pending_readonly_commit": "a23efba31436de2dc7a67a3140fc457383028956",
+  "proposed_corrected_root": "6y3o-dot-stop-optimized-20261025-a02",
+  "corrected_launch_submitted": false,
+  "local_tests": {
+    "status": "passed",
+    "test_counts": {
+      "optimized_queue": 2,
+      "exit_optimization": 6,
+      "long_queue_with_native_resume": 3,
+      "handoff": 11
+    },
+    "logs": {
+      "local-regression.log": {
+        "path": "temp/stop_optimized_20261025/local-regression.log",
+        "sha256": "0a5f3e2f8d919c50e116d11d4e096c9a41a0e319f2c26ebf34cbaba4a0fac159"
+      },
+      "local-optimization.log": {
+        "path": "temp/stop_optimized_20261025/local-optimization.log",
+        "sha256": "c208b825d612aa3a829d9892c91c5eb597d1c900b504addff35264fecb649031"
+      },
+      "handoff-tests.log": {
+        "path": "temp/stop_optimized_20261025/handoff-tests.log",
+        "sha256": "50b1b90eab7addf240e96349b896e8745fe49df8225398af17257a3beb3eddaf"
+      },
+      "queue-tests.log": {
+        "path": "temp/stop_optimized_20261025/queue-tests.log",
+        "sha256": "9ebe7374ceac43609bf854e32a047b8b6009ecb854723525b05b4d557d21ea0c"
+      }
+    }
+  },
+  "logs": {
+    "stop-old.log": {
+      "path": "temp/stop_optimized_20261025/stop-old.log",
+      "sha256": "be1c684980534b39528d995c98be768774f8a763e689e074ebf0559bea041546"
+    },
+    "recover.log": {
+      "path": "temp/stop_optimized_20261025/recover.log",
+      "sha256": "2a92c00149ae4a9b1486f3d0c9a6be069543ba4b4dfffcee57fa27bc2eb2abf3"
+    },
+    "launch.log": {
+      "path": "temp/stop_optimized_20261025/launch.log",
+      "sha256": "61b82485d920c3ce77af7f32c95ccd48198d85858dda8e8265fb0a1199f94b44"
+    },
+    "health-a01.log": {
+      "path": "temp/stop_optimized_20261025/health-a01.log",
+      "sha256": "2a3b1511b9c0e4339bc6a2a98d3c8d46ad4e0c6c992547c3b7ef55197f60f320"
+    },
+    "health-a02.log": {
+      "path": "temp/stop_optimized_20261025/health-a02.log",
+      "sha256": "2302c8e51903b23f2dcf02e6948e3d226117bef8629d3444618ffdee04385564"
+    },
+    "stop-verify.log": {
+      "path": "temp/stop_optimized_20261025/stop-verify.log",
+      "sha256": "b1a590a4afa669bc4c8020b89878fd83fb4e01ec98ee5a00b1199f02f443e0cd"
+    },
+    "queue-tests-grouped.log": {
+      "path": "temp/stop_optimized_20261025/queue-tests-grouped.log",
+      "sha256": "624c25a91fc1371a85f650d0d6809607e83c031b4c9ddbd9a4b9728ec212d661"
+    },
+    "handoff-tests.log": {
+      "path": "temp/stop_optimized_20261025/handoff-tests.log",
+      "sha256": "50b1b90eab7addf240e96349b896e8745fe49df8225398af17257a3beb3eddaf"
+    }
+  }
+}

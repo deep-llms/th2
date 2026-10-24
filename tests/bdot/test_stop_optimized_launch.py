@@ -49,6 +49,9 @@ class OptimizedQueueTests(unittest.TestCase):
             self.assertLess(names.index('eval_smoke'), names.index('D-continue-5000'))
             self.assertTrue(all(j['gpus'] == list(range(8)) for j in jobs))
             self.assertIn('--exit-shared-prefix', jobs[2]['argv'])
+            for j in jobs:
+                if j['name'] in ('optimization_ddp', 'resume_gate') or j['name'].startswith('benchmark-'):
+                    self.assertEqual(j['argv'][j['argv'].index('--expert-backend')+1], 'grouped')
             cfg = json.loads((run/'prepared/D-DualCE6-init/config.json').read_text())
             self.assertEqual(cfg['bdot_exit_training'], dict(depth=6, ce_weight=.5, kl_weight=0.,
                                                            ce_backend='native', shared_prefix=True))
@@ -75,7 +78,8 @@ class OptimizedQueueTests(unittest.TestCase):
             for case, time in [('control',1.), ('reference',3.), ('optimized',1.5)]:
                 for repeat in (1,2):
                     write(run/f'benchmark-{case}-{repeat}.json', dict(status='completed', world_size=8,
-                        settings=dict(batch_size=16, accumulation=4, length=1024, attention_backend='fa4', checkpointing=False),
+                        settings=dict(batch_size=16, accumulation=4, length=1024, attention_backend='fa4',
+                                      expert_backend='grouped', checkpointing=False),
                         seconds_per_update=time, peak_allocated_bytes=10))
             path = run/'benchmark-optimized-1.json'; data = json.loads(path.read_text())
             bad = copy.deepcopy(data); bad['seconds_per_update'] = 5.; write(path, bad)
