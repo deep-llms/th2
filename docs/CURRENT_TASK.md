@@ -16,16 +16,12 @@ rechecks exact worker identities before reclaiming and verifying all8 GPUs free.
 Training starts only after production GROUPED numerical/DDP/resume/timing tests
 and evaluator smoke pass. All18 jobs and final automatic burns are frozen into
 its fresh source/output root; no a01 outputs or source are overwritten.
-At07:39SGT the new launch receipt is still absent; the latest Dropbox status is
-01:59SGT and contains no newer controller error. Do NOT claim B200 has started
-this queue, or repeat the executable push. Remote commands remain the single
-authorized a02 launch, so it can execute when the runner picks it up. Local
-commands are #0 for safety; the local status commit is NOT pushed. Do not push
-that inactive revision while the authorized launch is still unacknowledged.
-Next: retrieve the a02 launch receipt, then use prepared fresh read-only
-`temp/stop_optimized_20261025/health-a04.sh` (a02 root) to verify production gates
-and actual training. Restore remote #0 after launch is acknowledged. No timers
-or duplicate monitors were created.
+Launch acknowledged by a02 receipt, downloaded07:40SGT. Live predecessor
+ownership passed twice; exact train runtime pins passed; Accelerate resource was
+copied to HF cache and `accelerate env` confirms8GPU BF16. Immutable queue
+submitted in its own tmux session. Await fresh a04 read-only health receipt for
+GPU-free proof, production GROUPED gates and training progress. Old pending
+receipt warning is resolved. Do not resubmit a02 or modify its source snapshot.
 
 [Evidence](results/bdot_stop_optimized_progress_20261025.json). Updated raw proof:
 `temp/stop_optimized_20261025/stop-verify-final.log` and `health-a03.log/.json`.

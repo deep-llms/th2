@@ -1,5 +1,5 @@
 {
-  "status": "corrected_queue_pushed_runner_receipt_pending",
+  "status": "corrected_queue_launched_gates_pending",
   "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
   "original_queue": "6y3o-dot-stop-long-20261024-a01",
   "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
@@ -323,12 +323,16 @@
     "runner-status-a02-launch.log": {
       "path": "temp/stop_optimized_20261025/runner-status-a02-launch.log",
       "sha256": "023417efacffc2b622deb343d71999249d100b1f0831905f7740d913eba757d9"
+    },
+    "launch-a02.log": {
+      "path": "temp/stop_optimized_20261025/launch-a02.log",
+      "sha256": "684caacdad6940c006183b7f219ed95ab91be7db865aaa54102fe497ccab8d20"
     }
   },
   "handoff_verified_utc": "2026-10-24T17:43:07.874636+00:00",
   "latest_verified_live_utc": "2026-10-24T17:58:19.776621+00:00",
   "corrected_launch_commit": "f07a7d5ce4e0f926ae64b5a159550e6c98d851c3",
   "corrected_launch_utc": "2026-10-24T23:35:01+00:00",
-  "corrected_launch_acknowledged": false,
+  "corrected_launch_acknowledged": true,
   "training_started_verified": false
 }
