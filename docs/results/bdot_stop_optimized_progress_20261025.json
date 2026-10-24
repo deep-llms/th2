@@ -1,5 +1,5 @@
 {
-  "status": "corrected_queue_numerical_resume_passed_final_gates_pending",
+  "status": "a02_gpu_checks_passed_gate_cli_import_fixed_a03_submitting",
   "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
   "original_queue": "6y3o-dot-stop-long-20261024-a01",
   "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
@@ -339,6 +339,10 @@
     "health-a06.log": {
       "path": "temp/stop_optimized_20261025/health-a06.log",
       "sha256": "bf95eac18e26a9323b8c008a129a49401a8f352717c7f746b866fa66949298cb"
+    },
+    "health-a07.log": {
+      "path": "temp/stop_optimized_20261025/health-a07.log",
+      "sha256": "ff97316b5224dd1385101fc66ca1259a27bf9f2756c23931479d0fc983e406f1"
     }
   },
   "handoff_verified_utc": "2026-10-24T17:43:07.874636+00:00",
@@ -728,6 +732,203 @@
     "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
   },
   "corrected_benchmarks": {
+    "benchmark-control-2.json": {
+      "status": "completed",
+      "settings": {
+        "config": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a02/benchmark-control.json",
+        "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a02/supervised/run/benchmark-control-2.json",
+        "device": "cuda",
+        "batch_size": 16,
+        "accumulation": 4,
+        "length": 1024,
+        "document_length": 1024,
+        "warmup": 3,
+        "steps": 15,
+        "bf16": true,
+        "checkpointing": false,
+        "attention_backend": "fa4",
+        "progress": 1.0,
+        "seed": 0,
+        "router_prior": null,
+        "expert_backend": "grouped",
+        "bdot_source": null,
+        "profile": false
+      },
+      "versions": {
+        "torch": "2.14.1",
+        "transformers": "5.9.0",
+        "accelerate": "1.13.0",
+        "datasets": "4.8.5",
+        "flash-attn-4": "4.0.0b33",
+        "flash-attn": null
+      },
+      "torch": "2.14.1+cu130",
+      "cuda": "13.0",
+      "world_size": 8,
+      "gpu": "NVIDIA B200",
+      "parameters": 344373256,
+      "config": {
+        "transformers_version": "5.9.0",
+        "architectures": [
+          "BDOTForCausalLM"
+        ],
+        "output_hidden_states": false,
+        "return_dict": true,
+        "dtype": "float32",
+        "chunk_size_feed_forward": 0,
+        "is_encoder_decoder": false,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "problem_type": null,
+        "vocab_size": 151936,
+        "hidden_size": 1024,
+        "intermediate_size": 3072,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 16,
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "hidden_act": "silu",
+        "max_position_embeddings": 1024,
+        "initializer_range": 0.02,
+        "rms_norm_eps": 1e-06,
+        "use_cache": false,
+        "tie_word_embeddings": true,
+        "rope_parameters": {
+          "rope_theta": 1000000.0,
+          "rope_type": "default"
+        },
+        "attention_bias": false,
+        "use_sliding_window": false,
+        "sliding_window": null,
+        "max_window_layers": 28,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "attention_dropout": 0.0,
+        "pad_token_id": 151643,
+        "bos_token_id": null,
+        "eos_token_id": 151643,
+        "_name_or_path": "",
+        "bdot": {
+          "n_stem": 2,
+          "n_coda": 2,
+          "S": 8,
+          "mode": "compute_matched",
+          "window": "absolute",
+          "kv_mode": "step",
+          "route_scope": "qo_mlp",
+          "routed_mlp_fraction": 1.0,
+          "router_detach_input": false,
+          "router_metric": "linear",
+          "r": 0,
+          "reuse": true,
+          "routing": "fixed",
+          "step_film": true,
+          "visit_scale": "none",
+          "gate": "st",
+          "default_prior": 1.0,
+          "init_std_scale": 0.1,
+          "balance_rate": 0.001,
+          "z_loss_coef": 0.001,
+          "explore_eps_max": 0.05,
+          "curriculum": "none",
+          "soft_phase_frac": 0.15,
+          "explore_end_frac": 0.5,
+          "widen_every_frac": 0.1,
+          "seed": 0,
+          "expert_backend": "grouped",
+          "logit_cap": null,
+          "select_on": "logits",
+          "placement_film": false,
+          "placement_film_scope": "both"
+        },
+        "bdot_stop": {
+          "min_steps": 6,
+          "train_random_prob": 0.0,
+          "exit_steps": [
+            6
+          ]
+        },
+        "model_type": "qwen3",
+        "output_attentions": false
+      },
+      "seconds": 9.993123956024647,
+      "seconds_per_update": 0.6662082637349764,
+      "rank0_update_seconds": [
+        0.6426652860827744,
+        0.6398305627517402,
+        0.6386804990470409,
+        0.639134201221168,
+        0.6407914068549871,
+        0.6384649910032749,
+        0.6357662421651185,
+        0.6365706440992653,
+        0.6374821937642992,
+        0.635497665964067,
+        0.6359322862699628,
+        0.6353600970469415,
+        0.6368214283138514,
+        0.6352193979546428,
+        0.6362052322365344
+      ],
+      "rank0_median_update_seconds": 0.6368214283138514,
+      "tokens_per_second": 786973.126182305,
+      "peak_allocated_bytes": 56530277376,
+      "peak_reserved_bytes": 57457770496,
+      "routing_metrics": {
+        "lm_loss_last_update": 11.962202608585358,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288
+      },
+      "scope": "Synthetic HF Trainer updates, forward/backward/clip/AdamW/scheduler/routing. Excludes preprocessing, evaluation and checkpoint saving; not a convergence result.",
+      "source_sha256": {
+        "bdot/model.py": "0c6f16ee1a785c3dacaa856b8c32b09a296f16e18c1bd93b65fc1071951f8e01",
+        "bdot/grouped.py": "4e76471b26a6a96e781c1dc29f790f3e66b507bb46115d053f57b9dd02324cca",
+        "bdot/trainer.py": "49a410956f0eaea4f8ba7852d3423d7fc0462acd8165b543b11277a9424a1206",
+        "bdot/exit_training.py": "07a3b1e93b83121b7a38f173c97079a8b3eaa3aa6cfc880c5af3cb8bc0927913",
+        "packed_fa4.py": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+        "packed_fa2.py": "994d78d8b96b5a083c768744b45b1877f642ac963a75a2f9130205b30b9df89d",
+        "packed_training.py": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+        "train.py": "4749b903cfc5f453479ca6659ea4ea727f7ff31b9e2cb8be6c0e49de07662c03",
+        "scripts/benchmark_bdot.py": "0bf55548d1adbec07dabc919e1f81d5c8c0629d22d59196344a4183a6117b907"
+      }
+    },
     "benchmark-reference-2.json": {
       "status": "completed",
       "settings": {
@@ -1742,5 +1943,215 @@
       }
     }
   },
-  "corrected_last_status_utc": "2026-10-24T23:47:10.484104+00:00"
+  "corrected_last_status_utc": "2026-10-24T23:47:10.484104+00:00",
+  "gate_replay": {
+    "status": "passed",
+    "timings": {
+      "control": {
+        "seconds_per_update": 0.6665682611986994,
+        "repeats": [
+          0.6669282586624224,
+          0.6662082637349764
+        ],
+        "peak_allocated_bytes": 56530277376
+      },
+      "reference": {
+        "seconds_per_update": 2.119104485368977,
+        "repeats": [
+          2.1165465298729638,
+          2.12166244086499
+        ],
+        "peak_allocated_bytes": 82137643520
+      },
+      "optimized": {
+        "seconds_per_update": 0.8621317135014881,
+        "repeats": [
+          0.8618024107379217,
+          0.8624610162650546
+        ],
+        "peak_allocated_bytes": 69278276608
+      }
+    },
+    "update_time_reduction": 0.5931622440262192,
+    "optimized_over_control": 1.2933884850009272,
+    "note": "Fresh branch only; mathematical equivalence is not bitwise migration of old training."
+  },
+  "a02_failure": {
+    "started_at": "2026-10-24T23:37:14.707172+00:00",
+    "training_status": "failed",
+    "training_error": "RuntimeError('optimization_gate exited with code 1')",
+    "free_after_training": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ],
+    "burn": {
+      "at": "2026-10-24T23:48:42.244795+00:00",
+      "session": "dot_stop_optimized_20261025_a02_burn",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544049
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544050
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544051
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544052
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544053
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544054
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544055
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 155212.0,
+          "utilization_percent": 100.0,
+          "pids": [
+            544056
+          ]
+        }
+      ],
+      "collective_progress_verified": true
+    },
+    "finished_at": "2026-10-24T23:48:42.245055+00:00"
+  },
+  "a02_live_burn_verified_utc": "2026-10-24T23:50:38.989874+00:00",
+  "a03_root": "6y3o-dot-stop-optimized-20261025-a03",
+  "gate_import_fix_test": "3 queue tests passed, including isolated CLI with only its two modules; exact B200 report replay passed"
 }

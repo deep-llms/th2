@@ -12,10 +12,6 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.prepare_stop_adaptation import read, write
-from scripts.bdot_stop_launch import snapshot
-from scripts.stop_long_launch import prepare, OVERLAYS
-from scripts.native_baseline_pipeline import burn_gate
-from scripts.gpu_process import inspect
 
 EXTRA = ('bdot/exit_training.py', 'scripts/stop_optimized_launch.py',
          'scripts/check_exit_optimization.py', 'scripts/benchmark_bdot.py',
@@ -55,6 +51,8 @@ def gate(run):
 
 
 def prepare_optimized(parent, smoke_previous, root, source):
+    from scripts.stop_long_launch import prepare
+
     jobs = prepare(parent, smoke_previous, root, source, optimized=True)
     jobs[1]['argv'] += ['--expert-backend', 'grouped']
     init = root / 'prepared/D-DualCE6-init'
@@ -116,6 +114,13 @@ def main():
     if a.action == 'gate':
         gate(a.run)
         return
+    # Launch orchestration is not included in the immutable training snapshot.
+    # The gate needs only its JSON receipts, not the launch-only import graph.
+    from scripts.bdot_stop_launch import snapshot
+    from scripts.stop_long_launch import OVERLAYS
+    from scripts.native_baseline_pipeline import burn_gate
+    from scripts.gpu_process import inspect
+
     if socket.gethostname() != a.host:
         raise ValueError('Wrong node')
     burn_gate(a.previous)

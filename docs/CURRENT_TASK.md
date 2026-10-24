@@ -1,30 +1,30 @@
 # Current task
 
-## Corrected optimized queue submitted — 25 October 2026, 07:35 SGT
+## Optimized queue packaging fix — 25 October 2026, 07:55 SGT
 
-Delayed receipts have arrived and resolve the earlier handoff uncertainty.
-Verification-only a01 stopped before any long fit, all eight GPUs were cleared,
-and communicating burns were restored at01:43:07SGT. The read-only01:58:19SGT
-receipt verifies the same live workers538535–538542, collective progress, released
-guard and unchanged source/Accelerate config. No controller/AWS failure was
-reported. Original checkpoint, old runs and environments remain intact.
+Corrected a02 passed every GPU numerical/capacity/DDP/8GPU resume and all six
+whole-update timing jobs. D0.66657s/update; oldDualCE2.11910; optimized0.86213,
+59.3% less time,1.293×D. Its final gate then FAILED before any training because
+`stop_optimized_launch.py` eagerly imported a launch-only transitive helper absent
+from the frozen snapshot (`scripts.bdot_long_pair`). This was a CLI packaging
+bug, not numerical, model, environment, GPU or controller failure.
 
-The already-authorized fresh a02 queue was pushed as `f07a7d5` using
-`temp/stop_optimized_20261025/launch-a02.sh`. GitHub head verified. Its launcher rechecks LIVE burn
-ownership twice before launch, copies/verifies Accelerate, and the supervisor
-rechecks exact worker identities before reclaiming and verifying all8 GPUs free.
-Training starts only after production GROUPED numerical/DDP/resume/timing tests
-and evaluator smoke pass. All18 jobs and final automatic burns are frozen into
-its fresh source/output root; no a01 outputs or source are overwritten.
-Launch acknowledged by a02 receipt, downloaded07:40SGT. Live predecessor
-ownership passed twice; exact train runtime pins passed; Accelerate resource was
-copied to HF cache and `accelerate env` confirms8GPU BF16. Immutable queue
-submitted in its own tmux session. Await fresh a04 read-only health receipt for
-GPU-free proof, production GROUPED gates and training progress. Old pending
-receipt warning is resolved. Do not resubmit a02 or modify its source snapshot.
+Fixed by importing launch-only helpers only in launch/prepare paths. Three queue
+tests pass, including a fresh isolated Python process with only the two gate
+modules present. The fixed CLI also PASSED on the exact downloaded a02 B200
+receipts in `temp/stop_optimized_20261025/gate-replay-a02/`. No model, objective,
+optimizer or recipe changes. Keep a02 immutable and preserve all its receipts.
 
-[Evidence](results/bdot_stop_optimized_progress_20261025.json). Updated raw proof:
-`temp/stop_optimized_20261025/stop-verify-final.log` and `health-a03.log/.json`.
+A02 automatically cleared all8 GPUs and restored verified communicating burns
+at07:48:42SGT, matching live workers544049–544056/released guard at07:50:38.
+Submit fresh a03 with `temp/stop_optimized_20261025/launch-a03.sh`; it repeats the
+full gates before the authorized10k matched pair. The launch checks live burn
+ownership, copies/verifies Accelerate, reclaims verified workers and checks all
+GPUs free; final burns remain automatic on success/failure. Never resubmit a02.
+Original D10k and every prior output preserved. No long fit has started yet.
+
+[Evidence](results/bdot_stop_optimized_progress_20261025.json). Raw receipts:
+`temp/stop_optimized_20261025/health-a07.log/.json` and earlier files in that folder.
 
 ## Optimized D/DualCE replacement — authorized 25 October 2026, 01:17 SGT
 

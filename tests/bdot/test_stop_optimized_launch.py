@@ -1,6 +1,10 @@
 import copy
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -89,6 +93,30 @@ class OptimizedQueueTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Wrong throughput'): gate(run)
             write(path, data); gate(run)
             self.assertEqual(json.loads((run/'optimization-gate.json').read_text())['update_time_reduction'], .5)
+
+    def test_gate_cli_runs_without_launch_only_modules(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / 'source/scripts'
+            source.mkdir(parents=True)
+            for name in ('stop_optimized_launch.py', 'prepare_stop_adaptation.py'):
+                shutil.copy2(ROOT / 'scripts' / name, source / name)
+            run = root / 'run'
+            for path, status in [('numerics.json', 'passed'), ('resume/summary.json', 'passed'),
+                                 ('ddp/rank0.json', 'passed'), ('ddp/rank1.json', 'passed')]:
+                write(run / path, dict(status=status))
+            write(run / 'capacity.json', dict(status='ok', branches={'D': dict(device_total_bytes=1000)}))
+            for case, seconds in [('control', 1.), ('reference', 3.), ('optimized', 1.5)]:
+                for repeat in (1, 2):
+                    write(run / f'benchmark-{case}-{repeat}.json', dict(status='completed', world_size=8,
+                        settings=dict(batch_size=16, accumulation=4, length=1024, attention_backend='fa4',
+                                      expert_backend='grouped', checkpointing=False),
+                        seconds_per_update=seconds, peak_allocated_bytes=10))
+            result = subprocess.run([sys.executable, '-I', str(source / 'stop_optimized_launch.py'),
+                                     'gate', '--run', str(run)], cwd=root, capture_output=True, text=True,
+                                    env={k: v for k, v in os.environ.items() if k != 'PYTHONPATH'})
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(json.loads((run / 'optimization-gate.json').read_text())['status'], 'passed')
 
 
 if __name__ == '__main__':
