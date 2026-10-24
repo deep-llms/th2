@@ -1,31 +1,25 @@
 # Current task
 
-## Current blocker — 25 October 2026, 01:55 SGT
+## Corrected optimized queue submission — 25 October 2026, 07:36 SGT
 
-**Corrected optimized 10k pair has NOT been launched.** Numerical/capacity checks
-on B200 passed, but verification-only a01 needed its probe execution flags fixed
-(reference → production grouped). It was signaled through its verified owner
-before any long fit. The first cancellation log confirms signal delivery while
-benchmarking; its final burn handoff is unverified. The last delivered runner
-status is 01:43:20SGT. A fresh #2 pull (`e498261`) and subsequent read-only #1
-inspection (`a23efba`) have not returned new receipts as of01:55SGT. No explicit
-AWS/controller error has arrived; do not infer node death, burn success, or a
-training-code failure from this delivery gap. Stop further remote writes until
-status returns. No environments/drivers were changed.
+Delayed receipts have arrived and resolve the earlier handoff uncertainty.
+Verification-only a01 stopped before any long fit, all eight GPUs were cleared,
+and communicating burns were restored at01:43:07SGT. The read-only01:58:19SGT
+receipt verifies the same live workers538535–538542, collective progress, released
+guard and unchanged source/Accelerate config. No controller/AWS failure was
+reported. Original checkpoint, old runs and environments remain intact.
 
-Local corrected launcher/test changes explicitly select grouped execution for
-DDP/resume/timing and reject mismatched timing receipts. They are ready but NOT
-submitted to B200. The execution checkout may be locally ahead of remote; inspect
-before any push. Its local commands are #0; remote `a23efba` is a read-only status
-request, not a GPU launch. Next: retrieve that receipt, verify a01's supervisor
-finished, all training workers exited and live communicating burns match; then
-submit `temp/stop_optimized_20261025/launch-a02.sh` with the corrected code. It
-creates a fresh root and gates all training on the full B200 tests. Do not skip
-those tests or mutate a01. Original10k parent and all prior outputs remain intact.
+Submit the already-authorized fresh a02 queue using
+`temp/stop_optimized_20261025/launch-a02.sh`. Its launcher rechecks LIVE burn
+ownership twice before launch, copies/verifies Accelerate, and the supervisor
+rechecks exact worker identities before reclaiming and verifying all8 GPUs free.
+Training starts only after production GROUPED numerical/DDP/resume/timing tests
+and evaluator smoke pass. All18 jobs and final automatic burns are frozen into
+its fresh source/output root; no a01 outputs or source are overwritten.
+Submission is not proof of training; retrieve the new launch/health receipts.
 
-[Evidence](results/bdot_stop_optimized_progress_20261025.json). Raw receipts and
-ready commands: `temp/stop_optimized_20261025/`. User authorization to stop old
-queue and train a fresh matched10k pair persists; no new permission needed.
+[Evidence](results/bdot_stop_optimized_progress_20261025.json). Updated raw proof:
+`temp/stop_optimized_20261025/stop-verify-final.log` and `health-a03.log/.json`.
 
 ## Optimized D/DualCE replacement — authorized 25 October 2026, 01:17 SGT
 

@@ -21,7 +21,9 @@ receipt. Cleanup now handles EINVAL only with bounded reap/ownership rescans,
 never an unverified PID/group fallback, and still refuses a handoff on persistent
 errors. Eleven CPU ownership tests pass, including real orphan cleanup. No GPU,
 CUDA, driver or environment changes. Final burn handoff after verification-only
-a01 cancellation is not yet verified because fresh runner receipts are pending.
+a01 cancellation is now verified by delayed receipts: all8 communicating burns
+restored01:43:07SGT, matching live identities/released guard at01:58:19SGT.
+Corrected a02 still requires fresh live ownership checks and all production gates.
 
 ## Optional DualCE execution optimization — 24 October 2026
 

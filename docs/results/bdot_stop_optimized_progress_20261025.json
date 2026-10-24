@@ -1,5 +1,5 @@
 {
-  "status": "b200_numerics_passed_corrected_queue_pending_runner",
+  "status": "handoff_verified_corrected_queue_submitting",
   "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
   "original_queue": "6y3o-dot-stop-long-20261024-a01",
   "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
@@ -248,7 +248,7 @@
   "fixture_correction": "Resume, DDP and timing probes must explicitly use expert_backend=grouped. Production-model numerical/capacity tests already used grouped. The reference-backend timings are not the production speed claim.",
   "verification_only_cancel": "4277c62d72764fcc492d89cb7e67a621ed9cdc42",
   "verification_cancel_confirmed_before_any_long_fit": true,
-  "final_handoff_confirmed": false,
+  "final_handoff_confirmed": true,
   "latest_pending_readonly_commit": "a23efba31436de2dc7a67a3140fc457383028956",
   "proposed_corrected_root": "6y3o-dot-stop-optimized-20261025-a02",
   "corrected_launch_submitted": false,
@@ -311,6 +311,16 @@
     "handoff-tests.log": {
       "path": "temp/stop_optimized_20261025/handoff-tests.log",
       "sha256": "50b1b90eab7addf240e96349b896e8745fe49df8225398af17257a3beb3eddaf"
+    },
+    "stop-verify-final.log": {
+      "path": "temp/stop_optimized_20261025/stop-verify-final.log",
+      "sha256": "2bfd78c139182d16b9cb933d8f61eb474779e93ba0b4c968d4d640303e70e915"
+    },
+    "health-a03.log": {
+      "path": "temp/stop_optimized_20261025/health-a03.log",
+      "sha256": "dc0d042dd520af908764439c85ec7330ed53f2e0e193d11ab09d6e52f0a35e66"
     }
-  }
+  },
+  "handoff_verified_utc": "2026-10-24T17:43:07.874636+00:00",
+  "latest_verified_live_utc": "2026-10-24T17:58:19.776621+00:00"
 }
