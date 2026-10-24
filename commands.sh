@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-stop-optimized-health-20261025-a04
+#th2-6y3o-dot-stop-optimized-health-20261025-a05
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -59,7 +59,7 @@ r['initializations']={p.parent.name:read(p) for p in (root/'prepared').glob('*-i
 r['prepared_configs']={p.name:read(p) for p in (root/'prepared').glob('*.train.json')}
 r['benchmarks']={p.name:read(p) for p in (root/'supervised/run').glob('benchmark-*.json')}
 r['guard_owner']=Path('/mnt/local/_gpu_guard/DISABLED').read_text() if Path('/mnt/local/_gpu_guard/DISABLED').exists() else None
-out=root/'health-a04.json'
+out=root/'health-a05.json'
 with out.open('x') as f:f.write(json.dumps(r,indent=2)+'\n')
 print('STOP_HEALTH '+json.dumps(r),flush=True)
 print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
