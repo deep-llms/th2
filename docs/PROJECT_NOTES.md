@@ -4,6 +4,22 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## STOP pilot final result — 24 October 2026
+
+Four 1k-step adaptations plus calibration/evaluation finished 23 October
+12:41:45 SGT; burns restored 12:42:56 and verified live 24 October 14:57:34 SGT.
+All jobs/checkpoints/data/source/numerical gates pass, but **no practical STOP
+speed–quality gate passes**. Full-depth PPL D-continue/D-STOP/Partial-continue/
+Partial-STOP: 26.6934/27.0478/26.7514/27.0912. Learned threshold 0.7 yields
+26.7816/27.1969/26.8360/27.2400 and mean middle depths 7.9697/7.8805/7.9707/7.8713
+out of 8. Every chosen policy is slower than its own full-depth control across
+measured batch/context settings. Learned heads beat calibrated matched-random
+exits in loss, but safe skipping is too small to pay for head/selection overhead.
+Random-STOP adaptation improves shallow-exit quality but worsens full depth.
+This rejects this tested configuration, not every early-exit design. No further
+fits are queued. Preserve all four checkpoints per branch and fitted heads.
+See CURRENT_TASK and [evidence](results/bdot_stop_final_20261024.json).
+
 ## STOP pilot implementation — 23 October 2026
 
 User explicitly authorized STOP after the completed 10k pair/downstream screen.

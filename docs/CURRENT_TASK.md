@@ -1,6 +1,60 @@
 # Current task
 
-## STOP study — authorized 23 October 2026
+## STOP study completed — results retrieved 24 October 2026
+
+All four adaptation branches reached **1,000 additional steps**, followed by
+successful head fitting, calibration, full validation and cached decode checks.
+The queue finished **23 October 12:41:45 SGT**; automatic communicating burns
+were restored at **12:42:56 SGT**. Delayed controller receipt c271f16 independently
+verified all eight burns **24 October 14:57:34 SGT** (workers 462505–462512,
+100% utilization, advancing collectives, released guard). No queued work remains.
+The previous missing receipt did not indicate training failure.
+
+PPL below uses the identical 9,704-sequence / 9,915,698-token validation set.
+All four independently calibrated heads select threshold 0.7. Decode timing is
+whole-model cached SDPA, batch 1, context 128, median of three 32-token trials.
+“Continue” receives ordinary adaptation; “STOP” receives random-STOP adaptation.
+All four are evaluated both at full depth and with their fitted STOP head.
+
+| Branch | Full-depth PPL | Learned-STOP PPL | Mean middle steps / 8 | Decode ms/token, full → STOP |
+|---|---:|---:|---:|---:|
+| D-continue | 26.6934 | 26.7816 | 7.9697 | 15.097 → 16.846 |
+| D-STOP | 27.0478 | 27.1969 | 7.8805 | 15.159 → 16.822 |
+| Partial-25-cosine-continue | 26.7514 | 26.8360 | 7.9707 | 19.127 → 20.950 |
+| Partial-25-cosine-STOP | 27.0912 | 27.2400 | 7.8713 | 18.669 → 19.928 |
+
+**No useful speed–quality win in this pilot.** Selected policies save only
+0.4–1.6% of middle steps; head/selection overhead dominates. They are also slower
+than their respective full-depth controls at batch 32 and context 512. All four
+predeclared practical gates fail. Random-STOP adaptation improves shallow exits
+but costs about 0.013 nats of full-depth loss relative to ordinary adaptation.
+For example, calibration loss at depth 4 improves from 4.929→3.958 for D and
+4.918→3.947 for Partial-25, but their full-depth calibration losses are about
+3.28. Aggressive stopping remains too costly for quality.
+
+The head has a useful but insufficient signal: learned exits have lower final
+loss than calibrated matched-random exits in all four branches (by about
+0.0042–0.0074 nats). This does not overcome the tiny amount of safe skipping.
+Cached/parallel checks pass on the measured fragment, with zero depth mismatch
+and logit RMS 0.0154–0.0188; this is limited numerical evidence, not exhaustive
+validation. One seed/pair, small calibration set, no downstream STOP claim.
+
+Verification: all six jobs exit 0, no retries, source manifest and Accelerate
+cache match; each arm has checkpoints 250/500/750/1000, final optimizer/scheduler
+and eight rank RNG files. Each consumes 524,288,000 input tokens from the same
+parent fingerprint and packed-row offset 5,120,000. Reloaded full-depth loss
+matches the training final evaluation. Source receipt and evaluation-summary
+SHA256s were checked locally. No training or GPU process was restarted to fetch
+these results. Commands returned to #0 after verification.
+
+[Full results and verification](results/bdot_stop_final_20261024.json).
+Local exact evaluation summary: `temp/stop_20261023/evaluation-summary.json`.
+Local status receipt: `temp/stop_20261023/adapt-final-20261024-a01.json`.
+Remote output: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01`.
+Final checkpoints: `prepared/runs/<branch>/checkpoint-1000`; evaluation artifacts:
+`supervised/run/evaluation/<branch>/`, including fitted `stop_head.pt`.
+
+## STOP study launch history — authorized 23 October 2026
 
 Latest user: “ok. lets try STOP”. Implementing the previously agreed dense/routed
 2×2 adaptation study from the finished D and Partial-25-cosine 10k checkpoints.
@@ -57,8 +111,8 @@ fragments for batch 32. The four head/evaluation jobs run concurrently.
 Output: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01`.
 Queue: head smoke → D-continue → D-STOP → Partial-25-cosine-continue →
 Partial-25-cosine-STOP → STOP evaluations → restored/verified burns.
-Approximate finish **12:50–13:20 SGT**, subject to measured STOP adaptation and
-evaluation speed. No STOP quality result exists yet. Input check 09fe427 passed: exact tokenizer/data
+Historical launch estimate: **12:50–13:20 SGT**. Final completion and results
+are recorded above. Input check 09fe427 passed: exact tokenizer/data
 identity, fit rows [5632000, 5632256), calibration [5632256, 5632512), 32 long
 document fragments, and the original 9,704-sequence final validation set.
 Commands return to #0; the independent supervised queue continues.
