@@ -19,6 +19,15 @@ only the adapted model. Six new fits, two existing continuation controls; no
 additional seeds or long training automatically authorized. CheckCURRENT_TASK
 for launch and results. Old STOP paths/outputs remain available and unchanged.
 
+Launched **24 October16:49 SGT**, after local tests and all GPU gates passed.
+At16:53 SGT, D-DualKD6 reached80/1,000 on eight GPUs, about2.41seconds/update.
+GPU resume was exact on the reduced-width fixture; full-width backend/capacity
+and cached checks passed for every branch. Source and Accelerate verified;
+supervisor handles evaluation and burn restoration. Active root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01`.
+[Launch evidence](results/bdot_stop_v2_launch_20261024.json). Startup verified,
+not completed results. Commands are inactive while the frozen queue runs.
+
 ## STOP pilot final result — 24 October 2026
 
 Four 1k-step adaptations plus calibration/evaluation finished 23 October
@@ -32,7 +41,7 @@ measured batch/context settings. Learned heads beat calibrated matched-random
 exits in loss, but safe skipping is too small to pay for head/selection overhead.
 Random-STOP adaptation improves shallow-exit quality but worsens full depth.
 This rejects this tested configuration, not every early-exit design. No further
-fits are queued. Preserve all four checkpoints per branch and fitted heads.
+fits remained in that old queue. Preserve all four checkpoints per branch and fitted heads.
 See CURRENT_TASK and [evidence](results/bdot_stop_final_20261024.json).
 
 ## STOP pilot implementation — 23 October 2026

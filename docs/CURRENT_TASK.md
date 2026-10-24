@@ -2,8 +2,9 @@
 
 ## STOP-v2 — six methods/trunk combinations authorized 24 October 2026
 
-Latest user: “ok, think about several methods and run them”. Implementation and
-local checks underway; no new GPU training launched yet. Scientific basis:
+Latest user: “ok, think about several methods and run them”. Implemented, tested
+and launched; first real fit verified healthy **24 October 16:53:19 SGT**.
+Scientific basis:
 `BDOT_v2_spec.md` sections 3.5/3.9, followed by the user's approved late-exit
 training extension. Same D and Partial-25-cosine original 10k parents. Three
 methods per trunk, 1,000 new updates each, same next 512,000 packed rows and
@@ -45,8 +46,37 @@ RNG/data/routes/depths). [Evidence](results/bdot_stop_v2_local_20261024.json).
 Read-only B200 preflight **3712e59** passed at **16:37:33 SGT**, job
 `th2-6y3o-dot-stop-v2-preflight-20261024-a01`: parent hashes and immutable source match,
 24 TB free storage, eight known burns. No installs, no cache deletion,
-no old checkpoint mutation. Planned root:
+no old checkpoint mutation. Active root:
 `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01`.
+
+Launch commit **a8046a1**, latest read-only receipt **982915e**. Accelerate was
+copied to its HF cache, byte-compared and checked with `accelerate env`: eight
+GPUs, BF16. Only known predecessor burn workers 462505–462512 were stopped;
+all eight GPUs were verified empty at **16:45:45 SGT** before the gates began.
+The frozen source and Accelerate cache still match at the latest receipt.
+
+All B200 gates passed: six real-width FA4/SDPA forward/backward and micro16×1024
+capacity checks, cached fixed-exit checks, head-fit smoke, two-GPU BF16 Trainer
+gradient normalization, and eight-GPU fresh-process resume. The resume fixture
+matches weights/optimizer/scheduler/data/RNG/routes/depths exactly across all16
+rank/case comparisons. The largest FA4/SDPA loss gap was 0.000763 and the largest
+relative gradient-norm gap 0.131%; these synthetic checks are numerical evidence,
+not a guarantee of long-run scientific equivalence.
+
+**D-DualKD6 is training**, step **80/1,000** at the last receipt, workers
+470734–470741, GPU utilization97–100%. Main LM loss3.304, exit CE3.507,
+exit KL0.2202, gradient norm0.2802; all finite. Real-data throughput about
+217k input tokens/s (**2.41 seconds/update**), peak allocated82.14GB per GPU.
+Data offset5,120,000 and both expected fingerprints match. Five remaining fits
+follow automatically, then eight independent evaluation workers. Rough initial
+queue ETA **24 October20:00–21:00 SGT**, including evaluation; only the first
+method's real-data throughput is measured so far. No scientific results yet.
+
+Supervisor restores and verifies communicating burns on success or failure.
+Commands returned to `#0` after startup verification; this does not stop the
+snapshot-based queue. [Launch and GPU evidence](results/bdot_stop_v2_launch_20261024.json).
+Exact local receipt: `temp/stop_v2_20261024/health-a02.json`; raw Dropbox log:
+`temp/stop_v2_20261024/health-a02.log`.
 
 ## STOP study completed — results retrieved 24 October 2026
 
@@ -55,7 +85,7 @@ successful head fitting, calibration, full validation and cached decode checks.
 The queue finished **23 October 12:41:45 SGT**; automatic communicating burns
 were restored at **12:42:56 SGT**. Delayed controller receipt c271f16 independently
 verified all eight burns **24 October 14:57:34 SGT** (workers 462505–462512,
-100% utilization, advancing collectives, released guard). No queued work remains.
+100% utilization, advancing collectives, released guard). That earlier queue ended.
 The previous missing receipt did not indicate training failure.
 
 PPL below uses the identical 9,704-sequence / 9,915,698-token validation set.

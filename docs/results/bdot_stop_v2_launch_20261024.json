@@ -1,0 +1,1325 @@
+{
+  "live": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-24T08:53:19.410849+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          470734
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          470735
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          470736
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          470737
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          470738
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          470739
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          470740
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 86638.0,
+        "utilization_percent": 99.0,
+        "pids": [
+          470741
+        ]
+      }
+    ],
+    "workers": [
+      470734,
+      470735,
+      470736,
+      470737,
+      470738,
+      470739,
+      470740,
+      470741
+    ],
+    "stop_roots": [],
+    "processes": {
+      "470734": {
+        "pid": 470734,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470735": {
+        "pid": 470735,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470736": {
+        "pid": 470736,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470737": {
+        "pid": 470737,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470738": {
+        "pid": 470738,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470739": {
+        "pid": 470739,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470740": {
+        "pid": 470740,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      },
+      "470741": {
+        "pid": 470741,
+        "ppid": 470728,
+        "start_ticks": 277232268,
+        "command_sha256": "9135450178f6db17e59a60eda1589c9688cbad1f50aadddec119e0b32d1025b2",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-u",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/source/train.py"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "guard_disabled": true
+  },
+  "supervisor_tail": "AUTHORIZED_BURN_WORKER_STOP [462505, 462506, 462507, 462508, 462509, 462510, 462511, 462512]\nALL_EIGHT_GPUS_VERIFIED_FREE\nSTART numerics_and_capacity\nOK numerics_and_capacity\nSTART ddp\nOK ddp\nSTART resume\nOK resume\nSTART D-DualKD6\n",
+  "launch.json": {
+    "status": "submitted",
+    "session": "dot_stop_v2_20261024_a01",
+    "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01",
+    "python": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+    "versions": {
+      "torch": "2.14.1",
+      "transformers": "5.9.0",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0",
+      "flash-attn-4": "4.0.0b33"
+    },
+    "accelerate_cache": "/mnt/local/.cache/huggingface/accelerate/default_config.yaml",
+    "environment": {
+      "HF_HUB_OFFLINE": "1",
+      "HF_DATASETS_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_HUB_DISABLE_TELEMETRY": "1",
+      "WANDB_MODE": "offline",
+      "NCCL_NVLS_ENABLE": "0",
+      "OMP_NUM_THREADS": "1",
+      "TOKENIZERS_PARALLELISM": "false",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "jobs_config": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/jobs.json"
+  },
+  "adaptation.json": {
+    "parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01",
+    "previous": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01",
+    "steps": 1000,
+    "start_sequence": 5120000,
+    "next_sequence": 5632000,
+    "input_tokens_per_branch": 524288000,
+    "peak_lr": 3e-05,
+    "warmup": 20,
+    "min_lr": 3e-06,
+    "methods": [
+      [
+        "LateDrop6",
+        0.5,
+        null
+      ],
+      [
+        "DualCE6",
+        0.0,
+        {
+          "depth": 6,
+          "ce_weight": 0.5,
+          "kl_weight": 0.0
+        }
+      ],
+      [
+        "DualKD6",
+        0.0,
+        {
+          "depth": 6,
+          "ce_weight": 0.5,
+          "kl_weight": 0.5
+        }
+      ]
+    ],
+    "branches": {
+      "D-DualKD6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/D-DualKD6/checkpoint-1000",
+      "Partial-25-cosine-DualKD6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/Partial-25-cosine-DualKD6/checkpoint-1000",
+      "D-DualCE6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/D-DualCE6/checkpoint-1000",
+      "Partial-25-cosine-DualCE6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/Partial-25-cosine-DualCE6/checkpoint-1000",
+      "D-LateDrop6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/D-LateDrop6/checkpoint-1000",
+      "Partial-25-cosine-LateDrop6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/Partial-25-cosine-LateDrop6/checkpoint-1000"
+    },
+    "auxiliary_note": "Full LM + .5 exit CE [+ .5 forward KL], temperature 1; full-path router regularization and balance only.",
+    "comparisons": "Equal data/updates; dual passes cost more training compute. Existing continue controls reused."
+  },
+  "branches.json": {
+    "D-DualKD6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/D-DualKD6/checkpoint-1000",
+    "Partial-25-cosine-DualKD6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/Partial-25-cosine-DualKD6/checkpoint-1000",
+    "D-DualCE6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/D-DualCE6/checkpoint-1000",
+    "Partial-25-cosine-DualCE6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/Partial-25-cosine-DualCE6/checkpoint-1000",
+    "D-LateDrop6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/D-LateDrop6/checkpoint-1000",
+    "Partial-25-cosine-LateDrop6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01/prepared/runs/Partial-25-cosine-LateDrop6/checkpoint-1000"
+  },
+  "supervised/reclaim.json": {
+    "at": "2026-10-24T08:45:15.064833+00:00",
+    "before": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462505
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462506
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462507
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462508
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462509
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462510
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462511
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          462512
+        ]
+      }
+    ],
+    "identities": {
+      "462505": {
+        "pid": 462505,
+        "ppid": 462436,
+        "start_ticks": 267110754,
+        "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462436": {
+        "pid": 462436,
+        "ppid": 9406,
+        "start_ticks": 267110632,
+        "command_sha256": "8f5218434dd5c47d6ab8468d9a2e56bdad1b53c977decbc3e2a2bf0da30e802d",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-adapt-20261023-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      },
+      "462506": {
+        "pid": 462506,
+        "ppid": 462436,
+        "start_ticks": 267110754,
+        "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462507": {
+        "pid": 462507,
+        "ppid": 462436,
+        "start_ticks": 267110754,
+        "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462508": {
+        "pid": 462508,
+        "ppid": 462436,
+        "start_ticks": 267110754,
+        "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462509": {
+        "pid": 462509,
+        "ppid": 462436,
+        "start_ticks": 267110755,
+        "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462510": {
+        "pid": 462510,
+        "ppid": 462436,
+        "start_ticks": 267110755,
+        "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462511": {
+        "pid": 462511,
+        "ppid": 462436,
+        "start_ticks": 267110755,
+        "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "462512": {
+        "pid": 462512,
+        "ppid": 462436,
+        "start_ticks": 267110755,
+        "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "signal_targets": [
+      462505,
+      462506,
+      462507,
+      462508,
+      462509,
+      462510,
+      462511,
+      462512
+    ]
+  },
+  "supervised/gpus-free-before-training.json": {
+    "at": "2026-10-24T08:45:45.069428+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ]
+  },
+  "supervised/supervisor.json": {
+    "started_at": "2026-10-24T08:45:45.356551+00:00",
+    "training_status": "running"
+  },
+  "supervised/run/run.json": {
+    "status": "running",
+    "started_at": "2026-10-24T08:45:45.356819+00:00",
+    "jobs": [
+      {
+        "name": "numerics_and_capacity",
+        "started_at": "2026-10-24T08:45:45.357222+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 50.685097507201135,
+        "artifacts": [
+          {
+            "path": "numerics.json",
+            "sha256": "9382cf6c9f316811e132f4efaf06f54eb98c197382d9dc43043c39509c96d0cd",
+            "bytes": 6357
+          }
+        ],
+        "finished_at": "2026-10-24T08:46:36.592289+00:00"
+      },
+      {
+        "name": "ddp",
+        "started_at": "2026-10-24T08:46:36.592339+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 18.39026679005474,
+        "artifacts": [
+          {
+            "path": "ddp/rank0.json",
+            "sha256": "251f4eec979102349f8b8f66ae64c7209c6bc578aca26fc7a5d691cf297c48e9",
+            "bytes": 451
+          }
+        ],
+        "finished_at": "2026-10-24T08:46:55.496604+00:00"
+      },
+      {
+        "name": "resume",
+        "started_at": "2026-10-24T08:46:55.496644+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 129.7889688112773,
+        "artifacts": [
+          {
+            "path": "resume/summary.json",
+            "sha256": "ffe5527356636ef358320ad821c24e8946414786d12e286cf59ce51cce97ca53",
+            "bytes": 7443
+          }
+        ],
+        "finished_at": "2026-10-24T08:49:05.797029+00:00"
+      },
+      {
+        "name": "D-DualKD6",
+        "started_at": "2026-10-24T08:49:05.797070+00:00",
+        "status": "running"
+      }
+    ]
+  },
+  "supervised/run/numerics.json": {
+    "status": "ok",
+    "branches": {
+      "D-DualKD6": {
+        "loss_fa4": 18.120637893676758,
+        "loss_sdpa": 18.120281219482422,
+        "gradient_norms": [
+          32.59356689453125,
+          32.58555221557617
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.5877913162112236,
+        "peak_allocated_bytes": 69500954112,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.010315021499991417,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0002331658179173246,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.375,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.6340932250022888
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "Partial-25-cosine-DualKD6": {
+        "loss_fa4": 18.05368423461914,
+        "loss_sdpa": 18.054447174072266,
+        "gradient_norms": [
+          31.87316131591797,
+          31.902395248413086
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.6093073040246964,
+        "peak_allocated_bytes": 71575575040,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.011522081680595875,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": 0.00027555134147405624,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.375,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.6206451654434204
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "D-DualCE6": {
+        "loss_fa4": 17.783123016357422,
+        "loss_sdpa": 17.782564163208008,
+        "gradient_norms": [
+          32.09895324707031,
+          32.08241271972656
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.5145789189264178,
+        "peak_allocated_bytes": 69500954112,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.010908840224146843,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0007728773634880781,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.375,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.6328647136688232
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "Partial-25-cosine-DualCE6": {
+        "loss_fa4": 17.729705810546875,
+        "loss_sdpa": 17.730133056640625,
+        "gradient_norms": [
+          31.295032501220703,
+          31.3192138671875
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.5370794110931456,
+        "peak_allocated_bytes": 71575575040,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.011303814128041267,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.001106981304474175,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.1875,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.5365630388259888
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "D-LateDrop6": {
+        "loss_fa4": 11.898320198059082,
+        "loss_sdpa": 11.897842407226562,
+        "gradient_norms": [
+          23.0841064453125,
+          23.054044723510742
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.15075215511023998,
+        "peak_allocated_bytes": 57599537152,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.010083298198878765,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": 0.00023592844081576914,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.3125,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.6059199571609497
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "Partial-25-cosine-LateDrop6": {
+        "loss_fa4": 11.778936386108398,
+        "loss_sdpa": 11.77882194519043,
+        "gradient_norms": [
+          22.112306594848633,
+          22.110872268676758
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.16528021218255162,
+        "peak_allocated_bytes": 58921088512,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.013686154969036579,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0015092124231159687,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.1875,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.5371298789978027
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      }
+    },
+    "note": "Synthetic numerical/capacity gate; wall time is not a real-data training ETA."
+  },
+  "supervised/run/ddp/rank0.json": {
+    "status": "passed",
+    "max_gradient_error": 0.00244140625,
+    "counts": [
+      [
+        12,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        12,
+        0,
+        0
+      ]
+    ],
+    "balance_bias": [
+      -0.0010000000474974513,
+      -0.0010000000474974513,
+      0.0010000000474974513,
+      0.0010000000474974513
+    ],
+    "reference_loss": 5.472437858581543,
+    "checkpointing": false,
+    "soft": false,
+    "device": "cuda:0",
+    "torch": "2.14.1+cu130",
+    "expert_backend": "reference",
+    "bf16": true,
+    "no_reuse": false,
+    "home_only": false
+  },
+  "supervised/run/ddp/rank1.json": {
+    "status": "passed",
+    "max_gradient_error": 0.00244140625,
+    "counts": [
+      [
+        12,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        12,
+        0,
+        0
+      ]
+    ],
+    "balance_bias": [
+      -0.0010000000474974513,
+      -0.0010000000474974513,
+      0.0010000000474974513,
+      0.0010000000474974513
+    ],
+    "reference_loss": 5.472437858581543,
+    "checkpointing": false,
+    "soft": false,
+    "device": "cuda:1",
+    "torch": "2.14.1+cu130",
+    "expert_backend": "reference",
+    "bf16": true,
+    "no_reuse": false,
+    "home_only": false
+  },
+  "supervised/run/resume/summary.json": {
+    "status": "passed",
+    "world_size": 8,
+    "steps": 8,
+    "schedule_steps": 8,
+    "split": 4,
+    "soft_split": 2,
+    "results": [
+      {
+        "case": "resume_hard",
+        "rank": 0,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 1,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 2,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 3,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 4,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 5,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 6,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 7,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 0,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 1,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 2,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 3,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 4,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 5,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 6,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 7,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      }
+    ],
+    "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
+  },
+  "source_matches": true,
+  "accelerate_cache_matches": true,
+  "accelerate_env": "\nCopy-and-paste the text below in your GitHub issue\n\n- `Accelerate` version: 1.13.0\n- Platform: Linux-6.12.103-127.188.amzn2023.x86_64-x86_64-with-glibc2.39\n- `accelerate` bash location: /usr/local/bin/accelerate\n- Python version: 3.11.15\n- Numpy version: 2.4.6\n- PyTorch version: 2.14.1+cu130\n- PyTorch accelerator: CUDA\n- System RAM: 1996.02 GB\n- GPU type: NVIDIA B200\n- `Accelerate` default config:\n\t- compute_environment: LOCAL_MACHINE\n\t- distributed_type: MULTI_GPU\n\t- mixed_precision: bf16\n\t- use_cpu: False\n\t- debug: False\n\t- num_processes: 8\n\t- machine_rank: 0\n\t- num_machines: 1\n\t- gpu_ids: all\n\t- rdzv_backend: static\n\t- same_network: True\n\t- main_training_function: main\n\t- enable_cpu_affinity: False\n\t- downcast_bf16: no\n\t- tpu_use_cluster: False\n\t- tpu_use_sudo: False\n\t- tpu_env: []\n",
+  "branch_verified": {},
+  "status": "startup_verified_training_running",
+  "launch_commit": "a8046a19615560e864be6e0aafb060d242f9e586",
+  "health_commit": "982915ef0719153060e34884bbd8179277283138",
+  "receipt_json_sha256": "9ff5886694a21b6267371843bebb80f2e6fa06b6de3f6c7a83f41aa041b6f1c6",
+  "receipt_log_sha256": "a5266a25c6aa8059d4ba4b5064cba7b52c8c0ef0e4508d1c976df5d4bba11535",
+  "training": {
+    "D-DualKD6": {
+      "latest_metrics": {
+        "step": 80,
+        "grad_norm": 0.2801821827888489,
+        "learning_rate": 2.9759253297634018e-05,
+        "exit_ce_loss": 3.5066404626677525,
+        "exit_kl_loss": 0.22021614463874023,
+        "objective_loss": 5.167396545410156,
+        "lm_loss_last_update": 3.3294049203395844,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 3.3039692309738986,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231362,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 217359.37309252226,
+        "interval_wall_seconds": 24.120790952816606,
+        "peak_allocated_bytes": 82137643520,
+        "peak_reserved_bytes": 88837455872
+      },
+      "data_slice": {
+        "start": 5120000,
+        "remaining_sequences": 24158633,
+        "fingerprint": "190cb5957440e160"
+      },
+      "parent_fingerprint": "a7d3e88e5670c8a2"
+    }
+  }
+}
