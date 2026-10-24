@@ -1,6 +1,6 @@
 # Current task
 
-## Corrected optimized queue submission — 25 October 2026, 07:36 SGT
+## Corrected optimized queue submitted — 25 October 2026, 07:35 SGT
 
 Delayed receipts have arrived and resolve the earlier handoff uncertainty.
 Verification-only a01 stopped before any long fit, all eight GPUs were cleared,
@@ -9,14 +9,23 @@ receipt verifies the same live workers538535–538542, collective progress, rele
 guard and unchanged source/Accelerate config. No controller/AWS failure was
 reported. Original checkpoint, old runs and environments remain intact.
 
-Submit the already-authorized fresh a02 queue using
-`temp/stop_optimized_20261025/launch-a02.sh`. Its launcher rechecks LIVE burn
+The already-authorized fresh a02 queue was pushed as `f07a7d5` using
+`temp/stop_optimized_20261025/launch-a02.sh`. GitHub head verified. Its launcher rechecks LIVE burn
 ownership twice before launch, copies/verifies Accelerate, and the supervisor
 rechecks exact worker identities before reclaiming and verifying all8 GPUs free.
 Training starts only after production GROUPED numerical/DDP/resume/timing tests
 and evaluator smoke pass. All18 jobs and final automatic burns are frozen into
 its fresh source/output root; no a01 outputs or source are overwritten.
-Submission is not proof of training; retrieve the new launch/health receipts.
+At07:39SGT the new launch receipt is still absent; the latest Dropbox status is
+01:59SGT and contains no newer controller error. Do NOT claim B200 has started
+this queue, or repeat the executable push. Remote commands remain the single
+authorized a02 launch, so it can execute when the runner picks it up. Local
+commands are #0 for safety; the local status commit is NOT pushed. Do not push
+that inactive revision while the authorized launch is still unacknowledged.
+Next: retrieve the a02 launch receipt, then use prepared fresh read-only
+`temp/stop_optimized_20261025/health-a04.sh` (a02 root) to verify production gates
+and actual training. Restore remote #0 after launch is acknowledged. No timers
+or duplicate monitors were created.
 
 [Evidence](results/bdot_stop_optimized_progress_20261025.json). Updated raw proof:
 `temp/stop_optimized_20261025/stop-verify-final.log` and `health-a03.log/.json`.
