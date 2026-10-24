@@ -1,6 +1,64 @@
 # Current task
 
-## STOP-v2 — six methods/trunk combinations authorized 24 October 2026
+## STOP-v2 completed — verified 24 October 22:20 SGT
+
+All six branches completed **1,000 updates**, followed by eight-way evaluation
+(six new fits plus two existing ordinary controls). All ten queue jobs exited0,
+without retries. Queue finished **19:59:28 SGT** after 3h14m including gates;
+communicating burns restored **20:00:34 SGT**. Read-only receipt **f49dd79**
+verified the same eight burn workers517315–517322 at **22:20:36 SGT**, 100%
+utilization, advancing NCCL cycles and released ownership guard. Nothing remains
+queued. No training/evaluation was restarted to retrieve these results.
+
+**No practical speed–quality win.** DualCE6 is the strongest compromise, but
+its selected exit is used by only0.62%/0.82% of D/Partial tokens. It saves too
+little work to offset STOP overhead. DualKD6 and LateDrop6 fail the calibration
+quality limit even at full depth, so their reported policy falls back to no STOP.
+All cached checks pass, but all eight practical speed–quality gates fail.
+
+Same validation:9,704 sequences,9,915,698 scored tokens. “Exit6” forces every
+token to stop after six of eight middle steps; the coda still runs. Selected
+policies were fixed using separate calibration data. Decode timing is whole-model
+cached SDPA, batch1/context128, median of three trials; latency comparisons use
+the same current evaluation, not the previous day's timings.
+
+| Branch | Full PPL | Exit6 PPL | Selected PPL | Tokens exiting at6 | Decode ms, full → selected |
+|---|---:|---:|---:|---:|---:|
+| D-continue | 26.6934 | 44.6312 | 26.7675 | 1.372% | 15.542 → 16.603 |
+| D-DualCE6 | 26.9081 | 31.4118 | 26.9127 | 0.622% | 15.498 → 16.472 |
+| D-DualKD6 | 27.1129 | 30.4730 | 27.1129 | 0% (fallback) | 14.646 → 14.646 |
+| D-LateDrop6 | 27.1073 | 31.2561 | 27.1073 | 0% (fallback) | 15.308 → 15.308 |
+| Partial-25-continue | 26.7514 | 43.3487 | 26.8225 | 1.286% | 19.014 → 19.627 |
+| Partial-25-DualCE6 | 26.9485 | 31.2971 | 26.9536 | 0.822% | 18.453 → 19.308 |
+| Partial-25-DualKD6 | 27.1486 | 30.4013 | 27.1486 | 0% (fallback) | 18.859 → 18.859 |
+| Partial-25-LateDrop6 | 27.1395 | 31.1332 | 27.1395 | 0% (fallback) | 19.119 → 19.119 |
+
+Useful learning signal: explicit supervision/distillation improves fixed-exit
+PPL dramatically (D44.63→30.47 with KD), but it remains well above full-depth
+ordinary continuation26.69. Extra KL improves the exit further while degrading
+the full path more than CE alone. Depth6 calibration loss continues decreasing
+from500 to1,000 for all methods, but the remaining full/exit gap is0.12–0.16 nats;
+this does not establish that simply training longer will produce a useful exit.
+Single seed and heuristic linear STOP head; no downstream or general impossibility
+claim. Tiny full-depth timing differences between D models imply no STOP savings.
+
+Train-job wall times, D/Partial respectively: DualKD41.5/42.8min,
+DualCE36.6/38.0min, LateDrop11.9/12.9min. All used identical524,288,000 input
+tokens /523,138,470 scored training targets; comparisons are equal updates/data,
+not equal training compute. Evaluation took6m41s with eight independent workers.
+
+Verified checkpoint steps250/500/750/1000, final model/optimizer/scheduler/eight
+RNG files, expected parent/data fingerprints and offset, full-eval carry, source
+manifest, Accelerate cache, result hashes and burn handoff. Commands returned
+to`#0` after receipt. [Full results](results/bdot_stop_v2_final_20261024.json).
+Exact local summary:`temp/stop_v2_20261024/evaluation-summary.json`, SHA256
+`82e6f2fcd68f03bb41ba06c04722a558d377c420a8bd89f496c4399042d3a76a`.
+Exact local receipt:`temp/stop_v2_20261024/health-a03.json` and `.log`.
+Remote root:`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01`;
+checkpoints:`prepared/runs/<branch>/checkpoint-1000`, evaluation/head artifacts:
+`supervised/run/evaluation/<branch>/`. Preserve these artifacts.
+
+## STOP-v2 launch history — authorized 24 October 2026
 
 Latest user: “ok, think about several methods and run them”. Implemented, tested
 and launched; first real fit verified healthy **24 October 16:53:19 SGT**.

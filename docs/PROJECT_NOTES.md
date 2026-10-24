@@ -3,8 +3,29 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+## STOP-v2 final result — 24 October 2026
 
-## STOP-v2 design — 24 October 2026
+Six1k-step fits and eight evaluations finished19:59:28SGT; burns restored20:00:34,
+verified live22:20:36 with all eight ranks communicating. Every declared job,
+checkpoint/data/source/numerical check passed. No further runs are queued.
+
+All practical speed–quality gates fail. Full-depth ordinary D/Partial PPL:
+26.6934/26.7514. DualCE6 selected-STOP PPL26.9127/26.9536, with only0.62%/0.82%
+tokens exiting at6, and slower decoding. DualKD6/LateDrop6 fail the calibration
+quality allowance even at full depth, hence fall back to no STOP. Fixed-exit
+quality improved (D exit6 PPL44.63→30.47 with KD), but the gap to ordinary full
+depth is still substantial. KL improves exit quality while degrading full depth
+more than CE alone. This is evidence of a tradeoff, not a numerical failure or
+proof that every STOP architecture fails. No automatic longer run authorized.
+
+All branches use the same additional524,288,000 input tokens; dual passes cost
+about37–43minutes versus12–13minutes for LateDrop. One seed, heuristic STOP
+head, thresholds calibrated independently of the held-out report. Full details,
+counts, latency, progress curves and hashes are in
+[the final evidence](results/bdot_stop_v2_final_20261024.json) and CURRENT_TASK.
+Exact downloaded summary:`temp/stop_v2_20261024/evaluation-summary.json`.
+
+## STOP-v2 design and launch history — 24 October 2026
 
 User authorized several new STOP methods after the first pilot. Six 1k-step
 warm-start branches: D/Partial-25 × LateDrop6, DualCE6, DualKD6, original10k
