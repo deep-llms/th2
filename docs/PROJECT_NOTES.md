@@ -8,11 +8,17 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 Real D-parent weights / full-width FA4 BF16 checks passed: nativeCE loss, logits,
 gradients/update exact in the fixture; shared-prefix loss/logits exact with
 0.2917% gradient relativeL2 and cosine0.9999957. Micro16 capacity passed at71.50GB
-peak allocated. Cached decoding and head fitting passed. Resume and DDP passed
-with reference expert execution, but production uses grouped; probe flags are
-now explicit and MUST be rechecked before training. Do not claim reference
-benchmark timings as production timings. No corrected long fit has started;
-CURRENT_TASK records the pending runner status and ready replacement queue.
+peak allocated. Cached decoding and head fitting passed. The corrected a02
+queue also passed production GROUPED DDP and exact8GPU native resume (all ranks,
+weights/optimizer/RNG/data/losses) by25October07:41SGT. Resume uses the established
+reduced-width12-layer fixture; this is not a long-run convergence guarantee.
+
+Production8GPU whole-HF-update timing, micro16 × accumulation4, seq1024, FA4:
+original DualCE2.1191s/update versus optimized0.8621s/update (two reversed-order
+repeats). 59.3% less update time,2.46× throughput. D control first repeat0.6669s;
+optimized ~1.29× D. Optimization changes execution only, not architecture or
+objective; BF16 gradient reduction order differs. Final control repeat, gate,
+evaluator smoke and long-fit status are recorded in CURRENT_TASK/evidence.
 
 During cancellation of the original long queue, child cleanup hit pidfd_open
 EINVAL. All GPUs were subsequently verified empty; a separate recovery restored
