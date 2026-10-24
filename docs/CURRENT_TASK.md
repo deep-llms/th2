@@ -11,8 +11,8 @@ branch. Partial-25 and other methods are not queued. Design remains
 Original backbone/router and loss implementation remain unchanged. Start fresh
 AdamW with LR3e-5, 200 warmup steps, cosine decay to3e-6 over all10,000 updates.
 Same seeds0, FA4, seq1024, micro16 × accumulation4 × eight GPUs, EOS boundaries,
-document isolation/reset, data order and saved validation. Retain every250-step
-checkpoint. Both branches start at packed row5,120,000 and end at10,240,000.
+document isolation/reset, data order and saved validation. Retain every 250-step
+checkpoint. Both branches start at packed row 5,120,000 and end at10,240,000.
 Head fitting uses [10240000,10240256), calibration [10240256,10240512), beyond
 the entire planned training segment, including during the5k assessment.
 
@@ -32,14 +32,44 @@ extends the existing STOP evaluator to explicit checkpoint steps and a matched
 control at that same step; rejects calibration overlap and wrong-stage metrics.
 
 Read-only preflight **a87ab41** passed **22:46:41 SGT**: original parent hashes,
-previous snapshot, runtime pins and all eight known burns517315–517322 match;
-23.9TB free. All 12 targeted local tests pass, including exact native checked-stage
-resume (weights/optimizer/scheduler/RNG), warm-start preservation and loss regressions.
-[Local evidence](results/bdot_stop_long_local_20261024.json). Preparing launch;
-GPU and real-data evaluation gates precede training.
-Planned output:`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01`.
-Predecessor:`6y3o-dot-stop-v2-20261024-a01`; original parent:
-`6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000`.
+previous snapshot, runtime pins and known burns matched; 23.9 TB free. All 12
+local targeted tests passed, including exact native checked-stage resume.
+[Local evidence](results/bdot_stop_long_local_20261024.json).
+
+**Launched and verified, 24 October 23:05:42 SGT.** Launch commit `b3db1fc`;
+latest read-only receipt `6da067c`. Accelerate config copied, byte-checked and
+`accelerate env` verified for eight GPUs. Known burn workers 517315–517322 were
+rechecked and stopped; all eight GPUs were empty at 22:54:59 SGT. Immutable
+source and both original D-10k initialization hashes match. No environment or
+driver changes.
+
+Real-width FA4/SDPA numerics, micro16 capacity and cached decoding passed for
+both branches. The eight-GPU reduced-width FA4 resume fixture matched exactly
+on every rank: weights, optimizer, scheduler, RNG, data and losses. The full
+evaluator check on saved 1k models finished successfully at 23:03:16 SGT,
+including the new calibration rows, matched reference, exact validation counts
+and full-depth PPL carry. These checks do not constitute new long-run results.
+
+D-continue is now training on eight GPUs (workers 521787–521794), verified at
+step 140: finite LM loss 3.281614 and gradient norm 0.187700, warmup LR 2.085e-5,
+about 0.65 seconds/update. Data starts at packed row 5,120,000, parent fingerprint
+`a7d3e88e5670c8a2`, sliced fingerprint `190cb5957440e160`. Stage cutoff 5k,
+schedule 10k, all checkpoints every 250 steps. D-DualCE6 follows; both stages and
+assessments remain in the frozen queue. Estimated final completion **25 October
+07:00–08:00 SGT**, based on this control and previous DualCE6 throughput.
+
+[Verified launch evidence](results/bdot_stop_long_launch_20261024.json).
+Downloaded receipt: `temp/stop_long_20261024/health-a03.json`; raw log alongside.
+Output: `/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01`.
+Tmux: `dot_stop_long_20261024_a01`. Predecessor: `6y3o-dot-stop-v2-20261024-a01`.
+Original parent: `6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000`.
+
+Commands restored to #0 after startup verification; this does not stop the
+frozen queue. Next: fetch fresh read-only status, verify paired 5k and 10k
+artifacts and scientific results, then supervisor completion and live
+communicating burns. Do not infer completion from missing PIDs or submit
+another executable launch. No additional methods authorized.
+
 
 ## STOP-v2 completed — verified 24 October 22:20 SGT
 

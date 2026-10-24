@@ -6,13 +6,21 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 ## Long D STOP pair — 24 October 2026
 
 User approved D-continue + D-DualCE6 first, each for10k adaptation updates from
-the ORIGINAL D10k checkpoint, fresh optimizer and coherent10k schedule. Same
+the ORIGINAL D-10k checkpoint, fresh optimizer and coherent10k schedule. Same
 model/loss/batch/data; LR3e-5, warmup200, floor3e-6. Assess both at5k then resume
 to10k under the unchanged schedule. Use existing native cutoff/resume and stage
 receipt helpers. Head/calibration data starts at packed row10,240,000, beyond
-all planned training. Keep every250-step checkpoint. About8hours expected on
+all planned training. Keep every 250-step checkpoint. About8hours expected on
 all eight B200s, including evaluation. No routed pair or other methods authorized
 in this queue. CURRENT_TASK records launch status and evidence.
+
+Launch `b3db1fc` verified at 24 October 23:05:42 SGT. All local/GPU numerical,
+capacity, exact eight-GPU resume and real evaluator gates passed. D-continue
+reached 140 steps on all eight GPUs; original D-10k parent and untouched data
+order verified. The 5k assessment uses calibration beyond the entire 10k training
+segment. Native midpoint resume preserves the full schedule. Frozen queue
+restores communicating burns after success/failure; commands are inactive.
+[Launch evidence](results/bdot_stop_long_launch_20261024.json).
 
 ## STOP-v2 final result — 24 October 2026
 

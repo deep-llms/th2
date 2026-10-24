@@ -1,0 +1,941 @@
+{
+  "status": "training_started",
+  "observed_at": "2026-10-24T15:05:42.678277+00:00",
+  "observed_at_sgt": "2026-10-24 23:05:42 SGT",
+  "launch_commit": "b3db1fc042accea52ed0e6052ea594c241bb112e",
+  "status_commit": "6da067ca3b43ca6ce7b84a2cfe6ec1b4e0d3b532",
+  "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01",
+  "session": "dot_stop_long_20261024_a01",
+  "launch_receipt": {
+    "path": "temp/stop_long_20261024/launch.log",
+    "sha256": "a7f2cbe05ef19be75957de17fc7dba25c37b69d575c7170db62f005ddce831cf"
+  },
+  "status_receipt": {
+    "path": "temp/stop_long_20261024/health-a03.json",
+    "sha256": "7a66b44e8a5e70da73ca80ca79ec50dd9cd5189a3e76ec778ed6e2e70a5742ef",
+    "log_path": "temp/stop_long_20261024/health-a03.log",
+    "log_sha256": "9367773040493e602381477fe0836431162d8ee22075e8a6d829cc183e29b27f",
+    "remote_log": "/_run-2026-10-24_15-05-31-th2-6y3o-dot-stop-long-health-20261024-a03.log"
+  },
+  "adaptation": {
+    "parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01",
+    "predecessor": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01",
+    "steps": 10000,
+    "midpoint": 5000,
+    "start_sequence": 5120000,
+    "next_sequence": 10240000,
+    "head_training_rows": [
+      10240000,
+      10240256
+    ],
+    "calibration_rows": [
+      10240256,
+      10240512
+    ],
+    "input_tokens_per_branch": 5242880000,
+    "peak_lr": 3e-05,
+    "warmup": 200,
+    "min_lr": 3e-06,
+    "branches": {
+      "D-continue": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-continue/checkpoint-10000",
+      "D-DualCE6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-DualCE6/checkpoint-10000"
+    },
+    "optimizer": "Fresh AdamW from original 10k parent; native resume at midpoint",
+    "objective": "Control full LM; DualCE6 full LM + 0.5 exit CE, unchanged architecture/loss",
+    "assessment": "Report 5k then continue authorized 10k; numerical/artifact failures stop the queue"
+  },
+  "initializations": {
+    "D-continue-init": {
+      "parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+      "parent_weight_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+      "reset_buffers": {
+        "completed_steps": 10000,
+        "routing_counter": 40000,
+        "training_totals": [
+          19034113187.223763,
+          5231393884.0,
+          0.0,
+          41943040000.0,
+          5242880000.0
+        ],
+        "logged_training_totals": [
+          19034113187.223763,
+          5231393884.0,
+          0.0,
+          41943040000.0,
+          5242880000.0
+        ]
+      },
+      "optimizer": "fresh AdamW",
+      "schedule": "new 10000-step adaptation",
+      "preserved": "all backbone/router weights and learned balance bias",
+      "changed_config": {
+        "curriculum": "none",
+        "bdot_stop": {
+          "min_steps": 6,
+          "train_random_prob": 0.0,
+          "exit_steps": [
+            6
+          ]
+        },
+        "bdot_exit_training": null
+      }
+    },
+    "D-DualCE6-init": {
+      "parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+      "parent_weight_sha256": "a0b189ba8257686d148714bcf4b2b4c2c8514440a12f7e2518e357cbfef51330",
+      "reset_buffers": {
+        "completed_steps": 10000,
+        "routing_counter": 40000,
+        "training_totals": [
+          19034113187.223763,
+          5231393884.0,
+          0.0,
+          41943040000.0,
+          5242880000.0
+        ],
+        "logged_training_totals": [
+          19034113187.223763,
+          5231393884.0,
+          0.0,
+          41943040000.0,
+          5242880000.0
+        ]
+      },
+      "optimizer": "fresh AdamW",
+      "schedule": "new 10000-step adaptation",
+      "preserved": "all backbone/router weights and learned balance bias",
+      "changed_config": {
+        "curriculum": "none",
+        "bdot_stop": {
+          "min_steps": 6,
+          "train_random_prob": 0.0,
+          "exit_steps": [
+            6
+          ]
+        },
+        "bdot_exit_training": {
+          "depth": 6,
+          "ce_weight": 0.5,
+          "kl_weight": 0.0
+        }
+      }
+    }
+  },
+  "prepared_configs": {
+    "D-DualCE6-5000.train.json": {
+      "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-DualCE6-init",
+      "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+      "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-DualCE6",
+      "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+      "data_order": "packed_shuffle",
+      "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+      "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+      "document_end_token": "<|endoftext|>",
+      "preprocessing_num_workers": 128,
+      "map_batch_size": 1000,
+      "block_size": 1024,
+      "attention_backend": "fa4",
+      "isolate_documents": true,
+      "reset_document_positions": true,
+      "seed": 0,
+      "data_seed": 0,
+      "bf16": true,
+      "tf32": false,
+      "gradient_checkpointing": false,
+      "optim": "adamw_torch",
+      "per_device_train_batch_size": 16,
+      "gradient_accumulation_steps": 4,
+      "per_device_eval_batch_size": 16,
+      "max_steps": 10000,
+      "warmup_steps": 200,
+      "learning_rate": 3e-05,
+      "lr_scheduler_type": "cosine_with_min_lr",
+      "lr_scheduler_kwargs": {
+        "min_lr_rate": 0.1
+      },
+      "adam_beta1": 0.9,
+      "adam_beta2": 0.95,
+      "weight_decay": 0.1,
+      "max_grad_norm": 1.0,
+      "logging_steps": 10,
+      "save_steps": 250,
+      "save_total_limit": null,
+      "eval_strategy": "steps",
+      "eval_steps": 100,
+      "eval_max_sequences": 1024,
+      "report_to": "none",
+      "do_eval": true,
+      "disable_tqdm": true,
+      "dataloader_num_workers": 8,
+      "dataloader_drop_last": true,
+      "train_sampling_strategy": "sequential",
+      "ddp_timeout": 21600,
+      "ddp_find_unused_parameters": true,
+      "ddp_broadcast_buffers": false,
+      "model_name_or_path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-DualCE6-init",
+      "train_start_sequence": 5120000,
+      "train_parent_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+      "stop_after": 5000
+    },
+    "D-DualCE6-10000.train.json": {
+      "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-DualCE6-init",
+      "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+      "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-DualCE6",
+      "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+      "data_order": "packed_shuffle",
+      "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+      "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+      "document_end_token": "<|endoftext|>",
+      "preprocessing_num_workers": 128,
+      "map_batch_size": 1000,
+      "block_size": 1024,
+      "attention_backend": "fa4",
+      "isolate_documents": true,
+      "reset_document_positions": true,
+      "seed": 0,
+      "data_seed": 0,
+      "bf16": true,
+      "tf32": false,
+      "gradient_checkpointing": false,
+      "optim": "adamw_torch",
+      "per_device_train_batch_size": 16,
+      "gradient_accumulation_steps": 4,
+      "per_device_eval_batch_size": 16,
+      "max_steps": 10000,
+      "warmup_steps": 200,
+      "learning_rate": 3e-05,
+      "lr_scheduler_type": "cosine_with_min_lr",
+      "lr_scheduler_kwargs": {
+        "min_lr_rate": 0.1
+      },
+      "adam_beta1": 0.9,
+      "adam_beta2": 0.95,
+      "weight_decay": 0.1,
+      "max_grad_norm": 1.0,
+      "logging_steps": 10,
+      "save_steps": 250,
+      "save_total_limit": null,
+      "eval_strategy": "steps",
+      "eval_steps": 100,
+      "eval_max_sequences": 1024,
+      "report_to": "none",
+      "do_eval": true,
+      "disable_tqdm": true,
+      "dataloader_num_workers": 8,
+      "dataloader_drop_last": true,
+      "train_sampling_strategy": "sequential",
+      "ddp_timeout": 21600,
+      "ddp_find_unused_parameters": true,
+      "ddp_broadcast_buffers": false,
+      "model_name_or_path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-DualCE6-init",
+      "train_start_sequence": 5120000,
+      "train_parent_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+      "stop_after": 10000,
+      "resume_from_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-DualCE6/checkpoint-5000"
+    },
+    "D-continue-5000.train.json": {
+      "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-continue-init",
+      "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+      "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-continue",
+      "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+      "data_order": "packed_shuffle",
+      "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+      "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+      "document_end_token": "<|endoftext|>",
+      "preprocessing_num_workers": 128,
+      "map_batch_size": 1000,
+      "block_size": 1024,
+      "attention_backend": "fa4",
+      "isolate_documents": true,
+      "reset_document_positions": true,
+      "seed": 0,
+      "data_seed": 0,
+      "bf16": true,
+      "tf32": false,
+      "gradient_checkpointing": false,
+      "optim": "adamw_torch",
+      "per_device_train_batch_size": 16,
+      "gradient_accumulation_steps": 4,
+      "per_device_eval_batch_size": 16,
+      "max_steps": 10000,
+      "warmup_steps": 200,
+      "learning_rate": 3e-05,
+      "lr_scheduler_type": "cosine_with_min_lr",
+      "lr_scheduler_kwargs": {
+        "min_lr_rate": 0.1
+      },
+      "adam_beta1": 0.9,
+      "adam_beta2": 0.95,
+      "weight_decay": 0.1,
+      "max_grad_norm": 1.0,
+      "logging_steps": 10,
+      "save_steps": 250,
+      "save_total_limit": null,
+      "eval_strategy": "steps",
+      "eval_steps": 100,
+      "eval_max_sequences": 1024,
+      "report_to": "none",
+      "do_eval": true,
+      "disable_tqdm": true,
+      "dataloader_num_workers": 8,
+      "dataloader_drop_last": true,
+      "train_sampling_strategy": "sequential",
+      "ddp_timeout": 21600,
+      "ddp_find_unused_parameters": true,
+      "ddp_broadcast_buffers": false,
+      "model_name_or_path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-continue-init",
+      "train_start_sequence": 5120000,
+      "train_parent_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+      "stop_after": 5000
+    },
+    "D-continue-10000.train.json": {
+      "config_name": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-continue-init",
+      "tokenizer_name": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+      "data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/train",
+      "output_dir": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-continue",
+      "eval_data_dir": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation",
+      "data_order": "packed_shuffle",
+      "dataset_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+      "validation_manifest": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-pilot-20261020-a01/prepared/validation.json",
+      "document_end_token": "<|endoftext|>",
+      "preprocessing_num_workers": 128,
+      "map_batch_size": 1000,
+      "block_size": 1024,
+      "attention_backend": "fa4",
+      "isolate_documents": true,
+      "reset_document_positions": true,
+      "seed": 0,
+      "data_seed": 0,
+      "bf16": true,
+      "tf32": false,
+      "gradient_checkpointing": false,
+      "optim": "adamw_torch",
+      "per_device_train_batch_size": 16,
+      "gradient_accumulation_steps": 4,
+      "per_device_eval_batch_size": 16,
+      "max_steps": 10000,
+      "warmup_steps": 200,
+      "learning_rate": 3e-05,
+      "lr_scheduler_type": "cosine_with_min_lr",
+      "lr_scheduler_kwargs": {
+        "min_lr_rate": 0.1
+      },
+      "adam_beta1": 0.9,
+      "adam_beta2": 0.95,
+      "weight_decay": 0.1,
+      "max_grad_norm": 1.0,
+      "logging_steps": 10,
+      "save_steps": 250,
+      "save_total_limit": null,
+      "eval_strategy": "steps",
+      "eval_steps": 100,
+      "eval_max_sequences": 1024,
+      "report_to": "none",
+      "do_eval": true,
+      "disable_tqdm": true,
+      "dataloader_num_workers": 8,
+      "dataloader_drop_last": true,
+      "train_sampling_strategy": "sequential",
+      "ddp_timeout": 21600,
+      "ddp_find_unused_parameters": true,
+      "ddp_broadcast_buffers": false,
+      "model_name_or_path": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/D-continue-init",
+      "train_start_sequence": 5120000,
+      "train_parent_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/D-s0/checkpoint-10000",
+      "stop_after": 10000,
+      "resume_from_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01/prepared/runs/D-continue/checkpoint-5000"
+    }
+  },
+  "source_matches": true,
+  "accelerate_cache_matches": true,
+  "accelerate_env": "\nCopy-and-paste the text below in your GitHub issue\n\n- `Accelerate` version: 1.13.0\n- Platform: Linux-6.12.103-127.188.amzn2023.x86_64-x86_64-with-glibc2.39\n- `accelerate` bash location: /usr/local/bin/accelerate\n- Python version: 3.11.15\n- Numpy version: 2.4.6\n- PyTorch version: 2.14.1+cu130\n- PyTorch accelerator: CUDA\n- System RAM: 1996.02 GB\n- GPU type: NVIDIA B200\n- `Accelerate` default config:\n\t- compute_environment: LOCAL_MACHINE\n\t- distributed_type: MULTI_GPU\n\t- mixed_precision: bf16\n\t- use_cpu: False\n\t- debug: False\n\t- num_processes: 8\n\t- machine_rank: 0\n\t- num_machines: 1\n\t- gpu_ids: all\n\t- rdzv_backend: static\n\t- same_network: True\n\t- main_training_function: main\n\t- enable_cpu_affinity: False\n\t- downcast_bf16: no\n\t- tpu_use_cluster: False\n\t- tpu_use_sudo: False\n\t- tpu_env: []\n",
+  "runtime": {
+    "torch": "2.14.1",
+    "transformers": "5.9.0",
+    "accelerate": "1.13.0",
+    "datasets": "4.8.5",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.8.0",
+    "flash-attn-4": "4.0.0b33"
+  },
+  "reclaim": {
+    "at": "2026-10-24T14:54:29.851087+00:00",
+    "signal_targets": [
+      517315,
+      517316,
+      517317,
+      517318,
+      517319,
+      517320,
+      517321,
+      517322
+    ],
+    "all_eight_free_at": "2026-10-24T14:54:59.854232+00:00"
+  },
+  "capacity": {
+    "status": "ok",
+    "branches": {
+      "D-continue": {
+        "loss_fa4": 11.865358352661133,
+        "loss_sdpa": 11.863974571228027,
+        "gradient_norms": [
+          23.795217514038086,
+          23.773303985595703
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.15532227186486125,
+        "peak_allocated_bytes": 58752531456,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.011272195726633072,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": 0.002270123455673456,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.25,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.577991247177124
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      },
+      "D-DualCE6": {
+        "loss_fa4": 17.783123016357422,
+        "loss_sdpa": 17.782564163208008,
+        "gradient_norms": [
+          32.09895324707031,
+          32.08241271972656
+        ],
+        "micro16_forward_backward_optimizer_seconds": 0.5148050459101796,
+        "peak_allocated_bytes": 69501904384,
+        "device_total_bytes": 191503007744,
+        "cached_check": {
+          "logit_rms": 0.010908840224146843,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0007728773634880781,
+          "passed": true
+        },
+        "head_fit": {
+          "examples": 16,
+          "positive_fraction": 0.375,
+          "bce_by_epoch": [
+            0.6931471824645996,
+            0.6328647136688232
+          ],
+          "label": "fixed-depth NLL minus full-depth NLL <= 0.01 nats on valid next-token targets",
+          "sampling_seed": 371,
+          "head_shuffle_seed": 812,
+          "epochs": 2,
+          "lr": 0.001,
+          "caveat": "Full-depth features/fixed-depth labels are heuristic; mixed exits are evaluated directly."
+        }
+      }
+    },
+    "note": "Synthetic numerical/capacity gate; wall time is not a real-data training ETA."
+  },
+  "resume": {
+    "status": "passed",
+    "world_size": 8,
+    "steps": 8,
+    "schedule_steps": 8,
+    "split": 4,
+    "soft_split": 2,
+    "results": [
+      {
+        "case": "resume_hard",
+        "rank": 0,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 1,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 2,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 3,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 4,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 5,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 6,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_hard",
+        "rank": 7,
+        "status": "passed",
+        "errors": [],
+        "batches": 8,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 0,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 1,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 2,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 3,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 4,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 5,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 6,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      },
+      {
+        "case": "resume_soft",
+        "rank": 7,
+        "status": "passed",
+        "errors": [],
+        "batches": 4,
+        "mismatches": {
+          "step": 0,
+          "input_sha256": 0,
+          "labels_sha256": 0,
+          "rng_sha256": 0,
+          "progress": 0,
+          "routing_counter": 0,
+          "routes": 0,
+          "stop_depths": 0
+        },
+        "max_loss_abs": 0.0,
+        "restored_state_exact": true,
+        "final_state_exact": true
+      }
+    ],
+    "scope": "Real train.py and strict data/training recipe checks, fresh processes, 12-layer reduced-width synthetic fixture."
+  },
+  "eval_smoke": {
+    "status": "ok",
+    "sha256": "22fa385aefdfeeb6dc4d0d5c111b7adee8122ce0bc720782076b0ca0573c5154",
+    "adaptation_step": 1000,
+    "cached_checks": {
+      "D-continue": {
+        "full": {
+          "logit_rms": 0.020030777901411057,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -5.154066820978187e-05,
+          "passed": true
+        },
+        "fixed6": {
+          "logit_rms": 0.018523521721363068,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0009721012902446091,
+          "passed": true
+        },
+        "chosen": {
+          "logit_rms": 0.020030777901411057,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -5.154066820978187e-05,
+          "passed": true
+        }
+      },
+      "D-DualCE6": {
+        "full": {
+          "logit_rms": 0.019477449357509613,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": 0.0004927918780595064,
+          "passed": true
+        },
+        "fixed6": {
+          "logit_rms": 0.018279695883393288,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": -0.0015721858944743872,
+          "passed": true
+        },
+        "chosen": {
+          "logit_rms": 0.01971268653869629,
+          "depth_mismatch_fraction": 0.0,
+          "nll_gap": 0.001042318413965404,
+          "passed": true
+        }
+      }
+    },
+    "full_ppl": {
+      "D-continue": 26.693447482597392,
+      "D-DualCE6": 26.908125259061688
+    },
+    "scope": "Verification on saved 1k models; these are not new long-run results."
+  },
+  "jobs": [
+    {
+      "name": "capacity",
+      "started_at": "2026-10-24T14:55:00.493045+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 35.260352625045925,
+      "artifacts": [
+        {
+          "path": "capacity.json",
+          "sha256": "591d2d5ab8fa4b6a5d6d76e52c91b3c647f6d457a65722ae8a171b2c9e5fc5f8",
+          "bytes": 2188
+        }
+      ],
+      "finished_at": "2026-10-24T14:55:36.278128+00:00"
+    },
+    {
+      "name": "resume_gate",
+      "started_at": "2026-10-24T14:55:36.278170+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 128.48844966618344,
+      "artifacts": [
+        {
+          "path": "resume/summary.json",
+          "sha256": "ffe5527356636ef358320ad821c24e8946414786d12e286cf59ce51cce97ca53",
+          "bytes": 7443
+        }
+      ],
+      "finished_at": "2026-10-24T14:57:45.304618+00:00"
+    },
+    {
+      "name": "eval_smoke",
+      "started_at": "2026-10-24T14:57:45.304669+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 331.10368597181514,
+      "artifacts": [
+        {
+          "path": "eval_smoke/summary.json",
+          "sha256": "22fa385aefdfeeb6dc4d0d5c111b7adee8122ce0bc720782076b0ca0573c5154",
+          "bytes": 44498
+        }
+      ],
+      "finished_at": "2026-10-24T15:03:16.936242+00:00"
+    },
+    {
+      "name": "D-continue-5000",
+      "started_at": "2026-10-24T15:03:16.936284+00:00",
+      "status": "running"
+    }
+  ],
+  "training": {
+    "D-continue": {
+      "latest_metric": {
+        "step": 140,
+        "grad_norm": 0.18770043551921844,
+        "learning_rate": 2.085e-05,
+        "objective_loss": 3.281614303588867,
+        "lm_loss_last_update": 3.27313669025898,
+        "router_z_loss_last_update": 0.0,
+        "off_default_share_last_update": 0.0,
+        "router_entropy_last_update": 0.0,
+        "reuse_rate_last_update": 0.0,
+        "module_load_max_min_ratio_last_update": 1.0,
+        "off_default_step_0_last_update": 0.0,
+        "off_default_step_1_last_update": 0.0,
+        "off_default_step_2_last_update": 0.0,
+        "off_default_step_3_last_update": 0.0,
+        "off_default_step_4_last_update": 0.0,
+        "off_default_step_5_last_update": 0.0,
+        "off_default_step_6_last_update": 0.0,
+        "off_default_step_7_last_update": 0.0,
+        "module_0_decisions_last_update": 524288,
+        "module_1_decisions_last_update": 524288,
+        "module_2_decisions_last_update": 524288,
+        "module_3_decisions_last_update": 524288,
+        "module_4_decisions_last_update": 524288,
+        "module_5_decisions_last_update": 524288,
+        "module_6_decisions_last_update": 524288,
+        "module_7_decisions_last_update": 524288,
+        "lm_loss": 3.281614219933298,
+        "router_z_loss": 0.0,
+        "lm_tokens": 5231430,
+        "input_tokens": 5242880,
+        "input_tokens_per_second_interval_wall": 806433.6126646317,
+        "interval_wall_seconds": 6.501316311303526,
+        "peak_allocated_bytes": 56530277376,
+        "peak_reserved_bytes": 57457770496
+      },
+      "data_slice": {
+        "start": 5120000,
+        "remaining_sequences": 24158633,
+        "fingerprint": "190cb5957440e160"
+      },
+      "parent_fingerprint": "a7d3e88e5670c8a2"
+    }
+  },
+  "live_workers": [
+    521787,
+    521788,
+    521789,
+    521790,
+    521791,
+    521792,
+    521793,
+    521794
+  ],
+  "eta": "Approximately 25 October 2026 07:00\u201308:00 SGT, using observed control and previous DualCE6 throughput; not a guaranteed completion time.",
+  "local_tests": "12 targeted tests, including exact native stage resume; docs/results/bdot_stop_long_local_20261024.json",
+  "completion_contract": "Verify 5k and 10k receipts/evaluations for both branches, supervisor success, and live communicating burn handoff; current receipt proves startup only."
+}
