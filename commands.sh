@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-dot-stop-v2-health-20261024-a01
+#th2-6y3o-dot-stop-v2-health-20261024-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
@@ -54,7 +54,7 @@ if 'supervised/burn-verified.json' in r:
  r['live_burn_handoff_verified']=True
  r['collective_progress_verified']=burn_progress((root/'supervised/burn.log').read_text())
  r['burn_tail']=tail(root/'supervised/burn.log')
-out=root/'health-a01.json'
+out=root/'health-a02.json'
 with out.open('x') as f:f.write(json.dumps(r,indent=2)+'\n')
 print('STOP_HEALTH '+json.dumps(r),flush=True)
 print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
