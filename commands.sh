@@ -1,66 +1,46 @@
-#1 +30+a
-#th2-6y3o-dot-stop-long-health-20261024-a05
+#1 +60+a
+#th2-6y3o-dot-stop-burn-recover-20261025-a01
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
+export WANDB_MODE=offline NCCL_NVLS_ENABLE=0 OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1
 /mnt/local/conda-py311/envs/train/bin/python3.11 - <<'REMOTE'
-import json,hashlib
+import json,hashlib,time
 from pathlib import Path
+from scripts.gpu_status import require_free
 from scripts.gpu_process import inspect
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01')
+from scripts.bdot_stop_launch import snapshot
+from scripts.train_then_burn import start_burn,release_guard_if_safe,GUARD_HASH
+from scripts.native_baseline_pipeline import burn_gate
+from run_experiments import write_json,now
+old=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-long-20261024-a01')
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-recovery-20261025-a01')
 read=lambda p:json.loads(p.read_text())
-def tail(p,n=2000):
- if not p.is_file():return ''
- with p.open('rb') as f:f.seek(max(0,p.stat().st_size-n));return f.read().decode(errors='replace')
-r={'live':inspect(),'supervisor_tail':tail(root/'supervisor.log',14000)}
-for rel in ['launch.json','adaptation.json','branches.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/supervisor.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/capacity.json','supervised/run/ddp/rank0.json','supervised/run/ddp/rank1.json','supervised/run/resume/summary.json','supervised/run/eval_smoke/summary.json','supervised/run/eval_5000/summary.json','supervised/run/eval_10000/summary.json']:
- if (root/rel).is_file():r[rel]=read(root/rel)
-if (root/'source/SOURCE_MANIFEST.json').is_file():
- source=root/'source';r['source_matches']=all(hashlib.sha256((source/k).read_bytes()).hexdigest()==v for k,v in read(source/'SOURCE_MANIFEST.json')['files'].items())
- assert r['source_matches']
-if 'launch.json' in r:
- r['accelerate_cache_matches']=Path(r['launch.json']['accelerate_cache']).read_bytes()==(root/'source/resources/accelerate_b200.yaml').read_bytes()
- r['accelerate_env']=(root/'accelerate_env.txt').read_text()
-r['logs']={str(p.relative_to(root)):tail(p,3500) for p in (root/'supervised/run').glob('*.log')}
-r['resume_logs']={p.name:tail(p,3000) for p in (root/'supervised/run/resume').glob('*.log')}
-r['training']={}
-for p in (root/'prepared/runs').glob('*'):
- entry={'metrics_tail':tail(p/'metrics.jsonl',2500),'checkpoints':sorted(x.name for x in p.glob('checkpoint-*'))}
- for name in ['train_results.json','final_eval.json']:
-  if (p/name).is_file():entry[name]=read(p/name)
- if (p/'data_recipe.json').is_file():
-  data=read(p/'data_recipe.json');entry['data_slice']=data.get('training_slice');entry['parent_fingerprint']=data['shuffled_fingerprint']
- r['training'][p.name]=entry
-
-r['evaluation_details']={}
-for p in (root/'supervised/run').glob('eval_*/*'):
- if p.is_dir():
-  entry={}
-  for name in ['head.json','calibration.json','result.json']:
-   if (p/name).is_file():entry[name]=read(p/name)
-  r['evaluation_details'][str(p.relative_to(root))]=entry
- elif p.suffix=='.log':r['logs'][str(p.relative_to(root))]=tail(p,8000)
-r['branch_verified']={p.name:read(p) for p in (root/'supervised/run/checks').glob('*.json')}
-for p in (root/'prepared/runs').glob('*'):
- cp=p/'checkpoint-10000'
- if cp.is_dir():
-  r['training'][p.name]['final_files']={x.name:x.stat().st_size for x in cp.iterdir() if x.is_file()}
-  if (cp/'trainer_state.json').is_file():
-   ts=read(cp/'trainer_state.json');r['training'][p.name]['trainer_step']=ts.get('global_step')
-
-if 'supervised/burn-verified.json' in r:
- from scripts.native_baseline_pipeline import validate_burn_handoff
- from scripts.train_then_burn import burn_progress
- validate_burn_handoff(r['supervised/supervisor.json'],r['supervised/burn-verified.json'],r['live'])
- r['live_burn_handoff_verified']=True
- r['collective_progress_verified']=burn_progress((root/'supervised/burn.log').read_text())
- r['burn_tail']=tail(root/'supervised/burn.log')
-r['evaluation_sha256']={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (root/'supervised/run').glob('eval_*/summary.json')}
-r['initializations']={p.parent.name:read(p) for p in (root/'prepared').glob('*-init/initialization.json')}
-r['prepared_configs']={p.name:read(p) for p in (root/'prepared').glob('*.train.json')}
-r['guard_owner']=Path('/mnt/local/_gpu_guard/DISABLED').read_text() if Path('/mnt/local/_gpu_guard/DISABLED').exists() else None
-r['burn_tail']=tail(root/'supervised/burn.log',8000)
-out=root/'health-a05.json'
-with out.open('x') as f:f.write(json.dumps(r,indent=2)+'\n')
-print('STOP_HEALTH '+json.dumps(r),flush=True)
-print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
+guard=Path('/mnt/local/_gpu_guard/DISABLED')
+marker=guard.read_text();inode=guard.stat().st_ino;owner=json.loads(marker)
+assert owner['owner_pid']==519238 and owner['output']==str(old/'supervised')
+assert not Path('/proc',str(owner['owner_pid'])).exists(),'Old supervisor still exists; do not compete'
+assert hashlib.sha256((guard.parent/'gpu_guard.sh').read_bytes()).hexdigest()==GUARD_HASH
+state=read(old/'supervised/supervisor.json')
+assert state.get('finished_at') and state.get('handoff_error')=="OSError(22, 'Invalid argument')"
+assert not (old/'supervised/burn.log').exists()
+before=inspect();require_free(list(range(8)))
+original=old/'source'
+for rel,h in read(original/'SOURCE_MANIFEST.json')['files'].items():
+ assert hashlib.sha256((original/rel).read_bytes()).hexdigest()==h,rel
+root.mkdir(exist_ok=False)
+snapshot(original,root/'source',('scripts/train_then_burn.py','tests/test_train_then_burn.py'))
+out=root/'supervised';out.mkdir()
+write_json(root/'recovery.json',dict(predecessor=str(old),original_supervisor=state,stale_guard=owner,before=before))
+time.sleep(30)
+free=require_free(list(range(8)))
+assert guard.stat().st_ino==inode and guard.read_text()==marker
+receipt=dict(started_at=now(),training_status='failed',training_error='Predecessor explicitly cancelled by user; burn recovery only',free_after_training=free)
+write_json(out/'supervisor.json',receipt)
+proof=start_burn(out,'dot_stop_recovery_20261025_a01_burn',root/'source')
+receipt.update(burn=proof,finished_at=now())
+write_json(out/'supervisor.json',receipt)
+assert release_guard_if_safe(guard,inode,marker,out)
+burn_gate(root)
+print('RECOVERED_BURN_HANDOFF '+json.dumps(receipt),flush=True)
 REMOTE

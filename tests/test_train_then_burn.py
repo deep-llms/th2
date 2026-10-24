@@ -1,5 +1,6 @@
 """CPU-only ownership, failure and handoff regression tests."""
 import json
+import errno
 import os
 from pathlib import Path
 import signal
@@ -13,6 +14,25 @@ from scripts import train_then_burn as handoff
 
 
 class HandoffTests(unittest.TestCase):
+    def test_cleanup_rechecks_invalid_handle_without_fallback_signals(self):
+        records = {123: dict(pid=123, ppid=99, start_ticks=1, command_sha256='owned')}
+        with patch.object(handoff.os, 'waitpid', return_value=(0, 0)), \
+             patch.object(handoff, 'descendants', side_effect=[records, {}]), \
+             patch.object(handoff, 'pidfd_open', side_effect=OSError(errno.EINVAL, 'exiting')), \
+             patch.object(handoff, 'pidfd_send_signal') as send, patch.object(handoff.time, 'sleep'):
+            handoff.clean_owned_children()
+            send.assert_not_called()
+
+    def test_cleanup_persistent_invalid_handle_still_fails_closed(self):
+        records = {123: dict(pid=123, ppid=99, start_ticks=1, command_sha256='owned')}
+        with patch.object(handoff.os, 'waitpid', return_value=(0, 0)), \
+             patch.object(handoff, 'descendants', return_value=records), \
+             patch.object(handoff, 'pidfd_open', side_effect=OSError(errno.EINVAL, 'invalid')), \
+             patch.object(handoff, 'pidfd_send_signal') as send, patch.object(handoff.time, 'sleep'):
+            with self.assertRaisesRegex(RuntimeError, 'Owned training descendants did not exit'):
+                handoff.clean_owned_children()
+            send.assert_not_called()
+
     def test_guard_stays_held_after_partial_reclaim_or_unverified_handoff(self):
         for targets, receipt, release in [
                 (None, None, True), ([], None, True), ([123], None, False),

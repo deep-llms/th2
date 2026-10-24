@@ -1,5 +1,40 @@
 # Current task
 
+## Optimized D/DualCE replacement — authorized 25 October 2026, 01:17 SGT
+
+The user explicitly approved stopping the old unoptimized queue, preserving all
+outputs, then testing and starting a **fresh matched D-continue / optimized
+D-DualCE6 pair**, 10,000 NEW adaptation steps each from the original D-10k parent.
+This supersedes the earlier instruction to leave the old queue running. Same
+seed0, data segment, FA4, micro16 × accumulation4 × eight GPUs, sequence1024,
+LR3e-5 / warmup200 / 10k cosine schedule, all checkpoints every250, assessments
+at5k and10k with unchanged native midpoint resume. Only DualCE execution changes:
+`ce_backend=native`, `shared_prefix=true`; auxiliary CE weight remains0.5.
+
+Read-only receipt c9710c3 (25 October01:15:33SGT) verified old D-control finished
+5k (full held-out PPL26.22080); old DualCE was at2090/5000, healthy. Authorized
+stop command4e56dbd targets only the exact guard-owned queue supervisor, after
+checking its command/cwd/PID identity and all GPU-worker ancestry. It preserves
+all data/checkpoints and lets the existing supervisor restore and verify burns.
+Stop confirmed by d882462: supervisor519238 exited, all eight GPUs empty at
+01:22:57SGT, all outputs preserved. Cleanup hit pidfd_open EINVAL and correctly
+held the automatic-burn guard. No environment/driver/GPU failure. The helper now
+retries this error only by bounded ownership rescans (no PID/group fallback);
+11 CPU handoff tests pass, including actual orphan cleanup and persistent-error
+refusal. Separate burn recovery root `6y3o-dot-stop-recovery-20261025-a01` verifies
+the exact dead supervisor/stale guard and all GPUs free twice, then starts and
+verifies burns before releasing that guard. It preserves the failed old receipt.
+No optimized B200 fit has started yet.
+
+New launch helper `scripts/stop_optimized_launch.py` reuses the old preparation,
+native HF stages, evaluator and burn supervisor. Before training it requires
+real-parent-weight FA4 loss/gradient/AdamW checks, micro16 capacity, DDP gradient
+normalization, exact eight-GPU resume, two reversed-order eight-GPU whole-update
+benchmarks of control/original/optimized, and evaluator smoke. Any failed gate
+stops the queue and restores burns. Fresh roots only; no old runtime-resume guard
+bypass or source snapshot mutation. Planned root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a01`.
+
 ## DualCE throughput optimization — local verification, 24 October 2026
 
 User asked to reduce DualCE6's roughly 3.3× B200 training cost. Implemented two

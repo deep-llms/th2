@@ -6,6 +6,7 @@ without inferring ownership from a GPU PID or signaling unrelated processes.
 """
 import argparse
 import ctypes
+import errno
 import hashlib
 import json
 import os
@@ -132,6 +133,14 @@ def clean_owned_children():
                 pidfd_send_signal(fd, signal.SIGTERM if attempt < 5 else signal.SIGKILL)
             except (ProcessLookupError, FileNotFoundError):
                 pass
+            except OSError as error:
+                # A process can become unopenable during shutdown. Do not
+                # substitute os.kill or infer another owner: rescan/reap on
+                # the next bounded iteration. Persistent errors still fail
+                # cleanup and keep the guard held, preventing a competing burn.
+                if error.errno != errno.EINVAL:
+                    raise
+                print('OWNED_CHILD_PIDFD_RESCAN', pid, record, flush=True)
             finally:
                 if fd is not None:
                     os.close(fd)
@@ -246,6 +255,7 @@ def main():
     parser.add_argument('--inspection', type=Path, required=True)
     parser.add_argument('--host', required=True)
     parser.add_argument('--burn-session', required=True)
+    parser.add_argument('--predecessor-burn-script', type=Path)
     args = parser.parse_args()
     project = Path.cwd().resolve()
     expected = json.loads(args.inspection.read_text())
@@ -257,6 +267,12 @@ def main():
     if not all('B200' in g['name'] for g in status):
         raise RuntimeError('Expected eight B200 GPUs')
     jobs = load_jobs(args.config)
+    approved = {**APPROVED_BURNS, str(project / 'resources/llm_pretrain_burn.py'): BURN_HASH}
+    if args.predecessor_burn_script:
+        path = args.predecessor_burn_script.resolve()
+        if digest(path) != BURN_HASH:
+            raise RuntimeError('Predecessor burn script differs from approved source')
+        approved[str(path)] = BURN_HASH
     args.output.mkdir(parents=True, exist_ok=False)
     enable_subreaper()
     guard = Path('/mnt/local/_gpu_guard/DISABLED')
@@ -272,7 +288,6 @@ def main():
     signal.signal(signal.SIGINT, interrupted)
     try:
         time.sleep(30)  # Allow any guard pass already in flight to finish.
-        approved = {**APPROVED_BURNS, str(project / 'resources/llm_pretrain_burn.py'): BURN_HASH}
         stop_burns(args.output, approved)
         return execute_queue(jobs, project, args.output, args.burn_session)
     finally:

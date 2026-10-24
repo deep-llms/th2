@@ -23,7 +23,7 @@ START_SEQUENCE = 5120000
 FIT_START = START_SEQUENCE + STEPS * 512
 
 
-def prepare(parent, previous, root, source):
+def prepare(parent, previous, root, source, *, optimized=False):
     prepared = root / 'prepared'
     prepared.mkdir()
     old = read(parent / 'prepared/D-s0.train.json')
@@ -41,6 +41,8 @@ def prepare(parent, previous, root, source):
         raise ValueError('Expected the established cosine floor')
     branches = {}
     for name, auxiliary in [('D-continue', None), ('D-DualCE6', dict(depth=6, ce_weight=.5, kl_weight=0.))]:
+        if optimized and auxiliary is not None:
+            auxiliary.update(ce_backend='native', shared_prefix=True)
         init = prepared / (name + '-init')
         initialize(cp, init, 0., stop_settings=dict(min_steps=6, exit_steps=[6]),
                    exit_training=auxiliary, schedule_steps=STEPS)
@@ -83,6 +85,8 @@ def prepare(parent, previous, root, source):
     resume_config['bdot']['curriculum'] = 'none'
     resume_config['bdot_stop'] = dict(train_random_prob=0., min_steps=6, exit_steps=[6])
     resume_config['bdot_exit_training'] = dict(depth=6, ce_weight=.5, kl_weight=0.)
+    if optimized:
+        resume_config['bdot_exit_training'].update(ce_backend='native', shared_prefix=True)
     write(root / 'resume-model.json', resume_config)
     job('resume_gate', ['{python}', str(source / 'tests/bdot/resume_gpu_probe.py'), 'suite',
                        '--output', '{run_dir}/resume', '--accelerate-config',

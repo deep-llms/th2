@@ -21,12 +21,13 @@ from bdot.model import BDOTForCausalLM
 from packed_training import PackedCollator, model_inputs
 
 
-def run(config, inputs, backend, *, shared=False, native=False):
+def run(config, inputs, backend, *, shared=False, native=False, model_path=None):
     torch.manual_seed(73)
     c = Qwen3Config(**copy.deepcopy(config))
     c._attn_implementation = backend
     c.bdot_exit_training.update(shared_prefix=shared, ce_backend='native' if native else 'chunked')
-    m = BDOTForCausalLM(c).cuda().train()
+    m = (BDOTForCausalLM.from_pretrained(model_path, config=c, attn_implementation=backend)
+         if model_path else BDOTForCausalLM(c)).cuda().train()
     optimizer = torch.optim.AdamW(m.parameters(), lr=3e-5, betas=(.9, .95), weight_decay=.1)
     with torch.autocast('cuda', dtype=torch.bfloat16):
         output = m(**inputs)
@@ -81,6 +82,8 @@ def main():
     p.add_argument('--attention-backend', choices=('sdpa', 'fa4'), default='sdpa')
     p.add_argument('--batch-size', type=int, default=2)
     p.add_argument('--length', type=int, default=128)
+    p.add_argument('--model-name-or-path', type=Path,
+                   help='Optional local initialized checkpoint for trained-weight verification')
     a = p.parse_args()
     if not os.environ.get('CUDA_VISIBLE_DEVICES') or a.output.exists():
         p.error('Allocate a visible GPU and choose a fresh receipt')
@@ -100,17 +103,18 @@ def main():
                  segments=(torch.arange(a.length)//(a.length//2)).tolist()) for x in ids]
     inputs = model_inputs({k: v.cuda() if isinstance(v, torch.Tensor) else v for k, v in
                            PackedCollator(attention_backend=a.attention_backend)(rows).items()})
-    ref = run(config, inputs, backend)
+    ref = run(config, inputs, backend, model_path=a.model_name_or_path)
     results = {}
     for name, flags in [('reference_repeat', {}), ('native_ce', dict(native=True)),
                         ('shared_prefix_native_ce', dict(native=True, shared=True))]:
-        result = run(config, inputs, backend, **flags)
+        result = run(config, inputs, backend, model_path=a.model_name_or_path, **flags)
         results[name] = compare(ref, result)
         del result
         print(name, json.dumps(results[name]), flush=True)
     receipt = dict(status='passed' if all(x['passed'] for x in results.values()) else 'failed',
                    torch=torch.__version__, gpu=torch.cuda.get_device_name(0), backend=a.attention_backend,
                    config=config, batch_size=a.batch_size, length=a.length, comparisons=results,
+                   model_path=str(a.model_name_or_path) if a.model_name_or_path else None,
                    source_sha256=hashlib.sha256((Path(__file__).resolve().parents[1]/'bdot/exit_training.py').read_bytes()).hexdigest(),
                    scope='Full model/vocabulary, BF16 one-update CUDA numerical test; not convergence or DDP validation.')
     a.output.parent.mkdir(parents=True, exist_ok=True)
