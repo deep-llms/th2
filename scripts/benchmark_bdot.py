@@ -201,7 +201,7 @@ def main():
             source_sha256={f: hashlib.sha256(
                 ((a.bdot_source.resolve() if a.bdot_source and f.startswith('bdot/') else root)/f
                  ).read_bytes()).hexdigest() for f in
-                           ['bdot/model.py', 'bdot/grouped.py', 'bdot/trainer.py', 'packed_fa4.py',
+                           ['bdot/model.py', 'bdot/grouped.py', 'bdot/trainer.py', 'bdot/exit_training.py', 'packed_fa4.py',
                             'packed_fa2.py', 'packed_training.py', 'train.py', 'scripts/benchmark_bdot.py']},
         )
         out.parent.mkdir(parents=True, exist_ok=True)

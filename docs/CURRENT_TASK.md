@@ -1,5 +1,40 @@
 # Current task
 
+## DualCE throughput optimization — local verification, 24 October 2026
+
+User asked to reduce DualCE6's roughly 3.3× B200 training cost. Implemented two
+explicit opt-ins in `bdot/exit_training.py`; defaults and the active B200 queue
+remain unchanged. `ce_backend="native"` uses one FP32 CE without checkpointed
+slices (CE-only, zero KL). `shared_prefix=true` computes the common stem/middle
+prefix once and branches through the coda, with both losses attached. It preserves
+the actual native mask/RoPE. Uniform exit6 without a training cache makes later
+auxiliary middle K/V writes dead; cached/mixed-exit inference keeps the old path.
+
+Local full-width 12-layer/151,936-vocabulary HF Trainer, A100, SDPA, BF16,
+sequence 1024 / microbatch 2 / accumulation 4, two reversed-order repeats: D 0.451s/update, old DualCE 0.860s,
+native CE only 0.812s, native CE + shared prefix 0.570s. Combined change reduces
+update time 33.8%, to 1.26× D in THIS local setup. Peak allocated memory 13.14 GiB
+versus 13.64 GiB old DualCE. Not a B200/FA4 prediction. Loss-only 8,192-token profile
+found 32 slice-backward operations and 31 large gradient additions in the old path;
+native CE removes them and reduces that isolated loss operation 296→45 ms, at
+higher live softmax memory. Do not present that 6.6× as whole-model acceleration.
+
+13 local tests pass; two-rank CPU normalization/optimizer checks pass with and
+without checkpointing. Fresh-process native resume is exact within the optimized
+implementation. Full-width CUDA BF16 sequence 1024: native CE preserves total loss,
+full logits, gradients and AdamW update exactly in the tested fixture (logged
+unnormalized CE sum differs by 0.001953). Shared prefix preserves forward loss and
+logits but changes BF16 gradient addition order: relative L2 difference 0.598%,
+cosine 0.999982, max updated-weight difference 5.995e-5. This is mathematical, not
+bitwise, equivalence. GPU tests use the pre-existing local torch 2.7.1+cu118 env;
+CPU tests use production-version torch 2.14.1. No environment/driver changes.
+
+[Evidence and raw receipt paths](results/bdot_stop_optimization_local_20261024.json).
+Next before enabling remotely: FA4/B200 numerical and microbatch 16 capacity checks,
+whole-update timings and eight-GPU resume. Do not patch running snapshots or
+bypass source/config resume guards. The original D/DualCE 10k queue below remains
+active with its original code; commands stay #0. No new B200 workload submitted.
+
 ## Long D STOP pair — authorized 24 October 2026
 
 User approved the recommended D-only pair: **D-continue and D-DualCE6**, each

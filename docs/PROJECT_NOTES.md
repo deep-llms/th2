@@ -3,6 +3,27 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+## Optional DualCE execution optimization — 24 October 2026
+
+The old CE chunks caused full-logit slice-gradient padding/accumulation for every
+chunk, and dual training recomputed an identical prefix. `bdot/exit_training.py`
+now offers `ce_backend="native"` (zero KL only) and `shared_prefix=true`. The
+objective, trainable parameters, data normalization and inference are unchanged.
+Both options default to the old implementation; no active queue was modified.
+Native CE uses more live softmax memory, so verify capacity before deployment.
+Shared prefix skips only auxiliary K/V writes that have no consumers when ALL
+auxiliary tokens exit at one depth and there is no training cache.
+
+Local A100/SDPA whole-update time fell 33.8% (0.860→0.570s), to 1.26× D. This is
+microbatch 2, sequence 1024, accumulation 4 with full model/vocabulary, not B200 microbatch 16 throughput.
+13 tests, DDP normalization with/without checkpointing and exact native resume
+pass. CUDA native CE matched gradients/update exactly; prefix sharing changes
+BF16 gradient summation order (~0.6% relative gradient difference), so do not
+claim bitwise equivalence or silently migrate an old checkpoint/runtime.
+Target B200 FA4/capacity/DDP validation is still required before adoption.
+[Evidence](results/bdot_stop_optimization_local_20261024.json); source and raw
+local artifacts are retained under `temp/stop_opt_20261024/`.
+
 ## Long D STOP pair — 24 October 2026
 
 User approved D-continue + D-DualCE6 first, each for10k adaptation updates from

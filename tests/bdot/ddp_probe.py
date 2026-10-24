@@ -27,10 +27,14 @@ parser.add_argument('--no-reuse',action='store_true')
 parser.add_argument('--home-only',action='store_true')
 parser.add_argument('--stop',action='store_true')
 parser.add_argument('--exit-training',action='store_true')
+parser.add_argument('--exit-shared-prefix',action='store_true')
+parser.add_argument('--exit-native-ce',action='store_true')
 parser.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
 parser.add_argument('--bf16',action='store_true')
 parser.add_argument('--device',choices=['cpu','cuda'],default='cpu')
 settings=parser.parse_args()
+if (settings.exit_shared_prefix or settings.exit_native_ce) and not settings.exit_training:
+    parser.error('Exit optimizations require --exit-training')
 if settings.device=='cuda':
     if not os.environ.get('CUDA_VISIBLE_DEVICES'):
         parser.error('Allocate CUDA_VISIBLE_DEVICES explicitly')
@@ -80,7 +84,10 @@ if settings.stop or settings.exit_training:
         from bdot.exit_training import install
         m.config.bdot_stop.update(exit_steps=[2])
         m.stop_controller.options=replace(m.stop_controller.options,exit_steps=(2,))
-        m.config.bdot_exit_training=dict(depth=2,ce_weight=.5,kl_weight=.5,chunk_size=3)
+        m.config.bdot_exit_training=dict(depth=2,ce_weight=.5,
+            kl_weight=0. if settings.exit_native_ce else .5,chunk_size=3,
+            shared_prefix=settings.exit_shared_prefix,
+            ce_backend='native' if settings.exit_native_ce else 'chunked')
         install(m);m.to(device)
 ref=copy.deepcopy(m)
 args=BaselineTrainingArguments(output_dir=str(root/'training'),use_cpu=settings.device=='cpu',report_to='none',bf16=settings.bf16,
@@ -138,7 +145,7 @@ torch.testing.assert_close(m.balance_bias,expected,atol=0,rtol=0)
 expected_lm = float(loss.detach()) - ref.options.z_loss_coef * float(ref.metric_totals[2]/ref.metric_totals[3])
 if settings.exit_training:
     v=ref.exit_metric_totals
-    expected_lm -= float((.5*v[0]+.5*v[1])/v[2])
+    expected_lm -= float((ref.exit_options.ce_weight*v[0]+ref.exit_options.kl_weight*v[1])/v[2])
 assert abs(m.last_update_metrics['lm_loss_last_update']-expected_lm) < 1e-5
 opt.step()
 for name,p in m.named_parameters():
@@ -148,5 +155,6 @@ for name,p in m.named_parameters():
     counts=counts.tolist(),balance_bias=m.balance_bias.tolist(),reference_loss=loss.item(),
     checkpointing=settings.checkpointing,soft=settings.soft,device=str(device),torch=torch.__version__,
     expert_backend=settings.expert_backend,bf16=settings.bf16,no_reuse=settings.no_reuse,
-    home_only=settings.home_only))+'\n')
+    home_only=settings.home_only,exit_training=settings.exit_training,
+    exit_shared_prefix=settings.exit_shared_prefix,exit_native_ce=settings.exit_native_ce))+'\n')
 torch.distributed.barrier();torch.distributed.destroy_process_group()
