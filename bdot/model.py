@@ -400,6 +400,9 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         if hasattr(config, 'bdot_stop'):
             from .stopping import StopController
             self.stop_controller = StopController(config, options)
+        if hasattr(config, 'bdot_exit_training'):
+            from .exit_training import install
+            install(self)
 
     @torch.no_grad()
     def _init_weights(self, module):
@@ -417,6 +420,10 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
             hf_init.zeros_(module.metric_totals)
             hf_init.zeros_(module.training_totals)
             hf_init.zeros_(module.logged_training_totals)
+            if hasattr(module, 'exit_options'):
+                hf_init.zeros_(module.exit_training_totals)
+                hf_init.zeros_(module.logged_exit_training_totals)
+                hf_init.zeros_(module.exit_metric_totals)
             # RoutedStep is inside a native Qwen3Model: HF dispatches that
             # child's initializer there, so restore our tables at this root.
             if not module.options.reuse:
@@ -433,6 +440,19 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
     def forward(self, input_ids=None, attention_mask=None, position_ids=None,
                 past_key_values=None, inputs_embeds=None, labels=None, use_cache=None,
                 bdot_num_decisions=None, bdot_forced_routes=None, bdot_stop_depths=None, **kwargs):
+        arguments = dict(input_ids=input_ids, attention_mask=attention_mask, position_ids=position_ids,
+            past_key_values=past_key_values, inputs_embeds=inputs_embeds, labels=labels,
+            use_cache=use_cache, bdot_num_decisions=bdot_num_decisions,
+            bdot_forced_routes=bdot_forced_routes, bdot_stop_depths=bdot_stop_depths, **kwargs)
+        if self.training and labels is not None and hasattr(self, 'exit_options'):
+            from .exit_training import forward
+            return forward(self, arguments)
+        return self._forward_once(**arguments)
+
+    def _forward_once(self, input_ids=None, attention_mask=None, position_ids=None,
+                past_key_values=None, inputs_embeds=None, labels=None, use_cache=None,
+                bdot_num_decisions=None, bdot_forced_routes=None, bdot_stop_depths=None,
+                _bdot_auxiliary=False, **kwargs):
         shape = input_ids.shape if input_ids is not None else inputs_embeds.shape[:2]
         device = input_ids.device if input_ids is not None else inputs_embeds.device
         n = math.prod(shape)
@@ -442,8 +462,9 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         # counter. Equal-batch DDP keeps counters equal; rank selects disjoint draws.
         rank = torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
         if self.training:
-            counter = int(self.routing_counter)
-            self.routing_counter.add_(1)
+            counter = int(self.routing_counter) - int(_bdot_auxiliary)
+            if not _bdot_auxiliary:
+                self.routing_counter.add_(1)
             seed = (self.options.seed + 1000003*counter + 1000000007*rank) % (2**63-1)
         else:
             seed = (self.eval_seed + 1000003*self.eval_counter + 1000000007*rank) % (2**63-1)
@@ -470,7 +491,7 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
         if ctl is not None:
             ctl.last_depths = (context.stop.depths.detach() if context.stop is not None else
                                torch.full(shape, self.options.S, device=device, dtype=torch.long))
-        if self.training:
+        if self.training and not _bdot_auxiliary:
             self.load_counts.add_(torch.stack(context.counts))
         if self.capture_routes:
             self.last_routes = torch.stack(context.routes)
@@ -497,6 +518,9 @@ class BDOTForCausalLM(Qwen3ForCausalLM):
 
     @torch.no_grad()
     def finish_update(self):
+        if hasattr(self, 'exit_options'):
+            from .exit_training import finish_update
+            finish_update(self)
         if torch.distributed.is_initialized():
             torch.distributed.all_reduce(self.load_counts)
             torch.distributed.all_reduce(self.metric_totals)

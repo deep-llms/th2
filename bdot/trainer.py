@@ -127,6 +127,16 @@ class BDOTTrainer(PackedTrainer):
         return batches, lm_tokens
 
     def log(self, logs, start_time=None):
+        if hasattr(self.model, 'exit_options'):
+            if 'loss' in logs:
+                interval = (self.model.exit_training_totals - self.model.logged_exit_training_totals).tolist()
+                logs.update(exit_ce_loss=interval[0]/max(interval[2],1),
+                            exit_kl_loss=interval[1]/max(interval[2],1))
+                self.model.logged_exit_training_totals.copy_(self.model.exit_training_totals)
+            if 'train_loss' in logs:
+                totals = self.model.exit_training_totals.tolist()
+                logs.update(train_exit_ce_loss=totals[0]/max(totals[2],1),
+                            train_exit_kl_loss=totals[1]/max(totals[2],1))
         if "loss" in logs:
             logs['objective_loss'] = logs.pop('loss')
             logs.update(self.model.last_update_metrics)

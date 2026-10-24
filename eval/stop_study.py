@@ -87,7 +87,7 @@ def fit_head(model, dataset, backend, size=4, samples_per_row=32, epochs=20):
                 picks=candidates[torch.randperm(len(candidates),generator=sample_rng)[:samples_per_row]]
                 chosen.append(picks+row*length)
             chosen=torch.cat(chosen).to(model.device)
-            for depth in range(ctl.options.min_steps,S):
+            for depth in (ctl.options.exit_steps or range(ctl.options.min_steps,S)):
                 choose_policy(ctl,dict(policy='fixed',fixed_depth=depth))
                 early=token_losses(model(**data).logits,labels)
                 features.append(states[depth-1][:,:-1].reshape(-1,model.config.hidden_size)[chosen].float().cpu())

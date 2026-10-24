@@ -19,11 +19,16 @@ from transformers.models.qwen3.modeling_qwen3 import (
 class StopConfig:
     train_random_prob: float = .05
     min_steps: int = 2
+    exit_steps: tuple[int, ...] = ()  # Empty preserves the original all-depth policy.
 
     def validate(self, options):
         if (type(self.min_steps) is not int or not 1 <= self.min_steps < options.S
                 or not math.isfinite(self.train_random_prob) or not 0 <= self.train_random_prob <= 1):
             raise ValueError('Invalid STOP minimum depth/probability')
+        if (not isinstance(self.exit_steps, (tuple, list))
+                or any(type(s) is not int or not self.min_steps <= s < options.S for s in self.exit_steps)
+                or list(self.exit_steps) != sorted(set(self.exit_steps))):
+            raise ValueError('STOP exit_steps must be unique increasing eligible depths')
         if (not options.reuse or options.curriculum != 'none' or options.gate != 'st'
                 or options.placement_film or options.kv_mode != 'step'
                 or (options.route_scope != 'mlp' and options.routing != 'fixed')):
@@ -66,10 +71,16 @@ class StopController(nn.Module):
         steps = self.bias.numel()
         if policy == 'fixed' and not self.options.min_steps <= self.fixed_depth <= steps:
             raise ValueError('Fixed depth is outside the permitted STOP range')
+        if (policy == 'fixed' and self.options.exit_steps
+                and self.fixed_depth not in (*self.options.exit_steps, steps)):
+            raise ValueError('Fixed depth is not an eligible exit step')
         if depths is not None:
             if (depths.shape != shape or depths.dtype != torch.long
                     or bool(((depths < self.options.min_steps) | (depths > steps)).any())):
                 raise ValueError('Explicit STOP depths must be int64 [batch, length] in the permitted range')
+            if self.options.exit_steps and not bool(torch.isin(
+                    depths, depths.new_tensor([*self.options.exit_steps, steps])).all()):
+                raise ValueError('Explicit STOP depths must be eligible exit steps')
         self.last_states = []
         # A separate stream ensures STOP draws cannot change exploration draws.
         generator = torch.Generator(device=device).manual_seed((seed + 7919) % (2**63-1))
@@ -92,6 +103,8 @@ class StopState:
         if ctl.capture_states:
             ctl.last_states.append(h.detach())
         if step + 1 < ctl.options.min_steps or step + 1 == ctl.bias.numel():
+            return h
+        if ctl.options.exit_steps and step + 1 not in ctl.options.exit_steps:
             return h
         if self.forced_depths is not None:
             stop = self.forced_depths <= step + 1

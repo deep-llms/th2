@@ -1,5 +1,53 @@
 # Current task
 
+## STOP-v2 — six methods/trunk combinations authorized 24 October 2026
+
+Latest user: “ok, think about several methods and run them”. Implementation and
+local checks underway; no new GPU training launched yet. Scientific basis:
+`BDOT_v2_spec.md` sections 3.5/3.9, followed by the user's approved late-exit
+training extension. Same D and Partial-25-cosine original 10k parents. Three
+methods per trunk, 1,000 new updates each, same next 512,000 packed rows and
+unchanged old adaptation LR/batch/seed recipe. Existing ordinary 1k continuation
+controls are reused, with fresh matching six-only head evaluation.
+
+- **LateDrop6:** one 50% per-token random STOP decision at middle step 6; ordinary
+  LM loss on the resulting mixed-depth path. No decision at earlier depths.
+- **DualCE6:** full-depth LM objective plus 0.5 × actual depth-6-exit CE.
+- **DualKD6:** DualCE6 plus 0.5 × KL(detached full distribution || depth-6 exit),
+  temperature 1. Both paths use actual held-state K/V and coda execution.
+
+Full path alone supplies router z regularization, balance counts and reported
+main LM loss; auxiliary gradients do reach the backbone/router through the early
+prediction. HF owns optimizer, global target-count normalization, accumulation
+and resume. Auxiliary forward reuses the full pass's routing seed without
+advancing the persistent counter or doubling recorded consumed tokens. Chunked
+FP32 CE/KL with loss-only recomputation bounds memory. These are equal-data/step
+comparisons; dual paths require more compute, which must be reported.
+
+Launch order: D-DualKD6 → Partial-25-DualKD6 → D-DualCE6 → Partial-25-DualCE6 →
+D-LateDrop6 → Partial-25-LateDrop6. All training uses eight GPUs. Before fitting,
+require real-width FA4/SDPA forward/backward, micro16×1024 memory/head checks,
+two-GPU gradient normalization and eight-GPU fresh-process resume. Supervisor
+fails closed at a failed gate and restores/verifies communicating burns.
+
+Evaluation: six new checkpoints plus two saved ordinary controls concurrently,
+one per GPU. Fit on unused packed rows [5632000,5632256), calibrate on the next256,
+only consider learned exits within +0.01 nats of BOTH own full-depth and matched
+ordinary-control calibration loss. Freeze policy before full validation; also
+score fixed depth6 and matched-random exits. Record full/exit6 calibration curves
+at steps500/1000 without using final validation for selection. Benchmark cached
+whole-model SDPA at batches1/32, contexts128/512. All250-step checkpoints retained.
+
+Local gates: **105 regression tests pass**, two-process CPU DDP maximum gradient
+error **8.94e-8**, fresh-process four-step resume exact (weights/optimizer/scheduler/
+RNG/data/routes/depths). [Evidence](results/bdot_stop_v2_local_20261024.json).
+
+Read-only B200 preflight **3712e59** passed at **16:37:33 SGT**, job
+`th2-6y3o-dot-stop-v2-preflight-20261024-a01`: parent hashes and immutable source match,
+24 TB free storage, eight known burns. No installs, no cache deletion,
+no old checkpoint mutation. Planned root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01`.
+
 ## STOP study completed — results retrieved 24 October 2026
 
 All four adaptation branches reached **1,000 additional steps**, followed by

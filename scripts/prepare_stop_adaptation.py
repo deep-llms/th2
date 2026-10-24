@@ -13,7 +13,7 @@ def write(path,value):
     with Path(path).open('x') as f: json.dump(value,f,indent=2,allow_nan=False);f.write('\n')
 
 
-def initialize(checkpoint, destination, probability):
+def initialize(checkpoint, destination, probability, *, stop_settings=None, exit_training=None):
     import torch
     from safetensors.torch import load_file, save_file
     from bdot.routing import RoutingConfig
@@ -22,7 +22,9 @@ def initialize(checkpoint, destination, probability):
         raise ValueError('STOP pilot requires the completed 10k parents')
     cfg=read(checkpoint/'config.json')
     cfg['bdot']['curriculum']='none'
-    cfg['bdot_stop']=dict(min_steps=2,train_random_prob=probability)
+    cfg['bdot_stop']={**dict(min_steps=2,train_random_prob=probability), **(stop_settings or {})}
+    if exit_training is not None:
+        cfg['bdot_exit_training']=dict(exit_training)
     StopConfig(**cfg['bdot_stop']).validate(RoutingConfig(**cfg['bdot']))
     weights=checkpoint/'model.safetensors'
     tensors=load_file(str(weights))
@@ -34,6 +36,9 @@ def initialize(checkpoint, destination, probability):
     tensors['stop_controller.norm.weight']=torch.ones(cfg['hidden_size'])
     tensors['stop_controller.head.weight']=torch.zeros(1,cfg['hidden_size'])
     tensors['stop_controller.bias']=torch.zeros(cfg['bdot']['S'])
+    if exit_training is not None:
+        tensors['exit_training_totals']=torch.zeros(3,dtype=torch.float64)
+        tensors['logged_exit_training_totals']=torch.zeros(3,dtype=torch.float64)
     destination.mkdir(parents=True,exist_ok=False)
     save_file(tensors,str(destination/'model.safetensors'),metadata={'format':'pt'})
     write(destination/'config.json',cfg)
@@ -42,7 +47,8 @@ def initialize(checkpoint, destination, probability):
         parent_weight_sha256=hashlib.sha256(weights.read_bytes()).hexdigest(),
         reset_buffers=resets,optimizer='fresh AdamW',schedule='new 1000-step adaptation',
         preserved='all backbone/router weights and learned balance bias',
-        changed_config=dict(curriculum='none',bdot_stop=cfg['bdot_stop'])))
+        changed_config=dict(curriculum='none',bdot_stop=cfg['bdot_stop'],
+                            bdot_exit_training=cfg.get('bdot_exit_training'))))
 
 
 def prepare(parent, output, source):

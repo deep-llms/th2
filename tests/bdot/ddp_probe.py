@@ -26,6 +26,7 @@ parser.add_argument('--soft',action='store_true')
 parser.add_argument('--no-reuse',action='store_true')
 parser.add_argument('--home-only',action='store_true')
 parser.add_argument('--stop',action='store_true')
+parser.add_argument('--exit-training',action='store_true')
 parser.add_argument('--expert-backend',choices=['reference','grouped'],default='reference')
 parser.add_argument('--bf16',action='store_true')
 parser.add_argument('--device',choices=['cpu','cuda'],default='cpu')
@@ -51,7 +52,7 @@ class ForcedTrainer(BDOTTrainer):
         else:
             forced = torch.full((4,*inputs['input_ids'].shape),rank,dtype=torch.long,device=device)
         inputs=dict(inputs,bdot_forced_routes=forced)
-        if settings.stop:
+        if settings.stop and not settings.exit_training:
             inputs['bdot_stop_depths'] = inputs['input_ids'].remainder(3) + 2
         return super().compute_loss(model,inputs,return_outputs,num_items_in_batch)
 
@@ -64,7 +65,7 @@ m=model(r=1 if settings.no_reuse or settings.home_only else 3,
         reuse=not settings.no_reuse,
         curriculum='A' if settings.home_only else 'B' if settings.soft else 'none',default_prior=0.,
         expert_backend=settings.expert_backend).to(device)
-if settings.stop:
+if settings.stop or settings.exit_training:
     if settings.soft or settings.no_reuse or settings.home_only:
         raise ValueError('STOP probe needs ordinary hard routing')
     # MLP routing permits arbitrary expert choices while sparse attention is
@@ -74,6 +75,13 @@ if settings.stop:
     from bdot.stopping import StopController
     m.config.bdot_stop=dict(train_random_prob=0.,min_steps=2)
     m.stop_controller=StopController(m.config,m.options).to(device)
+    if settings.exit_training:
+        from dataclasses import replace
+        from bdot.exit_training import install
+        m.config.bdot_stop.update(exit_steps=[2])
+        m.stop_controller.options=replace(m.stop_controller.options,exit_steps=(2,))
+        m.config.bdot_exit_training=dict(depth=2,ce_weight=.5,kl_weight=.5,chunk_size=3)
+        install(m);m.to(device)
 ref=copy.deepcopy(m)
 args=BaselineTrainingArguments(output_dir=str(root/'training'),use_cpu=settings.device=='cpu',report_to='none',bf16=settings.bf16,
     max_steps=1,save_strategy='no',logging_strategy='no',per_device_train_batch_size=1,
@@ -109,7 +117,7 @@ if settings.no_reuse or settings.home_only:
     forced = torch.tensor(paths, device=device).T[:,:,None].expand(4,4,6)
 with torch.autocast(device.type,dtype=torch.bfloat16,enabled=settings.bf16):
     loss=ref(**inputs,**({} if settings.soft else dict(bdot_forced_routes=forced)),
-        **(dict(bdot_stop_depths=inputs['input_ids'].remainder(3)+2) if settings.stop else {})).loss
+        **(dict(bdot_stop_depths=inputs['input_ids'].remainder(3)+2) if settings.stop and not settings.exit_training else {})).loss
 loss.backward()
 t.train()
 max_error=0.
@@ -128,6 +136,9 @@ shares=ref.load_counts.float()/ref.load_counts.sum(-1,keepdim=True)
 expected=ref.options.balance_rate*(torch.full((4,),.25,device=device)-shares.mean(0)).sign()
 torch.testing.assert_close(m.balance_bias,expected,atol=0,rtol=0)
 expected_lm = float(loss.detach()) - ref.options.z_loss_coef * float(ref.metric_totals[2]/ref.metric_totals[3])
+if settings.exit_training:
+    v=ref.exit_metric_totals
+    expected_lm -= float((.5*v[0]+.5*v[1])/v[2])
 assert abs(m.last_update_metrics['lm_loss_last_update']-expected_lm) < 1e-5
 opt.step()
 for name,p in m.named_parameters():

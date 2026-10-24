@@ -4,6 +4,21 @@ User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
 
+## STOP-v2 design — 24 October 2026
+
+User authorized several new STOP methods after the first pilot. Six 1k-step
+warm-start branches: D/Partial-25 × LateDrop6, DualCE6, DualKD6, original10k
+parents, same next packed data segment and old adaptation recipe. Single STOP
+opportunity at middle step6. LateDrop uses probability0.5; DualCE uses full LM
+plus0.5 exit CE; DualKD also adds0.5 KL(detached full || exit), temperature1.
+Full-path routing regularization/balance only. One DDP forward encloses both
+traversals, with HF global target normalization and ordinary native resume;
+input-token progress counts each example once. Explicitly report extra training
+compute. Calibrate to own full AND matching ordinary control (+0.01 nats), not
+only the adapted model. Six new fits, two existing continuation controls; no
+additional seeds or long training automatically authorized. CheckCURRENT_TASK
+for launch and results. Old STOP paths/outputs remain available and unchanged.
+
 ## STOP pilot final result — 24 October 2026
 
 Four 1k-step adaptations plus calibration/evaluation finished 23 October
