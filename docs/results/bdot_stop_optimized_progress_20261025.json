@@ -1,5 +1,5 @@
 {
-  "status": "a03_healthy_gpu_checks_running_long_training_queued",
+  "status": "a03_real_training_healthy_D1540_DualCE_queued",
   "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
   "original_queue": "6y3o-dot-stop-long-20261024-a01",
   "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
@@ -351,6 +351,10 @@
     "health-a08.log": {
       "path": "temp/stop_optimized_20261025/health-a08.log",
       "sha256": "4b84707fa31cd46945ee152ce724ae6da07fad3c33d48cd31bdeb39aa1c2ca8c"
+    },
+    "health-a09.log": {
+      "path": "temp/stop_optimized_20261025/health-a09.log",
+      "sha256": "6eaf2d905a6a037a6c4593dc6a4f77cae75a6647ac0b6189349ac74a5d35b6e6"
     }
   },
   "handoff_verified_utc": "2026-10-24T17:43:07.874636+00:00",
@@ -358,7 +362,7 @@
   "corrected_launch_commit": "f07a7d5ce4e0f926ae64b5a159550e6c98d851c3",
   "corrected_launch_utc": "2026-10-24T23:35:01+00:00",
   "corrected_launch_acknowledged": true,
-  "training_started_verified": false,
+  "training_started_verified": true,
   "corrected_gpu_free_before_tests": "2026-10-24T23:37:14.429164+00:00",
   "corrected_ddp": {
     "status": "passed",
@@ -2165,7 +2169,7 @@
   "a03_launch_commit": "5034d945b56f807515fcb5499f1d5b5834ab38a4",
   "a03_launch_acknowledged": true,
   "active_root": "6y3o-dot-stop-optimized-20261025-a03",
-  "a03_last_status_utc": "2026-10-24T23:58:22.478492+00:00",
+  "a03_last_status_utc": "2026-10-25T00:30:12.413212+00:00",
   "a03_gpu_free_before_tests": {
     "at": "2026-10-24T23:56:25.057286+00:00",
     "gpus": [
@@ -2295,11 +2299,219 @@
       {
         "name": "resume_gate",
         "started_at": "2026-10-24T23:58:06.443259+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 125.62697696313262,
+        "artifacts": [
+          {
+            "path": "resume/summary.json",
+            "sha256": "ffe5527356636ef358320ad821c24e8946414786d12e286cf59ce51cce97ca53",
+            "bytes": 7443
+          }
+        ],
+        "finished_at": "2026-10-25T00:00:12.647063+00:00"
+      },
+      {
+        "name": "benchmark-control-1",
+        "started_at": "2026-10-25T00:00:12.647099+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 54.23141904780641,
+        "artifacts": [
+          {
+            "path": "benchmark-control-1.json",
+            "sha256": "e941da35598d4b1e6169b8da48fbe6a1dec3d06f34bb5a630f4489a98877e397",
+            "bytes": 6102
+          }
+        ],
+        "finished_at": "2026-10-25T00:01:07.383260+00:00"
+      },
+      {
+        "name": "benchmark-reference-1",
+        "started_at": "2026-10-25T00:01:07.383299+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 79.91655528731644,
+        "artifacts": [
+          {
+            "path": "benchmark-reference-1.json",
+            "sha256": "3b7ee812b5b94cc7ab777ffa812324087cc7a06856803771e6a2eba7889acdfd",
+            "bytes": 6263
+          }
+        ],
+        "finished_at": "2026-10-25T00:02:27.817603+00:00"
+      },
+      {
+        "name": "benchmark-optimized-1",
+        "started_at": "2026-10-25T00:02:27.817642+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 56.78636391879991,
+        "artifacts": [
+          {
+            "path": "benchmark-optimized-1.json",
+            "sha256": "0cdcffad55940ad507e8d41039534312d7b81aacb9cc89d91eabc427bc6df743",
+            "bytes": 6269
+          }
+        ],
+        "finished_at": "2026-10-25T00:03:25.110603+00:00"
+      },
+      {
+        "name": "benchmark-optimized-2",
+        "started_at": "2026-10-25T00:03:25.110648+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 58.08659256901592,
+        "artifacts": [
+          {
+            "path": "benchmark-optimized-2.json",
+            "sha256": "090940e2cfb255c20d6e417c906179e3d754520e8768e8319e4fe1aee0490b60",
+            "bytes": 6269
+          }
+        ],
+        "finished_at": "2026-10-25T00:04:23.700234+00:00"
+      },
+      {
+        "name": "benchmark-reference-2",
+        "started_at": "2026-10-25T00:04:23.700276+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 80.67929926607758,
+        "artifacts": [
+          {
+            "path": "benchmark-reference-2.json",
+            "sha256": "88355fca2db3406aa6f74ca706040724581d80ddfba81499eaa24ad148755916",
+            "bytes": 6264
+          }
+        ],
+        "finished_at": "2026-10-25T00:05:44.887363+00:00"
+      },
+      {
+        "name": "benchmark-control-2",
+        "started_at": "2026-10-25T00:05:44.887404+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 53.53238789411262,
+        "artifacts": [
+          {
+            "path": "benchmark-control-2.json",
+            "sha256": "98ad6efc69f90d43a8b325dc263239e77559dedb9d6a7b9d480b5f35f8f2b7ec",
+            "bytes": 6106
+          }
+        ],
+        "finished_at": "2026-10-25T00:06:38.916092+00:00"
+      },
+      {
+        "name": "optimization_gate",
+        "started_at": "2026-10-25T00:06:38.916139+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 0.06399681698530912,
+        "artifacts": [
+          {
+            "path": "optimization-gate.json",
+            "sha256": "eab4d9604a52c45259d859717745fd409a695df6ccf394cdfd1da64bf29b991f",
+            "bytes": 832
+          }
+        ],
+        "finished_at": "2026-10-25T00:06:39.478525+00:00"
+      },
+      {
+        "name": "eval_smoke",
+        "started_at": "2026-10-25T00:06:39.478552+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 333.113893579226,
+        "artifacts": [
+          {
+            "path": "eval_smoke/summary.json",
+            "sha256": "c55a25a8b38a3900ed5016d4bed82df1e6379f8a679aa9cdc9ea2acbaf81c7c9",
+            "bytes": 44484
+          }
+        ],
+        "finished_at": "2026-10-25T00:12:13.092092+00:00"
+      },
+      {
+        "name": "D-continue-5000",
+        "started_at": "2026-10-25T00:12:13.092128+00:00",
         "status": "running"
       }
     ]
   },
   "a03_source_matches": true,
   "a03_accelerate_cache_matches": true,
-  "a03_long_training_started_verified": false
+  "a03_long_training_started_verified": true,
+  "a03_optimization_gate": {
+    "status": "passed",
+    "timings": {
+      "control": {
+        "seconds_per_update": 0.6696355885826051,
+        "repeats": [
+          0.6692858139363428,
+          0.6699853632288675
+        ],
+        "peak_allocated_bytes": 56530277376
+      },
+      "reference": {
+        "seconds_per_update": 2.125680805137381,
+        "repeats": [
+          2.1227772504091265,
+          2.1285843598656355
+        ],
+        "peak_allocated_bytes": 82137643520
+      },
+      "optimized": {
+        "seconds_per_update": 0.8613042475810895,
+        "repeats": [
+          0.8617880800118048,
+          0.8608204151503742
+        ],
+        "peak_allocated_bytes": 69278276608
+      }
+    },
+    "update_time_reduction": 0.5948101683472538,
+    "optimized_over_control": 1.2862283042694653,
+    "note": "Fresh branch only; mathematical equivalence is not bitwise migration of old training."
+  },
+  "a03_eval_smoke_status": "ok",
+  "a03_training_status": {
+    "D-continue": {
+      "step": 1540,
+      "grad_norm": 0.19883599877357483,
+      "learning_rate": 2.877528791542858e-05,
+      "objective_loss": 3.2820053100585938,
+      "lm_loss_last_update": 3.258934587240219,
+      "router_z_loss_last_update": 0.0,
+      "off_default_share_last_update": 0.0,
+      "router_entropy_last_update": 0.0,
+      "reuse_rate_last_update": 0.0,
+      "module_load_max_min_ratio_last_update": 1.0,
+      "off_default_step_0_last_update": 0.0,
+      "off_default_step_1_last_update": 0.0,
+      "off_default_step_2_last_update": 0.0,
+      "off_default_step_3_last_update": 0.0,
+      "off_default_step_4_last_update": 0.0,
+      "off_default_step_5_last_update": 0.0,
+      "off_default_step_6_last_update": 0.0,
+      "off_default_step_7_last_update": 0.0,
+      "module_0_decisions_last_update": 524288,
+      "module_1_decisions_last_update": 524288,
+      "module_2_decisions_last_update": 524288,
+      "module_3_decisions_last_update": 524288,
+      "module_4_decisions_last_update": 524288,
+      "module_5_decisions_last_update": 524288,
+      "module_6_decisions_last_update": 524288,
+      "module_7_decisions_last_update": 524288,
+      "lm_loss": 3.2820059863121367,
+      "router_z_loss": 0.0,
+      "lm_tokens": 5231349,
+      "input_tokens": 5242880,
+      "input_tokens_per_second_interval_wall": 807239.2416180266,
+      "interval_wall_seconds": 6.494827963877469,
+      "peak_allocated_bytes": 56530277376,
+      "peak_reserved_bytes": 57457770496
+    },
+    "D-DualCE6": "queued"
+  },
+  "finish_estimate_sgt": "2026-10-25 12:45\u201313:15; approximate, includes evaluations and checkpoint overhead"
 }

@@ -1,5 +1,27 @@
 # Current task
 
+## Live training — 25 October 2026, 08:30 SGT
+
+A03 has passed every numerical/capacity/DDP/8GPU resume/timing/evaluator gate.
+Real D-continue training started08:12:13SGT and reached1540 updates at08:30:12SGT.
+All8 GPUs have one matching training worker each (548701–548708),91–97%utilization,
+56,712MiB used/device. Last training LM loss3.2820, gradient norm0.19884, finite.
+Checkpoints250/500/750/1000/1250/1500 are retained. Original source and Accelerate
+cache hashes match, data parent fingerprinta7d3e88e5670c8a2 and continuation slice
+fingerprint190cb5957440e160 match the plan. No errors.
+
+Queue remains D to5k → optimizedDualCE to5k → paired evaluation → native D to10k
+→ nativeDualCE to10k → final evaluation → automatic verified communicating burns.
+DualCE has not started yet. D mean elapsed including startup/checkpoints0.701s/update;
+active intervals~0.65s/update. Optimized benchmark0.8613s/update (59.48% less time
+than old2.1257s). Estimated full finish **25October12:45–13:15SGT**, including
+remaining training, evaluations/checkpoints/burn handoff; not a guaranteed ETA.
+
+Read-only status commit3753b47; raw `temp/stop_optimized_20261025/health-a09.log/.json`,
+SHA256 `6eaf2d905a6a037a6c4593dc6a4f77cae75a6647ac0b6189349ac74a5d35b6e6`.
+Commands return to#0; independent immutable a03 queue stays running. Next check:
+fresh health suffix/roota03; do not resubmit training. Earlier sections are history.
+
 ## Fixed optimized queue launched — 25 October 2026, 07:57 SGT
 
 Corrected a02 passed every GPU numerical/capacity/DDP/8GPU resume and all six

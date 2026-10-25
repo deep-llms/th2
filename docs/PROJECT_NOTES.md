@@ -20,8 +20,8 @@ optimized ~1.29× D. Optimization changes execution only, not architecture or
 objective; BF16 gradient reduction order differs. A02's final gate failed due to eager launch-only imports missing from its frozen
 snapshot; no long fit began. Fixed by lazy launch imports; isolated CLI regression
 and replay of the exact B200 reports passed. A02 restored8 verified burns. Fresh
-a03 (5034d94) repeats all gates and starts the10k pair automatically; at07:58SGT
-numerical/capacity/DDP passed and resume checks were running, no long fit yet.
+a03 (5034d94) passed all gates and started real D training08:12SGT; at08:30SGT
+D reached1540 updates on all8 GPUs with finite loss/gradients. DualCE is queued.
 See CURRENT_TASK/evidence for the latest observed status.
 
 During cancellation of the original long queue, child cleanup hit pidfd_open
