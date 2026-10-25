@@ -1,5 +1,18 @@
 # Current task
 
+## Authorized evaluation only — 25 October 2026
+
+Evaluate unchanged Partial-25-cosine seed 0/1 at 4,768 and seed 0 at 10,000,
+plus Partial-50-cosine-detach seed 0 at 4,768. Run the existing frozen-source
+route study on all 9,704 validation sequences, recording own/default/random
+losses, off-default share, per-step usage and per-module loads. Previous maps
+covered only 4,096 sequences. No training, optimizer steps or checkpoint edits.
+Use the verified eight-GPU supervisor/Accelerate/burn handoff; restore burns
+after evaluation. Output: `6y3o-dot-partial-route-full-20261025-a01`.
+Local launch: `temp/partial_router_diagnostics_20261025/launch.sh`.
+Current state: prepared, not yet verified launched. Older queue notes below
+are history; this evaluation supersedes their no-new-workload status.
+
 Results documentation: [consolidated follow-up report](BDOT_RESULTS_20261025.md)
 now covers all completed partial-MLP/router, seed-confirmation, 10k, downstream,
 STOP-v1/v2 and optimized continuation studies, with timings and evidence links.
