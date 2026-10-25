@@ -1,5 +1,5 @@
 {
-  "status": "a02_gpu_checks_passed_gate_cli_import_fixed_a03_submitting",
+  "status": "a03_healthy_gpu_checks_running_long_training_queued",
   "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
   "original_queue": "6y3o-dot-stop-long-20261024-a01",
   "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
@@ -343,6 +343,14 @@
     "health-a07.log": {
       "path": "temp/stop_optimized_20261025/health-a07.log",
       "sha256": "ff97316b5224dd1385101fc66ca1259a27bf9f2756c23931479d0fc983e406f1"
+    },
+    "launch-a03.log": {
+      "path": "temp/stop_optimized_20261025/launch-a03.log",
+      "sha256": "c9b1e37663d6335b5ba84449bceab6b8a64d8c4fdc945205ac076350d1c5e607"
+    },
+    "health-a08.log": {
+      "path": "temp/stop_optimized_20261025/health-a08.log",
+      "sha256": "4b84707fa31cd46945ee152ce724ae6da07fad3c33d48cd31bdeb39aa1c2ca8c"
     }
   },
   "handoff_verified_utc": "2026-10-24T17:43:07.874636+00:00",
@@ -2153,5 +2161,145 @@
   },
   "a02_live_burn_verified_utc": "2026-10-24T23:50:38.989874+00:00",
   "a03_root": "6y3o-dot-stop-optimized-20261025-a03",
-  "gate_import_fix_test": "3 queue tests passed, including isolated CLI with only its two modules; exact B200 report replay passed"
+  "gate_import_fix_test": "3 queue tests passed, including isolated CLI with only its two modules; exact B200 report replay passed",
+  "a03_launch_commit": "5034d945b56f807515fcb5499f1d5b5834ab38a4",
+  "a03_launch_acknowledged": true,
+  "active_root": "6y3o-dot-stop-optimized-20261025-a03",
+  "a03_last_status_utc": "2026-10-24T23:58:22.478492+00:00",
+  "a03_gpu_free_before_tests": {
+    "at": "2026-10-24T23:56:25.057286+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ]
+  },
+  "a03_jobs": {
+    "status": "running",
+    "started_at": "2026-10-24T23:56:25.352679+00:00",
+    "jobs": [
+      {
+        "name": "optimization_numerics",
+        "started_at": "2026-10-24T23:56:25.353221+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 47.07525304798037,
+        "artifacts": [
+          {
+            "path": "numerics.json",
+            "sha256": "8652d9095384922a586d76fba76a896254453ea532f3fb8c406cd016f258f560",
+            "bytes": 4380
+          }
+        ],
+        "finished_at": "2026-10-24T23:57:12.955437+00:00"
+      },
+      {
+        "name": "capacity",
+        "started_at": "2026-10-24T23:57:12.955481+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 33.8100897828117,
+        "artifacts": [
+          {
+            "path": "capacity.json",
+            "sha256": "f46c12183f5fb7ab148c194f9996018e52ff3aaca5a9cd5144532ffafca4c555",
+            "bytes": 2191
+          }
+        ],
+        "finished_at": "2026-10-24T23:57:47.283649+00:00"
+      },
+      {
+        "name": "optimization_ddp",
+        "started_at": "2026-10-24T23:57:47.283690+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 18.636983116157353,
+        "artifacts": [
+          {
+            "path": "ddp/rank0.json",
+            "sha256": "76ebab89555186d47931ed3896b4ad7f0f490d279a69aeecbf3264cdc0e5a046",
+            "bytes": 524
+          }
+        ],
+        "finished_at": "2026-10-24T23:58:06.443223+00:00"
+      },
+      {
+        "name": "resume_gate",
+        "started_at": "2026-10-24T23:58:06.443259+00:00",
+        "status": "running"
+      }
+    ]
+  },
+  "a03_source_matches": true,
+  "a03_accelerate_cache_matches": true,
+  "a03_long_training_started_verified": false
 }

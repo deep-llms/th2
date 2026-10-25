@@ -1,6 +1,6 @@
 # Current task
 
-## Optimized queue packaging fix — 25 October 2026, 07:55 SGT
+## Fixed optimized queue launched — 25 October 2026, 07:57 SGT
 
 Corrected a02 passed every GPU numerical/capacity/DDP/8GPU resume and all six
 whole-update timing jobs. D0.66657s/update; oldDualCE2.11910; optimized0.86213,
@@ -17,14 +17,30 @@ optimizer or recipe changes. Keep a02 immutable and preserve all its receipts.
 
 A02 automatically cleared all8 GPUs and restored verified communicating burns
 at07:48:42SGT, matching live workers544049–544056/released guard at07:50:38.
-Submit fresh a03 with `temp/stop_optimized_20261025/launch-a03.sh`; it repeats the
+Fresh a03 launched with `temp/stop_optimized_20261025/launch-a03.sh`, commit
+`5034d94`. Receipt confirms live burn ownership twice, exact runtime pins, copied
+Accelerate cache and8GPU BF16 `accelerate env`. It repeats the
 full gates before the authorized10k matched pair. The launch checks live burn
 ownership, copies/verifies Accelerate, reclaims verified workers and checks all
 GPUs free; final burns remain automatic on success/failure. Never resubmit a02.
-Original D10k and every prior output preserved. No long fit has started yet.
+Original D10k and every prior output preserved. Fresh a03 status07:58:22SGT
+(read-only commit a53abdd) verifies all8 GPUs free before tests, exact approved
+burn-worker reclaim, source/Accelerate unchanged; numerical/capacity/DDP passed,
+resume probe running, no errors. No long fit has started at this observation.
+The frozen queue proceeds automatically through timing/evaluator gates into
+D-continue5k → DualCE5k → evaluation → native resume D10k → DualCE10k → final
+evaluation → verified burns. No additional launch is needed. Remote commands
+are being returned to #0; this does not stop the independent tmux queue.
+
+Next status check: use a fresh read-only receipt with root
+`6y3o-dot-stop-optimized-20261025-a03`, starting from
+`temp/stop_optimized_20261025/health-a08.sh` with a new job/output suffix. Do not
+reuse a02 status or resubmit launch. Confirm optimization_gate/eval_smoke passed
+and finite real-data training progress before claiming the long fits began.
 
 [Evidence](results/bdot_stop_optimized_progress_20261025.json). Raw receipts:
-`temp/stop_optimized_20261025/health-a07.log/.json` and earlier files in that folder.
+`temp/stop_optimized_20261025/health-a08.log/.json` (live a03), `launch-a03.log`,
+and `health-a07.log/.json` (completed a02 evidence).
 
 ## Optimized D/DualCE replacement — authorized 25 October 2026, 01:17 SGT
 
