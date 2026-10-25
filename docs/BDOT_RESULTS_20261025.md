@@ -5,13 +5,31 @@ CURRENT_TASK and PROJECT_NOTES: all 12 partial-MLP/router runs, second-seed chec
 learning curves, the fresh 10k pair, downstream evaluation, both short STOP studies,
 the optimized 5k/10k STOP continuation and throughput/numerical checks. Interrupted
 runs are recorded separately. All dates/times in this report use Singapore time
-(SGT, UTC+8). The latest evidence was verified **25 October 2026, 13:19 SGT**.
+(SGT, UTC+8). The latest evidence was verified **25 October 2026, 14:37 SGT**.
 
 **Main findings:** Partial-25-cosine nearly matches dense D but has not beaten it
 on full validation or aggregate downstream accuracy. DualCE makes an early exit
 more accurate, and its training implementation is much faster after optimization.
 However, none of the tested learned STOP policies achieves the required combined
 quality and decoding-speed improvement.
+
+## Full-validation routing update — 25 October, 14:35 SGT
+
+The requested checkpoint-only evaluation is complete. These off-default shares
+and the linked usage maps cover all 9,704 validation sequences. No weights changed.
+
+| Checkpoint | Off-default | Own loss | Forced-default loss | Random-route loss |
+| --- | --- | --- | --- | --- |
+| Partial-25-cosine, seed 0, 4,768 | 14.4480% | 3.495407 | 3.494408 | 3.557807 |
+| Partial-25-cosine, seed 1, 4,768 | 12.3656% | 3.496507 | 3.495690 | 3.560467 |
+| Partial-25-cosine, seed 0, 10,000 | 20.2274% | 3.297071 | 3.296087 | 3.366806 |
+| Partial-50-cosine-detach, seed 0, 4,768 | 8.8867% | 3.497266 | 3.495615 | 3.635753 |
+
+Forced default is slightly better in all four; random routing is worse. Loads
+remain close to uniform. [Full per-step maps, per-module counts and interpretation](BDOT_PARTIAL_ROUTER_DIAGNOSTICS_20261025.md);
+[verified evidence](results/bdot_partial_router_full_validation_20261025.json).
+This supersedes the earlier 4,096-sequence usage maps, not the original training
+results. Communicating burns were restored and verified at 14:37 SGT.
 
 ## Scope and comparison rules
 

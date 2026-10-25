@@ -8,6 +8,20 @@ Readable results through 25 October are consolidated in
 follow-up study, downstream scores, timing/numerical evidence and interrupted-run
 status, and links the earlier pilot/v3 reports. Historical notes below remain intact.
 
+## Full-validation partial-router interventions — 25 October 2026
+
+Evaluation only: unchanged Partial-25-cosine seed 0/1 at 4,768 and seed 0 at 10k,
+plus Partial-50-cosine-detach seed 0 at 4,768. All routing maps now cover the full
+9,704-sequence validation, superseding prior 4,096-sequence usage subsets.
+Off-default shares are 14.4480%, 12.3656%, 20.2274%, 8.8867%. Forced-default
+loss is lower by 0.000999, 0.000816, 0.000984, 0.001650 nats respectively;
+random routing is worse. Loads are near uniform, without severe collapse.
+Learned choices are active but show no NLL advantage over home routing at these
+weights. This intervention is not a retrained-control or significance result.
+Hashes unchanged; source/own-loss/count checks passed. Completed 14:35:39 SGT,
+burns restored 14:36:50 and verified live 14:37:54. No training performed.
+[Full maps and loads](BDOT_PARTIAL_ROUTER_DIAGNOSTICS_20261025.md).
+
 ## Optimized STOP pair completed — 25 October 2026
 
 Fresh matched D/control and optimizedDualCE each completed10k extra steps from

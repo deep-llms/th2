@@ -1,17 +1,26 @@
 # Current task
 
-## Authorized evaluation only — 25 October 2026
+## Full-validation router diagnostics complete — 25 October, 14:37 SGT verified
 
-Evaluate unchanged Partial-25-cosine seed 0/1 at 4,768 and seed 0 at 10,000,
-plus Partial-50-cosine-detach seed 0 at 4,768. Run the existing frozen-source
-route study on all 9,704 validation sequences, recording own/default/random
-losses, off-default share, per-step usage and per-module loads. Previous maps
-covered only 4,096 sequences. No training, optimizer steps or checkpoint edits.
-Use the verified eight-GPU supervisor/Accelerate/burn handoff; restore burns
-after evaluation. Output: `6y3o-dot-partial-route-full-20261025-a01`.
-Local launch: `temp/partial_router_diagnostics_20261025/launch.sh`.
-Current state: prepared, not yet verified launched. Older queue notes below
-are history; this evaluation supersedes their no-new-workload status.
+All four requested checkpoint evaluations and final validation passed, completing
+14:35:39 SGT. No training, optimizer steps or checkpoint edits. Full maps cover
+9,704 sequences / 9,936,896 routing input tokens, not the earlier 4,096-sequence
+subset. Own/default/random losses score 9,915,698 targets. Own losses and global
+off-default shares reproduce exactly; source and checkpoint hashes are unchanged.
+
+Off-default shares: Partial-25 seed 0 14.4480%, seed 1 12.3656%, seed-0 10k
+20.2274%; Partial-50-cosine-detach seed 0 8.8867%. Forced default is slightly
+better in all four (0.000816–0.001650 nats); random is worse. Loads are near uniform,
+with the largest imbalance at 10k (0.9370–1.0714× uniform). Detailed maps/counts:
+[diagnostic report](BDOT_PARTIAL_ROUTER_DIAGNOSTICS_20261025.md) and
+[verified JSON](results/bdot_partial_router_full_validation_20261025.json).
+
+Root `6y3o-dot-partial-route-full-20261025-a01`; launch `3f8b269`, final inspection
+`718c5c1`. Copied/verified Accelerate, known burn reclamation and eight-free checks
+passed. Eight communicating burns restored 14:36:50 and verified live 14:37:54;
+guard released. Local receipts: `temp/partial_router_diagnostics_20261025/`.
+No pending evaluation or newly authorized training. Commands return to #0.
+Earlier queue notes below are history.
 
 Results documentation: [consolidated follow-up report](BDOT_RESULTS_20261025.md)
 now covers all completed partial-MLP/router, seed-confirmation, 10k, downstream,

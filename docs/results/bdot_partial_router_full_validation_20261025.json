@@ -1,0 +1,2023 @@
+{
+  "status": "verified_complete",
+  "completed_sgt": "2026-10-25T14:35:39.712300+08:00",
+  "summary": {
+    "status": "ok",
+    "scope": "Evaluation only: four unchanged checkpoints, full held-out routing diagnostics",
+    "source": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/source",
+    "results": {
+      "Partial-25-cosine-s0-4768": {
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-4768",
+        "step": 4768,
+        "seed": 0,
+        "off_default_share": 0.1444795739031585,
+        "interventions": {
+          "as_trained": {
+            "loss": 3.495407258695272,
+            "perplexity": 32.963709977217704,
+            "nll_sum": 34659402.76423019,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.1444795739031585,
+            "reuse_rate": 0.15640628622861708,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896
+          },
+          "fixed": {
+            "loss": 3.4944079302552087,
+            "perplexity": 32.93078485859127,
+            "nll_sum": 34649493.72521571,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.0,
+            "reuse_rate": 0.0,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": -0.0009993284400633407
+          },
+          "random": {
+            "loss": 3.557807383007748,
+            "perplexity": 35.08618218455449,
+            "nll_sum": 35278143.55207516,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.6250103025129778,
+            "reuse_rate": 0.9883028865351917,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": 0.0624001243124761
+          }
+        },
+        "usage": {
+          "num_sequences": 9704,
+          "input_tokens": 9936896,
+          "routing_decisions": 79495168,
+          "off_default_share": 0.1444795739031585,
+          "off_default_share_by_step": [
+            0.11596206702777205,
+            0.150319979196723,
+            0.05940597546759068,
+            0.0493229475280812,
+            0.1636058181548846,
+            0.15559325568064716,
+            0.2409190958625309,
+            0.22070745230703834
+          ],
+          "reuse_rate": 0.15640628622861708,
+          "distinct_paths": 1257,
+          "distinct_paths_per_10000_tokens": 271.7019133937563,
+          "diversity_complete_windows": 993,
+          "diversity_excluded_tail_tokens": 6896,
+          "mean_path_length": 8,
+          "module_counts_by_step": [
+            [
+              8784593,
+              1152303,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              1183766,
+              8443182,
+              309948,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              406070,
+              9346585,
+              184241,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              193054,
+              9446779,
+              297063,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              295538,
+              8311162,
+              1330196,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1329160,
+              8390782,
+              216954,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              211741,
+              7542908,
+              2182247
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2193147,
+              7743749
+            ]
+          ],
+          "module_share_by_step": [
+            [
+              0.884037932972228,
+              0.11596206702777205,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.11912834752421682,
+              0.849680020803277,
+              0.031191631672506184,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.040864873698990105,
+              0.9405940245324094,
+              0.018541101768600576,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.019427998441364384,
+              0.9506770524719188,
+              0.02989494908671682,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.02974148063942704,
+              0.8363941818451154,
+              0.13386433751545754,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.1337600796063479,
+              0.8444067443193528,
+              0.021833176074299257,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.021308565572186727,
+              0.7590809041374691,
+              0.2196105302903442
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.22070745230703834,
+              0.7792925476929616
+            ]
+          ],
+          "module_load_share": [
+            0.1253957850620556,
+            0.1258133701912549,
+            0.12390170683078498,
+            0.1248699543599933,
+            0.12500615131727252,
+            0.12494745592587464,
+            0.12520269156485084,
+            0.12486288474791322
+          ],
+          "module_target_share": 0.125,
+          "module_load_over_target": [
+            1.0031662804964447,
+            1.0065069615300393,
+            0.9912136546462799,
+            0.9989596348799464,
+            1.0000492105381802,
+            0.9995796474069971,
+            1.0016215325188067,
+            0.9989030779833058
+          ],
+          "distinct_modules_histogram": [
+            0,
+            0,
+            0,
+            0,
+            3,
+            19893,
+            268054,
+            1266243,
+            8382703
+          ],
+          "mean_distinct_modules": 7.812613315063376
+        },
+        "module_load_counts": [
+          9968359,
+          10001555,
+          9849587,
+          9926558,
+          9937385,
+          9932719,
+          9953009,
+          9925996
+        ],
+        "unchanged_checkpoint_sha256": {
+          "model.safetensors": "cb4908bc6b7d630c92b85e11e4af84614956bb7aadd491fb843d1e8e459bebaf",
+          "config.json": "a58dc2c34748e715930b56f9e555266365de77d3bff505e5737a2fe58c8a4153",
+          "trainer_state.json": "2a39fe7398ff854693330df3de61e8d267d8df1fba73b3c4f3048a13bf52015e",
+          "data_recipe.json": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b",
+          "training_recipe.json": "ae74f6869e854acd37d6ff10b8239c6dc10d5a70894e56baa2268b3a598429ea"
+        },
+        "result_sha256": "d50d5294e9b9362c364f26ad911fa4bec95318f92e18a5bacb50187678fff157",
+        "loss_replay_delta": 0.0,
+        "data_recipe": {
+          "policy": "document_segments_map_v2",
+          "sources": [
+            {
+              "format": "saved",
+              "sources": [
+                "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+              ],
+              "files": [
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                  "bytes": 247,
+                  "mtime_ns": 1792461609078234207
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                  "bytes": 165,
+                  "mtime_ns": 1792461587538373514
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                  "bytes": 44942336,
+                  "mtime_ns": 1792461577068441722
+                }
+              ],
+              "rows": 11717,
+              "fingerprint": "d0696a73ba2e15f6"
+            }
+          ],
+          "raw_fingerprint": "8e4d5df974b46bcc",
+          "raw_documents": 11717,
+          "tokenizer": {
+            "class": "Qwen2Tokenizer",
+            "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+            "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+            "special_tokens": {
+              "eos_token": "<|endoftext|>",
+              "pad_token": "<|endoftext|>"
+            },
+            "model_max_length": 131072,
+            "padding_side": "right",
+            "truncation_side": "right"
+          },
+          "tokenizer_files": [
+            {
+              "name": "merges.txt",
+              "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+            },
+            {
+              "name": "tokenizer.json",
+              "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+            },
+            {
+              "name": "tokenizer_config.json",
+              "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+            },
+            {
+              "name": "vocab.json",
+              "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+            }
+          ],
+          "document_end": {
+            "token": "<|endoftext|>",
+            "id": 151643,
+            "selection": "explicit"
+          },
+          "block_size": 1024,
+          "map_batch_size": 1000,
+          "requested_workers": 128,
+          "effective_workers": 128,
+          "shuffle_seed": 0,
+          "add_special_tokens": false,
+          "append_boundary": "one_after_every_document_including_empty",
+          "remainder": "drop_per_map_batch_within_worker_shard",
+          "attention": "causal_within_document",
+          "positions": "reset_per_document_fragment",
+          "labels": "ignore_first_and_document_starts",
+          "attention_backend": "fa4",
+          "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+          "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+          "versions": {
+            "datasets": "4.8.5",
+            "transformers": "5.9.0",
+            "tokenizers": "0.22.2",
+            "pyarrow": "26.0.0"
+          },
+          "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+          "packed_fingerprint": "98806e57e2a3d990",
+          "shuffled_fingerprint": "b3b53e7dde5c38e7",
+          "packed_sequences": 9704,
+          "packed_input_tokens": 9936896,
+          "scored_target_tokens": 9915698,
+          "fa4_runtime": {
+            "package": "flash-attn-4",
+            "version": "4.0.0b33",
+            "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+            "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+          }
+        },
+        "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+        "selection": {
+          "full_sequences": 9704,
+          "max_sequences": null,
+          "shuffle_seed": 0,
+          "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+        },
+        "world_size": 8,
+        "batch_size_per_rank": 16,
+        "routing_seed": 0,
+        "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+        "exporter_sha256": "a697132a2259cbed4cf4bb123847772699bde51ecf952db84ff0c12e975e8a57"
+      },
+      "Partial-25-cosine-s1-4768": {
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-confirm-20261023-a01/prepared/runs/Partial-25-cosine-s1/checkpoint-4768",
+        "step": 4768,
+        "seed": 1,
+        "off_default_share": 0.12365575477493172,
+        "interventions": {
+          "as_trained": {
+            "loss": 3.4965066446610065,
+            "perplexity": 32.99996974543323,
+            "nll_sum": 34670303.94345185,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.12365575477493172,
+            "reuse_rate": 0.14504096651509688,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896
+          },
+          "fixed": {
+            "loss": 3.49569030083424,
+            "perplexity": 32.97304141673098,
+            "nll_sum": 34662209.32460147,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.0,
+            "reuse_rate": 0.0,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": -0.0008163438267665413
+          },
+          "random": {
+            "loss": 3.5604667876477256,
+            "perplexity": 35.179614722651586,
+            "nll_sum": 35304513.40534498,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.6249841877181768,
+            "reuse_rate": 0.9883512919929925,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": 0.06396014298671915
+          }
+        },
+        "usage": {
+          "num_sequences": 9704,
+          "input_tokens": 9936896,
+          "routing_decisions": 79495168,
+          "off_default_share": 0.12365575477493172,
+          "off_default_share_by_step": [
+            0.08855129408620156,
+            0.1079393404137469,
+            0.04413963877653545,
+            0.035514208863612944,
+            0.16521497256286066,
+            0.16408313018471765,
+            0.19848793828575845,
+            0.1853155150260202
+          ],
+          "reuse_rate": 0.14504096651509688,
+          "distinct_paths": 1235,
+          "distinct_paths_per_10000_tokens": 204.78348439073514,
+          "diversity_complete_windows": 993,
+          "diversity_excluded_tail_tokens": 6896,
+          "mean_path_length": 8,
+          "module_counts_by_step": [
+            [
+              9056971,
+              879925,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              826726,
+              8864314,
+              245856,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              384037,
+              9498285,
+              54574,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              200362,
+              9583995,
+              152539,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              150738,
+              8295172,
+              1490986,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              1495715,
+              8306419,
+              134762,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              139170,
+              7964542,
+              1833184
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1841461,
+              8095435
+            ]
+          ],
+          "module_share_by_step": [
+            [
+              0.9114487059137985,
+              0.08855129408620156,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0831976101994023,
+              0.8920606595862531,
+              0.0247417302143446,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.038647581699556885,
+              0.9558603612234645,
+              0.005492057076978566,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.02016343936778648,
+              0.9644857911363871,
+              0.015350769495826463,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.015169525775453422,
+              0.8347850274371393,
+              0.15004544678740725,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.15052134992657668,
+              0.8359168698152823,
+              0.013561780258140973,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.014005379547093981,
+              0.8015120617142415,
+              0.18448255873866448
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.1853155150260202,
+              0.8146844849739798
+            ]
+          ],
+          "module_load_share": [
+            0.1243307895141501,
+            0.12740744192150144,
+            0.12509569135069945,
+            0.12314342174860238,
+            0.1250821433574428,
+            0.12499596201872296,
+            0.12504866962480035,
+            0.12489588046408054
+          ],
+          "module_target_share": 0.125,
+          "module_load_over_target": [
+            0.9946463161132008,
+            1.0192595353720115,
+            1.0007655308055956,
+            0.985147373988819,
+            1.0006571468595424,
+            0.9999676961497836,
+            1.0003893569984028,
+            0.9991670437126443
+          ],
+          "distinct_modules_histogram": [
+            0,
+            0,
+            0,
+            0,
+            14,
+            5917,
+            144990,
+            1290336,
+            8495639
+          ],
+          "mean_distinct_modules": 7.839172816138963
+        },
+        "module_load_counts": [
+          9883697,
+          10128276,
+          9944503,
+          9789307,
+          9943426,
+          9936575,
+          9940765,
+          9928619
+        ],
+        "unchanged_checkpoint_sha256": {
+          "model.safetensors": "b50b18a295488e4b0ddc215a2e1e652981570ea2f02c5bcd3e0255681c468508",
+          "config.json": "0f16a5c45c6d36efec8c1f151e8ef2ca3beee4dbd90111052b63c2e9601c2825",
+          "trainer_state.json": "5fee4b5d73c9cfed480a56e18036c58abd42e807ba38daed1ad9dac6c185d4d0",
+          "data_recipe.json": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b",
+          "training_recipe.json": "40037f67787b44e0bf56edba072425d0137444f812b940042b55eea308d8c161"
+        },
+        "result_sha256": "916bd262bbb7ed6eaecba1e4cc615668c22c18dc4431f99a85ba15a502818390",
+        "loss_replay_delta": 0.0,
+        "data_recipe": {
+          "policy": "document_segments_map_v2",
+          "sources": [
+            {
+              "format": "saved",
+              "sources": [
+                "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+              ],
+              "files": [
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                  "bytes": 247,
+                  "mtime_ns": 1792461609078234207
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                  "bytes": 165,
+                  "mtime_ns": 1792461587538373514
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                  "bytes": 44942336,
+                  "mtime_ns": 1792461577068441722
+                }
+              ],
+              "rows": 11717,
+              "fingerprint": "d0696a73ba2e15f6"
+            }
+          ],
+          "raw_fingerprint": "8e4d5df974b46bcc",
+          "raw_documents": 11717,
+          "tokenizer": {
+            "class": "Qwen2Tokenizer",
+            "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+            "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+            "special_tokens": {
+              "eos_token": "<|endoftext|>",
+              "pad_token": "<|endoftext|>"
+            },
+            "model_max_length": 131072,
+            "padding_side": "right",
+            "truncation_side": "right"
+          },
+          "tokenizer_files": [
+            {
+              "name": "merges.txt",
+              "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+            },
+            {
+              "name": "tokenizer.json",
+              "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+            },
+            {
+              "name": "tokenizer_config.json",
+              "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+            },
+            {
+              "name": "vocab.json",
+              "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+            }
+          ],
+          "document_end": {
+            "token": "<|endoftext|>",
+            "id": 151643,
+            "selection": "explicit"
+          },
+          "block_size": 1024,
+          "map_batch_size": 1000,
+          "requested_workers": 128,
+          "effective_workers": 128,
+          "shuffle_seed": 0,
+          "add_special_tokens": false,
+          "append_boundary": "one_after_every_document_including_empty",
+          "remainder": "drop_per_map_batch_within_worker_shard",
+          "attention": "causal_within_document",
+          "positions": "reset_per_document_fragment",
+          "labels": "ignore_first_and_document_starts",
+          "attention_backend": "fa4",
+          "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+          "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+          "versions": {
+            "datasets": "4.8.5",
+            "transformers": "5.9.0",
+            "tokenizers": "0.22.2",
+            "pyarrow": "26.0.0"
+          },
+          "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+          "packed_fingerprint": "98806e57e2a3d990",
+          "shuffled_fingerprint": "b3b53e7dde5c38e7",
+          "packed_sequences": 9704,
+          "packed_input_tokens": 9936896,
+          "scored_target_tokens": 9915698,
+          "fa4_runtime": {
+            "package": "flash-attn-4",
+            "version": "4.0.0b33",
+            "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+            "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+          }
+        },
+        "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+        "selection": {
+          "full_sequences": 9704,
+          "max_sequences": null,
+          "shuffle_seed": 0,
+          "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+        },
+        "world_size": 8,
+        "batch_size_per_rank": 16,
+        "routing_seed": 1,
+        "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+        "exporter_sha256": "a697132a2259cbed4cf4bb123847772699bde51ecf952db84ff0c12e975e8a57"
+      },
+      "Partial-25-cosine-s0-10000": {
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01/prepared/runs/Partial-25-cosine-s0/checkpoint-10000",
+        "step": 10000,
+        "seed": 0,
+        "off_default_share": 0.202274218729873,
+        "interventions": {
+          "as_trained": {
+            "loss": 3.2970712571608005,
+            "perplexity": 27.033349139931865,
+            "nll_sum": 32692762.870486837,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.202274218729873,
+            "reuse_rate": 0.24101469915756388,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896
+          },
+          "fixed": {
+            "loss": 3.29608683808163,
+            "perplexity": 27.006750089718956,
+            "nll_sum": 32683001.668192346,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.0,
+            "reuse_rate": 0.0,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": -0.000984419079170351
+          },
+          "random": {
+            "loss": 3.3668060884094477,
+            "perplexity": 28.985800971477346,
+            "nll_sum": 33384232.397229385,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.6250103025129778,
+            "reuse_rate": 0.9883028865351917,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": 0.06973483124864721
+          }
+        },
+        "usage": {
+          "num_sequences": 9704,
+          "input_tokens": 9936896,
+          "routing_decisions": 79495168,
+          "off_default_share": 0.202274218729873,
+          "off_default_share_by_step": [
+            0.08389521234800082,
+            0.19946419888061623,
+            0.1517916661299464,
+            0.10586112604982481,
+            0.10413805276818838,
+            0.09886014707208368,
+            0.44158860070589445,
+            0.4325947458844291
+          ],
+          "reuse_rate": 0.24101469915756388,
+          "distinct_paths": 794,
+          "distinct_paths_per_10000_tokens": 200.46223564954684,
+          "diversity_complete_windows": 993,
+          "diversity_excluded_tail_tokens": 6896,
+          "mean_path_length": 8,
+          "module_counts_by_step": [
+            [
+              9103238,
+              833658,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              816089,
+              7954841,
+              1165966,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1189943,
+              8428558,
+              318395,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1051931,
+              8884965,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              107419,
+              8902087,
+              927390,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              907527,
+              8954533,
+              74836,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              83428,
+              5548876,
+              4304592
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              4298649,
+              5638247
+            ]
+          ],
+          "module_share_by_step": [
+            [
+              0.9161047876519992,
+              0.08389521234800082,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.08212715520017519,
+              0.8005358011193837,
+              0.11733704368044105,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.11974997021202596,
+              0.8482083338700536,
+              0.03204169591792044,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.10586112604982481,
+              0.8941388739501752,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.010810116156997115,
+              0.8958619472318117,
+              0.09332793661119126,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.09132902266462284,
+              0.9011398529279163,
+              0.007531124407460841,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.008395780734748557,
+              0.5584113992941055,
+              0.4331928199711459
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.4325947458844291,
+              0.5674052541155709
+            ]
+          ],
+          "module_load_share": [
+            0.12477899285652179,
+            0.1255226229599263,
+            0.13392581295003994,
+            0.11712383575313659,
+            0.12339887123705431,
+            0.12535794628423202,
+            0.12481715869824943,
+            0.1250747592608396
+          ],
+          "module_target_share": 0.125,
+          "module_load_over_target": [
+            0.9982319428521743,
+            1.0041809836794104,
+            1.0714065036003195,
+            0.9369906860250927,
+            0.9871909698964345,
+            1.0028635702738562,
+            0.9985372695859954,
+            1.0005980740867169
+          ],
+          "distinct_modules_histogram": [
+            0,
+            0,
+            0,
+            0,
+            196,
+            17148,
+            295687,
+            2081907,
+            7541958
+          ],
+          "mean_distinct_modules": 7.7257182725873355
+        },
+        "module_load_counts": [
+          9919327,
+          9978442,
+          10646455,
+          9310779,
+          9809614,
+          9965351,
+          9922361,
+          9942839
+        ],
+        "unchanged_checkpoint_sha256": {
+          "model.safetensors": "d30977a61cd4b549e16dd24616d3cdd96d33b2cfd766cba4dd713dca2d3d9840",
+          "config.json": "a58dc2c34748e715930b56f9e555266365de77d3bff505e5737a2fe58c8a4153",
+          "trainer_state.json": "cad7fa0e4635f01fce7689263b19539fe3fb82d6f01eb01ead0c55eca0170fc2",
+          "data_recipe.json": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b",
+          "training_recipe.json": "3d6d4104c33252b297097ebc8c0ad72f0bc743eb0d599da0c789f7c1378f6301"
+        },
+        "result_sha256": "4ccfe9fef658b1c2c7b182667c79de633e4cf54db6b018ffed2fa89a0ee6856f",
+        "loss_replay_delta": 0.0,
+        "data_recipe": {
+          "policy": "document_segments_map_v2",
+          "sources": [
+            {
+              "format": "saved",
+              "sources": [
+                "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+              ],
+              "files": [
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                  "bytes": 247,
+                  "mtime_ns": 1792461609078234207
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                  "bytes": 165,
+                  "mtime_ns": 1792461587538373514
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                  "bytes": 44942336,
+                  "mtime_ns": 1792461577068441722
+                }
+              ],
+              "rows": 11717,
+              "fingerprint": "d0696a73ba2e15f6"
+            }
+          ],
+          "raw_fingerprint": "8e4d5df974b46bcc",
+          "raw_documents": 11717,
+          "tokenizer": {
+            "class": "Qwen2Tokenizer",
+            "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+            "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+            "special_tokens": {
+              "eos_token": "<|endoftext|>",
+              "pad_token": "<|endoftext|>"
+            },
+            "model_max_length": 131072,
+            "padding_side": "right",
+            "truncation_side": "right"
+          },
+          "tokenizer_files": [
+            {
+              "name": "merges.txt",
+              "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+            },
+            {
+              "name": "tokenizer.json",
+              "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+            },
+            {
+              "name": "tokenizer_config.json",
+              "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+            },
+            {
+              "name": "vocab.json",
+              "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+            }
+          ],
+          "document_end": {
+            "token": "<|endoftext|>",
+            "id": 151643,
+            "selection": "explicit"
+          },
+          "block_size": 1024,
+          "map_batch_size": 1000,
+          "requested_workers": 128,
+          "effective_workers": 128,
+          "shuffle_seed": 0,
+          "add_special_tokens": false,
+          "append_boundary": "one_after_every_document_including_empty",
+          "remainder": "drop_per_map_batch_within_worker_shard",
+          "attention": "causal_within_document",
+          "positions": "reset_per_document_fragment",
+          "labels": "ignore_first_and_document_starts",
+          "attention_backend": "fa4",
+          "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+          "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+          "versions": {
+            "datasets": "4.8.5",
+            "transformers": "5.9.0",
+            "tokenizers": "0.22.2",
+            "pyarrow": "26.0.0"
+          },
+          "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+          "packed_fingerprint": "98806e57e2a3d990",
+          "shuffled_fingerprint": "b3b53e7dde5c38e7",
+          "packed_sequences": 9704,
+          "packed_input_tokens": 9936896,
+          "scored_target_tokens": 9915698,
+          "fa4_runtime": {
+            "package": "flash-attn-4",
+            "version": "4.0.0b33",
+            "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+            "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+          }
+        },
+        "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+        "selection": {
+          "full_sequences": 9704,
+          "max_sequences": null,
+          "shuffle_seed": 0,
+          "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+        },
+        "world_size": 8,
+        "batch_size_per_rank": 16,
+        "routing_seed": 0,
+        "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+        "exporter_sha256": "a697132a2259cbed4cf4bb123847772699bde51ecf952db84ff0c12e975e8a57"
+      },
+      "Partial-50-cosine-detach-s0-4768": {
+        "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-router-20261022-a01/prepared/runs/Partial-50-cosine-detach-s0/checkpoint-4768",
+        "step": 4768,
+        "seed": 0,
+        "off_default_share": 0.08886740134947572,
+        "interventions": {
+          "as_trained": {
+            "loss": 3.4972656017974293,
+            "perplexity": 33.02502481463238,
+            "nll_sum": 34677829.53321157,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.08886740134947572,
+            "reuse_rate": 0.11740336217667972,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896
+          },
+          "fixed": {
+            "loss": 3.4956153055480974,
+            "perplexity": 32.970568686777646,
+            "nll_sum": 34661465.69399266,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.0,
+            "reuse_rate": 0.0,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": -0.001650296249331884
+          },
+          "random": {
+            "loss": 3.635752864424315,
+            "perplexity": 37.93039859797701,
+            "nll_sum": 36051027.40626645,
+            "num_tokens": 9915698,
+            "num_sequences": 9704,
+            "off_default_share": 0.6250103025129778,
+            "reuse_rate": 0.9883028865351917,
+            "routing_decisions": 79495168,
+            "routing_input_tokens": 9936896,
+            "loss_delta_vs_as_trained": 0.1384872626268856
+          }
+        },
+        "usage": {
+          "num_sequences": 9704,
+          "input_tokens": 9936896,
+          "routing_decisions": 79495168,
+          "off_default_share": 0.08886740134947572,
+          "off_default_share_by_step": [
+            0.026530216276793073,
+            0.04831468498814922,
+            0.03347343073732482,
+            0.13117989762597898,
+            0.13700083003787097,
+            0.034793158748969495,
+            0.15383264552632936,
+            0.14581434685438993
+          ],
+          "reuse_rate": 0.11740336217667972,
+          "distinct_paths": 1448,
+          "distinct_paths_per_10000_tokens": 211.0725075528701,
+          "diversity_complete_windows": 993,
+          "diversity_excluded_tail_tokens": 6896,
+          "mean_path_length": 8,
+          "module_counts_by_step": [
+            [
+              9673268,
+              263628,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              374881,
+              9456798,
+              105217,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              111836,
+              9604274,
+              220786,
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              220219,
+              8633375,
+              1083302,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              1083487,
+              8575533,
+              277876,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              293272,
+              9591160,
+              52464,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              53010,
+              8408277,
+              1475609
+            ],
+            [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1448942,
+              8487954
+            ]
+          ],
+          "module_share_by_step": [
+            [
+              0.9734697837232069,
+              0.026530216276793073,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0377261672055338,
+              0.9516853150118508,
+              0.010588517782615416,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.011254621161376752,
+              0.9665265692626752,
+              0.022218809575948063,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.022161749504070485,
+              0.8688201023740211,
+              0.10901814812190849,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.10903676560567807,
+              0.862999169962129,
+              0.02796406443219291,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.02951344162201154,
+              0.9652068412510305,
+              0.005279717126957955,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.005334663862840066,
+              0.8461673544736706,
+              0.1484979816634893
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.14581434685438993,
+              0.85418565314561
+            ]
+          ],
+          "module_load_share": [
+            0.1263994938660926,
+            0.12368376905625257,
+            0.12490960456867013,
+            0.1250094596944559,
+            0.12519134496325612,
+            0.12481319619325794,
+            0.12465767730687732,
+            0.1253354543511374
+          ],
+          "module_target_share": 0.125,
+          "module_load_over_target": [
+            1.0111959509287407,
+            0.9894701524500206,
+            0.9992768365493611,
+            1.0000756775556472,
+            1.001530759706049,
+            0.9985055695460635,
+            0.9972614184550186,
+            1.0026836348090993
+          ],
+          "distinct_modules_histogram": [
+            0,
+            0,
+            0,
+            0,
+            862,
+            10450,
+            147934,
+            1007379,
+            8770271
+          ],
+          "mean_distinct_modules": 7.865345777997475
+        },
+        "module_load_counts": [
+          10048149,
+          9832262,
+          9929710,
+          9937648,
+          9952107,
+          9922046,
+          9909683,
+          9963563
+        ],
+        "unchanged_checkpoint_sha256": {
+          "model.safetensors": "4147faddb663761ab2e54e605a9126f8ec9ffb2f57d6fcde1b15cc26c4aa35a4",
+          "config.json": "2541c227f3a829bb24ef42ad9eec83be52e6c5ca5d6976dfe324a11da25c503f",
+          "trainer_state.json": "b947b3e51f5072fe5ba43f93261646a26ebc0ddce963420e9c4ec97ce22c7b65",
+          "data_recipe.json": "9f9f5383c0e23d4fbe49cf48bfa2cef98fc318b49ca5638bbab1c14df15e2e4b",
+          "training_recipe.json": "ce25b2c46cbe9397665096642a6800c5fdd3ce1f4b06b8e3afb739ad43248379"
+        },
+        "result_sha256": "a0f65eaeaa5e14a61c6d068e87eb14fe2db8c06fc5a569918c18783a1d94ea2e",
+        "loss_replay_delta": 0.0,
+        "data_recipe": {
+          "policy": "document_segments_map_v2",
+          "sources": [
+            {
+              "format": "saved",
+              "sources": [
+                "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000"
+              ],
+              "files": [
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/state.json",
+                  "bytes": 247,
+                  "mtime_ns": 1792461609078234207
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/dataset_info.json",
+                  "bytes": 165,
+                  "mtime_ns": 1792461587538373514
+                },
+                {
+                  "path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+                  "bytes": 44942336,
+                  "mtime_ns": 1792461577068441722
+                }
+              ],
+              "rows": 11717,
+              "fingerprint": "d0696a73ba2e15f6"
+            }
+          ],
+          "raw_fingerprint": "8e4d5df974b46bcc",
+          "raw_documents": 11717,
+          "tokenizer": {
+            "class": "Qwen2Tokenizer",
+            "backend_sha256": "a373b7ff0c52176575a72ede185c306613ef1c01a2346f900f3b631ce1dc23f9",
+            "vocab_sha256": "f488fa45d324a8bc64c84f0e27b47223872d550f2a6900564f77dfa67ca5ff4d",
+            "special_tokens": {
+              "eos_token": "<|endoftext|>",
+              "pad_token": "<|endoftext|>"
+            },
+            "model_max_length": 131072,
+            "padding_side": "right",
+            "truncation_side": "right"
+          },
+          "tokenizer_files": [
+            {
+              "name": "merges.txt",
+              "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+            },
+            {
+              "name": "tokenizer.json",
+              "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+            },
+            {
+              "name": "tokenizer_config.json",
+              "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+            },
+            {
+              "name": "vocab.json",
+              "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+            }
+          ],
+          "document_end": {
+            "token": "<|endoftext|>",
+            "id": 151643,
+            "selection": "explicit"
+          },
+          "block_size": 1024,
+          "map_batch_size": 1000,
+          "requested_workers": 128,
+          "effective_workers": 128,
+          "shuffle_seed": 0,
+          "add_special_tokens": false,
+          "append_boundary": "one_after_every_document_including_empty",
+          "remainder": "drop_per_map_batch_within_worker_shard",
+          "attention": "causal_within_document",
+          "positions": "reset_per_document_fragment",
+          "labels": "ignore_first_and_document_starts",
+          "attention_backend": "fa4",
+          "boundary_code_sha256": "fd9dce28926920519c27cb6bdc11157ca90af36d3d1e733b65e2850054c893f5",
+          "code_sha256": "28a6eaf3bebaf1b182f0c3cb1b095621fba5043ced4c17172c8b6846223b110e",
+          "versions": {
+            "datasets": "4.8.5",
+            "transformers": "5.9.0",
+            "tokenizers": "0.22.2",
+            "pyarrow": "26.0.0"
+          },
+          "tokenized_fingerprint": "fc48a5449bce1b5e33608d480c0a6115",
+          "packed_fingerprint": "98806e57e2a3d990",
+          "shuffled_fingerprint": "b3b53e7dde5c38e7",
+          "packed_sequences": 9704,
+          "packed_input_tokens": 9936896,
+          "scored_target_tokens": 9915698,
+          "fa4_runtime": {
+            "package": "flash-attn-4",
+            "version": "4.0.0b33",
+            "shared_adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1",
+            "adapter_sha256": "286c42fa3f0a7e95464a584dffa9f5bb7bf79b701d7c9b321ed61179f4efcab1"
+          }
+        },
+        "training_recipe_sha256": "cd33f5001ac84cdd5469428a19f06c3e7c5845e9e6fb9f29c39c372fd283781d",
+        "selection": {
+          "full_sequences": 9704,
+          "max_sequences": null,
+          "shuffle_seed": 0,
+          "validation_manifest_sha256": "745e76f100ea9111e53e44af20144838fc191b7eda65140dfe90194ad68808fd"
+        },
+        "world_size": 8,
+        "batch_size_per_rank": 16,
+        "routing_seed": 0,
+        "evaluator_sha256": "3f20c3b026b29a0daf8afbcdf903d02e31cab6923aceaff6b915e6f157668e5c",
+        "exporter_sha256": "a697132a2259cbed4cf4bb123847772699bde51ecf952db84ff0c12e975e8a57"
+      }
+    },
+    "checkpoint_files_unchanged": true,
+    "source_unchanged": true,
+    "counts": {
+      "sequences": 9704,
+      "scored_targets": 9915698,
+      "routing_input_tokens": 9936896,
+      "routing_decisions": 79495168
+    }
+  },
+  "source_receipt": "temp/partial_router_diagnostics_20261025/final-status.json",
+  "source_receipt_sha256": "e73dbe247cb1b889cf061b40b10e4129a2cd6705b7ef23091c832206a355fcf8",
+  "remote_summary_sha256": "5361eb97b4fc0cfb7848c350064a56335cd6e9b6c203063c2242b4e2684ebf11",
+  "live": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-25T06:37:54.785049+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581907
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581908
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581909
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581910
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581911
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581912
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581913
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581914
+        ]
+      }
+    ],
+    "workers": [
+      581907,
+      581908,
+      581909,
+      581910,
+      581911,
+      581912,
+      581913,
+      581914
+    ],
+    "stop_roots": [
+      581838
+    ],
+    "processes": {
+      "581907": {
+        "pid": 581907,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "108f00b282d8b45e34dca3a6a56f57d5f1efd647a08dfcf2c87a69b39840b959",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581908": {
+        "pid": 581908,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "55caa891f226da18946cd01dc60442427e762ceb52fdd1f017129da45b0d2661",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581909": {
+        "pid": 581909,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "7e0ca1d23998445232f02bc2fb87b44f06e99260486497880857aa74ffe366df",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581910": {
+        "pid": 581910,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "30a27357611b5b9e1af3f1f3b59119747de9b5d242558e03544739a4c112120f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581911": {
+        "pid": 581911,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "c07e5502da59f7b6e3ec9a69e044b255fb963b139a3d428fdebcd6cc9ddbbf0f",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581912": {
+        "pid": 581912,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "94552c3ac2ac616bf1a4bbc56d80480af702e7fa94ed2d13fd4847efca5085de",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581913": {
+        "pid": 581913,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "c394b5e9cfbc392dfab22747d9cdf80121d672d3cdcb07713535a4fd94203e50",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581914": {
+        "pid": 581914,
+        "ppid": 581838,
+        "start_ticks": 285074151,
+        "command_sha256": "52b85b6d2e43210aed0f804cfdff8a7ff20d9116c85276f5699e2635001b1dc9",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "581838": {
+        "pid": 581838,
+        "ppid": 9406,
+        "start_ticks": 285074033,
+        "command_sha256": "15e9bf91f4e993a6fec6d4b2879c02b6060bb4cee18493fb123895bce06fee69",
+        "exe": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/train/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a03/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "guard_disabled": false
+  },
+  "burn_verified": {
+    "at": "2026-10-25T06:36:50.562494+00:00",
+    "session": "partial_route_full_20261025_a01_burn",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581907
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581908
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581909
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581910
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581911
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581912
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581913
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          581914
+        ]
+      }
+    ],
+    "collective_progress_verified": true
+  },
+  "live_burn_handoff_verified": true,
+  "collective_progress_verified": true,
+  "launch": {
+    "status": "submitted",
+    "session": "partial_route_full_20261025_a01",
+    "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-partial-route-full-20261025-a01",
+    "python": "/mnt/local/conda-py311/envs/train/bin/python3.11",
+    "versions": {
+      "torch": "2.14.1",
+      "transformers": "5.9.0",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "tokenizers": "0.22.2",
+      "safetensors": "0.8.0",
+      "flash-attn-4": "4.0.0b33"
+    },
+    "accelerate_cache": "/mnt/local/.cache/huggingface/accelerate/default_config.yaml",
+    "environment": {
+      "HF_HUB_OFFLINE": "1",
+      "HF_DATASETS_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "HF_HUB_DISABLE_TELEMETRY": "1",
+      "WANDB_MODE": "offline",
+      "NCCL_NVLS_ENABLE": "0",
+      "OMP_NUM_THREADS": "1",
+      "TOKENIZERS_PARALLELISM": "false",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "jobs_config": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-partial-route-full-20261025-a01/prepared/jobs.json"
+  },
+  "jobs": {
+    "status": "ok",
+    "started_at": "2026-10-25T06:31:58.096699+00:00",
+    "jobs": [
+      {
+        "name": "Partial-25-cosine-s0-4768",
+        "started_at": "2026-10-25T06:31:58.096978+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 54.3385727358982,
+        "artifacts": [
+          {
+            "path": "Partial-25-cosine-s0-4768/result.json",
+            "sha256": "d50d5294e9b9362c364f26ad911fa4bec95318f92e18a5bacb50187678fff157",
+            "bytes": 11340
+          }
+        ],
+        "finished_at": "2026-10-25T06:32:52.986734+00:00"
+      },
+      {
+        "name": "Partial-25-cosine-s1-4768",
+        "started_at": "2026-10-25T06:32:52.987201+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 54.86000528791919,
+        "artifacts": [
+          {
+            "path": "Partial-25-cosine-s1-4768/result.json",
+            "sha256": "916bd262bbb7ed6eaecba1e4cc615668c22c18dc4431f99a85ba15a502818390",
+            "bytes": 11363
+          }
+        ],
+        "finished_at": "2026-10-25T06:33:48.410217+00:00"
+      },
+      {
+        "name": "Partial-25-cosine-s0-10000",
+        "started_at": "2026-10-25T06:33:48.410262+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 52.6356823341921,
+        "artifacts": [
+          {
+            "path": "Partial-25-cosine-s0-10000/result.json",
+            "sha256": "4ccfe9fef658b1c2c7b182667c79de633e4cf54db6b018ffed2fa89a0ee6856f",
+            "bytes": 11335
+          }
+        ],
+        "finished_at": "2026-10-25T06:34:41.534558+00:00"
+      },
+      {
+        "name": "Partial-50-cosine-detach-s0-4768",
+        "started_at": "2026-10-25T06:34:41.534600+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 53.13585205934942,
+        "artifacts": [
+          {
+            "path": "Partial-50-cosine-detach-s0-4768/result.json",
+            "sha256": "a0f65eaeaa5e14a61c6d068e87eb14fe2db8c06fc5a569918c18783a1d94ea2e",
+            "bytes": 11367
+          }
+        ],
+        "finished_at": "2026-10-25T06:35:35.141343+00:00"
+      },
+      {
+        "name": "validate",
+        "started_at": "2026-10-25T06:35:35.141382+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 4.569580118637532,
+        "artifacts": [
+          {
+            "path": "summary.json",
+            "sha256": "5361eb97b4fc0cfb7848c350064a56335cd6e9b6c203063c2242b4e2684ebf11",
+            "bytes": 46942
+          }
+        ],
+        "finished_at": "2026-10-25T06:35:39.712263+00:00"
+      }
+    ],
+    "finished_at": "2026-10-25T06:35:39.712300+00:00"
+  }
+}
