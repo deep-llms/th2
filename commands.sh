@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-partial-router-full-health-20261025-a01
+#th2-6y3o-partial-router-full-health-20261025-a02
 set -euo pipefail
 test "$(hostname)" = thiennh-p6-6y3o-worker-0
 export PYTHONDONTWRITEBYTECODE=1
@@ -34,7 +34,7 @@ if 'supervised/burn-verified.json' in r:
 if (root/'supervised/run/summary.json').is_file():
     r['summary_sha256']=hashlib.sha256((root/'supervised/run/summary.json').read_bytes()).hexdigest()
 r['guard_owner']=Path('/mnt/local/_gpu_guard/DISABLED').read_text() if Path('/mnt/local/_gpu_guard/DISABLED').exists() else None
-out=root/'health-a01.json'
+out=root/'health-a02.json'
 with out.open('x') as f:json.dump(r,f,indent=2,allow_nan=False);f.write('\n')
 print('FULL_ROUTE_HEALTH '+json.dumps(r),flush=True)
 print('STATUS_FILE_SHA256 '+hashlib.sha256(out.read_bytes()).hexdigest(),flush=True)
