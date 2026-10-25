@@ -1,5 +1,10 @@
 # B-DOT pilot results — 20–21 October 2026
 
+Later completed studies are consolidated in
+[B-DOT follow-up results through 25 October](BDOT_RESULTS_20261025.md), including
+partial routing, longer runs, downstream evaluation and STOP. Status statements
+below describe this earlier pilot.
+
 **Both routing curricula completed training but performed worse than the matched
 dense control.** P1-A was slightly better than P1-B. Neither met the quality
 requirement for expanding the research to the next phase.

@@ -1,5 +1,10 @@
 # Current task
 
+Results documentation: [consolidated follow-up report](BDOT_RESULTS_20261025.md)
+now covers all completed partial-MLP/router, seed-confirmation, 10k, downstream,
+STOP-v1/v2 and optimized continuation studies, with timings and evidence links.
+Interrupted runs are recorded separately. Documentation only; no new workload.
+
 ## Completed — 25 October 2026, verified13:19SGT
 
 A03 finished all18 jobs successfully at12:44:52SGT, then restored verified

@@ -3,6 +3,11 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+Readable results through 25 October are consolidated in
+[BDOT_RESULTS_20261025.md](BDOT_RESULTS_20261025.md). It includes every completed
+follow-up study, downstream scores, timing/numerical evidence and interrupted-run
+status, and links the earlier pilot/v3 reports. Historical notes below remain intact.
+
 ## Optimized STOP pair completed — 25 October 2026
 
 Fresh matched D/control and optimizedDualCE each completed10k extra steps from

@@ -1,5 +1,9 @@
 # B-DOT v3 pilot results — 22 October 2026
 
+See [the consolidated follow-up results](BDOT_RESULTS_20261025.md) for the complete
+partial-MLP/router tables, second seeds, 10k pair, downstream evaluation and STOP
+studies through 25 October. Pending/queued statements below are historical.
+
 All **13 training runs and 13 evaluations completed successfully**, without retries. The queue finished at **05:32:12 SGT** after **13h14m** from the first research run. Automatic communicating burns were verified at 05:33:23; the independent 05:50:33 check matched all eight workers, advancing collective payload, 100% GPU utilization and a released ownership guard.
 
 Every run completed 4,768 updates with the same 2.5B-token pilot recipe (sequence 1,024, 524,288 input tokens/update, 96 warmup updates). Model/routing seeds vary as labeled; data order stays fixed. Each final checkpoint contains optimizer/scheduler and eight RNG files; checkpoints 1,000/2,500/4,768 are retained. Architecture definitions and checks are in [the implementation report](BDOT_V3_IMPLEMENTATION_20261021.md).
