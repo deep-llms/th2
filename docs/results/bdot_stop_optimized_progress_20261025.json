@@ -1,5 +1,5 @@
 {
-  "status": "a03_real_training_healthy_D1540_DualCE_queued",
+  "status": "complete_all_18_jobs_ok_final_eval_ok_live_burns_verified",
   "user_scope": "Stop original queue, preserve outputs; verify optimization then fresh matched D/DualCE6 10k adaptation steps each",
   "original_queue": "6y3o-dot-stop-long-20261024-a01",
   "original_queue_cancel": "4e56dbde494af1dec0c2fb9d95d8faf7ec9af3aa",
@@ -355,6 +355,10 @@
     "health-a09.log": {
       "path": "temp/stop_optimized_20261025/health-a09.log",
       "sha256": "6eaf2d905a6a037a6c4593dc6a4f77cae75a6647ac0b6189349ac74a5d35b6e6"
+    },
+    "health-a10.log": {
+      "path": "temp/stop_optimized_20261025/health-a10.log",
+      "sha256": "966c5d0d570177c30c2db6f47e00b037d247a91e115d4168d72d599403af8e32"
     }
   },
   "handoff_verified_utc": "2026-10-24T17:43:07.874636+00:00",
@@ -2169,7 +2173,7 @@
   "a03_launch_commit": "5034d945b56f807515fcb5499f1d5b5834ab38a4",
   "a03_launch_acknowledged": true,
   "active_root": "6y3o-dot-stop-optimized-20261025-a03",
-  "a03_last_status_utc": "2026-10-25T00:30:12.413212+00:00",
+  "a03_last_status_utc": "2026-10-25T05:19:46.676385+00:00",
   "a03_gpu_free_before_tests": {
     "at": "2026-10-24T23:56:25.057286+00:00",
     "gpus": [
@@ -2513,5 +2517,8 @@
     },
     "D-DualCE6": "queued"
   },
-  "finish_estimate_sgt": "2026-10-25 12:45\u201313:15; approximate, includes evaluations and checkpoint overhead"
+  "finish_estimate_sgt": "2026-10-25 12:45\u201313:15; approximate, includes evaluations and checkpoint overhead",
+  "completed_sgt": "2026-10-25T12:44:52.517762+08:00",
+  "burn_restored_sgt": "2026-10-25T12:46:03.369125+08:00",
+  "final_report": "docs/results/bdot_stop_optimized_final_20261025.json"
 }

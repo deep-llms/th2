@@ -1,0 +1,1134 @@
+{
+  "status": "ok",
+  "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a03",
+  "launch_commit": "5034d945b56f807515fcb5499f1d5b5834ab38a4",
+  "final_status_commit": "7b939c04735289ed16f09e64004662b213df3edc",
+  "completed_sgt": "2026-10-25T12:44:52.517762+08:00",
+  "burn_restored_sgt": "2026-10-25T12:46:03.369125+08:00",
+  "live_burn_verified_sgt": "2026-10-25T13:19:46.676385+08:00",
+  "all_18_jobs_passed": true,
+  "source_matches": true,
+  "accelerate_cache_matches": true,
+  "live_burn_workers": [
+    579559,
+    579560,
+    579561,
+    579562,
+    579563,
+    579564,
+    579565,
+    579566
+  ],
+  "collective_progress_verified": true,
+  "guard_released": true,
+  "adaptation": {
+    "parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-long-pair-20261023-a01",
+    "predecessor": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-v2-20261024-a01",
+    "steps": 10000,
+    "midpoint": 5000,
+    "start_sequence": 5120000,
+    "next_sequence": 10240000,
+    "head_training_rows": [
+      10240000,
+      10240256
+    ],
+    "calibration_rows": [
+      10240256,
+      10240512
+    ],
+    "input_tokens_per_branch": 5242880000,
+    "peak_lr": 3e-05,
+    "warmup": 200,
+    "min_lr": 3e-06,
+    "branches": {
+      "D-continue": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a03/prepared/runs/D-continue/checkpoint-10000",
+      "D-DualCE6": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a03/prepared/runs/D-DualCE6/checkpoint-10000"
+    },
+    "optimizer": "Fresh AdamW from original 10k parent; native resume at midpoint",
+    "objective": "Control full LM; DualCE6 full LM + 0.5 exit CE, unchanged architecture/loss",
+    "assessment": "Report 5k then continue authorized 10k; numerical/artifact failures stop the queue"
+  },
+  "optimization": {
+    "status": "passed",
+    "timings": {
+      "control": {
+        "seconds_per_update": 0.6696355885826051,
+        "repeats": [
+          0.6692858139363428,
+          0.6699853632288675
+        ],
+        "peak_allocated_bytes": 56530277376
+      },
+      "reference": {
+        "seconds_per_update": 2.125680805137381,
+        "repeats": [
+          2.1227772504091265,
+          2.1285843598656355
+        ],
+        "peak_allocated_bytes": 82137643520
+      },
+      "optimized": {
+        "seconds_per_update": 0.8613042475810895,
+        "repeats": [
+          0.8617880800118048,
+          0.8608204151503742
+        ],
+        "peak_allocated_bytes": 69278276608
+      }
+    },
+    "update_time_reduction": 0.5948101683472538,
+    "optimized_over_control": 1.2862283042694653,
+    "note": "Fresh branch only; mathematical equivalence is not bitwise migration of old training."
+  },
+  "training": {
+    "D-continue": {
+      "adaptation_steps": 10000,
+      "lifetime_steps": 20000,
+      "checkpoint_count": 40,
+      "final_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a03/prepared/runs/D-continue/checkpoint-10000",
+      "final_validation": {
+        "eval_loss": 3.2534316560281065,
+        "eval_perplexity": 25.878995523406928,
+        "eval_nll_sum": 32260045.76481458,
+        "eval_num_tokens": 9915698,
+        "eval_num_sequences": 9704,
+        "eval_off_default_share": 0.0,
+        "eval_reuse_rate": 0.0,
+        "eval_routing_decisions": 79495168,
+        "eval_routing_input_tokens": 9936896,
+        "eval_runtime": 4.4267,
+        "eval_samples_per_second": 2192.147,
+        "eval_steps_per_second": 17.169,
+        "epoch": 0.2119328808566327
+      },
+      "stage_job_seconds": 6860.196648822166,
+      "trainer_stage_seconds": 6761.1844
+    },
+    "D-DualCE6": {
+      "adaptation_steps": 10000,
+      "lifetime_steps": 20000,
+      "checkpoint_count": 40,
+      "final_checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-dot-stop-optimized-20261025-a03/prepared/runs/D-DualCE6/checkpoint-10000",
+      "final_validation": {
+        "eval_loss": 3.2620742670445733,
+        "eval_perplexity": 26.103626917864865,
+        "eval_nll_sum": 32345743.28558534,
+        "eval_num_tokens": 9915698,
+        "eval_num_sequences": 9704,
+        "eval_off_default_share": 0.0,
+        "eval_reuse_rate": 0.0,
+        "eval_routing_decisions": 79495168,
+        "eval_routing_input_tokens": 9936896,
+        "eval_runtime": 4.4603,
+        "eval_samples_per_second": 2175.655,
+        "eval_steps_per_second": 17.039,
+        "epoch": 0.2119328808566327
+      },
+      "stage_job_seconds": 8848.996414235793,
+      "trainer_stage_seconds": 8750.7622
+    }
+  },
+  "assessments": {
+    "5000": {
+      "status": "ok",
+      "points": [
+        {
+          "branch": "D-continue",
+          "chosen": {
+            "policy": "learned",
+            "threshold": 0.6
+          },
+          "loss": 3.2686152329604496,
+          "perplexity": 26.274929483182227,
+          "loss_gap_to_D_continue": 0.0020682643621401375,
+          "decode_ms": 15.816700368304737,
+          "speedup_vs_D_continue": 0.9477208663972039,
+          "cache_check_passed": true,
+          "practical_gate": false
+        },
+        {
+          "branch": "D-DualCE6",
+          "chosen": {
+            "policy": "learned",
+            "threshold": 0.8
+          },
+          "loss": 3.275513007394717,
+          "perplexity": 26.456794530988503,
+          "loss_gap_to_D_continue": 0.00896603879640745,
+          "decode_ms": 15.675573245971464,
+          "speedup_vs_D_continue": 0.9562531935122078,
+          "cache_check_passed": true,
+          "practical_gate": false
+        }
+      ],
+      "reference_loss": 3.2665469685983095,
+      "reference_decode_ms": 14.989816976594739,
+      "scope": "Single-pair adaptation pilot, not a statistical equivalence claim. Compare router STOP against dense STOP too.",
+      "adaptation_step": 5000,
+      "total_step": 15000,
+      "head_training_rows": [
+        10240000,
+        10240256
+      ],
+      "calibration_rows": [
+        10240256,
+        10240512
+      ],
+      "branches": {
+        "D-continue": {
+          "final": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "loss": 3.2665469685983095,
+              "perplexity": 26.220642142552542,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 8.0,
+              "seconds": 59.61516643874347
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "loss": 3.8150447215271237,
+              "perplexity": 45.37878574616639,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 6.0,
+              "seconds": 55.84679727675393
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "loss": 3.2686152329604496,
+              "perplexity": 26.274929483182227,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.972807605111294,
+              "seconds": 62.64554794691503
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011913299560546875
+              },
+              "loss": 3.2720387667265474,
+              "perplexity": 26.36503674608918,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.976119504521331,
+              "seconds": 62.552195040974766
+            }
+          ],
+          "chosen": {
+            "policy": {
+              "policy": "learned",
+              "threshold": 0.6
+            },
+            "loss": 3.3162497094790635,
+            "perplexity": 27.55681048204982,
+            "num_tokens": 261602,
+            "num_sequences": 256,
+            "mean_middle_steps": 7.976173400878906,
+            "seconds": 1.6242612963542342
+          },
+          "cached_checks": {
+            "full": {
+              "logit_rms": 0.019432412460446358,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": 0.0012035728432238102,
+              "passed": true
+            },
+            "fixed6": {
+              "logit_rms": 0.018381189554929733,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": -0.0008352759759873152,
+              "passed": true
+            },
+            "chosen": {
+              "logit_rms": 0.019432412460446358,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": 0.0012035728432238102,
+              "passed": true
+            }
+          },
+          "latency": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 14.989816976594739
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.048011628095992
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.091771885636263
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.104560094187036
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 13.617831195006147
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 13.604937441414222
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 13.722188989049755
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 13.721555063966662
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.816700368304737
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.826276852749288
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.856097219511867
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 18.69859806902241
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011913299560546875
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.803898175363429
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011913299560546875
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 18.349643840338103
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011913299560546875
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.646621963242069
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011913299560546875
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.64225803303998
+            }
+          ]
+        },
+        "D-DualCE6": {
+          "final": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "loss": 3.274889645494547,
+              "perplexity": 26.440307512500727,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 8.0,
+              "seconds": 60.03396063903347
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "loss": 3.3679212114436163,
+              "perplexity": 29.01814173441801,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 6.0,
+              "seconds": 55.21546000475064
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "loss": 3.275513007394717,
+              "perplexity": 26.456794530988503,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.945469490673949,
+              "seconds": 61.798816619906574
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.02391815185546875
+              },
+              "loss": 3.2773489209615096,
+              "perplexity": 26.50541153365356,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.952131530812037,
+              "seconds": 61.599123777356
+            }
+          ],
+          "chosen": {
+            "policy": {
+              "policy": "learned",
+              "threshold": 0.8
+            },
+            "loss": 3.3231292752105395,
+            "perplexity": 27.74704297931239,
+            "num_tokens": 261602,
+            "num_sequences": 256,
+            "mean_middle_steps": 7.9521636962890625,
+            "seconds": 1.650354792829603
+          },
+          "cached_checks": {
+            "full": {
+              "logit_rms": 0.019434774294495583,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": 0.0008298149332404137,
+              "passed": true
+            },
+            "fixed6": {
+              "logit_rms": 0.01975318044424057,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": -0.002665864769369364,
+              "passed": true
+            },
+            "chosen": {
+              "logit_rms": 0.019291609525680542,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": 0.0006870002252981067,
+              "passed": true
+            }
+          },
+          "latency": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 14.797123250900768
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 14.718249905854464
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 14.84237177646719
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 14.781607285840437
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 13.41757655609399
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 13.411580192041583
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 13.497252119123004
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 13.493526843376458
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.675573245971464
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.634654904715717
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.569088092888705
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.515596154727973
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.02391815185546875
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 17.666294588707387
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.02391815185546875
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.655315000913106
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.02391815185546875
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 17.750124156009406
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.02391815185546875
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.56146149232518
+            }
+          ]
+        }
+      }
+    },
+    "10000": {
+      "status": "ok",
+      "points": [
+        {
+          "branch": "D-continue",
+          "chosen": {
+            "policy": "learned",
+            "threshold": 0.6
+          },
+          "loss": 3.2554453856207943,
+          "perplexity": 25.931161328806322,
+          "loss_gap_to_D_continue": 0.002013729592683866,
+          "decode_ms": 15.439800772583112,
+          "speedup_vs_D_continue": 0.9474368275442808,
+          "cache_check_passed": true,
+          "practical_gate": false
+        },
+        {
+          "branch": "D-DualCE6",
+          "chosen": {
+            "policy": "learned",
+            "threshold": 0.8
+          },
+          "loss": 3.2627289435295364,
+          "perplexity": 26.120721943825416,
+          "loss_gap_to_D_continue": 0.009297287501425888,
+          "decode_ms": 15.565210094791837,
+          "speedup_vs_D_continue": 0.9398033031874417,
+          "cache_check_passed": true,
+          "practical_gate": false
+        }
+      ],
+      "reference_loss": 3.2534316560281105,
+      "reference_decode_ms": 14.62823586189188,
+      "scope": "Single-pair adaptation pilot, not a statistical equivalence claim. Compare router STOP against dense STOP too.",
+      "adaptation_step": 10000,
+      "total_step": 20000,
+      "head_training_rows": [
+        10240000,
+        10240256
+      ],
+      "calibration_rows": [
+        10240256,
+        10240512
+      ],
+      "branches": {
+        "D-continue": {
+          "final": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "loss": 3.2534316560281105,
+              "perplexity": 25.87899552340703,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 8.0,
+              "seconds": 60.11502482416108
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "loss": 3.823307278583834,
+              "perplexity": 45.75528382905094,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 6.0,
+              "seconds": 55.92321863118559
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "loss": 3.2554453856207943,
+              "perplexity": 25.931161328806322,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.972662288102844,
+              "seconds": 61.14798920415342
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011890411376953125
+              },
+              "loss": 3.259113357593797,
+              "perplexity": 26.026450754423585,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.976161569971146,
+              "seconds": 60.64128737710416
+            }
+          ],
+          "chosen": {
+            "policy": {
+              "policy": "learned",
+              "threshold": 0.6
+            },
+            "loss": 3.303411861478345,
+            "perplexity": 27.20530147497852,
+            "num_tokens": 261602,
+            "num_sequences": 256,
+            "mean_middle_steps": 7.976219177246094,
+            "seconds": 1.6216409699991345
+          },
+          "cached_checks": {
+            "full": {
+              "logit_rms": 0.019305076450109482,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": -0.0002957879041787237,
+              "passed": true
+            },
+            "fixed6": {
+              "logit_rms": 0.019045939669013023,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": -0.0016310871578752995,
+              "passed": true
+            },
+            "chosen": {
+              "logit_rms": 0.019305076450109482,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": -0.0002957879041787237,
+              "passed": true
+            }
+          },
+          "latency": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 14.62823586189188
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 14.642479276517406
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 14.684901718283072
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 14.690613345010206
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 13.307167842867784
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 13.375874113989994
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 13.368742846068926
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 13.348808730370365
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.439800772583112
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.432282059919089
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.406354155857116
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.6
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.427681631990708
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011890411376953125
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.282484528142959
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011890411376953125
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.228554999339394
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011890411376953125
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.264006215147674
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.011890411376953125
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.245248287101276
+            }
+          ]
+        },
+        "D-DualCE6": {
+          "final": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "loss": 3.262074267044576,
+              "perplexity": 26.103626917864933,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 8.0,
+              "seconds": 60.31595456413925
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "loss": 3.3486102530267847,
+              "perplexity": 28.463149568253105,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 6.0,
+              "seconds": 55.69199188472703
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "loss": 3.2627289435295364,
+              "perplexity": 26.120721943825416,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.945607159418796,
+              "seconds": 61.60133678279817
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.0238189697265625
+              },
+              "loss": 3.2644110370930104,
+              "perplexity": 26.164696416300384,
+              "num_tokens": 9915698,
+              "num_sequences": 9704,
+              "mean_middle_steps": 7.952336826308739,
+              "seconds": 60.607895584777
+            }
+          ],
+          "chosen": {
+            "policy": {
+              "policy": "learned",
+              "threshold": 0.8
+            },
+            "loss": 3.3102704480744447,
+            "perplexity": 27.39253272794944,
+            "num_tokens": 261602,
+            "num_sequences": 256,
+            "mean_middle_steps": 7.952362060546875,
+            "seconds": 1.7034527310170233
+          },
+          "cached_checks": {
+            "full": {
+              "logit_rms": 0.01862931437790394,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": 0.00265910173766315,
+              "passed": true
+            },
+            "fixed6": {
+              "logit_rms": 0.02005903236567974,
+              "depth_mismatch_fraction": 0.0,
+              "nll_gap": 0.0006478239665739238,
+              "passed": true
+            },
+            "chosen": {
+              "logit_rms": 0.0677012950181961,
+              "depth_mismatch_fraction": 0.0078125,
+              "nll_gap": 0.003079552436247468,
+              "passed": true
+            }
+          },
+          "latency": [
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 14.70720198994968
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 14.752431059605442
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 14.770002831937745
+            },
+            {
+              "policy": {
+                "policy": "none"
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 14.781122692511417
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 13.378195493714884
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 13.34861722716596
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 13.405567035079002
+            },
+            {
+              "policy": {
+                "policy": "fixed",
+                "fixed_depth": 6
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 13.424926131847315
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.565210094791837
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.438977119629271
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.458012843737379
+            },
+            {
+              "policy": {
+                "policy": "learned",
+                "threshold": 0.8
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.37473127245903
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.0238189697265625
+              },
+              "batch": 1,
+              "context": 128,
+              "decode_ms": 15.307253619539551
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.0238189697265625
+              },
+              "batch": 1,
+              "context": 512,
+              "decode_ms": 15.301616149372421
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.0238189697265625
+              },
+              "batch": 32,
+              "context": 128,
+              "decode_ms": 15.283830463886261
+            },
+            {
+              "policy": {
+                "policy": "constant",
+                "constant_prob": 0.0238189697265625
+              },
+              "batch": 32,
+              "context": 512,
+              "decode_ms": 15.257892504450865
+            }
+          ]
+        }
+      }
+    }
+  },
+  "raw_evidence": {
+    "path": "temp/stop_optimized_20261025/health-a10.log",
+    "sha256": "966c5d0d570177c30c2db6f47e00b037d247a91e115d4168d72d599403af8e32"
+  },
+  "scope": "Single seed and fixed validation. Runtime is summed stage elapsed time, not the misleading resumed Trainer steps/sec aggregate."
+}

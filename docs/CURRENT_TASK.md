@@ -1,5 +1,32 @@
 # Current task
 
+## Completed — 25 October 2026, verified13:19SGT
+
+A03 finished all18 jobs successfully at12:44:52SGT, then restored verified
+communicating burns on all8 GPUs at12:46:03SGT. Read-only status7b939c0 verifies
+the same live burn workers579559–579566 and advancing collective progress at
+13:19:46SGT, released guard, unchanged source and Accelerate cache. No pending
+training/evaluation or further authorized experiments in this queue.
+
+Both branches completed10,000 NEW adaptation steps (20,000 lifetime), including
+native resume at5k, with all40 checkpoints retained per branch. Final checkpoint
+weights/optimizer/scheduler/all8 RNG files exist; final evaluation loaded them.
+Same9,704-sequence /9,915,698-token validation: D loss3.253432/PPL25.878996;
+DualCE loss3.262074/PPL26.103627. Stage job time totals D114m20s, DualCE147m29s.
+
+Learned STOP still fails the practical speed gate. At10k adaptation: D+STOP
+PPL25.9312,15.440ms decode; DualCE+STOP PPL26.1207,15.565ms versus full D14.628ms
+(batch1/context128). DualCE mean middle depth7.9456/8; fixed-exit6 improves over
+D's fixed-exit6 (PPL28.463 vs45.755), but trails full D. Training optimization
+works; this run does not demonstrate a useful learned-STOP decoding speedup.
+
+[Final report](results/bdot_stop_optimized_final_20261025.json) contains both5k/10k
+assessments and all tested decode batch/context settings. Raw local receipt:
+`temp/stop_optimized_20261025/health-a10.log/.json`; SHA256
+`966c5d0d570177c30c2db6f47e00b037d247a91e115d4168d72d599403af8e32`.
+Commands are#0. Preserve checkpoints and burns; no new workload authorized.
+Earlier sections below record history, not the current active state.
+
 ## Live training — 25 October 2026, 08:30 SGT
 
 A03 has passed every numerical/capacity/DDP/8GPU resume/timing/evaluator gate.

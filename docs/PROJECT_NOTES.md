@@ -3,6 +3,20 @@
 User preference (21 October 2026): report times and ETAs in **Singapore time
 (SGT, UTC+8)**. Machine-readable receipts may retain their original UTC timestamps.
 
+## Optimized STOP pair completed — 25 October 2026
+
+Fresh matched D/control and optimizedDualCE each completed10k extra steps from
+originalD10k (20k lifetime). All18 tests/train/eval stages passed. Final full-val
+PPL: D25.8790, DualCE26.1036. LearnedSTOP:25.9312/26.1207, and15.440/15.565ms
+versus fullD14.628ms (batch1/context128). Neither passes the practical speed gate.
+DualCE fixed-exit6 PPL28.463 improves markedly over D's45.755 but loses to fullD.
+The59.5% training update-time reduction is confirmed; learned early exit still
+saves too little depth to overcome its overhead in this pilot. Single seed.
+
+Completed12:44:52SGT; burns restored12:46:03, verified live/communicating13:19:46.
+All40 checkpoints retained per branch; native midpoint resume and final artifact
+checks passed. [Final evidence](results/bdot_stop_optimized_final_20261025.json).
+
 ## Optimized DualCE B200 verification — 25 October 2026
 
 Real D-parent weights / full-width FA4 BF16 checks passed: nativeCE loss, logits,
