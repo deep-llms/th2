@@ -2,11 +2,28 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for, kv_mlp_jobs_for
 from run_experiments import load_jobs
 
 
 class RouterJobTests(unittest.TestCase):
+    def test_kv_mlp_gates_and_matched_recovery(self):
+        config=kv_mlp_jobs_for('/model','/probe','/accelerate.yaml',29721)
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+        jobs=config['jobs']
+        self.assertIn('efficient_llm.kv_mlp_check',jobs[0]['argv'])
+        self.assertIn('calibrate',jobs[1]['argv'])
+        self.assertIn('--smoke',jobs[2]['argv'])
+        self.assertEqual(jobs[2]['required_outputs'][0]['json_equals']['steps'],8)
+        self.assertEqual([j['required_outputs'][0]['json_equals']['arm'] for j in jobs[3:9]],list('ABCDEF'))
+        for job in jobs[3:9]:
+            self.assertEqual(job['gpus'],list(range(8)))
+            self.assertEqual(job['required_outputs'][0]['json_equals']['steps'],512)
+            self.assertFalse(job['required_outputs'][0]['json_equals']['smoke'])
+        self.assertIn('efficient_llm.kv_mlp_profile',jobs[9]['argv'])
+        self.assertNotIn('gpus',jobs[-1])
+
     def test_window_screen_is_gated_inference_only(self):
         config=window_jobs_for('/model','/inputs','/accelerate.yaml',29721)
         with tempfile.TemporaryDirectory() as tmp:

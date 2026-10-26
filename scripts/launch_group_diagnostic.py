@@ -119,6 +119,38 @@ def window_jobs_for(model, inputs, config, port):
     return {'jobs':jobs}
 
 
+def kv_mlp_jobs_for(model, probe, config, port):
+    launch = ['{python}', '-m', 'accelerate.commands.launch', '--config_file', str(config),
+              '--main_process_port', str(port), '--module']
+    common = ['--model', str(model), '--probe', str(probe)]
+    jobs = [dict(name='kv-mlp-gpu-gate', gpus=[0], timeout_seconds=1200,
+        argv=['{python}', '-m', 'efficient_llm.kv_mlp_check', *common,
+              '--output', '{run_dir}/gpu-check.json'],
+        required_outputs=[dict(path='gpu-check.json', json_equals=dict(status='passed'))]),
+        dict(name='kv-mlp-calibration', gpus=list(range(8)), timeout_seconds=5400,
+        argv=[*launch, 'efficient_llm.kv_mlp_study', 'calibrate', *common,
+              '--output', '{run_dir}/plan.json'],
+        required_outputs=[dict(path='plan.json', json_equals=dict(status='passed', world_size=8))])]
+    for arm, smoke in [('D', True)] + [(a, False) for a in 'ABCDEF']:
+        name = 'smoke' if smoke else arm
+        steps = 8 if smoke else 512
+        jobs.append(dict(name='kv-mlp-'+name, gpus=list(range(8)), timeout_seconds=7200,
+            argv=[*launch, 'efficient_llm.kv_mlp_study', 'train', *common,
+                  '--plan', '{run_dir}/plan.json', '--arm', arm, '--steps', str(steps),
+                  '--batch', '8', '--output', '{run_dir}/'+name] + (['--smoke'] if smoke else []),
+            required_outputs=[dict(path=name+'/result.json', json_equals=dict(
+                status='passed', world_size=8, steps=steps, arm=arm, smoke=smoke))]))
+    jobs += [dict(name='kv-mlp-profile', gpus=list(range(8)), timeout_seconds=1800,
+        argv=[*launch, 'efficient_llm.kv_mlp_profile', '--runs', '{run_dir}',
+              '--output', '{run_dir}/profile.json'],
+        required_outputs=[dict(path='profile.json', json_equals=dict(status='measured', world_size=8))]),
+        dict(name='kv-mlp-summary', timeout_seconds=300,
+        argv=['{python}', '-m', 'efficient_llm.kv_mlp_study', 'summarize',
+              '--runs', '{run_dir}', '--output', '{run_dir}/summary.json'],
+        required_outputs=[dict(path='summary.json', json_equals=dict(status='passed'))])]
+    return dict(jobs=jobs)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -127,7 +159,7 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     parser.add_argument('--previous-run',type=Path)
     args = parser.parse_args()
@@ -138,6 +170,8 @@ def main():
         raise ValueError("Router pilot requires the previous held-out probe manifest")
     if args.output.parent.resolve() != Path("/mnt/local/_outputs/deep-llms_th2"):
         raise ValueError("Require the authorized external output root")
+    if args.study == 'kv_mlp' and shutil.disk_usage(args.output.parent).free < 150 * 1024**3:
+        raise ValueError('Require 150 GiB free for retained recovery checkpoints')
     if digest(args.predecessor_burn_script) != BURN_HASH:
         raise ValueError("Unknown predecessor burn")
     guard = Path("/mnt/local/_gpu_guard")
@@ -171,6 +205,9 @@ def main():
         "--contract", str(frozen/"resources/cx_english_20261020.json")]
     if args.study in ("router", "context"):
         prepare += ["--calibration", "1024", "--evaluation", "256"]
+    if args.study == 'kv_mlp':
+        prepare += ['--length', '1024', '--calibration', '32896', '--evaluation', '256',
+                    '--seed', '8042', '--max-shards', '32']
     if args.exclude_manifest is not None:
         prepare += ["--exclude-manifest", str(args.exclude_manifest)]
     if args.study in ('deploy','numerics','research','window'):
@@ -217,7 +254,7 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for}[args.study]
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for}[args.study]
     jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe'), config, port), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs

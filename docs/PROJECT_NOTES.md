@@ -283,3 +283,21 @@ Eleven exports SHA256-verified against node receipts, exact source and prior fit
 identity checked. 88 timing rows, 48 microbenchmark rows, 256 paired documents;
 raw temp/window_results_20261027, durable docs/results/window_compact_20261027.
 commands.sh #0; no new job queued. Environments/drivers/old outputs unchanged.
+
+## KV sharing and MLP conversion pilot, 27 October 2026 SGT
+
+User approved the bounded interaction study in [KV_MLP_PILOT_20261027.md](KV_MLP_PILOT_20261027.md).
+Six matched recovery arms on original pretrained 28-layer Qwen: dense, paired KV,
+physical 25% aggregate MLP pruning, their combination, and channel/allocation
+recalibration controls. Standard CE/KL teacher recovery; 512 steps / 33.55M tokens
+per arm, one data pass, eight GPUs. Small disjoint document-prefix probe; this
+is not full-corpus PPL or a downstream result. No broader follow-up authorized.
+
+Native SDPA, FP32 parameters/BF16 autocast, native HF Trainer and checkpoints.
+Cross-layer KV tensors retain gradients and only producers own persistent caches.
+Decoder checkpointing is explicitly rejected. Compressed checkpoints require
+`efficient_llm.kv_mlp.load_compressed`; do not load through vanilla AutoModel.
+The dense model and reference-algebra/gradient tests, physical pruning, cached
+decoding, CE/KL normalization, and two-rank CPU recovery/save/reload pass locally.
+Source manifest includes shared validation helpers; existing GPU supervisor is
+unchanged. Actual-weight GPU gate and eight-GPU smoke precede all six arms.

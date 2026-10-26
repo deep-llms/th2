@@ -6,7 +6,17 @@ Report times in Singapore time (SGT, UTC+8). Design: [PROJECT_IDEA.md](PROJECT_I
 [CONTEXT_BUDGET_PLAN_20261026.md](CONTEXT_BUDGET_PLAN_20261026.md), and latest
 [WINDOW_COMPACT_PLAN_20261027.md](WINDOW_COMPACT_PLAN_20261027.md).
 
-## Latest authorized work completed
+## Active approved work: KV sharing / MLP pilot
+
+The user approved a bounded interaction pilot after the literature/novelty review.
+Design: [KV_MLP_PILOT_20261027.md](KV_MLP_PILOT_20261027.md). Implement and test
+fixed adjacent KV sharing, physical MLP pruning, calibration and matched native
+Trainer recovery on the original pretrained 28-layer Qwen. Six controlled arms,
+512 steps each, approximately 201M total recovery tokens. No large search or
+new kernel. Reuse the verified node/model/data and safe burn supervisor.
+Read-only B200 preflight submitted as 8fc914d; implementation in progress.
+
+## Previous authorized work completed
 
 The user approved testing pure sliding-window attention and compact selective
 scheduling. Frozen original 28-layer Qwen3-0.6B-Base and identical fitted routers
