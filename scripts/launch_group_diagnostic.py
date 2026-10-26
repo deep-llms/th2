@@ -161,6 +161,29 @@ def kv_mlp_quality_jobs_for(model, previous, config, port):
         required_outputs=[dict(path='inference-quality.json',json_equals=dict(status='passed',world_size=8))])])
 
 
+def kv_recovery_jobs_for(model, probe, config, port, previous):
+    launch=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
+            '--main_process_port',str(port),'--module','efficient_llm.kv_mlp_study']
+    jobs=[]
+    for arm,smoke in [('B',True),('A',False),('B',False)]:
+        name='smoke' if smoke else arm
+        parent=Path(previous)/'supervised/run'/arm
+        steps=8 if smoke else 2048
+        jobs.append(dict(name='kv-recovery-'+name,gpus=list(range(8)),timeout_seconds=7200,
+            argv=[*launch,'train','--model',str(model),'--probe',str(probe),
+                  '--initial-model',str(parent/'final'),'--parent-result',str(parent/'result.json'),
+                  '--calibration','0','--arm',arm,'--steps',str(steps),'--batch','8',
+                  '--eval-every',str(8 if smoke else 256),'--output','{run_dir}/'+name]
+                  + (['--smoke'] if smoke else ['--inference-eval']),
+            required_outputs=[dict(path=name+'/result.json',json_equals=dict(status='passed',
+                world_size=8,steps=steps,arm=arm,smoke=smoke,phase='new_recovery',optimizer_and_schedule_reset=True))]))
+    jobs.append(dict(name='kv-recovery-summary',timeout_seconds=300,
+        argv=['{python}','-m','efficient_llm.kv_mlp_study','recovery-summary',
+              '--runs','{run_dir}','--output','{run_dir}/summary.json'],
+        required_outputs=[dict(path='summary.json',json_equals=dict(status='passed'))]))
+    return dict(jobs=jobs)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -169,7 +192,7 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp", "kv_mlp_quality"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp", "kv_mlp_quality", "kv_recovery"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     parser.add_argument('--previous-run',type=Path)
     args = parser.parse_args()
@@ -182,6 +205,8 @@ def main():
         raise ValueError("Require the authorized external output root")
     if args.study == 'kv_mlp' and shutil.disk_usage(args.output.parent).free < 150 * 1024**3:
         raise ValueError('Require 150 GiB free for retained recovery checkpoints')
+    if args.study == 'kv_recovery' and shutil.disk_usage(args.output.parent).free < 200 * 1024**3:
+        raise ValueError('Require 200 GiB free for all recovery checkpoints')
     if digest(args.predecessor_burn_script) != BURN_HASH:
         raise ValueError("Unknown predecessor burn")
     guard = Path("/mnt/local/_gpu_guard")
@@ -190,7 +215,7 @@ def main():
     for session in (args.session, args.session+"_burn"):
         if subprocess.run(["tmux", "has-session", "-t", session], capture_output=True).returncode == 0:
             raise ValueError("Session already exists: " + session)
-    if args.study=='kv_mlp_quality':
+    if args.study in ('kv_mlp_quality','kv_recovery'):
         previous=args.previous_run
         if previous is None or previous.parent.resolve()!=args.output.parent.resolve():
             raise ValueError('Require a completed pilot under the authorized output root')
@@ -209,6 +234,12 @@ def main():
             report=json.loads((previous/'supervised/run'/arm/'result.json').read_text())
             if report['status']!='passed' or report['probe_sha256']!=identity:
                 raise ValueError('Prior recovery arm/probe is incomplete or changed')
+        if args.study=='kv_recovery':
+            for arm in 'AB':
+                parent=previous/'supervised/run'/arm
+                report=json.loads((parent/'result.json').read_text())
+                if report['steps']!=512 or report['smoke'] or not (parent/'final/model.safetensors').is_file():
+                    raise ValueError('Require completed 512-step parent final weights')
     manifest = json.loads((source/"resources/joint_source_manifest.json").read_text())
     for relative, expected in manifest.items():
         path = (source/relative).resolve()
@@ -237,6 +268,9 @@ def main():
     if args.study == 'kv_mlp':
         prepare += ['--length', '1024', '--calibration', '32896', '--evaluation', '256',
                     '--seed', '8042', '--max-shards', '32']
+    if args.study == 'kv_recovery':
+        prepare += ['--length','1024','--calibration','131072','--evaluation','256',
+                    '--seed','9042','--max-shards','32','--recovery-from',str(args.previous_run/'probe')]
     if args.exclude_manifest is not None:
         prepare += ["--exclude-manifest", str(args.exclude_manifest)]
     if args.study in ('deploy','numerics','research','window'):
@@ -284,9 +318,10 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for,'kv_mlp_quality':kv_mlp_quality_jobs_for}[args.study]
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for,'kv_mlp_quality':kv_mlp_quality_jobs_for,'kv_recovery':kv_recovery_jobs_for}[args.study]
     inputs = args.previous_run if args.study=='kv_mlp_quality' else args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe')
-    jobs.write_text(json.dumps(factory(args.model, inputs, config, port), indent=2)+"\n")
+    extras=[args.previous_run] if args.study=='kv_recovery' else []
+    jobs.write_text(json.dumps(factory(args.model, inputs, config, port, *extras), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs
     load_jobs(jobs)

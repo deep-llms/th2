@@ -343,3 +343,26 @@ receipts. Local full archive `temp/kv_mlp_results_20261027/`; durable small resu
 in that local archive plus node outputs; compact hashes/metadata committed.
 Large checkpoints remain on temporary B200 storage. Folder-path export was
 unsupported (empty payload), so enumerate files on this runner. commands.sh #0.
+
+## Recovery authorization and overnight continuation — 27 October 2026 SGT
+
+User approved testing whether pretrained KV sharing needs more recovery, plus
+bounded autonomous follow-ups while sleeping. See KV_RECOVERY_OVERNIGHT_20261027.md.
+Continue A/B final weights in a new matched 2,048-step optimizer/schedule phase,
+134.22M fresh tokens each. Never call this exact resume of the expired scheduler.
+Reuse old validation and exclude all old pilot documents. Architecture/backend
+unchanged. Initial validation must reproduce parent per-document losses. Keep all
+256-step checkpoints and score final BF16 deployment weights. First pass 8-GPU
+smoke from B. No environment/driver changes.
+
+Preflight d9ed973 passed 06:44 SGT. Initial weight SHA256: A
+`fe621f7c14de058b20b9ee5dd7e0071ac2c62f352675dfdc21f65af262328be8`, B
+`c5f9ef7aea0b4260a9087ec2be998a121f16d4f1693ad5eb88a9a9a7384c487c`.
+Only known burns present; 21,710 GiB free. Preserve old pilot.
+
+Explicit scheduled wake-ups use existing app-server thread via codex queue, not
+a new agent/session. 45-minute interval and 12-hour cap; stop on cancellation or
+completed useful work. Follow-ups capped at four additional <=4096-step jobs;
+pruning is gated on recovered quality, not assumed worthwhile. Read CURRENT_TASK
+for live state and the local timer status; never claim successful delivery solely
+from a CLI enqueue receipt.

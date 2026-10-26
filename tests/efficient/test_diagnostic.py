@@ -66,6 +66,21 @@ class ScoringTests(unittest.TestCase):
                 self.assertEqual(fresh['excluded_evaluation_manifest_sha256'], sha256(root/'probe/manifest.json'))
                 for key in ('text_sha256', 'tokens_sha256'):
                     self.assertFalse({x[key] for x in b} & {x[key] for x in fresh['documents']['evaluation']})
+                recovered = prepare_probe(data, model, root/'recovery', length=4,
+                    calibration=3, evaluation=4, contract_path=contract, seed=19,
+                    recovery_from=root/'probe')
+                self.assertTrue(recovered['evaluation_reused'])
+                self.assertEqual(recovered['documents']['evaluation'], b)
+                before=torch.load(root/'probe/tokens.pt',weights_only=True)
+                after=torch.load(root/'recovery/tokens.pt',weights_only=True)
+                self.assertTrue(torch.equal(before['evaluation'],after['evaluation']))
+                for key in ('text_sha256','tokens_sha256'):
+                    used={x[key] for x in a+b}
+                    self.assertFalse(used & {x[key] for x in recovered['documents']['calibration']})
+                with self.assertRaisesRegex(ValueError,'mutually exclusive'):
+                    prepare_probe(data,model,root/'both',length=4,calibration=3,evaluation=4,
+                        contract_path=contract,recovery_from=root/'probe',
+                        exclude_manifest=root/'probe/manifest.json')
                 next((data/"subsets/test/train/shard").glob("*.arrow")).write_bytes(b"changed")
                 with self.assertRaisesRegex(ValueError, "checksum"):
                     prepare_probe(data, model, root/"corrupt", length=4, calibration=3, evaluation=4, contract_path=contract)

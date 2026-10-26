@@ -50,7 +50,8 @@ def choose_documents(dataset, tokenizer, *, count, length, seed, excluded,
 
 
 def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
-                  evaluation=128, seed=42, max_shards=8, contract_path, exclude_manifest=None):
+                  evaluation=128, seed=42, max_shards=8, contract_path, exclude_manifest=None,
+                  recovery_from=None):
     from datasets import load_from_disk
     from transformers import AutoTokenizer
     from training_data import document_end
@@ -76,6 +77,27 @@ def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
     tokenizer = AutoTokenizer.from_pretrained(model_root, local_files_only=True)
     eod = document_end(tokenizer, "<|endoftext|>")
     excluded, tensors, selections, verified = set(), {}, {}, {}
+    previous = previous_tokens = None
+    if recovery_from is not None:
+        if exclude_manifest is not None:
+            raise ValueError('Recovery reuse and evaluation exclusion are mutually exclusive')
+        recovery_from = Path(recovery_from)
+        previous = json.loads((recovery_from/'manifest.json').read_text())
+        if (previous['status'] != 'passed' or previous['length'] != length
+                or previous['tokenizer_revision'] != contract['tokenizer_revision']
+                or previous['pool_revision'] != contract['revision']
+                or previous['evaluation_documents'] != evaluation
+                or sha256(recovery_from/'tokens.pt') != previous['tokens_sha256']):
+            raise ValueError('Recovery source probe identity differs')
+        previous_tokens = torch.load(recovery_from/'tokens.pt', map_location='cpu', weights_only=True)
+        if tuple(previous_tokens['evaluation'].shape) != (evaluation, length+1):
+            raise ValueError('Prior evaluation tensor shape differs')
+        for records in previous['documents'].values():
+            for record in records:
+                excluded.update((record['text_sha256'], record['tokens_sha256']))
+        for row, record in zip(previous_tokens['evaluation'].tolist(), previous['documents']['evaluation'], strict=True):
+            if hashlib.sha256(json.dumps(row, separators=(',', ':')).encode()).hexdigest() != record['tokens_sha256']:
+                raise ValueError('Prior evaluation document/tensor identity differs')
     if exclude_manifest is not None:
         previous = json.loads(Path(exclude_manifest).read_text())
         if previous['length'] != length or previous['tokenizer_revision'] != contract['tokenizer_revision']:
@@ -84,6 +106,10 @@ def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
             excluded.update((record['text_sha256'], record['tokens_sha256']))
     for split, name, count in (("train", "calibration", calibration),
                                ("validation", "evaluation", evaluation)):
+        if name == 'evaluation' and recovery_from is not None:
+            tensors[name] = previous_tokens[name].clone()
+            selections[name] = previous['documents'][name]
+            continue
         rows, records = [], []
         # Bound I/O: deterministic rows in the first pinned shards. This is not
         # claimed to be a uniform sample of the full 30B-token training pool.
@@ -123,5 +149,9 @@ def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
         "tokens_sha256": sha256(output / "tokens.pt"), "model_files": model_files,
         "excluded_evaluation_manifest_sha256": sha256(exclude_manifest) if exclude_manifest else None,
         "verified_shard_files": verified, "documents": selections}
+    if recovery_from is not None:
+        receipt.update(recovery_from_manifest_sha256=sha256(recovery_from/'manifest.json'),
+                       excluded_previous_documents=sum(len(v) for v in previous['documents'].values()),
+                       evaluation_reused=True)
     (output / "manifest.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return receipt

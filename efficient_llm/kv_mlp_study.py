@@ -226,9 +226,27 @@ class Validation(TrainerCallback):
 
 
 def train(args, device, rank, world, tokens, manifest):
-    plan = json.loads(args.plan.read_text())
-    if plan['probe_sha256'] != sha256(args.probe/'manifest.json') or plan['status'] != 'passed':
-        raise ValueError('Calibration identity differs')
+    parent = None
+    parent_files = None
+    if args.initial_model is not None:
+        if args.parent_result is None or args.plan is not None or args.calibration != 0:
+            raise ValueError('New recovery phase requires parent result, no calibration/plan')
+        if args.initial_model.resolve() != (args.parent_result.parent/'final').resolve():
+            raise ValueError('Initial checkpoint is not the parent final model')
+        parent = json.loads(args.parent_result.read_text())
+        if (parent['status'] != 'passed' or parent['smoke'] or parent['arm'] != args.arm
+                or parent['probe_sha256'] != manifest.get('recovery_from_manifest_sha256')
+                or not manifest.get('evaluation_reused')):
+            raise ValueError('Recovery parent and reused evaluation do not match')
+        parent_files = {p.name:sha256(p) for p in sorted(args.initial_model.iterdir())
+                        if p.is_file() and p.suffix in {'.json','.safetensors'}} if rank == 0 else None
+        plan = None
+    else:
+        if args.parent_result is not None or args.plan is None or args.calibration < 1:
+            raise ValueError('Fresh conversion requires calibration and a plan')
+        plan = json.loads(args.plan.read_text())
+        if plan['probe_sha256'] != sha256(args.probe/'manifest.json') or plan['status'] != 'passed':
+            raise ValueError('Calibration identity differs')
     rows = tokens['calibration'][2*args.calibration:]
     needed = args.steps * args.batch * world
     if args.smoke:
@@ -240,12 +258,25 @@ def train(args, device, rank, world, tokens, manifest):
         args.output.mkdir(parents=True, exist_ok=False)
     if world > 1: dist.barrier()
     teacher = load_compressed(args.model, device).eval().requires_grad_(False)
-    model = load_compressed(args.model, device)
-    convert(model, **plan['arms'][args.arm])
+    model = load_compressed(args.initial_model or args.model, device)
+    if parent is None:
+        convert(model, **plan['arms'][args.arm])
+    elif (model.config.kv_sources != parent['kv_sources'] or model.config.mlp_widths != parent['mlp_widths']
+          or sum(p.numel() for p in model.parameters()) != parent['parameters']):
+        raise ValueError('Parent architecture differs')
     model.requires_grad_(True)
     checkpoint_steps = sorted({max(1, args.steps//4), args.steps})
+    if args.eval_every:
+        checkpoint_steps = sorted(set(range(args.eval_every, args.steps+1, args.eval_every)) | {args.steps})
     callback = Validation(tokens['evaluation'], args.output/'validation.json', checkpoint_steps, rank)
     callback.measure(model, 0)
+    initial_difference = None
+    if parent is not None:
+        old = parent['validation'][str(parent['steps'])]['per_document_nll']
+        new = callback.history['0']['per_document_nll']
+        torch.testing.assert_close(torch.tensor(new, dtype=torch.float64),
+            torch.tensor(old, dtype=torch.float64), rtol=0, atol=1e-5)
+        initial_difference = max(abs(a-b) for a,b in zip(new,old,strict=True))
     config = TrainingArguments(output_dir=str(args.output/'trainer'), max_steps=args.steps,
         per_device_train_batch_size=args.batch, gradient_accumulation_steps=1,
         learning_rate=5e-5, lr_scheduler_type='cosine', warmup_steps=max(1,round(.05*args.steps)),
@@ -285,19 +316,29 @@ def train(args, device, rank, world, tokens, manifest):
     gc.collect()
     if device.type == 'cuda': torch.cuda.empty_cache()
     after_sensitivity = None
-    if args.arm in ('A','B'):
+    if args.arm in ('A','B') and args.calibration > 0:
         rankings = rank_channels(model, tokens['calibration'][:args.calibration])
         after_sensitivity = sensitivity(model, tokens['calibration'][args.calibration:2*args.calibration],
                                         rankings, levels=(0,2))
+    inference = None
+    if args.inference_eval:
+        if device.type != 'cuda':raise ValueError('Inference precision check requires CUDA')
+        deployed = load_compressed(args.output/'final', device, torch.bfloat16).eval()
+        inference = score(deployed, tokens['evaluation'])
+        del deployed
     report = dict(status='passed', arm=args.arm, world_size=world, steps=args.steps, smoke=args.smoke,
         input_tokens=needed*(rows.shape[1]-1), unique_documents=len(rows),
         parameters=sum(p.numel() for p in model.parameters()),
         kv_sources=model.config.kv_sources, mlp_widths=model.config.mlp_widths,
         sample_order_sha256_per_rank=hashes, probe_sha256=sha256(args.probe/'manifest.json'),
-        plan_sha256=sha256(args.plan), training_seconds=elapsed, trainer_metrics=result.metrics,
+        plan_sha256=sha256(args.plan) if args.plan else None, training_seconds=elapsed, trainer_metrics=result.metrics,
         training_arguments=config.to_dict(), validation=callback.history,
         reloaded_max_nll_difference=max(abs(a-b) for a,b in zip(actual['per_document_nll'],reference['per_document_nll'])),
-        post_recovery_sensitivity=after_sensitivity)
+        post_recovery_sensitivity=after_sensitivity, inference_validation=inference,
+        phase='new_recovery' if parent else 'initial_conversion',
+        initial_model_files=parent_files, parent_result_sha256=sha256(args.parent_result) if parent else None,
+        parent_steps=parent['steps'] if parent else 0, initial_max_nll_difference=initial_difference,
+        optimizer_and_schedule_reset=parent is not None)
     if rank == 0:
         write(args.output/'result.json', report)
         print('KV_MLP_RECOVERY_COMPLETE', args.arm, flush=True)
@@ -349,9 +390,41 @@ def inference_quality(args, device, rank, world, tokens):
         autocast_dtype='bfloat16',probe_sha256=sha256(args.probe/'manifest.json'),arms=reports))
 
 
+def recovery_summary(args):
+    reports = {a:json.loads((args.runs/a/'result.json').read_text()) for a in 'AB'}
+    a,b = reports['A'], reports['B']
+    for r in reports.values():
+        if r['status'] != 'passed' or r['smoke'] or r['phase'] != 'new_recovery':
+            raise ValueError('Recovery phase did not complete')
+    for key in ['steps','world_size','input_tokens','sample_order_sha256_per_rank','probe_sha256','parent_steps']:
+        if a[key] != b[key]:raise ValueError('Unmatched recovery pair: '+key)
+    for key in ['learning_rate','lr_scheduler_type','warmup_steps','weight_decay','max_grad_norm',
+                'per_device_train_batch_size','gradient_accumulation_steps','seed','data_seed','bf16']:
+        if a['training_arguments'][key] != b['training_arguments'][key]:
+            raise ValueError('Unmatched recovery recipe: '+key)
+    if a['validation'].keys() != b['validation'].keys():
+        raise ValueError('Unmatched validation steps')
+    curve = {}
+    for step in a['validation']:
+        x,y = a['validation'][step],b['validation'][step]
+        curve[step] = dict(dense_ppl=x['ppl'], shared_ppl=y['ppl'], ppl_ratio=y['ppl']/x['ppl'],
+            paired=paired_summary(y['per_document_nll'],x['per_document_nll']))
+    x,y = a['inference_validation'], b['inference_validation']
+    if x is None or y is None:raise ValueError('Missing inference-precision validation')
+    inference=dict(dense_ppl=x['ppl'],shared_ppl=y['ppl'],ppl_ratio=y['ppl']/x['ppl'],
+                   paired=paired_summary(y['per_document_nll'],x['per_document_nll']))
+    gate=inference['paired']['paired_document_bootstrap_95ci'][1] <= math.log(1.05)
+    write(args.output,dict(status='passed',curve=curve,inference=inference,
+        decision='prune_recovered' if gate else 'review_conversion',
+        gate='Upper 95% document CI for shared-minus-dense NLL <= log(1.05)',
+        phase_tokens=sum(r['input_tokens'] for r in reports.values()),
+        limitations=['A diagnostic on reused 256-document validation; not a new independent test.',
+                     'New optimizer/schedule phase, not an exact resume; one training seed.']))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('mode', choices=['calibrate','train','summarize','inference-quality'])
+    p.add_argument('mode', choices=['calibrate','train','summarize','inference-quality','recovery-summary'])
     for name in ['model','probe','output','plan','runs']: p.add_argument('--'+name, type=Path)
     p.add_argument('--arm', choices=list('ABCDEF'))
     p.add_argument('--device', choices=['cpu','cuda'], default='cuda')
@@ -359,10 +432,18 @@ def main():
     p.add_argument('--steps', type=int, default=512)
     p.add_argument('--batch', type=int, default=8)
     p.add_argument('--smoke', action='store_true')
+    p.add_argument('--initial-model', type=Path)
+    p.add_argument('--parent-result', type=Path)
+    p.add_argument('--eval-every', type=int, default=0)
+    p.add_argument('--inference-eval', action='store_true')
     args = p.parse_args()
     if args.output is None or args.output.exists(): raise ValueError('Require fresh output')
     if args.mode == 'summarize':
         summarize(args); return
+    if args.mode == 'recovery-summary':
+        recovery_summary(args); return
+    if min(args.steps,args.batch) < 1 or args.calibration < 0 or args.eval_every < 0:
+        raise ValueError('Invalid recovery sizes')
     rank, world = int(os.environ.get('RANK',0)), int(os.environ.get('WORLD_SIZE',1))
     device = torch.device('cuda',int(os.environ.get('LOCAL_RANK',0))) if args.device == 'cuda' else torch.device('cpu')
     if device.type == 'cuda': torch.cuda.set_device(device)

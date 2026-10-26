@@ -55,6 +55,33 @@ def independent_reference(model, ids):
 
 
 class KVMlpTests(unittest.TestCase):
+    def test_recovery_gate_and_recipe_matching(self):
+        from types import SimpleNamespace
+        from efficient_llm.kv_mlp_study import recovery_summary
+        import math
+        keys = ['learning_rate','lr_scheduler_type','warmup_steps','weight_decay','max_grad_norm',
+                'per_device_train_batch_size','gradient_accumulation_steps','seed','data_seed','bf16']
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            report=dict(status='passed',smoke=False,phase='new_recovery',steps=2048,
+                world_size=8,input_tokens=134217728,sample_order_sha256_per_rank=['same']*8,
+                probe_sha256='same',parent_steps=512,training_arguments=dict.fromkeys(keys,1))
+            for arm,loss in [('A',3.),('B',3.02)]:
+                score=dict(ppl=math.exp(loss),per_document_nll=[loss]*8)
+                (root/arm).mkdir()
+                (root/arm/'result.json').write_text(json.dumps(dict(report,
+                    validation={'2048':score},inference_validation=score)))
+            args=SimpleNamespace(runs=root,output=root/'summary.json')
+            recovery_summary(args)
+            self.assertEqual(json.loads(args.output.read_text())['decision'],'prune_recovered')
+            path=root/'B/result.json';b=json.loads(path.read_text())
+            b['inference_validation']=dict(ppl=math.exp(3.2),per_document_nll=[3.2]*8)
+            path.write_text(json.dumps(b));recovery_summary(args)
+            self.assertEqual(json.loads(args.output.read_text())['decision'],'review_conversion')
+            b['training_arguments']['seed']=2;path.write_text(json.dumps(b))
+            with self.assertRaisesRegex(ValueError,'Unmatched recovery recipe'):
+                recovery_summary(args)
+
     def test_bf16_independent_decoder_same_kernel(self):
         from efficient_llm.kv_mlp_check import reference, fixed_input_checks
         model=convert(tiny(),share=True,channels=[list(range(24))]*4)
@@ -196,6 +223,33 @@ class KVMlpTests(unittest.TestCase):
                 p=root/f'D/trainer/checkpoint-{step}'
                 for name in ['optimizer.pt','scheduler.pt','rng_state_0.pth','rng_state_1.pth']:
                     self.assertTrue((p/name).is_file(),name)
+            # A new phase must load the existing compressed architecture, preserve
+            # parent files and evaluation, and restart the optimizer/schedule.
+            old_hash=sha256(root/'D/final/model.safetensors')
+            new_probe=root/'next-probe';new_probe.mkdir()
+            old_tokens=torch.load(probe/'tokens.pt',weights_only=True)
+            torch.save(dict(calibration=torch.randint(0,47,(8,17)),
+                evaluation=old_tokens['evaluation']),new_probe/'tokens.pt')
+            receipt=json.loads((probe/'manifest.json').read_text())
+            receipt.update(calibration_documents=8,tokens_sha256=sha256(new_probe/'tokens.pt'),
+                           evaluation_reused=True,recovery_from_manifest_sha256=sha256(probe/'manifest.json'))
+            (new_probe/'manifest.json').write_text(json.dumps(receipt))
+            done=subprocess.run([*launch,'train','--model',str(model),'--probe',str(new_probe),
+                '--device','cpu','--calibration','0','--initial-model',str(root/'D/final'),
+                '--parent-result',str(root/'D/result.json'),'--arm','D','--steps','2','--batch','2',
+                '--eval-every','1','--output',str(root/'continued')],
+                capture_output=True,text=True,timeout=240)
+            self.assertEqual(done.returncode,0,done.stdout+done.stderr)
+            phase=json.loads((root/'continued/result.json').read_text())
+            self.assertTrue(phase['optimizer_and_schedule_reset'])
+            self.assertEqual(phase['steps'],2);self.assertEqual(phase['parent_steps'],4)
+            self.assertEqual(phase['initial_max_nll_difference'],0)
+            self.assertEqual(phase['kv_sources'],report['kv_sources'])
+            self.assertEqual(phase['mlp_widths'],report['mlp_widths'])
+            self.assertEqual(sha256(root/'D/final/model.safetensors'),old_hash)
+            self.assertNotEqual(sha256(root/'continued/final/model.safetensors'),old_hash)
+            state=json.loads((root/'continued/trainer/checkpoint-2/trainer_state.json').read_text())
+            self.assertEqual(state['global_step'],2)
 
 
 if __name__=='__main__':unittest.main()

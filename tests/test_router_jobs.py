@@ -2,11 +2,23 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for, kv_mlp_jobs_for, kv_mlp_quality_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for, kv_mlp_jobs_for, kv_mlp_quality_jobs_for, kv_recovery_jobs_for
 from run_experiments import load_jobs
 
 
 class RouterJobTests(unittest.TestCase):
+    def test_recovery_pair_starts_from_parents_after_smoke(self):
+        config=kv_recovery_jobs_for('/model','/probe','/accelerate.yaml',29721,'/previous')
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+        self.assertEqual([j['name'] for j in config['jobs']],
+                         ['kv-recovery-smoke','kv-recovery-A','kv-recovery-B','kv-recovery-summary'])
+        for arm,job in zip('AB',config['jobs'][1:3]):
+            self.assertEqual(job['gpus'],list(range(8)))
+            self.assertIn('/previous/supervised/run/'+arm+'/final',job['argv'])
+            self.assertIn('2048',job['argv']);self.assertIn('--inference-eval',job['argv'])
+            self.assertNotIn('--plan',job['argv'])
+
     def test_inference_quality_is_evaluation_only(self):
         config=kv_mlp_quality_jobs_for('/model','/previous','/accelerate.yaml',29721)
         with tempfile.TemporaryDirectory() as tmp:

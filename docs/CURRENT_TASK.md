@@ -1,5 +1,43 @@
 # Current task
 
+## Active: KV recovery and overnight continuation, 27 October 2026 SGT
+
+User approved a matched recovery test and bounded autonomous follow-ups while
+sleeping. Design: [KV_RECOVERY_OVERNIGHT_20261027.md](KV_RECOVERY_OVERNIGHT_20261027.md).
+A/B will start from the old step-512 final weights; explicit new optimizer and
+2,048-step schedule, 134.22M fresh tokens per arm. Reuse the old 256 validation
+prefixes and exclude all old pilot documents from training. Same model, SDPA,
+frozen teacher, native Trainer and 8-GPU recipe. Eight-step B smoke gates A/B.
+
+Read-only preflight `d9ed973` passed at **06:44:15 SGT**: parent hashes verified,
+21,710 GiB free, only the previously identified eight burn workers 612725–612732,
+launcher 612656; guard released; collectives advancing. Receipt:
+`temp/kv_recovery_preflight01.log`. Controller healthy. Reinspect before reclaim.
+CPU data/score tests (4), model/2-rank training tests (8), recovery decision test (1),
+and infrastructure checks (56, including 8 job tests) pass.
+No environment or model architecture changes; GPU lifecycle unchanged.
+
+Next submission uses fresh output
+`/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a01`,
+predecessor training `6y3o-efficient-kv-mlp-20261027-a03`, predecessor burn source
+`6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
+Session `efficient_kv_recovery_20261027_a01`. CPU data preparation happens before
+reclaim; Accelerate cache copy/env, exact worker identities and free checks are
+mandatory. Final artifacts: `supervised/run/{A,B}/result.json`, `summary.json`,
+`complete.json`, `supervised/supervisor.json`, `burn-verified.json`.
+
+Schedule this existing conversation every 45 minutes, at most 12 hours, with
+`scripts/queue_watch.py`; state under ignored `temp/kv_recovery_watch_20261027/`.
+Do not create another timer or agent if one exists. At most four extra training
+jobs (<=4096 steps each) beyond A/B, justified by results. No broad unmotivated
+sweep. Upper 95% paired-document CI <=log(1.05) gates pruning after recovery.
+If the sharing gap remains large, inspect a focused conversion hypothesis instead.
+Respect latest user steering, controller failure rules and the safe burn handoff.
+End long-wait turns; the timer queues the next turn. Stop scheduling once useful
+work/results are complete or the cap expires. Record actual delivery separately
+from successful enqueue. No remote follow-up is authorized by stale PID state.
+
+
 Workspace `/disk/thuat/efficient_llm`, independent efficient-LLM architecture
 project. Report times in Singapore time (SGT, UTC+8). Objective:
 [PROJECT_IDEA.md](PROJECT_IDEA.md); active design:
@@ -43,7 +81,7 @@ D 15.821 ms (paired speedup 1.162×), but D's inference PPL is 43.2% higher.
 Shared arms store exactly half the KV. No useful quality/cost joint benefit;
 retain as a negative pilot rather than scaling this recipe. One short recovery,
 model and seed; no 8k-quality or downstream claim. commands.sh #0.
-**All authorized work complete; no additional training authorized or queued.**
+**Historical pilot complete. Superseded by the recovery authorization below.**
 
 ## Verification and historical failures
 
