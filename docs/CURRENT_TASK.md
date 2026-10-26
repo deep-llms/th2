@@ -1,139 +1,98 @@
 # Current task
 
-Workspace `/disk/thuat/efficient_llm`; independent efficient-LLM architecture project.
-Report times in Singapore time (SGT, UTC+8). Design: [PROJECT_IDEA.md](PROJECT_IDEA.md),
-[FIRST_ARCHITECTURE_HYPOTHESIS.md](FIRST_ARCHITECTURE_HYPOTHESIS.md),
-[CONTEXT_BUDGET_PLAN_20261026.md](CONTEXT_BUDGET_PLAN_20261026.md), and latest
-[WINDOW_COMPACT_PLAN_20261027.md](WINDOW_COMPACT_PLAN_20261027.md).
+Workspace `/disk/thuat/efficient_llm`, independent efficient-LLM architecture
+project. Report times in Singapore time (SGT, UTC+8). Objective:
+[PROJECT_IDEA.md](PROJECT_IDEA.md); active design:
+[KV_MLP_PILOT_20261027.md](KV_MLP_PILOT_20261027.md).
 
-## Active approved work: KV sharing / MLP pilot
+## Approved work and state
 
-The user approved a bounded interaction pilot after the literature/novelty review.
-Design: [KV_MLP_PILOT_20261027.md](KV_MLP_PILOT_20261027.md). Implement and test
-fixed adjacent KV sharing, physical MLP pruning, calibration and matched native
-Trainer recovery on the original pretrained 28-layer Qwen. Six controlled arms,
-512 steps each, approximately 201M total recovery tokens. No large search or
-new kernel. Reuse the verified node/model/data and safe burn supervisor.
-Implemented in `6f346f0`, revised numerical gates in `7abbd37`. Eight CPU model/
-training tests and 54 infrastructure checks pass, including two-rank native
-Trainer checkpoint/save/reload. Source imports and hashes verified.
+User approved a bounded pretrained KV-sharing × MLP-pruning interaction pilot.
+All six fresh 512-step arms completed successfully on original 28-layer
+Qwen3-0.6B-Base. Total 201,326,592 recovery tokens. Native HF Trainer/Accelerate,
+native SDPA, identical actual sample order and teacher-distillation recipe.
+Final training-validation PPL: A 20.03790, B 26.22461, C 21.67554, D 28.69731,
+E 30.77849, F 32.49516. Recalibrating after sharing did not help this recipe.
+This is a 256-document × 1024-target prefix probe, not full-corpus/downstream PPL.
 
-**Active run a03**: `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03`,
-session `efficient_kv_mlp_20261027_a03`, supervisor owner 608437. Latest health
-`748c881` at **05:09:24 SGT** confirms actual-weight GPU gate passed (11.98s),
-eight-GPU calibration passed (66.85s), and eight-GPU D smoke running. Known burns
-reclaimed by identity and all eight GPUs verified free before work; Accelerate
-copied/byte-verified, eight-GPU BF16 env confirmed. No environment/driver changes.
-GPU maximum fixed-input output/gradient errors .001873/.012473; FP32 cached max
-absolute error .001063. Gate artifact SHA256
-`88f51c405c59da5216729d4abefca446b9e3f3aa500240f88ee0496b05c98be4`.
-Calibration artifact SHA256 `3a5c14aed1bd87ae18f061b14ed0712ef3f83893968c15c9b894d9b86ed94487`.
+Training source `7abbd37`, run `6y3o-efficient-kv-mlp-20261027-a03` completed
+**05:26:25 SGT, 27 October**. Burns restored/verified 05:27:36; independent
+health `3ba782c` at 05:28:28 confirmed advancing eight-rank burns and released
+guard. Compact result bundle exists under this run's `result_export/`.
+Its manifest SHA256: `57d09d8d87d4794401ac3e2c317850f6f77132ea45a381cbff83537f70048d02`.
 
-Health `532002e` at **05:13:07 SGT** confirms smoke passed in 48.18s, A
-completed 512 steps in 168.36s (training 132.65s), and B running at step 32.
-A held-out NLL/PPL at 512: **2.9976257 / 20.03790**. All training is fresh;
-checkpoint/reload and exact one-pass data coverage checks pass. Estimated full
-pilot/profile/burn completion about 05:30 SGT; fresh health requested. Queue requires
-successful training, save/reload and exact data coverage before A/B/C/D/E/F;
-512 steps each, then whole-model profile and summary, then automatic burns.
-Do not repeat the launch. Failed a01/a02 outputs are preserved separately.
+Evaluation-only precision check `c140449` completed **05:39:00 SGT** in 34.67s:
+`6y3o-efficient-kv-mlp-inference-20261027-a01`. BF16-weight PPL A/B/C/D/E/F:
+20.03850 / 26.22722 / 21.67890 / 28.70302 / 30.78658 / 32.50281, matching the
+profile precision with unchanged ranking. Same probe and trained model code
+verified. Accelerate copied/verified, eight-GPU BF16 env confirmed.
+Burns restored 05:40:11; independent health `381f1da` at **05:42:22 SGT** verified
+advancing burns and guard released. No environment/driver changes.
 
-Attempts a01 and a02 stopped in the numerical gate; neither calibrated nor
-trained an arm. Full-model FP32 explicit-reference output/gradient errors
-4.53e-5 / 9.91e-5 pass. On B200, the independent BF16 decoder using identical
-SDPA has **zero output error / 5.11e-9 relative gradient error**. Full-model
-BF16 explicit-math error remains large (.399 output / .681 gradient); it is
-recorded, not accepted as backend parity. Local fixed-input explicit attention
-across all 28 layers has max output .00186 / gradient .01167. See design doc
-for revised gate: FP32 full math, BF16 same-kernel full decoder, and BF16
-fixed-input explicit-math output/gradients in every layer. Production model,
-training and backend are unchanged. Fresh a03 repeats all gates and full queue.
+**Archival complete:** exact-file export `8809832` returned 29 files, all
+SHA256-verified locally against node receipts (folder export `59e30f9` failed
+without changing results). Full local archive `temp/kv_mlp_results_20261027/`;
+small durable artifacts `docs/results/kv_mlp_20261027/`.
+[Final report](KV_MLP_RESULTS_20261027.md). Model/optimizer checkpoints remain
+on temporary B200 storage; they were not pulled through the small-file channel.
 
-Latest independent B200 health at **04:58:00 SGT** (`4724c8d`) verified a02 burns
-restored/advancing and guard released. Workers **607624–607631**, launcher
-**607555**, source a02/source/resources/llm_pretrain_burn.py. Reinspect before
-reclamation. a03 uses root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03`
-and session `efficient_kv_mlp_20261027_a03`; preserve both previous attempts.
-All repeated prep used identical manifest SHA256
-`d7787dbe5685aec296b45ac38e122e20bff1d16e65059f3f0a7dba347b4be0ea`.
+Step-512 interaction D−B−C+A is +0.011546 nats [0.006544,0.018057]. E−D is
++0.070013; F−E +0.054275. Post-recovery single-layer pruning sensitivity
+correlation A/B: Pearson .985, Spearman .922. B8/8k eager decode: A 18.390 ms,
+D 15.821 ms (paired speedup 1.162×), but D's inference PPL is 43.2% higher.
+Shared arms store exactly half the KV. No useful quality/cost joint benefit;
+retain as a negative pilot rather than scaling this recipe. One short recovery,
+model and seed; no 8k-quality or downstream claim. commands.sh #0.
+**All authorized work complete; no additional training authorized or queued.**
 
+## Verification and historical failures
 
-## Previous authorized work completed
+Eight CPU model/training tests and 55 infrastructure checks pass. Actual-weight
+GPU gate and eight-GPU smoke passed. Every arm passes exact one-pass data
+coverage, matched per-rank order, frozen teacher and save/reload checks (max
+checked NLL difference zero). Checkpoints require `load_compressed`, not vanilla
+AutoModel; consumer KV retains gradients; decoder checkpointing is rejected.
 
-The user approved testing pure sliding-window attention and compact selective
-scheduling. Frozen original 28-layer Qwen3-0.6B-Base and identical fitted routers
-and fixed allocations; no training. [Results](WINDOW_COMPACT_RESULTS_20261027.md).
+Attempts a01/a02 stopped in the gate before training; outputs preserved. Corrected
+reference QK precision and separated full-model same-kernel BF16 checks from
+fixed-input cross-kernel checks. FP32 full explicit-math output/gradient errors
+4.53e-5/9.91e-5; same-SDPA independent BF16 decoder output error zero; fixed-input
+BF16 output/gradient maxima .001873/.012473. Full-model explicit-math BF16 errors
+.399/.681 remain documented; cross-kernel interchangeability is **not accepted**.
+See `docs/results/kv_mlp_20261027/gpu_gate.json` and the design document.
 
-- All 82 local tests and the compiled GPU math/FP32 gate passed. Opt-in
-  `triton_compact` launches no empty local tiles; local heads write final outputs
-  directly. Original kernel remains a control; native SDPA remains default.
-- Native SDPA PPL on the same 256 × 2k documents: dense **18.9668**, fixed
-  first-four + recent-128 **19.3570**, same fixed groups with recent-128 only
-  **75.5163**. All 256 documents worsen without sinks. Do not generalize this to
-  trained sliding-window architectures or claim four sinks is optimal.
-- B8/8k attention microbenchmark: dense original 86.12 us, fixed original 51.50 us,
-  fixed compact 48.57 us. Dropping four sinks has negligible custom-kernel cost.
-- Whole-model eager B8/8k: dense original kernel **22.346 ms**, fixed original
-  **22.489**, fixed compact **22.656**, joint original **26.179**, joint compact
-  **27.160**. Compact scheduling does not improve whole-model speed. Native SDPA
-  dense is 32.728 ms; compare against the fastest dense control instead.
-- FP32 original-weight cached checks passed. BF16 original/compact trajectories
-  still differ on some individual documents by >.01 nats. Prior native acceptance
-  gate remains failed. Profile is diagnostic-only, not backend acceptance.
-- Keep sinks for this frozen policy; no adoption of compact as default. No cache
-  capacity saving: all KV retained. No new training or follow-up queue authorized.
+## Runner and latest ownership
+
+Remote `git@github-share:deep-llms/th2.git`, main; this worktree serves development
+and execution. Node `thiennh-p6-6y3o-worker-0`, eight B200s. Code
+`/mnt/local/deep-llms_th2`; all outputs under `/mnt/local/_outputs/deep-llms_th2`.
+Do not repeat migration/cleanup; never repush unchanged executable commands.sh.
+
+Python `/mnt/local/conda-py311/envs/train/bin/python3.11`: torch 2.14.1+cu130,
+transformers 5.9.0, accelerate 1.13.0, datasets 4.8.5. Model
+`/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6`; data
+`/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513`.
+Contract `resources/cx_english_20261020.json`; config `resources/accelerate_b200.yaml`.
+No GPU-node outbound network; controller #d/#i inputs and #2 exports only.
+Dropbox label 6Y3O; credentials/map under ignored DOT/temp. Never print contents.
+
+Latest burn ownership, **05:42:22 SGT**: workers 612725–612732, launcher 612656;
+source `6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
+All eight GPUs owned by these known burns; guard released. This supersedes all
+previous PID records. Reinspect exact PID/start identities before a later stop.
+Guard/burn hashes and rules in GPU_SAFETY.md.
 
 ## Earlier evidence
 
-[JOINT_GROUP_RESULTS_20261026.md](JOINT_GROUP_RESULTS_20261026.md),
-[ROUTER_PILOT_RESULTS_20261026.md](ROUTER_PILOT_RESULTS_20261026.md),
+[WINDOW_COMPACT_RESULTS_20261027.md](WINDOW_COMPACT_RESULTS_20261027.md),
+[SELECTIVE_DECODE_RESULTS_20261026.md](SELECTIVE_DECODE_RESULTS_20261026.md),
 [CONTEXT_BUDGET_RESULTS_20261026.md](CONTEXT_BUDGET_RESULTS_20261026.md),
-[SELECTIVE_DECODE_RESULTS_20261026.md](SELECTIVE_DECODE_RESULTS_20261026.md).
+[ROUTER_PILOT_RESULTS_20261026.md](ROUTER_PILOT_RESULTS_20261026.md), and
+[JOINT_GROUP_RESULTS_20261026.md](JOINT_GROUP_RESULTS_20261026.md).
 
-Whole-group removal loses substantial quality: learned joint 23.4644 versus dense
-18.9674 PPL on 256 documents. Preserving local attention reduces the joint router's
-PPL gap to 1.17% at 2k / 2.15% at 8k. Joint versus independent supervision gives
-only a small gain. Simple native-SDPA retrieval saturated: dense/fixed/joint/
-independent 128/128, local-only 45/128. No practical learned-routing speed gain,
-broad downstream parity, cache-capacity reduction, or novelty established.
-Do not scale up router training based on these results.
-
-## Verified GPU ownership and runtime
-
-Execution/development remote `git@github-share:deep-llms/th2.git`, branch main.
-Node `thiennh-p6-6y3o-worker-0`, eight B200s. Code `/mnt/local/deep-llms_th2`;
-assets/outputs separate. Migration completed earlier; do not repeat cleanup.
-Never repush an unchanged executable commands.sh.
-
-Latest root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-window-compact-20261027-a01`.
-Launch/source `36e30fa`, session `efficient_window_20261027_a01`; independent health
-`b10b860`, export `4cf8964`. Gate 54.5s, profile 129.6s, quality 33.5s, all zero
-exit by **01:19:46 SGT, 27 October**. Source/model/probe/router identity pinned.
-Accelerate copied/byte-verified, eight-GPU BF16 env confirmed. Previous exact burn
-workers 602209–602216 reclaimed, all GPUs checked free before GPU jobs.
-
-Burns restored/verified **01:20:56 SGT**, independently healthy **01:21:17 SGT**:
-eight ready ranks, collective sum 36, advancing 40 cycles / 44.41 GiB per rank,
-guard released. Workers **604193–604200**, launcher **604124** at observation.
-Burn path under latest root `source/resources/llm_pretrain_burn.py`, SHA256
-`2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174`.
-Reinspect PID/start identities before stopping. Supersedes all earlier ownership.
-
-Python `/mnt/local/conda-py311/envs/train/bin/python3.11`: PyTorch 2.14.1+cu130,
-Transformers 5.9.0, datasets 4.8.5, Accelerate 1.13.0. Environments unchanged.
-Model `/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6`;
-data `/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513`.
-Contracts `resources/cx_english_20261020.json`, `resources/context_fit_20261026.json`.
-No node outbound network: controller #d/#i inputs, #2 exports.
-Dropbox label 6Y3O, existing credentials/map in ignored DOT/temp; never print.
-
-## Evidence
-
-Raw logs `temp/window_launch01.log`, `temp/window_health01.log`; downloaded files
-`temp/window_results_20261027/`. Durable `docs/results/window_compact_20261027/`.
-All 11 exports matched independent node SHA256s; source/input identity, 60 kernel
-cases, 88 whole-model timing rows, 48 microbenchmark rows, 256 document pairs and
-burn/completion receipts verified locally. commands.sh #0; no further queue.
-Earlier verified artifacts remain under `docs/results/` and ignored temp archives.
-Fitted router weights backed up in `temp/context_results_20261026/`; full native
-router training checkpoints/features remain only on temporary B200 storage.
+Prior learned group/context routing has not demonstrated useful whole-model
+speed over the fastest dense control or cache-capacity savings. Compact kernel
+is opt-in; native SDPA default. Removing sinks from the frozen half-local policy
+severely worsens PPL. Do not restart those queues automatically. Raw archives
+remain under ignored temp; durable reports/results under docs/. Large training
+checkpoints remain on temporary B200 storage; small metrics are backed up.

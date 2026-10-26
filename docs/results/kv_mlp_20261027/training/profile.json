@@ -1,0 +1,1451 @@
+{
+  "status": "measured",
+  "world_size": 8,
+  "rows": [
+    {
+      "rank": 0,
+      "arm": "A",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 18.450095783919096,
+          "decode_ms_per_step": 17.401463429753978,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 18.593179993331432,
+          "decode_ms_per_step": 17.195749911479652,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 18.432326149195433,
+          "decode_ms_per_step": 17.436252848710865,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 18.450095783919096,
+      "decode_ms_per_step": 17.401463429753978,
+      "cache_bytes": 238092288,
+      "parameters": 596049920
+    },
+    {
+      "rank": 0,
+      "arm": "B",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 16.052778344601393,
+          "decode_ms_per_step": 15.02640147615845,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.886509325355291,
+          "decode_ms_per_step": 15.335153924146047,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.884095337241888,
+          "decode_ms_per_step": 15.07318792088578,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 15.886509325355291,
+      "decode_ms_per_step": 15.07318792088578,
+      "cache_bytes": 119046144,
+      "parameters": 566688000
+    },
+    {
+      "rank": 0,
+      "arm": "C",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 18.596488051116467,
+          "decode_ms_per_step": 17.352012121894706,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 18.57798406854272,
+          "decode_ms_per_step": 17.44246348971501,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 18.668097909539938,
+          "decode_ms_per_step": 17.525282552621018,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 18.596488051116467,
+      "decode_ms_per_step": 17.44246348971501,
+      "cache_bytes": 238092288,
+      "parameters": 529989632
+    },
+    {
+      "rank": 0,
+      "arm": "D",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 15.99926920607686,
+          "decode_ms_per_step": 15.090163001635423,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 18.247439991682768,
+          "decode_ms_per_step": 17.677207089339692,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 16.252963803708553,
+          "decode_ms_per_step": 15.047022044503441,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 16.252963803708553,
+      "decode_ms_per_step": 15.090163001635423,
+      "cache_bytes": 119046144,
+      "parameters": 500627712
+    },
+    {
+      "rank": 0,
+      "arm": "E",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 16.425068955868483,
+          "decode_ms_per_step": 16.713746066670865,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 22.516699973493814,
+          "decode_ms_per_step": 15.886817825958133,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 21.27420622855425,
+          "decode_ms_per_step": 15.814892462609956,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 21.27420622855425,
+      "decode_ms_per_step": 15.886817825958133,
+      "cache_bytes": 119046144,
+      "parameters": 500627712
+    },
+    {
+      "rank": 0,
+      "arm": "F",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 16.578239388763905,
+          "decode_ms_per_step": 16.514790748866897,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 16.442961990833282,
+          "decode_ms_per_step": 17.824650761516143,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 16.195977106690407,
+          "decode_ms_per_step": 15.368733205832541,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 16.442961990833282,
+      "decode_ms_per_step": 16.514790748866897,
+      "cache_bytes": 119046144,
+      "parameters": 500627712
+    },
+    {
+      "rank": 1,
+      "arm": "B",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 60.57165376842022,
+          "decode_ms_per_step": 14.967054380880048,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 60.677722096443176,
+          "decode_ms_per_step": 14.78744474782919,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 60.54014526307583,
+          "decode_ms_per_step": 15.190846577752382,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 60.57165376842022,
+      "decode_ms_per_step": 14.967054380880048,
+      "cache_bytes": 952369152,
+      "parameters": 566688000
+    },
+    {
+      "rank": 1,
+      "arm": "C",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 69.43179899826646,
+          "decode_ms_per_step": 17.04310132966687,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 69.43899905309081,
+          "decode_ms_per_step": 17.06862507853657,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 69.46241296827793,
+          "decode_ms_per_step": 17.458070574017864,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 69.43899905309081,
+      "decode_ms_per_step": 17.06862507853657,
+      "cache_bytes": 1904738304,
+      "parameters": 529989632
+    },
+    {
+      "rank": 1,
+      "arm": "D",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 59.00941789150238,
+          "decode_ms_per_step": 14.944835488374034,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.997416868805885,
+          "decode_ms_per_step": 14.908270502928644,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 59.00540901347995,
+          "decode_ms_per_step": 15.126364422030747,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 59.00540901347995,
+      "decode_ms_per_step": 14.944835488374034,
+      "cache_bytes": 952369152,
+      "parameters": 500627712
+    },
+    {
+      "rank": 1,
+      "arm": "E",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 58.97247884422541,
+          "decode_ms_per_step": 15.82877196293945,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 59.30393375456333,
+          "decode_ms_per_step": 15.362884965725243,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.990863151848316,
+          "decode_ms_per_step": 15.247712881925205,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 58.990863151848316,
+      "decode_ms_per_step": 15.362884965725243,
+      "cache_bytes": 952369152,
+      "parameters": 500627712
+    },
+    {
+      "rank": 1,
+      "arm": "F",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 59.01659978553653,
+          "decode_ms_per_step": 15.849026288681975,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.942208997905254,
+          "decode_ms_per_step": 15.909914703418812,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 59.0021419338882,
+          "decode_ms_per_step": 15.350591740570962,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 59.0021419338882,
+      "decode_ms_per_step": 15.849026288681975,
+      "cache_bytes": 952369152,
+      "parameters": 500627712
+    },
+    {
+      "rank": 1,
+      "arm": "A",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 71.06722379103303,
+          "decode_ms_per_step": 17.556791989287984,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 71.13789208233356,
+          "decode_ms_per_step": 17.526021983940154,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 71.05983002111316,
+          "decode_ms_per_step": 17.64503006900971,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 71.06722379103303,
+      "decode_ms_per_step": 17.556791989287984,
+      "cache_bytes": 1904738304,
+      "parameters": 596049920
+    },
+    {
+      "rank": 2,
+      "arm": "C",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 39.13488006219268,
+          "decode_ms_per_step": 17.111703986302018,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 39.1678218729794,
+          "decode_ms_per_step": 17.055916716344655,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 39.22514105215669,
+          "decode_ms_per_step": 17.39823758058871,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 39.1678218729794,
+      "decode_ms_per_step": 17.111703986302018,
+      "cache_bytes": 942735360,
+      "parameters": 529989632
+    },
+    {
+      "rank": 2,
+      "arm": "D",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 33.59960298985243,
+          "decode_ms_per_step": 14.93437613438194,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.59866887331009,
+          "decode_ms_per_step": 14.917388674803078,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.61240774393082,
+          "decode_ms_per_step": 15.036639660441628,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 33.59960298985243,
+      "decode_ms_per_step": 14.93437613438194,
+      "cache_bytes": 471367680,
+      "parameters": 500627712
+    },
+    {
+      "rank": 2,
+      "arm": "E",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 33.5565940476954,
+          "decode_ms_per_step": 14.704477992684891,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.587465062737465,
+          "decode_ms_per_step": 14.737568873291215,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.56464998796582,
+          "decode_ms_per_step": 14.714505950299403,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 33.56464998796582,
+      "decode_ms_per_step": 14.714505950299403,
+      "cache_bytes": 471367680,
+      "parameters": 500627712
+    },
+    {
+      "rank": 2,
+      "arm": "F",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 33.57601538300514,
+          "decode_ms_per_step": 14.81524445504571,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.53219199925661,
+          "decode_ms_per_step": 16.09793637180701,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.54848921298981,
+          "decode_ms_per_step": 14.865775243379176,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 33.54848921298981,
+      "decode_ms_per_step": 14.865775243379176,
+      "cache_bytes": 471367680,
+      "parameters": 500627712
+    },
+    {
+      "rank": 2,
+      "arm": "A",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 40.09114112704992,
+          "decode_ms_per_step": 20.76655925096323,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 40.079060941934586,
+          "decode_ms_per_step": 20.27425847093885,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 40.12022214010358,
+          "decode_ms_per_step": 17.32022379292175,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 40.09114112704992,
+      "decode_ms_per_step": 20.27425847093885,
+      "cache_bytes": 942735360,
+      "parameters": 596049920
+    },
+    {
+      "rank": 2,
+      "arm": "B",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 41.833993047475815,
+          "decode_ms_per_step": 16.52910595294088,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 34.42658809944987,
+          "decode_ms_per_step": 14.914364534585426,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 34.42182671278715,
+          "decode_ms_per_step": 14.8591289568382,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 34.42658809944987,
+      "decode_ms_per_step": 14.914364534585426,
+      "cache_bytes": 471367680,
+      "parameters": 566688000
+    },
+    {
+      "rank": 3,
+      "arm": "D",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 255.64707396551967,
+          "decode_ms_per_step": 15.857063136839619,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 255.64735103398561,
+          "decode_ms_per_step": 15.964451498196771,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 255.5621168576181,
+          "decode_ms_per_step": 15.908443039127937,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 255.64707396551967,
+      "decode_ms_per_step": 15.908443039127937,
+      "cache_bytes": 3770941440,
+      "parameters": 500627712
+    },
+    {
+      "rank": 3,
+      "arm": "E",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 255.66548574715853,
+          "decode_ms_per_step": 15.877943427767605,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 255.600999109447,
+          "decode_ms_per_step": 15.846420758559058,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 255.6669400073588,
+          "decode_ms_per_step": 15.745226216192046,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 255.66548574715853,
+      "decode_ms_per_step": 15.846420758559058,
+      "cache_bytes": 3770941440,
+      "parameters": 500627712
+    },
+    {
+      "rank": 3,
+      "arm": "F",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 255.3679351694882,
+          "decode_ms_per_step": 15.82848816178739,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 255.3265132009983,
+          "decode_ms_per_step": 18.459376549193014,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 255.2932258695364,
+          "decode_ms_per_step": 15.767937002237886,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 255.3265132009983,
+      "decode_ms_per_step": 15.82848816178739,
+      "cache_bytes": 3770941440,
+      "parameters": 500627712
+    },
+    {
+      "rank": 3,
+      "arm": "A",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 303.12297074124217,
+          "decode_ms_per_step": 18.768738955259323,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 303.0993929132819,
+          "decode_ms_per_step": 18.502212420571595,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 303.2154939137399,
+          "decode_ms_per_step": 21.654674298285197,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 303.12297074124217,
+      "decode_ms_per_step": 18.768738955259323,
+      "cache_bytes": 7541882880,
+      "parameters": 596049920
+    },
+    {
+      "rank": 3,
+      "arm": "B",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 261.9439857080579,
+          "decode_ms_per_step": 15.816193694869677,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 261.940476950258,
+          "decode_ms_per_step": 15.757555956952274,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 261.94863114506006,
+          "decode_ms_per_step": 18.211215792689472,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 261.9439857080579,
+      "decode_ms_per_step": 15.816193694869677,
+      "cache_bytes": 3770941440,
+      "parameters": 566688000
+    },
+    {
+      "rank": 3,
+      "arm": "C",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 296.89169209450483,
+          "decode_ms_per_step": 18.243178841657937,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 296.90601537004113,
+          "decode_ms_per_step": 18.283920459604513,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 296.8650246039033,
+          "decode_ms_per_step": 18.465547123923898,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 296.89169209450483,
+      "decode_ms_per_step": 18.283920459604513,
+      "cache_bytes": 7541882880,
+      "parameters": 529989632
+    },
+    {
+      "rank": 4,
+      "arm": "E",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 15.871142037212849,
+          "decode_ms_per_step": 14.786816881193468,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 19.818021915853024,
+          "decode_ms_per_step": 14.76314349565655,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.93687990680337,
+          "decode_ms_per_step": 14.800933131482452,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 15.93687990680337,
+      "decode_ms_per_step": 14.786816881193468,
+      "cache_bytes": 119046144,
+      "parameters": 500627712
+    },
+    {
+      "rank": 4,
+      "arm": "F",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 16.117336228489876,
+          "decode_ms_per_step": 14.995014333787063,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 16.21647272258997,
+          "decode_ms_per_step": 14.87996153688679,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.672442968934774,
+          "decode_ms_per_step": 14.905191278861215,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 16.117336228489876,
+      "decode_ms_per_step": 14.905191278861215,
+      "cache_bytes": 119046144,
+      "parameters": 500627712
+    },
+    {
+      "rank": 4,
+      "arm": "A",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 18.58039479702711,
+          "decode_ms_per_step": 17.116961535066366,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 18.223213963210583,
+          "decode_ms_per_step": 16.894933709409088,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 17.98091223463416,
+          "decode_ms_per_step": 16.927588168376435,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 18.223213963210583,
+      "decode_ms_per_step": 16.927588168376435,
+      "cache_bytes": 238092288,
+      "parameters": 596049920
+    },
+    {
+      "rank": 4,
+      "arm": "B",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 15.675154980272055,
+          "decode_ms_per_step": 14.883398757471392,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.80893388018012,
+          "decode_ms_per_step": 14.800593218145272,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.675128903239965,
+          "decode_ms_per_step": 17.416339794484276,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 15.675154980272055,
+      "decode_ms_per_step": 14.883398757471392,
+      "cache_bytes": 119046144,
+      "parameters": 566688000
+    },
+    {
+      "rank": 4,
+      "arm": "C",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 19.058747217059135,
+          "decode_ms_per_step": 19.012819160707295,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 31.80603589862585,
+          "decode_ms_per_step": 18.960390026525904,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 35.5173209682107,
+          "decode_ms_per_step": 17.854394992658246,
+          "cache_bytes": 238092288,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 31.80603589862585,
+      "decode_ms_per_step": 18.960390026525904,
+      "cache_bytes": 238092288,
+      "parameters": 529989632
+    },
+    {
+      "rank": 4,
+      "arm": "D",
+      "batch": 1,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 37.154687102884054,
+          "decode_ms_per_step": 16.28650100125621,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 16.035642940551043,
+          "decode_ms_per_step": 17.626161493050557,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 15.994241926819086,
+          "decode_ms_per_step": 15.087722082777569,
+          "cache_bytes": 119046144,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 16.035642940551043,
+      "decode_ms_per_step": 16.28650100125621,
+      "cache_bytes": 119046144,
+      "parameters": 500627712
+    },
+    {
+      "rank": 5,
+      "arm": "F",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 58.95141698420048,
+          "decode_ms_per_step": 14.958076470065862,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.90676472336054,
+          "decode_ms_per_step": 14.977335716442516,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.86924033984542,
+          "decode_ms_per_step": 15.566275804303586,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 58.90676472336054,
+      "decode_ms_per_step": 14.977335716442516,
+      "cache_bytes": 952369152,
+      "parameters": 500627712
+    },
+    {
+      "rank": 5,
+      "arm": "A",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 71.06409966945648,
+          "decode_ms_per_step": 17.53884049442907,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 71.06966804713011,
+          "decode_ms_per_step": 17.353993588282417,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 70.98860200494528,
+          "decode_ms_per_step": 17.374282780413825,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 71.06409966945648,
+      "decode_ms_per_step": 17.374282780413825,
+      "cache_bytes": 1904738304,
+      "parameters": 596049920
+    },
+    {
+      "rank": 5,
+      "arm": "B",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 60.63070893287659,
+          "decode_ms_per_step": 15.159638734379163,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 60.57538092136383,
+          "decode_ms_per_step": 15.385568762818972,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 60.6096419505775,
+          "decode_ms_per_step": 15.59878361877054,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 60.6096419505775,
+      "decode_ms_per_step": 15.385568762818972,
+      "cache_bytes": 952369152,
+      "parameters": 566688000
+    },
+    {
+      "rank": 5,
+      "arm": "C",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 69.36962530016899,
+          "decode_ms_per_step": 19.969647206986945,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 69.36675775796175,
+          "decode_ms_per_step": 17.37907874242713,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 69.32069500908256,
+          "decode_ms_per_step": 17.526553652714938,
+          "cache_bytes": 1904738304,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 69.36675775796175,
+      "decode_ms_per_step": 17.526553652714938,
+      "cache_bytes": 1904738304,
+      "parameters": 529989632
+    },
+    {
+      "rank": 5,
+      "arm": "D",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 58.9884789660573,
+          "decode_ms_per_step": 15.241674981856098,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.944891672581434,
+          "decode_ms_per_step": 15.38677525240928,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.96475585177541,
+          "decode_ms_per_step": 17.141638789325953,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 58.96475585177541,
+      "decode_ms_per_step": 15.38677525240928,
+      "cache_bytes": 952369152,
+      "parameters": 500627712
+    },
+    {
+      "rank": 5,
+      "arm": "E",
+      "batch": 8,
+      "context": 2048,
+      "repetitions": [
+        {
+          "prefill_ms": 58.97586327046156,
+          "decode_ms_per_step": 14.886488536528,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.94627096131444,
+          "decode_ms_per_step": 15.106678707525134,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 58.95440699532628,
+          "decode_ms_per_step": 14.91704499737049,
+          "cache_bytes": 952369152,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 58.95440699532628,
+      "decode_ms_per_step": 14.91704499737049,
+      "cache_bytes": 952369152,
+      "parameters": 500627712
+    },
+    {
+      "rank": 6,
+      "arm": "A",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 40.060310158878565,
+          "decode_ms_per_step": 17.7890748794501,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 40.05094990134239,
+          "decode_ms_per_step": 17.94474178071444,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 40.217972826212645,
+          "decode_ms_per_step": 17.714068409986794,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 40.060310158878565,
+      "decode_ms_per_step": 17.7890748794501,
+      "cache_bytes": 942735360,
+      "parameters": 596049920
+    },
+    {
+      "rank": 6,
+      "arm": "B",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 34.45742418989539,
+          "decode_ms_per_step": 15.398633918569734,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 34.47116632014513,
+          "decode_ms_per_step": 15.358383883722126,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 34.44052068516612,
+          "decode_ms_per_step": 15.533178908905635,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 34.45742418989539,
+      "decode_ms_per_step": 15.398633918569734,
+      "cache_bytes": 471367680,
+      "parameters": 566688000
+    },
+    {
+      "rank": 6,
+      "arm": "C",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 39.150888565927744,
+          "decode_ms_per_step": 17.807597507877897,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 39.13805680349469,
+          "decode_ms_per_step": 17.740330173789214,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 39.20491086319089,
+          "decode_ms_per_step": 17.75099061584721,
+          "cache_bytes": 942735360,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 39.150888565927744,
+      "decode_ms_per_step": 17.75099061584721,
+      "cache_bytes": 942735360,
+      "parameters": 529989632
+    },
+    {
+      "rank": 6,
+      "arm": "D",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 33.55714213103056,
+          "decode_ms_per_step": 15.411192260216922,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.61751791089773,
+          "decode_ms_per_step": 18.076162998719763,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.56231888756156,
+          "decode_ms_per_step": 15.386279711189369,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 33.56231888756156,
+      "decode_ms_per_step": 15.411192260216922,
+      "cache_bytes": 471367680,
+      "parameters": 500627712
+    },
+    {
+      "rank": 6,
+      "arm": "E",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 33.65629864856601,
+          "decode_ms_per_step": 17.97971222549677,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.54928223416209,
+          "decode_ms_per_step": 18.954975821543485,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.60582981258631,
+          "decode_ms_per_step": 15.67769948936378,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 33.60582981258631,
+      "decode_ms_per_step": 17.97971222549677,
+      "cache_bytes": 471367680,
+      "parameters": 500627712
+    },
+    {
+      "rank": 6,
+      "arm": "F",
+      "batch": 1,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 33.62071514129639,
+          "decode_ms_per_step": 16.862454048047464,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.603549003601074,
+          "decode_ms_per_step": 15.835396343997369,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 33.574716188013554,
+          "decode_ms_per_step": 15.538862343722334,
+          "cache_bytes": 471367680,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 33.603549003601074,
+      "decode_ms_per_step": 15.835396343997369,
+      "cache_bytes": 471367680,
+      "parameters": 500627712
+    },
+    {
+      "rank": 7,
+      "arm": "B",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 263.20328703150153,
+          "decode_ms_per_step": 15.493257301083455,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 263.1783480755985,
+          "decode_ms_per_step": 15.81010150645549,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 263.25929583981633,
+          "decode_ms_per_step": 15.595289781534424,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 263.20328703150153,
+      "decode_ms_per_step": 15.595289781534424,
+      "cache_bytes": 3770941440,
+      "parameters": 566688000
+    },
+    {
+      "rank": 7,
+      "arm": "C",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 298.12899930402637,
+          "decode_ms_per_step": 18.314561631996185,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 298.2064411044121,
+          "decode_ms_per_step": 18.01903611825158,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 298.1830555945635,
+          "decode_ms_per_step": 17.97559754534935,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 298.1830555945635,
+      "decode_ms_per_step": 18.01903611825158,
+      "cache_bytes": 7541882880,
+      "parameters": 529989632
+    },
+    {
+      "rank": 7,
+      "arm": "D",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 256.88320212066174,
+          "decode_ms_per_step": 15.498208716356507,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 256.94096740335226,
+          "decode_ms_per_step": 16.38870230332638,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 256.92934915423393,
+          "decode_ms_per_step": 15.733232624673596,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 256.92934915423393,
+      "decode_ms_per_step": 15.733232624673596,
+      "cache_bytes": 3770941440,
+      "parameters": 500627712
+    },
+    {
+      "rank": 7,
+      "arm": "E",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 256.9360602647066,
+          "decode_ms_per_step": 16.061005415394902,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 256.95332791656256,
+          "decode_ms_per_step": 15.721528713280955,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 257.001596968621,
+          "decode_ms_per_step": 16.787044800973188,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 256.95332791656256,
+      "decode_ms_per_step": 16.061005415394902,
+      "cache_bytes": 3770941440,
+      "parameters": 500627712
+    },
+    {
+      "rank": 7,
+      "arm": "F",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 256.6279680468142,
+          "decode_ms_per_step": 15.609707334078848,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 256.6746477968991,
+          "decode_ms_per_step": 15.61094153051575,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        },
+        {
+          "prefill_ms": 256.6299862228334,
+          "decode_ms_per_step": 15.634606844590357,
+          "cache_bytes": 3770941440,
+          "active_kv_layers": 14
+        }
+      ],
+      "prefill_ms": 256.6299862228334,
+      "decode_ms_per_step": 15.61094153051575,
+      "cache_bytes": 3770941440,
+      "parameters": 500627712
+    },
+    {
+      "rank": 7,
+      "arm": "A",
+      "batch": 8,
+      "context": 8192,
+      "repetitions": [
+        {
+          "prefill_ms": 304.5298303477466,
+          "decode_ms_per_step": 18.02697725361213,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 304.6145811676979,
+          "decode_ms_per_step": 18.01036486479764,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        },
+        {
+          "prefill_ms": 304.5579846948385,
+          "decode_ms_per_step": 18.005760910455137,
+          "cache_bytes": 7541882880,
+          "active_kv_layers": 28
+        }
+      ],
+      "prefill_ms": 304.5579846948385,
+      "decode_ms_per_step": 18.01036486479764,
+      "cache_bytes": 7541882880,
+      "parameters": 596049920
+    }
+  ],
+  "limitations": [
+    "Eager native SDPA, BF16 weights, DynamicCache; not a serving benchmark.",
+    "All consumers still perform attention; cache storage is not traffic or latency.",
+    "Synthetic IDs establish cost only; quality measured separately on real text."
+  ]
+}

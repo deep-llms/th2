@@ -1,0 +1,42 @@
+{
+  "inference-quality.json": {
+    "source": "supervised/run/inference-quality.json",
+    "sha256": "6f9a181f3c2b8c957e54e6485f96d257b428b7f2a9e06d466edc8c4080d96e04",
+    "bytes": 45152
+  },
+  "complete.json": {
+    "source": "supervised/run/complete.json",
+    "sha256": "7688f1f90556429374f2927247a2758858ae050d1446063315eb2b49c89a188a",
+    "bytes": 603
+  },
+  "supervisor.json": {
+    "source": "supervised/supervisor.json",
+    "sha256": "e44e0c2892077d4b7bf212e23d96dfc7ace64394eefff4ab06c88e0caae19f90",
+    "bytes": 4549
+  },
+  "burn-verified.json": {
+    "source": "supervised/burn-verified.json",
+    "sha256": "77cf45d9ce723009d4bdecd6b949768287ba4eba0c71c1dcba3fd49c68b633c5",
+    "bytes": 2276
+  },
+  "reclaim.json": {
+    "source": "supervised/reclaim.json",
+    "sha256": "77ec6b5968dbfa97544cc0af0882eb3a8347f2a19756a4b7b57ef266cf1a55c5",
+    "bytes": 6060
+  },
+  "gpus-free.json": {
+    "source": "supervised/gpus-free-before-training.json",
+    "sha256": "cbe945fcf7c39a5eac8a82fa2db19b744de40415f762039122647d0b3521ca5b",
+    "bytes": 1943
+  },
+  "source-manifest.json": {
+    "source": "source-manifest.json",
+    "sha256": "cc379824172e68432e140794034386be2855a56e7481062523020dbae8c7b430",
+    "bytes": 3470
+  },
+  "accelerate-env.log": {
+    "source": "accelerate-env.log",
+    "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "bytes": 797
+  }
+}

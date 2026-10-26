@@ -1,0 +1,97 @@
+{
+  "gpu-check.json": {
+    "source": "supervised/run/gpu-check.json",
+    "sha256": "88f51c405c59da5216729d4abefca446b9e3f3aa500240f88ee0496b05c98be4",
+    "bytes": 4918
+  },
+  "plan.json": {
+    "source": "supervised/run/plan.json",
+    "sha256": "3a5c14aed1bd87ae18f061b14ed0712ef3f83893968c15c9b894d9b86ed94487",
+    "bytes": 6047165
+  },
+  "summary.json": {
+    "source": "supervised/run/summary.json",
+    "sha256": "5bcfac458f0902c94f96de870f6a188bae414ba298dc7b9d66538a13c07c9eac",
+    "bytes": 161304
+  },
+  "profile.json": {
+    "source": "supervised/run/profile.json",
+    "sha256": "e7f9e7141b0cf0fa424a3eafab86a6e842c94684921c9104bd730a4a7aa6c001",
+    "bytes": 39953
+  },
+  "smoke.json": {
+    "source": "supervised/run/smoke/result.json",
+    "sha256": "8251572263eab4a99c323facd7f1082d2bc51a8f73c163e836eecf4c0314febe",
+    "bytes": 27092
+  },
+  "complete.json": {
+    "source": "supervised/run/complete.json",
+    "sha256": "87ade431cdab3efb442b72075c778aa67031425bb745b07163411bad8fad7009",
+    "bytes": 5000
+  },
+  "supervisor.json": {
+    "source": "supervised/supervisor.json",
+    "sha256": "324a511c1f48b1c0b0071b120d8577b4929c99951fc6a57814d1462172142312",
+    "bytes": 4539
+  },
+  "burn-verified.json": {
+    "source": "supervised/burn-verified.json",
+    "sha256": "31efe50e27a7c6f3d54d8cf7e5cbcb7682775137351eb1ebf7620f85e6671438",
+    "bytes": 2266
+  },
+  "reclaim.json": {
+    "source": "supervised/reclaim.json",
+    "sha256": "735eacf7ab2f038080b5a38d3c80a8cbfe4618c418fbfaa4c42c8708031a5980",
+    "bytes": 6060
+  },
+  "gpus-free.json": {
+    "source": "supervised/gpus-free-before-training.json",
+    "sha256": "17813e3adf89ae4b8fb3c5af6efc60bf2b95fe491c511a30df5a9657e5b9b718",
+    "bytes": 1943
+  },
+  "probe-manifest.json": {
+    "source": "probe/manifest.json",
+    "sha256": "d7787dbe5685aec296b45ac38e122e20bff1d16e65059f3f0a7dba347b4be0ea",
+    "bytes": 9711774
+  },
+  "source-manifest.json": {
+    "source": "source-manifest.json",
+    "sha256": "5042fa296221b8620cb79454b21431cb4516c9749adfc21ebd0ee46789838763",
+    "bytes": 3470
+  },
+  "accelerate-env.log": {
+    "source": "accelerate-env.log",
+    "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "bytes": 797
+  },
+  "A.json": {
+    "source": "supervised/run/A/result.json",
+    "sha256": "546bde083f9c45f16d44b6ea82c4c99a9c75eba33ffe8c67744e3da35cdac4c0",
+    "bytes": 29407
+  },
+  "B.json": {
+    "source": "supervised/run/B/result.json",
+    "sha256": "45eebb3ab288c2d62c7ea83848d899242873002224680cb792e4a4506c7c6296",
+    "bytes": 29412
+  },
+  "C.json": {
+    "source": "supervised/run/C/result.json",
+    "sha256": "bbc8fc7033bd6bd8438a7905a32f0f6869d9f32e38cb57449a7d21ecdba971f6",
+    "bytes": 27252
+  },
+  "D.json": {
+    "source": "supervised/run/D/result.json",
+    "sha256": "e3e45d34b729da567e41c132963e08d230256806a6050e473909e130e7bb0341",
+    "bytes": 27349
+  },
+  "E.json": {
+    "source": "supervised/run/E/result.json",
+    "sha256": "818a3c5002f009cff960fc00acfdc573ce90db688774f3624dd412f14834d0f6",
+    "bytes": 27282
+  },
+  "F.json": {
+    "source": "supervised/run/F/result.json",
+    "sha256": "7db1bcf71b047ce4b6da5491ea710b205ddc6ea5c8dcc3cec90cd16c00b250c3",
+    "bytes": 27315
+  }
+}

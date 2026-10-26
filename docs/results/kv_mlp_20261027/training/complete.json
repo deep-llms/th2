@@ -1,0 +1,172 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T21:07:36.592259+00:00",
+  "jobs": [
+    {
+      "name": "kv-mlp-gpu-gate",
+      "started_at": "2026-10-26T21:07:36.592784+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 11.980506286025047,
+      "artifacts": [
+        {
+          "path": "gpu-check.json",
+          "sha256": "88f51c405c59da5216729d4abefca446b9e3f3aa500240f88ee0496b05c98be4",
+          "bytes": 4918
+        }
+      ],
+      "finished_at": "2026-10-26T21:07:49.106953+00:00"
+    },
+    {
+      "name": "kv-mlp-calibration",
+      "started_at": "2026-10-26T21:07:49.106997+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 66.85083539085463,
+      "artifacts": [
+        {
+          "path": "plan.json",
+          "sha256": "3a5c14aed1bd87ae18f061b14ed0712ef3f83893968c15c9b894d9b86ed94487",
+          "bytes": 6047165
+        }
+      ],
+      "finished_at": "2026-10-26T21:08:56.496983+00:00"
+    },
+    {
+      "name": "kv-mlp-smoke",
+      "started_at": "2026-10-26T21:08:56.497027+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 48.17779458826408,
+      "artifacts": [
+        {
+          "path": "smoke/result.json",
+          "sha256": "8251572263eab4a99c323facd7f1082d2bc51a8f73c163e836eecf4c0314febe",
+          "bytes": 27092
+        }
+      ],
+      "finished_at": "2026-10-26T21:09:45.184394+00:00"
+    },
+    {
+      "name": "kv-mlp-A",
+      "started_at": "2026-10-26T21:09:45.184433+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 168.36356719164178,
+      "artifacts": [
+        {
+          "path": "A/result.json",
+          "sha256": "546bde083f9c45f16d44b6ea82c4c99a9c75eba33ffe8c67744e3da35cdac4c0",
+          "bytes": 29407
+        }
+      ],
+      "finished_at": "2026-10-26T21:12:34.061629+00:00"
+    },
+    {
+      "name": "kv-mlp-B",
+      "started_at": "2026-10-26T21:12:34.061672+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 159.0364171229303,
+      "artifacts": [
+        {
+          "path": "B/result.json",
+          "sha256": "45eebb3ab288c2d62c7ea83848d899242873002224680cb792e4a4506c7c6296",
+          "bytes": 29412
+        }
+      ],
+      "finished_at": "2026-10-26T21:15:13.596612+00:00"
+    },
+    {
+      "name": "kv-mlp-C",
+      "started_at": "2026-10-26T21:15:13.596648+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 160.71742471121252,
+      "artifacts": [
+        {
+          "path": "C/result.json",
+          "sha256": "bbc8fc7033bd6bd8438a7905a32f0f6869d9f32e38cb57449a7d21ecdba971f6",
+          "bytes": 27252
+        }
+      ],
+      "finished_at": "2026-10-26T21:17:54.799812+00:00"
+    },
+    {
+      "name": "kv-mlp-D",
+      "started_at": "2026-10-26T21:17:54.799850+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 151.56510648177937,
+      "artifacts": [
+        {
+          "path": "D/result.json",
+          "sha256": "e3e45d34b729da567e41c132963e08d230256806a6050e473909e130e7bb0341",
+          "bytes": 27349
+        }
+      ],
+      "finished_at": "2026-10-26T21:20:26.854210+00:00"
+    },
+    {
+      "name": "kv-mlp-E",
+      "started_at": "2026-10-26T21:20:26.854256+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 152.31951283011585,
+      "artifacts": [
+        {
+          "path": "E/result.json",
+          "sha256": "818a3c5002f009cff960fc00acfdc573ce90db688774f3624dd412f14834d0f6",
+          "bytes": 27282
+        }
+      ],
+      "finished_at": "2026-10-26T21:23:00.392984+00:00"
+    },
+    {
+      "name": "kv-mlp-F",
+      "started_at": "2026-10-26T21:23:00.393026+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 153.2431101980619,
+      "artifacts": [
+        {
+          "path": "F/result.json",
+          "sha256": "7db1bcf71b047ce4b6da5491ea710b205ddc6ea5c8dcc3cec90cd16c00b250c3",
+          "bytes": 27315
+        }
+      ],
+      "finished_at": "2026-10-26T21:25:34.159158+00:00"
+    },
+    {
+      "name": "kv-mlp-profile",
+      "started_at": "2026-10-26T21:25:34.159200+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 47.079548398032784,
+      "artifacts": [
+        {
+          "path": "profile.json",
+          "sha256": "e7f9e7141b0cf0fa424a3eafab86a6e842c94684921c9104bd730a4a7aa6c001",
+          "bytes": 39953
+        }
+      ],
+      "finished_at": "2026-10-26T21:26:21.761272+00:00"
+    },
+    {
+      "name": "kv-mlp-summary",
+      "started_at": "2026-10-26T21:26:21.761314+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 4.119058115873486,
+      "artifacts": [
+        {
+          "path": "summary.json",
+          "sha256": "5bcfac458f0902c94f96de870f6a188bae414ba298dc7b9d66538a13c07c9eac",
+          "bytes": 161304
+        }
+      ],
+      "finished_at": "2026-10-26T21:26:25.882723+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T21:26:25.882759+00:00"
+}

@@ -301,3 +301,45 @@ The dense model and reference-algebra/gradient tests, physical pruning, cached
 decoding, CE/KL normalization, and two-rank CPU recovery/save/reload pass locally.
 Source manifest includes shared validation helpers; existing GPU supervisor is
 unchanged. Actual-weight GPU gate and eight-GPU smoke precede all six arms.
+
+## KV/MLP pilot result, 27 October 2026 SGT
+
+Six matched 512-step recoveries completed; see [KV_MLP_RESULTS_20261027.md](KV_MLP_RESULTS_20261027.md).
+FP32-parameter/BF16-AMP PPL: dense A 20.03790, paired-KV B 26.22461,
+MLP-only C 21.67554, combined D 28.69731, reranked E 30.77849,
+reallocated F 32.49516. BF16-weight inference gives the same ranking and tiny
+aggregate NLL changes (maximum +0.000263 nats). Direct sharing dominates the
+quality damage; immediate recalibration does not help. It was calibrated before
+sharing recovered, so this does not rule out calibration after successful recovery.
+Do not scale this recipe or claim novel beneficial interaction from this pilot.
+One model/seed, 256 held-out prefixes, short recovery; no downstream conclusions.
+
+Training source `7abbd37`, run `6y3o-efficient-kv-mlp-20261027-a03`, completed
+05:26:25 SGT. All six have 33,554,432 tokens, identical verified per-rank sample
+order, successful checkpoint reload and no teacher gradients. Eight-GPU smoke
+and actual-weight GPU gate passed before training. Earlier a01/a02 failed gates
+before training and remain preserved. Full-model explicit-math BF16 parity is
+not accepted; same-SDPA independent decoder and FP32 explicit math pass. The
+fixed-input BF16 math checks pass across all layers; see the numerical audit.
+
+Evaluation-only source `c140449`, run `6y3o-efficient-kv-mlp-inference-20261027-a01`,
+completed 05:39:00 SGT. Burns automatically restored 05:40:11 and independently
+verified 05:42:22 (`381f1da`): workers 612725–612732, launcher 612656, source
+under that run's source/resources/llm_pretrain_burn.py; guard released.
+Observed 170 advancing cycles / 188.76 GiB collective payload per rank.
+Reinspect identities before stopping; this supersedes all previous ownership.
+No environment/driver changes. No further training queued.
+
+Verified paired step-512 interaction D−B−C+A +0.011546 nats (document CI
+[0.006544,0.018057]); E−D +0.070013; F−E +0.054275. Post-recovery per-layer
+25%-pruning sensitivities remain highly correlated (Pearson .985, Spearman .922).
+B8/8k eager SDPA decode A 18.390 ms, D 15.821 ms, paired speedup 1.162×;
+D BF16 inference PPL 43.2% higher. Shared arms halve actual KV storage. No
+useful combined quality/latency result or broad capacity-reordering evidence.
+
+Exact-file export `8809832` retrieved 29 files, all SHA256-verified against node
+receipts. Local full archive `temp/kv_mlp_results_20261027/`; durable small results
+`docs/results/kv_mlp_20261027/`. Full channel plan/document manifest retained only
+in that local archive plus node outputs; compact hashes/metadata committed.
+Large checkpoints remain on temporary B200 storage. Folder-path export was
+unsupported (empty payload), so enumerate files on this runner. commands.sh #0.

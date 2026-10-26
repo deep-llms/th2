@@ -249,6 +249,11 @@ files in this dev checkout. Use `DROPBOX_ACCESS.md` to list/download them and
 verify SHA256 plus expected result counts. Require current timestamps and the
 matching job/commit. A successful `#2` response does not prove the workload succeeded.
 
+On the 6Y3O runner (27 October 2026), passing a directory itself produced a
+zero-byte item and “No valid paths pulled”. Enumerate exact files within a
+compact result directory; do not assume recursive folder export is supported.
+Files from the same parent are grouped in one exported folder.
+
 The known operator limits are 25 MB per pulled file/log, last 20 log items,
 last 10 pulled folders, and up to 5 `#2` pulls per 10 minutes / 20 per hour.
 Confirm the current limits in `temp/INSTRUCTION.md`. Export compact results

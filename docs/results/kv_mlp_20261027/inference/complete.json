@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T21:38:24.946602+00:00",
+  "jobs": [
+    {
+      "name": "bf16-inference-quality",
+      "started_at": "2026-10-26T21:38:24.946772+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 34.66666315309703,
+      "artifacts": [
+        {
+          "path": "inference-quality.json",
+          "sha256": "6f9a181f3c2b8c957e54e6485f96d257b428b7f2a9e06d466edc8c4080d96e04",
+          "bytes": 45152
+        }
+      ],
+      "finished_at": "2026-10-26T21:39:00.390740+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T21:39:00.390778+00:00"
+}
