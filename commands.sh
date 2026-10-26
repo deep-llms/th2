@@ -1,8 +1,8 @@
 #1 +30+a
-#th2-6y3o-efficient-deployment-verify-20261026-a02
+#th2-6y3o-efficient-deployment-verify-20261026-a03
 set -euo pipefail
 python3 - <<'REMOTE'
-import ast, datetime, hashlib, json, os, socket, subprocess
+import ast, datetime, hashlib, json, os, re, socket, subprocess
 from pathlib import Path
 ROOT=Path('/mnt/local/deep-llms_th2')
 OUT=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-migration-20261026-a01')
@@ -37,8 +37,15 @@ with log.open('rb') as handle:
     head=handle.read(128*1024).decode(errors='replace')
     handle.seek(max(0,log.stat().st_size-128*1024))
     tail=handle.read().decode(errors='replace')
-ready=[json.loads(s.split(' ',1)[1]) for s in head.splitlines() if s.startswith('gpu_burn_ready ')]
-progress=[json.loads(s.split(' ',1)[1]) for s in tail.splitlines() if s.startswith('gpu_burn_progress ')]
+def burn_records(text, event):
+    return [dict(re.findall(r"([a-z_]+)=([^\s]+)", s)) for s in text.splitlines(keepends=True)
+            if s.startswith(event+' ') and s.endswith('\n')]
+ready=burn_records(head,'gpu_burn_ready')
+progress=burn_records(tail,'gpu_burn_progress')
+if {int(r['rank']) for r in ready}!=set(range(8)) or any(int(r['world_size'])!=8 or float(r['collective_probe_sum'])!=36 for r in ready):
+    raise RuntimeError('Incomplete eight-rank burn readiness')
+if len(progress)<2 or int(progress[-1]['completed_cycles'])<=int(progress[-2]['completed_cycles']) or float(progress[-1]['completed_collective_payload_gib'])<=float(progress[-2]['completed_collective_payload_gib']):
+    raise RuntimeError('Burn progress not advancing')
 emit('BURN_LOG',path=str(log),ready=ready,latest_progress=progress[-2:])
 metadata_code="import importlib.metadata as m,json,sys; names=['torch','transformers','accelerate','datasets','flash-attn','flash-attn-4']; print(json.dumps({'python':sys.executable,'versions':{n:m.version(n) for n in names if list(m.distributions(name=n))}},sort_keys=True))"
 metadata=json.loads(subprocess.check_output(['/mnt/local/conda-py311/envs/train/bin/python3.11','-c',metadata_code],text=True,timeout=60))
