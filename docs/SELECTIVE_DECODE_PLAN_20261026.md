@@ -80,3 +80,16 @@ or call the implementation accepted. Diagnose eight original documents using a
 FP32 SDPA-on-BF16-operands control, replayed reference routes, and FP32 model
 computation at identical BF16-rounded weights. Report all numerical comparisons.
 This is an investigation, not a new quality/performance acceptance threshold.
+
+The follow-up (25dc043) passed FP32 trajectory comparisons on all eight documents,
+max logit error 2.87e-5 at BF16-rounded weights. BF16 native/kernel mean NLL delta
+was +0.000420, with 129/7168 router choices different. The FP32 SDPA-on-BF16 control
+also shows per-document deviations; replaying routes does not remove all differences.
+This supports arithmetic/quantization sensitivity, not an indexing failure, without
+passing the original BF16 native gate. Kernel remains experimental.
+
+Complete the scientific screen using **diagnostic-only** speed measurement:
+preserve all per-rank comparisons and original gate failures in profile.json;
+status measured is not backend acceptance. Do not alter the kernel or threshold.
+Run retrieval on the five established native SDPA policies only. These quality
+results do not qualify the new kernel. No additional training or tuning.

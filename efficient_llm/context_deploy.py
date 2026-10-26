@@ -146,14 +146,19 @@ def distributed(a):
                 scores=cached_logits(model,ids[:,:2048],name,config,routers,2016)
                 nll=torch.nn.functional.cross_entropy(scores.flatten(0,1),target.flatten(),reduction='none')
                 compare[name]=dict(nll=nll.cpu().tolist(),predictions=scores.argmax(-1).flatten().cpu().tolist())
+            discrepancies={}
             for ref,new in [('dense','dense_kernel'),('joint_router','joint_kernel')]:
                 delta=abs(statistics.mean(compare[new]['nll'])-statistics.mean(compare[ref]['nll']))
-                if delta>.01:raise ValueError(f'BF16 cached NLL discrepancy {new}: {delta}')
-            extra=dict(rank=rank,bf16_cached_real_document=compare)
+                if delta>.01:discrepancies[new]=delta
+            extra=dict(rank=rank,bf16_cached_real_document=compare,native_nll_gate_failures=discrepancies)
+            # Preserve every rank's timing and negative checks before reporting a
+            # gate failure. Experimental timing never implies backend acceptance.
+            write(a.output.with_name(a.output.stem+f'-rank{rank}.json'),dict(results=rows,extra=extra))
         else:
             lookup=torch.load(a.inputs/'lookup.pt',weights_only=True,map_location='cpu')
             candidates=torch.tensor(lookup['candidate_ids'],device=device)
             names=['dense','local','fixed_groups','joint_router','independent_router','joint_kernel']
+            if a.reference_only:names.remove('joint_kernel')
             for i in range(rank,len(lookup['rows']),world):
                 item=lookup['rows'][i];ids=item['tokens'][None].to(device)
                 for name in names:
@@ -166,10 +171,18 @@ def distributed(a):
         parts=[None]*world
         if world>1:dist.all_gather_object(parts,(rows,extra))
         else:parts=[(rows,extra)]
+        numerical_failures=any(x and x.get('native_nll_gate_failures') for _,x in parts)
         if rank==0:
             results=[r for part,_ in parts for r in part]
             report=dict(status='passed',world_size=world,finished_utc=datetime.now(timezone.utc).isoformat(),
                 input_manifest_sha256=sha256(a.inputs/'manifest.json'),results=results,extra=[x for _,x in parts if x])
+            if a.command=='profile':
+                report.update(status='measured' if a.diagnostic_only else ('failed' if numerical_failures else 'passed'),
+                    native_nll_gate_passed=not numerical_failures,diagnostic_only=a.diagnostic_only,
+                    notes=['Native NLL tolerance remains .01 nats per document; report all failures.',
+                           'Experimental kernel timing is not an accepted drop-in BF16 backend.',
+                           'No CUDA graphs/full compilation, native full KV remains allocated.',
+                           'Whole-model eager cached decode; prefill and compilation excluded.'])
             if a.command=='retrieval':
                 if len(results)!=len(lookup['rows'])*len(names) or len({(r['case'],r['method']) for r in results})!=len(results):raise ValueError('Lookup coverage differs')
                 report['summary']={}
@@ -181,6 +194,7 @@ def distributed(a):
                             report['summary'][name][f'{length}_{depth}']=dict(correct=sum(r['correct'] for r in cell),count=len(cell),accuracy=statistics.mean(r['correct'] for r in cell))
                 report['notes']=lookup['notes']+['Synthetic eight-choice lookup; chance 12.5%; not free generation or a standard benchmark.']
             write(a.output,report);print('DEPLOY_RESULT',a.command,json.dumps(report.get('summary',results)),flush=True)
+        if numerical_failures and not a.diagnostic_only:raise ValueError('BF16 native NLL gate failed; full report preserved')
     finally:
         if dist.is_initialized():dist.destroy_process_group()
 
@@ -189,7 +203,11 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['prepare','gate','profile','retrieval'])
     for name in ('model','output'):p.add_argument('--'+name,type=Path,required=True)
     for name in ('inputs','previous-run','contract'):p.add_argument('--'+name,type=Path)
+    p.add_argument('--diagnostic-only',action='store_true',help='Profile and retain failed numerical checks; does not accept the backend')
+    p.add_argument('--reference-only',action='store_true',help='Retrieval with established SDPA paths only')
     a=p.parse_args()
+    if a.diagnostic_only and a.command!='profile':raise ValueError('Diagnostic-only flag applies to profiling')
+    if a.reference_only and a.command!='retrieval':raise ValueError('Reference-only flag applies to retrieval')
     if a.output.exists():raise ValueError('Output must be fresh')
     if a.command=='prepare':prepare(a)
     elif a.command=='gate':gate(a)

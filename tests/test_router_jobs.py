@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for
 from run_experiments import load_jobs
 
 
@@ -45,3 +45,14 @@ class RouterJobTests(unittest.TestCase):
         self.assertIn('profile',jobs[1]['argv'])
         self.assertIn('retrieval',jobs[2]['argv'])
         self.assertTrue(all('train' not in j['argv'] for j in jobs))
+
+    def test_research_does_not_accept_backend_or_use_it_for_retrieval(self):
+        for factory in (numerical_jobs_for,research_jobs_for):
+            config=factory('/model','/inputs','/accelerate.yaml',29721)
+            with tempfile.TemporaryDirectory() as tmp:
+                path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+            self.assertTrue(all(j['gpus']==list(range(8)) for j in config['jobs']))
+        jobs=config['jobs']
+        self.assertIn('--diagnostic-only',jobs[0]['argv'])
+        self.assertEqual(jobs[0]['required_outputs'][0]['json_equals']['status'],'measured')
+        self.assertIn('--reference-only',jobs[1]['argv'])

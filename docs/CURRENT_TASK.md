@@ -60,7 +60,17 @@ Next: focused eight-document BF16 diagnostic with FP32-attention control, native
 route replay, and FP32 computation at the same BF16-rounded weights. Original gate
 is not relaxed. Run 6y3o-efficient-decode-numerics-20261026-a01, session
 efficient_numerics_20261026_a01. Prior files preserved; no training.
-78 local CPU tests passed. Read-only health export is the next action.
+Numerics launch 25dc043, health f381865: all eight FP32 comparisons passed; BF16
+native/kernel mean NLL delta +0.000420, 129/7168 choices differ. Original .01
+per-document acceptance remains failed. Raw reports SHA256 verified locally in
+temp/numerics_results_20261026. No indexing/mask failure found in tested cases.
+Next run: 6y3o-efficient-selective-research-20261026-a01, session
+efficient_research_20261026_a01: diagnostic-only timings with explicit numerical
+failures preserved, then reference-only retrieval (five SDPA policies). Kernel
+remains experimental. GPU handoff remains the unchanged verified supervisor.
+Burns at latest observation: workers 601030,601031,601032,601033,601034,601035,601036,601037, launcher 600961,
+source under decode-numerics run; guard released. Reinspect before stopping.
+80 local tests across maintained suites; focused numerical-control tests passed.
 
 ## Previous verified execution and GPU ownership
 
