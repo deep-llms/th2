@@ -17,16 +17,18 @@ CPU data/score tests (4), model/2-rank training tests (8), recovery decision tes
 and infrastructure checks (56, including 8 job tests) pass.
 No environment or model architecture changes; GPU lifecycle unchanged.
 
-Submitted `6399e48` at approximately 06:53 SGT; no launch receipt in Dropbox as
-of the 06:58 SGT listing. Latest controller status remains the successful
-preflight. Do not resubmit or infer failure from this delivery delay. Keep the
-submitted command until acknowledgement, then restore #0. Training is not yet
-verified running. Timer must check this pending handoff first.
+Attempt `6399e48` failed at 06:53:25 SGT before Python, data preparation,
+output creation or any GPU operation: `git rev-parse HEAD` ran in the runner's
+source copy, which has no .git directory. This is a project shell-header mistake,
+not a controller failure. Receipt `temp/kv_recovery_launch01.log`. Removed this
+header command, set explicit project cwd, and submit a02 with a fresh output.
+Do not re-run a01. Controller acknowledged delivery; its generic OK is not
+proof that the shell or training succeeded.
 Fresh output
-`/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a01`,
+`/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02`,
 predecessor training `6y3o-efficient-kv-mlp-20261027-a03`, predecessor burn source
 `6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
-Session `efficient_kv_recovery_20261027_a01`. CPU data preparation happens before
+Session `efficient_kv_recovery_20261027_a02`. CPU data preparation happens before
 reclaim; Accelerate cache copy/env, exact worker identities and free checks are
 mandatory. Final artifacts: `supervised/run/{A,B}/result.json`, `summary.json`,
 `complete.json`, `supervised/supervisor.json`, `burn-verified.json`.

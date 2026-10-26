@@ -366,3 +366,8 @@ completed useful work. Follow-ups capped at four additional <=4096-step jobs;
 pruning is gated on recovered quality, not assumed worthwhile. Read CURRENT_TASK
 for live state and the local timer status; never claim successful delivery solely
 from a CLI enqueue receipt.
+
+Recovery launch a01 (6399e48) failed before Python/GPU work because a shell header
+used git rev-parse in the node's source-only copy, which omits .git. Removed that
+header and use explicit /mnt/local/deep-llms_th2 cwd; the checksum manifest records
+source identity. Controller OK means delivery, not job success. Use fresh a02.
