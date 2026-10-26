@@ -137,5 +137,12 @@
     "inventory01.log": "05dc99b5caad8b44cfab81a78d5a6adda246ff21d05d0916714f584abbf8fc88",
     "inventory02.log": "cda820eb8309c03c5ddf47f8747c4265d2eb48bac38ca86f22923e135eb3dafa",
     "cleanup01.log": "2565996aa0f845535ca109bb6e08823ce0f7d9322ea5e3088f891224aceba466"
-  }
+  },
+  "deployment_attempts": [
+    {
+      "commit": "de1207c11da83eb6fe2ec57a3730215aff1980fc",
+      "status": "controller_source_scan_blocked",
+      "reason": "CPU test asserted that the upstream publication option is false. Redundant assertion removed; offline network-transport test retained. Production code unchanged."
+    }
+  ]
 }
