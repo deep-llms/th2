@@ -1,7 +1,7 @@
 # Current task
 
 Status: B200 migration verified on 26 October 2026 at 09:05:45 SGT.
-Initial architecture hypothesis drafted; no model implementation or training yet.
+First joint-group diagnostic implemented and CPU-tested; preparing B200 execution.
 Working folder: `/disk/thuat/efficient_llm`.
 
 ## Objective
@@ -56,7 +56,31 @@ file, not a missing project folder. An a03/a02 log mismatch was also observed;
 its cause remains unknown, but the fresh a04 receipt establishes correct command
 delivery and deployment. No architecture experiments have been started.
 
-## Next steps
+## Current implementation and execution
+
+The user authorized implementing and running the new code after migration.
+Implementing the first screen in FIRST_ARCHITECTURE_HYPOTHESIS.md; concrete
+protocol: [JOINT_GROUP_DIAGNOSTIC.md](JOINT_GROUP_DIAGNOSTIC.md). Frozen full
+pretrained Qwen3-0.6B-Base, 6/8 and 4/8 groups, dense/static/raw-norm/projected-norm/
+joint comparisons. 64 calibration and 128 held-out single-document prefixes,
+2,048 scored tokens each. Eight-GPU inference; no backbone or router training yet.
+
+Preflight b035ebd passed: train torch 2.14.1, Transformers 5.9.0, datasets 4.8.5,
+Accelerate 1.13.0; expected eight B200s and the same burn workers. Dataset root:
+/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513. The model directory contained
+config/tokenizer only. Controller download d2ed6f0 requested the pinned original
+model.safetensors (published SHA256 cd2a512003e2f9f3cd3c32a9c3573f820bb28c940f73c57b1ddaa983d9223eba).
+Preparation must verify this before any GPU stop. Download session ended;
+actual weight hash has not yet been verified on the node.
+
+Local CPU results: 11 mechanism/scoring tests passed, including real CLI serial
+versus uneven two-rank inference; 11 reused ownership/handoff tests passed.
+Planned output: /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01.
+Use immutable source, fresh probe, copied/verified eight-GPU Accelerate config,
+GPU correctness gate, then study and automatic verified burn handoff.
+No new GPU experiment has launched at this recorded state.
+
+## Previous migration next steps (now being carried out)
 
 1. Specify model, calibration/evaluation data and fixed group budget for the
    small diagnostic in FIRST_ARCHITECTURE_HYPOTHESIS.md, using inspected local

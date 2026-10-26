@@ -59,6 +59,14 @@ or dataset for this research.
 
 ## Results and decisions
 
+26 October first diagnostic: use full pretrained Qwen3-0.6B-Base, 6/8 and 4/8
+GQA groups, frozen backbone and small disjoint English prefix probe. See
+JOINT_GROUP_DIAGNOSTIC.md. Dense SDPA execution with output masking isolates
+quality; no speedup or cache-size claim. Reused the old verified GPU supervisor
+unchanged, with its ownership/failure tests. The earlier model directory held
+only configuration/tokenizer, so acquire the exact pretrained weights through
+controller #d and verify their published hash before GPU execution.
+
 | Date (SGT) | Work | Evidence | Result | Decision |
 |---|---|---|---|---|
 | 2026-10-26 | Project initialization | CURRENT_TASK.md; PROJECT_IDEA.md | Template copied; helper code unchanged | Continue design here; no experiments yet |
