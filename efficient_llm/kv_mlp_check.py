@@ -2,16 +2,16 @@
 import argparse
 from copy import deepcopy
 from pathlib import Path
-import tempfile
 import torch
+from torch.nn import functional as F
 from transformers import DynamicCache, AutoModelForCausalLM
 from efficient_llm.kv_mlp import load_compressed, convert
 from efficient_llm.diagnostic import load_probe, write
 from efficient_llm.diagnostic_data import sha256
 
 
-def reference(model, ids):
-    """Explicit softmax attention, no SharedAttention or native attention calls."""
+def reference(model, ids, *, sdpa=False):
+    """Independent decoder algebra: explicit softmax or the same SDPA primitive."""
     h = model.model.embed_tokens(ids)
     positions = torch.arange(ids.shape[1], device=ids.device)[None]
     cos, sin = model.model.rotary_emb(h, positions)
@@ -28,18 +28,32 @@ def reference(model, ids):
             v = a.v_proj(x).view(shape).transpose(1,2)
             shared[i] = (k,v)
         k,v = shared[a.source_idx]
-        k = k.repeat_interleave(a.num_key_value_groups,1)
-        v = v.repeat_interleave(a.num_key_value_groups,1)
-        scores = (q@k.transpose(-1,-2))*a.scaling
-        mask = torch.ones(ids.shape[1],ids.shape[1],device=ids.device,dtype=torch.bool).tril()
-        probability = scores.masked_fill(~mask,-float('inf')).float().softmax(-1).to(q.dtype)
-        h = h+a.o_proj((probability@v).transpose(1,2).flatten(2))
+        if sdpa:
+            # Independent decoder algebra, same kernel as production: separates
+            # implementation errors from mixed-precision accumulation differences.
+            y = F.scaled_dot_product_attention(q,k,v,is_causal=True,
+                                               scale=a.scaling,enable_gqa=True)
+        else:
+            # SDPA autocast rounds its Q/K/V inputs, then accumulates QK and
+            # softmax in FP32. Autocasting the standalone QK matmul instead
+            # would additionally round the scores to BF16, an invalid oracle.
+            if torch.is_autocast_enabled(h.device.type):
+                dtype = torch.get_autocast_dtype(h.device.type)
+                q,k,v = (x.to(dtype) for x in (q,k,v))
+            k = k.repeat_interleave(a.num_key_value_groups,1)
+            v = v.repeat_interleave(a.num_key_value_groups,1)
+            with torch.autocast(h.device.type,enabled=False):
+                scores = (q.float()@k.float().transpose(-1,-2))*a.scaling
+                mask = torch.ones(ids.shape[1],ids.shape[1],device=ids.device,dtype=torch.bool).tril()
+                probability = scores.masked_fill(~mask,-float('inf')).softmax(-1)
+                y = (probability@v.float()).to(q.dtype)
+        h = h+a.o_proj(y.transpose(1,2).flatten(2))
         h = h+layer.mlp(layer.post_attention_layernorm(h))
     return model.lm_head(model.model.norm(h))
 
 
 def relative(a, b):
-    return float((a.float()-b.float()).norm()/b.float().norm().clamp_min(1e-12))
+    return float((a.detach().float()-b.detach().float()).norm()/b.detach().float().norm().clamp_min(1e-12))
 
 
 def cache_bytes(cache):
@@ -65,15 +79,19 @@ def main():
         expected=native(ids,use_cache=False).logits
         actual=model(ids,use_cache=False).logits
         torch.testing.assert_close(actual,expected,rtol=0,atol=0)
+        with torch.autocast('cuda',dtype=torch.bfloat16):
+            torch.testing.assert_close(model(ids,use_cache=False).logits,
+                                       native(ids,use_cache=False).logits,rtol=0,atol=0)
     del native,expected,actual
     channels=[list(range(model.config.intermediate_size*3//4))]*model.config.num_hidden_layers
     convert(model,share=True,channels=channels)
     ref=deepcopy(model)
-    for precision in ('fp32','bf16'):
+    failed=[]
+    for precision in ('fp32','bf16','bf16_same_kernel'):
         model.zero_grad(set_to_none=True);ref.zero_grad(set_to_none=True)
-        with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
+        with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision!='fp32'):
             actual=model(ids,use_cache=False).logits
-            expected=reference(ref,ids)
+            expected=reference(ref,ids,sdpa=precision=='bf16_same_kernel')
             actual.float().square().mean().backward()
             expected.float().square().mean().backward()
         errors[precision+'_logits_relative_l2']=relative(actual,expected)
@@ -86,7 +104,11 @@ def main():
         errors[precision+'_gradient_relative_l2']=float((numerator/denominator).sqrt())
         limit=.03 if precision=='bf16' else 3e-4
         if errors[precision+'_logits_relative_l2']>limit or errors[precision+'_gradient_relative_l2']>2*limit:
-            raise ValueError('Reference mismatch: '+str(errors))
+            failed.append(precision)
+        print('KV_MLP_NUMERICAL',precision,errors,flush=True)
+    if failed:
+        write(a.output,dict(status='failed',failed=failed,errors=errors))
+        raise ValueError('Reference mismatch: '+str(errors))
     del ref,expected,actual
     model.zero_grad(set_to_none=True)
     with torch.no_grad():

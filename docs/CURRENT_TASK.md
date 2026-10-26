@@ -14,7 +14,26 @@ fixed adjacent KV sharing, physical MLP pruning, calibration and matched native
 Trainer recovery on the original pretrained 28-layer Qwen. Six controlled arms,
 512 steps each, approximately 201M total recovery tokens. No large search or
 new kernel. Reuse the verified node/model/data and safe burn supervisor.
-Read-only B200 preflight submitted as 8fc914d; implementation in progress.
+Implemented in `6f346f0`: seven CPU model/training tests and 54 infrastructure
+checks pass, including a two-rank HF Trainer run and native checkpoint reload.
+Frozen-source imports pass. Runner accepted launch at approximately 04:32 SGT.
+Root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a01`,
+session `efficient_kv_mlp_20261027_a01`. CPU preparation precedes GPU reclamation;
+actual-weight gate, calibration and eight-step eight-GPU smoke gate all six arms.
+First GPU gate failed before calibration/training. FP32 relative output/gradient
+errors 4.53e-5 / 9.91e-5 passed; BF16 0.491 / 1.094 failed. Independent reference
+incorrectly rounded QK scores to BF16 under autocast, unlike SDPA's FP32
+accumulation. Correct that reference, retain all original thresholds, add direct
+BF16 native dense identity and independent same-kernel decoder/gradient checks.
+Fresh attempt a02 repeats prep and all gates; preserve a01 failure outputs.
+
+At 04:42:07 SGT (`0f078ae`), a01 burns were verified restored and advancing,
+guard released; workers 606563–606570 under launcher 606494. Burn source is
+a01/source/resources/llm_pretrain_burn.py. Reinspect before reclamation. The
+first attempt trained no arm. CPU preparation and Accelerate eight-GPU BF16
+configuration had passed; input manifest SHA256
+`d7787dbe5685aec296b45ac38e122e20bff1d16e65059f3f0a7dba347b4be0ea`.
+
 
 ## Previous authorized work completed
 

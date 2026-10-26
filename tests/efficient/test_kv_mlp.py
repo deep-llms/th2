@@ -55,6 +55,20 @@ def independent_reference(model, ids):
 
 
 class KVMlpTests(unittest.TestCase):
+    def test_bf16_independent_decoder_same_kernel(self):
+        from efficient_llm.kv_mlp_check import reference
+        model=convert(tiny(),share=True,channels=[list(range(24))]*4)
+        other=deepcopy(model);ids=torch.arange(1,19).reshape(2,9)%47
+        with torch.autocast('cpu',dtype=torch.bfloat16):
+            actual=model(ids,use_cache=False).logits
+            expected=reference(other,ids,sdpa=True)
+            torch.testing.assert_close(actual,expected,rtol=0,atol=0)
+            actual.float().square().sum().backward()
+            expected.float().square().sum().backward()
+        for (name,a),(other_name,b) in zip(model.named_parameters(),other.named_parameters()):
+            self.assertEqual(name,other_name)
+            torch.testing.assert_close(a.grad,b.grad,rtol=1e-4,atol=2e-5,msg=name)
+
     def test_dense_identity_and_shared_reference_gradients(self):
         model = tiny(); ids = torch.arange(1,19).reshape(2,9)%47
         native = Qwen3ForCausalLM._from_config(deepcopy(model.config),attn_implementation='sdpa')
