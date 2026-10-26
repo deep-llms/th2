@@ -6,7 +6,16 @@ Report times in Singapore time (SGT, UTC+8). Design: [PROJECT_IDEA.md](PROJECT_I
 [CONTEXT_BUDGET_PLAN_20261026.md](CONTEXT_BUDGET_PLAN_20261026.md), and current
 [SELECTIVE_DECODE_PLAN_20261026.md](SELECTIVE_DECODE_PLAN_20261026.md).
 
-## Completed authorized work
+## Active authorized work
+
+User approved the sink/window and compact scheduling screen in
+[WINDOW_COMPACT_PLAN_20261027.md](WINDOW_COMPACT_PLAN_20261027.md).
+Implement/test an opt-in compact kernel and compare zero/four sinks with fixed
+group assignments. Reuse frozen model and routers; no training. Preserve the
+prior failed BF16 native acceptance gate. CPU tests and B200 preparation underway;
+next launch must use the existing supervisor and verify burn handoff on any exit.
+
+## Previously completed work
 
 The user approved continuing execution/retrieval tests after the context-budget
 screen. Implemented an inference-only split-K local/global decode kernel; reused

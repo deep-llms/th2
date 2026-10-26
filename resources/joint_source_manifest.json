@@ -4,7 +4,7 @@
   "scripts/gpu_status.py": "63506e500bd24c4b105234116cd601543e1cdf5bd50c599b22550730b31c38eb",
   "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
   "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
-  "scripts/launch_group_diagnostic.py": "2469eeb3e9eee1051366e51eef3a245195cae60ac0d3fa710fbcf252b700ab58",
+  "scripts/launch_group_diagnostic.py": "95ad997844fc43ac4a2fee8de591c2049f01c693d1456f8b14d864715cf05d9c",
   "resources/llm_pretrain_burn.py": "2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174",
   "resources/accelerate_b200.yaml": "923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5",
   "resources/cx_english_20261020.json": "fcb0aa46602d67d3dcc4fa57d4d7303d51bef7f3bb5d44646b8c9d6d507b055d",
@@ -17,13 +17,14 @@
   "efficient_llm/router_pilot.py": "e9cb47d232cd18d54e81c018ec7c922fb80e789e1b7802c58e249d1446b83718",
   "efficient_llm/router_check.py": "5b865951ac38c0e007f3092d7bf81e272cd4cb71c3253d6b025dd6087f38effa",
   "efficient_llm/decode_profile.py": "35bbfdd7f55c3d8058555147b4492eb7b94420259d42f003e3be4a848753b33b",
-  "efficient_llm/context_attention.py": "3a778255a417acfe96bb4792f5fe28fadfd60b8a03ff0a1c13109425c42b7096",
+  "efficient_llm/context_attention.py": "36a1664353d8e023bf9d9e7d3e80bd7b6a0b9e4352b9efcefdf6e864de9b5539",
   "efficient_llm/context_check.py": "4a55526451858329ffff8bbad38d5fd88792fce991f059eccd1f6e0608c402de",
   "efficient_llm/context_study.py": "84b6f79e9848bbcd344c21ecfa17a349528a27aa8d0eabc6feb42add009c411b",
   "efficient_llm/context_profile.py": "02d221eb991c2c92e0e88cf0188f4a5f756e740b32a0f1849672c678f7fa1b7d",
   "efficient_llm/context_deploy.py": "66a9f7072e0b338b5dd1f34763f511d0102f111d3dca192a72cb1b0a69a9ecc8",
-  "efficient_llm/selective_decode.py": "7c6f5a7617646ac4f914fbbda36aebedee8f8fd8663b0f2f731d0fbac241198c",
+  "efficient_llm/selective_decode.py": "157551ff5501627b2f712ae4feec70b65c5493ffdd58e9a376f5a0f3c70fd956",
   "efficient_llm/lookup_probe.py": "efd31b938b4cc844454f17e6f687ef7604312e9535acc9be65e1f8685b2f05a2",
   "resources/context_fit_20261026.json": "8c50aef8228f12bdd500e560ebef9ca6e1af268c775b4eba996937e7ab11ce41",
-  "efficient_llm/decode_numerics.py": "ed0591e7de14360f070351310bd171ee0c3d07316555a085e111182b3e26a085"
+  "efficient_llm/decode_numerics.py": "ed0591e7de14360f070351310bd171ee0c3d07316555a085e111182b3e26a085",
+  "efficient_llm/window_study.py": "a2eab7f7a4e9a5f99af21f5fd4a0fbc45e91667713a9ab995aaf6a7c5503f7e1"
 }

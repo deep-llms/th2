@@ -24,6 +24,13 @@ def local_attention(module, q, k, v, *, start, window, sinks, chunk=256):
         b=min(a+chunk,q.shape[2]); end=start+b
         left=min(end,max(sinks,start+a-window+1))
         sink_end=min(sinks,end)
+        if sinks==0 and b-a==1:
+            # Pure sliding-window decode needs only a view, no concatenation or
+            # positions tensor. Keep the existing sink reference unchanged.
+            y,_=sdpa_attention_forward(module,q[:,:,a:b],k[:,:,left:end],v[:,:,left:end],None,
+                dropout=0.,scaling=module.scaling,is_causal=False)
+            pieces.append(y)
+            continue
         if left<=sink_end:
             keys=k[:,:,:end];values=v[:,:,:end];positions=torch.arange(end,device=q.device)
         else:
@@ -58,9 +65,12 @@ class ContextPolicy:
         if any(layer.self_attn.sliding_window is not None for layer in model.model.layers):
             raise ValueError('Native sliding layers are outside this contract')
         self.model,self.mode,self.window,self.sinks,self.stride=model,mode,window,sinks,stride
-        if decode_backend not in ('sdpa','triton') or (decode_backend=='triton' and mode not in ('router','reference_static','local')):
+        if decode_backend not in ('sdpa','triton','triton_compact') or (decode_backend!='sdpa' and mode not in ('router','reference_static','local')):
             raise ValueError('Selective decode supports router, reference_static or local only')
         self.decode_backend=decode_backend
+        self.keep=keep
+        if decode_backend=='triton_compact' and window+sinks>256:
+            raise ValueError('Compact backend supports <=256 local keys')
         self.groups,self.repeat=c.num_key_value_heads,c.num_attention_heads//c.num_key_value_heads
         self.masks=subset_masks(self.groups,keep,device=next(model.parameters()).device)
         self.routers,self.bank=routers,bank
@@ -146,11 +156,15 @@ class ContextPolicy:
             n,order,heads,inverse=self.orders[index]
             q=q.index_select(1,heads);k=k.index_select(1,order);v=v.index_select(1,order)
         if cache is not None:k,v=cache.update(k,v,module.layer_idx)
-        if self.decode_backend=='triton' and x.shape[1]==1:
-            from efficient_llm.selective_decode import decode
+        if self.decode_backend in ('triton','triton_compact') and x.shape[1]==1:
+            from efficient_llm.selective_decode import decode,decode_compact
             if mode=='local':selected=self.masks.new_zeros(x.shape[0],1,self.groups)
             if mode=='reference_static':selected=self.static[index].expand(x.shape[0],1,-1)
-            output=decode(q,k,v,selected[:,0],length=self.start+1,window=self.window,sinks=self.sinks,scale=module.scaling)
+            options=dict(length=self.start+1,window=self.window,sinks=self.sinks,scale=module.scaling)
+            if self.decode_backend=='triton_compact':
+                count=self.keep if mode=='router' else (0 if mode=='local' else self.orders[index][0])
+                output=decode_compact(q,k,v,selected[:,0],global_groups=count,**options)
+            else:output=decode(q,k,v,selected[:,0],**options)
         elif mode=='local' or (mode=='static' and self.orders[index][0]==0):
             output=local_attention(module,q,k,v,start=self.start,window=self.window,sinks=self.sinks)
         elif mode=='static':

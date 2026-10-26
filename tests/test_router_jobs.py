@@ -2,11 +2,23 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for
 from run_experiments import load_jobs
 
 
 class RouterJobTests(unittest.TestCase):
+    def test_window_screen_is_gated_inference_only(self):
+        config=window_jobs_for('/model','/inputs','/accelerate.yaml',29721)
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+        jobs=config['jobs']
+        self.assertEqual([j['gpus'] for j in jobs],[[0],list(range(8)),list(range(8))])
+        self.assertIn('gate',jobs[0]['argv'])
+        self.assertIn('profile',jobs[1]['argv'])
+        self.assertIn('quality',jobs[2]['argv'])
+        self.assertFalse(jobs[1]['required_outputs'][0]['json_equals']['native_backend_accepted'])
+        self.assertTrue(all('train' not in j['argv'] for j in jobs))
+
     def test_sequential_gpu_gates_and_fixed_pilot(self):
         config = router_jobs_for('/model', '/probe', '/accelerate.yaml', 29681)
         with tempfile.TemporaryDirectory() as tmp:

@@ -103,6 +103,22 @@ def research_jobs_for(model, inputs, config, port):
     return {'jobs':jobs}
 
 
+def window_jobs_for(model, inputs, config, port):
+    base=['--model',str(model),'--inputs',str(inputs)]
+    launch=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
+            '--main_process_port',str(port),'--module','efficient_llm.window_study']
+    jobs=[dict(name='window-compact-gate',gpus=[0],timeout_seconds=1800,
+        argv=['{python}','-m','efficient_llm.window_study','gate',*base,'--output','{run_dir}/gate.json'],
+        required_outputs=[dict(path='gate.json',json_equals=dict(status='passed'))])]
+    for name in ('profile','quality'):
+        expected=dict(status='measured' if name=='profile' else 'passed',world_size=8)
+        if name=='profile':expected.update(diagnostic_only=True,native_backend_accepted=False)
+        jobs.append(dict(name='window-'+name,gpus=list(range(8)),timeout_seconds=1800,
+            argv=[*launch,name,*base,'--output','{run_dir}/'+name+'.json'],
+            required_outputs=[dict(path=name+'.json',json_equals=expected)]))
+    return {'jobs':jobs}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -111,7 +127,7 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     parser.add_argument('--previous-run',type=Path)
     args = parser.parse_args()
@@ -157,7 +173,7 @@ def main():
         prepare += ["--calibration", "1024", "--evaluation", "256"]
     if args.exclude_manifest is not None:
         prepare += ["--exclude-manifest", str(args.exclude_manifest)]
-    if args.study in ('deploy','numerics','research'):
+    if args.study in ('deploy','numerics','research','window'):
         if args.previous_run is None:raise ValueError('Deployment screen requires verified prior study')
         prepare=[sys.executable,'-m','efficient_llm.context_deploy','prepare','--model',str(args.model),
             '--previous-run',str(args.previous_run),'--output',str(args.output/'inputs'),
@@ -201,8 +217,8 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for}[args.study]
-    jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study in ('deploy','numerics','research') else 'probe'), config, port), indent=2)+"\n")
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for}[args.study]
+    jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe'), config, port), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs
     load_jobs(jobs)
