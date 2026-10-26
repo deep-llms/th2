@@ -51,6 +51,28 @@ def router_jobs_for(model, probe, config, port):
     ]}
 
 
+def context_jobs_for(model, probe, config, port):
+    launch = ['{python}', '-m', 'accelerate.commands.launch', '--config_file', str(config),
+              '--main_process_port', str(port), '--module']
+    return {'jobs': [
+        {'name':'context-gpu-correctness','gpus':[0],'timeout_seconds':900,
+         'argv':['{python}','-m','efficient_llm.context_check','--model',str(model),
+                 '--probe',str(probe),'--output','{run_dir}/gpu-check.json'],
+         'required_outputs':[{'path':'gpu-check.json','json_equals':{'status':'passed'}}]},
+        {'name':'context-budget-study','gpus':list(range(8)),'timeout_seconds':5400,
+         'argv':launch+['efficient_llm.context_study','--model',str(model),'--probe',str(probe),
+             '--long-probe',str(Path(probe).parent/'long-probe'),'--output','{run_dir}/study',
+             '--keep','4','--window','128','--sinks','4','--stride','16','--steps','512','--feature-batch','256'],
+         'required_outputs':[
+             {'path':'study/training.json','json_equals':{'status':'passed','world_size':8,'steps':512}},
+             {'path':'study/evaluation.json','json_equals':{'status':'passed','world_size':8}}]},
+        {'name':'context-decode-profile','gpus':list(range(8)),'timeout_seconds':1800,
+         'argv':launch+['efficient_llm.context_profile','--model',str(model),'--study','{run_dir}/study',
+                       '--output','{run_dir}/decode-profile.json','--steps','32','--repeats','3'],
+         'required_outputs':[{'path':'decode-profile.json','json_equals':{'status':'passed','world_size':8}}]},
+    ]}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -59,13 +81,13 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     args = parser.parse_args()
     source = Path.cwd().resolve()
     if socket.gethostname() != args.host or args.output.exists():
         raise ValueError("Wrong node or existing output")
-    if args.study == "router" and (args.exclude_manifest is None or not args.exclude_manifest.is_file()):
+    if args.study in ("router", "context") and (args.exclude_manifest is None or not args.exclude_manifest.is_file()):
         raise ValueError("Router pilot requires the previous held-out probe manifest")
     if args.output.parent.resolve() != Path("/mnt/local/_outputs/deep-llms_th2"):
         raise ValueError("Require the authorized external output root")
@@ -100,11 +122,24 @@ def main():
     prepare = [sys.executable, "-m", "efficient_llm.diagnostic", "prepare", "--model", str(args.model),
         "--data-root", str(args.data_root), "--output", str(args.output/"probe"),
         "--contract", str(frozen/"resources/cx_english_20261020.json")]
-    if args.study == "router":
+    if args.study in ("router", "context"):
         prepare += ["--calibration", "1024", "--evaluation", "256"]
     if args.exclude_manifest is not None:
         prepare += ["--exclude-manifest", str(args.exclude_manifest)]
     subprocess.run(prepare, cwd=frozen, env=env, check=True)
+    if args.study == 'context':
+        subprocess.run([sys.executable,'-m','efficient_llm.diagnostic','prepare','--model',str(args.model),
+            '--data-root',str(args.data_root),'--output',str(args.output/'long-probe'),
+            '--contract',str(frozen/'resources/cx_english_20261020.json'),
+            '--length','8192','--calibration','8','--evaluation','32'],cwd=frozen,env=env,check=True)
+        short=json.loads((args.output/'probe/manifest.json').read_text())
+        long=json.loads((args.output/'long-probe/manifest.json').read_text())
+        training={r['text_sha256'] for r in short['documents']['calibration']}
+        validation={r['text_sha256'] for r in long['documents']['evaluation']}
+        if training & validation:raise ValueError('Long evaluation overlaps router fit documents')
+        overlap=validation & {r['text_sha256'] for r in short['documents']['evaluation']}
+        (args.output/'probe-overlap.json').write_text(json.dumps(dict(training_overlap=0,
+            short_long_validation_overlap=len(overlap),unused_long_calibration_documents=8),indent=2)+'\n')
     from accelerate.commands.config.config_args import default_config_file
     config = frozen/"resources/accelerate_b200.yaml"
     cached = Path(default_config_file)
@@ -130,7 +165,7 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = router_jobs_for if args.study == "router" else jobs_for
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for}[args.study]
     jobs.write_text(json.dumps(factory(args.model, args.output/"probe", config, port), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs

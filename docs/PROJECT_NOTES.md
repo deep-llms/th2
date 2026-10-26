@@ -170,3 +170,16 @@ raw data/compact learned-router weights in temp/router_results_20261026 and
 small durable reports in docs/results/router_pilot_20261026. Restore commands.sh
 to #0 after archival. Do not compare these PPL values directly to the previous
 128-document probe. Continue only after reviewing quality/cost tradeoffs.
+
+## Context-budget screen authorized, 26 October 2026 SGT
+
+Latest user requests more research and B200 tests. See CONTEXT_BUDGET_PLAN_20261026.md.
+Preserve every head's local attention, allocate half the GQA groups or layers to
+global context. Matched joint/independent full-minus-local reconstruction teachers;
+frozen backbone, reuse the proven native Trainer recipe. Compare fixed groups,
+fixed layers, periodic layers, learned routers, oracle, dense and local-only.
+Explicitly acknowledge DuoAttention/All-or-Here/On-Demand/Switch Attention overlap.
+The 2k probe is reused development data; separate 8k prefixes test longer context,
+with overlap reported. No backbone adaptation, driver or environment changes.
+Static policies execute sliced attention for actual cached-decode timing; dynamic
+references compute both branches. Full KV retained: no capacity-saving claim.

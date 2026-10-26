@@ -42,14 +42,14 @@ class FeatureDataset(Dataset):
 
 
 @torch.no_grad()
-def collect(model, tokens, directory, keep, stride, rank, world, batch_size=2):
+def collect(model, tokens, directory, keep, stride, rank, world, batch_size=2, teacher=None):
     features, costs, example_ids = [], [], []
     indices = list(range(rank, len(tokens), world))
     positions = (tokens.shape[1]-1)//stride
     if positions < 1 or not indices:
         raise ValueError("Each rank needs teacher examples")
     device = next(model.parameters()).device
-    with TeacherFeatures(model, keep, stride) as teacher:
+    with (teacher if teacher is not None else TeacherFeatures(model, keep, stride)) as teacher:
         for start in range(0, len(indices), batch_size):
             ids = indices[start:start+batch_size]
             model.model(tokens[ids, :-1].to(device), use_cache=False)
@@ -109,6 +109,53 @@ def regret_report(stats):
     return rows
 
 
+def fit_routers(model, tokens, *, output, probe, keep, stride, steps, feature_batch, rank, world, teacher=None):
+    """Shared native Trainer recipe for frozen teacher features; no backbone updates."""
+    device = next(model.parameters()).device
+    start=time.monotonic()
+    path,scales,cost_sum,n=collect(model,tokens['calibration'],output/'features',keep,stride,rank,world,teacher=teacher)
+    if world>1: dist.barrier()
+    dataset=FeatureDataset([output/'features'/f'rank-{i}.pt' for i in range(world)])
+    if n!=len(dataset) or n%(world*feature_batch):
+        raise ValueError('Feature count must divide into complete global batches')
+    routers=RouterPair(model.config.num_hidden_layers,model.config.hidden_size,
+        model.config.num_key_value_heads,keep,scales.cpu()).to(device)
+    if not torch.equal(routers.weight[0],routers.weight[1]): raise ValueError('Initial banks differ')
+    shard=torch.load(path,map_location='cpu',weights_only=True,mmap=True)
+    before=supervised_metrics(routers,shard,world)
+    collection_seconds=time.monotonic()-start
+    if rank==0: print('TEACHER_READY',json.dumps({'examples':n,'seconds':collection_seconds,'initial':before}),flush=True)
+    args=TrainingArguments(output_dir=str(output/'trainer'),per_device_train_batch_size=feature_batch,
+        max_steps=steps,learning_rate=1e-3,lr_scheduler_type='cosine',warmup_steps=max(1,round(.05*steps)),
+        optim='adamw_torch',weight_decay=.01,max_grad_norm=0.,gradient_accumulation_steps=1,
+        bf16=device.type=='cuda',use_cpu=device.type=='cpu',seed=42,data_seed=42,report_to='none',
+        dataloader_drop_last=True,dataloader_num_workers=0,dataloader_pin_memory=device.type=='cuda',
+        save_steps=max(1,steps//2),logging_steps=max(1,steps//8),logging_first_step=True,
+        ddp_find_unused_parameters=False,ddp_broadcast_buffers=False,disable_tqdm=True)
+    trainer=Trainer(model=routers,args=args,train_dataset=dataset,data_collator=default_data_collator)
+    if trainer.model_accepts_loss_kwargs: raise ValueError('Unexpected loss denominator injection')
+    result=trainer.train()
+    if trainer.state.global_step!=steps: raise ValueError('Incomplete router fit')
+    routers=trainer.accelerator.unwrap_model(trainer.model).eval()
+    after=supervised_metrics(routers,shard,world)
+    if any(p.requires_grad or p.grad is not None for p in model.parameters()):
+        raise ValueError('Frozen backbone received gradients')
+    if rank==0:
+        save_routers(routers,output/'routers.pt')
+        write(output/'training.json',dict(status='passed',steps=steps,world_size=world,
+            training_context_tokens=len(tokens['calibration'])*(tokens['calibration'].shape[1]-1),
+            feature_examples=n,feature_passes=steps*feature_batch*world/n,
+            scales=scales.cpu().tolist(),temperature=routers.temperature,router_spec=routers.spec,
+            initial=before,final=after,trainer_metrics=result.metrics,trainer_args=args.to_dict(),
+            probe_manifest_sha256=sha256(probe/'manifest.json'),routers_sha256=sha256(output/'routers.pt'),
+            feature_shards=[{'name':f'rank-{i}.pt','sha256':sha256(output/'features'/f'rank-{i}.pt')} for i in range(world)]))
+    if world>1: dist.barrier()
+    loaded=load_routers(output/'routers.pt',device)
+    for key,value in routers.state_dict().items():
+        torch.testing.assert_close(loaded.state_dict()[key],value,rtol=0,atol=0)
+    return loaded, cost_sum
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--model',type=Path,required=True); p.add_argument('--probe',type=Path,required=True)
@@ -134,47 +181,8 @@ def main():
         if world>1: dist.barrier()
         torch.manual_seed(42); torch.set_float32_matmul_precision('highest')
         model=load_model(a.model,device,torch.bfloat16 if device.type=='cuda' else torch.float32)
-        start=time.monotonic()
-        path,scales,cost_sum,n=collect(model,tokens['calibration'],a.output/'features',a.keep,a.stride,rank,world)
-        if world>1: dist.barrier()
-        dataset=FeatureDataset([a.output/'features'/f'rank-{i}.pt' for i in range(world)])
-        if n!=len(dataset) or n%(world*a.feature_batch):
-            raise ValueError('Feature count must divide into complete global batches')
-        routers=RouterPair(model.config.num_hidden_layers,model.config.hidden_size,
-            model.config.num_key_value_heads,a.keep,scales.cpu()).to(device)
-        if not torch.equal(routers.weight[0],routers.weight[1]): raise ValueError('Initial banks differ')
-        shard=torch.load(path,map_location='cpu',weights_only=True,mmap=True)
-        before=supervised_metrics(routers,shard,world)
-        collection_seconds=time.monotonic()-start
-        if rank==0: print('TEACHER_READY',json.dumps({'examples':n,'seconds':collection_seconds,'initial':before}),flush=True)
-        args=TrainingArguments(output_dir=str(a.output/'trainer'),per_device_train_batch_size=a.feature_batch,
-            max_steps=a.steps,learning_rate=1e-3,lr_scheduler_type='cosine',warmup_steps=max(1,round(.05*a.steps)),
-            optim='adamw_torch',weight_decay=.01,max_grad_norm=0.,gradient_accumulation_steps=1,
-            bf16=device.type=='cuda',use_cpu=device.type=='cpu',seed=42,data_seed=42,report_to='none',
-            dataloader_drop_last=True,dataloader_num_workers=0,dataloader_pin_memory=device.type=='cuda',
-            save_steps=max(1,a.steps//2),logging_steps=max(1,a.steps//8),logging_first_step=True,
-            ddp_find_unused_parameters=False,ddp_broadcast_buffers=False,disable_tqdm=True)
-        trainer=Trainer(model=routers,args=args,train_dataset=dataset,data_collator=default_data_collator)
-        if trainer.model_accepts_loss_kwargs: raise ValueError('Unexpected loss denominator injection')
-        result=trainer.train()
-        if trainer.state.global_step!=a.steps: raise ValueError('Incomplete router fit')
-        routers=trainer.accelerator.unwrap_model(trainer.model).eval()
-        after=supervised_metrics(routers,shard,world)
-        if any(p.requires_grad or p.grad is not None for p in model.parameters()):
-            raise ValueError('Frozen backbone received gradients')
-        if rank==0:
-            save_routers(routers,a.output/'routers.pt')
-            write(a.output/'training.json',dict(status='passed',steps=a.steps,world_size=world,
-                training_context_tokens=len(tokens['calibration'])*(tokens['calibration'].shape[1]-1),
-                feature_examples=n,feature_passes=a.steps*a.feature_batch*world/n,
-                scales=scales.cpu().tolist(),temperature=routers.temperature,router_spec=routers.spec,
-                initial=before,final=after,trainer_metrics=result.metrics,trainer_args=args.to_dict(),
-                probe_manifest_sha256=sha256(a.probe/'manifest.json'),routers_sha256=sha256(a.output/'routers.pt'),
-                feature_shards=[{'name':f'rank-{i}.pt','sha256':sha256(a.output/'features'/f'rank-{i}.pt')} for i in range(world)]))
-        if world>1: dist.barrier()
-        loaded=load_routers(a.output/'routers.pt',device)
-        for key,value in routers.state_dict().items():
-            torch.testing.assert_close(loaded.state_dict()[key],value,rtol=0,atol=0)
+        loaded, cost_sum = fit_routers(model,tokens,output=a.output,probe=a.probe,keep=a.keep,
+            stride=a.stride,steps=a.steps,feature_batch=a.feature_batch,rank=rank,world=world)
         from efficient_llm.router_check import cached_check
         cached = cached_check(model.float(), loaded, tokens['evaluation'][:1,:24].to(device))
         if device.type=='cuda': model.bfloat16()

@@ -7,9 +7,17 @@ Report times in Singapore time (SGT, UTC+8). Design documents:
 
 ## Completed work and current scope
 
-The user authorized the first diagnostic, then approved the matched 6/8-router
-pilot and cached-decode profile. Both are complete. No adaptation, sparse-kernel
-job, additional method or training continuation is queued. commands.sh is #0.
+The first diagnostic and matched 6/8-router pilot/profile are complete. The user
+now authorized more research and B200 experiments. Implementing/testing the
+[context-budget screen](CONTEXT_BUDGET_PLAN_20261026.md): keep all heads, allocate
+50% global history and use sink+recent attention elsewhere. Eight quality policies,
+two small matched router banks, and actual static-policy decode timing. No backbone
+adaptation or environment change. 74 local tests passed (50 helper + 24 ML), including both actual two-rank
+Trainer integrations. Submitting context-budget a01 via the unchanged ownership
+supervisor. Run root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-context-budget-20261026-a01`;
+session `efficient_context_20261026_a01`. Expected: GPU numerical gate, router fit
+and eight-policy 2k/8k evaluation, static cached-decode timings, automatic burn
+restoration. Verify receipts and handoff; submission is not completion.
 
 - First diagnostic: [protocol](JOINT_GROUP_DIAGNOSTIC.md),
   [results](JOINT_GROUP_RESULTS_20261026.md). Original frozen 28-layer pretrained

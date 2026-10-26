@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for
 from run_experiments import load_jobs
 
 
@@ -22,3 +22,15 @@ class RouterJobTests(unittest.TestCase):
         self.assertIn('efficient_llm.router_pilot', jobs[1]['argv'])
         self.assertEqual(jobs[1]['argv'][jobs[1]['argv'].index('--steps')+1], '512')
         self.assertIn('efficient_llm.decode_profile', jobs[2]['argv'])
+
+    def test_context_study_gates_and_budget(self):
+        config=context_jobs_for('/model','/root/probe','/accelerate.yaml',29681)
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+        jobs=config['jobs']
+        self.assertEqual([j['gpus'] for j in jobs],[[0],list(range(8)),list(range(8))])
+        self.assertIn('efficient_llm.context_check',jobs[0]['argv'])
+        self.assertIn('/root/long-probe',jobs[1]['argv'])
+        for option,value in [('--keep','4'),('--window','128'),('--steps','512')]:
+            self.assertEqual(jobs[1]['argv'][jobs[1]['argv'].index(option)+1],value)
+        self.assertIn('efficient_llm.context_profile',jobs[2]['argv'])
