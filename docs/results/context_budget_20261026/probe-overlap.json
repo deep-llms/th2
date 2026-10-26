@@ -1,0 +1,5 @@
+{
+  "training_overlap": 0,
+  "short_long_validation_overlap": 23,
+  "unused_long_calibration_documents": 8
+}

@@ -1,0 +1,57 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T11:00:49.073875+00:00",
+  "jobs": [
+    {
+      "name": "context-gpu-correctness",
+      "started_at": "2026-10-26T11:00:49.074099+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 12.980172260198742,
+      "artifacts": [
+        {
+          "path": "gpu-check.json",
+          "sha256": "ff3008f5281124afef2fb9c9a74a0238bd3211fdc4ad899be5da1ebe702343e6",
+          "bytes": 840
+        }
+      ],
+      "finished_at": "2026-10-26T11:01:02.576378+00:00"
+    },
+    {
+      "name": "context-budget-study",
+      "started_at": "2026-10-26T11:01:02.576416+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 89.22798053734004,
+      "artifacts": [
+        {
+          "path": "study/training.json",
+          "sha256": "ccdf6072a0a057bc5a8b96c11fd15a69ac1672e6b7aade52b412504301ae1c21",
+          "bytes": 7337
+        },
+        {
+          "path": "study/evaluation.json",
+          "sha256": "fd62357102ef628b3ac8b5fa7c7e3694881c3a6426898b094f892f565408caa2",
+          "bytes": 99537
+        }
+      ],
+      "finished_at": "2026-10-26T11:02:32.305825+00:00"
+    },
+    {
+      "name": "context-decode-profile",
+      "started_at": "2026-10-26T11:02:32.305869+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 60.99291935702786,
+      "artifacts": [
+        {
+          "path": "decode-profile.json",
+          "sha256": "531f58d16ae32e016f7e148cace72b33d1919ed77b268b31a95bd4950a44397f",
+          "bytes": 34383
+        }
+      ],
+      "finished_at": "2026-10-26T11:03:33.808672+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T11:03:33.808718+00:00"
+}

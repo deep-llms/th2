@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "source_commit": "81ef234603b774367b922d5e532fdc1e88424703",
+  "artifacts_sha256_verified": 13,
+  "quality_rows_verified": 16,
+  "timing_rows_verified": 40,
+  "local_tests": 74,
+  "prior_router_probe_byte_identical": true,
+  "training_validation_overlap": 0,
+  "short_long_validation_overlap": 23,
+  "all_static_policies_global_group_count": 112,
+  "all_jobs_exit_zero": true,
+  "communicating_burn_live_verified_utc": "2026-10-26T11:09:24.900370+00:00",
+  "guard_released": true,
+  "raw_local_directory": "/disk/thuat/efficient_llm/temp/context_results_20261026",
+  "health_log_sha256": "764f50d285f77753123f3606888a2e6745edaa567d4ec0784845842f13de1159"
+}

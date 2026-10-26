@@ -1,0 +1,140 @@
+{
+  "status": "passed",
+  "steps": 512,
+  "world_size": 8,
+  "training_context_tokens": 2097152,
+  "feature_examples": 131072,
+  "feature_passes": 8.0,
+  "scales": [
+    0.016799546778202057,
+    0.052503883838653564,
+    0.21364624798297882,
+    0.507605791091919,
+    0.24138009548187256,
+    0.12848210334777832,
+    0.5829313397407532,
+    0.2074931412935257,
+    1.0669289827346802,
+    0.8571169972419739,
+    0.6241741180419922,
+    2.867624044418335,
+    1.4881700277328491,
+    2.3664448261260986,
+    2.243412494659424,
+    2.1482276916503906,
+    11.033122062683105,
+    6.2966132164001465,
+    15.307574272155762,
+    21.498516082763672,
+    27.358036041259766,
+    90.8415756225586,
+    47.38849639892578,
+    47.33466339111328,
+    131.85345458984375,
+    175.78945922851562,
+    255.6685028076172,
+    5.5046281814575195
+  ],
+  "temperature": 0.5,
+  "router_spec": {
+    "layers": 28,
+    "hidden": 1024,
+    "groups": 8,
+    "keep": 4,
+    "temperature": 0.5,
+    "seed": 42
+  },
+  "initial": {
+    "joint": {
+      "cross_entropy": 5.7119349012294895,
+      "target_entropy": 3.655969861288557,
+      "kl": 2.0559650399409324,
+      "top1_agreement": 0.011633736746651786,
+      "normalized_cost_regret": 1.6353871777551432,
+      "layer_positions": 3670016
+    },
+    "independent": {
+      "cross_entropy": 5.711883584547787,
+      "target_entropy": 3.6416952905245807,
+      "kl": 2.070188294023207,
+      "top1_agreement": 0.011721202305385045,
+      "normalized_cost_regret": 1.6386712970328254,
+      "layer_positions": 3670016
+    }
+  },
+  "final": {
+    "joint": {
+      "cross_entropy": 3.8661444074993816,
+      "target_entropy": 3.655969861288557,
+      "kl": 0.21017454621082468,
+      "top1_agreement": 0.3742168971470424,
+      "normalized_cost_regret": 0.10442374266863855,
+      "layer_positions": 3670016
+    },
+    "independent": {
+      "cross_entropy": 3.849925358736087,
+      "target_entropy": 3.6416952905245807,
+      "kl": 0.20823006821150614,
+      "top1_agreement": 0.38414628165108816,
+      "normalized_cost_regret": 0.10058503021812937,
+      "layer_positions": 3670016
+    }
+  },
+  "trainer_metrics": {
+    "train_runtime": 5.8854,
+    "train_samples_per_second": 178165.924,
+    "train_steps_per_second": 86.995,
+    "train_loss": 7.877568654716015,
+    "epoch": 8.0
+  },
+  "probe_manifest_sha256": "b9cf5ddd3517237a6ca874053d03fba66af3728f6a984af21e1fb383ed40c450",
+  "routers_sha256": "26e87fceff6e55f2b659f0cc1d7d4efba3a838195907f3e48ea6755b0273201c",
+  "feature_shards": [
+    {
+      "name": "rank-0.pt",
+      "sha256": "d87b0884edb25942bf53d89217f830fcd72c99b1799c716f62ac9538c65d537e"
+    },
+    {
+      "name": "rank-1.pt",
+      "sha256": "332760954e7f39d7d88973b670ca96e20f41a27bf4eb33ab56996482fa52a2bf"
+    },
+    {
+      "name": "rank-2.pt",
+      "sha256": "06b3990602c3370f7d75891e5755e87eaa84861f6a106f83b293fa513214238e"
+    },
+    {
+      "name": "rank-3.pt",
+      "sha256": "4ec5e685c19657772d33db892bdfe284c35cb6dacd083f2fa26255bda08d2221"
+    },
+    {
+      "name": "rank-4.pt",
+      "sha256": "3da6a02068d64cdd7ef9e7f333831ddd08f22a2c41c5f4ec456b3e5e74d3dfb0"
+    },
+    {
+      "name": "rank-5.pt",
+      "sha256": "47da4de6405d4504958e9561835785d08b975ed94fcd29623f9afa32725a27d3"
+    },
+    {
+      "name": "rank-6.pt",
+      "sha256": "b44d7cbea30ad20effd192da2244dda368c07b1377a39c440c067082e1b9af5d"
+    },
+    {
+      "name": "rank-7.pt",
+      "sha256": "95f8e4bcc6abe048e336175264e937561a46184cd3609261f21e206048e1fd3f"
+    }
+  ],
+  "recipe": {
+    "max_steps": 512,
+    "per_device_train_batch_size": 256,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.001,
+    "lr_scheduler_type": "cosine",
+    "warmup_steps": 26,
+    "weight_decay": 0.01,
+    "max_grad_norm": 0.0,
+    "seed": 42,
+    "data_seed": 42,
+    "bf16": true,
+    "optim": "adamw_torch"
+  }
+}

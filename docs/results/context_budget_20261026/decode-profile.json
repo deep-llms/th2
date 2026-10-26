@@ -1,0 +1,1256 @@
+{
+  "status": "passed",
+  "world_size": 8,
+  "backend": "native_sdpa",
+  "precision": "bf16",
+  "config_sha256": "a48106f8093946adcf985a8b4333ee71060797b9dfc3882d0be50e8f5f86e7b0",
+  "results": [
+    {
+      "rank": 0,
+      "batch": 1,
+      "context": 2048,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 691.6317138671875,
+          "wall_ms": 691.6755493730307,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 690.8641357421875,
+          "wall_ms": 690.905662253499,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 706.5879516601562,
+          "wall_ms": 706.7889743484557,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.614860917907208,
+      "tokens_per_second": 46.264466091083314,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 0,
+      "batch": 1,
+      "context": 2048,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 660.1307373046875,
+          "wall_ms": 660.2808833122253,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 660.3399658203125,
+          "wall_ms": 660.3869600221515,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 661.713623046875,
+          "wall_ms": 661.7585723288357,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.637092500692233,
+      "tokens_per_second": 48.45643832659358,
+      "speedup_vs_dense": 1.0473791750064685,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 0,
+      "batch": 1,
+      "context": 2048,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 859.0401000976562,
+          "wall_ms": 859.0850052423775,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 862.7163696289062,
+          "wall_ms": 862.763409037143,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 856.3992919921875,
+          "wall_ms": 856.4476063475013,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 26.846406413824297,
+      "tokens_per_second": 37.24893323096903,
+      "speedup_vs_dense": 0.8051305111278075,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 0,
+      "batch": 1,
+      "context": 2048,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 695.7051391601562,
+          "wall_ms": 695.7507650367916,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 692.1414794921875,
+          "wall_ms": 692.187128122896,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 731.0116577148438,
+          "wall_ms": 731.0569919645786,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.742211407399736,
+      "tokens_per_second": 45.99348158576272,
+      "speedup_vs_dense": 0.9941427076065875,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 0,
+      "batch": 1,
+      "context": 2048,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 694.3753051757812,
+          "wall_ms": 694.4198599085212,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 695.3936767578125,
+          "wall_ms": 695.4390942119062,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 799.3225708007812,
+          "wall_ms": 799.6942647732794,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.73247169412207,
+      "tokens_per_second": 46.01409421232412,
+      "speedup_vs_dense": 0.9945882466628648,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 1,
+      "batch": 8,
+      "context": 2048,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 667.6480102539062,
+          "wall_ms": 667.6954817958176,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 675.8028564453125,
+          "wall_ms": 675.8738658390939,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 757.2926635742188,
+          "wall_ms": 757.3523633182049,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.121058307471685,
+      "tokens_per_second": 378.7688989604256,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 1,
+      "batch": 8,
+      "context": 2048,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 645.03515625,
+          "wall_ms": 645.0846921652555,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 648.31494140625,
+          "wall_ms": 648.384131025523,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 644.7734985351562,
+          "wall_ms": 644.8298539035022,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.158896630164236,
+      "tokens_per_second": 396.8471165246916,
+      "speedup_vs_dense": 1.0477288859087528,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 1,
+      "batch": 8,
+      "context": 2048,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 840.513916015625,
+          "wall_ms": 840.5670607462525,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 827.2000732421875,
+          "wall_ms": 827.2521728649735,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 828.1314086914062,
+          "wall_ms": 828.1983882188797,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 25.88119963183999,
+      "tokens_per_second": 309.10468269631946,
+      "speedup_vs_dense": 0.8160772532926871,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 1,
+      "batch": 8,
+      "context": 2048,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 673.0513916015625,
+          "wall_ms": 673.1003918685019,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 677.2544555664062,
+          "wall_ms": 677.4134254083037,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 672.45263671875,
+          "wall_ms": 672.503441106528,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.034387245890684,
+      "tokens_per_second": 380.32959584134755,
+      "speedup_vs_dense": 1.0041204462277804,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 1,
+      "batch": 8,
+      "context": 2048,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 677.5973510742188,
+          "wall_ms": 677.666172850877,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 677.4024658203125,
+          "wall_ms": 677.4505130015314,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 732.5007934570312,
+          "wall_ms": 732.5628041289747,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.177067901589908,
+      "tokens_per_second": 377.7671223030543,
+      "speedup_vs_dense": 0.9973551771010746,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 2,
+      "batch": 1,
+      "context": 8192,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 694.4567260742188,
+          "wall_ms": 694.4910068996251,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 698.51611328125,
+          "wall_ms": 698.5501213930547,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 696.1067504882812,
+          "wall_ms": 696.1449170485139,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.75452865776606,
+      "tokens_per_second": 45.96744042271006,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 2,
+      "batch": 1,
+      "context": 8192,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 664.0693359375,
+          "wall_ms": 664.1185046173632,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 666.5067138671875,
+          "wall_ms": 666.564610786736,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 667.6731567382812,
+          "wall_ms": 667.7217101678252,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.8301440870855,
+      "tokens_per_second": 48.007349148390716,
+      "speedup_vs_dense": 1.0443772528320467,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 2,
+      "batch": 1,
+      "context": 8192,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 879.0310668945312,
+          "wall_ms": 879.0691569447517,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 1017.4990234375,
+          "wall_ms": 1017.554759979248,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 865.593994140625,
+          "wall_ms": 865.6418859027326,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 27.470911154523492,
+      "tokens_per_second": 36.402141682706265,
+      "speedup_vs_dense": 0.7919114344404937,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 2,
+      "batch": 1,
+      "context": 8192,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 695.427001953125,
+          "wall_ms": 695.4755871556699,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 758.4223022460938,
+          "wall_ms": 758.4675722755492,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 696.9946899414062,
+          "wall_ms": 697.0404209569097,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.782513154903427,
+      "tokens_per_second": 45.90838499160468,
+      "speedup_vs_dense": 0.9987152769316212,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 2,
+      "batch": 1,
+      "context": 8192,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 694.7296142578125,
+          "wall_ms": 694.7783078067005,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 695.6177368164062,
+          "wall_ms": 695.6637571565807,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 702.3818359375,
+          "wall_ms": 702.427193056792,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.739492411143146,
+      "tokens_per_second": 45.99923407077452,
+      "speedup_vs_dense": 1.0006916558279533,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 3,
+      "batch": 8,
+      "context": 8192,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 1055.738525390625,
+          "wall_ms": 1055.7822063565254,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 1055.64306640625,
+          "wall_ms": 1055.680404882878,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 1054.96240234375,
+          "wall_ms": 1054.9998576752841,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 32.99001265258994,
+      "tokens_per_second": 242.4976335791719,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 3,
+      "batch": 8,
+      "context": 8192,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 648.6035766601562,
+          "wall_ms": 648.6695469357073,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 647.5792236328125,
+          "wall_ms": 647.6392420008779,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 641.8535766601562,
+          "wall_ms": 641.9036979787052,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.238726312527433,
+      "tokens_per_second": 395.28179177205106,
+      "speedup_vs_dense": 1.6300439139872984,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 3,
+      "batch": 8,
+      "context": 8192,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 1021.6190185546875,
+          "wall_ms": 1021.6834601014853,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 925.3824462890625,
+          "wall_ms": 925.4187811166048,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 924.721435546875,
+          "wall_ms": 924.7572631575167,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 28.9193369098939,
+      "tokens_per_second": 276.63151561621856,
+      "speedup_vs_dense": 1.1407596500355226,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 3,
+      "batch": 8,
+      "context": 8192,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 682.0359497070312,
+          "wall_ms": 682.077094912529,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 681.4437866210938,
+          "wall_ms": 681.4762749709189,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 678.7103271484375,
+          "wall_ms": 678.7441070191562,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.296133592841215,
+      "tokens_per_second": 375.6550439131934,
+      "speedup_vs_dense": 1.549108081463185,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 3,
+      "batch": 8,
+      "context": 8192,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 681.0809326171875,
+          "wall_ms": 681.1161609366536,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 682.5065307617188,
+          "wall_ms": 682.5375868938863,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 679.9285278320312,
+          "wall_ms": 679.9593479372561,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.284880029270425,
+      "tokens_per_second": 375.85365710300476,
+      "speedup_vs_dense": 1.5499271129187908,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 4,
+      "batch": 1,
+      "context": 2048,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 693.47314453125,
+          "wall_ms": 693.5231452807784,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 695.6328735351562,
+          "wall_ms": 695.6819007173181,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 696.3394165039062,
+          "wall_ms": 696.4952149428427,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.74005939741619,
+      "tokens_per_second": 45.99803439906196,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 4,
+      "batch": 1,
+      "context": 2048,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 659.6212158203125,
+          "wall_ms": 659.6708460710943,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 664.5068969726562,
+          "wall_ms": 664.5603198558092,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 659.0298461914062,
+          "wall_ms": 659.0756219811738,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.614713939721696,
+      "tokens_per_second": 48.50904082026278,
+      "speedup_vs_dense": 1.0545894287441995,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 4,
+      "batch": 1,
+      "context": 2048,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 859.3006591796875,
+          "wall_ms": 859.3520461581647,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 861.8027954101562,
+          "wall_ms": 861.8623949587345,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 899.9509887695312,
+          "wall_ms": 900.0106928870082,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 26.933199842460454,
+      "tokens_per_second": 37.12889689488325,
+      "speedup_vs_dense": 0.8071844238553034,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 4,
+      "batch": 1,
+      "context": 2048,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 696.6064453125,
+          "wall_ms": 696.6586862690747,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 695.6383056640625,
+          "wall_ms": 695.7003828138113,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 802.7711791992188,
+          "wall_ms": 802.8330551460385,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.770583945908584,
+      "tokens_per_second": 45.93354052810941,
+      "speedup_vs_dense": 0.9985978994147223,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 4,
+      "batch": 1,
+      "context": 2048,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 698.3357543945312,
+          "wall_ms": 698.3857927843928,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 698.379638671875,
+          "wall_ms": 698.4413680620492,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 696.5806884765625,
+          "wall_ms": 696.660194080323,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.824556024512276,
+      "tokens_per_second": 45.81994698434409,
+      "speedup_vs_dense": 0.9961283690261015,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 5,
+      "batch": 8,
+      "context": 2048,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 663.7320556640625,
+          "wall_ms": 663.7760037556291,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 669.607177734375,
+          "wall_ms": 669.6478291414678,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 669.4320678710938,
+          "wall_ms": 669.5765173062682,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.92426616582088,
+      "tokens_per_second": 382.33120992638413,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 5,
+      "batch": 8,
+      "context": 2048,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 644.4002685546875,
+          "wall_ms": 644.4514989852905,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 642.1869506835938,
+          "wall_ms": 642.2320539131761,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 643.888671875,
+          "wall_ms": 643.9396771602333,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.12311491125729,
+      "tokens_per_second": 397.55276632270454,
+      "speedup_vs_dense": 1.0398124871868326,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 5,
+      "batch": 8,
+      "context": 2048,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 831.3952026367188,
+          "wall_ms": 831.4585061743855,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 836.9282836914062,
+          "wall_ms": 836.9778180494905,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 831.503662109375,
+          "wall_ms": 831.5453128889203,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 25.98579102777876,
+      "tokens_per_second": 307.8605531556848,
+      "speedup_vs_dense": 0.8052195195232996,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 5,
+      "batch": 8,
+      "context": 2048,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 675.35888671875,
+          "wall_ms": 675.500453915447,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 671.0994262695312,
+          "wall_ms": 671.1507197469473,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 767.193359375,
+          "wall_ms": 767.2471920959651,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.10938918485772,
+      "tokens_per_second": 378.9782797570759,
+      "speedup_vs_dense": 0.9912302995877479,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 5,
+      "batch": 8,
+      "context": 2048,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 676.5811767578125,
+          "wall_ms": 676.6189029440284,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 676.1160278320312,
+          "wall_ms": 676.1757670901716,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 716.7315673828125,
+          "wall_ms": 716.7770122177899,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.144340717000887,
+      "tokens_per_second": 378.35182979092286,
+      "speedup_vs_dense": 0.9895917988588286,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 6,
+      "batch": 1,
+      "context": 8192,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 704.9165649414062,
+          "wall_ms": 704.9486967734993,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 708.27001953125,
+          "wall_ms": 708.3291062153876,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 715.9240112304688,
+          "wall_ms": 715.9592127427459,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 22.135284569230862,
+      "tokens_per_second": 45.17674018928356,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 6,
+      "batch": 1,
+      "context": 8192,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 673.623779296875,
+          "wall_ms": 673.7723941914737,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 679.6895141601562,
+          "wall_ms": 679.7447539865971,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 678.6663208007812,
+          "wall_ms": 678.7120955996215,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.209752987488173,
+      "tokens_per_second": 47.14812098895773,
+      "speedup_vs_dense": 1.0436370749951058,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 6,
+      "batch": 1,
+      "context": 8192,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 879.9089965820312,
+          "wall_ms": 879.9626640975475,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 1023.3179931640625,
+          "wall_ms": 1023.3762767165899,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 879.5877075195312,
+          "wall_ms": 879.6307817101479,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 27.49883325304836,
+      "tokens_per_second": 36.365179234982485,
+      "speedup_vs_dense": 0.8049535907774222,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 6,
+      "batch": 1,
+      "context": 8192,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 710.6539916992188,
+          "wall_ms": 710.7238518074155,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 707.2650146484375,
+          "wall_ms": 707.3313840664923,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 784.5487670898438,
+          "wall_ms": 784.5921171829104,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 22.210120368981734,
+      "tokens_per_second": 45.02451960578217,
+      "speedup_vs_dense": 0.9966305540669025,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 6,
+      "batch": 1,
+      "context": 8192,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 710.569091796875,
+          "wall_ms": 710.6188940815628,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 715.5032958984375,
+          "wall_ms": 715.5616371892393,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 715.7847900390625,
+          "wall_ms": 715.8447378315032,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 22.361301162163727,
+      "tokens_per_second": 44.720116810198974,
+      "speedup_vs_dense": 0.9898925115629991,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 7,
+      "batch": 8,
+      "context": 8192,
+      "method": "dense",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 1057.41357421875,
+          "wall_ms": 1057.4489911086857,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 1056.375732421875,
+          "wall_ms": 1056.4129911363125,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 1057.97509765625,
+          "wall_ms": 1058.0135360360146,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 33.04528097214643,
+      "tokens_per_second": 242.09205564761663,
+      "speedup_vs_dense": 1.0,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 7,
+      "batch": 8,
+      "context": 8192,
+      "method": "local",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 737.2323608398438,
+          "wall_ms": 737.2795799747109,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 635.1112060546875,
+          "wall_ms": 635.1591781713068,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 634.2702026367188,
+          "wall_ms": 634.3196630477905,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 19.84872431785334,
+      "tokens_per_second": 403.04857238629876,
+      "speedup_vs_dense": 1.6648566649909677,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 7,
+      "batch": 8,
+      "context": 8192,
+      "method": "fixed_groups",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 924.317626953125,
+          "wall_ms": 924.3581993505359,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 923.8063354492188,
+          "wall_ms": 923.843206372112,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 924.5499877929688,
+          "wall_ms": 924.6006133034825,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 28.886193729704246,
+      "tokens_per_second": 276.94891458729785,
+      "speedup_vs_dense": 1.14398183718353,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 7,
+      "batch": 8,
+      "context": 8192,
+      "method": "fixed_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 679.9186401367188,
+          "wall_ms": 679.9543099477887,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 671.6226196289062,
+          "wall_ms": 671.6624647378922,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 673.4671630859375,
+          "wall_ms": 673.5012549906969,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 21.04691421845928,
+      "tokens_per_second": 380.10322639047814,
+      "speedup_vs_dense": 1.5700772393115916,
+      "gpu": "NVIDIA B200"
+    },
+    {
+      "rank": 7,
+      "batch": 8,
+      "context": 8192,
+      "method": "periodic_layers",
+      "steps": 32,
+      "repetitions": [
+        {
+          "cuda_interval_ms": 669.5357055664062,
+          "wall_ms": 669.5691016502678,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 670.5894165039062,
+          "wall_ms": 670.6235553137958,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        },
+        {
+          "cuda_interval_ms": 672.3802490234375,
+          "wall_ms": 672.4113039672375,
+          "attention_core_ms": null,
+          "sdpa_calls": null
+        }
+      ],
+      "median_ms_per_step": 20.95698610355612,
+      "tokens_per_second": 381.7342799422149,
+      "speedup_vs_dense": 1.5768145671738119,
+      "gpu": "NVIDIA B200"
+    }
+  ],
+  "notes": [
+    "Whole-model cached decode, includes projections/MLPs/logits and policy Python overhead.",
+    "Fresh StaticCache per repetition; full KV allocation retained; synthetic teacher-forced token IDs.",
+    "Policy order rotates per repetition/rank; one full warmup per policy; no collectives during timing.",
+    "Eager Hugging Face implementation, no CUDA graphs/compilation; not optimized-serving throughput.",
+    "Only static policies execute selective full/local attention; learned routers are not timed."
+  ]
+}

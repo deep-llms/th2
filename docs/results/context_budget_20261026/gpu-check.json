@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "fp32_errors": {
+    "teacher_identity": 0.0,
+    "static_execution": 0.0,
+    "local_causal": 0.00015926361083984375,
+    "local_dynamic": 0.00015926361083984375,
+    "local_static": 0.00015926361083984375,
+    "static_causal": 0.00015926361083984375,
+    "static_dynamic": 0.00015926361083984375,
+    "static_static": 0.00015926361083984375,
+    "oracle_causal": 0.00015926361083984375,
+    "oracle_dynamic": 0.00015926361083984375,
+    "oracle_static": 0.00015926361083984375,
+    "router0_causal": 0.00015926361083984375,
+    "router0_dynamic": 0.00015926361083984375,
+    "router0_static": 0.00015926361083984375,
+    "router1_causal": 0.00015926361083984375,
+    "router1_dynamic": 0.00015926361083984375,
+    "router1_static": 0.00015926361083984375
+  },
+  "bf16_finite": true,
+  "backend": "native_sdpa"
+}

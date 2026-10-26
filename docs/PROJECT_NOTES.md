@@ -183,3 +183,31 @@ The 2k probe is reused development data; separate 8k prefixes test longer contex
 with overlap reported. No backbone adaptation, driver or environment changes.
 Static policies execute sliced attention for actual cached-decode timing; dynamic
 references compute both branches. Full KV retained: no capacity-saving claim.
+
+## Context-budget result, 26 October 2026 SGT
+
+[Results](CONTEXT_BUDGET_RESULTS_20261026.md). Frozen original Qwen3, half the GQA
+groups global; the rest keep sink+recent local attention. Learned joint PPL 19.1899
+versus dense 18.9674 on the identical 2k development probe (+1.17%); 15.3083 versus
+14.9860 on 32 long 8k prefixes (+2.15%). This is much better than whole-head removal,
+but is not an equal-latency comparison. Independent router 19.2066/15.3270: joint
+supervision has a small extra gain, not a strong standalone novelty claim.
+
+Actual static grouped execution is 1.142× faster at batch8/context8k, with 3.52%
+higher PPL, and slower in the smaller cases. Whole-layer allocation is 1.560× faster
+there but has 11.45% higher PPL. Learned policy still computes both branches for
+quality; no learned speed or KV capacity saving is demonstrated. Next useful gate
+is efficient execution and retrieval preservation, not a large training sweep.
+Closest existing local/global methods are explicitly acknowledged in the plan.
+
+Source/launch 81ef234, run 6y3o-efficient-context-budget-20261026-a01; all jobs zero
+exit by 19:03:33 SGT. Burns restored/verified 19:04:39 and independently healthy
+19:09:24, guard released. Workers 597076–597083, launcher 597007 at observation;
+burn source under this run's immutable source/resources/llm_pretrain_burn.py.
+Reinspect before stopping. This supersedes earlier burn ownership records.
+
+74 local tests + GPU gates passed. Thirteen exported files independently SHA256
+verified. Raw results/router weights in temp/context_results_20261026; durable
+reports in docs/results/context_budget_20261026. Short probe byte-identical to prior
+pilot; 23 of the 32 long validation documents also occur in short validation.
+No fitting/validation document overlap. commands.sh #0, no further queue.
