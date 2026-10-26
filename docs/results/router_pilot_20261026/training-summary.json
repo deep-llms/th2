@@ -1,0 +1,147 @@
+{
+  "status": "passed",
+  "steps": 512,
+  "world_size": 8,
+  "training_context_tokens": 2097152,
+  "feature_examples": 131072,
+  "feature_passes": 8.0,
+  "scales": [
+    3.134676694869995,
+    0.7954303026199341,
+    1.096760869026184,
+    2.865039348602295,
+    3.4444172382354736,
+    5.842452526092529,
+    5.465900897979736,
+    4.65805196762085,
+    7.631733417510986,
+    12.166358947753906,
+    8.995514869689941,
+    32.27801513671875,
+    13.011219024658203,
+    11.418722152709961,
+    20.860671997070312,
+    29.184226989746094,
+    43.03986358642578,
+    65.04002380371094,
+    99.25139617919922,
+    154.99517822265625,
+    235.83895874023438,
+    336.1493835449219,
+    307.87353515625,
+    395.6504211425781,
+    698.6901245117188,
+    719.8443603515625,
+    2635.90087890625,
+    1276.57421875
+  ],
+  "temperature": 0.5,
+  "router_spec": {
+    "layers": 28,
+    "hidden": 1024,
+    "groups": 8,
+    "keep": 6,
+    "temperature": 0.5,
+    "seed": 42
+  },
+  "initial": {
+    "joint": {
+      "cross_entropy": 4.554839004604754,
+      "target_entropy": 2.7592158730825527,
+      "kl": 1.795623131522202,
+      "top1_agreement": 0.03359903608049665,
+      "normalized_cost_regret": 1.265885514270964,
+      "layer_positions": 3670016
+    },
+    "independent": {
+      "cross_entropy": 4.551539839739576,
+      "target_entropy": 2.7667851043053355,
+      "kl": 1.78475473543424,
+      "top1_agreement": 0.03359276907784598,
+      "normalized_cost_regret": 1.2449989327374895,
+      "layer_positions": 3670016
+    }
+  },
+  "final": {
+    "joint": {
+      "cross_entropy": 2.8957135891713546,
+      "target_entropy": 2.7592158730825527,
+      "kl": 0.13649771608880204,
+      "top1_agreement": 0.49235098702566965,
+      "normalized_cost_regret": 0.08757372189733628,
+      "layer_positions": 3670016
+    },
+    "independent": {
+      "cross_entropy": 2.901467433889098,
+      "target_entropy": 2.7667851043053355,
+      "kl": 0.13468232958376194,
+      "top1_agreement": 0.4908308301653181,
+      "normalized_cost_regret": 0.08566648191425856,
+      "layer_positions": 3670016
+    }
+  },
+  "trainer_metrics": {
+    "train_runtime": 4.8487,
+    "train_samples_per_second": 216257.075,
+    "train_steps_per_second": 105.594,
+    "train_loss": 5.940758468583226,
+    "epoch": 8.0
+  },
+  "probe_manifest_sha256": "b9cf5ddd3517237a6ca874053d03fba66af3728f6a984af21e1fb383ed40c450",
+  "routers_sha256": "9c9c1b7394cc53728263bf82b1faf9f3fbbd9c07a61ac541edc41d29bb7c40a8",
+  "feature_shards": [
+    {
+      "name": "rank-0.pt",
+      "sha256": "a61c424f6973eb7bde06f2b66ebc335fcc6569bcaf2c9ef5ae9d90d0bf08c832"
+    },
+    {
+      "name": "rank-1.pt",
+      "sha256": "c365b91583833a4036118cf1cafbee525ae2aafd65c0acb0a886c360bf54749d"
+    },
+    {
+      "name": "rank-2.pt",
+      "sha256": "acca205746ceabdad723c03b672c72092ea5432764734619078e6aa47e6cc515"
+    },
+    {
+      "name": "rank-3.pt",
+      "sha256": "87bfbf85c0af1f94fe91c0da6d99235da9fc4fed2c9eb8efd299787f9ab49974"
+    },
+    {
+      "name": "rank-4.pt",
+      "sha256": "8b5342718b28640d68edacaa84cd46d6f6a149af95f7a4a275cf39eed8cce3b6"
+    },
+    {
+      "name": "rank-5.pt",
+      "sha256": "31afade9f4129cb47760847d511b6cb647458e3d103a5cd7283295b2fd9d6e34"
+    },
+    {
+      "name": "rank-6.pt",
+      "sha256": "4197d07dbd95cc134a87a1c2f72c1c6bbdab70d8e3c131d69740518c8ff96c9c"
+    },
+    {
+      "name": "rank-7.pt",
+      "sha256": "bae046a6f986b8bbc163077973c2673f3400d3d8d7182ada77b115b5759306c6"
+    }
+  ],
+  "recipe": {
+    "per_device_train_batch_size": 256,
+    "gradient_accumulation_steps": 1,
+    "learning_rate": 0.001,
+    "lr_scheduler_type": "cosine",
+    "warmup_steps": 26,
+    "max_steps": 512,
+    "optim": "adamw_torch",
+    "weight_decay": 0.01,
+    "max_grad_norm": 0.0,
+    "seed": 42,
+    "data_seed": 42,
+    "bf16": true,
+    "save_steps": 256,
+    "save_total_limit": null
+  },
+  "raw_training_record": {
+    "local_path": "/disk/thuat/efficient_llm/temp/router_results_20261026/supervised/run/pilot/training.json",
+    "sha256": "839b96b72058acd75996862b3a28d9516da0534e0f6f7ed0a97a9509d4774d95",
+    "note": "Selected Trainer recipe fields are retained here; full original JSON is stored locally."
+  }
+}

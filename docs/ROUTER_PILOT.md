@@ -3,7 +3,8 @@
 Approved 26 October 2026 SGT after the first
 [joint-group diagnostic](JOINT_GROUP_RESULTS_20261026.md). Scope: fit two small
 routers on a frozen pretrained model and profile dense cached decoding. No
-backbone adaptation or sparse-kernel development is queued.
+backbone adaptation or sparse-kernel development is queued. Completed results:
+[ROUTER_PILOT_RESULTS_20261026.md](ROUTER_PILOT_RESULTS_20261026.md).
 
 ## Comparison
 

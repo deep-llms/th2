@@ -1,0 +1,57 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T07:54:28.084361+00:00",
+  "jobs": [
+    {
+      "name": "router-gpu-correctness",
+      "started_at": "2026-10-26T07:54:28.084596+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 8.728896365966648,
+      "artifacts": [
+        {
+          "path": "gpu-check.json",
+          "sha256": "549051660aaf3a9dde6ef89fa72ebd87e482b7abb6568c262623ed409f96843a",
+          "bytes": 331
+        }
+      ],
+      "finished_at": "2026-10-26T07:54:37.338333+00:00"
+    },
+    {
+      "name": "matched-router-pilot",
+      "started_at": "2026-10-26T07:54:37.338385+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 53.34260717500001,
+      "artifacts": [
+        {
+          "path": "pilot/training.json",
+          "sha256": "839b96b72058acd75996862b3a28d9516da0534e0f6f7ed0a97a9509d4774d95",
+          "bytes": 7306
+        },
+        {
+          "path": "pilot/evaluation.json",
+          "sha256": "674c6c95d1e628957801f6dc4ca441b1b16b7b5746aa30d59003df02f5220bc7",
+          "bytes": 67429
+        }
+      ],
+      "finished_at": "2026-10-26T07:55:31.187802+00:00"
+    },
+    {
+      "name": "cached-decode-profile",
+      "started_at": "2026-10-26T07:55:31.187844+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 37.264290909748524,
+      "artifacts": [
+        {
+          "path": "decode-profile.json",
+          "sha256": "6347af20b6397c7c2a5987d4a07fdbfc87ede03406ef7de3f12b917098869152",
+          "bytes": 9836
+        }
+      ],
+      "finished_at": "2026-10-26T07:56:08.951963+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T07:56:08.952012+00:00"
+}

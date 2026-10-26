@@ -1,0 +1,13 @@
+{
+  "supervised/run/pilot/training.json": "839b96b72058acd75996862b3a28d9516da0534e0f6f7ed0a97a9509d4774d95",
+  "supervised/run/pilot/routers.pt": "9c9c1b7394cc53728263bf82b1faf9f3fbbd9c07a61ac541edc41d29bb7c40a8",
+  "supervised/run/pilot/evaluation.partial.json": "32f031e5242fdb3fc9972287b9bb6eb78495d5698db951db1f7c67d65161782d",
+  "supervised/run/pilot/evaluation.json": "674c6c95d1e628957801f6dc4ca441b1b16b7b5746aa30d59003df02f5220bc7",
+  "supervised/run/decode-profile.json": "6347af20b6397c7c2a5987d4a07fdbfc87ede03406ef7de3f12b917098869152",
+  "probe/manifest.json": "b9cf5ddd3517237a6ca874053d03fba66af3728f6a984af21e1fb383ed40c450",
+  "source-manifest.json": "e632580c958f125e5ec9b201e876641172aaf52fd56fdc1b6293c7f1e1e68fcc",
+  "supervised/supervisor.json": "fca73b00a525b2d18a63dd24e1f9b7743d80aeb2d09667ad998a15dc9d4be7ab",
+  "supervised/burn-verified.json": "08c0b0fc2f4c63e3c20543d22f610c250cac0a9c52e6aa0708271b9ddec3e251",
+  "supervised/run/complete.json": "63943a8a779a5effe2b89f709a80dd74ff3c665631d0255ddc37197e998fd043",
+  "supervised/run/gpu-check.json": "549051660aaf3a9dde6ef89fa72ebd87e482b7abb6568c262623ed409f96843a"
+}

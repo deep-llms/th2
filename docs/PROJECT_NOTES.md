@@ -1,7 +1,7 @@
 # Project notes
 
 Initialized 26 October 2026 SGT at `/disk/thuat/efficient_llm` from
-`/disk/thuat/new_project_template`. First joint-group diagnostic completed; matched learned-router pilot now approved.
+`/disk/thuat/new_project_template`. Joint-group diagnostic and matched learned-router pilot completed.
 Report times and ETAs in Singapore time (SGT, UTC+8).
 
 ## Purpose and success criteria
@@ -52,8 +52,8 @@ an unchanged executable commands.sh. The migration checkout remains separate.
 ## Data and reproducibility
 
 The first diagnostic uses pretrained Qwen3-0.6B-Base and the pinned English
-CulturaX pool; see JOINT_GROUP_DIAGNOSTIC.md for hashes and selection. A training
-recipe, deployable router and downstream suite are not selected.
+CulturaX pool; see JOINT_GROUP_DIAGNOSTIC.md for hashes and selection. The matched-router recipe is now implemented in ROUTER_PILOT.md. Backbone
+adaptation, efficient sparse execution and a downstream suite are not selected.
 Preserve the helper contracts below where applicable, and validate deliberate
 changes required by the eventual design. Template examples do not select a model
 or dataset for this research.
@@ -132,7 +132,7 @@ outputs; they are not cheap learned routers and provide no efficiency evidence.
 Run 6y3o-efficient-joint-groups-20261026-a01, launch 1f786de, finished 09:29:27 SGT.
 59 local tests plus the pretrained GPU gate passed. Burns automatically restored
 and communication verified 09:30:38 SGT; observed healthy 09:32:02 SGT, guard released.
-Current burn source is this run's external source/resources/llm_pretrain_burn.py;
+At this diagnostic handoff, the burn source was its external source/resources/llm_pretrain_burn.py;
 workers 590625–590632, launcher 590556 at that observation. Reinspect identities
 before any future stop. Downloaded results/provenance are in
 docs/results/joint_groups_20261026/. commands.sh is #0; no further job queued.
@@ -147,3 +147,26 @@ banks. Use 256 new validation prefixes excluding the earlier 128; no held-out
 target scaling/tuning. A separate native SDPA cached-decode profile tests runtime
 headroom. Dense masked execution establishes quality only, not sparse speed.
 No backbone adaptation or further methods are queued automatically.
+
+## Matched-router result, 26 October 2026 SGT
+
+[Report](ROUTER_PILOT_RESULTS_20261026.md). Launch 5554c61, run
+6y3o-efficient-router-pilot-20261026-a01. All jobs completed 15:56:08 SGT;
+burns restored/verified 15:57:19, independently healthy 16:00:18, guard released.
+Current workers at that observation: 594491–594498, launcher 594422, burn source
+under this run's immutable source/. This supersedes the previous burn record.
+
+New 256-document probe: learned joint PPL 23.4644 versus learned independent
+24.1605 and dense 18.9674. Joint wins on 250 documents, paired NLL delta
+−0.029232 [−0.032145, −0.026263]. Joint supervision has a repeatable document-level
+signal within this seed/probe; dense-quality parity remains absent. Cached-decode
+profile suggests only 4–15% idealized headroom in this eager SDPA setup, before
+router/dispatch costs. No sparse speedup, adaptation benefit or downstream gain
+has been demonstrated. No additional training or kernel work is queued.
+
+67 local tests and real-model GPU gates passed. Native 256/512 checkpoints have
+optimizer and scheduler state. All ten exported files verified by SHA256, with
+raw data/compact learned-router weights in temp/router_results_20261026 and
+small durable reports in docs/results/router_pilot_20261026. Restore commands.sh
+to #0 after archival. Do not compare these PPL values directly to the previous
+128-document probe. Continue only after reviewing quality/cost tradeoffs.
