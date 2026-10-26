@@ -20,18 +20,23 @@ Frozen-source imports pass. Runner accepted launch at approximately 04:32 SGT.
 Root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a01`,
 session `efficient_kv_mlp_20261027_a01`. CPU preparation precedes GPU reclamation;
 actual-weight gate, calibration and eight-step eight-GPU smoke gate all six arms.
-First GPU gate failed before calibration/training. FP32 relative output/gradient
-errors 4.53e-5 / 9.91e-5 passed; BF16 0.491 / 1.094 failed. Independent reference
-incorrectly rounded QK scores to BF16 under autocast, unlike SDPA's FP32
-accumulation. Correct that reference, retain all original thresholds, add direct
-BF16 native dense identity and independent same-kernel decoder/gradient checks.
-Fresh attempt a02 repeats prep and all gates; preserve a01 failure outputs.
+Attempts a01 and a02 stopped in the numerical gate; neither calibrated nor
+trained an arm. Full-model FP32 explicit-reference output/gradient errors
+4.53e-5 / 9.91e-5 pass. On B200, the independent BF16 decoder using identical
+SDPA has **zero output error / 5.11e-9 relative gradient error**. Full-model
+BF16 explicit-math error remains large (.399 output / .681 gradient); it is
+recorded, not accepted as backend parity. Local fixed-input explicit attention
+across all 28 layers has max output .00186 / gradient .01167. See design doc
+for revised gate: FP32 full math, BF16 same-kernel full decoder, and BF16
+fixed-input explicit-math output/gradients in every layer. Production model,
+training and backend are unchanged. Fresh a03 repeats all gates and full queue.
 
-At 04:42:07 SGT (`0f078ae`), a01 burns were verified restored and advancing,
-guard released; workers 606563–606570 under launcher 606494. Burn source is
-a01/source/resources/llm_pretrain_burn.py. Reinspect before reclamation. The
-first attempt trained no arm. CPU preparation and Accelerate eight-GPU BF16
-configuration had passed; input manifest SHA256
+Latest independent B200 health at **04:58:00 SGT** (`4724c8d`) verified a02 burns
+restored/advancing and guard released. Workers **607624–607631**, launcher
+**607555**, source a02/source/resources/llm_pretrain_burn.py. Reinspect before
+reclamation. a03 uses root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03`
+and session `efficient_kv_mlp_20261027_a03`; preserve both previous attempts.
+All repeated prep used identical manifest SHA256
 `d7787dbe5685aec296b45ac38e122e20bff1d16e65059f3f0a7dba347b4be0ea`.
 
 

@@ -1,0 +1,164 @@
+{
+  "production_model_unchanged": true,
+  "production_backend": "native_sdpa",
+  "initial_gate_source": "6f346f0",
+  "corrected_reference_source": "bc8d2df",
+  "gpu": {
+    "fp32_output_relative_l2": 4.532494494924322e-05,
+    "fp32_gradient_relative_l2": 9.90909358083128e-05,
+    "bf16_same_kernel_output_relative_l2": 0.0,
+    "bf16_same_kernel_gradient_relative_l2": 5.109115773137396e-09,
+    "bf16_explicit_math_full_output_relative_l2": 0.39878809452056885,
+    "bf16_explicit_math_full_gradient_relative_l2": 0.680678652047967,
+    "cross_kernel_bf16_full_model_accepted": false
+  },
+  "local_fixed_input_attention": [
+    {
+      "layer": 0,
+      "output_relative_l2": 0.0009099481394514441,
+      "gradient_relative_l2": 0.01167139783501625
+    },
+    {
+      "layer": 1,
+      "output_relative_l2": 0.000909787486307323,
+      "gradient_relative_l2": 0.0064048911444842815
+    },
+    {
+      "layer": 2,
+      "output_relative_l2": 0.0012371051125228405,
+      "gradient_relative_l2": 0.0057521481066942215
+    },
+    {
+      "layer": 3,
+      "output_relative_l2": 0.0010460352059453726,
+      "gradient_relative_l2": 0.003907997161149979
+    },
+    {
+      "layer": 4,
+      "output_relative_l2": 0.0017270718235522509,
+      "gradient_relative_l2": 0.0030724876560270786
+    },
+    {
+      "layer": 5,
+      "output_relative_l2": 0.0011337542673572898,
+      "gradient_relative_l2": 0.0044176010414958
+    },
+    {
+      "layer": 6,
+      "output_relative_l2": 0.0014647922944277525,
+      "gradient_relative_l2": 0.0034325772430747747
+    },
+    {
+      "layer": 7,
+      "output_relative_l2": 0.0010276841931045055,
+      "gradient_relative_l2": 0.004112956114113331
+    },
+    {
+      "layer": 8,
+      "output_relative_l2": 0.0014044719282537699,
+      "gradient_relative_l2": 0.002838428132236004
+    },
+    {
+      "layer": 9,
+      "output_relative_l2": 0.0013518049381673336,
+      "gradient_relative_l2": 0.0038820989429950714
+    },
+    {
+      "layer": 10,
+      "output_relative_l2": 0.001730186166241765,
+      "gradient_relative_l2": 0.002792883664369583
+    },
+    {
+      "layer": 11,
+      "output_relative_l2": 0.001439646352082491,
+      "gradient_relative_l2": 0.004995967261493206
+    },
+    {
+      "layer": 12,
+      "output_relative_l2": 0.0017970596672967076,
+      "gradient_relative_l2": 0.0030398392118513584
+    },
+    {
+      "layer": 13,
+      "output_relative_l2": 0.0014657621504738927,
+      "gradient_relative_l2": 0.003861150471493602
+    },
+    {
+      "layer": 14,
+      "output_relative_l2": 0.0015831005293875933,
+      "gradient_relative_l2": 0.003491000272333622
+    },
+    {
+      "layer": 15,
+      "output_relative_l2": 0.0013915527379140258,
+      "gradient_relative_l2": 0.004109198693186045
+    },
+    {
+      "layer": 16,
+      "output_relative_l2": 0.0014927174197509885,
+      "gradient_relative_l2": 0.003839257173240185
+    },
+    {
+      "layer": 17,
+      "output_relative_l2": 0.0013898845063522458,
+      "gradient_relative_l2": 0.003610840532928705
+    },
+    {
+      "layer": 18,
+      "output_relative_l2": 0.001858128933236003,
+      "gradient_relative_l2": 0.003184750908985734
+    },
+    {
+      "layer": 19,
+      "output_relative_l2": 0.0014466774882748723,
+      "gradient_relative_l2": 0.0043421960435807705
+    },
+    {
+      "layer": 20,
+      "output_relative_l2": 0.0017114639049395919,
+      "gradient_relative_l2": 0.002842323388904333
+    },
+    {
+      "layer": 21,
+      "output_relative_l2": 0.0013172717299312353,
+      "gradient_relative_l2": 0.004349092487245798
+    },
+    {
+      "layer": 22,
+      "output_relative_l2": 0.0017902394756674767,
+      "gradient_relative_l2": 0.0022837736178189516
+    },
+    {
+      "layer": 23,
+      "output_relative_l2": 0.0015632378635928035,
+      "gradient_relative_l2": 0.003840206889435649
+    },
+    {
+      "layer": 24,
+      "output_relative_l2": 0.0018440868007019162,
+      "gradient_relative_l2": 0.0036913591902703047
+    },
+    {
+      "layer": 25,
+      "output_relative_l2": 0.0014767167158424854,
+      "gradient_relative_l2": 0.004976963624358177
+    },
+    {
+      "layer": 26,
+      "output_relative_l2": 0.0015089946100488305,
+      "gradient_relative_l2": 0.0036816145293414593
+    },
+    {
+      "layer": 27,
+      "output_relative_l2": 0.0013398956507444382,
+      "gradient_relative_l2": 0.00419716676697135
+    }
+  ],
+  "local_weight_sha256": "cd2a512003e2f9f3cd3c32a9c3573f820bb28c940f73c57b1ddaa983d9223eba",
+  "failed_attempts_trained_no_arms": true,
+  "evidence": [
+    "temp/kv_mlp_health02.log",
+    "temp/kv_mlp_health04.log",
+    "temp/kv_mlp_fixed_inputs_cpu.log"
+  ]
+}

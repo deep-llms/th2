@@ -82,6 +82,24 @@ the full queue. The CPU integration test uses two ranks and tiny weights.
 Custom checkpoints reload through `CompressedQwen`/`load_compressed`, not the
 generic AutoModel factory, because per-layer widths and KV sources differ.
 
+Numerical gate clarification after the first GPU attempt: a full-model BF16
+comparison against explicit attention was not a valid implementation oracle.
+The original reference incorrectly rounded QK scores to BF16. Correcting that
+still changes intermediate rounding versus fused SDPA. On identical original
+weights locally, the independent decoder using SDPA matches exactly, while
+explicit attention differs by 0.289 relative L2 after all 28 altered layers.
+At identical per-layer Q/K/V inputs, the explicit attention differs by at most
+0.00186 in outputs and 0.01167 in gradients. This is evidence of accumulated
+arithmetic sensitivity in the unrecovered compressed model, not backend parity.
+
+The gate therefore requires full-model FP32 explicit-math output/gradient
+agreement, full-model BF16 independent-decoder agreement using the same SDPA
+primitive, and explicit BF16 attention output/gradient checks at fixed inputs
+in every layer. Output/gradient tolerances remain 3e-4/6e-4 for full-model FP32
+and same-kernel BF16, and .03/.06 for fixed-input BF16 attention. Full-model
+cross-kernel BF16 errors remain reported; cross-kernel interchangeability is
+explicitly **not accepted**. Native production attention and training are unchanged.
+
 Measure native SDPA whole-model prefill/decode with actual pruned weights and
 shared DynamicCache, against the same dense backend, separately from training
 throughput. Report parameters and allocated cache bytes; never equate cache

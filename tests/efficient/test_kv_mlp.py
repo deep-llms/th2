@@ -56,7 +56,7 @@ def independent_reference(model, ids):
 
 class KVMlpTests(unittest.TestCase):
     def test_bf16_independent_decoder_same_kernel(self):
-        from efficient_llm.kv_mlp_check import reference
+        from efficient_llm.kv_mlp_check import reference, fixed_input_checks
         model=convert(tiny(),share=True,channels=[list(range(24))]*4)
         other=deepcopy(model);ids=torch.arange(1,19).reshape(2,9)%47
         with torch.autocast('cpu',dtype=torch.bfloat16):
@@ -68,6 +68,10 @@ class KVMlpTests(unittest.TestCase):
         for (name,a),(other_name,b) in zip(model.named_parameters(),other.named_parameters()):
             self.assertEqual(name,other_name)
             torch.testing.assert_close(a.grad,b.grad,rtol=1e-4,atol=2e-5,msg=name)
+        rows=fixed_input_checks(model,ids)
+        self.assertEqual(len(rows),4)
+        self.assertLess(max(r['output_relative_l2'] for r in rows),.03)
+        self.assertLess(max(r['gradient_relative_l2'] for r in rows),.06)
 
     def test_dense_identity_and_shared_reference_gradients(self):
         model = tiny(); ids = torch.arange(1,19).reshape(2,9)%47
