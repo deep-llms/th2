@@ -1,2 +1,0 @@
-# Core utilities use only Python 3.11's standard library.
-# Add and validate dependencies for your project; do not inherit old pins.
