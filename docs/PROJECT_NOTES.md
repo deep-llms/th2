@@ -95,16 +95,17 @@ remains on temporary storage. Keep CURRENT_TASK.md concise and up to date.
 
 ## Deployment handoff, 26 October 2026 SGT
 
-New source was uploaded by 3bf2626. Its command reached burn-log parsing after
-checking 56 source hashes, syntax, old-code absence and unchanged GPU identities.
-A parser format error prevented the final completion marker. Corrected read-only
-check 6be699f was acknowledged as a03 but produced a newly exported a02 log
-with the identical old traceback. Result export 7c7625c remains pending; see
-[the migration record](results/efficient_llm_migration_20261026.json).
-Do not repeat cleanup or assume experiments were launched. The sole test-code
-change removes an upstream default-option assertion rejected by the source
-scanner; the offline network-transport protection test remains and passed locally.
-Production training code and installed environments were not changed.
+Deployment verified by 6ea92de/a04 at **09:05:45 SGT**: 56 source hashes matched,
+old DOT code was absent, and all eight existing burn PID/start identities were
+unchanged. The log's command SHA256 matches the pushed revision. The result file
+was written under the migration output directory. See
+[the migration record](results/efficient_llm_migration_20261026.json) and local
+`temp/th2_migration_20261026/deployment04.log`. commands.sh is restored to #0.
 
-Remote writes are on hold because the corrected revision and exported log do
-not match. Preserve state; resolve command delivery before starting experiments.
+Earlier verification had a burn-log format error before writing its result.
+The export therefore failed because that result file did not exist. An a03/a02
+receipt mismatch remains unexplained historically; the fresh a04 receipt verifies
+current command delivery. Do not repeat cleanup or assume experiments launched.
+The sole test-code change removes an upstream default-option assertion rejected
+by the source scanner; the offline network-transport protection test remains and
+passed locally. Production training code and installed environments were unchanged.

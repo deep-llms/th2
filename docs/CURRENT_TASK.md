@@ -1,7 +1,7 @@
 # Current task
 
-Status: B200 migration in progress on 26 October 2026 SGT;
-initial architecture hypothesis drafted, no model implementation or training yet.
+Status: B200 migration verified on 26 October 2026 at 09:05:45 SGT.
+Initial architecture hypothesis drafted; no model implementation or training yet.
 Working folder: `/disk/thuat/efficient_llm`.
 
 ## Objective
@@ -35,21 +35,13 @@ all eight burn workers. It archived 419 files to
 /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-migration-20261026-a01/archived_code.
 External data/model/environment/output directory identities were unchanged.
 
-Project code was uploaded by 3bf2626. Its verification passed all 56 file hashes,
-Python syntax, absence of old code and unchanged GPU PID/start identities, then
-failed in supplementary burn-log parsing (key/value text mistaken for JSON).
-This conclusion follows the traceback location and command control flow;
-the job did not emit its final completion marker.
-
-Corrected read-only verification 6be699f was acknowledged by the controller as
-a03, but its newly exported log is named a02 and repeats the old JSON parser
-traceback byte-for-byte. The corrected command has no such parsing call at that
-line. Result export 7c7625c is submitted; its receipt remains pending.
-Do not rerun cleanup. Do not claim full completion until deployment_result.json
-or the matching DEPLOYMENT_COMPLETE record is retrieved. The remote commands.sh
-is export-only (#2). Local commands.sh is restored to #0 in an unpublished
-handoff commit; publish it after verifying the pending receipt. No new commands
-should be submitted merely to retrigger the unacknowledged request.
+Deployment commit 6ea92de completed on the expected node. Its a04 log contains
+the matching job marker, expected commands.sh SHA256 and DEPLOYMENT_COMPLETE:
+all 56 source hashes matched, old DOT code was absent, and all eight burn worker
+PID/start identities were unchanged. It wrote deployment_result.json under the
+migration output directory. Raw receipt: temp/th2_migration_20261026/deployment04.log.
+Tracked evidence: docs/results/efficient_llm_migration_20261026.json.
+commands.sh is restored to #0. Do not rerun cleanup.
 
 The initial deployment de1207c was rejected by the controller scanner for a CPU
 test's disabled-publication-option assertion. Removed that redundant assertion;
@@ -58,20 +50,22 @@ training code is unchanged. No environments or GPU workloads were modified.
 This Git repository serves development and execution roles, so every push
 requires command review. Current model/data choices still need verification.
 
-At the final 26 October morning check, the controller acknowledged 6be699f/a03
-but exported a new a02 log at 08:38:19 SGT, identical to the earlier failure.
-This is a controller receipt/synchronization mismatch; the cause is unconfirmed.
-Stop remote writes and preserve state until command delivery can be established.
-No architecture experiments have been started.
+Earlier verification failed by parsing burn key/value text as JSON, so no result
+file was written. The subsequent export failures explicitly reported a missing
+file, not a missing project folder. An a03/a02 log mismatch was also observed;
+its cause remains unknown, but the fresh a04 receipt establishes correct command
+delivery and deployment. No architecture experiments have been started.
 
 ## Next steps
 
-1. Review the candidate's prior-work overlap, local-loss surrogate, router
-   predictability and execution cost before selecting it.
-2. If pursued, specify model, calibration/evaluation data and fixed group budget
-   for the small diagnostic in FIRST_ARCHITECTURE_HYPOTHESIS.md.
-3. Reuse helpers for the approved experiment; validate consistent prefill/decode
-   and real sparse execution before claiming speedup.
+1. Specify model, calibration/evaluation data and fixed group budget for the
+   small diagnostic in FIRST_ARCHITECTURE_HYPOTHESIS.md, using inspected local
+   B200 assets where suitable. Available model directory:
+   /mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6.
+2. Implement and test the diagnostic before GPU execution; reuse helpers and
+   evaluate the local-loss surrogate on the altered model's own causal states.
+3. Follow GPU ownership checks for any launch. Current burns were preserved,
+   not stopped; no model/data/environment compatibility has been freshly tested.
 
 ## Current evidence and handoff
 
