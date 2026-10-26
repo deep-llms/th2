@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for
 from run_experiments import load_jobs
 
 
@@ -34,3 +34,14 @@ class RouterJobTests(unittest.TestCase):
         for option,value in [('--keep','4'),('--window','128'),('--steps','512')]:
             self.assertEqual(jobs[1]['argv'][jobs[1]['argv'].index(option)+1],value)
         self.assertIn('efficient_llm.context_profile',jobs[2]['argv'])
+
+    def test_deployment_uses_existing_fit_and_gate_first(self):
+        config=deploy_jobs_for('/model','/inputs','/accelerate.yaml',29721)
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+        jobs=config['jobs']
+        self.assertEqual([j['gpus'] for j in jobs],[[0],list(range(8)),list(range(8))])
+        self.assertIn('gate',jobs[0]['argv'])
+        self.assertIn('profile',jobs[1]['argv'])
+        self.assertIn('retrieval',jobs[2]['argv'])
+        self.assertTrue(all('train' not in j['argv'] for j in jobs))

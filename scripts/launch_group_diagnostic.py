@@ -73,6 +73,20 @@ def context_jobs_for(model, probe, config, port):
     ]}
 
 
+def deploy_jobs_for(model, inputs, config, port):
+    base=['--model',str(model),'--inputs',str(inputs)]
+    launch=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
+            '--main_process_port',str(port),'--module','efficient_llm.context_deploy']
+    jobs=[dict(name='selective-decode-gate',gpus=[0],timeout_seconds=1200,
+        argv=['{python}','-m','efficient_llm.context_deploy','gate',*base,'--output','{run_dir}/gate.json'],
+        required_outputs=[dict(path='gate.json',json_equals=dict(status='passed'))])]
+    for name in ('profile','retrieval'):
+        jobs.append(dict(name='selective-'+name,gpus=list(range(8)),timeout_seconds=1800,
+            argv=[*launch,name,*base,'--output','{run_dir}/'+name+'.json'],
+            required_outputs=[dict(path=name+'.json',json_equals=dict(status='passed',world_size=8))]))
+    return {'jobs':jobs}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -81,8 +95,9 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
+    parser.add_argument('--previous-run',type=Path)
     args = parser.parse_args()
     source = Path.cwd().resolve()
     if socket.gethostname() != args.host or args.output.exists():
@@ -126,6 +141,11 @@ def main():
         prepare += ["--calibration", "1024", "--evaluation", "256"]
     if args.exclude_manifest is not None:
         prepare += ["--exclude-manifest", str(args.exclude_manifest)]
+    if args.study=='deploy':
+        if args.previous_run is None:raise ValueError('Deployment screen requires verified prior study')
+        prepare=[sys.executable,'-m','efficient_llm.context_deploy','prepare','--model',str(args.model),
+            '--previous-run',str(args.previous_run),'--output',str(args.output/'inputs'),
+            '--contract',str(frozen/'resources/context_fit_20261026.json')]
     subprocess.run(prepare, cwd=frozen, env=env, check=True)
     if args.study == 'context':
         subprocess.run([sys.executable,'-m','efficient_llm.diagnostic','prepare','--model',str(args.model),
@@ -165,8 +185,8 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for}[args.study]
-    jobs.write_text(json.dumps(factory(args.model, args.output/"probe", config, port), indent=2)+"\n")
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for}[args.study]
+    jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study=='deploy' else 'probe'), config, port), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs
     load_jobs(jobs)

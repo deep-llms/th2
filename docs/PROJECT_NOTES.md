@@ -211,3 +211,14 @@ verified. Raw results/router weights in temp/context_results_20261026; durable
 reports in docs/results/context_budget_20261026. Short probe byte-identical to prior
 pilot; 23 of the 32 long validation documents also occur in short validation.
 No fitting/validation document overlap. commands.sh #0, no further queue.
+
+## Selective execution screen authorized, 26 October 2026 SGT
+
+The user's “keep going” approves the next execution/retrieval gate. See
+SELECTIVE_DECODE_PLAN_20261026.md. Reuse frozen fitted routers and Qwen3; no training.
+Inference-only split-K kernel reads native full/local KV without historical gathers;
+prefill remains the reference. Dense with the same kernel is a required control.
+A fixed balanced eight-choice record-lookup probe includes dense/near controls;
+failed positive controls mean inconclusive retrieval evidence. All KV remains stored.
+Use the unchanged supervisor and preserve prior outputs/environment. Fix cache-owner
+identity using a retained object token; a Python numeric id may be recycled.

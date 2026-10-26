@@ -1,0 +1,9 @@
+{
+  "protocol": "context_fit_v1",
+  "files": {
+    "supervised/run/study/context-config.json": "a48106f8093946adcf985a8b4333ee71060797b9dfc3882d0be50e8f5f86e7b0",
+    "supervised/run/study/routers.pt": "26e87fceff6e55f2b659f0cc1d7d4efba3a838195907f3e48ea6755b0273201c",
+    "probe/manifest.json": "b9cf5ddd3517237a6ca874053d03fba66af3728f6a984af21e1fb383ed40c450",
+    "probe/tokens.pt": "c1ca584f35dd9dc05c3d622ea8ba83a72b74d6582f8b255f4e0bad4499702eca"
+  }
+}

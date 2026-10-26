@@ -128,5 +128,18 @@ class ContextTests(unittest.TestCase):
                 m(ids,attention_mask=torch.ones_like(ids))
         self.assertEqual(m.model.layers[0].self_attn.forward,original)
 
+    def test_cache_retains_unique_policy_identity(self):
+        m=model();ids=torch.tensor([[1,2]])
+        cache=StaticCache(config=m.config,max_cache_len=8)
+        with torch.no_grad(),ContextPolicy(m,mode='local') as policy:
+            m(ids,past_key_values=cache,use_cache=True)
+            self.assertIs(cache._context_policy_owner,policy.cache_owner)
+        token=cache._context_policy_owner
+        del policy
+        with torch.no_grad(),ContextPolicy(m,mode='local') as replacement:
+            self.assertIsNot(token,replacement.cache_owner)
+            with self.assertRaisesRegex(ValueError,'switch policies'):
+                m(ids,past_key_values=cache,use_cache=True)
+
 
 if __name__=='__main__': unittest.main()

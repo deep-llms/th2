@@ -3,7 +3,8 @@
 Workspace `/disk/thuat/efficient_llm`; independent efficient-LLM research project.
 Report times in Singapore time (SGT, UTC+8). Design documents:
 [PROJECT_IDEA.md](PROJECT_IDEA.md), [FIRST_ARCHITECTURE_HYPOTHESIS.md](FIRST_ARCHITECTURE_HYPOTHESIS.md),
-and current [CONTEXT_BUDGET_PLAN_20261026.md](CONTEXT_BUDGET_PLAN_20261026.md).
+[CONTEXT_BUDGET_PLAN_20261026.md](CONTEXT_BUDGET_PLAN_20261026.md), and current
+[SELECTIVE_DECODE_PLAN_20261026.md](SELECTIVE_DECODE_PLAN_20261026.md).
 
 ## Current result and scope
 
@@ -11,8 +12,8 @@ The user requested further research and B200 tests. The authorized context-budge
 screen is complete: preserve every head's local attention and give 4/8 GQA groups
 full causal history. Sink=4, recent window=128, original absolute positions.
 Frozen original 28-layer Qwen3-0.6B-Base; no backbone training or environment change.
-No additional job is queued. All 13 artifacts were downloaded and verified;
-commands.sh is restored to #0. [Full results](CONTEXT_BUDGET_RESULTS_20261026.md).
+The previous 13 artifacts were downloaded and verified; its commands were restored to #0.
+The user has now authorized the next selective-execution/retrieval screen (below). [Full results](CONTEXT_BUDGET_RESULTS_20261026.md).
 
 - Previous head-removal diagnostic and matched-router results:
   [JOINT_GROUP_RESULTS_20261026.md](JOINT_GROUP_RESULTS_20261026.md),
@@ -33,7 +34,24 @@ commands.sh is restored to #0. [Full results](CONTEXT_BUDGET_RESULTS_20261026.md
   decision should concern efficient execution/retrieval preservation, not a large
   adaptation sweep. Natural-text PPL is not downstream or retrieval accuracy.
 
-## Verified execution and GPU ownership
+## Current authorized next screen
+
+Implement inference-only local/global selective decode, reuse the exact fitted
+routers/model, and test correctness, whole-model speed and distant retrieval on
+B200. No new model/router training, installation, downloads or old-output cleanup.
+Plan: SELECTIVE_DECODE_PLAN_20261026.md. Compare native dense and dense using the
+same kernel, so an implementation gain cannot masquerade as a routing gain.
+CPU tests cover Triton interpreter math/cache behavior and seeded lookup construction.
+Review also fixed a pre-existing cache-owner check: retain a unique object token,
+not a recyclable Python object ID. Switching policy on a live cache must fail.
+
+Planned run: 6y3o-efficient-selective-decode-20261026-a01, immutable inputs/source,
+session efficient_selective_20261026_a01. Mandatory compiled FP32/BF16 gate before
+eight-GPU profile and retrieval jobs. Reuse verified supervisor for Accelerate
+copy/env, exact-worker burn reclaim, free-GPU checks and automatic burn restoration.
+Do not claim deployment or GPU correctness until fresh receipts establish them.
+
+## Previous verified execution and GPU ownership
 
 Execution remote `git@github-share:deep-llms/th2.git`, branch main; node
 `thiennh-p6-6y3o-worker-0`, eight B200s. Dev repository also serves execution:

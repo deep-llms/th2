@@ -51,13 +51,16 @@ def mix_outputs(full, local, selected):
 class ContextPolicy:
     MODES={'teacher','local','static','oracle','router','reference_static'}
 
-    def __init__(self,model,*,mode,keep=4,window=128,sinks=4,stride=16,static_masks=None,routers=None,bank=0):
+    def __init__(self,model,*,mode,keep=4,window=128,sinks=4,stride=16,static_masks=None,routers=None,bank=0,decode_backend='sdpa'):
         c=model.config
         if c.model_type!='qwen3' or c._attn_implementation!='sdpa' or min(window,stride)<1 or sinks<0 or mode not in self.MODES:
             raise ValueError('Require native SDPA Qwen3 and valid context policy')
         if any(layer.self_attn.sliding_window is not None for layer in model.model.layers):
             raise ValueError('Native sliding layers are outside this contract')
         self.model,self.mode,self.window,self.sinks,self.stride=model,mode,window,sinks,stride
+        if decode_backend not in ('sdpa','triton') or (decode_backend=='triton' and mode not in ('router','reference_static','local')):
+            raise ValueError('Selective decode supports router, reference_static or local only')
+        self.decode_backend=decode_backend
         self.groups,self.repeat=c.num_key_value_heads,c.num_attention_heads//c.num_key_value_heads
         self.masks=subset_masks(self.groups,keep,device=next(model.parameters()).device)
         self.routers,self.bank=routers,bank
@@ -77,6 +80,9 @@ class ContextPolicy:
         self.handles=[];self.original=[];self.inputs={};self.costs={};self.stats={}
         self.layer_totals=torch.zeros(c.num_hidden_layers,2,dtype=torch.float64,device=self.masks.device)
         self.start=0
+        # A cache retains this token after the policy exits; unlike id(self),
+        # its identity cannot be recycled while the cache still owns it.
+        self.cache_owner=object()
 
     def _begin(self,module,args,kwargs):
         if kwargs.get('attention_mask') is not None or kwargs.get('position_ids') is not None:
@@ -85,7 +91,7 @@ class ContextPolicy:
         self.start=0
         if cache is not None:
             owner=getattr(cache,'_context_policy_owner',None)
-            if owner is not None and owner!=id(self):
+            if owner is not None and owner is not self.cache_owner:
                 raise ValueError('Cannot switch policies on an existing KV cache')
             if owner is None:
                 if int(cache.get_seq_length())!=0: raise ValueError('Require a fresh cache for context policy')
@@ -101,7 +107,7 @@ class ContextPolicy:
             module=layer.self_attn;self.original.append(module.forward)
             def forward(module,hidden_states,position_embeddings,attention_mask,past_key_values=None,index=i,**kwargs):
                 cache=past_key_values
-                if cache is not None:cache._context_policy_owner=id(self)
+                if cache is not None:cache._context_policy_owner=self.cache_owner
                 result=self._forward(index,module,hidden_states,position_embeddings,attention_mask,cache,kwargs)
                 if cache is not None and index==len(self.original)-1:
                     cache._context_policy_length=self.start+hidden_states.shape[1]
@@ -126,7 +132,7 @@ class ContextPolicy:
 
     def _forward(self,index,module,x,position_embeddings,attention_mask,cache,kwargs):
         mode=self.mode
-        if mode=='static' and self.orders[index][0]==self.groups:
+        if mode in ('static','reference_static') and self.orders[index][0]==self.groups and (self.decode_backend=='sdpa' or x.shape[1]>1):
             return self.original[index](hidden_states=x,position_embeddings=position_embeddings,
                 attention_mask=attention_mask,past_key_values=cache,**kwargs)
         # Router selection precedes QKV/attention; later outputs cannot change it.
@@ -140,7 +146,12 @@ class ContextPolicy:
             n,order,heads,inverse=self.orders[index]
             q=q.index_select(1,heads);k=k.index_select(1,order);v=v.index_select(1,order)
         if cache is not None:k,v=cache.update(k,v,module.layer_idx)
-        if mode=='local' or (mode=='static' and self.orders[index][0]==0):
+        if self.decode_backend=='triton' and x.shape[1]==1:
+            from efficient_llm.selective_decode import decode
+            if mode=='local':selected=self.masks.new_zeros(x.shape[0],1,self.groups)
+            if mode=='reference_static':selected=self.static[index].expand(x.shape[0],1,-1)
+            output=decode(q,k,v,selected[:,0],length=self.start+1,window=self.window,sinks=self.sinks,scale=module.scaling)
+        elif mode=='local' or (mode=='static' and self.orders[index][0]==0):
             output=local_attention(module,q,k,v,start=self.start,window=self.window,sinks=self.sinks)
         elif mode=='static':
             n,order,heads,inverse=self.orders[index];h=n*self.repeat
