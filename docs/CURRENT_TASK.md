@@ -17,7 +17,12 @@ CPU data/score tests (4), model/2-rank training tests (8), recovery decision tes
 and infrastructure checks (56, including 8 job tests) pass.
 No environment or model architecture changes; GPU lifecycle unchanged.
 
-Next submission uses fresh output
+Submitted `6399e48` at approximately 06:53 SGT; no launch receipt in Dropbox as
+of the 06:58 SGT listing. Latest controller status remains the successful
+preflight. Do not resubmit or infer failure from this delivery delay. Keep the
+submitted command until acknowledgement, then restore #0. Training is not yet
+verified running. Timer must check this pending handoff first.
+Fresh output
 `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a01`,
 predecessor training `6y3o-efficient-kv-mlp-20261027-a03`, predecessor burn source
 `6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
@@ -28,11 +33,16 @@ mandatory. Final artifacts: `supervised/run/{A,B}/result.json`, `summary.json`,
 
 Schedule this existing conversation every 45 minutes, at most 12 hours, with
 `scripts/queue_watch.py`; state under ignored `temp/kv_recovery_watch_20261027/`.
+Timer is live (PID 324788, tmux `efficient_kv_recovery_watch_20261027`). First tick
+07:38:46 SGT; deadline 18:53:46 SGT on 27 October. App server accepted delivery
+test message `01a17a6b-7b31-7c12-a366-27b05ce6cebf`; actual turn delivery remains
+pending. Check `delivery_ack.json` for confirmation, not the enqueue receipt.
 Do not create another timer or agent if one exists. At most four extra training
 jobs (<=4096 steps each) beyond A/B, justified by results. No broad unmotivated
 sweep. Upper 95% paired-document CI <=log(1.05) gates pruning after recovery.
 If the sharing gap remains large, inspect a focused conversion hypothesis instead.
 Respect latest user steering, controller failure rules and the safe burn handoff.
+Follow-up training jobs submitted beyond A/B: **0 of 4**.
 End long-wait turns; the timer queues the next turn. Stop scheduling once useful
 work/results are complete or the cap expires. Record actual delivery separately
 from successful enqueue. No remote follow-up is authorized by stale PID state.
@@ -40,10 +50,10 @@ from successful enqueue. No remote follow-up is authorized by stale PID state.
 
 Workspace `/disk/thuat/efficient_llm`, independent efficient-LLM architecture
 project. Report times in Singapore time (SGT, UTC+8). Objective:
-[PROJECT_IDEA.md](PROJECT_IDEA.md); active design:
+[PROJECT_IDEA.md](PROJECT_IDEA.md); original pilot design:
 [KV_MLP_PILOT_20261027.md](KV_MLP_PILOT_20261027.md).
 
-## Approved work and state
+## Completed initial pilot (historical)
 
 User approved a bounded pretrained KV-sharing × MLP-pruning interaction pilot.
 All six fresh 512-step arms completed successfully on original 28-layer
@@ -81,7 +91,7 @@ D 15.821 ms (paired speedup 1.162×), but D's inference PPL is 43.2% higher.
 Shared arms store exactly half the KV. No useful quality/cost joint benefit;
 retain as a negative pilot rather than scaling this recipe. One short recovery,
 model and seed; no 8k-quality or downstream claim. commands.sh #0.
-**Historical pilot complete. Superseded by the recovery authorization below.**
+**Historical pilot complete. Superseded by the recovery authorization above.**
 
 ## Verification and historical failures
 
