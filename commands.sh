@@ -1,12 +1,12 @@
 #1 +30+a
-#th2-6y3o-efficient-migration-inventory-20261026-a01
+#th2-6y3o-efficient-migration-inventory-20261026-a02
 set -euo pipefail
 python3 - <<'REMOTE'
 import datetime, hashlib, json, os, socket, stat, subprocess
 from pathlib import Path
 root=Path('/mnt/local/deep-llms_th2')
-def emit(kind, **data):
-    print(kind+' '+json.dumps(data, sort_keys=True), flush=True)
+def emit(event, **data):
+    print(event+' '+json.dumps(data, sort_keys=True), flush=True)
 assert socket.gethostname()=='thiennh-p6-6y3o-worker-0', 'Unexpected host'
 assert not root.is_symlink() and root.resolve()==root==Path.cwd(), 'Unexpected code path'
 def describe(p):
