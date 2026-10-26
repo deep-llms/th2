@@ -2,8 +2,8 @@
 
 26 October 2026 SGT. Initial design rationale. The first diagnostic is now
 implemented and completed on B200; see [JOINT_GROUP_DIAGNOSTIC.md](JOINT_GROUP_DIAGNOSTIC.md),
-[results](JOINT_GROUP_RESULTS_20261026.md) and CURRENT_TASK.md. No learned
-router or sparse execution kernel has been implemented.
+[results](JOINT_GROUP_RESULTS_20261026.md) and CURRENT_TASK.md. The matched learned-router pilot is now implemented; see [ROUTER_PILOT.md](ROUTER_PILOT.md).
+No sparse execution kernel has been implemented.
 
 ## The question
 

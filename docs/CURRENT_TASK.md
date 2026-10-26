@@ -13,9 +13,9 @@ migration. No new environments, old-checkpoint cleanup or unrelated jobs.
 
 Frozen original 28-layer Qwen3-0.6B-Base; retain 6/8 and 4/8 GQA groups at every
 layer. Dense/static/raw-norm/projected-norm/joint comparisons. Dense execution
-with masked outputs; actual modified-model trajectories. No speedup claim,
-router fit or backbone training. A useful held-out LM advantage would justify
-later matched-router fitting; do not expand training automatically.
+with masked outputs; actual modified-model trajectories. No speedup claim or backbone training. The completed diagnostic justified the
+now-approved matched-router pilot described below; do not expand to backbone
+adaptation automatically.
 
 64 calibration train documents, 128 validation documents, fixed seed 42,
 2,048 next-token targets per long-document prefix. Exact row/token hashes and
@@ -67,9 +67,8 @@ burns after cleaning only its own descendants; unknown ownership fails closed.
 Expected outputs: `supervised/run/gpu-check.json`, `diagnostic.json`, `complete.json`,
 `supervised/supervisor.json`, `supervised/burn-verified.json`.
 All expected artifacts and final ownership verified. Reports are archived under
-`docs/results/joint_groups_20261026/`; commands.sh restored to #0. No follow-up
-training is queued. Next scientific step, if pursued: matched causal routers at
-6/8 groups; neither efficiency nor dense-quality parity has been established.
+`docs/results/joint_groups_20261026/`; commands.sh was restored to #0. The next matched-router pilot is now authorized;
+neither efficiency nor dense-quality parity has been established.
 
 ## Local validation
 
@@ -84,3 +83,25 @@ joint 20.7038; 4/8 joint 55.8841. Full result/interval report is archived.
 The method retains quality better than magnitude references on this probe, but
 does not match dense quality and has not demonstrated sparse execution or a
 learned router. Do not confuse the completed diagnostic with model training.
+
+## Approved next step: matched routers and cached-decode profile
+
+Protocol: [ROUTER_PILOT.md](ROUTER_PILOT.md), approved by the latest user “ok”.
+Implement and run joint versus independent-cost linear routers, 6/8 groups,
+frozen pretrained backbone. 1,024 train documents, 256 new held-out documents;
+exclude the previous 128 evaluation documents. Native HF Trainer, seed 42,
+512 router-only updates over cached teacher features. Dense SDPA cached-decode
+profile at batch 1/8 and context 2k/8k. No adaptation or extra arms authorized
+as part of this queue. Existing baseline training helpers remain unchanged.
+
+Prepared run: `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-router-pilot-20261026-a01`.
+Session: `efficient_router_20261026_a01`. Launcher revalidates the prior joint
+run's burn source and fresh GPU PID/start identities, copies and checks the
+Accelerate cache, checks free GPUs and uses the unchanged supervisor. Automatic
+communicating burn restoration on success/failure remains mandatory.
+
+Local checks: 49 helper/ownership/job tests passed; 18 mechanism/scoring tests
+passed including an actual two-rank native-Trainer fit, StaticCache equivalence,
+profiling-wrapper identity/restoration and prior-heldout exclusion. Total: 67.
+Prepared for remote submission; no remote completion claimed yet. Logs: `temp/router_tests_20261026.log`,
+`temp/router_tests_final_20261026.log`, `temp/router_helper_tests_20261026.log`.

@@ -1,7 +1,7 @@
 # Project notes
 
 Initialized 26 October 2026 SGT at `/disk/thuat/efficient_llm` from
-`/disk/thuat/new_project_template`. First joint-group diagnostic implemented and completed; no deployable router yet.
+`/disk/thuat/new_project_template`. First joint-group diagnostic completed; matched learned-router pilot now approved.
 Report times and ETAs in Singapore time (SGT, UTC+8).
 
 ## Purpose and success criteria
@@ -136,3 +136,14 @@ Current burn source is this run's external source/resources/llm_pretrain_burn.py
 workers 590625–590632, launcher 590556 at that observation. Reinspect identities
 before any future stop. Downloaded results/provenance are in
 docs/results/joint_groups_20261026/. commands.sh is #0; no further job queued.
+
+## Matched-router pilot approved, 26 October 2026 SGT
+
+See ROUTER_PILOT.md. Two linear banks with identical initialization, data and
+HF Trainer recipe; joint versus independent post-projection reconstruction
+cost targets are the only controlled difference. Frozen backbone, 6/8 groups,
+2M teacher context tokens, 512 router updates. No global clipping couples the
+banks. Use 256 new validation prefixes excluding the earlier 128; no held-out
+target scaling/tuning. A separate native SDPA cached-decode profile tests runtime
+headroom. Dense masked execution establishes quality only, not sparse speed.
+No backbone adaptation or further methods are queued automatically.

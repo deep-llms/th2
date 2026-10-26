@@ -61,6 +61,11 @@ class ScoringTests(unittest.TestCase):
                 self.assertEqual(report["status"], "passed")
                 a, b = [report["documents"][s] for s in ("calibration", "evaluation")]
                 self.assertFalse({x["text_sha256"] for x in a} & {x["text_sha256"] for x in b})
+                fresh = prepare_probe(data, model, root/"fresh", length=4, calibration=3, evaluation=4,
+                    contract_path=contract, exclude_manifest=root/"probe/manifest.json")
+                self.assertEqual(fresh['excluded_evaluation_manifest_sha256'], sha256(root/'probe/manifest.json'))
+                for key in ('text_sha256', 'tokens_sha256'):
+                    self.assertFalse({x[key] for x in b} & {x[key] for x in fresh['documents']['evaluation']})
                 next((data/"subsets/test/train/shard").glob("*.arrow")).write_bytes(b"changed")
                 with self.assertRaisesRegex(ValueError, "checksum"):
                     prepare_probe(data, model, root/"corrupt", length=4, calibration=3, evaluation=4, contract_path=contract)

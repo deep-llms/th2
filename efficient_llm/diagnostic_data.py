@@ -50,7 +50,7 @@ def choose_documents(dataset, tokenizer, *, count, length, seed, excluded,
 
 
 def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
-                  evaluation=128, seed=42, max_shards=8, contract_path):
+                  evaluation=128, seed=42, max_shards=8, contract_path, exclude_manifest=None):
     from datasets import load_from_disk
     from transformers import AutoTokenizer
     from training_data import document_end
@@ -76,6 +76,12 @@ def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
     tokenizer = AutoTokenizer.from_pretrained(model_root, local_files_only=True)
     eod = document_end(tokenizer, "<|endoftext|>")
     excluded, tensors, selections, verified = set(), {}, {}, {}
+    if exclude_manifest is not None:
+        previous = json.loads(Path(exclude_manifest).read_text())
+        if previous['length'] != length or previous['tokenizer_revision'] != contract['tokenizer_revision']:
+            raise ValueError("Prior evaluation exclusion uses different tokenization")
+        for record in previous['documents']['evaluation']:
+            excluded.update((record['text_sha256'], record['tokens_sha256']))
     for split, name, count in (("train", "calibration", calibration),
                                ("validation", "evaluation", evaluation)):
         rows, records = [], []
@@ -115,6 +121,7 @@ def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
         "eod": eod, "data_root": str(data_root), "model_root": str(model_root),
         "pool_revision": contract["revision"], "tokenizer_revision": contract["tokenizer_revision"],
         "tokens_sha256": sha256(output / "tokens.pt"), "model_files": model_files,
+        "excluded_evaluation_manifest_sha256": sha256(exclude_manifest) if exclude_manifest else None,
         "verified_shard_files": verified, "documents": selections}
     (output / "manifest.json").write_text(json.dumps(receipt, indent=2) + "\n")
     return receipt

@@ -61,15 +61,16 @@ def reduce_stats(selection):
 
 @torch.inference_mode()
 def evaluate(model, tokens, *, keep, policy, static_masks=None, collect=False,
-             batch_size=2, stride=16, rank=0, world=1):
+             batch_size=2, stride=16, rank=0, world=1, selection=None):
     device = next(model.parameters()).device
     sums = torch.zeros(len(tokens), dtype=torch.float64, device=device)
     coverage = torch.zeros_like(sums)
     indices = list(range(rank, len(tokens), world))
     if not indices:
         raise ValueError("Each rank needs at least one document")
-    with GroupSelection(model, keep=keep, policy=policy, static_masks=static_masks,
-                        collect=collect, sample_stride=stride) as selection:
+    context = selection if selection is not None else GroupSelection(model, keep=keep, policy=policy,
+                    static_masks=static_masks, collect=collect, sample_stride=stride)
+    with context as selection:
         for start in range(0, len(indices), batch_size):
             ids = indices[start:start+batch_size]
             batch = tokens[ids].to(device)
@@ -226,6 +227,7 @@ def main():
     prep.add_argument("--length", type=int, default=2048)
     prep.add_argument("--calibration", type=int, default=64)
     prep.add_argument("--evaluation", type=int, default=128)
+    prep.add_argument("--exclude-manifest", type=Path)
     study = commands.add_parser("run")
     study.add_argument("--model", type=Path, required=True)
     study.add_argument("--probe", type=Path, required=True)
@@ -238,7 +240,8 @@ def main():
     args = parser.parse_args()
     if args.command == "prepare":
         receipt = prepare_probe(args.data_root, args.model, args.output, contract_path=args.contract,
-            length=args.length, calibration=args.calibration, evaluation=args.evaluation)
+            length=args.length, calibration=args.calibration, evaluation=args.evaluation,
+            exclude_manifest=args.exclude_manifest)
         print("PROBE_PREPARED " + json.dumps({k: receipt[k] for k in ("status", "length", "calibration_documents", "evaluation_documents")}), flush=True)
     else:
         if min(args.batch_size, args.stride) < 1 or len(set(args.keep)) != len(args.keep):
