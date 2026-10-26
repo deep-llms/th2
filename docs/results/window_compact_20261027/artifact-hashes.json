@@ -1,0 +1,57 @@
+[
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised_run/gate.json",
+    "local": "temp/window_results_20261027/gate.json",
+    "sha256": "582811decdcee0a9e4bba1a10863edb16769d44b331f501d9a5f4064a90552c0"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised_run/profile.json",
+    "local": "temp/window_results_20261027/profile.json",
+    "sha256": "c544595e1c86468bf4edab514ea54f24f764b1c7885ba70d9db762434c7b5db3"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised_run/quality.json",
+    "local": "temp/window_results_20261027/quality.json",
+    "sha256": "742e1178c47e51c4754d734281b9fff2c0eb7f89658667a6d7cfe66a01e1e3ca"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_inputs/manifest.json",
+    "local": "temp/window_results_20261027/input-manifest.json",
+    "sha256": "b3bb0da4e724fcf746a828e8d7426db35d6a37e2f1d2038aaeb85c26f33cbf5f"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01/source-manifest.json",
+    "local": "temp/window_results_20261027/source-manifest.json",
+    "sha256": "cea9c080805e507c3181e6da53d67a6668cc94b8baa4c52e38a39cacca224b59"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01/accelerate-env.log",
+    "local": "temp/window_results_20261027/accelerate-env.log",
+    "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised/supervisor.json",
+    "local": "temp/window_results_20261027/supervisor.json",
+    "sha256": "d60594834a7341ef325dd5caa3544b36f354a523a8920055d882c32b7d1af968"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised/burn-verified.json",
+    "local": "temp/window_results_20261027/burn-verified.json",
+    "sha256": "e725b18c29e5bb39d36e03b05cb65ba48da342280b8146e8c937fdd75e149408"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised_run/complete.json",
+    "local": "temp/window_results_20261027/complete.json",
+    "sha256": "eae74b6fa97bec8a08ef7e1410b0ff4057fd57818ad4a1784c48eab2cd535df5"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised/reclaim.json",
+    "local": "temp/window_results_20261027/reclaim.json",
+    "sha256": "17c9754b3d835b467fb894cee163a88ce158d54dee4eeecdffce03d777b77432"
+  },
+  {
+    "remote": "/mnt_local__outputs_deep-llms_th2_6y3o-efficient-window-compact-20261027-a01_supervised/gpus-free-before-training.json",
+    "local": "temp/window_results_20261027/gpus-free-before-training.json",
+    "sha256": "37dba7a9e582a33129c769eca7cb9f10519f02738e299c25cdbda9accef8cda2"
+  }
+]

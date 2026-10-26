@@ -249,3 +249,37 @@ reinspect before stopping. Supersedes previous burn ownership. Eight final expor
 verified by SHA256 (export b48013a), 48 timing records/640 lookup scores/128 frozen cases;
 80 local tests across maintained suites. Raw archive temp/research_results_20261026,
 durable docs/results/selective_decode_20261026. commands.sh #0; no further queue.
+
+## Sink/window and compact scheduling, 27 October 2026 SGT
+
+[Report](WINDOW_COMPACT_RESULTS_20261027.md). User authorized a specific mask and
+scheduling ablation, not more training. Native SDPA on 256 × 2k documents: dense
+18.9668 PPL, fixed half-global first-four+recent-128 19.3570, same groups with
+recent-128 only 75.5163. Every document worsens; paired delta +1.361293 nats,
+CI [1.330133, 1.393875]. Keep sinks for this frozen pretrained policy; this does
+not condemn models trained with sliding windows or establish four as optimal.
+
+Added opt-in triton_compact: no empty local tiles, direct local output, global-only
+partial reduction. 82 local tests and 60 compiled attention cases passed; FP32
+whole-model errors <=6.25e-5. Original kernel retained, native SDPA default unchanged.
+BF16 whole-model original/compact comparisons still contain >.01-nat document
+differences; prior native gate remains failed. No BF16 backend acceptance.
+
+B8/8k attention-only graph microbenchmark: original fixed 51.50 us, compact fixed
+48.57 us; zero/four sinks nearly identical. Whole-model eager: dense original
+22.346 ms, fixed original 22.489, compact fixed 22.656, original joint 26.179,
+compact joint 27.160. Scheduling helps larger attention kernels, but not whole-model
+latency. Four extra keys are not the primary custom-kernel cost in these cases.
+Do not promote compact to default or start router training from this result.
+
+Run 6y3o-efficient-window-compact-20261027-a01, source 36e30fa, health b10b860,
+export 4cf8964. All jobs zero exit 01:19:46; automatic burns verified 01:20:56 and
+independently healthy 01:21:17 SGT. Eight ready ranks, collective sum36, advancing
+40 cycles/44.41 GiB per rank; guard released. Workers 604193–604200 under launcher
+604124 at observation; source latest run/source/resources/llm_pretrain_burn.py.
+Reinspect identities before later stops. Supersedes all previous ownership records.
+
+Eleven exports SHA256-verified against node receipts, exact source and prior fit
+identity checked. 88 timing rows, 48 microbenchmark rows, 256 paired documents;
+raw temp/window_results_20261027, durable docs/results/window_compact_20261027.
+commands.sh #0; no new job queued. Environments/drivers/old outputs unchanged.

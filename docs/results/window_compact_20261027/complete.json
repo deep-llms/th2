@@ -1,0 +1,52 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T17:16:06.902699+00:00",
+  "jobs": [
+    {
+      "name": "window-compact-gate",
+      "started_at": "2026-10-26T17:16:06.902931+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 54.532511341851205,
+      "artifacts": [
+        {
+          "path": "gate.json",
+          "sha256": "582811decdcee0a9e4bba1a10863edb16769d44b331f501d9a5f4064a90552c0",
+          "bytes": 12165
+        }
+      ],
+      "finished_at": "2026-10-26T17:17:01.954489+00:00"
+    },
+    {
+      "name": "window-profile",
+      "started_at": "2026-10-26T17:17:01.954526+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 129.58261676458642,
+      "artifacts": [
+        {
+          "path": "profile.json",
+          "sha256": "c544595e1c86468bf4edab514ea54f24f764b1c7885ba70d9db762434c7b5db3",
+          "bytes": 178434
+        }
+      ],
+      "finished_at": "2026-10-26T17:19:12.032102+00:00"
+    },
+    {
+      "name": "window-quality",
+      "started_at": "2026-10-26T17:19:12.032140+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 33.46472961967811,
+      "artifacts": [
+        {
+          "path": "quality.json",
+          "sha256": "742e1178c47e51c4754d734281b9fff2c0eb7f89658667a6d7cfe66a01e1e3ca",
+          "bytes": 22249
+        }
+      ],
+      "finished_at": "2026-10-26T17:19:46.028195+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T17:19:46.028235+00:00"
+}

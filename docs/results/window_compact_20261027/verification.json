@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-10-26T17:30:47.345542+00:00",
+  "files": 11,
+  "kernel_cases": 60,
+  "timing_rows": 88,
+  "microbenchmark_rows": 48,
+  "quality_documents": 256,
+  "quality_tokens_per_method": 524288,
+  "input_identity_verified": true,
+  "source_identity_verified": true,
+  "completion_and_burn_verified": true,
+  "native_backend_accepted": false
+}
