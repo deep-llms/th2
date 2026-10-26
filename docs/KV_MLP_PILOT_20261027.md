@@ -102,7 +102,11 @@ explicitly **not accepted**. Native production attention and training are unchan
 
 Measure native SDPA whole-model prefill/decode with actual pruned weights and
 shared DynamicCache, against the same dense backend, separately from training
-throughput. Report parameters and allocated cache bytes; never equate cache
+throughput. Also score the final checkpoints loaded with BF16 weights (the profiler
+configuration), alongside FP32-weight/AMP training validation, so quality and
+latency refer to the same precision. This is evaluation only after the initial
+queue completes and its burns are verified; reuse the same safe supervisor.
+Report parameters and allocated cache bytes; never equate cache
 capacity saving with proportional speed. Eager timings are not serving results.
 
 Proceed no further automatically. The result may be no interaction, ordinary

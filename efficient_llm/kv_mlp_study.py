@@ -327,9 +327,31 @@ def summarize(args):
                      'Calibration loss curves are single-layer perturbations, not a causal proof.']))
 
 
+def inference_quality(args, device, rank, world, tokens):
+    """Score the BF16-weight inference configuration used by the profiler."""
+    if device.type != 'cuda':raise ValueError('Deployment precision check requires CUDA')
+    reports={}
+    for arm in 'ABCDEF':
+        previous=json.loads((args.runs/arm/'result.json').read_text())
+        if (previous['status']!='passed' or previous['steps']!=512 or previous['smoke']
+                or previous['probe_sha256']!=sha256(args.probe/'manifest.json')):
+            raise ValueError('Inference checkpoint/probe identity differs')
+        model=load_compressed(args.runs/arm/'final',device,torch.bfloat16).eval()
+        if (model.config.kv_sources!=previous['kv_sources'] or model.config.mlp_widths!=previous['mlp_widths']
+                or sum(p.numel() for p in model.parameters())!=previous['parameters']):
+            raise ValueError('Inference architecture differs')
+        reports[arm]=score(model,tokens['evaluation'])
+        reports[arm]['versus_training_precision']=paired_summary(reports[arm]['per_document_nll'],
+            previous['validation']['512']['per_document_nll'])
+        if rank==0:print('KV_MLP_INFERENCE_QUALITY',arm,reports[arm]['loss'],reports[arm]['ppl'],flush=True)
+        del model;gc.collect();torch.cuda.empty_cache()
+    if rank==0:write(args.output,dict(status='passed',world_size=world,weight_dtype='bfloat16',
+        autocast_dtype='bfloat16',probe_sha256=sha256(args.probe/'manifest.json'),arms=reports))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('mode', choices=['calibrate','train','summarize'])
+    p.add_argument('mode', choices=['calibrate','train','summarize','inference-quality'])
     for name in ['model','probe','output','plan','runs']: p.add_argument('--'+name, type=Path)
     p.add_argument('--arm', choices=list('ABCDEF'))
     p.add_argument('--device', choices=['cpu','cuda'], default='cuda')
@@ -353,6 +375,7 @@ def main():
                 if sha256(args.model/name) != expected: raise ValueError('Model identity mismatch: '+name)
         if world > 1: dist.barrier()
         if args.mode == 'calibrate': calibrate(args,device,rank,world,tokens,manifest)
+        elif args.mode == 'inference-quality':inference_quality(args,device,rank,world,tokens)
         else: train(args,device,rank,world,tokens,manifest)
     finally:
         if dist.is_initialized(): dist.destroy_process_group()

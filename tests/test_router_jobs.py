@@ -2,11 +2,22 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for, kv_mlp_jobs_for
+from scripts.launch_group_diagnostic import router_jobs_for, context_jobs_for, deploy_jobs_for, research_jobs_for, numerical_jobs_for, window_jobs_for, kv_mlp_jobs_for, kv_mlp_quality_jobs_for
 from run_experiments import load_jobs
 
 
 class RouterJobTests(unittest.TestCase):
+    def test_inference_quality_is_evaluation_only(self):
+        config=kv_mlp_quality_jobs_for('/model','/previous','/accelerate.yaml',29721)
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(config));load_jobs(path)
+        job=config['jobs'][0]
+        self.assertEqual(job['gpus'],list(range(8)))
+        self.assertIn('inference-quality',job['argv'])
+        self.assertIn('/previous/probe',job['argv'])
+        self.assertIn('/previous/supervised/run',job['argv'])
+        self.assertNotIn('train',job['argv'])
+
     def test_kv_mlp_gates_and_matched_recovery(self):
         config=kv_mlp_jobs_for('/model','/probe','/accelerate.yaml',29721)
         with tempfile.TemporaryDirectory() as tmp:

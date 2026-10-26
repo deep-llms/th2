@@ -14,12 +14,30 @@ fixed adjacent KV sharing, physical MLP pruning, calibration and matched native
 Trainer recovery on the original pretrained 28-layer Qwen. Six controlled arms,
 512 steps each, approximately 201M total recovery tokens. No large search or
 new kernel. Reuse the verified node/model/data and safe burn supervisor.
-Implemented in `6f346f0`: seven CPU model/training tests and 54 infrastructure
-checks pass, including a two-rank HF Trainer run and native checkpoint reload.
-Frozen-source imports pass. Runner accepted launch at approximately 04:32 SGT.
-Root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a01`,
-session `efficient_kv_mlp_20261027_a01`. CPU preparation precedes GPU reclamation;
-actual-weight gate, calibration and eight-step eight-GPU smoke gate all six arms.
+Implemented in `6f346f0`, revised numerical gates in `7abbd37`. Eight CPU model/
+training tests and 54 infrastructure checks pass, including two-rank native
+Trainer checkpoint/save/reload. Source imports and hashes verified.
+
+**Active run a03**: `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03`,
+session `efficient_kv_mlp_20261027_a03`, supervisor owner 608437. Latest health
+`748c881` at **05:09:24 SGT** confirms actual-weight GPU gate passed (11.98s),
+eight-GPU calibration passed (66.85s), and eight-GPU D smoke running. Known burns
+reclaimed by identity and all eight GPUs verified free before work; Accelerate
+copied/byte-verified, eight-GPU BF16 env confirmed. No environment/driver changes.
+GPU maximum fixed-input output/gradient errors .001873/.012473; FP32 cached max
+absolute error .001063. Gate artifact SHA256
+`88f51c405c59da5216729d4abefca446b9e3f3aa500240f88ee0496b05c98be4`.
+Calibration artifact SHA256 `3a5c14aed1bd87ae18f061b14ed0712ef3f83893968c15c9b894d9b86ed94487`.
+
+Health `532002e` at **05:13:07 SGT** confirms smoke passed in 48.18s, A
+completed 512 steps in 168.36s (training 132.65s), and B running at step 32.
+A held-out NLL/PPL at 512: **2.9976257 / 20.03790**. All training is fresh;
+checkpoint/reload and exact one-pass data coverage checks pass. Estimated full
+pilot/profile/burn completion about 05:30 SGT; fresh health requested. Queue requires
+successful training, save/reload and exact data coverage before A/B/C/D/E/F;
+512 steps each, then whole-model profile and summary, then automatic burns.
+Do not repeat the launch. Failed a01/a02 outputs are preserved separately.
+
 Attempts a01 and a02 stopped in the numerical gate; neither calibrated nor
 trained an arm. Full-model FP32 explicit-reference output/gradient errors
 4.53e-5 / 9.91e-5 pass. On B200, the independent BF16 decoder using identical

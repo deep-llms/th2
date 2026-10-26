@@ -122,6 +122,14 @@ class KVMlpTests(unittest.TestCase):
             m.save_pretrained(tmp)
             loaded=load_compressed(tmp,torch.device('cpu'))
             torch.testing.assert_close(loaded(ids,use_cache=False).logits,full,rtol=0,atol=0)
+            bf16=load_compressed(tmp,torch.device('cpu'),torch.bfloat16)
+            self.assertTrue(all(p.dtype==torch.bfloat16 for p in bf16.parameters()))
+            # from_pretrained preserves FP32 RoPE frequencies. model.to(bf16)
+            # would also cast those buffers and is not the same inference setup.
+            for parameter in loaded.parameters():parameter.data=parameter.data.to(torch.bfloat16)
+            self.assertEqual(bf16.model.rotary_emb.inv_freq.dtype,torch.float32)
+            torch.testing.assert_close(bf16(ids,use_cache=False).logits,
+                loaded(ids,use_cache=False).logits,rtol=0,atol=0)
         m.train();m.gradient_checkpointing_enable()
         with self.assertRaisesRegex(ValueError,'checkpointing'):m(ids,use_cache=False)
 

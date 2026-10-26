@@ -151,6 +151,16 @@ def kv_mlp_jobs_for(model, probe, config, port):
     return dict(jobs=jobs)
 
 
+def kv_mlp_quality_jobs_for(model, previous, config, port):
+    previous=Path(previous)
+    return dict(jobs=[dict(name='bf16-inference-quality',gpus=list(range(8)),timeout_seconds=1200,
+        argv=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
+              '--main_process_port',str(port),'--module','efficient_llm.kv_mlp_study','inference-quality',
+              '--model',str(model),'--probe',str(previous/'probe'),
+              '--runs',str(previous/'supervised/run'),'--output','{run_dir}/inference-quality.json'],
+        required_outputs=[dict(path='inference-quality.json',json_equals=dict(status='passed',world_size=8))])])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -159,7 +169,7 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp", "kv_mlp_quality"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     parser.add_argument('--previous-run',type=Path)
     args = parser.parse_args()
@@ -180,6 +190,25 @@ def main():
     for session in (args.session, args.session+"_burn"):
         if subprocess.run(["tmux", "has-session", "-t", session], capture_output=True).returncode == 0:
             raise ValueError("Session already exists: " + session)
+    if args.study=='kv_mlp_quality':
+        previous=args.previous_run
+        if previous is None or previous.parent.resolve()!=args.output.parent.resolve():
+            raise ValueError('Require a completed pilot under the authorized output root')
+        if (json.loads((previous/'supervised/run/complete.json').read_text())['status']!='ok'
+            or json.loads((previous/'supervised/supervisor.json').read_text())['training_status']!='ok'
+            or not json.loads((previous/'supervised/burn-verified.json').read_text())['collective_progress_verified']):
+            raise ValueError('Predecessor pilot/burn handoff is incomplete')
+        prior=json.loads((previous/'source-manifest.json').read_text())
+        if digest(source/'efficient_llm/kv_mlp.py')!=prior['efficient_llm/kv_mlp.py']:
+            raise ValueError('Model implementation differs from trained checkpoints')
+        probe=json.loads((previous/'probe/manifest.json').read_text())
+        if digest(previous/'probe/tokens.pt')!=probe['tokens_sha256']:
+            raise ValueError('Prior validation tensors changed')
+        identity=digest(previous/'probe/manifest.json')
+        for arm in 'ABCDEF':
+            report=json.loads((previous/'supervised/run'/arm/'result.json').read_text())
+            if report['status']!='passed' or report['probe_sha256']!=identity:
+                raise ValueError('Prior recovery arm/probe is incomplete or changed')
     manifest = json.loads((source/"resources/joint_source_manifest.json").read_text())
     for relative, expected in manifest.items():
         path = (source/relative).resolve()
@@ -215,7 +244,8 @@ def main():
         prepare=[sys.executable,'-m','efficient_llm.context_deploy','prepare','--model',str(args.model),
             '--previous-run',str(args.previous_run),'--output',str(args.output/'inputs'),
             '--contract',str(frozen/'resources/context_fit_20261026.json')]
-    subprocess.run(prepare, cwd=frozen, env=env, check=True)
+    if args.study!='kv_mlp_quality':
+        subprocess.run(prepare, cwd=frozen, env=env, check=True)
     if args.study == 'context':
         subprocess.run([sys.executable,'-m','efficient_llm.diagnostic','prepare','--model',str(args.model),
             '--data-root',str(args.data_root),'--output',str(args.output/'long-probe'),
@@ -254,8 +284,9 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for}[args.study]
-    jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe'), config, port), indent=2)+"\n")
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for,'kv_mlp_quality':kv_mlp_quality_jobs_for}[args.study]
+    inputs = args.previous_run if args.study=='kv_mlp_quality' else args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe')
+    jobs.write_text(json.dumps(factory(args.model, inputs, config, port), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs
     load_jobs(jobs)

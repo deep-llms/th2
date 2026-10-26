@@ -1,50 +1,13 @@
-#1 +30+a
-#th2-6y3o-efficient-kv-mlp-final-20261027-a01
+#1 +60+a
+#th2-6y3o-efficient-kv-mlp-inference-20261027-a01
 set -euo pipefail
-export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
-/mnt/local/conda-py311/envs/train/bin/python3.11 -u - <<'REMOTE'
-from pathlib import Path
-from datetime import datetime, timezone
-import json, hashlib, shutil
-from scripts.gpu_process import inspect
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03')
-print('FINAL_AT',datetime.now(timezone.utc).isoformat(),flush=True)
-for name in ['supervised/run/run.json','supervised/supervisor.json','supervised/burn-verified.json']:
- p=root/name
- print('FILE',name,flush=True)
- print(p.read_text() if p.is_file() else 'MISSING',flush=True)
-for arm in 'ABCDEF':
- p=root/'supervised/run'/arm/'result.json'
- if p.is_file():
-  r=json.loads(p.read_text());print('ARM',arm,json.dumps({k:r[k] for k in ['status','steps','parameters','training_seconds','reloaded_max_nll_difference']}),flush=True)
-  print('QUALITY',arm,json.dumps({s:{k:v[k] for k in ['loss','ppl']} for s,v in r['validation'].items()}),flush=True)
-for name in ['supervised/run/kv-mlp-profile.log','supervised/run/kv-mlp-summary.log','supervised/burn.log']:
- p=root/name
- if p.is_file():print('LOG',name,p.read_text()[-5000:],flush=True)
-print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
-guard=Path('/mnt/local/_gpu_guard/DISABLED')
-print('GUARD_DISABLED',guard.exists(),guard.read_text() if guard.exists() else '',flush=True)
-complete=root/'supervised/run/complete.json';burn=root/'supervised/burn-verified.json'
-if complete.is_file() and burn.is_file() and not guard.exists():
- assert json.loads((root/'supervised/supervisor.json').read_text())['training_status']=='ok'
- assert json.loads(burn.read_text())['collective_progress_verified'] is True
- paths={'gpu-check.json':'supervised/run/gpu-check.json','plan.json':'supervised/run/plan.json',
- 'summary.json':'supervised/run/summary.json','profile.json':'supervised/run/profile.json',
- 'smoke.json':'supervised/run/smoke/result.json','complete.json':'supervised/run/complete.json',
- 'supervisor.json':'supervised/supervisor.json','burn-verified.json':'supervised/burn-verified.json',
- 'reclaim.json':'supervised/reclaim.json','gpus-free.json':'supervised/gpus-free-before-training.json',
- 'probe-manifest.json':'probe/manifest.json','source-manifest.json':'source-manifest.json',
- 'accelerate-env.log':'accelerate-env.log'}
- paths.update({a+'.json':'supervised/run/'+a+'/result.json' for a in 'ABCDEF'})
- for name in paths.values():assert (root/name).is_file() and (root/name).stat().st_size<25*1024**2,name
- target=root/'result_export';target.mkdir(exist_ok=False)
- receipt={}
- for name,source in paths.items():
-  shutil.copyfile(root/source,target/name)
-  receipt[name]=dict(source=source,sha256=hashlib.sha256((target/name).read_bytes()).hexdigest(),bytes=(target/name).stat().st_size)
- (target/'manifest.json').write_text(json.dumps(receipt,indent=2)+'\n')
- print('EXPORT_MANIFEST',json.dumps(receipt),flush=True)
- print('EXPORT_MANIFEST_SHA256',hashlib.sha256((target/'manifest.json').read_bytes()).hexdigest(),flush=True)
- print('RESULT_EXPORT_READY',flush=True)
-else:print('NOT_FINISHED',flush=True)
-REMOTE
+export PYTHONDONTWRITEBYTECODE=1
+/mnt/local/conda-py311/envs/train/bin/python3.11 -u -m scripts.launch_group_diagnostic \
+  --study kv_mlp_quality \
+  --previous-run /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03 \
+  --output /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-inference-20261027-a01 \
+  --model /mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6 \
+  --data-root /mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513 \
+  --host thiennh-p6-6y3o-worker-0 \
+  --session efficient_kv_mlp_inference_20261027_a01 \
+  --predecessor-burn-script /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/source/resources/llm_pretrain_burn.py
