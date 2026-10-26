@@ -49,7 +49,10 @@ Planned run: 6y3o-efficient-selective-decode-20261026-a01, immutable inputs/sour
 session efficient_selective_20261026_a01. Mandatory compiled FP32/BF16 gate before
 eight-GPU profile and retrieval jobs. Reuse verified supervisor for Accelerate
 copy/env, exact-worker burn reclaim, free-GPU checks and automatic burn restoration.
-Do not claim deployment or GPU correctness until fresh receipts establish them.
+Launch/source 9481bee acknowledged at 23:26 SGT: pinned preparation passed for
+128 lookup cases; Accelerate copy verified and environment confirmed eight B200s/BF16.
+Supervisor submitted. GPU gate/results and final handoff are still pending.
+78 local CPU tests passed. Read-only health export is the next action.
 
 ## Previous verified execution and GPU ownership
 
