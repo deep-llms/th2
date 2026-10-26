@@ -1,104 +1,86 @@
 # Current task
 
-Status: B200 migration verified on 26 October 2026 at 09:05:45 SGT.
-First joint-group diagnostic implemented and CPU-tested; preparing B200 execution.
-Working folder: `/disk/thuat/efficient_llm`.
+Working folder: `/disk/thuat/efficient_llm`. Separate efficient-LLM project;
+normal layer order, no B-DOT or proxy requirement. Report times in Singapore time.
 
-## Objective
+## Objective and scope
 
-Idea document: [PROJECT_IDEA.md](PROJECT_IDEA.md), summarizing the user's direction
-and our discussion. A detailed architecture specification has not been selected.
+Design: [PROJECT_IDEA.md](PROJECT_IDEA.md),
+[FIRST_ARCHITECTURE_HYPOTHESIS.md](FIRST_ARCHITECTURE_HYPOTHESIS.md).
+Implemented first screen: [JOINT_GROUP_DIAGNOSTIC.md](JOINT_GROUP_DIAGNOSTIC.md).
+The user authorized implementing and running it on the existing th2 B200 after
+migration. No new environments, old-checkpoint cleanup or unrelated jobs.
 
-Investigate an efficient LLM architecture that preserves useful model quality
-while reducing inference latency, compute or KV-cache memory. This is a separate
-project from dynamic layer ordering/B-DOT and deep-to-shallow proxies.
+Frozen original 28-layer Qwen3-0.6B-Base; retain 6/8 and 4/8 GQA groups at every
+layer. Dense/static/raw-norm/projected-norm/joint comparisons. Dense execution
+with masked outputs; actual modified-model trajectories. No speedup claim,
+router fit or backbone training. A useful held-out LM advantage would justify
+later matched-router fitting; do not expand training automatically.
 
-Background: [literature review](EFFICIENT_LLM_RESEARCH_20261026.md).
-Candidate: [joint attention-group selection](FIRST_ARCHITECTURE_HYPOTHESIS.md).
-It targets decode work at fixed active-group count using joint post-projection
-reconstruction targets. It retains dense KV writes; it does not claim cache
-capacity savings or established novelty.
+64 calibration train documents, 128 validation documents, fixed seed 42,
+2,048 next-token targets per long-document prefix. Exact row/token hashes and
+consumed-shard checksums are frozen before evaluation. This is not full-pool PPL.
 
-## Scope and authorization
+## Verified deployment and assets
 
-User authorized using the existing th2 B200 for experiments, first replacing
-the GitHub tree with only commands.sh, cleaning the old remote project code,
-and uploading this project. Execution target: deep-llms/th2 main; existing
-6Y3O node. Migration checkout: /disk/thuat/efficient_llm-th2. Historical DOT
-source/checkpoints/results must remain recoverable. Data, models, environments,
-runner metadata and live workload sources are outside the code-cleanup scope.
+Execution: `git@github-share:deep-llms/th2.git`, `main`, node
+`thiennh-p6-6y3o-worker-0`; eight B200s. Current repository serves development
+and execution: never repush unchanged executable commands.sh.
+Code root `/mnt/local/deep-llms_th2`; output/data/models are separate external
+roots. Dropbox credentials and 6Y3O map remain in ignored DOT/temp; do not print.
 
-Minimal-tree commits f009def/de02a34 inspected /mnt/local/deep-llms_th2. The first
-inventory had a logging-name error; the corrected read-only inventory completed.
-Cleanup commit 2fca185 completed at 08:16:55 SGT, preserving runner metadata and
-all eight burn workers. It archived 419 files to
-/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-migration-20261026-a01/archived_code.
-External data/model/environment/output directory identities were unchanged.
+Migration verified at 09:05:45 SGT on 26 October 2026. All 56 initial source
+hashes matched; old code archived with hashes and all burn workers preserved.
+See `docs/results/efficient_llm_migration_20261026.json`. Do not repeat cleanup.
+The old missing-path error was a missing receipt caused by a parser exception,
+not a missing project directory. Fresh a04 verification resolved delivery.
 
-Deployment commit 6ea92de completed on the expected node. Its a04 log contains
-the matching job marker, expected commands.sh SHA256 and DEPLOYMENT_COMPLETE:
-all 56 source hashes matched, old DOT code was absent, and all eight burn worker
-PID/start identities were unchanged. It wrote deployment_result.json under the
-migration output directory. Raw receipt: temp/th2_migration_20261026/deployment04.log.
-Tracked evidence: docs/results/efficient_llm_migration_20261026.json.
-commands.sh is restored to #0. Do not rerun cleanup.
+Train Python `/mnt/local/conda-py311/envs/train/bin/python3.11`:
+torch 2.14.1+cu130, Transformers 5.9.0, datasets 4.8.5, Accelerate 1.13.0.
+Model `/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6`.
+Dataset `/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513`.
+The old model directory had tokenizer/config only. Controller d2ed6f0 downloaded
+the original pinned safetensors; the actual weight hash and consumed shard hashes
+passed preparation in launch 1f786de. No installed environment was changed.
 
-The initial deployment de1207c was rejected by the controller scanner for a CPU
-test's disabled-publication-option assertion. Removed that redundant assertion;
-the stronger offline transport-blocking test still passes locally. Production
-training code is unchanged. No environments or GPU workloads were modified.
-This Git repository serves development and execution roles, so every push
-requires command review. Current model/data choices still need verification.
+## Current execution
 
-Earlier verification failed by parsing burn key/value text as JSON, so no result
-file was written. The subsequent export failures explicitly reported a missing
-file, not a missing project folder. An a03/a02 log mismatch was also observed;
-its cause remains unknown, but the fresh a04 receipt establishes correct command
-delivery and deployment. No architecture experiments have been started.
+Source/launch commit `1f786de`; run root:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01`.
+Independent supervisor session `efficient_joint_20261026_a01`, using immutable
+`source/`. Local launch receipt `temp/th2_migration_20261026/launch01.log` confirms
+PROBE_PREPARED and DIAGNOSTIC_SUBMITTED. Accelerate config was copied to its
+actual cache and `accelerate env` confirms MULTI_GPU, 8 processes, BF16.
+Read-only health `c1b710f` verified successful completion at 09:29:27 SGT,
+26 October 2026. Both jobs exited zero. All eight communicating burns were
+restored and verified at 09:30:38 SGT, still present at 09:32:02 SGT; guard released.
+Workers 590625–590632, launcher 590556, source under this run’s immutable snapshot.
+Export `b850d88` retrieved and verified locally: result/check hashes and counts,
+probe-manifest hash, and source identity all match. Results and interpretation:
+[JOINT_GROUP_RESULTS_20261026.md](JOINT_GROUP_RESULTS_20261026.md).
 
-## Current implementation and execution
+Sequence: verified burn-worker reclamation → all eight GPUs free → GPU correctness
+check → eight-rank study → free check → communicating burn restored and verified.
+Reused the earlier checked supervisor unchanged. On job failure it also restores
+burns after cleaning only its own descendants; unknown ownership fails closed.
 
-The user authorized implementing and running the new code after migration.
-Implementing the first screen in FIRST_ARCHITECTURE_HYPOTHESIS.md; concrete
-protocol: [JOINT_GROUP_DIAGNOSTIC.md](JOINT_GROUP_DIAGNOSTIC.md). Frozen full
-pretrained Qwen3-0.6B-Base, 6/8 and 4/8 groups, dense/static/raw-norm/projected-norm/
-joint comparisons. 64 calibration and 128 held-out single-document prefixes,
-2,048 scored tokens each. Eight-GPU inference; no backbone or router training yet.
+Expected outputs: `supervised/run/gpu-check.json`, `diagnostic.json`, `complete.json`,
+`supervised/supervisor.json`, `supervised/burn-verified.json`.
+All expected artifacts and final ownership verified. Reports are archived under
+`docs/results/joint_groups_20261026/`; commands.sh restored to #0. No follow-up
+training is queued. Next scientific step, if pursued: matched causal routers at
+6/8 groups; neither efficiency nor dense-quality parity has been established.
 
-Preflight b035ebd passed: train torch 2.14.1, Transformers 5.9.0, datasets 4.8.5,
-Accelerate 1.13.0; expected eight B200s and the same burn workers. Dataset root:
-/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513. The model directory contained
-config/tokenizer only. Controller download d2ed6f0 requested the pinned original
-model.safetensors (published SHA256 cd2a512003e2f9f3cd3c32a9c3573f820bb28c940f73c57b1ddaa983d9223eba).
-Preparation must verify this before any GPU stop. Download session ended;
-actual weight hash has not yet been verified on the node.
+## Local validation
 
-Local CPU results: 11 mechanism/scoring tests passed, including real CLI serial
-versus uneven two-rank inference; 11 reused ownership/handoff tests passed.
-Planned output: /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01.
-Use immutable source, fresh probe, copied/verified eight-GPU Accelerate config,
-GPU correctness gate, then study and automatic verified burn handoff.
-No new GPU experiment has launched at this recorded state.
-
-## Previous migration next steps (now being carried out)
-
-1. Specify model, calibration/evaluation data and fixed group budget for the
-   small diagnostic in FIRST_ARCHITECTURE_HYPOTHESIS.md, using inspected local
-   B200 assets where suitable. Available model directory:
-   /mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6.
-2. Implement and test the diagnostic before GPU execution; reuse helpers and
-   evaluate the local-loss surrogate on the altered model's own causal states.
-3. Follow GPU ownership checks for any launch. Current burns were preserved,
-   not stopped; no model/data/environment compatibility has been freshly tested.
-
-## Current evidence and handoff
-
-The initial copy was checked byte-for-byte against all 55 template files before
-editing project documentation. Training/helper code remains unchanged.
-Two synthetic four-group fixtures verify the reconstruction objective and show
-that magnitude ranking can be suboptimal. They are algebra checks, not model
-results. New prior-work checks identified AHA/Switch Attention/ODA as precedents
-for local/global switching. No real-model results exist for this project.
-Template-only historical test evidence
-in VALIDATION.md does not validate an unimplemented new architecture or describe
-current remote machine status.
+59 tests passed: 48 helper/supervisor tests, 11 mechanism/scoring tests. Includes
+GQA projection algebra, bias, causal/cache consistency, keep-all identity, EOS,
+corrupted shards, shifted loss and serial versus uneven two-rank inference.
+Raw local logs: `temp/th2_migration_20261026/diagnostic_tests.log`, `helper_tests.log`.
+GPU gate passed: exact keep-all identity and causal prefixes; maximum FP32
+cached/full logit difference 0.000212; all KV groups preserved. Initial PPL:
+dense 17.7753; 6/8 static 26.7351, raw norm 21.7584, projected norm 21.2005,
+joint 20.7038; 4/8 joint 55.8841. Full result/interval report is archived.
+The method retains quality better than magnitude references on this probe, but
+does not match dense quality and has not demonstrated sparse execution or a
+learned router. Do not confuse the completed diagnostic with model training.

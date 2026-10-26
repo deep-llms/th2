@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T01:28:41.993671+00:00",
+  "jobs": [
+    {
+      "name": "gpu-correctness",
+      "started_at": "2026-10-26T01:28:41.993874+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 10.378194166813046,
+      "artifacts": [
+        {
+          "path": "gpu-check.json",
+          "sha256": "85867368ff0020ba2ca9d9be457f720ed64f6d574b86dac7507df13761643210",
+          "bytes": 1140
+        }
+      ],
+      "finished_at": "2026-10-26T01:28:52.907700+00:00"
+    },
+    {
+      "name": "joint-groups",
+      "started_at": "2026-10-26T01:28:52.907745+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 34.008634886704385,
+      "artifacts": [
+        {
+          "path": "diagnostic.json",
+          "sha256": "9299ae436af7e568796b06d3691c009265c1ba072ff986e044689bb65afa2f5d",
+          "bytes": 91184
+        }
+      ],
+      "finished_at": "2026-10-26T01:29:27.455076+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T01:29:27.455115+00:00"
+}

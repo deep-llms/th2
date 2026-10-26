@@ -1,7 +1,7 @@
 # Project notes
 
 Initialized 26 October 2026 SGT at `/disk/thuat/efficient_llm` from
-`/disk/thuat/new_project_template`. Research/design stage; architecture undecided.
+`/disk/thuat/new_project_template`. First joint-group diagnostic implemented and completed; no deployable router yet.
 Report times and ETAs in Singapore time (SGT, UTC+8).
 
 ## Purpose and success criteria
@@ -16,9 +16,8 @@ First candidate: [joint attention-group selection](FIRST_ARCHITECTURE_HYPOTHESIS
 It asks whether subsets chosen to preserve the combined attention output are
 better router targets than independent magnitudes. Frozen pretrained backbone,
 dense KV writes, per-token group reads; no cache-size claim. Prior-work overlap
-and practical usefulness remain unresolved. This remains a design proposal with
-no real-model evidence. The user has since authorized B200 experiments, with
-migration required first.
+and practical usefulness remain unresolved. The first real-model diagnostic is complete; see JOINT_GROUP_RESULTS_20261026.md.
+The user authorized B200 implementation and experiments after the verified migration.
 
 ## Infrastructure
 
@@ -52,7 +51,9 @@ an unchanged executable commands.sh. The migration checkout remains separate.
 
 ## Data and reproducibility
 
-Model, dataset, tokenizer, training recipe and benchmark suite are not selected.
+The first diagnostic uses pretrained Qwen3-0.6B-Base and the pinned English
+CulturaX pool; see JOINT_GROUP_DIAGNOSTIC.md for hashes and selection. A training
+recipe, deployable router and downstream suite are not selected.
 Preserve the helper contracts below where applicable, and validate deliberate
 changes required by the eventual design. Template examples do not select a model
 or dataset for this research.
@@ -117,3 +118,21 @@ current command delivery. Do not repeat cleanup or assume experiments launched.
 The sole test-code change removes an upstream default-option assertion rejected
 by the source scanner; the offline network-transport protection test remains and
 passed locally. Production training code and installed environments were unchanged.
+
+## First real-model result, 26 October 2026 SGT
+
+[Report](JOINT_GROUP_RESULTS_20261026.md): 128 held-out long-document prefixes.
+Dense PPL 17.7753; at 6/8 groups, joint 20.7038, projected norms 21.2005, raw
+norms 21.7584, static 26.7351. Joint improves over projected norms on all 128
+documents (−0.023705 nats/token; paired 95% CI [−0.025049, −0.022412]), but
+remains worse than dense. At 4/8, joint PPL 55.8841: too much quality loss for
+the present frozen model. These policies compute full attention and use its
+outputs; they are not cheap learned routers and provide no efficiency evidence.
+
+Run 6y3o-efficient-joint-groups-20261026-a01, launch 1f786de, finished 09:29:27 SGT.
+59 local tests plus the pretrained GPU gate passed. Burns automatically restored
+and communication verified 09:30:38 SGT; observed healthy 09:32:02 SGT, guard released.
+Current burn source is this run's external source/resources/llm_pretrain_burn.py;
+workers 590625–590632, launcher 590556 at that observation. Reinspect identities
+before any future stop. Downloaded results/provenance are in
+docs/results/joint_groups_20261026/. commands.sh is #0; no further job queued.

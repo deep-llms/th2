@@ -1,2 +1,2 @@
-#2 +a -f-/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/supervised/run/diagnostic.json,/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/supervised/run/gpu-check.json,/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/supervised/run/complete.json,/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/supervised/supervisor.json,/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/supervised/burn-verified.json,/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/probe/manifest.json,/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-joint-groups-20261026-a01/source-manifest.json
-#th2-6y3o-efficient-joint-groups-results-20261026-a01
+#0
+# Joint-group diagnostic completed; results archived and eight-GPU burn handoff verified.

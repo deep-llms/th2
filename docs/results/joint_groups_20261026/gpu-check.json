@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "model": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+  "gpu": "NVIDIA B200",
+  "checks": {
+    "dense": {
+      "fp32_cached_max_abs": 0.00013744831085205078,
+      "fp32_causal_max_abs": 0.0,
+      "bf16_causal_max_abs": 0.0
+    },
+    "static": {
+      "fp32_cached_max_abs": 0.00013369321823120117,
+      "fp32_causal_max_abs": 0.0,
+      "bf16_causal_max_abs": 0.0
+    },
+    "raw_norm": {
+      "fp32_cached_max_abs": 0.0001499652862548828,
+      "fp32_causal_max_abs": 0.0,
+      "bf16_causal_max_abs": 0.0
+    },
+    "projected_norm": {
+      "fp32_cached_max_abs": 0.00013828277587890625,
+      "fp32_causal_max_abs": 0.0,
+      "bf16_causal_max_abs": 0.0
+    },
+    "joint": {
+      "fp32_cached_max_abs": 0.0002117156982421875,
+      "fp32_causal_max_abs": 0.0,
+      "bf16_causal_max_abs": 0.0
+    }
+  },
+  "keep_all_exact_identity": true,
+  "all_kv_groups_preserved": true,
+  "probe_tokens_sha256": "36538210f4aac95340a05a3202e7fb5a94e6822a18350a2721522f9beb7b3dfb",
+  "scope": "FP32 cached equivalence; BF16 keep-all identity, causality and finite logits. No sparse kernel tested."
+}

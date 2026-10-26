@@ -1,7 +1,9 @@
 # First hypothesis: joint selection of attention groups
 
-26 October 2026 SGT. Proposed design for discussion. No real-model experiment,
-router fit, architecture implementation or GPU job has been run for this idea.
+26 October 2026 SGT. Initial design rationale. The first diagnostic is now
+implemented and completed on B200; see [JOINT_GROUP_DIAGNOSTIC.md](JOINT_GROUP_DIAGNOSTIC.md),
+[results](JOINT_GROUP_RESULTS_20261026.md) and CURRENT_TASK.md. No learned
+router or sparse execution kernel has been implemented.
 
 ## The question
 
@@ -50,8 +52,8 @@ Start with frozen backbone parameters and train only the router. Initially retai
 dense QKV and output projection execution and count their costs.
 
 For a model with eight KV groups, keeping six permits 28 subsets; keeping four
-permits 70. A linear classifier over these choices can predict the whole subset.
-These are examples, not a selected model or run. Begin with moderate sparsity.
+permits 70. A linear classifier over these choices could predict the whole subset.
+The first diagnostic now uses both budgets, starting with moderate sparsity.
 Enumeration does not scale to arbitrary group counts: larger models would need
 a bounded subset library or another selector, introducing another approximation.
 
@@ -122,7 +124,7 @@ count approximately matches attention work, but router/dispatch costs can differ
 Measure complete decoding with identical precision, cache layout and backend.
 An active fraction does not imply a proportional speedup.
 
-## Smallest informative test — not launched
+## Smallest informative test
 
 Before LM adaptation, use one selected pretrained model and fixed held-out
 documents. Compare at the same group budget:
@@ -146,7 +148,8 @@ router as the practical reference. Evaluate all layers together on the sparse
 trajectory, then measure decode latency and a fixed downstream suite.
 
 These comparisons test one mechanism, rather than unrelated architecture fits.
-Model, data, budget and hardware are still unassigned.
+The concrete model, data, budgets and execution protocol are specified in
+JOINT_GROUP_DIAGNOSTIC.md; CURRENT_TASK.md records actual execution status.
 
 ## Reasons this may fail
 
