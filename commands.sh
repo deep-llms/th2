@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-efficient-router-pilot-health-20261026-a01
+#th2-6y3o-efficient-router-pilot-health-20261026-a02
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
 /mnt/local/conda-py311/envs/train/bin/python3.11 -u - <<'REMOTE'
@@ -23,6 +23,14 @@ for name in ['supervised/run/pilot/training.json','supervised/run/pilot/evaluati
    obj['methods']={k:{kk:vv for kk,vv in v.items() if kk!='per_document_nll'} for k,v in obj['methods'].items()}
   if 'trainer_args' in obj: obj.pop('trainer_args')
   print(json.dumps(obj),flush=True)
+for cp in sorted((root/'supervised/run/pilot/trainer').glob('checkpoint-*')):
+ state=json.loads((cp/'trainer_state.json').read_text())
+ print('CHECKPOINT',cp.name,state['global_step'],{f:(cp/f).is_file() for f in ('model.safetensors','optimizer.pt','scheduler.pt')},flush=True)
+p=root/'supervised/burn.log'
+if p.exists(): print('BURN_TAIL',p.read_text()[-10000:],flush=True)
+for name in ['probe/manifest.json','source-manifest.json','supervised/supervisor.json','supervised/burn-verified.json','supervised/run/complete.json','supervised/run/gpu-check.json']:
+ p=root/name
+ if p.is_file(): print('ARTIFACT_HASH',name,hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
 print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
 p=Path('/mnt/local/_gpu_guard/DISABLED')
 print('GUARD_DISABLED',p.exists(),p.read_text() if p.exists() else '',flush=True)
