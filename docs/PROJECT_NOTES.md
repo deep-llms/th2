@@ -98,9 +98,13 @@ remains on temporary storage. Keep CURRENT_TASK.md concise and up to date.
 New source was uploaded by 3bf2626. Its command reached burn-log parsing after
 checking 56 source hashes, syntax, old-code absence and unchanged GPU identities.
 A parser format error prevented the final completion marker. Corrected read-only
-check 6be699f and export request 7c7625c await controller receipts; see
+check 6be699f was acknowledged as a03 but produced a newly exported a02 log
+with the identical old traceback. Result export 7c7625c remains pending; see
 [the migration record](results/efficient_llm_migration_20261026.json).
 Do not repeat cleanup or assume experiments were launched. The sole test-code
 change removes an upstream default-option assertion rejected by the source
 scanner; the offline network-transport protection test remains and passed locally.
 Production training code and installed environments were not changed.
+
+Remote writes are on hold because the corrected revision and exported log do
+not match. Preserve state; resolve command delivery before starting experiments.

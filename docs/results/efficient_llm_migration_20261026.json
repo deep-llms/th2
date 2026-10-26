@@ -1,5 +1,5 @@
 {
-  "phase": "source_deployed_final_supplemental_receipt_pending",
+  "phase": "source_deployed_final_verification_blocked_by_receipt_mismatch",
   "inventory_commit": "de02a3475a65e77b7e4d6e7b6280e505290cc8e8",
   "cleanup_commit": "2fca185719e26fee43ad6d7118ff27377f627222",
   "inventory": {
@@ -164,8 +164,16 @@
     "cleanup_fixture": "archive and unexpected-entry refusal passed",
     "burn_parser_source_format_fixtures": "passed; complete records parsed, truncated record ignored"
   },
-  "last_local_check_utc": "2026-10-26T00:38:57.241452+00:00",
-  "last_acknowledged_commit": "3bf2626",
+  "last_local_check_utc": "2026-10-26T00:40:05.148247+00:00",
+  "last_acknowledged_commit": "6be699f",
   "local_commands_mode": "#0 (unpublished)",
-  "remote_commands_mode": "#2 (receipt request)"
+  "remote_commands_mode": "#2 (receipt request)",
+  "receipt_mismatch": {
+    "acknowledged_job": "th2-6y3o-efficient-deployment-verify-20261026-a03",
+    "exported_log": "_run-2026-10-26_00-37-07-th2-6y3o-efficient-deployment-verify-20261026-a02.log",
+    "exported_log_modified_sgt": "2026-10-26T08:38:19+08:00",
+    "local_receipt": "temp/th2_migration_20261026/deployment03_stale.log",
+    "sha256": "8f5856059c706eb45a64a70a3eaaffebe399e73fde2bff696e080298179e8bf4",
+    "finding": "New export repeats old a02 failure exactly; no proof corrected a03 body executed. No further remote writes."
+  }
 }

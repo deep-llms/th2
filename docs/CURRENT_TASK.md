@@ -41,8 +41,10 @@ failed in supplementary burn-log parsing (key/value text mistaken for JSON).
 This conclusion follows the traceback location and command control flow;
 the job did not emit its final completion marker.
 
-Corrected read-only verification 6be699f and result export 7c7625c are submitted;
-their receipts remain pending. The last delivered log is deployment a02.
+Corrected read-only verification 6be699f was acknowledged by the controller as
+a03, but its newly exported log is named a02 and repeats the old JSON parser
+traceback byte-for-byte. The corrected command has no such parsing call at that
+line. Result export 7c7625c is submitted; its receipt remains pending.
 Do not rerun cleanup. Do not claim full completion until deployment_result.json
 or the matching DEPLOYMENT_COMPLETE record is retrieved. The remote commands.sh
 is export-only (#2). Local commands.sh is restored to #0 in an unpublished
@@ -56,10 +58,11 @@ training code is unchanged. No environments or GPU workloads were modified.
 This Git repository serves development and execution roles, so every push
 requires command review. Current model/data choices still need verification.
 
-At the final 26 October morning check, Dropbox still acknowledged only 3bf2626,
-with no controller response to 6be699f or 7c7625c. The last log modification was
-08:26:37 SGT. No new infrastructure error was reported, so the cause of the delay
-is unknown. No architecture experiments have been started.
+At the final 26 October morning check, the controller acknowledged 6be699f/a03
+but exported a new a02 log at 08:38:19 SGT, identical to the earlier failure.
+This is a controller receipt/synchronization mismatch; the cause is unconfirmed.
+Stop remote writes and preserve state until command delivery can be established.
+No architecture experiments have been started.
 
 ## Next steps
 
