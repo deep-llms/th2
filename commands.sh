@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-efficient-context-budget-health-20261026-a01
+#th2-6y3o-efficient-context-budget-health-20261026-a02
 set -euo pipefail
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
 /mnt/local/conda-py311/envs/train/bin/python3.11 -u - <<'REMOTE'
@@ -13,7 +13,7 @@ for name in ['supervisor.log','supervised/supervisor.json','supervised/reclaim.j
  p=root/name
  print('FILE',name,'EXISTS',p.is_file(),flush=True)
  if p.is_file(): print(p.read_text()[-22000:],flush=True)
-for name in ['supervised/run/study/training.json','supervised/run/study/evaluation.partial.json','supervised/run/study/evaluation.json','supervised/run/decode-profile.json']:
+for name in ['supervised/run/study/context-config.json','supervised/run/study/training.json','supervised/run/study/evaluation.partial.json','supervised/run/study/evaluation.json','supervised/run/decode-profile.json']:
  p=root/name
  if p.is_file():
   obj=json.loads(p.read_text())
@@ -26,6 +26,8 @@ for name in ['supervised/run/study/training.json','supervised/run/study/evaluati
    for scope in obj['scopes'].values():
     for row in scope['methods'].values():row.pop('per_document_nll',None)
   print(json.dumps(obj),flush=True)
+p=root/'supervised/run/study/routers.pt'
+if p.is_file():print('ARTIFACT_HASH','supervised/run/study/routers.pt',hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
 for cp in sorted((root/'supervised/run/study/trainer').glob('checkpoint-*')):
  state=json.loads((cp/'trainer_state.json').read_text())
  print('CHECKPOINT',cp.name,state['global_step'],{f:(cp/f).is_file() for f in ('model.safetensors','optimizer.pt','scheduler.pt')},flush=True)
