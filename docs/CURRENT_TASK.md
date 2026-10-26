@@ -21,7 +21,15 @@ Attempt `6399e48` failed at 06:53:25 SGT before Python, data preparation,
 output creation or any GPU operation: `git rev-parse HEAD` ran in the runner's
 source copy, which has no .git directory. This is a project shell-header mistake,
 not a controller failure. Receipt `temp/kv_recovery_launch01.log`. Removed this
-header command, set explicit project cwd, and submit a02 with a fresh output.
+header command, set explicit project cwd, and submitted a02 with a fresh output
+in `a1847c0`. Corrected node launch at **07:00:29 SGT** reached Python and printed
+`RECOVERY_PARENT_HASHES_VERIFIED`; controller acknowledged at 07:03 SGT.
+Receipt `temp/kv_recovery_launch02.log`, controller03. Snapshot precedes the
+PROBE_PREPARED/DIAGNOSTIC_SUBMITTED markers, so GPU training is not yet confirmed.
+The workflow performs fresh-data CPU preparation before reclaim, then smoke/A/B;
+let it continue. The next wake must check liveness/progress/artifacts, not resubmit.
+commands.sh restored to #0 after this acknowledgement; frozen job source is
+outside the synced repository.
 Do not re-run a01. Controller acknowledged delivery; its generic OK is not
 proof that the shell or training succeeded.
 Fresh output
@@ -30,7 +38,9 @@ predecessor training `6y3o-efficient-kv-mlp-20261027-a03`, predecessor burn sour
 `6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
 Session `efficient_kv_recovery_20261027_a02`. CPU data preparation happens before
 reclaim; Accelerate cache copy/env, exact worker identities and free checks are
-mandatory. Final artifacts: `supervised/run/{A,B}/result.json`, `summary.json`,
+mandatory. The large recovery probe manifest may exceed the 25 MB export limit;
+export a compact identity/count/hash receipt and small results instead of the
+full document list. Final artifacts: `supervised/run/{A,B}/result.json`, `summary.json`,
 `complete.json`, `supervised/supervisor.json`, `burn-verified.json`.
 
 Schedule this existing conversation every 45 minutes, at most 12 hours, with

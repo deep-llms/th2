@@ -97,3 +97,17 @@ stop scheduling. On controller/AWS/credentials failure, freeze remote writes and
 report; do not repair infrastructure through GPU process kills or relaunches.
 Stop the watcher when conclusions/artifacts/burn handoff are complete or the cap
 is reached. Restore commands.sh #0 after acknowledged actions.
+
+## Initial submission receipt
+
+CPU checks: 4 data/score, 8 model/distributed recovery, 1 decision-gate test, and
+56 infrastructure tests passed. Read-only B200 preflight passed 06:44 SGT.
+Attempt6399e48 failed before Python/GPU work because its shell header requested
+Git metadata from the node's source-only copy. Corrected a1847c0/a02 reached
+Python and verified both checkpoint hashes at 07:00 SGT. No training ran in a01.
+At the first a02 snapshot, probe preparation/smoke/training are not yet confirmed
+complete; see CURRENT_TASK for live state. Existing data/env/old results preserved.
+
+The live dev timer starts checks at 07:38:46 SGT, repeats every45minutes and ends
+18:53:46 SGT on27October. Its delivery test was accepted by the app server; actual
+receipt is recorded separately in ignored temp/kv_recovery_watch_20261027.
