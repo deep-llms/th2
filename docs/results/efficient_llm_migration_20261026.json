@@ -1,5 +1,5 @@
 {
-  "phase": "remote_code_cleanup_verified_deployment_pending",
+  "phase": "source_deployed_final_supplemental_receipt_pending",
   "inventory_commit": "de02a3475a65e77b7e4d6e7b6280e505290cc8e8",
   "cleanup_commit": "2fca185719e26fee43ad6d7118ff27377f627222",
   "inventory": {
@@ -136,13 +136,36 @@
   "receipt_sha256": {
     "inventory01.log": "05dc99b5caad8b44cfab81a78d5a6adda246ff21d05d0916714f584abbf8fc88",
     "inventory02.log": "cda820eb8309c03c5ddf47f8747c4265d2eb48bac38ca86f22923e135eb3dafa",
-    "cleanup01.log": "2565996aa0f845535ca109bb6e08823ce0f7d9322ea5e3088f891224aceba466"
+    "cleanup01.log": "2565996aa0f845535ca109bb6e08823ce0f7d9322ea5e3088f891224aceba466",
+    "deployment02.log": "8f5856059c706eb45a64a70a3eaaffebe399e73fde2bff696e080298179e8bf4"
   },
   "deployment_attempts": [
     {
       "commit": "de1207c11da83eb6fe2ec57a3730215aff1980fc",
       "status": "controller_source_scan_blocked",
       "reason": "CPU test asserted that the upstream publication option is false. Redundant assertion removed; offline network-transport test retained. Production code unchanged."
+    },
+    {
+      "commit": "3bf262658ba0ea11dab641e855ad7676ea7a6a6a",
+      "status": "uploaded_source_checks_passed_then_log_parser_failed",
+      "evidence": "deployment02.log traceback at burn record JSON parsing, after all 56 source hashes, Python syntax, absence of old code and unchanged GPU PID/start identities were checked. This is control-flow evidence; no final completion marker was emitted."
+    },
+    {
+      "commit": "6be699f8ccf1c7dafc3d2a69bd74c57cae4d69a2",
+      "status": "corrected_read_only_check_submitted_receipt_pending"
+    },
+    {
+      "commit": "7c7625c97f862574a360584fe7e672d8f0794340",
+      "status": "result_export_requested_receipt_pending"
     }
-  ]
+  ],
+  "local_validation": {
+    "offline_network_transport_test": "passed in train_env with CUDA_VISIBLE_DEVICES empty",
+    "cleanup_fixture": "archive and unexpected-entry refusal passed",
+    "burn_parser_source_format_fixtures": "passed; complete records parsed, truncated record ignored"
+  },
+  "last_local_check_utc": "2026-10-26T00:38:57.241452+00:00",
+  "last_acknowledged_commit": "3bf2626",
+  "local_commands_mode": "#0 (unpublished)",
+  "remote_commands_mode": "#2 (receipt request)"
 }

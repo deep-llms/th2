@@ -92,3 +92,15 @@ These contracts do not select this project's scientific hypothesis or recipe.
 
 Record where source, small results and large checkpoints are retained and what
 remains on temporary storage. Keep CURRENT_TASK.md concise and up to date.
+
+## Deployment handoff, 26 October 2026 SGT
+
+New source was uploaded by 3bf2626. Its command reached burn-log parsing after
+checking 56 source hashes, syntax, old-code absence and unchanged GPU identities.
+A parser format error prevented the final completion marker. Corrected read-only
+check 6be699f and export request 7c7625c await controller receipts; see
+[the migration record](results/efficient_llm_migration_20261026.json).
+Do not repeat cleanup or assume experiments were launched. The sole test-code
+change removes an upstream default-option assertion rejected by the source
+scanner; the offline network-transport protection test remains and passed locally.
+Production training code and installed environments were not changed.

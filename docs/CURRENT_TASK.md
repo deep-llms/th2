@@ -35,10 +35,31 @@ all eight burn workers. It archived 419 files to
 /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-migration-20261026-a01/archived_code.
 External data/model/environment/output directory identities were unchanged.
 
-Uploading this project and verifying file hashes is next. The local development
-repository now follows th2/main; it also serves as the execution remote, so every
-push requires command review. No environment changes or new GPU workloads have
-been submitted. Current model/data choices still need verification.
+Project code was uploaded by 3bf2626. Its verification passed all 56 file hashes,
+Python syntax, absence of old code and unchanged GPU PID/start identities, then
+failed in supplementary burn-log parsing (key/value text mistaken for JSON).
+This conclusion follows the traceback location and command control flow;
+the job did not emit its final completion marker.
+
+Corrected read-only verification 6be699f and result export 7c7625c are submitted;
+their receipts remain pending. The last delivered log is deployment a02.
+Do not rerun cleanup. Do not claim full completion until deployment_result.json
+or the matching DEPLOYMENT_COMPLETE record is retrieved. The remote commands.sh
+is export-only (#2). Local commands.sh is restored to #0 in an unpublished
+handoff commit; publish it after verifying the pending receipt. No new commands
+should be submitted merely to retrigger the unacknowledged request.
+
+The initial deployment de1207c was rejected by the controller scanner for a CPU
+test's disabled-publication-option assertion. Removed that redundant assertion;
+the stronger offline transport-blocking test still passes locally. Production
+training code is unchanged. No environments or GPU workloads were modified.
+This Git repository serves development and execution roles, so every push
+requires command review. Current model/data choices still need verification.
+
+At the final 26 October morning check, Dropbox still acknowledged only 3bf2626,
+with no controller response to 6be699f or 7c7625c. The last log modification was
+08:26:37 SGT. No new infrastructure error was reported, so the cause of the delay
+is unknown. No architecture experiments have been started.
 
 ## Next steps
 
