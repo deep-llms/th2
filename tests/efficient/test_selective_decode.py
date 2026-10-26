@@ -18,6 +18,30 @@ class Tokenizer:
 
 
 class SelectiveTests(unittest.TestCase):
+    def test_numerical_controls_restore_and_replay(self):
+        import torch
+        from efficient_llm.decode_numerics import routes,fp32_attention
+        from efficient_llm.routers import RouterPair
+        from efficient_llm import selective_decode
+        router=RouterPair(2,32,2,1,torch.ones(2)).eval()
+        x=torch.randn(1,1,32);original=router.layer_choice
+        with routes(router) as seen:router.layer_choice(x,0,0)
+        self.assertEqual(router.layer_choice,original)
+        forced=[1-seen[0]]
+        with routes(router,replay=forced) as replay:
+            actual=router.layer_choice(x,0,0)
+        torch.testing.assert_close(actual,forced[0])
+        self.assertEqual(len(replay),1)
+        decode=selective_decode.decode
+        q=torch.randn(1,4,1,8);k=torch.randn(1,2,17,8);v=torch.randn_like(k)
+        selected=torch.tensor([[True,False]])
+        with fp32_attention():
+            result=selective_decode.decode(q,k,v,selected,length=13,window=5,sinks=2,scale=8**-.5)
+            v[:,:,13:]=float('nan')
+            again=selective_decode.decode(q,k,v,selected,length=13,window=5,sinks=2,scale=8**-.5)
+        self.assertIs(selective_decode.decode,decode)
+        torch.testing.assert_close(result,again,atol=0,rtol=0)
+
     def test_lookup_balance_positions_and_reproducibility(self):
         a=build(Tokenizer());b=build(Tokenizer())
         self.assertEqual(len(a['rows']),128)

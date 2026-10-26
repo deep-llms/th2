@@ -87,6 +87,14 @@ def deploy_jobs_for(model, inputs, config, port):
     return {'jobs':jobs}
 
 
+def numerical_jobs_for(model, inputs, config, port):
+    return {'jobs':[dict(name='decode-numerical-diagnosis',gpus=list(range(8)),timeout_seconds=1200,
+        argv=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
+              '--main_process_port',str(port),'--module','efficient_llm.decode_numerics',
+              '--model',str(model),'--inputs',str(inputs),'--output','{run_dir}/numerics.json'],
+        required_outputs=[dict(path='numerics.json',json_equals=dict(status='measured',world_size=8))])]}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -95,7 +103,7 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     parser.add_argument('--previous-run',type=Path)
     args = parser.parse_args()
@@ -141,7 +149,7 @@ def main():
         prepare += ["--calibration", "1024", "--evaluation", "256"]
     if args.exclude_manifest is not None:
         prepare += ["--exclude-manifest", str(args.exclude_manifest)]
-    if args.study=='deploy':
+    if args.study in ('deploy','numerics'):
         if args.previous_run is None:raise ValueError('Deployment screen requires verified prior study')
         prepare=[sys.executable,'-m','efficient_llm.context_deploy','prepare','--model',str(args.model),
             '--previous-run',str(args.previous_run),'--output',str(args.output/'inputs'),
@@ -185,8 +193,8 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for}[args.study]
-    jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study=='deploy' else 'probe'), config, port), indent=2)+"\n")
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for}[args.study]
+    jobs.write_text(json.dumps(factory(args.model, args.output/('inputs' if args.study in ('deploy','numerics') else 'probe'), config, port), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs
     load_jobs(jobs)

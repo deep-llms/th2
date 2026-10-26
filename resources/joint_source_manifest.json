@@ -4,7 +4,7 @@
   "scripts/gpu_status.py": "63506e500bd24c4b105234116cd601543e1cdf5bd50c599b22550730b31c38eb",
   "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
   "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
-  "scripts/launch_group_diagnostic.py": "dad468f721d4f72ae34229b3ca60ab7183237cc8a9153e0a89dbeb92aaaf59a2",
+  "scripts/launch_group_diagnostic.py": "3e3ba877618e58c937662b39e0f5da794e55afc7bec099b919cb118f0a7b0c6f",
   "resources/llm_pretrain_burn.py": "2b32968798e2200a8148a3395f1d37ae06e92b6340a74a2f192bfe1a48bcf174",
   "resources/accelerate_b200.yaml": "923db7f20a2df3d051180f67f9bea1f30c84c804651e313fa9961a9fd17a57e5",
   "resources/cx_english_20261020.json": "fcb0aa46602d67d3dcc4fa57d4d7303d51bef7f3bb5d44646b8c9d6d507b055d",
@@ -24,5 +24,6 @@
   "efficient_llm/context_deploy.py": "630f3a1006162b1279c8110c466a23b55bfe331b1f8e67bac966bf95076ca70f",
   "efficient_llm/selective_decode.py": "7c6f5a7617646ac4f914fbbda36aebedee8f8fd8663b0f2f731d0fbac241198c",
   "efficient_llm/lookup_probe.py": "efd31b938b4cc844454f17e6f687ef7604312e9535acc9be65e1f8685b2f05a2",
-  "resources/context_fit_20261026.json": "8c50aef8228f12bdd500e560ebef9ca6e1af268c775b4eba996937e7ab11ce41"
+  "resources/context_fit_20261026.json": "8c50aef8228f12bdd500e560ebef9ca6e1af268c775b4eba996937e7ab11ce41",
+  "efficient_llm/decode_numerics.py": "ed0591e7de14360f070351310bd171ee0c3d07316555a085e111182b3e26a085"
 }

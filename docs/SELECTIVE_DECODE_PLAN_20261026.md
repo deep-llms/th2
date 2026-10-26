@@ -70,3 +70,13 @@ GPUs. Reuse the existing supervisor: copy/verify Accelerate, identify exact know
 burn workers, stop only those workers, verify all GPUs free, then GPU gate → all-eight
 profile → all-eight retrieval. Automatic verified communicating burn on success or
 failure. Preserve earlier outputs. Export hashes/results and return commands.sh to #0.
+
+## First execution and diagnostic follow-up
+
+Launch 9481bee: compiled attention and FP32 full-model gates passed. BF16 cached
+trajectory failed on document 4 (0.015731 nats mean NLL difference vs .01 gate).
+The queue stopped before retrieval; automatic burn restored. Do not relax the gate
+or call the implementation accepted. Diagnose eight original documents using a
+FP32 SDPA-on-BF16-operands control, replayed reference routes, and FP32 model
+computation at identical BF16-rounded weights. Report all numerical comparisons.
+This is an investigation, not a new quality/performance acceptance threshold.

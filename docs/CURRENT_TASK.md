@@ -51,7 +51,15 @@ eight-GPU profile and retrieval jobs. Reuse verified supervisor for Accelerate
 copy/env, exact-worker burn reclaim, free-GPU checks and automatic burn restoration.
 Launch/source 9481bee acknowledged at 23:26 SGT: pinned preparation passed for
 128 lookup cases; Accelerate copy verified and environment confirmed eight B200s/BF16.
-Supervisor submitted. GPU gate/results and final handoff are still pending.
+Initial compiled GPU gate passed (FP32 model max abs 3.82e-5).
+The eight-GPU profile then stopped on rank 4: joint BF16 cached mean NLL difference
+0.015731 exceeded the predeclared .01 limit. No retrieval ran; no profile accepted.
+Burns restored 23:27:53 SGT and independently healthy 23:28:33; workers 599948–599955,
+launcher 599879, source under selective-decode run; guard released.
+Next: focused eight-document BF16 diagnostic with FP32-attention control, native
+route replay, and FP32 computation at the same BF16-rounded weights. Original gate
+is not relaxed. Run 6y3o-efficient-decode-numerics-20261026-a01, session
+efficient_numerics_20261026_a01. Prior files preserved; no training.
 78 local CPU tests passed. Read-only health export is the next action.
 
 ## Previous verified execution and GPU ownership
