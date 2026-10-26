@@ -1,13 +1,29 @@
-#1 +60+a
-#th2-6y3o-efficient-window-compact-launch-20261027-a01
+#1 +30+a
+#th2-6y3o-efficient-window-compact-health-20261027-a01
 set -euo pipefail
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false PYTHONDONTWRITEBYTECODE=1 NCCL_NVLS_ENABLE=0 CUDA_VISIBLE_DEVICES=""
-/mnt/local/conda-py311/envs/train/bin/python3.11 -u -m scripts.launch_group_diagnostic \
- --study window \
- --host thiennh-p6-6y3o-worker-0 \
- --model /mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6 \
- --data-root /mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513 \
- --output /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-window-compact-20261027-a01 \
- --session efficient_window_20261027_a01 \
- --previous-run /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-context-budget-20261026-a01 \
- --predecessor-burn-script /mnt/local/_outputs/deep-llms_th2/6y3o-efficient-selective-research-20261026-a01/source/resources/llm_pretrain_burn.py
+export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
+/mnt/local/conda-py311/envs/train/bin/python3.11 -u - <<'REMOTE'
+from pathlib import Path
+from datetime import datetime, timezone
+import json, hashlib
+from scripts.gpu_process import inspect
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-window-compact-20261027-a01')
+print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+for name in ['supervisor.log','accelerate-env.log','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/run/window-compact-gate.log','supervised/run/window-profile.log','supervised/run/window-quality.log','supervised/run/complete.json','supervised/burn-verified.json']:
+ p=root/name
+ print('FILE',name,'EXISTS',p.is_file(),flush=True)
+ if p.is_file():print(p.read_text()[-13000:],flush=True)
+for name in ['supervised/run/gate.json','supervised/run/profile.json','supervised/run/quality.json']:
+ p=root/name
+ if p.is_file():
+  obj=json.loads(p.read_text());print('RESULT',name,'SHA256',hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
+  print(json.dumps(obj),flush=True)
+p=root/'supervised/burn.log'
+if p.is_file():print('BURN_TAIL',p.read_text()[-8000:],flush=True)
+for name in ['inputs/manifest.json','source-manifest.json','accelerate-env.log','supervised/supervisor.json','supervised/burn-verified.json','supervised/run/complete.json','supervised/reclaim.json','supervised/gpus-free-before-training.json']:
+ p=root/name
+ if p.is_file():print('ARTIFACT_HASH',name,hashlib.sha256(p.read_bytes()).hexdigest(),flush=True)
+print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
+p=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD_DISABLED',p.exists(),p.read_text() if p.exists() else '',flush=True)
+print('HEALTH_COMPLETE',flush=True)
+REMOTE
