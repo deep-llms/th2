@@ -1,0 +1,141 @@
+{
+  "phase": "remote_code_cleanup_verified_deployment_pending",
+  "inventory_commit": "de02a3475a65e77b7e4d6e7b6280e505290cc8e8",
+  "cleanup_commit": "2fca185719e26fee43ad6d7118ff27377f627222",
+  "inventory": {
+    "INVENTORY_START": {
+      "cwd": "/mnt/local/deep-llms_th2",
+      "hostname": "thiennh-p6-6y3o-worker-0",
+      "utc": "2026-10-26T00:13:21.539429+00:00"
+    },
+    "GPU_INVENTORY": {
+      "apps": [
+        "581907, GPU-90eef51a-3614-2801-475c-b7b7b592397c, 155198",
+        "581908, GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c, 155198",
+        "581909, GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1, 155198",
+        "581910, GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e, 155198",
+        "581911, GPU-b755571d-58df-0910-0013-12fc8f77beeb, 155198",
+        "581912, GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2, 155198",
+        "581913, GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6, 155198",
+        "581914, GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328, 155198"
+      ],
+      "gpus": [
+        "0, NVIDIA B200, GPU-90eef51a-3614-2801-475c-b7b7b592397c, 155212 MiB, 183359 MiB, 100 %",
+        "1, NVIDIA B200, GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c, 155212 MiB, 183359 MiB, 100 %",
+        "2, NVIDIA B200, GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1, 155212 MiB, 183359 MiB, 100 %",
+        "3, NVIDIA B200, GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e, 155212 MiB, 183359 MiB, 100 %",
+        "4, NVIDIA B200, GPU-b755571d-58df-0910-0013-12fc8f77beeb, 155212 MiB, 183359 MiB, 100 %",
+        "5, NVIDIA B200, GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2, 155212 MiB, 183359 MiB, 100 %",
+        "6, NVIDIA B200, GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6, 155212 MiB, 183359 MiB, 100 %",
+        "7, NVIDIA B200, GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328, 155212 MiB, 183359 MiB, 100 %"
+      ]
+    },
+    "INVENTORY_COMPLETE": {
+      "commands_sha256": "1be18a7ff07968c36bffe4b1f2a387e32a20b98674ff2b8b64ff975c9c0f9760"
+    }
+  },
+  "cleanup": {
+    "CLEANUP_PREFLIGHT": {
+      "archiving": [
+        ".gitignore",
+        "AGENTS.md",
+        "README.md",
+        "bdot",
+        "configs",
+        "docs",
+        "envs",
+        "eval",
+        "jobs.example.json",
+        "jobs.training.example.json",
+        "packed_evaluation.py",
+        "packed_fa2.py",
+        "packed_fa4.py",
+        "packed_training.py",
+        "project.example.json",
+        "queued",
+        "requirements.txt",
+        "resources",
+        "resume_recipe.py",
+        "run_experiments.py",
+        "scripts",
+        "tests",
+        "train.py",
+        "training_data.py"
+      ],
+      "backup": "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-migration-20261026-a01",
+      "file_count": 419,
+      "preserving": [
+        "_dl_active.txt",
+        "_install_active.txt",
+        "_previous_run_status.log",
+        "_run_log_",
+        "commands.sh"
+      ]
+    },
+    "CLEANUP_COMPLETE": {
+      "archived_files": 419,
+      "backup": "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-migration-20261026-a01",
+      "code_root": "/mnt/local/deep-llms_th2",
+      "commands_sha256": "ec9dc75155a51dc2cfdd46cd8422e322b1ab24eff776914fa53447122877c2de",
+      "external_directory_identities_unchanged": true,
+      "gpu_processes": [
+        {
+          "gpu_uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+          "pid": 581907,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+          "pid": 581908,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+          "pid": 581909,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+          "pid": 581910,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+          "pid": 581911,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+          "pid": 581912,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+          "pid": 581913,
+          "start_ticks": 285074151
+        },
+        {
+          "gpu_uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+          "pid": 581914,
+          "start_ticks": 285074151
+        }
+      ],
+      "gpu_processes_unchanged": true,
+      "hostname": "thiennh-p6-6y3o-worker-0",
+      "remaining": [
+        "_dl_active.txt",
+        "_install_active.txt",
+        "_previous_run_status.log",
+        "_run_log_",
+        "commands.sh"
+      ],
+      "utc": "2026-10-26T00:16:55.370785+00:00"
+    }
+  },
+  "local_receipt_directory": "temp/th2_migration_20261026",
+  "receipt_sha256": {
+    "inventory01.log": "05dc99b5caad8b44cfab81a78d5a6adda246ff21d05d0916714f584abbf8fc88",
+    "inventory02.log": "cda820eb8309c03c5ddf47f8747c4265d2eb48bac38ca86f22923e135eb3dafa",
+    "cleanup01.log": "2565996aa0f845535ca109bb6e08823ce0f7d9322ea5e3088f891224aceba466"
+  }
+}
