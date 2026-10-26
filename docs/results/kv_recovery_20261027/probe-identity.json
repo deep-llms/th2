@@ -1,0 +1,280 @@
+{
+  "sha256": "adb7be00b0ca051dc95cdaa0cfd9fbe394b2ff029ff8eaacee833b60db4744ff",
+  "metadata": {
+    "status": "passed",
+    "length": 1024,
+    "seed": 9042,
+    "calibration_documents": 131072,
+    "evaluation_documents": 256,
+    "selection": "seeded document prefixes in bounded pinned shards; long documents only",
+    "eod": {
+      "token": "<|endoftext|>",
+      "id": 151643,
+      "selection": "explicit"
+    },
+    "data_root": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513",
+    "model_root": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+    "pool_revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+    "tokenizer_revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+    "tokens_sha256": "24f7bdac3823325a2f42e98a3a1ebff04be68e6f0ad995e557c36e6e6d7e3653",
+    "model_files": {
+      "config.json": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59",
+      "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+      "model.safetensors": "cd2a512003e2f9f3cd3c32a9c3573f820bb28c940f73c57b1ddaa983d9223eba",
+      "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+      "tokenizer_config.json": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+      "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    },
+    "excluded_evaluation_manifest_sha256": null,
+    "verified_shard_files": {
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000000/data-00000-of-00001.arrow": {
+        "bytes": 186868536,
+        "sha256": "4e9b4b41576e1b96a014d41f1de60f337c6f684fd23cc94e9ffe8abefa2f9e8c"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000000/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000000/document_index.parquet": {
+        "bytes": 574135,
+        "sha256": "489b034632e792324f90a54c8ae3430be0becd1b11c52de16ce7357e7d4726d5"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000000/state.json": {
+        "bytes": 247,
+        "sha256": "dd17185935b4b967981cd81cb410368ea10fa9a2b341c9abd2081ed81741c0b3"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000001/data-00000-of-00001.arrow": {
+        "bytes": 187691320,
+        "sha256": "585abeaff1f66a4ace225826dbcd986438b9385977d56641173d725522cecd17"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000001/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000001/document_index.parquet": {
+        "bytes": 592026,
+        "sha256": "74eea6d1693ead04f838a4e6ac133be7d87dc313bf3c92646567b1296cce460f"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000001/state.json": {
+        "bytes": 247,
+        "sha256": "d28550f877cba8761b39fa62678f98127828099c53dac41aafee6b530f133c8a"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000002/data-00000-of-00001.arrow": {
+        "bytes": 188151344,
+        "sha256": "b32eaa1049dee1280da07a332e17e88aa195b3334fa4b9a13f7833af31ad95f7"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000002/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000002/document_index.parquet": {
+        "bytes": 586893,
+        "sha256": "c76763b68c9cb05968bec8415964a70b2d26867162fc0d96cce5379de2e16e00"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000002/state.json": {
+        "bytes": 247,
+        "sha256": "ebc161519ba0b8f196ddffd4f60fdd5e1077c6a940fae7a0d7ef633a95a9d54e"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000003/data-00000-of-00001.arrow": {
+        "bytes": 184490136,
+        "sha256": "e9fb2a2ac896acb39bf9b16724e4d289953fdff5efed547f9b961e7557edcb7b"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000003/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000003/document_index.parquet": {
+        "bytes": 583201,
+        "sha256": "20eba676049c5941766f68b6ba4630b1fc66117886ebd305038c9e4b0b453c31"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000003/state.json": {
+        "bytes": 247,
+        "sha256": "3fea8a2c5bfae4b1e2226847061d3b0e5d6df64ce7ff4dafb920e90b59c07f77"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000004/data-00000-of-00001.arrow": {
+        "bytes": 187885640,
+        "sha256": "ecfb0cafeda614e818571fe4ca026e6f4e64d15efdad04a5dc9257274975fc7d"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000004/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000004/document_index.parquet": {
+        "bytes": 579860,
+        "sha256": "2a77aee0095a54af4215607b1411e3949ca319e8c33e37fc21ce8e33832471b5"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000004/state.json": {
+        "bytes": 247,
+        "sha256": "6ff1a2ac00baf8074bfb922ff4cf9ad67f45978f7501ffc7cfaa3a3c61dc8930"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000005/data-00000-of-00001.arrow": {
+        "bytes": 188389808,
+        "sha256": "decf0836f35d3370f5fe54c8b5a2dac5fbc557db8bd1ee8daf6c9b6fe61bf014"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000005/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000005/document_index.parquet": {
+        "bytes": 584027,
+        "sha256": "e3c4bbe250b679721ff14531f0e5500c7ae9677e8d7a76856240dda0ee3e0dde"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000005/state.json": {
+        "bytes": 247,
+        "sha256": "104838a3002aa7d9354d526d57aa5daaffea7413c2dff856e522f65ce01bd1bd"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000006/data-00000-of-00001.arrow": {
+        "bytes": 186106568,
+        "sha256": "7a3f750256c70fd1aa16beb97a75eabf01c2503266bbc44bf56aaf193984b6f6"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000006/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000006/document_index.parquet": {
+        "bytes": 586432,
+        "sha256": "2d5f23b48f2db85edc560f961c2d77fdddeed65d13d5783e7f90f0878b3e1a02"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000006/state.json": {
+        "bytes": 247,
+        "sha256": "8bcd863591d236b95c13de06c0497891c98f517d1c034f617bd949622e466d68"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000007/data-00000-of-00001.arrow": {
+        "bytes": 186842688,
+        "sha256": "40f3a5f2af296ebc6582e68c7c4c293c897a5477890b7db321800f8b9a887b3f"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000007/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000007/document_index.parquet": {
+        "bytes": 587848,
+        "sha256": "4cd736d5f5ca6e084ab9a304356dae33f4a26b976818346426f4595e48cf9ddc"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000007/state.json": {
+        "bytes": 247,
+        "sha256": "29dceef987cb06abcc9734ae4bdcee36045d1b0fb501a269ae0cb58d5926a1ee"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000008/data-00000-of-00001.arrow": {
+        "bytes": 187294480,
+        "sha256": "9ae2acf04c472c8665d9265d49ac9e8b6f6cff543172d40d21047d2299ee5132"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000008/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000008/document_index.parquet": {
+        "bytes": 568820,
+        "sha256": "d457853a498cafbd2d43af5458b5f429f9b70b51efb9a8feef21002cdc834863"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000008/state.json": {
+        "bytes": 247,
+        "sha256": "3dbfbb4be1d8e5819e7a61c4ce8ef240d43c5db5ed568c4ec227e51fed26e9e2"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000009/data-00000-of-00001.arrow": {
+        "bytes": 189010952,
+        "sha256": "8f658c03692e2cdcac7c5b94eb63f0548322f234e46458ed37b5c501d9062984"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000009/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000009/document_index.parquet": {
+        "bytes": 572961,
+        "sha256": "0e0a084dea029c778cf7cb906334caaca63965c0ecec09cc3c9027558573e5aa"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000009/state.json": {
+        "bytes": 247,
+        "sha256": "1641c661582ae099ac707df89d926b2eac464a5cd71c133f794c81b829c754be"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000010/data-00000-of-00001.arrow": {
+        "bytes": 188816152,
+        "sha256": "74b5e50bbff97878144b58cb1291fc4d6471f540e82b42e69114ed1a0f406e38"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000010/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000010/document_index.parquet": {
+        "bytes": 577609,
+        "sha256": "d3abfea4289bdcf0d48b6e0b888e7f75037a8c1c5240508fd086d3a513d38302"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000010/state.json": {
+        "bytes": 247,
+        "sha256": "54bd6d18490fcdd56909950cae4fd8770d9ac1e3aa5ae9677f452c3d7b384cf5"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000011/data-00000-of-00001.arrow": {
+        "bytes": 187443856,
+        "sha256": "ab8749178d5f243a481a6f7cbb396ced6c2c6ef3e132cd2c029ab83fb8e0af55"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000011/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000011/document_index.parquet": {
+        "bytes": 563249,
+        "sha256": "4a77f7ae2299eaa047468ac200039c4526b50f0c213b8353d019e8c43c88cc6e"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000011/state.json": {
+        "bytes": 247,
+        "sha256": "f03f490e23bbd35f93285fe97e7dadc2141bec978ad2408ed1636ddc13e49943"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000012/data-00000-of-00001.arrow": {
+        "bytes": 186228248,
+        "sha256": "322cc8d1e004e669b9d895e696717a23bf7923dbde73d253da1f83e6530b157d"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000012/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000012/document_index.parquet": {
+        "bytes": 566319,
+        "sha256": "823c86e9f5343889d91a96f793f4436958140e94e946e86dfec274e4addc5f1e"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000012/state.json": {
+        "bytes": 247,
+        "sha256": "45c3e4922491280ea774df3099b88fce94d6d32ff2146975f2fc9600bb6ccfab"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000013/data-00000-of-00001.arrow": {
+        "bytes": 187630040,
+        "sha256": "8d4bc0937602ec7090d88136b66e5907718e7876c546dc7151c62f5fddc374e5"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000013/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000013/document_index.parquet": {
+        "bytes": 591968,
+        "sha256": "3dea2066262a12722abbb4c17e30fcaa6d1ff97da3d4110ad221e459970086f3"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000013/state.json": {
+        "bytes": 247,
+        "sha256": "7de53c6f65fed16d69b6d3b83c5a54951b9e062fec765fb6c37dfe546d1b61cb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000014/data-00000-of-00001.arrow": {
+        "bytes": 186652528,
+        "sha256": "2b4c05ab290e622be92df5d73ddfe56c3fa857395c5986a57eea340fd78458f5"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000014/dataset_info.json": {
+        "bytes": 165,
+        "sha256": "6f88709c27798c6e5ac7002e08dba0e2c64b779dbe6ad2ea32124c0d7a1fc6bb"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000014/document_index.parquet": {
+        "bytes": 559016,
+        "sha256": "33a39405b49423d1d230a63a0d9cf8f333146efeca0475a2acbc94a3626b05e8"
+      },
+      "subsets/qwen3_0.6b_base_en_30B/train/shard_000014/state.json": {
+        "bytes": 247,
+        "sha256": "764ad0ca310219fa95eb958da069c15dbe17c8a37059955b272d28d4f6e171b0"
+      }
+    },
+    "recovery_from_manifest_sha256": "d7787dbe5685aec296b45ac38e122e20bff1d16e65059f3f0a7dba347b4be0ea",
+    "excluded_previous_documents": 33152,
+    "evaluation_reused": true
+  },
+  "previous_document_overlap": {
+    "text_sha256": 0,
+    "tokens_sha256": 0
+  },
+  "identical_validation_records": true
+}

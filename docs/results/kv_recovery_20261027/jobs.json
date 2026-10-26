@@ -1,0 +1,209 @@
+{
+  "jobs": [
+    {
+      "name": "kv-recovery-smoke",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "53833",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/B/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/B/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--steps",
+        "8",
+        "--batch",
+        "8",
+        "--eval-every",
+        "8",
+        "--output",
+        "{run_dir}/smoke",
+        "--smoke"
+      ],
+      "required_outputs": [
+        {
+          "path": "smoke/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 8,
+            "arm": "B",
+            "smoke": true,
+            "phase": "new_recovery",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "kv-recovery-A",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "53833",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "A",
+        "--steps",
+        "2048",
+        "--batch",
+        "8",
+        "--eval-every",
+        "256",
+        "--output",
+        "{run_dir}/A",
+        "--inference-eval"
+      ],
+      "required_outputs": [
+        {
+          "path": "A/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 2048,
+            "arm": "A",
+            "smoke": false,
+            "phase": "new_recovery",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "kv-recovery-B",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "53833",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/B/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/B/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--steps",
+        "2048",
+        "--batch",
+        "8",
+        "--eval-every",
+        "256",
+        "--output",
+        "{run_dir}/B",
+        "--inference-eval"
+      ],
+      "required_outputs": [
+        {
+          "path": "B/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 2048,
+            "arm": "B",
+            "smoke": false,
+            "phase": "new_recovery",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "kv-recovery-summary",
+      "timeout_seconds": 300,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_mlp_study",
+        "recovery-summary",
+        "--runs",
+        "{run_dir}",
+        "--output",
+        "{run_dir}/summary.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "summary.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        }
+      ]
+    }
+  ]
+}

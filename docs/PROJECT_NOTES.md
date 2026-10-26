@@ -371,3 +371,21 @@ Recovery launch a01 (6399e48) failed before Python/GPU work because a shell head
 used git rev-parse in the node's source-only copy, which omits .git. Removed that
 header and use explicit /mnt/local/deep-llms_th2 cwd; the checksum manifest records
 source identity. Controller OK means delivery, not job success. Use fresh a02.
+
+
+## Recovery outcome and placement decision — 27 October 2026 SGT
+
+Recovery a02 finished 07:39:16 SGT, burn handoff verified 07:40:27 and independent
+health ce33588 at 07:40:39. A/B BF16 PPL 19.2416/22.3924; B penalty 16.37%,
+paired NLL +0.151645 [0.145347,0.158700]. All 256 documents worse; the 5% gate
+fails. No additional pruning. Data/order/parent/reload checks pass. Results and
+SHA receipts: docs/results/kv_recovery_20261027; report KV_RECOVERY_RESULTS_20261027.md.
+
+Follow-up isolates KV-sharing placement: upper25, uniform25, full50, all from
+identical dense A-512, same 2048-step fresh phase/data/order as completed dense
+A recovery (reused matched control). Existing SharedAttention runtime unchanged;
+fixed producer maps only, no new backend/loss/kernel. Three authorized additional
+training jobs, leaving at most one; caps are not quotas. Actual GPU gates for
+all maps and 8-step 8-GPU smoke precede fits. Keep all checkpoints and prior
+outputs. Novelty is not established by partial sharing, which exists in prior
+work. See KV_PLACEMENT_PILOT_20261027.md and CURRENT_TASK for receipt/live state.

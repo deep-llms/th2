@@ -1,0 +1,58 @@
+[
+  {
+    "path": "jobs.json",
+    "sha256": "6ae80a63ebb50870f84bca594921997fe09d93a641e146def72e5078b062eaf2"
+  },
+  {
+    "path": "source-manifest.json",
+    "sha256": "01392c50ff82a5aae74f04adaa90e60b254c60ca03b98d30f24f55d50e488a91"
+  },
+  {
+    "path": "accelerate-env.log",
+    "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd"
+  },
+  {
+    "path": "supervised/supervisor.json",
+    "sha256": "12430ae8a808efa08ee7f2cebb17e2cdcc7fe60416dc2fd147b05b6d1fa5f90a"
+  },
+  {
+    "path": "supervised/burn-verified.json",
+    "sha256": "cbb7873d5c48c0bcf94756e9745081ff2f614f81c08cd67e46951915a824acad"
+  },
+  {
+    "path": "supervised/reclaim.json",
+    "sha256": "cb5306a4320faf9fa492c7986b8db39208edc06506be4c95661fe03186ce768b"
+  },
+  {
+    "path": "supervised/gpus-free-before-training.json",
+    "sha256": "e016691d2617f53a375adc3955db395a25765e25a91020927918f22254cce7eb"
+  },
+  {
+    "path": "supervised/run/complete.json",
+    "sha256": "bfdf0aefef54c2c0c244a75091f62f0ab021018f90a6d14cdd65c8ab926388a4"
+  },
+  {
+    "path": "supervised/run/summary.json",
+    "sha256": "696161cf49548a477a1f068d6ce14f48e1193f1434405e180b05435eb33196ad"
+  },
+  {
+    "path": "supervised/run/smoke/result.json",
+    "sha256": "b5f4c207ba8427408ad47129ffd28179a3f278699f6507e733e72e589e1b654f"
+  },
+  {
+    "path": "supervised/run/A/result.json",
+    "sha256": "a386ef56a4fe5254ee5ba038071f7cd6adc3b2d2f684cfb0fc2a52f1b8f1cb96"
+  },
+  {
+    "path": "supervised/run/B/result.json",
+    "sha256": "4dbce334eb5df1ca7ffb863ec0def5b7ffbafe147e01e1eb2a05a7d3de296028"
+  },
+  {
+    "path": "supervised/run/A/validation.json",
+    "sha256": "cc8e038f968406daea64fd454a09a8dad6961ccabe6b9a40d70d2c9383540acd"
+  },
+  {
+    "path": "supervised/run/B/validation.json",
+    "sha256": "9b54a073e2ea56e3f50d0a1cce6891b46daa290711b39bc28f0ac90735e3bfb0"
+  }
+]

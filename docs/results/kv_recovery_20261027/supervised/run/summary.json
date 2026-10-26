@@ -1,0 +1,152 @@
+{
+  "status": "passed",
+  "curve": {
+    "0": {
+      "dense_ppl": 20.037904857814457,
+      "shared_ppl": 26.22461379222563,
+      "ppl_ratio": 1.3087502899285628,
+      "paired": {
+        "delta_nats_per_token": 0.2690727047334832,
+        "paired_document_bootstrap_95ci": [
+          0.2604380957861085,
+          0.27816141964083774
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "256": {
+      "dense_ppl": 20.412499603196,
+      "shared_ppl": 25.484673748869973,
+      "ppl_ratio": 1.2484837351756675,
+      "paired": {
+        "delta_nats_per_token": 0.22192980316037605,
+        "paired_document_bootstrap_95ci": [
+          0.2141839824887047,
+          0.23033840957429533
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "512": {
+      "dense_ppl": 20.198488381199237,
+      "shared_ppl": 24.485893321029096,
+      "ppl_ratio": 1.2122636535425382,
+      "paired": {
+        "delta_nats_per_token": 0.19248939991580036,
+        "paired_document_bootstrap_95ci": [
+          0.18546803694832778,
+          0.20016389543239665
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "768": {
+      "dense_ppl": 19.978312089306016,
+      "shared_ppl": 23.802430497768082,
+      "ppl_ratio": 1.1914134883551568,
+      "paired": {
+        "delta_nats_per_token": 0.17514040758126298,
+        "paired_document_bootstrap_95ci": [
+          0.16866560229222347,
+          0.1821867900841708
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "1024": {
+      "dense_ppl": 19.69999027300023,
+      "shared_ppl": 23.18173231492529,
+      "ppl_ratio": 1.1767382619826445,
+      "paired": {
+        "delta_nats_per_token": 0.16274642630366232,
+        "paired_document_bootstrap_95ci": [
+          0.15611329980591415,
+          0.17004937634874787
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "1280": {
+      "dense_ppl": 19.50090998308348,
+      "shared_ppl": 22.8269737159222,
+      "ppl_ratio": 1.1705594116235596,
+      "paired": {
+        "delta_nats_per_token": 0.15748176413491852,
+        "paired_document_bootstrap_95ci": [
+          0.15105406368284208,
+          0.16448476355887628
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "1536": {
+      "dense_ppl": 19.327167585737968,
+      "shared_ppl": 22.54027486893507,
+      "ppl_ratio": 1.1662482238508731,
+      "paired": {
+        "delta_nats_per_token": 0.15379195022080594,
+        "paired_document_bootstrap_95ci": [
+          0.14738465374250007,
+          0.16089998229573768
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "1792": {
+      "dense_ppl": 19.254924881261918,
+      "shared_ppl": 22.421466228435364,
+      "ppl_ratio": 1.1644535809254177,
+      "paired": {
+        "delta_nats_per_token": 0.15225194774047182,
+        "paired_document_bootstrap_95ci": [
+          0.14594327637722343,
+          0.15933441378481805
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "2048": {
+      "dense_ppl": 19.2379412794953,
+      "shared_ppl": 22.389650540455104,
+      "ppl_ratio": 1.1638277825662688,
+      "paired": {
+        "delta_nats_per_token": 0.1517143852413412,
+        "paired_document_bootstrap_95ci": [
+          0.1454676337531992,
+          0.15877910129853304
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    }
+  },
+  "inference": {
+    "dense_ppl": 19.24162534696335,
+    "shared_ppl": 22.392385990168997,
+    "ppl_ratio": 1.1637471152457965,
+    "paired": {
+      "delta_nats_per_token": 0.15164507076249795,
+      "paired_document_bootstrap_95ci": [
+        0.1453474842753855,
+        0.15870028988344248
+      ],
+      "documents_improved": 0,
+      "documents": 256
+    }
+  },
+  "decision": "review_conversion",
+  "gate": "Upper 95% document CI for shared-minus-dense NLL <= log(1.05)",
+  "phase_tokens": 268435456,
+  "limitations": [
+    "A diagnostic on reused 256-document validation; not a new independent test.",
+    "New optimizer/schedule phase, not an exact resume; one training seed."
+  ]
+}

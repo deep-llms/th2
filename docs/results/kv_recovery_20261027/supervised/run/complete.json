@@ -1,0 +1,67 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T23:20:17.986072+00:00",
+  "jobs": [
+    {
+      "name": "kv-recovery-smoke",
+      "started_at": "2026-10-26T23:20:17.986346+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 46.62570108938962,
+      "artifacts": [
+        {
+          "path": "smoke/result.json",
+          "sha256": "b5f4c207ba8427408ad47129ffd28179a3f278699f6507e733e72e589e1b654f",
+          "bytes": 20555
+        }
+      ],
+      "finished_at": "2026-10-26T23:21:05.118603+00:00"
+    },
+    {
+      "name": "kv-recovery-A",
+      "started_at": "2026-10-26T23:21:05.118643+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 558.8012199681252,
+      "artifacts": [
+        {
+          "path": "A/result.json",
+          "sha256": "a386ef56a4fe5254ee5ba038071f7cd6adc3b2d2f684cfb0fc2a52f1b8f1cb96",
+          "bytes": 77759
+        }
+      ],
+      "finished_at": "2026-10-26T23:30:24.435115+00:00"
+    },
+    {
+      "name": "kv-recovery-B",
+      "started_at": "2026-10-26T23:30:24.435154+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 527.3100415491499,
+      "artifacts": [
+        {
+          "path": "B/result.json",
+          "sha256": "4dbce334eb5df1ca7ffb863ec0def5b7ffbafe147e01e1eb2a05a7d3de296028",
+          "bytes": 77778
+        }
+      ],
+      "finished_at": "2026-10-26T23:39:12.241619+00:00"
+    },
+    {
+      "name": "kv-recovery-summary",
+      "started_at": "2026-10-26T23:39:12.241658+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 4.169053086079657,
+      "artifacts": [
+        {
+          "path": "summary.json",
+          "sha256": "696161cf49548a477a1f068d6ce14f48e1193f1434405e180b05435eb33196ad",
+          "bytes": 4235
+        }
+      ],
+      "finished_at": "2026-10-26T23:39:16.411598+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T23:39:16.411632+00:00"
+}

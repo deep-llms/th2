@@ -228,13 +228,16 @@ class Validation(TrainerCallback):
 def train(args, device, rank, world, tokens, manifest):
     parent = None
     parent_files = None
+    layout = args.sharing_layout
+    if layout is not None and args.initial_model is None:
+        raise ValueError('Placement requires an explicit dense parent')
     if args.initial_model is not None:
         if args.parent_result is None or args.plan is not None or args.calibration != 0:
             raise ValueError('New recovery phase requires parent result, no calibration/plan')
         if args.initial_model.resolve() != (args.parent_result.parent/'final').resolve():
             raise ValueError('Initial checkpoint is not the parent final model')
         parent = json.loads(args.parent_result.read_text())
-        if (parent['status'] != 'passed' or parent['smoke'] or parent['arm'] != args.arm
+        if (parent['status'] != 'passed' or parent['smoke'] or parent['arm'] != ('A' if layout else args.arm)
                 or parent['probe_sha256'] != manifest.get('recovery_from_manifest_sha256')
                 or not manifest.get('evaluation_reused')):
             raise ValueError('Recovery parent and reused evaluation do not match')
@@ -277,6 +280,12 @@ def train(args, device, rank, world, tokens, manifest):
         torch.testing.assert_close(torch.tensor(new, dtype=torch.float64),
             torch.tensor(old, dtype=torch.float64), rtol=0, atol=1e-5)
         initial_difference = max(abs(a-b) for a,b in zip(new,old,strict=True))
+    if layout is not None:
+        from efficient_llm.kv_placement import apply_layout
+        apply_layout(model, layout)
+        # Keep the parent verification above, but report the converted step-zero
+        # model in the learning curve. Conversion removes parameters before AdamW/DDP.
+        callback.measure(model, 0)
     config = TrainingArguments(output_dir=str(args.output/'trainer'), max_steps=args.steps,
         per_device_train_batch_size=args.batch, gradient_accumulation_steps=1,
         learning_rate=5e-5, lr_scheduler_type='cosine', warmup_steps=max(1,round(.05*args.steps)),
@@ -335,7 +344,8 @@ def train(args, device, rank, world, tokens, manifest):
         training_arguments=config.to_dict(), validation=callback.history,
         reloaded_max_nll_difference=max(abs(a-b) for a,b in zip(actual['per_document_nll'],reference['per_document_nll'])),
         post_recovery_sensitivity=after_sensitivity, inference_validation=inference,
-        phase='new_recovery' if parent else 'initial_conversion',
+        phase='placement_conversion' if layout else 'new_recovery' if parent else 'initial_conversion',
+        sharing_layout=layout,
         initial_model_files=parent_files, parent_result_sha256=sha256(args.parent_result) if parent else None,
         parent_steps=parent['steps'] if parent else 0, initial_max_nll_difference=initial_difference,
         optimizer_and_schedule_reset=parent is not None)
@@ -436,6 +446,7 @@ def main():
     p.add_argument('--parent-result', type=Path)
     p.add_argument('--eval-every', type=int, default=0)
     p.add_argument('--inference-eval', action='store_true')
+    p.add_argument('--sharing-layout', choices=['full50','uniform25','upper25'])
     args = p.parse_args()
     if args.output is None or args.output.exists(): raise ValueError('Require fresh output')
     if args.mode == 'summarize':

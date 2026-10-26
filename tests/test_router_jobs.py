@@ -7,6 +7,23 @@ from run_experiments import load_jobs
 
 
 class RouterJobTests(unittest.TestCase):
+    def test_placement_uses_same_dense_parent_and_existing_probe(self):
+        from scripts.launch_group_diagnostic import kv_placement_jobs_for
+        result=kv_placement_jobs_for('/model','/previous/probe','/accelerate.yaml',29721,'/previous','/parent')
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(result));load_jobs(path)
+        jobs=result['jobs']
+        self.assertEqual(len(jobs),8)
+        self.assertEqual([j['gpus'] for j in jobs[:3]],[[0]]*3)
+        self.assertTrue(jobs[3]['required_outputs'][0]['json_equals']['smoke'])
+        for job in jobs[4:7]:
+            self.assertEqual(job['gpus'],list(range(8)))
+            self.assertIn('/parent/supervised/run/A/final',job['argv'])
+            self.assertIn('/previous/probe',job['argv'])
+            self.assertIn('2048',job['argv'])
+            self.assertIn('--inference-eval',job['argv'])
+        self.assertIn('/previous/supervised/run/A/result.json',jobs[-1]['argv'])
+
     def test_recovery_pair_starts_from_parents_after_smoke(self):
         config=kv_recovery_jobs_for('/model','/probe','/accelerate.yaml',29721,'/previous')
         with tempfile.TemporaryDirectory() as tmp:

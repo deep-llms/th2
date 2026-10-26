@@ -1,63 +1,54 @@
 # Current task
 
-## Active: KV recovery and overnight continuation, 27 October 2026 SGT
+## Active: placement follow-up after verified recovery, 27 October 2026 SGT
 
-User approved a matched recovery test and bounded autonomous follow-ups while
-sleeping. Design: [KV_RECOVERY_OVERNIGHT_20261027.md](KV_RECOVERY_OVERNIGHT_20261027.md).
-A/B will start from the old step-512 final weights; explicit new optimizer and
-2,048-step schedule, 134.22M fresh tokens per arm. Reuse the old 256 validation
-prefixes and exclude all old pilot documents from training. Same model, SDPA,
-frozen teacher, native Trainer and 8-GPU recipe. Eight-step B smoke gates A/B.
+User approved bounded autonomous recovery research while sleeping. Designs:
+[KV_RECOVERY_OVERNIGHT_20261027.md](KV_RECOVERY_OVERNIGHT_20261027.md), then
+[KV_PLACEMENT_PILOT_20261027.md](KV_PLACEMENT_PILOT_20261027.md).
 
-Read-only preflight `d9ed973` passed at **06:44:15 SGT**: parent hashes verified,
-21,710 GiB free, only the previously identified eight burn workers 612725–612732,
-launcher 612656; guard released; collectives advancing. Receipt:
-`temp/kv_recovery_preflight01.log`. Controller healthy. Reinspect before reclaim.
-CPU data/score tests (4), model/2-rank training tests (8), recovery decision test (1),
-and infrastructure checks (56, including 8 job tests) pass.
-No environment or model architecture changes; GPU lifecycle unchanged.
-
-Attempt `6399e48` failed at 06:53:25 SGT before Python, data preparation,
-output creation or any GPU operation: `git rev-parse HEAD` ran in the runner's
-source copy, which has no .git directory. This is a project shell-header mistake,
-not a controller failure. Receipt `temp/kv_recovery_launch01.log`. Removed this
-header command, set explicit project cwd, and submitted a02 with a fresh output
-in `a1847c0`. Corrected node launch at **07:00:29 SGT** reached Python and printed
-`RECOVERY_PARENT_HASHES_VERIFIED`; controller acknowledged at 07:03 SGT.
-Receipt `temp/kv_recovery_launch02.log`, controller03. Snapshot precedes the
-PROBE_PREPARED/DIAGNOSTIC_SUBMITTED markers, so GPU training is not yet confirmed.
-The workflow performs fresh-data CPU preparation before reclaim, then smoke/A/B;
-let it continue. The next wake must check liveness/progress/artifacts, not resubmit.
-commands.sh restored to #0 after this acknowledgement; frozen job source is
-outside the synced repository.
-Do not re-run a01. Controller acknowledged delivery; its generic OK is not
-proof that the shell or training succeeded.
-Fresh output
+**Recovery pair complete and archived.** Run
 `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02`,
-predecessor training `6y3o-efficient-kv-mlp-20261027-a03`, predecessor burn source
-`6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
-Session `efficient_kv_recovery_20261027_a02`. CPU data preparation happens before
-reclaim; Accelerate cache copy/env, exact worker identities and free checks are
-mandatory. The large recovery probe manifest may exceed the 25 MB export limit;
-export a compact identity/count/hash receipt and small results instead of the
-full document list. Final artifacts: `supervised/run/{A,B}/result.json`, `summary.json`,
-`complete.json`, `supervised/supervisor.json`, `burn-verified.json`.
+launch a1847c0, health ce33588. Queue ended07:39:16SGT; burn handoff07:40:27.
+Independent read-only inspection07:40:39 confirmed eight known burns, collective
+progress and guard released. Parent/reload differences zero, exact sample-order
+match, no old-document overlap, unchanged256-document validation; Accelerate8GPU
+bf16 configuration verified. Small artifacts reconstructed from log and SHA256
+verified. [Results](KV_RECOVERY_RESULTS_20261027.md). Archive:
+`docs/results/kv_recovery_20261027/`; raw `temp/kv_recovery_results_20261027/`.
 
-Schedule this existing conversation every 45 minutes, at most 12 hours, with
-`scripts/queue_watch.py`; state under ignored `temp/kv_recovery_watch_20261027/`.
-Timer is live (PID 324788, tmux `efficient_kv_recovery_watch_20261027`). First tick
-07:38:46 SGT; deadline 18:53:46 SGT on 27 October. App server accepted delivery
-test message `01a17a6b-7b31-7c12-a366-27b05ce6cebf`; actual turn delivery remains
-pending. Check `delivery_ack.json` for confirmation, not the enqueue receipt.
-Do not create another timer or agent if one exists. At most four extra training
-jobs (<=4096 steps each) beyond A/B, justified by results. No broad unmotivated
-sweep. Upper 95% paired-document CI <=log(1.05) gates pruning after recovery.
-If the sharing gap remains large, inspect a focused conversion hypothesis instead.
-Respect latest user steering, controller failure rules and the safe burn handoff.
-Follow-up training jobs submitted beyond A/B: **0 of 4**.
-End long-wait turns; the timer queues the next turn. Stop scheduling once useful
-work/results are complete or the cap expires. Record actual delivery separately
-from successful enqueue. No remote follow-up is authorized by stale PID state.
+Final BF16 PPL A19.2416 versus B22.3924 (+16.37%, paired NLL+0.151645,
+95%CI[0.145347,0.158700]). This fails the predefined5%gate. No further pruning.
+B improved substantially from26.22 but remains worse on all256documents.
+
+Implement/test/submit three fixed-layout conversions from the SAME dense A-512:
+upper25, uniform25, full50. Same2,048step phase and existing recovery probe;
+reuse completed dense A as matched control. Previous B continuation is not a
+matched initialization. No backend/loss/forward implementation change. New map
+construction uses existing source_idx/cache behavior. All3GPU numerical gates,
+then8step8GPU smoke precede the fits. Keep all256step checkpoints. No data/env
+installation. See design for precise maps and decision criteria.
+
+Planned output `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01`;
+session `efficient_kv_placement_20261027_a01`. Previous run is recovery a02,
+dense-parent-run is `6y3o-efficient-kv-mlp-20261027-a03`. Current burns come from
+recovery a02/source/resources/llm_pretrain_burn.py. At07:40:39SGT workers615740–615747
+under launcher615671. Reinspect before stopping; no arbitrary PIDs/groups.
+
+Follow-up training jobs beyond A/B: **3 in this submission of 4 maximum** (receipt pending).
+Do not launch a fourth without a meaningful matched comparison. No new agents,
+models, datasets, environments, drivers or broad sweeps. Any controller/AWS/
+credentials failure freezes remote writes. Preserve old outputs. commands.sh is
+the fresh placement launch for this submission; restore #0 after acknowledgement.
+Never repush an executable command unchanged.
+
+Existing timer only: PID324788, tmux `efficient_kv_recovery_watch_20261027`,
+state `temp/kv_recovery_watch_20261027/`. Delivery test acknowledged07:05:03SGT;
+first real research wake arrived07:38SGT. Every45minutes; deadline18:53:46SGT.
+Next08:23:46SGT. Do not create another timer. End long-wait turns; on completion
+or cap, verify artifacts/burns, touch its STOP and summarize. Read latest user
+steering each wake. The earliest a01 launch failed before Python/GPU work on a
+Git metadata header; fixed in a02. Node source copy has no.git; do not run git
+rev-parse in a remote shell header. Source identity is verified by hashes.
 
 
 Workspace `/disk/thuat/efficient_llm`, independent efficient-LLM architecture
@@ -136,11 +127,11 @@ Contract `resources/cx_english_20261020.json`; config `resources/accelerate_b200
 No GPU-node outbound network; controller #d/#i inputs and #2 exports only.
 Dropbox label 6Y3O; credentials/map under ignored DOT/temp. Never print contents.
 
-Latest burn ownership, **05:42:22 SGT**: workers 612725–612732, launcher 612656;
-source `6y3o-efficient-kv-mlp-inference-20261027-a01/source/resources/llm_pretrain_burn.py`.
-All eight GPUs owned by these known burns; guard released. This supersedes all
-previous PID records. Reinspect exact PID/start identities before a later stop.
-Guard/burn hashes and rules in GPU_SAFETY.md.
+Latest verified burn ownership, **07:40:39 SGT**: workers 615740–615747,
+launcher 615671; source recovery a02/source/resources/llm_pretrain_burn.py.
+Guard released and collective progress verified. Placement supervisor must
+reinspect exact identities before stopping; these PIDs are historical evidence,
+not permission to signal without rechecking. Guard/burn rules in GPU_SAFETY.md.
 
 ## Earlier evidence
 

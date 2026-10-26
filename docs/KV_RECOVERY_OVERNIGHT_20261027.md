@@ -111,3 +111,20 @@ complete; see CURRENT_TASK for live state. Existing data/env/old results preserv
 The live dev timer starts checks at 07:38:46 SGT, repeats every45minutes and ends
 18:53:46 SGT on27October. Its delivery test was accepted by the app server; actual
 receipt is recorded separately in ignored temp/kv_recovery_watch_20261027.
+
+## Focused prior-work check during first monitoring tick
+
+[SwiftKV, EMNLP 2025, sections 3.3–3.4 and 5.3](https://aclanthology.org/2025.emnlp-main.1306.pdf)
+combines later-layer KV sharing with another transformation that projects later
+KV from an earlier hidden state. Its distillation updates affected Q/K/V
+projections and freezes the remaining weights. Its restricted-update ablation
+beats updating all later-layer parameters. Those experiments use substantially
+larger instruct models and instruction data, so they do not establish the right
+recipe for our 0.6B base model and English continued pretraining.
+
+Implication for our study: unrestricted sharing everywhere and full-model
+updates are choices to test, not requirements of sharing. If the recovery gap
+remains large, a matched study of less destructive sharing placement or narrower
+parameter updates is better motivated than pruning the already damaged model.
+Neither change is novel by itself. No follow-up is selected or launched from
+this literature check alone; the current recovery curves come first.

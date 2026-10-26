@@ -96,6 +96,7 @@ def cache_bytes(cache):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('model','probe','output'): p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--sharing-layout', choices=['full50','uniform25','upper25'])
     a=p.parse_args()
     if a.output.exists():raise ValueError('Require fresh GPU gate output')
     manifest,tokens=load_probe(a.probe)
@@ -116,7 +117,11 @@ def main():
                                        native(ids,use_cache=False).logits,rtol=0,atol=0)
     del native,expected,actual
     channels=[list(range(model.config.intermediate_size*3//4))]*model.config.num_hidden_layers
-    convert(model,share=True,channels=channels)
+    if a.sharing_layout:
+        from efficient_llm.kv_placement import apply_layout
+        apply_layout(model,a.sharing_layout)
+    else:
+        convert(model,share=True,channels=channels)
     ref=deepcopy(model)
     failed=[]
     for precision in ('fp32','bf16','bf16_same_kernel'):
@@ -159,13 +164,13 @@ def main():
         torch.testing.assert_close(torch.cat(parts,1),full,rtol=3e-4,atol=2e-3)
         errors['cached_fp32_max_abs']=float((torch.cat(parts,1)-full).abs().max())
         active=sum(layer.is_initialized for layer in cache.layers)
-        if active != (model.config.num_hidden_layers+1)//2:raise ValueError('Unexpected cache allocation')
+        if active != len(set(model.config.kv_sources)):raise ValueError('Unexpected cache allocation')
         expected_bytes=active*2*ids.shape[0]*ids.shape[1]*model.config.num_key_value_heads*model.config.head_dim*4
         if cache_bytes(cache)!=expected_bytes:raise ValueError('Shared KV storage duplicated')
     write(a.output,dict(status='passed',errors=errors,attention=attention,
         cross_kernel_bf16_full_model_accepted=False,backend='native_sdpa',active_kv_layers=active,
         cache_bytes=cache_bytes(cache),parameters=sum(x.numel() for x in model.parameters()),
-        model_files=manifest['model_files']))
+        model_files=manifest['model_files'],sharing_layout=a.sharing_layout))
     print('KV_MLP_GPU_GATE_PASSED',flush=True)
 
 
