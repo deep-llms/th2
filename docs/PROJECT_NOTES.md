@@ -222,3 +222,30 @@ A fixed balanced eight-choice record-lookup probe includes dense/near controls;
 failed positive controls mean inconclusive retrieval evidence. All KV remains stored.
 Use the unchanged supervisor and preserve prior outputs/environment. Fix cache-owner
 identity using a retained object token; a Python numeric id may be recycled.
+
+## Selective execution and retrieval results, 26 October 2026 SGT
+
+[Report](SELECTIVE_DECODE_RESULTS_20261026.md). Kernel compiled FP32/BF16 math,
+masking and poisoned-cache tests passed. BF16 whole-model native loss tolerance
+failed; do not hide that failure or call experimental timings backend acceptance.
+Eight-document controls recover agreement with FP32 compute (max 2.87e-5), while
+BF16 hard choices differ 1.80%, mean joint loss difference +.000420 nats. Native
+SDPA remains default. No production/long-generation equivalence claim.
+
+Batch 8/context 8k: native dense 32.72 ms, selective joint 24.26 ms, same-kernel dense
+20.74 ms. Kernel improvement accounts for the apparent native speedup; routing
+still costs 16.9% versus dense same-kernel. Smaller cases also lose to native.
+Reference-only synthetic retrieval: dense/fixed/joint/independent 128/128 each,
+local 45/128 (32 near + 13 distant). Half-global allocation retains this task, but the
+probe is saturated and does not establish a learned-router benefit. No KV saving.
+Do not scale router training now; establish headroom against a strong dense
+implementation in an attention-bound workload first.
+
+Three immutable runs preserve failure and follow-up evidence: initial 9481bee,
+numerics 25dc043, final measurement 8adb821. Latest root 6y3o-efficient-selective-research-20261026-a01.
+Jobs completed 23:52:48 SGT; burns verified 23:53:59 and independently 23:54:51, guard
+released. Workers 602209–602216, launcher 602140, burn source under latest run/source;
+reinspect before stopping. Supersedes previous burn ownership. Eight final exports
+verified by SHA256 (export b48013a), 48 timing records/640 lookup scores/128 frozen cases;
+80 local tests across maintained suites. Raw archive temp/research_results_20261026,
+durable docs/results/selective_decode_20261026. commands.sh #0; no further queue.

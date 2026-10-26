@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T15:50:43.064931+00:00",
+  "jobs": [
+    {
+      "name": "selective-profile",
+      "started_at": "2026-10-26T15:50:43.065139+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 81.51804414112121,
+      "artifacts": [
+        {
+          "path": "profile.json",
+          "sha256": "124c69656c8c64c67aa6756e006a81a697918f4e0e41832b581c3383922d04a6",
+          "bytes": 93409
+        }
+      ],
+      "finished_at": "2026-10-26T15:52:05.099595+00:00"
+    },
+    {
+      "name": "selective-retrieval",
+      "started_at": "2026-10-26T15:52:05.099635+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 43.069489574059844,
+      "artifacts": [
+        {
+          "path": "retrieval.json",
+          "sha256": "538c12803ee75a507f858c913f347007eabb18ada13c97fa730c2f569f270ea9",
+          "bytes": 323454
+        }
+      ],
+      "finished_at": "2026-10-26T15:52:48.654451+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T15:52:48.654497+00:00"
+}

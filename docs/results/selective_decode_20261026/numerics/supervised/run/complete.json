@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-26T15:39:24.027408+00:00",
+  "jobs": [
+    {
+      "name": "decode-numerical-diagnosis",
+      "started_at": "2026-10-26T15:39:24.027662+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 37.9158624089323,
+      "artifacts": [
+        {
+          "path": "numerics.json",
+          "sha256": "109646794278f1b8463bc55b11bcc5264769d617833e5c13ffe6094b555f4bdd",
+          "bytes": 93168
+        }
+      ],
+      "finished_at": "2026-10-26T15:40:02.479111+00:00"
+    }
+  ],
+  "finished_at": "2026-10-26T15:40:02.479151+00:00"
+}

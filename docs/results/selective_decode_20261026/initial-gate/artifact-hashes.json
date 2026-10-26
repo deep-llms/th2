@@ -1,0 +1,8 @@
+{
+  "inputs/manifest.json": "b3bb0da4e724fcf746a828e8d7426db35d6a37e2f1d2038aaeb85c26f33cbf5f",
+  "inputs/lookup.pt": "4d72d20aae817d10fea0c9d4b2863be17cb5b46cbf109a8e2ad2aedfc9e54209",
+  "source-manifest.json": "477c595595e487e2666b92585f5beb264c2a8a1538c6d048e03edf8b37e12938",
+  "supervised/supervisor.json": "14d34bc638dc9d4ede92277b2fb4bc8d1d857f70b88893de782f46f5cebfad90",
+  "supervised/burn-verified.json": "de63f8b3e9a6675c278e4c7f5ad280aa20092e2a16682dc58200cb66a9fe93fd",
+  "supervised/run/gate.json": "724e83f1a6864ae53bc5be64bb9709be2dcd2bafb72a5ca1e2bebe8dc1aae9d4"
+}

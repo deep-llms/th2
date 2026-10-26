@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "files": 8,
+  "profile_records": 48,
+  "retrieval_records": 640,
+  "lookup_cases": 128,
+  "source_snapshot_verified": true,
+  "numerical_backend_accepted": false,
+  "reference_retrieval_only": true
+}

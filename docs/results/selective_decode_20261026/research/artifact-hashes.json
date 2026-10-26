@@ -1,0 +1,10 @@
+{
+  "supervised/run/profile.json": "124c69656c8c64c67aa6756e006a81a697918f4e0e41832b581c3383922d04a6",
+  "supervised/run/retrieval.json": "538c12803ee75a507f858c913f347007eabb18ada13c97fa730c2f569f270ea9",
+  "inputs/manifest.json": "b3bb0da4e724fcf746a828e8d7426db35d6a37e2f1d2038aaeb85c26f33cbf5f",
+  "inputs/lookup.pt": "4d72d20aae817d10fea0c9d4b2863be17cb5b46cbf109a8e2ad2aedfc9e54209",
+  "source-manifest.json": "2aa1ba06563e8c127b1e9e8516a6af62dd7fc3c2f41f6b4f64baa19483f09f0c",
+  "supervised/supervisor.json": "cbeb22a6e33850a8037c4fc6cdcf6a3960a4517366332dd76e4bc4b30ed1ee12",
+  "supervised/burn-verified.json": "d1abe69f932050724151dcc2ba78a301f98a748b65f03688b9fe20721c5c62ff",
+  "supervised/run/complete.json": "b9db46f47e4c398a2c9525d83272283691962550d199c5ecc09386e807dd019a"
+}

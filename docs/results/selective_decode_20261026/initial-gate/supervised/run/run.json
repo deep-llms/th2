@@ -1,0 +1,30 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-26T15:25:33.024914+00:00",
+  "jobs": [
+    {
+      "name": "selective-decode-gate",
+      "started_at": "2026-10-26T15:25:33.025140+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 22.04380024271086,
+      "artifacts": [
+        {
+          "path": "gate.json",
+          "sha256": "724e83f1a6864ae53bc5be64bb9709be2dcd2bafb72a5ca1e2bebe8dc1aae9d4",
+          "bytes": 1804
+        }
+      ],
+      "finished_at": "2026-10-26T15:25:55.605429+00:00"
+    },
+    {
+      "name": "selective-profile",
+      "started_at": "2026-10-26T15:25:55.605474+00:00",
+      "status": "failed",
+      "returncode": 1,
+      "elapsed_seconds": 51.436242452822626
+    }
+  ],
+  "finished_at": "2026-10-26T15:26:47.302453+00:00",
+  "error": "selective-profile exited with code 1"
+}
