@@ -8,46 +8,53 @@ User approved bounded autonomous recovery research while sleeping. Designs:
 
 **Recovery pair complete and archived.** Run
 `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02`,
-launch a1847c0, health ce33588. Queue ended07:39:16SGT; burn handoff07:40:27.
-Independent read-only inspection07:40:39 confirmed eight known burns, collective
+launch a1847c0, health ce33588. Queue ended 07:39:16 SGT; burn handoff 07:40:27.
+Independent read-only inspection 07:40:39 confirmed eight known burns, collective
 progress and guard released. Parent/reload differences zero, exact sample-order
-match, no old-document overlap, unchanged256-document validation; Accelerate8GPU
+match, no old-document overlap, unchanged 256-document validation; Accelerate eight-GPU
 bf16 configuration verified. Small artifacts reconstructed from log and SHA256
 verified. [Results](KV_RECOVERY_RESULTS_20261027.md). Archive:
 `docs/results/kv_recovery_20261027/`; raw `temp/kv_recovery_results_20261027/`.
 
-Final BF16 PPL A19.2416 versus B22.3924 (+16.37%, paired NLL+0.151645,
-95%CI[0.145347,0.158700]). This fails the predefined5%gate. No further pruning.
-B improved substantially from26.22 but remains worse on all256documents.
+Final BF16 PPL A 19.2416 versus B 22.3924 (+16.37%, paired NLL +0.151645,
+95% CI [0.145347,0.158700]). This fails the predefined 5% gate. No further pruning.
+B improved substantially from 26.22 but remains worse on all 256 documents.
 
-Implement/test/submit three fixed-layout conversions from the SAME dense A-512:
-upper25, uniform25, full50. Same2,048step phase and existing recovery probe;
+Submitted three fixed-layout conversions from the SAME dense A-512:
+upper25, uniform25, full50. Same 2,048-step phase and existing recovery probe;
 reuse completed dense A as matched control. Previous B continuation is not a
 matched initialization. No backend/loss/forward implementation change. New map
-construction uses existing source_idx/cache behavior. All3GPU numerical gates,
-then8step8GPU smoke precede the fits. Keep all256step checkpoints. No data/env
+construction uses existing source_idx/cache behavior. All three GPU numerical gates,
+then eight-step eight-GPU smoke precede the fits. Keep all 256-step checkpoints. No data/env
 installation. See design for precise maps and decision criteria.
 
-Planned output `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01`;
+Active submitted output `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01`;
 session `efficient_kv_placement_20261027_a01`. Previous run is recovery a02,
 dense-parent-run is `6y3o-efficient-kv-mlp-20261027-a03`. Current burns come from
-recovery a02/source/resources/llm_pretrain_burn.py. At07:40:39SGT workers615740–615747
-under launcher615671. Reinspect before stopping; no arbitrary PIDs/groups.
+recovery a02/source/resources/llm_pretrain_burn.py. At 07:40:39 SGT workers 615740–615747
+under launcher 615671. Reinspect before stopping; no arbitrary PIDs/groups.
 
-Follow-up training jobs beyond A/B: **3 in this submission of 4 maximum** (receipt pending).
+Launch receipt `temp/kv_placement_launch01.log` (SHA256
+b689fca2121fda31e32d199be3ed13f7880babae369a2af0b128e5ecc978da07)
+confirms baseline hash, Accelerate cache copy/verification (8 GPU, BF16) and
+DIAGNOSTIC_SUBMITTED, starting 07:59:58 SGT. Controller acknowledges bca23aa.
+Fresh read-only health requests gate/smoke/job evidence; training progress is
+not inferred from submission alone.
+
+Follow-up training jobs beyond A/B: **3 submitted of 4 maximum** (launch bca23aa; acknowledged).
 Do not launch a fourth without a meaningful matched comparison. No new agents,
 models, datasets, environments, drivers or broad sweeps. Any controller/AWS/
 credentials failure freezes remote writes. Preserve old outputs. commands.sh is
-the fresh placement launch for this submission; restore #0 after acknowledgement.
+a fresh read-only placement health request; restore #0 after acknowledgement.
 Never repush an executable command unchanged.
 
-Existing timer only: PID324788, tmux `efficient_kv_recovery_watch_20261027`,
-state `temp/kv_recovery_watch_20261027/`. Delivery test acknowledged07:05:03SGT;
-first real research wake arrived07:38SGT. Every45minutes; deadline18:53:46SGT.
-Next08:23:46SGT. Do not create another timer. End long-wait turns; on completion
+Existing timer only: PID 324788, tmux `efficient_kv_recovery_watch_20261027`,
+state `temp/kv_recovery_watch_20261027/`. Delivery test acknowledged 07:05:03 SGT;
+first real research wake arrived 07:38 SGT. Every 45 minutes; deadline 18:53:46 SGT.
+Next 08:23:46 SGT. Do not create another timer. End long-wait turns; on completion
 or cap, verify artifacts/burns, touch its STOP and summarize. Read latest user
 steering each wake. The earliest a01 launch failed before Python/GPU work on a
-Git metadata header; fixed in a02. Node source copy has no.git; do not run git
+Git metadata header; fixed in a02. Node source copy has no .git; do not run git
 rev-parse in a remote shell header. Source identity is verified by hashes.
 
 
