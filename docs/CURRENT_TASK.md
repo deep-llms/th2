@@ -19,8 +19,13 @@ Read-only preflight4383957 verified at18:56:32 SGT: expected8B200, only QKV-owne
 burns620160–620167 under620091, released guard,22.97TB free. These are historical
 identities; supervisor rechecks before stopping. No new GPU job yet.
 Local33 model/data/job tests and42 infrastructure checks passed; additional long
-checks cover exact prefix extension and handoff failures.
-Intended output6y3o-efficient-kv-long-20261027-a01. Reuse native guarded supervisor
+checks cover exact prefix extension and handoff failures. Explicit intermediate
+checkpoint saving also passed a two-rank integration test.
+Launch1c968cf acknowledged at19:04:22 SGT; CPU preparation runs in detached
+session efficient_kv_long_prepare_20261027_a01, then the guarded supervisor starts
+the numerical gate, A/B smoke, and full A/B pair automatically. Receipt
+temp/kv_long_launch.log SHA2563f2645bf8af3d391a69dacb90bb83a1e173402e5091331a8b2c1ed65f680cce4.
+Output6y3o-efficient-kv-long-20261027-a01. Reuse native guarded supervisor
 and automatic communicating burns. Old timer remains stopped; no new timer.
 
 ## Completed: bounded KV-sharing recovery research, 27 October 2026 SGT
