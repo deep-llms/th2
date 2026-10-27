@@ -12,9 +12,10 @@ from test_model import tiny_model
 
 class Rows(torch.utils.data.Dataset):
     length=8
-    def __init__(self,n):
+    def __init__(self,n,length=8,vocab=32):
+        self.length=length
         self.order=np.arange(n)
-        self.ids=torch.randint(1,32,(n,8),generator=torch.Generator().manual_seed(9))
+        self.ids=torch.randint(1,vocab,(n,length),generator=torch.Generator().manual_seed(9))
     def __len__(self):return len(self.order)
     def __getitem__(self,i):return dict(input_ids=self.ids[i],sample_id=int(self.order[i]))
 

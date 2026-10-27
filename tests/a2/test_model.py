@@ -12,7 +12,7 @@ from efficient_llm.a2.measure import residual_profile,score,document_mask
 torch.set_num_threads(1)
 
 
-def tiny_model():
+def tiny_model(**overrides):
     from transformers.dynamic_module_utils import get_class_from_dynamic_module
     code=os.environ.get('A2_OPENSCI_CODE')
     if not code or not Path(code,'modeling_opensci.py').is_file():
@@ -22,10 +22,12 @@ def tiny_model():
         if hashlib.sha256(Path(code,name).read_bytes()).hexdigest()!=digest:
             raise AssertionError('Test must use the exact pinned OpenSci main source')
     cls=get_class_from_dynamic_module('modeling_opensci.OpensciForCausalLM',code,local_files_only=True)
-    config=cls.config_class(hidden_size=16,intermediate_size=32,num_hidden_layers=4,
+    values=dict(hidden_size=16,intermediate_size=32,num_hidden_layers=4,
         num_attention_heads=2,num_key_value_heads=2,head_dim=8,vocab_size=32,
         attention_dropout=0.,attention_bias=True,mlp_bias=True,qk_layernorm=True,
         tie_word_embeddings=True,use_cache=False)
+    values.update(overrides)
+    config=cls.config_class(**values)
     config._attn_implementation='sdpa'
     torch.manual_seed(0)
     return cls(config).float().eval()

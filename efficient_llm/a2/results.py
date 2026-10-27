@@ -50,7 +50,10 @@ def report(rows,parents,*,include_secondary=True):
         main=contrasts(('S1','S2'),'0.2B','delta_post')
         pre=contrasts(('S1','S2'),'0.2B','delta_pre')
         short=contrasts(('S1','S2','S3','S4'),'0.05B','delta_post')
-        return dict(**length_decision(main,pre,sum(short.values(),[])),main=main,pre=pre,short=short)
+        damage={d:{p:descriptive([val(d,p,s,'0.2B','delta_pre') for s in ('S1','S2')])
+                   for p in (early,late)} for d in DATASETS}
+        return dict(**length_decision(main,pre,sum(short.values(),[])),main=main,pre=pre,short=short,
+                    unhealed_damage_context=damage)
     a=length('P300','P1T'); b=length('S72','S188')
     contrasts=[]
     for d in DATASETS:
@@ -96,6 +99,9 @@ def report(rows,parents,*,include_secondary=True):
                                       parents.get(f'{d}/P300',{}).get('val')) for d in DATASETS}
     result['log_length_effects']=dict(annealed=a['E']/math.log(1000/300) if a['E'] is not None else None,
                                     stable=b['E']/math.log(776.2/297.3) if b['E'] is not None else None)
+    result['effective_curve_run_ids']=sorted({row['run_id'] for run in matrix(chosen)
+        if run.budget!='0.03B' and not run.suffix
+        if (row:=effective(run.dataset,run.arm,run.set,run.budget)) is not None})
     if include_secondary:
         # Keep tuning losses, selected LRs and original divergence decisions.
         # Secondary results only score the SAME effective runs; never reselect.
@@ -170,12 +176,11 @@ def write_report(directory,rows,parents):
             for ax,s in zip(axes,('S1','S2')):
                 # Use only the selected, successful effective runs; do not plot
                 # original divergences or LR-grid fits as main learning curves.
-                chosen=result['chosen_lrs'].get(f'{ds}/{arm}')
+                effective_ids=set(result['effective_curve_run_ids'])
                 good=[]
                 for r in rows:
                     if (r['dataset'],r['arm'],r['set'])!=(ds,arm,s) or r['budget']=='0.03B' or 't14' in r.get('suffix',''):continue
-                    if r.get('diverged') or r['status']!='complete':continue
-                    if not r.get('rerun_of') and r['lr']!=chosen:continue
+                    if r['run_id'] not in effective_ids:continue
                     good.append(r)
                 good.sort(key=lambda r:r['heal_tokens'])
                 if good:ax.plot([r['heal_tokens']/1e9 for r in good],[r['delta_post'] for r in good],marker='o',label=arm)

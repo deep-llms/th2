@@ -105,6 +105,9 @@ def heal(student,teacher,train_rows,evaluation,output,*,run,microbatch=1,chunk=1
         any(pre_values.get(k) is None for k in ('parent_secondary','teacher_secondary'))):
         raise ValueError('Secondary scoring requires matching unhealed/parent/teacher baselines')
     device=next(student.parameters()).device
+    hardware=dict(gpu_count=world if device.type=='cuda' else 0,
+                  gpu_type=torch.cuda.get_device_name(device) if device.type=='cuda' else None,
+                  world_size=world,seed=0)
     if any(p.dtype!=torch.float32 for p in student.parameters()): raise ValueError('FP32 student required')
     set_seed(0)
     args=make_arguments(root/'trainer',run.steps,run.lr,microbatch,world,
@@ -114,7 +117,7 @@ def heal(student,teacher,train_rows,evaluation,output,*,run,microbatch=1,chunk=1
         train_dataset=train_rows,data_collator=default_data_collator,callbacks=[guard])
     started=time.monotonic()
     if rank==0: write_json(root/'recipe.json',dict(run.record(),provenance=provenance,
-        training=args.to_dict(),estimated_seconds=estimated_seconds))
+        training=args.to_dict(),estimated_seconds=estimated_seconds,hardware=hardware))
     try:
         trainer.train()
     except FloatingPointError as error:
@@ -162,7 +165,7 @@ def heal(student,teacher,train_rows,evaluation,output,*,run,microbatch=1,chunk=1
         coverage=coverage,roundtrip_difference=difference,training_seconds=training_seconds,
         wallclock_h=elapsed/3600,gpu_hours=elapsed*world/3600,
         tokens_per_second=run.steps*global_sequences*train_rows.length/training_seconds,
-        lr_updates=guard.lrs,log_history=history)
+        lr_updates=guard.lrs,log_history=history,hardware=hardware)
     if 'secondary' in values:
         result.update(val_secondary_parent=pre_values['parent_secondary'],
             val_secondary_teacher=pre_values['teacher_secondary'],
