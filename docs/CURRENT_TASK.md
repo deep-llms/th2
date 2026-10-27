@@ -38,14 +38,22 @@ Launch receipt `temp/kv_placement_launch01.log` (SHA256
 b689fca2121fda31e32d199be3ed13f7880babae369a2af0b128e5ecc978da07)
 confirms baseline hash, Accelerate cache copy/verification (8 GPU, BF16) and
 DIAGNOSTIC_SUBMITTED, starting 07:59:58 SGT. Controller acknowledges bca23aa.
-Fresh read-only health requests gate/smoke/job evidence; training progress is
-not inferred from submission alone.
+Health e1c58de at **08:07:11 SGT** confirms all three GPU numerical gates
+passed, eight-step/eight-GPU smoke passed (parent and reload NLL differences zero),
+known burns reclaimed by verified identities, all eight GPUs free before launch.
+Upper25 is active on eight GPUs, latest step 1024/2048, validation PPL 21.2232;
+uniform25 then full50 queued. Guard held by supervisor, no burn overlap.
+No final placement results yet. Approximate queue finish 08:30–08:40 SGT.
+Evidence `temp/kv_placement_health01.log`, SHA256
+539ae2ce01764bd061c8f174c4ad9446743992d9998137d574ff93b278871876;
+SHA-verified extracted artifacts and receipts `temp/kv_placement_health01/`.
+Do not treat this historical step as live status; fetch again next scheduled tick.
 
 Follow-up training jobs beyond A/B: **3 submitted of 4 maximum** (launch bca23aa; acknowledged).
 Do not launch a fourth without a meaningful matched comparison. No new agents,
 models, datasets, environments, drivers or broad sweeps. Any controller/AWS/
 credentials failure freezes remote writes. Preserve old outputs. commands.sh is
-a fresh read-only placement health request; restore #0 after acknowledgement.
+inactive #0 after the acknowledged placement health request.
 Never repush an executable command unchanged.
 
 Existing timer only: PID 324788, tmux `efficient_kv_recovery_watch_20261027`,

@@ -51,3 +51,20 @@ L2 is below 6e-7; same-SDPA independent decoder outputs are exactly equal.
 The elementwise absolute gradient tolerance is 2e-5, matching the existing
 reference test; a separate relative-L2 bound of 1e-5 prevents hiding a real drift.
 GPU checks are mandatory before the real fits; CPU success alone is insufficient.
+
+## Launch and initial health
+
+Launch bca23aa acknowledged; health e1c58de at 08:07:11 SGT confirms all three
+actual-weight GPU gates pass. Same-SDPA independent BF16 decoder logits agree
+exactly; gradient relative L2 < 7e-9. FP32 explicit-math output/gradient gates,
+fixed-input BF16 attention checks, cache capacity and cached decoding also pass.
+Full-model cross-kernel BF16 differences are still reported and not accepted
+as interchangeable; runtime remains the original SDPA implementation.
+
+Eight-step eight-GPU smoke passes, parent/reload differences zero. Accelerate
+cache copied/checked, exact known burns stopped and all GPUs verified free.
+Upper25 reached step 1024/2048, validation PPL 21.2232; uniform25/full50 queued.
+These are interim training-precision scores, not final BF16 comparisons.
+Raw evidence and exact-file SHA receipts: temp/kv_placement_health01.log and
+ temp/kv_placement_health01/. Existing supervisor handles final burns even on
+failure. Existing watcher checks again at 08:23:46 SGT; no new monitor created.
