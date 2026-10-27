@@ -1,5 +1,36 @@
 # Current task
 
+## Active: A2 Phase 0 implementation; no B200 launch
+
+User authorized implementation after review of [A2_pilot_spec.md](A2_pilot_spec.md)
+v2.1 and [A2_novelty_and_feasibility.md](A2_novelty_and_feasibility.md).
+Implementation guide: [A2_IMPLEMENTATION.md](A2_IMPLEMENTATION.md).
+
+Added `efficient_llm/a2/`: fixed 127-run matrix, original-layer pruning with
+pinned main OpenSci code, pure full-vocabulary KL, native HF Trainer/Accelerate,
+exact update-indexed LR, deterministic corpus-wide reservation and EOS packing,
+separate tuning/final sets, BF16 export/reload, residual/bypass/Gaussian probes,
+phase queue/retry rules, decision reports and plots. Token counts are reused
+from the checksum-verified published `document_index.parquet`; no long-document
+filter or repeated Qwen tokenization of the reserved billion-token pool.
+
+Local checks use `temp/a2_test_env` (Transformers4.57.1 overlay, original train
+runtime untouched), native pinned OpenSci source with tiny models, and a meta
+shape check for the full 1.7B parameter count. Unit and two-process CPU evidence
+is archived at `docs/results/a2_implementation/validation.json`. These are NOT
+released-weight CUDA/BF16/throughput results. Test inputs/results remain in
+ignored `temp/a2_*`; no full model weights or dataset were downloaded this turn.
+
+Next: acquire/verify actual pinned public assets using the authorized controller,
+prepare the fixed data, record secondary acquisition/skip decisions, run all
+actual-parent B200 preflight stages, aggregate/review T1–T13/T15 and measure the
+whole workload cost. Only then construct the execution configuration for the
+127-run pilot under the existing supervisor, with Accelerate cache verification,
+known-burn reclamation/free-GPU checks and verified automatic burn handoff.
+The heal entry point refuses missing/mismatched preflight and baseline evidence.
+No deferred Phase1, B200 install, GPU action, execution push or new timer occurred.
+`commands.sh` remains #0; old research outputs preserved and user design/review documents unchanged.
+
 ## Complete: downstream screen of long-recovery A/B, 28 October SGT
 
 User-requested evaluation complete; [results/protocol](KV_DOWNSTREAM_20261028.md).

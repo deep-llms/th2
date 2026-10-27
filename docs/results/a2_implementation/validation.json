@@ -1,0 +1,92 @@
+{
+  "status": "passed_local_cpu_only",
+  "at_sgt": "2026-10-28T05:49:32.130767+08:00",
+  "tests": 26,
+  "unit_runtime_seconds": 3.814,
+  "ddp": {
+    "status": "passed",
+    "coverage": {
+      "examples": 96,
+      "microbatches": 48,
+      "world_size": 2,
+      "exact_order": true
+    },
+    "max_parameter_difference": 7.450580596923828e-09,
+    "lr_updates": [
+      1e-05,
+      2e-05,
+      3e-05,
+      4e-05,
+      5e-05,
+      6e-05,
+      7e-05,
+      8e-05,
+      9e-05,
+      0.0001,
+      5e-05,
+      0.0
+    ],
+    "teacher_no_gradient": true
+  },
+  "spec_sha256": "9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd",
+  "environment": {
+    "torch": "2.14.1",
+    "transformers": "4.57.1",
+    "huggingface-hub": "0.36.0",
+    "tokenizers": "0.22.1",
+    "accelerate": "1.13.0",
+    "datasets": "4.8.5",
+    "numpy": "2.4.6",
+    "safetensors": "0.8.0",
+    "matplotlib": "3.10.7"
+  },
+  "native_code": {
+    "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+    "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+    "config.json": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777"
+  },
+  "source_sha256": {
+    "efficient_llm/a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+    "efficient_llm/a2/__main__.py": "ecfeae7e370b312c61e3eb046760e086ceadc7b99ee99311cace39d90d3c8aba",
+    "efficient_llm/a2/check.py": "02534b3218dbe905a352d4f9624df41e0ec632f41745813548d08f79883dd7b0",
+    "efficient_llm/a2/data.py": "079400b276f1cecfd2cb88fc4ec76ade658221358ae6dbd8d7d85ef32e18acb4",
+    "efficient_llm/a2/measure.py": "db818b8b124d6a097072713294f140cb14cf4c3d7495b351dbcd8f5e2e701d26",
+    "efficient_llm/a2/model.py": "7285507f6972eab28a1036cefea00635b4b0b2ef4e947050edec5b244f74d8b1",
+    "efficient_llm/a2/protocol.py": "f7ede1be74d37098a92c47504dcf9c37d29672f6e05b5f615a77a0809da07ce9",
+    "efficient_llm/a2/queue.py": "80a57c57e1b4afd7a0cbc7238a00ffd8f5ba411b0db37a3511ca0d771daf203f",
+    "efficient_llm/a2/results.py": "ef91712d15526a327da61fae4b03644321a99f6d7b2bc40a220923a913685732",
+    "efficient_llm/a2/train.py": "e3c7fb6f0c4ac4ee291def5ef28c95bb0a5749372de0a71127a638c696d42cf7",
+    "scripts/a2_asset_manifest.py": "28db6197371653c59885a7246a1b655b5e51e959001864f8e5a07f1f780c3ab9",
+    "tests/a2/ddp_probe.py": "25d8e3d542ffce202ebce6f900ec4f85da4f6b0620faf1597de29609537df30d",
+    "tests/a2/test_data.py": "d9b9cc56ae997225e18cd60986120ff2c2a0101c1227b078cdb22736c9a87254",
+    "tests/a2/test_model.py": "ec7a8db01a164f6c2badb9fedf4ce9b622df47bac87fa28e50493960f2cc4a9d",
+    "tests/a2/test_protocol.py": "babcf1e8544c06e6d8c7ff59b8cfa3ddfc998e43752ea31f74df1020c102bddc",
+    "tests/a2/test_results.py": "26721e16ca98babb21f85d28c215e78abf27aae5e23da9fb3d9600b27ed51543",
+    "tests/a2/test_train.py": "bb405a7ee00ec5dc2a32fd90b20f75cc175c06c188472be4ee6896e46b116de9"
+  },
+  "artifacts": {
+    "unit_tests.txt": "02c4c3d14bcc39503e0881836273e0e18b1603d9fd0ec32b57da14e236e5bd69",
+    "ddp_single.txt": "0db240d80b9a1bc04abcd3176c7a9c3307baf4af1812425bb59b0dbdd148107b",
+    "ddp_two.txt": "469408e9243d2505cece4115b49c168d30d55d15ad23d9e07b0b93110adcd37c",
+    "ddp_result.json": "3f4236f312238427d9171a3eb2f8364f4c11fe326dfc0f6cc0970b164bc6d72f"
+  },
+  "full_parameter_count": 1714377728,
+  "nonembedding_parameter_count": 1611355136,
+  "full_shape_check": "meta device only",
+  "released_weights_loaded": false,
+  "gpu_work_launched": false,
+  "original_train_env_changed": false,
+  "pending": [
+    "Actual released-parent numerical/precision validation on B200",
+    "Full data preparation and provenance",
+    "Secondary acquisition or documented skip",
+    "T8 whole-workload budget and pre-launch report",
+    "GPU supervisor launch/handoff"
+  ],
+  "original_train_versions_verified": {
+    "torch": "2.14.1",
+    "transformers": "5.9.0",
+    "huggingface-hub": "1.33.0",
+    "tokenizers": "0.22.2"
+  }
+}

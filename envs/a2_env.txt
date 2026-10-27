@@ -1,0 +1,14 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+# Dedicated environment; never replace train_env for A2's older Transformers.
+pip
+torch==2.14.1
+transformers==4.57.1
+huggingface-hub==0.36.0
+tokenizers==0.22.1
+accelerate==1.13.0
+datasets==4.8.5
+safetensors==0.8.0
+numpy==2.4.6
+matplotlib==3.10.7

@@ -474,3 +474,31 @@ has no lm-eval, so leave it unchanged. Final KV checkpoints contain weights and
 config only: pass original training tokenizer explicitly and verify its manifest
 bytes/sha256. The first launcher compared manifest dictionaries with bare hashes;
 it failed safely before GPU reclaim/output creation, fixed with a regression test.
+
+
+## A2 implementation: separate study and runtime
+
+The active research spec is `docs/A2_pilot_spec.md` v2.1, with rationale in
+`docs/A2_novelty_and_feasibility.md`. Public OpenSci depth pruning/healing is a
+new experiment, not permission to resume the failed KV-sharing direction.
+Implementation lives in `efficient_llm/a2`; see `docs/A2_IMPLEMENTATION.md`.
+The existing Qwen baseline, KV methods and GPU supervisor stay unchanged.
+
+Use a dedicated Transformers4.57.1 environment for OpenSci's pinned main code;
+never downgrade the existing train_env or import the old branch Python code.
+The native model's whole decoder layers are removed by original indices in one
+ModuleList rebuild. No RoPE patch, attention change, LM-loss mixture or repair
+is used. The custom Trainer changes only KL, optimizer grouping, sampling and
+the exact schedule required by the preregistration. It uses ordinary Accelerate
+DDP and accumulation; head/loss chunk recomputation does not recompute decoders.
+
+The new cx_sampled pool has sidecar per-document `tokens_with_eod` counts.
+Source `/disk/thuat/prepare_pretraining_data/prepare.py` confirms these include
+one EOS. Reuse verified counts after a tokenizer spot-check. Retokenize reserved
+text with GPT-NeoX; keep the global permutation and split documents before
+packing. Do not import old long-document selection or per-map-batch truncation.
+
+Local CPU and two-process tests validate code semantics, not full-model B200
+numerics/performance. Actual preflight and measured whole-workload budget remain
+required before any healing run. No new training/deployment was launched in the
+implementation turn; commands.sh remains inactive and old outputs are preserved.

@@ -1,0 +1,47 @@
+test_indexed_counts_and_secondary (test_data.DataTests.test_indexed_counts_and_secondary) ... ok
+test_overlap_fails (test_data.DataTests.test_overlap_fails) ... ok
+test_published_pool_layout (test_data.DataTests.test_published_pool_layout) ... Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 280.74 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 265.14 examples/s]
+Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 339.76 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 315.67 examples/s]
+Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 345.64 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 321.50 examples/s]
+Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 406.35 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 380.06 examples/s]
+ok
+test_reproducible_continuous_packing (test_data.DataTests.test_reproducible_continuous_packing) ... ok
+test_t14_retry_preserves_permutation (test_data.DataTests.test_t14_retry_preserves_permutation) ... ok
+test_unused_overlap_does_not_change_registered_split (test_data.DataTests.test_unused_overlap_does_not_change_registered_split) ... ok
+test_accumulation_64_vs_8 (test_model.KDTests.test_accumulation_64_vs_8) ... /home/users/thien/miniconda3/envs/train_env/lib/python3.11/site-packages/torch/cuda/__init__.py:228: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12000). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /__w/pytorch/pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+ok
+test_chunk_loss_and_gradients (test_model.KDTests.test_chunk_loss_and_gradients) ... ok
+test_gaussian_exact_restore (test_model.NativeCheckTests.test_gaussian_exact_restore) ... ok
+test_runtime_numerical_probe (test_model.NativeCheckTests.test_runtime_numerical_probe) ... `torch_dtype` is deprecated! Use `dtype` instead!
+ok
+test_mask_and_score (test_model.NativeModelTests.test_mask_and_score) ... ok
+test_native_prune_hooks_and_reload (test_model.NativeModelTests.test_native_prune_hooks_and_reload) ... ok
+test_residual_not_final_norm (test_model.NativeModelTests.test_residual_not_final_norm) ... ok
+test_released_parameter_count_on_meta (test_model.ReleasedShapeTests.test_released_parameter_count_on_meta) ... ok
+test_decision_boundaries (test_protocol.ProtocolTests.test_decision_boundaries) ... ok
+test_lr_selection (test_protocol.ProtocolTests.test_lr_selection) ... ok
+test_lr_state (test_protocol.ProtocolTests.test_lr_state) ... ok
+test_matrix (test_protocol.ProtocolTests.test_matrix) ... ok
+test_s2 (test_protocol.ProtocolTests.test_s2) ... ok
+test_schedule (test_protocol.ProtocolTests.test_schedule) ... ok
+test_queue_grid_retry_and_freshness (test_results.ResultTests.test_queue_grid_retry_and_freshness) ... ok
+test_reports_retry_and_no_final_selection (test_results.ResultTests.test_reports_retry_and_no_final_selection) ... ok
+test_whole_estimate (test_results.ResultTests.test_whole_estimate) ... ok
+test_accumulation_trainer_and_used_lr (test_train.TrainerTests.test_accumulation_trainer_and_used_lr) ... ok
+test_complete_heal_export (test_train.TrainerTests.test_complete_heal_export) ... ok
+test_nonfinite_runtime_estimates_refused (test_train.TrainerTests.test_nonfinite_runtime_estimates_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 3.814s
+
+OK
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488548204302788, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.233, 'train_samples_per_second': 412.043, 'train_steps_per_second': 51.505, 'train_loss': 0.00025538612438443425, 'epoch': 1.0}
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488546341657639, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.7664, 'train_samples_per_second': 125.256, 'train_steps_per_second': 15.657, 'train_loss': 0.00025538354384480044, 'epoch': 1.0}
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488546341657639, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.7579, 'train_samples_per_second': 126.673, 'train_steps_per_second': 15.834, 'train_loss': 0.00025538354384480044, 'epoch': 1.0}

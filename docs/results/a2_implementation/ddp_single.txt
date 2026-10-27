@@ -1,0 +1,6 @@
+/home/users/thien/miniconda3/envs/train_env/lib/python3.11/site-packages/torch/cuda/__init__.py:228: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12000). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /__w/pytorch/pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+⚙️  Running in WANDB offline mode
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488546341657639, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.7506, 'train_samples_per_second': 127.9, 'train_steps_per_second': 15.987, 'train_loss': 0.00025538354384480044, 'epoch': 1.0}
