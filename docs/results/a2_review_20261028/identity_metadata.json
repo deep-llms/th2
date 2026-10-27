@@ -1,0 +1,120 @@
+{
+  "status": "passed",
+  "tests": {
+    "dclm": {
+      "T2": true,
+      "T3": {
+        "S72": {
+          "passed": true,
+          "reasons": []
+        },
+        "S188": {
+          "passed": true,
+          "reasons": []
+        }
+      },
+      "trunk": {
+        "P300": {
+          "commit": "fd608db6c8f692d88903a59507f6d97406cb0c84",
+          "sha256": "efc226a1bc56ac89596b989d40856dcd6d2a5c703a1166f5bc2f5d7dffe3866d"
+        },
+        "P1T": {
+          "commit": "2068e32cf1ee5b5603b4c5e6092a1eae868a6514",
+          "sha256": "efc226a1bc56ac89596b989d40856dcd6d2a5c703a1166f5bc2f5d7dffe3866d"
+        }
+      },
+      "annealed_step72000_commit": "81896718c9cea1ad2f4a57716eab6eacbdc5770a",
+      "annealed_step72000_sha256": "6ff1a377c99c1a7a673e2cdf0d8152705a1ecd743ae98a2cea043a6e7e34bcea",
+      "run_names": {
+        "P300": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-DCLM_tokenizer-GPT-NeoX_samples-300B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_12254566/hf/iter_0072661",
+        "P1T": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-DCLM_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14070018/hf/iter_0242204",
+        "S72": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-DCLM_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14070018/hf/iter_0072000",
+        "S188": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-DCLM_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14070018/hf/iter_0188000"
+      },
+      "tokenizer_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+        "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+        "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+      }
+    },
+    "fwe": {
+      "T2": true,
+      "T3": {
+        "S72": {
+          "passed": true,
+          "reasons": []
+        },
+        "S188": {
+          "passed": true,
+          "reasons": []
+        }
+      },
+      "trunk": {
+        "P300": {
+          "commit": "9d3d6d2350f2bf2ee22b138095607104ff36062e",
+          "sha256": "1c272b48836914bb9849c3623db5a36af53e2dda9967f50faf41c672b333e389"
+        },
+        "P1T": {
+          "commit": "9e3ab6de74445e74d299bbd44f504f51b5fa8e86",
+          "sha256": "1c272b48836914bb9849c3623db5a36af53e2dda9967f50faf41c672b333e389"
+        }
+      },
+      "annealed_step72000_commit": "ffaa3c56136e74f90ae7ae786f0550e2255a8a9f",
+      "annealed_step72000_sha256": "32f6341d6c9539d08f240564e3f14d628c1302fd4414b7d52fd52517db578b28",
+      "run_names": {
+        "P300": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-300B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_12872088/hf/iter_0072661",
+        "P1T": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14066868/hf/iter_0242204",
+        "S72": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14066868/hf/iter_0072000",
+        "S188": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14066868/hf/iter_0188000"
+      },
+      "tokenizer_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+        "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+        "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+      }
+    },
+    "nem": {
+      "T2": true,
+      "T3": {
+        "S72": {
+          "passed": true,
+          "reasons": []
+        },
+        "S188": {
+          "passed": true,
+          "reasons": []
+        }
+      },
+      "trunk": {
+        "P300": {
+          "commit": "b5e4cce86476dd6238bf2a5d7428ef24f1e515f9",
+          "sha256": "bfd58eb91dadda9595f1876e5d78f51e3b0699c5aef28baaeec3669b7ad5dcba"
+        },
+        "P1T": {
+          "commit": "024afd75cafed30c656d4b355c57f7b2be358cd0",
+          "sha256": "bfd58eb91dadda9595f1876e5d78f51e3b0699c5aef28baaeec3669b7ad5dcba"
+        }
+      },
+      "annealed_step72000_commit": "e220d2e2b2e437cecb0d4d90aa759b7304b6cd5c",
+      "annealed_step72000_sha256": "5c649822ad0705f4e6fa29f3d2d067f4a043d236bcdc547edcf1281f5d3c09c1",
+      "run_names": {
+        "P300": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-Nemotron-cc-2024-HQ-real-synth-mix_tokenizer-GPT-NeoX_samples-300B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13715533/hf/iter_0072661",
+        "P1T": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-Nemotron-cc-2024-HQ-real-synth-mix_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13977373/hf/iter_0242204",
+        "S72": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-Nemotron-cc-2024-HQ-real-synth-mix_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13977373/hf/iter_0072000",
+        "S188": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.7b_data-Nemotron-cc-2024-HQ-real-synth-mix_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13977373/hf/iter_0188000"
+      },
+      "tokenizer_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+        "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+        "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+      }
+    }
+  },
+  "note": "Metadata only. Does not claim downloaded weight hashes/runtime correctness."
+}

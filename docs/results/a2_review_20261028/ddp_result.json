@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "coverage": {
+    "examples": 96,
+    "microbatches": 48,
+    "world_size": 2,
+    "exact_order": true
+  },
+  "cuda": false,
+  "head_check": null,
+  "max_parameter_difference": 7.450580596923828e-09,
+  "lr_updates": [
+    1e-05,
+    2e-05,
+    3e-05,
+    4e-05,
+    5e-05,
+    6e-05,
+    7e-05,
+    8e-05,
+    9e-05,
+    0.0001,
+    5e-05,
+    0.0
+  ],
+  "evaluation": [
+    {
+      "sequences": 5,
+      "tokens": 35,
+      "max_nll_difference": 0.0
+    },
+    {
+      "sequences": 1,
+      "tokens": 7,
+      "max_nll_difference": 0.0
+    }
+  ],
+  "teacher_no_gradient": true
+}

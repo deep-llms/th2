@@ -40,8 +40,10 @@ if cuda and world==1:
 if cuda:
     teacher.to(torch.bfloat16)
     torch.manual_seed(4)
-    h=torch.randn(2,17,128,device=state.device,requires_grad=True)
-    w=torch.randn(1024,128,device=state.device,requires_grad=True)
+    # Stress the released model's real hidden/vocabulary widths, but only 34
+    # positions. This is separate from the small full-decoder fixture below.
+    h=torch.randn(2,17,2048,device=state.device,requires_grad=True)
+    w=torch.randn(50304,2048,device=state.device,requires_grad=True)
     th=torch.randn_like(h).bfloat16();tw=torch.randn_like(w).bfloat16()
     with autocast(state.device):
         reference=forward_kl(h,w,th,tw,5,recompute_head=False)
@@ -50,7 +52,8 @@ if cuda:
     torch.testing.assert_close(reference,recomputed,rtol=0,atol=0)
     for a,b in zip(gr,gc):torch.testing.assert_close(a,b,rtol=0,atol=0)
     head_check=dict(loss_difference=abs(reference.item()-recomputed.item()),
-                    max_gradient_difference=max((a-b).abs().max().item() for a,b in zip(gr,gc)))
+                    max_gradient_difference=max((a-b).abs().max().item() for a,b in zip(gr,gc)),
+                    hidden_width=2048,vocabulary=50304,positions=34)
     del h,w,th,tw,gr,gc,reference,recomputed
 global_sequences=64 if cuda else 8
 micro=1 if cuda else 2//world
@@ -80,7 +83,11 @@ if rank==0:
         torch.save(student.state_dict(),root/'reference.pt')
         write_json(root/'reference_lrs.json',guard.lrs)
         write_json(root/'reference.json',dict(status='passed',coverage=coverage,evaluation=evaluation,
-            head_check=head_check,native_check=native_check))
+            head_check=head_check,native_check=native_check,
+            scope='Random native OpenSci regression fixture, not released checkpoint acceptance',
+            fixture=dict(parent_layers=4,student_layers=2,hidden_size=teacher.config.hidden_size,
+                         vocab_size=teacher.config.vocab_size,sequence_length=8 if not cuda else 64,
+                         global_sequences=global_sequences,steps=12)))
     else:
         ref=torch.load(root/'reference.pt',weights_only=True)
         max_difference=0.

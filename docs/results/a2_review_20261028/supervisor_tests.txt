@@ -1,0 +1,63 @@
+test_busy_gpu_prevents_burn (test_train_then_burn.HandoffTests.test_busy_gpu_prevents_burn) ... Traceback (most recent call last):
+  File "/disk/thuat/efficient_llm/scripts/train_then_burn.py", line 219, in execute_queue
+    receipt['free_after_training'] = require_free(GPUS)
+                                     ^^^^^^^^^^^^^^^^^^
+  File "/home/users/thien/miniconda3/envs/train_env/lib/python3.11/unittest/mock.py", line 1124, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/users/thien/miniconda3/envs/train_env/lib/python3.11/unittest/mock.py", line 1128, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/users/thien/miniconda3/envs/train_env/lib/python3.11/unittest/mock.py", line 1183, in _execute_mock_call
+    raise effect
+RuntimeError: unknown GPU worker
+ok
+test_changed_burn_identity_never_signaled (test_train_then_burn.HandoffTests.test_changed_burn_identity_never_signaled) ... ok
+test_cleanup_persistent_invalid_handle_still_fails_closed (test_train_then_burn.HandoffTests.test_cleanup_persistent_invalid_handle_still_fails_closed) ... OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+ok
+test_cleanup_rechecks_invalid_handle_without_fallback_signals (test_train_then_burn.HandoffTests.test_cleanup_rechecks_invalid_handle_without_fallback_signals) ... OWNED_CHILD_PIDFD_RESCAN 123 {'pid': 123, 'ppid': 99, 'start_ticks': 1, 'command_sha256': 'owned'}
+ok
+test_failed_free_check_after_signal_retains_guard_without_supervisor_receipt (test_train_then_burn.HandoffTests.test_failed_free_check_after_signal_retains_guard_without_supervisor_receipt) ... AUTHORIZED_BURN_WORKER_STOP [123]
+ok
+test_guard_stays_held_after_partial_reclaim_or_unverified_handoff (test_train_then_burn.HandoffTests.test_guard_stays_held_after_partial_reclaim_or_unverified_handoff) ... ok
+test_progress_requires_all_ranks_and_advancing_collectives (test_train_then_burn.HandoffTests.test_progress_requires_all_ranks_and_advancing_collectives) ... ok
+test_real_queue_success_and_failure_both_handoff (test_train_then_burn.HandoffTests.test_real_queue_success_and_failure_both_handoff) ... START test
+OK test
+START test
+Traceback (most recent call last):
+  File "/disk/thuat/efficient_llm/scripts/train_then_burn.py", line 207, in execute_queue
+    code = run_jobs(jobs, project, output / 'run')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/disk/thuat/efficient_llm/run_experiments.py", line 187, in run_jobs
+    raise RuntimeError(f"{job['name']} exited with code {returncode}")
+RuntimeError: test exited with code 7
+ok
+test_subreaper_cleans_owned_orphans_only (test_train_then_burn.HandoffTests.test_subreaper_cleans_owned_orphans_only) ... ok
+test_unknown_gpu_worker_never_signaled (test_train_then_burn.HandoffTests.test_unknown_gpu_worker_never_signaled) ... ok
+test_verified_stop_waits_before_requiring_free_gpus (test_train_then_burn.HandoffTests.test_verified_stop_waits_before_requiring_free_gpus) ... AUTHORIZED_BURN_WORKER_STOP [123]
+ALL_EIGHT_GPUS_VERIFIED_FREE
+ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.501s
+
+OK

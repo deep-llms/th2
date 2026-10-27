@@ -1,0 +1,57 @@
+test_indexed_counts_and_secondary (test_data.DataTests.test_indexed_counts_and_secondary) ... ok
+test_overlap_fails (test_data.DataTests.test_overlap_fails) ... ok
+test_published_pool_layout (test_data.DataTests.test_published_pool_layout) ... Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 305.11 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 285.73 examples/s]
+Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 357.66 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 332.67 examples/s]
+Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 365.29 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 338.44 examples/s]
+Saving the dataset (0/1 shards):   0%|          | 0/1 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 402.52 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 1/1 [00:00<00:00, 376.75 examples/s]
+ok
+test_reproducible_continuous_packing (test_data.DataTests.test_reproducible_continuous_packing) ... ok
+test_t14_retry_preserves_permutation (test_data.DataTests.test_t14_retry_preserves_permutation) ... ok
+test_unused_overlap_does_not_change_registered_split (test_data.DataTests.test_unused_overlap_does_not_change_registered_split) ... ok
+test_accumulation_64_vs_8 (test_model.KDTests.test_accumulation_64_vs_8) ... /home/users/thien/miniconda3/envs/train_env/lib/python3.11/site-packages/torch/cuda/__init__.py:228: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12000). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /__w/pytorch/pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+ok
+test_chunk_loss_and_gradients (test_model.KDTests.test_chunk_loss_and_gradients) ... ok
+test_gaussian_exact_restore (test_model.NativeCheckTests.test_gaussian_exact_restore) ... ok
+test_runtime_numerical_probe (test_model.NativeCheckTests.test_runtime_numerical_probe) ... `torch_dtype` is deprecated! Use `dtype` instead!
+ok
+test_mask_and_score (test_model.NativeModelTests.test_mask_and_score) ... ok
+test_native_prune_hooks_and_reload (test_model.NativeModelTests.test_native_prune_hooks_and_reload) ... ok
+test_residual_not_final_norm (test_model.NativeModelTests.test_residual_not_final_norm) ... ok
+test_released_parameter_count_on_meta (test_model.ReleasedShapeTests.test_released_parameter_count_on_meta) ... ok
+test_decision_boundaries (test_protocol.ProtocolTests.test_decision_boundaries) ... ok
+test_lr_selection (test_protocol.ProtocolTests.test_lr_selection) ... ok
+test_lr_state (test_protocol.ProtocolTests.test_lr_state) ... ok
+test_matrix (test_protocol.ProtocolTests.test_matrix) ... ok
+test_s2 (test_protocol.ProtocolTests.test_s2) ... ok
+test_schedule (test_protocol.ProtocolTests.test_schedule) ... ok
+test_branch_identity_failure_does_not_invalidate_sibling (test_results.ResultTests.test_branch_identity_failure_does_not_invalidate_sibling) ... ok
+test_queue_grid_retry_and_freshness (test_results.ResultTests.test_queue_grid_retry_and_freshness) ... ok
+test_queue_rejects_wrong_receipt_and_silent_failure (test_results.ResultTests.test_queue_rejects_wrong_receipt_and_silent_failure) ... ok
+test_reports_retry_and_no_final_selection (test_results.ResultTests.test_reports_retry_and_no_final_selection) ... ok
+test_secondary_scores_same_effective_runs_without_selecting (test_results.ResultTests.test_secondary_scores_same_effective_runs_without_selecting) ... ok
+test_whole_estimate (test_results.ResultTests.test_whole_estimate) ... ok
+test_accumulation_trainer_and_used_lr (test_train.TrainerTests.test_accumulation_trainer_and_used_lr) ... ok
+test_complete_heal_export (test_train.TrainerTests.test_complete_heal_export) ... ok
+test_final_scoring_failure_does_not_select_retry_lr (test_train.TrainerTests.test_final_scoring_failure_does_not_select_retry_lr) ... ok
+test_nonfinite_runtime_estimates_refused (test_train.TrainerTests.test_nonfinite_runtime_estimates_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 4.802s
+
+OK
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488548204302788, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.2314, 'train_samples_per_second': 414.81, 'train_steps_per_second': 51.851, 'train_loss': 0.00025538612438443425, 'epoch': 1.0}
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488546341657639, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.7578, 'train_samples_per_second': 126.687, 'train_steps_per_second': 15.836, 'train_loss': 0.00025538354384480044, 'epoch': 1.0}
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488546341657639, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.7549, 'train_samples_per_second': 127.163, 'train_steps_per_second': 15.895, 'train_loss': 0.00025538354384480044, 'epoch': 1.0}
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488548204302788, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.2356, 'train_samples_per_second': 407.449, 'train_steps_per_second': 50.931, 'train_loss': 0.00025538612438443425, 'epoch': 1.0}
+{'loss': 0.0003, 'grad_norm': 0.023359596729278564, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0003, 'grad_norm': 0.015488548204302788, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 0.2303, 'train_samples_per_second': 416.872, 'train_steps_per_second': 52.109, 'train_loss': 0.00025538612438443425, 'epoch': 1.0}

@@ -1,13 +1,22 @@
 # Current task
 
-## Active: A2 Phase 0 implementation; no B200 launch
+## Active: A2 correctness review; full pilot not launched
 
 28 October review: user requested another correctness review and B200 tests if
 needed. Fixed secondary reporting, strict run/retry receipts and independent T3
 branch failures. 29 local tests passed; public metadata check of all 12 pinned
 parents passed. Preparing a bounded CUDA/BF16/DDP smoke, NOT the healing pilot.
-First action is read-only node/environment/GPU inventory; preserve all old envs,
-outputs and workloads. Actual-parent/data preflight remains pending.
+Inventory23e65dd acknowledged06:02:53SGT: correct6Y3O/eightB200, historical
+burn workers630628–630635 still present; a2_env absent. Installation c7b2170 is
+acknowledged running in background. Pinned native-code-only download400f8a1
+submitted. Preserve all old envs, outputs and workloads. Actual-parent/data
+preflight remains pending. Do not launch healing from this random-model test.
+
+Install and all three native-source downloads now acknowledged successful.
+Preparing supervised smoke at
+`/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01`, session
+`a2_review_20261028_a01`: one/eight GPU random-model fixture, no real heal.
+30 local tests now pass, including final-scoring failure versus tuning retry.
 
 User authorized implementation after review of [A2_pilot_spec.md](A2_pilot_spec.md)
 v2.1 and [A2_novelty_and_feasibility.md](A2_novelty_and_feasibility.md).

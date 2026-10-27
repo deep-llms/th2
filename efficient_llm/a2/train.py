@@ -137,15 +137,18 @@ def heal(student,teacher,train_rows,evaluation,output,*,run,microbatch=1,chunk=1
     trainer.optimizer.zero_grad(set_to_none=True)
     history=trainer.state.log_history
     del trainer
+    # Scoring errors on final/secondary are correctness failures, not a reason
+    # to choose a different LR. Only the tuning set decides numerical divergence.
+    master=score(student,evaluation['final'])['loss']
+    round_to_saved_precision(student)
     try:
-        master=score(student,evaluation['final'])['loss']
-        round_to_saved_precision(student)
-        values={key:score(student,rows,teacher=teacher if key=='small' else None)
-                for key,rows in evaluation.items()}
+        values={'tuning':score(student,evaluation['tuning'])}
     except FloatingPointError as error:
         result=dict(run.record(),status='failed',diverged=True,error=str(error),provenance=provenance,rerun_of=rerun_of)
         if rank==0:write_json(root/'result.json',result)
         raise
+    values.update({key:score(student,rows,teacher=teacher if key=='small' else None)
+                   for key,rows in evaluation.items() if key!='tuning'})
     diverged=values['tuning']['loss']>pre_values['tuning']['loss']
     # Save first, then score the actual exported file for the round-trip gate.
     if rank==0: save_student(student,root/'final')

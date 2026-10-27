@@ -43,11 +43,39 @@ used in training; the isolated mask exists only for T9.
 
 ## Local validation
 
+Review on 28 October: the follow-up receipt is under
+`docs/results/a2_review_20261028/` (the original 26-test receipt remains intact).
+The revised suite has 30 passing tests plus the two-process comparison and 11
+unchanged supervisor checks. Distributed scoring also covers uneven row counts
+and fewer rows than ranks. Public Hub metadata for all 12 pinned parents passed
+T2/T3 identity checks; that does not verify downloaded model bytes or CUDA.
+
+Corrections from this review:
+- Final/secondary scoring errors stop the queue; they cannot trigger a lower-LR
+  retry. Only training numerical failure or tuning divergence selects a retry.
+- Run receipts must match all registered fields, retry identity and baseline
+  provenance; a failed non-divergence receipt cannot count as completion.
+- Secondary parent/teacher/pre/post losses and damage contrasts are retained.
+  Secondary summaries use the same tuning-selected effective runs and carry no
+  decision labels. Curves also use only validated effective runs.
+- T3 branch identity failures are recorded per branch, preserving eligible
+  annealed parents. Metadata records the resolved annealed-72k comparison commit.
+
+`tests/a2/ddp_probe.py <fresh-root> --cuda` is a separate bounded random-model
+test: one GPU followed by eight, BF16 head recomputation, native removal checks,
+exact sample coverage, BF16 export/reload and a 4096-token scoring probe. It uses
+native OpenSci code with reduced width/depth/vocabulary; it is not T1/T8 for the
+released 1.7B checkpoints. `scripts/launch_a2_check.py` wraps those two jobs in
+the existing supervisor, preserving Accelerate verification and burn handoff.
+CUDA evidence must be read from the separate review receipt, not inferred from
+these CPU tests or the existence of the launcher.
+
 Use a separate environment. Local testing used an ignored venv at
 `temp/a2_test_env`, inheriting Torch from the existing environment but installing
 Transformers 4.57.1, Hub 0.36.0 and Tokenizers 0.22.1 locally in the venv.
 The existing `train_env` was not changed. `envs/a2_env.txt` defines a separate
-future runner environment; it has **not** been installed on B200.
+runner environment; its installation was requested during the 28 October review.
+Installation and CUDA-test status are recorded in CURRENT_TASK and the review receipt.
 
 The native-model tests require these three small files from the pinned DCLM
 P300 commit `9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0`:

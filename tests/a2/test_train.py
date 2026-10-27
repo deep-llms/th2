@@ -2,6 +2,7 @@ import copy
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import numpy as np
 import torch
 from transformers import default_data_collator
@@ -65,3 +66,23 @@ class TrainerTests(unittest.TestCase):
     def test_nonfinite_runtime_estimates_refused(self):
         for value in (float('nan'),float('inf'),-1.,0.):
             with self.assertRaises(ValueError):RuntimeGuard(value)
+
+    def test_final_scoring_failure_does_not_select_retry_lr(self):
+        class Fixture:
+            steps=12;lr=1e-4
+            def record(self):return dict(run_id='cpu-failure-fixture',steps=12,lr=self.lr)
+        for failed_set in ('final','tuning'):
+            teacher=tiny_model().requires_grad_(False)
+            student=copy.deepcopy(teacher).requires_grad_(True);prune(student,[1,2])
+            evaluation={key:Rows(n) for key,n in [('final',3),('tuning',2),('small',1)]}
+            pre=score(student,evaluation['tuning'])
+            def failing_score(model,rows,**kwargs):
+                if rows is evaluation[failed_set]:raise FloatingPointError('Injected invalid scoring')
+                return score(model,rows,**kwargs)
+            with tempfile.TemporaryDirectory() as d,patch('efficient_llm.a2.train.score',side_effect=failing_score):
+                output=Path(d)/'run'
+                with self.assertRaises(FloatingPointError):
+                    heal(student,teacher,Rows(96),evaluation,output,run=Fixture(),microbatch=8,chunk=3,
+                        estimated_seconds=60,provenance={},pre_values=dict(tuning=pre,final=pre,
+                        parent_final=3.,teacher_final=3.),global_sequences=8)
+                self.assertEqual((output/'result.json').exists(),failed_set=='tuning')
