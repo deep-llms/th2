@@ -5,11 +5,26 @@ from unittest.mock import patch
 
 from efficient_llm.a2.data import write_json
 from efficient_llm.diagnostic_data import sha256
-from scripts.a2_preflight_inputs import initial_jobs, verify_prepared
+from scripts.a2_preflight_inputs import initial_jobs, verify_prepared, initial_asset_plan
 from run_experiments import load_jobs
 
 
 class PreflightInputTests(unittest.TestCase):
+    def test_initial_parent_scope_and_missing_hash_refusal(self):
+        asset = dict(weights_dir='/model', code_dir='/code',
+            files={'config.json':'a', 'model.safetensors':'b'},
+            code_files={'modeling_opensci.py':'c', 'configuration_opensci.py':'d'})
+        downloads = [dict(path=directory+'/'+name, sha256=digest)
+            for directory, files in (('/model', asset['files']), ('/code', asset['code_files']))
+            for name, digest in files.items()]
+        plan = dict(assets={'dclm/P300':asset}, downloads=downloads+[
+            dict(path='/other/download-in-progress', sha256='e')])
+        self.assertEqual(initial_asset_plan(plan)['downloads'], downloads)
+        self.assertEqual(len(plan['downloads']), 5)
+        plan['downloads'] = plan['downloads'][1:]
+        with self.assertRaisesRegex(ValueError, 'lock incomplete'):
+            initial_asset_plan(plan)
+
     def test_only_bounded_initial_stages(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d)/'jobs.json'

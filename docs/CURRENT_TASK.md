@@ -1,5 +1,18 @@
 # Current task
 
+## Actual B200 execution authorized — 28 October 2026 SGT
+
+User requests the real run. First execute the spec-required actual-parent
+preflight, report its outcome/cost before any scientific healing. Read-only
+863ab40 at07:32:43SGT confirms50/54asset files SHA-verified: only Nemotron S72/S188
+remain missing/downloading. All inputs for DCLM/P300 initial T8/survey are ready.
+Same known eight burn workers634055–634062 / launcher633986, no other GPU work.
+Initial launcher now checks only its actual parent dependency, letting unrelated
+model downloads continue; every later parent still requires its pinned hashes.
+Three readiness/job-manifest tests passed after this narrow launch-only change.
+Main data/model/loss/sampling/schedule and existing supervisor are unchanged.
+
+
 ## Latest preparation continuation — 28 October 2026 SGT
 
 CPU preparation COMPLETE07:11:32SGT (790.30seconds), confirmed by read-only
@@ -23,7 +36,8 @@ Fresh health receipt acknowledged; commands.sh returned#0 with code preparation.
 Prepared `scripts/launch_a2_preflight.py`: only discarded12-update real T8 plus
 one DCLM/P300 survey, both8GPUs, under unchanged train_then_burn supervisor.
 Requires successful main preparation, exact spec/data/asset contracts, actual
-packed bytes and all downloaded weight hashes BEFORE GPU reclaim. Copies
+packed bytes and required DCLM/P300 weight/code hashes BEFORE GPU reclaim.
+Other parent downloads may continue; their own loaders still require exact hashes. Copies
 resource Accelerate config and verifies accelerate env; supervisor owns exact
 burn PID checks, free-GPU checks and automatic communicating burn restoration.
 No heal/automatic pilot entry point in this initial-stage manifest.34CPUtests

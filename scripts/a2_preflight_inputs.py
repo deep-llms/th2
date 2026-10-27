@@ -6,6 +6,20 @@ from efficient_llm.diagnostic_data import sha256
 from efficient_llm.a2.data import PackedRows
 
 
+def initial_asset_plan(plan):
+    """Only DCLM/P300 is loaded by the initial jobs; other downloads may continue."""
+    asset = plan['assets']['dclm/P300']
+    required = {str(Path(asset[directory])/name): digest
+        for directory, files in (('weights_dir', 'files'), ('code_dir', 'code_files'))
+        for name, digest in asset[files].items()}
+    downloads = [item for item in plan['downloads'] if item['path'] in required]
+    if ({item['path']: item['sha256'] for item in downloads} != required
+        or not {'config.json','model.safetensors'} <= asset['files'].keys()
+        or not {'modeling_opensci.py','configuration_opensci.py'} <= asset['code_files'].keys()):
+        raise ValueError('Initial parent lock incomplete or inconsistent')
+    return dict(plan, downloads=downloads)
+
+
 def verify_prepared(root, spec, plan):
     root = Path(root)
     complete = json.loads((root/'complete.json').read_text())

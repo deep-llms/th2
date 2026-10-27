@@ -36,11 +36,11 @@ def main():
         if version(name).split('+')[0]!=expected:raise ValueError('Wrong review runtime: '+name)
     if len(a.code_commit)!=40 or any(c not in '0123456789abcdef' for c in a.code_commit):
         raise ValueError('Reviewed source commit required')
-    from scripts.a2_preflight_inputs import verify_prepared
+    from scripts.a2_preflight_inputs import verify_prepared, initial_asset_plan
     from scripts.a2_prepare_inputs import verify_inputs
     plan=json.loads((source/'resources/a2_inputs_20261028.json').read_text())
     inputs_receipt=verify_prepared(a.inputs,source/'docs/A2_pilot_spec.md',plan)
-    weights_receipt=verify_inputs(plan)
+    weights_receipt=verify_inputs(initial_asset_plan(plan))
     verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
     if (digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH
         or Path('/mnt/local/_gpu_guard/DISABLED').exists()):raise ValueError('Unknown burn/guard owner')
