@@ -49,3 +49,10 @@ and stop this recovery branch. If it passes, only bounded evaluation of actual
 latency/cache and longer-context quality is justified before claiming utility.
 The 5% gate remains upper 95% paired-document NLL CI <= log(1.05); reused
 validation and one seed limit the conclusion even on success.
+
+## Outcome
+
+Completed 27 October, 09:36:38 SGT; communicating burns restored and verified.
+Q/K/V-only PPL 23.0779, versus 20.4610 for its all-parameter control and 19.2416
+for dense A. Correctness checks pass; quality gate fails. No further training.
+See [final matched results](KV_RECOVERY_FINAL_RESULTS_20261027.md).

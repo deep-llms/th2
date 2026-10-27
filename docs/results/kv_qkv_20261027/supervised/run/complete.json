@@ -1,0 +1,52 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-27T01:28:25.288289+00:00",
+  "jobs": [
+    {
+      "name": "qkv-smoke",
+      "started_at": "2026-10-27T01:28:25.288535+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 47.47461720695719,
+      "artifacts": [
+        {
+          "path": "smoke/result.json",
+          "sha256": "1441aca0d26ab98d45be38ef3b050fdc6e72e3a84da6802f8432b1425718c6a8",
+          "bytes": 22482
+        }
+      ],
+      "finished_at": "2026-10-27T01:29:13.369699+00:00"
+    },
+    {
+      "name": "qkv-qkv",
+      "started_at": "2026-10-27T01:29:13.369739+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 439.73424511309713,
+      "artifacts": [
+        {
+          "path": "qkv/result.json",
+          "sha256": "1842155f6d7455512b213351090258eb038c43d059db7c2f4297fd5c23ba9da7",
+          "bytes": 79672
+        }
+      ],
+      "finished_at": "2026-10-27T01:36:33.704211+00:00"
+    },
+    {
+      "name": "qkv-summary",
+      "started_at": "2026-10-27T01:36:33.704251+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 3.970429365988821,
+      "artifacts": [
+        {
+          "path": "summary.json",
+          "sha256": "58047f4f1b7335cf8fd336dbe73633ed110374124a3f95a0cd8c3b9963cfeea4",
+          "bytes": 1036
+        }
+      ],
+      "finished_at": "2026-10-27T01:36:37.675631+00:00"
+    }
+  ],
+  "finished_at": "2026-10-27T01:36:37.675669+00:00"
+}

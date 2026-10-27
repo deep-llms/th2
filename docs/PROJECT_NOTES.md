@@ -410,3 +410,26 @@ See KV_QKV_RECOVERY_20261027.md. Six CPU and 58 infrastructure tests pass;
 new 8-step/8-GPU smoke gates the real fit. This brings submitted additional jobs
 to four of four. No fifth training job. Stop this branch if quality still fails;
 actual speed/cache/long-context evaluation is allowed only after quality passes.
+
+
+## Final recovery outcome — 27 October 2026 SGT
+
+QKV-only uniform25 completes2048steps, PPL23.0779: +19.94% vs dense19.2416,
++12.79% vs all-parameter uniform25 20.4610. Paired NLL vs dense +.181800,
+95%CI[.171678,.195069]; all256documents worse. Matching frozen bytes, changed
+trainable bytes, actual data order/coverage, parent/reload and eight-GPU smoke
+checks pass. Summary recomputed locally identical; 13 artifacts SHA-verified.
+Only44.04Mparameters train. Fit398.62s vs control506.47s; not inference speed.
+
+Queue complete09:36:38SGT, burns verified09:37:49, independent health09:55:47:
+eight known workers620160–620167, launcher620091, QKV a01/source burn,
+guard released; 1250cycles/1387.94GiB collective payload per rank. Always
+recheck exact identities before future authorized reclaim.
+
+Four/four bounded follow-up training jobs complete. Stop this tested conversion
+recipe; no further training or pruning. Existing timer STOP set after archival
+and verified handoff; commands.sh #0. Final comparison:
+KV_RECOVERY_FINAL_RESULTS_20261027.md. Durable archive docs/results/kv_qkv_20261027,
+local temp/kv_qkv_results_20261027, raw temp/kv_qkv_health01.log. One seed and
+reused prefix validation do not reject KV sharing generally or prove downstream
+quality. No environment/driver/model/data changes; prior outputs preserved.

@@ -1,90 +1,61 @@
 # Current task
 
-## Active: final Q/K/V-only recovery test, 27 October 2026 SGT
+## Completed: bounded KV-sharing recovery research, 27 October 2026 SGT
 
-Project idea: [PROJECT_IDEA.md](PROJECT_IDEA.md). Overnight scope:
+Project objective: [PROJECT_IDEA.md](PROJECT_IDEA.md). Authorized overnight scope:
 [KV_RECOVERY_OVERNIGHT_20261027.md](KV_RECOVERY_OVERNIGHT_20261027.md).
-Report times in Singapore time (UTC+8). Workspace /disk/thuat/efficient_llm.
+Final report: [KV_RECOVERY_FINAL_RESULTS_20261027.md](KV_RECOVERY_FINAL_RESULTS_20261027.md).
+Workspace /disk/thuat/efficient_llm. Report times in Singapore time (UTC+8).
 
-### Scheduled tick 4: QKV launch acknowledged; fresh health requested
+All four additional training jobs are complete. **No more training authorized.**
+Final matched BF16 PPL: dense A 19.2416, uniform25 20.4610, upper25 20.6189,
+full50 22.6557, uniform25 Q/K/V-only 23.0779. All sharing variants fail the
+upper-95%-CI <= log(1.05) gate. Stop this short conversion/recovery recipe;
+no pruning sweep or speed-only evaluation. One model/seed, reused 256-document
+prefix probe: do not generalize this to all KV sharing or downstream accuracy.
 
-Launch **3932ad44cd629c8a6fb0f498f9bb3f9e244e07c9** is acknowledged by the
-controller. Node receipt at **09:27:16 SGT** confirms copied/verified Accelerate
-8-GPU BF16 configuration and DIAGNOSTIC_SUBMITTED. Receipt:
-`temp/kv_qkv_launch01.log`, SHA256
-`81c187d2386c9444ef6614c834266b19e6e6d99a87f2a231d66748037a1860fa`.
-The previous delayed Dropbox snapshots were not a launch failure.
+### Final QKV job and evidence
 
-This commit replaces the acknowledged launch with unique read-only health
-`th2-6y3o-efficient-kv-qkv-health-20261027-a01` to retrieve terminal artifacts,
-smoke/data/frozen-weight checks and current communicating burns. No new training
-or process signals. Do not repush this executable health unchanged. Restore #0
-after acknowledgement. 4/4 follow-up jobs remain submitted; no fifth job.
+Run `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-qkv-20261027-a01`,
+session `efficient_kv_qkv_20261027_a01`, launch3932ad4; final healthd1e92f3.
+Receipt confirms Accelerate cache copy and eight-GPU BF16 verification. Smoke
+8steps/8GPUs and full2048-step fit pass. Same original dense A-512 parent,
+134,217,728 tokens, exact sample order and recipe as dense/all-parameter controls.
+Frozen bytes unchanged; selected Q/K/V weights changed; parent/reload max NLL
+difference zero. Local recomputed summary equals node summary exactly.
 
-The delayed read-only health 4dc992d was retrieved, then independent final health
-60dcf16 verified the full queue and burn handoff at **09:11:42 SGT**. All three
-placement arms completed 08:29:36 SGT; supervisor restored/verified eight-rank
-communicating burns at 08:30:46 SGT. No overlapping workload or restart occurred.
+Queue completed **09:36:37.676 SGT**. Communicating burn handoff verified
+**09:37:48.530 SGT**. Independent live health **09:55:46.983 SGT** confirms eight
+known burn workers, guard released, advancing collectives through 1,250 cycles
+and 1,387.94 GiB logical payload/rank. No environment/driver/model/data change.
 
-BF16 PPL: matched dense A **19.2416**, uniform25 **20.4610** (+6.34%), upper25
-**20.6189** (+7.16%), full50 **22.6557** (+17.74%). All fail the upper-95%-CI
-<= log(1.05) quality screen. Uniform25 outperforms upper25 at equal 75% cache
-retention. All actual sample-order/coverage, parent and reload checks pass.
-[Placement results](KV_PLACEMENT_RESULTS_20261027.md), SHA-verified archive:
-`docs/results/kv_placement_20261027/`. Raw log `temp/kv_placement_final01.log`,
-SHA256 `1906ef653d0a038811026afbaeea5e9539b4e2dcdc9563a51d8723507283fad3`.
-The previous B continuation (22.3924 PPL) has different starting weights and is
-not a matched placement control. Its report is KV_RECOVERY_RESULTS_20261027.md.
+13 exact exported artifacts SHA-verified, archive
+`docs/results/kv_qkv_20261027/`; local `temp/kv_qkv_results_20261027/`.
+Raw health `temp/kv_qkv_health01.log`, SHA256
+`3ffd72cea3ebd77556ac10ea603a412dd10732fe3eaa9e98abe75e7f8db51e32`.
+Large checkpoints remain on B200. Prior outputs and caches preserved.
 
-One final controlled training job is prepared: uniform25 from the SAME original
-dense A-512, updating affected Q/K/V projections only. Same 2048 steps, 134.22M
-tokens, actual data order, teacher, loss, LR/schedule and runtime. Freeze all
-other weights and require exact before/after byte identity. Compare completed
-all-parameter uniform25 and dense A. This tests a focused optimization question;
-restricted tuning and partial sharing are already known, not novelty claims.
-See [KV_QKV_RECOVERY_20261027.md](KV_QKV_RECOVERY_20261027.md).
+Latest burn source is this QKV run's `source/resources/llm_pretrain_burn.py`,
+launcher620091, workers620160–620167. These are historical identities, never a
+substitute for fresh PID/start verification before any future authorized stop.
+No active training or evaluation remains. commands.sh restored to **#0**.
 
-Local verification: 6 CPU tests including two-rank training, exact frozen-weight
-checks and matched summary validation; 58 infrastructure tests. All pass.
-The unchanged architecture's real GPU numerical gate already passed. New
-8-step/8-GPU smoke must pass before the one real fit. Source manifest checked.
-No environment, driver, dataset, model, core attention or loss changes.
+Existing timer `temp/kv_recovery_watch_20261027/STOP` is set after verified final
+results/handoff. No replacement timer/agent. Do not restart research from stale
+queued wake prompts; completed cap is4/4. Wait for new user instructions.
 
-This commit submits the fourth and FINAL additional training job beyond A/B:
-`/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-qkv-20261027-a01`,
-session `efficient_kv_qkv_20261027_a01`, study `kv_qkv`.
-**3 completed + 1 submitted = 4/4 cap. No further training authorized.**
-Submission is not launch/completion proof; retrieve receipt and smoke status.
-If the quality screen fails, archive and stop this branch. If it passes, only
-bounded actual cache/latency and longer-context evaluation remains justified.
-No broad pruning sweep. Preserve every prior output/checkpoint.
+### Earlier recovery stages
 
-QKV predecessor is completed placement a01, source burn path
-`/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01/source/resources/llm_pretrain_burn.py`.
-At 09:11:42 SGT workers 618321–618328, launcher 618252; collective progress and
-released guard verified. These are historical identities: supervisor must freshly
-verify exact PID/start identities, hold guard, stop only known burn workers,
-wait/recheck all eight GPUs free, then run. It copies resources/accelerate_b200.yaml
-to actual HF cache and checks accelerate env; restores/verifies communicating
-burns on completion/failure. Never signal unknown processes or groups.
+Recovery a02/a1847c0 complete07:39:16SGT: denseA19.2416, oldB22.3924 (+16.37%).
+B starts from already-shared B-512 and is not a matched placement initialization.
+Three placement jobs bca23aa complete08:29:36SGT from SAME denseA-512:
+uniform25 +6.34%, upper25 +7.16%, full50 +17.74%. All artifacts/data/reload and
+burn checks pass. Reports KV_RECOVERY_RESULTS_20261027.md and
+KV_PLACEMENT_RESULTS_20261027.md; SHA archives under docs/results/.
 
-commands.sh is the fresh read-only QKV health request replacing acknowledged launch.
-Never repush it unchanged. Restore #0 after acknowledgement, using read-only
-health with a unique identifier if fresh supervisor/progress evidence is needed.
-Controller/AWS/credentials/connectivity failure freezes remote writes.
-
-Existing dev timer only: PID 324788, tmux efficient_kv_recovery_watch_20261027,
-state temp/kv_recovery_watch_20261027. Tick 4 delivered 09:53:46 SGT; next
-**10:38:46 SGT**, deadline **18:53:46 SGT**. Do not create another agent, session
-or timer. End this turn when the job is healthy; do not wait for long completion.
-Touch STOP only after final artifacts and burn handoff are verified and the
-research branch is concluded, or user cancellation/deadline. A delayed fetch is
-not evidence of failure and not a reason to stop the timer.
-
-Recovery a02/a1847c0 completed 07:39:16 SGT, archived with exact data and reload
-checks and communicating burns. Original pilot a03 contains dense A-512 parent.
-Placement bca23aa completed as above. All source copies on node omit .git;
-never use git rev-parse in a node shell header. Source identity uses SHA manifests.
+Node source copy omits .git; source identity uses SHA manifests. Earliest recovery
+a01 failed before Python/GPU because of a git metadata shell header; corrected
+a02 preserved all outputs. Delayed Dropbox receipts are not run failures.
 
 ## Completed initial pilot (historical)
 
@@ -157,11 +128,10 @@ Contract `resources/cx_english_20261020.json`; config `resources/accelerate_b200
 No GPU-node outbound network; controller #d/#i inputs and #2 exports only.
 Dropbox label 6Y3O; credentials/map under ignored DOT/temp. Never print contents.
 
-Latest verified burn ownership, **09:11:42 SGT**: workers 618321–618328,
-launcher 618252; source placement a01/source/resources/llm_pretrain_burn.py.
-Guard released and collective progress verified. QKV supervisor must
-reinspect exact identities before stopping; these PIDs are historical evidence,
-not permission to signal without rechecking. Guard/burn rules in GPU_SAFETY.md.
+Latest verified burn ownership, **09:55:46 SGT**: workers620160–620167,
+launcher620091; source QKV a01/source/resources/llm_pretrain_burn.py.
+Guard released and collective progress verified. Reinspect exact identities
+before any future authorized stop. Rules in GPU_SAFETY.md.
 
 ## Earlier evidence
 

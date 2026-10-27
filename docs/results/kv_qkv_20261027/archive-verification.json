@@ -1,0 +1,13 @@
+{
+  "launch_commit": "3932ad44cd629c8a6fb0f498f9bb3f9e244e07c9",
+  "health_commit": "d1e92f396dd7dad8072575a39c38fc501fcaa5f2",
+  "raw_health_log": "temp/kv_qkv_health01.log",
+  "raw_health_sha256": "3ffd72cea3ebd77556ac10ea603a412dd10732fe3eaa9e98abe75e7f8db51e32",
+  "raw_launch_log": "temp/kv_qkv_launch01.log",
+  "raw_launch_sha256": "81c187d2386c9444ef6614c834266b19e6e6d99a87f2a231d66748037a1860fa",
+  "artifact_count": 13,
+  "local_summary_exact_match": true,
+  "independent_matched_scope_and_handoff_verification": true,
+  "latest_burn_cycles": 1250,
+  "latest_burn_collective_payload_gib_per_rank": 1387.94
+}

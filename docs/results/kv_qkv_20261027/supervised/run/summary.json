@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "ppl": 23.077903722299858,
+  "comparisons": {
+    "dense": {
+      "ppl_ratio": 1.1993739253395213,
+      "paired": {
+        "delta_nats_per_token": 0.18179969176235097,
+        "paired_document_bootstrap_95ci": [
+          0.17167806170288322,
+          0.19506940966833983
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "all_parameters": {
+      "ppl_ratio": 1.1278970765445797,
+      "paired": {
+        "delta_nats_per_token": 0.12035490471479432,
+        "paired_document_bootstrap_95ci": [
+          0.11145840614711944,
+          0.1319362223879435
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    }
+  },
+  "within_five_percent": false,
+  "trainable_parameters": 44040192,
+  "training_seconds": 398.61636477708817,
+  "frozen_weights_unchanged": true,
+  "limitations": [
+    "One seed, reused development probe; not an independent confirmation.",
+    "Only trainable parameter scope changes; not a reproduction of SwiftKV."
+  ]
+}

@@ -56,3 +56,7 @@ Run `6y3o-efficient-kv-placement-20261027-a01`; launch bca23aa, final health 60d
 Raw log: `temp/kv_placement_final01.log` (SHA256
 1906ef653d0a038811026afbaeea5e9539b4e2dcdc9563a51d8723507283fad3).
 All exported bytes are verified; large checkpoints remain on B200.
+
+Final follow-up: affected-Q/K/V-only adaptation of uniform25 finished at PPL
+23.0779, worse than all-parameter uniform25. The bounded recovery branch is
+closed; [final comparison and verification](KV_RECOVERY_FINAL_RESULTS_20261027.md).
