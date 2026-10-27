@@ -25,6 +25,13 @@ def write(path, value):
     with Path(path).open('x') as f: json.dump(value, f, indent=2); f.write('\n')
 
 
+def verify_tokenizer(path, files):
+    for name, expected in files.items():
+        p=Path(path)/name
+        if p.stat().st_size!=expected['bytes'] or digest(p)!=expected['sha256']:
+            raise ValueError('Training tokenizer changed: '+name)
+
+
 def jobs_for(checkpoints, data, manifest, tokenizer):
     jobs = [dict(name='adapter-check', gpus=[0], timeout_seconds=600,
         argv=['{python}','-m','scripts.check_kv_downstream_adapter','--checkpoints',str(checkpoints),
@@ -74,8 +81,7 @@ def main():
     manifest=source/'resources/downstream_english_20261023.json'
     local_dataset_paths(a.data_root,manifest)
     tokenizer_files=json.loads((a.parent/'source/resources/cx_english_20261020.json').read_text())['tokenizer_files']
-    for name, expected in tokenizer_files.items():
-        if digest(a.tokenizer/name)!=expected:raise ValueError('Training tokenizer changed: '+name)
+    verify_tokenizer(a.tokenizer,tokenizer_files)
     checkpoints={arm:str(a.parent/'supervised/run'/arm/'final') for arm in ['A','B']}
     weights={}
     for arm, cp in checkpoints.items():

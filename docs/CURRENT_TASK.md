@@ -16,10 +16,14 @@ lacks lm-eval, so do not modify it. Final folders contain weights/config only;
 explicitly use the original hash-checked model tokenizer. Preflight archive
 `docs/results/kv_downstream_20261028/preflight.json`.
 
-Submitting `6y3o-efficient-kv-downstream-20261028-a01`, session
+Launch `a2ec3c6` pushed/remote-head verified; `6y3o-efficient-kv-downstream-20261028-a01`, session
 `efficient_kv_downstream_20261028_a01`: adapter gate -> smoke -> full, automatic
 verified communicating burns afterward. No model/training/runtime changes.
-Await launch receipt; never repush executable commands unchanged.
+First launch a2ec3c6 failed before output creation or GPU reclaim: tokenizer
+manifest entries are metadata dictionaries, not bare hash strings. Corrected
+comparison to bytes/sha256 and regression-tested. Submitting fresh a02 output
+and session; a01 never evaluated or stopped burns. Await corrected receipt;
+never repush executable commands unchanged.
 No new timer or agent. Previous research timer remains stopped.
 
 ## Complete: 1.36B-token dense/uniform25 pair, 28 October 2026 SGT

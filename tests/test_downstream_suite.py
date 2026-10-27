@@ -61,5 +61,17 @@ class DownstreamCollectionTests(unittest.TestCase):
             self.assertEqual(jobs[-1]['gpus'],list(range(8)))
             self.assertIn('--limit',jobs[1]['argv']);self.assertNotIn('--limit',jobs[2]['argv'])
 
+    def test_tokenizer_manifest_uses_byte_and_hash_records(self):
+        import hashlib
+        from scripts.launch_kv_downstream import verify_tokenizer
+        with tempfile.TemporaryDirectory() as p:
+            root=Path(p);f=root/'config.json';f.write_bytes(b'{}')
+            files={'config.json':dict(bytes=2,sha256=hashlib.sha256(b'{}').hexdigest())}
+            verify_tokenizer(root,files)
+            f.write_bytes(b'[]')
+            with self.assertRaisesRegex(ValueError,'tokenizer'):verify_tokenizer(root,files)
+            f.write_bytes(b'{} ')
+            with self.assertRaisesRegex(ValueError,'tokenizer'):verify_tokenizer(root,files)
+
 
 if __name__=='__main__':unittest.main()
