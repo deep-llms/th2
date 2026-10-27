@@ -61,3 +61,8 @@ All 18 exported artifacts verified. Raw local receipt `temp/kv_long_health03.log
 SHA256 `a32aa5a6b72563ea3e04b972f245abbe461bf26aaf9455550f826777eeb97e51`.
 Large checkpoints remain under the B200 run
 `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01`.
+
+
+Downstream follow-up is complete: [nine-task results](KV_DOWNSTREAM_20261028.md).
+Eight-task MC average A60.60% versus uniform25 58.43%; LAMBADA accuracy52.28%
+versus50.26%. The5%PPL screen did not establish downstream parity.

@@ -1,32 +1,36 @@
 # Current task
 
-## Authorized: downstream screen of long-recovery A/B, 28 October SGT
+## Complete: downstream screen of long-recovery A/B, 28 October SGT
 
-User requested downstream evaluation of the completed dense A / uniform25 pair.
-Plan [KV_DOWNSTREAM_20261028.md](KV_DOWNSTREAM_20261028.md). Nine complete English
-zero-shot tasks, seed42, context1024, native SDPA/BF16 weights; eight concurrent
-single-GPU workers. No training. Reuse existing pinned benchmark files and
-canonical lm-eval0.4.13 scoring. CPU adapter/task/collector checks pass; actual
-GPU adapter and eight-example/task smoke gate the full evaluation.
+User-requested evaluation complete; [results/protocol](KV_DOWNSTREAM_20261028.md).
+Nine full English zero-shot tasks; native SDPA/BF16 weights, context1024, seed42,
+26,618examples per arm. Eight-task mean: A60.6003%, uniform25B58.4273%, delta
+−2.1729points; paired within-task example-bootstrap95%CI[−2.6646,−1.6825].
+B lower on all9tasks. LAMBADA accuracy52.2802→50.2620%, PPL10.2766→11.6019.
+No downstream parity or measured inference-efficiency claim. One training seed.
 
-Read-only preflight `be59b1e` passed01:00:56SGT: both final checkpoints at20,752,
-all27benchmark files verified, eight known communicating burn workers present.
-Use existing eval env (torch2.14.1/transformers5.9.0/lm-eval0.4.13); train env
-lacks lm-eval, so do not modify it. Final folders contain weights/config only;
-explicitly use the original hash-checked model tokenizer. Preflight archive
-`docs/results/kv_downstream_20261028/preflight.json`.
+Successful fresh a02 launch dc7c0ba, health a850e76. Actual GPU native-logit and
+manual-likelihood gate exact (zero errors); eight-example/task smoke passed;
+full evaluation150.27s on8concurrent workers. All stages return0, full benchmark
+counts/paired prompts and unchanged checkpoint hashes verified. Two likelihood
+requests per arm truncated at1,024; others fit. Existing eval environment reused,
+no installs, driver changes or model/training modifications. Resource Accelerate
+config copied and8GPU/BF16 env verified; known burns stopped and8GPUs free.
 
-Launch `a2ec3c6` pushed/remote-head verified; `6y3o-efficient-kv-downstream-20261028-a01`, session
-`efficient_kv_downstream_20261028_a01`: adapter gate -> smoke -> full, automatic
-verified communicating burns afterward. No model/training/runtime changes.
-First launch a2ec3c6 failed before output creation or GPU reclaim: tokenizer
-manifest entries are metadata dictionaries, not bare hash strings. Corrected
-comparison to bytes/sha256 and regression-tested. Submitting fresh a02 output
-and session via dc7c0ba (pushed/remote-head verified); a01 never evaluated or
-stopped burns. Corrected launch dc7c0ba acknowledged: Accelerate8GPU/BF16
-verified and supervisor submitted under a02 at01:17SGT. Requesting live health
-and result artifacts; do not infer success from launch acknowledgement.
-No new timer or agent. Previous research timer remains stopped.
+Queue complete01:21:47SGT. Communicating burns restored/verified01:22:58SGT,
+independent live check01:23:02SGT:8workers630628–630635, launcher630559,
+source under this run's source/resources/llm_pretrain_burn.py; guard released,
+20cycles/22.21GiB collective progress/rank. Historical identities; reverify later.
+commands.sh restored#0. No more jobs queued; previous overnight timer stopped.
+
+Root `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-downstream-20261028-a02`.
+Local archive `docs/results/kv_downstream_20261028/final/`, raw
+`temp/kv_downstream_health01.log` SHA256
+`48a696f89032f4b4d6fbf8e5a8488fcf8df7fa85b35f73715048ef835c865782`.
+All exported artifacts SHA-checked; complete-marker hashes verified. Full
+per-example outputs remain onB200 with local byte/SHA receipts. All checkpoints
+preserved. Initial a01 failed in tokenizer manifest validation before GPU stop or
+output creation; fixed dict-versus-digest comparison and regression-tested.
 
 ## Complete: 1.36B-token dense/uniform25 pair, 28 October 2026 SGT
 

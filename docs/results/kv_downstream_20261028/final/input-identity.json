@@ -1,0 +1,39 @@
+{
+  "checkpoints": {
+    "A": "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/supervised/run/A/final",
+    "B": "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/supervised/run/B/final"
+  },
+  "weights_sha256": {
+    "A": "871ea72747d7913133e7afafd446571031587894ce14ef646d60576718f1fb69",
+    "B": "d1a6bbeeb8592bc4f2cf49c73c574a1d95eb543a192c12356110aa1ae6a3b171"
+  },
+  "tokenizer": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+  "tokenizer_files": {
+    "config.json": {
+      "bytes": 727,
+      "sha256": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59"
+    },
+    "generation_config.json": {
+      "bytes": 138,
+      "sha256": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8"
+    },
+    "tokenizer.json": {
+      "bytes": 7031645,
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    "tokenizer_config.json": {
+      "bytes": 9678,
+      "sha256": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5"
+    },
+    "merges.txt": {
+      "bytes": 1671853,
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+    },
+    "vocab.json": {
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  },
+  "parent_complete_sha256": "3e41b5586e2ccca8d7c2611fcc11854c60e7331cc6759b2b877db5178ce3e673",
+  "benchmark_manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b"
+}

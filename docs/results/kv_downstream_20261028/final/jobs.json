@@ -1,0 +1,108 @@
+{
+  "jobs": [
+    {
+      "name": "adapter-check",
+      "gpus": [
+        0
+      ],
+      "timeout_seconds": 600,
+      "argv": [
+        "{python}",
+        "-m",
+        "scripts.check_kv_downstream_adapter",
+        "--checkpoints",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-downstream-20261028-a02/checkpoints.json",
+        "--tokenizer",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--output",
+        "{run_dir}/adapter-check.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "adapter-check.json",
+          "json_equals": {
+            "status": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "smoke",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "eval.downstream_suite",
+        "--checkpoints",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-downstream-20261028-a02/checkpoints.json",
+        "--output",
+        "{run_dir}/smoke",
+        "--dataset-root",
+        "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+        "--manifest",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-downstream-20261028-a02/source/resources/downstream_english_20261023.json",
+        "--tokenizer",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--limit",
+        "8"
+      ],
+      "required_outputs": [
+        {
+          "path": "smoke/summary.json",
+          "json_equals": {
+            "status": "ok",
+            "diagnostic": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "full",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "eval.downstream_suite",
+        "--checkpoints",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-downstream-20261028-a02/checkpoints.json",
+        "--output",
+        "{run_dir}/full",
+        "--dataset-root",
+        "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+        "--manifest",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-downstream-20261028-a02/source/resources/downstream_english_20261023.json",
+        "--tokenizer",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6"
+      ],
+      "required_outputs": [
+        {
+          "path": "full/summary.json",
+          "json_equals": {
+            "status": "ok",
+            "diagnostic": false
+          }
+        }
+      ]
+    }
+  ]
+}

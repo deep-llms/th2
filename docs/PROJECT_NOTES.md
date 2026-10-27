@@ -448,3 +448,29 @@ KV_RECOVERY_FINAL_RESULTS_20261027.md. Durable archive docs/results/kv_qkv_20261
 local temp/kv_qkv_results_20261027, raw temp/kv_qkv_health01.log. One seed and
 reused prefix validation do not reject KV sharing generally or prove downstream
 quality. No environment/driver/model/data changes; prior outputs preserved.
+
+
+## Long-recovery downstream outcome — 28 October 2026 SGT
+
+User authorized downstream evaluation; [full report](KV_DOWNSTREAM_20261028.md).
+Original28-layer pretrained Qwen0.6B long-recovered dense A vs uniform25, final
+20,752-step checkpoints, canonical lm-eval0.4.13 English zero-shot nine-task
+screen. A60.6003%, B58.4273% eight-MC-task mean, −2.1729points; B lower on all9.
+Paired example-bootstrap95%CI for mean difference[−2.6646,−1.6825]; conditional
+on this seed/checkpoints. LAMBADA accuracy52.2802→50.2620%, PPL10.2766→11.6019.
+No quality equivalence or measured serving-efficiency claim. Full150.27seconds
+using eight concurrent workers, no training. Precision/backend matches final
+BF16 native-SDPA PPL. Two truncated likelihood requests each, identical prompts.
+
+Run6y3o-efficient-kv-downstream-20261028-a02, launchdc7c0ba, healtha850e76.
+All checks/results archived docs/results/kv_downstream_20261028/final; raw
+receipt temp/kv_downstream_health01.log. Complete01:21:47SGT, burns verified
+01:22:58 and independently01:23:02; guard released. Known workers630628–630635
+under630559 at observation, source this run/source/resources/llm_pretrain_burn.py.
+Reverify before stopping. commands#0; no additional job or timer.
+
+Reuse existing eval env matching train torch2.14.1/transformers5.9.0; train env
+has no lm-eval, so leave it unchanged. Final KV checkpoints contain weights and
+config only: pass original training tokenizer explicitly and verify its manifest
+bytes/sha256. The first launcher compared manifest dictionaries with bare hashes;
+it failed safely before GPU reclaim/output creation, fixed with a regression test.
