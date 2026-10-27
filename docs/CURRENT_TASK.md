@@ -10,7 +10,7 @@ Read-only inventory11efc8d observed06:42:03SGT: authorized6Y3O alive, old burn
 workers634055–634062 under633986 unchanged; no other GPU workload. English
 cx_sampled_dd1b1513 has all3008 files, matching sizes and pinned manifest SHA;
 36,495,424train documents and11,717validation documents. Full shard SHA checks
-will run before sampling. Existing Qwen tokenizer present. New A2 asset folder
+subsequently passed before sampling (see latest health below). Existing Qwen tokenizer present. New A2 asset folder
 absent; about22.6TB disk free. No environments/driver/outputs changed.
 Raw inventory temp/a2_assets_inventory.log SHA256
 705824080d73feee0b483fe490d78a5fd460dce5c0483a5c91fdf0deb1c77453.
@@ -34,9 +34,22 @@ T15 resource a2_logged_lr_20261028.json binds public archive and exact run names
 Nemotron188000 exactLR.004; other requested exact steps absent in the matching
 log members. Nearest values are explicitly context only, never substituted.
 CPU launcher scripts/launch_a2_inputs.py snapshots source and uses the existing
-job runner, four-hour timeout, no GPU/burn/guard control. Not yet launched.
-Secondary downloads all3complete; parent request remainsRUNNING, last item copy
-configuration_opensci.py at DCLM-P300. This is not proof of failure. Data can
+job runner, four-hour timeout, no GPU/burn/guard control. Launched3bd6cb8,
+reviewed source2589987, at06:58:22SGT; health32f323c at07:01:15SGT confirms
+running/no error, frozen source hashes match, all3secondary sets complete and
+all751train+1validation English shards SHA-verified in136.37seconds. Nemotron
+packed bytes match the independent dev probe exactly. Main tokenization follows;
+no data completion marker yet. Root:
+/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01
+Data will be at run/inputs/data; assets/secondary_map.json under run/inputs.
+Session a2_inputs_20261028_a01. Do not restart or overwrite this healthy job.
+Receipt docs/results/a2_preflight_20261028/input_status_0701.json.
+Latest user questioned necessity of secondary/tokenizer checks: explained the
+spec's secondary corpus diagnostics versus mandatory tokenizer/count identity;
+no additional optional test expansion. Keep focus on main data and actual model.
+Secondary downloads all3complete; parent request remainsRUNNING. The controller
+progress line can lag: actual06:58inspection found16/54files including a partial
+S72weight. No failure inferred and no duplicate download/relaunch. Data can
 prepare concurrently once its tokenizer bytes are present: it never loads parent
 weights, and its receipt explicitly says model_weights_verified=false. Every
 parent still requires actual weight SHA verification before GPU loading.

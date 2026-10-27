@@ -1,6 +1,7 @@
 # A2 preflight — 28 October 2026 (Singapore time)
 
-Status: acquiring actual inputs and preparing the frozen streams. **No healing
+Status at07:01SGT: CPU preparation is running; all source English shard hashes
+and secondary sets passed. Actual parent downloads continue. **No healing
 run has started.** The 127-fit matrix remains gated on the real-parent tests and
 whole-workload cost report in [the preregistration](A2_pilot_spec.md).
 
@@ -12,7 +13,7 @@ whole-workload cost report in [the preregistration](A2_pilot_spec.md).
 - Read-only inspection at 06:42 SGT: correct 6Y3O node, eight known communicating
   burn workers still owned by the earlier review supervisor; no new GPU job.
 - Existing `cx_sampled_dd1b1513` English pool: pinned manifest matches; all 3,008
-  files exist with expected sizes. Full content hashes are checked by preparation.
+  files exist with expected sizes. Full content hashes subsequently passed in136.37seconds on the node.
   The pool has 36,495,424 train and 11,717 validation documents. No full-pool
   download is needed.
 - Input lock: [12 parents and tokenizers](../resources/a2_inputs_20261028.json).
@@ -28,7 +29,7 @@ per corpus before scoring: the first listed DCLM-baseline shard, the first
 FineWeb-Edu **v1.0.0** shard, and the first original Nemotron-CC
 `quality=high/kind=actual/kind2=actual` shard. Use the first 256 packed sequences
 from each, never select shards by losses. Controller request `76f4c90` is
-complete for all three files; node checksum verification/preparation remains pending.
+complete for all three files; node checksums and256-sequence preparations passed.
 
 The original Nemotron source is available from [Common Crawl's official
 listing](https://data.commoncrawl.org/contrib/Nemotron/Nemotron-CC/index.html).
@@ -68,6 +69,12 @@ old outputs and caches are preserved. Parent weights can finish downloading in
 parallel: this CPU stage never loads them or claims their verification. Actual
 model loaders check their pinned hashes before GPU use. The CPU stage does not
 touch GPU burns or the guard.
+
+CPU job launched06:58:22SGT, source2589987, run
+`6y3o-a2-inputs-20261028-a01`. [07:01 health receipt](results/a2_preflight_20261028/input_status_0701.json):
+source hashes match, no errors, all source shards verified, three secondary
+streams complete, Nemotron matches dev byte-for-byte. Main data is not complete
+yet. GPU burns were not stopped. No extra optional tokenizer tests are queued.
 
 Once data passes: measure actual-model T8, finish real-parent numerical and
 survey gates, include loading/scoring/saving/diagnostic time in both phase

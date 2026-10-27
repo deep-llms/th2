@@ -1,0 +1,58 @@
+{
+  "status": "running_not_complete",
+  "observed_at_sgt": "2026-10-28T07:01:15+08:00",
+  "source_commit": "25899871d2181df7f7ba154c800c8ddf3007b08f",
+  "launch_commit": "3bd6cb88d2565ba5e4f55cc4544db5bc171392cc",
+  "health_commit": "32f323c8beeb6e9bc7b6701aa36bc145bd4dd238",
+  "source_files_matched": 59,
+  "secondary": {
+    "dclm": {
+      "final": {
+        "rows": 256,
+        "tokens": 1048576,
+        "dropped": 0,
+        "length": 4096,
+        "token_sha256": "a36deec7d618eeceb004f6ca8563e9dd1db6bd1b71a02be147a55acc9e1ea269",
+        "starts_sha256": "f5f023562f459977ccab0b7f68e911366dc1527ab12adf4bb28f3c084d897754"
+      }
+    },
+    "fwe": {
+      "final": {
+        "rows": 256,
+        "tokens": 1048576,
+        "dropped": 0,
+        "length": 4096,
+        "token_sha256": "bd2edbfe9c0b210bf9024d2893eae73a6cb8822a9ebbfaa4b79d25b447b2d984",
+        "starts_sha256": "c378ba623393747e295628178f0eae164c291a6350b2a4d3be74403ba4876d0a"
+      }
+    },
+    "nem": {
+      "final": {
+        "rows": 256,
+        "tokens": 1048576,
+        "dropped": 0,
+        "length": 4096,
+        "token_sha256": "df39d2cc4f9f4e7fb0b08a1b5d63f7a8d9700a6b5379fa0bc0011c0e18814d56",
+        "starts_sha256": "22c1ffb746276ba7d1e3fa9210aff9e0aded920322cc2324b4c29a664f61eb62"
+      }
+    }
+  },
+  "nem_matches_dev_probe": true,
+  "english_shards_verified": {
+    "train": 751,
+    "validation": 1,
+    "seconds": 136.3745972220786
+  },
+  "raw_health_sha256": "aeacf5f4bae7ece9e4bfa0a84c5f2cd791e917977ece3c849ed0f69d3a58d6db",
+  "artifacts": {
+    "source-manifest.json": "d1d026af982cf6db5eef88c0f4c9164e682471f957df81ae32194b6c7c0c0168",
+    "jobs.json": "e48ce08e5897cfd01864148861ae3a70821f9048fb3752e0b4a94b3e6c181a0b",
+    "run/run.json": "a2f59ed1991377901eec08bed42df5d42d4bafe17f49a3182a2f8264f1c6be00",
+    "run/inputs/verified_inputs.json": "e5edfc09e5919fc8c22d9faf02f0fdbfbd60a2081f6e055338240177a9436bd7",
+    "run/inputs/secondary_map.json": "3f0711e12a90ff8d24abd06e0e8eda10ce65d378ba74f9a0b5643069afb655b4",
+    "run/inputs/secondary/dclm/manifest.json": "9a7372222d56b763d9af01951a380ae910289d9d87ef68306d9453b1a2fd1d46",
+    "run/inputs/secondary/fwe/manifest.json": "4831c90dd2f115cfe379a90cde8e34d2c421d0bf552b715f059e401989989843",
+    "run/inputs/secondary/nem/manifest.json": "184cc71a305e05bf9df64f3b28ab74823f45064efcd83821bc597d17f8b63ef2"
+  },
+  "note": "Weights are still downloading; real-parent GPU preflight and healing not launched. The CPU job does not touch burns, guard, environments, driver, old outputs or caches."
+}
