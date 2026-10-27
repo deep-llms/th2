@@ -478,6 +478,15 @@ it failed safely before GPU reclaim/output creation, fixed with a regression tes
 
 ## A2 implementation: separate study and runtime
 
+28 October follow-up: correctness review and bounded one/eight B200 smoke passed;
+see `docs/results/a2_review_20261028/validation.json` and CURRENT_TASK. A separate
+`a2_env` now exists on6Y3O (Transformers4.57.1); old train/eval envs and driver were
+not changed. The scientific127-run pilot remains unlaunched. GPU fixtures use
+random reduced OpenSci decoders plus a full-width head test; actual1.7B parent
+precision/throughput/data gates still apply. Final/secondary scoring failures
+must stop for inspection, never choose a retry LR. Secondary summaries use the
+same tuning-selected successful effective runs and never drive decisions.
+
 The active research spec is `docs/A2_pilot_spec.md` v2.1, with rationale in
 `docs/A2_novelty_and_feasibility.md`. Public OpenSci depth pruning/healing is a
 new experiment, not permission to resume the failed KV-sharing direction.

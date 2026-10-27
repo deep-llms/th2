@@ -1,0 +1,172 @@
+{
+  "status": "passed_review_and_bounded_b200_smoke",
+  "at_sgt": "2026-10-28T06:30:29.574476+08:00",
+  "source_commit": "64789a3e10240b09384efda87246eab350670626",
+  "health_commit": "124e9f95afebe8a9380e55377692c3402b5fcc03",
+  "spec_sha256": "9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd",
+  "unit_tests": 30,
+  "supervisor_tests": 11,
+  "cpu_ddp": {
+    "status": "passed",
+    "coverage": {
+      "examples": 96,
+      "microbatches": 48,
+      "world_size": 2,
+      "exact_order": true
+    },
+    "cuda": false,
+    "head_check": null,
+    "max_parameter_difference": 7.450580596923828e-09,
+    "lr_updates": [
+      1e-05,
+      2e-05,
+      3e-05,
+      4e-05,
+      5e-05,
+      6e-05,
+      7e-05,
+      8e-05,
+      9e-05,
+      0.0001,
+      5e-05,
+      0.0
+    ],
+    "evaluation": [
+      {
+        "sequences": 5,
+        "tokens": 35,
+        "max_nll_difference": 0.0
+      },
+      {
+        "sequences": 1,
+        "tokens": 7,
+        "max_nll_difference": 0.0
+      }
+    ],
+    "teacher_no_gradient": true
+  },
+  "gpu_ddp": {
+    "status": "passed",
+    "coverage": {
+      "examples": 768,
+      "microbatches": 96,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "cuda": true,
+    "head_check": {
+      "loss_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "hidden_width": 2048,
+      "vocabulary": 50304,
+      "positions": 34
+    },
+    "max_parameter_difference": 1.476844772696495e-05,
+    "lr_updates": [
+      1e-05,
+      2e-05,
+      3e-05,
+      4e-05,
+      5e-05,
+      6e-05,
+      7e-05,
+      8e-05,
+      9e-05,
+      0.0001,
+      5e-05,
+      0.0
+    ],
+    "evaluation": [
+      {
+        "sequences": 5,
+        "tokens": 315,
+        "max_nll_difference": 0.0
+      },
+      {
+        "sequences": 1,
+        "tokens": 63,
+        "max_nll_difference": 0.0
+      }
+    ],
+    "teacher_no_gradient": true
+  },
+  "native_gpu_checks": {
+    "T4_no_removal": true,
+    "T4_prune_max_abs": 0.0,
+    "T10_formula_max_abs": 3.725290298461914e-09,
+    "T11_max_abs": 2.3283064365386963e-08,
+    "T4_reload_max_abs": 0.0,
+    "T4_reload_val_abs": 0.0,
+    "T5_loss": 0.0,
+    "T5_finite_gradient": true,
+    "T12_loss_abs": 0.0,
+    "T12_gradient_max_abs": 8.731149137020111e-11,
+    "T12_accum_max_abs": 4.3655745685100555e-10,
+    "passed": true,
+    "probe_shape": [
+      1,
+      64
+    ]
+  },
+  "gpu_fixture": {
+    "parent_layers": 4,
+    "student_layers": 2,
+    "hidden_size": 256,
+    "vocab_size": 1024,
+    "sequence_length": 64,
+    "global_sequences": 64,
+    "steps": 12
+  },
+  "metadata_parents": 12,
+  "released_weights_loaded": false,
+  "environment": {
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.1",
+    "accelerate": "1.13.0"
+  },
+  "old_train_environment_changed": false,
+  "driver_changed": false,
+  "healing_pilot_launched": false,
+  "verified_source_files": 62,
+  "complete_at_sgt": "2026-10-28T06:22:12.703905+08:00",
+  "burn_verified_at_sgt": "2026-10-28T06:23:23.579248+08:00",
+  "independent_health_at_sgt": "2026-10-28T06:23:45.339072+08:00",
+  "raw_health_path": "temp/a2_health01.log",
+  "raw_health_sha256": "122549326d86745d3fb88e621ea793841a1ca76334339bc9aee645361bd62dad",
+  "artifacts": {
+    "ddp_result.json": "3fd53b440931abab906b88bf928342f2cee91d6f3a9087d58642cbf647b75673",
+    "ddp_single.txt": "8c46e837e8cd05acc1cd800e186f88a59531ee31f884c607f07a9c7815a384eb",
+    "ddp_two.txt": "e8c21d6204d26b17423cf769d6ad63d28e897959acc839fc74efc9d67ce95669",
+    "expected_assets.json": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+    "gpu/accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "gpu/accelerate-env.tail.txt": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "gpu/inspection.json": "04a43e980491df8742269918ed06658045644474ec9d6bfbde2910ac55454d62",
+    "gpu/jobs.json": "418df2c36ecafe11a36e1663b1cdf562eeb7f2492817ca82dd331af1ed5545db",
+    "gpu/launch.txt": "7e824efe58a265b85bc782de5ec8eefe5ef5fa253badac4e0d527bd40eb801f6",
+    "gpu/live.json": "bf843bf902487f315711f56a7e531a36eeeb3929efcca92ff10a10b18f78e6ea",
+    "gpu/source-manifest.json": "763e88cbbdef8af98b73f0ae4527d71647869fba481e031c382ac5c7ac877e4a",
+    "gpu/supervised/burn-verified.json": "53a90e5fef81fb48ad1bdc51120f1b7c1ed8fa1798f2d65506c5b4a5388a60b6",
+    "gpu/supervised/burn.tail.txt": "4667ab31b5386c2eca5de63bcbc7915b43586c0715608850d0824d39dcdda17d",
+    "gpu/supervised/gpus-free-before-training.json": "f909cc702363d9ea668932be730c7bfc89d82cab6324d82cc4797f71ea952ceb",
+    "gpu/supervised/reclaim.json": "712a90dcf60f538cd3270dac79a5e6a7433beb6626ed95cbc8f94eefc792b24d",
+    "gpu/supervised/run/complete.json": "55816e242e29223e7cbfe78236e6423f5d1582fd35b7663e2c0a62ae8a810d25",
+    "gpu/supervised/run/eight.tail.txt": "c29b363463c90f356a7677cd896ce6de9f631250a564e7638bcf8debc5b9a1a9",
+    "gpu/supervised/run/probe/ddp_result.json": "b5915de6896ed8eb8dd4809d6298a994b3e0e68c4a42cf5100e4dfc067711e94",
+    "gpu/supervised/run/probe/reference.json": "cdf2db465b6f3773d7724a09b3f1e9c081d3302d2d81cbc59b693675cad65650",
+    "gpu/supervised/run/probe/roundtrip-w1.json": "5d6432ce1095a01661c6808683e3df0ddd7302ac331384a098cabc59568328fa",
+    "gpu/supervised/run/probe/roundtrip-w8.json": "c7e05017dccd632cc27b603edc557555930818ac68d48719ccb7b7efd385e733",
+    "gpu/supervised/run/run.json": "55816e242e29223e7cbfe78236e6423f5d1582fd35b7663e2c0a62ae8a810d25",
+    "gpu/supervised/run/single.tail.txt": "f0e36179a26791bc8b27db6d4965a8697d44e89efb1b86cab95d897cfa7004b2",
+    "gpu/supervised/supervisor.json": "d7f86d57eac4c35e57364af1c95d204e3eb7fd02a4420149bdecb8f1d001ccad",
+    "gpu/supervisor.tail.txt": "806a20cbfe70ed7d39efaebcd770e61269da2210f474d28a7e65a6751aec0a46",
+    "identity_metadata.json": "5a1e1ae48390fa300609d8a5928fcb591e6e25c14fe89b243062d0f6c8a342d1",
+    "supervisor_tests.txt": "87cef9cacadd7b0798c3930123931f1e31a1cd5e7184acefa5ecf6fc721e9418",
+    "unit_tests.txt": "6963001ed665f05807238ce40996a4ad450b3fae7b6cd98f2c56c4dbca347afb"
+  },
+  "limits": [
+    "CUDA decoder uses random reduced-width/depth/vocabulary OpenSci, not released 1.7B weights.",
+    "Head checkpoint equivalence uses actual 2048 hidden / 50304 vocab widths and 34 positions.",
+    "One/eight GPU BF16 updates agree within the predeclared tolerance, not bitwise.",
+    "Actual-parent T1/T8, data preparation, full workload budget and prelaunch review still pending."
+  ]
+}

@@ -1,0 +1,5 @@
+⚙️  Running in WANDB offline mode
+`torch_dtype` is deprecated! Use `dtype` instead!
+{'loss': 0.0709, 'grad_norm': 0.12329501658678055, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0682, 'grad_norm': 0.11771757155656815, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 21.7136, 'train_samples_per_second': 35.37, 'train_steps_per_second': 0.553, 'train_loss': 0.06747031087676685, 'epoch': 1.0}

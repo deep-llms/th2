@@ -70,6 +70,15 @@ the existing supervisor, preserving Accelerate verification and burn handoff.
 CUDA evidence must be read from the separate review receipt, not inferred from
 these CPU tests or the existence of the launcher.
 
+The bounded B200 smoke subsequently passed (28 October, 06:22 SGT): BF16 head
+checkpoint loss/gradient differences were zero at hidden2048/vocabulary50304;
+one/eight GPU maximum parameter difference was1.4768448e-5 within the declared
+tolerance. BF16 export/reload losses matched exactly, including distributed
+scoring without padding, and the4096-token probe completed. These fixtures are
+not bitwise one/eight-GPU training or released-parent acceptance. The unchanged
+supervisor restored communicating burns; independent health verified them at
+06:23:45SGT. Exact artifacts and source hashes are in the review receipt above.
+
 Use a separate environment. Local testing used an ignored venv at
 `temp/a2_test_env`, inheriting Torch from the existing environment but installing
 Transformers 4.57.1, Hub 0.36.0 and Tokenizers 0.22.1 locally in the venv.
@@ -179,4 +188,4 @@ skipped; resulting missing comparisons remain INCOMPLETE.
 The 12 actual checkpoints, full data preparation, numerical/precision gates on
 B200, secondary acquisition, T15 logged-LR availability, measured workload budget,
 pre-launch review and supervisor launch/handoff verification remain **pending**.
-No real A2 training result or B200 throughput has been measured yet.
+No real A2 healing result or production T8 throughput has been measured yet.

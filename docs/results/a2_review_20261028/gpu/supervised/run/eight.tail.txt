@@ -1,0 +1,21 @@
+ is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[rank5]:[W1027 22:22:04.309534867 Utils.hpp:112] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[rank7]:[W1027 22:22:04.309550436 Utils.hpp:112] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[rank1]:[W1027 22:22:04.309691851 Utils.hpp:112] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[rank4]:[W1027 22:22:04.309715883 Utils.hpp:112] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[rank2]:[W1027 22:22:04.310100256 Utils.hpp:112] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+[rank3]:[W1027 22:22:04.310100556 Utils.hpp:112] Warning: Environment variable NCCL_ASYNC_ERROR_HANDLING is deprecated; use TORCH_NCCL_ASYNC_ERROR_HANDLING instead (function operator())
+{'loss': 0.0709, 'grad_norm': 0.12329501658678055, 'learning_rate': 1e-05, 'epoch': 0.08333333333333333}
+{'loss': 0.0682, 'grad_norm': 0.11771059036254883, 'learning_rate': 0.0001, 'epoch': 0.8333333333333334}
+{'train_runtime': 3.642, 'train_samples_per_second': 210.873, 'train_steps_per_second': 3.295, 'train_loss': 0.06772045170267423, 'epoch': 1.0}
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+I1027 22:22:10.908000 633754 site-packages/torch/distributed/elastic/agent/server/api.py:932] [default] worker group successfully finished. Waiting 300 seconds for other agents to finish.
+I1027 22:22:10.908000 633754 site-packages/torch/distributed/elastic/agent/server/api.py:985] Local worker group finished (WorkerState.SUCCEEDED). Waiting 300 seconds for other agents to finish
+I1027 22:22:10.908000 633754 site-packages/torch/distributed/elastic/agent/server/api.py:1000] Done waiting for other agents. Elapsed: 0.00020265579223632812 seconds

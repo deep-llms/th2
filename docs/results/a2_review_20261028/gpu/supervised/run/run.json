@@ -1,0 +1,47 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-27T22:21:12.365707+00:00",
+  "jobs": [
+    {
+      "name": "single",
+      "started_at": "2026-10-27T22:21:12.365919+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 30.954498107079417,
+      "artifacts": [
+        {
+          "path": "probe/reference.json",
+          "sha256": "cdf2db465b6f3773d7724a09b3f1e9c081d3302d2d81cbc59b693675cad65650",
+          "bytes": 1247
+        },
+        {
+          "path": "probe/roundtrip-w1.json",
+          "sha256": "5d6432ce1095a01661c6808683e3df0ddd7302ac331384a098cabc59568328fa",
+          "bytes": 118
+        }
+      ],
+      "finished_at": "2026-10-27T22:21:43.846050+00:00"
+    },
+    {
+      "name": "eight",
+      "started_at": "2026-10-27T22:21:43.846096+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 28.35016327397898,
+      "artifacts": [
+        {
+          "path": "probe/ddp_result.json",
+          "sha256": "b5915de6896ed8eb8dd4809d6298a994b3e0e68c4a42cf5100e4dfc067711e94",
+          "bytes": 744
+        },
+        {
+          "path": "probe/roundtrip-w8.json",
+          "sha256": "c7e05017dccd632cc27b603edc557555930818ac68d48719ccb7b7efd385e733",
+          "bytes": 117
+        }
+      ],
+      "finished_at": "2026-10-27T22:22:12.703862+00:00"
+    }
+  ],
+  "finished_at": "2026-10-27T22:22:12.703905+00:00"
+}

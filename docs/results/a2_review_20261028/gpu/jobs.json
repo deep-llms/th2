@@ -1,0 +1,71 @@
+{
+  "jobs": [
+    {
+      "name": "single",
+      "gpus": [
+        0
+      ],
+      "timeout_seconds": 600,
+      "argv": [
+        "{python}",
+        "tests/a2/ddp_probe.py",
+        "{run_dir}/probe",
+        "--cuda"
+      ],
+      "required_outputs": [
+        {
+          "path": "probe/reference.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        },
+        {
+          "path": "probe/roundtrip-w1.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "eight",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 600,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "34603",
+        "tests/a2/ddp_probe.py",
+        "{run_dir}/probe",
+        "--cuda"
+      ],
+      "required_outputs": [
+        {
+          "path": "probe/ddp_result.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        },
+        {
+          "path": "probe/roundtrip-w8.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        }
+      ]
+    }
+  ]
+}

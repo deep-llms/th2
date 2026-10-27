@@ -1,0 +1,56 @@
+{
+  "status": "passed",
+  "coverage": {
+    "examples": 768,
+    "microbatches": 768,
+    "world_size": 1,
+    "exact_order": true
+  },
+  "evaluation": [
+    {
+      "sequences": 5,
+      "tokens": 315,
+      "max_nll_difference": 0.0
+    },
+    {
+      "sequences": 1,
+      "tokens": 63,
+      "max_nll_difference": 0.0
+    }
+  ],
+  "head_check": {
+    "loss_difference": 0.0,
+    "max_gradient_difference": 0.0,
+    "hidden_width": 2048,
+    "vocabulary": 50304,
+    "positions": 34
+  },
+  "native_check": {
+    "T4_no_removal": true,
+    "T4_prune_max_abs": 0.0,
+    "T10_formula_max_abs": 3.725290298461914e-09,
+    "T11_max_abs": 2.3283064365386963e-08,
+    "T4_reload_max_abs": 0.0,
+    "T4_reload_val_abs": 0.0,
+    "T5_loss": 0.0,
+    "T5_finite_gradient": true,
+    "T12_loss_abs": 0.0,
+    "T12_gradient_max_abs": 8.731149137020111e-11,
+    "T12_accum_max_abs": 4.3655745685100555e-10,
+    "passed": true,
+    "probe_shape": [
+      1,
+      64
+    ]
+  },
+  "scope": "Random native OpenSci regression fixture, not released checkpoint acceptance",
+  "fixture": {
+    "parent_layers": 4,
+    "student_layers": 2,
+    "hidden_size": 256,
+    "vocab_size": 1024,
+    "sequence_length": 64,
+    "global_sequences": 64,
+    "steps": 12
+  }
+}

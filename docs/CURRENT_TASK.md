@@ -1,51 +1,51 @@
 # Current task
 
-## Active: A2 correctness review; full pilot not launched
+## A2 review complete; full pilot not launched
 
-28 October review: user requested another correctness review and B200 tests if
-needed. Fixed secondary reporting, strict run/retry receipts and independent T3
-branch failures. 29 local tests passed; public metadata check of all 12 pinned
-parents passed. Preparing a bounded CUDA/BF16/DDP smoke, NOT the healing pilot.
-Inventory23e65dd acknowledged06:02:53SGT: correct6Y3O/eightB200, historical
-burn workers630628–630635 still present; a2_env absent. Installation c7b2170 is
-acknowledged running in background. Pinned native-code-only download400f8a1
-submitted. Preserve all old envs, outputs and workloads. Actual-parent/data
-preflight remains pending. Do not launch healing from this random-model test.
+Active design: [A2_pilot_spec.md](A2_pilot_spec.md) v2.1 and
+[A2_novelty_and_feasibility.md](A2_novelty_and_feasibility.md).
+Implementation: [A2_IMPLEMENTATION.md](A2_IMPLEMENTATION.md).
+User requested a second correctness review and B200 testing where needed.
+Receipt: [results/a2_review_20261028/validation.json](results/a2_review_20261028/validation.json).
 
-Install and all three native-source downloads now acknowledged successful.
-Preparing supervised smoke at
-`/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01`, session
-`a2_review_20261028_a01`: one/eight GPU random-model fixture, no real heal.
-30 local tests now pass, including final-scoring failure versus tuning retry.
+Fixed final/secondary scoring errors incorrectly triggering lower-LR retries,
+strict run/retry/provenance validation, secondary contrasts/report selection,
+and per-branch T3 failures. Loss, architecture, stream order, scientific matrix
+and schedules are unchanged. 30 local tests, two-process CPU equivalence and
+11 unchanged supervisor tests pass. Public metadata for all12 pinned parents
+passed identity checks; released weight bytes have NOT been downloaded/tested.
 
-User authorized implementation after review of [A2_pilot_spec.md](A2_pilot_spec.md)
-v2.1 and [A2_novelty_and_feasibility.md](A2_novelty_and_feasibility.md).
-Implementation guide: [A2_IMPLEMENTATION.md](A2_IMPLEMENTATION.md).
+B200 smoke64789a3 completed **28October06:22:12SGT**; read-only health124e9f9.
+One/eight GPU native OpenSci random fixture,12 updates each,64 sequences/update,
+sequence64, width256, vocabulary1024,4 parent/2 student layers. Actual head-width
+2048/vocabulary50304 BF16 checkpoint test has zero loss/gradient difference.
+One/eight GPU max parameter difference1.4768448e-5 within the fixed tolerance;
+exact sample order/LR, frozen teacher and uneven evaluation coverage pass.
+BF16 save/reload loss difference0; a4096-token scoring probe also passes.
+This is NOT actual-parent T1/T8 or acceptance of the1.7B scientific workload.
 
-Added `efficient_llm/a2/`: fixed 127-run matrix, original-layer pruning with
-pinned main OpenSci code, pure full-vocabulary KL, native HF Trainer/Accelerate,
-exact update-indexed LR, deterministic corpus-wide reservation and EOS packing,
-separate tuning/final sets, BF16 export/reload, residual/bypass/Gaussian probes,
-phase queue/retry rules, decision reports and plots. Token counts are reused
-from the checksum-verified published `document_index.parquet`; no long-document
-filter or repeated Qwen tokenization of the reserved billion-token pool.
+Isolated env `/mnt/local/conda-py311/envs/a2_env/bin/python3.11` installed:
+Torch2.14.1+cu130, Transformers4.57.1, Accelerate1.13.0. Original train environment
+remains Transformers5.9.0/Torch2.14.1; driver untouched. Pinned code-only files in
+`/mnt/local/_models/deep-llms_th2/a2_code_review_20261028` verified before use.
+Resource Accelerate config copied and8GPU/BF16 `accelerate env` verified;
+only verified known burn workers stopped, all GPUs checked free before tests.
 
-Local checks use `temp/a2_test_env` (Transformers4.57.1 overlay, original train
-runtime untouched), native pinned OpenSci source with tiny models, and a meta
-shape check for the full 1.7B parameter count. Unit and two-process CPU evidence
-is archived at `docs/results/a2_implementation/validation.json`. These are NOT
-released-weight CUDA/BF16/throughput results. Test inputs/results remain in
-ignored `temp/a2_*`; no full model weights or dataset were downloaded this turn.
+Automatic communicating burns verified **06:23:23SGT**, independently healthy
+**06:23:45SGT**; guard released, progress50cycles/55.52GiB collective payload/rank.
+Workers634055–634062 under633986 at that observation. Historical identities:
+reverify before stopping. Burn source:
+`/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01/source/resources/llm_pretrain_burn.py`.
+Root `6y3o-a2-review-20261028-a01`; small artifacts locally SHA-verified, including
+62 unchanged source files and all complete-marker artifacts. Raw receipt
+`temp/a2_health01.log`, SHA256122549326d86745d3fb88e621ea793841a1ca76334339bc9aee645361bd62dad.
+commands.sh restored#0; no healing or other GPU job queued, no new timer.
 
-Next: acquire/verify actual pinned public assets using the authorized controller,
-prepare the fixed data, record secondary acquisition/skip decisions, run all
-actual-parent B200 preflight stages, aggregate/review T1–T13/T15 and measure the
-whole workload cost. Only then construct the execution configuration for the
-127-run pilot under the existing supervisor, with Accelerate cache verification,
-known-burn reclamation/free-GPU checks and verified automatic burn handoff.
-The heal entry point refuses missing/mismatched preflight and baseline evidence.
-No deferred Phase1, B200 install, GPU action, execution push or new timer occurred.
-`commands.sh` remains #0; old research outputs preserved and user design/review documents unchanged.
+Next before any real pilot: acquire actual pinned checkpoints, prepare frozen
+heal/tuning/final data, record secondary acquisition/skip decisions, run actual-
+parent T1–T13/T15, measure full-workload T8 cost and send the prelaunch report.
+Only then configure the127-run scientific queue under the existing supervisor.
+No deferred phase is authorized by a decision label. Preserve old outputs.
 
 ## Complete: downstream screen of long-recovery A/B, 28 October SGT
 

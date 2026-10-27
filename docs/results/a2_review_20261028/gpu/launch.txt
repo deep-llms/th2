@@ -1,0 +1,34 @@
+EXISTING_TRAIN_ENV {'torch': '2.14.1', 'transformers': '5.9.0', 'accelerate': '1.13.0'}
+A2_ENV {'torch': '2.14.1', 'transformers': '4.57.1', 'accelerate': '1.13.0', 'datasets': '4.8.5', 'huggingface-hub': '0.36.0', 'tokenizers': '0.22.1'}
+
+Copy-and-paste the text below in your GitHub issue
+
+- `Accelerate` version: 1.13.0
+- Platform: Linux-6.12.103-127.188.amzn2023.x86_64-x86_64-with-glibc2.39
+- `accelerate` bash location: /usr/local/bin/accelerate
+- Python version: 3.11.15
+- Numpy version: 2.4.6
+- PyTorch version: 2.14.1+cu130
+- PyTorch accelerator: CUDA
+- System RAM: 1996.02 GB
+- GPU type: NVIDIA B200
+- `Accelerate` default config:
+	- compute_environment: LOCAL_MACHINE
+	- distributed_type: MULTI_GPU
+	- mixed_precision: bf16
+	- use_cpu: False
+	- debug: False
+	- num_processes: 8
+	- machine_rank: 0
+	- num_machines: 1
+	- gpu_ids: all
+	- rdzv_backend: static
+	- same_network: True
+	- main_training_function: main
+	- enable_cpu_affinity: False
+	- downcast_bf16: no
+	- tpu_use_cluster: False
+	- tpu_use_sudo: False
+	- tpu_env: []
+
+A2_REVIEW_SMOKE_SUBMITTED /mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01
