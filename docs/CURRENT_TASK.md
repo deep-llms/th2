@@ -1,50 +1,42 @@
 # Current task
 
-## Running: 1.36B-token dense/uniform25 pair, 27 October 2026 SGT
+## Complete: 1.36B-token dense/uniform25 pair, 28 October 2026 SGT
 
-Latest user authorization: "ok, training even longer is ok." New matched pair
-supersedes the completed overnight cap for these TWO jobs only. Design:
-[KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_20261027.md), objective
-[PROJECT_IDEA.md](PROJECT_IDEA.md). No further sweep or timer authorized/created.
+Project objective [PROJECT_IDEA.md](PROJECT_IDEA.md); recipe
+[KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_20261027.md); results
+[KV_LONG_RESULTS_20261028.md](KV_LONG_RESULTS_20261028.md).
+Both authorized arms completed20,752 steps /1,360,003,072 tokens each. Final
+BF16 PPL: dense A17.657243, uniform25 B18.200775 (+3.078%). Paired-document95%CI
+for B−A NLL[0.028418,0.032295] nats/token, passing the prespecified5% screening
+threshold. B still has worse PPL. Reused256-document prefix probe, one seed;
+no downstream equivalence or measured deployment speed claim.
 
-**Latest verified status22:44:49 SGT:** dense A training on all8B200, validation
-at step12,288/20,752 (59.2%), PPL18.06459 vs initial20.03790. Uniform25 B remains
-queued; neither full fit is complete. Eight known training workers626614–626621,
-~49.72GiB each, guard held by native supervisor. No errors in fetched logs.
-Do not stop/restart or submit duplicate work. Old overnight timer remains stopped.
+Queue finished00:38:45.992 SGT28October. Automatic communicating burns restored
+and verified00:39:51.837; independent live inspection00:41:30.782 shows8 known
+burn workers628303–628310 under launcher628234, guard released, progress to130
+cycles/144.35GiB logical collective payload per rank. Historical PID identities
+only: reverify before any future authorized stop. No more jobs authorized/queued.
+Old overnight timer remains stopped. commands.sh restored#0.
 
-Recent pace0.2391 seconds/update projects A finishing~23:18 SGT27October and the
-pair~00:40–01:00 SGT28October, including remaining B and handoff. Preparation
-added~2h48 before GPU work; the earlier~3h estimate was training time only.
+All six jobs returned zero. Data/model hashes, original shared dense A-512 parent,
+actual per-rank sample order, exact once-only1,328,128-document coverage and
+save/reload checks passed; both parent/reload max NLL differences zero. Local
+recomputation reproduces summary.json exactly. All23 saved full checkpoints
+per arm remain, with optimizer/scheduler and8rank RNG files; last step20,752.
 
-Data completed:1,328,128 unique1024-target prefixes, exact old131,072-prefix
-extension and frozen256-doc validation, no original-parent overlap. SHA contract
-checks passed over126 consumed source shards. Probe manifestSHA
-f6328dca7e38da8a85a14e331d8a7247fc8a0723c6ab951b9e4289abb3ed9f75.
-Accelerate config copied to actual cache and environment verified8GPU/BF16.
-Known burn workers safely reclaimed; all8GPUs verified free21:52:38 SGT.
-GPU uniform25 numerical gate and separate eight-step eight-GPU A/B smoke tests
-passed; both smokes have identical parent hashes and actual per-rank sample order,
-zero parent/reload NLL difference. Full-run order checks occur after completion.
+Accelerate cache copy and8GPU/BF16 verification, exact burn reclaim/free-GPU
+check, uniform25 numerical gate, and both8step8GPU smokes passed before fits.
+Training runtime A82.25min, B79.40min; queue including checks/setup2h46m.
+CPU preparation~2h48 beforehand. User correction recorded in PROJECT_NOTES:
+do not blindly scale diagnostic data filtering into larger training jobs.
 
-Both full fits start from original dense A-512, not previous recovery final
-weights.20,752 updates /1,360,003,072 recovery tokens each; fresh optimizer and
-cosine schedule,1,038 warmup steps. Same teacher/loss/runtime/data; all parameters
-trainable. Checkpoints retained every1,024 plus5,188/10,376/final. Native supervisor
-runs A then B, validates comparison, and restores/verifies communicating burns
-on success/failure. No environment, driver, architecture or loss changes.
-
-Run `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01`, session
-`efficient_kv_long_20261027_a01`; launch1c968cf acknowledged19:04:22SGT.
-Preparation session completed normally; external log is run-path plus`-prepare.log`.
-Health3fbef5b receipt`temp/kv_long_health02.log`, SHA256
- a97cb215b1f930232047d121ed822cd7e1b2f79888e9bb3efc0dbc178b9f80d9.
-12 small artifacts verified and archived under
-`docs/results/kv_long_20261027/status_2244/`; live GPU inspection included.
-Local33 model/data/job tests +42 infrastructure checks passed before launch;
-extra long-data/handoff tests and two-rank intermediate-checkpoint test passed.
-commands.sh restored#0 after acknowledged read-only health. Next status request
-may reuse`temp/kv_long_health_command.sh` with a NEW job ID(a01/a02 already used).
+Run `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01`,
+launch1c968cf, final read-only health85e22e0. All18 exported artifacts SHA-verified
+and archived`docs/results/kv_long_20261027/final/`; local`temp/kv_long_health03/`.
+Raw receipt`temp/kv_long_health03.log`, SHA256
+ a32aa5a6b72563ea3e04b972f245abbe461bf26aaf9455550f826777eeb97e51.
+Large model/optimizer checkpoints remain on B200; do not remove them.
+Earlier progress archive`docs/results/kv_long_20261027/status_2244/` remains.
 
 ## Completed: bounded KV-sharing recovery research, 27 October 2026 SGT
 

@@ -1,0 +1,362 @@
+{
+  "status": "passed",
+  "curve": {
+    "0": {
+      "dense_ppl": 20.037904857814457,
+      "shared_ppl": 102.10392407299922,
+      "ppl_ratio": 5.095538919737926,
+      "paired": {
+        "delta_nats_per_token": 1.6283654353180683,
+        "paired_document_bootstrap_95ci": [
+          1.6019765782097735,
+          1.6562159693917977
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "1024": {
+      "dense_ppl": 20.207336595866018,
+      "shared_ppl": 21.790666296787528,
+      "ppl_ratio": 1.0783542003870725,
+      "paired": {
+        "delta_nats_per_token": 0.07543599030655376,
+        "paired_document_bootstrap_95ci": [
+          0.07250940067014516,
+          0.07855028133678334
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "2048": {
+      "dense_ppl": 19.746975559826204,
+      "shared_ppl": 20.86773963170826,
+      "ppl_ratio": 1.0567562393788632,
+      "paired": {
+        "delta_nats_per_token": 0.055204064756641594,
+        "paired_document_bootstrap_95ci": [
+          0.05262100803514326,
+          0.05788558092049586
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "3072": {
+      "dense_ppl": 19.45425172589202,
+      "shared_ppl": 20.415373762557135,
+      "ppl_ratio": 1.0494042150891847,
+      "paired": {
+        "delta_nats_per_token": 0.04822258892829749,
+        "paired_document_bootstrap_95ci": [
+          0.04579310666291993,
+          0.050723410860085937
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      }
+    },
+    "4096": {
+      "dense_ppl": 19.24340882175856,
+      "shared_ppl": 20.067644753086952,
+      "ppl_ratio": 1.0428321166464243,
+      "paired": {
+        "delta_nats_per_token": 0.04194020107477599,
+        "paired_document_bootstrap_95ci": [
+          0.03945798602277737,
+          0.0445541175797694
+        ],
+        "documents_improved": 2,
+        "documents": 256
+      }
+    },
+    "5120": {
+      "dense_ppl": 19.091117289425107,
+      "shared_ppl": 19.875109955518568,
+      "ppl_ratio": 1.0410658346605899,
+      "paired": {
+        "delta_nats_per_token": 0.04024502938204269,
+        "paired_document_bootstrap_95ci": [
+          0.03769084883760976,
+          0.043084350161222515
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "5188": {
+      "dense_ppl": 19.077885392199722,
+      "shared_ppl": 19.84761360153417,
+      "ppl_ratio": 1.0403466208917034,
+      "paired": {
+        "delta_nats_per_token": 0.03955394694367985,
+        "paired_document_bootstrap_95ci": [
+          0.03707136165621722,
+          0.04227689821761866
+        ],
+        "documents_improved": 3,
+        "documents": 256
+      }
+    },
+    "6144": {
+      "dense_ppl": 18.947000915660176,
+      "shared_ppl": 19.666584669219684,
+      "ppl_ratio": 1.0379787680785275,
+      "paired": {
+        "delta_nats_per_token": 0.037275329889534144,
+        "paired_document_bootstrap_95ci": [
+          0.03483163508863728,
+          0.03989467968032054
+        ],
+        "documents_improved": 6,
+        "documents": 256
+      }
+    },
+    "7168": {
+      "dense_ppl": 18.77116396865452,
+      "shared_ppl": 19.459502601493092,
+      "ppl_ratio": 1.0366700026694142,
+      "paired": {
+        "delta_nats_per_token": 0.03601365552693638,
+        "paired_document_bootstrap_95ci": [
+          0.03386364008170398,
+          0.03829757101048894
+        ],
+        "documents_improved": 1,
+        "documents": 256
+      }
+    },
+    "8192": {
+      "dense_ppl": 18.599474697030324,
+      "shared_ppl": 19.24367627496392,
+      "ppl_ratio": 1.0346354716155748,
+      "paired": {
+        "delta_nats_per_token": 0.03404916334226535,
+        "paired_document_bootstrap_95ci": [
+          0.031949490672573,
+          0.03618998378015832
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "9216": {
+      "dense_ppl": 18.476895601903646,
+      "shared_ppl": 19.10856834705678,
+      "ppl_ratio": 1.0341871686003385,
+      "paired": {
+        "delta_nats_per_token": 0.03361577382540804,
+        "paired_document_bootstrap_95ci": [
+          0.03153429920413524,
+          0.035820164427527564
+        ],
+        "documents_improved": 6,
+        "documents": 256
+      }
+    },
+    "10240": {
+      "dense_ppl": 18.33899781774376,
+      "shared_ppl": 18.943043500674538,
+      "ppl_ratio": 1.0329377694972153,
+      "paired": {
+        "delta_nats_per_token": 0.03240694582257314,
+        "paired_document_bootstrap_95ci": [
+          0.030525106485230036,
+          0.03438017884691908
+        ],
+        "documents_improved": 3,
+        "documents": 256
+      }
+    },
+    "10376": {
+      "dense_ppl": 18.312294430087224,
+      "shared_ppl": 18.91081879017889,
+      "ppl_ratio": 1.032684291003332,
+      "paired": {
+        "delta_nats_per_token": 0.03216152000145858,
+        "paired_document_bootstrap_95ci": [
+          0.030325912845095275,
+          0.03405362812016154
+        ],
+        "documents_improved": 2,
+        "documents": 256
+      }
+    },
+    "11264": {
+      "dense_ppl": 18.186691942294274,
+      "shared_ppl": 18.79010766033099,
+      "ppl_ratio": 1.0331789706424528,
+      "paired": {
+        "delta_nats_per_token": 0.03264042841496305,
+        "paired_document_bootstrap_95ci": [
+          0.03067770315087099,
+          0.034679987451045474
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "12288": {
+      "dense_ppl": 18.064590687075057,
+      "shared_ppl": 18.65368325762166,
+      "ppl_ratio": 1.032610346990485,
+      "paired": {
+        "delta_nats_per_token": 0.03208991374100682,
+        "paired_document_bootstrap_95ci": [
+          0.030077628727050245,
+          0.03428275918435689
+        ],
+        "documents_improved": 3,
+        "documents": 256
+      }
+    },
+    "13312": {
+      "dense_ppl": 17.985764891895847,
+      "shared_ppl": 18.555899066160265,
+      "ppl_ratio": 1.031699189758747,
+      "paired": {
+        "delta_nats_per_token": 0.03120714177809352,
+        "paired_document_bootstrap_95ci": [
+          0.029197491567914634,
+          0.03333631586147538
+        ],
+        "documents_improved": 5,
+        "documents": 256
+      }
+    },
+    "14336": {
+      "dense_ppl": 17.889517406794567,
+      "shared_ppl": 18.457171061913353,
+      "ppl_ratio": 1.031731077044213,
+      "paired": {
+        "delta_nats_per_token": 0.031238048841909657,
+        "paired_document_bootstrap_95ci": [
+          0.029149169209406398,
+          0.033451937670831745
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "15360": {
+      "dense_ppl": 17.806084254442506,
+      "shared_ppl": 18.36220070904048,
+      "ppl_ratio": 1.0312318220362922,
+      "paired": {
+        "delta_nats_per_token": 0.0307540313950714,
+        "paired_document_bootstrap_95ci": [
+          0.02878877627306482,
+          0.03283349188278816
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "16384": {
+      "dense_ppl": 17.743810186837965,
+      "shared_ppl": 18.29592635675221,
+      "ppl_ratio": 1.0311159871583724,
+      "paired": {
+        "delta_nats_per_token": 0.03064169837585397,
+        "paired_document_bootstrap_95ci": [
+          0.02870762775677027,
+          0.03265332919134929
+        ],
+        "documents_improved": 3,
+        "documents": 256
+      }
+    },
+    "17408": {
+      "dense_ppl": 17.7023997858023,
+      "shared_ppl": 18.250288360576153,
+      "ppl_ratio": 1.0309499605366088,
+      "paired": {
+        "delta_nats_per_token": 0.03048066897491989,
+        "paired_document_bootstrap_95ci": [
+          0.028583205118837864,
+          0.03247312701400529
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "18432": {
+      "dense_ppl": 17.67626799385618,
+      "shared_ppl": 18.220106606035813,
+      "ppl_ratio": 1.030766596906579,
+      "paired": {
+        "delta_nats_per_token": 0.0303027942521783,
+        "paired_document_bootstrap_95ci": [
+          0.028432782246002705,
+          0.03221892323916504
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "19456": {
+      "dense_ppl": 17.660347913557246,
+      "shared_ppl": 18.204019549521007,
+      "ppl_ratio": 1.0307848768679355,
+      "paired": {
+        "delta_nats_per_token": 0.03032052843111071,
+        "paired_document_bootstrap_95ci": [
+          0.028418781115273316,
+          0.0322833399822608
+        ],
+        "documents_improved": 3,
+        "documents": 256
+      }
+    },
+    "20480": {
+      "dense_ppl": 17.655180566942217,
+      "shared_ppl": 18.199876001407095,
+      "ppl_ratio": 1.0308518755953577,
+      "paired": {
+        "delta_nats_per_token": 0.030385524097651342,
+        "paired_document_bootstrap_95ci": [
+          0.02847646781385805,
+          0.032371275704519704
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    },
+    "20752": {
+      "dense_ppl": 17.6554852224116,
+      "shared_ppl": 18.19898167631078,
+      "ppl_ratio": 1.0307834334232442,
+      "paired": {
+        "delta_nats_per_token": 0.03031912809459585,
+        "paired_document_bootstrap_95ci": [
+          0.028398927355443995,
+          0.03231926700521346
+        ],
+        "documents_improved": 4,
+        "documents": 256
+      }
+    }
+  },
+  "inference": {
+    "dense_ppl": 17.657242564753428,
+    "shared_ppl": 18.200774726435935,
+    "ppl_ratio": 1.0307823919668793,
+    "paired": {
+      "delta_nats_per_token": 0.030318117739891626,
+      "paired_document_bootstrap_95ci": [
+        0.028417703733470127,
+        0.032295359012477085
+      ],
+      "documents_improved": 4,
+      "documents": 256
+    }
+  },
+  "decision": "evaluate_efficiency",
+  "gate": "Upper 95% document CI for shared-minus-dense NLL <= log(1.05)",
+  "phase_tokens": 2720006144,
+  "limitations": [
+    "A diagnostic on reused 256-document validation; not a new independent test.",
+    "New optimizer/schedule phase, not an exact resume; one training seed."
+  ]
+}

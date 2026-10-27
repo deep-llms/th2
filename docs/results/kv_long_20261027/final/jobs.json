@@ -1,0 +1,322 @@
+{
+  "jobs": [
+    {
+      "name": "long-numerical-gate",
+      "gpus": [
+        0
+      ],
+      "timeout_seconds": 900,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_mlp_check",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/probe",
+        "--sharing-layout",
+        "uniform25",
+        "--output",
+        "{run_dir}/gate.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "gate.json",
+          "json_equals": {
+            "status": "passed",
+            "sharing_layout": "uniform25"
+          }
+        }
+      ]
+    },
+    {
+      "name": "long-smoke-A",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 14400,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "56191",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "A",
+        "--steps",
+        "8",
+        "--batch",
+        "8",
+        "--eval-every",
+        "8",
+        "--output",
+        "{run_dir}/smoke-A",
+        "--smoke"
+      ],
+      "required_outputs": [
+        {
+          "path": "smoke-A/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 8,
+            "arm": "A",
+            "smoke": true,
+            "trainable_scope": "all",
+            "input_tokens": 524288,
+            "parent_steps": 512,
+            "optimizer_and_schedule_reset": true,
+            "phase": "new_recovery"
+          }
+        }
+      ]
+    },
+    {
+      "name": "long-smoke-B",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 14400,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "56191",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--steps",
+        "8",
+        "--batch",
+        "8",
+        "--eval-every",
+        "8",
+        "--output",
+        "{run_dir}/smoke-B",
+        "--sharing-layout",
+        "uniform25",
+        "--smoke"
+      ],
+      "required_outputs": [
+        {
+          "path": "smoke-B/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 8,
+            "arm": "B",
+            "smoke": true,
+            "trainable_scope": "all",
+            "input_tokens": 524288,
+            "parent_steps": 512,
+            "optimizer_and_schedule_reset": true,
+            "phase": "placement_conversion"
+          }
+        }
+      ]
+    },
+    {
+      "name": "long-A",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 14400,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "56191",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "A",
+        "--steps",
+        "20752",
+        "--batch",
+        "8",
+        "--eval-every",
+        "1024",
+        "--output",
+        "{run_dir}/A",
+        "--inference-eval",
+        "--eval-steps",
+        "5188",
+        "10376"
+      ],
+      "required_outputs": [
+        {
+          "path": "A/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 20752,
+            "arm": "A",
+            "smoke": false,
+            "trainable_scope": "all",
+            "input_tokens": 1360003072,
+            "parent_steps": 512,
+            "optimizer_and_schedule_reset": true,
+            "phase": "new_recovery"
+          }
+        }
+      ]
+    },
+    {
+      "name": "long-B",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 14400,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "56191",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--steps",
+        "20752",
+        "--batch",
+        "8",
+        "--eval-every",
+        "1024",
+        "--output",
+        "{run_dir}/B",
+        "--sharing-layout",
+        "uniform25",
+        "--inference-eval",
+        "--eval-steps",
+        "5188",
+        "10376"
+      ],
+      "required_outputs": [
+        {
+          "path": "B/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 20752,
+            "arm": "B",
+            "smoke": false,
+            "trainable_scope": "all",
+            "input_tokens": 1360003072,
+            "parent_steps": 512,
+            "optimizer_and_schedule_reset": true,
+            "phase": "placement_conversion"
+          }
+        }
+      ]
+    },
+    {
+      "name": "long-summary",
+      "timeout_seconds": 300,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_mlp_study",
+        "long-summary",
+        "--runs",
+        "{run_dir}",
+        "--output",
+        "{run_dir}/summary.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "summary.json",
+          "json_equals": {
+            "status": "passed",
+            "phase_tokens": 2720006144
+          }
+        }
+      ]
+    }
+  ]
+}

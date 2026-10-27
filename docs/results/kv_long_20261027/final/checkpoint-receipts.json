@@ -1,0 +1,242 @@
+[
+  {
+    "arm": "A",
+    "checkpoints": [
+      {
+        "step": 1024,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 2048,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 3072,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 4096,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 5120,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 5188,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 6144,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 7168,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 8192,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 9216,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 10240,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 10376,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 11264,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 12288,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 13312,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 14336,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 15360,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 16384,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 17408,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 18432,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 19456,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 20480,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 20752,
+        "max_steps": 20752,
+        "complete_files": true
+      }
+    ]
+  },
+  {
+    "arm": "B",
+    "checkpoints": [
+      {
+        "step": 1024,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 2048,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 3072,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 4096,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 5120,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 5188,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 6144,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 7168,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 8192,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 9216,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 10240,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 10376,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 11264,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 12288,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 13312,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 14336,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 15360,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 16384,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 17408,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 18432,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 19456,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 20480,
+        "max_steps": 20752,
+        "complete_files": true
+      },
+      {
+        "step": 20752,
+        "max_steps": 20752,
+        "complete_files": true
+      }
+    ]
+  }
+]

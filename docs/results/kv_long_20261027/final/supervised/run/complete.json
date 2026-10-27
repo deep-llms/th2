@@ -1,0 +1,97 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-27T13:52:38.363645+00:00",
+  "jobs": [
+    {
+      "name": "long-numerical-gate",
+      "started_at": "2026-10-27T13:52:38.365203+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 28.909241932909936,
+      "artifacts": [
+        {
+          "path": "gate.json",
+          "sha256": "8302d74478bbc0dc8692dfebc240c740eb6505a2155ab3bedf217843b8c4c627",
+          "bytes": 4969
+        }
+      ],
+      "finished_at": "2026-10-27T13:53:07.815413+00:00"
+    },
+    {
+      "name": "long-smoke-A",
+      "started_at": "2026-10-27T13:53:07.815455+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 61.891253183130175,
+      "artifacts": [
+        {
+          "path": "smoke-A/result.json",
+          "sha256": "116cf82c7ca1ca6aa7ddcc6ff5d98a54407c9b092154e88848bf32672d702d4d",
+          "bytes": 20651
+        }
+      ],
+      "finished_at": "2026-10-27T13:54:10.197795+00:00"
+    },
+    {
+      "name": "long-smoke-B",
+      "started_at": "2026-10-27T13:54:10.197837+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 62.343078839126974,
+      "artifacts": [
+        {
+          "path": "smoke-B/result.json",
+          "sha256": "f68d4415b982b0e96b56ee5c3d0760a916db0531a9bb0f90c8f01aef428b484f",
+          "bytes": 20551
+        }
+      ],
+      "finished_at": "2026-10-27T13:55:13.043051+00:00"
+    },
+    {
+      "name": "long-A",
+      "started_at": "2026-10-27T13:55:13.043093+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 4989.545324166771,
+      "artifacts": [
+        {
+          "path": "A/result.json",
+          "sha256": "725417248004e4949c487b939ea085113e95c10bff4ffd8e13635f75a5f25a92",
+          "bytes": 186132
+        }
+      ],
+      "finished_at": "2026-10-27T15:18:23.090586+00:00"
+    },
+    {
+      "name": "long-B",
+      "started_at": "2026-10-27T15:18:23.090632+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 4817.939547794405,
+      "artifacts": [
+        {
+          "path": "B/result.json",
+          "sha256": "2fb18018aa95ae30bba370ae0b914c209ccc2926239c1e55fb2d33c6892c0910",
+          "bytes": 185924
+        }
+      ],
+      "finished_at": "2026-10-27T16:38:41.571696+00:00"
+    },
+    {
+      "name": "long-summary",
+      "started_at": "2026-10-27T16:38:41.571740+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 4.419338735751808,
+      "artifacts": [
+        {
+          "path": "summary.json",
+          "sha256": "defae59425100711489e9877c39138586b68e5022274f98aa40a8f9991eb1b3b",
+          "bytes": 10142
+        }
+      ],
+      "finished_at": "2026-10-27T16:38:45.992225+00:00"
+    }
+  ],
+  "finished_at": "2026-10-27T16:38:45.992265+00:00"
+}

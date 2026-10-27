@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "documents": 1328128,
+  "probe_sha256": "f6328dca7e38da8a85a14e331d8a7247fc8a0723c6ab951b9e4289abb3ed9f75",
+  "short_probe_sha256": "adb7be00b0ca051dc95cdaa0cfd9fbe394b2ff029ff8eaacee833b60db4744ff",
+  "exact_short_training_prefix_documents": 131072,
+  "exact_reused_validation_documents": 256,
+  "original_parent_overlap": 0
+}

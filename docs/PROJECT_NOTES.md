@@ -67,6 +67,14 @@ model/loss/runtime. Details: [KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_202
 The failed short recipe does not establish that KV sharing cannot recover with
 more training. This new pair is a budget test, not a CLA/SwiftKV reproduction.
 
+28 October user correction: reconsider the data pipeline before scaling a small
+diagnostic into a larger training run. The 1,024-token minimum-document filter
+was a diagnostic convenience, not a KV-sharing requirement. Preparation took
+about2h48. Future training should reuse prepared data where suitable and choose
+packing/filtering for the research question, rather than inherit this restriction.
+Keep the active matched pair unchanged. Profile preparation before promising its
+runtime; existing logs do not provide a per-stage timing breakdown.
+
 26 October first diagnostic: use full pretrained Qwen3-0.6B-Base, 6/8 and 4/8
 GQA groups, frozen backbone and small disjoint English prefix probe. See
 JOINT_GROUP_DIAGNOSTIC.md. Dense SDPA execution with output masking isolates

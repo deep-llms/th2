@@ -1,0 +1,92 @@
+[
+  {
+    "path": "jobs.json",
+    "sha256": "029464495c33c1e18f1f25af3127833ea8016486e0e746607a1faa85df847389",
+    "bytes": 8300
+  },
+  {
+    "path": "source-manifest.json",
+    "sha256": "811ebd2e924c1ceee4acd7a27203f419a91b5efd636f4b93cb567f76edf29be6",
+    "bytes": 3671
+  },
+  {
+    "path": "input-identity.json",
+    "sha256": "f629e6e27d83fd5d519bfaab5ed38df433e0c9ec8102b3138f1d41882b630d88",
+    "bytes": 354
+  },
+  {
+    "path": "accelerate-env.log",
+    "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "bytes": 797
+  },
+  {
+    "path": "supervised/supervisor.json",
+    "sha256": "4de19acb4507bf6336e9e8eca1a5f339c68904f13966556fcd9a68b4eb9cb4df",
+    "bytes": 4540
+  },
+  {
+    "path": "supervised/burn-verified.json",
+    "sha256": "cd8bb3d397fc2eec412127ce91490bdb713f5b87a5e03f342a59b534d92728fd",
+    "bytes": 2267
+  },
+  {
+    "path": "supervised/reclaim.json",
+    "sha256": "46f3cb78694f5d0b805d92e6057749f9fcf0602039049e33ea5cf9dd467c1153",
+    "bytes": 6060
+  },
+  {
+    "path": "supervised/gpus-free-before-training.json",
+    "sha256": "f0fedbe77578a573a806e5bf427a52ff39e704811c98550c9ed39920f0cbcaa2",
+    "bytes": 1943
+  },
+  {
+    "path": "supervised/run/complete.json",
+    "sha256": "3e41b5586e2ccca8d7c2611fcc11854c60e7331cc6759b2b877db5178ce3e673",
+    "bytes": 2800
+  },
+  {
+    "path": "supervised/run/run.json",
+    "sha256": "3e41b5586e2ccca8d7c2611fcc11854c60e7331cc6759b2b877db5178ce3e673",
+    "bytes": 2800
+  },
+  {
+    "path": "supervised/run/summary.json",
+    "sha256": "defae59425100711489e9877c39138586b68e5022274f98aa40a8f9991eb1b3b",
+    "bytes": 10142
+  },
+  {
+    "path": "supervised/run/gate.json",
+    "sha256": "8302d74478bbc0dc8692dfebc240c740eb6505a2155ab3bedf217843b8c4c627",
+    "bytes": 4969
+  },
+  {
+    "path": "supervised/run/smoke-A/result.json",
+    "sha256": "116cf82c7ca1ca6aa7ddcc6ff5d98a54407c9b092154e88848bf32672d702d4d",
+    "bytes": 20651
+  },
+  {
+    "path": "supervised/run/smoke-B/result.json",
+    "sha256": "f68d4415b982b0e96b56ee5c3d0760a916db0531a9bb0f90c8f01aef428b484f",
+    "bytes": 20551
+  },
+  {
+    "path": "supervised/run/A/result.json",
+    "sha256": "725417248004e4949c487b939ea085113e95c10bff4ffd8e13635f75a5f25a92",
+    "bytes": 186132
+  },
+  {
+    "path": "supervised/run/B/result.json",
+    "sha256": "2fb18018aa95ae30bba370ae0b914c209ccc2926239c1e55fb2d33c6892c0910",
+    "bytes": 185924
+  },
+  {
+    "path": "supervised/run/A/validation.json",
+    "sha256": "e268b25cbee4d097dc54012eb6584f050c08b27010ecd98e4d85fb8e910a7858",
+    "bytes": 160524
+  },
+  {
+    "path": "supervised/run/B/validation.json",
+    "sha256": "aa56a1f9f996a88553484851417db6e096861038b1e926f2e5936d9731082677",
+    "bytes": 160297
+  }
+]
