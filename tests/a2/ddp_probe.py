@@ -31,6 +31,12 @@ teacher=tiny_model(**(dict(hidden_size=256,intermediate_size=512,num_attention_h
     num_key_value_heads=4,head_dim=64,vocab_size=1024) if cuda else {})).to(state.device).requires_grad_(False)
 student=copy.deepcopy(teacher).requires_grad_(True);prune(student,[1,2])
 head_check=None
+native_check=None
+if cuda and world==1:
+    from efficient_llm.a2.check import numerical_checks
+    native_check=numerical_checks(copy.deepcopy(teacher).requires_grad_(True),
+        Rows(3,length=64,vocab=1024),{'S1':[1]},root/'native-check')
+    assert native_check['passed'],native_check
 if cuda:
     teacher.to(torch.bfloat16)
     torch.manual_seed(4)
@@ -73,7 +79,8 @@ if rank==0:
     if world==1:
         torch.save(student.state_dict(),root/'reference.pt')
         write_json(root/'reference_lrs.json',guard.lrs)
-        write_json(root/'reference.json',dict(status='passed',coverage=coverage,evaluation=evaluation,head_check=head_check))
+        write_json(root/'reference.json',dict(status='passed',coverage=coverage,evaluation=evaluation,
+            head_check=head_check,native_check=native_check))
     else:
         ref=torch.load(root/'reference.pt',weights_only=True)
         max_difference=0.
@@ -97,6 +104,9 @@ if cuda:
     after=score(restored,rows)
     difference=abs(before['loss']-after['loss'])
     assert difference<=1e-6
-    if rank==0:write_json(root/f'roundtrip-w{world}.json',dict(status='passed',difference=difference))
+    long_context=score(restored,Rows(1,length=4096,vocab=1024))
+    assert long_context['tokens']==4095
+    if rank==0:write_json(root/f'roundtrip-w{world}.json',dict(status='passed',difference=difference,
+        context4096_loss=long_context['loss'],context4096_tokens=long_context['tokens']))
     state.wait_for_everyone()
 if world>1:torch.distributed.destroy_process_group()
