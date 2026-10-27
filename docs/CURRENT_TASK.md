@@ -6,7 +6,20 @@ Project idea: [PROJECT_IDEA.md](PROJECT_IDEA.md). Overnight scope:
 [KV_RECOVERY_OVERNIGHT_20261027.md](KV_RECOVERY_OVERNIGHT_20261027.md).
 Report times in Singapore time (UTC+8). Workspace /disk/thuat/efficient_llm.
 
-### Scheduled tick 3: placement complete; final bounded experiment prepared
+### Scheduled tick 4: QKV launch acknowledged; fresh health requested
+
+Launch **3932ad44cd629c8a6fb0f498f9bb3f9e244e07c9** is acknowledged by the
+controller. Node receipt at **09:27:16 SGT** confirms copied/verified Accelerate
+8-GPU BF16 configuration and DIAGNOSTIC_SUBMITTED. Receipt:
+`temp/kv_qkv_launch01.log`, SHA256
+`81c187d2386c9444ef6614c834266b19e6e6d99a87f2a231d66748037a1860fa`.
+The previous delayed Dropbox snapshots were not a launch failure.
+
+This commit replaces the acknowledged launch with unique read-only health
+`th2-6y3o-efficient-kv-qkv-health-20261027-a01` to retrieve terminal artifacts,
+smoke/data/frozen-weight checks and current communicating burns. No new training
+or process signals. Do not repush this executable health unchanged. Restore #0
+after acknowledgement. 4/4 follow-up jobs remain submitted; no fifth job.
 
 The delayed read-only health 4dc992d was retrieved, then independent final health
 60dcf16 verified the full queue and burn handoff at **09:11:42 SGT**. All three
@@ -55,14 +68,14 @@ wait/recheck all eight GPUs free, then run. It copies resources/accelerate_b200.
 to actual HF cache and checks accelerate env; restores/verifies communicating
 burns on completion/failure. Never signal unknown processes or groups.
 
-commands.sh is a NEW QKV launch request replacing acknowledged final health.
+commands.sh is the fresh read-only QKV health request replacing acknowledged launch.
 Never repush it unchanged. Restore #0 after acknowledgement, using read-only
 health with a unique identifier if fresh supervisor/progress evidence is needed.
 Controller/AWS/credentials/connectivity failure freezes remote writes.
 
 Existing dev timer only: PID 324788, tmux efficient_kv_recovery_watch_20261027,
-state temp/kv_recovery_watch_20261027. Tick 3 delivered 09:08:46 SGT; next
-**09:53:46 SGT**, deadline **18:53:46 SGT**. Do not create another agent, session
+state temp/kv_recovery_watch_20261027. Tick 4 delivered 09:53:46 SGT; next
+**10:38:46 SGT**, deadline **18:53:46 SGT**. Do not create another agent, session
 or timer. End this turn when the job is healthy; do not wait for long completion.
 Touch STOP only after final artifacts and burn handoff are verified and the
 research branch is concluded, or user cancellation/deadline. A delayed fetch is
