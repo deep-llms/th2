@@ -1,45 +1,50 @@
 # Current task
 
-## Authorized next: 1.36B-token dense/uniform25 pair, 27 October 2026 SGT
+## Running: 1.36B-token dense/uniform25 pair, 27 October 2026 SGT
 
-Latest user instruction: "ok, training even longer is ok." This authorizes a new
-matched longer pair after the completed overnight screen; the historical cap
-below does not prohibit these two new jobs. Design:
-[KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_20261027.md), project objective
-[PROJECT_IDEA.md](PROJECT_IDEA.md). No further sweep authorized.
+Latest user authorization: "ok, training even longer is ok." New matched pair
+supersedes the completed overnight cap for these TWO jobs only. Design:
+[KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_20261027.md), objective
+[PROJECT_IDEA.md](PROJECT_IDEA.md). No further sweep or timer authorized/created.
 
-Prepare dense A and all-parameter uniform25 from the SAME original dense A-512,
-20,752 steps / 1,360,003,072 fresh recovery tokens each; new optimizer and full
-cosine schedule, 1,038 warmup steps. Same teacher/loss/runtime and frozen 256-doc
-validation. Extend deterministic document prefixes, preserve original short
-selection exactly, exclude original pilot documents. CPU batch-tokenizer and
-matched-pair tests precede real numerical and eight-GPU smoke gates.
+**Latest verified status22:44:49 SGT:** dense A training on all8B200, validation
+at step12,288/20,752 (59.2%), PPL18.06459 vs initial20.03790. Uniform25 B remains
+queued; neither full fit is complete. Eight known training workers626614–626621,
+~49.72GiB each, guard held by native supervisor. No errors in fetched logs.
+Do not stop/restart or submit duplicate work. Old overnight timer remains stopped.
 
-Read-only preflight4383957 verified at18:56:32 SGT: expected8B200, only QKV-owned
-burns620160–620167 under620091, released guard,22.97TB free. These are historical
-identities; supervisor rechecks before stopping. No new GPU job yet.
-Local33 model/data/job tests and42 infrastructure checks passed; additional long
-checks cover exact prefix extension and handoff failures. Explicit intermediate
-checkpoint saving also passed a two-rank integration test.
-Launch1c968cf acknowledged at19:04:22 SGT; CPU preparation runs in detached
-session efficient_kv_long_prepare_20261027_a01, then the guarded supervisor starts
-the numerical gate, A/B smoke, and full A/B pair automatically. Receipt
-temp/kv_long_launch.log SHA2563f2645bf8af3d391a69dacb90bb83a1e173402e5091331a8b2c1ed65f680cce4.
-Health86e403c at19:08:24 SGT: prep session alive, first4 consumed shards verified,
-12,526/1,328,128 eligible fresh prefixes selected; no errors. Only original known
-burn workers remain; guard released. Data preparation precedes GPU reclaim;
-Accelerate/GPU gates and actual training have NOT run yet. No manual follow-up is
-needed to start them: the persistent launcher performs all dependent stages.
-Evidence temp/kv_long_health01.log, SHA9b709ef28c0eed6b1d06ebbdbc8f997f9a94e37feebf260ae1d058c00d4ee7f5;
-compact durable receipt docs/results/kv_long_20261027/launch_receipt.json.
-Preparation log is outside the run directory at
-/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01-prepare.log.
-Prepared unique read-only request: temp/kv_long_health_command.sh (change job ID
-before another push). Preserve active preparation; do not submit a duplicate.
-Training alone projects~3h; preparation adds substantial CPU time. Refine ETA
-from later progress. commands.sh restored to#0 after acknowledged health.
-Output6y3o-efficient-kv-long-20261027-a01. Reuse native guarded supervisor
-and automatic communicating burns. Old timer remains stopped; no new timer.
+Recent pace0.2391 seconds/update projects A finishing~23:18 SGT27October and the
+pair~00:40–01:00 SGT28October, including remaining B and handoff. Preparation
+added~2h48 before GPU work; the earlier~3h estimate was training time only.
+
+Data completed:1,328,128 unique1024-target prefixes, exact old131,072-prefix
+extension and frozen256-doc validation, no original-parent overlap. SHA contract
+checks passed over126 consumed source shards. Probe manifestSHA
+f6328dca7e38da8a85a14e331d8a7247fc8a0723c6ab951b9e4289abb3ed9f75.
+Accelerate config copied to actual cache and environment verified8GPU/BF16.
+Known burn workers safely reclaimed; all8GPUs verified free21:52:38 SGT.
+GPU uniform25 numerical gate and separate eight-step eight-GPU A/B smoke tests
+passed; both smokes have identical parent hashes and actual per-rank sample order,
+zero parent/reload NLL difference. Full-run order checks occur after completion.
+
+Both full fits start from original dense A-512, not previous recovery final
+weights.20,752 updates /1,360,003,072 recovery tokens each; fresh optimizer and
+cosine schedule,1,038 warmup steps. Same teacher/loss/runtime/data; all parameters
+trainable. Checkpoints retained every1,024 plus5,188/10,376/final. Native supervisor
+runs A then B, validates comparison, and restores/verifies communicating burns
+on success/failure. No environment, driver, architecture or loss changes.
+
+Run `/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01`, session
+`efficient_kv_long_20261027_a01`; launch1c968cf acknowledged19:04:22SGT.
+Preparation session completed normally; external log is run-path plus`-prepare.log`.
+Health3fbef5b receipt`temp/kv_long_health02.log`, SHA256
+ a97cb215b1f930232047d121ed822cd7e1b2f79888e9bb3efc0dbc178b9f80d9.
+12 small artifacts verified and archived under
+`docs/results/kv_long_20261027/status_2244/`; live GPU inspection included.
+Local33 model/data/job tests +42 infrastructure checks passed before launch;
+extra long-data/handoff tests and two-rank intermediate-checkpoint test passed.
+commands.sh restored#0 after acknowledged read-only health. Next status request
+may reuse`temp/kv_long_health_command.sh` with a NEW job ID(a01/a02 already used).
 
 ## Completed: bounded KV-sharing recovery research, 27 October 2026 SGT
 

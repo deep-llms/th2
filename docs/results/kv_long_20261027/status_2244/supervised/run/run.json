@@ -1,0 +1,56 @@
+{
+  "status": "running",
+  "started_at": "2026-10-27T13:52:38.363645+00:00",
+  "jobs": [
+    {
+      "name": "long-numerical-gate",
+      "started_at": "2026-10-27T13:52:38.365203+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 28.909241932909936,
+      "artifacts": [
+        {
+          "path": "gate.json",
+          "sha256": "8302d74478bbc0dc8692dfebc240c740eb6505a2155ab3bedf217843b8c4c627",
+          "bytes": 4969
+        }
+      ],
+      "finished_at": "2026-10-27T13:53:07.815413+00:00"
+    },
+    {
+      "name": "long-smoke-A",
+      "started_at": "2026-10-27T13:53:07.815455+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 61.891253183130175,
+      "artifacts": [
+        {
+          "path": "smoke-A/result.json",
+          "sha256": "116cf82c7ca1ca6aa7ddcc6ff5d98a54407c9b092154e88848bf32672d702d4d",
+          "bytes": 20651
+        }
+      ],
+      "finished_at": "2026-10-27T13:54:10.197795+00:00"
+    },
+    {
+      "name": "long-smoke-B",
+      "started_at": "2026-10-27T13:54:10.197837+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 62.343078839126974,
+      "artifacts": [
+        {
+          "path": "smoke-B/result.json",
+          "sha256": "f68d4415b982b0e96b56ee5c3d0760a916db0531a9bb0f90c8f01aef428b484f",
+          "bytes": 20551
+        }
+      ],
+      "finished_at": "2026-10-27T13:55:13.043051+00:00"
+    },
+    {
+      "name": "long-A",
+      "started_at": "2026-10-27T13:55:13.043093+00:00",
+      "status": "running"
+    }
+  ]
+}
