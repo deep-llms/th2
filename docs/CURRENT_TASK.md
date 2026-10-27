@@ -1,5 +1,29 @@
 # Current task
 
+## A2 actual preflight preparation — 28 October 2026 SGT
+
+User asked to continue. Proceed with pinned checkpoint acquisition, frozen-data
+preparation and actual-model preflight; report preflight before any healing.
+No scientific healing run is queued. Active spec remains A2_pilot_spec.md v2.1.
+
+Read-only inventory11efc8d observed06:42:03SGT: authorized6Y3O alive, old burn
+workers634055–634062 under633986 unchanged; no other GPU workload. English
+cx_sampled_dd1b1513 has all3008 files, matching sizes and pinned manifest SHA;
+36,495,424train documents and11,717validation documents. Full shard SHA checks
+will run before sampling. Existing Qwen tokenizer present. New A2 asset folder
+absent; about22.6TB disk free. No environments/driver/outputs changed.
+Raw inventory temp/a2_assets_inventory.log SHA256
+705824080d73feee0b483fe490d78a5fd460dce5c0483a5c91fdf0deb1c77453.
+
+Input lock resources/a2_inputs_20261028.json contains12 pinned parent weights,
+main-source code/config/tokenizers (54 files), existing pool/tokenizer contracts.
+Controller download to /mnt/local/_models/deep-llms_th2/a2 is the next submission.
+Do not consume before per-item success and actual SHA verification. CPU worker
+scripts/a2_prepare_inputs.py verifies inputs then prepares the preregistered
+whole-pool random prefix with GPT-NeoX. It has no GPU/network/process control.
+30 existing tests plus a new corrupted-input check pass; progress logging changes
+no sampling or packing semantics. Prior GPU review evidence stays historical.
+
 ## A2 review complete; full pilot not launched
 
 Active design: [A2_pilot_spec.md](A2_pilot_spec.md) v2.1 and

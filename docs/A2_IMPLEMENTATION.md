@@ -4,8 +4,10 @@ Protocol: [A2_pilot_spec.md](A2_pilot_spec.md), **v2.1**. Research rationale:
 [A2_novelty_and_feasibility.md](A2_novelty_and_feasibility.md).
 
 This is a new depth-pruning study, not a continuation of the KV-sharing fits.
-Existing `train.py`, KV code, runner, Accelerate resources and `commands.sh`
-are unchanged. No full model/dataset download or B200 job has been submitted.
+Existing `train.py`, KV code, runner and Accelerate resources remain unchanged.
+The bounded B200 review below is complete; actual checkpoint/data acquisition
+and preflight are the next stage. `commands.sh` is changed only for authorized
+runner actions and restored to `#0` afterward.
 
 ## Code
 

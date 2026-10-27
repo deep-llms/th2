@@ -1,35 +1,56 @@
-#1 +30+a
-#th2-6y3o-a2-assets-inventory-20261028-a01
-set -euo pipefail
-cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
-import json,socket,shutil,hashlib
-from pathlib import Path
-from datetime import datetime,timezone
-from scripts.gpu_process import inspect
-assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
-print('INVENTORY_AT',datetime.now(timezone.utc).isoformat())
-print('DISK',shutil.disk_usage('/mnt/local'))
-print('GPU_INSPECTION',json.dumps(inspect()))
-root=Path('/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513')
-for rel in ('subsets/qwen3_0.6b_base_en_30B/manifest.json','completion.json'):
- p=root/rel
- print('POOL',str(p),p.exists())
- if p.is_file():
-  b=p.read_bytes(); j=json.loads(b)
-  print('POOL_MANIFEST',json.dumps(dict(path=str(p),sha256=hashlib.sha256(b).hexdigest(),keys=list(j),totals=j.get('totals'))))
-  if 'shards' in j:
-   for split,shards in j['shards'].items():
-    missing=[];badsize=[];n=0;total=0
-    for shard in shards:
-     for name,meta in shard['files'].items():
-      f=root/name;n+=1;total+=meta['bytes']
-      if not f.is_file():missing.append(name)
-      elif f.stat().st_size!=meta['bytes']:badsize.append(name)
-    print('POOL_SPLIT',json.dumps(dict(split=split,shards=len(shards),files=n,bytes=total,missing=missing,badsize=badsize)))
-for name in ('a2','Qwen3-0.6B-Base_da87bfb6'):
- p=Path('/mnt/local/_models/deep-llms_th2')/name
- print('MODEL_DIRECTORY',str(p),sorted(str(x.relative_to(p)) for x in p.rglob('*') if x.is_file()) if p.exists() else 'absent')
-print('INVENTORY_COMPLETE')
-PY
+#d +a
+#models
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/config.json /mnt/local/_models/deep-llms_th2/a2/dclm/P300/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/model.safetensors /mnt/local/_models/deep-llms_th2/a2/dclm/P300/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2/dclm/P300/modeling_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2/dclm/P300/configuration_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/tokenizer.json /mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2/dclm/P300/special_tokens_map.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/config.json /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/model.safetensors /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/tokenizer.json /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2/dclm/P1T/special_tokens_map.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/2ee702ba4c05cd1494c530d81f4e338bcf70536b/config.json /mnt/local/_models/deep-llms_th2/a2/dclm/S72/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/2ee702ba4c05cd1494c530d81f4e338bcf70536b/model.safetensors /mnt/local/_models/deep-llms_th2/a2/dclm/S72/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/0340fcb7b7717498ad8bcb229a653a31a7af0877/config.json /mnt/local/_models/deep-llms_th2/a2/dclm/S188/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/0340fcb7b7717498ad8bcb229a653a31a7af0877/model.safetensors /mnt/local/_models/deep-llms_th2/a2/dclm/S188/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/config.json /mnt/local/_models/deep-llms_th2/a2/fwe/P300/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/model.safetensors /mnt/local/_models/deep-llms_th2/a2/fwe/P300/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2/fwe/P300/modeling_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2/fwe/P300/configuration_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/tokenizer.json /mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2/fwe/P300/special_tokens_map.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/config.json /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/model.safetensors /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/modeling_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/configuration_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/tokenizer.json /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2/fwe/P1T/special_tokens_map.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5/config.json /mnt/local/_models/deep-llms_th2/a2/fwe/S72/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5/model.safetensors /mnt/local/_models/deep-llms_th2/a2/fwe/S72/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/85e25569105f1c84b0d653f6f8e69df1e30bd3de/config.json /mnt/local/_models/deep-llms_th2/a2/fwe/S188/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/85e25569105f1c84b0d653f6f8e69df1e30bd3de/model.safetensors /mnt/local/_models/deep-llms_th2/a2/fwe/S188/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/config.json /mnt/local/_models/deep-llms_th2/a2/nem/P300/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/model.safetensors /mnt/local/_models/deep-llms_th2/a2/nem/P300/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2/nem/P300/modeling_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2/nem/P300/configuration_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/tokenizer.json /mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2/nem/P300/special_tokens_map.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/config.json /mnt/local/_models/deep-llms_th2/a2/nem/P1T/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/model.safetensors /mnt/local/_models/deep-llms_th2/a2/nem/P1T/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2/nem/P1T/modeling_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2/nem/P1T/configuration_opensci.py
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/tokenizer.json /mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer_config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2/nem/P1T/special_tokens_map.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/a69f22d194ba460ce35e9d29a8d6cc4af919aca1/config.json /mnt/local/_models/deep-llms_th2/a2/nem/S72/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/a69f22d194ba460ce35e9d29a8d6cc4af919aca1/model.safetensors /mnt/local/_models/deep-llms_th2/a2/nem/S72/model.safetensors
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/10f3e6ae5e55164ce14709839c230a107d809aef/config.json /mnt/local/_models/deep-llms_th2/a2/nem/S188/config.json
+--url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/10f3e6ae5e55164ce14709839c230a107d809aef/model.safetensors /mnt/local/_models/deep-llms_th2/a2/nem/S188/model.safetensors

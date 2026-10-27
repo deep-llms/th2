@@ -1,6 +1,7 @@
 """A2 document sampling and continuous EOS packing; all inputs are local."""
 import hashlib
 import json
+import time
 from pathlib import Path
 import numpy as np
 import torch
@@ -75,10 +76,10 @@ def load_pool(root):
     root = Path(root)
     subset = root/'subsets'/'qwen3_0.6b_base_en_30B'
     manifest = json.loads((subset/'manifest.json').read_text())
-    result = {}; files = {}
+    result = {}; files = {}; started = time.monotonic()
     for split in ('train','validation'):
         pieces = []
-        for shard in manifest['shards'][split]:
+        for shard_number, shard in enumerate(manifest['shards'][split], 1):
             states = []
             for rel, expected in shard['files'].items():
                 p = (root/rel).resolve()
@@ -99,6 +100,9 @@ def load_pool(root):
             if len(counts) != len(ds) or not np.array_equal(counts, content+1) or (counts < 1).any():
                 raise ValueError('Invalid published Qwen token counts')
             pieces.append(ds.add_column('a2_qwen_tokens_with_eod', counts))
+            if shard_number % 100 == 0 or shard_number == len(manifest['shards'][split]):
+                print('A2_POOL_VERIFIED', json.dumps(dict(split=split, shards=shard_number,
+                    total_shards=len(manifest['shards'][split]), elapsed_seconds=time.monotonic()-started)), flush=True)
         result[split] = concatenate_datasets(pieces)
     return result, dict(manifest_sha256=sha256(subset/'manifest.json'), files=files)
 
@@ -114,6 +118,7 @@ def prepare(train, validation, qwen_tokenizer, tokenizer, output, *, provenance,
     if tokenizer.eos_token_id != 0 or min(length,reserved_qwen,heal_tokens,tune_rows,small_rows,batch_size) < 1:
         raise ValueError('Invalid tokenizer/budgets')
     if small_rows > tune_rows: raise ValueError('Small set exceeds tuning set')
+    started = last_progress = time.monotonic()
     indexed_counts = 'a2_qwen_tokens_with_eod' in getattr(train, 'column_names', [])
     if indexed_counts:
         # Verify the convention on a fixed sample, then reuse the checksum-verified
@@ -163,6 +168,13 @@ def prepare(train, validation, qwen_tokenizer, tokenizer, output, *, provenance,
                     if reserved_prefix is not None and enough:
                         extended = sum(counts[k] for k in ('heal','tuning','unused')) > reserved_prefix
                         finished = True; break
+                now = time.monotonic()
+                if now-last_progress >= 30 or finished:
+                    progress = dict(stage='tokenizing_train', counts=counts, document_tokens=sums,
+                        qwen_tokens=qwen_sum, elapsed_seconds=now-started)
+                    write_json(root/'progress.json', progress)
+                    print('A2_DATA_PROGRESS', json.dumps(progress), flush=True)
+                    last_progress = now
                 if finished: break
             if not finished: raise ValueError('Training split cannot meet reserved/heal/tuning budgets')
             for start in range(0,len(validation),batch_size):
@@ -193,6 +205,8 @@ def prepare(train, validation, qwen_tokenizer, tokenizer, output, *, provenance,
         documents_sha256=sha256(root/'documents.jsonl'), indices_sha256=sha256(root/'indices.npz'),
         permutation_seed=2028, small_seed=2029, disjoint_by_id_and_content=True)
     write_json(root/'manifest.json',result)
+    print('A2_DATA_COMPLETE', json.dumps(dict(counts=counts, streams=streams,
+        elapsed_seconds=time.monotonic()-started)), flush=True)
     return result
 
 

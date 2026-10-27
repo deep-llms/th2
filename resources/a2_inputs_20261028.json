@@ -1,0 +1,489 @@
+{
+  "status": "planned_not_verified",
+  "pool_path": "/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513",
+  "qwen_path": "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+  "tokenizer_path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+  "pool_contract": {
+    "repo": "nht10/cx_sampled",
+    "subset": "qwen3_0.6b_base_en_30B",
+    "revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+    "manifest_sha256": "c027aae3d802ddd2c17259b4ae4a8bfc67bae073338694f528691cc0e3496ade"
+  },
+  "tokenizer_provenance": {
+    "qwen": {
+      "repo": "Qwen/Qwen3-0.6B-Base",
+      "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+      "files": {
+        "config.json": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59",
+        "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+        "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+        "tokenizer_config.json": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+        "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    },
+    "gpt_neox": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+      "revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+      "files": {
+        "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+        "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+        "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+      }
+    }
+  },
+  "assets": {
+    "dclm/P300": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+      "revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+      "code_revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+      "files": {
+        "config.json": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777",
+        "model.safetensors": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "dclm/P1T": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+      "revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+      "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+      "files": {
+        "config.json": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+        "model.safetensors": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "dclm/S72": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+      "revision": "2ee702ba4c05cd1494c530d81f4e338bcf70536b",
+      "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+      "files": {
+        "config.json": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f",
+        "model.safetensors": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "dclm/S188": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+      "revision": "0340fcb7b7717498ad8bcb229a653a31a7af0877",
+      "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+      "files": {
+        "config.json": "314914ed4ed26ee8ced05ca1b2a22d73968acd772bb7d0ceb939b62a4c287786",
+        "model.safetensors": "683ef78df55635d5a861301d894cc03f610501a520ee1a93395201b36ea203d3"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "fwe/P300": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096",
+      "revision": "de8d9259fcac769157070eb63cd67fa89d4c2db1",
+      "code_revision": "de8d9259fcac769157070eb63cd67fa89d4c2db1",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+      "files": {
+        "config.json": "592e65dc00a2ed521f87d0f2339ad661277e9ee421a9a698f5373ec92e2a192e",
+        "model.safetensors": "cab564f469e41f2a55e8ed3c84bddaf0b858240653b6ca8d58579ce27f10ef09"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "fwe/P1T": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+      "revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+      "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+      "files": {
+        "config.json": "e81aca30f409cfeb481bdc200c9a785f5d9c11b7bdd41cab9389aa299dd9b18a",
+        "model.safetensors": "21acee7e83ffddd740017147357ff00097500783aac202b253f7f61acb42af9a"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "fwe/S72": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+      "revision": "2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5",
+      "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+      "files": {
+        "config.json": "7a512523f083a7fafe2be4750a88292ab6104d52832dd738dd3bdd03ae52d3bf",
+        "model.safetensors": "466cb060fc71048bfd77534aa36fa13b320f6e8c1c306494b3bf157edddcb21e"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "fwe/S188": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+      "revision": "85e25569105f1c84b0d653f6f8e69df1e30bd3de",
+      "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+      "files": {
+        "config.json": "0ee5e2b8b7a045f6eae0ffa9a6d2a8f94b067de4ba23352495bd90852d211d6d",
+        "model.safetensors": "d2b46127d4cff8fdef6f28bf84ba0b699f3f079583d8e4af179c7ddd18558a0c"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "nem/P300": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096",
+      "revision": "5cc94475d50d221ac201909c36aa61855fb2c50f",
+      "code_revision": "5cc94475d50d221ac201909c36aa61855fb2c50f",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P300",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P300",
+      "files": {
+        "config.json": "df5ea5e44e514cf7f28e0d40f872f66738bfeb49cb1938eeb550762f8a9bfb60",
+        "model.safetensors": "de9e2011347053829eed50aa50a22dd18a20bd97e2ea122c3fd74967875d36ab"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "nem/P1T": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+      "revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+      "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+      "files": {
+        "config.json": "0c213b88b29338cb028b83308ba438f62cb7f740f2b9f51b2d7ece50d064c771",
+        "model.safetensors": "b09cadfb1ed79ba21a89f7909ae5859e318e24f945d253252a563510a92137e6"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "nem/S72": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+      "revision": "a69f22d194ba460ce35e9d29a8d6cc4af919aca1",
+      "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/S72",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+      "files": {
+        "config.json": "048a8749f5bbe833b8119cf25df5da4510dc1f93b7b58031a9f8995749962be6",
+        "model.safetensors": "7c3d1702915d665f69b0f070dc1bbe31e57833640092d2626859c64050063c38"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    },
+    "nem/S188": {
+      "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+      "revision": "10f3e6ae5e55164ce14709839c230a107d809aef",
+      "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+      "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/S188",
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+      "files": {
+        "config.json": "9b2099fae696226a7faa63a764d9445343ea3462a1b18eb86f2d0ae3d4eea65e",
+        "model.safetensors": "e4e05cea7deff5e2c8ab3ab3d49fb1286cb71c45f3085ae5afa8145abbf7d60d"
+      },
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      }
+    }
+  },
+  "downloads": [
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/config.json",
+      "sha256": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/model.safetensors",
+      "sha256": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/modeling_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/configuration_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/tokenizer.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/tokenizer_config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096/resolve/9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0/special_tokens_map.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/config.json",
+      "sha256": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/model.safetensors",
+      "sha256": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/modeling_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/configuration_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/tokenizer.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/tokenizer_config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/90481ca923a6cba5c8e107e2249e09fcd32ec617/special_tokens_map.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/2ee702ba4c05cd1494c530d81f4e338bcf70536b/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/config.json",
+      "sha256": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/2ee702ba4c05cd1494c530d81f4e338bcf70536b/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/model.safetensors",
+      "sha256": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/0340fcb7b7717498ad8bcb229a653a31a7af0877/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188/config.json",
+      "sha256": "314914ed4ed26ee8ced05ca1b2a22d73968acd772bb7d0ceb939b62a4c287786"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096/resolve/0340fcb7b7717498ad8bcb229a653a31a7af0877/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188/model.safetensors",
+      "sha256": "683ef78df55635d5a861301d894cc03f610501a520ee1a93395201b36ea203d3"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/config.json",
+      "sha256": "592e65dc00a2ed521f87d0f2339ad661277e9ee421a9a698f5373ec92e2a192e"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/model.safetensors",
+      "sha256": "cab564f469e41f2a55e8ed3c84bddaf0b858240653b6ca8d58579ce27f10ef09"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/modeling_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/configuration_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/tokenizer.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/tokenizer_config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096/resolve/de8d9259fcac769157070eb63cd67fa89d4c2db1/special_tokens_map.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/config.json",
+      "sha256": "e81aca30f409cfeb481bdc200c9a785f5d9c11b7bdd41cab9389aa299dd9b18a"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/model.safetensors",
+      "sha256": "21acee7e83ffddd740017147357ff00097500783aac202b253f7f61acb42af9a"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/modeling_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/configuration_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/tokenizer.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/tokenizer_config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/ca1795337a73d08235c904609c4b6daa89ecd6ca/special_tokens_map.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72/config.json",
+      "sha256": "7a512523f083a7fafe2be4750a88292ab6104d52832dd738dd3bdd03ae52d3bf"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72/model.safetensors",
+      "sha256": "466cb060fc71048bfd77534aa36fa13b320f6e8c1c306494b3bf157edddcb21e"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/85e25569105f1c84b0d653f6f8e69df1e30bd3de/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188/config.json",
+      "sha256": "0ee5e2b8b7a045f6eae0ffa9a6d2a8f94b067de4ba23352495bd90852d211d6d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096/resolve/85e25569105f1c84b0d653f6f8e69df1e30bd3de/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188/model.safetensors",
+      "sha256": "d2b46127d4cff8fdef6f28bf84ba0b699f3f079583d8e4af179c7ddd18558a0c"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/config.json",
+      "sha256": "df5ea5e44e514cf7f28e0d40f872f66738bfeb49cb1938eeb550762f8a9bfb60"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/model.safetensors",
+      "sha256": "de9e2011347053829eed50aa50a22dd18a20bd97e2ea122c3fd74967875d36ab"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/modeling_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/configuration_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/tokenizer.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/tokenizer_config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096/resolve/5cc94475d50d221ac201909c36aa61855fb2c50f/special_tokens_map.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/config.json",
+      "sha256": "0c213b88b29338cb028b83308ba438f62cb7f740f2b9f51b2d7ece50d064c771"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/model.safetensors",
+      "sha256": "b09cadfb1ed79ba21a89f7909ae5859e318e24f945d253252a563510a92137e6"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/modeling_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/configuration_opensci.py",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/tokenizer.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/tokenizer_config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/c9ccbca7125d7072cead55a1f0a07e53a3fb6de1/special_tokens_map.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/a69f22d194ba460ce35e9d29a8d6cc4af919aca1/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S72/config.json",
+      "sha256": "048a8749f5bbe833b8119cf25df5da4510dc1f93b7b58031a9f8995749962be6"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/a69f22d194ba460ce35e9d29a8d6cc4af919aca1/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S72/model.safetensors",
+      "sha256": "7c3d1702915d665f69b0f070dc1bbe31e57833640092d2626859c64050063c38"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/10f3e6ae5e55164ce14709839c230a107d809aef/config.json",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S188/config.json",
+      "sha256": "9b2099fae696226a7faa63a764d9445343ea3462a1b18eb86f2d0ae3d4eea65e"
+    },
+    {
+      "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096/resolve/10f3e6ae5e55164ce14709839c230a107d809aef/model.safetensors",
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S188/model.safetensors",
+      "sha256": "e4e05cea7deff5e2c8ab3ab3d49fb1286cb71c45f3085ae5afa8145abbf7d60d"
+    }
+  ]
+}
