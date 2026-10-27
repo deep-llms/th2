@@ -22,8 +22,10 @@ verified communicating burns afterward. No model/training/runtime changes.
 First launch a2ec3c6 failed before output creation or GPU reclaim: tokenizer
 manifest entries are metadata dictionaries, not bare hash strings. Corrected
 comparison to bytes/sha256 and regression-tested. Submitting fresh a02 output
-and session; a01 never evaluated or stopped burns. Await corrected receipt;
-never repush executable commands unchanged.
+and session via dc7c0ba (pushed/remote-head verified); a01 never evaluated or
+stopped burns. Corrected launch dc7c0ba acknowledged: Accelerate8GPU/BF16
+verified and supervisor submitted under a02 at01:17SGT. Requesting live health
+and result artifacts; do not infer success from launch acknowledgement.
 No new timer or agent. Previous research timer remains stopped.
 
 ## Complete: 1.36B-token dense/uniform25 pair, 28 October 2026 SGT
