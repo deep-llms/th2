@@ -2,6 +2,13 @@
 
 ## Active: A2 Phase 0 implementation; no B200 launch
 
+28 October review: user requested another correctness review and B200 tests if
+needed. Fixed secondary reporting, strict run/retry receipts and independent T3
+branch failures. 29 local tests passed; public metadata check of all 12 pinned
+parents passed. Preparing a bounded CUDA/BF16/DDP smoke, NOT the healing pilot.
+First action is read-only node/environment/GPU inventory; preserve all old envs,
+outputs and workloads. Actual-parent/data preflight remains pending.
+
 User authorized implementation after review of [A2_pilot_spec.md](A2_pilot_spec.md)
 v2.1 and [A2_novelty_and_feasibility.md](A2_novelty_and_feasibility.md).
 Implementation guide: [A2_IMPLEMENTATION.md](A2_IMPLEMENTATION.md).
