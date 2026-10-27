@@ -1,0 +1,26 @@
+{
+  "status": "preparing",
+  "launch_commit": "1c968cf123e8e2aba726412ed9b5b06e14494bbb",
+  "launch_at_utc": "2026-10-27T11:04:22.771959+00:00",
+  "health_at_utc": "2026-10-27T11:08:24.126812+00:00",
+  "selected_documents_at_health": 12526,
+  "target_documents": 1328128,
+  "verified_source_shards_at_health": 4,
+  "gpu_workers": [
+    620160,
+    620161,
+    620162,
+    620163,
+    620164,
+    620165,
+    620166,
+    620167
+  ],
+  "guard_disabled": false,
+  "training_started": false,
+  "logs": {
+    "temp/kv_long_preflight.log": "21804a5a9eac09472e4c8cf670d06d95f6642cd84afe7ca737f193eb79946439",
+    "temp/kv_long_launch.log": "3f2645bf8af3d391a69dacb90bb83a1e173402e5091331a8b2c1ed65f680cce4",
+    "temp/kv_long_health01.log": "9b709ef28c0eed6b1d06ebbdbc8f997f9a94e37feebf260ae1d058c00d4ee7f5"
+  }
+}

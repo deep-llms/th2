@@ -25,6 +25,19 @@ Launch1c968cf acknowledged at19:04:22 SGT; CPU preparation runs in detached
 session efficient_kv_long_prepare_20261027_a01, then the guarded supervisor starts
 the numerical gate, A/B smoke, and full A/B pair automatically. Receipt
 temp/kv_long_launch.log SHA2563f2645bf8af3d391a69dacb90bb83a1e173402e5091331a8b2c1ed65f680cce4.
+Health86e403c at19:08:24 SGT: prep session alive, first4 consumed shards verified,
+12,526/1,328,128 eligible fresh prefixes selected; no errors. Only original known
+burn workers remain; guard released. Data preparation precedes GPU reclaim;
+Accelerate/GPU gates and actual training have NOT run yet. No manual follow-up is
+needed to start them: the persistent launcher performs all dependent stages.
+Evidence temp/kv_long_health01.log, SHA9b709ef28c0eed6b1d06ebbdbc8f997f9a94e37feebf260ae1d058c00d4ee7f5;
+compact durable receipt docs/results/kv_long_20261027/launch_receipt.json.
+Preparation log is outside the run directory at
+/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-long-20261027-a01-prepare.log.
+Prepared unique read-only request: temp/kv_long_health_command.sh (change job ID
+before another push). Preserve active preparation; do not submit a duplicate.
+Training alone projects~3h; preparation adds substantial CPU time. Refine ETA
+from later progress. commands.sh restored to#0 after acknowledged health.
 Output6y3o-efficient-kv-long-20261027-a01. Reuse native guarded supervisor
 and automatic communicating burns. Old timer remains stopped; no new timer.
 

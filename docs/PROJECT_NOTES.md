@@ -60,6 +60,13 @@ or dataset for this research.
 
 ## Results and decisions
 
+27 October evening: user authorized a longer matched dense/uniform25 pair after
+the completed short recovery screen. Use the same original dense A-512 parent,
+1.36B recovery tokens per arm and a fresh full-budget schedule; preserve the
+model/loss/runtime. Details: [KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_20261027.md).
+The failed short recipe does not establish that KV sharing cannot recover with
+more training. This new pair is a budget test, not a CLA/SwiftKV reproduction.
+
 26 October first diagnostic: use full pretrained Qwen3-0.6B-Base, 6/8 and 4/8
 GQA groups, frozen backbone and small disjoint English prefix probe. See
 JOINT_GROUP_DIAGNOSTIC.md. Dense SDPA execution with output masking isolates
