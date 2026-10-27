@@ -1,26 +1,35 @@
-#1 +30+a
-#th2-6y3o-efficient-kv-long-preflight-20261027-a01
+#1 +60+a
+#th2-6y3o-efficient-kv-long-launch-20261027-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
-/mnt/local/conda-py311/envs/train/bin/python3.11 -u - <<'READONLY'
-import json, shutil, socket
-from pathlib import Path
+export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1
+export WANDB_MODE=offline OMP_NUM_THREADS=1 TOKENIZERS_PARALLELISM=false NCCL_NVLS_ENABLE=0
+/mnt/local/conda-py311/envs/train/bin/python3.11 -u - <<'LAUNCH'
+import json, shlex, socket, subprocess, sys
 from datetime import datetime, timezone
-from scripts.gpu_process import inspect
+from pathlib import Path
 assert socket.gethostname() == 'thiennh-p6-6y3o-worker-0'
-root = Path('/mnt/local/_outputs/deep-llms_th2')
-print('HEALTH_AT', datetime.now(timezone.utc).isoformat(), flush=True)
-print('GPU_INSPECTION', json.dumps(inspect()), flush=True)
-print('FREE_BYTES', shutil.disk_usage(root).free, flush=True)
-data = Path('/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513')
-contract = json.loads(Path('resources/cx_english_20261020.json').read_text())
-pool = json.loads((data/'subsets'/contract['subset']/'manifest.json').read_text())
-print('TRAIN_SHARDS', len(pool['shards']['train']), flush=True)
-print('FIRST_SHARD', json.dumps(pool['shards']['train'][0]), flush=True)
-prior = root/'6y3o-efficient-kv-qkv-20261027-a01'
-for rel in ['supervised/run/complete.json', 'supervised/supervisor.json', 'supervised/burn-verified.json']:
- print('PRIOR', rel, (prior/rel).read_text(), flush=True)
-print('HEALTH_COMPLETE', flush=True)
-READONLY
-# KV recovery study complete; verified results and communicating GPU burns.
+base = Path('/mnt/local/_outputs/deep-llms_th2')
+root = base/'6y3o-efficient-kv-long-20261027-a01'
+log = base/'6y3o-efficient-kv-long-20261027-a01-prepare.log'
+session = 'efficient_kv_long_prepare_20261027_a01'
+assert not root.exists() and not log.exists()
+assert subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode != 0
+argv = [sys.executable, '-u', '-m', 'scripts.launch_group_diagnostic', '--study','kv_long',
+ '--output',str(root),'--model','/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6',
+ '--data-root','/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513',
+ '--host',socket.gethostname(),'--session','efficient_kv_long_20261027_a01',
+ '--previous-run',str(base/'6y3o-efficient-kv-recovery-20261027-a02'),
+ '--dense-parent-run',str(base/'6y3o-efficient-kv-mlp-20261027-a03'),
+ '--predecessor-burn-script',str(base/'6y3o-efficient-kv-qkv-20261027-a01/source/resources/llm_pretrain_burn.py')]
+keys = ['CUDA_VISIBLE_DEVICES','PYTHONDONTWRITEBYTECODE','HF_HUB_OFFLINE','HF_DATASETS_OFFLINE',
+        'TRANSFORMERS_OFFLINE','HF_HUB_DISABLE_TELEMETRY','WANDB_MODE','OMP_NUM_THREADS',
+        'TOKENIZERS_PARALLELISM','NCCL_NVLS_ENABLE']
+import os
+command = 'exec '+shlex.join(['env',*[f'{k}={os.environ[k]}' for k in keys],*argv])+' >'+shlex.quote(str(log))+' 2>&1'
+subprocess.run(['tmux','new-session','-d','-s',session,'-c',str(Path.cwd()),command],check=True)
+subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)
+print('LONG_PREPARATION_SUBMITTED',json.dumps(dict(at=datetime.now(timezone.utc).isoformat(),
+ session=session,output=str(root),log=str(log))),flush=True)
+LAUNCH

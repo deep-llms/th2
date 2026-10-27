@@ -1,5 +1,28 @@
 # Current task
 
+## Authorized next: 1.36B-token dense/uniform25 pair, 27 October 2026 SGT
+
+Latest user instruction: "ok, training even longer is ok." This authorizes a new
+matched longer pair after the completed overnight screen; the historical cap
+below does not prohibit these two new jobs. Design:
+[KV_LONG_RECOVERY_20261027.md](KV_LONG_RECOVERY_20261027.md), project objective
+[PROJECT_IDEA.md](PROJECT_IDEA.md). No further sweep authorized.
+
+Prepare dense A and all-parameter uniform25 from the SAME original dense A-512,
+20,752 steps / 1,360,003,072 fresh recovery tokens each; new optimizer and full
+cosine schedule, 1,038 warmup steps. Same teacher/loss/runtime and frozen 256-doc
+validation. Extend deterministic document prefixes, preserve original short
+selection exactly, exclude original pilot documents. CPU batch-tokenizer and
+matched-pair tests precede real numerical and eight-GPU smoke gates.
+
+Read-only preflight4383957 verified at18:56:32 SGT: expected8B200, only QKV-owned
+burns620160–620167 under620091, released guard,22.97TB free. These are historical
+identities; supervisor rechecks before stopping. No new GPU job yet.
+Local33 model/data/job tests and42 infrastructure checks passed; additional long
+checks cover exact prefix extension and handoff failures.
+Intended output6y3o-efficient-kv-long-20261027-a01. Reuse native guarded supervisor
+and automatic communicating burns. Old timer remains stopped; no new timer.
+
 ## Completed: bounded KV-sharing recovery research, 27 October 2026 SGT
 
 Project objective: [PROJECT_IDEA.md](PROJECT_IDEA.md). Authorized overnight scope:
@@ -7,7 +30,7 @@ Project objective: [PROJECT_IDEA.md](PROJECT_IDEA.md). Authorized overnight scop
 Final report: [KV_RECOVERY_FINAL_RESULTS_20261027.md](KV_RECOVERY_FINAL_RESULTS_20261027.md).
 Workspace /disk/thuat/efficient_llm. Report times in Singapore time (UTC+8).
 
-All four additional training jobs are complete. **No more training authorized.**
+All four additional training jobs in that earlier authorization are complete.
 Final matched BF16 PPL: dense A 19.2416, uniform25 20.4610, upper25 20.6189,
 full50 22.6557, uniform25 Q/K/V-only 23.0779. All sharing variants fail the
 upper-95%-CI <= log(1.05) gate. Stop this short conversion/recovery recipe;
@@ -42,7 +65,7 @@ No active training or evaluation remains. commands.sh restored to **#0**.
 
 Existing timer `temp/kv_recovery_watch_20261027/STOP` is set after verified final
 results/handoff. No replacement timer/agent. Do not restart research from stale
-queued wake prompts; completed cap is4/4. Wait for new user instructions.
+queued wake prompts; completed cap is4/4. New authorization is recorded above.
 
 ### Earlier recovery stages
 

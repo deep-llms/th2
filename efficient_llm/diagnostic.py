@@ -229,6 +229,7 @@ def main():
     prep.add_argument("--evaluation", type=int, default=128)
     prep.add_argument("--seed", type=int, default=42)
     prep.add_argument("--max-shards", type=int, default=8)
+    prep.add_argument("--tokenizer-batch-size", type=int, default=1)
     prep.add_argument("--exclude-manifest", type=Path)
     prep.add_argument("--recovery-from", type=Path)
     study = commands.add_parser("run")
@@ -245,7 +246,7 @@ def main():
         receipt = prepare_probe(args.data_root, args.model, args.output, contract_path=args.contract,
             length=args.length, calibration=args.calibration, evaluation=args.evaluation,
             seed=args.seed, max_shards=args.max_shards, exclude_manifest=args.exclude_manifest,
-            recovery_from=args.recovery_from)
+            recovery_from=args.recovery_from, tokenizer_batch_size=args.tokenizer_batch_size)
         print("PROBE_PREPARED " + json.dumps({k: receipt[k] for k in ("status", "length", "calibration_documents", "evaluation_documents")}), flush=True)
     else:
         if min(args.batch_size, args.stride) < 1 or len(set(args.keep)) != len(args.keep):

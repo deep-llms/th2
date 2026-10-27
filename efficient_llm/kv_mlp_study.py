@@ -273,6 +273,7 @@ def train(args, device, rank, world, tokens, manifest):
     checkpoint_steps = sorted({max(1, args.steps//4), args.steps})
     if args.eval_every:
         checkpoint_steps = sorted(set(range(args.eval_every, args.steps+1, args.eval_every)) | {args.steps})
+    checkpoint_steps = sorted(set(checkpoint_steps) | set(args.eval_steps))
     callback = Validation(tokens['evaluation'], args.output/'validation.json', checkpoint_steps, rank)
     callback.measure(model, 0)
     initial_difference = None
@@ -423,12 +424,23 @@ def inference_quality(args, device, rank, world, tokens):
         autocast_dtype='bfloat16',probe_sha256=sha256(args.probe/'manifest.json'),arms=reports))
 
 
-def recovery_summary(args):
+def recovery_summary(args, *, matched_placement=False):
     reports = {a:json.loads((args.runs/a/'result.json').read_text()) for a in 'AB'}
     a,b = reports['A'], reports['B']
-    for r in reports.values():
-        if r['status'] != 'passed' or r['smoke'] or r['phase'] != 'new_recovery':
+    for arm, r in reports.items():
+        phase = 'placement_conversion' if matched_placement and arm == 'B' else 'new_recovery'
+        if r['status'] != 'passed' or r['smoke'] or r['phase'] != phase:
             raise ValueError('Recovery phase did not complete')
+    if matched_placement:
+        from efficient_llm.kv_placement import layout_sources
+        for key in ['parent_result_sha256','initial_model_files','mlp_widths']:
+            if a[key] != b[key]:raise ValueError('Unmatched dense parent: '+key)
+        if (a['arm'] != 'A' or b['arm'] != 'B'
+                or a['trainable_scope'] != 'all' or b['trainable_scope'] != 'all'
+                or a['kv_sources'] != list(range(len(a['kv_sources'])))
+                or b['sharing_layout'] != 'uniform25'
+                or b['kv_sources'] != layout_sources(len(a['kv_sources']), 'uniform25')):
+            raise ValueError('Require dense and all-parameter uniform25 recovery')
     for key in ['steps','world_size','input_tokens','sample_order_sha256_per_rank','probe_sha256','parent_steps']:
         if a[key] != b[key]:raise ValueError('Unmatched recovery pair: '+key)
     for key in ['learning_rate','lr_scheduler_type','warmup_steps','weight_decay','max_grad_norm',
@@ -448,7 +460,7 @@ def recovery_summary(args):
                    paired=paired_summary(y['per_document_nll'],x['per_document_nll']))
     gate=inference['paired']['paired_document_bootstrap_95ci'][1] <= math.log(1.05)
     write(args.output,dict(status='passed',curve=curve,inference=inference,
-        decision='prune_recovered' if gate else 'review_conversion',
+        decision=('evaluate_efficiency' if matched_placement else 'prune_recovered') if gate else 'review_conversion',
         gate='Upper 95% document CI for shared-minus-dense NLL <= log(1.05)',
         phase_tokens=sum(r['input_tokens'] for r in reports.values()),
         limitations=['A diagnostic on reused 256-document validation; not a new independent test.',
@@ -457,7 +469,7 @@ def recovery_summary(args):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('mode', choices=['calibrate','train','summarize','inference-quality','recovery-summary'])
+    p.add_argument('mode', choices=['calibrate','train','summarize','inference-quality','recovery-summary','long-summary'])
     for name in ['model','probe','output','plan','runs']: p.add_argument('--'+name, type=Path)
     p.add_argument('--arm', choices=list('ABCDEF'))
     p.add_argument('--device', choices=['cpu','cuda'], default='cuda')
@@ -468,6 +480,7 @@ def main():
     p.add_argument('--initial-model', type=Path)
     p.add_argument('--parent-result', type=Path)
     p.add_argument('--eval-every', type=int, default=0)
+    p.add_argument('--eval-steps', type=int, nargs='*', default=[])
     p.add_argument('--inference-eval', action='store_true')
     p.add_argument('--sharing-layout', choices=['full50','uniform25','upper25'])
     p.add_argument('--qkv-only', action='store_true')
@@ -475,9 +488,10 @@ def main():
     if args.output is None or args.output.exists(): raise ValueError('Require fresh output')
     if args.mode == 'summarize':
         summarize(args); return
-    if args.mode == 'recovery-summary':
-        recovery_summary(args); return
-    if min(args.steps,args.batch) < 1 or args.calibration < 0 or args.eval_every < 0:
+    if args.mode in ('recovery-summary', 'long-summary'):
+        recovery_summary(args, matched_placement=args.mode == 'long-summary'); return
+    if (min(args.steps,args.batch) < 1 or args.calibration < 0 or args.eval_every < 0
+            or any(s < 1 or s > args.steps for s in args.eval_steps)):
         raise ValueError('Invalid recovery sizes')
     rank, world = int(os.environ.get('RANK',0)), int(os.environ.get('WORLD_SIZE',1))
     device = torch.device('cuda',int(os.environ.get('LOCAL_RANK',0))) if args.device == 'cuda' else torch.device('cpu')

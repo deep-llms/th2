@@ -16,20 +16,34 @@ def sha256(path):
 
 
 def choose_documents(dataset, tokenizer, *, count, length, seed, excluded,
-                     source, eod_id):
+                     source, eod_id, tokenizer_batch_size=1):
     """One fixed prefix per unique sufficiently long document; no cross-doc packing."""
-    if count < 1 or length < 1:
+    if count < 1 or length < 1 or tokenizer_batch_size < 1:
         raise ValueError("Document count and sequence length must be positive")
     order = list(range(len(dataset)))
     random.Random(seed).shuffle(order)
     rows, records = [], []
-    for index in order:
-        text = dataset[index]["text"]
-        identity = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    def tokenized():
+        for start in range(0, len(order), tokenizer_batch_size):
+            pending = []
+            for index in order[start:start+tokenizer_batch_size]:
+                text = dataset[index]["text"]
+                identity = hashlib.sha256(text.encode("utf-8")).hexdigest()
+                if identity not in excluded:
+                    pending.append((index, identity, text))
+            if not pending:
+                continue
+            kwargs = dict(add_special_tokens=False, truncation=True, max_length=length+1)
+            if tokenizer_batch_size == 1:
+                encoded = [tokenizer(pending[0][2], **kwargs)['input_ids']]
+            else:
+                encoded = tokenizer([item[2] for item in pending], **kwargs)['input_ids']
+            for (index, identity, _), tokens in zip(pending, encoded, strict=True):
+                yield index, identity, tokens
+    for index, identity, tokens in tokenized():
+        # Duplicates can occur inside a tokenizer batch; recheck in original order.
         if identity in excluded:
             continue
-        tokens = tokenizer(text, add_special_tokens=False, truncation=True,
-                           max_length=length + 1)["input_ids"]
         # A real document end can complete a window. A truncated prefix never
         # receives an artificial EOS inside the scored window.
         if not tokens or tokens[-1] != eod_id:
@@ -51,12 +65,12 @@ def choose_documents(dataset, tokenizer, *, count, length, seed, excluded,
 
 def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
                   evaluation=128, seed=42, max_shards=8, contract_path, exclude_manifest=None,
-                  recovery_from=None):
+                  recovery_from=None, tokenizer_batch_size=1):
     from datasets import load_from_disk
     from transformers import AutoTokenizer
     from training_data import document_end
     data_root, model_root, output = map(Path, (data_root, model_root, output))
-    if output.exists() or min(length, calibration, evaluation, max_shards) < 1:
+    if output.exists() or min(length, calibration, evaluation, max_shards, tokenizer_batch_size) < 1:
         raise ValueError("Require a fresh probe directory and positive sizes")
     contract = json.loads(Path(contract_path).read_text())
     if not contract.get("model_weights"):
@@ -129,8 +143,10 @@ def prepare_probe(data_root, model_root, output, *, length=2048, calibration=64,
             ds = load_from_disk(str(states[0].parent))
             selected, ids = choose_documents(ds, tokenizer, count=count-len(rows),
                 length=length, seed=seed + (10000 if split == "validation" else 0) + shard_index,
-                excluded=excluded, source=str(states[0].parent.relative_to(data_root)), eod_id=eod["id"])
+                excluded=excluded, source=str(states[0].parent.relative_to(data_root)), eod_id=eod["id"],
+                tokenizer_batch_size=tokenizer_batch_size)
             rows.extend(selected); records.extend(ids)
+            print('PROBE_PROGRESS', name, shard_index+1, len(rows), count, flush=True)
             if len(rows) == count:
                 break
         if len(rows) != count:

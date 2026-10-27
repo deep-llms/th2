@@ -185,7 +185,7 @@ class PlacementTests(unittest.TestCase):
                 '--model',str(original),'--probe',str(probe),'--initial-model',str(parent/'final'),
                 '--parent-result',str(parent/'result.json'),'--device','cpu','--arm','B',
                 '--calibration','0','--sharing-layout','uniform25' if qkv else 'upper25',
-                '--steps','2','--batch','2','--eval-every','1','--output',str(root/'fit')]
+                '--steps','2','--batch','2','--eval-every','2','--eval-steps','1','--output',str(root/'fit')]
                 + (['--qkv-only'] if qkv else []),capture_output=True,text=True,timeout=180)
             self.assertEqual(done.returncode,0,done.stdout+done.stderr)
             actual=json.loads((root/'fit/result.json').read_text())
@@ -194,6 +194,8 @@ class PlacementTests(unittest.TestCase):
             self.assertEqual(actual['initial_max_nll_difference'],0)
             self.assertEqual(actual['reloaded_max_nll_difference'],0)
             self.assertEqual(actual['unique_documents'],8)
+            self.assertEqual(set(actual['validation']),{'0','1','2'})
+            self.assertTrue((root/'fit/trainer/checkpoint-1/optimizer.pt').is_file())
             self.assertEqual(sha256(parent/'final/model.safetensors'),before)
             self.assertNotEqual(sha256(root/'fit/final/model.safetensors'),before)
             self.assertTrue((root/'fit/trainer/checkpoint-2/optimizer.pt').is_file())
