@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from efficient_llm.diagnostic_data import sha256
-from .data import write_json,PackedRows,prepare,load_pool,prepare_secondary,training_order
+from .data import write_json,PackedRows,prepare,load_pool,prepare_secondary,secondary_records,training_order
 from .protocol import DATASETS,PARENTS,FIXED_SETS,Run,matrix,choose_s2,layers_for
 from .model import load_parent,prune
 from .measure import rank_world,score,survey
@@ -93,7 +93,11 @@ def main():
     if args.action=='prepare-secondary':
         from transformers import AutoTokenizer
         from training_data import load_text
-        ds,records=load_text(args.source)
+        if args.source.is_file() and args.source.name.endswith(('.parquet','.jsonl.zst','.jsonl.zstd')):
+            ds=secondary_records(args.source)
+            records=[dict(path=str(args.source),sha256=sha256(args.source))]
+        else:
+            ds,records=load_text(args.source)
         prepare_secondary(ds,AutoTokenizer.from_pretrained(args.tokenizer,local_files_only=True),args.output,
             provenance=dict(source=read(args.source_provenance),files=records))
         return

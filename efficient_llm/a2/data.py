@@ -210,14 +210,38 @@ def prepare(train, validation, qwen_tokenizer, tokenizer, output, *, provenance,
     return result
 
 
+def secondary_records(path):
+    """Stream a fixed local public shard in stored order; never access the network."""
+    path = Path(path)
+    if path.suffix == '.parquet':
+        import pyarrow.parquet as pq
+        for batch in pq.ParquetFile(path).iter_batches(batch_size=64, columns=['text']):
+            for text in batch.column(0).to_pylist():
+                if not isinstance(text, str): raise ValueError('Secondary text must be a string')
+                yield {'text': text}
+    elif path.name.endswith(('.jsonl.zst', '.jsonl.zstd')):
+        import io
+        import zstandard
+        with path.open('rb') as source, zstandard.ZstdDecompressor().stream_reader(source) as stream:
+            with io.TextIOWrapper(stream, encoding='utf8') as lines:
+                for line in lines:
+                    row = json.loads(line)
+                    if not isinstance(row.get('text'), str): raise ValueError('Secondary text must be a string')
+                    yield {'text': row['text']}
+    else:
+        raise ValueError('Expected a single Parquet or JSONL-Zstandard shard')
+
+
 def prepare_secondary(dataset,tokenizer,output,*,provenance,length=4096,rows=256,batch_size=64):
     """Fixed public shard, stored order, first 256 packed sequences; never selects arms."""
     if tokenizer.eos_token_id!=0:raise ValueError('GPT-NeoX EOS must be zero')
     root=Path(output);root.mkdir(parents=True,exist_ok=False)
     writer=PackedWriter(root,'final',length,rows)
     try:
-        for start in range(0,len(dataset),batch_size):
-            texts=[dataset[i]['text'] for i in range(start,min(start+batch_size,len(dataset)))]
+        from itertools import islice
+        iterator = iter(dataset)
+        while records := list(islice(iterator, batch_size)):
+            texts = [record['text'] for record in records]
             for ids in tokenizer(texts,add_special_tokens=False,truncation=False)['input_ids']:
                 writer.add(list(ids)+[0])
             if writer.count>=rows*length:break

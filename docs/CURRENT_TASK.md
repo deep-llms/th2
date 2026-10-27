@@ -17,12 +17,24 @@ Raw inventory temp/a2_assets_inventory.log SHA256
 
 Input lock resources/a2_inputs_20261028.json contains12 pinned parent weights,
 main-source code/config/tokenizers (54 files), existing pool/tokenizer contracts.
-Controller download to /mnt/local/_models/deep-llms_th2/a2 is the next submission.
+Controller54-file download ab350b8 to /mnt/local/_models/deep-llms_th2/a2
+acknowledged STARTED (ID2026-10-27_22-46-06), completion pending.
 Do not consume before per-item success and actual SHA verification. CPU worker
 scripts/a2_prepare_inputs.py verifies inputs then prepares the preregistered
 whole-pool random prefix with GPT-NeoX. It has no GPU/network/process control.
-30 existing tests plus a new corrupted-input check pass; progress logging changes
+32 tests now pass, including corrupt inputs and streaming secondary formats; progress logging changes
 no sampling or packing semantics. Prior GPU review evidence stays historical.
+
+Secondary locks resources/a2_secondary_20261028.json: first fixed public shard
+of DCLM-baseline, FineWeb-Edu v1.0.0 (the original release), Nemotron-CC actual
+high-quality. Full Nemotron source read locally and SHA/ETag verified. Only these
+three shards are requested via controller; stream the first256x4096tokens each.
+No need to load/decompress the entire corpus or change the generic baseline.
+T15 resource a2_logged_lr_20261028.json binds public archive and exact run names:
+Nemotron188000 exactLR.004; other requested exact steps absent in the matching
+log members. Nearest values are explicitly context only, never substituted.
+CPU launcher scripts/launch_a2_inputs.py snapshots source and uses the existing
+job runner, four-hour timeout, no GPU/burn/guard control. Not yet launched.
 
 ## A2 review complete; full pilot not launched
 

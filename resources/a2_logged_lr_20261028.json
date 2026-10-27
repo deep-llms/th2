@@ -1,0 +1,96 @@
+{
+  "source": {
+    "repo": "open-sci/open-sci-ref-0.01-logs",
+    "revision": "ae3dd3ccbae070a94ac6c2bfe715de84f99c851a",
+    "file": "logs.tar.gz",
+    "bytes": 44177653,
+    "sha256": "8abfde159e8a6c0433a2d00af617e498ce628b55deedcea32f8c66af1d3ef8f8"
+  },
+  "tests": {
+    "dclm": {
+      "run_name": "open-sci-ref_model-1.7b_data-DCLM_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14070018",
+      "archive_member": "leonardo_work/EUHPC_E03_068/jjitsev0/megatron_lm_reference/slurm_output/open-sci-ref_model-1.7b_data-DCLM_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14070018.out",
+      "member_sha256": "0b54aa537a3ee20c2a67d3b8475fe89f88b7e4643f3fb581e13033238b96f189",
+      "exact": {
+        "72000": [],
+        "188000": []
+      },
+      "nearest_for_context_only": {
+        "72000": {
+          "iteration": 200050,
+          "lr": 0.003480925,
+          "line": "[lrdn1281:3]: [2025-03-19 08:27:25] iteration   200050/  242204 | consumed samples:    201650400 | elapsed time per iteration (ms): 1384.5 | throughput per GPU (TFLOP/s/GPU): 150.3 | learning rate: 3.480925E-03 | global batch size:  1008 | lm loss: 1.297617E+00 | loss scale: 1.0 | grad norm: 0.020 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+        },
+        "188000": {
+          "iteration": 200050,
+          "lr": 0.003480925,
+          "line": "[lrdn1281:3]: [2025-03-19 08:27:25] iteration   200050/  242204 | consumed samples:    201650400 | elapsed time per iteration (ms): 1384.5 | throughput per GPU (TFLOP/s/GPU): 150.3 | learning rate: 3.480925E-03 | global batch size:  1008 | lm loss: 1.297617E+00 | loss scale: 1.0 | grad norm: 0.020 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+        }
+      },
+      "logged_records": 844,
+      "iteration_range": [
+        200050,
+        242200
+      ]
+    },
+    "fwe": {
+      "run_name": "open-sci-ref_model-1.7b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14066868",
+      "archive_member": "leonardo_work/EUHPC_E03_068/jjitsev0/megatron_lm_reference/slurm_output/open-sci-ref_model-1.7b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_14066868.out",
+      "member_sha256": "0ff14c688a0cb6b8ec47d5492b3e7e672730dc8a34ed52de089fb3a94d1ddb9f",
+      "exact": {
+        "72000": [],
+        "188000": []
+      },
+      "nearest_for_context_only": {
+        "72000": {
+          "iteration": 196050,
+          "lr": 0.00381123,
+          "line": "[lrdn3274:3]: [2025-03-19 02:51:09] iteration   196050/  242204 | consumed samples:    197618400 | elapsed time per iteration (ms): 1558.5 | throughput per GPU (TFLOP/s/GPU): 133.5 | learning rate: 3.811230E-03 | global batch size:  1008 | lm loss: 9.832653E-01 | loss scale: 1.0 | grad norm: 0.035 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+        },
+        "188000": {
+          "iteration": 196050,
+          "lr": 0.00381123,
+          "line": "[lrdn3274:3]: [2025-03-19 02:51:09] iteration   196050/  242204 | consumed samples:    197618400 | elapsed time per iteration (ms): 1558.5 | throughput per GPU (TFLOP/s/GPU): 133.5 | learning rate: 3.811230E-03 | global batch size:  1008 | lm loss: 9.832653E-01 | loss scale: 1.0 | grad norm: 0.035 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+        }
+      },
+      "logged_records": 924,
+      "iteration_range": [
+        196050,
+        242200
+      ]
+    },
+    "nem": {
+      "run_name": "open-sci-ref_model-1.7b_data-Nemotron-cc-2024-HQ-real-synth-mix_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13977373",
+      "archive_member": "leonardo_work/EUHPC_E03_068/jjitsev0/megatron_lm_reference/slurm_output/open-sci-ref_model-1.7b_data-Nemotron-cc-2024-HQ-real-synth-mix_tokenizer-GPT-NeoX_samples-1000B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13977373.out",
+      "member_sha256": "b9da76439c8ab5b9addb9629c63630b45f8cacc8fa191879832d93cc6cbc6f37",
+      "exact": {
+        "72000": [],
+        "188000": [
+          {
+            "iteration": 188000,
+            "lr": 0.004,
+            "line": "[lrdn1606:3]: [2025-03-17 07:01:02] iteration   188000/  242204 | consumed samples:    189504000 | elapsed time per iteration (ms): 1178.0 | throughput per GPU (TFLOP/s/GPU): 176.6 | learning rate: 4.000000E-03 | global batch size:  1008 | lm loss: 1.267316E+00 | loss scale: 1.0 | grad norm: 0.015 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+          }
+        ]
+      },
+      "nearest_for_context_only": {
+        "72000": {
+          "iteration": 172050,
+          "lr": 0.004,
+          "line": "[lrdn1606:3]: [2025-03-17 01:29:38] iteration   172050/  242204 | consumed samples:    173426400 | elapsed time per iteration (ms): 1407.8 | throughput per GPU (TFLOP/s/GPU): 147.8 | learning rate: 4.000000E-03 | global batch size:  1008 | lm loss: 1.266617E+00 | loss scale: 1.0 | grad norm: 0.015 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+        },
+        "188000": {
+          "iteration": 188000,
+          "lr": 0.004,
+          "line": "[lrdn1606:3]: [2025-03-17 07:01:02] iteration   188000/  242204 | consumed samples:    189504000 | elapsed time per iteration (ms): 1178.0 | throughput per GPU (TFLOP/s/GPU): 176.6 | learning rate: 4.000000E-03 | global batch size:  1008 | lm loss: 1.267316E+00 | loss scale: 1.0 | grad norm: 0.015 | number of skipped iterations:   0 | number of nan iterations:   0 |"
+        }
+      },
+      "logged_records": 1404,
+      "iteration_range": [
+        172050,
+        242200
+      ]
+    }
+  },
+  "note": "Exact absent steps remain unverified; nearest logged steps are context, not substituted values. LR-state diagnostics never exclude parents."
+}

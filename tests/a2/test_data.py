@@ -82,6 +82,25 @@ class DataTests(unittest.TestCase):
             self.assertEqual(pool['train']['text'],['train-0','train-1'])
             self.assertEqual(pool['train']['a2_qwen_tokens_with_eod'],[8,8])
 
+    def test_secondary_shards_keep_text_order(self):
+        from efficient_llm.a2.data import secondary_records, prepare_secondary
+        import zstandard
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d); records=[{'text': 'abcdef'}, {'text': 'xyz123'}]
+            parquet=root/'shard.parquet'; pq.write_table(pa.Table.from_pylist(records),parquet)
+            compressed=root/'shard.jsonl.zstd'
+            compressed.write_bytes(zstandard.ZstdCompressor().compress(
+                ''.join(json.dumps(r)+'\n' for r in records).encode()))
+            for source in (parquet,compressed):
+                self.assertEqual(list(secondary_records(source)),records)
+                output=root/source.suffix[1:]
+                prepare_secondary(secondary_records(source),Tokenizer(),output,
+                    provenance={'test':True},length=4,rows=3,batch_size=1)
+                self.assertEqual(PackedRows(output,'final')[1]['input_ids'].tolist(),[101,102,0,120])
+            self.assertEqual((root/'parquet/final.bin').read_bytes(),(root/'zstd/final.bin').read_bytes())
+
     def test_t14_retry_preserves_permutation(self):
         from efficient_llm.a2.data import training_order
         count=12160

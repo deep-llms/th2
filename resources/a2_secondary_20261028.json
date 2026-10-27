@@ -1,0 +1,33 @@
+{
+  "dclm": {
+    "repo": "mlfoundations/dclm-baseline-1.0",
+    "revision": "a3b142c183aebe5af344955ae20836eb34dcf69b",
+    "file": "global-shard_01_of_10/local-shard_0_of_10/shard_00000000_processed.jsonl.zst",
+    "bytes": 141306362,
+    "sha256": "c006fce0b12ea2366ed94503344c7bc539e17c0aa10159a632272dd6d2929bdb",
+    "url": "https://huggingface.co/datasets/mlfoundations/dclm-baseline-1.0/resolve/a3b142c183aebe5af344955ae20836eb34dcf69b/global-shard_01_of_10/local-shard_0_of_10/shard_00000000_processed.jsonl.zst",
+    "path": "/mnt/local/_data/deep-llms_th2/a2_secondary_20261028/dclm/shard_00000000_processed.jsonl.zst"
+  },
+  "fwe": {
+    "repo": "HuggingFaceFW/fineweb-edu",
+    "revision": "fc9850dff5e2d0f8f776efe41b24a1c49556cfc5",
+    "file": "data/CC-MAIN-2013-20/train-00000-of-00014.parquet",
+    "bytes": 2369456837,
+    "sha256": "fb989c566f6fba00ab61decc5f7aa1538a07d9b142e58a52ff790154528ffd03",
+    "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/fc9850dff5e2d0f8f776efe41b24a1c49556cfc5/data/CC-MAIN-2013-20/train-00000-of-00014.parquet",
+    "path": "/mnt/local/_data/deep-llms_th2/a2_secondary_20261028/fwe/train-00000-of-00014.parquet",
+    "tag_at_selection": "v1.0.0"
+  },
+  "nem": {
+    "url": "https://data.commoncrawl.org/contrib/Nemotron/Nemotron-CC/data-jsonl/quality=high/kind=actual/kind2=actual/CC-MAIN-2013-20-part-00000.jsonl.zstd",
+    "file": "contrib/Nemotron/Nemotron-CC/data-jsonl/quality=high/kind=actual/kind2=actual/CC-MAIN-2013-20-part-00000.jsonl.zstd",
+    "bytes": 371190509,
+    "sha256": "2f675c84f1e447d057777b6e1381bf906504ae871584c49f4d727e1abd54b6b5",
+    "index_url": "https://data.commoncrawl.org/contrib/Nemotron/Nemotron-CC/data-jsonl.paths.gz",
+    "index_sha256": "d8201c1e05b5e9fecef7678457c172f98a19a25f1dd656cdba1f937e7a29e68e",
+    "etag_md5_verified": true,
+    "path": "/mnt/local/_data/deep-llms_th2/a2_secondary_20261028/nem/CC-MAIN-2013-20-part-00000.jsonl.zstd",
+    "selection": "First listed quality=high/kind=actual/kind2=actual shard",
+    "etag": "\"22930e199863281a52bc9a2f35d5baa6\""
+  }
+}
