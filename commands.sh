@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-efficient-kv-placement-health-20261027-a02
+#th2-6y3o-efficient-kv-placement-final-20261027-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
