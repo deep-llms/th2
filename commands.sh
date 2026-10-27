@@ -1,5 +1,5 @@
-#1 +30+a
-#th2-6y3o-a2-inputs-health-20261028-a02
+#1 +60+a
+#th2-6y3o-a2-inputs-health-20261028-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
@@ -32,5 +32,15 @@ burn=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01/supervi
 if burn.is_file():
  with burn.open('rb') as f:
   f.seek(max(0,burn.stat().st_size-5000));print('BURN_TAIL',f.read().decode(errors='replace'),flush=True)
+checks=[]
+for item in plan['downloads']:
+ p=Path(item['path'])
+ if not p.is_file():
+  checks.append(dict(path=str(p),status='missing'));continue
+ h=hashlib.sha256()
+ with p.open('rb') as f:
+  for block in iter(lambda:f.read(8*1024*1024),b''):h.update(block)
+ checks.append(dict(path=str(p),bytes=p.stat().st_size,sha256=h.hexdigest(),status='verified' if h.hexdigest()==item['sha256'] else 'incomplete_or_mismatch'))
+print('ASSET_HASH_CHECKS',json.dumps(checks),flush=True)
 print('HEALTH_COMPLETE',flush=True)
 PY
