@@ -101,6 +101,9 @@ def heal(student,teacher,train_rows,evaluation,output,*,run,microbatch=1,chunk=1
     if world>1: torch.distributed.barrier()
     if run.lr is None or len(train_rows)!=run.steps*global_sequences:
         raise ValueError('Resolved LR and exact run prefix required')
+    if 'secondary' in evaluation and (not pre_values.get('secondary') or
+        any(pre_values.get(k) is None for k in ('parent_secondary','teacher_secondary'))):
+        raise ValueError('Secondary scoring requires matching unhealed/parent/teacher baselines')
     device=next(student.parameters()).device
     if any(p.dtype!=torch.float32 for p in student.parameters()): raise ValueError('FP32 student required')
     set_seed(0)
@@ -160,6 +163,13 @@ def heal(student,teacher,train_rows,evaluation,output,*,run,microbatch=1,chunk=1
         wallclock_h=elapsed/3600,gpu_hours=elapsed*world/3600,
         tokens_per_second=run.steps*global_sequences*train_rows.length/training_seconds,
         lr_updates=guard.lrs,log_history=history)
+    if 'secondary' in values:
+        result.update(val_secondary_parent=pre_values['parent_secondary'],
+            val_secondary_teacher=pre_values['teacher_secondary'],
+            val_secondary_pre=pre_values['secondary']['loss'],
+            val_secondary_post=values['secondary']['loss'],
+            delta_secondary_pre=pre_values['secondary']['loss']-pre_values['parent_secondary'],
+            delta_secondary_post=values['secondary']['loss']-pre_values['parent_secondary'])
     if rank==0:
         write_json(root/'order.json',traces); write_json(root/'result.json',result)
     return result

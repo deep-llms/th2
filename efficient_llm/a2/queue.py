@@ -38,6 +38,8 @@ def execute_phase(*,phase,root,launcher,common,pre,estimated,spent_seconds):
             raise ValueError('Parent and teacher baselines have different provenance')
         values=dict(baseline['sets'][run.set],parent_final=baseline['parent']['final']['loss'],
                     teacher_final=pre[f'{run.dataset}/{run.teacher}']['parent']['final']['loss'],
+                    parent_secondary=baseline['parent'].get('secondary',{}).get('loss'),
+                    teacher_secondary=pre[f'{run.dataset}/{run.teacher}']['parent'].get('secondary',{}).get('loss'),
                     provenance=baseline.get('provenance'),sets_sha256=baseline.get('sets_sha256'),
                     parent=run.parent,teacher=run.teacher)
         write_json(prefile,values)
@@ -50,10 +52,15 @@ def execute_phase(*,phase,root,launcher,common,pre,estimated,spent_seconds):
         result_path=folder/'result.json'
         if not result_path.is_file():raise RuntimeError(f'No terminal artifact: {run.run_id}, exit={child.returncode}')
         result=json.loads(result_path.read_text())
-        if result['run_id']!=run.run_id:raise ValueError('Wrong run receipt')
+        if any(result.get(k)!=v for k,v in run.record().items()) or result.get('rerun_of')!=rerun_of:
+            raise ValueError('Wrong run receipt or retry identity')
+        if result.get('provenance')!=baseline.get('provenance'):
+            raise ValueError('Run receipt provenance differs from its baseline')
         if child.returncode and not (result.get('diverged') and result.get('status')=='failed'):
             raise RuntimeError('Training failed outside the registered divergence rule')
         if result['status'] not in ('complete','failed'):raise ValueError('Nonterminal result')
+        if result['status']=='failed' and not result.get('diverged'):
+            raise RuntimeError('Non-divergence failure cannot be accepted as completed')
         rows.append(result)
         with (root/'runs.jsonl').open('a') as records:records.write(json.dumps(result,allow_nan=False)+'\n')
         return result

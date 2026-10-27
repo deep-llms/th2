@@ -14,7 +14,7 @@ def selected_lrs(rows):
     return result
 
 
-def report(rows,parents):
+def report(rows,parents,*,include_secondary=True):
     """parents keyed 'dataset/parent', with final loss; failed required rows -> None."""
     ids=[r['run_id'] for r in rows]
     if len(ids)!=len(set(ids)): raise ValueError('Duplicate run results')
@@ -38,8 +38,13 @@ def report(rows,parents):
         return r
     def val(ds,arm,s,budget,key='val_post'):
         r=effective(ds,arm,s,budget)
-        return r[key] if r and math.isfinite(r[key]) else None
+        return r[key] if r and r.get(key) is not None and math.isfinite(r[key]) else None
     def diff(a,b):return a-b if a is not None and b is not None else None
+    def descriptive(values):
+        defined=[v for v in values if v is not None and math.isfinite(v)]
+        return dict(mean=statistics.mean(defined) if defined else None,
+                    defined=len(defined),total=len(values),
+                    negative=sum(v<0 for v in defined),positive=sum(v>0 for v in defined))
     def length(early,late):
         contrasts=lambda sets,budget,key: {d:[diff(val(d,late,s,budget,key),val(d,early,s,budget,key)) for s in sets] for d in DATASETS}
         main=contrasts(('S1','S2'),'0.2B','delta_post')
@@ -74,14 +79,42 @@ def report(rows,parents):
             annealing_gain_below_002=gain is not None and gain<.02,
             nonpositive_stable_gain=stable_gain is not None and stable_gain<=0,
             lr_history='documented by WSD schedule/iteration; consult separate logged-LR receipt if available')
-    return dict(T15=t15,phase0A=a,phase0B_length=b,phase0B_lr=dict(lr,contrasts=contrasts,short_A=short_a,
-            grid_A_init=grid_gap),nem_healing_curves=curves,comparison_tables=tables,T14_differences=noise,
+    result=dict(T15=t15,phase0A=a,phase0B_length=b,phase0B_lr=dict(lr,contrasts=contrasts,short_A=short_a,
+            grid_A_init=grid_gap,
+            descriptive={key:descriptive([item[key] for item in contrasts]) for key in ('A_teach','A')},
+            short_A_descriptive=descriptive(short_a),
+            X72_P300_same_lr={d:(chosen[d,'X72']==chosen[d,'P300'] if chosen.get((d,'X72')) is not None
+                and chosen.get((d,'P300')) is not None else None) for d in DATASETS}),
+        nem_healing_curves=curves,comparison_tables=tables,T14_differences=noise,
         chosen_lrs={f'{d}/{arm}':v for (d,arm),v in chosen.items()},
         annealing_gain={d:diff(parents.get(f'{d}/S72',{}).get('val'),parents.get(f'{d}/P300',{}).get('val')) for d in DATASETS},
         descriptive_slope_difference=(a['E']/math.log(1000/300)-b['E']/math.log(776.2/297.3))
             if a['E'] is not None and b['E'] is not None else None,
         scope='Screening only; dependent contrasts, public checkpoint/teacher/recipe confounds. GO is not a novelty claim.',
         run_count=len(rows),failed=[r['run_id'] for r in rows if r.get('diverged') or r['status']!='complete'])
+    result['parent_length_gap']={d:diff(parents.get(f'{d}/P1T',{}).get('val'),
+                                      parents.get(f'{d}/P300',{}).get('val')) for d in DATASETS}
+    result['log_length_effects']=dict(annealed=a['E']/math.log(1000/300) if a['E'] is not None else None,
+                                    stable=b['E']/math.log(776.2/297.3) if b['E'] is not None else None)
+    if include_secondary:
+        # Keep tuning losses, selected LRs and original divergence decisions.
+        # Secondary results only score the SAME effective runs; never reselect.
+        secondary_rows=[]
+        for row in rows:
+            projected=dict(row)
+            for name in ('val_post','delta_pre','delta_post'):
+                projected[name]=row.get(name.replace('_','_secondary_',1))
+            secondary_rows.append(projected)
+        secondary_parents={k:dict(v,val=v.get('secondary',{}).get('loss')) for k,v in parents.items()}
+        secondary=report(secondary_rows,secondary_parents,include_secondary=False)
+        def quantities(item):
+            return {k:v for k,v in item.items() if k not in ('label','clauses','stop_reason')}
+        result['secondary']=dict(note='Descriptive only; no decision label, LR selection or divergence test.',
+            phase0A=quantities(secondary['phase0A']),phase0B_length=quantities(secondary['phase0B_length']),
+            phase0B_lr=quantities(secondary['phase0B_lr']),
+            parent_length_gap=secondary['parent_length_gap'],comparison_tables=secondary['comparison_tables'],
+            nem_healing_curves=secondary['nem_healing_curves'],T14_differences=secondary['T14_differences'])
+    return result
 
 
 def estimate_workload(costs):

@@ -16,6 +16,21 @@ from efficient_llm.a2.data import write_json
 def digest(data):return hashlib.sha256(data).hexdigest()
 
 
+def branch_identity(config,main_config,*,parent,hashes,annealed72000_hash):
+    """T3 failure invalidates this branch, never the annealed pair or its sibling."""
+    normalized=lambda c:{k:v for k,v in c.items() if k not in ('_name_or_path','transformers_version')}
+    reasons=[]
+    if normalized(config)!=normalized(main_config):reasons.append('branch config differs')
+    name=config.get('_name_or_path',''); main=main_config.get('_name_or_path','')
+    step={'S72':'0072000','S188':'0188000'}[parent]
+    if name.rsplit('/hf/',1)[0]!=main.rsplit('/hf/',1)[0] or not name.endswith('iter_'+step):
+        reasons.append('branch run identity mismatch')
+    if any(hashes[parent]==value for p,value in hashes.items() if p!=parent):
+        reasons.append('duplicate parent weights')
+    if parent=='S72' and hashes[parent]==annealed72000_hash:reasons.append('wrong S72 branch')
+    return dict(passed=not reasons,reasons=reasons)
+
+
 def build(root):
     api=HfApi(); infos={}; bytes_cache={}
     def info(repo,revision):
@@ -59,16 +74,14 @@ def build(root):
         trunk={p:dict(commit=info(refs[p]['repo'],'iter_0058000').sha,
                      sha256=weight_hash(refs[p]['repo'],'iter_0058000')) for p in ('P300','P1T')}
         if trunk['P300']['sha256']!=trunk['P1T']['sha256']:raise ValueError('T2 shared trunk mismatch')
-        hashes=[assets[f'{ds}/{p}']['files']['model.safetensors'] for p in PARENTS]
-        if len(set(hashes))!=4:raise ValueError('T3 duplicate parent weights')
+        hashes={p:assets[f'{ds}/{p}']['files']['model.safetensors'] for p in PARENTS}
+        if hashes['P300']==hashes['P1T']:raise ValueError('T2 identical annealed parent weights')
         branch300=weight_hash(refs['P300']['repo'],'iter_0072000')
-        if hashes[2]==branch300:raise ValueError('T3 wrong S72 branch')
-        for p,step in (('S72','0072000'),('S188','0188000')):
-            if normalized(configs[p],True)!=normalized(configs['P1T'],True):raise ValueError('T3 branch config differs')
-            name=configs[p]['_name_or_path']; main_name=configs['P1T']['_name_or_path']
-            if name.rsplit('/hf/',1)[0]!=main_name.rsplit('/hf/',1)[0] or not name.endswith('iter_'+step):
-                raise ValueError('T3 branch run identity mismatch')
-        tests[ds]=dict(T2=True,T3=True,trunk=trunk,annealed_step72000_sha256=branch300,
+        branches={p:branch_identity(configs[p],configs['P1T'],parent=p,hashes=hashes,
+                                   annealed72000_hash=branch300) for p in ('S72','S188')}
+        tests[ds]=dict(T2=True,T3=branches,trunk=trunk,
+                       annealed_step72000_commit=info(refs['P300']['repo'],'iter_0072000').sha,
+                       annealed_step72000_sha256=branch300,
                        run_names={p:c['_name_or_path'] for p,c in configs.items()},
                        tokenizer_files=code_tokens['P1T'])
     return assets,tests
@@ -83,7 +96,8 @@ def main():
     assets,tests=build(args.node_asset_root)
     args.output.mkdir(parents=True)
     write_json(args.output/'assets.json',assets)
-    write_json(args.output/'identity_metadata.json',dict(status='passed',tests=tests,
+    write_json(args.output/'identity_metadata.json',dict(status='passed' if all(
+        branch['passed'] for t in tests.values() for branch in t['T3'].values()) else 'partial',tests=tests,
         note='Metadata only. Does not claim downloaded weight hashes/runtime correctness.'))
 
 if __name__=='__main__':main()

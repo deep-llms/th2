@@ -49,13 +49,16 @@ class TrainerTests(unittest.TestCase):
         rows=Rows(3)
         pre=score(student,rows); parent=score(teacher,rows)['loss']
         with tempfile.TemporaryDirectory() as d:
-            result=heal(student,teacher,Rows(96),dict(final=rows,tuning=rows,small=rows),Path(d)/'run',
+            result=heal(student,teacher,Rows(96),dict(final=rows,tuning=rows,small=rows,secondary=rows),Path(d)/'run',
                 run=Fixture(),microbatch=2,chunk=3,estimated_seconds=60,provenance={'fixture':True},
-                pre_values=dict(final=pre,tuning=pre,parent_final=parent,teacher_final=parent),global_sequences=8)
+                pre_values=dict(final=pre,tuning=pre,secondary=pre,parent_final=parent,teacher_final=parent,
+                                parent_secondary=parent,teacher_secondary=parent),global_sequences=8)
             self.assertEqual(result['status'],'complete')
             self.assertEqual(result['roundtrip_difference'],0)
             self.assertEqual(result['coverage']['examples'],96)
             self.assertTrue((Path(d)/'run/final/model.safetensors').is_file())
+            self.assertEqual(result['val_secondary_post'],result['val_post'])
+            self.assertEqual(result['delta_secondary_post'],result['delta_post'])
 
 
     def test_nonfinite_runtime_estimates_refused(self):
