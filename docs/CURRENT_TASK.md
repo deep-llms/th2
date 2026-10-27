@@ -1,5 +1,31 @@
 # Current task
 
+## Initial actual preflight COMPLETE — 28 October 2026 SGT
+
+Fresh healthc3fe89a at07:46:31SGT confirms successful terminal artifacts:
+T8completed07:39:03; DCLM/P300 survey completed07:43:24 in261.18seconds;
+whole two-job queue322seconds. Supervisor burn handoff verified07:44:30 and
+independently still healthy07:46:31:8workers638429–638436, guard released,
+advancing collective cycles140→150 /155.45→166.55GiB per rank. Reverify identities
+before any later reclaim. New predecessor burn script is
+`/mnt/local/_outputs/deep-llms_th2/6y3o-a2-initial-preflight-20261028-a01/source/resources/llm_pretrain_burn.py`.
+
+Actual parent T1precision passes: BF16-AMP small loss2.723300243 vs fullFP32
+2.723201842, gap0.000098401nats; final2.737793032. Other-theta loss2.844251513.
+Position-bucket loss not monotonically decreasing is a diagnostic flag only,
+never a parent exclusion. No scientific healing arm launched. Remaining11parent
+surveys, frozenS2 selection, numerical/removal/roundtrip gates, unhealed baselines
+and whole-workload cost report still required. Initial launcher does NOT queue
+those automatically. Measured representative survey4.35minutes suggests about
+48minutes for11similar surveys alone; other checks/scoring/load/save add time.
+Do not claim a complete all-parent preflight or a fixed pilot ETA from this.
+
+SHA-verified final receipts: results/a2_preflight_20261028/initial_complete_0746.json
+anddclm_P300_survey.json. Full local artifactstemp/a2_actual_health02; raw logSHA
+138b6903444cac33cf9ce7d7b58c5cbbdc55d063c7eb1ea7037dfcfc109cdb37.
+Controller download session reportedENDED at07:43; not yet independently verified
+all54model files, so do not treat it as full asset acceptance. commands.sh#0.
+
 ## Actual B200 preflight running — 28 October 2026 SGT
 
 User requests the real run. Execute the spec-required actual-parent preflight,

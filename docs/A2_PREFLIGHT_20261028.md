@@ -1,10 +1,20 @@
 # A2 preflight — 28 October 2026 (Singapore time)
 
-Status at **07:41 SGT**: actual-parent GPU preflight is running on all eight
-B200s. The real-workload12-update T8 passed; DCLM/P300 survey is running.
-Data preparation completed07:11SGT. At07:32,50/54model files had passed SHA
-checks, with only Nemotron S72/S188 pending; the current job uses verified
-DCLM/P300 only. **No scientific healing arm has started.**
+Status at **07:46 SGT**: the initial representative preflight **completed at
+07:43:24SGT**. T8 and DCLM/P300 survey exited successfully. Communicating burns
+were restored/verified07:44:30 and independently healthy07:46:31; guard released.
+**This is not completion of all-parent preflight. No healing arm has started.**
+
+The survey took261.18seconds (4.35minutes). Its T1precision comparison passes:
+BF16-AMP small loss2.723300243 vs fullFP32 2.723201842, gap0.000098401nats.
+Final validation loss2.737793032; teacherBF16 small2.723368261; other-theta
+small2.844251513. Position buckets are not monotonically decreasing: record the
+T9diagnostic flag, do not exclude the parent. [Survey](results/a2_preflight_20261028/dclm_P300_survey.json),
+[terminal/burn receipt](results/a2_preflight_20261028/initial_complete_0746.json).
+
+Eleven remaining surveys would take roughly48minutes at this measured rate.
+Numerical tests, selection and unhealed scoring add time; there is no fixed
+completion time for the full preflight yet, and those stages are not queued.
 
 ## Actual GPU gate
 
