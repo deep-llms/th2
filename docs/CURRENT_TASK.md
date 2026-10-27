@@ -1,5 +1,27 @@
 # Current task
 
+## Authorized: downstream screen of long-recovery A/B, 28 October SGT
+
+User requested downstream evaluation of the completed dense A / uniform25 pair.
+Plan [KV_DOWNSTREAM_20261028.md](KV_DOWNSTREAM_20261028.md). Nine complete English
+zero-shot tasks, seed42, context1024, native SDPA/BF16 weights; eight concurrent
+single-GPU workers. No training. Reuse existing pinned benchmark files and
+canonical lm-eval0.4.13 scoring. CPU adapter/task/collector checks pass; actual
+GPU adapter and eight-example/task smoke gate the full evaluation.
+
+Read-only preflight `be59b1e` passed01:00:56SGT: both final checkpoints at20,752,
+all27benchmark files verified, eight known communicating burn workers present.
+Use existing eval env (torch2.14.1/transformers5.9.0/lm-eval0.4.13); train env
+lacks lm-eval, so do not modify it. Final folders contain weights/config only;
+explicitly use the original hash-checked model tokenizer. Preflight archive
+`docs/results/kv_downstream_20261028/preflight.json`.
+
+Submitting `6y3o-efficient-kv-downstream-20261028-a01`, session
+`efficient_kv_downstream_20261028_a01`: adapter gate -> smoke -> full, automatic
+verified communicating burns afterward. No model/training/runtime changes.
+Await launch receipt; never repush executable commands unchanged.
+No new timer or agent. Previous research timer remains stopped.
+
 ## Complete: 1.36B-token dense/uniform25 pair, 28 October 2026 SGT
 
 Project objective [PROJECT_IDEA.md](PROJECT_IDEA.md); recipe
