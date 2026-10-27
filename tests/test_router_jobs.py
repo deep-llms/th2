@@ -7,6 +7,21 @@ from run_experiments import load_jobs
 
 
 class RouterJobTests(unittest.TestCase):
+    def test_qkv_queue_smoke_and_one_fit(self):
+        from scripts.launch_group_diagnostic import kv_qkv_jobs_for
+        result=kv_qkv_jobs_for('/model','/recovery/probe','/accelerate.yaml',29721,
+            '/recovery','/parent','/placement')
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'jobs.json';path.write_text(json.dumps(result));load_jobs(path)
+        self.assertEqual(len(result['jobs']),3)
+        for job in result['jobs'][:2]:
+            self.assertEqual(job['gpus'],list(range(8)))
+            self.assertIn('--qkv-only',job['argv'])
+            self.assertIn('/parent/supervised/run/A/final',job['argv'])
+        self.assertIn('--smoke',result['jobs'][0]['argv'])
+        self.assertIn('2048',result['jobs'][1]['argv'])
+        self.assertIn('/placement/supervised/run/uniform25/result.json',result['jobs'][2]['argv'])
+
     def test_placement_uses_same_dense_parent_and_existing_probe(self):
         from scripts.launch_group_diagnostic import kv_placement_jobs_for
         result=kv_placement_jobs_for('/model','/previous/probe','/accelerate.yaml',29721,'/previous','/parent')

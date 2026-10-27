@@ -231,6 +231,8 @@ def train(args, device, rank, world, tokens, manifest):
     layout = args.sharing_layout
     if layout is not None and args.initial_model is None:
         raise ValueError('Placement requires an explicit dense parent')
+    if args.qkv_only and layout is None:
+        raise ValueError('QKV-only recovery requires a sharing placement')
     if args.initial_model is not None:
         if args.parent_result is None or args.plan is not None or args.calibration != 0:
             raise ValueError('New recovery phase requires parent result, no calibration/plan')
@@ -286,6 +288,16 @@ def train(args, device, rank, world, tokens, manifest):
         # Keep the parent verification above, but report the converted step-zero
         # model in the learning curve. Conversion removes parameters before AdamW/DDP.
         callback.measure(model, 0)
+    adaptation = None
+    if args.qkv_only:
+        from efficient_llm.kv_placement import train_affected_qkv, parameter_fingerprint
+        affected = train_affected_qkv(model)
+        adaptation = dict(affected_layers=affected,
+            trainable_names=[name for name,p in model.named_parameters() if p.requires_grad],
+            trainable_parameters=sum(p.numel() for p in model.parameters() if p.requires_grad))
+        if rank == 0:
+            adaptation['frozen_before'] = parameter_fingerprint(model, trainable=False)
+            adaptation['trainable_before'] = parameter_fingerprint(model, trainable=True)
     config = TrainingArguments(output_dir=str(args.output/'trainer'), max_steps=args.steps,
         per_device_train_batch_size=args.batch, gradient_accumulation_steps=1,
         learning_rate=5e-5, lr_scheduler_type='cosine', warmup_steps=max(1,round(.05*args.steps)),
@@ -306,6 +318,16 @@ def train(args, device, rank, world, tokens, manifest):
         raise ValueError('Recovery ended at wrong step')
     if any(p.requires_grad or p.grad is not None for p in teacher.parameters()):
         raise ValueError('Teacher received gradients')
+    if adaptation is not None:
+        if any(p.grad is not None for p in model.parameters() if not p.requires_grad):
+            raise ValueError('Frozen student parameter received a gradient')
+        if rank == 0:
+            adaptation['frozen_after'] = parameter_fingerprint(model, trainable=False)
+            adaptation['trainable_after'] = parameter_fingerprint(model, trainable=True)
+            if adaptation['frozen_before'] != adaptation['frozen_after']:
+                raise ValueError('Frozen student weights changed')
+            if adaptation['trainable_before'] == adaptation['trainable_after']:
+                raise ValueError('QKV adaptation did not update parameters')
     order = [None] * world
     if world > 1: dist.all_gather_object(order, trainer.seen)
     else: order[0] = trainer.seen
@@ -346,6 +368,7 @@ def train(args, device, rank, world, tokens, manifest):
         post_recovery_sensitivity=after_sensitivity, inference_validation=inference,
         phase='placement_conversion' if layout else 'new_recovery' if parent else 'initial_conversion',
         sharing_layout=layout,
+        trainable_scope='affected_qkv' if args.qkv_only else 'all', adaptation=adaptation,
         initial_model_files=parent_files, parent_result_sha256=sha256(args.parent_result) if parent else None,
         parent_steps=parent['steps'] if parent else 0, initial_max_nll_difference=initial_difference,
         optimizer_and_schedule_reset=parent is not None)
@@ -447,6 +470,7 @@ def main():
     p.add_argument('--eval-every', type=int, default=0)
     p.add_argument('--inference-eval', action='store_true')
     p.add_argument('--sharing-layout', choices=['full50','uniform25','upper25'])
+    p.add_argument('--qkv-only', action='store_true')
     args = p.parse_args()
     if args.output is None or args.output.exists(): raise ValueError('Require fresh output')
     if args.mode == 'summarize':

@@ -1,0 +1,168 @@
+{
+  "status": "passed",
+  "errors": {
+    "fp32_logits_relative_l2": 9.970797691494226e-05,
+    "fp32_gradient_relative_l2": 0.00031286710885065786,
+    "bf16_logits_relative_l2": 0.2728758454322815,
+    "bf16_gradient_relative_l2": 0.7571350465927632,
+    "bf16_same_kernel_logits_relative_l2": 0.0,
+    "bf16_same_kernel_gradient_relative_l2": 6.818543534283476e-09,
+    "cached_fp32_max_abs": 0.0016623735427856445
+  },
+  "attention": [
+    {
+      "layer": 0,
+      "output_relative_l2": 0.0009038467542268336,
+      "gradient_relative_l2": 0.012629155069589615
+    },
+    {
+      "layer": 1,
+      "output_relative_l2": 0.0007615021895617247,
+      "gradient_relative_l2": 0.003026930382475257
+    },
+    {
+      "layer": 2,
+      "output_relative_l2": 0.0013041747733950615,
+      "gradient_relative_l2": 0.004157484043389559
+    },
+    {
+      "layer": 3,
+      "output_relative_l2": 0.0010805989149957895,
+      "gradient_relative_l2": 0.004092060029506683
+    },
+    {
+      "layer": 4,
+      "output_relative_l2": 0.0018571370746940374,
+      "gradient_relative_l2": 0.0032598853576928377
+    },
+    {
+      "layer": 5,
+      "output_relative_l2": 0.0010803783079609275,
+      "gradient_relative_l2": 0.0037155533209443092
+    },
+    {
+      "layer": 6,
+      "output_relative_l2": 0.001519936602562666,
+      "gradient_relative_l2": 0.0035018075723201036
+    },
+    {
+      "layer": 7,
+      "output_relative_l2": 0.0011673762928694487,
+      "gradient_relative_l2": 0.004132785368710756
+    },
+    {
+      "layer": 8,
+      "output_relative_l2": 0.0015163692878559232,
+      "gradient_relative_l2": 0.002270496217533946
+    },
+    {
+      "layer": 9,
+      "output_relative_l2": 0.0013665658188983798,
+      "gradient_relative_l2": 0.002334172837436199
+    },
+    {
+      "layer": 10,
+      "output_relative_l2": 0.0016493709990754724,
+      "gradient_relative_l2": 0.002437824383378029
+    },
+    {
+      "layer": 11,
+      "output_relative_l2": 0.0013805535854771733,
+      "gradient_relative_l2": 0.0029653373640030622
+    },
+    {
+      "layer": 12,
+      "output_relative_l2": 0.0017078531673178077,
+      "gradient_relative_l2": 0.002381932456046343
+    },
+    {
+      "layer": 13,
+      "output_relative_l2": 0.0017663704929873347,
+      "gradient_relative_l2": 0.0028072078712284565
+    },
+    {
+      "layer": 14,
+      "output_relative_l2": 0.0015147135127335787,
+      "gradient_relative_l2": 0.0025994591414928436
+    },
+    {
+      "layer": 15,
+      "output_relative_l2": 0.0016142328968271613,
+      "gradient_relative_l2": 0.0027046489994972944
+    },
+    {
+      "layer": 16,
+      "output_relative_l2": 0.001588795450516045,
+      "gradient_relative_l2": 0.0025393387768417597
+    },
+    {
+      "layer": 17,
+      "output_relative_l2": 0.001254928414709866,
+      "gradient_relative_l2": 0.0037543184589594603
+    },
+    {
+      "layer": 18,
+      "output_relative_l2": 0.0018286537379026413,
+      "gradient_relative_l2": 0.0024764493573457003
+    },
+    {
+      "layer": 19,
+      "output_relative_l2": 0.0014104311121627688,
+      "gradient_relative_l2": 0.004110520239919424
+    },
+    {
+      "layer": 20,
+      "output_relative_l2": 0.0018491065129637718,
+      "gradient_relative_l2": 0.0030903364531695843
+    },
+    {
+      "layer": 21,
+      "output_relative_l2": 0.0014198569115251303,
+      "gradient_relative_l2": 0.004674780182540417
+    },
+    {
+      "layer": 22,
+      "output_relative_l2": 0.001664061564952135,
+      "gradient_relative_l2": 0.0018556491704657674
+    },
+    {
+      "layer": 23,
+      "output_relative_l2": 0.0014093158533796668,
+      "gradient_relative_l2": 0.003474357770755887
+    },
+    {
+      "layer": 24,
+      "output_relative_l2": 0.00187428027857095,
+      "gradient_relative_l2": 0.003179468447342515
+    },
+    {
+      "layer": 25,
+      "output_relative_l2": 0.0012580191250890493,
+      "gradient_relative_l2": 0.004592220298945904
+    },
+    {
+      "layer": 26,
+      "output_relative_l2": 0.0015548260416835546,
+      "gradient_relative_l2": 0.00262015825137496
+    },
+    {
+      "layer": 27,
+      "output_relative_l2": 0.001177437836304307,
+      "gradient_relative_l2": 0.004230009391903877
+    }
+  ],
+  "cross_kernel_bf16_full_model_accepted": false,
+  "backend": "native_sdpa",
+  "active_kv_layers": 14,
+  "cache_bytes": 2752512,
+  "parameters": 566688000,
+  "model_files": {
+    "config.json": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59",
+    "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+    "model.safetensors": "cd2a512003e2f9f3cd3c32a9c3573f820bb28c940f73c57b1ddaa983d9223eba",
+    "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+    "tokenizer_config.json": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+    "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+  },
+  "sharing_layout": "full50"
+}

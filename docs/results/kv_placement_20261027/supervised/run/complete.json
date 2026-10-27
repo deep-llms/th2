@@ -1,0 +1,127 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-27T00:01:07.917846+00:00",
+  "jobs": [
+    {
+      "name": "placement-gate-full50",
+      "started_at": "2026-10-27T00:01:07.918218+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 12.934843133203685,
+      "artifacts": [
+        {
+          "path": "gate-full50.json",
+          "sha256": "ec280801c5e05c466859740d3ece5b3684b90cd8b62b1f8c96762917faf37bb0",
+          "bytes": 4952
+        }
+      ],
+      "finished_at": "2026-10-27T00:01:21.426135+00:00"
+    },
+    {
+      "name": "placement-gate-uniform25",
+      "started_at": "2026-10-27T00:01:21.426179+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 11.528187755960971,
+      "artifacts": [
+        {
+          "path": "gate-uniform25.json",
+          "sha256": "8302d74478bbc0dc8692dfebc240c740eb6505a2155ab3bedf217843b8c4c627",
+          "bytes": 4969
+        }
+      ],
+      "finished_at": "2026-10-27T00:01:33.490453+00:00"
+    },
+    {
+      "name": "placement-gate-upper25",
+      "started_at": "2026-10-27T00:01:33.490498+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 12.029781167395413,
+      "artifacts": [
+        {
+          "path": "gate-upper25.json",
+          "sha256": "b631c1cb862723b49efcc94a2941d89b48de08d68a400872c326e1677dcb1b51",
+          "bytes": 4950
+        }
+      ],
+      "finished_at": "2026-10-27T00:01:46.039638+00:00"
+    },
+    {
+      "name": "placement-smoke",
+      "started_at": "2026-10-27T00:01:46.039682+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 47.28251217585057,
+      "artifacts": [
+        {
+          "path": "smoke/result.json",
+          "sha256": "2a7e8d09a10a2bd601a6982c6035b6113c0ba1ba5b54a1580cd5e1d191b61715",
+          "bytes": 20456
+        }
+      ],
+      "finished_at": "2026-10-27T00:02:33.819454+00:00"
+    },
+    {
+      "name": "placement-upper25",
+      "started_at": "2026-10-27T00:02:33.819498+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 544.265015067067,
+      "artifacts": [
+        {
+          "path": "upper25/result.json",
+          "sha256": "586caf21717c5fd41fbe3cf341161fc9d21abddc151b8964aa6416fed007c9fc",
+          "bytes": 77638
+        }
+      ],
+      "finished_at": "2026-10-27T00:11:38.584823+00:00"
+    },
+    {
+      "name": "placement-uniform25",
+      "started_at": "2026-10-27T00:11:38.584869+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 544.2018629098311,
+      "artifacts": [
+        {
+          "path": "uniform25/result.json",
+          "sha256": "8274527bcd397291327bccadfe9f431712f5aa50ec8c3a2291bcf893f33286fa",
+          "bytes": 77727
+        }
+      ],
+      "finished_at": "2026-10-27T00:20:43.331831+00:00"
+    },
+    {
+      "name": "placement-full50",
+      "started_at": "2026-10-27T00:20:43.331873+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 528.3026657751761,
+      "artifacts": [
+        {
+          "path": "full50/result.json",
+          "sha256": "8f7cf23cc9f3b86e0f78ff46bd1219aee5b85532beeb7dff427d260229cd4237",
+          "bytes": 77814
+        }
+      ],
+      "finished_at": "2026-10-27T00:29:32.169333+00:00"
+    },
+    {
+      "name": "placement-summary",
+      "started_at": "2026-10-27T00:29:32.169374+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 3.96974484808743,
+      "artifacts": [
+        {
+          "path": "summary.json",
+          "sha256": "89954a132c04b660e03c35f2fb4f78113cbba66eb7f91be6de6b72715f77eb10",
+          "bytes": 1864
+        }
+      ],
+      "finished_at": "2026-10-27T00:29:36.140167+00:00"
+    }
+  ],
+  "finished_at": "2026-10-27T00:29:36.140206+00:00"
+}

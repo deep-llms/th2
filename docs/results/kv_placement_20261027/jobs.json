@@ -1,0 +1,366 @@
+{
+  "jobs": [
+    {
+      "name": "placement-gate-full50",
+      "gpus": [
+        0
+      ],
+      "timeout_seconds": 900,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_mlp_check",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--sharing-layout",
+        "full50",
+        "--output",
+        "{run_dir}/gate-full50.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "gate-full50.json",
+          "json_equals": {
+            "status": "passed",
+            "sharing_layout": "full50"
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-gate-uniform25",
+      "gpus": [
+        0
+      ],
+      "timeout_seconds": 900,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_mlp_check",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--sharing-layout",
+        "uniform25",
+        "--output",
+        "{run_dir}/gate-uniform25.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "gate-uniform25.json",
+          "json_equals": {
+            "status": "passed",
+            "sharing_layout": "uniform25"
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-gate-upper25",
+      "gpus": [
+        0
+      ],
+      "timeout_seconds": 900,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_mlp_check",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--sharing-layout",
+        "upper25",
+        "--output",
+        "{run_dir}/gate-upper25.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "gate-upper25.json",
+          "json_equals": {
+            "status": "passed",
+            "sharing_layout": "upper25"
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-smoke",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "48601",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--sharing-layout",
+        "upper25",
+        "--steps",
+        "8",
+        "--batch",
+        "8",
+        "--eval-every",
+        "8",
+        "--output",
+        "{run_dir}/smoke",
+        "--smoke"
+      ],
+      "required_outputs": [
+        {
+          "path": "smoke/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 8,
+            "smoke": true,
+            "phase": "placement_conversion",
+            "sharing_layout": "upper25",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-upper25",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "48601",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--sharing-layout",
+        "upper25",
+        "--steps",
+        "2048",
+        "--batch",
+        "8",
+        "--eval-every",
+        "256",
+        "--output",
+        "{run_dir}/upper25",
+        "--inference-eval"
+      ],
+      "required_outputs": [
+        {
+          "path": "upper25/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 2048,
+            "smoke": false,
+            "phase": "placement_conversion",
+            "sharing_layout": "upper25",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-uniform25",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "48601",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--sharing-layout",
+        "uniform25",
+        "--steps",
+        "2048",
+        "--batch",
+        "8",
+        "--eval-every",
+        "256",
+        "--output",
+        "{run_dir}/uniform25",
+        "--inference-eval"
+      ],
+      "required_outputs": [
+        {
+          "path": "uniform25/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 2048,
+            "smoke": false,
+            "phase": "placement_conversion",
+            "sharing_layout": "uniform25",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-full50",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-placement-20261027-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "48601",
+        "--module",
+        "efficient_llm.kv_mlp_study",
+        "train",
+        "--model",
+        "/mnt/local/_models/deep-llms_th2/Qwen3-0.6B-Base_da87bfb6",
+        "--probe",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+        "--initial-model",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/final",
+        "--parent-result",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03/supervised/run/A/result.json",
+        "--calibration",
+        "0",
+        "--arm",
+        "B",
+        "--sharing-layout",
+        "full50",
+        "--steps",
+        "2048",
+        "--batch",
+        "8",
+        "--eval-every",
+        "256",
+        "--output",
+        "{run_dir}/full50",
+        "--inference-eval"
+      ],
+      "required_outputs": [
+        {
+          "path": "full50/result.json",
+          "json_equals": {
+            "status": "passed",
+            "world_size": 8,
+            "steps": 2048,
+            "smoke": false,
+            "phase": "placement_conversion",
+            "sharing_layout": "full50",
+            "optimizer_and_schedule_reset": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "placement-summary",
+      "timeout_seconds": 300,
+      "argv": [
+        "{python}",
+        "-m",
+        "efficient_llm.kv_placement",
+        "--runs",
+        "{run_dir}",
+        "--baseline",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/supervised/run/A/result.json",
+        "--output",
+        "{run_dir}/summary.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "summary.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        }
+      ]
+    }
+  ]
+}

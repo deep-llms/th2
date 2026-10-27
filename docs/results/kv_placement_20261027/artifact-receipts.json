@@ -1,0 +1,82 @@
+[
+  {
+    "path": "jobs.json",
+    "sha256": "c2a5bae6e447b611cf4df0c5cb8d6c4004018bb128d733582ec2800e96e031c6"
+  },
+  {
+    "path": "source-manifest.json",
+    "sha256": "df804d25ef6a198496e92e980922fb4516f2c248247b43ec162fb941309bd6a3"
+  },
+  {
+    "path": "input-identity.json",
+    "sha256": "87611d6956a4e5897147d52fefeedd95c23cff0b1f599bc89aee32ce1fd8b04c"
+  },
+  {
+    "path": "accelerate-env.log",
+    "sha256": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd"
+  },
+  {
+    "path": "supervised/supervisor.json",
+    "sha256": "394c569e1336818fc1210e215538df26b50f1c729f849de1f8b4617a5c0b3688"
+  },
+  {
+    "path": "supervised/burn-verified.json",
+    "sha256": "0c6a7aa4f5928dc946a95dbfde3435b49719442cb364b93cfa1cd92df98d6dee"
+  },
+  {
+    "path": "supervised/reclaim.json",
+    "sha256": "47fa76c0c360155222f8236f0a015ef06534284cdd22779266d5237050608c6a"
+  },
+  {
+    "path": "supervised/gpus-free-before-training.json",
+    "sha256": "3f0c74ea8bb70d5b5fdd32e919356e9ecbd703967919f2cb237593da6b5ae1a6"
+  },
+  {
+    "path": "supervised/run/complete.json",
+    "sha256": "f88e84452fa4210d235c8bb0a531f1701aea2a45f8ec0d05b2fc76eec4181c86"
+  },
+  {
+    "path": "supervised/run/summary.json",
+    "sha256": "89954a132c04b660e03c35f2fb4f78113cbba66eb7f91be6de6b72715f77eb10"
+  },
+  {
+    "path": "supervised/run/gate-full50.json",
+    "sha256": "ec280801c5e05c466859740d3ece5b3684b90cd8b62b1f8c96762917faf37bb0"
+  },
+  {
+    "path": "supervised/run/gate-uniform25.json",
+    "sha256": "8302d74478bbc0dc8692dfebc240c740eb6505a2155ab3bedf217843b8c4c627"
+  },
+  {
+    "path": "supervised/run/gate-upper25.json",
+    "sha256": "b631c1cb862723b49efcc94a2941d89b48de08d68a400872c326e1677dcb1b51"
+  },
+  {
+    "path": "supervised/run/smoke/result.json",
+    "sha256": "2a7e8d09a10a2bd601a6982c6035b6113c0ba1ba5b54a1580cd5e1d191b61715"
+  },
+  {
+    "path": "supervised/run/upper25/result.json",
+    "sha256": "586caf21717c5fd41fbe3cf341161fc9d21abddc151b8964aa6416fed007c9fc"
+  },
+  {
+    "path": "supervised/run/uniform25/result.json",
+    "sha256": "8274527bcd397291327bccadfe9f431712f5aa50ec8c3a2291bcf893f33286fa"
+  },
+  {
+    "path": "supervised/run/full50/result.json",
+    "sha256": "8f7cf23cc9f3b86e0f78ff46bd1219aee5b85532beeb7dff427d260229cd4237"
+  },
+  {
+    "path": "supervised/run/upper25/validation.json",
+    "sha256": "ec49a17fd7a82c405580d5a67c63cf13de34a6f52e052839f5fef34fa2399cf6"
+  },
+  {
+    "path": "supervised/run/uniform25/validation.json",
+    "sha256": "fb29f99bcb3b9a5eed0854a3b2604f0c5c544c0c26851b9b87ede0f58af1b76e"
+  },
+  {
+    "path": "supervised/run/full50/validation.json",
+    "sha256": "196389a75e41e3d5c32b29330dbf75ed0411937da2cf771c91605a3c5587e8e9"
+  }
+]

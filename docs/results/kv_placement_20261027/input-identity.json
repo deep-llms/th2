@@ -1,0 +1,6 @@
+{
+  "probe": "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-recovery-20261027-a02/probe",
+  "probe_sha256": "adb7be00b0ca051dc95cdaa0cfd9fbe394b2ff029ff8eaacee833b60db4744ff",
+  "dense_parent": "/mnt/local/_outputs/deep-llms_th2/6y3o-efficient-kv-mlp-20261027-a03",
+  "baseline_result_sha256": "a386ef56a4fe5254ee5ba038071f7cd6adc3b2d2f684cfb0fc2a52f1b8f1cb96"
+}

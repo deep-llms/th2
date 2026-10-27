@@ -212,6 +212,31 @@ def kv_placement_jobs_for(model, probe, config, port, previous, dense_parent):
     return dict(jobs=jobs)
 
 
+def kv_qkv_jobs_for(model, probe, config, port, previous, dense_parent, placement):
+    parent=Path(dense_parent)/'supervised/run/A'
+    launch=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
+            '--main_process_port',str(port),'--module','efficient_llm.kv_mlp_study']
+    jobs=[]
+    for smoke in (True, False):
+        name='smoke' if smoke else 'qkv';steps=8 if smoke else 2048
+        jobs.append(dict(name='qkv-'+name,gpus=list(range(8)),timeout_seconds=7200,
+            argv=[*launch,'train','--model',str(model),'--probe',str(probe),
+                  '--initial-model',str(parent/'final'),'--parent-result',str(parent/'result.json'),
+                  '--calibration','0','--arm','B','--sharing-layout','uniform25','--qkv-only',
+                  '--steps',str(steps),'--batch','8','--eval-every',str(8 if smoke else 256),
+                  '--output','{run_dir}/'+name]+(['--smoke'] if smoke else ['--inference-eval']),
+            required_outputs=[dict(path=name+'/result.json',json_equals=dict(status='passed',world_size=8,
+                steps=steps,smoke=smoke,phase='placement_conversion',sharing_layout='uniform25',
+                trainable_scope='affected_qkv',optimizer_and_schedule_reset=True))]))
+    jobs.append(dict(name='qkv-summary',timeout_seconds=300,
+        argv=['{python}','-m','efficient_llm.kv_placement','--runs','{run_dir}',
+              '--baseline',str(Path(previous)/'supervised/run/A/result.json'),
+              '--control',str(Path(placement)/'supervised/run/uniform25/result.json'),
+              '--output','{run_dir}/summary.json'],
+        required_outputs=[dict(path='summary.json',json_equals=dict(status='passed',frozen_weights_unchanged=True))]))
+    return dict(jobs=jobs)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -220,10 +245,11 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--predecessor-burn-script", type=Path, required=True)
-    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp", "kv_mlp_quality", "kv_recovery", "kv_placement"], default="diagnostic")
+    parser.add_argument("--study", choices=["diagnostic", "router", "context", "deploy", "numerics", "research", "window", "kv_mlp", "kv_mlp_quality", "kv_recovery", "kv_placement", "kv_qkv"], default="diagnostic")
     parser.add_argument("--exclude-manifest", type=Path)
     parser.add_argument('--previous-run',type=Path)
     parser.add_argument('--dense-parent-run',type=Path)
+    parser.add_argument('--placement-run',type=Path)
     args = parser.parse_args()
     source = Path.cwd().resolve()
     if socket.gethostname() != args.host or args.output.exists():
@@ -236,7 +262,7 @@ def main():
         raise ValueError('Require 150 GiB free for retained recovery checkpoints')
     if args.study == 'kv_recovery' and shutil.disk_usage(args.output.parent).free < 200 * 1024**3:
         raise ValueError('Require 200 GiB free for all recovery checkpoints')
-    if args.study == 'kv_placement' and shutil.disk_usage(args.output.parent).free < 300 * 1024**3:
+    if args.study in ('kv_placement','kv_qkv') and shutil.disk_usage(args.output.parent).free < 300 * 1024**3:
         raise ValueError('Require 300 GiB free for retained placement checkpoints')
     if digest(args.predecessor_burn_script) != BURN_HASH:
         raise ValueError("Unknown predecessor burn")
@@ -246,7 +272,7 @@ def main():
     for session in (args.session, args.session+"_burn"):
         if subprocess.run(["tmux", "has-session", "-t", session], capture_output=True).returncode == 0:
             raise ValueError("Session already exists: " + session)
-    if args.study in ('kv_mlp_quality','kv_recovery','kv_placement'):
+    if args.study in ('kv_mlp_quality','kv_recovery','kv_placement','kv_qkv'):
         previous=args.previous_run
         if previous is None or previous.parent.resolve()!=args.output.parent.resolve():
             raise ValueError('Require a completed pilot under the authorized output root')
@@ -261,7 +287,7 @@ def main():
         if digest(previous/'probe/tokens.pt')!=probe['tokens_sha256']:
             raise ValueError('Prior validation tensors changed')
         identity=digest(previous/'probe/manifest.json')
-        for arm in ('AB' if args.study=='kv_placement' else 'ABCDEF'):
+        for arm in ('AB' if args.study in ('kv_placement','kv_qkv') else 'ABCDEF'):
             report=json.loads((previous/'supervised/run'/arm/'result.json').read_text())
             if report['status']!='passed' or report['probe_sha256']!=identity:
                 raise ValueError('Prior recovery arm/probe is incomplete or changed')
@@ -271,7 +297,7 @@ def main():
                 report=json.loads((parent/'result.json').read_text())
                 if report['steps']!=512 or report['smoke'] or not (parent/'final/model.safetensors').is_file():
                     raise ValueError('Require completed 512-step parent final weights')
-        if args.study=='kv_placement':
+        if args.study in ('kv_placement','kv_qkv'):
             parent=args.dense_parent_run
             if parent is None or parent.parent.resolve()!=args.output.parent.resolve():
                 raise ValueError('Require original dense parent run')
@@ -283,6 +309,28 @@ def main():
             for name,sha in baseline['initial_model_files'].items():
                 if digest(parent/'supervised/run/A/final'/name)!=sha:
                     raise ValueError('Dense parent weights/config changed: '+name)
+        if args.study=='kv_qkv':
+            placement=args.placement_run
+            if placement is None or placement.parent.resolve()!=args.output.parent.resolve():
+                raise ValueError('Require completed placement control run')
+            if (json.loads((placement/'supervised/run/complete.json').read_text())['status']!='ok'
+                or json.loads((placement/'supervised/supervisor.json').read_text())['training_status']!='ok'
+                or not json.loads((placement/'supervised/burn-verified.json').read_text())['collective_progress_verified']):
+                raise ValueError('Placement control/burn handoff incomplete')
+            if args.predecessor_burn_script.resolve()!=(placement/'source/resources/llm_pretrain_burn.py').resolve():
+                raise ValueError('Expected placement-owned predecessor burn')
+            old=json.loads((placement/'source-manifest.json').read_text())
+            if old['efficient_llm/kv_mlp.py']!=digest(source/'efficient_llm/kv_mlp.py'):
+                raise ValueError('Placement runtime changed')
+            result=json.loads((placement/'supervised/run/uniform25/result.json').read_text())
+            for key in ('probe_sha256','parent_result_sha256','initial_model_files','steps','sample_order_sha256_per_rank'):
+                if result[key]!=baseline[key]:raise ValueError('Placement control differs: '+key)
+            gate=json.loads((placement/'supervised/run/gate-uniform25.json').read_text())
+            if gate['status']!='passed' or gate['sharing_layout']!='uniform25':
+                raise ValueError('Missing numerical gate for unchanged architecture')
+            summary=json.loads((placement/'supervised/run/summary.json').read_text())
+            if summary['status']!='passed' or any(c['within_five_percent'] for c in summary['comparisons'].values()):
+                raise ValueError('QKV-only fallback requires all placement quality gates to fail')
     manifest = json.loads((source/"resources/joint_source_manifest.json").read_text())
     for relative, expected in manifest.items():
         path = (source/relative).resolve()
@@ -321,9 +369,9 @@ def main():
         prepare=[sys.executable,'-m','efficient_llm.context_deploy','prepare','--model',str(args.model),
             '--previous-run',str(args.previous_run),'--output',str(args.output/'inputs'),
             '--contract',str(frozen/'resources/context_fit_20261026.json')]
-    if args.study not in ('kv_mlp_quality','kv_placement'):
+    if args.study not in ('kv_mlp_quality','kv_placement','kv_qkv'):
         subprocess.run(prepare, cwd=frozen, env=env, check=True)
-    if args.study=='kv_placement':
+    if args.study in ('kv_placement','kv_qkv'):
         (args.output/'input-identity.json').write_text(json.dumps(dict(
             probe=str(args.previous_run/'probe'),probe_sha256=digest(args.previous_run/'probe/manifest.json'),
             dense_parent=str(args.dense_parent_run),
@@ -366,11 +414,12 @@ def main():
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0)); port = sock.getsockname()[1]
     jobs = args.output/"jobs.json"
-    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for,'kv_mlp_quality':kv_mlp_quality_jobs_for,'kv_recovery':kv_recovery_jobs_for,'kv_placement':kv_placement_jobs_for}[args.study]
+    factory = {'router':router_jobs_for,'context':context_jobs_for,'diagnostic':jobs_for,'deploy':deploy_jobs_for,'numerics':numerical_jobs_for,'research':research_jobs_for,'window':window_jobs_for,'kv_mlp':kv_mlp_jobs_for,'kv_mlp_quality':kv_mlp_quality_jobs_for,'kv_recovery':kv_recovery_jobs_for,'kv_placement':kv_placement_jobs_for,'kv_qkv':kv_qkv_jobs_for}[args.study]
     inputs = (args.previous_run if args.study=='kv_mlp_quality' else args.previous_run/'probe'
-              if args.study=='kv_placement' else args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe'))
+              if args.study in ('kv_placement','kv_qkv') else args.output/('inputs' if args.study in ('deploy','numerics','research','window') else 'probe'))
     extras=[args.previous_run] if args.study=='kv_recovery' else []
     if args.study=='kv_placement':extras=[args.previous_run,args.dense_parent_run]
+    if args.study=='kv_qkv':extras=[args.previous_run,args.dense_parent_run,args.placement_run]
     jobs.write_text(json.dumps(factory(args.model, inputs, config, port, *extras), indent=2)+"\n")
     # Validate the manifest before creating the independent supervisor session.
     from run_experiments import load_jobs

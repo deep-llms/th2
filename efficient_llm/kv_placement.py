@@ -1,5 +1,6 @@
 """Fixed sharing placement controls; use the unchanged shared-attention decoder."""
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -39,6 +40,34 @@ def apply_layout(model, layout):
     return model
 
 
+def train_affected_qkv(model):
+    """Freeze everything except Q/K/V in sharing producer/consumer pairs."""
+    sources = model.config.kv_sources
+    validate_map(sources, model.config.num_hidden_layers)
+    affected = {j for i, source in enumerate(sources) if source != i for j in (source, i)}
+    if not affected:
+        raise ValueError('QKV adaptation requires a shared model')
+    model.requires_grad_(False)
+    for i in sorted(affected):
+        attention = model.model.layers[i].self_attn
+        for name in ('q_proj', 'k_proj', 'v_proj'):
+            projection = getattr(attention, name)
+            if projection is not None:
+                projection.requires_grad_(True)
+    return sorted(affected)
+
+
+def parameter_fingerprint(model, *, trainable):
+    """Exact stored parameter bytes, including names/shapes; never alter weights."""
+    import torch
+    digest = hashlib.sha256()
+    for name, parameter in model.named_parameters():
+        if parameter.requires_grad == trainable:
+            digest.update(json.dumps([name, list(parameter.shape), str(parameter.dtype)]).encode())
+            digest.update(parameter.detach().contiguous().cpu().view(torch.uint8).numpy().tobytes())
+    return digest.hexdigest()
+
+
 def summarize(runs, baseline, output):
     a = json.loads(baseline.read_text())
     if a['status'] != 'passed' or a['arm'] != 'A' or a['smoke'] or a['phase'] != 'new_recovery':
@@ -74,12 +103,56 @@ def summarize(runs, baseline, output):
                      'Cache fractions are structural; serving speed and long-context quality unmeasured.']))
 
 
+def summarize_qkv(result, control, baseline, output):
+    q, c, a = (json.loads(p.read_text()) for p in (result, control, baseline))
+    if (q.get('trainable_scope') != 'affected_qkv' or c.get('trainable_scope', 'all') != 'all'
+            or q['sharing_layout'] != 'uniform25' or c['sharing_layout'] != 'uniform25'
+            or a['arm'] != 'A' or a['phase'] != 'new_recovery'):
+        raise ValueError('Require QKV-only uniform25, all-parameter control and dense baseline')
+    for r in (q, c, a):
+        if r['status'] != 'passed' or r['smoke']:
+            raise ValueError('Incomplete adaptation comparison')
+        for key in ['steps', 'world_size', 'input_tokens', 'sample_order_sha256_per_rank',
+                    'probe_sha256', 'parent_steps', 'parent_result_sha256', 'initial_model_files']:
+            if r[key] != a[key]:raise ValueError('Unmatched adaptation: '+key)
+        for key in ['learning_rate', 'lr_scheduler_type', 'warmup_steps', 'weight_decay',
+                    'max_grad_norm', 'per_device_train_batch_size', 'gradient_accumulation_steps',
+                    'seed', 'data_seed', 'bf16']:
+            if r['training_arguments'][key] != a['training_arguments'][key]:
+                raise ValueError('Unmatched adaptation recipe: '+key)
+    for key in ('kv_sources', 'mlp_widths', 'parameters', 'phase'):
+        if q[key] != c[key]:raise ValueError('Changed architecture/phase: '+key)
+    initial = [r['validation']['0']['per_document_nll'] for r in (q, c)]
+    if max(abs(x-y) for x,y in zip(*initial, strict=True)) > 1e-5:
+        raise ValueError('Conversion initial losses differ')
+    proof = q['adaptation']
+    if (proof['frozen_before'] != proof['frozen_after']
+            or proof['trainable_before'] == proof['trainable_after']):
+        raise ValueError('Invalid frozen/trainable weight proof')
+    comparisons = {}
+    x = q['inference_validation']
+    for name, ref in [('dense', a), ('all_parameters', c)]:
+        y = ref['inference_validation']
+        comparisons[name] = dict(ppl_ratio=x['ppl']/y['ppl'], paired=paired_summary(
+            x['per_document_nll'], y['per_document_nll']))
+    write(output, dict(status='passed', ppl=x['ppl'], comparisons=comparisons,
+        within_five_percent=comparisons['dense']['paired']['paired_document_bootstrap_95ci'][1] <= math.log(1.05),
+        trainable_parameters=proof['trainable_parameters'], training_seconds=q['training_seconds'],
+        frozen_weights_unchanged=True,
+        limitations=['One seed, reused development probe; not an independent confirmation.',
+                     'Only trainable parameter scope changes; not a reproduction of SwiftKV.']))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in ('runs', 'baseline', 'output'):p.add_argument('--'+name, type=Path, required=True)
+    p.add_argument('--control', type=Path)
     a = p.parse_args()
     if a.output.exists():raise ValueError('Require fresh summary output')
-    summarize(a.runs, a.baseline, a.output)
+    if a.control:
+        summarize_qkv(a.runs/'qkv/result.json', a.control, a.baseline, a.output)
+    else:
+        summarize(a.runs, a.baseline, a.output)
 
 
 if __name__ == '__main__':main()

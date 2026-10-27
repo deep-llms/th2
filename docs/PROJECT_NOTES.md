@@ -389,3 +389,24 @@ training jobs, leaving at most one; caps are not quotas. Actual GPU gates for
 all maps and 8-step 8-GPU smoke precede fits. Keep all checkpoints and prior
 outputs. Novelty is not established by partial sharing, which exists in prior
 work. See KV_PLACEMENT_PILOT_20261027.md and CURRENT_TASK for receipt/live state.
+
+
+## Placement outcome and final bounded control — 27 October 2026 SGT
+
+All three placement jobs completed 08:29:36 SGT; burns verified 08:30:46 and
+independently 09:11:42. Dense A / uniform25 / upper25 / full50 BF16 PPL:
+19.2416 / 20.4610 / 20.6189 / 22.6557. All fail the 5% screening gate; uniform
+beats upper placement at equal 75% KV cache. Exact data-order, parent, reload
+and runtime checks pass. See KV_PLACEMENT_RESULTS_20261027.md and its raw-byte
+SHA archive docs/results/kv_placement_20261027. No pruning sweep justified.
+
+Use the last authorized job for affected-Q/K/V-only adaptation of uniform25,
+from the same dense A-512, same 2048-step recipe/data/order. Freeze all other
+weights, verify their exact SHA unchanged and selected weights changed. Compare
+matched all-parameter uniform25 and dense A; do not compare against differently
+initialized historical B. Motivated by SwiftKV's restricted-tuning ablation,
+which uses different instruct models/metrics and is not proof of better PPL.
+See KV_QKV_RECOVERY_20261027.md. Six CPU and 58 infrastructure tests pass;
+new 8-step/8-GPU smoke gates the real fit. This brings submitted additional jobs
+to four of four. No fifth training job. Stop this branch if quality still fails;
+actual speed/cache/long-context evaluation is allowed only after quality passes.

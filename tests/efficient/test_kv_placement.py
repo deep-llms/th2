@@ -13,12 +13,42 @@ from transformers import DynamicCache
 from efficient_llm.kv_mlp import CompressedQwen, convert, load_compressed
 from efficient_llm.kv_mlp_check import reference, cache_bytes
 from efficient_llm.kv_mlp_study import score
-from efficient_llm.kv_placement import apply_layout, layout_sources, LAYOUTS, summarize
+from efficient_llm.kv_placement import (apply_layout, layout_sources, LAYOUTS, summarize,
+    train_affected_qkv, parameter_fingerprint, summarize_qkv)
 from efficient_llm.diagnostic_data import sha256
 from tests.efficient.test_kv_mlp import tiny
 
 
 class PlacementTests(unittest.TestCase):
+    def test_qkv_scope_preserves_forward_and_frozen_parameters(self):
+        config=tiny().config;config.num_hidden_layers=8;config.layer_types=['full_attention']*8
+        config.kv_sources=list(range(8));config.mlp_widths=[config.intermediate_size]*8
+        model=apply_layout(CompressedQwen._from_config(config,attn_implementation='sdpa'),'uniform25')
+        ids=torch.arange(1,19).reshape(2,9)%47
+        with torch.no_grad():expected=model(ids,use_cache=False).logits
+        self.assertEqual(train_affected_qkv(model),[2,3,6,7])
+        actual={n for n,p in model.named_parameters() if p.requires_grad}
+        names={f'model.layers.{i}.self_attn.{proj}.{suffix}'
+               for i in (2,3,6,7)
+               for proj in (('q_proj','k_proj','v_proj') if i%2==0 else ('q_proj',))
+               for suffix in ('weight','bias')}
+        self.assertEqual(actual,names)
+        frozen=parameter_fingerprint(model,trainable=False)
+        trained=parameter_fingerprint(model,trainable=True)
+        logits=model(ids,use_cache=False).logits
+        torch.testing.assert_close(logits,expected,rtol=0,atol=0)
+        logits.square().mean().backward()
+        for name,p in model.named_parameters():
+            if p.requires_grad:
+                self.assertIsNotNone(p.grad,name)
+                self.assertTrue(torch.isfinite(p.grad).all(),name)
+            else:self.assertIsNone(p.grad,name)
+        optimizer=torch.optim.AdamW((p for p in model.parameters() if p.requires_grad),lr=1e-3)
+        optimizer.step()
+        self.assertEqual(parameter_fingerprint(model,trainable=False),frozen)
+        self.assertNotEqual(parameter_fingerprint(model,trainable=True),trained)
+        with self.assertRaises(ValueError):train_affected_qkv(tiny())
+
     def test_layout_reference_gradients_cache_and_reload(self):
         config=tiny().config;config.num_hidden_layers=8;config.layer_types=['full_attention']*8
         config.kv_sources=list(range(8));config.mlp_widths=[config.intermediate_size]*8
@@ -97,7 +127,39 @@ class PlacementTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'Unmatched recovery recipe'):
                 summarize(root,baseline,root/'summary.json')
 
+    def test_qkv_summary_rejects_changed_frozen_weights(self):
+        import math
+        keys=['learning_rate','lr_scheduler_type','warmup_steps','weight_decay',
+              'max_grad_norm','per_device_train_batch_size','gradient_accumulation_steps',
+              'seed','data_seed','bf16']
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            a=dict(status='passed',arm='A',smoke=False,phase='new_recovery',steps=2048,
+                world_size=8,input_tokens=134217728,sample_order_sha256_per_rank=['same']*8,
+                probe_sha256='same',parent_steps=512,parent_result_sha256='parent',
+                initial_model_files={'weights':'same'},training_arguments=dict.fromkeys(keys,1),
+                inference_validation=dict(ppl=math.exp(3.),per_document_nll=[3.]*8))
+            c=deepcopy(a);c.update(arm='B',phase='placement_conversion',sharing_layout='uniform25',
+                parameters=1000,kv_sources=layout_sources(8,'uniform25'),mlp_widths=[32]*8,
+                validation={'0':{'per_document_nll':[4.]*8}})
+            q=deepcopy(c);q.update(trainable_scope='affected_qkv',training_seconds=1.,
+                adaptation=dict(trainable_parameters=100,frozen_before='same',frozen_after='same',
+                    trainable_before='old',trainable_after='new'))
+            for name,value in [('a',a),('c',c),('q',q)]:
+                (root/(name+'.json')).write_text(json.dumps(value))
+            summarize_qkv(root/'q.json',root/'c.json',root/'a.json',root/'summary.json')
+            self.assertTrue(json.loads((root/'summary.json').read_text())['frozen_weights_unchanged'])
+            q['adaptation']['frozen_after']='changed';(root/'q.json').write_text(json.dumps(q))
+            with self.assertRaisesRegex(ValueError,'weight proof'):
+                summarize_qkv(root/'q.json',root/'c.json',root/'a.json',root/'summary.json')
+
     def test_two_rank_dense_parent_conversion(self):
+        self._two_rank_conversion(qkv=False)
+
+    def test_two_rank_qkv_only_conversion(self):
+        self._two_rank_conversion(qkv=True)
+
+    def _two_rank_conversion(self, qkv):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);model=tiny();original=root/'model';model.save_pretrained(original)
             parent=root/'parent';model.save_pretrained(parent/'final')
@@ -122,8 +184,9 @@ class PlacementTests(unittest.TestCase):
                 '--nproc_per_node=2','-m','efficient_llm.kv_mlp_study','train',
                 '--model',str(original),'--probe',str(probe),'--initial-model',str(parent/'final'),
                 '--parent-result',str(parent/'result.json'),'--device','cpu','--arm','B',
-                '--calibration','0','--sharing-layout','upper25','--steps','2','--batch','2',
-                '--eval-every','1','--output',str(root/'fit')],capture_output=True,text=True,timeout=180)
+                '--calibration','0','--sharing-layout','uniform25' if qkv else 'upper25',
+                '--steps','2','--batch','2','--eval-every','1','--output',str(root/'fit')]
+                + (['--qkv-only'] if qkv else []),capture_output=True,text=True,timeout=180)
             self.assertEqual(done.returncode,0,done.stdout+done.stderr)
             actual=json.loads((root/'fit/result.json').read_text())
             self.assertEqual(actual['phase'],'placement_conversion')
@@ -134,6 +197,21 @@ class PlacementTests(unittest.TestCase):
             self.assertEqual(sha256(parent/'final/model.safetensors'),before)
             self.assertNotEqual(sha256(root/'fit/final/model.safetensors'),before)
             self.assertTrue((root/'fit/trainer/checkpoint-2/optimizer.pt').is_file())
+            if qkv:
+                self.assertEqual(actual['trainable_scope'],'affected_qkv')
+                proof=actual['adaptation']
+                self.assertEqual(proof['affected_layers'],[2,3])
+                self.assertEqual(proof['frozen_before'],proof['frozen_after'])
+                self.assertNotEqual(proof['trainable_before'],proof['trainable_after'])
+                # Compare actual tensors, independently of the fingerprint report.
+                final=load_compressed(root/'fit/final','cpu')
+                parent_model=apply_layout(load_compressed(parent/'final','cpu'),'uniform25')
+                trained=set(proof['trainable_names']);changed=[]
+                for name,p in final.named_parameters():
+                    other=dict(parent_model.named_parameters())[name]
+                    if name in trained:changed.append(not torch.equal(p,other))
+                    else:torch.testing.assert_close(p,other,rtol=0,atol=0,msg=name)
+                self.assertTrue(any(changed))
 
 
 if __name__=='__main__':unittest.main()

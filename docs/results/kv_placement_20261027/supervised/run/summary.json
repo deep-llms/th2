@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "dense_ppl": 19.24162534696335,
+  "comparisons": {
+    "full50": {
+      "ppl": 22.655728041675335,
+      "ppl_ratio": 1.177433175895964,
+      "paired": {
+        "delta_nats_per_token": 0.1633367944665932,
+        "paired_document_bootstrap_95ci": [
+          0.1565410083161736,
+          0.17100466171595488
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      },
+      "cache_fraction": 0.5,
+      "training_seconds": 491.1983810919337,
+      "within_five_percent": false
+    },
+    "uniform25": {
+      "ppl": 20.461001453254244,
+      "ppl_ratio": 1.0633717830122564,
+      "paired": {
+        "delta_nats_per_token": 0.06144478704755666,
+        "paired_document_bootstrap_95ci": [
+          0.05849978418008945,
+          0.06455065254177253
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      },
+      "cache_fraction": 0.75,
+      "training_seconds": 506.4669745080173,
+      "within_five_percent": false
+    },
+    "upper25": {
+      "ppl": 20.618926839254247,
+      "ppl_ratio": 1.071579269809879,
+      "paired": {
+        "delta_nats_per_token": 0.0691335134189647,
+        "paired_document_bootstrap_95ci": [
+          0.06608875525422041,
+          0.07225756518351027
+        ],
+        "documents_improved": 0,
+        "documents": 256
+      },
+      "cache_fraction": 0.75,
+      "training_seconds": 506.4809223241173,
+      "within_five_percent": false
+    }
+  },
+  "upper_minus_uniform": {
+    "delta_nats_per_token": 0.007688726371408051,
+    "paired_document_bootstrap_95ci": [
+      0.005495064593011318,
+      0.009952624779257596
+    ],
+    "documents_improved": 87,
+    "documents": 256
+  },
+  "limitations": [
+    "One seed and reused 256-document development probe.",
+    "Cache fractions are structural; serving speed and long-context quality unmeasured."
+  ]
+}
