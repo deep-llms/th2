@@ -1,10 +1,33 @@
 # A2 preflight — 28 October 2026 (Singapore time)
 
-Data preparation completed **07:11 SGT**, with successful exit and SHA-verified
-terminal artifacts. Parent weights are still downloading:26/54files passed actual
-SHA checks at07:12SGT, including five complete weights. **No healing
-run has started.** The 127-fit matrix remains gated on the real-parent tests and
-whole-workload cost report in [the preregistration](A2_pilot_spec.md).
+Status at **07:41 SGT**: actual-parent GPU preflight is running on all eight
+B200s. The real-workload12-update T8 passed; DCLM/P300 survey is running.
+Data preparation completed07:11SGT. At07:32,50/54model files had passed SHA
+checks, with only Nemotron S72/S188 pending; the current job uses verified
+DCLM/P300 only. **No scientific healing arm has started.**
+
+## Actual GPU gate
+
+Launchbbf9997, immutable source20b61d0. Accelerate resource config copied to
+cache and `accelerate env` verified8GPU/BF16 in the isolated A2 environment.
+Supervisor stopped only known burn workers634055–634062 and verified all eight
+GPUs empty at07:38:01. Survey workers638142–638149 were active at07:41:05.
+Supervisor owns cleanup and communicating burn restoration on success/failure.
+
+[T8 receipt](results/a2_preflight_20261028/throughput.json): actual OpenSci parent,
+S1-pruned student, pure KD, global64×4096, microbatch1 / accumulation8 on8GPUs.
+All12updates completed; actual768examples across all ranks match the exact order.
+
+- Mean update time after first2startup steps: **1.199seconds**.
+- Throughput: **218,631tokens/s** across the node.
+- Peak allocated CUDA memory on rank0: **41.67GiB**.
+- Complete T8job including loading/startup:60.77seconds.
+
+This measures discarded test updates, not a scientific healing arm. It does
+not include evaluation/save/diagnostic costs, so it is **not the full pilot ETA**.
+The remaining surveys and numerical gates still apply.
+[Health receipt](results/a2_preflight_20261028/health_0741.json):9exported artifact
+hashes and70frozen source files independently verified; no errors in this snapshot.
 
 ## Verified so far
 

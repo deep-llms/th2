@@ -1,17 +1,38 @@
 # Current task
 
-## Actual B200 execution authorized — 28 October 2026 SGT
+## Actual B200 preflight running — 28 October 2026 SGT
 
-User requests the real run. First execute the spec-required actual-parent
-preflight, report its outcome/cost before any scientific healing. Read-only
-863ab40 at07:32:43SGT confirms50/54asset files SHA-verified: only Nemotron S72/S188
-remain missing/downloading. All inputs for DCLM/P300 initial T8/survey are ready.
-Same known eight burn workers634055–634062 / launcher633986, no other GPU work.
-Initial launcher now checks only its actual parent dependency, letting unrelated
-model downloads continue; every later parent still requires its pinned hashes.
-Three readiness/job-manifest tests passed after this narrow launch-only change.
-Main data/model/loss/sampling/schedule and existing supervisor are unchanged.
+User requests the real run. Execute the spec-required actual-parent preflight,
+report its outcome/cost before any scientific healing. Initial launch bbf9997,
+source20b61d0, acknowledged in07:36 launch log. Actual data and DCLM/P300 pinned
+weight/code SHA checks passed, resource Accelerate cache copied and env verified:
+8B200/BF16, a2_env Torch2.14.1+cu130 / Transformers4.57.1 / Accelerate1.13.0.
+Root `/mnt/local/_outputs/deep-llms_th2/6y3o-a2-initial-preflight-20261028-a01`;
+session `a2_initial_preflight_20261028_a01`. First discarded12-update T8, then
+DCLM/P300 survey; no heal queued. Existing supervisor owns burn reclaim/free
+checks and automatic communicating-burn restoration on success/failure.
+Launch logtemp/a2_actual_launch01.log SHA
+abcf5ba8a2f0e4581f6a19cb34946f11e8db02c6c4b2fd61b2726bae1f74abb1.
+Health17b37bb at07:41:05SGT verifies exact known burn workers stopped, all8GPUs
+empty at07:38:01before launch, and12-update T8 successful at07:39:03. T8 measured
+1.199023s/update /218,631tokens/s, after discarding first2startup timings;768samples
+across8ranks exactly match intended order. Peak allocator44,738,788,864bytes on
+rank0. End-to-end T8job60.77s includes loading/startup; throughput excludes those.
+Survey running since07:39:03, all8workers638142–638149 active under native launch.
+Supervisor637822 owns guard and automatic burn handoff; do not stop/relaunch it.
+Nine artifact hashes and70source files verified. Rawtemp/a2_actual_health01.log SHA
+9ca063da590f8014be957326fa149e653efe89518fdd388b0a07bac475d3f6af.
+Receipts results/a2_preflight_20261028/health_0741.json andthroughput.json.
+commands.sh restored#0; jobs run from frozen source. Next retrieve survey/terminal
+supervisor/burn receipts, then complete remaining parent/numerical gates and cost
+report before scientific healing. No full pilot ETA or acceptance claimed.
 
+Read-only readiness863ab40 at07:32:43SGT confirmed50/54asset files SHA-verified:
+only Nemotron S72/S188 still pending. Initial launcher checks only its actual
+parent dependencies; unrelated downloads continue and every later parent still
+requires pinned hashes. Three readiness/job-manifest tests passed after this
+narrow launch-only change. Main model/loss/data/schedule/supervisor unchanged.
+Readiness receipt: results/a2_preflight_20261028/readiness_0732.json.
 
 ## Latest preparation continuation — 28 October 2026 SGT
 

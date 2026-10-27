@@ -1,0 +1,551 @@
+{
+  "at": "2026-10-27T23:32:43.131913+00:00",
+  "gpu": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-27T23:32:43.411369+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634055
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634056
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634057
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634058
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634059
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634060
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634061
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634062
+        ]
+      }
+    ],
+    "workers": [
+      634055,
+      634056,
+      634057,
+      634058,
+      634059,
+      634060,
+      634061,
+      634062
+    ],
+    "stop_roots": [
+      633986
+    ],
+    "processes": {
+      "634055": {
+        "pid": 634055,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634056": {
+        "pid": 634056,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634057": {
+        "pid": 634057,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634058": {
+        "pid": 634058,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634059": {
+        "pid": 634059,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634060": {
+        "pid": 634060,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634061": {
+        "pid": 634061,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634062": {
+        "pid": 634062,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "633986": {
+        "pid": 633986,
+        "ppid": 9406,
+        "start_ticks": 308033332,
+        "command_sha256": "eb7bd8a45e90686f78f911f6668bb0fbfaea88a36abe8667ad1821fd6fd1c35e",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "guard_disabled": false
+  },
+  "assets": [
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/config.json",
+      "bytes": 1186,
+      "sha256": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/config.json",
+      "bytes": 1187,
+      "sha256": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/config.json",
+      "bytes": 1187,
+      "sha256": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188/config.json",
+      "bytes": 1187,
+      "sha256": "314914ed4ed26ee8ced05ca1b2a22d73968acd772bb7d0ceb939b62a4c287786",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "683ef78df55635d5a861301d894cc03f610501a520ee1a93395201b36ea203d3",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/config.json",
+      "bytes": 1198,
+      "sha256": "592e65dc00a2ed521f87d0f2339ad661277e9ee421a9a698f5373ec92e2a192e",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "cab564f469e41f2a55e8ed3c84bddaf0b858240653b6ca8d58579ce27f10ef09",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/config.json",
+      "bytes": 1199,
+      "sha256": "e81aca30f409cfeb481bdc200c9a785f5d9c11b7bdd41cab9389aa299dd9b18a",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "21acee7e83ffddd740017147357ff00097500783aac202b253f7f61acb42af9a",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72/config.json",
+      "bytes": 1199,
+      "sha256": "7a512523f083a7fafe2be4750a88292ab6104d52832dd738dd3bdd03ae52d3bf",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "466cb060fc71048bfd77534aa36fa13b320f6e8c1c306494b3bf157edddcb21e",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188/config.json",
+      "bytes": 1199,
+      "sha256": "0ee5e2b8b7a045f6eae0ffa9a6d2a8f94b067de4ba23352495bd90852d211d6d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "d2b46127d4cff8fdef6f28bf84ba0b699f3f079583d8e4af179c7ddd18558a0c",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/config.json",
+      "bytes": 1216,
+      "sha256": "df5ea5e44e514cf7f28e0d40f872f66738bfeb49cb1938eeb550762f8a9bfb60",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "de9e2011347053829eed50aa50a22dd18a20bd97e2ea122c3fd74967875d36ab",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/config.json",
+      "bytes": 1217,
+      "sha256": "0c213b88b29338cb028b83308ba438f62cb7f740f2b9f51b2d7ece50d064c771",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "b09cadfb1ed79ba21a89f7909ae5859e318e24f945d253252a563510a92137e6",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S72/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S72/model.safetensors",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S188/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S188/model.safetensors",
+      "status": "missing"
+    }
+  ],
+  "command_commit": "863ab409044ef238cf718e59ca089b78a603e86f",
+  "raw_log_sha256": "28ecc05bd57fe992461370978e7420ce7a7b913407d347ebf08398ef231411bc",
+  "launch_commit": "bbf9997c0cf890f321198ff3acad19390a912a33",
+  "code_commit": "20b61d04d59a603532e31ef00687872be6af7e6d"
+}

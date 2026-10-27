@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "step_seconds": 1.1990230083465576,
+  "tokens_per_second": 218631.33415721048,
+  "all_step_seconds": [
+    5.072608947753906,
+    1.2511241436004639,
+    1.341797113418579,
+    1.212891697883606,
+    1.1617703437805176,
+    1.2101126909255981,
+    1.217879056930542,
+    1.1598618030548096,
+    1.157889485359192,
+    1.1583209037780762,
+    1.1616566181182861,
+    1.2080498933792114
+  ],
+  "gpu": "NVIDIA B200",
+  "world_size": 8,
+  "max_memory_bytes": 44738788864,
+  "coverage": {
+    "examples": 768,
+    "microbatches": 96,
+    "world_size": 8,
+    "exact_order": true
+  },
+  "note": "Not a healing arm. Excludes evaluations/load/save; full-workload estimate still required.",
+  "provenance": {
+    "spec_sha256": "9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd",
+    "assets_sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+    "data_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+    "code_commit": "20b61d04d59a603532e31ef00687872be6af7e6d",
+    "code_files": {
+      "a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+      "a2/__main__.py": "c2faf6066ba693c94a5ef91b5538aae3e2f556b0b0198a31671066ee5b5a26c3",
+      "a2/check.py": "02534b3218dbe905a352d4f9624df41e0ec632f41745813548d08f79883dd7b0",
+      "a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+      "a2/measure.py": "db818b8b124d6a097072713294f140cb14cf4c3d7495b351dbcd8f5e2e701d26",
+      "a2/model.py": "7285507f6972eab28a1036cefea00635b4b0b2ef4e947050edec5b244f74d8b1",
+      "a2/protocol.py": "f7ede1be74d37098a92c47504dcf9c37d29672f6e05b5f615a77a0809da07ce9",
+      "a2/queue.py": "bc7f2e2c476206fbc6699363a39f47148f3bff5ac98ad1a8207728116a01c491",
+      "a2/results.py": "c67c241cb97950493389329a48f0069f21f55ae4d20b126fc2dca51044bd300f",
+      "a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+      "packed_evaluation.py": "e8ad9b65831ed44522670b229e8724e9e3ff69163c79f901371fb20c274877e7",
+      "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+      "training_data.py": "37982be7fe0ddf3a068c7d625125eae6da3ea2073a9e88a97f02474d86ff7028",
+      "efficient_llm/diagnostic_data.py": "da080488a893ad4b71048a69298b867c89285ce4bb7f7ee94261e61ad1616d19"
+    },
+    "software": {
+      "torch": "2.14.1",
+      "transformers": "4.57.1",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "numpy": "2.4.6",
+      "safetensors": "0.8.0"
+    },
+    "python": "3.11.15",
+    "secondary_map_sha256": "3f0711e12a90ff8d24abd06e0e8eda10ce65d378ba74f9a0b5643069afb655b4"
+  }
+}
