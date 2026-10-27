@@ -1,0 +1,900 @@
+{
+  "at": "2026-10-27T23:12:39.530008+00:00",
+  "command_commit": "d0c4797907f4e6fead5d8a6fd60410955d46d004",
+  "raw_log_sha256": "2ef837628b88dcf0cb59c6da18f32666d6c5ffd71a7fa82245314b2c61aa011c",
+  "artifact_sha256": {
+    "source-manifest.json": "d1d026af982cf6db5eef88c0f4c9164e682471f957df81ae32194b6c7c0c0168",
+    "jobs.json": "e48ce08e5897cfd01864148861ae3a70821f9048fb3752e0b4a94b3e6c181a0b",
+    "run/run.json": "4e75862d6c6f29c31cfac972520e20bd7fedfd742b2495db19ab5615e8c3233d",
+    "run/complete.json": "4e75862d6c6f29c31cfac972520e20bd7fedfd742b2495db19ab5615e8c3233d",
+    "run/inputs/verified_inputs.json": "e5edfc09e5919fc8c22d9faf02f0fdbfbd60a2081f6e055338240177a9436bd7",
+    "run/inputs/complete.json": "3ebc7a64708c1c83954264e8e04fe305c486212dda7c529ef112b2995090bbe3",
+    "run/inputs/data/progress.json": "9e4127b59c48c2497daf4e091f3bd8646df084624e57eeff897cc5e753e4485f",
+    "run/inputs/data/manifest.json": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+    "run/inputs/secondary_map.json": "3f0711e12a90ff8d24abd06e0e8eda10ce65d378ba74f9a0b5643069afb655b4",
+    "run/inputs/secondary/dclm/manifest.json": "9a7372222d56b763d9af01951a380ae910289d9d87ef68306d9453b1a2fd1d46",
+    "run/inputs/secondary/fwe/manifest.json": "4831c90dd2f115cfe379a90cde8e34d2c421d0bf552b715f059e401989989843",
+    "run/inputs/secondary/nem/manifest.json": "184cc71a305e05bf9df64f3b28ab74823f45064efcd83821bc597d17f8b63ef2"
+  },
+  "source": {
+    "code_commit": "25899871d2181df7f7ba154c800c8ddf3007b08f",
+    "verified_files": 59
+  },
+  "complete": {
+    "status": "ok",
+    "started_at": "2026-10-27T22:58:22.236098+00:00",
+    "jobs": [
+      {
+        "name": "prepare",
+        "started_at": "2026-10-27T22:58:22.236330+00:00",
+        "status": "ok",
+        "returncode": 0,
+        "elapsed_seconds": 790.3037888440304,
+        "artifacts": [
+          {
+            "path": "inputs/complete.json",
+            "sha256": "3ebc7a64708c1c83954264e8e04fe305c486212dda7c529ef112b2995090bbe3",
+            "bytes": 430
+          }
+        ],
+        "finished_at": "2026-10-27T23:11:32.540941+00:00"
+      }
+    ],
+    "finished_at": "2026-10-27T23:11:32.540973+00:00"
+  },
+  "inputs_complete": {
+    "status": "passed",
+    "elapsed_seconds": 788.6772350869142,
+    "data_manifest_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+    "verified_inputs_sha256": "e5edfc09e5919fc8c22d9faf02f0fdbfbd60a2081f6e055338240177a9436bd7",
+    "secondary_map_sha256": "3f0711e12a90ff8d24abd06e0e8eda10ce65d378ba74f9a0b5643069afb655b4",
+    "note": "CPU assets/data only. No numerical/preflight or healing acceptance."
+  },
+  "data": {
+    "status": "complete",
+    "counts": {
+      "heal": 1029236,
+      "tuning": 5145,
+      "unused": 425585,
+      "final": 11717
+    },
+    "document_tokens": {
+      "heal": 850001239,
+      "tuning": 4196274,
+      "unused": 352777810,
+      "final": 10082857
+    },
+    "source_counts": {
+      "train": 36495424,
+      "validation": 11717
+    },
+    "streams": {
+      "heal": {
+        "rows": 207519,
+        "tokens": 849997824,
+        "dropped": 3415,
+        "length": 4096,
+        "token_sha256": "4ec75262c9f3015bbab424b2fd481d8ec4b4f96452e77fbbfa8e754dbe15d412",
+        "starts_sha256": "2d16ad7ad6ad54ef901577ae255aa276f31dc46916f0299b5d714a34677fe2fc"
+      },
+      "tuning": {
+        "rows": 1024,
+        "tokens": 4194304,
+        "dropped": 0,
+        "length": 4096,
+        "token_sha256": "3f4c141e5f4890cbc61a89af6d2bb7e8a89856827749be841f2484de19183aac",
+        "starts_sha256": "575464b89f26b87449cb4746a73e663dd8d0dd267c169f42c34b5b81d2becacb"
+      },
+      "final": {
+        "rows": 2461,
+        "tokens": 10080256,
+        "dropped": 2601,
+        "length": 4096,
+        "token_sha256": "cab0ff6d73910e764bcfc14c9bb3ff9fdd6bb0c98c94c99fd00ad8085adc9ae7",
+        "starts_sha256": "54b5eebb2e624cea5c982016b14eb44069275def9feed9886b94e10025c7f97b"
+      }
+    },
+    "small_indices": [
+      0,
+      6,
+      7,
+      10,
+      11,
+      12,
+      17,
+      21,
+      22,
+      29,
+      31,
+      33,
+      38,
+      42,
+      52,
+      54,
+      56,
+      61,
+      77,
+      83,
+      86,
+      91,
+      99,
+      101,
+      105,
+      109,
+      117,
+      118,
+      124,
+      127,
+      130,
+      131,
+      132,
+      134,
+      135,
+      141,
+      144,
+      153,
+      162,
+      170,
+      173,
+      176,
+      182,
+      183,
+      188,
+      190,
+      191,
+      198,
+      203,
+      212,
+      213,
+      215,
+      216,
+      230,
+      237,
+      240,
+      242,
+      245,
+      249,
+      250,
+      253,
+      255,
+      259,
+      260,
+      269,
+      282,
+      283,
+      284,
+      287,
+      290,
+      293,
+      302,
+      306,
+      309,
+      310,
+      311,
+      315,
+      318,
+      322,
+      323,
+      325,
+      326,
+      328,
+      330,
+      338,
+      342,
+      343,
+      348,
+      349,
+      358,
+      371,
+      375,
+      377,
+      380,
+      386,
+      387,
+      388,
+      389,
+      390,
+      395,
+      396,
+      401,
+      402,
+      403,
+      405,
+      409,
+      411,
+      424,
+      429,
+      430,
+      442,
+      445,
+      446,
+      448,
+      449,
+      451,
+      454,
+      455,
+      461,
+      469,
+      474,
+      477,
+      479,
+      484,
+      491,
+      495,
+      503,
+      507,
+      508,
+      514,
+      519,
+      529,
+      535,
+      546,
+      550,
+      552,
+      557,
+      561,
+      564,
+      572,
+      574,
+      576,
+      577,
+      580,
+      581,
+      591,
+      596,
+      598,
+      600,
+      602,
+      611,
+      613,
+      614,
+      615,
+      626,
+      627,
+      628,
+      629,
+      631,
+      632,
+      635,
+      639,
+      640,
+      644,
+      648,
+      653,
+      655,
+      657,
+      658,
+      662,
+      667,
+      668,
+      676,
+      681,
+      691,
+      694,
+      698,
+      706,
+      719,
+      723,
+      732,
+      735,
+      737,
+      738,
+      742,
+      746,
+      753,
+      755,
+      760,
+      769,
+      770,
+      772,
+      773,
+      783,
+      785,
+      787,
+      792,
+      796,
+      797,
+      801,
+      806,
+      811,
+      817,
+      823,
+      830,
+      833,
+      836,
+      837,
+      840,
+      845,
+      846,
+      849,
+      853,
+      854,
+      856,
+      861,
+      862,
+      865,
+      870,
+      884,
+      885,
+      887,
+      888,
+      889,
+      892,
+      906,
+      910,
+      914,
+      915,
+      924,
+      927,
+      928,
+      932,
+      940,
+      948,
+      951,
+      958,
+      959,
+      960,
+      961,
+      962,
+      964,
+      967,
+      969,
+      974,
+      975,
+      976,
+      987,
+      989,
+      994,
+      1003,
+      1006,
+      1008,
+      1011,
+      1020,
+      1022
+    ],
+    "reserved_qwen_tokens": 1200002619,
+    "qwen_count_convention": "add_special_tokens=False plus one document EOS",
+    "qwen_counts_source": "verified_published_index",
+    "gpt_neox_qwen_ratio": 1.0058105739850889,
+    "original_reserved_prefix": 1459966,
+    "extended": false,
+    "documents_sha256": "5d5b3b53445bd9d3939f9148de8800c237cdf393852634ba6c9bdc11c1a16ad5",
+    "indices_sha256": "70b28905fd76bc9b29860fc97569793aa241c0643fb5d4a31f36286a920dd634",
+    "permutation_seed": 2028,
+    "small_seed": 2029,
+    "disjoint_by_id_and_content": true,
+    "provenance": {
+      "manifest_sha256": "c027aae3d802ddd2c17259b4ae4a8bfc67bae073338694f528691cc0e3496ade",
+      "dataset": "nht10/cx_sampled",
+      "subset": "qwen3_0.6b_base_en_30B",
+      "revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+      "tokenizers": {
+        "qwen": {
+          "repo": "Qwen/Qwen3-0.6B-Base",
+          "revision": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+          "files": {
+            "config.json": "504a6b58c4271583724e66584b6b7698aea18450209df6b2f7582df0e89cee59",
+            "generation_config.json": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8",
+            "tokenizer.json": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+            "tokenizer_config.json": "3c04ed3ca964ea2f6b2b5faf0dc4d31aec1cb1e8b4bcf63f402d295046b422b5",
+            "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+            "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+          }
+        },
+        "gpt_neox": {
+          "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+          "revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+          "files": {
+            "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+            "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+            "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+          }
+        }
+      },
+      "pool_contract_sha256": "5190d2eebcf3b440de35c78825cd9a7ef905f2f241afc8224dfd8fca1b6f01d7",
+      "spec_sha256": "9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd"
+    }
+  },
+  "asset_checks": [
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/config.json",
+      "bytes": 1186,
+      "sha256": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/config.json",
+      "bytes": 1187,
+      "sha256": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/config.json",
+      "bytes": 1187,
+      "sha256": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188/config.json",
+      "bytes": 1187,
+      "sha256": "314914ed4ed26ee8ced05ca1b2a22d73968acd772bb7d0ceb939b62a4c287786",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "683ef78df55635d5a861301d894cc03f610501a520ee1a93395201b36ea203d3",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/config.json",
+      "bytes": 1198,
+      "sha256": "592e65dc00a2ed521f87d0f2339ad661277e9ee421a9a698f5373ec92e2a192e",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/model.safetensors",
+      "bytes": 3428804400,
+      "sha256": "cab564f469e41f2a55e8ed3c84bddaf0b858240653b6ca8d58579ce27f10ef09",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/modeling_opensci.py",
+      "bytes": 44839,
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/configuration_opensci.py",
+      "bytes": 11190,
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer.json",
+      "bytes": 2113710,
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/tokenizer_config.json",
+      "bytes": 156,
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300/special_tokens_map.json",
+      "bytes": 90,
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/config.json",
+      "bytes": 1199,
+      "sha256": "e81aca30f409cfeb481bdc200c9a785f5d9c11b7bdd41cab9389aa299dd9b18a",
+      "status": "verified"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/model.safetensors",
+      "bytes": 2738379264,
+      "sha256": "2812a92924563a70b65f6c1339b746b903fae3104bf66387ee8eb7f20b637032",
+      "status": "incomplete_or_mismatch"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/modeling_opensci.py",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/configuration_opensci.py",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/tokenizer_config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T/special_tokens_map.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72/model.safetensors",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188/model.safetensors",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/model.safetensors",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/modeling_opensci.py",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/configuration_opensci.py",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/tokenizer_config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P300/special_tokens_map.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/model.safetensors",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/modeling_opensci.py",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/configuration_opensci.py",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/tokenizer_config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T/special_tokens_map.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S72/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S72/model.safetensors",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S188/config.json",
+      "status": "missing"
+    },
+    {
+      "path": "/mnt/local/_models/deep-llms_th2/a2/nem/S188/model.safetensors",
+      "status": "missing"
+    }
+  ],
+  "gpu_inspection": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-27T23:12:39.797277+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634055
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634056
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634057
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634058
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634059
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634060
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634061
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 155212.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          634062
+        ]
+      }
+    ],
+    "workers": [
+      634055,
+      634056,
+      634057,
+      634058,
+      634059,
+      634060,
+      634061,
+      634062
+    ],
+    "stop_roots": [
+      633986
+    ],
+    "processes": {
+      "634055": {
+        "pid": 634055,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634056": {
+        "pid": 634056,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634057": {
+        "pid": 634057,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634058": {
+        "pid": 634058,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634059": {
+        "pid": 634059,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634060": {
+        "pid": 634060,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634061": {
+        "pid": 634061,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "634062": {
+        "pid": 634062,
+        "ppid": 633986,
+        "start_ticks": 308033460,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "633986": {
+        "pid": 633986,
+        "ppid": 9406,
+        "start_ticks": 308033332,
+        "command_sha256": "eb7bd8a45e90686f78f911f6668bb0fbfaea88a36abe8667ad1821fd6fd1c35e",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-review-20261028-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "guard_disabled": false
+  },
+  "tests": {
+    "cpu_passed": 34,
+    "log_sha256": "bc74d85dc838ddf0920dbf8fbdc80de8fd1a82918fe39b291c389e3a7661ae47"
+  }
+}

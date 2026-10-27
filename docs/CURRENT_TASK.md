@@ -1,5 +1,36 @@
 # Current task
 
+## Latest preparation continuation — 28 October 2026 SGT
+
+CPU preparation COMPLETE07:11:32SGT (790.30seconds), confirmed by read-only
+healthd0c4797 at07:12:39. Original run/source unchanged:12exported artifact SHA
+checks and all59 frozen source files independently verified against2589987.
+Packed heal207,519×4096=849,997,824tokens; tuning1024×4096=4,194,304;
+final2461×4096=10,080,256 from all11,717validation documents. Fixed reservation
+1,200,002,619Qwen tokens, T7 document id/content disjointness passes. Preserve
+all output; no rerun needed. CPU job exit0 plus terminal artifacts both pass.
+Root `/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs`.
+Evidence: results/a2_preflight_20261028/input_status_0712.json; full small artifacts
+in ignoredtemp/a2_inputs_health03. Raw log SHA
+2ef837628b88dcf0cb59c6da18f32666d6c5ffd71a7fa82245314b2c61aa011c.
+
+Weight download still ongoing:26/54files SHA-verified, including all4DCLM weights
+and FWE/P300. FWE/P1T and later parents not ready. Do not redownload/restart; next
+retrieve controller completion and verify remaining actual bytes. GPU burns still
+owned by prior review supervisor; no GPU job or environment/driver change.
+Fresh health receipt acknowledged; commands.sh returned#0 with code preparation.
+
+Prepared `scripts/launch_a2_preflight.py`: only discarded12-update real T8 plus
+one DCLM/P300 survey, both8GPUs, under unchanged train_then_burn supervisor.
+Requires successful main preparation, exact spec/data/asset contracts, actual
+packed bytes and all downloaded weight hashes BEFORE GPU reclaim. Copies
+resource Accelerate config and verifies accelerate env; supervisor owns exact
+burn PID checks, free-GPU checks and automatic communicating burn restoration.
+No heal/automatic pilot entry point in this initial-stage manifest.34CPUtests
+pass, including readiness rejection and bounded-job manifest tests. Actual
+preflight remains unlaunched while parent downloads complete; later surveys,
+full numerical checks, full-workload estimate and prelaunch report remain.
+
 ## A2 actual preflight preparation — 28 October 2026 SGT
 
 User asked to continue. Proceed with pinned checkpoint acquisition, frozen-data

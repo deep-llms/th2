@@ -1,7 +1,8 @@
 # A2 preflight — 28 October 2026 (Singapore time)
 
-Status at07:01SGT: CPU preparation is running; all source English shard hashes
-and secondary sets passed. Actual parent downloads continue. **No healing
+Data preparation completed **07:11 SGT**, with successful exit and SHA-verified
+terminal artifacts. Parent weights are still downloading:26/54files passed actual
+SHA checks at07:12SGT, including five complete weights. **No healing
 run has started.** The 127-fit matrix remains gated on the real-parent tests and
 whole-workload cost report in [the preregistration](A2_pilot_spec.md).
 
@@ -80,3 +81,42 @@ Once data passes: measure actual-model T8, finish real-parent numerical and
 survey gates, include loading/scoring/saving/diagnostic time in both phase
 estimates, and send the prelaunch report **before any healing**. No actual-model
 throughput or phase completion estimate is claimed yet.
+
+## Prepared next stage
+
+[07:08 health receipt](results/a2_preflight_20261028/input_status_0708.json) confirms
+continued sampling progress and advancing communicating burns. Five weight files
+have expected sizes; sizes alone are not acceptance. No GPU preflight has launched.
+
+`launch_a2_preflight.py` prepares a bounded initial cost gate: twelve discarded
+updates of the actual1.7B-derived student/teacher at64×4096tokens, then a single
+DCLM/P300 survey. Both use eight GPUs and the unchanged burn supervisor. Main
+input completion, pinned spec/contracts, packed bytes and weight hashes are
+checked before reclaiming GPUs. The Accelerate cache copy/env verification and
+automatic burn handoff are retained. This launcher cannot start scientific heals.
+
+34CPUtests passed; the two new tests check stale/changed/failed data refusal and
+the exact bounded job manifest. Existing model/loss/data/schedule code is unchanged.
+This is preparation, not a claim that actual-parent numerical or cost gates passed.
+
+## Main data completed
+
+[07:12 receipt](results/a2_preflight_20261028/input_status_0712.json): CPU job
+finished07:11:32SGT in790.30seconds. Twelve exported artifacts and59frozen source
+files verified independently. The fixed reservation reached1,200,002,619Qwen
+tokens, and document-id/content-hash disjointness passed.
+
+| Packed split | Sequences of4096 | Tokens |
+|---|---:|---:|
+| Healing |207,519|849,997,824|
+| Tuning |1,024|4,194,304|
+| Final validation |2,461|10,080,256|
+
+All11,717validation documents were processed; only the final incomplete packed
+sequence was dropped. Three secondary sets each contain256×4096tokens.
+No change to the frozen sampling/packing recipe was needed.
+
+All four DCLM weights and FWE/P300 now match pinned SHA hashes. FWE/P1T and later
+parents remain pending. No duplicate download or GPU launch. Initial preflight
+code is prepared/tested and waits for complete inputs; actual-model acceptance
+and the full pilot cost estimate remain outstanding.
