@@ -1,7 +1,8 @@
 """Offline CPU input verification and frozen A2 data preparation. No GPU work.
 
-Run only after the controller reports all pinned downloads complete. This job
-refuses partial inputs/output reuse, verifies actual bytes and never downloads.
+Run after the controller reports tokenizer and secondary downloads complete.
+Parent weights may download concurrently: data preparation never reads them.
+This job refuses partial inputs/output reuse and never downloads.
 """
 import argparse
 import json
@@ -18,10 +19,10 @@ from efficient_llm.a2.data import write_json
 from efficient_llm.diagnostic_data import sha256
 
 
-def verify_inputs(plan):
+def verify_inputs(plan, *, include_models=True):
     """Verify exactly the locked files; paths alone or controller success aren't enough."""
     verified = {}
-    for item in plan['downloads']:
+    for item in plan['downloads'] if include_models else ():
         p = Path(item['path'])
         if not p.is_file() or sha256(p) != item['sha256']:
             raise ValueError('A2 input missing or digest mismatch: '+str(p))
@@ -29,8 +30,10 @@ def verify_inputs(plan):
         print('A2_INPUT_VERIFIED', str(p), flush=True)
     for key, path in (('qwen', plan['qwen_path']), ('gpt_neox', plan['tokenizer_path'])):
         for name, expected in plan['tokenizer_provenance'][key]['files'].items():
-            if sha256(Path(path)/name) != expected:
+            p = Path(path)/name
+            if sha256(p) != expected:
                 raise ValueError('Tokenizer mismatch: '+key+'/'+name)
+            verified[str(p)] = dict(bytes=p.stat().st_size, sha256=expected)
     manifest = Path(plan['pool_path'])/'subsets'/plan['pool_contract']['subset']/'manifest.json'
     if sha256(manifest) != plan['pool_contract']['manifest_sha256']:
         raise ValueError('Source pool manifest differs')
@@ -50,9 +53,9 @@ def main():
     started = time.monotonic()
     try:
         plan = json.loads(a.plan.read_text())
-        verified = verify_inputs(plan)
+        verified = verify_inputs(plan, include_models=False)
         write_json(a.output/'verified_inputs.json', dict(status='passed', files=verified,
-            plan_sha256=sha256(a.plan), elapsed_seconds=time.monotonic()-started))
+            plan_sha256=sha256(a.plan), model_weights_verified=False, elapsed_seconds=time.monotonic()-started))
         for name, value in [('assets', plan['assets']), ('pool_contract', plan['pool_contract']),
                             ('tokenizer_provenance', plan['tokenizer_provenance'])]:
             write_json(a.output/(name+'.json'), value)

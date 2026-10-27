@@ -25,6 +25,9 @@ class InputTests(unittest.TestCase):
                 verified=verify_inputs(plan)
                 self.assertEqual(verified[str(model)]['bytes'],7)
                 model.write_bytes(b'badfile')
+                data_only=verify_inputs(plan, include_models=False)
+                self.assertNotIn(str(model),data_only)
+                self.assertIn(str(tokenizer),data_only)
                 with self.assertRaisesRegex(ValueError,'input missing or digest mismatch'):
                     verify_inputs(plan)
                 model.write_bytes(b'weights');tokenizer.write_bytes(b'bad tokenizer')

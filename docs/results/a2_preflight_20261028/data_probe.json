@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "scope": "Local actual Nemotron shard / pinned GPT-NeoX tokenizer, CPU only",
+  "streams": {
+    "final": {
+      "rows": 256,
+      "tokens": 1048576,
+      "dropped": 0,
+      "length": 4096,
+      "token_sha256": "df39d2cc4f9f4e7fb0b08a1b5d63f7a8d9700a6b5379fa0bc0011c0e18814d56",
+      "starts_sha256": "22c1ffb746276ba7d1e3fa9210aff9e0aded920322cc2324b4c29a664f61eb62"
+    }
+  },
+  "tokenizer": {
+    "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+    "revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+    "files": {
+      "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    }
+  },
+  "source_sha256": "2f675c84f1e447d057777b6e1381bf906504ae871584c49f4d727e1abd54b6b5",
+  "note": "First local attempt used a temporary filename without .jsonl and was correctly rejected. Repeated with correct extension and fresh output; production filenames already have .jsonl.zstd."
+}

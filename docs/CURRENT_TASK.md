@@ -20,7 +20,7 @@ main-source code/config/tokenizers (54 files), existing pool/tokenizer contracts
 Controller54-file download ab350b8 to /mnt/local/_models/deep-llms_th2/a2
 acknowledged STARTED (ID2026-10-27_22-46-06), completion pending.
 Do not consume before per-item success and actual SHA verification. CPU worker
-scripts/a2_prepare_inputs.py verifies inputs then prepares the preregistered
+scripts/a2_prepare_inputs.py verifies tokenizer/data inputs then prepares the preregistered
 whole-pool random prefix with GPT-NeoX. It has no GPU/network/process control.
 32 tests now pass, including corrupt inputs and streaming secondary formats; progress logging changes
 no sampling or packing semantics. Prior GPU review evidence stays historical.
@@ -35,6 +35,14 @@ Nemotron188000 exactLR.004; other requested exact steps absent in the matching
 log members. Nearest values are explicitly context only, never substituted.
 CPU launcher scripts/launch_a2_inputs.py snapshots source and uses the existing
 job runner, four-hour timeout, no GPU/burn/guard control. Not yet launched.
+Secondary downloads all3complete; parent request remainsRUNNING, last item copy
+configuration_opensci.py at DCLM-P300. This is not proof of failure. Data can
+prepare concurrently once its tokenizer bytes are present: it never loads parent
+weights, and its receipt explicitly says model_weights_verified=false. Every
+parent still requires actual weight SHA verification before GPU loading.
+Local real Nemotron shard + pinned GPT-NeoX test produced exactly256x4096tokens;
+receipt docs/results/a2_preflight_20261028/data_probe.json. No model scoring.
+Detailed preflight record: docs/A2_PREFLIGHT_20261028.md.
 
 ## A2 review complete; full pilot not launched
 

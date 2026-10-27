@@ -185,6 +185,15 @@ T14b's retry keeps its special data permutation. Existing outputs are refused;
 there is no implicit mid-run resume. Failed/ineligible parents are recorded and
 skipped; resulting missing comparisons remain INCOMPLETE.
 
+## Actual input preparation
+
+See [the live preflight record](A2_PREFLIGHT_20261028.md). The pinned model and
+secondary-shard requests go through the controller only. CPU preparation uses
+`scripts/launch_a2_inputs.py` and `scripts/a2_prepare_inputs.py`, with source
+snapshots, full input hashes, fixed tokenizer contracts and a completion marker.
+Secondary Parquet/JSONL-Zstandard readers stop after the required prefix;
+the reusable baseline loader is unchanged. The current local suite has32tests.
+
 ## Remaining before the real pilot
 
 The 12 actual checkpoints, full data preparation, numerical/precision gates on
