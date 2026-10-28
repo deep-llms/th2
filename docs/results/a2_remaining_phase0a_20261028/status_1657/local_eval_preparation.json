@@ -1,0 +1,14 @@
+{
+  "native_adapter_cpu_tests": 4,
+  "existing_downstream_tests": 6,
+  "status": "passed",
+  "gpu_validation": "not_run",
+  "source": {
+    "eval/a2_harness.py": "9b2b98c80289faa3f01f2966745825872fb569ef56c4edd02d3d1685c60ee39f",
+    "tests/a2/test_harness.py": "d93489a49cdbe2ca559933a324a10ffb4d48553e08c89fc98055aa32426879dc"
+  },
+  "logs": {
+    "temp/a2_harness_cpu_tests.log": "a5a7d53e5cb5c530608b1f4fbf174df3f1b48af6a0d33090a2d41b5d4bf0cb8e",
+    "temp/a2_downstream_existing_tests.log": "49df1aff59fe56f55b2f7b8919a2b30be30d45fafd903d91f2196faee7a3e439"
+  }
+}

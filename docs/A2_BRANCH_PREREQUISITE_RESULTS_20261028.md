@@ -67,3 +67,32 @@ Actualresults and SHAreceipts: results/a2_remaining_phase0a_20261028/status_1556
 S2–0.2B was active at logged660/762updates. Measured~1.19seconds/update with
 ~90seconds whole-fit loading/scoring/saving overhead gives21:00–21:40SGT ETA
 (using90–180seconds overhead perremaining fit), without retries.
+
+
+At16:57:33 SGT, 11/28 new healing fits are complete, all exact recipe/data order/
+LR/roundtrip checks pass, with no divergence or retry. FWE/P300/S2–0.2B is active
+at logged460/762 updates. Supervisor656246 still owns the guard; all86 frozen
+files matchd3a8a0b; eightGPUs91–96% utilization. Currentqueue elapsed1h48min.
+
+DCLM paired completed results (NLL; lower is better):
+
+| Set/budget | P300 final NLL | P1T final NLL | P1T−P300 excess damage relative to each original parent |
+|---|---:|---:|---:|
+| S2 / 0.05B | 2.929940 | 2.900690 | +0.021634 |
+| S3 / 0.05B | 2.890030 | 2.852705 | +0.013559 |
+| S4 / 0.05B | 2.877159 | 2.849714 | +0.023439 |
+| S2 / 0.2B | 2.849884 | 2.813267 | +0.014267 |
+
+P1T retains lower absolute loss, but its degradation from the original parent
+is slightly larger. DCLM's registered mean across S1/S2 main-budget contrasts
+is +0.012572 nats; the other two datasets are incomplete, so no full-pilot
+GO/STOP conclusion follows. FWE/P300 short S2/S3/S4 NLLs are
+3.033330/2.997276/2.986001; matching P1T results are still pending.
+
+With17original fits remaining including the active fit, 10,780 logged remaining
+updates at measuredmedian1.190seconds/update plus90–180seconds/fit overhead,
+ETA is21:00–21:25SGT (about4.0–4.4hours from16:57), without retries. Phaseledger
+is18600seconds plus currentelapsed, about6.97nodehours so far, below15/18h caps.
+Verified compact results: results/a2_remaining_phase0a_20261028/status_1657.
+Raw local receipt: temp/a2_remaining_health05.log, SHA
+ba807e563df5eac920ccb0e2e41a91e860573fdcd3b03c38944c3d2831a1d8c0.

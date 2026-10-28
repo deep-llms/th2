@@ -1,0 +1,173 @@
+{
+  "baselines": 6,
+  "baseline_metrics": [
+    {
+      "dataset": "dclm",
+      "parent": "P1T",
+      "parent_nll": 2.6869089917639344,
+      "unhealed_nll": {
+        "S1": 4.004721485196599,
+        "S3": 3.293841890655786,
+        "S4": 9.809053738961092,
+        "S2": 7.5715882347220305
+      }
+    },
+    {
+      "dataset": "dclm",
+      "parent": "P300",
+      "parent_nll": 2.7377930322126844,
+      "unhealed_nll": {
+        "S1": 3.7637751437881795,
+        "S3": 3.2699469024516175,
+        "S4": 4.159725901180525,
+        "S2": 9.09491776730996
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "P1T",
+      "parent_nll": 2.808707333601816,
+      "unhealed_nll": {
+        "S1": 4.124982157487267,
+        "S3": 3.3228820812883044,
+        "S4": 5.402749698618086,
+        "S2": 8.031933519902852
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "P300",
+      "parent_nll": 2.860631325856815,
+      "unhealed_nll": {
+        "S1": 3.822488626155516,
+        "S3": 3.3004530692173115,
+        "S4": 4.219123631953061,
+        "S2": 10.284663162592977
+      }
+    },
+    {
+      "dataset": "nem",
+      "parent": "P1T",
+      "parent_nll": 2.723382862026508,
+      "unhealed_nll": {
+        "S1": 4.116536224984662,
+        "S3": 3.3572271676042624,
+        "S4": 5.681247287036622,
+        "S2": 6.559216306827478
+      }
+    },
+    {
+      "dataset": "nem",
+      "parent": "P300",
+      "parent_nll": 2.774250937159999,
+      "unhealed_nll": {
+        "S1": 3.866534354760928,
+        "S3": 3.9888367284618997,
+        "S4": 6.078927823256903,
+        "S2": 6.394251825220455
+      }
+    }
+  ],
+  "pending_originals": 28,
+  "verified_results": [
+    {
+      "run_id": "P0-dclm-P300-S2-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.7377930322126844,
+      "val_post": 2.929940011413063,
+      "delta_post": 0.1921469792003787,
+      "wallclock_h": 0.07804395183584549
+    },
+    {
+      "run_id": "P0-dclm-P300-S3-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.7377930322126844,
+      "val_post": 2.89003009135155,
+      "delta_post": 0.15223705913886576,
+      "wallclock_h": 0.07714855652224893
+    },
+    {
+      "run_id": "P0-dclm-P300-S4-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.7377930322126844,
+      "val_post": 2.8771590224309436,
+      "delta_post": 0.13936599021825913,
+      "wallclock_h": 0.07743169374117213
+    },
+    {
+      "run_id": "P0-dclm-P300-S2-0.2B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.7377930322126844,
+      "val_post": 2.8498839580960387,
+      "delta_post": 0.11209092588335423,
+      "wallclock_h": 0.26265848650803997
+    },
+    {
+      "run_id": "P0-dclm-P1T-S2-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.6869089917639344,
+      "val_post": 2.9006900949348924,
+      "delta_post": 0.213781103170958,
+      "wallclock_h": 0.0775197304539486
+    },
+    {
+      "run_id": "P0-dclm-P1T-S3-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.6869089917639344,
+      "val_post": 2.8527053058949776,
+      "delta_post": 0.16579631413104323,
+      "wallclock_h": 0.0773491935852346
+    },
+    {
+      "run_id": "P0-dclm-P1T-S4-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.6869089917639344,
+      "val_post": 2.8497135283057564,
+      "delta_post": 0.16280453654182203,
+      "wallclock_h": 0.07739698203966125
+    },
+    {
+      "run_id": "P0-dclm-P1T-S2-0.2B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.6869089917639344,
+      "val_post": 2.8132670905706094,
+      "delta_post": 0.12635809880667503,
+      "wallclock_h": 0.264257576984819
+    },
+    {
+      "run_id": "P0-fwe-P300-S2-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.860631325856815,
+      "val_post": 3.0333302647030727,
+      "delta_post": 0.17269893884625764,
+      "wallclock_h": 0.07822810484406849
+    },
+    {
+      "run_id": "P0-fwe-P300-S3-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.860631325856815,
+      "val_post": 2.9972764397878966,
+      "delta_post": 0.13664511393108159,
+      "wallclock_h": 0.07792268074363366
+    },
+    {
+      "run_id": "P0-fwe-P300-S4-0.05B-lr3e-4",
+      "status": "complete",
+      "diverged": false,
+      "val_teacher": 2.860631325856815,
+      "val_post": 2.9860009720030596,
+      "delta_post": 0.12536964614624457,
+      "wallclock_h": 0.07759817447953134
+    }
+  ]
+}

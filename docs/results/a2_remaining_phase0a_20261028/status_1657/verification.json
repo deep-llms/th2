@@ -1,0 +1,16 @@
+{
+  "snapshot": "2026-10-28T08:57:33.198022+00:00",
+  "source_commit": "d3a8a0b35b29a9e6cd951a7d4cf754908fe0fc40",
+  "source_files_verified": 86,
+  "guard": "{\"owner_pid\": 656246, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised\", \"at\": \"2026-10-28T07:08:28.984717+00:00\"}",
+  "session": "0 656246",
+  "verified_fits": 11,
+  "baselines": 6,
+  "no_divergence_or_retry": true,
+  "full_lr_and_exact_eight_rank_order_verified": true,
+  "roundtrip_difference": 0,
+  "raw_log": "temp/a2_remaining_health05.log",
+  "raw_sha256": "ba807e563df5eac920ccb0e2e41a91e860573fdcd3b03c38944c3d2831a1d8c0",
+  "raw_results_artifact_sha256": "c0be6dc1078aa24fa4330d104436b234c2116fc1220d07614da55e0f07e2cc35",
+  "archive_note": "Full original receipts remain in the SHA-verified local raw log and extraction. Commit compact summaries to keep runner source below 25MB."
+}

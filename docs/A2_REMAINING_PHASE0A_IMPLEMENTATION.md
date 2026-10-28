@@ -149,3 +149,16 @@ data provenance are rejected. Partial data remains INCOMPLETE; unexecutedPhase0B
 is explicitly absent, not a failed experiment. This changes no deployed source.
 Final reporting still requires all expected original IDs/retries, terminal
 scientific results and independent supervisor/burn verification.
+
+Native downstream adapter prepared locally in eval/a2_harness.py. It wraps an
+already verified model from load_parent/reload_student, using FP32 parameters
+and CUDA BF16 autocast, EOS0, native SDPA, fixed<=4096context and likelihood only.
+It reuses the original harness request handling; the Qwen adapter is unchanged.
+CPU checks on the pinned tiny native OpenSci model cover independent likelihood,
+padding/batching, left truncation, physical-prune save/reload, and rejected
+precision/EOS/generation settings. The lm-eval0.4.13 logits reuse cache gives
+incorrect scores when identical input tokens have different context/continuation
+boundaries; the regression fixture detects this, and A2 disables logits_cache.
+No GPU evaluation has run. The suite/checkpoint identity collector and real
+full-model GPU parity remain required; confirm offline node benchmark files and
+compatible harness runtime before scheduling. No training numerical code changed.
