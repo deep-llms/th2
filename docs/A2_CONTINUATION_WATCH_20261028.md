@@ -74,3 +74,33 @@ Actual numerical core is byte-identical; historical checks retain exact hashes.
 Next FWE estimated80–95minutes; conservative prior Phase0A ledger5200seconds
 (actual completed queues4811.77seconds plus setup/handoff reserve). Same3hhardcap.
 Worker's existing30min schedule and15:50:29SGTdeadline remain; no duplicate timer.
+
+## Owner extension — 28 October, approximately 12:32 SGT
+
+Owner is going to sleep and explicitly authorizes continuing the registered pilot,
+its arms and necessary preflight, and permits PPL/downstream evaluation. Extend
+the SAME local watcher through 29 October 06:00 SGT, at 30-minute intervals.
+This supersedes the old six-hour watcher cutoff, not the Phase 0A 18-hour hard
+cap or 15-hour report trigger. Stop earlier on completion, budget, or cancellation.
+
+Existing worker was replaced in its same tmux pane/state/thread after verifying
+the exact old local process had terminated and its exclusive lock was released.
+No duplicate worker or new conversation. PID 553354; next wake 12:55:29 SGT;
+state temp/a2_watch_20261028. The delivery mechanism is unchanged and already
+verified end-to-end; receipt of later reminders remains separately observable.
+
+After the current FWE pair and verified burns, run the already-tested NEM S1 pair.
+Then prioritize registered remaining dependencies: scientific branch-parent
+surveys/identity/precision, prescribed S2 selection on all usable parents, and
+representative numerical coverage of newly frozen removal patterns. Continue
+remaining registered Phase 0A heals with completed grids/fits reused. Implement
+only missing exact orchestration and test it before deployment; do not replay
+completed fits to simplify bookkeeping. Keep a cumulative elapsed-time ledger.
+
+Report PPL as exp(final validation NLL) from existing scores, avoiding duplicate
+scoring. Downstream evaluation is now authorized on completed checkpoints and
+available offline benchmarks, with fixed tasks/settings across original/healed
+models. Verify native OpenSci and pruned-checkpoint loading/logits first; the
+older Qwen/KV evaluation adapter is not automatically compatible. Treat these
+as supplementary comparisons, separate from preregistered A2 decision rules.
+No environment/data/driver changes or new architecture fits are implied.

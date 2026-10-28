@@ -540,3 +540,12 @@ wake via scripts/queue_watch.py near completion. Verify app-server acceptance an
 actual delivery separately. Continue useful authorized work after validated results
 and GPU handoff instead of leaving compute idle waiting for a user status request.
 Use a bounded deadline and durable prompt; no duplicate monitors or new sessions.
+
+## Extended A2 authorization — 28 October 2026, 12:32 SGT
+
+Owner permits continued registered pilot arms/necessary preflight while asleep,
+and supplementary PPL/downstream evaluation. Existing same-thread watcher extended
+to 29 October06:00SGT, still every30minutes, preserving Phase0A18h hard/15h report
+caps and supervised GPU handoffs. Use existing final NLL for PPL; downstream must
+be matched and validated for native OpenSci/pruned weights, not the old Qwen loader.
+Scope and dependencies: A2_CONTINUATION_WATCH_20261028.md. No duplicate timer.

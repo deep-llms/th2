@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-28T03:08:54.590076+00:00",
+  "jobs": [
+    {
+      "name": "s1-pair",
+      "started_at": "2026-10-28T03:08:54.590269+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 4687.371113095898,
+      "artifacts": [
+        {
+          "path": "pair/complete.json",
+          "sha256": "51404c452cc31e2beccf29063e071b7217a1892bfe4448645aa59c24c22db7f0",
+          "bytes": 272
+        }
+      ],
+      "finished_at": "2026-10-28T04:27:02.529410+00:00"
+    }
+  ],
+  "finished_at": "2026-10-28T04:27:02.529456+00:00"
+}

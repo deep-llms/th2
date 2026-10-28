@@ -1,5 +1,22 @@
 # Current task
 
+## Latest — FWE COMPLETE; preparing NEM S1, 28 October 12:35 SGT
+
+Final healthd1abfae observed12:31:49: all10fits successful, no retry, all8rank
+coverage/order/LR/parent matching/save-reload verified;78frozenfiles matchcfeb74c.
+Finished12:27:02 in4687.37seconds. Burns restored12:28:13 and independently
+communicating12:31:49, guardreleased; cycles260→270. Rawtemp/a2_fwe_health05.log
+SHA9fa109bdb9962be1553fa2e7fdc716f04464e67191505c4bff4db64e209b858f;
+reportA2_FWE_S1_RESULTS_20261028.md, finalarchive results/a2_fwe_s1_20261028/final.
+Next authorized NEM S1pair: same proven code, own6grid+4short/mainfits. Prior
+phaseledger conservatively10200seconds (5200+4687.37+handoffreserve). Expected
+80–95min, hardcap3h; no S2 until prescribed scientific dependencies.
+Owner latest explicitly authorizes continued registered pilot/preflight plus
+PPL/downstream while asleep. SAME watcher extended to29Oct06:00SGT, PID553354,
+next12:55:29SGT; original6hcutoff superseded. Still Phase0A18hhard/15hreportcap.
+See A2_CONTINUATION_WATCH_20261028.md extension. No newagent/duplicateworker.
+NEM not yet launched; record exact submission/ack below before next tick.
+
 ## Latest FWE progress — 28 October, 11:59 SGT observation
 
 Read-only health0d9646a acknowledged. Eight of ten fits completed without divergence

@@ -1,0 +1,202 @@
+[
+  {
+    "run_id": "P0-fwe-P300-S1-0.03B-lr3e-5",
+    "arm": "P300",
+    "budget": "0.03B",
+    "lr": 3e-05,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.860631325856815,
+    "val_post": 3.404871990077835,
+    "val_tune_post": 3.3893238331812086,
+    "delta_post": 0.5442406642210198,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 137.630615147762
+  },
+  {
+    "run_id": "P0-fwe-P300-S1-0.03B-lr1e-4",
+    "arm": "P300",
+    "budget": "0.03B",
+    "lr": 0.0001,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.860631325856815,
+    "val_post": 3.287335532840068,
+    "val_tune_post": 3.2708583586023554,
+    "delta_post": 0.4267042069832532,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 136.23648053826764
+  },
+  {
+    "run_id": "P0-fwe-P300-S1-0.03B-lr3e-4",
+    "arm": "P300",
+    "budget": "0.03B",
+    "lr": 0.0003,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.860631325856815,
+    "val_post": 3.1934303877877084,
+    "val_tune_post": 3.1768794848489366,
+    "delta_post": 0.33279906193089337,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 137.4083875301294
+  },
+  {
+    "run_id": "P0-fwe-P1T-S1-0.03B-lr3e-5",
+    "arm": "P1T",
+    "budget": "0.03B",
+    "lr": 3e-05,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.808707333601816,
+    "val_post": 3.4305356845550437,
+    "val_tune_post": 3.417440236901463,
+    "delta_post": 0.6218283509532276,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 135.05809423932806
+  },
+  {
+    "run_id": "P0-fwe-P1T-S1-0.03B-lr1e-4",
+    "arm": "P1T",
+    "budget": "0.03B",
+    "lr": 0.0001,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.808707333601816,
+    "val_post": 3.2816096985597483,
+    "val_tune_post": 3.26721097580826,
+    "delta_post": 0.47290236495793225,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 135.26241255225614
+  },
+  {
+    "run_id": "P0-fwe-P1T-S1-0.03B-lr3e-4",
+    "arm": "P1T",
+    "budget": "0.03B",
+    "lr": 0.0003,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.808707333601816,
+    "val_post": 3.1758759013669384,
+    "val_tune_post": 3.1612782344905552,
+    "delta_post": 0.3671685677651224,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 135.09622422698885
+  },
+  {
+    "run_id": "P0-fwe-P300-S1-0.05B-lr3e-4",
+    "arm": "P300",
+    "budget": "0.05B",
+    "lr": 0.0003,
+    "steps": 190,
+    "heal_tokens": 49807360,
+    "val_teacher": 2.860631325856815,
+    "val_post": 3.143627101775282,
+    "val_tune_post": 3.12702952736187,
+    "delta_post": 0.2829957759184669,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 12160,
+      "microbatches": 1520,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 224.37321373494342
+  },
+  {
+    "run_id": "P0-fwe-P1T-S1-0.05B-lr3e-4",
+    "arm": "P1T",
+    "budget": "0.05B",
+    "lr": 0.0003,
+    "steps": 190,
+    "heal_tokens": 49807360,
+    "val_teacher": 2.808707333601816,
+    "val_post": 3.1159621613008497,
+    "val_tune_post": 3.1010912664525936,
+    "delta_post": 0.3072548276990337,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 12160,
+      "microbatches": 1520,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 228.09740224806592
+  },
+  {
+    "run_id": "P0-fwe-P300-S1-0.2B-lr3e-4",
+    "arm": "P300",
+    "budget": "0.2B",
+    "lr": 0.0003,
+    "steps": 762,
+    "heal_tokens": 199753728,
+    "val_teacher": 2.860631325856815,
+    "val_post": 3.0361568477523764,
+    "val_tune_post": 3.0191273719079406,
+    "delta_post": 0.17552552189556136,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 6096,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 896.357257284224
+  },
+  {
+    "run_id": "P0-fwe-P1T-S1-0.2B-lr3e-4",
+    "arm": "P1T",
+    "budget": "0.2B",
+    "lr": 0.0003,
+    "steps": 762,
+    "heal_tokens": 199753728,
+    "val_teacher": 2.808707333601816,
+    "val_post": 2.996827827741338,
+    "val_tune_post": 2.9803944584316024,
+    "delta_post": 0.1881204941395218,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 6096,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 898.7179430909455
+  }
+]
