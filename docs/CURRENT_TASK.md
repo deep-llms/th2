@@ -24,7 +24,13 @@ for next launch. Next expected80–95minutes, hardcap3h. Timer deadline15:50:29S
 still permits this queue and a later NEMpair if time allows. No S2 until all
 prescribed BI dependencies. Current timer remains active; no newtimer/agent.
 Target /mnt/local/_outputs/deep-llms_th2/6y3o-a2-fwe-s1-20261028-a01,
-sessiona2_fwe_s1_20261028_a01; not submitted yet. Commands#0 for code commit.
+sessiona2_fwe_s1_20261028_a01. Submission2849fa6 pushed11:07SGT,
+frozen sourcecfeb74c6db5e63d3a1044cda6955d2df16e4891b. Launch acknowledged
+11:10SGT, FWE/P300+P1T actual file SHA checks passed, Accelerate copied+verified
+8GPU/BF16. Supervisor submitted. Rawtemp/a2_fwe_launch01.log SHA
+e9fdcd5ad178643bde1fdef59f953cff296004fed0bbebcd58e7e1fee6fb4b02.
+Do not repush executable launch. Pendingfreshhealth fwe-s1-health-20261028-a01. Estimatedfinish12:30–12:50SGT if no retry.
+Next retrieve launch and fresh health, then commands#0; no newtimer.
 
 
 ## Latest: real DCLM S1 pair running with automatic wake — 28 October 2026 SGT
