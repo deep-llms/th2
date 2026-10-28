@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-a2-corpora-health-20261029-a03
+#th2-6y3o-a2-corpora-health-20261029-a04
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
@@ -37,5 +37,16 @@ if raw.exists():
 processes=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
 parents={x.split()[0] for x in processes if str(root/'source/scripts/a2_prepare_corpora.py') in x}; selected=[x for x in processes if len(x.split())>2 and (x.split()[0] in parents or x.split()[1] in parents)]
 print('CPU_PROCESSES',json.dumps(selected),flush=True)
+for name,corpus in plan['corpora'].items():
+ base=data/'parts'/name
+ receipts=[]
+ if base.exists():
+  for p in sorted(base.glob('*/complete.json')):
+   item=json.loads(p.read_text());record=corpus['files'][item['source']['index']]
+   assert item['source']==record
+   assert item['tokenizer_sha256']==plan['tokenizer_files']['tokenizer.json']
+   receipts.append(dict(index=item['source']['index'],seconds=item['seconds'],tokens=sum(x['tokens'] for x in item['streams'].values()),sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
+ token_bytes=sum(p.stat().st_size for p in base.glob('*/*.bin') if p.name!='documents.bin') if base.exists() else 0
+ print('PART_PROGRESS',json.dumps(dict(corpus=name,completed=receipts,observed_token_bytes=token_bytes,observed_tokens=token_bytes//4)),flush=True)
 print('HEALTH_COMPLETE',flush=True)
 PY

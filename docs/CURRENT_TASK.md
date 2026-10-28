@@ -1,5 +1,9 @@
 # Current task
 
+29 October05:17SGT: healtha03 96b29a9 ACKNOWLEDGED, actual04:58:07: correctedCPUjob healthy/session681361,32spawnworkers~100%CPU,5sourcefiles5fdf313+planverified. DCLM90rawfiles/24.016GB observed,FWE0,0completedparts at2m48afterstartup. No failure. Rawhealth03 SHAcc8b282fd6b5adda6afe91c35bd3562a3d37cfad4e14bc13e30151757092e583. DownloadRUNNING perlatestcontroller. Submituniquehealtha04 withparttoken/receiptprogress; no restart/newdownload/GPUwork.
+
+2026-10-29T04:56:29.498651+08:00: Recovery84c6b69 ACKNOWLEDGED,34knownCPUworkersreleased andfreshprepa03launched. Uniquehealtha03 96b29a96b1957c2725043322cfa5c8b2c667d1e5 SUBMITTED/remoteheadverified; retrievebeforewrites. Currentroot6y3o-a2-corpora-20261029-a03/source5fdf313/sessiona2_corpora_20261029_a03; sameplan/rawdownloadID. Nativepidfdnotavailable;a02failedbeforesignals; supportedidentity-checkedos.killrecoverya03succeeded. Needactualtokenization/counts/ETA. NoGPU/burn/envchanges.
+
 29 October04:56SGT: recovery84c6b69 ACKNOWLEDGED: CPU_WAITING_WORKERS_RELEASED34 andCORPUS_CPU_PREPARATION_SUBMITTED root6y3o-a2-corpora-20261029-a03. Rawtemp/a2_corpora_launch03.log SHA78f576fc28093c70dade681f99b5e529d226261d8527312116cdfaa6c16beb17. OldwaitingCPUtreeexited+lockreleased; freshCPUjob launched, originaldownloadunchanged. Submituniquehealtha03 toverifyactualtokenization andrawcounts; no GPUchanges.
 
 2026-10-29T04:54:05.348675+08:00: CPUrecovery84c6b69517a671a8b153b612097a551e618d2ce3 SUBMITTED/remoteheadverified, source5fdf313/root6y3o-a2-corpora-20261029-a03/sessiona2_corpora_20261029_a03. Retrievependingreceiptbeforewrites. Prior47fff65failed BEFOREANYsignal onmissingpidfd_open; no process/data changes. Newcommand uses supportedos.kill onlyafterperPIDfreshcmd/startverification, sameexactCPUwaitingtree. NoGPU/burn/download/envchanges. Healthtemplate temp/a2_corpora_health03.sh pointsa03andcountsactualnestedfiles; notsubmitted.

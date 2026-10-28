@@ -1,0 +1,14 @@
+{
+  "a2_corpora_launch02.log": {
+    "path": "temp/a2_corpora_launch02.log",
+    "sha256": "969e97d7fe086df38d9a2303470c61d1915e080968e621cb068a8a80697e9480"
+  },
+  "a2_corpora_launch03.log": {
+    "path": "temp/a2_corpora_launch03.log",
+    "sha256": "78f576fc28093c70dade681f99b5e529d226261d8527312116cdfaa6c16beb17"
+  },
+  "a2_corpora_directory_cpu.log": {
+    "path": "temp/a2_corpora_directory_cpu.log",
+    "sha256": "2c758915db167fcb58884d61a01c155b5f04614b33060e15830b2b8edc966695"
+  }
+}
