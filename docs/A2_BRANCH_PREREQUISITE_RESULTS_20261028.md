@@ -161,3 +161,15 @@ Artifacts: [compact18:31 archive](results/a2_remaining_phase0a_20261028/status_1
 Full original receipt: temp/a2_remaining_health08.log, SHA256
 3726bf541baf4c9933e9b1ec57e984c6495b1fa905243f42ed48031d1b61330d.
 No extra GPU job or modification to running training.
+
+## 18:56 SGT check: long NEM heal advancing
+
+Still20/28 remaining fits complete, all6baselines verified. NEM/P300/S1 0.8B
+advanced to2,400/3,051updates, from1,080 at18:31. Recent training KL~0.1323
+is not final validation NLL; no new completed fit or scientific decision.
+All20 receipts pass the unchanged LR/order/provenance/roundtrip checks, no retry.
+Eight GPUs95–96%,45,882MiB each, supervisor656246/86frozen source hashes intact.
+Elapsed3h47/current, totalphase~8h57. Remaining~2–2.3h; ETA21:00–21:15SGT.
+[Compact archive](results/a2_remaining_phase0a_20261028/status_1856); rawlocal
+temp/a2_remaining_health09.log SHA256
+ca24a139e88251e26532491b3152a61e365d4f151224dbe93536245e012d2051.

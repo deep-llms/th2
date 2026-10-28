@@ -211,3 +211,19 @@ on an offline task, matching prior direct-harness tests, tamper/overwrite reject
 Raw test log temp/a2_request_cli_tests_final.log; checksum in status_1831 archive.
 Native checkpoint identity/scoring CLI, suite and full-weight GPU parity remain
 before downstream deployment. This is local preparation, not an executed eval.
+
+19:01SGT local-only preparation: eval/a2_checkpoint.py collects actual parent or
+healed export file hashes from reviewed input/result/reference/frozen-set locks.
+It verifies exact completed-fit recipe/LR/order/roundtrip, original layer mapping,
+matching native code, and file identity before/after native FP32 reload.
+This records current export bytes; it does not invent a training-time weight hash.
+The coordinator must provide the reviewed locks and wait for terminal handoff.
+
+eval/a2_score.py scores a SHA-pinned prepared request artifact using the unchanged
+native scorer and load_parent/reload_student paths in a2_env. Output binds request,
+protocol, checkpoint hashes and runtime; no lm-eval dependency, no GPU ownership
+operations, no environment changes. Three CPU tests passed on tiny24-layer native
+model export→18-layer prune/reload, batched-vs-single scoring, and changed
+weight/code/layer/receipt/request rejection. Not actual1.7B/B200 acceptance.
+Still needed: reviewed checkpoint identity-plan builder, supervised paired suite,
+and actual-weight GPU parity/smoke after current training/burn handoff.

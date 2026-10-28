@@ -1,0 +1,8 @@
+{
+  "test_command": "tests/a2/test_eval_checkpoint.py",
+  "tests": 3,
+  "status": "passed",
+  "raw_log": "temp/a2_eval_identity_score_tests.log",
+  "sha256": "e5b1d9b9125484e5007d55827c05e15b455977abd57fe8706243476a47132b1b",
+  "gpu_validated": false
+}
