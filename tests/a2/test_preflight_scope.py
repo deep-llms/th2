@@ -6,8 +6,8 @@ import tempfile
 import unittest
 
 from efficient_llm.a2.protocol import (
-    DATASETS, PARENTS, FIXED_SETS, ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC,
-    compatible_data_spec, shared_check_sets, validate_shared_check, layers_for,
+    DATASETS, PARENTS, FIXED_SETS, ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC, DEPENDENCY_SPEC,
+    compatible_data_spec, shared_check_sets, validate_shared_check, layers_for, validate_run_scope, Run,
 )
 from scripts.a2_preflight_inputs import shared_numerical_jobs
 from run_experiments import load_jobs
@@ -28,7 +28,11 @@ class SharedScopeTests(unittest.TestCase):
         content = spec.read_bytes()
         original = content.split(b'\n\n## Approved preflight scope amendment', 1)[0]
         self.assertEqual(hashlib.sha256(original).hexdigest(), ORIGINAL_DATA_SPEC)
-        self.assertEqual(hashlib.sha256(content).hexdigest(), PREFLIGHT_SCOPE_SPEC)
+        previous=content.split(b'\n\n## Approved dependency-based launch amendment',1)[0]
+        self.assertEqual(hashlib.sha256(previous).hexdigest(), PREFLIGHT_SCOPE_SPEC)
+        self.assertEqual(hashlib.sha256(content).hexdigest(), DEPENDENCY_SPEC)
+        self.assertTrue(compatible_data_spec(ORIGINAL_DATA_SPEC, DEPENDENCY_SPEC))
+        self.assertTrue(compatible_data_spec(PREFLIGHT_SCOPE_SPEC, DEPENDENCY_SPEC))
         self.assertTrue(compatible_data_spec(ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC))
         self.assertTrue(compatible_data_spec(PREFLIGHT_SCOPE_SPEC, PREFLIGHT_SCOPE_SPEC))
         self.assertFalse(compatible_data_spec(PREFLIGHT_SCOPE_SPEC, ORIGINAL_DATA_SPEC))
@@ -65,6 +69,45 @@ class SharedScopeTests(unittest.TestCase):
             bad = dict(receipt, **{key: value})
             with self.assertRaisesRegex(ValueError, 'shared numerical'):
                 validate_shared_check(bad, sets, assets, prov, 'frozen')
+
+    def test_bounded_gate_cannot_unlock_other_runs(self):
+        assets, _ = fixture()
+        scope='dclm_P300_S1_grid'; gate={'launch_scope':scope}
+        sets={'dclm':{'S1':FIXED_SETS['S1']}}
+        self.assertEqual(len(shared_check_sets(sets,assets,scope=scope)),1)
+        for lr in (3e-5,1e-4,3e-4):
+            run=Run('dclm','P300','S1','0.03B',lr)
+            validate_run_scope(run,gate,scope)
+            retry=Run('dclm','P300','S1','0.03B',lr/2,'-rerun')
+            validate_run_scope(retry,gate,scope,run.run_id)
+            with self.assertRaises(ValueError):validate_run_scope(retry,gate,scope)
+        for run in (Run('dclm','P1T','S1','0.03B',1e-4),
+                    Run('dclm','P300','S2','0.2B',1e-4),
+                    Run('dclm','P300','S1','0.2B',1e-4)):
+            with self.assertRaisesRegex(ValueError,'not covered'):
+                validate_run_scope(run,gate,scope)
+        with self.assertRaisesRegex(ValueError,'scope mismatch'):
+            validate_run_scope(Run('dclm','P300','S1','0.03B',1e-4),gate,'all')
+
+    def test_historical_numerical_code_lock(self):
+        from efficient_llm.a2.early_grid import ast_hash
+        root=Path(__file__).resolve().parents[2]
+        lock=json.loads((root/'resources/a2_early_grid_reuse.json').read_text())
+        for file,digest in lock['unchanged_files'].items():
+            self.assertEqual(hashlib.sha256((root/file).read_bytes()).hexdigest(),digest,file)
+        for file,names in lock['unchanged_definitions'].items():
+            for name,digest in names.items():
+                self.assertEqual(ast_hash(root/file,name),digest,(file,name))
+
+    def test_bounded_manifest(self):
+        from scripts.a2_preflight_inputs import early_grid_jobs
+        with tempfile.TemporaryDirectory() as d:
+            jobs=early_grid_jobs('/inputs','/prior',29537)
+            path=Path(d)/'jobs.json';path.write_text(json.dumps({'jobs':jobs}))
+            load_jobs(path)
+            self.assertEqual(len(jobs),1)
+            self.assertEqual(jobs[0]['timeout_seconds'],3700)
+            self.assertEqual(jobs[0]['gpus'],list(range(8)))
 
     def test_post_s2_job_runs_mechanism_once_and_never_repeats_t8(self):
         assets, sets = fixture()

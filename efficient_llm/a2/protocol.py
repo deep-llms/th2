@@ -19,27 +19,34 @@ REPOS = {
 # Neither the sampling recipe nor the bytes/order of prepared data changed.
 ORIGINAL_DATA_SPEC = '9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd'
 PREFLIGHT_SCOPE_SPEC = 'f91f401f066a3054f3c866a51e6cc4d68aee8bb4e54948998d6c926f7dff5e64'
+DEPENDENCY_SPEC = 'b5507004791c958ec433005d97be8482561a6e3b010ec17a9be420f533204cca'
 REPRESENTATIVE = 'dclm/P300'
 
 
 def compatible_data_spec(prepared, current):
-    return prepared == current or (prepared, current) == (ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC)
+    return (prepared == current or (prepared, current) == (ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC)
+        or current == DEPENDENCY_SPEC and prepared in (ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC))
 
 
-def shared_check_sets(all_sets, assets):
+def shared_check_sets(all_sets, assets, *, scope='all'):
     """One representative probe, covering each actual removal pattern once."""
-    if set(all_sets) != set(DATASETS):
+    early = scope == 'dclm_P300_S1_grid'
+    if scope not in ('all', 'dclm_P300_S1_grid'):
+        raise ValueError('Unknown preflight scope')
+    datasets = ('dclm',) if early else DATASETS
+    parents = ('P300',) if early else PARENTS
+    if set(all_sets) != set(datasets):
         raise ValueError('Freeze S2 for every dataset before shared checks')
     reference = assets[REPRESENTATIVE]['code_files']
     required_code = {'modeling_opensci.py', 'configuration_opensci.py'}
     if not required_code <= reference.keys() or any(
-        assets[f'{ds}/{p}']['code_files'] != reference for ds in DATASETS for p in PARENTS
+        assets[f'{ds}/{p}']['code_files'] != reference for ds in datasets for p in parents
     ):
         raise ValueError('Shared checks require identical pinned native source')
     patterns = {}
-    for ds in DATASETS:
+    for ds in datasets:
         sets = all_sets[ds]
-        if set(sets) != {'S1', 'S2', 'S3', 'S4'}:
+        if set(sets) != ({'S1'} if early else {'S1', 'S2', 'S3', 'S4'}):
             raise ValueError('All four frozen sets required per dataset')
         for name, groups in sets.items():
             if len(groups) != 3:
@@ -51,14 +58,30 @@ def shared_check_sets(all_sets, assets):
     return dict(patterns.values())
 
 
-def validate_shared_check(receipt, all_sets, assets, provenance, sets_sha256):
-    expected = {tuple(layers_for(g)) for g in shared_check_sets(all_sets, assets).values()}
+def validate_shared_check(receipt, all_sets, assets, provenance, sets_sha256, *, scope='all'):
+    expected = {tuple(layers_for(g)) for g in shared_check_sets(all_sets, assets,scope=scope).values()}
     expected.update(((0,), (11,), (23,)))
     if (receipt.get('passed') is not True or receipt.get('scope') != 'shared_mechanism'
         or receipt.get('representative') != REPRESENTATIVE
         or receipt.get('provenance') != provenance or receipt.get('sets_sha256') != sets_sha256
         or {tuple(p) for p in receipt.get('removal_patterns', [])} != expected):
         raise ValueError('Missing, stale or incomplete shared numerical evidence')
+
+
+def validate_run_scope(run, gate, scope, rerun_of=None):
+    if gate.get('launch_scope', 'all') != scope:
+        raise ValueError('Preflight launch scope mismatch')
+    if scope == 'all':
+        return
+    if scope != 'dclm_P300_S1_grid' or (run.dataset,run.arm,run.set,run.budget) != ('dclm','P300','S1','0.03B'):
+        raise ValueError('Run not covered by bounded preflight')
+    if not rerun_of:
+        if run.lr not in LRS or run.suffix:
+            raise ValueError('Only registered grid points allowed')
+    else:
+        original=Run('dclm','P300','S1','0.03B',run.lr*2)
+        if run.lr*2 not in LRS or run.suffix!='-rerun' or original.run_id!=rerun_of:
+            raise ValueError('Only one registered half-LR retry allowed')
 # Order: P300, P1T, S72, S188. Branch weights always use P1T main code.
 COMMITS = {
  'dclm': ('9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0', '90481ca923a6cba5c8e107e2249e09fcd32ec617',

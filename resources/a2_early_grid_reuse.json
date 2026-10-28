@@ -1,0 +1,49 @@
+{
+  "source_commit": "20b61d04d59a603532e31ef00687872be6af7e6d",
+  "artifacts": {
+    "source-manifest.json": "91fed40b8e3cc1610389e51eaa43d1f81cad520f2bfabe7b26fd9b95660dd3b2",
+    "supervised/run/complete.json": "8b7bb094a9fb4bed2b1c94d2fc0a37cb9512d361a92d1675e2261a8425042228",
+    "supervised/run/throughput.json": "b7d5f966dcb20aa1075dcf26ea8dfb5c55ffb79124f4dbb6718ea96e81053704",
+    "supervised/run/survey.json": "93a1c6b4682520f11108f2462c6d2638bb069b21dccd71183caf9a73aeed1963"
+  },
+  "unchanged_files": {
+    "efficient_llm/a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+    "efficient_llm/a2/measure.py": "db818b8b124d6a097072713294f140cb14cf4c3d7495b351dbcd8f5e2e701d26",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "packed_evaluation.py": "e8ad9b65831ed44522670b229e8724e9e3ff69163c79f901371fb20c274877e7",
+    "docs/results/a2_review_20261028/validation.json": "8e681971d55623924e130f9c103272dccbc1ef52be8a03a4dbacf62958d5600f",
+    "docs/results/a2_review_20261028/identity_metadata.json": "5a1e1ae48390fa300609d8a5928fcb591e6e25c14fe89b243062d0f6c8a342d1"
+  },
+  "unchanged_definitions": {
+    "efficient_llm/a2/model.py": {
+      "autocast": "66b89c6791f7466fc31b66faabf13d1eab39447feb349d72e7a35ec37dcdd7a3",
+      "load_parent": "de299b5b33dcf3b390951e3a56c27e97b8990d1b84392daa7d7ac5506d10c56b",
+      "prune": "6bf09ca81a50e499114973be3a882ab352bbc7c5e2b62de7fbde9197c7c662c4",
+      "bypass": "450adf39dbf38ae1807a6b91ecfcddc5b0393b6e5ff185a4c62305e84d862eb5",
+      "kl_chunk": "5ac8dd58a395476f97aec58ac04dce34d54f5eabac4882511881b7e41e2b1da6",
+      "forward_kl": "2ca237e7b4eff5670a5ee5ca5d93924040476d80316b8430624f2a917bc989be",
+      "KDModel": "c240f21db69b3df30b920a14e03455bf68740d6d864f91b225c9c70c1f8719ae",
+      "round_to_saved_precision": "6ca1424399606c7bfd6d5793eb7f665b8e565c578deac7b45a346050af5fcdd9",
+      "save_student": "e2d9fd33403f29931ee1162957e259b5a1e2acbbc8e670d47e907c03d4b99c50",
+      "reload_student": "3c6346a5ac6d00f0cdbb800aae9e4791e8ea47ea7ca755117b4a55b35b223f5b"
+    },
+    "efficient_llm/a2/protocol.py": {
+      "parent_ref": "5951ce12982d149e9c2bd8a5a2138585867169aa57933d554f86e1165aa3c631",
+      "steps_for": "58a8cbae4088383be2aeb8d5c6c282a2bdd15c4d874d18ebb3bbe1bd0cf90b7e",
+      "warmup_steps": "fea891b4bf6931d96fc8395c9834af18e91fad0264c1314960ddb63f86383d29",
+      "lr_for_update": "53de7c9d1d8534bb376b25f3e266cbd247d0b8b5276bee97b3b772d7594e917b",
+      "layers_for": "686abb67412645d1d37f3610d4509e286690fb6805c8213f7a1c706b64b07d62",
+      "choose_s2": "0e991a1df2ccaf34b870054edbcb202881c2b048794b0a4e4f1543a9f9d588be",
+      "choose_lr": "48b620631cca485783e0ddf64c14cba83284e6554a902a5fa2744058cff3b159",
+      "_finite": "96dd615b3b70cbdc878f37e8161b8620dc7b17f25c40665eea27009fb39f5574",
+      "_sign": "67e4149fb74474d65fa9c8818c4d89666245fd90d2f353cb4a05f7b89c213bfd",
+      "length_decision": "64ed188b4b94eae48ef2aa67b93de1c0af3dbd37dfdbe98ad10dd73e335f0f56",
+      "lr_state_decision": "1dfd7c77d52db42343cb35bc9ad695b50dfe1be0beeaf301c8ff27276648e663",
+      "Run": "8841fb63ff118ec87770e14849befc624894fae4a3348ff8d0da970adc8b6aa5",
+      "matrix": "bf08da01cc2a898caf10705d004024c8bd2b3fa2ed6d5dbb11c0dc77521d6381"
+    },
+    "efficient_llm/a2/check.py": {
+      "throughput": "86ff94800a1f6ed042a20e5ccd3c4a6168c6e7e96875f376565f1af90d0f3d34"
+    }
+  }
+}

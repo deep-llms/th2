@@ -82,6 +82,14 @@ def shared_numerical_jobs(source, inputs, port, sets_path, assets):
     return [job]
 
 
+def early_grid_jobs(inputs, prior, port):
+    return [dict(name='early-grid',gpus=list(range(8)),timeout_seconds=3700,
+        argv=['{python}','-u','-m','efficient_llm.a2.early_grid','--inputs',str(inputs),
+              '--prior',str(prior),'--port',str(port),'--output','{run_dir}/grid'],
+        required_outputs=[dict(path='grid/complete.json',json_equals={
+            'status':'complete','scope':'dclm_P300_S1_grid','full_pilot_complete':False})])]
+
+
 def _model_job(source, inputs, port, action, limit, contract):
     source, inputs = Path(source), Path(inputs)
     launch = ['{python}', '-m', 'accelerate.commands.launch', '--config_file',

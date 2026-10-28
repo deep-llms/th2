@@ -1,5 +1,24 @@
 # Current task
 
+## Latest: bounded DCLM/P300 S1 grid authorized — 28 October 2026 SGT
+
+User approved dependency-based launching instead of waiting for all parents.
+Preparing `launch_a2_preflight --stage early-grid`: actual representative checks
+for S1, unhealed baseline, then exactly three 0.03B LR-grid fits (114 updates
+apiece) and only the registered half-LR retries. No P1T/S2/other dataset launch.
+The existing supervisor retains Accelerate verification, exact burn ownership
+reclaim/free checks, guard and automatic communicating-burn handoff.
+Target root: /mnt/local/_outputs/deep-llms_th2/6y3o-a2-early-grid-20261028-a01.
+Session a2_early_grid_20261028_a01. Prior/source/data unchanged; original T1/T8
+receipts reused via explicit checksum and unchanged numerical-code locks.
+Spec's appended dependency amendment governs this bounded launch. No changes to
+loss, optimizer, schedule, dataset/order or scientific selection. The gate can
+only authorize DCLM/P300 S1's registered grid and retries; no full-pilot claim.
+Estimated 25–35 minutes after queue start, plus ~7 minutes per retry; one-hour
+hard cap. Charge all elapsed time to Phase 0A alongside prior 322seconds. Full
+pilot workload report remains pending; report progress/ETA in Singapore time.
+Submission/acknowledgement not yet recorded; do not claim running from this note.
+
 ## Latest: lean preflight implemented — 28 October 2026 SGT
 
 User approved running shared implementation checks on one actual representative,

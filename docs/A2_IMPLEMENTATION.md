@@ -237,3 +237,29 @@ Validation: the 39-test A2 CPU suite passed, followed by all 9 native-model
 tests after adding the finite-forward/RoPE and structural-mismatch regressions.
 Logs: `temp/a2_scope_tests.log`, `temp/a2_scope_model_tests_final.log`. These are
 local code tests, not completion of the pending actual-parent GPU checks.
+
+
+### Dependency-based first grid (28 October 2026 SGT)
+
+`launch_a2_preflight --stage early-grid --prior <initial-preflight-root>` reuses
+all GPU-supervisor behavior. It snapshots `early_grid.py`, the fixed reuse lock
+and reviewed identity/DDP receipts. Before reclaiming GPUs it verifies old
+artifacts, unchanged numerical code/runtime and current prepared data/weights.
+The child runs current protocol tests, actual DCLM/P300 S1 numerical checks,
+unhealed scoring and three fresh 114-update LR fits. A failed check prevents
+training. Only tuning loss decides divergence; retries use half LR once and
+never enter LR selection. Exact global sample order and BF16 reload are checked
+by the unchanged heal implementation. Existing outputs are never overwritten.
+
+Scoped sets/gate name `dclm_P300_S1_grid` permits only that parent/set/budget/grid
+and registered retry. It does not grant permission for other parents, S2 or
+longer fits. S2 selection and the full preflight path remain intact. Historical
+receipts preserve original provenance in `reuse.json`; source-function checksums
+use exact source text (including decorators), independent of Python AST-dump
+format. No new model/environment/data or training recipe.
+
+Local checks: 43-test suite had one reuse-hash portability failure (dev Python
+AST format), fixed by source-text hashing; all seven scope tests subsequently
+passed. Native numerical/training tests passed in that suite. Actual archived
+input/result reuse is checked separately before deployment. This is not a claim
+that the upcoming actual-parent mechanism test or first healing fit has passed.

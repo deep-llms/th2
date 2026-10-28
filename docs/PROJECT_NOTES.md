@@ -523,3 +523,11 @@ amendment and A2_IMPLEMENTATION.md. Existing data and completed receipts are
 preserved with explicit historical provenance; no preparation rerun for this
 scope-only amendment. Never interpret shared checks as all parents already
 passing, or discard scientific measurements as redundant code tests.
+
+
+## Progress-report preference — 28 October 2026 SGT
+
+Always include elapsed/remaining time and the estimated completion date/time in
+Singapore time when reporting a running test/training queue. Distinguish measured
+throughput estimates from unmeasured stages. If no job is running or a stage has
+not been submitted, say so explicitly; do not give a fictitious completion time.

@@ -27,6 +27,8 @@ def main():
     p.add_argument('--code-commit',required=True)
     p.add_argument('--predecessor-burn-script',type=Path,required=True)
     p.add_argument('--host',required=True);p.add_argument('--session',required=True)
+    p.add_argument('--stage',choices=('initial','early-grid'),default='initial')
+    p.add_argument('--prior',type=Path)
     a=p.parse_args();source=Path(__file__).resolve().parents[1]
     if socket.gethostname()!=a.host or a.output.exists():raise ValueError('Wrong host or existing output')
     for name in (a.session,a.session+'_burn'):
@@ -41,6 +43,10 @@ def main():
     plan=json.loads((source/'resources/a2_inputs_20261028.json').read_text())
     inputs_receipt=verify_prepared(a.inputs,source/'docs/A2_pilot_spec.md',plan)
     weights_receipt=verify_inputs(initial_asset_plan(plan))
+    if a.stage=='early-grid':
+        if a.prior is None:raise ValueError('Prior completed preflight required')
+        from efficient_llm.a2.early_grid import verify_reuse
+        verify_reuse(source,a.inputs,a.prior,json.loads((source/'resources/a2_early_grid_reuse.json').read_text()))
     verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
     if (digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH
         or Path('/mnt/local/_gpu_guard/DISABLED').exists()):raise ValueError('Unknown burn/guard owner')
@@ -50,6 +56,9 @@ def main():
         files.extend((source/directory).rglob('*.py'))
     files.extend(source/name for name in ('resources/accelerate_b200.yaml','resources/llm_pretrain_burn.py',
         'resources/a2_inputs_20261028.json','docs/A2_pilot_spec.md'))
+    if a.stage=='early-grid':
+        files.extend(source/name for name in ('resources/a2_early_grid_reuse.json',
+            'docs/results/a2_review_20261028/validation.json','docs/results/a2_review_20261028/identity_metadata.json'))
     identities={}
     for file in files:
         relative=file.relative_to(source);target=frozen/relative
@@ -74,8 +83,9 @@ def main():
     print(verification.stdout,flush=True)
     live=inspect();write_json(a.output/'inspection.json',live)
     with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
-    from scripts.a2_preflight_inputs import initial_jobs
-    jobs=initial_jobs(frozen,a.inputs.resolve(),port)
+    from scripts.a2_preflight_inputs import initial_jobs,early_grid_jobs
+    jobs=(initial_jobs(frozen,a.inputs.resolve(),port) if a.stage=='initial'
+        else early_grid_jobs(a.inputs.resolve(),a.prior.resolve(),port))
     path=a.output/'jobs.json';write_json(path,dict(jobs=jobs))
     from run_experiments import load_jobs
     load_jobs(path)

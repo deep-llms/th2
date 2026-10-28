@@ -649,3 +649,25 @@ receipts and record both original and amended spec identities; do not resample,
 retokenize or rewrite historical evidence. Reuse of historical code-test or
 throughput receipts requires an explicit reviewed record of unchanged relevant
 code/runtime/recipe, not silently relabelling their provenance.
+
+
+## Approved dependency-based launch amendment — 28 October 2026 (SGT)
+
+The owner approved starting eligible fixed-set arms before unrelated parents
+finish their surveys. The first bounded launch is DCLM/P300 S1's three 0.03B
+LR-grid fits, with the registered one-half-LR divergence retries only. Each fit
+still starts fresh; no budget, LR selection, data, loss or metric is changed.
+
+Before these fits, require the actual representative mechanism checks covering
+S1 and single layers 0/11/23, this parent's identity/precision checks, data
+integrity/disjointness, recipe/LR/decision tests and measured throughput. Reuse
+verified historical results only with an explicit original-receipt checksum and
+review of unchanged relevant code/runtime. Score the unhealed S1 baseline first.
+Report a bounded workload estimate; charge this work to Phase 0A. No other arm
+is eligible from this gate. S2 remains dependent on its full prescribed BI survey;
+other parents require their own identity/precision evidence. Extend mechanism
+coverage when new removal patterns are introduced. Stop after this grid and
+restore verified communicating burns; do not automatically start the full pilot.
+
+This amendment changes execution dependencies only. Previously prepared data
+under the original or first preflight-scope spec remains byte-for-byte valid.

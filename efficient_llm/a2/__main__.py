@@ -10,7 +10,7 @@ import torch
 from efficient_llm.diagnostic_data import sha256
 from .data import write_json,PackedRows,prepare,load_pool,prepare_secondary,secondary_records,training_order
 from .protocol import DATASETS,PARENTS,FIXED_SETS,Run,matrix,choose_s2,layers_for
-from .protocol import compatible_data_spec,REPRESENTATIVE,shared_check_sets,validate_shared_check
+from .protocol import compatible_data_spec,REPRESENTATIVE,shared_check_sets,validate_shared_check,validate_run_scope
 from .model import load_parent,prune
 from .measure import rank_world,score,survey
 from .results import selected_lrs,write_report,estimate_workload
@@ -174,13 +174,15 @@ def main():
             args.output.with_suffix('.work'),microbatch=args.microbatch)
         if rank==0:write_json(args.output,dict(result,provenance=prov))
         return
-    all_sets=read(args.sets)['sets']
+    set_record=read(args.sets)
+    scope=set_record.get('scope','all')
+    all_sets=set_record['sets']
     sets=all_sets[args.dataset]
     if args.action=='check':
         from .check import numerical_checks
         if f'{args.dataset}/{args.parent}'!=REPRESENTATIVE:
             raise ValueError('Run shared mechanism checks only on '+REPRESENTATIVE)
-        patterns=shared_check_sets(all_sets,assets)
+        patterns=shared_check_sets(all_sets,assets,scope=scope)
         model=load_parent(assets,args.dataset,args.parent,device)
         result=numerical_checks(model,evaluation['small'],patterns,args.output.with_suffix('.work'))
         if rank==0:write_json(args.output,dict(result,provenance=prov,scope='shared_mechanism',
@@ -189,13 +191,17 @@ def main():
         return
     if args.action=='pre':
         from .model import bypass
+        from .check import parent_sanity
+        shared_check_sets(all_sets,assets,scope=scope)
         model=load_parent(assets,args.dataset,args.parent,device)
+        sanity=parent_sanity(model,evaluation['small'])
         baseline={k:score(model,rows) for k,rows in evaluation.items()}
         values={}
         for name,groups in sets.items():
             with bypass(model,layers_for(groups)):
                 values[name]={k:score(model,rows) for k,rows in evaluation.items()}
-        if rank==0:write_json(args.output,dict(provenance=prov,parent=baseline,sets=values,sets_sha256=sha256(args.sets)))
+        if rank==0:write_json(args.output,dict(provenance=prov,parent=baseline,sets=values,
+            parent_sanity=sanity,sets_sha256=sha256(args.sets)))
         return
     gate=read(args.preflight)
     if not args.secondary_map:raise ValueError('Record secondary acquisition/skip decisions before healing')
@@ -204,8 +210,9 @@ def main():
     required=('T4','T5','T6','T7','T8','T10_formula','T11','T12','T13')
     if not all(gate.get('tests',{}).get(t,{}).get('passed') is True for t in required):
         raise ValueError('Missing pre-heal correctness evidence')
-    validate_shared_check(gate.get('shared_numerical',{}),all_sets,assets,prov,sha256(args.sets))
+    validate_shared_check(gate.get('shared_numerical',{}),all_sets,assets,prov,sha256(args.sets),scope=scope)
     raw=read(args.run); run=Run(**{k:raw[k] for k in ('dataset','arm','set','budget','lr','suffix')})
+    validate_run_scope(run,gate,scope,raw.get('rerun_of'))
     if run.dataset!=args.dataset: raise ValueError('Run dataset differs')
     pre_values=read(args.pre_values)
     if (pre_values.get('provenance')!=prov or pre_values.get('sets_sha256')!=sha256(args.sets)
