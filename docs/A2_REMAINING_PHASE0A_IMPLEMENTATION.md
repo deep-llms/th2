@@ -84,3 +84,29 @@ amendment/data-spec metadata field: recognize only its exact reviewed artifact
 SHA, verify both historical byte/ASTlocks, and check the approved spec transition
 without rewriting originalprovenance. Changed survey values are rejected by test.
 Node-path history lock: resources/a2_completed_s1_20261028.json.
+
+14:34 SGT integration: `scripts/a2_heal_stage.py` verifies reviewed successful
+prerequisite hashes, rechecks BI selection, requires identical numerical
+code_files/runtime/data for check reuse, preserves the original check in its
+envelope, verifies historical T8/recipe evidence, scores six native all-pattern
+baselines, then invokes only the28 pending fits. It is connected as launcher
+`--stage remaining-heals --prerequisites LOCK` (plus existing history/prior/grid).
+No old matrix/grid fits are repeated. Worst-case original-fit timeouts plus
+baselines/cleanup must fit remaining18h Phase0A cap; each retry is separately
+budget checked. T15 diagnostics are recorded and never change eligibility.
+70 CPU tests pass, including numerical-provenance/tampered-receipt rejection,
+all-six-baseline CLI ordering, registered28-run execution and retry/T14 checks.
+Actual prerequisite final receipt and GPU execution remain pending; current
+branch job keeps its frozen source602fbce. Log temp/a2_heal_stage_tests.log.
+
+
+At14:37SGT the first branch stage had six successful surveys but failed in CPU
+S2 assembly: the exact original DCLM/P300 survey predates parent_sanity metadata.
+The fix accepts that omission ONLY for its original locked SHA; pinned history
+already requires a successful parent pre-baseline, and healing requires it again.
+It never marks arbitrary missing sanity metadata as passed. Actual30fit/12survey
+replay now selects S2=[1,2,3] DCLM/FWE, [1,2,5] NEM. All71CPUtests pass.
+Original failed supervisor and successful survey receipts are retained under
+results/a2_branches_20261028/final_surveys. Recovery reuses all six surveys through
+resources/a2_completed_surveys_20261028.json and executes only CPU freeze + GPU
+numericalcheck. No numericalcore or scientific selection rule changed.

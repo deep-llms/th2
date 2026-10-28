@@ -180,6 +180,24 @@ def branch_sequence(surveys,identity):
     return todo
 
 
+def survey_precision_passed(survey,current):
+    """Old first survey lacks later sanity metadata; never default it for others.
+
+    Its exact reviewed bytes retain T1. Parent forward/RoPE sanity is separately
+    required by load_history's SHA-pinned completed pre-baseline, and is checked
+    again in the all-pattern pre-baseline before any new healing.
+    """
+    same_survey_science(survey,current)
+    if 'parent_sanity' in survey:
+        return survey['T1_precision_passed'] is True and survey['parent_sanity']['passed'] is True
+    lock=json.loads((Path(__file__).resolve().parents[1]/'resources/a2_early_grid_reuse.json').read_text())
+    digest=hashlib.sha256((json.dumps(survey,indent=2,allow_nan=False)+'\n').encode()).hexdigest()
+    if digest!=lock['artifacts']['supervised/run/survey.json']:
+        raise ValueError('Unreviewed survey without parent sanity metadata')
+    verify_current_core(Path(__file__).resolve().parents[1])
+    return survey['T1_precision_passed'] is True
+
+
 def freeze_sets(surveys,identity,current,assets):
     if branch_sequence(surveys,identity):
         raise ValueError('Unmeasured eligible branches; S2 cannot be frozen')
@@ -195,7 +213,7 @@ def freeze_sets(surveys,identity,current,assets):
             s=surveys[key]
             if (s['dataset'],s['parent'])!=(ds,parent): raise ValueError('Wrong survey parent')
             same_survey_science(s,current)
-            passed=s['T1_precision_passed'] is True and s['parent_sanity']['passed'] is True
+            passed=survey_precision_passed(s,current)
             eligibility[key]=dict(T1=passed,T3=True)
             if passed:usable.append(parent)
         decisions[ds]=choose_s2({p:surveys[ds+'/'+p]['group_bi'] for p in usable},usable)

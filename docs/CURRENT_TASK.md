@@ -1,5 +1,22 @@
 # Current task
 
+Latest14:45SGT: branchhealth e91620a acknowledged snapshot14:37:57. All six
+surveys successful/T1+sanitypassed, but CPU freeze-sets FAILED14:35:43 because
+original DCLM/P300 survey lacks later parent_sanity field. No numerical/heals ran.
+Native supervisor restored verified8communicatingburns14:36:54; independent
+healthguardreleased/cycles80→90/payload88.83→99.93GiB. No node/env/model issue.
+Rawtemp/a2_branch_health03.log SHAce97553cda2f46cf51daadefca6a33c2561ffbb8c8d41aac4d0770b9be2475f9.
+Archived docs/results/a2_branches_20261028/final_surveys (original receipts).
+Fixed coordinator legacy metadata handling ONLY for exact reviewed original
+surveySHA; parent sanity independently passed by pinned pre-baseline and will
+be required again before heals. Numericalcore locks unchanged. 71CPUtests pass.
+Actual30fit+12survey replay/S2 selection pass. New historyresource
+resources/a2_completed_surveys_20261028.json reuses ALL surveys, no repeats.
+Preparing fresh remaining-prereqs stage a02: ONLY freezeS2 + numericalcheck;
+phaseledger18000seconds includesfailedstage, expected10–20min, max4320seconds.
+New healstage/launcher implemented and tested but GPU execution awaits actual
+fullpatternnumerical receipt and successful terminalburn. No heals submitted.
+
 Latest14:36SGT: branchhealth609764f acknowledged, snapshot14:28:41. Fourbranch
 surveys finished andT1passed; nem/S72active, source82filesverified; noerror.
 Rawtemp/a2_branch_health02.log SHA0b24283503ca43d83aa2894ca7cd804e2dfeecc83471e7b4b079c06267367808.

@@ -27,10 +27,11 @@ def main():
     p.add_argument('--code-commit',required=True)
     p.add_argument('--predecessor-burn-script',type=Path,required=True)
     p.add_argument('--host',required=True);p.add_argument('--session',required=True)
-    p.add_argument('--stage',choices=('initial','early-grid','s1-pair','remaining-prereqs'),default='initial')
+    p.add_argument('--stage',choices=('initial','early-grid','s1-pair','remaining-prereqs','remaining-heals'),default='initial')
     p.add_argument('--prior',type=Path)
     p.add_argument('--grid',type=Path)
     p.add_argument('--history',type=Path,help='Reviewed SHA-pinned completed S1 receipts')
+    p.add_argument('--prerequisites',type=Path,help='Reviewed terminal branch/check artifact lock')
     p.add_argument('--dataset',choices=('dclm','fwe','nem'),default='dclm')
     p.add_argument('--spent-seconds',type=float,default=1155.47)
     a=p.parse_args();source=Path(__file__).resolve().parents[1]
@@ -48,7 +49,13 @@ def main():
     from scripts.a2_prepare_inputs import verify_inputs
     plan=json.loads((source/'resources/a2_inputs_20261028.json').read_text())
     inputs_receipt=verify_prepared(a.inputs,source/'docs/A2_pilot_spec.md',plan)
-    if a.stage=='remaining-prereqs':
+    if a.stage=='remaining-heals':
+        from scripts.a2_heal_stage import prepare_heals
+        if any(v is None for v in (a.history,a.prerequisites,a.prior,a.grid)):
+            raise ValueError('History, completed prerequisites, original T8 and grid required')
+        prepared=prepare_heals(source,a.inputs,a.history,a.prerequisites,a.prior,a.grid,a.code_commit,a.spent_seconds)
+        weights_receipt=verify_inputs(prepared['asset_plan'])
+    elif a.stage=='remaining-prereqs':
         from scripts.a2_remaining import prepare_prerequisites
         if a.history is None:raise ValueError('Reviewed completed-history lock required')
         prepared=prepare_prerequisites(source,a.inputs,a.history,a.code_commit,a.spent_seconds)
@@ -73,10 +80,12 @@ def main():
         files.extend((source/directory).rglob('*.py'))
     files.extend(source/name for name in ('resources/accelerate_b200.yaml','resources/llm_pretrain_burn.py',
         'resources/a2_inputs_20261028.json','docs/A2_pilot_spec.md'))
-    if a.stage in ('early-grid','s1-pair','remaining-prereqs'):
+    if a.stage in ('early-grid','s1-pair','remaining-prereqs','remaining-heals'):
         files.extend(source/name for name in ('resources/a2_early_grid_reuse.json',
             'docs/results/a2_review_20261028/validation.json','docs/results/a2_review_20261028/identity_metadata.json'))
-    if a.stage in ('s1-pair','remaining-prereqs'):files.append(source/'resources/a2_pair_reuse.json')
+    if a.stage in ('s1-pair','remaining-prereqs','remaining-heals'):files.append(source/'resources/a2_pair_reuse.json')
+    if a.stage in ('remaining-prereqs','remaining-heals'):
+        files.append(source/'docs/results/a2_preflight_20261028/dclm_P300_survey.json')
     identities={}
     for file in files:
         relative=file.relative_to(source);target=frozen/relative
@@ -90,6 +99,8 @@ def main():
         write_json(a.output/'reference.json',prepared['reference'])
         write_json(a.output/'remaining-plan.json',prepared['plan'])
         write_json(a.output/'phase-budget.json',prepared['budget'])
+        if a.stage=='remaining-heals':
+            write_json(a.output/'prerequisites.json',prepared['prerequisites_lock'])
     env={**os.environ,'CUDA_VISIBLE_DEVICES':'','HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1',
          'HF_DATASETS_OFFLINE':'1','HF_HUB_DISABLE_TELEMETRY':'1','WANDB_MODE':'offline',
          'OMP_NUM_THREADS':'1','NCCL_NVLS_ENABLE':'0','TOKENIZERS_PARALLELISM':'false',
@@ -114,6 +125,10 @@ def main():
         jobs=early_grid_jobs(a.inputs.resolve(),a.prior.resolve(),port)
     elif a.stage=='s1-pair':
         jobs=pair_jobs(a.inputs.resolve(),a.prior.resolve(),a.grid.resolve(),port,a.dataset,a.spent_seconds)
+    elif a.stage=='remaining-heals':
+        from scripts.a2_heal_stage import heal_jobs
+        jobs=heal_jobs(a.inputs.resolve(),a.output/'history.json',a.output/'prerequisites.json',
+            a.prior.resolve(),a.grid.resolve(),port,a.spent_seconds,18*3600-a.spent_seconds-600)
     else:
         from scripts.a2_remaining import prerequisite_jobs
         jobs=prerequisite_jobs(source=frozen,inputs=a.inputs.resolve(),port=port,

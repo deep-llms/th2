@@ -170,6 +170,22 @@ class RemainingTests(unittest.TestCase):
         survey['group_bi'][0]+=1
         with self.assertRaises(ValueError):same_survey_science(survey,current)
 
+    def test_original_survey_missing_later_sanity_metadata(self):
+        from scripts.a2_remaining import survey_precision_passed
+        from efficient_llm.a2.protocol import DEPENDENCY_SPEC
+        survey=json.loads((ROOT/'docs/results/a2_preflight_20261028/dclm_P300_survey.json').read_text())
+        original=copy.deepcopy(survey)
+        current=dict(survey['provenance'],spec_sha256=DEPENDENCY_SPEC,
+            data_spec_sha256=survey['provenance']['spec_sha256'])
+        self.assertTrue(survey_precision_passed(survey,current))
+        self.assertEqual(survey,original)
+        surveys,identity,assets=survey_fixture()
+        candidate=surveys['fwe/P300'];del candidate['parent_sanity']
+        with self.assertRaisesRegex(ValueError,'without parent sanity'):
+            survey_precision_passed(candidate,provenance())
+        survey['final']['loss']+=.01
+        with self.assertRaises(ValueError):survey_precision_passed(survey,current)
+
     def test_prerequisite_launch_gate_inputs_and_budget(self):
         from unittest.mock import patch
         from scripts.a2_remaining import prepare_prerequisites
