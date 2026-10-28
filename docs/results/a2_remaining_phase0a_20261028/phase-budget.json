@@ -1,0 +1,8 @@
+{
+  "phase": "0A",
+  "spent_seconds": 18600.0,
+  "estimated_seconds": 23834.659022808075,
+  "worst_seconds": 39591.98853421211,
+  "hard_cap_seconds": 64800,
+  "report_threshold_seconds": 54000
+}
