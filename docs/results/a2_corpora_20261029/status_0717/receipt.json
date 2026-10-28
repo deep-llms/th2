@@ -1,0 +1,49 @@
+{
+  "raw_log": "temp/a2_corpora_health08.log",
+  "raw_sha256": "4aa277611806d18a4a4e841c53d49ac36d585783d5069c0ff47c447a8e706025",
+  "artifacts": {
+    "source-manifest.json": "d2f443908bf165c58539cf263d5155eed86547a2aa8f980ad03933cc8ae6f59a",
+    "data/status.json": "bc698992774952651a28fb4185b366a86ff18d5b380fd1e6896643a759be8f83"
+  },
+  "corpus_counts": [
+    {
+      "corpus": "dclm",
+      "raw_files_present": 340,
+      "raw_bytes_observed": 89940986748,
+      "planned_files": 340,
+      "completed_parts": 160
+    },
+    {
+      "corpus": "fineweb_edu",
+      "raw_files_present": 6,
+      "raw_bytes_observed": 12909670045,
+      "planned_files": 60,
+      "completed_parts": 0
+    }
+  ],
+  "health_at": "2026-10-28T23:17:46.348354+00:00",
+  "session": "0 681361",
+  "part_progress": [
+    {
+      "corpus": "dclm",
+      "observed_token_bytes": 92996675864,
+      "observed_tokens": 23249168966,
+      "completed_count": 160,
+      "completed_tokens": 22156193480,
+      "part_receipt_set_sha256": "ccc19a7520b40632cc7020bd0fdb061e9b24acec4d86aee2069e00d57f34a326"
+    },
+    {
+      "corpus": "fineweb_edu",
+      "observed_token_bytes": 0,
+      "observed_tokens": 0,
+      "completed_count": 0,
+      "completed_tokens": 0,
+      "part_receipt_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "receipt_complete": true,
+  "source_files_verified": 5,
+  "source_commit": "5fdf313eb2fb05f239e056b543266b0c69610f1d",
+  "readiness": "INCOMPLETE: packed output and final prefix comparison pending",
+  "full_receipt_extraction": "temp/a2_corpora_health08_extracted"
+}
