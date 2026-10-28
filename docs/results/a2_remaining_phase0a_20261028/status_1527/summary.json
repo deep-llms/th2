@@ -1,0 +1,71 @@
+{
+  "baselines": 5,
+  "baseline_metrics": [
+    {
+      "dataset": "dclm",
+      "parent": "P1T",
+      "parent_nll": 2.6869089917639344,
+      "unhealed_nll": {
+        "S1": 4.004721485196599,
+        "S3": 3.293841890655786,
+        "S4": 9.809053738961092,
+        "S2": 7.5715882347220305
+      }
+    },
+    {
+      "dataset": "dclm",
+      "parent": "P300",
+      "parent_nll": 2.7377930322126844,
+      "unhealed_nll": {
+        "S1": 3.7637751437881795,
+        "S3": 3.2699469024516175,
+        "S4": 4.159725901180525,
+        "S2": 9.09491776730996
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "P1T",
+      "parent_nll": 2.808707333601816,
+      "unhealed_nll": {
+        "S1": 4.124982157487267,
+        "S3": 3.3228820812883044,
+        "S4": 5.402749698618086,
+        "S2": 8.031933519902852
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "P300",
+      "parent_nll": 2.860631325856815,
+      "unhealed_nll": {
+        "S1": 3.822488626155516,
+        "S3": 3.3004530692173115,
+        "S4": 4.219123631953061,
+        "S2": 10.284663162592977
+      }
+    },
+    {
+      "dataset": "nem",
+      "parent": "P300",
+      "parent_nll": 2.774250937159999,
+      "unhealed_nll": {
+        "S1": 3.866534354760928,
+        "S3": 3.9888367284618997,
+        "S4": 6.078927823256903,
+        "S2": 6.394251825220455
+      }
+    }
+  ],
+  "pending_originals": 28,
+  "verified_results": [],
+  "health_at": "2026-10-28T07:27:01.071034+00:00",
+  "raw_sha256": "547fcf0aa6ffbfde37a10092384e0e3489bf43e84788ca5a3ae82cc02dba5ba0",
+  "source": "d3a8a0b35b29a9e6cd951a7d4cf754908fe0fc40",
+  "source_files_verified": 86,
+  "active": "nem/P1T all-pattern baseline",
+  "gpu_count": 8,
+  "guard": "{\"owner_pid\": 656246, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised\", \"at\": \"2026-10-28T07:08:28.984717+00:00\"}",
+  "eta_sgt": "2026-10-28 21:50\u201322:15",
+  "note": "No healing result yet at this snapshot; original parent baselines match within1e-6."
+}

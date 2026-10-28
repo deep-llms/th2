@@ -1,5 +1,20 @@
 # Current task
 
+Latest15:29SGT: health41df888 acknowledged; snapshot15:27:01 healthy,5/6fullpattern
+baselinesdone, nem/P1Tactive,0healingresults yet. FiveparentNLLs match original
+within1e-6; allfoursets present/sanity/provenancepass. 86sourcefilesmatchd3a8a0b,
+guard656246/sessionactive, all8GPUs66–79%/~12GB. Noerror/retry/newGPUjob.
+Rawtemp/a2_remaining_health02.log SHA547fcf0aa6ffbfde37a10092384e0e3489bf43e84788ca5a3ae82cc02dba5ba0.
+Archived docs/results/a2_remaining_phase0a_20261028/status_1527 (5actualbaselines,
+summary+SHAreceipts). Runstarted15:09:30; elapsed~17.5min at snapshot. ETA remains
+21:50–22:15SGT, roughly6h20–6h45remaining. S2 unhealedloss is large; no conclusion
+about recovery until matchedheals. Nativequeuecontinuesautomatically afterlast
+baseline; no repeats/intervention. Restoringcommands#0, nextwatch15:55SGT.
+
+Latest 15:27:01 SGT: unique read-only remaininghealtha02 SUBMITTED41df8886f5c9c44ca42b1eb2acccb0800a35fd5b.
+Remoteheadverified; retrieve pendingreceipt beforewrites. Runningd3a8a0b source
+unchanged. No newGPUjobs, norestart. Previoushealth15:12activefirstbaseline.
+
 Latest15:15SGT: startuphealth93bb6da acknowledged; snapshot15:12:13 confirms
 healthyremainingqueue, active dclm/P300 all-patternbaseline, nofitcompletedyet.
 86sourcefilesmatchd3a8a0b, supervisor656246owns guard; all8GPUs64–75%/~12GB.

@@ -39,3 +39,11 @@ and collective progress120→130. All86frozen files matchbb72766. Originalprune,
 reload and numerical receipts are in results/a2_branches_20261028/final_check.
 Actual fullgate assembly verifies allsixannealed parents and unchanged numerical
 locks. Next ledger18600seconds includes the recovery and handoff reserve.
+
+
+At15:27SGT, the remaining Phase0A queue completed five of six all-pattern
+baselines and was scoring NEM/P1T. Each completed parent's finalNLL matches its
+original S1-stage baseline within1e-6. The five receipts, compact unhealed loss
+table and SHA records are in results/a2_remaining_phase0a_20261028/status_1527.
+No healing fit had finished at this snapshot. S2 pruning causes large initial
+loss increases; recovery conclusions require the registered healing runs.
