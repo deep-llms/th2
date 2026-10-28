@@ -316,3 +316,28 @@ Prior phase ledger 40,200 seconds, with cleanup reserve within the 18-hour cap.
 Evidence: `results/a2_downstream_20261028/startup/`; original local log
 `temp/a2_downstream_health01.log`, SHA256
 `b000dec3d72caa4f7cf296a3b08c61b0de8db4c7aff5878398f81404810dcb6b`.
+
+### Batch-eight gate failure and batch-two recovery — 28 October 21:59 SGT
+
+The first eval exited at 21:08:32, before any benchmark scores. Actual original
+DCLM/P300 gate: independent CE error 1.326851e-7 nats/token, batch-two versus
+batch-one error 0, batch-eight versus batch-one error 0.03590965. No greedy
+mismatch. The batch-eight discrepancy exceeded the predeclared 0.01 threshold;
+the gate correctly stopped the screen. This demonstrates batch-dependent BF16
+numerics in this test; it does not establish an underlying kernel cause.
+
+Burns were restored at 21:09:38. Independent 21:26:52 health verifies guard
+release, eight known burn workers and collective progress 1190→1200. Training
+results and all original outputs are preserved. Evidence is under
+`results/a2_downstream_20261028/batch8_gate_failure/`. Raw local receipt
+`temp/a2_downstream_health02.log` SHA256
+`cfcaabe0d5235864b8079588b7428e82b8254e0c389185cd10e242f1be759f4d`.
+
+Recovery uses batch two for both actual numerical gates and all model scoring,
+keeping thresholds, native FP32 weights/BF16 AMP, tasks, prompts and model bytes
+unchanged. The 78,259 canonical requests are reused by exact SHA. A reviewed
+failure/cleanup lock permits only this failed predecessor; the native supervisor
+still independently verifies exact current burn PID/start identities.
+22 CPU tests and replay of the actual failed gate/cleanup receipt pass. A fresh
+output root is required; no old output/cache is removed. New child cap 9,000
+seconds plus cleanup with conservative prior ledger 43,800 seconds.

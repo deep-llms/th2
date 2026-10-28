@@ -27,7 +27,7 @@ def score_artifact(identity, prepared, *, batch_size=8, device='cpu'):
     model=load_verified(identity,device)
     scores=score_requests(model,prepared['requests'],batch_size=batch_size,max_length=protocol['max_length'])
     verify_identity(identity)
-    scores.update(prepared_sha256=digest(prepared),request_sha256=prepared['request_sha256'],
+    scores.update(batch_size=batch_size,prepared_sha256=digest(prepared),request_sha256=prepared['request_sha256'],
         checkpoint_identity=identity,checkpoint_identity_sha256=digest(identity),
         packages={k:version(k) for k in ('torch','transformers','tokenizers')})
     return scores

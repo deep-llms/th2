@@ -58,6 +58,31 @@ def remaining_budget(spent,elapsed,requested):
         phase_hard_seconds=18*3600,report_due=spent+elapsed+requested>=15*3600)
 
 
+def verify_failed_eval_handoff(output_parent,burn_script,reviewed_lock):
+    reviewed=read_locked(reviewed_lock);root=burn_script.parents[2]
+    if (reviewed.get('scope')!='a2_batch8_numerical_gate_failure_before_scoring'
+            or root.parent.resolve()!=output_parent.resolve()
+            or burn_script.resolve()!=(root/'source/resources/llm_pretrain_burn.py').resolve()):
+        raise ValueError('Wrong reviewed failed-evaluation predecessor')
+    paths=dict(run='supervised/run/run.json',supervisor='supervised/supervisor.json',
+        burn='supervised/burn-verified.json',gate='supervised/run/downstream/dclm-P300-original-check.json')
+    records={}
+    for name,rel in paths.items():
+        if Path(reviewed[name]['path']).resolve()!=(root/rel).resolve():raise ValueError('Wrong failure receipt location')
+        records[name]=read_locked(reviewed[name])
+    run,sv,burn,gate=(records[k] for k in ('run','supervisor','burn','gate'))
+    if (run['status']!='failed' or len(run['jobs'])!=1 or run['jobs'][0]['name']!='a2-downstream'
+            or run['jobs'][0]['returncode']!=1 or sv['training_status']!='failed' or not sv.get('finished_at')
+            or len(sv['free_after_training'])!=8 or any(g['pids'] for g in sv['free_after_training'])
+            or not burn['collective_progress_verified'] or gate['passed'] is not False
+            or gate['production_batch_size']!=8 or gate['manual_max_nats_per_token']>2e-5
+            or gate['batch_max_nats_per_token']>.01 or gate['production_max_nats_per_token']<=.01
+            or gate['greedy_reference_mismatches'] or gate['greedy_batch_mismatches']
+            or list((root/'supervised/run/downstream/scores').glob('*/scores.json'))):
+        raise ValueError('Failed numerical check or successful cleanup differs from reviewed evidence')
+    return reviewed
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('stage','history','assets','sets'):
@@ -66,6 +91,7 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     for name in ('host','session','code-commit'):p.add_argument('--'+name,required=True)
     p.add_argument('--spent-seconds',type=float,required=True)
+    p.add_argument('--failed-handoff');p.add_argument('--failed-handoff-sha256')
     p.add_argument('--timeout-seconds',type=float,default=10800)
     a=p.parse_args();started=time.monotonic();source=Path(__file__).resolve().parents[1]
     remaining_budget(a.spent_seconds,0,a.timeout_seconds)
@@ -80,18 +106,27 @@ def main():
     stage=read_locked(locks[0]);prior=a.predecessor_burn_script.parents[2]
     required={'supervisor':'supervised/supervisor.json','run_complete':'supervised/run/complete.json',
               'burn':'supervised/burn-verified.json','complete':'supervised/run/remaining/heals/complete.json'}
+    failed=None
+    if a.failed_handoff:
+        if not a.failed_handoff_sha256:raise ValueError('Pinned failure receipt required')
+        failed=verify_failed_eval_handoff(a.output.parent,a.predecessor_burn_script,
+            dict(path=a.failed_handoff,sha256=a.failed_handoff_sha256))
+        prior=Path(stage['supervisor']['path']).parents[1]
+        verify_handoff(a.output.parent,prior/'source/resources/llm_pretrain_burn.py',digest)
+    else:
+        verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
     if any(Path(stage[k]['path']).resolve()!=(prior/rel).resolve() for k,rel in required.items()):
-        raise ValueError('Reviewed stage is not the actual predecessor')
-    verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
+        raise ValueError('Reviewed training stage receipt locations differ')
     if (digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH
             or Path('/mnt/local/_gpu_guard/DISABLED').exists()):raise ValueError('Unknown burn/guard owner')
     a.output.mkdir();frozen=freeze_source(source,a.output,a.code_commit)
     identities=prepare_identities(*locks,a.output/'identities')
     plan=dict(schema=1,identities=identities['identities'],tasks=list(COUNTS),gpus=list(range(8)),
-        max_length=4096,native_python=sys.executable,eval_python=str(a.eval_python.resolve()),
+        max_length=4096,batch_size=2,native_python=sys.executable,eval_python=str(a.eval_python.resolve()),
         tokenizer=str(a.tokenizer.resolve()),dataset_root=str(a.dataset_root.resolve()),
         input_spec=lock(frozen/'resources/a2_inputs_20261028.json'),
         manifest=lock(frozen/'resources/downstream_english_20261023.json'))
+    if failed:plan['prepared']=failed['prepared']
     validate_plan(plan);plan_lock=write(a.output/'plan.json',plan)
     env={**os.environ,'CUDA_VISIBLE_DEVICES':'','HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1',
          'HF_DATASETS_OFFLINE':'1','HF_HUB_DISABLE_TELEMETRY':'1','WANDB_MODE':'offline',

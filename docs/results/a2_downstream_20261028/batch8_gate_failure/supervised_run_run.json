@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-28T13:06:02.255753+00:00",
+  "jobs": [
+    {
+      "name": "a2-downstream",
+      "started_at": "2026-10-28T13:06:02.255938+00:00",
+      "status": "failed",
+      "returncode": 1,
+      "elapsed_seconds": 150.20889051631093
+    }
+  ],
+  "finished_at": "2026-10-28T13:08:32.724370+00:00",
+  "error": "a2-downstream exited with code 1"
+}

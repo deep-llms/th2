@@ -12,7 +12,7 @@ from eval.downstream_suite import COUNTS
 
 class EvalRunTests(unittest.TestCase):
     def fixture(self,root):
-        plan=dict(schema=1,tasks=list(COUNTS),gpus=list(range(8)),max_length=4096,
+        plan=dict(schema=1,tasks=list(COUNTS),gpus=list(range(8)),max_length=4096,batch_size=2,
             native_python='/native/python',eval_python='/eval/python',tokenizer='/tokenizer',
             dataset_root='/benchmarks',manifest=write(root/'manifest.json',{}),
             input_spec=write(root/'input.json',{}),identities={})
@@ -39,8 +39,15 @@ class EvalRunTests(unittest.TestCase):
             Path(item['path']).write_text(json.dumps(identity));plan['identities']['nem-P1T-S1-0.8B']=lock(item['path'])
             with self.assertRaises(ValueError):validate_plan(plan)
 
-    def exercise(self,root,fail=False):
+    def exercise(self,root,fail=False,reuse=False):
         plan=self.fixture(root);prepared=dict(schema=1,requests=[],protocol={});calls=[]
+        if reuse:
+            input_path=Path(plan['input_spec']['path']);input_path.write_text(json.dumps(dict(tokenizer_provenance={'gpt_neox':{'files':{}}})))
+            plan['input_spec']=lock(input_path)
+            protocol=dict(tasks=plan['tasks'],max_length=4096,limit=None,seed=42,num_fewshot=0,
+                manifest_sha256=plan['manifest']['sha256'],tokenizer_files={})
+            prepared=dict(schema=1,requests=[],protocol=protocol,request_sha256=digest([]),protocol_sha256=digest(protocol))
+            plan['prepared']=write(root/'old-prepared.json',prepared)
         def fake(argv,**kwargs):
             calls.append(argv);out=Path(argv[argv.index('--output')+1]);out.parent.mkdir(parents=True,exist_ok=True)
             if argv[2]=='eval.a2_requests':
@@ -49,10 +56,11 @@ class EvalRunTests(unittest.TestCase):
             else:
                 self.assertEqual(kwargs['env']['CUDA_VISIBLE_DEVICES'],'0')
                 identity=json.loads(Path(argv[argv.index('--identity')+1]).read_text())
-                value=dict(passed=not fail,checkpoint_identity_sha256=digest(identity),prepared_sha256=digest(prepared))
+                value=dict(passed=not fail,production_batch_size=int(argv[argv.index('--batch-size')+1]),checkpoint_identity_sha256=digest(identity),prepared_sha256=digest(prepared))
             out.write_text(json.dumps(value))
         def scores(jobs,**kwargs):
             self.assertEqual(len(jobs),14)
+            self.assertTrue(all(j['argv'][j['argv'].index('--batch-size')+1]=='2' for j in jobs))
             self.assertEqual(len({j['argv'][j['argv'].index('--prepared')+1] for j in jobs}),1)
             for job in jobs:
                 out=Path(job['output']);out.parent.mkdir(parents=True);out.write_text('{}')
@@ -66,12 +74,15 @@ class EvalRunTests(unittest.TestCase):
             else:
                 run_screen(plan,root/'out',timeout_seconds=60)
                 self.assertEqual(sum(c[2]=='eval.a2_check' for c in calls),2)
-                self.assertEqual(sum(c[2]=='eval.a2_requests' and c[3]=='prepare' for c in calls),1)
+                self.assertEqual(sum(c[2]=='eval.a2_requests' and c[3]=='prepare' for c in calls),0 if reuse else 1)
                 self.assertEqual(sum(c[2]=='eval.a2_requests' and c[3]=='replay' for c in calls),14)
                 self.assertEqual(json.loads((root/'out/complete.json').read_text())['models'],14)
 
     def test_shared_requests_two_gates_then_fourteen_models(self):
         with tempfile.TemporaryDirectory() as d:self.exercise(Path(d))
+
+    def test_pinned_requests_reused_without_second_cpu_prepare(self):
+        with tempfile.TemporaryDirectory() as d:self.exercise(Path(d),reuse=True)
 
     def test_failed_gpu_gate_never_starts_scoring(self):
         with tempfile.TemporaryDirectory() as d:self.exercise(Path(d),fail=True)

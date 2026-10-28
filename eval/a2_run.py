@@ -40,7 +40,7 @@ def validate_plan(plan):
                 expected[f'{ds}-{parent}-S1-{budget}']=(ds,parent,'healed',budget)
     if (plan.get('schema')!=1 or set(plan['identities'])!=set(expected)
             or plan.get('tasks')!=list(COUNTS) or plan.get('max_length')!=4096
-            or plan.get('gpus')!=list(range(8))):
+            or plan.get('gpus')!=list(range(8)) or plan.get('batch_size',8) not in (1,2,8)):
         raise ValueError('Require the fixed fourteen-model nine-task screen')
     identities={}
     for name,item in plan['identities'].items():
@@ -82,19 +82,31 @@ def run_screen(plan, output, *, timeout_seconds):
         '--dataset-root',plan['dataset_root'],'--manifest',plan['manifest']['path'],
         '--max-length','4096','--tasks',*plan['tasks']]
     prepared_path=root/'prepared.json'
-    command([*bridge,'prepare',*common,'--output',str(prepared_path)],'prepare.log')
+    if plan.get('prepared'):
+        reused=read_locked(plan['prepared']);protocol=reused['protocol']
+        if (protocol['tasks']!=plan['tasks'] or protocol['max_length']!=4096 or protocol['limit'] is not None
+                or protocol['seed']!=42 or protocol['num_fewshot']!=0
+                or protocol['manifest_sha256']!=plan['manifest']['sha256']
+                or protocol['tokenizer_files']!=read_locked(plan['input_spec'])['tokenizer_provenance']['gpt_neox']['files']
+                or reused['request_sha256']!=digest(reused['requests'])
+                or reused['protocol_sha256']!=digest(protocol)):
+            raise ValueError('Reused canonical request protocol changed')
+        with prepared_path.open('xb') as stream:stream.write(Path(plan['prepared']['path']).read_bytes())
+    else:
+        command([*bridge,'prepare',*common,'--output',str(prepared_path)],'prepare.log')
     prepared_lock=lock(prepared_path);prepared=read_locked(prepared_lock)
     # Both depth/load paths are checked on actual weights, once, before scoring.
     for name in ('dclm-P300-original','dclm-P300-S1-0.2B'):
         item=plan['identities'][name];target=root/(name+'-check.json')
         command([plan['native_python'],'-m','eval.a2_check','--identity',item['path'],
             '--identity-sha256',item['sha256'],'--prepared',prepared_lock['path'],
-            '--prepared-sha256',prepared_lock['sha256'],'--output',str(target)],name+'-check.log',0)
+            '--prepared-sha256',prepared_lock['sha256'],'--batch-size',str(plan.get('batch_size',8)),'--output',str(target)],name+'-check.log',0)
         check=json.loads(target.read_text())
-        if (check.get('passed') is not True or check['checkpoint_identity_sha256']!=digest(identities[name])
+        if (check.get('passed') is not True or check.get('production_batch_size')!=plan.get('batch_size',8)
+                or check['checkpoint_identity_sha256']!=digest(identities[name])
                 or check['prepared_sha256']!=digest(prepared)):
             raise ValueError('Actual-weight numerical gate failed or mismatched')
-    jobs=scoring_jobs(plan['identities'],prepared_lock,root/'scores',plan['native_python'],plan['gpus'])
+    jobs=scoring_jobs(plan['identities'],prepared_lock,root/'scores',plan['native_python'],plan['gpus'],batch_size=plan.get('batch_size',8))
     execute_scoring(jobs,timeout_seconds=remaining())
     scores={j['name']:lock(j['output']) for j in jobs};replays={}
     for name,score in scores.items():

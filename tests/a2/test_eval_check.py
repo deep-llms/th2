@@ -16,6 +16,8 @@ class EvalCheckTests(unittest.TestCase):
         result=check_model(tiny_model(),self.rows(),max_length=16)
         self.assertTrue(result['passed']);self.assertEqual(result['truncated_requests'],1)
         self.assertLess(result['manual_max_nats_per_token'],2e-5)
+        small=check_model(tiny_model(),self.rows(),max_length=16,batch_size=2)
+        self.assertEqual(small['production_batch_size'],2);self.assertTrue(small['passed'])
 
     def test_gate_rejects_wrong_likelihood(self):
         real=score_requests

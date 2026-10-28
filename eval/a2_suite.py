@@ -13,10 +13,10 @@ from eval.downstream_suite import COUNTS, PRIMARY
 from efficient_llm.diagnostic_data import sha256
 
 
-def scoring_jobs(identities, prepared, output, native_python, gpus):
+def scoring_jobs(identities, prepared, output, native_python, gpus, batch_size=8):
     """Plan pinned native scoring jobs; caller schedules one job per free slot."""
     if (len(gpus)!=8 or len(set(gpus))!=8 or any(type(g) is not int or g<0 for g in gpus)
-            or not identities or not Path(native_python).is_absolute()):
+            or batch_size not in (1,2,8) or not identities or not Path(native_python).is_absolute()):
         raise ValueError('Explicit native runtime and eight unique physical GPUs required')
     if any(not name or name in ('.','..') or not name[0].isalnum()
            or not name.replace('-','').replace('_','').replace('.','').isalnum() for name in identities):
@@ -31,7 +31,7 @@ def scoring_jobs(identities, prepared, output, native_python, gpus):
         jobs.append(dict(name=name,gpu=gpus[index%8],output=str(target),argv=[native_python,
             '-m','eval.a2_score','--identity',identity['path'],'--identity-sha256',identity['sha256'],
             '--prepared',prepared['path'],'--prepared-sha256',prepared['sha256'],
-            '--output',str(target),'--device','cuda:0','--batch-size','8']))
+            '--output',str(target),'--device','cuda:0','--batch-size',str(batch_size)]))
     return jobs
 
 

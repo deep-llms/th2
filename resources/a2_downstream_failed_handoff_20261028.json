@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "scope": "a2_batch8_numerical_gate_failure_before_scoring",
+  "run": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/supervised/run/run.json",
+    "sha256": "7d22493e1859469abc486d4242cbe2d759de3f131436369a5d78db7f85b80e68"
+  },
+  "supervisor": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/supervised/supervisor.json",
+    "sha256": "a19b9ac4e6a5aad9f79653f9b8691be2a23d180fb53e0130a94dd35c83e7718a"
+  },
+  "burn": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/supervised/burn-verified.json",
+    "sha256": "502c2251f0fc9183ecf5d0fb35083956519d0966e649ff27bc2f44ce2a251042"
+  },
+  "gate": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/supervised/run/downstream/dclm-P300-original-check.json",
+    "sha256": "22dde723d7739143040c4508587c29cba76d9113c3f3c319206b06d69bd6084e"
+  },
+  "prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/supervised/run/downstream/prepared.json",
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+  }
+}

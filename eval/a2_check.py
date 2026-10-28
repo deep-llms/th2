@@ -35,10 +35,10 @@ def select_requests(prepared):
 
 
 @torch.inference_mode()
-def check_model(model,requests,*,max_length):
+def check_model(model,requests,*,max_length,batch_size=8):
     single=score_requests(model,requests,batch_size=1,max_length=max_length)
     batch=score_requests(model,requests,batch_size=2,max_length=max_length)
-    production=score_requests(model,requests,batch_size=8,max_length=max_length)
+    production=score_requests(model,requests,batch_size=batch_size,max_length=max_length)
     manual=[]
     for row in requests:
         context=row['context'] or [0];target=row['continuation']
@@ -70,7 +70,7 @@ def check_model(model,requests,*,max_length):
     return dict(passed=passed,requests=len(requests),max_length=max_length,
         manual_max_nats_per_token=max(reference_errors),batch_max_nats_per_token=max(batch_errors),
         greedy_reference_mismatches=greedy_reference,greedy_batch_mismatches=greedy_batch,
-        production_batch_size=8,production_max_nats_per_token=max(production_errors),
+        production_batch_size=batch_size,production_max_nats_per_token=max(production_errors),
         greedy_production_mismatches=greedy_production,
         truncated_requests=single['truncated_requests'],
         thresholds=dict(manual_nats_per_token=2e-5,batch_nats_per_token=.01,greedy_mismatches=0))
@@ -80,13 +80,13 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('identity','identity-sha256','prepared','prepared-sha256','output'):
         p.add_argument('--'+name,required=True)
-    p.add_argument('--device',default='cuda:0');a=p.parse_args();out=Path(a.output)
+    p.add_argument('--device',default='cuda:0');p.add_argument('--batch-size',type=int,choices=(1,2,8),default=8);a=p.parse_args();out=Path(a.output)
     if out.exists():p.error('Output exists')
     identity=read_locked(dict(path=a.identity,sha256=a.identity_sha256))
     prepared=read_locked(dict(path=a.prepared,sha256=a.prepared_sha256))
     indices,requests=select_requests(prepared)
     model=load_verified(identity,a.device)
-    check=check_model(model,requests,max_length=prepared['protocol']['max_length'])
+    check=check_model(model,requests,max_length=prepared['protocol']['max_length'],batch_size=a.batch_size)
     verify_identity(identity)
     result=dict(check,checkpoint_identity_sha256=digest(identity),prepared_sha256=digest(prepared),
                 selected_request_indices=indices,precision='fp32_parameters_bf16_cuda_autocast')

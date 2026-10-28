@@ -37,3 +37,26 @@ class EvalLauncherTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class FailedEvalHandoffTests(unittest.TestCase):
+    def test_exact_reviewed_failure_cleanup_and_reject_wrong_gate(self):
+        from scripts.launch_a2_downstream import verify_failed_eval_handoff
+        from eval.a2_run import write,lock
+        with tempfile.TemporaryDirectory() as d:
+            parent=Path(d);root=parent/'failed';burn_script=root/'source/resources/llm_pretrain_burn.py'
+            records=dict(run=dict(status='failed',jobs=[dict(name='a2-downstream',returncode=1)]),
+                supervisor=dict(training_status='failed',finished_at='fixture',free_after_training=[dict(pids=[])]*8),
+                burn=dict(collective_progress_verified=True),
+                gate=dict(passed=False,production_batch_size=8,manual_max_nats_per_token=1e-7,
+                    batch_max_nats_per_token=0.,production_max_nats_per_token=.0359,
+                    greedy_reference_mismatches=0,greedy_batch_mismatches=0))
+            paths=dict(run='supervised/run/run.json',supervisor='supervised/supervisor.json',
+                burn='supervised/burn-verified.json',gate='supervised/run/downstream/dclm-P300-original-check.json')
+            reviewed=dict(scope='a2_batch8_numerical_gate_failure_before_scoring')
+            for name,path in paths.items():reviewed[name]=write(root/path,records[name])
+            rl=write(parent/'reviewed.json',reviewed)
+            self.assertEqual(verify_failed_eval_handoff(parent,burn_script,rl),reviewed)
+            gate_path=Path(reviewed['gate']['path']);records['gate']['manual_max_nats_per_token']=.1
+            gate_path.write_text(json.dumps(records['gate']));reviewed['gate']=lock(gate_path)
+            Path(rl['path']).write_text(json.dumps(reviewed));rl=lock(rl['path'])
+            with self.assertRaises(ValueError):verify_failed_eval_handoff(parent,burn_script,rl)

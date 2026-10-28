@@ -1,0 +1,9 @@
+{
+  "health_at": "2026-10-28T13:26:52.903282+00:00",
+  "raw_log": "temp/a2_downstream_health02.log",
+  "raw_sha256": "cfcaabe0d5235864b8079588b7428e82b8254e0c389185cd10e242f1be759f4d",
+  "source_files_verified": 85,
+  "source_commit": "e740f86697689192d70b4d3c5b0d3484065c252b",
+  "guard": "released",
+  "session": "1 666429"
+}
