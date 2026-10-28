@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-a2-corpora-cpu-20261029-a02
+#th2-6y3o-a2-corpora-cpu-20261029-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime,timezone
 assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a01')
-new=root.with_name('6y3o-a2-corpora-20261029-a02')
+new=root.with_name('6y3o-a2-corpora-20261029-a03')
 data=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029')
 assert not new.exists()
 plan=Path('resources/a2_corpora_30b_20261029.json')
@@ -39,11 +39,7 @@ owned=[parent]+children
 for item in owned:
  now=identity(item['pid'])
  assert now and now['start']==item['start'] and now['cmd']==item['cmd']
- fd=os.pidfd_open(item['pid'])
- try:
-  now=identity(item['pid']);assert now and now['start']==item['start']
-  signal.pidfd_send_signal(fd,signal.SIGTERM)
- finally:os.close(fd)
+ os.kill(item['pid'],signal.SIGTERM)
 deadline=time.monotonic()+30
 while True:
  live=[x['pid'] for x in owned if (cur:=identity(x['pid'])) and cur['start']==x['start'] and cur['state']!='Z']
@@ -57,6 +53,6 @@ print('CPU_WAITING_WORKERS_RELEASED',len(owned),flush=True)
 PY
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.launch_a2_corpora \
  --plan /mnt/local/deep-llms_th2/resources/a2_corpora_30b_20261029.json \
- --output /mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a02 \
- --host thiennh-p6-6y3o-worker-0 --session a2_corpora_20261029_a02 \
+ --output /mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a03 \
+ --host thiennh-p6-6y3o-worker-0 --session a2_corpora_20261029_a03 \
  --code-commit 5fdf313eb2fb05f239e056b543266b0c69610f1d
