@@ -65,3 +65,22 @@ still pending; numerical core and the running NEM frozen source are unchanged.
 Validation after launcher integration: 59 A2 tests pass; actual20-receipt replay
 still passes. Log: temp/a2_prerequisite_tests_20261028.log. No GPU execution
 claim for this new stage. Numerical byte/AST locks still pass.
+
+Local continuation preparation, 14:00 SGT: scripts/a2_remaining_heals.py now
+implements exact pending-fit execution after a current all-pattern gate/baselines.
+It subtracts the30 prior fits, keeps each dataset/parent's selected LR, preserves
+T14 permutation suffix through the single allowed half-LR retry, rejects infra
+failures, checks every successful result's coverage/schedule/baseline/roundtrip,
+and reserves600seconds for handoff before the Phase0A cap. It does not acquire
+GPUs or launch by import. Four new CPU tests exercise all28 pending runs, explicit
+subsets, retry identity, caps, non-divergence failures and malformed receipts.
+Actual full-pattern gate/baseline assembly and launcher connection for these heals
+remain pending; the prerequisite stage is separately connected and ready to
+validate real history. Do not describe this executor as already running.
+
+Final preparation:64A2tests pass and all30actualcompletedfits+6annealedsurveys
+replay successfully. The original DCLM/P300survey predates the launch-scope
+amendment/data-spec metadata field: recognize only its exact reviewed artifact
+SHA, verify both historical byte/ASTlocks, and check the approved spec transition
+without rewriting originalprovenance. Changed survey values are rejected by test.
+Node-path history lock: resources/a2_completed_s1_20261028.json.

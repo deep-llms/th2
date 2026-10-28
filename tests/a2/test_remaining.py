@@ -159,6 +159,17 @@ class RemainingTests(unittest.TestCase):
     def test_existing_numerical_code_lock_passes(self):
         verify_current_core(ROOT)
 
+    def test_exact_original_survey_amendment_keeps_provenance(self):
+        from scripts.a2_remaining import same_survey_science
+        from efficient_llm.a2.protocol import DEPENDENCY_SPEC
+        survey=json.loads((ROOT/'docs/results/a2_preflight_20261028/dclm_P300_survey.json').read_text())
+        original=copy.deepcopy(survey)
+        current=dict(survey['provenance'],spec_sha256=DEPENDENCY_SPEC,
+            data_spec_sha256=survey['provenance']['spec_sha256'])
+        same_survey_science(survey,current);self.assertEqual(survey,original)
+        survey['group_bi'][0]+=1
+        with self.assertRaises(ValueError):same_survey_science(survey,current)
+
     def test_prerequisite_launch_gate_inputs_and_budget(self):
         from unittest.mock import patch
         from scripts.a2_remaining import prepare_prerequisites

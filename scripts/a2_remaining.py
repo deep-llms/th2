@@ -39,6 +39,32 @@ def same_science(old, current):
             raise ValueError('Historical scientific identity differs: '+key)
 
 
+def same_survey_science(survey,current):
+    """Recognize only the exact original survey predating the scope amendment.
+
+    Keep its original provenance intact; validate the already-approved change in
+    launch dependencies and the later-added data-spec metadata explicitly.
+    """
+    old=survey['provenance']
+    try:
+        same_science(old,current)
+        return
+    except ValueError:
+        project=Path(__file__).resolve().parents[1]
+        lock=json.loads((project/'resources/a2_early_grid_reuse.json').read_text())
+        digest=hashlib.sha256((json.dumps(survey,indent=2,allow_nan=False)+'\n').encode()).hexdigest()
+        from efficient_llm.a2.protocol import compatible_data_spec
+        if (digest!=lock['artifacts']['supervised/run/survey.json']
+                or old['code_commit']!=lock['source_commit']
+                or not compatible_data_spec(old['spec_sha256'],current['spec_sha256'])
+                or 'data_spec_sha256' in old or current['data_spec_sha256']!=old['spec_sha256']):
+            raise ValueError('Unreviewed historical survey identity')
+        verify_current_core(project)
+        # Validation view only; never replace the stored original provenance.
+        same_science(dict(old,spec_sha256=current['spec_sha256'],
+                          data_spec_sha256=old['spec_sha256']),current)
+
+
 def validate_completed(row, provenance, pre):
     run = Run(**{k:row[k] for k in ('dataset','arm','set','budget','lr','suffix')})
     if (run.part != '0A' or run.set != 'S1' or run.suffix or row.get('rerun_of')
@@ -108,7 +134,7 @@ def load_history(lock, current):
         survey=read_locked(item['artifact'])
         if key in surveys or key != survey['dataset']+'/'+survey['parent'] or survey['provenance'] != item['provenance']:
             raise ValueError('Wrong or duplicate standalone survey')
-        same_science(survey['provenance'],current)
+        same_survey_science(survey,current)
         surveys[key]=survey
     return dict(rows=list(rows.values()),surveys=surveys,historical_receipts=receipts)
 
@@ -168,7 +194,7 @@ def freeze_sets(surveys,identity,current,assets):
                 continue
             s=surveys[key]
             if (s['dataset'],s['parent'])!=(ds,parent): raise ValueError('Wrong survey parent')
-            same_science(s['provenance'],current)
+            same_survey_science(s,current)
             passed=s['T1_precision_passed'] is True and s['parent_sanity']['passed'] is True
             eligibility[key]=dict(T1=passed,T3=True)
             if passed:usable.append(parent)
@@ -182,13 +208,14 @@ def verify_current_core(project):
     """Use reviewed historical byte/AST locks; no new numerical waiver."""
     from efficient_llm.a2.early_grid import ast_hash
     project=Path(project)
-    lock=json.loads((project/'resources/a2_pair_reuse.json').read_text())
-    for name,digest in lock['unchanged_files'].items():
-        if hashlib.sha256((project/name).read_bytes()).hexdigest()!=digest:
-            raise ValueError('Numerical source changed: '+name)
-    for name,functions in lock['unchanged_definitions'].items():
-        for fn,digest in functions.items():
-            if ast_hash(project/name,fn)!=digest:raise ValueError('Scientific definition changed: '+fn)
+    for filename in ('a2_pair_reuse.json','a2_early_grid_reuse.json'):
+        lock=json.loads((project/'resources'/filename).read_text())
+        for name,digest in lock['unchanged_files'].items():
+            if hashlib.sha256((project/name).read_bytes()).hexdigest()!=digest:
+                raise ValueError('Numerical source changed: '+name)
+        for name,functions in lock['unchanged_definitions'].items():
+            for fn,digest in functions.items():
+                if ast_hash(project/name,fn)!=digest:raise ValueError('Scientific definition changed: '+fn)
 
 
 def prerequisite_jobs(*, source, inputs, port, history, reference, identity, sequence):

@@ -1,5 +1,24 @@
 # Current task
 
+Latest14:07SGT: NEMfinal verified from healthaff05f7 at14:01:32SGT.
+10fits successful; supervisor/run exit0, guardreleased,8communicatingburns,
+cycles290→300,payload322→333.11GiB. Rawhealth05SHA459875ab2aa3b9a0b3214a85176e8dd084025ced8ac021d498073fc32db58db0.
+Archived results/a2_nem_s1_20261028/final. All30S1fits+6annealedsurveys imported
+withactualSHAs; resource a2_completed_s1_20261028.json pins nodepaths.
+64A2tests pass; originalDCLMP300survey reused via exact originalSHA and approved
+scope-only amendment, preserving originalprovenance and bothcode locks.
+Preparing branchprerequisites stage, sourcecode commit pending:6surveys→S2freeze→
+representative numericalunion; no healing. Phaseledger15600seconds conservative.
+Expected30–40minutes, worstcase9720seconds includingcleanup, within18hcap.
+No nextstage submitted yet; use newest notes above older pending requests.
+
+Latest14:00SGT: NEM ten fits scientifically complete13:56:15 in4693.09seconds.
+Health212a243 acknowledged; snapshot13:57 catches burn startup, terminal supervisor
+and progress verification not yet present. Fresh read-only healthaff05f7/a05
+submitted; retrieve pending before writes. No next GPUstage until verifiedhandoff.
+Report A2_NEM_S1_RESULTS_20261028.md; rawhealth04SHA6d9a52a2b3dfd3d432ee33907165532191844633a4005a045e8db38787937761.
+Local exactremaining executor and4new tests prepared, numericalcore unchanged.
+
 Latest13:55SGT: health9f9b382 acknowledged, snapshot13:33SGT. Eight fits complete,
 both chosenLR3e-4, P300main active; exactcoverage/LR/save-reload/source78verified.
 Preparing fresh read-only healtha04 to determine terminal status before nextstage.

@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "scientific_complete": true,
+  "scope": "nem_S1_pair",
+  "runs": 10,
+  "chosen_lrs": {
+    "P300": 0.0003,
+    "P1T": 0.0003
+  },
+  "phase": "0A",
+  "elapsed_seconds": 4691.685027638916,
+  "full_pilot_complete": false,
+  "reused_grid": null
+}
