@@ -1,5 +1,22 @@
 # Current task
 
+Latest15:11SGT: remaininglaunch ebe6470 ACKNOWLEDGED. Allsixparentsactualweight/
+codehashespass, Acceleratecachecopied+env8GPU/BF16verified; supervisor submitted.
+Rawtemp/a2_remaining_launch01.log SHA69247ec03f133c0dcad6f560c00cc22b7c82a3d2f1d1d77e638906dff2fb7e4c.
+Submitting unique read-only remaininghealtha01 to verify freshburnreclaim/freeGPUs
+and currentbaseline advancement. GPUsource d3a8a0b. Nochange to runningcode.
+
+Latest 15:08:52 SGT: remaining Phase0A SUBMITTEDebe6470be2c863ba067acba69bd3b0e0ca9ca296,
+source d3a8a0b35b29a9e6cd951a7d4cf754908fe0fc40, remoteheadverified.
+Root6y3o-a2-remaining-phase0a-20261028-a01/sessiona2_remaining_phase0a_20261028_a01.
+73tests and actualfullgate+historyreplay pass. Sixfullpatternpre-baselines then
+exact28remainingfits; no surveys/grids/repeatedS1fits. Originalparentsfreshperfit.
+Ledger18600sec; estimate6.62h fromstart, ETA~21:50–22:15SGT if no retry.
+Worst11h+prior5.17h <18hcap; native coordinator/supervisor enforcecap+cleanup.
+Retrievependinglaunchreceipt beforewrites; preparedread-onlyhealth
+ temp/a2_remaining_health.sh (remaining-health-a01). No claimrunningyet.
+Originalprerequisitecheck+burn terminal independently verified15:03:12.
+
 Latest15:06SGT: a03 prerequisites COMPLETE15:00:30; independenthealth15:03:12
 passes supervisor0/guardreleased/8workers/progress120→130,payload133.24→144.35GiB.
 86frozen sourcefilesverifiedbb72766, allpatterns numericalpassed, prune/reloadexact.
