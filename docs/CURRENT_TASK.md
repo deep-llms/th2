@@ -17,7 +17,14 @@ only authorize DCLM/P300 S1's registered grid and retries; no full-pilot claim.
 Estimated 25–35 minutes after queue start, plus ~7 minutes per retry; one-hour
 hard cap. Charge all elapsed time to Phase 0A alongside prior 322seconds. Full
 pilot workload report remains pending; report progress/ETA in Singapore time.
-Submission/acknowledgement not yet recorded; do not claim running from this note.
+Submission032f258 pushed/remote-head verified at08:29SGT, frozen source4c2c385.
+Launch acknowledged in Dropbox00:32:41UTC /08:32:41SGT. Actual parent/input
+hashes, historical-reuse contract and copied8GPU/BF16 Accelerate config passed.
+Raw logtemp/a2_grid_launch01.log SHA
+3c39413a31b42fd176fac0c9ce1a71835897fc3ee4bf6d99c0f857e876bdba44.
+Supervisor submitted; live numerical/training stage still needs health receipt. Expected
+completion09:00–09:10SGT if it starts promptly and needs no retry. Pending health
+command: temp/a2_early_grid_health.sh. Do not repush the executable launch.
 
 ## Latest: lean preflight implemented — 28 October 2026 SGT
 
