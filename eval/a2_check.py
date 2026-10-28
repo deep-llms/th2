@@ -38,6 +38,7 @@ def select_requests(prepared):
 def check_model(model,requests,*,max_length):
     single=score_requests(model,requests,batch_size=1,max_length=max_length)
     batch=score_requests(model,requests,batch_size=2,max_length=max_length)
+    production=score_requests(model,requests,batch_size=8,max_length=max_length)
     manual=[]
     for row in requests:
         context=row['context'] or [0];target=row['continuation']
@@ -56,16 +57,21 @@ def check_model(model,requests,*,max_length):
     lengths=[len(row['continuation']) for row in requests]
     reference_errors=[abs(a[0]-b[0])/n for a,b,n in zip(single['scores'],manual,lengths)]
     batch_errors=[abs(a[0]-b[0])/n for a,b,n in zip(single['scores'],batch['scores'],lengths)]
+    production_errors=[abs(a[0]-b[0])/n for a,b,n in zip(single['scores'],production['scores'],lengths)]
+    greedy_production=sum(a[1]!=b[1] for a,b in zip(single['scores'],production['scores']))
     greedy_reference=sum(a[1]!=b[1] for a,b in zip(single['scores'],manual))
     greedy_batch=sum(a[1]!=b[1] for a,b in zip(single['scores'],batch['scores']))
     # Same-input independent algebra is strict. BF16 batching can select
     # different GEMM kernels; report measured differences, do not call bitwise.
     passed=(max(reference_errors)<=2e-5 and max(batch_errors)<=.01
+            and max(production_errors)<=.01 and greedy_production==0
             and greedy_reference==0 and greedy_batch==0
-            and single['truncated_requests']==batch['truncated_requests'])
+            and single['truncated_requests']==batch['truncated_requests']==production['truncated_requests'])
     return dict(passed=passed,requests=len(requests),max_length=max_length,
         manual_max_nats_per_token=max(reference_errors),batch_max_nats_per_token=max(batch_errors),
         greedy_reference_mismatches=greedy_reference,greedy_batch_mismatches=greedy_batch,
+        production_batch_size=8,production_max_nats_per_token=max(production_errors),
+        greedy_production_mismatches=greedy_production,
         truncated_requests=single['truncated_requests'],
         thresholds=dict(manual_nats_per_token=2e-5,batch_nats_per_token=.01,greedy_mismatches=0))
 

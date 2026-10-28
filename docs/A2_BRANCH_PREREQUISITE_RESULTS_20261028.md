@@ -243,3 +243,27 @@ Elapsed queue ~5h22; conservative total phase ledger ~10h32.
 Evidence: `results/a2_remaining_phase0a_20261028/status_2031/`; full local
 receipt `temp/a2_remaining_health12.log`, SHA256
 `25c7ad59c9164531bda219b2d9fc79d989fc47a5e8432f34651bcdd793a6e0b2`.
+
+### Final Phase0A — 28 October 20:56 SGT
+
+All 28 remaining fits completed successfully at 20:55:17 SGT; combining the
+30 historical fits yields 58 validated receipts, no divergence/retries, exact
+eight-rank sample order/coverage, full LR schedules and zero save/reload loss
+difference. Native supervisor exited successfully and restored communicating
+burns at 20:56:23. Independent 20:56:41 inspection verified released guard,
+eight burn workers and collective cycles 30→40 / payload 33.31→44.41 GiB.
+
+Final NEM S1 0.8B: P300 NLL 2.884719484 (damage +0.110468547); P1T NLL
+2.839078955 (damage +0.115696093). Both improve over 0.2B. The remaining
+P1T-minus-P300 damage contrast is +0.005227546 nats at 0.8B.
+
+The preregistered Phase0A main rule returns GO: mean E +0.012542268 nats,
+all three dataset means positive and 12/12 short signs positive. This supports
+the tested difference in relative recovery damage; it does not establish
+downstream utility, a new architecture improvement, or completed Phase0B.
+Phase0B has not been executed.
+
+Final compact evidence: `results/a2_remaining_phase0a_20261028/final/`.
+Original local receipt: `temp/a2_remaining_health13.log`, SHA256
+`52acc0b66ad7c55447cdb2856794fb8560f44c08d992974769ece936909e5a83`.
+Reviewed node receipt bundle: `resources/a2_phase0a_terminal_20261028.json`.

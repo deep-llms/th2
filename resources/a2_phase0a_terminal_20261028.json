@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "reference": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/reference.json",
+    "sha256": "ae4f4b8ec1d36de8900e7de7c5c5d23bf9e998cab698bf3d26533a1d81d00909"
+  },
+  "results": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised/run/remaining/heals/results.json",
+    "sha256": "90a180c2a62e249b32433815815d9ec826a7c61f1fcecc2f98ecca6a6a5e4f9a"
+  },
+  "plan": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/remaining-plan.json",
+    "sha256": "6f9b420ac2be14764466fbe01acdc62bdf2f2d220e4562d7aa309aa03a1e3a17"
+  },
+  "complete": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised/run/remaining/heals/complete.json",
+    "sha256": "aa7cddecf4351269ebfa911623928dd108793aaa06cec6b21164cea979aca20a"
+  },
+  "supervisor": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised/supervisor.json",
+    "sha256": "3076be78b0e2ffb784c00fa6b1b98e4379fae7f6fc0052119b7508966ea5322b"
+  },
+  "run_complete": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised/run/complete.json",
+    "sha256": "5051e5c6f9803fc10fc3b311ed0d6720c393846dac899d514c711429de1a5c60"
+  },
+  "burn": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised/burn-verified.json",
+    "sha256": "f0f65c410fd4eaeb371b929c3723a7653c5139df264aaea8767c99437bd92271"
+  }
+}

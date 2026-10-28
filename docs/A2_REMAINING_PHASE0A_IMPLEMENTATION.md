@@ -286,3 +286,18 @@ Still required: actual final terminal receipt bundle and identity plan, a
 supervised launcher freezing `eval/` as well as its existing dependencies,
 copy/verify Accelerate, independent burn/free-GPU handoff, actual-weight GPU
 numerical gates, then the full screen. No training source or environment changed.
+
+### Supervised downstream launcher — 28 October 21:02 SGT
+
+Added `scripts/launch_a2_downstream.py`, reusing the native supervisor without
+changes. It requires the reviewed completed predecessor, builds checkpoint
+identities on CPU, freezes eval/native dependencies, copies Accelerate config
+and verifies its eight-GPU BF16 environment, inspects current burn ownership,
+then delegates reclaim/free-GPU checks and final burns to the existing supervisor.
+The fixed screen is capped at three hours, with cleanup reserve and the 18-hour
+phase cap. No new training, downloads, packages or driver changes.
+
+17 coordinator/launcher CPU tests passed; six follow-up launcher/gate tests
+also passed after adding production batch-eight parity to the representative
+GPU gate (same existing thresholds, before observing any GPU results). Actual
+full-model numerical gates remain mandatory before full benchmark scoring.

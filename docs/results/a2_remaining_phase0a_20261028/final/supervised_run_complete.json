@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-28T07:09:30.722012+00:00",
+  "jobs": [
+    {
+      "name": "remaining-phase0a",
+      "started_at": "2026-10-28T07:09:30.722201+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 20746.080744109116,
+      "artifacts": [
+        {
+          "path": "remaining/heals/complete.json",
+          "sha256": "aa7cddecf4351269ebfa911623928dd108793aaa06cec6b21164cea979aca20a",
+          "bytes": 3309
+        }
+      ],
+      "finished_at": "2026-10-28T12:55:17.342878+00:00"
+    }
+  ],
+  "finished_at": "2026-10-28T12:55:17.342945+00:00"
+}
