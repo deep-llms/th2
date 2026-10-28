@@ -5,11 +5,22 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from tokenizers import Tokenizer
 from transformers import AutoTokenizer
-from scripts.a2_prepare_corpora import group_for,shard_worker,sha,assemble,verify_packed
+from scripts.a2_prepare_corpora import group_for,shard_worker,sha,assemble,verify_packed,wait_source
 
 TOKENIZER=Path('temp/a2_neox_tokenizer')
 
 class CorpusTests(unittest.TestCase):
+    def test_controller_directory_layout_and_hash_gate(self):
+        with tempfile.TemporaryDirectory() as d:
+            dest=Path(d)/'00000.parquet';dest.mkdir()
+            raw=dest/'published.parquet';raw.write_bytes(b'payload')
+            record=dict(local=str(dest),path='upstream/published.parquet',bytes=7,sha256=sha(raw))
+            self.assertEqual(wait_source(record,time.monotonic()+1),raw)
+            raw.write_bytes(b'corrupt')
+            with self.assertRaises(ValueError):wait_source(record,time.monotonic()+1)
+            record['path']='upstream/missing.parquet'
+            with self.assertRaises(TimeoutError):wait_source(record,time.monotonic()-1)
+
     def fixture(self,root,index,texts):
         raw=root/f'raw{index}.parquet';pq.write_table(pa.table({'text':texts}),raw)
         record=dict(index=index,path=raw.name,local=str(raw),bytes=raw.stat().st_size,sha256=sha(raw))
@@ -74,7 +85,8 @@ class CorpusTests(unittest.TestCase):
             found.setdefault(group,text);i+=1
         with tempfile.TemporaryDirectory(dir='temp') as d:
             root=Path(d).resolve();raw=root/'source.parquet';pq.write_table(pa.table({'text':list(found.values())}),raw)
-            record=dict(index=0,path='source.parquet',local=str(raw),bytes=raw.stat().st_size,sha256=sha(raw))
+            destination=root/'00000.parquet';destination.mkdir();raw=raw.rename(destination/'source.parquet')
+            record=dict(index=0,path='source.parquet',local=str(destination),bytes=raw.stat().st_size,sha256=sha(raw))
             plan=dict(root=str(root/'data'),length=4096,train_tokens=8192,tuning_rows=2,final_rows=2,eos_id=0,
                 tokenizer_path=str(TOKENIZER.resolve()),tokenizer_files={'tokenizer.json':sha(TOKENIZER/'tokenizer.json')},
                 corpora={'fixture':dict(workers=1,files=[record])})

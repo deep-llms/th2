@@ -1,5 +1,9 @@
 # Current task
 
+29 October04:51SGT: healtha02 8e66137 ACKNOWLEDGED, actual04:48:22: confirmed project path bug. Controller dataset --url creates destinationDIRECTORY/publishedbasename; frozenworker waits destinationFILE. All32CPUworkers idle/no parts/no failure; downloads continue. Preserve source/rawoutputs. Patchedwait_source supports exactpublishedbasename inside destination withsamebytes/SHA;4CPUtests pass5.274sec includingactualspawnedpipeline directorylayout. Preparing targeted CPU-only recovery of exactwaitingparent677159+its verifiedspawnchildren to fresha02source/session; noGPU/burn/network/env changes or downloadresubmit.
+
+2026-10-29T04:47:31.991176+08:00: Unique readonlyCPUhealtha02 8e66137f3d8702997d7ba64d5f4f55dbb6f0ea5a SUBMITTED/remoteheadverified. Retrievependingreceiptbeforewrites. Inspectrawlayouttoensurecontrollerdestinationsmatchworkerexactpaths; historical04:19snapshot0expectedfiles despitecontroller9laterOK, notfailureclaim. No newprep/download/GPUwork.
+
 29 October04:48SGT: CPUhealtha01 ca110a5 ACKNOWLEDGED. Actual04:19:49SGT snapshot: session alive,5frozenfiles+planSHA verified, statusrunning/no failure,0rawfiles at expected exactpaths/no completedparts. Controller laterreports9DCLMitemsOK and backgroundRUNNING through Dropbox04:42SGT. Need fresh rawlayout/CPUhealth before timing/conclusion; uniquehealtha02 nowprepared, no restart/resubmit. Rawhealth01 SHA1195ef4c373c286e6b86a30041532b51a3b990973963c0f12d02554749da41bb.
 
 2026-10-29T04:19:04.626162+08:00: Downloadda8f71d acknowledged STARTED; unique CPUhealtha01 ca110a5b0f097a4a39fedee4bcfaa794c4d8faa8 nowSUBMITTED/remoteheadverified. Retrievependinghealthreceipt beforewrites. No newprep/download/GPUjob. Samewatchnext04:46SGT. Commandshealth executable pendingack.

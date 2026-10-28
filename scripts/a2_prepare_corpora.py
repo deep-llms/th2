@@ -45,8 +45,13 @@ def verify_file(path, expected):
 
 
 def wait_source(record, deadline):
-    path = Path(record['local'])
-    while not path.is_file() or path.stat().st_size != record['bytes']:
+    destination = Path(record['local'])
+    while True:
+        # Controller dataset --url destinations are directories containing the
+        # published basename. Also accept an explicitly staged file (CPU tests).
+        path = destination / Path(record['path']).name if destination.is_dir() else destination
+        if path.is_file() and path.stat().st_size == record['bytes']:
+            break
         if time.monotonic() >= deadline: raise TimeoutError('Download not ready: ' + str(path))
         time.sleep(30)
     verify_file(path, record)

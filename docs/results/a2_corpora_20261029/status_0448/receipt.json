@@ -1,0 +1,29 @@
+{
+  "raw_log": "temp/a2_corpora_health02.log",
+  "raw_sha256": "a6c2187ee8196a6b80daa07a663d989139e2c489facba6f46c34a85eae3761fe",
+  "artifacts": {
+    "source-manifest.json": "056b937533ee3aeb9438e73125c924cbc02e1097ecbeb1c2a03ccac5ddbd726b",
+    "data/status.json": "91644672c8d92098c1af14b78fa278e22ece663b82ba13540ef3647445fd8d4b"
+  },
+  "corpus_counts": [
+    {
+      "corpus": "dclm",
+      "raw_files_present": 0,
+      "raw_bytes_observed": 0,
+      "planned_files": 340,
+      "completed_parts": 0
+    },
+    {
+      "corpus": "fineweb_edu",
+      "raw_files_present": 0,
+      "raw_bytes_observed": 0,
+      "planned_files": 60,
+      "completed_parts": 0
+    }
+  ],
+  "health_at": "2026-10-28T20:48:22.196266+00:00",
+  "session": "0 677159",
+  "receipt_complete": true,
+  "source_files_verified": 5,
+  "source_commit": "fb88f39f19f425bef2e31e9ffb625b2100bfaf6d"
+}
