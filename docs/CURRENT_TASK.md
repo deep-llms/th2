@@ -1,5 +1,25 @@
 # Current task
 
+## REMOTE WRITES FROZEN — 28 October approximately 12:59 SGT
+
+Read-only health8920863d1d9abc9fbbacf7ec9f49ae0236d6856f failed at controller:
+`FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known`.
+_RUN_STATUS_ receipt updated12:59:41SGT; its internal clock labels21:58:38 on
+27October (controller clock differs). Rawtemp/a2_nem_runner_1302.log SHA
+b4365ed2bad16cff7ebe77d0b57c8e7abaf691a7229dd7f172faae2f139fa219.
+No remote writes, retries, repair, kills or new GPU jobs after this error.
+NEM latest verifiedlive12:42SGT; oldETA14:00–14:15SGT is now unverified.
+Local commands#0; NOT pushed due connectivity freeze. Do not push even code-only
+updates until recovery is established. Existing watcher remains read-only remotely;
+noSTOP for this transient infrastructure issue. Owner/operator repair may be needed.
+
+Local preparation: scripts/a2_remaining.py imports pinned historical receipts,
+verifies fits/order/LR/baselines, computes28remaining from30completedS1fits,
+and prepares6branchsurveys→freezeS2→one representative check manifest.
+58A2tests pass; replay20actualDCLM/FWEreceipts passes. Numerical core unchanged.
+Details/remaining launcher integration: A2_REMAINING_PHASE0A_IMPLEMENTATION.md.
+No NEM final receipt or new launch claim. Local-only commit; remote remains8920863.
+
 ## Latest NEM startup VERIFIED — 28 October 12:42 SGT
 
 Health3c553b3 acknowledged: NEM queue started12:38:01SGT, P300survey active on
