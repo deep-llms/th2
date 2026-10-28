@@ -1,5 +1,18 @@
 # Current task
 
+## Latest FWE progress — 28 October, 11:26 SGT observation
+
+Read-only health9e6ac4a acknowledged: both FWE parents passed T1 precision and
+unhealed scoring. P300 grid LR3e-5 completed114steps; loss3.404872, tuning3.389324;
+exact7296examples/8ranks, all114LRvalues and zero save/reload difference verified.
+Second grid LR1e-4 at70/114steps, KD1.0168→0.4916, finite gradients. Eight workers
+active, supervisor644785 owns guard, no error observed. No next queue launched.
+All78sourcefiles matchcfeb74c. Rawtemp/a2_fwe_health02.log SHA
+7fd844eb9ae839ce6e9568cc3cde46aa669367c4db69b619903c358c07a2fbfd; compact archive
+results/a2_fwe_s1_20261028/status_1126. Both scientific surveys ~259seconds,
+firstfit230.29seconds; updated ETA12:30–12:40SGT if no retry. Keep running.
+Commands#0 after acknowledged health. Existing watcher next11:55SGT; no newtimer.
+
 ## Latest: DCLM S1 COMPLETE, FineWeb-Edu pair RUNNING — 28 October 2026 SGT
 
 Active design docs/A2_pilot_spec.md v2.1; approved automatic continuation follows
