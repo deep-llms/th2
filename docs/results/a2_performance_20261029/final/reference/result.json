@@ -1,0 +1,77 @@
+{
+  "status": "complete",
+  "numerical_passed": true,
+  "variant": "reference",
+  "options": {
+    "microbatch": 1,
+    "chunk": 128,
+    "deferred_checks": false,
+    "fused_optimizer": false,
+    "compile_head": false
+  },
+  "first_gradient": {
+    "relative_l2": 0.0,
+    "cosine": 1.0,
+    "max_abs": 0.0
+  },
+  "validation_nll": 3.328734292389993,
+  "validation_delta": 0.0,
+  "thresholds": {
+    "gradient_relative_l2": 0.02,
+    "gradient_cosine": 0.9998,
+    "validation_abs_nats": 0.002
+  },
+  "all_step_seconds": [
+    13.258008003234863,
+    1.2651352882385254,
+    1.2104781866073608,
+    1.4359402656555176,
+    18.674673080444336,
+    1.2819864749908447,
+    1.2168465852737427,
+    1.234475016593933,
+    1.231721043586731,
+    1.1927204132080078,
+    1.3936878442764282,
+    1.326602816581726,
+    1.2682123184204102,
+    1.191915512084961,
+    1.1610907316207886,
+    1.1942163705825806
+  ],
+  "steady_mean_seconds": 1.2448613752018323,
+  "steady_median_seconds": 1.231721043586731,
+  "tokens_per_second": 210580.87689281706,
+  "training_seconds": 50.46863073017448,
+  "cold_first_update_compute_seconds": 5.15457524266094,
+  "peak_allocated_bytes": 44738789376.0,
+  "coverage": {
+    "examples": 1024,
+    "microbatches": 128,
+    "world_size": 8,
+    "exact_order": true
+  },
+  "lr_updates": [
+    2.9999999999999997e-05,
+    5.9999999999999995e-05,
+    8.999999999999999e-05,
+    0.00011999999999999999,
+    0.00015,
+    0.00017999999999999998,
+    0.00020999999999999998,
+    0.00023999999999999998,
+    0.00027,
+    0.0003,
+    0.00025,
+    0.00019999999999999998,
+    0.00015,
+    9.999999999999999e-05,
+    4.9999999999999996e-05,
+    0.0
+  ],
+  "teacher_no_gradient": true,
+  "code_commit": "7441fd00382a1a148e5e4ddea1c4ca15446cfa5b",
+  "assets_sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+  "data_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+  "note": "Discarded performance probe; no scientific fit. Timing excludes profiler/startup/gradient audit."
+}

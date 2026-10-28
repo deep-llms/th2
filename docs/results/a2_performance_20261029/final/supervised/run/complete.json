@@ -1,0 +1,157 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-28T17:59:04.349102+00:00",
+  "jobs": [
+    {
+      "name": "reference",
+      "started_at": "2026-10-28T17:59:04.349491+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 92.62590350490063,
+      "artifacts": [
+        {
+          "path": "reference/result.json",
+          "sha256": "1856373a35c1c47b8015cb9614f2e5cb08098027918e9a27e76888e43a685fa4",
+          "bytes": 2043
+        }
+      ],
+      "finished_at": "2026-10-28T18:00:37.514055+00:00"
+    },
+    {
+      "name": "deferred",
+      "started_at": "2026-10-28T18:00:37.514100+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 120.12937834393233,
+      "artifacts": [
+        {
+          "path": "deferred/result.json",
+          "sha256": "445839e247cfb220c836530de6a2c95beca91af4d92390407f2e8a00614547fc",
+          "bytes": 2113
+        }
+      ],
+      "finished_at": "2026-10-28T18:02:38.142289+00:00"
+    },
+    {
+      "name": "fused",
+      "started_at": "2026-10-28T18:02:38.142330+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 120.32724385010079,
+      "artifacts": [
+        {
+          "path": "fused/result.json",
+          "sha256": "ee519fc11697191d5f41ae2e0ef6d94cf1c4f53ea8da1fcc567082763383432e",
+          "bytes": 2106
+        }
+      ],
+      "finished_at": "2026-10-28T18:04:38.971332+00:00"
+    },
+    {
+      "name": "chunk512",
+      "started_at": "2026-10-28T18:04:38.971377+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 120.53504696302116,
+      "artifacts": [
+        {
+          "path": "chunk512/result.json",
+          "sha256": "3ca5f87c16a8bf94a0fc0723a45c423a9ee0fce0dd94431ba824921cd4c0f78c",
+          "bytes": 2117
+        }
+      ],
+      "finished_at": "2026-10-28T18:06:40.023151+00:00"
+    },
+    {
+      "name": "chunk1024",
+      "started_at": "2026-10-28T18:06:40.023190+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 120.19089507078752,
+      "artifacts": [
+        {
+          "path": "chunk1024/result.json",
+          "sha256": "d6b016431845cab150251679afa9c054a867a3c3b49f765eb03bb78831fa3e03",
+          "bytes": 2116
+        }
+      ],
+      "finished_at": "2026-10-28T18:08:40.718583+00:00"
+    },
+    {
+      "name": "micro2",
+      "started_at": "2026-10-28T18:08:40.718624+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 116.57378906477243,
+      "artifacts": [
+        {
+          "path": "micro2/result.json",
+          "sha256": "7d1358eb7df2b9fc06cb2ae12ac9ff8b3308896e22e98321c6e05f07f0887e0d",
+          "bytes": 2112
+        }
+      ],
+      "finished_at": "2026-10-28T18:10:37.794156+00:00"
+    },
+    {
+      "name": "micro4",
+      "started_at": "2026-10-28T18:10:37.794196+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 115.22658935980871,
+      "artifacts": [
+        {
+          "path": "micro4/result.json",
+          "sha256": "b359e9386d83d5f36b3f1f8233ee90ebeb10f1bb561e29df5df02fd9acd8329a",
+          "bytes": 2113
+        }
+      ],
+      "finished_at": "2026-10-28T18:12:33.524915+00:00"
+    },
+    {
+      "name": "combined",
+      "started_at": "2026-10-28T18:12:33.524953+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 121.6757892947644,
+      "artifacts": [
+        {
+          "path": "combined/result.json",
+          "sha256": "f7d80f60c75cc1dff4c3f58488d09001e40c06fd644840d9a68eaef33a695eb3",
+          "bytes": 2112
+        }
+      ],
+      "finished_at": "2026-10-28T18:14:35.697673+00:00"
+    },
+    {
+      "name": "compiled_head",
+      "started_at": "2026-10-28T18:14:35.697715+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 120.6353769376874,
+      "artifacts": [
+        {
+          "path": "compiled_head/result.json",
+          "sha256": "6ee891736c7e6da970b1715eefb2076e58a2455ee9320bec26987a21011feb67",
+          "bytes": 2116
+        }
+      ],
+      "finished_at": "2026-10-28T18:16:36.889635+00:00"
+    },
+    {
+      "name": "reference_repeat",
+      "started_at": "2026-10-28T18:16:36.889830+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 119.22206047317013,
+      "artifacts": [
+        {
+          "path": "reference_repeat/result.json",
+          "sha256": "e95a44e9953ea536588d63be7ddc4078905dd6137e9f82a0b518672595093903",
+          "bytes": 2122
+        }
+      ],
+      "finished_at": "2026-10-28T18:18:36.636074+00:00"
+    }
+  ],
+  "finished_at": "2026-10-28T18:18:36.636116+00:00"
+}

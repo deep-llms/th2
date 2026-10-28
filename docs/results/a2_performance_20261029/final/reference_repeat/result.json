@@ -1,0 +1,77 @@
+{
+  "status": "complete",
+  "numerical_passed": true,
+  "variant": "reference_repeat",
+  "options": {
+    "microbatch": 1,
+    "chunk": 128,
+    "deferred_checks": false,
+    "fused_optimizer": false,
+    "compile_head": false
+  },
+  "first_gradient": {
+    "relative_l2": 0.000312499100952576,
+    "cosine": 0.9999999511721626,
+    "max_abs": 9.961053729057312e-05
+  },
+  "validation_nll": 3.3290077168169017,
+  "validation_delta": 0.00027342442690869717,
+  "thresholds": {
+    "gradient_relative_l2": 0.02,
+    "gradient_cosine": 0.9998,
+    "validation_abs_nats": 0.002
+  },
+  "all_step_seconds": [
+    60.041378021240234,
+    1.2659413814544678,
+    1.159722924232483,
+    1.1589411497116089,
+    1.1578710079193115,
+    1.1876952648162842,
+    1.1600368022918701,
+    1.158425211906433,
+    1.1573705673217773,
+    1.1574769020080566,
+    1.1575655937194824,
+    1.157933235168457,
+    1.157871127128601,
+    1.1577781438827515,
+    1.1579228639602661,
+    1.1590601205825806
+  ],
+  "steady_mean_seconds": 1.1608305302533237,
+  "steady_median_seconds": 1.1579228639602661,
+  "tokens_per_second": 225824.52232953702,
+  "training_seconds": 77.8872902020812,
+  "cold_first_update_compute_seconds": 2.5529013331979513,
+  "peak_allocated_bytes": 44738789376.0,
+  "coverage": {
+    "examples": 1024,
+    "microbatches": 128,
+    "world_size": 8,
+    "exact_order": true
+  },
+  "lr_updates": [
+    2.9999999999999997e-05,
+    5.9999999999999995e-05,
+    8.999999999999999e-05,
+    0.00011999999999999999,
+    0.00015,
+    0.00017999999999999998,
+    0.00020999999999999998,
+    0.00023999999999999998,
+    0.00027,
+    0.0003,
+    0.00025,
+    0.00019999999999999998,
+    0.00015,
+    9.999999999999999e-05,
+    4.9999999999999996e-05,
+    0.0
+  ],
+  "teacher_no_gradient": true,
+  "code_commit": "7441fd00382a1a148e5e4ddea1c4ca15446cfa5b",
+  "assets_sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+  "data_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+  "note": "Discarded performance probe; no scientific fit. Timing excludes profiler/startup/gradient audit."
+}

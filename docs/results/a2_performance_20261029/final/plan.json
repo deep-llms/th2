@@ -1,0 +1,84 @@
+{
+  "scope": "discarded_performance_only",
+  "steps_per_variant": 16,
+  "global_tokens_per_step": 262144,
+  "variants": {
+    "reference": {
+      "microbatch": 1,
+      "chunk": 128,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "deferred": {
+      "microbatch": 1,
+      "chunk": 128,
+      "deferred_checks": true,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "fused": {
+      "microbatch": 1,
+      "chunk": 128,
+      "deferred_checks": false,
+      "fused_optimizer": true,
+      "compile_head": false
+    },
+    "chunk512": {
+      "microbatch": 1,
+      "chunk": 512,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "chunk1024": {
+      "microbatch": 1,
+      "chunk": 1024,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "micro2": {
+      "microbatch": 2,
+      "chunk": 512,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "micro4": {
+      "microbatch": 4,
+      "chunk": 256,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "combined": {
+      "microbatch": 1,
+      "chunk": 512,
+      "deferred_checks": true,
+      "fused_optimizer": true,
+      "compile_head": false
+    },
+    "compiled_head": {
+      "microbatch": 1,
+      "chunk": 512,
+      "deferred_checks": true,
+      "fused_optimizer": true,
+      "compile_head": true
+    },
+    "reference_repeat": {
+      "microbatch": 1,
+      "chunk": 128,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    }
+  },
+  "maximum_job_seconds": 4950,
+  "compile_scope": "head/loss only, fullgraph Inductor, backward autocast off",
+  "thresholds": {
+    "gradient_relative_l2": 0.02,
+    "gradient_cosine": 0.9998,
+    "validation_abs_nats": 0.002
+  }
+}

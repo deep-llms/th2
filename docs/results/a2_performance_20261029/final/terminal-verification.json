@@ -1,0 +1,35 @@
+{
+  "status": "verified",
+  "at": "2026-10-28T18:23:26.422130+00:00",
+  "raw_sha256": "3cdb0a97b1517696f735c065b46785a3fcc1d161233d7bd06ef64bbcbec6bdc7",
+  "finished": "2026-10-28T18:19:47.490773+00:00",
+  "jobs": 10,
+  "workers": [
+    674029,
+    674030,
+    674031,
+    674032,
+    674033,
+    674034,
+    674035,
+    674036
+  ],
+  "progress": [
+    {
+      "rank": "0",
+      "completed_cycles": "260",
+      "completed_gemms": "267280",
+      "completed_collective_payload_gib": "288.69",
+      "average_cycle_seconds": "0.871",
+      "cycles_per_second": "1.148"
+    },
+    {
+      "rank": "0",
+      "completed_cycles": "270",
+      "completed_gemms": "277560",
+      "completed_collective_payload_gib": "299.79",
+      "average_cycle_seconds": "0.871",
+      "cycles_per_second": "1.148"
+    }
+  ]
+}

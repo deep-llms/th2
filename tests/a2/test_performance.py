@@ -90,3 +90,25 @@ class ProbeTests(unittest.TestCase):
             if j['name']!='reference':self.assertIn('{run_dir}/reference',j['argv'])
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'jobs.json';p.write_text(json.dumps(jobs));load_jobs(p)
+
+class ReportTests(unittest.TestCase):
+    def test_report_rejects_mismatched_data_and_loss(self):
+        import json
+        from scripts.a2_performance_report import summarize
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            self.assertEqual(summarize(root)['status'],'incomplete')
+            for name in VARIANTS:
+                (root/name).mkdir()
+                record=dict(status='complete',variant=name,options=VARIANTS[name].record(),
+                    coverage=dict(exact_order=True,examples=1024,world_size=8),teacher_no_gradient=True,
+                    all_step_seconds=[1.]*16,lr_updates=[.01]*16,steady_mean_seconds=1.,steady_median_seconds=1.,
+                    first_gradient=dict(relative_l2=0.,cosine=1.),validation_delta=0.,validation_nll=3.,
+                    numerical_passed=True,assets_sha256='assets',data_sha256='data',code_commit='commit',
+                    tokens_per_second=262144,peak_allocated_bytes=1024,cold_first_update_compute_seconds=2.)
+                (root/name/'result.json').write_text(json.dumps(record))
+            r=summarize(root);self.assertEqual(r['status'],'complete');self.assertTrue(r['repeat_stable'])
+            path=root/'fused/result.json';bad=json.loads(path.read_text());bad['data_sha256']='changed';path.write_text(json.dumps(bad))
+            with self.assertRaises(ValueError):summarize(root)
+            bad['data_sha256']='data';bad['validation_nll']=4.;path.write_text(json.dumps(bad))
+            with self.assertRaises(ValueError):summarize(root)
