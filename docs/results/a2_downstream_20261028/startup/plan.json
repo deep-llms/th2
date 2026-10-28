@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "identities": {
+    "dclm-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/dclm-P300-original-identity.json",
+      "sha256": "7e92739357df71ffeb18e84c32085de29a34330f34244902d7b0868d94a4022a"
+    },
+    "dclm-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/dclm-P300-S1-0.2B-identity.json",
+      "sha256": "dd91f12a5c93d5074fd6e8319437a7eb5e57abe7c03672d581e302c1ea22f888"
+    },
+    "dclm-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/dclm-P1T-original-identity.json",
+      "sha256": "27a2f2208934c5794ca63b3714e998068ba10b836b33cb85f838d56e4ed3d98b"
+    },
+    "dclm-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/dclm-P1T-S1-0.2B-identity.json",
+      "sha256": "27e4db9ed9190af7c0333da69a7a516a1304ab502e986eb8a3deb5b8a5113f5c"
+    },
+    "fwe-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/fwe-P300-original-identity.json",
+      "sha256": "7e2ee603531e74e15e2d8f4048d0c49dcdf6ca55d5b00b20496ba98a5e9f3219"
+    },
+    "fwe-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/fwe-P300-S1-0.2B-identity.json",
+      "sha256": "8a0e091b0f899e2ae26bf68e5ef0064f9753d38a88e5bbcecff45924b09ad43b"
+    },
+    "fwe-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/fwe-P1T-original-identity.json",
+      "sha256": "f2f59ba4c29ec046311d3e431045d618ab7a5a6949c3acfa18c5424e3b3af21f"
+    },
+    "fwe-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/fwe-P1T-S1-0.2B-identity.json",
+      "sha256": "ce7ee7f4f0cf0b5a8c99a2f876c326fce922e5dd6d1d4984777734bf4fd00880"
+    },
+    "nem-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/nem-P300-original-identity.json",
+      "sha256": "07edbca04551d71a734a1e5c17ea0c49a748184f486ddc0c4144af6c86b17420"
+    },
+    "nem-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/nem-P300-S1-0.2B-identity.json",
+      "sha256": "0b8732389c42605a4936e7d3835a96ef3ee22738a06e769bc8c52987a8ce2afa"
+    },
+    "nem-P300-S1-0.8B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/nem-P300-S1-0.8B-identity.json",
+      "sha256": "550d462fe8c64b1f1ca9b1e5777e468b74a993fdde4a20925e4ece6933445454"
+    },
+    "nem-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/nem-P1T-original-identity.json",
+      "sha256": "971014da6b5bcf43ac962f41d278c439690e0ab42408e7280e9f2662d5b396a0"
+    },
+    "nem-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/nem-P1T-S1-0.2B-identity.json",
+      "sha256": "7066bc4cab7ccf3af153330dc44fec745f0df7aebcd60d1ba5e785fcd701c0ff"
+    },
+    "nem-P1T-S1-0.8B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/identities/nem-P1T-S1-0.8B-identity.json",
+      "sha256": "d3028aec9aa58f1480cfeb7e796332a431dcb22d36031d771f6fc09015df599f"
+    }
+  },
+  "tasks": [
+    "hellaswag",
+    "arc_easy",
+    "arc_challenge",
+    "piqa",
+    "winogrande",
+    "boolq",
+    "openbookqa",
+    "sciq",
+    "lambada_openai"
+  ],
+  "gpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "max_length": 4096,
+  "native_python": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+  "eval_python": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+  "tokenizer": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+  "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+  "input_spec": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/source/resources/a2_inputs_20261028.json",
+    "sha256": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e"
+  },
+  "manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/source/resources/downstream_english_20261023.json",
+    "sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b"
+  }
+}

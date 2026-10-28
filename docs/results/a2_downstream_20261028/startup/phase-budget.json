@@ -1,0 +1,7 @@
+{
+  "prior_seconds": 40200.0,
+  "preparation_seconds": 110.94974825484678,
+  "timeout_seconds": 10800.0,
+  "phase_hard_seconds": 64800,
+  "report_due": false
+}

@@ -301,3 +301,18 @@ phase cap. No new training, downloads, packages or driver changes.
 also passed after adding production batch-eight parity to the representative
 GPU gate (same existing thresholds, before observing any GPU results). Actual
 full-model numerical gates remain mandatory before full benchmark scoring.
+
+### Actual downstream startup — 28 October 21:06 SGT
+
+Launch `32b7f52`, frozen source `e740f86`, root
+`/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01`.
+Independent startup health `61b9152` verifies 85 frozen files, 14 actual checkpoint
+identity locks, nine-task plan, copied Accelerate config/eight-GPU BF16 environment,
+exact reclaim of burn workers 665634–665641, all eight GPUs empty before start,
+and supervisor/guard owner 666429. CPU canonical request preparation is active;
+no actual model numerical gate or benchmark score has completed in this snapshot.
+Provisional 60–120 minutes from 21:06 SGT startup; hard three-hour child budget.
+Prior phase ledger 40,200 seconds, with cleanup reserve within the 18-hour cap.
+Evidence: `results/a2_downstream_20261028/startup/`; original local log
+`temp/a2_downstream_health01.log`, SHA256
+`b000dec3d72caa4f7cf296a3b08c61b0de8db4c7aff5878398f81404810dcb6b`.

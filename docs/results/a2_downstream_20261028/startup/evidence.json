@@ -1,0 +1,9 @@
+{
+  "health_at": "2026-10-28T13:06:58.440062+00:00",
+  "raw_log": "temp/a2_downstream_health01.log",
+  "raw_sha256": "b000dec3d72caa4f7cf296a3b08c61b0de8db4c7aff5878398f81404810dcb6b",
+  "source_files_verified": 85,
+  "source_commit": "e740f86697689192d70b4d3c5b0d3484065c252b",
+  "guard": "{\"owner_pid\": 666429, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01/supervised\", \"at\": \"2026-10-28T13:05:01.443650+00:00\"}",
+  "session": "0 666429"
+}
