@@ -1,0 +1,117 @@
+{
+  "observed_utc": "2026-10-28T01:56:32.380729+00:00",
+  "source_commit": "a89c08e0b93c83982bd95d8548a94dfc15cfb34a",
+  "source_files_verified": 78,
+  "raw_log": "temp/a2_pair_health01.log",
+  "raw_sha256": "4875decfae4022519f292465f0abfa3f0490b1ce798d6896bc7d53a2a233edc7",
+  "artifact_sha256": {
+    "live-inspection.json": "f59fba8b3263a89b0467e20896a960eb2df857753e33120a4c9790e749813dc9",
+    "source-manifest.json": "e8e590ace3c47c2ed3f1d27c73daf5aca3474e65dc1e7fe266a43638c7d51c37",
+    "inputs-verified.json": "f1b630e2d22ae78f1cdd86bce5913e0bb384b0b0848843a4becbc6fff7e0c6be",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "jobs.json": "e0518570e33823203b991fb68512ca027faa217220ec343a7704b52927aa4199",
+    "supervised/supervisor.json": "54f073762c61f9001dc893fe779e59cfe6b10cc9ba9e87e1c469bb9b32a58092",
+    "supervised/reclaim.json": "32e19d67c456720009aac6cbba678e7236ddfe0249ca7d2d4e829a6b111e289b",
+    "supervised/gpus-free-before-training.json": "2eace30a7b5d6c1ec738215f8c6b42af585c5c462a2fefa7eb3b51cc504da263",
+    "supervised/run/run.json": "2a7a038f89a22dc8b59dfdae422334f125192a6795ed7fd6c26670c99a36b1a5",
+    "supervised/run/pair/shared-check-reuse.json": "5e1f411c57b9a2d584badab36b8d52fd5d5e2659d32cac83b60bfa5b89a79f86",
+    "supervised/run/pair/P1T-survey.json": "7949d3c29dfdbdadb840a1a70a091a18617e67dc42d0b8a511ae0194b22250fc",
+    "supervised/run/pair/reuse.json": "8d06b7b247f74b675ba4c140ed9cb3166af02f1b1530472e21b499779f0922f2",
+    "supervised/run/pair/timings.json": "2e55865c6db1b42bcf36cc386d5a25bee1573f18d27e3caf0abab9b1909ce470"
+  },
+  "gpus_free": {
+    "at": "2026-10-28T01:52:03.959593+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ]
+  },
+  "reclaim_targets": [
+    640635,
+    640636,
+    640637,
+    640638,
+    640639,
+    640640,
+    640641,
+    640642
+  ],
+  "supervisor": {
+    "started_at": "2026-10-28T01:52:04.234048+00:00",
+    "training_status": "running"
+  },
+  "stage": "P1T-pre",
+  "survey_precision_passed": true,
+  "precision_gap": 0.00011237434217825637,
+  "no_final_result_yet": true
+}

@@ -1,6 +1,6 @@
 # Current task
 
-## Latest: preparing real DCLM S1 pair and automatic wake — 28 October 2026 SGT
+## Latest: real DCLM S1 pair running with automatic wake — 28 October 2026 SGT
 
 Owner authorizes continuation and an ETA-based same-thread reminder worker.
 Plan: A2_CONTINUATION_WATCH_20261028.md. Seven new fits: P1T3-point grid,
@@ -12,8 +12,15 @@ Submission fce351ae1004ff4ba1e8f7e72b7bd7becf2e6a69 pushed09:50SGT,
 frozen source a89c08e0b93c83982bd95d8548a94dfc15cfb34a. Launch acknowledged09:55SGT: required P300/P1T weight+code hashes verified,
 Accelerate copied and8GPU/BF16 env verified, supervisor submitted. Raw receipt
 temp/a2_pair_launch01.log SHA421990753e1d35e3bd31b9e8ec1f44bbf236258b5235195dc7e0d12d8f1d2db4.
-Pending fresh health to confirm reclaim/free GPUs and live stage; do not relaunch.48CPU tests passed; extra mocked7-fit orchestration
-check subsequently passed (49total). Remaining fullpilot not done.
+Health2542b91 observed09:56:32SGT: exactknownburnworkers640635–640642
+stopped, all8GPUs empty09:52:03 before queue started09:52:04. P1Tsurvey passed
+in260.62s; P1T-pre running, supervisor641758 owns guard and automaticburnhandoff.
+49CPUtests passed; frozen source all files verified. Receipt
+results/a2_s1_pair_20261028/health_0956.json; rawtemp/a2_pair_health01.log SHA
+4875decfae4022519f292465f0abfa3f0490b1ce798d6896bc7d53a2a233edc7.
+ETA~11:00–11:15SGT without retry, +4–20min each. No failure observed, no final
+training result yet; keep running. commands#0 after acknowledged health.
+Remaining fullpilot not done.
 Watcher will use existing thread, localstate temp/a2_watch_20261028,6hwindow,
 first10:55:29SGT then30min, deadline15:50:29SGT. App-serveraccepted
 deliverytest01a18033-9fc7-70e0-8729-47bd52707d51; actualackpending. No duplicate timer/newagent; delivery acceptance and
