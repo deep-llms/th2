@@ -36,3 +36,12 @@ Checkpoints remain under the original B200 output root `6y3o-a2-s1-pair-20261028
 Next registered subset: FineWeb-Edu P300/P1T S1, each with its own 3-point grid,
 190-step short and 762-step main heal. Same CulturaX healing/evaluation text,
 different pretrained parent corpus. No new architecture/data/runtime change.
+
+## PPL derived from existing final scores
+
+No additional scoring; PPL = exp(token-weighted final NLL).
+
+| Parent | Original PPL | S1 healed 0.2B PPL |
+|---|---:|---:|
+| P300 | 15.4528 | 18.8261 |
+| P1T | 14.6862 | 18.0877 |

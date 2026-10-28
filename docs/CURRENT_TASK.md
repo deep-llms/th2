@@ -1,5 +1,17 @@
 # Current task
 
+## Latest NEM startup VERIFIED — 28 October 12:42 SGT
+
+Health3c553b3 acknowledged: NEM queue started12:38:01SGT, P300survey active on
+all8GPUs (workers649011–649018), supervisor648962 owns guard/session. Exactknown
+FWEburnworkers648238–648245 reclaimed; all8GPUs verifiedempty12:38:01.50before
+queue. Accelerate copied+8GPU/BF16verified; model/datahashpassed;78sourcefiles
+matcha6e871c. No error observed. ETA14:00–14:15SGT, remaining~75–90minutes
+at12:45. Rawtemp/a2_nem_health01.log SHA
+f8fa1cd5f38927839b7a16d1b2154882f936c4ce9ac9f11cc9eb6c2e01d4b09f;
+receipt results/a2_nem_s1_20261028/health_1242.json. Previous pending notesbelow
+are superseded. Commands#0 restored; existingwatchernext12:55SGT, no newtimer.
+
 ## Latest — FWE COMPLETE; preparing NEM S1, 28 October 12:35 SGT
 
 Final healthd1abfae observed12:31:49: all10fits successful, no retry, all8rank
@@ -15,7 +27,27 @@ Owner latest explicitly authorizes continued registered pilot/preflight plus
 PPL/downstream while asleep. SAME watcher extended to29Oct06:00SGT, PID553354,
 next12:55:29SGT; original6hcutoff superseded. Still Phase0A18hhard/15hreportcap.
 See A2_CONTINUATION_WATCH_20261028.md extension. No newagent/duplicateworker.
-NEM not yet launched; record exact submission/ack below before next tick.
+NEM submission56ef9ca48719c415dbd50ed5f2aecf4c5f2bff25 pushed12:36SGT;
+frozen sourcea6e871c6c29ba721720dc3ebe99fe7482af4bd92. Root
+/mnt/local/_outputs/deep-llms_th2/6y3o-a2-nem-s1-20261028-a01,
+sessiona2_nem_s1_20261028_a01. Launch acknowledged12:40SGT: actual NEM/P300+P1T filehashes passed, Accelerate
+copied+envverified8GPU/BF16; supervisor submitted. Rawtemp/a2_nem_launch01.log
+SHA7d1508febe500f1fba5dc65b58e695db28f2b057abdf4448358ce8b613800f8f.
+Startup health3c553b37a4d036a964e7dd1021ef47d9832874d5 submitted, pendingreceipt
+asof12:44SGT (Dropboxlatest12:40launchreceipt); no error or completion inferred;
+retrieve before another request. Do not resubmit unchanged.
+CURRENT_TASK and DCLMPPL edits intentionally local/uncommitted while executable
+health request awaits acknowledgement. Commit together with deliberate#0 once
+acknowledged; never push unchanged executablecommands just to sync these docs.
+Expectedfinish~14:00–14:15SGT if promptly started/no retry.
+Prepared health template temp/a2_nem_health.sh; current pendingrequest is nem-s1-health-20261028-a01.
+Next implementation caveat: generic a2/queue.py currently executes its full matrix
+and has NO completed-fit reuse argument. Do not invoke it unchanged and repeat
+finishedS1fits. Add exact hash-verified completed-result reuse for remainingPhase0A
+or use a bounded registered-subset coordinator, with tests. Branch surveys/S2
+remain prerequisites; scope-specific receipt provenance must remain explicit.
+Downstream eval/downstream_suite.py currently hardcodes KV/global_step20752;
+use a tested native OpenSci loader rather than silently relaxing old contracts.
 
 ## Latest FWE progress — 28 October, 11:59 SGT observation
 
