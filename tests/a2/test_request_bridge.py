@@ -24,6 +24,63 @@ class RequestBridgeTests(unittest.TestCase):
         self.assertIsNotNone(bridge.captured)
         return bridge.captured
 
+    def test_persisted_cli_capture_score_replay(self):
+        import hashlib
+        from unittest.mock import patch
+        from eval.a2_requests import main
+        from eval.a2_request_bridge import digest
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);tokdir=root/'tokenizer';tokenizer().save_pretrained(tokdir)
+            hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in tokdir.iterdir()}
+            spec=root/'spec.json';spec.write_text(json.dumps(dict(tokenizer_provenance={
+                'gpt_neox':dict(files=hashes)})))
+            data=root/'data.jsonl';data.write_text(json.dumps(dict(
+                question='w1 w2',choices=['w3','w4'],answer=0))+'\n')
+            manifest=root/'manifest.json';manifest.write_text('{}')
+            config=dict(task='fixture',dataset_path='json',dataset_kwargs=dict(
+                data_files={'validation':str(data)},cache_dir=directory),validation_split='validation',
+                output_type='multiple_choice',doc_to_text='question',doc_to_target='answer',
+                doc_to_choice='choices',num_fewshot=0,
+                metric_list=[dict(metric='acc',aggregation='mean',higher_is_better=True)])
+            prepared_path=root/'prepared.json';scored_path=root/'scored.json';result_path=root/'result.json'
+            common=['--tokenizer',str(tokdir),'--input-spec',str(spec),'--manifest',str(manifest),
+                    '--dataset-root',directory,'--tasks','fixture','--max-length','16']
+            def invoke(args):
+                with patch('sys.argv',['a2_requests']+args), patch(
+                    'eval.benchmark_data.local_dataset_paths',return_value={}), patch(
+                    'eval.benchmark_data.task_configs',return_value=[config]), patch(
+                    'eval.downstream_suite.COUNTS',{'fixture':1}):main()
+            invoke(['prepare',*common,'--output',str(prepared_path)])
+            prepared=json.loads(prepared_path.read_text())
+            self.assertNotIn('results',prepared)
+            scored=score_requests(tiny_model(),prepared['requests'],max_length=16)
+            scored.update(prepared_sha256=digest(prepared),request_sha256=prepared['request_sha256'])
+            scored_path.write_text(json.dumps(scored))
+            invoke(['replay',*common,'--prepared',str(prepared_path),'--scored',str(scored_path),
+                    '--output',str(result_path)])
+            result=json.loads(result_path.read_text())
+            self.assertEqual(result['n-samples']['fixture'],dict(original=1,effective=1))
+            self.assertEqual(result['a2_metadata']['prepared_sha256'],digest(prepared))
+            with self.assertRaises(SystemExit):
+                invoke(['prepare',*common,'--output',str(prepared_path)])
+
+    def test_persisted_protocol_binding(self):
+        from eval.a2_requests import validate_prepared, validate_scored
+        from eval.a2_request_bridge import digest
+        prepared=self.prepared()
+        protocol=dict(max_length=16,seed=42,tasks=['fixture'])
+        prepared.update(protocol=protocol,protocol_sha256=digest(protocol))
+        prepared=json.loads(json.dumps(prepared))
+        scored=dict(prepared_sha256=digest(prepared),request_sha256=prepared['request_sha256'],
+            max_length=16,precision='fp32_parameters_bf16_cuda_autocast',likelihood_requests=3)
+        validate_prepared(prepared,protocol);validate_scored(prepared,scored)
+        for key,value in [('max_length',8),('likelihood_requests',2),('precision','bf16'),
+                          ('prepared_sha256','0'*64)]:
+            with self.assertRaises(ValueError):validate_scored(prepared,{**scored,key:value})
+        with self.assertRaises(ValueError):validate_prepared(prepared,{**protocol,'seed':43})
+        bad=copy.deepcopy(prepared);bad['requests'][0]['continuation'].append(3)
+        with self.assertRaises(ValueError):validate_prepared(bad,protocol)
+
     def test_capture_native_score_and_replay(self):
         prepared=self.prepared()
         scored=score_requests(tiny_model(),prepared['requests'],max_length=16)

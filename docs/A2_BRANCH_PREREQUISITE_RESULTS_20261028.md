@@ -144,3 +144,20 @@ ETA21:00–21:15SGT including handoff allowance, without retries.
 Archive results/a2_remaining_phase0a_20261028/status_1757; fullrawreceipt
 temp/a2_remaining_health07.log, SHA
 ae0a5a2cebdadfe6cb8d57bccb2a07df6ff7819fada8322e5bc4d2b6513e4fc8.
+
+## 18:31 SGT check: 20/28 remaining fits complete
+
+NEM/P300/S2 0.2B completed with final NLL **2.871260569** (own parent
+2.774250937; damage +0.097009631). NEM/P1T counterpart is still pending;
+no complete NEM contrast or full-pilot decision yet. Current NEM/P300/S1
+0.8B logged 1,080/3,051 updates. All20 published fits pass exact recipe,
+full LR schedule, eight-rank sample order/coverage, provenance and checkpoint
+roundtrip checks; no divergence/retry. All6 pre-baselines remain validated.
+
+Eight GPUs96%,45,882MiB each; guard owner656246 and86 frozen source hashes
+match d3a8a0b. Queue elapsed3h22, cumulative Phase0A about8h31 including prior
+18,600seconds. Estimated remaining2.5–2.75h, finish21:00–21:15SGT if no retry.
+Artifacts: [compact18:31 archive](results/a2_remaining_phase0a_20261028/status_1831).
+Full original receipt: temp/a2_remaining_health08.log, SHA256
+3726bf541baf4c9933e9b1ec57e984c6495b1fa905243f42ed48031d1b61330d.
+No extra GPU job or modification to running training.

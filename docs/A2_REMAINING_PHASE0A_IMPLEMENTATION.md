@@ -196,3 +196,18 @@ missing. Historical successful downstream command uses envs/eval/bin/python3.11
 (temp/kv_downstream_health_command.sh), so absence of the actual eval environment
 is NOT established. Next read-only check must use that exact historical path.
 No package installation, environment repair or cross-environment import occurred.
+
+18:31SGT actual runtime check confirms the existing envs/eval interpreter:
+torch2.14.1, transformers5.9.0, lm-eval0.4.13, datasets4.8.5, tokenizers0.22.2.
+It can host CPU request preparation/aggregation; native model loading stays
+in a2_env with Transformers4.57.1. No package/env changes or cross-env imports.
+
+Prepared eval/a2_requests.py prepare/replay CLI: local tokenizer/data checksums,
+fixed canonical zero-shot task settings and seed42, persisted request/protocol
+hashes, score-to-input binding, exact task/sample counts and exclusive output.
+Capture aborts before metrics; replay uses canonical aggregation with actual
+scores. Five CPU tests pass, including full JSON prepare/native-score/replay
+on an offline task, matching prior direct-harness tests, tamper/overwrite rejection.
+Raw test log temp/a2_request_cli_tests_final.log; checksum in status_1831 archive.
+Native checkpoint identity/scoring CLI, suite and full-weight GPU parity remain
+before downstream deployment. This is local preparation, not an executed eval.

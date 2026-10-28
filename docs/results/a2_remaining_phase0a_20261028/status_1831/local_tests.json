@@ -1,0 +1,8 @@
+{
+  "test_command": "tests/a2/test_request_bridge.py",
+  "tests": 5,
+  "status": "passed",
+  "raw_log": "temp/a2_request_cli_tests_final.log",
+  "sha256": "16add6df73760a8de556a1e8042f174084f7b95090a37cac82b1291d6f399181",
+  "gpu_validated": false
+}

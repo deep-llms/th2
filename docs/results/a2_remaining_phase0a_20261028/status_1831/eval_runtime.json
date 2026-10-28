@@ -1,0 +1,5 @@
+{
+  "returncode": 0,
+  "stdout": "{\"python\": \"/mnt/local/conda-py311/envs/eval/bin/python3.11\", \"torch\": \"2.14.1\", \"transformers\": \"5.9.0\", \"lm-eval\": \"0.4.13\", \"datasets\": \"4.8.5\", \"tokenizers\": \"0.22.2\"}\n",
+  "stderr": ""
+}
