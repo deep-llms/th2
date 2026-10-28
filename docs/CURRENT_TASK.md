@@ -1,6 +1,6 @@
 # Current task
 
-## Latest: DCLM S1 COMPLETE, preparing FineWeb-Edu pair — 28 October 2026 SGT
+## Latest: DCLM S1 COMPLETE, FineWeb-Edu pair RUNNING — 28 October 2026 SGT
 
 Active design docs/A2_pilot_spec.md v2.1; approved automatic continuation follows
 A2_CONTINUATION_WATCH_20261028.md. Final DCLM health54646e9 observed10:59:12SGT:
@@ -29,8 +29,19 @@ frozen sourcecfeb74c6db5e63d3a1044cda6955d2df16e4891b. Launch acknowledged
 11:10SGT, FWE/P300+P1T actual file SHA checks passed, Accelerate copied+verified
 8GPU/BF16. Supervisor submitted. Rawtemp/a2_fwe_launch01.log SHA
 e9fdcd5ad178643bde1fdef59f953cff296004fed0bbebcd58e7e1fee6fb4b02.
-Do not repush executable launch. Pendingfreshhealth fwe-s1-health-20261028-a01. Estimatedfinish12:30–12:50SGT if no retry.
-Next retrieve launch and fresh health, then commands#0; no newtimer.
+Health397f466 observed11:12:13SGT: exact burnworkers644045–644052 reclaimed,
+all8GPUs empty11:08:54 before queue began11:08:54.59. P300survey running with
+8workers644834–644841 under supervisor644785; guard owned, NCCLrings connected.
+All78frozenfiles verified againstcfeb74c. Receipt
+results/a2_fwe_s1_20261028/health_1112.json; rawtemp/a2_fwe_health01.log SHA
+23c4b86033a7ea3968227c86feea8a54b4739cfb8eb3433901be0ac9b70bc64f.
+No error observed, no final results yet. Keep queue running; commands#0. Estimatedfinish12:30–12:50SGT if no retry.
+Next wake: inspect FWE advancement and ETA; no duplicate launch, no newtimer.
+After successful terminal results and burnhandoff, NEM S1pair can use the same
+launcher --dataset nem with cumulative --spent-seconds and its new unique root.
+Only if remaining timer window fits ~80–95min plus verification. Original
+--grid points to completed DCLM earlygrid for shared checks; NEM runs its OWN
+6grid fits and4short/main fits, not DCLM LR reuse. All science unchanged.
 
 
 ## Latest: real DCLM S1 pair running with automatic wake — 28 October 2026 SGT
