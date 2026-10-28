@@ -1,5 +1,23 @@
 # Current task
 
+## Latest: first DCLM/P300 S1 grid COMPLETE — 28 October 2026 SGT
+
+Healthf701a9c observed09:31:39SGT confirms three successful114-update fits, no
+retry, exact7296-sequence order on8ranks, LR schedules and zero roundtrip loss
+difference. Queue completed08:44:30SGT in833.47seconds; burns verified08:45:36,
+still communicating on8GPUs at09:31:39, guard released. Workers640635–640642;
+reverify identities before any future reclaim. Burn source now this grid root's
+source/resources/llm_pretrain_burn.py. No further training queued; commands#0.
+Chosen LR3e-4 from tuning only. Original final loss2.737793; unhealed3.763775;
+healed3.312775 /3.188723 /3.095975 for3e-5 /1e-4 /3e-4. Only first short grid
+complete, not full pilot. Report A2_FIRST_GRID_RESULTS_20261028.md and metrics
+results/a2_early_grid_20261028/results.json. Rawtemp/a2_grid_health02.log SHA
+0313f9993906e9a62065f6138af5462b949cf7d65be12e6de4afb50ac141aa16.
+All75 frozen source files verified against4c2c385. Subsequent work must reuse
+these runs, not rerun this completed grid. Remaining parents/S2/longer fits
+still require their own dependencies. Results do not establish the paired
+research comparison. Historical running notes below are superseded.
+
 ## Latest: bounded DCLM/P300 S1 grid authorized — 28 October 2026 SGT
 
 User approved dependency-based launching instead of waiting for all parents.

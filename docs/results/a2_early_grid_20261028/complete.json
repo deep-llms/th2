@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "scope": "dclm_P300_S1_grid",
+  "runs": 3,
+  "chosen_lr": 0.0003,
+  "elapsed_seconds": 832.0955751449801,
+  "phase": "0A",
+  "full_pilot_complete": false
+}
