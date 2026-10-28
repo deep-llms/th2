@@ -1,5 +1,22 @@
 # Current task
 
+Latest15:00SGT: recoverylaunchfc10b81 FAILED BEFORE GPU acquisition/output creation.
+Receipt temp/a2_branch_launch02.log SHA7dc94b9b2f7d12d9ca4ae1eebdb0eb8707ecbc3b3a892f182ca25d36bf2e3552.
+The old verify_handoff required prior success complete.json, unavailable after
+known CPUfreeze failure. No training/inspection/reclaim/config change occurred.
+Adding explicit SHA-locked recovery for ONLY failedCPUfreeze after6successful
+surveys +terminalcleanup/burn receipts. Native supervisor/PID/freechecks unchanged.
+Nextsubmission will use fresh a03/root/session, same zero-survey prerequisitejobs.
+
+Latest14:48SGT: prerequisite recovery SUBMITTEDfc10b812b39d821b37ec7e995c64252845b0c43a,
+source0e9dfc8ce9117815136077c2b3b3de97d1d776b9, remoteheadverified. Root
+6y3o-a2-branches-20261028-a02/sessiona2_branches_20261028_a02. ONLY freezeS2
+and sharednumerical; sixsuccessfulsurveys reused via newhistory resource.
+Ledger18000sec, expected10–20min fromstart (~15:00–15:10SGT if prompt),
+hardchildtotal4320sec includingcleanup. Retrieve launchreceipt beforewrites;
+read-only nexttemplate temp/a2_branch_retry_health.sh (uniquehealtha04).
+Noheals yet. 28fitstage implemented/71tests, requiresactualsuccessfulcheck/handoff.
+
 Latest14:45SGT: branchhealth e91620a acknowledged snapshot14:37:57. All six
 surveys successful/T1+sanitypassed, but CPU freeze-sets FAILED14:35:43 because
 original DCLM/P300 survey lacks later parent_sanity field. No numerical/heals ran.

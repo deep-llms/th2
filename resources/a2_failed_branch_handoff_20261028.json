@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "scope": "failed_cpu_freeze_after_completed_surveys",
+  "run": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a01/supervised/run/run.json",
+    "sha256": "d3fbc24e27cb591e7eb1b69ecb1427799501c9206dc102d6283141c3fad0f3fa"
+  },
+  "supervisor": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a01/supervised/supervisor.json",
+    "sha256": "11b65d0f5f4d188389187d42141ae52a60297d24bf6e2ad5366b2fec0decc1e5"
+  },
+  "burn": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a01/supervised/burn-verified.json",
+    "sha256": "292e4ff883cbea046c29d6eb3d4eb38351a9cffbd3fb041ba458c9448a3fac6a"
+  }
+}

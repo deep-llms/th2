@@ -110,3 +110,12 @@ Original failed supervisor and successful survey receipts are retained under
 results/a2_branches_20261028/final_surveys. Recovery reuses all six surveys through
 resources/a2_completed_surveys_20261028.json and executes only CPU freeze + GPU
 numericalcheck. No numericalcore or scientific selection rule changed.
+
+Recovery a02 was refused before GPU acquisition: the inherited successful-job
+handoff helper requires complete.json. Added an explicit --failed-handoff receipt
+lock for this exact failed CPU freeze after six completed surveys. It verifies
+terminal cleanup and restored communicating burns from SHA-pinned artifacts;
+the native supervisor still rechecks live PID/start identities and GPU freedom.
+This does not turn failure into success or relax scientific gates. A separate
+CPU test uses the actual archived failure receipts and rejects changed/foreign
+paths and incomplete burns. Next recovery uses a fresh a03 output.

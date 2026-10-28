@@ -20,6 +20,35 @@ from scripts.train_then_burn import digest,BURN_HASH,GUARD_HASH
 from efficient_llm.a2.data import write_json
 
 
+def verify_failed_handoff(output_parent,burn_script,lock_path):
+    """Explicit SHA-reviewed failed CPU prerequisite; preserve native GPU checks.
+
+    A failed scientific job is not success. This only validates that its native
+    supervisor cleaned up and restored communicating burns before a fresh retry.
+    """
+    from scripts.a2_remaining import read_locked
+    root=burn_script.parents[2]
+    if root.parent.resolve()!=output_parent.resolve() or burn_script.resolve()!=(root/'source/resources/llm_pretrain_burn.py').resolve():
+        raise ValueError('Wrong reviewed predecessor root')
+    lock=json.loads(lock_path.read_text())
+    if lock.get('schema')!=1 or lock.get('scope')!='failed_cpu_freeze_after_completed_surveys':
+        raise ValueError('Explicit reviewed CPU-failure handoff required')
+    paths={'run':'supervised/run/run.json','supervisor':'supervised/supervisor.json','burn':'supervised/burn-verified.json'}
+    for key,rel in paths.items():
+        if Path(lock[key]['path']).resolve()!=(root/rel).resolve():raise ValueError('Wrong predecessor receipt path')
+    run,supervisor,burn=(read_locked(lock[k]) for k in ('run','supervisor','burn'))
+    jobs=run.get('jobs',[])
+    if (run.get('status')!='failed' or supervisor.get('training_status')!='failed'
+        or not supervisor.get('finished_at') or not burn.get('collective_progress_verified')
+        or len(jobs)!=7 or jobs[-1].get('name')!='freeze-sets' or jobs[-1].get('returncode')!=1
+        or any(j.get('status')!='ok' or j.get('returncode')!=0 for j in jobs[:-1])
+        or {j['name'] for j in jobs[:-1]}!={d+'-'+p for d in ('dclm','fwe','nem') for p in ('S72','S188')}
+        or len(supervisor.get('free_after_training',[]))!=8
+        or any(g['pids'] for g in supervisor['free_after_training'])):
+        raise ValueError('Failed prerequisite cleanup/burn handoff incomplete')
+    return dict(root=str(root),failed_handoff_lock=digest(lock_path))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
@@ -31,6 +60,7 @@ def main():
     p.add_argument('--prior',type=Path)
     p.add_argument('--grid',type=Path)
     p.add_argument('--history',type=Path,help='Reviewed SHA-pinned completed S1 receipts')
+    p.add_argument('--failed-handoff',type=Path,help='Exact reviewed failed CPU prerequisite cleanup receipts')
     p.add_argument('--prerequisites',type=Path,help='Reviewed terminal branch/check artifact lock')
     p.add_argument('--dataset',choices=('dclm','fwe','nem'),default='dclm')
     p.add_argument('--spent-seconds',type=float,default=1155.47)
@@ -71,7 +101,12 @@ def main():
         from efficient_llm.a2.pair import verify_grid
         if a.grid is None:raise ValueError('Completed grid required')
         verify_grid(source,a.grid)
-    verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
+    if a.failed_handoff is not None:
+        if a.stage!='remaining-prereqs' or prepared['sequence']:
+            raise ValueError('Failed handoff recovery only permits reused-survey prerequisites')
+        verify_failed_handoff(a.output.parent,a.predecessor_burn_script,a.failed_handoff)
+    else:
+        verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
     if (digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH
         or Path('/mnt/local/_gpu_guard/DISABLED').exists()):raise ValueError('Unknown burn/guard owner')
     a.output.mkdir();frozen=a.output/'source'
