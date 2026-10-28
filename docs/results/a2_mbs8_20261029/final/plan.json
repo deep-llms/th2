@@ -1,0 +1,43 @@
+{
+  "suite": "mbs8",
+  "scope": "discarded_performance_only",
+  "steps_per_variant": 16,
+  "global_tokens_per_step": 262144,
+  "variants": {
+    "reference": {
+      "microbatch": 4,
+      "chunk": 256,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "micro8_chunk128": {
+      "microbatch": 8,
+      "chunk": 128,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "micro8_chunk256": {
+      "microbatch": 8,
+      "chunk": 256,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    },
+    "reference_repeat": {
+      "microbatch": 4,
+      "chunk": 256,
+      "deferred_checks": false,
+      "fused_optimizer": false,
+      "compile_head": false
+    }
+  },
+  "maximum_job_seconds": 1800,
+  "compile_scope": "none; unchanged native KDModel/HealTrainer",
+  "thresholds": {
+    "gradient_relative_l2": 0.02,
+    "gradient_cosine": 0.9998,
+    "validation_abs_nats": 0.002
+  }
+}

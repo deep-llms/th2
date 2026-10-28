@@ -1,0 +1,78 @@
+{
+  "suite": "mbs8",
+  "status": "complete",
+  "numerical_passed": true,
+  "variant": "micro8_chunk256",
+  "options": {
+    "microbatch": 8,
+    "chunk": 256,
+    "deferred_checks": false,
+    "fused_optimizer": false,
+    "compile_head": false
+  },
+  "first_gradient": {
+    "relative_l2": 0.0007558050915086175,
+    "cosine": 0.9999997143793312,
+    "max_abs": 0.00017790868878364563
+  },
+  "validation_nll": 3.3291256054004683,
+  "validation_delta": 0.0005440884302023719,
+  "thresholds": {
+    "gradient_relative_l2": 0.02,
+    "gradient_cosine": 0.9998,
+    "validation_abs_nats": 0.002
+  },
+  "all_step_seconds": [
+    59.5191764831543,
+    0.9145249724388123,
+    0.9110893607139587,
+    0.9158774614334106,
+    0.9135487079620361,
+    0.9113980531692505,
+    0.9122164249420166,
+    0.9147909879684448,
+    0.9141312837600708,
+    0.9162158966064453,
+    0.9135328531265259,
+    0.9164549112319946,
+    0.9161574840545654,
+    0.9191420674324036,
+    0.9182267189025879,
+    0.918510377407074
+  ],
+  "steady_mean_seconds": 0.91552518714558,
+  "steady_median_seconds": 0.9161574840545654,
+  "tokens_per_second": 286331.82754623203,
+  "training_seconds": 73.67069143988192,
+  "cold_first_update_compute_seconds": 1.9454703209921718,
+  "peak_allocated_bytes": 125050388480.0,
+  "coverage": {
+    "examples": 1024,
+    "microbatches": 16,
+    "world_size": 8,
+    "exact_order": true
+  },
+  "lr_updates": [
+    2.9999999999999997e-05,
+    5.9999999999999995e-05,
+    8.999999999999999e-05,
+    0.00011999999999999999,
+    0.00015,
+    0.00017999999999999998,
+    0.00020999999999999998,
+    0.00023999999999999998,
+    0.00027,
+    0.0003,
+    0.00025,
+    0.00019999999999999998,
+    0.00015,
+    9.999999999999999e-05,
+    4.9999999999999996e-05,
+    0.0
+  ],
+  "teacher_no_gradient": true,
+  "code_commit": "04ab56618eae019b13aec0ba8fd784b1937faed8",
+  "assets_sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+  "data_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+  "note": "Discarded performance probe; no scientific fit. Timing excludes profiler/startup/gradient audit."
+}

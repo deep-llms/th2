@@ -1,0 +1,62 @@
+{
+  "status": "complete",
+  "completed": 4,
+  "repeat_stable": true,
+  "timing_reference": "reference_repeat",
+  "rows": [
+    {
+      "variant": "reference",
+      "numerical_passed": true,
+      "step_seconds": 0.9489325881004333,
+      "median_seconds": 0.9478914737701416,
+      "speedup": 1.0004325540950862,
+      "tokens_per_second": 276251.44640122226,
+      "peak_gib": 75.83464050292969,
+      "cold_compute_seconds": 4.550282864365727,
+      "gradient_relative_l2": 0.0,
+      "gradient_cosine": 1.0,
+      "validation_delta": 0.0
+    },
+    {
+      "variant": "micro8_chunk128",
+      "numerical_passed": true,
+      "step_seconds": 0.9327325549992648,
+      "median_seconds": 0.9311418533325195,
+      "speedup": 1.017808425029322,
+      "tokens_per_second": 281049.480470001,
+      "peak_gib": 115.49105834960938,
+      "cold_compute_seconds": 2.1483671297319233,
+      "gradient_relative_l2": 0.0006690249809128406,
+      "gradient_cosine": 0.9999997762027781,
+      "validation_delta": 0.0005715974543938351
+    },
+    {
+      "variant": "micro8_chunk256",
+      "numerical_passed": true,
+      "step_seconds": 0.91552518714558,
+      "median_seconds": 0.9161574840545654,
+      "speedup": 1.0369382143786063,
+      "tokens_per_second": 286331.82754623203,
+      "peak_gib": 116.46224975585938,
+      "cold_compute_seconds": 1.9454703209921718,
+      "gradient_relative_l2": 0.0007558050915086175,
+      "gradient_cosine": 0.9999997143793312,
+      "validation_delta": 0.0005440884302023719
+    },
+    {
+      "variant": "reference_repeat",
+      "numerical_passed": true,
+      "step_seconds": 0.9493430527773771,
+      "median_seconds": 0.9493019580841064,
+      "speedup": 1.0,
+      "tokens_per_second": 276132.0043719468,
+      "peak_gib": 75.83464050292969,
+      "cold_compute_seconds": 2.1363679645583034,
+      "gradient_relative_l2": 0.0003339689043661573,
+      "gradient_cosine": 0.9999999442323839,
+      "validation_delta": 0.0005963367900441163
+    }
+  ],
+  "fastest_screened_candidate": null,
+  "note": "Screening only; promotion requires reviewing profile, cold overhead, numerical limits and real integration. No default mutation."
+}

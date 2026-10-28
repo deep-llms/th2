@@ -1,0 +1,37 @@
+{
+  "status": "verified",
+  "health_at": "2026-10-28T19:31:29.441750+00:00",
+  "source_commit": "04ab56618eae019b13aec0ba8fd784b1937faed8",
+  "source_files": 89,
+  "raw_sha256": "b7ff4e7fe570b5fac415c8c7b2be4613401f125601184b49ca338f47c7cb7376",
+  "finished": "2026-10-28T19:11:26.999713+00:00",
+  "burn_finished": "2026-10-28T19:12:32.853293+00:00",
+  "workers": [
+    676151,
+    676152,
+    676153,
+    676154,
+    676155,
+    676156,
+    676157,
+    676158
+  ],
+  "progress": [
+    {
+      "rank": "0",
+      "completed_cycles": "1310",
+      "completed_gemms": "1345370",
+      "completed_collective_payload_gib": "1454.56",
+      "average_cycle_seconds": "0.872",
+      "cycles_per_second": "1.147"
+    },
+    {
+      "rank": "0",
+      "completed_cycles": "1320",
+      "completed_gemms": "1355640",
+      "completed_collective_payload_gib": "1465.66",
+      "average_cycle_seconds": "0.872",
+      "cycles_per_second": "1.147"
+    }
+  ]
+}

@@ -49,3 +49,20 @@ Artifacts: [validated summary](results/a2_performance_20261029/final/summary.jso
 ## Authorized MBS8 follow-up
 
 User requested measuring larger microbatch after the first results. New separate suite `mbs8`: microbatch4/chunk256 reference → microbatch8/chunk128 → microbatch8/chunk256 → repeat microbatch4/chunk256. All four use unchanged native `KDModel`/`HealTrainer`, no profiler/compiler/fused/deferred additions. Four discarded16-update probes, same fresh DCLM/P300/S1 weights, 64sequences×4096 tokens/update, original small-set/first-gradient thresholds and exact order audits. Accumulation2→1, no global batch or schedule change. Expected8–12minutes after startup, hard4×450seconds plus supervised cleanup. Predecessor is verified performance-a01 burn owner; native launcher freshly verifies exact workers/start times and GPU availability, restores communicating burns on success/failure. Original ten-probe suite and scientific results preserved.
+
+### MBS8 results — complete
+
+All four probes completed **29 October03:11:27SGT**; successful supervisor/burn handoff03:12:33. Independent health03:31:29 verified89frozenfiles (`04ab566`), four artifact hashes, releasedguard, eight knownburnworkers676151–676158 and advancingcollectives1310→1320cycles. Dropbox HTTP500 during an earlier check was transient; user-requested retry succeeded, then read-only health `e817f2f` returned these results. No benchmark restart.
+
+| Native configuration | Seconds/update | Tokens/second | Throughput vs MBS4 repeat | Peak allocated GiB/GPU |
+|---|---:|---:|---:|---:|
+| MBS4/chunk256 first |0.94893|276,251|+0.04%|75.83|
+| MBS8/chunk128 |0.93273|281,049|+1.78%|115.49|
+| MBS8/chunk256 |0.91553|286,332|+3.69%|116.46|
+| MBS4/chunk256 repeat |0.94934|276,132|reference|75.83|
+
+MBS8/chunk256 is the fastest measured configuration, but the gain is **modest:3.7% throughput** for **40.6GiB extra allocated memory/GPU**. Both MBS4 references differ by only0.04%, supporting stable timing within this short experiment. No candidate reaches the existing5% automatic-screening improvement threshold, so the summarizer correctly leaves `fastest_screened_candidate` null. Keep MBS4 as the conservative recommendation; MBS8 is a valid optional choice when maximizing measured throughput on this exact B200 setup is worth the memory. Production defaults remain unchanged.
+
+All four numerical/order/LR gates passed. MBS8/chunk256 first-gradient relativeL2=0.0007558, cosine=0.999999714, final small-setNLL delta=+0.000544nats versus firstMBS4; repeatMBS4 delta=+0.000596. Effective globalbatch262144tokens and sequence4096 remain unchanged. Only16-update screening; no long-run quality or statistical-significance claim. No further GPUjobs launched.
+
+[Summary](results/a2_mbs8_20261029/final/summary.json), [terminal verification](results/a2_mbs8_20261029/final/terminal-verification.json), [SHA receipts](results/a2_mbs8_20261029/final/SHA256SUMS). Raw local `temp/a2_mbs8_health01.log`, SHA256 `b7ff4e7fe570b5fac415c8c7b2be4613401f125601184b49ca338f47c7cb7376`; full extraction `temp/a2_mbs8_health01/`. Node root `/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mbs8-20261029-a01`.
