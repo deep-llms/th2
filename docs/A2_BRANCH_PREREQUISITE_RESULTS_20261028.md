@@ -21,7 +21,7 @@ BI selection uses all four eligible parents per dataset, with the preregistered 
 | fwe | [1, 2, 3] |
 | nem | [1, 2, 5] |
 
-The CPU replay selected these groups; the full-pattern GPU numerical gate is still pending. No GO/STOP conclusion follows from these measurements alone.
+The CPU replay and GPU stage selected these groups; the full-pattern GPU numerical gate passed at15:00:30 SGT. No GO/STOP conclusion follows from these measurements alone.
 
 The initial error was missing `parent_sanity` metadata in the exact original DCLM/P300 survey. Its precision evidence is preserved; parent sanity is independently verified in the pinned completed baseline. The compatibility fix accepts only that original SHA. A subsequent retry was refused before GPU acquisition because the inherited handoff helper required a successful prior job. The new explicit failed-handoff lock verifies this failed CPU job’s terminal cleanup and restored burns; live ownership checks remain unchanged.
 
@@ -30,3 +30,12 @@ At the independent 14:37:57 SGT snapshot, all eight communicating burns were run
 Local evidence: [verification](results/a2_branches_20261028/final_surveys/verification.json), [original failed run](results/a2_branches_20261028/final_surveys/run.json), [supervisor](results/a2_branches_20261028/final_surveys/supervisor.json), and the six survey JSON files in the same directory. Raw downloaded health: `temp/a2_branch_health03.log`, SHA `ce97553cda2f46cf51daadefca6a33c2561ffbb8c8d41aac4d0770b9be2475f9`.
 
 After successful numerical and burn checks, 28 Phase0A fits remain. With the original measured 1.199 seconds/update and load/evaluation/save allowance, estimated remaining baselines + fits are 6.62 node-hours; the timeout envelope including cleanup is 11.00 hours. Prior conservative ledger is 5.00 hours plus the new prerequisite stage. Retry costs are charged to the 18-hour phase cap.
+
+
+Recovery a03 completed successfully at15:00:30 SGT. The numerical check took
+47.23seconds (earlier10–20min estimate was conservative); total jobs49.19seconds.
+The15:03:12 snapshot verifies supervisor exit0, released guard, eightburnworkers,
+and collective progress120→130. All86frozen files matchbb72766. Originalprune,
+reload and numerical receipts are in results/a2_branches_20261028/final_check.
+Actual fullgate assembly verifies allsixannealed parents and unchanged numerical
+locks. Next ledger18600seconds includes the recovery and handoff reserve.

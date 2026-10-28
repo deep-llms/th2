@@ -126,3 +126,17 @@ executes the one half-LR retry instead of treating this as infrastructure failur
 a second divergent result remains incomplete and does not count as successful.
 A test exercises two finite divergences then continuation to the next fit.
 All73CPUtests pass. Native training/loss/optimizer code unchanged.
+
+Supplementary downstream preparation (not launched): the old KV adapter's
+checkpoint20752/layout constraints and native BF16 casting must not be copied
+unchanged. Reuse benchmark_data's offline tasks and likelihood batching, but
+load original OpenSci parents through a2.model.load_parent and pruned students
+through reload_student, verify kept-layer maps/weights/source hashes, and match
+A2 scoring's FP32 parameters plus BF16 autocast. Use the already-pinned GPT-NeoX
+tokenizer (EOS0), plain causal positions/no chat template/no generation. Preserve
+paired prompts, examples and seed, record truncation; choose one fixed context
+within4096 for every compared checkpoint. Existing suite assumes1024 and exactly
+two KV models, so a separate native-model entry point/metadata collector is needed.
+Before any GPU evaluation, confirm offline nine-task files and lm-eval runtime on
+node; no installs or downloads are authorized as an implicit compatibility fix.
+Prioritize the remaining registered healing stage and do not overlap its GPUs.

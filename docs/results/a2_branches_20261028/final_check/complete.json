@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-28T06:59:40.643592+00:00",
+  "jobs": [
+    {
+      "name": "freeze-sets",
+      "started_at": "2026-10-28T06:59:40.643797+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 1.966390663292259,
+      "artifacts": [
+        {
+          "path": "sets.json",
+          "sha256": "835e39c4e4acd1ffc09e05d4282ea707371af35a8ac0efd5007502376f8de3b9",
+          "bytes": 1897762
+        }
+      ],
+      "finished_at": "2026-10-28T06:59:42.628575+00:00"
+    },
+    {
+      "name": "shared-numerical",
+      "started_at": "2026-10-28T06:59:42.628613+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 47.227779819164425,
+      "artifacts": [
+        {
+          "path": "check.json",
+          "sha256": "0b3c5ddd13e167e4b4a4e377179b79abf1b5d730dea4a45e59252d6e4133cde0",
+          "bytes": 3287
+        }
+      ],
+      "finished_at": "2026-10-28T07:00:30.371359+00:00"
+    }
+  ],
+  "finished_at": "2026-10-28T07:00:30.371401+00:00"
+}
