@@ -10,6 +10,7 @@ import torch
 from efficient_llm.diagnostic_data import sha256
 from .data import write_json,PackedRows,prepare,load_pool,prepare_secondary,secondary_records,training_order
 from .protocol import DATASETS,PARENTS,FIXED_SETS,Run,matrix,choose_s2,layers_for
+from .protocol import compatible_data_spec,REPRESENTATIVE,shared_check_sets,validate_shared_check
 from .model import load_parent,prune
 from .measure import rank_world,score,survey
 from .results import selected_lrs,write_report,estimate_workload
@@ -31,7 +32,9 @@ def provenance(args):
     for name in ('packed_evaluation.py','packed_training.py','training_data.py','efficient_llm/diagnostic_data.py'):
         files[name]=sha256(project/name)
     return dict(spec_sha256=sha256(args.spec),assets_sha256=sha256(args.assets),
-        data_sha256=sha256(Path(args.data)/'manifest.json'),code_commit=commit,code_files=files,
+        data_sha256=sha256(Path(args.data)/'manifest.json'),
+        data_spec_sha256=read(Path(args.data)/'manifest.json')['provenance']['spec_sha256'],
+        code_commit=commit,code_files=files,
         software={name:importlib.metadata.version(name) for name in
                   ('torch','transformers','accelerate','datasets','numpy','safetensors')},python=platform.python_version())
 
@@ -127,7 +130,7 @@ def main():
     state=PartialState(); device=state.device; rank,world=rank_world()
     assets=read(args.assets); prov=provenance(args)
     data_manifest=read(args.data/'manifest.json')
-    if data_manifest['provenance']['spec_sha256']!=prov['spec_sha256']:
+    if not compatible_data_spec(data_manifest['provenance']['spec_sha256'],prov['spec_sha256']):
         raise ValueError('Data prepared under a different preregistration')
     if data_manifest['streams']['heal']['length']!=4096:
         raise ValueError('Production A2 requires 4096 tokens per sequence')
@@ -144,9 +147,11 @@ def main():
         else:secondary_status=item['skip_reason']
         prov['secondary_map_sha256']=sha256(args.secondary_map)
     if args.action=='survey':
+        from .check import parent_sanity
         model=load_parent(assets,args.dataset,args.parent,device)
+        sanity=parent_sanity(model,evaluation['small'])
         values=survey(model,evaluation['small'])
-        values.update(provenance=prov,dataset=args.dataset,parent=args.parent,secondary_status=secondary_status,
+        values.update(provenance=prov,dataset=args.dataset,parent=args.parent,secondary_status=secondary_status,parent_sanity=sanity,
             final=score(model,evaluation['final']),tuning=score(model,evaluation['tuning']))
         if 'secondary' in evaluation:values['secondary']=score(model,evaluation['secondary'])
         del model
@@ -169,12 +174,17 @@ def main():
             args.output.with_suffix('.work'),microbatch=args.microbatch)
         if rank==0:write_json(args.output,dict(result,provenance=prov))
         return
-    sets=read(args.sets)['sets'][args.dataset]
+    all_sets=read(args.sets)['sets']
+    sets=all_sets[args.dataset]
     if args.action=='check':
         from .check import numerical_checks
+        if f'{args.dataset}/{args.parent}'!=REPRESENTATIVE:
+            raise ValueError('Run shared mechanism checks only on '+REPRESENTATIVE)
+        patterns=shared_check_sets(all_sets,assets)
         model=load_parent(assets,args.dataset,args.parent,device)
-        result=numerical_checks(model,evaluation['small'],sets,args.output.with_suffix('.work'))
-        if rank==0:write_json(args.output,dict(result,provenance=prov))
+        result=numerical_checks(model,evaluation['small'],patterns,args.output.with_suffix('.work'))
+        if rank==0:write_json(args.output,dict(result,provenance=prov,scope='shared_mechanism',
+            representative=REPRESENTATIVE,sets_sha256=sha256(args.sets)))
         if not result['passed']:raise ValueError('Native numerical check failed')
         return
     if args.action=='pre':
@@ -194,6 +204,7 @@ def main():
     required=('T4','T5','T6','T7','T8','T10_formula','T11','T12','T13')
     if not all(gate.get('tests',{}).get(t,{}).get('passed') is True for t in required):
         raise ValueError('Missing pre-heal correctness evidence')
+    validate_shared_check(gate.get('shared_numerical',{}),all_sets,assets,prov,sha256(args.sets))
     raw=read(args.run); run=Run(**{k:raw[k] for k in ('dataset','arm','set','budget','lr','suffix')})
     if run.dataset!=args.dataset: raise ValueError('Run dataset differs')
     pre_values=read(args.pre_values)

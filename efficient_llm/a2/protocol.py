@@ -14,6 +14,51 @@ CAPS = {'0A': (15., 18.), '0B': (14.5, 17.)}
 REPOS = {
     'dclm': 'dclm', 'fwe': 'fineweb-edu-1.4t', 'nem': 'nemotron-hq',
 }
+
+# Only this reviewed test-scope amendment may reuse the original packed data.
+# Neither the sampling recipe nor the bytes/order of prepared data changed.
+ORIGINAL_DATA_SPEC = '9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd'
+PREFLIGHT_SCOPE_SPEC = 'f91f401f066a3054f3c866a51e6cc4d68aee8bb4e54948998d6c926f7dff5e64'
+REPRESENTATIVE = 'dclm/P300'
+
+
+def compatible_data_spec(prepared, current):
+    return prepared == current or (prepared, current) == (ORIGINAL_DATA_SPEC, PREFLIGHT_SCOPE_SPEC)
+
+
+def shared_check_sets(all_sets, assets):
+    """One representative probe, covering each actual removal pattern once."""
+    if set(all_sets) != set(DATASETS):
+        raise ValueError('Freeze S2 for every dataset before shared checks')
+    reference = assets[REPRESENTATIVE]['code_files']
+    required_code = {'modeling_opensci.py', 'configuration_opensci.py'}
+    if not required_code <= reference.keys() or any(
+        assets[f'{ds}/{p}']['code_files'] != reference for ds in DATASETS for p in PARENTS
+    ):
+        raise ValueError('Shared checks require identical pinned native source')
+    patterns = {}
+    for ds in DATASETS:
+        sets = all_sets[ds]
+        if set(sets) != {'S1', 'S2', 'S3', 'S4'}:
+            raise ValueError('All four frozen sets required per dataset')
+        for name, groups in sets.items():
+            if len(groups) != 3:
+                raise ValueError('Production pruning requires three groups')
+            if name in FIXED_SETS and sorted(groups) != sorted(FIXED_SETS[name]):
+                raise ValueError('Fixed removal set changed')
+            layers = tuple(layers_for(groups))
+            patterns.setdefault(layers, (f'{ds}/{name}', list(groups)))
+    return dict(patterns.values())
+
+
+def validate_shared_check(receipt, all_sets, assets, provenance, sets_sha256):
+    expected = {tuple(layers_for(g)) for g in shared_check_sets(all_sets, assets).values()}
+    expected.update(((0,), (11,), (23,)))
+    if (receipt.get('passed') is not True or receipt.get('scope') != 'shared_mechanism'
+        or receipt.get('representative') != REPRESENTATIVE
+        or receipt.get('provenance') != provenance or receipt.get('sets_sha256') != sets_sha256
+        or {tuple(p) for p in receipt.get('removal_patterns', [])} != expected):
+        raise ValueError('Missing, stale or incomplete shared numerical evidence')
 # Order: P300, P1T, S72, S188. Branch weights always use P1T main code.
 COMMITS = {
  'dclm': ('9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0', '90481ca923a6cba5c8e107e2249e09fcd32ec617',

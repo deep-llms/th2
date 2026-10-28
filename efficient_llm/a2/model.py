@@ -24,6 +24,13 @@ def assert_native(model, *, full=False):
         raise ValueError('Dropout must be zero at attention construction')
     if full and (len(model.model.layers) != 24 or sum(p.numel() for p in model.parameters()) != 1714377728):
         raise ValueError('Unexpected released OpenSci shape/count')
+    if full:
+        expected = dict(hidden_size=2048, intermediate_size=8192, num_attention_heads=32,
+            num_key_value_heads=32, head_dim=64, vocab_size=50304, hidden_act='silu',
+            attention_bias=True, mlp_bias=True, qk_layernorm=True, tie_word_embeddings=True,
+            rope_scaling=None, rms_norm_eps=1e-5, layer_norm_eps=1e-5)
+        if any(getattr(model.config, key, None) != value for key, value in expected.items()):
+            raise ValueError('Parent structure differs from shared-check architecture')
 
 
 def load_parent(assets, dataset, parent, device='cpu', *, teacher=False, theta=None):

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from efficient_llm.diagnostic_data import sha256
 from efficient_llm.a2.data import PackedRows
+from efficient_llm.a2.protocol import compatible_data_spec
 
 
 def initial_asset_plan(plan):
@@ -29,7 +30,7 @@ def verify_prepared(root, spec, plan):
         or complete['verified_inputs_sha256'] != sha256(root/'verified_inputs.json')
         or complete['secondary_map_sha256'] != sha256(root/'secondary_map.json')):
         raise ValueError('Missing, failed or changed preparation receipt')
-    if (manifest['provenance']['spec_sha256'] != sha256(spec)
+    if (not compatible_data_spec(manifest['provenance']['spec_sha256'], sha256(spec))
         or manifest['provenance']['revision'] != plan['pool_contract']['revision']
         or manifest['provenance']['manifest_sha256'] != plan['pool_contract']['manifest_sha256']
         or not manifest['disjoint_by_id_and_content']
@@ -64,16 +65,30 @@ def verify_prepared(root, spec, plan):
 
 
 def initial_jobs(source, inputs, port):
+    # Initial cost probe only; do not rerun when continuing after this stage.
+    return [_model_job(source, inputs, port, action, limit, contract)
+        for action, limit, contract in (
+            ('throughput', 1800, {'status': 'passed'}),
+            ('survey', 3600, {'dataset': 'dclm', 'parent': 'P300'}))]
+
+
+def shared_numerical_jobs(source, inputs, port, sets_path, assets):
+    """Post-S2 manifest: exactly one real-parent mechanism job, no T8 or heal."""
+    from efficient_llm.a2.protocol import shared_check_sets
+    shared_check_sets(json.loads(Path(sets_path).read_text())['sets'], assets)
+    job = _model_job(source, inputs, port, 'check', 3600,
+        {'passed': True, 'scope': 'shared_mechanism', 'representative': 'dclm/P300'})
+    job['argv'].extend(['--sets', str(sets_path)])
+    return [job]
+
+
+def _model_job(source, inputs, port, action, limit, contract):
     source, inputs = Path(source), Path(inputs)
     launch = ['{python}', '-m', 'accelerate.commands.launch', '--config_file',
         str(source/'resources/accelerate_b200.yaml'), '--main_process_port', str(port),
         '-m', 'efficient_llm.a2']
     common = ['--assets', str(inputs/'assets.json'), '--data', str(inputs/'data'),
         '--secondary-map', str(inputs/'secondary_map.json'), '--dataset', 'dclm', '--parent', 'P300']
-    # Fresh discarded weights for T8. Never enqueue heal/queue from this launcher.
-    return [dict(name=action, gpus=list(range(8)), timeout_seconds=limit,
+    return dict(name=action, gpus=list(range(8)), timeout_seconds=limit,
         argv=launch+[action]+common+['--output', '{run_dir}/'+action+'.json'],
-        required_outputs=[dict(path=action+'.json', **contract)])
-        for action, limit, contract in (
-            ('throughput', 1800, {'json_equals': {'status': 'passed'}}),
-            ('survey', 3600, {'json_equals': {'dataset': 'dclm', 'parent': 'P300'}}))]
+        required_outputs=[dict(path=action+'.json', json_equals=contract)])

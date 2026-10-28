@@ -100,13 +100,29 @@ class NativeModelTests(unittest.TestCase):
         self.assertEqual(result['tokens'],6)
 
 class NativeCheckTests(unittest.TestCase):
+    def test_parent_sanity_checks_weights_and_rope(self):
+        from efficient_llm.a2.check import parent_sanity
+        model=tiny_model().train()
+        rows=[dict(input_ids=torch.tensor([1,2,3,4]),sample_id=0)]
+        self.assertTrue(parent_sanity(model,rows)['passed'])
+        self.assertTrue(model.training)
+        original=model.model.rotary_emb.inv_freq.clone()
+        model.model.rotary_emb.inv_freq.add_(1)
+        with self.assertRaisesRegex(ValueError,'sanity failed'):
+            parent_sanity(model,rows)
+        model.model.rotary_emb.inv_freq.copy_(original)
+        with torch.no_grad():model.lm_head.weight.fill_(float('nan'))
+        with self.assertRaisesRegex(ValueError,'sanity failed'):
+            parent_sanity(model,rows)
+
     def test_runtime_numerical_probe(self):
         from efficient_llm.a2.check import numerical_checks
         model=tiny_model()
         rows=[dict(input_ids=torch.tensor([1,2,3,4,5,6,7,8]),sample_id=0)]
         with tempfile.TemporaryDirectory() as d:
-            result=numerical_checks(model,rows,{'S1':[1]},d)
+            result=numerical_checks(model,rows,{'S1':[1],'duplicate':[1]},d)
         self.assertTrue(result['passed'],result)
+        self.assertEqual(result['removal_patterns'],[[0],[3],[2,3]])
 
     def test_gaussian_exact_restore(self):
         from efficient_llm.a2.measure import gaussian
@@ -129,3 +145,8 @@ class ReleasedShapeTests(unittest.TestCase):
         count=sum(p.numel() for p in model.parameters())
         self.assertEqual(count,1714377728)
         self.assertEqual(count-model.model.embed_tokens.weight.numel(),1611355136)
+        from efficient_llm.a2.model import assert_native
+        assert_native(model,full=True)
+        model.config.qk_layernorm=False
+        with self.assertRaisesRegex(ValueError,'structure differs'):
+            assert_native(model,full=True)

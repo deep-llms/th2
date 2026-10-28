@@ -12,6 +12,25 @@ from .measure import full_fp32,rank_world,residual_profile,score
 from .protocol import layers_for
 
 
+@torch.no_grad()
+def parent_sanity(model, small):
+    """Cheap weight-dependent forward and config-dependent RoPE formula check."""
+    from packed_evaluation import preserve_rng_and_mode
+    device = next(model.parameters()).device
+    with preserve_rng_and_mode(model), full_fp32():
+        model.eval()
+        ids = small[0]['input_ids'][None, :64].to(device)
+        finite = bool(torch.isfinite(model(ids, use_cache=False).logits).all())
+        hd = model.config.head_dim
+        expected = 1 / (model.config.rope_theta ** (
+            torch.arange(0, hd, 2, device=device, dtype=torch.float32) / hd))
+        error = (model.model.rotary_emb.inv_freq - expected).abs().max().item()
+    result = dict(finite_logits=finite, T10_formula_max_abs=error, passed=finite and error < 1e-6)
+    if not result['passed']:
+        raise ValueError('Parent forward/RoPE sanity failed')
+    return result
+
+
 def _numerical_checks(model,small,sets,output):
     """T4/T5/T10 formula/T11/T12, FP32 native model, bounded 64-token probe.
 
@@ -27,6 +46,8 @@ def _numerical_checks(model,small,sets,output):
         checks['T4_no_removal']=bool(torch.equal(reference,student(ids,use_cache=False).logits));del student
         n=len(model.model.layers)
         indices=[(0,), (min(11,n-1),), (n-1,)] + [tuple(layers_for(groups)) for groups in sets.values()]
+        indices=list(dict.fromkeys(indices))
+        checks['removal_patterns']=[list(p) for p in indices]
         diffs=[]
         for removed in indices:
             student=copy.deepcopy(model);prune(student,removed)

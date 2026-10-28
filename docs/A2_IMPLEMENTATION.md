@@ -200,3 +200,40 @@ The 12 actual checkpoints, full data preparation, numerical/precision gates on
 B200, secondary acquisition, T15 logged-LR availability, measured workload budget,
 pre-launch review and supervisor launch/handoff verification remain **pending**.
 No real A2 healing result or production T8 throughput has been measured yet.
+
+### Preflight scope amendment (28 October 2026 SGT)
+
+The final amendment in `A2_pilot_spec.md` separates shared mechanism tests from
+weight-dependent scientific measurements. `check --dataset dclm --parent P300`
+now consumes the complete frozen `sets.json` (all three datasets), deduplicates
+removal patterns and tests their union once. Other representatives are rejected.
+Its receipt records `scope`, `representative`, `sets_sha256` and
+`removal_patterns`; the healing gate requires this receipt in
+`preflight.json.shared_numerical` with matching provenance and full coverage.
+Per-parent gates are still required. All pinned native code must be identical;
+the loader also enforces the shared structural configuration on each parent.
+
+`scripts.a2_preflight_inputs.shared_numerical_jobs(...)` generates exactly one
+post-S2 job. It does not repeat T8 or enqueue healing. The existing initial
+launcher remains an initial cost probe, not a continuation launcher: do not
+rerun it to continue the completed initial stage. Surveys for the remaining
+parents and S2 selection precede the shared numerical job. BI, Gaussian,
+unhealed baselines and precision measurements remain per parent.
+
+`survey` adds a cheap finite-forward/RoPE check before its measurements. Existing
+DCLM/P300 measurements remain archived; the forthcoming shared numerical probe
+covers its remaining formula/mechanism checks. Post-healing round trips remain
+unchanged. No model, loss, optimizer or data-order changes were made.
+
+Prepared-data compatibility accepts only exact spec equality or the one reviewed
+old-to-amended spec SHA pair in `protocol.py`. New provenance records both the
+current spec and original data spec. A regression test verifies that every byte
+of the old spec precedes the appended amendment unchanged. No historical receipt
+is rewritten. Old T8/survey receipts require explicit provenance reconciliation
+when assembling the preflight report; they are not silently relabelled as results
+from the new source commit.
+
+Validation: the 39-test A2 CPU suite passed, followed by all 9 native-model
+tests after adding the finite-forward/RoPE and structural-mismatch regressions.
+Logs: `temp/a2_scope_tests.log`, `temp/a2_scope_model_tests_final.log`. These are
+local code tests, not completion of the pending actual-parent GPU checks.

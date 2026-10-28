@@ -511,3 +511,15 @@ Local CPU and two-process tests validate code semantics, not full-model B200
 numerics/performance. Actual preflight and measured whole-workload budget remain
 required before any healing run. No new training/deployment was launched in the
 implementation turn; commands.sh remains inactive and old outputs are preserved.
+
+
+## A2 shared preflight scope — 28 October 2026 SGT
+
+Owner approved one actual DCLM/P300 mechanism test suite (T4/T5/T11/T12), with
+all distinct dataset-specific removal patterns covered after freezing S2.
+Unchanged recipe/runtime/data tests are shared; identity, precision and
+scientific measurements still depend on each parent. See the appended spec
+amendment and A2_IMPLEMENTATION.md. Existing data and completed receipts are
+preserved with explicit historical provenance; no preparation rerun for this
+scope-only amendment. Never interpret shared checks as all parents already
+passing, or discard scientific measurements as redundant code tests.

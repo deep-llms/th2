@@ -608,3 +608,44 @@ The items about the narrow model now live in the deferred file.
 - **Secondary validation and overlap caveat:** added.
 - **Tests:** the data-sanity, RoPE, BI, KD-implementation, decision and noise tests added.
 - **Budgets:** triggers and caps restated.
+
+
+## Approved preflight scope amendment — 28 October 2026 (SGT)
+
+The owner requested that implementation tests not be repeated for all twelve
+checkpoints when the architecture, native source and runtime are identical.
+This amendment overrides only test repetition in section 3.5; it does not
+change the scientific matrix, data, loss, optimizer, budgets or decision rules.
+
+- **Once on the real DCLM/P300 checkpoint:** T4, T5, T11 and T12. After S2 is
+  frozen, T4 covers the union of distinct removal patterns from all three
+  datasets, including their different S2 choices, plus layers 0, 11 and 23.
+  One representative pruned export/reload is sufficient for this code check.
+  Sharing is allowed only with identical pinned native source and structural
+  configuration, and the same runtime/backend/precision and KD recipe.
+- **Once per unchanged recipe/data/runtime:** T6, T7, T8 and T13. Preserve
+  existing receipts; a scope amendment alone does not require repeating T8.
+  T8 remains a representative measurement, not proof that all workloads cost
+  the same. Full-workload estimates still include scoring, loading and saving.
+- **Every parent:** T1 loading/hash/tied-weight/dropout/shape checks, finite
+  forward output and the cheap T10 formula check. Retain the small-set
+  FP32-versus-BF16-AMP comparison: numerical error depends on the weights.
+  T2/T3 remain per pair/branch identity checks; identical code does not prove
+  that a downloaded weight file or branch is correct.
+- **Scientific measurements remain per parent:** BI, update norms, individual
+  layer bypasses, Gaussian sensitivity, parent/unhealed losses, T9 and the
+  loss part of T10. These measure the checkpoints rather than test shared
+  code. T14/T15 and post-healing T16 retain their existing scope.
+
+A shared check receipt must name the representative, exact provenance and
+covered removal patterns. Missing/failed evidence is never promoted to passed.
+Changing relevant code, model structure, precision, backend or runtime requires
+reviewing the affected tests again; new removal patterns require coverage.
+
+Prepared inputs under the preceding spec SHA
+`9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd`
+remain valid for this exact amendment. Preserve their original manifests and
+receipts and record both original and amended spec identities; do not resample,
+retokenize or rewrite historical evidence. Reuse of historical code-test or
+throughput receipts requires an explicit reviewed record of unchanged relevant
+code/runtime/recipe, not silently relabelling their provenance.

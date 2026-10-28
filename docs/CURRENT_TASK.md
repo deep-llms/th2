@@ -1,5 +1,26 @@
 # Current task
 
+## Latest: lean preflight implemented — 28 October 2026 SGT
+
+User approved running shared implementation checks on one actual representative,
+not all twelve parents. The appended amendment in A2_pilot_spec.md governs scope.
+`check` now requires DCLM/P300 and covers every distinct frozen S1–S4 pattern
+across all three datasets, including different S2 choices. One post-S2 job;
+no repeated T8, no automatic healing. Its receipt is mandatory in the heal gate.
+Per-parent load/hash/config/finite-forward/RoPE checks and weight-dependent
+FP32/BF16, BI, Gaussian and loss measurements remain. Native source identity and
+structural configuration are verified before sharing code-test evidence.
+
+The old prepared data is accepted only for this exact test-scope amendment;
+original manifest/order/receipts remain untouched and both spec hashes are
+recorded. Main model, loss, optimizer, data and supervisor are unchanged.
+Local CPU tests passed (see A2_IMPLEMENTATION.md); no new B200 job submitted in
+this scope-change turn. commands.sh remains #0. Actual shared numerical checks
+are still pending, not claimed passed. Remaining scientific surveys, frozen S2,
+shared checks and whole-workload report still precede any healing. Initial T8
+and DCLM/P300 survey remain complete as recorded below; preserve their source
+identities when reconciling the final preflight report. No resampling is needed.
+
 ## Initial actual preflight COMPLETE — 28 October 2026 SGT
 
 Fresh healthc3fe89a at07:46:31SGT confirms successful terminal artifacts:
