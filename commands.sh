@@ -1,30 +1,62 @@
 #1 +30+a
-#th2-6y3o-a2-snapshot32b-20261029-a01
+#th2-6y3o-a2-corpora-health-20261029-a06
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
 from pathlib import Path
-import hashlib,json,shutil,socket,subprocess,sys,shlex
+import json,hashlib,socket,subprocess
+from datetime import datetime,timezone
 assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-snapshot32b-20261029-a01')
-out=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/snapshots/dclm_first_3p2b_20261029')
-old=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a03/source/plan.json')
-plan=Path('resources/a2_corpora_30b_20261029.json')
-session='a2_snapshot32b_20261029_a01'
-assert not root.exists() and not out.exists()
-assert subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode!=0
-assert plan.read_bytes()==old.read_bytes()
-assert shutil.disk_usage(out.parent.parent).free>50_000_000_000
-root.mkdir();source=root/'source';source.mkdir()
-names=['scripts/a2_corpus_snapshot.py','scripts/a2_prepare_corpora.py','efficient_llm/__init__.py','efficient_llm/a2/__init__.py','efficient_llm/a2/data.py','efficient_llm/diagnostic_data.py']
-files={}
-for name in names:
- p=source/name;p.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(name,p);files[name]=hashlib.sha256(p.read_bytes()).hexdigest()
-shutil.copyfile(plan,source/'plan.json')
-(root/'source-manifest.json').write_text(json.dumps(dict(code_commit='d195e58dbe3c9d62f89c466d1ef40c66f0c4f573',files=files,plan_sha256=hashlib.sha256(plan.read_bytes()).hexdigest(),cpu_only=True),indent=2)+'\n')
-argv=['env','CUDA_VISIBLE_DEVICES=','PYTHONDONTWRITEBYTECODE=1','HF_HUB_OFFLINE=1','TRANSFORMERS_OFFLINE=1','OMP_NUM_THREADS=1','OPENBLAS_NUM_THREADS=1','MKL_NUM_THREADS=1','PYTHONPATH='+str(source),'nice','-n','10',sys.executable,'-u','-m','scripts.a2_corpus_snapshot','--plan',str(source/'plan.json'),'--corpus','dclm','--output',str(out),'--tokens','3200000000']
-subprocess.run(['tmux','new-session','-d','-s',session,'-c',str(source),'exec '+shlex.join(argv)+' >'+shlex.quote(str(root/'snapshot.log'))+' 2>&1'],check=True)
-subprocess.run(['tmux','set-option','-w','-t',session,'remain-on-exit','on'],check=True)
-print('CORPUS_SNAPSHOT_SUBMITTED',str(root),flush=True)
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a03')
+data=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029')
+print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+for label,p in [('source-manifest.json',root/'source-manifest.json'),('data/status.json',data/'status.json'),('data/failure.json',data/'failure.json'),('data/complete.json',data/'complete.json'),*[(f'data/{c}/manifest.json',data/'packed'/c/'manifest.json') for c in ('dclm','fineweb_edu')]]:
+ if p.is_file():
+  b=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=label,sha256=hashlib.sha256(b).hexdigest(),text=b.decode())),flush=True)
+ else:print('MISSING',label,flush=True)
+plan=json.loads((root/'source/plan.json').read_text())
+for name,corpus in plan['corpora'].items():
+ files=[Path(f['local'])/Path(f['path']).name if Path(f['local']).is_dir() else Path(f['local']) for f in corpus['files']];present=[p for p in files if p.is_file()]
+ parts=list((data/'parts'/name).glob('*/complete.json'))
+ print('CORPUS_COUNTS',json.dumps(dict(corpus=name,raw_files_present=len(present),raw_bytes_observed=sum(p.stat().st_size for p in present),planned_files=len(files),completed_parts=len(parts))),flush=True)
+log=root/'prepare.log'
+if log.is_file():
+ with log.open('rb') as f:f.seek(max(0,log.stat().st_size-12000));tail=f.read().decode(errors='replace')
+ print('LOG_TAIL',json.dumps(dict(path='prepare.log',bytes=log.stat().st_size,text=tail)),flush=True)
+print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_corpora_20261029_a03','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+raw=data/'raw'
+if raw.exists():
+ for name in ('dclm','fineweb_edu'):
+  base=raw/name
+  entries=[]
+  if base.exists():
+   for p in sorted(base.iterdir())[:12]:
+    entries.append(dict(name=p.name,is_file=p.is_file(),is_dir=p.is_dir(),bytes=p.stat().st_size,children=[dict(name=q.name,is_file=q.is_file(),bytes=q.stat().st_size) for q in sorted(p.iterdir())[:2]] if p.is_dir() else []))
+  print('RAW_LAYOUT',json.dumps(dict(corpus=name,entries=entries)),flush=True)
+processes=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
+parents={x.split()[0] for x in processes if str(root/'source/scripts/a2_prepare_corpora.py') in x}; selected=[x for x in processes if len(x.split())>2 and (x.split()[0] in parents or x.split()[1] in parents)]
+print('CPU_PROCESSES',json.dumps(selected),flush=True)
+for name,corpus in plan['corpora'].items():
+ base=data/'parts'/name
+ receipts=[]
+ if base.exists():
+  for p in sorted(base.glob('*/complete.json')):
+   item=json.loads(p.read_text());record=corpus['files'][item['source']['index']]
+   assert item['source']==record
+   assert item['tokenizer_sha256']==plan['tokenizer_files']['tokenizer.json']
+   receipts.append(dict(index=item['source']['index'],seconds=item['seconds'],tokens=sum(x['tokens'] for x in item['streams'].values()),sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
+ token_bytes=sum(p.stat().st_size for p in base.glob('*/*.bin') if p.name!='documents.bin') if base.exists() else 0
+ print('PART_PROGRESS',json.dumps(dict(corpus=name,completed=receipts,observed_token_bytes=token_bytes,observed_tokens=token_bytes//4)),flush=True)
+snaproot=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-snapshot32b-20261029-a01')
+snapdata=data/'snapshots/dclm_first_3p2b_20261029'
+for label,p in [('snapshot/source-manifest.json',snaproot/'source-manifest.json'),('snapshot/manifest.json',snapdata/'manifest.json'),('snapshot/complete.json',snapdata/'complete.json')]:
+ if p.is_file():
+  b=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=label,sha256=hashlib.sha256(b).hexdigest(),text=b.decode())),flush=True)
+ else:print('MISSING',label,flush=True)
+p=snaproot/'snapshot.log'
+if p.is_file():print('LOG_TAIL',json.dumps(dict(path='snapshot.log',text=p.read_text()[-16000:])),flush=True)
+print('SNAPSHOT_SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_snapshot32b_20261029_a01','#{pane_dead} #{pane_dead_status} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+print('SNAPSHOT_FILE_BYTES',json.dumps({name:(snapdata/name).stat().st_size for name in ('heal.bin','heal.starts') if (snapdata/name).is_file()}),flush=True)
+print('HEALTH_COMPLETE',flush=True)
 PY
