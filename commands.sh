@@ -1,2 +1,6 @@
-#0
-# Phase0A terminal handoff verified; prepare authorized downstream screen.
+#1 +60+a
+#th2-6y3o-a2-downstream-20261028-a01
+set -euo pipefail
+cd /mnt/local/deep-llms_th2
+export CUDA_VISIBLE_DEVICES="" HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 WANDB_MODE=offline TOKENIZERS_PARALLELISM=false
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.launch_a2_downstream --stage resources/a2_phase0a_terminal_20261028.json --stage-sha256 2a24396c4f3ecf16d56752cadec601a03e87bc420de967f83820b8df00f77c73 --history resources/a2_completed_surveys_20261028.json --history-sha256 936da19cf8ced000505836ee82c80ffa1347ca63c314a2b4a07d6f18a4436986 --assets /mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json --assets-sha256 5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371 --sets /mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a03/supervised/run/sets.json --sets-sha256 835e39c4e4acd1ffc09e05d4282ea707371af35a8ac0efd5007502376f8de3b9 --output /mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01 --predecessor-burn-script /mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/source/resources/llm_pretrain_burn.py --eval-python /mnt/local/conda-py311/envs/eval/bin/python3.11 --tokenizer /mnt/local/_models/deep-llms_th2/a2/dclm/P300 --dataset-root /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023 --host thiennh-p6-6y3o-worker-0 --session a2_downstream_20261028_a01 --code-commit e740f86697689192d70b4d3c5b0d3484065c252b --spent-seconds 40200 --timeout-seconds 10800
