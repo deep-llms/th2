@@ -8,9 +8,15 @@ then P300/P1T at0.05B and0.2B. Reuse completed P300grid, no rerun. Unchanged
 model/loss/Trainer/data/runtime; historical numerical receipts explicitly preserved.
 Expected65–80min from start, +4–20min per registered retry; hardcap3h.
 Target6y3o-a2-s1-pair-20261028-a01, sessiona2_s1_pair_20261028_a01.
-Not submitted yet; commands#0.48CPU tests passed. Remaining fullpilot not done.
+Submission fce351ae1004ff4ba1e8f7e72b7bd7becf2e6a69 pushed09:50SGT,
+frozen source a89c08e0b93c83982bd95d8548a94dfc15cfb34a. Launch acknowledged09:55SGT: required P300/P1T weight+code hashes verified,
+Accelerate copied and8GPU/BF16 env verified, supervisor submitted. Raw receipt
+temp/a2_pair_launch01.log SHA421990753e1d35e3bd31b9e8ec1f44bbf236258b5235195dc7e0d12d8f1d2db4.
+Pending fresh health to confirm reclaim/free GPUs and live stage; do not relaunch.48CPU tests passed; extra mocked7-fit orchestration
+check subsequently passed (49total). Remaining fullpilot not done.
 Watcher will use existing thread, localstate temp/a2_watch_20261028,6hwindow,
-firstnearETA then30min. No duplicate timer/newagent; delivery acceptance and
+first10:55:29SGT then30min, deadline15:50:29SGT. App-serveraccepted
+deliverytest01a18033-9fc7-70e0-8729-47bd52707d51; actualackpending. No duplicate timer/newagent; delivery acceptance and
 actualack must be distinguished. Automatic subsequent work only preregistered
 Phase0A dependencies, remaining budgets and safe verified handoffs, see plan.
 

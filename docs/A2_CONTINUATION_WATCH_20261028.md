@@ -30,14 +30,16 @@ including prior322+833.47seconds and new tests/scoring. This is not the full pil
 
 Launcher: scripts/launch_a2_preflight.py --stage s1-pair.
 Coordinator: efficient_llm/a2/pair.py. CPU validation: existing43 A2 tests and5new
-scope/reuse/terminal-contract tests pass. No training implementation changed.
+scope/reuse/terminal-contract tests pass. A sixth test simulates the full coordinator
+and verifies exactly seven new fits, selected LR and no repeated P300grid.
+No training implementation changed.
 Root: /mnt/local/_outputs/deep-llms_th2/6y3o-a2-s1-pair-20261028-a01.
 Session: a2_s1_pair_20261028_a01. Current submission/ack lives in CURRENT_TASK.
 
 ## Wake-up policy
 
 Reuse scripts/queue_watch.py, queue into the existing thread (never a new agent),
-with first check near expected completion and30-minute repeats. State and prompt
+with first check10:55:29SGT and30-minute repeats, ending15:50:29SGT. State and prompt
 in ignored temp/a2_watch_20261028; bounded6-hour wall-clock window. A delivery test
 must distinguish app-server acceptance from an actual delivered acknowledgement.
 No long polling or waiting in a model turn. Always report Singapore times and ETA.

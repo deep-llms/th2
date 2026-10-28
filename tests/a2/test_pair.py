@@ -69,6 +69,50 @@ class PairTests(unittest.TestCase):
         validate_result(failed,r,{'x':1},None,1)
         with self.assertRaises(ValueError):validate_result(dict(failed,diverged=False),r,{'x':1},None,1)
 
+    def test_coordinator_runs_only_seven_new_fits(self):
+        from efficient_llm.a2 import pair
+        from efficient_llm.diagnostic_data import sha256
+        archive=ROOT/'temp/a2_grid_health02'
+        if not archive.is_dir():self.skipTest('Local exact archive fixture not present')
+        old=json.loads((archive/'supervised/run/grid/check.json').read_text())
+        prov=copy.deepcopy(old['provenance']);prov['code_commit']='a'*40
+        prov['code_files']['a2/protocol.py']=sha256(ROOT/'efficient_llm/a2/protocol.py')
+        prov['code_files']['a2/pair.py']=sha256(ROOT/'efficient_llm/a2/pair.py')
+        calls=[]
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);inputs=root/'inputs';inputs.mkdir()
+            plan=json.loads((ROOT/'resources/a2_inputs_20261028.json').read_text())
+            (inputs/'assets.json').write_text(json.dumps(plan['assets']))
+            output=root/'out'
+            def child(argv,**kwargs):
+                from types import SimpleNamespace
+                if 'unittest' in argv:return SimpleNamespace(returncode=0)
+                action=argv[argv.index('efficient_llm.a2')+1]
+                out=Path(argv[argv.index('--output')+1]);calls.append(action)
+                if action=='survey':
+                    out.write_text(json.dumps(dict(T1_precision_passed=True,parent_sanity={'passed':True},provenance=prov)))
+                elif action=='pre':
+                    record=json.loads((archive/'supervised/run/grid/pre.json').read_text())
+                    record.update(provenance=prov,sets_sha256=sha256(output/'sets.json'))
+                    out.write_text(json.dumps(record))
+                else:
+                    run=json.loads(Path(argv[argv.index('--run')+1]).read_text())
+                    gate=json.loads(Path(argv[argv.index('--preflight')+1]).read_text())
+                    validate_run_scope(Run(**{k:run[k] for k in ('dataset','arm','set','budget','lr','suffix')}),gate,SCOPE,run['rerun_of'])
+                    out.mkdir();run.update(provenance=prov,status='complete',diverged=False,
+                        coverage={'exact_order':True},roundtrip_difference=0,val_tune_post=4-run['lr']*1000)
+                    (out/'result.json').write_text(json.dumps(run))
+                return SimpleNamespace(returncode=0)
+            args=['pair','--inputs',str(inputs),'--prior','/prior','--grid',str(archive),
+                  '--output',str(output),'--port','29537']
+            with patch('sys.argv',args),patch.object(pair,'verify_reuse',return_value={'step_seconds':1.2}),patch.object(pair.subprocess,'run',side_effect=child):
+                pair.main()
+            rows=json.loads((output/'results.json').read_text())
+            self.assertEqual(calls,['survey','pre']+['heal']*7)
+            self.assertEqual([(r['arm'],r['steps']) for r in rows],
+                [('P1T',114)]*3+[('P300',190),('P1T',190),('P300',762),('P1T',762)])
+            self.assertTrue(json.loads((output/'complete.json').read_text())['scientific_complete'])
+
     def test_bounded_manifest(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d)/'jobs.json';p.write_text(json.dumps({'jobs':pair_jobs('/inputs','/prior','/grid',12345)}))
