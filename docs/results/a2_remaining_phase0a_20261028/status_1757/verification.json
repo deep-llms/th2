@@ -1,0 +1,20 @@
+{
+  "snapshot": "2026-10-28T09:57:03.770140+00:00",
+  "source_commit": "d3a8a0b35b29a9e6cd951a7d4cf754908fe0fc40",
+  "source_files_verified": 86,
+  "guard": "{\"owner_pid\": 656246, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised\", \"at\": \"2026-10-28T07:08:28.984717+00:00\"}",
+  "session": "0 656246",
+  "verified_fits": 19,
+  "baselines": 6,
+  "no_divergence_or_retry": true,
+  "full_lr_and_exact_eight_rank_order_verified": true,
+  "roundtrip_difference": 0,
+  "raw_log": "temp/a2_remaining_health07.log",
+  "raw_sha256": "ae0a5a2cebdadfe6cb8d57bccb2a07df6ff7819fada8322e5bc4d2b6513e4fc8",
+  "raw_results_artifact_sha256": "7d666e03146fa56bad6b5603c5858b8f21343ef1f9f5b5fa5f3fc25c1cc99d7e",
+  "eval_probe": {
+    "status": "missing",
+    "interpreter": "/mnt/local/conda-py311/envs/eval_env/bin/python3.11"
+  },
+  "eval_probe_note": "This queried eval_env, not the historically used envs/eval path. Does not establish that the actual eval environment is absent."
+}

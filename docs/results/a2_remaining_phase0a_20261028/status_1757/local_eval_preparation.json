@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "bridge_cpu_tests": 3,
+  "gpu_tests": "not_run",
+  "integration": "capture canonical local multiple-choice task, score tiny native OpenSci, replay; task metrics equal direct HFLM",
+  "source": {
+    "eval/a2_request_bridge.py": "a6f7f25184a392923813bcca80ec112c4975f96d8a72c8bb8266aba40800db09",
+    "tests/a2/test_request_bridge.py": "eb86e0d32a61c62246d7e6579a1eff885ee8d784199f95977cb3c0131394dc23"
+  },
+  "log": "temp/a2_request_bridge_tests.log",
+  "log_sha256": "317c7ba32ea1ea6565cff2f8bf53e68afc889748ee37ccc18a10818372686dff"
+}

@@ -121,3 +121,26 @@ from17:27; ETA21:00–21:20SGT including handoff allowance, without retries.
 Archive results/a2_remaining_phase0a_20261028/status_1727; rawlocal
 temp/a2_remaining_health06.log, SHA
 8e57c2b81dda159afa05dec00e61c680000faf2e55017380a848dd96e10219f4.
+
+
+At17:57:03 SGT, 19/28 new fits passed all recipe/order/LR/roundtrip checks, no
+divergence/retry. NEM/P300/S2–0.2B is active, logged190/762updates; eightGPUs95–96%,
+guard656246 and all86frozenfiles unchanged. Queueelapsed2h48min; Phase0A ledger
+~7h58min including prior18600seconds.
+
+| New result | Final NLL | Damage vs original parent |
+|---|---:|---:|
+| FWE / P1T / S2 / 0.2B | 2.914824 | +0.106117 |
+| NEM / P300 / S2 / 0.05B | 2.932966 | +0.158715 |
+| NEM / P300 / S3 / 0.05B | 2.927950 | +0.153699 |
+| NEM / P300 / S4 / 0.05B | 2.928426 | +0.154175 |
+
+FWE main S2 excessdamagecontrast is +0.017488nats, and its registered S1/S2
+mean is +0.015041 (DCLM +0.012572). P1T retains lower absolute loss. NEM remains
+incomplete, so no full-pilot decision is available. Ninefits remain, including
+two longer0.8B NEM curves and both T14 controls. Remaining8386updates atmedian
+1.1894seconds/update plus90–180seconds/fit overhead: ~3.0–3.2hours from17:57,
+ETA21:00–21:15SGT including handoff allowance, without retries.
+Archive results/a2_remaining_phase0a_20261028/status_1757; fullrawreceipt
+temp/a2_remaining_health07.log, SHA
+ae0a5a2cebdadfe6cb8d57bccb2a07df6ff7819fada8322e5bc4d2b6513e4fc8.

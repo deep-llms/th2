@@ -180,3 +180,19 @@ canonical task/token requests in that CPU environment, score those requests
 using a2_env, then replay scores to canonical task aggregation. This avoids
 installing/importing libraries across environments. Request identity/checkpoint
 collector, CLI/orchestration and actual GPU parity remain required before launch.
+
+Prepared eval/a2_request_bridge.py, CPU-only TemplateLM capture/replay. Capture
+raises RequestsCaptured after canonical tokenization and before metrics; it never
+publishes placeholder scores. Replay requires identical text/token request order,
+matching request hash, complete finite nonpositive likelihoods and boolean greedy
+flags. ThreeCPU tests pass, including an actual offline ConfigurableTask roundtrip
+through canonical task aggregation; final metrics/prompts equal direct HFLM on
+the tiny native OpenSci model. Native training and scoring precision are unchanged.
+Still missing: persisted request/scoring CLI, checkpoint identity and supervised
+suite, plus actual-weight GPU parity after the training handoff.
+
+The17:57 read-only runtime probe queried envs/eval_env and reported that path
+missing. Historical successful downstream command uses envs/eval/bin/python3.11
+(temp/kv_downstream_health_command.sh), so absence of the actual eval environment
+is NOT established. Next read-only check must use that exact historical path.
+No package installation, environment repair or cross-environment import occurred.
