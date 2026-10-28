@@ -1,5 +1,20 @@
 # Current task
 
+## Latest: preparing real DCLM S1 pair and automatic wake — 28 October 2026 SGT
+
+Owner authorizes continuation and an ETA-based same-thread reminder worker.
+Plan: A2_CONTINUATION_WATCH_20261028.md. Seven new fits: P1T3-point grid,
+then P300/P1T at0.05B and0.2B. Reuse completed P300grid, no rerun. Unchanged
+model/loss/Trainer/data/runtime; historical numerical receipts explicitly preserved.
+Expected65–80min from start, +4–20min per registered retry; hardcap3h.
+Target6y3o-a2-s1-pair-20261028-a01, sessiona2_s1_pair_20261028_a01.
+Not submitted yet; commands#0.48CPU tests passed. Remaining fullpilot not done.
+Watcher will use existing thread, localstate temp/a2_watch_20261028,6hwindow,
+firstnearETA then30min. No duplicate timer/newagent; delivery acceptance and
+actualack must be distinguished. Automatic subsequent work only preregistered
+Phase0A dependencies, remaining budgets and safe verified handoffs, see plan.
+
+
 ## Latest: first DCLM/P300 S1 grid COMPLETE — 28 October 2026 SGT
 
 Healthf701a9c observed09:31:39SGT confirms three successful114-update fits, no

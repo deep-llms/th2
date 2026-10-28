@@ -7,9 +7,17 @@ from efficient_llm.a2.data import PackedRows
 from efficient_llm.a2.protocol import compatible_data_spec
 
 
-def initial_asset_plan(plan):
-    """Only DCLM/P300 is loaded by the initial jobs; other downloads may continue."""
-    asset = plan['assets']['dclm/P300']
+def initial_asset_plan(plan, parents=('P300',)):
+    """Verify only actual launch dependencies; unrelated downloads may continue."""
+    if not parents or not set(parents) <= {'P300','P1T'}:
+        raise ValueError('Unsupported bounded launch parents')
+    plans = [_parent_asset_plan(plan,parent) for parent in parents]
+    downloads = {item['path']:item for part in plans for item in part['downloads']}
+    return dict(plan, downloads=list(downloads.values()))
+
+
+def _parent_asset_plan(plan, parent):
+    asset = plan['assets']['dclm/'+parent]
     required = {str(Path(asset[directory])/name): digest
         for directory, files in (('weights_dir', 'files'), ('code_dir', 'code_files'))
         for name, digest in asset[files].items()}
@@ -100,3 +108,11 @@ def _model_job(source, inputs, port, action, limit, contract):
     return dict(name=action, gpus=list(range(8)), timeout_seconds=limit,
         argv=launch+[action]+common+['--output', '{run_dir}/'+action+'.json'],
         required_outputs=[dict(path=action+'.json', json_equals=contract)])
+
+
+def pair_jobs(inputs, prior, grid, port):
+    return [dict(name='s1-pair',gpus=list(range(8)),timeout_seconds=10900,
+        argv=['{python}','-u','-m','efficient_llm.a2.pair','--inputs',str(inputs),
+              '--prior',str(prior),'--grid',str(grid),'--port',str(port),'--output','{run_dir}/pair'],
+        required_outputs=[dict(path='pair/complete.json',json_equals={
+            'status':'complete','scope':'dclm_S1_pair','full_pilot_complete':False})])]

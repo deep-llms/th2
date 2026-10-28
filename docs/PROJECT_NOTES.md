@@ -531,3 +531,12 @@ Always include elapsed/remaining time and the estimated completion date/time in
 Singapore time when reporting a running test/training queue. Distinguish measured
 throughput estimates from unmeasured stages. If no job is running or a stage has
 not been submitted, say so explicitly; do not give a fictitious completion time.
+
+
+## Automatic follow-up preference — 28 October 2026 SGT
+
+For long authorized experiments, estimate runtime and schedule an existing-thread
+wake via scripts/queue_watch.py near completion. Verify app-server acceptance and
+actual delivery separately. Continue useful authorized work after validated results
+and GPU handoff instead of leaving compute idle waiting for a user status request.
+Use a bounded deadline and durable prompt; no duplicate monitors or new sessions.

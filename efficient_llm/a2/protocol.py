@@ -30,11 +30,11 @@ def compatible_data_spec(prepared, current):
 
 def shared_check_sets(all_sets, assets, *, scope='all'):
     """One representative probe, covering each actual removal pattern once."""
-    early = scope == 'dclm_P300_S1_grid'
-    if scope not in ('all', 'dclm_P300_S1_grid'):
+    early = scope in ('dclm_P300_S1_grid', 'dclm_S1_pair')
+    if scope not in ('all', 'dclm_P300_S1_grid', 'dclm_S1_pair'):
         raise ValueError('Unknown preflight scope')
     datasets = ('dclm',) if early else DATASETS
-    parents = ('P300',) if early else PARENTS
+    parents = ('P300','P1T') if scope == 'dclm_S1_pair' else ('P300',) if early else PARENTS
     if set(all_sets) != set(datasets):
         raise ValueError('Freeze S2 for every dataset before shared checks')
     reference = assets[REPRESENTATIVE]['code_files']
@@ -72,6 +72,20 @@ def validate_run_scope(run, gate, scope, rerun_of=None):
     if gate.get('launch_scope', 'all') != scope:
         raise ValueError('Preflight launch scope mismatch')
     if scope == 'all':
+        return
+    if scope == 'dclm_S1_pair':
+        if (run.dataset != 'dclm' or run.arm not in ('P300','P1T') or run.set != 'S1'
+            or run.budget not in ('0.03B','0.05B','0.2B')
+            or run.budget == '0.03B' and run.arm != 'P1T'):
+            raise ValueError('Run not covered by bounded pair')
+        expected = LRS if run.budget == '0.03B' else (gate.get('chosen_lrs',{}).get(run.arm),)
+        if not rerun_of:
+            if run.lr not in expected or run.suffix:
+                raise ValueError('Pair requires registered grid or tuning-selected LR')
+        else:
+            original=Run(run.dataset,run.arm,run.set,run.budget,run.lr*2)
+            if run.lr*2 not in expected or run.suffix!='-rerun' or original.run_id!=rerun_of:
+                raise ValueError('Only one registered half-LR retry allowed')
         return
     if scope != 'dclm_P300_S1_grid' or (run.dataset,run.arm,run.set,run.budget) != ('dclm','P300','S1','0.03B'):
         raise ValueError('Run not covered by bounded preflight')
