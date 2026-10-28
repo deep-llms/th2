@@ -1,5 +1,24 @@
 # Current task
 
+Latest14:11SGT: branchlaunch8e1abed acknowledged: allrequiredactualmodel/codehashes
+pass, Acceleratecachecopied and envverified8GPU/BF16. Supervisor submitted.
+Rawtemp/a2_branch_launch01.log SHAd15ee929da220e9b6637776e65e8d73ea082c6a3c7f97653c82aba9d189328e4.
+Submitting unique branchhealtha01 to verify reclaim/freeGPUs/activefirstsurvey.
+
+Latest14:08SGT: registered prerequisites SUBMITTED8e1abedc5e17b2ddf9aa76bddb45db9a0cae2849,
+source602fbce114091d19108588bad125651b6f18c247, remoteheadverified.
+Root/mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a01,
+sessiona2_branches_20261028_a01. Await launchreceipt before newrequest.
+Sixbranchsurveys→freezeS2→onefullpatternnumericalcheck, noheals.
+Estimated30–40min fromstart (~14:40–14:50SGT if startedpromptly).
+Phaseledger15600seconds; actualterminal30fits+6surveys pinned, bothcode locks
+passed,64CPUtests, no model/loss/data/runtime change. Native supervisor handles
+freshPID/startburnreclaim, freeGPUs, automaticcommunicatingburnrestore.
+Read-only healthtemplate temp/a2_branch_health.sh.
+Remaining executor scripts/a2_remaining_heals.py tested but still needs current
+fullgate/baseline assembly+launcher integration after prerequisite success.
+No duplicateS1 fits. Currentstatusdirty intentionally awaitingack/#0.
+
 Latest14:07SGT: NEMfinal verified from healthaff05f7 at14:01:32SGT.
 10fits successful; supervisor/run exit0, guardreleased,8communicatingburns,
 cycles290→300,payload322→333.11GiB. Rawhealth05SHA459875ab2aa3b9a0b3214a85176e8dd084025ced8ac021d498073fc32db58db0.
