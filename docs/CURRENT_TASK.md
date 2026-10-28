@@ -1,5 +1,9 @@
 # Current task
 
+Latest16:56SGT: pendinghealthd84004d ACKNOWLEDGED. Actualsnapshot16:30:45SGT healthy,7/28healscomplete; allsixbaselines/86frozenfiles/guard656246 verified. DCLM/P1T/S2 .2B logged740/762; eightGPUs74–96%/45882MiB. Exactrecipe/LR/order/roundtrip and no divergence verified all7. Rawhealth04 SHA7114feff1f33c4fbc22639166239640fff10fa61fbed408d35fd8ca2087b0249; archive status_1630. NewDCLMP300S2 .2B NLL2.849884, P1TshortS2/S3/S4 2.900690/2.852705/2.849714. Freshhealtha05 to follow, no newGPUwork.
+
+Latest16:28SGT: unique read-only healtha04 SUBMITTEDd84004dc5ae2a9a85b054724f956b35d87a18fa9; remoteheadverified. Retrieve pending receipt before another write. Current queue/source unchanged. No new GPU job. Local report preparation temp/a2_aggregate_remaining.py replays actual SHA-locked30history+3current receipts, validates exactplan/provenance/recipe and uses existing results.report; partial remains INCOMPLETE, Phase0B explicitly not executed. Commands still executable health pendingack; status localdirty intentionally.
+
 Latest16:00SGT: health151d769 acknowledged, snapshot15:56:41 HEALTHY. All6baselines
 pass/originalparentmatch;3/28healscomplete: dclm/P300 S2/S3/S4 .05B NLL
 2.929940/2.890030/2.877159 (S1 previous3.045107). FullLR/exact8rankorder/12160seq/

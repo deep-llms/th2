@@ -1,0 +1,9 @@
+{
+  "raw_log": "temp/a2_remaining_health04.log",
+  "raw_sha256": "7114feff1f33c4fbc22639166239640fff10fa61fbed408d35fd8ca2087b0249",
+  "files": {
+    "results.json": "0ccc4df700c67c7d47f707add23f818bb45f64451698ecadaf4eeb52d51d38b0",
+    "summary.json": "a5f306ffce7df37decd1dab41b14e3f9c5873e8d524c1f05581b48e6c41bf1c5",
+    "partial_aggregate.json": "4505b212603b91e6a0890324ef7046eb157b370c49f361fa5814e01e4b3747c9"
+  }
+}

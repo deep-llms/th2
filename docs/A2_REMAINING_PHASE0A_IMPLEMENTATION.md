@@ -140,3 +140,12 @@ two KV models, so a separate native-model entry point/metadata collector is need
 Before any GPU evaluation, confirm offline nine-task files and lm-eval runtime on
 node; no installs or downloads are authorized as an implicit compatibility fix.
 Prioritize the remaining registered healing stage and do not overlap its GPUs.
+
+Local report preparation at16:33SGT: temp/a2_aggregate_remaining.py maps only
+receipt paths to the local archive, compares every other history-lock field,
+then reuses load_history, verify_result and results.report. Actual30historical
+plus3new receipts replay successfully; duplicate IDs, modified LR and modified
+data provenance are rejected. Partial data remains INCOMPLETE; unexecutedPhase0B
+is explicitly absent, not a failed experiment. This changes no deployed source.
+Final reporting still requires all expected original IDs/retries, terminal
+scientific results and independent supervisor/burn verification.
