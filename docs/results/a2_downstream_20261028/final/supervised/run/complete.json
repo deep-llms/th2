@@ -1,0 +1,27 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-28T14:03:19.593331+00:00",
+  "jobs": [
+    {
+      "name": "a2-downstream",
+      "started_at": "2026-10-28T14:03:19.593513+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 2987.58156430861,
+      "artifacts": [
+        {
+          "path": "downstream/complete.json",
+          "sha256": "59b1739172eecf7698b910b79f9bd2abb050b79e828da0edb3f8e47087a374ee",
+          "bytes": 7794
+        },
+        {
+          "path": "downstream/results.json",
+          "sha256": "7aae0f1c76d87635507df2bbe2c40c435c0b8e1650d32abc9d24c40a85932ddd",
+          "bytes": 66104
+        }
+      ],
+      "finished_at": "2026-10-28T14:53:07.712382+00:00"
+    }
+  ],
+  "finished_at": "2026-10-28T14:53:07.712427+00:00"
+}

@@ -1,0 +1,129 @@
+{
+  "status": "ok",
+  "models": 14,
+  "prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/prepared.json",
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+  },
+  "scores": {
+    "dclm-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/dclm-P300-original/scores.json",
+      "sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99"
+    },
+    "dclm-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/dclm-P300-S1-0.2B/scores.json",
+      "sha256": "69cc2eebe8bbec4b2edbe35f7c1f4f5b41b578247e0f7def5f85d156ab77b445"
+    },
+    "dclm-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/dclm-P1T-original/scores.json",
+      "sha256": "181f72af8e1870b9acb87f377e44d20bb23e94276efdec9fc4ab74e1e5c2a607"
+    },
+    "dclm-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/dclm-P1T-S1-0.2B/scores.json",
+      "sha256": "f9532e96fb888a089c58de2c28ec5fff2ffc71dc6bb7ea3b40b4cf73f9284072"
+    },
+    "fwe-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/fwe-P300-original/scores.json",
+      "sha256": "cf9105490806bbe02dc3f9827f0e18872597fca14a62bd1fdf61d356721633b8"
+    },
+    "fwe-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/fwe-P300-S1-0.2B/scores.json",
+      "sha256": "49c22952b13dce13f3b8732a6fa378d62d479b45f75ba8c1c4de0260617d3d3a"
+    },
+    "fwe-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/fwe-P1T-original/scores.json",
+      "sha256": "9d6f86abb0d069eb8bc4430c8c1df3c0d76b39a60addaa992e5e45d8d9b84ed0"
+    },
+    "fwe-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/fwe-P1T-S1-0.2B/scores.json",
+      "sha256": "2fd2f03db78b6374056661e5709b40cc4bf5a3ba1642c6661098dc487b21a29c"
+    },
+    "nem-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/nem-P300-original/scores.json",
+      "sha256": "7b67abf93eec7691f9fefb199d939d62c74202ee06b2edf4f894ab13003e4e78"
+    },
+    "nem-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/nem-P300-S1-0.2B/scores.json",
+      "sha256": "423f9bb2177ab3068d3f8358255284339cf4f9a9fe8176d27bda13ceb5fd5c83"
+    },
+    "nem-P300-S1-0.8B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/nem-P300-S1-0.8B/scores.json",
+      "sha256": "34ccfc500e03691861a796522f4e807219fbacfa67182bc5c90dac4fe00f439c"
+    },
+    "nem-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/nem-P1T-original/scores.json",
+      "sha256": "ecb60d7c8e07ba6b83a4337d673e60a6a0c0b152962ba954be259b484601dbae"
+    },
+    "nem-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/nem-P1T-S1-0.2B/scores.json",
+      "sha256": "2820235a80158969d12637e41c629c1f4598a6a064faa8f073fd7d48f78cfbb2"
+    },
+    "nem-P1T-S1-0.8B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/scores/nem-P1T-S1-0.8B/scores.json",
+      "sha256": "aa0d514036eef459270a06cd21b6dd82926f226b990a25e38247a3beefcca5c9"
+    }
+  },
+  "replays": {
+    "dclm-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/dclm-P300-original.json",
+      "sha256": "10c219d6858d21ed8f75070f16dfbeeb5fbbc74d06a50d1c2c6851318c6bd3a1"
+    },
+    "dclm-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/dclm-P300-S1-0.2B.json",
+      "sha256": "dd38aa225b8cf767385855f53e14b850ff952180e96e0b252181c33acb7c507f"
+    },
+    "dclm-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/dclm-P1T-original.json",
+      "sha256": "68e240a368a4fd7660361821a5ee6ee0bbe61c2ef8d185a841376116cce31240"
+    },
+    "dclm-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/dclm-P1T-S1-0.2B.json",
+      "sha256": "a33ecab7426be5521aa27f3119a062a340ff10f5121a11760277c263cb2c7339"
+    },
+    "fwe-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/fwe-P300-original.json",
+      "sha256": "e85b3696b54dccf05bbd526fe1fb74d16f8747fe1a07d356fcf1cc72233a75f0"
+    },
+    "fwe-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/fwe-P300-S1-0.2B.json",
+      "sha256": "4cd65e3f3a42cb891a41d935a40955e0973c6a9eaeeb1c9b1efcc10b34093008"
+    },
+    "fwe-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/fwe-P1T-original.json",
+      "sha256": "6aa4fdc64d0f5b201fd65212947a5335ab236538bbd69e7a11b7de0ee5394216"
+    },
+    "fwe-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/fwe-P1T-S1-0.2B.json",
+      "sha256": "2c84fdd893dd97b657357f3b9b1155841656c27b6fdfbe910d0c1aba97a6d0c6"
+    },
+    "nem-P300-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/nem-P300-original.json",
+      "sha256": "1fe6b0065b29c6a04c3a67c69082660c7e89a93f454d705b22b0493ffdbc627b"
+    },
+    "nem-P300-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/nem-P300-S1-0.2B.json",
+      "sha256": "86e1ec806beb10ac88fd7b5aa9d8b292e8284c5523338b89024230633f8fe49a"
+    },
+    "nem-P300-S1-0.8B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/nem-P300-S1-0.8B.json",
+      "sha256": "e31b96b00578f74dc0b367e86c37be9fe230869f4923535723530dbb8f9a758e"
+    },
+    "nem-P1T-original": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/nem-P1T-original.json",
+      "sha256": "214439cc7147d1ea6e16c269960938ca5068617ff1ef083645b9319529358baf"
+    },
+    "nem-P1T-S1-0.2B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/nem-P1T-S1-0.2B.json",
+      "sha256": "e315ed9b8e33a261963eac80410b1ac5487ff3c612f56fb8225967c27e331353"
+    },
+    "nem-P1T-S1-0.8B": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/replays/nem-P1T-S1-0.8B.json",
+      "sha256": "77e1be03991d11521953824b5fb61b0f4bb6fa264616b0eff1dd4bd54d7e901a"
+    }
+  },
+  "results": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a02/supervised/run/downstream/results.json",
+    "sha256": "7aae0f1c76d87635507df2bbe2c40c435c0b8e1650d32abc9d24c40a85932ddd"
+  },
+  "elapsed_seconds": 2985.852139452938
+}

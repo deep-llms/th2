@@ -1,0 +1,13 @@
+{
+  "plan.json": "330becfa411f7a0108f4cc73c2ce0ebb1e45506bccde6cd97d5d96e91286d587",
+  "phase-budget.json": "3a7fc3d3bea43526c7128587bcf960ed8675075d4ee8267394747a995c780217",
+  "source-manifest.json": "0a40d0854a69a2b02fdbe097ae9da3b4d118054424b8f9a0423fd7d1872c290b",
+  "terminal-verification.json": "9594e6a2e63d3580e762c9091943ef609e4fd4976b7c368b355f02e4072d7dda",
+  "supervised/supervisor.json": "afdacc82cd8761cc54f8b9815bf79961662b5a1de4f63124f3973ad63598eea0",
+  "supervised/burn-verified.json": "05ed968983f660853910637df5bbd8b12c1234c9c8a957ca203060f5c3791ffd",
+  "supervised/run/complete.json": "f749d3d9df54925b9c590b31b4f8facc510bc8106aafc25a65280770ceff09f7",
+  "supervised/run/downstream/complete.json": "59b1739172eecf7698b910b79f9bd2abb050b79e828da0edb3f8e47087a374ee",
+  "supervised/run/downstream/results.json": "7aae0f1c76d87635507df2bbe2c40c435c0b8e1650d32abc9d24c40a85932ddd",
+  "supervised/run/downstream/dclm-P300-original-check.json": "fa9bda1acab5553e5af4d9b6bd495356068c2f81210200b836fb9fbb8fbd9a9f",
+  "supervised/run/downstream/dclm-P300-S1-0.2B-check.json": "1d2b5e20c1bd254a7cbbcf30a6198c8d00b4842f40869e24a97c8618996b80b2"
+}

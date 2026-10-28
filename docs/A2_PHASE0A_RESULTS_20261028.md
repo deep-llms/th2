@@ -36,4 +36,4 @@ T14 checks, NEM/P300/S1/0.05B: identical repeat changes NLL by −0.000006436; f
 - Full local original receipt: `temp/a2_remaining_health13.log`; SHA256 `52acc0b66ad7c55447cdb2856794fb8560f44c08d992974769ece936909e5a83`.
 - Original checkpoints and full training artifacts remain on B200 under the roots recorded in `resources/a2_completed_surveys_20261028.json` and `resources/a2_phase0a_terminal_20261028.json`.
 
-Supplementary downstream evaluation started at 21:06 SGT after verified GPU handoff: 14 fixed checkpoints, nine existing English tasks, zero-shot seed 42. The first attempt stopped before scoring because batch-eight numerical error exceeded the fixed gate; batch-two recovery is being prepared. No downstream results are available yet.
+Supplementary downstream evaluation is complete: all 14 fixed checkpoints and nine tasks, with validated batch-2 numerics and verified burn handoff. See [full downstream results](A2_DOWNSTREAM_RESULTS_20261028.md). The MC damage contrast is mixed across datasets; do not interpret the NLL screening GO as a downstream superiority claim.
