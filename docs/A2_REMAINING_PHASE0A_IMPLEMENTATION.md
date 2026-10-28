@@ -36,9 +36,11 @@ Before GPU execution, still required:
 1. Retrieve NEM's successful final artifacts and independently verify burns.
 2. Build/review a remote-path history lock from actual receipts, including the
    original DCLM/P300 standalone survey; pin all actual artifact hashes.
-3. Connect the prerequisite manifest to the existing native launcher, verifying
-   the six branch weight/code files, cumulative budget, copied Accelerate cache,
-   fresh burn PID/start identities, free GPUs and automatic verified burn restore.
+3. The prerequisite manifest is now connected to the existing native launcher
+   (`--stage remaining-prereqs --history LOCK`). It verifies branch weights/code,
+   current native provenance, cumulative worst-case timeouts plus cleanup reserve,
+   then reuses Accelerate copying, fresh burn identities/free-GPU checks and
+   native automatic burn restoration. Actual GPU execution awaits NEM handoff.
 4. After S2/numerical checks, create the current-provenance preflight/baselines
    for remaining heals and use the exact pending list. The old generic queue
    still runs its full matrix; do not call it unchanged and repeat S1/grid fits.
@@ -52,3 +54,14 @@ for health submission8920863. All remote writes are frozen pending operator/syst
 recovery. This does not establish whether NEM training stopped. Keep outputs and
 workloads intact; local code/tests may continue, and the existing watcher may
 check read-only receipts. Do not resubmit commands as an infrastructure repair.
+
+Recovery addendum, 13:26 SGT: the same pending health8920863 subsequently ran
+successfully (snapshot13:08, receipt13:11); no retry was submitted here. NEM
+continued through five grid fits. Remote-write freeze is lifted on this evidence.
+The new launch gate has CPU tests for exact required assets, completed-history
+dependencies and budget rejection. Its first actual GPU prerequisite stage is
+still pending; numerical core and the running NEM frozen source are unchanged.
+
+Validation after launcher integration: 59 A2 tests pass; actual20-receipt replay
+still passes. Log: temp/a2_prerequisite_tests_20261028.log. No GPU execution
+claim for this new stage. Numerical byte/AST locks still pass.

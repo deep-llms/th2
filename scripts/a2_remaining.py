@@ -222,6 +222,43 @@ def prerequisite_jobs(*, source, inputs, port, history, reference, identity, seq
     return jobs
 
 
+def prepare_prerequisites(source, inputs, history_path, code_commit, spent_seconds):
+    """CPU launch gate: actual history, native provenance, exact input set/budget.
+
+    Does not acquire GPUs. The existing launcher owns source freezing, Accelerate
+    configuration and native supervisor handoff after this function succeeds.
+    """
+    from argparse import Namespace
+    from efficient_llm.a2.__main__ import provenance
+    from scripts.a2_preflight_inputs import _parent_asset_plan
+    source,inputs=Path(source),Path(inputs)
+    verify_current_core(source)
+    reference=provenance(Namespace(code_commit=code_commit,spec=source/'docs/A2_pilot_spec.md',
+        assets=inputs/'assets.json',data=inputs/'data'))
+    reference['secondary_map_sha256']=hashlib.sha256((inputs/'secondary_map.json').read_bytes()).hexdigest()
+    lock=json.loads(Path(history_path).read_text())
+    history=load_history(lock,reference)
+    plan=remaining_runs(history['rows'])
+    identity=json.loads((source/'docs/results/a2_review_20261028/identity_metadata.json').read_text())
+    sequence=branch_sequence(history['surveys'],identity)
+    # Sum worst-case child timeouts plus cleanup reserve, not only expected cost.
+    worst_seconds=len(sequence)*900+120+3600+600
+    if not math.isfinite(spent_seconds) or spent_seconds<0 or spent_seconds+worst_seconds>18*3600:
+        raise ValueError('Insufficient Phase0A budget for prerequisites and handoff')
+    assets=json.loads((source/'resources/a2_inputs_20261028.json').read_text())
+    required={('dclm','P300')} | {(s['dataset'],s['parent']) for s in sequence}
+    downloads={}
+    for ds,parent in sorted(required):
+        for item in _parent_asset_plan(assets,parent,ds)['downloads']:
+            if item['path'] in downloads and downloads[item['path']]!=item:
+                raise ValueError('Conflicting pinned asset')
+            downloads[item['path']]=item
+    return dict(history_lock=lock,reference=reference,plan=plan,sequence=sequence,
+        asset_plan=dict(assets,downloads=list(downloads.values())),
+        budget=dict(phase='0A',spent_seconds=spent_seconds,worst_seconds=worst_seconds,
+                    hard_cap_seconds=18*3600,report_threshold_seconds=15*3600))
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--history',type=Path,required=True)

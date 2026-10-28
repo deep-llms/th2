@@ -1,0 +1,102 @@
+[
+  {
+    "run_id": "P0-nem-P300-S1-0.03B-lr3e-5",
+    "arm": "P300",
+    "budget": "0.03B",
+    "lr": 3e-05,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.774250937159999,
+    "val_post": 3.3223757589403986,
+    "val_tune_post": 3.3117025325752976,
+    "delta_post": 0.5481248217803998,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 136.85957925580442
+  },
+  {
+    "run_id": "P0-nem-P300-S1-0.03B-lr1e-4",
+    "arm": "P300",
+    "budget": "0.03B",
+    "lr": 0.0001,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.774250937159999,
+    "val_post": 3.2013844903309665,
+    "val_tune_post": 3.1900943038460836,
+    "delta_post": 0.4271335531709677,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 136.3979588910006
+  },
+  {
+    "run_id": "P0-nem-P300-S1-0.03B-lr3e-4",
+    "arm": "P300",
+    "budget": "0.03B",
+    "lr": 0.0003,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.774250937159999,
+    "val_post": 3.1110103852418773,
+    "val_tune_post": 3.0994134739180024,
+    "delta_post": 0.3367594480818785,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 135.81157511891797
+  },
+  {
+    "run_id": "P0-nem-P1T-S1-0.03B-lr3e-5",
+    "arm": "P1T",
+    "budget": "0.03B",
+    "lr": 3e-05,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.723382862026508,
+    "val_post": 3.342141597086536,
+    "val_tune_post": 3.3310194232720782,
+    "delta_post": 0.6187587350600281,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 137.95728952018544
+  },
+  {
+    "run_id": "P0-nem-P1T-S1-0.03B-lr1e-4",
+    "arm": "P1T",
+    "budget": "0.03B",
+    "lr": 0.0001,
+    "steps": 114,
+    "heal_tokens": 29884416,
+    "val_teacher": 2.723382862026508,
+    "val_post": 3.1902557595724823,
+    "val_tune_post": 3.178842507537212,
+    "delta_post": 0.4668728975459744,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 7296,
+      "microbatches": 912,
+      "world_size": 8,
+      "exact_order": true
+    },
+    "training_seconds": 134.86775036808103
+  }
+]

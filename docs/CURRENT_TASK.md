@@ -1,5 +1,28 @@
 # Current task
 
+## Recovery verified — 28 October 13:08 SGT snapshot (retrieved13:26)
+
+The previously failed health8920863 later executed successfully without a new
+submission. Controller reports OK/synced; health_at05:08:56UTC, receipt uploaded
+13:11:22SGT. SSH recovery is established by actual node receipt, lifting the
+remote-write freeze below. No repair/restart was performed; NEM kept training.
+Five grid fits complete, sixth P1T LR3e-4 starting; both parent surveys/pre passed.
+78 frozen source files matcha6e871c, guard owner648962/session intact. All five
+fits pass exact8rank order/coverage, full LR schedule and zero save/reload error.
+P300 selects3e-4; P1T selection pending this snapshot. Expected final/burn handoff
+~14:00–14:15SGT if no retry; snapshot is historical, not a current-step assertion.
+Rawtemp/a2_nem_health02.log SHA81836495f566f4017cb6389f6a5ca8ef9ad6b968923e92952ebf186e7960810c;
+compact verified archive results/a2_nem_s1_20261028/status_1308.
+
+Local next-stage launcher now supports --stage remaining-prereqs --history LOCK,
+using the unchanged native supervisor/Accelerate/known-burn handoff. Requires all
+30 actual S1 records, six branch surveys before S2, exact pinned asset/runtime
+checks, and worst-case child timeouts+cleanup within remaining Phase0A budget.
+59 A2 tests and actual20-receipt replay pass; numerical byte/AST locks unchanged.
+No new GPU stage launched; actual NEM terminal history lock still pending.
+Remaining-heal coordinator integration still needed; do NOT call old fullqueue.
+
+
 ## REMOTE WRITES FROZEN — 28 October approximately 12:59 SGT
 
 Read-only health8920863d1d9abc9fbbacf7ec9f49ae0236d6856f failed at controller:

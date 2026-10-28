@@ -159,5 +159,31 @@ class RemainingTests(unittest.TestCase):
     def test_existing_numerical_code_lock_passes(self):
         verify_current_core(ROOT)
 
+    def test_prerequisite_launch_gate_inputs_and_budget(self):
+        from unittest.mock import patch
+        from scripts.a2_remaining import prepare_prerequisites
+        surveys,identity,assets=survey_fixture()
+        annealed={k:v for k,v in surveys.items() if v['parent'] in ('P300','P1T')}
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/'secondary_map.json').write_text('{}')
+            (root/'history.json').write_text('{}')
+            with patch('efficient_llm.a2.__main__.provenance',return_value=provenance()), \
+                 patch('scripts.a2_remaining.load_history',return_value=dict(rows=completed_s1(),surveys=annealed)):
+                result=prepare_prerequisites(ROOT,root,root/'history.json','a'*40,15000)
+                self.assertEqual(len(result['sequence']),6)
+                self.assertEqual(len(result['plan']['pending']),28)
+                self.assertEqual(result['budget']['worst_seconds'],9720)
+                required={item['path'] for item in result['asset_plan']['downloads']}
+                self.assertTrue(any('/dclm/P300/' in p for p in required))
+                self.assertTrue(all(any('/'+ds+'/'+p+'/' in name for name in required)
+                    for ds in DATASETS for p in ('S72','S188')))
+                # Branches deliberately use pinned main-line model Python; only
+                # P1T *weights* are unnecessary for this prerequisite stage.
+                self.assertFalse(any('/P1T/model.safetensors' in name for name in required))
+                for spent in (-1,float('nan'),60000):
+                    with self.subTest(spent=spent),self.assertRaises(ValueError):
+                        prepare_prerequisites(ROOT,root,root/'history.json','a'*40,spent)
+
+
 
 if __name__=='__main__':unittest.main()

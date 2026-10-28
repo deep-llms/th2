@@ -1,2 +1,2 @@
 #0
-# REMOTE WRITES FROZEN: runner SSH hostname resolution failed for health8920863.
+# Health8920863 acknowledged after controller recovery; no new GPU work.
