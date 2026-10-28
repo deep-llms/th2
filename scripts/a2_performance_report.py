@@ -1,17 +1,18 @@
 """Validate and summarize discarded A2 performance probe artifacts, offline."""
 import argparse,json,math,statistics
 from pathlib import Path
-from efficient_llm.a2.performance import VARIANTS
+from efficient_llm.a2.performance import SUITES
 from efficient_llm.a2.data import write_json
 
 
-def summarize(root):
+def summarize(root,suite='initial'):
+    variants=SUITES[suite]
     root=Path(root);results={}
-    for name,option in VARIANTS.items():
+    for name,option in variants.items():
         path=root/name/'result.json'
         if not path.is_file():continue
         r=json.loads(path.read_text())
-        if (r['status']!='complete' or r['variant']!=name or r['options']!=option.record()
+        if (r['status']!='complete' or r.get('suite','initial')!=suite or r['variant']!=name or r['options']!=option.record()
             or not r['coverage']['exact_order'] or r['coverage']['examples']!=1024
             or r['coverage']['world_size']!=8 or not r['teacher_no_gradient']
             or len(r['all_step_seconds'])!=16 or len(r['lr_updates'])!=16):raise ValueError('Probe contract differs: '+name)
@@ -35,15 +36,15 @@ def summarize(root):
         validation_delta=r['validation_delta']) for n,r in results.items()]
     stable=bool(repeat and repeat['numerical_passed'] and abs(repeat['steady_mean_seconds']/ref['steady_mean_seconds']-1)<=.1)
     usable=[r for r in rows if r['numerical_passed'] and r['variant'] not in ('reference','reference_repeat') and r['speedup']>=1.05]
-    return dict(status='complete' if len(results)==len(VARIANTS) else 'incomplete',completed=len(results),
+    return dict(status='complete' if len(results)==len(variants) else 'incomplete',completed=len(results),
         repeat_stable=stable,timing_reference='reference_repeat' if repeat else 'reference',rows=rows,
         fastest_screened_candidate=min(usable,key=lambda r:r['step_seconds'])['variant'] if stable and usable else None,
         note='Screening only; promotion requires reviewing profile, cold overhead, numerical limits and real integration. No default mutation.')
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('root');p.add_argument('--output',required=True)
-    a=p.parse_args();r=summarize(a.root);write_json(a.output,r);print(json.dumps(r))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('root');p.add_argument('--suite',choices=SUITES,default='initial');p.add_argument('--output',required=True)
+    a=p.parse_args();r=summarize(a.root,a.suite);write_json(a.output,r);print(json.dumps(r))
 
 
 if __name__=='__main__':main()

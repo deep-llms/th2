@@ -4,20 +4,22 @@ from pathlib import Path
 from importlib.metadata import version
 from efficient_llm.kv_long import verify_handoff
 from efficient_llm.a2.data import write_json
-from efficient_llm.a2.performance import VARIANTS
+from efficient_llm.a2.performance import SUITES
 from scripts.train_then_burn import digest,BURN_HASH,GUARD_HASH
 from scripts.gpu_process import inspect
 from scripts.launch_a2_downstream import freeze_source
 from run_experiments import load_jobs
 
 
-def jobs_for(inputs,config,port):
+def jobs_for(inputs,config,port,suite="initial"):
+    variants=SUITES[suite]
     launch=['{python}','-m','accelerate.commands.launch','--config_file',str(config),
-            '--main_process_port',str(port),'-m','efficient_llm.a2.perf_probe','--inputs',str(inputs)]
+            '--main_process_port',str(port),'-m','efficient_llm.a2.perf_probe','--inputs',str(inputs),'--suite',suite]
     jobs=[]
-    for name in VARIANTS:
+    for name in variants:
         args=launch+['--variant',name,'--output','{run_dir}/'+name]
-        if name=='reference':args+=['--profile']
+        if name=='reference':
+            if suite=='initial':args+=['--profile']
         else:args+=['--reference','{run_dir}/reference']
         jobs.append(dict(name=name,gpus=list(range(8)),timeout_seconds=900 if name=='compiled_head' else 450,
             argv=args,required_outputs=[dict(path=name+'/result.json',json_equals=dict(status='complete'))]))
@@ -30,6 +32,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('output','inputs','predecessor-burn-script'):p.add_argument('--'+name,type=Path,required=True)
     for name in ('host','session','code-commit'):p.add_argument('--'+name,required=True)
+    p.add_argument('--suite',choices=SUITES,default='initial')
     a=p.parse_args();source=Path(__file__).resolve().parents[1]
     if socket.gethostname()!=a.host or a.output.exists():raise ValueError('Wrong host/existing output')
     if len(a.code_commit)!=40 or any(c not in '0123456789abcdef' for c in a.code_commit):raise ValueError('Pinned source required')
@@ -64,12 +67,12 @@ def main():
     (a.output/'accelerate-env.log').write_text(receipt.stdout+receipt.stderr)
     print(receipt.stdout,flush=True)
     with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
-    jobs=jobs_for(a.inputs,config,port)
+    jobs=jobs_for(a.inputs,config,port,a.suite)
     if sum(j['timeout_seconds'] for j in jobs['jobs'])>5000:raise ValueError('Probe budget exceeds bound')
-    write_json(a.output/'plan.json',dict(scope='discarded_performance_only',steps_per_variant=16,
-        global_tokens_per_step=262144,variants={k:v.record() for k,v in VARIANTS.items()},
+    write_json(a.output/'plan.json',dict(suite=a.suite,scope='discarded_performance_only',steps_per_variant=16,
+        global_tokens_per_step=262144,variants={k:v.record() for k,v in SUITES[a.suite].items()},
         maximum_job_seconds=sum(j['timeout_seconds'] for j in jobs['jobs']),
-        compile_scope='head/loss only, fullgraph Inductor, backward autocast off',
+        compile_scope='head/loss only, fullgraph Inductor, backward autocast off' if a.suite=='initial' else 'none; unchanged native KDModel/HealTrainer',
         thresholds=dict(gradient_relative_l2=.02,gradient_cosine=.9998,validation_abs_nats=.002)))
     jobfile=a.output/'jobs.json';write_json(jobfile,jobs);load_jobs(jobfile)
     write_json(a.output/'inspection.json',inspect())

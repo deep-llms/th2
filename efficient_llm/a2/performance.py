@@ -21,7 +21,7 @@ class Options:
     compile_head: bool = False
 
     def __post_init__(self):
-        if self.microbatch not in (1,2,4) or self.chunk not in (128,256,512,1024):
+        if self.microbatch not in (1,2,4,8) or self.chunk not in (128,256,512,1024):
             raise ValueError('Unreviewed performance configuration')
 
     def record(self):return asdict(self)
@@ -38,6 +38,18 @@ VARIANTS = {
     'combined': Options(chunk=512,deferred_checks=True,fused_optimizer=True),
     'compiled_head': Options(chunk=512,deferred_checks=True,fused_optimizer=True,compile_head=True),
     'reference_repeat': Options(),
+}
+
+
+# Separate suite: preserve the original ten-probe protocol and its reports.
+SUITES = {
+    'initial': VARIANTS,
+    'mbs8': {
+        'reference': Options(microbatch=4,chunk=256),
+        'micro8_chunk128': Options(microbatch=8,chunk=128),
+        'micro8_chunk256': Options(microbatch=8,chunk=256),
+        'reference_repeat': Options(microbatch=4,chunk=256),
+    },
 }
 
 

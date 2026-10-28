@@ -31,7 +31,7 @@ class PerformanceTests(unittest.TestCase):
         reference=copy.deepcopy(teacher).requires_grad_(True);prune(reference,[1,2])
         states=[]
         with tempfile.TemporaryDirectory() as d:
-            for i,option in enumerate((Options(),Options(microbatch=2,deferred_checks=True),Options(microbatch=4,deferred_checks=True,fused_optimizer=True))):
+            for i,option in enumerate((Options(),Options(microbatch=2,deferred_checks=True),Options(microbatch=4,deferred_checks=True,fused_optimizer=True),Options(microbatch=8,chunk=256))):
                 student=copy.deepcopy(reference)
                 args=make_arguments(Path(d)/str(i),12,1e-4,option.microbatch,1,cuda=False,global_sequences=8)
                 if i==0:
@@ -62,7 +62,7 @@ class PerformanceTests(unittest.TestCase):
         for k,v in student.state_dict().items():torch.testing.assert_close(v,initial[k],rtol=0,atol=0)
 
     def test_bounded_options(self):
-        for kw in ({'chunk':4096},{'microbatch':8}):
+        for kw in ({'chunk':4096},{'microbatch':16}):
             with self.assertRaises(ValueError):Options(**kw)
         self.assertEqual(VARIANTS['reference'],VARIANTS['reference_repeat'])
 
@@ -112,3 +112,21 @@ class ReportTests(unittest.TestCase):
             with self.assertRaises(ValueError):summarize(root)
             bad['data_sha256']='data';bad['validation_nll']=4.;path.write_text(json.dumps(bad))
             with self.assertRaises(ValueError):summarize(root)
+
+
+class MBS8Tests(unittest.TestCase):
+    def test_native_suite_keeps_global_batch_and_reference(self):
+        from efficient_llm.a2.performance import SUITES
+        from scripts.launch_a2_performance import jobs_for
+        jobs=jobs_for(Path('/inputs'),Path('/config'),29500,'mbs8')['jobs']
+        self.assertEqual([j['name'] for j in jobs],list(SUITES['mbs8']))
+        self.assertEqual(sum(j['timeout_seconds'] for j in jobs),1800)
+        for j in jobs:
+            self.assertNotIn('--profile',j['argv'])
+            self.assertIn('mbs8',j['argv'])
+            if j['name']!='reference':self.assertIn('{run_dir}/reference',j['argv'])
+        for name,opt in SUITES['mbs8'].items():
+            args=make_arguments('/tmp/a2-args-only',16,3e-4,opt.microbatch,8,cuda=False)
+            self.assertEqual(args.gradient_accumulation_steps*opt.microbatch*8,64)
+            self.assertEqual(args.gradient_accumulation_steps,1 if opt.microbatch==8 else 2)
+            self.assertFalse(opt.compile_head or opt.fused_optimizer or opt.deferred_checks)

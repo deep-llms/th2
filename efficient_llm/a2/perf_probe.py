@@ -12,7 +12,7 @@ import numpy as np
 from transformers import TrainerCallback,default_data_collator,set_seed
 from .data import PackedRows,write_json
 from .model import KDModel,load_parent,prune
-from .performance import VARIANTS,PerformanceKDModel,PerformanceTrainer
+from .performance import SUITES,PerformanceKDModel,PerformanceTrainer
 from .protocol import FIXED_SETS,layers_for,lr_for_update
 from .train import HealTrainer,make_arguments,audit_order
 from .measure import score
@@ -73,7 +73,8 @@ class Probe(TrainerCallback):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--inputs',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--variant',choices=VARIANTS,required=True);p.add_argument('--reference',type=Path)
+    p.add_argument('--suite',choices=SUITES,default='initial')
+    p.add_argument('--variant',required=True);p.add_argument('--reference',type=Path)
     p.add_argument('--steps',type=int,default=16);p.add_argument('--profile',action='store_true')
     a=p.parse_args()
     if a.steps!=16:raise ValueError('Fixed discarded 16-update probe')
@@ -82,7 +83,7 @@ def main():
     if state.device.type!='cuda' or world!=8:raise ValueError('Eight actual GPUs required')
     if rank==0:a.output.mkdir(parents=True,exist_ok=False)
     torch.distributed.barrier()
-    option=VARIANTS[a.variant];set_seed(0)
+    option=SUITES[a.suite][a.variant];set_seed(0)
     assets=json.loads((a.inputs/'assets.json').read_text())
     student=load_parent(assets,'dclm','P300',state.device);prune(student,layers_for(FIXED_SETS['S1']))
     teacher=load_parent(assets,'dclm','P300',state.device,teacher=True)
@@ -90,8 +91,8 @@ def main():
     # Prefix identical for all variants. Per-rank assignment can change with
     # microbatch but each effective update consumes the exact same 64 sequences.
     args=make_arguments(a.output/'trainer',a.steps,3e-4,option.microbatch,world,cuda=True)
-    plain=a.variant in ('reference','reference_repeat')
-    model=KDModel(student) if plain else PerformanceKDModel(student,option)
+    plain=a.suite=='mbs8' or a.variant in ('reference','reference_repeat')
+    model=KDModel(student,option.chunk) if plain else PerformanceKDModel(student,option)
     probe=Probe(student,a.output,a.reference,rank,world,a.profile)
     kwargs=dict(model=model,teacher=teacher,args=args,train_dataset=rows,
         data_collator=default_data_collator,callbacks=[probe])
@@ -114,7 +115,7 @@ def main():
         initial_grad=probe.gradient
         validation_delta=0. if a.reference is None else val['loss']-json.loads((a.reference/'result.json').read_text())['validation_nll']
         accepted=(initial_grad['relative_l2']<=.02 and initial_grad['cosine']>=.9998 and abs(validation_delta)<=.002)
-        result=dict(status='complete',numerical_passed=accepted,variant=a.variant,options=option.record(),
+        result=dict(suite=a.suite,status='complete',numerical_passed=accepted,variant=a.variant,options=option.record(),
             first_gradient=initial_grad,validation_nll=val['loss'],validation_delta=validation_delta,
             thresholds=dict(gradient_relative_l2=.02,gradient_cosine=.9998,validation_abs_nats=.002),
             all_step_seconds=times.cpu().tolist(),steady_mean_seconds=statistics.mean(steady),
