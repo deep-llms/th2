@@ -18,6 +18,22 @@ def write_lock(path,value):
 
 
 class EvalSuiteTests(unittest.TestCase):
+    def test_fixed_screen_requires_all_matched_checkpoints(self):
+        from eval.a2_suite import select_initial_screen
+        from efficient_llm.a2.protocol import Run
+        rows=[]
+        for ds in ('dclm','fwe','nem'):
+            for parent in ('P300','P1T'):
+                for budget in (('0.2B','0.8B') if ds=='nem' else ('0.2B',)):
+                    rows.append(dict(Run(ds,parent,'S1',budget,3e-4).record(),status='complete',diverged=False))
+        selected=select_initial_screen(rows)
+        self.assertEqual(len(selected),14)
+        self.assertEqual(sum(r['kind']=='parent' for r in selected.values()),6)
+        with self.assertRaises(ValueError):select_initial_screen(rows[:-1])
+        with self.assertRaises(ValueError):select_initial_screen(rows+[rows[0]])
+        changed=copy.deepcopy(rows);changed[0]['set']='S2'
+        with self.assertRaises(ValueError):select_initial_screen(changed)
+
     def fixture(self):
         tasks=list(COUNTS);requests=[dict(context=[0],continuation=[2]) for _ in tasks]
         protocol=dict(tasks=tasks,limit=1,seed=42,num_fewshot=0,max_length=4096)

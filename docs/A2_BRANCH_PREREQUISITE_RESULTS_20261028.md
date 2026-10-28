@@ -199,3 +199,29 @@ remaining~1.5–1.8h, ETA21:00–21:15SGT.
 [Compact archive](results/a2_remaining_phase0a_20261028/status_1926); rawlocal
 temp/a2_remaining_health10.log SHA256
 8d3d0a11c1fb62d4eab23f6358907804cb7a8a6b532eb9de41382653e0eb8140.
+
+## 19:56 SGT check: 27/28 remaining fits complete
+
+NEM/P1T shortS3/S4 finalNLL2.884076917/2.896807783; mainS2 finalNLL
+2.832700506. All27 results pass exactrecipe/fullLR/eight-rankorder/roundtrip,
+no divergence/retry. Lastfit NEM/P1T/S1 0.8B logged110/3,051steps.
+EightGPUs76–100%,45,882MiB,guard656246/86frozen source hashes verified.
+Elapsed4h47/current,totalphase9h57. ETA21:00–21:10SGT, about one hour remaining.
+
+All three datasets now have the required main S1/S2 .2B contrasts:
+
+| Dataset | Mean excess damage, P1T minus P300 (nats) |
+|---|---:|
+| DCLM | +0.012571973 |
+| FWE | +0.015041272 |
+| NEM | +0.010013559 |
+| Mean | **+0.012542268** |
+
+All12short contrasts have positive sign. The registered **main statistic** now
+satisfies its GO rule; this is not a final whole-pilot conclusion or authorization
+to launch Phase0B. The NEM long-budget paired result and terminal artifact/burn
+handoff remain pending. Positive means P1T loses slightly more relative to its
+own parent after healing; P1T still has lower absolute NLL.
+[Compact archive](results/a2_remaining_phase0a_20261028/status_1956); rawlocal
+temp/a2_remaining_health11.log SHA256
+fe0b525d744a8dcba1d6a4c4cd4eda7e19a7ecc37ae1f938a58d72df8d68ec70.

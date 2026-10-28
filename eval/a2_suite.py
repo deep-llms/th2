@@ -115,3 +115,25 @@ def execute_scoring(jobs, *, timeout_seconds):
     with ThreadPoolExecutor(max_workers=8) as pool:
         futures=[pool.submit(lane,items) for items in lanes.values()]
         for future in futures:future.result()
+
+
+def select_initial_screen(verified_rows):
+    """Fixed supplementary screen: six parents, six S1 main fits, two NEM long.
+
+    Caller must validate original receipts first. No best-on-benchmark selection;
+    S2 and T14 are not substitutes for these prespecified checkpoints.
+    """
+    result={}
+    for dataset in ('dclm','fwe','nem'):
+        for parent in ('P300','P1T'):
+            result[f'{dataset}-{parent}-original']=dict(kind='parent',dataset=dataset,parent=parent)
+            for budget in (('0.2B','0.8B') if dataset=='nem' else ('0.2B',)):
+                eligible=[row for row in verified_rows if
+                    (row['dataset'],row['parent'],row['teacher'],row['set'],row['budget'])==
+                    (dataset,parent,parent,'S1',budget) and row['status']=='complete'
+                    and row.get('diverged') is False and row.get('suffix','') in ('','-rerun')]
+                if len(eligible)!=1:raise ValueError('Missing or ambiguous fixed downstream checkpoint')
+                row=eligible[0]
+                result[f'{dataset}-{parent}-S1-{budget}']=dict(kind='healed',dataset=dataset,
+                    parent=parent,run_id=row['run_id'])
+    return result

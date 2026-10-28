@@ -239,3 +239,24 @@ ThreeCPU tests pass, including mocked ninejobs/eightlanes without GPU execution,
 paired accuracy aggregation and changed/missing artifacts/prompts rejection.
 Need reviewed checkpoint selection/identity-plan construction, supervised launch
 integration and actual full-model GPU parity before deployment. No new GPUjob.
+
+20:02SGT local preparation: eval/a2_check.py selects fixed first/length-extreme
+requests without looking at model scores, compares native likelihood with an
+independent full-sequence masked cross-entropy, and compares batch1vs2. Thresholds
+are frozen before GPU execution: manual<=2e-5nats/answer-token, batching<=0.01,
+zero boolean greedy-match disagreements. Native SDPA/FP32params/BF16AMP unchanged.
+ThreeCPU tests pass including truncation/full-length continuation and deliberately
+wrong score rejection. Actual representative original+pruned full-model GPU checks
+are still required under the supervisor after training/burn handoff.
+
+Initial supplementary downstream screen fixed before any benchmark scoring:
+all six original P300/P1T parents (DCLM/FWE/NEM), their six S1 .2B healed exports,
+and two NEM S1 .8B exports:14checkpoints. Same nine verified offline English tasks,
+zero-shot/seed42/context4096, shared requests, eight independent GPU scoring lanes.
+Select no best benchmark/seed; no S2/T14 substitution if a chosen fit is missing.
+Report per-task accuracies and eight-MC mean, LAMBADA separately; compare each
+healed model with its own parent. Supplementary metrics do not replace A2's
+registered decision rule. select_initial_screen has a missing/duplicate/wrong-set
+regression test; four suite tests pass. Final integration still needed: actual
+reviewed identity-plan construction, supervised stage/launcher, CPU replay and
+full-model GPU gate. No eval launched and no speculative runtime guarantee yet.

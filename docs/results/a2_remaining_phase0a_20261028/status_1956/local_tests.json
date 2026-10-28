@@ -1,0 +1,16 @@
+[
+  {
+    "log": "temp/a2_eval_check_tests.log",
+    "sha256": "0e4e4d0677ee0a5b3aa65b19668a8c1298ed17fc72e1593bce76a101ba83a6b2",
+    "tests": 3,
+    "status": "passed",
+    "gpu_validated": false
+  },
+  {
+    "log": "temp/a2_eval_screen_tests.log",
+    "sha256": "5c5059ffe660259db32dc1b4a02e8b2a73514e80d187184d21997dcd28f35254",
+    "tests": 4,
+    "status": "passed",
+    "gpu_validated": false
+  }
+]
