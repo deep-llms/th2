@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "scope": "dclm_P300_S1_grid",
+  "estimated_three_fits_seconds": 1193.6179657909088,
+  "extra_seconds_per_retry": 397.87265526363626,
+  "completed_check_and_baseline_seconds": 137.3584814220667,
+  "hard_cap_seconds": 3600,
+  "historical_phase0A_seconds": 322,
+  "charge_all_elapsed_to_phase0A": true,
+  "gate_sha256": "88833f396b7fa997c59f4ac4964ec3f2702dfcd2c09e45385308991f7ffba695"
+}

@@ -1,0 +1,74 @@
+{
+  "T4_no_removal": true,
+  "removal_patterns": [
+    [
+      0
+    ],
+    [
+      11
+    ],
+    [
+      23
+    ],
+    [
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  ],
+  "T4_prune_max_abs": 0.0,
+  "T10_formula_max_abs": 3.725290298461914e-09,
+  "T11_max_abs": 3.1141098588705063e-09,
+  "T4_reload_max_abs": 0.0,
+  "T4_reload_val_abs": 0.0,
+  "T5_loss": 0.0,
+  "T5_finite_gradient": true,
+  "T12_loss_abs": 4.76837158203125e-07,
+  "T12_gradient_max_abs": 2.5331974029541016e-07,
+  "T12_accum_max_abs": 8.940696716308594e-07,
+  "passed": true,
+  "probe_shape": [
+    1,
+    64
+  ],
+  "provenance": {
+    "spec_sha256": "b5507004791c958ec433005d97be8482561a6e3b010ec17a9be420f533204cca",
+    "assets_sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+    "data_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+    "data_spec_sha256": "9854e8338cecab6cd6fccd1700e7196c62a329a3b44fa76689d31d11ecbc9afd",
+    "code_commit": "4c2c3853545289de8b89f815fe9fd1023a983aae",
+    "code_files": {
+      "a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+      "a2/__main__.py": "f7c48fb9b739d935278b514ad3a90ef0bb0f6b63b3c44e422b86df739e7dd03b",
+      "a2/check.py": "6a8b05074f845085c66d8b9b15bed86bcc4a01b89e362ba27b08c12a7800e43f",
+      "a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+      "a2/early_grid.py": "a4d65faffa6b1058bbc921d7aa3f0f5c145f744e6ea3ebc4805d514499eab5c3",
+      "a2/measure.py": "db818b8b124d6a097072713294f140cb14cf4c3d7495b351dbcd8f5e2e701d26",
+      "a2/model.py": "ac40fb3776f8537a04fad8b3f164c2ea598a1ab1b994b3cf61cf078d7e8c4d4f",
+      "a2/protocol.py": "3dc82c3151edcd3ec84e092e1b0d7f6def1c4f1bbcf2d8fcf540e1322cf890b9",
+      "a2/queue.py": "bc7f2e2c476206fbc6699363a39f47148f3bff5ac98ad1a8207728116a01c491",
+      "a2/results.py": "c67c241cb97950493389329a48f0069f21f55ae4d20b126fc2dca51044bd300f",
+      "a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+      "packed_evaluation.py": "e8ad9b65831ed44522670b229e8724e9e3ff69163c79f901371fb20c274877e7",
+      "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0",
+      "training_data.py": "37982be7fe0ddf3a068c7d625125eae6da3ea2073a9e88a97f02474d86ff7028",
+      "efficient_llm/diagnostic_data.py": "da080488a893ad4b71048a69298b867c89285ce4bb7f7ee94261e61ad1616d19"
+    },
+    "software": {
+      "torch": "2.14.1",
+      "transformers": "4.57.1",
+      "accelerate": "1.13.0",
+      "datasets": "4.8.5",
+      "numpy": "2.4.6",
+      "safetensors": "0.8.0"
+    },
+    "python": "3.11.15",
+    "secondary_map_sha256": "3f0711e12a90ff8d24abd06e0e8eda10ce65d378ba74f9a0b5643069afb655b4"
+  },
+  "scope": "shared_mechanism",
+  "representative": "dclm/P300",
+  "sets_sha256": "5db5c88a8ca5d9db0ca5d6ebe54e53a59d7e0c90b0b7dd8017099f8dbd7c85cb"
+}

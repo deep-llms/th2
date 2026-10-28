@@ -17,6 +17,19 @@ only authorize DCLM/P300 S1's registered grid and retries; no full-pilot claim.
 Estimated 25–35 minutes after queue start, plus ~7 minutes per retry; one-hour
 hard cap. Charge all elapsed time to Phase 0A alongside prior 322seconds. Full
 pilot workload report remains pending; report progress/ETA in Singapore time.
+Fresh healthcacb814 at08:34:50SGT confirms actual numerical checks passed,
+unhealed S1 baseline complete and first3e-5 fit at60/114updates (KD1.061→0.6639).
+Known burn workers638429–638436 reclaimed; all8GPUs empty08:30:35 before start.
+Supervisor639431 owns guard/session and automatic burn handoff. Numerical47.18s,
+unhealed scoring90.18s; first fit started08:32:54. Three-fit estimate1193.62s.
+Updated ETA08:55–09:00SGT including burn handoff if no retry; +~7min per retry.
+Rawtemp/a2_grid_health01.log SHA
+e8e33fcf003d8b6b8b0070598cd9538ae831f36fee434adc5ec932b86954ae86.
+Artifacts in docs/results/a2_early_grid_20261028; fullsmallfiles ignoredtemp/
+a2_grid_health01. Every source-manifest file matches frozen4c2c385. No final
+result yet; do not infer success from a disappearing worker. Retrieve final
+results, coverage/roundtrips and verified communicating burns next. commands#0.
+
 Submission032f258 pushed/remote-head verified at08:29SGT, frozen source4c2c385.
 Launch acknowledged in Dropbox00:32:41UTC /08:32:41SGT. Actual parent/input
 hashes, historical-reuse contract and copied8GPU/BF16 Accelerate config passed.
