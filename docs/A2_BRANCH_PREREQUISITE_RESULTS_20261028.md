@@ -96,3 +96,28 @@ is18600seconds plus currentelapsed, about6.97nodehours so far, below15/18h caps.
 Verified compact results: results/a2_remaining_phase0a_20261028/status_1657.
 Raw local receipt: temp/a2_remaining_health05.log, SHA
 ba807e563df5eac920ccb0e2e41a91e860573fdcd3b03c38944c3d2831a1d8c0.
+
+
+At17:27:35 SGT, 15/28 new fits passed all recipe/order/LR/roundtrip checks, with
+no divergence/retry. FWE/P1T/S2–0.2B is active, logged340/762updates. EightGPUs
+95–97%, guard656246, 86frozen sourcefiles unchanged. Queueelapsed2h18min; cumulative
+Phase0A ledger~7h28min (prior18600seconds included).
+
+| New FWE result | Final NLL | Damage vs original parent |
+|---|---:|---:|
+| P300 / S2 / 0.2B | 2.949261 | +0.088629 |
+| P1T / S2 / 0.05B | 3.002164 | +0.193456 |
+| P1T / S3 / 0.05B | 2.959809 | +0.151102 |
+| P1T / S4 / 0.05B | 2.959262 | +0.150554 |
+
+FWE's short-budget S2/S3/S4 excessdamage contrasts P1T−P300 are
++0.020757/+0.014457/+0.025185nats. As with DCLM, the later parent still has lower
+absolute NLL; these contrasts measure degradation from its own original loss.
+The main-budget FWE S2 pair and NEM are pending; fullpilot remains INCOMPLETE.
+
+13original fits remain includingactive, 9568loggedremainingupdates. Atmedian
+1.1895seconds/update plus90–180seconds/fit overhead, remaining~3.5–3.8hours
+from17:27; ETA21:00–21:20SGT including handoff allowance, without retries.
+Archive results/a2_remaining_phase0a_20261028/status_1727; rawlocal
+temp/a2_remaining_health06.log, SHA
+8e57c2b81dda159afa05dec00e61c680000faf2e55017380a848dd96e10219f4.

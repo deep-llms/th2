@@ -162,3 +162,21 @@ boundaries; the regression fixture detects this, and A2 disables logits_cache.
 No GPU evaluation has run. The suite/checkpoint identity collector and real
 full-model GPU parity remain required; confirm offline node benchmark files and
 compatible harness runtime before scheduling. No training numerical code changed.
+
+At17:27SGT the node confirms all nine existing offline benchmark snapshots pass
+manifest hashes. a2_env has torch2.14.1/transformers4.57.1/datasets4.8.5/tokenizers
+0.22.1, but no lm-eval. Do not change the live environment or load native A2
+weights using the old eval environment's incompatible Transformers.
+
+Prepared eval/a2_likelihood.py: a native-only batched token-request scorer, no
+lm-eval dependency, FP32parameters/BF16CUDAAMP, full-vocabulary likelihood,
+canonical left truncation/rightpadding/EOS0 prefix and original request order.
+It matches the pinned harness on CPU, including the cache-boundary regression.
+Public text requests with the actual SHA-verified GPT-NeoX tokenizer also match
+independent native logits, including emptycontext/trailingwhitespace. Six tests
+pass; no actual-weight GPU evaluation yet. Training/numericalcore is untouched.
+Next evaluation preparation: confirm the existing eval_env runtime, prepare
+canonical task/token requests in that CPU environment, score those requests
+using a2_env, then replay scores to canonical task aggregation. This avoids
+installing/importing libraries across environments. Request identity/checkpoint
+collector, CLI/orchestration and actual GPU parity remain required before launch.

@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "cpu_tests": 6,
+  "gpu_tests": "not_run",
+  "native_parameters": "tiny OpenSci only; actual pinned tokenizer",
+  "source": {
+    "eval/a2_likelihood.py": "aa4cea6264e5bfaa525d4bc7249727439947b644b2b1f8723413517f19147a7c",
+    "eval/a2_harness.py": "9b2b98c80289faa3f01f2966745825872fb569ef56c4edd02d3d1685c60ee39f",
+    "tests/a2/test_harness.py": "656f19c2e37bd39caa1b5b4fadbc2e2d2a414523fe6f2c2c6b59b373aa2a8ce9"
+  },
+  "log": "temp/a2_native_likelihood_cpu_tests.log",
+  "log_sha256": "8f5a193fbc0c29140e3f8cf343812bf26092ac8c66b1a7bda59362370963b668"
+}

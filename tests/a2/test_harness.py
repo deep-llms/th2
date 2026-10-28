@@ -1,12 +1,17 @@
 import copy
+import hashlib
+import json
+import os
+from pathlib import Path
 import tempfile
 import unittest
 
 import torch
 from tokenizers import Tokenizer, models, pre_tokenizers
-from transformers import PreTrainedTokenizerFast
+from transformers import AutoTokenizer, PreTrainedTokenizerFast
 
 from eval.a2_harness import make_harness
+from eval.a2_likelihood import score_requests
 from efficient_llm.a2.model import prune, save_student, reload_student
 from test_model import tiny_model
 
@@ -19,6 +24,59 @@ def tokenizer():
 
 
 class NativeHarnessTests(unittest.TestCase):
+    def test_native_scorer_matches_harness_without_harness_runtime(self):
+        model=tiny_model()
+        rows=[dict(context=[2,3],continuation=[4,5]),
+              dict(context=[],continuation=[6]),
+              dict(context=[2],continuation=[3,4,5]),
+              dict(context=[2,3,0,4,5,6],continuation=[7,8])]
+        lm=make_harness(model,tokenizer(),batch_size=3,max_length=4)
+        reference=lm._loglikelihood_tokens(
+            [((str(i),'answer'),r['context'] or [0],r['continuation']) for i,r in enumerate(rows)],
+            disable_tqdm=True)
+        for batch_size in (1,3):
+            got=score_requests(model,rows,batch_size=batch_size,max_length=4)
+            self.assertEqual(got['truncated_requests'],1)
+            for a,b in zip(got['scores'],reference):
+                self.assertAlmostEqual(a[0],b[0],places=5)
+                self.assertEqual(a[1],b[1])
+        for invalid in ([dict(context=[-1],continuation=[2])],
+                        [dict(context=[2],continuation=[])],
+                        [dict(context=[2],continuation=[3]*5)]):
+            with self.assertRaises(ValueError):score_requests(model,invalid,max_length=4)
+
+    def test_public_text_requests_with_pinned_neox_tokenizer(self):
+        from lm_eval.api.instance import Instance
+        location=os.environ.get('A2_NEOX_TOKENIZER')
+        if not location:
+            self.skipTest('Set A2_NEOX_TOKENIZER to the existing pinned local tokenizer')
+        manifest=json.loads(Path('resources/a2_inputs_20261028.json').read_text())
+        for name,digest in manifest['tokenizer_provenance']['gpt_neox']['files'].items():
+            self.assertEqual(hashlib.sha256(Path(location,name).read_bytes()).hexdigest(),digest)
+        tok=AutoTokenizer.from_pretrained(location,local_files_only=True)
+        model=tiny_model(vocab_size=50304)
+        lm=make_harness(model,tok,max_length=64,batch_size=3)
+        pairs=[('The capital of Singapore is',' Singapore.'),('', 'Hello.'),
+               ('A small test ', 'has two parts.')]
+        requests=[Instance(request_type='loglikelihood',doc={},arguments=pair,idx=i)
+                  for i,pair in enumerate(pairs)]
+        got=lm.loglikelihood(requests,disable_tqdm=True)
+        for (context,answer),(value,_) in zip(pairs,got):
+            # Harness's canonical convention moves trailing context whitespace
+            # into the answer. Score independent native logits for those tokens.
+            clean=context.rstrip();answer=context[len(clean):]+answer
+            context_ids=tok.encode(clean,add_special_tokens=False)
+            joined=tok.encode(clean+answer,add_special_tokens=False)
+            target=joined[len(context_ids):]
+            context_ids=context_ids or [0]
+            ids=torch.tensor([context_ids+target])
+            with torch.no_grad():
+                logp=model(ids[:,:-1],use_cache=False).logits[0,len(context_ids)-1:].float().log_softmax(-1)
+            wanted=logp.gather(1,torch.tensor(target)[:,None]).sum().item()
+            self.assertAlmostEqual(value,wanted,places=4)
+        self.assertEqual(lm.prefix_token_id,0)
+        self.assertFalse(lm.add_bos_token)
+
     def test_likelihood_matches_manual_and_padding(self):
         model=tiny_model(); lm=make_harness(model,tokenizer(),batch_size=3,max_length=16)
         requests=[(('a','b'),[2,3],[4,5]), (('c','d'),[0],[6]), (('e','f'),[2],[3,4,5])]

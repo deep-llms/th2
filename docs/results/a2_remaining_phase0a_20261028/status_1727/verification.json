@@ -1,0 +1,36 @@
+{
+  "snapshot": "2026-10-28T09:27:35.741434+00:00",
+  "source_commit": "d3a8a0b35b29a9e6cd951a7d4cf754908fe0fc40",
+  "source_files_verified": 86,
+  "guard": "{\"owner_pid\": 656246, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised\", \"at\": \"2026-10-28T07:08:28.984717+00:00\"}",
+  "session": "0 656246",
+  "verified_fits": 15,
+  "baselines": 6,
+  "no_divergence_or_retry": true,
+  "full_lr_and_exact_eight_rank_order_verified": true,
+  "roundtrip_difference": 0,
+  "raw_log": "temp/a2_remaining_health06.log",
+  "raw_sha256": "8e57c2b81dda159afa05dec00e61c680000faf2e55017380a848dd96e10219f4",
+  "raw_results_artifact_sha256": "c8337942784bb4b512b52002dd3569d52c0b0a75fa1f36603aa33751829f8c4a",
+  "eval_runtime": {
+    "torch": "2.14.1",
+    "transformers": "4.57.1",
+    "lm-eval": null,
+    "datasets": "4.8.5",
+    "tokenizers": "0.22.1"
+  },
+  "offline_benchmarks": {
+    "status": "verified",
+    "tasks": [
+      "arc_challenge",
+      "arc_easy",
+      "boolq",
+      "hellaswag",
+      "lambada_openai",
+      "openbookqa",
+      "piqa",
+      "sciq",
+      "winogrande"
+    ]
+  }
+}
