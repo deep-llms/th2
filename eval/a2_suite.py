@@ -18,7 +18,8 @@ def scoring_jobs(identities, prepared, output, native_python, gpus):
     if (len(gpus)!=8 or len(set(gpus))!=8 or any(type(g) is not int or g<0 for g in gpus)
             or not identities or not Path(native_python).is_absolute()):
         raise ValueError('Explicit native runtime and eight unique physical GPUs required')
-    if any(not name or not name.replace('-','').replace('_','').isalnum() for name in identities):
+    if any(not name or name in ('.','..') or not name[0].isalnum()
+           or not name.replace('-','').replace('_','').replace('.','').isalnum() for name in identities):
         raise ValueError('Invalid checkpoint label')
     root=Path(output)
     jobs=[]
@@ -98,19 +99,23 @@ def execute_scoring(jobs, *, timeout_seconds):
     from concurrent.futures import ThreadPoolExecutor
     import os
     import subprocess
+    import time
     if not math.isfinite(timeout_seconds) or timeout_seconds<=0:raise ValueError('Finite timeout required')
+    deadline=time.monotonic()+timeout_seconds
     lanes={}
     for job in jobs:lanes.setdefault(job['gpu'],[]).append(job)
     if len(lanes)>8:raise ValueError('Too many GPU lanes')
     def lane(items):
         for job in items:
+            remaining=deadline-time.monotonic()
+            if remaining<=0:raise TimeoutError('Shared scoring budget exhausted')
             target=Path(job['output']);target.parent.mkdir(parents=True,exist_ok=True)
             if target.exists():raise ValueError('Score output exists')
             env={**os.environ,'CUDA_VISIBLE_DEVICES':str(job['gpu']),'CUDA_DEVICE_ORDER':'PCI_BUS_ID'}
             for key in ('RANK','LOCAL_RANK','WORLD_SIZE','LOCAL_WORLD_SIZE'):env.pop(key,None)
             with target.with_suffix('.log').open('x') as stream:
                 subprocess.run(job['argv'],env=env,stdout=stream,stderr=subprocess.STDOUT,
-                               check=True,timeout=timeout_seconds)
+                               check=True,timeout=remaining)
             if not target.is_file():raise ValueError('Native scorer produced no artifact')
     with ThreadPoolExecutor(max_workers=8) as pool:
         futures=[pool.submit(lane,items) for items in lanes.values()]

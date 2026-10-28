@@ -1,0 +1,34 @@
+{
+  "health_at": "2026-10-28T12:31:26.181068+00:00",
+  "raw_log": "temp/a2_remaining_health12.log",
+  "raw_sha256": "25c7ad59c9164531bda219b2d9fc79d989fc47a5e8432f34651bcdd793a6e0b2",
+  "source_files_verified": 86,
+  "source_commit": "d3a8a0b35b29a9e6cd951a7d4cf754908fe0fc40",
+  "guard": "{\"owner_pid\": 656246, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/supervised\", \"at\": \"2026-10-28T07:08:28.984717+00:00\"}",
+  "session": "0 656246",
+  "receipt_complete": true,
+  "active": "nem/P1T/S1/0.8B",
+  "logged_updates": 1890,
+  "total_updates": 3051,
+  "gpu_utilization": [
+    96.0,
+    95.0,
+    95.0,
+    96.0,
+    96.0,
+    96.0,
+    96.0,
+    95.0
+  ],
+  "gpu_memory_mib": [
+    45882.0,
+    45882.0,
+    45882.0,
+    45882.0,
+    45882.0,
+    45882.0,
+    45882.0,
+    45882.0
+  ],
+  "health_commit": "ee3243c51cac89b9da574d87f45999c3e5eb85db"
+}

@@ -260,3 +260,29 @@ registered decision rule. select_initial_screen has a missing/duplicate/wrong-se
 regression test; four suite tests pass. Final integration still needed: actual
 reviewed identity-plan construction, supervised stage/launcher, CPU replay and
 full-model GPU gate. No eval launched and no speculative runtime guarantee yet.
+
+### Downstream coordinator preparation — 28 October 20:37 SGT
+
+`eval/a2_plan.py` builds the fixed 14-checkpoint identity set only from reviewed
+terminal/history locks, complete registered fit coverage, and exact agreement
+between aggregate and export-adjacent results. Original provenance is copied
+verbatim. It checks native checkpoint bytes through the existing identity code.
+This CPU operation does not substitute for an independent live burn inspection.
+
+`eval/a2_run.py` prepares all nine canonical tasks once in the existing eval
+environment, gates one parent and one pruned checkpoint in a2_env, schedules
+14 models across eight single-GPU lanes, and replays/collects paired results.
+Each model loads once for full scoring. A failed numerical gate prevents full
+scoring. Its caller must already own GPUs under the existing native supervisor.
+
+Integration tests found and fixed decimal budget labels being rejected by the
+job planner and per-job timeout resets allowing a lane to exceed the shared
+scoring deadline. Fourteen CPU tests passed, including actual tiny native
+exports, metadata/receipt tamper rejection, fixed screen selection, shared
+requests, GPU-gate failure blocking scoring, and shared deadline exhaustion.
+Evidence: `temp/a2_eval_coordinator_tests.log`. No full-model GPU eval yet.
+
+Still required: actual final terminal receipt bundle and identity plan, a
+supervised launcher freezing `eval/` as well as its existing dependencies,
+copy/verify Accelerate, independent burn/free-GPU handoff, actual-weight GPU
+numerical gates, then the full screen. No training source or environment changed.

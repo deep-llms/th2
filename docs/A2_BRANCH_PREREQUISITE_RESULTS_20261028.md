@@ -225,3 +225,21 @@ own parent after healing; P1T still has lower absolute NLL.
 [Compact archive](results/a2_remaining_phase0a_20261028/status_1956); rawlocal
 temp/a2_remaining_health11.log SHA256
 fe0b525d744a8dcba1d6a4c4cd4eda7e19a7ecc37ae1f938a58d72df8d68ec70.
+
+### 28 October 20:31 SGT — final long fit advancing
+
+Read-only health `ee3243c` confirms the final NEM/P1T/S1 0.8B fit at
+1,890/3,051 updates. All eight GPUs are active at 95–96%, using 45,882 MiB
+each. Guard owner 656246 and all 86 frozen source files are unchanged.
+27/28 new fits and all six baselines remain verified; no divergence/retry,
+recipe/order/LR or save/reload failures. No new final validation result.
+
+Main-rule E remains +0.012542268 nats with 12/12 positive short contrasts.
+The main statistical rule returns GO, but the full phase and terminal handoff
+are not complete. No Phase0B job was launched. ETA including validation and
+burn handoff remains 21:00–21:10 SGT (29–39 minutes from this snapshot).
+Elapsed queue ~5h22; conservative total phase ledger ~10h32.
+
+Evidence: `results/a2_remaining_phase0a_20261028/status_2031/`; full local
+receipt `temp/a2_remaining_health12.log`, SHA256
+`25c7ad59c9164531bda219b2d9fc79d989fc47a5e8432f34651bcdd793a6e0b2`.
