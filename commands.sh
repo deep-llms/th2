@@ -1,6 +1,40 @@
-#1 +60+a
-#th2-6y3o-a2-downstream-20261028-a01
+#1 +30+a
+#th2-6y3o-a2-downstream-health-20261028-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES="" HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 WANDB_MODE=offline TOKENIZERS_PARALLELISM=false
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.launch_a2_downstream --stage resources/a2_phase0a_terminal_20261028.json --stage-sha256 2a24396c4f3ecf16d56752cadec601a03e87bc420de967f83820b8df00f77c73 --history resources/a2_completed_surveys_20261028.json --history-sha256 936da19cf8ced000505836ee82c80ffa1347ca63c314a2b4a07d6f18a4436986 --assets /mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json --assets-sha256 5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371 --sets /mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a03/supervised/run/sets.json --sets-sha256 835e39c4e4acd1ffc09e05d4282ea707371af35a8ac0efd5007502376f8de3b9 --output /mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01 --predecessor-burn-script /mnt/local/_outputs/deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01/source/resources/llm_pretrain_burn.py --eval-python /mnt/local/conda-py311/envs/eval/bin/python3.11 --tokenizer /mnt/local/_models/deep-llms_th2/a2/dclm/P300 --dataset-root /mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023 --host thiennh-p6-6y3o-worker-0 --session a2_downstream_20261028_a01 --code-commit e740f86697689192d70b4d3c5b0d3484065c252b --spent-seconds 40200 --timeout-seconds 10800
+export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
+import hashlib,json,socket,subprocess
+from pathlib import Path
+from datetime import datetime,timezone
+from scripts.gpu_process import inspect
+assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-downstream-20261028-a01')
+print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
+for rel in ('source-manifest.json','plan.json','jobs.json','phase-budget.json','accelerate-env.log','identities/identities.json',
+ 'supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json',
+ 'supervised/run/run.json','supervised/run/complete.json','supervised/run/downstream/complete.json','supervised/run/downstream/results.json',
+ 'supervised/run/downstream/dclm-P300-original-check.json','supervised/run/downstream/dclm-P300-S1-0.2B-check.json'):
+ p=root/rel
+ if p.is_file():
+  raw=p.read_bytes();assert len(raw)<5000000
+  print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+ else:print('MISSING',rel,flush=True)
+base=root/'supervised/run/downstream'
+p=base/'prepared.json'
+if p.is_file():
+ raw=p.read_bytes();obj=json.loads(raw)
+ print('PREPARED_SUMMARY',json.dumps(dict(sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw),requests=len(obj['requests']),protocol=obj['protocol'])),flush=True)
+for p in sorted((base/'scores').glob('*/scores.json')):
+ raw=p.read_bytes();obj=json.loads(raw)
+ print('SCORED_SUMMARY',json.dumps(dict(name=p.parent.name,sha256=hashlib.sha256(raw).hexdigest(),requests=len(obj['scores']),identity=obj['checkpoint_identity_sha256'],precision=obj['precision'])),flush=True)
+logs=[root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/a2-downstream.log',*base.glob('*.log'),*(base/'scores').glob('*/*.log')]
+for p in logs:
+ if p.is_file():
+  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));tail=f.read().decode(errors='replace')
+  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
+guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
+print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_downstream_20261028_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+print('HEALTH_COMPLETE',flush=True)
+PY
