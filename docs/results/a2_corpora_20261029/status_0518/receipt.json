@@ -1,0 +1,213 @@
+{
+  "raw_log": "temp/a2_corpora_health04.log",
+  "raw_sha256": "a0a2848d5da4a31f6f671f0b6de39827f4d0f52de8c706af4a491ed73b27b15f",
+  "artifacts": {
+    "source-manifest.json": "d2f443908bf165c58539cf263d5155eed86547a2aa8f980ad03933cc8ae6f59a",
+    "data/status.json": "91644672c8d92098c1af14b78fa278e22ece663b82ba13540ef3647445fd8d4b"
+  },
+  "corpus_counts": [
+    {
+      "corpus": "dclm",
+      "raw_files_present": 127,
+      "raw_bytes_observed": 34193724507,
+      "planned_files": 340,
+      "completed_parts": 28
+    },
+    {
+      "corpus": "fineweb_edu",
+      "raw_files_present": 0,
+      "raw_bytes_observed": 0,
+      "planned_files": 60,
+      "completed_parts": 0
+    }
+  ],
+  "health_at": "2026-10-28T21:18:11.385818+00:00",
+  "session": "0 681361",
+  "receipt_complete": true,
+  "source_files_verified": 5,
+  "source_commit": "5fdf313eb2fb05f239e056b543266b0c69610f1d",
+  "part_progress": [
+    {
+      "corpus": "dclm",
+      "completed": [
+        {
+          "index": 1,
+          "seconds": 1009.1474440717138,
+          "tokens": 120522086,
+          "sha256": "fdd2f14188c81493b6622a09d97d60998cd276d5dfcdf03d220b6be953342b3d"
+        },
+        {
+          "index": 2,
+          "seconds": 1123.8916802657768,
+          "tokens": 133404229,
+          "sha256": "8286c2e3e476f96c4051df8c67d895fe553875a28300d70552d9448f2150a9e1"
+        },
+        {
+          "index": 3,
+          "seconds": 1116.9760270942934,
+          "tokens": 136919958,
+          "sha256": "ab80a4a091dc53d3f7c84aed570ef0eb545c6b50dc68994c10a0e4bf7ec8177d"
+        },
+        {
+          "index": 4,
+          "seconds": 1325.0917656030506,
+          "tokens": 159797617,
+          "sha256": "56981c0182c370813af430dd59a97ed2d5dbd4d122eada4953d26377866f7e24"
+        },
+        {
+          "index": 5,
+          "seconds": 941.3517529298551,
+          "tokens": 106481545,
+          "sha256": "72ab09d67758b57cfb47e600e79f0976a44e8566b719e6d37cb610292bc7fe9f"
+        },
+        {
+          "index": 6,
+          "seconds": 1222.235089018941,
+          "tokens": 149310207,
+          "sha256": "4fe6a2f3d76945d97f1fd49a0da05587be0be739acf0c22c8b19b5280a3f996e"
+        },
+        {
+          "index": 7,
+          "seconds": 988.4565660320222,
+          "tokens": 116548835,
+          "sha256": "2e27d1b4d8b436362c40dcf941311073c337fb15e3e6d81f4b91344b5910ddc3"
+        },
+        {
+          "index": 8,
+          "seconds": 1014.7516622417606,
+          "tokens": 114804644,
+          "sha256": "35a181ccd79cf21844a8ec12ca5fe490be42aa7eec9cedbd61d45212d425909f"
+        },
+        {
+          "index": 9,
+          "seconds": 1276.391088933684,
+          "tokens": 156386576,
+          "sha256": "580e3a6676dca1d71870a68f22dbd18cdbd649f5c027f5bcabbf90e81b0f1263"
+        },
+        {
+          "index": 10,
+          "seconds": 1229.9007487422787,
+          "tokens": 148152888,
+          "sha256": "ac9d851ed33e7b165c1ef89c44070b62c1aa78af395ccb09bb5e077e6e474f14"
+        },
+        {
+          "index": 11,
+          "seconds": 1062.097032730002,
+          "tokens": 123681887,
+          "sha256": "f8a8d0dc3aa6c48c29492efce31d6d725ccf3230a6a7740f52ab34ba49f530ef"
+        },
+        {
+          "index": 12,
+          "seconds": 1133.4994715522043,
+          "tokens": 136822094,
+          "sha256": "9fa46c92caaafe6175539cd479d8a0200da013369558e4a8479e4e5174b6886d"
+        },
+        {
+          "index": 13,
+          "seconds": 1042.2610734230839,
+          "tokens": 118113427,
+          "sha256": "e89d2e087a42372c60c3ebdfbc7c5196fdce697824231b0fe99a01a0817e96a1"
+        },
+        {
+          "index": 14,
+          "seconds": 1075.2512244321406,
+          "tokens": 128121784,
+          "sha256": "a2983c68f9ba965921371e2c786d870d543ae87c79abd30f31a65d9e67552f48"
+        },
+        {
+          "index": 15,
+          "seconds": 1167.3396539608948,
+          "tokens": 137918682,
+          "sha256": "b02377a87f50d80599d9fee77dfd3198b8102cdc4baedee08a78d103748ae439"
+        },
+        {
+          "index": 16,
+          "seconds": 897.6220260318369,
+          "tokens": 104622823,
+          "sha256": "7c4a84b17b4e065bc4f7656d8d5475cbf454568557f5c6f05be49ff95e6ed914"
+        },
+        {
+          "index": 17,
+          "seconds": 1062.197943797335,
+          "tokens": 121329283,
+          "sha256": "c2afd1df6c8b45e5c5dd47891c81244f1d687a2dd7df7ff1202cbc75b7ced930"
+        },
+        {
+          "index": 18,
+          "seconds": 1336.518132080324,
+          "tokens": 167792909,
+          "sha256": "70ea0b5868865e7b0f1f1d641025a08d84b8064c89c06877919dabd9d9aa3c17"
+        },
+        {
+          "index": 20,
+          "seconds": 918.2123004361056,
+          "tokens": 106432675,
+          "sha256": "89fb31c43b05037961d8c6a76ada151e8354d52ab15682dbf400ef58c56668c5"
+        },
+        {
+          "index": 21,
+          "seconds": 1031.0710982601158,
+          "tokens": 118510249,
+          "sha256": "3e0ccb7bf543fd4309b664ebdf1e4eb5a01a60807c3937c74dfd7c5789b8a251"
+        },
+        {
+          "index": 22,
+          "seconds": 1088.6747140730731,
+          "tokens": 122247407,
+          "sha256": "8616ad62b244bbd94a7ae6e617e52de0344895854feefb8e3c768c35133a19e0"
+        },
+        {
+          "index": 23,
+          "seconds": 823.4408506420441,
+          "tokens": 96275212,
+          "sha256": "e86a9ffe964ad4aa9bb4b6786c65ea45320b0937fc58d6bf9a05041df63b4618"
+        },
+        {
+          "index": 24,
+          "seconds": 1036.2914376710542,
+          "tokens": 116573714,
+          "sha256": "29f11ac5f098ecf779e617956f59b0a0fdc886b2eb5793d8798890e412742ebb"
+        },
+        {
+          "index": 25,
+          "seconds": 1346.1333301616833,
+          "tokens": 167231510,
+          "sha256": "f013d78478d2751046e61f6b81c84af137ad0b18829009c9de3e53bffccbf824"
+        },
+        {
+          "index": 26,
+          "seconds": 1056.3302616681904,
+          "tokens": 125212850,
+          "sha256": "f434fed91d73912a7dce338d87e29a0ad1d002e5d0b1ae2514b158c1282f6e85"
+        },
+        {
+          "index": 27,
+          "seconds": 920.5425857431255,
+          "tokens": 114966863,
+          "sha256": "dc0531a5d26a1447c6c2d8310587edec64af04130a21a8f772c8e10e13a28ce2"
+        },
+        {
+          "index": 28,
+          "seconds": 986.3929169829935,
+          "tokens": 115491882,
+          "sha256": "6fa2eda35caa1a7cbcd9591fb20a198b4e77cc54a6aefed2b3df6951865adce9"
+        },
+        {
+          "index": 29,
+          "seconds": 1257.1383580700494,
+          "tokens": 148447104,
+          "sha256": "899ce328cea43fcaac0521fae9170badbac125c38b180a26c425368d6e01b33b"
+        }
+      ],
+      "observed_token_bytes": 17261798312,
+      "observed_tokens": 4315449578
+    },
+    {
+      "corpus": "fineweb_edu",
+      "completed": [],
+      "observed_token_bytes": 0,
+      "observed_tokens": 0
+    }
+  ],
+  "readiness": "INCOMPLETE: part receipts/source identity checked; full final stream hashes/native reader pending"
+}
