@@ -1,0 +1,14 @@
+{
+  "status": "complete",
+  "scientific_complete": true,
+  "scope": "dclm_S1_pair",
+  "runs": 7,
+  "chosen_lrs": {
+    "P300": 0.0003,
+    "P1T": 0.0003
+  },
+  "phase": "0A",
+  "elapsed_seconds": 3654.8172532878816,
+  "full_pilot_complete": false,
+  "reused_grid": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-early-grid-20261028-a01/supervised/run/grid/results.json"
+}

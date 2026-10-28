@@ -7,17 +7,17 @@ from efficient_llm.a2.data import PackedRows
 from efficient_llm.a2.protocol import compatible_data_spec
 
 
-def initial_asset_plan(plan, parents=('P300',)):
+def initial_asset_plan(plan, parents=('P300',), dataset='dclm'):
     """Verify only actual launch dependencies; unrelated downloads may continue."""
-    if not parents or not set(parents) <= {'P300','P1T'}:
+    if dataset not in ('dclm','fwe','nem') or not parents or not set(parents) <= {'P300','P1T'}:
         raise ValueError('Unsupported bounded launch parents')
-    plans = [_parent_asset_plan(plan,parent) for parent in parents]
+    plans = [_parent_asset_plan(plan,parent,dataset) for parent in parents]
     downloads = {item['path']:item for part in plans for item in part['downloads']}
     return dict(plan, downloads=list(downloads.values()))
 
 
-def _parent_asset_plan(plan, parent):
-    asset = plan['assets']['dclm/'+parent]
+def _parent_asset_plan(plan, parent, dataset='dclm'):
+    asset = plan['assets'][dataset+'/'+parent]
     required = {str(Path(asset[directory])/name): digest
         for directory, files in (('weights_dir', 'files'), ('code_dir', 'code_files'))
         for name, digest in asset[files].items()}
@@ -110,9 +110,10 @@ def _model_job(source, inputs, port, action, limit, contract):
         required_outputs=[dict(path=action+'.json', json_equals=contract)])
 
 
-def pair_jobs(inputs, prior, grid, port):
+def pair_jobs(inputs, prior, grid, port, dataset='dclm', spent_seconds=1155.47):
     return [dict(name='s1-pair',gpus=list(range(8)),timeout_seconds=10900,
         argv=['{python}','-u','-m','efficient_llm.a2.pair','--inputs',str(inputs),
-              '--prior',str(prior),'--grid',str(grid),'--port',str(port),'--output','{run_dir}/pair'],
+              '--prior',str(prior),'--grid',str(grid),'--port',str(port),'--output','{run_dir}/pair',
+              '--dataset',dataset,'--spent-seconds',str(spent_seconds)],
         required_outputs=[dict(path='pair/complete.json',json_equals={
-            'status':'complete','scope':'dclm_S1_pair','full_pilot_complete':False})])]
+            'status':'complete','scope':dataset+'_S1_pair','full_pilot_complete':False})])]

@@ -30,7 +30,11 @@ def main():
     p.add_argument('--stage',choices=('initial','early-grid','s1-pair'),default='initial')
     p.add_argument('--prior',type=Path)
     p.add_argument('--grid',type=Path)
+    p.add_argument('--dataset',choices=('dclm','fwe','nem'),default='dclm')
+    p.add_argument('--spent-seconds',type=float,default=1155.47)
     a=p.parse_args();source=Path(__file__).resolve().parents[1]
+    if (a.stage!='s1-pair' and a.dataset!='dclm') or not 0<=a.spent_seconds<18*3600-10800:
+        raise ValueError('Invalid bounded dataset/remaining phase budget')
     if socket.gethostname()!=a.host or a.output.exists():raise ValueError('Wrong host or existing output')
     for name in (a.session,a.session+'_burn'):
         if subprocess.run(['tmux','has-session','-t',name],capture_output=True).returncode==0:
@@ -43,7 +47,7 @@ def main():
     from scripts.a2_prepare_inputs import verify_inputs
     plan=json.loads((source/'resources/a2_inputs_20261028.json').read_text())
     inputs_receipt=verify_prepared(a.inputs,source/'docs/A2_pilot_spec.md',plan)
-    weights_receipt=verify_inputs(initial_asset_plan(plan, ('P300','P1T') if a.stage=='s1-pair' else ('P300',)))
+    weights_receipt=verify_inputs(initial_asset_plan(plan, ('P300','P1T') if a.stage=='s1-pair' else ('P300',),a.dataset))
     if a.stage in ('early-grid','s1-pair'):
         if a.prior is None:raise ValueError('Prior completed preflight required')
         from efficient_llm.a2.early_grid import verify_reuse
@@ -92,7 +96,7 @@ def main():
     from scripts.a2_preflight_inputs import initial_jobs,early_grid_jobs,pair_jobs
     jobs=(initial_jobs(frozen,a.inputs.resolve(),port) if a.stage=='initial'
         else early_grid_jobs(a.inputs.resolve(),a.prior.resolve(),port) if a.stage=='early-grid'
-        else pair_jobs(a.inputs.resolve(),a.prior.resolve(),a.grid.resolve(),port))
+        else pair_jobs(a.inputs.resolve(),a.prior.resolve(),a.grid.resolve(),port,a.dataset,a.spent_seconds))
     path=a.output/'jobs.json';write_json(path,dict(jobs=jobs))
     from run_experiments import load_jobs
     load_jobs(path)

@@ -1,5 +1,32 @@
 # Current task
 
+## Latest: DCLM S1 COMPLETE, preparing FineWeb-Edu pair — 28 October 2026 SGT
+
+Active design docs/A2_pilot_spec.md v2.1; approved automatic continuation follows
+A2_CONTINUATION_WATCH_20261028.md. Final DCLM health54646e9 observed10:59:12SGT:
+all7fits successful, no retry, full8rank order/LR/save-reload checks passed,
+78frozenfiles verified. Queue finished10:53:01 in3656.29seconds; burns verified
+10:54:11 and independently10:59:12, guardreleased, workers644045–644052.
+New predecessorburn: /mnt/local/_outputs/deep-llms_th2/6y3o-a2-s1-pair-20261028-a01/source/resources/llm_pretrain_burn.py.
+Historical PIDs only; launcher rechecks identities immediately before reclaim.
+Results docs/A2_DCLM_S1_RESULTS_20261028.md, rawtemp/a2_pair_health02.log SHA
+4479ea899ea17e10a289377d50478fdadcc985f02288b6b58c21a1efecdafbee; archive
+results/a2_s1_pair_20261028/final. Main lossP3002.935242/P1T2.895235;
+damage0.197449/0.208326, contrast+0.010877. No aggregate research conclusion.
+
+Next: same registered S1 pair for FWE, both parent surveys/pre-baselines,
+6LR-gridfits +4short/mainfits. Generalized existing coordinator dataset argument;
+model/loss/Trainer/data/backend unchanged. All50CPUtests pass including mock
+fullFWE/NEM10fit sequences and unchanged DCLM7fit reuse. Exact original numerical
+receipts still pinned. No duplicated shared GPU implementation checks.
+Measured elapsed phase0A4811.77seconds; reserve to5200 for setup/handoff overhead
+for next launch. Next expected80–95minutes, hardcap3h. Timer deadline15:50:29SGT
+still permits this queue and a later NEMpair if time allows. No S2 until all
+prescribed BI dependencies. Current timer remains active; no newtimer/agent.
+Target /mnt/local/_outputs/deep-llms_th2/6y3o-a2-fwe-s1-20261028-a01,
+sessiona2_fwe_s1_20261028_a01; not submitted yet. Commands#0 for code commit.
+
+
 ## Latest: real DCLM S1 pair running with automatic wake — 28 October 2026 SGT
 
 Owner authorizes continuation and an ETA-based same-thread reminder worker.
@@ -23,7 +50,8 @@ training result yet; keep running. commands#0 after acknowledged health.
 Remaining fullpilot not done.
 Watcher will use existing thread, localstate temp/a2_watch_20261028,6hwindow,
 first10:55:29SGT then30min, deadline15:50:29SGT. App-serveraccepted
-deliverytest01a18033-9fc7-70e0-8729-47bd52707d51; actualackpending. No duplicate timer/newagent; delivery acceptance and
+deliverytest01a18033-9fc7-70e0-8729-47bd52707d51 acknowledged10:01:53SGT
+(temp/a2_watch_20261028/delivery_ack.json). No duplicate timer/newagent; delivery acceptance and
 actualack must be distinguished. Automatic subsequent work only preregistered
 Phase0A dependencies, remaining budgets and safe verified handoffs, see plan.
 

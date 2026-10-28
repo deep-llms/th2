@@ -1,4 +1,4 @@
-"""Continue the registered DCLM S1 pair, reusing the completed P300 grid."""
+"""Run a registered dataset S1 pair; DCLM reuses its completed P300 grid."""
 import argparse
 from dataclasses import replace
 from datetime import datetime, timezone
@@ -72,19 +72,25 @@ def validate_result(result,run,provenance,rerun_of,exitcode):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('inputs','prior','grid','output'):p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--dataset',choices=('dclm','fwe','nem'),default='dclm')
+    p.add_argument('--spent-seconds',type=float,default=1155.47)
     p.add_argument('--port',type=int,required=True);a=p.parse_args()
+    scope=a.dataset+'_S1_pair'
+    if not 0<=a.spent_seconds<18*3600-10800:raise ValueError('Insufficient phase budget')
     source=Path(__file__).resolve().parents[2];a.output.mkdir(parents=True,exist_ok=False)
     started=time.monotonic();durations={};results=[]
     reuse=verify_reuse(source,a.inputs,a.prior,read(source/'resources/a2_early_grid_reuse.json'))
+    identity=read(source/'docs/results/a2_review_20261028/identity_metadata.json')
+    if not identity['tests'][a.dataset]['T2']:raise ValueError('Dataset parent identity check failed')
     grid_reuse=verify_grid(source,a.grid);write_json(a.output/'reuse.json',dict(initial=reuse,grid=grid_reuse))
     with (a.output/'protocol-tests.log').open('x') as log:
         subprocess.run([sys.executable,'-m','unittest','discover','-s','tests/a2','-p','test_protocol.py','-v'],
             cwd=source,env={**os.environ,'CUDA_VISIBLE_DEVICES':''},stdout=log,stderr=subprocess.STDOUT,check=True,timeout=120)
-    sets=a.output/'sets.json';write_json(sets,dict(scope=SCOPE,sets={'dclm':{'S1':FIXED_SETS['S1']}}))
+    sets=a.output/'sets.json';write_json(sets,dict(scope=scope,sets={a.dataset:{'S1':FIXED_SETS['S1']}}))
     launcher=[sys.executable,'-m','accelerate.commands.launch','--config_file',str(source/'resources/accelerate_b200.yaml'),
               '--main_process_port',str(a.port),'-m','efficient_llm.a2']
     common=['--assets',str(a.inputs/'assets.json'),'--data',str(a.inputs/'data'),
-            '--secondary-map',str(a.inputs/'secondary_map.json'),'--dataset','dclm']
+            '--secondary-map',str(a.inputs/'secondary_map.json'),'--dataset',a.dataset]
     def stage(name,action,extra,timeout=900,allow_divergence=False):
         begin=time.monotonic();remaining=10800-(begin-started)
         if remaining<timeout:raise TimeoutError('Insufficient bounded pair wall time')
@@ -96,33 +102,39 @@ def main():
         print('A2_STAGE_END',name,'exit',job.returncode,'seconds',durations[name],flush=True)
         if job.returncode and not allow_divergence:raise RuntimeError('Stage failed: '+name)
         return job.returncode
-    survey=a.output/'P1T-survey.json';pre=a.output/'P1T-pre.json'
-    stage('P1T-survey','survey',['--parent','P1T','--output',str(survey)])
-    measured=read(survey)
-    if not measured['T1_precision_passed'] or not measured['parent_sanity']['passed']:
-        raise ValueError('P1T precision/sanity failed; preserve evidence, stop this pair')
-    prov=measured['provenance'];sh=sha256(sets);old=a.grid/'supervised/run/grid'
+    old=a.grid/'supervised/run/grid';sh=sha256(sets);baseline={};prov=None
+    grid_parents=('P1T',) if a.dataset=='dclm' else ('P300','P1T')
+    for parent in grid_parents:
+        survey=a.output/(parent+'-survey.json');pre=a.output/(parent+'-pre.json')
+        stage(parent+'-survey','survey',['--parent',parent,'--output',str(survey)])
+        measured=read(survey)
+        if not measured['T1_precision_passed'] or not measured['parent_sanity']['passed']:
+            raise ValueError(parent+' precision/sanity failed; preserve evidence, stop this pair')
+        if prov is not None and measured['provenance']!=prov:raise ValueError('Parent provenance differs')
+        prov=measured['provenance']
+        stage(parent+'-pre','pre',['--parent',parent,'--sets',str(sets),'--output',str(pre)])
+        baseline[parent]=read(pre)
+        if baseline[parent]['provenance']!=prov or not baseline[parent]['parent_sanity']['passed']:
+            raise ValueError(parent+' baseline provenance/sanity failed')
     numerical=reuse_record(read(old/'check.json'),prov,sh)
-    baseline={'P300':reuse_record(read(old/'pre.json'),prov,sh)}
-    validate_shared_check(numerical,read(sets)['sets'],read(a.inputs/'assets.json'),prov,sh,scope=SCOPE)
+    validate_shared_check(numerical,read(sets)['sets'],read(a.inputs/'assets.json'),prov,sh,scope=scope)
     write_json(a.output/'shared-check-reuse.json',numerical)
-    write_json(a.output/'P300-pre-reuse.json',baseline['P300'])
-    stage('P1T-pre','pre',['--parent','P1T','--sets',str(sets),'--output',str(pre)])
-    baseline['P1T']=read(pre)
-    if baseline['P1T']['provenance']!=prov or not baseline['P1T']['parent_sanity']['passed']:
-        raise ValueError('P1T baseline provenance/sanity failed')
-    chosen={'P300':grid_reuse['chosen_lr']}
+    chosen={}
+    if a.dataset=='dclm':
+        baseline['P300']=reuse_record(read(old/'pre.json'),prov,sh)
+        write_json(a.output/'P300-pre-reuse.json',baseline['P300'])
+        chosen['P300']=grid_reuse['chosen_lr']
     oldgate=read(old/'gate.json')
-    gate=dict(oldgate,launch_scope=SCOPE,provenance=prov,sets_sha256=sh,shared_numerical=numerical,
-        parents={f'dclm/{parent}':dict(passed=True) for parent in ('P300','P1T')},chosen_lrs=chosen,
-        reuse=dict(initial=reuse,grid=grid_reuse),note='Only registered DCLM S1 pair, no full pilot claim')
+    gate=dict(oldgate,launch_scope=scope,provenance=prov,sets_sha256=sh,shared_numerical=numerical,
+        parents={f'{a.dataset}/{parent}':dict(passed=True) for parent in ('P300','P1T')},chosen_lrs=chosen,
+        reuse=dict(initial=reuse,grid=grid_reuse),note='Only registered '+a.dataset+' S1 pair, no full pilot claim')
     gatepath=a.output/'gate.json'
     # Observed 1.2s/update + ~95s scoring/load/save; conservative +180s allowance.
     estimate=lambda run:run.steps*reuse['step_seconds']+180
-    write_json(a.output/'prelaunch-report.json',dict(scope=SCOPE,estimated_seconds=4800,
-        hard_cap_seconds=10800,historical_phase0A_seconds=322+read(old/'complete.json')['elapsed_seconds'],
+    write_json(a.output/'prelaunch-report.json',dict(scope=scope,estimated_seconds=4800 if a.dataset=='dclm' else 5700,
+        hard_cap_seconds=10800,historical_phase0A_seconds=a.spent_seconds,
         charge_all_elapsed_to_phase0A=True,fresh_initialization_per_budget=True,
-        reused_grid=str(old/'results.json'),new_fits=7,full_pilot_complete=False))
+        reused_grid=str(old/'results.json') if a.dataset=='dclm' else None,new_fits=7 if a.dataset=='dclm' else 10,full_pilot_complete=False))
     def fit(run,rerun_of=None):
         write_json(gatepath,gate)
         base=baseline[run.parent]
@@ -141,18 +153,19 @@ def main():
     def fit_with_retry(run):
         result=fit(run)
         if result.get('diverged'):fit(replace(run,lr=run.lr/2,suffix='-rerun'),run.run_id)
-    for lr in LRS:fit_with_retry(Run('dclm','P1T','S1','0.03B',lr))
-    chosen['P1T']=choose_lr([r for r in results if not r.get('rerun_of')])
-    if chosen['P1T'] is None:raise ValueError('No eligible P1T LR; matched pair cannot proceed')
+    for parent in grid_parents:
+        for lr in LRS:fit_with_retry(Run(a.dataset,parent,'S1','0.03B',lr))
+        chosen[parent]=choose_lr([r for r in results if r['arm']==parent and not r.get('rerun_of')])
+        if chosen[parent] is None:raise ValueError('No eligible '+parent+' LR; matched pair cannot proceed')
     write_json(a.output/'chosen-lrs.json',chosen)
     for budget in ('0.05B','0.2B'):
-        for parent in ('P300','P1T'):fit_with_retry(Run('dclm',parent,'S1',budget,chosen[parent]))
+        for parent in ('P300','P1T'):fit_with_retry(Run(a.dataset,parent,'S1',budget,chosen[parent]))
     scientific_complete=all(not r.get('diverged') or any(
         x.get('rerun_of')==r['run_id'] and not x.get('diverged') for x in results)
         for r in results if r['budget']!='0.03B' and not r.get('rerun_of'))
     write_json(a.output/'complete.json',dict(status='complete',scientific_complete=scientific_complete,
-        scope=SCOPE,runs=len(results),chosen_lrs=chosen,phase='0A',elapsed_seconds=time.monotonic()-started,
-        full_pilot_complete=False,reused_grid=str(old/'results.json')))
+        scope=scope,runs=len(results),chosen_lrs=chosen,phase='0A',elapsed_seconds=time.monotonic()-started,
+        full_pilot_complete=False,reused_grid=str(old/'results.json') if a.dataset=='dclm' else None))
 
 
 if __name__=='__main__':main()

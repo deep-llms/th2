@@ -70,6 +70,13 @@ class PairTests(unittest.TestCase):
         with self.assertRaises(ValueError):validate_result(dict(failed,diverged=False),r,{'x':1},None,1)
 
     def test_coordinator_runs_only_seven_new_fits(self):
+        self.coordinator_case('dclm')
+
+    def test_new_dataset_pairs_run_both_grids(self):
+        for dataset in ('fwe','nem'):
+            with self.subTest(dataset=dataset):self.coordinator_case(dataset)
+
+    def coordinator_case(self,dataset):
         from efficient_llm.a2 import pair
         from efficient_llm.diagnostic_data import sha256
         archive=ROOT/'temp/a2_grid_health02'
@@ -98,19 +105,21 @@ class PairTests(unittest.TestCase):
                 else:
                     run=json.loads(Path(argv[argv.index('--run')+1]).read_text())
                     gate=json.loads(Path(argv[argv.index('--preflight')+1]).read_text())
-                    validate_run_scope(Run(**{k:run[k] for k in ('dataset','arm','set','budget','lr','suffix')}),gate,SCOPE,run['rerun_of'])
+                    validate_run_scope(Run(**{k:run[k] for k in ('dataset','arm','set','budget','lr','suffix')}),gate,dataset+'_S1_pair',run['rerun_of'])
                     out.mkdir();run.update(provenance=prov,status='complete',diverged=False,
                         coverage={'exact_order':True},roundtrip_difference=0,val_tune_post=4-run['lr']*1000)
                     (out/'result.json').write_text(json.dumps(run))
                 return SimpleNamespace(returncode=0)
             args=['pair','--inputs',str(inputs),'--prior','/prior','--grid',str(archive),
-                  '--output',str(output),'--port','29537']
+                  '--output',str(output),'--port','29537','--dataset',dataset]
             with patch('sys.argv',args),patch.object(pair,'verify_reuse',return_value={'step_seconds':1.2}),patch.object(pair.subprocess,'run',side_effect=child):
                 pair.main()
             rows=json.loads((output/'results.json').read_text())
-            self.assertEqual(calls,['survey','pre']+['heal']*7)
+            grid_parents=['P1T'] if dataset=='dclm' else ['P300','P1T']
+            self.assertEqual(calls,['survey','pre']*len(grid_parents)+['heal']*(3*len(grid_parents)+4))
             self.assertEqual([(r['arm'],r['steps']) for r in rows],
-                [('P1T',114)]*3+[('P300',190),('P1T',190),('P300',762),('P1T',762)])
+                [(parent,114) for parent in grid_parents for _ in range(3)]+[('P300',190),('P1T',190),('P300',762),('P1T',762)])
+            self.assertEqual({r['dataset'] for r in rows},{dataset})
             self.assertTrue(json.loads((output/'complete.json').read_text())['scientific_complete'])
 
     def test_bounded_manifest(self):

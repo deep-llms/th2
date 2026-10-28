@@ -62,3 +62,15 @@ no changes to environments/driver, no GPU-node internet. Freeze remote writes on
 controller/AWS/auth/connectivity failure; never use cleanup as infrastructure repair.
 Stop the local timer when planned work ends or user cancels. A delayed snapshot
 alone is not a reason to stop it. Do not restart old KV recovery watches.
+
+## Continuation after DCLM — 28 October, 11:05SGT
+
+DCLM S1 complete and burn handoff verified; see A2_DCLM_S1_RESULTS_20261028.md.
+Extend existing pair coordinator with explicit --dataset fwe/nem; both new
+parents get their own scientific survey/pre-baseline and3LR-grid fits before
+short/main S1. Ten fits per next dataset; no DCLM grid rerun or changed recipe.
+All50CPUtests pass, including full mocked10-fit order on each new dataset.
+Actual numerical core is byte-identical; historical checks retain exact hashes.
+Next FWE estimated80–95minutes; conservative prior Phase0A ledger5200seconds
+(actual completed queues4811.77seconds plus setup/handoff reserve). Same3hhardcap.
+Worker's existing30min schedule and15:50:29SGTdeadline remain; no duplicate timer.
