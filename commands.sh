@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-a2-corpora-health-20261029-a01
+#th2-6y3o-a2-corpora-health-20261029-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
@@ -25,5 +25,17 @@ if log.is_file():
  with log.open('rb') as f:f.seek(max(0,log.stat().st_size-12000));tail=f.read().decode(errors='replace')
  print('LOG_TAIL',json.dumps(dict(path='prepare.log',bytes=log.stat().st_size,text=tail)),flush=True)
 print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_corpora_20261029_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+raw=data/'raw'
+if raw.exists():
+ for name in ('dclm','fineweb_edu'):
+  base=raw/name
+  entries=[]
+  if base.exists():
+   for p in sorted(base.iterdir())[:12]:
+    entries.append(dict(name=p.name,is_file=p.is_file(),is_dir=p.is_dir(),bytes=p.stat().st_size,children=[dict(name=q.name,is_file=q.is_file(),bytes=q.stat().st_size) for q in sorted(p.iterdir())[:2]] if p.is_dir() else []))
+  print('RAW_LAYOUT',json.dumps(dict(corpus=name,entries=entries)),flush=True)
+processes=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
+selected=[x for x in processes if 'a2_prepare_corpora.py' in x or ('multiprocessing.spawn' in x and 'spawn_main' in x)]
+print('CPU_PROCESSES',json.dumps(selected),flush=True)
 print('HEALTH_COMPLETE',flush=True)
 PY

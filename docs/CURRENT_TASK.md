@@ -1,5 +1,9 @@
 # Current task
 
+29 October04:48SGT: CPUhealtha01 ca110a5 ACKNOWLEDGED. Actual04:19:49SGT snapshot: session alive,5frozenfiles+planSHA verified, statusrunning/no failure,0rawfiles at expected exactpaths/no completedparts. Controller laterreports9DCLMitemsOK and backgroundRUNNING through Dropbox04:42SGT. Need fresh rawlayout/CPUhealth before timing/conclusion; uniquehealtha02 nowprepared, no restart/resubmit. Rawhealth01 SHA1195ef4c373c286e6b86a30041532b51a3b990973963c0f12d02554749da41bb.
+
+2026-10-29T04:19:04.626162+08:00: Downloadda8f71d acknowledged STARTED; unique CPUhealtha01 ca110a5b0f097a4a39fedee4bcfaa794c4d8faa8 nowSUBMITTED/remoteheadverified. Retrievependinghealthreceipt beforewrites. No newprep/download/GPUjob. Samewatchnext04:46SGT. Commandshealth executable pendingack.
+
 29 October04:18SGT: controller download da8f71d ACKNOWLEDGED STARTED, background id2026-10-28_20-10-30. Receipt temp/a2_corpora_tick01_runstatus.log SHA769a034c2c99ec119e5e06231f40399e0459b7817a0bab814da16fa57eaa02c9, Dropboxmodified04:14:33SGT. This confirms download admission, not400files complete. Submitting unique CPU-only healtha01; no restart/GPU changes. Existing datawatch delivery confirmed.
 
 2026-10-29T04:10:21.581151+08:00: Controller#d400-file download SUBMITTED da8f71dc8778b3e76e9b8da2d4867376ce2fabc1, remoteheadverified. DO NOT resubmit; retrieve downloadack/tasks before morewrites. CPUprep76fcd5b alreadyacknowledged/frozenfb88f39 automaticallywaits rawfiles. Same datawatchnext04:16SGT; no GPUjobs. Commands#d remains pendingack; CURRENT_TASKlocaldirty intentionally.

@@ -1,0 +1,22 @@
+{
+  "receipts": {
+    "temp/a2_corpora_inventory01.log": {
+      "bytes": 721,
+      "sha256": "333c97fc391e0eaab447e0ac69436224595aad416346ef9622a955800f24272e"
+    },
+    "temp/a2_corpora_launch01.log": {
+      "bytes": 96,
+      "sha256": "572e8501bbec5e2b265118a82d6e9d64f5cf260792a9029b60ec8f2976a4eaa6"
+    },
+    "temp/a2_corpora_tick01_runstatus.log": {
+      "bytes": 160126,
+      "sha256": "769a034c2c99ec119e5e06231f40399e0459b7817a0bab814da16fa57eaa02c9"
+    }
+  },
+  "download_commit": "da8f71dc8778b3e76e9b8da2d4867376ce2fabc1",
+  "download_status": "STARTED",
+  "background_download_id": "2026-10-28_20-10-30",
+  "pending_health_commit": "ca110a5b0f097a4a39fedee4bcfaa794c4d8faa8",
+  "worker_status": "launch admitted; fresh CPU progress pending",
+  "data_ready": false
+}
