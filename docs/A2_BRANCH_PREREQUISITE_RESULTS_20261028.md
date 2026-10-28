@@ -47,3 +47,23 @@ original S1-stage baseline within1e-6. The five receipts, compact unhealed loss
 table and SHA records are in results/a2_remaining_phase0a_20261028/status_1527.
 No healing fit had finished at this snapshot. S2 pruning causes large initial
 loss increases; recovery conclusions require the registered healing runs.
+
+
+At15:56:41 SGT, allsixbaselines and the firstthree healing fits passed. Allthree
+have190updates, 12,160sequences, exact8rankorder/fullLR schedule, zero saved-model
+roundtrip difference, and no divergence/retry. DCLM/P300 short-budget results:
+
+| Set | Final NLL | PPL |
+|---|---:|---:|
+| S1 (previous completed run) | 3.045107 | 21.0123 |
+| S2 | 2.929940 | 18.7265 |
+| S3 | 2.890030 | 17.9939 |
+| S4 | 2.877159 | 17.7637 |
+
+S2's large unhealed damage does not imply poor recovery: its post-healing loss
+is lower than S1 here. This is only DCLM/P300 at0.05B; P1T/otherdatasets/mainbudgets
+are still needed for the preregistered decision. No full-pilot GO/STOP is inferred.
+Actualresults and SHAreceipts: results/a2_remaining_phase0a_20261028/status_1556.
+S2–0.2B was active at logged660/762updates. Measured~1.19seconds/update with
+~90seconds whole-fit loading/scoring/saving overhead gives21:00–21:40SGT ETA
+(using90–180seconds overhead perremaining fit), without retries.

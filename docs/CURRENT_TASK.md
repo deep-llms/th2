@@ -1,5 +1,21 @@
 # Current task
 
+Latest16:00SGT: health151d769 acknowledged, snapshot15:56:41 HEALTHY. All6baselines
+pass/originalparentmatch;3/28healscomplete: dclm/P300 S2/S3/S4 .05B NLL
+2.929940/2.890030/2.877159 (S1 previous3.045107). FullLR/exact8rankorder/12160seq/
+zero roundtrip/no retry verified. Currentdclm/P300/S2 .2B logged660/762updates.
+8GPUs95–96%/~45.9GB, supervisor656246guardowner,86frozenfilesd3a8a0bmatch.
+Rawtemp/a2_remaining_health03.log SHAf1790713896eec2587591c03bf9cce616af026bb6cdf8acab95ab219fe5034c2.
+Archive docs/results/a2_remaining_phase0a_20261028/status_1556 (3actualresults,
+lastbaseline,compactsummary,SHAs). ETAupdated21:00–21:40SGT; remaining~5–5.7h
+fromsnapshot,13244updates*1.199sec+25fits*90–180secoverhead. Nofullpilotdecision.
+Queue unchanged; commands#0 restore, no pendingreceipt, nextwatch16:25SGT.
+Futurehealtha04 unique. Currentledger18600seconds+elapsed47min~6nodehours.
+
+Latest 15:56:54 SGT: read-only healtha03 SUBMITTED151d769a88809c73ef5f16d7abd2bf95d35b8e6e.
+Remoteheadverified. Retrievependingreceipt beforewrites. CurrentGPUqueue unchanged;
+no newjob/restart/envchange. Priorhealth15:27had5baselines/0fits.
+
 Latest15:29SGT: health41df888 acknowledged; snapshot15:27:01 healthy,5/6fullpattern
 baselinesdone, nem/P1Tactive,0healingresults yet. FiveparentNLLs match original
 within1e-6; allfoursets present/sanity/provenancepass. 86sourcefilesmatchd3a8a0b,
