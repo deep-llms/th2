@@ -1,5 +1,21 @@
 # Current task
 
+## Latest FWE progress — 28 October, 11:59 SGT observation
+
+Read-only health0d9646a acknowledged. Eight of ten fits completed without divergence
+or retry: both three-point grids and both190-step short fits. Each parent selects
+LR3e-4, independently checked from tuning losses. P300 main at240/762steps;
+P1T main remains. All8GPUs96%utilization, workers647448–647455; supervisor644785
+owns guard/session. No error observed, keep running; no next queue launched.
+Completed fits verified for exact8rank coverage/order, every LR update, tokens,
+zero save/reload difference and78frozenfiles matchingcfeb74c. Raw
+temp/a2_fwe_health03.log SHA68aa9c31b9f112cbb7462ee9b43631ad2182061a4ad104fdabd8ede4523d506e;
+compact receipt/summary results/a2_fwe_s1_20261028/status_1159.
+Updated expected finish12:28–12:35SGT, including normal scoring/burn handoff,
+if no retry. Existing watcher next12:25SGT; no duplicate timer. Commands#0 restored
+after acknowledged health. After terminal artifact/burn verification, NEM pair
+remains authorized if it fits15:50:29SGTdeadline; do not overlap current queue.
+
 ## Latest FWE progress — 28 October, 11:26 SGT observation
 
 Read-only health9e6ac4a acknowledged: both FWE parents passed T1 precision and
