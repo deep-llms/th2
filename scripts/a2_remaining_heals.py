@@ -23,7 +23,7 @@ def verify_result(row,run,provenance,rerun_of,exitcode):
         raise ValueError('Incomplete native result receipt') from error
     if row['status']=='complete':
         expected=dict(examples=run.steps*64,microbatches=run.steps*8,world_size=8,exact_order=True)
-        if (row.get('diverged') is not False or row.get('coverage')!=expected
+        if (type(row.get('diverged')) is not bool or row.get('coverage')!=expected
                 or row.get('roundtrip_difference')!=0):
             raise ValueError('Pending fit coverage/roundtrip differs')
         lrs=row.get('lr_updates',[])
@@ -116,7 +116,7 @@ def execute_remaining(*,root,launcher,common,history,pre,gate,sets,assets,
         row=fit(run)
         if row.get('diverged'):
             row=fit(replace(run,lr=run.lr/2,suffix=run.suffix+'-rerun'),run.run_id)
-        if row['status']=='complete':finished.append(key)
+        if row['status']=='complete' and not row['diverged']:finished.append(key)
     result=dict(status='complete' if len(finished)==len(ids) else 'incomplete',phase='0A',
         scientific_complete=len(finished)==len(ids),requested_ids=ids,completed_original_ids=finished,
         reused_ids=plan['reused_ids'],runs=len(results),elapsed_seconds=time.monotonic()-started,

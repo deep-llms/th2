@@ -119,3 +119,10 @@ the native supervisor still rechecks live PID/start identities and GPU freedom.
 This does not turn failure into success or relax scientific gates. A separate
 CPU test uses the actual archived failure receipts and rejects changed/foreign
 paths and incomplete burns. Next recovery uses a fresh a03 output.
+
+Further review before healing fixed finite tuning divergence handling: native
+heal may return status=complete, diverged=true. The pending coordinator now
+executes the one half-LR retry instead of treating this as infrastructure failure;
+a second divergent result remains incomplete and does not count as successful.
+A test exercises two finite divergences then continuation to the next fit.
+All73CPUtests pass. Native training/loss/optimizer code unchanged.

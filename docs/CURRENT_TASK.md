@@ -1,5 +1,30 @@
 # Current task
 
+Latest15:02SGT: recoverylaunchf5f1967 acknowledged; pinnedmodel/input checks pass,
+Acceleratecachecopied+env8GPU/BF16verified. Rawtemp/a2_branch_launch03.log
+SHAcfac817afffa7b820c63e09e60217b3834845de080c7d32278b8ef536c1f30f7.
+Submitting unique read-only startuphealtha04 for a03. GPUfrozen sourcebb72766.
+Local remaining-heal coordinator fix handles finite tuning divergence: retry
+halfLR once; second divergence remainsincomplete and continuesremainingjobs.
+73CPUtests pass; this coordinator is NOT active GPU work yet.
+
+Latest 15:00:37 SGT: a03 f5f1967 submitted; no launchreceipt yet (latestDropbox14:52).
+Earlier notes15:00/15:02 are approximate preparation labels, not node event times.
+No newwrites untilreceipt. Report A2_BRANCH_PREREQUISITE_RESULTS_20261028.md
+records actualbranchmetrics/selection,6.62h expectedremaining28fits,11.00h
+worstincludingcleanup pluspriorledger+pendingprerequisite. Numericalgatepending.
+
+Latest15:02SGT: recovery a03 SUBMITTEDf5f1967b1d838844cc13dd42ec12fff3c758dfca,
+sourcebb72766458dc06ba5ca2ca275c69f153d7d5a871; remoteheadverified.
+Root6y3o-a2-branches-20261028-a03/sessiona2_branches_20261028_a03.
+Explicit failedhandoffresources/a2_failed_branch_handoff_20261028.json verifies
+exactfailedCPUjob receipts+successfulcleanup/burn; unchangednativeGPUreclaim.
+72tests passed, including actualfailurehandoff replay and rejection cases.
+OnlyfreezeS2+sharednumerical, noheals/surveys. Priorledger18000sec. Expected
+10–20minutes afterstartup (~15:15–15:25SGT); unmeasured check, cap4320sec.
+Retrievependinglaunchreceipt beforewrites. Healthtemplatea04 and terminal
+verifier updatedfor a03. Nochange to model/loss/runtime/source numericalcore.
+
 Latest15:00SGT: recoverylaunchfc10b81 FAILED BEFORE GPU acquisition/output creation.
 Receipt temp/a2_branch_launch02.log SHA7dc94b9b2f7d12d9ca4ae1eebdb0eb8707ecbc3b3a892f182ca25d36bf2e3552.
 The old verify_handoff required prior success complete.json, unavailable after

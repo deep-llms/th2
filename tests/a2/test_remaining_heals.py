@@ -70,6 +70,26 @@ class RemainingHealsTests(unittest.TestCase):
             self.assertEqual(calls[1]['rerun_of'],r['run_id']);self.assertEqual(result['status'],'complete')
             self.assertFalse(result['full_phase_complete'])
 
+    def test_completed_but_tuning_diverged_retries_then_stays_incomplete(self):
+        # Native heal returns status=complete even when finite tuning loss is
+        # worse than unhealed; this is registered divergence, not infrastructure.
+        with tempfile.TemporaryDirectory() as d:
+            args=self.fixture(Path(d));calls=[]
+            chosen=remaining_runs(args['history']['rows'])['pending'][:2]
+            def child(argv,**kw):
+                response=self.fake_child(args['gate']['provenance'],calls)(argv,**kw)
+                out=Path(argv[argv.index('--output')+1])/'result.json'
+                row=json.loads(out.read_text())
+                if len(calls)<=2:row.update(diverged=True,val_tune_pre=2.,val_tune_post=3.)
+                out.write_text(json.dumps(row));return response
+            with patch('scripts.a2_remaining_heals.subprocess.run',side_effect=child):
+                result=execute_remaining(**args,subset=[r['run_id'] for r in chosen])
+            self.assertEqual(len(calls),3)
+            self.assertEqual(calls[1]['lr'],chosen[0]['lr']/2)
+            self.assertEqual(result['status'],'incomplete')
+            self.assertFalse(result['scientific_complete'])
+            self.assertEqual(result['completed_original_ids'],[chosen[1]['run_id']])
+
     def test_infra_no_retry_and_caps_or_reused_subset_refused(self):
         with tempfile.TemporaryDirectory() as d:
             args=self.fixture(Path(d));calls=[];pending=remaining_runs(args['history']['rows'])['pending']
