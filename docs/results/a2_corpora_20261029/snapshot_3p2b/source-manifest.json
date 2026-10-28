@@ -1,0 +1,13 @@
+{
+  "code_commit": "d195e58dbe3c9d62f89c466d1ef40c66f0c4f573",
+  "files": {
+    "scripts/a2_corpus_snapshot.py": "20274768e00b56ba346950e3bfe5b3e87c055faa01efdc29194fd3ab1d801421",
+    "scripts/a2_prepare_corpora.py": "c8bc298dcd71e136ef4f4838f25b3c25b0bdff474b9e15c142fd18419b933d68",
+    "efficient_llm/__init__.py": "7415b751b9addb2c7b9d2863b40f42f9557cb2768ce9508398086119b44c5611",
+    "efficient_llm/a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "efficient_llm/diagnostic_data.py": "da080488a893ad4b71048a69298b867c89285ce4bb7f7ee94261e61ad1616d19"
+  },
+  "plan_sha256": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+  "cpu_only": true
+}

@@ -1,0 +1,6 @@
+{
+  "status": "complete",
+  "manifest_sha256": "02ba86c24feb61585f67c710a79bf8bf3cc5a0cf175386c480e26a467075ec87",
+  "native_reader_passed": true,
+  "source_prefix_hashes_match": true
+}

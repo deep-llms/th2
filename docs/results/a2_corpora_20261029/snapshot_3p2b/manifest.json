@@ -1,0 +1,141 @@
+{
+  "status": "complete",
+  "schema": "a2-training-prefix-v1",
+  "corpus": "dclm",
+  "plan_sha256": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+  "tokenizer_sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+  "eos_id": 0,
+  "streams": {
+    "heal": {
+      "rows": 781250,
+      "tokens": 3200000000,
+      "length": 4096,
+      "token_sha256": "ec8b09f2084d45568335813ba5565df333047fd5a05786b6c2c9caa7b10a49d1",
+      "starts_sha256": "c636b662cd41eee1725662f6a4c8a2b79be68a1e712436904ad27a2756790d30"
+    }
+  },
+  "source_prefixes": [
+    {
+      "index": 0,
+      "tokens": 205425967,
+      "shard_receipt_sha256": "49aa8842e280dd8024ee83de06c677f0b5c857408b6c149db6293ca88f7dd49f"
+    },
+    {
+      "index": 1,
+      "tokens": 120429022,
+      "shard_receipt_sha256": "fdd2f14188c81493b6622a09d97d60998cd276d5dfcdf03d220b6be953342b3d"
+    },
+    {
+      "index": 2,
+      "tokens": 133252756,
+      "shard_receipt_sha256": "8286c2e3e476f96c4051df8c67d895fe553875a28300d70552d9448f2150a9e1"
+    },
+    {
+      "index": 3,
+      "tokens": 136743184,
+      "shard_receipt_sha256": "ab80a4a091dc53d3f7c84aed570ef0eb545c6b50dc68994c10a0e4bf7ec8177d"
+    },
+    {
+      "index": 4,
+      "tokens": 159642657,
+      "shard_receipt_sha256": "56981c0182c370813af430dd59a97ed2d5dbd4d122eada4953d26377866f7e24"
+    },
+    {
+      "index": 5,
+      "tokens": 106385746,
+      "shard_receipt_sha256": "72ab09d67758b57cfb47e600e79f0976a44e8566b719e6d37cb610292bc7fe9f"
+    },
+    {
+      "index": 6,
+      "tokens": 149189525,
+      "shard_receipt_sha256": "4fe6a2f3d76945d97f1fd49a0da05587be0be739acf0c22c8b19b5280a3f996e"
+    },
+    {
+      "index": 7,
+      "tokens": 116406693,
+      "shard_receipt_sha256": "2e27d1b4d8b436362c40dcf941311073c337fb15e3e6d81f4b91344b5910ddc3"
+    },
+    {
+      "index": 8,
+      "tokens": 114690538,
+      "shard_receipt_sha256": "35a181ccd79cf21844a8ec12ca5fe490be42aa7eec9cedbd61d45212d425909f"
+    },
+    {
+      "index": 9,
+      "tokens": 156231066,
+      "shard_receipt_sha256": "580e3a6676dca1d71870a68f22dbd18cdbd649f5c027f5bcabbf90e81b0f1263"
+    },
+    {
+      "index": 10,
+      "tokens": 147975682,
+      "shard_receipt_sha256": "ac9d851ed33e7b165c1ef89c44070b62c1aa78af395ccb09bb5e077e6e474f14"
+    },
+    {
+      "index": 11,
+      "tokens": 123547337,
+      "shard_receipt_sha256": "f8a8d0dc3aa6c48c29492efce31d6d725ccf3230a6a7740f52ab34ba49f530ef"
+    },
+    {
+      "index": 12,
+      "tokens": 136677951,
+      "shard_receipt_sha256": "9fa46c92caaafe6175539cd479d8a0200da013369558e4a8479e4e5174b6886d"
+    },
+    {
+      "index": 13,
+      "tokens": 118006358,
+      "shard_receipt_sha256": "e89d2e087a42372c60c3ebdfbc7c5196fdce697824231b0fe99a01a0817e96a1"
+    },
+    {
+      "index": 14,
+      "tokens": 127956672,
+      "shard_receipt_sha256": "a2983c68f9ba965921371e2c786d870d543ae87c79abd30f31a65d9e67552f48"
+    },
+    {
+      "index": 15,
+      "tokens": 137807787,
+      "shard_receipt_sha256": "b02377a87f50d80599d9fee77dfd3198b8102cdc4baedee08a78d103748ae439"
+    },
+    {
+      "index": 16,
+      "tokens": 104534807,
+      "shard_receipt_sha256": "7c4a84b17b4e065bc4f7656d8d5475cbf454568557f5c6f05be49ff95e6ed914"
+    },
+    {
+      "index": 17,
+      "tokens": 121199892,
+      "shard_receipt_sha256": "c2afd1df6c8b45e5c5dd47891c81244f1d687a2dd7df7ff1202cbc75b7ced930"
+    },
+    {
+      "index": 18,
+      "tokens": 167610581,
+      "shard_receipt_sha256": "70ea0b5868865e7b0f1f1d641025a08d84b8064c89c06877919dabd9d9aa3c17"
+    },
+    {
+      "index": 19,
+      "tokens": 213805379,
+      "shard_receipt_sha256": "501765879965397dfad79679431425b30e25c37da096df0710f257646d8963d0"
+    },
+    {
+      "index": 20,
+      "tokens": 106335110,
+      "shard_receipt_sha256": "89fb31c43b05037961d8c6a76ada151e8354d52ab15682dbf400ef58c56668c5"
+    },
+    {
+      "index": 21,
+      "tokens": 118347432,
+      "shard_receipt_sha256": "3e0ccb7bf543fd4309b664ebdf1e4eb5a01a60807c3937c74dfd7c5789b8a251"
+    },
+    {
+      "index": 22,
+      "tokens": 122154358,
+      "shard_receipt_sha256": "8616ad62b244bbd94a7ae6e617e52de0344895854feefb8e3c768c35133a19e0"
+    },
+    {
+      "index": 23,
+      "tokens": 55643500,
+      "shard_receipt_sha256": "e86a9ffe964ad4aa9bb4b6786c65ea45320b0937fc58d6bf9a05041df63b4618"
+    }
+  ],
+  "evaluation": "Training stream only. Select a separately frozen validation set in the experiment protocol.",
+  "order": "Sequential rows, no shuffle; exact prefix of the full corpus training stream."
+}
