@@ -1,0 +1,338 @@
+{
+  "raw_log": "temp/a2_branch_health02.log",
+  "raw_sha256": "0b24283503ca43d83aa2894ca7cd804e2dfeecc83471e7b4b079c06267367808",
+  "artifacts": {
+    "source-manifest.json": "d3cc8fa4ecdbdc50c23fcb1c467c54d670d21bab71967fa5d81ca2245b7ab3e7",
+    "inputs-verified.json": "569799c13af9f334f85a345c591f2e796a5a3ffd3cefa91a99e9a0f3601e201e",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "jobs.json": "8fdd4258b224413315cc182e179d8e865b9e4ccf43f8660ca7894d0a02659eb4",
+    "history.json": "05327353f9fa7b2598a40f4a9ae02b8668a518d096233657b462f70ff0fb9e85",
+    "reference.json": "0ea6a3621d107a7db4e2fa21fc3f1665f1c0c8097270e917e0ad84e790da2daa",
+    "phase-budget.json": "c34b05550d5bf4dc731d65e6902bfabae79b8dfed830276fead3ad98c41e6818",
+    "remaining-plan.json": "6f9b420ac2be14764466fbe01acdc62bdf2f2d220e4562d7aa309aa03a1e3a17",
+    "supervised/supervisor.json": "a57a0469ea17cceb19e0f520ceb8f1242bb5bd4d641503dad6e3c9d57b4bf2d4",
+    "supervised/reclaim.json": "6bee90345e124762440fbf5d44f311f5d38be7456ae0d9b16350460dde50f3b2",
+    "supervised/gpus-free-before-training.json": "e7393353c9300753ea497406952f8a853f64775bac6c27d2af04274f40173957",
+    "supervised/run/run.json": "d6adf127ebd9807f0b5d3e09370343660f29a8fd99ae05f0610846713c462980",
+    "supervised/run/surveys/dclm-S72.json": "844201b8bbe0db2eed9d3e48c80fe25521a7844618a9379d19e85fbe96509b6e",
+    "supervised/run/surveys/dclm-S188.json": "0a963baf6e8fe99c190b423b0b3ef605e073e09847e2c7e825690dcb3f006ba2",
+    "supervised/run/surveys/fwe-S72.json": "735584ef9764421a6bbd8a7833db876e5899918acd17f397eab8b364f919a12a",
+    "supervised/run/surveys/fwe-S188.json": "f1e5277e85be9c23554ac9f31714a730fc94ded4d036c56977057bbf68da7f3a"
+  },
+  "health_at": "2026-10-28T06:28:41.691744+00:00",
+  "live": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-28T06:28:41.952012+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 94.0,
+        "pids": [
+          653833
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          653834
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 93.0,
+        "pids": [
+          653835
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          653836
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          653837
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 96.0,
+        "pids": [
+          653838
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 94.0,
+        "pids": [
+          653839
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 12216.0,
+        "utilization_percent": 100.0,
+        "pids": [
+          653840
+        ]
+      }
+    ],
+    "workers": [
+      653833,
+      653834,
+      653835,
+      653836,
+      653837,
+      653838,
+      653839,
+      653840
+    ],
+    "stop_roots": [],
+    "processes": {
+      "653833": {
+        "pid": 653833,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653834": {
+        "pid": 653834,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653835": {
+        "pid": 653835,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653836": {
+        "pid": 653836,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653837": {
+        "pid": 653837,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653838": {
+        "pid": 653838,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653839": {
+        "pid": 653839,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "653840": {
+        "pid": 653840,
+        "ppid": 653827,
+        "start_ticks": 310939925,
+        "command_sha256": "2c38ca5a60ea7fbbfe320008f1b9d86a12ae44258c8a251aaba572a01e244e55",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "guard_disabled": true
+  },
+  "guard": "{\"owner_pid\": 653073, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a01/supervised\", \"at\": \"2026-10-28T06:08:48.990397+00:00\"}",
+  "session": "0 653073",
+  "receipt_complete": true,
+  "source_files_verified": 82,
+  "source_commit": "602fbce114091d19108588bad125651b6f18c247",
+  "completed_surveys": {
+    "dclm-S72": {
+      "T1_precision_passed": true,
+      "precision_gap": 0.00011493196512901704,
+      "parent_sanity": {
+        "finite_logits": true,
+        "T10_formula_max_abs": 3.725290298461914e-09,
+        "passed": true
+      },
+      "group_bi": [
+        0.9773079093797605,
+        0.027643500201747884,
+        0.036228491594044954,
+        0.05277841640463521,
+        0.057880270920861676,
+        0.06382280212659452,
+        0.07376217208104663,
+        0.08328070906395624,
+        0.07751248083042128,
+        0.07210250418580699,
+        0.06898965763747356,
+        0.03470613174789605
+      ],
+      "final_loss": 2.90857529610787
+    },
+    "dclm-S188": {
+      "T1_precision_passed": true,
+      "precision_gap": 9.312273767525525e-05,
+      "parent_sanity": {
+        "finite_logits": true,
+        "T10_formula_max_abs": 3.725290298461914e-09,
+        "passed": true
+      },
+      "group_bi": [
+        0.9689962221773953,
+        0.03911259918959331,
+        0.05287185875590694,
+        0.07074668295501851,
+        0.07319759627421263,
+        0.07220284449306291,
+        0.07898025437651768,
+        0.08488063966569825,
+        0.07980573460764617,
+        0.07768574570229703,
+        0.09406865835666167,
+        0.04376405734507216
+      ],
+      "final_loss": 2.88670669804388
+    },
+    "fwe-S72": {
+      "T1_precision_passed": true,
+      "precision_gap": 7.769337689467193e-05,
+      "parent_sanity": {
+        "finite_logits": true,
+        "T10_formula_max_abs": 3.725290298461914e-09,
+        "passed": true
+      },
+      "group_bi": [
+        0.9815670969330768,
+        0.020436768814704465,
+        0.024716334062588885,
+        0.034774920649908836,
+        0.04735591441760789,
+        0.05521847863582252,
+        0.06780432311876439,
+        0.07164372748928827,
+        0.0721841114207109,
+        0.06435702619921813,
+        0.10207977303497273,
+        0.02526136740129914
+      ],
+      "final_loss": 3.042152001946299
+    },
+    "fwe-S188": {
+      "T1_precision_passed": true,
+      "precision_gap": 0.00010001528974257212,
+      "parent_sanity": {
+        "finite_logits": true,
+        "T10_formula_max_abs": 3.725290298461914e-09,
+        "passed": true
+      },
+      "group_bi": [
+        0.9714511880089276,
+        0.03071024342051487,
+        0.04092524532200059,
+        0.05205617749317071,
+        0.060860191478354864,
+        0.07101008017639288,
+        0.08064543797024726,
+        0.08209851890001119,
+        0.08053796760606247,
+        0.07268246070748319,
+        0.11801528686692109,
+        0.03962976815910224
+      ],
+      "final_loss": 3.0238075916258356
+    }
+  }
+}
