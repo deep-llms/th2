@@ -1,0 +1,150 @@
+{
+  "historical_fits": 30,
+  "new_receipts": 24,
+  "missing_originals": [
+    "P0-nem-P1T-S1-0.8B-lr3e-4",
+    "P0-nem-P1T-S2-0.2B-lr3e-4",
+    "P0-nem-P1T-S3-0.05B-lr3e-4",
+    "P0-nem-P1T-S4-0.05B-lr3e-4"
+  ],
+  "scientific_complete": false,
+  "phase0B": "Not executed; absent results are not failed experiments.",
+  "partial_phase0A": {
+    "label": "INCOMPLETE",
+    "clauses": {
+      "INCOMPLETE": true,
+      "GO": false,
+      "REFRAME": false,
+      "STOP": false
+    },
+    "E": null,
+    "E_d": {
+      "dclm": 0.012571973404717607,
+      "fwe": 0.015041272024274077,
+      "nem": null
+    },
+    "E_pre": null,
+    "E_pre_d": {
+      "dclm": -0.5903075551410049,
+      "fwe": -0.9231940634241886,
+      "nem": null
+    },
+    "sign_count": 0,
+    "stop_reason": null,
+    "main": {
+      "dclm": [
+        0.01087677388611441,
+        0.014267172923320803
+      ],
+      "fwe": [
+        0.012594972243960445,
+        0.01748757180458771
+      ],
+      "nem": [
+        0.007719106149845167,
+        null
+      ]
+    },
+    "pre": {
+      "dclm": [
+        0.2918303818571699,
+        -1.4724454921391796
+      ],
+      "fwe": [
+        0.3544175235867497,
+        -2.200805650435127
+      ],
+      "nem": [
+        0.300869945357225,
+        null
+      ]
+    },
+    "short": {
+      "dclm": [
+        0.01960398516809736,
+        0.02163412397057929,
+        0.013559254992177472,
+        0.023438546323562903
+      ],
+      "fwe": [
+        0.024259051780566754,
+        0.020757227944458112,
+        0.01445653544272485,
+        0.02518459337330592
+      ],
+      "nem": [
+        0.019606225316481485,
+        0.01916974834210272,
+        null,
+        null
+      ]
+    },
+    "unhealed_damage_context": {
+      "dclm": {
+        "P300": {
+          "mean": 3.6915534233363854,
+          "defined": 2,
+          "total": 2,
+          "negative": 0,
+          "positive": 2
+        },
+        "P1T": {
+          "mean": 3.101245868195381,
+          "defined": 2,
+          "total": 2,
+          "negative": 0,
+          "positive": 2
+        }
+      },
+      "fwe": {
+        "P300": {
+          "mean": 4.192944568517432,
+          "defined": 2,
+          "total": 2,
+          "negative": 0,
+          "positive": 2
+        },
+        "P1T": {
+          "mean": 3.269750505093243,
+          "defined": 2,
+          "total": 2,
+          "negative": 0,
+          "positive": 2
+        }
+      },
+      "nem": {
+        "P300": {
+          "mean": 2.3561421528306927,
+          "defined": 2,
+          "total": 2,
+          "negative": 0,
+          "positive": 2
+        },
+        "P1T": {
+          "mean": 1.393153362958154,
+          "defined": 1,
+          "total": 2,
+          "negative": 0,
+          "positive": 1
+        }
+      }
+    }
+  },
+  "T14": {
+    "-t14a": -6.4359164353433584e-06,
+    "-t14b": -0.002285655350733329
+  },
+  "nem_healing_curves": {
+    "P300": {
+      "0.05B": 0.2876248148819034,
+      "0.2B": 0.18258812147143288,
+      "0.8B": 0.1104685470026534
+    },
+    "P1T": {
+      "0.05B": 0.3072310401983849,
+      "0.2B": 0.19030722762127805,
+      "0.8B": null
+    }
+  },
+  "note": "Partial aggregation only; final conclusions require terminal scientific results and independent burn handoff."
+}

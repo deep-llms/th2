@@ -1,0 +1,8 @@
+{
+  "test_command": "tests/a2/test_eval_suite.py",
+  "tests": 3,
+  "status": "passed",
+  "raw_log": "temp/a2_eval_suite_tests.log",
+  "sha256": "903a371054920cecf53d6e8054f10298ffa960bbb71e7c70d5f2485c5a7350d9",
+  "gpu_validated": false
+}

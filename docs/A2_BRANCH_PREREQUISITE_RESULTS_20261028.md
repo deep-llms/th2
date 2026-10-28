@@ -173,3 +173,29 @@ Elapsed3h47/current, totalphase~8h57. Remaining~2–2.3h; ETA21:00–21:15SGT.
 [Compact archive](results/a2_remaining_phase0a_20261028/status_1856); rawlocal
 temp/a2_remaining_health09.log SHA256
 ca24a139e88251e26532491b3152a61e365d4f151224dbe93536245e012d2051.
+
+## 19:26 SGT check: 24/28 remaining fits complete
+
+| Newly completed NEM fit | Final NLL |
+|---|---:|
+| P300 S1, 0.8B | 2.884719484 |
+| P300 S1, 0.05B, T14a identical repeat | 3.061869316 |
+| P300 S1, 0.05B, T14b data shuffle | 3.059590097 |
+| P1T S2, 0.05B | 2.901267885 |
+
+P300 S1 0.8B PPL17.898546, NLL improves0.072119574 from0.2B2.956839059.
+Both budgets started from the original parent with their own schedules; this
+is not resume. Remaining parent-relative NLL damage is0.110468547. P1T long
+counterpart is unfinished, so no paired long-budget conclusion yet.
+T14a differs from original3.061875752 by−0.000006436; T14b by−0.002285655.
+These are one repeat and one shuffle, not a confidence interval.
+
+All24 completed receipts validate exact recipe/fullLR/eight-rank order/roundtrip,
+with no divergence/retry. Snapshot is between fits: P1T/S2short ended19:26:23,
+P1T/S3short worker group began19:26:31. GPUs temporarily0%/4MiB, not evidence
+of failure or queue completion. Supervisor656246 retains guard;86frozen hashes
+match. Fourfits remain: P1TS3/S4short,S2main,S1long. Queueelapsed4h17/phase9h27;
+remaining~1.5–1.8h, ETA21:00–21:15SGT.
+[Compact archive](results/a2_remaining_phase0a_20261028/status_1926); rawlocal
+temp/a2_remaining_health10.log SHA256
+8d3d0a11c1fb62d4eab23f6358907804cb7a8a6b532eb9de41382653e0eb8140.

@@ -227,3 +227,15 @@ model export→18-layer prune/reload, batched-vs-single scoring, and changed
 weight/code/layer/receipt/request rejection. Not actual1.7B/B200 acceptance.
 Still needed: reviewed checkpoint identity-plan builder, supervised paired suite,
 and actual-weight GPU parity/smoke after current training/burn handoff.
+
+19:32SGT local-only downstream preparation: eval/a2_suite.py plans native scoring
+on eight explicit GPU lanes, serializes multiple checkpoints assigned to the
+same GPU, and loads each checkpoint once for the entire shared request set.
+The caller must first validate training/burn handoff and numerical gates; this
+module neither acquires GPUs nor launches anything on import.
+Collector checks all nine tasks, exact sample counts/prompts across models,
+request/checkpoint/precision/runtime identity and score-file hash used by replay.
+ThreeCPU tests pass, including mocked ninejobs/eightlanes without GPU execution,
+paired accuracy aggregation and changed/missing artifacts/prompts rejection.
+Need reviewed checkpoint selection/identity-plan construction, supervised launch
+integration and actual full-model GPU parity before deployment. No new GPUjob.
