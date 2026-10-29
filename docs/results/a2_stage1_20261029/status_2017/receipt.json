@@ -1,0 +1,558 @@
+{
+  "at": "2026-10-29T12:17:50.312160+00:00",
+  "source": "0c1c1488477f1b836989182986bd785fbcd667d8",
+  "source_files": 103,
+  "guard": "{\"owner_pid\": 699598, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised\", \"at\": \"2026-10-29T01:20:48.542944+00:00\"}",
+  "session": "0 699598",
+  "published_fits": 10,
+  "fits": [
+    {
+      "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-3",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.001,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.9127663315143915,
+      "tuning": 2.901834545102013,
+      "dclm": 2.6803887579261017,
+      "roundtrip": 0.0,
+      "sha256": "6a266764096074093ddcb1b3074c2add6c7f635718dc94c108169b8e5a4efc09"
+    },
+    {
+      "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-4",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "final": 3.021207766650058,
+      "tuning": 3.012119551010823,
+      "dclm": 2.787754776027343,
+      "roundtrip": 0.0,
+      "sha256": "bdc4088b7b171283fd9ab8591bd2d388c3152845bac30a37922ca5c629b1234e"
+    },
+    {
+      "run_id": "ST1-dclm-P1T-S1-0.2B-lr3e-3",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.003,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.969984804664871,
+      "tuning": 2.9599632416656334,
+      "dclm": 2.7455578657194786,
+      "roundtrip": 0.0,
+      "sha256": "e9e9c1b1ab53772fd54a02aa52b22ec04f272658bdafb73071edc0e83a4f4da5"
+    },
+    {
+      "run_id": "ST1-dclm-P1T-S1-0.2B-lr3e-4",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.0003,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.949752725049912,
+      "tuning": 2.939432266639747,
+      "dclm": 2.7152403657781354,
+      "roundtrip": 0.0,
+      "sha256": "38655e0af41fd6d507168434fdfe61070bb01d8ff19b1c177e92d70b5f1b554f"
+    },
+    {
+      "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+      "arm": "P1T",
+      "budget": "3.2B",
+      "lr": 0.001,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.810678155612458,
+      "tuning": 2.798194435998354,
+      "dclm": 2.579649787752916,
+      "roundtrip": 0.0,
+      "sha256": "9c86cbea6c992e9f362348705f895e9a68d5a24585bed2f13be2aefef4286c14"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.001,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.9425540786156272,
+      "tuning": 2.930716072041446,
+      "dclm": 2.7091193496498067,
+      "roundtrip": 0.0,
+      "sha256": "061c4133f43085c06f8f248058c666cfb57d664cd5b2a1b54a57a3162ea63763"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "final": 3.0538869961718627,
+      "tuning": 3.04414581930077,
+      "dclm": 2.820801636291366,
+      "roundtrip": 0.0,
+      "sha256": "abb05f5c5d11eee1401cffc70b60e7769affabc32bc29b32f4ca06c2fe9bfd95"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr3e-3",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.003,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.9710086109282887,
+      "tuning": 2.959859914237808,
+      "dclm": 2.744826744461367,
+      "roundtrip": 0.0,
+      "sha256": "b0da9126e44872b8eb74ab9b07fb25555cdea6c768314f7e9746373cdfdc8eb0"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr3e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0003,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.9865329842558648,
+      "tuning": 2.9755779663648854,
+      "dclm": 2.7525039520998122,
+      "roundtrip": 0.0,
+      "sha256": "155b9e132a04f2d3452d64a05f23abedcc18ea5455d3b39499d10849a249644e"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+      "arm": "P300",
+      "budget": "3.2B",
+      "lr": 0.001,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.839891311491385,
+      "tuning": 2.8272426262154613,
+      "dclm": 2.6111758373312903,
+      "roundtrip": 0.0,
+      "sha256": "638ae8cb9e9390bceb980ea524e9ba18988f58ac168affea83f4ab7eb58e23ba"
+    }
+  ],
+  "raw_sha256": "09b3d088151f70cc996bd3019796e3e8263e43119848d53ccf6166a4aebba097",
+  "artifact_sha256": {
+    "source-manifest.json": "0e2f9685d2cab65d2bfd2aab2dd9e301958ce23eeb9ef667d6ce76ca45b27389",
+    "inputs.json": "eea34f2d2f3eca6bdc50e1d788aaa5aa4c801d76a07a54b6c9882ce3a108bec3",
+    "jobs.json": "637fe3ec59a228954069fe66bc200573cbac4ae56a8200a2dbaef4e570555948",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "c854ccb6230aaad35d4d0b0458a8ffa2783e3dfdef5a55ce16ae5e91746cb5b7",
+    "supervised/reclaim.json": "018e69fdef33570c146745c186c5b870188439dffe98438f4e37c9365c42c00a",
+    "supervised/gpus-free-before-training.json": "26b813ace5464a21bb56cfcb1d6c7e9d146a36533512532bad44f71bfd78d2b8",
+    "supervised/run/run.json": "d138503be53fba85cc9ebeca064c3de106c54fbe9c0b3335d0d805981de186ad",
+    "supervised/run/results/a2_stage1/progress.json": "23201f57b01ebb7d0fdb3df70439851839e0080a81687d663ae50cf5a3a6edac",
+    "supervised/run/results/a2_stage1/lr_choice.json": "8f522c1aff4a3d7a6df4a15ed311c6429c63a9787d4e8ea61f2e3937ee55be0b",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json": "061c4133f43085c06f8f248058c666cfb57d664cd5b2a1b54a57a3162ea63763",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-0.2B-lr3e-4/result.json": "38655e0af41fd6d507168434fdfe61070bb01d8ff19b1c177e92d70b5f1b554f",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-3.2B-lr1e-3/result.json": "9c86cbea6c992e9f362348705f895e9a68d5a24585bed2f13be2aefef4286c14",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr3e-4/result.json": "155b9e132a04f2d3452d64a05f23abedcc18ea5455d3b39499d10849a249644e",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr3e-3/result.json": "b0da9126e44872b8eb74ab9b07fb25555cdea6c768314f7e9746373cdfdc8eb0",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-0.2B-lr1e-3/result.json": "6a266764096074093ddcb1b3074c2add6c7f635718dc94c108169b8e5a4efc09",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-0.2B-lr1e-4/result.json": "bdc4088b7b171283fd9ab8591bd2d388c3152845bac30a37922ca5c629b1234e",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-0.2B-lr3e-3/result.json": "e9e9c1b1ab53772fd54a02aa52b22ec04f272658bdafb73071edc0e83a4f4da5",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-3.2B-lr1e-3/result.json": "638ae8cb9e9390bceb980ea524e9ba18988f58ac168affea83f4ab7eb58e23ba",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr1e-4/result.json": "abb05f5c5d11eee1401cffc70b60e7769affabc32bc29b32f4ca06c2fe9bfd95",
+    "corpora/source-manifest.json": "d2f443908bf165c58539cf263d5155eed86547a2aa8f980ad03933cc8ae6f59a",
+    "corpora/status.json": "43017dd6c5c4327872ad06605a5e97b51b09943007ba923516d86d38100a7cad",
+    "corpora/complete.json": "43017dd6c5c4327872ad06605a5e97b51b09943007ba923516d86d38100a7cad",
+    "corpora/fineweb_edu/manifest.json": "0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd"
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        705289
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        705290
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        705291
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        705292
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        705293
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        705294
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        705295
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        705296
+      ]
+    }
+  ],
+  "fwe": {
+    "raw_files": 60,
+    "raw_bytes": 121398496853,
+    "parts": [
+      {
+        "index": 0,
+        "tokens": 751236762,
+        "seconds": 7221.4042586013675,
+        "sha256": "bfa27262ca62c8254464a2c5c781065d37e9e6661e952fe7027d23d71e84e718"
+      },
+      {
+        "index": 1,
+        "tokens": 750124700,
+        "seconds": 7484.514312448911,
+        "sha256": "0748bb323013fa4b6890cce50b1f753d77036e2cb3dc55db27b7adbd9de4bb2b"
+      },
+      {
+        "index": 2,
+        "tokens": 749927246,
+        "seconds": 7259.963704257272,
+        "sha256": "fc01c0549454b06e34f0f95390da7d29b8192dfc50bfd1dbddc0c72bafc2e644"
+      },
+      {
+        "index": 3,
+        "tokens": 748178856,
+        "seconds": 7316.173999671359,
+        "sha256": "dbbe26cbcb314d3f41c1a80ec4141f7f36a27cd8fd0914908d30c64dfb0729ad"
+      },
+      {
+        "index": 4,
+        "tokens": 748786120,
+        "seconds": 7306.910258748103,
+        "sha256": "72a410eda57ba09355e0f473ec4a7737e2d351bea40e94ee8ed0646b98fc6fa6"
+      },
+      {
+        "index": 5,
+        "tokens": 751467212,
+        "seconds": 7233.965792440344,
+        "sha256": "b64aa83c8bda964ce9df6b99ed989d92e3e66014c2fbb70a4fdc6b03cb34aa0f"
+      },
+      {
+        "index": 6,
+        "tokens": 751665280,
+        "seconds": 7247.550585308112,
+        "sha256": "aa9fbd7718ff06ad8465612ba3f55318717b9e48ce31af93946eb6af63ffec3a"
+      },
+      {
+        "index": 7,
+        "tokens": 748583131,
+        "seconds": 7301.126350782812,
+        "sha256": "e32bea505004a6e5706c5552e8ee06c431a46d51350bd19c77c69ef99a918691"
+      },
+      {
+        "index": 8,
+        "tokens": 749479526,
+        "seconds": 7268.645664007869,
+        "sha256": "b4d2aca4bbd21acd8591161e031317b6e2f072235f14101d5ace7f3d9bb2edcc"
+      },
+      {
+        "index": 9,
+        "tokens": 245733474,
+        "seconds": 2396.834217674099,
+        "sha256": "967c17ba730c75232fedc49aac8a645fcd3508c1b1f4f2ad08d9bf101167567a"
+      },
+      {
+        "index": 10,
+        "tokens": 748613053,
+        "seconds": 7348.922093428671,
+        "sha256": "ef29e9b5f1941db029eb3d8438952c5f4bc015541046e08173b34ab104133c5c"
+      },
+      {
+        "index": 11,
+        "tokens": 751712323,
+        "seconds": 7169.927418000065,
+        "sha256": "fd65f4af435c44a6dd344a71b9c6619f75ff87bef58633e85b88b0f9f2ab0d51"
+      },
+      {
+        "index": 12,
+        "tokens": 751273872,
+        "seconds": 7304.899479791988,
+        "sha256": "d8eb972027c7410c579a139fab1b70ed7f0d7bb0b7a88378e4310c4067700c98"
+      },
+      {
+        "index": 13,
+        "tokens": 248099279,
+        "seconds": 2455.4033018648624,
+        "sha256": "352635b0e33134b52a783c8bf1ba0ed4daeb0d6a3551263bac8f8aff14238d3e"
+      },
+      {
+        "index": 14,
+        "tokens": 234993701,
+        "seconds": 2250.9572701682337,
+        "sha256": "7badd3256369d0d71ea2269fb64d20efe1efdee133d49ee2aaa3f8a96280d112"
+      },
+      {
+        "index": 15,
+        "tokens": 749120172,
+        "seconds": 7282.932200711686,
+        "sha256": "b322505b32893991107fc5d0a687710cd9521a441d725de207f9db5e288e72e6"
+      },
+      {
+        "index": 16,
+        "tokens": 748726274,
+        "seconds": 7353.702161527239,
+        "sha256": "e2766603d4ad4064140f1bade0d7c86cf994578e7e2290b4a2e6200715288617"
+      },
+      {
+        "index": 17,
+        "tokens": 259021029,
+        "seconds": 2536.551507164724,
+        "sha256": "e3915cd0b8120a49b2a23aeb4d8dcb1e2fea992a5f12d0a102dd2a252b43cf2d"
+      },
+      {
+        "index": 18,
+        "tokens": 748274201,
+        "seconds": 7510.210858819075,
+        "sha256": "98b83819a54375cb54a201867fe3d518e5d1e3eb2dc7bb8d512768004033dae7"
+      },
+      {
+        "index": 19,
+        "tokens": 749524493,
+        "seconds": 7289.584493128117,
+        "sha256": "a61db6104808b0d77d2cc53a9b002415172a45d51b900691980bf6ec6098c6ee"
+      },
+      {
+        "index": 20,
+        "tokens": 751333423,
+        "seconds": 7275.0893693617545,
+        "sha256": "a9cc8a65e08391ef1c1bb8096e9dcc4e6595dbf7796438efb3a8cbec74af0b8a"
+      },
+      {
+        "index": 21,
+        "tokens": 749402880,
+        "seconds": 7266.661142822821,
+        "sha256": "72641de3311dd7e598d73842c3129447109a3bed19afb225e65caf8522d6fe07"
+      },
+      {
+        "index": 22,
+        "tokens": 750808900,
+        "seconds": 7346.041635652073,
+        "sha256": "a6a5d95a407c115540e287337d4bbe004356e4edd4d8d9bb3bf08f2b31c20e08"
+      },
+      {
+        "index": 23,
+        "tokens": 750467826,
+        "seconds": 7310.865900885779,
+        "sha256": "e653142765213b3db2b9515d3961fe91ccde871847e8400eaf7b4bcdb8c2bf2c"
+      },
+      {
+        "index": 24,
+        "tokens": 751478881,
+        "seconds": 7311.294678268023,
+        "sha256": "1fef5ef810caae80e84c5c06b94372dcc56b66c0f7565838dffdc56902e56371"
+      },
+      {
+        "index": 25,
+        "tokens": 750844329,
+        "seconds": 7261.935101746116,
+        "sha256": "50c5f1addd181e38eaa3c2e131afbd38d7a7aa63140566943874f75c33c5970f"
+      },
+      {
+        "index": 26,
+        "tokens": 751347714,
+        "seconds": 7241.041252685245,
+        "sha256": "49700cfeb404c6d79e4234a0892294746f73bfbdcf108ccbab5e0dcd9e995692"
+      },
+      {
+        "index": 27,
+        "tokens": 749768487,
+        "seconds": 7389.734346060082,
+        "sha256": "d5e6b686dad1e6fb2c93b8a6a43188db6c18b3c6a3fd636ab177a882cdbe9ced"
+      },
+      {
+        "index": 28,
+        "tokens": 749926658,
+        "seconds": 7256.8020573360845,
+        "sha256": "5ad7872ab8f68afb18adbf7b657daf14323f07f658cc8706d758dfa1821fe814"
+      },
+      {
+        "index": 29,
+        "tokens": 750462836,
+        "seconds": 7312.34348627599,
+        "sha256": "788e5a184d61dbbceb79274389ef5ecdfa03d551f9bace388b61f9d2e59f4748"
+      },
+      {
+        "index": 30,
+        "tokens": 751104297,
+        "seconds": 7277.629061671905,
+        "sha256": "a1ca98bf394aab3b124d012e6f26f1849a21e81eaf154233f71c48801eb5a29d"
+      },
+      {
+        "index": 31,
+        "tokens": 749318344,
+        "seconds": 7594.829564276617,
+        "sha256": "90400297ba650d231f4a34c6a88fbb762749156d617e5d17f37c0600c5c858eb"
+      },
+      {
+        "index": 32,
+        "tokens": 751854952,
+        "seconds": 7244.639560576063,
+        "sha256": "2da0c5dbdfe4a7f3665d7515c9f79c65e70cd44a041a710e66577c5330d2a844"
+      },
+      {
+        "index": 33,
+        "tokens": 749011235,
+        "seconds": 7332.491757938173,
+        "sha256": "c19b07a585a858a62b321ca008a24ca74b461fc9a91fe750f74edc809171ecee"
+      },
+      {
+        "index": 34,
+        "tokens": 750700621,
+        "seconds": 7270.2918052501045,
+        "sha256": "26f67f04fd9eb5d02bc8d251d11dac9a0c19c9415f6a880b1ac1883f786e862a"
+      },
+      {
+        "index": 35,
+        "tokens": 751057967,
+        "seconds": 7275.46881437907,
+        "sha256": "bada1cb70ffcc42bd12f164109668ac432af484dc9f192b66ef574a26f5a136f"
+      },
+      {
+        "index": 36,
+        "tokens": 751283223,
+        "seconds": 7288.4291758053005,
+        "sha256": "e0579000cccd9ba2ea40d840ad8d4ca007b0a19405a52a9e48dc6ac707c491db"
+      },
+      {
+        "index": 37,
+        "tokens": 751120640,
+        "seconds": 7201.742521036882,
+        "sha256": "a86908ebd1fa1c8a2dd29a35057fcc36d5444978dc9ac7270a6955fb1376f4fe"
+      },
+      {
+        "index": 38,
+        "tokens": 751190389,
+        "seconds": 7274.259025920648,
+        "sha256": "3c620c71faa3654acd449e07b7931a1ece4fe0a1a2c16ac71e0d8e01fa2bd3e1"
+      },
+      {
+        "index": 39,
+        "tokens": 73505193,
+        "seconds": 674.6082939757034,
+        "sha256": "e96cb348eadc397172e626dbbbc3b61823d7cfba6e332de17fcf9af7a987a60e"
+      },
+      {
+        "index": 40,
+        "tokens": 750582229,
+        "seconds": 7268.074495220091,
+        "sha256": "fc5d2a28df85f3752e9a11133c3e27b55459e2fe63a2921815221a6282fae78d"
+      },
+      {
+        "index": 41,
+        "tokens": 748962168,
+        "seconds": 7277.868688793853,
+        "sha256": "2eb19f892f150e1b356d60300926d795a4b9300da51232f37cbe109cd8e42ed7"
+      },
+      {
+        "index": 42,
+        "tokens": 749427138,
+        "seconds": 7332.743499676231,
+        "sha256": "563321378b2204cb7709aae16246edfd74443a0e6a74ccfe0392027969ecc29e"
+      },
+      {
+        "index": 43,
+        "tokens": 748294359,
+        "seconds": 7340.601413726341,
+        "sha256": "b6bded2bf2f31724272ff3ed32779dcade1970fd78007ddf9db38144711bca99"
+      },
+      {
+        "index": 44,
+        "tokens": 751529518,
+        "seconds": 7248.652460931335,
+        "sha256": "c9d8e8e49b2442a28292e330d6509a87549d89b98cdcd75ff1b75514e6753e5c"
+      },
+      {
+        "index": 45,
+        "tokens": 748838266,
+        "seconds": 7422.076267217752,
+        "sha256": "abf151f8c6509497a26d3416bdd1518c6b88e4a9622e5f5c8c505ed65f93e55d"
+      },
+      {
+        "index": 46,
+        "tokens": 751265381,
+        "seconds": 7287.339039119892,
+        "sha256": "c2104f4cf0caf7b8a4ad4f1c49c9ea3e13e2e615a48a0faa03dc1285eb6690d0"
+      },
+      {
+        "index": 47,
+        "tokens": 750377786,
+        "seconds": 7581.617281290237,
+        "sha256": "4da336d224940f8a100638865f12cef2acb47eb333d933f048487c4062e71501"
+      }
+    ],
+    "observed_tokens": 33319806344
+  },
+  "active_fit": {
+    "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+    "logged_step": 9450,
+    "total_steps": 12207
+  },
+  "corpora_source_verified": 5
+}
