@@ -1,5 +1,9 @@
 # Current task
 
+29Oct16:17:38SGT VERIFIED: healtha13 982874a ACKNOWLEDGED;P1Tmain3.2B6750/12207(55.3%),8GPUs98–99%/81286MiB,guard699598/sessionactive.103sourcefiles0c1c148/sameprovenance verified;9/15fitscomplete/fullLR/exact8rankorder/roundtrip0/no divergence/commonLR1e-3.No newfinalvalidation. P1TETA17:45–18:00SGT(~1h30remaining);fullstage30Oct00:30–01:30provisional(~8–9h). Rawhealth13SHAa0c23bf9a5e7c9f4d762f049ea3a25620994d4351f5c600b9ae31fdf91604572;archive status_1617. BOTH30Bcorpora independentlycomplete unchanged. Restorecommands#0/no pendingreceipt;nextuniquehealtha14 fromtemp/a2_stage1_heals_health13.sh(renamea13). Samewatch16:46SGT/noSTOP/newtimer/restart/GPUjob.
+
+2026-10-29T16:17:01.556599+08:00: Unique readonly traininghealtha13 982874a56cee76d92b4f966ac501fc5e36e056a7 SUBMITTED/remoteheadverified;retrieve pendingreceipt BEFOREwrites. No restart/sourcechange/newGPUjob;bothcorporaalreadyverified.
+
 29Oct15:23:08SGT VERIFIED: healtha12 ef63bca ACKNOWLEDGED;P1Tmain3.2B3340/12207(27.4%),8GPUs98–100%/81286MiB,guard699598/sessionactive.103sourcefiles0c1c148/sameprovenance verified;9/15fitscomplete/fullLR/exact8rankorder/roundtrip0/no divergence/commonLR1e-3. P300mainNLL2.839891311 unchanged;no newfinalvalidation. MeasuredP1T~.96sec/update;ETA17:45–18:00SGT/fullstage30Oct00:30–01:30provisional. Rawhealth12SHA5becdf3c53a0f152048fde7f66a934cd4c6feff071f7b22116065db5dcee628c;archive status_1523. BOTH30Bcorpora independentlycomplete;no morehash/prep/download. Restorecommands#0/no pendingreceipt;nextuniquehealtha13 fromtemp/a2_stage1_heals_health12.sh(renamea12). Samewatch16:16SGT/noSTOP/newtimer/restart/GPUjob.
 
 2026-10-29T15:22:51.037310+08:00: Unique traininghealtha12 ef63bca819da732fe9b5d0c8b6ba37196466c0c6 SUBMITTED/remoteheadverified;retrieve BEFOREwrites. BOTH30Bcorpora independentlyVERIFIED;FWEfinalreceiptarchived,doNOT rehash/reprepare/download. CurrentStage1source0c1c148unchanged;noGPUrestart. Samewatch15:46/noSTOP/newtimer.
