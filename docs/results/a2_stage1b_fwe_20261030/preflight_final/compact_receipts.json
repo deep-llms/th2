@@ -1,0 +1,10 @@
+{
+  "note": "Compact audit copies; original byte hashes below. Full original receipts retained locally under temp/a2_stage1b_preflight_health02 and on the GPU node. Do not use compact copies as original SHA locks.",
+  "original_sha256": {
+    "inputs.json": "1b0b1733ebd51ade0d87c391c269e0f927fc816b4e39a6be0f9d06df0195ec44",
+    "supervised/run/P1T.json": "4503b06dbbc102ccc691dfde07f5a05583d0b339b2883836c837c727e0a10030",
+    "supervised/run/P300.json": "73d1bb3543bd1fab56d2bee802f9a7e6396ba024b15bf73e35233f8cb9bf2906",
+    "supervised/run/S72.json": "ec97b2c71eb0b787b56e9a05695d909acf52b0684110b6a3298a079936c62bf2",
+    "supervised/run/tests.json": "0ddedf66933134338cc87f872b28e5df9d8a67ba0cf6460d482c90ebe0321b8b"
+  }
+}
