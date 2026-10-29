@@ -8,16 +8,16 @@ DOC=np.dtype([('row','<u8'),('hash','V32'),('tokens','<u8'),('group','u1')])
 INDEX=np.dtype([('source','<u4'),('row','<u8'),('hash','V32'),('offset','<u8'),('tokens','<u8')])
 
 
-def documents(root,plan,manifest,group):
+def documents(root,plan,manifest,group,corpus="dclm"):
     """Recover ids, exact-text hashes, and offsets from pinned completed shards."""
     rows=[];offset=0;partial=0
     for item in manifest['source_prefixes']:
         if item['group']!=group:continue
-        i=item['source_index'];part=root/'parts/dclm'/f'{i:05d}'
+        i=item['source_index'];part=root/'parts'/corpus/f'{i:05d}'
         receipt=part/'complete.json'
         if sha(receipt)!=item['shard_receipt_sha256']:raise ValueError('Source receipt changed')
         saved=json.loads(receipt.read_text())
-        if saved['source']!=plan['corpora']['dclm']['files'][i]:raise ValueError('Source identity changed')
+        if saved['source']!=plan['corpora'][corpus]['files'][i]:raise ValueError('Source identity changed')
         verify_file(part/'documents.bin',saved['files']['documents.bin'])
         docs=np.fromfile(part/'documents.bin',dtype=DOC)
         docs=docs[docs['group']=={'heal':0,'tuning':1,'final':2}[group]]
@@ -33,14 +33,26 @@ def documents(root,plan,manifest,group):
     return np.concatenate(rows),partial
 
 
-def prepare(plan_path,source_sha,output,spec,length=4096,minimum=781248):
-    started=time.monotonic();plan=json.loads(Path(plan_path).read_text());root=Path(plan['root']);source=root/'packed/dclm'
-    if sha(source/'manifest.json')!=source_sha:raise ValueError('Unreviewed DCLM manifest')
+def prepare(plan_path,source_sha,output,spec,length=4096,minimum=781248,*,corpus="dclm",prior_verification=None,replication_spec=None):
+    started=time.monotonic();plan=json.loads(Path(plan_path).read_text());root=Path(plan['root']);source=root/'packed'/corpus
+    if sha(source/'manifest.json')!=source_sha:raise ValueError('Unreviewed corpus manifest')
     manifest=json.loads((source/'manifest.json').read_text())
     if manifest['plan_sha256']!=sha(plan_path):raise ValueError('Different source plan')
-    verify_packed(source,manifest)
+    if corpus not in ('dclm','fineweb_edu'):raise ValueError('Unregistered corpus')
+    if prior_verification is None:
+        verify_packed(source,manifest)
+    else:
+        receipt=json.loads(Path(prior_verification).read_text())
+        if (receipt.get('status')!='verified' or receipt.get('corpus')!=corpus
+            or receipt.get('manifest_sha256')!=source_sha
+            or not receipt.get('full_output_hashes_passed') or not receipt.get('native_reader_passed')
+            or receipt['streams']!=manifest['streams']):raise ValueError('Prior full verification differs')
+        for name,stream in manifest['streams'].items():
+            for suffix,mult in [('bin',4),('starts',1)]:
+                if (source/(name+'.'+suffix)).stat().st_size!=stream['tokens']*mult:raise ValueError('Source size changed')
+
     output=Path(output);output.mkdir(parents=True,exist_ok=False)
-    heal,excluded=documents(root,plan,manifest,'heal');held,_=documents(root,plan,manifest,'tuning')
+    heal,excluded=documents(root,plan,manifest,'heal',corpus);held,_=documents(root,plan,manifest,'tuning',corpus)
     ids=lambda a:np.rec.fromarrays([a['source'],a['row']],names='source,row')
     if np.intersect1d(ids(heal),ids(held)).size or np.intersect1d(heal['hash'],held['hash']).size:
         raise ValueError('T7 overlap by document id or exact content')
@@ -71,6 +83,10 @@ def prepare(plan_path,source_sha,output,spec,length=4096,minimum=781248):
         heldout=dict(path=str(source),stream='tuning',manifest_sha256=source_sha,tokens=manifest['streams']['tuning']['tokens']),
         T7=dict(passed=True,id_overlap=0,content_hash_overlap=0),
         T18=dict(sequences=full//length,eos_tokens=eos,eos_share=eos/full),elapsed_seconds=time.monotonic()-started)
+    if replication_spec:
+        result['stage1b_spec_sha256']=sha(replication_spec)
+        result['corpus']=corpus
+        result['prior_verification_sha256']=sha(prior_verification) if prior_verification else None
     verify_packed(output,result);write_json(output/'manifest.json',result)
     from efficient_llm.a2.data import PackedRows
     reader=PackedRows(output,'heal',count=2,order=[0,info['rows']-1],verify=False)
