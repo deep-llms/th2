@@ -1,0 +1,8 @@
+{
+  "status": "complete",
+  "training_complete": true,
+  "full_stage_complete": false,
+  "downstream_pending": true,
+  "runs": 15,
+  "decision_sha256": "984a74a865e6ca54b179c6ac9720ff935ea6df7de1d5b1841d9b453551db5577"
+}

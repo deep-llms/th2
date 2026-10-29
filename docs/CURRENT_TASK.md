@@ -1,5 +1,9 @@
 # Current task
 
+29Oct23:52:24SGT VERIFIED: terminal b5cb0fe ACKNOWLEDGED;all15fits/fullLR/exact8rankorder/roundtrip0/same103files PASS. Training23:48:01 exit0;supervisorok/guardreleased/sessiondead,8knownburnworkers/collectivecycles230→240,payload255.38→266.48GiB independentlyverified. RawSHA0533800e29a5923c39db567afe346fc02ef29481a64b94a03a8ba4cd2d602b40;archive training_final. ActualSHAterminal/reference locks prepared for sixmodel downstream,not yetlaunched. Priorledger1800sec+elapsed09:21:49→launch;timeout7200sec+660reserve remainsunder30/36h/deadline. Bothcorpora complete. NoSTOP/newtimer.
+
+2026-10-29T23:52:02.204231+08:00: Readonlyterminalcollection b5cb0fe514d052ade3c64931836f1b4abbae31db SUBMITTED/remoteheadverified;retrievebeforewrites. All15trainingfitsverifiedexit0,independentburn+terminalbundlepending. NoGPUlaunch/restart. Samewatch00:16SGT.
+
 29Oct23:48:11SGT VERIFIED: healtha28 4bfee1c ACKNOWLEDGED;ALL15fits COMPLETE/exit0/fullLR/exact8rankorder/roundtrip0/no divergence. X72.8Bfinal2.918631007/.2Bfinal3.015278782. Trainingterminal23:48:01SGT;supervisor snapshot stilltransitioning/guard699598/GPUsfree,independentburnverification REQUIRED. E(.2/.8/3.2)=.02109629335/.02078642256/.02167088457;A_init=.07272470371/.03891002886/.01211313187;ratioA=.3113113053. Mainlabels persists/anneal first;downstream/fullreportpending. Rawhealth28SHA936441da36df15ae556477057e838fa1a37820d607292ec93eab637867c2dabd;archive status_2348. Nextreadonlyterminalcollection temp/a2_stage1_heals_terminal01.sh includesruns/tests/config. Bothcorpora unchanged. No newGPUjob/restart/STOP/timer.
 
 2026-10-29T23:47:21.875816+08:00: Unique readonly traininghealtha28 4bfee1c0b2452ffe82ef509ed8e815df64d94df4 SUBMITTED/remoteheadverified; retrieve pendingreceipt BEFOREwrites. VerifyX720.8Bterminal/0.2Btransition;no restart/newGPUjob/sourcechange. Samewatch30Oct00:16SGT.

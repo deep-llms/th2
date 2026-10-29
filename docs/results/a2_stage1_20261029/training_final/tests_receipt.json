@@ -1,0 +1,8 @@
+{
+  "sha256": "739847de9e35a517fd7240f46b69a47bad7a55183503abfe2668a402b24380ef",
+  "bytes": 1090690,
+  "status": "passed",
+  "eligible_x72": true,
+  "step_seconds": 0.9489318132400513,
+  "original_archive": "docs/results/a2_stage1_20261029/preflight_final"
+}

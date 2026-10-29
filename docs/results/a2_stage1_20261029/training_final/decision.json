@@ -1,0 +1,58 @@
+{
+  "budgets": {
+    "0.2B": {
+      "E": 0.021096293347514283,
+      "A_init": 0.07272470370653528,
+      "E_dclm": 0.025535262684837523,
+      "A_init_dclm": 0.07471880562500433
+    },
+    "0.8B": {
+      "E": 0.02078642256362606,
+      "A_init": 0.038910028863575974,
+      "E_dclm": 0.022010081864630937,
+      "A_init_dclm": 0.04011035061795587
+    },
+    "3.2B": {
+      "E": 0.021670884569823023,
+      "A_init": 0.01211313187395735,
+      "E_dclm": 0.022739804830168353,
+      "A_init_dclm": 0.012886019799362991
+    }
+  },
+  "length": {
+    "value": 0.021670884569823023,
+    "clauses": {
+      "INCOMPLETE": false,
+      "persists": true,
+      "reversed": false,
+      "erased": false
+    },
+    "label": "persists"
+  },
+  "state": {
+    "value": 0.01211313187395735,
+    "clauses": {
+      "INCOMPLETE": false,
+      "anneal first": true,
+      "prune before you anneal": false,
+      "no effect": false
+    },
+    "label": "anneal first"
+  },
+  "ratios": {
+    "E": 1.0425499868238353,
+    "A_init": 0.3113113052788445
+  },
+  "E_pre": 0.2918303818571699,
+  "parent_difference": -0.050884040448750056,
+  "exposure_caveat": "Own-corpus heldout may have been seen during parent pretraining, more by P1T; no decisions use it.",
+  "chosen_lr": 0.001,
+  "own_best_lrs": {
+    "P300": 0.001,
+    "P1T": 0.001
+  },
+  "stage1_spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "spent_seconds": 53770.010947525036,
+  "downstream_status": "pending",
+  "E_short_own_best": 0.021096293347514283
+}

@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-29T01:21:49.359472+00:00",
+  "jobs": [
+    {
+      "name": "stage1-heals",
+      "started_at": "2026-10-29T01:21:49.359667+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 51971.408268721774,
+      "artifacts": [
+        {
+          "path": "results/a2_stage1/complete.json",
+          "sha256": "02674955c5255fb70914f06764cfa9552ec02691972577bd3a5e5d2692dbb1a0",
+          "bytes": 221
+        }
+      ],
+      "finished_at": "2026-10-29T15:48:01.289521+00:00"
+    }
+  ],
+  "finished_at": "2026-10-29T15:48:01.289574+00:00"
+}
