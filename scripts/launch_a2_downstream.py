@@ -33,13 +33,14 @@ def job_config(plan_lock, timeout_seconds):
                           dict(path='downstream/results.json',json_equals=dict(status='ok',diagnostic=False))])])
 
 
-def freeze_source(source, output, commit):
+def freeze_source(source, output, commit, extra_files=()):
     frozen=output/'source';files=list(source.glob('*.py'))
     for directory in ('efficient_llm','eval','scripts'):
         files.extend((source/directory).rglob('*.py'))
     files.extend(source/name for name in ('resources/accelerate_b200.yaml','resources/llm_pretrain_burn.py',
         'resources/a2_inputs_20261028.json','resources/downstream_english_20261023.json',
         'resources/a2_early_grid_reuse.json','resources/a2_pair_reuse.json','docs/A2_pilot_spec.md'))
+    files.extend(source/name for name in extra_files)
     identities={}
     for file in files:
         relative=file.relative_to(source);target=frozen/relative
