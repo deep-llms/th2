@@ -1,0 +1,157 @@
+{
+  "at": "2026-10-29T01:47:36.112913+00:00",
+  "source": "0c1c1488477f1b836989182986bd785fbcd667d8",
+  "source_files": 103,
+  "guard": "{\"owner_pid\": 699598, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised\", \"at\": \"2026-10-29T01:20:48.542944+00:00\"}",
+  "session": "0 699598",
+  "published_fits": 1,
+  "fits": [
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "final": 3.0538869961718627,
+      "tuning": 3.04414581930077,
+      "dclm": 2.820801636291366,
+      "roundtrip": 0.0,
+      "sha256": "abb05f5c5d11eee1401cffc70b60e7769affabc32bc29b32f4ca06c2fe9bfd95"
+    }
+  ],
+  "raw_sha256": "264fe015e8baa2e737d20ecc4a1529b39e36774da0865c0469d401e5a5392c6d",
+  "artifact_sha256": {
+    "source-manifest.json": "0e2f9685d2cab65d2bfd2aab2dd9e301958ce23eeb9ef667d6ce76ca45b27389",
+    "inputs.json": "eea34f2d2f3eca6bdc50e1d788aaa5aa4c801d76a07a54b6c9882ce3a108bec3",
+    "jobs.json": "637fe3ec59a228954069fe66bc200573cbac4ae56a8200a2dbaef4e570555948",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "c854ccb6230aaad35d4d0b0458a8ffa2783e3dfdef5a55ce16ae5e91746cb5b7",
+    "supervised/reclaim.json": "018e69fdef33570c146745c186c5b870188439dffe98438f4e37c9365c42c00a",
+    "supervised/gpus-free-before-training.json": "26b813ace5464a21bb56cfcb1d6c7e9d146a36533512532bad44f71bfd78d2b8",
+    "supervised/run/run.json": "d138503be53fba85cc9ebeca064c3de106c54fbe9c0b3335d0d805981de186ad",
+    "supervised/run/results/a2_stage1/progress.json": "fc95f8f18f29a70a716d9580b39c492b228a5be323f64fecb315a0583a7ccc8a",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr1e-4/result.json": "abb05f5c5d11eee1401cffc70b60e7769affabc32bc29b32f4ca06c2fe9bfd95",
+    "corpora/source-manifest.json": "d2f443908bf165c58539cf263d5155eed86547a2aa8f980ad03933cc8ae6f59a",
+    "corpora/status.json": "378a5a0a609d35f4dc98e76aae3b1d85792d24d01ed76bd2f10d03ab9f509b9d"
+  },
+  "active_run": "ST1-dclm-P1T-S1-0.2B-lr1e-4",
+  "active_step": 710,
+  "lr_selected": false,
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        699928
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        699929
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        699930
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        699931
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        699932
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        699933
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        699934
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        699935
+      ]
+    }
+  ],
+  "fwe": {
+    "raw_files": 60,
+    "raw_bytes": 121398496853,
+    "parts": [
+      {
+        "index": 9,
+        "tokens": 245733474,
+        "seconds": 2396.834217674099,
+        "sha256": "967c17ba730c75232fedc49aac8a645fcd3508c1b1f4f2ad08d9bf101167567a"
+      },
+      {
+        "index": 13,
+        "tokens": 248099279,
+        "seconds": 2455.4033018648624,
+        "sha256": "352635b0e33134b52a783c8bf1ba0ed4daeb0d6a3551263bac8f8aff14238d3e"
+      },
+      {
+        "index": 14,
+        "tokens": 234993701,
+        "seconds": 2250.9572701682337,
+        "sha256": "7badd3256369d0d71ea2269fb64d20efe1efdee133d49ee2aaa3f8a96280d112"
+      }
+    ],
+    "observed_tokens": 7998883910
+  },
+  "corpora_source_verified": 5
+}
