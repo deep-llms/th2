@@ -1,0 +1,60 @@
+{
+  "condition": "Phase0A CulturaX healing, DCLM parents, S1; different healing data and LR-selection procedure from Stage1",
+  "history_lock": {
+    "path": "resources/a2_completed_surveys_20261028.json",
+    "sha256": "936da19cf8ced000505836ee82c80ffa1347ca63c314a2b4a07d6f18a4436986"
+  },
+  "budgets": {
+    "0.05B": {
+      "E": 0.01960398516809736,
+      "fits": {
+        "P300": {
+          "run_id": "P0-dclm-P300-S1-0.05B-lr3e-4",
+          "lr": 0.0003,
+          "val_teacher": 2.7377930322126844,
+          "val_post": 3.0451066237699376,
+          "delta_post": 0.30731359155725313,
+          "provenance_canonical_sha256": "5f5023b18a832bbdc999975a7844aabeddfea7cd555d9f0562140f9b56d8b165"
+        },
+        "P1T": {
+          "run_id": "P0-dclm-P1T-S1-0.05B-lr3e-4",
+          "lr": 0.0003,
+          "val_teacher": 2.6869089917639344,
+          "val_post": 3.013826568489285,
+          "delta_post": 0.3269175767253505,
+          "provenance_canonical_sha256": "5f5023b18a832bbdc999975a7844aabeddfea7cd555d9f0562140f9b56d8b165"
+        }
+      }
+    },
+    "0.2B": {
+      "E": 0.01087677388611441,
+      "fits": {
+        "P300": {
+          "run_id": "P0-dclm-P300-S1-0.2B-lr3e-4",
+          "lr": 0.0003,
+          "val_teacher": 2.7377930322126844,
+          "val_post": 2.9352420697253008,
+          "delta_post": 0.19744903751261633,
+          "provenance_canonical_sha256": "5f5023b18a832bbdc999975a7844aabeddfea7cd555d9f0562140f9b56d8b165"
+        },
+        "P1T": {
+          "run_id": "P0-dclm-P1T-S1-0.2B-lr3e-4",
+          "lr": 0.0003,
+          "val_teacher": 2.6869089917639344,
+          "val_post": 2.895234803162665,
+          "delta_post": 0.20832581139873074,
+          "provenance_canonical_sha256": "5f5023b18a832bbdc999975a7844aabeddfea7cd555d9f0562140f9b56d8b165"
+        }
+      }
+    }
+  },
+  "T14": {
+    "source": "docs/results/a2_remaining_phase0a_20261028/final/aggregate.json",
+    "sha256": "cb8fb53543fbb1833f6f52b4daa0a48d54ef919e2242a42127028c7b38d83b91",
+    "differences": {
+      "-t14a": -6.4359164353433584e-06,
+      "-t14b": -0.002285655350733329
+    },
+    "note": "Single NEM/P300/S1/0.05B checks, not confidence intervals."
+  }
+}

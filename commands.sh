@@ -1,49 +1,58 @@
-#1 +30+a
-#th2-6y3o-a2-stage1-heals-health-20261029-a11
+#1 +60+a
+#th2-6y3o-a2-fwe-final-verify-20261029-a01
 set -euo pipefail
-cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
+export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1
+cd /mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a03/source
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PYCODE'
 import hashlib,json,socket,subprocess
 from pathlib import Path
 from datetime import datetime,timezone
-from scripts.gpu_process import inspect
+from scripts.a2_prepare_corpora import sha,verify_packed,tokenizer_identity,budgets
+from efficient_llm.a2.data import PackedRows
 assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
-root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01')
-print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
-print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
-rels=['source-manifest.json','inputs.json','jobs.json','accelerate-env.log','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/complete.json']
-fitroot=root/'supervised/run/results/a2_stage1'
-for name in ('progress.json','lr_choice.json','decision_stage1.json','complete.json'):rels.append(str((fitroot/name).relative_to(root)))
-for p in fitroot.glob('ST1-*/result.json'):rels.append(str(p.relative_to(root)))
-for rel in rels:
- p=root/rel
- if p.is_file():
-  raw=p.read_bytes();assert len(raw)<5000000
-  print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
- else:print('MISSING',rel,flush=True)
-base=root/'supervised/run'
-logs=[root/'supervisor.log',root/'supervised/burn.log',*base.glob('*.log'),*fitroot.glob('*.log'),*fitroot.glob('*/profile.txt')]
-for p in logs:
- if p.is_file():
-  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));tail=f.read().decode(errors='replace')
-  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
-guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
-print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_stage1_heals_20261029_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
-processes=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
-print('LAUNCH_PROCESSES',json.dumps([line for line in processes if 'scripts.launch_a2_stage1' in line or str(root/'source') in line]),flush=True)
-corpora=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029')
-cpu=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-corpora-20261029-a03')
-for rel,path in [('corpora/source-manifest.json',cpu/'source-manifest.json'),('corpora/status.json',corpora/'status.json'),('corpora/failure.json',corpora/'failure.json'),('corpora/complete.json',corpora/'complete.json'),('corpora/fineweb_edu/manifest.json',corpora/'packed/fineweb_edu/manifest.json')]:
- if path.is_file():
-  raw=path.read_bytes();print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
-plan=json.loads((cpu/'source/plan.json').read_text());records=plan['corpora']['fineweb_edu']['files']
-files=[Path(f['local'])/Path(f['path']).name if Path(f['local']).is_dir() else Path(f['local']) for f in records]
-parts=[]
-for p in sorted((corpora/'parts/fineweb_edu').glob('*/complete.json')):
- item=json.loads(p.read_text());assert item['source']==records[item['source']['index']]
- parts.append(dict(index=item['source']['index'],tokens=sum(x['tokens'] for x in item['streams'].values()),seconds=item['seconds'],sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
-print('FWE_PROGRESS',json.dumps(dict(raw_files=sum(p.is_file() for p in files),raw_bytes=sum(p.stat().st_size for p in files if p.is_file()),parts=parts,observed_tokens=sum(p.stat().st_size for p in (corpora/'parts/fineweb_edu').glob('*/*.bin') if p.name!='documents.bin')//4)),flush=True)
-print('FWE_SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_corpora_20261029_a03','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
-print('HEALTH_COMPLETE',flush=True)
-PY
+source=Path.cwd();launch=source.parent
+sm=json.loads((launch/'source-manifest.json').read_text())
+assert sm['code_commit'].startswith('5fdf313') and sm['cpu_only']
+assert len(sm['files'])==5
+for rel,h in sm['files'].items():assert sha(source/rel)==h
+assert sha(source/'plan.json')==sm['plan_sha256']
+plan=json.loads((source/'plan.json').read_text());data=Path(plan['root'])
+assert not (data/'failure.json').exists()
+complete=json.loads((data/'complete.json').read_text())
+assert complete['status']=='complete' and complete['plan_sha256']==sm['plan_sha256']
+out=data/'packed/fineweb_edu';manifest=json.loads((out/'manifest.json').read_text())
+assert manifest['status']=='complete' and manifest['corpus']=='fineweb_edu'
+assert manifest['plan_sha256']==sm['plan_sha256'] and manifest['eos_id']==0
+assert manifest['tokenizer_sha256']==tokenizer_identity(plan)
+assert complete['corpora']['fineweb_edu']['status']=='complete'
+assert complete['corpora']['fineweb_edu']['manifest_sha256']==sha(out/'manifest.json')
+assert complete['corpora']['fineweb_edu']['streams']==manifest['streams']
+assert {g:r['tokens'] for g,r in manifest['streams'].items()}==budgets(plan)
+assert budgets(plan)==dict(heal=29999996928,tuning=4194304,final=16777216)
+records=plan['corpora']['fineweb_edu']['files']
+receipts={}
+for g,target in budgets(plan).items():
+    entries=[r for r in manifest['source_prefixes'] if r['group']==g]
+    assert [r['source_index'] for r in entries]==list(range(len(entries)))
+    assert sum(r['tokens'] for r in entries)==target
+    remaining=target
+    for r in entries:
+        part=data/'parts/fineweb_edu'/f"{r['source_index']:05d}"/'complete.json'
+        assert sha(part)==r['shard_receipt_sha256']
+        saved=json.loads(part.read_text())
+        assert saved['status']=='complete' and saved['source']==records[r['source_index']]
+        assert saved['tokenizer_sha256']==manifest['tokenizer_sha256']
+        assert r['tokens']==min(remaining,saved['streams'][g]['tokens'])
+        remaining-=r['tokens'];receipts[str(r['source_index'])]=sha(part)
+print('FWE_FINAL_VERIFICATION_STARTED',datetime.now(timezone.utc).isoformat(),flush=True)
+verify_packed(out,manifest)
+for g in ('heal','tuning','final'):
+    ds=PackedRows(out,g,count=8,verify=False)
+    assert len(ds[0]['input_ids'])==4096
+session=subprocess.run(['tmux','display-message','-p','-t','a2_corpora_20261029_a03','#{pane_dead} #{pane_dead_status}'],capture_output=True,text=True,check=True).stdout.strip()
+assert session=='1 0',session
+receipt=dict(at=datetime.now(timezone.utc).isoformat(),status='verified',corpus='fineweb_edu',manifest_sha256=sha(out/'manifest.json'),complete_sha256=sha(data/'complete.json'),source=sm,streams=manifest['streams'],source_receipts=receipts,native_reader_passed=True,full_output_hashes_passed=True,session=session)
+print('FWE_FINAL_VERIFIED',json.dumps(receipt),flush=True)
+for name,p in [('fwe_manifest.json',out/'manifest.json'),('corpora_complete.json',data/'complete.json')]:
+    raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=name,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+PYCODE
