@@ -1,0 +1,18 @@
+{
+  "training_updates": 52632,
+  "training_tokens": 13797163008,
+  "training_coordinator_seconds": 51971.408268721774,
+  "prior_preflight_ledger_seconds": 1800,
+  "downstream_supervisor_seconds": 1546.506302,
+  "downstream_prior_seconds": 54405.20319,
+  "downstream_preparation_seconds": 52.231430114246905,
+  "conservative_ledger_at_downstream_terminal_seconds": 56003.94092211425,
+  "node_hours": 15.556650256142847,
+  "eight_gpu_node_equivalent_gpu_hours": 124.45320204914277,
+  "report_threshold_node_hours": 30,
+  "hard_cap_node_hours": 36,
+  "includes_gaps_in_prior_ledger": true,
+  "corpus_cpu_preparation_excluded": true,
+  "report_at": "2026-10-30T00:57:12.830744+08:00",
+  "elapsed_node_hours_through_report_including_preflight_ledger": 16.089853131111113
+}

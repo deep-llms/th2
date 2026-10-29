@@ -1,0 +1,54 @@
+{
+  "schema": 2,
+  "kind": "healed",
+  "dataset": "dclm",
+  "parent": "P300",
+  "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-P300-S1-3.2B-lr1e-3/final",
+  "files": {
+    "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+    "model.safetensors": "4b94b9169738ebac3b5fdba7286f4014d8581174e4beedb9ae7300314226f05a",
+    "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+    "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+  },
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+  "code_files": {
+    "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+    "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+  },
+  "kept_layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    22,
+    23
+  ],
+  "training_receipts": {
+    "result": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-P300-S1-3.2B-lr1e-3/result.json",
+      "sha256": "638ae8cb9e9390bceb980ea524e9ba18988f58ac168affea83f4ab7eb58e23ba"
+    },
+    "reference": {
+      "path": "/mnt/local/deep-llms_th2/resources/a2_stage1_reference_20261029.json",
+      "sha256": "9873eadea52ee7398f7fecb1b99cfc833fda93e0933143bfeaeaceb214c1236c"
+    },
+    "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+    "teacher": "P300"
+  }
+}

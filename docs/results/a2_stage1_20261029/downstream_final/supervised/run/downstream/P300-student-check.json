@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "requests": 12,
+  "max_length": 4096,
+  "manual_max_nats_per_token": 1.326851222826087e-07,
+  "batch_max_nats_per_token": 0.00012683868408203125,
+  "greedy_reference_mismatches": 0,
+  "greedy_batch_mismatches": 0,
+  "production_batch_size": 2,
+  "production_max_nats_per_token": 0.00012683868408203125,
+  "greedy_production_mismatches": 0,
+  "truncated_requests": 0,
+  "thresholds": {
+    "manual_nats_per_token": 2e-05,
+    "batch_nats_per_token": 0.01,
+    "greedy_mismatches": 0
+  },
+  "checkpoint_identity_sha256": "c6b444e8e750845b1f1ffd9955dab7914f0e3622a81df3f12510a5058d8297ee",
+  "prepared_sha256": "8b3563419e7900fdc36210822fcc809d1dfe838a763a2a449dd29c5a86deb971",
+  "selected_request_indices": [
+    0,
+    1,
+    2,
+    3,
+    67114,
+    67115,
+    66874,
+    66875,
+    40180,
+    40181,
+    54985,
+    54984
+  ],
+  "precision": "fp32_parameters_bf16_cuda_autocast"
+}

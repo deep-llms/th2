@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "kind": "parent",
+  "dataset": "dclm",
+  "parent": "P1T",
+  "checkpoint": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+  "files": {
+    "config.json": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+    "model.safetensors": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e"
+  },
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+  "code_files": {
+    "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+    "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+  },
+  "kept_layers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "training_receipts": null
+}

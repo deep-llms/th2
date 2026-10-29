@@ -1,0 +1,105 @@
+{
+  "budgets": {
+    "0.2B": {
+      "E": 0.021096293347514283,
+      "A_init": 0.07272470370653528,
+      "E_dclm": 0.025535262684837523,
+      "A_init_dclm": 0.07471880562500433
+    },
+    "0.8B": {
+      "E": 0.02078642256362606,
+      "A_init": 0.038910028863575974,
+      "E_dclm": 0.022010081864630937,
+      "A_init_dclm": 0.04011035061795587
+    },
+    "3.2B": {
+      "E": 0.021670884569823023,
+      "A_init": 0.01211313187395735,
+      "E_dclm": 0.022739804830168353,
+      "A_init_dclm": 0.012886019799362991
+    }
+  },
+  "length": {
+    "value": 0.021670884569823023,
+    "clauses": {
+      "INCOMPLETE": false,
+      "persists": true,
+      "reversed": false,
+      "erased": false,
+      "grey": false
+    },
+    "label": "persists"
+  },
+  "state": {
+    "value": 0.01211313187395735,
+    "clauses": {
+      "INCOMPLETE": false,
+      "anneal first": true,
+      "prune before you anneal": false,
+      "no effect": false,
+      "grey": false
+    },
+    "label": "anneal first"
+  },
+  "ratios": {
+    "E": 1.0425499868238353,
+    "A_init": 0.3113113052788445
+  },
+  "E_pre": 0.2918303818571699,
+  "parent_difference": -0.050884040448750056,
+  "exposure_caveat": "Own-corpus heldout may have been seen during parent pretraining, more by P1T; no decisions use it.",
+  "chosen_lr": 0.001,
+  "own_best_lrs": {
+    "P300": 0.001,
+    "P1T": 0.001
+  },
+  "stage1_spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "spent_seconds": 53770.010947525036,
+  "downstream_status": "verified",
+  "E_short_own_best": 0.021096293347514283,
+  "full_stage1_complete": true,
+  "downstream_results_sha256": "04ea2b80389d00653bd8b7351a719677fcc123d9faa844642badb022d7ab935e",
+  "paired_accuracy_sha256": "8c4a65379e493ed662ca1e211dbb3986b43c8910b298d45b115ce7394adb8f39",
+  "secondary_diagnostics": {
+    "P300": {
+      "parent": 2.5063441408083897,
+      "pre": 3.555026044526289,
+      "delta_pre": 1.0486819037178994
+    },
+    "P1T": {
+      "parent": 2.452078286399847,
+      "pre": 3.7448791663987326,
+      "delta_pre": 1.2928008799988855
+    },
+    "S72": {
+      "parent": 2.6772801754047455,
+      "pre": 3.618580657739698,
+      "delta_pre": 0.9413004823349524
+    },
+    "E_pre": 0.2441189762809861,
+    "parent_difference": -0.05426585440854259,
+    "annealing_gain": 0.17093603459635576,
+    "ratio_E": 1.0331540323214354,
+    "ratio_A": 0.32126420240251935
+  },
+  "compute": {
+    "training_updates": 52632,
+    "training_tokens": 13797163008,
+    "training_coordinator_seconds": 51971.408268721774,
+    "prior_preflight_ledger_seconds": 1800,
+    "downstream_supervisor_seconds": 1546.506302,
+    "downstream_prior_seconds": 54405.20319,
+    "downstream_preparation_seconds": 52.231430114246905,
+    "conservative_ledger_at_downstream_terminal_seconds": 56003.94092211425,
+    "node_hours": 15.556650256142847,
+    "eight_gpu_node_equivalent_gpu_hours": 124.45320204914277,
+    "report_threshold_node_hours": 30,
+    "hard_cap_node_hours": 36,
+    "includes_gaps_in_prior_ledger": true,
+    "corpus_cpu_preparation_excluded": true,
+    "report_at": "2026-10-30T00:57:12.830744+08:00",
+    "elapsed_node_hours_through_report_including_preflight_ledger": 16.089853131111113
+  },
+  "next_experiment": "owner decision required; none launched",
+  "completed_report_at": "2026-10-30T00:57:12.830744+08:00"
+}

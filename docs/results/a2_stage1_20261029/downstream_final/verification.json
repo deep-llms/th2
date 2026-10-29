@@ -1,0 +1,27 @@
+{
+  "status": "verified",
+  "at": "2026-10-29T16:47:30.911112+00:00",
+  "finished": "2026-10-29T16:26:16.935277+00:00",
+  "progress": [
+    {
+      "rank": "0",
+      "completed_cycles": "1450",
+      "completed_gemms": "1519600",
+      "completed_collective_payload_gib": "1610.01",
+      "average_cycle_seconds": "0.888",
+      "cycles_per_second": "1.126"
+    },
+    {
+      "rank": "0",
+      "completed_cycles": "1460",
+      "completed_gemms": "1530080",
+      "completed_collective_payload_gib": "1621.11",
+      "average_cycle_seconds": "0.888",
+      "cycles_per_second": "1.126"
+    }
+  ],
+  "models": 6,
+  "requests": 78259,
+  "raw_sha256": "fbe31f18034063630c1db9dba4c98cfe10e65df427740c56e7434cf9e480732c",
+  "result_sha256": "04ea2b80389d00653bd8b7351a719677fcc123d9faa844642badb022d7ab935e"
+}

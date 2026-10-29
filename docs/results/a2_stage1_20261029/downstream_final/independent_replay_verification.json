@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-29T16:54:01.600317+00:00",
+  "source": "13686edd9cb8d7914b0f2c44c3c362c435a808f6",
+  "source_files": 105,
+  "models": 6,
+  "requests": 78259,
+  "tasks": 9,
+  "score_hashes": {
+    "P300-parent": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99",
+    "P1T-parent": "181f72af8e1870b9acb87f377e44d20bb23e94276efdec9fc4ab74e1e5c2a607",
+    "S72-parent": "32480dc68d0842b3d4a2d2b50cb51c818e9e86b42b1e1e9091a65d5154b0700a",
+    "P300-student": "bbf8f0f299bb266067456e609a56054ca99e63ec8cde5e7e717b8cfc0eb0deb4",
+    "P1T-student": "5c6988b67a535e2901d4df644524eb25df9c1dd7adbba6f1be395f73f74fd3fd",
+    "X72-student": "81fb28e70229f7e52ba5e712ca48c111391e50cd71a5125470eb5e9788a663f7"
+  },
+  "replay_hashes": {
+    "P300-parent": "aa01aac9553898138d07a4678d30e1d4c565c8a1b0f940403ab1a740b603dda6",
+    "P1T-parent": "f86ec904ed79f3e68471e6e9f8ae9de40a6a144949cfda81c23cac4e79c8334d",
+    "S72-parent": "e446c8d1ee4be82ba9aba1a4e9406845dcf2429def26880730c8c69b4987b785",
+    "P300-student": "3eea41bfd61235991354bc9e594f2432f1f09bea9e75886d1895c35ed8a0596a",
+    "P1T-student": "44bb2c1ed4ac4e409d781507c04a82841141dca1eaf80226912b73df13b6ccb1",
+    "X72-student": "dbc971d030cec31f887e6996d823d3bd400eb74a97511e823e6982bda9085f44"
+  },
+  "results": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/results.json",
+    "sha256": "04ea2b80389d00653bd8b7351a719677fcc123d9faa844642badb022d7ab935e"
+  },
+  "paired_accuracy": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/paired_accuracy.json",
+    "sha256": "8c4a65379e493ed662ca1e211dbb3986b43c8910b298d45b115ce7394adb8f39"
+  },
+  "resamples": 10000,
+  "seed": 0,
+  "raw_sha256": "738b7b6f4c1f15eba4abb43302a6ffcbfccd086ffd3f3c156901768af1fb513a",
+  "command_commit": "b0eb7c5617441a4af1065c217a53dbdbdf20d765"
+}

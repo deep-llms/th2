@@ -1,0 +1,236 @@
+{
+  "P300": {
+    "baseline": {
+      "final": {
+        "loss": 2.7377930322126844,
+        "tokens": 10077795,
+        "sequences": 2461,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "tuning": {
+        "loss": 2.7227194080603616,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "small": {
+        "loss": 2.723300243001256,
+        "tokens": 1048320,
+        "sequences": 256,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "secondary": {
+        "loss": 2.5063441408083897,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      }
+    },
+    "pre": {
+      "final": {
+        "loss": 3.7637751437881795,
+        "tokens": 10077795,
+        "sequences": 2461,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "tuning": {
+        "loss": 3.7583449032547005,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "small": {
+        "loss": 3.7546924873039895,
+        "tokens": 1048320,
+        "sequences": 256,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "secondary": {
+        "loss": 3.555026044526289,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      }
+    }
+  },
+  "P1T": {
+    "baseline": {
+      "final": {
+        "loss": 2.6869089917639344,
+        "tokens": 10077795,
+        "sequences": 2461,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "tuning": {
+        "loss": 2.671354022439473,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "small": {
+        "loss": 2.6709930100187753,
+        "tokens": 1048320,
+        "sequences": 256,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "secondary": {
+        "loss": 2.452078286399847,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      }
+    },
+    "pre": {
+      "final": {
+        "loss": 4.004721485196599,
+        "tokens": 10077795,
+        "sequences": 2461,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "tuning": {
+        "loss": 4.006763505308702,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "small": {
+        "loss": 4.01290440261794,
+        "tokens": 1048320,
+        "sequences": 256,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "secondary": {
+        "loss": 3.7448791663987326,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      }
+    }
+  },
+  "S72": {
+    "baseline": {
+      "final": {
+        "loss": 2.90857529610787,
+        "tokens": 10077795,
+        "sequences": 2461,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "tuning": {
+        "loss": 2.8969205838721432,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "small": {
+        "loss": 2.898688648336374,
+        "tokens": 1048320,
+        "sequences": 256,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "secondary": {
+        "loss": 2.6772801754047455,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      }
+    },
+    "pre": {
+      "final": {
+        "loss": 3.854544222000957,
+        "tokens": 10077795,
+        "sequences": 2461,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "tuning": {
+        "loss": 3.8464218927247567,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "small": {
+        "loss": 3.8422247789817563,
+        "tokens": 1048320,
+        "sequences": 256,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      },
+      "secondary": {
+        "loss": 3.618580657739698,
+        "tokens": 4193280,
+        "sequences": 1024,
+        "bucket_axis": "target_position",
+        "final_kl": null,
+        "precision": "bf16_autocast",
+        "isolate": false
+      }
+    }
+  }
+}

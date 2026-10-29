@@ -1,5 +1,11 @@
 # Project notes
 
+## Stage1 completed — 30 October 2026 SGT
+
+2026-10-30T00:57:12.830744+08:00: STAGE1 COMPLETE. All15training fits + six-model/9-task downstream + paired10k seed0 + independent CPU replay recomputation VERIFIED. Downstream terminal00:26:16SGT; burn handoff independently verified00:47:30SGT (8 known workers710843–710850, cycles1450→1460/payload1610.01→1621.11GiB, guard released). Readonly replay b0eb7c5 ACKNOWLEDGED/verified00:54:01SGT, rawSHA738b7b6f4c1f15eba4abb43302a6ffcbfccd086ffd3f3c156901768af1fb513a. No pendingreceipt. Final report docs/A2_STAGE1_RESULTS_20261030.md; archives downstream_final and final. E3.2=+.02167088457 persists; A_init3.2=+.01211313187 anneal first; main downstream pairedCI include0. Ledger15.5567nodeh to downstream terminal; 16.0899h conservatively through report, below30/36h. BOTH30Bcorpora independentlycomplete. Restorecommands#0; existing watcher STOP permitted now all scope complete. No more experiments; owner decides12.8B/FWE/replication.
+
+[Full report](A2_STAGE1_RESULTS_20261030.md). Original training/downstream artifacts and numerical core remain frozen. No further run is authorized by the Stage1 completion itself.
+
 Initialized 26 October 2026 SGT at `/disk/thuat/efficient_llm` from
 `/disk/thuat/new_project_template`. Joint-group diagnostic and matched learned-router pilot completed.
 Report times and ETAs in Singapore time (SGT, UTC+8).

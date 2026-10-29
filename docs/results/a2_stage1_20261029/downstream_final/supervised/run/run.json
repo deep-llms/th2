@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-29T16:00:30.429251+00:00",
+  "jobs": [
+    {
+      "name": "stage1-downstream",
+      "started_at": "2026-10-29T16:00:30.429454+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 1475.067066673655,
+      "artifacts": [
+        {
+          "path": "downstream/complete.json",
+          "sha256": "be934c8ef3f72664849bf9b38071d47a9cb4dac56d6d50470a6cb4b961e336df",
+          "bytes": 3910
+        },
+        {
+          "path": "downstream/results.json",
+          "sha256": "04ea2b80389d00653bd8b7351a719677fcc123d9faa844642badb022d7ab935e",
+          "bytes": 29374
+        },
+        {
+          "path": "downstream/paired_accuracy.json",
+          "sha256": "8c4a65379e493ed662ca1e211dbb3986b43c8910b298d45b115ce7394adb8f39",
+          "bytes": 15062
+        }
+      ],
+      "finished_at": "2026-10-29T16:25:06.058724+00:00"
+    }
+  ],
+  "finished_at": "2026-10-29T16:25:06.058775+00:00"
+}
