@@ -1,0 +1,225 @@
+{
+  "at": "2026-10-29T21:31:20.233844+00:00",
+  "raw_sha256": "57f59ad3392df9aa5cf3693f6e016d485cdf417a324a93a5f9904700089b03e5",
+  "source": "7dd9da088ba5af581c295775819319ce54b2025c",
+  "source_files": 124,
+  "guard": "{\"owner_pid\": 715452, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised\", \"at\": \"2026-10-29T20:18:09.238562+00:00\"}",
+  "session": "0 715452",
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        717029
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        717030
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        717031
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        717032
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        717033
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 100.0,
+      "pids": [
+        717034
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 99.0,
+      "pids": [
+        717035
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 98.0,
+      "pids": [
+        717036
+      ]
+    }
+  ],
+  "active_fit": {
+    "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-3",
+    "total_steps": 762,
+    "logged_step": 160
+  },
+  "choice": null,
+  "artifact_sha256": {
+    "source-manifest.json": "3796ddd36e680c3d0991644cc89b129a7f2e43abdd1dd96f94085b2712d1a750",
+    "inputs.json": "e0c70eae956fe7650d81462ae1f9341ea8f1a99c5cfc7566c61e580222ae668c",
+    "stage-budget.json": "39bf4b1659b4f76675735a4a3c41641b92010c166e6d96bad4a6f298afb126ce",
+    "jobs.json": "9bcca314f73e6f4d50ef63d0d46b1963cd7730344207ad0afc97fb50cdea7293",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "9c16675466c18a715bf166a62a40d3e96b5a8b0d87b0b05c069d56a932f6e69f",
+    "supervised/reclaim.json": "70c3334dd0298f5ed00cbc8239c38b301ae53115fa5a87f7738cd64ba6f613b9",
+    "supervised/gpus-free-before-training.json": "e51bc7ca19bfbdb71a5686f64f81d8805dc2dbb8684a01c7a61f159e35eb695b",
+    "supervised/run/run.json": "4c55a1bea8c3927471c4487c12c239696a8cd54dbfa24fbdf3a8f1a7dd097b22",
+    "supervised/run/results/a2_stage1_fwe/progress.json": "01a718686a5ee3c3e7311856495aa8df87e19877b943309059196cd851b664e2",
+    "supervised/run/results/a2_stage1_fwe/tests.json": "0ddedf66933134338cc87f872b28e5df9d8a67ba0cf6460d482c90ebe0321b8b",
+    "supervised/run/results/a2_stage1_fwe/runs.json": "2c62d0cd60fb761fc431130868dc9831f961395c71215f2dd56002f81d751d71",
+    "supervised/run/results/a2_stage1_fwe/ST1-fwe-P300-S1-0.2B-lr3e-4/result.json": "d8418dd8af303f7abc0adaf31d1568a19cb92e7d36a83a57422b10e7be538885",
+    "supervised/run/results/a2_stage1_fwe/ST1-fwe-P300-S1-0.2B-lr1e-3/result.json": "cb23ec48338e37f3bae75a3426abace0e33c7ef530f44b92f12016f571cf5641",
+    "supervised/run/results/a2_stage1_fwe/ST1-fwe-P1T-S1-0.2B-lr1e-4/result.json": "3e8fafe52ccd3285aaf8d80a7a7bdd4d25781c29d8f8946551e491d9f7a1a2e8",
+    "supervised/run/results/a2_stage1_fwe/ST1-fwe-P1T-S1-0.2B-lr3e-4/result.json": "81b81b07feee3eaa93519d3112d396df2215c3a175b4bedac65c005206e6ea00",
+    "supervised/run/results/a2_stage1_fwe/ST1-fwe-P300-S1-0.2B-lr1e-4/result.json": "940b1fd1c4685d569eeacf622a6fe2e3e421caa2f560ca9aab63c2d8fda6a6fe"
+  },
+  "published_fits": 5,
+  "fits": [
+    {
+      "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-4",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "val_post": 3.142402422190098,
+      "val_tune_post": 3.1253435230822975,
+      "val_secondary_post": 2.5974727212310813,
+      "delta_post": 0.3336950885882821,
+      "roundtrip_difference": 0.0,
+      "coverage": {
+        "examples": 48768,
+        "microbatches": 1524,
+        "world_size": 8,
+        "exact_order": true
+      }
+    },
+    {
+      "run_id": "ST1-fwe-P1T-S1-0.2B-lr3e-4",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.0003,
+      "status": "complete",
+      "diverged": false,
+      "val_post": 3.0717859133625165,
+      "val_tune_post": 3.053515230554817,
+      "val_secondary_post": 2.52122436879138,
+      "delta_post": 0.2630785797607005,
+      "roundtrip_difference": 0.0,
+      "coverage": {
+        "examples": 48768,
+        "microbatches": 1524,
+        "world_size": 8,
+        "exact_order": true
+      }
+    },
+    {
+      "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-3",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.001,
+      "status": "complete",
+      "diverged": false,
+      "val_post": 3.0563533142033608,
+      "val_tune_post": 3.0370600384962767,
+      "val_secondary_post": 2.505082424603219,
+      "delta_post": 0.19572198834654575,
+      "roundtrip_difference": 0.0,
+      "coverage": {
+        "examples": 48768,
+        "microbatches": 1524,
+        "world_size": 8,
+        "exact_order": true
+      }
+    },
+    {
+      "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "val_post": 3.169482733655409,
+      "val_tune_post": 3.151107980759047,
+      "val_secondary_post": 2.6247469366280587,
+      "delta_post": 0.30885140779859377,
+      "roundtrip_difference": 0.0,
+      "coverage": {
+        "examples": 48768,
+        "microbatches": 1524,
+        "world_size": 8,
+        "exact_order": true
+      }
+    },
+    {
+      "run_id": "ST1-fwe-P300-S1-0.2B-lr3e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0003,
+      "status": "complete",
+      "diverged": false,
+      "val_post": 3.10332191287916,
+      "val_tune_post": 3.0842985142142414,
+      "val_secondary_post": 2.5530087651491122,
+      "delta_post": 0.24269058702234503,
+      "roundtrip_difference": 0.0,
+      "coverage": {
+        "examples": 48768,
+        "microbatches": 1524,
+        "world_size": 8,
+        "exact_order": true
+      }
+    }
+  ],
+  "supervisor_owner": 715452,
+  "ownership_chain_verified": true,
+  "immutable_inputs_source_runtime_verified": true,
+  "prior_published_receipts_unchanged": true
+}
