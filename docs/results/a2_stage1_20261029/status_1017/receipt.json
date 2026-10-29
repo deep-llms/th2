@@ -1,0 +1,209 @@
+{
+  "at": "2026-10-29T02:17:25.155690+00:00",
+  "source": "0c1c1488477f1b836989182986bd785fbcd667d8",
+  "source_files": 103,
+  "guard": "{\"owner_pid\": 699598, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised\", \"at\": \"2026-10-29T01:20:48.542944+00:00\"}",
+  "session": "0 699598",
+  "published_fits": 4,
+  "fits": [
+    {
+      "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-4",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "final": 3.021207766650058,
+      "tuning": 3.012119551010823,
+      "dclm": 2.787754776027343,
+      "roundtrip": 0.0,
+      "sha256": "bdc4088b7b171283fd9ab8591bd2d388c3152845bac30a37922ca5c629b1234e"
+    },
+    {
+      "run_id": "ST1-dclm-P1T-S1-0.2B-lr3e-4",
+      "arm": "P1T",
+      "budget": "0.2B",
+      "lr": 0.0003,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.949752725049912,
+      "tuning": 2.939432266639747,
+      "dclm": 2.7152403657781354,
+      "roundtrip": 0.0,
+      "sha256": "38655e0af41fd6d507168434fdfe61070bb01d8ff19b1c177e92d70b5f1b554f"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0001,
+      "status": "complete",
+      "diverged": false,
+      "final": 3.0538869961718627,
+      "tuning": 3.04414581930077,
+      "dclm": 2.820801636291366,
+      "roundtrip": 0.0,
+      "sha256": "abb05f5c5d11eee1401cffc70b60e7769affabc32bc29b32f4ca06c2fe9bfd95"
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr3e-4",
+      "arm": "P300",
+      "budget": "0.2B",
+      "lr": 0.0003,
+      "status": "complete",
+      "diverged": false,
+      "final": 2.9865329842558648,
+      "tuning": 2.9755779663648854,
+      "dclm": 2.7525039520998122,
+      "roundtrip": 0.0,
+      "sha256": "155b9e132a04f2d3452d64a05f23abedcc18ea5455d3b39499d10849a249644e"
+    }
+  ],
+  "raw_sha256": "d16e903a290db42829437c93603948dccbb7d75d274a394514ce512f730f688d",
+  "artifact_sha256": {
+    "source-manifest.json": "0e2f9685d2cab65d2bfd2aab2dd9e301958ce23eeb9ef667d6ce76ca45b27389",
+    "inputs.json": "eea34f2d2f3eca6bdc50e1d788aaa5aa4c801d76a07a54b6c9882ce3a108bec3",
+    "jobs.json": "637fe3ec59a228954069fe66bc200573cbac4ae56a8200a2dbaef4e570555948",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "c854ccb6230aaad35d4d0b0458a8ffa2783e3dfdef5a55ce16ae5e91746cb5b7",
+    "supervised/reclaim.json": "018e69fdef33570c146745c186c5b870188439dffe98438f4e37c9365c42c00a",
+    "supervised/gpus-free-before-training.json": "26b813ace5464a21bb56cfcb1d6c7e9d146a36533512532bad44f71bfd78d2b8",
+    "supervised/run/run.json": "d138503be53fba85cc9ebeca064c3de106c54fbe9c0b3335d0d805981de186ad",
+    "supervised/run/results/a2_stage1/progress.json": "b19e9234c1033a658e832a35df2c0ec95c46f9cbb8c519f6970c5320dd801ea2",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-0.2B-lr3e-4/result.json": "38655e0af41fd6d507168434fdfe61070bb01d8ff19b1c177e92d70b5f1b554f",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr3e-4/result.json": "155b9e132a04f2d3452d64a05f23abedcc18ea5455d3b39499d10849a249644e",
+    "supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-0.2B-lr1e-4/result.json": "bdc4088b7b171283fd9ab8591bd2d388c3152845bac30a37922ca5c629b1234e",
+    "supervised/run/results/a2_stage1/ST1-dclm-P300-S1-0.2B-lr1e-4/result.json": "abb05f5c5d11eee1401cffc70b60e7769affabc32bc29b32f4ca06c2fe9bfd95",
+    "corpora/source-manifest.json": "d2f443908bf165c58539cf263d5155eed86547a2aa8f980ad03933cc8ae6f59a",
+    "corpora/status.json": "378a5a0a609d35f4dc98e76aae3b1d85792d24d01ed76bd2f10d03ab9f509b9d"
+  },
+  "active_run": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+  "active_stage": "startup",
+  "lr_selected": false,
+  "paired_grid_means": {
+    "0.0001": 3.0281326851557964,
+    "0.0003": 2.9575051165023165
+  },
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 17.0,
+      "pids": [
+        700863
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 10.0,
+      "pids": [
+        700864
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 16.0,
+      "pids": [
+        700865
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 0.0,
+      "pids": [
+        700866
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 14.0,
+      "pids": [
+        700867
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 1.0,
+      "pids": [
+        700868
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 3.0,
+      "pids": [
+        700869
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 9096.0,
+      "utilization_percent": 10.0,
+      "pids": [
+        700870
+      ]
+    }
+  ],
+  "fwe": {
+    "raw_files": 60,
+    "raw_bytes": 121398496853,
+    "parts": [
+      {
+        "index": 9,
+        "tokens": 245733474,
+        "seconds": 2396.834217674099,
+        "sha256": "967c17ba730c75232fedc49aac8a645fcd3508c1b1f4f2ad08d9bf101167567a"
+      },
+      {
+        "index": 11,
+        "tokens": 751712323,
+        "seconds": 7169.927418000065,
+        "sha256": "fd65f4af435c44a6dd344a71b9c6619f75ff87bef58633e85b88b0f9f2ab0d51"
+      },
+      {
+        "index": 13,
+        "tokens": 248099279,
+        "seconds": 2455.4033018648624,
+        "sha256": "352635b0e33134b52a783c8bf1ba0ed4daeb0d6a3551263bac8f8aff14238d3e"
+      },
+      {
+        "index": 14,
+        "tokens": 234993701,
+        "seconds": 2250.9572701682337,
+        "sha256": "7badd3256369d0d71ea2269fb64d20efe1efdee133d49ee2aaa3f8a96280d112"
+      }
+    ],
+    "observed_tokens": 10387075465
+  },
+  "corpora_source_verified": 5
+}
