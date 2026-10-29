@@ -1,0 +1,33 @@
+{
+  "health_at": "2026-10-29T00:17:44.166443+00:00",
+  "raw_sha256": "b59ff1687822a238ae2fac49201a66ff72bd7b785fb1a74770d1ba74079f531b",
+  "manifest_sha256": "9f6ba331da25a6b9763d99f365f613f12e362ea840d4cbfb1ae6027dfb38c7e0",
+  "streams": {
+    "heal": {
+      "rows": 7324218,
+      "tokens": 29999996928,
+      "length": 4096,
+      "token_sha256": "f12f73603025ddf56aca58409477fe2b960207f541384895855f9fa976e33c0d",
+      "starts_sha256": "2880f0d8c62a77c25df1f6616f1697a0a35e8cfc27222a31355fadc75ec11559"
+    },
+    "tuning": {
+      "rows": 1024,
+      "tokens": 4194304,
+      "length": 4096,
+      "token_sha256": "b7a1c1b057d44c804a151891bd0e415d5c034ee6ac8371b2b59c0ba77303cd6a",
+      "starts_sha256": "ff6359d0c14d574175b37657588176785945116673fae695ed4986c0ffd43bb3"
+    },
+    "final": {
+      "rows": 4096,
+      "tokens": 16777216,
+      "length": 4096,
+      "token_sha256": "810e5e5da9be5e4a0a972461841a21216d621d8e05e5337838ff09945c2071f8",
+      "starts_sha256": "17a6086380a1319fe3ee80d3f8d99d7990b0f1133ce5dbf95425cef92efe3804"
+    }
+  },
+  "full_snapshot_prefix_verified": {
+    "heal.bin": "ec8b09f2084d45568335813ba5565df333047fd5a05786b6c2c9caa7b10a49d1",
+    "heal.starts": "c636b662cd41eee1725662f6a4c8a2b79be68a1e712436904ad27a2756790d30"
+  },
+  "native_reader": "Passed in frozen prepare() before corpus complete status"
+}

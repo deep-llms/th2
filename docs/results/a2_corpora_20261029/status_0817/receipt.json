@@ -1,0 +1,54 @@
+{
+  "raw_log": "temp/a2_corpora_health10.log",
+  "raw_sha256": "b59ff1687822a238ae2fac49201a66ff72bd7b785fb1a74770d1ba74079f531b",
+  "artifacts": {
+    "source-manifest.json": "d2f443908bf165c58539cf263d5155eed86547a2aa8f980ad03933cc8ae6f59a",
+    "data/status.json": "378a5a0a609d35f4dc98e76aae3b1d85792d24d01ed76bd2f10d03ab9f509b9d",
+    "data/dclm/manifest.json": "9f6ba331da25a6b9763d99f365f613f12e362ea840d4cbfb1ae6027dfb38c7e0"
+  },
+  "corpus_counts": [
+    {
+      "corpus": "dclm",
+      "raw_files_present": 340,
+      "raw_bytes_observed": 89940986748,
+      "planned_files": 340,
+      "completed_parts": 224
+    },
+    {
+      "corpus": "fineweb_edu",
+      "raw_files_present": 56,
+      "raw_bytes_observed": 112788439536,
+      "planned_files": 60,
+      "completed_parts": 0
+    }
+  ],
+  "health_at": "2026-10-29T00:17:44.166443+00:00",
+  "session": "0 681361",
+  "part_progress": [
+    {
+      "corpus": "dclm",
+      "observed_token_bytes": 125209543708,
+      "observed_tokens": 31302385927,
+      "completed_count": 224,
+      "completed_tokens": 31302385927,
+      "part_receipt_set_sha256": "09141d0f10df1ea46de027390c6e94c9559635f347fff76e89fcb47302bf978a"
+    },
+    {
+      "corpus": "fineweb_edu",
+      "observed_token_bytes": 262494488,
+      "observed_tokens": 65623622,
+      "completed_count": 0,
+      "completed_tokens": 0,
+      "part_receipt_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "receipt_complete": true,
+  "source_files_verified": 5,
+  "source_commit": "5fdf313eb2fb05f239e056b543266b0c69610f1d",
+  "readiness": "DCLM COMPLETE: full hashes/native reader and independent 3.2B prefix verified; FineWeb-Edu tokenizing",
+  "full_snapshot_prefix_verified": {
+    "heal.bin": "ec8b09f2084d45568335813ba5565df333047fd5a05786b6c2c9caa7b10a49d1",
+    "heal.starts": "c636b662cd41eee1725662f6a4c8a2b79be68a1e712436904ad27a2756790d30"
+  },
+  "full_receipt_extraction": "temp/a2_corpora_health10_extracted"
+}
