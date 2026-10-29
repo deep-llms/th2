@@ -1,0 +1,942 @@
+{
+  "status": "complete",
+  "schema": "a2-new-corpus-v1",
+  "corpus": "fineweb_edu",
+  "plan_sha256": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+  "tokenizer_sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+  "eos_id": 0,
+  "streams": {
+    "heal": {
+      "rows": 7324218,
+      "tokens": 29999996928,
+      "length": 4096,
+      "token_sha256": "4249bd8d8a3ae098abd572631b4b86c91036ad8701176d353058369192d60287",
+      "starts_sha256": "591c1121278a1b837a3736fc2880af9df74aafe48e6e2891ef1c5d0e1349c3bf"
+    },
+    "tuning": {
+      "rows": 1024,
+      "tokens": 4194304,
+      "length": 4096,
+      "token_sha256": "9c0e72d33d317cd758bf085ba83d7867f49034e541ee67b322c20b6718dd7fe5",
+      "starts_sha256": "314c82813ca2b61bc8c9bc839b0c0a5c1dac1bd98209e34688dd5500c9f853ce"
+    },
+    "final": {
+      "rows": 4096,
+      "tokens": 16777216,
+      "length": 4096,
+      "token_sha256": "c18613146bcdc63a65686b548cf3c2c742b8db429d8e3e5c285d0150fa83fba9",
+      "starts_sha256": "b6504f2adacebe3d101a7f531ace61290bff5cf85e24ffa53d12c48a02cd5ea5"
+    }
+  },
+  "small_indices": [
+    0,
+    6,
+    7,
+    10,
+    11,
+    12,
+    17,
+    21,
+    22,
+    29,
+    31,
+    33,
+    38,
+    42,
+    52,
+    54,
+    56,
+    61,
+    77,
+    83,
+    86,
+    91,
+    99,
+    101,
+    105,
+    109,
+    117,
+    118,
+    124,
+    127,
+    130,
+    131,
+    132,
+    134,
+    135,
+    141,
+    144,
+    153,
+    162,
+    170,
+    173,
+    176,
+    182,
+    183,
+    188,
+    190,
+    191,
+    198,
+    203,
+    212,
+    213,
+    215,
+    216,
+    230,
+    237,
+    240,
+    242,
+    245,
+    249,
+    250,
+    253,
+    255,
+    259,
+    260,
+    269,
+    282,
+    283,
+    284,
+    287,
+    290,
+    293,
+    302,
+    306,
+    309,
+    310,
+    311,
+    315,
+    318,
+    322,
+    323,
+    325,
+    326,
+    328,
+    330,
+    338,
+    342,
+    343,
+    348,
+    349,
+    358,
+    371,
+    375,
+    377,
+    380,
+    386,
+    387,
+    388,
+    389,
+    390,
+    395,
+    396,
+    401,
+    402,
+    403,
+    405,
+    409,
+    411,
+    424,
+    429,
+    430,
+    442,
+    445,
+    446,
+    448,
+    449,
+    451,
+    454,
+    455,
+    461,
+    469,
+    474,
+    477,
+    479,
+    484,
+    491,
+    495,
+    503,
+    507,
+    508,
+    514,
+    519,
+    529,
+    535,
+    546,
+    550,
+    552,
+    557,
+    561,
+    564,
+    572,
+    574,
+    576,
+    577,
+    580,
+    581,
+    591,
+    596,
+    598,
+    600,
+    602,
+    611,
+    613,
+    614,
+    615,
+    626,
+    627,
+    628,
+    629,
+    631,
+    632,
+    635,
+    639,
+    640,
+    644,
+    648,
+    653,
+    655,
+    657,
+    658,
+    662,
+    667,
+    668,
+    676,
+    681,
+    691,
+    694,
+    698,
+    706,
+    719,
+    723,
+    732,
+    735,
+    737,
+    738,
+    742,
+    746,
+    753,
+    755,
+    760,
+    769,
+    770,
+    772,
+    773,
+    783,
+    785,
+    787,
+    792,
+    796,
+    797,
+    801,
+    806,
+    811,
+    817,
+    823,
+    830,
+    833,
+    836,
+    837,
+    840,
+    845,
+    846,
+    849,
+    853,
+    854,
+    856,
+    861,
+    862,
+    865,
+    870,
+    884,
+    885,
+    887,
+    888,
+    889,
+    892,
+    906,
+    910,
+    914,
+    915,
+    924,
+    927,
+    928,
+    932,
+    940,
+    948,
+    951,
+    958,
+    959,
+    960,
+    961,
+    962,
+    964,
+    967,
+    969,
+    974,
+    975,
+    976,
+    987,
+    989,
+    994,
+    1003,
+    1006,
+    1008,
+    1011,
+    1020,
+    1022
+  ],
+  "source_prefixes": [
+    {
+      "group": "heal",
+      "source_index": 0,
+      "tokens": 750523369,
+      "shard_receipt_sha256": "bfa27262ca62c8254464a2c5c781065d37e9e6661e952fe7027d23d71e84e718"
+    },
+    {
+      "group": "heal",
+      "source_index": 1,
+      "tokens": 749332899,
+      "shard_receipt_sha256": "0748bb323013fa4b6890cce50b1f753d77036e2cb3dc55db27b7adbd9de4bb2b"
+    },
+    {
+      "group": "heal",
+      "source_index": 2,
+      "tokens": 749237761,
+      "shard_receipt_sha256": "fc01c0549454b06e34f0f95390da7d29b8192dfc50bfd1dbddc0c72bafc2e644"
+    },
+    {
+      "group": "heal",
+      "source_index": 3,
+      "tokens": 747450587,
+      "shard_receipt_sha256": "dbbe26cbcb314d3f41c1a80ec4141f7f36a27cd8fd0914908d30c64dfb0729ad"
+    },
+    {
+      "group": "heal",
+      "source_index": 4,
+      "tokens": 748049750,
+      "shard_receipt_sha256": "72a410eda57ba09355e0f473ec4a7737e2d351bea40e94ee8ed0646b98fc6fa6"
+    },
+    {
+      "group": "heal",
+      "source_index": 5,
+      "tokens": 750817176,
+      "shard_receipt_sha256": "b64aa83c8bda964ce9df6b99ed989d92e3e66014c2fbb70a4fdc6b03cb34aa0f"
+    },
+    {
+      "group": "heal",
+      "source_index": 6,
+      "tokens": 750963299,
+      "shard_receipt_sha256": "aa9fbd7718ff06ad8465612ba3f55318717b9e48ce31af93946eb6af63ffec3a"
+    },
+    {
+      "group": "heal",
+      "source_index": 7,
+      "tokens": 747899720,
+      "shard_receipt_sha256": "e32bea505004a6e5706c5552e8ee06c431a46d51350bd19c77c69ef99a918691"
+    },
+    {
+      "group": "heal",
+      "source_index": 8,
+      "tokens": 748765238,
+      "shard_receipt_sha256": "b4d2aca4bbd21acd8591161e031317b6e2f072235f14101d5ace7f3d9bb2edcc"
+    },
+    {
+      "group": "heal",
+      "source_index": 9,
+      "tokens": 245481342,
+      "shard_receipt_sha256": "967c17ba730c75232fedc49aac8a645fcd3508c1b1f4f2ad08d9bf101167567a"
+    },
+    {
+      "group": "heal",
+      "source_index": 10,
+      "tokens": 747897437,
+      "shard_receipt_sha256": "ef29e9b5f1941db029eb3d8438952c5f4bc015541046e08173b34ab104133c5c"
+    },
+    {
+      "group": "heal",
+      "source_index": 11,
+      "tokens": 751020626,
+      "shard_receipt_sha256": "fd65f4af435c44a6dd344a71b9c6619f75ff87bef58633e85b88b0f9f2ab0d51"
+    },
+    {
+      "group": "heal",
+      "source_index": 12,
+      "tokens": 750503961,
+      "shard_receipt_sha256": "d8eb972027c7410c579a139fab1b70ed7f0d7bb0b7a88378e4310c4067700c98"
+    },
+    {
+      "group": "heal",
+      "source_index": 13,
+      "tokens": 247904769,
+      "shard_receipt_sha256": "352635b0e33134b52a783c8bf1ba0ed4daeb0d6a3551263bac8f8aff14238d3e"
+    },
+    {
+      "group": "heal",
+      "source_index": 14,
+      "tokens": 234799468,
+      "shard_receipt_sha256": "7badd3256369d0d71ea2269fb64d20efe1efdee133d49ee2aaa3f8a96280d112"
+    },
+    {
+      "group": "heal",
+      "source_index": 15,
+      "tokens": 748326641,
+      "shard_receipt_sha256": "b322505b32893991107fc5d0a687710cd9521a441d725de207f9db5e288e72e6"
+    },
+    {
+      "group": "heal",
+      "source_index": 16,
+      "tokens": 747959063,
+      "shard_receipt_sha256": "e2766603d4ad4064140f1bade0d7c86cf994578e7e2290b4a2e6200715288617"
+    },
+    {
+      "group": "heal",
+      "source_index": 17,
+      "tokens": 258732834,
+      "shard_receipt_sha256": "e3915cd0b8120a49b2a23aeb4d8dcb1e2fea992a5f12d0a102dd2a252b43cf2d"
+    },
+    {
+      "group": "heal",
+      "source_index": 18,
+      "tokens": 747500765,
+      "shard_receipt_sha256": "98b83819a54375cb54a201867fe3d518e5d1e3eb2dc7bb8d512768004033dae7"
+    },
+    {
+      "group": "heal",
+      "source_index": 19,
+      "tokens": 748682003,
+      "shard_receipt_sha256": "a61db6104808b0d77d2cc53a9b002415172a45d51b900691980bf6ec6098c6ee"
+    },
+    {
+      "group": "heal",
+      "source_index": 20,
+      "tokens": 750613259,
+      "shard_receipt_sha256": "a9cc8a65e08391ef1c1bb8096e9dcc4e6595dbf7796438efb3a8cbec74af0b8a"
+    },
+    {
+      "group": "heal",
+      "source_index": 21,
+      "tokens": 748666652,
+      "shard_receipt_sha256": "72641de3311dd7e598d73842c3129447109a3bed19afb225e65caf8522d6fe07"
+    },
+    {
+      "group": "heal",
+      "source_index": 22,
+      "tokens": 750173561,
+      "shard_receipt_sha256": "a6a5d95a407c115540e287337d4bbe004356e4edd4d8d9bb3bf08f2b31c20e08"
+    },
+    {
+      "group": "heal",
+      "source_index": 23,
+      "tokens": 749772919,
+      "shard_receipt_sha256": "e653142765213b3db2b9515d3961fe91ccde871847e8400eaf7b4bcdb8c2bf2c"
+    },
+    {
+      "group": "heal",
+      "source_index": 24,
+      "tokens": 750836545,
+      "shard_receipt_sha256": "1fef5ef810caae80e84c5c06b94372dcc56b66c0f7565838dffdc56902e56371"
+    },
+    {
+      "group": "heal",
+      "source_index": 25,
+      "tokens": 750076747,
+      "shard_receipt_sha256": "50c5f1addd181e38eaa3c2e131afbd38d7a7aa63140566943874f75c33c5970f"
+    },
+    {
+      "group": "heal",
+      "source_index": 26,
+      "tokens": 750589749,
+      "shard_receipt_sha256": "49700cfeb404c6d79e4234a0892294746f73bfbdcf108ccbab5e0dcd9e995692"
+    },
+    {
+      "group": "heal",
+      "source_index": 27,
+      "tokens": 749015373,
+      "shard_receipt_sha256": "d5e6b686dad1e6fb2c93b8a6a43188db6c18b3c6a3fd636ab177a882cdbe9ced"
+    },
+    {
+      "group": "heal",
+      "source_index": 28,
+      "tokens": 749246102,
+      "shard_receipt_sha256": "5ad7872ab8f68afb18adbf7b657daf14323f07f658cc8706d758dfa1821fe814"
+    },
+    {
+      "group": "heal",
+      "source_index": 29,
+      "tokens": 749677960,
+      "shard_receipt_sha256": "788e5a184d61dbbceb79274389ef5ecdfa03d551f9bace388b61f9d2e59f4748"
+    },
+    {
+      "group": "heal",
+      "source_index": 30,
+      "tokens": 750423736,
+      "shard_receipt_sha256": "a1ca98bf394aab3b124d012e6f26f1849a21e81eaf154233f71c48801eb5a29d"
+    },
+    {
+      "group": "heal",
+      "source_index": 31,
+      "tokens": 748567452,
+      "shard_receipt_sha256": "90400297ba650d231f4a34c6a88fbb762749156d617e5d17f37c0600c5c858eb"
+    },
+    {
+      "group": "heal",
+      "source_index": 32,
+      "tokens": 751081230,
+      "shard_receipt_sha256": "2da0c5dbdfe4a7f3665d7515c9f79c65e70cd44a041a710e66577c5330d2a844"
+    },
+    {
+      "group": "heal",
+      "source_index": 33,
+      "tokens": 748290963,
+      "shard_receipt_sha256": "c19b07a585a858a62b321ca008a24ca74b461fc9a91fe750f74edc809171ecee"
+    },
+    {
+      "group": "heal",
+      "source_index": 34,
+      "tokens": 749957886,
+      "shard_receipt_sha256": "26f67f04fd9eb5d02bc8d251d11dac9a0c19c9415f6a880b1ac1883f786e862a"
+    },
+    {
+      "group": "heal",
+      "source_index": 35,
+      "tokens": 750397338,
+      "shard_receipt_sha256": "bada1cb70ffcc42bd12f164109668ac432af484dc9f192b66ef574a26f5a136f"
+    },
+    {
+      "group": "heal",
+      "source_index": 36,
+      "tokens": 750573247,
+      "shard_receipt_sha256": "e0579000cccd9ba2ea40d840ad8d4ca007b0a19405a52a9e48dc6ac707c491db"
+    },
+    {
+      "group": "heal",
+      "source_index": 37,
+      "tokens": 750323379,
+      "shard_receipt_sha256": "a86908ebd1fa1c8a2dd29a35057fcc36d5444978dc9ac7270a6955fb1376f4fe"
+    },
+    {
+      "group": "heal",
+      "source_index": 38,
+      "tokens": 750442637,
+      "shard_receipt_sha256": "3c620c71faa3654acd449e07b7931a1ece4fe0a1a2c16ac71e0d8e01fa2bd3e1"
+    },
+    {
+      "group": "heal",
+      "source_index": 39,
+      "tokens": 73432563,
+      "shard_receipt_sha256": "e96cb348eadc397172e626dbbbc3b61823d7cfba6e332de17fcf9af7a987a60e"
+    },
+    {
+      "group": "heal",
+      "source_index": 40,
+      "tokens": 749805652,
+      "shard_receipt_sha256": "fc5d2a28df85f3752e9a11133c3e27b55459e2fe63a2921815221a6282fae78d"
+    },
+    {
+      "group": "heal",
+      "source_index": 41,
+      "tokens": 748247609,
+      "shard_receipt_sha256": "2eb19f892f150e1b356d60300926d795a4b9300da51232f37cbe109cd8e42ed7"
+    },
+    {
+      "group": "heal",
+      "source_index": 42,
+      "tokens": 748592574,
+      "shard_receipt_sha256": "563321378b2204cb7709aae16246edfd74443a0e6a74ccfe0392027969ecc29e"
+    },
+    {
+      "group": "heal",
+      "source_index": 43,
+      "tokens": 459343087,
+      "shard_receipt_sha256": "b6bded2bf2f31724272ff3ed32779dcade1970fd78007ddf9db38144711bca99"
+    },
+    {
+      "group": "tuning",
+      "source_index": 0,
+      "tokens": 152378,
+      "shard_receipt_sha256": "bfa27262ca62c8254464a2c5c781065d37e9e6661e952fe7027d23d71e84e718"
+    },
+    {
+      "group": "tuning",
+      "source_index": 1,
+      "tokens": 171813,
+      "shard_receipt_sha256": "0748bb323013fa4b6890cce50b1f753d77036e2cb3dc55db27b7adbd9de4bb2b"
+    },
+    {
+      "group": "tuning",
+      "source_index": 2,
+      "tokens": 150695,
+      "shard_receipt_sha256": "fc01c0549454b06e34f0f95390da7d29b8192dfc50bfd1dbddc0c72bafc2e644"
+    },
+    {
+      "group": "tuning",
+      "source_index": 3,
+      "tokens": 158156,
+      "shard_receipt_sha256": "dbbe26cbcb314d3f41c1a80ec4141f7f36a27cd8fd0914908d30c64dfb0729ad"
+    },
+    {
+      "group": "tuning",
+      "source_index": 4,
+      "tokens": 132701,
+      "shard_receipt_sha256": "72a410eda57ba09355e0f473ec4a7737e2d351bea40e94ee8ed0646b98fc6fa6"
+    },
+    {
+      "group": "tuning",
+      "source_index": 5,
+      "tokens": 99791,
+      "shard_receipt_sha256": "b64aa83c8bda964ce9df6b99ed989d92e3e66014c2fbb70a4fdc6b03cb34aa0f"
+    },
+    {
+      "group": "tuning",
+      "source_index": 6,
+      "tokens": 169926,
+      "shard_receipt_sha256": "aa9fbd7718ff06ad8465612ba3f55318717b9e48ce31af93946eb6af63ffec3a"
+    },
+    {
+      "group": "tuning",
+      "source_index": 7,
+      "tokens": 124994,
+      "shard_receipt_sha256": "e32bea505004a6e5706c5552e8ee06c431a46d51350bd19c77c69ef99a918691"
+    },
+    {
+      "group": "tuning",
+      "source_index": 8,
+      "tokens": 105789,
+      "shard_receipt_sha256": "b4d2aca4bbd21acd8591161e031317b6e2f072235f14101d5ace7f3d9bb2edcc"
+    },
+    {
+      "group": "tuning",
+      "source_index": 9,
+      "tokens": 45343,
+      "shard_receipt_sha256": "967c17ba730c75232fedc49aac8a645fcd3508c1b1f4f2ad08d9bf101167567a"
+    },
+    {
+      "group": "tuning",
+      "source_index": 10,
+      "tokens": 166986,
+      "shard_receipt_sha256": "ef29e9b5f1941db029eb3d8438952c5f4bc015541046e08173b34ab104133c5c"
+    },
+    {
+      "group": "tuning",
+      "source_index": 11,
+      "tokens": 115563,
+      "shard_receipt_sha256": "fd65f4af435c44a6dd344a71b9c6619f75ff87bef58633e85b88b0f9f2ab0d51"
+    },
+    {
+      "group": "tuning",
+      "source_index": 12,
+      "tokens": 131384,
+      "shard_receipt_sha256": "d8eb972027c7410c579a139fab1b70ed7f0d7bb0b7a88378e4310c4067700c98"
+    },
+    {
+      "group": "tuning",
+      "source_index": 13,
+      "tokens": 32435,
+      "shard_receipt_sha256": "352635b0e33134b52a783c8bf1ba0ed4daeb0d6a3551263bac8f8aff14238d3e"
+    },
+    {
+      "group": "tuning",
+      "source_index": 14,
+      "tokens": 24531,
+      "shard_receipt_sha256": "7badd3256369d0d71ea2269fb64d20efe1efdee133d49ee2aaa3f8a96280d112"
+    },
+    {
+      "group": "tuning",
+      "source_index": 15,
+      "tokens": 185656,
+      "shard_receipt_sha256": "b322505b32893991107fc5d0a687710cd9521a441d725de207f9db5e288e72e6"
+    },
+    {
+      "group": "tuning",
+      "source_index": 16,
+      "tokens": 158592,
+      "shard_receipt_sha256": "e2766603d4ad4064140f1bade0d7c86cf994578e7e2290b4a2e6200715288617"
+    },
+    {
+      "group": "tuning",
+      "source_index": 17,
+      "tokens": 73450,
+      "shard_receipt_sha256": "e3915cd0b8120a49b2a23aeb4d8dcb1e2fea992a5f12d0a102dd2a252b43cf2d"
+    },
+    {
+      "group": "tuning",
+      "source_index": 18,
+      "tokens": 141872,
+      "shard_receipt_sha256": "98b83819a54375cb54a201867fe3d518e5d1e3eb2dc7bb8d512768004033dae7"
+    },
+    {
+      "group": "tuning",
+      "source_index": 19,
+      "tokens": 131348,
+      "shard_receipt_sha256": "a61db6104808b0d77d2cc53a9b002415172a45d51b900691980bf6ec6098c6ee"
+    },
+    {
+      "group": "tuning",
+      "source_index": 20,
+      "tokens": 143090,
+      "shard_receipt_sha256": "a9cc8a65e08391ef1c1bb8096e9dcc4e6595dbf7796438efb3a8cbec74af0b8a"
+    },
+    {
+      "group": "tuning",
+      "source_index": 21,
+      "tokens": 146944,
+      "shard_receipt_sha256": "72641de3311dd7e598d73842c3129447109a3bed19afb225e65caf8522d6fe07"
+    },
+    {
+      "group": "tuning",
+      "source_index": 22,
+      "tokens": 89467,
+      "shard_receipt_sha256": "a6a5d95a407c115540e287337d4bbe004356e4edd4d8d9bb3bf08f2b31c20e08"
+    },
+    {
+      "group": "tuning",
+      "source_index": 23,
+      "tokens": 161667,
+      "shard_receipt_sha256": "e653142765213b3db2b9515d3961fe91ccde871847e8400eaf7b4bcdb8c2bf2c"
+    },
+    {
+      "group": "tuning",
+      "source_index": 24,
+      "tokens": 128956,
+      "shard_receipt_sha256": "1fef5ef810caae80e84c5c06b94372dcc56b66c0f7565838dffdc56902e56371"
+    },
+    {
+      "group": "tuning",
+      "source_index": 25,
+      "tokens": 195438,
+      "shard_receipt_sha256": "50c5f1addd181e38eaa3c2e131afbd38d7a7aa63140566943874f75c33c5970f"
+    },
+    {
+      "group": "tuning",
+      "source_index": 26,
+      "tokens": 152720,
+      "shard_receipt_sha256": "49700cfeb404c6d79e4234a0892294746f73bfbdcf108ccbab5e0dcd9e995692"
+    },
+    {
+      "group": "tuning",
+      "source_index": 27,
+      "tokens": 153839,
+      "shard_receipt_sha256": "d5e6b686dad1e6fb2c93b8a6a43188db6c18b3c6a3fd636ab177a882cdbe9ced"
+    },
+    {
+      "group": "tuning",
+      "source_index": 28,
+      "tokens": 116750,
+      "shard_receipt_sha256": "5ad7872ab8f68afb18adbf7b657daf14323f07f658cc8706d758dfa1821fe814"
+    },
+    {
+      "group": "tuning",
+      "source_index": 29,
+      "tokens": 143737,
+      "shard_receipt_sha256": "788e5a184d61dbbceb79274389ef5ecdfa03d551f9bace388b61f9d2e59f4748"
+    },
+    {
+      "group": "tuning",
+      "source_index": 30,
+      "tokens": 143169,
+      "shard_receipt_sha256": "a1ca98bf394aab3b124d012e6f26f1849a21e81eaf154233f71c48801eb5a29d"
+    },
+    {
+      "group": "tuning",
+      "source_index": 31,
+      "tokens": 145124,
+      "shard_receipt_sha256": "90400297ba650d231f4a34c6a88fbb762749156d617e5d17f37c0600c5c858eb"
+    },
+    {
+      "group": "final",
+      "source_index": 0,
+      "tokens": 561015,
+      "shard_receipt_sha256": "bfa27262ca62c8254464a2c5c781065d37e9e6661e952fe7027d23d71e84e718"
+    },
+    {
+      "group": "final",
+      "source_index": 1,
+      "tokens": 619988,
+      "shard_receipt_sha256": "0748bb323013fa4b6890cce50b1f753d77036e2cb3dc55db27b7adbd9de4bb2b"
+    },
+    {
+      "group": "final",
+      "source_index": 2,
+      "tokens": 538790,
+      "shard_receipt_sha256": "fc01c0549454b06e34f0f95390da7d29b8192dfc50bfd1dbddc0c72bafc2e644"
+    },
+    {
+      "group": "final",
+      "source_index": 3,
+      "tokens": 570113,
+      "shard_receipt_sha256": "dbbe26cbcb314d3f41c1a80ec4141f7f36a27cd8fd0914908d30c64dfb0729ad"
+    },
+    {
+      "group": "final",
+      "source_index": 4,
+      "tokens": 603669,
+      "shard_receipt_sha256": "72a410eda57ba09355e0f473ec4a7737e2d351bea40e94ee8ed0646b98fc6fa6"
+    },
+    {
+      "group": "final",
+      "source_index": 5,
+      "tokens": 550245,
+      "shard_receipt_sha256": "b64aa83c8bda964ce9df6b99ed989d92e3e66014c2fbb70a4fdc6b03cb34aa0f"
+    },
+    {
+      "group": "final",
+      "source_index": 6,
+      "tokens": 532055,
+      "shard_receipt_sha256": "aa9fbd7718ff06ad8465612ba3f55318717b9e48ce31af93946eb6af63ffec3a"
+    },
+    {
+      "group": "final",
+      "source_index": 7,
+      "tokens": 558417,
+      "shard_receipt_sha256": "e32bea505004a6e5706c5552e8ee06c431a46d51350bd19c77c69ef99a918691"
+    },
+    {
+      "group": "final",
+      "source_index": 8,
+      "tokens": 608499,
+      "shard_receipt_sha256": "b4d2aca4bbd21acd8591161e031317b6e2f072235f14101d5ace7f3d9bb2edcc"
+    },
+    {
+      "group": "final",
+      "source_index": 9,
+      "tokens": 206789,
+      "shard_receipt_sha256": "967c17ba730c75232fedc49aac8a645fcd3508c1b1f4f2ad08d9bf101167567a"
+    },
+    {
+      "group": "final",
+      "source_index": 10,
+      "tokens": 548630,
+      "shard_receipt_sha256": "ef29e9b5f1941db029eb3d8438952c5f4bc015541046e08173b34ab104133c5c"
+    },
+    {
+      "group": "final",
+      "source_index": 11,
+      "tokens": 576134,
+      "shard_receipt_sha256": "fd65f4af435c44a6dd344a71b9c6619f75ff87bef58633e85b88b0f9f2ab0d51"
+    },
+    {
+      "group": "final",
+      "source_index": 12,
+      "tokens": 638527,
+      "shard_receipt_sha256": "d8eb972027c7410c579a139fab1b70ed7f0d7bb0b7a88378e4310c4067700c98"
+    },
+    {
+      "group": "final",
+      "source_index": 13,
+      "tokens": 162075,
+      "shard_receipt_sha256": "352635b0e33134b52a783c8bf1ba0ed4daeb0d6a3551263bac8f8aff14238d3e"
+    },
+    {
+      "group": "final",
+      "source_index": 14,
+      "tokens": 169702,
+      "shard_receipt_sha256": "7badd3256369d0d71ea2269fb64d20efe1efdee133d49ee2aaa3f8a96280d112"
+    },
+    {
+      "group": "final",
+      "source_index": 15,
+      "tokens": 607875,
+      "shard_receipt_sha256": "b322505b32893991107fc5d0a687710cd9521a441d725de207f9db5e288e72e6"
+    },
+    {
+      "group": "final",
+      "source_index": 16,
+      "tokens": 608619,
+      "shard_receipt_sha256": "e2766603d4ad4064140f1bade0d7c86cf994578e7e2290b4a2e6200715288617"
+    },
+    {
+      "group": "final",
+      "source_index": 17,
+      "tokens": 214745,
+      "shard_receipt_sha256": "e3915cd0b8120a49b2a23aeb4d8dcb1e2fea992a5f12d0a102dd2a252b43cf2d"
+    },
+    {
+      "group": "final",
+      "source_index": 18,
+      "tokens": 631564,
+      "shard_receipt_sha256": "98b83819a54375cb54a201867fe3d518e5d1e3eb2dc7bb8d512768004033dae7"
+    },
+    {
+      "group": "final",
+      "source_index": 19,
+      "tokens": 711142,
+      "shard_receipt_sha256": "a61db6104808b0d77d2cc53a9b002415172a45d51b900691980bf6ec6098c6ee"
+    },
+    {
+      "group": "final",
+      "source_index": 20,
+      "tokens": 577074,
+      "shard_receipt_sha256": "a9cc8a65e08391ef1c1bb8096e9dcc4e6595dbf7796438efb3a8cbec74af0b8a"
+    },
+    {
+      "group": "final",
+      "source_index": 21,
+      "tokens": 589284,
+      "shard_receipt_sha256": "72641de3311dd7e598d73842c3129447109a3bed19afb225e65caf8522d6fe07"
+    },
+    {
+      "group": "final",
+      "source_index": 22,
+      "tokens": 545872,
+      "shard_receipt_sha256": "a6a5d95a407c115540e287337d4bbe004356e4edd4d8d9bb3bf08f2b31c20e08"
+    },
+    {
+      "group": "final",
+      "source_index": 23,
+      "tokens": 533240,
+      "shard_receipt_sha256": "e653142765213b3db2b9515d3961fe91ccde871847e8400eaf7b4bcdb8c2bf2c"
+    },
+    {
+      "group": "final",
+      "source_index": 24,
+      "tokens": 513380,
+      "shard_receipt_sha256": "1fef5ef810caae80e84c5c06b94372dcc56b66c0f7565838dffdc56902e56371"
+    },
+    {
+      "group": "final",
+      "source_index": 25,
+      "tokens": 572144,
+      "shard_receipt_sha256": "50c5f1addd181e38eaa3c2e131afbd38d7a7aa63140566943874f75c33c5970f"
+    },
+    {
+      "group": "final",
+      "source_index": 26,
+      "tokens": 605245,
+      "shard_receipt_sha256": "49700cfeb404c6d79e4234a0892294746f73bfbdcf108ccbab5e0dcd9e995692"
+    },
+    {
+      "group": "final",
+      "source_index": 27,
+      "tokens": 599275,
+      "shard_receipt_sha256": "d5e6b686dad1e6fb2c93b8a6a43188db6c18b3c6a3fd636ab177a882cdbe9ced"
+    },
+    {
+      "group": "final",
+      "source_index": 28,
+      "tokens": 563806,
+      "shard_receipt_sha256": "5ad7872ab8f68afb18adbf7b657daf14323f07f658cc8706d758dfa1821fe814"
+    },
+    {
+      "group": "final",
+      "source_index": 29,
+      "tokens": 641139,
+      "shard_receipt_sha256": "788e5a184d61dbbceb79274389ef5ecdfa03d551f9bace388b61f9d2e59f4748"
+    },
+    {
+      "group": "final",
+      "source_index": 30,
+      "tokens": 537392,
+      "shard_receipt_sha256": "a1ca98bf394aab3b124d012e6f26f1849a21e81eaf154233f71c48801eb5a29d"
+    },
+    {
+      "group": "final",
+      "source_index": 31,
+      "tokens": 280772,
+      "shard_receipt_sha256": "90400297ba650d231f4a34c6a88fbb762749156d617e5d17f37c0600c5c858eb"
+    }
+  ],
+  "partition": "SHA256(exact UTF8 text), first8bytes big-endian mod10000: tuning0..1, final2..9, heal10..9999",
+  "packing": "continuous across documents/shards; no BOS; append EOS0; cut only at final full-sequence budget",
+  "caveat": "May overlap parent pretraining. Distinct corpus; not the old CulturaX Phase0A protocol."
+}

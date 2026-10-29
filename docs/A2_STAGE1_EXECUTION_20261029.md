@@ -52,4 +52,3 @@ Local supervised evaluation launcher (29 October 13:20 SGT): `scripts.launch_a2_
 
 
 29Oct14:48:16SGT VERIFIED: healshealtha11 120087f ACKNOWLEDGED;P300main3.2B COMPLETE finalNLL2.839891311/tuning2.827242626/DCLMheldout2.611175837,fullLR/exact8rankorder/roundtrip0/no divergence.9/15fits complete;P1Tmain3.2B ACTIVE1160/12207,8GPUs98–99%/81286MiB,supervisor699598/source103files0c1c148/sameprovenance verified. P1TETA17:45–18:00SGT;fullstage30Oct00:30–01:30 provisional. FWE48parts33,319,806,344tokens;FINALmanifest+corporaComplete nowpresent,manifestSHA0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd;independentfullhash/native/exitverification pending. Rawhealth11SHA265a7d7725f604c618f40025b5c8fc25df01d56efb68653842b3d4b1cae323e9;archive status_1448.
-

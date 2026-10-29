@@ -1,5 +1,9 @@
 # Current task
 
+29Oct14:55:25SGT FWE FINAL INDEPENDENTLY VERIFIED;retrieved15:21 via#2f27f0b2ACK. Fivefrozencodefiles5fdf313/plan/tokenizer/sourceprefixreceipts/fulloutputhash/nativePackedRows/CPUterminal1 0 PASS. Heal29,999,996,928/tuning4,194,304/final16,777,216tokens. ManifestSHA0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd;rawterminalSHA45afadc282390c694894708e50e04f02882dadb7fab6f50e7b5f14f55b485b0f;archive docs/results/a2_corpora_20261029/fwe_final. BOTH30Bcorpora complete;DO NOT rehash/reprepare/download. KeepwatchforStage1;noSTOP. Nextfreshtraininghealtha12.
+
+2026-10-29T15:18:26.235877+08:00: FWEterminalreceipt#2 f27f0b2dad124a3581a2ec70c670842b3bc5e32a SUBMITTED/remoteheadverified;retrieve beforewrites. Nohashrerun/GPUchange. Existingwatchprompt compacted withauthorization/safety unchanged, historicalstates retained inCURRENT_TASK andlocalpromptbackup;no newtimer.
+
 29Oct15:16SGT: FWEverify70bea6e ACKNOWLEDGED started14:53:25SGT; exported60ssnapshotonlySTART line, no terminalresultyet. Rawtemp/a2_fwe_final_verify01.log SHA9546b4bc1eba56beb91af15299884fdcb8c65991534d533b39d2032100850202. Pull latestlog viaunique#2 beforeanynewhealth;DO NOT rerunfullhash.
 
 2026-10-29T14:52:53.206809+08:00: FWEfinalreadonlyverification70bea6e3c1817db696cad285974990fe4883b9af SUBMITTED/remoteheadverified;retrieve pendingreceipt BEFOREwrites. ExactknowncompletedFWEonly/fullhash/native/PIDexit;noGPUchanges/restart. commands executableverificationpending;CURRENT_TASKlocaldirty. Nexttraininghealthuniquea12;keep SAMEwatch15:16SGT despitecorpuscompletion becauseStage1ongoing.

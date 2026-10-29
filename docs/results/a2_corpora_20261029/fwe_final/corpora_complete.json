@@ -1,0 +1,61 @@
+{
+  "status": "complete",
+  "plan_sha256": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+  "corpora": {
+    "dclm": {
+      "status": "complete",
+      "manifest_sha256": "9f6ba331da25a6b9763d99f365f613f12e362ea840d4cbfb1ae6027dfb38c7e0",
+      "streams": {
+        "heal": {
+          "rows": 7324218,
+          "tokens": 29999996928,
+          "length": 4096,
+          "token_sha256": "f12f73603025ddf56aca58409477fe2b960207f541384895855f9fa976e33c0d",
+          "starts_sha256": "2880f0d8c62a77c25df1f6616f1697a0a35e8cfc27222a31355fadc75ec11559"
+        },
+        "tuning": {
+          "rows": 1024,
+          "tokens": 4194304,
+          "length": 4096,
+          "token_sha256": "b7a1c1b057d44c804a151891bd0e415d5c034ee6ac8371b2b59c0ba77303cd6a",
+          "starts_sha256": "ff6359d0c14d574175b37657588176785945116673fae695ed4986c0ffd43bb3"
+        },
+        "final": {
+          "rows": 4096,
+          "tokens": 16777216,
+          "length": 4096,
+          "token_sha256": "810e5e5da9be5e4a0a972461841a21216d621d8e05e5337838ff09945c2071f8",
+          "starts_sha256": "17a6086380a1319fe3ee80d3f8d99d7990b0f1133ce5dbf95425cef92efe3804"
+        }
+      }
+    },
+    "fineweb_edu": {
+      "status": "complete",
+      "manifest_sha256": "0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd",
+      "streams": {
+        "heal": {
+          "rows": 7324218,
+          "tokens": 29999996928,
+          "length": 4096,
+          "token_sha256": "4249bd8d8a3ae098abd572631b4b86c91036ad8701176d353058369192d60287",
+          "starts_sha256": "591c1121278a1b837a3736fc2880af9df74aafe48e6e2891ef1c5d0e1349c3bf"
+        },
+        "tuning": {
+          "rows": 1024,
+          "tokens": 4194304,
+          "length": 4096,
+          "token_sha256": "9c0e72d33d317cd758bf085ba83d7867f49034e541ee67b322c20b6718dd7fe5",
+          "starts_sha256": "314c82813ca2b61bc8c9bc839b0c0a5c1dac1bd98209e34688dd5500c9f853ce"
+        },
+        "final": {
+          "rows": 4096,
+          "tokens": 16777216,
+          "length": 4096,
+          "token_sha256": "c18613146bcdc63a65686b548cf3c2c742b8db429d8e3e5c285d0150fa83fba9",
+          "starts_sha256": "b6504f2adacebe3d101a7f531ace61290bff5cf85e24ffa53d12c48a02cd5ea5"
+        }
+      }
+    }
+  },
+  "elapsed_seconds": 35231.512965418864
+}
