@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "health_at": "2026-10-29T19:43:56.222929+00:00",
+  "raw_sha256": "4a2376be9807ff4988dab973428e3284795f77e90db6c95efad038d7b0dc4b45",
+  "artifact_original_shas": {
+    "source-manifest.json": "dd1e32961b39c600b9467cfaa4e91542fee55ff9f371077271a8a9d71e58955c",
+    "status.json": "46ef009cef53e840cf3d2571a4c2d364980ec14be20b69ed1600aec30aa7b35f",
+    "manifest.json": "28362487768d9ceb285a06788f4d9589f1f692be8185d3091abc7ffc6ed50a3f",
+    "complete.json": "053e112c514d9f90f52fdb0bd12be99467dc20ae45f1d1f37a2e51b0d6ef5f2f",
+    "diagnostics.json": "66c3fd0eae36abd46fa9af8d0f8016ca9d0fbe9d25a228413069cc826ec3ba39"
+  },
+  "source_commit": "f5e56ecf1776a2b566e83e8488989eb2b7d645e7",
+  "source_files_verified": 12,
+  "native_reader_passed": true,
+  "exit_status": 0,
+  "manifest_sha256": "28362487768d9ceb285a06788f4d9589f1f692be8185d3091abc7ffc6ed50a3f",
+  "rows": 7324217,
+  "tokens": 29999992832,
+  "full_output_hashes_verified_by_preparation": true
+}

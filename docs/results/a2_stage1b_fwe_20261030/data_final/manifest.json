@@ -1,0 +1,67 @@
+{
+  "status": "complete",
+  "schema": "a2-stage1-shuffled-v1",
+  "spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "source_manifest_sha256": "0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd",
+  "source_plan_sha256": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+  "tokenizer_sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+  "eos_id": 0,
+  "streams": {
+    "heal": {
+      "rows": 7324217,
+      "tokens": 29999992832,
+      "length": 4096,
+      "token_sha256": "a9b17a2d25e2093550c598f87a8ac10d4cca6ef6792a6b103b67814f465e2559",
+      "starts_sha256": "7dd82d4a671085bd95727ca111324c047d81e5e89c6401d005a25cf02c462a26"
+    }
+  },
+  "order": "numpy.random.default_rng(2030).permutation over complete documents; sequential packed rows in every run",
+  "excluded_original_tail_tokens": 848,
+  "dropped_after_shuffle": 3248,
+  "document_count": 29155861,
+  "documents_sha256": "82571448856cec259fcb6b29deb097a7671309f6d55d39f0321efb1ffc8d132e",
+  "document_order_sha256": "685e403d261c34b35e237c71f9978a8d089399adfc0314ec3bee6dc66aff66ba",
+  "heldout_documents_sha256": "458eb59e0ccd5e9c3ebcffe1eaf54a27bd2ef1dcd0c1f6c4f52cd699e182bbf8",
+  "document_dtype": [
+    [
+      "source",
+      "<u4"
+    ],
+    [
+      "row",
+      "<u8"
+    ],
+    [
+      "hash",
+      "|V32"
+    ],
+    [
+      "offset",
+      "<u8"
+    ],
+    [
+      "tokens",
+      "<u8"
+    ]
+  ],
+  "heldout": {
+    "path": "/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/packed/fineweb_edu",
+    "stream": "tuning",
+    "manifest_sha256": "0685a790f3c60bf0c02f2e0679910ada71d9c3fefd95a99c53578b201b87f3dd",
+    "tokens": 4194304
+  },
+  "T7": {
+    "passed": true,
+    "id_overlap": 0,
+    "content_hash_overlap": 0
+  },
+  "T18": {
+    "sequences": 7324217,
+    "eos_tokens": 29155864,
+    "eos_share": 0.0009718623655436479
+  },
+  "elapsed_seconds": 554.6861533070914,
+  "stage1b_spec_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+  "corpus": "fineweb_edu",
+  "prior_verification_sha256": "f6816d61b42213748f87916ade9e94d5ea8e459bf63325db1a49a5e564b56a45"
+}

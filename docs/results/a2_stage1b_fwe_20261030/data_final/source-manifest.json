@@ -1,0 +1,18 @@
+{
+  "code_commit": "f5e56ecf1776a2b566e83e8488989eb2b7d645e7",
+  "files": {
+    "scripts/a2_stage1_data.py": "cac4e434319b847b0e96422b46d5a59516b6516bf9f736db2745a2c2aa549aa7",
+    "scripts/a2_stage1b_data.py": "2e72c7a6fbc8b0998dbd30dc71c6e0d3e00e538400740083c9a6942de6206cd3",
+    "scripts/a2_prepare_corpora.py": "c8bc298dcd71e136ef4f4838f25b3c25b0bdff474b9e15c142fd18419b933d68",
+    "efficient_llm/__init__.py": "7415b751b9addb2c7b9d2863b40f42f9557cb2768ce9508398086119b44c5611",
+    "efficient_llm/a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "efficient_llm/diagnostic_data.py": "da080488a893ad4b71048a69298b867c89285ce4bb7f7ee94261e61ad1616d19",
+    "docs/A2_stage1_spec.md": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+    "docs/A2_stage1b_fwe_spec.md": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+    "resources/a2_stage1b_fwe_release_20261030.json": "6fcb9d3a307480e34d4af61819647f76762da1de4f875400930d7522cd6488fc",
+    "docs/results/a2_corpora_20261029/fwe_final/verification.json": "f6816d61b42213748f87916ade9e94d5ea8e459bf63325db1a49a5e564b56a45",
+    "resources/a2_corpora_30b_20261029.json": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e"
+  },
+  "cpu_only": true
+}
