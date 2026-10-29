@@ -1,42 +1,30 @@
 #1 +30+a
-#th2-6y3o-a2-stage1-downstream-health-20261030-a03
+#th2-6y3o-a2-stage1-downstream-replay-verify-20261030-a01
 set -euo pipefail
-cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
+export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
+cd /mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/source
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
-import hashlib,json,socket,subprocess
+import hashlib,json,socket
 from pathlib import Path
 from datetime import datetime,timezone
-from scripts.gpu_process import inspect
+from scripts.a2_remaining import read_locked
+from eval.a2_suite import collect_files
+from eval.a2_stage1_stats import MODELS,aligned_accuracy_arrays,paired_accuracy_intervals
 assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01')
-print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
-print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
-for rel in ('source-manifest.json','plan.json','jobs.json','stage-budget.json','accelerate-env.log','identities/identities.json',
- 'supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json',
- 'supervised/run/run.json','supervised/run/complete.json','supervised/run/downstream/complete.json','supervised/run/downstream/results.json','supervised/run/downstream/paired_accuracy.json',
- 'supervised/run/downstream/P300-parent-check.json','supervised/run/downstream/P300-student-check.json'):
- p=root/rel
- if p.is_file():
-  raw=p.read_bytes();assert len(raw)<5000000
-  print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
- else:print('MISSING',rel,flush=True)
-for p in sorted((root/'identities').glob('*-identity.json')):
- raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=str(p.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
-base=root/'supervised/run/downstream'
-p=base/'prepared.json'
-if p.is_file():
- raw=p.read_bytes();obj=json.loads(raw)
- print('PREPARED_SUMMARY',json.dumps(dict(sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw),requests=len(obj['requests']),protocol=obj['protocol'])),flush=True)
-for p in sorted((base/'scores').glob('*/scores.json')):
- raw=p.read_bytes();obj=json.loads(raw)
- print('SCORED_SUMMARY',json.dumps(dict(name=p.parent.name,sha256=hashlib.sha256(raw).hexdigest(),requests=len(obj['scores']),identity=obj['checkpoint_identity_sha256'],precision=obj['precision'],batch_size=obj.get('batch_size'))),flush=True)
-logs=[root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/stage1-downstream.log',*base.glob('*.log'),*(base/'scores').glob('*/*.log')]
-for p in logs:
- if p.is_file():
-  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));tail=f.read().decode(errors='replace')
-  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
-guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
-print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_stage1_downstream_20261029_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
-print('HEALTH_COMPLETE',flush=True)
+def read(p):return json.loads(p.read_text())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+sm=read(root/'source-manifest.json');assert sm['code_commit']=='13686edd9cb8d7914b0f2c44c3c362c435a808f6'
+for rel,h in sm['files'].items():assert sha(root/'source'/rel)==h
+sv=read(root/'supervised/supervisor.json');assert sv['training_status']=='ok' and sv['training_returncode']==0
+terminal=read(root/'supervised/run/complete.json');assert terminal['status']=='ok' and len(terminal['jobs'])==1
+job=terminal['jobs'][0];assert job['name']=='stage1-downstream' and job['returncode']==0
+for item in job['artifacts']:assert sha(root/'supervised/run'/item['path'])==item['sha256']
+plan=read(root/'plan.json');done=read(root/'supervised/run/downstream/complete.json');assert done['status']=='ok' and done['models']==6
+ids={n:read_locked(lock) for n,lock in plan['identities'].items()};assert set(ids)==set(MODELS)
+actual=collect_files(ids,done['prepared'],done['scores'],done['replays']);assert actual==read_locked(done['results'])
+replays={n:read_locked(lock) for n,lock in done['replays'].items()}
+paired=paired_accuracy_intervals(aligned_accuracy_arrays(replays),resamples=10000,seed=0)
+assert paired==read_locked(done['additional_results']['paired_accuracy'])
+print('INDEPENDENT_REPLAY_VERIFIED',json.dumps(dict(at=datetime.now(timezone.utc).isoformat(),source=sm['code_commit'],source_files=len(sm['files']),models=6,requests=78259,tasks=9,score_hashes={n:l['sha256'] for n,l in done['scores'].items()},replay_hashes={n:l['sha256'] for n,l in done['replays'].items()},results=done['results'],paired_accuracy=done['additional_results']['paired_accuracy'],resamples=10000,seed=0)),flush=True)
 PY
