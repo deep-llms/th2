@@ -1,0 +1,86 @@
+{
+  "schema": 2,
+  "identities": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/identities/P300-parent-identity.json",
+      "sha256": "7e92739357df71ffeb18e84c32085de29a34330f34244902d7b0868d94a4022a"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/identities/P1T-parent-identity.json",
+      "sha256": "27a2f2208934c5794ca63b3714e998068ba10b836b33cb85f838d56e4ed3d98b"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/identities/S72-parent-identity.json",
+      "sha256": "195c3b816a4f1292fe985db10114038deb0e5dccb179f38138e5ce242d940e5e"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/identities/P300-student-identity.json",
+      "sha256": "44e361ccf4f1ed2fac2da0e18b2928d7953eae84178621226052cef5841a1bf6"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/identities/P1T-student-identity.json",
+      "sha256": "0994a25af5cbf111b9b07ba6c038209e82b6014eb40d9fcc144e00441ef9830d"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/identities/X72-student-identity.json",
+      "sha256": "b68e41c18d469b05b0591837961d9593741b545fef03d2c6d653d5d36770ad0b"
+    }
+  },
+  "selection": {
+    "P300-parent": {
+      "kind": "parent",
+      "dataset": "dclm",
+      "parent": "P300"
+    },
+    "P1T-parent": {
+      "kind": "parent",
+      "dataset": "dclm",
+      "parent": "P1T"
+    },
+    "S72-parent": {
+      "kind": "parent",
+      "dataset": "dclm",
+      "parent": "S72"
+    },
+    "P300-student": {
+      "kind": "healed",
+      "dataset": "dclm",
+      "parent": "P300",
+      "teacher": "P300",
+      "arm": "P300",
+      "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+      "budget": "3.2B",
+      "lr": 0.001
+    },
+    "P1T-student": {
+      "kind": "healed",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "teacher": "P1T",
+      "arm": "P1T",
+      "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+      "budget": "3.2B",
+      "lr": 0.001
+    },
+    "X72-student": {
+      "kind": "healed",
+      "dataset": "dclm",
+      "parent": "S72",
+      "teacher": "P300",
+      "arm": "X72",
+      "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+      "budget": "3.2B",
+      "lr": 0.001
+    }
+  },
+  "source_locks": {
+    "stage": {
+      "path": "/mnt/local/deep-llms_th2/resources/a2_stage1_terminal_20261029.json",
+      "sha256": "7a815ea063b0b81ba72a81c327384c47a53c1cb0925cad6b28cd4576a96f75fd"
+    },
+    "assets": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+      "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+    }
+  }
+}
