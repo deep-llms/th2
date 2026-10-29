@@ -1,0 +1,316 @@
+{
+  "status": "verified",
+  "repository": "HuggingFaceFW/fineweb-edu",
+  "prepared_revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+  "original_release": "v1.0.0",
+  "original_release_revision": "fc9850dff5e2d0f8f776efe41b24a1c49556cfc5",
+  "selected_files": 60,
+  "all_selected_files_byte_identical_to_original_release": true,
+  "files": [
+    {
+      "path": "sample/100BT/000_00007.parquet",
+      "sha256": "98e15e6976fe0e9cafe4e695d37ca836cae9ffa3c4c3937f8f1325dc6bf899e8",
+      "bytes": 2150919214
+    },
+    {
+      "path": "sample/100BT/002_00002.parquet",
+      "sha256": "65b07ff5f637f3ad2ac7f3cedc00c4e146e403f777f04d9854c8b981d15400f7",
+      "bytes": 2151150989
+    },
+    {
+      "path": "sample/100BT/001_00004.parquet",
+      "sha256": "cb3b26b79288c4a965ae8c99cfc93eba5e14c5ec98472120b7e1dedb0015c6f8",
+      "bytes": 2151634678
+    },
+    {
+      "path": "sample/100BT/011_00000.parquet",
+      "sha256": "69119d14738751f9182db6fd87a7582e10f33b9e35571c8205bf6facf6b0a42d",
+      "bytes": 2150983433
+    },
+    {
+      "path": "sample/100BT/011_00007.parquet",
+      "sha256": "09083d8b1758a6e425029f3a370d11b78ac4ed5ad802d0b87b0ad353dd5cafbf",
+      "bytes": 2152992454
+    },
+    {
+      "path": "sample/100BT/000_00008.parquet",
+      "sha256": "0641091de585eea70376e19c25ca34ca913af321c715e5a40805219424bebdf4",
+      "bytes": 2151989277
+    },
+    {
+      "path": "sample/100BT/000_00000.parquet",
+      "sha256": "955ff462f3db09a52a4750e7a69901f89d64e48dfc936de0847c9f234f32b695",
+      "bytes": 2153444469
+    },
+    {
+      "path": "sample/100BT/010_00008.parquet",
+      "sha256": "5959b241b3825595e4817724c5d57b0f420a93642625c2022e13973014f062bc",
+      "bytes": 2150821210
+    },
+    {
+      "path": "sample/100BT/012_00000.parquet",
+      "sha256": "5c98fd3f113deff5395deb9f958740977982a977920b32bd46129376088d642a",
+      "bytes": 2151175692
+    },
+    {
+      "path": "sample/100BT/013_00004.parquet",
+      "sha256": "5407e63a718207c8f5e3982b3ef0d0835e7177e34d434fcb79234afd42532826",
+      "bytes": 705597730
+    },
+    {
+      "path": "sample/100BT/004_00001.parquet",
+      "sha256": "910e38ed2219a9aa9396eba7b1d2ca28a744b73494b726de325bc012ef019e86",
+      "bytes": 2153291928
+    },
+    {
+      "path": "sample/100BT/009_00005.parquet",
+      "sha256": "c3b30571f66e2a829a35d7d4ab132b6183ca30486c9cd2400430ae1e32871266",
+      "bytes": 2152442675
+    },
+    {
+      "path": "sample/100BT/006_00006.parquet",
+      "sha256": "04f3b0996c65b2ffb99fd571a5409508b7e67df66f0fedb918b49aae9fee4778",
+      "bytes": 2153385904
+    },
+    {
+      "path": "sample/100BT/013_00009.parquet",
+      "sha256": "92f097534c4887400ddea2f4878850c91f2b52c48bfc52354de61749c92e547a",
+      "bytes": 710997519
+    },
+    {
+      "path": "sample/100BT/013_00008.parquet",
+      "sha256": "cb27cb812ab0a0120823a05e67a5d5b0610dcf946782d381c8608f70cf858565",
+      "bytes": 673400814
+    },
+    {
+      "path": "sample/100BT/005_00002.parquet",
+      "sha256": "bc43566bfe69c4fc0fe6115716c4cb6c7fa46e09dd527ea4b2a81b81b8ea3f8e",
+      "bytes": 2150936398
+    },
+    {
+      "path": "sample/100BT/011_00002.parquet",
+      "sha256": "1ca4d7ca7f5fb97f326e7cb3ffa63317efa6acb695553868f5a48882d939cbdc",
+      "bytes": 2150635926
+    },
+    {
+      "path": "sample/100BT/013_00001.parquet",
+      "sha256": "487da1a3e004fb2ca87996ca9836c16a49f64e8d70018944c819e49a62774e3a",
+      "bytes": 743123195
+    },
+    {
+      "path": "sample/100BT/003_00004.parquet",
+      "sha256": "a82c8f5921078c75ad91fdde1939258440c5362c13ac98daeeb0280d1de2e243",
+      "bytes": 2151543898
+    },
+    {
+      "path": "sample/100BT/003_00001.parquet",
+      "sha256": "b60cf16e720a328deb6893a2065c76d0bc94413ac7d3aa81a0cd96f99821a0ae",
+      "bytes": 2152532221
+    },
+    {
+      "path": "sample/100BT/007_00001.parquet",
+      "sha256": "7a3c3bcb55e4215a0e0720ea8e7de918007d4da0253789359922486e8bcda930",
+      "bytes": 2152021786
+    },
+    {
+      "path": "sample/100BT/008_00002.parquet",
+      "sha256": "6102754c22f5ba224b16633774523612727878ed42e1b364a8dcbb252a407a81",
+      "bytes": 2151279431
+    },
+    {
+      "path": "sample/100BT/006_00004.parquet",
+      "sha256": "6eaa51d93913045c178e70d6e319595a02b7aad5b24703b5f290c313dfc945b5",
+      "bytes": 2152464846
+    },
+    {
+      "path": "sample/100BT/005_00005.parquet",
+      "sha256": "0f870a2d57d287a6fe6b2f33d4385188c274ba8e4af4faf54a9494c401b01f23",
+      "bytes": 2153145072
+    },
+    {
+      "path": "sample/100BT/006_00002.parquet",
+      "sha256": "ae98b91c695a31af4930cda913d0f5a9fbf8778eb764034b3d67429eef2bfc0d",
+      "bytes": 2153360191
+    },
+    {
+      "path": "sample/100BT/008_00005.parquet",
+      "sha256": "5951a56ebd9edb291cb7b3ede8c0298e6d928b86b64e3159c67cc6373128e7f9",
+      "bytes": 2152582259
+    },
+    {
+      "path": "sample/100BT/009_00004.parquet",
+      "sha256": "dfa31314933e7e925f1ef152f46452b3f086c2857a61528f1385251c2350ef6f",
+      "bytes": 2150735027
+    },
+    {
+      "path": "sample/100BT/002_00001.parquet",
+      "sha256": "97c2b65c93604305f2ed862a448eddd2eb299402c75fbe7583852c2c1b3cac3b",
+      "bytes": 2151671407
+    },
+    {
+      "path": "sample/100BT/008_00000.parquet",
+      "sha256": "da61fb9e93618c8ed2a3e20329cf26ba7073ac797bfe8dbf523421dfa30e1b68",
+      "bytes": 2151138399
+    },
+    {
+      "path": "sample/100BT/001_00006.parquet",
+      "sha256": "7f9ac4b60f7cfa292cba83a676ce3afedfae44d343363671acb215447d4af172",
+      "bytes": 2152289650
+    },
+    {
+      "path": "sample/100BT/009_00009.parquet",
+      "sha256": "f350a772442df44c87446af257c140066f0431c13759faddc9fd0285964b0a17",
+      "bytes": 2150747289
+    },
+    {
+      "path": "sample/100BT/010_00006.parquet",
+      "sha256": "ed99e9b6f25a017b4bd002fd2470086ea5a729cbe1b364550f3808f08291c08b",
+      "bytes": 2150869474
+    },
+    {
+      "path": "sample/100BT/009_00003.parquet",
+      "sha256": "461b2907254965b904e15da071825e2c2f3627ba3d9b701376d8da2cf84f87c5",
+      "bytes": 2152793292
+    },
+    {
+      "path": "sample/100BT/011_00001.parquet",
+      "sha256": "a8b8b5a3326d7ad5df554b4b2d6fb4401acbf7cc44b3894b677a384331e18b7a",
+      "bytes": 2151833168
+    },
+    {
+      "path": "sample/100BT/001_00007.parquet",
+      "sha256": "767f6546c88d78d630bd5ae6b091c82bec1026736c2d135fd331bfa161bd889f",
+      "bytes": 2152010940
+    },
+    {
+      "path": "sample/100BT/001_00000.parquet",
+      "sha256": "e2882e48990027b0a8866cf5a305ca7411c92c09ac465b7ec73ad5ccbed70cab",
+      "bytes": 2153082292
+    },
+    {
+      "path": "sample/100BT/000_00005.parquet",
+      "sha256": "9f089373c48cdeea728da9790bc369cc4d88243b3b18c13f5ec4e06e8446b6df",
+      "bytes": 2152630983
+    },
+    {
+      "path": "sample/100BT/009_00001.parquet",
+      "sha256": "2a92e5f0a71d0c09681c0378c57fd01f93d15804408fe48b9ef7b360400ad155",
+      "bytes": 2150826267
+    },
+    {
+      "path": "sample/100BT/007_00004.parquet",
+      "sha256": "93777e43d9d00b508c8b061912378d09ff00cea6fa6fb71bb289bd03aa7423c3",
+      "bytes": 2151524072
+    },
+    {
+      "path": "sample/100BT/013_00007.parquet",
+      "sha256": "9c74754bd8b524c04a6d2a57f1654340f8deb1414846db3456b83fe0e321f591",
+      "bytes": 209335613
+    },
+    {
+      "path": "sample/100BT/007_00005.parquet",
+      "sha256": "c1354b2b762319b8c7ad56852910c909387f130713a65af862cef21a207aa9c4",
+      "bytes": 2150552642
+    },
+    {
+      "path": "sample/100BT/012_00008.parquet",
+      "sha256": "dda63bc89a0afb6f9d2883ab798301bf91c9b572ed17fe504deef7c4086acece",
+      "bytes": 2150448824
+    },
+    {
+      "path": "sample/100BT/010_00000.parquet",
+      "sha256": "4fce79a4201b4b04e28030f0b7f677eb99084ca064178ebf050c920d50b5b424",
+      "bytes": 2151571678
+    },
+    {
+      "path": "sample/100BT/004_00003.parquet",
+      "sha256": "38a52b91572be74b2a1f95b03f967e433a4ada19755a0cf5986a9b3a11653690",
+      "bytes": 2151470830
+    },
+    {
+      "path": "sample/100BT/009_00002.parquet",
+      "sha256": "fd98882fd0c6f0715b519f73088e025399baaed5d47d23b69711230230ebb0b6",
+      "bytes": 2152785235
+    },
+    {
+      "path": "sample/100BT/003_00003.parquet",
+      "sha256": "6608a6e81959b774e15e57e8c49c5155fa307052c45986e6a091824501860258",
+      "bytes": 2151776296
+    },
+    {
+      "path": "sample/100BT/008_00007.parquet",
+      "sha256": "23012c54073f1362674e437b1c5ebe7c2bf998fdadb7adb4611e183dd17d1377",
+      "bytes": 2152831030
+    },
+    {
+      "path": "sample/100BT/001_00005.parquet",
+      "sha256": "deae87e78f9811e23b835f59482734ba1d542f9bde91b93acf3bdd3902ede1c8",
+      "bytes": 2151681049
+    },
+    {
+      "path": "sample/100BT/005_00001.parquet",
+      "sha256": "be9324f353455b39a22a79521f1b1c100a0c24c94f8275220039eac1aed920f6",
+      "bytes": 2151500293
+    },
+    {
+      "path": "sample/100BT/006_00007.parquet",
+      "sha256": "2f7318492b187daf9e43a5d6928ad5ccd978affa487a59c54ec17018b795459e",
+      "bytes": 2153420855
+    },
+    {
+      "path": "sample/100BT/010_00007.parquet",
+      "sha256": "04074548c93fce0dcd56a1c1eeccfd2ed28b96eae6b95bae96712e1cb2f30e73",
+      "bytes": 2152353010
+    },
+    {
+      "path": "sample/100BT/000_00006.parquet",
+      "sha256": "20e2491fc8dd6211998a550cdeb8a0e28b6d93b4b8495e463c248871c332acf1",
+      "bytes": 2150872058
+    },
+    {
+      "path": "sample/100BT/007_00008.parquet",
+      "sha256": "9af6e214393faa7c91608569314d1c09367e1deeb26aa36485d1aa4753c5c3db",
+      "bytes": 2151691660
+    },
+    {
+      "path": "sample/100BT/005_00006.parquet",
+      "sha256": "6c379b4936cf25368212b370359090beb41e05b1fdbd1bd4ffa9942fae954b4c",
+      "bytes": 2152580193
+    },
+    {
+      "path": "sample/100BT/011_00003.parquet",
+      "sha256": "ff5212cacd088f4127adc2041e18dcc170a8c2cb19dc92271ad22adaeed7e827",
+      "bytes": 2152670300
+    },
+    {
+      "path": "sample/100BT/004_00009.parquet",
+      "sha256": "3c79a80adcb20ed955b7578083981adff986125bc2dd89e44ba0bad8cd618627",
+      "bytes": 2150892501
+    },
+    {
+      "path": "sample/100BT/007_00006.parquet",
+      "sha256": "4ced9db298b90aa92b3ad9207c3146bc79123381673ab4e8d68fdf3690b3693c",
+      "bytes": 2153194366
+    },
+    {
+      "path": "sample/100BT/005_00003.parquet",
+      "sha256": "6ed97e6c8862c3502e1844e472ad16a9beb82e2c8e17ad5694e9a7045ff86be8",
+      "bytes": 2151166424
+    },
+    {
+      "path": "sample/100BT/001_00008.parquet",
+      "sha256": "4b58ba114b677c498d8ecece6798958d0eced3bb283f3f000feb278749f88cfb",
+      "bytes": 2152393119
+    },
+    {
+      "path": "sample/100BT/005_00007.parquet",
+      "sha256": "09160cd46dc31123b2c49106196fa7fdc3a427ac0015f0089a41a4314f24efef",
+      "bytes": 2153303408
+    }
+  ],
+  "evidence_urls": [
+    "https://huggingface.co/api/datasets/HuggingFaceFW/fineweb-edu/tree/fc9850dff5e2d0f8f776efe41b24a1c49556cfc5/sample/100BT?limit=1000",
+    "https://huggingface.co/api/datasets/HuggingFaceFW/fineweb-edu/tree/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT?limit=1000"
+  ],
+  "note": "FineWeb-Edu-1.4T in Open-Sci run names is corpus token count, not HF v1.4.0 release. All selected sample files have identical LFS SHA256 in original v1.0.0 and prepared revision."
+}
