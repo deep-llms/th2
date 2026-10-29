@@ -71,3 +71,50 @@ def paired_accuracy_intervals(tasks, *, resamples=10000, seed=0):
                 drop_sign='parent minus student; positive is worse after healing',
                 direct_sign='X72 student minus P300 student; positive is higher X72 accuracy',
                 mc_mean=report(mc_point, mc_draws), lambada_accuracy=lambada, tasks=by_task)
+
+
+def aligned_accuracy_arrays(replays):
+    """Validate complete canonical replay samples before paired statistics.
+
+    File SHA and checkpoint identity remain the suite collector's responsibility.
+    This layer rejects mismatched prompts, protocols, counts and aggregate scores
+    and aligns each model by doc_id, never by incidental JSON list position.
+    """
+    from eval.downstream_suite import COUNTS, PRIMARY, digest
+    if set(replays) != set(MODELS):
+        raise ValueError('Require the six registered Stage1 models')
+    reference = replays[MODELS[0]]['a2_metadata']
+    protocol = reference['protocol']
+    if (set(protocol['tasks']) != set(COUNTS) or len(protocol['tasks']) != 9
+            or protocol['num_fewshot'] != 0 or protocol['seed'] != 42
+            or protocol['max_length'] != 4096 or protocol['limit'] is not None):
+        raise ValueError('Fixed full nine-task protocol required')
+    tasks = {task:{} for task in COUNTS}
+    prompts = {}
+    for model in MODELS:
+        result = replays[model]
+        meta = result['a2_metadata']
+        if any(meta[key] != reference[key] for key in
+               ('protocol', 'prepared_sha256', 'request_sha256')):
+            raise ValueError('Unpaired prepared requests or protocol')
+        if set(result['samples']) != set(COUNTS) or set(result['results']) != set(COUNTS):
+            raise ValueError('Missing or unexpected tasks')
+        for task, n in COUNTS.items():
+            samples = sorted(result['samples'][task], key=lambda row:row['doc_id'])
+            if (len(samples) != n or len({row['doc_id'] for row in samples}) != n
+                    or result['n-shot'][task] != 0
+                    or result['n-samples'][task] != dict(original=n, effective=n)):
+                raise ValueError('Incomplete per-item coverage')
+            identity = digest([(row['doc_id'], {key:row[key] for key in
+                               ('doc', 'arguments', 'target')}) for row in samples])
+            if prompts.setdefault(task, identity) != identity:
+                raise ValueError('Per-item prompt/target pairing differs')
+            primary = PRIMARY[task]
+            values = np.asarray([row[primary.split(',')[0]] for row in samples], dtype=float)
+            if values.ndim != 1 or not np.isin(values, [0, 1]).all():
+                raise ValueError('Nonbinary primary accuracy')
+            aggregate = result['results'][task][primary]
+            if not np.isfinite(aggregate) or abs(float(values.mean())-aggregate) > 1e-12:
+                raise ValueError('Per-item scores disagree with canonical aggregate')
+            tasks[task][model] = values
+    return tasks
