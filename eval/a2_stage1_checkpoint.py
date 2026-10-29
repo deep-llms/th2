@@ -13,13 +13,23 @@ def checkpoint_identity(*, assets_lock, checkpoint, result_lock, reference_lock)
 
     row = read_locked(result_lock)
     reference = read_locked(reference_lock)
-    run = Run(row['arm'], row['budget'], row['lr'])
+    dataset = row.get('dataset')
+    run_type = Run
+    if dataset == 'fwe':
+        from efficient_llm.a2_stage1b.protocol import Run as FWERun, REPLICATION_SPEC_SHA
+        if (reference.get('stage1b_spec_sha256') != REPLICATION_SPEC_SHA
+                or reference.get('dataset') != 'fwe'):
+            raise ValueError('Wrong Stage1b replication provenance')
+        run_type = FWERun
+    elif dataset != 'dclm':
+        raise ValueError('Unregistered Stage1 corpus')
+    run = run_type(row['arm'], row['budget'], row['lr'])
     validate_fit(row, run, reference)
     if (reference.get('spec_sha256') != SPEC_SHA
             or reference.get('assets_sha256') != assets_lock['sha256']
             or row['status'] != 'complete' or row.get('diverged') is not False):
         raise ValueError('Unsuccessful or mismatched Stage1 receipt')
-    original = parent_identity(assets_lock=assets_lock, dataset='dclm', parent=run.parent)
+    original = parent_identity(assets_lock=assets_lock, dataset=dataset, parent=run.parent)
     root = Path(checkpoint).resolve()
     if root.name != 'final' or root.parent.name != run.run_id:
         raise ValueError('Checkpoint is not the declared Stage1 fit')
@@ -34,7 +44,7 @@ def checkpoint_identity(*, assets_lock, checkpoint, result_lock, reference_lock)
         if sha256(root/name) != value:
             raise ValueError('Exported native code changed')
         files[name] = value
-    return dict(schema=2, kind='healed', dataset='dclm', parent=run.parent,
+    return dict(schema=2, kind='healed', dataset=dataset, parent=run.parent,
                 checkpoint=str(root), files=files, assets=assets_lock,
                 code_dir=original['code_dir'], code_files=original['code_files'],
                 kept_layers=kept, training_receipts=dict(result=result_lock,

@@ -1,0 +1,112 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-29T19:52:38.245964+00:00",
+  "jobs": [
+    {
+      "name": "P300",
+      "started_at": "2026-10-29T19:52:38.246264+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 122.2264619898051,
+      "artifacts": [
+        {
+          "path": "P300.json",
+          "sha256": "73d1bb3543bd1fab56d2bee802f9a7e6396ba024b15bf73e35233f8cb9bf2906",
+          "bytes": 291167
+        }
+      ],
+      "finished_at": "2026-10-29T19:54:40.981337+00:00"
+    },
+    {
+      "name": "P1T",
+      "started_at": "2026-10-29T19:54:40.981380+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 119.72116370592266,
+      "artifacts": [
+        {
+          "path": "P1T.json",
+          "sha256": "4503b06dbbc102ccc691dfde07f5a05583d0b339b2883836c837c727e0a10030",
+          "bytes": 290347
+        }
+      ],
+      "finished_at": "2026-10-29T19:56:41.172873+00:00"
+    },
+    {
+      "name": "S72",
+      "started_at": "2026-10-29T19:56:41.172911+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 118.32482238486409,
+      "artifacts": [
+        {
+          "path": "S72.json",
+          "sha256": "ec97b2c71eb0b787b56e9a05695d909acf52b0684110b6a3298a079936c62bf2",
+          "bytes": 290715
+        }
+      ],
+      "finished_at": "2026-10-29T19:58:39.994809+00:00"
+    },
+    {
+      "name": "numerical",
+      "started_at": "2026-10-29T19:58:39.994855+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 46.08366070268676,
+      "artifacts": [
+        {
+          "path": "numerical.json",
+          "sha256": "1c358fe44004dfbe3d26c7c8c4222660264d107bba83c1847c12e74199520726",
+          "bytes": 4437
+        }
+      ],
+      "finished_at": "2026-10-29T19:59:26.568970+00:00"
+    },
+    {
+      "name": "throughput",
+      "started_at": "2026-10-29T19:59:26.569017+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 54.68122604675591,
+      "artifacts": [
+        {
+          "path": "throughput.json",
+          "sha256": "c1af562c58d8c84b6b42ed66c7d819d26fd9135bbc71ce905334749e80b040d2",
+          "bytes": 4568
+        }
+      ],
+      "finished_at": "2026-10-29T20:00:21.764932+00:00"
+    },
+    {
+      "name": "t17",
+      "started_at": "2026-10-29T20:00:21.764971+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 271.50811359565705,
+      "artifacts": [
+        {
+          "path": "t17/T17.json",
+          "sha256": "9056d874791badc922103a3589a9b49ced3554d4a54f20403cd02e1ae6a73188",
+          "bytes": 4033
+        }
+      ],
+      "finished_at": "2026-10-29T20:04:53.813996+00:00"
+    },
+    {
+      "name": "report",
+      "started_at": "2026-10-29T20:04:53.814035+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 1.4156591179780662,
+      "artifacts": [
+        {
+          "path": "tests.json",
+          "sha256": "0ddedf66933134338cc87f872b28e5df9d8a67ba0cf6460d482c90ebe0321b8b",
+          "bytes": 1095595
+        }
+      ],
+      "finished_at": "2026-10-29T20:04:55.783049+00:00"
+    }
+  ],
+  "finished_at": "2026-10-29T20:04:55.783083+00:00"
+}

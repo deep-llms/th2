@@ -1,0 +1,275 @@
+{
+  "jobs": [
+    {
+      "name": "P300",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 1200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "55707",
+        "-m",
+        "efficient_llm.a2_stage1b.model_stage",
+        "parent",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--parent",
+        "P300",
+        "--output",
+        "{run_dir}/P300.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "P300.json",
+          "json_equals": {
+            "status": "complete"
+          }
+        }
+      ]
+    },
+    {
+      "name": "P1T",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 1200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "55707",
+        "-m",
+        "efficient_llm.a2_stage1b.model_stage",
+        "parent",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--parent",
+        "P1T",
+        "--output",
+        "{run_dir}/P1T.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "P1T.json",
+          "json_equals": {
+            "status": "complete"
+          }
+        }
+      ]
+    },
+    {
+      "name": "S72",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 1200,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "55707",
+        "-m",
+        "efficient_llm.a2_stage1b.model_stage",
+        "parent",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--parent",
+        "S72",
+        "--output",
+        "{run_dir}/S72.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "S72.json",
+          "json_equals": {
+            "status": "complete"
+          }
+        }
+      ]
+    },
+    {
+      "name": "numerical",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 900,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "55707",
+        "-m",
+        "efficient_llm.a2_stage1b.model_stage",
+        "numerical",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--output",
+        "{run_dir}/numerical.json",
+        "--estimate",
+        "900"
+      ],
+      "required_outputs": [
+        {
+          "path": "numerical.json",
+          "json_equals": {
+            "passed": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "throughput",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 450,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "55707",
+        "-m",
+        "efficient_llm.a2_stage1b.model_stage",
+        "throughput",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--output",
+        "{run_dir}/throughput.json",
+        "--estimate",
+        "900"
+      ],
+      "required_outputs": [
+        {
+          "path": "throughput.json",
+          "json_equals": {
+            "passed": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "t17",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 1500,
+      "argv": [
+        "{python}",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/source/resources/accelerate_b200.yaml",
+        "--main_process_port",
+        "55707",
+        "-m",
+        "efficient_llm.a2_stage1b.model_stage",
+        "t17",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--output",
+        "{run_dir}/t17",
+        "--estimate",
+        "900"
+      ],
+      "required_outputs": [
+        {
+          "path": "t17/T17.json",
+          "json_equals": {
+            "passed": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "report",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 120,
+      "argv": [
+        "{python}",
+        "-m",
+        "scripts.a2_stage1b_preflight",
+        "--inputs",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01/inputs.json",
+        "--output",
+        "{run_dir}"
+      ],
+      "required_outputs": [
+        {
+          "path": "tests.json",
+          "json_equals": {
+            "status": "passed"
+          }
+        }
+      ]
+    }
+  ]
+}

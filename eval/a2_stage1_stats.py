@@ -19,7 +19,7 @@ CONTRASTS = {
 }
 
 
-def paired_accuracy_intervals(tasks, *, resamples=10000, seed=0):
+def paired_accuracy_intervals(tasks, *, resamples=10000, seed=0, models=MODELS, contrasts=CONTRASTS):
     """Each task maps all six fixed model labels to aligned binary arrays.
 
     Caller validates task names/counts and exact pairing before this numerical
@@ -32,21 +32,24 @@ def paired_accuracy_intervals(tasks, *, resamples=10000, seed=0):
     if type(resamples) is not int or resamples < 2 or type(seed) is not int:
         raise ValueError('Explicit valid bootstrap settings required')
     rng = np.random.default_rng(seed)
-    weights = np.asarray(list(CONTRASTS.values()), dtype=np.float64).T
-    mc_point = np.zeros(len(CONTRASTS))
-    mc_draws = np.zeros((resamples, len(CONTRASTS)))
+    weights = np.asarray(list(contrasts.values()), dtype=np.float64).T
+    if (len(set(models)) != len(models) or not models or not contrasts
+            or weights.shape != (len(models), len(contrasts)) or not np.isfinite(weights).all()):
+        raise ValueError('Invalid checkpoint contrast matrix')
+    mc_point = np.zeros(len(contrasts))
+    mc_draws = np.zeros((resamples, len(contrasts)))
     by_task = {}
 
     def report(point, draws):
         lo, hi = np.quantile(draws, [.025, .975], axis=0, method='linear')
         return {name: dict(estimate=float(point[i]), ci95=[float(lo[i]), float(hi[i])])
-                for i, name in enumerate(CONTRASTS)}
+                for i, name in enumerate(contrasts)}
 
     for task in sorted(tasks):
         records = tasks[task]
-        if set(records) != set(MODELS):
+        if set(records) != set(models):
             raise ValueError('Missing or unexpected checkpoint')
-        arrays = [np.asarray(records[name]) for name in MODELS]
+        arrays = [np.asarray(records[name]) for name in models]
         if any(a.ndim != 1 or a.size == 0 or a.size != arrays[0].size
                or not np.isin(a, [0, 1]).all() for a in arrays):
             raise ValueError('Expected paired finite binary item scores')
@@ -58,7 +61,7 @@ def paired_accuracy_intervals(tasks, *, resamples=10000, seed=0):
         draws = rng.multinomial(n, counts/n, size=resamples) @ (patterns @ weights) / n
         point = matrix.mean(axis=0) @ weights
         by_task[task] = dict(examples=n, contrasts=report(point, draws),
-                            accuracy=dict(zip(MODELS, map(float, matrix.mean(axis=0)))))
+                            accuracy=dict(zip(models, map(float, matrix.mean(axis=0)))))
         if task == 'lambada_openai':
             lambada = report(point, draws)
         else:
@@ -73,7 +76,7 @@ def paired_accuracy_intervals(tasks, *, resamples=10000, seed=0):
                 mc_mean=report(mc_point, mc_draws), lambada_accuracy=lambada, tasks=by_task)
 
 
-def aligned_accuracy_arrays(replays):
+def aligned_accuracy_arrays(replays, *, models=MODELS):
     """Validate complete canonical replay samples before paired statistics.
 
     File SHA and checkpoint identity remain the suite collector's responsibility.
@@ -81,9 +84,9 @@ def aligned_accuracy_arrays(replays):
     and aligns each model by doc_id, never by incidental JSON list position.
     """
     from eval.downstream_suite import COUNTS, PRIMARY, digest
-    if set(replays) != set(MODELS):
-        raise ValueError('Require the six registered Stage1 models')
-    reference = replays[MODELS[0]]['a2_metadata']
+    if set(replays) != set(models):
+        raise ValueError('Require the registered Stage1 model selection')
+    reference = replays[models[0]]['a2_metadata']
     protocol = reference['protocol']
     if (set(protocol['tasks']) != set(COUNTS) or len(protocol['tasks']) != 9
             or protocol['num_fewshot'] != 0 or protocol['seed'] != 42
@@ -91,7 +94,7 @@ def aligned_accuracy_arrays(replays):
         raise ValueError('Fixed full nine-task protocol required')
     tasks = {task:{} for task in COUNTS}
     prompts = {}
-    for model in MODELS:
+    for model in models:
         result = replays[model]
         meta = result['a2_metadata']
         if any(meta[key] != reference[key] for key in
