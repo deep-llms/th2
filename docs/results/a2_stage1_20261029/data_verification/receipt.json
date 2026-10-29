@@ -1,0 +1,10 @@
+{
+  "raw": "temp/a2_stage1_health03.log",
+  "sha256": "38cbd09ded301e6ef0837fd7725d4896aee5d79b1e9f1ecaf44bfad8d57576eb",
+  "health_at": "2026-10-29T00:45:24.127898+00:00",
+  "source_commit": "716d3f3521f4f34823dc32fc7ebca43ae3049f73",
+  "source_files_verified": 8,
+  "terminal_pane": "1 0 697095",
+  "manifest_sha256": "461d1f9a5b0d3d8bb72617ffa6e51fd90c8bc458fbc630643b199daedfac3295",
+  "note": "Atomic complete and manifest authoritative; progress status remains last copying checkpoint."
+}

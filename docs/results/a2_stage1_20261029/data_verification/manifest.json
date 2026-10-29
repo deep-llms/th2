@@ -1,0 +1,64 @@
+{
+  "status": "complete",
+  "schema": "a2-stage1-shuffled-v1",
+  "spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "source_manifest_sha256": "9f6ba331da25a6b9763d99f365f613f12e362ea840d4cbfb1ae6027dfb38c7e0",
+  "source_plan_sha256": "26b086fc1550cc646fad73252f506aa7629cfd52b32dfd915fa6cdd3055d044e",
+  "tokenizer_sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+  "eos_id": 0,
+  "streams": {
+    "heal": {
+      "rows": 7324217,
+      "tokens": 29999992832,
+      "length": 4096,
+      "token_sha256": "1079076a62ee4d42440ae2fdb88771ef2f60438148ca79bf0769deaeeb0ddfd6",
+      "starts_sha256": "73fa680b9441768d1d93f1221784c8e86505c165af807ca4b2c5db75e0cfddf9"
+    }
+  },
+  "order": "numpy.random.default_rng(2030).permutation over complete documents; sequential packed rows in every run",
+  "excluded_original_tail_tokens": 38,
+  "dropped_after_shuffle": 4058,
+  "document_count": 22873862,
+  "documents_sha256": "a29b9869d8b4d7b3fad38c6e28c43ae061730de5c26d70a5b8bad17a0f0a4081",
+  "document_order_sha256": "a80c9cf34cd9e6be8136bebccb8ac62121fdc2894d464bd1f7b575b38a01f678",
+  "heldout_documents_sha256": "5c2a4e40dbf5123912a76eb747093974a1f748c93d728e5a1f4229972259602f",
+  "document_dtype": [
+    [
+      "source",
+      "<u4"
+    ],
+    [
+      "row",
+      "<u8"
+    ],
+    [
+      "hash",
+      "|V32"
+    ],
+    [
+      "offset",
+      "<u8"
+    ],
+    [
+      "tokens",
+      "<u8"
+    ]
+  ],
+  "heldout": {
+    "path": "/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/packed/dclm",
+    "stream": "tuning",
+    "manifest_sha256": "9f6ba331da25a6b9763d99f365f613f12e362ea840d4cbfb1ae6027dfb38c7e0",
+    "tokens": 4194304
+  },
+  "T7": {
+    "passed": true,
+    "id_overlap": 0,
+    "content_hash_overlap": 0
+  },
+  "T18": {
+    "sequences": 7324217,
+    "eos_tokens": 22873896,
+    "eos_share": 0.0007624633821779175
+  },
+  "elapsed_seconds": 609.6560068470426
+}
