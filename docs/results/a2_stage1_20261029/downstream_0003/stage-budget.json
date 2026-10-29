@@ -1,0 +1,9 @@
+{
+  "prior_seconds": 54405.20319,
+  "preparation_seconds": 52.231430114246905,
+  "timeout_seconds": 7200.0,
+  "cleanup_reserve_seconds": 660,
+  "stage_hard_seconds": 129600,
+  "report_due": false,
+  "deadline": "2026-10-31T04:06:27.182436+08:00"
+}
