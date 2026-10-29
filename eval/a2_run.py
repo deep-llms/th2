@@ -60,13 +60,19 @@ def validate_plan(plan):
 
 
 def run_screen(plan, output, *, timeout_seconds):
+    return _run_screen(plan, output, timeout_seconds=timeout_seconds,
+        validator=validate_plan, gate_names=('dclm-P300-original','dclm-P300-S1-0.2B'))
+
+
+def _run_screen(plan, output, *, timeout_seconds, validator, gate_names, finalize=None):
+    """Shared execution; the screen-specific validator fixes model identities."""
     if not math.isfinite(timeout_seconds) or timeout_seconds<=0:raise ValueError('Finite budget required')
     deadline=time.monotonic()+timeout_seconds
     def remaining():
         value=deadline-time.monotonic()
         if value<=0:raise TimeoutError('Downstream screen budget exhausted')
         return value
-    identities=validate_plan(plan);root=Path(output)
+    identities=validator(plan);root=Path(output)
     root.mkdir(parents=True,exist_ok=False)
     write(root/'plan.json',plan)
     env={**os.environ,'HF_HUB_OFFLINE':'1','HF_DATASETS_OFFLINE':'1',
@@ -96,7 +102,7 @@ def run_screen(plan, output, *, timeout_seconds):
         command([*bridge,'prepare',*common,'--output',str(prepared_path)],'prepare.log')
     prepared_lock=lock(prepared_path);prepared=read_locked(prepared_lock)
     # Both depth/load paths are checked on actual weights, once, before scoring.
-    for name in ('dclm-P300-original','dclm-P300-S1-0.2B'):
+    for name in gate_names:
         item=plan['identities'][name];target=root/(name+'-check.json')
         command([plan['native_python'],'-m','eval.a2_check','--identity',item['path'],
             '--identity-sha256',item['sha256'],'--prepared',prepared_lock['path'],
@@ -120,9 +126,10 @@ def run_screen(plan, output, *, timeout_seconds):
     for name in ('manifest','input_spec'):read_locked(plan[name])
     result=collect_files(identities,prepared_lock,scores,replays)
     write(root/'results.json',result)
+    extra={} if finalize is None else finalize(plan,root,result,replays)
     write(root/'complete.json',dict(status='ok',models=len(identities),
         prepared=prepared_lock,scores=scores,replays=replays,results=lock(root/'results.json'),
-        elapsed_seconds=timeout_seconds-remaining()))
+        elapsed_seconds=timeout_seconds-remaining(),additional_results=extra))
     return result
 
 
