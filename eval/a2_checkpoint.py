@@ -61,6 +61,9 @@ def checkpoint_identity(*, assets_lock, dataset, parent, checkpoint=None,
 
 def verify_identity(identity):
     """Reconstruct from original reviewed locks and require identical bytes."""
+    if identity.get('schema') == 2:
+        from eval.a2_stage1_checkpoint import verify_identity as verify_stage1
+        return verify_stage1(identity)
     if identity.get('schema')!=1 or identity.get('kind') not in ('parent','healed'):
         raise ValueError('Unknown checkpoint identity')
     args=dict(assets_lock=identity['assets'],dataset=identity['dataset'],parent=identity['parent'])
