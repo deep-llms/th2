@@ -1,0 +1,14 @@
+{
+  "status": "running",
+  "health_at": "2026-10-29T19:39:09.695606+00:00",
+  "raw_sha256": "07f05574255460120773a36061e5f60fd4a0db6650d58077c360bbbab52b9c97",
+  "source_files_verified": 12,
+  "source_commit": "f5e56ecf1776a2b566e83e8488989eb2b7d645e7",
+  "last_progress": {
+    "documents": 27200000,
+    "tokens": 27988670633
+  },
+  "session": "a2_stage1b_fwe_shuffle_20261030_a01",
+  "pid": 712955,
+  "complete": false
+}
