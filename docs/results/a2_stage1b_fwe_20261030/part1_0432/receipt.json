@@ -1,0 +1,150 @@
+{
+  "at": "2026-10-29T20:32:25.506140+00:00",
+  "raw_sha256": "7b8e30cfb631164838f33cd3bc00bffac8f4240b9a9c7db9a208ed2b58a06a6c",
+  "source": "7dd9da088ba5af581c295775819319ce54b2025c",
+  "source_files": 124,
+  "guard": "{\"owner_pid\": 715452, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised\", \"at\": \"2026-10-29T20:18:09.238562+00:00\"}",
+  "session": "0 715452",
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 60.0,
+      "pids": [
+        715488
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 55.0,
+      "pids": [
+        715489
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 58.0,
+      "pids": [
+        715490
+      ]
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 51.0,
+      "pids": [
+        715491
+      ]
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 59.0,
+      "pids": [
+        715492
+      ]
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 65.0,
+      "pids": [
+        715493
+      ]
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 63.0,
+      "pids": [
+        715494
+      ]
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 81286.0,
+      "utilization_percent": 55.0,
+      "pids": [
+        715495
+      ]
+    }
+  ],
+  "active_fit": {
+    "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-4",
+    "total_steps": 762,
+    "logged_step": 760
+  },
+  "choice": null,
+  "artifact_sha256": {
+    "source-manifest.json": "3796ddd36e680c3d0991644cc89b129a7f2e43abdd1dd96f94085b2712d1a750",
+    "inputs.json": "e0c70eae956fe7650d81462ae1f9341ea8f1a99c5cfc7566c61e580222ae668c",
+    "stage-budget.json": "39bf4b1659b4f76675735a4a3c41641b92010c166e6d96bad4a6f298afb126ce",
+    "jobs.json": "9bcca314f73e6f4d50ef63d0d46b1963cd7730344207ad0afc97fb50cdea7293",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "9c16675466c18a715bf166a62a40d3e96b5a8b0d87b0b05c069d56a932f6e69f",
+    "supervised/reclaim.json": "70c3334dd0298f5ed00cbc8239c38b301ae53115fa5a87f7738cd64ba6f613b9",
+    "supervised/gpus-free-before-training.json": "e51bc7ca19bfbdb71a5686f64f81d8805dc2dbb8684a01c7a61f159e35eb695b",
+    "supervised/run/run.json": "4c55a1bea8c3927471c4487c12c239696a8cd54dbfa24fbdf3a8f1a7dd097b22",
+    "supervised/run/results/a2_stage1_fwe/tests.json": "0ddedf66933134338cc87f872b28e5df9d8a67ba0cf6460d482c90ebe0321b8b"
+  },
+  "published_fits": 0,
+  "fits": [],
+  "startup_verified": true,
+  "reclaimed_workers": [
+    714644,
+    714645,
+    714646,
+    714647,
+    714648,
+    714649,
+    714650,
+    714651
+  ],
+  "supervisor_guard": {
+    "owner_pid": 715452,
+    "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised",
+    "at": "2026-10-29T20:18:09.238562+00:00"
+  },
+  "training_worker_launcher": 715482,
+  "started": "2026-10-29T20:19:10.047762+00:00",
+  "free_at": "2026-10-29T20:19:09.775215+00:00",
+  "stage_budget": {
+    "prior_seconds": 3152.574,
+    "preparation_seconds": 147.36936763394624,
+    "timeout_seconds": 46204,
+    "cleanup_reserve_seconds": 660,
+    "stage_hard_seconds": 86400,
+    "report_due": false,
+    "deadline": "2026-10-31T04:06:27.182436+08:00"
+  },
+  "accelerate_verified": true,
+  "same_preflight_provenance": true,
+  "first_fit_training_seconds": 734.6795,
+  "first_fit_training_finished_validation_pending": true
+}

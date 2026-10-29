@@ -17,3 +17,5 @@ T8: 0.950574577 seconds/update, 275774.26 tokens/second at MBS4/chunk256. Estima
 Reviewed tests SHA256: `0ddedf66933134338cc87f872b28e5df9d8a67ba0cf6460d482c90ebe0321b8b`. Raw receipt SHA256: `15755798c4a6ef346907955a2fb2e9ddd46f525ba31a788188ca082dd4fd215f`. Source9f5601d (120 files); all27 numerical/provenance core files unchanged in launch source7dd9da0. Archive: `results/a2_stage1b_fwe_20261030/preflight_final`.
 
 Continuation: FWE grid and P300/P1T3.2B, four-model downstream/interim report; then authorized Part2 and final cross-dataset report. No scientific result is claimed by this preflight report.
+
+Part1 startup independently verified by healtha01 at 04:32:25 SGT: GPUstart04:19:10, exact predecessor burn workers714644–714651 reclaimed and all8 GPUs free before entry, native supervisor715452/session active. Source7dd9da0 has124 frozen files and identical preflight provenance. First P3000.2B/1e-4 training loop finished in734.6795seconds; validation/export still pending at snapshot. No grid result or chosen LR yet. Full-stage ETA20:00–21:00SGT provisional.
