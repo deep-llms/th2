@@ -1,0 +1,87 @@
+{
+  "raw_log": "temp/a2_stage1_preflight_health01.log",
+  "raw_sha256": "4405de7bf587b9554a32d2171bd92b3abbb1a6e623168d330c3c393e800bdb5c",
+  "artifacts": {
+    "source-manifest.json": "0e2f9685d2cab65d2bfd2aab2dd9e301958ce23eeb9ef667d6ce76ca45b27389",
+    "inputs.json": "8cfcb98da2ca776126b14ab7dadb65e83e00efab1aba7d1f110150285e3d1461",
+    "jobs.json": "e141bd974d4616e8a20e146309c7fb0a74ca7f0d688e45047adf0c66c0fb9d87",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/run/P300.json": "37faa77ea8851735505290d3d1fbffcc0571b67fd135a4cdb78a0307472f71aa",
+    "supervised/run/P1T.json": "c496eb4c2f32a1b1936f8d9df20ceab32def6a7284c18599362cfef962ed7f11",
+    "supervised/run/S72.json": "3100aaf259984b4fc91a9146e076f1311e18c1f64028cc91ad8e5a3c57b3ea99",
+    "supervised/supervisor.json": "be4c7ebb0772af54c63747534f56f6075e2f1179c209ba6e5971ef9c0375cc13",
+    "supervised/reclaim.json": "805fdce0572f486f0ff74a2e22429cc05b5d5a18023b743afb7b2f95c5ad480e",
+    "supervised/gpus-free-before-training.json": "414c1443137f343c2dba97f31e3cd6b3a0ed4f659de91dfa50fb1ced89911daf",
+    "supervised/run/run.json": "27fe130c36016b818494e541a47ab2999a760b9aae693eb8418a3cc9134da808",
+    "snapshot-retired.json": "774672b65056c34e28c41a1da0164fffcb697509f25d2a4e5ce5f665374a4999"
+  },
+  "health_at": "2026-10-29T00:59:45.513965+00:00",
+  "guard": "{\"owner_pid\": 697457, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-preflight-20261029-a01/supervised\", \"at\": \"2026-10-29T00:52:27.211378+00:00\"}",
+  "session": "0 697457",
+  "receipt_complete": true,
+  "source_files_verified": 103,
+  "source_commit": "0c1c1488477f1b836989182986bd785fbcd667d8",
+  "parents": {
+    "P300": {
+      "T1": true,
+      "precision_gap": 9.840094697466384e-05,
+      "baseline": {
+        "final": 2.7377930322126844,
+        "tuning": 2.7227194080603616,
+        "small": 2.723300243001256,
+        "secondary": 2.5063441408083897
+      },
+      "pre": {
+        "final": 3.7637751437881795,
+        "tuning": 3.7583449032547005,
+        "small": 3.7546924873039895,
+        "secondary": 3.555026044526289
+      }
+    },
+    "P1T": {
+      "T1": true,
+      "precision_gap": 0.00011237434217825637,
+      "baseline": {
+        "final": 2.6869089917639344,
+        "tuning": 2.671354022439473,
+        "small": 2.6709930100187753,
+        "secondary": 2.452078286399847
+      },
+      "pre": {
+        "final": 4.004721485196599,
+        "tuning": 4.006763505308702,
+        "small": 4.01290440261794,
+        "secondary": 3.7448791663987326
+      }
+    },
+    "S72": {
+      "T1": true,
+      "precision_gap": 0.00011493196512901704,
+      "baseline": {
+        "final": 2.90857529610787,
+        "tuning": 2.8969205838721432,
+        "small": 2.898688648336374,
+        "secondary": 2.6772801754047455
+      },
+      "pre": {
+        "final": 3.854544222000957,
+        "tuning": 3.8464218927247567,
+        "small": 3.8422247789817563,
+        "secondary": 3.618580657739698
+      }
+    }
+  },
+  "T3": {
+    "passed": true,
+    "reasons": []
+  },
+  "gpu_snapshot_note": "Numerical stage startup, eight known ranks; utilization0\u20131%, not steady throughput",
+  "snapshot_retired": {
+    "manifest_sha256": "02ba86c24feb61585f67c710a79bf8bf3cc5a0cf175386c480e26a467075ec87",
+    "status": "retired",
+    "removed_bytes": 16000000000,
+    "receipts_preserved": true
+  },
+  "actual_gpu_start": "2026-10-29T00:53:28.089320+00:00",
+  "scientific_fits_started": 0
+}
