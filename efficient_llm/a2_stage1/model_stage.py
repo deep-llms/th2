@@ -86,7 +86,9 @@ def main():
    if pre['provenance']!=prov:raise ValueError('Stale baseline')
    rows=PackedRows(inputs['heal'],'heal',count=run.steps*64,verify=False)
   student=load_parent(assets,ds,run.parent,state.device);prune(student,range(16,22));teacher=load_parent(assets,ds,run.teacher,state.device,teacher=True)
-  result=heal(student,teacher,rows,ev,a.output,run=run,microbatch=4,chunk=256,estimated_seconds=a.estimate,provenance=prov,pre_values=pre)
+  run_prov=prov if a.action!='t17' else dict(prov,data_sha256=prov['original_data_sha256'],stage1_data_sha256=prov['data_sha256'],test='T17 original CulturaX stream')
+  if a.action=='t17' and original['provenance']['data_sha256']!=run_prov['data_sha256']:raise ValueError('T17 original data differs')
+  result=heal(student,teacher,rows,ev,a.output,run=run,microbatch=4,chunk=256,estimated_seconds=a.estimate,provenance=run_prov,pre_values=pre)
   if a.action=='t17':
    delta=result['val_post']-original['val_post'];check=dict(passed=abs(delta)<=.002,original_val=original['val_post'],actual_val=result['val_post'],difference=delta,original_run=original['run_id'],provenance=prov)
    if rank==0:write_json(a.output/'T17.json',check)

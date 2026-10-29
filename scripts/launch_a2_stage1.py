@@ -47,7 +47,7 @@ def prepare_inputs(source,frozen,original,heal):
  prov=dict(spec_sha256=SPEC_SHA,base_spec_sha256=digest(source/'docs/A2_pilot_spec.md'),data_sha256=digest(heal/'manifest.json'),
   original_data_sha256=old['data_manifest_sha256'],assets_sha256=digest(original/'assets.json'),heldout_sha256=digest(held/'manifest.json'),
   code_commit=os.environ['A2_CODE_COMMIT'],code_files=core,software={k:version(k) for k in ('torch','transformers','accelerate','numpy','safetensors')},microbatch=4,chunk=256)
- return dict(original_inputs=str(original),heal=str(heal),heldout=str(held),spec=str(frozen/'docs/A2_stage1_spec.md'),provenance=prov,T3=t3,data_manifest=m,t17_reference=oldrun[0],t17_history_lock=ref,preflight_cap_seconds=7200)
+ return dict(source_plan=str(frozen/'resources/a2_corpora_30b_20261029.json'),original_inputs=str(original),heal=str(heal),heldout=str(held),spec=str(frozen/'docs/A2_stage1_spec.md'),provenance=prov,T3=t3,data_manifest=m,t17_reference=oldrun[0],t17_history_lock=ref,preflight_cap_seconds=7200)
 
 
 
@@ -97,7 +97,7 @@ def main():
  verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
  if digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH or Path('/mnt/local/_gpu_guard/DISABLED').exists():raise ValueError('Unknown guard/burn owner')
  a.output.mkdir();frozen=freeze_source(source,a.output,a.code_commit)
- extra=['docs/A2_stage1_spec.md','docs/results/a2_review_20261028/identity_metadata.json','resources/a2_completed_s1_20261028.json']
+ extra=['docs/A2_stage1_spec.md','docs/results/a2_review_20261028/identity_metadata.json','resources/a2_completed_s1_20261028.json','resources/a2_corpora_30b_20261029.json']
  sm=read(a.output/'source-manifest.json')
  for name in extra:
   target=frozen/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source/name,target);sm['files'][name]=digest(target)

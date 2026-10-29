@@ -78,6 +78,7 @@ def execute(root,inputs_path,preflight,port,spent_seconds,runner=subprocess.run)
  started=time.monotonic();rows=[];grid=[];parents=gate['parents'];step=gate['step_seconds']
  write_json(root/'config/inputs.json',inputs);write_json(root/'tests.json',gate)
  write_json(root/'manifests/heal.json',inputs['data_manifest'])
+ if inputs.get('source_plan'):(root/'manifests/source_plan.json').write_bytes(Path(inputs['source_plan']).read_bytes())
  (root/'config/stage1_spec.md').write_bytes(Path(inputs['spec']).read_bytes())
  with (root/'parents.jsonl').open('x') as f:
   for name,record in parents.items():f.write(json.dumps(dict(record,parent=name))+'\n')
