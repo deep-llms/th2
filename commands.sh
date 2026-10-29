@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-a2-stage1-heals-health-20261029-a28
+#th2-6y3o-a2-stage1-heals-terminal-20261029-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
@@ -14,7 +14,7 @@ print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
 print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
 rels=['source-manifest.json','inputs.json','jobs.json','accelerate-env.log','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/complete.json']
 fitroot=root/'supervised/run/results/a2_stage1'
-for name in ('progress.json','lr_choice.json','decision_stage1.json','complete.json'):rels.append(str((fitroot/name).relative_to(root)))
+for name in ('progress.json','lr_choice.json','decision_stage1.json','complete.json','runs.json','tests.json','config/inputs.json'):rels.append(str((fitroot/name).relative_to(root)))
 for p in fitroot.glob('ST1-*/result.json'):rels.append(str(p.relative_to(root)))
 for rel in rels:
  p=root/rel
