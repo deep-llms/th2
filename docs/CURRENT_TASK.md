@@ -1,3 +1,7 @@
+30Oct17:19SGT: Part2 launch ff50d1b ACKNOWLEDGED (initial asset verification); controller ledger49937.77251938212seconds, source42f7820. ActualGPUstart pending health. Next unique healtha01 ready. No relaunch. Source numerical training core unchanged. New downstream gate/comparison helpers local-only, not deployed.
+
+2026-10-30T09:16:14.083388+00:00: Part2 launch ff50d1bc26ea23b5564a61875ea8f51658965e71 SUBMITTED/remoteheadverified; source42f7820ce72d932ff3d75edc96e16538dbd85df5. Retrieve pending receipt BEFORE remote writes; never relaunch. Root6y3o-a2-stage1b-fwe-part2-20261030-a01/sessiona2_stage1b_fwe_part2_20261030_a01. All5registeredheals authorized independent downstream; projected ledger~20.15h expected/~23.2h capped incl660reserve, dynamiccontrollerledger/hard24h/deadline enforced. ActualGPUstartup notyetverified. Samewatch unchanged.
+
 30Oct2026 LATEST USER DECISION: launch registered Part2 heals now, independent of downstream; over20nodeh approved, hard24h/deadline31Oct04:06SGT unchanged. Hold downstream until Part2 terminal, then one six-model run; full78259 P300 batch1/batch2 decision at <=0.1pp MCmean and LAMBADA, fallbackall6batch1. Every-model gates: manual<=2e-5, batch<=0.1nats/token, greedy token mismatch<=0.1%; old.01 gate is diagnostic. Report per-task flips and LL max/mean/padding. Standing reported-only failures never block heals. Policy resource resources/a2_stage1b_continuation_20261030.json supersedes earlier HOLD. No new T17 or watcher.
 
 # Current task

@@ -1,12 +1,36 @@
 #1 +30+a
-#th2-6y3o-a2-stage1b-fwe-part2-20261030-a01
+#th2-6y3o-a2-stage1b-fwe-part2-health-20261030-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1
-PART2_SPENT=$(/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'LEDGER'
+export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
+import hashlib,json,socket,subprocess
+from pathlib import Path
 from datetime import datetime,timezone
-print(3299.9433463821188+(datetime.now(timezone.utc)-datetime.fromisoformat('2026-10-29T20:19:10.047762+00:00')).total_seconds())
-LEDGER
-)
-printf 'PART2_PRIOR_LEDGER_SECONDS=%s\n' "$PART2_SPENT"
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.launch_a2_stage1b_heals --phase part2 --output /mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part2-20261030-a01 --inputs /mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs --heal-data /mnt/local/_data/deep-llms_th2/a2_stage1b_fwe_shuffle2030_20261030 --predecessor-burn-script /mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/resources/llm_pretrain_burn.py --preflight-root /mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01 --preflight-sha256 0ddedf66933134338cc87f872b28e5df9d8a67ba0cf6460d482c90ebe0321b8b --session a2_stage1b_fwe_part2_20261030_a01 --code-commit 42f7820ce72d932ff3d75edc96e16538dbd85df5 --spent-seconds "$PART2_SPENT" --deadline 2026-10-31T04:06:27.182436+08:00 --over20h-reported --prior /mnt/local/deep-llms_th2/resources/a2_stage1b_part2_prior_20261030.json --prior-sha256 c126960e5f1632688da9347723e56b1aa1c8314dfe90c9d425de6043334f01b8
+from scripts.gpu_process import inspect
+assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part2-20261030-a01')
+print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
+rels=['source-manifest.json','inputs.json','stage-budget.json','jobs.json','accelerate-env.log','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/complete.json']
+fitroot=root/'supervised/run/results/a2_stage1_fwe'
+for name in ('progress.json','GRID_NOTE.md','lr_choice.json','decision_stage1_fwe.json','tests.json','runs.json','complete.json'):rels.append(str((fitroot/name).relative_to(root)))
+for p in fitroot.glob('*/result.json'):rels.append(str(p.relative_to(root)))
+for rel in rels:
+ p=root/rel
+ if p.is_file():
+  raw=p.read_bytes();assert len(raw)<5000000
+  print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+ else:print('MISSING',rel,flush=True)
+base=root/'supervised/run'
+logs=[root/'supervisor.log',root/'supervised/burn.log',*base.glob('*.log'),*fitroot.glob('*.log'),*fitroot.glob('*/profile.txt')]
+for p in logs:
+ if p.is_file():
+  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));tail=f.read().decode(errors='replace')
+  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
+guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
+print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_stage1b_fwe_part2_20261030_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+processes=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
+print('LAUNCH_PROCESSES',json.dumps([line for line in processes if 'scripts.launch_a2_stage1' in line or str(root) in line]),flush=True)
+print('HEALTH_COMPLETE',flush=True)
+PY
