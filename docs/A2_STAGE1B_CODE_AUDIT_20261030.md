@@ -64,6 +64,8 @@ T17 chạy bằng adapter Stage1b tại preflight9f5601d, kết thúc **04:04:53
 
 So với13686ed, trong `eval/` chỉ có hai file sửa (`a2_stage1_checkpoint.py`: FWE checkpoint identity; `a2_stage1_stats.py`: model/contrast tham số) và ba file thêm (`a2_stage1b_plan.py`, `a2_stage1b_run.py`, `a2_stage1b_stats.py`). Chín file scoring/request/replay/gate liệt kê trong audit.json giống byte. Điều này hỗ trợ static review nhưng chưa thay thế regression trên GPU.
 
+> **Cập nhật theo follow-up mới:** Chính sách gate trong đoạn dưới là lịch sử và đã được thay thế bởi [câu trả lời follow-up, mục 3](A2_STAGE1B_FOLLOWUP_REPLY_20261030.md). PASS yêu cầu accuracy từng task giống hệt; LL max là diagnostic. Nếu FAIL: giữ FWE downstream, gửi interim không có downstream và tiếp tục Part2 heals sau native handoff trong ngân sách. Không dừng P1T.
+
 **Gate mới theo yêu cầu user:** ngay sau P1T3.2B terminal + independent native burn handoff, trước FWE downstream và Part2, re-score **DCLM P300 parent** với candidate frozen downstream code, exact Stage1 identity/weights, canonical prepared requests và protocol (78,259 requests;9 tasks;batch2;FP32 parameters/BF16 AMP). CPU replay và đối chiếu per-request outputs cùng per-task metrics với Stage1. Archive đầy đủ identity/source/request/result SHA và sai khác; chỉ tiếp tục khi đã xác minh match. Nếu mismatch, báo rõ và xử lý trước khi dùng downstream FWE. Bước này **chưa chạy**, được đưa vào ledger24h/report20h. Job P1T hiện tại không bị dừng.
 
 ## 3. Spec hashes thực tế
