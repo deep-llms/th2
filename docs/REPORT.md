@@ -1,0 +1,33 @@
+# Stage1b FineWeb-Edu — report in progress
+
+Status: Part1 training complete; Part2 running, verified at17:25:34SGT: X72 3.2B310/12207 updates, eight GPUs99%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
+
+Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init and0.8B findings await Part2. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
+
+## Downstream deviation authorized on 30 October 2026
+
+This records the user decision following the failed FineWeb-Edu P300 parent numerical gate. The final `REPORT.md` must incorporate this deviation together with actual comparison results; this document contains no new GPU result.
+
+## Preserved failure
+
+The original batch2 gate failed before production scoring at 30Oct14:04:31SGT: batch/production error **0.011164188385009766 nats/token**, exceeding the original 0.01 threshold. Manual-reference error was 0 and recorded request-level greedy mismatches were 0. The native supervisor restored communicating burns and released its guard. Raw receipt SHA256: `5005f261292a74d572dd099ed19fcc322147bf58ceb25d6b101dcf918c0abe1b`; archive: [downstream_part1_gate_failure](results/a2_stage1b_fwe_20261030/downstream_part1_gate_failure/verification.json). The original receipt is unchanged.
+
+The DCLM P300 regression is independently PASS: all nine task accuracies match Stage1 exactly and maximum aligned per-request LL difference is zero. This checks a different checkpoint and does not substitute for the FWE comparison.
+
+## Authorized replacement protocol
+
+1. Complete the five registered Part2 heals first, in the original order. Downstream and other reported-only failures never block these heals.
+2. After independent native terminal/burn handoff, evaluate all six FWE models in one screen: P300/P1T/S72 parents and P300/P1T/X72 3.2B students. Retain the exact 78,259 canonical requests, fixed nine tasks, zero-shot seed42, FP32 parameters/BF16 AMP, and paired bootstrap10,000 resamples seed0.
+3. For every model, record the representative batch1/batch2 per-token check. Hard numerical limits are manual-reference error ≤0.00002 nats/token, batch difference ≤0.1 nats/token, and greedy token mismatch rate ≤0.1% of compared continuation tokens. The original 0.01 batch limit is diagnostic. Historical request-level exact-match booleans are not token mismatch counts; collect token argmax evidence explicitly.
+4. Before other production scoring, score the entire FWE P300 parent request set at both batch1 and batch2. Accept batch2 if absolute differences in the eight-task MC mean and LAMBADA accuracy are each ≤0.1 percentage points. Individual MC tasks are reported, not separate pass thresholds. Reuse its batch2 scores for production on PASS. Otherwise use batch1 for all six models, reusing its batch1 scores, and explicitly record departure from Stage1's batch2 protocol.
+5. Report each task's accuracy difference, prediction flips (including changes between two wrong MC choices), per-request LL max/mean differences, and whether differing requests are in padded pairs. Preserve all deciding-check scores and SHA locks. LAMBADA correctness flips and actual generated-token prediction flips must be distinguished; the historical score format alone stores only exact-match correctness.
+6. Cut downstream first if time is short. Over20nodeh reporting is approved; the24nodeh hard cap, deadline31Oct04:06SGT, and cleanup reserve remain enforced.
+
+## Implementation and actual results
+
+Part2 launch was submitted as `ff50d1bc26ea23b5564a61875ea8f51658965e71`, freezing training source `42f7820ce72d932ff3d75edc96e16538dbd85df5`. GPU startup was independently verified at30Oct17:19:54SGT: supervisor725565, eight free GPUs after exactknownburn723690–723697 reclaim; source126files42f7820 and27corehashmatch. Follow-up health at17:25:34SGT verified310/12207updates and eight GPUs99%; rawSHA6674ab36afc9c0ba3e96ec1a10f299aac00ca718c0d822efb5557a746e918a58. The new downstream gate and comparison helpers are local preparation only; final six-model orchestration, actual GPU gates, complete batch comparison and final confidence intervals remain pending. No BF16-root-cause conclusion is claimed from the original failure alone.
+
+
+## Remaining evidence required
+
+Actual Part2 terminal/source commit and five new fit receipts; independent supervisor/burn handoff; full78259 P300 batch1/batch2 decision; six-model production scores and every-model numerical checks; prediction flips and padded-pair LL diagnostics; paired confidence intervals; final compute ledger and cross-dataset E/A tables. Reported-only failures are recorded and never cancel registered heals.
