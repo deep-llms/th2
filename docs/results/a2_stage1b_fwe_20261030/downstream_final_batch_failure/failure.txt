@@ -1,0 +1,13 @@
+/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/source/eval/a2_stage1b_batch_report.py:60: DeprecationWarning: get_task_dict is deprecated. Use TaskManager.load() instead.
+  tasks=get_task_dict(task_configs(list(COUNTS),paths),task_manager=benchmark_task_manager())
+[Task: boolq] metric acc is defined, but aggregation is not. using default aggregation=mean
+[Task: boolq] metric acc is defined, but higher_is_better is not. using default higher_is_better=True
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/source/eval/a2_stage1b_batch_report.py", line 70, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/source/eval/a2_stage1b_batch_report.py", line 67, in main
+    raise RuntimeError('Full P300 comparison exceeds user hard numerical limits; diagnostic retained')
+RuntimeError: Full P300 comparison exceeds user hard numerical limits; diagnostic retained

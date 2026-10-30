@@ -553,5 +553,7 @@
       "cycles_per_second": "1.144"
     }
   ],
-  "independent_full_batch_recomputation": "pending"
+  "independent_full_batch_recomputation": "failed_batch_independently_reproduced",
+  "independent_replay_receipt": "independent_failed_batch_replay.json",
+  "independent_replay_raw_sha256": "aa54ba2393fc93c28aeaca73f0a13c0bd9bf2b0ed7bcdae6341752dd209ddb46"
 }
