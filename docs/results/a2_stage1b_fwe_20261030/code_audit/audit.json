@@ -1,0 +1,1422 @@
+{
+  "training_from": "0c1c1488477f1b836989182986bd785fbcd667d8",
+  "training_to": "7dd9da088ba5af581c295775819319ce54b2025c",
+  "frozen_counts": [
+    103,
+    124
+  ],
+  "frozen_delta": [
+    {
+      "path": "docs/A2_stage1b_fwe_spec.md",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "Pre-registration FWE v1.1, th\u1ee9 t\u1ef1 Part1/Part2 v\u00e0 gi\u1edbi h\u1ea1n ng\u00e2n s\u00e1ch."
+    },
+    {
+      "path": "efficient_llm/a2_stage1b/__init__.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "d5576a0c63676446ed6f1c49b9b3d9ca18f8f43d4c56e968d5609c9f3fc36b2c",
+      "numerical_surface": "Kh\u00f4ng",
+      "description": "Kh\u1edfi t\u1ea1o package."
+    },
+    {
+      "path": "efficient_llm/a2_stage1b/model_stage.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "42bbf56816fa98db25aac380f66c21d6ca196449e549214cb3ed62ed48fe266a",
+      "numerical_surface": "C\u00f3: ch\u1ecdn model/data, g\u1ecdi training v\u00e0 evaluation",
+      "description": "Adapter t\u1eeb Stage1: ch\u1ecdn FWE parents/teacher, held-out v\u00e0 stream; ki\u1ec3m tra spec. Forward, prune(range(16,22)), KD/KL, optimizer/schedule, AMP v\u00e0 score g\u1ecdi implementation c\u0169, kh\u00f4ng \u0111\u1ed5i c\u00f4ng th\u1ee9c. Nh\u00e1nh T17 gi\u1eef nem/CulturaX g\u1ed1c."
+    },
+    {
+      "path": "efficient_llm/a2_stage1b/protocol.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "7a7d281737411367f67bb2140159694db018022571aab8225fc18cee1f3ed602",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh run/LR/budget",
+      "description": "K\u1ebf th\u1eeba Stage1 Run, GRID, grid_choice, decision; \u0111\u1ed5i run ID/dataset v\u00e0 th\u1ee9 t\u1ef1 hai phase. Kh\u00f4ng \u0111\u1ed5i h\u00e0m l\u1ecbch LR."
+    },
+    {
+      "path": "eval/a2_checkpoint.py",
+      "status": "M",
+      "old_sha256": "f4fb4f9c704ff621b5c50d383d8025e9d3067752ed5ceb77f8c5830a333ce1c6",
+      "new_sha256": "1f0e01c5ee8d300a712dfd575aa4e8dbfc0efe6ee5c6efad99d07d90df277a2e",
+      "numerical_surface": "C\u00f3: \u0111\u01b0\u1eddng load/identity c\u1ee7a evaluation",
+      "description": "Dispatch schema2 sang b\u1ed9 x\u00e1c minh checkpoint Stage1; kh\u00f4ng s\u1eeda forward/scoring."
+    },
+    {
+      "path": "eval/a2_run.py",
+      "status": "M",
+      "old_sha256": "0d60987deda5a6fcd0a2af63d9a388a35dfc069c83a4fb6faa36c557363376de",
+      "new_sha256": "8f0ff358f7425d024794ffc54b4b516bb2e28b812e7cf14dac010547d473c169",
+      "numerical_surface": "C\u00f3: orchestration evaluation/scoring",
+      "description": "T\u00e1ch _run_screen d\u00f9ng validator/gate_names/finalize; gi\u1eef scorer, requests, precision v\u00e0 replay. Thay \u0111\u1ed5i n\u00e0y \u0111\u00e3 c\u00f3 trong downstream Stage1 13686ed."
+    },
+    {
+      "path": "eval/a2_stage1_checkpoint.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "738e52ffa5b7af67afcd778c1c9cce79e22c26999319cfdc34188d5297858cd3",
+      "numerical_surface": "C\u00f3: ch\u1ecdn/load checkpoint, x\u00e1c minh layer removal",
+      "description": "R\u00e0ng bu\u1ed9c native export v\u1edbi receipt; ki\u1ec3m tra 18 layer/kept_layers; th\u00eam dataset FWE. Kh\u00f4ng thay \u0111\u1ed5i ph\u00e9p prune hay forward."
+    },
+    {
+      "path": "eval/a2_stage1_plan.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "95011b047a470b65f845b066996477a33ae8a7e07a6a81d7560fedd3f64c10e5",
+      "numerical_surface": "C\u00f3: ch\u1ecdn model evaluation",
+      "description": "Ch\u1ecdn s\u00e1u identity Stage1 DCLM, ki\u1ec3m tra terminal v\u00e0 SHA; kh\u00f4ng t\u00ednh likelihood."
+    },
+    {
+      "path": "eval/a2_stage1_run.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "84a61ac7c07b3d0b567bc3f8d2bd7563da2f67b805d90904777a510c5608c3f5",
+      "numerical_surface": "C\u00f3: orchestration evaluation",
+      "description": "S\u00e1u model, hai GPU gate, shared scorer v\u00e0 paired statistics; \u0111\u00e3 d\u00f9ng trong Stage1 downstream."
+    },
+    {
+      "path": "eval/a2_stage1_stats.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "d34b06b5c301be0e89a486b229127936392f1ab3e034ff96c1b33f64dad76de1",
+      "numerical_surface": "C\u00f3: th\u1ed1ng k\u00ea evaluation",
+      "description": "Paired bootstrap 10k seed0, c\u0103n ch\u1ec9nh replay; m\u1edf r\u1ed9ng model/contrast tham s\u1ed1 cho 4+2. \u0110\u00e2y l\u00e0 m\u00e3 s\u1ed1 th\u1ed1ng k\u00ea, kh\u00f4ng ph\u1ea3i training."
+    },
+    {
+      "path": "eval/a2_stage1b_plan.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "73da43ff92eca92a78ae20b0b8f25525af4b43a0dc50f3ef21c26fb406574c26",
+      "numerical_surface": "C\u00f3: ch\u1ecdn model evaluation",
+      "description": "Terminal/identity locks FWE theo phase, 4 model Part1 v\u00e0 2 Part2."
+    },
+    {
+      "path": "eval/a2_stage1b_run.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "d1a7c426724461a0819ff22ba966b85ebbdceb6f61bb6268a0c0474f8b053e3c",
+      "numerical_surface": "C\u00f3: orchestration evaluation/scoring",
+      "description": "Adapter 4+2, batch2, 9 task, hai gate m\u1ed7i phase, g\u1ecdi shared _run_screen."
+    },
+    {
+      "path": "eval/a2_stage1b_stats.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "4ab6c96420315e4baf051b435c2d3922e775d3aa53e165392a2c9de73506db3b",
+      "numerical_surface": "C\u00f3: th\u1ed1ng k\u00ea evaluation",
+      "description": "\u0110\u1eb7t model/contrast cho Part1/Part2/final; g\u1ecdi bootstrap d\u00f9ng chung."
+    },
+    {
+      "path": "resources/a2_stage1b_fwe_release_20261030.json",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "6fcb9d3a307480e34d4af61819647f76762da1de4f875400930d7522cd6488fc",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi; kh\u00f3a d\u1eef li\u1ec7u",
+      "description": "Receipt release/revision v\u00e0 SHA c\u1ee7a 60 source shard FWE."
+    },
+    {
+      "path": "scripts/a2_stage1_data.py",
+      "status": "M",
+      "old_sha256": "a7861a7f6b7faa6b9855fb216b3f2a491cf1bf9c2e069b5e22536c0752bc4783",
+      "new_sha256": "cac4e434319b847b0e96422b46d5a59516b6516bf9f736db2745a2c2aa549aa7",
+      "numerical_surface": "C\u00f3: \u0111\u01b0\u1eddng data packing/order",
+      "description": "Tham s\u1ed1 h\u00f3a corpus; th\u00eam d\u00f9ng receipt full-hash tr\u01b0\u1edbc \u0111\u00f3 \u0111\u1ec3 tr\u00e1nh rehash ngu\u1ed3n; th\u00eam kh\u00f3a replication spec. Thu\u1eadt to\u00e1n shuffle seed2030/copy token/packing gi\u1eef nguy\u00ean."
+    },
+    {
+      "path": "scripts/a2_stage1b.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "63385d8f3f18e44c022e80eed1d67316facfa024198bddb96baf0772847bb286",
+      "numerical_surface": "C\u00f3: ch\u1ecdn run/data, LR v\u00e0 t\u1ed5ng h\u1ee3p evaluation",
+      "description": "Coordinator FWE; grid/edge/commonLR, Part1/Part2, validates full schedule, computes E/A. D\u00f9ng grid_choice/validate_fit/report_runs c\u0169; kh\u00f4ng s\u1eeda train loop."
+    },
+    {
+      "path": "scripts/a2_stage1b_budget.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "b755dadd1f6b6dc378aef997c3e552c45c3bb193afd9a3f86a8bc83b6a471ce7",
+      "numerical_surface": "Kh\u00f4ng",
+      "description": "Ledger/admission 20h report,24h hard, deadline/cleanup."
+    },
+    {
+      "path": "scripts/a2_stage1b_data.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "2e72c7a6fbc8b0998dbd30dc71c6e0d3e00e538400740083c9a6942de6206cd3",
+      "numerical_surface": "C\u00f3: ch\u1ecdn d\u1eef li\u1ec7u/packing",
+      "description": "Admission FWE \u0111\u00e3 pin, ki\u1ec3m tra release/spec, g\u1ecdi prepare d\u00f9ng chung v\u1edbi corpus=fineweb_edu."
+    },
+    {
+      "path": "scripts/a2_stage1b_preflight.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "870707d319d1b5e545c796a78b7348621af270d7010e62a9dc7534039c1783b6",
+      "numerical_surface": "Kh\u00f4ng t\u00ednh forward/loss; t\u1ed5ng h\u1ee3p k\u1ebft qu\u1ea3 s\u1ed1",
+      "description": "G\u1ed9p T1/T3/T7/T8/T17/T18, eligibility v\u00e0 budget; kh\u00f4ng t\u1ef1 ch\u1ea5m model."
+    },
+    {
+      "path": "scripts/launch_a2_downstream.py",
+      "status": "M",
+      "old_sha256": "74e1344813b2981e485a55083a3d519963febfe1274a432150006468364fbca6",
+      "new_sha256": "3649e234a61a6b833a4f9d31d9d470a04f1f2f65a94091bed2a3e62dfa004521",
+      "numerical_surface": "Kh\u00f4ng",
+      "description": "freeze_source nh\u1eadn extra_files; thay \u0111\u1ed5i staging/manifest, kh\u00f4ng \u0111\u1ed5i numerical code."
+    },
+    {
+      "path": "scripts/launch_a2_stage1_downstream.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "a000cb353eb16253f3475bcc927d11f9cf92cbad26b976b75b53cad4bc579112",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh evaluation, kh\u00f4ng t\u00ednh score",
+      "description": "Launcher Stage1: freeze/identity/budget/native supervisor, fixed six-model plan."
+    },
+    {
+      "path": "scripts/launch_a2_stage1b_data.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "4aa6d6f3150af9afe9a785dc2e3ea317fd0a4d63af8f7edeba9ef3e9a4870027",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh data job, kh\u00f4ng t\u1ef1 packing",
+      "description": "CPU shuffle launcher, frozen source v\u00e0 paths; g\u1ecdi preparation \u0111\u00e3 m\u00f4 t\u1ea3."
+    },
+    {
+      "path": "scripts/launch_a2_stage1b_downstream.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "5e9a7b01b684d5f1e4d712dcc9e2201c037b5ebba0c5baa96b5779b5842d5730",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh evaluation/precision env",
+      "description": "Launcher 4+2; identity locks, batch2, Accelerate/env, native handoff. Kh\u00f4ng s\u1eeda scoring kernel."
+    },
+    {
+      "path": "scripts/launch_a2_stage1b_heals.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "bfd704f3fe16d08415d6751f9b2d8c79b6b86df340f380ddb8c4dbd0efb744b8",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh training/data/precision env",
+      "description": "Ch\u1ecdn phase, ki\u1ec3m tra 27 core SHA b\u1eb1ng preflight, gi\u1eef provenance ki\u1ec3m th\u1eed, Accelerate8/BF16, frozen launch; kh\u00f4ng \u0111\u1ed5i optimizer hay forward."
+    },
+    {
+      "path": "scripts/launch_a2_stage1b_preflight.py",
+      "status": "A",
+      "old_sha256": null,
+      "new_sha256": "88b33a89810be9ea7bad16d315a474fb6633fff08c0a6d5a4033aaba7b867d61",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh model/data/tests/precision env",
+      "description": "Admission FWE/parent/T3; t\u1ea1o inputs, 27 core SHA, jobs T17 v\u00e0 c\u00e1c gate; gi\u1eef native supervisor."
+    }
+  ],
+  "full_git_delta": [
+    {
+      "status": "M",
+      "path": "docs/A2_CORPORA_30B_20261029.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "M",
+      "path": "docs/A2_STAGE1_EXECUTION_20261029.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/A2_STAGE1_PREFLIGHT_20261029.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/A2_STAGE1_RESULTS_20261030.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/A2_stage1b_fwe_spec.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "Pre-registration FWE v1.1, th\u1ee9 t\u1ef1 Part1/Part2 v\u00e0 gi\u1edbi h\u1ea1n ng\u00e2n s\u00e1ch.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "M",
+      "path": "docs/CURRENT_TASK.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "M",
+      "path": "docs/PROJECT_NOTES.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_corpora_20261029/fwe_final/corpora_complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_corpora_20261029/fwe_final/fwe_manifest.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_corpora_20261029/fwe_final/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/data_verification/complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/data_verification/manifest.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/data_verification/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0003/gpus-free-before-training.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0003/identities.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0003/plan.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0003/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0003/reclaim.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0003/stage-budget.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0017/gpus-free-before-training.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0017/identities.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0017/plan.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0017/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0017/reclaim.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_0017/stage-budget.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/SHA256SUMS.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/P1T-parent-identity.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/P1T-student-identity.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/P300-parent-identity.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/P300-student-identity.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/S72-parent-identity.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/X72-student-identity.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/identities/identities.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/independent_replay_verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/jobs.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/plan.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/raw_receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/source-manifest.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/stage-budget.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/burn-verified.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/gpus-free-before-training.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/reclaim.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/downstream/P300-parent-check.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/downstream/P300-student-check.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/downstream/complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/downstream/paired_accuracy.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/downstream/results.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/run/run.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/supervised/supervisor.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/downstream_final/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/REPORT.md",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/SHA256SUMS.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/compute.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/decision_stage1.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/parents_summary.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/runs_summary.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/final/secondary_diagnostics.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/historical_comparison.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/preflight_0859/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/preflight_final/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_0947/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1017/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1047/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1117/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1147/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1217/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1247/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1318/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1349/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1418/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1448/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1523/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1617/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1647/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1717/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1747/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1817/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1847/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1917/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_1947/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2017/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2047/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2117/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2148/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2217/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2247/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2317/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/status_2348/receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/burn.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/choice.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/decision.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/run_complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/supervisor.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/tests_receipt.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1_20261029/training_final/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/data_0339/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/data_final/complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/data_final/gpu-inspection.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/data_final/manifest.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/data_final/source-manifest.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/data_final/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/inventory/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_0401/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/SHA256SUMS",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/inputs.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/jobs.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/source-manifest.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/stage-budget.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/burn-verified.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/P1T.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/P300.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/S72.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/complete.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/numerical.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/t17/T17.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/tests.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/throughput.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/supervisor.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "docs/results/a2_stage1b_fwe_20261030/preflight_final/verification.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi",
+      "description": "T\u00e0i li\u1ec7u ho\u1eb7c receipt k\u1ebft qu\u1ea3; kh\u00f4ng thay \u0111\u1ed5i numerical path.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "efficient_llm/a2_stage1b/__init__.py",
+      "numerical_surface": "Kh\u00f4ng",
+      "description": "Kh\u1edfi t\u1ea1o package.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "efficient_llm/a2_stage1b/model_stage.py",
+      "numerical_surface": "C\u00f3: ch\u1ecdn model/data, g\u1ecdi training v\u00e0 evaluation",
+      "description": "Adapter t\u1eeb Stage1: ch\u1ecdn FWE parents/teacher, held-out v\u00e0 stream; ki\u1ec3m tra spec. Forward, prune(range(16,22)), KD/KL, optimizer/schedule, AMP v\u00e0 score g\u1ecdi implementation c\u0169, kh\u00f4ng \u0111\u1ed5i c\u00f4ng th\u1ee9c. Nh\u00e1nh T17 gi\u1eef nem/CulturaX g\u1ed1c.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "efficient_llm/a2_stage1b/protocol.py",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh run/LR/budget",
+      "description": "K\u1ebf th\u1eeba Stage1 Run, GRID, grid_choice, decision; \u0111\u1ed5i run ID/dataset v\u00e0 th\u1ee9 t\u1ef1 hai phase. Kh\u00f4ng \u0111\u1ed5i h\u00e0m l\u1ecbch LR.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "M",
+      "path": "eval/a2_checkpoint.py",
+      "numerical_surface": "C\u00f3: \u0111\u01b0\u1eddng load/identity c\u1ee7a evaluation",
+      "description": "Dispatch schema2 sang b\u1ed9 x\u00e1c minh checkpoint Stage1; kh\u00f4ng s\u1eeda forward/scoring.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "M",
+      "path": "eval/a2_run.py",
+      "numerical_surface": "C\u00f3: orchestration evaluation/scoring",
+      "description": "T\u00e1ch _run_screen d\u00f9ng validator/gate_names/finalize; gi\u1eef scorer, requests, precision v\u00e0 replay. Thay \u0111\u1ed5i n\u00e0y \u0111\u00e3 c\u00f3 trong downstream Stage1 13686ed.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1_checkpoint.py",
+      "numerical_surface": "C\u00f3: ch\u1ecdn/load checkpoint, x\u00e1c minh layer removal",
+      "description": "R\u00e0ng bu\u1ed9c native export v\u1edbi receipt; ki\u1ec3m tra 18 layer/kept_layers; th\u00eam dataset FWE. Kh\u00f4ng thay \u0111\u1ed5i ph\u00e9p prune hay forward.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1_plan.py",
+      "numerical_surface": "C\u00f3: ch\u1ecdn model evaluation",
+      "description": "Ch\u1ecdn s\u00e1u identity Stage1 DCLM, ki\u1ec3m tra terminal v\u00e0 SHA; kh\u00f4ng t\u00ednh likelihood.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1_run.py",
+      "numerical_surface": "C\u00f3: orchestration evaluation",
+      "description": "S\u00e1u model, hai GPU gate, shared scorer v\u00e0 paired statistics; \u0111\u00e3 d\u00f9ng trong Stage1 downstream.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1_stats.py",
+      "numerical_surface": "C\u00f3: th\u1ed1ng k\u00ea evaluation",
+      "description": "Paired bootstrap 10k seed0, c\u0103n ch\u1ec9nh replay; m\u1edf r\u1ed9ng model/contrast tham s\u1ed1 cho 4+2. \u0110\u00e2y l\u00e0 m\u00e3 s\u1ed1 th\u1ed1ng k\u00ea, kh\u00f4ng ph\u1ea3i training.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1b_plan.py",
+      "numerical_surface": "C\u00f3: ch\u1ecdn model evaluation",
+      "description": "Terminal/identity locks FWE theo phase, 4 model Part1 v\u00e0 2 Part2.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1b_run.py",
+      "numerical_surface": "C\u00f3: orchestration evaluation/scoring",
+      "description": "Adapter 4+2, batch2, 9 task, hai gate m\u1ed7i phase, g\u1ecdi shared _run_screen.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "eval/a2_stage1b_stats.py",
+      "numerical_surface": "C\u00f3: th\u1ed1ng k\u00ea evaluation",
+      "description": "\u0110\u1eb7t model/contrast cho Part1/Part2/final; g\u1ecdi bootstrap d\u00f9ng chung.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "resources/a2_stage1_reference_20261029.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi; kh\u00f3a identity",
+      "description": "Terminal/reference lock cho downstream; kh\u00f4ng s\u1eeda c\u00f4ng th\u1ee9c s\u1ed1.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "resources/a2_stage1_terminal_20261029.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi; kh\u00f3a identity",
+      "description": "Terminal/reference lock cho downstream; kh\u00f4ng s\u1eeda c\u00f4ng th\u1ee9c s\u1ed1.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "resources/a2_stage1b_fwe_release_20261030.json",
+      "numerical_surface": "Kh\u00f4ng th\u1ef1c thi; kh\u00f3a d\u1eef li\u1ec7u",
+      "description": "Receipt release/revision v\u00e0 SHA c\u1ee7a 60 source shard FWE.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "M",
+      "path": "scripts/a2_stage1_data.py",
+      "numerical_surface": "C\u00f3: \u0111\u01b0\u1eddng data packing/order",
+      "description": "Tham s\u1ed1 h\u00f3a corpus; th\u00eam d\u00f9ng receipt full-hash tr\u01b0\u1edbc \u0111\u00f3 \u0111\u1ec3 tr\u00e1nh rehash ngu\u1ed3n; th\u00eam kh\u00f3a replication spec. Thu\u1eadt to\u00e1n shuffle seed2030/copy token/packing gi\u1eef nguy\u00ean.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/a2_stage1b.py",
+      "numerical_surface": "C\u00f3: ch\u1ecdn run/data, LR v\u00e0 t\u1ed5ng h\u1ee3p evaluation",
+      "description": "Coordinator FWE; grid/edge/commonLR, Part1/Part2, validates full schedule, computes E/A. D\u00f9ng grid_choice/validate_fit/report_runs c\u0169; kh\u00f4ng s\u1eeda train loop.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/a2_stage1b_budget.py",
+      "numerical_surface": "Kh\u00f4ng",
+      "description": "Ledger/admission 20h report,24h hard, deadline/cleanup.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/a2_stage1b_data.py",
+      "numerical_surface": "C\u00f3: ch\u1ecdn d\u1eef li\u1ec7u/packing",
+      "description": "Admission FWE \u0111\u00e3 pin, ki\u1ec3m tra release/spec, g\u1ecdi prepare d\u00f9ng chung v\u1edbi corpus=fineweb_edu.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/a2_stage1b_preflight.py",
+      "numerical_surface": "Kh\u00f4ng t\u00ednh forward/loss; t\u1ed5ng h\u1ee3p k\u1ebft qu\u1ea3 s\u1ed1",
+      "description": "G\u1ed9p T1/T3/T7/T8/T17/T18, eligibility v\u00e0 budget; kh\u00f4ng t\u1ef1 ch\u1ea5m model.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "M",
+      "path": "scripts/launch_a2_downstream.py",
+      "numerical_surface": "Kh\u00f4ng",
+      "description": "freeze_source nh\u1eadn extra_files; thay \u0111\u1ed5i staging/manifest, kh\u00f4ng \u0111\u1ed5i numerical code.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/launch_a2_stage1_downstream.py",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh evaluation, kh\u00f4ng t\u00ednh score",
+      "description": "Launcher Stage1: freeze/identity/budget/native supervisor, fixed six-model plan.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/launch_a2_stage1b_data.py",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh data job, kh\u00f4ng t\u1ef1 packing",
+      "description": "CPU shuffle launcher, frozen source v\u00e0 paths; g\u1ecdi preparation \u0111\u00e3 m\u00f4 t\u1ea3.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/launch_a2_stage1b_downstream.py",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh evaluation/precision env",
+      "description": "Launcher 4+2; identity locks, batch2, Accelerate/env, native handoff. Kh\u00f4ng s\u1eeda scoring kernel.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/launch_a2_stage1b_heals.py",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh training/data/precision env",
+      "description": "Ch\u1ecdn phase, ki\u1ec3m tra 27 core SHA b\u1eb1ng preflight, gi\u1eef provenance ki\u1ec3m th\u1eed, Accelerate8/BF16, frozen launch; kh\u00f4ng \u0111\u1ed5i optimizer hay forward.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "scripts/launch_a2_stage1b_preflight.py",
+      "numerical_surface": "C\u00f3: c\u1ea5u h\u00ecnh model/data/tests/precision env",
+      "description": "Admission FWE/parent/T3; t\u1ea1o inputs, 27 core SHA, jobs T17 v\u00e0 c\u00e1c gate; gi\u1eef native supervisor.",
+      "in_frozen_delta": true
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1_checkpoint.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1_eval_launcher.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1_eval_plan.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1_eval_run.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1_plan.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1_stats.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_checkpoint.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_data.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_eval_launcher.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_eval_plan.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_eval_run.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_launch.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_parts.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_preflight.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    },
+    {
+      "status": "A",
+      "path": "tests/a2/test_stage1b_stats.py",
+      "numerical_surface": "Kh\u00f4ng trong production path",
+      "description": "CPU test; ki\u1ec3m tra c\u00e1c adapter t\u01b0\u01a1ng \u1ee9ng, kh\u00f4ng \u0111\u01b0\u1ee3c freeze v\u00e0o 124-file snapshot.",
+      "in_frozen_delta": false
+    }
+  ],
+  "preflight_commit": "9f5601d97ddf2940b32ba5e17de8d21b7c7fe1c0",
+  "preflight_core_files_equal": {
+    "efficient_llm/a2/__init__.py": "8b149cf0b80942849908b458135ac7767ebe13b41d66ec5dec2d72499501c6d9",
+    "efficient_llm/a2/__main__.py": "f7c48fb9b739d935278b514ad3a90ef0bb0f6b63b3c44e422b86df739e7dd03b",
+    "efficient_llm/a2/check.py": "6a8b05074f845085c66d8b9b15bed86bcc4a01b89e362ba27b08c12a7800e43f",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "efficient_llm/a2/early_grid.py": "a4d65faffa6b1058bbc921d7aa3f0f5c145f744e6ea3ebc4805d514499eab5c3",
+    "efficient_llm/a2/measure.py": "db818b8b124d6a097072713294f140cb14cf4c3d7495b351dbcd8f5e2e701d26",
+    "efficient_llm/a2/model.py": "ac40fb3776f8537a04fad8b3f164c2ea598a1ab1b994b3cf61cf078d7e8c4d4f",
+    "efficient_llm/a2/pair.py": "185c02e75fcad9b4a3c6ec6002c76bbe35e8a900fdbba503cdfe43ae2441c967",
+    "efficient_llm/a2/perf_probe.py": "f402363f93465967d84d8577663bccc03f852fbedb0205d395eb146dafdcf6c0",
+    "efficient_llm/a2/performance.py": "e087f67f21f4b3753966a9a19cec478c91a4355d2ba36e5e7b68e4109d324d8a",
+    "efficient_llm/a2/protocol.py": "68c0dc595015fc0f03e24d9fc0c758555415bb91395c036152073e9a5e60cd15",
+    "efficient_llm/a2/queue.py": "bc7f2e2c476206fbc6699363a39f47148f3bff5ac98ad1a8207728116a01c491",
+    "efficient_llm/a2/results.py": "c67c241cb97950493389329a48f0069f21f55ae4d20b126fc2dca51044bd300f",
+    "efficient_llm/a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+    "efficient_llm/a2_stage1/__init__.py": "5a6fb21bd733c45c3d3b80fa46faec4a7cb73146ba0b793818722a63e817efc6",
+    "efficient_llm/a2_stage1/model_stage.py": "b99749fb096464f669d0dd4e0a9f32cc7980ab4825a44246efadaec8ba725e2f",
+    "efficient_llm/a2_stage1/protocol.py": "7544f1cc03feabd3caee70d25778cee387201592c144101c6af8aa9689545794",
+    "efficient_llm/a2_stage1b/__init__.py": "d5576a0c63676446ed6f1c49b9b3d9ca18f8f43d4c56e968d5609c9f3fc36b2c",
+    "efficient_llm/a2_stage1b/model_stage.py": "42bbf56816fa98db25aac380f66c21d6ca196449e549214cb3ed62ed48fe266a",
+    "efficient_llm/a2_stage1b/protocol.py": "7a7d281737411367f67bb2140159694db018022571aab8225fc18cee1f3ed602",
+    "scripts/a2_stage1.py": "386d1323a920cc90fd7ae947755b947445c3b3eb82cf999e77d7da8fb0165614",
+    "scripts/launch_a2_stage1.py": "f6938ec5628116b6c56a402e062c861e57644ecc952e98ea6529debe95d3f152",
+    "scripts/a2_stage1b.py": "63385d8f3f18e44c022e80eed1d67316facfa024198bddb96baf0772847bb286",
+    "scripts/a2_stage1b_preflight.py": "870707d319d1b5e545c796a78b7348621af270d7010e62a9dc7534039c1783b6",
+    "scripts/launch_a2_stage1b_preflight.py": "88b33a89810be9ea7bad16d315a474fb6633fff08c0a6d5a4033aaba7b867d61",
+    "packed_evaluation.py": "e8ad9b65831ed44522670b229e8724e9e3ff69163c79f901371fb20c274877e7",
+    "packed_training.py": "5d592ecdd3575633feb164ab2408925ddea23dd010f9b9dd701300ddf6cf7af0"
+  },
+  "published_receipts_checked": 9,
+  "active_run": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+  "spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "stage1b_spec_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+  "T17": {
+    "passed": true,
+    "original_val": 3.061875752041902,
+    "actual_val": 3.0617311959690636,
+    "difference": -0.0001445560728385864,
+    "original_run": "P0-nem-P300-S1-0.05B-lr3e-4"
+  },
+  "T17_original_sha256": "9056d874791badc922103a3589a9b49ced3554d4a54f20403cd02e1ae6a73188",
+  "T17_completed_sgt": "2026-10-30T04:04:53.813996+08:00",
+  "part1_started_sgt": "2026-10-30T04:19:10.047762+08:00",
+  "downstream_scoring_files_equal_to_13686ed": [
+    "eval/a2_score.py",
+    "eval/a2_likelihood.py",
+    "eval/a2_requests.py",
+    "eval/a2_request_bridge.py",
+    "eval/a2_harness.py",
+    "eval/a2_suite.py",
+    "eval/downstream_suite.py",
+    "eval/a2_run.py",
+    "eval/a2_check.py"
+  ],
+  "downstream_regression": {
+    "status": "required_before_fwe_downstream",
+    "model": "DCLM P300 parent",
+    "gpu_submitted": false,
+    "requirements": "After P1T terminal and independent burn handoff: use candidate frozen code, exact Stage1 identity and canonical requests, batch2/FP32 params/BF16 AMP; rescore all78259 requests, CPU replay; compare per-request outputs and per-task final metrics with Stage1; investigate/report any mismatch, do not mark equivalence from CPU tests.",
+    "reference_locks": {
+      "prepared": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+        "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+      },
+      "scores": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-parent/scores.json",
+        "sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99"
+      },
+      "replay": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P300-parent.json",
+        "sha256": "aa01aac9553898138d07a4678d30e1d4c565c8a1b0f940403ab1a740b603dda6"
+      }
+    }
+  },
+  "T17_full_lr_sequence_verified": true
+}

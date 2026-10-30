@@ -70,3 +70,5 @@ Cả tám run grid và P300 3.2B đã được kiểm tra đủ lịch LR, thứ
 - Raw health SHA-256: `a856c5f4e67bdd53d850ebcbb9c420b7c28baf18a61d68e9571c2654dccedd3f`.
 
 Số hiển thị được làm tròn 9 chữ số thập phân; receipt lưu độ chính xác đầy đủ. Khi P1T hoàn tất, cập nhật bảng 3.2B và E từ receipt cuối đã kiểm chứng.
+
+Code/provenance audit trước interim: [bảng thay đổi từng file, T17 và gate regression downstream](A2_STAGE1B_CODE_AUDIT_20261030.md). Frozen commit Part1 là7dd9da0; provenance trong result giữ9f5601d của preflight sau khi kiểm tra27coreSHAgiống nhau.
