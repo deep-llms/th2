@@ -1,0 +1,72 @@
+{
+  "status": "failure_handoff_verified",
+  "at": "2026-10-30T06:31:32.270962+00:00",
+  "source": "05b0d0a944b4f01e947e0ea50fea62a01510da54",
+  "source_files": 122,
+  "raw_sha256": "5005f261292a74d572dd099ed19fcc322147bf58ceb25d6b101dcf918c0abe1b",
+  "failed_gate": {
+    "passed": false,
+    "requests": 12,
+    "max_length": 4096,
+    "manual_max_nats_per_token": 0.0,
+    "batch_max_nats_per_token": 0.011164188385009766,
+    "greedy_reference_mismatches": 0,
+    "greedy_batch_mismatches": 0,
+    "production_batch_size": 2,
+    "production_max_nats_per_token": 0.011164188385009766,
+    "greedy_production_mismatches": 0,
+    "truncated_requests": 0,
+    "thresholds": {
+      "manual_nats_per_token": 2e-05,
+      "batch_nats_per_token": 0.01,
+      "greedy_mismatches": 0
+    },
+    "checkpoint_identity_sha256": "2a7c02acdcb7d4978e4e28bb73c8ad855e140a2c47d473030d0f2d32c16ba132",
+    "prepared_sha256": "8b3563419e7900fdc36210822fcc809d1dfe838a763a2a449dd29c5a86deb971",
+    "selected_request_indices": [
+      0,
+      1,
+      2,
+      3,
+      67114,
+      67115,
+      66874,
+      66875,
+      40180,
+      40181,
+      54985,
+      54984
+    ],
+    "precision": "fp32_parameters_bf16_cuda_autocast"
+  },
+  "scored_models": 0,
+  "supervisor_finished": "2026-10-30T06:05:36.892861+00:00",
+  "workers": [
+    723690,
+    723691,
+    723692,
+    723693,
+    723694,
+    723695,
+    723696,
+    723697
+  ],
+  "progress": [
+    {
+      "rank": "0",
+      "completed_cycles": "1780",
+      "completed_gemms": "1836960",
+      "completed_collective_payload_gib": "1976.43",
+      "average_cycle_seconds": "0.876",
+      "cycles_per_second": "1.142"
+    },
+    {
+      "rank": "0",
+      "completed_cycles": "1790",
+      "completed_gemms": "1847280",
+      "completed_collective_payload_gib": "1987.53",
+      "average_cycle_seconds": "0.876",
+      "cycles_per_second": "1.142"
+    }
+  ]
+}

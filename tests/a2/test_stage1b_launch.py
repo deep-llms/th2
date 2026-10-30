@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 from scripts.a2_stage1b_budget import budget
-from scripts.launch_a2_stage1b_heals import phase_estimate, heals_jobs, admit_part2
+from scripts.launch_a2_stage1b_heals import phase_estimate, heals_jobs, admit_part2, admission_budget
 from efficient_llm.a2_stage1b.protocol import REPLICATION_SPEC_SHA
 from efficient_llm.diagnostic_data import sha256
 
@@ -18,6 +18,18 @@ class Stage1bLaunchTests(unittest.TestCase):
         self.assertTrue(budget(71000,20,1000,end,now)['report_due'])
         for spent,requested,deadline in [(85500,1000,end),(0,1000,'2026-10-30T00:20:00+00:00'),(float('nan'),1,end)]:
             with self.assertRaises(ValueError):budget(spent,0,requested,deadline,now)
+
+    def test_reported_projection_preserves_hard_cap_and_deadline(self):
+        now=datetime(2026,10,30,tzinfo=timezone.utc)
+        end='2026-10-31T00:00:00+00:00'
+        with self.assertRaisesRegex(ValueError,'Report over20h'):
+            admission_budget(41000,10,32000,end,False,now)
+        receipt=admission_budget(41000,10,32000,end,True,now)
+        self.assertTrue(receipt['report_due'])
+        self.assertTrue(receipt['over20h_reported'])
+        for spent,requested,deadline in [(60000,30000,end),(41000,32000,'2026-10-30T08:00:00+00:00')]:
+            with self.assertRaisesRegex(ValueError,'24h cap or continuation deadline'):
+                admission_budget(spent,10,requested,deadline,True,now)
 
     def test_exact_part_job_contracts(self):
         gate=dict(step_seconds=1,eligible_x72=True)

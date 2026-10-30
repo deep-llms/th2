@@ -1,0 +1,54 @@
+{
+  "jobs": [
+    {
+      "name": "stage1b-downstream-part1",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": 7260.0,
+      "argv": [
+        "{python}",
+        "-m",
+        "eval.a2_stage1b_run",
+        "--plan",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/plan.json",
+        "--plan-sha256",
+        "6566be1d276753934c5cf46f1419138a9049f5e78c088dfbd1b2d76b77b88ee6",
+        "--timeout-seconds",
+        "7200.0",
+        "--output",
+        "{run_dir}/downstream"
+      ],
+      "required_outputs": [
+        {
+          "path": "downstream/complete.json",
+          "json_equals": {
+            "status": "ok",
+            "models": 4
+          }
+        },
+        {
+          "path": "downstream/results.json",
+          "json_equals": {
+            "status": "ok",
+            "diagnostic": false
+          }
+        },
+        {
+          "path": "downstream/paired_accuracy.json",
+          "json_equals": {
+            "resamples": 10000,
+            "seed": 0
+          }
+        }
+      ]
+    }
+  ]
+}

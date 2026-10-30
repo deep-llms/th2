@@ -1,0 +1,69 @@
+{
+  "schema": 2,
+  "phase": "part1",
+  "identities": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P300-parent-identity.json",
+      "sha256": "7e2ee603531e74e15e2d8f4048d0c49dcdf6ca55d5b00b20496ba98a5e9f3219"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P1T-parent-identity.json",
+      "sha256": "f2f59ba4c29ec046311d3e431045d618ab7a5a6949c3acfa18c5424e3b3af21f"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P300-student-identity.json",
+      "sha256": "2a625478fe104db63b68b0ebeeaf6e52455b659c60d8a409fec26faa65aeb379"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P1T-student-identity.json",
+      "sha256": "ff2663dba746707e93e56a43b2e220304774f534d64feb91f8e7ae0a02c67c2b"
+    }
+  },
+  "identity_bundle": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/identities.json",
+    "sha256": "4ff611b1f536b74bd1ba7d92805b4872ab14a5a8ea152f19223ef617b5ad44cd"
+  },
+  "tasks": [
+    "hellaswag",
+    "arc_easy",
+    "arc_challenge",
+    "piqa",
+    "winogrande",
+    "boolq",
+    "openbookqa",
+    "sciq",
+    "lambada_openai"
+  ],
+  "gpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "max_length": 4096,
+  "batch_size": 2,
+  "native_python": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+  "eval_python": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+  "tokenizer": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+  "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+  "input_spec": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/resources/a2_inputs_20261028.json",
+    "sha256": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e"
+  },
+  "manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/resources/downstream_english_20261023.json",
+    "sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b"
+  },
+  "prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+  },
+  "regression": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_regression_terminal_20261030.json",
+    "sha256": "094296ba1fa4139c38da13cf213baae74411abdd4b8b1cbdbb648905d9b9f888"
+  }
+}

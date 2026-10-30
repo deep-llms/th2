@@ -1,0 +1,15 @@
+{
+  "status": "failed",
+  "started_at": "2026-10-30T06:03:43.361736+00:00",
+  "jobs": [
+    {
+      "name": "stage1b-downstream-part1",
+      "started_at": "2026-10-30T06:03:43.361923+00:00",
+      "status": "failed",
+      "returncode": 1,
+      "elapsed_seconds": 47.4241869430989
+    }
+  ],
+  "finished_at": "2026-10-30T06:04:31.054554+00:00",
+  "error": "stage1b-downstream-part1 exited with code 1"
+}

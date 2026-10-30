@@ -1,0 +1,110 @@
+{
+  "budgets": {
+    "0.2B": {
+      "E": 0.026224221566386152,
+      "A_init": null,
+      "E_fwe": 0.026352782880719516,
+      "A_init_fwe": null
+    },
+    "0.8B": {
+      "E": null,
+      "A_init": null,
+      "E_fwe": null,
+      "A_init_fwe": null
+    },
+    "3.2B": {
+      "E": 0.023461150403907727,
+      "A_init": null,
+      "E_fwe": 0.022921405400227357,
+      "A_init_fwe": null
+    }
+  },
+  "length": {
+    "value": 0.023461150403907727,
+    "clauses": {
+      "INCOMPLETE": false,
+      "persists": true,
+      "reversed": false,
+      "erased": false
+    },
+    "label": "persists"
+  },
+  "state": {
+    "value": null,
+    "clauses": {
+      "INCOMPLETE": true,
+      "anneal first": false,
+      "prune before you anneal": false,
+      "no effect": false
+    },
+    "label": "INCOMPLETE"
+  },
+  "ratios": {
+    "E": null,
+    "A_init": null
+  },
+  "E_pre": 0.3544175235867497,
+  "parent_difference": -0.051923992254998996,
+  "exposure_caveat": "Own-corpus heldout may have been seen during parent pretraining, more by P1T; no decisions use it.",
+  "phase": "part1",
+  "stage1b_spec_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+  "chosen_lr": 0.001,
+  "own_best_lrs": {
+    "P300": 0.001,
+    "P1T": 0.001
+  },
+  "stage1_spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "spent_seconds": 33545.29995202832,
+  "downstream_status": "numerical_gate_failed_before_scoring",
+  "E_short_own_best": 0.026224221566386152,
+  "cross_dataset_length": "replicated",
+  "status": "partial_interim_downstream_gate_failed",
+  "training_status": "part1_complete_verified",
+  "paired_accuracy": null,
+  "part2_status": "not_started_pending_user_direction",
+  "actual_training_commit": "7dd9da088ba5af581c295775819319ce54b2025c",
+  "inherited_provenance_commit": "9f5601d97ddf2940b32ba5e17de8d21b7c7fe1c0",
+  "matching_core_files": 27,
+  "actual_part2_commit": null,
+  "regression": {
+    "passed": true,
+    "exact_primary_accuracies": 9,
+    "max_abs_loglikelihood_difference": 0.0
+  },
+  "failure_evidence": "results/a2_stage1b_fwe_20261030/downstream_part1_gate_failure/verification.json",
+  "failed_gpu_gate": {
+    "passed": false,
+    "requests": 12,
+    "max_length": 4096,
+    "manual_max_nats_per_token": 0.0,
+    "batch_max_nats_per_token": 0.011164188385009766,
+    "greedy_reference_mismatches": 0,
+    "greedy_batch_mismatches": 0,
+    "production_batch_size": 2,
+    "production_max_nats_per_token": 0.011164188385009766,
+    "greedy_production_mismatches": 0,
+    "truncated_requests": 0,
+    "thresholds": {
+      "manual_nats_per_token": 2e-05,
+      "batch_nats_per_token": 0.01,
+      "greedy_mismatches": 0
+    },
+    "checkpoint_identity_sha256": "2a7c02acdcb7d4978e4e28bb73c8ad855e140a2c47d473030d0f2d32c16ba132",
+    "prepared_sha256": "8b3563419e7900fdc36210822fcc809d1dfe838a763a2a449dd29c5a86deb971",
+    "selected_request_indices": [
+      0,
+      1,
+      2,
+      3,
+      67114,
+      67115,
+      66874,
+      66875,
+      40180,
+      40181,
+      54985,
+      54984
+    ],
+    "precision": "fp32_parameters_bf16_cuda_autocast"
+  }
+}

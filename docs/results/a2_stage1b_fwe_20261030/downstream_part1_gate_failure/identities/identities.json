@@ -1,0 +1,65 @@
+{
+  "schema": 2,
+  "dataset": "fwe",
+  "phase": "part1",
+  "identities": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P300-parent-identity.json",
+      "sha256": "7e2ee603531e74e15e2d8f4048d0c49dcdf6ca55d5b00b20496ba98a5e9f3219"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P1T-parent-identity.json",
+      "sha256": "f2f59ba4c29ec046311d3e431045d618ab7a5a6949c3acfa18c5424e3b3af21f"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P300-student-identity.json",
+      "sha256": "2a625478fe104db63b68b0ebeeaf6e52455b659c60d8a409fec26faa65aeb379"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P1T-student-identity.json",
+      "sha256": "ff2663dba746707e93e56a43b2e220304774f534d64feb91f8e7ae0a02c67c2b"
+    }
+  },
+  "selection": {
+    "P300-parent": {
+      "kind": "parent",
+      "dataset": "fwe",
+      "parent": "P300"
+    },
+    "P1T-parent": {
+      "kind": "parent",
+      "dataset": "fwe",
+      "parent": "P1T"
+    },
+    "P300-student": {
+      "kind": "healed",
+      "dataset": "fwe",
+      "parent": "P300",
+      "teacher": "P300",
+      "arm": "P300",
+      "run_id": "ST1-fwe-P300-S1-3.2B-lr1e-3",
+      "budget": "3.2B",
+      "lr": 0.001
+    },
+    "P1T-student": {
+      "kind": "healed",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "teacher": "P1T",
+      "arm": "P1T",
+      "run_id": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+      "budget": "3.2B",
+      "lr": 0.001
+    }
+  },
+  "source_locks": {
+    "stage": {
+      "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_terminal_20261030.json",
+      "sha256": "01ad2695a967ac09fde27bdbfd6efc909284427384cd8994877e7666ae74f222"
+    },
+    "assets": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+      "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+    }
+  }
+}

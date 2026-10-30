@@ -62,6 +62,15 @@ def heals_jobs(inputs,preflight,port,phase,spent,timeout,prior=None,prior_sha=No
         json_equals={'status':'complete','phase':phase,'training_complete':phase=='part2'})])])
 
 
+
+def admission_budget(spent, preparation, requested, deadline, over20h_reported=False, now=None):
+    receipt=budget(spent,preparation,requested,deadline,now)
+    if receipt['report_due'] and not over20h_reported:
+        raise ValueError('Report over20h admission before launch')
+    receipt['over20h_reported']=bool(over20h_reported)
+    return receipt
+
+
 def main():
  p=argparse.ArgumentParser()
  for name in ('output','inputs','heal-data','predecessor-burn-script'):p.add_argument('--'+name,type=Path,required=True)
@@ -70,6 +79,7 @@ def main():
  p.add_argument('--phase',choices=('part1','part2'),required=True)
  p.add_argument('--preflight-root',type=Path,required=True);p.add_argument('--preflight-sha256',required=True)
  p.add_argument('--prior');p.add_argument('--prior-sha256')
+ p.add_argument('--over20h-reported',action='store_true')
  a=p.parse_args();started=time.monotonic();source=Path(__file__).resolve().parents[1]
  gate=read(a.preflight_root/'supervised/run/tests.json')
  if digest(a.preflight_root/'supervised/run/tests.json')!=a.preflight_sha256 or gate['status']!='passed':raise ValueError('Reviewed passing preflight SHA required')
@@ -80,8 +90,7 @@ def main():
  if a.phase=='part1' and a.predecessor_burn_script.resolve().parents[2]!=a.preflight_root.resolve():raise ValueError('Preflight predecessor mismatch')
  remaining=phase_estimate(gate,a.phase)
  timeout=math.ceil(remaining*1.5)
- receipt=budget(a.spent_seconds,0,timeout,a.deadline)
- if receipt['report_due']:raise ValueError('Report over20h admission before launch')
+ receipt=admission_budget(a.spent_seconds,0,timeout,a.deadline,a.over20h_reported)
  if socket.gethostname()!='thiennh-p6-6y3o-worker-0' or a.output.exists():raise ValueError('Wrong host/existing output')
  if len(a.code_commit)!=40:raise ValueError('Pinned source required')
  for k,v in [('torch','2.14.1'),('transformers','4.57.1'),('accelerate','1.13.0')]:
@@ -113,7 +122,7 @@ def main():
  (a.output/'accelerate-env.log').write_text(receipt.stdout+receipt.stderr);print(receipt.stdout,flush=True)
  with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
  jobs=heals_jobs(inputpath,a.preflight_root/'supervised/run',port,a.phase,a.spent_seconds+time.monotonic()-started,timeout,a.prior,a.prior_sha256)
- write_json(a.output/'stage-budget.json',budget(a.spent_seconds,time.monotonic()-started,timeout,a.deadline))
+ write_json(a.output/'stage-budget.json',admission_budget(a.spent_seconds,time.monotonic()-started,timeout,a.deadline,a.over20h_reported))
  jobfile=a.output/'jobs.json';write_json(jobfile,jobs);load_jobs(jobfile);write_json(a.output/'inspection.json',inspect())
  keys=('CUDA_VISIBLE_DEVICES','HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE','HF_DATASETS_OFFLINE','HF_HUB_DISABLE_TELEMETRY','WANDB_MODE','OMP_NUM_THREADS','NCCL_NVLS_ENABLE','TOKENIZERS_PARALLELISM','PYTHONPATH','A2_CODE_COMMIT')
  argv=['env',*[k+'='+env[k] for k in keys],sys.executable,'-u','-m','scripts.train_then_burn','--config',str(jobfile),'--output',str(a.output/'supervised'),'--inspection',str(a.output/'inspection.json'),'--host','thiennh-p6-6y3o-worker-0','--burn-session',a.session+'_burn','--predecessor-burn-script',str(a.predecessor_burn_script)]
