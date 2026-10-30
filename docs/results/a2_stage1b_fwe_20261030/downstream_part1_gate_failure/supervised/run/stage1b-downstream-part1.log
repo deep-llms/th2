@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_stage1b_run.py", line 81, in <module>
+    main()
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_stage1b_run.py", line 76, in main
+    run_screen(read_locked(dict(path=args.plan,sha256=args.plan_sha256)),args.output,
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_stage1b_run.py", line 65, in run_screen
+    return _run_screen(plan,output,timeout_seconds=timeout_seconds,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_run.py", line 107, in _run_screen
+    command([plan['native_python'],'-m','eval.a2_check','--identity',item['path'],
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_run.py", line 84, in command
+    subprocess.run(argv,env=child,stdout=stream,stderr=subprocess.STDOUT,
+  File "/mnt/local/conda-py311/envs/a2_env/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/mnt/local/conda-py311/envs/a2_env/bin/python3.11', '-m', 'eval.a2_check', '--identity', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/identities/P300-parent-identity.json', '--identity-sha256', '7e2ee603531e74e15e2d8f4048d0c49dcdf6ca55d5b00b20496ba98a5e9f3219', '--prepared', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/run/downstream/prepared.json', '--prepared-sha256', '85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf', '--batch-size', '2', '--output', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/run/downstream/P300-parent-check.json']' returned non-zero exit status 1.

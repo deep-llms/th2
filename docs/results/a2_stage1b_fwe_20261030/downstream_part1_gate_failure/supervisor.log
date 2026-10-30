@@ -1,0 +1,10 @@
+AUTHORIZED_BURN_WORKER_STOP [722513, 722514, 722515, 722516, 722517, 722518, 722519, 722520]
+ALL_EIGHT_GPUS_VERIFIED_FREE
+START stage1b-downstream-part1
+Traceback (most recent call last):
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/scripts/train_then_burn.py", line 207, in execute_queue
+    code = run_jobs(jobs, project, output / 'run')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/run_experiments.py", line 187, in run_jobs
+    raise RuntimeError(f"{job['name']} exited with code {returncode}")
+RuntimeError: stage1b-downstream-part1 exited with code 1

@@ -1,0 +1,11 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_check.py", line 98, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/source/eval/a2_check.py", line 95, in main
+    if not check['passed']:raise RuntimeError('A2 downstream numerical gate failed; preserve receipt')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: A2 downstream numerical gate failed; preserve receipt
