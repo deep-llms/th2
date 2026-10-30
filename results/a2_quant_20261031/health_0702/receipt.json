@@ -1,0 +1,9 @@
+{
+  "raw_sha256": "81ae14db1b4c775d443004dad2ecc778f3e77cdb38de7cb84e117bd8e88b6990",
+  "health_at": "2026-10-30T23:02:06.103339+00:00",
+  "source_unchanged": true,
+  "ownership_verified": true,
+  "stage": "cal1",
+  "independent_mean_recomputation": true,
+  "final_replay": "pending"
+}

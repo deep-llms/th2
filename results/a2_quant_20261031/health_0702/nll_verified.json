@@ -1,0 +1,1358 @@
+{
+  "count": 128,
+  "max_mean_difference": 8.881784197001252e-16,
+  "records": [
+    {
+      "run_id": "Q-dclm-P1T-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.686908991763934,
+      "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P1T-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.004721485196599,
+      "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P300-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7377930322126844,
+      "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P300-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.7637751437881795,
+      "sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-S188-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8867066980438802,
+      "sha256": "4f3544359641d2ed6594b855bbd7781a27a5fe07227ebfd94ffe843a168c7d2c",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-S188-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.012656808594966,
+      "sha256": "8b80beed055e798b4b63bc318844daa5b883100f06715f5b157bd039d3b9badf",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-S72-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.9085752961078706,
+      "sha256": "0342765afc5400053ce529176b58b19a48b96482e30357eed1185ca931986adb",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.854544222000957,
+      "sha256": "087d23fb601ee0d0a558c8db9a8a40078b142edca35f1fe6401757349b6ae400",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.808707333601816,
+      "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-P1T-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.124982157487267,
+      "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-P300-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.860631325856815,
+      "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-P300-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.822488626155515,
+      "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S188-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0238075916258356,
+      "sha256": "a5181de571c022c0f2d8363571ce79dd195caefb70bb338f3dbc45b18df25f3f",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S188-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.199338768224907,
+      "sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S72-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0421520019462984,
+      "sha256": "1a472129c5fd51871d929de1f7ce64d2cb554cad676e3e7891ea2d9d436068aa",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S72-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.007307971499392,
+      "sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P1T-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7233828620265084,
+      "sha256": "60a87dfd12a186acbf65e3c92832a8621ea2c1c88a598d391ddbabb53636ca7c",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P1T-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.116536224984662,
+      "sha256": "74d83f1861fb347ec570b2825ab92a1b31d890f90f5f5b328762a345f6558558",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P300-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7742509371599984,
+      "sha256": "1b64af7fd3d95f722944c80abccb1efa3d2e69fc0b210d8c790d0f7d02fb8f0a",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P300-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.8665343547609274,
+      "sha256": "a26d8cdea06f9aea23ea45d27a925025c3eedf4420c11b2690c95082ba7b58f3",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S188-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.9267089606763275,
+      "sha256": "df980034a3ab762da782ffbd472b9ddb78abe281a9937cd105f143e9961b6f33",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S188-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 4.141426296313544,
+      "sha256": "eddf239be30daad45001fce81812729c62bd59f9f5df47e55a9db2793343c052",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S72-parent",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.9524637834169547,
+      "sha256": "e8e76d1c55402f8d78b4826bc94a1a83ee179b0bbfb95d2f2a129adbb594098d",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S72-pre-S1",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.852902816181422,
+      "sha256": "8445af26988488428c4ff66a967a246d1b332fd64f6d2b24ef7cf75eb5e79bbc",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P1T-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7424967770636393,
+      "sha256": "8a4f443cfe0b5788e2f7c3dca1b263087f8bfe01ef5ec20f2a5c41f6ff94e7ee",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.6952390044461803,
+      "sha256": "eeaa0085cedabb432a16eccda56b251902e193fffdd65de80058b4ebdaa6ccd3",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7731223980464588,
+      "sha256": "8be399caed687edfdea10dd966878a85380d18347a20f7466236ba524b9b9935",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7446794646733386,
+      "sha256": "6659c73a8eba044b9bc7d16c7608bc76c461a66a629282f2aa92ac249f52e4dd",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.918886464813801,
+      "sha256": "02d09ca72e841e7d6933f71eed092bb38b08c68ca448f17dff3a5144bf38af33",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8931169771236687,
+      "sha256": "602ab9c416e730fe5a84733f15ecf5a8735a915628edbb69974e0d0d07220576",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.9403092495845335,
+      "sha256": "4a84fff691da6fa6e01a6dc8bf8ba28e4602190934b8bd88270eeca3cc3e054d",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.914721623196616,
+      "sha256": "4a0350c4d922ea24275290ff8968268b44acff010cc5b74a4f5432a535943c69",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.848414442145686,
+      "sha256": "d1d9852d69268f9e6e8b3d7ea2e318d76534ea642ecf1ab7b0a4fad8661b53b1",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8162542685446397,
+      "sha256": "09976d0e7c76ecd17c0f504260485fe6294856302ca53761595ebc25edf7f49f",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.890143259673042,
+      "sha256": "d4bef0c6c05a82031806b31bf06af00aed65eff41bcc36ac686306165815f0b4",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.867883781259471,
+      "sha256": "e53c3dd2cb59c2fd033218fc05cc4578e797d5fd34149d571a541a0eeee475b9",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0523110783854692,
+      "sha256": "98632c258435e9c38e30d350abcfba499093b4d6a2ffa44457683176f584b1a4",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.028760628998404,
+      "sha256": "69e95042a486d4ea31f13dd9bdea7fb6939ad9c84f099c8f8dc4e015a833d8d7",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-gptq3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0658566138337955,
+      "sha256": "c855efabbf7a6e682904bbfd9538ff4a436a16beedeea7953e232814235161f4",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-gptq4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0468762064056762,
+      "sha256": "b8a03d11a27292b360dd82f3c69ffb1122cb07ed91caedca6457617c7f7bb40f",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.7638390955810963,
+      "sha256": "c6a79814305539c19d6770744bda78f9c5c107d8706ed758e296ffea9c00bb74",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.698595929260709,
+      "sha256": "d8e00c1f04641971481192571d9cafb32af2ddc88febb17fca20f0d308a98c3e",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8035389779645628,
+      "sha256": "26a2eb16f40002448a0f69b000d3faafe770369be1ccabc875a8cd374a68ad1b",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.748440407820418,
+      "sha256": "1b8f74443ecde275179053c6810ea301fa35237c9e586770a8c01545adff03a4",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.9345688273267303,
+      "sha256": "ae08e81e42773b41e7b756919aeba63cd14c5d3135ea0002077b5bed3d7cbc73",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8972080183775404,
+      "sha256": "bd739765d7fd4914a5ec96f61da58991389085c729ceddaa7640d63a3df2b35f",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.96328292792958,
+      "sha256": "a2a2688d98972776207e44d177b7464a413dac5b543e34a33970c1176eb0053f",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.917861542016779,
+      "sha256": "b699dc6e0ee811bccf21dd51e0e1da9efaaa1dc965f3e4572f38e191ba03c99b",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.865632341260075,
+      "sha256": "68a830a3a16700e2f7f4d65309fe16d9c358f07bffe682c096a8c1a358e14173",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8197370370683736,
+      "sha256": "6bb29ab794344434bb14e2b98b38c1d8cf54ad0d35a46ffb47dbcd6210bb1fe0",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.91496175616415,
+      "sha256": "8e3bae77de64e6341ae077d490b23c64771782456bbffe312868d8bb768cf7ef",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.871162211870252,
+      "sha256": "915e6212fcca76f4ef41ae20eb4fb271d95805de1d8e4e63b5829afddc7e6e5f",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.070687022585273,
+      "sha256": "f75359ececdddfcf02ac5d02f304c188e5a0220734ac6491a94c55cfdac650fa",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.032904102261556,
+      "sha256": "ee4b050a112847c26bf4617350756ae3a5397637cc3cd8425eb601a4baf5c2d1",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0812622679481794,
+      "sha256": "4d9e0354473985bbf0b234fb1499e6817ed17604f7d5cecf6774334a7d077e08",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 3.0494418764996127,
+      "sha256": "a6841beb7cee0cfbcd79a7abce01b7fb7df1ce4c0575fa850ee376651a160260",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P1T-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.787745700864875,
+      "sha256": "228aadb21b972f7a550d17cde8df06a9c80e2c43fe2f6389ca63760468044b77",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P1T-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.73607647779451,
+      "sha256": "bc8b19388e8a5960dd70de32d0ef23b2b5afb17591ab5f6e031a7fbc4fbeddd3",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P300-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.8325717386043343,
+      "sha256": "58557248ae7d9e7b272f6ee890c047543afda8e4b81b6c6d5408ce1802e9edb0",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P300-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.785776165979487,
+      "sha256": "948efc92e81583ca5abec0f8ecd7bee7460ffd619ec34a17f79295277bc031bb",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S188-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.9686428878058093,
+      "sha256": "78fbfbd80e7b2dadc9fb579b5e3d59672b9fb3405aeb99e5ba4e9da18f5ffa75",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S188-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.934729832261648,
+      "sha256": "0a1036f00c4d1b1873cdde2d898f5c49c49542f1dd70ff765a540fb31ead744d",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S72-rtn3",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.99379274487396,
+      "sha256": "c8d8b261b6f0188fddf011cfb71cadea233a3bfc6ec4896caac7bccf0380d42b",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S72-rtn4",
+      "set": "final",
+      "sequences": 2461,
+      "nll": 2.960013122666348,
+      "sha256": "0c3538fe56f6b2ab43a287b69d6f0947a42fdba94792ba9488df98abbb0bf44e",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.452078286399847,
+      "sha256": "ace3b86010d7ce07d9cf8ce925a655d21d48ebd7e8d63d397da305aad0c5f665",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P1T-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.744879166398733,
+      "sha256": "44c738510a3a26448939d0c07a8efa92b53a9080b60693220dbad2010b41160d",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P300-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5063441408083893,
+      "sha256": "f56529e0dc334eb5cd236ce5fbd606a2035d9ea8f9af347032d1a3c8355b895b",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P300-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.555026044526289,
+      "sha256": "0169f3a20b507e48725312029a488c4e13833b0c04fc3eec2a0e5f94fdce4d2e",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-S188-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.6568504203213665,
+      "sha256": "ffdd634215a66788e3e1616f0f17a094e17c3c75924de2202747f143baf1c140",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-S188-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.774380817661476,
+      "sha256": "bcc6bfa39f0109404f20a0b851922da575ac0533dc85938c2ed66921548fb871",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-S72-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.677280175404746,
+      "sha256": "6b8268b8d3d7bbb5853e9942ca6de49d5511fb7ac66e374aae49e2466f16e284",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.618580657739698,
+      "sha256": "3687eeef8ea61dafa302bac3d392904b2e5b66742e2847c339761ab006ffda40",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.256209722936269,
+      "sha256": "396cf65a4c6ba2c2485e76f9e3856c620490edfc7860dda1f49d3855063e4c45",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-P1T-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.6285955808457144,
+      "sha256": "2c9a8e711810cc2666cbac415991b84a7c93cdab0e911459f9780726afaa4ee2",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-P300-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.308842448624648,
+      "sha256": "9f1d12a29613cf5263e04d43e776a24eb2e6302bdc0116cee981a717cd2dede8",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-P300-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.313459735705311,
+      "sha256": "9f8ad7a978364dee076d188bafb802f62447e282713f527e460bfb33e0f49c8e",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S188-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.4743180230533106,
+      "sha256": "865ef87f571235c8103a39925dafdfc1c59a9fb7f452548a8a0c527943eaccda",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S188-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.6826651132204193,
+      "sha256": "59a7439a708ea60e1e3f2424337392b61c60b08268c3609b381ca1dc5b406202",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S72-parent",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.489572923113581,
+      "sha256": "d4c1466a2d7623fbab0a68cff5f2c36b100eea0fb00f63f21c8a22cde2b9707b",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-fwe-S72-pre-S1",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 3.4756963478420193,
+      "sha256": "58282be105f4566ca81f39ee881258d5e8fda5d73ea83169209cab2f17c061a5",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P1T-parent",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.5136667088959888,
+      "sha256": "4a3d9888b5290126e46af9814fcbcc0071794ebc086d8b03f39e9831dfcfa0c8",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P1T-pre-S1",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 3.859129403093694,
+      "sha256": "7aee67b76858343e44d5cea6315f6ec5af90dc6d6a6a3d9d2fcc57eddb454495",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P300-parent",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.5649809811009363,
+      "sha256": "654eb6bdcfa79f6258af8216db19e8ab83462789de77505a94a4357a4158bbbc",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-P300-pre-S1",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 3.6247016907040335,
+      "sha256": "4a459d80ee762b069a94bf96ed3b121400b581b3fcbe983c5242b82d4f6a58f6",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S188-parent",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.703932035754362,
+      "sha256": "09b9dd355b4f8ebad2726e3a7c9aa3ae87b72696f49e9c0833cebefa37e6e0a9",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S188-pre-S1",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 3.894054993124133,
+      "sha256": "252eecce1f2143d0465c9f31541776e354a4df53a70099365ac1547173da50c7",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S72-parent",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.7265672788882203,
+      "sha256": "e8fd33496b344ff81dbd287c7d956c8a30bb3ea17160ac9d9b22ab3276f353f7",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-nem-S72-pre-S1",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 3.5819084009956503,
+      "sha256": "29e8689e273114a3a323ad6ead6dc4cd83f16c471bf9221b274079aca21a80ee",
+      "unverified": false,
+      "flags": []
+    },
+    {
+      "run_id": "Q-dclm-P1T-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5054055240920032,
+      "sha256": "9f213844752c57fc2cc4b8c8f0d00458f00153e60192b1a92ad848507412862d",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.461780393668688,
+      "sha256": "17599b0145337fd3f469d6b32761704d21f22a24bf9e0099992171cc49fafe01",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.545049747713257,
+      "sha256": "e5cd2be7b1784aed3c711a8afa6dcf0dd1ec35769e0946eb54a0b8004e8dd184",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.513603601710769,
+      "sha256": "11e25a3292871ef0684cafd9cb93159ad12a4710caffc1f619215f72c2cdf6d9",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.689443025393369,
+      "sha256": "6c802486cc2c322827b0609039b861d34cad6ab5526d0eaab52c793dd04b970d",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.663330429119757,
+      "sha256": "4824474a551bc6845b9b25cb53181acf70bd022d75eaa77ab513805be8935eaa",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.7086909455174735,
+      "sha256": "abe80888927dba6f2302ad650a410a58057f4ca00b2d1e669aa38ad6f6ea071a",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.6832760033606364,
+      "sha256": "b0579cdb79ce9a5fb0354cc4bac0ec1a9aba3c92fb9f4076ea8b0a01f840d30a",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.301690841676794,
+      "sha256": "6d5c02488d835b2ff5d2ab281d9d6816d7488d3a11eafd31d021341be1240f6e",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.2650832992417973,
+      "sha256": "b277438ac09ca3a09a3b9bdd497d6b4924d72733fe4e75e28f387c9679a924ef",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.3452820397073233,
+      "sha256": "5c9c1c437412d629f2b309fac8cf88cb1ed9a50f3bc1589886807662cafc557a",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.316616441846171,
+      "sha256": "724abdcbcf32fc2749c07d9201c521e05170c7f7abbb8be84a9603711141d8df",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5060515670833796,
+      "sha256": "151bfeea96255869e16eddb372e418e79f211879c529b2887a6ce66888794517",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.4801163202012644,
+      "sha256": "db1dc95254cf06074f56f4a98600b7773bac52e057fa7ccd027be7e692220593",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-gptq3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5165072736150242,
+      "sha256": "5dc41f07e18b6d314e2c20a6bae284da5324f17e2a3ea09d0a85a0cabb429f3f",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-gptq4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.4950160272502226,
+      "sha256": "a214632581ceb435e46b877f39de997ff6709ad8c694bc90bdd8fc58acf2790b",
+      "unverified": true,
+      "flags": [
+        "QT3",
+        "QT6_inherited"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5202616925843424,
+      "sha256": "f3d213826ecffbe7e8d3366c76f30953948096671a320d97763be1be637a2b67",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P1T-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.4633097389005347,
+      "sha256": "b6aa9d6bcd7791c1c860c64e14a7bd567e5a6fd1b11cfc1160d16ea719636c7b",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5778152535514307,
+      "sha256": "1ad8e849f68cc9adb1b62bcb5d1020f89e69ed3bcdbc2d55c73dfd1196038189",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-P300-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5171556203206915,
+      "sha256": "c2a5dfa2d468e72d677259e3501fb629b867b8f042516bcbb62a6b280a5de371",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.696517687199786,
+      "sha256": "21cce0b869d5c8cc8ce328363c6912ab092d71ed8e660d06b44d293720a5f11f",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S188-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.6646372614593954,
+      "sha256": "b7c45acb9f4a37d74d6ae9b61e4b1da0e0feb85c73d75ab25383ef3a6b2069a7",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.73655738603478,
+      "sha256": "ebb9fb8cd80a6a9db12f7b84683706f4003099b5b0022070e3714d77ae28e2cb",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-dclm-S72-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.6854950627034966,
+      "sha256": "dd5260a6af755a169ddeec1e3433f65a90c9c4292ca24f6c31a475733f3757d1",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.311612434121818,
+      "sha256": "87d3c5a8537a09f973bb0d850770afa55e0feda5fd1a3646eda017d34e813230",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P1T-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.267294164962019,
+      "sha256": "e23e867e81d3d54b180e0197584f71053f8f7b6cab940916d2322aaec36a216e",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.3615910232765227,
+      "sha256": "32ca737dd236c815bfab762ea7454fb338190fc943d92fefd537753f592f509c",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-P300-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.3183883043800244,
+      "sha256": "22c08e4bb85465ce07e928604f4055c1711006dc3ed49b3d3a25d12c9ae19b07",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5218013326727933,
+      "sha256": "319ec1491a448da498577fa3d9540433f7dcc0da3b7504f75ec41394edae6363",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S188-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.4821098259225534,
+      "sha256": "2894c89a9d149ba538a3a5a01e2fa32895d934374b0a2b71d2a4698c5a5b802b",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-rtn3",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.5275253013341503,
+      "sha256": "b90267bb3c25267c1f80ef7a53c60f144a2aa0386c372ddf67713ca4c2bf895e",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-fwe-S72-rtn4",
+      "set": "own_corpus",
+      "sequences": 1024,
+      "nll": 2.4965810675372935,
+      "sha256": "56599121fede15dff9dbe6ddf249065aa2507ffaf3740ed275967ae93f035585",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P1T-rtn3",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.5737314742244886,
+      "sha256": "e0ecd53bc01ced69244a81effecfde657873d932be8667b4c3da5caa37887abb",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P1T-rtn4",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.5256444733050607,
+      "sha256": "a6d04023d6fb882dc60f00b5b7a29048c78bf7e58edddf5a1eec0edee059af2e",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P300-rtn3",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.616314741544535,
+      "sha256": "f8ea740a76dff1754fdd06e5862d38646223883e01345ba4e78e7715a46e8ad0",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-P300-rtn4",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.575194962006038,
+      "sha256": "5ad76518b045eb757e894c320942ac4c9030e0c27e80efefc4509a2c52f258fb",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S188-rtn3",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.7415098905725435,
+      "sha256": "974b0bc4a2e497fa3f80d49091aaeb761b9609428d85da441697592b3d4d4787",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S188-rtn4",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.711332261602833,
+      "sha256": "e2d3059264dc4804c6be8f356a4c15ce3b7f615db3055f4e1d06dcdbba659027",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S72-rtn3",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.7625550573149216,
+      "sha256": "af22f987321711e1c66e0342f1d0766b1a1dbd23e22cc3bfa7c40b006007e603",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    },
+    {
+      "run_id": "Q-nem-S72-rtn4",
+      "set": "own_corpus",
+      "sequences": 256,
+      "nll": 2.7338260438706508,
+      "sha256": "88fb4e41a497103e036cd73d8c95b375849ea84fec516328d5474e9f0542fd28",
+      "unverified": true,
+      "flags": [
+        "QT3"
+      ]
+    }
+  ]
+}
