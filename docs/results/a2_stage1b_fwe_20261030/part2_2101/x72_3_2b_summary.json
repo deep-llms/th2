@@ -1,0 +1,22 @@
+{
+  "run_id": "ST1-fwe-X72-S1-3.2B-lr1e-3",
+  "steps": 12207,
+  "heal_tokens": 3199991808,
+  "status": "complete",
+  "diverged": false,
+  "val_parent": 3.042152001946299,
+  "val_pre": 4.007307971499392,
+  "val_post": 2.9688060036997257,
+  "val_tune_post": 2.9494744594565536,
+  "delta_post": -0.07334599824657317,
+  "val_secondary_post": 2.420236999085872,
+  "delta_secondary_post": -0.0693359240277096,
+  "roundtrip_difference": 0.0,
+  "training_seconds": 11721.795334039722,
+  "wallclock_h": 3.2720735698119583,
+  "A_init_3_2B": 0.01299365118963669,
+  "A_init_fwe_3_2B": 0.013620394355744914,
+  "state_label": "anneal first",
+  "basis": "X72 student minus P300 student CulturaX final NLL",
+  "full_stage1b_complete": false
+}
