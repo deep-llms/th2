@@ -1,0 +1,22 @@
+test_final_plan_requires_both_terminal_parts_and_immutable_prior_fits (tests.a2.test_stage1b_final_admission.CombinedPlan.test_final_plan_requires_both_terminal_parts_and_immutable_prior_fits) ... ok
+test_full_request_ll_statistics_and_padding_association (tests.a2.test_stage1b_final_admission.FinalAdmission.test_full_request_ll_statistics_and_padding_association) ... ok
+test_only_registered_adapters_may_differ_from_actual_passed_regression (tests.a2.test_stage1b_final_admission.FinalAdmission.test_only_registered_adapters_may_differ_from_actual_passed_regression) ... ok
+test_report_only_ledger_can_exceed_previous_cap (tests.a2.test_stage1b_final_admission.FinalAdmission.test_report_only_ledger_can_exceed_previous_cap) ... ok
+test_authorized_unlimited_runtime_has_no_subprocess_timeout (tests.a2.test_stage1b_final_run.FinalRun.test_authorized_unlimited_runtime_has_no_subprocess_timeout) ... ok
+test_batch2_reuses_parent_and_batch1_fallback_all_models (tests.a2.test_stage1b_final_run.FinalRun.test_batch2_reuses_parent_and_batch1_fallback_all_models) ... ok
+test_failures_never_publish_complete_or_skip_decision (tests.a2.test_stage1b_final_run.FinalRun.test_failures_never_publish_complete_or_skip_decision) ... ok
+test_native_contract_is_six_models_and_full_comparison (tests.a2.test_stage1b_final_run.FinalRun.test_native_contract_is_six_models_and_full_comparison) ... ok
+test_unlimited_scoring_uses_only_supplied_lanes_and_no_timeout (tests.a2.test_stage1b_final_run.FinalRun.test_unlimited_scoring_uses_only_supplied_lanes_and_no_timeout) ... ok
+test_actual_tiny_native_model_token_diagnostics (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_actual_tiny_native_model_token_diagnostics) ... ok
+test_batch_choice_uses_mean_and_lambada_not_each_mc_task (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_batch_choice_uses_mean_and_lambada_not_each_mc_task) ... ok
+test_inclusive_limits_and_token_denominator (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_inclusive_limits_and_token_denominator) ... ok
+test_lambada_two_wrong_predictions_still_flip (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_lambada_two_wrong_predictions_still_flip) ... ok
+test_old_failure_is_reported_and_accepted (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_old_failure_is_reported_and_accepted) ... ok
+test_padding_pairs_reproduce_sorted_scoring_and_truncation (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_padding_pairs_reproduce_sorted_scoring_and_truncation) ... ok
+test_prediction_flips_are_not_correctness_flips (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_prediction_flips_are_not_correctness_flips) ... ok
+test_readonly_hook_preserves_production_scores (tests.a2.test_stage1b_revised_gate.RevisedGateTests.test_readonly_hook_preserves_production_scores) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 12.823s
+
+OK

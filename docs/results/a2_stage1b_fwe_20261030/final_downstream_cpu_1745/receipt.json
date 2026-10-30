@@ -1,0 +1,24 @@
+{
+  "status": "cpu_prepared_not_gpu_validated",
+  "at": "2026-10-30T09:45:08.062940+00:00",
+  "original_scoring_model_files_unchanged": 66,
+  "original_regression_source": "8b78d9e1051407a45be6676820bc57ac87a872e4",
+  "integration_tests_passed": 10,
+  "revised_gate_tests_passed": 8,
+  "tiny_pinned_native_model_test": true,
+  "actual_gpu_final_gate_pending": true,
+  "actual_full_parent_batch_comparison_pending": true,
+  "files": {
+    "eval/a2_stage1b_check.py": "f75b68bd72f0aa200629a3c7d595ad7fc2fcbec15307d9af56acfbde93e66369",
+    "eval/a2_stage1b_parent_score.py": "196f416683659fdc8ac65203b83cce5b26154b690fe0ee4e4f0192319fe12a12",
+    "eval/a2_stage1b_batch_compare.py": "90bb0033bb7b597ed960b5af61127b62f5cca4c912cc96a065f8f06cda20bd88",
+    "eval/a2_stage1b_batch_report.py": "1eabb9bfd2e7cbf36ce194473dc97ad2df952d4ead940596ba7b35612f1094d5",
+    "eval/a2_stage1b_final_plan.py": "2dfc58750aaba68488a48470aaf335e001523b5b33e73c5e50e2d6846b5eacba",
+    "eval/a2_stage1b_final_run.py": "4fd53f3ab99e4a5ffd646cbfbc9d570984534cffe36515923a9393aea90b0cea",
+    "scripts/launch_a2_stage1b_final_downstream.py": "84ab5aff4b10ce36dba61f28314800598b9230a9ec2bb6f6788738d4128f5dc1"
+  },
+  "time_policy": {
+    "path": "resources/a2_stage1b_time_policy_20261030.json",
+    "sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  }
+}

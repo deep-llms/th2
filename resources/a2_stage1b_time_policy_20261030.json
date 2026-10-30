@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "authority": "Explicit user instruction 30Oct2026 during the 17:30 SGT turn",
+  "user_instruction_vi": "không cần lo về deadline hay giới hạn thời gian chạy, cứ chạy đi, chạy đúng là được. chỉ cần báo cho tôi khi chạy quá thời gian mong muốn để tôi biết là được, và cứ tiếp tục chạy. sau này khi gặp các điều kiện dừng như vừa rồi cũng thế. cứ tiếp tục chạy rồi báo lại cho tôi là được. nhưng lưu ý tin nhắn dễ trôi, nhất là khi worker gửi tin mới, nên nhớ báo lại vấn đề hoặc câu hỏi ở cuối mọi lượt trả lời của bạn.",
+  "supersedes_time_limits_in": "resources/a2_stage1b_continuation_20261030.json",
+  "time_limits_report_only": true,
+  "hard_node_hours": null,
+  "hard_deadline": null,
+  "continue_registered_work": true,
+  "correctness_required": true,
+  "reported_only_failure_never_blocks_heals": true,
+  "repeat_open_issues_at_end_of_every_reply": true,
+  "scientific_protocol_unchanged": true,
+  "retain_original_receipts_and_active_frozen_source": true
+}

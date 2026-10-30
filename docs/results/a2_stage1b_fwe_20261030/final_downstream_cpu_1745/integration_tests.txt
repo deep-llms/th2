@@ -1,0 +1,15 @@
+test_locked_full_artifacts_prediction_flips_and_accuracy_decision (tests.a2.test_stage1b_batch_report.BatchReport.test_locked_full_artifacts_prediction_flips_and_accuracy_decision) ... ok
+test_authorized_unlimited_runtime_has_no_subprocess_timeout (tests.a2.test_stage1b_final_run.FinalRun.test_authorized_unlimited_runtime_has_no_subprocess_timeout) ... ok
+test_batch2_reuses_parent_and_batch1_fallback_all_models (tests.a2.test_stage1b_final_run.FinalRun.test_batch2_reuses_parent_and_batch1_fallback_all_models) ... ok
+test_failures_never_publish_complete_or_skip_decision (tests.a2.test_stage1b_final_run.FinalRun.test_failures_never_publish_complete_or_skip_decision) ... ok
+test_native_contract_is_six_models_and_full_comparison (tests.a2.test_stage1b_final_run.FinalRun.test_native_contract_is_six_models_and_full_comparison) ... ok
+test_unlimited_scoring_uses_only_supplied_lanes_and_no_timeout (tests.a2.test_stage1b_final_run.FinalRun.test_unlimited_scoring_uses_only_supplied_lanes_and_no_timeout) ... ok
+test_final_plan_requires_both_terminal_parts_and_immutable_prior_fits (tests.a2.test_stage1b_final_admission.CombinedPlan.test_final_plan_requires_both_terminal_parts_and_immutable_prior_fits) ... ok
+test_full_request_ll_statistics_and_padding_association (tests.a2.test_stage1b_final_admission.FinalAdmission.test_full_request_ll_statistics_and_padding_association) ... ok
+test_only_registered_adapters_may_differ_from_actual_passed_regression (tests.a2.test_stage1b_final_admission.FinalAdmission.test_only_registered_adapters_may_differ_from_actual_passed_regression) ... ok
+test_report_only_ledger_can_exceed_previous_cap (tests.a2.test_stage1b_final_admission.FinalAdmission.test_report_only_ledger_can_exceed_previous_cap) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 13.806s
+
+OK

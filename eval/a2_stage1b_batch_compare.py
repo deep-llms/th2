@@ -35,7 +35,8 @@ def ll_differences(prepared,batch1,batch2):
     def stats(subset):
         return dict(requests=len(subset),nonzero=sum(x['abs_difference']!=0 for x in subset),
             max_abs=max((x['abs_difference'] for x in subset),default=0),
-            mean_abs=sum(x['abs_difference'] for x in subset)/len(subset) if subset else None)
+            mean_abs=sum(x['abs_difference'] for x in subset)/len(subset) if subset else None,
+            mean_signed=sum(x['difference'] for x in subset)/len(subset) if subset else None)
     largest=max(rows,key=lambda x:x['abs_difference'])
     return dict(summary=stats(rows),largest=largest,
         padded_pairs=stats([r for r in rows if r['pair_has_padding']]),
@@ -104,14 +105,17 @@ def lambada_token_prediction_flips(samples, prepared, predictions1, predictions2
         raise ValueError('Incomplete argmax receipts')
     indices={}
     for i,r in enumerate(prepared['requests']):indices.setdefault(tuple(r['text']),[]).append(i)
-    flipped=[]
+    flipped=[];paired_cache={}
     for sample in samples:
         if len(sample['arguments'])!=1:raise ValueError('Expected one LAMBADA request')
         matches=indices.get(tuple(sample['arguments'][0]),[])
         if not matches:raise ValueError('Missing canonical LAMBADA request')
-        pairs={(tuple(predictions1['predictions'][i]),tuple(predictions2['predictions'][i])) for i in matches}
-        if len(pairs)!=1:raise ValueError('Ambiguous duplicate LAMBADA prediction pairing')
-        a,b=pairs.pop()
+        key=tuple(sample['arguments'][0])
+        if key not in paired_cache:
+            pairs={(tuple(predictions1['predictions'][i]),tuple(predictions2['predictions'][i])) for i in matches}
+            if len(pairs)!=1:raise ValueError('Ambiguous duplicate LAMBADA prediction pairing')
+            paired_cache[key]=pairs.pop()
+        a,b=paired_cache[key]
         if a!=b:flipped.append(sample['doc_id'])
     return dict(items=len(samples),flips=len(flipped),flipped_doc_ids=flipped,
                 definition='teacher-forced continuation argmax tokens, including two incorrect predictions')
