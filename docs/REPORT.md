@@ -1,6 +1,6 @@
 # Stage1b FineWeb-Edu — report in progress
 
-Status: All15 registered training fits completed30Oct23:21:56SGT; independent terminal/nativeburn verified23:31:20SGT. Final six-model downstream started23:40:10SGT; All six revised gates passed by31Oct00:01; full P300 batch2 scoring complete, batch1 active, decision/production pending. This is not a full completion report.
+Status: All15 registered training fits are complete. Final downstream failed31Oct00:12:10SGT on the full P300 batch comparison: max0.10355663299560547 nats/token exceeds0.1. Six representative gates passed, and the accuracy rule accepts batch2; the full numerical failure is retained. Five other production scores and paired CI are absent. Native failed-job burn handoff verified00:33:07SGT. This is not a full completion report.
 
 Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init(3.2B)=+0.01299365118963669 (`anneal first`); E(0.8B)=+0.02281977941126856; A_init(0.2B)=+0.07847837360805077 and A_init(0.8B)=+0.04245379935293281; A(3.2B)/A(0.8B)=0.30606568523151645. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
 
@@ -100,3 +100,12 @@ All six revised gates PASS; each compares502 continuation tokens with0 mismatche
 | X72-student | 0 | 0.0159463882446 | 0/502 | FAIL |
 
 Full P300 batch2 produced78259 scores (SHAae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3); batch1 remains active at snapshot00:01. No batch decision or final accuracy/CI is claimed. Source132filesf0c8154 and all six identity locks remain unchanged; ownership chain to supervisor730334 verified.
+
+
+## Full P300 comparison failure — 31Oct00:33 SGT receipt
+
+Both batches contain all78,259 scores. The accuracy rule accepts batch2: eight-task MC mean difference +0.004797435042615955 percentage points, LAMBADA0. Full token mismatches1,309/1,396,626 (0.09372587936927997%) meet0.1%. However, maximum per-request normalized LL difference0.10355663299560547 nats/token exceeds0.1, so the deployed full-comparison check failed and stopped before the five other production scores. This additional full-set enforcement is distinct from the six representative model gates, which all passed. No threshold or failed diagnostic has been changed. Independent failed-batch recomputation is pending.
+
+Raw LL max0.5551643371582031, mean absolute0.011516675116967773; differences also occur in unpadded pairs. MC prediction flips by task: HellaSwag7, ARC-easy5, ARC-challenge2, PIQA2, WinoGrande2, BoolQ3, OpenBookQA0, SciQ1. LAMBADA has1 token-prediction flip and0 correctness flips. [Full diagnostic and SHA locks](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/batch_decision.json).
+
+Job exit1 at00:12:10; native supervisor restored eight burns and released its guard00:13:16. At00:33:07 the fresh native burn workers730982–730989 under730913 were verified, cycles1370→1380 and collective payload1521.18→1532.29GiB. [Failure and handoff receipt](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/receipt.json). Raw SHA256 `d2d4e9c420033532c7b8491305be387668f84a87b2c800c64ca317e3cd39286c`. All15 training results remain valid; full Stage1b downstream remains incomplete.

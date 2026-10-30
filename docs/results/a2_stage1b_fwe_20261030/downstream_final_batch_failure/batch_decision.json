@@ -1,0 +1,245 @@
+{
+  "batch2_accepted": true,
+  "production_batch_size": 2,
+  "mc_mean_difference_pp": 0.004797435042615955,
+  "lambada_difference_pp": 0.0,
+  "limit_pp": 0.1,
+  "per_task": {
+    "hellaswag": {
+      "batch1": 0.6141206930890261,
+      "batch2": 0.6142202748456482,
+      "difference_pp": 0.009958175662216906,
+      "metric": "acc_norm,none"
+    },
+    "arc_easy": {
+      "batch1": 0.7255892255892256,
+      "batch2": 0.7247474747474747,
+      "difference_pp": -0.08417508417508657,
+      "metric": "acc_norm,none"
+    },
+    "arc_challenge": {
+      "batch1": 0.4257679180887372,
+      "batch2": 0.42662116040955633,
+      "difference_pp": 0.08532423208191253,
+      "metric": "acc_norm,none"
+    },
+    "piqa": {
+      "batch1": 0.7513601741022851,
+      "batch2": 0.7513601741022851,
+      "difference_pp": 0.0,
+      "metric": "acc_norm,none"
+    },
+    "winogrande": {
+      "batch1": 0.6093133385951065,
+      "batch2": 0.6108918705603789,
+      "difference_pp": 0.15785319652723562,
+      "metric": "acc,none"
+    },
+    "boolq": {
+      "batch1": 0.6238532110091743,
+      "batch2": 0.6235474006116208,
+      "difference_pp": -0.03058103975535076,
+      "metric": "acc,none"
+    },
+    "openbookqa": {
+      "batch1": 0.418,
+      "batch2": 0.418,
+      "difference_pp": 0.0,
+      "metric": "acc_norm,none"
+    },
+    "sciq": {
+      "batch1": 0.933,
+      "batch2": 0.932,
+      "difference_pp": -0.10000000000000009,
+      "metric": "acc,none"
+    },
+    "lambada_openai": {
+      "batch1": 0.5177566466136231,
+      "batch2": 0.5177566466136231,
+      "difference_pp": 0.0,
+      "metric": "acc,none"
+    }
+  },
+  "status": "compared",
+  "requests": 78259,
+  "prediction_flips": {
+    "hellaswag": {
+      "items": 10042,
+      "flips": 7,
+      "flipped_doc_ids": [
+        1298,
+        2150,
+        2282,
+        2309,
+        2644,
+        3065,
+        3224
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "arc_easy": {
+      "items": 2376,
+      "flips": 5,
+      "flipped_doc_ids": [
+        901,
+        903,
+        1081,
+        1108,
+        1824
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "arc_challenge": {
+      "items": 1172,
+      "flips": 2,
+      "flipped_doc_ids": [
+        26,
+        299
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "piqa": {
+      "items": 1838,
+      "flips": 2,
+      "flipped_doc_ids": [
+        1344,
+        1749
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "winogrande": {
+      "items": 1267,
+      "flips": 2,
+      "flipped_doc_ids": [
+        19,
+        602
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "boolq": {
+      "items": 3270,
+      "flips": 3,
+      "flipped_doc_ids": [
+        509,
+        2107,
+        2527
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "openbookqa": {
+      "items": 500,
+      "flips": 0,
+      "flipped_doc_ids": [],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "sciq": {
+      "items": 1000,
+      "flips": 1,
+      "flipped_doc_ids": [
+        102
+      ],
+      "definition": "MC primary-metric choice argmax"
+    },
+    "lambada_openai": {
+      "items": 5153,
+      "flips": 1,
+      "flipped_doc_ids": [
+        1091
+      ],
+      "definition": "teacher-forced continuation argmax tokens, including two incorrect predictions",
+      "correctness_flips": {
+        "items": 5153,
+        "flips": 0,
+        "flipped_doc_ids": [],
+        "definition": "LAMBADA exact-match correctness"
+      }
+    }
+  },
+  "inputs": {
+    "identity": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part1/P300-parent-identity.json",
+      "sha256": "7e2ee603531e74e15e2d8f4048d0c49dcdf6ca55d5b00b20496ba98a5e9f3219"
+    },
+    "prepared": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/prepared.json",
+      "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+    },
+    "scores": {
+      "1": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/1/scores.json",
+        "sha256": "231aea3bddb4be446aa949cef479cc0e4224720792f8892ad4b7dbdc82b5d1dd"
+      },
+      "2": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/2/scores.json",
+        "sha256": "ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3"
+      }
+    },
+    "replays": {
+      "1": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/replays/P300-parent-batch1.json",
+        "sha256": "97704d343deae168cc79dd2754fac617ebac0ad149e6a8a628aa01537391c716"
+      },
+      "2": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/replays/P300-parent-batch2.json",
+        "sha256": "4bf936bf3dc7d5cbf502900b26e758b732b6f64db114766eefdb09ff60c563d1"
+      }
+    },
+    "predictions": {
+      "1": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/1/predictions.json",
+        "sha256": "0acc183f41dd30ec1c205455ac96714faa5c451ee33f577ee3afbe8a67ea6a89"
+      },
+      "2": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/2/predictions.json",
+        "sha256": "401737749b2674c92615901c62d00e5a75ec206eedc3eb2359318c76c042b9ea"
+      }
+    }
+  },
+  "likelihood": {
+    "summary": {
+      "requests": 78259,
+      "nonzero": 21102,
+      "max_abs": 0.5551643371582031,
+      "mean_abs": 0.011516675116967773,
+      "mean_signed": 9.365685456076398e-05
+    },
+    "largest": {
+      "index": 13716,
+      "request_sha256": "f22bfaa149a007317ace8ece5bf1981aac9e13465b2a9d6f47ebd819904f4261",
+      "difference": -0.5551643371582031,
+      "abs_difference": 0.5551643371582031,
+      "nats_per_token": -0.029219175639905427,
+      "greedy_exact_match_flipped": false,
+      "pair_indices": [
+        13203,
+        13716
+      ],
+      "pair_has_padding": false,
+      "request_padding_tokens": 0
+    },
+    "padded_pairs": {
+      "requests": 318,
+      "nonzero": 46,
+      "max_abs": 0.11421585083007812,
+      "mean_abs": 0.0044810786937017864,
+      "mean_signed": -0.001851479212443034
+    },
+    "unpadded_pairs": {
+      "requests": 77941,
+      "nonzero": 21056,
+      "max_abs": 0.5551643371582031,
+      "mean_abs": 0.011545380415367826,
+      "mean_signed": 0.00010159302768283334
+    },
+    "differences_only_in_padded_pairs": false,
+    "per_request": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/per_request_ll_differences.json",
+      "sha256": "6adb9852d04da6be084454b4abca48e11add7c2ad552e796fe8b96bfa719ab17"
+    }
+  },
+  "full_compared_tokens": 1396626,
+  "full_greedy_token_mismatches": 1309,
+  "full_greedy_token_mismatch_rate": 0.0009372587936927997,
+  "full_max_nats_per_token": 0.10355663299560547,
+  "hard_batch_passed": false
+}
