@@ -1,0 +1,190 @@
+{
+  "status": "running",
+  "at": "2026-10-30T16:01:27.321001+00:00",
+  "raw_sha256": "7ea025a1495ea75a687f43528dbacc3d180a4475e2c72856c19d789c07c72c38",
+  "source": "f0c8154808bef431c76553a47fd9727d3ba8bd53",
+  "source_files": 132,
+  "supervisor_owner": 730334,
+  "ownership_chain_verified": true,
+  "immutable_source_inputs_runtime_identities_verified": true,
+  "prepared": {
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf",
+    "bytes": 61661044,
+    "requests": 78259,
+    "protocol": {
+      "tasks": [
+        "hellaswag",
+        "arc_easy",
+        "arc_challenge",
+        "piqa",
+        "winogrande",
+        "boolq",
+        "openbookqa",
+        "sciq",
+        "lambada_openai"
+      ],
+      "max_length": 4096,
+      "limit": null,
+      "num_fewshot": 0,
+      "seed": 42,
+      "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+      "tokenizer_files": {
+        "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+        "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+        "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+      },
+      "packages": {
+        "lm-eval": "0.4.13",
+        "transformers": "5.9.0",
+        "tokenizers": "0.22.2",
+        "datasets": "4.8.5",
+        "torch": "2.14.1"
+      }
+    }
+  },
+  "scores": [
+    {
+      "name": "2",
+      "sha256": "ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3",
+      "requests": 78259,
+      "identity": "2a7c02acdcb7d4978e4e28bb73c8ad855e140a2c47d473030d0f2d32c16ba132",
+      "precision": "fp32_parameters_bf16_cuda_autocast",
+      "batch_size": 2
+    }
+  ],
+  "gates": {
+    "P300-parent": {
+      "passed": true,
+      "manual_max_nats_per_token": 0.0,
+      "batch_max_nats_per_token": 0.011164188385009766,
+      "greedy_token_mismatches": 0,
+      "compared_tokens": 502,
+      "greedy_token_mismatch_rate": 0.0,
+      "old_batch_limit_exceeded": true
+    },
+    "P1T-parent": {
+      "passed": true,
+      "manual_max_nats_per_token": 2.653702445652174e-07,
+      "batch_max_nats_per_token": 0.029241561889648438,
+      "greedy_token_mismatches": 0,
+      "compared_tokens": 502,
+      "greedy_token_mismatch_rate": 0.0,
+      "old_batch_limit_exceeded": true
+    },
+    "S72-parent": {
+      "passed": true,
+      "manual_max_nats_per_token": 0.0,
+      "batch_max_nats_per_token": 0.0035562515258789062,
+      "greedy_token_mismatches": 0,
+      "compared_tokens": 502,
+      "greedy_token_mismatch_rate": 0.0,
+      "old_batch_limit_exceeded": false
+    },
+    "P300-student": {
+      "passed": true,
+      "manual_max_nats_per_token": 0.0,
+      "batch_max_nats_per_token": 0.0,
+      "greedy_token_mismatches": 0,
+      "compared_tokens": 502,
+      "greedy_token_mismatch_rate": 0.0,
+      "old_batch_limit_exceeded": false
+    },
+    "P1T-student": {
+      "passed": true,
+      "manual_max_nats_per_token": 2.6422145562770563e-07,
+      "batch_max_nats_per_token": 0.0,
+      "greedy_token_mismatches": 0,
+      "compared_tokens": 502,
+      "greedy_token_mismatch_rate": 0.0,
+      "old_batch_limit_exceeded": false
+    },
+    "X72-student": {
+      "passed": true,
+      "manual_max_nats_per_token": 0.0,
+      "batch_max_nats_per_token": 0.015946388244628906,
+      "greedy_token_mismatches": 0,
+      "compared_tokens": 502,
+      "greedy_token_mismatch_rate": 0.0,
+      "old_batch_limit_exceeded": true
+    }
+  },
+  "full_stage_complete": false,
+  "batch_decision": "pending",
+  "active": "P300-parent full batch1 scoring",
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 7896.0,
+      "utilization_percent": 45.0,
+      "pids": [
+        730479
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    }
+  ]
+}

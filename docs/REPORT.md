@@ -1,6 +1,6 @@
 # Stage1b FineWeb-Edu — report in progress
 
-Status: All15 registered training fits completed30Oct23:21:56SGT; independent terminal/nativeburn verified23:31:20SGT. Final six-model downstream started23:40:10SGT; P300 parent revised gate passed at23:41, other gates/scoring pending. This is not a full completion report.
+Status: All15 registered training fits completed30Oct23:21:56SGT; independent terminal/nativeburn verified23:31:20SGT. Final six-model downstream started23:40:10SGT; All six revised gates passed by31Oct00:01; full P300 batch2 scoring complete, batch1 active, decision/production pending. This is not a full completion report.
 
 Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init(3.2B)=+0.01299365118963669 (`anneal first`); E(0.8B)=+0.02281977941126856; A_init(0.2B)=+0.07847837360805077 and A_init(0.8B)=+0.04245379935293281; A(3.2B)/A(0.8B)=0.30606568523151645. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
 
@@ -84,3 +84,19 @@ Actual Part1 source7dd9da0, Part2 source42f7820, inherited preflight provenance9
 
 
 30Oct23:41:25SGT actual downstream startup verified: sourcef0c8154808bef431c76553a47fd9727d3ba8bd53/132files, original66 eval/model files byte-identical; six registered adapters. Native supervisor730334 reclaimed exact Part2burn729392–729399 with matching start identities, verified all8free, then started23:40:10. P300 revised gate PASS (manual0,batch0.011164188385009766,tokenmismatch0/502); original0.01 diagnostic failure retained. P1T gate running; full batch comparison and production scores pending. [Receipt](results/a2_stage1b_fwe_20261030/downstream_final_2341/receipt.json). Runtime cap/deadline null; priorledger72844.667764sec, forecast22.418nodeh before actual preparation.
+
+
+## Actual six-model numerical gates, 31Oct00:01SGT
+
+All six revised gates PASS; each compares502 continuation tokens with0 mismatches. Original0.01 threshold diagnostics remain failures for P300-parent, P1T-parent and X72-student. [Gate evidence](results/a2_stage1b_fwe_20261030/downstream_final_0001/receipt.json).
+
+| Model | Manual nats/token | Batch nats/token | Token mismatch | Old0.01 diagnostic |
+|---|---:|---:|---:|---|
+| P300-parent | 0 | 0.011164188385 | 0/502 | FAIL |
+| P1T-parent | 2.65370244565e-07 | 0.0292415618896 | 0/502 | FAIL |
+| S72-parent | 0 | 0.00355625152588 | 0/502 | PASS |
+| P300-student | 0 | 0 | 0/502 | PASS |
+| P1T-student | 2.64221455628e-07 | 0 | 0/502 | PASS |
+| X72-student | 0 | 0.0159463882446 | 0/502 | FAIL |
+
+Full P300 batch2 produced78259 scores (SHAae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3); batch1 remains active at snapshot00:01. No batch decision or final accuracy/CI is claimed. Source132filesf0c8154 and all six identity locks remain unchanged; ownership chain to supervisor730334 verified.
