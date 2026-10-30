@@ -1,0 +1,11 @@
+{
+  "status": "running",
+  "started_at": "2026-10-30T15:40:10.667197+00:00",
+  "jobs": [
+    {
+      "name": "stage1b-downstream-final",
+      "started_at": "2026-10-30T15:40:10.667411+00:00",
+      "status": "running"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Stage1b FineWeb-Edu — report in progress
 
-Status: All15 registered training fits completed30Oct23:21:56SGT; independent terminal/nativeburn verified23:31:20SGT. Final six-model downstream remains pending; this is not a full completion report.
+Status: All15 registered training fits completed30Oct23:21:56SGT; independent terminal/nativeburn verified23:31:20SGT. Final six-model downstream started23:40:10SGT; P300 parent revised gate passed at23:41, other gates/scoring pending. This is not a full completion report.
 
 Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init(3.2B)=+0.01299365118963669 (`anneal first`); E(0.8B)=+0.02281977941126856; A_init(0.2B)=+0.07847837360805077 and A_init(0.8B)=+0.04245379935293281; A(3.2B)/A(0.8B)=0.30606568523151645. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
 
@@ -66,3 +66,21 @@ At30Oct23:01:19SGT, healtha14 independently verified X720.8B2690/3051(88.2%), ab
 
 
 30Oct23:31SGT: All15 training fits and native handoff independently verified; source42f7820 unchanged. Evidence: [part2_final](results/a2_stage1b_fwe_20261030/part2_final/verification.json). Native training ledger71801.2573sec (19.9448h); conservative controller ledger has crossed20h including gaps/handoff, reported before downstream. Legacy timeouts ended with Part2; final downstream has no elapsed-time termination.
+
+
+## Validated cross-dataset training comparison (30Oct23:31SGT)
+
+CulturaX final is the deciding endpoint. Differences below are FWE minus DCLM. Both datasets independently selected common LR1e-3 and own-best LR1e-3 for P300/P1T.
+
+| Budget | DCLM E | FWE E | Difference E | DCLM A_init | FWE A_init | Difference A_init |
+|---|---:|---:|---:|---:|---:|---:|
+| 0.2B | 0.021096293348 | 0.026224221566 | +0.005127928219 | 0.072724703707 | 0.078478373608 | +0.005753669902 |
+| 0.8B | 0.020786422564 | 0.022819779411 | +0.002033356848 | 0.038910028864 | 0.042453799353 | +0.003543770489 |
+| 3.2B | 0.021670884570 | 0.023461150404 | +0.001790265834 | 0.012113131874 | 0.012993651190 | +0.000880519316 |
+
+Ratios 3.2B/0.8B: DCLM E=1.042549986824, A_init=0.311311305279; FWE E=1.028105924298, A_init=0.306065685232. Both yield `persists` and `anneal first`; FWE length finding is `replicated`. These are registered single-seed recipe comparisons, not isolated LR-state or exposure effects. Own-corpus held-out remains diagnostic.
+
+Actual Part1 source7dd9da0, Part2 source42f7820, inherited preflight provenance9f5601d with27core hashes unchanged. All15 fits use full registered LR schedules, exact8-rank coverage, roundtrip0 and no divergence. Final downstream sourcef0c8154 preserves all66 original regression eval/model files and adds only the six registered adapters. GPU validation is pending.
+
+
+30Oct23:41:25SGT actual downstream startup verified: sourcef0c8154808bef431c76553a47fd9727d3ba8bd53/132files, original66 eval/model files byte-identical; six registered adapters. Native supervisor730334 reclaimed exact Part2burn729392–729399 with matching start identities, verified all8free, then started23:40:10. P300 revised gate PASS (manual0,batch0.011164188385009766,tokenmismatch0/502); original0.01 diagnostic failure retained. P1T gate running; full batch comparison and production scores pending. [Receipt](results/a2_stage1b_fwe_20261030/downstream_final_2341/receipt.json). Runtime cap/deadline null; priorledger72844.667764sec, forecast22.418nodeh before actual preparation.

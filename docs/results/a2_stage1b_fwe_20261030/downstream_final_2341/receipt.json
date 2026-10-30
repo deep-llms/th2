@@ -1,0 +1,184 @@
+{
+  "status": "running",
+  "at": "2026-10-30T15:41:25.231169+00:00",
+  "raw_sha256": "2334ff8f84902e554d6beadfb70f685af0b1993782c8e5e5580210c93719d177",
+  "source": "f0c8154808bef431c76553a47fd9727d3ba8bd53",
+  "source_files": 132,
+  "original_core_files_unchanged": 66,
+  "registered_adapters": 6,
+  "source_manifest": "416ae03c37f941ff3fc9e45d7561640564238b54bfdc63d68802cd1664009870",
+  "actual_start": "2026-10-30T15:40:10.667197+00:00",
+  "supervisor_owner": 730334,
+  "ownership_chain_verified": true,
+  "predecessor_workers": [
+    729392,
+    729393,
+    729394,
+    729395,
+    729396,
+    729397,
+    729398,
+    729399
+  ],
+  "predecessor_starts_verified": true,
+  "all8free_verified": true,
+  "prepared": {
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf",
+    "bytes": 61661044,
+    "requests": 78259,
+    "protocol": {
+      "tasks": [
+        "hellaswag",
+        "arc_easy",
+        "arc_challenge",
+        "piqa",
+        "winogrande",
+        "boolq",
+        "openbookqa",
+        "sciq",
+        "lambada_openai"
+      ],
+      "max_length": 4096,
+      "limit": null,
+      "num_fewshot": 0,
+      "seed": 42,
+      "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+      "tokenizer_files": {
+        "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+        "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+        "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+      },
+      "packages": {
+        "lm-eval": "0.4.13",
+        "transformers": "5.9.0",
+        "tokenizers": "0.22.2",
+        "datasets": "4.8.5",
+        "torch": "2.14.1"
+      }
+    }
+  },
+  "budget": {
+    "prior_seconds": 72844.66776438212,
+    "preparation_seconds": 52.26113309012726,
+    "expected_seconds": 7200.0,
+    "cleanup_estimate_seconds": 660,
+    "projected_node_hours": 22.432480249297846,
+    "report_due": true,
+    "former_24h_exceeded": false,
+    "hard_node_hours": null,
+    "hard_deadline": null,
+    "timeout_seconds": null,
+    "time_policy": {
+      "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_time_policy_20261030.json",
+      "sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+    }
+  },
+  "identities": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part1/P300-parent-identity.json",
+      "sha256": "7e2ee603531e74e15e2d8f4048d0c49dcdf6ca55d5b00b20496ba98a5e9f3219"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part1/P1T-parent-identity.json",
+      "sha256": "f2f59ba4c29ec046311d3e431045d618ab7a5a6949c3acfa18c5424e3b3af21f"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part2/S72-parent-identity.json",
+      "sha256": "9bb40306896d6adb9a3ba6f891f09663fdf7a132fa9208f7dc5e0541259dd86a"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part1/P300-student-identity.json",
+      "sha256": "2a625478fe104db63b68b0ebeeaf6e52455b659c60d8a409fec26faa65aeb379"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part1/P1T-student-identity.json",
+      "sha256": "ff2663dba746707e93e56a43b2e220304774f534d64feb91f8e7ae0a02c67c2b"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/identities/part2/X72-student-identity.json",
+      "sha256": "05b517fbb7a7c01dec93e0a8e7237a78a343b70e37d758ad738d13bf0f02da9b"
+    }
+  },
+  "gate_passed": [
+    "P300-parent"
+  ],
+  "gates_remaining": 5,
+  "scoring_pending": true,
+  "full_stage_complete": false,
+  "gpus": [
+    {
+      "index": 0,
+      "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 7168.0,
+      "utilization_percent": 0.0,
+      "pids": [
+        730375
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 2,
+      "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 3,
+      "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 4,
+      "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 5,
+      "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 6,
+      "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    },
+    {
+      "index": 7,
+      "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+      "name": "NVIDIA B200",
+      "memory_total_mib": 183359.0,
+      "memory_used_mib": 0.0,
+      "utilization_percent": 0.0,
+      "pids": []
+    }
+  ]
+}
