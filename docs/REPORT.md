@@ -1,6 +1,6 @@
 # Stage1b FineWeb-Edu — report in progress
 
-Status: Part1 training complete; Part2 running, verified at19:31:23SGT: X72 3.2B8170/12207 updates (66.9%), eight GPUs99–100%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
+Status: Part1 training complete; Part2 running, verified at20:00:56SGT: X72 3.2B10020/12207 updates (82.1%), eight GPUs99–100%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
 
 Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init and0.8B findings await Part2. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
 
@@ -49,3 +49,5 @@ At 18:30:58 SGT, Part2 healtha05 confirmed continued X72 progress at about0.9601
 At19:01:20SGT, healtha06 independently verified continued X72 progress at about0.95907seconds/update, unchanged source/input/runtime/provenance and ten prior fits; no new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1901`, rawSHA `d5835e16272b4be88214180d4a2b027b39138e8668e1759f851eda8060ee10e6`. Remaining training is about94minutes plus validation/save; provisional X72 completion20:40–20:50SGT and overall00:30–02:00SGT. Legacy loaded timeouts remain an open issue, with no imminent boundary at this snapshot.
 
 At19:31:23SGT, healtha07 independently verified X72 at8170/12207steps, about0.96446seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1931`; rawSHA `a7ece95cd1a13aa9574f487e445c3977ecd137c85ff31db8d26947b0501a10f3`. Remaining training is about65minutes plus validation/save. X72ETA20:40–20:50SGT, full stage00:30–02:00SGT provisional. Legacy timeouts remain monitored, not imminent at this snapshot; downstream actual evidence remains pending.
+
+At20:00:56SGT, healtha08 independently verified X72 at10020/12207steps, about0.95827seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_2000`; rawSHA `05a07193f23024ebcc64996e994c1aa3a08a15a914ed0b619947b726e887cf37`. Remaining training is about35minutes plus validation/save. X72ETA20:40–20:50SGT; full stage00:30–02:00SGT provisional. Legacy timeouts remain monitored, not imminent at this snapshot; downstream actual evidence remains pending.
