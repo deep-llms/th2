@@ -6,7 +6,9 @@ Continuation tái dùng P300-parent batch2, chấm năm model còn lại ở bat
 
 File kết quả chung: [A2_STAGE1B_FWE_RESULTS_20261030.md](A2_STAGE1B_FWE_RESULTS_20261030.md). Chưa khẳng định scores/CI/replay của continuation đã hoàn tất.
 
-Còn mở: launch/receipt continuation, năm model, paired CI, replay, final report và native handoff. Các ghi chú chờ lựa chọn phía dưới là lịch sử, đã được Option 2 thay thế.
+Continuation source `27087e1` đã khởi chạy 03:03:08 SGT; health `dbce800` lúc 03:05:45 xác minh năm scorer batch2 hoạt động trên GPU 0–4, P300-parent reuse PASS, full-set LL FLAG diagnostic và pipeline tiếp tục. Xem [receipt](results/a2_stage1b_fwe_20261030/option2_startup_0305/receipt.json).
+
+Còn mở: hoàn tất năm model, paired CI, replay, final report và native handoff. Các ghi chú chờ lựa chọn phía dưới là lịch sử, đã được Option 2 thay thế.
 
 ---
 

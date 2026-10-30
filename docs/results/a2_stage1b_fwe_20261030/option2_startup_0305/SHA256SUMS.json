@@ -1,0 +1,11 @@
+{
+  "receipt.json": "768dff57c515fd642b36913d8a3037e5482353288860561ca9ef9718a15521da",
+  "source-manifest.json": "2ba1b04f07a6138fd496f3d4c20c4f62de306e17e898fa24fd7763d3390ef5c7",
+  "stage-budget.json": "c14862131f658728758776c58a2c4adc07e13ff2282e353e7f517c46371ab61e",
+  "plan.json": "ac2be1e3eb55de391b91a5e2ef590420d20d47e2e4fb1d9343e6afae7007e0ce",
+  "continuation-admission.json": "0f985201f07f96984f83ef3758e9ae9683a5e3e6a32740a95593b907ac34a629",
+  "regression-admission.json": "e7c6c6fa0a9c8a0a4c09177e48f9ed3bd3b48bf8117608d9e7d672423fdb4918",
+  "supervised/reclaim.json": "ceac6f66e4e3517c948a5cdfede079d33749edcb2aa2221ef3c06ec76e5ce568",
+  "supervised/gpus-free-before-training.json": "a21bd0175a123abc20b0b5749d9fb57d430ef7ebb8c5c72918bc5d1f08bbcfbe",
+  "supervised/run/downstream/option2.json": "63a919ea89c5b0eef2b0cf20666da39617b70270321add2e8456be5d1d101a84"
+}

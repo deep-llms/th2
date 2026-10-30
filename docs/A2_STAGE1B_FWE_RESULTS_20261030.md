@@ -2,9 +2,9 @@
 
 File kết quả chung cho đợt **Stage1b FineWeb-Edu bắt đầu ngày 30/10/2026**, gồm Part1, Part2 và downstream liên quan. Đặt cùng nhóm file kết quả A2; [kết quả Stage1 DCLM](A2_STAGE1_RESULTS_20261030.md) là đối chiếu của đợt trước. Artifact của đợt FWE nằm trong `docs/results/a2_stage1b_fwe_20261030/`.
 
-Cập nhật báo cáo: **31/10/2026 02:16 SGT**. Bằng chứng khoa học mới nhất là phép tính lại độc lập lúc **31/10/2026 00:39:22 SGT**, được nhận lúc 01:00 SGT. Tất cả thời gian bên dưới dùng SGT.
+Cập nhật trạng thái: **31/10/2026 03:05:45 SGT** (receipt nhận khoảng 03:09). Continuation Option 2 đang chạy; phép tính lại batch độc lập mới nhất vẫn là **00:39:22 SGT**. Tất cả thời gian bên dưới dùng SGT.
 
-**Training đã hoàn tất và được xác minh đủ 15/15 fit. Downstream sáu model chưa hoàn tất.** Kết quả NLL giữ nhãn `persists`, `replicated`, `anneal first`. Downstream đã vượt qua sáu gate đại diện nhưng dừng vì một request trong phép so sánh P300 toàn bộ vượt ngưỡng LL đang được mã thực thi áp dụng. Lỗi đã được tái hiện độc lập; chưa có kết quả năm model còn lại hoặc paired CI.
+**Training đã hoàn tất và được xác minh đủ 15/15 fit. Downstream sáu model chưa hoàn tất.** Kết quả NLL giữ nhãn `persists`, `replicated`, `anneal first`. Lượt downstream đầu dừng vì một request vượt ngưỡng LL full-set trong mã cũ. Người dùng đã xác nhận full-set LL chỉ là diagnostic và continuation Option 2 hiện đang chấm năm model còn lại ở batch2. Lỗi đã được tái hiện độc lập; chưa có kết quả năm model còn lại hoặc paired CI.
 
 ## Kết luận đã xác minh
 
@@ -213,14 +213,20 @@ P300 score SHA batch1: `231aea3bddb4be446aa949cef479cc0e4224720792f8892ad4b7dbdc
 
 **Option 2 đã được phê duyệt.** Accuracy rule là tiêu chí chọn batch và đã PASS. Full-set LL max 0.10355663299560547 tại request 71485 cùng token mismatch 0.0937258793693% chỉ là diagnostic. Ngưỡng 0.1 nats/token áp dụng cho sáu gate đại diện. Tái dùng scores P300-parent batch2 và chạy năm model còn lại; cập nhật kết quả thực tế sau receipt. Deviation đã ghi trong [REPORT.md](REPORT.md).
 
+## Trạng thái continuation đã xác minh
+
+Khởi chạy **31/10 03:03:08 SGT**, source `27087e1ca34b605e32c49cb5b1f1a8f23bd39500`, launch `64dc68b`, health `dbce800`. Snapshot **03:05:45** xác minh năm scorer batch2 hoạt động trên GPU 0–4; P300-parent batch2 tái dùng thành công, cả sáu identity và 66 file scoring/model gốc không đổi. Full-set LL giữ FLAG diagnostic và pipeline tiếp tục. Kiểm thử CPU: 14 orchestration/admission + 8 gate PASS. [Receipt startup](results/a2_stage1b_fwe_20261030/option2_startup_0305/receipt.json).
+
+Ledger launch 85,020.146618 giây; dự toán thêm 7,200 giây và 660 giây dự phòng là 25.80004 node-giờ, report-only; timeout null. Pipeline có scoring năm model, paired bootstrap, replay harness độc lập và tính lại CI, rồi native burn handoff. Các mục này chưa được đánh dấu hoàn tất trước receipt thực tế.
+
 ## Các vấn đề còn mở
 
 | Vấn đề | Cần giải quyết |
 |---|---|
-| **Triển khai quyết định batch đã chốt** | Người dùng đã chọn Option 2: full-set LL là diagnostic, batch2 giữ nguyên; continuation được phép launch ngay. |
-| **Năm model chưa chấm production** | P1T-parent, S72-parent, P300-student, P1T-student, X72-student. P300-parent đã có cả batch1 và batch2 để tái dùng sau quyết định; chưa có bộ production sáu model hoàn chỉnh. |
+| **Hoàn tất continuation batch2** | Option 2 đã launch và năm scorer đang hoạt động; chờ artifact hoàn chỉnh. |
+| **Năm model đang chấm production** | P1T-parent, S72-parent, P300-student, P1T-student, X72-student. P300-parent đã có cả batch1 và batch2 để tái dùng sau quyết định; chưa có bộ production sáu model hoàn chỉnh. |
 | **Paired CI và replay kết quả cuối** | Cần bộ scores/replays sáu model cùng batch, paired bootstrap 10,000 resamples seed 0 và xác minh độc lập. Replay đã có chỉ xác minh lỗi P300. |
-| **Bàn giao sau một lượt tiếp tục** | Nếu được tiếp tục, cần fresh PID/start/source/ownership/free-GPU checks trước launch, rồi native terminal và burn progress sau khi hoàn tất. Handoff của job lỗi hiện đã được xác minh. |
+| **Bàn giao sau một lượt tiếp tục** | Đã xác minh fresh PID/start/source/ownership/free-GPU checks trước launch; còn cần native terminal và burn progress sau khi hoàn tất. Handoff của job lỗi hiện đã được xác minh. |
 | **Chốt toàn Stage1b** | Bổ sung downstream, paired CI, compute ledger cuối và decision/report hoàn tất sau khi các điều kiện trên đạt. Báo cáo này tổng hợp kết quả hiện có, không chứng nhận toàn Stage1b hoàn tất. |
 
 Các hướng từng được đưa ra (lịch sử): **(1)** chuyển cả sáu model sang batch1, tái dùng P300 batch1 và giữ nguyên diagnostic FAIL; **(2)** xác nhận ngưỡng 0.1 chỉ áp dụng cho gate đại diện, giữ full-set LL là diagnostic và tiếp tục batch2 theo accuracy rule; **(3)** giữ downstream dừng để điều tra thêm. **Đã được người dùng chọn hướng (2), yêu cầu launch ngay:** tái dùng P300-parent batch2, chấm năm model còn lại ở batch2 rồi paired bootstrap và independent replay. Kiểm tra khoa học log/flag/continue; kết quả lỗi hoặc thiếu không được ghi thành PASS. Không chạy thêm training, T17, LR hoặc exposure experiment ngoài phạm vi đã đăng ký.

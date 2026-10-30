@@ -1,0 +1,17 @@
+{
+  "original_files": 66,
+  "unchanged": true,
+  "additions": {
+    "eval/a2_stage1b_batch_compare.py": "90bb0033bb7b597ed960b5af61127b62f5cca4c912cc96a065f8f06cda20bd88",
+    "eval/a2_stage1b_batch_report.py": "2852861e687131e6b182f19fa9f5c41001e6c54ba57d8867a77165f5e7a9d3c2",
+    "eval/a2_stage1b_check.py": "99c95eabc723d2a5b9146e82f43836e5700c81587fafbb3edc26213f7cc68d7c",
+    "eval/a2_stage1b_final_plan.py": "2dfc58750aaba68488a48470aaf335e001523b5b33e73c5e50e2d6846b5eacba",
+    "eval/a2_stage1b_final_run.py": "1d8a77f5e796f708ab26448e5fec4450aaeb67daaa499e47121c263175f4ac3e",
+    "eval/a2_stage1b_parent_score.py": "196f416683659fdc8ac65203b83cce5b26154b690fe0ee4e4f0192319fe12a12"
+  },
+  "regression": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_regression_terminal_20261030.json",
+    "sha256": "094296ba1fa4139c38da13cf213baae74411abdd4b8b1cbdbb648905d9b9f888"
+  },
+  "regression_passed": true
+}
