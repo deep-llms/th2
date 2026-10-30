@@ -1,0 +1,11 @@
+{
+  "status": "running",
+  "started_at": "2026-10-30T09:19:54.888207+00:00",
+  "jobs": [
+    {
+      "name": "stage1b-part2",
+      "started_at": "2026-10-30T09:19:54.888394+00:00",
+      "status": "running"
+    }
+  ]
+}
