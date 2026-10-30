@@ -1,129 +1,269 @@
-# Option 2 — deviation được người dùng phê duyệt, 31/10/2026 SGT
+# Stage1b FineWeb-Edu — báo cáo hoàn tất
 
-Người dùng đã chọn **Option 2 và yêu cầu launch ngay**. Batch 2 được quyết định bởi accuracy rule đã PASS: MC mean +0.004797435 điểm phần trăm, LAMBADA 0. Ngưỡng **0.1 nats/token chỉ áp dụng cho sáu gate đại diện**, cả sáu đã PASS. Trên full set, LL là **diagnostic**: max **0.10355663299560547 nats/token**, request **71485**; token mismatch **1309/1396626 = 0.0937258793693%**. Giữ nguyên artifact FAIL lịch sử; không đổi thành PASS. Việc mã cũ dùng full-set LL làm hard stop là deviation đã được điều chỉnh theo xác nhận này.
+File kết quả chung cho đợt **Stage1b FineWeb-Edu bắt đầu ngày 30/10/2026**, gồm Part1, Part2 và downstream liên quan. Đặt cùng nhóm file kết quả A2; [kết quả Stage1 DCLM](A2_STAGE1_RESULTS_20261030.md) là đối chiếu của đợt trước. Artifact của đợt FWE nằm trong `docs/results/a2_stage1b_fwe_20261030/`.
 
-Continuation tái dùng P300-parent batch2, chấm năm model còn lại ở batch2, chạy paired bootstrap 10,000 seed0 và replay độc lập. Kiểm tra khoa học ghi PASS/FLAG và tiếp tục phần kế hoạch còn thực hiện được; không chờ trả lời hay tạo kết quả thay thế cho artifact thiếu. Native supervisor kiểm tra đúng quyền sở hữu GPU trước khi thu hồi burn. Trạng thái thực thi hoàn tất được tách khỏi trạng thái kết quả khoa học đầy đủ/đã xác minh.
+Cập nhật cuối: **31/10/2026 03:38:32 SGT**. **Stage1b đã hoàn tất và được xác minh:** 15/15 training fits, sáu-model downstream batch2, paired CI, replay độc lập và native handoff. Nhãn CulturaX NLL: `persists`, `replicated`, `anneal first`. Chi tiết downstream và giới hạn nằm cuối file.
 
-File kết quả chung: [A2_STAGE1B_FWE_RESULTS_20261030.md](A2_STAGE1B_FWE_RESULTS_20261030.md). Chưa khẳng định scores/CI/replay của continuation đã hoàn tất.
+## Kết luận đã xác minh
 
-Continuation source `27087e1` đã khởi chạy 03:03:08 SGT; health `dbce800` lúc 03:05:45 xác minh năm scorer batch2 hoạt động trên GPU 0–4, P300-parent reuse PASS, full-set LL FLAG diagnostic và pipeline tiếp tục. Xem [receipt](results/a2_stage1b_fwe_20261030/option2_startup_0305/receipt.json).
+| Hạng mục | Kết quả |
+|---|---|
+| LR chung trên FWE | **1e-3**; LR tốt nhất riêng của P300 và P1T cũng là 1e-3 |
+| E ở 3.2B | **+0.023461150403907727 nats**, nhãn `persists` |
+| Đối chiếu hiệu ứng E với DCLM | `replicated` theo quy tắc đã đăng ký |
+| A_init ở 3.2B | **+0.01299365118963669 nats**, nhãn `anneal first` |
+| A_init 3.2B / 0.8B | **0.30606568523151645**, còn khoảng 30.61% mức ở 0.8B |
+| Training | 15 fit hoàn tất; full LR schedule, exact 8-rank order, save/reload sai khác 0, không divergence |
+| DCLM P300 regression | 9 task accuracy khớp chính xác Stage1; LL max difference = 0 trên 78,259 requests |
+| Sáu gate FWE đại diện theo ngưỡng sửa đổi | Cả sáu PASS; mỗi model 0/502 token mismatch |
+| P300 full batch1 và batch2 | Cả hai đủ 78,259 scores; tiêu chí MC mean/LAMBADA đạt |
+| Full LL trong mã cũ; diagnostic theo Option2 | **FAIL**, max 0.10355663299560547 > 0.1 nats/token; 1 request vượt ngưỡng |
+| Hoàn tất toàn Stage1b | **COMPLETE**, gồm downstream, CI, replay và handoff |
 
-Còn mở: hoàn tất năm model, paired CI, replay, final report và native handoff. Các ghi chú chờ lựa chọn phía dưới là lịch sử, đã được Option 2 thay thế.
+## Thiết lập và cách đọc kết quả
 
----
+Thực nghiệm theo Stage1b spec v1.1, dùng layer set S1, heal trên FineWeb-Edu, document shuffle một lần bằng seed 2030, pack 4096 và các prefix lồng nhau. P300 và P1T là hai parent của đối chiếu training length; X72 là student từ S72 trong đối chiếu initialization/annealing.
 
-# Stage1b FineWeb-Edu — report in progress
+NLL càng thấp càng tốt. LR được chọn bằng trung bình **CulturaX tuning NLL** của P300 và P1T. **CulturaX final NLL** là endpoint quyết định; FWE held-out chỉ dùng chẩn đoán.
 
-Status: All15 registered training fits are complete. Final downstream failed31Oct00:12:10SGT on the full P300 batch comparison: max0.10355663299560547 nats/token exceeds0.1. Six representative gates passed, and the accuracy rule accepts batch2; the full numerical failure is retained. Five other production scores and paired CI are absent. Native failed-job burn handoff verified00:33:07SGT. This is not a full completion report.
+- Δ_post = NLL student − NLL parent tương ứng.
+- E = Δ_post(P1T) − Δ_post(P300). E dương nghĩa là P1T chịu mức tăng NLL lớn hơn P300 so với parent tương ứng, dù NLL tuyệt đối của student P1T có thể thấp hơn.
+- A_init = NLL(X72 student) − NLL(P300 student). A_init dương nghĩa là P300 student có NLL thấp hơn X72 tại cùng budget.
+- Các nhãn là kết luận của recipe và ngưỡng đã đăng ký; chúng không tự chứng minh quan hệ nhân quả riêng của LR state hay exposure.
 
-Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init(3.2B)=+0.01299365118963669 (`anneal first`); E(0.8B)=+0.02281977941126856; A_init(0.2B)=+0.07847837360805077 and A_init(0.8B)=+0.04245379935293281; A(3.2B)/A(0.8B)=0.30606568523151645. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
+## Chọn LR và toàn bộ 15 fit
 
-## Downstream deviation authorized on 30 October 2026
+Grid ban đầu gồm ba LR 1e-4, 3e-4, 1e-3 trên hai arm tại 0.2B. Vì optimum nằm ở biên trên, đã chạy thêm đúng một cặp 3e-3. Tổng cộng **8 fit grid + 7 fit còn lại = 15 fit**. Không mở rộng LR thêm.
 
-This records the user decision following the failed FineWeb-Edu P300 parent numerical gate. The final `REPORT.md` must incorporate this deviation together with actual comparison results; this document contains no new GPU result.
+| LR | Trung bình tuning NLL của P300 và P1T tại 0.2B |
+|---|---:|
+| 0.0001 | 3.138225751921 |
+| 0.0003 | 3.068906872385 |
+| 0.001 | 3.024409690999 |
+| 0.003 | 3.052233397952 |
 
-## Preserved failure
+LR 1e-3 thắng cả lựa chọn chung và lựa chọn riêng từng arm. Lựa chọn trên FWE trùng DCLM nhưng được tính lại độc lập.
 
-The original batch2 gate failed before production scoring at 30Oct14:04:31SGT: batch/production error **0.011164188385009766 nats/token**, exceeding the original 0.01 threshold. Manual-reference error was 0 and recorded request-level greedy mismatches were 0. The native supervisor restored communicating burns and released its guard. Raw receipt SHA256: `5005f261292a74d572dd099ed19fcc322147bf58ceb25d6b101dcf918c0abe1b`; archive: [downstream_part1_gate_failure](results/a2_stage1b_fwe_20261030/downstream_part1_gate_failure/verification.json). The original receipt is unchanged.
+| Arm | Budget token | LR | CulturaX tuning NLL | CulturaX final NLL | FWE held-out NLL | Δ_post CulturaX |
+|---|---|---:|---:|---:|---:|---:|
+| P300 | 0.2B | 0.0001 | 3.151107981 | 3.169482734 | 2.624746937 | +0.308851408 |
+| P1T | 0.2B | 0.0001 | 3.125343523 | 3.142402422 | 2.597472721 | +0.333695089 |
+| P300 | 0.2B | 0.0003 | 3.084298514 | 3.103321913 | 2.553008765 | +0.242690587 |
+| P1T | 0.2B | 0.0003 | 3.053515231 | 3.071785913 | 2.521224369 | +0.263078580 |
+| P300 | 0.2B | 0.001 | 3.037060038 | 3.056353314 | 2.505082425 | +0.195721988 |
+| P1T | 0.2B | 0.001 | 3.011759344 | 3.030653544 | 2.478802482 | +0.221946210 |
+| P300 | 0.2B | 0.003 | 3.052761722 | 3.071304613 | 2.520658197 | +0.210673287 |
+| P1T | 0.2B | 0.003 | 3.051705074 | 3.069546812 | 2.518718774 | +0.260839479 |
+| P300 | 3.2B | 0.001 | 2.936589511 | 2.955812353 | 2.406616605 | +0.095181027 |
+| P1T | 3.2B | 0.001 | 2.908373912 | 2.927349511 | 2.376905284 | +0.118642177 |
+| X72 | 3.2B | 0.001 | 2.949474459 | 2.968806004 | 2.420236999 | -0.073345998 |
+| P300 | 0.8B | 0.001 | 2.977784103 | 2.997096324 | 2.444843807 | +0.136464998 |
+| P1T | 0.8B | 0.001 | 2.949299475 | 2.967992111 | 2.416288128 | +0.159284777 |
+| X72 | 0.8B | 0.001 | 3.020255002 | 3.039550123 | 2.488052950 | -0.002601879 |
+| X72 | 0.2B | 0.001 | 3.116279572 | 3.134831688 | 2.583314970 | +0.092679686 |
 
-The DCLM P300 regression is independently PASS: all nine task accuracies match Stage1 exactly and maximum aligned per-request LL difference is zero. This checks a different checkpoint and does not substitute for the FWE comparison.
+Các giá trị trong bảng được làm tròn; receipt và artifact gốc giữ đầy đủ độ chính xác. Training Part1 kết thúc **30/10 12:43:17**, Part2 kết thúc **30/10 23:21:56**. Native terminal và burn handoff của cả hai phần đã được kiểm tra độc lập.
 
-## Authorized replacement protocol
+## Đối chiếu DCLM và FWE trên CulturaX final
 
-1. Complete the five registered Part2 heals first, in the original order. Downstream and other reported-only failures never block these heals.
-2. After independent native terminal/burn handoff, evaluate all six FWE models in one screen: P300/P1T/S72 parents and P300/P1T/X72 3.2B students. Retain the exact 78,259 canonical requests, fixed nine tasks, zero-shot seed42, FP32 parameters/BF16 AMP, and paired bootstrap10,000 resamples seed0.
-3. For every model, record the representative batch1/batch2 per-token check. Hard numerical limits are manual-reference error ≤0.00002 nats/token, batch difference ≤0.1 nats/token, and greedy token mismatch rate ≤0.1% of compared continuation tokens. The original 0.01 batch limit is diagnostic. Historical request-level exact-match booleans are not token mismatch counts; collect token argmax evidence explicitly.
-4. Before other production scoring, score the entire FWE P300 parent request set at both batch1 and batch2. Accept batch2 if absolute differences in the eight-task MC mean and LAMBADA accuracy are each ≤0.1 percentage points. Individual MC tasks are reported, not separate pass thresholds. Reuse its batch2 scores for production on PASS. Otherwise use batch1 for all six models, reusing its batch1 scores, and explicitly record departure from Stage1's batch2 protocol.
-5. Report each task's accuracy difference, prediction flips (including changes between two wrong MC choices), per-request LL max/mean differences, and whether differing requests are in padded pairs. Preserve all deciding-check scores and SHA locks. LAMBADA correctness flips and actual generated-token prediction flips must be distinguished; the historical score format alone stores only exact-match correctness.
-6. Time limits are report-only under the subsequent 17:30 SGT user override. Continue the registered work and report overruns; retain numerical validity and ownership checks.
+Cả hai dataset chọn LR chung và own-best của P300/P1T là 1e-3. Hiệu dưới đây là FWE trừ DCLM, đơn vị nats.
 
-## Implementation and actual results
-
-Part2 launch was submitted as `ff50d1bc26ea23b5564a61875ea8f51658965e71`, freezing training source `42f7820ce72d932ff3d75edc96e16538dbd85df5`. GPU startup was independently verified at30Oct17:19:54SGT: supervisor725565, eight free GPUs after exactknownburn723690–723697 reclaim; source126files42f7820 and27corehashmatch. Follow-up health at17:25:34SGT verified310/12207updates and eight GPUs99%; rawSHA6674ab36afc9c0ba3e96ec1a10f299aac00ca718c0d822efb5557a746e918a58. The new downstream gate and comparison helpers are local preparation only; final six-model orchestration, actual GPU gates, complete batch comparison and final confidence intervals remain pending. No BF16-root-cause conclusion is claimed from the original failure alone.
-
-
-## Remaining evidence required
-
-Actual Part2 terminal/source commit and five new fit receipts; independent supervisor/burn handoff; full78259 P300 batch1/batch2 decision; six-model production scores and every-model numerical checks; prediction flips and padded-pair LL diagnostics; paired confidence intervals; final compute ledger and cross-dataset E/A tables. Reported-only failures are recorded and never cancel registered heals.
-
-30Oct2026 USER OVERRIDE (17:30 SGT turn): No hard runtime/deadline stop; time estimates and former20/24nodeh/31Oct04:06 deadline are REPORT-ONLY. Continue registered work correctly and report overruns/issues; repeat outstanding issues/questions at END OF EVERY REPLY, including watcher replies. Preserve numerical validity and ownership checks; never mark failed diagnostics as passed. New immutable authority resources/a2_stage1b_time_policy_20261030.json SHA e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac. Existing Part2 source42f7820 remains frozen and healthy; its already-running supervisor timeout32893sec is still embedded (not live-patched). Existing watcher894175 likewise still has old04:06 process deadline; reconcile same-watch continuation before then if task remains unfinished, no duplicate watcher. Future final downstream launcher must use report-only ledger/no total-time termination. This latest instruction supersedes all older harddeadline/cutdownstream text below.
-
-At 17:31:48 SGT, Part2 X72 3.2B was at 700/12,207 updates with all eight GPUs at 99% utilization; source `42f7820` and ten inherited fit receipts were unchanged. No new final validation is available. Evidence: `results/a2_stage1b_fwe_20261030/part2_1731`.
-
-The final six-model orchestration is CPU-prepared: ten integration/admission tests and eight revised-gate tests passed, including score-preserving argmax capture on a pinned tiny native model. All 66 original regression scoring/model files remain byte-identical; six new adapters implement the authorized checks, comparison and final orchestration. Actual full-model GPU checks and full P300 batch comparison remain pending. Future downstream has no total elapsed-time termination under the latest user time policy; projected and actual usage will still be reported.
-
-At 18:01:31 SGT, source126files42f7820, the ten inherited fit receipts and native ownership were verified unchanged. Raw health SHA256: `0610ffc9e6c2b7d1366d5474f9375d8736b5df7b51664c6036ea122d9142a828`; archive: `results/a2_stage1b_fwe_20261030/part2_1801`.
-
-The existing watcher was continued serially in the same session, state, thread and pane under the exact time-policy SHA. Old PID894175 exited before PID1003079 acquired the watch; no overlapping watcher or GPU restart occurred. Its deadline is now null, with the next scheduled check at18:30SGT. The frozen Part2 process still contains its legacy job/per-fit timeouts and admission checks; these remain an open operational issue to resolve before they can interrupt unfinished registered work.
-
-The independent final verifier is CPU-prepared (two artifact/gate verification tests passed); two watcher policy tests also passed. The verifier recomputes six-model scores/replays, paired intervals, full P300 batch decision and token diagnostics from SHA-bound artifacts. Actual final GPU evidence and a separate fresh native-burn handoff are still required; no final downstream success is claimed.
-
-At 18:30:58 SGT, Part2 healtha05 confirmed continued X72 progress at about0.96016seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1830`; rawSHA `0073055c5d155d3abfc0fc4539a1a2082c1d6cb910b7451acdbaa5660a7202d0`. X72 completion is provisionally20:40–20:50SGT; all heals23:30–00:00 and full downstream/report00:30–02:00. The local Part2 terminal verifier is syntax-checked only; actual15-fit terminal and fresh native-burn evidence remain required. Legacy loaded Part2 timeouts remain monitored, not imminent at this snapshot.
-
-At19:01:20SGT, healtha06 independently verified continued X72 progress at about0.95907seconds/update, unchanged source/input/runtime/provenance and ten prior fits; no new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1901`, rawSHA `d5835e16272b4be88214180d4a2b027b39138e8668e1759f851eda8060ee10e6`. Remaining training is about94minutes plus validation/save; provisional X72 completion20:40–20:50SGT and overall00:30–02:00SGT. Legacy loaded timeouts remain an open issue, with no imminent boundary at this snapshot.
-
-At19:31:23SGT, healtha07 independently verified X72 at8170/12207steps, about0.96446seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1931`; rawSHA `a7ece95cd1a13aa9574f487e445c3977ecd137c85ff31db8d26947b0501a10f3`. Remaining training is about65minutes plus validation/save. X72ETA20:40–20:50SGT, full stage00:30–02:00SGT provisional. Legacy timeouts remain monitored, not imminent at this snapshot; downstream actual evidence remains pending.
-
-At20:00:56SGT, healtha08 independently verified X72 at10020/12207steps, about0.95827seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_2000`; rawSHA `05a07193f23024ebcc64996e994c1aa3a08a15a914ed0b619947b726e887cf37`. Remaining training is about35minutes plus validation/save. X72ETA20:40–20:50SGT; full stage00:30–02:00SGT provisional. Legacy timeouts remain monitored, not imminent at this snapshot; downstream actual evidence remains pending.
-
-At20:31:21SGT, healtha09 independently verified X72 at11920/12207steps, about0.96017seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_2031`; rawSHA `7ba47ccb190f2a23480ac12314dbd82b0a55d43a57567350bb2b00a8c94bff99`. Remaining training is about5minutes plus validation/save; the next health check must verify the X72 final result and transition to P3000.8B. Full stage00:30–02:00SGT remains provisional. Legacy timeouts remain monitored, not imminent; downstream actual evidence remains pending.
-
-At30Oct21:01:08SGT, healtha10 verified X723.2B complete: finalNLL2.9688060036997257, tuningNLL2.9494744594565536, FWEheldout2.420236999085872; full LR schedule, exact8rank order, roundtrip0 and no divergence. A_init(3.2B)=X72−P300=+0.01299365118963669 nats, label `anneal first`; FWEheldout A=+0.013620394355744914 is diagnostic. This contrast does not isolate LR state. P3000.8B is active1480/3051 under the same supervisor725565; all ten prior fit receipts and source126files42f7820 are unchanged. Evidence: [receipt](results/a2_stage1b_fwe_20261030/part2_2101/receipt.json), [X72 summary](results/a2_stage1b_fwe_20261030/part2_2101/x72_3_2b_summary.json); rawSHA `fe1de27675a49a7287db250add3cf4dab14cfd07cd25c7e4b9926e1b2d8b12ae`. All heals23:30–00:00/full00:30–02:00SGT remains provisional. Four short fits, terminal/burn and downstream evidence remain pending. Legacy loaded timeouts remain monitored, not imminent.
-
-At30Oct21:31:18SGT, healtha11 verified P3000.8B complete: CulturaX final2.9970963238272885, tuning2.9777841032682884, FWEheldout2.444843807379002, delta_post0.1364649979704735. Full LR schedule, exact8rank order, roundtrip0 and no divergence were verified; training2929.928263354115seconds. P1T0.8B is active210/3051 under supervisor725565 with eight GPUs98–99%; source126files42f7820, inputs/runtime/provenance and eleven prior fit receipts unchanged. Evidence: [receipt](results/a2_stage1b_fwe_20261030/part2_2131/receipt.json), [P300 summary](results/a2_stage1b_fwe_20261030/part2_2131/p300_0_8b_summary.json); rawSHA `dfcfd05ddf392d3eacc65e96829e36af3d4ace840a813c656e8558a7698bdab5`. P1T0.8B/X720.8B/X720.2B, terminal/burn and downstream remain pending; E/A at0.8B cannot yet be computed. ETA all heals23:30–00:00/full00:30–02:00SGT remains provisional. Legacy timeouts remain monitored, not imminent. Next read-only health collection raises the per-artifact read cap from5MB to10MB to accommodate the growing runs.json; training source is unchanged.
-
-Healtha12, retrieved22:30SGT, independently verifies the22:01:42SGT snapshot: P1T0.8B2110/3051(69.2%), eight GPUs98–99%, unchanged source126files42f7820/inputs/runtime/provenance and twelve prior fit receipts; no new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_2201`; rawSHA `104b51a351d20e5eea4f1966820ac21408091e84daba6d37b461fdd9c5fc1cdd`. Fresh healtha13 is needed to verify P1T completion and X720.8B transition.
-
-At30Oct22:32:12SGT, healtha13 verified P1T0.8B complete: final2.967992110983558, tuning2.949299474694987, FWEheldout2.416288128300919, delta_post0.15928477738174207; full LR schedule, exact8rank order, roundtrip0 and no divergence. E(0.8B)=+0.02281977941126856; diagnostic FWEheldout E=+0.024077046610296193. E(3.2B)/E(0.8B)=1.028105924298394. X720.8B is active870/3051 under supervisor725565, eight GPUs98–99%; source126files42f7820, inputs/runtime/provenance and twelve prior fit receipts unchanged. Evidence: [receipt](results/a2_stage1b_fwe_20261030/part2_2232/receipt.json), [P1T/E summary](results/a2_stage1b_fwe_20261030/part2_2232/p1t_0_8b_summary.json); rawSHA `0a76f23d1bedd186cd9b39ac27dc242440a585e06582501c3880ffcbe2bf9500`. X720.8B/X720.2B, terminal/burn and downstream remain pending. All heals23:30–00:00/full00:30–02:00SGT remains provisional; legacy timeouts remain monitored, not imminent.
-
-At30Oct23:01:19SGT, healtha14 independently verified X720.8B2690/3051(88.2%), about0.960149seconds/update, eight GPUs98–99%, unchanged source126files42f7820/inputs/runtime/provenance and thirteen prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_2301`; rawSHA `0115b32f5addca4975da6fb3e1625166ddeb7b0953c1dd3d4578db6603cc22d8`. Conservative elapsed ledger is19.619330102606146nodehours; report the20hour crossing at the next check and continue under the user override. Remaining training is about6minutes plus validation/save, then X720.2B. The next receipt must check both remaining fit results and, if terminal, independently verify native burn progress before final downstream. ETA all heals23:30–00:00/full00:30–02:00SGT remains provisional; legacy timeouts remain monitored, not imminent. A local bundle builder is syntax-checked and requires the actual independent15fit terminal verification before writing Part2 SHA locks; no terminal result is inferred.
-
-
-30Oct23:31SGT: All15 training fits and native handoff independently verified; source42f7820 unchanged. Evidence: [part2_final](results/a2_stage1b_fwe_20261030/part2_final/verification.json). Native training ledger71801.2573sec (19.9448h); conservative controller ledger has crossed20h including gaps/handoff, reported before downstream. Legacy timeouts ended with Part2; final downstream has no elapsed-time termination.
-
-
-## Validated cross-dataset training comparison (30Oct23:31SGT)
-
-CulturaX final is the deciding endpoint. Differences below are FWE minus DCLM. Both datasets independently selected common LR1e-3 and own-best LR1e-3 for P300/P1T.
-
-| Budget | DCLM E | FWE E | Difference E | DCLM A_init | FWE A_init | Difference A_init |
+| Budget | DCLM E | FWE E | Hiệu E | DCLM A_init | FWE A_init | Hiệu A_init |
 |---|---:|---:|---:|---:|---:|---:|
 | 0.2B | 0.021096293348 | 0.026224221566 | +0.005127928219 | 0.072724703707 | 0.078478373608 | +0.005753669902 |
 | 0.8B | 0.020786422564 | 0.022819779411 | +0.002033356848 | 0.038910028864 | 0.042453799353 | +0.003543770489 |
 | 3.2B | 0.021670884570 | 0.023461150404 | +0.001790265834 | 0.012113131874 | 0.012993651190 | +0.000880519316 |
 
-Ratios 3.2B/0.8B: DCLM E=1.042549986824, A_init=0.311311305279; FWE E=1.028105924298, A_init=0.306065685232. Both yield `persists` and `anneal first`; FWE length finding is `replicated`. These are registered single-seed recipe comparisons, not isolated LR-state or exposure effects. Own-corpus held-out remains diagnostic.
+E vẫn dương ở 3.2B và gần mức 0.8B trên cả hai dataset. A_init giảm theo budget nhưng vẫn dương ở 3.2B.
 
-Actual Part1 source7dd9da0, Part2 source42f7820, inherited preflight provenance9f5601d with27core hashes unchanged. All15 fits use full registered LR schedules, exact8-rank coverage, roundtrip0 and no divergence. Final downstream sourcef0c8154 preserves all66 original regression eval/model files and adds only the six registered adapters. GPU validation is pending.
+| Dataset | E 3.2B / 0.8B | A_init 0.8B / 0.2B | A_init 3.2B / 0.8B |
+|---|---:|---:|---:|
+| DCLM | 1.042549986824 | 0.535031796356 | 0.311311305279 |
+| FWE | 1.028105924298 | 0.540961763109 | 0.306065685232 |
 
+## FWE held-out và giới hạn suy luận
 
-30Oct23:41:25SGT actual downstream startup verified: sourcef0c8154808bef431c76553a47fd9727d3ba8bd53/132files, original66 eval/model files byte-identical; six registered adapters. Native supervisor730334 reclaimed exact Part2burn729392–729399 with matching start identities, verified all8free, then started23:40:10. P300 revised gate PASS (manual0,batch0.011164188385009766,tokenmismatch0/502); original0.01 diagnostic failure retained. P1T gate running; full batch comparison and production scores pending. [Receipt](results/a2_stage1b_fwe_20261030/downstream_final_2341/receipt.json). Runtime cap/deadline null; priorledger72844.667764sec, forecast22.418nodeh before actual preparation.
+| Budget | E trên FWE held-out | A_init trên FWE held-out |
+|---|---:|---:|
+| 0.2B | 0.026352782881 | 0.078232544929 |
+| 0.8B | 0.024077046610 | 0.043209142918 |
+| 3.2B | 0.022921405400 | 0.013620394356 |
 
+Own-corpus held-out có thể đã xuất hiện trong pretraining của parent. Exposure ước tính trên FWE là khoảng 71% đối với P1T và 21% đối với P300; trên DCLM khoảng 25% và 7.5%. Vì vậy chỉ số held-out này không dùng để ra quyết định hoặc cô lập tác động exposure. Đây là các recipe một seed, chưa phải CI qua nhiều training seed.
 
-## Actual six-model numerical gates, 31Oct00:01SGT
+Điều kiện CulturaX lịch sử: Phase0A DCLM/S1 có E(0.05B) ≈ 0.019603985, E(0.2B) ≈ 0.010876774 tại LR 3e-4; Stage1 DCLM có E(0.2B) ≈ 0.021096293 tại LR 1e-3. Khác biệt recipe/LR cần được giữ khi diễn giải, không coi đây là ablation riêng corpus.
 
-All six revised gates PASS; each compares502 continuation tokens with0 mismatches. Original0.01 threshold diagnostics remain failures for P300-parent, P1T-parent and X72-student. [Gate evidence](results/a2_stage1b_fwe_20261030/downstream_final_0001/receipt.json).
+## Dữ liệu và kiểm tra trước training
 
-| Model | Manual nats/token | Batch nats/token | Token mismatch | Old0.01 diagnostic |
-|---|---:|---:|---:|---|
-| P300-parent | 0 | 0.011164188385 | 0/502 | FAIL |
-| P1T-parent | 2.65370244565e-07 | 0.0292415618896 | 0/502 | FAIL |
-| S72-parent | 0 | 0.00355625152588 | 0/502 | PASS |
-| P300-student | 0 | 0 | 0/502 | PASS |
-| P1T-student | 2.64221455628e-07 | 0 | 0/502 | PASS |
-| X72-student | 0 | 0.0159463882446 | 0/502 | FAIL |
+Heal stream là `HuggingFaceFW/fineweb-edu`, prepared revision `87f09149ef4734204d70ed1d046ddc9ca3f2b8f9`. Release gốc `v1.0.0` ở revision `fc9850dff5e2d0f8f776efe41b24a1c49556cfc5`: cả **60 file được chọn có cùng byte/LFS identity**, xác nhận release tương ứng với parent. Corpus shuffle có **29,999,992,832 tokens / 7,324,217 sequences**. Corpus gốc được giữ nguyên.
 
-Full P300 batch2 produced78259 scores (SHAae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3); batch1 remains active at snapshot00:01. No batch decision or final accuracy/CI is claimed. Source132filesf0c8154 and all six identity locks remain unchanged; ownership chain to supervisor730334 verified.
+| Kiểm tra | Kết quả đã xác minh |
+|---|---|
+| T1 | P300/P1T/S72 PASS; precision gaps lần lượt 0.0000913465 / 0.0001567571 / 0.0000776934 nats |
+| T3 | PASS; S72/X72 đủ điều kiện |
+| T7 | Document-ID overlap = 0, content-hash overlap = 0 |
+| T18 | EOS 29,155,864; share 0.000971862366; không flag |
+| T17 | Rerun trước science đã PASS; delta −0.000144556073 trong ±0.002 |
 
+| Parent | CulturaX final NLL | FWE held-out NLL |
+|---|---:|---:|
+| P300 | 2.860631325857 | 2.308842448625 |
+| P1T | 2.808707333602 | 2.256209722936 |
+| S72 | 3.042152001946 | 2.489572923114 |
 
-## Full P300 comparison failure — 31Oct00:33 SGT receipt
+P300/P1T CulturaX final khớp chính xác Phase0A. S72−P300 annealing gain là **0.18152067608948386 nats**. T14a có identical-rerun noise −0.000006436 và alternate-order difference −0.002285655; đây là hai phép đo đơn lẻ, không phải ước lượng variance hay CI nhiều seed.
 
-Both batches contain all78,259 scores. The accuracy rule accepts batch2: eight-task MC mean difference +0.004797435042615955 percentage points, LAMBADA0. Full token mismatches1,309/1,396,626 (0.09372587936927997%) meet0.1%. However, maximum per-request normalized LL difference0.10355663299560547 nats/token exceeds0.1, so the deployed full-comparison check failed and stopped before the five other production scores. This additional full-set enforcement is distinct from the six representative model gates, which all passed. No threshold or failed diagnostic has been changed. Independent failed-batch recomputation reproduced the result at31Oct00:39:22SGT (retrieved01:00SGT).
+## Downstream đã thực hiện
 
-Raw LL max0.5551643371582031, mean absolute0.011516675116967773; differences also occur in unpadded pairs. MC prediction flips by task: HellaSwag7, ARC-easy5, ARC-challenge2, PIQA2, WinoGrande2, BoolQ3, OpenBookQA0, SciQ1. LAMBADA has1 token-prediction flip and0 correctness flips. [Full diagnostic and SHA locks](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/batch_decision.json).
+Dùng cùng **78,259 canonical requests**, 9 task, zero-shot seed 42, FP32 parameters và BF16 AMP. Sáu model là P300/P1T/S72 parents và P300/P1T/X72 students ở 3.2B. Paired bootstrap 10,000 resamples, seed 0 đã hoàn tất; bảng CI cuối nằm bên dưới.
 
-Job exit1 at00:12:10; native supervisor restored eight burns and released its guard00:13:16. At00:33:07 the fresh native burn workers730982–730989 under730913 were verified, cycles1370→1380 and collective payload1521.18→1532.29GiB. [Failure and handoff receipt](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/receipt.json). Raw SHA256 `d2d4e9c420033532c7b8491305be387668f84a87b2c800c64ca317e3cd39286c`. All15 training results remain valid; full Stage1b downstream remains incomplete.
+DCLM P300 regression đã PASS với accuracy của cả 9 task giống hệt Stage1 và LL max difference bằng 0. Đây là checkpoint DCLM, không thay thế việc kiểm tra checkpoint FWE.
 
-Conservative elapsed ledger:20.8000654871 node-hours at failed downstream terminal00:12:10,21.1492799282 at the00:33:07 verification; these include controller gaps and are report-only. No runtime timeout caused this failure. The open protocol question is whether to extend fallback to batch1 for this full-set LL exceedance, or confirm that the0.1 numerical threshold applies only to the representative gates while the full-set batch choice follows the stated MC/LAMBADA rule. No GPU retry is submitted while this question is unresolved.
+Lần FWE downstream đầu tiên thất bại trước scoring tại ngưỡng batch 0.01: P300 parent có sai lệch **0.011164188385009766 nats/token**. Sau đó người dùng cho phép ngưỡng gate sửa đổi: manual ≤ 2e-5, batch ≤ 0.1 nats/token, greedy token mismatch ≤ 0.1%; ngưỡng cũ 0.01 giữ làm diagnostic.
 
-Independent CPU recomputation at31Oct00:39:22SGT verified all132 frozen source files, all78,259 aligned scores, binary-item accuracies, token/prediction flips, full per-request LL/padding rows and the exact recorded decision. Only one request exceeds0.1 nats/token: index71485, SHA `9efed81f23070082278106d9c7cc6ed4fcb255319d08f48d9fb46c5cb9ccb99d`, context53 tokens, continuation1 token, unpadded pair71484/71485, difference+0.10355663299560547, no greedy exact-match flip. This confirms the failed diagnostic; it does not establish successful final downstream completion. [Independent receipt](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/independent_failed_batch_replay.json), raw SHA `aa54ba2393fc93c28aeaca73f0a13c0bd9bf2b0ed7bcdae6341752dd209ddb46`. Awaiting clarification of threshold scope/fallback; no GPU retry.
+### Sáu gate đại diện trên GPU
+
+| Model | Manual nats/token | Batch nats/token | Token mismatch | Gate sửa đổi | Diagnostic ngưỡng cũ 0.01 |
+|---|---:|---:|---:|---|---|
+| P300-parent | 0 | 0.011164188385 | 0/502 | PASS | FAIL |
+| P1T-parent | 2.65370244565e-07 | 0.0292415618896 | 0/502 | PASS | FAIL |
+| S72-parent | 0 | 0.00355625152588 | 0/502 | PASS | PASS |
+| P300-student | 0 | 0 | 0/502 | PASS | PASS |
+| P1T-student | 2.64221455628e-07 | 0 | 0/502 | PASS | PASS |
+| X72-student | 0 | 0.0159463882446 | 0/502 | PASS | FAIL |
+
+### So sánh P300 trên toàn bộ requests
+
+Cả batch1 và batch2 đã tạo đủ 78,259 scores. Quy tắc accuracy chấp nhận batch2 nếu độ lệch tuyệt đối của trung bình 8 task MC và LAMBADA đều ≤ 0.1 điểm phần trăm. Kết quả đạt quy tắc này: **MC mean +0.004797435043 điểm phần trăm; LAMBADA 0**. Từng task MC được báo cáo riêng, không áp thêm ngưỡng accuracy riêng từng task.
+
+| Task | Accuracy batch1 (%) | Accuracy batch2 (%) | Batch2 − batch1 (điểm %) | Prediction flips |
+|---|---:|---:|---:|---:|
+| hellaswag | 61.412069 | 61.422027 | +0.009958 | 7 |
+| arc_easy | 72.558923 | 72.474747 | -0.084175 | 5 |
+| arc_challenge | 42.576792 | 42.662116 | +0.085324 | 2 |
+| piqa | 75.136017 | 75.136017 | +0.000000 | 2 |
+| winogrande | 60.931334 | 61.089187 | +0.157853 | 2 |
+| boolq | 62.385321 | 62.354740 | -0.030581 | 3 |
+| openbookqa | 41.800000 | 41.800000 | +0.000000 | 0 |
+| sciq | 93.300000 | 93.200000 | -0.100000 | 1 |
+| lambada_openai | 51.775665 | 51.775665 | +0.000000 | 1 |
+
+MC flips tính thay đổi choice theo primary metric, kể cả chuyển giữa hai đáp án sai. LAMBADA có **1 thay đổi token prediction theo teacher forcing nhưng 0 correctness flips**; không coi đó là kết quả sinh tự do.
+
+| Diagnostic toàn bộ | Giá trị |
+|---|---:|
+| Requests có LL khác 0 | 21,102 / 78,259 |
+| Max absolute LL difference, chưa chuẩn hóa token | 0.5551643371582031 nats/request |
+| Mean absolute LL difference, chưa chuẩn hóa token | 0.011516675116967773 nats/request |
+| Max normalized LL difference | **0.10355663299560547 nats/token** |
+| Token mismatch | 1,309 / 1,396,626 = **0.0937258793693%**, đạt ngưỡng 0.1% |
+| Requests vượt 0.1 nats/token | **1 / 78,259** |
+| Requests trong cặp có padding | 318; 46 có LL khác 0 |
+| Requests trong cặp không padding | 77,941; 21,056 có LL khác 0 |
+
+Khác biệt LL không chỉ xuất hiện ở cặp có padding. Request có **raw LL difference lớn nhất** không phải request có **normalized LL difference lớn nhất**.
+
+### Lỗi làm downstream dừng
+
+Ngoài sáu gate đại diện, mã thực thi còn áp ngưỡng **0.1 nats/token cho max trên toàn bộ requests**. Kiểm tra này FAIL vì **0.10355663299560547 > 0.1**, dù quy tắc accuracy chấp nhận batch2. Job thoát mã 1 lúc **31/10 00:12:10 SGT**, trước khi chấm năm model còn lại.
+
+Phép tính lại CPU độc lập lúc **00:39:22 SGT** xác minh 132 source files và tái tạo chính xác toàn bộ batch decision, accuracies, token/prediction flips và per-request LL/padding. Request duy nhất vượt ngưỡng có index **71485**, context **53 tokens**, continuation **1 token**, cặp **71484/71485 không padding**; LL batch2−batch1 = **+0.10355663299560547**, không đổi trạng thái greedy exact-match. Điều này chưa chứng minh nguyên nhân số học cụ thể.
+
+Kết quả FAIL được giữ nguyên. Sáu gate PASS không được dùng để ghi đè lỗi full-set; phép xác minh lỗi không phải successful final replay.
+
+## Bàn giao và thời gian sử dụng
+
+| Mốc | Trạng thái đã xác minh |
+|---|---|
+| Part1 terminal và handoff | Training kết thúc 30/10 12:43:17; handoff xác minh độc lập 13:00:54 |
+| Part2 terminal và handoff | Training kết thúc 30/10 23:21:56; supervisor exit 0; burn handoff xác minh 23:31:20 |
+| Final downstream lỗi | 31/10 00:12:10, exit 1 |
+| Native handoff sau lỗi | 00:13:16 khôi phục burn và giải phóng guard |
+| Kiểm tra burn độc lập mới nhất | 00:33:07: 8 workers 730982–730989 dưới launcher 730913; cycles 1370→1380, collective payload 1521.18→1532.29 GiB |
+
+Native ledger sau training là **71,801.2573 giây ≈ 19.9448 node-giờ**. Ledger elapsed bảo thủ, gồm cả khoảng chờ/controller, là **20.8001 node-giờ** tại downstream failure và **21.1493 node-giờ** tại kiểm tra 00:33:07. Các số này không phải tổng GPU compute thuần hoặc số đo sử dụng hiện tại sau mốc đó.
+
+Theo override 30/10 17:30 SGT, các mốc 20/24 node-giờ và deadline cũ chỉ dùng báo cáo. Downstream cuối có timeout/deadline null; lỗi trên không do timeout. Legacy timeout Part2 đã hết hiệu lực khi job hoàn tất. Continuation Option 2 đã hoàn tất và được xác minh ở phần cuối; receipt burn 00:33:07 ở trên là lịch sử của job lỗi.
+
+## Provenance và bằng chứng
+
+| Thành phần | Commit thực thi |
+|---|---|
+| Part1 training | `7dd9da088ba5af581c295775819319ce54b2025c` |
+| Part2 training | `42f7820ce72d932ff3d75edc96e16538dbd85df5` |
+| Preflight provenance kế thừa | `9f5601d97ddf2940b32ba5e17de8d21b7c7fe1c0` |
+| Final downstream ban đầu | `f0c8154808bef431c76553a47fd9727d3ba8bd53` |
+| Option2 continuation | `27087e1ca34b605e32c49cb5b1f1a8f23bd39500` |
+
+27 numerical core hashes của training khớp provenance kế thừa. Final downstream giữ nguyên 66 file eval/model của regression và thêm 6 adapter đã đăng ký. Published results và artifact gốc được giữ nguyên. Runtime audit ghi nhận software và cùng 8 GPU UUID, nhưng chưa ghi đầy đủ cuDNN/NCCL, driver package và actual SDPA backend; không dùng phần thiếu này để đổi nhãn T17.
+
+Bằng chứng chính có thể truy từ các file sau:
+
+- [Stage1b spec v1.1](A2_stage1b_fwe_spec.md), SHA `b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483`.
+- [Release proof FWE](../resources/a2_stage1b_fwe_release_20261030.json) và [preflight](A2_STAGE1B_PREFLIGHT_20261030.md).
+- [Part1 terminal](results/a2_stage1b_fwe_20261030/part1_final/verification.json), [Part2 terminal](results/a2_stage1b_fwe_20261030/part2_final/verification.json), [training decision](results/a2_stage1b_fwe_20261030/part2_final/decision_stage1_fwe.json).
+- [DCLM Stage1](A2_STAGE1_RESULTS_20261030.md) và [runtime audit](A2_STAGE1B_FOLLOWUP_REPLY_20261030.md).
+- [Sáu gate](results/a2_stage1b_fwe_20261030/downstream_final_0001/receipt.json), [full batch decision](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/batch_decision.json), [failed-job handoff](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/receipt.json).
+- [Replay độc lập của lỗi](results/a2_stage1b_fwe_20261030/downstream_final_batch_failure/independent_failed_batch_replay.json), raw SHA `aa54ba2393fc93c28aeaca73f0a13c0bd9bf2b0ed7bcdae6341752dd209ddb46`.
+
+P300 score SHA batch1: `231aea3bddb4be446aa949cef479cc0e4224720792f8892ad4b7dbdc82b5d1dd`; batch2: `ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3`. Canonical prepared requests SHA: `85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf`.
+
+## Quyết định continuation ngày 31/10/2026
+
+**Option 2 đã được phê duyệt.** Accuracy rule là tiêu chí chọn batch và đã PASS. Full-set LL max 0.10355663299560547 tại request 71485 cùng token mismatch 0.0937258793693% chỉ là diagnostic. Ngưỡng 0.1 nats/token áp dụng cho sáu gate đại diện. Tái dùng scores P300-parent batch2 và chạy năm model còn lại; kết quả và receipt cuối được trình bày bên dưới. Deviation đã ghi trong [REPORT.md](REPORT.md).
+
+## Downstream cuối: sáu model batch 2
+
+Terminal native: **31/10/2026 03:37:49 SGT**; xác minh độc lập và burn handoff: **31/10/2026 03:38:32 SGT**. Cả sáu model đủ 78,259 likelihood requests; năm model mới và P300-parent batch2 tái dùng đúng SHA. Sáu replay độc lập khớp samples/aggregates; bootstrap được tính lại độc lập và khớp chính xác.
+
+Accuracy theo %, MC mean là trung bình đều của tám task MC.
+
+| Task | P300-parent | P1T-parent | S72-parent | P300-student | P1T-student | X72-student |
+|---|---:|---:|---:|---:|---:|---:|
+| hellaswag | 61.4220 | 64.4692 | 54.3816 | 56.5027 | 58.4147 | 55.8753 |
+| arc_easy | 72.4747 | 70.9596 | 66.6667 | 68.7290 | 65.9512 | 67.7609 |
+| arc_challenge | 42.6621 | 42.9181 | 37.5427 | 39.2491 | 39.4198 | 37.7986 |
+| piqa | 75.1360 | 75.2448 | 71.5452 | 73.8303 | 73.9935 | 72.0348 |
+| winogrande | 61.0892 | 63.8516 | 57.4586 | 58.1689 | 59.6685 | 58.7214 |
+| boolq | 62.3547 | 63.9144 | 59.2661 | 61.8960 | 62.8135 | 62.0183 |
+| openbookqa | 41.8000 | 42.4000 | 39.8000 | 39.2000 | 40.2000 | 38.8000 |
+| sciq | 93.2000 | 93.2000 | 89.4000 | 90.5000 | 91.0000 | 90.0000 |
+| lambada_openai | 51.7757 | 54.3179 | 42.0144 | 47.4481 | 48.8647 | 46.6136 |
+| MC mean | 63.7674 | 64.6197 | 59.5076 | 61.0095 | 61.4326 | 60.3762 |
+
+## Paired CI 95%
+
+10,000 paired item bootstrap resamples, seed 0; đơn vị **điểm phần trăm (pp)**. CI mô tả biến thiên theo benchmark items, không bao gồm training seeds. Drop = parent − student; drop dương nghĩa accuracy giảm.
+
+| Contrast | MC estimate [CI95] | LAMBADA estimate [CI95] |
+|---|---:|---:|
+| P300_drop | +2.7579 [+2.1776, +3.3370] | +4.3276 [+3.3961, +5.2979] |
+| P1T_drop | +3.1871 [+2.5921, +3.7944] | +5.4531 [+4.4823, +6.4433] |
+| X72_drop_from_S72 | -0.8686 [-1.5208, -0.2186] | -4.5993 [-5.6666, -3.5319] |
+| P1T_minus_P300_drop | +0.4292 [-0.3531, +1.2097] | +1.1256 [-0.1358, +2.3870] |
+| X72_minus_P300_accuracy | -0.6333 [-1.1295, -0.1391] | -0.8345 [-1.6107, -0.0388] |
+| X72_minus_P300_drop | -3.6265 [-4.3997, -2.8292] | -8.9268 [-10.2659, -7.6072] |
+
+P1T chịu drop lớn hơn P300 theo point estimate, nhưng CI của chênh lệch drop chứa 0 ở cả MC mean và LAMBADA. Đây không phải bằng chứng downstream đủ để khẳng định khác biệt drop. Nhãn training `persists`/`replicated` vẫn dựa trên CulturaX NLL theo đăng ký.
+
+X72 student thấp hơn P300 student khoảng 0.6333 pp MC và 0.8345 pp LAMBADA; hai CI không chứa 0. X72 cải thiện so với chính S72 parent (drop âm). Không suy ra quan hệ nhân quả riêng của LR state hoặc exposure từ các tương phản này.
+
+## Hoàn tất, compute và giới hạn còn ghi nhận
+
+Ledger bảo thủ đến native terminal: **24.227606 node-giờ** = preflight 3299.943346s + elapsed từ 30/10 04:19:10.047762 SGT đến terminal (bao gồm khoảng chờ/controller). Option2 supervisor elapsed 2081.136553s. Đây là elapsed ledger theo quy ước đợt chạy, không phải tổng GPU-kernel busy time. Dự toán sau preparation là 25.815441 node-giờ. Vượt mốc 20/24 giờ được báo cáo theo policy report-only; không có hard timeout.
+
+**Đã hoàn tất toàn bộ phạm vi Stage1b đăng ký:** 15 training fits, sáu-model downstream, paired CI, independent replay/recomputation và native burn handoff. Không còn bước thực thi hay quyết định protocol đang chờ người dùng trong phạm vi này.
+
+Các diagnostic/giới hạn được giữ nguyên: full-set LL max **0.10355663299560547** tại request **71485**, token mismatch **1309/1396626 = 0.0937258793693%**; lỗi hard-stop lịch sử không đổi thành PASS. Các ngưỡng đại diện đều PASS. Runtime audit thiếu một số metadata cuDNN/NCCL/driver package/actual SDPA backend; CI chỉ theo items và không có replication theo training seed. Không chạy thêm exposure test, LR, T17 hay kiến trúc ngoài phạm vi.
+
+[Receipt terminal](results/a2_stage1b_fwe_20261030/option2_final/receipt.json), [scores tổng hợp](results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/results.json), [paired CI](results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/paired_accuracy.json), [independent verification](results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/independent_verification.json).
+
+Raw receipt SHA256: `3bbc250badfc165a9cbb7ca4a9d959798430055889981b2320a8700fe7637ab8`. Continuation source `27087e1ca34b605e32c49cb5b1f1a8f23bd39500`, 137 frozen files được xác minh; 66 original regression eval/model files giữ nguyên.
+
+## Option 2 — deviation trong mã — deviation được người dùng phê duyệt, 31/10/2026 SGT
+
+Người dùng đã chọn **Option 2 và yêu cầu launch ngay**. Batch 2 được quyết định bởi accuracy rule đã PASS: MC mean +0.004797435 điểm phần trăm, LAMBADA 0. Ngưỡng **0.1 nats/token chỉ áp dụng cho sáu gate đại diện**, cả sáu đã PASS. Trên full set, LL là **diagnostic**: max **0.10355663299560547 nats/token**, request **71485**; token mismatch **1309/1396626 = 0.0937258793693%**. Giữ nguyên artifact FAIL lịch sử; không đổi thành PASS. Việc mã cũ dùng full-set LL làm hard stop là deviation đã được điều chỉnh theo xác nhận này.
+
+Continuation tái dùng P300-parent batch2, chấm năm model còn lại ở batch2, chạy paired bootstrap 10,000 seed0 và replay độc lập. Kiểm tra khoa học ghi PASS/FLAG và tiếp tục phần kế hoạch còn thực hiện được; không chờ trả lời hay tạo kết quả thay thế cho artifact thiếu. Native supervisor kiểm tra đúng quyền sở hữu GPU trước khi thu hồi burn. Trạng thái thực thi hoàn tất được tách khỏi trạng thái kết quả khoa học đầy đủ/đã xác minh.
+
+Decision máy đọc: [decision_stage1_fwe.json](decision_stage1_fwe.json). Không còn công việc đăng ký chưa hoàn tất.

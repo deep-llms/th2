@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-30T19:03:08.348874+00:00",
+  "jobs": [
+    {
+      "name": "stage1b-downstream-option2",
+      "started_at": "2026-10-30T19:03:08.349097+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 2009.7221951130778,
+      "artifacts": [
+        {
+          "path": "downstream/complete.json",
+          "sha256": "dcc7753029a7caaecf630e1d2fa9d394eeaf6207cc500d96d6a3dc69fe32cc31",
+          "bytes": 8643
+        }
+      ],
+      "finished_at": "2026-10-30T19:36:38.633491+00:00"
+    }
+  ],
+  "finished_at": "2026-10-30T19:36:38.633533+00:00"
+}

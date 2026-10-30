@@ -1,0 +1,15 @@
+{
+  "policy": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_option2_20261031.json",
+    "sha256": "c491fbb16dbcfbeeb31316aaa6b01492298f051d20217c0e8450d2f432ac4794"
+  },
+  "prior_decision": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_decision.json",
+    "sha256": "e723e5332f0ab5687b44a9027e01df535aa842e72ed9f991109266b966e91e33"
+  },
+  "production_batch_size": 2,
+  "full_set_ll_diagnostic": true,
+  "max_nats_per_token": 0.10355663299560547,
+  "worst_request_index": 71485,
+  "token_mismatch_rate": 0.0009372587936927997
+}

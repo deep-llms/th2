@@ -1,0 +1,93 @@
+{
+  "status": "option2_terminal_verified",
+  "at": "2026-10-30T19:38:32.370680+00:00",
+  "raw_sha256": "3bbc250badfc165a9cbb7ca4a9d959798430055889981b2320a8700fe7637ab8",
+  "source": "27087e1ca34b605e32c49cb5b1f1a8f23bd39500",
+  "source_files": 137,
+  "models": 6,
+  "production_batch_size": 2,
+  "scientific_complete": true,
+  "independent_replay": {
+    "passed": true,
+    "checks": [
+      {
+        "check": "coverage",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "model:P300-parent",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "model:P1T-parent",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "model:S72-parent",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "model:P300-student",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "model:P1T-student",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "model:X72-student",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "paired_bootstrap_10000_seed0",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      },
+      {
+        "check": "accuracy_rule_and_exact_parent_reuse",
+        "passed": true,
+        "diagnostic": false,
+        "note": "Completed"
+      }
+    ],
+    "status": "independently_checked",
+    "models": 6,
+    "resamples": 10000,
+    "seed": 0,
+    "full_set_ll_scope": "diagnostic_only"
+  },
+  "burn_progress": [
+    [
+      "60",
+      "66.62"
+    ],
+    [
+      "70",
+      "77.72"
+    ]
+  ],
+  "flags": [
+    {
+      "check": "full_set_LL",
+      "passed": false,
+      "diagnostic": true,
+      "note": "Diagnostic only under Option 2; max=0.10355663299560547; token mismatch rate=0.0009372587936927997"
+    }
+  ],
+  "native_handoff": true
+}

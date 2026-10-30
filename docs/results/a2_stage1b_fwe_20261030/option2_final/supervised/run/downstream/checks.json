@@ -1,0 +1,326 @@
+[
+  {
+    "check": "plan_validation",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "full_set_LL",
+    "passed": false,
+    "diagnostic": true,
+    "note": "Diagnostic only under Option 2; max=0.10355663299560547; token mismatch rate=0.0009372587936927997"
+  },
+  {
+    "check": "accuracy_rule",
+    "passed": true,
+    "diagnostic": false,
+    "note": "User selected batch 2"
+  },
+  {
+    "check": "identity:P300-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "identity:P1T-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "identity:S72-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "identity:P300-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "identity:P1T-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "identity:X72-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "representative_gate:P300-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "representative_gate:P1T-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "representative_gate:S72-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "representative_gate:P300-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "representative_gate:P1T-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "representative_gate:X72-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "reuse_P300_parent_batch2",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:X72-student-score.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "score:X72-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P300-student-score.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "score:P300-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P1T-student-score.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "score:P1T-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P1T-parent-score.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "score:P1T-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:S72-parent-score.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "score:S72-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P1T-parent-replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "replay:P1T-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:S72-parent-replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "replay:S72-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P300-student-replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "replay:P300-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P1T-student-replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "replay:P1T-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:X72-student-replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "replay:X72-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "collect_results",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "paired_bootstrap",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P300-parent-independent_replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_replay:P300-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P1T-parent-independent_replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_replay:P1T-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:S72-parent-independent_replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_replay:S72-parent",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P300-student-independent_replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_replay:P300-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:P1T-student-independent_replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_replay:P1T-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:X72-student-independent_replays.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_replay:X72-student",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "process:independent-verification.log",
+    "passed": true,
+    "diagnostic": false,
+    "note": "returncode=0"
+  },
+  {
+    "check": "independent_verification_process",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "independent_verification_artifact",
+    "passed": true,
+    "diagnostic": false,
+    "note": "Completed"
+  },
+  {
+    "check": "independent_verification",
+    "passed": true,
+    "diagnostic": false,
+    "note": "See independent_verification.json"
+  }
+]

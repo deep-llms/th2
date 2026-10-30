@@ -1,0 +1,104 @@
+{
+  "budgets": {
+    "0.2B": {
+      "E": 0.026224221566386152,
+      "A_init": 0.07847837360805077,
+      "E_fwe": 0.026352782880719516,
+      "A_init_fwe": 0.0782325449293535
+    },
+    "0.8B": {
+      "E": 0.02281977941126856,
+      "A_init": 0.04245379935293281,
+      "E_fwe": 0.024077046610296193,
+      "A_init_fwe": 0.043209142918419374
+    },
+    "3.2B": {
+      "E": 0.023461150403907727,
+      "A_init": 0.01299365118963669,
+      "E_fwe": 0.022921405400227357,
+      "A_init_fwe": 0.013620394355744914
+    }
+  },
+  "length": {
+    "value": 0.023461150403907727,
+    "clauses": {
+      "INCOMPLETE": false,
+      "persists": true,
+      "reversed": false,
+      "erased": false
+    },
+    "label": "persists"
+  },
+  "state": {
+    "value": 0.01299365118963669,
+    "clauses": {
+      "INCOMPLETE": false,
+      "anneal first": true,
+      "prune before you anneal": false,
+      "no effect": false
+    },
+    "label": "anneal first"
+  },
+  "ratios": {
+    "E": 1.028105924298394,
+    "A_init": 0.30606568523151645
+  },
+  "E_pre": 0.3544175235867497,
+  "parent_difference": -0.051923992254998996,
+  "exposure_caveat": "Own-corpus heldout may have been seen during parent pretraining, more by P1T; no decisions use it.",
+  "phase": "final",
+  "stage1b_spec_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+  "chosen_lr": 0.001,
+  "own_best_lrs": {
+    "P300": 0.001,
+    "P1T": 0.001
+  },
+  "stage1_spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "spent_seconds": 71801.2572578541,
+  "downstream_status": "complete",
+  "E_short_own_best": 0.026224221566386152,
+  "cross_dataset_length": "replicated",
+  "stage1b_status": "complete",
+  "production_batch_size": 2,
+  "verified_at": "2026-10-30T19:38:32.370680+00:00",
+  "training_decision": {
+    "path": "docs/results/a2_stage1b_fwe_20261030/part2_final/decision_stage1_fwe.json",
+    "sha256": "f0d792f73620d158d8dc2518bed5d2dc0702b5fcf8cafee5063af82169835694"
+  },
+  "conservative_elapsed_node_hours_at_terminal": 24.227605761495035,
+  "downstream": {
+    "path": "docs/results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/results.json",
+    "sha256": "988cd0f209193cb59ae4431faa8a42063ba33e1cad7fe8e9c1042ee4b293cbfb"
+  },
+  "paired_ci": {
+    "path": "docs/results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/paired_accuracy.json",
+    "sha256": "5d46a5a8a3b9e37e35484817f80778d6daa9261129ec7e7a3d95e5e32310321c"
+  },
+  "independent_verification": {
+    "path": "docs/results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/independent_verification.json",
+    "sha256": "686461cef8f5d227cb128ef597e828d46a5d4b2d5c2a81d11897ca1021cc99ea"
+  },
+  "native_handoff": {
+    "path": "docs/results/a2_stage1b_fwe_20261030/option2_final/verification.json",
+    "sha256": "0eae5df0e9e85a953dc6c2f88f2a2bc24aab5d045f697decfde57e606ec8a2f7"
+  },
+  "registered_work_remaining": [],
+  "preserved_diagnostics": {
+    "full_set_ll_max_nats_per_token": 0.10355663299560547,
+    "worst_request_index": 71485,
+    "token_mismatch_count": 1309,
+    "token_count": 1396626,
+    "token_mismatch_rate": 0.0009372587936927997,
+    "full_set_ll_threshold_scope": "diagnostic_only_by_user_Option2",
+    "old_failure_preserved": true
+  },
+  "limitations": [
+    "CI covers benchmark items, not training seeds",
+    "Exposure and LR-state causality not isolated",
+    "Historical runtime metadata incomplete"
+  ],
+  "time_policy": {
+    "path": "resources/a2_stage1b_time_policy_20261030.json",
+    "sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  }
+}

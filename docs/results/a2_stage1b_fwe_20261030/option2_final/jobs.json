@@ -1,0 +1,37 @@
+{
+  "jobs": [
+    {
+      "name": "stage1b-downstream-option2",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": null,
+      "argv": [
+        "{python}",
+        "-m",
+        "eval.a2_stage1b_final_run",
+        "--plan",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/plan.json",
+        "--plan-sha256",
+        "ac2be1e3eb55de391b91a5e2ef590420d20d47e2e4fb1d9343e6afae7007e0ce",
+        "--output",
+        "{run_dir}/downstream"
+      ],
+      "required_outputs": [
+        {
+          "path": "downstream/complete.json",
+          "json_equals": {
+            "execution_complete": true
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "prior_seconds": 85020.14661838212,
+  "preparation_seconds": 55.44069700175896,
+  "expected_seconds": 7200.0,
+  "cleanup_estimate_seconds": 660,
+  "projected_node_hours": 25.815440920939967,
+  "report_due": true,
+  "former_24h_exceeded": true,
+  "hard_node_hours": null,
+  "hard_deadline": null,
+  "timeout_seconds": null,
+  "time_policy": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_time_policy_20261030.json",
+    "sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  }
+}

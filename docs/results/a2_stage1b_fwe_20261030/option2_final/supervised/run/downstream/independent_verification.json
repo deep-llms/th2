@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "check": "coverage",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "model:P300-parent",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "model:P1T-parent",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "model:S72-parent",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "model:P300-student",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "model:P1T-student",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "model:X72-student",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "paired_bootstrap_10000_seed0",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    },
+    {
+      "check": "accuracy_rule_and_exact_parent_reuse",
+      "passed": true,
+      "diagnostic": false,
+      "note": "Completed"
+    }
+  ],
+  "status": "independently_checked",
+  "models": 6,
+  "resamples": 10000,
+  "seed": 0,
+  "full_set_ll_scope": "diagnostic_only"
+}

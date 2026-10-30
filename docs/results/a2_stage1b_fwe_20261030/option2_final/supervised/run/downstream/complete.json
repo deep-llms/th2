@@ -1,0 +1,147 @@
+{
+  "status": "ok",
+  "execution_complete": true,
+  "scientific_complete": true,
+  "models": 6,
+  "expected_models": 6,
+  "prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+  },
+  "scores": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/2/scores.json",
+      "sha256": "ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+      "sha256": "9d6f86abb0d069eb8bc4430c8c1df3c0d76b39a60addaa992e5e45d8d9b84ed0"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+      "sha256": "71188bcf4dd9485d813b37d6cc67d991e945e307a11b36cffc8d895a367b22d3"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P300-student/scores.json",
+      "sha256": "c466349f5478ca484c26ae505a4fecdbf901e2155fd26442d740c1cf89c37ae3"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P1T-student/scores.json",
+      "sha256": "95ba459e7f718ba937c34490d6817d891e5ffe73aabb218c7fb0a7e8ca769257"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/X72-student/scores.json",
+      "sha256": "9efa9fe309c35e910ad3b82b41b36111b865a16b1814754b887e93453a7adbd9"
+    }
+  },
+  "replays": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/replays/P300-parent-batch2.json",
+      "sha256": "4bf936bf3dc7d5cbf502900b26e758b732b6f64db114766eefdb09ff60c563d1"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P1T-parent.json",
+      "sha256": "fe0d2ac5141130bde82308ce74299a3d1aaeb633f6762bea500f54b5ec6ab2e9"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/S72-parent.json",
+      "sha256": "89a35f410e6445cc727822a1898eafa4412f1290eb13cce1bd514d2b50839d6d"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P300-student.json",
+      "sha256": "36cde1ebfdc50ace8f794712c474190177005dbab3c6984aa4214f8f5d31deb2"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P1T-student.json",
+      "sha256": "239f792165c7bddb4d880c91bac79a79b62f6b00aac4deddb9e6f6ccf8556e3f"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/X72-student.json",
+      "sha256": "8772ff0563855471e898644689c243a1de5f28e59976ff403108e2512f3805fa"
+    }
+  },
+  "independent_replays": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_replays/P300-parent.json",
+      "sha256": "e6dce0d09356a1a117a2645b4549c50e0fb20599dfe8d59ad092dca18ae674fe"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_replays/P1T-parent.json",
+      "sha256": "bd15f509a1bd465986e1cfad7230f1f14b2be8b0bf7b5ac1bb60d8da265938a1"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_replays/S72-parent.json",
+      "sha256": "d2d67c71e798c7e67c375c89013a445b16f05c1f7abbc6e295cfe1550633bae5"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_replays/P300-student.json",
+      "sha256": "b726968ed75bf7d6e40a89569fdabc1e06df1f430aaf1efa4f3138a76119087a"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_replays/P1T-student.json",
+      "sha256": "86e3d9d8b44d888e28438b9d099b9fa21c745458a86ea92ede0d9a0c018f67c4"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_replays/X72-student.json",
+      "sha256": "af0c67fdd3602368d282c4da8d3614bec2247531adba3553f1c305761307e27b"
+    }
+  },
+  "results": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/results.json",
+    "sha256": "988cd0f209193cb59ae4431faa8a42063ba33e1cad7fe8e9c1042ee4b293cbfb"
+  },
+  "production_batch_size": 2,
+  "batch_decision": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_decision.json",
+    "sha256": "e723e5332f0ab5687b44a9027e01df535aa842e72ed9f991109266b966e91e33"
+  },
+  "revised_gates": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P300-parent-check.json",
+      "sha256": "f87ec6e92cab44e444735975b962b73fe7d056b494244f1d2cb5bdeab61dcfac"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P1T-parent-check.json",
+      "sha256": "0b7c49afb5a38f808b08a91a6d3a60d0aca24d7b412bf7a52bab57fa500a53a4"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/S72-parent-check.json",
+      "sha256": "11cbe8c94e53963990d46dde171731b4bac9802ce7df36f948ce7b131c435ee6"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P300-student-check.json",
+      "sha256": "791a7a43beb63bf65f445a3dd5dfe1ef0eedc9ccbfe656e56aaf37403b8c3ad1"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P1T-student-check.json",
+      "sha256": "3929b113335fb60cafa718535712d7cf062d6ade0e6d079d1c99fc6630a6899b"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/X72-student-check.json",
+      "sha256": "0c56cd0c5efce18ca0b4905644d2fea3ed2dc64ea5b3c9e941efdad308fc7ef0"
+    }
+  },
+  "checks": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/checks.json",
+    "sha256": "27b85766ebfe6236d2abdc02b142606be2dffe8f168b5c12ce320606b3ac1338"
+  },
+  "continuation": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_option2_reuse_20261031.json",
+    "sha256": "c581f45f48dabd1d1346d2ef064237370f52beb2da3c965c1f11bc48441c6492"
+  },
+  "time_policy": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_time_policy_20261030.json",
+    "sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  },
+  "elapsed_seconds": 2008.092300110031,
+  "additional_results": {
+    "paired_accuracy": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/paired_accuracy.json",
+      "sha256": "5d46a5a8a3b9e37e35484817f80778d6daa9261129ec7e7a3d95e5e32310321c"
+    }
+  },
+  "independent_verification": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/independent_verification.json",
+    "sha256": "686461cef8f5d227cb128ef597e828d46a5d4b2d5c2a81d11897ca1021cc99ea"
+  }
+}

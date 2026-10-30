@@ -2,9 +2,7 @@
 
 File kết quả chung cho đợt **Stage1b FineWeb-Edu bắt đầu ngày 30/10/2026**, gồm Part1, Part2 và downstream liên quan. Đặt cùng nhóm file kết quả A2; [kết quả Stage1 DCLM](A2_STAGE1_RESULTS_20261030.md) là đối chiếu của đợt trước. Artifact của đợt FWE nằm trong `docs/results/a2_stage1b_fwe_20261030/`.
 
-Cập nhật trạng thái: **31/10/2026 03:05:45 SGT** (receipt nhận khoảng 03:09). Continuation Option 2 đang chạy; phép tính lại batch độc lập mới nhất vẫn là **00:39:22 SGT**. Tất cả thời gian bên dưới dùng SGT.
-
-**Training đã hoàn tất và được xác minh đủ 15/15 fit. Downstream sáu model chưa hoàn tất.** Kết quả NLL giữ nhãn `persists`, `replicated`, `anneal first`. Lượt downstream đầu dừng vì một request vượt ngưỡng LL full-set trong mã cũ. Người dùng đã xác nhận full-set LL chỉ là diagnostic và continuation Option 2 hiện đang chấm năm model còn lại ở batch2. Lỗi đã được tái hiện độc lập; chưa có kết quả năm model còn lại hoặc paired CI.
+Cập nhật cuối: **31/10/2026 03:38:32 SGT**. **Stage1b đã hoàn tất và được xác minh:** 15/15 training fits, sáu-model downstream batch2, paired CI, replay độc lập và native handoff. Nhãn CulturaX NLL: `persists`, `replicated`, `anneal first`. Chi tiết downstream và giới hạn nằm cuối file.
 
 ## Kết luận đã xác minh
 
@@ -19,8 +17,8 @@ Cập nhật trạng thái: **31/10/2026 03:05:45 SGT** (receipt nhận khoảng
 | DCLM P300 regression | 9 task accuracy khớp chính xác Stage1; LL max difference = 0 trên 78,259 requests |
 | Sáu gate FWE đại diện theo ngưỡng sửa đổi | Cả sáu PASS; mỗi model 0/502 token mismatch |
 | P300 full batch1 và batch2 | Cả hai đủ 78,259 scores; tiêu chí MC mean/LAMBADA đạt |
-| Kiểm tra full LL trong mã thực thi | **FAIL**, max 0.10355663299560547 > 0.1 nats/token; 1 request vượt ngưỡng |
-| Hoàn tất toàn Stage1b | **Chưa hoàn tất**; các bước còn mở nằm cuối file |
+| Full LL trong mã cũ; diagnostic theo Option2 | **FAIL**, max 0.10355663299560547 > 0.1 nats/token; 1 request vượt ngưỡng |
+| Hoàn tất toàn Stage1b | **COMPLETE**, gồm downstream, CI, replay và handoff |
 
 ## Thiết lập và cách đọc kết quả
 
@@ -117,7 +115,7 @@ P300/P1T CulturaX final khớp chính xác Phase0A. S72−P300 annealing gain l�
 
 ## Downstream đã thực hiện
 
-Dùng cùng **78,259 canonical requests**, 9 task, zero-shot seed 42, FP32 parameters và BF16 AMP. Sáu model dự kiến là P300/P1T/S72 parents và P300/P1T/X72 students ở 3.2B. Paired bootstrap dự kiến 10,000 resamples, seed 0; hiện chưa có paired CI FWE.
+Dùng cùng **78,259 canonical requests**, 9 task, zero-shot seed 42, FP32 parameters và BF16 AMP. Sáu model là P300/P1T/S72 parents và P300/P1T/X72 students ở 3.2B. Paired bootstrap 10,000 resamples, seed 0 đã hoàn tất; bảng CI cuối nằm bên dưới.
 
 DCLM P300 regression đã PASS với accuracy của cả 9 task giống hệt Stage1 và LL max difference bằng 0. Đây là checkpoint DCLM, không thay thế việc kiểm tra checkpoint FWE.
 
@@ -185,7 +183,7 @@ Kết quả FAIL được giữ nguyên. Sáu gate PASS không được dùng đ
 
 Native ledger sau training là **71,801.2573 giây ≈ 19.9448 node-giờ**. Ledger elapsed bảo thủ, gồm cả khoảng chờ/controller, là **20.8001 node-giờ** tại downstream failure và **21.1493 node-giờ** tại kiểm tra 00:33:07. Các số này không phải tổng GPU compute thuần hoặc số đo sử dụng hiện tại sau mốc đó.
 
-Theo override 30/10 17:30 SGT, các mốc 20/24 node-giờ và deadline cũ chỉ dùng báo cáo. Downstream cuối có timeout/deadline null; lỗi trên không do timeout. Legacy timeout Part2 đã hết hiệu lực khi job hoàn tất. `commands.sh` đang ở `#0`, không receipt chờ và chưa gửi GPU retry. Watcher hiện có tiếp tục với `until=null`; không suy ra trạng thái GPU hiện tại từ receipt burn 00:33:07.
+Theo override 30/10 17:30 SGT, các mốc 20/24 node-giờ và deadline cũ chỉ dùng báo cáo. Downstream cuối có timeout/deadline null; lỗi trên không do timeout. Legacy timeout Part2 đã hết hiệu lực khi job hoàn tất. Continuation Option 2 đã hoàn tất và được xác minh ở phần cuối; receipt burn 00:33:07 ở trên là lịch sử của job lỗi.
 
 ## Provenance và bằng chứng
 
@@ -194,7 +192,8 @@ Theo override 30/10 17:30 SGT, các mốc 20/24 node-giờ và deadline cũ ch�
 | Part1 training | `7dd9da088ba5af581c295775819319ce54b2025c` |
 | Part2 training | `42f7820ce72d932ff3d75edc96e16538dbd85df5` |
 | Preflight provenance kế thừa | `9f5601d97ddf2940b32ba5e17de8d21b7c7fe1c0` |
-| Final downstream | `f0c8154808bef431c76553a47fd9727d3ba8bd53` |
+| Final downstream ban đầu | `f0c8154808bef431c76553a47fd9727d3ba8bd53` |
+| Option2 continuation | `27087e1ca34b605e32c49cb5b1f1a8f23bd39500` |
 
 27 numerical core hashes của training khớp provenance kế thừa. Final downstream giữ nguyên 66 file eval/model của regression và thêm 6 adapter đã đăng ký. Published results và artifact gốc được giữ nguyên. Runtime audit ghi nhận software và cùng 8 GPU UUID, nhưng chưa ghi đầy đủ cuDNN/NCCL, driver package và actual SDPA backend; không dùng phần thiếu này để đổi nhãn T17.
 
@@ -211,22 +210,54 @@ P300 score SHA batch1: `231aea3bddb4be446aa949cef479cc0e4224720792f8892ad4b7dbdc
 
 ## Quyết định continuation ngày 31/10/2026
 
-**Option 2 đã được phê duyệt.** Accuracy rule là tiêu chí chọn batch và đã PASS. Full-set LL max 0.10355663299560547 tại request 71485 cùng token mismatch 0.0937258793693% chỉ là diagnostic. Ngưỡng 0.1 nats/token áp dụng cho sáu gate đại diện. Tái dùng scores P300-parent batch2 và chạy năm model còn lại; cập nhật kết quả thực tế sau receipt. Deviation đã ghi trong [REPORT.md](REPORT.md).
+**Option 2 đã được phê duyệt.** Accuracy rule là tiêu chí chọn batch và đã PASS. Full-set LL max 0.10355663299560547 tại request 71485 cùng token mismatch 0.0937258793693% chỉ là diagnostic. Ngưỡng 0.1 nats/token áp dụng cho sáu gate đại diện. Tái dùng scores P300-parent batch2 và chạy năm model còn lại; kết quả và receipt cuối được trình bày bên dưới. Deviation đã ghi trong [REPORT.md](REPORT.md).
 
-## Trạng thái continuation đã xác minh
+## Downstream cuối: sáu model batch 2
 
-Khởi chạy **31/10 03:03:08 SGT**, source `27087e1ca34b605e32c49cb5b1f1a8f23bd39500`, launch `64dc68b`, health `dbce800`. Snapshot **03:05:45** xác minh năm scorer batch2 hoạt động trên GPU 0–4; P300-parent batch2 tái dùng thành công, cả sáu identity và 66 file scoring/model gốc không đổi. Full-set LL giữ FLAG diagnostic và pipeline tiếp tục. Kiểm thử CPU: 14 orchestration/admission + 8 gate PASS. [Receipt startup](results/a2_stage1b_fwe_20261030/option2_startup_0305/receipt.json).
+Terminal native: **31/10/2026 03:37:49 SGT**; xác minh độc lập và burn handoff: **31/10/2026 03:38:32 SGT**. Cả sáu model đủ 78,259 likelihood requests; năm model mới và P300-parent batch2 tái dùng đúng SHA. Sáu replay độc lập khớp samples/aggregates; bootstrap được tính lại độc lập và khớp chính xác.
 
-Ledger launch 85,020.146618 giây; dự toán thêm 7,200 giây và 660 giây dự phòng là 25.80004 node-giờ, report-only; timeout null. Pipeline có scoring năm model, paired bootstrap, replay harness độc lập và tính lại CI, rồi native burn handoff. Các mục này chưa được đánh dấu hoàn tất trước receipt thực tế.
+Accuracy theo %, MC mean là trung bình đều của tám task MC.
 
-## Các vấn đề còn mở
+| Task | P300-parent | P1T-parent | S72-parent | P300-student | P1T-student | X72-student |
+|---|---:|---:|---:|---:|---:|---:|
+| hellaswag | 61.4220 | 64.4692 | 54.3816 | 56.5027 | 58.4147 | 55.8753 |
+| arc_easy | 72.4747 | 70.9596 | 66.6667 | 68.7290 | 65.9512 | 67.7609 |
+| arc_challenge | 42.6621 | 42.9181 | 37.5427 | 39.2491 | 39.4198 | 37.7986 |
+| piqa | 75.1360 | 75.2448 | 71.5452 | 73.8303 | 73.9935 | 72.0348 |
+| winogrande | 61.0892 | 63.8516 | 57.4586 | 58.1689 | 59.6685 | 58.7214 |
+| boolq | 62.3547 | 63.9144 | 59.2661 | 61.8960 | 62.8135 | 62.0183 |
+| openbookqa | 41.8000 | 42.4000 | 39.8000 | 39.2000 | 40.2000 | 38.8000 |
+| sciq | 93.2000 | 93.2000 | 89.4000 | 90.5000 | 91.0000 | 90.0000 |
+| lambada_openai | 51.7757 | 54.3179 | 42.0144 | 47.4481 | 48.8647 | 46.6136 |
+| MC mean | 63.7674 | 64.6197 | 59.5076 | 61.0095 | 61.4326 | 60.3762 |
 
-| Vấn đề | Cần giải quyết |
-|---|---|
-| **Hoàn tất continuation batch2** | Option 2 đã launch và năm scorer đang hoạt động; chờ artifact hoàn chỉnh. |
-| **Năm model đang chấm production** | P1T-parent, S72-parent, P300-student, P1T-student, X72-student. P300-parent đã có cả batch1 và batch2 để tái dùng sau quyết định; chưa có bộ production sáu model hoàn chỉnh. |
-| **Paired CI và replay kết quả cuối** | Cần bộ scores/replays sáu model cùng batch, paired bootstrap 10,000 resamples seed 0 và xác minh độc lập. Replay đã có chỉ xác minh lỗi P300. |
-| **Bàn giao sau một lượt tiếp tục** | Đã xác minh fresh PID/start/source/ownership/free-GPU checks trước launch; còn cần native terminal và burn progress sau khi hoàn tất. Handoff của job lỗi hiện đã được xác minh. |
-| **Chốt toàn Stage1b** | Bổ sung downstream, paired CI, compute ledger cuối và decision/report hoàn tất sau khi các điều kiện trên đạt. Báo cáo này tổng hợp kết quả hiện có, không chứng nhận toàn Stage1b hoàn tất. |
+## Paired CI 95%
 
-Các hướng từng được đưa ra (lịch sử): **(1)** chuyển cả sáu model sang batch1, tái dùng P300 batch1 và giữ nguyên diagnostic FAIL; **(2)** xác nhận ngưỡng 0.1 chỉ áp dụng cho gate đại diện, giữ full-set LL là diagnostic và tiếp tục batch2 theo accuracy rule; **(3)** giữ downstream dừng để điều tra thêm. **Đã được người dùng chọn hướng (2), yêu cầu launch ngay:** tái dùng P300-parent batch2, chấm năm model còn lại ở batch2 rồi paired bootstrap và independent replay. Kiểm tra khoa học log/flag/continue; kết quả lỗi hoặc thiếu không được ghi thành PASS. Không chạy thêm training, T17, LR hoặc exposure experiment ngoài phạm vi đã đăng ký.
+10,000 paired item bootstrap resamples, seed 0; đơn vị **điểm phần trăm (pp)**. CI mô tả biến thiên theo benchmark items, không bao gồm training seeds. Drop = parent − student; drop dương nghĩa accuracy giảm.
+
+| Contrast | MC estimate [CI95] | LAMBADA estimate [CI95] |
+|---|---:|---:|
+| P300_drop | +2.7579 [+2.1776, +3.3370] | +4.3276 [+3.3961, +5.2979] |
+| P1T_drop | +3.1871 [+2.5921, +3.7944] | +5.4531 [+4.4823, +6.4433] |
+| X72_drop_from_S72 | -0.8686 [-1.5208, -0.2186] | -4.5993 [-5.6666, -3.5319] |
+| P1T_minus_P300_drop | +0.4292 [-0.3531, +1.2097] | +1.1256 [-0.1358, +2.3870] |
+| X72_minus_P300_accuracy | -0.6333 [-1.1295, -0.1391] | -0.8345 [-1.6107, -0.0388] |
+| X72_minus_P300_drop | -3.6265 [-4.3997, -2.8292] | -8.9268 [-10.2659, -7.6072] |
+
+P1T chịu drop lớn hơn P300 theo point estimate, nhưng CI của chênh lệch drop chứa 0 ở cả MC mean và LAMBADA. Đây không phải bằng chứng downstream đủ để khẳng định khác biệt drop. Nhãn training `persists`/`replicated` vẫn dựa trên CulturaX NLL theo đăng ký.
+
+X72 student thấp hơn P300 student khoảng 0.6333 pp MC và 0.8345 pp LAMBADA; hai CI không chứa 0. X72 cải thiện so với chính S72 parent (drop âm). Không suy ra quan hệ nhân quả riêng của LR state hoặc exposure từ các tương phản này.
+
+## Hoàn tất, compute và giới hạn còn ghi nhận
+
+Ledger bảo thủ đến native terminal: **24.227606 node-giờ** = preflight 3299.943346s + elapsed từ 30/10 04:19:10.047762 SGT đến terminal (bao gồm khoảng chờ/controller). Option2 supervisor elapsed 2081.136553s. Đây là elapsed ledger theo quy ước đợt chạy, không phải tổng GPU-kernel busy time. Dự toán sau preparation là 25.815441 node-giờ. Vượt mốc 20/24 giờ được báo cáo theo policy report-only; không có hard timeout.
+
+**Đã hoàn tất toàn bộ phạm vi Stage1b đăng ký:** 15 training fits, sáu-model downstream, paired CI, independent replay/recomputation và native burn handoff. Không còn bước thực thi hay quyết định protocol đang chờ người dùng trong phạm vi này.
+
+Các diagnostic/giới hạn được giữ nguyên: full-set LL max **0.10355663299560547** tại request **71485**, token mismatch **1309/1396626 = 0.0937258793693%**; lỗi hard-stop lịch sử không đổi thành PASS. Các ngưỡng đại diện đều PASS. Runtime audit thiếu một số metadata cuDNN/NCCL/driver package/actual SDPA backend; CI chỉ theo items và không có replication theo training seed. Không chạy thêm exposure test, LR, T17 hay kiến trúc ngoài phạm vi.
+
+[Receipt terminal](results/a2_stage1b_fwe_20261030/option2_final/receipt.json), [scores tổng hợp](results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/results.json), [paired CI](results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/paired_accuracy.json), [independent verification](results/a2_stage1b_fwe_20261030/option2_final/supervised/run/downstream/independent_verification.json).
+
+Raw receipt SHA256: `3bbc250badfc165a9cbb7ca4a9d959798430055889981b2320a8700fe7637ab8`. Continuation source `27087e1ca34b605e32c49cb5b1f1a8f23bd39500`, 137 frozen files được xác minh; 66 original regression eval/model files giữ nguyên.
+
+Decision máy đọc: [decision_stage1_fwe.json](decision_stage1_fwe.json). Không còn công việc đăng ký chưa hoàn tất.

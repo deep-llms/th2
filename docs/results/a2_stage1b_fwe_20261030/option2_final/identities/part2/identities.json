@@ -1,0 +1,42 @@
+{
+  "schema": 2,
+  "dataset": "fwe",
+  "phase": "part2",
+  "identities": {
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/identities/part2/S72-parent-identity.json",
+      "sha256": "9bb40306896d6adb9a3ba6f891f09663fdf7a132fa9208f7dc5e0541259dd86a"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/identities/part2/X72-student-identity.json",
+      "sha256": "05b517fbb7a7c01dec93e0a8e7237a78a343b70e37d758ad738d13bf0f02da9b"
+    }
+  },
+  "selection": {
+    "S72-parent": {
+      "kind": "parent",
+      "dataset": "fwe",
+      "parent": "S72"
+    },
+    "X72-student": {
+      "kind": "healed",
+      "dataset": "fwe",
+      "parent": "S72",
+      "teacher": "P300",
+      "arm": "X72",
+      "run_id": "ST1-fwe-X72-S1-3.2B-lr1e-3",
+      "budget": "3.2B",
+      "lr": 0.001
+    }
+  },
+  "source_locks": {
+    "stage": {
+      "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_part2_terminal_20261030.json",
+      "sha256": "fb4eb881a5b693999bb59cb395d135df93a2ddefc6394fd8fb117b924710fe43"
+    },
+    "assets": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+      "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+    }
+  }
+}
