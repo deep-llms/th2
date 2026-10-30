@@ -1,0 +1,190 @@
+{
+  "status": "ok",
+  "diagnostic": false,
+  "scores": {
+    "P300-parent": {
+      "hellaswag": {
+        "accuracy": 0.6505676160127465,
+        "primary_metric": "acc_norm,none",
+        "examples": 10042,
+        "metrics": {
+          "name": "hellaswag",
+          "alias": "hellaswag",
+          "sample_len": 10042,
+          "acc,none": 0.48864767974507073,
+          "acc_stderr,none": "N/A",
+          "acc_norm,none": 0.6505676160127465,
+          "acc_norm_stderr,none": "N/A"
+        },
+        "prompt_sha256": "cc335e8a14c5982b74a0a8bad23c445efaf7f5e5d2f45434762fcd16a4c33af4"
+      },
+      "arc_easy": {
+        "accuracy": 0.67003367003367,
+        "primary_metric": "acc_norm,none",
+        "examples": 2376,
+        "metrics": {
+          "name": "arc_easy",
+          "alias": "arc_easy",
+          "sample_len": 2376,
+          "acc,none": 0.7175925925925926,
+          "acc_stderr,none": "N/A",
+          "acc_norm,none": 0.67003367003367,
+          "acc_norm_stderr,none": "N/A"
+        },
+        "prompt_sha256": "ff7ff4a1569b206c735b7e855209598de18cd4f0e53773f5ca31e27ef23b822b"
+      },
+      "arc_challenge": {
+        "accuracy": 0.371160409556314,
+        "primary_metric": "acc_norm,none",
+        "examples": 1172,
+        "metrics": {
+          "name": "arc_challenge",
+          "alias": "arc_challenge",
+          "sample_len": 1172,
+          "acc,none": 0.35238907849829354,
+          "acc_stderr,none": "N/A",
+          "acc_norm,none": 0.371160409556314,
+          "acc_norm_stderr,none": "N/A"
+        },
+        "prompt_sha256": "a484a2680ef47fd9de501f64cb3a71fe415f70726a73462ec449a682c1576674"
+      },
+      "piqa": {
+        "accuracy": 0.7568008705114254,
+        "primary_metric": "acc_norm,none",
+        "examples": 1838,
+        "metrics": {
+          "name": "piqa",
+          "alias": "piqa",
+          "sample_len": 1838,
+          "acc,none": 0.7557127312295974,
+          "acc_stderr,none": "N/A",
+          "acc_norm,none": 0.7568008705114254,
+          "acc_norm_stderr,none": "N/A"
+        },
+        "prompt_sha256": "6780ea1f7dd3f8616e8effb328f6889f0c9520da5bd6c1531d724639913a858c"
+      },
+      "winogrande": {
+        "accuracy": 0.6203630623520127,
+        "primary_metric": "acc,none",
+        "examples": 1267,
+        "metrics": {
+          "name": "winogrande",
+          "alias": "winogrande",
+          "sample_len": 1267,
+          "acc,none": 0.6203630623520127,
+          "acc_stderr,none": "N/A"
+        },
+        "prompt_sha256": "990f2c2bcd9da7434a6a727f4372525ac6295bb298bb8eb6a5c23b49df3bf0c9"
+      },
+      "boolq": {
+        "accuracy": 0.6235474006116208,
+        "primary_metric": "acc,none",
+        "examples": 3270,
+        "metrics": {
+          "name": "boolq",
+          "alias": "boolq",
+          "sample_len": 3270,
+          "acc,none": 0.6235474006116208,
+          "acc_stderr,none": "N/A"
+        },
+        "prompt_sha256": "2fd815d9ece6d552677c13c3435f35d9eb90a2e4f25e38798c0f006963eeae74"
+      },
+      "openbookqa": {
+        "accuracy": 0.392,
+        "primary_metric": "acc_norm,none",
+        "examples": 500,
+        "metrics": {
+          "name": "openbookqa",
+          "alias": "openbookqa",
+          "sample_len": 500,
+          "acc,none": 0.292,
+          "acc_stderr,none": "N/A",
+          "acc_norm,none": 0.392,
+          "acc_norm_stderr,none": "N/A"
+        },
+        "prompt_sha256": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a"
+      },
+      "sciq": {
+        "accuracy": 0.908,
+        "primary_metric": "acc,none",
+        "examples": 1000,
+        "metrics": {
+          "name": "sciq",
+          "alias": "sciq",
+          "sample_len": 1000,
+          "acc,none": 0.908,
+          "acc_stderr,none": "N/A",
+          "acc_norm,none": 0.867,
+          "acc_norm_stderr,none": "N/A"
+        },
+        "prompt_sha256": "82d80c6f1ade95321ded36fe16617f77e46b17f9218142eea6361d7de3832463"
+      },
+      "lambada_openai": {
+        "accuracy": 0.6547642150203765,
+        "primary_metric": "acc,none",
+        "examples": 5153,
+        "metrics": {
+          "name": "lambada_openai",
+          "alias": "lambada_openai",
+          "sample_len": 5153,
+          "perplexity,none": 4.847368615236139,
+          "perplexity_stderr,none": "N/A",
+          "acc,none": 0.6547642150203765,
+          "acc_stderr,none": "N/A"
+        },
+        "prompt_sha256": "b2236bc5fbfcccfedf27ca878d4b469b5849c716474a979546f47188810dd4c9"
+      },
+      "multiple_choice_average": 0.6240591286347238
+    }
+  },
+  "protocol": {
+    "tasks": [
+      "hellaswag",
+      "arc_easy",
+      "arc_challenge",
+      "piqa",
+      "winogrande",
+      "boolq",
+      "openbookqa",
+      "sciq",
+      "lambada_openai"
+    ],
+    "max_length": 4096,
+    "limit": null,
+    "num_fewshot": 0,
+    "seed": 42,
+    "manifest_sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+    "tokenizer_files": {
+      "tokenizer.json": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "tokenizer_config.json": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "special_tokens_map.json": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd"
+    },
+    "packages": {
+      "lm-eval": "0.4.13",
+      "transformers": "5.9.0",
+      "tokenizers": "0.22.2",
+      "datasets": "4.8.5",
+      "torch": "2.14.1"
+    }
+  },
+  "native_packages": {
+    "torch": "2.14.1",
+    "transformers": "4.57.1",
+    "tokenizers": "0.22.1"
+  },
+  "checkpoint_hashes": {
+    "P300-parent": "5ea27e919c772c28c55aa9cf45a51688618fa12134e3968427c9f3cd942a39f7"
+  },
+  "prepared_sha256": "8b3563419e7900fdc36210822fcc809d1dfe838a763a2a449dd29c5a86deb971",
+  "paired_prompt_hashes": {
+    "hellaswag": "cc335e8a14c5982b74a0a8bad23c445efaf7f5e5d2f45434762fcd16a4c33af4",
+    "arc_easy": "ff7ff4a1569b206c735b7e855209598de18cd4f0e53773f5ca31e27ef23b822b",
+    "arc_challenge": "a484a2680ef47fd9de501f64cb3a71fe415f70726a73462ec449a682c1576674",
+    "piqa": "6780ea1f7dd3f8616e8effb328f6889f0c9520da5bd6c1531d724639913a858c",
+    "winogrande": "990f2c2bcd9da7434a6a727f4372525ac6295bb298bb8eb6a5c23b49df3bf0c9",
+    "boolq": "2fd815d9ece6d552677c13c3435f35d9eb90a2e4f25e38798c0f006963eeae74",
+    "openbookqa": "4f7f4114c3dac01517c7ff852439011505237d9b148c42b3574bfe423809360a",
+    "sciq": "82d80c6f1ade95321ded36fe16617f77e46b17f9218142eea6361d7de3832463",
+    "lambada_openai": "b2236bc5fbfcccfedf27ca878d4b469b5849c716474a979546f47188810dd4c9"
+  }
+}

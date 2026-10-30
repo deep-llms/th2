@@ -1,0 +1,10 @@
+{
+  "stage": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_terminal_20261030.json",
+    "sha256": "01ad2695a967ac09fde27bdbfd6efc909284427384cd8994877e7666ae74f222"
+  },
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  }
+}

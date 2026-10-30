@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-30T05:10:42.784228+00:00",
+  "jobs": [
+    {
+      "name": "stage1b-regression",
+      "started_at": "2026-10-30T05:10:42.784423+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 935.8296380019747,
+      "artifacts": [
+        {
+          "path": "downstream/complete.json",
+          "sha256": "ad9bce46585fa29fdb122dcd76207fa421f91a542e5ffca674af3ad1faa75176",
+          "bytes": 1378
+        },
+        {
+          "path": "downstream/results.json",
+          "sha256": "76985d3e5fe2b885072489b1d3badf176f37e87765db1bad2b1776baafd6c4e3",
+          "bytes": 6517
+        },
+        {
+          "path": "downstream/regression.json",
+          "sha256": "2d739bbb052439b98cf327d5ca13138463cedb7010dd73aa13315f1c54d42845",
+          "bytes": 5672
+        }
+      ],
+      "finished_at": "2026-10-30T05:26:19.940839+00:00"
+    }
+  ],
+  "finished_at": "2026-10-30T05:26:19.940873+00:00"
+}

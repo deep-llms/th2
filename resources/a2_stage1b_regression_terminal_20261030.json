@@ -1,0 +1,26 @@
+{
+  "source_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/source-manifest.json",
+    "sha256": "c070b641f3cd8d0610ddba7d3f10e14bf68c69803074f9e0d6ae016236605c7c"
+  },
+  "complete": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/downstream/complete.json",
+    "sha256": "ad9bce46585fa29fdb122dcd76207fa421f91a542e5ffca674af3ad1faa75176"
+  },
+  "supervisor": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/supervisor.json",
+    "sha256": "08400fdd714a999d1b03748ff9d900a62a7cf1e600db64513fd60e1c8838b80a"
+  },
+  "run_complete": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/complete.json",
+    "sha256": "e078ecbf82b1a3a1d79bcd8aaa09e4417a9cf4249fae41a677e61b0f544fd9e2"
+  },
+  "burn": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/burn-verified.json",
+    "sha256": "2b1a8b48630a552c4fe7828fc122a34485b53cc3ff05f2cbb8e3b2becc48dd5d"
+  },
+  "training_predecessor": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/training-predecessor.json",
+    "sha256": "178e59830f04ac2a78fd9d7319ccdbd3d607a799ea120c4855d33d6f377107ed"
+  }
+}

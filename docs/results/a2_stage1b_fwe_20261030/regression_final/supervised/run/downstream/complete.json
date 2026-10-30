@@ -1,0 +1,31 @@
+{
+  "status": "ok",
+  "models": 1,
+  "prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/downstream/prepared.json",
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+  },
+  "scores": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/downstream/scores/P300-parent/scores.json",
+      "sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99"
+    }
+  },
+  "replays": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/downstream/replays/P300-parent.json",
+      "sha256": "b0206ab6bf2a45ad2f6a5589cd0584f98092124977d24d16686c479e932e0c5c"
+    }
+  },
+  "results": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/downstream/results.json",
+    "sha256": "76985d3e5fe2b885072489b1d3badf176f37e87765db1bad2b1776baafd6c4e3"
+  },
+  "elapsed_seconds": 934.1901135519147,
+  "additional_results": {
+    "regression": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01/supervised/run/downstream/regression.json",
+      "sha256": "2d739bbb052439b98cf327d5ca13138463cedb7010dd73aa13315f1c54d42845"
+    }
+  }
+}

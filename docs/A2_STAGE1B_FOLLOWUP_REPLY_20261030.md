@@ -103,3 +103,21 @@ Launcher hiện có admission bắt buộc Part1 downstream bốn model đã ho�
 Nguồn: [Stage1 downstream results](results/a2_stage1_20261029/downstream_final/supervised/run/downstream/results.json). Prepared SHA `85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf`; original P300 scores SHA `502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99`; replay SHA `aa01aac9553898138d07a4678d30e1d4c565c8a1b0f940403ab1a740b603dda6`.
 
 [Evidence và hashes của audit](results/a2_stage1b_fwe_20261030/followup_audit/evidence.json). Không có GPU experiment mới được thực hiện để viết tài liệu này.
+
+## Regression result — verified 30 October 13:33 SGT, retrieved 14:00 SGT
+
+PASS: all nine primary task accuracies exactly match Stage 1. The maximum absolute aligned per-request log-likelihood difference is **0.0 nats** across all **78,259 requests**, with zero greedy mismatches. The complete score file is byte-identical (SHA-256 `502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99`). Candidate execution source: `8b78d9e1051407a45be6676820bc57ac87a872e4`; original downstream source: `13686edd9cb8d7914b0f2c44c3c362c435a808f6`. Exact original model identity, prepared requests, batch 2 and FP32 parameters with BF16 AMP were retained.
+
+| Task | Primary metric | Stage 1 | Re-score | Difference |
+|---|---|---:|---:|---:|
+| hellaswag | acc_norm,none | 0.650567616012746 | 0.650567616012746 | 0 |
+| arc_easy | acc_norm,none | 0.67003367003367 | 0.67003367003367 | 0 |
+| arc_challenge | acc_norm,none | 0.371160409556314 | 0.371160409556314 | 0 |
+| piqa | acc_norm,none | 0.756800870511425 | 0.756800870511425 | 0 |
+| winogrande | acc,none | 0.620363062352013 | 0.620363062352013 | 0 |
+| boolq | acc,none | 0.623547400611621 | 0.623547400611621 | 0 |
+| openbookqa | acc_norm,none | 0.392 | 0.392 | 0 |
+| sciq | acc,none | 0.908 | 0.908 | 0 |
+| lambada_openai | acc,none | 0.654764215020377 | 0.654764215020377 | 0 |
+
+The local verifier independently recomputed the comparison from both full score arrays and the original Stage 1 summary. Native job and supervisor exited successfully; guard released; eight burn workers 722513–722520 verified with cycles 410→420 and collective payload 455.24→466.35 GiB. Raw receipt SHA-256: `98a9ebb4f9c41f481f5c4b09e9f7aa311a065a49702feed8465900757a27adb0`. [Archived evidence](results/a2_stage1b_fwe_20261030/regression_final/verification.json). FWE downstream is admitted with the same candidate evaluation/model file hashes; its results remain pending.
