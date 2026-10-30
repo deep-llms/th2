@@ -1,0 +1,15 @@
+{
+  "run_id": "ST1-fwe-P300-S1-0.8B-lr1e-3",
+  "steps": 3051,
+  "heal_tokens": 799801344,
+  "status": "complete",
+  "diverged": false,
+  "val_post": 2.9970963238272885,
+  "val_tune_post": 2.9777841032682884,
+  "delta_post": 0.1364649979704735,
+  "val_secondary_post": 2.444843807379002,
+  "delta_secondary_post": 0.13600135875435404,
+  "roundtrip_difference": 0.0,
+  "training_seconds": 2929.928263354115,
+  "wallclock_h": 0.8299244077993919
+}
