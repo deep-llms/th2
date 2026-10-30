@@ -1,0 +1,20 @@
+{
+  "run_id": "ST1-fwe-P1T-S1-0.8B-lr1e-3",
+  "steps": 3051,
+  "heal_tokens": 799801344,
+  "status": "complete",
+  "diverged": false,
+  "val_post": 2.967992110983558,
+  "val_tune_post": 2.949299474694987,
+  "delta_post": 0.15928477738174207,
+  "val_secondary_post": 2.416288128300919,
+  "delta_secondary_post": 0.16007840536465023,
+  "roundtrip_difference": 0.0,
+  "training_seconds": 2931.252332226839,
+  "wallclock_h": 0.8301465415988221,
+  "E_0_8B": 0.02281977941126856,
+  "E_fwe_0_8B": 0.024077046610296193,
+  "E_3_2_over_0_8": 1.028105924298394,
+  "A_init_0_8B": null,
+  "full_stage1b_complete": false
+}

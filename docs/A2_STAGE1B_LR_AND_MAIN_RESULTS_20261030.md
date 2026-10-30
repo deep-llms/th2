@@ -1,8 +1,8 @@
 # Stage1b FineWeb-Edu: chọn LR và ba arm 3.2B
 
-Cập nhật: **30/10/2026, 21:31:18 SGT**, từ healtha11 đã xác minh. Part1 training hoàn tất lúc **12:43:17 SGT**; X72 3.2B và P300 0.8B đã hoàn tất; P1T 0.8B đang chạy.
+Cập nhật: **30/10/2026, 22:32:12 SGT**, từ healtha13 đã xác minh. Part1 training hoàn tất lúc **12:43:17 SGT**; X72 3.2B và P300/P1T 0.8B đã hoàn tất; X72 0.8B đang chạy.
 
-**Part1 đã đủ sáu run grid ban đầu, hai run mở rộng và P300/P1T 3.2B.** Đủ lịch LR, exact 8-rank order, save/reload sai khác 0 và terminal exit 0 của Part1 đã kiểm tra. Native burn handoff của Part1 được xác minh độc lập. X72 3.2B cũng đã được kiểm tra đầy đủ; tổng 12/15 fit đã xác minh. Ba fit còn lại của Part2, downstream và báo cáo toàn Stage1b còn chờ.
+**Part1 đã đủ sáu run grid ban đầu, hai run mở rộng và P300/P1T 3.2B.** Đủ lịch LR, exact 8-rank order, save/reload sai khác 0 và terminal exit 0 của Part1 đã kiểm tra. Native burn handoff của Part1 được xác minh độc lập. X72 3.2B cũng đã được kiểm tra đầy đủ; tổng 13/15 fit đã xác minh. Hai fit còn lại của Part2, downstream và báo cáo toàn Stage1b còn chờ.
 
 ## Thiết lập và cách đọc
 
@@ -57,7 +57,7 @@ Tại 0.2B và LR đã chọn:
 | Student FWE held-out NLL | 2.406616605 | 2.376905284 |
 | Δ_post FWE held-out | +0.097774156 | +0.120695562 |
 
-**E tại 3.2B = +0.023461150 nats**, nhãn training-length **persists**, đối chiếu DCLM là **replicated** theo spec. FWE held-out E = **+0.022921405** (chẩn đoán). DCLM E3.2 = +0.021670885; FWE − DCLM = **+0.001790266**. A_init(3.2B) đã có bên dưới; xu hướng 0.8B và toàn bộ Stage1b còn chờ.
+**E tại 3.2B = +0.023461150 nats**, nhãn training-length **persists**, đối chiếu DCLM là **replicated** theo spec. FWE held-out E = **+0.022921405** (chẩn đoán). DCLM E3.2 = +0.021670885; FWE − DCLM = **+0.001790266**. A_init(3.2B) và E(0.8B) đã có bên dưới; A_init(0.8B) và toàn bộ Stage1b còn chờ.
 
 DCLM P300 regression đã PASS: cả 9 task accuracy khớp chính xác, LL max difference bằng 0. FWE downstream ban đầu thất bại tại numerical gate trước scoring; theo quyết định mới, sẽ chạy một lượt sáu model sau Part2, với kiểm tra đầy đủ P300 batch1/batch2. Chi tiết và receipt lỗi ở [REPORT.md](REPORT.md); chưa có FWE downstream scores/CI.
 
@@ -75,19 +75,19 @@ X72 đã hoàn tất 12.207 updates / 3.199.991.808 tokens tại LR 1e-3, không
 
 **A_init(3.2B) = NLL(X72 student) − NLL(P300 student) = +0.01299365118963669 nats**, nhãn **“anneal first”** theo ngưỡng đã đăng ký. X72 có NLL cao hơn P300 student; đây là đối chiếu recipe đã đăng ký, không tách riêng tác động của LR state. FWE held-out A_init = **+0.013620394355744914**, chỉ dùng chẩn đoán. DCLM A_init(3.2B) ≈ +0.012113132, cùng nhãn; A_init ở 0.2B/0.8B và tỷ lệ thu hẹp của FWE chưa có.
 
-[Receipt healtha10](results/a2_stage1b_fwe_20261030/part2_2101/receipt.json), [X72 và A_init đầy đủ](results/a2_stage1b_fwe_20261030/part2_2101/x72_3_2b_summary.json), [SHA-256](results/a2_stage1b_fwe_20261030/part2_2101/SHA256SUMS). Tại snapshot mới nhất, P300 0.8B đã hoàn tất; Part2 đang chạy P1T 0.8B (210/3.051 bước), rồi X72 0.8B và X72 0.2B. Chưa có terminal/burn handoff của Part2.
+[Receipt healtha10](results/a2_stage1b_fwe_20261030/part2_2101/receipt.json), [X72 và A_init đầy đủ](results/a2_stage1b_fwe_20261030/part2_2101/x72_3_2b_summary.json), [SHA-256](results/a2_stage1b_fwe_20261030/part2_2101/SHA256SUMS). Tại snapshot mới nhất, P300/P1T 0.8B đã hoàn tất; Part2 đang chạy X72 0.8B (870/3.051 bước), sau đó X72 0.2B. Chưa có terminal/burn handoff của Part2.
 
 ## Kết quả 0.8B đang cập nhật
 
-P300 0.8B đã hoàn tất 3.051 updates, LR 1e-3; full LR schedule, exact 8-rank order, roundtrip 0 và không divergence đã xác minh.
+P300 và P1T 0.8B đều đã hoàn tất 3.051 updates, LR 1e-3; full LR schedule, exact 8-rank order, roundtrip 0 và không divergence đã xác minh.
 
 | Arm | CulturaX tuning | CulturaX final | FWE held-out | Δ_post CulturaX |
 |---|---:|---:|---:|---:|
 | P300 | 2.977784103 | 2.997096324 | 2.444843807 | +0.136464998 |
-| P1T | Đang chạy | Chưa có | Chưa có | Chưa có |
-| X72 | Chưa chạy | Chưa có | Chưa có | Chưa có |
+| P1T | 2.949299475 | 2.967992111 | 2.416288128 | +0.159284777 |
+| X72 | Đang chạy | Chưa có | Chưa có | Chưa có |
 
-E và A_init tại 0.8B còn chờ đủ các arm. [Receipt healtha11](results/a2_stage1b_fwe_20261030/part2_2131/receipt.json), [P300 0.8B đầy đủ](results/a2_stage1b_fwe_20261030/part2_2131/p300_0_8b_summary.json).
+**E(0.8B) = +0.02281977941126856 nats**; FWE held-out E = **+0.024077046610296193** (chẩn đoán). E(3.2B)/E(0.8B) = **1.028105924**; A_init tại 0.8B còn chờ X72. [P1T và E đầy đủ](results/a2_stage1b_fwe_20261030/part2_2232/p1t_0_8b_summary.json). [Receipt healtha11](results/a2_stage1b_fwe_20261030/part2_2131/receipt.json), [P300 0.8B đầy đủ](results/a2_stage1b_fwe_20261030/part2_2131/p300_0_8b_summary.json).
 
 ## Kiểm chứng và nguồn
 
