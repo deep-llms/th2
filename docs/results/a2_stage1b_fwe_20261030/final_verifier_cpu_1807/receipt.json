@@ -1,0 +1,16 @@
+{
+  "status": "cpu_prepared_only",
+  "tests": {
+    "final_artifact_gate_verifier": 2,
+    "watcher_time_policy": 2
+  },
+  "actual_gpu_validated": false,
+  "source_sha256": {
+    "scripts/verify_a2_stage1b_final.py": "bc7f2779b2cd40976bee03acb6ac8ccdc30556fbe0ff1e5c831b9a1007ccf364",
+    "tests/a2/test_stage1b_final_verify.py": "b8e33b400d39f82cce95064151bbea6b56c574c96c4115b7cc92229ad1964db3",
+    "scripts/queue_watch.py": "af55077e62b9e72eeebcddc58ea758e6449c2429ab554ea8578142823d054301",
+    "tests/test_queue_watch_time_policy.py": "0743d2e6eaabc2a9701914ddb183b6fe54ed3b83a7f06a6b872891e65a71cb47"
+  },
+  "actual_final_replay_pending": true,
+  "fresh_native_burn_receipt_required": true
+}

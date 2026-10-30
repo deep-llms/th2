@@ -1,6 +1,6 @@
 # Stage1b FineWeb-Edu — report in progress
 
-Status: Part1 training complete; Part2 running, verified at17:25:34SGT: X72 3.2B310/12207 updates, eight GPUs99%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
+Status: Part1 training complete; Part2 running, verified at18:01:31SGT: X72 3.2B2560/12207 updates (21.0%), eight GPUs97–100%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
 
 Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init and0.8B findings await Part2. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
 
@@ -21,7 +21,7 @@ The DCLM P300 regression is independently PASS: all nine task accuracies match S
 3. For every model, record the representative batch1/batch2 per-token check. Hard numerical limits are manual-reference error ≤0.00002 nats/token, batch difference ≤0.1 nats/token, and greedy token mismatch rate ≤0.1% of compared continuation tokens. The original 0.01 batch limit is diagnostic. Historical request-level exact-match booleans are not token mismatch counts; collect token argmax evidence explicitly.
 4. Before other production scoring, score the entire FWE P300 parent request set at both batch1 and batch2. Accept batch2 if absolute differences in the eight-task MC mean and LAMBADA accuracy are each ≤0.1 percentage points. Individual MC tasks are reported, not separate pass thresholds. Reuse its batch2 scores for production on PASS. Otherwise use batch1 for all six models, reusing its batch1 scores, and explicitly record departure from Stage1's batch2 protocol.
 5. Report each task's accuracy difference, prediction flips (including changes between two wrong MC choices), per-request LL max/mean differences, and whether differing requests are in padded pairs. Preserve all deciding-check scores and SHA locks. LAMBADA correctness flips and actual generated-token prediction flips must be distinguished; the historical score format alone stores only exact-match correctness.
-6. Cut downstream first if time is short. Over20nodeh reporting is approved; the24nodeh hard cap, deadline31Oct04:06SGT, and cleanup reserve remain enforced.
+6. Time limits are report-only under the subsequent 17:30 SGT user override. Continue the registered work and report overruns; retain numerical validity and ownership checks.
 
 ## Implementation and actual results
 
@@ -37,3 +37,9 @@ Actual Part2 terminal/source commit and five new fit receipts; independent super
 At 17:31:48 SGT, Part2 X72 3.2B was at 700/12,207 updates with all eight GPUs at 99% utilization; source `42f7820` and ten inherited fit receipts were unchanged. No new final validation is available. Evidence: `results/a2_stage1b_fwe_20261030/part2_1731`.
 
 The final six-model orchestration is CPU-prepared: ten integration/admission tests and eight revised-gate tests passed, including score-preserving argmax capture on a pinned tiny native model. All 66 original regression scoring/model files remain byte-identical; six new adapters implement the authorized checks, comparison and final orchestration. Actual full-model GPU checks and full P300 batch comparison remain pending. Future downstream has no total elapsed-time termination under the latest user time policy; projected and actual usage will still be reported.
+
+At 18:01:31 SGT, source126files42f7820, the ten inherited fit receipts and native ownership were verified unchanged. Raw health SHA256: `0610ffc9e6c2b7d1366d5474f9375d8736b5df7b51664c6036ea122d9142a828`; archive: `results/a2_stage1b_fwe_20261030/part2_1801`.
+
+The existing watcher was continued serially in the same session, state, thread and pane under the exact time-policy SHA. Old PID894175 exited before PID1003079 acquired the watch; no overlapping watcher or GPU restart occurred. Its deadline is now null, with the next scheduled check at18:30SGT. The frozen Part2 process still contains its legacy job/per-fit timeouts and admission checks; these remain an open operational issue to resolve before they can interrupt unfinished registered work.
+
+The independent final verifier is CPU-prepared (two artifact/gate verification tests passed); two watcher policy tests also passed. The verifier recomputes six-model scores/replays, paired intervals, full P300 batch decision and token diagnostics from SHA-bound artifacts. Actual final GPU evidence and a separate fresh native-burn handoff are still required; no final downstream success is claimed.

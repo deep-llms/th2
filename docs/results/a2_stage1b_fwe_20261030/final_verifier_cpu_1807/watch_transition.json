@@ -1,0 +1,63 @@
+{
+  "previous": {
+    "pid": 894175,
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "tick": 29,
+    "status": "waiting",
+    "next_utc": "2026-10-30T10:30:00+00:00",
+    "until": "2026-10-31T04:06:27.182436+08:00"
+  },
+  "previous_proc_start": "3878546463",
+  "previous_argv": [
+    "python3",
+    "scripts/queue_watch.py",
+    "--thread",
+    "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "--cwd",
+    "/disk/thuat/efficient_llm",
+    "--prompt",
+    "/disk/thuat/efficient_llm/temp/a2_corpora_watch_20261029/prompt.txt",
+    "--state",
+    "/disk/thuat/efficient_llm/temp/a2_corpora_watch_20261029",
+    "--interval",
+    "1800",
+    "--until",
+    "2026-10-31T04:06:27.182436+08:00",
+    "--first-at",
+    "2026-10-30T04:00:00+08:00"
+  ],
+  "new_argv": [
+    "python3",
+    "/disk/thuat/efficient_llm/scripts/queue_watch.py",
+    "--thread",
+    "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "--cwd",
+    "/disk/thuat/efficient_llm",
+    "--prompt",
+    "/disk/thuat/efficient_llm/temp/a2_corpora_watch_20261029/prompt.txt",
+    "--state",
+    "/disk/thuat/efficient_llm/temp/a2_corpora_watch_20261029",
+    "--interval",
+    "1800",
+    "--first-at",
+    "2026-10-30T10:30:00+00:00",
+    "--time-policy",
+    "/disk/thuat/efficient_llm/resources/a2_stage1b_time_policy_20261030.json",
+    "--time-policy-sha256",
+    "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  ],
+  "pane": "%103",
+  "reason": "Explicit user removal of time/deadline stops; same watch/session/state, no overlapping process",
+  "continued": {
+    "pid": 1003079,
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "tick": 0,
+    "status": "waiting",
+    "next_utc": "2026-10-30T10:30:00+00:00",
+    "until": null,
+    "time_policy": "/disk/thuat/efficient_llm/resources/a2_stage1b_time_policy_20261030.json",
+    "time_policy_sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  },
+  "old_process_exited_before_continuation": true,
+  "old_state": "Z, tmux pane dead, lock released"
+}

@@ -1,11 +1,12 @@
 """Wake the explicitly selected existing Codex conversation at a fixed interval.
 
 Local-only; no API keys, new agents, GPU management, or remote shell access.
-Queues a message on the existing app server; never opens a competing writer. Ends at the fixed deadline or STOP.
+Queues a message on the existing app server; never opens a competing writer. Ends at a fixed deadline or STOP; an explicitly SHA-locked user policy can remove the deadline.
 """
 import argparse
 from datetime import datetime, timezone
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -17,6 +18,22 @@ def write(path,data):
     temp=path.with_suffix('.tmp');temp.write_text(json.dumps(data,indent=2)+'\n');temp.replace(path)
 
 
+def deadline(until, policy=None, policy_sha=None):
+    if policy is None:
+        if not until or policy_sha:raise ValueError('Deadline or explicit policy required')
+        value=datetime.fromisoformat(until)
+        if value.tzinfo is None:raise ValueError('Deadline timezone required')
+        return value.timestamp()
+    if until or policy_sha!='e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac':
+        raise ValueError('Explicit report-only time policy required')
+    raw=Path(policy).read_bytes()
+    if hashlib.sha256(raw).hexdigest()!=policy_sha:raise ValueError('Time policy changed')
+    value=json.loads(raw)
+    if (value.get('time_limits_report_only') is not True or value.get('continue_registered_work') is not True
+            or value.get('hard_deadline') is not None):raise ValueError('Policy does not authorize continuation')
+    return float('inf')
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--thread',required=True)
@@ -24,12 +41,15 @@ def main():
     p.add_argument('--prompt',type=Path,required=True)
     p.add_argument('--state',type=Path,required=True)
     p.add_argument('--interval',type=int,default=1800)
-    p.add_argument('--until',required=True)
+    stop=p.add_mutually_exclusive_group(required=True)
+    stop.add_argument('--until')
+    stop.add_argument('--time-policy',type=Path)
+    p.add_argument('--time-policy-sha256')
     p.add_argument('--first-at')
     p.add_argument('--codex',default='/home/users/thien/.local/bin/codex')
     a=p.parse_args()
     if a.interval<1800:raise ValueError('Minimum interval30min')
-    end=datetime.fromisoformat(a.until).timestamp()
+    end=deadline(a.until,a.time_policy,a.time_policy_sha256)
     os.umask(0o077);a.state.mkdir(parents=True,exist_ok=True)
     with (a.state/'lock').open('w') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -39,7 +59,8 @@ def main():
         while time.time()<end and not (a.state/'STOP').exists():
             status={'pid':os.getpid(),'thread':a.thread,'tick':tick,'status':'waiting',
                     'next_utc':datetime.fromtimestamp(next_run,timezone.utc).isoformat(),
-                    'until':a.until}
+                    'until':a.until,'time_policy':str(a.time_policy) if a.time_policy else None,
+                    'time_policy_sha256':a.time_policy_sha256}
             write(a.state/'status.json',status)
             while time.time()<min(next_run,end) and not (a.state/'STOP').exists():time.sleep(1)
             if time.time()>=end or (a.state/'STOP').exists():break
