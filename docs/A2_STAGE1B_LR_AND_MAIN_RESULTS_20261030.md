@@ -1,8 +1,8 @@
 # Stage1b FineWeb-Edu: chọn LR và hai arm 3.2B
 
-Cập nhật tài liệu: **30/10/2026, 10:56 SGT**. Snapshot đã xác minh gần nhất: **10:31:35 SGT**.
+Cập nhật tài liệu: **30/10/2026, 11:01 SGT**. Snapshot đã xác minh gần nhất: **11:01:13 SGT**.
 
-**Chưa đủ kết quả cuối của cả hai arm 3.2B.** Sáu run grid ban đầu và hai run mở rộng đã hoàn tất. P300 3.2B đã hoàn tất; P1T 3.2B đang ở bước **4.030/12.207 (33,0%)** trong snapshot trên. ETA P1T **12:45–13:00 SGT**, còn phụ thuộc validation/save. Các ô “Chờ” dưới đây chưa có kết quả, không phải giá trị bằng 0.
+**Chưa đủ kết quả cuối của cả hai arm 3.2B.** Sáu run grid ban đầu và hai run mở rộng đã hoàn tất. P300 3.2B đã hoàn tất; P1T 3.2B đang ở bước **5.890/12.207 (48,3%)** trong snapshot trên. ETA P1T **12:45–13:00 SGT**, còn phụ thuộc validation/save. Các ô “Chờ” dưới đây chưa có kết quả, không phải giá trị bằng 0.
 
 ## Thiết lập và cách đọc
 
@@ -48,7 +48,7 @@ Tại 0.2B và LR đã chọn:
 
 | Chỉ số | P300 | P1T |
 |---|---:|---:|
-| Trạng thái | Hoàn tất, xác minh 09:31 SGT | Đang chạy, 4.030/12.207 bước lúc 10:31 SGT |
+| Trạng thái | Hoàn tất, xác minh 09:31 SGT | Đang chạy, 5.890/12.207 bước lúc 11:01 SGT |
 | Parent CulturaX final NLL | 2.860631326 | 2.808707334 |
 | Student CulturaX tuning NLL | 2.936589511 | Chờ |
 | Student CulturaX final NLL | 2.955812353 | Chờ |
@@ -61,12 +61,12 @@ Tại 0.2B và LR đã chọn:
 
 ## Kiểm chứng và nguồn
 
-Cả tám run grid và P300 3.2B đã được kiểm tra đủ lịch LR, thứ tự dữ liệu chính xác trên 8 rank, sai khác save/reload bằng 0, không divergence. Snapshot P1T hiện tại có 8 GPU hoạt động 98–100%; source, inputs, runtime, ownership và chín receipt đã hoàn tất không đổi.
+Cả tám run grid và P300 3.2B đã được kiểm tra đủ lịch LR, thứ tự dữ liệu chính xác trên 8 rank, sai khác save/reload bằng 0, không divergence. Snapshot P1T hiện tại có 8 GPU hoạt động 97–100%; source, inputs, runtime, ownership và chín receipt đã hoàn tất không đổi.
 
-- [Receipt 10:31 SGT](results/a2_stage1b_fwe_20261030/part1_1031/receipt.json), [SHA-256 của receipt](results/a2_stage1b_fwe_20261030/part1_1031/receipt.sha256).
+- [Receipt 11:01 SGT](results/a2_stage1b_fwe_20261030/part1_1101/receipt.json), [SHA-256 của receipt](results/a2_stage1b_fwe_20261030/part1_1101/receipt.sha256).
 - [Grid note và phép tính E](results/a2_stage1b_fwe_20261030/part1_0631/grid_note.json).
 - [Preflight và đo parent](A2_STAGE1B_PREFLIGHT_20261030.md).
 - Training source: `7dd9da088ba5af581c295775819319ce54b2025c` (124 file đã xác minh).
-- Raw health SHA-256: `1455afb0f014ff231dc43396eaf6548a0fe845b500d5b30faed81f26b02a0d36`.
+- Raw health SHA-256: `a856c5f4e67bdd53d850ebcbb9c420b7c28baf18a61d68e9571c2654dccedd3f`.
 
 Số hiển thị được làm tròn 9 chữ số thập phân; receipt lưu độ chính xác đầy đủ. Khi P1T hoàn tất, cập nhật bảng 3.2B và E từ receipt cuối đã kiểm chứng.
