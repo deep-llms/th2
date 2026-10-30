@@ -1,0 +1,249 @@
+{
+  "raw_log": "temp/a2_quant_health01.log",
+  "raw_sha256": "b23d15da687293369ee4fe39a387f2806e2df75d161fcf6970877df2bdd9f6f2",
+  "artifacts": {
+    "source-manifest.json": "108ecade4a6117965f67adbebbd4067ef99730ad60d0cbdeade146a3a70de55f",
+    "jobs.json": "b9a34ef65e785b364d7b8656bad68f7b84111c28d53d12dde4f5adc8ce4252cf",
+    "budget.json": "d71e1baa23788a0f11ca65aba31668857eed16ab0eef6a183d59cb6b51dc841b",
+    "admission.json": "86f421b2f586660f47a2cbab0766f1719f62e7c5169bf4c166ac72fc1ae23b98",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "fbef2bcd3b40770214b79ceb86c06200d39c4b008da051e130f744040f528395",
+    "supervised/reclaim.json": "202ed61b683ae674b8b2235a80fb1459958121eea6df406d2f334040483cde2c",
+    "supervised/gpus-free-before-training.json": "005102f479bcdc7022bef18d65b2357cb6d031277b120f0aac3895f9c5bd42ff",
+    "supervised/run/run.json": "47d53e4216d57a4f1e7a11bc7a6dbb2b15441939f679f03536fb8761e33a3e76",
+    "results/a2_quant_20261031/config/plan.json": "f578a1bec652c93f98d21bcddabe193b41fb8e89ba0c98443d4235434af208a3",
+    "results/a2_quant_20261031/preparation_checks.json": "0a55215bd9d68036b1260e684d755dca26416ed4def245495b4ca641b896523f",
+    "results/a2_quant_20261031/manifests/gptq_implementation.json": "5ff67500025c2d24a3650c3ae766a1939c9a5981c3417210572316d9a9c44bcc",
+    "results/a2_quant_20261031/pooled_downstream.json": "7d832a4e8f9c2d6b483c40bcb8bbeeab5451ec56705789f735989270c4cecda5"
+  },
+  "logs": {
+    "supervisor.log": "AUTHORIZED_BURN_WORKER_STOP [734481, 734482, 734483, 734484, 734485, 734486, 734487, 734488]\nALL_EIGHT_GPUS_VERIFIED_FREE\nSTART a2-quant\n",
+    "supervised/run/a2-quant.log": "QUANT_PHASE baseline\nREPORTED_CHECK {\"check\": \"pooled_followup\", \"passed\": true, \"diagnostic\": false, \"note\": \"Completed\"}\n",
+    "results/a2_quant_20261031/logs/baseline/fwe-P300.log": "proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"fwe\", \"parent\": \"P300\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/fwe-S72.log": "_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"fwe\", \"parent\": \"S72\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/fwe-P1T.log": "_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"fwe\", \"parent\": \"P1T\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/dclm-P1T.log": "proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"P1T\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/fwe-S188.log": "proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"fwe\", \"parent\": \"S188\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/dclm-P300.log": "roj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"P300\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/dclm-S72.log": "2, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"S72\", \"phase\": \"baseline\"}\nQUANT_CHECK {\"test\": \"QT3\", \"passed\": false, \"detail\": {\"bits\": 3, \"cardinality\": true, \"idempotent\": false, \"repeat_max_abs\": 0.06792092323303223, \"constant_groups\": 0}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"S72\", \"phase\": \"baseline\"}\nQUANT_CHECK {\"test\": \"QT4\", \"passed\": true, \"detail\": {\"bits\": 3, \"max_abs\": 0.0}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"S72\", \"phase\": \"baseline\"}\nQUANT_CHECK {\"test\": \"QT3\", \"passed\": false, \"detail\": {\"bits\": 4, \"cardinality\": true, \"idempotent\": false, \"repeat_max_abs\": 0.06270831823348999, \"constant_groups\": 0}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"S72\", \"phase\": \"baseline\"}\nQUANT_CHECK {\"test\": \"QT4\", \"passed\": true, \"detail\": {\"bits\": 4, \"max_abs\": 0.0}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"S72\", \"phase\": \"baseline\"}\n",
+    "results/a2_quant_20261031/logs/baseline/dclm-S188.log": "roj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.21.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.21.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.22.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.22.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.22.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}, {\"name\": \"model.layers.23.self_attn.q_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.k_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.v_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.self_attn.o_proj.weight\", \"shape\": [2048, 2048], \"weights\": 4194304}, {\"name\": \"model.layers.23.mlp.gate_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.up_proj.weight\", \"shape\": [8192, 2048], \"weights\": 16777216}, {\"name\": \"model.layers.23.mlp.down_proj.weight\", \"shape\": [2048, 8192], \"weights\": 16777216}]}, \"spec_sha256\": \"a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da\", \"dataset\": \"dclm\", \"parent\": \"S188\", \"phase\": \"baseline\"}\n"
+  },
+  "health_at": "2026-10-30T22:06:40.963780+00:00",
+  "live": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-30T22:06:41.199868+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7970.0,
+        "utilization_percent": 78.0,
+        "pids": [
+          736250
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 82.0,
+        "pids": [
+          736251
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 76.0,
+        "pids": [
+          736253
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 74.0,
+        "pids": [
+          736255
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 84.0,
+        "pids": [
+          736256
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 80.0,
+        "pids": [
+          736258
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 80.0,
+        "pids": [
+          736260
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 76.0,
+        "pids": [
+          736261
+        ]
+      }
+    ],
+    "workers": [
+      736250,
+      736251,
+      736253,
+      736255,
+      736256,
+      736258,
+      736260,
+      736261
+    ],
+    "stop_roots": [],
+    "processes": {
+      "736250": {
+        "pid": 736250,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "25dd6763735fa7025bd0803dcaf710305f718fa3d20149f46222921b7cfb88be",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736251": {
+        "pid": 736251,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "54137c986783b73aded7f4368e00fe94003f8108b059227c7120dbf281538726",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736253": {
+        "pid": 736253,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "afdee512e96b2c1e9dd83a80867d58d3c87418cf4ef1befb86fb024c82f77172",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736255": {
+        "pid": 736255,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "92ce4b7dbc6792f607988dd0d44bcb6e3f2bf07ef1359292318a5459f12c7cdc",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736256": {
+        "pid": 736256,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "ca178c7039d5a021b08726bd2034fab04b685819ad08599877f2b6536d15305c",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736258": {
+        "pid": 736258,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "fcc94cc054ad21ab774edb13b3a4d42c44adc5306d84dc5f0859e83880bf5c47",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736260": {
+        "pid": 736260,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "f23520897f00559a6da6915f6c834766579da4519a5a1c857bcbffcfa3a44e89",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736261": {
+        "pid": 736261,
+        "ppid": 736243,
+        "start_ticks": 333842888,
+        "command_sha256": "17b5839a2424cc428f80fd1518fe616043c17242782fe531b658683919e4fea8",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "guard_disabled": true
+  },
+  "guard": "{\"owner_pid\": 736203, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/supervised\", \"at\": \"2026-10-30T22:03:16.602026+00:00\"}",
+  "session": "0 736203",
+  "receipt_complete": true,
+  "source_files_verified": 144,
+  "source_commit": "422bb7f118fd875ea2d9392e5da0cefbfbfb8d30"
+}

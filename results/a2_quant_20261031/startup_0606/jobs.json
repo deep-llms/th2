@@ -1,0 +1,38 @@
+{
+  "jobs": [
+    {
+      "name": "a2-quant",
+      "gpus": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "timeout_seconds": null,
+      "argv": [
+        "{python}",
+        "-u",
+        "-m",
+        "scripts.a2_quant_run",
+        "--config",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/config/plan.json",
+        "--config-sha256",
+        "f578a1bec652c93f98d21bcddabe193b41fb8e89ba0c98443d4235434af208a3",
+        "--receipt",
+        "{run_dir}/quant-complete.json"
+      ],
+      "required_outputs": [
+        {
+          "path": "quant-complete.json",
+          "json_equals": {
+            "execution_complete": true
+          }
+        }
+      ]
+    }
+  ]
+}

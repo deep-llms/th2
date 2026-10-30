@@ -1,0 +1,118 @@
+[
+  {
+    "test": "spec_identity",
+    "passed": true,
+    "detail": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "twelve_parent_manifest",
+    "passed": true,
+    "detail": {
+      "keys": [
+        "dclm/P1T",
+        "dclm/P300",
+        "dclm/S188",
+        "dclm/S72",
+        "fwe/P1T",
+        "fwe/P300",
+        "fwe/S188",
+        "fwe/S72",
+        "nem/P1T",
+        "nem/P300",
+        "nem/S188",
+        "nem/S72"
+      ]
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "data:/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data:final",
+    "passed": true,
+    "detail": {
+      "sequences": 2461,
+      "length": 4096
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "data:/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/packed/dclm:tuning",
+    "passed": true,
+    "detail": {
+      "sequences": 1024,
+      "length": 4096
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "data:/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/packed/fineweb_edu:tuning",
+    "passed": true,
+    "detail": {
+      "sequences": 1024,
+      "length": 4096
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "data:/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem:final",
+    "passed": true,
+    "detail": {
+      "sequences": 256,
+      "length": 4096
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "QT6",
+    "passed": false,
+    "detail": {
+      "overlaps": {
+        "cal0:cal1": {
+          "ids": [
+            [
+              "train",
+              25978874
+            ]
+          ],
+          "content_hashes": [
+            "cd0f63b818a2b11ebc4783a1dfd49700266833e76b0b0538b4dd2639edb40d7c"
+          ]
+        },
+        "cal0:tuning": {
+          "ids": [],
+          "content_hashes": []
+        },
+        "cal0:final": {
+          "ids": [],
+          "content_hashes": []
+        },
+        "cal1:tuning": {
+          "ids": [],
+          "content_hashes": []
+        },
+        "cal1:final": {
+          "ids": [],
+          "content_hashes": []
+        }
+      },
+      "action": "Keep exact preregistered sequence prefixes; flag QT6/calibration-dependent results. No silent resampling."
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "accelerate_configuration",
+    "passed": true,
+    "detail": {
+      "path": "/mnt/local/.cache/huggingface/accelerate/default_config.yaml"
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  },
+  {
+    "test": "accelerate_env",
+    "passed": true,
+    "detail": {
+      "returncode": 0
+    },
+    "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+  }
+]

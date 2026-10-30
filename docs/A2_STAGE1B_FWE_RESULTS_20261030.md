@@ -265,3 +265,34 @@ Decision máy đọc: [decision_stage1_fwe.json](decision_stage1_fwe.json). Khô
 ## Bổ sung A2 Q: T17 (text only)
 
 T17 Stage1 = 3.0618885176067017 và Stage1b = 3.0617311959690636 nats; Stage1b − Stage1 = −0.0001573216376380 nats. Các phiên bản được ghi nhận (Stage1 / Stage1b) khớp nhau: torch 2.14.1+cu130 / 2.14.1+cu130, CUDA build tag cu130 / cu130, transformers 4.57.1 / 4.57.1, accelerate 1.13.0 / 1.13.0, Python 3.11.15 / 3.11.15, NumPy 2.4.6 / 2.4.6, safetensors 0.8.0 / 0.8.0. Hai lần dùng cùng tám UUID GPU B200. Exact loaded CUDA runtime, cuDNN, NCCL, driver package và SDPA backend thực tế không được ghi đầy đủ cho từng T17, nên không khẳng định chúng giống nhau. Nguyên nhân: chưa xác định (not identified). Không label nào phụ thuộc sai khác này. Nguồn: docs/A2_STAGE1B_FOLLOWUP_REPLY_20261030.md; đây là đối chiếu text-only, không chạy thêm T17.
+
+## Bổ sung post hoc: pooled downstream DCLM + FineWeb-Edu
+
+Phân tích được định nghĩa sau khi thấy kết quả từng dataset. Bootstrap 10.000 lần, seed 0; cùng lượt lấy mẫu item áp dụng cho cả hai dataset, giữ pairing giữa các model. Đơn vị bảng: điểm phần trăm (pp). CI chỉ phản ánh sampling benchmark item.
+
+| Metric | Contrast | DCLM | FWE | Pooled | 95% CI | Tương quan draws |
+|---|---|---:|---:|---:|---|---:|
+| mc_mean | P300_drop | 3.472035404 | 2.757858272 | 3.114946838 | [2.680669771, 3.543912518] | 0.077349 |
+| mc_mean | P1T_drop | 3.315287576 | 3.187083642 | 3.251185609 | [2.830996678, 3.672330266] | 0.038843 |
+| mc_mean | X72_drop_from_S72 | 0.659318837 | -0.868594621 | -0.104637892 | [-0.575700089, 0.357834720] | -0.014275 |
+| mc_mean | P1T_minus_P300_drop | -0.156747828 | 0.429225370 | 0.136238771 | [-0.417750278, 0.686094129] | 0.022334 |
+| mc_mean | X72_minus_P300_accuracy | -0.403024228 | -0.633313744 | -0.518168986 | [-0.860637835, -0.181002262] | -0.021306 |
+| mc_mean | X72_minus_P300_drop | -2.812716567 | -3.626452893 | -3.219584730 | [-3.777794579, -2.638681556] | 0.035375 |
+| mc7_without_boolq | P300_drop | 2.919547671 | 3.086307226 | 3.002927448 | [2.531974455, 3.459722972] | 0.083833 |
+| mc7_without_boolq | P1T_drop | 3.352028090 | 3.485107387 | 3.418567739 | [2.963731641, 3.880104117] | 0.045965 |
+| mc7_without_boolq | X72_drop_from_S72 | -0.251298349 | -0.599494770 | -0.425396559 | [-0.930109196, 0.072702750] | 0.020727 |
+| mc7_without_boolq | P1T_minus_P300_drop | 0.432480420 | 0.398800161 | 0.415640290 | [-0.190583147, 1.016291138] | 0.025676 |
+| mc7_without_boolq | X72_minus_P300_accuracy | -0.609135596 | -0.741262015 | -0.675198806 | [-1.040536299, -0.318187370] | -0.029856 |
+| mc7_without_boolq | X72_minus_P300_drop | -3.170846020 | -3.685801996 | -3.428324008 | [-4.038018914, -2.813584641] | 0.045271 |
+| lambada_accuracy | P300_drop | 4.405200854 | 4.327576169 | 4.366388512 | [3.716281778, 5.035901417] | 0.003420 |
+| lambada_accuracy | P1T_drop | 5.297884727 | 5.453134097 | 5.375509412 | [4.676887250, 6.074131574] | 0.019134 |
+| lambada_accuracy | X72_drop_from_S72 | -3.842421890 | -4.599262565 | -4.220842228 | [-5.006792160, -3.444595381] | 0.013609 |
+| lambada_accuracy | P1T_minus_P300_drop | 0.892683873 | 1.125557927 | 1.009120900 | [0.116437027, 1.862992432] | -0.001075 |
+| lambada_accuracy | X72_minus_P300_accuracy | -0.174655540 | -0.834465360 | -0.504560450 | [-1.048175820, 0.058218513] | 0.015352 |
+| lambada_accuracy | X72_minus_P300_drop | -8.247622744 | -8.926838735 | -8.587230739 | [-9.547836212, -7.655734524] | 0.013262 |
+
+MC7 bỏ BoolQ là sensitivity báo cạnh MC8, không thay thế kết quả chính; lý do preregistration: parents ở mức majority-class khoảng 62.2%.
+Đối chiếu point estimates với các bảng đã công bố: True.
+
+
+Nguồn: [pooled_downstream.json](../results/a2_quant_20261031/pooled_downstream.json), receipt quant healtha01 `3839d65`, 31 Oct 06:06:40 SGT.
