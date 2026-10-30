@@ -1,6 +1,6 @@
 # Stage1b FineWeb-Edu — report in progress
 
-Status: Part1 training complete; Part2 running, verified at18:30:58SGT: X72 3.2B4400/12207 updates (36.0%), eight GPUs98–99%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
+Status: Part1 training complete; Part2 running, verified at19:01:20SGT: X72 3.2B6300/12207 updates (51.6%), eight GPUs98–99%. Part2 actual GPU startup was verified at17:19:54SGT; final downstream results are pending. This is not a full completion report.
 
 Part1 common/own-best LR is1e-3. CulturaX final NLL: P3003.2B2.955812352510089; P1T3.2B2.9273495106589977. E(3.2B)=+0.023461150403907727, `persists`, with DCLM/FWE length finding `replicated`. A_init and0.8B findings await Part2. Full validated tables and preregistered caveats are in [REPORT_interim.md](REPORT_interim.md).
 
@@ -45,3 +45,5 @@ The existing watcher was continued serially in the same session, state, thread a
 The independent final verifier is CPU-prepared (two artifact/gate verification tests passed); two watcher policy tests also passed. The verifier recomputes six-model scores/replays, paired intervals, full P300 batch decision and token diagnostics from SHA-bound artifacts. Actual final GPU evidence and a separate fresh native-burn handoff are still required; no final downstream success is claimed.
 
 At 18:30:58 SGT, Part2 healtha05 confirmed continued X72 progress at about0.96016seconds/update, unchanged source/input/runtime/provenance and ten prior fit receipts. No new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1830`; rawSHA `0073055c5d155d3abfc0fc4539a1a2082c1d6cb910b7451acdbaa5660a7202d0`. X72 completion is provisionally20:40–20:50SGT; all heals23:30–00:00 and full downstream/report00:30–02:00. The local Part2 terminal verifier is syntax-checked only; actual15-fit terminal and fresh native-burn evidence remain required. Legacy loaded Part2 timeouts remain monitored, not imminent at this snapshot.
+
+At19:01:20SGT, healtha06 independently verified continued X72 progress at about0.95907seconds/update, unchanged source/input/runtime/provenance and ten prior fits; no new final validation. Evidence: `results/a2_stage1b_fwe_20261030/part2_1901`, rawSHA `d5835e16272b4be88214180d4a2b027b39138e8668e1759f851eda8060ee10e6`. Remaining training is about94minutes plus validation/save; provisional X72 completion20:40–20:50SGT and overall00:30–02:00SGT. Legacy loaded timeouts remain an open issue, with no imminent boundary at this snapshot.
