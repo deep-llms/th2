@@ -39,6 +39,9 @@ def execute_final_scoring(jobs,*,timeout_seconds):
 
 
 def run_screen(plan,output,*,timeout_seconds=None):
+    if 'continuation' in plan:
+        from scripts.a2_stage1b_option2 import run
+        return run(plan,output)
     if timeout_seconds is not None and (not math.isfinite(timeout_seconds) or timeout_seconds<=0):
         raise ValueError('Invalid optional test timeout')
     started=time.monotonic();deadline=None if timeout_seconds is None else started+timeout_seconds
@@ -104,7 +107,6 @@ def run_screen(plan,output,*,timeout_seconds=None):
     decision_lock=lock(decision_path);decision=read_locked(decision_lock)
     batch=decision['production_batch_size']
     if (decision['status']!='compared' or decision['requests']!=78259 or batch not in (1,2)
-            or decision.get('hard_batch_passed') is not True
             or decision['inputs']!=read_locked(comparison_inputs)
             or (batch==2)!=decision['batch2_accepted']):raise ValueError('Incomplete batch decision')
     # No other production scoring until the complete P300 decision exists.

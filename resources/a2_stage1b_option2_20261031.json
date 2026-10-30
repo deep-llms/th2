@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "authorized_at": "2026-10-30T18:55:03.466902+00:00",
+  "authority": "User explicit Option 2, launch now, in this thread",
+  "production_batch_size": 2,
+  "reuse_p300_parent_batch2": true,
+  "representative_gate_thresholds": {
+    "manual": 2e-05,
+    "batch_nats_per_token": 0.1,
+    "token_mismatch_rate": 0.001
+  },
+  "full_set_LL": "diagnostic_only",
+  "full_set_token_mismatch": "diagnostic_only",
+  "decision": "accuracy_rule_passed",
+  "on_scientific_check_failure": "log_flag_continue_maximum_registered_plan_without_waiting",
+  "never_relabel_failure_as_pass": true,
+  "timeout_seconds": null,
+  "scope": "Five remaining registered FWE models, paired bootstrap, independent replay, final report"
+}

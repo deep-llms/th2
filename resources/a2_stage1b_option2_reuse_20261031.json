@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01",
+  "source_commit": "f0c8154808bef431c76553a47fd9727d3ba8bd53",
+  "source_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/source-manifest.json",
+    "sha256": "416ae03c37f941ff3fc9e45d7561640564238b54bfdc63d68802cd1664009870"
+  },
+  "plan": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/plan.json",
+    "sha256": "ecf585781f88f0278372c19e127ba25edb87e55574280e68e1153afd9ca1f700"
+  },
+  "supervisor": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/supervisor.json",
+    "sha256": "7cd29ea2f16f4e86a20c1cd055d548123dc36fdbf705bebbb28aeb4e9d7e362d"
+  },
+  "burn": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/burn-verified.json",
+    "sha256": "dbcafa3466da4586a812db7bcc194bea41d14fa4495676a0a919c69d87619d13"
+  },
+  "decision": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_decision.json",
+    "sha256": "e723e5332f0ab5687b44a9027e01df535aa842e72ed9f991109266b966e91e33"
+  },
+  "gates": {
+    "P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P300-parent-check.json",
+      "sha256": "f87ec6e92cab44e444735975b962b73fe7d056b494244f1d2cb5bdeab61dcfac"
+    },
+    "P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P1T-parent-check.json",
+      "sha256": "0b7c49afb5a38f808b08a91a6d3a60d0aca24d7b412bf7a52bab57fa500a53a4"
+    },
+    "S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/S72-parent-check.json",
+      "sha256": "11cbe8c94e53963990d46dde171731b4bac9802ce7df36f948ce7b131c435ee6"
+    },
+    "P300-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P300-student-check.json",
+      "sha256": "791a7a43beb63bf65f445a3dd5dfe1ef0eedc9ccbfe656e56aaf37403b8c3ad1"
+    },
+    "P1T-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/P1T-student-check.json",
+      "sha256": "3929b113335fb60cafa718535712d7cf062d6ade0e6d079d1c99fc6630a6899b"
+    },
+    "X72-student": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/X72-student-check.json",
+      "sha256": "0c56cd0c5efce18ca0b4905644d2fea3ed2dc64ea5b3c9e941efdad308fc7ef0"
+    }
+  },
+  "policy": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_option2_20261031.json",
+    "sha256": "c491fbb16dbcfbeeb31316aaa6b01492298f051d20217c0e8450d2f432ac4794"
+  },
+  "known_burn_identities": {
+    "730982": {
+      "pid": 730982,
+      "ppid": 730913,
+      "start_ticks": 331733213,
+      "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730983": {
+      "pid": 730983,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730984": {
+      "pid": 730984,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730985": {
+      "pid": 730985,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730986": {
+      "pid": 730986,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730987": {
+      "pid": 730987,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730988": {
+      "pid": 730988,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730989": {
+      "pid": 730989,
+      "ppid": 730913,
+      "start_ticks": 331733214,
+      "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "730913": {
+      "pid": 730913,
+      "ppid": 9406,
+      "start_ticks": 331733096,
+      "command_sha256": "d50de53c91af750f486169a0c6c0adb882ee8c4830af8ffa7055bd41eb380b55",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/source/resources/llm_pretrain_burn.py"
+      ],
+      "launcher_kind": "gpu_burn"
+    }
+  }
+}

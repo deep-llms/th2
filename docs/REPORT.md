@@ -1,3 +1,15 @@
+# Option 2 — deviation được người dùng phê duyệt, 31/10/2026 SGT
+
+Người dùng đã chọn **Option 2 và yêu cầu launch ngay**. Batch 2 được quyết định bởi accuracy rule đã PASS: MC mean +0.004797435 điểm phần trăm, LAMBADA 0. Ngưỡng **0.1 nats/token chỉ áp dụng cho sáu gate đại diện**, cả sáu đã PASS. Trên full set, LL là **diagnostic**: max **0.10355663299560547 nats/token**, request **71485**; token mismatch **1309/1396626 = 0.0937258793693%**. Giữ nguyên artifact FAIL lịch sử; không đổi thành PASS. Việc mã cũ dùng full-set LL làm hard stop là deviation đã được điều chỉnh theo xác nhận này.
+
+Continuation tái dùng P300-parent batch2, chấm năm model còn lại ở batch2, chạy paired bootstrap 10,000 seed0 và replay độc lập. Kiểm tra khoa học ghi PASS/FLAG và tiếp tục phần kế hoạch còn thực hiện được; không chờ trả lời hay tạo kết quả thay thế cho artifact thiếu. Native supervisor kiểm tra đúng quyền sở hữu GPU trước khi thu hồi burn. Trạng thái thực thi hoàn tất được tách khỏi trạng thái kết quả khoa học đầy đủ/đã xác minh.
+
+File kết quả chung: [A2_STAGE1B_FWE_RESULTS_20261030.md](A2_STAGE1B_FWE_RESULTS_20261030.md). Chưa khẳng định scores/CI/replay của continuation đã hoàn tất.
+
+Còn mở: launch/receipt continuation, năm model, paired CI, replay, final report và native handoff. Các ghi chú chờ lựa chọn phía dưới là lịch sử, đã được Option 2 thay thế.
+
+---
+
 # Stage1b FineWeb-Edu — report in progress
 
 Status: All15 registered training fits are complete. Final downstream failed31Oct00:12:10SGT on the full P300 batch comparison: max0.10355663299560547 nats/token exceeds0.1. Six representative gates passed, and the accuracy rule accepts batch2; the full numerical failure is retained. Five other production scores and paired CI are absent. Native failed-job burn handoff verified00:33:07SGT. This is not a full completion report.

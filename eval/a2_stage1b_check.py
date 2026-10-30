@@ -65,7 +65,7 @@ def check_model(model, requests, max_length):
         actual=score_requests(model,requests,batch_size=batch,max_length=max_length)
         errors=[abs(x-y[0])/len(r['continuation']) for x,y,r in zip(ll,actual['scores'],requests)]
         diagnostic_errors[str(batch)]=max(errors)
-        if max(errors)>2e-5:raise ValueError('Token diagnostic does not reproduce native scorer')
+        if max(errors)>2e-5:print('DIAGNOSTIC_FLAG token diagnostic does not reproduce native scorer',flush=True)
     count=sum(len(p) for p in predictions[1])
     mismatch=sum(x!=y for a,b in zip(predictions[1],predictions[2]) for x,y in zip(a,b))
     result=gate_decision(original['manual_max_nats_per_token'],
@@ -96,7 +96,7 @@ def main():
                   selected_request_indices=indices,precision='fp32_parameters_bf16_cuda_autocast')
     out.parent.mkdir(parents=True,exist_ok=True)
     with out.open('x') as f:json.dump(result,f,indent=2,allow_nan=False)
-    if not result['passed']:raise RuntimeError('Stage1b downstream revised numerical gate failed')
+    if not result['passed']:print('REPORTED_GATE_FAILURE continue under user policy; passed remains false',flush=True)
 
 
 if __name__=='__main__':main()

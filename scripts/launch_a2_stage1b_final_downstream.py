@@ -40,7 +40,12 @@ def budget(spent, elapsed, expected, time_policy):
         timeout_seconds=None,time_policy=time_policy)
 
 
-def job_config(plan_lock):
+def job_config(plan_lock, continuation=False):
+    if continuation:
+        return dict(jobs=[dict(name="stage1b-downstream-option2",gpus=list(range(8)),timeout_seconds=None,
+            argv=["{python}","-m","eval.a2_stage1b_final_run","--plan",plan_lock["path"],
+                "--plan-sha256",plan_lock["sha256"],"--output","{run_dir}/downstream"],
+            required_outputs=[dict(path="downstream/complete.json",json_equals=dict(execution_complete=True))])])
     return dict(jobs=[dict(name='stage1b-downstream-final',gpus=list(range(8)),timeout_seconds=None,
         argv=['{python}','-m','eval.a2_stage1b_final_run','--plan',plan_lock['path'],
               '--plan-sha256',plan_lock['sha256'],
@@ -59,14 +64,15 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     for name in ('host','session','code-commit'):
         p.add_argument('--'+name,required=True)
+    p.add_argument('--continuation');p.add_argument('--continuation-sha256')
     p.add_argument('--spent-seconds',type=float,required=True)
     p.add_argument('--expected-seconds',type=float,default=7200)
     p.add_argument('--over20h-reported',action='store_true')
     a=p.parse_args();started=time.monotonic();source=Path(__file__).resolve().parents[1]
     def remaining_budget():
         receipt=budget(a.spent_seconds,time.monotonic()-started,a.expected_seconds,dict(path=a.time_policy,sha256=a.time_policy_sha256))
-        if receipt['report_due'] and not a.over20h_reported:
-            raise ValueError('Send the over20h Stage1 estimate before launch')
+        if receipt['report_due']:
+            print('REPORT_ONLY_NODE_HOURS',receipt['projected_node_hours'],flush=True)
         return receipt
     remaining_budget()
     if socket.gethostname()!=a.host or a.output.exists():raise ValueError('Wrong host or existing output')
@@ -84,21 +90,30 @@ def main():
         raise ValueError('Actual terminal receipts from both training parts required')
     regression_admission=admit_final_regression(locks['regression'],source,locks['policy'])
     # Only the final training part can be the immediate GPU predecessor.
-    bind_predecessor(locks['part2'],locks['assets'],a.output.parent,a.predecessor_burn_script)
+    continuation=None
+    if a.continuation:
+        continuation=dict(path=a.continuation,sha256=a.continuation_sha256)
+        from scripts.a2_stage1b_option2_admission import verify_predecessor
+        predecessor_admission=verify_predecessor(continuation,a.output.parent,a.predecessor_burn_script)
+    else:
+        bind_predecessor(locks['part2'],locks['assets'],a.output.parent,a.predecessor_burn_script)
     if (digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH
             or Path('/mnt/local/_gpu_guard/DISABLED').exists()):raise ValueError('Unknown burn/guard owner')
     a.output.mkdir();frozen=freeze_source(source,a.output,a.code_commit,
-        extra_files=('docs/A2_stage1_spec.md','docs/A2_stage1b_fwe_spec.md','resources/a2_stage1b_continuation_20261030.json','resources/a2_stage1b_time_policy_20261030.json'))
+        extra_files=('docs/A2_stage1_spec.md','docs/A2_stage1b_fwe_spec.md','resources/a2_stage1b_continuation_20261030.json','resources/a2_stage1b_time_policy_20261030.json','resources/a2_stage1b_option2_20261031.json','resources/a2_stage1b_option2_reuse_20261031.json'))
     # Recheck copied evaluation files against the passing regression and policy.
     if admit_final_regression(locks['regression'],frozen,locks['policy'])!=regression_admission:
         raise ValueError('Frozen evaluation source differs from admission')
     write(a.output/'regression-admission.json',regression_admission)
+    if continuation:write(a.output/'continuation-admission.json',predecessor_admission)
     common=dict(tasks=list(COUNTS),gpus=list(range(8)),max_length=4096,batch_size=2,
         native_python=sys.executable,eval_python=str(a.eval_python.resolve()),tokenizer=str(a.tokenizer.resolve()),
         dataset_root=str(a.dataset_root.resolve()),input_spec=lock(frozen/'resources/a2_inputs_20261028.json'),
         manifest=lock(frozen/'resources/downstream_english_20261023.json'))
     plan=prepare_plan(locks['part1'],locks['part2'],locks['assets'],a.output/'identities',common=common,
         policy=locks['policy'],time_policy=locks['time_policy'],regression=locks['regression'],failed_gate=locks['failed_gate'],prepared=locks['prepared'])
+    if continuation:
+        plan['continuation']=continuation
     plan_lock=write(a.output/'plan.json',plan)
     env={**os.environ,'CUDA_VISIBLE_DEVICES':'','HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1',
          'HF_DATASETS_OFFLINE':'1','HF_HUB_DISABLE_TELEMETRY':'1','WANDB_MODE':'offline',
@@ -116,7 +131,7 @@ def main():
     (a.output/'accelerate-env.log').write_text(verification.stdout+verification.stderr)
     print(verification.stdout,flush=True)
     write(a.output/'stage-budget.json',remaining_budget());write(a.output/'inspection.json',inspect())
-    jobs=a.output/'jobs.json';write(jobs,job_config(plan_lock));load_jobs(jobs)
+    jobs=a.output/'jobs.json';write(jobs,job_config(plan_lock,continuation=bool(continuation)));load_jobs(jobs)
     argv=['env',*[k+'='+env[k] for k in ('CUDA_VISIBLE_DEVICES','HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE',
         'HF_DATASETS_OFFLINE','HF_HUB_DISABLE_TELEMETRY','WANDB_MODE','OMP_NUM_THREADS','NCCL_NVLS_ENABLE',
         'TOKENIZERS_PARALLELISM','PYTHONPATH','A2_CODE_COMMIT')],sys.executable,'-u','-m','scripts.train_then_burn',
