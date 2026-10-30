@@ -261,3 +261,7 @@ Các diagnostic/giới hạn được giữ nguyên: full-set LL max **0.1035566
 Raw receipt SHA256: `3bbc250badfc165a9cbb7ca4a9d959798430055889981b2320a8700fe7637ab8`. Continuation source `27087e1ca34b605e32c49cb5b1f1a8f23bd39500`, 137 frozen files được xác minh; 66 original regression eval/model files giữ nguyên.
 
 Decision máy đọc: [decision_stage1_fwe.json](decision_stage1_fwe.json). Không còn công việc đăng ký chưa hoàn tất.
+
+## Bổ sung A2 Q: T17 (text only)
+
+T17 Stage1 = 3.0618885176067017 và Stage1b = 3.0617311959690636 nats; Stage1b − Stage1 = −0.0001573216376380 nats. Các phiên bản được ghi nhận (Stage1 / Stage1b) khớp nhau: torch 2.14.1+cu130 / 2.14.1+cu130, CUDA build tag cu130 / cu130, transformers 4.57.1 / 4.57.1, accelerate 1.13.0 / 1.13.0, Python 3.11.15 / 3.11.15, NumPy 2.4.6 / 2.4.6, safetensors 0.8.0 / 0.8.0. Hai lần dùng cùng tám UUID GPU B200. Exact loaded CUDA runtime, cuDNN, NCCL, driver package và SDPA backend thực tế không được ghi đầy đủ cho từng T17, nên không khẳng định chúng giống nhau. Nguyên nhân: chưa xác định (not identified). Không label nào phụ thuộc sai khác này. Nguồn: docs/A2_STAGE1B_FOLLOWUP_REPLY_20261030.md; đây là đối chiếu text-only, không chạy thêm T17.

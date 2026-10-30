@@ -1,0 +1,1574 @@
+{
+  "schema": 1,
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "original_inputs": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs",
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "calibration_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "references": {
+    "dclm/S72": {
+      "parent": 2.90857529610787,
+      "pre": 3.854544222000957,
+      "evidence": "temp/a2_stage1_preflight_health02/supervised/run/S72.json",
+      "evidence_sha256": "3100aaf259984b4fc91a9146e076f1311e18c1f64028cc91ad8e5a3c57b3ea99"
+    },
+    "dclm/P300": {
+      "parent": 2.7377930322126844,
+      "pre": 3.7637751437881795,
+      "evidence": "temp/a2_stage1_preflight_health02/supervised/run/P300.json",
+      "evidence_sha256": "37faa77ea8851735505290d3d1fbffcc0571b67fd135a4cdb78a0307472f71aa"
+    },
+    "dclm/S188": {
+      "parent": 2.88670669804388,
+      "evidence": "docs/results/a2_branches_20261028/final_surveys/dclm-S188.json",
+      "evidence_sha256": "0a963baf6e8fe99c190b423b0b3ef605e073e09847e2c7e825690dcb3f006ba2"
+    },
+    "dclm/P1T": {
+      "parent": 2.6869089917639344,
+      "pre": 4.004721485196599,
+      "evidence": "temp/a2_stage1_preflight_health02/supervised/run/P1T.json",
+      "evidence_sha256": "c496eb4c2f32a1b1936f8d9df20ceab32def6a7284c18599362cfef962ed7f11"
+    },
+    "fwe/S72": {
+      "parent": 3.042152001946299,
+      "pre": 4.007307971499392,
+      "evidence": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/S72.json",
+      "evidence_sha256": "ac277afe4e5e52fcc5200e19378fe76441c119f4c16d74fdb0dfdb6e6a784859"
+    },
+    "fwe/P300": {
+      "parent": 2.860631325856815,
+      "pre": 3.822488626155516,
+      "evidence": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/P300.json",
+      "evidence_sha256": "303eb3e7b8c32c0ab914e5eb437863c153581fdc53e3db994da957760eb9ea0c"
+    },
+    "fwe/S188": {
+      "parent": 3.0238075916258356,
+      "evidence": "docs/results/a2_branches_20261028/final_surveys/fwe-S188.json",
+      "evidence_sha256": "f1e5277e85be9c23554ac9f31714a730fc94ded4d036c56977057bbf68da7f3a"
+    },
+    "fwe/P1T": {
+      "parent": 2.808707333601816,
+      "pre": 4.124982157487267,
+      "evidence": "docs/results/a2_stage1b_fwe_20261030/preflight_final/supervised/run/P1T.json",
+      "evidence_sha256": "44e88822b8edddb8311e919f7c08faf20b397b21ace0a02afca91a7af65fee13"
+    },
+    "nem/S72": {
+      "parent": 2.9524637834169547,
+      "evidence": "docs/results/a2_branches_20261028/final_surveys/nem-S72.json",
+      "evidence_sha256": "ed56fde636269ffa27584bea8ff52682c69f6059cd064e932916259ad4b07ea8"
+    },
+    "nem/P300": {
+      "parent": 2.774250937159999,
+      "evidence": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P300-survey.json",
+      "evidence_sha256": "b4cfc82fd8474414d4dad565a57ca26aec04adbce2e7b5ebb3f089b21b08fd5a"
+    },
+    "nem/S188": {
+      "parent": 2.9267089606763275,
+      "evidence": "docs/results/a2_branches_20261028/final_surveys/nem-S188.json",
+      "evidence_sha256": "abb73594506a789a060bbc27b7c2a27a13ad7047bc0adddcd8d71a34bea28afb"
+    },
+    "nem/P1T": {
+      "parent": 2.723382862026508,
+      "evidence": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/P1T-survey.json",
+      "evidence_sha256": "ce83824f7d2e403edf912d385ec1e40d6c3a0d80f8e7c9728639c18e8d7e3940"
+    }
+  },
+  "prepared": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+    "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+  },
+  "prior_downstream": {
+    "dclm": {
+      "scores": {
+        "P300-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-parent/scores.json",
+          "sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99"
+        },
+        "P1T-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+          "sha256": "181f72af8e1870b9acb87f377e44d20bb23e94276efdec9fc4ab74e1e5c2a607"
+        },
+        "S72-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+          "sha256": "32480dc68d0842b3d4a2d2b50cb51c818e9e86b42b1e1e9091a65d5154b0700a"
+        },
+        "P300-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-student/scores.json",
+          "sha256": "bbf8f0f299bb266067456e609a56054ca99e63ec8cde5e7e717b8cfc0eb0deb4"
+        },
+        "P1T-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P1T-student/scores.json",
+          "sha256": "5c6988b67a535e2901d4df644524eb25df9c1dd7adbba6f1be395f73f74fd3fd"
+        },
+        "X72-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/X72-student/scores.json",
+          "sha256": "81fb28e70229f7e52ba5e712ca48c111391e50cd71a5125470eb5e9788a663f7"
+        }
+      },
+      "replays": {
+        "P300-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P300-parent.json",
+          "sha256": "aa01aac9553898138d07a4678d30e1d4c565c8a1b0f940403ab1a740b603dda6"
+        },
+        "P1T-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P1T-parent.json",
+          "sha256": "f86ec904ed79f3e68471e6e9f8ae9de40a6a144949cfda81c23cac4e79c8334d"
+        },
+        "S72-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/S72-parent.json",
+          "sha256": "e446c8d1ee4be82ba9aba1a4e9406845dcf2429def26880730c8c69b4987b785"
+        },
+        "P300-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P300-student.json",
+          "sha256": "3eea41bfd61235991354bc9e594f2432f1f09bea9e75886d1895c35ed8a0596a"
+        },
+        "P1T-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P1T-student.json",
+          "sha256": "44bb2c1ed4ac4e409d781507c04a82841141dca1eaf80226912b73df13b6ccb1"
+        },
+        "X72-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/X72-student.json",
+          "sha256": "dbc971d030cec31f887e6996d823d3bd400eb74a97511e823e6982bda9085f44"
+        }
+      },
+      "results": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/results.json",
+        "sha256": "04ea2b80389d00653bd8b7351a719677fcc123d9faa844642badb022d7ab935e"
+      }
+    },
+    "fwe": {
+      "scores": {
+        "P300-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/2/scores.json",
+          "sha256": "ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3"
+        },
+        "P1T-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+          "sha256": "9d6f86abb0d069eb8bc4430c8c1df3c0d76b39a60addaa992e5e45d8d9b84ed0"
+        },
+        "S72-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+          "sha256": "71188bcf4dd9485d813b37d6cc67d991e945e307a11b36cffc8d895a367b22d3"
+        },
+        "P300-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P300-student/scores.json",
+          "sha256": "c466349f5478ca484c26ae505a4fecdbf901e2155fd26442d740c1cf89c37ae3"
+        },
+        "P1T-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P1T-student/scores.json",
+          "sha256": "95ba459e7f718ba937c34490d6817d891e5ffe73aabb218c7fb0a7e8ca769257"
+        },
+        "X72-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/X72-student/scores.json",
+          "sha256": "9efa9fe309c35e910ad3b82b41b36111b865a16b1814754b887e93453a7adbd9"
+        }
+      },
+      "replays": {
+        "P300-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/replays/P300-parent-batch2.json",
+          "sha256": "4bf936bf3dc7d5cbf502900b26e758b732b6f64db114766eefdb09ff60c563d1"
+        },
+        "P1T-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P1T-parent.json",
+          "sha256": "fe0d2ac5141130bde82308ce74299a3d1aaeb633f6762bea500f54b5ec6ab2e9"
+        },
+        "S72-parent": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/S72-parent.json",
+          "sha256": "89a35f410e6445cc727822a1898eafa4412f1290eb13cce1bd514d2b50839d6d"
+        },
+        "P300-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P300-student.json",
+          "sha256": "36cde1ebfdc50ace8f794712c474190177005dbab3c6984aa4214f8f5d31deb2"
+        },
+        "P1T-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P1T-student.json",
+          "sha256": "239f792165c7bddb4d880c91bac79a79b62f6b00aac4deddb9e6f6ccf8556e3f"
+        },
+        "X72-student": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/X72-student.json",
+          "sha256": "8772ff0563855471e898644689c243a1de5f28e59976ff403108e2512f3805fa"
+        }
+      },
+      "results": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/results.json",
+        "sha256": "988cd0f209193cb59ae4431faa8a42063ba33e1cad7fe8e9c1042ee4b293cbfb"
+      }
+    }
+  },
+  "prior_paired": {
+    "dclm": {
+      "schema": 1,
+      "resamples": 10000,
+      "seed": 0,
+      "method": "paired item bootstrap within each task; multinomial counts of identical paired rows",
+      "units": "accuracy fraction; multiply by100 for percentage points",
+      "uncertainty": "benchmark items only; does not cover training seeds",
+      "drop_sign": "parent minus student; positive is worse after healing",
+      "direct_sign": "X72 student minus P300 student; positive is higher X72 accuracy",
+      "mc_mean": {
+        "P300_drop": {
+          "estimate": 0.03472035404437575,
+          "ci95": [
+            0.028848117271494646,
+            0.040657471569718544
+          ]
+        },
+        "P1T_drop": {
+          "estimate": 0.033152875760448695,
+          "ci95": [
+            0.02743749257069377,
+            0.03888710400527198
+          ]
+        },
+        "X72_drop_from_S72": {
+          "estimate": 0.006593188374608726,
+          "ci95": [
+            -2.813226182744104e-06,
+            0.013186083438447092
+          ]
+        },
+        "P1T_minus_P300_drop": {
+          "estimate": -0.0015674782839270457,
+          "ci95": [
+            -0.009050932537715082,
+            0.0059891458196555955
+          ]
+        },
+        "X72_minus_P300_accuracy": {
+          "estimate": -0.004030242278555168,
+          "ci95": [
+            -0.008798336636120589,
+            0.0007228054443612381
+          ]
+        },
+        "X72_minus_P300_drop": {
+          "estimate": -0.028127165669767022,
+          "ci95": [
+            -0.035980985785036834,
+            -0.02049558829587083
+          ]
+        }
+      },
+      "lambada_accuracy": {
+        "P300_drop": {
+          "estimate": 0.04405200853871538,
+          "ci95": [
+            0.03473704638074908,
+            0.053366970696681545
+          ]
+        },
+        "P1T_drop": {
+          "estimate": 0.05297884727343294,
+          "ci95": [
+            0.04346982340384242,
+            0.06268193285464778
+          ]
+        },
+        "X72_drop_from_S72": {
+          "estimate": -0.03842421890161074,
+          "ci95": [
+            -0.04967979817581991,
+            -0.02736270133902581
+          ]
+        },
+        "P1T_minus_P300_drop": {
+          "estimate": 0.008926838734717446,
+          "ci95": [
+            -0.0034931108092373375,
+            0.02115272656704832
+          ]
+        },
+        "X72_minus_P300_accuracy": {
+          "estimate": -0.0017465554046186549,
+          "ci95": [
+            -0.00950902386959053,
+            0.006015913060353192
+          ]
+        },
+        "X72_minus_P300_drop": {
+          "estimate": -0.08247622744032612,
+          "ci95": [
+            -0.09567242383077819,
+            -0.06966815447312245
+          ]
+        }
+      },
+      "tasks": {
+        "arc_challenge": {
+          "examples": 1172,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.03498293515358364,
+              "ci95": [
+                0.015358361774744027,
+                0.05546075085324232
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.05631399317406144,
+              "ci95": [
+                0.03668941979522184,
+                0.07593856655290103
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": 0.01877133105802048,
+              "ci95": [
+                -0.0017064846416382253,
+                0.03924914675767918
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.021331058020477855,
+              "ci95": [
+                -0.005119453924914676,
+                0.04692832764505119
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.013651877133105783,
+              "ci95": [
+                -0.02901023890784983,
+                0.002559726962457338
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.01621160409556316,
+              "ci95": [
+                -0.040955631399317405,
+                0.008532423208191127
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.371160409556314,
+            "P1T-parent": 0.4035836177474403,
+            "S72-parent": 0.3412969283276451,
+            "P300-student": 0.3361774744027304,
+            "P1T-student": 0.34726962457337884,
+            "X72-student": 0.3225255972696246
+          }
+        },
+        "arc_easy": {
+          "examples": 2376,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.039562289562289465,
+              "ci95": [
+                0.027356902356902357,
+                0.05218855218855219
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.039562289562289576,
+              "ci95": [
+                0.026515151515151516,
+                0.05260942760942761
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.011363636363636354,
+              "ci95": [
+                -0.025252525252525252,
+                0.0025252525252525255
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 1.1102230246251565e-16,
+              "ci95": [
+                -0.016414141414141416,
+                0.016835016835016835
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.006734006734006814,
+              "ci95": [
+                -0.016414141414141416,
+                0.002946127946127946
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.05092592592592582,
+              "ci95": [
+                -0.06734006734006734,
+                -0.034511784511784514
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.67003367003367,
+            "P1T-parent": 0.6843434343434344,
+            "S72-parent": 0.6123737373737373,
+            "P300-student": 0.6304713804713805,
+            "P1T-student": 0.6447811447811448,
+            "X72-student": 0.6237373737373737
+          }
+        },
+        "boolq": {
+          "examples": 3270,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.07339449541284404,
+              "ci95": [
+                0.05688073394495413,
+                0.08929663608562691
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.030581039755351647,
+              "ci95": [
+                0.018042813455657492,
+                0.04342507645259939
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": 0.07033639143730896,
+              "ci95": [
+                0.04801223241590214,
+                0.09235474006116208
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": -0.042813455657492505,
+              "ci95": [
+                -0.061467889908256884,
+                -0.023853211009174313
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": 0.01039755351681948,
+              "ci95": [
+                -0.0021406727828746177,
+                0.022629969418960245
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.003058103975535076,
+              "ci95": [
+                -0.02416666666666666,
+                0.018960244648318043
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6235474006116208,
+            "P1T-parent": 0.6590214067278287,
+            "S72-parent": 0.6308868501529052,
+            "P300-student": 0.5501529051987768,
+            "P1T-student": 0.6284403669724771,
+            "X72-student": 0.5605504587155963
+          }
+        },
+        "hellaswag": {
+          "examples": 10042,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.0566620195180243,
+              "ci95": [
+                0.051384186417048394,
+                0.062139016132244575
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.06751643098984272,
+              "ci95": [
+                0.06184027086237801,
+                0.0731925911173073
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.004381597291376216,
+              "ci95": [
+                -0.010157339175463055,
+                0.0013941445927106153
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.010854411471818426,
+              "ci95": [
+                0.004082852021509659,
+                0.017625970922127067
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.008763194582752432,
+              "ci95": [
+                -0.012746464847639912,
+                -0.004976598287193823
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.061043616809400514,
+              "ci95": [
+                -0.06811392152957578,
+                -0.053973312089225255
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6505676160127465,
+            "P1T-parent": 0.6859191396136228,
+            "S72-parent": 0.5807608046205935,
+            "P300-student": 0.5939055964947222,
+            "P1T-student": 0.6184027086237801,
+            "X72-student": 0.5851424019119698
+          }
+        },
+        "lambada_openai": {
+          "examples": 5153,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.04405200853871538,
+              "ci95": [
+                0.03473704638074908,
+                0.053366970696681545
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.05297884727343294,
+              "ci95": [
+                0.04346982340384242,
+                0.06268193285464778
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.03842421890161074,
+              "ci95": [
+                -0.04967979817581991,
+                -0.02736270133902581
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.008926838734717446,
+              "ci95": [
+                -0.0034931108092373375,
+                0.02115272656704832
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.0017465554046186549,
+              "ci95": [
+                -0.00950902386959053,
+                0.006015913060353192
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.08247622744032612,
+              "ci95": [
+                -0.09567242383077819,
+                -0.06966815447312245
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6547642150203765,
+            "P1T-parent": 0.6764991267222977,
+            "S72-parent": 0.5705414321754317,
+            "P300-student": 0.6107122064816611,
+            "P1T-student": 0.6235202794488648,
+            "X72-student": 0.6089656510770425
+          }
+        },
+        "openbookqa": {
+          "examples": 500,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.03600000000000003,
+              "ci95": [
+                0.012,
+                0.06
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.020000000000000018,
+              "ci95": [
+                -0.002,
+                0.042
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": 0.0040000000000000036,
+              "ci95": [
+                -0.022,
+                0.032
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": -0.016000000000000014,
+              "ci95": [
+                -0.046,
+                0.014
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": 0.008000000000000007,
+              "ci95": [
+                -0.01,
+                0.026
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.03200000000000003,
+              "ci95": [
+                -0.064,
+                -0.002
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.392,
+            "P1T-parent": 0.392,
+            "S72-parent": 0.368,
+            "P300-student": 0.356,
+            "P1T-student": 0.372,
+            "X72-student": 0.364
+          }
+        },
+        "piqa": {
+          "examples": 1838,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.019586507072905324,
+              "ci95": [
+                0.008705114254624592,
+                0.031011969532100107
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.025571273122959703,
+              "ci95": [
+                0.013601741022850925,
+                0.03754080522306855
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.009249183895538637,
+              "ci95": [
+                -0.02176278563656148,
+                0.003264417845484222
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.00598476605005438,
+              "ci95": [
+                -0.010337323177366704,
+                0.022306855277475515
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.003808487486398171,
+              "ci95": [
+                -0.013057671381936888,
+                0.00544069640914037
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.02883569096844396,
+              "ci95": [
+                -0.044069640914037,
+                -0.014145810663764961
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.7568008705114254,
+            "P1T-parent": 0.76550598476605,
+            "S72-parent": 0.7241566920565833,
+            "P300-student": 0.7372143634385201,
+            "P1T-student": 0.7399347116430903,
+            "X72-student": 0.7334058759521219
+          }
+        },
+        "sciq": {
+          "examples": 1000,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.0010000000000000009,
+              "ci95": [
+                -0.011,
+                0.014
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.0020000000000000018,
+              "ci95": [
+                -0.009,
+                0.013
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.013000000000000012,
+              "ci95": [
+                -0.028,
+                0.002
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.001000000000000112,
+              "ci95": [
+                -0.014,
+                0.016
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.009000000000000008,
+              "ci95": [
+                -0.021,
+                0.003
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.014000000000000012,
+              "ci95": [
+                -0.033,
+                0.004
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.908,
+            "P1T-parent": 0.93,
+            "S72-parent": 0.885,
+            "P300-student": 0.907,
+            "P1T-student": 0.928,
+            "X72-student": 0.898
+          }
+        },
+        "winogrande": {
+          "examples": 1267,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.016574585635359185,
+              "ci95": [
+                -0.006314127861089187,
+                0.04025256511444357
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.023677979479084454,
+              "ci95": [
+                0.0,
+                0.04656669297553275
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.0023677979479084232,
+              "ci95": [
+                -0.026835043409629045,
+                0.022099447513812154
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.00710339384372527,
+              "ci95": [
+                -0.0244672454617206,
+                0.03867403314917127
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.008681925808997626,
+              "ci95": [
+                -0.026835043409629045,
+                0.010260457774269928
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.018942383583267608,
+              "ci95": [
+                -0.049723756906077346,
+                0.011838989739542225
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6203630623520127,
+            "P1T-parent": 0.6353591160220995,
+            "S72-parent": 0.5927387529597474,
+            "P300-student": 0.6037884767166535,
+            "P1T-student": 0.611681136543015,
+            "X72-student": 0.5951065509076559
+          }
+        }
+      }
+    },
+    "fwe": {
+      "schema": 1,
+      "resamples": 10000,
+      "seed": 0,
+      "method": "paired item bootstrap within each task; multinomial counts of identical paired rows",
+      "units": "accuracy fraction; multiply by100 for percentage points",
+      "uncertainty": "benchmark items only; does not cover training seeds",
+      "drop_sign": "parent minus student; positive is worse after healing",
+      "direct_sign": "X72 student minus P300 student; positive is higher X72 accuracy",
+      "mc_mean": {
+        "P300_drop": {
+          "estimate": 0.02757858272060179,
+          "ci95": [
+            0.021776419410985133,
+            0.03337019650260575
+          ]
+        },
+        "P1T_drop": {
+          "estimate": 0.031870836424589204,
+          "ci95": [
+            0.025920611784594934,
+            0.037943811710305836
+          ]
+        },
+        "X72_drop_from_S72": {
+          "estimate": -0.008685946208595967,
+          "ci95": [
+            -0.015207839780982486,
+            -0.0021857321386479526
+          ]
+        },
+        "P1T_minus_P300_drop": {
+          "estimate": 0.004292253703987427,
+          "ci95": [
+            -0.003531450791537994,
+            0.012097130192252288
+          ]
+        },
+        "X72_minus_P300_accuracy": {
+          "estimate": -0.006333137435344173,
+          "ci95": [
+            -0.01129523590553876,
+            -0.0013914937489159745
+          ]
+        },
+        "X72_minus_P300_drop": {
+          "estimate": -0.03626452892919776,
+          "ci95": [
+            -0.043996701736883866,
+            -0.028291819243063617
+          ]
+        }
+      },
+      "lambada_accuracy": {
+        "P300_drop": {
+          "estimate": 0.043275761692218084,
+          "ci95": [
+            0.03396079953425189,
+            0.05297884727343295
+          ]
+        },
+        "P1T_drop": {
+          "estimate": 0.054531340966427366,
+          "ci95": [
+            0.044823403842421894,
+            0.06443333980205698
+          ]
+        },
+        "X72_drop_from_S72": {
+          "estimate": -0.045992625654958263,
+          "ci95": [
+            -0.056666019794294586,
+            -0.03531923151562197
+          ]
+        },
+        "P1T_minus_P300_drop": {
+          "estimate": 0.011255579274209337,
+          "ci95": [
+            -0.0013584319813700757,
+            0.023869590529788473
+          ]
+        },
+        "X72_minus_P300_accuracy": {
+          "estimate": -0.008344653599844765,
+          "ci95": [
+            -0.016107122064816612,
+            -0.00038812342324859306
+          ]
+        },
+        "X72_minus_P300_drop": {
+          "estimate": -0.08926838734717635,
+          "ci95": [
+            -0.10265864544925286,
+            -0.07607219095672424
+          ]
+        }
+      },
+      "tasks": {
+        "arc_challenge": {
+          "examples": 1172,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.03412969283276451,
+              "ci95": [
+                0.015358361774744027,
+                0.052901023890784986
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.03498293515358364,
+              "ci95": [
+                0.015358361774744027,
+                0.05460750853242321
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.002559726962457376,
+              "ci95": [
+                -0.02303754266211604,
+                0.017918088737201365
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.0008532423208190698,
+              "ci95": [
+                -0.023890784982935155,
+                0.025597269624573378
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.014505119453924908,
+              "ci95": [
+                -0.029863481228668942,
+                0.0008532423208191126
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.03668941979522189,
+              "ci95": [
+                -0.060580204778156996,
+                -0.013651877133105802
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.42662116040955633,
+            "P1T-parent": 0.42918088737201365,
+            "S72-parent": 0.37542662116040953,
+            "P300-student": 0.3924914675767918,
+            "P1T-student": 0.39419795221843,
+            "X72-student": 0.3779863481228669
+          }
+        },
+        "arc_easy": {
+          "examples": 2376,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.03745791245791241,
+              "ci95": [
+                0.025673400673400674,
+                0.04924242424242424
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.050084175084175064,
+              "ci95": [
+                0.037037037037037035,
+                0.06313131313131314
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.010942760942761032,
+              "ci95": [
+                -0.024831649831649833,
+                0.002946127946127946
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.012626262626262652,
+              "ci95": [
+                -0.003367003367003367,
+                0.02904040404040404
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.009680134680134622,
+              "ci95": [
+                -0.01978114478114478,
+                0.00042087542087542086
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.048400673400673444,
+              "ci95": [
+                -0.06481481481481481,
+                -0.03198653198653199
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.7247474747474747,
+            "P1T-parent": 0.7095959595959596,
+            "S72-parent": 0.6666666666666666,
+            "P300-student": 0.6872895622895623,
+            "P1T-student": 0.6595117845117845,
+            "X72-student": 0.6776094276094277
+          }
+        },
+        "boolq": {
+          "examples": 3270,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.004587155963302836,
+              "ci95": [
+                -0.011314984709480122,
+                0.020489296636085626
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.011009174311926606,
+              "ci95": [
+                -0.00672782874617737,
+                0.028440366972477066
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.02752293577981657,
+              "ci95": [
+                -0.04709480122324159,
+                -0.007951070336391437
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.00642201834862377,
+              "ci95": [
+                -0.01529051987767584,
+                0.02874617737003058
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": 0.0012232415902141414,
+              "ci95": [
+                -0.012232415902140673,
+                0.014984709480122324
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.03211009174311941,
+              "ci95": [
+                -0.05382262996941896,
+                -0.010703363914373088
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6235474006116208,
+            "P1T-parent": 0.6391437308868502,
+            "S72-parent": 0.5926605504587156,
+            "P300-student": 0.618960244648318,
+            "P1T-student": 0.6281345565749236,
+            "X72-student": 0.6201834862385321
+          }
+        },
+        "hellaswag": {
+          "examples": 10042,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.049193387771360286,
+              "ci95": [
+                0.04401513642700657,
+                0.054371639115714
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.06054570802628956,
+              "ci95": [
+                0.054769966142202746,
+                0.06622186815375423
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.014937263493328024,
+              "ci95": [
+                -0.02061342362079267,
+                -0.009261103365863374
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.011352320254929271,
+              "ci95": [
+                0.0044811790479984065,
+                0.01822346146186019
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.006273650667197761,
+              "ci95": [
+                -0.010256920932085242,
+                -0.00219079864568811
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.06413065126468831,
+              "ci95": [
+                -0.07120095598486358,
+                -0.057259510057757416
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6142202748456482,
+            "P1T-parent": 0.6446922923720374,
+            "S72-parent": 0.5438159729137622,
+            "P300-student": 0.5650268870742879,
+            "P1T-student": 0.5841465843457478,
+            "X72-student": 0.5587532364070902
+          }
+        },
+        "lambada_openai": {
+          "examples": 5153,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.043275761692218084,
+              "ci95": [
+                0.03396079953425189,
+                0.05297884727343295
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.054531340966427366,
+              "ci95": [
+                0.044823403842421894,
+                0.06443333980205698
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.045992625654958263,
+              "ci95": [
+                -0.056666019794294586,
+                -0.03531923151562197
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.011255579274209337,
+              "ci95": [
+                -0.0013584319813700757,
+                0.023869590529788473
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.008344653599844765,
+              "ci95": [
+                -0.016107122064816612,
+                -0.00038812342324859306
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.08926838734717635,
+              "ci95": [
+                -0.10265864544925286,
+                -0.07607219095672424
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.5177566466136231,
+            "P1T-parent": 0.543178730836406,
+            "S72-parent": 0.42014360566660197,
+            "P300-student": 0.474480884921405,
+            "P1T-student": 0.48864738986997863,
+            "X72-student": 0.46613623132156023
+          }
+        },
+        "openbookqa": {
+          "examples": 500,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.025999999999999968,
+              "ci95": [
+                0.004,
+                0.048
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.021999999999999964,
+              "ci95": [
+                -0.002,
+                0.046
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": 0.010000000000000009,
+              "ci95": [
+                -0.016,
+                0.036
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": -0.003999999999999948,
+              "ci95": [
+                -0.034,
+                0.028
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.0040000000000000036,
+              "ci95": [
+                -0.024,
+                0.016
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.01599999999999996,
+              "ci95": [
+                -0.048,
+                0.016
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.418,
+            "P1T-parent": 0.424,
+            "S72-parent": 0.398,
+            "P300-student": 0.392,
+            "P1T-student": 0.402,
+            "X72-student": 0.388
+          }
+        },
+        "piqa": {
+          "examples": 1838,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.013057671381936808,
+              "ci95": [
+                0.001632208922742111,
+                0.025027203482045703
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.012513601741022895,
+              "ci95": [
+                0.000544069640914037,
+                0.024496735582154316
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.004896626768226331,
+              "ci95": [
+                -0.018498367791077257,
+                0.008705114254624592
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": -0.0005440696409138024,
+              "ci95": [
+                -0.016866158868335146,
+                0.015233949945593036
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.01795429815016325,
+              "ci95": [
+                -0.028291621327529923,
+                -0.007616974972796518
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.01795429815016314,
+              "ci95": [
+                -0.03482045701849837,
+                -0.001632208922742111
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.7513601741022851,
+            "P1T-parent": 0.7524483133841132,
+            "S72-parent": 0.7154515778019587,
+            "P300-student": 0.7383025027203483,
+            "P1T-student": 0.7399347116430903,
+            "X72-student": 0.720348204570185
+          }
+        },
+        "sciq": {
+          "examples": 1000,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.027000000000000024,
+              "ci95": [
+                0.014,
+                0.04
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.02200000000000002,
+              "ci95": [
+                0.01,
+                0.034
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.006000000000000005,
+              "ci95": [
+                -0.02,
+                0.008
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": -0.004999999999999893,
+              "ci95": [
+                -0.02,
+                0.01
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": -0.0050000000000000044,
+              "ci95": [
+                -0.015,
+                0.005
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.03300000000000003,
+              "ci95": [
+                -0.049,
+                -0.017
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.932,
+            "P1T-parent": 0.932,
+            "S72-parent": 0.894,
+            "P300-student": 0.905,
+            "P1T-student": 0.91,
+            "X72-student": 0.9
+          }
+        },
+        "winogrande": {
+          "examples": 1267,
+          "contrasts": {
+            "P300_drop": {
+              "estimate": 0.02920284135753748,
+              "ci95": [
+                0.004735595895816891,
+                0.05367008681925809
+              ]
+            },
+            "P1T_drop": {
+              "estimate": 0.041831097079715884,
+              "ci95": [
+                0.017363851617995266,
+                0.06550907655880031
+              ]
+            },
+            "X72_drop_from_S72": {
+              "estimate": -0.012628255722178405,
+              "ci95": [
+                -0.03867403314917127,
+                0.013417521704814523
+              ]
+            },
+            "P1T_minus_P300_drop": {
+              "estimate": 0.012628255722178294,
+              "ci95": [
+                -0.021310181531176007,
+                0.04656669297553275
+              ]
+            },
+            "X72_minus_P300_accuracy": {
+              "estimate": 0.0055248618784530246,
+              "ci95": [
+                -0.01578531965272297,
+                0.026045777426992895
+              ]
+            },
+            "X72_minus_P300_drop": {
+              "estimate": -0.041831097079715884,
+              "ci95": [
+                -0.07576953433307025,
+                -0.007892659826361484
+              ]
+            }
+          },
+          "accuracy": {
+            "P300-parent": 0.6108918705603789,
+            "P1T-parent": 0.6385161799526441,
+            "S72-parent": 0.574585635359116,
+            "P300-student": 0.5816890292028414,
+            "P1T-student": 0.5966850828729282,
+            "X72-student": 0.5872138910812944
+          }
+        }
+      },
+      "dataset": "fwe",
+      "part": "final",
+      "models": [
+        "P300-parent",
+        "P1T-parent",
+        "S72-parent",
+        "P300-student",
+        "P1T-student",
+        "X72-student"
+      ]
+    }
+  },
+  "downstream_common": {
+    "tasks": [
+      "hellaswag",
+      "arc_easy",
+      "arc_challenge",
+      "piqa",
+      "winogrande",
+      "boolq",
+      "openbookqa",
+      "sciq",
+      "lambada_openai"
+    ],
+    "eval_python": "/mnt/local/conda-py311/envs/eval/bin/python3.11",
+    "tokenizer": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+    "dataset_root": "/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023",
+    "input_spec": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source/resources/a2_inputs_20261028.json",
+      "sha256": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e"
+    },
+    "manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source/resources/downstream_english_20261023.json",
+      "sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b"
+    }
+  },
+  "heldout": {
+    "dclm": "/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/packed/dclm",
+    "fwe": "/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/packed/fineweb_edu"
+  },
+  "predecessor": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01",
+    "burn_script": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source/resources/llm_pretrain_burn.py",
+    "known_burn_identities": {
+      "734481": {
+        "pid": 734481,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734482": {
+        "pid": 734482,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734483": {
+        "pid": 734483,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734484": {
+        "pid": 734484,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734485": {
+        "pid": 734485,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734486": {
+        "pid": 734486,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734487": {
+        "pid": 734487,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734488": {
+        "pid": 734488,
+        "ppid": 734412,
+        "start_ticks": 332960054,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "734412": {
+        "pid": 734412,
+        "ppid": 9406,
+        "start_ticks": 332959926,
+        "command_sha256": "8f76bd016efc4f5e0d9f38ec28ebe770a8b630dd45021af05b3c0179ddbf462e",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "supervisor": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/supervisor.json",
+      "sha256": "b37177c21751b41f40964b11c2dc9b0ee16a7c067d43a515100a02fdd0da642a"
+    },
+    "burn": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/burn-verified.json",
+      "sha256": "0e506cbb0e2b9266d0321b32f3f50de088395a17bb6c30446cf4be7488ba532f"
+    },
+    "source_manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source-manifest.json",
+      "sha256": "2ba1b04f07a6138fd496f3d4c20c4f62de306e17e898fa24fd7763d3390ef5c7"
+    },
+    "complete": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/complete.json",
+      "sha256": "dcc7753029a7caaecf630e1d2fa9d394eeaf6207cc500d96d6a3dc69fe32cc31"
+    }
+  },
+  "runtime_policy": "report-only; no hard timeout; scientific failures flag/continue",
+  "estimated_node_hours": 2,
+  "reference_implementation": {
+    "path": "resources/a2_quant_gptq_reference_20261031.json",
+    "sha256": "3e78bf1b6e2f83ee9fccfafac706a9a6b58eb41965137a48bb88ba34268b6911"
+  }
+}

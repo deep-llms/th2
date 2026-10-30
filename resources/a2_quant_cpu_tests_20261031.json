@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-30T22:01:55.477448+00:00",
+  "scope": "CPU implementation and native tiny-model integration; not actual-parent scientific QT1-QT7 results",
+  "passed": true,
+  "tests": 10,
+  "log_sha256": "ffc122b8a4eaf3c4d53452d6decfbc8d5676310d531e939e8b213372bd924cde",
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "files": {
+    "scripts/a2_quant_worker.py": "1a055a28457d5b9d3d0feed3b069cbc4ae18c5f11831fe02611ad0210830ff3c",
+    "scripts/a2_quant_inputs.py": "7c68caffd95f25261426a42316d66c7cfd0a15d74259f684e941a5c271be8f57",
+    "scripts/a2_quant_run.py": "48e1d9f7b6bb4963948c1ecd662f06037c2c0e0f11c7c360f9072a9999f36562",
+    "scripts/a2_quant_report.py": "a514f1cc580c8ee70be22f2af98e00ddd0f6718baf405bd84e6d53482a6f7569",
+    "scripts/a2_quant_io.py": "e94fa42e1ca23d2b2f75314ffd62adbc9a576a8f183a2e6e06b29ad16d3474b4",
+    "scripts/launch_a2_quant.py": "9572e1ef7826d407ec831cc15461254b34b4f9818b096507aa8f168d2edb5276",
+    "efficient_llm/a2/quant.py": "54c708c4ba50b9393fe95e58c7c443e086a1d652c3e7bb1656add983e6b6230c",
+    "efficient_llm/a2/quant_stats.py": "fc31636e097d02b07712efede832a58e5279a22fd8f0cff796017c4425541f20",
+    "tests/a2/test_quant.py": "04010620cfa20ddae6a9942b819784838eff8579a1e1ba36bc734642bbad9411"
+  },
+  "log": "test_calibration_boundary_overlap_is_explicit (test_quant.QuantTests.test_calibration_boundary_overlap_is_explicit) ... ok\ntest_grid_formula_and_identity_hessian (test_quant.QuantTests.test_grid_formula_and_identity_hessian) ... ok\ntest_label_precedence_and_paired_sequences (test_quant.QuantTests.test_label_precedence_and_paired_sequences) ... ok\ntest_matrix_failure_continues_and_preserves_flag (test_quant.QuantTests.test_matrix_failure_continues_and_preserves_flag) ... ok\ntest_nontrivial_hessian_and_constant_groups (test_quant.QuantTests.test_nontrivial_hessian_and_constant_groups) ... ok\ntest_pinned_reference_gptq (test_quant.QuantTests.test_pinned_reference_gptq) ... ok\ntest_pooled_identical_datasets_preserve_covariance (test_quant.QuantTests.test_pooled_identical_datasets_preserve_covariance) ... ok\ntest_real_worker_baseline_artifact_flow_on_cpu (test_quant.QuantTests.test_real_worker_baseline_artifact_flow_on_cpu) ... ok\ntest_report_partial_coverage_is_not_success (test_quant.QuantTests.test_report_partial_coverage_is_not_success) ... ok\ntest_true_sequential_native_and_repeat (test_quant.QuantTests.test_true_sequential_native_and_repeat) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 8.747s\n\nOK\nCUDA extension not installed.\ntime 0.06\nerror 0.039618879556655884\ntime 0.06\nerror 0.008486943319439888\n",
+  "QT3_note": "GPTQ refit-grid idempotence fails on the tiny fixture and is preserved as a flag; fixed-grid idempotence and cardinality pass, repeated full quantization is identical."
+}

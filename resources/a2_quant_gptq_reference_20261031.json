@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/IST-DASLab/gptq",
+  "commit": "2d65066eeb06a5c9ff5184d8cebdf33662c67faf",
+  "files": {
+    "gptq.py": "bb47468cc2c788577562751de414d76eeb9968ff1c6098e21153557ef3d154c7",
+    "quant.py": "211528568b962b868d20fc58b55200b615f41ebd9f36b4d2d7e4a196a095ea5a",
+    "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+  },
+  "implementation": "project adaptation; exact A2 grid and token-normalized Hessian, true sequential"
+}
