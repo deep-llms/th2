@@ -1,16 +1,44 @@
 #1 +30+a
-#th2-6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01
+#th2-6y3o-a2-stage1b-fwe-downstream-option2-health-20261031-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PYRUN'
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
+import hashlib,json,socket,subprocess
+from pathlib import Path
 from datetime import datetime,timezone
-import subprocess,sys,json
-from scripts.launch_a2_stage1b_final_downstream import budget
-spent=3299.9433463821188+(datetime.now(timezone.utc)-datetime.fromisoformat('2026-10-29T20:19:10.047762+00:00')).total_seconds()
-time_policy=dict(path='/mnt/local/deep-llms_th2/resources/a2_stage1b_time_policy_20261030.json',sha256='e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac')
-print('FWE_OPTION2_REPORT_ONLY_BUDGET',json.dumps(budget(spent,0,7200,time_policy)),flush=True)
-argv=['-u', '-m', 'scripts.launch_a2_stage1b_final_downstream', '--part1', '/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_terminal_20261030.json', '--part1-sha256', '01ad2695a967ac09fde27bdbfd6efc909284427384cd8994877e7666ae74f222', '--part2', '/mnt/local/deep-llms_th2/resources/a2_stage1b_part2_terminal_20261030.json', '--part2-sha256', 'fb4eb881a5b693999bb59cb395d135df93a2ddefc6394fd8fb117b924710fe43', '--regression', '/mnt/local/deep-llms_th2/resources/a2_stage1b_regression_terminal_20261030.json', '--regression-sha256', '094296ba1fa4139c38da13cf213baae74411abdd4b8b1cbdbb648905d9b9f888', '--policy', '/mnt/local/deep-llms_th2/resources/a2_stage1b_continuation_20261030.json', '--policy-sha256', '8797ab8557de5ef6076c2d1aa8cedb906dd89217566009e2f93d8077262efa4c', '--time-policy', '/mnt/local/deep-llms_th2/resources/a2_stage1b_time_policy_20261030.json', '--time-policy-sha256', 'e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac', '--assets', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json', '--assets-sha256', '5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371', '--failed-gate', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/run/downstream/P300-parent-check.json', '--failed-gate-sha256', 'a27ffdc7a467bc63bf55f8956f81e986d9320e12530f01baf8f6709e417084cb', '--prepared', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json', '--prepared-sha256', '85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf', '--output', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01', '--predecessor-burn-script', '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/source/resources/llm_pretrain_burn.py', '--eval-python', '/mnt/local/conda-py311/envs/eval/bin/python3.11', '--tokenizer', '/mnt/local/_models/deep-llms_th2/a2/dclm/P300', '--dataset-root', '/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023', '--host', 'thiennh-p6-6y3o-worker-0', '--session', 'a2_stage1b_fwe_downstream_option2_20261031_a01', '--code-commit', '27087e1ca34b605e32c49cb5b1f1a8f23bd39500', '--expected-seconds', '7200', '--over20h-reported', '--continuation', '/mnt/local/deep-llms_th2/resources/a2_stage1b_option2_reuse_20261031.json', '--continuation-sha256', 'c581f45f48dabd1d1346d2ef064237370f52beb2da3c965c1f11bc48441c6492']
-subprocess.run([sys.executable,*argv,"--spent-seconds",str(spent)],check=True)
-PYRUN
+from scripts.gpu_process import inspect
+assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01')
+print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
+for rel in ('source-manifest.json','plan.json','jobs.json','stage-budget.json','accelerate-env.log','identities/part1/identities.json','identities/part2/identities.json','regression-admission.json',
+ 'supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json',
+ 'continuation-admission.json','supervised/run/downstream/option2.json','supervised/run/downstream/checks.json','supervised/run/downstream/checks.jsonl','supervised/run/downstream/independent_verification.json','supervised/run/run.json','supervised/run/complete.json','supervised/run/downstream/complete.json','supervised/run/downstream/results.json','supervised/run/downstream/paired_accuracy.json',
+ 'supervised/run/downstream/batch_decision.json',*[f'supervised/run/downstream/{name}-check.json' for name in ('P300-parent','P1T-parent','S72-parent','P300-student','P1T-student','X72-student')]):
+ p=root/rel
+ if p.is_file():
+  raw=p.read_bytes();assert len(raw)<10000000
+  print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+ else:print('MISSING',rel,flush=True)
+for p in sorted((root/'identities').rglob('*-identity.json')):
+ raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=str(p.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+base=root/'supervised/run/downstream'
+p=base/'prepared.json'
+if p.is_file():
+ raw=p.read_bytes();obj=json.loads(raw)
+ print('PREPARED_SUMMARY',json.dumps(dict(sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw),requests=len(obj['requests']),protocol=obj['protocol'])),flush=True)
+for p in sorted(base.glob('**/scores.json')):
+ raw=p.read_bytes();obj=json.loads(raw)
+ print('SCORED_SUMMARY',json.dumps(dict(name=p.parent.name,sha256=hashlib.sha256(raw).hexdigest(),requests=len(obj['scores']),identity=obj['checkpoint_identity_sha256'],precision=obj['precision'],batch_size=obj.get('batch_size'))),flush=True)
+logs=[root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/stage1b-downstream-option2.log',*base.glob('*.log'),*base.glob('**/scores.log')]
+for p in logs:
+ if p.is_file():
+  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));tail=f.read().decode(errors='replace')
+  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
+guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
+print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_stage1b_fwe_downstream_option2_20261031_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+processes=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
+print('LAUNCH_PROCESSES',json.dumps([line for line in processes if 'eval.a2_' in line or str(root) in line]),flush=True)
+print('HEALTH_COMPLETE',flush=True)
+PY
