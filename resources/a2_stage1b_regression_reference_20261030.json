@@ -1,0 +1,14 @@
+{
+  "plan": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/plan.json",
+    "sha256": "9740c40080825af5f01e9bc3f7c9660827848da9a9a35e64fdd11d74f63ff819"
+  },
+  "source_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/source-manifest.json",
+    "sha256": "70ea4fd0ff838b9d437f783d533d3be6e47c7da1d8a3eeedb51f0f81c66c9d93"
+  },
+  "complete": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/complete.json",
+    "sha256": "be934c8ef3f72664849bf9b38071d47a9cb4dac56d6d50470a6cb4b961e336df"
+  }
+}

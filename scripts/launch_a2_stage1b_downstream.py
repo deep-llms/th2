@@ -21,6 +21,7 @@ from efficient_llm.a2_stage1b.protocol import SPEC_SHA, REPLICATION_SPEC_SHA
 from eval.a2_run import lock, write
 from eval.a2_stage1b_plan import prepare_identities, validate_terminal_bundle
 from eval.a2_stage1b_run import validate_plan
+from eval.a2_stage1b_regression import admit_regression
 from eval.downstream_suite import COUNTS
 from scripts.a2_remaining import read_locked
 from scripts.launch_a2_downstream import freeze_source
@@ -74,7 +75,7 @@ def bind_predecessor(stage_lock, assets_lock, output_parent, burn_script):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    for name in ('stage','assets'):
+    for name in ('stage','assets','regression'):
         p.add_argument('--'+name,required=True);p.add_argument('--'+name+'-sha256',required=True)
     for name in ('output','predecessor-burn-script','eval-python','tokenizer','dataset-root'):
         p.add_argument('--'+name,type=Path,required=True)
@@ -104,7 +105,20 @@ def main():
     if not a.eval_python.is_file():raise ValueError('Existing CPU eval runtime required')
     stage_lock=dict(path=a.stage,sha256=a.stage_sha256);assets_lock=dict(path=a.assets,sha256=a.assets_sha256)
     if read_locked(stage_lock).get('phase')!=a.phase:raise ValueError('Training/eval phase mismatch')
-    bind_predecessor(stage_lock,assets_lock,a.output.parent,a.predecessor_burn_script)
+    regression_lock=dict(path=a.regression,sha256=a.regression_sha256)
+    rb,rv,_=admit_regression(regression_lock,source)
+    if a.phase=='part1':
+        if rv['training_predecessor']!=dict(stage=stage_lock,assets=assets_lock):
+            raise ValueError('Regression followed a different training run')
+        prior=a.predecessor_burn_script.resolve().parents[2]
+        if (prior.parent!=a.output.parent.resolve()
+                or a.predecessor_burn_script.resolve()!=prior/'source/resources/llm_pretrain_burn.py'
+                or Path(rb['supervisor']['path']).resolve()!=prior/'supervised/supervisor.json'
+                or Path(rb['burn']['path']).resolve()!=prior/'supervised/burn-verified.json'):
+            raise ValueError('Wrong regression predecessor burn')
+        verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
+    else:
+        bind_predecessor(stage_lock,assets_lock,a.output.parent,a.predecessor_burn_script)
     if (digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH
             or Path('/mnt/local/_gpu_guard/DISABLED').exists()):raise ValueError('Unknown burn/guard owner')
     a.output.mkdir();frozen=freeze_source(source,a.output,a.code_commit,extra_files=('docs/A2_stage1_spec.md','docs/A2_stage1b_fwe_spec.md'))
@@ -116,7 +130,7 @@ def main():
         manifest=lock(frozen/'resources/downstream_english_20261023.json'))
     if a.prepared:
         plan['prepared']=dict(path=a.prepared,sha256=a.prepared_sha256);read_locked(plan['prepared'])
-    validate_plan(plan);plan_lock=write(a.output/'plan.json',plan)
+    validate_plan(plan);plan['regression']=regression_lock;plan_lock=write(a.output/'plan.json',plan)
     env={**os.environ,'CUDA_VISIBLE_DEVICES':'','HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1',
          'HF_DATASETS_OFFLINE':'1','HF_HUB_DISABLE_TELEMETRY':'1','WANDB_MODE':'offline',
          'OMP_NUM_THREADS':'1','NCCL_NVLS_ENABLE':'0','TOKENIZERS_PARALLELISM':'false',

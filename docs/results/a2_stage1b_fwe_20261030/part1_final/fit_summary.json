@@ -1,0 +1,192 @@
+[
+  {
+    "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-4",
+    "arm": "P300",
+    "budget": "0.2B",
+    "lr": 0.0001,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.169482733655409,
+    "val_tune_post": 3.151107980759047,
+    "val_secondary_post": 2.6247469366280587,
+    "delta_post": 0.30885140779859377,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-4",
+    "arm": "P1T",
+    "budget": "0.2B",
+    "lr": 0.0001,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.142402422190098,
+    "val_tune_post": 3.1253435230822975,
+    "val_secondary_post": 2.5974727212310813,
+    "delta_post": 0.3336950885882821,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P300-S1-0.2B-lr3e-4",
+    "arm": "P300",
+    "budget": "0.2B",
+    "lr": 0.0003,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.10332191287916,
+    "val_tune_post": 3.0842985142142414,
+    "val_secondary_post": 2.5530087651491122,
+    "delta_post": 0.24269058702234503,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P1T-S1-0.2B-lr3e-4",
+    "arm": "P1T",
+    "budget": "0.2B",
+    "lr": 0.0003,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.0717859133625165,
+    "val_tune_post": 3.053515230554817,
+    "val_secondary_post": 2.52122436879138,
+    "delta_post": 0.2630785797607005,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-3",
+    "arm": "P300",
+    "budget": "0.2B",
+    "lr": 0.001,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.0563533142033608,
+    "val_tune_post": 3.0370600384962767,
+    "val_secondary_post": 2.505082424603219,
+    "delta_post": 0.19572198834654575,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-3",
+    "arm": "P1T",
+    "budget": "0.2B",
+    "lr": 0.001,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.030653543514748,
+    "val_tune_post": 3.011759343501586,
+    "val_secondary_post": 2.4788024817955594,
+    "delta_post": 0.2219462099129319,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P300-S1-0.2B-lr3e-3",
+    "arm": "P300",
+    "budget": "0.2B",
+    "lr": 0.003,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.07130461258787,
+    "val_tune_post": 3.0527617222091155,
+    "val_secondary_post": 2.520658197147719,
+    "delta_post": 0.2106732867310548,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P1T-S1-0.2B-lr3e-3",
+    "arm": "P1T",
+    "budget": "0.2B",
+    "lr": 0.003,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 3.0695468123011596,
+    "val_tune_post": 3.0517050736955085,
+    "val_secondary_post": 2.5187187738918912,
+    "delta_post": 0.26083947869934354,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 48768,
+      "microbatches": 1524,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P300-S1-3.2B-lr1e-3",
+    "arm": "P300",
+    "budget": "3.2B",
+    "lr": 0.001,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 2.955812352510089,
+    "val_tune_post": 2.9365895112911202,
+    "val_secondary_post": 2.406616604730127,
+    "delta_post": 0.09518102665327399,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 781248,
+      "microbatches": 24414,
+      "world_size": 8,
+      "exact_order": true
+    }
+  },
+  {
+    "run_id": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+    "arm": "P1T",
+    "budget": "3.2B",
+    "lr": 0.001,
+    "status": "complete",
+    "diverged": false,
+    "val_post": 2.9273495106589977,
+    "val_tune_post": 2.9083739115890603,
+    "val_secondary_post": 2.376905284441975,
+    "delta_post": 0.11864217705718172,
+    "roundtrip_difference": 0.0,
+    "coverage": {
+      "examples": 781248,
+      "microbatches": 24414,
+      "world_size": 8,
+      "exact_order": true
+    }
+  }
+]

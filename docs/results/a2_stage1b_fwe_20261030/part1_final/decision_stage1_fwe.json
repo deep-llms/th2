@@ -1,0 +1,61 @@
+{
+  "budgets": {
+    "0.2B": {
+      "E": 0.026224221566386152,
+      "A_init": null,
+      "E_fwe": 0.026352782880719516,
+      "A_init_fwe": null
+    },
+    "0.8B": {
+      "E": null,
+      "A_init": null,
+      "E_fwe": null,
+      "A_init_fwe": null
+    },
+    "3.2B": {
+      "E": 0.023461150403907727,
+      "A_init": null,
+      "E_fwe": 0.022921405400227357,
+      "A_init_fwe": null
+    }
+  },
+  "length": {
+    "value": 0.023461150403907727,
+    "clauses": {
+      "INCOMPLETE": false,
+      "persists": true,
+      "reversed": false,
+      "erased": false
+    },
+    "label": "persists"
+  },
+  "state": {
+    "value": null,
+    "clauses": {
+      "INCOMPLETE": true,
+      "anneal first": false,
+      "prune before you anneal": false,
+      "no effect": false
+    },
+    "label": "INCOMPLETE"
+  },
+  "ratios": {
+    "E": null,
+    "A_init": null
+  },
+  "E_pre": 0.3544175235867497,
+  "parent_difference": -0.051923992254998996,
+  "exposure_caveat": "Own-corpus heldout may have been seen during parent pretraining, more by P1T; no decisions use it.",
+  "phase": "part1",
+  "stage1b_spec_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+  "chosen_lr": 0.001,
+  "own_best_lrs": {
+    "P300": 0.001,
+    "P1T": 0.001
+  },
+  "stage1_spec_sha256": "9ebe0d0a377f0107f7058bf5e4899b5380cbe5f4f518b09091ac533d2c9f254e",
+  "spent_seconds": 33545.29995202832,
+  "downstream_status": "pending",
+  "E_short_own_best": 0.026224221566386152,
+  "cross_dataset_length": "replicated"
+}

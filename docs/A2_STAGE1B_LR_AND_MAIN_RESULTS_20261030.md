@@ -1,8 +1,8 @@
 # Stage1b FineWeb-Edu: chọn LR và hai arm 3.2B
 
-Cập nhật tài liệu: **30/10/2026, 12:31 SGT**. Snapshot đã xác minh gần nhất: **12:31:37 SGT**.
+Cập nhật: **30/10/2026, 13:00:54 SGT**, từ receipt terminal đã xác minh. Part1 training hoàn tất lúc **12:43:17 SGT**.
 
-**Chưa đủ kết quả cuối của cả hai arm 3.2B.** Sáu run grid ban đầu và hai run mở rộng đã hoàn tất. P300 3.2B đã hoàn tất; P1T 3.2B đang ở bước **11.540/12.207 (94,5%)** trong snapshot trên. ETA P1T **12:45–13:00 SGT**, còn phụ thuộc validation/save. Các ô “Chờ” dưới đây chưa có kết quả, không phải giá trị bằng 0.
+**Đã đủ kết quả của sáu run grid ban đầu, hai run mở rộng và cả hai arm 3.2B.** Đủ lịch LR, exact 8-rank order, save/reload sai khác 0 và terminal exit 0 đã kiểm tra. Native burn handoff được xác minh độc lập. Downstream, Part2 và báo cáo toàn Stage1b còn chờ.
 
 ## Thiết lập và cách đọc
 
@@ -48,27 +48,27 @@ Tại 0.2B và LR đã chọn:
 
 | Chỉ số | P300 | P1T |
 |---|---:|---:|
-| Trạng thái | Hoàn tất, xác minh 09:31 SGT | Đang chạy, 11.540/12.207 bước lúc 12:31 SGT |
+| Trạng thái | Hoàn tất, xác minh 09:31 SGT | Hoàn tất, terminal xác minh 13:00 SGT |
 | Parent CulturaX final NLL | 2.860631326 | 2.808707334 |
-| Student CulturaX tuning NLL | 2.936589511 | Chờ |
-| Student CulturaX final NLL | 2.955812353 | Chờ |
-| Δ_post CulturaX final | +0.095181027 | Chờ |
+| Student CulturaX tuning NLL | 2.936589511 | 2.908373912 |
+| Student CulturaX final NLL | 2.955812353 | 2.927349511 |
+| Δ_post CulturaX final | +0.095181027 | +0.118642177 |
 | Parent FWE held-out NLL | 2.308842449 | 2.256209723 |
-| Student FWE held-out NLL | 2.406616605 | Chờ |
-| Δ_post FWE held-out | +0.097774156 | Chờ |
+| Student FWE held-out NLL | 2.406616605 | 2.376905284 |
+| Δ_post FWE held-out | +0.097774156 | +0.120695562 |
 
-**E tại 3.2B và nhãn kết luận training-length chưa xác định**, vì thiếu kết quả cuối P1T. Downstream bốn model cũng chưa chạy; tài liệu này chưa phải `REPORT_interim.md` hoàn chỉnh theo spec.
+**E tại 3.2B = +0.023461150 nats**, nhãn training-length **persists**, đối chiếu DCLM là **replicated** theo spec. FWE held-out E = **+0.022921405** (chẩn đoán). DCLM E3.2 = +0.021670885; FWE − DCLM = **+0.001790266**. A_init và xu hướng 0.8B còn chờ Part2; chưa kết luận toàn bộ Stage1b.
+
+Re-score DCLM P300 parent phải hoàn tất trước FWE downstream theo [follow-up](A2_STAGE1B_FOLLOWUP_REPLY_20261030.md). Downstream bốn model chưa chạy, nên tài liệu này chưa thay thế `REPORT_interim.md`.
 
 ## Kiểm chứng và nguồn
 
-Cả tám run grid và P300 3.2B đã được kiểm tra đủ lịch LR, thứ tự dữ liệu chính xác trên 8 rank, sai khác save/reload bằng 0, không divergence. Snapshot P1T hiện tại có 8 GPU hoạt động 98–99%; source, inputs, runtime, ownership và chín receipt đã hoàn tất không đổi.
+Cả tám run grid và hai run 3.2B đã qua kiểm tra: full LR schedule, exact 8-rank order, roundtrip 0, không divergence. Native terminal exit 0; guard đã released; 8 burn worker đã xác minh, collective cycles tăng 1140→1150 và payload 1265.80→1276.90 GiB.
 
-- [Receipt 12:31 SGT](results/a2_stage1b_fwe_20261030/part1_1231/receipt.json), [SHA-256 của receipt](results/a2_stage1b_fwe_20261030/part1_1231/receipt.sha256).
-- [Grid note và phép tính E](results/a2_stage1b_fwe_20261030/part1_0631/grid_note.json).
-- [Preflight và đo parent](A2_STAGE1B_PREFLIGHT_20261030.md).
-- Training source: `7dd9da088ba5af581c295775819319ce54b2025c` (124 file đã xác minh).
-- Raw health SHA-256: `2d8347b431b206a3e1a90bdb9938e6ad6f37cc02c04d6c259b5b6dec34dd4f7d`.
+- [Terminal/handoff verification](results/a2_stage1b_fwe_20261030/part1_final/verification.json), [fit summary](results/a2_stage1b_fwe_20261030/part1_final/fit_summary.json), [SHA-256](results/a2_stage1b_fwe_20261030/part1_final/SHA256SUMS).
+- [Training decision gốc](results/a2_stage1b_fwe_20261030/part1_final/decision_stage1_fwe.json).
+- [Grid note](results/a2_stage1b_fwe_20261030/part1_0631/grid_note.json), [preflight/parents](A2_STAGE1B_PREFLIGHT_20261030.md).
+- Actual frozen training source: `7dd9da088ba5af581c295775819319ce54b2025c` (124 files). Result provenance giữ preflight `9f5601d97ddf2940b32ba5e17de8d21b7c7fe1c0` sau khi so khớp **27 core-file hashes**. Published results không sửa. Commit thực tế Part2 sẽ ghi khi launch.
+- Raw terminal health SHA: `7247425579c0a24acd6c742466b4a90dea9499347964dc2f8abb27238247018d`.
 
-Số hiển thị được làm tròn 9 chữ số thập phân; receipt lưu độ chính xác đầy đủ. Khi P1T hoàn tất, cập nhật bảng 3.2B và E từ receipt cuối đã kiểm chứng.
-
-Code/provenance audit trước interim: [bảng thay đổi từng file, T17 và gate regression downstream](A2_STAGE1B_CODE_AUDIT_20261030.md). Frozen commit Part1 là7dd9da0; provenance trong result giữ9f5601d của preflight sau khi kiểm tra27coreSHAgiống nhau.
+Số hiển thị làm tròn 9 chữ số thập phân; receipt lưu độ chính xác đầy đủ. [Audit code và T17](A2_STAGE1B_CODE_AUDIT_20261030.md).
