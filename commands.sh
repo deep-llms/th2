@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-a2-quant-health-20261031-a02
+#th2-6y3o-a2-quant-health-20261031-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
@@ -24,13 +24,15 @@ for rel in ('source-manifest.json','jobs.json','budget.json','admission.json','a
  'supervised/run/run.json','supervised/run/complete.json','supervised/run/quant-complete.json'):
  export(root/rel)
 for rel in ('config/plan.json','preparation_checks.json','manifests/gptq_implementation.json','pooled_downstream.json',
- 'labels_note.json','decision_quant.json','bitwidth.json','downstream_paired.json','downstream.json','tests.json','complete.json','REPORT.md','runs.jsonl'):
+ 'manifests/calibration.json','labels_note.json','decision_quant.json','bitwidth.json','downstream_paired.json','downstream.json','tests.json','complete.json','REPORT.md','runs.jsonl'):
  export(base/rel)
 manifest=root/'source-manifest.json'
 if manifest.exists():
  m=json.loads(manifest.read_text());changed=[name for name,value in m['files'].items() if hashlib.sha256((root/'source'/name).read_bytes()).hexdigest()!=value]
  print('SOURCE_VERIFICATION',json.dumps(dict(files=len(m['files']),code_commit=m['code_commit'],changed=changed)),flush=True)
 for path in sorted(base.glob('workers/*/*/*/complete.json')):export(path)
+for pattern in ('workers/*/*/*/*-final.json','workers/*/*/*/*-own_corpus.json'):
+ for path in sorted(base.glob(pattern)):export(path)
 for path in sorted(base.glob('workers/*/*/*/tests.json')):
  rows=json.loads(path.read_text());bad=[r for r in rows if not r['passed']]
  print('WORKER_TEST_SUMMARY',json.dumps(dict(path=str(path.relative_to(root)),checks=len(rows),flagged=len(bad),recent_flags=bad[-3:])),flush=True)

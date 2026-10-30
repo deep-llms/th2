@@ -1,0 +1,150 @@
+[
+  {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-30T22:31:51.013177+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7938.0,
+        "utilization_percent": 0.0,
+        "pids": [
+          736610
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7938.0,
+        "utilization_percent": 6.0,
+        "pids": [
+          736604
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7938.0,
+        "utilization_percent": 4.0,
+        "pids": [
+          736606
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7938.0,
+        "utilization_percent": 0.0,
+        "pids": [
+          736614
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 0.0,
+        "utilization_percent": 0.0,
+        "pids": []
+      }
+    ],
+    "workers": [
+      736604,
+      736606,
+      736610,
+      736614
+    ],
+    "stop_roots": [],
+    "processes": {
+      "736604": {
+        "pid": 736604,
+        "ppid": 736243,
+        "start_ticks": 333982836,
+        "command_sha256": "a26ee23d1c37536f96f989d3682a248cb8a9c427b1d188dd0e039b5cfa0e6d1e",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736606": {
+        "pid": 736606,
+        "ppid": 736243,
+        "start_ticks": 333983011,
+        "command_sha256": "566764832a9bf3f34124fb60c97ccfe1291cd5b16b871c2853be4b6288a7a80e",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736610": {
+        "pid": 736610,
+        "ppid": 736243,
+        "start_ticks": 333983701,
+        "command_sha256": "c61dc3469e68809b29dd2198711c8057bb013a607b42e0642d9e8ba9acb4e911",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "736614": {
+        "pid": 736614,
+        "ppid": 736243,
+        "start_ticks": 333984076,
+        "command_sha256": "70aa80c68fc81971fdf92dce3b1248a83ef38472606651fd9d05536f3492adb8",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "guard_disabled": true
+  }
+]

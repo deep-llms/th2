@@ -1,0 +1,801 @@
+[
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/dclm/P1T/tests.json",
+    "checks": 3,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/dclm/P300/tests.json",
+    "checks": 3,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/dclm/S188/tests.json",
+    "checks": 2,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/dclm/S72/tests.json",
+    "checks": 7,
+    "flagged": 2,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.06792092323303223,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S72",
+        "phase": "baseline"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "bits": 4,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.06270831823348999,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S72",
+        "phase": "baseline"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/fwe/P1T/tests.json",
+    "checks": 3,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/fwe/P300/tests.json",
+    "checks": 3,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/fwe/S188/tests.json",
+    "checks": 2,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/fwe/S72/tests.json",
+    "checks": 3,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/nem/P1T/tests.json",
+    "checks": 2,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/nem/P300/tests.json",
+    "checks": 2,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/nem/S188/tests.json",
+    "checks": 2,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/baseline/nem/S72/tests.json",
+    "checks": 2,
+    "flagged": 0,
+    "recent_flags": []
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/dclm/P1T/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.04878827929496765,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "P1T",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.04878827929496765,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "P1T",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08370530605316162,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "P1T",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/dclm/P300/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.07079082727432251,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "P300",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.05715879797935486,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "P300",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08083546161651611,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "P300",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/dclm/S188/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.11862248182296753,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S188",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.0860968828201294,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S188",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.09422832727432251,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S188",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/dclm/S72/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.09853315353393555,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S72",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08274871110916138,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S72",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.10714280605316162,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "dclm",
+        "parent": "S72",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/fwe/P1T/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.07270404696464539,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "P1T",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.04687497019767761,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "P1T",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.04544001817703247,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "P1T",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/fwe/P300/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.06122446060180664,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "P300",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.05787628889083862,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "P300",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.05452805757522583,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "P300",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/fwe/S188/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.0803571343421936,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "S188",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.0841836929321289,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "S188",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08035719394683838,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "S188",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/fwe/S72/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08561861515045166,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "S72",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08227038383483887,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "S72",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.07413899898529053,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "fwe",
+        "parent": "S72",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/nem/P1T/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.05046236515045166,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "P1T",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.047592490911483765,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "P1T",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.04926657676696777,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "P1T",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/nem/P300/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.06265944242477417,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "P300",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.06122446060180664,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "P300",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.05548471212387085,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "P300",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/nem/S188/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.09709823131561279,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "S188",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.07700890302658081,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "S188",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.07748723030090332,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "S188",
+        "phase": "rtn"
+      }
+    ]
+  },
+  {
+    "path": "results/a2_quant_20261031/workers/rtn/nem/S72/tests.json",
+    "checks": 338,
+    "flagged": 336,
+    "recent_flags": [
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.gate_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.08274871110916138,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "S72",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.up_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.07605230808258057,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "S72",
+        "phase": "rtn"
+      },
+      {
+        "test": "QT3",
+        "passed": false,
+        "detail": {
+          "layer": 23,
+          "matrix": "mlp.down_proj",
+          "bits": 3,
+          "cardinality": true,
+          "idempotent": false,
+          "repeat_max_abs": 0.12436223030090332,
+          "constant_groups": 0
+        },
+        "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+        "dataset": "nem",
+        "parent": "S72",
+        "phase": "rtn"
+      }
+    ]
+  }
+]
