@@ -1,26 +1,52 @@
 #1 +30+a
-#th2-6y3o-a2-stage1b-fwe-regression-20261030-a01
+#th2-6y3o-a2-stage1b-fwe-regression-health-20261030-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
-export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 WANDB_MODE=offline
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PYRUN'
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
+import hashlib,json,socket,subprocess
+from pathlib import Path
 from datetime import datetime,timezone
-import subprocess,sys,json
-from scripts.launch_a2_stage1b_regression import budget
-spent=3299.9433463821188+(datetime.now(timezone.utc)-datetime.fromisoformat('2026-10-29T20:19:10.047762+00:00')).total_seconds()
-print('REGRESSION_BUDGET',json.dumps(budget(spent,0,1800,'2026-10-31T04:06:27.182436+08:00')),flush=True)
-subprocess.run([sys.executable,'-u','-m','scripts.launch_a2_stage1b_regression',
- '--stage','/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_terminal_20261030.json','--stage-sha256','01ad2695a967ac09fde27bdbfd6efc909284427384cd8994877e7666ae74f222',
- '--reference','/mnt/local/deep-llms_th2/resources/a2_stage1b_regression_reference_20261030.json','--reference-sha256','b96a6d60b796fbc71f2bfe42132747480e57bc43407efd3e5045a534978e0187',
- '--assets','/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json',
- '--assets-sha256','5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371',
- '--output','/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01',
- '--predecessor-burn-script','/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/source/resources/llm_pretrain_burn.py',
- '--eval-python','/mnt/local/conda-py311/envs/eval/bin/python3.11',
- '--tokenizer','/mnt/local/_models/deep-llms_th2/a2/dclm/P300',
- '--dataset-root','/mnt/local/_data/deep-llms_th2/benchmarks_zero_20261023',
- '--host','thiennh-p6-6y3o-worker-0','--session','a2_stage1b_fwe_regression_20261030_a01',
- '--code-commit','8b78d9e1051407a45be6676820bc57ac87a872e4','--deadline','2026-10-31T04:06:27.182436+08:00',
- '--spent-seconds',str(spent),'--timeout-seconds','1800'],check=True)
-PYRUN
+from scripts.gpu_process import inspect
+assert socket.gethostname()=='thiennh-p6-6y3o-worker-0'
+root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01')
+print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+print('GPU_INSPECTION',json.dumps(inspect()),flush=True)
+for rel in ('source-manifest.json','plan.json','jobs.json','stage-budget.json','accelerate-env.log','training-predecessor.json',
+ 'supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json',
+ 'supervised/run/run.json','supervised/run/complete.json','supervised/run/downstream/complete.json','supervised/run/downstream/results.json','supervised/run/downstream/regression.json',
+ 'supervised/run/downstream/P300-parent-check.json','supervised/run/downstream/P300-student-check.json'):
+ p=root/rel
+ if p.is_file():
+  raw=p.read_bytes();assert len(raw)<5000000
+  print('ARTIFACT',json.dumps(dict(path=rel,sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+ else:print('MISSING',rel,flush=True)
+for p in sorted((root/'identities').glob('*-identity.json')):
+ raw=p.read_bytes();print('ARTIFACT',json.dumps(dict(path=str(p.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+# Original and candidate compact native scores permit independent local LL comparison.
+old=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-parent/scores.json')
+if old.is_file():
+ raw=old.read_bytes();assert len(raw)<5000000
+ assert hashlib.sha256(raw).hexdigest()=='502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99'
+ print('ARTIFACT',json.dumps(dict(path='reference/P300-parent-scores.json',sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+new=root/'supervised/run/downstream/scores/P300-parent/scores.json'
+if new.is_file():
+ raw=new.read_bytes();assert len(raw)<5000000
+ print('ARTIFACT',json.dumps(dict(path=str(new.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
+base=root/'supervised/run/downstream'
+p=base/'prepared.json'
+if p.is_file():
+ raw=p.read_bytes();obj=json.loads(raw)
+ print('PREPARED_SUMMARY',json.dumps(dict(sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw),requests=len(obj['requests']),protocol=obj['protocol'])),flush=True)
+for p in sorted((base/'scores').glob('*/scores.json')):
+ raw=p.read_bytes();obj=json.loads(raw)
+ print('SCORED_SUMMARY',json.dumps(dict(name=p.parent.name,sha256=hashlib.sha256(raw).hexdigest(),requests=len(obj['scores']),identity=obj['checkpoint_identity_sha256'],precision=obj['precision'],batch_size=obj.get('batch_size'))),flush=True)
+logs=[root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/stage1b-regression.log',*base.glob('*.log'),*(base/'scores').glob('*/*.log')]
+for p in logs:
+ if p.is_file():
+  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));tail=f.read().decode(errors='replace')
+  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
+guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
+print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_stage1b_fwe_regression_20261030_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
+print('HEALTH_COMPLETE',flush=True)
+PY
