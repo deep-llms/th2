@@ -1,0 +1,13 @@
+{
+  "status": "verified",
+  "report_sent": true,
+  "scope": "verified_part1_training_partial_interim_with_failed_downstream",
+  "report": {
+    "path": "/mnt/local/deep-llms_th2/docs/REPORT_interim.md",
+    "sha256": "90d092f5d4e5aa2d323977e18e249a0e8c6fd2b2ba11c46809a0626a772b9575"
+  },
+  "decision": {
+    "path": "/mnt/local/deep-llms_th2/docs/decision_stage1_fwe_interim.json",
+    "sha256": "e1eb2293ce31c3e2a965fb4d39c54bc68bf7038d7bd831f5fb5dbfbbe647ee05"
+  }
+}

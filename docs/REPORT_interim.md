@@ -108,3 +108,9 @@ Spec v1.1 SHA `b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483`
 Training Part1 terminal12:43:17SGT; downstream failure14:04:31SGT, burn restored14:05:36SGT. Ledger bảo thủ lúc downstream launch38,275.421714sec (~10.63nodeh), gồm cả thời gian chờ; dự trữ timeout7,200sec+cleanup660 dưới20/24h. Ledger bảo thủ tới15:00 khoảng11.60nodeh. Không dùng ETA20–21SGT cũ làm cam kết sau failure. Trước Part2 phải tính lại budget, báo nếu projection vượt20h, tuyệt đối giữ hard24h và deadline31Oct04:06:27SGT.
 
 [Decision JSON](decision_stage1_fwe_interim.json). Downstream scores/paired CI: **không có**, không điền zero hoặc suy ra từ DCLM. Full Stage1b chưa hoàn tất.
+
+
+## User decision after the failed downstream gate — 30 October 2026
+
+30Oct2026 LATEST USER DECISION: launch registered Part2 heals now, independent of downstream; over20nodeh approved, hard24h/deadline31Oct04:06SGT unchanged. Hold downstream until Part2 terminal, then one six-model run; full78259 P300 batch1/batch2 decision at <=0.1pp MCmean and LAMBADA, fallbackall6batch1. Every-model gates: manual<=2e-5, batch<=0.1nats/token, greedy token mismatch<=0.1%; old.01 gate is diagnostic. Report per-task flips and LL max/mean/padding. Standing reported-only failures never block heals. Policy resource resources/a2_stage1b_continuation_20261030.json supersedes earlier HOLD. No new T17 or watcher.
+The failed gate receipt and published training results remain unchanged. Part2 launch is now authorized; actual startup is pending verification. Downstream results and confidence intervals remain unavailable.

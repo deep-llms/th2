@@ -59,3 +59,39 @@ class Stage1bLaunchTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'predecessor'):admit_part2(prior,root/'other/source/resources/llm_pretrain_burn.py')
             Path(interim['path']).write_text('{}')
             with self.assertRaises(ValueError):admit_part2(prior,burn)
+
+    def test_authorized_failed_gate_handoff_and_rejections(self):
+        from copy import deepcopy
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)/'downstream';root.mkdir()
+            def save(p,v):
+                p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v))
+                return dict(path=str(p),sha256=sha256(p))
+            # Fixture values describe the published failed run without depending on temp files.
+            data={
+                'run':dict(status='failed',jobs=[dict(name='stage1b-downstream-part1',returncode=1)]),
+                'supervisor':dict(training_status='failed',finished_at='2026-10-30',free_after_training=[dict(pids=[]) for _ in range(8)]),
+                'burn':dict(collective_progress_verified=True),
+                'gate':dict(passed=False,production_batch_size=2,manual_max_nats_per_token=0,
+                    batch_max_nats_per_token=0.011164188385009766,production_max_nats_per_token=0.011164188385009766,
+                    greedy_reference_mismatches=0,greedy_batch_mismatches=0,greedy_production_mismatches=0)}
+            rels=dict(run='supervised/run/run.json',supervisor='supervised/supervisor.json',
+                burn='supervised/burn-verified.json',gate='supervised/run/downstream/P300-parent-check.json')
+            failed={k:save(root/rels[k],v) for k,v in data.items()}
+            policy=save(root/'policy.json',dict(registered_heals_independent_of_downstream=True,downstream_after_part2=True))
+            interim=save(root/'interim.json',dict(status='verified',report_sent=True,
+                report=save(root/'report.json',{}),decision=save(root/'decision.json',{})))
+            obj=dict(stage1b_spec_sha256=REPLICATION_SPEC_SHA,interim=interim,downstream_deferred=True,
+                continuation_policy=policy,failed_downstream=failed)
+            burn=root/'source/resources/llm_pretrain_burn.py'
+            admit_part2(save(root/'prior.json',obj),burn)
+            for key,field,value in [('burn','collective_progress_verified',False),('supervisor','free_after_training',[dict(pids=[123])]*8),('gate','manual_max_nats_per_token',.1)]:
+                bad=deepcopy(obj);record=deepcopy(data[key]);record[field]=value
+                bad['failed_downstream'][key]=save(root/rels[key],record)
+                with self.assertRaisesRegex(ValueError,'handoff differs'):
+                    admit_part2(save(root/'prior.json',bad),burn)
+                save(root/rels[key],data[key])
+            policy=save(root/'policy.json',dict(registered_heals_independent_of_downstream=False,downstream_after_part2=True))
+            obj['continuation_policy']=policy
+            with self.assertRaisesRegex(ValueError,'authorization'):
+                admit_part2(save(root/'prior.json',obj),burn)

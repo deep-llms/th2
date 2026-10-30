@@ -1,0 +1,42 @@
+{
+  "stage1b_spec_sha256": "b2121a4f2859f99db421273082c6be035dc5e833af6d1d071f5ed4cd381ed483",
+  "complete": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/complete.json",
+    "sha256": "7d5a8d9c43a1561e287ee105983dfb0a4dc5e3e737f0716e0052eb750e137d05"
+  },
+  "runs": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/runs.json",
+    "sha256": "0938113dfca8f2e1e29e25a302556695b7a9278e7b3701ec03b8eb576cc850b8"
+  },
+  "choice": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/lr_choice.json",
+    "sha256": "2589a97bdb1f15bcb53b253080425c14fd24bdc231a513c057725b53f3fe2e75"
+  },
+  "interim": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_interim_sent_20261030.json",
+    "sha256": "aefe454e40638bef784c530047a743dc4615ca965b7325b8f7b758b99d0225b3"
+  },
+  "downstream_deferred": true,
+  "continuation_policy": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_continuation_20261030.json",
+    "sha256": "8797ab8557de5ef6076c2d1aa8cedb906dd89217566009e2f93d8077262efa4c"
+  },
+  "failed_downstream": {
+    "run": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/run/run.json",
+      "sha256": "f23c04c9cfe83c171bfedf788fb02d39848f5a289fdd2c7a4f7e1f9abf1754ef"
+    },
+    "supervisor": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/supervisor.json",
+      "sha256": "5212186eef7dd50c050a51584edd4533dc2008425fbaab8442e9df64e51a0b75"
+    },
+    "burn": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/burn-verified.json",
+      "sha256": "eb6babc84832496af69802c85c742e6399425b996daf0130872a1644f3048a3d"
+    },
+    "gate": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01/supervised/run/downstream/P300-parent-check.json",
+      "sha256": "a27ffdc7a467bc63bf55f8956f81e986d9320e12530f01baf8f6709e417084cb"
+    }
+  }
+}

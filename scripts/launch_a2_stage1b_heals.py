@@ -19,6 +19,45 @@ from scripts.a2_remaining import read_locked
 import math
 
 
+def verify_deferred_handoff(prior, predecessor):
+    """Explicit user-authorized continuation after the recorded FWE gate failure.
+
+    This verifies failed receipts, never substitutes a successful completion.
+    The unchanged native supervisor rechecks live PID/start ownership before reclaim.
+    """
+    policy=read_locked(prior['continuation_policy'])
+    if (policy.get('registered_heals_independent_of_downstream') is not True
+            or policy.get('downstream_after_part2') is not True):
+        raise ValueError('Explicit downstream deferral authorization required')
+    root=predecessor.resolve().parents[2]
+    records={}
+    for key,rel in [('run','supervised/run/run.json'),
+                    ('supervisor','supervised/supervisor.json'),
+                    ('burn','supervised/burn-verified.json'),
+                    ('gate','supervised/run/downstream/P300-parent-check.json')]:
+        item=prior['failed_downstream'][key]
+        if Path(item['path']).resolve()!=root/rel:
+            raise ValueError('Failed downstream predecessor mismatch')
+        records[key]=read_locked(item)
+    run,sv,burn,gate=(records[k] for k in ('run','supervisor','burn','gate'))
+    if (run.get('status')!='failed' or len(run.get('jobs',[]))!=1
+            or run['jobs'][0].get('name')!='stage1b-downstream-part1'
+            or run['jobs'][0].get('returncode')!=1
+            or sv.get('training_status')!='failed' or not sv.get('finished_at')
+            or len(sv.get('free_after_training',[]))!=8
+            or any(g['pids'] for g in sv['free_after_training'])
+            or burn.get('collective_progress_verified') is not True
+            or gate.get('passed') is not False or gate.get('production_batch_size')!=2
+            or gate.get('manual_max_nats_per_token')!=0
+            or gate.get('batch_max_nats_per_token')!=0.011164188385009766
+            or gate.get('production_max_nats_per_token')!=0.011164188385009766
+            or any(gate.get(k)!=0 for k in ('greedy_reference_mismatches',
+                       'greedy_batch_mismatches','greedy_production_mismatches'))
+            or list((root/'supervised/run/downstream/scores').glob('*/scores.json'))):
+        raise ValueError('Reviewed failed gate/native handoff differs')
+    return records
+
+
 def admit_part2(prior_lock, predecessor):
     prior=read_locked(prior_lock)
     if prior.get('stage1b_spec_sha256')!=REPLICATION_SPEC_SHA:
@@ -29,6 +68,9 @@ def admit_part2(prior_lock, predecessor):
     for key in ('report','decision'):
         item=interim[key]
         if digest(item['path'])!=item['sha256']:raise ValueError('Interim artifact changed')
+    if prior.get('downstream_deferred') is True:
+        verify_deferred_handoff(prior,predecessor)
+        return prior
     root=predecessor.resolve().parents[2]
     for key,rel in [('supervisor','supervised/supervisor.json'),
                     ('run_complete','supervised/run/complete.json'),
@@ -86,7 +128,8 @@ def main():
  if gate['report_before_launch']:raise ValueError('Report over20h estimate before launch')
  if a.phase=='part1' and (a.prior or a.prior_sha256):raise ValueError('Unexpected prior part1')
  if a.phase=='part2' and not (a.prior and a.prior_sha256):raise ValueError('Verified interim lock required')
- if a.phase=='part2':admit_part2(dict(path=a.prior,sha256=a.prior_sha256),a.predecessor_burn_script)
+ prior=None
+ if a.phase=='part2':prior=admit_part2(dict(path=a.prior,sha256=a.prior_sha256),a.predecessor_burn_script)
  if a.phase=='part1' and a.predecessor_burn_script.resolve().parents[2]!=a.preflight_root.resolve():raise ValueError('Preflight predecessor mismatch')
  remaining=phase_estimate(gate,a.phase)
  timeout=math.ceil(remaining*1.5)
@@ -97,7 +140,10 @@ def main():
   if version(k).split('+')[0]!=v:raise ValueError('Runtime changed')
  for session in (a.session,a.session+'_burn'):
   if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Existing session')
- verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
+ if prior and prior.get('downstream_deferred') is True:
+  if a.predecessor_burn_script.resolve().parents[3]!=a.output.parent.resolve():raise ValueError('Wrong predecessor output parent')
+  verify_deferred_handoff(prior,a.predecessor_burn_script)
+ else:verify_handoff(a.output.parent,a.predecessor_burn_script,digest)
  if digest(a.predecessor_burn_script)!=BURN_HASH or digest('/mnt/local/_gpu_guard/gpu_guard.sh')!=GUARD_HASH or Path('/mnt/local/_gpu_guard/DISABLED').exists():raise ValueError('Unknown guard/burn owner')
  if digest(source/'docs/A2_stage1b_fwe_spec.md')!=REPLICATION_SPEC_SHA:raise ValueError('Replication spec changed')
  a.output.mkdir();frozen=freeze_source(source,a.output,a.code_commit)

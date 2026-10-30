@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "authority": "Explicit user decision 30Oct2026: act now, no further reply",
+  "registered_heals_independent_of_downstream": true,
+  "downstream_after_part2": true,
+  "reported_only_failure_never_blocks_heals": true,
+  "over20h_approved": true,
+  "hard_node_hours": 24,
+  "deadline": "2026-10-31T04:06:27.182436+08:00",
+  "part2_order": [
+    "X72:3.2B",
+    "P300:0.8B",
+    "P1T:0.8B",
+    "X72:0.8B",
+    "X72:0.2B"
+  ],
+  "downstream_models": [
+    "P300-parent",
+    "P1T-parent",
+    "S72-parent",
+    "P300-student",
+    "P1T-student",
+    "X72-student"
+  ],
+  "manual_limit": 2e-05,
+  "batch_token_limit": 0.1,
+  "greedy_token_mismatch_rate_limit": 0.001,
+  "deciding_parent": "P300-parent",
+  "deciding_requests": 78259,
+  "deciding_batches": [
+    1,
+    2
+  ],
+  "mc_mean_accuracy_difference_limit": 0.001,
+  "lambada_accuracy_difference_limit": 0.001,
+  "fallback_batch": 1,
+  "reuse_batch2_production": true,
+  "diagnostics": [
+    "per_task_differences",
+    "prediction_flip_counts",
+    "per_request_LL_max_mean",
+    "padded_pair_association"
+  ],
+  "failed_receipt_sha256": "5005f261292a74d572dd099ed19fcc322147bf58ceb25d6b101dcf918c0abe1b"
+}

@@ -61,7 +61,7 @@
   "status": "partial_interim_downstream_gate_failed",
   "training_status": "part1_complete_verified",
   "paired_accuracy": null,
-  "part2_status": "not_started_pending_user_direction",
+  "part2_status": "authorized_independent_of_downstream_pending_launch",
   "actual_training_commit": "7dd9da088ba5af581c295775819319ce54b2025c",
   "inherited_provenance_commit": "9f5601d97ddf2940b32ba5e17de8d21b7c7fe1c0",
   "matching_core_files": 27,
@@ -106,5 +106,9 @@
       54984
     ],
     "precision": "fp32_parameters_bf16_cuda_autocast"
+  },
+  "continuation_policy": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_continuation_20261030.json",
+    "sha256": "8797ab8557de5ef6076c2d1aa8cedb906dd89217566009e2f93d8077262efa4c"
   }
 }
