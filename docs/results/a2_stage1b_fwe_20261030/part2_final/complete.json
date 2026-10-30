@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "phase": "part2",
+  "training_complete": true,
+  "full_stage_complete": false,
+  "downstream_pending": true,
+  "runs": 15,
+  "runs_sha256": "1df43ebc87e9ce840cbd0da489b490ee4fe7d456549f2b4b16ff8ccf1300b897",
+  "choice_sha256": "2589a97bdb1f15bcb53b253080425c14fd24bdc231a513c057725b53f3fe2e75",
+  "decision_sha256": "f0d792f73620d158d8dc2518bed5d2dc0702b5fcf8cafee5063af82169835694"
+}

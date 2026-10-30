@@ -1,0 +1,15 @@
+{
+  "run_id": "ST1-fwe-X72-S1-0.2B-lr1e-3",
+  "budget": "0.2B",
+  "val_post": 3.1348316878114115,
+  "val_tune_post": 3.1162795722443017,
+  "val_secondary_post": 2.5833149695325726,
+  "delta_post": 0.09267968586511266,
+  "roundtrip_difference": 0.0,
+  "coverage": {
+    "examples": 48768,
+    "microbatches": 1524,
+    "world_size": 8,
+    "exact_order": true
+  }
+}

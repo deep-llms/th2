@@ -1,8 +1,6 @@
 # Stage1b FineWeb-Edu: chọn LR và ba arm 3.2B
 
-Cập nhật: **30/10/2026, 22:32:12 SGT**, từ healtha13 đã xác minh. Part1 training hoàn tất lúc **12:43:17 SGT**; X72 3.2B và P300/P1T 0.8B đã hoàn tất; X72 0.8B đang chạy.
-
-**Part1 đã đủ sáu run grid ban đầu, hai run mở rộng và P300/P1T 3.2B.** Đủ lịch LR, exact 8-rank order, save/reload sai khác 0 và terminal exit 0 của Part1 đã kiểm tra. Native burn handoff của Part1 được xác minh độc lập. X72 3.2B cũng đã được kiểm tra đầy đủ; tổng 13/15 fit đã xác minh. Hai fit còn lại của Part2, downstream và báo cáo toàn Stage1b còn chờ.
+Cập nhật: **30/10/2026, 23:31:20 SGT**. Đã xác minh đủ **15/15 fit**, full LR, exact8-rank, roundtrip0, không divergence; Part2 kết thúc23:21:56 và bàn giao native burn được xác minh độc lập. Downstream sáu model và báo cáo toàn Stage1b còn chờ.
 
 ## Thiết lập và cách đọc
 
@@ -100,3 +98,13 @@ Cả tám run grid và hai run 3.2B đã qua kiểm tra: full LR schedule, exact
 - Raw terminal health SHA: `7247425579c0a24acd6c742466b4a90dea9499347964dc2f8abb27238247018d`.
 
 Số hiển thị làm tròn 9 chữ số thập phân; receipt lưu độ chính xác đầy đủ. [Audit code và T17](A2_STAGE1B_CODE_AUDIT_20261030.md).
+
+## Kết quả training đầy đủ sau Part2
+
+| Budget | E (CulturaX final) | A_init (CulturaX final) | E (FWE diagnostic) | A_init (FWE diagnostic) |
+|---|---:|---:|---:|---:|
+| 0.2B | 0.026224221566 | 0.078478373608 | 0.026352782881 | 0.078232544929 |
+| 0.8B | 0.022819779411 | 0.042453799353 | 0.024077046610 | 0.043209142918 |
+| 3.2B | 0.023461150404 | 0.012993651190 | 0.022921405400 | 0.013620394356 |
+
+E3.2/E0.8 =1.028105924298394; A3.2/A0.8 =0.30606568523151645. Nhãn `persists`, `replicated`, `anneal first`. [Bằng chứng terminal](results/a2_stage1b_fwe_20261030/part2_final/verification.json). FWE held-out chỉ chẩn đoán do exposure caveat.
