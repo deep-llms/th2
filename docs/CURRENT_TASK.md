@@ -1,5 +1,7 @@
 # Current task
 
+30Oct10:56SGT: User requested a consolidated doc for LR grid and both3.2B arms. Added docs/A2_STAGE1B_LR_AND_MAIN_RESULTS_20261030.md from verifiedpart1_1031: all6base+2edgegrid and P3003.2B final; P1T/E3.2 explicitly pending. Update this doc when P1T terminalreceipt is verified; keep existingwatch11:00SGT. No newjob.
+
 30Oct10:31:35SGT VERIFIED: Part1healtha13 22136ee ACKNOWLEDGED;P1T3.2B ACTIVE4030/12207(33.0%),8GPUs98–100%/81286MiB,guard715452/sessionactive/fullownershipchainverified;124sourcefiles7dd9da0/inputs/runtime/provenance/prior9fits unchanged.9/15fitscomplete/fullLR/exact8rankorder/roundtrip0/no divergence/commonLR1e-3/bothownbest1e-3;GRIDNOTE+choice byteunchanged/P300mainunchanged/no newfinalvalidation/E3.2pending. RawSHA1455afb0f014ff231dc43396eaf6548a0fe845b500d5b30faed81f26b02a0d36;archivepart1_1031. Measured.95889sec/update,P1Telapsed~1h04/remaining~2h11trainingplusvalidation/save,ETA12:45–13:00SGT;fullStage1b20:00–21:00SGTprovisional(~9.5–10.5hremaining). Restorecommands#0/no pendingreceipt;nextuniquehealtha14. Samewatch11:00SGT/noSTOP/newtimer/restart.
 
 2026-10-30T10:30:44.313997+08:00: Unique Part1healtha13 22136ee04e76da4466ec13640158b02016cca764 SUBMITTED/remoteheadverified;retrieve BEFOREwrites. Source7dd9da0unchanged/no relaunch. Samewatch11:00SGT.
