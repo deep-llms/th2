@@ -1,0 +1,175 @@
+{
+  "method": "Independent numpy means and contrasts from healtha02 full saved heal arrays",
+  "checks": [
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "baseline",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "pre_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "post_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "post_tuning",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "post_small",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "master_final",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S188-S1-0.2B-lr1e-3",
+      "test": "delta_post",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "baseline",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "pre_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "post_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "post_tuning",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "post_small",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "master_final",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-dclm-S72-S1-0.2B-lr1e-3",
+      "test": "delta_post",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "baseline",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "pre_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "post_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "post_tuning",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "post_small",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "master_final",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S188-S1-0.2B-lr1e-3",
+      "test": "delta_post",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "baseline",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "pre_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "post_final",
+      "max_abs_error": 4.440892098500626e-16,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "post_tuning",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "post_small",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "master_final",
+      "max_abs_error": 0.0,
+      "passed": true
+    },
+    {
+      "run": "ST1-fwe-S72-S1-0.2B-lr1e-3",
+      "test": "delta_post",
+      "max_abs_error": 8.881784197001252e-16,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "scope": "Four stable heals only; full Smol bootstrap replay pending result export"
+}
