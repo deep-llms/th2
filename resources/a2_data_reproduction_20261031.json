@@ -1,0 +1,33 @@
+{
+  "schema": "a2-data-reproduction-local-kit-v1",
+  "scope": "A2 pruning from CulturaX KD healing through Stage1, Stage1b, Q and M; earlier DOT/KV excluded",
+  "directory": "/disk/thuat/efficient_llm/artifacts/a2_reproduction_20261031",
+  "archive": "/disk/thuat/efficient_llm/artifacts/a2_reproduction_20261031.tar.gz",
+  "archive_bytes": 1463520,
+  "archive_sha256": "db60268b87f5dfd52372f8b3ad9f633226946a30dede7a60e70b23608ee7fad3",
+  "files_in_archive": 128,
+  "metadata_verification": {
+    "status": "complete",
+    "remote_metadata_commit": "d2dfa545555d804a7bfb8f9fe99a02c3f9d1d210",
+    "remote_receipt_sha256": "b16e91475b2051d2be539049253aee3cf92cee6fe637732e1acca5b0414dcde5",
+    "dclm_shards": 340,
+    "fwe_shards": 60,
+    "culturax_files": 3008,
+    "culturax_source_manifest_verified": true,
+    "culturax_prepared_manifest_verified": true,
+    "frozen_source_files": 84,
+    "gpt_neox_tokenizer_files_verified": 3,
+    "new_download_or_preprocessing_run": false,
+    "checkpoint_backup_performed": false
+  },
+  "canonical_manifest": "resources/a2_corpora_30b_20261029.json",
+  "original_source_raw_bytes_dclm_fwe": 211339483601,
+  "checkpoint_and_parent_backup_bytes": 511152199260,
+  "checkpoint_backup_paths": "/disk/thuat/efficient_llm/artifacts/a2_reproduction_20261031/pruning_backup_paths.txt",
+  "limitations": [
+    "No new full data rebuild or upstream availability test",
+    "Exact upstream bytes must remain obtainable; archive raw/packed data for upstream independence",
+    "Completion manifests contain timing/path provenance; compare content hashes and bind fresh receipts when rebuilding",
+    "Local kit excluded from Git; copy archive as well as repository"
+  ]
+}
