@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-a2-mech-health-20261031-a03
+#th2-6y3o-a2-mech-health-20261031-a04
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
