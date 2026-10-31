@@ -1,0 +1,9 @@
+{
+  "files": 159,
+  "all_member_sha256_verified": true,
+  "all56_perseq_match_health_receipt": true,
+  "archive_sha256": "9821604f83b263cf01008844b632e61d4bba1f5801e25581d9f1724ae720a774",
+  "archive_bytes": 7772377,
+  "local_originals": "results/a2_breadth_20261031/artifacts/results/a2_breadth_20261031",
+  "export_commit": "a98de30119c3e0856b818249e513174403f1649f"
+}

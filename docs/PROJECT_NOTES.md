@@ -627,3 +627,8 @@ User explicitly requested a reminder worker for Breadth. Reuse the existing loca
 ## Standing owner requirement: reminder worker for long jobs — 1 November 2026 SGT
 
 Owner explicitly says not to forget the reminder worker again. For every future authorized long-running experiment, arrange same-thread automatic follow-up before ending the launch turn. Inspect existing workers first and reuse a suitable watcher; never create duplicates or subagents. Verify the worker is alive, record cadence/next wake, and distinguish queue acceptance from actual delivery. This standing authorization supersedes historical no-new-watcher wording for necessary reminder setup; it does not authorize new experiments or infrastructure repair. Keep follow-up until the requested work, report, and native handoff are verified complete, or the owner stops it.
+
+
+## A2 Breadth completion — 1 November 2026 SGT
+
+All4 stable heals and44Smol configurations completed;603/603 checksPASS. Independent local CPU replay of56savedNLL arrays,3paired10kseed0intervals,contrasts/correlations/clauses passed (max1.14e-13). SM1/SM2/SP1 supported;SM3 not supported. E_stabDCLM+.0111319744/FWE+.0147807444. Smol B_S1matched+7.646% [7.378,7.973]% andrho1.0. Report results/a2_breadth_20261031/REPORT.md.159files/7.77MB exported+hashverified;bulk originals in results/a2_breadth_20261031/artifacts are Gitignored. Native terminal02:33:22/handoff02:34:28/independentburn07:12SGT,workers753407–753414 under753338. Earlier runnerDNS/SSH errors preserved, recovery evidenced by actual healthreceipt;no GPU rerun. Depthspecmissing orderingdeviation retained; noDepthC/DT6 invented. BreadthwatchSTOPafterverifiedcompletion.

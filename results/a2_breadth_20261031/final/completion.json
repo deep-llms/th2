@@ -1,0 +1,25 @@
+{
+  "completed_at_sgt": "2026-11-01T07:27:24.140569+08:00",
+  "scope": "A2 Breadth only",
+  "source_commit": "60e5461cbbf21ae437149a45923371cbc6dd74a2",
+  "heals": 4,
+  "smol_configs": 44,
+  "perseq_files": 56,
+  "exported_files": 159,
+  "checks_passed": 603,
+  "checks_total": 603,
+  "independent_cpu_replay_passed": true,
+  "independent_native_handoff_verified": true,
+  "clauses": {
+    "SM1": true,
+    "SM2": true,
+    "SM3": false,
+    "SP1": true
+  },
+  "deviations": [
+    "Depth A-B prerequisite/spec absent from workspace; execute authorized Breadth now; Depth C cannot be reconstructed."
+  ],
+  "remaining_breadth_work": [],
+  "depth_c": "not executed; specification absent",
+  "report_sha256": "05873bcdea7ff3d0df8349047c599545e6fd3696418f59a211d772a5d5ece102"
+}

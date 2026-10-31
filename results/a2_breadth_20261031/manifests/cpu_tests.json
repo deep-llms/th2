@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "tests": 10,
+  "log_sha256": "ddb6367df594e48e66748d3aca10c9c8fd700392037b7d817cea9dba7b020cf5",
+  "files": {
+    "efficient_llm/a2_breadth/__init__.py": "8e962f723f786703e03753ad047320c1e76f0c052762f139c8114d1430885c3b",
+    "efficient_llm/a2_breadth/common.py": "2d5b46c38083659775bb29f7db7bcd72ea154be93db6538458e811b1e5ae5a50",
+    "efficient_llm/a2_breadth/smol.py": "220ea41c3477f48d4f192cf2ddfca943d4e3845d56528d3682e7505f1dca92ad",
+    "efficient_llm/a2_breadth/heal.py": "e26c575e5c4a8409cafbc3a2d67bc55955754cfd3850702a1705e21724dd46d1",
+    "scripts/launch_a2_breadth.py": "3928b17283d0097469691c014382ed96b66a4b5a8023168d9c3f2c3380608364",
+    "scripts/a2_breadth_run.py": "e7c3749487dd38b3000dba851c7ff9abea1e2c624baa84a1393bb66192c81cf1",
+    "scripts/a2_breadth_report.py": "9d76e4b8112afa3e01f394fc293f515ca1c919aeec5a3025445266d13e2305a2",
+    "tests/a2/test_breadth.py": "9d7a1eeca97ebf84ae3a68c2cc89ab19f7a00b44f8675f01d60c9e17b9f39858"
+  },
+  "scope": "tiny native SmolLM3 CPU: bitwise no-removal; RoPE/NoPE preservation; independent CE; per-document isolation; weighted paired bootstrap; unchanged KD gradients/optimizer/scheduler; fault continuation; complete/missing saved readout",
+  "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+}

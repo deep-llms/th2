@@ -1,0 +1,14 @@
+{
+  "documents": 11717,
+  "tokens": 8833068,
+  "predicted_tokens": 8821351,
+  "tokenizer_files": {
+    "special_tokens_map.json": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+    "tokenizer.json": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+    "tokenizer_config.json": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd"
+  },
+  "token_sha256": "a4103ccc75651e1200eab67b83a36861da2de943d86a7c22863d2e245f9b3cf4",
+  "offset_sha256": "563dc2e8bef137e9de8174356cb69502024eea750e5fd9312c5b5927e1374b90",
+  "convention": "add_special_tokens=False + one EOS, then truncate to4096; one document/sequence; preserve validation order",
+  "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+}
