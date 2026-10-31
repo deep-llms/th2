@@ -1,4 +1,8 @@
-31Oct18:26SGT: Tokenpackagea01 2f8d9c7 ACK/18arraysoriginalhashesmatch/36parts20MiBmax,total725595544bytes. Fiveaddendumtables complete inREPORT.md;249correlationsindependentlyrecomputed|maxerror5.55e-16|72layerrows40bucketrowsverified. Preparing exportb01 of3,12parts/6arrays. NoGPUactions.
+31Oct18:34SGT: Tokenexportb01 f9fdee7 ACK controller Done12pulled/0skipped; Dropbox folder appearing incrementally (4/12parts so far), not failure. Local downloader stopped early on missingyetparts; downloadedmatchingparts preserved, will resume read-only after listingcomplete. Receipt allows nextuniqueexportb02. Addendumcomplete.
+
+2026-10-31T18:27:12.107148+08:00: A2 M tokenexportb01 f9fdee79df4ff6bb9d145ce57f2b96e4e7e35912 SUBMITTED/remoteheadverified. Pending receipt/download12parts before nextremoteexport. Addendumcomplete/committed. Backup18arrays725603544bytes; noGPUactions.
+
+31Oct18:26SGT: Tokenpackagea01 2f8d9c7 ACK/18arraysoriginalhashesmatch/36parts20MiBmax,total725603544bytes. Fiveaddendumtables complete inREPORT.md;249correlationsindependentlyrecomputed|maxerror5.55e-16|72layerrows40bucketrowsverified. Preparing exportb01 of3,12parts/6arrays. NoGPUactions.
 
 2026-10-31T18:23:57.962856+08:00: Userauthorizes A2 M CPU-onlyaddendum fivefulltables inREPORT.md and backup18savedtokenarrays. Tokenpackagea01 2f8d9c78f91e994ff7a62fcac1735e8863e84a3b SUBMITTED/remoteheadverified; pendingreceipt before nextremotewrite/no duplicate. NoGPUactions. Addendum being generated fromlockedlocalJSON; backup36parts in3batchesplanned, allhashchecked.
 
