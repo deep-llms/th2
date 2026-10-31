@@ -1,0 +1,17 @@
+{
+  "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b",
+  "source_commit": "60e5461cbbf21ae437149a45923371cbc6dd74a2",
+  "launch_commit": "fd80dda62db15801e2db6794cf1951a3de99dfdb",
+  "download_commit": "faaed45456227de27b886c3fdbd9841986dbdabe",
+  "download_bytes": 67842755970,
+  "cpu_tests": 10,
+  "actual_gpu_start_verified": false,
+  "source_archive": {
+    "path": "docs/results/a2_branches_20261028/final_check/sets.json.gz",
+    "original_sha256": "835e39c4e4acd1ffc09e05d4282ea707371af35a8ac0efd5007502376f8de3b9",
+    "original_retained_locally": true
+  },
+  "deviations": [
+    "Depth A-B specification absent; explicit Breadth authorization executed, Depth C remains unavailable."
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b",
+  "launch_commit": "fd80dda62db15801e2db6794cf1951a3de99dfdb",
+  "raw_sha256": "9645c90dbd9fedc1ef733d28d72938e1ce630b78ab6f50dce0a3f47354ec929c",
+  "preparation_checks": [
+    {
+      "test": "spec_identity",
+      "passed": true,
+      "detail": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "data_manifest",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "small_set_identity",
+      "passed": true,
+      "detail": {
+        "count": 256
+      },
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "packed_data:tuning",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "packed_data:final",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "assets",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/S72/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/S72/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/P300/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/P300/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/S188/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/S188/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/P1T/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:dclm/P1T/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/S72/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/S72/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/P300/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/P300/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/S188/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/S188/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/P1T/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:fwe/P1T/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/S72/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/S72/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/P300/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/P300/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/S188/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/S188/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/P1T/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "reference_nll:nem/P1T/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "heal_manifest:dclm",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "heal_manifest:fwe",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "accelerate_configuration",
+      "passed": true,
+      "detail": {
+        "path": "/mnt/local/.cache/huggingface/accelerate/default_config.yaml"
+      },
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    },
+    {
+      "test": "accelerate_env",
+      "passed": true,
+      "detail": {
+        "returncode": 0
+      },
+      "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b"
+    }
+  ],
+  "actual_gpu_start_verified": false
+}
