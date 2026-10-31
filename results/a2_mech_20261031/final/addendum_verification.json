@@ -1,0 +1,22 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "source_sha256": {
+    "results/a2_mech_20261031/decision_mech.json": "734206eaf39c0e18a1d08c85c321cf68d3fc849a8f5bbe8bc90e73165e7f8603",
+    "results/a2_mech_20261031/noise_paired.json": "31be6a0b930dbf02cebc093904a3908999e7c83a4b1ebe061fea8c68bf67c6ba",
+    "results/a2_mech_20261031/layers.json": "c40adcfda84f17accab8628e2fe03c81d28da1beaed670c40562c240c7559771",
+    "results/a2_mech_20261031/buckets.json": "2563db0e7d97440a502a77a459da8ee9dc132aaa480fb4ae5bd999574ec40568",
+    "results/a2_quant_20261031/batches/b01/decision_quant.json": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb"
+  },
+  "n_rtn3_parents": 12,
+  "n_rtn3_contrast_rows": 3,
+  "n_iso_extra_contrast_rows": 6,
+  "correlation_metrics": 83,
+  "correlation_values": 249,
+  "correlation_recomputed_max_abs": 5.551115123125783e-16,
+  "layer_dataset_rows": 72,
+  "layer_contrasts": 216,
+  "bucket_rows": 40,
+  "cpu_only": true,
+  "no_model_forward": true,
+  "decision_unchanged": true
+}
