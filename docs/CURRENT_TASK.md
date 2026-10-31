@@ -1,3 +1,11 @@
+2026-10-31T05:54:22.558864+00:00: Existingwatch1095005 STOP acknowledged/process exited05:54:00UTC (13:54SGT). Quant fullreport/localverification/nativehandoff COMPLETE WITH QT3/QT6flags; no registeredworkremaining, no pendingreceipt, commands#0.
+
+31/10/2026 13:53:59 SGT: A2 QUANT COMPLETE execution+downloads+localverification+report/nativehandoff. All80config/160NLL,16scores,32replays exactSHA; paired10kseed0 exactrecomputed. Final results/a2_quant_20261031/REPORT.md, final_completion.json. QT3/QT6 FAIL remain scientificlimitations/unverified; no pendingprotocolquestion or registeredexecutionwork. Historicalhealtha04 missing replacedbycompleteartifactproof, not relabeledACK. commands#0. Existingwatch STOP now authorized by completion.
+
+2026-10-31T05:51:12.296471+00:00: b08 5d23d3a ACK Done5pulled/0skipped; all9replayparts+manifest nowdownloaded/SHAchecked. No pendingreceipt/commands#0local. Local32replaylosslessrestoration and downstreampairedverification running; thenfinalreport. QT3/QT6retained.
+
+2026-10-31T05:47:08.530571+00:00: Replaybatchb08 5d23d3a6bd0ff088e219a5cfc2b60b17b16d6e78 SUBMITTED/remoteheadverified; last5parts004-008 pendingreceipt. b07all5filesdownloaded/checksummatched. No GPU work. Remaining localreplayverification/finalreport, QT3/QT6flags.
+
 2026-10-31T05:46:37.003389+00:00: b07 6103246 ACK Done5pulled/0skipped; manifest+parts000-003 downloaded/SHAverified. Submit final smallbatchb08 parts004-008 only; no GPU execution. Full160NLL/CI/nativehandoff verified, downstreamreplays/finalreport next. QT3/QT6 retained.
 
 2026-10-31T05:42:06.163588+00:00: Replaybatchb07 6103246c2896e6256294dff1a938403cfa76deb7 SUBMITTED; manifest+losslessreplayparts000-003, pending#2receipt. AfterACK exportparts004-008 in b08. Full160NLL/CI + nativehandoff verified locally; raw16scoresdownloaded/6parentreuse+8quantstateidentitiesverified. NoGPUlaunch.

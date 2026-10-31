@@ -1,0 +1,36 @@
+{
+  "source_commit": "422bb7f118fd875ea2d9392e5da0cefbfbfb8d30",
+  "source_files_verified": 144,
+  "source_matches_frozen_git": true,
+  "remote_source_changes": [],
+  "native_handoff_verified": true,
+  "guard_released": true,
+  "burn_parent": 740040,
+  "burn_workers": [
+    740109,
+    740110,
+    740111,
+    740112,
+    740113,
+    740114,
+    740115,
+    740116
+  ],
+  "process_identity_stable": true,
+  "progress": [
+    [
+      20070,
+      22284.76
+    ],
+    [
+      20090,
+      22306.96
+    ]
+  ],
+  "sample_times": [
+    "2026-10-31T05:27:43.671449+00:00",
+    "2026-10-31T05:27:55.953453+00:00"
+  ],
+  "execution_finished_at": "2026-10-31T00:33:05.659859+00:00",
+  "supervisor_finished_at": "2026-10-31T00:34:16.511900+00:00"
+}

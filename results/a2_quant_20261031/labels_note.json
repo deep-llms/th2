@@ -1,0 +1,71 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "labels": {
+    "dclm": {
+      "pre-S1": {
+        "L_ann": "more damage",
+        "L_stab": "more damage",
+        "R_short": "grey"
+      },
+      "gptq3-cal1": {
+        "L_ann": "more damage",
+        "L_stab": "no effect",
+        "R_short": "more damage"
+      },
+      "gptq3": {
+        "L_ann": "more damage",
+        "L_stab": "no effect",
+        "R_short": "more damage"
+      },
+      "gptq4": {
+        "L_ann": "no effect",
+        "L_stab": "no effect",
+        "R_short": "no effect"
+      },
+      "rtn3": {
+        "L_ann": "more damage",
+        "L_stab": "less damage",
+        "R_short": "more damage"
+      },
+      "rtn4": {
+        "L_ann": "no effect",
+        "L_stab": "no effect",
+        "R_short": "no effect"
+      }
+    },
+    "fwe": {
+      "pre-S1": {
+        "L_ann": "more damage",
+        "L_stab": "more damage",
+        "R_short": "no effect"
+      },
+      "gptq3-cal1": {
+        "L_ann": "more damage",
+        "L_stab": "more damage",
+        "R_short": "more damage"
+      },
+      "gptq3": {
+        "L_ann": "more damage",
+        "L_stab": "more damage",
+        "R_short": "more damage"
+      },
+      "gptq4": {
+        "L_ann": "no effect",
+        "L_stab": "no effect",
+        "R_short": "no effect"
+      },
+      "rtn3": {
+        "L_ann": "no effect",
+        "L_stab": "more damage",
+        "R_short": "more damage"
+      },
+      "rtn4": {
+        "L_ann": "no effect",
+        "L_stab": "no effect",
+        "R_short": "more damage"
+      }
+    }
+  },
+  "calibration_disjointness_passed": false,
+  "continuing": "NEM GPTQ then downstream"
+}

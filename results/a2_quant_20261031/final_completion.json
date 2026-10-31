@@ -1,0 +1,25 @@
+{
+  "completed_at_sgt": "2026-10-31T13:53:59.207415+08:00",
+  "execution_complete": true,
+  "local_results_complete": true,
+  "nll_files": 160,
+  "configurations": 80,
+  "downstream_scores": 16,
+  "replays": 32,
+  "native_handoff_verified": true,
+  "scientific_flags": [
+    "QT3",
+    "QT6"
+  ],
+  "scientific_all_pass": false,
+  "historical_missing_receipt": "6d4cccb9f8d0d02284f92bede74d37dca6218d21",
+  "report_sha256": "561b576d05fca18584be5bb83581a5ea33bf4c556968b8342b2809928df84815",
+  "original_report_sha256": "457130a0939d6d25e7e7389f2251db2b24858b49065a4c04d822ff96d52e482b",
+  "artifacts_path": "/disk/thuat/efficient_llm/results/a2_quant_20261031/artifacts",
+  "verification_receipts": {
+    "final_nll_verification.json": "190461056f2312f3b507e43c53334bd450fbb9b35c885241cedc7737a2b364e6",
+    "final_downstream_verification.json": "c3ca9198b0301c2716293022cfe7a0c5940b9848950129186fb746c794675e06",
+    "replay_restore_verification.json": "671deb2d1fbd988eb0d432abe30c135bd9c37176a0a72e680f1c8a60d2471fd8",
+    "final_terminal_verification.json": "fd719b662eec19384fb745a0a497dd819b1bda652b2f9478a1004c26bba253cb"
+  }
+}

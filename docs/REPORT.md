@@ -267,3 +267,8 @@ Người dùng đã chọn **Option 2 và yêu cầu launch ngay**. Batch 2 đư
 Continuation tái dùng P300-parent batch2, chấm năm model còn lại ở batch2, chạy paired bootstrap 10,000 seed0 và replay độc lập. Kiểm tra khoa học ghi PASS/FLAG và tiếp tục phần kế hoạch còn thực hiện được; không chờ trả lời hay tạo kết quả thay thế cho artifact thiếu. Native supervisor kiểm tra đúng quyền sở hữu GPU trước khi thu hồi burn. Trạng thái thực thi hoàn tất được tách khỏi trạng thái kết quả khoa học đầy đủ/đã xác minh.
 
 Decision máy đọc: [decision_stage1_fwe.json](decision_stage1_fwe.json). Không còn công việc đăng ký chưa hoàn tất.
+
+
+## A2 QUANT — đợt 31/10/2026
+
+Hoàn tất thực thi, tải và kiểm chứng lúc 31/10/2026 13:53:59 SGT. Báo cáo riêng của đợt quant: [A2 QUANT](../results/a2_quant_20261031/REPORT.md), gồm đủ 80 cấu hình, 160 NLL, 16 downstream, 32 replay, paired CI và native handoff. QT3/QT6 FAIL được giữ nguyên; kết quả chịu ảnh hưởng là unverified. Không còn việc thực thi đã đăng ký đang chờ.

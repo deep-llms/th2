@@ -1,0 +1,9 @@
+{
+  "execution_complete": true,
+  "result": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/complete.json",
+    "sha256": "f64c2991f49e9060bdf685d5e1d9461f72874373897a465fc4b636242688d187"
+  },
+  "coverage_complete": true,
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da"
+}

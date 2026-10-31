@@ -1,0 +1,128 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "source_commit": "422bb7f118fd875ea2d9392e5da0cefbfbfb8d30",
+  "source_files_verified": 144,
+  "run_records_hash_verified": 160,
+  "downstream_models_verified": {
+    "dclm/S72-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "32480dc68d0842b3d4a2d2b50cb51c818e9e86b42b1e1e9091a65d5154b0700a"
+    },
+    "dclm/P300-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99"
+    },
+    "dclm/S188-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "58eaf30c32e104012ba59658cefa5c9273a67a36869698dd633628fd7d7d4b20"
+    },
+    "dclm/P1T-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "181f72af8e1870b9acb87f377e44d20bb23e94276efdec9fc4ab74e1e5c2a607"
+    },
+    "dclm/S72-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "cfde531f1fdc93f05607e05d7a1b62e693a2cb75c5a46f87b043365680549334"
+    },
+    "dclm/P300-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "af69cd6574e051f4e06499316caebd8cfb1df754f7a7c16c0d3e96347e552055"
+    },
+    "dclm/S188-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "945f7f14e616c6774fdde8a45a2bdd156dc01c9d9adeae51800cb1440234ad50"
+    },
+    "dclm/P1T-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "b3aeda05ac3905e1bc4aba4767842b5a1f7dccfa8b23c7fb98a0a177e6488ac4"
+    },
+    "fwe/S72-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "71188bcf4dd9485d813b37d6cc67d991e945e307a11b36cffc8d895a367b22d3"
+    },
+    "fwe/P300-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3"
+    },
+    "fwe/S188-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "f45c9f2e8ccf9dc4e9054e82510886f238492a89a340e7a1540c473dd1191398"
+    },
+    "fwe/P1T-parent": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "9d6f86abb0d069eb8bc4430c8c1df3c0d76b39a60addaa992e5e45d8d9b84ed0"
+    },
+    "fwe/S72-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "6bf13b97770ba9e7015ab88f2ac02f5d9c89aca0fcf31ffd07d587b3f8259f07"
+    },
+    "fwe/P300-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "af73528fc0fa18fe1faf7d1c6992a9aacc26e713472e84ce8eb0dbc9604c51f7"
+    },
+    "fwe/S188-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "9924e557b898792e980c71776d47d851414696607f4b2e9a5045d940c3aa4b1a"
+    },
+    "fwe/P1T-quantized": {
+      "scores": 78259,
+      "batch_size": 2,
+      "primary_equals_independent": true,
+      "score_sha256": "3a794403ad6a37c804bf6f83633c98889a0f9b5ebedcab1d8a04a340fd0f87b9"
+    }
+  },
+  "paired_bootstrap_exact": {
+    "dclm": true,
+    "fwe": true
+  },
+  "native_handoff_verified": true,
+  "burn_progress": [
+    [
+      20070,
+      22284.76
+    ],
+    [
+      20090,
+      22306.96
+    ]
+  ],
+  "flag_counts": {
+    "QT3": 9578,
+    "QT6_inherited": 32
+  },
+  "flagged_checks": 9610,
+  "calibration_disjointness_passed": false,
+  "execution_complete": true,
+  "coverage_complete": true,
+  "scientific_flags_retained": true
+}

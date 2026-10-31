@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-10-30T22:04:17.435933+00:00",
+  "jobs": [
+    {
+      "name": "a2-quant",
+      "started_at": "2026-10-30T22:04:17.436107+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 8927.685257514939,
+      "artifacts": [
+        {
+          "path": "quant-complete.json",
+          "sha256": "a1b188880da2abd0d8a27843091b5a2be120b2de5f07cee378cf020b56b6cd9a",
+          "bytes": 363
+        }
+      ],
+      "finished_at": "2026-10-31T00:33:05.659822+00:00"
+    }
+  ],
+  "finished_at": "2026-10-31T00:33:05.659859+00:00"
+}

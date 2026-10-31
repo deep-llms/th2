@@ -1,0 +1,1567 @@
+{
+  "resamples": 10000,
+  "seed": 0,
+  "datasets": {
+    "dclm": {
+      "pre-S1": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.29183038185717103,
+            "ci95": [
+              0.2880807878432027,
+              0.2956051913195166
+            ],
+            "reference": "P300",
+            "reference_damage": 1.0259821115754946,
+            "relative_to_reference_damage": 0.28444002927988415,
+            "label": "more damage",
+            "T": 0.10259821115754947,
+            "t": 0.030779463347264835,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": 0.1799811846579994,
+            "ci95": [
+              0.17719064164490758,
+              0.18284170665347843
+            ],
+            "reference": "S72",
+            "reference_damage": 0.9459689258930865,
+            "relative_to_reference_damage": 0.19026120174939118,
+            "label": "more damage",
+            "T": 0.09459689258930865,
+            "t": 0.028379067776792593,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_short": {
+            "estimate": 0.08001318568240812,
+            "ci95": [
+              0.07821316216186865,
+              0.08182730049519354
+            ],
+            "reference": "S72",
+            "reference_damage": 0.9459689258930865,
+            "relative_to_reference_damage": 0.08458331293162501,
+            "label": "grey",
+            "T": 0.09459689258930865,
+            "t": 0.028379067776792593,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.19186238288157975,
+            "ci95": [
+              0.18884020162683696,
+              0.19486418502072395
+            ],
+            "reference": "S188",
+            "reference_damage": 1.1259501105510858,
+            "relative_to_reference_damage": 0.170400429897977,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.11184919719917175,
+            "ci95": [
+              0.10898332609458973,
+              0.11462833705344071
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9085752961078706,
+            "compressed_nll": 3.854544222000957,
+            "damage": 0.9459689258930865,
+            "relative_damage": 0.32523446347046303
+          },
+          "P300": {
+            "parent_nll": 2.7377930322126844,
+            "compressed_nll": 3.7637751437881795,
+            "damage": 1.0259821115754946,
+            "relative_damage": 0.37474787155342265
+          },
+          "S188": {
+            "parent_nll": 2.8867066980438802,
+            "compressed_nll": 4.012656808594966,
+            "damage": 1.1259501105510858,
+            "relative_damage": 0.39004659230328587
+          },
+          "P1T": {
+            "parent_nll": 2.686908991763934,
+            "compressed_nll": 4.004721485196599,
+            "damage": 1.3178124934326656,
+            "relative_damage": 0.4904566911168556
+          }
+        }
+      },
+      "gptq3": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.020258419465930197,
+            "ci95": [
+              0.019900406842644595,
+              0.020613748353455585
+            ],
+            "reference": "P300",
+            "reference_damage": 0.03532936583377446,
+            "relative_to_reference_damage": 0.5734158818826968,
+            "label": "more damage",
+            "T": 0.003532936583377446,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": 0.0004458132932576783,
+            "ci95": [
+              0.00014440419633808318,
+              0.0007416463510749444
+            ],
+            "reference": "S72",
+            "reference_damage": 0.03173395347666295,
+            "relative_to_reference_damage": 0.01404846369317104,
+            "label": "no effect",
+            "T": 0.003173395347666295,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.003595412357111513,
+            "ci95": [
+              0.0032869105600801187,
+              0.0038995010158555856
+            ],
+            "reference": "S72",
+            "reference_damage": 0.03173395347666295,
+            "relative_to_reference_damage": 0.1132985954540952,
+            "label": "more damage",
+            "T": 0.003173395347666295,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.023408018529784032,
+            "ci95": [
+              0.023048668885588135,
+              0.023778449872980483
+            ],
+            "reference": "S188",
+            "reference_damage": 0.032179766769920626,
+            "relative_to_reference_damage": 0.7274141760301444,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.01981260617267252,
+            "ci95": [
+              0.019346603019225275,
+              0.020285548927129856
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9085752961078706,
+            "compressed_nll": 2.9403092495845335,
+            "damage": 0.03173395347666295,
+            "relative_damage": 0.010910480302548107
+          },
+          "P300": {
+            "parent_nll": 2.7377930322126844,
+            "compressed_nll": 2.7731223980464588,
+            "damage": 0.03532936583377446,
+            "relative_damage": 0.01290432308727927
+          },
+          "S188": {
+            "parent_nll": 2.8867066980438802,
+            "compressed_nll": 2.918886464813801,
+            "damage": 0.032179766769920626,
+            "relative_damage": 0.011147570618007922
+          },
+          "P1T": {
+            "parent_nll": 2.686908991763934,
+            "compressed_nll": 2.7424967770636393,
+            "damage": 0.05558778529970466,
+            "relative_damage": 0.020688376670030692
+          }
+        }
+      },
+      "gptq4": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.0014435802215913866,
+            "ci95": [
+              0.0012956330270173122,
+              0.0015828547073229438
+            ],
+            "reference": "P300",
+            "reference_damage": 0.006886432460654499,
+            "relative_to_reference_damage": 0.2096267159867253,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "L_stab": {
+            "estimate": 0.00026395199104263,
+            "ci95": [
+              0.00013669973647052495,
+              0.00039322777579123795
+            ],
+            "reference": "S72",
+            "reference_damage": 0.006146327088745662,
+            "relative_to_reference_damage": 0.04294467040746072,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.0007401053719088375,
+            "ci95": [
+              0.0006106197356706267,
+              0.0008706380219493294
+            ],
+            "reference": "S72",
+            "reference_damage": 0.006146327088745662,
+            "relative_to_reference_damage": 0.12041425085625856,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_long": {
+            "estimate": 0.001919733602457594,
+            "ci95": [
+              0.0017799357691645457,
+              0.0020578293108720488
+            ],
+            "reference": "S188",
+            "reference_damage": 0.006410279079788292,
+            "relative_to_reference_damage": 0.2994773828975003,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.0011796282305487566,
+            "ci95": [
+              0.0009917567790539968,
+              0.0013631252848012579
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9085752961078706,
+            "compressed_nll": 2.914721623196616,
+            "damage": 0.006146327088745662,
+            "relative_damage": 0.002113174479949139
+          },
+          "P300": {
+            "parent_nll": 2.7377930322126844,
+            "compressed_nll": 2.7446794646733386,
+            "damage": 0.006886432460654499,
+            "relative_damage": 0.002515322516943103
+          },
+          "S188": {
+            "parent_nll": 2.8867066980438802,
+            "compressed_nll": 2.8931169771236687,
+            "damage": 0.006410279079788292,
+            "relative_damage": 0.0022206201565722248
+          },
+          "P1T": {
+            "parent_nll": 2.686908991763934,
+            "compressed_nll": 2.6952390044461803,
+            "damage": 0.008330012682245886,
+            "relative_damage": 0.003100221372506294
+          }
+        }
+      },
+      "rtn3": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.011184158065283528,
+            "ci95": [
+              0.010752879195052948,
+              0.011621516973194189
+            ],
+            "reference": "P300",
+            "reference_damage": 0.06574594575187834,
+            "relative_to_reference_damage": 0.1701117527077934,
+            "label": "more damage",
+            "T": 0.0065745945751878344,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": -0.006845502538858614,
+            "ci95": [
+              -0.0072410543667953105,
+              -0.00645049939248478
+            ],
+            "reference": "S72",
+            "reference_damage": 0.054707631821709124,
+            "relative_to_reference_damage": -0.12512884054582996,
+            "label": "less damage",
+            "T": 0.005470763182170913,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": true,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_short": {
+            "estimate": 0.011038313930169213,
+            "ci95": [
+              0.01064114666140271,
+              0.011436266567527342
+            ],
+            "reference": "S72",
+            "reference_damage": 0.054707631821709124,
+            "relative_to_reference_damage": 0.20176917849675557,
+            "label": "more damage",
+            "T": 0.005470763182170913,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.029067974534311355,
+            "ci95": [
+              0.028645456516961345,
+              0.029500311768186325
+            ],
+            "reference": "S188",
+            "reference_damage": 0.04786212928285051,
+            "relative_to_reference_damage": 0.6073272328217689,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.018029660604142142,
+            "ci95": [
+              0.017459768066184652,
+              0.018601025527585493
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9085752961078706,
+            "compressed_nll": 2.96328292792958,
+            "damage": 0.054707631821709124,
+            "relative_damage": 0.018809082197361885
+          },
+          "P300": {
+            "parent_nll": 2.7377930322126844,
+            "compressed_nll": 2.8035389779645628,
+            "damage": 0.06574594575187834,
+            "relative_damage": 0.02401421326532578
+          },
+          "S188": {
+            "parent_nll": 2.8867066980438802,
+            "compressed_nll": 2.9345688273267303,
+            "damage": 0.04786212928285051,
+            "relative_damage": 0.016580184372483472
+          },
+          "P1T": {
+            "parent_nll": 2.686908991763934,
+            "compressed_nll": 2.7638390955810963,
+            "damage": 0.07693010381716187,
+            "relative_damage": 0.028631451252339544
+          }
+        }
+      },
+      "rtn4": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.0010395618890412552,
+            "ci95": [
+              0.0008545713858585742,
+              0.0012205104652990195
+            ],
+            "reference": "P300",
+            "reference_damage": 0.010647375607733224,
+            "relative_to_reference_damage": 0.09763550449804907,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "L_stab": {
+            "estimate": 0.001215074424752445,
+            "ci95": [
+              0.00105513684828771,
+              0.0013731042263554446
+            ],
+            "reference": "S72",
+            "reference_damage": 0.009286245908907927,
+            "relative_to_reference_damage": 0.13084667762102578,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.001361129698825297,
+            "ci95": [
+              0.0011902714020755024,
+              0.0015300846016925282
+            ],
+            "reference": "S72",
+            "reference_damage": 0.009286245908907927,
+            "relative_to_reference_damage": 0.14657480667398862,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_long": {
+            "estimate": 0.0011856171631141072,
+            "ci95": [
+              0.0010143598350093107,
+              0.0013600146123509435
+            ],
+            "reference": "S188",
+            "reference_damage": 0.010501320333660372,
+            "relative_to_reference_damage": 0.11290172334937668,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": -0.00017551253571118988,
+            "ci95": [
+              -0.00040958580080558023,
+              6.118215486925034e-05
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9085752961078706,
+            "compressed_nll": 2.917861542016779,
+            "damage": 0.009286245908907927,
+            "relative_damage": 0.003192712913890996
+          },
+          "P300": {
+            "parent_nll": 2.7377930322126844,
+            "compressed_nll": 2.748440407820418,
+            "damage": 0.010647375607733224,
+            "relative_damage": 0.003889035979877564
+          },
+          "S188": {
+            "parent_nll": 2.8867066980438802,
+            "compressed_nll": 2.8972080183775404,
+            "damage": 0.010501320333660372,
+            "relative_damage": 0.003637820337194764
+          },
+          "P1T": {
+            "parent_nll": 2.686908991763934,
+            "compressed_nll": 2.698595929260709,
+            "damage": 0.011686937496774479,
+            "relative_damage": 0.004349584423066781
+          }
+        }
+      }
+    },
+    "fwe": {
+      "pre-S1": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.3544175235867498,
+            "ci95": [
+              0.3512731208311102,
+              0.3575291056578102
+            ],
+            "reference": "P300",
+            "reference_damage": 0.9618573002987004,
+            "relative_to_reference_damage": 0.36847204203439227,
+            "label": "more damage",
+            "T": 0.09618573002987005,
+            "t": 0.02885571900896101,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": 0.21037520704597779,
+            "ci95": [
+              0.2075667102376662,
+              0.21322526939582181
+            ],
+            "reference": "S72",
+            "reference_damage": 0.9651559695530935,
+            "relative_to_reference_damage": 0.21797016615189158,
+            "label": "more damage",
+            "T": 0.09651559695530935,
+            "t": 0.028954679086592803,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_short": {
+            "estimate": -0.0032986692543930385,
+            "ci95": [
+              -0.0055855367781345614,
+              -0.0009055593430773612
+            ],
+            "reference": "S72",
+            "reference_damage": 0.9651559695530935,
+            "relative_to_reference_damage": -0.0034177577080318497,
+            "label": "no effect",
+            "T": 0.09651559695530935,
+            "t": 0.028954679086592803,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_long": {
+            "estimate": 0.140743647286379,
+            "ci95": [
+              0.1381509698816956,
+              0.1432931976326041
+            ],
+            "reference": "S188",
+            "reference_damage": 1.1755311765990712,
+            "relative_to_reference_damage": 0.11972770275099329,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.14404231654077204,
+            "ci95": [
+              0.1415250267401028,
+              0.14654426980234644
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 3.0421520019462984,
+            "compressed_nll": 4.007307971499392,
+            "damage": 0.9651559695530935,
+            "relative_damage": 0.3172609287555681
+          },
+          "P300": {
+            "parent_nll": 2.860631325856815,
+            "compressed_nll": 3.822488626155515,
+            "damage": 0.9618573002987004,
+            "relative_damage": 0.3362395187400129
+          },
+          "S188": {
+            "parent_nll": 3.0238075916258356,
+            "compressed_nll": 4.199338768224907,
+            "damage": 1.1755311765990712,
+            "relative_damage": 0.3887585902802148
+          },
+          "P1T": {
+            "parent_nll": 2.808707333601816,
+            "compressed_nll": 4.124982157487267,
+            "damage": 1.3162748238854503,
+            "relative_damage": 0.4686407900667573
+          }
+        }
+      },
+      "gptq3": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.01019517472764193,
+            "ci95": [
+              0.009876725095832888,
+              0.010508562989176004
+            ],
+            "reference": "P300",
+            "reference_damage": 0.02951193381622735,
+            "relative_to_reference_damage": 0.3454593924995874,
+            "label": "more damage",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": 0.004798874872136642,
+            "ci95": [
+              0.004498678552673316,
+              0.005100016358449084
+            ],
+            "reference": "S72",
+            "reference_damage": 0.023704611887496767,
+            "relative_to_reference_damage": 0.20244477719830783,
+            "label": "more damage",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_short": {
+            "estimate": 0.005807321928730583,
+            "ci95": [
+              0.005508324081556657,
+              0.006115978952272364
+            ],
+            "reference": "S72",
+            "reference_damage": 0.023704611887496767,
+            "relative_to_reference_damage": 0.24498700743519503,
+            "label": "more damage",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.011203621784235871,
+            "ci95": [
+              0.010865892375099063,
+              0.011535211224576724
+            ],
+            "reference": "S188",
+            "reference_damage": 0.02850348675963341,
+            "relative_to_reference_damage": 0.39306144819104805,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.005396299855505292,
+            "ci95": [
+              0.0049584957181243025,
+              0.005824635986708244
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 3.0421520019462984,
+            "compressed_nll": 3.0658566138337955,
+            "damage": 0.023704611887496767,
+            "relative_damage": 0.007792053741013304
+          },
+          "P300": {
+            "parent_nll": 2.860631325856815,
+            "compressed_nll": 2.890143259673042,
+            "damage": 0.02951193381622735,
+            "relative_damage": 0.01031658066157405
+          },
+          "S188": {
+            "parent_nll": 3.0238075916258356,
+            "compressed_nll": 3.0523110783854692,
+            "damage": 0.02850348675963341,
+            "relative_damage": 0.009426355975350834
+          },
+          "P1T": {
+            "parent_nll": 2.808707333601816,
+            "compressed_nll": 2.848414442145686,
+            "damage": 0.03970710854386928,
+            "relative_damage": 0.014137147031602569
+          }
+        }
+      },
+      "gptq4": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.00029447954016705545,
+            "ci95": [
+              0.000140034228770078,
+              0.000450777805652688
+            ],
+            "reference": "P300",
+            "reference_damage": 0.007252455402656164,
+            "relative_to_reference_damage": 0.040604115960396564,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "L_stab": {
+            "estimate": 0.00022883291319072876,
+            "ci95": [
+              9.77874391817055e-05,
+              0.0003608094882265467
+            ],
+            "reference": "S72",
+            "reference_damage": 0.004724204459377573,
+            "relative_to_reference_damage": 0.0484384016734276,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.0025282509432785908,
+            "ci95": [
+              0.0023898713446269077,
+              0.0026628179765607572
+            ],
+            "reference": "S72",
+            "reference_damage": 0.004724204459377573,
+            "relative_to_reference_damage": 0.5351696703685206,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_long": {
+            "estimate": 0.0025938975702549175,
+            "ci95": [
+              0.002445225790911951,
+              0.0027469566763855427
+            ],
+            "reference": "S188",
+            "reference_damage": 0.004953037372568302,
+            "relative_to_reference_damage": 0.5236983642846817,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 6.564662697632669e-05,
+            "ci95": [
+              -0.0001418888227571187,
+              0.0002755889602740726
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 3.0421520019462984,
+            "compressed_nll": 3.0468762064056762,
+            "damage": 0.004724204459377573,
+            "relative_damage": 0.0015529153232169651
+          },
+          "P300": {
+            "parent_nll": 2.860631325856815,
+            "compressed_nll": 2.867883781259471,
+            "damage": 0.007252455402656164,
+            "relative_damage": 0.0025352639248204805
+          },
+          "S188": {
+            "parent_nll": 3.0238075916258356,
+            "compressed_nll": 3.028760628998404,
+            "damage": 0.004953037372568302,
+            "relative_damage": 0.0016380134061060286
+          },
+          "P1T": {
+            "parent_nll": 2.808707333601816,
+            "compressed_nll": 2.8162542685446397,
+            "damage": 0.00754693494282322,
+            "relative_damage": 0.002686978045927348
+          }
+        }
+      },
+      "rtn3": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.0025945773509236797,
+            "ci95": [
+              0.0021177335387343953,
+              0.0030638900415447252
+            ],
+            "reference": "P300",
+            "reference_damage": 0.0543304303073352,
+            "relative_to_reference_damage": 0.04775550895228937,
+            "label": "no effect",
+            "T": 0.00543304303073352,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "L_stab": {
+            "estimate": 0.007769164957556862,
+            "ci95": [
+              0.0072393310740680155,
+              0.008294300202192616
+            ],
+            "reference": "S72",
+            "reference_damage": 0.03911026600188073,
+            "relative_to_reference_damage": 0.19864771457149535,
+            "label": "more damage",
+            "T": 0.0039110266001880735,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_short": {
+            "estimate": 0.015220164305454469,
+            "ci95": [
+              0.014829802829541161,
+              0.015605395879350567
+            ],
+            "reference": "S72",
+            "reference_damage": 0.03911026600188073,
+            "relative_to_reference_damage": 0.38916033720462456,
+            "label": "more damage",
+            "T": 0.0039110266001880735,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.010045576698821286,
+            "ci95": [
+              0.009495118975706028,
+              0.010576626388473568
+            ],
+            "reference": "S188",
+            "reference_damage": 0.04687943095943759,
+            "relative_to_reference_damage": 0.21428538045850465,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": -0.0051745876066331825,
+            "ci95": [
+              -0.005829547608141665,
+              -0.0045347281502245065
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 3.0421520019462984,
+            "compressed_nll": 3.0812622679481794,
+            "damage": 0.03911026600188073,
+            "relative_damage": 0.012856118292859426
+          },
+          "P300": {
+            "parent_nll": 2.860631325856815,
+            "compressed_nll": 2.91496175616415,
+            "damage": 0.0543304303073352,
+            "relative_damage": 0.01899246149486326
+          },
+          "S188": {
+            "parent_nll": 3.0238075916258356,
+            "compressed_nll": 3.070687022585273,
+            "damage": 0.04687943095943759,
+            "relative_damage": 0.015503443767145098
+          },
+          "P1T": {
+            "parent_nll": 2.808707333601816,
+            "compressed_nll": 2.865632341260075,
+            "damage": 0.05692500765825888,
+            "relative_damage": 0.020267333295014282
+          }
+        }
+      },
+      "rtn4": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.0004988174531196134,
+            "ci95": [
+              0.00031069121785008767,
+              0.0006905499188159715
+            ],
+            "reference": "P300",
+            "reference_damage": 0.010530886013437548,
+            "relative_to_reference_damage": 0.04736709261529522,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "L_stab": {
+            "estimate": 0.0018066360824057692,
+            "ci95": [
+              0.0016462255984376628,
+              0.0019649134942157816
+            ],
+            "reference": "S72",
+            "reference_damage": 0.007289874553314378,
+            "relative_to_reference_damage": 0.24782814425583952,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.00324101146012317,
+            "ci95": [
+              0.003071173837420985,
+              0.00340455372003839
+            ],
+            "reference": "S72",
+            "reference_damage": 0.007289874553314378,
+            "relative_to_reference_damage": 0.4445908412305432,
+            "label": "more damage",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.001933192830837014,
+            "ci95": [
+              0.0017487830891674532,
+              0.0021174360618935067
+            ],
+            "reference": "S188",
+            "reference_damage": 0.009096510635720147,
+            "relative_to_reference_damage": 0.21252026279678704,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": -0.001307818629286155,
+            "ci95": [
+              -0.0015577725642744256,
+              -0.0010532255723103622
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 3.0421520019462984,
+            "compressed_nll": 3.0494418764996127,
+            "damage": 0.007289874553314378,
+            "relative_damage": 0.0023962887287191713
+          },
+          "P300": {
+            "parent_nll": 2.860631325856815,
+            "compressed_nll": 2.871162211870252,
+            "damage": 0.010530886013437548,
+            "relative_damage": 0.003681315351003276
+          },
+          "S188": {
+            "parent_nll": 3.0238075916258356,
+            "compressed_nll": 3.032904102261556,
+            "damage": 0.009096510635720147,
+            "relative_damage": 0.003008296778178651
+          },
+          "P1T": {
+            "parent_nll": 2.808707333601816,
+            "compressed_nll": 2.8197370370683736,
+            "damage": 0.011029703466557161,
+            "relative_damage": 0.0039269678740123295
+          }
+        }
+      }
+    },
+    "nem": {
+      "pre-S1": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.30086994535722456,
+            "ci95": [
+              0.29742099223034996,
+              0.30437665992972524
+            ],
+            "reference": "P300",
+            "reference_damage": 1.0922834176009293,
+            "relative_to_reference_damage": 0.27545043759617777,
+            "label": "more damage",
+            "T": 0.10922834176009294,
+            "t": 0.032768502528027876,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": 0.3142783028727506,
+            "ci95": [
+              0.311382091429557,
+              0.31723736531557245
+            ],
+            "reference": "S72",
+            "reference_damage": 0.900439032764467,
+            "relative_to_reference_damage": 0.3490278535659151,
+            "label": "more damage",
+            "T": 0.09004390327644671,
+            "t": 0.027013170982934008,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_short": {
+            "estimate": 0.19184438483646227,
+            "ci95": [
+              0.19033448966378344,
+              0.19343074282679482
+            ],
+            "reference": "S72",
+            "reference_damage": 0.900439032764467,
+            "relative_to_reference_damage": 0.2130564956157827,
+            "label": "more damage",
+            "T": 0.09004390327644671,
+            "t": 0.027013170982934008,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.17843602732093622,
+            "ci95": [
+              0.17569356197350972,
+              0.18121671202277506
+            ],
+            "reference": "S188",
+            "reference_damage": 1.2147173356372176,
+            "relative_to_reference_damage": 0.14689510233039696,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": -0.013408357515525937,
+            "ci95": [
+              -0.015994506624176695,
+              -0.010832654512553747
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9524637834169547,
+            "compressed_nll": 3.852902816181422,
+            "damage": 0.900439032764467,
+            "relative_damage": 0.3049788579361905
+          },
+          "P300": {
+            "parent_nll": 2.7742509371599984,
+            "compressed_nll": 3.8665343547609274,
+            "damage": 1.0922834176009293,
+            "relative_damage": 0.3937219243472979
+          },
+          "S188": {
+            "parent_nll": 2.9267089606763275,
+            "compressed_nll": 4.141426296313544,
+            "damage": 1.2147173356372176,
+            "relative_damage": 0.4150454834964222
+          },
+          "P1T": {
+            "parent_nll": 2.7233828620265084,
+            "compressed_nll": 4.116536224984662,
+            "damage": 1.3931533629581538,
+            "relative_damage": 0.5115525188850929
+          }
+        }
+      },
+      "rtn3": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.006042037394031072,
+            "ci95": [
+              0.005653290563173117,
+              0.00643824976556663
+            ],
+            "reference": "P300",
+            "reference_damage": 0.05832080144433567,
+            "relative_to_reference_damage": 0.10360004054124494,
+            "label": "more damage",
+            "T": 0.0058320801444335674,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "L_stab": {
+            "estimate": 0.0006049656724768926,
+            "ci95": [
+              0.00024233072186035466,
+              0.0009687163532618096
+            ],
+            "reference": "S72",
+            "reference_damage": 0.04132896145700508,
+            "relative_to_reference_damage": 0.014637814528832144,
+            "label": "no effect",
+            "T": 0.004132896145700508,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.016991839987330594,
+            "ci95": [
+              0.01664757323011063,
+              0.017340733432569637
+            ],
+            "reference": "S72",
+            "reference_damage": 0.04132896145700508,
+            "relative_to_reference_damage": 0.4111363893091621,
+            "label": "more damage",
+            "T": 0.004132896145700508,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.022428911708884773,
+            "ci95": [
+              0.022026379012666884,
+              0.022837982367065718
+            ],
+            "reference": "S188",
+            "reference_damage": 0.04193392712948197,
+            "relative_to_reference_damage": 0.5348631345599862,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.005437071721554179,
+            "ci95": [
+              0.004934312208383531,
+              0.005943812091893326
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9524637834169547,
+            "compressed_nll": 2.99379274487396,
+            "damage": 0.04132896145700508,
+            "relative_damage": 0.013998126476313322
+          },
+          "P300": {
+            "parent_nll": 2.7742509371599984,
+            "compressed_nll": 2.8325717386043343,
+            "damage": 0.05832080144433567,
+            "relative_damage": 0.02102217959563481
+          },
+          "S188": {
+            "parent_nll": 2.9267089606763275,
+            "compressed_nll": 2.9686428878058093,
+            "damage": 0.04193392712948197,
+            "relative_damage": 0.01432801405705593
+          },
+          "P1T": {
+            "parent_nll": 2.7233828620265084,
+            "compressed_nll": 2.787745700864875,
+            "damage": 0.06436283883836674,
+            "relative_damage": 0.023633415534705035
+          }
+        }
+      },
+      "rtn4": {
+        "contrasts": {
+          "L_ann": {
+            "estimate": 0.001168386948513879,
+            "ci95": [
+              0.0009883385525624024,
+              0.0013504175374038773
+            ],
+            "reference": "P300",
+            "reference_damage": 0.011525228819488226,
+            "relative_to_reference_damage": 0.10137646434734827,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "L_stab": {
+            "estimate": 0.0004715323359271552,
+            "ci95": [
+              0.00030903532323802124,
+              0.0006308481970982267
+            ],
+            "reference": "S72",
+            "reference_damage": 0.007549339249393287,
+            "relative_to_reference_damage": 0.062460080326241875,
+            "label": "no effect",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": false,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": true
+            }
+          },
+          "R_short": {
+            "estimate": 0.003975889570094939,
+            "ci95": [
+              0.00381673206486388,
+              0.004132912617170019
+            ],
+            "reference": "S72",
+            "reference_damage": 0.007549339249393287,
+            "relative_to_reference_damage": 0.5266539810639013,
+            "label": "more damage",
+            "T": 0.003,
+            "t": 0.003,
+            "clauses": {
+              "at_least_T": true,
+              "at_most_minus_T": false,
+              "ci_excludes_zero": true,
+              "abs_below_t": false
+            }
+          },
+          "R_long": {
+            "estimate": 0.004672744182681663,
+            "ci95": [
+              0.00449317129549337,
+              0.004849163139075676
+            ],
+            "reference": "S188",
+            "reference_damage": 0.008020871585320442,
+            "relative_to_reference_damage": 0.5825731197633907,
+            "label": "descriptive only"
+          },
+          "I": {
+            "estimate": 0.0006968546125867246,
+            "ci95": [
+              0.0004608010096115815,
+              0.0009283724407430365
+            ],
+            "reference": null,
+            "reference_damage": null,
+            "relative_to_reference_damage": null,
+            "label": "descriptive only"
+          }
+        },
+        "damage": {
+          "S72": {
+            "parent_nll": 2.9524637834169547,
+            "compressed_nll": 2.960013122666348,
+            "damage": 0.007549339249393287,
+            "relative_damage": 0.0025569625245855723
+          },
+          "P300": {
+            "parent_nll": 2.7742509371599984,
+            "compressed_nll": 2.785776165979487,
+            "damage": 0.011525228819488226,
+            "relative_damage": 0.004154357006827438
+          },
+          "S188": {
+            "parent_nll": 2.9267089606763275,
+            "compressed_nll": 2.934729832261648,
+            "damage": 0.008020871585320442,
+            "relative_damage": 0.0027405771100201624
+          },
+          "P1T": {
+            "parent_nll": 2.7233828620265084,
+            "compressed_nll": 2.73607647779451,
+            "damage": 0.012693615768002105,
+            "relative_damage": 0.004660973653390989
+          }
+        }
+      }
+    }
+  },
+  "across_datasets": {
+    "pre-S1": {
+      "L_ann": {
+        "labels": {
+          "dclm": "more damage",
+          "fwe": "more damage",
+          "nem": "more damage"
+        },
+        "consistent": true
+      },
+      "L_stab": {
+        "labels": {
+          "dclm": "more damage",
+          "fwe": "more damage",
+          "nem": "more damage"
+        },
+        "consistent": true
+      },
+      "R_short": {
+        "labels": {
+          "dclm": "grey",
+          "fwe": "no effect",
+          "nem": "more damage"
+        },
+        "consistent": false
+      }
+    },
+    "rtn4": {
+      "L_ann": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "no effect",
+          "nem": "no effect"
+        },
+        "consistent": true
+      },
+      "L_stab": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "no effect",
+          "nem": "no effect"
+        },
+        "consistent": true
+      },
+      "R_short": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "more damage",
+          "nem": "more damage"
+        },
+        "consistent": false
+      }
+    },
+    "rtn3": {
+      "L_ann": {
+        "labels": {
+          "dclm": "more damage",
+          "fwe": "no effect",
+          "nem": "more damage"
+        },
+        "consistent": false
+      },
+      "L_stab": {
+        "labels": {
+          "dclm": "less damage",
+          "fwe": "more damage",
+          "nem": "no effect"
+        },
+        "consistent": false
+      },
+      "R_short": {
+        "labels": {
+          "dclm": "more damage",
+          "fwe": "more damage",
+          "nem": "more damage"
+        },
+        "consistent": true
+      }
+    },
+    "gptq4": {
+      "L_ann": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "no effect"
+        },
+        "consistent": false
+      },
+      "L_stab": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "no effect"
+        },
+        "consistent": false
+      },
+      "R_short": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "no effect"
+        },
+        "consistent": false
+      }
+    },
+    "gptq3": {
+      "L_ann": {
+        "labels": {
+          "dclm": "more damage",
+          "fwe": "more damage"
+        },
+        "consistent": false
+      },
+      "L_stab": {
+        "labels": {
+          "dclm": "no effect",
+          "fwe": "more damage"
+        },
+        "consistent": false
+      },
+      "R_short": {
+        "labels": {
+          "dclm": "more damage",
+          "fwe": "more damage"
+        },
+        "consistent": false
+      }
+    }
+  },
+  "uncertainty": "final-set sequences, not training or calibration seeds",
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "snapshot_at": "2026-10-30T23:02:06.103339+00:00",
+  "provisional": true,
+  "coverage_complete": false,
+  "unverified": true,
+  "limitations": [
+    "QT3 refit-grid idempotence FAIL",
+    "QT6 calibration-boundary overlap FAIL",
+    "Cal1 sensitivity and NEM GPTQ not present in this snapshot",
+    "No comparison to remote decision yet"
+  ]
+}

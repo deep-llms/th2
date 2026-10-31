@@ -1,0 +1,20 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "execution_complete": true,
+  "registered_models": 80,
+  "nll_files": 160,
+  "downstream_models": 16,
+  "elapsed_seconds": 8926.140910940245,
+  "node_hours": 2.4794835865861065,
+  "coverage_complete": true,
+  "flagged_checks": 9610,
+  "calibration_disjointness_passed": false,
+  "decision": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/decision_quant.json",
+    "sha256": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb"
+  },
+  "tests": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/tests.json",
+    "sha256": "244a0ccd663294b30339d568f8eedbc25a4cf0f56d7284f7a4fe5b8bcc2ed39f"
+  }
+}

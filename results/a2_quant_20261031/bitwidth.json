@@ -1,0 +1,9 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "mean_damage": {
+    "3": 0.034532251548411184,
+    "4": 0.0065312104361074505
+  },
+  "selected_bits": 3,
+  "rule": "closest to 0.10 over all eight DCLM/FWE parents; exact tie -> lower bitwidth"
+}

@@ -1,0 +1,206 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "selected_bits": 3,
+  "scores": {
+    "dclm/S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+      "sha256": "32480dc68d0842b3d4a2d2b50cb51c818e9e86b42b1e1e9091a65d5154b0700a"
+    },
+    "dclm/P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-parent/scores.json",
+      "sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99"
+    },
+    "dclm/P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+      "sha256": "181f72af8e1870b9acb87f377e44d20bb23e94276efdec9fc4ab74e1e5c2a607"
+    },
+    "fwe/S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+      "sha256": "71188bcf4dd9485d813b37d6cc67d991e945e307a11b36cffc8d895a367b22d3"
+    },
+    "fwe/P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/batch_comparison/2/scores.json",
+      "sha256": "ae05ee601822e3af5c24b70b1e6ea1c974b07fb9967ed72acc9743953adca3a3"
+    },
+    "fwe/P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+      "sha256": "9d6f86abb0d069eb8bc4430c8c1df3c0d76b39a60addaa992e5e45d8d9b84ed0"
+    },
+    "fwe/P300-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/fwe/P300-quantized/scores.json",
+      "sha256": "af73528fc0fa18fe1faf7d1c6992a9aacc26e713472e84ce8eb0dbc9604c51f7"
+    },
+    "dclm/P1T-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/dclm/P1T-quantized/scores.json",
+      "sha256": "b3aeda05ac3905e1bc4aba4767842b5a1f7dccfa8b23c7fb98a0a177e6488ac4"
+    },
+    "dclm/S72-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/dclm/S72-quantized/scores.json",
+      "sha256": "cfde531f1fdc93f05607e05d7a1b62e693a2cb75c5a46f87b043365680549334"
+    },
+    "fwe/P1T-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/fwe/P1T-quantized/scores.json",
+      "sha256": "3a794403ad6a37c804bf6f83633c98889a0f9b5ebedcab1d8a04a340fd0f87b9"
+    },
+    "dclm/P300-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/dclm/P300-quantized/scores.json",
+      "sha256": "af69cd6574e051f4e06499316caebd8cfb1df754f7a7c16c0d3e96347e552055"
+    },
+    "fwe/S72-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/fwe/S72-quantized/scores.json",
+      "sha256": "6bf13b97770ba9e7015ab88f2ac02f5d9c89aca0fcf31ffd07d587b3f8259f07"
+    },
+    "dclm/S188-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/dclm/S188-quantized/scores.json",
+      "sha256": "945f7f14e616c6774fdde8a45a2bdd156dc01c9d9adeae51800cb1440234ad50"
+    },
+    "fwe/S188-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/fwe/S188-quantized/scores.json",
+      "sha256": "9924e557b898792e980c71776d47d851414696607f4b2e9a5045d940c3aa4b1a"
+    },
+    "fwe/S188-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/fwe/S188-parent/scores.json",
+      "sha256": "f45c9f2e8ccf9dc4e9054e82510886f238492a89a340e7a1540c473dd1191398"
+    },
+    "dclm/S188-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/downstream/dclm/S188-parent/scores.json",
+      "sha256": "58eaf30c32e104012ba59658cefa5c9273a67a36869698dd633628fd7d7d4b20"
+    }
+  },
+  "replays": {
+    "dclm/S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/S72-parent.json",
+      "sha256": "e446c8d1ee4be82ba9aba1a4e9406845dcf2429def26880730c8c69b4987b785"
+    },
+    "dclm/P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P300-parent.json",
+      "sha256": "aa01aac9553898138d07a4678d30e1d4c565c8a1b0f940403ab1a740b603dda6"
+    },
+    "dclm/P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P1T-parent.json",
+      "sha256": "f86ec904ed79f3e68471e6e9f8ae9de40a6a144949cfda81c23cac4e79c8334d"
+    },
+    "fwe/S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/S72-parent.json",
+      "sha256": "89a35f410e6445cc727822a1898eafa4412f1290eb13cce1bd514d2b50839d6d"
+    },
+    "fwe/P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01/supervised/run/downstream/replays/P300-parent-batch2.json",
+      "sha256": "4bf936bf3dc7d5cbf502900b26e758b732b6f64db114766eefdb09ff60c563d1"
+    },
+    "fwe/P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/supervised/run/downstream/replays/P1T-parent.json",
+      "sha256": "fe0d2ac5141130bde82308ce74299a3d1aaeb633f6762bea500f54b5ec6ab2e9"
+    },
+    "dclm/P1T-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/dclm/P1T-quantized.json",
+      "sha256": "55d3c713d480031a72635a80de683a58cbfdba08032d530a02406722f5657fec"
+    },
+    "dclm/P300-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/dclm/P300-quantized.json",
+      "sha256": "b6c4695d666c46ea92dd3e32b67779dcea16f20cf3cd4732a17ab3755a725660"
+    },
+    "dclm/S188-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/dclm/S188-parent.json",
+      "sha256": "4a827c2390c6ca8a050f8fc7cce6dbe70f59c7f6dcdeff3d6e230bb322e0dc19"
+    },
+    "dclm/S188-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/dclm/S188-quantized.json",
+      "sha256": "0fc19ad03f80027890a0f63f8d9942e4a6f64cd26f25ac755031a884b321c4db"
+    },
+    "dclm/S72-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/dclm/S72-quantized.json",
+      "sha256": "a9099b5bbf23d873d420d4db62c3c12f20742b0249fe37d4b17d543ef13db599"
+    },
+    "fwe/P1T-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/fwe/P1T-quantized.json",
+      "sha256": "e01fb8a67d875118ba4b724b07de925d68f300f317ea64771036db90c3b94d16"
+    },
+    "fwe/P300-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/fwe/P300-quantized.json",
+      "sha256": "1e75751e494d8d25564e1ed17246b94489b35760f4f1793031f455b4b5a004c7"
+    },
+    "fwe/S188-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/fwe/S188-parent.json",
+      "sha256": "f8988d29c19e86cef8d604a870289e9630dd0d72b9709bf992d633bd58d57581"
+    },
+    "fwe/S188-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/fwe/S188-quantized.json",
+      "sha256": "ebc62ef108fccae7701ea2799669acddada43c7645b7cf737596d1bb6f1162d6"
+    },
+    "fwe/S72-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/replays/fwe/S72-quantized.json",
+      "sha256": "2e44ccf18fe1dfb6f6f58fcd901a6818297b18c0e34ef3b60b02566d38a6c358"
+    }
+  },
+  "independent_replays": {
+    "dclm/P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/P1T-parent.json",
+      "sha256": "5a82a96b56029309ab89511a0d4a90a9c989cd8a414db881fe16cf6d83bd08d6"
+    },
+    "dclm/P1T-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/P1T-quantized.json",
+      "sha256": "091a743d2c87bc225002ec3d42db4cf2c370867cc4843a41b474c048802f0830"
+    },
+    "dclm/P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/P300-parent.json",
+      "sha256": "b8a855c8830b66c68f8f903007655a01dfcbf3db46387af3c9a0ae2ec34ce60f"
+    },
+    "dclm/P300-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/P300-quantized.json",
+      "sha256": "00e83702ff011fa3cbd819b394ea7616fd2503adda02d0d7f63952c9f7063cc7"
+    },
+    "dclm/S188-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/S188-parent.json",
+      "sha256": "fd83bff12f4991de4b3560bf679cffd0e37f6670851f72373d3d2fb294d0fd54"
+    },
+    "dclm/S188-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/S188-quantized.json",
+      "sha256": "47bd2d9298b3e319b625d6f4e5437f85e995097f07b6bd9c927c4a492a294f85"
+    },
+    "dclm/S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/S72-parent.json",
+      "sha256": "58671ecbc44a48a618a24a258015ab0d84ec03643493871dc227672b959154d4"
+    },
+    "dclm/S72-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/dclm/S72-quantized.json",
+      "sha256": "2ffbc4263f718ed6b85a9d917849f9ee4b3b3c5fdc15163fa7329e71b3c287db"
+    },
+    "fwe/P1T-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/P1T-parent.json",
+      "sha256": "ed0309cd26b65db18f142cc1e1e1170cc0ac664c78d4649918a8e744c73a2493"
+    },
+    "fwe/P1T-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/P1T-quantized.json",
+      "sha256": "4bfd55806af3eb5aff90f2d5d975437414af419d9216b693a2f9fcb3f361b63d"
+    },
+    "fwe/P300-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/P300-parent.json",
+      "sha256": "ca5b5e91b5881083949020b36e5ec9706341bd593b646e27c5ccbcbfed3e07ec"
+    },
+    "fwe/P300-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/P300-quantized.json",
+      "sha256": "9f8973bab60796b58af410c80eb7b13e2789f8c016d2b884f2239b83a8a05488"
+    },
+    "fwe/S188-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/S188-parent.json",
+      "sha256": "14fa2b69f6aab8e3b3e9c54e0845dff3dfa533bd0bcbe293ad9d30fde554b0a5"
+    },
+    "fwe/S188-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/S188-quantized.json",
+      "sha256": "84956a5a461b8906c4a7cc3d3e9255bf2a9b9b246466221ffa01195c9e32c548"
+    },
+    "fwe/S72-parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/S72-parent.json",
+      "sha256": "f2ba1d1381a389e6a046e159034b8b55b36e0c730083af92e98c1e6e1d8b05ec"
+    },
+    "fwe/S72-quantized": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/independent_replays/fwe/S72-quantized.json",
+      "sha256": "a04489e02d99ca0d827c87cd07ed0b2fd2721b7279c5febebbafceeaa6687ae4"
+    }
+  },
+  "verified": {
+    "dclm": true,
+    "fwe": true
+  }
+}

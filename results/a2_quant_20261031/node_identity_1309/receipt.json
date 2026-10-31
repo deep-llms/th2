@@ -1,0 +1,43 @@
+{
+  "probe_commit": "e362977461b6d05e8d78e7da92ba7ff6c37049d9",
+  "sample": {
+    "utc": "2026-10-31T05:09:49.850032+00:00",
+    "host": "thiennh-p6-6y3o-worker-0",
+    "cwd": "/mnt/local/deep-llms_th2",
+    "uname": [
+      "Linux",
+      "thiennh-p6-6y3o-worker-0",
+      "6.12.103-127.188.amzn2023.x86_64",
+      "#1 SMP PREEMPT_DYNAMIC Tue Aug 25 15:42:53 UTC 2026",
+      "x86_64"
+    ]
+  },
+  "raw_sha256": "93efa09b5bcdc11f6db914fdf90c1421c6f41744fd6d0b9501ed58587467f06b",
+  "gpu_uuid_order_exact_match": true,
+  "gpu_uuids": [
+    "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+    "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+    "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+    "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+    "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+    "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+    "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+    "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328"
+  ],
+  "boot_utc_estimate": "2026-09-22T06:43:49.920380+00:00",
+  "prior_storage_and_quant_root_present": true,
+  "execution_complete_reported": true,
+  "complete_hash_chain_verified": true,
+  "coverage_counts_observed": {
+    "workers/*/*/*/complete.json": 44,
+    "workers/*/*/*/*-final.json": 80,
+    "workers/*/*/*/*-own_corpus.json": 80
+  },
+  "execution_finished_at": "2026-10-31T00:33:05.659859+00:00",
+  "full_results_independently_verified_locally": false,
+  "old_health_a04_receipt": "missing",
+  "flags": [
+    "QT3 refit idempotence FAIL retained",
+    "QT6 shared calibration boundary document FAIL retained"
+  ]
+}

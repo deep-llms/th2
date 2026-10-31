@@ -1,0 +1,18 @@
+{
+  "commit": "4f6f3ce9874bc54a1a943652a21ebdc0d1805b19",
+  "dropbox_path": "/_run-2026-10-31_03-36-49-th2-6y3o-dropbox-probe-20261031-a01.log",
+  "dropbox_modified_utc": "2026-10-31T03:39:32Z",
+  "raw_sha256": "a657a5fadece39f8d87ec49f3b2f97483f834b8064bf5693c39ff5b7e1c8d7ef",
+  "controller_status_sha256": "3085c118f5ac8cd6daf8f07a6bdf48d0d8353ed721f273fc194715160e5aab9e",
+  "controller_receipt_lines": [
+    "2026-10-30 16:32:49 | 6d4cccb | th2-6y3o-a2-quant-health-20261031-a04 | #1 +30+a | OK | started",
+    "2026-10-30 20:39:14 | 4f6f3ce | th2-6y3o-dropbox-probe-20261031-a01 | #1 +30+a | OK | started",
+    "2026-10-30 20:39:14 | 4f6f3ce | th2-6y3o-dropbox-probe-20261031-a01 | #1 +30+a | OK | synced to bx (after wait)"
+  ],
+  "new_commit_receipt_received": true,
+  "probe_execution_passed": false,
+  "probe_error": "git rev-parse HEAD exited128: synced node source has no .git",
+  "gpu_mutation": false,
+  "old_health_a04_receipt": "still pending",
+  "quant_completion": "not established"
+}

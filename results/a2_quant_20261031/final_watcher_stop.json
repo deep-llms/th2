@@ -1,0 +1,10 @@
+{
+  "pid": 1095005,
+  "status": {
+    "status": "stopped",
+    "tick": 15,
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "utc": "2026-10-31T05:54:00.184399+00:00"
+  },
+  "stop_reason": "Full quant results, verification, report and native handoff complete"
+}
