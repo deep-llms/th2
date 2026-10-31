@@ -1,0 +1,8 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "commit": "4ab52e1bf289f77be88b409c88f7de4ba26030b4",
+  "code_commit": "2661b78",
+  "raw_sha256": "a2599513f44cd9c6a9e49cf8627494759d634062291773e49d9983b870bf5638",
+  "submitted": true,
+  "no_gpu_actions": true
+}
