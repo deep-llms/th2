@@ -1,3 +1,7 @@
+2026-10-31T05:27:12.825637+00:00: Packagingb03 d89b047 ACK sameModuleNotFoundError despite syncedpath. Remove projectimport dependency entirely; b04 uses Pythonstdlib only + read-only nvidia-smi/proc for two nativeownershipsamples. Existingresultsonly copied; noGPUwork/scientificchanges.
+
+2026-10-31T05:24:19.143481+00:00: Corrected result packaging b03 d89b04752faffd6b17fb232ec730b50fda1bff07 SUBMITTED/remoteheadverified. Pending receipt; no duplicate. User authorized all smallbatch retrieval now; olda04 no longerblocks these exports. Quantexecutionalreadycomplete, noGPUlaunch.
+
 2026-10-31T05:24:05.222242+00:00: Packaging b02 5d7ceb3 receipt ACK projectModuleNotFoundError scripts.gpu_process from frozen source snapshot. No artifactsmodified/noGPUwork; only emptyretrievaldir created. Fix helper import to synced code (known unchanged helper); new unique packaging b03 directory/job. b01all5files retained/verified.
 
 2026-10-31T05:20:52.293090+00:00: Results package b02 5d7ceb34050687c0227a67e1d521169ec54e5e97 SUBMITTED; CPU-copy existingJSON/JSONL/MD only into retrieval_20261031_b02, max16MiBparts/core+scores+replays, SHA manifest and two read-only nativeburnsamples. Retrieve receipt before batchb03; no quantrelaunch.

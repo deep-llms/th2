@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-quant-results-package-20261031-b03
+#th2-6y3o-quant-results-package-20261031-b04
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES=""
 python3 -u - <<'PY'
@@ -9,10 +9,30 @@ from pathlib import Path
 from datetime import datetime,timezone
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01')
 base=root/'results/a2_quant_20261031'
-out=root/'retrieval_20261031_b03'
+out=root/'retrieval_20261031_b04'
 out.mkdir(exist_ok=False)
-sys.path.insert(0,'/mnt/local/deep-llms_th2')
-from scripts.gpu_process import inspect
+import csv,socket,subprocess
+
+def proc(pid):
+ p=Path('/proc')/str(pid);fields=(p/'stat').read_text().rsplit(')',1)[1].split()
+ command=(p/'cmdline').read_bytes();argv=[s.decode(errors='replace') for s in command.split(b'\0') if s]
+ prefix=argv[:3]
+ if '-c' in prefix:prefix=prefix[:prefix.index('-c')+1]
+ return dict(pid=pid,ppid=int(fields[1]),start_ticks=int(fields[19]),command_sha256=hashlib.sha256(command).hexdigest(),exe=os.readlink(p/'exe'),command_prefix=prefix,launcher_kind='gpu_burn' if len(argv)>1 and Path(argv[1]).name in ('polite_burn.py','llm_pretrain_burn.py') else None)
+def inspect():
+ def query(kind,fields):
+  return list(csv.reader(subprocess.check_output(['nvidia-smi','--query-'+kind+'='+fields,'--format=csv,noheader,nounits'],text=True,timeout=20).splitlines(),skipinitialspace=True))
+ gs=query('gpu','index,uuid,name,memory.total,memory.used,utilization.gpu')
+ apps=query('compute-apps','gpu_uuid,pid')
+ gpus=[dict(index=int(g[0]),uuid=g[1],name=g[2],memory_total_mib=float(g[3]),memory_used_mib=float(g[4]),utilization_percent=float(g[5]),pids=sorted(int(a[1]) for a in apps if a[0]==g[1])) for g in gs]
+ workers=sorted({p for g in gpus for p in g['pids']});records={str(p):proc(p) for p in workers};roots=[]
+ for p in workers:
+  parent=records[str(p)]['ppid']
+  if parent>1:
+   item=proc(parent)
+   if item['launcher_kind']=='gpu_burn':records[str(parent)]=item;roots.append(parent)
+ return dict(host=socket.gethostname(),time=datetime.now(timezone.utc).isoformat(),gpus=gpus,workers=workers,stop_roots=sorted(set(roots)-set(workers)),processes=records,guard_disabled=Path('/mnt/local/_gpu_guard/DISABLED').exists())
+
 
 def sha(p):
  h=hashlib.sha256()
