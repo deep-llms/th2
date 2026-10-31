@@ -86,7 +86,7 @@ def inspect_matrix(q,parent,bits,chunk=4096):
     q=q.float().numpy().reshape(-1,128)
     p=None if parent is None else parent.bfloat16().float().numpy().reshape(-1,128)
     result=dict(groups=len(q),cardinality_failed_groups=0,grid_failed_groups=0,
-                max_distinct_values=0,constant_groups=0,failures=[])
+                max_distinct_values=0,constant_groups=0,source_codes_failed_groups=0,storage_failed_groups=0,failures=[])
     for start in range(0,len(q),chunk):
         v=q[start:start+chunk];assert np.isfinite(v).all()
         count,u=distinct(v,levels);card=count<=levels
@@ -94,13 +94,16 @@ def inspect_matrix(q,parent,bits,chunk=4096):
             good=uniform_bf16(u,count,bits)&card
         else:
             w=p[start:start+chunk];lo=w.min(1,keepdims=True);hi=w.max(1,keepdims=True)
-            scale=(hi-lo)/np.float32(levels-1);constant=scale==0
+            # Match CUDA tensor / CPU-scalar: FP32 multiply by rounded reciprocal.
+            scale=(hi-lo)*np.float32(1.0/(levels-1));constant=scale==0
             safe=np.where(constant,np.float32(1),scale);zero=np.rint(-lo/safe)
             original=np.clip(np.rint(w/safe)+zero,0,levels-1)
             recovered=np.clip(np.rint(v/safe)+zero,0,levels-1)
             expected=np.where(constant,lo,(original-zero)*safe)
             expected=torch.from_numpy(expected).bfloat16().float().numpy()
             stable=np.where(constant,v==lo,recovered==original)
+            result['source_codes_failed_groups']+=int((~stable.all(1)).sum())
+            result['storage_failed_groups']+=int((~(v==expected).all(1)).sum())
             good=stable.all(1)&(v==expected).all(1)&card
             result['constant_groups']+=int(constant.sum())
         result['cardinality_failed_groups']+=int((~card).sum())
@@ -156,8 +159,9 @@ def main():
     tasks=[]
     for key,entry in plan['parents'].items():
         ds,parent=key.split('/');tasks.append((ds,parent,entry['records'],entry['asset'],str(a.output),plan['spec_sha256']))
+    expected_models=sum(len(t[2]) for t in tasks)
     started=time.monotonic();models=[];errors=[]
-    print('QT3_REVISED_START',json.dumps(dict(device='cpu',parents=len(tasks),models=56,processes=min(a.processes,len(tasks)),plan_sha256=sha(a.plan),code_sha256=sha(__file__))),flush=True)
+    print('QT3_REVISED_START',json.dumps(dict(device='cpu',parents=len(tasks),models=expected_models,processes=min(a.processes,len(tasks)),plan_sha256=sha(a.plan),code_sha256=sha(__file__))),flush=True)
     with ProcessPoolExecutor(max_workers=min(a.processes,len(tasks))) as pool:
         futures={pool.submit(worker,t):t[:2] for t in tasks}
         for future in as_completed(futures):
@@ -165,8 +169,8 @@ def main():
             except Exception as error:errors.append(dict(parent=futures[future],error=repr(error)))
     result=dict(spec_sha256=plan['spec_sha256'],policy=plan['policy'],plan_sha256=sha(a.plan),
         audit_code_sha256=sha(__file__),device='cpu',new_quantization=False,models=models,errors=errors,
-        expected_models=56,actual_models=len(models),matrices=sum(x['matrix_count'] for x in models),
-        groups=sum(x['group_count'] for x in models),all_passed=len(models)==56 and not errors and all(x['passed'] for x in models),
+        expected_models=expected_models,actual_models=len(models),matrices=sum(x['matrix_count'] for x in models),
+        groups=sum(x['group_count'] for x in models),all_passed=len(models)==expected_models and not errors and all(x['passed'] for x in models),
         elapsed_seconds=time.monotonic()-started)
     (a.output/'summary.json').write_text(json.dumps(result,indent=2)+'\n')
     print('QT3_REVISED_COMPLETE',json.dumps({k:v for k,v in result.items() if k!='models'}),flush=True)

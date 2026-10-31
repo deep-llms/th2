@@ -1,0 +1,332 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "policy": "User follow-up 31Oct2026: QT3 original-grid codes/cardinality; GPTQ unstored-grid BF16 uniform fallback; preserve original QT3, clear affected unverified only where revised audit passes. QT6 accepted minor deviation; no rerun/new quantization.",
+  "parents": {
+    "dclm/P300": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+        "revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+        "code_revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+        "files": {
+          "config.json": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777",
+          "model.safetensors": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P300/rtn3-weights.json",
+          "3ad15fe6dc5a5fb1063820affb9bf30cbf800e34935b778b90e52e96dd92a40a"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P300/rtn4-weights.json",
+          "5e9e89cba021f24da9e28e484468377b3e042ed4360008bd926541ffc3bab2a9"
+        ]
+      ]
+    },
+    "dclm/P1T": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+        "revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "files": {
+          "config.json": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+          "model.safetensors": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P1T/rtn3-weights.json",
+          "480574e182437fd151c49fd19cf7df9b2f21029b0ef35eb1f9642dc183bf2ac4"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P1T/rtn4-weights.json",
+          "b8d99708f93de168693dcc96f94ebb98ede00fc953e4e8f84f020792d4ca05f5"
+        ]
+      ]
+    },
+    "dclm/S72": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+        "revision": "2ee702ba4c05cd1494c530d81f4e338bcf70536b",
+        "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "files": {
+          "config.json": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f",
+          "model.safetensors": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S72/rtn3-weights.json",
+          "4c9a03918ebb4d32ce69b451f69a632e9c17d3c391d0fb3abd8807f14b2f607d"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S72/rtn4-weights.json",
+          "a291da207a51c4b2c5f7ab7ebaf0f2e27e0619117cdf1409038ded461a631ed3"
+        ]
+      ]
+    },
+    "dclm/S188": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+        "revision": "0340fcb7b7717498ad8bcb229a653a31a7af0877",
+        "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "files": {
+          "config.json": "314914ed4ed26ee8ced05ca1b2a22d73968acd772bb7d0ceb939b62a4c287786",
+          "model.safetensors": "683ef78df55635d5a861301d894cc03f610501a520ee1a93395201b36ea203d3"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S188/rtn3-weights.json",
+          "4f20527b12824079d7580435c3a5041071a81c0e9a7d15d1c075757d93b39925"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S188/rtn4-weights.json",
+          "83c85bbbc5aef3a2ba886472a2a67baf0e7abe7126e4864383c56506d8e23699"
+        ]
+      ]
+    },
+    "fwe/P300": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096",
+        "revision": "de8d9259fcac769157070eb63cd67fa89d4c2db1",
+        "code_revision": "de8d9259fcac769157070eb63cd67fa89d4c2db1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+        "files": {
+          "config.json": "592e65dc00a2ed521f87d0f2339ad661277e9ee421a9a698f5373ec92e2a192e",
+          "model.safetensors": "cab564f469e41f2a55e8ed3c84bddaf0b858240653b6ca8d58579ce27f10ef09"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P300/rtn3-weights.json",
+          "68d8b4567b94b1fd2eee09393572c8e9ccbd233f5c5a5c0c1a4b4a81f307ec4c"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P300/rtn4-weights.json",
+          "4c4c12de020664b2a45c4c53e2e3cc72d5741880e6b6311bc158b2e8be2229d6"
+        ]
+      ]
+    },
+    "fwe/P1T": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+        "revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "files": {
+          "config.json": "e81aca30f409cfeb481bdc200c9a785f5d9c11b7bdd41cab9389aa299dd9b18a",
+          "model.safetensors": "21acee7e83ffddd740017147357ff00097500783aac202b253f7f61acb42af9a"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P1T/rtn3-weights.json",
+          "23b7da76f4ba505668e8c3109af2e70f8b7522ec67dd3068d789365bc6e745b6"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P1T/rtn4-weights.json",
+          "ee4f35645b3a2e3515d1dfd13f8baca7b806c949ad1a8ffdbae50936816eb571"
+        ]
+      ]
+    },
+    "fwe/S72": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+        "revision": "2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5",
+        "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "files": {
+          "config.json": "7a512523f083a7fafe2be4750a88292ab6104d52832dd738dd3bdd03ae52d3bf",
+          "model.safetensors": "466cb060fc71048bfd77534aa36fa13b320f6e8c1c306494b3bf157edddcb21e"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S72/rtn3-weights.json",
+          "0f3cd2de749ab2baeda9f235cd6e5c7ea8ab6f981499cba8db206fdf03ac5cca"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S72/rtn4-weights.json",
+          "6be1073ebb3809bf8959c7142fd6f1327379416591ecab9151435f232f87192b"
+        ]
+      ]
+    },
+    "fwe/S188": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+        "revision": "85e25569105f1c84b0d653f6f8e69df1e30bd3de",
+        "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "files": {
+          "config.json": "0ee5e2b8b7a045f6eae0ffa9a6d2a8f94b067de4ba23352495bd90852d211d6d",
+          "model.safetensors": "d2b46127d4cff8fdef6f28bf84ba0b699f3f079583d8e4af179c7ddd18558a0c"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S188/rtn3-weights.json",
+          "5ae7895745a915411e7d8eed7bdac9694803620418eb8c8d4c3d8a9444f3c222"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S188/rtn4-weights.json",
+          "9ff71c292761fec19a4ca10b07441a2b7aa3ae650ebc69114565c7a96cfb7a94"
+        ]
+      ]
+    },
+    "nem/P300": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096",
+        "revision": "5cc94475d50d221ac201909c36aa61855fb2c50f",
+        "code_revision": "5cc94475d50d221ac201909c36aa61855fb2c50f",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P300",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P300",
+        "files": {
+          "config.json": "df5ea5e44e514cf7f28e0d40f872f66738bfeb49cb1938eeb550762f8a9bfb60",
+          "model.safetensors": "de9e2011347053829eed50aa50a22dd18a20bd97e2ea122c3fd74967875d36ab"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P300/rtn3-weights.json",
+          "09dbf8025d5dffa1245182a4e481565414f64d3fc88b76b8df3a611c8d8740d6"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P300/rtn4-weights.json",
+          "67d7e3a3e79ca0d8be06d593eaec55b41b2d1716aa87f1b4a56aacf92de57ab6"
+        ]
+      ]
+    },
+    "nem/P1T": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+        "revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "files": {
+          "config.json": "0c213b88b29338cb028b83308ba438f62cb7f740f2b9f51b2d7ece50d064c771",
+          "model.safetensors": "b09cadfb1ed79ba21a89f7909ae5859e318e24f945d253252a563510a92137e6"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P1T/rtn3-weights.json",
+          "9e904ba658bd220cfce0bea8248305ab3f0a24467d9a81ba30f51e162c8d9ad0"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P1T/rtn4-weights.json",
+          "a5d9c017a1d7e7b380ce01966d7a78d60d223a18e6e79d4c3d8bc1e84c2b48cd"
+        ]
+      ]
+    },
+    "nem/S72": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+        "revision": "a69f22d194ba460ce35e9d29a8d6cc4af919aca1",
+        "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/S72",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "files": {
+          "config.json": "048a8749f5bbe833b8119cf25df5da4510dc1f93b7b58031a9f8995749962be6",
+          "model.safetensors": "7c3d1702915d665f69b0f070dc1bbe31e57833640092d2626859c64050063c38"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S72/rtn3-weights.json",
+          "a810bbeda89a9b9d1621b7b12e17ff85c4fb8d8bfc180931934a8137d5006792"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S72/rtn4-weights.json",
+          "a57560b98d5e7d0d55a21a20674eafa27eb728997f839292decaf18f6cf76268"
+        ]
+      ]
+    },
+    "nem/S188": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+        "revision": "10f3e6ae5e55164ce14709839c230a107d809aef",
+        "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/S188",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "files": {
+          "config.json": "9b2099fae696226a7faa63a764d9445343ea3462a1b18eb86f2d0ae3d4eea65e",
+          "model.safetensors": "e4e05cea7deff5e2c8ab3ab3d49fb1286cb71c45f3085ae5afa8145abbf7d60d"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S188/rtn3-weights.json",
+          "bd97f1219ac0515b0250f85dae26e5cbab7ed578ef13c9980a7d5dc133c248f0"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S188/rtn4-weights.json",
+          "713dbd7fbe8819f39397cb29217949b9749061fa6950cb465b48dcb0da553a19"
+        ]
+      ]
+    }
+  },
+  "correction": "RTN grid reconstruction matches CUDA tensor/scalar division: FP32 range * FP32 reciprocal, not CPU direct division. Retain audit attempt01; repeat read-only RTN check only, GPTQ receipts remain valid.",
+  "arithmetic_source": "https://raw.githubusercontent.com/pytorch/pytorch/main/aten/src/ATen/native/cuda/BinaryDivTrueKernel.cu"
+}
