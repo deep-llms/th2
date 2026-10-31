@@ -617,3 +617,8 @@ Registered mechanism probes COMPLETE; see [report](../results/a2_mech_20261031/R
 ## A2 M descriptive addendum and token backup — 31 October 2026
 
 User-requested fivefulltables appended to REPORT.md from savedJSON onCPU: N-rtn3damages/ratios/contrasts, N-iso0.1/0.3contrasts, all83metrics/249dataset-centeredcorrelations,72layer-datasetrows,40bucketrows. Decisionsunchanged;seedorderingflips andlowdenominatorsretained. All18tokenarrays725603544bytes copiedoffB200 into results/a2_mech_20261031/artifacts/token_arrays, outsideGit; originalspreserved. AllSHA/dtype/shape verified andperseqmeansmaxerror0. final/token_backup_verification.json recordsproof. NoGPUactions/no pendingreceipt/no remainingfollowup.
+
+
+### Breadth automatic follow-up — 1 November 2026 SGT
+
+User explicitly requested a reminder worker for Breadth. Reuse the existing local queue_watch session/state and same Codex thread, every30minutes, under the existing report-only time policy; do not create duplicate monitors/subagents. Record queue acceptance separately from actual wake delivery. Stop after verified Breadth results/report/replay/native handoff or explicit user stop. Watcher PID1262581; state `temp/a2_corpora_watch_20261029`. Prior completed Quant watcher files preserved in `before_breadth_20261031T224817Z`.
