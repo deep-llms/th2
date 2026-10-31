@@ -1,0 +1,16 @@
+{
+  "manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/exports/final_b01/manifest.json",
+    "sha256": "def93cde95fb90c2bab80de68a63ba5d81bf2443a73c7ebc9513cdc800e7d654"
+  },
+  "archive_sha256": "ee7cc0d1e7edc4f7e45e5ba8421a3bbef99a653ce967f4267fa9ab00aafb9f49",
+  "file_count": 578,
+  "parts": [
+    {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/exports/final_b01/results.tar.gz.part000",
+      "bytes": 9212001,
+      "sha256": "ee7cc0d1e7edc4f7e45e5ba8421a3bbef99a653ce967f4267fa9ab00aafb9f49"
+    }
+  ],
+  "token_arrays": 18
+}

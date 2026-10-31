@@ -1,0 +1,40 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "files_sha_verified": 578,
+  "worker_counts": {
+    "layers": 12,
+    "noise": 12,
+    "tokens": 8,
+    "weights": 12
+  },
+  "per_sequence_means_checked": 462,
+  "per_sequence_max_error": 3.552713678800501e-15,
+  "matrix_rows_verified": 2016,
+  "relative_contrasts_verified": 747,
+  "paired_noise_bootstrap_resamples": 10000,
+  "paired_noise_bootstrap_seed": 0,
+  "paired_noise_bootstrap_max_error": 0.0,
+  "tests": 286,
+  "test_failures": [
+    {
+      "test": "original_coordinator_exit",
+      "passed": false,
+      "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+      "detail": {
+        "native_status": "failed",
+        "action": "CPU completion recovers registered weights/readout; original error retained"
+      }
+    }
+  ],
+  "external_MT6_replays": 18,
+  "canonical_readout_exact": true,
+  "token_arrays_on_node": 18,
+  "token_arrays_downloaded": false,
+  "hypotheses": {
+    "H_P1": true,
+    "H_P2": false,
+    "H_Q1": false,
+    "H_Q2": true,
+    "H_E": false
+  }
+}

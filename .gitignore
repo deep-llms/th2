@@ -38,3 +38,7 @@ project.local.json
 # Local agent/operator guides
 /docs/AGENT_GUIDE.md
 /docs/DROPBOX_ACCESS.md
+
+# Full A2 M tables are archived locally/on the runner; keep the code sync small.
+/results/a2_mech_20261031/*.json
+/results/a2_mech_20261031/config/
