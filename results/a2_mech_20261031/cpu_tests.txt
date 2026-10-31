@@ -1,0 +1,18 @@
+test_buckets_and_gap_signs (test_mech.MechTests.test_buckets_and_gap_signs) ... ok
+test_full_readout_and_replay (test_mech.MechTests.test_full_readout_and_replay) ... /home/users/thien/miniconda3/envs/train_env/lib/python3.11/site-packages/numpy/lib/_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/home/users/thien/miniconda3/envs/train_env/lib/python3.11/site-packages/numpy/lib/_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+ok
+test_identity_profile (test_mech.MechTests.test_identity_profile) ... ok
+test_noise_groups_and_seeds (test_mech.MechTests.test_noise_groups_and_seeds) ... ok
+test_pattern_all_datasets_required (test_mech.MechTests.test_pattern_all_datasets_required) ... ok
+test_physical_single_removal_equals_hook (test_mech.MechTests.test_physical_single_removal_equals_hook) ... ok
+test_token_storage_matches_original_score (test_mech.MechTests.test_token_storage_matches_original_score) ... MECH_TOKEN_PROGRESS 0 2
+ok
+test_weight_stats_saved_error (test_mech.MechTests.test_weight_stats_saved_error) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.745s
+
+OK

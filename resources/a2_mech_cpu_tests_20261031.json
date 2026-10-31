@@ -1,0 +1,17 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "passed": true,
+  "tests": 8,
+  "device": "CPU",
+  "native_code": "pinned OpenSci main",
+  "log_sha256": "bacc6cb446af68f5f69c4321bede1336b71c25795044b2618f191296d245fc53",
+  "source_sha256": {
+    "efficient_llm/a2/mech.py": "438f87a14db7420dc522c037100ee7c11c9121fec100c92cce9b810db3d29413",
+    "scripts/a2_mech_worker.py": "b6f22b606d57a406acea76bbf82111c2f20388d3d5882c076e6f68de39d6dd92",
+    "scripts/a2_mech_run.py": "c3a65781e5bd1807679b6b523740e35d8ab5dab458be01bf0e1f3897a419e37b",
+    "scripts/a2_mech_report.py": "b8d0e5a8814271308bf4879787b6fcb74aa33ce140d702fe38958725145a0545",
+    "scripts/launch_a2_mech.py": "5c4761e4529a4d26f9e9a2c1d76ff018c59fe199d0c337224fdffb0af0fa12c8",
+    "tests/a2/test_mech.py": "8ed8cf70799f2fbdbfa6910235f6fec95e3b7ec8e33059f06dca485ecb086fd9"
+  },
+  "command": "A2_OPENSCI_CODE=temp/a2_model_code PYTHONPATH=tests/a2:. temp/a2_test_env/bin/python -m unittest discover -s tests/a2 -p test_mech.py -v"
+}

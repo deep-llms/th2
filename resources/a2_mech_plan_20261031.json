@@ -1,0 +1,948 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "quant_spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "small_indices": [
+    0,
+    6,
+    7,
+    10,
+    11,
+    12,
+    17,
+    21,
+    22,
+    29,
+    31,
+    33,
+    38,
+    42,
+    52,
+    54,
+    56,
+    61,
+    77,
+    83,
+    86,
+    91,
+    99,
+    101,
+    105,
+    109,
+    117,
+    118,
+    124,
+    127,
+    130,
+    131,
+    132,
+    134,
+    135,
+    141,
+    144,
+    153,
+    162,
+    170,
+    173,
+    176,
+    182,
+    183,
+    188,
+    190,
+    191,
+    198,
+    203,
+    212,
+    213,
+    215,
+    216,
+    230,
+    237,
+    240,
+    242,
+    245,
+    249,
+    250,
+    253,
+    255,
+    259,
+    260,
+    269,
+    282,
+    283,
+    284,
+    287,
+    290,
+    293,
+    302,
+    306,
+    309,
+    310,
+    311,
+    315,
+    318,
+    322,
+    323,
+    325,
+    326,
+    328,
+    330,
+    338,
+    342,
+    343,
+    348,
+    349,
+    358,
+    371,
+    375,
+    377,
+    380,
+    386,
+    387,
+    388,
+    389,
+    390,
+    395,
+    396,
+    401,
+    402,
+    403,
+    405,
+    409,
+    411,
+    424,
+    429,
+    430,
+    442,
+    445,
+    446,
+    448,
+    449,
+    451,
+    454,
+    455,
+    461,
+    469,
+    474,
+    477,
+    479,
+    484,
+    491,
+    495,
+    503,
+    507,
+    508,
+    514,
+    519,
+    529,
+    535,
+    546,
+    550,
+    552,
+    557,
+    561,
+    564,
+    572,
+    574,
+    576,
+    577,
+    580,
+    581,
+    591,
+    596,
+    598,
+    600,
+    602,
+    611,
+    613,
+    614,
+    615,
+    626,
+    627,
+    628,
+    629,
+    631,
+    632,
+    635,
+    639,
+    640,
+    644,
+    648,
+    653,
+    655,
+    657,
+    658,
+    662,
+    667,
+    668,
+    676,
+    681,
+    691,
+    694,
+    698,
+    706,
+    719,
+    723,
+    732,
+    735,
+    737,
+    738,
+    742,
+    746,
+    753,
+    755,
+    760,
+    769,
+    770,
+    772,
+    773,
+    783,
+    785,
+    787,
+    792,
+    796,
+    797,
+    801,
+    806,
+    811,
+    817,
+    823,
+    830,
+    833,
+    836,
+    837,
+    840,
+    845,
+    846,
+    849,
+    853,
+    854,
+    856,
+    861,
+    862,
+    865,
+    870,
+    884,
+    885,
+    887,
+    888,
+    889,
+    892,
+    906,
+    910,
+    914,
+    915,
+    924,
+    927,
+    928,
+    932,
+    940,
+    948,
+    951,
+    958,
+    959,
+    960,
+    961,
+    962,
+    964,
+    967,
+    969,
+    974,
+    975,
+    976,
+    987,
+    989,
+    994,
+    1003,
+    1006,
+    1008,
+    1011,
+    1020,
+    1022
+  ],
+  "quant_results": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031",
+  "quant_decision": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/decision_quant.json",
+    "sha256": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb"
+  },
+  "reference_nll": {
+    "dclm/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/parent-final.json",
+      "sha256": "0342765afc5400053ce529176b58b19a48b96482e30357eed1185ca931986adb"
+    },
+    "dclm/S72/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/pre-S1-final.json",
+      "sha256": "087d23fb601ee0d0a558c8db9a8a40078b142edca35f1fe6401757349b6ae400"
+    },
+    "dclm/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+      "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b"
+    },
+    "dclm/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+      "sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db"
+    },
+    "dclm/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/parent-final.json",
+      "sha256": "4f3544359641d2ed6594b855bbd7781a27a5fe07227ebfd94ffe843a168c7d2c"
+    },
+    "dclm/S188/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/pre-S1-final.json",
+      "sha256": "8b80beed055e798b4b63bc318844daa5b883100f06715f5b157bd039d3b9badf"
+    },
+    "dclm/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+      "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c"
+    },
+    "dclm/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60"
+    },
+    "fwe/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/parent-final.json",
+      "sha256": "1a472129c5fd51871d929de1f7ce64d2cb554cad676e3e7891ea2d9d436068aa"
+    },
+    "fwe/S72/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+      "sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9"
+    },
+    "fwe/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+      "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489"
+    },
+    "fwe/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039"
+    },
+    "fwe/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/parent-final.json",
+      "sha256": "a5181de571c022c0f2d8363571ce79dd195caefb70bb338f3dbc45b18df25f3f"
+    },
+    "fwe/S188/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+      "sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1"
+    },
+    "fwe/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+      "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5"
+    },
+    "fwe/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a"
+    },
+    "nem/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/parent-final.json",
+      "sha256": "e8e76d1c55402f8d78b4826bc94a1a83ee179b0bbfb95d2f2a129adbb594098d"
+    },
+    "nem/S72/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/pre-S1-final.json",
+      "sha256": "8445af26988488428c4ff66a967a246d1b332fd64f6d2b24ef7cf75eb5e79bbc"
+    },
+    "nem/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/parent-final.json",
+      "sha256": "1b64af7fd3d95f722944c80abccb1efa3d2e69fc0b210d8c790d0f7d02fb8f0a"
+    },
+    "nem/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/pre-S1-final.json",
+      "sha256": "a26d8cdea06f9aea23ea45d27a925025c3eedf4420c11b2690c95082ba7b58f3"
+    },
+    "nem/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/parent-final.json",
+      "sha256": "df980034a3ab762da782ffbd472b9ddb78abe281a9937cd105f143e9961b6f33"
+    },
+    "nem/S188/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/pre-S1-final.json",
+      "sha256": "eddf239be30daad45001fce81812729c62bd59f9f5df47e55a9db2793343c052"
+    },
+    "nem/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/parent-final.json",
+      "sha256": "60a87dfd12a186acbf65e3c92832a8621ea2c1c88a598d391ddbabb53636ca7c"
+    },
+    "nem/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/pre-S1-final.json",
+      "sha256": "74d83f1861fb347ec570b2825ab92a1b31d890f90f5f5b328762a345f6558558"
+    }
+  },
+  "rtn_weights": {
+    "dclm/S72/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S72/rtn3-weights.json",
+      "sha256": "4c9a03918ebb4d32ce69b451f69a632e9c17d3c391d0fb3abd8807f14b2f607d"
+    },
+    "dclm/S72/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S72/rtn4-weights.json",
+      "sha256": "a291da207a51c4b2c5f7ab7ebaf0f2e27e0619117cdf1409038ded461a631ed3"
+    },
+    "dclm/P300/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P300/rtn3-weights.json",
+      "sha256": "3ad15fe6dc5a5fb1063820affb9bf30cbf800e34935b778b90e52e96dd92a40a"
+    },
+    "dclm/P300/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P300/rtn4-weights.json",
+      "sha256": "5e9e89cba021f24da9e28e484468377b3e042ed4360008bd926541ffc3bab2a9"
+    },
+    "dclm/S188/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S188/rtn3-weights.json",
+      "sha256": "4f20527b12824079d7580435c3a5041071a81c0e9a7d15d1c075757d93b39925"
+    },
+    "dclm/S188/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S188/rtn4-weights.json",
+      "sha256": "83c85bbbc5aef3a2ba886472a2a67baf0e7abe7126e4864383c56506d8e23699"
+    },
+    "dclm/P1T/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P1T/rtn3-weights.json",
+      "sha256": "480574e182437fd151c49fd19cf7df9b2f21029b0ef35eb1f9642dc183bf2ac4"
+    },
+    "dclm/P1T/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P1T/rtn4-weights.json",
+      "sha256": "b8d99708f93de168693dcc96f94ebb98ede00fc953e4e8f84f020792d4ca05f5"
+    },
+    "fwe/S72/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S72/rtn3-weights.json",
+      "sha256": "0f3cd2de749ab2baeda9f235cd6e5c7ea8ab6f981499cba8db206fdf03ac5cca"
+    },
+    "fwe/S72/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S72/rtn4-weights.json",
+      "sha256": "6be1073ebb3809bf8959c7142fd6f1327379416591ecab9151435f232f87192b"
+    },
+    "fwe/P300/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P300/rtn3-weights.json",
+      "sha256": "68d8b4567b94b1fd2eee09393572c8e9ccbd233f5c5a5c0c1a4b4a81f307ec4c"
+    },
+    "fwe/P300/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P300/rtn4-weights.json",
+      "sha256": "4c4c12de020664b2a45c4c53e2e3cc72d5741880e6b6311bc158b2e8be2229d6"
+    },
+    "fwe/S188/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S188/rtn3-weights.json",
+      "sha256": "5ae7895745a915411e7d8eed7bdac9694803620418eb8c8d4c3d8a9444f3c222"
+    },
+    "fwe/S188/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S188/rtn4-weights.json",
+      "sha256": "9ff71c292761fec19a4ca10b07441a2b7aa3ae650ebc69114565c7a96cfb7a94"
+    },
+    "fwe/P1T/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P1T/rtn3-weights.json",
+      "sha256": "23b7da76f4ba505668e8c3109af2e70f8b7522ec67dd3068d789365bc6e745b6"
+    },
+    "fwe/P1T/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P1T/rtn4-weights.json",
+      "sha256": "ee4f35645b3a2e3515d1dfd13f8baca7b806c949ad1a8ffdbae50936816eb571"
+    },
+    "nem/S72/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S72/rtn3-weights.json",
+      "sha256": "a810bbeda89a9b9d1621b7b12e17ff85c4fb8d8bfc180931934a8137d5006792"
+    },
+    "nem/S72/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S72/rtn4-weights.json",
+      "sha256": "a57560b98d5e7d0d55a21a20674eafa27eb728997f839292decaf18f6cf76268"
+    },
+    "nem/P300/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P300/rtn3-weights.json",
+      "sha256": "09dbf8025d5dffa1245182a4e481565414f64d3fc88b76b8df3a611c8d8740d6"
+    },
+    "nem/P300/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P300/rtn4-weights.json",
+      "sha256": "67d7e3a3e79ca0d8be06d593eaec55b41b2d1716aa87f1b4a56aacf92de57ab6"
+    },
+    "nem/S188/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S188/rtn3-weights.json",
+      "sha256": "bd97f1219ac0515b0250f85dae26e5cbab7ed578ef13c9980a7d5dc133c248f0"
+    },
+    "nem/S188/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S188/rtn4-weights.json",
+      "sha256": "713dbd7fbe8819f39397cb29217949b9749061fa6950cb465b48dcb0da553a19"
+    },
+    "nem/P1T/rtn3": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P1T/rtn3-weights.json",
+      "sha256": "9e904ba658bd220cfce0bea8248305ab3f0a24467d9a81ba30f51e162c8d9ad0"
+    },
+    "nem/P1T/rtn4": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P1T/rtn4-weights.json",
+      "sha256": "a5d9c017a1d7e7b380ce01966d7a78d60d223a18e6e79d4c3d8bc1e84c2b48cd"
+    }
+  },
+  "students": {
+    "dclm/P300": {
+      "schema": 2,
+      "kind": "healed",
+      "dataset": "dclm",
+      "parent": "P300",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-P300-S1-3.2B-lr1e-3/final",
+      "files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "model.safetensors": "4b94b9169738ebac3b5fdba7286f4014d8581174e4beedb9ae7300314226f05a",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "kept_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        22,
+        23
+      ],
+      "training_receipts": {
+        "result": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-P300-S1-3.2B-lr1e-3/result.json",
+          "sha256": "638ae8cb9e9390bceb980ea524e9ba18988f58ac168affea83f4ab7eb58e23ba"
+        },
+        "reference": {
+          "path": "/mnt/local/deep-llms_th2/resources/a2_stage1_reference_20261029.json",
+          "sha256": "9873eadea52ee7398f7fecb1b99cfc833fda93e0933143bfeaeaceb214c1236c"
+        },
+        "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+        "teacher": "P300"
+      }
+    },
+    "dclm/P1T": {
+      "schema": 2,
+      "kind": "healed",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-3.2B-lr1e-3/final",
+      "files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "model.safetensors": "a51517f38f23d9d6934403f27a37503ca5829f4d1fe5287b015e44128cc95950",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "kept_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        22,
+        23
+      ],
+      "training_receipts": {
+        "result": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-P1T-S1-3.2B-lr1e-3/result.json",
+          "sha256": "9c86cbea6c992e9f362348705f895e9a68d5a24585bed2f13be2aefef4286c14"
+        },
+        "reference": {
+          "path": "/mnt/local/deep-llms_th2/resources/a2_stage1_reference_20261029.json",
+          "sha256": "9873eadea52ee7398f7fecb1b99cfc833fda93e0933143bfeaeaceb214c1236c"
+        },
+        "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+        "teacher": "P1T"
+      }
+    },
+    "dclm/X72": {
+      "schema": 2,
+      "kind": "healed",
+      "dataset": "dclm",
+      "parent": "S72",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-X72-S1-3.2B-lr1e-3/final",
+      "files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "model.safetensors": "7a478072ec33cb3dd09ba3a40e1b096538fb4d9b1227db44ea08b61b8e92791a",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "kept_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        22,
+        23
+      ],
+      "training_receipts": {
+        "result": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/supervised/run/results/a2_stage1/ST1-dclm-X72-S1-3.2B-lr1e-3/result.json",
+          "sha256": "6532b2c4889fb8e26b3a9767b6a1ef81816f1e42b7425530189a4490654830f8"
+        },
+        "reference": {
+          "path": "/mnt/local/deep-llms_th2/resources/a2_stage1_reference_20261029.json",
+          "sha256": "9873eadea52ee7398f7fecb1b99cfc833fda93e0933143bfeaeaceb214c1236c"
+        },
+        "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+        "teacher": "P300"
+      }
+    },
+    "fwe/P300": {
+      "schema": 2,
+      "kind": "healed",
+      "dataset": "fwe",
+      "parent": "P300",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/ST1-fwe-P300-S1-3.2B-lr1e-3/final",
+      "files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "model.safetensors": "0f183681c952c752033633a5f1cd82415d227624c7efe80656a441bc9077a1c4",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "kept_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        22,
+        23
+      ],
+      "training_receipts": {
+        "result": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/ST1-fwe-P300-S1-3.2B-lr1e-3/result.json",
+          "sha256": "a974ed352a74b4421824c19369fc1a57978ce5e62a2e5b65f69f597186a0e4d0"
+        },
+        "reference": {
+          "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_reference_20261030.json",
+          "sha256": "c2ac510552ac9e54fd17077cd860ba116bf07038405a5449d9bd546c2468306c"
+        },
+        "run_id": "ST1-fwe-P300-S1-3.2B-lr1e-3",
+        "teacher": "P300"
+      }
+    },
+    "fwe/P1T": {
+      "schema": 2,
+      "kind": "healed",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/ST1-fwe-P1T-S1-3.2B-lr1e-3/final",
+      "files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "model.safetensors": "241e00796a7701f9c399ba73d613afb6ecf0c28e56421f311e5b49244ae9e35d",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "kept_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        22,
+        23
+      ],
+      "training_receipts": {
+        "result": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01/supervised/run/results/a2_stage1_fwe/ST1-fwe-P1T-S1-3.2B-lr1e-3/result.json",
+          "sha256": "81099efc2aa96004755be13181412a7b8fea4b6e35b0be62ec48c464fea5b8e5"
+        },
+        "reference": {
+          "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_reference_20261030.json",
+          "sha256": "c2ac510552ac9e54fd17077cd860ba116bf07038405a5449d9bd546c2468306c"
+        },
+        "run_id": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+        "teacher": "P1T"
+      }
+    },
+    "fwe/X72": {
+      "schema": 2,
+      "kind": "healed",
+      "dataset": "fwe",
+      "parent": "S72",
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part2-20261030-a01/supervised/run/results/a2_stage1_fwe/ST1-fwe-X72-S1-3.2B-lr1e-3/final",
+      "files": {
+        "config.json": "84473d976cc16640692097339baf7d8ba15e884e2bad9625fae9de4af6c722f5",
+        "model.safetensors": "7ff56b9ce451c84db6017d942b43e1edd1245b1fc3f87fa66f8039685f265a81",
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+      "code_files": {
+        "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+      },
+      "kept_layers": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        22,
+        23
+      ],
+      "training_receipts": {
+        "result": {
+          "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-part2-20261030-a01/supervised/run/results/a2_stage1_fwe/ST1-fwe-X72-S1-3.2B-lr1e-3/result.json",
+          "sha256": "3bae173d65b0e6316165b263467aac6b8e72d9a555be61835f2534373b64222c"
+        },
+        "reference": {
+          "path": "/mnt/local/deep-llms_th2/resources/a2_stage1b_part1_reference_20261030.json",
+          "sha256": "c2ac510552ac9e54fd17077cd860ba116bf07038405a5449d9bd546c2468306c"
+        },
+        "run_id": "ST1-fwe-X72-S1-3.2B-lr1e-3",
+        "teacher": "P300"
+      }
+    }
+  },
+  "registered_order": [
+    "CPU weights alongside GPU",
+    "layers",
+    "noise",
+    "tokens",
+    "readout"
+  ],
+  "estimated_node_hours": 1,
+  "time_policy": "report-only",
+  "scientific_checks": "log flag continue",
+  "rng": "202610310000 + 1000*seed + matrix_index in existing matrix_manifest order",
+  "precision": "FP32 parameters rounded BF16; BF16 AMP; batch1; FP32 chunk128 head CE; TF32 disabled",
+  "predecessor": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01",
+    "burn_script": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/source/resources/llm_pretrain_burn.py",
+    "supervisor": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/supervised/supervisor.json",
+      "sha256": "ba8886de94eac6f15d9446db078ab56780f6c74355005c96e8bc98585227d8ce"
+    },
+    "burn": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/supervised/burn-verified.json",
+      "sha256": "a5261d78fef8a1463faf0749381982759bd2f55cd40b13b411361671642d61e6"
+    },
+    "complete": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/supervised/run/quant-complete.json",
+      "sha256": "a1b188880da2abd0d8a27843091b5a2be120b2de5f07cee378cf020b56b6cd9a"
+    },
+    "source_manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/source-manifest.json",
+      "sha256": "108ecade4a6117965f67adbebbd4067ef99730ad60d0cbdeade146a3a70de55f"
+    },
+    "known_burn_identities": {
+      "740109": {
+        "pid": 740109,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740110": {
+        "pid": 740110,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740111": {
+        "pid": 740111,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740112": {
+        "pid": 740112,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740113": {
+        "pid": 740113,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740114": {
+        "pid": 740114,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740115": {
+        "pid": 740115,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740116": {
+        "pid": 740116,
+        "ppid": 740040,
+        "start_ticks": 334738747,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "740040": {
+        "pid": 740040,
+        "ppid": 9406,
+        "start_ticks": 334738628,
+        "command_sha256": "7ea363a1a1231b6a7b6b01894df4490177b0297bfbd6041505289faf6870de3a",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    }
+  }
+}
