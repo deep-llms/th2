@@ -1,0 +1,78 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "phase": "weights",
+  "events": [
+    {
+      "dataset": "dclm",
+      "parent": "S72",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/dclm/S72/result.json",
+        "sha256": "8600f1f332943abcf38bafc3a9e0421fc686e6a71c10ef2ee5e82e8637a16c05"
+      }
+    },
+    {
+      "dataset": "dclm",
+      "parent": "P300",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/dclm/P300/result.json",
+        "sha256": "eeedc278434dc1316d43b4a1327e267c5ed22feba7b8379534f067f0f511414a"
+      }
+    },
+    {
+      "dataset": "dclm",
+      "parent": "S188",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/dclm/S188/result.json",
+        "sha256": "e814031dc97be989b17f4f5dddbe37073143405cdea72cb6da15745f4d28e35c"
+      }
+    },
+    {
+      "dataset": "dclm",
+      "parent": "P1T",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/dclm/P1T/result.json",
+        "sha256": "7729f326b41f50cd28b47eed45674357e8b970821be616aac84bd10614afa1e0"
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "S72",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/fwe/S72/result.json",
+        "sha256": "b0befd5232a20f6a468ff8df274a9ea4f93d14a555aa1157f3a0f88cae6b0358"
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "P300",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/fwe/P300/result.json",
+        "sha256": "121e156e1f47d82bdbb33d4e3858a709edded68f97443effb5afa44644577c93"
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "S188",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/fwe/S188/result.json",
+        "sha256": "b90bd537383058731d7adaca4de1f6f20fbe9ac83c5f4c8a8ce809d76327c163"
+      }
+    },
+    {
+      "dataset": "fwe",
+      "parent": "P1T",
+      "returncode": 0,
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/workers/weights/fwe/P1T/result.json",
+        "sha256": "3dd2abf3df806cd65fa9af18531ef7983a37e01aa2e5e7f0b414c05dd2a43b3d"
+      }
+    }
+  ]
+}

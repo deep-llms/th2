@@ -1,0 +1,10 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "active_weight_workers": [],
+  "code_commit": "2661b7873ae526344fbdeb00599ff2e2e1945760",
+  "config": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/results/a2_mech_20261031/config/plan.json",
+    "sha256": "adf49b8bfeb0011d5f647bec4d86f0327ba3b0baccf3323b015981715d7fac08"
+  },
+  "no_gpu_actions": true
+}
