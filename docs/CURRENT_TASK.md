@@ -1,3 +1,5 @@
+2026-10-31T06:44:54.579527+00:00: QT3 audit1ea2ce0 ACK startup CPU12processes/56models, planSHA5b2885594682bfc062cbbe5d0511501bfec38e5850c5b2e903ab2745cc389b0b/codeSHAe6cf1d4cf393a2486b0b9e426e2379cc16b14db50a8069a017510d2f979ac1f3. NoGPU/burnchanges/noquantization. Next readonlyprogress/resultpackage; originalQT3preserved, QT6accepted.
+
 2026-10-31T06:38:08.134997+00:00: USER ACCEPTS A2 Q results; authorizes QT3 revised audit only, no new quantization. Check every saved quantized matrix/group cardinality<=2^b and same-code on original grid (RTN parent-reconstructed; GPTQ grids not saved, use uniform-grid-within-BF16 fallback). Preserve historicalQT3; clear unverified only for passing revised scope. QT6 boundary overlap accepted minor deviation/no rerun. CPU-only read existing weights; noGPU/burn/watcherchanges. Spec docs/A2_quant_spec.md preserved; followuprecords separate.
 
 2026-10-31T05:54:22.558864+00:00: Existingwatch1095005 STOP acknowledged/process exited05:54:00UTC (13:54SGT). Quant fullreport/localverification/nativehandoff COMPLETE WITH QT3/QT6flags; no registeredworkremaining, no pendingreceipt, commands#0.
