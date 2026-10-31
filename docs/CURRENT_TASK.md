@@ -1,3 +1,9 @@
+2026-10-31T18:54:25.486772+08:00: A2 M useraddendum+tokenbackup COMPLETE. REPORT.md includes12N-rtn3parentdamages/ratios+3contrastrows,6N-iso0.1/0.3contrastrows,83metrics×3dataset-centeredcorrelations,24layers×3datasetsrelativecontrasts,40fullbucketrows. CPUsourceJSONverified;correlationrecompute maxerror5.55e-16;scientificdecisions/flagsunchanged. All18tokenarrays725603544bytes COPIEDOFFB200 to results/a2_mech_20261031/artifacts/token_arrays;18SHA/shape/dtype/perseqmeansverified exact(max0);originalspreserved. All3exportsACK/downloadverified;final/token_backup_verification.json recordsallpaths/hashes. commands#0/no pendingreceipt/noGPUactions/no watcher. No remaining requestedwork; retainoriginalcoordinator/lowdenom/calibrationqualifiers.
+
+2026-10-31T18:45:42.652702+08:00: Tokenbackupb02 localCOMPLETE;12/18arrays nowlocal/483735696bytes/allSHAverified/float32(2461,4095)/perseqmeansmaxerror0. Lastb03 865f67a pendingreceipt; remaining6arrays/finalbackupreceipt/reportlocationupdate only.
+
+2026-10-31T18:44:06.781676+08:00: Tokenexportb03 865f67a4656b6a204073efdb7d30cd933b0c911d SUBMITTED/remoteheadverified; pendingreceipt before furtherremote writes. b01local6arraysverified;b02ACK12pulled,awaitingDropboxparts; b03last6arrays. Addendumcomplete.
+
 31Oct18:43SGT: Tokenexportb02 9aca318 ACK Done12pulled/0skipped; Dropbox receivingparts. b01local6arraysverified; preparethird/finalexportb03 forlast6arrays. NoGPUactions.
 
 2026-10-31T18:36:57.164567+08:00: Tokenbackupb01 localCOMPLETE6/18arrays/241867848bytes/allSHAverified/float32(2461,4095)/perseqmeansmaxerror0. b02 9aca318 pendingreceipt; no newremote writes untilACK. Addendumalreadycomplete. Remaining12arrays/b02+b03/finalbackupreceipt/reportlocationupdate.

@@ -76,14 +76,14 @@ Các bảng canonical đã tải và kiểm tra SHA:
 - [Replay trên máy phát triển](final/local_replay.json) và [script tái kiểm chứng](final/replay_download.py).
 - [Manifest 578 file](artifacts/manifest.json); per-sequence files nằm trong `artifacts/node/results/a2_mech_20261031/workers/`. Bundle SHA-256: `ee7cc0d1e7edc4f7e45e5ba8421a3bbef99a653ce967f4267fa9ab00aafb9f49`.
 
-Toàn bộ bảng và per-sequence files có ở máy này, giữ ngoài Git để đáp ứng giới hạn code sync 25 MiB. Báo cáo, receipt và script tái kiểm chứng được lưu trong Git. **18 per-token arrays (~726 MB) giữ trên B200**, đã được hash và replay tại node; chưa sao lưu chúng sang máy phát triển. Vị trí từng file có trong token_inventory.json và manifest.
+Toàn bộ bảng và per-sequence files có ở máy này, giữ ngoài Git để đáp ứng giới hạn code sync 25 MiB. Báo cáo, receipt và script tái kiểm chứng được lưu trong Git. **18 per-token arrays đã được sao lưu khỏi B200 về máy này**, tổng **725.603.544 byte**. Các file `.npy` nằm trong [artifacts/token_arrays/](artifacts/token_arrays/); bản gốc trên B200 được giữ nguyên. Toàn bộ 18 checksum khớp manifest gốc, dtype `float32`, shape `(2461, 4095)`; NLL trung bình theo sequence khớp metadata với sai lệch tối đa **0**. [Receipt sao lưu và đường dẫn từng file](final/token_backup_verification.json), [manifest các phần truyền](final/token_backup_manifest.json). Receipt replay cục bộ ban đầu ghi `token_arrays_downloaded=false` là snapshot lịch sử trước khi sao lưu; receipt mới này xác nhận hoàn tất.
 
 Không còn bước đã đăng ký chờ thực hiện. Cờ còn giữ: lỗi điều phối gốc, bucket mẫu số nhỏ và các hạn chế diễn giải nêu trên.
 
 <!-- A2_M_ADDENDUM_START -->
 ## Phụ lục theo yêu cầu — bảng đầy đủ từ JSON đã lưu
 
-Bổ sung bằng CPU từ các kết quả canonical đã khóa SHA; không chạy lại model, quantization hoặc GPU. Các điểm noise là trung bình seed 0 và 1. Damage/gap/A_init có đơn vị nats/token; retention và correlation là số không thứ nguyên. Giá trị bảng làm tròn để đọc; JSON giữ đầy đủ độ chính xác.
+Bổ sung bằng CPU từ các kết quả canonical đã khóa SHA; không chạy lại model, quantization hoặc GPU. [Kiểm chứng các bảng phụ lục](final/addendum_verification.json) và [script tạo bảng](final/report_addendum.py). Các điểm noise là trung bình seed 0 và 1. Damage/gap/A_init có đơn vị nats/token; retention và correlation là số không thứ nguyên. Giá trị bảng làm tròn để đọc; JSON giữ đầy đủ độ chính xác.
 
 `L_ann = (P1T − P300) / P300`, `L_stab = (S188 − S72) / S72`, `R_short = (P300 − S72) / S72`, áp dụng riêng cho metric đang xét. Các relative contrasts hiển thị dưới dạng %. Mẫu số là giá trị metric của parent tham chiếu, không phải NLL parent.
 

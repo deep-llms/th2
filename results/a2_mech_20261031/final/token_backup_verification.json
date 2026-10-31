@@ -1,0 +1,217 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "verified_at_sgt": "2026-10-31T18:54:25.486772+08:00",
+  "complete": true,
+  "cpu_only": true,
+  "no_gpu_actions": true,
+  "original_arrays_preserved": true,
+  "arrays": 18,
+  "bytes": 725603544,
+  "per_sequence_max_abs": 0.0,
+  "files": [
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/P1T/P1T.npy",
+      "sha256": "95881874d2fb84e5201e64923e087180f3eaaba06d06ddaf17bd5df206d3a4d1",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/P1T/pre-P1T.npy",
+      "sha256": "9aa2d2959db5ab14edb63f8cb985e750bd472fbd56dc471d144008f0b1c0b885",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/P1T/student-P1T.npy",
+      "sha256": "41056b43998be5bbea51c707fde8471b8547e85cfa5e0f6a5a02e08bdc39bf21",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/P300/P300.npy",
+      "sha256": "a289c4362f45c4a89b0d8a35d08b22ad481b84b5218453af59967c7a9a4ff726",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/P300/pre-P300.npy",
+      "sha256": "7865aaeda0863962866e0b3cb736b2af8069f0a4a5f3c15ce1fb71418994e924",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/P300/student-P300.npy",
+      "sha256": "9585d72b7c479bc27c6a742add5ebd716dd425b778ab3406ee3e338993c31e21",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/S188/S188.npy",
+      "sha256": "4fde761f63799a9430744026703bcc05bf686160a8fcfb7142a66c2deda69453",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/S72/S72.npy",
+      "sha256": "8698e430b76c23a4634a511ef6bb30fab30726ec5bb010421048aa855bc74a4f",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/dclm/S72/student-X72.npy",
+      "sha256": "7bab1f88b2507f220e69daffd8ef37e5d51993217c294a33478b6361882910c6",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/P1T/P1T.npy",
+      "sha256": "946a779189c68f149b1f75c19c3edbc5d9c05e1fc143eb96b2dbd285cd625b5a",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/P1T/pre-P1T.npy",
+      "sha256": "2ec701cbb69729729fd9f77f861eee7955c8e136f74daf7ffb9539b438cceab4",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/P1T/student-P1T.npy",
+      "sha256": "08ad55544cb03217aa391f975018a4fc0aa9afae93709f988298cb774d96341c",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/P300/P300.npy",
+      "sha256": "b2a2fccf3d665ea9bd7eb59685978e9dce619b9a87ab2b4dd22c10231b95ce67",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/P300/pre-P300.npy",
+      "sha256": "6a91a6a58a642f6c2829e2976c850e9672d82daec863a915c1b144e40840f32b",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/P300/student-P300.npy",
+      "sha256": "e27a61c1d615539c7692786df0498a123406357d0f19bccec20d4c6823fc454a",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/S188/S188.npy",
+      "sha256": "5450cf1eb29ef6026498e4ab0be944eae32b43ceb3f0e6b75f7964c79731bb67",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/S72/S72.npy",
+      "sha256": "50432a50e510da33f2dc72b4fd166a58e7e83f7bb6586b2c5132fca9f8a85860",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    },
+    {
+      "path": "results/a2_mech_20261031/artifacts/token_arrays/fwe/S72/student-X72.npy",
+      "sha256": "7f5356883f8e8659da2cf12df3ad9726931e37873c0870c3503d260b501e8ae8",
+      "bytes": 40311308,
+      "shape": [
+        2461,
+        4095
+      ],
+      "dtype": "float32",
+      "per_sequence_max_abs": 0.0
+    }
+  ],
+  "manifest_sha256": "e71ac8a98b232bf6562a4fcc6348ac7bb59fb7b7d502d0d9a22489990284006f",
+  "export_commits": [
+    "f9fdee79df4ff6bb9d145ce57f2b96e4e7e35912",
+    "9aca318ddc9560e9579f445a05fa8fea1e67311a",
+    "865f67a4656b6a204073efdb7d30cd933b0c911d"
+  ]
+}

@@ -610,3 +610,8 @@ On6Y3O, dataset `#d --url URL DEST` treats DEST as a directory, retaining the pu
 ## A2 M completion — 31 October 2026 SGT
 
 Registered mechanism probes COMPLETE; see [report](../results/a2_mech_20261031/REPORT.md). All12weights/layers/noise and18tokenarrays complete; H-P1 and H-Q2 meet preregistered patterns; H-P2/H-Q1/H-E do not meet all clauses. Original coordinator progress.json.tmp race caused exit1 after GPU probes; separate authorized CPU branch recovered weights/readout without GPU repeats, preserving the error flag. Canonical frequency uses all4096positions. 578small artifacts downloaded/hashverified; local pairednoisebootstrap exact, 18externalMT6PASS. Native burn745736–745743 under745667 verified17:52:27–39SGT cycles940→950. Readout finished17:40:24SGT. 18largeper-token arrays remainnode and outsideGit; hashes in token_inventory/manifest. Tables ignored to respect25MiBcode limit. No pendingreceipt/watchers/registeredwork. Lowdenominator difficultybucket0 bothdatasets and calibration qualifiers retained.
+
+
+## A2 M descriptive addendum and token backup — 31 October 2026
+
+User-requested fivefulltables appended to REPORT.md from savedJSON onCPU: N-rtn3damages/ratios/contrasts, N-iso0.1/0.3contrasts, all83metrics/249dataset-centeredcorrelations,72layer-datasetrows,40bucketrows. Decisionsunchanged;seedorderingflips andlowdenominatorsretained. All18tokenarrays725603544bytes copiedoffB200 into results/a2_mech_20261031/artifacts/token_arrays, outsideGit; originalspreserved. AllSHA/dtype/shape verified andperseqmeansmaxerror0. final/token_backup_verification.json recordsproof. NoGPUactions/no pendingreceipt/no remainingfollowup.
