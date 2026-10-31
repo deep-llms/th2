@@ -100,11 +100,11 @@ def token_score(model, rows, output):
         storage_replay_max_abs=float(np.max(np.abs(means-independent))))
 
 
-def token_buckets(values, targets):
+def token_buckets(values, targets, frequency_counts=None):
     names=('P300','P1T','S72','S188','pre-P300','pre-P1T','student-P300','student-P1T','student-X72')
     if set(values)!=set(names):raise ValueError('Incomplete token model coverage')
     if any(v.shape!=targets.shape for v in values.values()):raise ValueError('Unpaired token shapes')
-    target=targets.reshape(-1);count=np.bincount(target);out={}
+    target=targets.reshape(-1);count=np.bincount(target) if frequency_counts is None else frequency_counts;out={}
     for kind,key in [('frequency',count[target]),('difficulty',values['S188'].reshape(-1))]:
         order=np.argsort(key,kind='stable') # ties resolved by sequence then target position
         buckets=[]

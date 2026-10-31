@@ -1,0 +1,13 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "tests": 9,
+  "passed": true,
+  "log_sha256": "8c63cae590bb0184f64d24d43c855a7750fc085f1a310ef7cecdc429fed59825",
+  "scope": "all-position frequency counts; no GPU changes",
+  "source_sha256": {
+    "efficient_llm/a2/mech.py": "15ccab3507514119efe525c41af3dab7edb6ec6525da188a31adb9daded48b2f",
+    "scripts/a2_mech_report.py": "04d1b0038203e115a5732906ecf969c5e34a5a53b86d1efd5d1e8b6653e1acb7",
+    "scripts/a2_mech_finalize.py": "27d18c2ea6eecea73d808ddd0081dc2e3adab4bd836d40d35a2c46f18965235d",
+    "tests/a2/test_mech.py": "bd12445b198d3f9abbb1c83777cd41ef60110fdadf3ce198fdc9ed573683448d"
+  }
+}

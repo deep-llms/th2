@@ -109,10 +109,11 @@ def summarize(cfg,root):
         try:
             from efficient_llm.a2.data import PackedRows
             rows=PackedRows(cfg['data_root'],'final',verify=False);target=np.asarray(rows.ids)[:,1:]
-            table=token_buckets(values,target)
+            full_frequency=np.bincount(np.asarray(rows.ids).ravel())
+            table=token_buckets(values,target,frequency_counts=full_frequency)
             # Paired sequence bootstrap of bucket gaps and retention; bucket membership fixed.
             n=len(target);draws=np.random.default_rng(0).multinomial(n,np.full(n,1/n),size=10000)
-            flat=target.ravel();freq=np.bincount(flat)[flat]
+            flat=target.ravel();freq=full_frequency[flat]
             for kind,key in [('frequency',freq),('difficulty',values['S188'].ravel())]:
                 retention_draws=[]
                 for b,ix in zip(table['buckets'][kind],np.array_split(np.argsort(key,kind='stable'),10),strict=True):

@@ -52,6 +52,15 @@ class MechTests(unittest.TestCase):
         for b in a['buckets']['frequency']:
             self.assertEqual(b['count'],10);self.assertEqual(b['retention'],.5);self.assertEqual(b['pre_extra'],1)
         self.assertEqual(a,token_buckets(v,target))
+    def test_frequency_counts_include_unscored_first_tokens(self):
+        target=np.tile(np.arange(10),(10,1))
+        names=('P300','P1T','S72','S188','pre-P300','pre-P1T','student-P300','student-P1T','student-X72')
+        values={n:np.ones_like(target,dtype=np.float32)*(3 if n=='P300' else 2) for n in names}
+        counts=np.bincount(target.ravel());counts[0]+=100
+        out=token_buckets(values,target,frequency_counts=counts)
+        self.assertEqual(out['buckets']['frequency'][-1]['key_min'],110)
+        self.assertEqual(out['buckets']['frequency'][0]['key_min'],10)
+
     def test_pattern_all_datasets_required(self):
         vals={d:dict(S72=1,P300=1.1,S188=1.5,P1T=1.8) for d in ('dclm','fwe','nem')}
         self.assertTrue(patterns(relative(vals))['pruning']);self.assertFalse(patterns(relative(vals))['ptq'])
