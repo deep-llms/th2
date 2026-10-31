@@ -1,0 +1,1085 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "policy": "User follow-up 31Oct2026: QT3 original-grid codes/cardinality; GPTQ unstored-grid BF16 uniform fallback; preserve original QT3, clear affected unverified only where revised audit passes. QT6 accepted minor deviation; no rerun/new quantization.",
+  "plan_sha256": "5b2885594682bfc062cbbe5d0511501bfec38e5850c5b2e903ab2745cc389b0b",
+  "audit_attempts": [
+    "attempt01",
+    "attempt02"
+  ],
+  "device": "cpu",
+  "new_quantization": false,
+  "models": [
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S72",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.05291714007035,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_S72_gptq3.json",
+        "sha256": "aad3909830d75c6278d1ec23bebd7730c0c77b8b5fc2f164cf9e270a0f48a814"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S72",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.66282244166359,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_S72_gptq4.json",
+        "sha256": "22236f111f1d1129006d0ad8d6ccf5a56ad6350cc6bc8553ddf6024ba19fb110"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S188",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 32.93992775911465,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_S188_gptq3.json",
+        "sha256": "4537961283d97bca238572c574fb7d4b7d722afce64b5882ce344bc880b9e7ee"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S188",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.62843981618062,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_S188_gptq4.json",
+        "sha256": "3c555328c3f8ef8c8aebf2a19936be51ca242e54c2eca68547c661db375a53f3"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P1T",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 32.93989445222542,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_P1T_gptq3.json",
+        "sha256": "bcdaa2ac1f5304d61526606508d722f80b7383ee2fafb4f076aa67d9bb6986a8"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P1T",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.964954890776426,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_P1T_gptq4.json",
+        "sha256": "3fe927b842c597ea14dd1e1d2c6624c4752e903ee31c0c2973d3d0469fd9080b"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P300",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.16122691426426,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_P300_gptq3.json",
+        "sha256": "6016f7574b5ec7f62767cd6861f32705c3e45519c72a567d995c51e897e78611"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P300",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.678842816036195,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/nem_P300_gptq4.json",
+        "sha256": "6b8bac6fbf9f2b166278cc350eb05cf2335cd1545f6467cd88e49b62ee61496c"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 32.987987083848566,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_P1T_gptq3-cal1.json",
+        "sha256": "8f7e90431b2d978e676624b107b7520a44d96c72e098eb3007442af7b4498fae"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.05414693476632,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_P1T_gptq3.json",
+        "sha256": "5a386e0f02fe16269c3e98d5ef0e27c4d9c7e498f493dc6c126d07fa41e9289d"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 60.999878568109125,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_P1T_gptq4.json",
+        "sha256": "b6a6a5dbe7e335216c031483069874170511333ac1385952c12867fb3975a0fb"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S72",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.04751470498741,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_S72_gptq3-cal1.json",
+        "sha256": "601237156204b30c0243858ca8e9937f2162eaf27c211fa3e12711d1a4636292"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S72",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.064445754978806,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_S72_gptq3.json",
+        "sha256": "3bb859208b7a12836e9008250350c01113418412b10d54dc7f330c3ee6732005"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S72",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.52374618733302,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_S72_gptq4.json",
+        "sha256": "3d1ceeea6a924a0b9b878f0bed134fe51826f52d175f6c15b94cbe7268f71aaf"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 32.949199000839144,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_P1T_gptq3-cal1.json",
+        "sha256": "06640debd1965f2bb77dccb84a5929643196a8cf65e8da23b05f22e81d72385e"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.01527649303898,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_P1T_gptq3.json",
+        "sha256": "6ad935bcafa738a2384f7c0686e0b096b85636698409e2d697d12d1aa7f9fe2e"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.170671422965825,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_P1T_gptq4.json",
+        "sha256": "77e4d5af2b52c9ad782cbc9da90619da5bb62d792b459c2de9140a3645be0955"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P300",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 32.93294564401731,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_P300_gptq3-cal1.json",
+        "sha256": "ffcadf3fabf3fe8bbfcc763d5012ac8033347d2ffdafc580e7f2ce08c5e02e2f"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P300",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.29974541114643,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_P300_gptq3.json",
+        "sha256": "a774d7391fb4bbf83addf61285c1f0dc58f83098fefe1a5c0413979d3da21eea"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P300",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.966308830771595,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_P300_gptq4.json",
+        "sha256": "bd8848ee0979b4dfdc71fbe979c7166d113053675aff6d5f5da94667deaa47b3"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P300",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.225553133990616,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_P300_gptq3-cal1.json",
+        "sha256": "e1628fab19e403093e4d67dd6d0c03da1dca98119526794800cd761a1201d09d"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P300",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.298551528248936,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_P300_gptq3.json",
+        "sha256": "1ec86836b9ea8102ba3d4d217728a39fa576f0e623a9214d5f100b2e6b3ff622"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P300",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.689529162831604,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_P300_gptq4.json",
+        "sha256": "a5223e2b1548b46834fc7883572a67e5d0329106965bc6470a4e9ccb109a315d"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S188",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.22506053419784,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_S188_gptq3-cal1.json",
+        "sha256": "8c2efbc6a1b7916a348dc258d886ef76fb24ddbf6f2f06f0c98df8fda58c40a2"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S188",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.26567346090451,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_S188_gptq3.json",
+        "sha256": "ed3cf9e94d7c0f328f0680237394b2bd520e43da671c4ce196c60fcba3d7a6a2"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S188",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.52038106415421,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_S188_gptq4.json",
+        "sha256": "f0bcd2bed1db444762f53217fe1629ae73119cf2b5588e042b7ab340c007210b"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S72",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 32.98612388595939,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_S72_gptq3-cal1.json",
+        "sha256": "f24cc176ab44354ee6b6251fe4e8a98265d0c188869ffbbe9ddefb7eab81f260"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S72",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 34.009813636075705,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_S72_gptq3.json",
+        "sha256": "c208af2bf490ad6979fe2f2f6accf6e256689d13f3f3b62122b007cb9c0d75f8"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S72",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 62.081205383874476,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/fwe_S72_gptq4.json",
+        "sha256": "6ac6fcca6421c60acfe7c8ae4566e07920fd47f8c7cd0ea7787ed51efc0ebbcf"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S188",
+      "compression": "gptq3-cal1",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.20523593388498,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_S188_gptq3-cal1.json",
+        "sha256": "7d3b0fe3fd41e6ee2ec1e4fd3054e7d75cd0bf9a4c6aadf44907bba9a54b00b2"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S188",
+      "compression": "gptq3",
+      "bits": 3,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 33.88478294806555,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_S188_gptq3.json",
+        "sha256": "afc52597172b78e5408b75e4ec5863fb2526859517d436725f97dcd2581245bc"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S188",
+      "compression": "gptq4",
+      "bits": 4,
+      "method": "GPTQ grids not stored: uniform grid feasibility within BF16 rounding intervals",
+      "historical_grid_recovered": false,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 61.284311971627176,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a01/dclm_S188_gptq4.json",
+        "sha256": "8c9ad4211928997f35bf53a9035b409fb5e4fb826813f48d9b37c8e4999f324c"
+      },
+      "audit_attempt": "attempt01"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P300",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.28482986986637,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_P300_rtn3.json",
+        "sha256": "4c7e138eb53746a213d9f74b53fd111de423951fde4a3a7d604b2a7ecf2919ed"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P300",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.11515755672008,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_P300_rtn4.json",
+        "sha256": "375b4dca5bc7e913fa6ca6cb95e1389fb6b770b7a6e31b04b999c125d38faa01"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S188",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.201287598814815,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_S188_rtn3.json",
+        "sha256": "a27e0cd81f9acecd56e275cfb74e912800ae1d3e2f45522e397b1bd34b193681"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S188",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.12258462514728,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_S188_rtn4.json",
+        "sha256": "fc24b7157c803d238043f1b0f79fd2ed93eae3945d1efba97b75901b95d48ead"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P300",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.90633802488446,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_P300_rtn3.json",
+        "sha256": "ecd2fe01ad9123e190e386d12b71b15980da2f0b4506b31e76477fe7ec685471"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P300",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.472012436017394,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_P300_rtn4.json",
+        "sha256": "05951013775ebb642aa0e6608f2c468968ca9e7f4c2e8c3b1fa7c8d4bddabfc5"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S72",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 38.51691942475736,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_S72_rtn3.json",
+        "sha256": "fc9d1ed68d8c3bc995dd869c71e957f8e6f1af4447388b8e330c80343e5510d3"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S72",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 39.97767828498036,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_S72_rtn4.json",
+        "sha256": "3ec95b686aa0720cd46ea8500c9da41f3f842b813af580a7ee6c5c5886f384a0"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 38.15042980015278,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_P1T_rtn3.json",
+        "sha256": "41031b1f34c2b2911e9c4758b002522a6cad86d6a577c433ec5606e9c69b6c63"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "P1T",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.6234528189525,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_P1T_rtn4.json",
+        "sha256": "f605b4e66ccdc6a3ce25153125fc391bce069a3dd845e6b5b7f4e6cf26db480d"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S72",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.781278036069125,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_S72_rtn3.json",
+        "sha256": "edb695314bac4e29da80efe1eca71dd8d9c9a293499bf19885ca7d0220939614"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S72",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.775321651715785,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_S72_rtn4.json",
+        "sha256": "6c6c67a3fa6d8cdd880d054e1373d106732497fa0cb94229394ed7c86dfbc31d"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S188",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.9016742547974,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_S188_rtn3.json",
+        "sha256": "3a68d5032d20948cf44278ef72f5c84d77e27d3756584f2bc496508187925129"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "dclm",
+      "parent": "S188",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.60397700406611,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/dclm_S188_rtn4.json",
+        "sha256": "61fe2867c54e718207fc8924cf7dd3db5cbb3c8b596bb54d07dec757d2e7e3cb"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P1T",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.99866564106196,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_P1T_rtn3.json",
+        "sha256": "4cf7142799abb97fa8d35e6995a33172b511e2570a587ceea3b52d5642f78492"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "P1T",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.73677014000714,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_P1T_rtn4.json",
+        "sha256": "d1343c941e2cafa3cae27cd4a91acea7cd803efe145b8643f71c3c0c321150fb"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S72",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 37.915396272204816,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_S72_rtn3.json",
+        "sha256": "b40bb9d65cc21a4d45eaf16109472c336fd504496248b7854a78f16733cde952"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "S72",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.81654875492677,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_S72_rtn4.json",
+        "sha256": "4585d853e8659279ccc16c37d3c5033cab9e51c4f13e374de06ccc243eba833f"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 38.07069514878094,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_P1T_rtn3.json",
+        "sha256": "b2c5dea5d492ed7c849183130ab17737c0a4367904dc5da23fd3aa18b742d528"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P1T",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 40.93292394280434,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_P1T_rtn4.json",
+        "sha256": "3db065b16934fed374f47a0f589ff5ad4fb31eb2b8cacfd91b97dcacbdd7db0d"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P300",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 38.18659669207409,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_P300_rtn3.json",
+        "sha256": "5468c5b87c26b5b4f708c3d8e19e0f9da25f4eb3e171029feb0f06ce492421eb"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "fwe",
+      "parent": "P300",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 41.23988297814503,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/fwe_P300_rtn4.json",
+        "sha256": "e1f8becd3efa8e480b71034443c4cfc9420571f19509be9c01866e3effff3f54"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S188",
+      "compression": "rtn3",
+      "bits": 3,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 38.41215744800866,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_S188_rtn3.json",
+        "sha256": "f2e26648b9c62ccdbd47018e55372497898522c5fb3acaa52b3280ddb28d750b"
+      },
+      "audit_attempt": "attempt02"
+    },
+    {
+      "test": "QT3_revised",
+      "dataset": "nem",
+      "parent": "S188",
+      "compression": "rtn4",
+      "bits": 4,
+      "method": "RTN parent grid: original codes == codes recovered from saved BF16 weights; exact saved values",
+      "historical_grid_recovered": true,
+      "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+      "matrix_count": 168,
+      "group_count": 12582912,
+      "passed": true,
+      "elapsed_seconds": 41.78528409311548,
+      "receipt": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/qt3_revision_20261031_a02/nem_S188_rtn4.json",
+        "sha256": "5b99bbacedde8339f222e00af618aa3c18f2eaf9d66cce046002c59e954e8e65"
+      },
+      "audit_attempt": "attempt02"
+    }
+  ],
+  "errors": [],
+  "expected_models": 56,
+  "actual_models": 56,
+  "matrices": 9408,
+  "groups": 704643072,
+  "all_passed": true,
+  "elapsed_audit_seconds": 320.5242089009844,
+  "selection": "GPTQ attempt01 + RTN attempt02; original attempt01 RTN CPU-emulation flags retained separately"
+}

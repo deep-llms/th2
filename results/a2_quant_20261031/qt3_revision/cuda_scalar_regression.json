@@ -1,0 +1,12 @@
+{
+  "3": {
+    "old_cpu_arithmetic_false_flags": 12,
+    "corrected_grid_all_passed": true,
+    "groups": 200
+  },
+  "4": {
+    "old_cpu_arithmetic_false_flags": 9,
+    "corrected_grid_all_passed": true,
+    "groups": 200
+  }
+}

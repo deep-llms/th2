@@ -1,8 +1,26 @@
 # A2 QUANT — kết quả và kiểm chứng hoàn tất
 
+## Cập nhật QT3/QT6 theo yêu cầu user — 31/10/2026 14:59:01 SGT
+
+**Audit QT3 sửa đổi: 9408/9408 matrix đạt, trên 704,643,072 group thuộc 56 bộ trọng số đã lưu.** Số file NLL còn `unverified` theo kiểm tra hiện hành: **0/160**. Không chạy quantization mới; mọi trọng số, NLL, scores, CI và nhãn giữ nguyên.
+
+| Kiểm tra | Kết quả gốc | Trạng thái hiện tại |
+|---|---|---|
+| QT3 refit grid trên ŵ | FAIL, giữ nguyên 9.578 bản ghi | Test gốc được thay thế theo chỉ đạo user; không đổi lịch sử thành PASS |
+| QT3 sửa đổi, RTN | Chưa phải tiêu chí gốc | Tính lại grid từ parent BF16; ≤2^b giá trị/group; mã khôi phục từ ŵ khớp mã từ parent và giá trị BF16 đã lưu khớp chính xác |
+| QT3 sửa đổi, GPTQ | Grid không được lưu riêng | ≤2^b giá trị/group; tìm được một uniform grid nằm trong các khoảng làm tròn BF16. Đây là fallback được user cho phép, không tuyên bố khôi phục được grid/codes gốc |
+| QT6 | FAIL do document train25978874 ở ranh giới cal0/cal1 | **Minor deviation được user chấp nhận**, không rerun; không trùng tuning/final |
+| QT4 / QT5 | PASS | Giữ nguyên |
+
+Audit chỉ dùng CPU và đọc artifact đã lưu. Lượt đầu dựng scale RTN bằng phép chia CPU trực tiếp, khác cách CUDA nhân nghịch đảo FP32 khi chia tensor cho hằng số; các flag của lượt audit đó được giữ trong attempt01. Đã sửa phép tính cho đúng mã gốc và kiểm tra lại riêng RTN trong attempt02, không đổi tiêu chí hay trọng số. Nguồn phép tính: [PyTorch BinaryDivTrueKernel.cu](https://github.com/pytorch/pytorch/blob/main/aten/src/ATen/native/cuda/BinaryDivTrueKernel.cu). Với GPTQ, phép thử tìm assignment mã và khoảng scale/offset khả thi cho mọi giá trị phân biệt, dùng các midpoint BF16 lân cận và allowance một ulp tương đối FP32 cho phép nhân gốc. Với RTN, kiểm tra dùng đúng công thức min/max và zero-point đã làm tròn của mã chạy gốc; không refit trên ŵ.
+
+[Audit tổng hợp](qt3_revision/summary.json), [trạng thái hiện tại của 160 file NLL](validation_revision.json), [decision cập nhật](decision_quant.json), [bản báo cáo trước sửa đổi](qt3_revision/before_revision/REPORT.md). Các file gốc trong artifacts giữ nguyên SHA và cờ lịch sử; validation_revision.json là lớp trạng thái hiện hành thay thế cờ cũ ở những phần audit đạt. Cờ sensitivity `calibration_flag` của DCLM GPTQ3 L_stab vẫn giữ nguyên vì là kết quả cal0–cal1, không phải QT6.
+
+---
+
 Cập nhật **31/10/2026 13:53:59 SGT**. Đã tải đủ toàn bộ kết quả cần cho báo cáo về máy phát triển và kiểm chứng độc lập. Job B200 kết thúc **31/10/2026 08:33:05 SGT**, exit 0; native supervisor bàn giao burn lúc **08:34:16 SGT**. Không còn công việc thực thi, tải kết quả hoặc xác minh nào đang chờ trong kế hoạch đã đăng ký.
 
-**Hoàn tất thực thi và kiểm chứng số liệu không có nghĩa mọi tiêu chí khoa học đều PASS.** QT3 refit-grid idempotence vẫn FAIL; QT6 vẫn FAIL do cal0/cal1 chung document `train25978874`, không trùng tuning/final. Kết quả chịu ảnh hưởng tiếp tục mang cờ **unverified**. Không đổi prefix calibration, không chạy thêm healing/T17 hoặc che giấu cờ lỗi.
+Trạng thái kiểm chứng đã được cập nhật theo QT3 sửa đổi và việc user chấp nhận QT6 bên trên. Các kết quả QT3/QT6 cũ được giữ như lịch sử; không đổi trọng số, prefix calibration hoặc số liệu NLL/downstream.
 
 | Phần việc | Kết quả xác minh trên máy phát triển |
 |---|---|
@@ -12,7 +30,7 @@ Cập nhật **31/10/2026 13:53:59 SGT**. Đã tải đủ toàn bộ kết qu�
 | Replay | 16 primary + 16 independent replay khôi phục đúng từng byte/SHA; nội dung và kết quả tương ứng khớp nhau |
 | Paired downstream | Tính lại từ cả primary và independent replay, khớp chính xác cho DCLM và FWE |
 | Source / handoff | 144 file đúng frozen source; guard đã nhả; 8 burn workers đúng ownership và log tiến triển |
-| Cờ khoa học | 9.578 QT3 + 32 QT6_inherited trong worker/coordinator; QT6 preparation FAIL được ghi riêng |
+| Cờ khoa học gốc (lịch sử) | 9.578 QT3 + 32 QT6_inherited trong worker/coordinator; QT6 preparation FAIL được ghi riêng |
 
 Các file đối chiếu: [NLL/CI](final_nll_verification.json), [khôi phục replay](replay_restore_verification.json), [downstream](final_downstream_verification.json), [native handoff](final_terminal_verification.json), [decision](decision_quant.json), [paired downstream](downstream_paired.json).
 
@@ -22,7 +40,7 @@ Thu hồi qua các đợt nhỏ, tối đa 5 file mỗi đợt. Replay dùng gó
 
 Ledger coordinator **2.4794835866 node-hours**; khoảng supervisor từ 06:04:17 đến 08:34:16 là **2.4997433925 giờ**, gồm handoff. Thời gian chờ/tải Dropbox sau khi job kết thúc không được tính thành thời gian chạy quant. Ước lượng 2 giờ là report-only.
 
-Các nhãn trong bảng dưới đây là kết quả áp dụng quy tắc đã đăng ký vào số liệu, luôn đọc cùng cờ QT3/QT6 ở trên. Giới hạn còn lại là giới hạn khoa học đã báo cáo, không phải yêu cầu chờ phê duyệt hoặc công việc GPU chưa làm.
+Các nhãn trong bảng dưới đây giữ nguyên. Cờ nhạy calibration dựa trên chênh lệch cal0–cal1 cũng giữ nguyên; nó khác với deviation overlap QT6 được chấp nhận.
 
 ---
 
@@ -30,7 +48,7 @@ Các nhãn trong bảng dưới đây là kết quả áp dụng quy tắc đã 
 
 Spec SHA256: `a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da`. Frozen source: `422bb7f118fd875ea2d9392e5da0cefbfbfb8d30`.
 
-Trạng thái thực thi: {"spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da", "execution_complete": true, "registered_models": 80, "nll_files": 160, "downstream_models": 16, "elapsed_seconds": 8926.140910940245, "node_hours": 2.4794835865861065, "coverage_complete": true, "flagged_checks": 9610, "calibration_disjointness_passed": false, "decision": {"path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/decision_quant.json", "sha256": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb"}, "tests": {"path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/tests.json", "sha256": "244a0ccd663294b30339d568f8eedbc25a4cf0f56d7284f7a4fe5b8bcc2ed39f"}}.
+Trạng thái thực thi (receipt gốc): {"spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da", "execution_complete": true, "registered_models": 80, "nll_files": 160, "downstream_models": 16, "elapsed_seconds": 8926.140910940245, "node_hours": 2.4794835865861065, "coverage_complete": true, "flagged_checks": 9610, "calibration_disjointness_passed": false, "decision": {"path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/decision_quant.json", "sha256": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb"}, "tests": {"path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/tests.json", "sha256": "244a0ccd663294b30339d568f8eedbc25a4cf0f56d7284f7a4fe5b8bcc2ed39f"}}.
 
 Final CulturaX là decision set; own-corpus chỉ diagnostic. Trọng số dequantized được làm tròn BF16, giữ trong tensor FP32; forward BF16 autocast và CE FP32. Mọi NLL/CI xuất phát từ file per-sequence, batch validation 1, downstream batch 2. Không healing, không thêm architecture/LR/exposure test.
 
@@ -155,7 +173,7 @@ T=max(0.003,0.10D(R)); t=max(0.003,0.03D(R)). Thứ tự: more damage, less dama
 
 QT6 calibration disjointness: False. Overlaps: `{"cal0:cal1": {"ids": [["train", 25978874]], "content_hashes": ["cd0f63b818a2b11ebc4783a1dfd49700266833e76b0b0538b4dd2639edb40d7c"]}, "cal0:tuning": {"ids": [], "content_hashes": []}, "cal0:final": {"ids": [], "content_hashes": []}, "cal1:tuning": {"ids": [], "content_hashes": []}, "cal1:final": {"ids": [], "content_hashes": []}}`.
 
-Nếu hai prefix calibration chạm cùng document ở ranh giới đóng gói, giữ đúng first128/next128 theo spec, ghi QT6 FAIL và đánh dấu mọi kết quả phụ thuộc calibration là unverified. Không thay prefix âm thầm.
+QT6 gốc ghi FAIL vì một document ở ranh giới cal0/cal1. User đã chấp nhận đây là minor deviation, không rerun và không còn gắn unverified chỉ vì QT6. Giữ nguyên first128/next128 và bằng chứng không overlap tuning/final.
 
 | Check | PASS | FLAG |
 |---|---:|---:|
@@ -163,7 +181,8 @@ Nếu hai prefix calibration chạm cùng document ở ranh giới đóng gói, 
 | GPTQ_matrix | 5544 | 0 |
 | QT1 | 12 | 0 |
 | QT2 | 6 | 0 |
-| QT3 | 0 | 9578 |
+| QT3 gốc — refit-grid, lịch sử | 0 | 9578 |
+| QT3 sửa đổi — matrix trên trọng số đã lưu | 9408 | 0 |
 | QT4 | 3 | 0 |
 | QT5 | 1 | 0 |
 | QT6 | 0 | 1 |
@@ -543,5 +562,5 @@ Parent/calibration/native implementation: manifests/. Per-sequence NLL: workers/
 
 Ước lượng preregistration: khoảng 2 node-hours; đây không phải deadline. Ledger đo được trong complete.json chỉ bao gồm coordinator; thời gian chuẩn bị/handoff bổ sung từ supervisor receipt khi xác minh terminal.
 
-Coverage complete: True. Coverage đầy đủ không biến diagnostic FAIL thành PASS. Các flag/unverified vẫn được giữ.
+Coverage complete: True. Coverage đầy đủ; QT3 gốc giữ nguyên trong lịch sử, QT3 sửa đổi quyết định trạng thái hiện tại, QT6 là minor deviation được chấp nhận. Xem validation_revision.json cho từng run.
 

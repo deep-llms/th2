@@ -1,0 +1,12 @@
+{
+  "uniform_bf16_bits3": true,
+  "nonuniform_rejected_bits3": true,
+  "rtn_samecodes_and_corruption_bits3": true,
+  "uniform_bf16_bits4": true,
+  "nonuniform_rejected_bits4": true,
+  "rtn_samecodes_and_corruption_bits4": true,
+  "constant_groups": true,
+  "cardinality_rejected": true,
+  "large_uniform_groups": 32768,
+  "seconds_4M_values": 0.24132075160741806
+}

@@ -271,4 +271,9 @@ Decision máy đọc: [decision_stage1_fwe.json](decision_stage1_fwe.json). Khô
 
 ## A2 QUANT — đợt 31/10/2026
 
-Hoàn tất thực thi, tải và kiểm chứng lúc 31/10/2026 13:53:59 SGT. Báo cáo riêng của đợt quant: [A2 QUANT](../results/a2_quant_20261031/REPORT.md), gồm đủ 80 cấu hình, 160 NLL, 16 downstream, 32 replay, paired CI và native handoff. QT3/QT6 FAIL được giữ nguyên; kết quả chịu ảnh hưởng là unverified. Không còn việc thực thi đã đăng ký đang chờ.
+Hoàn tất thực thi, tải và kiểm chứng lúc 31/10/2026 13:53:59 SGT. Báo cáo riêng của đợt quant: [A2 QUANT](../results/a2_quant_20261031/REPORT.md), gồm đủ 80 cấu hình, 160 NLL, 16 downstream, 32 replay, paired CI và native handoff. QT3 gốc được giữ trong lịch sử; follow-up bên dưới cập nhật QT3 sửa đổi và chấp nhận deviation QT6. Không còn việc thực thi đã đăng ký đang chờ.
+
+
+### A2 Q — QT3/QT6 follow-up
+
+31/10/2026 14:59:01 SGT: QT3 sửa đổi kiểm tra trọng số đã lưu: 9408/9408 matrix đạt; 0/160 NLL còn unverified. QT3 gốc giữ nguyên; QT6 được chấp nhận là minor deviation. Không quantization/rerun, số liệu và CI không đổi. [Báo cáo cập nhật](../results/a2_quant_20261031/REPORT.md).

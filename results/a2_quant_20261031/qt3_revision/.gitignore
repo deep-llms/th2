@@ -1,0 +1,7 @@
+# Detailed immutable CPU audit receipts remain available locally and on the B200.
+/attempt01/
+/attempt02/
+/before_revision/
+/dclm_*.json
+/fwe_*.json
+/nem_*.json

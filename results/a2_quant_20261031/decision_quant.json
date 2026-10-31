@@ -2017,8 +2017,274 @@
   "uncertainty": "final-set sequences, not training or calibration seeds",
   "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
   "calibration_disjointness_passed": false,
-  "calibration_dependent_results_unverified": true,
+  "calibration_dependent_results_unverified": false,
   "verification": {
+    "dclm/P1T/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P300/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S188/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S72/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P1T/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P300/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S188/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S72/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/P1T/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/P300/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/S188/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/S72/baseline": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P1T/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P300/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S188/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S72/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P1T/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P300/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S188/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S72/cal1": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P1T/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P300/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S188/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S72/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P1T/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P300/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S188/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S72/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/P1T/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/P300/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/S188/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/S72/gptq": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P1T/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/P300/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S188/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "dclm/S72/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P1T/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/P300/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S188/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "fwe/S72/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/P1T/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/P300/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/S188/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    },
+    "nem/S72/rtn": {
+      "passed": true,
+      "failed_checks": [],
+      "original_failed_checks_retained_in": "verification_original",
+      "qt6_accepted_minor_deviation": true
+    }
+  },
+  "verification_original": {
     "dclm/P1T/baseline": {
       "passed": true,
       "failed_checks": []
@@ -11838,5 +12104,12 @@
         "QT3"
       ]
     }
-  }
+  },
+  "calibration_deviation_accepted": true,
+  "validation_revision": {
+    "path": "validation_revision.json",
+    "sha256": "aacf0f788cb90a989ac263e7d777617521c9a1d43f6bb2deb957fb85f264f278"
+  },
+  "qt3_revised_all_passed": true,
+  "unverified_runs": []
 }

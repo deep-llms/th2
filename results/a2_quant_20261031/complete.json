@@ -16,5 +16,15 @@
   "tests": {
     "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/tests.json",
     "sha256": "244a0ccd663294b30339d568f8eedbc25a4cf0f56d7284f7a4fe5b8bcc2ed39f"
+  },
+  "posthoc_validation_revision": {
+    "path": "validation_revision.json",
+    "sha256": "aacf0f788cb90a989ac263e7d777617521c9a1d43f6bb2deb957fb85f264f278"
+  },
+  "current_unverified_runs": 0,
+  "qt6_deviation_accepted": true,
+  "revised_decision": {
+    "path": "decision_quant.json",
+    "sha256": "e9edec8394f66dbaef723782614f9085d732b7eaaed5e6a0eae5b3df390aafd7"
   }
 }

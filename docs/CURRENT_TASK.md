@@ -1,3 +1,7 @@
+31/10/2026 14:59:01 SGT: User QT3/QT6 follow-up COMPLETE, no new quantization. Saved-weight CPU audit 9408/9408 matrices PASS / 704643072 groups / 56models; 0/160 NLL remain unverified under revised rule. OriginalQT3 retained; QT6 accepted minor deviation/no rerun. Numerics/labels/CIs unchanged, calibration sensitivity flag retained. Canonical results/a2_quant_20261031/REPORT.md, validation_revision.json, qt3_revision/summary.json. No watcher/GPU changes; commands#0.
+
+2026-10-31T06:57:41.571500+00:00: CorrectedRTN receiptpackage1d79a3583899f98113f1c6729632c5dd6f7cae4b SUBMITTED, awaitingreceipt. Audit92a53b4 startupACK only; no furtherremote writes until packageACK. GPTQ32revisedPASS verified in attempt01; RTN24pendingcorrectedCPUsamegridresults. KeeporiginalQT3, QT6accepted. NoGPU/newquantization/watcher.
+
 2026-10-31T06:54:31.153857+00:00: CorrectedRTN92a53b4 ACK CPU24models startup; planSHAae069392dab89eb637b813cfabc8e1cc6cedd32c458fb8da687bc5b9c262638c/codeSHA59d99d76277a20605b064328260c2fba65eff43179104863b2d3e243c4faa8fe. Retrieve completedreceiptbundle via unique readonlypackagea02; no repeat audit/quantization.
 
 2026-10-31T06:53:21.138780+00:00: Corrected CPU RTNaudit92a53b4c7fb2fce5f1290e87dd366a8257a08ad0 SUBMITTED/remoteheadverified, pendingreceipt. Only24savedRTN outputs; noquantization/GPU. Localregression reproduces falseflags from CPUdirectdivision (12/200groups3bit,9/2004bit) and correctedCUDA scalarreciprocal arithmetic passesboth. GPTQ32 priorauditPASS retained. Retrieve receipt before furtherremote writes.

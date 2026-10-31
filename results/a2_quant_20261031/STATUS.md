@@ -1,7 +1,5 @@
-# A2 QUANT — hoàn tất
+# A2 QUANT — follow-up QT3/QT6 hoàn tất
 
-Cập nhật 31/10/2026 13:53:59 SGT. Đủ 80 cấu hình/160 NLL, 16 scores và 32 replay đã tải về máy này; NLL và paired CI tính lại khớp, native handoff xác minh. Job đã kết thúc 08:33:05 SGT, burn handoff 08:34:16 SGT.
+Cập nhật 31/10/2026 14:59:01 SGT. Đã kiểm tra 9408 matrix / 704,643,072 group từ 56 bộ trọng số, không quantization mới. QT3 sửa đổi: 9408 PASS / 0 FAIL. Số NLL còn unverified: 0/160. QT6 được user chấp nhận là minor deviation. QT3 gốc vẫn lưu nguyên; số liệu và CI không đổi.
 
-Báo cáo đầy đủ: [REPORT.md](REPORT.md). Bằng chứng: [NLL](final_nll_verification.json), [downstream](final_downstream_verification.json), [replay](replay_restore_verification.json), [handoff](final_terminal_verification.json).
-
-Các cập nhật UNKNOWN/chưa nhận file trước đây được giữ trong [lịch sử](STATUS_history.md), đã được thay thế bằng bằng chứng mới. Không còn công việc đã đăng ký đang chờ. QT3/QT6 FAIL và trạng thái unverified của kết quả chịu ảnh hưởng vẫn giữ nguyên; không có câu hỏi protocol chờ trả lời.
+[Báo cáo](REPORT.md) · [Audit](qt3_revision/summary.json) · [Trạng thái từng run](validation_revision.json).
