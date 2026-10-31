@@ -1,0 +1,645 @@
+{
+  "spec_sha256": "dd24ef489e2fb3cb4f6e16fd7db0df4b412e96679786315cf44bb3229c88fd0b",
+  "repo": "HuggingFaceTB/SmolLM3-3B-checkpoints",
+  "checkpoints": [
+    {
+      "revision": "stage1-step-40000",
+      "commit": "524d818535ee98e56a4f0d621c84dd5c8fb8d3d4",
+      "step": 40000,
+      "tokens": 94371840000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-40000_524d8185",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "c87ec961675c5220149448271eac2cd5e958c131f30c34f31abc9d3d4dcff751",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "33c67067b0c21c1f79774df14a2c27ea6c7f556621e91cb6144e4b8f2e4ba192",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/524d818535ee98e56a4f0d621c84dd5c8fb8d3d4/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-80000",
+      "commit": "44e49b7581d34859f3988e252f03c0e6190fd871",
+      "step": 80000,
+      "tokens": 188743680000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-80000_44e49b75",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "ec39b5dc5c521bf0535e8a79f7db794c5260c2e2297c9628dd52a8a213761ac6",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "4bbc05b5a6a41da752c707a2970c4683b7ab1d32a0786f1d291a2e454bf9e5c3",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/44e49b7581d34859f3988e252f03c0e6190fd871/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-120000",
+      "commit": "a413fa599817fa464a9dc279f6573eb869894e1e",
+      "step": 120000,
+      "tokens": 283115520000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-120000_a413fa59",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "de7ab220bcf27ee77073b60081b8d256b8030542651b2c123512adba5e6cc113",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "444da795066368784a7eefe2738554a2c944d41453566b335ac75f9a51c62934",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/a413fa599817fa464a9dc279f6573eb869894e1e/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-160000",
+      "commit": "f3dd3eba907e8b116578fd946b28340ffa870d11",
+      "step": 160000,
+      "tokens": 377487360000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-160000_f3dd3eba",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "fd412e71371a6e13bd153702959c4b82d2f2dccfc66a0cac75286c65bfb9992f",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "0f48d01d0382501b8d75de242c9afc8124f0a6e911b085d2035edadf436bbf60",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/f3dd3eba907e8b116578fd946b28340ffa870d11/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-320000",
+      "commit": "dc2de214427512c4bbc6b9414acd50e2cee6d7fc",
+      "step": 320000,
+      "tokens": 754974720000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-320000_dc2de214",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "d78aa2724aa2815202394c6e2ab2446278abd5d922a3cdc7c1ca46f407e51ca4",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "e087f96995613ea7786b0ea22403fbb6089af139f50cb0335c1cb66fa69661dc",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/dc2de214427512c4bbc6b9414acd50e2cee6d7fc/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-640000",
+      "commit": "16612752258e67ddb761ca2917ee932cb03f2806",
+      "step": 640000,
+      "tokens": 1509949440000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-640000_16612752",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "44a11a5bf4393f69644cba69afefc3317339464f3809439f4552a72334cf6cd5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "a87bc54d51bc9c80e7510899377f95e23d696970a78afb67a946f55bde3d31b7",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/16612752258e67ddb761ca2917ee932cb03f2806/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-1280000",
+      "commit": "1be632d4b5f5e4805f4301b253c01fb897d458ea",
+      "step": 1280000,
+      "tokens": 3019898880000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-1280000_1be632d4",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "569e1b4118c864c9bdf921818e395999f5bf970f3f5b611305bda1126d8247f3",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "5f26b9d0e4dd3e478242f74f69ffd05617f938b6aac7555e641ab88b6d90fa98",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/1be632d4b5f5e4805f4301b253c01fb897d458ea/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-2560000",
+      "commit": "6ef73a94518ebb94d17dada63f7c21bf760e238f",
+      "step": 2560000,
+      "tokens": 6039797760000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-2560000_6ef73a94",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "2c43f3570f51acc8948b8cbaa9adbf139ea877795a51a14a1fab529408f78b60",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "2ebf68b15d9c1aaea4a09a60d0e0bded6cee1b408ad4cd912ecce0d6407acea7",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage1-step-3440000",
+      "commit": "d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4",
+      "step": 3440000,
+      "tokens": 8115978240000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage1-step-3440000_d07a5a83",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "76f0129ad93ff4e21fc8958ee49be17c6467feff947d84c09e4a47e850119a94",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "5004145ce6b9dd455eeea80f025bdf2438d06e95ec1270ef64da38d057f1949a",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/d07a5a83dd011f3f084e9d2f1b47f51e524ca8d4/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage2-step-4200000",
+      "commit": "eebe6fccea5aa05cf48b0e630d10eeee97f92fc5",
+      "step": 4200000,
+      "tokens": 9909043200000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage2-step-4200000_eebe6fcc",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "68402b171829e8dd85459a71d88f06ed1b6eb2e1a7a1ddb35d2461613181d0cc",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "e4605c57214fb98ec64e8b5ab93c0f62345be7fca07cc76cf55a47271a7237ac",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/eebe6fccea5aa05cf48b0e630d10eeee97f92fc5/tokenizer_config.json"
+        }
+      ]
+    },
+    {
+      "revision": "stage3-step-4720000",
+      "commit": "20e7817e636d6b1f63cffbee0f384721b1f4bb67",
+      "step": 4720000,
+      "tokens": 11135877120000,
+      "path": "/mnt/local/_models/deep-llms_th2/a2_breadth/stage3-step-4720000_20e7817e",
+      "format": "native HF safetensors; no conversion",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "df65cd6b882051bdc4657d7c80ebb6131289e1291b4da74e89f730f6d252f556",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "3a20cf7a3a64f41dbded108275cb8e8ab053ef70e716d6c22f8b709298707560",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/20e7817e636d6b1f63cffbee0f384721b1f4bb67/tokenizer_config.json"
+        }
+      ]
+    }
+  ],
+  "total_bytes": 67842755970
+}

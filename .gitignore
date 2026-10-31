@@ -42,3 +42,6 @@ project.local.json
 # Full A2 M tables are archived locally/on the runner; keep the code sync small.
 /results/a2_mech_20261031/*.json
 /results/a2_mech_20261031/config/
+
+# Original retained locally; lossless tracked .gz and historical blob preserve bytes.
+/docs/results/a2_branches_20261028/final_check/sets.json
