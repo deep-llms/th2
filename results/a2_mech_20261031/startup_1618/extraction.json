@@ -1,0 +1,248 @@
+{
+  "raw_log": "temp/a2_mech_health01.log",
+  "raw_sha256": "b0b3c84ea4fea38cd307721f20b4c4850dfb779de087ae3fd24d21e6b66fb77a",
+  "artifacts": {
+    "source-manifest.json": "d36d209e5afbcd0a820989124569743402a06473db304f4c4107684641633649",
+    "jobs.json": "cca34b0701440fdf32667aa8c66a4d25cd7d803a2cc0315a0da0448c8684079d",
+    "budget.json": "ff48924cea203d45f75319f72c3f47219a5765dba36f463204461c38f9014c1e",
+    "admission.json": "adfa427bd3a74b87b2d3f8cb75d470b58c63a97e83d3c3b286865e7893a93c8e",
+    "accelerate-env.log": "675e3169bf50fb37dc0d02ef5451034088bfdeeb043265e9351eec75adfcfdbd",
+    "supervised/supervisor.json": "5c078be91e48fa910767162b497ff26ed8e681b03a43e34b91b482d864186a4b",
+    "supervised/reclaim.json": "32de56deb67bbb6705f5187770db4c79339587e6330045beabb1096a59f50d79",
+    "supervised/gpus-free-before-training.json": "627d5d8c8c53c8c1becc5c6ec2bb1df494cf23fac772698bcc32902a084d25ad",
+    "supervised/run/run.json": "8fc767f971528c2b813d9fe421e3ed6cc6c6014a850b59d17a36023f7aee49d4",
+    "results/a2_mech_20261031/config/plan.json": "adf49b8bfeb0011d5f647bec4d86f0327ba3b0baccf3323b015981715d7fac08",
+    "results/a2_mech_20261031/preparation_checks.json": "059f459d8e3f12dee065d46f1f6c68c12cc36f27cead329b8725e184e2963480",
+    "results/a2_mech_20261031/progress.json": "2ebe63cd00aae71fefacc6427148a66d6139d67360bad887b7cb16e5a6f1f0bf"
+  },
+  "logs": {
+    "supervisor.log": "AUTHORIZED_BURN_WORKER_STOP [740109, 740110, 740111, 740112, 740113, 740114, 740115, 740116]\nALL_EIGHT_GPUS_VERIFIED_FREE\nSTART a2-mech\n",
+    "supervised/run/a2-mech.log": "",
+    "results/a2_mech_20261031/logs/layers/fwe-P300.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/fwe-S72.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/fwe-P1T.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/dclm-P1T.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/fwe-S188.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/dclm-P300.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/dclm-S72.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n",
+    "results/a2_mech_20261031/logs/layers/dclm-S188.log": "\u2699\ufe0f  Running in WANDB offline mode\n`torch_dtype` is deprecated! Use `dtype` instead!\n"
+  },
+  "health_at": "2026-10-31T08:18:08.762420+00:00",
+  "live": {
+    "host": "thiennh-p6-6y3o-worker-0",
+    "time": "2026-10-31T08:18:09.004310+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-90eef51a-3614-2801-475c-b7b7b592397c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 73.0,
+        "pids": [
+          744529
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-ea18f950-5cac-ebed-f461-c4c1bd22b87c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 71.0,
+        "pids": [
+          744528
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-89eebd73-de66-5b77-7973-97f42ff2a6f1",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 78.0,
+        "pids": [
+          744531
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-a2c6ea49-76b9-a938-0361-df6f3eb94b9e",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 76.0,
+        "pids": [
+          744537
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-b755571d-58df-0910-0013-12fc8f77beeb",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 76.0,
+        "pids": [
+          744535
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-8ebac13f-9a32-ea17-3f1b-d5f333e326b2",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 72.0,
+        "pids": [
+          744538
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-861fe2fa-6e3e-e90e-7dc1-35d459dd9ac6",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 72.0,
+        "pids": [
+          744539
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-7b9b15fb-03bd-21e7-bdc7-44711e56d328",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 7902.0,
+        "utilization_percent": 76.0,
+        "pids": [
+          744540
+        ]
+      }
+    ],
+    "workers": [
+      744528,
+      744529,
+      744531,
+      744535,
+      744537,
+      744538,
+      744539,
+      744540
+    ],
+    "stop_roots": [],
+    "processes": {
+      "744528": {
+        "pid": 744528,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "2af2b3ff9842ba1b9217c06e2c9702f743e5c155c1feafd2f2395fa8982f250f",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744529": {
+        "pid": 744529,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "293d4312f091f1244057e3c046a98fd05758e3f79b3c480796adfed2a116958d",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744531": {
+        "pid": 744531,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "8b366ca2a904fdddeab8e65e28628ba821fdfc1cf4098d71d7487670487aa060",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744535": {
+        "pid": 744535,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "44dea5b9587d268b24a736c63027ff54fc7e6e6ff7bec1ef4506153c690bb493",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744537": {
+        "pid": 744537,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "b7b0cbb5648e2b35da0228123763d73d44cee662175883cb6054d492bbabbee2",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744538": {
+        "pid": 744538,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "a29e814decaecbc8f79d6d10732cd1f534152e58b78a18a3708b50275494d540",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744539": {
+        "pid": 744539,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "baa86b4e0cb4c79b43bd043f73cff6a6426b6eff51ea8c26b07515864d90aaac",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      },
+      "744540": {
+        "pid": 744540,
+        "ppid": 744522,
+        "start_ticks": 337504982,
+        "command_sha256": "64679d52d24906258991bc3483d911c07e2c4da7429b3e4dab0759a3fd52cdf8",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-u",
+          "-m"
+        ],
+        "launcher_kind": null
+      }
+    },
+    "guard_disabled": true
+  },
+  "guard": "{\"owner_pid\": 744482, \"output\": \"/mnt/local/_outputs/deep-llms_th2/6y3o-a2-mech-20261031-a01/supervised\", \"at\": \"2026-10-31T08:13:37.567967+00:00\"}",
+  "session": "0 744482",
+  "receipt_complete": true,
+  "source_files_verified": 148,
+  "source_commit": "1e865abe929563d4f6525e6b95383cf55bebf282"
+}

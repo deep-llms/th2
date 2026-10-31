@@ -1,0 +1,15 @@
+{
+  "spec_sha256": "82093a3fa9ae6d9428c007e8d26c112d875dae0b84dfe83eee3677cf4c8184d4",
+  "tests": 11,
+  "passed": true,
+  "log_sha256": "16acbfb53c808745dced23194ec77b986fd014b16ff0af16cad6d316eeba55e8",
+  "scope": "CPU coordinator failure continuation; token external replay; full readout; native tiny model; frequency all positions",
+  "source_sha256": {
+    "efficient_llm/a2/mech.py": "15ccab3507514119efe525c41af3dab7edb6ec6525da188a31adb9daded48b2f",
+    "scripts/a2_mech_run.py": "2fe2084712dd2527947fc9b7394f957601fda3e636caf1289482d905847c9a92",
+    "scripts/a2_mech_report.py": "f09d04d791c13375e4161e19931be2e4062155be274720e164796902b4f860af",
+    "scripts/a2_mech_finalize.py": "b5dc05fe3715a67d86a25c15f75480ed5101f456061d1c765ae6654c7303deb8",
+    "scripts/a2_mech_cpu_completion.py": "314c0564245ec4be9e61422acb9ed462c91e394131cbbd0c337701b2ce2f12d2",
+    "tests/a2/test_mech.py": "1f88722dd3e6ae24d834cd9663e534c2d536a338b12ed33ccda7bccf14e9a246"
+  }
+}

@@ -99,4 +99,43 @@ class MechTests(unittest.TestCase):
             self.assertEqual(first,second);self.assertTrue(first['coverage_complete'])
             self.assertEqual(len(first['H_E_readout']),2)
 
+    def test_coordinator_cpu_error_keeps_other_phases_and_report(self):
+        import json
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        import scripts.a2_mech_run as run
+        from scripts.a2_quant_io import write
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);cfg=write(root/'config.json',{'spec_sha256':'0'*64,'results_root':str(root)})
+            def injected(path,value):
+                if Path(path).name=='progress.json' and value.get('phase')=='weights':raise OSError('injected CPU progress write error')
+                return write(path,value)
+            argv=['run','--config',cfg['path'],'--config-sha256',cfg['sha256'],'--receipt',str(root/'receipt.json')]
+            with patch('sys.argv',argv),patch.object(run,'write',side_effect=injected),patch.object(run.subprocess,'run',return_value=SimpleNamespace(returncode=0)),patch('scripts.a2_mech_report.summarize',return_value={'coverage_complete':False,'flags':[]}):
+                run.main()
+            result=json.loads((root/'coordinator.json').read_text())
+            self.assertTrue(any(e['test']=='CPU_weights_phase' and not e['passed'] for e in result['events']))
+            self.assertTrue(any(e['test']=='readout' and e['passed'] for e in result['events']))
+            self.assertTrue(json.loads((root/'receipt.json').read_text())['execution_complete'])
+    def test_cpu_finalize_preserves_failed_coordinator_and_checks_token_replay(self):
+        import json
+        from unittest.mock import patch
+        import scripts.a2_mech_finalize as finish
+        from scripts.a2_quant_io import write,lock
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);base=root/'results/a2_mech_20261031';folder=base/'workers/tokens/dclm/P300';folder.mkdir(parents=True)
+            arr=np.arange(12,dtype=np.float32).reshape(3,4);np.save(folder/'P300.npy',arr)
+            means=arr.astype(float).mean(-1).tolist()
+            write(folder/'P300.json',{'tokens_file':lock(folder/'P300.npy'),'per_sequence_nll':means})
+            ref=write(root/'ref.json',{'per_sequence_nll':means})
+            write(base/'config/plan.json',{'spec_sha256':'0'*64,'reference_nll':{'dclm/P300/parent':ref}})
+            write(root/'supervised/supervisor.json',{'finished_at':'fixture','training_status':'failed'})
+            def fake(cfg,revision):
+                (revision/'REPORT.md').write_text('fixture report')
+                return {'coverage_complete':False}
+            with patch('sys.argv',['finish','--root',str(root),'--code-commit','fixture']),patch.object(finish,'summarize',fake):finish.main()
+            checks=json.loads((base/'readout_frequency_revision/preparation_checks.json').read_text())
+            self.assertFalse(checks[0]['passed']);self.assertTrue(checks[1]['passed'])
+            self.assertTrue((folder/'P300.npy').exists())
+
 if __name__=='__main__':unittest.main()

@@ -159,7 +159,7 @@ def summarize(cfg,root):
         interpretation='Associations across public length x LR-state checkpoints, not causal effects; flagged tests qualify affected results.')
     write(root/'tests.json',dict(spec_sha256=sha,tests=tests));write(root/'decision_mech.json',result)
     text='# A2 M — mechanism probes\n\nSpec SHA-256: `'+sha+'`.\n\n'
-    text+='Execution coverage: '+str(complete)+'. Scientific failed checks: '+str(len(failed))+'.\n\n'
+    text+='Execution coverage: '+str(complete)+'. Recorded failed checks: '+str(len(failed))+'.\n\n'
     text+='| Hypothesis | Preregistered pattern met |\n|---|---|\n'+''.join('| '+k+' | '+str(v)+' |\n' for k,v in h.items())
     text+='\nThese are associations, not causal claims. `decision_mech.json` contains all clauses, relative contrasts, seed-order flips and dataset-centered correlations. `noise_paired.json` and `buckets.json` use paired 10,000 sequence resamples, seed 0. Low-denominator buckets remain flagged.\n\n'
     text+='Weights use existing saved RTN outputs. No training or new compression. Source A2 Q QT3 was superseded by the saved-grid audit; original failures are retained there. QT6 is an accepted minor deviation; calibration sensitivity is not erased.\n\n'

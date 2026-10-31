@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import threading
 from scripts.a2_quant_io import write,lock
 from scripts.a2_remaining import read_locked
 from efficient_llm.a2.quant_stats import PARENTS
@@ -16,7 +17,7 @@ def main():
     p=argparse.ArgumentParser()
     for k in ('config','config-sha256','receipt'):p.add_argument('--'+k,required=True)
     a=p.parse_args();cfg=read_locked(dict(path=a.config,sha256=a.config_sha256));root=Path(cfg['results_root'])
-    start=time.monotonic();events=[]
+    start=time.monotonic();events=[];progress_lock=threading.Lock()
     def record(name,passed,detail):
         event=dict(test=name,passed=bool(passed),detail=detail,spec_sha256=cfg['spec_sha256'])
         events.append(event);print('MECH_PROGRESS',json.dumps(event),flush=True)
@@ -34,14 +35,16 @@ def main():
         items=[(d,p) for d in datasets for p in PARENTS]
         def lane(index):
             for ds,parent in items[index::lanes]:worker(name,ds,parent,None if cpu else index)
-        write(root/'progress.json',dict(spec_sha256=cfg['spec_sha256'],phase=name,elapsed_seconds=time.monotonic()-start,events=list(events)))
+        with progress_lock:
+            write(root/'progress.json',dict(spec_sha256=cfg['spec_sha256'],phase=name,elapsed_seconds=time.monotonic()-start,events=list(events)))
         with ThreadPoolExecutor(max_workers=lanes) as pool:list(pool.map(lane,range(lanes)))
     with ThreadPoolExecutor(max_workers=1) as executor:
         weights=executor.submit(phase,'weights',('dclm','fwe','nem'),4,True)
         phase('layers',('dclm','fwe','nem'))
         phase('noise',('dclm','fwe','nem'))
         phase('tokens',('dclm','fwe'))
-        weights.result()
+        try:weights.result()
+        except Exception as error:record('CPU_weights_phase',False,repr(error))
     result=None
     try:
         from scripts.a2_mech_report import summarize
