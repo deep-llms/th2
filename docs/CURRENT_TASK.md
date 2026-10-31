@@ -1,3 +1,7 @@
+2026-10-31T05:46:37.003389+00:00: b07 6103246 ACK Done5pulled/0skipped; manifest+parts000-003 downloaded/SHAverified. Submit final smallbatchb08 parts004-008 only; no GPU execution. Full160NLL/CI/nativehandoff verified, downstreamreplays/finalreport next. QT3/QT6 retained.
+
+2026-10-31T05:42:06.163588+00:00: Replaybatchb07 6103246c2896e6256294dff1a938403cfa76deb7 SUBMITTED; manifest+losslessreplayparts000-003, pending#2receipt. AfterACK exportparts004-008 in b08. Full160NLL/CI + nativehandoff verified locally; raw16scoresdownloaded/6parentreuse+8quantstateidentitiesverified. NoGPUlaunch.
+
 2026-10-31T05:40:07.958480+00:00: Replaydedupb06 ae7eb3e COMPLETE/ACK all32files exactoriginalserializationSHA checked. Losslessarchive139547418bytes/9parts (from435751728bytes); manifestSHAa108a711896bbd5e054bbde6b9d165f2efed06c5a1b386f980771496e8340cd5. Next#2b07 manifest+parts000-003 (5files); b08remainingparts004-008 afterreceipt. No GPUjob.
 
 2026-10-31T05:38:16.769528+00:00: Local full160NLLaudit COMPLETE exactmeans/paired10kseed0 CI matches saveddecision; final_nll_verification.json. Source144files exactfrozen and two freshnativeburnsamples guardreleased/ownership740040->740109-740116 stable/progress20070->20090 verified; final_terminal_verification.json. Only downstreamreplaytransport/audit/reportfinalization remains; b06ae7eb3e pendingreceipt, no relaunch. QT3/QT6flags retained.
