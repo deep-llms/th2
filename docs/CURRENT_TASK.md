@@ -1,3 +1,7 @@
+2026-10-31T05:35:03.929130+00:00: Batchb05 82b3fd6 ACK Done3pulled/0skipped; core390files+scores16 SHA verified/downloaded. Manifest complete source_changed=[], full32replays gzip435751728bytes/26parts. To retrieve faster in smallbatches, lossless shared-prompt transport b06: exact originalJSONserializationSHA checked before stripping duplicate doc/arguments/target; retain allperitemresponses/metadata, reconstruct exactSHA locally. No scientific rerun. Full160NLL localrecompute running.
+
+2026-10-31T05:30:22.403503+00:00: Batchb05 82b3fd692bc49ab68fa50c6e91ba9c788c36c85c SUBMITTED for core.part000/scores.part000/manifest.json. Await #2receipt before next partbatch. B04packager snapshotpartial but core/scores independentlyclosed+SHA; no repack/relaunch.
+
 2026-10-31T05:30:07.358877+00:00: Packagingb04 f4c5f62 snapshot ACK: core390files5,599,022bytes SHA4959222b and scores16files12,140,425bytes SHAf285bed2 COMPLETE parts; replaybundle still pending snapshot (no failure inferred). Submit read-only #2 batchb05 for two completedparts+manifest, independent of packagingcontinuation; no duplicatepack/quantlaunch.
 
 2026-10-31T05:27:33.254939+00:00: Stdlib-only results package b04 f4c5f62291d1d395cd9e58d28e9f99ddb43d77a2 SUBMITTED/remoteheadverified; unique retrieval_20261031_b04. Await newreceipt before part exports. b01report5files alreadydownloaded; no GPU experiment/relaunch.
