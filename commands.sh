@@ -1,5 +1,5 @@
 #1 +30+a
-#th2-6y3o-quant-results-package-20261031-b02
+#th2-6y3o-quant-results-package-20261031-b03
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES=""
 python3 -u - <<'PY'
@@ -9,9 +9,9 @@ from pathlib import Path
 from datetime import datetime,timezone
 root=Path('/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01')
 base=root/'results/a2_quant_20261031'
-out=root/'retrieval_20261031_b02'
+out=root/'retrieval_20261031_b03'
 out.mkdir(exist_ok=False)
-sys.path.insert(0,str(root/'source'))
+sys.path.insert(0,'/mnt/local/deep-llms_th2')
 from scripts.gpu_process import inspect
 
 def sha(p):

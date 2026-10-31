@@ -1,3 +1,7 @@
+2026-10-31T05:24:05.222242+00:00: Packaging b02 5d7ceb3 receipt ACK projectModuleNotFoundError scripts.gpu_process from frozen source snapshot. No artifactsmodified/noGPUwork; only emptyretrievaldir created. Fix helper import to synced code (known unchanged helper); new unique packaging b03 directory/job. b01all5files retained/verified.
+
+2026-10-31T05:20:52.293090+00:00: Results package b02 5d7ceb34050687c0227a67e1d521169ec54e5e97 SUBMITTED; CPU-copy existingJSON/JSONL/MD only into retrieval_20261031_b02, max16MiBparts/core+scores+replays, SHA manifest and two read-only nativeburnsamples. Retrieve receipt before batchb03; no quantrelaunch.
+
 2026-10-31T05:20:41.734564+00:00: Batchb01 7d1932c ACK, all5files downloaded results/a2_quant_20261031/batches/b01; complete/decision SHA exactverified against terminalreceipt. Next CPU-only packaging existing results into bounded bundles for smallbatch retrieval; no GPU work/relaunch.
 
 2026-10-31T05:18:01.504027+00:00: Quant result batch b01 7d1932c7a8e1c71c4f3348cedb5d87155a393f2a SUBMITTED; five exact report/decision/downstream/complete files via #2. Retrieve newbatch before next export; no quantrelaunch. User authorizes smallbatches; olda04 historicalmissing does not block requested retrieval.
