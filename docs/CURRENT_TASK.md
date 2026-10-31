@@ -1,3 +1,9 @@
+2026-10-31T05:40:07.958480+00:00: Replaydedupb06 ae7eb3e COMPLETE/ACK all32files exactoriginalserializationSHA checked. Losslessarchive139547418bytes/9parts (from435751728bytes); manifestSHAa108a711896bbd5e054bbde6b9d165f2efed06c5a1b386f980771496e8340cd5. Next#2b07 manifest+parts000-003 (5files); b08remainingparts004-008 afterreceipt. No GPUjob.
+
+2026-10-31T05:38:16.769528+00:00: Local full160NLLaudit COMPLETE exactmeans/paired10kseed0 CI matches saveddecision; final_nll_verification.json. Source144files exactfrozen and two freshnativeburnsamples guardreleased/ownership740040->740109-740116 stable/progress20070->20090 verified; final_terminal_verification.json. Only downstreamreplaytransport/audit/reportfinalization remains; b06ae7eb3e pendingreceipt, no relaunch. QT3/QT6flags retained.
+
+2026-10-31T05:35:18.903932+00:00: Losslessreplaytransport b06 ae7eb3ef50d994a45bea9e100761dfe9496e7fc3 SUBMITTED/remoteheadverified; CPUcopyonly, waitreceipt. Core+scores alreadydownloaded; fullreplaysoriginalbundle retainedremote.
+
 2026-10-31T05:35:03.929130+00:00: Batchb05 82b3fd6 ACK Done3pulled/0skipped; core390files+scores16 SHA verified/downloaded. Manifest complete source_changed=[], full32replays gzip435751728bytes/26parts. To retrieve faster in smallbatches, lossless shared-prompt transport b06: exact originalJSONserializationSHA checked before stripping duplicate doc/arguments/target; retain allperitemresponses/metadata, reconstruct exactSHA locally. No scientific rerun. Full160NLL localrecompute running.
 
 2026-10-31T05:30:22.403503+00:00: Batchb05 82b3fd692bc49ab68fa50c6e91ba9c788c36c85c SUBMITTED for core.part000/scores.part000/manifest.json. Await #2receipt before next partbatch. B04packager snapshotpartial but core/scores independentlyclosed+SHA; no repack/relaunch.
