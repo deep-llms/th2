@@ -1,3 +1,7 @@
+2026-10-31T06:54:31.153857+00:00: CorrectedRTN92a53b4 ACK CPU24models startup; planSHAae069392dab89eb637b813cfabc8e1cc6cedd32c458fb8da687bc5b9c262638c/codeSHA59d99d76277a20605b064328260c2fba65eff43179104863b2d3e243c4faa8fe. Retrieve completedreceiptbundle via unique readonlypackagea02; no repeat audit/quantization.
+
+2026-10-31T06:53:21.138780+00:00: Corrected CPU RTNaudit92a53b4c7fb2fce5f1290e87dd366a8257a08ad0 SUBMITTED/remoteheadverified, pendingreceipt. Only24savedRTN outputs; noquantization/GPU. Localregression reproduces falseflags from CPUdirectdivision (12/200groups3bit,9/2004bit) and correctedCUDA scalarreciprocal arithmetic passesboth. GPTQ32 priorauditPASS retained. Retrieve receipt before furtherremote writes.
+
 2026-10-31T06:51:05.441269+00:00: QT3audit1ea2ce0/package565b196 ACK COMPLETE230.88sec/56models/9408matrices/704643072groups. GPTQ32allPASS/cardinalityall56PASS; RTN24 flagged by audit CPU grid reconstruction using direct division while actual CUDA scalar division multiplies rounded reciprocal (PyTorch BinaryDivTrueKernel.cu). Preserve attempt01; correct CPU emulation, re-audit only24storedRTN outputs, noquantization/GPU. No unverified cleared yet.
 
 2026-10-31T06:44:54.579527+00:00: QT3 audit1ea2ce0 ACK startup CPU12processes/56models, planSHA5b2885594682bfc062cbbe5d0511501bfec38e5850c5b2e903ab2745cc389b0b/codeSHAe6cf1d4cf393a2486b0b9e426e2379cc16b14db50a8069a017510d2f979ac1f3. NoGPU/burnchanges/noquantization. Next readonlyprogress/resultpackage; originalQT3preserved, QT6accepted.
