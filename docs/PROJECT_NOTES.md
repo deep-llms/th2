@@ -622,3 +622,8 @@ User-requested fivefulltables appended to REPORT.md from savedJSON onCPU: N-rtn3
 ### Breadth automatic follow-up — 1 November 2026 SGT
 
 User explicitly requested a reminder worker for Breadth. Reuse the existing local queue_watch session/state and same Codex thread, every30minutes, under the existing report-only time policy; do not create duplicate monitors/subagents. Record queue acceptance separately from actual wake delivery. Stop after verified Breadth results/report/replay/native handoff or explicit user stop. Watcher PID1262581; state `temp/a2_corpora_watch_20261029`. Prior completed Quant watcher files preserved in `before_breadth_20261031T224817Z`.
+
+
+## Standing owner requirement: reminder worker for long jobs — 1 November 2026 SGT
+
+Owner explicitly says not to forget the reminder worker again. For every future authorized long-running experiment, arrange same-thread automatic follow-up before ending the launch turn. Inspect existing workers first and reuse a suitable watcher; never create duplicates or subagents. Verify the worker is alive, record cadence/next wake, and distinguish queue acceptance from actual delivery. This standing authorization supersedes historical no-new-watcher wording for necessary reminder setup; it does not authorize new experiments or infrastructure repair. Keep follow-up until the requested work, report, and native handoff are verified complete, or the owner stops it.

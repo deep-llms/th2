@@ -1,0 +1,394 @@
+[
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-dclm-S188-S1-0.2B-lr1e-3/parent.json",
+    "sha256": "b8d4f8063ba87fd2aa1bfd339ffdb1668163f3689a3b5759e52e66d9af5777d9",
+    "loss": 2.88670669804388,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-dclm-S188-S1-0.2B-lr1e-3/post-S1.json",
+    "sha256": "ed1858adf760589b152d8d79c00e49120be10481cdaae7bd0fd8d4ef934428a9",
+    "loss": 3.0562501498537853,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-dclm-S188-S1-0.2B-lr1e-3/pre-S1.json",
+    "sha256": "14874c54cc5d336b32e95d558e6e664f8ade334d57421fd0f978a53cac70a036",
+    "loss": 4.012656808594966,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-dclm-S72-S1-0.2B-lr1e-3/parent.json",
+    "sha256": "e5faa4b419a4f22fd7b2b61d3d66e93424dd4e5a4c94552c41170235569d1d08",
+    "loss": 2.90857529610787,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-dclm-S72-S1-0.2B-lr1e-3/post-S1.json",
+    "sha256": "8b85e18b5bcd1ed1d67299be15f659f671002c4647e79c370a8c47f5604decef",
+    "loss": 3.0669867735128715,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-dclm-S72-S1-0.2B-lr1e-3/pre-S1.json",
+    "sha256": "c4a16a4b3c80007a09193c1dfba088c57f6372f64fe18359c7246a1460b4efa5",
+    "loss": 3.854544222000957,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-fwe-S188-S1-0.2B-lr1e-3/parent.json",
+    "sha256": "2f0b9acc0b198668a794a3ac0e755d206d835bf6c7c02ba39a841732f2c712c4",
+    "loss": 3.0238075916258356,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-fwe-S188-S1-0.2B-lr1e-3/post-S1.json",
+    "sha256": "8e652dc3bcf59170a4a32919f9aa4126498ddf6328de6e16898d13478c13c7c9",
+    "loss": 3.1855880798064975,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-fwe-S188-S1-0.2B-lr1e-3/pre-S1.json",
+    "sha256": "cfc45b16914b5bc46b854c548bc166f0c68f3e380ca329b40a1b39c059851ce2",
+    "loss": 4.199338768224907,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-fwe-S72-S1-0.2B-lr1e-3/parent.json",
+    "sha256": "8a1f2463540864e8195fa3f0d2b8b0c58cf524e79068340682bf5a29f798f5d8",
+    "loss": 3.042152001946299,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-fwe-S72-S1-0.2B-lr1e-3/post-S1.json",
+    "sha256": "792c07886f25c2bae145d9f1d544c70e7a679a01a64d440a2deed6c516ca4d8a",
+    "loss": 3.189151745695954,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/ST1-fwe-S72-S1-0.2B-lr1e-3/pre-S1.json",
+    "sha256": "06540a2d642a97ec0b12e0ffea1ce1012bb7a26aaa55216e93c17d543ac80a7d",
+    "loss": 4.007307971499392,
+    "sequences": 2461,
+    "tokens": 10077795
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-120000/B_S1.json",
+    "sha256": "cf7e0ded3181caa7b037c8274108f1bace9f90f8476846a65e3a4fffdb48db9c",
+    "loss": 3.746031302320496,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-120000/B_early.json",
+    "sha256": "223df4f36ea025a9163c3b635d0d2b0e72d6677dbe04f714e30a93b141102974",
+    "loss": 9.764700120835176,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-120000/B_end.json",
+    "sha256": "e80f178574b3cfdf5604c13c7b0dde7bf8d364447b2a5833885a1a08cabdc19c",
+    "loss": 6.296933898159321,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-120000/parent.json",
+    "sha256": "eb3b2cb97a006b6666ca0c4a7bdb0267786ea74ed4882101c9a3e5776f40a97c",
+    "loss": 2.7616084172397755,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-1280000/B_S1.json",
+    "sha256": "5e430ca8b16eaef0a389f412685cf410dc929e3497c57c12d023853e65f8d5cb",
+    "loss": 3.8849678185731498,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-1280000/B_early.json",
+    "sha256": "7b349ffb8f950df0745a01ce5fa2143bc3eed8161772f4351d575343567241f4",
+    "loss": 5.898747389772477,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-1280000/B_end.json",
+    "sha256": "be5205537baf570fe22bc7f3e6c4f204212219baceb9940a709372edc8a4e101",
+    "loss": 12.24943873856593,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-1280000/parent.json",
+    "sha256": "e53dda19e1c029cc54fe54a4dd58d304e48501a36d46be6c7526ef5932bb18cf",
+    "loss": 2.6661469537584335,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-160000/B_S1.json",
+    "sha256": "c970e18cbdf5939704bc6f1e0db284297bb2cad68baef886f7dea5a6ce94f37a",
+    "loss": 3.750305040681969,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-160000/B_early.json",
+    "sha256": "a6b54b3e98b7db0ddc46edfbba9cb70413a7d6357cec253a877bc6987ed7f2aa",
+    "loss": 11.652344239965228,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-160000/B_end.json",
+    "sha256": "0da5cb125214f959925736c051fd10d14678e1ca5584ec532e9ff9b5b8f12aac",
+    "loss": 6.621524451577817,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-160000/parent.json",
+    "sha256": "a6952c720fc12865e461ef75202b0fb99b5b84e01f62fa448cd83d277550024a",
+    "loss": 2.7463212980323863,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-2560000/B_S1.json",
+    "sha256": "06ba36de3cc28fc11693df745e26ecf8a8a009183715ebb3971b5005b91029eb",
+    "loss": 4.690374386472095,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-2560000/B_early.json",
+    "sha256": "a8ad75b93aba662157b7655d0ce57b9e9a286f693a10f7c2d16fb32fe929ce98",
+    "loss": 5.713049015107132,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-2560000/B_end.json",
+    "sha256": "e39add450def3acda6ae1165362dc47d47fec581ec393b16f0c52b6d92b56bcf",
+    "loss": 15.941351916142505,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-2560000/parent.json",
+    "sha256": "81a3d12d0e26cb4d90c41a2bc376145d17ef02e92a8cc0727d7a9f3cdcf6f49d",
+    "loss": 2.6500002816722734,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-320000/B_S1.json",
+    "sha256": "6c042729bab7123f59496291c526fa2b8b6de41fbed59d770581ac790313b1c8",
+    "loss": 3.771719515324504,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-320000/B_early.json",
+    "sha256": "c2c734a91a01ca2e5cab5a5c20c2795bfba22477381f45b221afbf283c77c63b",
+    "loss": 8.90894667380709,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-320000/B_end.json",
+    "sha256": "40fd36a791cd4780341342f5a9210f49845f8c4939ac402cb11242d6839dfa7e",
+    "loss": 6.51884195361583,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-320000/parent.json",
+    "sha256": "fdbbe97c6171415c130cdbd156ad2ee744bfe4e5d43a79875be09a09595fdad8",
+    "loss": 2.712024099757349,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-3440000/B_S1.json",
+    "sha256": "9cb6ef615bca952504a088177d889ab022b9720f2580f1c82d8bb7a110a581e5",
+    "loss": 6.223016330775233,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-3440000/B_early.json",
+    "sha256": "ba5fa4ea8bef502d8e4bcd02ec6a41da6507a22fa0e8dc88bdc84b2eb2fc923c",
+    "loss": 6.540731832272617,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-3440000/B_end.json",
+    "sha256": "da07544e51315d50a15640dfa59dd61c6c148d0af046101678e7e76d73854688",
+    "loss": 18.757602170582896,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-3440000/parent.json",
+    "sha256": "bab54e3f30f05a2b9e489260c4beb98198c57c49ed612c5dec325207583a1d31",
+    "loss": 2.64653984103472,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-40000/B_S1.json",
+    "sha256": "c839e5b4a8d2ce9680ac42250a7d44cc47b523eba622a68213896073a652ee1a",
+    "loss": 3.7168690187527846,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-40000/B_early.json",
+    "sha256": "a46d05f75a4e4a7c5fa65c7dd2c3de265eea08f5bc606d32f84075e4429f93a1",
+    "loss": 11.344604533330909,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-40000/B_end.json",
+    "sha256": "cfdfeef31580b387caf2f2bb84cb05b48a215562630ae858ecab78c105c06282",
+    "loss": 5.592091475928471,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-40000/parent.json",
+    "sha256": "e8cd2ea18754341c17baeecbfa36aa3b3e2e9e2c57c88d8407d4ef2ffe0c30be",
+    "loss": 2.8540408333341514,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-640000/B_S1.json",
+    "sha256": "a28b3de7475c41ffcdb310b5d97f9d78ddf958ef839696260780106836efc6e9",
+    "loss": 3.7844436475601237,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-640000/B_early.json",
+    "sha256": "51d2229b707fab33df26a07b0867abe0bc06c8b3623351144d7ae4c7e7848d8c",
+    "loss": 8.91351275319998,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-640000/B_end.json",
+    "sha256": "66dc4365be49ef3e070e8e3d097ef2a51bbfdea274580b890fc43cac34f40aca",
+    "loss": 13.185075281422906,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-640000/parent.json",
+    "sha256": "b5473cbdaeaed0b412226d8233a7659113237a8c866ce1130b056d617b8dadc8",
+    "loss": 2.6867767941264886,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-80000/B_S1.json",
+    "sha256": "8d711bfb2f8625f47c9520272a34f38c5e497c6f7c1c08e5231d216bc4937bf7",
+    "loss": 3.7490620197189064,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-80000/B_early.json",
+    "sha256": "4c64e1853e77a7631e5ec2fec165046cb867a095af7a151be66b36b03d984c35",
+    "loss": 10.248140740030951,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-80000/B_end.json",
+    "sha256": "e9478469731378c6707cbcca4bf608dd824c1636b84ca994bc821afd6e09de02",
+    "loss": 6.094341132747627,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage1-step-80000/parent.json",
+    "sha256": "af02519bf3886f117f203fa132a90a0730d74d218caefbcf16b42f286c092d86",
+    "loss": 2.7899478565433307,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage2-step-4200000/B_S1.json",
+    "sha256": "5950cdef734ca4717305d4c96893b10f7306e48db3010e61b6a6a980aef0e60b",
+    "loss": 8.199397207877272,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage2-step-4200000/B_early.json",
+    "sha256": "fb2426386274ebce7c11d72e6f2e490d77cc63ba1f358149442b3afdd084ca14",
+    "loss": 6.206369660469829,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage2-step-4200000/B_end.json",
+    "sha256": "0612b939900c37657401ee054ccfb7ec601a59d1267851e6425a6aafcca26a9f",
+    "loss": 20.16020624594816,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage2-step-4200000/parent.json",
+    "sha256": "8b75bb6ab54dbda733e3c42b5e11b85b755e5b64addfd6ae1a5b411918b6192b",
+    "loss": 2.6516280231153035,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage3-step-4720000/B_S1.json",
+    "sha256": "7884dbf35f2100e24b12e6e68f0b1240dca10b04ba788ac61ac4d5fd17460ff8",
+    "loss": 44.350990466463955,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage3-step-4720000/B_early.json",
+    "sha256": "158c54ce9551d84ca4674165580da8414ae06added3f5ae7d25411f4e6238175",
+    "loss": 5.92012579726613,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage3-step-4720000/B_end.json",
+    "sha256": "072bc311f54fc8ab81b8d63f18abfa1c3ebe5937a8b49130bd49becd69366a5d",
+    "loss": 28.33125279237714,
+    "sequences": 11717,
+    "tokens": 8821351
+  },
+  {
+    "path": "results/a2_breadth_20261031/perseq/stage3-step-4720000/parent.json",
+    "sha256": "f7291192409f5419a079b6fe51bf0d53097bc0da43f1e7b33484793086f88a84",
+    "loss": 2.550939192890596,
+    "sequences": 11717,
+    "tokens": 8821351
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "commit": "8f963c5168474ac445534a15c1a96d4d68093b7a",
+  "job": "th2-6y3o-a2-breadth-health-20261031-a02",
+  "controller_status_line": "2026-10-31 15:49:35 | 8f963c5 | th2-6y3o-a2-breadth-health-20261031-a02 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+  "controller_timestamp_timezone": "not established; preserve literal timestamp",
+  "dropbox_modified_utc": "2026-10-31T22:49:57Z",
+  "raw_status_sha256": "84e193235798358f7bfb747593d4dba797bd7d8e85fc4d87a11003ee4a889e39",
+  "raw_status_local": "temp/a2_breadth_status_a02_01.log",
+  "error_type": "runner SSH hostname resolution failure",
+  "gpu_job_state": "unknown after 2026-10-31T21:51:26+08:00",
+  "action": "freeze remote writes; no repair/relaunch/duplicate health command",
+  "watcher_pid": 1262581,
+  "watcher_actual_delivery_verified": true
+}
