@@ -1,0 +1,458 @@
+{
+  "spec_sha256": "a7fb04042d54f977cff4ea5c2275b6b2af3a7c00cce4b2898ffc3dc9383c44da",
+  "policy": "User follow-up 31Oct2026: QT3 original-grid codes/cardinality; GPTQ unstored-grid BF16 uniform fallback; preserve original QT3, clear affected unverified only where revised audit passes. QT6 accepted minor deviation; no rerun/new quantization.",
+  "parents": {
+    "dclm/P300": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-300B-4096",
+        "revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+        "code_revision": "9d02563017b25fd0a1e1849b7cd2bfd02b30d4e0",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300",
+        "files": {
+          "config.json": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777",
+          "model.safetensors": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/dclm/P300/gptq3-cal1-weights.json",
+          "c872a5a1cb987c4004127ac42efaac7520c289d01b6ea11c20ef1ac22d4577c7"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/P300/gptq3-weights.json",
+          "9a07be8715a63d251e063f52cbf3ad6dfeb39ec120a5afc608f00ef0885a2145"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/P300/gptq4-weights.json",
+          "1a4f56a63ec1e0a4c57cf864984eab63b352228b6db002dcaff0791aa34d246e"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P300/rtn3-weights.json",
+          "3ad15fe6dc5a5fb1063820affb9bf30cbf800e34935b778b90e52e96dd92a40a"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P300/rtn4-weights.json",
+          "5e9e89cba021f24da9e28e484468377b3e042ed4360008bd926541ffc3bab2a9"
+        ]
+      ]
+    },
+    "dclm/P1T": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+        "revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "files": {
+          "config.json": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+          "model.safetensors": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/dclm/P1T/gptq3-cal1-weights.json",
+          "b13690c5feaa8bc4a9c4a9d1aed48cb6f7d8a00ec743bf74fd328199fc65c25c"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/P1T/gptq3-weights.json",
+          "8d7de833645aaed72e1cca2f8eaf490736b0b736775729ce9f496c27378846f9"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/P1T/gptq4-weights.json",
+          "0c673b4d9cb1601b36d35cd3bb87df546d165a431c3a35c432e8004f2e0750fb"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P1T/rtn3-weights.json",
+          "480574e182437fd151c49fd19cf7df9b2f21029b0ef35eb1f9642dc183bf2ac4"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/P1T/rtn4-weights.json",
+          "b8d99708f93de168693dcc96f94ebb98ede00fc953e4e8f84f020792d4ca05f5"
+        ]
+      ]
+    },
+    "dclm/S72": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+        "revision": "2ee702ba4c05cd1494c530d81f4e338bcf70536b",
+        "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "files": {
+          "config.json": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f",
+          "model.safetensors": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/dclm/S72/gptq3-cal1-weights.json",
+          "5b068132cce2a4a16e2f7ec9addaa48f466bfda5ed5066b537e3ccbdb97dbefe"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/S72/gptq3-weights.json",
+          "2f4fb49db0d6afc42166944bdc795e723b44228127a0e5b39f62d81cfdfb3eb3"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/S72/gptq4-weights.json",
+          "8b1a5d7d5e2a1b85d50202427a045caf0283711164942e866ca9e0fb0ee710b5"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S72/rtn3-weights.json",
+          "4c9a03918ebb4d32ce69b451f69a632e9c17d3c391d0fb3abd8807f14b2f607d"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S72/rtn4-weights.json",
+          "a291da207a51c4b2c5f7ab7ebaf0f2e27e0619117cdf1409038ded461a631ed3"
+        ]
+      ]
+    },
+    "dclm/S188": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-dclm-1T-4096",
+        "revision": "0340fcb7b7717498ad8bcb229a653a31a7af0877",
+        "code_revision": "90481ca923a6cba5c8e107e2249e09fcd32ec617",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/S188",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T",
+        "files": {
+          "config.json": "314914ed4ed26ee8ced05ca1b2a22d73968acd772bb7d0ceb939b62a4c287786",
+          "model.safetensors": "683ef78df55635d5a861301d894cc03f610501a520ee1a93395201b36ea203d3"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/dclm/S188/gptq3-cal1-weights.json",
+          "6bbd3c954a018da1d31a40bf602a4b2f23cfa8a6d28e15604eb7ff360ce545c4"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/S188/gptq3-weights.json",
+          "de561a70d2244e845e11e3cb6522cf2e003bf0dd7db6c46d29a05c89215c0b94"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/dclm/S188/gptq4-weights.json",
+          "f5dc2fe81366d6fc45ebb983c50f83ba2afbb703bc688a99026ba9ba923f99fb"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S188/rtn3-weights.json",
+          "4f20527b12824079d7580435c3a5041071a81c0e9a7d15d1c075757d93b39925"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/dclm/S188/rtn4-weights.json",
+          "83c85bbbc5aef3a2ba886472a2a67baf0e7abe7126e4864383c56506d8e23699"
+        ]
+      ]
+    },
+    "fwe/P300": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-300B-4096",
+        "revision": "de8d9259fcac769157070eb63cd67fa89d4c2db1",
+        "code_revision": "de8d9259fcac769157070eb63cd67fa89d4c2db1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P300",
+        "files": {
+          "config.json": "592e65dc00a2ed521f87d0f2339ad661277e9ee421a9a698f5373ec92e2a192e",
+          "model.safetensors": "cab564f469e41f2a55e8ed3c84bddaf0b858240653b6ca8d58579ce27f10ef09"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/fwe/P300/gptq3-cal1-weights.json",
+          "53c722a665aeed812f5c7a64d242b766671c42b1f26f00633799a6ec4c374e31"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/P300/gptq3-weights.json",
+          "55b20a8f96538960f0e2f0eb19c3a6f240d4697a69a5066da302300d5c823ee7"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/P300/gptq4-weights.json",
+          "9eaf0e167fda7f5546ee74b1f1e64a6e51a8a7670de8878f16daa9b31344bdfd"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P300/rtn3-weights.json",
+          "68d8b4567b94b1fd2eee09393572c8e9ccbd233f5c5a5c0c1a4b4a81f307ec4c"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P300/rtn4-weights.json",
+          "4c4c12de020664b2a45c4c53e2e3cc72d5741880e6b6311bc158b2e8be2229d6"
+        ]
+      ]
+    },
+    "fwe/P1T": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+        "revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "files": {
+          "config.json": "e81aca30f409cfeb481bdc200c9a785f5d9c11b7bdd41cab9389aa299dd9b18a",
+          "model.safetensors": "21acee7e83ffddd740017147357ff00097500783aac202b253f7f61acb42af9a"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/fwe/P1T/gptq3-cal1-weights.json",
+          "1545583594e82cd1c968a0acb5803222ca77f169788748ab4a8d2cf4e7ad7366"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/P1T/gptq3-weights.json",
+          "0212639402540997357d90e3c3cd699e2797de72d2d2c83cb8d30219714522f9"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/P1T/gptq4-weights.json",
+          "a7df4e27fd129a914ab0c0dcf2edd4409577c96bccca4d20dfc9d55803e7ebd2"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P1T/rtn3-weights.json",
+          "23b7da76f4ba505668e8c3109af2e70f8b7522ec67dd3068d789365bc6e745b6"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/P1T/rtn4-weights.json",
+          "ee4f35645b3a2e3515d1dfd13f8baca7b806c949ad1a8ffdbae50936816eb571"
+        ]
+      ]
+    },
+    "fwe/S72": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+        "revision": "2acd776f32a524e413b02f9c2c5f1f3a49c8d4e5",
+        "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/S72",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "files": {
+          "config.json": "7a512523f083a7fafe2be4750a88292ab6104d52832dd738dd3bdd03ae52d3bf",
+          "model.safetensors": "466cb060fc71048bfd77534aa36fa13b320f6e8c1c306494b3bf157edddcb21e"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/fwe/S72/gptq3-cal1-weights.json",
+          "a86c694c7c6a989203cc795b8d6212b226bac35987a1cff341ed9f81022cf577"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/S72/gptq3-weights.json",
+          "e4411972016538d8290b5962409c5ebb0ee087dbdd0102a352d2c1c8a1443109"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/S72/gptq4-weights.json",
+          "37ecf6eb02cdda33122412315c4d000e56886cf752bc1245944c379a9695483d"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S72/rtn3-weights.json",
+          "0f3cd2de749ab2baeda9f235cd6e5c7ea8ab6f981499cba8db206fdf03ac5cca"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S72/rtn4-weights.json",
+          "6be1073ebb3809bf8959c7142fd6f1327379416591ecab9151435f232f87192b"
+        ]
+      ]
+    },
+    "fwe/S188": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-fineweb-edu-1.4t-1T-4096",
+        "revision": "85e25569105f1c84b0d653f6f8e69df1e30bd3de",
+        "code_revision": "ca1795337a73d08235c904609c4b6daa89ecd6ca",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/S188",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/fwe/P1T",
+        "files": {
+          "config.json": "0ee5e2b8b7a045f6eae0ffa9a6d2a8f94b067de4ba23352495bd90852d211d6d",
+          "model.safetensors": "d2b46127d4cff8fdef6f28bf84ba0b699f3f079583d8e4af179c7ddd18558a0c"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/cal1/fwe/S188/gptq3-cal1-weights.json",
+          "348364ea05c698b2f684e877e0ab148b68a44d2b6055814ca855b85d41f1cd9d"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/S188/gptq3-weights.json",
+          "56fe1e35a5dd338d9fecb460a0ccabd0fd4230d97f8b73280f375847c1c017b7"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/fwe/S188/gptq4-weights.json",
+          "5c4d748060c225ecc5bd5ae6f93fcd0f4b588fcc39140f67906468e0bf0fe985"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S188/rtn3-weights.json",
+          "5ae7895745a915411e7d8eed7bdac9694803620418eb8c8d4c3d8a9444f3c222"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/fwe/S188/rtn4-weights.json",
+          "9ff71c292761fec19a4ca10b07441a2b7aa3ae650ebc69114565c7a96cfb7a94"
+        ]
+      ]
+    },
+    "nem/P300": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-300B-4096",
+        "revision": "5cc94475d50d221ac201909c36aa61855fb2c50f",
+        "code_revision": "5cc94475d50d221ac201909c36aa61855fb2c50f",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P300",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P300",
+        "files": {
+          "config.json": "df5ea5e44e514cf7f28e0d40f872f66738bfeb49cb1938eeb550762f8a9bfb60",
+          "model.safetensors": "de9e2011347053829eed50aa50a22dd18a20bd97e2ea122c3fd74967875d36ab"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/P300/gptq3-weights.json",
+          "ea04d94372c8c3380cfe2e4d1f1b31e6edbb886e512051bfde5af26f90f61da2"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/P300/gptq4-weights.json",
+          "9f37a2958c4f3800315d73f5e7a6d799b530757c9d4d4edb9d1de434e6447fe8"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P300/rtn3-weights.json",
+          "09dbf8025d5dffa1245182a4e481565414f64d3fc88b76b8df3a611c8d8740d6"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P300/rtn4-weights.json",
+          "67d7e3a3e79ca0d8be06d593eaec55b41b2d1716aa87f1b4a56aacf92de57ab6"
+        ]
+      ]
+    },
+    "nem/P1T": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+        "revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "files": {
+          "config.json": "0c213b88b29338cb028b83308ba438f62cb7f740f2b9f51b2d7ece50d064c771",
+          "model.safetensors": "b09cadfb1ed79ba21a89f7909ae5859e318e24f945d253252a563510a92137e6"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/P1T/gptq3-weights.json",
+          "45b067ea9ab0b151ad133a6d02ee9bdda0f76494591d97e3a03b371135d6d5bc"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/P1T/gptq4-weights.json",
+          "033adf671c9c32366d4ea1ace2501207373068c83a14ad725cf2b960885916aa"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P1T/rtn3-weights.json",
+          "9e904ba658bd220cfce0bea8248305ab3f0a24467d9a81ba30f51e162c8d9ad0"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/P1T/rtn4-weights.json",
+          "a5d9c017a1d7e7b380ce01966d7a78d60d223a18e6e79d4c3d8bc1e84c2b48cd"
+        ]
+      ]
+    },
+    "nem/S72": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+        "revision": "a69f22d194ba460ce35e9d29a8d6cc4af919aca1",
+        "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/S72",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "files": {
+          "config.json": "048a8749f5bbe833b8119cf25df5da4510dc1f93b7b58031a9f8995749962be6",
+          "model.safetensors": "7c3d1702915d665f69b0f070dc1bbe31e57833640092d2626859c64050063c38"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/S72/gptq3-weights.json",
+          "5d9b6d2c3c3f7c9d6df3f327a7e6d0c3a2b1a60d1d46047f28f022e4f9bfec4e"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/S72/gptq4-weights.json",
+          "e85be76fcf00d71fc18f77e1c40686c33f7ffb8da0c9662d0412fea07209bf77"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S72/rtn3-weights.json",
+          "a810bbeda89a9b9d1621b7b12e17ff85c4fb8d8bfc180931934a8137d5006792"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S72/rtn4-weights.json",
+          "a57560b98d5e7d0d55a21a20674eafa27eb728997f839292decaf18f6cf76268"
+        ]
+      ]
+    },
+    "nem/S188": {
+      "asset": {
+        "repo": "open-sci/open-sci-ref-v0.01-1.7b-nemotron-hq-1T-4096",
+        "revision": "10f3e6ae5e55164ce14709839c230a107d809aef",
+        "code_revision": "c9ccbca7125d7072cead55a1f0a07e53a3fb6de1",
+        "weights_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/S188",
+        "code_dir": "/mnt/local/_models/deep-llms_th2/a2/nem/P1T",
+        "files": {
+          "config.json": "9b2099fae696226a7faa63a764d9445343ea3462a1b18eb86f2d0ae3d4eea65e",
+          "model.safetensors": "e4e05cea7deff5e2c8ab3ab3d49fb1286cb71c45f3085ae5afa8145abbf7d60d"
+        },
+        "code_files": {
+          "modeling_opensci.py": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "configuration_opensci.py": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885"
+        }
+      },
+      "records": [
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/S188/gptq3-weights.json",
+          "0823f1660a4b0209caa61ddc9c10a4a99081e30e76e11cef75817de64957734a"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/gptq/nem/S188/gptq4-weights.json",
+          "5c5eebe53682a29575ddbe607dc94d9f443df5fa8784479c9b7425cd7d25b947"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S188/rtn3-weights.json",
+          "bd97f1219ac0515b0250f85dae26e5cbab7ed578ef13c9980a7d5dc133c248f0"
+        ],
+        [
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/rtn/nem/S188/rtn4-weights.json",
+          "713dbd7fbe8819f39397cb29217949b9749061fa6950cb465b48dcb0da553a19"
+        ]
+      ]
+    }
+  }
+}
