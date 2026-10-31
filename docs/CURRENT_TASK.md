@@ -1,3 +1,9 @@
+31Oct18:43SGT: Tokenexportb02 9aca318 ACK Done12pulled/0skipped; Dropbox receivingparts. b01local6arraysverified; preparethird/finalexportb03 forlast6arrays. NoGPUactions.
+
+2026-10-31T18:36:57.164567+08:00: Tokenbackupb01 localCOMPLETE6/18arrays/241867848bytes/allSHAverified/float32(2461,4095)/perseqmeansmaxerror0. b02 9aca318 pendingreceipt; no newremote writes untilACK. Addendumalreadycomplete. Remaining12arrays/b02+b03/finalbackupreceipt/reportlocationupdate.
+
+2026-10-31T18:35:27.467785+08:00: Tokenexportb02 9aca318ddc9560e9579f445a05fa8fea1e67311a SUBMITTED/remoteheadverified, pendingreceipt before nextexport. b01ACK12pulled/0skipped; awaiting allDropboxparts then localhashjoin. NoGPUactions.
+
 31Oct18:34SGT: Tokenexportb01 f9fdee7 ACK controller Done12pulled/0skipped; Dropbox folder appearing incrementally (4/12parts so far), not failure. Local downloader stopped early on missingyetparts; downloadedmatchingparts preserved, will resume read-only after listingcomplete. Receipt allows nextuniqueexportb02. Addendumcomplete.
 
 2026-10-31T18:27:12.107148+08:00: A2 M tokenexportb01 f9fdee79df4ff6bb9d145ce57f2b96e4e7e35912 SUBMITTED/remoteheadverified. Pending receipt/download12parts before nextremoteexport. Addendumcomplete/committed. Backup18arrays725603544bytes; noGPUactions.
