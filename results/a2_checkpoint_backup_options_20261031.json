@@ -1,0 +1,39 @@
+{
+  "scope": "31 A2 output roots plus /mnt/local/_models/deep-llms_th2/a2; no deletion or rewrite",
+  "audit_commit": "bb7151d94fbef0229fb99b546c288916a437a3a2",
+  "raw_receipt_sha256": "d9e9fdd7442efda98983a958c6b8b7764c2891520df4a486c19fc0bbed13c4aa",
+  "method": "File names/stat plus safetensors headers; no full tensor payload load. Source review confirms Trainer save_strategy=no and final BF16 model-only export.",
+  "file_groups": {
+    "small_metadata_code_results": {
+      "bytes": 513838412,
+      "files": 6084
+    },
+    "model_weights": {
+      "bytes": 487487550112,
+      "files": 165
+    },
+    "other_large": {
+      "bytes": 12652043356,
+      "files": 175
+    },
+    "profiling_gradients": {
+      "bytes": 10492528182,
+      "files": 2
+    },
+    "other_tensor": {
+      "bytes": 6331017,
+      "files": 1
+    }
+  },
+  "options": {
+    "all_files_bytes": 511152291079,
+    "without_optimizer_scheduler_rng_bytes": 511152291079,
+    "without_profiling_gradients_bytes": 500659762897,
+    "model_weights_only_bytes": 487487550112,
+    "weights_only_reduction_bytes": 23664740967
+  },
+  "quant_weights_bytes": 180389712384,
+  "quant_weights_dtype": "BF16 dequantized values, not packed 3/4-bit storage",
+  "caveat": "Weights-only excludes required loading config/tokenizer/native model code/manifests and scientific results; preserve these separately. No compression/deduplication/packed quant conversion measured.",
+  "full_local_inventory": "/disk/thuat/efficient_llm/artifacts/a2_checkpoint_size_audit_20261031/file_inventory.json"
+}
