@@ -1,0 +1,9 @@
+{
+  "original_path": "results.json",
+  "original_bytes": 956003,
+  "original_sha256": "0ccc4df700c67c7d47f707add23f818bb45f64451698ecadaf4eeb52d51d38b0",
+  "compressed_path": "results.json.gz",
+  "compressed_sha256": "d090f63be2c1641ce31cc8a2a8e6b4df7df32ae57e6f6dfcbba2ecf7b2d80456",
+  "method": "gzip lossless; sha256.json retains original-byte locks",
+  "reason": "25MiB execution source limit; scientific bytes unchanged"
+}

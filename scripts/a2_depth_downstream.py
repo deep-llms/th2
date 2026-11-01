@@ -7,7 +7,8 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-from efficient_llm.a2_depth.common import Checks,write
+from efficient_llm.a2_depth.common import Checks,write,read
+from efficient_llm.a2_depth.recovery import continued_checks,next_path
 from scripts.a2_quant_io import lock
 from scripts.a2_remaining import read_locked
 from eval.a2_request_bridge import digest
@@ -27,13 +28,16 @@ def verify_replay(primary, fresh):
 
 def run(cfg,config):
     from scripts.a2_depth_partc_run import require_free_gpus
-    root=Path(cfg['results_root'])/'downstream';root.mkdir(parents=True,exist_ok=False)
-    checks=Checks(root/'checks.json');scores={};identities={};replays={};fresh={}
+    root=Path(cfg['results_root'])/'downstream';root.mkdir(parents=True,exist_ok=True)
+    binding={'source_manifest':cfg.get('source_manifest'),'prepared':cfg['prepared'],'parents':cfg['prior_downstream']}
+    if (root/'binding.json').exists() and read(root/'binding.json')['binding']!=binding:raise ValueError('Downstream resume identity changed')
+    write(root/'binding.json',dict(binding=binding))
+    checks=continued_checks(root/'checks.json');scores={};identities={};replays={};fresh={}
     env={**os.environ,'HF_HUB_OFFLINE':'1','HF_DATASETS_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1',
          'WANDB_MODE':'offline','TOKENIZERS_PARALLELISM':'false','CUDA_DEVICE_ORDER':'PCI_BUS_ID'}
     for k in ('RANK','LOCAL_RANK','WORLD_SIZE','LOCAL_WORLD_SIZE'):env.pop(k,None)
     def command(args,label,gpu=None):
-        with (root/(label+'.log')).open('x') as f:
+        with next_path(root/(label+'.log')).open('x') as f:
             proc=subprocess.run(args,env={**env,'CUDA_VISIBLE_DEVICES':'' if gpu is None else str(gpu)},
                                 stdout=f,stderr=subprocess.STDOUT)
         checks.record('process:'+label,proc.returncode==0,proc.returncode)
@@ -49,26 +53,49 @@ def run(cfg,config):
     # Three lanes are unnecessary for this small screen; serial allocation makes
     # ownership explicit and allows the other arms to continue after a failure.
     for arm in ('P300','P1T','X72'):
-        require_free_gpus()
-        name=arm+'-student';out=root/'scores'/name
-        command([sys.executable,'-u','-m','scripts.a2_depth_score','--config',str(config),
-                 '--arm',arm,'--output',str(out)],name+'-score',0)
-        def accept_score():
+        name=arm+'-student';base=root/'scores'/name
+        def accept_score(out):
+            from scripts.a2_depth_score import identity
             item=lock(out/'scores.json');value=read_locked(item)
+            done=read(out/'complete.json')
+            if not done['coverage_complete'] or done['scores']!=item:raise ValueError('Incomplete score receipt')
             prepared=read_locked(cfg['prepared'])
             if value['batch_size']!=2 or value['prepared_sha256']!=digest(prepared) or len(value['scores'])!=len(prepared['requests']):
                 raise ValueError('Incomplete or mismatched scores')
-            scores[name]=item;identities[name]=value['checkpoint_identity']
-        checks.attempt('score:'+name,accept_score)
-        # Import every scientific flag, even if production scoring succeeded.
+            ident=identity(cfg,arm,checks)
+            if value['checkpoint_identity']!=ident or value['checkpoint_identity_sha256']!=digest(ident):raise ValueError('Scored checkpoint changed')
+            # A cached score may predate a crash before complete.json; only sealed scores reuse.
+            if read(out/'checks.json')['checks']!=done['checks']:raise ValueError('Scorer check history changed')
+            scores[name]=item;identities[name]=ident
+            return out
+        out=None
+        for candidate in [base,*sorted(base.parent.glob(name+'-attempt*'))]:
+            if not candidate.exists():continue
+            out=checks.attempt('reuse_score:'+name,lambda candidate=candidate:accept_score(candidate))
+            if out is not None:break
+        if out is None:
+            require_free_gpus()
+            out=next_path(base)
+            command([sys.executable,'-u','-m','scripts.a2_depth_score','--config',str(config),
+                     '--arm',arm,'--output',str(out)],name+'-score',0)
+            checks.attempt('score:'+name,lambda:accept_score(out))
         def worker_checks():
-            for event in read_locked(lock(out/'checks.json'))['checks']:
+            for event in read(out/'checks.json')['checks']:
                 checks.record(name+':'+event['test'],event['passed'],event.get('detail'))
         checks.attempt('worker_checks:'+name,worker_checks)
     common=cfg['downstream_common']
     def replay(name,item,folder):
+        item_score=item
         for k in ('input_spec','manifest'):read_locked(common[k])
         target=root/folder/(name+'.json')
+        for candidate in [target,*sorted(target.parent.glob(name+'-attempt*.json'))]:
+            if not candidate.exists():continue
+            try:
+                cached=lock(candidate)
+                collect_files({name:identities[name]},cfg['prepared'],{name:item_score},{name:cached})
+                return cached
+            except Exception as error:checks.record('reuse_replay:'+name,False,repr(error))
+        target=next_path(target)
         command([common['eval_python'],'-m','eval.a2_requests','replay','--tokenizer',common['tokenizer'],
             '--input-spec',common['input_spec']['path'],'--dataset-root',common['dataset_root'],
             '--manifest',common['manifest']['path'],'--max-length','4096','--tasks',*common['tasks'],

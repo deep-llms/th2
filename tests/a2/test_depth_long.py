@@ -10,7 +10,7 @@ from tests.a2.test_depth_resume import RandomProbe
 from efficient_llm.a2.model import KDModel,prune
 from efficient_llm.a2.train import make_arguments
 from efficient_llm.a2_depth.heal_short import ReportTrainer,Trace
-from efficient_llm.a2_depth.heal_long import train_resumable
+from efficient_llm.a2_depth.heal_long import train_resumable, RecoverableTrainer
 from efficient_llm.a2_depth.resume import enable_checkpoints,select_checkpoint
 from efficient_llm.a2_depth.common import read,write,SPEC_SHA
 
@@ -23,8 +23,10 @@ class DepthLongTests(unittest.TestCase):
             def run(out,stop=None,resume=False):
                 set_seed(0);trace=Trace()
                 args=enable_checkpoints(make_arguments(out/'trainer',16,.001,1,1,cuda=False,global_sequences=2),every=4)
-                trainer=ReportTrainer(model=KDModel(copy.deepcopy(student),2),teacher=copy.deepcopy(teacher),args=args,
+                trainer=RecoverableTrainer(model=KDModel(copy.deepcopy(student),2),teacher=copy.deepcopy(teacher),args=args,
                     train_dataset=rows,data_collator=default_data_collator,callbacks=[trace,RandomProbe(stop)])
+                from efficient_llm.a2_depth.common import Checks
+                trainer.recovery_checks=Checks(out/'recovery.json')
                 ckpt,rejected=select_checkpoint(out/'trainer',identity,1) if resume else (None,[])
                 if ckpt and read(ckpt/'trainer_state.json')['global_step']==16:
                     with patch.object(trainer,'train',side_effect=AssertionError('Extra optimizer update')):
@@ -69,7 +71,7 @@ class DepthLongCoordinatorTests(unittest.TestCase):
             calls=[]
             def fake(cmd,**kw):calls.append(cmd);return SimpleNamespace(returncode=1 if len(calls)<3 else 0)
             checks=Checks(root/'checks.json')
-            with patch.object(runner,'require_free_gpus') as guard,patch.object(runner.subprocess,'run',side_effect=fake),patch.object(runner,'select_checkpoint',side_effect=[(out/'trainer/checkpoint-1000',[]),(out/'trainer/checkpoint-2000',[])]):
+            with patch.object(runner,'completed_arm',return_value={}),patch.object(runner.time,'sleep'),patch.object(runner,'require_free_gpus') as guard,patch.object(runner.subprocess,'run',side_effect=fake),patch.object(runner,'select_checkpoint',side_effect=[(out/'trainer/checkpoint-1000',[]),(out/'trainer/checkpoint-2000',[])]):
                 events=runner.run_arm(cfg,'fixture','P300',checks)
             self.assertEqual(len(events),3);self.assertEqual(guard.call_count,3)
             self.assertTrue(all('--resume' in call for call in calls))
@@ -102,9 +104,9 @@ class DepthLongCoordinatorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);cfg=dict(results_root=d,spec_sha256=SPEC_SHA,assets={},heal_streams={'dclm':{}},source_manifest={})
             checks=Checks(root/'checks.json')
-            with patch.object(runner,'require_free_gpus'),patch.object(runner.subprocess,'run',return_value=SimpleNamespace(returncode=1)),patch.object(runner,'select_checkpoint',return_value=(root/'checkpoint-1000',[])):
+            with patch.object(runner.time,'sleep'),patch.object(runner,'require_free_gpus'),patch.object(runner.subprocess,'run',return_value=SimpleNamespace(returncode=1)),patch.object(runner,'select_checkpoint',return_value=(root/'checkpoint-1000',[])):
                 events=runner.run_arm(cfg,'fixture','P300',checks)
-            self.assertEqual(len(events),2)
+            self.assertEqual(len(events),3)
             self.assertEqual(checks.items[-1]['test'],'resume_no_progress:P300')
             self.assertFalse(checks.items[-1]['passed'])
 

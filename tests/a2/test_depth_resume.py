@@ -58,9 +58,9 @@ class DepthResumeTests(unittest.TestCase):
             self.assertEqual(final.name,'checkpoint-16');self.assertFalse(rejected)
             (final/'optimizer.pt').write_bytes(b'broken')
             previous,rejected=select_checkpoint(root/'resume',identity,1)
-            self.assertEqual(previous.name,'checkpoint-12');self.assertEqual(len(rejected),1)
+            self.assertEqual(previous.name,'checkpoint-16');self.assertEqual(previous.parent.name,'clean-state');self.assertEqual(len(rejected),1)
             self.assertIsNone(select_checkpoint(root/'resume',dict(identity,steps=17),1)[0])
-            self.assertEqual(read(previous/'trainer_state.json')['global_step'],12)
+            self.assertEqual(read(previous/'trainer_state.json')['global_step'],16)
 
     def test_registered_C_schedule_and_prefix_counts(self):
         self.assertEqual(warmup_steps(48828),977)

@@ -22,6 +22,21 @@ from .heal_short import Trace, ReportTrainer
 from .resume import enable_checkpoints, CheckpointAudit, select_checkpoint, restore_audit
 from transformers.trainer_callback import TrainerState
 
+class RecoverableTrainer(ReportTrainer):
+    def compute_loss(self,model,inputs,return_outputs=False,num_items_in_batch=None):
+        value=super().compute_loss(model,inputs,return_outputs,num_items_in_batch)
+        loss=value[0] if return_outputs else value
+        bad=(~torch.isfinite(loss.detach())).to(dtype=torch.int32)
+        if torch.distributed.is_initialized():torch.distributed.all_reduce(bad,op=torch.distributed.ReduceOp.MAX)
+        if bad.item():
+            # All ranks leave the failed attempt together, before a corrupt update.
+            # The coordinator records it and resumes the full registered schedule.
+            self.recovery_checks.record('nonfinite_attempt',False,dict(step=self.state.global_step,action='recover clean state'))
+            print('DEPTH_NONFINITE_RECOVERY',self.state.global_step,flush=True)
+            raise FloatingPointError('Recoverable nonfinite KD; no optimizer update applied')
+        return value
+
+
 STEPS=48828
 
 def run_identity(cfg, arm):
@@ -84,7 +99,8 @@ def run(cfg,arm,resume=False):
     rows=PackedRows(cfg['heal_streams'][ds]['path'],'heal',count=STEPS*64,verify=False)
     checks.record('heal_manifest',sha(Path(cfg['heal_streams'][ds]['path'])/'manifest.json')==cfg['heal_streams'][ds]['sha256'])
     set_seed(0);args=enable_checkpoints(make_arguments(out/'trainer',STEPS,1e-3,4,world,cuda=True));trace=Trace()
-    trainer=ReportTrainer(model=KDModel(student,256),teacher=teacher,args=args,train_dataset=rows,data_collator=default_data_collator,callbacks=[trace])
+    trainer=RecoverableTrainer(model=KDModel(student,256),teacher=teacher,args=args,train_dataset=rows,data_collator=default_data_collator,callbacks=[trace])
+    trainer.recovery_checks=checks
     if rank==0 and not (out/'recipe.json').exists():write(out/'recipe.json',dict(run_id=name,dataset=ds,arm=arm,teacher=teacher_arm,initial_parent=initial,block=block,removed=removed,steps=STEPS,tokens=STEPS*64*4096,lr=.001,training=args.to_dict(),baseline=baseline,pre=pre,source=cfg['source_manifest']))
     started=time.monotonic()
     train_resumable(trainer,trace,identity,checkpoint,out,resume=resume,rejected=rejected)
@@ -120,6 +136,8 @@ def run(cfg,arm,resume=False):
         write(out/'result.json',result)
         for label,value in [('parent',baseline),('pre-'+block,pre['final']),('post-'+block,values['final'])]:
             if value is not None:write(root/'perseq'/name/(label+'.json'),dict(value,run_id=name,flags=flags,unverified=bool(flags)))
+        from .recovery import seal_arm
+        seal_arm(out,identity)
     state.wait_for_everyone()
 
 if __name__=='__main__':

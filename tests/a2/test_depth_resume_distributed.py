@@ -18,7 +18,7 @@ class DepthDistributedResumeTests(unittest.TestCase):
             for rank in range(2):
                 r=json.loads((Path(d)/f'verified-rank{rank}.json').read_text())
                 self.assertTrue(r['passed']);self.assertEqual(r['world'],2);self.assertEqual(r['global_step'],16)
-                self.assertTrue(r['order']['exact_order'])
+                self.assertTrue(r['order']['exact_order']);self.assertTrue(r['synchronized_nonfinite_recovery'])
 
 
 if __name__=='__main__':unittest.main()

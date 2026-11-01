@@ -32,7 +32,7 @@ class DepthCLaunchTests(unittest.TestCase):
             (source/'resources').mkdir(parents=True);(source/'docs').mkdir()
             (source/'docs/A2_depth_spec.md').write_text('fixture')
             (source/'resources/accelerate_b200.yaml').write_text('fixture')
-            write(source/'resources/a2_depth_partc_integration_cpu_20261101.json',dict(status='PASS',files={}))
+            write(source/'resources/a2_depth_partc_recovery_cpu_20261101.json',dict(status='PASS',files={}))
             report=Path(d)/'AB.md';report.write_text('Actual A+B report fixture')
             cfg=dict(spec_sha256=SPEC_SHA,data_root=d,assets='assets',data_manifest='data',prepared='prepared',
                 reference_nll={},part_ab_note=dict(spec_sha256=SPEC_SHA,posted_at='fixture'),

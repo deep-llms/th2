@@ -5,6 +5,9 @@ after all ranks saved their RNG and audit state. Incomplete checkpoints remain
 on disk and are reported when selecting the latest usable state.
 """
 from pathlib import Path
+import os
+import shutil
+import torch
 from transformers import TrainerCallback
 from transformers.trainer_utils import SaveStrategy
 from .common import read, write, SPEC_SHA
@@ -43,10 +46,34 @@ class CheckpointAudit(TrainerCallback):
         if args.process_index == 0:
             required = checkpoint_files(args.world_size)
             present = all((root/name).is_file() and (root/name).stat().st_size for name in required)
-            write(root/'depth-checkpoint.json', dict(complete=bool(present), identity=self.identity,
+            clean=all(read(root/f'depth-audit-rank{rank}.json')['nonfinite_microbatches']==0 for rank in range(args.world_size))
+            clean=clean and finite_state(self.trainer.model.state_dict()) and finite_state(self.trainer.optimizer.state_dict())
+            write(root/'depth-checkpoint.json', dict(complete=bool(present), state_finite=bool(clean), identity=self.identity,
                 global_step=state.global_step, world_size=args.world_size,
                 files={name:(root/name).stat().st_size for name in required if (root/name).is_file()}))
+            if present and clean:pin_clean_checkpoint(root)
         self.trainer.accelerator.wait_for_everyone()
+
+
+def finite_state(value):
+    if isinstance(value,torch.Tensor):return bool(torch.isfinite(value).all())
+    if isinstance(value,dict):return all(finite_state(v) for v in value.values())
+    if isinstance(value,(list,tuple)):return all(finite_state(v) for v in value)
+    return True
+
+
+def pin_clean_checkpoint(root):
+    # Copy, never hard-link: a future save at the same step must not mutate this state.
+    # Native Trainer rotates BEFORE on_save, so this store is outside the checkpoint-* rotation namespace.
+    store=root.parent/'clean-state';store.mkdir(exist_ok=True)
+    dest=store/root.name;pending=store/(root.name+f'.pending-{os.getpid()}')
+    if pending.exists():shutil.rmtree(pending)
+    shutil.copytree(root,pending)
+    if dest.exists():
+        shutil.rmtree(pending)  # Same-step clean state already pinned; immutable.
+    else:pending.rename(dest)
+    for previous in store.glob('checkpoint-*'):
+        if previous!=dest and previous.name[11:].isdigit() and int(previous.name[11:])<int(root.name[11:]):shutil.rmtree(previous)
 
 
 def select_checkpoint(output, identity, world):
@@ -55,12 +82,14 @@ def select_checkpoint(output, identity, world):
     Callers must record rejections. This does not launch or restart a GPU job.
     """
     rejected=[]
-    candidates=[p for p in Path(output).glob('checkpoint-*') if p.is_dir() and p.name[11:].isdigit()]
+    candidates=[p for folder in (Path(output),Path(output)/'clean-state')
+                for p in folder.glob('checkpoint-*') if p.is_dir() and p.name[11:].isdigit()]
     for root in sorted(candidates,key=lambda p:int(p.name[11:]),reverse=True):
         try:
             marker=read(root/'depth-checkpoint.json')
             if marker['spec_sha256']!=SPEC_SHA or not marker['complete'] or marker['identity']!=identity or marker['world_size']!=world:
                 raise ValueError('Incomplete checkpoint or changed recipe/world/spec')
+            if marker.get('state_finite') is False:raise ValueError('Nonfinite model or optimizer state')
             step=marker['global_step']
             if step!=int(root.name[11:]) or read(root/'trainer_state.json')['global_step']!=step:
                 raise ValueError('Checkpoint step mismatch')
@@ -70,6 +99,7 @@ def select_checkpoint(output, identity, world):
                 audit=read(root/f'depth-audit-rank{rank}.json')
                 if audit['identity']!=identity or audit['global_step']!=step or audit['world_size']!=world or audit['rank']!=rank:
                     raise ValueError('Rank audit identity mismatch')
+                if audit['nonfinite_microbatches']!=0:raise ValueError('Nonfinite loss in checkpoint history')
                 if len(audit['lrs'])!=step:raise ValueError('Incomplete LR trace')
                 expected_lrs=[lr_for_update(i,identity['steps'],identity['lr']) for i in range(1,step+1)]
                 if audit['lrs']!=expected_lrs:raise ValueError('Saved LR trace differs from full schedule')

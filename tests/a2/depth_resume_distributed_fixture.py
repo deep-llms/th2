@@ -2,6 +2,7 @@
 import argparse
 import copy
 import random
+from unittest.mock import patch
 from pathlib import Path
 import numpy as np
 import torch
@@ -13,7 +14,8 @@ from efficient_llm.a2.model import KDModel, prune
 from efficient_llm.a2.train import make_arguments, audit_order
 from efficient_llm.a2_depth.heal_short import ReportTrainer, Trace
 from efficient_llm.a2_depth.resume import enable_checkpoints, CheckpointAudit, select_checkpoint, restore_audit
-from efficient_llm.a2_depth.common import write
+from efficient_llm.a2_depth.common import write,Checks
+from efficient_llm.a2_depth.heal_long import RecoverableTrainer
 
 
 class Probe(TrainerCallback):
@@ -34,8 +36,9 @@ def main():
     def run(path,stop=None,resume=None):
         set_seed(0);trace=Trace();probe=Probe(stop)
         args=enable_checkpoints(make_arguments(path,16,.001,1,2,cuda=False,global_sequences=4),every=4)
-        trainer=ReportTrainer(model=KDModel(copy.deepcopy(initial),2),teacher=copy.deepcopy(teacher),args=args,
+        trainer=RecoverableTrainer(model=KDModel(copy.deepcopy(initial),2),teacher=copy.deepcopy(teacher),args=args,
             train_dataset=rows,data_collator=default_data_collator,callbacks=[trace,probe])
+        trainer.recovery_checks=Checks(path/f'flags-{state.process_index}.json')
         trainer.add_callback(CheckpointAudit(trainer,trace,identity))
         if resume:restore_audit(trainer,trace,resume)
         trainer.train(resume_from_checkpoint=str(resume) if resume else None)
@@ -55,8 +58,15 @@ def main():
     assert full.lr_scheduler.state_dict()==resumed.lr_scheduler.state_dict()
     traces=[None]*2;dist.all_gather_object(traces,resumed.seen)
     order=audit_order(traces,list(range(64)),2,1)
+    # A loss failure on only rank zero must unwind both ranks before backward.
+    failed=False
+    loss=torch.tensor(float('nan') if state.process_index==0 else 1.,requires_grad=True)
+    with patch('efficient_llm.a2_depth.heal_short.ReportTrainer.compute_loss',return_value=loss):
+        try:resumed.compute_loss(None,{})
+        except FloatingPointError:failed=True
+    failures=[None]*2;dist.all_gather_object(failures,failed);assert all(failures)
     write(a.output/f'verified-rank{state.process_index}.json',dict(passed=True,world=2,device='cpu',
-        global_step=resumed.state.global_step,exact_weights_optimizer_scheduler_RNG_LR=True,order=order))
+        global_step=resumed.state.global_step,exact_weights_optimizer_scheduler_RNG_LR=True,synchronized_nonfinite_recovery=True,order=order))
     state.wait_for_everyone();dist.destroy_process_group()
 
 

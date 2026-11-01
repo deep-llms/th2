@@ -1,0 +1,54 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "at": "2026-11-01T04:52:20.211535+00:00",
+  "status": "PASS",
+  "tests": 20,
+  "files": {
+    "efficient_llm/a2_depth/recovery.py": "bd367af25406ad98541f743fbcf6d4022aa5b702a467d513044eb575496ad336",
+    "efficient_llm/a2_depth/resume.py": "1deaf5fb3a180a9011830d01ba672904d572ed26b7bb92ac18c18c3df2d86112",
+    "efficient_llm/a2_depth/heal_long.py": "e5cf3892613ff86834ce4941ae0d0e2404d9b9be34f63a443f82032cfb5cc7da",
+    "scripts/a2_depth_continue.py": "e5a9f21e01654ef4198a91be79cd4495339f53285b28ec26d9669d8d9f3bda3f",
+    "scripts/launch_a2_depth_partc.py": "a9d003ac962df716635e34cb6f05278a526711962c25463df390b0533b39c794",
+    "scripts/a2_depth_partc_plan.py": "264582dcaf6fcd1db25dca877e3690342d1fc610ca8f0ab0f2e50e879e34b9d8",
+    "scripts/a2_depth_partc_run.py": "4e3606c4c61a5b5452cb4aba9821246751746700374ceb281a624e2dca633950",
+    "scripts/a2_depth_partc_report.py": "956b8b600a82162704f68d21754236178521177548db98453d7f0ea02d89b28c",
+    "scripts/a2_depth_downstream.py": "2c4b494fc56cbe3deb759f400b311409331f8d03fd66024e73ab1037d7824445",
+    "scripts/a2_depth_score.py": "5fc23b9a4d111e8d2438b8f62223806f874bec8e3f43b093dc06d96373f6f893",
+    "efficient_llm/a2_depth/stream.py": "d48b8a844007de0807ec113a65578f93a86209a2e467f38988f56e39cba88a1d"
+  },
+  "test_files": {
+    "tests/a2/test_depth_recovery.py": "ae2e6e6014d9a212c853221c20f1ab14b669cfd6501219dd191ab8dbf2999717",
+    "tests/a2/test_depth_long.py": "2b2e1bad597ea9d1984d271ed4abc560e54d7e8f7d6660debcabc7f1aef1aece",
+    "tests/a2/test_depth_resume.py": "96a6622e6f60ab9151726db26a32b0ec4cadc89bb4d9adc3d261f99c063e2e94",
+    "tests/a2/test_depth_downstream.py": "5e687f44df010f26dfd4c8f908024c64e5ee4d7a1f3603bc65d5339f8b0a3e06",
+    "tests/a2/test_depth_partc_launch.py": "584a273f8b7c467180c607995a9447710b3097a9b34461ee084ceaa9575e7936",
+    "tests/a2/test_depth_resume_distributed.py": "7c9ad2c18ebce9588f9e1b2b4dd893f225fca5e7604db4f984690163b7e08b5e",
+    "tests/a2/depth_resume_distributed_fixture.py": "570c144af617803cd529f60fd07feee9ce54fd67196b3626239d5dd1f1ee623e"
+  },
+  "log_sha256": "45d81adb39630abbdec7f459e45bbad2940c82515feae77dc2266a66ccfb84bc",
+  "scope": [
+    "Clean copied checkpoint survives native rotation/corruption of normal checkpoint; reject nonfinite audit/model/optimizer marker",
+    "Finite training unchanged; synchronized nonfinite failure on two CPU/Gloo ranks before backward",
+    "Two-rank native uninterrupted/resumed weights optimizer scheduler RNG LR order exact",
+    "Three bounded same-step failure attempts with backoff; complete-arm integrity reuse",
+    "Existing frozen-root continuation after coordinator loss; rejects source/config changes, live supervisor, held guard and occupied GPUs",
+    "Downstream reentry reuses complete scores/replays; preserves partial files and recomputes only missing/invalid scores"
+  ],
+  "gpu_deployed": false,
+  "actual_C_plan_created": false,
+  "limitations": [
+    "CPU/Gloo evidence only; no actual eight-B200/NCCL resume test",
+    "Physical ownership remains mandatory; no stale guard removal or infrastructure repair",
+    "Scientific failures from prior attempts remain flagged even after recovery"
+  ],
+  "prior_test_failures": [
+    {
+      "log_sha256": "ea9250e1d2014ab7afa47a8a6dade0d6742b4beb413ae0fa066eef5e913bb374",
+      "reason": "Existing test expected two attempts; updated for bounded three-attempt policy"
+    },
+    {
+      "log_sha256": "25f88aaabdec101a63b91ff5a2df860dced5df49a3dab224d9c3ff027702e64c",
+      "reason": "New test fixtures: schedule8 shorter than warmup10; parent namedX72 instead of S72. Corrected fixtures; no production numerical change"
+    }
+  ]
+}

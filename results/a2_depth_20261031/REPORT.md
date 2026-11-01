@@ -97,3 +97,17 @@ Còn lại: B12/replay/A+B note, DT6 production, C/downstream/final report/nativ
 DCLM/W9 X72 đang chạy70/762,8GPU98–100%;304worker checks/43prepPASS,176sourcefiles không đổi/full ownership verified. [Receipt và verification](partb_health_1232/verification.json). Mỗi fit gồm startup hiện khoảng14.5phút; dự kiến B14:50–15:15SGT, sơ bộ. C39h vẫn chưa đo.
 
 Còn lại:10fits B/replay/A+B note,DT6/C/downstream/finalreport/nativehandoff; deviation Breadth–Depth giữ nguyên.
+
+
+## C recovery implementation — 01Nov2026 (CPU validation only)
+
+User-authorized review fixes completed before C launch. The C trainer flags and synchronizes a nonfinite loss across ranks, leaves that failed attempt before backward, and the coordinator retries from clean full-state evidence. Finite-loss KD/optimizer/LR/sample order are unchanged. All failure flags remain in the report.
+
+- Native rotation keeps two ordinary checkpoints; one additional copied clean checkpoint is kept under trainer/clean-state, outside checkpoint-* rotation. A replacement copy is staged before the older clean copy is removed. Nonfinite audit/state candidates are rejected.
+- Same-step transient failures receive up to three attempts with10/20s backoff; each uses an available rendezvous port. Physical GPUs must become free; no unknown processes are killed.
+- `launch_a2_depth_partc.py --resume --output EXISTING_ROOT --plan ORIGINAL_FROZEN_PLAN --code-commit ORIGINAL_COMMIT --session UNIQUE_SESSION --recovery-handoff FRESH_JSON` resumes the existing scientific experiment under a new native supervisor. Fresh handoff JSON is either `{"mode":"burn","predecessor":{...exact current locks/start identities...}}` or `{"mode":"free"}`. Free mode independently verifies original host/GPU UUIDs, no GPU workers, no held guard and no live prior supervisor/coordinator. Existing source/config/plan must match their original hashes. Historical supervisor/burn receipts are preserved under their original paths; new receipts are indexed in continuations.json.
+- Completed arms validate result/recipe/order/rank checks/final model hashes before reuse. Downstream can reenter; sealed scores and matching replays are reused, partial files remain in earlier attempt directories.
+
+20CPU tests PASS, including exact two-rank Gloo resume (weights/optimizer/scheduler/RNG/LR/order) and NaN on one rank unwinding both ranks before backward. [Evidence](cpu_recovery_20261101/validation.json). Initial test-fixture failures are retained alongside the passing log. No actual eight-B200/NCCL resume test or C launch is claimed.
+
+Remaining: B/replay/A+B note,production DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation unchanged.

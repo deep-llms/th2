@@ -49,7 +49,7 @@ def prepare(cfg,root,frozen,commit):
         checks.record('DT6_historical_provenance',original['provenance']==history['provenance'])
     checks.attempt('DT6_original_receipt',historical)
     def cpu():
-        evidence=read(frozen/'resources/a2_depth_partc_integration_cpu_20261101.json')
+        evidence=read(frozen/'resources/a2_depth_partc_recovery_cpu_20261101.json')
         checks.record('cpu_validation',evidence['status']=='PASS' and all(digest(frozen/n)==v for n,v in evidence['files'].items()),evidence)
     checks.attempt('cpu_validation_receipt',cpu)
     cfg.update(results_root=str(root),code_commit=commit,source_manifest=lock(root.parents[1]/'source-manifest.json'))
@@ -59,7 +59,14 @@ def prepare(cfg,root,frozen,commit):
 def main():
     p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True)
     p.add_argument('--session',required=True);p.add_argument('--code-commit',required=True)
-    p.add_argument('--plan',type=Path,required=True);a=p.parse_args()
+    p.add_argument('--plan',type=Path,required=True)
+    p.add_argument('--resume',action='store_true')
+    p.add_argument('--recovery-handoff',type=Path)
+    a=p.parse_args()
+    if a.resume:
+        if not a.recovery_handoff:p.error('--resume requires a fresh --recovery-handoff JSON')
+        from scripts.a2_depth_continue import continue_run
+        return continue_run(a)
     source=Path(__file__).resolve().parents[1];cfg=read(a.plan);started=time.monotonic()
     if socket.gethostname()!='thiennh-p6-6y3o-worker-0' or a.output.exists():raise ValueError('Wrong host or duplicate root')
     for session in (a.session,a.session+'_burn'):
@@ -67,7 +74,7 @@ def main():
     admission=predecessor(cfg,a.output)
     a.output.mkdir();plan_rel=a.plan.resolve().relative_to(source)
     frozen=freeze_source(source,a.output,a.code_commit,extra_files=(str(plan_rel),'docs/A2_depth_spec.md',
-        'resources/a2_depth_partc_integration_cpu_20261101.json','resources/a2_depth_partc_cpu_tests_20261101.json',
+        'resources/a2_depth_partc_integration_cpu_20261101.json','resources/a2_depth_partc_recovery_cpu_20261101.json','resources/a2_depth_partc_cpu_tests_20261101.json',
         'resources/a2_depth_resume_distributed_cpu_20261101.json','resources/a2_depth_stage1_references_20261101.json',
         'resources/a2_depth_stream_reference_20261101.json'))
     root=a.output/'results/a2_depth_20261031';root.mkdir(parents=True)
@@ -96,6 +103,9 @@ def main():
     cmd=['env',*[k+'='+env[k] for k in keys],sys.executable,'-u','-m','scripts.train_then_burn','--config',jobs['path'],
          '--output',str(a.output/'supervised'),'--inspection',str(a.output/'inspection.json'),'--host',socket.gethostname(),
          '--burn-session',a.session+'_burn','--predecessor-burn-script',cfg['predecessor']['burn_script']]
+    write(a.output/'launch.json',dict(session=a.session,config=config,jobs=jobs,input_plan=lock(frozen/plan_rel),
+        source_manifest=lock(a.output/'source-manifest.json'),initial_inspection=lock(a.output/'inspection.json'),
+        environment={k:env[k] for k in keys}))
     command='exec '+shlex.join(cmd)+' >'+shlex.quote(str(a.output/'supervisor.log'))+' 2>&1'
     subprocess.run(['tmux','new-session','-d','-s',a.session,'-c',str(frozen),command],env=env,check=True)
     subprocess.run(['tmux','set-option','-w','-t',a.session,'remain-on-exit','on'],check=True)
