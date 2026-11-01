@@ -1,0 +1,7 @@
+{
+  "original": "source-manifest.json",
+  "original_sha256": "ca2da0ca56d19b9ee9deacfc075627f90aab25fca4fe7d94ffaf662ce499f33f",
+  "gzip": "source-manifest.json.gz",
+  "gzip_sha256": "ba4802e3cc4db702919f87d4e9f53cf607f364322fb0e2220aa75d8ce3129d30",
+  "lossless": true
+}

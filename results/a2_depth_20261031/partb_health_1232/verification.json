@@ -1,0 +1,143 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "health_at": "2026-11-01T04:32:12.301624+00:00",
+  "raw_sha256": "7944d76a2aced495e0731b98bbb2c2bf916cd8688497993cd417d8b7b7d57851",
+  "health_commit": "0d1ae9573a34f3a030bc340daef69543c3d7e030",
+  "source": "a9cbd433d1fb91642c266319463e91c7a931afc4",
+  "source_files": 176,
+  "phase": "D-dclm-X72-W9-0.2B-lr1e-3",
+  "updates": 70,
+  "total_updates": 762,
+  "completed_B": 2,
+  "preparation_checks": 43,
+  "worker_checks": 304,
+  "full_ownership_verified": true,
+  "workers": [
+    763464,
+    763465,
+    763466,
+    763467,
+    763468,
+    763469,
+    763470,
+    763471
+  ],
+  "guard": 762457,
+  "gpu_utilization": [
+    98.0,
+    100.0,
+    98.0,
+    98.0,
+    98.0,
+    100.0,
+    99.0,
+    99.0
+  ],
+  "completed": [
+    {
+      "run_id": "D-dclm-P1T-W9-0.2B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P1T",
+      "block": "W9",
+      "status": "complete",
+      "training_seconds": 733.259786772076,
+      "elapsed_seconds": 789.7507288819179,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-P1T-W9-0.2B-lr1e-3/final",
+      "delta_post": 0.3221056339716317,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/D-dclm-P1T-W9-0.2B-lr1e-3/result.json",
+      "sha256": "892cca75e00ca8db3b8132729bf2ec7677e4abcafbabd41341a285af20783874",
+      "scores": {
+        "final": {
+          "loss": 3.009014625735566,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 2.9991731007411695,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 3.002213835890988,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 762
+    },
+    {
+      "run_id": "D-dclm-P300-W9-0.2B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P300",
+      "block": "W9",
+      "status": "complete",
+      "training_seconds": 733.1854833010584,
+      "elapsed_seconds": 785.1996380076744,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-P300-W9-0.2B-lr1e-3/final",
+      "delta_post": 0.28907196064241303,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/D-dclm-P300-W9-0.2B-lr1e-3/result.json",
+      "sha256": "00c628c4d96c00a5c423b2061eb3a8d516d8afb335c30f3eec82520c6a3902b3",
+      "scores": {
+        "final": {
+          "loss": 3.0268649928550975,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 3.0165084787512777,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 3.0181312118046835,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 762
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P300",
+      "block": "S1",
+      "status": "complete",
+      "training_seconds": 734.4229208780453,
+      "elapsed_seconds": 786.0492754033767,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-0.2B-lr1e-3/final",
+      "delta_post": 0.20515510694919392,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+      "sha256": "849e4cfdd11c1f56d9662a3f2831004e8da5ab3e9ce9edab2f417fba06fa187b",
+      "scores": {
+        "final": {
+          "loss": 2.9429481391618784,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 2.9310933019668948,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 2.9331967403370385,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 762
+    }
+  ],
+  "DCLM_W9_E_from_summary": 0.033033673329218693,
+  "full_array_replay": "pending",
+  "raw_receipt": "raw_receipt.log.gz"
+}

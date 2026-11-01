@@ -88,3 +88,12 @@ DT4 đã chạy đúng một lần, đủ 762 updates; final NLL **2.94294813916
 Lượt B đầu tiên DCLM/P300/W9 đang chạy (1/762 tại snapshot), tám GPU 99%; 128 worker checks và 43 preparation checks PASS, 176 source files không đổi, full ownership được xác minh. Bằng chứng: [verification](partb_health_1202/verification.json). ETA B khoảng14:40–15:30 SGT, sơ bộ từ DT4; C 39h vẫn là estimate chưa đo.
 
 Còn lại: B12/replay/A+B note, DT6 production, C/downstream/final report/native handoff. Deviation Breadth-before-Depth giữ nguyên.
+
+
+## Part B — snapshot 01Nov12:32 SGT
+
+2/12 B fits hoàn tất: DCLM/W9 P300 final NLL 3.0268649928550975 (damage0.28907196064241303); P1T final3.009014625735566 (damage0.3221056339716317). E_W9=+0.033033673329218693 tính từ summaries; full saved-array replay còn chờ. Cả hai đủ762 LR updates, roundtrip0, không flags. DT4 giữ nguyên PASS.
+
+DCLM/W9 X72 đang chạy70/762,8GPU98–100%;304worker checks/43prepPASS,176sourcefiles không đổi/full ownership verified. [Receipt và verification](partb_health_1232/verification.json). Mỗi fit gồm startup hiện khoảng14.5phút; dự kiến B14:50–15:15SGT, sơ bộ. C39h vẫn chưa đo.
+
+Còn lại:10fits B/replay/A+B note,DT6/C/downstream/finalreport/nativehandoff; deviation Breadth–Depth giữ nguyên.
