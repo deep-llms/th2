@@ -1,0 +1,9 @@
+{
+  "original_path": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/results.json",
+  "original_bytes": 1360403,
+  "original_sha256": "862b1a59e810dc6d7d7a4d2b0a5ae1ca3662301163030d334f971d842884fbad",
+  "gzip_path": "docs/results/a2_nem_s1_20261028/final/supervised/run/pair/results.json.gz",
+  "gzip_bytes": 413104,
+  "gzip_sha256": "2ad4743db13bd143cf9ed174a1d91277a172fe7629e27752049a9dc293a9c671",
+  "reason": "Lossless archival compression for runner source-tree cap; original bytes retained locally and remotely; no scientific or runtime changes"
+}

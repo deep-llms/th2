@@ -1,0 +1,11 @@
+{
+  "checks": [
+    {
+      "test": "DT6_manifest",
+      "passed": true,
+      "detail": null,
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    }
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}
