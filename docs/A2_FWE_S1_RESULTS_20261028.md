@@ -28,7 +28,7 @@ difference. All 78 source files verified against cfeb74c. Supervisor exit0 and
 complete artifacts verified. Burns restored12:28:13SGT and independently live
 12:31:49SGT, guard released; collective cycles260→270, payload288.69→299.79GiB/rank.
 
-Full [results](results/a2_fwe_s1_20261028/final/results.json), compact
+Full [results](results/a2_fwe_s1_20261028/final/results.json.gz), compact
 [summary](results/a2_fwe_s1_20261028/final/summary.json), and
 [health/SHA receipt](results/a2_fwe_s1_20261028/final/health.json).
 Raw local receipt temp/a2_fwe_health05.log SHA256
