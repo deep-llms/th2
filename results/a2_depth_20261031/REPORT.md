@@ -140,3 +140,12 @@ Remaining: six B fits including the active one, replay/A+B note, DT6/C/downstrea
 DCLM/X72/W1 active at 270/762, eight GPUs 98–100%; 176 source files unchanged/full ownership verified, 43 preparation and 832 worker checks PASS, zero nonfinite flags across ten existing logs. [Verified receipt](partb_health_1401/verification.json). B ETA 14:50–15:15 SGT remains provisional; C39h unmeasured.
 
 Remaining: four B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
+
+
+## Part B — snapshot 01Nov14:32 SGT
+
+10/12 B fits complete: all DCLM arms, all FWE/W9 arms and FWE/W1 P300. New final NLL: DCLM/X72/W1 2.941970030074853 (damage 0.03339473396698267), FWE/P300/W1 2.9833470122117824 (damage 0.12271568635496743). Each completed fit has 762 LR updates, roundtrip difference 0 and no flags. DT4 and prior results unchanged; full saved-array replay pending.
+
+FWE/P1T/W1 active at 370/762, then FWE/X72/W1 remains. Eight GPUs 98–99%; 176 source files unchanged/full ownership verified, 43 preparation and 1,008 worker checks PASS, zero nonfinite flags across 12 existing logs. [Verified receipt](partb_health_1432/verification.json). Measured roughly 0.96s/update plus ~14.5min for the last fit and final readout suggests B ETA 14:55–15:10 SGT, provisional; C39h remains unmeasured.
+
+Remaining: two B fits including the active one, saved-array replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
