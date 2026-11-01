@@ -1,3 +1,7 @@
+01Nov15:26SGT: correctedClaunchf8d30cc ACK/9returnedchecksPASS/A2_DEPTH_PART_C_SUBMITTED root-a02. ActualDT6/GPUstartup pending read-onlyhealtha02. Do not reuse faileda01root.
+
+2026-11-01T07:23:07.979922+00:00: Corrected C launchf8d30cc6dffb0a3ec5de2b3371003f2ca68dc4c5 SUBMITTED/remoteheadverified,frozendd55c8b. Newroot6y3o-a2-depth-partc-20261101-a02/sessiona2_depth_partc_20261101_a02. Retrievependinglaunchreceipt BEFORE remote writes; no duplicate. a01 failed before GPUreclaim/DT6 on nativejobs metadata; preserved. Nativewriter+load_jobs fixed in initial/continuation/9CPUtestsPASS. SameBburn exact untouched. Remaining actualstartup/DT6/C/downstream/replay/finalreport/handoff;CPU-onlyresume/Breadth-orderdeviation.
+
 01Nov15:21SGT: Chealtha01 5b29368 ACK shows project launch failure before GPUreclaim/DT6: native jobs schema rejected extra spec_sha256. PriorBburn exact/all8 identities unchanged;guardreleased/sessiondead;185sourcefiles42a6f05verified. RawSHAff008ce5e223d888fc92a976633afae1b15a807fe0757d699cfc45d920420c46. Fixing both initial/continuation nativejobs writer with actualnativeparser test; preservefaileda01root, authorizedcorrectedfresh a02 next. No pendingreceipt.
 
 2026-11-01T07:18:12.627691+00:00: Unique read-only Chealtha01 5b29368af9035dead18b5d3084ef7531850a206f SUBMITTED/remoteheadverified; retrieve BEFORE remote writes. Launcha0bfc35 ACK; actualDT6/GPUstate pending. Frozen42a6f05; samewatch1283867. RemainingC/DT6/downstream/replay/report/handoff;CPU-onlyresume/Breadth-orderdeviation.
