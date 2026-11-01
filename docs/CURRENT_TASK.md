@@ -1,3 +1,7 @@
+01Nov15:09SGT: Bpackage3fe78a5 ACK; 205files/5487189archivebytes/SHA4717f3de61f65c8ab70eb67e9fa69027bded68d950decfa97b039ba2d24eb104. Preparing exact manifest+parts export; no GPU work; replay then A+Bnote/C.
+
+2026-11-01T07:05:11.282961+00:00: DepthB resultpackageb01 3fe78a5a3f799c3196dee3fc463814651758b892 SUBMITTED/remoteheadverified; retrieve packageACK before exact export. No GPU work; all13fits/nativehandoff verified. Remaining export/replay/A+Bnote,C.
+
 01Nov15:02:15SGT VERIFIED/retrieved15:05: DepthB healtha08 a63084c ACK; all12B+DT4complete/full762updates/roundtrip0/no flags;1152workerchecksPASS/13lognonfinite0/176sourcefilesunchanged. Trainingend14:53:43/nativehandoff14:54:54;guardreleased/sessiondead/nativeburn530→540/payload588.49→599.59 independentlyverified. RawSHA07ecf7ff20a88bc71e1f84366281e76fc25903a1a3f94aaaf06dc9cd4e3d80dd. Actual arrays/replay/A+Bnote pending before C. No pendingreceipt before unique resultpackageb01; samewatch1283867.
 
 2026-11-01T07:01:31.544990+00:00: Unique read-only DepthPartBhealtha08 a63084c41d137ce323745d98767bd59ed508da55 SUBMITTED/remoteheadverified. Retrieve receipt BEFORE remote writes/no duplicate/relaunch. Verify all B/terminal/nativeburn if available; lastactual14:32B10/12. Samewatch1283867 next15:30:55SGT. RemainingBterminal/replay/A+Bnote,DT6/C/downstream/finalreport/nativehandoff;Breadth-orderdeviation/CPU-onlyresume retained.
