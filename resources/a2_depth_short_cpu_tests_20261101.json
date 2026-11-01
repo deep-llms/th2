@@ -1,0 +1,13 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "PASS",
+  "tests": 3,
+  "scope": "DT4/Part B CPU only; no GPU deployment",
+  "log_sha256": "a9fae51bf76ca54e73360f98e919b4f9d8348ea629e7d052c05a9661f0266b84",
+  "files": {
+    "efficient_llm/a2_depth/heal_short.py": "d471bdb39c091303652b59008f7cdbaaa2513f3f938b7e691087f0ac34b7b26a",
+    "scripts/a2_depth_partb_run.py": "a02054c69f9dc0f1fa73c0c28ebba39162d99fb7969e5589a366724aeaf4bbee",
+    "scripts/a2_depth_partb_report.py": "dfbd69d2f43f0c81c31366e2a0da2755fe1380ee63a98a28616f21dff7dd77ed",
+    "tests/a2/test_depth_short.py": "0ae0487c4bd616c7ece10d76f7513e24d4833041704ca027691f9218074e4044"
+  }
+}

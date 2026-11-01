@@ -1,0 +1,8 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "preparation_seconds": 0.4628862631507218,
+  "expected_node_hours": 0.6,
+  "timeout_seconds": null,
+  "deadline": null,
+  "policy": "report-only"
+}
