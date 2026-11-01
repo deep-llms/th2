@@ -1,0 +1,26 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "at": "2026-11-01T03:06:22.960737+00:00",
+  "status": "PASS",
+  "tests": 5,
+  "files": {
+    "efficient_llm/a2_depth/heal_long.py": "9be2350caffb32b41d06917c28f91f122d3c012a066d48c7937c059cecf84bb7",
+    "scripts/a2_depth_partc_run.py": "895c9b6cec0a6bbe73995aa97596e1fd85d106a9c3e0b3aed439efcb911f1552",
+    "scripts/a2_depth_partc_report.py": "b4b7f23283dae5d5ccb562290b385512cccd5b7df9411805b5a23b259e1d73d6",
+    "efficient_llm/a2_depth/resume.py": "40fd243ac25b6a16cfd001003b444d748936e498cca977133e5aea4404c40b2d",
+    "tests/a2/test_depth_long.py": "6c94dec0a195540c306cd84498fdacfd4eaff33b7b29cfd54a11b2f76648c91f"
+  },
+  "log_sha256": "38da8c21db6cabc6489787c77e24ed0c0d68af8dc75f29fac508e9b3ee09c1af",
+  "scope": [
+    "Native integrated resume matches uninterrupted weights/LR/order",
+    "Completed training checkpoint resumes evaluation without another update",
+    "C saved-array E/A/ratios/labels and partial notes",
+    "Checkpoint-progress retry and physical GPU-ownership refusal",
+    "DT6 failure retains flag and continues all registered arms/notes"
+  ],
+  "limitations": [
+    "CPU only; no C GPU execution claimed",
+    "C launcher/actual A+B handoff plan and downstream integration still pending",
+    "Actual stream DT6 and full scientific arrays/replay not yet verified"
+  ]
+}
