@@ -133,7 +133,9 @@ class ContinuationTests(unittest.TestCase):
         source=write(out/'source-manifest.json',dict(code_commit='frozen',files=files))
         resultroot=out/'results/a2_depth_20261031';resultroot.mkdir(parents=True)
         config=write(resultroot/'config/plan.json',dict(code_commit='frozen',results_root=str(resultroot),source_manifest=source,predecessor={'burn_script':'known'}))
-        jobs=write(out/'jobs.json',{'jobs':[]});live={'host':'thiennh-p6-6y3o-worker-0','gpus':[{'index':i,'uuid':str(i),'pids':[]} for i in range(8)]}
+        from scripts.a2_quant_io import write as write_native
+        from scripts.launch_a2_depth_partc import job_config
+        jobs=write_native(out/'jobs.json',job_config(config));live={'host':'thiennh-p6-6y3o-worker-0','gpus':[{'index':i,'uuid':str(i),'pids':[]} for i in range(8)]}
         inspection=write(out/'inspection.json',live)
         write(out/'launch.json',dict(config=config,input_plan=lock(plan),source_manifest=source,jobs=jobs,session='original',initial_inspection=inspection,environment={'CUDA_VISIBLE_DEVICES':'','PYTHONPATH':str(frozen)}))
         handoff=root/'handoff.json';write(handoff,dict(mode='free'))

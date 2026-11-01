@@ -46,7 +46,8 @@ class DepthCLaunchTests(unittest.TestCase):
                 return source
             with patch.object(launcher,'__file__',str(source/'scripts/launcher.py')),patch('sys.argv',['launcher','--plan',str(plan),'--output',str(out),'--session','fixture','--code-commit','fixture']),patch.object(launcher.socket,'gethostname',return_value='thiennh-p6-6y3o-worker-0'),patch.object(launcher,'predecessor',return_value=dict(inspection={})),patch.object(launcher,'freeze_source',side_effect=freeze),patch.object(launcher,'read_locked',side_effect=lambda item:{}),patch.object(launcher.subprocess,'run',side_effect=process),patch('efficient_llm.a2.data.PackedRows',side_effect=ValueError('fixture flag')),patch('accelerate.commands.config.config_args.default_config_file',str(Path(d)/'cache.yaml')),patch('accelerate.commands.config.config_args.load_config_from_file',return_value=SimpleNamespace(num_processes=8,mixed_precision='bf16',use_cpu=False)):
                 launcher.main()
-            jobs=read(out/'jobs.json')['jobs'];self.assertEqual(len(jobs),1)
+            from run_experiments import load_jobs
+            jobs=load_jobs(out/'jobs.json');self.assertEqual(len(jobs),1)
             self.assertIsNone(jobs[0]['timeout_seconds']);self.assertIn('scripts.a2_depth_partc_run',jobs[0]['argv'])
             self.assertEqual(sum(c[:2]==['tmux','new-session'] for c in calls),1)
             root=out/'results/a2_depth_20261031';frozen=read(root/'config/plan.json')

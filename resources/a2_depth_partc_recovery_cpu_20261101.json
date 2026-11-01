@@ -7,8 +7,8 @@
     "efficient_llm/a2_depth/recovery.py": "bd367af25406ad98541f743fbcf6d4022aa5b702a467d513044eb575496ad336",
     "efficient_llm/a2_depth/resume.py": "1deaf5fb3a180a9011830d01ba672904d572ed26b7bb92ac18c18c3df2d86112",
     "efficient_llm/a2_depth/heal_long.py": "e5cf3892613ff86834ce4941ae0d0e2404d9b9be34f63a443f82032cfb5cc7da",
-    "scripts/a2_depth_continue.py": "e5a9f21e01654ef4198a91be79cd4495339f53285b28ec26d9669d8d9f3bda3f",
-    "scripts/launch_a2_depth_partc.py": "a9d003ac962df716635e34cb6f05278a526711962c25463df390b0533b39c794",
+    "scripts/a2_depth_continue.py": "1d1fffc5335e098ff20859ab544a0287a7bc5fc4b6aa4c0cc83ecf20ef435035",
+    "scripts/launch_a2_depth_partc.py": "683ea57a3a81412c784dc3dac840da558b047298ce446f740a4bde2365eb06ca",
     "scripts/a2_depth_partc_plan.py": "264582dcaf6fcd1db25dca877e3690342d1fc610ca8f0ab0f2e50e879e34b9d8",
     "scripts/a2_depth_partc_run.py": "4e3606c4c61a5b5452cb4aba9821246751746700374ceb281a624e2dca633950",
     "scripts/a2_depth_partc_report.py": "956b8b600a82162704f68d21754236178521177548db98453d7f0ea02d89b28c",
@@ -17,11 +17,11 @@
     "efficient_llm/a2_depth/stream.py": "d48b8a844007de0807ec113a65578f93a86209a2e467f38988f56e39cba88a1d"
   },
   "test_files": {
-    "tests/a2/test_depth_recovery.py": "ae2e6e6014d9a212c853221c20f1ab14b669cfd6501219dd191ab8dbf2999717",
+    "tests/a2/test_depth_recovery.py": "0e1e93a72eefbbb9962d75b448c398c140578387df03f2b1aebf8bf4906a0290",
     "tests/a2/test_depth_long.py": "2b2e1bad597ea9d1984d271ed4abc560e54d7e8f7d6660debcabc7f1aef1aece",
     "tests/a2/test_depth_resume.py": "96a6622e6f60ab9151726db26a32b0ec4cadc89bb4d9adc3d261f99c063e2e94",
     "tests/a2/test_depth_downstream.py": "5e687f44df010f26dfd4c8f908024c64e5ee4d7a1f3603bc65d5339f8b0a3e06",
-    "tests/a2/test_depth_partc_launch.py": "584a273f8b7c467180c607995a9447710b3097a9b34461ee084ceaa9575e7936",
+    "tests/a2/test_depth_partc_launch.py": "599e2aa3940489d84804e7081caf7d3d693518253655fd1217f43cce80e4ae3c",
     "tests/a2/test_depth_resume_distributed.py": "7c9ad2c18ebce9588f9e1b2b4dd893f225fca5e7604db4f984690163b7e08b5e",
     "tests/a2/depth_resume_distributed_fixture.py": "570c144af617803cd529f60fd07feee9ce54fd67196b3626239d5dd1f1ee623e"
   },
@@ -50,5 +50,16 @@
       "log_sha256": "25f88aaabdec101a63b91ff5a2df860dced5df49a3dab224d9c3ff027702e64c",
       "reason": "New test fixtures: schedule8 shorter than warmup10; parent namedX72 instead of S72. Corrected fixtures; no production numerical change"
     }
-  ]
+  ],
+  "native_jobs_revision": {
+    "status": "PASS",
+    "tests": 9,
+    "suites": [
+      "test_depth_partc_launch",
+      "test_depth_recovery"
+    ],
+    "log_sha256": "3ab005194395e189bfb46f61e24e8e3eddacf31ee694f6acf6481ff3134cfdfb",
+    "prior_proof_sha256": "d9eccd033a8318d556a171a8a02d25813d3c1a6f586d0c54fba2035fad69defb",
+    "scope": "Actual native load_jobs parser accepts serialized initial and continuation job configs; numerical/recovery kernel unchanged; earlier 20 tests not rerun"
+  }
 }

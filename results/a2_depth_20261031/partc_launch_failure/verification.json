@@ -1,0 +1,13 @@
+{
+  "health_at": "2026-11-01T07:18:58.442467+00:00",
+  "raw_sha256": "ff008ce5e223d888fc92a976633afae1b15a807fe0757d699cfc45d920420c46",
+  "source": "42a6f054f7306fe1131d1da4e1582773ab1348cc",
+  "source_files": 185,
+  "status": "project launcher schema failure before GPU reclaim or DT6",
+  "cause": "Depth metadata writer adds spec_sha256 to strict native jobs JSON",
+  "session_dead": true,
+  "guard_released": true,
+  "prior_burn_all_identities_exact": true,
+  "training_started": false,
+  "action": "Use native JSON writer and native load_jobs validation in launch and continuation; preserve failed root; fresh a02 launch"
+}

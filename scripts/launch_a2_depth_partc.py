@@ -1,4 +1,7 @@
 """Launch registered C through the existing native ownership supervisor."""
+from scripts.a2_quant_io import write as write_native
+from run_experiments import load_jobs
+
 import argparse
 import json
 import os
@@ -97,7 +100,8 @@ def main():
     write(a.output/'budget.json',dict(preparation_seconds=time.monotonic()-started,expected_node_hours=39,
                                      timeout_seconds=None,deadline=None,policy='report-only'))
     admission=predecessor(cfg,a.output);write(a.output/'inspection.json',admission['inspection'])
-    jobs=write(a.output/'jobs.json',job_config(config))
+    jobs=write_native(a.output/'jobs.json',job_config(config))
+    load_jobs(Path(jobs['path']))
     keys=('CUDA_VISIBLE_DEVICES','HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE','HF_DATASETS_OFFLINE','HF_HUB_DISABLE_TELEMETRY',
           'WANDB_MODE','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NCCL_NVLS_ENABLE','TOKENIZERS_PARALLELISM','PYTHONPATH','A2_CODE_COMMIT')
     cmd=['env',*[k+'='+env[k] for k in keys],sys.executable,'-u','-m','scripts.train_then_burn','--config',jobs['path'],

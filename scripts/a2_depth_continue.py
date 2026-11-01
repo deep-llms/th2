@@ -3,6 +3,9 @@
 The recovery handoff describes either exact known burn identities or currently
 free original GPUs. It never clears guards, kills a prior session, or edits source.
 """
+from scripts.a2_quant_io import write as write_native
+from run_experiments import load_jobs
+
 import fcntl
 import os
 from pathlib import Path
@@ -71,7 +74,8 @@ def continue_run(args):
         attempt=output/'continuations'/f'attempt{len(history)+1:03d}'
         attempt.mkdir(parents=True,exist_ok=False)
         write(attempt/'admission.json',observed)
-        jobs=read_locked(record['jobs']);job_lock=write(attempt/'jobs.json',jobs)
+        jobs=read_locked(record['jobs']);job_lock=write_native(attempt/'jobs.json',jobs)
+        load_jobs(Path(job_lock['path']))
         # Reinspect immediately before the native owner; native pidfd checks still follow.
         observed=admission(output,record,cfg,handoff)
         inspection=write(attempt/'inspection.json',observed['inspection'])

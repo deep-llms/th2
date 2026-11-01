@@ -1,3 +1,7 @@
+01Nov15:21SGT: Chealtha01 5b29368 ACK shows project launch failure before GPUreclaim/DT6: native jobs schema rejected extra spec_sha256. PriorBburn exact/all8 identities unchanged;guardreleased/sessiondead;185sourcefiles42a6f05verified. RawSHAff008ce5e223d888fc92a976633afae1b15a807fe0757d699cfc45d920420c46. Fixing both initial/continuation nativejobs writer with actualnativeparser test; preservefaileda01root, authorizedcorrectedfresh a02 next. No pendingreceipt.
+
+2026-11-01T07:18:12.627691+00:00: Unique read-only Chealtha01 5b29368af9035dead18b5d3084ef7531850a206f SUBMITTED/remoteheadverified; retrieve BEFORE remote writes. Launcha0bfc35 ACK; actualDT6/GPUstate pending. Frozen42a6f05; samewatch1283867. RemainingC/DT6/downstream/replay/report/handoff;CPU-onlyresume/Breadth-orderdeviation.
+
 01Nov15:18SGT: C launch a0bfc35 ACK/all returned launchchecksPASS/native session submitted; actualDT6/GPUstartup pending unique healtha01. No relaunch.
 
 2026-11-01T07:15:22.607117+00:00: DepthDT6/PartClaunch a0bfc35cba61ba859ef2ea8fce9cdc30fb95d958 SUBMITTED/remoteheadverified; frozen42a6f054f7306fe1131d1da4e1582773ab1348cc. Root6y3o-a2-depth-partc-20261101-a01/sessiona2_depth_partc_20261101_a01. Retrieve pending launchreceipt BEFORE remote writes; no duplicate/relaunch. ActualDT6/GPUstartup pending. B12+DT4/all205files/39arrays/replay504checks/nativehandoff/A+Bnote complete. NextuniqueChealtha01 prepared NOTsubmitted;samewatch1283867. RemainingDT6/C/downstream/replay/report/handoff;Breadth-orderdeviation/CPU-onlyresume.
