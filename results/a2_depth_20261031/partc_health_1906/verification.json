@@ -1,0 +1,52 @@
+{
+  "health_at": "2026-11-01T11:06:14.072511+00:00",
+  "raw_sha256": "3c8178ca05189c735511ed49fc13c548739e1f0b7fef20d57b992b89bd9b26c0",
+  "source": "dd55c8ba96eafabfed3de63a94e249da674c4f19",
+  "source_files": 185,
+  "command_commit": "845750f222697e00d76769f01cb805c79277ee8f",
+  "status": "DT6 PASS and first C arm active",
+  "active": "P300",
+  "updates_from_log_epoch": 13230,
+  "total_updates": 48828,
+  "worker_checks": 32,
+  "other_checks": 17,
+  "owner": 767788,
+  "coordinator": 767828,
+  "workers": [
+    767905,
+    767906,
+    767907,
+    767908,
+    767909,
+    767910,
+    767911,
+    767912
+  ],
+  "nonfinite_log_flags": {
+    "C-P300-attempt001.log": 0
+  },
+  "actual_eight_gpu_resume_verified": false,
+  "checkpoint_member_sizes_match": true,
+  "checkpoint_marker_steps": [
+    12000,
+    13000,
+    13000
+  ],
+  "clean_checkpoint_step": 13000,
+  "checkpoint_verification_scope": "Saved marker and actual 20 member sizes match for each of three directories; no external tensor-load/resume performed",
+  "seconds_per_update_observed": 0.9835098043269231,
+  "first_arm_training_eta_utc": "2026-11-01T20:49:45.054525+00:00",
+  "all_training_eta_utc": "2026-11-02T23:30:30.687977+00:00",
+  "eta_scope": "Extrapolated from latest 2080 updates including saves; later arms/evaluation/downstream may differ",
+  "gpu_utilization_percent": [
+    98.0,
+    98.0,
+    98.0,
+    99.0,
+    98.0,
+    98.0,
+    99.0,
+    98.0
+  ],
+  "prior_snapshot_observation": "a10 checkpoint11000 members disappeared during save13000 boundary. a11 verifies progress13230, checkpoint12000/13000 and clean13000 fully matching, same worker PIDs/attempt001; consistent with native retention rotation, no restart or intervention. Original failed snapshot retained."
+}
