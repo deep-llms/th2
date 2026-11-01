@@ -1,0 +1,29 @@
+{
+  "health_at": "2026-11-01T07:30:06.503807+00:00",
+  "raw_sha256": "6201fe003cab8ec8d6c92c84fdd796952bc5182c571dd0ddb1d2d18a748f9617",
+  "source": "dd55c8ba96eafabfed3de63a94e249da674c4f19",
+  "source_files": 185,
+  "command_commit": "a401a4ff1b2b89393094818ffb7ea73e9801d25a",
+  "status": "DT6 PASS and first C arm active",
+  "active": "P300",
+  "updates_from_log_epoch": 80,
+  "total_updates": 48828,
+  "worker_checks": 32,
+  "other_checks": 17,
+  "owner": 767788,
+  "coordinator": 767828,
+  "workers": [
+    767905,
+    767906,
+    767907,
+    767908,
+    767909,
+    767910,
+    767911,
+    767912
+  ],
+  "nonfinite_log_flags": {
+    "C-P300-attempt001.log": 0
+  },
+  "actual_eight_gpu_resume_verified": false
+}
