@@ -1,0 +1,176 @@
+{
+  "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/trainer/checkpoint-2000/depth-checkpoint.json": {
+    "complete": true,
+    "state_finite": true,
+    "identity": {
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+      "steps": 48828,
+      "lr": 0.001,
+      "global_sequences": 64,
+      "microbatch": 4,
+      "dataset": "dclm",
+      "arm": "P300",
+      "removed": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "heal_stream": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_stage1_dclm_shuffle2030_20261029",
+        "sha256": "461d1f9a5b0d3d8bb72617ffa6e51fd90c8bc458fbc630643b199daedfac3295"
+      },
+      "source_manifest": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/source-manifest.json",
+        "sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d"
+      }
+    },
+    "global_step": 2000,
+    "world_size": 8,
+    "files": {
+      "pytorch_model.bin": 5246287491,
+      "optimizer.pt": 10492598595,
+      "scheduler.pt": 1465,
+      "trainer_state.json": 36212,
+      "rng_state_0.pth": 16325,
+      "rng_state_1.pth": 16325,
+      "rng_state_2.pth": 16325,
+      "rng_state_3.pth": 16325,
+      "rng_state_4.pth": 16325,
+      "rng_state_5.pth": 16325,
+      "rng_state_6.pth": 16325,
+      "rng_state_7.pth": 16325,
+      "depth-audit-rank0.json": 313113,
+      "depth-audit-rank1.json": 313117,
+      "depth-audit-rank2.json": 313123,
+      "depth-audit-rank3.json": 313125,
+      "depth-audit-rank4.json": 313129,
+      "depth-audit-rank5.json": 313129,
+      "depth-audit-rank6.json": 313129,
+      "depth-audit-rank7.json": 313129
+    },
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+  },
+  "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/trainer/checkpoint-3000/depth-checkpoint.json": {
+    "complete": true,
+    "state_finite": true,
+    "identity": {
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+      "steps": 48828,
+      "lr": 0.001,
+      "global_sequences": 64,
+      "microbatch": 4,
+      "dataset": "dclm",
+      "arm": "P300",
+      "removed": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "heal_stream": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_stage1_dclm_shuffle2030_20261029",
+        "sha256": "461d1f9a5b0d3d8bb72617ffa6e51fd90c8bc458fbc630643b199daedfac3295"
+      },
+      "source_manifest": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/source-manifest.json",
+        "sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d"
+      }
+    },
+    "global_step": 3000,
+    "world_size": 8,
+    "files": {
+      "pytorch_model.bin": 5246287491,
+      "optimizer.pt": 10492598595,
+      "scheduler.pt": 1465,
+      "trainer_state.json": 53842,
+      "rng_state_0.pth": 16325,
+      "rng_state_1.pth": 16325,
+      "rng_state_2.pth": 16325,
+      "rng_state_3.pth": 16325,
+      "rng_state_4.pth": 16325,
+      "rng_state_5.pth": 16325,
+      "rng_state_6.pth": 16325,
+      "rng_state_7.pth": 16325,
+      "depth-audit-rank0.json": 475980,
+      "depth-audit-rank1.json": 475984,
+      "depth-audit-rank2.json": 475990,
+      "depth-audit-rank3.json": 475992,
+      "depth-audit-rank4.json": 475996,
+      "depth-audit-rank5.json": 475996,
+      "depth-audit-rank6.json": 475996,
+      "depth-audit-rank7.json": 475996
+    },
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+  },
+  "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/trainer/clean-state/checkpoint-3000/depth-checkpoint.json": {
+    "complete": true,
+    "state_finite": true,
+    "identity": {
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+      "steps": 48828,
+      "lr": 0.001,
+      "global_sequences": 64,
+      "microbatch": 4,
+      "dataset": "dclm",
+      "arm": "P300",
+      "removed": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "assets": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+        "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+      },
+      "heal_stream": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_stage1_dclm_shuffle2030_20261029",
+        "sha256": "461d1f9a5b0d3d8bb72617ffa6e51fd90c8bc458fbc630643b199daedfac3295"
+      },
+      "source_manifest": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/source-manifest.json",
+        "sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d"
+      }
+    },
+    "global_step": 3000,
+    "world_size": 8,
+    "files": {
+      "pytorch_model.bin": 5246287491,
+      "optimizer.pt": 10492598595,
+      "scheduler.pt": 1465,
+      "trainer_state.json": 53842,
+      "rng_state_0.pth": 16325,
+      "rng_state_1.pth": 16325,
+      "rng_state_2.pth": 16325,
+      "rng_state_3.pth": 16325,
+      "rng_state_4.pth": 16325,
+      "rng_state_5.pth": 16325,
+      "rng_state_6.pth": 16325,
+      "rng_state_7.pth": 16325,
+      "depth-audit-rank0.json": 475980,
+      "depth-audit-rank1.json": 475984,
+      "depth-audit-rank2.json": 475990,
+      "depth-audit-rank3.json": 475992,
+      "depth-audit-rank4.json": 475996,
+      "depth-audit-rank5.json": 475996,
+      "depth-audit-rank6.json": 475996,
+      "depth-audit-rank7.json": 475996
+    },
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+  }
+}
