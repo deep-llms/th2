@@ -4,10 +4,11 @@ from pathlib import Path
 import numpy as np
 from efficient_llm.a2_depth.common import read,write,SPEC_SHA
 from efficient_llm.a2_stage1.protocol import decision as classify
+from efficient_llm.a2_depth.readout_audit import array_audit, collect_checks
 
 
 def compute(cfg,root):
-    root=Path(root);table={};flags=[];runs=[];tests=[]
+    root=Path(root);table={};flags=[];runs=[];tests=collect_checks(root);arrays_complete=True
     for ds in ('dclm','fwe'):
         table[ds]={}
         for block in ('W1','W9'):
@@ -16,8 +17,15 @@ def compute(cfg,root):
                 name=f'D-{ds}-{arm}-{block}-0.2B-lr1e-3'
                 try:
                     r=read(root/'heals'/name/'result.json')
-                    final=float(np.mean(r['scores']['final']['per_sequence_nll']))
-                    parent=float(np.mean(r['baseline']['per_sequence_nll']))
+                    flags.extend(dict(run=name,detail=flag) for flag in r.get('flags',[]))
+                    arrays=[]
+                    for key,row in [('final',r['scores']['final']),('parent',r['baseline'])]:
+                        arr,usable,full,audits=array_audit(dict(row,spec_sha256=r.get('spec_sha256')),cfg,name+'/'+key)
+                        tests.extend(audits);arrays_complete=arrays_complete and full
+                        if not usable:raise ValueError('Nonfinite or malformed '+key+' array')
+                        arrays.append(arr)
+                    if len(arrays[0])!=len(arrays[1]):raise ValueError('Unpaired parent/post arrays')
+                    final,parent=map(lambda arr:float(arr.mean()),arrays)
                     values[arm]=dict(val=final,parent_val=parent,delta=final-parent,checkpoint=r['checkpoint'])
                     runs.append(dict(run_id=name,dataset=ds,block=block,arm=arm,**values[arm],spec_sha256=SPEC_SHA))
                     tests.append(dict(test='saved_mean:'+name,passed=abs(final-r['scores']['final']['loss'])<=1e-12 and abs(final-parent-r['delta_post'])<=1e-12,spec_sha256=SPEC_SHA))
@@ -40,7 +48,13 @@ def compute(cfg,root):
     flags.extend(t for t in tests if not t['passed'])
     dt4=root/'heals/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json'
     dt4_result=read(dt4) if dt4.exists() else None
-    return dict(part='B',coverage_complete=len(runs)==12 and dt4_result is not None,
+    dt4_coverage=False
+    if dt4_result is not None:
+        try:
+            _,_,dt4_coverage,audits=array_audit(dict(dt4_result['scores']['final'],spec_sha256=dt4_result.get('spec_sha256')),cfg,'DT4/final')
+            tests.extend(audits);flags.extend(t for t in audits if not t['passed'])
+        except Exception as error:flags.append(dict(run='DT4',error=repr(error)))
+    return dict(part='B',coverage_complete=arrays_complete and len(runs)==12 and dt4_coverage,
         datasets=table,predictions=predictions,clauses=clauses,DT4=dt4_result,flags=flags,
         deviations=cfg.get('deviations',[]),remaining=['publish A+B report','DT6','Part C','C downstream','final replay/report/native handoff']),tests,runs
 

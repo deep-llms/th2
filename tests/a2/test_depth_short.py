@@ -46,19 +46,27 @@ class DepthShortTests(unittest.TestCase):
     def test_B_saved_arrays_absolute_X72_difference(self):
         from scripts.a2_depth_partb_report import compute
         with tempfile.TemporaryDirectory() as d:
-            root=Path(d);cfg=dict(short_S1_reference={ds:dict(E=.01,E_relative=.1,A_init=.04,A_init_relative=.2) for ds in ('dclm','fwe')})
-            write(root/'heals/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json',dict(scores=dict(final=dict(loss=2.942554079))))
+            root=Path(d);cfg=dict(final_sequences=2,final_targets_per_sequence=1,short_S1_reference={ds:dict(E=.01,E_relative=.1,A_init=.04,A_init_relative=.2) for ds in ('dclm','fwe')})
+            def row(value):return dict(per_sequence_nll=[value]*2,loss=value,sequences=2,tokens=2)
+            dt4=root/'heals/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json'
+            write(dt4,dict(scores=dict(final=row(2.942554079))))
             for ds in ('dclm','fwe'):
                 for block in ('W1','W9'):
                     for arm,base,post in [('P300',3.,3.2),('P1T',2.9,3.13),('X72',3.1,3.25)]:
                         name=f'D-{ds}-{arm}-{block}-0.2B-lr1e-3'
-                        write(root/'heals'/name/'result.json',dict(baseline=dict(per_sequence_nll=[base]*2),scores=dict(final=dict(loss=post,per_sequence_nll=[post]*2)),checkpoint='fixture',delta_post=post-base))
+                        write(root/'heals'/name/'result.json',dict(baseline=row(base),scores=dict(final=row(post)),checkpoint='fixture',delta_post=post-base))
             r,tests,runs=compute(cfg,root)
             self.assertTrue(r['coverage_complete']);self.assertEqual(len(runs),12);self.assertTrue(all(t['passed'] for t in tests))
             self.assertAlmostEqual(r['datasets']['dclm']['W1']['E'],.03)
             self.assertAlmostEqual(r['datasets']['dclm']['W1']['A_init'],.05)
             self.assertAlmostEqual(r['datasets']['dclm']['W1']['A_init_relative'],.25)
             self.assertEqual(r['predictions'],dict(B1=True,B2=True))
+            write(dt4,dict(scores=dict(final=dict(loss=2.942554079))))
+            write(root/'coordinator_checks.json',dict(checks=[dict(test='process:DT4',passed=False)]))
+            broken,_,_=compute(cfg,root)
+            self.assertFalse(broken['coverage_complete'])
+            self.assertTrue(any(f.get('test')=='process:DT4' for f in broken['flags']))
+            self.assertEqual(broken['predictions'],r['predictions'])
 
 
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,48 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "at": "2026-11-01T02:20:00.427952+00:00",
+  "tests": 11,
+  "status": "PASS",
+  "scope": "CPU: Part A/DT4/B audit plus native full-state resume helper (not integrated into Part C yet)",
+  "log_sha256": "a39c23cbe28783f2ffaafcd69782e9647cd8e2f788477ed68f48e3652b932552",
+  "files": {
+    "efficient_llm/a2_depth/readout_audit.py": "be75f6f19f46ce7c27389db301bfb5fdd392cafdbae9dc69a80165997fa2a36d",
+    "efficient_llm/a2_depth/resume.py": "40fd243ac25b6a16cfd001003b444d748936e498cca977133e5aea4404c40b2d",
+    "efficient_llm/a2_depth/heal_short.py": "bec132bcb7ea8283f32bef76353f34aa41b31f4462ce24ddfb96016449b4ed3b",
+    "scripts/a2_depth_parta_report.py": "d5f79d7cf86a20e83713d3d3bbcf9fabf429c2fcef71a4465e4a985ef4c479c3",
+    "scripts/a2_depth_partb_report.py": "1b1ba0648fe18a3e8e04644906decdaa6806c8ebc51513844c79d5b3317edbe4",
+    "tests/a2/test_depth.py": "74d8907eb4978886636fd0f77e326aed7deacda16e4b5a5c883011a0fc0e1ae2",
+    "tests/a2/test_depth_short.py": "761ce2f8e6dbb0c0e7cb66ba80f93a05be8d1fc2364b5f789ff1b7ae431a7932",
+    "tests/a2/test_depth_resume.py": "1b4a4afa5ee0f19de8ae3ad2dd4e3c448a7257372be4cab1eb5b1d5f4872eabd"
+  },
+  "original_core_byte_identical": {
+    "efficient_llm/a2/model.py": true,
+    "efficient_llm/a2/train.py": true,
+    "efficient_llm/a2/measure.py": true,
+    "efficient_llm/a2/data.py": true,
+    "efficient_llm/a2/protocol.py": true,
+    "efficient_llm/a2/quant_stats.py": true,
+    "scripts/train_then_burn.py": true,
+    "scripts/gpu_process.py": true
+  },
+  "limitations": [
+    "CPU resume test is single rank; distributed resume and production C integration remain required.",
+    "No full Part A saved-array replay until result export.",
+    "Part B launcher and A+B report consolidation not yet implemented.",
+    "DT6/Part C coordinator/downstream not yet implemented."
+  ],
+  "findings_fixed": [
+    "Readout did not collect preparation/coordinator flags.",
+    "Filename counts alone could report complete coverage for truncated or metadata-inconsistent arrays.",
+    "Short-heal per-sequence outputs lacked combined cross-rank scientific flags."
+  ],
+  "initial_resume_fixture": "First test used 6 updates, invalid under unchanged Stage1 minimum 10-step warmup; fixture corrected to 16 updates. Production schedule unchanged.",
+  "resume_checks": [
+    "Native KD model weights bitwise equal after interrupted/resumed 16-update CPU run",
+    "Optimizer states and scheduler identical",
+    "Python/NumPy/Torch RNG samples identical",
+    "Sample order and full LR trace identical",
+    "Incomplete checkpoint fallback and changed identity rejected",
+    "48828 updates / warmup977 / 3124992 sequences constants verified"
+  ]
+}

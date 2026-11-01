@@ -5,6 +5,7 @@ import numpy as np
 from efficient_llm.a2.quant_stats import nll_report, CONTRASTS, REFERENCES
 from efficient_llm.a2_breadth.common import spearman
 from efficient_llm.a2_depth.common import read, write, SPEC_SHA, DATASETS, PARENTS, SETS
+from efficient_llm.a2_depth.readout_audit import array_audit, collect_checks
 
 
 def clauses(tables, field):
@@ -39,7 +40,8 @@ def clauses(tables, field):
 
 def compute(cfg, root):
     root = Path(root)
-    values, tests, runs, failures = {}, [], [], []
+    values, tests, runs, failures = {}, collect_checks(root), [], []
+    arrays_complete = True
     def check(name, passed, detail=None):
         tests.append(dict(test=name, passed=bool(passed), detail=detail, spec_sha256=SPEC_SHA))
     for ds in DATASETS:
@@ -52,9 +54,9 @@ def compute(cfg, root):
                 path = directory/(name+'.json')
                 try:
                     row = read(path)
-                    arr = np.asarray(row['per_sequence_nll'], dtype=np.float64)
-                    good = arr.ndim == 1 and len(arr)>0 and np.isfinite(arr).all()
-                    check('saved_array:'+ds+'/'+parent+'/'+name, good and row['spec_sha256']==SPEC_SHA)
+                    arr, good, full, audits = array_audit(row, cfg, ds+'/'+parent+'/'+name)
+                    tests.extend(audits)
+                    arrays_complete = arrays_complete and full
                     if not good:
                         continue
                     check('saved_mean:'+ds+'/'+parent+'/'+name, abs(float(arr.mean())-row['loss'])<=1e-12)
@@ -104,7 +106,7 @@ def compute(cfg, root):
             for contrast in ('R_short','L_ann','L_stab'):
                 series = [tables[ds].get(f'W{k}',{}).get('contrasts',{}).get(contrast,{}).get(field) for k in range(1,10)]
                 correlations[ds][field][contrast] = spearman(range(1,10),series) if all(x is not None for x in series) else None
-    complete = len(runs)==156 and all(set(tables.get(ds,{}))==set(SETS) for ds in DATASETS)
+    complete = arrays_complete and len(runs)==156 and all(set(tables.get(ds,{}))==set(SETS) for ds in DATASETS)
     decision = dict(part='A', coverage_complete=complete, datasets=tables, correlations=correlations,
         predictions_nats=clauses(tables,'estimate'), predictions_relative=clauses(tables,'relative_to_reference_damage'),
         prediction_scale_note='Spec defines contrasts in nats and additionally requests relative values. Both clause evaluations are reported explicitly, without choosing a scale after observing results.',

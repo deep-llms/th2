@@ -73,6 +73,7 @@ def run(cfg,ds,arm,block,dt4=False):
     if coverage is not None:checks.record('DT5_data_order',True,coverage)
     checks.record('DT5_teacher_frozen',not any(p.grad is not None or p.requires_grad for p in teacher.parameters()))
     checks.record('finite_training',getattr(trainer,'nonfinite_steps',0)==0,dict(nonfinite_microbatches=getattr(trainer,'nonfinite_steps',0)))
+    history=trainer.state.log_history
     trainer.optimizer.zero_grad(set_to_none=True);del trainer;gc.collect();torch.cuda.empty_cache()
     master=checks.attempt('master_final',lambda:score(student,ev['final']))
     round_to_saved_precision(student)
@@ -86,12 +87,16 @@ def run(cfg,ds,arm,block,dt4=False):
     reloaded=reload_student(out/'final',device);reload_value=checks.attempt('reload_score',lambda:score(reloaded,ev['small']))
     difference=abs(reload_value['loss']-values['small']['loss']) if reload_value and values['small'] else None
     checks.record('DT5_roundtrip',difference is not None and difference<=1e-6,dict(difference=difference))
+    all_checks=[None]*world
+    torch.distributed.all_gather_object(all_checks,checks.items)
+    flags=[dict(c,rank=i) for i,items in enumerate(all_checks) for c in items if not c['passed']]
     if rank==0:
         write(out/'order.json',dict(rank_microbatches=traces))
         result=dict(run_id=name,dataset=ds,arm=arm,block=block,initial_parent=initial,teacher=teacher_arm,status='complete',training_seconds=train_seconds,elapsed_seconds=time.monotonic()-started,baseline=baseline,pre=pre,scores=values,master_final=master,lr_updates=trace.lrs,coverage=coverage,roundtrip_difference=difference,checkpoint=str(out/'final'),delta_post=values['final']['loss']-baseline['loss'] if values['final'] else None)
+        result.update(flags=flags,unverified=bool(flags),log_history=history)
         write(out/'result.json',result)
         for label,value in [('parent',baseline),('pre-'+block,pre['final']),('post-'+block,values['final'])]:
-            if value is not None:write(root/'perseq'/name/(label+'.json'),dict(value,run_id=name))
+            if value is not None:write(root/'perseq'/name/(label+'.json'),dict(value,run_id=name,flags=flags,unverified=bool(flags)))
     state.wait_for_everyone()
 
 if __name__=='__main__':

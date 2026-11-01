@@ -49,7 +49,7 @@ class DepthTests(unittest.TestCase):
 
     def test_paired_readout_and_missing_scope(self):
         with tempfile.TemporaryDirectory() as d:
-            root=Path(d);cfg=dict(resamples=100,deviations=[])
+            root=Path(d);cfg=dict(resamples=100,deviations=[],final_sequences=4,final_targets_per_sequence=1)
             base=np.array([3.,4.,5.,6.]);spread=np.array([.7,.9,1.1,1.3])
             for ds in DATASETS:
                 for j,p in enumerate(PARENTS):
@@ -57,7 +57,7 @@ class DepthTests(unittest.TestCase):
                         # All paired damage vectors are proportional: relative CI is exact.
                         damage=0 if s=='parent' else (.1+.01*j+.002*k)*spread
                         arr=base-.02*j+damage
-                        write(root/'part_a'/ds/p/(s+'.json'),dict(per_sequence_nll=arr.tolist(),loss=float(arr.mean())))
+                        write(root/'part_a'/ds/p/(s+'.json'),dict(per_sequence_nll=arr.tolist(),loss=float(arr.mean()),sequences=4,tokens=4))
             result,checks,runs=compute(cfg,root)
             self.assertTrue(result['coverage_complete']);self.assertEqual(len(runs),156)
             self.assertTrue(all(c['passed'] for c in checks))
@@ -71,6 +71,21 @@ class DepthTests(unittest.TestCase):
             self.assertFalse(result['coverage_complete'])
             self.assertIsNone(result['predictions_nats']['predictions']['A1'])
             self.assertIn('W1',result['datasets']['nem'])
+
+    def test_incomplete_arrays_and_preparation_flags_survive_readout(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);cfg=dict(resamples=10,final_sequences=4,final_targets_per_sequence=1)
+            for ds in DATASETS:
+                for j,p in enumerate(PARENTS):
+                    for s in ('parent',)+SETS:
+                        value=3.+(.1+j*.01 if s!='parent' else 0)
+                        write(root/'part_a'/ds/p/(s+'.json'),dict(per_sequence_nll=[value]*3,loss=value,sequences=4,tokens=4))
+            write(root/'preparation_checks.json',dict(checks=[dict(test='fixture_input',passed=False)]))
+            result,checks,runs=compute(cfg,root)
+            self.assertEqual(len(runs),156)
+            self.assertFalse(result['coverage_complete'])
+            self.assertTrue(any(c['test']=='fixture_input' for c in result['flags']))
+            self.assertIn('W1',result['datasets']['dclm'])
 
     def test_coordinator_failure_continues_all_twelve(self):
         import scripts.a2_depth_parta_run as runner
