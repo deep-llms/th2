@@ -1,0 +1,210 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "command_commit": "616c2d5ee0f8e7447b471aef25b66c848f402548",
+  "source_commit": "1be9ccb33fb146e6e6712aff140e8c3346f0fbdb",
+  "raw_sha256": "2199bf3c3e9ec43a23cb77fa3386abbca13813bcb02f40e4af0bd9fec6ecaecd",
+  "preparation_checks": [
+    {
+      "test": "spec_identity",
+      "passed": true,
+      "detail": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "data_manifest",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "small_set_identity",
+      "passed": true,
+      "detail": {
+        "count": 256
+      },
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "packed_data:tuning",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "packed_data:final",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "assets",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/S72/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/S72/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/P300/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/P300/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/S188/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/S188/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/P1T/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:dclm/P1T/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/S72/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/S72/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/P300/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/P300/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/S188/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/S188/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/P1T/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:fwe/P1T/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/S72/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/S72/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/P300/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/P300/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/S188/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/S188/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/P1T/parent",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "reference_nll:nem/P1T/pre-S1",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "heal_manifest:dclm",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "heal_manifest:fwe",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "phase0_sets",
+      "passed": true,
+      "detail": "Verified",
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    }
+  ],
+  "submission_acknowledged": true,
+  "actual_gpu_start_pending_health": true
+}
