@@ -1,0 +1,22 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "purpose": "Lossless archived receipt compression for runner 25MiB source limit; frozen running source and scientific artifacts unchanged",
+  "members": [
+    {
+      "original": "results/a2_depth_20261031/health_1032/checks.json",
+      "compressed": "results/a2_depth_20261031/health_1032/checks.json.gz",
+      "original_sha256": "a7497aeb638644296bbbff0ec1aabefeec1b36733bd26e53eadc21e8dfe1e74d",
+      "compressed_sha256": "802d3b71ec67ea841ff58da630bd3657cbd11c2450d1d53ed8c4b4ec434c1408",
+      "original_bytes": 70340,
+      "compressed_bytes": 1537
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1015/checks.json",
+      "compressed": "results/a2_depth_20261031/health_1015/checks.json.gz",
+      "original_sha256": "e47c5fbe2dbcc4053ec629fa7c7d57b509a3e32c1127e5f4c19bf92222de5f34",
+      "compressed_sha256": "98bb57c20d11fdc090c7fee15d7a1e942b219b6a3937dacfe5ebbf6d4d36f94e",
+      "original_bytes": 32494,
+      "compressed_bytes": 991
+    }
+  ]
+}
