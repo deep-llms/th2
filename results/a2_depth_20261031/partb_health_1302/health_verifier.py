@@ -35,7 +35,7 @@ nonfinite=json.loads(next(l.split(' ',1)[1] for l in raw.read_text().splitlines(
 assert len(nonfinite)==6 and all(v==0 for v in nonfinite.values())
 previous=json.loads(Path('results/a2_depth_20261031/partb_health_1232/verification.json').read_text())
 for old in previous['completed']:assert next(h for h in heals if h['run_id']==old['run_id'])==old
-A=byarm['X72']['delta_post']-byarm['P300']['delta_post']
+A=byarm['X72']['scores']['final']['loss']-byarm['P300']['scores']['final']['loss']
 out=Path('results/a2_depth_20261031/partb_health_1302');out.mkdir(exist_ok=True)
 summary=dict(spec_sha256=progress['spec_sha256'],health_at=e['health_at'],raw_sha256=e['raw_sha256'],health_commit='ce39abc76a59a8fd5c4ffe0a8bae4c0b7ddb19b9',source=e['source_commit'],source_files=176,phase=progress['active'],updates=step,total_updates=762,completed_B=4,preparation_checks=len(checks),worker_checks=len(workers),full_ownership_verified=True,workers=live['workers'],guard=762457,gpu_utilization=[g['utilization_percent'] for g in live['gpus']],completed=heals,DCLM_W9_E_from_summary=E,DCLM_W9_A_init_from_summary=A,nonfinite_log_counts=nonfinite,full_array_replay='pending',raw_receipt='raw_receipt.log.gz')
 (out/'verification.json').write_text(json.dumps(summary,indent=2)+'\n');(out/'raw_receipt.log.gz').write_bytes(gzip.compress(raw.read_bytes(),mtime=0));(out/'health_verifier.py').write_bytes(Path(__file__).read_bytes())

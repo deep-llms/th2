@@ -1,0 +1,8 @@
+{
+  "field": "DCLM_W9_A_init_from_summary",
+  "previous": -0.09364817516422841,
+  "corrected": 0.07713408873095728,
+  "reason": "A_init is final NLL X72 minus P300, not difference of their damage values against different parents.",
+  "scope": "Local health-summary derived field only; raw scores, frozen production code, main E, training and production readout unchanged.",
+  "prior_commit": "862c6ef33d391b3b9eaee08666ae7b0868cf56f1"
+}

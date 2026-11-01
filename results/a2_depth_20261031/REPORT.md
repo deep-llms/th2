@@ -120,3 +120,14 @@ Remaining: B/replay/A+B note,production DT6/C/downstream/finalreport/nativehando
 FWE/P1T/W9 is active at 140/762 updates; all eight GPUs active (86–100%). All 176 frozen source files unchanged, full process ownership verified, 43 preparation and 480 worker checks PASS. Complete scans of all six existing training logs found zero nonfinite flags. [Evidence](partb_health_1302/verification.json). B ETA 14:50–15:15 SGT remains provisional; C's 39h estimate remains unmeasured.
 
 Remaining: eight B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
+
+
+## Part B — snapshot 01Nov13:32 SGT
+
+6/12 B fits complete: all DCLM/W9 and FWE/W9 arms. New FWE/W9 final NLL: P1T 3.10458358007902 (damage 0.2958762464772038), X72 3.1988802194277857 (damage 0.1567282174814868). All completed fits have 762 LR updates, roundtrip difference 0, no flags. DT4 and prior results remain unchanged; full saved-array replay pending.
+
+DCLM/P300/W1 active at 230/762, eight GPUs at 98–99%; 176 source files unchanged/full ownership verified, 43 preparation and 656 worker checks PASS, zero nonfinite flags across all eight existing logs. [Verified receipt](partb_health_1332/verification.json). B ETA 14:50–15:15 SGT provisional; C39h unmeasured.
+
+Correction to the local 13:02 health summary: A_init is X72 final NLL minus P300 final NLL, hence DCLM/W9 A_init = 0.07713408873095728. The prior field incorrectly subtracted damage values against different parents. [Correction record](partb_health_1302/A_init_correction.json) retains the old value and formula explanation. Raw scores, production report formula, E and training are unchanged.
+
+Remaining: six B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.

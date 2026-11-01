@@ -206,7 +206,7 @@
     }
   ],
   "DCLM_W9_E_from_summary": 0.033033673329218693,
-  "DCLM_W9_A_init_from_summary": -0.09364817516422841,
+  "DCLM_W9_A_init_from_summary": 0.07713408873095728,
   "nonfinite_log_counts": {
     "D-fwe-P1T-W9-0.2B-lr1e-3.log": 0,
     "D-fwe-P300-W9-0.2B-lr1e-3.log": 0,
