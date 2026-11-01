@@ -1,0 +1,41 @@
+{
+  "health_at": "2026-11-01T09:02:11.382888+00:00",
+  "raw_sha256": "8d8c00c33a6498da93ad437c419358cca787bbe0bb72f0d2cf7c422a029d810f",
+  "source": "dd55c8ba96eafabfed3de63a94e249da674c4f19",
+  "source_files": 185,
+  "command_commit": "1259569d995061b1e725f55c74392cbfe799a5fe",
+  "status": "DT6 PASS and first C arm active",
+  "active": "P300",
+  "updates_from_log_epoch": 5700,
+  "total_updates": 48828,
+  "worker_checks": 32,
+  "other_checks": 17,
+  "owner": 767788,
+  "coordinator": 767828,
+  "workers": [
+    767905,
+    767906,
+    767907,
+    767908,
+    767909,
+    767910,
+    767911,
+    767912
+  ],
+  "nonfinite_log_flags": {
+    "C-P300-attempt001.log": 0
+  },
+  "actual_eight_gpu_resume_verified": false,
+  "checkpoint_member_sizes_match": true,
+  "checkpoint_marker_steps": [
+    4000,
+    5000,
+    5000
+  ],
+  "clean_checkpoint_step": 5000,
+  "checkpoint_verification_scope": "Saved marker and actual 20 member sizes match for each of three directories; no external tensor-load/resume performed",
+  "seconds_per_update_observed": 0.9855832,
+  "first_arm_training_eta_utc": "2026-11-01T20:50:37.615138+00:00",
+  "all_training_eta_utc": "2026-11-02T23:34:45.728117+00:00",
+  "eta_scope": "Extrapolated from latest 1850 updates including saves; later arms/evaluation/downstream may differ"
+}
