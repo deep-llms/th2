@@ -1,0 +1,17 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "PASS",
+  "tests": 5,
+  "scope": "Part A CPU only: native pinned OpenSci physical removal vs hook/restoration; frozen windows; paired readout and missing coverage; scientific and worker failure continuation",
+  "log_sha256": "b586990bac0a6079de4b6072c0fc24d0c81675a36aaf6c01e97cfbf32b27daaa",
+  "at": "2026-11-01T02:00:45.339061+00:00",
+  "files": {
+    "efficient_llm/a2_depth/__init__.py": "51091c1d36f342a5c691b8f0488f9a35923af7f0ca93beb93bb81fb139fdc2a9",
+    "efficient_llm/a2_depth/common.py": "2c4d274525b13f4beb530948c6f3dac8b1d54da46b7e62f00d076008440d03a6",
+    "efficient_llm/a2_depth/parta.py": "333f39587c40142fad529d4c255eca3dfd7d35a03759b96a28dd2020cb77c564",
+    "scripts/a2_depth_parta_run.py": "c481b51ac9500060a34549d6c43b19995f97267893eb9fd0ce10b80b0b40593d",
+    "scripts/a2_depth_parta_report.py": "ebbc3cc69d687293b81238a38bc7fabe9288158013ba903ec8ed24dfb6ebe0d8",
+    "scripts/launch_a2_depth_parta.py": "d0925ce66b01f9c3971f1bccf171f1c3de187acf0caab41d7d7ec4fd1992175a",
+    "tests/a2/test_depth.py": "0ae35fc5153230999b1a9c5617373fb3e6e292d1ba28251688da37ccdb435636"
+  }
+}

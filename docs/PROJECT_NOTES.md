@@ -632,3 +632,8 @@ Owner explicitly says not to forget the reminder worker again. For every future 
 ## A2 Breadth completion — 1 November 2026 SGT
 
 All4 stable heals and44Smol configurations completed;603/603 checksPASS. Independent local CPU replay of56savedNLL arrays,3paired10kseed0intervals,contrasts/correlations/clauses passed (max1.14e-13). SM1/SM2/SP1 supported;SM3 not supported. E_stabDCLM+.0111319744/FWE+.0147807444. Smol B_S1matched+7.646% [7.378,7.973]% andrho1.0. Report results/a2_breadth_20261031/REPORT.md.159files/7.77MB exported+hashverified;bulk originals in results/a2_breadth_20261031/artifacts are Gitignored. Native terminal02:33:22/handoff02:34:28/independentburn07:12SGT,workers753407–753414 under753338. Earlier runnerDNS/SSH errors preserved, recovery evidenced by actual healthreceipt;no GPU rerun. Depthspecmissing orderingdeviation retained; noDepthC/DT6 invented. BreadthwatchSTOPafterverifiedcompletion.
+
+
+## A2 Depth authorization — 1 November 2026 SGT
+
+User supplied docs/A2_depth_spec.md v1.1 SHA 2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe after the missing-spec clarification. Execute all registered A/B/C steps in order, preserving Breadth-before-Depth deviation. Part A uses frozen Phase0A S2/S3/S4 and exact Q parent references. DT4 precedes 12 short heals; publish A+B before DT6 and three resumable 12.8B heals/downstream. Report-only time/scientific policy and same-thread reminder requirement remain. Parts may use separately frozen native stages to publish required notes between them; do not describe not-yet-implemented stages as queued.
