@@ -1,32 +1,72 @@
-# A2 Depth — đang chạy
+# A2 Depth — Part A hoàn tất; B/C còn tiếp tục
 
-Spec: `docs/A2_depth_spec.md` v1.1, SHA-256 `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
+Spec SHA-256: `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
 
-Part A bắt đầu 01/11/2026 10:03:15 SGT. Snapshot 11:02:17 SGT xác nhận 4 worker NEM hoạt động trên GPU 0–3 (74–77%); GPU 4–7 rảnh đúng kế hoạch, coordinator/supervisor và 163 file nguồn giữ nguyên. Metadata ghi nhận 148/156 arrays (DCLM/FWE đủ 104, NEM có 44), mỗi array 2461 sequences / 10077795 targets; full saved-array replay còn chờ export.
+Coverage complete: **True**. Saved arrays: 156/156 (144 pruned + 12 parents).
 
-- 33 kiểm tra chuẩn bị PASS; 176 kiểm tra worker PASS; cả 12 DT1 PASS. NEM còn 8 arrays S3/S4 tại snapshot này.
-- 5 kiểm thử CPU Part A PASS, gồm phép pruning native, paired readout và tiếp tục sau lỗi.
-- DT4/Part B đã chuẩn bị adapter/coordinator/readout/launcher và công cụ lập plan từ bàn giao thực tế; 7 kiểm thử CPU PASS. Chưa lập plan chạy thật hoặc khởi chạy B; cần Part A terminal và note kết quả thực tế.
-- Mốc Stage 1/1b chính xác: `resources/a2_depth_stage1_references_20261101.json`.
-- Ước lượng spec: khoảng 42 node-giờ cho toàn bộ A/B/C/downstream; chưa hiệu chỉnh bằng throughput thực tế. Không có hard timeout/deadline.
-- Worker nhắc cùng thread PID1283867, chu kỳ 30 phút, lần kế tiếp 11:30:55 SGT; đã xác nhận actual delivery vào cùng thread, có delivery_ack_depth.json.
+FP32 parameters rounded to BF16 saved precision, native BF16 AMP/SDPA; final CulturaX set, unchanged A2 scorer.
 
-Tiến độ đo được khoảng 600 giây/4 phép đánh giá mỗi lane. Với hai đợt parent trên các lane 0–3, ETA Part A khoảng **01/11 11:10–11:25 SGT**, gồm readout, còn tạm tính; ước lượng 0,6 node-giờ ban đầu thấp. Ước lượng toàn bộ khoảng 42–43 node-giờ vẫn chưa được đo trên C.
+Paired sequence bootstrap: 10,000 draws, seed 0. Relative intervals recompute the reference damage in every paired draw.
 
-Nguồn đang chạy: `1be9ccb33fb146e6e6712aff140e8c3346f0fbdb`. Receipt và bằng chứng startup: [startup_1005/verification.json](startup_1005/verification.json). Tiến độ mới nhất: [health_1102/verification.json](health_1102/verification.json).
+| Dataset | Set | L_ann / D(P300) | L_stab / D(S72) | R_short / D(S72) | R_long / D(S188) |
+|---|---|---:|---:|---:|---:|
+| dclm | W1 | -0.231621 | -0.146985 | 0.141551 | 0.028286 |
+| dclm | W2 | 0.047056 | 0.065850 | 0.605570 | 0.577259 |
+| dclm | W3 | 0.245461 | -0.100480 | 0.409317 | 0.951317 |
+| dclm | W4 | 0.088436 | 0.090806 | 0.036337 | 0.034086 |
+| dclm | W5 | -0.007412 | 0.010100 | 0.047619 | 0.029456 |
+| dclm | W6 | 0.066162 | 0.038535 | 0.139724 | 0.170043 |
+| dclm | W7 | 0.229747 | 0.161430 | 0.194582 | 0.264850 |
+| dclm | W8 | 0.284440 | 0.190261 | 0.084583 | 0.170400 |
+| dclm | W9 | 0.289559 | 0.127370 | 0.121081 | 0.282366 |
+| dclm | S2 | -0.231621 | -0.146985 | 0.141551 | 0.028286 |
+| dclm | S3 | 0.140521 | 0.001845 | 0.148428 | 0.307394 |
+| dclm | S4 | 4.008777 | 0.203851 | 0.806788 | 6.517374 |
+| fwe | W1 | -0.296443 | 1.184652 | 1.007967 | -0.353344 |
+| fwe | W2 | -0.160492 | -0.340845 | 0.342944 | 0.710391 |
+| fwe | W3 | 0.075268 | -0.028993 | 0.333506 | 0.476691 |
+| fwe | W4 | 1.294981 | 1.022075 | -0.003822 | 0.130625 |
+| fwe | W5 | 0.485164 | 0.530033 | -0.014421 | -0.043323 |
+| fwe | W6 | 0.398667 | 0.314279 | 0.044520 | 0.111587 |
+| fwe | W7 | 0.357375 | 0.223246 | 0.136323 | 0.260920 |
+| fwe | W8 | 0.368472 | 0.217970 | -0.003418 | 0.119728 |
+| fwe | W9 | 0.239371 | 0.052643 | 0.142567 | 0.345247 |
+| fwe | S2 | -0.296443 | 1.184652 | 1.007967 | -0.353344 |
+| fwe | S3 | 0.169053 | 0.297311 | 0.269707 | 0.144178 |
+| fwe | S4 | 0.909501 | 2.728301 | 1.035943 | 0.042736 |
+| nem | W1 | -0.225489 | -0.519324 | 0.118515 | 0.802257 |
+| nem | W2 | -0.158909 | -0.109273 | 1.149663 | 1.029871 |
+| nem | W3 | 0.498893 | 0.144377 | 1.304653 | 2.018610 |
+| nem | W4 | 0.058023 | 0.149579 | 0.052429 | -0.031389 |
+| nem | W5 | -0.039524 | -0.066119 | 0.044113 | 0.073847 |
+| nem | W6 | 0.076071 | 0.011021 | 0.081790 | 0.151393 |
+| nem | W7 | 0.169799 | 0.200485 | 0.209834 | 0.178909 |
+| nem | W8 | 0.275450 | 0.349028 | 0.213056 | 0.146895 |
+| nem | W9 | 0.309117 | 0.152429 | 0.128916 | 0.282408 |
+| nem | S2 | 0.059622 | 0.266550 | 1.657121 | 1.223004 |
+| nem | S3 | -0.478140 | -0.467518 | 0.307518 | 0.281437 |
+| nem | S4 | -0.104946 | 0.274928 | 1.772607 | 0.946488 |
 
-Sai lệch giữ nguyên: Breadth đã hoàn tất trước Depth A/B do spec Depth chưa có lúc đó. Spec hiện đã được cung cấp; không còn yêu cầu user bổ sung.
+Full absolute/relative estimates, intervals, damages, correlations and every prediction clause are in `decision_depth.json`.
 
-Rà soát code theo yêu cầu user (01/11): **11/11 kiểm thử CPU PASS**, không skip. Bằng chứng và hash: [code_review_20261101.json](code_review_20261101.json).
+Spec defines contrasts in nats and additionally requests relative values. Both clause evaluations are reported explicitly, without choosing a scale after observing results.
 
-- Phép cắt layer native/restoration, công thức paired contrasts, KL/gradients, optimizer/scheduler kế thừa và thứ tự DT4 + 12 fits phù hợp với các kiểm thử đã chạy.
-- Đã sửa readout để gom cờ lỗi preparation/coordinator; kiểm tra số sequences, targets và mean thay vì chỉ đếm filename; đánh dấu thiếu coverage nhưng vẫn tính phần dữ liệu hữu dụng và giữ cờ lỗi.
-- Đã bổ sung cờ lỗi tổng hợp từ mọi rank vào result và per-sequence outputs của short heals. Các sửa này nằm trong code cho bước tiếp theo/readout độc lập; không sửa source Part A đã đóng băng đang chạy.
-- Helper full-state checkpoint/resume đã kiểm thử bằng native Trainer trên CPU: weights/optimizer/scheduler, mẫu RNG Python/NumPy/Torch, thứ tự mẫu và LR trùng khớp chạy liền mạch. Lưu model FP32 + optimizer/scheduler + RNG + Trainer state và trace từng rank; checkpoint cuối khoa học vẫn BF16. Mặc định giữ 2 training checkpoints mới nhất trong root C mới, không đụng checkpoint cũ của dự án.
-- Kiểm thử bổ sung 01/11 10:40 SGT: native full-state resume **2 rank CPU/Gloo PASS**, so sánh bitwise weights và trạng thái optimizer/scheduler/RNG, LR và thứ tự mẫu với chạy liên tục. Hai lần fixture lỗi `cpu:0` trước đó được giữ trong bằng chứng; sửa bằng `ACCELERATE_TORCH_DEVICE=cpu` chỉ trong subprocess kiểm thử CPU, không sửa numerical core/GPU.
-- Launcher DT4/B và ghép A+B đã CPU validated. DT6 có code kiểm tra full-stream hash lịch sử để xác nhận prefix, cộng kiểm tra độc lập view/order của PackedRows; fixture phát hiện được thay đổi ngoài prefix. Chưa chạy DT6 trên stream thật, không tuyên bố đã có historical prefix-only hash.
-- Bằng chứng: [cpu_preparation_1040/partb_validation.json](cpu_preparation_1040/partb_validation.json), [cpu_preparation_1040/resume_validation.json](cpu_preparation_1040/resume_validation.json); các hash nguồn/kiểm thử được đối chiếu lại trước commit.
-- Bổ sung 11:06 SGT: worker C đã tích hợp native full-state resume; coordinator chạy DT6 rồi P300/P1T/X72, viết note sau từng arm và readout E/A, ratios, labels. **5 kiểm thử CPU PASS**, gồm resume giữa chừng và sau khi đủ số bước (không thêm optimizer update), cờ DT6 không hủy các arm, retry khi checkpoint tiến triển và từ chối launch nếu có GPU không rõ chủ. Lỗi lặp lại tại cùng checkpoint được giữ và tiếp tục các arm còn lại; không ghi nhận arm đó hoàn tất. [Bằng chứng CPU](cpu_preparation_1106/validation.json).
-- Giới hạn: chưa xác minh resume 8 GPU. C launcher/plan từ A+B thực tế và downstream chưa tích hợp; chưa có B/C GPU execution hoặc production DT6. Không tuyên bố toàn pipeline đã được chứng minh đúng.
+Predictions (nats): `{"A1": false, "A2": false, "A3": false, "A4": false}`.
 
-Còn lại: Part A và bảng A1–A4; DT4; 12 lượt heal Part B và báo cáo A+B; DT6; 3 lượt heal 12.8B có checkpoint đầy đủ để resume; downstream; replay độc lập, báo cáo cuối và native burn handoff. Scientific/time checks ghi nhận và tiếp tục; không chuyển FAIL thành PASS.
+Predictions (relative): `{"A1": false, "A2": false, "A3": false, "A4": false}`.
+
+Scientific flags: 0. Failed checks retain their original values; remaining registered work continues.
+
+Deviations: ["Breadth completed before Depth A/B because Depth spec was unavailable; historical ordering deviation preserved."].
+
+Ledger: see `ledger.json`; estimates and elapsed time are report-only.
+
+Remaining: DT4, Part B and its report, DT6, Part C, downstream, independent replay and native handoff.
+
+Xác minh local: 222 file tải đủ và đúng SHA; 156 arrays; replay độc lập 1.938 phép đối chiếu, max sai khác 3.375077994860476e-14. Readout sửa kiểm tra coverage giữ nguyên numerics/clauses, 0 cờ khoa học.
+
+Part A kết thúc 01/11 11:06:32 SGT; native handoff 11:07:38 SGT; fresh burn 11:31 cycles1660→1680, payload1843.18→1865.39 GiB. Runtime job3796.785sec ≈1.0547nodeh (ước lượng ban đầu0.6h).
+
+Bằng chứng: [replay độc lập](parta_verified/independent_replay.json), [audit coverage](parta_verified/readout_audit.json), [bảng và báo cáo Part A](parta_verified/REPORT.md), [terminal/handoff](parta_terminal/verification.json). Quyết định đầy đủ lưu lossless tại parta_verified/decision_depth.json.gz; originals gồm156arrays trong artifacts/, cần backup riêng vì Gitignored.
+
+DT4/B launcher đã CPUvalidated7tests; C worker/resume/coordinator/readout5testsPASS, thêm2rankCPUresumePASS. C launcher/actualhandoff/downstream vẫn cần tích hợp trước chạy. Chưa có B/C GPU result; không tuyên bố toàn bộDepth hoàn tất.

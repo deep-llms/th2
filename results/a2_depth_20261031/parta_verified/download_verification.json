@@ -1,0 +1,11 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "files": 222,
+  "arrays": 156,
+  "all_member_sha256_verified": true,
+  "all_arrays_match_terminal_receipt": true,
+  "archive_bytes": 4207996,
+  "archive_sha256": "467596ca1d4bc932488891c5311cc94c915e926785f5a9c315871313034deaca",
+  "local_originals": "results/a2_depth_20261031/artifacts",
+  "export_commit": "edb350309f6e0543f179ba63c1df6a775a69d128"
+}

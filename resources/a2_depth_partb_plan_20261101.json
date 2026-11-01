@@ -1,0 +1,924 @@
+{
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "small_indices": [
+    0,
+    6,
+    7,
+    10,
+    11,
+    12,
+    17,
+    21,
+    22,
+    29,
+    31,
+    33,
+    38,
+    42,
+    52,
+    54,
+    56,
+    61,
+    77,
+    83,
+    86,
+    91,
+    99,
+    101,
+    105,
+    109,
+    117,
+    118,
+    124,
+    127,
+    130,
+    131,
+    132,
+    134,
+    135,
+    141,
+    144,
+    153,
+    162,
+    170,
+    173,
+    176,
+    182,
+    183,
+    188,
+    190,
+    191,
+    198,
+    203,
+    212,
+    213,
+    215,
+    216,
+    230,
+    237,
+    240,
+    242,
+    245,
+    249,
+    250,
+    253,
+    255,
+    259,
+    260,
+    269,
+    282,
+    283,
+    284,
+    287,
+    290,
+    293,
+    302,
+    306,
+    309,
+    310,
+    311,
+    315,
+    318,
+    322,
+    323,
+    325,
+    326,
+    328,
+    330,
+    338,
+    342,
+    343,
+    348,
+    349,
+    358,
+    371,
+    375,
+    377,
+    380,
+    386,
+    387,
+    388,
+    389,
+    390,
+    395,
+    396,
+    401,
+    402,
+    403,
+    405,
+    409,
+    411,
+    424,
+    429,
+    430,
+    442,
+    445,
+    446,
+    448,
+    449,
+    451,
+    454,
+    455,
+    461,
+    469,
+    474,
+    477,
+    479,
+    484,
+    491,
+    495,
+    503,
+    507,
+    508,
+    514,
+    519,
+    529,
+    535,
+    546,
+    550,
+    552,
+    557,
+    561,
+    564,
+    572,
+    574,
+    576,
+    577,
+    580,
+    581,
+    591,
+    596,
+    598,
+    600,
+    602,
+    611,
+    613,
+    614,
+    615,
+    626,
+    627,
+    628,
+    629,
+    631,
+    632,
+    635,
+    639,
+    640,
+    644,
+    648,
+    653,
+    655,
+    657,
+    658,
+    662,
+    667,
+    668,
+    676,
+    681,
+    691,
+    694,
+    698,
+    706,
+    719,
+    723,
+    732,
+    735,
+    737,
+    738,
+    742,
+    746,
+    753,
+    755,
+    760,
+    769,
+    770,
+    772,
+    773,
+    783,
+    785,
+    787,
+    792,
+    796,
+    797,
+    801,
+    806,
+    811,
+    817,
+    823,
+    830,
+    833,
+    836,
+    837,
+    840,
+    845,
+    846,
+    849,
+    853,
+    854,
+    856,
+    861,
+    862,
+    865,
+    870,
+    884,
+    885,
+    887,
+    888,
+    889,
+    892,
+    906,
+    910,
+    914,
+    915,
+    924,
+    927,
+    928,
+    932,
+    940,
+    948,
+    951,
+    958,
+    959,
+    960,
+    961,
+    962,
+    964,
+    967,
+    969,
+    974,
+    975,
+    976,
+    987,
+    989,
+    994,
+    1003,
+    1006,
+    1008,
+    1011,
+    1020,
+    1022
+  ],
+  "reference_nll": {
+    "dclm/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/parent-final.json",
+      "sha256": "0342765afc5400053ce529176b58b19a48b96482e30357eed1185ca931986adb"
+    },
+    "dclm/S72/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/pre-S1-final.json",
+      "sha256": "087d23fb601ee0d0a558c8db9a8a40078b142edca35f1fe6401757349b6ae400"
+    },
+    "dclm/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+      "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b"
+    },
+    "dclm/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+      "sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db"
+    },
+    "dclm/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/parent-final.json",
+      "sha256": "4f3544359641d2ed6594b855bbd7781a27a5fe07227ebfd94ffe843a168c7d2c"
+    },
+    "dclm/S188/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/pre-S1-final.json",
+      "sha256": "8b80beed055e798b4b63bc318844daa5b883100f06715f5b157bd039d3b9badf"
+    },
+    "dclm/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+      "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c"
+    },
+    "dclm/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60"
+    },
+    "fwe/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/parent-final.json",
+      "sha256": "1a472129c5fd51871d929de1f7ce64d2cb554cad676e3e7891ea2d9d436068aa"
+    },
+    "fwe/S72/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+      "sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9"
+    },
+    "fwe/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+      "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489"
+    },
+    "fwe/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039"
+    },
+    "fwe/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/parent-final.json",
+      "sha256": "a5181de571c022c0f2d8363571ce79dd195caefb70bb338f3dbc45b18df25f3f"
+    },
+    "fwe/S188/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+      "sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1"
+    },
+    "fwe/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+      "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5"
+    },
+    "fwe/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a"
+    },
+    "nem/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/parent-final.json",
+      "sha256": "e8e76d1c55402f8d78b4826bc94a1a83ee179b0bbfb95d2f2a129adbb594098d"
+    },
+    "nem/S72/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/pre-S1-final.json",
+      "sha256": "8445af26988488428c4ff66a967a246d1b332fd64f6d2b24ef7cf75eb5e79bbc"
+    },
+    "nem/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/parent-final.json",
+      "sha256": "1b64af7fd3d95f722944c80abccb1efa3d2e69fc0b210d8c790d0f7d02fb8f0a"
+    },
+    "nem/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/pre-S1-final.json",
+      "sha256": "a26d8cdea06f9aea23ea45d27a925025c3eedf4420c11b2690c95082ba7b58f3"
+    },
+    "nem/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/parent-final.json",
+      "sha256": "df980034a3ab762da782ffbd472b9ddb78abe281a9937cd105f143e9961b6f33"
+    },
+    "nem/S188/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/pre-S1-final.json",
+      "sha256": "eddf239be30daad45001fce81812729c62bd59f9f5df47e55a9db2793343c052"
+    },
+    "nem/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/parent-final.json",
+      "sha256": "60a87dfd12a186acbf65e3c92832a8621ea2c1c88a598d391ddbabb53636ca7c"
+    },
+    "nem/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/pre-S1-final.json",
+      "sha256": "74d83f1861fb347ec570b2825ab92a1b31d890f90f5f5b328762a345f6558558"
+    }
+  },
+  "heal_streams": {
+    "dclm": {
+      "path": "/mnt/local/_data/deep-llms_th2/a2_stage1_dclm_shuffle2030_20261029",
+      "sha256": "461d1f9a5b0d3d8bb72617ffa6e51fd90c8bc458fbc630643b199daedfac3295"
+    },
+    "fwe": {
+      "path": "/mnt/local/_data/deep-llms_th2/a2_stage1b_fwe_shuffle2030_20261030",
+      "sha256": "28362487768d9ceb285a06788f4d9589f1f692be8185d3091abc7ffc6ed50a3f"
+    }
+  },
+  "phase0_sets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-branches-20261028-a03/supervised/run/sets.json",
+    "sha256": "835e39c4e4acd1ffc09e05d4282ea707371af35a8ac0efd5007502376f8de3b9"
+  },
+  "layer_sets": {
+    "dclm": {
+      "W1": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "W2": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "W3": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "W4": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "W5": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "W6": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "W7": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "W8": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "W9": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "S2": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "S3": [
+        6,
+        7,
+        12,
+        13,
+        18,
+        19
+      ],
+      "S4": [
+        2,
+        3,
+        4,
+        5,
+        12,
+        13
+      ]
+    },
+    "fwe": {
+      "W1": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "W2": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "W3": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "W4": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "W5": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "W6": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "W7": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "W8": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "W9": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "S2": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "S3": [
+        6,
+        7,
+        12,
+        13,
+        18,
+        19
+      ],
+      "S4": [
+        2,
+        3,
+        4,
+        5,
+        12,
+        13
+      ]
+    },
+    "nem": {
+      "W1": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "W2": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "W3": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "W4": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "W5": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "W6": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "W7": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "W8": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "W9": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "S2": [
+        2,
+        3,
+        4,
+        5,
+        10,
+        11
+      ],
+      "S3": [
+        6,
+        7,
+        12,
+        13,
+        18,
+        19
+      ],
+      "S4": [
+        2,
+        3,
+        4,
+        5,
+        12,
+        13
+      ]
+    }
+  },
+  "deviations": [
+    "Breadth completed before Depth A/B because Depth spec was unavailable; historical ordering deviation preserved."
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "stage": "DT4+PartB",
+  "predecessor": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01",
+    "burn_script": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/source/resources/llm_pretrain_burn.py",
+    "supervisor": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/supervised/supervisor.json",
+      "sha256": "3469bac220b1593af8bbce059574b5a8be26ac5c9e0456f7a7ca9701512b7b07"
+    },
+    "burn": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/supervised/burn-verified.json",
+      "sha256": "ffe3767a90b6eca433f7bf67cc9f96271f3d9b9a791ab93d63cecb7d34e66601"
+    },
+    "complete": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/supervised/run/depth-parta-complete.json",
+      "sha256": "dc91b09f1ba1fc8c98d12ba3549db92b48c31e74767aadcef3b05f4f1a4d90dd"
+    },
+    "source_manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/source-manifest.json",
+      "sha256": "ca2da0ca56d19b9ee9deacfc075627f90aab25fca4fe7d94ffaf662ce499f33f"
+    },
+    "prior_status": "ok",
+    "known_burn_identities": {
+      "761449": {
+        "pid": 761449,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761377": {
+        "pid": 761377,
+        "ppid": 9406,
+        "start_ticks": 344299303,
+        "command_sha256": "464c81c68b771ee954b2ee122ac56746210cf4219d9aa251567684749dab0d5c",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      },
+      "761450": {
+        "pid": 761450,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761451": {
+        "pid": 761451,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761452": {
+        "pid": 761452,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761453": {
+        "pid": 761453,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761454": {
+        "pid": 761454,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761455": {
+        "pid": 761455,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "761456": {
+        "pid": 761456,
+        "ppid": 761377,
+        "start_ticks": 344299422,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      }
+    }
+  },
+  "part_a_note": {
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+    "posted_at": "2026-11-01T03:41:28.574717+00:00",
+    "channel": "same-thread commentary",
+    "report": "results/a2_depth_20261031/parta_verified/REPORT.md",
+    "report_sha256": "6ae54a45836d2aa670824ac01b598bcac30754b4ad774d59519f0869952b16b5",
+    "predictions": {
+      "A1": false,
+      "A2": false,
+      "A3": false,
+      "A4": false
+    },
+    "scales": [
+      "nats",
+      "relative"
+    ],
+    "replay": "results/a2_depth_20261031/parta_verified/independent_replay.json",
+    "continuing": "DT4 then 12 registered B fits without waiting"
+  },
+  "part_a_report": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/results/a2_depth_20261031/REPORT.md",
+    "sha256": "6ae54a45836d2aa670824ac01b598bcac30754b4ad774d59519f0869952b16b5"
+  },
+  "stage1_references": {
+    "path": "/mnt/local/deep-llms_th2/resources/a2_depth_stage1_references_20261101.json",
+    "sha256": "78afb6090646a84afc59d498911d37590ebce745a8e0a4d637d0411406651da5"
+  },
+  "short_S1_reference": {
+    "dclm": {
+      "E": 0.021096293347514283,
+      "E_relative": 0.10302884126700326,
+      "A_init": 0.07272470370653528,
+      "A_init_relative": 0.35516864649842933,
+      "P300_delta": 0.2047610464029428,
+      "E_label": "persists",
+      "runs": {
+        "P300": {
+          "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+          "val_post": 2.9425540786156272,
+          "val_parent": 2.7377930322126844,
+          "delta_post": 0.2047610464029428,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        },
+        "P1T": {
+          "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-3",
+          "val_post": 2.9127663315143915,
+          "val_parent": 2.6869089917639344,
+          "delta_post": 0.22585733975045708,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        },
+        "X72": {
+          "run_id": "ST1-dclm-X72-S1-0.2B-lr1e-3",
+          "val_post": 3.0152787823221625,
+          "val_parent": 2.90857529610787,
+          "delta_post": 0.10670348621429238,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        }
+      }
+    },
+    "fwe": {
+      "E": 0.026224221566386152,
+      "E_relative": 0.1339870997016109,
+      "A_init": 0.07847837360805077,
+      "A_init_relative": 0.4009686099708777,
+      "P300_delta": 0.19572198834654575,
+      "E_label": "persists",
+      "runs": {
+        "P300": {
+          "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-3",
+          "val_post": 3.0563533142033608,
+          "val_parent": 2.860631325856815,
+          "delta_post": 0.19572198834654575,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        },
+        "P1T": {
+          "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-3",
+          "val_post": 3.030653543514748,
+          "val_parent": 2.808707333601816,
+          "delta_post": 0.2219462099129319,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        },
+        "X72": {
+          "run_id": "ST1-fwe-X72-S1-0.2B-lr1e-3",
+          "val_post": 3.1348316878114115,
+          "val_parent": 3.042152001946299,
+          "delta_post": 0.09267968586511266,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        }
+      }
+    }
+  },
+  "final_sequences": 2461,
+  "final_targets_per_sequence": 4095,
+  "resamples": 10000,
+  "seed": 0,
+  "scientific_policy": "log/flag/continue; no time termination",
+  "expected_node_hours": 2.7
+}

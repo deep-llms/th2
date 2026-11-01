@@ -1,0 +1,80 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "PASS",
+  "saved_arrays": 156,
+  "comparisons": 1938,
+  "max_absolute_difference": 3.375077994860476e-14,
+  "resamples": 10000,
+  "seed": 0,
+  "method": "Independent NumPy batch-count replay of raw arrays, explicit contrast pairs/labels/clauses and tied rank correlations; no production statistics/readout imports",
+  "predictions_nats": {
+    "scale": "estimate",
+    "per_dataset": {
+      "dclm": {
+        "A1_W9_gt_W8": true,
+        "A1_W8_gt_W1": false,
+        "A2_L_ann": false,
+        "A2_L_stab": false,
+        "A3_negative": false,
+        "A4": false
+      },
+      "fwe": {
+        "A1_W9_gt_W8": true,
+        "A1_W8_gt_W1": false,
+        "A2_L_ann": false,
+        "A2_L_stab": true,
+        "A3_negative": false,
+        "A4": true
+      },
+      "nem": {
+        "A1_W9_gt_W8": true,
+        "A1_W8_gt_W1": false,
+        "A2_L_ann": false,
+        "A2_L_stab": false,
+        "A3_negative": false,
+        "A4": false
+      }
+    },
+    "predictions": {
+      "A1": false,
+      "A2": false,
+      "A3": false,
+      "A4": false
+    }
+  },
+  "predictions_relative": {
+    "scale": "relative_to_reference_damage",
+    "per_dataset": {
+      "dclm": {
+        "A1_W9_gt_W8": true,
+        "A1_W8_gt_W1": false,
+        "A2_L_ann": false,
+        "A2_L_stab": false,
+        "A3_negative": false,
+        "A4": false
+      },
+      "fwe": {
+        "A1_W9_gt_W8": true,
+        "A1_W8_gt_W1": false,
+        "A2_L_ann": false,
+        "A2_L_stab": true,
+        "A3_negative": false,
+        "A4": true
+      },
+      "nem": {
+        "A1_W9_gt_W8": false,
+        "A1_W8_gt_W1": true,
+        "A2_L_ann": false,
+        "A2_L_stab": false,
+        "A3_negative": false,
+        "A4": false
+      }
+    },
+    "predictions": {
+      "A1": false,
+      "A2": false,
+      "A3": false,
+      "A4": false
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "lossless": true,
+  "members": [
+    {
+      "original": "perseq_hashes.json",
+      "compressed": "perseq_hashes.json.gz",
+      "sha256": "395e6e2c306c651f15f7f894d1e7e140c2072650537afa62ba988c13ab3ea2af"
+    },
+    {
+      "original": "source-manifest.json",
+      "compressed": "source-manifest.json.gz",
+      "sha256": "ca2da0ca56d19b9ee9deacfc075627f90aab25fca4fe7d94ffaf662ce499f33f"
+    },
+    {
+      "original": "supervised/supervisor.json",
+      "compressed": "supervised/supervisor.json.gz",
+      "sha256": "3469bac220b1593af8bbce059574b5a8be26ac5c9e0456f7a7ca9701512b7b07"
+    },
+    {
+      "original": "supervised/burn-verified.json",
+      "compressed": "supervised/burn-verified.json.gz",
+      "sha256": "ffe3767a90b6eca433f7bf67cc9f96271f3d9b9a791ab93d63cecb7d34e66601"
+    },
+    {
+      "original": "supervised/run/complete.json",
+      "compressed": "supervised/run/complete.json.gz",
+      "sha256": "f6d29423f931b67dc1c98fc0c025f367a4835e045dd2cd3fa5517ef149031c8a"
+    },
+    {
+      "original": "supervised/run/depth-parta-complete.json",
+      "compressed": "supervised/run/depth-parta-complete.json.gz",
+      "sha256": "dc91b09f1ba1fc8c98d12ba3549db92b48c31e74767aadcef3b05f4f1a4d90dd"
+    },
+    {
+      "original": "results/a2_depth_20261031/decision_depth.json",
+      "compressed": "results/a2_depth_20261031/decision_depth.json.gz",
+      "sha256": "8fa07b1828fcd6abafc9b425f005d1c4daf0728220a520e64c350b4d84fe8802"
+    },
+    {
+      "original": "results/a2_depth_20261031/ledger.json",
+      "compressed": "results/a2_depth_20261031/ledger.json.gz",
+      "sha256": "42fc91d71e03f63d8b1de5adac7794c5a55d9163feec63624e48636153b3a178"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "posted_at": "2026-11-01T03:41:28.574717+00:00",
+  "channel": "same-thread commentary",
+  "report": "results/a2_depth_20261031/parta_verified/REPORT.md",
+  "report_sha256": "6ae54a45836d2aa670824ac01b598bcac30754b4ad774d59519f0869952b16b5",
+  "predictions": {
+    "A1": false,
+    "A2": false,
+    "A3": false,
+    "A4": false
+  },
+  "scales": [
+    "nats",
+    "relative"
+  ],
+  "replay": "results/a2_depth_20261031/parta_verified/independent_replay.json",
+  "continuing": "DT4 then 12 registered B fits without waiting"
+}

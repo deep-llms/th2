@@ -1,3 +1,7 @@
+01Nov11:41SGT: PartA COMPLETE and NOTE POSTED. exportedb3503ACK2files/222members4.2MB SHA467596ca;156arrays allSHAexact; independentCPU1938comparisons/10kseed0CI/correlations/allclausesPASS,max3.37508e-14. UpdatedreadoutcoverageTrue/flags0/numericsunchanged. AllA1-A4false onbothscales preserved; report results/a2_depth_20261031/REPORT.md andparta_verified. GPUterminal11:06:32/nativehandoff11:07:38/freshburn11:31 verified. ActualBplan nowassemble fromterminal/note; launchDT4+12B authorizednext, no question. No pendingreceipt/commands#0 beforecodefreeze. C launcher/downstream pendingintegration. Samewatch1283867 next12:00:55. RemainingDT4/B/report,DT6/C/downstream/replay/finalhandoff;Breadth-orderdeviation.
+
+2026-11-01T03:37:55.818645+00:00: DepthPartAexportb01 edb350309f6e0543f179ba63c1df6a775a69d128 SUBMITTED/remoteheadverified; awaitexportreceipt+manifest/part000 before remote writes.222files4.2MB/noGPUwork;fullreplay/note thenDT4/B. Samewatch1283867.
+
 01Nov11:37SGT: DepthPartApackageb01 f883e4e ACK;222files/4,207,996bytes archiveSHA467596ca1d4bc932488891c5311cc94c915e926785f5a9c315871313034deaca. Preparing exact2fileexportb01(manifest+part000);noGPUwork. Nativehandoff verified/fullsavedarray replay next.
 
 2026-11-01T03:34:36.242843+00:00: DepthPartAresultpackageb01 f883e4edab7213098d1b52f6bc971d84d589c675 SUBMITTED/remoteheadverified; awaitpackageACK beforeexport/remote writes. AllAterminal/metadata/nativehandoff verified; localfullarrayreplay pending. Samewatch1283867.
