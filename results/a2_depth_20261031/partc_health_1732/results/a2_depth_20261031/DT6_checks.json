@@ -1,0 +1,69 @@
+{
+  "checks": [
+    {
+      "test": "DT6_manifest",
+      "passed": true,
+      "detail": null,
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_historical_full_tokens",
+      "passed": true,
+      "detail": {
+        "full_sha256": "1079076a62ee4d42440ae2fdb88771ef2f60438148ca79bf0769deaeeb0ddfd6",
+        "prefix_sha256": "0b551217969cbd8f771fb19a7beb5d1af526683edc7763e94147cf8881440103",
+        "bytes": 119999971328
+      },
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_historical_full_boundaries",
+      "passed": true,
+      "detail": {
+        "full_sha256": "73fa680b9441768d1d93f1221784c8e86505c165af807ca4b2c5db75e0cfddf9",
+        "prefix_sha256": "c0183d3ab3d0a22022375b89510daac80e7bd69e8d883a153d39b6d33e42ff21",
+        "bytes": 29999992832
+      },
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_physical_lengths",
+      "passed": true,
+      "detail": null,
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_count",
+      "passed": true,
+      "detail": {
+        "selected": 3124992,
+        "available": 7324217,
+        "required": 3124992
+      },
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_sequential_order",
+      "passed": true,
+      "detail": null,
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_reader_prefix",
+      "passed": true,
+      "detail": {
+        "prefix_sequences": 781248,
+        "reader_sha256": "0b551217969cbd8f771fb19a7beb5d1af526683edc7763e94147cf8881440103",
+        "physical_prefix_sha256": "0b551217969cbd8f771fb19a7beb5d1af526683edc7763e94147cf8881440103"
+      },
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    },
+    {
+      "test": "DT6_files_stable",
+      "passed": true,
+      "detail": null,
+      "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+    }
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}
