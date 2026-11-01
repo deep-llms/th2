@@ -1,0 +1,21 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "PASS",
+  "tests": 10,
+  "at": "2026-11-01T03:49:36.045654+00:00",
+  "scope": "C native full-state resume, no extra update at complete checkpoint, advancing/repeated-failure continuation, per-arm notes, downstream three-student dispatch/parent reuse contracts, paired/fresh per-item replay, C launcher scientific flag continuation/physical admission boundary and actual-handoff plan assembly. CPU only; actual 8GPU evidence pending.",
+  "files": {
+    "scripts/launch_a2_depth_partc.py": "b2997610bf9bcfe9339a66009779eeb680cbb8a17c21e9d91e0cfd621bf525e8",
+    "scripts/a2_depth_partc_plan.py": "264582dcaf6fcd1db25dca877e3690342d1fc610ca8f0ab0f2e50e879e34b9d8",
+    "scripts/a2_depth_partc_run.py": "adf9a3b208d2513d3291e55d7bd3a900d960adf61122a9d295e133421ea46d2d",
+    "scripts/a2_depth_partc_report.py": "956b8b600a82162704f68d21754236178521177548db98453d7f0ea02d89b28c",
+    "scripts/a2_depth_downstream.py": "b5aaf5adb99ee690f81d5e319ea73368b5c1ca00200ad5240f3b8f59d7c3ed16",
+    "scripts/a2_depth_score.py": "5fc23b9a4d111e8d2438b8f62223806f874bec8e3f43b093dc06d96373f6f893",
+    "efficient_llm/a2_depth/heal_long.py": "9be2350caffb32b41d06917c28f91f122d3c012a066d48c7937c059cecf84bb7",
+    "efficient_llm/a2_depth/resume.py": "40fd243ac25b6a16cfd001003b444d748936e498cca977133e5aea4404c40b2d",
+    "efficient_llm/a2_depth/stream.py": "d48b8a844007de0807ec113a65578f93a86209a2e467f38988f56e39cba88a1d"
+  },
+  "log_sha256": "9cffbe0374d6402abeb9c909aa26ce4413a3a4045923a1a426e92ad94a6e7f7e",
+  "gpu_deployed": false,
+  "actual_C_plan_created": false
+}

@@ -1,4 +1,4 @@
-# A2 Depth — Part A hoàn tất; B/C còn tiếp tục
+# A2 Depth — Part A hoàn tất; DT4/B đang chạy
 
 Spec SHA-256: `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
 
@@ -70,3 +70,12 @@ Part A kết thúc 01/11 11:06:32 SGT; native handoff 11:07:38 SGT; fresh burn 1
 Bằng chứng: [replay độc lập](parta_verified/independent_replay.json), [audit coverage](parta_verified/readout_audit.json), [bảng và báo cáo Part A](parta_verified/REPORT.md), [terminal/handoff](parta_terminal/verification.json). Quyết định đầy đủ lưu lossless tại parta_verified/decision_depth.json.gz; originals gồm156arrays trong artifacts/, cần backup riêng vì Gitignored.
 
 DT4/B launcher đã CPUvalidated7tests; C worker/resume/coordinator/readout5testsPASS, thêm2rankCPUresumePASS. C launcher/actualhandoff/downstream vẫn cần tích hợp trước chạy. Chưa có B/C GPU result; không tuyên bố toàn bộDepth hoàn tất.
+
+
+## Tiến độ DT4/B và chuẩn bị C — 01Nov11:53 SGT
+
+DT4/B bắt đầu 11:46:14 SGT; snapshot 11:48:52 xác nhận DT4 70/762 updates, 8 GPU 98–99%, 43 preparation checks và 32 worker checks ban đầu PASS. Source `a9cbd433`/176 files bất biến; đúng burn được thu hồi và quyền sở hữu đầy đủ được xác minh. Receipt: [partb_startup_1148/verification.json](partb_startup_1148/verification.json). DT4 chưa có final NLL; chưa có kết quả B cuối. ETA DT4/B 14:30–15:30 SGT, sơ bộ.
+
+C worker/resume, plan assembler, launcher, 3-student batch-2 downstream, exact parent-score reuse, paired 10k seed 0/fresh per-item replay và ghép report đã qua 10 CPU tests: [validation](cpu_preparation_1150/validation.json). Chưa lập actual C handoff plan, chưa launch C; cần B terminal và A+B report trước. Native 8-GPU resume chưa được xác minh thực nghiệm.
+
+Còn lại: DT4/B hoàn tất và replay/report A+B; DT6 production, C ba full schedules, downstream/replay/final report/native handoff. Breadth-before-Depth deviation giữ nguyên.

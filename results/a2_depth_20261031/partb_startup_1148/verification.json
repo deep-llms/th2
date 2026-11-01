@@ -1,0 +1,32 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "health_at": "2026-11-01T03:48:52.202663+00:00",
+  "raw_sha256": "70ab24fe0b99d002a067f92d5fbc945eb45055f56728a4ca6991d952a135e38f",
+  "health_commit": "5b2c54899cba266ddb114f9b54886ace75175acb",
+  "source": "a9cbd433d1fb91642c266319463e91c7a931afc4",
+  "source_files": 176,
+  "started_at": "2026-11-01T03:46:14.624579+00:00",
+  "phase": "DT4",
+  "updates": 70,
+  "total_updates": 762,
+  "preparation_checks": 43,
+  "initial_worker_checks": 32,
+  "full_ownership_verified": true,
+  "guard": {
+    "owner_pid": 762457,
+    "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/supervised",
+    "at": "2026-11-01T03:45:13.790981+00:00"
+  },
+  "exact_known_burn_reclaimed": [
+    761449,
+    761450,
+    761451,
+    761452,
+    761453,
+    761454,
+    761455,
+    761456
+  ],
+  "full_receipt": "verification.json.gz",
+  "full_uncompressed_sha256": "47ca4cf454f5386da4189f85df1f7553c32f3540f810619031cf7155bae4aa35"
+}

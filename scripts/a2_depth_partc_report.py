@@ -8,6 +8,7 @@ from efficient_llm.a2_stage1.protocol import decision as classify
 
 def compute(cfg,root):
     root=Path(root);tests=collect_checks(root);runs=[];values={};flags=[];complete=True
+    if (root/'runtime_checks.json').exists():tests.extend(read(root/'runtime_checks.json')['checks'])
     for arm in ('P300','P1T','X72'):
         name=f'ST1-dclm-{arm}-S1-12.8B-lr1e-3'
         try:

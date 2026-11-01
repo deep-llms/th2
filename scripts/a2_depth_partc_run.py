@@ -69,10 +69,28 @@ def main():
         events.extend(run_arm(cfg,a.config,arm,checks))
         checks.attempt('note:'+arm,lambda arm=arm:finalize(cfg,note_arm=arm))
     decision=checks.attempt('part_c_readout',lambda:finalize(cfg))
+    from scripts.a2_depth_downstream import run as downstream_run
+    require_free_gpus()
+    downstream=checks.attempt('registered_downstream',lambda:downstream_run(cfg,a.config))
     write(root/'ledger_partc.json',dict(elapsed_seconds=time.monotonic()-started,events=events,policy='report-only'))
-    write(root/'progress.json',dict(phase='part_c_training_terminal',completed=events,next='registered three-student downstream, paired CI, replay and final report'))
+    write(root/'progress.json',dict(phase='part_c_terminal',completed=events,next='external saved-array verification and final native handoff'))
     write(a.receipt,dict(execution_complete=True,training_coverage_complete=bool(decision and decision['coverage_complete']),
-                        downstream_complete=False,readout_complete=decision is not None,events=events))
+                        downstream_complete=bool(downstream and downstream['coverage_complete']),
+                        readout_complete=decision is not None,events=events))
+    def report():
+        import json
+        path=root/'REPORT.md';training=root/'REPORT_PART_C.md'
+        text=training.read_text() if training.exists() else '# Depth C\n\nTraining readout unavailable; see checks.\n'
+        text='\n'.join(line for line in text.splitlines() if not line.startswith('Remaining:'))+'\n'
+        prior=cfg.get('part_ab_report_local')
+        if prior:text=Path(prior).read_text()+'\n\n'+text
+        text+='\n\n## Part C downstream (reported only)\n\n```json\n'+json.dumps(downstream,indent=2)+'\n```\n'
+        text+='\nIndependent external saved-array verification and native terminal handoff still require separate evidence.\n'
+        path.write_text(text)
+        write(root/'decision_depth.json',dict(training=decision,downstream=downstream,
+             coverage_complete=bool(decision and decision['coverage_complete'] and downstream and downstream['coverage_complete']),
+             flags=[e for e in checks.items if not e['passed']]))
+    checks.attempt('combined_report',report)
 
 
 if __name__=='__main__':main()

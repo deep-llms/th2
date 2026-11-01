@@ -88,11 +88,12 @@ class DepthLongCoordinatorTests(unittest.TestCase):
                 arms.append(arm);return [dict(arm=arm,returncode=0)]
             def finalize(cfg,**kw):
                 notes.append(kw.get('note_arm'));return dict(coverage_complete=True)
-            with patch('sys.argv',['runner','--config',str(plan),'--receipt',str(root/'done.json')]),patch('efficient_llm.a2_depth.stream.verify',side_effect=ValueError('DT6 fixture flag')),patch.object(runner,'run_arm',side_effect=run_arm),patch('scripts.a2_depth_partc_report.finalize',side_effect=finalize):
+            with patch('sys.argv',['runner','--config',str(plan),'--receipt',str(root/'done.json')]),patch('efficient_llm.a2_depth.stream.verify',side_effect=ValueError('DT6 fixture flag')),patch.object(runner,'run_arm',side_effect=run_arm),patch('scripts.a2_depth_partc_report.finalize',side_effect=finalize),patch.object(runner,'require_free_gpus'),patch('scripts.a2_depth_downstream.run',return_value=dict(coverage_complete=True)) as downstream:
                 runner.main()
             self.assertEqual(arms,['P300','P1T','X72']);self.assertEqual(notes,['P300','P1T','X72',None])
             self.assertFalse(read(root/'coordinator_checks.json')['checks'][0]['passed'])
-            self.assertFalse(read(root/'done.json')['downstream_complete'])
+            downstream.assert_called_once()
+            self.assertTrue(read(root/'done.json')['downstream_complete'])
 
     def test_repeated_same_step_failure_is_flagged_without_endless_retry(self):
         from types import SimpleNamespace

@@ -17,6 +17,54 @@
       "compressed_sha256": "98bb57c20d11fdc090c7fee15d7a1e942b219b6a3937dacfe5ebbf6d4d36f94e",
       "original_bytes": 32494,
       "compressed_bytes": 991
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1015/verification.json",
+      "compressed": "results/a2_depth_20261031/health_1015/verification.json.gz",
+      "original_sha256": "744f35fbbba16d3b10f59e254e8884acdf8276fc32cf7961d61703dac382bc70",
+      "compressed_sha256": "cec726c1cc7e2db45adece9ef27dd84dcb249c0a0a8d2442889fa0f7138be142",
+      "original_bytes": 20198,
+      "compressed_bytes": 2024
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1015/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/health_1015/source-manifest.json.gz",
+      "original_sha256": "ca2da0ca56d19b9ee9deacfc075627f90aab25fca4fe7d94ffaf662ce499f33f",
+      "compressed_sha256": "ba4802e3cc4db702919f87d4e9f53cf607f364322fb0e2220aa75d8ce3129d30",
+      "original_bytes": 16990,
+      "compressed_bytes": 7820
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1032/verification.json",
+      "compressed": "results/a2_depth_20261031/health_1032/verification.json.gz",
+      "original_sha256": "e26f4ff0cb7fe03a66b3d45c08f06ebc8d6b8132440281c6c19b6e325b0ac8c4",
+      "compressed_sha256": "1da639a7bb08d9fd9a3e158f1e6850cb0d6e58305b3c27ddc95b3b111262ed4c",
+      "original_bytes": 20197,
+      "compressed_bytes": 2024
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1032/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/health_1032/source-manifest.json.gz",
+      "original_sha256": "ca2da0ca56d19b9ee9deacfc075627f90aab25fca4fe7d94ffaf662ce499f33f",
+      "compressed_sha256": "ba4802e3cc4db702919f87d4e9f53cf607f364322fb0e2220aa75d8ce3129d30",
+      "original_bytes": 16990,
+      "compressed_bytes": 7820
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1102/verification.json",
+      "compressed": "results/a2_depth_20261031/health_1102/verification.json.gz",
+      "original_sha256": "ab0177f30d08ced8ff0a448a2e147bbdb300f4ebda16086fb43a8a98005c11cf",
+      "compressed_sha256": "5e0c31eb35f4776ca20a78b2e39498aeb9bd3c4e0f9d51c8f18598d88f9da209",
+      "original_bytes": 11782,
+      "compressed_bytes": 1767
+    },
+    {
+      "original": "results/a2_depth_20261031/health_1102/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/health_1102/source-manifest.json.gz",
+      "original_sha256": "ca2da0ca56d19b9ee9deacfc075627f90aab25fca4fe7d94ffaf662ce499f33f",
+      "compressed_sha256": "ba4802e3cc4db702919f87d4e9f53cf607f364322fb0e2220aa75d8ce3129d30",
+      "original_bytes": 16990,
+      "compressed_bytes": 7820
     }
   ]
 }
