@@ -79,3 +79,12 @@ DT4/B bắt đầu 11:46:14 SGT; snapshot 11:48:52 xác nhận DT4 70/762 update
 C worker/resume, plan assembler, launcher, 3-student batch-2 downstream, exact parent-score reuse, paired 10k seed 0/fresh per-item replay và ghép report đã qua 10 CPU tests: [validation](cpu_preparation_1150/validation.json). Chưa lập actual C handoff plan, chưa launch C; cần B terminal và A+B report trước. Native 8-GPU resume chưa được xác minh thực nghiệm.
 
 Còn lại: DT4/B hoàn tất và replay/report A+B; DT6 production, C ba full schedules, downstream/replay/final report/native handoff. Breadth-before-Depth deviation giữ nguyên.
+
+
+## DT4 hoàn tất, B đang chạy — snapshot 01Nov12:02 SGT
+
+DT4 đã chạy đúng một lần, đủ 762 updates; final NLL **2.9429481391618784**, so với Stage1 reference 2.942554079, chênh **+0.0003940601618781514**, PASS ngưỡng 0.002. Tuning NLL 2.9310933019668948, save/reload difference 0; không có flags. Thời gian training 734.423s, toàn fit 786.049s. Đây là kiểm tra từ receipt/result summary; replay toàn bộ saved arrays sẽ thực hiện khi tải kết quả B.
+
+Lượt B đầu tiên DCLM/P300/W9 đang chạy (1/762 tại snapshot), tám GPU 99%; 128 worker checks và 43 preparation checks PASS, 176 source files không đổi, full ownership được xác minh. Bằng chứng: [verification](partb_health_1202/verification.json). ETA B khoảng14:40–15:30 SGT, sơ bộ từ DT4; C 39h vẫn là estimate chưa đo.
+
+Còn lại: B12/replay/A+B note, DT6 production, C/downstream/final report/native handoff. Deviation Breadth-before-Depth giữ nguyên.

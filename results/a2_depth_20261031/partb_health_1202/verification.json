@@ -1,0 +1,75 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "health_at": "2026-11-01T04:02:12.730578+00:00",
+  "raw_sha256": "6def56203c8516fba6cf24c803e2646e6e5102253322a7e53c80156dad8aa9a0",
+  "health_commit": "b2099f68ba4e5bd7f0f53c47cbe9a24406701598",
+  "source": "a9cbd433d1fb91642c266319463e91c7a931afc4",
+  "source_files": 176,
+  "started_at": "2026-11-01T03:46:14.624579+00:00",
+  "phase": "D-dclm-P300-W9-0.2B-lr1e-3",
+  "updates": 1,
+  "total_updates": 762,
+  "preparation_checks": 43,
+  "initial_worker_checks": 128,
+  "full_ownership_verified": true,
+  "guard": {
+    "owner_pid": 762457,
+    "output": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/supervised",
+    "at": "2026-11-01T03:45:13.790981+00:00"
+  },
+  "exact_known_burn_reclaimed": [
+    761449,
+    761450,
+    761451,
+    761452,
+    761453,
+    761454,
+    761455,
+    761456
+  ],
+  "DT4": {
+    "result_summary": {
+      "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P300",
+      "block": "S1",
+      "status": "complete",
+      "training_seconds": 734.4229208780453,
+      "elapsed_seconds": 786.0492754033767,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-0.2B-lr1e-3/final",
+      "delta_post": 0.20515510694919392,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+      "sha256": "849e4cfdd11c1f56d9662a3f2831004e8da5ab3e9ce9edab2f417fba06fa187b",
+      "scores": {
+        "final": {
+          "loss": 2.9429481391618784,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 2.9310933019668948,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 2.9331967403370385,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 762
+    },
+    "reference": 2.942554079,
+    "difference": 0.0003940601618781514,
+    "passed": true,
+    "full_saved_array_replay": "pending"
+  },
+  "full_evidence": {
+    "path": "verification_full.json.gz",
+    "original_sha256": "c15588ad913dd41f08e4793d21b07a57c167d15f34acb450e0ed91770de5aebd",
+    "compression": "gzip lossless"
+  }
+}
