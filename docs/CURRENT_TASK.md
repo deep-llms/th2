@@ -1,3 +1,7 @@
+01Nov15:18SGT: C launch a0bfc35 ACK/all returned launchchecksPASS/native session submitted; actualDT6/GPUstartup pending unique healtha01. No relaunch.
+
+2026-11-01T07:15:22.607117+00:00: DepthDT6/PartClaunch a0bfc35cba61ba859ef2ea8fce9cdc30fb95d958 SUBMITTED/remoteheadverified; frozen42a6f054f7306fe1131d1da4e1582773ab1348cc. Root6y3o-a2-depth-partc-20261101-a01/sessiona2_depth_partc_20261101_a01. Retrieve pending launchreceipt BEFORE remote writes; no duplicate/relaunch. ActualDT6/GPUstartup pending. B12+DT4/all205files/39arrays/replay504checks/nativehandoff/A+Bnote complete. NextuniqueChealtha01 prepared NOTsubmitted;samewatch1283867. RemainingDT6/C/downstream/replay/report/handoff;Breadth-orderdeviation/CPU-onlyresume.
+
 01Nov15:13SGT: B exporte75fa40 ACK/205files5487189bytes/SHA4717f3de61f65c8ab70eb67e9fa69027bded68d950decfa97b039ba2d24eb104 exact/39arrays+13results locked. IndependentCPUreplay504checksPASS/max5.218e-15;B1true/B2false. A+B report posted in-thread before C; part_ab_note saved. ActualBterminal/nativeburnverified. No pendingreceipt/commands#0; assembling C withrecoverye10f0ca/newCPUproof. RemainingDT6/C/downstream/replay/report/handoff;Breadth-orderdeviation/CPU-onlyresume retained.
 
 2026-11-01T07:09:06.583460+00:00: B exactexportb01 e75fa40ee85c5303eab03e76e2461af2e9123a5f SUBMITTED/remoteheadverified; await exportreceipt+manifest/part000 before remote writes.205files/5487189bytes; noGPUwork. Remaining download/replay/A+Bnote,DT6/C/downstream/report/handoff.
