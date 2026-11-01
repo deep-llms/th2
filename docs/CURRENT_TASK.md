@@ -1,3 +1,7 @@
+01Nov11:37SGT: DepthPartApackageb01 f883e4e ACK;222files/4,207,996bytes archiveSHA467596ca1d4bc932488891c5311cc94c915e926785f5a9c315871313034deaca. Preparing exact2fileexportb01(manifest+part000);noGPUwork. Nativehandoff verified/fullsavedarray replay next.
+
+2026-11-01T03:34:36.242843+00:00: DepthPartAresultpackageb01 f883e4edab7213098d1b52f6bc971d84d589c675 SUBMITTED/remoteheadverified; awaitpackageACK beforeexport/remote writes. AllAterminal/metadata/nativehandoff verified; localfullarrayreplay pending. Samewatch1283867.
+
 01Nov11:31:48SGT VERIFIED/retrieved11:34: DepthPartAhealtha05 70a5756 ACK; all156NLLmetadata/180workerchecksPASS/all12DT1PASS;163sourcefiles1be9ccb unchanged. Actualnativehandoff11:07:38SGT;guardreleased/sessiondead/burnprogress1660->1680/payload1843.18->1865.39GiB/identitiesverified. RawSHA6755c0dbd3defd21634175d26fc3b67982355ffe659949f24f1548a9ed625315. Fullsavedarrays/replay pending. No pendingreceipt before uniqueCPUresultpackageb01; noGPUrelaunch. Samewatch1283867,next12:00:55. RemainingAexport/replay/note,DT4/B,DT6/C/downstream/report/handoff.
 
 2026-11-01T03:31:29.794579+00:00: DepthPartAhealtha05 70a57564eb0c668f1480effe52d6aa08f108c735 SUBMITTED/remoteheadverified; retrieve before remote writes/no duplicate/relaunch. Expected terminal evidence, current state pending. Samewatch1283867. RemainingAterminal/export/replay/note,DT4/B,DT6/C/downstream/report/handoff.
