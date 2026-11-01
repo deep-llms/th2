@@ -111,3 +111,12 @@ User-authorized review fixes completed before C launch. The C trainer flags and 
 20CPU tests PASS, including exact two-rank Gloo resume (weights/optimizer/scheduler/RNG/LR/order) and NaN on one rank unwinding both ranks before backward. [Evidence](cpu_recovery_20261101/validation.json). Initial test-fixture failures are retained alongside the passing log. No actual eight-B200/NCCL resume test or C launch is claimed.
 
 Remaining: B/replay/A+B note,production DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation unchanged.
+
+
+## Part B — snapshot 01Nov13:02 SGT
+
+4/12 B fits complete: all three DCLM/W9 arms and FWE/W9 P300. New final NLL: DCLM/X72/W9 3.1039990815860548 (damage 0.19542378547818462); FWE/P300/W9 3.1170931009343033 (damage 0.25646177507748824). Each completed fit has 762 LR updates, roundtrip difference 0 and no flags. Prior results and DT4 are unchanged. Full saved-array replay remains pending.
+
+FWE/P1T/W9 is active at 140/762 updates; all eight GPUs active (86–100%). All 176 frozen source files unchanged, full process ownership verified, 43 preparation and 480 worker checks PASS. Complete scans of all six existing training logs found zero nonfinite flags. [Evidence](partb_health_1302/verification.json). B ETA 14:50–15:15 SGT remains provisional; C's 39h estimate remains unmeasured.
+
+Remaining: eight B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
