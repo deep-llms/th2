@@ -28,7 +28,7 @@ before the next authorized reclaim.
 Raw receipt: temp/a2_pair_health02.log; SHA256
 4479ea899ea17e10a289377d50478fdadcc985f02288b6b58c21a1efecdafbee.
 Local metrics and full SHA/health receipt:
-[results](results/a2_s1_pair_20261028/final/results.json),
+[results](results/a2_s1_pair_20261028/final/results.json.gz),
 [health](results/a2_s1_pair_20261028/final/health_1059.json).
 Prior P300 grid: results/a2_early_grid_20261028/results.json.
 Checkpoints remain under the original B200 output root `6y3o-a2-s1-pair-20261028-a01`.

@@ -1,0 +1,9 @@
+{
+  "original_path": "docs/results/a2_s1_pair_20261028/final/results.json",
+  "original_bytes": 973558,
+  "original_sha256": "7073b4c7255a84c0029ad551db39d46ef88b373dfd50f12dc172e95a261ace79",
+  "gzip_path": "docs/results/a2_s1_pair_20261028/final/results.json.gz",
+  "gzip_bytes": 292956,
+  "gzip_sha256": "b93db41e3ffbe6bc5b38e0e86aa2af94b7cd632a1a660835d265207c154ebec0",
+  "reason": "Lossless archival compression for runner source-tree cap; original bytes retained locally and in Git history and on B200; no scientific or runtime changes"
+}
