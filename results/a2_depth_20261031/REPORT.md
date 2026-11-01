@@ -131,3 +131,12 @@ DCLM/P300/W1 active at 230/762, eight GPUs at 98–99%; 176 source files unchang
 Correction to the local 13:02 health summary: A_init is X72 final NLL minus P300 final NLL, hence DCLM/W9 A_init = 0.07713408873095728. The prior field incorrectly subtracted damage values against different parents. [Correction record](partb_health_1302/A_init_correction.json) retains the old value and formula explanation. Raw scores, production report formula, E and training are unchanged.
 
 Remaining: six B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
+
+
+## Part B — snapshot 01Nov14:01 SGT
+
+8/12 B fits complete: all W9 arms plus DCLM/W1 P300 and P1T. New DCLM/W1 final NLL: P300 2.870719834564392 (damage 0.13292680235170762), P1T 2.848468038789227 (damage 0.16155904702529256). All completed fits have 762 LR updates, roundtrip difference 0 and no flags. DT4 and prior results unchanged; full saved-array replay pending.
+
+DCLM/X72/W1 active at 270/762, eight GPUs 98–100%; 176 source files unchanged/full ownership verified, 43 preparation and 832 worker checks PASS, zero nonfinite flags across ten existing logs. [Verified receipt](partb_health_1401/verification.json). B ETA 14:50–15:15 SGT remains provisional; C39h unmeasured.
+
+Remaining: four B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
