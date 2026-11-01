@@ -1,0 +1,12 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "posted_at": "2026-11-01T07:12:18.200580+00:00",
+  "channel": "same-thread commentary; A+B results and table posted",
+  "report_sha256": "e6f2910d2e00fb69e3a6737bb9b9c610cdef9e88df654cfac1393ff0dd54a742",
+  "replay_sha256": "6f9374b08816904c314b2599717b5c7a700252e71adb6cd042a889fd69d81471",
+  "predictions": {
+    "B1": true,
+    "B2": false
+  },
+  "coverage_complete": true
+}

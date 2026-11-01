@@ -1,0 +1,74 @@
+{
+  "part": "DT4+B",
+  "elapsed_seconds": 11247.109206780791,
+  "expected_node_hours": 2.7,
+  "policy": "report-only",
+  "events": [
+    {
+      "name": "DT4",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/DT4.log"
+    },
+    {
+      "name": "D-dclm-P300-W9-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-dclm-P300-W9-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-dclm-P1T-W9-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-dclm-P1T-W9-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-dclm-X72-W9-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-dclm-X72-W9-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-fwe-P300-W9-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-fwe-P300-W9-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-fwe-P1T-W9-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-fwe-P1T-W9-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-fwe-X72-W9-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-fwe-X72-W9-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-dclm-P300-W1-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-dclm-P300-W1-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-dclm-P1T-W1-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-dclm-P1T-W1-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-dclm-X72-W1-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-dclm-X72-W1-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-fwe-P300-W1-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-fwe-P300-W1-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-fwe-P1T-W1-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-fwe-P1T-W1-0.2B-lr1e-3.log"
+    },
+    {
+      "name": "D-fwe-X72-W1-0.2B-lr1e-3",
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/logs/D-fwe-X72-W1-0.2B-lr1e-3.log"
+    }
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}

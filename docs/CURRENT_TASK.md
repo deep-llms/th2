@@ -1,3 +1,7 @@
+01Nov15:13SGT: B exporte75fa40 ACK/205files5487189bytes/SHA4717f3de61f65c8ab70eb67e9fa69027bded68d950decfa97b039ba2d24eb104 exact/39arrays+13results locked. IndependentCPUreplay504checksPASS/max5.218e-15;B1true/B2false. A+B report posted in-thread before C; part_ab_note saved. ActualBterminal/nativeburnverified. No pendingreceipt/commands#0; assembling C withrecoverye10f0ca/newCPUproof. RemainingDT6/C/downstream/replay/report/handoff;Breadth-orderdeviation/CPU-onlyresume retained.
+
+2026-11-01T07:09:06.583460+00:00: B exactexportb01 e75fa40ee85c5303eab03e76e2461af2e9123a5f SUBMITTED/remoteheadverified; await exportreceipt+manifest/part000 before remote writes.205files/5487189bytes; noGPUwork. Remaining download/replay/A+Bnote,DT6/C/downstream/report/handoff.
+
 01Nov15:09SGT: Bpackage3fe78a5 ACK; 205files/5487189archivebytes/SHA4717f3de61f65c8ab70eb67e9fa69027bded68d950decfa97b039ba2d24eb104. Preparing exact manifest+parts export; no GPU work; replay then A+Bnote/C.
 
 2026-11-01T07:05:11.282961+00:00: DepthB resultpackageb01 3fe78a5a3f799c3196dee3fc463814651758b892 SUBMITTED/remoteheadverified; retrieve packageACK before exact export. No GPU work; all13fits/nativehandoff verified. Remaining export/replay/A+Bnote,C.

@@ -1,4 +1,30 @@
-# A2 Depth — Part A hoàn tất; DT4/B đang chạy
+# A2 Depth — Parts A and B
+
+Spec SHA-256: `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
+
+Part A source report: {'path': '/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-parta-20261101-a01/results/a2_depth_20261031/REPORT.md', 'sha256': '6ae54a45836d2aa670824ac01b598bcac30754b4ad774d59519f0869952b16b5'}.
+
+| Dataset | Block | E | E / Δ(P300) | A_init | A_init / Δ(P300) | E label |
+|---|---|---:|---:|---:|---:|---|
+| dclm | W1 | 0.028632244673585383 | 0.21539858152781002 | 0.0712501955104603 | 0.5360107536623143 | {'value': 0.028632244673585383, 'clauses': {'INCOMPLETE': False, 'persists': True, 'reversed': False, 'erased': False}, 'label': 'persists'} |
+| dclm | W9 | 0.03303367332921914 | 0.11427491360908006 | 0.07713408873095728 | 0.2668335197905046 | {'value': 0.03303367332921914, 'clauses': {'INCOMPLETE': False, 'persists': True, 'reversed': False, 'erased': False}, 'label': 'persists'} |
+| dclm | S1 | 0.021096293347514283 | 0.10302884126700326 | 0.07272470370653528 | 0.35516864649842933 | persists |
+| fwe | W1 | 0.0345100244148524 | 0.2812193407371629 | 0.07505336227155057 | 0.611603654763835 | {'value': 0.0345100244148524, 'clauses': {'INCOMPLETE': False, 'persists': True, 'reversed': False, 'erased': False}, 'label': 'persists'} |
+| fwe | W9 | 0.039414471399715545 | 0.15368555952561244 | 0.08178711849348197 | 0.318905686700369 | {'value': 0.039414471399715545, 'clauses': {'INCOMPLETE': False, 'persists': True, 'reversed': False, 'erased': False}, 'label': 'persists'} |
+| fwe | S1 | 0.026224221566386152 | 0.1339870997016109 | 0.07847837360805077 | 0.4009686099708777 | persists |
+
+Predictions: `{"B1": true, "B2": false}`. Every clause: `{"dclm": {"B1": true, "B2": false}, "fwe": {"B1": true, "B2": false}}`.
+
+Scientific coverage complete: True. Flags: 0.
+
+DT4 and scientific flags remain recorded; they do not cancel Part C. Ledger: ledger.json (report-only).
+
+Remaining: publish this A+B result, DT6, three 12.8B fits, downstream, independent replay and final native handoff.
+
+## Part A: completed depth table and A1–A4
+
+The Part A numerical results below are retained from its earlier report; its then-pending-stage footer is omitted here.
+
 
 Spec SHA-256: `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
 
@@ -61,91 +87,16 @@ Deviations: ["Breadth completed before Depth A/B because Depth spec was unavaila
 
 Ledger: see `ledger.json`; estimates and elapsed time are report-only.
 
-Remaining: DT4, Part B and its report, DT6, Part C, downstream, independent replay and native handoff.
-
-Xác minh local: 222 file tải đủ và đúng SHA; 156 arrays; replay độc lập 1.938 phép đối chiếu, max sai khác 3.375077994860476e-14. Readout sửa kiểm tra coverage giữ nguyên numerics/clauses, 0 cờ khoa học.
-
-Part A kết thúc 01/11 11:06:32 SGT; native handoff 11:07:38 SGT; fresh burn 11:31 cycles1660→1680, payload1843.18→1865.39 GiB. Runtime job3796.785sec ≈1.0547nodeh (ước lượng ban đầu0.6h).
-
-Bằng chứng: [replay độc lập](parta_verified/independent_replay.json), [audit coverage](parta_verified/readout_audit.json), [bảng và báo cáo Part A](parta_verified/REPORT.md), [terminal/handoff](parta_terminal/verification.json). Quyết định đầy đủ lưu lossless tại parta_verified/decision_depth.json.gz; originals gồm156arrays trong artifacts/, cần backup riêng vì Gitignored.
-
-DT4/B launcher đã CPUvalidated7tests; C worker/resume/coordinator/readout5testsPASS, thêm2rankCPUresumePASS. C launcher/actualhandoff/downstream vẫn cần tích hợp trước chạy. Chưa có B/C GPU result; không tuyên bố toàn bộDepth hoàn tất.
 
 
-## Tiến độ DT4/B và chuẩn bị C — 01Nov11:53 SGT
+## Independent completion evidence — 01Nov15:13 SGT
 
-DT4/B bắt đầu 11:46:14 SGT; snapshot 11:48:52 xác nhận DT4 70/762 updates, 8 GPU 98–99%, 43 preparation checks và 32 worker checks ban đầu PASS. Source `a9cbd433`/176 files bất biến; đúng burn được thu hồi và quyền sở hữu đầy đủ được xác minh. Receipt: [partb_startup_1148/verification.json](partb_startup_1148/verification.json). DT4 chưa có final NLL; chưa có kết quả B cuối. ETA DT4/B 14:30–15:30 SGT, sơ bộ.
+DT4 and all12 Part B fits complete/full762 LR updates/exact eight-rank data order/roundtrip0/no scientific flags. All176 frozen files match a9cbd433. Training ended14:53:43SGT; native supervisor finished14:54:54; guard released and fresh burn progress530→540/payload588.49→599.59GiB independently verified15:02.
 
-C worker/resume, plan assembler, launcher, 3-student batch-2 downstream, exact parent-score reuse, paired 10k seed 0/fresh per-item replay và ghép report đã qua 10 CPU tests: [validation](cpu_preparation_1150/validation.json). Chưa lập actual C handoff plan, chưa launch C; cần B terminal và A+B report trước. Native 8-GPU resume chưa được xác minh thực nghiệm.
+205 downloaded files and39 per-sequence arrays have exact SHA matches; all13 result files match terminal receipts. Independent CPU replay504checksPASS, maximum difference5.218048215738236e-15. Recomputed E/A_init/relative values/labels/B1/B2; B1 true and B2 false, preserved. [Download proof](partb_verified/download_verification.json), [replay](partb_verified/independent_replay.json), [native handoff](partb_terminal/verification.json). Original bulk files are Git-ignored under artifacts/partb; retain them separately for backup.
 
-Còn lại: DT4/B hoàn tất và replay/report A+B; DT6 production, C ba full schedules, downstream/replay/final report/native handoff. Breadth-before-Depth deviation giữ nguyên.
+A+B report posted in this thread before assembling C. Breadth-before-Depth ordering deviation retained. A historical local health-summary A_init formula was corrected transparently; raw scores and production formulas did not change ([record](partb_health_1302/A_init_correction.json)).
 
+C recovery implementation: clean full-state copy outside checkpoint rotation, nonfinite attempts synchronized before backward, three bounded retry attempts, exact completed-arm/score reuse and native existing-root continuation.20CPU testsPASS including two CPU/Gloo ranks; no actual eight-B200/NCCL resume test. No C launch/productionDT6 claimed in this report snapshot. C39nodeh is an unmeasured report-only estimate.
 
-## DT4 hoàn tất, B đang chạy — snapshot 01Nov12:02 SGT
-
-DT4 đã chạy đúng một lần, đủ 762 updates; final NLL **2.9429481391618784**, so với Stage1 reference 2.942554079, chênh **+0.0003940601618781514**, PASS ngưỡng 0.002. Tuning NLL 2.9310933019668948, save/reload difference 0; không có flags. Thời gian training 734.423s, toàn fit 786.049s. Đây là kiểm tra từ receipt/result summary; replay toàn bộ saved arrays sẽ thực hiện khi tải kết quả B.
-
-Lượt B đầu tiên DCLM/P300/W9 đang chạy (1/762 tại snapshot), tám GPU 99%; 128 worker checks và 43 preparation checks PASS, 176 source files không đổi, full ownership được xác minh. Bằng chứng: [verification](partb_health_1202/verification.json). ETA B khoảng14:40–15:30 SGT, sơ bộ từ DT4; C 39h vẫn là estimate chưa đo.
-
-Còn lại: B12/replay/A+B note, DT6 production, C/downstream/final report/native handoff. Deviation Breadth-before-Depth giữ nguyên.
-
-
-## Part B — snapshot 01Nov12:32 SGT
-
-2/12 B fits hoàn tất: DCLM/W9 P300 final NLL 3.0268649928550975 (damage0.28907196064241303); P1T final3.009014625735566 (damage0.3221056339716317). E_W9=+0.033033673329218693 tính từ summaries; full saved-array replay còn chờ. Cả hai đủ762 LR updates, roundtrip0, không flags. DT4 giữ nguyên PASS.
-
-DCLM/W9 X72 đang chạy70/762,8GPU98–100%;304worker checks/43prepPASS,176sourcefiles không đổi/full ownership verified. [Receipt và verification](partb_health_1232/verification.json). Mỗi fit gồm startup hiện khoảng14.5phút; dự kiến B14:50–15:15SGT, sơ bộ. C39h vẫn chưa đo.
-
-Còn lại:10fits B/replay/A+B note,DT6/C/downstream/finalreport/nativehandoff; deviation Breadth–Depth giữ nguyên.
-
-
-## C recovery implementation — 01Nov2026 (CPU validation only)
-
-User-authorized review fixes completed before C launch. The C trainer flags and synchronizes a nonfinite loss across ranks, leaves that failed attempt before backward, and the coordinator retries from clean full-state evidence. Finite-loss KD/optimizer/LR/sample order are unchanged. All failure flags remain in the report.
-
-- Native rotation keeps two ordinary checkpoints; one additional copied clean checkpoint is kept under trainer/clean-state, outside checkpoint-* rotation. A replacement copy is staged before the older clean copy is removed. Nonfinite audit/state candidates are rejected.
-- Same-step transient failures receive up to three attempts with10/20s backoff; each uses an available rendezvous port. Physical GPUs must become free; no unknown processes are killed.
-- `launch_a2_depth_partc.py --resume --output EXISTING_ROOT --plan ORIGINAL_FROZEN_PLAN --code-commit ORIGINAL_COMMIT --session UNIQUE_SESSION --recovery-handoff FRESH_JSON` resumes the existing scientific experiment under a new native supervisor. Fresh handoff JSON is either `{"mode":"burn","predecessor":{...exact current locks/start identities...}}` or `{"mode":"free"}`. Free mode independently verifies original host/GPU UUIDs, no GPU workers, no held guard and no live prior supervisor/coordinator. Existing source/config/plan must match their original hashes. Historical supervisor/burn receipts are preserved under their original paths; new receipts are indexed in continuations.json.
-- Completed arms validate result/recipe/order/rank checks/final model hashes before reuse. Downstream can reenter; sealed scores and matching replays are reused, partial files remain in earlier attempt directories.
-
-20CPU tests PASS, including exact two-rank Gloo resume (weights/optimizer/scheduler/RNG/LR/order) and NaN on one rank unwinding both ranks before backward. [Evidence](cpu_recovery_20261101/validation.json). Initial test-fixture failures are retained alongside the passing log. No actual eight-B200/NCCL resume test or C launch is claimed.
-
-Remaining: B/replay/A+B note,production DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation unchanged.
-
-
-## Part B — snapshot 01Nov13:02 SGT
-
-4/12 B fits complete: all three DCLM/W9 arms and FWE/W9 P300. New final NLL: DCLM/X72/W9 3.1039990815860548 (damage 0.19542378547818462); FWE/P300/W9 3.1170931009343033 (damage 0.25646177507748824). Each completed fit has 762 LR updates, roundtrip difference 0 and no flags. Prior results and DT4 are unchanged. Full saved-array replay remains pending.
-
-FWE/P1T/W9 is active at 140/762 updates; all eight GPUs active (86–100%). All 176 frozen source files unchanged, full process ownership verified, 43 preparation and 480 worker checks PASS. Complete scans of all six existing training logs found zero nonfinite flags. [Evidence](partb_health_1302/verification.json). B ETA 14:50–15:15 SGT remains provisional; C's 39h estimate remains unmeasured.
-
-Remaining: eight B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
-
-
-## Part B — snapshot 01Nov13:32 SGT
-
-6/12 B fits complete: all DCLM/W9 and FWE/W9 arms. New FWE/W9 final NLL: P1T 3.10458358007902 (damage 0.2958762464772038), X72 3.1988802194277857 (damage 0.1567282174814868). All completed fits have 762 LR updates, roundtrip difference 0, no flags. DT4 and prior results remain unchanged; full saved-array replay pending.
-
-DCLM/P300/W1 active at 230/762, eight GPUs at 98–99%; 176 source files unchanged/full ownership verified, 43 preparation and 656 worker checks PASS, zero nonfinite flags across all eight existing logs. [Verified receipt](partb_health_1332/verification.json). B ETA 14:50–15:15 SGT provisional; C39h unmeasured.
-
-Correction to the local 13:02 health summary: A_init is X72 final NLL minus P300 final NLL, hence DCLM/W9 A_init = 0.07713408873095728. The prior field incorrectly subtracted damage values against different parents. [Correction record](partb_health_1302/A_init_correction.json) retains the old value and formula explanation. Raw scores, production report formula, E and training are unchanged.
-
-Remaining: six B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
-
-
-## Part B — snapshot 01Nov14:01 SGT
-
-8/12 B fits complete: all W9 arms plus DCLM/W1 P300 and P1T. New DCLM/W1 final NLL: P300 2.870719834564392 (damage 0.13292680235170762), P1T 2.848468038789227 (damage 0.16155904702529256). All completed fits have 762 LR updates, roundtrip difference 0 and no flags. DT4 and prior results unchanged; full saved-array replay pending.
-
-DCLM/X72/W1 active at 270/762, eight GPUs 98–100%; 176 source files unchanged/full ownership verified, 43 preparation and 832 worker checks PASS, zero nonfinite flags across ten existing logs. [Verified receipt](partb_health_1401/verification.json). B ETA 14:50–15:15 SGT remains provisional; C39h unmeasured.
-
-Remaining: four B fits including the active one, replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
-
-
-## Part B — snapshot 01Nov14:32 SGT
-
-10/12 B fits complete: all DCLM arms, all FWE/W9 arms and FWE/W1 P300. New final NLL: DCLM/X72/W1 2.941970030074853 (damage 0.03339473396698267), FWE/P300/W1 2.9833470122117824 (damage 0.12271568635496743). Each completed fit has 762 LR updates, roundtrip difference 0 and no flags. DT4 and prior results unchanged; full saved-array replay pending.
-
-FWE/P1T/W1 active at 370/762, then FWE/X72/W1 remains. Eight GPUs 98–99%; 176 source files unchanged/full ownership verified, 43 preparation and 1,008 worker checks PASS, zero nonfinite flags across 12 existing logs. [Verified receipt](partb_health_1432/verification.json). Measured roughly 0.96s/update plus ~14.5min for the last fit and final readout suggests B ETA 14:55–15:10 SGT, provisional; C39h remains unmeasured.
-
-Remaining: two B fits including the active one, saved-array replay/A+B note, DT6/C/downstream/finalreport/nativehandoff. Breadth ordering deviation and CPU-only C resume limitation retained.
+Remaining: productionDT6, three C12.8B fits/per-run notes, downstream/pairedCI/independent replay/finalreport/nativehandoff.

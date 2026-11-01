@@ -1,0 +1,158 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "terminal_and_metadata_verified",
+  "health_at": "2026-11-01T07:02:15.992740+00:00",
+  "raw_sha256": "07ecf7ff20a88bc71e1f84366281e76fc25903a1a3f94aaaf06dc9cd4e3d80dd",
+  "command_commit": "a63084c41d137ce323745d98767bd59ed508da55",
+  "source": "a9cbd433d1fb91642c266319463e91c7a931afc4",
+  "source_files": 176,
+  "completed_B": 12,
+  "DT4_complete": true,
+  "workerchecks": 1152,
+  "nonfinite_log_counts": {
+    "D-fwe-P1T-W1-0.2B-lr1e-3.log": 0,
+    "D-fwe-P300-W1-0.2B-lr1e-3.log": 0,
+    "D-dclm-P300-W1-0.2B-lr1e-3.log": 0,
+    "D-fwe-P1T-W9-0.2B-lr1e-3.log": 0,
+    "D-fwe-P300-W9-0.2B-lr1e-3.log": 0,
+    "D-dclm-X72-W1-0.2B-lr1e-3.log": 0,
+    "D-fwe-X72-W9-0.2B-lr1e-3.log": 0,
+    "D-dclm-P1T-W9-0.2B-lr1e-3.log": 0,
+    "D-dclm-X72-W9-0.2B-lr1e-3.log": 0,
+    "D-fwe-X72-W1-0.2B-lr1e-3.log": 0,
+    "D-dclm-P1T-W1-0.2B-lr1e-3.log": 0,
+    "DT4.log": 0,
+    "D-dclm-P300-W9-0.2B-lr1e-3.log": 0
+  },
+  "training_end": "2026-11-01T06:53:43.841191+00:00",
+  "native_finished": "2026-11-01T06:54:54.717403+00:00",
+  "burn_progress": [
+    [
+      "530",
+      "588.49"
+    ],
+    [
+      "540",
+      "599.59"
+    ]
+  ],
+  "burn_identities": {
+    "766734": {
+      "pid": 766734,
+      "ppid": 766665,
+      "start_ticks": 345662564,
+      "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766665": {
+      "pid": 766665,
+      "ppid": 9406,
+      "start_ticks": 345662447,
+      "command_sha256": "d2ae44d1ec9cc6b574bfc5621d4f0feb0add263ea13852ef44ff8e3c9961c406",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/source/resources/llm_pretrain_burn.py"
+      ],
+      "launcher_kind": "gpu_burn"
+    },
+    "766735": {
+      "pid": 766735,
+      "ppid": 766665,
+      "start_ticks": 345662564,
+      "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766736": {
+      "pid": 766736,
+      "ppid": 766665,
+      "start_ticks": 345662564,
+      "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766737": {
+      "pid": 766737,
+      "ppid": 766665,
+      "start_ticks": 345662564,
+      "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766738": {
+      "pid": 766738,
+      "ppid": 766665,
+      "start_ticks": 345662564,
+      "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766739": {
+      "pid": 766739,
+      "ppid": 766665,
+      "start_ticks": 345662565,
+      "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766740": {
+      "pid": 766740,
+      "ppid": 766665,
+      "start_ticks": 345662565,
+      "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    },
+    "766741": {
+      "pid": 766741,
+      "ppid": 766665,
+      "start_ticks": 345662565,
+      "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-B",
+        "-c"
+      ],
+      "launcher_kind": null
+    }
+  },
+  "perseq_replay_pending": true
+}

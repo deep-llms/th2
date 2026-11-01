@@ -1,0 +1,16 @@
+{
+  "reason": "Lossless compact archive; original receipt locks refer to decompressed bytes, originals remain under temp/a2_depth_partb_health08",
+  "files": [
+    {
+      "path": "results/a2_depth_20261031/decision_depth_partb.json",
+      "sha256": "52a5ddf9b7bc9e913d2d6ffbd2204176fc727be0d6ebbf2ac9e8787f07284b33",
+      "bytes": 397406,
+      "compressed_path": "results/a2_depth_20261031/decision_depth_partb.json.gz"
+    }
+  ],
+  "results/a2_depth_20261031/REPORT.md": {
+    "sha256": "cd35786fd94a9600fcd55656d3203250c78f083b39f5a13accac8283498c40b8",
+    "bytes": 5577,
+    "gzip_sha256": "fa330f0c63b9bcc50d1c178880f9ad638517da9bb77b6af12800c473ce80a4aa"
+  }
+}

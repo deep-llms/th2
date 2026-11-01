@@ -1,0 +1,11 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "files": 205,
+  "arrays": 39,
+  "all_member_sha256_verified": true,
+  "all_results_match_terminal_receipt": true,
+  "archive_bytes": 5487189,
+  "archive_sha256": "4717f3de61f65c8ab70eb67e9fa69027bded68d950decfa97b039ba2d24eb104",
+  "local_originals": "results/a2_depth_20261031/artifacts/partb",
+  "export_commit": "e75fa40ee85c5303eab03e76e2461af2e9123a5f"
+}

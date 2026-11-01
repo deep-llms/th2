@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "started_at": "2026-11-01T03:46:14.624579+00:00",
+  "jobs": [
+    {
+      "name": "a2-depth-partb",
+      "started_at": "2026-11-01T03:46:14.624752+00:00",
+      "status": "ok",
+      "returncode": 0,
+      "elapsed_seconds": 11248.68003533408,
+      "artifacts": [
+        {
+          "path": "depth-partb-complete.json",
+          "sha256": "ddfeaf6d0f223dfb5874ee71a95ebd5227ef282ffd0ea19d09ade738e2f80939",
+          "bytes": 3069
+        }
+      ],
+      "finished_at": "2026-11-01T06:53:43.841153+00:00"
+    }
+  ],
+  "finished_at": "2026-11-01T06:53:43.841191+00:00"
+}

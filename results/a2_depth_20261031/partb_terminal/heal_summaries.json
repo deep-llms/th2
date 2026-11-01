@@ -1,0 +1,444 @@
+[
+  {
+    "run_id": "D-dclm-P1T-W1-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "P1T",
+    "block": "W1",
+    "status": "complete",
+    "training_seconds": 733.3029249487445,
+    "elapsed_seconds": 784.3095839670859,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-P1T-W1-0.2B-lr1e-3/final",
+    "delta_post": 0.16155904702529256,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-dclm-P1T-W1-0.2B-lr1e-3/result.json",
+    "sha256": "e9f58df0a70ee74aa371d4672d175d58cd36db6840ff756d79a2f7ab2cc0d88a",
+    "scores": {
+      "final": {
+        "loss": 2.848468038789227,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.8350768858244204,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.8354188207767317,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-dclm-P1T-W9-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "P1T",
+    "block": "W9",
+    "status": "complete",
+    "training_seconds": 733.259786772076,
+    "elapsed_seconds": 789.7507288819179,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-P1T-W9-0.2B-lr1e-3/final",
+    "delta_post": 0.3221056339716317,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-dclm-P1T-W9-0.2B-lr1e-3/result.json",
+    "sha256": "892cca75e00ca8db3b8132729bf2ec7677e4abcafbabd41341a285af20783874",
+    "scores": {
+      "final": {
+        "loss": 3.009014625735566,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.9991731007411695,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.002213835890988,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-dclm-P300-W1-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "P300",
+    "block": "W1",
+    "status": "complete",
+    "training_seconds": 732.4061298202723,
+    "elapsed_seconds": 785.166585598141,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-P300-W1-0.2B-lr1e-3/final",
+    "delta_post": 0.13292680235170762,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-dclm-P300-W1-0.2B-lr1e-3/result.json",
+    "sha256": "65cd70057d90ae9ccff0e204e65b0f5d54fda52f0be0d6845b5d03087f40267d",
+    "scores": {
+      "final": {
+        "loss": 2.870719834564392,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.8579905639962435,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.8585405269184685,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-dclm-P300-W9-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "P300",
+    "block": "W9",
+    "status": "complete",
+    "training_seconds": 733.1854833010584,
+    "elapsed_seconds": 785.1996380076744,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-P300-W9-0.2B-lr1e-3/final",
+    "delta_post": 0.28907196064241303,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-dclm-P300-W9-0.2B-lr1e-3/result.json",
+    "sha256": "00c628c4d96c00a5c423b2061eb3a8d516d8afb335c30f3eec82520c6a3902b3",
+    "scores": {
+      "final": {
+        "loss": 3.0268649928550975,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 3.0165084787512777,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.0181312118046835,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-dclm-X72-W1-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "X72",
+    "block": "W1",
+    "status": "complete",
+    "training_seconds": 732.4324743738398,
+    "elapsed_seconds": 783.6307751866989,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-X72-W1-0.2B-lr1e-3/final",
+    "delta_post": 0.03339473396698267,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-dclm-X72-W1-0.2B-lr1e-3/result.json",
+    "sha256": "44f92623388641cd2f04e8a8de95f7849cb4b5faa7c393c4958f03bf684b6149",
+    "scores": {
+      "final": {
+        "loss": 2.941970030074853,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.930699589851101,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.932516481389108,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-dclm-X72-W9-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "X72",
+    "block": "W9",
+    "status": "complete",
+    "training_seconds": 732.4707965282723,
+    "elapsed_seconds": 783.8855229900219,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-dclm-X72-W9-0.2B-lr1e-3/final",
+    "delta_post": 0.19542378547818462,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-dclm-X72-W9-0.2B-lr1e-3/result.json",
+    "sha256": "a4da5849caaa8fae60b3ac8d5a451edfc984f4adee2ab0cfc232f2095565b426",
+    "scores": {
+      "final": {
+        "loss": 3.1039990815860548,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 3.0942931450527165,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.0973583496519637,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-fwe-P1T-W1-0.2B-lr1e-3",
+    "dataset": "fwe",
+    "arm": "P1T",
+    "block": "W1",
+    "status": "complete",
+    "training_seconds": 732.3716271207668,
+    "elapsed_seconds": 785.2561766579747,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-fwe-P1T-W1-0.2B-lr1e-3/final",
+    "delta_post": 0.15722571076981984,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-fwe-P1T-W1-0.2B-lr1e-3/result.json",
+    "sha256": "815cf350bb0e7ca55e7bc424a14602594737e4b0984f6a5dd70cf0aee2656a3a",
+    "scores": {
+      "final": {
+        "loss": 2.965933044371636,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.948617637380393,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.9401415232160697,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-fwe-P1T-W9-0.2B-lr1e-3",
+    "dataset": "fwe",
+    "arm": "P1T",
+    "block": "W9",
+    "status": "complete",
+    "training_seconds": 731.8754428708926,
+    "elapsed_seconds": 783.1888956688344,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-fwe-P1T-W9-0.2B-lr1e-3/final",
+    "delta_post": 0.2958762464772038,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-fwe-P1T-W9-0.2B-lr1e-3/result.json",
+    "sha256": "2155703125efffa300ec52ff660a3cd4ef14178b3ef00bfe87764b42fa334d34",
+    "scores": {
+      "final": {
+        "loss": 3.10458358007902,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 3.08682524865517,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.078698104243819,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-fwe-P300-W1-0.2B-lr1e-3",
+    "dataset": "fwe",
+    "arm": "P300",
+    "block": "W1",
+    "status": "complete",
+    "training_seconds": 732.1568364840932,
+    "elapsed_seconds": 783.4765536691993,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-fwe-P300-W1-0.2B-lr1e-3/final",
+    "delta_post": 0.12271568635496743,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-fwe-P300-W1-0.2B-lr1e-3/result.json",
+    "sha256": "60abae8467670a45b6565a8360583e13b94c6c40fe91ac8a4d3de61a3f28e8e8",
+    "scores": {
+      "final": {
+        "loss": 2.9833470122117824,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.9659749308044097,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.9565909691021495,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-fwe-P300-W9-0.2B-lr1e-3",
+    "dataset": "fwe",
+    "arm": "P300",
+    "block": "W9",
+    "status": "complete",
+    "training_seconds": 732.0269856899977,
+    "elapsed_seconds": 782.690917477943,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-fwe-P300-W9-0.2B-lr1e-3/final",
+    "delta_post": 0.25646177507748824,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-fwe-P300-W9-0.2B-lr1e-3/result.json",
+    "sha256": "584b331540a3d13558bb4bb55d41825e440042bd03795f68ebe866d4796bc771",
+    "scores": {
+      "final": {
+        "loss": 3.1170931009343033,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 3.099082122854935,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.0900189046498645,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-fwe-X72-W1-0.2B-lr1e-3",
+    "dataset": "fwe",
+    "arm": "X72",
+    "block": "W1",
+    "status": "complete",
+    "training_seconds": 732.1339182020165,
+    "elapsed_seconds": 782.8498873473145,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-fwe-X72-W1-0.2B-lr1e-3/final",
+    "delta_post": 0.01624837253703415,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-fwe-X72-W1-0.2B-lr1e-3/result.json",
+    "sha256": "d7914a88e8bde83353ddb28f3773b2e026640b8fb51296a2d257a06f407dde7c",
+    "scores": {
+      "final": {
+        "loss": 3.058400374483333,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 3.0417394854706625,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.0324514221312637,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "D-fwe-X72-W9-0.2B-lr1e-3",
+    "dataset": "fwe",
+    "arm": "X72",
+    "block": "W9",
+    "status": "complete",
+    "training_seconds": 732.1598926549777,
+    "elapsed_seconds": 783.9801874812692,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/D-fwe-X72-W9-0.2B-lr1e-3/final",
+    "delta_post": 0.1567282174814868,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/D-fwe-X72-W9-0.2B-lr1e-3/result.json",
+    "sha256": "7fddc2111a2385ba31f2def7b7c87a3b46a9d9f19767a00f2cb7d707688c9d87",
+    "scores": {
+      "final": {
+        "loss": 3.1988802194277857,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 3.181812341255502,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 3.1718201065048626,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  },
+  {
+    "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "P300",
+    "block": "S1",
+    "status": "complete",
+    "training_seconds": 734.4229208780453,
+    "elapsed_seconds": 786.0492754033767,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-0.2B-lr1e-3/final",
+    "delta_post": 0.20515510694919392,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+    "sha256": "849e4cfdd11c1f56d9662a3f2831004e8da5ab3e9ce9edab2f417fba06fa187b",
+    "scores": {
+      "final": {
+        "loss": 2.9429481391618784,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.9310933019668948,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.9331967403370385,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 762
+  }
+]
