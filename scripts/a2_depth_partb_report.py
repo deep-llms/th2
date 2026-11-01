@@ -61,16 +61,27 @@ def compute(cfg,root):
 
 def finalize(cfg):
     root=Path(cfg['results_root']);decision,tests,runs=compute(cfg,root)
+    part_a_text=None
+    try:
+        part_a_text=Path(cfg['part_a_report_local']).read_text()
+    except Exception as error:
+        decision['flags'].append(dict(test='part_a_report_consolidation',passed=False,error=repr(error)))
+    decision['part_a_report_included']=part_a_text is not None
     write(root/'decision_depth_partb.json',decision);write(root/'tests.json',dict(checks=tests))
     (root/'runs.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in runs))
     lines=['# A2 Depth — Parts A and B', '',f'Spec SHA-256: `{SPEC_SHA}`.', '',
-        'Part A report/decision: '+str(cfg.get('part_a_report','pending consolidation'))+'.', '',
+        'Part A source report: '+str(cfg.get('part_a_report','unavailable; flagged'))+'.', '',
         '| Dataset | Block | E | E / Δ(P300) | A_init | A_init / Δ(P300) | E label |',
         '|---|---|---:|---:|---:|---:|---|']
     for ds,t in decision['datasets'].items():
         for block,r in t.items():
             lines.append('| '+ ' | '.join([ds,block,*[str(r.get(k)) for k in ('E','E_relative','A_init','A_init_relative')],str(r.get('E_label'))])+' |')
-    lines+=['','Predictions: `'+json.dumps(decision['predictions'])+'`. Every clause and saved-array calculation is in decision_depth_partb.json.', '',
+    lines+=['','Predictions: `'+json.dumps(decision['predictions'])+'`. Every clause: `'+json.dumps(decision['clauses'])+'`.', '',
+        'Scientific coverage complete: '+str(decision['coverage_complete'])+'. Flags: '+str(len(decision['flags']))+'.', '',
         'DT4 and scientific flags remain recorded; they do not cancel Part C. Ledger: ledger.json (report-only).', '',
         'Remaining: publish this A+B result, DT6, three 12.8B fits, downstream, independent replay and final native handoff.']
+    if part_a_text is not None:
+        lines+=['','## Part A: completed depth table and A1–A4','',
+            'The Part A numerical results below are retained from its earlier report; its then-pending-stage footer is omitted here.','',
+            '\n'.join(line for line in part_a_text.splitlines() if not line.startswith(('# A2 Depth','Remaining:')))]
     (root/'REPORT.md').write_text('\n'.join(lines)+'\n');return decision

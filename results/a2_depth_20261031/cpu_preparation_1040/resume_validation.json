@@ -1,0 +1,38 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "PASS",
+  "at": "2026-11-01T02:39:44.717664+00:00",
+  "scope": "Two CPU/Gloo ranks, native Trainer/KD, full optimizer/scheduler/model/RNG checkpoints; no GPU use",
+  "tests": 1,
+  "log_sha256": "10994f019aed301b80dfa5b564ff562963a8457c972d381a9505df2caa6a5c19",
+  "files": {
+    "efficient_llm/a2_depth/resume.py": "40fd243ac25b6a16cfd001003b444d748936e498cca977133e5aea4404c40b2d",
+    "efficient_llm/a2_depth/stream.py": "d48b8a844007de0807ec113a65578f93a86209a2e467f38988f56e39cba88a1d",
+    "tests/a2/test_depth_resume_distributed.py": "f60cd80667437f8eef1e80b194432684d2e5cec89bda91079c21bdbc0c2b0363",
+    "tests/a2/depth_resume_distributed_fixture.py": "a249fd9ac324351f1cb0ff7751ce5dd727ede3df0644bcd7307d9b93461382ca",
+    "resources/a2_depth_stream_reference_20261101.json": "835959da445ff1f4e06899a11014a1cbf8e49918481e895c7cc0f245767e7924"
+  },
+  "checks": [
+    "weights bitwise identical",
+    "optimizer/scheduler identical",
+    "Python/NumPy/Torch RNG identical",
+    "rank traces and reconstructed global sample order identical",
+    "complete per-rank RNG/audit checkpoint markers"
+  ],
+  "prior_fixture_failures": [
+    {
+      "log_sha256": "03300837d94e082be99762fd1a6481a0b8cfb455f536d820bc4a0a0910eba893",
+      "reason": "Accelerate MULTI_CPU defaults to cpu:0; native torch.load cannot deserialize that location"
+    },
+    {
+      "log_sha256": "3685fc2fbfb513ac5bc629d0f4052240f4632e7be32ff21ecca9c08a5f9a18e1",
+      "reason": "Accelerate MULTI_CPU defaults to cpu:0; native torch.load cannot deserialize that location"
+    }
+  ],
+  "fixture_resolution": "ACCELERATE_TORCH_DEVICE=cpu in CPU test subprocess environment only; numerical/GPU core unchanged",
+  "limitations": [
+    "No actual 8-GPU resume test claimed",
+    "C adapter/coordinator/downstream integration remains pending",
+    "DT6 checked on CPU fixture; production stream verification remains pending before C"
+  ]
+}

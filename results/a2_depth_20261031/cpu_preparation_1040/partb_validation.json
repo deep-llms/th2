@@ -1,0 +1,23 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "PASS",
+  "tests": 7,
+  "at": "2026-11-01T02:39:44.717664+00:00",
+  "scope": "DT4/B CPU: native KL/gradients, full registered run order, saved-array formulas, physical handoff, nonblocking scientific failures in launcher, A+B consolidation, actual predecessor plan. DT6 historical-byte-identity fixture also passed.",
+  "log_sha256": "8c4eb830bc8dd4211fb79e3f3b0e76617d15013e8c1b1f5da872ae4fe039423e",
+  "files": {
+    "scripts/launch_a2_depth_partb.py": "675e1100613505cc34dc516ecd76c176f4a28ae9b354df3a41deaababd894a2f",
+    "scripts/a2_depth_partb_plan.py": "f7a9092d6950f5aab2f84398dfb9d4194de080a32fff410b26b1e056e5a0aef1",
+    "scripts/a2_depth_partb_run.py": "a02054c69f9dc0f1fa73c0c28ebba39162d99fb7969e5589a366724aeaf4bbee",
+    "scripts/a2_depth_partb_report.py": "be6e01ea393ff5c42724cd79b19f11e042ddf93bf752f9e3e83e65a7d547651d",
+    "efficient_llm/a2_depth/common.py": "2c4d274525b13f4beb530948c6f3dac8b1d54da46b7e62f00d076008440d03a6",
+    "efficient_llm/a2_depth/heal_short.py": "bec132bcb7ea8283f32bef76353f34aa41b31f4462ce24ddfb96016449b4ed3b",
+    "efficient_llm/a2_depth/readout_audit.py": "be75f6f19f46ce7c27389db301bfb5fdd392cafdbae9dc69a80165997fa2a36d"
+  },
+  "test_files": {
+    "tests/a2/test_depth_stages.py": "7f74c2664974961906400521c3b01b89ee5395e2f976f4ebd2c838a35b7af5cb",
+    "tests/a2/test_depth_short.py": "761ce2f8e6dbb0c0e7cb66ba80f93a05be8d1fc2364b5f789ff1b7ae431a7932"
+  },
+  "gpu_deployed": false,
+  "part_a_terminal_or_B_launch_claimed": false
+}
