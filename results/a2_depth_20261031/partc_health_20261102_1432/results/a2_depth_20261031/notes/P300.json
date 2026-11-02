@@ -1,0 +1,22 @@
+{
+  "arm": "P300",
+  "result": {
+    "val": 2.816662510208993,
+    "parent_val": 2.7377930322126844,
+    "delta_post": 0.07886947799630839,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/final"
+  },
+  "E": null,
+  "A_init": null,
+  "flags": [
+    {
+      "run_id": "ST1-dclm-P1T-S1-12.8B-lr1e-3",
+      "error": "FileNotFoundError(2, 'No such file or directory')"
+    },
+    {
+      "run_id": "ST1-dclm-X72-S1-12.8B-lr1e-3",
+      "error": "FileNotFoundError(2, 'No such file or directory')"
+    }
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}
