@@ -1,0 +1,48 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "posted_at": "2026-11-02T06:03:55.009953+00:00",
+  "arm": "P300",
+  "result": {
+    "run_id": "ST1-dclm-P300-S1-12.8B-lr1e-3",
+    "dataset": "dclm",
+    "arm": "P300",
+    "block": "S1",
+    "status": "complete",
+    "training_seconds": 48187.089545540046,
+    "elapsed_seconds": 48243.072839220054,
+    "roundtrip_difference": 0.0,
+    "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/final",
+    "delta_post": 0.07886947799630839,
+    "unverified": false,
+    "flags": [],
+    "path": "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/result.json",
+    "sha256": "dea4bfecd1843993977b8d2807ea2dd906b6147779a959f030b1f423a365407f",
+    "scores": {
+      "final": {
+        "loss": 2.816662510208993,
+        "sequences": 2461,
+        "tokens": 10077795
+      },
+      "tuning": {
+        "loss": 2.803552488285597,
+        "sequences": 1024,
+        "tokens": 4193280
+      },
+      "small": {
+        "loss": 2.8046993595899528,
+        "sequences": 256,
+        "tokens": 1048320
+      }
+    },
+    "lr_updates": 48828
+  },
+  "evidence": "results/a2_depth_20261031/partc_health_20261102_1359/verification.json",
+  "independent_saved_array_replay": "pending",
+  "E": null,
+  "A_init": null,
+  "limitations": [
+    "P1T and X72 results incomplete; no Part C comparative conclusion",
+    "Actual eight GPU resume unverified",
+    "Breadth-before-Depth ordering deviation retained"
+  ]
+}

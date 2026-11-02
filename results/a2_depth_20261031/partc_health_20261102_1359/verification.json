@@ -1,0 +1,88 @@
+{
+  "health_at": "2026-11-02T05:59:38.573138+00:00",
+  "raw_sha256": "350d4958fd659bbb4eb58a411280b653184d204cc175040671c9da79bd3d0303",
+  "source": "dd55c8ba96eafabfed3de63a94e249da674c4f19",
+  "source_files": 185,
+  "command_commit": "2cc85f58be4be352dd8b29efb95bc34e2b562f7e",
+  "status": "P300 complete; P1T active",
+  "active": "P1T",
+  "updates_from_log_epoch": 33300,
+  "total_updates": 48828,
+  "worker_checks": 120,
+  "other_checks": 17,
+  "owner": 767788,
+  "coordinator": 767828,
+  "launcher": 773611,
+  "workers": [
+    773617,
+    773618,
+    773619,
+    773620,
+    773621,
+    773622,
+    773623,
+    773624
+  ],
+  "nonfinite_log_flags": {
+    "C-P1T-attempt001.log": 0,
+    "C-P300-attempt001.log": 0
+  },
+  "completed_results": [
+    {
+      "run_id": "ST1-dclm-P300-S1-12.8B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P300",
+      "block": "S1",
+      "status": "complete",
+      "training_seconds": 48187.089545540046,
+      "elapsed_seconds": 48243.072839220054,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/final",
+      "delta_post": 0.07886947799630839,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/result.json",
+      "sha256": "dea4bfecd1843993977b8d2807ea2dd906b6147779a959f030b1f423a365407f",
+      "scores": {
+        "final": {
+          "loss": 2.816662510208993,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 2.803552488285597,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 2.8046993595899528,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 48828
+    }
+  ],
+  "actual_eight_gpu_resume_verified": false,
+  "checkpoint_member_sizes_match": true,
+  "clean_checkpoint_steps": {
+    "P1T": 33000,
+    "P300": 48828
+  },
+  "checkpoint_verification_scope": "Saved marker and actual20member sizes for6directories; no external tensor-load/resume",
+  "seconds_per_update_from_completed_P300": 0.9868741202904081,
+  "active_training_eta_utc": "2026-11-02T10:15:02.754478+00:00",
+  "all_training_eta_utc": "2026-11-02T23:38:09.844023+00:00",
+  "eta_scope": "Extrapolated using completed P300 training runtime; P1T/X72 speed and evaluation/downstream may differ",
+  "partial_readout_flags": [
+    {
+      "run_id": "ST1-dclm-P1T-S1-12.8B-lr1e-3",
+      "error": "FileNotFoundError(2, 'No such file or directory')"
+    },
+    {
+      "run_id": "ST1-dclm-X72-S1-12.8B-lr1e-3",
+      "error": "FileNotFoundError(2, 'No such file or directory')"
+    }
+  ],
+  "independent_saved_array_replay": "pending"
+}
