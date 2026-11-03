@@ -1,0 +1,102 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "snapshot_sgt": "2026-11-04T00:38:04.518092+08:00",
+  "health_commit": "47e3eec92d1f567800e9bce1110c298be073acea",
+  "raw_sha256": "76513c047bb44a46999373b0c583eab58df47962bc308da9652afb8feeb0393e",
+  "controller_status_sha256": "f6416fee2c98ac89387b5bfc8d40b062e7ecb0394153f17373b9320610f6ff8b",
+  "exported_artifact_hashes_verified": 26,
+  "source": {
+    "files": 191,
+    "code_commit": "e2af735a59127f1116dbf8d671fe5aa95f1bb12f",
+    "changed": []
+  },
+  "DT6_checks_pass": 8,
+  "worker_checks_pass": 32,
+  "active_arm": "X72",
+  "step": 24990,
+  "target_updates": 48828,
+  "gpu_workers": [
+    17254,
+    17255,
+    17256,
+    17257,
+    17258,
+    17259,
+    17260,
+    17261
+  ],
+  "parent_chain": [
+    17248,
+    17177,
+    17138
+  ],
+  "ownership_identical_to_previous": true,
+  "gpu_utilization": [
+    99.0,
+    99.0,
+    99.0,
+    99.0,
+    98.0,
+    98.0,
+    98.0,
+    99.0
+  ],
+  "gpu_memory_mib": [
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0
+  ],
+  "nonfinite_counts": {
+    "C-X72-attempt001.log": 0
+  },
+  "guard_owner": 17138,
+  "checkpoint_markers": [
+    {
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/trainer/checkpoint-23000/depth-checkpoint.json",
+      "sha256": "388e96373a35996423a377c8f5e5da3980c94b3ad9c3e67bae01eb06be096ea5",
+      "step": 23000,
+      "complete": true,
+      "state_finite": true,
+      "actual_member_sizes_match": true,
+      "members": 20
+    },
+    {
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/trainer/checkpoint-24000/depth-checkpoint.json",
+      "sha256": "e7b762c47ed019b614d38d24e3a07eca06e5f208414af60fcf3de6f2b6f35ada",
+      "step": 24000,
+      "complete": true,
+      "state_finite": true,
+      "actual_member_sizes_match": true,
+      "members": 20
+    },
+    {
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/trainer/clean-state/checkpoint-24000/depth-checkpoint.json",
+      "sha256": "e7b762c47ed019b614d38d24e3a07eca06e5f208414af60fcf3de6f2b6f35ada",
+      "step": 24000,
+      "complete": true,
+      "state_finite": true,
+      "actual_member_sizes_match": true,
+      "members": 20
+    }
+  ],
+  "actual_gpu_resume_verified": false,
+  "observed_seconds_per_update": 0.9719774167567568,
+  "rate_interval_steps": 1850,
+  "rate_includes_checkpoint_save": true,
+  "extrapolated_x72_training_finish_sgt": "2026-11-04T07:04:14.515753+08:00",
+  "extrapolated_all_three_training_only_finish_sgt": "2026-11-05T09:26:13.942364+08:00",
+  "eta_caveat": "Provisional 30.0-minute interval; excludes evaluation, downstream, replay, report, handoff.",
+  "full_pipeline_complete": false,
+  "flags": [
+    "old_node_checkpoint_loss",
+    "CPU_only_resume_validation",
+    "Breadth_before_Depth_order_deviation",
+    "user_X72_first_order_deviation",
+    "historical_failures_retained"
+  ]
+}
