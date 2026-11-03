@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-11-03T05:00:18.723306+00:00",
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "host": "thiennh-p6-wc69-worker-0",
+  "a2_env": {
+    "imports": "PASS",
+    "pip_check": "PASS",
+    "Trainer": "PASS",
+    "python": "3.11.15",
+    "torch": "2.14.1",
+    "transformers": "4.57.1",
+    "cuda_build": "13.0",
+    "nvml_devices": 8,
+    "gpu_compute_test_run": false
+  },
+  "missing_envs": [
+    "eval",
+    "train_env"
+  ],
+  "project_data_and_models_dirs": "empty",
+  "project_outputs_root": "absent",
+  "gpu_ownership": {
+    "workers": [
+      503,
+      504,
+      505,
+      506,
+      507,
+      508,
+      509,
+      510
+    ],
+    "parent": 436,
+    "launcher": "/tmp/llm_pretrain_burn.py",
+    "signals_sent": false
+  },
+  "backup": "33 project subdirectories listed at depth2, prior A2/Breadth/Stage1/Stage1b roots present; no Depth root listed; contents/integrity not yet verified",
+  "helper_import": {
+    "a2_env": "PASS",
+    "system_python": "external scripts package shadows repository namespace; use a2_env interpreter"
+  },
+  "ready_to_resume": false,
+  "flags": [
+    "eval_missing",
+    "assets_not_restored",
+    "Depth_checkpoint_backup_not_located",
+    "GPU_resume_unverified"
+  ],
+  "receipt_sha256": {
+    "probe01": "e53f2a46f851d56dace1213d60fd6ac0c3fc57bd4be8d2071a5dd2de64d8142c",
+    "probe02": "b79b898c11006d7b0659f8178483a1a9ab3205246fcb1a15af5eeddf1b0729b2",
+    "probe03": "754f6e7ed423941911571f471a2344b48e296585965a40a78b9965cafe8970da"
+  }
+}
