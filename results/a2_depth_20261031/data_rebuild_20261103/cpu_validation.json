@@ -1,0 +1,16 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "source_commit": "4900d756b61c24358eb9e81d308147275f4d2c3a",
+  "historical_launcher_commit": "5fdf313eb2fb05f239e056b543266b0c69610f1d",
+  "historical_shuffle_commit": "716d3f3521f4f34823dc32fc7ebca43ae3049f73",
+  "corpus_and_shuffle_tests": {
+    "passed": 6,
+    "log_sha256": "e35067e35303cc9a32fc8b5fd7782dc6fe06a0261297919f1e80566c9610811b"
+  },
+  "isolated_launcher_without_git": "passed",
+  "isolated_final_verifier_imports": "passed",
+  "multiblock_full_and_prefix_hash_fixture": "passed",
+  "restore_bad_hash_and_existing_destination_rejected": "passed",
+  "production_data_equality": "pending",
+  "training_launched": false
+}
