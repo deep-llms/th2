@@ -1,0 +1,13 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "snapshot_sgt": "2026-11-03T17:37:52.034445+08:00",
+  "health_commit": "937949f9adf93b7d6014b1aa4ecf62c1f054049d",
+  "raw_sha256": "d24d3d93b24d68ea00ca695a1f9ed2ff70d5a51cc536f9b276b3cba95d9f0cc4",
+  "historical_full_prefix_hashes_exact": true,
+  "physical_reader_exact": true,
+  "source_unchanged": true,
+  "ownership_identities_unchanged": true,
+  "eval_and_benchmarks_pass": true,
+  "production_c_not_launched": true,
+  "note": "watcher OFF in reconstruction receipt is historical launch-time metadata; current same watcher is ON"
+}

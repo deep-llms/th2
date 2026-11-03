@@ -1,0 +1,29 @@
+{
+  "reason": "Lossless storage within runner 25MiB source cap; archived evidence only, no production source changes",
+  "files": [
+    {
+      "original": "results/a2_depth_20261031/data_rebuild_20261103/health_1613/verification.json",
+      "compressed": "results/a2_depth_20261031/data_rebuild_20261103/health_1613/verification.json.gz",
+      "original_sha256": "5a856a353a9d60b8e2473f65f8b800cf1ede0d855a7fd372e994d1083b49c8ef",
+      "compressed_sha256": "bcaabb7c04ff50904fe2b2b245303d67551638bdd7ee9f0d0950e60dc7d63ec3",
+      "original_bytes": 30756,
+      "compressed_bytes": 5554
+    },
+    {
+      "original": "results/a2_depth_20261031/data_rebuild_20261103/health_1638/verification.json",
+      "compressed": "results/a2_depth_20261031/data_rebuild_20261103/health_1638/verification.json.gz",
+      "original_sha256": "c2477e450eb197a9f8e53dcf194bc7abd7509b6ed799fd5da50c5dc0be1f6794",
+      "compressed_sha256": "05838faa518da0d3481ecd4c2939615e443385ba30831e02dbb25fd115ef49ee",
+      "original_bytes": 16926,
+      "compressed_bytes": 3004
+    },
+    {
+      "original": "results/a2_depth_20261031/data_rebuild_20261103/restore_a02_verified/verification.json",
+      "compressed": "results/a2_depth_20261031/data_rebuild_20261103/restore_a02_verified/verification.json.gz",
+      "original_sha256": "6650d8744cd426bb65b7a08c81d298486c135bfd55500ee880743960e4b09ed1",
+      "compressed_sha256": "f85a6a03cceccaee6bbe5b22aede2c6ecf565301d92d38f166334049aec44e4a",
+      "original_bytes": 24540,
+      "compressed_bytes": 4059
+    }
+  ]
+}
