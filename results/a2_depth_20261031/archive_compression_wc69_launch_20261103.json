@@ -189,6 +189,13 @@
       "original_sha256": "7eaef0d4be169b0715b09eff37cafcaf04858df8a4d2edeaa000ab4ff9a8e6af",
       "original_bytes": 110407,
       "compressed_bytes": 20949
+    },
+    {
+      "original": "results/a2_quant_20261031/final_retrieval/original_manifest.json",
+      "compressed": "results/a2_quant_20261031/final_retrieval/original_manifest.json.gz",
+      "original_sha256": "1d8e89a00dd346d899dde9df937a844da36da468dcc4b44635ac374ecb77f797",
+      "original_bytes": 166968,
+      "compressed_bytes": 25052
     }
   ]
 }
