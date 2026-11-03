@@ -1,0 +1,19 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "raw_sha256": "28525516e3b6e97b82b3927613b100b0590f8abed168b2a7142a9621eaaa7981",
+  "source": {
+    "files": 191,
+    "code_commit": "e2af735a59127f1116dbf8d671fe5aa95f1bb12f",
+    "changed": []
+  },
+  "checks_pass": {
+    "preparation_checks.json": 8,
+    "runtime_checks.json": 2,
+    "DT6_checks.json": 1
+  },
+  "known_burn_reclaim_identities_exact": true,
+  "guard_pid": 17138,
+  "coordinator_pid": 17177,
+  "dt6_in_progress": true,
+  "gpu_training_verified": false
+}
