@@ -1,0 +1,37 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "snapshot_sgt": "2026-11-03T17:08:07.521181+08:00",
+  "health_commit": "fc004d86519cd220a9bcbe5d508d561be5eca161",
+  "raw_sha256": "ccaf073dbec976f8846a8237753a20a16931b44191f7196f396141663f193bb2",
+  "completed_shards": 215,
+  "completed_heal_tokens": 29909192881,
+  "source_unchanged": true,
+  "raw_shards_size_ready": 216,
+  "raw_hash_checks": [
+    212,
+    213,
+    214,
+    215
+  ],
+  "ownership_identical_to_health_1638": true,
+  "cpu_pids": [
+    4313,
+    4368
+  ],
+  "benchmark_sha_pass": 27,
+  "eval_runtime": {
+    "packages": {
+      "lm-eval": "0.4.13",
+      "torch": "2.14.1",
+      "transformers": "5.9.0",
+      "tokenizers": "0.22.2",
+      "datasets": "4.8.5"
+    },
+    "torch_cuda": "13.0"
+  },
+  "shuffle_file_sizes": {},
+  "data_eta_sgt": "03Nov17\u201319SGT provisional; assembly/shuffle/fullhash unmeasured",
+  "training_launched": false,
+  "observed_health_checks_pass": true,
+  "full_data_hash_dt6_verified": false
+}
