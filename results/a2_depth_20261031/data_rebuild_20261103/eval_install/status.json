@@ -1,0 +1,9 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "commit": "f5e7300a71041691cf967c0540e5893e871d4fd0",
+  "install_id": "2026-11-03_08-25-33",
+  "state": "STARTED; completion and runtime verification pending",
+  "raw_sha256": "119f8d6e608430d5671e0b0c94a81b1f96ecb97ec555b5298ef47280b1ca0326",
+  "benchmark_download_id": "2026-11-03_08-24-08",
+  "benchmark_items_ok": 5
+}
