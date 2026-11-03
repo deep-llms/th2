@@ -1,0 +1,19 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "at": "2026-11-03T07:45:45.969729+00:00",
+  "health_commit": "6f9c16c0803cf59864dd8773edeca31520219b98",
+  "status": "submitted_started_detailed_receipt_pending",
+  "download_id": "2026-11-03_05-35-45",
+  "controller_download_completed_items": 216,
+  "controller_sha256": "b894f597b3aba72123138d3026fb51b4b11c344a879070e98d5f4889bf9dbc8a",
+  "latest_status_sha256": "ebe15e5ef8ba75330bf897abcab6f875db549a27c512530f4a0a91586791b518",
+  "last_physical_snapshot_sgt": "2026-11-03T15:07:58+08:00",
+  "raw_size_ready_last_physical": 164,
+  "completed_shards_last_physical": 70,
+  "current_data_identity": "unverified/pending physical receipt and final reconstruction",
+  "gpu_actions": false,
+  "watcher_pid": 1730807,
+  "next_watch_sgt": "2026-11-03T16:06:38+08:00",
+  "eta_data_sgt": "03Nov17\u201319 provisional from earlier tokenization; not refreshed physical throughput",
+  "next": "Retrieve a04 before remote writes; do not duplicate. Exact restore40 files, separate eval env, benchmark27 pinned files and real new plan pending."
+}

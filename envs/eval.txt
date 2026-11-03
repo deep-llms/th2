@@ -1,0 +1,10 @@
+# manager: conda
+# fresh: true
+# python: 3.11
+# Separate canonical CPU replay environment, matching saved Stage1 protocol.
+pip
+lm-eval==0.4.13
+transformers==5.9.0
+tokenizers==0.22.2
+datasets==4.8.5
+torch==2.14.1

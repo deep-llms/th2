@@ -1,8 +1,8 @@
 {
   "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
-  "at": "2026-11-03T07:17:47.493078+00:00",
+  "at": "2026-11-03T07:44:45.616321+00:00",
   "status": "PASS",
-  "tests_unique": 33,
+  "tests_unique": 36,
   "files": {
     "efficient_llm/a2_depth/heal_long.py": "e5cf3892613ff86834ce4941ae0d0e2404d9b9be34f63a443f82032cfb5cc7da",
     "efficient_llm/a2_depth/reconstruction.py": "3e0c012d0ff1f66e2ee8edc25b428e5da4f1f30595ff71771d27d4141e62804e",
@@ -20,7 +20,9 @@
     "scripts/a2_quant_io.py": "e94fa42e1ca23d2b2f75314ffd62adbc9a576a8f183a2e6e06b29ad16d3474b4",
     "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
     "scripts/launch_a2_depth_partc.py": "d318ca29101105fa7cc6bed4bfee1f20560504afd543b177cb1b2f2cdf3d191d",
-    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc"
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc",
+    "scripts/a2_depth_wc69_plan.py": "885ee97bd7a74dd006bcebbbb3186c825ce549812cede429d3abfa755ab7a175",
+    "scripts/a2_depth_wc69_restore.py": "6d572fcec62a7eea222bbd53c3ebdbf1546399bbf20d0b529efb41473e875f90"
   },
   "test_files": {
     "tests/a2/depth_resume_distributed_fixture.py": "570c144af617803cd529f60fd07feee9ce54fd67196b3626239d5dd1f1ee623e",
@@ -32,7 +34,8 @@
     "tests/a2/test_depth_resume.py": "96a6622e6f60ab9151726db26a32b0ec4cadc89bb4d9adc3d261f99c063e2e94",
     "tests/a2/test_depth_resume_distributed.py": "7c9ad2c18ebce9588f9e1b2b4dd893f225fca5e7604db4f984690163b7e08b5e",
     "tests/a2/test_depth_stages.py": "7f74c2664974961906400521c3b01b89ee5395e2f976f4ebd2c838a35b7af5cb",
-    "tests/a2/test_depth_wc69_admission.py": "05353c1ea026ed86964f1cdd6bb72e0692ba54b3abdee6ac588a1e8f88eec425"
+    "tests/a2/test_depth_wc69_admission.py": "05353c1ea026ed86964f1cdd6bb72e0692ba54b3abdee6ac588a1e8f88eec425",
+    "tests/a2/test_depth_wc69_restore.py": "02620046f3f149f178aacae9104985a15b5b880fcb0f5c24f51bd8509fa38a4d"
   },
   "validation": [
     {
@@ -45,6 +48,12 @@
       "skipped": 0,
       "log_sha256": "e6da9994978d21f225ba15043a7a45d89e348a8ead970894dcc52043e804aeaa",
       "scope": "Final admission suite; 4 overlap previous run; 1 added successful new-node launcher integration"
+    },
+    {
+      "tests": 3,
+      "skipped": 0,
+      "log_sha256": "74bb87dec06e191cb563c3fc62441ee447a08f472a6aed329c237c45d32d940c",
+      "scope": "Exact restoration copy/reuse; refusal before any writes for changed source/destination; new plan preserves old history/recipe and refuses changed restored bytes"
     }
   ],
   "prior_test_failures": [
@@ -64,7 +73,8 @@
     "Explicit authorized X72/P300/P1T order, per-arm notes, then downstream; original default unchanged",
     "New-node known operator burn/guard/UUID/PID/start identity refusal and launch through unchanged native supervisor",
     "Continuation on same wc69 GPUs with immutable source and no held guard; no stale old-node burn requirement when free",
-    "Existing CPU native fullstate resume, two-rank Gloo exactness and synchronized nonfinite failure"
+    "Existing CPU native fullstate resume, two-rank Gloo exactness and synchronized nonfinite failure",
+    "Replacement plan assembler and exact restoration are CPU validated; production assets/plan still pending receipt/data completion"
   ],
   "gpu_deployed": false,
   "actual_C_plan_created": false,
@@ -72,5 +82,6 @@
     "CPU-only evidence; no actual 8-GPU/NCCL resume test",
     "Production rebuilt data/DT6 pending",
     "Reference/prepared assets and P1T weights/eval environment still need restoration/verification; actual new-node plan requires completed reconstruction receipt and fresh ownership"
-  ]
+  ],
+  "prior_proof_sha256": "9610e581dc86bd23f1d67b1c154be99c84c732db5c1d6419cad6d5849bc05819"
 }
