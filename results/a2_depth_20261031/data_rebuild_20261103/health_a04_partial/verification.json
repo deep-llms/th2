@@ -1,0 +1,174 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "health_commit": "6f9c16c0803cf59864dd8773edeca31520219b98",
+  "pull_commit": "c6142cf0317e5cf1b7f226057c1d9d4ce3017060",
+  "raw_sha256": "d118945cb7c06e8aa0b01a3f15914d6dad81832ba999609d5d5ecaacee30b3ba",
+  "raw_bytes": 54910976,
+  "raw_local": "temp/a2_wc69_data_health04.log",
+  "status": "partial receipt retrieved; tail ends inside verbose prepared JSON; no completion/progress/ownership claim",
+  "restoration_candidates": [
+    {
+      "key": "dclm/P1T/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "expected_sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60",
+      "exists": true,
+      "bytes": 58101,
+      "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60"
+    },
+    {
+      "key": "fwe/S72/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/parent-final.json",
+      "expected_sha256": "1a472129c5fd51871d929de1f7ce64d2cb554cad676e3e7891ea2d9d436068aa",
+      "exists": true,
+      "bytes": 58735,
+      "sha256": "1a472129c5fd51871d929de1f7ce64d2cb554cad676e3e7891ea2d9d436068aa"
+    },
+    {
+      "key": "fwe/S72/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+      "expected_sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9",
+      "exists": true,
+      "bytes": 58170,
+      "sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9"
+    },
+    {
+      "key": "fwe/P300/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+      "expected_sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489",
+      "exists": true,
+      "bytes": 58713,
+      "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489"
+    },
+    {
+      "key": "fwe/P300/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "expected_sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039",
+      "exists": true,
+      "bytes": 58427,
+      "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039"
+    },
+    {
+      "key": "fwe/S188/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/parent-final.json",
+      "expected_sha256": "a5181de571c022c0f2d8363571ce79dd195caefb70bb338f3dbc45b18df25f3f",
+      "exists": true,
+      "bytes": 58687,
+      "sha256": "a5181de571c022c0f2d8363571ce79dd195caefb70bb338f3dbc45b18df25f3f"
+    },
+    {
+      "key": "fwe/S188/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+      "expected_sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1",
+      "exists": true,
+      "bytes": 57857,
+      "sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1"
+    },
+    {
+      "key": "fwe/P1T/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+      "expected_sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5",
+      "exists": true,
+      "bytes": 58696,
+      "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5"
+    },
+    {
+      "key": "fwe/P1T/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "expected_sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a",
+      "exists": true,
+      "bytes": 57911,
+      "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a"
+    },
+    {
+      "key": "nem/S72/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/parent-final.json",
+      "expected_sha256": "e8e76d1c55402f8d78b4826bc94a1a83ee179b0bbfb95d2f2a129adbb594098d",
+      "exists": true,
+      "bytes": 58678,
+      "sha256": "e8e76d1c55402f8d78b4826bc94a1a83ee179b0bbfb95d2f2a129adbb594098d"
+    },
+    {
+      "key": "nem/S72/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/pre-S1-final.json",
+      "expected_sha256": "8445af26988488428c4ff66a967a246d1b332fd64f6d2b24ef7cf75eb5e79bbc",
+      "exists": true,
+      "bytes": 58375,
+      "sha256": "8445af26988488428c4ff66a967a246d1b332fd64f6d2b24ef7cf75eb5e79bbc"
+    },
+    {
+      "key": "nem/P300/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/parent-final.json",
+      "expected_sha256": "1b64af7fd3d95f722944c80abccb1efa3d2e69fc0b210d8c790d0f7d02fb8f0a",
+      "exists": true,
+      "bytes": 58797,
+      "sha256": "1b64af7fd3d95f722944c80abccb1efa3d2e69fc0b210d8c790d0f7d02fb8f0a"
+    },
+    {
+      "key": "nem/P300/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/pre-S1-final.json",
+      "expected_sha256": "a26d8cdea06f9aea23ea45d27a925025c3eedf4420c11b2690c95082ba7b58f3",
+      "exists": true,
+      "bytes": 58354,
+      "sha256": "a26d8cdea06f9aea23ea45d27a925025c3eedf4420c11b2690c95082ba7b58f3"
+    },
+    {
+      "key": "nem/S188/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/parent-final.json",
+      "expected_sha256": "df980034a3ab762da782ffbd472b9ddb78abe281a9937cd105f143e9961b6f33",
+      "exists": true,
+      "bytes": 58747,
+      "sha256": "df980034a3ab762da782ffbd472b9ddb78abe281a9937cd105f143e9961b6f33"
+    },
+    {
+      "key": "nem/S188/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/pre-S1-final.json",
+      "expected_sha256": "eddf239be30daad45001fce81812729c62bd59f9f5df47e55a9db2793343c052",
+      "exists": true,
+      "bytes": 57900,
+      "sha256": "eddf239be30daad45001fce81812729c62bd59f9f5df47e55a9db2793343c052"
+    },
+    {
+      "key": "nem/P1T/parent",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/parent-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/parent-final.json",
+      "expected_sha256": "60a87dfd12a186acbf65e3c92832a8621ea2c1c88a598d391ddbabb53636ca7c",
+      "exists": true,
+      "bytes": 58714,
+      "sha256": "60a87dfd12a186acbf65e3c92832a8621ea2c1c88a598d391ddbabb53636ca7c"
+    },
+    {
+      "key": "nem/P1T/pre-S1",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/pre-S1-final.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/pre-S1-final.json",
+      "expected_sha256": "74d83f1861fb347ec570b2825ab92a1b31d890f90f5f5b328762a345f6558558",
+      "exists": true,
+      "bytes": 57947,
+      "sha256": "74d83f1861fb347ec570b2825ab92a1b31d890f90f5f5b328762a345f6558558"
+    },
+    {
+      "key": "prepared",
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+      "expected_sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf",
+      "exists": true,
+      "bytes": 61661044,
+      "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf"
+    }
+  ],
+  "next": "Unique bounded read-only healtha05; do not repeat verbose health or alter current data job"
+}
