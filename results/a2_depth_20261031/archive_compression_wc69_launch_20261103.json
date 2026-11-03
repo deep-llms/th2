@@ -203,6 +203,13 @@
       "original_sha256": "f7b7a5631d4d5832ce162f902373f9efb3838c5e20e10ac8c338856348e326bd",
       "original_bytes": 257506,
       "compressed_bytes": 5703
+    },
+    {
+      "original": "results/a2_quant_20261031/batches/b01/decision_quant.json",
+      "compressed": "results/a2_quant_20261031/batches/b01/decision_quant.json.gz",
+      "original_sha256": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb",
+      "original_bytes": 212975,
+      "compressed_bytes": 9362
     }
   ]
 }
