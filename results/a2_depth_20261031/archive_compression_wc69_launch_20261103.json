@@ -210,6 +210,20 @@
       "original_sha256": "71a126fd980fe7d491ef45581053be1395de62a2804969c90ac4a340913170fb",
       "original_bytes": 212975,
       "compressed_bytes": 9362
+    },
+    {
+      "original": "results/a2_quant_20261031/health_0631/extraction.json",
+      "compressed": "results/a2_quant_20261031/health_0631/extraction.json.gz",
+      "original_sha256": "f59b6e3ef53fc45952960cc6952b46d4291c8e90b25b775e5f100c940c89664c",
+      "original_bytes": 64734,
+      "compressed_bytes": 9305
+    },
+    {
+      "original": "results/a2_quant_20261031/health_0702/worker_test_summary.json",
+      "compressed": "results/a2_quant_20261031/health_0702/worker_test_summary.json.gz",
+      "original_sha256": "d2a637888f52105b7af1a914e2851efcc8bb62942aa89d9df0a054291278a90b",
+      "original_bytes": 52993,
+      "compressed_bytes": 2206
     }
   ]
 }
