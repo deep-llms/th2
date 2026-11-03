@@ -1,0 +1,68 @@
+{
+  "reason": "Lossless historical evidence compression for runner source limit; frozen runtime and receipts unchanged",
+  "files": [
+    {
+      "original": "results/a2_depth_20261031/data_rebuild_20261103/health_1507/verification.json",
+      "compressed": "results/a2_depth_20261031/data_rebuild_20261103/health_1507/verification.json.gz",
+      "original_sha256": "186f365f6e23e7dab6e4dee943ea0648287a8bdf60442fd86c4828b63f13b473",
+      "original_bytes": 35017,
+      "compressed_bytes": 7530
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1530/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1530/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1601/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1601/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1631/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1631/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1702/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1702/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1732/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1732/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1802/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1802/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1832/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1832/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    },
+    {
+      "original": "results/a2_depth_20261031/partc_health_1906/source-manifest.json",
+      "compressed": "results/a2_depth_20261031/partc_health_1906/source-manifest.json.gz",
+      "original_sha256": "d1361af31fd640f70a76ead22b1ebd4865f38df3d52c43cdb1a2c7ba4de0322d",
+      "original_bytes": 19458,
+      "compressed_bytes": 8851
+    }
+  ]
+}
