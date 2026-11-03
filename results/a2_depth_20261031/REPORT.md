@@ -100,3 +100,8 @@ A+B report posted in this thread before assembling C. Breadth-before-Depth order
 C recovery implementation: clean full-state copy outside checkpoint rotation, nonfinite attempts synchronized before backward, three bounded retry attempts, exact completed-arm/score reuse and native existing-root continuation.20CPU testsPASS including two CPU/Gloo ranks; no actual eight-B200/NCCL resume test. No C launch/productionDT6 claimed in this report snapshot. C39nodeh is an unmeasured report-only estimate.
 
 Remaining: productionDT6, three C12.8B fits/per-run notes, downstream/pairedCI/independent replay/finalreport/nativehandoff.
+
+
+## wc69 recovery update — 04Nov2026 SGT
+
+X72 rerun complete: final NLL 2.817733402529562, PPL 16.73886736753704; 48,828 updates, roundtrip0, no run scientific flags. All23 result files and3 final-set arrays downloaded with exact SHA; independent CPU replay164PASS. [X72 report and backup evidence](wc69_x72_20261104/REPORT.md). P300 is active; P1T, downstream, pairedCI, final replay/report and native handoff remain. Earlier C scalar results are historical and are not mixed with this rerun. Historical deviations and CPU-only resume limitation remain.

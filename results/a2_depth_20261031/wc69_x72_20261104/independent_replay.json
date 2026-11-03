@@ -1,0 +1,895 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "verified_at_utc": "2026-11-03T23:44:38.208495+00:00",
+  "export_commit": "d845186b1532d5c7a88bcc7b1c8c1cee5cdffba2",
+  "export_receipt_sha256": "85374136ca1a1f644da5bb28bdadbc43d6f54288cbebc30a6c91a7bca68c2af0",
+  "files": 23,
+  "bytes": 3768152,
+  "saved_final_sequence_arrays": 3,
+  "checks_pass": 164,
+  "checks": [
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/result.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/recipe.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank0.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank1.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank2.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank3.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank4.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank5.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank6.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/heals/ST1-dclm-X72-S1-12.8B-lr1e-3/tests-rank7.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/perseq/ST1-dclm-X72-S1-12.8B-lr1e-3/parent.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/perseq/ST1-dclm-X72-S1-12.8B-lr1e-3/pre-S1.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/perseq/ST1-dclm-X72-S1-12.8B-lr1e-3/post-S1.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/notes/X72.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/REPORT_PART_C.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/decision_depth_partc.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/tests_partc.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/runs_partc.jsonl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/logs/C-X72-attempt001.log",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:source-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/config/plan.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/DT6.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "sha:results/a2_depth_20261031/DT6_checks.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "spec",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "seed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "no_resume",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "full_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "all_48828_lr_values",
+      "passed": true,
+      "detail": {
+        "max_abs": 0.0,
+        "warmup": 977
+      }
+    },
+    {
+      "test": "coverage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "coverage:parent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:parent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:parent",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.9085752961078706,
+        "saved": 2.90857529610787
+      }
+    },
+    {
+      "test": "coverage:master_final",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:master_final",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:master_final",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.8177901151955838,
+        "saved": 2.8177901151955838
+      }
+    },
+    {
+      "test": "coverage:pre/final",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:pre/final",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:pre/final",
+      "passed": true,
+      "detail": {
+        "recomputed": 3.854544222000957,
+        "saved": 3.854544222000957
+      }
+    },
+    {
+      "test": "coverage:pre/tuning",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:pre/tuning",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:pre/tuning",
+      "passed": true,
+      "detail": {
+        "recomputed": 3.8464218927247567,
+        "saved": 3.8464218927247567
+      }
+    },
+    {
+      "test": "coverage:post/final",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:post/final",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:post/final",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.817733402529562,
+        "saved": 2.817733402529562
+      }
+    },
+    {
+      "test": "coverage:post/tuning",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:post/tuning",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:post/tuning",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.8046319990651596,
+        "saved": 2.8046319990651596
+      }
+    },
+    {
+      "test": "coverage:post/small",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:post/small",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:post/small",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.806049853267977,
+        "saved": 2.806049853267977
+      }
+    },
+    {
+      "test": "perseq_exact:parent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "coverage:perseq/parent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:perseq/parent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:perseq/parent",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.9085752961078706,
+        "saved": 2.90857529610787
+      }
+    },
+    {
+      "test": "perseq_exact:pre-S1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "coverage:perseq/pre-S1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:perseq/pre-S1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:perseq/pre-S1",
+      "passed": true,
+      "detail": {
+        "recomputed": 3.854544222000957,
+        "saved": 3.854544222000957
+      }
+    },
+    {
+      "test": "perseq_exact:post-S1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "coverage:perseq/post-S1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "finite:perseq/post-S1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "mean:perseq/post-S1",
+      "passed": true,
+      "detail": {
+        "recomputed": 2.817733402529562,
+        "saved": 2.817733402529562
+      }
+    },
+    {
+      "test": "delta",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "parent_reference",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "note_NLL",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "note_delta",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank0.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank1.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank2.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank3.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank4.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank5.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank6.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:eight_ranks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:parent_vs_A2Q",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:DT2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:heal_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:DT5_updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:DT5_LR",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:DT5_data_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:DT5_teacher_frozen",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:finite_training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:tuning_divergence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "tests-rank7.json:DT5_roundtrip",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_historical_full_tokens",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_historical_full_boundaries",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_physical_lengths",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_sequential_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_reader_prefix",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "test": "DT6:DT6_files_stable",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "final_nll": 2.817733402529562,
+  "final_ppl": 16.73886736753704,
+  "parent_nll": 2.9085752961078706,
+  "parent_ppl": 18.33066418595026,
+  "delta_post": -0.09084189357830841,
+  "training_updates": 48828,
+  "training_seconds": 47958.70495391404,
+  "downstream_available": false,
+  "full_depth_complete": false,
+  "flags": [
+    "old_node_checkpoint_loss",
+    "CPU_only_resume_validation",
+    "Breadth_before_Depth_order_deviation",
+    "user_X72_first_order_deviation",
+    "historical_failures_retained"
+  ],
+  "missing_arms": [
+    "P300",
+    "P1T"
+  ],
+  "local_replay_correction": {
+    "initial_failure": "no_resume assertion assumed empty resume_events; one initialization event exists",
+    "resolution": "Schema-aware check confirms attempt1/resume_requested false/checkpoint null/no rejected checkpoints; production data unchanged",
+    "original_script": "temp/replay_wc69_x72_20261104_initial.py"
+  },
+  "portable_archive": {
+    "path": "artifacts/a2_depth_wc69_x72_20261104.tar.gz",
+    "bytes": 1957083,
+    "sha256": "22aa1275f772c239d37436d7a1de4596c5cf2fa751416ed8d34f00f916fc5247"
+  }
+}
