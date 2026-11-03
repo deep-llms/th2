@@ -1,0 +1,14 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "commit": "ca3750690a6dbc07344676c5cc871c88b181a29c",
+  "raw_sha256": "d72c29c981532e8872179d738fb451a59e408fda03d6e607c4fc4e09ff5bb4d4",
+  "error": "A/B report source under ignored artifacts directory missing from execution source",
+  "phase": "prevalidation before any target copy",
+  "correction": {
+    "report": "resources/a2_depth_part_ab_report_original_20261101.md",
+    "sha256": "cd35786fd94a9600fcd55656d3203250c78f083b39f5a13accac8283498c40b8",
+    "recipe": "resources/a2_depth_wc69_restore_20261103_a02.json",
+    "output": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-assets-20261103-a02"
+  },
+  "data_job_unchanged": true
+}
