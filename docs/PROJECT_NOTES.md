@@ -641,3 +641,6 @@ All4 stable heals and44Smol configurations completed;603/603 checksPASS. Indepen
 ## A2 Depth authorization — 1 November 2026 SGT
 
 User supplied docs/A2_depth_spec.md v1.1 SHA 2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe after the missing-spec clarification. Execute all registered A/B/C steps in order, preserving Breadth-before-Depth deviation. Part A uses frozen Phase0A S2/S3/S4 and exact Q parent references. DT4 precedes 12 short heals; publish A+B before DT6 and three resumable 12.8B heals/downstream. Report-only time/scientific policy and same-thread reminder requirement remain. Parts may use separately frozen native stages to publish required notes between them; do not describe not-yet-implemented stages as queued.
+
+
+03Nov2026 new node: user supplied Dropbox directory deep-llms_th2_thiennh-p6-wc69. Use private local mapping temp/dropbox_wc69_folders.txt label WC69 for new-node receipts; retain 6Y3O as historical. Install commit408006873cc0bb3c74392db70e51e82a5d1a8416 confirmed ITEM OK a2_env / OK 1 env(s), receipt results/a2_depth_20261031/newnode_wc69_install_20261103. This confirms installer completion only; runtime imports/CUDA, separate eval environment, assets and checkpoints require new-node verification. No private share URL stored in Git.

@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-11-03T04:51:36.340718+00:00",
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "share_label": "WC69",
+  "share_directory": "deep-llms_th2_thiennh-p6-wc69",
+  "commit": "408006873cc0bb3c74392db70e51e82a5d1a8416",
+  "job": "th2-a2-newnode-install-20261103-a01",
+  "status": "install OK: 1 env(s)",
+  "env": "a2_env",
+  "raw_sha256": "d8ea26f6ef0c1704cf0f5aa539ca9d6e8999815af5f7eab6660ca8586e45a9b5",
+  "runtime_imports_verified": false,
+  "eval_env_verified": false,
+  "runner_timestamp_raw": "2026-11-02 20:31:31",
+  "dropbox_modified_utc": "2026-11-03T04:31:34Z"
+}
