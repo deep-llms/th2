@@ -1,0 +1,525 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "commit": "65a97b2267f189268612bf275126a3643bc814a7",
+  "raw_sha256": "d2763c3b48c1a7c62f5169ece3fb63bebecbf3bf1a84fe3af9fb3c86354949f5",
+  "recipe_sha256": "285517770137175259cb23211b73d86936d5d281179dc929159dcd6c7ce4b56d",
+  "utc": "2026-11-03T08:21:24.538581+00:00",
+  "files": 40,
+  "all_expected_hashes_match": true,
+  "restoration": {
+    "status": "verified",
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+    "utc": "2026-11-03T08:21:24.538581+00:00",
+    "recipe_sha256": "285517770137175259cb23211b73d86936d5d281179dc929159dcd6c7ce4b56d",
+    "files": [
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/parent-final.json",
+        "sha256": "0342765afc5400053ce529176b58b19a48b96482e30357eed1185ca931986adb",
+        "bytes": 59465,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S72/pre-S1-final.json",
+        "sha256": "087d23fb601ee0d0a558c8db9a8a40078b142edca35f1fe6401757349b6ae400",
+        "bytes": 59202,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+        "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b",
+        "bytes": 58731,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+        "sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db",
+        "bytes": 58494,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/parent-final.json",
+        "sha256": "4f3544359641d2ed6594b855bbd7781a27a5fe07227ebfd94ffe843a168c7d2c",
+        "bytes": 58693,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/S188/pre-S1-final.json",
+        "sha256": "8b80beed055e798b4b63bc318844daa5b883100f06715f5b157bd039d3b9badf",
+        "bytes": 58178,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+        "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c",
+        "bytes": 58715,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+        "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60",
+        "bytes": 58101,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/parent-final.json",
+        "sha256": "1a472129c5fd51871d929de1f7ce64d2cb554cad676e3e7891ea2d9d436068aa",
+        "bytes": 58735,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S72/pre-S1-final.json",
+        "sha256": "3092aa6bedf3d55771cc124586484aee97672fdd220481a3abe5b39a4763c0d9",
+        "bytes": 58170,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+        "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489",
+        "bytes": 58713,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+        "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039",
+        "bytes": 58427,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/parent-final.json",
+        "sha256": "a5181de571c022c0f2d8363571ce79dd195caefb70bb338f3dbc45b18df25f3f",
+        "bytes": 58687,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/S188/pre-S1-final.json",
+        "sha256": "96b65cb3a5ee77b19467e1ed3fadb5b3df2c211763660659975eb899e763f6d1",
+        "bytes": 57857,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+        "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5",
+        "bytes": 58696,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+        "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a",
+        "bytes": 57911,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/parent-final.json",
+        "sha256": "e8e76d1c55402f8d78b4826bc94a1a83ee179b0bbfb95d2f2a129adbb594098d",
+        "bytes": 58678,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S72/pre-S1-final.json",
+        "sha256": "8445af26988488428c4ff66a967a246d1b332fd64f6d2b24ef7cf75eb5e79bbc",
+        "bytes": 58375,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/parent-final.json",
+        "sha256": "1b64af7fd3d95f722944c80abccb1efa3d2e69fc0b210d8c790d0f7d02fb8f0a",
+        "bytes": 58797,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P300/pre-S1-final.json",
+        "sha256": "a26d8cdea06f9aea23ea45d27a925025c3eedf4420c11b2690c95082ba7b58f3",
+        "bytes": 58354,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/parent-final.json",
+        "sha256": "df980034a3ab762da782ffbd472b9ddb78abe281a9937cd105f143e9961b6f33",
+        "bytes": 58747,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/S188/pre-S1-final.json",
+        "sha256": "eddf239be30daad45001fce81812729c62bd59f9f5df47e55a9db2793343c052",
+        "bytes": 57900,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/parent-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/parent-final.json",
+        "sha256": "60a87dfd12a186acbf65e3c92832a8621ea2c1c88a598d391ddbabb53636ca7c",
+        "bytes": 58714,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/pre-S1-final.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/nem/P1T/pre-S1-final.json",
+        "sha256": "74d83f1861fb347ec570b2825ab92a1b31d890f90f5f5b328762a345f6558558",
+        "bytes": 57947,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/inputs.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01/inputs.json",
+        "sha256": "eea34f2d2f3eca6bdc50e1d788aaa5aa4c801d76a07a54b6c9882ce3a108bec3",
+        "bytes": 138605,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/prepared.json",
+        "sha256": "85cf7f2119e35e81a79aea48f58080bdc9ba5371b27accbda0eac52aa6770bbf",
+        "bytes": 61661044,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-parent/scores.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P300-parent/scores.json",
+        "sha256": "502c080eebc32429a5539691dc9b100a39d77b3a3591a57bd95ae2c014d2db99",
+        "bytes": 2298238,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/P1T-parent/scores.json",
+        "sha256": "181f72af8e1870b9acb87f377e44d20bb23e94276efdec9fc4ab74e1e5c2a607",
+        "bytes": 2297860,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/scores/S72-parent/scores.json",
+        "sha256": "32480dc68d0842b3d4a2d2b50cb51c818e9e86b42b1e1e9091a65d5154b0700a",
+        "bytes": 2297265,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P300-parent.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P300-parent.json",
+        "sha256": "aa01aac9553898138d07a4678d30e1d4c565c8a1b0f940403ab1a740b603dda6",
+        "bytes": 69890508,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P1T-parent.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/P1T-parent.json",
+        "sha256": "f86ec904ed79f3e68471e6e9f8ae9de40a6a144949cfda81c23cac4e79c8334d",
+        "bytes": 69889987,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/S72-parent.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01/supervised/run/downstream/replays/S72-parent.json",
+        "sha256": "e446c8d1ee4be82ba9aba1a4e9406845dcf2429def26880730c8c69b4987b785",
+        "bytes": 69888063,
+        "action": "copied and verified"
+      },
+      {
+        "source": "results/a2_depth_20261031/partb_terminal/supervised/run/depth-partb-complete.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/supervised/run/depth-partb-complete.json",
+        "sha256": "ddfeaf6d0f223dfb5874ee71a95ebd5227ef282ffd0ea19d09ade738e2f80939",
+        "bytes": 3069,
+        "action": "copied and verified"
+      },
+      {
+        "source": "resources/a2_depth_part_ab_report_original_20261101.md",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partb-20261101-a01/results/a2_depth_20261031/REPORT.md",
+        "sha256": "cd35786fd94a9600fcd55656d3203250c78f083b39f5a13accac8283498c40b8",
+        "bytes": 5577,
+        "action": "copied and verified"
+      },
+      {
+        "source": "resources/a2_inputs_20261028.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source/resources/a2_inputs_20261028.json",
+        "sha256": "3150a15914791bbb59d8972be25d1e46e7f0b34870bdd7df1462a057ba9dd99e",
+        "bytes": 29535,
+        "action": "copied and verified"
+      },
+      {
+        "source": "resources/downstream_english_20261023.json",
+        "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01/source/resources/downstream_english_20261023.json",
+        "sha256": "edefbc381c96e9808f541855623318df53e7d68b81d8818cb10ee09138b8c65b",
+        "bytes": 15998,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P1T/config.json",
+        "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/config.json",
+        "sha256": "62250b74ae362e3621e867b3eae6062988c7e9c9437315b9822c0d55b31157b1",
+        "bytes": 1187,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P1T/model.safetensors",
+        "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/model.safetensors",
+        "sha256": "664210bf4457252efc45a2b86f5a4927ffd8fdc37a876d3bec20b5ed30970d9e",
+        "bytes": 3428804400,
+        "action": "copied and verified"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+        "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+        "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+        "bytes": 44839,
+        "action": "reuse exact existing bytes"
+      },
+      {
+        "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+        "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+        "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+        "bytes": 11190,
+        "action": "reuse exact existing bytes"
+      }
+    ],
+    "backup_modified": false,
+    "gpu_actions": false
+  },
+  "gpu_inspection": {
+    "host": "thiennh-p6-wc69-worker-0",
+    "time": "2026-11-03T08:21:25.272426+00:00",
+    "gpus": [
+      {
+        "index": 0,
+        "uuid": "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          503
+        ]
+      },
+      {
+        "index": 1,
+        "uuid": "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          504
+        ]
+      },
+      {
+        "index": 2,
+        "uuid": "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          505
+        ]
+      },
+      {
+        "index": 3,
+        "uuid": "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 96.0,
+        "pids": [
+          506
+        ]
+      },
+      {
+        "index": 4,
+        "uuid": "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 96.0,
+        "pids": [
+          507
+        ]
+      },
+      {
+        "index": 5,
+        "uuid": "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          508
+        ]
+      },
+      {
+        "index": 6,
+        "uuid": "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          509
+        ]
+      },
+      {
+        "index": 7,
+        "uuid": "GPU-817e7cb4-510c-c53f-9db1-c5752571469f",
+        "name": "NVIDIA B200",
+        "memory_total_mib": 183359.0,
+        "memory_used_mib": 2510.0,
+        "utilization_percent": 97.0,
+        "pids": [
+          510
+        ]
+      }
+    ],
+    "workers": [
+      503,
+      504,
+      505,
+      506,
+      507,
+      508,
+      509,
+      510
+    ],
+    "stop_roots": [
+      436
+    ],
+    "processes": {
+      "503": {
+        "pid": 503,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "2e5625405c633de02e9160c6033d7394ab81a39c4f39797de9b552833890b803",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "504": {
+        "pid": 504,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "debff8ff98d4f487b7d5ec922270749b107fb9c2dbd8f201b2217c710c62c683",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "505": {
+        "pid": 505,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "0ee70b47ac7824a3f3e59587572452852e19c0a674988b51c818fc97fcab0605",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "506": {
+        "pid": 506,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "9475142cf97fbcb0dfa8c4878925146e33b243d7f1ca06de2366d10bef17baf8",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "507": {
+        "pid": 507,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "e266ae550f0dc667cbacaa4304abb69bdfd6987b551d87746adcb8a29716253e",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "508": {
+        "pid": 508,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "fd6cb5b9b2ee9aee34a7778e35a3012f09f1d1f18f01eb29178b0aaaf9cf214e",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "509": {
+        "pid": 509,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "ee2df05129cf8e1ce8cae80a9a7108c76a60e93050e57ff1e1358a1c08dd295c",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "510": {
+        "pid": 510,
+        "ppid": 436,
+        "start_ticks": 357119662,
+        "command_sha256": "114a991204ccfc2810ed0e9599d2631ddc1f80b7b60144d5366140a7a956bb0e",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "436": {
+        "pid": 436,
+        "ppid": 1,
+        "start_ticks": 357119537,
+        "command_sha256": "77f9d08311eb954f72769231609be45ebd5f982670b720772b300b80b1e0f214",
+        "exe": "/usr/bin/python3.10",
+        "command_prefix": [
+          "/usr/bin/python3",
+          "/tmp/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    },
+    "guard_disabled": false
+  }
+}
