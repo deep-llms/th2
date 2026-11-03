@@ -1,0 +1,13 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "status": "implementation_pending_no_gpu_launch",
+  "priority": "X72 first per user",
+  "findings": [
+    "Current C launcher hardcodes old host6y3o and old B native-burn predecessor; cannot reuse unchanged on wc69.",
+    "Current C coordinator hardcodes P300/P1T/X72; implement explicit validated arm order for user-authorized X72 priority.",
+    "Rebuilt manifest SHA must bind fresh completed content-equality receipt, retain old full-stream/DT6 anchors.",
+    "Old B terminal+A/B report survive locally; old-node physical burn receipts are not new-node ownership. Require fresh wc69 native guard/burn admission.",
+    "Separate eval environment/assets still need new-node verification; P1T weights not yet restored (only native code needed by S72)."
+  ],
+  "next": "Prepare and CPU-validate new-node X72 launch/admission and fresh data binding while current CPU preparation continues; preserve frozen4900d75."
+}
