@@ -1,0 +1,420 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "checked_at": "2026-11-03T05:05:23.664777+00:00",
+  "remote_audit": {
+    "AUDIT_START": [
+      {
+        "utc": "2026-11-03T05:03:08.640781+00:00",
+        "host": "thiennh-p6-wc69-worker-0",
+        "root": "/mnt/local/_backup"
+      }
+    ],
+    "BACKUP_TOTAL": [
+      {
+        "root": "deep-llms_th2/6y3o-a2-branches-20261028-a01",
+        "files": 113,
+        "bytes": 2750486,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678846.1987388,
+        "newest_mtime": 1793678846.3787386
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-branches-20261028-a03",
+        "files": 114,
+        "bytes": 2832424525,
+        "weights": 1,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678846.2787387,
+        "newest_mtime": 1793678853.498726
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-breadth-20261031-a01",
+        "files": 364,
+        "bytes": 11380546534,
+        "weights": 4,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678846.4687383,
+        "newest_mtime": 1793678853.7187254
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-corpora-20261029-a01",
+        "files": 9,
+        "bytes": 353248,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678846.8987377,
+        "newest_mtime": 1793678846.9887376
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-corpora-20261029-a03",
+        "files": 8,
+        "bytes": 374684,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678846.9387376,
+        "newest_mtime": 1793678847.0187376
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-downstream-20261028-a01",
+        "files": 129,
+        "bytes": 62757164,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678846.9587376,
+        "newest_mtime": 1793678847.838736
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-downstream-20261028-a02",
+        "files": 189,
+        "bytes": 1073982910,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678847.0887372,
+        "newest_mtime": 1793678848.4687347
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-early-grid-20261028-a01",
+        "files": 139,
+        "bytes": 11320252820,
+        "weights": 4,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678847.3687367,
+        "newest_mtime": 1793678854.8387234
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-fwe-s1-20261028-a01",
+        "files": 222,
+        "bytes": 28303907243,
+        "weights": 10,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678847.6887362,
+        "newest_mtime": 1793678855.2587228
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-initial-preflight-20261028-a01",
+        "files": 89,
+        "bytes": 1317168,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678848.1087356,
+        "newest_mtime": 1793678848.338735
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-inputs-20261028-a01",
+        "files": 91,
+        "bytes": 4618583715,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678848.2587352,
+        "newest_mtime": 1793678856.8387198
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-mbs8-20261029-a01",
+        "files": 127,
+        "bytes": 5248459362,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678848.448735,
+        "newest_mtime": 1793678861.6787112
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-mech-20261031-a01",
+        "files": 1556,
+        "bytes": 2253796508,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678848.6787345,
+        "newest_mtime": 1793678852.368728
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-nem-s1-20261028-a01",
+        "files": 222,
+        "bytes": 28303910377,
+        "weights": 10,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678852.288728,
+        "newest_mtime": 1793678860.6087132
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-performance-20261029-a01",
+        "files": 362,
+        "bytes": 5424639088,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678852.7187274,
+        "newest_mtime": 1793678867.8387
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-quant-20261031-a01",
+        "files": 879,
+        "bytes": 184077832349,
+        "weights": 56,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678853.5587258,
+        "newest_mtime": 1793678870.648695
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-remaining-phase0a-20261028-a01",
+        "files": 434,
+        "bytes": 79266412666,
+        "weights": 28,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678864.4287062,
+        "newest_mtime": 1793678874.2686884
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-review-20261028-a01",
+        "files": 99,
+        "bytes": 18501512,
+        "weights": 3,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678866.168703,
+        "newest_mtime": 1793678867.9287
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-s1-pair-20261028-a01",
+        "files": 186,
+        "bytes": 19813966350,
+        "weights": 7,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678867.8687,
+        "newest_mtime": 1793678876.8986838
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-snapshot32b-20261029-a01",
+        "files": 9,
+        "bytes": 351611,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678869.0986977,
+        "newest_mtime": 1793678869.1786976
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1-downstream-20261029-a01",
+        "files": 162,
+        "bytes": 496348316,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678869.1086977,
+        "newest_mtime": 1793678870.4786954
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1-heals-20261029-a01",
+        "files": 297,
+        "bytes": 42515652420,
+        "weights": 15,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678869.6586967,
+        "newest_mtime": 1793678878.6786807
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1-preflight-20261029-a01",
+        "files": 146,
+        "bytes": 5664151159,
+        "weights": 2,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678870.9986944,
+        "newest_mtime": 1793678880.5086772
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1-shuffle-20261029-a01",
+        "files": 10,
+        "bytes": 373016,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678871.758693,
+        "newest_mtime": 1793678871.8886926
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-final-20261030-a01",
+        "files": 185,
+        "bytes": 273384884,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678871.828693,
+        "newest_mtime": 1793678874.2286885
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-option2-20261031-a01",
+        "files": 209,
+        "bytes": 782202360,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678873.0886905,
+        "newest_mtime": 1793678874.8686874
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-downstream-part1-20261030-a01",
+        "files": 147,
+        "bytes": 63080078,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678873.938689,
+        "newest_mtime": 1793678875.068687
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-part1-20261030-a01",
+        "files": 266,
+        "bytes": 28339670033,
+        "weights": 10,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678874.3786883,
+        "newest_mtime": 1793678884.8586695
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-part2-20261030-a01",
+        "files": 213,
+        "bytes": 14185130306,
+        "weights": 5,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678875.018687,
+        "newest_mtime": 1793678884.2186708
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-preflight-20261030-a01",
+        "files": 164,
+        "bytes": 5664259854,
+        "weights": 2,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678875.568686,
+        "newest_mtime": 1793678884.8186698
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-regression-20261030-a01",
+        "files": 151,
+        "bytes": 135122053,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678876.078685,
+        "newest_mtime": 1793678877.248683
+      },
+      {
+        "root": "deep-llms_th2/6y3o-a2-stage1b-fwe-shuffle-20261030-a01",
+        "files": 14,
+        "bytes": 401477,
+        "weights": 0,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678876.5186844,
+        "newest_mtime": 1793678876.5986843
+      },
+      {
+        "root": "deep-llms_th2/a2",
+        "files": 54,
+        "bytes": 41158687119,
+        "weights": 12,
+        "optimizer": 0,
+        "rng": 0,
+        "oldest_mtime": 1793678884.9686694,
+        "newest_mtime": 1793678894.9186516
+      }
+    ],
+    "DEPTH_CANDIDATES": [
+      {
+        "count": 0,
+        "entries": [],
+        "truncated": false
+      }
+    ],
+    "TRAINER_STATES": [
+      {
+        "count": 0,
+        "entries": [],
+        "truncated": false
+      }
+    ],
+    "SYMLINKS": [
+      {
+        "count": 0,
+        "entries": [],
+        "truncated": false
+      }
+    ],
+    "AUDIT_COMPLETE": [
+      {
+        "utc": "2026-11-03T05:03:08.826914+00:00",
+        "directories": 1081,
+        "files": 7359,
+        "bytes": 523283583395,
+        "inventory_sha256": "fe43031f7173eff69e4354095e30778f5208216a8df97a412cd60fcf6acfda13",
+        "errors": [],
+        "root_exists": true,
+        "note": "Recursive metadata audit; no symlink traversal and no large weight hashes."
+      }
+    ]
+  },
+  "raw_sha256": "b5ffbf3486997351aa44349680cf90f339ae63e70f7f1f85772773de1269addb",
+  "local_downloads_reverified": {
+    "A": {
+      "files": 222,
+      "per_sequence_arrays": 156,
+      "member_sha256_verified_now": true,
+      "archive_sha256": "467596ca1d4bc932488891c5311cc94c915e926785f5a9c315871313034deaca",
+      "archive_verified_now": true,
+      "original_local_root": "results/a2_depth_20261031/artifacts",
+      "portable_archive": "artifacts/a2_depth_saved_results_20261103/partA.tar.gz"
+    },
+    "B": {
+      "files": 205,
+      "per_sequence_arrays": 39,
+      "member_sha256_verified_now": true,
+      "archive_sha256": "4717f3de61f65c8ab70eb67e9fa69027bded68d950decfa97b039ba2d24eb104",
+      "archive_verified_now": true,
+      "original_local_root": "results/a2_depth_20261031/artifacts/partb",
+      "portable_archive": "artifacts/a2_depth_saved_results_20261103/partB.tar.gz"
+    },
+    "C": {
+      "saved": [
+        "DT6",
+        "P300/P1T native notes and decision",
+        "partial progress X72 and verified raw health receipt"
+      ],
+      "last_gpu_snapshot_sgt": "2026-11-02T22:46:19.731737+08:00",
+      "last_X72_update": 16480,
+      "target_updates": 48828,
+      "saved_per_sequence_arrays": 0,
+      "saved_model_optimizer_checkpoints": 0,
+      "independent_array_replay": "not run",
+      "archive_sha256": "09e66b1762aa9287a24e30bd505e1404d5e1ccd1a56b31c99414042c14e9c399"
+    }
+  },
+  "watcher": {
+    "status": "stopped",
+    "tick": 103,
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "utc": "2026-11-03T05:01:48.306288+00:00"
+  },
+  "scope_limit": "Recursive names/sizes audit of supplied wc69 _backup; no large weight hashing, no claim about unprovided external backups. Depth checkpoint not found; A/B numerical evidence retained locally."
+}
