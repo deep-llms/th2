@@ -82,13 +82,20 @@ def main():
 
 
 def execute(cfg,config,receipt):
+    from efficient_llm.a2_depth.reconstruction import arm_order
+    order=arm_order(cfg)  # Reject missing/duplicate arms before any GPU action.
     root=Path(cfg['results_root']);checks=continued_checks(root/'coordinator_checks.json')
     started=time.monotonic();events=[]
     previous=read(root/'ledger_partc.json') if (root/'ledger_partc.json').exists() else {}
     from efficient_llm.a2_depth.stream import verify
     from scripts.a2_depth_partc_report import finalize
-    checks.attempt('DT6',lambda:verify(cfg['heal_streams']['dclm']['path'],cfg['stream_history'],root))
-    for arm in ('P300','P1T','X72'):
+    write(root/'execution_order.json',dict(arms=list(order),authorization=cfg.get('arm_order_authorization'),
+        original_order=['P300','P1T','X72'],numerical_recipe_unchanged=True))
+    dt6=checks.attempt('DT6',lambda:verify(cfg['heal_streams']['dclm']['path'],cfg['stream_history'],root,
+        reconstruction=cfg.get('stream_reconstruction')))
+    if cfg.get('stream_reconstruction') is not None and not (dt6 and dt6.get('passed')):
+        raise ValueError('Reconstructed data failed DT6; no C arm may consume substituted bytes')
+    for arm in order:
         write(root/'progress.json',dict(phase='part_c',active=arm,completed=events))
         # Physical-ownership failures propagate to the native supervisor; these
         # cannot be treated as permission to launch onto an unknown workload.

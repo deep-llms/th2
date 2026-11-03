@@ -20,6 +20,13 @@ from scripts.launch_a2_depth_partb import predecessor
 from scripts.train_then_burn import digest
 
 
+def physical_admission(cfg, output):
+    if 'node_restart' in cfg:
+        from scripts.a2_depth_wc69_admission import admission
+        return admission(cfg, output)
+    return predecessor(cfg, output)
+
+
 def job_config(config):
     return dict(jobs=[dict(name='a2-depth-partc',gpus=list(range(8)),timeout_seconds=None,
         argv=['{python}','-u','-m','scripts.a2_depth_partc_run','--config',config['path'],
@@ -50,9 +57,13 @@ def prepare(cfg,root,frozen,commit):
         history=cfg['stream_history'];original=read_locked(history['historical_inputs'])
         checks.record('DT6_historical_manifest',original['data_manifest']==history['data_manifest'])
         checks.record('DT6_historical_provenance',original['provenance']==history['provenance'])
+        if cfg.get('stream_reconstruction') is not None:
+            from efficient_llm.a2_depth.reconstruction import rebuilt_manifest
+            checks.record('DT6_rebuilt_provenance',rebuilt_manifest(
+                cfg['heal_streams']['dclm']['path'],history,cfg['stream_reconstruction'])==cfg['heal_streams']['dclm']['sha256'])
     checks.attempt('DT6_original_receipt',historical)
     def cpu():
-        evidence=read(frozen/'resources/a2_depth_partc_recovery_cpu_20261101.json')
+        evidence=read(frozen/cfg.get('cpu_validation_resource','resources/a2_depth_partc_recovery_cpu_20261101.json'))
         checks.record('cpu_validation',evidence['status']=='PASS' and all(digest(frozen/n)==v for n,v in evidence['files'].items()),evidence)
     checks.attempt('cpu_validation_receipt',cpu)
     cfg.update(results_root=str(root),code_commit=commit,source_manifest=lock(root.parents[1]/'source-manifest.json'))
@@ -71,15 +82,28 @@ def main():
         from scripts.a2_depth_continue import continue_run
         return continue_run(a)
     source=Path(__file__).resolve().parents[1];cfg=read(a.plan);started=time.monotonic()
-    if socket.gethostname()!='thiennh-p6-6y3o-worker-0' or a.output.exists():raise ValueError('Wrong host or duplicate root')
+    host=cfg.get('node_restart',{}).get('host','thiennh-p6-6y3o-worker-0')
+    if socket.gethostname()!=host or a.output.exists():raise ValueError('Wrong host or duplicate root')
+    if 'node_restart' in cfg:
+        from efficient_llm.a2_depth.reconstruction import rebuilt_manifest,arm_order
+        arm_order(cfg)
+        if rebuilt_manifest(cfg['heal_streams']['dclm']['path'],cfg['stream_history'],cfg['stream_reconstruction'])!=cfg['heal_streams']['dclm']['sha256']:
+            raise ValueError('New data plan is not bound to verified reconstruction')
+        proof=read_locked(cfg['cpu_validation'])
+        if digest(source/cfg['cpu_validation_resource'])!=cfg['cpu_validation']['sha256']:
+            raise ValueError('Frozen CPU proof differs from admission proof')
+        if (proof.get('status')!='PASS' or not proof.get('files')
+                or any(digest(source/n)!=v for n,v in proof['files'].items())):
+            raise ValueError('New-node CPU admission proof invalid')
     for session in (a.session,a.session+'_burn'):
         if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Duplicate session')
-    admission=predecessor(cfg,a.output)
+    admission=physical_admission(cfg,a.output)
     a.output.mkdir();plan_rel=a.plan.resolve().relative_to(source)
     frozen=freeze_source(source,a.output,a.code_commit,extra_files=(str(plan_rel),'docs/A2_depth_spec.md',
         'resources/a2_depth_partc_integration_cpu_20261101.json','resources/a2_depth_partc_recovery_cpu_20261101.json','resources/a2_depth_partc_cpu_tests_20261101.json',
         'resources/a2_depth_resume_distributed_cpu_20261101.json','resources/a2_depth_stage1_references_20261101.json',
-        'resources/a2_depth_stream_reference_20261101.json'))
+        'resources/a2_depth_stream_reference_20261101.json',
+        *([cfg['cpu_validation_resource']] if 'node_restart' in cfg else [])))
     root=a.output/'results/a2_depth_20261031';root.mkdir(parents=True)
     config=prepare(cfg,root,frozen,a.code_commit)
     write(a.output/'admission.json',admission)
@@ -99,14 +123,16 @@ def main():
     checks.record('accelerate_env',result.returncode==0)
     write(a.output/'budget.json',dict(preparation_seconds=time.monotonic()-started,expected_node_hours=39,
                                      timeout_seconds=None,deadline=None,policy='report-only'))
-    admission=predecessor(cfg,a.output);write(a.output/'inspection.json',admission['inspection'])
+    admission=physical_admission(cfg,a.output);write(a.output/'inspection.json',admission['inspection'])
     jobs=write_native(a.output/'jobs.json',job_config(config))
     load_jobs(Path(jobs['path']))
     keys=('CUDA_VISIBLE_DEVICES','HF_HUB_OFFLINE','TRANSFORMERS_OFFLINE','HF_DATASETS_OFFLINE','HF_HUB_DISABLE_TELEMETRY',
           'WANDB_MODE','OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NCCL_NVLS_ENABLE','TOKENIZERS_PARALLELISM','PYTHONPATH','A2_CODE_COMMIT')
     cmd=['env',*[k+'='+env[k] for k in keys],sys.executable,'-u','-m','scripts.train_then_burn','--config',jobs['path'],
          '--output',str(a.output/'supervised'),'--inspection',str(a.output/'inspection.json'),'--host',socket.gethostname(),
-         '--burn-session',a.session+'_burn','--predecessor-burn-script',cfg['predecessor']['burn_script']]
+         '--burn-session',a.session+'_burn']
+    if 'node_restart' not in cfg:
+        cmd+=['--predecessor-burn-script',cfg['predecessor']['burn_script']]
     write(a.output/'launch.json',dict(session=a.session,config=config,jobs=jobs,input_plan=lock(frozen/plan_rel),
         source_manifest=lock(a.output/'source-manifest.json'),initial_inspection=lock(a.output/'inspection.json'),
         environment={k:env[k] for k in keys}))

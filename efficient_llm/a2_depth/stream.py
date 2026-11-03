@@ -17,7 +17,7 @@ def hashes(path, prefix_bytes):
     return dict(full_sha256=full.hexdigest(),prefix_sha256=prefix.hexdigest(),bytes=size)
 
 
-def verify(root, historical, output, *, prefix_rows=781248, selected_rows=3124992):
+def verify(root, historical, output, *, prefix_rows=781248, selected_rows=3124992, reconstruction=None):
     """CPU only; reads existing files, never repacks, reorders or truncates them.
 
     Historical inputs recorded a full-stream hash, not a prefix-only hash. Full
@@ -28,7 +28,12 @@ def verify(root, historical, output, *, prefix_rows=781248, selected_rows=312499
     checks=Checks(output/'DT6_checks.json');result={}
     info=historical['data_manifest']['streams']['heal']
     def inspect():
-        checks.record('DT6_manifest',sha256(root/'manifest.json')==historical['provenance']['data_sha256'])
+        expected_manifest=historical['provenance']['data_sha256']
+        if reconstruction is not None:
+            from .reconstruction import rebuilt_manifest
+            expected_manifest=rebuilt_manifest(root,historical,reconstruction)
+            result.update(reconstruction_receipt=reconstruction,rebuilt_manifest_sha256=expected_manifest)
+        checks.record('DT6_manifest',sha256(root/'manifest.json')==expected_manifest)
         before={name:(root/name).stat() for name in ('heal.bin','heal.starts')}
         tokens=hashes(root/'heal.bin',prefix_rows*info['length']*4)
         starts=hashes(root/'heal.starts',prefix_rows*info['length'])

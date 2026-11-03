@@ -39,7 +39,9 @@ def validate_existing(output,plan,commit):
 
 
 def admission(output,record,cfg,handoff):
-    if socket.gethostname()!='thiennh-p6-6y3o-worker-0':raise ValueError('Wrong continuation host')
+    host=cfg.get('node_restart',{}).get('host','thiennh-p6-6y3o-worker-0')
+    if host not in ('thiennh-p6-6y3o-worker-0','thiennh-p6-wc69-worker-0') or socket.gethostname()!=host:
+        raise ValueError('Wrong continuation host')
     if handoff['mode']=='burn':
         return predecessor({'predecessor':handoff['predecessor']},output)
     if handoff['mode']!='free':raise ValueError('Unknown recovery handoff mode')
@@ -50,7 +52,12 @@ def admission(output,record,cfg,handoff):
         raise ValueError('Original GPUs not free; no allocation or signals')
     if [(g['index'],g['uuid']) for g in live['gpus']]!=[(g['index'],g['uuid']) for g in old['gpus']]:
         raise ValueError('GPU identity changed')
-    return dict(inspection=live,mode='free',predecessor=cfg['predecessor'])
+    burn=cfg['predecessor']
+    if 'node_restart' in cfg:
+        # Free GPUs need no historical B burn on the replacement node.
+        # The immutable experiment's own burn is already source-hash verified.
+        burn=dict(burn_script=str(Path(output)/'source/resources/llm_pretrain_burn.py'))
+    return dict(inspection=live,mode='free',predecessor=burn)
 
 
 def continue_run(args):

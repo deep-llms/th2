@@ -1,0 +1,76 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "at": "2026-11-03T07:17:47.493078+00:00",
+  "status": "PASS",
+  "tests_unique": 33,
+  "files": {
+    "efficient_llm/a2_depth/heal_long.py": "e5cf3892613ff86834ce4941ae0d0e2404d9b9be34f63a443f82032cfb5cc7da",
+    "efficient_llm/a2_depth/reconstruction.py": "3e0c012d0ff1f66e2ee8edc25b428e5da4f1f30595ff71771d27d4141e62804e",
+    "efficient_llm/a2_depth/recovery.py": "bd367af25406ad98541f743fbcf6d4022aa5b702a467d513044eb575496ad336",
+    "efficient_llm/a2_depth/resume.py": "1deaf5fb3a180a9011830d01ba672904d572ed26b7bb92ac18c18c3df2d86112",
+    "efficient_llm/a2_depth/stream.py": "7547ab6c93be1d3a1ad1bd96a00a7967818b5b54a313215e235ebd1ce528f052",
+    "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d",
+    "scripts/a2_depth_continue.py": "efb127c477ba7bcd6c1e6622b079c2dfc6fefa408d94133d1702d33e989642b1",
+    "scripts/a2_depth_downstream.py": "2c4b494fc56cbe3deb759f400b311409331f8d03fd66024e73ab1037d7824445",
+    "scripts/a2_depth_partc_plan.py": "264582dcaf6fcd1db25dca877e3690342d1fc610ca8f0ab0f2e50e879e34b9d8",
+    "scripts/a2_depth_partc_report.py": "956b8b600a82162704f68d21754236178521177548db98453d7f0ea02d89b28c",
+    "scripts/a2_depth_partc_run.py": "41210fc22649bf01289d04afa81e6925bfcd3b3a4da633d47599ae740e111903",
+    "scripts/a2_depth_score.py": "5fc23b9a4d111e8d2438b8f62223806f874bec8e3f43b093dc06d96373f6f893",
+    "scripts/a2_depth_wc69_admission.py": "839df7c6040e2b2d40453cd08ae46c3500fc193ce2577e60247d556dd6b568b5",
+    "scripts/a2_quant_io.py": "e94fa42e1ca23d2b2f75314ffd62adbc9a576a8f183a2e6e06b29ad16d3474b4",
+    "scripts/gpu_process.py": "0bd5b1e6d6fd51c887b14ffdc35493075ce45e2d6421af367a4d2d6d06b6c446",
+    "scripts/launch_a2_depth_partc.py": "d318ca29101105fa7cc6bed4bfee1f20560504afd543b177cb1b2f2cdf3d191d",
+    "scripts/train_then_burn.py": "e5c6d4e3a6cae85aaa4d34663860d3f2c2bf77b34e86cbe45f81f37209c871fc"
+  },
+  "test_files": {
+    "tests/a2/depth_resume_distributed_fixture.py": "570c144af617803cd529f60fd07feee9ce54fd67196b3626239d5dd1f1ee623e",
+    "tests/a2/test_depth_downstream.py": "5e687f44df010f26dfd4c8f908024c64e5ee4d7a1f3603bc65d5339f8b0a3e06",
+    "tests/a2/test_depth_long.py": "2b2e1bad597ea9d1984d271ed4abc560e54d7e8f7d6660debcabc7f1aef1aece",
+    "tests/a2/test_depth_partc_launch.py": "599e2aa3940489d84804e7081caf7d3d693518253655fd1217f43cce80e4ae3c",
+    "tests/a2/test_depth_reconstruction.py": "6cc7ca49157f435ce3c8d3a67e60bb5e211f530b2fa2364ec1d2c89675b0be57",
+    "tests/a2/test_depth_recovery.py": "0e1e93a72eefbbb9962d75b448c398c140578387df03f2b1aebf8bf4906a0290",
+    "tests/a2/test_depth_resume.py": "96a6622e6f60ab9151726db26a32b0ec4cadc89bb4d9adc3d261f99c063e2e94",
+    "tests/a2/test_depth_resume_distributed.py": "7c9ad2c18ebce9588f9e1b2b4dd893f225fca5e7604db4f984690163b7e08b5e",
+    "tests/a2/test_depth_stages.py": "7f74c2664974961906400521c3b01b89ee5395e2f976f4ebd2c838a35b7af5cb",
+    "tests/a2/test_depth_wc69_admission.py": "05353c1ea026ed86964f1cdd6bb72e0692ba54b3abdee6ac588a1e8f88eec425"
+  },
+  "validation": [
+    {
+      "tests": 32,
+      "skipped": 0,
+      "log_sha256": "34d82d0556f5413615919bf66e569c3f950a7ab5fd1a2a85d08a5c7b70650b75"
+    },
+    {
+      "tests": 5,
+      "skipped": 0,
+      "log_sha256": "e6da9994978d21f225ba15043a7a45d89e348a8ead970894dcc52043e804aeaa",
+      "scope": "Final admission suite; 4 overlap previous run; 1 added successful new-node launcher integration"
+    }
+  ],
+  "prior_test_failures": [
+    {
+      "log_sha256": "7e4c4f83ddac575738ec7a1c2ae51bf5db159bcb4af8d5d94c727ee890a24f53",
+      "reason": "New rejection fixture omitted proof-file mock; 31 tests/one fixture error. Fixed fixture; no GPU action."
+    }
+  ],
+  "preliminary_test": {
+    "log_sha256": "aac37f3b92f2cc45bdf3459e78543cff42f70800b726cc2487f3c2e5f1161f09",
+    "tests": 13,
+    "skipped": 1,
+    "reason": "Native-model code path absent; final run supplied exact pinned model code and skipped none."
+  },
+  "scope": [
+    "New-manifest provenance separately bound to historical content; physical full stream/prefix DT6 still required",
+    "Explicit authorized X72/P300/P1T order, per-arm notes, then downstream; original default unchanged",
+    "New-node known operator burn/guard/UUID/PID/start identity refusal and launch through unchanged native supervisor",
+    "Continuation on same wc69 GPUs with immutable source and no held guard; no stale old-node burn requirement when free",
+    "Existing CPU native fullstate resume, two-rank Gloo exactness and synchronized nonfinite failure"
+  ],
+  "gpu_deployed": false,
+  "actual_C_plan_created": false,
+  "limitations": [
+    "CPU-only evidence; no actual 8-GPU/NCCL resume test",
+    "Production rebuilt data/DT6 pending",
+    "Reference/prepared assets and P1T weights/eval environment still need restoration/verification; actual new-node plan requires completed reconstruction receipt and fresh ownership"
+  ]
+}
