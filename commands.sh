@@ -1,74 +1,26 @@
 #1 +20+a
-#th2-wc69-a2-depth-partc-health-20261104-a30
+#th2-wc69-a2-depth-x72-results-20261104-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
 /mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PY'
-import hashlib,json,socket,subprocess,time
 from pathlib import Path
+import json,hashlib,gzip,base64
 from datetime import datetime,timezone
-from scripts.gpu_process import inspect,process
-root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-partc-20261103-a01');base=root/'results/a2_depth_20261031'
-print('HEALTH_AT',datetime.now(timezone.utc).isoformat(),flush=True)
-print('HOST',socket.gethostname(),flush=True)
-live=inspect();print('GPU_INSPECTION',json.dumps(live),flush=True)
-chains={}
-for worker in live['workers']:
- pid=worker;chain=[]
- while pid>1 and len(chain)<12:
-  try:row=process(pid)
-  except (FileNotFoundError,ProcessLookupError):break
-  chain.append(row);pid=row['ppid']
- chains[str(worker)]=chain
-print('PROCESS_CHAINS',json.dumps(chains),flush=True)
-def export(p):
- if p.is_file():
-  raw=p.read_bytes()
-  if len(raw)<2000000:print('ARTIFACT',json.dumps(dict(path=str(p.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),text=raw.decode())),flush=True)
-  else:print('LARGE_ARTIFACT',json.dumps(dict(path=str(p.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),bytes=len(raw))),flush=True)
- else:print('MISSING',str(p.relative_to(root)),flush=True)
-for rel in ('source-manifest.json','jobs.json','budget.json','admission.json','accelerate-env.log','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/complete.json','supervised/run/depth-partc-complete.json'):
- export(root/rel)
-for rel in ('config/plan.json','DT6.json','DT6_checks.json','preparation_checks.json','coordinator_checks.json','runtime_checks.json','attempts.json','progress.json','ledger_partc.json','manifests/documents.json','decision_depth_partc.json','independent_replay.json','REPORT.md'):
- export(base/rel)
-manifest=root/'source-manifest.json'
-if manifest.exists():
- m=json.loads(manifest.read_text());changed=[name for name,value in m['files'].items() if hashlib.sha256((root/'source'/name).read_bytes()).hexdigest()!=value]
- print('SOURCE_VERIFICATION',json.dumps(dict(files=len(m['files']),code_commit=m['code_commit'],changed=changed)),flush=True)
-for path in sorted(base.glob('heals/*/tests-rank*.json')):export(path)
-for path in sorted(base.glob('heals/*/trainer/**/depth-checkpoint.json')):
- export(path)
- marker=json.loads(path.read_text());actual={name:((path.parent/name).stat().st_size if (path.parent/name).is_file() else None) for name in marker['files']}
- print('CHECKPOINT_MEMBER_SIZES',json.dumps(dict(path=str(path.relative_to(root)),expected=marker['files'],actual=actual,match=actual==marker['files'])),flush=True)
-for path in sorted(base.glob('heals/*/result.json')):
- raw=path.read_bytes();v=json.loads(raw)
- summary={k:v.get(k) for k in ('run_id','dataset','arm','block','status','training_seconds','elapsed_seconds','roundtrip_difference','checkpoint','delta_post','unverified','flags')}
- summary.update(path=str(path.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),scores={k:None if r is None else {x:r.get(x) for x in ('loss','sequences','tokens')} for k,r in v.get('scores',{}).items()},lr_updates=len(v.get('lr_updates',[])))
- print('HEAL_RESULT',json.dumps(summary),flush=True)
-for p in [root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/a2-depth-partc.log',*base.glob('logs/*.log')]:
- if p.is_file():
-  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-2500));tail=f.read().decode(errors='replace')
-  print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)
-flag_counts={}
-for log in base.glob('logs/*.log'):
- with log.open(errors='replace') as handle:
-  count=sum('DEPTH_NONFINITE_KD_FLAG' in line or 'DEPTH_NONFINITE_RECOVERY' in line for line in handle)
- flag_counts[log.name]=count
-print('NONFINITE_LOG_FLAGS',json.dumps(flag_counts),flush=True)
-guard=Path('/mnt/local/_gpu_guard/DISABLED');print('GUARD',guard.read_text() if guard.is_file() else 'released',flush=True)
-print('SESSION',subprocess.run(['tmux','display-message','-p','-t','a2_depth_partc_wc69_20261103_a01','#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip(),flush=True)
-rows=subprocess.run(['ps','-eo','pid,ppid,pcpu,pmem,etime,args'],capture_output=True,text=True,check=True).stdout.splitlines()
-print('LAUNCH_PROCESSES',json.dumps([r for r in rows if 'a2_depth' in r or str(root) in r]),flush=True)
-terminal=root/'supervised/supervisor.json'
-if terminal.exists() and json.loads(terminal.read_text()).get('finished_at'):
- samples=[]
- for i in range(2):
-  snap=inspect();proc={}
-  for pid in snap['workers']:
-   item=process(pid);proc[str(pid)]=item
-   if item['ppid']>1:proc[str(item['ppid'])]=process(item['ppid'])
-  log=root/'supervised/burn.log';samples.append(dict(inspection=snap,processes=proc,burn_tail=log.read_text()[-6000:] if log.exists() else ''))
-  if i==0:time.sleep(12)
- print('NATIVE_TERMINAL_SAMPLES',json.dumps(samples),flush=True)
-print('HEALTH_COMPLETE',flush=True)
+root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-partc-20261103-a01')
+base=root/'results/a2_depth_20261031';name='ST1-dclm-X72-S1-12.8B-lr1e-3';heal=base/'heals'/name
+result=json.loads((heal/'result.json').read_text())
+assert result['status']=='complete' and len(result['lr_updates'])==48828
+assert hashlib.sha256((heal/'result.json').read_bytes()).hexdigest()=='5b3f8895d6fb5d5751856634870df352f474d92f52ca14525453d061149a53dc'
+files=[heal/'result.json',heal/'recipe.json',*[heal/f'tests-rank{i}.json' for i in range(8)],*[base/'perseq'/name/(label+'.json') for label in ('parent','pre-S1','post-S1')],base/'notes/X72.json',base/'REPORT_PART_C.md',base/'decision_depth_partc.json',base/'tests_partc.json',base/'runs_partc.jsonl',base/'logs/C-X72-attempt001.log',root/'source-manifest.json',base/'config/plan.json',base/'DT6.json',base/'DT6_checks.json']
+print('RESULTS_AT',datetime.now(timezone.utc).isoformat(),flush=True)
+manifest=[]
+for p in files:
+ assert p.is_file() and not p.is_symlink(),str(p)
+ raw=p.read_bytes();assert len(raw)<12*1024*1024
+ row=dict(path=str(p.relative_to(root)),bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+ packed=base64.b64encode(gzip.compress(raw,mtime=0)).decode()
+ print('RESULT_FILE',json.dumps(dict(row,gzip_b64=packed)),flush=True);manifest.append(row)
+print('RESULTS_MANIFEST',json.dumps(dict(spec_sha256='2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe',files=manifest)),flush=True)
+print('RESULTS_COMPLETE',flush=True)
 PY
