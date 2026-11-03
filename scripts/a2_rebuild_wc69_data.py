@@ -19,10 +19,10 @@ import sys
 from scripts.a2_prepare_corpora import sha, write_json, verify_packed
 
 RECIPE = 'resources/a2_data_rebuild_wc69_20261103.json'
-OUTPUT = Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-data-rebuild-20261103-a01')
+OUTPUT = Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-data-rebuild-20261103-a02')
 DATA = Path('/mnt/local/_data/deep-llms_th2/a2_dclm_rebuild_20261103')
 SHUFFLE = Path('/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103')
-SESSION = 'a2_data_rebuild_wc69_20261103_a01'
+SESSION = 'a2_data_rebuild_wc69_20261103_a02'
 
 
 def require(value, message):
@@ -115,7 +115,6 @@ def work():
         'excluded_original_tail_tokens', 'dropped_after_shuffle', 'document_count', 'documents_sha256',
         'document_order_sha256', 'heldout_documents_sha256', 'document_dtype', 'T7', 'T18'])
     # Independently re-read the physical prefix and the production reader view.
-    from efficient_llm.a2_depth.stream import hashes
     from efficient_llm.a2.data import PackedRows
     import numpy as np
     dt6 = recipe['historical_dt6']
@@ -139,7 +138,18 @@ def work():
     print('REBUILD_COMPLETE', json.dumps(receipt), flush=True)
 
 
-def launch():
+def hashes(path, prefix_bytes):
+    full, prefix, count = hashlib.sha256(), hashlib.sha256(), 0
+    with Path(path).open('rb') as stream:
+        while block := stream.read(8 << 20):
+            full.update(block)
+            if count < prefix_bytes:
+                prefix.update(block[:prefix_bytes-count])
+            count += len(block)
+    return dict(full_sha256=full.hexdigest(), prefix_sha256=prefix.hexdigest(), bytes=count)
+
+
+def launch(code_commit):
     require(socket.gethostname() == 'thiennh-p6-wc69-worker-0', 'Wrong node')
     for path in (OUTPUT, DATA, SHUFFLE):
         require(not path.exists(), 'Fresh output required: ' + str(path))
@@ -147,17 +157,20 @@ def launch():
     require(shutil.disk_usage('/mnt/local').free > 1_000_000_000_000, 'Need 1TB free')
     source = Path.cwd()
     frozen = OUTPUT/'source'
-    names = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
-    names = [n for n in names if n.startswith('efficient_llm/') and n.endswith('.py')] + [
-        'scripts/a2_rebuild_wc69_data.py', 'scripts/a2_prepare_corpora.py', 'scripts/a2_stage1_data.py', 'scripts/a2_quant_io.py',
-        RECIPE, 'resources/a2_corpora_30b_20261029.json', 'resources/a2_inputs_20261028.json', 'docs/A2_stage1_spec.md']
+    require(len(code_commit) == 40 and all(c in '0123456789abcdef' for c in code_commit), 'Pinned source revision required')
+    # The runner copies source without .git. Use the dev-built SHA manifest,
+    # as the original launchers used explicit file lists and --code-commit.
+    expected = json.loads(Path('resources/a2_rebuild_source_20261103.json').read_text())['files']
+    names = list(expected)
+    for name, digest in expected.items():
+        require(sha(source/name) == digest, 'Source changed: ' + name)
     identities = {}
     for name in names:
         target = frozen/name
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source/name, target)
         identities[name] = sha(target)
-    write_json(OUTPUT/'source-manifest.json', dict(code_commit=subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
+    write_json(OUTPUT/'source-manifest.json', dict(code_commit=code_commit,
         files=identities, cpu_only=True, runtime={k: version(k) for k in ('numpy','pyarrow','tokenizers')}))
     env = ['env','CUDA_VISIBLE_DEVICES=','HF_HUB_OFFLINE=1','TRANSFORMERS_OFFLINE=1','HF_DATASETS_OFFLINE=1',
            'HF_HUB_DISABLE_TELEMETRY=1','PYTHONDONTWRITEBYTECODE=1','TOKENIZERS_PARALLELISM=false',
@@ -171,6 +184,7 @@ def launch():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', action='store_true')
+    parser.add_argument('--code-commit')
     args = parser.parse_args()
     if args.work:
         try:
@@ -180,4 +194,4 @@ if __name__ == '__main__':
                 utc=datetime.now(timezone.utc).isoformat(), spec_sha256=json.loads(Path(RECIPE).read_text())['spec_sha256']))
             raise
     else:
-        launch()
+        launch(args.code_commit or '')
