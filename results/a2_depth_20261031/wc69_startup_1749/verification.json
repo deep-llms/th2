@@ -1,0 +1,58 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "snapshot_sgt": "2026-11-03T17:49:47.558498+08:00",
+  "health_commit": "092b5b9b2dcebd4756465f4791fcf8a5bd57f45f",
+  "raw_sha256": "2cdab3b2e8f7e20a42b8fbe2c72434cf9e2032dee946c996683a35c185502a2c",
+  "source": {
+    "files": 191,
+    "code_commit": "e2af735a59127f1116dbf8d671fe5aa95f1bb12f",
+    "changed": []
+  },
+  "DT6_checks_pass": 8,
+  "worker_checks_pass": 32,
+  "active_arm": "X72",
+  "step": 10,
+  "target_updates": 48828,
+  "gpu_workers": [
+    17254,
+    17255,
+    17256,
+    17257,
+    17258,
+    17259,
+    17260,
+    17261
+  ],
+  "parent_chain": [
+    17248,
+    17177,
+    17138
+  ],
+  "gpu_utilization": [
+    99.0,
+    99.0,
+    98.0,
+    98.0,
+    98.0,
+    98.0,
+    98.0,
+    99.0
+  ],
+  "gpu_memory_mib": [
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0,
+    81218.0
+  ],
+  "nonfinite_counts": {
+    "C-X72-attempt001.log": 0
+  },
+  "guard_owner": 17138,
+  "actual_gpu_training_verified": true,
+  "eta_x72_sgt": "04Nov07\u201308SGT provisional from historical ~0.98sec/update; new-node sustained rate not measured",
+  "full_pipeline_complete": false
+}
