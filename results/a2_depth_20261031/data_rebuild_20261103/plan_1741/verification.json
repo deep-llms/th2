@@ -1,0 +1,14 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "plan_sha256": "510b79f5857c08a87e027649525a25527a95ee43191bf696e5383ce3e019a185",
+  "receipt_sha256": "db48ed5510a2c17b251098aab9bc7cfc9c398180ba2de78b4055e7018e02d828",
+  "cpu_proof_hashes_match": true,
+  "native_readonly_admission_pass": true,
+  "arm_order": [
+    "X72",
+    "P300",
+    "P1T"
+  ],
+  "original_numerical_config_unchanged": true,
+  "training_launched": false
+}
