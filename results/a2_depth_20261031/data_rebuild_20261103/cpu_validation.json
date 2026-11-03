@@ -12,5 +12,6 @@
   "multiblock_full_and_prefix_hash_fixture": "passed",
   "restore_bad_hash_and_existing_destination_rejected": "passed",
   "production_data_equality": "pending",
-  "training_launched": false
+  "training_launched": false,
+  "historical_current_shuffle_fixture": "5binaryfiles byte-identical vs frozen716d3f3"
 }

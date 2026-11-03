@@ -1,0 +1,225 @@
+{
+  "status": "verified",
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "files": [
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+      "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+      "bytes": 9280
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/complete.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/complete.json",
+      "sha256": "3ebc7a64708c1c83954264e8e04fe305c486212dda7c529ef112b2995090bbe3",
+      "bytes": 430
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/documents.jsonl",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/documents.jsonl",
+      "sha256": "5d5b3b53445bd9d3939f9148de8800c237cdf393852634ba6c9bdc11c1a16ad5",
+      "bytes": 268509477
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/final.bin",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/final.bin",
+      "sha256": "cab0ff6d73910e764bcfc14c9bb3ff9fdd6bb0c98c94c99fd00ad8085adc9ae7",
+      "bytes": 40321024
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/final.starts",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/final.starts",
+      "sha256": "54b5eebb2e624cea5c982016b14eb44069275def9feed9886b94e10025c7f97b",
+      "bytes": 10080256
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/heal.bin",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/heal.bin",
+      "sha256": "4ec75262c9f3015bbab424b2fd481d8ec4b4f96452e77fbbfa8e754dbe15d412",
+      "bytes": 3399991296
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/heal.starts",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/heal.starts",
+      "sha256": "2d16ad7ad6ad54ef901577ae255aa276f31dc46916f0299b5d714a34677fe2fc",
+      "bytes": 849997824
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/indices.npz",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/indices.npz",
+      "sha256": "70b28905fd76bc9b29860fc97569793aa241c0643fb5d4a31f36286a920dd634",
+      "bytes": 11776746
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+      "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+      "bytes": 603597
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/progress.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/progress.json",
+      "sha256": "9e4127b59c48c2497daf4e091f3bd8646df084624e57eeff897cc5e753e4485f",
+      "bytes": 314
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/tuning.bin",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/tuning.bin",
+      "sha256": "3f4c141e5f4890cbc61a89af6d2bb7e8a89856827749be841f2484de19183aac",
+      "bytes": 16777216
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/tuning.starts",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/tuning.starts",
+      "sha256": "575464b89f26b87449cb4746a73e663dd8d0dd267c169f42c34b5b81d2becacb",
+      "bytes": 4194304
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/pool_contract.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/pool_contract.json",
+      "sha256": "5190d2eebcf3b440de35c78825cd9a7ef905f2f241afc8224dfd8fca1b6f01d7",
+      "bytes": 218
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/dclm/final.bin",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/dclm/final.bin",
+      "sha256": "a36deec7d618eeceb004f6ca8563e9dd1db6bd1b71a02be147a55acc9e1ea269",
+      "bytes": 4194304
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/dclm/final.starts",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/dclm/final.starts",
+      "sha256": "f5f023562f459977ccab0b7f68e911366dc1527ab12adf4bb28f3c084d897754",
+      "bytes": 1048576
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/dclm/manifest.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/dclm/manifest.json",
+      "sha256": "9a7372222d56b763d9af01951a380ae910289d9d87ef68306d9453b1a2fd1d46",
+      "bytes": 1075
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/fwe/final.bin",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/fwe/final.bin",
+      "sha256": "bd2edbfe9c0b210bf9024d2893eae73a6cb8822a9ebbfaa4b79d25b447b2d984",
+      "bytes": 4194304
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/fwe/final.starts",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/fwe/final.starts",
+      "sha256": "c378ba623393747e295628178f0eae164c291a6350b2a4d3be74403ba4876d0a",
+      "bytes": 1048576
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/fwe/manifest.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/fwe/manifest.json",
+      "sha256": "4831c90dd2f115cfe379a90cde8e34d2c421d0bf552b715f059e401989989843",
+      "bytes": 1037
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem/final.bin",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem/final.bin",
+      "sha256": "df39d2cc4f9f4e7fb0b08a1b5d63f7a8d9700a6b5379fa0bc0011c0e18814d56",
+      "bytes": 4194304
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem/final.starts",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem/final.starts",
+      "sha256": "22c1ffb746276ba7d1e3fa9210aff9e0aded920322cc2324b4c29a664f61eb62",
+      "bytes": 1048576
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem/manifest.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary/nem/manifest.json",
+      "sha256": "184cc71a305e05bf9df64f3b28ab74823f45064efcd83821bc597d17f8b63ef2",
+      "bytes": 1310
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary_map.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/secondary_map.json",
+      "sha256": "3f0711e12a90ff8d24abd06e0e8eda10ce65d378ba74f9a0b5643069afb655b4",
+      "bytes": 629
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/tokenizer_provenance.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/tokenizer_provenance.json",
+      "sha256": "bce65584a19c0a1576a463fef6eb7bd0801203ea094222471bf1f0714105566c",
+      "bytes": 1148
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/verified_inputs.json",
+      "destination": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/verified_inputs.json",
+      "sha256": "e5edfc09e5919fc8c22d9faf02f0fdbfbd60a2081f6e055338240177a9436bd7",
+      "bytes": 1933
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/config.json",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/config.json",
+      "sha256": "1c82ea3ac6380b63f642d8b48fd618f183c0ef14f3266aaa4be63f7bdf395777",
+      "bytes": 1186
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/model.safetensors",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/model.safetensors",
+      "sha256": "d7ad6d7d76b69e04b415eee039ce9146192c380c5ea6188b208a46348ce8d865",
+      "bytes": 3428804400
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/modeling_opensci.py",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "bytes": 44839
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/configuration_opensci.py",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "bytes": 11190
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/S72/config.json",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/config.json",
+      "sha256": "c3ad338135403b75294cfbd1b4dd4e04b30bdea9441324753c0217a306f9fc3f",
+      "bytes": 1187
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/S72/model.safetensors",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/S72/model.safetensors",
+      "sha256": "3f69d478b18e17e8fb2afdd7d76ac7dc8e91de7ea1eff4aa9adfa71fbd02ed9f",
+      "bytes": 3428804400
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/modeling_opensci.py",
+      "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+      "bytes": 44839
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P1T/configuration_opensci.py",
+      "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+      "bytes": 11190
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/tokenizer.json",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json",
+      "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+      "bytes": 2113710
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/tokenizer_config.json",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer_config.json",
+      "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+      "bytes": 156
+    },
+    {
+      "source": "/mnt/local/_backup/deep-llms_th2/a2/dclm/P300/special_tokens_map.json",
+      "destination": "/mnt/local/_models/deep-llms_th2/a2/dclm/P300/special_tokens_map.json",
+      "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+      "bytes": 90
+    }
+  ],
+  "culturax_manifest_sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e",
+  "assets_sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371",
+  "backup_modified": false
+}

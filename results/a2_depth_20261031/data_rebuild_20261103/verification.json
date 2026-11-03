@@ -1,0 +1,67 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "snapshot_utc": "2026-11-03T05:45:51.678298+00:00",
+  "snapshot_sgt": "2026-11-03T13:45:51.678298+08:00",
+  "health_commit": "d8e771edc336b687f947880cad95a7a2cc7ca540",
+  "raw_sha256": "638405263cc2b28a9c877871678437cd26a824a8df8cdce6b52e535bb70feffb",
+  "source_files_unchanged": 11,
+  "restore_files_verified": 36,
+  "restore_bytes": 11477834941,
+  "raw_shards_size_ready": {
+    "indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "partial_indices": [],
+    "needed": 216
+  },
+  "raw_shards_sha_verified_in_snapshot": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "note": "All consumed shards independently SHA-checked by corpus workers; remaining downloaded files not yet independently checked in this snapshot.",
+  "cpu_pids": [
+    4313,
+    4368
+  ],
+  "data_status": {
+    "status": "running",
+    "plan_sha256": "837333f6f7f252e217a3f1826e7569c45a8393ba5cd34094d89258d84ec7bcb9",
+    "corpora": {}
+  },
+  "gpu_burn_pids": [
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    509,
+    510
+  ],
+  "gpu_burn_parent": 436,
+  "gpu_processes_untouched": true,
+  "watcher": "OFF",
+  "training_launched": false,
+  "production_content_comparison": "pending",
+  "historical_failures_retained": [
+    "a01 launcher assumed .git; fixed before actual CPU work",
+    "old Depth node lost C artifacts",
+    "CPU-only resume",
+    "Breadth ordering deviation"
+  ]
+}
