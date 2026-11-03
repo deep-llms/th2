@@ -1,0 +1,9 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "launch_commit": "912097619b4d5986d251e3069483da1c46d724cc",
+  "frozen_commit": "e2af735a59127f1116dbf8d671fe5aa95f1bb12f",
+  "raw_sha256": "2987cceecf90daa70d319821f73d09c5a1bdb6efff15d52a1ab94ca7883bce0f",
+  "printed_checks_pass": 10,
+  "launcher_submitted": true,
+  "actual_gpu_training_verified": false
+}
