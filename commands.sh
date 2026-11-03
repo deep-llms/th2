@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-6y3o-a2-depth-partc-health-20261102-a29
+#th2-6y3o-a2-depth-partc-health-20261103-a30
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES="" PYTHONDONTWRITEBYTECODE=1
@@ -29,13 +29,15 @@ def export(p):
  else:print('MISSING',str(p.relative_to(root)),flush=True)
 for rel in ('source-manifest.json','jobs.json','budget.json','admission.json','accelerate-env.log','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json','supervised/run/run.json','supervised/run/complete.json','supervised/run/depth-partc-complete.json'):
  export(root/rel)
-for rel in ('config/plan.json','DT6.json','DT6_checks.json','preparation_checks.json','coordinator_checks.json','runtime_checks.json','attempts.json','progress.json','ledger_partc.json','manifests/documents.json','decision_depth_partc.json','independent_replay.json','REPORT.md'):
+for rel in ('config/plan.json','DT6.json','DT6_checks.json','preparation_checks.json','coordinator_checks.json','runtime_checks.json','attempts.json','progress.json','ledger_partc.json','manifests/documents.json','decision_depth_partc.json','independent_replay.json','decision_depth.json','downstream/checks.json','downstream/complete.json','REPORT.md'):
  export(base/rel)
 manifest=root/'source-manifest.json'
 if manifest.exists():
  m=json.loads(manifest.read_text());changed=[name for name,value in m['files'].items() if hashlib.sha256((root/'source'/name).read_bytes()).hexdigest()!=value]
  print('SOURCE_VERIFICATION',json.dumps(dict(files=len(m['files']),code_commit=m['code_commit'],changed=changed)),flush=True)
 for path in sorted(base.glob('notes/*.json')):export(path)
+for path in sorted(base.glob('downstream/scores/*/complete.json')):export(path)
+for path in sorted(base.glob('downstream/scores/*/checks.json')):export(path)
 for path in sorted(base.glob('heals/*/tests-rank*.json')):export(path)
 for path in sorted(base.glob('heals/*/trainer/**/depth-checkpoint.json')):
  export(path)
@@ -46,7 +48,7 @@ for path in sorted(base.glob('heals/*/result.json')):
  summary={k:v.get(k) for k in ('run_id','dataset','arm','block','status','training_seconds','elapsed_seconds','roundtrip_difference','checkpoint','delta_post','unverified','flags')}
  summary.update(path=str(path.relative_to(root)),sha256=hashlib.sha256(raw).hexdigest(),scores={k:None if r is None else {x:r.get(x) for x in ('loss','sequences','tokens')} for k,r in v.get('scores',{}).items()},lr_updates=len(v.get('lr_updates',[])))
  print('HEAL_RESULT',json.dumps(summary),flush=True)
-for p in [root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/a2-depth-partc.log',*base.glob('logs/*.log')]:
+for p in [root/'supervisor.log',root/'supervised/burn.log',root/'supervised/run/a2-depth-partc.log',*base.glob('logs/*.log'),*base.glob('downstream/*.log')]:
  if p.is_file():
   with p.open('rb') as f:f.seek(max(0,p.stat().st_size-2500));tail=f.read().decode(errors='replace')
   print('LOG_TAIL',json.dumps(dict(path=str(p.relative_to(root)),bytes=p.stat().st_size,text=tail)),flush=True)

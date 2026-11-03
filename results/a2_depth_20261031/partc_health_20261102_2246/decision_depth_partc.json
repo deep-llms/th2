@@ -1,0 +1,160 @@
+{
+  "part": "C",
+  "coverage_complete": false,
+  "parents": {
+    "P300": {
+      "val": 2.816662510208993,
+      "parent_val": 2.7377930322126844,
+      "delta_post": 0.07886947799630839,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/final"
+    },
+    "P1T": {
+      "val": 2.78616812985127,
+      "parent_val": 2.686908991763934,
+      "delta_post": 0.09925913808733622,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P1T-S1-12.8B-lr1e-3/final"
+    }
+  },
+  "E": 0.020389660091027828,
+  "A_init": null,
+  "E_ratio_3_2B": 0.9408780719279306,
+  "A_init_ratio_3_2B": null,
+  "E_label": {
+    "value": 0.020389660091027828,
+    "clauses": {
+      "INCOMPLETE": false,
+      "persists": true,
+      "reversed": false,
+      "erased": false
+    },
+    "label": "persists"
+  },
+  "A_init_label": {
+    "value": null,
+    "clauses": {
+      "INCOMPLETE": true,
+      "anneal first": false,
+      "prune before you anneal": false,
+      "no effect": false
+    },
+    "label": "INCOMPLETE"
+  },
+  "stage1_budgets": {
+    "0.2B": {
+      "E": 0.021096293347514283,
+      "E_relative": 0.10302884126700326,
+      "A_init": 0.07272470370653528,
+      "A_init_relative": 0.35516864649842933,
+      "P300_delta": 0.2047610464029428,
+      "E_label": "persists",
+      "runs": {
+        "P300": {
+          "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+          "val_post": 2.9425540786156272,
+          "val_parent": 2.7377930322126844,
+          "delta_post": 0.2047610464029428,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        },
+        "P1T": {
+          "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-3",
+          "val_post": 2.9127663315143915,
+          "val_parent": 2.6869089917639344,
+          "delta_post": 0.22585733975045708,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        },
+        "X72": {
+          "run_id": "ST1-dclm-X72-S1-0.2B-lr1e-3",
+          "val_post": 3.0152787823221625,
+          "val_parent": 2.90857529610787,
+          "delta_post": 0.10670348621429238,
+          "roundtrip_difference": 0.0,
+          "steps": 762
+        }
+      }
+    },
+    "0.8B": {
+      "E": 0.02078642256362606,
+      "E_relative": 0.14645757338084062,
+      "A_init": 0.038910028863575974,
+      "A_init_relative": 0.27415339941707156,
+      "P300_delta": 0.14192794598319702,
+      "E_label": "persists",
+      "runs": {
+        "P300": {
+          "run_id": "ST1-dclm-P300-S1-0.8B-lr1e-3",
+          "val_post": 2.8797209781958815,
+          "val_parent": 2.7377930322126844,
+          "delta_post": 0.14192794598319702,
+          "roundtrip_difference": 0.0,
+          "steps": 3051
+        },
+        "P1T": {
+          "run_id": "ST1-dclm-P1T-S1-0.8B-lr1e-3",
+          "val_post": 2.8496233603107575,
+          "val_parent": 2.6869089917639344,
+          "delta_post": 0.16271436854682308,
+          "roundtrip_difference": 0.0,
+          "steps": 3051
+        },
+        "X72": {
+          "run_id": "ST1-dclm-X72-S1-0.8B-lr1e-3",
+          "val_post": 2.9186310070594574,
+          "val_parent": 2.90857529610787,
+          "delta_post": 0.010055710951587304,
+          "roundtrip_difference": 0.0,
+          "steps": 3051
+        }
+      }
+    },
+    "3.2B": {
+      "E": 0.021670884569823023,
+      "E_relative": 0.21225514007603818,
+      "A_init": 0.01211313187395735,
+      "A_init_relative": 0.11864188074014263,
+      "P300_delta": 0.10209827927870041,
+      "E_label": "persists",
+      "runs": {
+        "P300": {
+          "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+          "val_post": 2.839891311491385,
+          "val_parent": 2.7377930322126844,
+          "delta_post": 0.10209827927870041,
+          "roundtrip_difference": 0.0,
+          "steps": 12207
+        },
+        "P1T": {
+          "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+          "val_post": 2.810678155612458,
+          "val_parent": 2.6869089917639344,
+          "delta_post": 0.12376916384852343,
+          "roundtrip_difference": 0.0,
+          "steps": 12207
+        },
+        "X72": {
+          "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+          "val_post": 2.852004443365342,
+          "val_parent": 2.90857529610787,
+          "delta_post": -0.05657085274252793,
+          "roundtrip_difference": 0.0,
+          "steps": 12207
+        }
+      }
+    }
+  },
+  "predictions": {
+    "C1": true,
+    "C2": null
+  },
+  "flags": [
+    {
+      "run_id": "ST1-dclm-X72-S1-12.8B-lr1e-3",
+      "error": "FileNotFoundError(2, 'No such file or directory')"
+    }
+  ],
+  "deviations": [
+    "Breadth completed before Depth A/B because Depth spec was unavailable; historical ordering deviation preserved."
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}

@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-11-02T14:01:32.367499+00:00",
+  "raw_sha256": "830ed059686f7b10d24b2a0db3d6c5b7c646799bc86818112e20d831e412547a",
+  "job_commit": "a0666c57957bc1016a09a05525ce149c195bff84",
+  "status_lines": [
+    "2026-11-02 04:52:50 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 04:57:59 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:03:08 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:08:19 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:13:30 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:18:39 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:23:48 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:28:58 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:34:06 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:39:15 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:44:24 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:49:33 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:54:42 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 05:59:51 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known"
+  ],
+  "agent_resubmitted": false,
+  "remote_writes_frozen": true
+}

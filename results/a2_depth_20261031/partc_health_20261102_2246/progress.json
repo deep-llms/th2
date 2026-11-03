@@ -1,0 +1,21 @@
+{
+  "phase": "part_c",
+  "active": "X72",
+  "completed": [
+    {
+      "arm": "P300",
+      "attempt": 1,
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/logs/C-P300-attempt001.log",
+      "elapsed_seconds": 48326.02396352496
+    },
+    {
+      "arm": "P1T",
+      "attempt": 1,
+      "returncode": 0,
+      "log": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/logs/C-P1T-attempt001.log",
+      "elapsed_seconds": 48126.84677942004
+    }
+  ],
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe"
+}

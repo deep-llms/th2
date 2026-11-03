@@ -1,0 +1,11 @@
+{
+  "observed_at_utc": "2026-11-02T13:03:18.292941+00:00",
+  "raw_sha256": "1299c9b50135423ae719a78ab34c515c2eb01919428c548c0f4c11c02ee1f357",
+  "job_commit": "a0666c57957bc1016a09a05525ce149c195bff84",
+  "status_lines": [
+    "2026-11-02 04:52:50 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+    "2026-11-02 04:57:59 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known"
+  ],
+  "agent_resubmitted": false,
+  "remote_writes_frozen": true
+}

@@ -1,0 +1,19 @@
+{
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "retrieved_at_utc": "2026-11-02T12:55:31.230572+00:00",
+  "command_commit": "a0666c57957bc1016a09a05525ce149c195bff84",
+  "job": "th2-6y3o-a2-depth-partc-health-20261102-a29",
+  "raw_sha256": "f6087c4f439660259509be707a7e1ba46e1845fa35ae60010b12b5dd11284ba2",
+  "runner_status_line": "2026-11-02 04:52:50 | a0666c5 | th2-6y3o-a2-depth-partc-health-20261102-a29 | #1 +20+a | FAILED(rc=255) | ssh: Could not resolve hostname <host>: nodename nor servname provided, or not known",
+  "classification": "runner SSH hostname resolution failure; not project/training evidence",
+  "remote_writes_frozen": true,
+  "repairs_attempted": false,
+  "training_intervention": false,
+  "current_gpu_ownership_verified": false,
+  "last_verified_health": "2026-11-02T06:32:10.662848+00:00",
+  "last_verified_active": "P1T",
+  "last_verified_step": 35290,
+  "last_verified_total": 48828,
+  "eta": "No refreshed ETA; previous03Nov09\u201312SGT remains tentative and unverified against current state",
+  "next_action": "Read-only status retrieval; wait for operator to resolve infrastructure before remote writes"
+}

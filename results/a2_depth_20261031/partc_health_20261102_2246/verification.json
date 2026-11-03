@@ -1,0 +1,104 @@
+{
+  "health_at": "2026-11-02T14:46:19.731737+00:00",
+  "raw_sha256": "841ee7ad107847c15a671c48adf6b35e50d2550346cd740e6a85f25bd7ea24f8",
+  "command_commit": "a0666c57957bc1016a09a05525ce149c195bff84",
+  "source": "dd55c8ba96eafabfed3de63a94e249da674c4f19",
+  "source_files": 185,
+  "active": "X72",
+  "updates_from_log_epoch": 16480,
+  "total_updates": 48828,
+  "completed_results": [
+    {
+      "run_id": "ST1-dclm-P1T-S1-12.8B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P1T",
+      "block": "S1",
+      "status": "complete",
+      "training_seconds": 47988.5106505109,
+      "elapsed_seconds": 48043.19140966097,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P1T-S1-12.8B-lr1e-3/final",
+      "delta_post": 0.09925913808733622,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-P1T-S1-12.8B-lr1e-3/result.json",
+      "sha256": "931628ddc6240923600bb32db53a13eb90af8fc66d86b085556db5d1e4e8ff9d",
+      "scores": {
+        "final": {
+          "loss": 2.7861681298512706,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 2.7722635448851554,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 2.772909295646984,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 48828
+    },
+    {
+      "run_id": "ST1-dclm-P300-S1-12.8B-lr1e-3",
+      "dataset": "dclm",
+      "arm": "P300",
+      "block": "S1",
+      "status": "complete",
+      "training_seconds": 48187.089545540046,
+      "elapsed_seconds": 48243.072839220054,
+      "roundtrip_difference": 0.0,
+      "checkpoint": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-depth-partc-20261101-a02/results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/final",
+      "delta_post": 0.07886947799630839,
+      "unverified": false,
+      "flags": [],
+      "path": "results/a2_depth_20261031/heals/ST1-dclm-P300-S1-12.8B-lr1e-3/result.json",
+      "sha256": "dea4bfecd1843993977b8d2807ea2dd906b6147779a959f030b1f423a365407f",
+      "scores": {
+        "final": {
+          "loss": 2.816662510208993,
+          "sequences": 2461,
+          "tokens": 10077795
+        },
+        "tuning": {
+          "loss": 2.803552488285597,
+          "sequences": 1024,
+          "tokens": 4193280
+        },
+        "small": {
+          "loss": 2.8046993595899528,
+          "sequences": 256,
+          "tokens": 1048320
+        }
+      },
+      "lr_updates": 48828
+    }
+  ],
+  "worker_checks": 208,
+  "other_checks": 17,
+  "owner": 767788,
+  "coordinator": 767828,
+  "launcher": 778223,
+  "workers": [
+    778232,
+    778233,
+    778234,
+    778235,
+    778236,
+    778237,
+    778238,
+    778239
+  ],
+  "nonfinite_log_flags": {
+    "C-X72-attempt001.log": 0,
+    "C-P1T-attempt001.log": 0,
+    "C-P300-attempt001.log": 0
+  },
+  "checkpoint_member_sizes_match": true,
+  "actual_eight_gpu_resume_verified": false,
+  "independent_saved_array_replay": "pending",
+  "observation_scope": "Historical snapshot02Nov22:46SGT; retrieved03Nov10:36SGT; no current progress/ETA inference"
+}
