@@ -1,0 +1,11 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "recorded_utc": "2026-11-04T09:39:24.760643+00:00",
+  "commit": "3fb4d73",
+  "prefetch": "Permission denied(publickey)",
+  "push": "To github-share:deep-llms/th2.git 5f7e0f2..3fb4d73 main -> main",
+  "remote_head_verification": "Permission denied(publickey)",
+  "remote_writes_frozen": true,
+  "premature_status_corrected": true,
+  "action": "Read-only receipt retrieval; no retry or infrastructure repair"
+}

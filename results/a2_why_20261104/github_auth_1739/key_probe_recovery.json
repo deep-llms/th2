@@ -1,0 +1,70 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "utc": "2026-11-04T11:05:55.448944+00:00",
+  "authority": "User explicitly requested testing keys in .ssh and retrying push",
+  "probes": [
+    {
+      "key": "id_ed25519_share_git",
+      "exit_code": 0,
+      "stdout": "3fb4d7388cce67e6e7d69394bc39f5c52335d2bb\trefs/heads/main",
+      "stderr": ""
+    },
+    {
+      "key": "id_ed25519_github_2",
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "git@github.com: Permission denied (publickey).\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    },
+    {
+      "key": "id_ed25519",
+      "exit_code": 0,
+      "stdout": "3fb4d7388cce67e6e7d69394bc39f5c52335d2bb\trefs/heads/main",
+      "stderr": ""
+    },
+    {
+      "key": "id_ed25519_chien",
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "git@github.com: Permission denied (publickey).\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    },
+    {
+      "key": "id_ed25519_thuat",
+      "error": "timeout15s"
+    },
+    {
+      "key": "id_ed25519_thuat1",
+      "error": "timeout15s"
+    },
+    {
+      "key": "id_rsa",
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "git@github.com: Permission denied (publickey).\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    },
+    {
+      "key": "shared_ec2.pem",
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "git@github.com: Permission denied (publickey).\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    },
+    {
+      "key": "vai",
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "git@github.com: Permission denied (publickey).\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    },
+    {
+      "key": "vai2",
+      "exit_code": 128,
+      "stdout": "",
+      "stderr": "git@github.com: Permission denied (publickey).\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists."
+    }
+  ],
+  "effective_config_identity_files": [
+    "vai",
+    "id_ed25519_share_git"
+  ],
+  "selected_key": "id_ed25519_share_git",
+  "mode": "Per-command -F /dev/null -i selected_key IdentitiesOnly=yes IdentityAgent=none HostName=github.com; global config unchanged",
+  "remote_head": "3fb4d7388cce67e6e7d69394bc39f5c52335d2bb"
+}

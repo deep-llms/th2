@@ -1,0 +1,199 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "snapshot_utc": "2026-11-04T09:39:24.592494+00:00",
+  "retrieved_utc": "2026-11-04T10:07:43.353897+00:00",
+  "raw_sha256": "b1bb544e85ef6a55a0c8167cdbb24ea1d94d7e9be16d1e948ed344a7f60d9f6f",
+  "raw_archive": "artifacts/a2_why_health_20261104_1739.log.gz",
+  "raw_archive_sha256": "d7af54a96e26b3252271f167732fc922eb78cea0f8b16af5c2c56b6c0688b80e",
+  "completed": [
+    {
+      "run_id": "Y1-dclm-P300-S1-0.2B-seed2031",
+      "final_nll": 2.9389427990745975,
+      "delta_post": 0.2011497668619131,
+      "roundtrip": 0.0,
+      "flags": [],
+      "result_lock": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/result.json",
+        "sha256": "0b3b42f304040d2e5b619fac32eba2983e0090d630397e38648389c9d90a7ffe"
+      }
+    },
+    {
+      "run_id": "YT1-ST1-dclm-P300-S1-0.2B-lr1e-3",
+      "final_nll": 2.942522101748737,
+      "delta_post": 0.2047290695360524,
+      "roundtrip": 0.0,
+      "flags": [],
+      "result_lock": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+        "sha256": "49e924c6e444930870cbb320938864305ef8cd34b0e32651d8ed199124b7df56"
+      }
+    }
+  ],
+  "active": "Y1-dclm-P1T-S1-0.2B-seed2031",
+  "active_updates": 480,
+  "total_updates": 762,
+  "live_identities": {
+    "30814": {
+      "pid": 30814,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30815": {
+      "pid": 30815,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30816": {
+      "pid": 30816,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30817": {
+      "pid": 30817,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30818": {
+      "pid": 30818,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30819": {
+      "pid": 30819,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30820": {
+      "pid": 30820,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30821": {
+      "pid": 30821,
+      "ppid": 30745,
+      "start_ticks": 367720866,
+      "command_sha256": "64dde74b6985579ce2b9319f766bc84953aeb08cf25b4bf114ec324593c3c90e",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30745": {
+      "pid": 30745,
+      "ppid": 30191,
+      "start_ticks": 367720095,
+      "command_sha256": "1dddfb262654565152ff0db676c875bbd08264adf208c9bd9ffa22c892927517",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30191": {
+      "pid": 30191,
+      "ppid": 30150,
+      "start_ticks": 367633354,
+      "command_sha256": "3f285697dd64c22cd303ddd401ad99b4a046033790013dabd3d45c415f253a57",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "30150": {
+      "pid": 30150,
+      "ppid": 17115,
+      "start_ticks": 367627214,
+      "command_sha256": "d30b9b4d10a48bba7f3a1c770d77c81455ee29a77a1d94288a2dddd5e71be592",
+      "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "command_prefix": [
+        "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "-u",
+        "-m"
+      ],
+      "launcher_kind": null
+    },
+    "17115": {
+      "pid": 17115,
+      "ppid": 1,
+      "start_ticks": 359165444,
+      "command_sha256": "a4a2d7892752f60c5cd62acfc2be19d804bcd8726ed0bd755452dc326fe4e89a",
+      "exe": "/usr/bin/tmux",
+      "command_prefix": [
+        "tmux",
+        "new-session",
+        "-d"
+      ],
+      "launcher_kind": null
+    }
+  },
+  "why_source_unchanged": true,
+  "depth_source_unchanged": true,
+  "fwe_actual_files": 0,
+  "github_readonly_check": "git ls-remote origin refs/heads/main exited128 Permission denied(publickey)",
+  "remote_writes_frozen": true,
+  "pending_receipt": false
+}

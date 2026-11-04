@@ -1,0 +1,26 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "checked_utc": "2026-11-04T10:58:58.159004+00:00",
+  "github_readonly_command": "git ls-remote origin refs/heads/main",
+  "exit_code": 128,
+  "error": "Permission denied(publickey)",
+  "controller_sha256": "7b3f951bbfb1c7d96902b52ecc1a5dec40281209e6110b0af7d8fc03ea1eb0b1",
+  "new_dropbox_entries": [],
+  "last_verified_gpu_snapshot_utc": "2026-11-04T09:39:24.592494+00:00",
+  "remote_writes_frozen": true,
+  "pending_receipt": false,
+  "watcher": {
+    "pid": 1730807,
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "tick": 57,
+    "status": "waiting",
+    "next_utc": "2026-11-04T11:06:38.881873+00:00",
+    "until": null,
+    "time_policy": "/disk/thuat/efficient_llm/resources/a2_stage1b_time_policy_20261030.json",
+    "time_policy_sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  },
+  "action": "Wait for operator auth recovery; no remote writes/relaunch/repair, keep existing watcher",
+  "controller_status_path": "temp/a2_why_status1858.log",
+  "listing_path": "temp/a2_why_list1858.jsonl",
+  "reason": "User status query; read-only checks, no remote mutations"
+}
