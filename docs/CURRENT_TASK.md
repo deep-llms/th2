@@ -1,3 +1,7 @@
+2026-11-04T05:38:18.020112+00:00: Why inventorya01 6fbfacc ACK/snapshot13:36SGT: no44FWErawshards/noFWEshuffle; bothFWEparents+code existin_backup,notrestored. Disk25TBfree; pausehelper waiting>23000/ownershipunchanged. No pendingreceipt. Reacquire exacthistorical44shardprefix via controller#d, restorehashverifiedparents, reconstructexact30Bpool+2030 then2031/2032. DCLMreusedunchanged.
+
+2026-11-04T05:36:17.368382+00:00: Why inputinventorya01 6fbfaccb1f722784aafdab3d97cf367ac9ae9409 SUBMITTED/remoteheadverified; retrievebeforewrites. Pausehelper waiting nextstate>23000; no duplicate.
+
 2026-11-04T05:35:57.208690+00:00: Why pausea01 4e828a16 ACK/retrieved; helper25039 ACTIVE waiting next saved state after23000; ownership exactverified, no signal yet atlaunchsnapshot. No pendingreceipt. Prepare Why inputs/code while nextsavewait; inspectpause/nativehandoff before any GPU launch.
 
 2026-11-04T05:33:27.284903+00:00: Why pausea01 4e828a164e9c24c32cb84e46d6b9605f1f3d0f67 SUBMITTED/remoteheadverified. Retrieve receipt BEFORE remote writes/no duplicate. Exact native supervisor17138 cancellation only after next complete independently copied+hashed P300state; pause/helper startup notyet verified. Why preparation local ongoing; oldDepthETA superseded by authorized Whypriority (~16–30nodeh after data/admission, reportonly). Samewatch1730807 prompt updated/no newwatch. Remainingpause/handoff/WhyYT1+Y1/Y2/Y3/report thenDepthresume/P1T/downstream/final; priorflags retained.
