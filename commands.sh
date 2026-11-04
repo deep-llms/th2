@@ -1,34 +1,46 @@
-#1 +20+a
-#th2-wc69-a2-why-fwe-empty-reset-20261104-a01
-set -euo pipefail
-cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES=''
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PYREMOTE'
-import os,json,socket
-from pathlib import Path
-from datetime import datetime,timezone
-assert socket.gethostname()=='thiennh-p6-wc69-worker-0'
-raw=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu')
-assert not raw.is_symlink() and raw.resolve()==raw and raw.is_dir()
-expected={raw/f'{i:05d}.parquet' for i in range(44)}
-assert set(raw.iterdir())==expected
-for p in expected:assert p.is_dir() and not p.is_symlink() and not list(p.iterdir()),str(p)
-open_fds=[];downloads=[]
-for p in Path('/proc').iterdir():
- if not p.name.isdigit() or int(p.name)==os.getpid():continue
- try:
-  args=(p/'cmdline').read_bytes().decode(errors='replace').split('\0');words=[Path(a).name for a in args[:3]]
-  if any(x in words for x in ['hf','huggingface-cli','wget','curl','aria2c','rsync','scp','rclone','aws','s5cmd']):downloads.append(int(p.name))
-  for fd in (p/'fd').iterdir():
-   try:target=os.readlink(fd)
-   except FileNotFoundError:continue
-   if target==str(raw) or target.startswith(str(raw)+'/'):open_fds.append(dict(pid=int(p.name),path=target))
- except (FileNotFoundError,ProcessLookupError):continue
-assert not downloads,downloads
-assert not open_fds,open_fds
-# rmdir refuses any unexpected new content; never recursively remove files.
-for p in sorted(expected):p.rmdir()
-raw.rmdir();raw.mkdir()
-assert not list(raw.iterdir())
-print('FWE_EMPTY_RESET_JSON',json.dumps(dict(utc=datetime.now(timezone.utc).isoformat(),path=str(raw),removed_empty_directories=45,deleted_files=0,recreated_empty_root=True,signals_sent=0,authority='user authorized stop old downloader, delete raw download folder and retry; controller none, no downloader found')),flush=True)
-PYREMOTE
+#d +a
+#datasets
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/000_00007.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00000.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/002_00002.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00001.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/001_00004.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00002.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/011_00000.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00003.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/011_00007.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00004.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/000_00008.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00005.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/000_00000.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00006.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/010_00008.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00007.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/012_00000.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00008.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00004.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00009.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/004_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00010.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00005.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00011.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/006_00006.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00012.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00009.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00013.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00008.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00014.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/005_00002.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00015.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/011_00002.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00016.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00017.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/003_00004.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00018.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/003_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00019.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/007_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00020.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/008_00002.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00021.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/006_00004.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00022.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/005_00005.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00023.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/006_00002.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00024.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/008_00005.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00025.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00004.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00026.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/002_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00027.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/008_00000.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00028.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/001_00006.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00029.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00009.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00030.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/010_00006.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00031.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00003.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00032.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/011_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00033.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/001_00007.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00034.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/001_00000.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00035.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/000_00005.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00036.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/009_00001.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00037.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/007_00004.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00038.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/013_00007.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00039.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/007_00005.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00040.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/012_00008.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00041.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/010_00000.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00042.parquet
+--url https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu/resolve/87f09149ef4734204d70ed1d046ddc9ca3f2b8f9/sample/100BT/004_00003.parquet /mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu/00043.parquet
