@@ -25,6 +25,34 @@ class WhyOrchestrationTests(unittest.TestCase):
             self.assertTrue(all(x['removed']==list(range(10,22)) and x['dataset']=='dclm' and x['budget']=='3.2B' for x in seen[-2:]))
             self.assertTrue(read(Path(d)/'terminal.json')['coverage_complete'])
 
+    def test_dclm_stage_then_rest_reuses_without_duplicate_fits(self):
+        from scripts.a2_why_run import reuse_run
+        from scripts.a2_quant_io import lock
+        from efficient_llm.a2_why.protocol import base_runs
+        with tempfile.TemporaryDirectory() as d:
+            base=Path(d);old=base/'old';partial=base/'partial';rest=base/'rest'
+            partial.mkdir();rest.mkdir();yt1=base_runs()[0]
+            src=old/'heals'/yt1['run_id'];write(src/'result.json',dict(registered_run=yt1,status='complete'))
+            source=dict(root=str(src),result=lock(src/'result.json'))
+            seen=[]
+            def run(cfg,item,events):
+                seen.append(item['run_id'])
+                p=Path(cfg['results_root'])/'heals'/item['run_id']/'result.json'
+                write(p,dict(registered_run=item,status='complete'))
+                events.append(dict(run_id=item['run_id'],returncode=0,result=lock(p)))
+            cfg=dict(results_root=str(partial),reused_yt1=source)
+            with patch('scripts.a2_why_run.run_one',side_effect=run):execute(cfg,'y1-dclm',str(partial/'terminal.json'))
+            expected=[x for x in base_runs() if x['phase']=='Y1' and x['dataset']=='dclm']
+            self.assertEqual(seen,[x['run_id'] for x in expected]);self.assertFalse((partial/'Y1_NOTE.md').exists())
+            reused={x['run_id']:dict(root=str(partial/'heals'/x['run_id']),result=lock(partial/'heals'/x['run_id']/'result.json')) for x in expected}
+            cfg=dict(results_root=str(rest),reused_yt1=source,reused_y1=reused);seen.clear()
+            with patch('scripts.a2_why_run.run_one',side_effect=run),patch('scripts.a2_why_run.part1',return_value={'tau':.003}),patch('scripts.a2_why_run.part2',return_value={}),patch('scripts.a2_why_run.part3',return_value={'extensions':{}}),patch('scripts.a2_why_run.final',return_value={'coverage_complete':True}):execute(cfg,'rest',str(rest/'terminal.json'))
+            self.assertEqual(len(seen),36)
+            self.assertFalse(set(reused)&set(seen));self.assertNotIn(yt1['run_id'],seen)
+            # Corrupt identity, while keeping a valid content lock, must not be reused.
+            bad=base/'bad';write(bad/'result.json',dict(registered_run=yt1,status='incomplete'))
+            with self.assertRaises(ValueError):reuse_run(dict(results_root=str(base/'reject')),yt1,dict(root=str(bad),result=lock(bad/'result.json')),[])
+
     def test_missing_results_are_unverified_not_pass(self):
         with tempfile.TemporaryDirectory() as d:
             ref={ds:{b:dict(E=.02,P300_delta=.2) for b in ('0.2B','0.8B')} for ds in ('dclm','fwe')}

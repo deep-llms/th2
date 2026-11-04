@@ -19,7 +19,7 @@ from run_experiments import load_jobs
 def main():
     p=argparse.ArgumentParser()
     for name in ('plan','output','session','code-commit'):p.add_argument('--'+name,required=True)
-    p.add_argument('--stage',choices=('yt1','rest'),required=True);a=p.parse_args()
+    p.add_argument('--stage',choices=('yt1','y1-dclm','rest'),required=True);a=p.parse_args()
     source=Path(__file__).resolve().parents[1];cfg=read(a.plan);out=Path(a.output)
     if socket.gethostname()!='thiennh-p6-wc69-worker-0' or out.exists():raise ValueError('Wrong node or existing root')
     for session in (a.session,a.session+'_burn'):
@@ -37,11 +37,15 @@ def main():
     checks.attempt('assets',lambda:read_locked(cfg['assets']))
     checks.attempt('data_manifest',lambda:read_locked(cfg['data_manifest']))
     for key,item in cfg['reference_nll'].items():
-        if a.stage=='rest' or key.startswith('dclm/P300/'):
+        if a.stage=='rest' or key.startswith('dclm/' if a.stage=='y1-dclm' else 'dclm/P300/'):
             checks.attempt('reference:'+key,lambda item=item:read_locked(item))
     if a.stage=='rest':
         data=read_locked(cfg['why_data']);cfg['heal_streams']=data['streams']
         checks.record('Why_data_complete',data['status']=='complete',cfg['why_data'])
+    if a.stage=='y1-dclm':
+        data=read_locked(cfg['why_dclm_data'])
+        if data['status']!='complete':raise ValueError('DCLM streams incomplete')
+        cfg['heal_streams']['dclm'].update(data['streams'])
     for ds,streams in cfg['heal_streams'].items():
         for seed,item in streams.items():
             def verify(item=item):

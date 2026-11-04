@@ -1,8 +1,8 @@
 {
   "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
-  "utc": "2026-11-04T05:52:00.612570+00:00",
+  "utc": "2026-11-04T09:13:29.114683+00:00",
   "status": "PASS",
-  "tests": 10,
+  "tests": 11,
   "scope": "CPU formula/norm/registered matrix/decision/extension order/missing and nonfinite reporting/exact prefix/pause copy+ownership/independent replay corruption rejection. No actual GPU fit or resume claim.",
   "files": {
     "efficient_llm/a2_why/__init__.py": "650facd322a871d0d1a3ba50aa2629bd3fbfc6e9733f221fcceb2bd02f35f9d2",
@@ -11,20 +11,21 @@
     "efficient_llm/a2_why/merge.py": "811b3ffc04bdd95ae5c2e7271efa9b558d4f16023a88308e04561c88f24ad0e1",
     "efficient_llm/a2_why/protocol.py": "8a4790948ec1257c7d83707c716cf056274a94ed6a7882db2226e29ef48a4e8e",
     "scripts/a2_why_pause_depth.py": "3e9534b4b0055e4ba64de98f20d6c5e1051ec05ba0864eba5737246655066ce4",
-    "scripts/a2_why_plan.py": "d45359b640e6e148e32178d5402166a3e0e779da8369e4f073f21b10f756f2d5",
+    "scripts/a2_why_plan.py": "ec3d4491e8b948718ca28d945db0d220ed1f46e4bb2459dad0c2fdad13763d81",
     "scripts/a2_why_prepare.py": "9e7ccfd38364265481e53b7c682efd0262ff2a6df7b07988ed83cdf708c47148",
     "scripts/a2_why_replay.py": "34aade6c29fef29a457ca29830272c68d0ea653cc36f4017910a28156e7ef678",
     "scripts/a2_why_report.py": "b05d989ad91dd8fd8fde8523736a391cd52bd71ffdb5f70b40035828406fd070",
-    "scripts/a2_why_run.py": "8ccdc2b16cb55c2b63893b85cdf0fdf543fdc5e2eb08afc2349e69fc5554ea58",
+    "scripts/a2_why_run.py": "3a5936c0444afad193c34b67867895661fcdd9f502d0cffe29019a26470d923c",
     "scripts/a2_why_streams.py": "f1fab19a57acb402f6db9a9c62ecb0dd5dc16cf1f9af547886c3b3d7a8f15b5f",
-    "scripts/launch_a2_why.py": "63aa7ce966bb412677d7391ebf66dc0fe25271224b0b873d5869a47df6b6edbe"
+    "scripts/launch_a2_why.py": "9192ca74fd4e43f63a9a4e5fc10a7044dcc8dadad02bda2a349147f15c813993"
   },
-  "test_log": "test_missing_results_are_unverified_not_pass (test_why_orchestration.WhyOrchestrationTests.test_missing_results_are_unverified_not_pass) ... WHY_NOTE Y1: sigma=None; tau=None; sample std ddof=1; coverage=False; unverified=True.\nWHY_NOTE Y2: rdsc: unverified, unverified=True; avg: unverified, unverified=True\nok\ntest_nonfinite_retained_without_json_abort (test_why_orchestration.WhyOrchestrationTests.test_nonfinite_retained_without_json_abort) ... ok\ntest_order_extensions_and_terminal (test_why_orchestration.WhyOrchestrationTests.test_order_extensions_and_terminal) ... ok\ntest_saved_results_noise_uses_historical_seed_and_new_pairs (test_why_orchestration.WhyOrchestrationTests.test_saved_results_noise_uses_historical_seed_and_new_pairs) ... WHY_NOTE Y1: sigma=0.010000000000000004; tau=0.020000000000000007; sample std ddof=1; coverage=True; unverified=False.\nok\ntest_copy_is_independent_and_detects_member_mismatch (test_why_pause.PauseTests.test_copy_is_independent_and_detects_member_mismatch) ... ok\ntest_owner_checks_full_identity (test_why_pause.PauseTests.test_owner_checks_full_identity) ... ok\ntest_matrix_and_boundaries (test_why_protocol.WhyTests.test_matrix_and_boundaries) ... ok\ntest_merges_preserve_norms_and_unrelated_layers (test_why_protocol.WhyTests.test_merges_preserve_norms_and_unrelated_layers) ... ok\ntest_prefix_matches_full_stream (test_why_protocol.WhyTests.test_prefix_matches_full_stream) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.102s\n\nOK\n\ntest_independent_replay_rejects_corrupt_sample_order (test_why_replay.ReplayTests.test_independent_replay_rejects_corrupt_sample_order) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.224s\n\nOK\n",
+  "test_log": "test_dclm_stage_then_rest_reuses_without_duplicate_fits (test_why_orchestration.WhyOrchestrationTests.test_dclm_stage_then_rest_reuses_without_duplicate_fits) ... ok\ntest_missing_results_are_unverified_not_pass (test_why_orchestration.WhyOrchestrationTests.test_missing_results_are_unverified_not_pass) ... WHY_NOTE Y1: sigma=None; tau=None; sample std ddof=1; coverage=False; unverified=True.\nWHY_NOTE Y2: rdsc: unverified, unverified=True; avg: unverified, unverified=True\nok\ntest_nonfinite_retained_without_json_abort (test_why_orchestration.WhyOrchestrationTests.test_nonfinite_retained_without_json_abort) ... ok\ntest_order_extensions_and_terminal (test_why_orchestration.WhyOrchestrationTests.test_order_extensions_and_terminal) ... ok\ntest_saved_results_noise_uses_historical_seed_and_new_pairs (test_why_orchestration.WhyOrchestrationTests.test_saved_results_noise_uses_historical_seed_and_new_pairs) ... WHY_NOTE Y1: sigma=0.010000000000000004; tau=0.020000000000000007; sample std ddof=1; coverage=True; unverified=False.\nok\ntest_copy_is_independent_and_detects_member_mismatch (test_why_pause.PauseTests.test_copy_is_independent_and_detects_member_mismatch) ... ok\ntest_owner_checks_full_identity (test_why_pause.PauseTests.test_owner_checks_full_identity) ... ok\ntest_matrix_and_boundaries (test_why_protocol.WhyTests.test_matrix_and_boundaries) ... ok\ntest_merges_preserve_norms_and_unrelated_layers (test_why_protocol.WhyTests.test_merges_preserve_norms_and_unrelated_layers) ... ok\ntest_prefix_matches_full_stream (test_why_protocol.WhyTests.test_prefix_matches_full_stream) ... ok\ntest_independent_replay_rejects_corrupt_sample_order (test_why_replay.ReplayTests.test_independent_replay_rejects_corrupt_sample_order) ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 0.324s\n\nOK\n",
   "history": [
     "Default dev python lacks torch; switched to installed train_env for CPU fixtures",
-    "First independent test oracle used sum(all4)-2receiver; corrected oracle to sum(all4)-3receiver; implementation matches preregistered receiver+sum(other-receiver) unchanged"
+    "First independent test oracle used sum(all4)-2receiver; corrected oracle to sum(all4)-3receiver; implementation matches preregistered receiver+sum(other-receiver) unchanged",
+    "After YT1 PASS, staged Y1 DCLM while all44FWEraw files absent; 11 CPU tests include exact reuse and no duplicate registered fits; native ownership unchanged."
   ],
   "gpu_tests": false,
-  "production_integration": "pending YT1",
+  "production_integration": "YT1 complete762/104checksPASS/NLL2.942522101748737; new staging CPU validated",
   "full_pipeline_launched": false
 }

@@ -39,6 +39,23 @@ def run_one(cfg,item,events):
     return event
 
 
+def reuse_run(cfg,item,source,events):
+    """Import a completed registered fit; never schedule it again in this stage."""
+    import shutil
+    from scripts.a2_remaining import read_locked
+    r=read_locked(source['result']);src=Path(source['root'])
+    if Path(source['result']['path'])!=src/'result.json' or r['registered_run']!=item or r['status']!='complete' or r['spec_sha256']!=SPEC_SHA:
+        raise ValueError('Reuse identity differs from registered completed fit')
+    for entry in source.get('artifacts',[]):read_locked(entry)
+    root=Path(cfg['results_root']);dst=root/'heals'/item['run_id'];dst.mkdir(parents=True,exist_ok=False)
+    for p in src.glob('*.json'):shutil.copyfile(p,dst/p.name)
+    perseq=src.parents[1]/'perseq'/item['run_id']
+    if perseq.exists():shutil.copytree(perseq,root/'perseq'/item['run_id'])
+    event=dict(run_id=item['run_id'],returncode=0,result=source['result'],seconds=r.get('elapsed_seconds',0),reused=True,spec_sha256=SPEC_SHA)
+    events.append(event)
+    with (root/'runs.jsonl').open('a') as f:f.write(json.dumps(event)+'\n')
+
+
 def execute(cfg,stage,receipt):
     root=Path(cfg['results_root']);checks=Checks(root/'coordinator_checks.json');events=[]
     runs=base_runs()
@@ -47,21 +64,21 @@ def execute(cfg,stage,receipt):
         write(receipt,dict(execution_complete=True,events=events,coverage_complete=events[0]['returncode']==0,next='Y1 after exact data preparation; native burn handoff'))
         return
     if cfg.get('reused_yt1'):
-        from scripts.a2_remaining import read_locked
-        r=read_locked(cfg['reused_yt1']['result'])
-        checks.record('YT1_reused_once',r['registered_run']==runs[0],cfg['reused_yt1'])
-        import shutil
-        src=Path(cfg['reused_yt1']['root']);dst=root/'heals'/runs[0]['run_id'];dst.mkdir(parents=True)
-        # Only result/audit files; final model stays in the original YT1 root.
-        for p in src.glob('*.json'):shutil.copyfile(p,dst/p.name)
-        perseq=src.parents[1]/'perseq'/runs[0]['run_id']
-        if perseq.exists():shutil.copytree(perseq,root/'perseq'/runs[0]['run_id'])
-        event=dict(run_id=runs[0]['run_id'],returncode=0,result=cfg['reused_yt1']['result'],seconds=r.get('elapsed_seconds',0),reused=True,spec_sha256=SPEC_SHA)
-        events.append(event)
-        with (root/'runs.jsonl').open('a') as f:f.write(json.dumps(event)+'\n')
-    else:run_one(cfg,runs[0],events)
+        reuse_run(cfg, runs[0], cfg['reused_yt1'], events)
+    else:
+        if stage=='y1-dclm':raise ValueError('Completed YT1 required before staged Y1')
+        run_one(cfg,runs[0],events)
+    reused=cfg.get('reused_y1',{})
+    allowed={x['run_id']:x for x in runs if x['phase']=='Y1'}
+    if set(reused)-set(allowed):raise ValueError('Unregistered Y1 reuse')
+    for name,source in reused.items():reuse_run(cfg,allowed[name],source,events)
     for item in runs:
-        if item['phase']=='Y1':run_one(cfg,item,events)
+        if item['phase']=='Y1' and item['run_id'] not in reused:
+            if stage!='y1-dclm' or item['dataset']=='dclm':run_one(cfg,item,events)
+    if stage=='y1-dclm':
+        write(receipt,dict(execution_complete=True,coverage_complete=all(e['returncode']==0 for e in events),
+            events=events,next='Reuse completed DCLM Y1; run FWE Y1 when inputs verified, then sigma/tau and Y2/Y3'))
+        return
     n=part1(cfg)
     for item in runs:
         if item['phase']=='Y2':run_one(cfg,item,events)
@@ -83,5 +100,5 @@ def execute(cfg,stage,receipt):
     write(receipt,dict(execution_complete=True,coverage_complete=bool(decision and decision['coverage_complete']),readout_complete=decision is not None,events=events))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--receipt',required=True);p.add_argument('--stage',choices=('yt1','rest'),required=True)
+    p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--receipt',required=True);p.add_argument('--stage',choices=('yt1','y1-dclm','rest'),required=True)
     a=p.parse_args();execute(read(a.config),a.stage,a.receipt)

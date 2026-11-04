@@ -28,11 +28,14 @@ def build(status,predecessor_root,stage,*,data_lock=None,yt1=None):
         pause=status['files'][PAUSE]
         if str(root)!=DEPTH or not pause['handoff_verified'] or pause['state']!='paused':raise ValueError('Depth pause not verified')
         cfg['depth_pause']=status['locks'][PAUSE]
+    elif stage=='y1-dclm':
+        if not data_lock or not yt1:raise ValueError('Need complete DCLM streams and YT1')
+        cfg.update(why_dclm_data=data_lock,reused_yt1=yt1,ordering_note='DCLM Y1 first while FWE download unavailable; complete all Y1 before Y2')
     else:
         if not data_lock or not yt1:raise ValueError('Need verified completed data and reused YT1')
         cfg.update(why_data=data_lock,reused_yt1=yt1)
     return cfg
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--status',required=True);p.add_argument('--predecessor-root',required=True);p.add_argument('--stage',choices=('yt1','rest'),required=True);p.add_argument('--output',required=True);p.add_argument('--data-lock');p.add_argument('--yt1')
+    p=argparse.ArgumentParser();p.add_argument('--status',required=True);p.add_argument('--predecessor-root',required=True);p.add_argument('--stage',choices=('yt1','y1-dclm','rest'),required=True);p.add_argument('--output',required=True);p.add_argument('--data-lock');p.add_argument('--yt1')
     a=p.parse_args();write(a.output,build(read(a.status),a.predecessor_root,a.stage,data_lock=read(a.data_lock) if a.data_lock else None,yt1=read(a.yt1) if a.yt1 else None))

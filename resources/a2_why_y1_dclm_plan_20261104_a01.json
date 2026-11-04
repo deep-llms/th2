@@ -1,0 +1,460 @@
+{
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "reference_nll": {
+    "dclm/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+      "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b"
+    },
+    "dclm/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+      "sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db"
+    },
+    "dclm/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+      "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c"
+    },
+    "dclm/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60"
+    },
+    "fwe/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+      "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489"
+    },
+    "fwe/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039"
+    },
+    "fwe/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+      "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5"
+    },
+    "fwe/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a"
+    }
+  },
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "historical": {
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+    "datasets": {
+      "dclm": {
+        "0.2B": {
+          "E": 0.021096293347514283,
+          "E_relative": 0.10302884126700326,
+          "A_init": 0.07272470370653528,
+          "A_init_relative": 0.35516864649842933,
+          "P300_delta": 0.2047610464029428,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+              "val_post": 2.9425540786156272,
+              "val_parent": 2.7377930322126844,
+              "delta_post": 0.2047610464029428,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "P1T": {
+              "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-3",
+              "val_post": 2.9127663315143915,
+              "val_parent": 2.6869089917639344,
+              "delta_post": 0.22585733975045708,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "X72": {
+              "run_id": "ST1-dclm-X72-S1-0.2B-lr1e-3",
+              "val_post": 3.0152787823221625,
+              "val_parent": 2.90857529610787,
+              "delta_post": 0.10670348621429238,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            }
+          }
+        },
+        "0.8B": {
+          "E": 0.02078642256362606,
+          "E_relative": 0.14645757338084062,
+          "A_init": 0.038910028863575974,
+          "A_init_relative": 0.27415339941707156,
+          "P300_delta": 0.14192794598319702,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-dclm-P300-S1-0.8B-lr1e-3",
+              "val_post": 2.8797209781958815,
+              "val_parent": 2.7377930322126844,
+              "delta_post": 0.14192794598319702,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "P1T": {
+              "run_id": "ST1-dclm-P1T-S1-0.8B-lr1e-3",
+              "val_post": 2.8496233603107575,
+              "val_parent": 2.6869089917639344,
+              "delta_post": 0.16271436854682308,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "X72": {
+              "run_id": "ST1-dclm-X72-S1-0.8B-lr1e-3",
+              "val_post": 2.9186310070594574,
+              "val_parent": 2.90857529610787,
+              "delta_post": 0.010055710951587304,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            }
+          }
+        },
+        "3.2B": {
+          "E": 0.021670884569823023,
+          "E_relative": 0.21225514007603818,
+          "A_init": 0.01211313187395735,
+          "A_init_relative": 0.11864188074014263,
+          "P300_delta": 0.10209827927870041,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+              "val_post": 2.839891311491385,
+              "val_parent": 2.7377930322126844,
+              "delta_post": 0.10209827927870041,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "P1T": {
+              "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+              "val_post": 2.810678155612458,
+              "val_parent": 2.6869089917639344,
+              "delta_post": 0.12376916384852343,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "X72": {
+              "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+              "val_post": 2.852004443365342,
+              "val_parent": 2.90857529610787,
+              "delta_post": -0.05657085274252793,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            }
+          }
+        }
+      },
+      "fwe": {
+        "0.2B": {
+          "E": 0.026224221566386152,
+          "E_relative": 0.1339870997016109,
+          "A_init": 0.07847837360805077,
+          "A_init_relative": 0.4009686099708777,
+          "P300_delta": 0.19572198834654575,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-3",
+              "val_post": 3.0563533142033608,
+              "val_parent": 2.860631325856815,
+              "delta_post": 0.19572198834654575,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "P1T": {
+              "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-3",
+              "val_post": 3.030653543514748,
+              "val_parent": 2.808707333601816,
+              "delta_post": 0.2219462099129319,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "X72": {
+              "run_id": "ST1-fwe-X72-S1-0.2B-lr1e-3",
+              "val_post": 3.1348316878114115,
+              "val_parent": 3.042152001946299,
+              "delta_post": 0.09267968586511266,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            }
+          }
+        },
+        "0.8B": {
+          "E": 0.02281977941126856,
+          "E_relative": 0.16722075074669332,
+          "A_init": 0.04245379935293281,
+          "A_init_relative": 0.3110966180655233,
+          "P300_delta": 0.1364649979704735,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-fwe-P300-S1-0.8B-lr1e-3",
+              "val_post": 2.9970963238272885,
+              "val_parent": 2.860631325856815,
+              "delta_post": 0.1364649979704735,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "P1T": {
+              "run_id": "ST1-fwe-P1T-S1-0.8B-lr1e-3",
+              "val_post": 2.967992110983558,
+              "val_parent": 2.808707333601816,
+              "delta_post": 0.15928477738174207,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "X72": {
+              "run_id": "ST1-fwe-X72-S1-0.8B-lr1e-3",
+              "val_post": 3.0395501231802213,
+              "val_parent": 3.042152001946299,
+              "delta_post": -0.0026018787660775367,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            }
+          }
+        },
+        "3.2B": {
+          "E": 0.023461150403907727,
+          "E_relative": 0.2464897808821935,
+          "A_init": 0.01299365118963669,
+          "A_init_relative": 0.1365151401126407,
+          "P300_delta": 0.09518102665327399,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-fwe-P300-S1-3.2B-lr1e-3",
+              "val_post": 2.955812352510089,
+              "val_parent": 2.860631325856815,
+              "delta_post": 0.09518102665327399,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "P1T": {
+              "run_id": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+              "val_post": 2.9273495106589977,
+              "val_parent": 2.808707333601816,
+              "delta_post": 0.11864217705718172,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "X72": {
+              "run_id": "ST1-fwe-X72-S1-3.2B-lr1e-3",
+              "val_post": 2.9688060036997257,
+              "val_parent": 3.042152001946299,
+              "delta_post": -0.07334599824657317,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            }
+          }
+        }
+      }
+    },
+    "source_locks": {
+      "dclm": {
+        "local_evidence": "docs/results/a2_stage1_20261029/final/runs_summary.json",
+        "sha256": "4b2ba8bade459591be0d990b187f276fd7f653951cdbc455bfc55941e887994f"
+      },
+      "fwe": {
+        "local_evidence": "temp/a2_stage1b_part2_health15/supervised/run/results/a2_stage1_fwe/runs.json",
+        "sha256": "1df43ebc87e9ce840cbd0da489b490ee4fe7d456549f2b4b16ff8ccf1300b897"
+      }
+    }
+  },
+  "heal_streams": {
+    "dclm": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103",
+        "sha256": "5ddfb10ac309886eae0ae0e43024b93350bb022bc93c8ad095bb91cd638178f0"
+      }
+    }
+  },
+  "stage": "y1-dclm",
+  "scientific_policy": "flag+continue; no cap",
+  "predecessor": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01",
+    "burn_script": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/source/resources/llm_pretrain_burn.py",
+    "prior_status": "ok",
+    "supervisor": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/supervised/supervisor.json",
+      "sha256": "07ba563dc999e89086ee839ff4d668122ba26987397ad5405fb45e1692a70689"
+    },
+    "burn": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/supervised/burn-verified.json",
+      "sha256": "15966016468136fe8c345b1690268e8e162386d503f924d72bed95433b2266db"
+    },
+    "source_manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/source-manifest.json",
+      "sha256": "24956d8def5dc41a0edbb0668fb7d711cb1fcd6154a117aaf4d25ea4da453c0c"
+    },
+    "known_burn_identities": {
+      "28974": {
+        "pid": 28974,
+        "ppid": 17115,
+        "start_ticks": 367409553,
+        "command_sha256": "0baf8fabc32ec06c6f0101aa9eb211c037f92fd6547a3d475ed73ac38be66aeb",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      },
+      "29049": {
+        "pid": 29049,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29050": {
+        "pid": 29050,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29043": {
+        "pid": 29043,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29046": {
+        "pid": 29046,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29045": {
+        "pid": 29045,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29044": {
+        "pid": 29044,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29047": {
+        "pid": 29047,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "29048": {
+        "pid": 29048,
+        "ppid": 28974,
+        "start_ticks": 367409670,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      }
+    }
+  },
+  "why_dclm_data": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01/dclm_ready.json",
+    "sha256": "4636681c298703a9aaf8c049e4ceff3248f94491fe8ed0f9c08d42b2d5b12afc"
+  },
+  "reused_yt1": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3",
+    "result": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+      "sha256": "49e924c6e444930870cbb320938864305ef8cd34b0e32651d8ed199124b7df56"
+    },
+    "artifacts": [
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank0.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank1.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank2.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank3.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank4.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank5.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank6.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank7.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      }
+    ]
+  },
+  "ordering_note": "DCLM Y1 first while FWE download unavailable; complete all Y1 before Y2"
+}
