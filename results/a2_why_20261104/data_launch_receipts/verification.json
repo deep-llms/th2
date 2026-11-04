@@ -1,0 +1,17 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "retrieved_utc": "2026-11-04T08:08:14.994041+00:00",
+  "commit": "3f82ca9362fa3767da2ad514dc9b6953bd8d2899",
+  "files": {
+    "a2_why_data_status_1607.log": "073557c7367f833f2ac12f5c870872326e67a29058a3375ce23830adf3408a2e",
+    "a2_why_data_receipt_first_1607.log": "9aa793271cd79dd072d116fd593e5ee440537237138bc9481024ef11fc8b367f",
+    "a2_why_data_receipt_retry_1607.log": "16b9f46e759b5fcfc0695e5bf2097dc3db7a036e1dd52c0a90e196eee31996b5"
+  },
+  "first_launch_observed_utc": "2026-11-04T05:42:03.957394+00:00",
+  "controller_broken_pipe_retained": true,
+  "controller_retry_ack": true,
+  "retry_assertion": "Existing output/data path guard at line6; no duplicate launched",
+  "download_ended_not_hash_verified": true,
+  "fresh_state_required": true,
+  "raw_storage": "Lossless .log.gz files; files map contains uncompressed SHA256"
+}

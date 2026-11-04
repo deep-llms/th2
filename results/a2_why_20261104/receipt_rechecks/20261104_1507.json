@@ -1,0 +1,24 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "retrieved_utc": "2026-11-04T07:06:59.394014+00:00",
+  "retrieved_sgt": "2026-11-04T15:06:59.394014+08:00",
+  "status_sha256": "1e9b58ba4a8bb2a9cb8618bec364ada8f95175b3ff46a819cb3d20a93b9d5c53",
+  "status_modified_utc": "2026-11-04T05:40:48Z",
+  "pending_commit": "3f82ca9362fa3767da2ad514dc9b6953bd8d2899",
+  "receipt_present": false,
+  "new_infrastructure_error": false,
+  "fresh_pause_or_gpu_or_data_evidence": false,
+  "action": "Await existing pending receipt; no remote writes, resubmission, repair or new watcher",
+  "watcher": {
+    "pid": 1730807,
+    "thread": "01a120fe-ea0e-7030-a337-dd3f52f3c625",
+    "tick": 50,
+    "status": "waiting",
+    "next_utc": "2026-11-04T07:36:38.881873+00:00",
+    "until": null,
+    "time_policy": "/disk/thuat/efficient_llm/resources/a2_stage1b_time_policy_20261030.json",
+    "time_policy_sha256": "e9cf0904bf92c8365b209ce940150cb33ce83c5987512242d3dcb2ef4d79a3ac"
+  },
+  "raw_status_path": "temp/a2_why_data_status_1507.log",
+  "listing_path": "temp/a2_why_data_list_1507.jsonl"
+}
