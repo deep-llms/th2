@@ -1,0 +1,9 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "commit": "ea07fe4ce51fbf83aa7e4c1b62ddac4f9efbf622",
+  "raw_sha256": "1e2aa0ddb0bd6224a7b87e01e182d0f2cb363ed10fdfdd4d1c4d8877520c502b",
+  "checks": 20,
+  "failed": [],
+  "launcher_submitted": true,
+  "actual_gpu_progress_pending": true
+}
