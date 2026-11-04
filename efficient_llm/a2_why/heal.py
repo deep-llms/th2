@@ -45,16 +45,19 @@ def run(cfg, item):
     if rank==0:out.mkdir(parents=True,exist_ok=False)
     state.wait_for_everyone();checks=Checks(out/f'tests-rank{rank}.json')
     checks.record('eight_ranks',world==8,dict(world=world))
+    for flag in cfg.get('preparation_flags',[]):checks.record('preparation:'+flag['test'],False,flag)
     assets=read_locked(cfg['assets']);data=Path(cfg['data_root']);manifest=read(data/'manifest.json')
     ev={k:PackedRows(data,k,verify=False) for k in ('final','tuning')}
     ev['small']=PackedRows(data,'tuning',order=manifest['small_indices'],count=len(manifest['small_indices']),verify=False)
     student=load_parent(assets,ds,initial,device)
     student.config.a2_why_spec_sha256=SPEC_SHA
     baseline=score(student,ev['final'])
-    ref=read_locked(cfg['reference_nll'][f'{ds}/{initial}/parent'])
-    reference=ref.get('loss',ref.get('mean_nll'))
-    if reference is None:reference=float(np.mean(ref['per_sequence_nll']))
-    checks.record('parent_vs_A2Q',abs(baseline['loss']-reference)<=1e-6,dict(actual=baseline['loss'],reference=reference,difference=baseline['loss']-reference))
+    ref=checks.attempt('reference_parent',lambda:read_locked(cfg['reference_nll'][f'{ds}/{initial}/parent']))
+    reference=None
+    if ref is not None:
+        reference=ref.get('loss',ref.get('mean_nll'))
+        if reference is None:reference=float(np.mean(ref['per_sequence_nll']))
+    checks.record('parent_vs_A2Q',reference is not None and abs(baseline['loss']-reference)<=1e-6,dict(actual=baseline['loss'],reference=reference,difference=baseline['loss']-reference if reference is not None else None))
     merge_manifest=None
     if item['variant']=='drop':
         with bypass(student,removed):pre={k:score(student,ev[k]) for k in ('final','tuning')}
@@ -62,7 +65,7 @@ def run(cfg, item):
     else:
         kept,merge_manifest=merge_and_prune(student,item['variant'],checks)
         pre={k:score(student,ev[k]) for k in ('final','tuning')}
-    drop_ref=read_locked(cfg['reference_nll'][f'{ds}/{initial}/pre-S1']) if block=='S1' else None
+    drop_ref=checks.attempt('reference_drop',lambda:read_locked(cfg['reference_nll'][f'{ds}/{initial}/pre-S1'])) if block=='S1' else None
     if rank==0:write(root/'manifests'/(name+'.json'),dict(run=item,kept=kept,merge=merge_manifest,drop_pre_S1=drop_ref))
     checks.record('YT3_YT4_kept',kept==[i for i in range(24) if i not in removed],dict(removed=removed,kept=kept))
     teacher=load_parent(assets,ds,teacher_arm,device,teacher=True)
@@ -85,13 +88,17 @@ def run(cfg, item):
     master=checks.attempt('master_final',lambda:score(student,ev['final']))
     round_to_saved_precision(student)
     # Preserve checkpoint even if a numerical scoring diagnostic fails.
-    if rank==0:save_student(student,out/'final')
+    if rank==0:checks.attempt('save_student',lambda:save_student(student,out/'final'))
     state.wait_for_everyone()
     values={k:checks.attempt('post:'+k,lambda k=k:score(student,ev[k],teacher=teacher if k=='small' else None)) for k in ev}
     if item['phase']=='YT1' and values['final'] is not None:
         checks.record('YT1',abs(values['final']['loss']-2.942554079)<=.002,dict(actual=values['final']['loss'],reference=2.942554079,tolerance=.002))
     if values['tuning'] is not None:checks.record('tuning_divergence',values['tuning']['loss']<=pre['tuning']['loss'],dict(pre=pre['tuning']['loss'],post=values['tuning']['loss']))
-    reloaded=reload_student(out/'final',device);reload_value=checks.attempt('reload_score',lambda:score(reloaded,ev['small']))
+    reloaded=checks.attempt('reload_model',lambda:reload_student(out/'final',device))
+    reload_ok=torch.tensor(int(reloaded is not None),device=device)
+    torch.distributed.all_reduce(reload_ok,op=torch.distributed.ReduceOp.MIN)
+    checks.record('all_rank_reload_available',bool(reload_ok.item()))
+    reload_value=checks.attempt('reload_score',lambda:score(reloaded,ev['small'])) if reload_ok.item() else None
     difference=abs(reload_value['loss']-values['small']['loss']) if reload_value and values['small'] else None
     checks.record('YT5_roundtrip',difference is not None and difference<=1e-6,dict(difference=difference))
     all_checks=[None]*world

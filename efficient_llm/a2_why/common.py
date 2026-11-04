@@ -1,5 +1,5 @@
 """Why identities and non-blocking scientific checks."""
-from contextlib import contextmanager
+import math
 import json
 from pathlib import Path
 import traceback
@@ -13,7 +13,16 @@ def read(path):
 
 
 def write(path, value):
-    return atomic_write(path, dict(value, spec_sha256=SPEC_SHA))
+    nonfinite=[]
+    def clean(v,location=''):
+        if isinstance(v,float) and not math.isfinite(v):
+            nonfinite.append(dict(path=location,value=repr(v)));return None
+        if isinstance(v,dict):return {k:clean(x,location+'/'+str(k)) for k,x in v.items()}
+        if isinstance(v,(list,tuple)):return [clean(x,location+'/'+str(i)) for i,x in enumerate(v)]
+        return v
+    result=clean(dict(value,spec_sha256=SPEC_SHA))
+    if nonfinite:result.update(nonfinite_values=nonfinite,unverified=True)
+    return atomic_write(path,result)
 
 
 
