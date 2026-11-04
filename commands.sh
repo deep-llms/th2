@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-a2-why-health-20261104-a02
+#th2-wc69-a2-why-health-20261104-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -53,5 +53,14 @@ if (data/'corpus_plan.json').is_file():
 for _ in range(3):
  for v in list(records.values()):
   if v['ppid']>1 and str(v['ppid']) not in records:records[str(v['ppid'])]=process(v['ppid'])
+
+rawbase=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu')
+result['fwe_actual_layout']=[]
+if rawbase.exists():
+ for p in sorted(rawbase.rglob('*')):
+  if len(result['fwe_actual_layout'])>=400:break
+  if p.is_file():result['fwe_actual_layout'].append(dict(path=str(p),bytes=p.stat().st_size))
+result['data_processes']=subprocess.run(['ps','-eo','pid,ppid,etime,pcpu,stat,args'],capture_output=True,text=True).stdout.splitlines()
+result['data_processes']=[x for x in result['data_processes'] if 'a2_why_prepare' in x or 'a2_prepare_corpora' in x]
 print('WHY_STATUS_JSON',json.dumps(result),flush=True)
 PY

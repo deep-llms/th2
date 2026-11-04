@@ -1,0 +1,24 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "snapshot_utc": "2026-11-04T08:38:56.690882+00:00",
+  "raw_sha256": "18ae798a5769a294338c0bc1716073157daa1224d8923a0c7ef9d68c3c4cf6be",
+  "raw_archive": "artifacts/a2_why_health_20261104_1638.log.gz",
+  "raw_archive_sha256": "d0502b368f2316bc5ef50da616c049d8a911cc502147cdc4bd10e5de9cf0e082",
+  "result_lock": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+    "sha256": "49e924c6e444930870cbb320938864305ef8cd34b0e32651d8ed199124b7df56"
+  },
+  "final_nll": 2.942522101748737,
+  "reference": 2.942554079,
+  "difference": -3.197725126335982e-05,
+  "lr_updates": 762,
+  "roundtrip": 0.0,
+  "flags": [],
+  "worker_checks": 104,
+  "worker_failed": [],
+  "why_source_unchanged": true,
+  "fwe_expected_files": 44,
+  "fwe_expected_paths_missing": 44,
+  "yt1_handoff_verified": false,
+  "action": "Fresh health to verify terminal/native burn and inspect FWE download paths; no relaunch"
+}
