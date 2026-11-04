@@ -1,4 +1,63 @@
-# A2 Depth — Parts A and B
+# A2 Depth — báo cáo tổng hợp hiện có, 04/11/2026 SGT
+
+**Cập nhật 04/11 13:08 SGT:** đã lấy receipt a31 sau khi controller khôi phục truy cập. Snapshot 12:42: P300 20.220/48.828 (41,4%), cùng GPU ownership, 8 GPU97–99%, nonfinite0, DT6 PASS. ETA train P300 20–21h 04/11; cả C 09–11h 05/11, tạm tính và chưa gồm downstream. Lỗi SSH và no Running worker pod được giữ trong evidence; thông tin mất truy cập ở snapshot cũ bên dưới đã được cập nhật bởi mốc này.
+
+**Trạng thái: A và B hoàn tất; C có kết quả từng arm nhưng bộ rerun cùng node và downstream chưa hoàn tất. Đây là báo cáo tiến độ, chưa phải báo cáo đóng toàn bộ Depth.** Các mục lịch sử bên dưới giữ nguyên snapshot và thời điểm của chúng; trạng thái hiện tại ở phần đầu này có ưu tiên.
+
+Spec v1.1 SHA-256: `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
+
+## A — Pruning theo độ sâu, không healing
+
+Đã hoàn tất 144 cấu hình pruned + 12 parents, lưu đủ 156 mảng; bootstrap paired 10.000 lần, seed 0. Replay độc lập 1.938 so sánh PASS. Bảng 36 hàng đầy đủ và các contrast nằm ở phần A lịch sử bên dưới; giá trị và khoảng tin cậy đầy đủ nằm trong [decision_depth.json.gz](parta_verified/decision_depth.json.gz).
+
+Cả A1, A2, A3, A4 đều **false** theo điều kiện đăng ký trước, trên cả thang nats và thang tương đối. Đây là kết quả kiểm tra giả thuyết, không phải lỗi kỹ thuật. Cụ thể: A1 yêu cầu R_short(W9)>R_short(W8)>R_short(W1) trên mọi dataset; A2 yêu cầu hai contrast chiều dài ở W1 lớn hơn W8 trên mọi dataset; A3 yêu cầu R_short(W1)<0 trên ít nhất hai dataset; A4 yêu cầu R_short(W9)≥L_stab(W9) trên mọi dataset. Không điều kiện tổng hợp nào được thỏa mãn.
+
+## B — Healing 0,2B ở W1 và W9
+
+Đã hoàn tất 12/12 fits, mỗi fit 762 updates. DT4 PASS: NLL 2,942948139162 so với reference 2,942554079, lệch +0,000394060162 ≤ 0,002. Đây là một cặp kiểm tra, không phải cận sai số tổng quát. Đã tải 205 file/39 mảng; replay độc lập 504 checks PASS.
+
+| Dataset | Block | Arm | NLL | PPL = exp(NLL) |
+|---|---|---|---:|---:|
+| dclm | W1 | P300 | 2.870719835 | 17.649719 |
+| dclm | W1 | P1T | 2.848468039 | 17.261318 |
+| dclm | W1 | X72 | 2.941970030 | 18.953148 |
+| dclm | W9 | P300 | 3.026864993 | 20.632448 |
+| dclm | W9 | P1T | 3.009014626 | 20.267419 |
+| dclm | W9 | X72 | 3.103999082 | 22.286900 |
+| fwe | W1 | P300 | 2.983347012 | 19.753822 |
+| fwe | W1 | P1T | 2.965933044 | 19.412808 |
+| fwe | W1 | X72 | 3.058400374 | 21.293468 |
+| fwe | W9 | P300 | 3.117093101 | 22.580644 |
+| fwe | W9 | P1T | 3.104583580 | 22.299931 |
+| fwe | W9 | X72 | 3.198880219 | 24.505075 |
+
+E = Δ_post(P1T) − Δ_post(P300); Δ_post tính so với parent riêng của từng arm. A_init = NLL(X72) − NLL(P300). Vì vậy E không phải hiệu hai NLL cuối trực tiếp. E có nhãn `persists` ở cả W1/W9 của DCLM và FWE. B1 **true**: E tương đối ở W1 lớn hơn S1 trên cả hai dataset. B2 **false**: A_init tương đối ở W9 không lớn hơn S1 trên cả hai dataset. Bảng E/A_init và giá trị S1 đối chiếu đầy đủ giữ ở phần lịch sử bên dưới.
+
+## C — Healing 12,8B, DCLM S1
+
+Mỗi kết quả hoàn tất dưới đây dùng 48.828 updates. NLL/PPL càng thấp càng tốt.
+
+| Arm | Nguồn | NLL | PPL | Evidence còn giữ |
+|---|---|---:|---:|---|
+| P300 | Node 6Y3O cũ | 2.816662510 | 16.720951 | Scalar/note/receipt; mất weights và mảng per-sequence |
+| P1T | Node 6Y3O cũ | 2.786168130 | 16.218752 | Scalar/note/receipt; mất weights và mảng per-sequence |
+| X72 | Rerun wc69, xong 04/11 07:09:52 SGT | 2.817733403 | 16.738867 | 23 file + 3 mảng, SHA khớp, replay 164 PASS |
+
+X72: parent NLL 2,908575296108 → student NLL 2,817733402530; Δ_post = −0,090841893578 nats/token. Seed=0, data_seed=0, LR=0,001, warmup=977 rồi linear decay; full schedule. Final set: 2.461 sequences, 10.077.795 target tokens. Data dựng lại đã khớp hash nội dung stream/prefix lịch sử; DT6 8/8 PASS. [Báo cáo X72](wc69_x72_20261104/REPORT.md).
+
+Riêng cặp P300/P1T cũ cho E(12,8B)=+0,020389660091, E/E(3,2B)=0,940878; nhãn `persists`, C1=true ở snapshot cũ. Giữ kết quả này như evidence lịch sử: không còn mảng để replay độc lập. Không ghép X72 node mới với scalar cũ để chốt A_init/C2 hoặc kết luận bộ rerun. P300/P1T đang được chạy lại để lấy đủ artifacts và downstream.
+
+**Downstream 12,8B:** chưa có kết quả MC mean/LAMBADA hoặc paired CI cho ba students. X72 xong training và NLL/PPL không đồng nghĩa cả phase Depth đã xong.
+
+## Trạng thái vận hành và phần còn lại
+
+Mốc GPU cuối xác minh: 04/11 07:38 SGT, P300 rerun 1.650/48.828, 8 GPU 99%, ownership đúng. Lúc lấy status 08:09 SGT, health a31 gặp SSH `Permission denied (publickey)`; đã đóng băng remote writes. Chưa xác minh tiến độ mới và không kết luận training đã dừng. ETA cũ P300 04/11 20–21h, cả ba lượt train 05/11 09–11h SGT là tạm tính, chưa cộng downstream/replay/report và chưa thể cập nhật do lỗi SSH.
+
+Còn P300/P1T rerun, downstream ba students batch2/paired CI, tải kết quả, replay tổng, báo cáo cuối và native handoff. Flags giữ nguyên: mất weights node cũ; resume mới kiểm thử CPU/Gloo, chưa thử resume thực tế trên 8 GPU; Breadth-before-Depth và X72-first theo yêu cầu user; toàn bộ lỗi lịch sử. A/B và X72 hoàn tất không có scientific flags của các run tương ứng.
+
+---
+
+# Snapshot lịch sử — Parts A and B
 
 Spec SHA-256: `2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe`.
 
