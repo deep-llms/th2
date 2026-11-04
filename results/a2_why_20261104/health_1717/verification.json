@@ -1,0 +1,23 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "snapshot_utc": "2026-11-04T09:17:24.470367+00:00",
+  "raw_sha256": "68eca0ee19accae26f40028a462ea13879620c2ad87967d0680f6f9a26aac4c0",
+  "raw_archive": "artifacts/a2_why_health_20261104_1717.log.gz",
+  "raw_archive_sha256": "56c653b39b224ff09191d2c2b623ecb8ffbd45362486b79c3e9065d88aee46a1",
+  "active": "Y1-dclm-P300-S1-0.2B-seed2031",
+  "gpu_workers": [
+    30332,
+    30333,
+    30334,
+    30335,
+    30336,
+    30337,
+    30338,
+    30339
+  ],
+  "launcher": 30260,
+  "coordinator": 30191,
+  "supervisor": 30150,
+  "source_unchanged": true,
+  "fwe_actual_files": 0
+}
