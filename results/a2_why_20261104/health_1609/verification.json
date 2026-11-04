@@ -1,0 +1,16 @@
+{
+  "snapshot_utc": "2026-11-04T08:09:33.083519+00:00",
+  "raw_sha256": "6e66e8cddfd1af12912162a3be6d420bf3368bc717633337d18e803ec39e7b23",
+  "pause_step": 24000,
+  "handoff_verified": true,
+  "depth_source_unchanged": true,
+  "data_session": {
+    "returncode": 0,
+    "output": "0  25412\n"
+  },
+  "dclm_ready": true,
+  "fwe_complete": false,
+  "actual_gpu_resume_test": false,
+  "local_default_python_error": "torch absent; used existing train_env for plan assembly; no remote environment change",
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+}
