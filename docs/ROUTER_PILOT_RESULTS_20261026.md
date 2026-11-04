@@ -112,7 +112,7 @@ Raw local downloads, including the SHA256-verified 6.4 MB `routers.pt`:
 Archived [evaluation](results/router_pilot_20261026/evaluation.json),
 [training summary](results/router_pilot_20261026/training-summary.json),
 [decode measurements](results/router_pilot_20261026/decode-profile.json),
-[probe manifest](results/router_pilot_20261026/probe-manifest.json), and
+[probe manifest](results/router_pilot_20261026/probe-manifest.json.gz), and
 [artifact hashes](results/router_pilot_20261026/artifact-hashes.json).
 The training summary selects relevant Trainer fields; its original raw record
 and checksum are referenced explicitly. The evaluation, profile, probe, source

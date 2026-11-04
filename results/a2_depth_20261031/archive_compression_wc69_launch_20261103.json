@@ -252,6 +252,13 @@
       "original_sha256": "69d5f5c75dfc50e283a070e057e311f445d9393f83040be03f88e33beddcf961",
       "original_bytes": 69250,
       "compressed_bytes": 5983
+    },
+    {
+      "original": "docs/results/router_pilot_20261026/probe-manifest.json",
+      "compressed": "docs/results/router_pilot_20261026/probe-manifest.json.gz",
+      "original_sha256": "b9cf5ddd3517237a6ca874053d03fba66af3728f6a984af21e1fb383ed40c450",
+      "original_bytes": 378853,
+      "compressed_bytes": 110442
     }
   ]
 }
