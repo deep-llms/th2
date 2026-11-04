@@ -1,3 +1,7 @@
+2026-11-04T05:40:28.217166+00:00: FWEdownload0cb58bf ACK STARTED id2026-11-04_05-39-32/statusSHAe5cb7dcb6344c437dcb6df3aa4b550259bafbc7023a6dc19374c108c0fe4f1bb. No pendingreceipt; asynchronous44shards notyetverifiedcomplete. Next CPUrestore/reconstruct+newstreams; pendingpause next24000.
+
+2026-11-04T05:39:00.603469+00:00: Why FWE44shard controllerdownload 0cb58bf3896cb5d30709a6eebcf280d766c1460e SUBMITTED/remoteheadverified; retrieveACK beforewrites/no duplicate. Exacthistoricalrevision87f09149/86,963,385,056bytes; CPUreconstruction notyetlaunched. Pausea01 remainswaitingnextstate>23000 pendingfreshhealth.
+
 2026-11-04T05:38:18.020112+00:00: Why inventorya01 6fbfacc ACK/snapshot13:36SGT: no44FWErawshards/noFWEshuffle; bothFWEparents+code existin_backup,notrestored. Disk25TBfree; pausehelper waiting>23000/ownershipunchanged. No pendingreceipt. Reacquire exacthistorical44shardprefix via controller#d, restorehashverifiedparents, reconstructexact30Bpool+2030 then2031/2032. DCLMreusedunchanged.
 
 2026-11-04T05:36:17.368382+00:00: Why inputinventorya01 6fbfaccb1f722784aafdab3d97cf367ac9ae9409 SUBMITTED/remoteheadverified; retrievebeforewrites. Pausehelper waiting nextstate>23000; no duplicate.

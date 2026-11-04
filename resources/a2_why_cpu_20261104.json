@@ -1,0 +1,23 @@
+{
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "utc": "2026-11-04T05:40:57.475137+00:00",
+  "status": "PASS",
+  "tests": 5,
+  "scope": "CPU formula/norm/matrix/decision/prefix and pause copy/ownership; full production integration still pending",
+  "files": {
+    "efficient_llm/a2_why/common.py": "e03cc1376e222985e67f19e0a51684b8a987814d2b9f07884bdd51f233296262",
+    "efficient_llm/a2_why/__init__.py": "650facd322a871d0d1a3ba50aa2629bd3fbfc6e9733f221fcceb2bd02f35f9d2",
+    "efficient_llm/a2_why/protocol.py": "8a4790948ec1257c7d83707c716cf056274a94ed6a7882db2226e29ef48a4e8e",
+    "efficient_llm/a2_why/merge.py": "811b3ffc04bdd95ae5c2e7271efa9b558d4f16023a88308e04561c88f24ad0e1",
+    "efficient_llm/a2_why/heal.py": "ceec49c1fe817e5e79ea4cdf24c487b3b7dfaaea480799a9ff43fb147ef837c3",
+    "scripts/a2_why_streams.py": "f1fab19a57acb402f6db9a9c62ecb0dd5dc16cf1f9af547886c3b3d7a8f15b5f",
+    "scripts/a2_why_prepare.py": "9e7ccfd38364265481e53b7c682efd0262ff2a6df7b07988ed83cdf708c47148",
+    "scripts/a2_why_pause_depth.py": "3e9534b4b0055e4ba64de98f20d6c5e1051ec05ba0864eba5737246655066ce4"
+  },
+  "test_log": "test_copy_is_independent_and_detects_member_mismatch (test_why_pause.PauseTests.test_copy_is_independent_and_detects_member_mismatch) ... ok\ntest_owner_checks_full_identity (test_why_pause.PauseTests.test_owner_checks_full_identity) ... ok\ntest_matrix_and_boundaries (test_why_protocol.WhyTests.test_matrix_and_boundaries) ... ok\ntest_merges_preserve_norms_and_unrelated_layers (test_why_protocol.WhyTests.test_merges_preserve_norms_and_unrelated_layers) ... ok\ntest_prefix_matches_full_stream (test_why_protocol.WhyTests.test_prefix_matches_full_stream) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.081s\n\nOK\n",
+  "history": [
+    "Default dev python lacks torch; switched to installed train_env for CPU fixtures",
+    "First independent test oracle used sum(all4)-2receiver; corrected oracle to sum(all4)-3receiver; implementation matches preregistered receiver+sum(other-receiver) unchanged"
+  ],
+  "gpu_tests": false
+}
