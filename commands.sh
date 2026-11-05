@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-wc69-a2-why-rest-health-20261105-a01
+#th2-wc69-a2-why-rest-health-20261105-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -31,7 +31,7 @@ result['live_identities']=records
 source=json.loads((depth/'source-manifest.json').read_text())
 result['depth_source_unchanged']=all(hashlib.sha256((depth/'source'/n).read_bytes()).hexdigest()==h for n,h in source['files'].items())
 yt1=base/'wc69-a2-why-rest-20261105-a01';yr=yt1/'results/a2_why_20261104'
-for root,names in ((yt1,['source-manifest.json','supervised/supervisor.json','supervised/burn-verified.json']), (yr,['preparation_checks.json','progress.json','runs.jsonl','ledger.json']), (Path('/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104'),['status.json','complete.json'])):
+for root,names in ((yt1,['source-manifest.json','supervised/supervisor.json','supervised/burn-verified.json']), (yr,['preparation_checks.json','progress.json','runs.jsonl','ledger.json','part1.json','part2.json','decision_why.json','coordinator_checks.json']), (Path('/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104'),['status.json','complete.json'])):
  for name in names:
   p=root/name
   if p.is_file():
@@ -77,5 +77,6 @@ result['data_source_unchanged']=all(hashlib.sha256((data/'source'/n).read_bytes(
 
 p=base/'wc69-a2-why-rest-20261105-a01.preflight.json'
 if p.is_file():result['files'][str(p)]=json.loads(p.read_text());result['locks'][str(p)]=lock(p)
+result['startup_processes']=[x for x in subprocess.run(['ps','-eo','pid,ppid,etime,pcpu,stat,args'],capture_output=True,text=True).stdout.splitlines() if 'scripts.launch_a2_why' in x or 'scripts.a2_why_run' in x or '/a2_env/bin/python3.11 -u -' in x]
 print('WHY_STATUS_JSON',json.dumps(result),flush=True)
 PY
