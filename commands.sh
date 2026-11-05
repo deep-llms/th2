@@ -1,102 +1,79 @@
 #1 +120+a
-#th2-wc69-a2-why-fwe-rawaudit-20261105-a15
+#th2-wc69-a2-why-rest-admission-20261105-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PYREMOTE'
-import os,json,hashlib,socket,subprocess
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 - <<'PY'
 from pathlib import Path
+import json,hashlib,subprocess
+from scripts.gpu_process import inspect,process
+from scripts.train_then_burn import burn_progress
+from scripts.a2_quant_io import lock
 from datetime import datetime,timezone
-from scripts.gpu_process import inspect
-raw=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu')
-r=dict(utc=datetime.now(timezone.utc).isoformat(),host=socket.gethostname(),gpu=inspect(),raw_path=str(raw),raw_exists=raw.exists(),raw_symlink=raw.is_symlink(),raw_resolved=str(raw.resolve()),files=[],directories=[],processes=[],unreadable_pids=[])
-if raw.exists():
- for p in sorted(raw.rglob('*')):
-  if p.is_symlink():r.setdefault('symlinks',[]).append(str(p));continue
-  if p.is_file():r['files'].append(dict(path=str(p),bytes=p.stat().st_size,mtime=p.stat().st_mtime))
-  elif p.is_dir():r['directories'].append(str(p))
-for p in Path('/proc').iterdir():
- if not p.name.isdigit() or int(p.name)==os.getpid():continue
- try:
-  cmd=(p/'cmdline').read_bytes();args=cmd.decode(errors='replace').split('\0');stat=(p/'stat').read_text().rsplit(')',1)[1].split();comm=(p/'comm').read_text().strip()
-  words=[Path(a).name for a in args[:3]]
-  matched=any(x in cmd.lower() for x in [b'fineweb',b'a2_why_prepare',b'a2_prepare_corpora']) or any(x in words for x in ['hf','huggingface-cli','wget','curl','aria2c','rsync','scp','rclone','aws','s5cmd'])
-  fds=[]
-  for fd in (p/'fd').iterdir():
-   try:target=os.readlink(fd)
-   except OSError:continue
-   if target.startswith(str(raw)+'/'):fds.append(target)
-  if matched or fds:
-   r['processes'].append(dict(pid=int(p.name),ppid=int(stat[1]),state=stat[0],start_ticks=int(stat[19]),comm=comm,exe=os.readlink(p/'exe'),command_sha256=hashlib.sha256(cmd).hexdigest(),is_preparer=b'a2_why_prepare' in cmd or b'a2_prepare_corpora' in cmd,raw_open_fds=fds,io=(p/'io').read_text()))
- except (FileNotFoundError,ProcessLookupError):continue
- except PermissionError:r['unreadable_pids'].append(int(p.name))
-
-items=json.loads(Path('resources/a2_corpora_30b_20261029.json').read_text())['corpora']['fineweb_edu']['files'][:44]
-r['batch_files']=[]
-for i in items:
- p=Path(i['local'])/Path(i['path']).name
- q=dict(path=str(p),expected_bytes=i['bytes'],expected_sha256=i['sha256'],exists=p.is_file(),pass_size=False,pass_sha256=False)
- if p.is_file():
-  q['bytes']=p.stat().st_size;q['pass_size']=q['bytes']==i['bytes']
-  if q['pass_size']:
-   h=hashlib.sha256()
-   with p.open('rb') as f:
-    for b in iter(lambda:f.read(8*1024*1024),b''):h.update(b)
-   q['sha256']=h.hexdigest();q['pass_sha256']=q['sha256']==i['sha256']
- r['batch_files'].append(q)
-
-
-r['preparation']={}
-for root,names in [('/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01',['complete.json','failure.json','historical_fwe_identity.json','tests.json']),('/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104',['status.json','complete.json'])]:
+base=Path('/mnt/local/_outputs/deep-llms_th2');depth=base/'wc69-a2-depth-partc-20261103-a01';pause=base/'wc69-a2-why-pause-20261104-a01';data=base/'wc69-a2-why-data-20261104-a01'
+result=dict(utc=datetime.now(timezone.utc).isoformat(),inspection=inspect(),files={},locks={},logs={},sessions={})
+for root,names in ((pause,['pause/request.json','pause/saved_state.json','pause/signal.json','pause/terminal.json']), (depth,['supervised/supervisor.json','supervised/burn-verified.json','source-manifest.json']), (data,['source-manifest.json','restore.json','tests.json','dclm/tests.json','dclm/complete.json','dclm_ready.json','complete.json','failure.json','historical_fwe_identity.json'])):
  for name in names:
-  p=Path(root)/name
-  if p.is_file():r['preparation'][str(p)]=dict(sha256=hashlib.sha256(p.read_bytes()).hexdigest(),value=json.loads(p.read_text()))
-
-r['tokenized_parts']=[]
-partroot=Path('/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104/parts/fineweb_edu')
-for item in items:
- receipt=partroot/f"{item['index']:05d}"/'complete.json'
- if receipt.is_file():
-  v=json.loads(receipt.read_text())
-  r['tokenized_parts'].append(dict(index=item['index'],status=v.get('status'),source_matches=v.get('source')==item,receipt_sha256=hashlib.sha256(receipt.read_bytes()).hexdigest(),rows=v.get('rows'),streams=v.get('streams')))
-
-
-r['partial_parts']=[]
-if partroot.exists():
- for d in sorted(partroot.iterdir()):
-  if d.is_dir():
-   r['partial_parts'].append(dict(index=d.name,complete=(d/'complete.json').is_file(),files=[dict(name=p.name,bytes=p.stat().st_size,mtime=p.stat().st_mtime) for p in sorted(d.iterdir()) if p.is_file()]))
-
-
-r['disk_usage']={}
-import shutil
-for path in [raw,partroot]:
- u=shutil.disk_usage(path);r['disk_usage'][str(path)]=dict(total=u.total,used=u.used,free=u.free)
-prep_root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01')
-manifest=json.loads((prep_root/'source-manifest.json').read_text())
-r['preparation_source_unchanged']=all(hashlib.sha256((prep_root/'source'/n).read_bytes()).hexdigest()==h for n,h in manifest['files'].items())
-pause_root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-pause-20261104-a01/pause')
-saved=json.loads((pause_root/'saved_state.json').read_text())
-r['pause_checkpoint']={'global_step':saved['global_step'],'path':saved['checkpoint'],'files':[]}
-for name,expected in saved['hashes'].items():
- p=Path(saved['checkpoint'])/name;h=hashlib.sha256()
+  p=root/name
+  if p.is_file():result['files'][str(p)]=json.loads(p.read_text());result['locks'][str(p)]=lock(p)
+for root,name in ((pause,'pause.log'),(depth,'supervisor.log'),(depth,'supervised/burn.log'),(data,'prepare.log')):
+ p=root/name
+ if p.exists():
+  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-12000));result['logs'][str(p)]=f.read().decode(errors='replace')
+if (depth/'supervised/burn.log').exists():result['burn_progress']=burn_progress((depth/'supervised/burn.log').read_text())
+for session in ('a2_why_pause_wc69_20261104_a01','a2_why_data_wc69_20261104_a01'):
+ r=subprocess.run(['tmux','display-message','-p','-t',session,'#{pane_dead} #{pane_dead_status} #{pane_pid}'],capture_output=True,text=True)
+ result['sessions'][session]=dict(returncode=r.returncode,output=r.stdout)
+records=dict(result['inspection']['processes'])
+for k,v in list(records.items()):
+ if v['ppid']>1:records[str(v['ppid'])]=process(v['ppid'])
+result['live_identities']=records
+source=json.loads((depth/'source-manifest.json').read_text())
+result['depth_source_unchanged']=all(hashlib.sha256((depth/'source'/n).read_bytes()).hexdigest()==h for n,h in source['files'].items())
+yt1=base/'wc69-a2-why-y1dclm-20261104-a01';yr=yt1/'results/a2_why_20261104'
+for root,names in ((yt1,['source-manifest.json','supervised/supervisor.json','supervised/burn-verified.json']), (yr,['preparation_checks.json','progress.json','runs.jsonl','ledger.json']), (Path('/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104'),['status.json','complete.json'])):
+ for name in names:
+  p=root/name
+  if p.is_file():
+   result['files'][str(p)]=[json.loads(x) for x in p.read_text().splitlines()] if name.endswith('.jsonl') else json.loads(p.read_text())
+   result['locks'][str(p)]=lock(p)
+if (yt1/'supervised/burn.log').exists():result['yt1_burn_progress']=burn_progress((yt1/'supervised/burn.log').read_text())
+for p in [yt1/'supervisor.log',yt1/'supervised/burn.log']+sorted((yr/'logs').glob('*.log')):
  if p.is_file():
-  with p.open('rb') as f:
-   for b in iter(lambda:f.read(8*1024*1024),b''):h.update(b)
- r['pause_checkpoint']['files'].append(dict(name=name,exists=p.is_file(),expected_sha256=expected,sha256=h.hexdigest() if p.is_file() else None,passed=p.is_file() and h.hexdigest()==expected))
+  with p.open('rb') as f:f.seek(max(0,p.stat().st_size-6000));result['logs'][str(p)]=f.read().decode(errors='replace')
+for p in sorted((yr/'heals').glob('*/result.json'))+sorted((yr/'heals').glob('*/tests-rank*.json')):
+ result['files'][str(p)]=json.loads(p.read_text());result['locks'][str(p)]=lock(p)
+if (yt1/'source-manifest.json').is_file():
+ source=json.loads((yt1/'source-manifest.json').read_text());result['why_source_unchanged']=all(hashlib.sha256((yt1/'source'/n).read_bytes()).hexdigest()==h for n,h in source['files'].items())
+if (data/'corpus_plan.json').is_file():
+ plan=json.loads((data/'corpus_plan.json').read_text());result['fwe_raw_sizes']=[]
+ for item in plan['corpora']['fineweb_edu']['files']:
+  p=Path(item['local']);p=p/Path(item['path']).name if p.is_dir() else p
+  result['fwe_raw_sizes'].append(dict(path=str(p),expected=item['bytes'],actual=p.stat().st_size if p.is_file() else None))
+for _ in range(3):
+ for v in list(records.values()):
+  if v['ppid']>1 and str(v['ppid']) not in records:records[str(v['ppid'])]=process(v['ppid'])
 
+rawbase=Path('/mnt/local/_data/deep-llms_th2/a2_corpora_30b_20261029/raw/fineweb_edu')
+result['fwe_actual_layout']=[]
+if rawbase.exists():
+ for p in sorted(rawbase.rglob('*')):
+  if len(result['fwe_actual_layout'])>=400:break
+  if p.is_file():result['fwe_actual_layout'].append(dict(path=str(p),bytes=p.stat().st_size))
+result['data_processes']=subprocess.run(['ps','-eo','pid,ppid,etime,pcpu,stat,args'],capture_output=True,text=True).stdout.splitlines()
+result['data_processes']=[x for x in result['data_processes'] if 'a2_why_prepare' in x or 'a2_prepare_corpora' in x]
 
-r['prepared_output_files']={}
-for directory in ['/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104/packed/fineweb_edu','/mnt/local/_data/deep-llms_th2/a2_why_fwe_shuffle2030_20261104','/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01/fwe']:
- d=Path(directory)
- if d.is_dir():
-  r['prepared_output_files'][directory]=[dict(path=str(p),bytes=p.stat().st_size,mtime=p.stat().st_mtime) for p in sorted(d.rglob('*')) if p.is_file()][:100]
-p=prep_root/'prepare.log'
-if p.is_file():
- with p.open('rb') as f:
-  f.seek(max(0,p.stat().st_size-8000));r['preparation_log_tail']=f.read().decode(errors='replace')
+reuse_locks=[{'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/result.json', 'sha256': '49e924c6e444930870cbb320938864305ef8cd34b0e32651d8ed199124b7df56'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank0.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank1.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank2.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank3.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank4.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank5.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank6.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank7.json', 'sha256': '37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/result.json', 'sha256': '4a6797adf233e543f591e2dfb34cbb1eb1dbc90fc4d04703751bc525e24f722e'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank0.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank1.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank2.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank3.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank4.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank5.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank6.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank7.json', 'sha256': 'dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/result.json', 'sha256': '9d18ced7172d5017ea29d561e665f29594b9b815238ccb899f300ff23469f8b7'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank0.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank1.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank2.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank3.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank4.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank5.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank6.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank7.json', 'sha256': '8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/result.json', 'sha256': '0b3b42f304040d2e5b619fac32eba2983e0090d630397e38648389c9d90a7ffe'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank0.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank1.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank2.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank3.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank4.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank5.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank6.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank7.json', 'sha256': '41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/result.json', 'sha256': '5639ff2f43311c1dd55474f4f2a57e347ab408e9b72b252eba08038bc63ccca0'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank0.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank1.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank2.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank3.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank4.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank5.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank6.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}, {'path': '/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank7.json', 'sha256': 'fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77'}]
+result['reuse_locks_verified']=[]
+for entry in reuse_locks:
+ p=Path(entry['path']);actual=hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None
+ result['reuse_locks_verified'].append(dict(path=entry['path'],expected=entry['sha256'],actual=actual,passed=actual==entry['sha256']))
 
-r['checked_end_utc']=datetime.now(timezone.utc).isoformat()
+for relative in ['fwe/tests.json','fwe/complete.json','fwe/2031/tests.json','fwe/2032/tests.json']:
+ p=data/relative
+ if p.is_file():result['files'][str(p)]=json.loads(p.read_text());result['locks'][str(p)]=lock(p)
+manifest=json.loads((data/'source-manifest.json').read_text())
+result['data_source_unchanged']=all(hashlib.sha256((data/'source'/n).read_bytes()).hexdigest()==h for n,h in manifest['files'].items())
 
-print('FWE_INSPECTION_JSON',json.dumps(r),flush=True)
-PYREMOTE
+print('WHY_STATUS_JSON',json.dumps(result),flush=True)
+PY
