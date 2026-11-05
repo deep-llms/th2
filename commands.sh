@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-wc69-a2-why-fwe-rawaudit-20261105-a06
+#th2-wc69-a2-why-fwe-rawaudit-20261105-a07
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -66,6 +66,24 @@ if partroot.exists():
  for d in sorted(partroot.iterdir()):
   if d.is_dir():
    r['partial_parts'].append(dict(index=d.name,complete=(d/'complete.json').is_file(),files=[dict(name=p.name,bytes=p.stat().st_size,mtime=p.stat().st_mtime) for p in sorted(d.iterdir()) if p.is_file()]))
+
+
+r['disk_usage']={}
+import shutil
+for path in [raw,partroot]:
+ u=shutil.disk_usage(path);r['disk_usage'][str(path)]=dict(total=u.total,used=u.used,free=u.free)
+prep_root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01')
+manifest=json.loads((prep_root/'source-manifest.json').read_text())
+r['preparation_source_unchanged']=all(hashlib.sha256((prep_root/'source'/n).read_bytes()).hexdigest()==h for n,h in manifest['files'].items())
+pause_root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-pause-20261104-a01/pause')
+saved=json.loads((pause_root/'saved_state.json').read_text())
+r['pause_checkpoint']={'global_step':saved['global_step'],'path':saved['checkpoint'],'files':[]}
+for name,expected in saved['hashes'].items():
+ p=Path(saved['checkpoint'])/name;h=hashlib.sha256()
+ if p.is_file():
+  with p.open('rb') as f:
+   for b in iter(lambda:f.read(8*1024*1024),b''):h.update(b)
+ r['pause_checkpoint']['files'].append(dict(name=name,exists=p.is_file(),expected_sha256=expected,sha256=h.hexdigest() if p.is_file() else None,passed=p.is_file() and h.hexdigest()==expected))
 
 r['checked_end_utc']=datetime.now(timezone.utc).isoformat()
 
