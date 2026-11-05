@@ -1,0 +1,626 @@
+{
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "reference_nll": {
+    "dclm/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+      "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b"
+    },
+    "dclm/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/pre-S1-final.json",
+      "sha256": "162b33d4090bef939ce707e83c7640f4a7202c46ab9a3205b2d127688dd369db"
+    },
+    "dclm/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+      "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c"
+    },
+    "dclm/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/pre-S1-final.json",
+      "sha256": "b6a9a3ca074b55fcb7d8b73fed3cff2a458a5b2a5f0b0b323593b668a4984e60"
+    },
+    "fwe/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/parent-final.json",
+      "sha256": "e25376b469b584952e6690ba94835e5dc7ae4471a265667f1561a20c0ebb1489"
+    },
+    "fwe/P300/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P300/pre-S1-final.json",
+      "sha256": "ddef0fffde96988e2818a8d24f7b947b15b7aa881ce4176ea05b3f2badc62039"
+    },
+    "fwe/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/parent-final.json",
+      "sha256": "816aea9013d79d7a08f487a7929844933a5924d4da05c7556200487e2a4bebd5"
+    },
+    "fwe/P1T/pre-S1": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/fwe/P1T/pre-S1-final.json",
+      "sha256": "8fc375a5f231a57d8c1a8835cee3177ac1659fd4ffb17da2cee7f8ab990bdb9a"
+    }
+  },
+  "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+  "historical": {
+    "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+    "datasets": {
+      "dclm": {
+        "0.2B": {
+          "E": 0.021096293347514283,
+          "E_relative": 0.10302884126700326,
+          "A_init": 0.07272470370653528,
+          "A_init_relative": 0.35516864649842933,
+          "P300_delta": 0.2047610464029428,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+              "val_post": 2.9425540786156272,
+              "val_parent": 2.7377930322126844,
+              "delta_post": 0.2047610464029428,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "P1T": {
+              "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-3",
+              "val_post": 2.9127663315143915,
+              "val_parent": 2.6869089917639344,
+              "delta_post": 0.22585733975045708,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "X72": {
+              "run_id": "ST1-dclm-X72-S1-0.2B-lr1e-3",
+              "val_post": 3.0152787823221625,
+              "val_parent": 2.90857529610787,
+              "delta_post": 0.10670348621429238,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            }
+          }
+        },
+        "0.8B": {
+          "E": 0.02078642256362606,
+          "E_relative": 0.14645757338084062,
+          "A_init": 0.038910028863575974,
+          "A_init_relative": 0.27415339941707156,
+          "P300_delta": 0.14192794598319702,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-dclm-P300-S1-0.8B-lr1e-3",
+              "val_post": 2.8797209781958815,
+              "val_parent": 2.7377930322126844,
+              "delta_post": 0.14192794598319702,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "P1T": {
+              "run_id": "ST1-dclm-P1T-S1-0.8B-lr1e-3",
+              "val_post": 2.8496233603107575,
+              "val_parent": 2.6869089917639344,
+              "delta_post": 0.16271436854682308,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "X72": {
+              "run_id": "ST1-dclm-X72-S1-0.8B-lr1e-3",
+              "val_post": 2.9186310070594574,
+              "val_parent": 2.90857529610787,
+              "delta_post": 0.010055710951587304,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            }
+          }
+        },
+        "3.2B": {
+          "E": 0.021670884569823023,
+          "E_relative": 0.21225514007603818,
+          "A_init": 0.01211313187395735,
+          "A_init_relative": 0.11864188074014263,
+          "P300_delta": 0.10209827927870041,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+              "val_post": 2.839891311491385,
+              "val_parent": 2.7377930322126844,
+              "delta_post": 0.10209827927870041,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "P1T": {
+              "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+              "val_post": 2.810678155612458,
+              "val_parent": 2.6869089917639344,
+              "delta_post": 0.12376916384852343,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "X72": {
+              "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+              "val_post": 2.852004443365342,
+              "val_parent": 2.90857529610787,
+              "delta_post": -0.05657085274252793,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            }
+          }
+        }
+      },
+      "fwe": {
+        "0.2B": {
+          "E": 0.026224221566386152,
+          "E_relative": 0.1339870997016109,
+          "A_init": 0.07847837360805077,
+          "A_init_relative": 0.4009686099708777,
+          "P300_delta": 0.19572198834654575,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-3",
+              "val_post": 3.0563533142033608,
+              "val_parent": 2.860631325856815,
+              "delta_post": 0.19572198834654575,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "P1T": {
+              "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-3",
+              "val_post": 3.030653543514748,
+              "val_parent": 2.808707333601816,
+              "delta_post": 0.2219462099129319,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            },
+            "X72": {
+              "run_id": "ST1-fwe-X72-S1-0.2B-lr1e-3",
+              "val_post": 3.1348316878114115,
+              "val_parent": 3.042152001946299,
+              "delta_post": 0.09267968586511266,
+              "roundtrip_difference": 0.0,
+              "steps": 762
+            }
+          }
+        },
+        "0.8B": {
+          "E": 0.02281977941126856,
+          "E_relative": 0.16722075074669332,
+          "A_init": 0.04245379935293281,
+          "A_init_relative": 0.3110966180655233,
+          "P300_delta": 0.1364649979704735,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-fwe-P300-S1-0.8B-lr1e-3",
+              "val_post": 2.9970963238272885,
+              "val_parent": 2.860631325856815,
+              "delta_post": 0.1364649979704735,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "P1T": {
+              "run_id": "ST1-fwe-P1T-S1-0.8B-lr1e-3",
+              "val_post": 2.967992110983558,
+              "val_parent": 2.808707333601816,
+              "delta_post": 0.15928477738174207,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            },
+            "X72": {
+              "run_id": "ST1-fwe-X72-S1-0.8B-lr1e-3",
+              "val_post": 3.0395501231802213,
+              "val_parent": 3.042152001946299,
+              "delta_post": -0.0026018787660775367,
+              "roundtrip_difference": 0.0,
+              "steps": 3051
+            }
+          }
+        },
+        "3.2B": {
+          "E": 0.023461150403907727,
+          "E_relative": 0.2464897808821935,
+          "A_init": 0.01299365118963669,
+          "A_init_relative": 0.1365151401126407,
+          "P300_delta": 0.09518102665327399,
+          "E_label": "persists",
+          "runs": {
+            "P300": {
+              "run_id": "ST1-fwe-P300-S1-3.2B-lr1e-3",
+              "val_post": 2.955812352510089,
+              "val_parent": 2.860631325856815,
+              "delta_post": 0.09518102665327399,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "P1T": {
+              "run_id": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+              "val_post": 2.9273495106589977,
+              "val_parent": 2.808707333601816,
+              "delta_post": 0.11864217705718172,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            },
+            "X72": {
+              "run_id": "ST1-fwe-X72-S1-3.2B-lr1e-3",
+              "val_post": 2.9688060036997257,
+              "val_parent": 3.042152001946299,
+              "delta_post": -0.07334599824657317,
+              "roundtrip_difference": 0.0,
+              "steps": 12207
+            }
+          }
+        }
+      }
+    },
+    "source_locks": {
+      "dclm": {
+        "local_evidence": "docs/results/a2_stage1_20261029/final/runs_summary.json",
+        "sha256": "4b2ba8bade459591be0d990b187f276fd7f653951cdbc455bfc55941e887994f"
+      },
+      "fwe": {
+        "local_evidence": "temp/a2_stage1b_part2_health15/supervised/run/results/a2_stage1_fwe/runs.json",
+        "sha256": "1df43ebc87e9ce840cbd0da489b490ee4fe7d456549f2b4b16ff8ccf1300b897"
+      }
+    }
+  },
+  "heal_streams": {
+    "dclm": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103",
+        "sha256": "5ddfb10ac309886eae0ae0e43024b93350bb022bc93c8ad095bb91cd638178f0"
+      }
+    }
+  },
+  "stage": "rest",
+  "scientific_policy": "flag+continue; no cap",
+  "predecessor": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01",
+    "burn_script": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/source/resources/llm_pretrain_burn.py",
+    "prior_status": "ok",
+    "supervisor": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/supervised/supervisor.json",
+      "sha256": "1052ca34b7c0b3a380ee6f7214ce1d6ddbb0d5d28107e49ddc641b49ef1d741e"
+    },
+    "burn": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/supervised/burn-verified.json",
+      "sha256": "8dffd42e1ad516ee5ed57b525fad31b5cca9add91c76ef406c635eb2592448d7"
+    },
+    "source_manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/source-manifest.json",
+      "sha256": "9b2846539ed47cf56291699b1a3bb1c06e89dc32b617add6e05fdcd135a69d0f"
+    },
+    "known_burn_identities": {
+      "32001": {
+        "pid": 32001,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "8a31106be88586a57efd32b284bea24d276c3847415ebf7aeb2b9e5a0f7b28de",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "31997": {
+        "pid": 31997,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "f12e917e9ef8c1d0e48bc1282e961a4f88a73748d66f1e6980b696bab1fbc913",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "31998": {
+        "pid": 31998,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "8838fd192e70491e013e494b524adfbcdfb950446df22ca3d01b4368975d3073",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "32002": {
+        "pid": 32002,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "fa9e7459be58941eca734e0c6035786d591632f56d7b52acef5fe26afe3664a6",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "31996": {
+        "pid": 31996,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "77262c1887625ce703de4b55d8e382c6b1c835d4f531fca5f601a4e0972429d7",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "31999": {
+        "pid": 31999,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "74f4c6498a286489c85f9d552049d996851dd59e214e5a3397115b7a7bb45a94",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "32003": {
+        "pid": 32003,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "fe6dd6819aea64a37bb8ef04b04bf7e2e683fb7bf3781bb8f4e5bfb5fabc6c24",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "32000": {
+        "pid": 32000,
+        "ppid": 31927,
+        "start_ticks": 367982098,
+        "command_sha256": "a1ab2486889c7e9155c8b173031667078db303d7da06d263caa721bd9b688b42",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "-B",
+          "-c"
+        ],
+        "launcher_kind": null
+      },
+      "31927": {
+        "pid": 31927,
+        "ppid": 17115,
+        "start_ticks": 367981962,
+        "command_sha256": "9c7c9226b50f50ae27bf44d0bcaa2aef37c1dd73b54257d9937019ddaee8119d",
+        "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+        "command_prefix": [
+          "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/source/resources/llm_pretrain_burn.py"
+        ],
+        "launcher_kind": "gpu_burn"
+      }
+    }
+  },
+  "why_data": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01/complete.json",
+    "sha256": "b155675a07c56dc48c5e8cfb8ca75da59881b36c2041f52326e8b7e9e83670f4"
+  },
+  "reused_yt1": {
+    "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3",
+    "result": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/result.json",
+      "sha256": "49e924c6e444930870cbb320938864305ef8cd34b0e32651d8ed199124b7df56"
+    },
+    "artifacts": [
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank0.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank1.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank2.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank3.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank4.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank5.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank6.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      },
+      {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-yt1-20261104-a01/results/a2_why_20261104/heals/YT1-ST1-dclm-P300-S1-0.2B-lr1e-3/tests-rank7.json",
+        "sha256": "37dde046caee8a5cdbe721d5a3574e61b2da6df2e13b3ff2f50621f9193e4e55"
+      }
+    ]
+  },
+  "reused_y1": {
+    "Y1-dclm-P1T-S1-0.2B-seed2031": {
+      "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031",
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/result.json",
+        "sha256": "4a6797adf233e543f591e2dfb34cbb1eb1dbc90fc4d04703751bc525e24f722e"
+      },
+      "artifacts": [
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank0.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank1.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank2.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank3.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank4.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank5.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank6.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2031/tests-rank7.json",
+          "sha256": "dcf47d2ff2cd855fd0f9b3c0d65228869e953881b61ed977e1ef812f77a29bc4"
+        }
+      ]
+    },
+    "Y1-dclm-P1T-S1-0.2B-seed2032": {
+      "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032",
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/result.json",
+        "sha256": "9d18ced7172d5017ea29d561e665f29594b9b815238ccb899f300ff23469f8b7"
+      },
+      "artifacts": [
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank0.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank1.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank2.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank3.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank4.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank5.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank6.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P1T-S1-0.2B-seed2032/tests-rank7.json",
+          "sha256": "8374b0456ae395079324c687f852904dfd429e9872e1494d2329ac1be5c90f44"
+        }
+      ]
+    },
+    "Y1-dclm-P300-S1-0.2B-seed2031": {
+      "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031",
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/result.json",
+        "sha256": "0b3b42f304040d2e5b619fac32eba2983e0090d630397e38648389c9d90a7ffe"
+      },
+      "artifacts": [
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank0.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank1.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank2.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank3.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank4.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank5.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank6.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2031/tests-rank7.json",
+          "sha256": "41dec6b7844e469bd20318dc3488f609f24f0d313c7d517d9c930e770d51a2a9"
+        }
+      ]
+    },
+    "Y1-dclm-P300-S1-0.2B-seed2032": {
+      "root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032",
+      "result": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/result.json",
+        "sha256": "5639ff2f43311c1dd55474f4f2a57e347ab408e9b72b252eba08038bc63ccca0"
+      },
+      "artifacts": [
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank0.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank1.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank2.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank3.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank4.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank5.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank6.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        },
+        {
+          "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-y1dclm-20261104-a01/results/a2_why_20261104/heals/Y1-dclm-P300-S1-0.2B-seed2032/tests-rank7.json",
+          "sha256": "fa763230478127d99eb7b9bf6f6da540b3d83f62111789a3f1fb0930671bcf77"
+        }
+      ]
+    }
+  },
+  "data_caveat": "YT2 FWE whole-pool vs CulturaX heldout: 3 content hash overlaps. Preserve exact historical pool; flag and continue per spec. New-stream manifest checks propagate via preparation_flags to all runs."
+}
