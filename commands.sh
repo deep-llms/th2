@@ -1,5 +1,5 @@
 #1 +120+a
-#th2-wc69-a2-why-fwe-rawaudit-20261105-a14
+#th2-wc69-a2-why-fwe-rawaudit-20261105-a15
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -84,6 +84,17 @@ for name,expected in saved['hashes'].items():
   with p.open('rb') as f:
    for b in iter(lambda:f.read(8*1024*1024),b''):h.update(b)
  r['pause_checkpoint']['files'].append(dict(name=name,exists=p.is_file(),expected_sha256=expected,sha256=h.hexdigest() if p.is_file() else None,passed=p.is_file() and h.hexdigest()==expected))
+
+
+r['prepared_output_files']={}
+for directory in ['/mnt/local/_data/deep-llms_th2/a2_why_fwe_rebuild_20261104/packed/fineweb_edu','/mnt/local/_data/deep-llms_th2/a2_why_fwe_shuffle2030_20261104','/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-data-20261104-a01/fwe']:
+ d=Path(directory)
+ if d.is_dir():
+  r['prepared_output_files'][directory]=[dict(path=str(p),bytes=p.stat().st_size,mtime=p.stat().st_mtime) for p in sorted(d.rglob('*')) if p.is_file()][:100]
+p=prep_root/'prepare.log'
+if p.is_file():
+ with p.open('rb') as f:
+  f.seek(max(0,p.stat().st_size-8000));r['preparation_log_tail']=f.read().decode(errors='replace')
 
 r['checked_end_utc']=datetime.now(timezone.utc).isoformat()
 
