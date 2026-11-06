@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-wc69-family-preparation-health-20261107-a09
+#th2-wc69-family-preparation-health-20261107-a10
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -106,7 +106,7 @@ r['family_native']={str(p.relative_to(family)):artifact(p) for p in [family/'lau
 
 r['family_logs']=[tail(p,6500) for p in [family/'supervisor.log',family/'supervised/run/a2-family.log',*sorted((family/'results/a2_family_20261107/logs').glob('*.log'))] if p.is_file()]
 r['family_checks']={str(p.relative_to(family)):artifact(p) for p in (family/'results/a2_family_20261107').glob('**/tests-rank*.json')}
-r['family_other']={str(p.relative_to(family)):artifact(p) for p in [family/'results/a2_family_20261107/preparation_checks.json',family/'results/a2_family_20261107/ledger.json',family/'results/a2_family_20261107/lr_selection.json',family/'supervised/reclaim.json',family/'supervised/gpus-free-before-training.json'] if p.is_file()}
+r['family_other']={str(p.relative_to(family)):artifact(p) for p in [family/'results/a2_family_20261107/preparation_checks.json',family/'results/a2_family_20261107/ledger.json',family/'results/a2_family_20261107/lr_selection.json',family/'results/a2_family_20261107/coordinator_checks.json',family/'supervised/reclaim.json',family/'supervised/gpus-free-before-training.json'] if p.is_file()}
 
 
 launch=read_locked(dict(path=str(family/'launch.json'),sha256=digest(family/'launch.json')))
@@ -131,7 +131,7 @@ for p in (family/'results/a2_family_20261107/logs').glob('*.log'):
  with p.open(errors='replace') as f:r['family_nonfinite_log_counts'][p.name]=sum('FAMILY_NONFINITE_KD_FLAG' in line for line in f)
 
 r['family_jobs']=read_locked(launch['jobs'])
-r['family_completion_backup']={str(p.relative_to(family)):artifact(p) for p in [family/'results/a2_family_20261107/backup/verified.json',family/'results/a2_family_20261107/decision_family.json',family/'supervised/run/complete.json',family/'supervised/run/a2-family-complete.json'] if p.is_file()}
+r['family_completion_backup']={str(p.relative_to(family)):artifact(p) for p in [family/'results/a2_family_20261107/backup/verified.json',family/'results/a2_family_20261107/decision_family.json',family/'supervised/run/complete.json',family/'supervised/run/family-complete.json'] if p.is_file()}
 r['snapshot_complete_utc']=datetime.now(timezone.utc).isoformat()
 print('FAMILY_PREPARATION_HEALTH',json.dumps(r),flush=True)
 HEALTH
