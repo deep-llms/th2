@@ -8,6 +8,22 @@ from scripts import a2_family_admit as admit
 
 
 class Admission(unittest.TestCase):
+    def test_frozen_entrypoints_have_all_offline_dependencies(self):
+        import os,subprocess,sys
+        from scripts.launch_a2_downstream import freeze_source
+        repo=Path(__file__).resolve().parents[2]
+        extras=[str(p.relative_to(repo)) for p in (repo/'resources').glob('a2_family*.json')]
+        extras+=['docs/A2_family_spec_v1.3.md','resources/a2_data_rebuild_wc69_20261103.json']
+        proof=read(repo/'resources/a2_family_integration_cpu_20261107.json')
+        extras+=list(proof['files'])
+        with tempfile.TemporaryDirectory() as tmp:
+            frozen=freeze_source(repo,Path(tmp),'0'*40,extra_files=extras)
+            for module in ('a2_family_admit','launch_a2_family','a2_family_pause_depth','a2_family_depth_bridge'):
+                result=subprocess.run([sys.executable,'-m','scripts.'+module,'--help'],cwd=frozen,
+                    env={**os.environ,'PYTHONPATH':str(frozen),'CUDA_VISIBLE_DEVICES':'','HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1'},
+                    capture_output=True,text=True,timeout=40)
+                self.assertEqual(result.returncode,0,result.stderr)
+
     def exercise(self,fail=None):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);out=root/'admission';family=root/'family';events=[]

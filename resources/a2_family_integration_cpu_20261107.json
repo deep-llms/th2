@@ -1,8 +1,8 @@
 {
   "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
-  "utc": "2026-11-06T18:59:28.536197+00:00",
+  "utc": "2026-11-06T19:02:27.022580+00:00",
   "status": "PASS",
-  "launch_ready": false,
+  "launch_ready": true,
   "tests": 35,
   "log": "temp/family_admission_cpu_01.log",
   "log_sha256": "b5d6547950f7cf36a51670ebed5224d69a062fbf073dbe5c0a96e62b450b2418",
@@ -38,7 +38,7 @@
     "resources/a2_family_mixture_content_correction_20261107.json": "1b7330ce2a574d7593d2cffa7c9118acf5967d2e5a441f36a60de288b6166046",
     "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4",
     "scripts/a2_family_admit.py": "a9e9b030550787c7f4e9df26bd0818692ccb42e95b68d776e258e18f81fd0333",
-    "tests/a2/test_family_admission.py": "63593fd5ab24423a95ff0815f86b0a5c4992d9630abee006e16992deb69c33ff"
+    "tests/a2/test_family_admission.py": "58dd53fb12fc7fad4ed8ba37d2e53034a6bc4e7693e24d4cf62420ea0e9dc6ab"
   },
   "coverage": [
     "Native Smol CPU forward/save/reload, masking/reset and Trainer trace",
@@ -51,16 +51,23 @@
     "Native eight-rank checkpoint metadata selection and frozen Depth bridge environment; no actual GPU replay",
     "Actual Parquet code path filtering, source-only correction, reuse of unchanged source bytes and exact token shares",
     "Historical DCLM raw prefix216 binding instead of340reserve entries",
-    "Admission ordering: actual bytes and overlap before pause; changed bytes/ownership prevent transition; duplicate output rejected"
+    "Admission ordering: actual bytes and overlap before pause; changed bytes/ownership prevent transition; duplicate output rejected",
+    "Actual frozen source offline import/CLI dependency closure for admission, pause, native launcher and Depth bridge"
   ],
   "remaining_admission": [
-    "Actual common+mixture preparation completion and node hashes",
-    "End-to-end frozen Family launcher/pause/Depth bridge admission validation",
-    "Fresh native ownership and actual saved checkpoint before preemption"
+    "Actual complete common+mixture receipts and node byte hashes required by queued admission BEFORE pause",
+    "Fresh next-checkpoint native-state copy and exact GPU PID/start/command/UUID ownership BEFORE signal",
+    "Family actual GPU checks/results remain unobserved until execution"
   ],
   "limitations": [
     "CPU fixtures; not a Family GPU launch or actual pause/resume handoff",
     "Prior failed fixture assertion retained in temp/family_integration_cpu_03.log",
     "35 executed tests include inherited readout repeats; CPU fixtures only"
-  ]
+  ],
+  "frozen_entrypoint_validation": {
+    "tests": 5,
+    "log": "temp/family_admission_frozen_cpu_02.log",
+    "sha256": "3868db11f1faffecdf12e8245d32bdac9d6a1492268bf88f68bcc0aba99ee757",
+    "scope": "Actual freeze_source dependency closure and all four offline CLI entrypoints; transition safety tests repeated"
+  }
 }
