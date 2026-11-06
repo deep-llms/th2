@@ -1,0 +1,27 @@
+{
+  "spec_sha256": "d73dbf6736e9cf9c26facb9dc75522019280f63321fbd35086a8192dcb8fd99c",
+  "source": "https://huggingface.co/datasets/HuggingFaceTB/smollm3-configs/blob/c8284ff581d326b1cab19b5c4e8445286fa12370/stage1_8T.yaml",
+  "source_sha256": "d8e1d6c3d23859700adfe428f09311583844444dc70f22aaf1c2cafedc14c6a5",
+  "peak_lr": 0.0002,
+  "warmup_steps": 2000,
+  "decay_start": 2600000,
+  "decay_steps": 600000,
+  "evidence": "Published training configuration; no optimizer/scheduler state in these HF model snapshots",
+  "checkpoints": {
+    "k6": {
+      "step": 240000,
+      "lr": 0.0002,
+      "within_stable_phase": true
+    },
+    "k20": {
+      "step": 800000,
+      "lr": 0.0002,
+      "within_stable_phase": true
+    },
+    "k64": {
+      "step": 2560000,
+      "lr": 0.0002,
+      "within_stable_phase": true
+    }
+  }
+}
