@@ -1,35 +1,61 @@
-#1 +40+a
-#th2-wc69-depth-resume-20261106-a01
+#1 +20+a
+#th2-wc69-depth-resume-health-20261106-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 HF_HUB_DISABLE_TELEMETRY=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'RESUME'
+export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'HEALTH'
 from pathlib import Path
-from types import SimpleNamespace
-import json
+import json,hashlib,subprocess
+from datetime import datetime,timezone
+from scripts.gpu_process import inspect,process
 from scripts.a2_remaining import read_locked
-from scripts.a2_quant_io import lock,write
 from scripts.train_then_burn import digest
-from scripts.a2_depth_continue import continue_run,validate_existing
-from efficient_llm.a2_depth.resume import select_checkpoint
-from efficient_llm.a2_depth.heal_long import run_identity
-from efficient_llm.a2_depth.recovery import completed_arm
-base=Path('/mnt/local/_outputs/deep-llms_th2');root=base/'wc69-a2-depth-partc-20261103-a01'
-pf=read_locked(dict(path=str(base/'wc69-a2-depth-resume-preflight-20261106-a01.json'),sha256='bbb9c3d0dc28b8637fad183d852ce75cc7c1cba06753faee2fa3186fb1575aca'))
-assert pf['pause_22_sha'] and pf['selected_matches_pause'] and pf['data_actual_hash_pass'] and not pf['rejected']
-assert read_locked(pf['why_decision'])['coverage_complete']
-record,cfg,frozen=validate_existing(root,Path(pf['depth_launch']['input_plan']['path']),'e2af735a59127f1116dbf8d671fe5aa95f1bb12f')
-assert record==pf['depth_launch'] and cfg==pf['depth_config']
-assert cfg['arm_order']==['X72','P300','P1T']
-pause=read_locked(pf['pause_receipt']);out=Path(cfg['results_root'])/'heals/ST1-dclm-P300-S1-12.8B-lr1e-3'
-selected,rejected=select_checkpoint(out/'trainer',run_identity(cfg,'P300'),8)
-assert str(selected)==pf['selected'] and selected.name=='checkpoint-24000' and not rejected
-for name,sha in pause['hashes'].items():assert digest(selected/name)==sha,name
-completed_arm(Path(cfg['results_root'])/'heals/ST1-dclm-X72-S1-12.8B-lr1e-3',run_identity(cfg,'X72'))
-proof=Path('resources/a2_depth_resume_patch_20261106.json').resolve()
-assert json.loads(proof.read_text())['original_source_manifest']==record['source_manifest']
-handoff=base/'wc69-a2-depth-resume-handoff-20261106-a01.json';assert not handoff.exists()
-write(handoff,dict(mode='burn',predecessor=pf['predecessor'],preflight=lock(base/'wc69-a2-depth-resume-preflight-20261106-a01.json'),full_why_backup_sha256='70cfa5bf71266078d89776d6683c891888271f7039caaf362a99f904cd3e7a93'))
-continue_run(SimpleNamespace(output=root,plan=Path(record['input_plan']['path']),code_commit='e2af735a59127f1116dbf8d671fe5aa95f1bb12f',session='a2_depth_partc_wc69_resume_20261106_a01',recovery_handoff=handoff,recovery_patch=proof))
-print('DEPTH_RESUME_LAUNCH_RECORD',json.dumps(json.loads((root/'continuations.json').read_text())),flush=True)
-RESUME
+root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-partc-20261103-a01');base=root/'results/a2_depth_20261031'
+def artifact(p):
+ if not p.is_file():return None
+ raw=p.read_bytes();v=json.loads(raw) if p.suffix=='.json' else raw.decode(errors='replace')
+ return dict(path=str(p),sha256=hashlib.sha256(raw).hexdigest(),value=v)
+def tail(p,n=4500):
+ if not p.is_file():return None
+ with p.open('rb') as f:f.seek(max(0,p.stat().st_size-n));v=f.read().decode(errors='replace')
+ return dict(path=str(p),bytes=p.stat().st_size,text=v)
+r=dict(utc=datetime.now(timezone.utc).isoformat(),inspection=inspect());chains={}
+for worker in r['inspection']['workers']:
+ pid=worker;rows=[]
+ while pid>1 and len(rows)<12:
+  try:v=process(pid)
+  except (FileNotFoundError,ProcessLookupError):break
+  rows.append(v);pid=v['ppid']
+ chains[str(worker)]=rows
+r['chains']=chains;r['continuations']=artifact(root/'continuations.json')
+latest=r['continuations']['value']['attempts'][-1];attempt=Path(latest['root'])
+r['native']={p:artifact(attempt/p) for p in ['admission.json','inspection.json','supervised/supervisor.json','supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/run/run.json','supervised/run/complete.json','supervised/run/depth-partc-complete.json','supervised/burn-verified.json']}
+r['source_checks']=[]
+for folder,manifest in [(root/'source',json.loads((root/'source-manifest.json').read_text())),(attempt/'source',read_locked(latest['execution_source_manifest']))]:
+ changed=[p for p,sha in manifest['files'].items() if digest(folder/p)!=sha]
+ r['source_checks'].append(dict(path=str(folder),files=len(manifest['files']),changed=changed))
+r['execution_manifest']=artifact(attempt/'execution-source-manifest.json')
+r['progress']={p:artifact(base/p) for p in ['progress.json','DT6_checks.json','DT6.json','coordinator_checks.json','attempts.json','decision_depth_partc.json','downstream/progress.json','downstream/decision_downstream.json']}
+r['arms']={}
+for arm in ['X72','P300','P1T']:
+ folder=base/'heals'/f'ST1-dclm-{arm}-S1-12.8B-lr1e-3';tests=[]
+ for p in sorted(folder.glob('tests-rank*.json')):
+  a=artifact(p);c=a['value']['checks'];tests.append(dict(path=str(p),sha256=a['sha256'],checks=len(c),flags=[x for x in c if not x['passed']],resume=[x for x in c if x['test']=='resume_available']))
+ result=artifact(folder/'result.json')
+ if result:
+  v=result['value'];result['value']={k:v.get(k) for k in ['status','run_id','flags','unverified','delta_post','roundtrip_difference','resume_events']};result['value']['scores']={k:None if x is None else x.get('loss') for k,x in v['scores'].items()};result['value']['updates']=len(v['lr_updates'])
+ checkpoints=[]
+ for p in sorted(folder.glob('trainer/**/depth-checkpoint.json')):
+  try:
+   marker=json.loads(p.read_text());actual={name:(p.parent/name).stat().st_size for name in marker['files']}
+   checkpoints.append(dict(path=str(p),step=marker['global_step'],complete=marker['complete'],finite=marker.get('state_finite'),actual_sizes_match=actual==marker['files']))
+  except FileNotFoundError as error:checkpoints.append(dict(path=str(p),observation='member disappeared during snapshot; possible native rotation',error=repr(error)))
+ r['arms'][arm]=dict(tests=tests,resume=artifact(folder/'resume_events.json'),result=result,checkpoints=checkpoints)
+r['logs']=[tail(p) for p in [attempt/'supervisor.log',attempt/'supervised/run/a2-depth-partc.log',attempt/'supervised/burn.log',*sorted(base.glob('logs/C-*.log'))]]
+r['nonfinite_flags']={}
+for p in base.glob('logs/C-*.log'):
+ with p.open(errors='replace') as f:r['nonfinite_flags'][p.name]=sum('DEPTH_NONFINITE_KD_FLAG' in line or 'DEPTH_NONFINITE_RECOVERY' in line for line in f)
+guard=Path('/mnt/local/_gpu_guard/DISABLED');r['guard']=guard.read_text() if guard.exists() else None
+r['session']=subprocess.run(['tmux','display-message','-p','-t',latest['session'],'#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip()
+print('DEPTH_RESUME_HEALTH',json.dumps(r),flush=True)
+HEALTH
