@@ -1,0 +1,19 @@
+{
+  "purpose": "Lossless archive of historical evidence for runner source size cap; live frozen source unchanged",
+  "files": [
+    {
+      "path": "docs/results/a2_remaining_phase0a_20261028/status_1527/fwe-P300-pre.json",
+      "compressed_path": "docs/results/a2_remaining_phase0a_20261028/status_1527/fwe-P300-pre.json.gz",
+      "bytes": 590582,
+      "sha256": "20942754ac843bf3914860c2e901a44421e26e30af0f819a358f95399b3c76dd",
+      "compressed_sha256": "0f16a51314f0a8712486c1c0863487b70f7ddfb8c3195813d346ec88f6c11199"
+    },
+    {
+      "path": "docs/results/a2_remaining_phase0a_20261028/status_1527/dclm-P1T-pre.json",
+      "compressed_path": "docs/results/a2_remaining_phase0a_20261028/status_1527/dclm-P1T-pre.json.gz",
+      "bytes": 588565,
+      "sha256": "96887097f4c46751d63963d115a9269ee61828ff94896ae34383b0c02eb7f6f7",
+      "compressed_sha256": "474711fdb7ec34ef20d76f98d44fa2e8ab308bd2d39e70d0479c59f132f27e5c"
+    }
+  ]
+}

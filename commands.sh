@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-depth-resume-health-20261106-a11
+#th2-wc69-family-input-inventory-20261107-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -69,5 +69,22 @@ for proc in Path('/proc').iterdir():
   if b'scripts.a2_depth_partc_run' not in cmd:continue
   item=process(int(proc.name));item.update(cwd=str((proc/'cwd').resolve()),io=(proc/'io').read_text(),status=(proc/'status').read_text().splitlines()[:8]);r['cpu_processes'].append(item)
  except (FileNotFoundError,ProcessLookupError,PermissionError):pass
-print('DEPTH_RESUME_HEALTH',json.dumps(r),flush=True)
+
+import shutil
+r['disk']=dict(zip(('total','used','free'),shutil.disk_usage('/mnt/local')))
+r['family_inventory']={}
+for directory in ['/mnt/local/_models/deep-llms_th2','/mnt/local/_data/deep-llms_th2']:
+ basepath=Path(directory)
+ r['family_inventory'][directory]=[dict(path=str(p),directory=p.is_dir(),bytes=p.stat().st_size) for p in sorted(basepath.iterdir())] if basepath.exists() else []
+r['smol_existing']=[]
+for p in Path('/mnt/local/_models/deep-llms_th2').rglob('config.json'):
+ if 'smol' in str(p).lower() or 'breadth' in str(p).lower():
+  r['smol_existing'].append(dict(path=str(p.parent),files=[dict(name=f.name,bytes=f.stat().st_size) for f in p.parent.iterdir() if f.is_file()]))
+r['cx_raw']={}
+for name in ['subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow','subsets/qwen3_0.6b_base_en_30B/train/shard_000000/data-00000-of-00001.arrow']:
+ p=Path('/mnt/local/_data/deep-llms_th2/raw/cx_sampled_dd1b1513')/name
+ r['cx_raw'][str(p)]=dict(exists=p.is_file(),bytes=p.stat().st_size if p.is_file() else None,sha256=digest(p) if p.is_file() else None)
+r['fwe_manifest']=artifact(Path('/mnt/local/_data/deep-llms_th2/a2_why_fwe_shuffle2030_20261104/manifest.json'))
+print('FAMILY_INPUT_INVENTORY',json.dumps(r),flush=True)
+
 HEALTH
