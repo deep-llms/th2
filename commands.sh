@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-preparation-health-20261107-a07
+#th2-wc69-family-preparation-health-20261107-a08
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -107,6 +107,29 @@ r['family_native']={str(p.relative_to(family)):artifact(p) for p in [family/'lau
 r['family_logs']=[tail(p,6500) for p in [family/'supervisor.log',family/'supervised/run/a2-family.log',*sorted((family/'results/a2_family_20261107/logs').glob('*.log'))] if p.is_file()]
 r['family_checks']={str(p.relative_to(family)):artifact(p) for p in (family/'results/a2_family_20261107').glob('**/tests-rank*.json')}
 r['family_other']={str(p.relative_to(family)):artifact(p) for p in [family/'results/a2_family_20261107/preparation_checks.json',family/'results/a2_family_20261107/ledger.json',family/'results/a2_family_20261107/lr_selection.json',family/'supervised/reclaim.json',family/'supervised/gpus-free-before-training.json'] if p.is_file()}
+
+
+launch=read_locked(dict(path=str(family/'launch.json'),sha256=digest(family/'launch.json')))
+cfg=read_locked(launch['config']);fm=read_locked(launch['source_manifest'])
+r['family_source_verification']=dict(code_commit=fm['code_commit'],files=len(fm['files']),changed=[p for p,h in fm['files'].items() if digest(family/'source'/p)!=h],manifest=launch['source_manifest'])
+r['family_config']=artifact(Path(launch['config']['path']))
+paused=read_locked(cfg['depth_pause']);saved=read_locked(paused['saved_state']);r['family_pause_saved']=saved
+r['family_pause_actual_bytes']={name:dict(expected=h,pinned=digest(Path(saved['checkpoint'])/name),original=digest(Path(saved['original'])/name)) for name,h in saved['hashes'].items()}
+r['family_mixture_manifest']=artifact(Path(cfg['mixture_stream']['path'])/'manifest.json')
+r['family_input_lock_checks']={}
+for name in ['preparation','models_manifest','cx_complete','mixture_complete','mixture_plan','depth_config','depth_execution_manifest','overlap_preflight']:
+ read_locked(cfg[name]);r['family_input_lock_checks'][name]=True
+mixplan=read_locked(cfg['mixture_plan']);t=mixplan['tokenizer'];r['shared_tokenizer_check']=dict(path=t['local'],expected=t['sha256'],actual=digest(t['local']))
+def compact(value):
+ if isinstance(value,dict):return {k:compact(v) for k,v in value.items() if not k.startswith('per_sequence') and k!='lr_updates'}
+ if isinstance(value,list):return [compact(v) for v in value]
+ return value
+r['family_result_summaries']={}
+for p in (family/'results/a2_family_20261107').glob('**/result.json'):
+ r['family_result_summaries'][str(p.relative_to(family))]=dict(path=str(p),sha256=digest(p),value=compact(json.loads(p.read_text())))
+r['family_nonfinite_log_counts']={}
+for p in (family/'results/a2_family_20261107/logs').glob('*.log'):
+ with p.open(errors='replace') as f:r['family_nonfinite_log_counts'][p.name]=sum('FAMILY_NONFINITE_KD_FLAG' in line for line in f)
 
 print('FAMILY_PREPARATION_HEALTH',json.dumps(r),flush=True)
 HEALTH
