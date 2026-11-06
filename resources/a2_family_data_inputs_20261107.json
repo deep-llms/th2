@@ -1,0 +1,111 @@
+{
+  "spec_sha256": "d73dbf6736e9cf9c26facb9dc75522019280f63321fbd35086a8192dcb8fd99c",
+  "source_manifest_sha256": "c027aae3d802ddd2c17259b4ae4a8bfc67bae073338694f528691cc0e3496ade",
+  "revision": "dd1b15134dc133a26d04f7edf45d9fe8315f4f52",
+  "recovery_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-cx-recovery-20261107-a01",
+  "recovery_document_sha256": "d5ca25dd3bccddd514a030cd8d0f042cd17d887b7cbb3aa60f15f27fdbd4c324",
+  "missing": [
+    {
+      "split": "train",
+      "index": 16556047,
+      "group": "tuning",
+      "text_sha256": "c2a138d456e0c17dd925c2005f2b641bc6e165d72ec58643ec3e5b3237c32aaf",
+      "qwen_tokens": 2572,
+      "gpt_neox_tokens": 2496,
+      "sequence_index": 5144,
+      "reason": "Original packing clipped the document tail",
+      "source": "subsets/qwen3_0.6b_base_en_30B/train/shard_000340/data-00000-of-00001.arrow",
+      "local_row": 46556
+    },
+    {
+      "split": "validation",
+      "index": 9837,
+      "group": "final",
+      "text_sha256": "73081143850ca557d992a6cab0b0fcac1f255926b6f5f78eaf0309a6ae6ab581",
+      "gpt_neox_tokens": 6711,
+      "sequence_index": 9837,
+      "reason": "Decoded UTF-8 differs from original text hash",
+      "source": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local_row": 9837
+    },
+    {
+      "split": "validation",
+      "index": 11712,
+      "group": "final",
+      "text_sha256": "b794d03814d930954bd9f1b8b7ec637d6ebeed2ad6f8376bd946b3783cec1d17",
+      "gpt_neox_tokens": 894,
+      "sequence_index": 11712,
+      "reason": "Original packing clipped the document tail",
+      "source": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local_row": 11712
+    },
+    {
+      "split": "validation",
+      "index": 11713,
+      "group": "final",
+      "text_sha256": "b095a518352e9e7d1a63caf5f7074e49cfabc99d39755d8be11a5653fd173b2b",
+      "gpt_neox_tokens": 433,
+      "sequence_index": 11713,
+      "reason": "Original packing clipped the document tail",
+      "source": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local_row": 11713
+    },
+    {
+      "split": "validation",
+      "index": 11714,
+      "group": "final",
+      "text_sha256": "d27546d5f28835e3ea7ea567de0cd4fa3caec39db3e3beac548bea7bef6e9896",
+      "gpt_neox_tokens": 503,
+      "sequence_index": 11714,
+      "reason": "Original packing clipped the document tail",
+      "source": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local_row": 11714
+    },
+    {
+      "split": "validation",
+      "index": 11715,
+      "group": "final",
+      "text_sha256": "89b6794525e6659950316ccd01fe7a218100da83b3f73e8ea361fd24582c3b7d",
+      "gpt_neox_tokens": 772,
+      "sequence_index": 11715,
+      "reason": "Original packing clipped the document tail",
+      "source": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local_row": 11715
+    },
+    {
+      "split": "validation",
+      "index": 11716,
+      "group": "final",
+      "text_sha256": "105ea0fca2e9d3e918748b1996e2c6c45de8d76504bc65583327a7a9666660ef",
+      "gpt_neox_tokens": 580,
+      "sequence_index": 11716,
+      "reason": "Original packing clipped the document tail",
+      "source": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local_row": 11716
+    }
+  ],
+  "files": [
+    {
+      "bytes": 176139568,
+      "sha256": "fbeaaa2961a6692f5eb1f29c7806943a197961107c9a6c813d6bbf1b84bab17a",
+      "name": "subsets/qwen3_0.6b_base_en_30B/train/shard_000340/data-00000-of-00001.arrow",
+      "url": "https://huggingface.co/datasets/nht10/cx_sampled/resolve/dd1b15134dc133a26d04f7edf45d9fe8315f4f52/subsets/qwen3_0.6b_base_en_30B/train/shard_000340/data-00000-of-00001.arrow",
+      "local": "/mnt/local/_data/deep-llms_th2/a2_family_cx_raw_20261107/subsets/qwen3_0.6b_base_en_30B/train/shard_000340/data-00000-of-00001.arrow"
+    },
+    {
+      "bytes": 44942336,
+      "sha256": "0b04304c7c9cf636ea7893f1fce37af5528a177c599f360e308196ae1ed39db3",
+      "name": "subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "url": "https://huggingface.co/datasets/nht10/cx_sampled/resolve/dd1b15134dc133a26d04f7edf45d9fe8315f4f52/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow",
+      "local": "/mnt/local/_data/deep-llms_th2/a2_family_cx_raw_20261107/subsets/qwen3_0.6b_base_en_30B/validation/shard_000000/data-00000-of-00001.arrow"
+    }
+  ],
+  "shared_tokenizer": {
+    "name": "tokenizer.json",
+    "bytes": 17208861,
+    "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+    "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/tokenizer.json",
+    "local": "/mnt/local/_models/deep-llms_th2/a2_family/shared_tokenizer/tokenizer.json"
+  },
+  "tokenizer_eos_id": 128001
+}
