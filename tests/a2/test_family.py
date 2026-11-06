@@ -19,6 +19,12 @@ class FamilyProtocol(unittest.TestCase):
         rows.update({(a,1.25e-5):.9 for a in ('k6','k20')})
         self.assertFalse(p.choose_lr(rows)['extend_down'])
         self.assertEqual(p.choose_lr(rows)['lr'],1.25e-5)
+    def test_mixture_trigger_is_fixed_and_independent_of_order_noise(self):
+        self.assertFalse(p.mixture_reading(.022,.02,.03)['run_F5'])
+        self.assertTrue(p.mixture_reading(.03,.02,.03)['run_F5'])
+        row=p.descriptor('F2c','k6','0.2B',5e-5,data='mix')
+        self.assertEqual(row['run_id'],'F2c-mix-k6-BS1-0.2B-lr5e-05-s2030')
+        self.assertEqual(row['tokens'],762*64*4096)
     def test_log_budget_interpolation(self):
         self.assertAlmostEqual(p.break_even([.2,.8],[3.,1.],2.)['budget'],.4)
         self.assertEqual(p.break_even([.2,.8],[3.,2.5],2.)['gap'],.5)
@@ -137,3 +143,47 @@ class CxAssembly(unittest.TestCase):
             prepare(root/'inputs.json',root/'out',root/'ref.json')
             actual=json.loads((root/'out/complete.json').read_text());self.assertFalse(actual['unverified']);self.assertTrue(actual['checks'][0]['passed'])
             self.assertEqual(json.loads((root/'out/final/documents.json').read_text())['documents'][1]['text_sha256'],rows[1]['text_sha256'])
+
+class FamilyHealingCPU(SmolIsolation):
+    def test_native_kd_optimizer_and_raw_sample_trace(self):
+        from pathlib import Path
+        import json
+        from efficient_llm.a2_family.heal import FamilyTrainer,Trace
+        from efficient_llm.a2_family.model import KDModel
+        from efficient_llm.a2.train import make_arguments,audit_order
+        from transformers import default_data_collator
+        teacher=self.model();student=copy.deepcopy(teacher);prune(student,[1])
+        class TinyRows:
+            def __len__(self):return 100
+            def __getitem__(self,i):return dict(input_ids=torch.tensor([1,2+i%20,8,9,10,11]),document_starts=torch.tensor([1,0,0,1,0,0]),sample_id=i)
+        with tempfile.TemporaryDirectory() as d:
+            args=make_arguments(Path(d)/'train',50,5e-5,1,1,cuda=False,global_sequences=2);trace=Trace()
+            trainer=FamilyTrainer(model=KDModel(student,8),teacher=teacher,args=args,train_dataset=TinyRows(),data_collator=default_data_collator,callbacks=[trace],trace_path=Path(d)/'trace.jsonl')
+            try:trainer.train()
+            finally:trainer.trace_file.close()
+            self.assertEqual(trainer.state.global_step,50)
+            self.assertEqual(audit_order([trainer.seen],list(range(100)),1,1)['examples'],100)
+            rows=[json.loads(x) for x in (Path(d)/'trace.jsonl').read_text().splitlines()]
+            self.assertEqual([x['sample_ids'] for x in rows],[[i] for i in range(100)])
+            embedding=student.get_input_embeddings().weight
+            groups=[g for g in trainer.optimizer.param_groups if any(p is embedding for p in g['params'])]
+            self.assertEqual(len(groups),1);self.assertEqual(groups[0]['weight_decay'],0.)
+            self.assertEqual(len(trace.lrs),50);self.assertEqual(trace.lrs[0],5e-6);self.assertEqual(trace.lrs[-1],0.)
+            self.assertFalse(any(p.grad is not None for p in teacher.parameters()))
+            self.assertTrue(all(torch.isfinite(p).all() for p in student.parameters()))
+
+    def test_document_scoring_token_weighting_and_nonfinite_rejection(self):
+        from pathlib import Path
+        from efficient_llm.a2_family.evaluate import score_docs
+        import torch.nn.functional as F
+        model=self.model();arrays=[np.array([1,2,3]),np.array([4,5,6,7,8])]
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);np.save(root/'tokens.npy',np.concatenate(arrays));np.save(root/'offsets.npy',[0,3,8])
+            result=score_docs(model,root);total=0
+            with torch.no_grad():
+                for row in arrays:
+                    ids=torch.tensor(row)[None];logits=model(ids).logits[:,:-1]
+                    total+=float(F.cross_entropy(logits.flatten(0,1),ids[:,1:].flatten(),reduction='sum'))
+            self.assertEqual(result['per_sequence_tokens'],[2,4]);self.assertAlmostEqual(result['loss'],total/6,places=6)
+            with torch.no_grad():next(model.parameters()).fill_(float('nan'))
+            with self.assertRaisesRegex(ValueError,'Nonfinite'):score_docs(model,root)

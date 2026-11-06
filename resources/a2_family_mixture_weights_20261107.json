@@ -1,0 +1,178 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "status": "weights_verified_public_config_sources_pending",
+  "config": {
+    "url": "https://huggingface.co/datasets/HuggingFaceTB/smollm3-configs/resolve/c8284ff581d326b1cab19b5c4e8445286fa12370/stage1_8T.yaml",
+    "sha256": "d8e1d6c3d23859700adfe428f09311583844444dc70f22aaf1c2cafedc14c6a5"
+  },
+  "sources": [
+    {
+      "name": "fineweb-edu",
+      "weight": 0.333
+    },
+    {
+      "name": "dclm",
+      "weight": 0.37
+    },
+    {
+      "name": "pes2o",
+      "weight": 0.02
+    },
+    {
+      "name": "wiki",
+      "weight": 0.001
+    },
+    {
+      "name": "stackexchange",
+      "weight": 0.004
+    },
+    {
+      "name": "fw2-fra",
+      "weight": 0.016
+    },
+    {
+      "name": "fw2-spa",
+      "weight": 0.02
+    },
+    {
+      "name": "fw2-deu",
+      "weight": 0.022
+    },
+    {
+      "name": "fw2-ita",
+      "weight": 0.0105
+    },
+    {
+      "name": "fw2-por",
+      "weight": 0.01
+    },
+    {
+      "name": "fw2-cmn",
+      "weight": 0.01
+    },
+    {
+      "name": "fw2-rus",
+      "weight": 0.01
+    },
+    {
+      "name": "fw2-fas",
+      "weight": 0.003
+    },
+    {
+      "name": "fw2-jpn",
+      "weight": 0.00325
+    },
+    {
+      "name": "fw2-kor",
+      "weight": 0.00325
+    },
+    {
+      "name": "fw2-hin",
+      "weight": 0.00325
+    },
+    {
+      "name": "fw2-tha",
+      "weight": 0.00325
+    },
+    {
+      "name": "fw2-vie",
+      "weight": 0.00325
+    },
+    {
+      "name": "fw2-ell",
+      "weight": 0.00225
+    },
+    {
+      "name": "infiwebmath",
+      "weight": 0.01
+    },
+    {
+      "name": "finemath",
+      "weight": 0.017
+    },
+    {
+      "name": "stack-edu-Python",
+      "weight": 0.025
+    },
+    {
+      "name": "stack-edu-Java",
+      "weight": 0.013
+    },
+    {
+      "name": "stack-edu-JavaScript",
+      "weight": 0.013
+    },
+    {
+      "name": "stack-edu-C",
+      "weight": 0.007
+    },
+    {
+      "name": "stack-edu-Cpp",
+      "weight": 0.018
+    },
+    {
+      "name": "stack-edu-C-Sharp",
+      "weight": 0.006
+    },
+    {
+      "name": "stack-edu-PHP",
+      "weight": 0.006
+    },
+    {
+      "name": "stack-edu-TypeScript",
+      "weight": 0.003
+    },
+    {
+      "name": "stack-edu-Swift",
+      "weight": 0.001
+    },
+    {
+      "name": "stack-edu-SQL",
+      "weight": 0.004
+    },
+    {
+      "name": "stack-edu-Ruby",
+      "weight": 0.0008
+    },
+    {
+      "name": "stack-edu-Markdown",
+      "weight": 0.005
+    },
+    {
+      "name": "stack-edu-HTML",
+      "weight": 0.006
+    },
+    {
+      "name": "stack-edu-Rust",
+      "weight": 0.0008
+    },
+    {
+      "name": "stack-edu-Go",
+      "weight": 0.0005
+    },
+    {
+      "name": "stack-edu-Shell",
+      "weight": 0.0007
+    },
+    {
+      "name": "pull-requests",
+      "weight": 0.006
+    },
+    {
+      "name": "kaggle",
+      "weight": 0.0005
+    },
+    {
+      "name": "jupyter-scripts",
+      "weight": 0.0055
+    },
+    {
+      "name": "github-issues",
+      "weight": 0.0032
+    }
+  ],
+  "total_weight": 1.0,
+  "sampling_seed": 2030,
+  "prepared_tokens": 799801344,
+  "policy": "Use public HF contents only; never access private S3 paths from reference config. Resolve each source, record substitutions/unavailable sources and proportional redistribution before preparation. Uniform document sampling within each declared source pool; retain exact sampling frame and every file/content hash. Exclude primary FWE consumed document hashes from FWE and DCLM mixture sources. Mixture preparation not yet submitted."
+}

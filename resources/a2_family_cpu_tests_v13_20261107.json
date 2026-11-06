@@ -1,0 +1,26 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "status": "PASS",
+  "tests": 10,
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=. temp/a2_test_env/bin/python -m unittest tests.a2.test_family -q",
+  "log": "temp/a2_family_cpu_tests_09.log",
+  "log_sha256": "c76d93f551a2d89499906bb6f2bd7cd6e46bd2c5a37a89e3414243fda6da0a32",
+  "coverage": [
+    "native Smol no-removal bitwise",
+    "RoPE/NoPE prune/save/reload",
+    "document isolation/reset",
+    "token-weighted scoring and NaN rejection",
+    "native Trainer 50-update forward-KL/optimizer grouping/raw trace",
+    "registered LR/budget/mixture conditional rules",
+    "exact FWE retokenization/hash/prefix",
+    "exact CX recovery and A2S bytes"
+  ],
+  "limits": [
+    "CPU only; no actual Family GPU admission or launch",
+    "F0/F1 distributed entry points compile only; coordinator/pause/mixture/report integration still pending"
+  ],
+  "historical_fixture_failures": [
+    "two-step fixture shorter than baseline minimum10warmup; increased to50 updates",
+    "fixture expected firstLRpeak instead of peak/10; corrected assertion; scheduler unchanged"
+  ]
+}

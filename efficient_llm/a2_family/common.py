@@ -5,7 +5,8 @@ import tempfile
 from pathlib import Path
 from efficient_llm.diagnostic_data import sha256 as sha
 
-SPEC_SHA = 'd73dbf6736e9cf9c26facb9dc75522019280f63321fbd35086a8192dcb8fd99c'
+INPUT_PREPARATION_SPEC_SHA = 'd73dbf6736e9cf9c26facb9dc75522019280f63321fbd35086a8192dcb8fd99c'
+SPEC_SHA = '40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0'
 
 def read(path):
     return json.loads(Path(path).read_text())

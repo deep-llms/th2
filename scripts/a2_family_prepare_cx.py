@@ -5,14 +5,14 @@ import json
 from pathlib import Path
 import numpy as np
 from scripts.a2_prepare_corpora import verify_file
-from efficient_llm.a2_family.common import read, write, sha, SPEC_SHA
+from efficient_llm.a2_family.common import read, write, sha, SPEC_SHA, INPUT_PREPARATION_SPEC_SHA
 
 
 def prepare(inputs, output, reference):
     import pyarrow as pa
     from tokenizers import Tokenizer
     cfg=read(inputs);output=Path(output)
-    if cfg['spec_sha256']!=SPEC_SHA:raise ValueError('Wrong Family inputs')
+    if cfg['spec_sha256'] not in (SPEC_SHA,INPUT_PREPARATION_SPEC_SHA):raise ValueError('Wrong Family inputs')
     recovery=Path(cfg['recovery_root']);raw_text=recovery/'exact_documents.jsonl'
     if sha(raw_text)!=cfg['recovery_document_sha256']:raise ValueError('Recovered text artifact changed')
     receipt=read(recovery/'recovery.json');docs={g:{} for g in ('tuning','final')}

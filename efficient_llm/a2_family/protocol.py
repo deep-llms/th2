@@ -6,11 +6,12 @@ STEPS = {'0.2B': 762, '0.8B': 3051, '3.2B': 12207}
 def removed_layers(n):
     return list(range(2*n//3, 11*n//12))
 
-def descriptor(phase, arm, budget, lr, seed=2030):
+def descriptor(phase, arm, budget, lr, seed=2030, data="fwe"):
+    if data not in ("fwe", "mix"):raise ValueError("Unregistered data")
     if arm not in ('k6', 'k20', 'k64') or seed not in (2030, 2031):
         raise ValueError('Unregistered arm or data order')
-    return dict(run_id=f'{phase}-fwe-{arm}-BS1-{budget}-lr{lr:.8g}-s{seed}',
-                phase=phase, arm=arm, budget=budget, steps=STEPS[budget],
+    return dict(run_id=f'{phase}-{data}-{arm}-BS1-{budget}-lr{lr:.8g}-s{seed}',
+                phase=phase, data=data, arm=arm, budget=budget, steps=STEPS[budget],
                 tokens=STEPS[budget]*64*4096, lr=lr, stream_seed=seed, model_seed=0)
 
 def grid(peak=2e-4, extension=False):
@@ -59,3 +60,11 @@ def break_even(budgets, nll, reference):
             fraction=(v0-reference)/(v0-value)
             return dict(budget=math.exp(math.log(b0)+fraction*math.log(budget/b0)), bracket=[b0,budget], interpolation=True)
     return dict(budget=None, largest_budget=pairs[-1][0], gap=pairs[-1][1]-reference)
+
+
+def mixture_reading(e_mix,e_fwe,e_second_order):
+    difference=e_mix-e_fwe
+    dependent=abs(difference)>=.003
+    return dict(FE4='data-dependent' if dependent else 'robust',difference=difference,
+                direction='up' if difference>0 else 'down' if difference<0 else 'equal',
+                data_order_difference=abs(e_second_order-e_fwe),run_F5=dependent)

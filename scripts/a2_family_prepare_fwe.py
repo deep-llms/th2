@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 from scripts.a2_stage1_data import INDEX
 from scripts.a2_prepare_corpora import verify_file
-from efficient_llm.a2_family.common import read, write, sha, SPEC_SHA
+from efficient_llm.a2_family.common import read, write, sha, SPEC_SHA, INPUT_PREPARATION_SPEC_SHA
 
 POOL_SHA='82571448856cec259fcb6b29deb097a7671309f6d55d39f0321efb1ffc8d132e'
 ORDER_SHA='685e403d261c34b35e237c71f9978a8d089399adfc0314ec3bee6dc66aff66ba'
@@ -56,7 +56,7 @@ def prepare(plan_path, old_shuffle, downloads_path, output, data_inputs=None):
     if sha(old/'documents.bin')!=POOL_SHA or sha(old/'document_order.bin')!=ORDER_SHA:
         raise ValueError('Historical pool/permutation identity changed')
     plan=read(plan_path);models=read(downloads_path)
-    if models['spec_sha256']!=SPEC_SHA:raise ValueError('Wrong Family spec')
+    if models['spec_sha256'] not in (SPEC_SHA,INPUT_PREPARATION_SPEC_SHA):raise ValueError('Wrong Family spec')
     tokenizer_entry=next(e for e in models['checkpoints'] if e['label']=='k6')
     tf=next(f for f in tokenizer_entry['files'] if f['name']=='tokenizer.json')
     tokenizer_path=Path(tokenizer_entry['path'])/'tokenizer.json'
