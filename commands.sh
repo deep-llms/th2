@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-depth-resume-health-20261106-a01
+#th2-wc69-depth-resume-health-20261106-a02
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -57,5 +57,13 @@ for p in base.glob('logs/C-*.log'):
  with p.open(errors='replace') as f:r['nonfinite_flags'][p.name]=sum('DEPTH_NONFINITE_KD_FLAG' in line or 'DEPTH_NONFINITE_RECOVERY' in line for line in f)
 guard=Path('/mnt/local/_gpu_guard/DISABLED');r['guard']=guard.read_text() if guard.exists() else None
 r['session']=subprocess.run(['tmux','display-message','-p','-t',latest['session'],'#{pane_dead} #{pane_pid}'],capture_output=True,text=True).stdout.strip()
+r['cpu_processes']=[]
+for proc in Path('/proc').iterdir():
+ if not proc.name.isdigit():continue
+ try:
+  cmd=(proc/'cmdline').read_bytes().split(b'\0')
+  if b'scripts.a2_depth_partc_run' not in cmd:continue
+  item=process(int(proc.name));item.update(cwd=str((proc/'cwd').resolve()),io=(proc/'io').read_text(),status=(proc/'status').read_text().splitlines()[:8]);r['cpu_processes'].append(item)
+ except (FileNotFoundError,ProcessLookupError,PermissionError):pass
 print('DEPTH_RESUME_HEALTH',json.dumps(r),flush=True)
 HEALTH
