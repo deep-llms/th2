@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-depth-resume-health-20261106-a02
+#th2-wc69-depth-resume-health-20261106-a03
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -35,6 +35,10 @@ for folder,manifest in [(root/'source',json.loads((root/'source-manifest.json').
  changed=[p for p,sha in manifest['files'].items() if digest(folder/p)!=sha]
  r['source_checks'].append(dict(path=str(folder),files=len(manifest['files']),changed=changed))
 r['execution_manifest']=artifact(attempt/'execution-source-manifest.json')
+pf=read_locked(dict(path='/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-resume-preflight-20261106-a01.json',sha256='bbb9c3d0dc28b8637fad183d852ce75cc7c1cba06753faee2fa3186fb1575aca'))
+read_locked(pf['pause_receipt']);cfg=read_locked(pf['depth_launch']['config']);stream=cfg['heal_streams']['dclm']
+read_locked(dict(path=stream['path']+'/manifest.json',sha256=stream['sha256']))
+r['input_locks']=dict(pause_receipt_unchanged=True,config_unchanged=True,heal_manifest_unchanged=True,last_actual_data_hash_verification=pf['utc'],last_actual_checkpoint_22sha_verification=pf['utc'],full_data_rehashed_this_health=False)
 r['progress']={p:artifact(base/p) for p in ['progress.json','DT6_checks.json','DT6.json','coordinator_checks.json','attempts.json','decision_depth_partc.json','downstream/progress.json','downstream/decision_downstream.json']}
 r['arms']={}
 for arm in ['X72','P300','P1T']:
