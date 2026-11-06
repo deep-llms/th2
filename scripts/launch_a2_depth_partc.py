@@ -76,6 +76,7 @@ def main():
     p.add_argument('--plan',type=Path,required=True)
     p.add_argument('--resume',action='store_true')
     p.add_argument('--recovery-handoff',type=Path)
+    p.add_argument('--recovery-patch',type=Path,help='Explicit CPU-validated patch manifest; original recipe and frozen source retained')
     a=p.parse_args()
     if a.resume:
         if not a.recovery_handoff:p.error('--resume requires a fresh --recovery-handoff JSON')

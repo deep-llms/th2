@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "spec_sha256": "2cbef31e9bb6576ec9f3a20918ca69d7019e6e8e69e13bfc12bf92d151d2adbe",
+  "original_commit": "e2af735a59127f1116dbf8d671fe5aa95f1bb12f",
+  "original_source_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-partc-20261103-a01/source-manifest.json",
+    "sha256": "5161ca3023816be7892fd6c98acdc28f90d4eb23eb7211337328f3c360da41f9"
+  },
+  "patches": {
+    "efficient_llm/a2/measure.py": {
+      "original_sha256": "db818b8b124d6a097072713294f140cb14cf4c3d7495b351dbcd8f5e2e701d26",
+      "patched_sha256": "3cbb5b326c468a2f98f4229802b68faed8c5aec59b3a407fbed95bb43c4d22fc"
+    },
+    "efficient_llm/a2_depth/heal_long.py": {
+      "original_sha256": "e5cf3892613ff86834ce4941ae0d0e2404d9b9be34f63a443f82032cfb5cc7da",
+      "patched_sha256": "857d14329d1de06cadb76b72c88380091f774bb133a84738ddd1d42d33565762"
+    }
+  },
+  "implementation": {
+    "scripts/a2_depth_continue.py": "0a0826eefee17248335f2f24b89abf77661bed0d9ff0b44155e12d4bf1e50287",
+    "scripts/launch_a2_depth_partc.py": "ee0cc70d19982d923777da513e0e280f6a9c169ace1e69eccb79215c81125b69",
+    "tests/a2/test_depth_resume_handoff.py": "0e5162d1d7e34a3d8805cb51296487ec547852276b42e12b7bf5f4d6ea02cdd9"
+  },
+  "checks": [
+    {
+      "test": "16 targeted CPU tests: recovery/full-state one-rank and two-rank native resume/launch contracts",
+      "passed": true
+    },
+    {
+      "test": "two-rank local score failure synchronized; healthy scores exact serial match",
+      "passed": true
+    },
+    {
+      "test": "rank-zero export failure synchronized; barriers remain aligned",
+      "passed": true
+    },
+    {
+      "test": "partial final export preserved; retry and interruption between renames safe",
+      "passed": true
+    },
+    {
+      "test": "patched source copy verified; original frozen bytes preserved; tampered bytes refused",
+      "passed": true
+    },
+    {
+      "test": "launcher hash admission recheck: 1 test PASS",
+      "passed": true
+    }
+  ],
+  "logs": {
+    "temp/depth_resume_patch_tests_20261106.log": "3460245514196ca070c016de7547c326997ffc2e128f30b3bbaa8c62bb3337ab",
+    "temp/depth_resume_patch_manifest_test_20261106.log": "0b807703306a83dee53d572e6a421e40f2b733845767e1ba01c9f4f7dbaeb73d"
+  },
+  "scope": "Only two failure-path/runtime provenance files differ in a separate execution-source copy. Original config/checkpoint identity, loss, LR, seed, order, native Trainer restore and immutable original source retained.",
+  "limits": [
+    "CPU/Gloo only; actual eight-GPU native resume must be verified after startup",
+    "No recovery guarantee for fatal CUDA/NCCL/device failures; native supervisor owns cleanup",
+    "Existing FWE/Breadth/infra flags retained"
+  ]
+}

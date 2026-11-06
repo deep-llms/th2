@@ -39,34 +39,48 @@ def score(model, rows, *, amp=True, batch=1, chunk=128, isolate=False, distribut
     bucket=torch.zeros(3,2,device=device,dtype=torch.float64)
     kd=torch.zeros(2,device=device,dtype=torch.float64)
     indices=list(range(rank,n,world))
-    with preserve_rng_and_mode(model):
-        model.eval()
-        for start in range(0,len(indices),batch):
-            selection=indices[start:start+batch]
-            ids=torch.stack([rows[i]['input_ids'] for i in selection]).to(device)
-            kwargs={}
-            if isolate:
-                mask,pos=document_mask(torch.stack([rows.boundaries(i) for i in selection]).to(device),next(model.parameters()).dtype)
-                kwargs=dict(attention_mask=mask,position_ids=pos)
-            with autocast(device,amp):
-                hidden=model.model(ids,use_cache=False,return_dict=True,**kwargs).last_hidden_state
-                if teacher is not None:
-                    th=teacher.model(ids,use_cache=False,return_dict=True).last_hidden_state
-                    kl=forward_kl(hidden,model.lm_head.weight,th,teacher.lm_head.weight,chunk,recompute_head=False)
-                    kd[0] += kl.double()*ids.numel(); kd[1] += ids.numel()
-                for offset in range(0,ids.shape[1]-1,chunk):
-                    end=min(offset+chunk,ids.shape[1]-1)
-                    logits=model.lm_head(hidden[:,offset:end]).float()
-                    ce=F.cross_entropy(logits.flatten(0,1),ids[:,offset+1:end+1].reshape(-1),reduction='none').view(len(selection),-1)
-                    totals[selection] += ce.double().sum(-1); counts[selection] += ce.shape[1]
-                    # Bucket by TARGET position: there is no prediction for position 0.
-                    positions=torch.arange(offset+1,end+1,device=device)
-                    for b,(low,high) in enumerate(((0,512),(512,2048),(2048,4096))):
-                        take=(positions>=low)&(positions<high)
-                        bucket[b,0] += ce[:,take].double().sum(); bucket[b,1] += take.sum()*len(selection)
+    failure=None
+    expected=None
+    try:
+        with preserve_rng_and_mode(model):
+            model.eval()
+            for start in range(0,len(indices),batch):
+                selection=indices[start:start+batch]
+                ids=torch.stack([rows[i]['input_ids'] for i in selection]).to(device)
+                kwargs={}
+                if isolate:
+                    mask,pos=document_mask(torch.stack([rows.boundaries(i) for i in selection]).to(device),next(model.parameters()).dtype)
+                    kwargs=dict(attention_mask=mask,position_ids=pos)
+                with autocast(device,amp):
+                    hidden=model.model(ids,use_cache=False,return_dict=True,**kwargs).last_hidden_state
+                    if teacher is not None:
+                        th=teacher.model(ids,use_cache=False,return_dict=True).last_hidden_state
+                        kl=forward_kl(hidden,model.lm_head.weight,th,teacher.lm_head.weight,chunk,recompute_head=False)
+                        kd[0] += kl.double()*ids.numel(); kd[1] += ids.numel()
+                    for offset in range(0,ids.shape[1]-1,chunk):
+                        end=min(offset+chunk,ids.shape[1]-1)
+                        logits=model.lm_head(hidden[:,offset:end]).float()
+                        ce=F.cross_entropy(logits.flatten(0,1),ids[:,offset+1:end+1].reshape(-1),reduction='none').view(len(selection),-1)
+                        totals[selection] += ce.double().sum(-1); counts[selection] += ce.shape[1]
+                        # Bucket by TARGET position: there is no prediction for position 0.
+                        positions=torch.arange(offset+1,end+1,device=device)
+                        for b,(low,high) in enumerate(((0,512),(512,2048),(2048,4096))):
+                            take=(positions>=low)&(positions<high)
+                            bucket[b,0] += ce[:,take].double().sum(); bucket[b,1] += take.sum()*len(selection)
+        expected=rows[0]['input_ids'].numel()-1
+    except Exception as error:
+        failure=error
+    # All ranks finish local scoring before entering metric reductions. A local
+    # data/forward error must not let peers enter a different collective.
+    if distributed and dist.is_initialized():
+        failed=torch.tensor(int(failure is not None),device=device,dtype=torch.int32)
+        dist.all_reduce(failed,op=dist.ReduceOp.MAX)
+        if failed.item():
+            raise RuntimeError('Distributed scoring failed; no partial metric published') from failure
+    elif failure is not None:
+        raise failure
     if distributed:
         for value in (totals,counts,bucket,kd): reduce_sum(value)
-    expected=rows[0]['input_ids'].numel()-1
     if not bool((counts==expected).all()): raise ValueError('Missing/duplicated validation coverage')
     if not torch.isfinite(totals).all() or not torch.isfinite(kd).all(): raise FloatingPointError('Nonfinite CE')
     return dict(loss=(totals.sum()/counts.sum()).item(),tokens=int(counts.sum()),sequences=n,

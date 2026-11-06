@@ -13,6 +13,7 @@ import shlex
 import socket
 import subprocess
 import sys
+import shutil
 from efficient_llm.a2_depth.common import read,write
 from efficient_llm.a2_depth.recovery import coordinator_lock
 from scripts.a2_remaining import read_locked
@@ -22,6 +23,35 @@ from scripts.train_then_burn import digest,GUARD_HASH
 from scripts.launch_a2_depth_partb import predecessor
 
 GUARD=Path('/mnt/local/_gpu_guard/DISABLED')
+PATCH_FILES={'efficient_llm/a2/measure.py','efficient_llm/a2_depth/heal_long.py'}
+
+
+def prepare_recovery_source(source,frozen,attempt,patch_path,original_manifest):
+    """Version an explicit failure-path fix without changing checkpoint identity."""
+    patch=read(patch_path)
+    if patch['original_source_manifest']!=original_manifest or patch['status']!='PASS':
+        raise ValueError('Recovery proof not bound to original source')
+    if set(patch['patches'])!=PATCH_FILES or not patch.get('checks') or not all(x['passed'] for x in patch['checks']):
+        raise ValueError('Incomplete recovery validation')
+    files=read_locked(original_manifest)['files']
+    for rel,item in patch['patches'].items():
+        if rel not in files or digest(frozen/rel)!=item['original_sha256'] or digest(source/rel)!=item['patched_sha256']:
+            raise ValueError('Recovery source mismatch: '+rel)
+    if not {'scripts/a2_depth_continue.py','scripts/launch_a2_depth_partc.py'}.issubset(patch['implementation']):
+        raise ValueError('Recovery launcher hashes missing')
+    for rel,sha in patch['implementation'].items():
+        if digest(source/rel)!=sha:raise ValueError('Recovery launcher/proof mismatch: '+rel)
+    patched=attempt/'source';patched.mkdir()
+    manifest={}
+    for rel,sha in files.items():
+        src=source/rel if rel in PATCH_FILES else frozen/rel
+        dest=patched/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(src,dest)
+        actual=digest(dest)
+        if actual!=(patch['patches'][rel]['patched_sha256'] if rel in PATCH_FILES else sha):raise ValueError('Recovery copy mismatch')
+        manifest[rel]=actual
+    proof=write(attempt/'execution-source-manifest.json',dict(original_source_manifest=original_manifest,
+        recovery_patch=lock(patch_path),files=manifest,checkpoint_recipe_unchanged=True))
+    return patched,proof
 
 
 def validate_existing(output,plan,commit):
@@ -67,8 +97,10 @@ def continue_run(args):
         record,cfg,frozen=validate_existing(output,args.plan,args.code_commit)
         # The launcher handling this continuation must itself match the frozen code.
         source=Path(__file__).resolve().parents[1]
-        for rel in ('scripts/a2_depth_continue.py','scripts/launch_a2_depth_partc.py'):
-            if digest(source/rel)!=digest(frozen/rel):raise ValueError('Use the original frozen continuation implementation')
+        patch_path=getattr(args,'recovery_patch',None)
+        if not patch_path:
+            for rel in ('scripts/a2_depth_continue.py','scripts/launch_a2_depth_partc.py'):
+                if digest(source/rel)!=digest(frozen/rel):raise ValueError('Use the original frozen continuation implementation')
         history=read(output/'continuations.json').get('attempts',[]) if (output/'continuations.json').exists() else []
         for session in [record['session'],*[v['session'] for v in history]]:
             if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:
@@ -80,6 +112,9 @@ def continue_run(args):
         handoff=read(args.recovery_handoff);observed=admission(output,record,cfg,handoff)
         attempt=output/'continuations'/f'attempt{len(history)+1:03d}'
         attempt.mkdir(parents=True,exist_ok=False)
+        execution_source=frozen;execution_manifest=None
+        if patch_path:
+            execution_source,execution_manifest=prepare_recovery_source(source,frozen,attempt,patch_path,record['source_manifest'])
         write(attempt/'admission.json',observed)
         jobs=read_locked(record['jobs']);job_lock=write_native(attempt/'jobs.json',jobs)
         load_jobs(Path(job_lock['path']))
@@ -87,13 +122,18 @@ def continue_run(args):
         observed=admission(output,record,cfg,handoff)
         inspection=write(attempt/'inspection.json',observed['inspection'])
         env={**os.environ,**record['environment']}
-        cmd=['env',*[k+'='+v for k,v in record['environment'].items()],sys.executable,'-u','-m','scripts.train_then_burn',
+        run_environment=dict(record['environment'])
+        if execution_manifest:
+            run_environment.update(PYTHONPATH=str(execution_source),A2_DEPTH_RECOVERY_PATCH=execution_manifest['path'])
+        env.update(run_environment)
+        cmd=['env',*[k+'='+v for k,v in run_environment.items()],sys.executable,'-u','-m','scripts.train_then_burn',
              '--config',job_lock['path'],'--output',str(attempt/'supervised'),'--inspection',inspection['path'],
              '--host',socket.gethostname(),'--burn-session',args.session+'_burn',
              '--predecessor-burn-script',observed['predecessor']['burn_script']]
         write(output/'continuations.json',dict(attempts=history+[dict(session=args.session,root=str(attempt),
-             handoff=lock(args.recovery_handoff),config=record['config'],source_manifest=record['source_manifest'])]))
+             handoff=lock(args.recovery_handoff),config=record['config'],source_manifest=record['source_manifest'],
+             execution_source_manifest=execution_manifest)]))
         command='exec '+shlex.join(cmd)+' >'+shlex.quote(str(attempt/'supervisor.log'))+' 2>&1'
-        subprocess.run(['tmux','new-session','-d','-s',args.session,'-c',str(frozen),command],env=env,check=True)
+        subprocess.run(['tmux','new-session','-d','-s',args.session,'-c',str(execution_source),command],env=env,check=True)
         subprocess.run(['tmux','set-option','-w','-t',args.session,'remain-on-exit','on'],check=True)
         print('A2_DEPTH_PART_C_CONTINUED',attempt,flush=True)

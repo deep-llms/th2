@@ -5,6 +5,8 @@ Scientific audits record failures and continue; no time cap or extra retry.
 import argparse
 import gc
 import time
+import os
+import uuid
 from pathlib import Path
 import numpy as np
 import torch
@@ -39,6 +41,34 @@ class RecoverableTrainer(ReportTrainer):
 
 STEPS=48828
 
+def publish_final(student, out):
+    """Preserve interrupted exports; publish a complete new serialization only."""
+    from safetensors import safe_open
+    out=Path(out);pending=out/('final-pending-'+uuid.uuid4().hex)
+    save_student(student,pending)
+    read(pending/'config.json')
+    shards=list(pending.glob('*.safetensors'))
+    if not shards:raise ValueError('Final export has no weights')
+    for shard in shards:
+        with safe_open(shard,framework='pt',device='cpu') as handle:
+            if not list(handle.keys()):raise ValueError('Empty final weight shard')
+    final=out/'final'
+    if final.exists():final.rename(out/('final-preserved-'+uuid.uuid4().hex))
+    pending.rename(final)
+    return final
+
+
+def publish_final_distributed(student,out,rank,device):
+    failure=None
+    if rank==0:
+        try:publish_final(student,out)
+        except Exception as error:failure=error
+    if torch.distributed.is_initialized():
+        failed=torch.tensor(int(failure is not None),device=device,dtype=torch.int32)
+        torch.distributed.broadcast(failed,src=0)
+        if failed.item():raise RuntimeError('Final export failed; preserve artifacts and retry from checkpoint') from failure
+    elif failure is not None:raise failure
+
 def run_identity(cfg, arm):
     return dict(spec_sha256=cfg['spec_sha256'], steps=STEPS, lr=.001, global_sequences=64,
                 microbatch=4, dataset='dclm', arm=arm, removed=list(range(16,22)),
@@ -52,7 +82,8 @@ def train_resumable(trainer, trace, identity, checkpoint, out, *, resume=False, 
     if trainer.args.process_index==0:
         events=read(out/'resume_events.json').get('events',[]) if (out/'resume_events.json').exists() else []
         events.append(dict(attempt=len(events)+1,resume_requested=resume,checkpoint=str(checkpoint) if checkpoint else None,
-                           rejected=list(rejected),action='resume' if checkpoint else 'full schedule from initialization'))
+                           rejected=list(rejected),action='resume' if checkpoint else 'full schedule from initialization',
+                           recovery_patch=os.environ.get('A2_DEPTH_RECOVERY_PATCH')))
         write(out/'resume_events.json',dict(events=events))
     if checkpoint and read(checkpoint/'trainer_state.json')['global_step']==identity['steps']:
         trainer._load_from_checkpoint(str(checkpoint))
@@ -119,7 +150,7 @@ def run(cfg,arm,resume=False):
     master=checks.attempt('master_final',lambda:score(student,ev['final']))
     round_to_saved_precision(student)
     # Preserve checkpoint even if a numerical scoring diagnostic fails.
-    if rank==0:save_student(student,out/'final')
+    publish_final_distributed(student,out,rank,device)
     state.wait_for_everyone()
     values={k:checks.attempt('post:'+k,lambda k=k:score(student,ev[k],teacher=teacher if k=='small' else None)) for k in ev}
     if values['tuning'] is not None:checks.record('tuning_divergence',values['tuning']['loss']<=pre['tuning']['loss'],dict(pre=pre['tuning']['loss'],post=values['tuning']['loss']))
