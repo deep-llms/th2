@@ -1,0 +1,253 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "datasets": {
+    "dclm": {
+      "0.2B": {
+        "E": 0.021096293347514283,
+        "E_relative": 0.10302884126700326,
+        "A_init": 0.07272470370653528,
+        "A_init_relative": 0.35516864649842933,
+        "P300_delta": 0.2047610464029428,
+        "E_label": "persists",
+        "runs": {
+          "P300": {
+            "run_id": "ST1-dclm-P300-S1-0.2B-lr1e-3",
+            "val_post": 2.9425540786156272,
+            "val_parent": 2.7377930322126844,
+            "delta_post": 0.2047610464029428,
+            "roundtrip_difference": 0.0,
+            "steps": 762
+          },
+          "P1T": {
+            "run_id": "ST1-dclm-P1T-S1-0.2B-lr1e-3",
+            "val_post": 2.9127663315143915,
+            "val_parent": 2.6869089917639344,
+            "delta_post": 0.22585733975045708,
+            "roundtrip_difference": 0.0,
+            "steps": 762
+          },
+          "X72": {
+            "run_id": "ST1-dclm-X72-S1-0.2B-lr1e-3",
+            "val_post": 3.0152787823221625,
+            "val_parent": 2.90857529610787,
+            "delta_post": 0.10670348621429238,
+            "roundtrip_difference": 0.0,
+            "steps": 762
+          }
+        }
+      },
+      "0.8B": {
+        "E": 0.02078642256362606,
+        "E_relative": 0.14645757338084062,
+        "A_init": 0.038910028863575974,
+        "A_init_relative": 0.27415339941707156,
+        "P300_delta": 0.14192794598319702,
+        "E_label": "persists",
+        "runs": {
+          "P300": {
+            "run_id": "ST1-dclm-P300-S1-0.8B-lr1e-3",
+            "val_post": 2.8797209781958815,
+            "val_parent": 2.7377930322126844,
+            "delta_post": 0.14192794598319702,
+            "roundtrip_difference": 0.0,
+            "steps": 3051
+          },
+          "P1T": {
+            "run_id": "ST1-dclm-P1T-S1-0.8B-lr1e-3",
+            "val_post": 2.8496233603107575,
+            "val_parent": 2.6869089917639344,
+            "delta_post": 0.16271436854682308,
+            "roundtrip_difference": 0.0,
+            "steps": 3051
+          },
+          "X72": {
+            "run_id": "ST1-dclm-X72-S1-0.8B-lr1e-3",
+            "val_post": 2.9186310070594574,
+            "val_parent": 2.90857529610787,
+            "delta_post": 0.010055710951587304,
+            "roundtrip_difference": 0.0,
+            "steps": 3051
+          }
+        }
+      },
+      "3.2B": {
+        "E": 0.021670884569823023,
+        "E_relative": 0.21225514007603818,
+        "A_init": 0.01211313187395735,
+        "A_init_relative": 0.11864188074014263,
+        "P300_delta": 0.10209827927870041,
+        "E_label": "persists",
+        "runs": {
+          "P300": {
+            "run_id": "ST1-dclm-P300-S1-3.2B-lr1e-3",
+            "val_post": 2.839891311491385,
+            "val_parent": 2.7377930322126844,
+            "delta_post": 0.10209827927870041,
+            "roundtrip_difference": 0.0,
+            "steps": 12207
+          },
+          "P1T": {
+            "run_id": "ST1-dclm-P1T-S1-3.2B-lr1e-3",
+            "val_post": 2.810678155612458,
+            "val_parent": 2.6869089917639344,
+            "delta_post": 0.12376916384852343,
+            "roundtrip_difference": 0.0,
+            "steps": 12207
+          },
+          "X72": {
+            "run_id": "ST1-dclm-X72-S1-3.2B-lr1e-3",
+            "val_post": 2.852004443365342,
+            "val_parent": 2.90857529610787,
+            "delta_post": -0.05657085274252793,
+            "roundtrip_difference": 0.0,
+            "steps": 12207
+          }
+        }
+      },
+      "12.8B": {
+        "runs": {
+          "P300": {
+            "val_post": 2.816662510208993,
+            "val_parent": 2.7377930322126844,
+            "delta_post": 0.07886947799630839,
+            "provenance": "First-node final scalar; per-sequence arrays lost; descriptive per Family F0 spec",
+            "evidence": {
+              "path": "results/a2_depth_20261031/partc_health_20261102_2246/notes/P300.json",
+              "sha256": "9847482590401eb494bfcf6e1a38bee076d4fadcefb90eeac594564b3becadde"
+            }
+          },
+          "P1T": {
+            "val_post": 2.78616812985127,
+            "val_parent": 2.686908991763934,
+            "delta_post": 0.09925913808733622,
+            "provenance": "First-node final scalar; per-sequence arrays lost; descriptive per Family F0 spec",
+            "evidence": {
+              "path": "results/a2_depth_20261031/partc_health_20261102_2246/notes/P1T.json",
+              "sha256": "b59601af06d28ec1e181829ccc2a235f6d2d7b31b4c6521d0161a9cb5a7aa5c6"
+            }
+          }
+        }
+      }
+    },
+    "fwe": {
+      "0.2B": {
+        "E": 0.026224221566386152,
+        "E_relative": 0.1339870997016109,
+        "A_init": 0.07847837360805077,
+        "A_init_relative": 0.4009686099708777,
+        "P300_delta": 0.19572198834654575,
+        "E_label": "persists",
+        "runs": {
+          "P300": {
+            "run_id": "ST1-fwe-P300-S1-0.2B-lr1e-3",
+            "val_post": 3.0563533142033608,
+            "val_parent": 2.860631325856815,
+            "delta_post": 0.19572198834654575,
+            "roundtrip_difference": 0.0,
+            "steps": 762
+          },
+          "P1T": {
+            "run_id": "ST1-fwe-P1T-S1-0.2B-lr1e-3",
+            "val_post": 3.030653543514748,
+            "val_parent": 2.808707333601816,
+            "delta_post": 0.2219462099129319,
+            "roundtrip_difference": 0.0,
+            "steps": 762
+          },
+          "X72": {
+            "run_id": "ST1-fwe-X72-S1-0.2B-lr1e-3",
+            "val_post": 3.1348316878114115,
+            "val_parent": 3.042152001946299,
+            "delta_post": 0.09267968586511266,
+            "roundtrip_difference": 0.0,
+            "steps": 762
+          }
+        }
+      },
+      "0.8B": {
+        "E": 0.02281977941126856,
+        "E_relative": 0.16722075074669332,
+        "A_init": 0.04245379935293281,
+        "A_init_relative": 0.3110966180655233,
+        "P300_delta": 0.1364649979704735,
+        "E_label": "persists",
+        "runs": {
+          "P300": {
+            "run_id": "ST1-fwe-P300-S1-0.8B-lr1e-3",
+            "val_post": 2.9970963238272885,
+            "val_parent": 2.860631325856815,
+            "delta_post": 0.1364649979704735,
+            "roundtrip_difference": 0.0,
+            "steps": 3051
+          },
+          "P1T": {
+            "run_id": "ST1-fwe-P1T-S1-0.8B-lr1e-3",
+            "val_post": 2.967992110983558,
+            "val_parent": 2.808707333601816,
+            "delta_post": 0.15928477738174207,
+            "roundtrip_difference": 0.0,
+            "steps": 3051
+          },
+          "X72": {
+            "run_id": "ST1-fwe-X72-S1-0.8B-lr1e-3",
+            "val_post": 3.0395501231802213,
+            "val_parent": 3.042152001946299,
+            "delta_post": -0.0026018787660775367,
+            "roundtrip_difference": 0.0,
+            "steps": 3051
+          }
+        }
+      },
+      "3.2B": {
+        "E": 0.023461150403907727,
+        "E_relative": 0.2464897808821935,
+        "A_init": 0.01299365118963669,
+        "A_init_relative": 0.1365151401126407,
+        "P300_delta": 0.09518102665327399,
+        "E_label": "persists",
+        "runs": {
+          "P300": {
+            "run_id": "ST1-fwe-P300-S1-3.2B-lr1e-3",
+            "val_post": 2.955812352510089,
+            "val_parent": 2.860631325856815,
+            "delta_post": 0.09518102665327399,
+            "roundtrip_difference": 0.0,
+            "steps": 12207
+          },
+          "P1T": {
+            "run_id": "ST1-fwe-P1T-S1-3.2B-lr1e-3",
+            "val_post": 2.9273495106589977,
+            "val_parent": 2.808707333601816,
+            "delta_post": 0.11864217705718172,
+            "roundtrip_difference": 0.0,
+            "steps": 12207
+          },
+          "X72": {
+            "run_id": "ST1-fwe-X72-S1-3.2B-lr1e-3",
+            "val_post": 2.9688060036997257,
+            "val_parent": 3.042152001946299,
+            "delta_post": -0.07334599824657317,
+            "roundtrip_difference": 0.0,
+            "steps": 12207
+          }
+        }
+      }
+    }
+  },
+  "source_locks": {
+    "dclm": {
+      "local_evidence": "docs/results/a2_stage1_20261029/final/runs_summary.json",
+      "sha256": "4b2ba8bade459591be0d990b187f276fd7f653951cdbc455bfc55941e887994f"
+    },
+    "fwe": {
+      "local_evidence": "temp/a2_stage1b_part2_health15/supervised/run/results/a2_stage1_fwe/runs.json",
+      "sha256": "1df43ebc87e9ce840cbd0da489b490ee4fe7d456549f2b4b16ff8ccf1300b897"
+    }
+  },
+  "provenance": {
+    "stage1_reference": {
+      "path": "resources/a2_depth_stage1_references_20261101.json",
+      "sha256": "78afb6090646a84afc59d498911d37590ebce745a8e0a4d637d0411406651da5"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "utc": "2026-11-06T18:35:42.429826+00:00",
+  "status": "PASS",
+  "launch_ready": false,
+  "tests": 27,
+  "log": "temp/family_integration_cpu_09.log",
+  "log_sha256": "0f93042da45f5b3f9717f49517be7768badf3c80577996378aa2f30d2ebabab3",
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=. temp/a2_test_env/bin/python -m unittest tests.a2.test_family_readout tests.a2.test_family tests.a2.test_why_pause -q",
+  "files": {
+    "efficient_llm/a2_family/__init__.py": "9cef25043ef133f5abd6e1ea315f8ce4803b7c766dbd24d0eb705c94eec09a81",
+    "efficient_llm/a2_family/checks.py": "0d025660998671b6a2cb6fc34435de5a51f7476babf33d1af579eeb4604be79a",
+    "efficient_llm/a2_family/common.py": "d438eaddac5c3ee6350cdda7e1c26b3ada02b42314ae82578b3a3ccb9a59efba",
+    "efficient_llm/a2_family/evaluate.py": "c6c48ee85d98bc21429a703f9083085ba432f67a7c8e6e8eebdfcb038eb0a0fc",
+    "efficient_llm/a2_family/heal.py": "7e1942a7270948b272e301b3b2133e05d66a9033b9dcda08721cc65079e635c5",
+    "efficient_llm/a2_family/model.py": "a08155df247329bd028357af1f293710765fc98c5c5c4d4f059313523a52a1f7",
+    "efficient_llm/a2_family/protocol.py": "d0744189d011d3b869294b6ca2783fb9bfda4335a46e312947a319850e49d161",
+    "efficient_llm/a2_family/reference.py": "dc67683e8976162b824875d0803c77061e6bcf5ea73353534ba3bd8001db6434",
+    "resources/a2_family_historical_20261107.json": "9aa6ac33ff1291d7982da6dd7044fbf6efec418f2432f91e8096c191b947ac64",
+    "scripts/a2_family_backup.py": "4a8a85b16f6b240a8bac440a3fcb8fd84d2e7446c8a3d258bec5e3b42b8135c4",
+    "scripts/a2_family_depth_bridge.py": "19ebcdb1d938e5841430fc95147437f58bd28ad843c637818210969bf1f4fd0a",
+    "scripts/a2_family_overlap.py": "de40b22395675cd927f159083d617ca66c825c118b36c41b2e167453aebb8044",
+    "scripts/a2_family_pause_depth.py": "f539dfdffce49e93e93efc3465190b9ea53396831706defcadf63832287aae2a",
+    "scripts/a2_family_plan.py": "cb17d1fa06b184f53479677434b37d3366d86c9c666202f731bfeb4b23872492",
+    "scripts/a2_family_prepare.py": "db18c98c95326ed24a1b540e1cbb18140337baaefa898fb2883ffff78adb91d8",
+    "scripts/a2_family_prepare_cx.py": "d9a7fcd869deba5c60703e396240b9cc5be2c993f5df61b7c8edb4128320393d",
+    "scripts/a2_family_prepare_fwe.py": "246e116a9d9fc5bfed6c98308d3639f133bbd0ab4dda6594e91254900ee8adf1",
+    "scripts/a2_family_prepare_mix.py": "e8e52bde8fed77b1c6a238cd3fafe09d8b9a0a26f00f1ef59e96ca3c31018ac6",
+    "scripts/a2_family_recover_cx.py": "b76a7fc7a1b226301222eb09aa2d1c3377a2928c1742ffaf908e119f9ea02986",
+    "scripts/a2_family_report.py": "1aac34960d3bbdf9eabc88a2f9b7ace9275808ac26046583be225aa57182762e",
+    "scripts/a2_family_run.py": "53f860e502a0b4601318c32f4e6b2a30bc6fc9e916dc924ab13787e37db24c63",
+    "scripts/launch_a2_family.py": "5c3eb05918df53872a5d4a48f5027aeebed61c88dfdc7d706c411d769afae224",
+    "tests/a2/test_family.py": "fbad212194c766266af001a1baa73ec6bb931c7d8c5fd8d4c2345c6623adeec7",
+    "tests/a2/test_family_readout.py": "bcaf97c450c53c1b5df0cba4fa398232b0bdb14f7f00f12298782c4eeae0ea3f",
+    "tests/a2/test_why_pause.py": "96a3e89e03eb89dce4fabc1183fd5364866418aabdfaef8f210279e3f7d8ffc2"
+  },
+  "coverage": [
+    "Native Smol CPU forward/save/reload, masking/reset and Trainer trace",
+    "Registered LR/budget conditional graph including overlap-adjudicated triggers",
+    "Actual-array weighted full/reduced paired report and exact trace coverage",
+    "Scientific backup member hashes and parent final arrays/raw traces retained",
+    "Complete input plan binding and incomplete-input rejection",
+    "Pause independent byte copy and wrong-source/arm rejection",
+    "Native Family then Depth queue manifest"
+  ],
+  "remaining_admission": [
+    "Actual common+mixture preparation completion and node hashes",
+    "End-to-end frozen Family launcher/pause/Depth bridge admission validation",
+    "Fresh native ownership and actual saved checkpoint before preemption"
+  ],
+  "limitations": [
+    "CPU fixtures; not a Family GPU launch or actual pause/resume handoff",
+    "Prior failed fixture assertion retained in temp/family_integration_cpu_03.log",
+    "Inherited test class repeats two readout methods; 27 is executed test count"
+  ]
+}

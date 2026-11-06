@@ -65,7 +65,8 @@ def run(cfg,item):
     teacher,teacher_loading=load_model(entry,device,teacher=True);teacher.eval().requires_grad_(False)
     checks.record('complete_teacher_load',not any(teacher_loading.values()),teacher_loading)
     for inherited in cache.get('flags',[]):checks.record('inherited_parent:'+inherited['test'],False,inherited)
-    for inherited in cfg.get('input_flags',[]):checks.record('inherited_input',False,inherited)
+    for inherited in cfg.get('input_flags',[]):
+        if inherited.get('data') in (None,item['data']):checks.record('inherited_input',False,inherited)
     stream=cfg['mixture_stream'] if item.get('data')=='mix' else cfg['streams'][str(item['stream_seed'])]
     checks.record('stream_manifest',sha(Path(stream['path'])/'manifest.json')==stream['sha256'])
     rows=Rows(stream['path'],'heal',count=item['steps']*64,verify=False)
