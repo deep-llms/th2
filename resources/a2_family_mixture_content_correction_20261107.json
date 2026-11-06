@@ -277,6 +277,17 @@
         "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
       },
       "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "dclm": {
+      "historical_dclm_prefix": {
+        "path": "resources/a2_data_rebuild_wc69_20261103.json",
+        "sha256": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4"
+      },
+      "source_pool": {
+        "selected_shards": 216,
+        "selection": "Exact historical reconstructed DCLM raw pool; original 340-file manifest included unused reserve shards"
+      },
+      "substitution": "Use complete verified historical216 raw pool; no numeric seed/weight change"
     }
   },
   "download_groups": {

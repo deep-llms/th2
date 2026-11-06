@@ -1,12 +1,12 @@
 {
   "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
-  "utc": "2026-11-06T18:35:42.429826+00:00",
+  "utc": "2026-11-06T18:51:37.048109+00:00",
   "status": "PASS",
   "launch_ready": false,
-  "tests": 27,
-  "log": "temp/family_integration_cpu_09.log",
-  "log_sha256": "0f93042da45f5b3f9717f49517be7768badf3c80577996378aa2f30d2ebabab3",
-  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=. temp/a2_test_env/bin/python -m unittest tests.a2.test_family_readout tests.a2.test_family tests.a2.test_why_pause -q",
+  "tests": 29,
+  "log": "temp/family_mixture_repair_cpu_03.log",
+  "log_sha256": "b1a8bce158281b6ec3f2fa5c4665dc5452febd2d81c5d5fe7c65c1c6fd3ee2d3",
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=. temp/a2_test_env/bin/python -m unittest tests.a2.test_family_mix_repair tests.a2.test_family_readout tests.a2.test_family -q",
   "files": {
     "efficient_llm/a2_family/__init__.py": "9cef25043ef133f5abd6e1ea315f8ce4803b7c766dbd24d0eb705c94eec09a81",
     "efficient_llm/a2_family/checks.py": "0d025660998671b6a2cb6fc34435de5a51f7476babf33d1af579eeb4604be79a",
@@ -21,18 +21,22 @@
     "scripts/a2_family_depth_bridge.py": "19ebcdb1d938e5841430fc95147437f58bd28ad843c637818210969bf1f4fd0a",
     "scripts/a2_family_overlap.py": "de40b22395675cd927f159083d617ca66c825c118b36c41b2e167453aebb8044",
     "scripts/a2_family_pause_depth.py": "f539dfdffce49e93e93efc3465190b9ea53396831706defcadf63832287aae2a",
-    "scripts/a2_family_plan.py": "cb17d1fa06b184f53479677434b37d3366d86c9c666202f731bfeb4b23872492",
+    "scripts/a2_family_plan.py": "858eb369a6f3b12086b9aeda7da7c484fc4abd6a8eb58d478f36f2876568f9ab",
     "scripts/a2_family_prepare.py": "db18c98c95326ed24a1b540e1cbb18140337baaefa898fb2883ffff78adb91d8",
     "scripts/a2_family_prepare_cx.py": "d9a7fcd869deba5c60703e396240b9cc5be2c993f5df61b7c8edb4128320393d",
     "scripts/a2_family_prepare_fwe.py": "246e116a9d9fc5bfed6c98308d3639f133bbd0ab4dda6594e91254900ee8adf1",
-    "scripts/a2_family_prepare_mix.py": "e8e52bde8fed77b1c6a238cd3fafe09d8b9a0a26f00f1ef59e96ca3c31018ac6",
+    "scripts/a2_family_prepare_mix.py": "864954160b5a6f4a24f317c17397f8242cc0e0d0ccf7d41825583433f7714029",
     "scripts/a2_family_recover_cx.py": "b76a7fc7a1b226301222eb09aa2d1c3377a2928c1742ffaf908e119f9ea02986",
     "scripts/a2_family_report.py": "1aac34960d3bbdf9eabc88a2f9b7ace9275808ac26046583be225aa57182762e",
     "scripts/a2_family_run.py": "53f860e502a0b4601318c32f4e6b2a30bc6fc9e916dc924ab13787e37db24c63",
     "scripts/launch_a2_family.py": "5c3eb05918df53872a5d4a48f5027aeebed61c88dfdc7d706c411d769afae224",
     "tests/a2/test_family.py": "fbad212194c766266af001a1baa73ec6bb931c7d8c5fd8d4c2345c6623adeec7",
-    "tests/a2/test_family_readout.py": "bcaf97c450c53c1b5df0cba4fa398232b0bdb14f7f00f12298782c4eeae0ea3f",
-    "tests/a2/test_why_pause.py": "96a3e89e03eb89dce4fabc1183fd5364866418aabdfaef8f210279e3f7d8ffc2"
+    "tests/a2/test_family_readout.py": "96612c5cac2ad873520a75c555afcbeba9179b6904754aefa4318de0634eeb62",
+    "tests/a2/test_why_pause.py": "96a3e89e03eb89dce4fabc1183fd5364866418aabdfaef8f210279e3f7d8ffc2",
+    "scripts/a2_family_repair_mix.py": "1a318f2eedea3d9fad53968fd1feca3f9255beed2c426229a372d9df642f9b19",
+    "tests/a2/test_family_mix_repair.py": "f6ed1e487e787efa9033d1ef7091026b19c6d96d45293584f1d9b04bb013412d",
+    "resources/a2_family_mixture_content_correction_20261107.json": "1b7330ce2a574d7593d2cffa7c9118acf5967d2e5a441f36a60de288b6166046",
+    "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4"
   },
   "coverage": [
     "Native Smol CPU forward/save/reload, masking/reset and Trainer trace",
@@ -41,7 +45,10 @@
     "Scientific backup member hashes and parent final arrays/raw traces retained",
     "Complete input plan binding and incomplete-input rejection",
     "Pause independent byte copy and wrong-source/arm rejection",
-    "Native Family then Depth queue manifest"
+    "Native Family then Depth queue manifest",
+    "Native eight-rank checkpoint metadata selection and frozen Depth bridge environment; no actual GPU replay",
+    "Actual Parquet code path filtering, source-only correction, reuse of unchanged source bytes and exact token shares",
+    "Historical DCLM raw prefix216 binding instead of340reserve entries"
   ],
   "remaining_admission": [
     "Actual common+mixture preparation completion and node hashes",

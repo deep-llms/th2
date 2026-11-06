@@ -21,8 +21,16 @@ def inputs(common, mixture, depth, resources, opensci_lock=None):
     fwe = read_locked(ready['ready']['fwe'])
     mix_lock = lock(mixture/'complete.json'); mix = read_locked(mix_lock)
     mix_plan = resources/'a2_family_mixture_plan_20261107.json'
-    if mix['status'] != 'complete' or mix['plan_sha256'] != sha(mix_plan):
+    if mix['status'] != 'complete':
         raise ValueError('Mixture incomplete or source plan differs')
+    mix_plan_lock=lock(mix_plan)
+    if mix['plan_sha256'] != sha(mix_plan):
+        if mix.get('original_plan_sha256')!=sha(mix_plan):raise ValueError('Mixture original plan differs')
+        from scripts.a2_family_repair_mix import corrected_plan
+        effective=read_locked(mix['effective_plan']);expected=corrected_plan(read(mix_plan),mix['schema_corrections'])
+        if effective!=expected or mix['effective_plan']['sha256']!=mix['plan_sha256']:
+            raise ValueError('Repair differs from recorded schema/content-source correction')
+        mix_plan_lock=mix['effective_plan']
     stream = read_locked(mix['stream'])
     if stream['status'] != 'complete': raise ValueError('Mixture stream incomplete')
     launch_lock = lock(depth/'launch.json'); launch = read_locked(launch_lock)
@@ -41,7 +49,7 @@ def inputs(common, mixture, depth, resources, opensci_lock=None):
         models=read(model_path), models_manifest=lock(model_path), cx_root=str(common/'cx'),
         cx_complete=ready['ready']['cx'], streams=fwe['streams'], mixture_complete=mix_lock,
         mixture_stream=dict(path=str(Path(mix['stream']['path']).parent), sha256=mix['stream']['sha256']),
-        mixture_plan=lock(mix_plan), input_flags=flags, peak_lr=lr['peak_lr'], lr_state=lr,
+        mixture_plan=mix_plan_lock, input_flags=flags, peak_lr=lr['peak_lr'], lr_state=lr,
         historical=read(resources/'a2_family_historical_20261107.json'),
         k64_reference_nll=2.650000281672266, opensci_cx_root=str(opensci), opensci_manifest=opensci_lock,
         original_depth_source=str(depth/'source'), depth_root=str(depth), depth_launch=launch_lock,

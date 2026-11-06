@@ -85,6 +85,50 @@ class FamilyQueue(unittest.TestCase):
             self.assertEqual(read(root/'backup/verified.json')['raw_rank_traces'],1)
 
 class FamilyNativeManifest(unittest.TestCase):
+    def test_depth_bridge_validates_native_selection_then_uses_frozen_environment(self):
+        from unittest.mock import patch
+        from scripts import a2_family_depth_bridge as bridge
+        from efficient_llm.a2_family.common import write,read
+        from efficient_llm.a2_depth.heal_long import run_identity
+        from efficient_llm.a2_depth.resume import checkpoint_files
+        from efficient_llm.a2_depth.common import SPEC_SHA as DEPTH_SHA
+        from efficient_llm.a2.protocol import lr_for_update
+        import shutil
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);depth=root/'depth';execution=depth/'continuations/attempt001/source'
+            src=depth/'source';src.mkdir(parents=True);execution.mkdir(parents=True)
+            for folder in (src,execution):(folder/'fixture.py').write_text('# immutable source\n')
+            original=write(depth/'source-manifest.json',dict(files={'fixture.py':sha(src/'fixture.py')}))
+            patched=write(execution.parent/'execution-source-manifest.json',dict(files={'fixture.py':sha(execution/'fixture.py')}))
+            plan=dict(spec_sha256=DEPTH_SHA,results_root=str(depth/'results'),assets={},heal_streams={'dclm':{}},source_manifest=original)
+            config=depth/'config.json';config.write_text(json.dumps(plan))
+            configlock=dict(path=str(config),sha256=sha(config))
+            launch=write(depth/'launch.json',dict(config=configlock,source_manifest=original,environment={'HF_HUB_OFFLINE':'1','A2_CODE_COMMIT':'original'}))
+            identity=run_identity(plan,'P300');state=Path(plan['results_root'])/'heals/ST1-dclm-P300-S1-12.8B-lr1e-3/trainer/checkpoint-1';state.mkdir(parents=True)
+            for name in checkpoint_files(8):(state/name).write_bytes(b'fixture')
+            (state/'trainer_state.json').write_text(json.dumps({'global_step':1}))
+            for rank in range(8):
+                audit=dict(identity=identity,global_step=1,world_size=8,rank=rank,nonfinite_microbatches=0,lrs=[lr_for_update(1,48828,.001)],seen=[[0,1,2,3],[4,5,6,7]])
+                (state/f'depth-audit-rank{rank}.json').write_text(json.dumps(audit))
+            marker=dict(spec_sha256=DEPTH_SHA,identity=identity,global_step=1,world_size=8,complete=True,state_finite=True,files={n:(state/n).stat().st_size for n in checkpoint_files(8)})
+            (state/'depth-checkpoint.json').write_text(json.dumps(marker))
+            pin=root/'pause/checkpoint-1';pin.parent.mkdir();shutil.copytree(state,pin)
+            saved=write(root/'pause/saved.json',dict(checkpoint=str(pin),original=str(state),global_step=1,hashes={p.name:sha(p) for p in state.iterdir()}))
+            pause=write(root/'pause/terminal.json',dict(state='paused',handoff_verified=True,arm='P300',saved_state=saved))
+            results=root/'family';backup=write(results/'backup/archive.json',{'scientific':'fixture'})
+            write(results/'backup/verified.json',dict(verified=True,files=[backup]))
+            cfg=dict(depth_pause=pause,depth_launch=launch,depth_root=str(depth),depth_execution_source=str(execution),depth_execution_manifest=patched,results_root=str(results))
+            self.assertEqual(bridge.validate(cfg)[2]['step'],1)
+            cfgpath=root/'family.json';write(cfgpath,cfg)
+            with patch('sys.argv',['bridge','--config',str(cfgpath),'--receipt',str(root/'receipt.json')]),patch.object(bridge,'require_free') as free,patch.object(bridge.subprocess,'run') as run:
+                run.return_value.returncode=0;bridge.main()
+                free.assert_called_once_with(list(range(8)))
+                self.assertEqual(run.call_args.kwargs['cwd'],execution)
+                self.assertEqual(run.call_args.kwargs['env']['PYTHONPATH'],str(execution))
+                self.assertEqual(run.call_args.kwargs['env']['A2_CODE_COMMIT'],'original')
+                self.assertIn(str(config),run.call_args.args[0])
+            (pin/'optimizer.pt').write_bytes(b'changed')
+            with self.assertRaises(ValueError):bridge.validate(cfg)
     def test_plan_requires_complete_inputs_and_binds_original_depth(self):
         from scripts.a2_family_plan import inputs
         from efficient_llm.a2_family.common import write,read

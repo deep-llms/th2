@@ -1,0 +1,20 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "status": "PASS",
+  "suite_tests": 29,
+  "log_sha256": "b1a8bce158281b6ec3f2fa5c4665dc5452febd2d81c5d5fe7c65c1c6fd3ee2d3",
+  "files": {
+    "scripts/a2_family_repair_mix.py": "1a318f2eedea3d9fad53968fd1feca3f9255beed2c426229a372d9df642f9b19",
+    "scripts/a2_family_prepare_mix.py": "864954160b5a6f4a24f317c17397f8242cc0e0d0ccf7d41825583433f7714029",
+    "tests/a2/test_family_mix_repair.py": "f6ed1e487e787efa9033d1ef7091026b19c6d96d45293584f1d9b04bb013412d",
+    "resources/a2_family_mixture_plan_20261107.json": "12b259426fd63e0f4f27da6b039f9b55a39b33fff052ef55738dea7f6cea15e2",
+    "resources/a2_family_mixture_content_correction_20261107.json": "1b7330ce2a574d7593d2cffa7c9118acf5967d2e5a441f36a60de288b6166046",
+    "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4"
+  },
+  "scope": "CPU mixture correction/reuse only; no GPU ownership or source mutation",
+  "limitations": [
+    "Fresh node raw content hashes still required by preparer",
+    "Original metadata-only source failures retained",
+    "No actual Family GPU run or pause/resume claimed"
+  ]
+}

@@ -30,7 +30,7 @@ def wait_verified(record,progress):
     return p
 
 
-def read_texts(files,columns):
+def read_texts(files,columns,path_suffixes=None):
     """Yield original raw rows in file order. No undocumented text normalization."""
     import pyarrow.parquet as pq
     for source,path in enumerate(files):
@@ -39,11 +39,17 @@ def read_texts(files,columns):
             column=next((c for c in columns if c in available),None)
             if column is None:raise ValueError('No registered text column: '+str(path))
             row=0
-            for batch in pf.iter_batches(batch_size=4096,columns=[column]):
-                for text in batch.column(0).to_pylist():
+            selected=[column,'path'] if path_suffixes else [column]
+            if path_suffixes and 'path' not in available:raise ValueError('Missing path column for registered code-language filter')
+            for batch in pf.iter_batches(batch_size=4096,columns=selected):
+                paths=batch.column(1).to_pylist() if path_suffixes else [None]*len(batch)
+                for text,path in zip(batch.column(0).to_pylist(),paths,strict=True):
+                    current=row;row+=1
+                    if path_suffixes and (not isinstance(path,str) or not path.endswith(tuple(path_suffixes))):continue
                     if not isinstance(text,str):raise ValueError('Non-text document')
-                    yield source,row,text,column;row+=1
+                    yield source,current,text,column
         else:
+            if path_suffixes:raise ValueError('Code path filtering requires registered Parquet schema')
             if str(path).endswith('.gz'):stream=gzip.open(path,'rt',encoding='utf8')
             elif str(path).endswith('.zst'):
                 import zstandard as zstd
@@ -86,7 +92,7 @@ def prepare_source(plan,entry,dest,target,exclusions):
     # of every document in the declared source pool without holding texts in RAM.
     index=[];fields=set();rejected=0;raw_docs=0;pool_overlaps=[]
     with (dest/'text.utf8').open('xb') as storage:
-        for source,row,text,column in read_texts(files,entry['text_columns']):
+        for source,row,text,column in read_texts(files,entry['text_columns'],entry.get('path_suffixes')):
             raw_docs+=1;encoded=text.encode('utf8');digest=hashlib.sha256(encoded).hexdigest();fields.add(column)
             if digest in plan.get('heldout_hashes',{}):pool_overlaps.append(dict(raw_file=source,raw_row=row,text_sha256=digest,heldout=plan['heldout_hashes'][digest],excluded_primary=digest in exclusions))
             if entry['name'] in ('fineweb-edu','dclm') and digest in exclusions:rejected+=1;continue
