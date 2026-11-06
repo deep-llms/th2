@@ -1,42 +1,9 @@
-#d +a
-#models
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/config.json /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/generation_config.json /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/generation_config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/model-00001-of-00002.safetensors /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/model-00001-of-00002.safetensors
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/model-00002-of-00002.safetensors /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/model-00002-of-00002.safetensors
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/model.safetensors.index.json /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/model.safetensors.index.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/special_tokens_map.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/tokenizer.json /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/tokenizer.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47/tokenizer_config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/config.json /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/generation_config.json /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/generation_config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/model-00001-of-00002.safetensors /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/model-00001-of-00002.safetensors
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/model-00002-of-00002.safetensors /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/model-00002-of-00002.safetensors
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/model.safetensors.index.json /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/model.safetensors.index.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/special_tokens_map.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/tokenizer.json /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/tokenizer.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a/tokenizer_config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/config.json /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/generation_config.json /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/generation_config.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model-00001-of-00002.safetensors /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/model-00001-of-00002.safetensors
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model-00002-of-00002.safetensors /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/model-00002-of-00002.safetensors
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model.safetensors.index.json /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/model.safetensors.index.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/special_tokens_map.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/tokenizer.json /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/tokenizer.json
---url https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94/tokenizer_config.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/config.json /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/config.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/configuration_opensci.py
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/model.safetensors /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/model.safetensors
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/modeling_opensci.py
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/special_tokens_map.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/tokenizer.json /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/tokenizer.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/tokenizer_config.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/vocab.json /mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847/vocab.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/config.json /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/config.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/configuration_opensci.py /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/configuration_opensci.py
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/model.safetensors /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/model.safetensors
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/modeling_opensci.py /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/modeling_opensci.py
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/special_tokens_map.json /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/special_tokens_map.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/tokenizer.json /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/tokenizer.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/tokenizer_config.json /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/tokenizer_config.json
---url https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/vocab.json /mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c/vocab.json
+#1 +20+a
+#th2-wc69-family-recover-cx-20261107-a01
+set -euo pipefail
+cd /mnt/local/deep-llms_th2
+export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1 OMP_NUM_THREADS=2 RAYON_NUM_THREADS=2
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.a2_family_recover_cx \
+ --data /mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data \
+ --tokenizer-file /mnt/local/_models/deep-llms_th2/a2/dclm/P300/tokenizer.json \
+ --output /mnt/local/_outputs/deep-llms_th2/wc69-a2-family-cx-recovery-20261107-a01
