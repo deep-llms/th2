@@ -1,0 +1,341 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "original_plan_sha256": "12b259426fd63e0f4f27da6b039f9b55a39b33fff052ef55738dea7f6cea15e2",
+  "source_overrides": {
+    "stackexchange": {
+      "text_columns": [
+        "ThreadText"
+      ],
+      "substitution": "Actual pinned node schema: complete rendered thread text, not metadata/body-only"
+    },
+    "stack-edu-Python": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".py"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Java": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".java"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-JavaScript": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".js"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-C": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".c",
+        ".h"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Cpp": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".cpp",
+        ".hpp",
+        ".c++",
+        ".h++",
+        ".cc",
+        ".hh",
+        ".C",
+        ".H"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-C-Sharp": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".cs"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-PHP": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".php",
+        ".php3",
+        ".php4",
+        ".php5",
+        ".phps",
+        ".phpt"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-TypeScript": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".ts",
+        ".tsx"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Swift": {
+      "download_group": "swift",
+      "repo": "ammarnasr/the-stack-swift-clean",
+      "revision": "4d2a539cb58f121a42ee7c2ec7e0bc18e07a50fa",
+      "text_columns": [
+        "content"
+      ],
+      "source_pool": {
+        "selected_shards": 1,
+        "eligible_shards": 9,
+        "selection": "seed2030 uniform shard then uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents; Stack-Edu files had metadata only"
+    },
+    "stack-edu-SQL": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".sql"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Ruby": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".rb"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Markdown": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".md",
+        ".markdown"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Rust": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".rs"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Go": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".go"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    },
+    "stack-edu-Shell": {
+      "download_group": "github-code",
+      "repo": "codeparrot/github-code",
+      "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+      "text_columns": [
+        "content"
+      ],
+      "path_suffixes": [
+        ".sh",
+        ".bash",
+        ".command",
+        ".zsh"
+      ],
+      "source_pool": {
+        "selected_shards": 5,
+        "eligible_shards": 1126,
+        "selection": "seed2030 uniform shard sample then exact documented path suffix and uniform documents"
+      },
+      "substitution": "Public HF-hosted code contents per Family section4b; original Stack-Edu files had metadata only"
+    }
+  },
+  "download_groups": {
+    "github-code": [
+      {
+        "path": "data/train-00835-of-01126.parquet",
+        "url": "https://huggingface.co/datasets/codeparrot/github-code/resolve/b5661e6b17396364b2bcf8e68977b0d28e1ebd19/data/train-00835-of-01126.parquet",
+        "local": "/mnt/local/_data/deep-llms_th2/a2_family_code_contents_20261107/github-code/train-00835-of-01126.parquet",
+        "sha256": "08359c0d22a337b453d65f13231a710a4e4646cb9983f91f2fa27a8d8ba7a9a3",
+        "bytes": 291291409
+      },
+      {
+        "path": "data/train-01056-of-01126.parquet",
+        "url": "https://huggingface.co/datasets/codeparrot/github-code/resolve/b5661e6b17396364b2bcf8e68977b0d28e1ebd19/data/train-01056-of-01126.parquet",
+        "local": "/mnt/local/_data/deep-llms_th2/a2_family_code_contents_20261107/github-code/train-01056-of-01126.parquet",
+        "sha256": "2c39063a3be5b0cdb2a65cf399ea21a70b85bef28d0d063651607992e5cc46e2",
+        "bytes": 287458941
+      },
+      {
+        "path": "data/train-00164-of-01126.parquet",
+        "url": "https://huggingface.co/datasets/codeparrot/github-code/resolve/b5661e6b17396364b2bcf8e68977b0d28e1ebd19/data/train-00164-of-01126.parquet",
+        "local": "/mnt/local/_data/deep-llms_th2/a2_family_code_contents_20261107/github-code/train-00164-of-01126.parquet",
+        "sha256": "bab05017bc43872585e3fcb9afef802ab4db4648d7b4a1d7db985cb88cc747d6",
+        "bytes": 284720165
+      },
+      {
+        "path": "data/train-00490-of-01126.parquet",
+        "url": "https://huggingface.co/datasets/codeparrot/github-code/resolve/b5661e6b17396364b2bcf8e68977b0d28e1ebd19/data/train-00490-of-01126.parquet",
+        "local": "/mnt/local/_data/deep-llms_th2/a2_family_code_contents_20261107/github-code/train-00490-of-01126.parquet",
+        "sha256": "1bf1615c411f2ef1c012b9f26da3c94676cd447e07874eaf5915598ed6e4549d",
+        "bytes": 290725925
+      },
+      {
+        "path": "data/train-00398-of-01126.parquet",
+        "url": "https://huggingface.co/datasets/codeparrot/github-code/resolve/b5661e6b17396364b2bcf8e68977b0d28e1ebd19/data/train-00398-of-01126.parquet",
+        "local": "/mnt/local/_data/deep-llms_th2/a2_family_code_contents_20261107/github-code/train-00398-of-01126.parquet",
+        "sha256": "d496ebffd144cbf1b58612aff6d1af631953a7ffd8226b4e62364e646ea066ab",
+        "bytes": 290422895
+      }
+    ],
+    "swift": [
+      {
+        "path": "data/train-00000-of-00009-4b18496f3a8142c0.parquet",
+        "url": "https://huggingface.co/datasets/ammarnasr/the-stack-swift-clean/resolve/4d2a539cb58f121a42ee7c2ec7e0bc18e07a50fa/data/train-00000-of-00009-4b18496f3a8142c0.parquet",
+        "local": "/mnt/local/_data/deep-llms_th2/a2_family_code_contents_20261107/swift/train-00000-of-00009-4b18496f3a8142c0.parquet",
+        "sha256": "499f8554976c7e8b9234085a52cd322b3d4111a9dff6832962236ea9d8e61da8",
+        "bytes": 149316001
+      }
+    ]
+  },
+  "schema_evidence": {
+    "raw_sha256": "7c60edd76e6931177e35f758c4f19a4f170345fa0a65aa1163c98f00e56cd338",
+    "snapshot": "2026-11-06T18:41:40.133172+00:00",
+    "footer_probe_sha256": "827ccf0e5370353c5fc2d5f87cd9a6858e4c0fdcebf2066ddcb093b8d2d68ca2"
+  },
+  "authority": "Familyv1.3 section4b permits HF-hosted code contents instead of Software Heritage; exact original source weights and uniform document seed retained",
+  "limitations": [
+    "New code source differs from Stack-Edu quality filtering; source-shard sampling qualification retained",
+    "No Swift in codeparrot/github-code; use pinned public Swift contents separately"
+  ],
+  "status": "content_downloads_pending"
+}
