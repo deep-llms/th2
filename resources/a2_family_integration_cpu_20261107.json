@@ -1,12 +1,12 @@
 {
   "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
-  "utc": "2026-11-06T18:51:37.048109+00:00",
+  "utc": "2026-11-06T18:59:28.536197+00:00",
   "status": "PASS",
   "launch_ready": false,
-  "tests": 29,
-  "log": "temp/family_mixture_repair_cpu_03.log",
-  "log_sha256": "b1a8bce158281b6ec3f2fa5c4665dc5452febd2d81c5d5fe7c65c1c6fd3ee2d3",
-  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=. temp/a2_test_env/bin/python -m unittest tests.a2.test_family_mix_repair tests.a2.test_family_readout tests.a2.test_family -q",
+  "tests": 35,
+  "log": "temp/family_admission_cpu_01.log",
+  "log_sha256": "b5d6547950f7cf36a51670ebed5224d69a062fbf073dbe5c0a96e62b450b2418",
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=. temp/a2_test_env/bin/python -m unittest tests.a2.test_family_admission tests.a2.test_family_mix_repair tests.a2.test_family_readout tests.a2.test_family tests.a2.test_why_pause -q",
   "files": {
     "efficient_llm/a2_family/__init__.py": "9cef25043ef133f5abd6e1ea315f8ce4803b7c766dbd24d0eb705c94eec09a81",
     "efficient_llm/a2_family/checks.py": "0d025660998671b6a2cb6fc34435de5a51f7476babf33d1af579eeb4604be79a",
@@ -29,14 +29,16 @@
     "scripts/a2_family_recover_cx.py": "b76a7fc7a1b226301222eb09aa2d1c3377a2928c1742ffaf908e119f9ea02986",
     "scripts/a2_family_report.py": "1aac34960d3bbdf9eabc88a2f9b7ace9275808ac26046583be225aa57182762e",
     "scripts/a2_family_run.py": "53f860e502a0b4601318c32f4e6b2a30bc6fc9e916dc924ab13787e37db24c63",
-    "scripts/launch_a2_family.py": "5c3eb05918df53872a5d4a48f5027aeebed61c88dfdc7d706c411d769afae224",
+    "scripts/launch_a2_family.py": "eef1b673cb726c9e8305d4773d3f2407f85d4b40404d92f3cfc77d21d54e5025",
     "tests/a2/test_family.py": "fbad212194c766266af001a1baa73ec6bb931c7d8c5fd8d4c2345c6623adeec7",
     "tests/a2/test_family_readout.py": "96612c5cac2ad873520a75c555afcbeba9179b6904754aefa4318de0634eeb62",
     "tests/a2/test_why_pause.py": "96a3e89e03eb89dce4fabc1183fd5364866418aabdfaef8f210279e3f7d8ffc2",
     "scripts/a2_family_repair_mix.py": "1a318f2eedea3d9fad53968fd1feca3f9255beed2c426229a372d9df642f9b19",
     "tests/a2/test_family_mix_repair.py": "f6ed1e487e787efa9033d1ef7091026b19c6d96d45293584f1d9b04bb013412d",
     "resources/a2_family_mixture_content_correction_20261107.json": "1b7330ce2a574d7593d2cffa7c9118acf5967d2e5a441f36a60de288b6166046",
-    "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4"
+    "resources/a2_data_rebuild_wc69_20261103.json": "14981417d7b44b3ace9bf7c2e56c0ccfb03b43e0e8dd1ea021c6264b331b9fe4",
+    "scripts/a2_family_admit.py": "a9e9b030550787c7f4e9df26bd0818692ccb42e95b68d776e258e18f81fd0333",
+    "tests/a2/test_family_admission.py": "63593fd5ab24423a95ff0815f86b0a5c4992d9630abee006e16992deb69c33ff"
   },
   "coverage": [
     "Native Smol CPU forward/save/reload, masking/reset and Trainer trace",
@@ -48,7 +50,8 @@
     "Native Family then Depth queue manifest",
     "Native eight-rank checkpoint metadata selection and frozen Depth bridge environment; no actual GPU replay",
     "Actual Parquet code path filtering, source-only correction, reuse of unchanged source bytes and exact token shares",
-    "Historical DCLM raw prefix216 binding instead of340reserve entries"
+    "Historical DCLM raw prefix216 binding instead of340reserve entries",
+    "Admission ordering: actual bytes and overlap before pause; changed bytes/ownership prevent transition; duplicate output rejected"
   ],
   "remaining_admission": [
     "Actual common+mixture preparation completion and node hashes",
@@ -58,6 +61,6 @@
   "limitations": [
     "CPU fixtures; not a Family GPU launch or actual pause/resume handoff",
     "Prior failed fixture assertion retained in temp/family_integration_cpu_03.log",
-    "Inherited test class repeats two readout methods; 27 is executed test count"
+    "35 executed tests include inherited readout repeats; CPU fixtures only"
   ]
 }

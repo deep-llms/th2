@@ -14,6 +14,13 @@
       "bytes": 588565,
       "sha256": "96887097f4c46751d63963d115a9269ee61828ff94896ae34383b0c02eb7f6f7",
       "compressed_sha256": "474711fdb7ec34ef20d76f98d44fa2e8ab308bd2d39e70d0479c59f132f27e5c"
+    },
+    {
+      "path": "docs/results/a2_remaining_phase0a_20261028/status_1527/dclm-P300-pre.json",
+      "compressed_path": "docs/results/a2_remaining_phase0a_20261028/status_1527/dclm-P300-pre.json.gz",
+      "bytes": 587848,
+      "sha256": "ee68553a6f0ca6ebb4be08b02afa37afca9b30ddb8810c1371a970aa311984dd",
+      "compressed_sha256": "80f89775c2e5184693cac685d45d419a171e3179827cd483dfde2f4843d04812"
     }
   ]
 }

@@ -69,6 +69,25 @@ def verify_inputs(cfg,paused=True):
         validate(cfg)
 
 
+def verify_proof(source):
+    source=Path(source);proof_path='resources/a2_family_integration_cpu_20261107.json'
+    proof=read(source/proof_path)
+    if proof['status']!='PASS' or not proof.get('launch_ready') or proof['spec_sha256']!=SPEC_SHA:
+        raise ValueError('Full pipeline CPU admission not ready')
+    for rel,h in proof['files'].items():
+        if sha(source/rel)!=h:raise ValueError('CPU proof changed: '+rel)
+    return proof
+
+
+def verified_overlap(cfg):
+    record=read_locked(cfg['overlap_preflight'])
+    if record['status']!='complete':raise ValueError('Overlap preflight incomplete')
+    for data in record['datasets'].values():
+        for trace in data['trace_locks'].values():
+            if sha(trace['path'])!=trace['sha256']:raise ValueError('Audited exposure changed')
+    return record['datasets']
+
+
 def main():
     p=argparse.ArgumentParser()
     for k in ('plan','output','session','code-commit'):p.add_argument('--'+k,required=True)
@@ -76,18 +95,15 @@ def main():
     if socket.gethostname()!='thiennh-p6-wc69-worker-0' or out.exists() or cfg['spec_sha256']!=SPEC_SHA:raise ValueError('Wrong node/spec or existing output')
     for session in (a.session,a.session+'_burn'):
         if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:raise ValueError('Existing session')
-    proof_path='resources/a2_family_integration_cpu_20261107.json';proof=read(source/proof_path)
-    if proof['status']!='PASS' or not proof.get('launch_ready'):raise ValueError('Full pipeline CPU admission not ready')
-    for rel,h in proof['files'].items():
-        if sha(source/rel)!=h:raise ValueError('CPU proof changed')
+    proof_path='resources/a2_family_integration_cpu_20261107.json';proof=verify_proof(source)
     predecessor(cfg);verify_inputs(cfg);out.mkdir(parents=True,exist_ok=False)
     extra=['docs/A2_family_spec_v1.3.md',proof_path,*[f for f in proof['files'] if f.startswith(('tests/','resources/'))]]
     frozen=freeze_source(source,out,a.code_commit,extra_files=extra)
     if sha(frozen/'docs/A2_family_spec_v1.3.md')!=SPEC_SHA:raise ValueError('Spec changed')
     root=out/'results/a2_family_20261107';root.mkdir(parents=True)
     cfg.update(results_root=str(root),code_commit=a.code_commit,source_manifest=lock(out/'source-manifest.json'))
-    from scripts.a2_family_overlap import audit
-    cfg['overlap']=audit(cfg,root/'overlap_audit/pools.json')
+    cfg['overlap']=verified_overlap(cfg)
+    write(root/'overlap_audit/pools.json',read_locked(cfg['overlap_preflight']))
     config=write(root/'config/plan.json',cfg);shutil.copyfile(frozen/'docs/A2_family_spec_v1.3.md',root/'config/spec.md')
     write(root/'preparation_checks.json',dict(checks=[dict(test='actual_input_hashes',passed=True),dict(test='FT7_LR_state',passed=cfg['peak_lr']==2e-4,detail=cfg['lr_state'])]))
     env={**os.environ,'CUDA_VISIBLE_DEVICES':'','HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1','HF_DATASETS_OFFLINE':'1','HF_HUB_DISABLE_TELEMETRY':'1','WANDB_MODE':'offline','OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','MKL_NUM_THREADS':'1','NCCL_NVLS_ENABLE':'0','TOKENIZERS_PARALLELISM':'false','PYTHONPATH':str(frozen),'A2_CODE_COMMIT':a.code_commit}
