@@ -187,3 +187,43 @@ class FamilyHealingCPU(SmolIsolation):
             self.assertEqual(result['per_sequence_tokens'],[2,4]);self.assertAlmostEqual(result['loss'],total/6,places=6)
             with torch.no_grad():next(model.parameters()).fill_(float('nan'))
             with self.assertRaisesRegex(ValueError,'Nonfinite'):score_docs(model,root)
+
+class MixturePreparation(unittest.TestCase):
+    def test_token_shares_and_document_boundaries(self):
+        import json
+        from pathlib import Path
+        from scripts.a2_family_prepare_mix import quotas,interleave
+        weights={'a':.25,'b':.75};q=quotas(weights,8192)
+        self.assertEqual(q,{'a':2048,'b':6144})
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);sources={}
+            for n,number in q.items():
+                token=root/(n+'.bin');np.full(number,3 if n=='a' else 7,dtype='<u4').tofile(token)
+                trace=root/(n+'.jsonl');rows=[dict(source=n,source_start=i,source_stop=i+128,consumed_tokens=128,text_sha256=n) for i in range(0,number,128)]
+                trace.write_text(''.join(json.dumps(r)+'\n' for r in rows));sources[n]=dict(token_file=str(token),documents_path=str(trace),tokens=number)
+            lock=interleave(sources,weights,root/'out',8192);receipt=json.loads(Path(lock['path']).read_text())
+            self.assertTrue(all(c['passed'] for c in receipt['checks']));self.assertEqual(receipt['shares'],weights)
+            rows=[json.loads(x) for x in (root/'out/consumed_documents.jsonl').read_text().splitlines()]
+            self.assertEqual([x['stream_start'] for x in rows],list(range(0,8192,128)))
+            self.assertEqual(np.flatnonzero(np.fromfile(root/'out/heal.starts',dtype='u1')).tolist(),list(range(0,8192,128)))
+            values=np.fromfile(root/'out/heal.bin',dtype='<u4');self.assertEqual(int((values==3).sum()),2048)
+
+    def test_uniform_pool_excludes_primary_and_records_overlap(self):
+        import json,hashlib
+        from pathlib import Path
+        from tokenizers import Tokenizer,models,pre_tokenizers
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+        from scripts.a2_family_prepare_mix import prepare_source
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);texts=['a b','c d','e f','g h'];raw=root/'raw.parquet';pq.write_table(pa.table({'text':texts}),raw)
+            h=lambda t:hashlib.sha256(t.encode()).hexdigest()
+            tok=Tokenizer(models.WordLevel(vocab={'[EOS]':0,'[UNK]':1,**{c:i+2 for i,c in enumerate('abcdefgh')}},unk_token='[UNK]'));tok.pre_tokenizer=pre_tokenizers.Whitespace();tok.save(str(root/'tok.json'))
+            plan=dict(tokenizer={'local':str(root/'tok.json')},eos_id=0,heldout_hashes={h(texts[0]):[{'set':'final','index':0}],h(texts[1]):[{'set':'final','index':1}]})
+            entry=dict(name='fineweb-edu',files=[dict(local=str(raw),path='raw.parquet',bytes=raw.stat().st_size,sha256=hashlib.sha256(raw.read_bytes()).hexdigest())],text_columns=['text'])
+            receipt=prepare_source(plan,entry,root/'out',9,{h(texts[0])});r=json.loads(Path(receipt['path']).read_text())
+            self.assertEqual(r['eligible_documents'],3);self.assertEqual(r['excluded_primary'],1)
+            self.assertEqual(len(r['pool_overlap']),2);self.assertEqual(len(r['consumed_overlap']),1)
+            rows=[json.loads(x) for x in (root/'out/documents.jsonl').read_text().splitlines()]
+            self.assertEqual({x['text_sha256'] for x in rows},{h(t) for t in texts[1:]})
+            self.assertEqual(r['tokens'],9)

@@ -1,0 +1,20 @@
+{
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "status": "PASS",
+  "tests": 2,
+  "log": "temp/a2_family_mixture_tests_02.log",
+  "log_sha256": "ce75d9706e6fac21020951062b57b3f8bdb21eec939bc6b2e958185ace1f0adb",
+  "files": {
+    "scripts/a2_family_prepare_mix.py": "e8e52bde8fed77b1c6a238cd3fafe09d8b9a0a26f00f1ef59e96ca3c31018ac6",
+    "tests/a2/test_family.py": "fbad212194c766266af001a1baa73ec6bb931c7d8c5fd8d4c2345c6623adeec7"
+  },
+  "checks": [
+    "whole-document token-balanced interleaving and exact starts/counts",
+    "uniform eligible-pool permutation, primary document exclusion and whole-pool/consumed overlap"
+  ],
+  "limits": [
+    "CPU fixtures only; actual full raw-file size/SHA and mixture readiness required on node",
+    "FT8 uses 1% relative tolerance; record failure and affected results if actual prefix cannot meet it",
+    "new-source finite/cluster sampled shard-pool limitation retained"
+  ]
+}
