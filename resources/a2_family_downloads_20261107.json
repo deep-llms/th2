@@ -1,0 +1,690 @@
+{
+  "spec_sha256": "d73dbf6736e9cf9c26facb9dc75522019280f63321fbd35086a8192dcb8fd99c",
+  "checkpoints": [
+    {
+      "label": "k6",
+      "repo": "HuggingFaceTB/SmolLM3-3B-checkpoints",
+      "revision": "stage1-step-240000",
+      "commit": "e5543d4767887f90d74ffd3f73a989db661c131c",
+      "path": "/mnt/local/_models/deep-llms_th2/a2_family/k6_e5543d47",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "ef4efc31bca37387d54936f7821c3667eaec4e9d2a3201e679f52093688cddf7",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "47bde6737e57d444609ee105edc3c7f81b8e06a3507c99a773b0a8c69b04c057",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/e5543d4767887f90d74ffd3f73a989db661c131c/tokenizer_config.json"
+        }
+      ],
+      "config": {
+        "architectures": [
+          "SmolLM3ForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 128000,
+        "eos_token_id": 128001,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 11008,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "max_position_embeddings": 4096,
+        "model_type": "smollm3",
+        "no_rope_layer_interval": 4,
+        "no_rope_layers": [
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "num_attention_heads": 16,
+        "num_hidden_layers": 36,
+        "num_key_value_heads": 4,
+        "pad_token_id": null,
+        "pretraining_tp": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_scaling": null,
+        "rope_theta": 50000.0,
+        "sliding_window": null,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.53.2",
+        "use_cache": true,
+        "use_sliding_window": false,
+        "vocab_size": 128256
+      },
+      "step": 240000,
+      "tokens": 566231040000
+    },
+    {
+      "label": "k20",
+      "repo": "HuggingFaceTB/SmolLM3-3B-checkpoints",
+      "revision": "stage1-step-800000",
+      "commit": "618b267a639a79282fc3529b4be874081c74f947",
+      "path": "/mnt/local/_models/deep-llms_th2/a2_family/k20_618b267a",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "99895b02330996f5299ab968920c8168a0755d23fe41ae15aa96a58aa684728a",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "5eadfe7b09c16e421c6706123a3e6b5cff593686fe954f5eeb47ceb257512c6b",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/618b267a639a79282fc3529b4be874081c74f947/tokenizer_config.json"
+        }
+      ],
+      "config": {
+        "architectures": [
+          "SmolLM3ForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 128000,
+        "eos_token_id": 128001,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 11008,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "max_position_embeddings": 4096,
+        "model_type": "smollm3",
+        "no_rope_layer_interval": 4,
+        "no_rope_layers": [
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "num_attention_heads": 16,
+        "num_hidden_layers": 36,
+        "num_key_value_heads": 4,
+        "pad_token_id": null,
+        "pretraining_tp": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_scaling": null,
+        "rope_theta": 50000.0,
+        "sliding_window": null,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.53.2",
+        "use_cache": true,
+        "use_sliding_window": false,
+        "vocab_size": 128256
+      },
+      "step": 800000,
+      "tokens": 1887436800000
+    },
+    {
+      "label": "k64",
+      "repo": "HuggingFaceTB/SmolLM3-3B-checkpoints",
+      "revision": "stage1-step-2560000",
+      "commit": "6ef73a94518ebb94d17dada63f7c21bf760e238f",
+      "path": "/mnt/local/_models/deep-llms_th2/a2_family/k64_6ef73a94",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1825,
+          "sha256": "6fa7ea6cc481f1c084c17c9275eb18cf70bb077ee691903a61ffa4506d9a955d",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/config.json"
+        },
+        {
+          "name": "generation_config.json",
+          "bytes": 121,
+          "sha256": "d2a5e10f6db5e3dfd22868be810c9f7cf5f8b717f9134ebffbc1156448a476ad",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/generation_config.json"
+        },
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "bytes": 4966315264,
+          "sha256": "2c43f3570f51acc8948b8cbaa9adbf139ea877795a51a14a1fab529408f78b60",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model-00001-of-00002.safetensors"
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "bytes": 1183919744,
+          "sha256": "2ebf68b15d9c1aaea4a09a60d0e0bded6cee1b408ad4cd912ecce0d6407acea7",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model-00002-of-00002.safetensors"
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 26899,
+          "sha256": "e3a7254c086c4a78f95ad5864f435d165ffed1ed8998326ce5107b4423c15b76",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/model.safetensors.index.json"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 151,
+          "sha256": "9faaa15579bbf433176493a621142ff580ae2d13d81bf4702cb72f4d6902dc62",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 17208861,
+          "sha256": "ab4da6b2aa68247e9c0fa9b97fc7fcc796505038d01f7e144522a65ce0dbd2e5",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 50405,
+          "sha256": "f398d9edb0184aac1c9fd1b1bdcd3a5a1527ae560fd847719635a66e2b54e9cd",
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM3-3B-checkpoints/resolve/6ef73a94518ebb94d17dada63f7c21bf760e238f/tokenizer_config.json"
+        }
+      ],
+      "config": {
+        "architectures": [
+          "SmolLM3ForCausalLM"
+        ],
+        "attention_bias": false,
+        "attention_dropout": 0.0,
+        "bos_token_id": 128000,
+        "eos_token_id": 128001,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 11008,
+        "layer_types": [
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention",
+          "full_attention"
+        ],
+        "max_position_embeddings": 4096,
+        "model_type": "smollm3",
+        "no_rope_layer_interval": 4,
+        "no_rope_layers": [
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "num_attention_heads": 16,
+        "num_hidden_layers": 36,
+        "num_key_value_heads": 4,
+        "pad_token_id": null,
+        "pretraining_tp": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_scaling": null,
+        "rope_theta": 50000.0,
+        "sliding_window": null,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.53.2",
+        "use_cache": true,
+        "use_sliding_window": false,
+        "vocab_size": 128256
+      },
+      "step": 2560000,
+      "tokens": 6039797760000
+    },
+    {
+      "label": "f0_dclm",
+      "repo": "open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096",
+      "revision": "main",
+      "commit": "3079e847355e36eb468e58b146918deedc1e23ab",
+      "path": "/mnt/local/_models/deep-llms_th2/a2_family/f0_dclm_3079e847",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1186,
+          "sha256": "8c7b13047dcf21a8b2182e9f6656d9e8ec39f4dd8c69b326c25668a667e5b557",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/config.json"
+        },
+        {
+          "name": "configuration_opensci.py",
+          "bytes": 11190,
+          "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/configuration_opensci.py"
+        },
+        {
+          "name": "model.safetensors",
+          "bytes": 2616942312,
+          "sha256": "7aa526e9e02ca836d54aa3499ce6a9629eca73c7537bfa8f7b1efdf290b7c3b8",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/model.safetensors"
+        },
+        {
+          "name": "modeling_opensci.py",
+          "bytes": 44839,
+          "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/modeling_opensci.py"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 90,
+          "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 2113710,
+          "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 156,
+          "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/tokenizer_config.json"
+        },
+        {
+          "name": "vocab.json",
+          "bytes": 1077392,
+          "sha256": "4529c7dbac8210536fdda3b82c499bd4fba0a1bf529dd571fef92448ff3f440c",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-dclm-300B-4096/resolve/3079e847355e36eb468e58b146918deedc1e23ab/vocab.json"
+        }
+      ],
+      "config": {
+        "_name_or_path": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.3b_data-DCLM_tokenizer-GPT-NeoX_samples-300B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_12228825/hf/iter_0072661",
+        "architectures": [
+          "OpenSciForCausalLM"
+        ],
+        "attention_bias": true,
+        "attention_dropout": 0.1,
+        "auto_map": {
+          "AutoConfig": "configuration_opensci.OpensciConfig",
+          "AutoModel": "modeling_opensci.OpensciPreTrainedModel",
+          "AutoModelForCausalLM": "modeling_opensci.OpensciForCausalLM"
+        },
+        "bos_token_id": 0,
+        "eos_token_id": 0,
+        "head_dim": 64,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 5440,
+        "layer_norm_eps": 1e-05,
+        "max_position_embeddings": 4096,
+        "mlp_bias": true,
+        "model_type": "opensci",
+        "num_attention_heads": 32,
+        "num_hidden_layers": 24,
+        "num_key_value_heads": 32,
+        "pretraining_tp": 1,
+        "qk_layernorm": true,
+        "rms_norm_eps": 1e-05,
+        "rope_scaling": null,
+        "rope_theta": 10000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.49.0",
+        "use_cache": true,
+        "vocab_size": 50304
+      }
+    },
+    {
+      "label": "f0_fwe",
+      "repo": "open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096",
+      "revision": "main",
+      "commit": "f7c1189c944a04a66f715136f96f4aae3c516cdd",
+      "path": "/mnt/local/_models/deep-llms_th2/a2_family/f0_fwe_f7c1189c",
+      "files": [
+        {
+          "name": "config.json",
+          "bytes": 1198,
+          "sha256": "73209113d20149606f81d74624258660fa79beb10e5ec69c5dbd77a38217bd38",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/config.json"
+        },
+        {
+          "name": "configuration_opensci.py",
+          "bytes": 11190,
+          "sha256": "194d816263ec0279f5804f41041ecd29a645c330b5893636d38dc7cb94747885",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/configuration_opensci.py"
+        },
+        {
+          "name": "model.safetensors",
+          "bytes": 2616942312,
+          "sha256": "e14cfef681b74474808ce3e9f3ad8ca7bed8419f9d91135b8a5b7ac4f8431f26",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/model.safetensors"
+        },
+        {
+          "name": "modeling_opensci.py",
+          "bytes": 44839,
+          "sha256": "f1a826eed8897a4df548c26d37741fb7b5d5cf3d170db2a7b079cd9f30da512d",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/modeling_opensci.py"
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 90,
+          "sha256": "c0b3c279b6ecdb71996a86ffb4d4ab94dfdb5df95f00bac9515688faef2ff5dd",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/special_tokens_map.json"
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 2113710,
+          "sha256": "c24618a1b3e6a38167beff1c72cffd126c3a66254347304b50547d12c5f25624",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/tokenizer.json"
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 156,
+          "sha256": "6c50f7b37042a059c71a347be27bc53cc4fcb0f6c8166b00712f3937c91e6bc7",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/tokenizer_config.json"
+        },
+        {
+          "name": "vocab.json",
+          "bytes": 1077392,
+          "sha256": "4529c7dbac8210536fdda3b82c499bd4fba0a1bf529dd571fef92448ff3f440c",
+          "url": "https://huggingface.co/open-sci/open-sci-ref-v0.01-1.3b-fineweb-edu-1.4t-300B-4096/resolve/f7c1189c944a04a66f715136f96f4aae3c516cdd/vocab.json"
+        }
+      ],
+      "config": {
+        "_name_or_path": "/leonardo/home/userexternal/tcarsten/work/converted_checkpoints/open-sci-ref_model-1.3b_data-FineWeb-Edu-1.4T_tokenizer-GPT-NeoX_samples-300B_global_bs-1008_context-4096_schedule-WSD_lr-4e-3_warmup-25000_machine-LEONARDO_13378532/hf/iter_0072661",
+        "architectures": [
+          "OpenSciForCausalLM"
+        ],
+        "attention_bias": true,
+        "attention_dropout": 0.1,
+        "auto_map": {
+          "AutoConfig": "configuration_opensci.OpensciConfig",
+          "AutoModel": "modeling_opensci.OpensciPreTrainedModel",
+          "AutoModelForCausalLM": "modeling_opensci.OpensciForCausalLM"
+        },
+        "bos_token_id": 0,
+        "eos_token_id": 0,
+        "head_dim": 64,
+        "hidden_act": "silu",
+        "hidden_size": 2048,
+        "initializer_range": 0.02,
+        "intermediate_size": 5440,
+        "layer_norm_eps": 1e-05,
+        "max_position_embeddings": 4096,
+        "mlp_bias": true,
+        "model_type": "opensci",
+        "num_attention_heads": 32,
+        "num_hidden_layers": 24,
+        "num_key_value_heads": 32,
+        "pretraining_tp": 1,
+        "qk_layernorm": true,
+        "rms_norm_eps": 1e-05,
+        "rope_scaling": null,
+        "rope_theta": 10000,
+        "tie_word_embeddings": true,
+        "torch_dtype": "bfloat16",
+        "transformers_version": "4.49.0",
+        "use_cache": true,
+        "vocab_size": 50304
+      }
+    }
+  ],
+  "total_bytes": 23742951572,
+  "selection": "Exact registered revisions; unsuffixed F0 twins"
+}
