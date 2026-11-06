@@ -1,0 +1,15 @@
+{
+  "utc": "2026-11-06T19:08:30.180508+00:00",
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "status": "CPU_admission_live_waiting_complete_inputs",
+  "code_commit": "6d1068f155071a3f400f48b1f18f294bbfe59912",
+  "source_files": 239,
+  "changed": [],
+  "PID": 78486,
+  "Depth_step": 44400,
+  "Depth_paused": false,
+  "Family_GPU_started": false,
+  "watcher_pid": 1730807,
+  "next_wake_SGT": "2026-11-07T03:36:38+08:00",
+  "health_raw_sha256": "6686d6e857000c812a63e047d3b5018a54425a8175c5baf2a63923174008fd77"
+}
