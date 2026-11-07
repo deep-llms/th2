@@ -20,12 +20,12 @@
     "CPUvalidate F6 coordinator/trigger/report",
     "Install and verify authorized safe handoff before current Family ends"
   ],
-  "remote_handoff_status": "VERIFIED installed gate; original Depth resume deferred until F6/report/backup completion. F6 ready.json absent; no F6 model run launched.",
+  "remote_handoff_status": "F6 ready.json published and source/config/input SHA verified; automatic F6 then combined report and verified backup before Depth45000. No F6 GPU run yet.",
   "estimated_extra_node_hours": [
     3.4,
     9.8
   ],
-  "status": "GATE_INSTALLED_F6_PREPARATION_PENDING",
+  "status": "F6_READY_WAITING_CURRENT_F4",
   "installation": {
     "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
     "original_spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
@@ -260,5 +260,28 @@
       },
       "guard_disabled": true
     }
+  },
+  "readiness_verified_utc": "2026-11-07T19:15:14.046820+00:00",
+  "readiness": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v14-transition-20261108-a01/ready.json",
+    "sha256": "0016daa1bb02906040c4fed977eedf84c23675b227d7e355264dc418799de58a",
+    "value": {
+      "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+      "source": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/source",
+      "source_manifest": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/source-manifest.json",
+        "sha256": "81a084cebbb936a56a3fd70e294a2d9a1e57f5dc4bdcd476556579b7cae9a5f2"
+      },
+      "config": {
+        "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107/config/plan.json",
+        "sha256": "8817b0131dafdcd6d864052dcf23b9083f7aebe2c5236f3e11d0bebdc4f0c72e"
+      }
+    }
+  },
+  "readiness_evidence": "results/a2_family_20261107/preparation_health_a54/health.json",
+  "actual_input_verification": {
+    "checks": 29,
+    "bytes_hashed": 317593278249,
+    "receipt": "4068c05a154741c7744ebdacea3adb216601d67365c4b2d3362218492258cd9d"
   }
 }
