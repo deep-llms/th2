@@ -20,10 +20,245 @@
     "CPUvalidate F6 coordinator/trigger/report",
     "Install and verify authorized safe handoff before current Family ends"
   ],
-  "remote_handoff_status": "NOT YET MODIFIED: current native queue still Family v1.3 -> Depth. Must replace/defer this future bridge before Family completes; no live training/source changes made this turn.",
+  "remote_handoff_status": "VERIFIED installed gate; original Depth resume deferred until F6/report/backup completion. F6 ready.json absent; no F6 model run launched.",
   "estimated_extra_node_hours": [
     3.4,
     9.8
   ],
-  "status": "SPEC_READ_AND_AUTHORITY_RECORDED_NOT_LAUNCHED"
+  "status": "GATE_INSTALLED_F6_PREPARATION_PENDING",
+  "installation": {
+    "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+    "original_spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+    "installed": true,
+    "original_manifest": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01/source-manifest.json",
+      "sha256": "be52e974448ac16e942e83df4ca409a49fb86822f568d6653d34c95bab219a2c"
+    },
+    "changed": [
+      "scripts/a2_family_depth_bridge.py"
+    ],
+    "original_sha256": "19ebcdb1d938e5841430fc95147437f58bd28ad843c637818210969bf1f4fd0a",
+    "patched_sha256": "564e7fe3054e03f2652e8bedfe355e7a102a697f32effe7412147fbf7e354adf",
+    "gate_sha256": "2d63da87723093e01d532b6bb9ad81fabe02092cc995aa8188396941c186e88a",
+    "family_source_files": 228,
+    "native_jobs_unchanged": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01/jobs.json",
+      "sha256": "afc016780b4336ed185a072646cf8cd28edfb8492afd8047fc10503b1e09fe18"
+    },
+    "transition_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v14-transition-20261108-a01",
+    "ready": false,
+    "semantics": "Future bridge requires F6/report/backup before original Depth code; no signals, no training modifications",
+    "ownership": {
+      "host": "thiennh-p6-wc69-worker-0",
+      "time": "2026-11-07T17:50:27.962776+00:00",
+      "gpus": [
+        {
+          "index": 0,
+          "uuid": "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 94.0,
+          "pids": [
+            94807
+          ]
+        },
+        {
+          "index": 1,
+          "uuid": "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 97.0,
+          "pids": [
+            94808
+          ]
+        },
+        {
+          "index": 2,
+          "uuid": "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 94.0,
+          "pids": [
+            94809
+          ]
+        },
+        {
+          "index": 3,
+          "uuid": "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 94.0,
+          "pids": [
+            94810
+          ]
+        },
+        {
+          "index": 4,
+          "uuid": "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 98.0,
+          "pids": [
+            94811
+          ]
+        },
+        {
+          "index": 5,
+          "uuid": "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 94.0,
+          "pids": [
+            94812
+          ]
+        },
+        {
+          "index": 6,
+          "uuid": "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 98.0,
+          "pids": [
+            94813
+          ]
+        },
+        {
+          "index": 7,
+          "uuid": "GPU-817e7cb4-510c-c53f-9db1-c5752571469f",
+          "name": "NVIDIA B200",
+          "memory_total_mib": 183359.0,
+          "memory_used_mib": 79532.0,
+          "utilization_percent": 98.0,
+          "pids": [
+            94814
+          ]
+        }
+      ],
+      "workers": [
+        94807,
+        94808,
+        94809,
+        94810,
+        94811,
+        94812,
+        94813,
+        94814
+      ],
+      "stop_roots": [],
+      "processes": {
+        "94807": {
+          "pid": 94807,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94808": {
+          "pid": 94808,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94809": {
+          "pid": 94809,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94810": {
+          "pid": 94810,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94811": {
+          "pid": 94811,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94812": {
+          "pid": 94812,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94813": {
+          "pid": 94813,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        },
+        "94814": {
+          "pid": 94814,
+          "ppid": 94738,
+          "start_ticks": 396420201,
+          "command_sha256": "d5a23039403b2ebbfefb79b5be89809ebc690e4992ddc3c37b7c6f46ed87736f",
+          "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+          "command_prefix": [
+            "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+            "-u",
+            "-m"
+          ],
+          "launcher_kind": null
+        }
+      },
+      "guard_disabled": true
+    }
+  }
 }
