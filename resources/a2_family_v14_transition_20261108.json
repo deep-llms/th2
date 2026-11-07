@@ -1,0 +1,29 @@
+{
+  "spec_path": "docs/A2_family_spec_v1.4.md",
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "accepted_utc": "2026-11-07T17:40:27.042693+00:00",
+  "authority": "User: v1.4 added; run another task before resuming Depth.",
+  "preserve_v13": "Every completed or started v1.3 run remains valid, retain original spec SHA and never rerun.",
+  "order": [
+    "Finish existing SmolLM3 F4/F5 if triggered",
+    "F6 FT9 DCLM S72 S1 0.2B LR1e-3 once",
+    "F6 S72/S188 each on DCLM/FWE 0.8B LR1e-3",
+    "F6 conditional S72/S188 3.2B on at most one dataset, larger relative change if both trigger",
+    "Combined F0-F6 report and verified backup",
+    "Resume exact Depth pause45000"
+  ],
+  "preparation_required": [
+    "Reuse A2 S exact revisions; inventory/download missing S72/S188 without GPU interruption",
+    "Reuse Stage1 recipe, own datasets seed2030, S1 remove16-21; preserve actual raw rank sample-order traces",
+    "FT9 threshold .002 flag+continue; historical .2B baselines retain origin",
+    "FWE overlap full/reduced and paired bootstrap",
+    "CPUvalidate F6 coordinator/trigger/report",
+    "Install and verify authorized safe handoff before current Family ends"
+  ],
+  "remote_handoff_status": "NOT YET MODIFIED: current native queue still Family v1.3 -> Depth. Must replace/defer this future bridge before Family completes; no live training/source changes made this turn.",
+  "estimated_extra_node_hours": [
+    3.4,
+    9.8
+  ],
+  "status": "SPEC_READ_AND_AUTHORITY_RECORDED_NOT_LAUNCHED"
+}

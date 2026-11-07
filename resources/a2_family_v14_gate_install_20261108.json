@@ -1,0 +1,48 @@
+{
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "original_spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "host": "thiennh-p6-wc69-worker-0",
+  "gpu_uuids": [
+    "GPU-08f82f92-6e9a-1b21-56cb-4b359c898e3c",
+    "GPU-2909c891-748d-a78f-f72c-181231c00e7a",
+    "GPU-d5679196-f3b9-f2fd-2a95-fc23676711ba",
+    "GPU-8ec230a4-1d3c-13c5-3681-51bceba7df9a",
+    "GPU-cdb11306-b5c0-52f0-d871-bba3d94e34d7",
+    "GPU-d6a96000-88e7-7653-6d72-9a8e3bddf198",
+    "GPU-96e1284a-b396-0253-6511-1d6b2ce193fa",
+    "GPU-817e7cb4-510c-c53f-9db1-c5752571469f"
+  ],
+  "coordinator": {
+    "pid": 79714,
+    "ppid": 79686,
+    "start_ticks": 388540781,
+    "command_sha256": "d59e45f29d30f532127f976e83042463715609e4852f2b137693b90b25861766",
+    "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+    "command_prefix": [
+      "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "-u",
+      "-m"
+    ],
+    "launcher_kind": null
+  },
+  "supervisor": {
+    "pid": 79686,
+    "ppid": 17115,
+    "start_ticks": 388534641,
+    "command_sha256": "f7f911ece29f92e95b854252b9e97940e6e8d7ad255a81172672d104802ca355",
+    "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+    "command_prefix": [
+      "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "-u",
+      "-m"
+    ],
+    "launcher_kind": null
+  },
+  "launch": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01/launch.json",
+    "sha256": "231d45f59219aa94994496024ea38a36694065eb5ec623f2222f1d93d19b4bdb"
+  },
+  "family_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01",
+  "transition_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v14-transition-20261108-a01",
+  "gate_sha256": "2d63da87723093e01d532b6bb9ad81fabe02092cc995aa8188396941c186e88a"
+}

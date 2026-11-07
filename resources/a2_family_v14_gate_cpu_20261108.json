@@ -1,0 +1,11 @@
+{
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "status": "PASS",
+  "tests": 9,
+  "scope": "CPU gate/receipt/bridge insertion tests only; F6 training implementation not admitted yet",
+  "files": {
+    "scripts/a2_family_v14_gate.py": "2d63da87723093e01d532b6bb9ad81fabe02092cc995aa8188396941c186e88a",
+    "scripts/a2_family_v14_install_gate.py": "fe9c88368436e4143eef58b88633a745a3e8efccc98e46f497bad13cf71d4bc5",
+    "tests/test_a2_family_v14_gate.py": "4f0ac5a91993ed68ea25de9c977bcd7955d91f7c9fa365544cd93a2649c5bb22"
+  }
+}
