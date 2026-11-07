@@ -65,6 +65,16 @@ def build_report(cfg, events, extension, final=False):
     decision = analyze(results, read_lock(cfg['overlap_audit']), cfg['historical'], final=final)
     old_root = Path(cfg['previous_results_root'])
     old = read(old_root/'decision_family.json')
+    smol_ratios=[]
+    primary=old.get('overlap',{}).get('fwe',{}).get('primary')
+    for pair in old.get('pairs',[]):
+        if pair['quantity']!='E' or pair['data']!='fwe' or pair['seed']!=2030 or pair['lr']!=old.get('lr_selection',{}).get('lr') or primary not in ('full','reduced'):
+            continue
+        short=next((r for r in old['rows'] if (r['arm'],r['data'],r['budget'],r['lr'],r['stream_seed'])==('k6','fwe',pair['budget'],pair['lr'],2030)),None)
+        if short is None:continue
+        delta=short['delta_post' if primary=='full' else 'reduced_delta_post']
+        smol_ratios.append(dict(budget=pair['budget'],E=pair[primary]['E'],short_delta_post=delta,
+                               E_over_short_delta=pair[primary]['E']/delta if abs(delta)>1e-15 else None,primary=primary))
     ft9=[r for r in results if r['registered_run']['phase']=='FT9']
     ft9_checks=[c for r in ft9 for c in r.get('flags',[]) if c['test']=='FT9']
     ft9_ok=bool(ft9) and not ft9_checks and bool(ft9[0].get('scores',{}).get('final'))
@@ -72,6 +82,7 @@ def build_report(cfg, events, extension, final=False):
     for ds,value in decision['FE6'].items():
         value['unverified']=not ft9_ok or bool(decision['missing_or_invalid']) or any(r['flags'] for r in decision['rows'] if r['dataset']==ds)
     decision.update(events=events,extension=extension,
+                    historical_02B=cfg['historical'],Smol_E_over_short_delta=smol_ratios,
                     missing_or_failed_runs=missing,FT9_pass=ft9_ok,FT9_flags=ft9_checks,
                     joint_reading=joint_reading(decision['FE6'],old.get('readings',{}).get('FE2',{})),
                     joint_reading_unverified=any(v.get('unverified') for v in decision['FE6'].values()) or old.get('readings',{}).get('FE2',{}).get('unverified',True),

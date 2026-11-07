@@ -42,6 +42,25 @@ class Registration(unittest.TestCase):
 
 
 class Replay(unittest.TestCase):
+    def test_combined_report_retains_smol_qualification_and_relative_damage(self):
+        from scripts.a2_family_f6_run import build_report
+        from scripts.a2_quant_io import lock
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)/'f6';old=Path(d)/'old';root.mkdir();old.mkdir()
+            old_value=dict(overlap={'fwe':{'primary':'full'}},lr_selection={'lr':.0001},
+                rows=[dict(arm='k6',data='fwe',budget='0.8B',lr=.0001,stream_seed=2030,delta_post=.16)],
+                pairs=[dict(quantity='E',data='fwe',seed=2030,budget='0.8B',lr=.0001,full={'E':.013})],
+                readings={'FE2':dict(label='changing',direction='down',unverified=True)})
+            write(old/'decision_family.json',old_value)
+            write(root/'audit.json',dict(exclude_final_sequence_ids=[875,963,1320]))
+            cfg=dict(results_root=str(root),previous_results_root=str(old),overlap_audit=lock(root/'audit.json'),
+                     historical={ds:dict(E_full=.01,E_reduced=.01) for ds in ('dclm','fwe')},ft9_reference=3.0669867735128715)
+            result=build_report(cfg,[],None)
+            self.assertAlmostEqual(result['Smol_E_over_short_delta'][0]['E_over_short_delta'],.013/.16)
+            self.assertTrue(result['joint_reading_unverified'])
+            self.assertFalse(result['FT9_pass'])
+            self.assertEqual(read(root/'decision_family.json')['previous_F0_F5']['readings'],old_value['readings'])
+
     def test_original_arrays_ft9_and_overlap_replay(self):
         a=json.loads(gzip.decompress(Path('resources/a2_family_f6_historical_20261108.json.gz').read_bytes()))['runs']
         self.assertEqual(a['ST1-dclm-S72-S1-0.2B-lr1e-3']['scores']['final']['loss'],3.0669867735128715)

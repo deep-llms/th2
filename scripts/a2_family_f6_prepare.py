@@ -85,6 +85,8 @@ def prepare(plan, source, output, commit):
     write(output/'progress.json',dict(state='verifying_actual_bytes',ready=False))
     verified=verify_inputs(cfg)
     write(root/'manifests/actual_inputs.json',dict(status='verified',files=verified))
+    write(root/'manifests/model_revisions.json',dict(assets={ds+'/'+arm:assets[ds+'/'+arm]
+          for ds in ('dclm','fwe') for arm in ('S72','S188')}))
     historical_path=source/plan['historical_file']['path']
     if sha(historical_path)!=plan['historical_file']['sha256']:raise ValueError('Historical arrays changed')
     historical=json.loads(gzip.decompress(historical_path.read_bytes()))
@@ -99,7 +101,9 @@ def prepare(plan, source, output, commit):
         full=pair_scores(pair['S72'],pair['S188'],repeats=0)
         reduced=pair_scores(pair['S72'],pair['S188'],audit['exclude_final_sequence_ids'] if ds=='fwe' else (),repeats=0)
         summary[ds]=dict(E_full=full['E'],E_reduced=reduced['E'],full=full,reduced=reduced,
+                         delta_post={arm:historical['runs'][f'ST1-{ds}-{arm}-S1-0.2B-lr1e-3']['delta_post'] for arm in ('S72','S188')},
                          origin='A2 S first node 6y3o; exact saved arrays; no rerun except FT9')
+        summary[ds]['E_over_short_delta']=full['E']/summary[ds]['delta_post']['S72']
     cfg.update(reference_nll=refs,historical=summary,
                ft9_reference=historical['runs']['ST1-dclm-S72-S1-0.2B-lr1e-3']['scores']['final']['loss'])
     run_list=initial_runs()+[descriptor(ds,arm,'3.2B') for ds in ('dclm','fwe') for arm in ('S72','S188')]
