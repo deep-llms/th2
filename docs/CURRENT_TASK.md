@@ -1,3 +1,7 @@
+2026-11-07T01:13:38.992936+00:00: F2cbackup5b03238 ACK verified242members80rawtraces/archive12260253bytesSHA82139f06343aa2ae446336e52c50be548ba1b12f8a48db1733b09f7f42da8153. No pendingreceipt. Export exactarchive+manifest next, localverificationpending.
+
+2026-11-07T01:10:56.760285+00:00: Unique CPU F2c milestonebackup5b03238668b50b89727264a649cf63fd21b59363 SUBMITTED/remoteheadverified. Freshrootwc69-a2-family-f2c-backup-20261107-a01,15immutableF0F1F2F2cresultlocks; no activefit mutation. Retrieve pendingreceipt beforewrites/no duplicate; actualarchive/exportpending.
+
 2026-11-07T01:10:38.152398+00:00: Familyhealtha17 c8e840c ACK/node07Nov09:08:21SGT F3k6 1700/3051;8GPU93–98%/samefullownership79686/source228/data+pausemetadata/lockedjobs unchanged/nonfinite0/13healthchecksPASS. RawSHA3c53873f74e4583b0459504a78b7b7371b538d885080a850ffc801a09af2fba2/archivepreparation_health_a17. No pendingreceipt. Preparing immutable F0/F1/F2/F2c15result backup, thenexport/localreplay. FamilyETA07Nov14–08Nov13SGT provisionalconditional plusreport/export; samewatchnext09:36:38SGT. ExistingFT2/FT8/source/LRupperedge flags retained.
 
 2026-11-07T01:07:28.570565+00:00: Readonly Familyhealtha17 c8e840c1fd0b006231493dc5fce2d0fee91a9b4f SUBMITTED/remoteheadverified. Retrieve pendingreceipt beforewrites/no duplicate. Latest08:38F3k6step770; currentprogresspending. Samewatch1730807next09:36:38SGT. RemainingFamily/report/backup/automaticDepthresume and existingflags unchanged.
