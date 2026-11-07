@@ -1,0 +1,51 @@
+{
+  "host": "thiennh-p6-wc69-worker-0",
+  "family_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01",
+  "transition_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v14-transition-20261108-a01",
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "native_supervisor": {
+    "pid": 79686,
+    "ppid": 17115,
+    "start_ticks": 388534641,
+    "command_sha256": "f7f911ece29f92e95b854252b9e97940e6e8d7ad255a81172672d104802ca355",
+    "exe": "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+    "command_prefix": [
+      "/mnt/local/conda-py311/envs/a2_env/bin/python3.11",
+      "-u",
+      "-m"
+    ],
+    "launcher_kind": null
+  },
+  "previous_results_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01/results/a2_family_20261107",
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "heal_streams": {
+    "dclm": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103",
+        "sha256": "5ddfb10ac309886eae0ae0e43024b93350bb022bc93c8ad095bb91cd638178f0"
+      }
+    },
+    "fwe": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_why_fwe_shuffle2030_20261104",
+        "sha256": "807e6807d6a39e4b7837c94e66723d2ffa7b3e62fc675cef357d2ed9e973071b"
+      }
+    }
+  },
+  "overlap_audit": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-why-overlap-audit-20261106-a01.json",
+    "sha256": "b9a4e26cea43c0e27ac537ee4385095bc4086df1491c67981e3ec4f3603ef85f"
+  },
+  "historical_file": {
+    "path": "resources/a2_family_f6_historical_20261108.json.gz",
+    "sha256": "93811240efec4e0ecaaab261c61088464b0dffa18c07966ebbd45c896671a042"
+  }
+}

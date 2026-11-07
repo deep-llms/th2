@@ -1,0 +1,33 @@
+{
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "utc": "2026-11-07T18:05:48.839016+00:00",
+  "status": "PASS",
+  "launch_ready": true,
+  "tests": 22,
+  "skipped": 0,
+  "command": "OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 CUDA_VISIBLE_DEVICES='' A2_OPENSCI_CODE=/disk/thuat/efficient_llm/temp/a2_model_code PYTHONPATH=.:tests/a2 temp/a2_test_env/bin/python -m unittest tests.a2.test_family_f6 tests.test_a2_family_v14_gate -q",
+  "log_sha256": "c09eba87cb2c64d275022897092e3c1a8ca87031370c2cbb5ba50badbc8c2a3a",
+  "scope": "CPU gate/registered sequence/failure continuation/trigger/backup/array replay/input rejection/readiness; tiny pinned OpenSci native trainer exact final weights/LR/order vs A2 S. Actual node inputs, readiness and GPU execution remain separate requirements.",
+  "files": {
+    "efficient_llm/a2_family_f6/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "efficient_llm/a2_family_f6/common.py": "d2ba52aa83ecb1a45192f0821909fa21c8337dc84d7561376b0704a301500274",
+    "efficient_llm/a2_family_f6/heal.py": "212c7afc4222fdace8c51912f7113f757b4fa2821d2c104a3325e192c52025a5",
+    "efficient_llm/a2_family_f6/protocol.py": "e93a272f3bf1a246549839430e69951e1ee3f54bc44809eec3019e21a9306ecf",
+    "efficient_llm/a2_family_f6/readout.py": "807eecfe6861bac39a4f3b17cc988a052250d2c3d2acbad86ca0509abbb90251",
+    "scripts/a2_family_f6_run.py": "9f303dd81576669ec1f62fddb743411893b1f270646b0a3ecce7447853292afe",
+    "scripts/a2_family_f6_backup.py": "ecefb30391d8362f71f3507f51fffda01e63c57191510b7bd7015641325f30e7",
+    "scripts/a2_family_f6_prepare.py": "f5b72443df758c00dba483362ff4caf854cfac23f47c1d634e51a7a84d4a2dec",
+    "scripts/a2_family_v14_gate.py": "2d63da87723093e01d532b6bb9ad81fabe02092cc995aa8188396941c186e88a",
+    "tests/a2/test_family_f6.py": "01b48f4e7b7fedc8327710808865ff47037d8337a0dc48c6bbb13272bba90435",
+    "tests/test_a2_family_v14_gate.py": "4f0ac5a91993ed68ea25de9c977bcd7955d91f7c9fa365544cd93a2649c5bb22",
+    "resources/a2_family_f6_historical_20261108.json.gz": "93811240efec4e0ecaaab261c61088464b0dffa18c07966ebbd45c896671a042",
+    "resources/a2_family_f6_plan_20261108.json": "0f553cb0d61facb0c2ba8a3b661d7352a6294265533d83a664b316e89a6c1e6b",
+    "efficient_llm/a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
+    "efficient_llm/a2/model.py": "ac40fb3776f8537a04fad8b3f164c2ea598a1ab1b994b3cf61cf078d7e8c4d4f",
+    "efficient_llm/a2/measure.py": "3cbb5b326c468a2f98f4229802b68faed8c5aec59b3a407fbed95bb43c4d22fc",
+    "efficient_llm/a2/data.py": "f3ad8127643cef87c83818d72b7356ddbcc9963e035bfc072a3b2513e2f687dd",
+    "efficient_llm/a2/protocol.py": "68c0dc595015fc0f03e24d9fc0c758555415bb91395c036152073e9a5e60cd15",
+    "scripts/a2_family_report.py": "1aac34960d3bbdf9eabc88a2f9b7ace9275808ac26046583be225aa57182762e",
+    "scripts/launch_a2_downstream.py": "3649e234a61a6b833a4f9d31d9d470a04f1f2f65a94091bed2a3e62dfa004521"
+  }
+}
