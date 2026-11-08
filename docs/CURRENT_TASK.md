@@ -1,3 +1,7 @@
+2026-11-08T17:17:43.754610+00:00: Correctedv17admissiona02 1ab7202ACK/source2858c80/rawSHA42fe77e0273c0d61ee4e7aac42e5eb6685e8142d7e2354dcdb0674f6a0f15ea5. No pendingreceipt; actualGPUstartup/inputhash proof pendinghealth05. PauseP1T15000 verifiedunchanged, olda01Markdownfailure preserved.
+
+2026-11-08T17:13:59.226165+00:00: Correctedv17admissiona02 1ab720252898e39069a66cfbaa261950a36d4c9f SUBMITTED/remoteheadverified/source2858c80. Fresh wc69-a2-family-v17-admission-20261109-a02 andrunwc69-a2-family-v17-20261109-a02; originalpausea01/P1T15000 unchanged. Retrieve beforewrites/no duplicate. Expected actualhash→F8/F7/report+backup→Depthqueue, actualstart pending.
+
 2026-11-08T17:13:40.066621+00:00: V17health04 31f73eaACK/node01:11:03SGT admissiona01 FAILED BEFORE GPUqueue on previous_report Markdown incorrectly JSONparsed. Allmodel/data hashes passed preceding code; fullproof notpublished. P1T15000safe/nativeburnunchanged/noGPUv17fit. RawSHA4f8158d304d6676ef95acd6a0f412072c1c694e75df0af566a2c850c88ebc34b. Fix verify_previous usesreportSHA/text,11CPUtestsPASS incl regression. Preservefaileda01, prepare freshadmission/runroota02; no pendingreceipt.
 
 2026-11-08T17:10:28.250368+00:00: Unique v17healtha04 31f73ea116679f2ed654393937f793ad7a9eb5c3 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate.
