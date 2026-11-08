@@ -1,3 +1,7 @@
+2026-11-08T17:07:42.744873+00:00: V17health02 34564c9ACK/node09Nov01:04:57SGT helper waiting nextcheckpoint after14000, admission WAIT_PAUSE, same8P1Townership/no error. RawSHA75075e0318e1db40c00fb182c1d8163486166d3f85c0eae5108ce30a826cbdae. No pendingreceipt. Expected15000 around01:06SGT from priorrate; actualstate notyetverified.
+
+2026-11-08T17:04:21.093070+00:00: Unique v17healtha02 34564c99ae59af4e517fb8411d1c54eca636c320 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate. Actualpause/F8pending.
+
 2026-11-08T17:04:17.432270+00:00: V17 admission236426cACK/source8bd78f4/rawSHAb4f6e56839a2e5bad39dc4c55bec150b9d219aef61dc82c6e3e9c8d2bba347f7. CPUtmux submitted; no pendingreceipt. Actualpause/launch/inputhash pendinghealth02; no duplicate.
 
 2026-11-08T17:00:51.590220+00:00: V17 ADMISSION a01 236426c97c2aeff90efe877e45d057c06b39108e SUBMITTED/remoteheadverified,frozen8bd78f4. Retrieve before writes/no duplicate. Single admission waits actual pause→rehash model/data→one native F8/F7/report/backup/Depth queue. Actual launch pending. Rootwc69-a2-family-v17-20261109-a01. Samewatch1730807.
