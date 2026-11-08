@@ -1,0 +1,41 @@
+{
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "verified_utc": "2026-11-08T12:17:01.774355+00:00",
+  "health_commit": "715efbaac84d9641148d212c4d41c8c4147cfd17",
+  "export_commit": "4649ba2ca3795742efd2ce8d1a2b81ec2dfb1890",
+  "archive": "artifacts/family_f6_final_science_20261108_a01.tar.gz",
+  "archive_sha256": "f4007ec12efb5a96447fed8facb271dd4add0d4693dd987c0fb1b4e8ca5896c4",
+  "members": 180,
+  "raw_rank_traces": 56,
+  "score_arrays": 49,
+  "scalar_lr_order_checks": 288,
+  "additional_independent_checks": 17,
+  "failures": 0,
+  "report": "results/a2_family_20261107/v14_final_export_20261108_a01/files/REPORT.md",
+  "summary": "results/a2_family_20261107/v14_final_export_20261108_a01/SUMMARY.md",
+  "FE6": {
+    "dclm": {
+      "label": "flat",
+      "difference": -0.002504629739437653,
+      "unverified": false
+    },
+    "fwe": {
+      "label": "falls",
+      "difference": -0.006169745700618403,
+      "unverified": false
+    }
+  },
+  "FE6_extended": {
+    "fwe": {
+      "label": "falls",
+      "difference": -0.0035824853024460784
+    }
+  },
+  "overlap": {
+    "immaterial": true,
+    "primary_FWE": "full"
+  },
+  "Depth_resume_step": 45000,
+  "Depth_observed_step": 45820,
+  "flags": "Prior FT2/FT8/source/LR and joint-reading qualifications retained; F6 runs have no new flags; Depth incomplete."
+}
