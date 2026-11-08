@@ -1,3 +1,7 @@
+2026-11-08T17:13:40.066621+00:00: V17health04 31f73eaACK/node01:11:03SGT admissiona01 FAILED BEFORE GPUqueue on previous_report Markdown incorrectly JSONparsed. Allmodel/data hashes passed preceding code; fullproof notpublished. P1T15000safe/nativeburnunchanged/noGPUv17fit. RawSHA4f8158d304d6676ef95acd6a0f412072c1c694e75df0af566a2c850c88ebc34b. Fix verify_previous usesreportSHA/text,11CPUtestsPASS incl regression. Preservefaileda01, prepare freshadmission/runroota02; no pendingreceipt.
+
+2026-11-08T17:10:28.250368+00:00: Unique v17healtha04 31f73ea116679f2ed654393937f793ad7a9eb5c3 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate.
+
 2026-11-08T17:10:24.368895+00:00: V17health03 f3e6f71ACK/node09Nov01:08:16SGT: P1T PAUSED15000,22independent checkpoint memberSHA complete incloptimizer/scheduler/8RNG/8audit; native79686cancel+cleanup/burnhandoff verified01:07:24SGT/guardreleased. RawSHA336927b0773ab151e7a1cd1a86691378e5b44d944680a40ee96a070b6a07fd45; proofresources/a2_family_v17_pause_20261109.json. Admission8bd78f4 verifying actualinputbytes beforeF8/F7; noGPUfit yet. No pendingreceipt/commands#0. Samewatch1730807. RemainingF8four/F7two/addendum+backup/DepthP1Tresume15000/downstream/handoff; historicalflags retained.
 
 2026-11-08T17:07:46.330744+00:00: Unique v17healtha03 f3e6f7176933edf688b49044cc663eaf9bc58a3b SUBMITTED/remoteheadverified; retrieve before writes/no duplicate.

@@ -2,7 +2,7 @@
   "status": "PASS",
   "launch_ready": true,
   "spec_sha256": "70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209",
-  "tests": 10,
+  "tests": 11,
   "actual_GPU_test": false,
   "checks": [
     "tiny CPU training matches Why weights/LR/order exactly",
@@ -12,7 +12,8 @@
     "corrupt model rejects admission",
     "scientific failure continues remaining fits",
     "backup before queued resume",
-    "independent checkpoint copy and stale PID refusal"
+    "independent checkpoint copy and stale PID refusal",
+    "Markdown prior report checked by SHA; reject changed bytes without JSON parsing"
   ],
   "files": {
     "efficient_llm/a2_family_v17/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -23,12 +24,12 @@
     "scripts/a2_family_v17_pause.py": "c75285f033c293de0f2e3578be82ea024cced0127364711de039093efa5ae0b2",
     "scripts/a2_family_v17_backup.py": "75690a9ba8f625d34f03c68321134a7379244d0e992b1a2333e9fa93f4c447bb",
     "scripts/a2_family_v17_depth_bridge.py": "81d361b21aa0afbf76b98836a4c4eb69433ede53614e8cdede88069fce8c9abe",
-    "scripts/a2_family_v17_prepare.py": "925df24e6eaf283c295e983c9301848667d019f9e78c11dfc8bca39fb8ce12cb",
+    "scripts/a2_family_v17_prepare.py": "a52fb46887177aca85c299615bb9c0e25191fb997585c6997964187cf59ae166",
     "scripts/a2_family_v17_run.py": "4473169fab6a30fe2ae04ff0366707b83a7a4459f4b27fc0b9e6e81b47b5db91",
     "scripts/launch_a2_family_v17.py": "917ae1fe40e74b8175545651f7ba158645de3b40483cbc81d0dbf7d14fab4800",
     "resources/a2_family_v17_plan_20261109.json": "5a5b780958a85b84d4aff49899fa8324a4a2f783be0943d46cdc8291a0dd7737",
     "tests/a2/test_family_v17_pause.py": "03a14ab9cc0213c762cd932465c97b58f0b97d355a1c91f8efe860361d81f3e2",
-    "tests/a2/test_family_v17.py": "9de290e1ff7a1af8e5549c53803e632f4fb9f8496b6c85dfe62af87ad2bfe49e",
+    "tests/a2/test_family_v17.py": "9ab3601bb63457ec4db5733da15c83445d8062dff4effaccb460c635a66e6e98",
     "docs/A2_family_spec_v1.7.md": "70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209",
     "efficient_llm/a2/train.py": "66e41889e226ae2bbcfa261beb3fe740412666bbc78420bac0ffc743d70eff93",
     "efficient_llm/a2/model.py": "ac40fb3776f8537a04fad8b3f164c2ea598a1ab1b994b3cf61cf078d7e8c4d4f",
@@ -42,5 +43,5 @@
     "run_experiments.py": "752c7913adbd4b2b1e58ae21a535b20462f2622be00ce5f48a9e76ec80e3172d"
   },
   "frozen_entrypoints_pass": 4,
-  "CPU_receipt_sha256": "a020c531b7b79e5285e64bcecd824601547182611e9deed5e099e71f5e4fe985"
+  "CPU_receipt_sha256": "882f3ac00807ab6d95f0048f4240b480a714ae936b83542a5115212a7fc8ce57"
 }

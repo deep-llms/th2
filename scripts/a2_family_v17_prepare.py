@@ -5,6 +5,13 @@ from scripts.a2_family_v14_gate import sha,read_lock
 from scripts.a2_family_v17_depth_bridge import validate
 
 
+def verify_previous(cfg):
+    # A Markdown report is byte-locked text, not a JSON record.
+    report=cfg['previous_report']
+    if sha(report['path'])!=report['sha256']:raise ValueError('Prior Markdown report changed')
+    for key in ('previous_decision','previous_backup'):read_lock(cfg[key])
+
+
 def verify_inputs(cfg):
     verified=[]
     def check(p,h):
@@ -34,7 +41,7 @@ def verify_inputs(cfg):
         for name,key in [('documents.bin','documents_sha256'),('document_order.bin','document_order_sha256')]:
             if (base/name).exists() and key in m:check(base/name,m[key])
     for lock in cfg['reference_nll'].values():read_lock(lock)
-    for key in ('previous_report','previous_decision','previous_backup'):read_lock(cfg[key])
+    verify_previous(cfg)
     previous=read_lock(cfg['previous_backup'])
     if not previous['verified']:raise ValueError('Previous backup unverified')
     for item in previous['files']:check(item['path'],item['sha256'])

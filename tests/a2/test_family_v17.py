@@ -65,6 +65,16 @@ class V17(unittest.TestCase):
         self.assertIn('scripts.a2_family_v17_run',j[0]['argv']);self.assertIn('scripts.a2_family_v17_depth_bridge',j[1]['argv'])
         self.assertTrue(j[0]['required_outputs'][0]['json_equals']['backup_verified'])
 
+    def test_markdown_report_is_hashed_not_parsed_as_json(self):
+        from scripts.a2_family_v17_prepare import verify_previous
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t);(root/'REPORT.md').write_text('# Family report\nActual Markdown, not JSON.\n')
+            write(root/'decision.json',{});write(root/'backup.json',{'verified':True})
+            cfg=dict(previous_report=lock(root/'REPORT.md'),previous_decision=lock(root/'decision.json'),previous_backup=lock(root/'backup.json'))
+            verify_previous(cfg)
+            (root/'REPORT.md').write_text('changed')
+            with self.assertRaisesRegex(ValueError,'Markdown report changed'):verify_previous(cfg)
+
     def test_bad_model_prevents_launch(self):
         from scripts.a2_family_v17_prepare import verify_inputs
         with tempfile.TemporaryDirectory() as t:
