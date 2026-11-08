@@ -1,0 +1,706 @@
+{
+  "assets": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/assets.json",
+    "sha256": "5f3f42b76d1f5be52e95a4a12e736c7aa81fbd121ed2c6daa730078625dc4371"
+  },
+  "data_root": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data",
+  "data_manifest": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-inputs-20261028-a01/run/inputs/data/manifest.json",
+    "sha256": "35aa415f1a3a2a60d9d3faa7faa85e97ce365088f38d23ea01b4a18737834c3e"
+  },
+  "heal_streams": {
+    "dclm": {
+      "2030": {
+        "path": "/mnt/local/_data/deep-llms_th2/a2_dclm_shuffle2030_rebuild_20261103",
+        "sha256": "5ddfb10ac309886eae0ae0e43024b93350bb022bc93c8ad095bb91cd638178f0"
+      }
+    }
+  },
+  "spec_sha256": "70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209",
+  "host": "thiennh-p6-wc69-worker-0",
+  "historical_v17": {
+    "cuts32": {
+      "6": {
+        "E": 0.021670884569823023,
+        "G": 0.050884040448750056,
+        "parent_gain_kept": 0.5741123468438057,
+        "node": "6y3o",
+        "origin": "Stage1",
+        "source": {
+          "path": "resources/a2_depth_stage1_references_20261101.json",
+          "sha256": "78afb6090646a84afc59d498911d37590ebce745a8e0a4d637d0411406651da5"
+        }
+      },
+      "12": {
+        "E": 0.02332383536097593,
+        "G": 0.050884040448750056,
+        "parent_gain_kept": 0.5416276861019422,
+        "node": "wc69",
+        "origin": "Why",
+        "historical_flags": [
+          [
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 0
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 0
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 1
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 1
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 2
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 2
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 3
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 3
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 4
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 4
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 5
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 5
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 6
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 6
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 7
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 7
+            }
+          ],
+          [
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 0
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 0
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 1
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 1
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 2
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 2
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 3
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 3
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 4
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 4
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 5
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 5
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 6
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 6
+            },
+            {
+              "test": "preparation:stream:fwe:2031:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2031:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 7
+            },
+            {
+              "test": "preparation:stream:fwe:2032:YT2_CulturaX_heldout",
+              "passed": false,
+              "detail": {
+                "test": "stream:fwe:2032:YT2_CulturaX_heldout",
+                "passed": false,
+                "detail": {
+                  "content_hash_overlap": 3,
+                  "heldout_documents": 16862,
+                  "id_disjoint": "Dataset-qualified ids: corpus/revision/source/row versus CulturaX split/index"
+                },
+                "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea"
+              },
+              "spec_sha256": "87af7498eaffab01c2ab16e6e5093402a85ad55f292a8d182462e6543f2304ea",
+              "rank": 7
+            }
+          ]
+        ],
+        "qualification": "DCLM cleared by independent Why overlap/row audit; original historical flags retained"
+      }
+    },
+    "E08": {
+      "3": 0.018639719725659365,
+      "9": 0.022253106709633208
+    },
+    "stable_series": {
+      "dclm": {
+        "0.2B": {
+          "E": 0.011131974404904479,
+          "node": "6y3o"
+        },
+        "0.8B": {
+          "E": 0.008627344665466826,
+          "E_pre": 0.17998118465799937,
+          "G": 0.021868598063990462,
+          "dropped_sequences": 0,
+          "dropped_prediction_tokens": 0,
+          "kept_sequences": 2461,
+          "kept_prediction_tokens": 10077795,
+          "E_over_G": 0.3945083557812922,
+          "bootstrap": {
+            "E_ci95": [
+              0.008146503158218799,
+              0.009101567875214807
+            ],
+            "E_over_G_ci95": [
+              0.37560361078697274,
+              0.4137477241031917
+            ],
+            "resamples": 10000,
+            "seed": 0,
+            "unit": "paired fixed-length packed sequences (native A2 S estimator)",
+            "estimator": "token weighted",
+            "zero_token_draws": 0,
+            "undefined_ratio_draws": 0
+          },
+          "E_over_short_delta": 0.09672714000895767,
+          "node": "wc69",
+          "origin": "F6"
+        }
+      },
+      "fwe": {
+        "0.2B": {
+          "E": 0.01478074443100589,
+          "node": "6y3o"
+        },
+        "0.8B": {
+          "E": 0.008610998730387487,
+          "E_pre": 0.21037520704597804,
+          "G": 0.018344410320462974,
+          "dropped_sequences": 0,
+          "dropped_prediction_tokens": 0,
+          "kept_sequences": 2461,
+          "kept_prediction_tokens": 10077795,
+          "E_over_G": 0.469407224323914,
+          "bootstrap": {
+            "E_ci95": [
+              0.008100929041604121,
+              0.009123613133210277
+            ],
+            "E_over_G_ci95": [
+              0.4446942800383174,
+              0.4946839052677514
+            ],
+            "resamples": 10000,
+            "seed": 0,
+            "unit": "paired fixed-length packed sequences (native A2 S estimator)",
+            "estimator": "token weighted",
+            "zero_token_draws": 0,
+            "undefined_ratio_draws": 0
+          },
+          "E_over_short_delta": 0.10643185358641802,
+          "node": "wc69",
+          "origin": "F6"
+        },
+        "3.2B": {
+          "E": 0.005028513427941408,
+          "E_pre": 0.21037520704597804,
+          "G": 0.018344410320462974,
+          "dropped_sequences": 0,
+          "dropped_prediction_tokens": 0,
+          "kept_sequences": 2461,
+          "kept_prediction_tokens": 10077795,
+          "E_over_G": 0.2741169293587028,
+          "bootstrap": {
+            "E_ci95": [
+              0.004554093812499127,
+              0.005517363521021101
+            ],
+            "E_over_G_ci95": [
+              0.251801136453651,
+              0.2968443200702413
+            ],
+            "resamples": 10000,
+            "seed": 0,
+            "unit": "paired fixed-length packed sequences (native A2 S estimator)",
+            "estimator": "token weighted",
+            "zero_token_draws": 0,
+            "undefined_ratio_draws": 0
+          },
+          "E_over_short_delta": 0.1259760226717792,
+          "node": "wc69",
+          "origin": "F6"
+        }
+      }
+    }
+  },
+  "reference_nll": {
+    "dclm/S72/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107/historical/dclm-S72-parent.json",
+      "sha256": "96026d6d037ce6ac7d25a4a9f04fe967f1145a902cea2fdf41917029a1f716f1"
+    },
+    "dclm/S188/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107/historical/dclm-S188-parent.json",
+      "sha256": "5510e8db7d9aef5c8d23c2ccec4323fadeaf8bde2da2a0d07e2aad713a07f6ae"
+    },
+    "dclm/P300/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P300/parent-final.json",
+      "sha256": "52122ea6e60ab5a2813bf4ff089629a7c9d5d82a49a76a9fd31bfef3e6f21c5b"
+    },
+    "dclm/P1T/parent": {
+      "path": "/mnt/local/_outputs/deep-llms_th2/6y3o-a2-quant-20261031-a01/results/a2_quant_20261031/workers/baseline/dclm/P1T/parent-final.json",
+      "sha256": "54272c0325bd88c25e2b3b0c76b1caa270f0b63a0bb13a67bad9bbfe49111e8c"
+    }
+  },
+  "FT10": {
+    "required": false,
+    "reason": "Same wc69 node as Why/F6; checked at admission"
+  },
+  "depth_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-depth-partc-20261103-a01",
+  "pause_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v17-pause-20261109-a01/pause",
+  "predecessor_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01",
+  "previous_results_root": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107",
+  "preparation_flags": [],
+  "previous_report": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107/REPORT.md",
+    "sha256": "fcbe218e8f8a23c13c0486dbf5731644c8ccbf54d04c74ba7259fe5fb4e2ec8a"
+  },
+  "previous_decision": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107/decision_family.json",
+    "sha256": "dbc37124ff65882630a46b92a899cacd4267d4806b1406e7e464a2543eb4a909"
+  },
+  "previous_backup": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-20261108-a02/results/a2_family_20261107/backup/verified.json",
+    "sha256": "3a3c8d3ca293bfaecfb29ee11d2eab7e1d0f247e9af56f011a9df4362c4482ef"
+  }
+}
