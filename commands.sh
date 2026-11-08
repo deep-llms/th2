@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-v17-health-20261109-a06
+#th2-wc69-family-v17-health-20261109-a07
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1
@@ -38,5 +38,10 @@ r['v17_results']={}
 for p in (run/'results/a2_family_20261107/heals').glob('*/result.json'):
  v=json.loads(p.read_text());r['v17_results'][p.parent.name]=dict(path=str(p),sha256=digest(p),delta_post=v.get('delta_post'),final=v['scores']['final']['loss'] if v['scores']['final'] else None,registered_run=v['registered_run'],flags=v['flags'])
 r['v17_supervisor_log']=(run/'supervisor.log').read_text()[-7000:] if (run/'supervisor.log').exists() else None
+r['v17_recipes']={}
+for p in (run/'results/a2_family_20261107/heals').glob('*/recipe.json'):
+ v=json.loads(p.read_text());r['v17_recipes'][p.parent.name]=dict(path=str(p),sha256=digest(p),value={k:v[k] for k in ('run_id','dataset','arm','teacher','initial_parent','block','removed','steps','tokens','lr','training','source','registered_run','spec_sha256')})
+import re
+r['v17_nonfinite_counts']={p.name:len(re.findall(r'NONFINITE_KD_FLAG|Traceback \(most recent call last\)|loss[\x27\x22]?\s*:\s*(?:nan|inf)',p.read_text(),flags=re.I)) for p in (run/'results/a2_family_20261107/logs').glob('*.log')}
 print('V17_HEALTH '+json.dumps(r),flush=True)
 PYCPU
