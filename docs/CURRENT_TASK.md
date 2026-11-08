@@ -1,3 +1,5 @@
+2026-11-08T17:00:47.760949+00:00: V17healtha01 2d844a1ACK/node09Nov00:58:58SGT: pause helper alive/waiting next saved state after14000; P1T8GPU exactownership79686 unchanged. RawSHA22dfbc83fbfb29c3e50fed0ae4ca2631daa30eb9b6394dcf7e4e3a336fd8e8c1. No pendingreceipt. v17 implementation8bd78f4 validated10CPUtests+4frozenentrypoints; preparing one gated admission waiting for verified pause/burn, actualdataSHA thenF8→F7→report/backup→Depth. No newfit claimed.
+
 2026-11-08T16:58:24.413686+00:00: Unique v17 readonlyhealtha01 2d844a142101bea775285e24d9515e61f7721dc2 SUBMITTED/remoteheadverified. Retrieve before writes. Pause terminal/actual saved step pending. Local 10CPUtestsPASS including exact Why numerical match; frozen entrypoint validation ongoing.
 
 2026-11-08T16:57:18.389724+00:00: V17pause3606ce4ACK retrieved/rawSHA291e2a586c52207bfb15b5171e337c1938b724aaf6b494bcdc62c4e8e3a48294. Exact P1T105922–105929 ancestry→79686 and all8physicalUUID verified; tmux pause helper launched/sourcec5ee50ef. No pendingreceipt; actual nextcheckpoint/pause terminal pending. New F8/F7 pipeline CPUtests running; no GPU v1.7 launch yet.
