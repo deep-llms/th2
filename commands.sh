@@ -1,5 +1,5 @@
 #1 +60+a
-#th2-wc69-family-preparation-health-20261107-a63
+#th2-wc69-family-preparation-health-20261107-a64
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
@@ -156,6 +156,10 @@ for p in Path('/proc').iterdir():
   if any(x in args for x in [b'scripts.a2_family_f6_prepare',b'scripts.a2_family_f6_run',b'efficient_llm.a2_family_f6.heal']):r['family_f6_processes'].append(process(int(p.name)))
  except (FileNotFoundError,ProcessLookupError,PermissionError):pass
 
+r['family_f6_checks']={str(p.relative_to(f6)):artifact(p) for p in (f6/'results/a2_family_20261107').glob('**/tests-rank*.json')}
+r['family_f6_results']={str(p.relative_to(f6)):dict(path=str(p),sha256=digest(p),value=compact(json.loads(p.read_text()))) for p in (f6/'results/a2_family_20261107').glob('**/result.json')}
+r['family_f6_ledger']=artifact(f6/'results/a2_family_20261107/ledger.json')
+r['bridge_log']=tail(family/'supervised/run/a2-family-depth-bridge.log',12000)
 r['snapshot_complete_utc']=datetime.now(timezone.utc).isoformat()
 print('FAMILY_PREPARATION_HEALTH',json.dumps(r),flush=True)
 HEALTH
