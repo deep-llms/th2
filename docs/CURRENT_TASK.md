@@ -1,3 +1,7 @@
+2026-11-08T17:04:17.432270+00:00: V17 admission236426cACK/source8bd78f4/rawSHAb4f6e56839a2e5bad39dc4c55bec150b9d219aef61dc82c6e3e9c8d2bba347f7. CPUtmux submitted; no pendingreceipt. Actualpause/launch/inputhash pendinghealth02; no duplicate.
+
+2026-11-08T17:00:51.590220+00:00: V17 ADMISSION a01 236426c97c2aeff90efe877e45d057c06b39108e SUBMITTED/remoteheadverified,frozen8bd78f4. Retrieve before writes/no duplicate. Single admission waits actual pause→rehash model/data→one native F8/F7/report/backup/Depth queue. Actual launch pending. Rootwc69-a2-family-v17-20261109-a01. Samewatch1730807.
+
 2026-11-08T17:00:47.760949+00:00: V17healtha01 2d844a1ACK/node09Nov00:58:58SGT: pause helper alive/waiting next saved state after14000; P1T8GPU exactownership79686 unchanged. RawSHA22dfbc83fbfb29c3e50fed0ae4ca2631daa30eb9b6394dcf7e4e3a336fd8e8c1. No pendingreceipt. v17 implementation8bd78f4 validated10CPUtests+4frozenentrypoints; preparing one gated admission waiting for verified pause/burn, actualdataSHA thenF8→F7→report/backup→Depth. No newfit claimed.
 
 2026-11-08T16:58:24.413686+00:00: Unique v17 readonlyhealtha01 2d844a142101bea775285e24d9515e61f7721dc2 SUBMITTED/remoteheadverified. Retrieve before writes. Pause terminal/actual saved step pending. Local 10CPUtestsPASS including exact Why numerical match; frozen entrypoint validation ongoing.
