@@ -1,0 +1,32 @@
+{
+  "spec_sha256": "70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209",
+  "snapshot_utc": "2026-11-08T17:25:06.648773+00:00",
+  "raw_sha256": "394591471a9e368b374b41ceb6a4cf305c07058d3ddfd513cb136eff62f08c4d",
+  "receipt_commit": "6423f0d159cb111fb1d9978759c3047dfdb83407",
+  "run_id": "Y3-dclm-P300-L3-3.2B",
+  "step": 130,
+  "max_steps": 12207,
+  "worker_checks_pass": 32,
+  "input_file_hash_checks": 27,
+  "input_bytes": 165376902231,
+  "source_files_unchanged": 244,
+  "gpu_owner_chain": [
+    109773,
+    109685,
+    109616
+  ],
+  "gpu_utilization_percent": [
+    100.0,
+    99.0,
+    99.0,
+    98.0,
+    99.0,
+    98.0,
+    98.0,
+    99.0
+  ],
+  "logged_lr_matches_custom_warmup_245": true,
+  "hf_warmup_fields_unused": "Custom registered scheduler; verified observed LR, not HF warmup fields.",
+  "depth_pause_proof": "resources/a2_family_v17_pause_20261109.json",
+  "pending_receipt": false
+}
