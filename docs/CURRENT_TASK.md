@@ -1,3 +1,7 @@
+2026-11-08T21:12:55.663631+00:00: F8P300L3backup34923baACK/20members/8rawtraces/5239203bytesSHA09e54b7aa44b051e31ff52c1a69e15c494fc86af15e980c32692bf3500d34618. No pendingreceipt; exporting exactarchive+manifest forlocalreplay.
+
+2026-11-08T21:10:36.983944+00:00: F8P300L3sciencebackup 34923ba1225a87e88d4d40278aebb9105d92bf29 SUBMITTED/remoteheadverified; retrieve pendingreceipt beforewrites/no duplicate. Sealed P300L3 only; activeP1Tunchanged.
+
 2026-11-08T21:10:19.828176+00:00: VERIFIED v17healtha16 be36395ACK/node09Nov05:08:01SGT F8P300L3 COMPLETE12207/final2.789057126163581/delta+.051264093950896594/no flags/return0; F8P1TL3 automaticallyACTIVE370/12207/8GPU98–99%/128workerchecksPASS/nonfinite0/fullownership111792–111799→111723→109685→109616. Source244/inputlocks+actualsizes/pause15000bothcopies22members unchanged. RawSHAb37f09bb67d54ccc736195ab5a92ac5fe6d4ac29ad82ee5cbabfa945b79b937b/archivehealth16. No pendingreceipt/commands#0. Preparing sealedP300L3 sciencebackup/export/replay whileP1Tcontinues. Measuredfirstfit13123s inclstartup/readout, allv17ETA21–24SGT provisional. Samewatch1730807next05:36:38. RemainingF8three/F7two/report+backup/Depth15000/downstream/handoff; historicalflags retained.
 
 2026-11-08T21:07:19.547912+00:00: Unique readonly v17healtha16 be363953581a1132b41158a253e498ee1550a935 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate. Latestverified F8P300L3 11000/12207; terminal/transition pending. Samewatch1730807next05:36:38SGT; DepthP1Tpaused15000.
