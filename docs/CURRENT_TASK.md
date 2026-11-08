@@ -1,3 +1,7 @@
+2026-11-08T17:20:59.382257+00:00: V17health05 f4d8d92ACK/node09Nov01:18:43SGT: correctednativequeuea02SUBMITTED/source2858c80/244filesunchanged; 27actualinputSHAchecks/165376902231bytes passed; samewc69FT10skip,originalP1T15000pausebound. Newnativeguard109616 exactoldburn108745–108752 reclaimed; startuptrainpending. RawSHAc9ae2dc0fe8996db36dae141f9895e34fd3669c955850ac6ef2b45a5605515d2. No pendingreceipt. RemainingF8four/F7two/report+backup/Depthresume15000/downstream/handoff; olda01Markdownfailurefixed+retained/historicalflags.
+
+2026-11-08T17:17:47.444668+00:00: Unique v17healtha05 f4d8d923605ee66742108d2a5ea4287916fd7875 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate.
+
 2026-11-08T17:17:43.754610+00:00: Correctedv17admissiona02 1ab7202ACK/source2858c80/rawSHA42fe77e0273c0d61ee4e7aac42e5eb6685e8142d7e2354dcdb0674f6a0f15ea5. No pendingreceipt; actualGPUstartup/inputhash proof pendinghealth05. PauseP1T15000 verifiedunchanged, olda01Markdownfailure preserved.
 
 2026-11-08T17:13:59.226165+00:00: Correctedv17admissiona02 1ab720252898e39069a66cfbaa261950a36d4c9f SUBMITTED/remoteheadverified/source2858c80. Fresh wc69-a2-family-v17-admission-20261109-a02 andrunwc69-a2-family-v17-20261109-a02; originalpausea01/P1T15000 unchanged. Retrieve beforewrites/no duplicate. Expected actualhash→F8/F7/report+backup→Depthqueue, actualstart pending.
