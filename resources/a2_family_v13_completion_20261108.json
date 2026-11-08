@@ -1,0 +1,29 @@
+{
+  "verified_utc": "2026-11-08T03:45:52.787028+00:00",
+  "spec_sha256": "40089a98702a285d38799adcdfa89c72c7eec2e75e627cfef8552448f9a593c0",
+  "export_commit": "ab56ad59d5cf7b11d831522d73dbf2ec84786044",
+  "archive": {
+    "archive_sha256": "31d479204955eacb82a07efeb9ba19e7cb8928960c1638ea9c4b258076bbf5f7",
+    "archive_bytes": 40673284,
+    "members": 472,
+    "result_locks": 22,
+    "raw_rank_traces": 136,
+    "verified": true
+  },
+  "scalar_order_lr_checks": 868,
+  "embedded_arrays": 135,
+  "paired_full_reduced_bootstrap_checks": 26,
+  "max_pair_error": 4.440892098500626e-16,
+  "coverage_complete": true,
+  "missing": [],
+  "invalid": [],
+  "scientific_flags_retained": [
+    "FT2 fallback",
+    "FT8 mixture prefix",
+    "mixture source qualifications",
+    "LR upper grid edge",
+    "stable parent healing also anneals",
+    "historical deviations"
+  ],
+  "scope": "F0-F5 complete with F5 correctly not triggered. F6 v1.4 ongoing, Depth resume45000 pending. Local replay uses recorded overlap mask, not a new source content audit."
+}
