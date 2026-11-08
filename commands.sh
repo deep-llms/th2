@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-v17-health-20261109-a09
+#th2-wc69-family-v17-health-20261109-a10
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1
@@ -43,5 +43,15 @@ for p in (run/'results/a2_family_20261107/heals').glob('*/recipe.json'):
  v=json.loads(p.read_text());r['v17_recipes'][p.parent.name]=dict(path=str(p),sha256=digest(p),value={k:v[k] for k in ('run_id','dataset','arm','teacher','initial_parent','block','removed','steps','tokens','lr','training','source','registered_run','spec_sha256')})
 import re
 r['v17_nonfinite_counts']={p.name:len(re.findall(r'NONFINITE_KD_FLAG|Traceback \(most recent call last\)|loss[\x27\x22]?\s*:\s*(?:nan|inf)',p.read_text(),flags=re.I)) for p in (run/'results/a2_family_20261107/logs').glob('*.log')}
+saved=r['pause']['resume_state.json']['value']
+r['paused_checkpoint_members']={}
+for side in ['checkpoint','original']:
+ base=Path(saved[side]); members={}
+ for name in saved['hashes']:
+  p=base/name
+  members[name]=dict(exists=p.is_file(),bytes=p.stat().st_size if p.is_file() else None)
+  if p.is_file() and name.endswith('.json'):members[name]['sha256']=digest(p)
+ r['paused_checkpoint_members'][side]=members
+r['input_file_sizes']=[dict(path=x['path'],expected=x['bytes'],actual=Path(x['path']).stat().st_size if Path(x['path']).is_file() else None) for x in r['v17']['results/a2_family_20261107/manifests/actual_inputs.json']['value']['files']]
 print('V17_HEALTH '+json.dumps(r),flush=True)
 PYCPU
