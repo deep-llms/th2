@@ -1,3 +1,7 @@
+2026-11-08T17:10:24.368895+00:00: V17health03 f3e6f71ACK/node09Nov01:08:16SGT: P1T PAUSED15000,22independent checkpoint memberSHA complete incloptimizer/scheduler/8RNG/8audit; native79686cancel+cleanup/burnhandoff verified01:07:24SGT/guardreleased. RawSHA336927b0773ab151e7a1cd1a86691378e5b44d944680a40ee96a070b6a07fd45; proofresources/a2_family_v17_pause_20261109.json. Admission8bd78f4 verifying actualinputbytes beforeF8/F7; noGPUfit yet. No pendingreceipt/commands#0. Samewatch1730807. RemainingF8four/F7two/addendum+backup/DepthP1Tresume15000/downstream/handoff; historicalflags retained.
+
+2026-11-08T17:07:46.330744+00:00: Unique v17healtha03 f3e6f7176933edf688b49044cc663eaf9bc58a3b SUBMITTED/remoteheadverified; retrieve before writes/no duplicate.
+
 2026-11-08T17:07:42.744873+00:00: V17health02 34564c9ACK/node09Nov01:04:57SGT helper waiting nextcheckpoint after14000, admission WAIT_PAUSE, same8P1Townership/no error. RawSHA75075e0318e1db40c00fb182c1d8163486166d3f85c0eae5108ce30a826cbdae. No pendingreceipt. Expected15000 around01:06SGT from priorrate; actualstate notyetverified.
 
 2026-11-08T17:04:21.093070+00:00: Unique v17healtha02 34564c99ae59af4e517fb8411d1c54eca636c320 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate. Actualpause/F8pending.
