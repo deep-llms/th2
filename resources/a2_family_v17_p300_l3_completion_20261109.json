@@ -1,0 +1,21 @@
+{
+  "spec_sha256": "70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209",
+  "archive_sha256": "09e54b7aa44b051e31ff52c1a69e15c494fc86af15e980c32692bf3500d34618",
+  "members": 20,
+  "raw_rank_traces": 8,
+  "embedded_score_arrays": 7,
+  "cpu_replay_pass": 42,
+  "cpu_replay_fail": 0,
+  "run": {
+    "run_id": "Y3-dclm-P300-L3-3.2B",
+    "arm": "P300",
+    "lr": 0.001,
+    "delta_post": 0.051264093950896594,
+    "final_NLL": 2.789057126163581,
+    "tuning_NLL": 2.7753704697014796,
+    "flags": []
+  },
+  "local_evidence": "results/a2_family_20261107/v17_p300_l3_export_20261109_a01/local_verification.json",
+  "paired_E": "pending P1T L3 completion",
+  "scope": "sealed P300 L3 scientific backup; model/optimizer weights excluded"
+}
