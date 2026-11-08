@@ -1,0 +1,46 @@
+{
+  "spec_sha256": "04233f076e8d82b6c76a33178d2944e621a278e01b779b3dce584b2b8ad464aa",
+  "utc": "2026-11-08T06:43:33.932885+00:00",
+  "archive": {
+    "path": "/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f6-base-backup-20261108-a01/family_f6_base_science.tar.gz",
+    "bytes": 6097344,
+    "sha256": "298d718588361bc02db4b7fd51e50779205eeacf6a991e6b20459886b2e9321d"
+  },
+  "member_count": 97,
+  "rank_traces": 40,
+  "embedded_arrays": 35,
+  "cpu_replay_passed": 206,
+  "cpu_replay_failed": 0,
+  "pair_replay": {
+    "pairs": [
+      {
+        "dataset": "dclm",
+        "E_full": 0.00862734466546683,
+        "E_reduced": 0.00862734466546683,
+        "difference": 0.0,
+        "dropped_sequences": 0,
+        "dropped_prediction_tokens": 0,
+        "trigger": false,
+        "E02": 0.011131974404904479,
+        "exposure": "not applicable"
+      },
+      {
+        "dataset": "fwe",
+        "E_full": 0.008610998730387481,
+        "E_reduced": 0.008611975849452252,
+        "difference": 9.771190647711592e-07,
+        "dropped_sequences": 3,
+        "dropped_prediction_tokens": 12285,
+        "trigger": true,
+        "E02": 0.01478074443100589,
+        "exposure": "not seen"
+      }
+    ],
+    "trigger_matches": true,
+    "overlap_immaterial_at_08": true,
+    "scope": "CPU replay from saved arrays and verified per-rank raw order; inherited exact content-audit SHA, no new source content audit; full-set primary at 0.8B; not final F6 3.2B result or CI."
+  },
+  "backup_commit": "6c9d674ac31dcbf7a881659eb3e85de4b324e51a",
+  "export_commit": "cda23418201b33438ba70d763b37eb04732671fb",
+  "scope": "FT9 plus four F6 0.8B fits only; 3.2B active, v1.4 finalreport/backup stillpending"
+}
