@@ -1,3 +1,7 @@
+2026-11-09T10:14:45.205962+00:00: F7S72backup54433f3ACK/20members/8rawtraces/archiveSHAdaa47a0f1e6153c00127ae4a1678a46378dd7cff4ae886b93f6bd384a41be46e. No pendingreceipt; exporting exactarchive+manifest forlocalreplay.
+
+2026-11-09T10:11:20.319410+00:00: F7S72sciencebackup 54433f34761907adafa52a2ddcd655301f1cfb2e SUBMITTED/remoteheadverified; retrieve pendingreceipt beforewrites/no duplicate. Sealed S72 only; activeS188 unchanged.
+
 2026-11-09T10:10:58.985215+00:00: VERIFIED v17healtha42 5d1c863ACK/node18:07:52SGT F7S72COMPLETE12207/return0/final2.9583194015669467/delta+.04974410545907659/no flags. F7S188autoACTIVE1020/12207/8GPU98–99%/512checksPASS/nonfinite0/fullownership118493–118500→118424→109685→109616/source244/input/Depthpause15000unchanged. RawSHAc6ab0932611af097ca5cb15049275db1dafcfb2ce7ebec8aec5e945cc0d61611/archivehealth42. No pendingreceipt; preparingsealedS72backup/export/replay. Allv17ETA09Nov21–24SGT provisional plusreport/backup; S188rate needssecondmeasurement. Samewatch1730807next18:36:38SGT. RemainingS188/report+backup/DepthP1T15000/downstream/handoff; historicalflagsretained.
 
 2026-11-09T10:07:14.130921+00:00: Unique readonly v17healtha42 5d1c863256200efe14504f0d7b62c5f99fa62360 SUBMITTED/remoteheadverified; retrieve before writes/no duplicate. Latestverified F7S72 11500/12207 at17:37SGT; completion/transition pending. Samewatch1730807; F8all4backup/replaysecured; DepthP1Tpaused15000.
