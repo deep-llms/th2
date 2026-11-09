@@ -1,3 +1,7 @@
+2026-11-09T03:46:28.571593+00:00: F8P300L9backup24a0c2bACK/20members/8rawtraces/archiveSHA89bff14cdc0aea914dff887671c5050fc194e50ee4a503e49f016a9eb786e436. No pendingreceipt; exporting exactarchive+manifest forlocalreplay.
+
+2026-11-09T03:42:55.402667+00:00: F8P300L9sciencebackup 24a0c2b850f4ef0ff31db9b73d1617bd6df11164 SUBMITTED/remoteheadverified; retrieve pendingreceipt beforewrites/no duplicate. Sealed P300L9 only; activeP1TL9 unchanged.
+
 2026-11-09T03:42:28.037010+00:00: VERIFIED v17healtha29 b2a32cfACK/node11:38:10SGT P300L9COMPLETE12207/return0/final2.8977510168408536/delta+.15995798462816913/no flags; P1TL9 automaticallyACTIVE90/12207/320checksPASS/nonfinite0/fullownership115194–115201→115122→109685→109616/source244/input/pause15000 unchanged. RawSHA9a8a03223015bf04b6fed7ebec72550d3256bfecf8d6644d36d375482a6d4c5b/archivehealth29. No pendingreceipt; preparingsealedP300L9backup/export/replay. P1TL9trainingETA~14:32SGT frompriorL9rate, allv17~21–24SGT provisional plusreport/backup. Samewatch1730807next12:06:38. RemainingP1TL9/F7pair/report+backup/Depth15000/downstream/handoff; historicalflagsretained.
 
 2026-11-09T03:37:37.201130+00:00: Unique readonly v17healtha29 b2a32cfc8923938aec38f5dc156aa69a7bce760f SUBMITTED/remoteheadverified; retrieve before writes/no duplicate. Latestverified P300L9 10340/12207 at11:08SGT; actualcompletion/transition pending. Samewatch1730807next12:06:38SGT; DepthP1Tpaused15000.
