@@ -1,5 +1,5 @@
 #1 +20+a
-#th2-wc69-family-v17-health-20261109-a45
+#th2-wc69-family-v17-health-20261109-a46
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
 export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1
