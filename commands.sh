@@ -1,57 +1,54 @@
 #1 +20+a
-#th2-wc69-family-v17-health-20261109-a35
+#th2-wc69-family-v17-p1t-l9-backup-20261109-a01
 set -euo pipefail
 cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'PYCPU'
+export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
+/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u - <<'BACKUP'
 from pathlib import Path
-import json,datetime,subprocess
-from scripts.gpu_process import inspect,process
-from scripts.a2_family_v17_pause import digest
-root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v17-pause-20261109-a01')
-r=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),inspection=inspect(),pause={},pause_log=(root/'pause.log').read_text()[-18000:])
-for p in sorted((root/'pause').glob('*.json')):r['pause'][p.name]=dict(path=str(p),sha256=digest(p),value=json.loads(p.read_text()))
-for name in ['supervisor.json','burn-verified.json']:
- p=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-20261107-a01/supervised')/name
- if p.exists():r[name]=dict(path=str(p),sha256=digest(p),value=json.loads(p.read_text()))
-p=Path('/mnt/local/_gpu_guard/DISABLED');r['guard']=json.loads(p.read_text()) if p.exists() else None
-r['chains']={}
-for g in r['inspection']['gpus']:
- for pid in g['pids']:
-  chain=[]
-  while pid>1:
-   v=process(pid);chain.append(v);pid=v['ppid']
-  r['chains'][str(g['index'])]=chain
-admission=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v17-admission-20261109-a02')
-run=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v17-20261109-a02')
-r['admission_log']=(admission/'admission.log').read_text()[-18000:] if (admission/'admission.log').exists() else None
-r['v17']={}
-for rel in ['progress.json','launch.json','jobs.json','source-manifest.json','supervised/supervisor.json','results/a2_family_20261107/config/plan.json','results/a2_family_20261107/manifests/actual_inputs.json','results/a2_family_20261107/manifests/actual_inputs_at_gpu_admission.json','results/a2_family_20261107/progress.json','results/a2_family_20261107/ledger.json','results/a2_family_20261107/backup/verified.json']:
- p=run/rel
- if p.exists():r['v17'][rel]=dict(path=str(p),sha256=digest(p),value=json.loads(p.read_text()))
-if (run/'source-manifest.json').exists():
- m=json.loads((run/'source-manifest.json').read_text());bad=[p for p,h in m['files'].items() if digest(run/'source'/p)!=h]
- r['v17_source']=dict(files=len(m['files']),changed=bad)
-r['v17_logs']={p.name:p.read_text()[-6500:] for p in sorted((run/'results/a2_family_20261107/logs').glob('*.log'))}
-r['v17_checks']={p.relative_to(run).as_posix():json.loads(p.read_text()) for p in (run/'results/a2_family_20261107/heals').glob('*/tests-rank*.json')}
-r['v17_results']={}
-for p in (run/'results/a2_family_20261107/heals').glob('*/result.json'):
- v=json.loads(p.read_text());r['v17_results'][p.parent.name]=dict(path=str(p),sha256=digest(p),delta_post=v.get('delta_post'),final=v['scores']['final']['loss'] if v['scores']['final'] else None,registered_run=v['registered_run'],flags=v['flags'])
-r['v17_supervisor_log']=(run/'supervisor.log').read_text()[-7000:] if (run/'supervisor.log').exists() else None
-r['v17_recipes']={}
-for p in (run/'results/a2_family_20261107/heals').glob('*/recipe.json'):
- v=json.loads(p.read_text());r['v17_recipes'][p.parent.name]=dict(path=str(p),sha256=digest(p),value={k:v[k] for k in ('run_id','dataset','arm','teacher','initial_parent','block','removed','steps','tokens','lr','training','source','registered_run','spec_sha256')})
-import re
-r['v17_nonfinite_counts']={p.name:len(re.findall(r'NONFINITE_KD_FLAG|Traceback \(most recent call last\)|loss[\x27\x22]?\s*:\s*(?:nan|inf)',p.read_text(),flags=re.I)) for p in (run/'results/a2_family_20261107/logs').glob('*.log')}
-saved=r['pause']['resume_state.json']['value']
-r['paused_checkpoint_members']={}
-for side in ['checkpoint','original']:
- base=Path(saved[side]); members={}
- for name in saved['hashes']:
-  p=base/name
-  members[name]=dict(exists=p.is_file(),bytes=p.stat().st_size if p.is_file() else None)
-  if p.is_file() and name.endswith('.json'):members[name]['sha256']=digest(p)
- r['paused_checkpoint_members'][side]=members
-r['input_file_sizes']=[dict(path=x['path'],expected=x['bytes'],actual=Path(x['path']).stat().st_size if Path(x['path']).is_file() else None) for x in r['v17']['results/a2_family_20261107/manifests/actual_inputs.json']['value']['files']]
-print('V17_HEALTH '+json.dumps(r),flush=True)
-PYCPU
+import hashlib,json,tarfile
+from datetime import datetime,timezone
+root=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v17-20261109-a02/results/a2_family_20261107')
+output=Path('/mnt/local/_outputs/deep-llms_th2/wc69-a2-family-v17-p1t-l9-backup-20261109-a01')
+output.mkdir(exist_ok=False)
+locks={'heals/Y3-dclm-P1T-L9-3.2B/result.json': '2e962f3b7afac0958b887019ca4d51592021d6d4e3f74f4e2530003e21233fca'}
+spec='70bee591aa19a48578998655b53404e358f218a2cbcb1946c432b00cd5f44209'
+def sha(p):
+ h=hashlib.sha256()
+ with Path(p).open('rb') as f:
+  for block in iter(lambda:f.read(8<<20),b''):h.update(block)
+ return h.hexdigest()
+files={}
+for rel,expected in locks.items():
+ p=root/rel
+ if sha(p)!=expected:raise ValueError('Completed result changed: '+rel)
+ result=json.loads(p.read_text())
+ if result['spec_sha256']!=spec:raise ValueError('Wrong spec')
+ if rel.startswith('heals/'):
+  if result['status']!='complete':raise ValueError('Unfinished run')
+  for trace in result['raw_order_files']:
+   if sha(trace['path'])!=trace['sha256']:raise ValueError('Raw sample trace changed')
+ for q in p.parent.rglob('*'):
+  relative=q.relative_to(p.parent)
+  if relative.parts[0] in ('trainer','final') or not q.is_file():continue
+  if q.is_symlink():raise ValueError('Unexpected symlink')
+  if q.suffix not in ('.json','.jsonl','.npy','.csv','.md','.log','.yaml'):continue
+  name=str(q.relative_to(root));files[name]=dict(bytes=q.stat().st_size,sha256=sha(q))
+for name,expected in {'config/plan.json': '6cc0ad2c59b62fbe86e3a254f32883276bfa8249ba07f36c5f06711329317742'}.items():
+ p=root/name
+ if sha(p)!=expected:raise ValueError('Sealed file changed: '+name)
+ files[name]=dict(bytes=p.stat().st_size,sha256=sha(p))
+archive=output/'family_v17_p1t_l9_science.tar.gz'
+with tarfile.open(archive,'w:gz') as tar:
+ for rel in sorted(files):tar.add(root/rel,arcname=rel,recursive=False)
+observed=set()
+with tarfile.open(archive,'r:gz') as tar:
+ for member in tar:
+  if not member.isfile() or member.name not in files or member.name in observed:raise ValueError('Unexpected member')
+  observed.add(member.name);data=tar.extractfile(member).read()
+  if len(data)!=files[member.name]['bytes'] or hashlib.sha256(data).hexdigest()!=files[member.name]['sha256']:raise ValueError('Archive mismatch')
+if observed!=set(files):raise ValueError('Missing member')
+if archive.stat().st_size>=25*1024*1024:raise ValueError('Archive exceeds export cap')
+manifest=dict(spec_sha256=spec,utc=datetime.now(timezone.utc).isoformat(),scope='Completed F8 DCLM P1T L9 3.2B with embedded baseline/pre/post arrays and eight raw rank traces; config lock; excludes active F7 S72 and weights; not final v1.7 report',result_locks=locks,files=files,archive=dict(path=str(archive),bytes=archive.stat().st_size,sha256=sha(archive)),members=len(files),raw_rank_traces=sum('sample-order-rank' in x for x in files),arrays=sum(x.endswith('.npy') for x in files),verified=True)
+(output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+print('FAMILY_EARLY_BACKUP',json.dumps({k:x for k,x in manifest.items() if k not in ('files','result_locks')}),flush=True)
+BACKUP
