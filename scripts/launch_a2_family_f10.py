@@ -8,6 +8,7 @@ import shlex
 import socket
 import subprocess
 import sys
+import time
 from eval.a2_family_f10 import SPEC_SHA,write
 from eval.a2_family_f9 import read
 from scripts.a2_family_f9_run import locked
@@ -42,6 +43,16 @@ def predecessor(root,host):
     return fresh
 
 
+def wait_for_preparation(preparation,session,timeout=3600):
+    """Allow the authorized CPU hash/preparation phase to finish without idle delay."""
+    root=Path(preparation);deadline=time.monotonic()+timeout
+    while not (root/'ready.json').is_file():
+        pane=subprocess.run(['tmux','list-panes','-t',session,'-F','#{pane_dead}'],capture_output=True,text=True)
+        if pane.returncode or pane.stdout.strip()!='0':raise RuntimeError('CPU preparation exited without ready; no GPU change')
+        if time.monotonic()>=deadline:raise TimeoutError('CPU readiness wait expired; no GPU change')
+        print('F10_WAIT_CPU_READY',session,flush=True);time.sleep(10)
+
+
 def launch(preparation,output,session,commit,proof):
     prep=Path(preparation);out=Path(output);source=Path(__file__).resolve().parents[1]
     ready=read(prep/'ready.json');cfg=locked(ready['config'])
@@ -74,10 +85,10 @@ def launch(preparation,output,session,commit,proof):
     if ready['model_hashes']!=37 or len(set(cfg['fresh_model_hashes']))!=37:raise ValueError('Incomplete model admission')
     predecessor(cfg['f9_root'],cfg['host'])
     out.mkdir();frozen=freeze_source(source,out,commit,extra_files=['docs/A2_family_spec_v1.11.md',
-        'resources/a2_family_f10_plan_20261111.json','resources/a2_family_f10_inputs_20261111.json',str(Path(proof).resolve().relative_to(source))])
+        'resources/a2_family_f10_plan_20261111.json','resources/a2_family_f10_inputs_20261111.json',str(Path(proof).resolve().relative_to(source)),*tested['files']])
     write(out/'source-manifest.json',read(out/'source-manifest.json'))
     cfg.update(source_manifest=lock(out/'source-manifest.json'),code_commit=commit,
-        output=str(out/'results/a2_family_20261107/f10'),preparation_ready=lock(prep/'ready.json'),cpu_proof=lock(proof))
+        output=str(out/'results/a2_family_20261107/f10'),preparation_ready=lock(prep/'ready.json'),cpu_proof=lock(frozen/Path(proof).resolve().relative_to(source)))
     config=write(out/'config.json',cfg);jobs=out/'jobs.json';write_json(jobs,job_manifest(config['path']));load_jobs(jobs)
     fresh=write(out/'inspection.json',predecessor(cfg['f9_root'],cfg['host']))
     cmd=[sys.executable,'-u','-m','scripts.train_then_burn','--config',str(jobs),'--output',str(out/'supervised'),
@@ -96,4 +107,7 @@ def launch(preparation,output,session,commit,proof):
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     for k in ('preparation','output','session','code-commit','cpu-proof'):p.add_argument('--'+k,required=True)
-    a=p.parse_args();launch(a.preparation,a.output,a.session,a.code_commit,a.cpu_proof)
+    p.add_argument('--wait-preparation-session')
+    a=p.parse_args()
+    if a.wait_preparation_session:wait_for_preparation(a.preparation,a.wait_preparation_session)
+    launch(a.preparation,a.output,a.session,a.code_commit,a.cpu_proof)

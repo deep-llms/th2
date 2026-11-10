@@ -127,3 +127,42 @@ class F10Tests(unittest.TestCase):
             self.assertTrue(v['verified']);self.assertTrue(v['raw_stays_on_node'])
             self.assertFalse(list(root.rglob('*.part*')))
             self.assertIn('scores.json',v['files'])
+
+    def test_launcher_serializes_offline_pane_and_freezes_proof(self):
+        import tempfile,json,socket,subprocess,shlex
+        from pathlib import Path
+        from unittest.mock import patch
+        from scripts.launch_a2_family_f10 import launch
+        from eval.a2_family_f10 import SPEC_SHA,write
+        from efficient_llm.diagnostic_data import sha256
+        from scripts.a2_quant_io import lock
+        with tempfile.TemporaryDirectory(dir='temp',prefix='f10_launcher_fixture_') as d:
+            base=Path(d).resolve();prep=base/'prep';prep.mkdir();output=base/'output'
+            proof=base/'proof.json';write(proof,dict(launch_ready=True,files={'scripts/launch_a2_family_f10.py':sha256('scripts/launch_a2_family_f10.py')}))
+            cfg={'host':socket.gethostname(),'benchmarks':{},'fresh_model_hashes':[str(i) for i in range(37)],'f9_root':'/fixture/old'}
+            for k in ('prepared','input_manifest','f9_manifest','f10a'):cfg[k]=write(base/(k+'.json'),{})
+            cfg['f9_config']=write(base/'f9_config.json',dict(locked_inputs=[],opensci_cx_root='/fixture/data'))
+            cfg['FT16']=write(base/'FT16.json',dict(counts={'mmlu':14042,'triviaqa':17944},recorded_before_scoring=True,input_hashes={}))
+            c=write(prep/'config.json',cfg);write(prep/'ready.json',dict(cpu_ready=True,new_models=42,oneshots=11,model_hashes=37,config=c))
+            def fake_run(args,**kwargs):return subprocess.CompletedProcess(args,1 if 'has-session' in args else 0)
+            with patch('scripts.launch_a2_family_f10.predecessor',return_value={'host':cfg['host'],'gpus':[]}),patch('efficient_llm.a2.data.PackedRows'),patch('scripts.launch_a2_family_f10.subprocess.run',side_effect=fake_run) as run:
+                launch(str(prep),str(output),'fixture_session','b'*40,str(proof))
+            saved=json.loads((output/'config.json').read_text())
+            self.assertIn(str(output/'source'),saved['cpu_proof']['path'])
+            calls=[c for c in run.call_args_list if c.args[0][:2]==['tmux','new-session']]
+            shell=calls[0].args[0][-1];tokens=shlex.split(shell)
+            self.assertEqual(tokens[:2],['exec','env'])
+            self.assertIn('HF_HUB_OFFLINE=1',tokens);self.assertIn('PYTHONPATH='+str(output/'source'),tokens)
+            self.assertEqual(saved['spec_sha256'],SPEC_SHA)
+
+    def test_readiness_wait_does_not_relaunch_or_accept_dead_preparer(self):
+        import tempfile,subprocess
+        from pathlib import Path
+        from unittest.mock import patch
+        from scripts.launch_a2_family_f10 import wait_for_preparation
+        with tempfile.TemporaryDirectory() as d:
+            with patch('scripts.launch_a2_family_f10.subprocess.run',return_value=subprocess.CompletedProcess([],0,stdout='1\n')):
+                with self.assertRaises(RuntimeError):wait_for_preparation(d,'dead')
+            (Path(d)/'ready.json').write_text('{}')
+            with patch('scripts.launch_a2_family_f10.subprocess.run') as run:
+                wait_for_preparation(d,'already-ready');run.assert_not_called()
