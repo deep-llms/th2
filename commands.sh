@@ -1,6 +1,2 @@
-#1 +20+a
-#th2-wc69-family-f9-health-20261110-a02
-set -euo pipefail
-cd /mnt/local/deep-llms_th2
-export CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1
-/mnt/local/conda-py311/envs/a2_env/bin/python3.11 -u -m scripts.a2_family_f9_health --root /mnt/local/_outputs/deep-llms_th2/wc69-a2-family-f9-20261110-a01
+#2 +a -f-_run-2026-11-10_09-06-49-th2-wc69-family-f9-launch-20261110-a01.log
+#th2-wc69-family-f9-launch-trace-20261110-a01
