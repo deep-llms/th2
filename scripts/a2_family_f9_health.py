@@ -25,7 +25,8 @@ def health(root):
     if manifest.is_file():
         m=json.loads(manifest.read_text());bad=[p for p,h in m['files'].items() if sha256(root/'source'/p)!=h]
         out['sources']=dict(files=len(m['files']),changed=bad,manifest_sha256=sha256(manifest))
-    names=['prepare.log','supervisor.log','supervised/supervisor.json','supervised/complete.json',
+    names=['prepare.log','supervisor.log','supervised/supervisor.json','supervised/run/complete.json',
+        'supervised/reclaim.json','supervised/gpus-free-before-training.json','supervised/burn-verified.json',
         'results/a2_family_20261107/downstream/preparation/ready.json',
         'results/a2_family_20261107/downstream/FT12_loads.json',
         'results/a2_family_20261107/downstream/progress.json',
