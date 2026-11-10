@@ -78,6 +78,16 @@ class V110(unittest.TestCase):
             with self.assertRaises(ValueError):predecessor('/tmp/root','host')
             inspect.assert_not_called()
 
+    def test_wait_handoff_requires_finished_receipt(self):
+        from scripts.launch_a2_family_f9_v110 import wait_handoff
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);(root/'scope_v110_drain').mkdir();(root/'supervised').mkdir()
+            (root/'scope_v110_drain/native_handoff_requested.json').write_text(json.dumps(dict(drained=True)))
+            supervisor=root/'supervised/supervisor.json';supervisor.write_text('{}')
+            def finish(_):supervisor.write_text(json.dumps(dict(finished_at='now')))
+            with patch('scripts.launch_a2_family_f9_v110.time.sleep',side_effect=finish) as sleep,patch('scripts.launch_a2_family_f9_v110.predecessor',return_value={'verified':True}) as pred:
+                self.assertEqual(wait_handoff(root,'host'),{'verified':True});sleep.assert_called_once();pred.assert_called_once_with(root,'host')
+
     def test_actual_all_tasks_choice_scores(self):
         root=Path('results/a2_depth_20261031/final_export_20261110_a01/files/dependencies')
         if not root.exists():self.skipTest('Local archived full-nine-task evidence unavailable')

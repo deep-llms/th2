@@ -8,6 +8,7 @@ import shlex
 import socket
 import subprocess
 import sys
+import time
 from eval.a2_family_f9 import read
 from eval.a2_family_f9_v110 import SPEC_SHA,EVALUATOR_COMMIT,write,select
 from scripts.a2_family_f9_run import locked
@@ -40,6 +41,19 @@ def predecessor(root,host):
     return fresh
 
 
+def wait_handoff(root,host):
+    root=Path(root);deadline=time.monotonic()+7200
+    print('F9_V110_WAIT_NATIVE_HANDOFF',root,flush=True)
+    while time.monotonic()<deadline:
+        request=root/'scope_v110_drain/native_handoff_requested.json'
+        if request.is_file():
+            if not read(request)['drained']:raise ValueError('Old scorer drain did not complete')
+            supervisor=root/'supervised/supervisor.json'
+            if supervisor.is_file() and read(supervisor).get('finished_at'):return predecessor(root,host)
+        time.sleep(5)
+    raise TimeoutError('Native handoff not verified; no new GPU job launched')
+
+
 def job_manifest(config,root):
     return dict(jobs=[dict(name='family-F9-v110-closed-list',gpus=list(range(8)),timeout_seconds=None,
         argv=['{python}','-u','-m','scripts.a2_family_f9_v110_run','--config',str(config),'--receipt','{run_dir}/f9-complete.json'],
@@ -59,7 +73,8 @@ def launch(plan,output,session,commit):
     if not proof['launch_ready']:raise ValueError('CPU proof not ready')
     for p,h in proof['files'].items():
         if sha256(source/p)!=h:raise ValueError('Tested source changed: '+p)
-    predecessor(old,cfg['host'])
+    stopped=read(old/'scope_v110_drain/dispatch_stopped.json')
+    if stopped['spec_sha256']!=SPEC_SHA:raise ValueError('No authorized old dispatch stop')
     manifest=locked(cfg['evaluator_source_manifest'])
     for p,h in manifest['files'].items():
         if sha256(old/'source'/p)!=h:raise ValueError('Numerical evaluator source changed')
@@ -109,7 +124,7 @@ def launch(plan,output,session,commit):
         v=read(p);batches[family]=v['batch_size'];write(prep/p.name,dict(origin=lock(p),result=v))
     for e in entries:
         if e['batch_family'] not in batches:raise ValueError('Missing family FT11 proof: '+e['batch_family'])
-    flags.append(dict(test='intentional_v19_scope_change',detail=lock(old/'scope_v110_drain/native_handoff_requested.json')))
+    flags.append(dict(test='intentional_v19_scope_change',detail=lock(old/'scope_v110_drain/dispatch_stopped.json')))
     flags.extend(read(prior/'flags.json')['flags']);flags.extend(dict(test='FT12_hash:'+e['model'],detail=e) for e in hash_failures)
     # Preserve exact raw preparations and all admission evidence in portable backup.
     import shutil
@@ -136,7 +151,8 @@ def launch(plan,output,session,commit):
         group_spots=spots,hash_failures=hash_failures,prior_scope_missing_excluded=True))
     config=write(result/'config.json',run)
     path=out/'jobs.json';write_json(path,job_manifest(config['path'],result));load_jobs(path)
-    fresh=predecessor(old,cfg['host']);inspection=write(out/'inspection.json',fresh)
+    fresh=wait_handoff(old,cfg['host']);inspection=write(out/'inspection.json',fresh)
+    shutil.copyfile(old/'scope_v110_drain/native_handoff_requested.json',prep/'native_handoff_requested.json')
     command=[sys.executable,'-u','-m','scripts.train_then_burn','--config',str(path),'--output',str(out/'supervised'),
         '--inspection',inspection['path'],'--host',cfg['host'],'--burn-session',session+'_burn',
         '--predecessor-burn-script',str(old/'source/resources/llm_pretrain_burn.py')]
