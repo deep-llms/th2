@@ -56,17 +56,21 @@ def main():
         # Let the current user-facing turn finish before resuming this same thread.
         next_run=datetime.fromisoformat(a.first_at).timestamp() if a.first_at else time.time()+a.interval
         tick=0
+        last_delivery=None
+        if (a.state/'status.json').exists():
+            last_delivery=json.loads((a.state/'status.json').read_text()).get('last_delivery')
         while time.time()<end and not (a.state/'STOP').exists():
             status={'pid':os.getpid(),'thread':a.thread,'tick':tick,'status':'waiting',
                     'next_utc':datetime.fromtimestamp(next_run,timezone.utc).isoformat(),
                     'until':a.until,'time_policy':str(a.time_policy) if a.time_policy else None,
-                    'time_policy_sha256':a.time_policy_sha256}
+                    'time_policy_sha256':a.time_policy_sha256,
+                    'last_delivery':last_delivery}
             write(a.state/'status.json',status)
             while time.time()<min(next_run,end) and not (a.state/'STOP').exists():time.sleep(1)
             if time.time()>=end or (a.state/'STOP').exists():break
             stamp=datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
             log=a.state/(stamp+'.log')
-            argv=[a.codex,'queue','--remote','unix://','--thread',a.thread,
+            argv=[a.codex,'queue','--remote','unix://','--resume','--thread',a.thread,
                   '--message',a.prompt.read_text()]
             status.update(status='running',started_utc=stamp,log=str(log));write(a.state/'status.json',status)
             # App server queues behind an active turn; preserve its model and permissions.
@@ -77,7 +81,14 @@ def main():
                     returncode=result.returncode
                 except subprocess.TimeoutExpired:
                     returncode=124
+                    handle.write('\nWatcher: queue command timed out; delivery is unconfirmed.\n')
+                except OSError as error:
+                    returncode=127
+                    handle.write(f'\nWatcher: could not execute queue command: {error}\n')
             status.update(status='queued' if returncode == 0 else 'delivery_failed',returncode=returncode)
+            last_delivery={'utc':datetime.now(timezone.utc).isoformat(),
+                           'status':status['status'],'returncode':returncode,'log':str(log)}
+            status['last_delivery']=last_delivery
             write(a.state/(stamp+'.json'),status)
             tick+=1
             next_run=max(next_run+a.interval,time.time()+60)
