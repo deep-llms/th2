@@ -92,6 +92,35 @@ class SmolScoring(unittest.TestCase):
             self.assertEqual(greedy,bool(torch.equal(logits.argmax(-1),target)))
 
 class F9Admission(unittest.TestCase):
+    def test_prepared_recovery_preserves_source_and_rejects_duplicate(self):
+        import tempfile
+        from pathlib import Path
+        from scripts.activate_a2_family_f9_prepared import validate_prepared
+        from eval.a2_family_f9 import write,read,SPEC_SHA
+        from scripts.a2_quant_io import lock
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);result=root/'results/a2_family_20261107/downstream'
+            source=root/'source';source.mkdir();(source/'fixture.py').write_text('original source')
+            from efficient_llm.diagnostic_data import sha256
+            manifest=write(root/'source-manifest.json',dict(code_commit='',files={'fixture.py':sha256(source/'fixture.py')}))
+            att=write(result/'SOURCE_COMMIT_ATTESTATION.json',dict(verified=True,actual_source_commit='a'*40,
+                checks={'fixture.py':True},source_manifest_sha256=manifest['sha256']))
+            inv=write(result/'inventory.json',dict(models=[{}]*189,hash_failures=[]))
+            cfg=write(result/'preparation/ready_config.json',dict(downstream_root=str(result),source_manifest=manifest,
+                locked_inputs=[],inventory=inv,benchmarks={},code_commit=''))
+            ready=write(result/'preparation/ready.json',dict(cpu_ready=True,models=189,flags=[],config=cfg))
+            failed=write(root/'jobs.json',dict(jobs=[{'fixture':True}]))
+            out=validate_prepared(root,ready['sha256'],att['sha256'],'a'*40)
+            self.assertEqual(out['code_commit'],'a'*40)
+            self.assertEqual(read(cfg['path'])['code_commit'],'')
+            self.assertEqual(sha256(failed['path']),failed['sha256'])
+            (source/'fixture.py').write_text('modified')
+            with self.assertRaisesRegex(ValueError,'Frozen source changed'):
+                validate_prepared(root,ready['sha256'],att['sha256'],'a'*40)
+            (root/'supervised').mkdir()
+            with self.assertRaisesRegex(ValueError,'refuse duplicate'):
+                validate_prepared(root,ready['sha256'],att['sha256'],'a'*40)
+
     def test_launcher_rejects_missing_commit_before_any_io(self):
         from scripts.launch_a2_family_f9 import launch
         for value in ('','HEAD','2a74421'):
@@ -137,13 +166,15 @@ class F9Admission(unittest.TestCase):
     def test_native_job_manifest_requires_only_evaluation_and_backup(self):
         import json,tempfile
         from pathlib import Path
-        from scripts.launch_a2_family_f9 import jobs
+        from scripts.launch_a2_family_f9 import jobs,save_jobs
         from run_experiments import load_jobs
         with tempfile.TemporaryDirectory() as directory:
-            p=Path(directory)/'jobs.json';p.write_text(json.dumps(jobs('/cfg.json',Path('/result/downstream'))))
+            p=Path(directory)/'jobs.json';save_jobs(p,'/cfg.json',Path('/result/downstream'))
             value=load_jobs(p)
             self.assertEqual(len(value),2)
             self.assertNotIn('train',json.dumps(value))
+            self.assertEqual(set(json.loads(p.read_text())),{'jobs'})
+            with self.assertRaises(ValueError):save_jobs(p,'/cfg.json',Path('/result/downstream'))
 
     def test_inventory_hash_rejects_changed_weight_and_missing_metadata(self):
         import tempfile,json,hashlib

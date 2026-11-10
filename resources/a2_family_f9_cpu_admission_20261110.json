@@ -15,15 +15,17 @@
     "scripts/a2_family_f9_backup.py": "a7630a19ba71519b634020827721af1f6da590efacc7ee39e21d2c0e7623910d",
     "scripts/a2_family_f9_inventory.py": "99092b1bfce2c840cfa511cb04de8cf0b75a9f442bac159dc26f2ccbe6cadfb7",
     "scripts/a2_family_f9_health.py": "5d1e1dd4def0954e47a9ad6415db0545f2ed6639704cc0ff86f502970898c34f",
-    "scripts/launch_a2_family_f9.py": "955e9029c910437e8ec6e49f0ecd418a893163692b7c785d2a384fe12d9303fb",
-    "tests/a2/test_family_f9.py": "d89c6e65ad293f548f73f7a50c4490f77b41fc25f894b08c40b0df4d91158abf",
+    "scripts/launch_a2_family_f9.py": "7d797a1fe09b5deaf037576d717176530a72886d81bb87924d229a61a58aafd0",
+    "tests/a2/test_family_f9.py": "1892612db2be51e9961f2ba927901dae7717686895e701b87741d0887ac56174",
     "resources/a2_family_f9_plan_20261110.json": "ae1b8964cb1547cb79a143cd0b519ca30ed90222f8840ad510338681b8286400",
-    "resources/a2_family_f9_smol_tokenizer_20261110.json": "2a97a5812a11c49d3e3576248da8a1371155e2b80777582bd2e871efe0587d93"
+    "resources/a2_family_f9_smol_tokenizer_20261110.json": "2a97a5812a11c49d3e3576248da8a1371155e2b80777582bd2e871efe0587d93",
+    "scripts/activate_a2_family_f9_prepared.py": "b4c94518cc3fa376801951663de2f24e77415cb7229d1fdc1ea476f1dcab0d6f"
   },
   "tests": {
     "f9": 9,
     "bridge_regression": 5,
-    "explicit_commit_guard": 1
+    "explicit_commit_guard": 1,
+    "prepared_recovery": 1
   },
   "logs": [
     {
@@ -37,12 +39,17 @@
     {
       "path": "temp/f9_commit_guard_test_a01.log",
       "sha256": "85f688d159e6dcbfabbd6b8d8aa8e1d66e38410da8354648de4638152fb22120"
+    },
+    {
+      "path": "temp/f9_recovery_tests_a01.log",
+      "sha256": "5bd7c86a9b7c3e67892bb213a1d96a7869aee6f71fa8645ba47fcce0996cf325"
     }
   ],
   "historical_failures": [
     "a10/a11 test invocation omitted tests/a2 import path; corrected invocation, a12/a14 all PASS",
     "original census53MB receipt oversize retained; compact a02 retrieved",
-    "initial tiny Smol pad fixture corrected, original failure preserved"
+    "initial tiny Smol pad fixture corrected, original failure preserved",
+    "Original launch native manifest added spec_sha256, rejected before GPU reclaim; actual saved-file load_jobs test and prepared-state activation now validated"
   ],
   "inventory": {
     "directories": 248,
@@ -63,5 +70,5 @@
     "Trusted data binaries hashed before native reclaim; fresh predecessor identities rechecked twice"
   ],
   "eta": "Await actual first model runtime; spec 8-12 nodehours estimated100-130 models, actual189 exceeds estimate",
-  "note": "This guard update applies to future launches only. Active a01 stays frozen at2a74421; empty original commit metadata is corrected by a separately verified additive source attestation."
+  "note": "Active numerical source remains frozen2a74421. Prepared-state activation reuses CPU_READY189 hashes/requests, preserves original failed manifest, writes strict native jobs schema and corrected config commit bound to actual253file attestation."
 }

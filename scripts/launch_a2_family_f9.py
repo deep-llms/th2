@@ -16,7 +16,7 @@ from scripts.a2_quant_io import lock
 from scripts.gpu_process import inspect,process
 from scripts.launch_a2_downstream import freeze_source
 from scripts.train_then_burn import BURN_HASH,GUARD_HASH,approved_launcher
-from run_experiments import load_jobs
+from run_experiments import load_jobs,write_json
 
 
 def predecessor(cfg):
@@ -42,6 +42,15 @@ def jobs(config,root):
         dict(name='family-F9-scientific-backup',gpus=list(range(8)),timeout_seconds=None,
         argv=['{python}','-u','-m','scripts.a2_family_f9_backup','--root',str(root),'--receipt','{run_dir}/f9-backup.json'],
         required_outputs=[dict(path='f9-backup.json',json_equals=dict(verified=True))])])
+
+
+def save_jobs(path,config,root):
+    # Native runner schema permits only "jobs". Spec identity belongs in the
+    # referenced scientific config, not as an extra native manifest field.
+    path=Path(path)
+    if path.exists():raise ValueError('Existing native manifest; preserve it')
+    write_json(path,jobs(config,root));load_jobs(path)
+    return lock(path)
 
 
 def launch(plan,output,session,commit):
@@ -75,7 +84,7 @@ def launch(plan,output,session,commit):
     ready=read(result/'preparation/ready.json');cfg=locked(ready['config'])
     if not ready['cpu_ready'] or not ready['models']:raise ValueError('No prepared models')
     cfg['downstream_root']=str(result);config=write(result/'config.json',cfg)
-    job=write(out/'jobs.json',jobs(config['path'],result));load_jobs(Path(job['path']))
+    job=save_jobs(out/'jobs.json',config['path'],result)
     fresh=predecessor(cfg);inspection=write(out/'inspection.json',fresh)
     command=[sys.executable,'-u','-m','scripts.train_then_burn','--config',job['path'],
         '--output',str(out/'supervised'),'--inspection',inspection['path'],'--host',cfg['host'],
